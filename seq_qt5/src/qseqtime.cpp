@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-12
+ * \updates       2019-09-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -141,7 +141,7 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.setPen(pen);
     for (midipulse tick = starttick; tick <= endtick; tick += ticks_per_step)
     {
-        char bar[16];
+        char bar[32];
         int x_offset = xoffset(tick) - scroll_offset_x();
 
         /*
