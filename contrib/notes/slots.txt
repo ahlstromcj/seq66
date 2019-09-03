@@ -1,0 +1,42 @@
+                                none = -1,           An out-of-range value, uninitialized.
+ bpm_up                      0  bpm_up = 0,          BPM up; for MIDI up and down.
+ bpm_dn                      1  bpm_dn,              BPM down; for MIDI down and up.
+ screenset_up                2  ss_up,               Screen-set (bank) up. And down for MIDI.
+ screenset_dn                3  ss_dn,               Screen-set (bank) down.
+ replace                     4  mod_replace,         Set status of replace control.
+ group_on                    5  mod_snapshot,        Set status of snapshot control.
+ group_off                   6  mod_queue,           Set status of queue control.
+ group_learn                 7  mod_gmute,           Set status of group-mute control.
+ replace                     8  mod_glearn,          Set status of group-learn control.
+ queue                       9  play_ss,             Sets the playing screen-set (bank).
+ snapshot_1                     playback,            Key pause, and MIDI for pause/start/stop.
+ snapshot_2                     song_record,         Sets recording of a live song performance.
+ keep_queue                     solo,                TODO, intended to solo track.
+ show_seq_key                   thru,                Enables/disables the MIDI THRU control.
+ start                          bpm_page_up,         Increments BMP by a configured page value.
+ stop                           bpm_page_dn,         Decrements BMP by a configured page value.
+ pause                          ss_set,              Key: set screen-set; MIDI: playing set.
+ show_seq_number                record,              Enables/disables the MIDI record control.
+ pattern_edit                   quan_record,         Enables/disables quantized recording.
+ event_edit                     reset_seq,           Controls loop overwrite versus reset.
+ pattern_shift                  mod_oneshot,         Set status of one-shot queuing.
+ song_mode                      FF,                  Fast-forwards the clock (pulse counter.)
+ toggle_jack                    rewind,              Rewinds the clock (pulse counter).
+ menu_mode                      top,                 Set to song beginning or L marker.
+ follow_transport               playlist,            MIDI only, arrow keys hardwired.
+ fast_forward                   playlist_song,       MIDI only, arrow keys hardwired.
+ rewind                         tap_bpm,             Tap key for estimating BPM.
+ pointer_position               start,               Pause playback. Compare to playback above.
+ tap_bpm                        stop,                Pause playback. Compare to playback above.
+ toggle_mutes                   mod_snapshot_2,      The second snapshot key.  TODO.
+ song_record                    toggle_mutes,        Song mute, unmute, and toggle?  TODO.
+ oneshot_queue                  song_pointer,        Reposition the song pointer.  TODO.
+                                keep_queue,          Set keep-queue (the "Q" button).
+                                slot_shift,          Used for sets > 32 patterns.
+                                reserved_2,          Reserved for expansion.
+                                reserved_3,          Reserved for expansion.
+                                maximum,             Used only for termination/range-checking.
+                                pattern,             Useful to set and retrieve op function.
+                                mute_group,          Useful to set and retrieve op function.
+                                automation           Useful to set and retrieve the name.
+

@@ -1,0 +1,360 @@
+# Seq66 0.90.0 (and above) rc configuration file
+#
+# /home/ahlstrom/.config/sequencer66/qseq66.rc
+# Written on 2019-03-26 09:00:11
+#
+# This file holds the main configuration options for Seq66.
+# It loosely follows the format of the seq24 'rc' configuration
+# file, but adds some new options, and is no longer compatible.
+# 
+# The next section is only a marker to help better control configuration
+# management.
+
+[Sequencer66]
+
+config-type = "rc"
+version = 0
+
+# The [comments] section holds the user's documentation for this file.
+# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
+# add a blank line by adding a space character to the line.
+
+[comments]
+
+(Comments added to this section are preserved.  Lines starting with
+ a '#' or '[', or that are blank, are ignored.  Start lines that must
+ be blank with a space.)
+
+
+[midi-control-flags]
+
+load-key-controls = true
+load-midi-control = true
+
+# This new style of control stanza incorporates key control as well.
+# The leftmost number on each line here is the pattern number (e.g.
+# 0 to 31); the group number, same range, for up to 32 groups; or it
+# it is an automation control number, again a similar range.
+# This internal MIDI control number is followed by three groups of
+# bracketed numbers, each providing three different type of control:
+#
+#    Normal:           [toggle]    [on]      [off]
+#    Playback:         [pause]     [start]   [stop]
+#    Playlist:         [by-value]  [next]    [previous] (if active)
+#
+# In each group, there are six numbers:
+#
+#    [on/off invert status d0 d1min d1max]
+#
+# 'on/off' enables/disables (1/0) the MIDI control for the pattern.
+# 'invert' (1/0) causes the opposite if data is outside the range.
+# 'status' is by MIDI event to match (channel is NOT ignored).
+# 'd0' is the first data value.  Example: if status is 144 (Note On),
+# then d0 represents Note 0.
+#
+# 'd1min'/'d1max' are the range of second values that should match.
+# Example:  For a Note On for note 0, 0 and 127 indicate that any
+# Note On velocity will cause the MIDI control to take effect.
+
+#  ------------------------- Loop, group, or automation-slot number
+# |   ---------------------- Name of the key (see the key map)
+# |  |    ------------------ On/off (indicate if section is enabled)
+# |  |   | ----------------- Inverse
+# |  |   | |  -------------- MIDI status (event) byte (e.g. Note On)
+# |  |   | | |  ------------ Data 1 (e.g. Note number)
+# |  |   | | | |  ---------- Data 2 min
+# |  |   | | | | |  -------- Data 2 max
+# |  |   | | | | | |
+# v  v   v v v v v v
+# 0 "1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
+#           Toggle          On              Off
+
+[loop-control]
+
+ 0 "1"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 0
+ 1 "q"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 1
+ 2 "a"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 2
+ 3 "z"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 3
+ 4 "2"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 4
+ 5 "w"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 5
+ 6 "s"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 6
+ 7 "x"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 7
+ 8 "3"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 8
+ 9 "e"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 9
+10 "d"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 10
+11 "c"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 11
+12 "4"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 12
+13 "r"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 13
+14 "f"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 14
+15 "v"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 15
+16 "5"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 16
+17 "t"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 17
+18 "g"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 18
+19 "b"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 19
+20 "6"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 20
+21 "y"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 21
+22 "h"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 22
+23 "n"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 23
+24 "7"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 24
+25 "u"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 25
+26 "j"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 26
+27 "m"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 27
+28 "8"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 28
+29 "i"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 29
+30 "k"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 30
+31 ","       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop 31
+
+[mute-group-control]
+
+ 0 "!"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 0
+ 1 "Q"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 1
+ 2 "A"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 2
+ 3 "Z"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 3
+ 4 "@"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 4
+ 5 "W"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 5
+ 6 "S"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 6
+ 7 "X"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 7
+ 8 "#"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 8
+ 9 "E"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 9
+10 "D"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 10
+11 "C"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 11
+12 "$"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 12
+13 "R"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 13
+14 "F"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 14
+15 "V"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 15
+16 "%"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 16
+17 "T"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 17
+18 "G"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 18
+19 "B"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 19
+20 "^"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 20
+21 "Y"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 21
+22 "H"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 22
+23 "N"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 23
+24 "&"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 24
+25 "U"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 25
+26 "J"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 26
+27 "M"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 27
+28 "*"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 28
+29 "I"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 29
+30 "K"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 30
+31 "<"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 31
+
+[automation-control]
+
+ 0 "'"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # BPM Up
+ 1 ";"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # BPM Dn
+ 2 "]"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Set Up
+ 3 "["       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Set Dn
+ 4 "KP_Home" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Replace
+ 5 "Ins"     [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Snapshot
+ 6 "o"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Queue
+ 7 "`"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Group Mute
+ 8 "l"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Group Learn
+ 9 "Home"    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Playing Set
+10 "."       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Playback
+11 "P"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Song Record
+12 "BS"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Solo
+13 "KP_/"    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Thru
+14 "PageUp"  [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # BPM Page Up
+15 "PageDn"  [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # BPM Page Dn
+16 "KP_."    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Set Set
+17 "KP_*"    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Record
+18 "KP_-"    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Quan Record
+19 "KP_+"    [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reset Seq
+20 "|"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # One-shot
+21 "F6"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # FF
+22 "F5"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Rewind
+23 "F1"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Top
+24 "F2"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Play List
+25 "F3"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Play Song
+26 "F9"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Tap BPM
+27 "Space"   [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Start
+28 "Esc"     [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Stop
+29 "KP_Ins"  [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Snapshot_2
+30 "F8"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Toggle Mute
+31 "F7"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Song Pos
+32 "\"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Keep Queue
+33 "/"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Slot Shift
+34 "Null_f0" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 34
+35 "Null_f1" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 35
+36 "Null_fb" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Loop Edit
+37 "Null_fc" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Event Edit
+38 "Null_fd" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Song Mode
+39 "Null_fe" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Toggle JACK
+
+[mute-group-flags]
+
+save-mutes-to-rc = preserve
+mute-group-rows = 4
+mute-group-columns = 8
+write-legacy-mutes = false
+
+[mute-groups]
+
+# All mute-group values are saved in this 'mutes' file, even if they
+# all are zero; but if all are zero, they will be stripped out from
+# the MIDI file by the new strip-empty-mutes functionality (a build
+# option).  This is less confusing to the user, who expects that
+# section to be intact.
+
+
+[midi-clock]
+
+# The first line indicates the number of MIDI busses defined.
+# Each buss line contains the buss (re 0) and the clock status of
+# that buss.  0 = MIDI Clock is off; 1 = MIDI Clock on, and Song
+# Position and MIDI Continue will be sent, if needed; 2 = MIDI
+# Clock Modulo, where MIDI clocking will not begin until the song
+# position reaches the start modulo value [midi-clock-mod-ticks].
+# A value of -1 indicates that the output port is totally
+# disabled.  One can set this value manually for devices that are
+# present, but not available, perhaps because another application
+# has exclusive access to the device (e.g. on Windows).
+
+     # number of MIDI clocks (output busses)
+
+
+[midi-clock-mod-ticks]
+
+# The Song Position (in 16th notes) at which clocking will begin
+# if the buss is set to MIDI Clock mod setting.
+
+64
+
+[midi-meta-events]
+
+# This section defines some features of MIDI meta-event handling.
+# Normally, tempo events are supposed to occur in the first track
+# (pattern 0).  But one can move this track elsewhere to accomodate
+# one's existing body of tunes.  If affects where tempo events are
+# recorded.  The default value is 0, the maximum is 1023.
+# A pattern must exist at this number for it to work.
+
+0    # tempo_track_number
+
+[midi-input]
+
+    # number of input MIDI busses
+
+# The first number is the port number, and the second number
+# indicates whether it is disabled (0), or enabled (1).
+
+
+# If set to 1, this option allows the master MIDI bus to record
+# (filter) incoming MIDI data by channel, allocating each incoming
+# MIDI event to the sequence that is set to that channel.
+# This is an option adopted from the Seq32 project at GitHub.
+
+0   # flag to record incoming data by channel
+
+[manual-alsa-ports]
+
+# Set to 1 to have seq66 create its own ALSA ports and not
+# connect to other clients.  Use 1 to expose all 16 MIDI ports to
+# JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
+# already running on one's computer, or to use the autoconnect
+# feature (Seq66 connects to existing JACK ports on startup.
+
+0   # flag for manual ALSA ports
+
+[reveal-alsa-ports]
+
+# Set to 1 to have seq66 ignore any system port names
+# declared in the 'user' configuration file.  Use this option if
+# you want to be able to see the port names as detected by ALSA.
+
+0   # flag for reveal ALSA ports
+# Set to 1 to allow Seq66 to stay in note-adding mode when
+# the right-click is released while holding the Mod4 (Super or
+# Windows) key.
+
+0   # allow_mod4_mode
+
+# Set to 1 to allow Seq66 to split performerance editor
+# triggers at the closest snap position, instead of splitting the
+# trigger exactly in its middle.  Remember that the split is
+# activated by a middle click.
+
+0   # allow_snap_split
+
+# Set to 1 to allow a double-click on a slot to bring it up in
+# the pattern editor.  This is the default.  Set it to 0 if
+# it interferes with muting/unmuting a pattern.
+
+1   # allow_click_edit
+
+[jack-transport]
+
+# jack_transport - Enable slave synchronization with JACK Transport.
+# Also contains the new flag to use JACK MIDI.
+
+0   # with_jack_transport
+
+# jack_master - Seq66 attempts to serve as JACK Master.
+# Also must enable jack_transport (the user interface forces this,
+# and also disables jack_master_cond).
+
+0   # with_jack_master
+
+# jack_master_cond - Seq66 is JACK master if no other JACK
+# master exists. Also must enable jack_transport (the user interface
+# forces this, and disables jack_master).
+
+0   # with_jack_master_cond
+
+# song_start_mode (applies mainly if JACK is enabled).
+
+# 0 = Playback in live mode. Allows muting and unmuting of loops.
+#     from the main (patterns) window.  Disables both manual and
+#     automatic muting and unmuting from the performerance window.
+# 1 = Playback uses the song (performerance) editor's data and mute
+#     controls, regardless of which window was used to start the
+#     playback.
+
+0   # song_start_mode
+
+# jack_midi - Enable JACK MIDI, which is a separate option from
+# JACK Transport.
+
+0   # with_jack_midi
+
+[auto-option-save]
+
+# Set the following value to 0 to disable the automatic saving of the
+# current configuration to the 'rc' and 'user' files.  Set it to 1 to
+# follow seq24 behavior of saving the configuration at exit.
+# Note that, if auto-save is set, many of the command-line settings,
+# such as the JACK/ALSA settings, are then saved to the configuration,
+# which can confuse one at first.  Also note that one currently needs
+# this option set to 1 to save the configuration, as there is not a
+# user-interface control for it at present.
+
+1     # auto-save-options-on-exit support flag
+
+[last-used-dir]
+
+# Last-used and currently-active directory:
+
+~/
+
+[recent-files]
+
+# Holds a list of the last few recently-loaded MIDI files.
+
+0
+
+[playlist]
+
+# Provides a configured play-list and a flag to activate it.
+# playlist_active: 1 = active, 0 = do not use it
+
+0
+
+# Provides the name of a play-list.  If there is none, use '""'.
+# Or set the flag above to 0.
+
+.playlist
+
+# End of /home/ahlstrom/.config/sequencer66/qseq66.rc
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

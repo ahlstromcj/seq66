@@ -1,0 +1,44 @@
+Key Names for Sequencer66
+Chris Ahlstrom
+2018-12-04 to 2018-12-04
+
+This file lists all of the legal (supported) key names that can be
+used to control operations.
+
+However, note that the keys that start with "Null" are not accessible.
+We will eventually fill them all in.  Currenty missing are "Alt_L" and
+"Alt_R".
+
+NUL      Space    @        `        Esc        F1         KP_Ins     Null_e0
+SOH      !        A        a        Tab        F2         KP_Del     Null_e1
+STX      "        B        b        BkTab      F3         Pause      Null_e2
+ETX      #        C        c        BkSpace    F4         Print      Null_e3
+EOT      $        D        d        Return     F5         KP_Home    Null_e4
+ENQ      %        E        e        Enter      F6         KP_End     Null_e5
+ACK      &        F        f        Ins        F7         KP_Left    Null_e6
+BEL      '        G        g        Del        F8         KP_Up      Null_e7
+BS       (        H        h        Pause      F9         KP_Right   Null_e8
+HT       )        I        i        Print      F10        KP_Down    Null_e9
+LF       *        J        j        SysReq     F11        KP_PageUp  Null_ea
+VT       +        K        k        Clear      F12        KP_PageDn  Null_eb
+FF       ,        L        l        Null_8c    Super_L    Null_cc    Null_ec
+CR       -        M        m        Null_8d    Super_R    Null_cd    Null_ed
+SO       .        N        n        Null_8e    Menu       Null_ce    Null_ee
+SI       /        O        o        Null_8f    Hyper_L    Null_cf    Null_ef
+DLE      0        P        p        Home       Hyper_R    KP_*       Null_f0
+DC1      1        Q        q        End        Help       KP_+       Null_f1
+DC2      2        R        r        Left       Dir_L      KP_,       Null_f2
+DC3      3        S        s        Up         Dir_R      KP_-       Null_f3
+DC4      4        T        t        Right      Sh_F1      KP_.       Null_f4
+NAK      5        U        u        Down       Sh_F2      KP_/       Null_f5
+SYN      6        V        v        PageUp     Sh_F3      Null_d6    Null_f6
+ETB      7        W        w        PageDn     Sh_F4      Shift      Null_f7
+CAN      8        X        x        Shift      Sh_F5      Control    Null_f8
+EM       9        Y        y        Ctrl       Sh_F6      Super      Null_f9
+SUB      :        Z        z        Meta       Sh_F7      Alt        Null_fa
+ESC      ;        [        {        Alt        Sh_F8      CapsLk     Null_fb
+FS       <        \\       |        CapsLk     Sh_F9      Null_dc    Null_fc
+GS       =        ]        }        NumLk      Sh_F10     Null_dd    Null_fd
+RS       >        ^        ~        ScrlLk     Sh_F11     Null_de    Null_fe
+US       ?        _        DEL      Null_9f    Sh_F12     Null_df    Null_ff
+

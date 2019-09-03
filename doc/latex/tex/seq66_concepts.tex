@@ -1,0 +1,249 @@
+%-------------------------------------------------------------------------------
+% seq66_concepts
+%-------------------------------------------------------------------------------
+%
+% \file        seq66_concepts.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-11-01
+% \update      2019-08-15
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides some concepts and terms needed to understand Sequencer66.
+%
+%-------------------------------------------------------------------------------
+
+\section{Concepts}
+\label{sec:concepts}
+
+   The \textsl{Sequencer66} program is a loop-playing machine with a 
+   simple interface.  Before we describe this interface, it is useful
+   to present some concepts and definitions of terms as
+   they are used in \textsl{Sequencer66}.  Various terms have been used over
+   the years to mean the same thing (e.g. "sequence", "pattern", "loop",
+   "track", and "slot"), so it is good to clarify the terminology.
+
+\subsection{Concepts / Terms}
+\label{subsec:concepts_terms}
+
+   This section doesn't provide comprehensive coverage of terms.  It
+   covers terms that might be puzzling.
+
+\subsubsection{Concepts / Terms / armed, muted}
+\label{subsubsec:concepts_terms_armed}
+
+   \index{armed}
+   An armed sequence is a sequence
+   (see \sectionref{subsubsec:concepts_terms_sequence})
+   that will be heard.  "Armed" is the opposite
+   of "muted".  Performing an \textsl{arm} operation in \textsl{Sequencer66}
+   means clicking on an "unarmed" sequence in the patterns panel (the main
+   window of \textsl{Sequencer66}).  An unarmed sequence will not be heard, and
+   it has a white background.  When the sequence is \textsl{armed}, it will be
+   heard, and it has a darker background.
+   A sequence can be armed or unarmed in three ways:
+
+   \begin{itemize}
+      \item Clicking on a sequence/pattern box.
+      \item Pressing the hot-key for that sequence/pattern box.
+      \item Opening up the Song Editor and starting playback; the
+            sequences arm/unarm depending on the layout of the
+            sequences and triggers in the piano roll of the Song Editor.
+   \end{itemize}
+
+\subsubsection{Concepts / Terms / bank, screenset}
+\label{subsubsec:concepts_terms_bank}
+
+   \index{screen set}
+   The \textsl{screen set}
+   is a set of patterns that fit within the 8x4 grid of loops/patterns in the
+   Patterns panel.
+   \textsl{Sequencer66} supports multiple screens sets, up to 32 of them,
+   and a name can be given to each for clarity.
+
+   \index{bank}
+   This term is \textsl{Kepler34}'s name for "screen set".
+
+\subsubsection{Concepts / Terms / buss (bus or port)}
+\label{subsubsec:concepts_terms_buss}
+
+   \index{bus}
+   \index{buss}
+   A \textsl{buss} (also spelled "bus" these days;
+   \url{https://en.wikipedia.org/wiki/Busbar}) is an entity onto which
+   MIDI events can be placed, in order to be heard or to affect the
+   playback.
+   A \textsl{buss} is just another name for port.
+   See \sectionref{subsubsec:concepts_terms_port}.
+
+\subsubsection{Concepts / Terms / export}
+\label{subsubsec:concepts_terms_export}
+
+   \index{export}
+   A \textsl{export} in \textsl{Sequencer66} is a way of writing a
+   song-performance to a more standard MIDI file, so that it can be played
+   exactly by other sequencers.
+   An export collects all of the unmuted tracks that have
+   performance information (triggers) associated with them, and creates one
+   larger trigger for each track, repeating the events as indicated by the
+   original performance.
+
+\subsubsection{Concepts / Terms / group}
+\label{subsubsec:concepts_terms_group}
+
+   \index{group}
+   A \textsl{group} in \textsl{Sequencer66} is a
+   previously-defined mute/unmute pattern in the active screen set.
+   A group is a set of patterns, in the current screen-set,
+   that can arm (unmute) their playing state
+   together.  Every group contains all sequences in the active screen
+   set.  This concept is similar to mute/unmute groups in hardware
+   sequencers.
+   \index{mute-group}
+   Also known as a "mute-group".
+
+\subsubsection{Concepts / Terms / loop (pattern, track, sequence)}
+\label{subsubsec:concepts_terms_loop}
+
+   \index{loop}
+   \textsl{Loop}
+   is a synonym for \textsl{pattern} or \textsl{sequence}, when used
+   in existing \textsl{Seq24} documentation.
+   Each loop is represented by a box (pattern slot) in the Pattern (main)
+   Window.
+
+   A \textsl{Sequencer66} \textsl{pattern}
+   \index{pattern}
+   (also called a "sequence" or "loop")
+   is a short unit of melody or rhythm in \textsl{Sequencer66},
+   extending for a small number of measures (in most cases).
+   Each pattern is represented by a box in the Patterns window.
+   Each pattern is editable on its own.  All patterns can be layed out in
+   a particular arrangement to generate a more complex song.
+
+   \index{sequence}
+   \textsl{Sequence} is
+   a synonym for \textsl{pattern}.
+
+   Note that other sequencer applications use the term "sequence"
+   to apply to the complete song, and not just to one track or pattern in the
+   entire song.
+
+\subsubsection{Concepts / Terms / performance}
+\label{subsubsec:concepts_terms_performance}
+
+   In the jargon of \textsl{Sequencer66}, a
+   \index{performance}
+   \textsl{performance} is an organized collection of patterns.
+   This layout of patterns is created using the Song Editor, sometimes
+   called the "performance editor".
+   This window controls the song playback in "Song Mode" (as opposed to "Live
+   Mode").
+   The playback of each track is controlled by a set of triggers created for
+   that track.
+
+\subsubsection{Concepts / Terms / pulses per quarter note}
+\label{subsubsec:concepts_terms_pulses}
+
+   \index{pulses}
+   The concept of "pulses per quarter note", or PPQN, is very important for
+   MIDI timing.  To make it a bit more confusing, sometimes these pulses are
+   referred to as "ticks", "clocks", and "divisions".
+   To make it even more confusing, there are separate timing concepts to
+   understand, such as "tempo", "beats per measure", "beats per minute",
+   "MIDI clocks", and more.
+
+   While a full description of all these terms, and how they are calculated, is
+   beyond the scope of this document, we will try to clarify the discussion
+   when such confusion could be an issue.
+
+\subsubsection{Concepts / Terms / queue}
+\label{subsubsec:concepts_terms_queue_mode}
+
+   To "queue" a pattern means to ready it for playback on the next repeat of
+   a pattern.  A pattern can be armed immediately, or it can be queued to
+   play back the next time the pattern restarts.
+   Pattern toggles occur at the end of
+   the pattern, rather than being set immediately.
+
+   A set of queued patterns can be temporarily stored, so that a different
+   set of playbacks can occur, before the original set of playbacks is
+   restored.
+
+   \index{keep queue}
+   \index{queue!keep}
+   The "keep queue" functionality allows the queue to be held without
+   holding down a button the whole time.  Once this key is pressed,
+   then the hot-keys for any pattern can be pressed, over and over,
+   to queue each pattern.
+
+\subsubsection{Concepts / Terms / snapshot}
+\label{subsubsec:concepts_terms_snapshot}
+
+   \index{snapshot}
+   A \textsl{Sequencer66} \textsl{snapshot} is a briefly preserved
+   state of the patterns.  One can press a snapshot key, change the state of
+   the patterns for live playback, and then release the snapshot key to
+   revert to the state when it was first pressed.  (One might call it a
+   "revert" key, instead.)
+
+\subsubsection{Concepts / Terms / song}
+\label{subsubsec:concepts_terms_song}
+
+   \index{song}
+   A \textsl{song} is a collection of patterns (a performance)
+   in a specific temporal layout, as assembled via the Song Editor window.
+   See \ref{subsubsec:concepts_terms_performance}.
+   See \ref{subsubsec:concepts_terms_trigger}.
+
+\subsubsection{Concepts / Terms / trigger}
+\label{subsubsec:concepts_terms_trigger}
+
+   \index{trigger}
+   A \textsl{trigger} is indicates when a sequence/pattern/loop
+   should be played, and how much of the sequence (including repeats) should be
+   played.  A song performance consists of a number of sequences, each
+   triggered in ways that the musician can lay out.
+
+\subsection{Concepts / Sound Subsystems}
+\label{subsec:concepts_sound_subsystems}
+
+\subsubsection{Concepts / Sound Subsystems / ALSA}
+\label{subsubsec:concepts_sound_alsa}
+
+   \textsl{ALSA} is a sound and MIDI system for Linux, with components built
+   into the Linux kernel. It is the main subsystem used by
+   \textsl{Sequencer66}.  The name of the library used to build
+   \textsl{ALSA} projects is \texttt{libasound}.
+   See reference \cite{alsa}.
+
+\subsubsection{Concepts / Sound Subsystems / PortMIDI}
+\label{subsubsec:concepts_sound_portmidi}
+
+   \textsl{PortMIDI} is a cross-platform API (applications programming
+   interface) for MIDI.  It is used in the "portmidi" C++ modules
+   included with the base source-code repository of \textsl{Seq24} available
+   (for example) from Debian Linux.  See reference \cite{portmidi}
+   for the PortMIDI home page.
+   This is the API used for Windows or Mac OSX.
+
+%  The SubatomicGlue Windows port of \textsl{Seq24} (see reference
+%  \cite{subatomicglue}) bundles a version of the PortMIDI project with the
+%  source code for the port.  It also provides a complete bundle of the
+%  other products (e.g. gtkmm 2.4) needed to build and run the project.
+%  (By the way, the Windows port is built with
+%  MingW, which provides the GNU compilers and tools.  This is a good thing,
+%  as Visual Studio Community, though "free", is not "Free".)
+
+\subsubsection{Concepts / Sound Subsystems / JACK}
+\label{subsubsec:concepts_sound_jack}
+
+   \textsl{JACK} is a cross-platform (with an emphasis on Linux)
+   API and infrastructure for making it easier to connect and reroute MIDI
+   and audio event between various applications and hardware ports.
+   See reference \cite{jack}.
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

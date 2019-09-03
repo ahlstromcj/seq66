@@ -1,0 +1,734 @@
+#if ! defined SEQ66_QEDITBASE_HPP
+#define SEQ66_QEDITBASE_HPP
+
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  seq66 is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with seq66; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          qeditbase.hpp
+ *
+ *  This module declares/defines the base class for the sequence and
+ *  performance editing frames of Seq66's Qt 5 version.
+ *
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2019-08-05
+ * \updates       2019-08-12
+ * \license       GNU GPLv2 or above
+ *
+ *  This class will be the base class for the qseqbase and qperfbase classes.
+ *  Both kinds of editing involve selection, movement, etc.
+ */
+
+#include "qbase.hpp"                    /* seq66:qbase super base class     */
+#include "util/rect.hpp"
+
+/**
+ *  The height of the data-entry area for velocity, aftertouch, and other
+ *  controllers, as well as note on and off velocity.  This value looks to
+ *  be in pixels; one pixel per MIDI value, which ranges from 0 to 127.
+ *  We're trying to avoid header clutter, and are using a hardwired constant
+ *  for this variable, which will eventually go away.
+ */
+
+const int c_dataarea_y = 128;
+
+/**
+ *  The dimensions and offset of the virtual keyboard at the left of the
+ *  piano roll.  Some have been moved to the GUI (Qt) that needs them.
+ */
+
+const int c_keyboard_padding_x = 6;     /* Qt version of keys padding       */
+
+/**
+ *  Provides constants for the perfroll object (performance editor).
+ *  Note the current dependence on the width of a font pixmap's character!
+ *  So we will use the font's numeric accessors soon.
+ */
+
+const int c_names_x         = 6 * 24;
+const int c_names_y         = 22;
+const int c_perf_scale_x    = 32;       /* units are ticks per pixel        */
+const int c_perf_max_zoom   = 8;        /* limit the amount of perf zoom    */
+
+/*
+ *  Do not document a namespace; it breaks Doxygen.
+ */
+
+namespace seq66
+{
+    class performer;
+    class sequence;
+
+/**
+ *  Provides basic functionality to be inherited by qseqbase and qperfbase.
+ */
+
+class qeditbase : public qbase
+{
+
+protected:
+
+    /**
+     *  The previous selection rectangle, used for undrawing it.  Accessed by
+     *  the getter/setting functions old_rect().
+     */
+
+    seq66::rect m_old;
+
+    /**
+     *  Used in moving and pasting notes.  Accessed by the getter/setting
+     *  functions selection().
+     */
+
+    seq66::rect m_selected;
+
+    /**
+     *  X scaling.  Allows the caller to adjust the overall zoom.   A
+     *  constant.
+     */
+
+    const int m_scale;
+
+    /**
+     *  Zoom times the scale, to save a very common calculation,
+     *  m_zoom * m_scale.
+     */
+
+    int m_scale_zoom;
+
+    /**
+     *
+     */
+
+    int m_padding_x;                        // c_keyboard_padding_x;
+
+    /**
+     *  The grid-snap setting for the piano roll grid.  Same meaning as for the
+     *  event-bar grid.  This value is the denominator of the note size used
+     *  for the snap.
+     */
+
+    int m_snap;
+
+    /**
+     *  Provides the length of a beat, in ticks.
+     */
+
+    midipulse m_beat_length;
+
+    /**
+     *  Provides the length of a measure or bar, in ticks.
+     */
+
+    midipulse m_measure_length;
+
+    /**
+     *  Set when highlighting a bunch of events.
+     */
+
+    bool m_selecting;
+
+    /**
+     *  Set when in note-adding mode.  This flag was moved from both
+     *  the fruity and the seq66 seqroll classes.
+     */
+
+    bool m_adding;
+
+    /**
+     *  Set when moving a bunch of events.
+     */
+
+    bool m_moving;
+
+    /**
+     *  Indicates the beginning of moving some events.  Used in the fruity and
+     *  seq66 mouse-handling modules.
+     */
+
+    bool m_moving_init;
+
+    /**
+     *  Indicates that the notes are to be extended or reduced in length.
+     */
+
+    bool m_growing;
+
+    /**
+     *  Indicates the painting of events.  Used in the fruity and seq66
+     *  mouse-handling modules.
+     */
+
+    bool m_painting;
+
+    /**
+     *  Indicates that we are in the process of pasting notes.
+     */
+
+    bool m_paste;
+
+    /**
+     *  The x location of the mouse when dropped.  Would be good to allocate this
+     *  to a base class for all grid panels.
+     */
+
+    int m_drop_x;
+
+    /**
+     *  The x location of the mouse when dropped.  Would be good to allocate this
+     *  to a base class for all grid panels.
+     */
+
+    int m_drop_y;
+
+    /**
+     *  Current x coordinate of pointer. Could move it to a base class.
+     */
+
+    int m_current_x;
+
+    /**
+     *  Current y coordinate of pointer. Could move it to a base class.
+     */
+
+    int m_current_y;
+
+    /**
+     *  Provides the location of the progress bar.
+     */
+
+    int m_progress_x;
+
+    /**
+     *  Provides the old location of the progress bar, for "playhead" tracking.
+     */
+
+    int m_old_progress_x;
+
+    /**
+     *  Provides the current scroll page in which the progress bar resides.
+     */
+
+    int m_scroll_page;
+
+    /**
+     *  Progress bar follow state.
+     */
+
+    bool m_progress_follow;
+
+    /**
+     *  The horizontal value of the scroll window in units of
+     *  ticks/pulses/divisions.
+     */
+
+    int m_scroll_offset;
+
+    /**
+     *  The vertical offset of the scroll window in units of sequences or MIDI
+     *  notes/keys.
+     */
+
+    int m_scroll_offset_v;  // int m_scroll_offset_seq; int m_scroll_offset_key;
+
+    /**
+     *  The horizontal value of the scroll window in units of pixels.
+     */
+
+    int m_scroll_offset_x;
+
+    /**
+     *  The vertical value of the scroll window in units of pixels.
+     */
+
+    int m_scroll_offset_y;
+
+    /**
+     *  See qseqroll::keyY.
+     */
+
+    int m_unit_height;
+
+    /**
+     *  See qseqroll::keyY * c_num_keys + 1.
+     */
+
+    int m_total_height;
+
+public:
+
+    qeditbase
+    (
+        performer & perf,
+        int zoom,
+        int scalex          = 1,
+        int padding         = 0,
+        int snap            = SEQ66_DEFAULT_SNAP,
+        int unit_height     = 1,
+        int total_height    = 1
+    );
+
+    const seq66::rect & old_rect () const
+    {
+        return m_old;
+    }
+
+    seq66::rect & old_rect ()
+    {
+        return m_old;
+    }
+
+    const seq66::rect & selection () const
+    {
+        return m_selected;
+    }
+
+    seq66::rect & selection ()
+    {
+        return m_selected;
+    }
+
+    int scale () const
+    {
+        return m_scale;
+    }
+
+    int scale_zoom () const
+    {
+        return m_scale_zoom;
+    }
+
+    /**
+     *  Indicates if we're selecting, moving, growing, or pasting.
+     *
+     * \return
+     *      Returns true if one of those four flags are set.
+     */
+
+    bool select_action () const
+    {
+        return selecting() || growing() || drop_action();
+    }
+
+    /**
+     *  Indicates if we're drag-pasting, selecting, moving, growing, or
+     *  pasting.
+     *
+     * \return
+     *      Returns true if one of those five flags are set.
+     */
+
+    virtual bool normal_action () const
+    {
+        return select_action();
+    }
+
+    /**
+     *  Indicates if we're moving or pasting.
+     *
+     * \return
+     *      Returns true if one of those two flags are set.
+     */
+
+    virtual bool drop_action () const
+    {
+        return moving();
+    }
+
+    int snap () const
+    {
+        return m_snap;
+    }
+
+    midipulse beat_length () const
+    {
+        return m_beat_length;
+    }
+
+    midipulse measure_length () const
+    {
+        return m_measure_length;
+    }
+
+    bool selecting () const
+    {
+        return m_selecting;
+    }
+
+    bool adding () const
+    {
+        return m_adding;
+    }
+
+    bool moving () const
+    {
+        return m_moving;
+    }
+
+    bool moving_init () const
+    {
+        return m_moving_init;
+    }
+
+    bool growing () const
+    {
+        return m_growing;
+    }
+
+    bool painting () const
+    {
+        return m_painting;
+    }
+
+    bool paste () const
+    {
+        return m_paste;
+    }
+
+    int drop_x () const
+    {
+        return m_drop_x;
+    }
+
+    int drop_y () const
+    {
+        return m_drop_y;
+    }
+
+    void snap_drop_x ()
+    {
+        snap_x(m_drop_x);
+    }
+
+    void snap_drop_y ()
+    {
+        snap_y(m_drop_y);
+    }
+
+    int current_x () const
+    {
+        return m_current_x;
+    }
+
+    int current_y () const
+    {
+        return m_current_y;
+    }
+
+    int progress_x () const
+    {
+        return m_progress_x;
+    }
+
+    int old_progress_x () const
+    {
+        return m_old_progress_x;
+    }
+
+    int scroll_page () const
+    {
+        return m_scroll_page;
+    }
+
+    bool progress_follow () const
+    {
+        return m_progress_follow;
+    }
+
+    virtual int scroll_offset () const
+    {
+        return m_scroll_offset;
+    }
+
+    int scroll_offset_v () const
+    {
+        return m_scroll_offset_v;
+    }
+
+    int scroll_offset_x () const
+    {
+        return m_scroll_offset_x;
+    }
+
+    int scroll_offset_y () const
+    {
+        return m_scroll_offset_y;
+    }
+
+    int xoffset (midipulse tick) const
+    {
+        return tix_to_pix(tick) + m_padding_x;
+    }
+
+    int unit_height () const
+    {
+        return m_unit_height;
+    }
+
+    int total_height () const
+    {
+        return m_total_height;
+    }
+
+public:
+
+    virtual bool set_ppqn (int ppqn) override;
+    virtual bool zoom_in () override;
+    virtual bool zoom_out () override;
+    virtual bool set_zoom (int z) override;
+    virtual bool needs_update () const override;
+
+    virtual void set_dirty () override
+    {
+        qbase::set_dirty();
+        qbase::set_needs_update();
+    }
+
+    void set_snap (midipulse snap)
+    {
+        m_snap = int(snap);
+    }
+
+protected:
+
+    int horizSizeHint () const;
+
+    void old_rect (seq66::rect & r)
+    {
+        m_old = r;
+    }
+
+    void selection (seq66::rect & r)
+    {
+        m_selected = r;
+    }
+
+    /**
+     *  Clears all the mouse-action flags.
+     */
+
+    void clear_action_flags ()
+    {
+		m_selecting = m_moving = m_growing = m_paste = m_moving_init =
+			 m_painting = false;
+    }
+
+    void selecting (bool v)
+    {
+        m_selecting = v;
+    }
+
+    void adding (bool v)
+    {
+        m_adding = v;
+    }
+
+    void moving (bool v)
+    {
+        m_moving = v;
+    }
+
+    void moving_init (bool v)
+    {
+        m_moving_init = v;
+    }
+
+    void growing (bool v)
+    {
+        m_growing = v;
+    }
+
+    void painting (bool v)
+    {
+        m_painting = v;
+    }
+
+    void paste (bool v)
+    {
+        m_paste = v;
+    }
+
+    void drop_x (int v)
+    {
+        m_drop_x = v;
+    }
+
+    void drop_y (int v)
+    {
+        m_drop_y = v;
+    }
+
+    void current_x (int v)
+    {
+        m_current_x = v;
+    }
+
+    void current_y (int v)
+    {
+        m_current_y = v;
+    }
+
+    void progress_x (int v)
+    {
+        m_progress_x = v;
+    }
+
+    void old_progress_x (int v)
+    {
+        m_old_progress_x = v;
+    }
+
+    void scroll_page (int v)
+    {
+        m_scroll_page = v;
+    }
+
+    void progress_follow (bool v)
+    {
+        m_progress_follow = v;
+    }
+
+    virtual void scroll_offset (int v)
+    {
+        m_scroll_offset = v;
+    }
+
+    void scroll_offset_v (int v)
+    {
+        m_scroll_offset_v = v;
+    }
+
+    void scroll_offset_x (int v)
+    {
+        m_scroll_offset_x = v;
+    }
+
+    void scroll_offset_y (int v)
+    {
+        m_scroll_offset_y = v;
+    }
+
+    void unit_height (int v)
+    {
+        m_unit_height = v;
+    }
+
+    void total_height (int v)
+    {
+        m_total_height = v;
+    }
+
+protected:
+
+    void set_scroll_x (int x);
+    void set_scroll_y (int y);
+    void snap_x (int & x);
+
+    void snap_current_x ()
+    {
+        snap_x(m_current_x);
+    }
+
+    void snap_y (int & y)
+    {
+        y -= y % c_names_y;     // m_unit_height;
+    }
+
+    void snap_current_y ()
+    {
+        snap_y(m_current_y);
+    }
+
+    void swap_x ()
+    {
+        int temp = m_current_x;
+        m_current_x = m_drop_x;
+        m_drop_x = temp;
+    }
+
+    void swap_y ()
+    {
+        int temp = m_current_y;
+        m_current_y = m_drop_y;
+        m_drop_y = temp;
+    }
+
+    /*
+     * Takes screen coordinates, give us notes/keys (to be generalized to
+     * other vertical user-interface quantities) and ticks (always the
+     * horizontal user-interface quantity).  Compare this function to
+     * qbase::pix_to_tix().
+     */
+
+    virtual midipulse pix_to_tix (int x) const
+    {
+        return x * pulses_per_pixel(ppqn(), m_scale_zoom);
+    }
+
+    virtual int tix_to_pix (midipulse ticks) const
+    {
+        return ticks / pulses_per_pixel(ppqn(), m_scale_zoom);
+    }
+
+    midipulse position_tick (int pix)
+    {
+        return m_scroll_offset + pix_to_tix(pix - m_scroll_offset_x);
+    }
+
+    int position_pixel (midipulse tix)
+    {
+        return m_scroll_offset_x + tix_to_pix(tix - m_scroll_offset);
+    }
+
+    void convert_x (int x, midipulse & tick);
+    void convert_xy (int x, int y, midipulse & ticks, int & seq);
+    void convert_ts (midipulse ticks, int seq, int & x, int & y);
+    void convert_ts_box_to_rect
+    (
+        midipulse tick_s, midipulse tick_f, int seq_h, int seq_l,
+        seq66::rect & r
+    );
+
+    /**
+     *  Meant to be overridden by derived classes to change a user-interface
+     *  item, such as the mouse pointer, when entering an adding mode.
+     *
+     * \param a
+     *      The value of the status of adding (e.g. a note).
+     */
+
+    virtual void set_adding (bool a)
+    {
+        adding(a);
+    }
+
+    void start_paste();
+
+};          // class qeditbase
+
+}           // namespace seq66
+
+#endif      // SEQ66_QEDITBASE_HPP
+
+/*
+ * qeditbase.hpp
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */
+

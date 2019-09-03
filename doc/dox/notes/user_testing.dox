@@ -1,0 +1,390 @@
+/*
+ *    This module provides no code.  It provides only a Doxygen "Doxygen
+ *    information" page.
+ */
+/**
+
+\file       user_testing.dox
+
+This document describes basic user testing of Seq66 using the
+Yoshimi software synthesizer.
+
+\page       user_testing_page User Testing of Seq66 with Yoshimi
+\author     Chris Ahlstrom 2017-06-11
+
+\section user_testing_intro Introduction
+
+This section describes user testing of Seq66 using Yoshimi.
+It will expand as we work our way through all the many use-cases
+that can be achieved with Seq66 and Yoshimi.
+
+Please note that the most advanced and recent testing can be found currently in
+the document <code>contrib/notes/jack-testing.txt</code>.  We will eventually
+merge the final tests here... someday.
+
+Also note that the default executable is no long <tt>seq66</tt>... it is
+now <tt>seq66</tt>.  Furthermore, this new version has a native JACK MIDI
+feature that is not yet part of the testing!  So much to catch up with!
+
+\section user_testing_smoke Smoke Test
+
+Every so often we run Seq66 with a software synthesizer to make sure we
+haven't broken any functionality via our major refactoring efforts.  We call it
+a "smoke test".  We fire up the two applications, and see if anything smokes.
+
+This smoke test sets up Yoshimi with a very simple ALSA setup, and no
+instruments are loaded.  Instead, only the "Simple Sound" is used on all
+channels.  We've been doing this test with Yoshimi 1.3.6.  The current Debian
+Sid ("testing") version of Yoshimi is 1.3.6-2, pulled from SourceForge.  It
+seems to have issues, so we've been cloning and pulling the code from:
+
+\verbatim
+   https://github.com/Yoshimi/yoshimi.git
+\endverbatim
+
+After getting the application build and installed, the next step is to run
+it, using ALSA for MIDI and for audio:
+
+\verbatim
+   $ yoshimi -a -A
+\endverbatim
+
+Next, fix up the configuration files for Seq66,
+<code>~/.config/seq66/seq66.rc</code> and
+<code>~/.config/seq66/seq66.usr</code>.
+
+First hide <code>seq66.usr</code> somewhere, or delete it,
+as it will determine what MIDI devices are available, and we don't want that
+(yet).  Second, make sure that <code>seq66.rc</code> makes the following
+setting:
+
+\verbatim
+   [manual-alsa-ports]
+
+   # Set to 1 if you want seq66 to create its own ALSA ports and
+   # not connect to other clients
+
+   0   # number of manual ALSA ports
+\endverbatim
+
+Next, run the newly-built version of Seq66.  If desired, use the --bus
+option described below to force the buss number to the buss you need, as shown
+in the second version of the command:
+
+\verbatim
+   $ seq66/seq66 &
+   $ seq66/seq66 --bus 5 &
+\endverbatim
+
+In <i>File / Options / MIDI Clock</i>, observe the MIDI inputs made available
+by your system.  Our system shows:
+
+\verbatim
+   [0] 14:0 (Midi Through Port-0)
+   [1] 128:0 (TiMidity port 0)
+   [2] 128:0 (TiMidity port 1)
+   [3] 128:0 (TiMidity port 2)
+   [4] 128:0 (TiMidity port 3)
+   [5] 129:0 (input)
+\endverbatim
+
+For some reason (a bug in Yoshimi?),
+input "[5]" doesn't indicate that it is Yoshimi, but
+it is.  Take note of that input number... that is the MIDI buss number that is
+needed to drive Yoshimi.
+
+Also make sure that of the clock settings for those busses are "Off".
+
+<b>
+The next instruction still works, but it is easier to simply pass the
+option <code>--bus 5</code> to Seq66 when starting it up.
+</b>
+
+Now open the file <code>seq66/contrib/midi/b4uacuse-GM-format.midi</code>
+in Seq66.  For all of the patterns (slots) that have lots of data in
+them, right click on the pattern and select <i>Midi Bus / [5] 129:0 (input)</i>
+and the desired channel number.  (Doesn't matter much, just use up the lower
+channel numbers first).
+
+Back in Yoshimi, select each Part corresponding to the channels you selected.
+Make sure <i>Enabled</i> is checked for each desired channel.
+
+Back in Seq66, click on each pattern you want to hear, which highlights
+them in black.  Now click the play button (green triangle).  The song should
+play, with each part using the "Simple Sound".  Not too bad for a bunch of sine
+waves, eh?
+
+Now we can test the application more fully.
+Note that the instructions here are very light.
+Detailed instructions on the usage of Seq66 can be found in the
+following project, which contains a PDF file and the LaTeX code used to build
+it:
+
+\verbatim
+   https://github.com/ahlstromcj/seq66-doc.git
+\endverbatim
+
+Although it applies to an earlier version of the project, it still mostly holds
+true for Seq66. 
+
+\section user_testing_patterns Tests in the Patterns Window
+
+The Patterns window is the inside portion of the main window, supported by the
+<code> mainwid </code> class.  it contains a grid of boxes or slots, with each
+slot potentially containing a pattern, sequence, or track.  Empty tracks (i.e.
+tracks that contain no events, like title-only tracks) are highlighted in
+yellow.
+
+This window supports only a single variant of mouse-handling.
+
+\subsection user_testing_patterns_buttons Button Clicks on a Pattern
+
+A left-click on a pattern slot should cause the following to happen:
+
+   -# The pattern will be highlighted (white on a black background).
+      This won't occur until the button is released.
+   -# During playback, the pattern will emit MIDI events and play its sequence.
+   -# If the pattern is dragged to another slot, whether playing is in progress
+      or not, releasing the button in the destination slot will move the
+      pattern to that slot.
+
+A right-click on a pattern slot should cause the following to happen:
+
+   -# If the pattern is empty, then a pop-up menu to make a New pattern, paste
+      a pattern, or make other selections will appear.
+   -# If the pattern is active, then a pop-up menu to Edit the pattern or make
+      other selections will appear.
+   -# A second right-click, just off the menu, will dismiss the menu.
+
+\subsection user_testing_patterns_shortcuts Patterns Window Key Shortcuts
+
+First, note the selection of the File / Options / Keyboard / Show keys option.
+The tests here should work whether or not it is selected.  The only difference
+is if the keys are shown.
+
+We got a segfault during this test, when we weren't being systematic about it.
+
+\subsection user_testing_patterns_usr The Seq66 User File
+
+To be discussed.
+
+\section user_testing_valgrind Tests Using Valgrind
+
+Valgrind is a very useful tool for unearthing memory issues and other issues in
+an application, especially when one has the source code and can build the code
+with debugging information.
+
+One runs the application from the command line, preceding its command line with
+valgrind and some of its options.
+
+\subsection user_testing_valgrind_supp Valgrind Suppressions
+
+One problem with valgrind is that it also uncovers errors in system libraries
+that one has no control over.  These errors clutter the output, so we suppress
+them using a valgrind "suppressions" file.  Here's how to create one:
+
+\verbatim
+  $ valgrind --gen-suppressions=yes --log-file=val.supp ./Seq66/seq66
+  $ valgrind --gen-suppressions=all --log-file=val.supp ./Seq66/seq66
+\endverbatim
+
+As the program runs, one is asked to print a suppression.  If the error is due
+to a system or third-party library, answer "Y return", and then copy-and-paste
+the suppression to a file, giving it a name.  For example, we provide a file
+<code>contrib/seq66.supp</code> containing suppressions of errors that annoy
+us.  There are way too many "errors" in ALSA, GTK+, gtkmm, glibc, and more.
+
+The second command collects all the suppressions.  Passing the val.supp
+file through sed makes it immediately usable:
+
+\verbatim
+   $ sed -i -e /^==/g val.supp
+\endverbatim
+
+Running valgrind like this then shows mostly the errors we care about:
+
+\verbatim
+  $ valgrind --suppressions=val.supp  ./Seq66/seq66
+\endverbatim
+
+We've added some other suppression files to the <code>contrib</code> directory.
+Too much!  For example:
+
+   https://github.com/dtrebbien/GNOME.supp
+
+However, overall this process is very painful, and we're going to eventually
+do all the valgrind work on the unit-test project for Seq66:
+
+   https://github.com/ahlstromcj/seq66-tests
+
+\subsection user_testing_valgrind_full Full Valgrind Leak-Checking
+
+Here's how to capture errors, while suppressing the system errors and while
+generating a log file:
+
+\verbatim
+   $ valgrind --suppressions=contrib/valgrind/seq66.supp \
+      --leak-check=full --leak-resolution=high \
+      --track-origins=yes --log-file=valgrind.log --show-leak-kinds=all \
+      ./Seq64rtmidi/seq66
+\endverbatim
+
+The errors can be also be re-routed to a log-file via the
+"2> valgrind.log" shell redirection.
+
+Another good idea is to precede the valgrind command with the following
+construct:
+
+\verbatim
+   $ G_SLICE=debug-blocks valgrind ...
+\endverbatim
+
+G_SLICE=debug-blocks will turn off gtk's advanced memory management to allow
+valgrind to show correct results.  This results in an amazing plethora or
+invalid read and invalid write errors in GNOME-related libraries.
+Sheesh!
+
+And don't forget about Valgrind's "massif" memory-tracking tool!
+(More to come!)
+
+\subsubsection user_testing_valgrind_basic Leak-Checking Basic Operation
+
+For the first pass, just run Seq66, then immediately exit.
+Then scan the log file to see if any "errors" can be pinpointed to the
+application and library code.
+
+Don't forget to run the same scenario without valgrind, in a console window, to
+see if any of our own debug/problem output occurs.
+
+In any case, leakage tagged as "still reachable" isn't as bad as leakage tagged
+as "definitely lost" or "indirectly lost".
+
+But good luck finding a Seq66 bug buried in the chaff of 3rd-party
+valgrind reports, even with some suppressions enabled.  Apparently a lot of
+them have to do with data structures that are intended to last the full life of
+the application.
+
+One can make the search a little easier by searching for the "seq66" namespace
+in the valgrind log.
+
+\section user_testing_cases Specific Fault Debugging
+
+This section goes through specific debugging cases we encountered.
+They should be part of the regular testing of Seq66.
+
+\section user_testing_case_snipped Snipping of a MIDI file.
+
+In order to have a test file for the <i> seq66-tests </i> project, we
+loaded up the <code>b4uacuse-GM-format.midi</code> file, removed all but
+four of the tracks, and saved it as <code>b4uacuse-snipped.midi</code>.
+Loading this file into Seq66 caused the following:
+
+\verbatim
+   $ ./Seq66/seq66 
+[Reading user configuration /home/ahlstrom/.config/seq66/seq66.usr]
+[Reading rc configuration /home/ahlstrom/.config/seq66/seq66.rc]
+get_sequence(): m_seqs[4] not null
+Segmentation fault
+\endverbatim
+
+First step, fire up a debugger and see what happened.  We use <i> cgdb </i>, a
+text-based front-end for gdb with a "vi" feel.
+
+\verbatim
+   $ cgdb ./Seq66/seq66 
+\endverbatim
+
+Just hit "r", do <i> File / Open </i>, navigate to
+<code>b4uacuse-snipped.midi</code>, select it, and watch what happens.
+
+The "bt" (backtrace) command shows a pretty large stack, 52 items.
+Page up to the top of the stack, and select frame 1 ("fr 1").
+This shows a mutex at a very low address, 0x650!  Frame 2 shows we are in the
+automutex constructor, calling lock() on that same badly-located mutex.
+Frame 3 is in sequence::event_count(), same bad mutex, and the m_events member
+is at address 0x0.  Obviously, we're dealing with an unallocated sequence.
+
+Frame 4 is in mainwid::draw_sequence_on_pixmap(), just after we've
+retrieved the next sequence via performer::get_sequence(4).  But that
+would be the fifth sequence (the sequence numbers start at 0), and we snipped
+all but 4 from the file before we saved it.
+
+So, one thing we need to do is <i> check </i> the value returned by
+get_sequence() before we try to use it.  The other thing to do is figure out
+how we got to the fifth sequence, and fix that code as well.
+Using the command "p perf().sequence_count()", we verify that there are indeed
+only 4 sequences allocated.
+
+Frame 5 is in mainwid::draw_sequences_on_pixmap().  That function
+tries to load all sequences on the current screen-set, from 0 to 31,
+without checking to see how many their actually are.  Inefficient and
+dangerous.
+
+Frame 6 is in mainwid::reset().  We could pass perf().sequence_count() here
+for checking, or get it in mainwid::draw_sequences_on_pixmap().
+
+Before we fix this issue, we need to load a file that works, to see why it does
+not fail for most files.  We will put a breakpoint at the top
+mainwid::draw_sequences_on_pixmap().
+
+We hit the breakpoint before even loading a file, with a sequence_count() of 0.
+The call to valid_sequence(0) passes the test.  We may want to make
+valid_sequence() take the sequence_count() into account.  But the call to
+perf().is_active(0) prevents anything bad from happening at startup time.
+
+Once we load a good file, the sequence_count() is 14 in
+mainwid::draw_sequences_on_pixmap().  We turn on the display of "offset" using
+the command "display offset", and "c" (for "continue") until offset = 14, which
+means we are beyond that last sequence.  That bad access is prevented
+by perf().is_active(14).
+
+So the fundamental problem is that perf().is_active(4) is not protecting the
+access when we load the "bad file".  We need to find and fix that issue before
+papering over the problem with better access checks.
+
+Start again, putting a breakpoint in the call to "new sequence(m_ppqn)" in
+midifile.  This call sets up some members and clears the list of 256 playing
+notes.  Add another breakpoint at "a_perf.add_sequence()" to see what's
+happening there.
+
+What we find is that the first two tracks have proper sequence numbers as read
+from the MIDI file, 0 and 1.  But the third one preserves the number from the
+old file, 4.  We have a disjunction between the track number and the sequence
+number, a conceptual problem.  We can leave it as is, and beef up the
+error-checking, or replace the sequence number with the track number
+when loading the file.  What to do?
+
+   -  Make sure that the is-active flag for all sequences is "false",
+      that the pointers are always null, and make sure to test both of these
+      items (depending on context) before doing anything with the sequence.
+   -  Convert the sequence number to the track number upon saving the MIDI
+      file, or upon reading the MIDI file, and use that number when adding
+      the sequence to the performer object.  This might affect some
+      seq66 functionality, however.  It's big move.
+
+We need information on reading and importing.
+
+First, if we look at a file that we created long ago by importing
+<code>b4uacuse.mid</code>, <code>b4uacuse-GM-format.midi</code>, it
+has its fourteen sequence numbers identical to their track numbers.
+No problem.
+
+Second, if we just read <code>b4uacuse.mid</code>, a non-seq66-created
+MIDI file, we see that each of its tracks have no sequence number -- they are
+all zero.  The performer::add_sequence() simple iterates from the beginning of
+m_seqs[] until it finds an inactive m_seqs[i], and uses that element to hold
+the sequence pointer.
+
+But now it also segfaults!  Let's fix  all the non-checked get_sequence() calls
+right away, it is too big an issue to ignore.
+
+In the end, we have to be aware that a screen-set can have blank (null) slots
+interspersed amongst the active slots.
+
+ */
+
+/*
+ * user_testing.dox
+ *
+ * vim: ts=3 sw=3 et syntax=doxygen
+ */

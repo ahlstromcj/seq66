@@ -1,0 +1,82 @@
+Setting the gcc and g++ version on Ubuntu
+Chris Ahlstrom
+2019-04-20 to 2019-04-20
+
+I had a problem using std::bind() that I could not figure out, with a
+construct the looked perfectly legal to me.  My Ubuntu laptop was using
+gcc/g++ version 7.  So I install gcc/g++ and wanted to make version 8 the
+default.
+
+The update-alternative program did not include gcc/g++!  After some
+Googoo-fu and reading the following link, here are the instructions that
+work.
+
+   http://charette.no-ip.com:81/programming/2011-12-24_GCCv47/
+
+We need to let update-alternatives know we have two C/C++ compilers, create
+a record for each one, and then configure which one we want to use. This is
+done with the following steps.
+
+First, a quick check:
+
+	$ ls /usr/bin/gcc*
+	/usr/bin/gcc    /usr/bin/gcc-ar    /usr/bin/gcc-nm    /usr/bin/gcc-ranlib
+	/usr/bin/gcc-7  /usr/bin/gcc-ar-7  /usr/bin/gcc-nm-7  /usr/bin/gcc-ranlib-7
+	/usr/bin/gcc-8  /usr/bin/gcc-ar-8  /usr/bin/gcc-nm-8  /usr/bin/gcc-ranlib-8
+
+	$ ls /usr/bin/g++*
+	/usr/bin/g++  /usr/bin/g++-7  /usr/bin/g++-8
+
+	$ ls -l /usr/bin/gcc /usr/bin/g++
+	lrwxrwxrwx 1 root root 5 Sep 17  2018 /usr/bin/g++ -> g++-7
+	lrwxrwxrwx 1 root root 5 Sep 17  2018 /usr/bin/gcc -> gcc-7
+
+We will assume that changing the compilers also brings in the correct
+versions of the "ar", "nm", and "ranlib" programs.
+
+    $ sudo  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 40 \
+        --slave /usr/bin/g++ g++ /usr/bin/g++-7
+    $ sudo  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 80 \
+        --slave /usr/bin/g++ g++ /usr/bin/g++-8
+
+We give the newer versions of gcc/g++ a higher priority.
+	
+The "install" parameters specify the master link, the name of the symlink in
+the "/etc/alternatives" directory, the path to the actual binary, and the
+priority of the link... a higher number is higher priority.
+
+Note the use of "--slave". This ensures when we change the configuration for
+gcc, that we automatically update the configuration for g++. This is
+important so the compilers aren not out-of-sync.  From this point forward,
+the only thing required when switching compilers is this (relatively) simple
+command, run as root or via sudo:
+
+	$ sudo update-alternatives --config gcc
+
+	There are 2 choices for the alternative gcc (providing /usr/bin/gcc).
+
+	  Selection    Path            Priority   Status
+	------------------------------------------------------------
+	* 0            /usr/bin/gcc-8   60        auto mode
+	  1            /usr/bin/gcc-7   40        manual mode
+	  2            /usr/bin/gcc-8   60        manual mode
+
+The default is now the version we want.
+
+    $ gcc --version
+    gcc (Ubuntu 8.2.0-1ubuntu2~18.04) 8.2.0
+
+    $ g++ --version
+    g++ (Ubuntu 8.2.0-1ubuntu2~18.04) 8.2.0
+
+As a final check:
+
+    $ ls -l /usr/bin/gcc /usr/bin/g++ /etc/alternatives/gcc* /etc/alternatives/g++*
+    lrwxrwxrwx 1 root root 14 Apr 20 05:16 /etc/alternatives/g++ -> /usr/bin/g++-8
+    lrwxrwxrwx 1 root root 14 Apr 20 05:16 /etc/alternatives/gcc -> /usr/bin/gcc-8
+    lrwxrwxrwx 1 root root 21 Apr 20 05:16 /usr/bin/g++ -> /etc/alternatives/g++
+    lrwxrwxrwx 1 root root 21 Apr 20 05:16 /usr/bin/gcc -> /etc/alternatives/gcc
+
+Now let us rebuild our program.
+	
+# vim: sw=4 ts=4 wm=8 et ft=sh

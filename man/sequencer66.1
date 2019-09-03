@@ -1,0 +1,319 @@
+.TH Sequencer66 "May 5 2019" "Version 0.90.0" "Seq66 Manual Page"
+
+.SH NAME
+Sequencer66 - Real-time live MIDI sequencer refactored from Seq64
+
+.SH SYNOPSIS
+.B sequencer66
+[\fIOPTIONS\fP] [\fIFILENAME\fP]
+.B seq66
+[\fIOPTIONS\fP] [\fIFILENAME\fP]
+.B seq66cli
+[\fIOPTIONS\fP] [\fIFILENAME\fP]
+.B qseq66
+[\fIOPTIONS\fP] [\fIFILENAME\fP]
+
+.SH DESCRIPTION
+.PP
+\fISequencer66\fP is a real-time MIDI sequencer. It was created to
+provide a simple interface for editing and playing MIDI 'loops'.
+It uses only Qt 5 for the user interface.  It is functionally very
+similar to Sequencer64, but refactored to be simpler, yet more flexible.
+
+.SH OPTIONS
+Sequencer66 accepts the following options, plus an optional name of
+a MIDI file. Note that the legacy options, which use underscores or
+are missing the option hyphen, are still unofficially supported.
+Note that many of the options are "sticky".  That is, they will
+be saved to the "rc" configuration file.
+
+.TP 8
+.B  \-h, \-\-help
+Display a list of all commandline options.
+
+.TP 8
+.B  \-V, \-\-version
+Display the program version.
+
+.TP 8
+.B  \-v, \-\-verbose
+Adds more output to the console, for troubleshooting.  This option
+is not saved to the "rc" configuration file.
+
+.TP 8
+.B  \-H, \-\-home dir
+Set the directory that holds the configuration files.  It is always
+relative to the user's HOME directory.  The default is ./config/sequencer66.
+
+.TP 8
+.B  \-X, \-\-playlist filename
+Load the given play-list from the HOME directory.  The conventional name for
+this file is, for example, "live-sets.playlist".
+This file provides one or more play-list
+entries, each providing a list of one or more songs.  Once loaded, the
+user can use the four arrow keys to move between play-lists and the songs
+in each play-list.  The play-list entries are also controllable via MIDI
+control values set in the "rc" file.  See the Sequencer66 manual for
+more information.  Note that, once set, this option is, by default, saved
+in the "rc" file.
+
+.TP 8
+.B  \-l, \-\-legacy
+Save the MIDI file in the old Seq24 format, as unspecified
+binary data, instead of as a legal MIDI track with meta events.
+Also read the configuration, if provided, from the ~/.seq24rc and ~/.seq24usr
+files, instead of the new ~/.config/sequencer66/sequencer66.rc and
+~/.config/sequencer66/sequencer66.usr files.  The user-interface will indicate
+this mode.  This mode is also used if the application is invoked as the
+\fIseq24\fP command (one can create a soft link to the sequencer66 binary to
+make that happen).
+
+.TP 8
+.B \-b b, \-\-bus b
+Supports modifying the buss number on all tracks when a MIDI file
+is read.  All tracks are loaded with this buss-number override.  This feature
+is useful for testing, making it easy to map the MIDI file onto the system's
+current hardware/software synthesizer setup.
+
+.TP 8
+.B \-B b, \-\-buss b
+The same as the --bus option, just for oldsters to use.
+
+.TP 8
+.B \-q p, \-\-ppqn p
+Supports modifying the PPQN value of Sequencer66, which defaults
+to a value of 192.  This setting should allow MIDI files to play back at the
+proper speed, and be written with the new PPQN value.  The support values for
+PPQN (p) are 0 and 32 to 19200.  The value of 0 is special.  It indicates
+that the Sequencer66 internal PPQN should be set to the value that
+is present in the currently-loaded MIDI file.
+
+.TP 8
+.B \-L, \-\-lash
+If LASH support is compiled into the program, this option
+enables it.
+If LASH support is not compiled into the program, this option will note
+be shown in the output of the --help option.
+
+.TP 8
+.B \-n, \-\-no-lash
+Disable LASH.  This option is useful if LASH is enabled in the configuration
+file, but one wants it disabled.
+
+.TP 8
+.B \-\-file \fI<filename>\fP
+Load the specified MIDI file on startup.
+This option does not exist.
+Instead, specify the file itself as the last command-line argument.
+
+.TP 8
+.B \-m, \-\-manual-alsa-ports
+Sequencer66 won't attach ALSA MIDI ports, it will make "manual" (virtual) ports.
+Instead, it will create is own set of virtual input and output busses/ports.
+Not support in the PortMIDI build.
+
+.TP 8
+.B \-a, \-\-auto-alsa-ports
+Sequencer66 will attach ALSA ports.  Useful for overriding the
+sequencer66.rc configuration file when set up to use manual (virtual) ports.
+
+.TP 8
+.B \-r, \-\-reveal-alsa-ports
+Do not use the 'user' definition for port names, used the actual
+port names reported by ALSA.
+
+.TP 8
+.B \-r, \-\-hide-alsa-ports
+Use the 'user' definition for port names (useful for overriding a
+configuration).
+
+.TP 8
+.B \-A, \-\-alsa
+Sequencer66 will use ALSA MIDI ports.  This option is useful to override the
+configuration file, if it was set up for JACK.  This is a sticky option.
+
+.TP 8
+.B \-s, \-\-show-midi
+Dumps incoming MIDI to screen.
+
+.TP 8
+.B \-k, \-\-show-keys
+Prints pressed key value.
+
+.TP 8
+.B \-K, \-\-inverse
+Changes the sequence editor and performance/song editor colors to an
+inverse-color mode.  This mode can be considered a "night mode".
+
+.TP 8
+.B \-p, \-\-priority
+Runs higher priority with a FIFO scheduler.
+This option needs root access to succeed.
+
+.TP 8
+.B \-P, \-\-pass-sysex
+Passes any incoming SYSEX messages to all outputs.
+Not yet fully implemented.
+
+.TP 8
+.B \-i, \-\-ignore \fI<number>\fP
+Ignore ALSA device <number>.
+
+.TP 8
+.B \-d, \-\-record-by-channel
+Divert MIDI input by cannel into the sequences that are configured for
+each channel.
+
+.TP 8
+.B \-D, \-\-legacy-record
+Record all MIDI into the active sequence.  Also set by the --legacy
+option.
+
+.TP 8
+.B \-x, \-\-interaction-method \fI<number>\fP
+Select the mouse interaction method
+0 = seq24 (the default); and 1 = fruity loops method.
+The latter does not completely support all actions supported by the Seq24
+interaction method, at this time.
+
+The following options will not be shown by --help if the application is
+not compiled for JACK support.
+
+.TP 8
+.B \-j, \-\-jack-transport
+Sequencer66 will sync to JACK transport.  Note that JACK transport is separate
+from native JACK MIDI support.
+
+.TP 8
+.B \-J, \-\-jack-master
+Sequencer66 will try to be the JACK master.  This is a sticky option.
+
+.TP 8
+.B \-C, \-\-jack-master-cond
+JACK master will fail if there is already a JACK master.
+
+.TP 8
+.B \-M, \-\-jack-start-mode \fI<x>\fP
+When Sequencer66 is synced to JACK, the following play modes are available:
+0 = live mode and 1 = song mode (the default).  Live mode means that
+the musician controls the unmuting of patterns on the main window.  Song mode
+means that the song layout in the "Song" window controls the playback.
+
+.TP 8
+.B \-t, \-\-jack-midi
+Use native JACK MIDI.  This is a separate option from JACK Transport, and is
+the default.  If JACK is not running, the application falls back to ALSA.
+
+.TP 8
+.B \-N, \-\-no-jack-midi
+Use ALSA MIDI, even with JACK Transport.  See the -A option.
+
+.TP 8
+.B \-S, \-\-stats
+Print statistics on the command-line while running, if built for
+showing statistics.
+
+.TP 8
+.B \-u, \-\-user-save
+Save the "user" configuration file after exiting.  Normally, it is saved
+only if it does not exist, so as not to make certain command-line "user"
+options (such as --bus) permanent.  (Perhaps the same should be true of the
+"rc" configuration options.)
+
+.TP 8
+.B \-f, \-\-rc filename
+Use a different "rc" configuration file.  It must be a file in the user's
+$HOME/.config/sequencer66 directory or the directory specified by the --home
+option.  Not supported by the --legacy mode.  The '.rc' extension is added if
+no extension is present in the filename.
+
+.TP 8
+.B \-F, \-\-usr filename
+Use a different "usr" configuration file.  It must be a file in the user's
+$HOME/.config/sequencer66 directory or the directory specified by the --home
+option.  Not supported by the --legacy mode.  The '.usr' extension is added if
+no extension is present in the filename.
+.TP 8
+.B \-c, \-\-config basename
+Use a different configuration file base name for the 'rc' and 'usr' files.
+For example, one can specify a full configuration for "testing", for "jack",
+or for "alsa".
+.TP 8
+.B \-o, \-\-option opvalue
+Provides additional options, including the no-GUI version of
+Sequencer66.  Here are the opvalues supported:
+
+daemonize     Makes this application fork to the background.
+no-daemonize  Makes this application not fork to the background.
+log=filename  Redirect console output to a log file in the
+              --home directory [$HOME/.config/sequencer66].
+wid=3x2,f     Sets up for multiple main windows, to show
+              multiple sets in a grid of patterns panels.
+sets=RxC      Modifies the rows and columns in a set from the
+              default of 4x8.  Supported values of R are 4 to 8,
+              and C can range from 8 to 12. If not 4x8, seq66 is
+              in 'variset' mode. Affects mute groups, too.
+scale=x       Scales the main window size, from 0.5 to 3.0.
+              A value of 0.75 is useful when using
+              "-o wid=2x2 -o sets=8x8", though the pattern
+              labelling is mildly distorted.
+
+.SH FILES
+\fB$HOME\fP/.config/sequencer66.rc stores the main configuration settings for
+Sequencer66.  If it does not exist, it will be generated when Sequencer66
+exits.  If it does exist, it will be rewritten with the current configuration
+of Sequencer66.  Many, or most, of the command-line options are "sticky", in
+that they will be written to the configuration file.
+
+\fB$HOME\fP/.config/sequencer66.usr stores the MIDI-configuration settings and
+some of the user-interface settings for Sequencer66.  If it does not
+exist, it will be generated with a minimal configuration when Sequencer66
+exits.  If it does exist, it will be rewritten with the current configuration
+of Sequencer66.  Note that the --legacy option causes the old
+configuration-file names to be used.
+
+.SH BUGS
+Sequencer66 has them.  See 
+.UR https://github.com/ahlstromcj/sequencer66/issues
+for the reported bugs.  We take pride in hiding a few more :-D.
+
+.SH SUGGESTIONS AND BUG REPORTS
+Any bugs found should be reported to the upstream author and/or package 
+maintainer.  See the link in the previous section.
+
+.SH HOMEPAGE
+.UR https://github.com/ahlstromcj/sequencer66/
+
+.SH OTHER INFO
+--ppqn works, but be aware that it may have bugs.  If a MIDI file is re-saved,
+--ppqn is also saved.  If no JACK/LASH options are shown above, they were
+disabled in the build configuration.
+
+The current Sequencer66 project homepage is a simple git repository at the
+https://github.com/ahlstromcj/sequencer66.git URL.
+Up-to-date and more comprehensive instructions can be found in the project at
+the https://github.com/ahlstromcj/sequencer66-doc.git URL.
+
+The old Seq24 project homepage is at <http://www.filter24.org/seq24/>, and the
+new one is at <https://edge.launchpad.net/seq24/>.  It is released under the
+GNU GPL license.  Sequencer66 is also released under the GNU GPL license.
+
+.SH SEE ALSO
+There are no man-pages yet for the "rc" and "usr" configuration files.
+However, when Sequencer66 is first run, these files are saved in
+$HOME/.config/sequencer66, and they are fairly self-documenting.
+
+.SH AUTHOR
+Sequencer66 was written by Chris Ahlstrom <ahlstromcj@gmail.com>, with
+contributions from Tim Deagan <tim@deagan.net>, Daniel Appelt
+<daniel.appelt@gmail.com>, 0rel, layk, and many others.
+Seq24 was originally written by Rob C. Buse <seq24@filter24.org> and the
+Seq24 team at LaunchPad.
+
+This manual page was written by
+Dana Olson <seq24@ubuntustudio.com>
+with additions from
+Guido Scholz <guido.scholz@bayernline.de>
+and
+Chris Ahlstrom <ahlstromcj@gmail.com>.
+

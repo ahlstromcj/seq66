@@ -1,0 +1,328 @@
+%-------------------------------------------------------------------------------
+% sequencer66-user-manual
+%-------------------------------------------------------------------------------
+%
+% \file        sequencer66-user-manual.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-11-01
+% \update      2019-08-13
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     This document provides LaTeX documentation for Sequencer66.
+%
+%-------------------------------------------------------------------------------
+
+\documentclass[
+ 11pt,
+ twoside,
+ a4paper,
+ headinclude,
+ footinclude,
+ final                                 % versus draft
+]{article}
+
+\input{docs-structure}                 % specifies document structure and layout
+
+% Replacing normal header/footer with a fancier version.  These two symbols of
+% document class were showing up as "unused" in the log file.
+%
+% headinclude,
+% footinclude,
+%
+% So we add the fancyhdr package, clear the default layout, and set it up for
+% our wider pages.
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyheadoffset{0.005\textwidth}
+\lhead{Sequencer66 Live MIDI Sequencer}
+\chead{}
+\rhead{User Manual}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+
+\makeindex
+
+\begin{document}
+
+\title{Sequencer66 User Manual 0.90.0}
+\author{Chris Ahlstrom \\
+   (\texttt{ahlstromcj@gmail.com})}
+\date{\today}
+\maketitle
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.40]{Sequencer66-0_94.png}
+%  \includegraphics[scale=0.40]{Sequencer66-0_90.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption*{"New Version"}
+\end{figure}
+
+\clearpage                             % moves Contents to next page
+
+\tableofcontents
+\listoffigures                         % print the list of figures
+\listoftables                          % print the list of tables
+
+% Changes the paragraph style to remove indenting and put a line between each
+% paragraph.  This could be moved up into the preamble, but then would
+% affect the spacing of the TOC and LOF, LOT noted above.
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
+\section{Introduction}
+\label{sec:introduction}
+
+   This document describes \textsl{Sequencer66}
+   \cite{sequencer66}, through version 0.90.0.
+   The following project supports \textsl{Sequencer66}:
+
+   \begin{itemize}
+      \item \url{https://github.com/ahlstromcj/sequencer66.git}.
+      \item \url{https://github.com/ahlstromcj/sequencer64-doc.git}.
+   \end{itemize}
+
+   We include the old \textsl{Sequencer64} documentation project because we would
+   like a more lean-and-mean manual for \textsl}Sequencer66].
+
+   \textsl{Sequencer66} is \textsl{Sequencer64} refactored for newer versions of
+   \textsl{C++} and with a lot of kruft removed.  It drops the Gtkmm
+   user-interface in favor of \textsl{Qt 5} and has better handling of sets and
+   configuration files.
+
+   We have many contributors to acknowledge.  Please see
+   \sectionref{sec:kudos}.
+
+\subsection{Sequencer66: What?}
+\label{subsec:what_is_sequencer66}
+
+   \textsl{Sequencer66} is an ongoing reboot of \textsl{Seq24},
+   a live-looping sequencer with an interface more like a hardware sequencer
+   than track-based MIDI sequencers.
+   \textsl{Sequencer66} is not a synthesizer.  It requires a hardware
+   synthesizer, or a software synthesizer such as Timidity \cite{timidity},
+   FluidSynth \cite{fluidsynth}, etc.
+
+\subsection{Sequencer66: Why?}
+\label{subsec:introduction_seq66_vs_others}
+
+   The first reason to refactor \textsl{Sequencer64} is ...
+
+\subsection{Improvements}
+\label{subsec:improvements}
+
+   The following improvements are some that have been made in
+   \textsl{Sequencer66} versus \textsl{Sequencer64}.
+
+   \begin{itemize}
+      \item A mutes editor.
+      \item A sets editor.
+      \item A better live frame (main window).
+      \item More to write!!!
+   \end{itemize}
+
+   For developers, \textsl{Sequencer66} is customizable via C macros,
+   by enabling/disabling options at build-configuration time, and by many
+   command-line arguments.  We cannot show all permutations of settings in this
+   document, so don't be surprised if some screenshots don't quite match
+   one's setup.  Distro maintainers might pick their favorite build
+   configurations.
+
+\subsection{Document Structure}
+\label{subsec:introduction_document_structure}
+
+   The structure of this document follows the user-interface of
+   \textsl{Sequencer66}.  The sections are provided in the order
+   their contents appear in the user-interface of \textsl{Sequencer66}.  To
+   help the reader jump around this document, it provides
+   multiple links, references, and index entries.
+
+\subsection{Let's Go!}
+\label{subsec:introduction_lets_get_started}
+
+   Make sure no other sound application is running, for the first run.
+   Start \textsl{Sequencer66} to use JACK for MIDI, or
+   on \textsl{Windows}, just run it (\texttt{qpseq66.exe};
+   on \textsl{Windows}, PortMidi is used). The port
+   settings will be different.  Provide a MIDI file.
+   On our system, the synthesizer
+   (\textsl{Yoshimi}) comes up on MIDI buss 5; an option remaps
+   all events to that buss:
+
+\begin{verbatim}
+   $ seq66 --jack-midi --buss 5 contrib/midi/b4uacuse-seq24.midi
+   C:\> qpseq66 --buss 1  contrib/midi/b4uacuse-seq24.midi
+\end{verbatim}
+
+   If the \texttt{--alsa} option is used instead of
+   \texttt{--jack-midi}, then the "JACK" button shows "ALSA" instead
+   (Linux only).  The following figure is for the Linux
+   version.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.5]{new/seq66-first-screen-0-94.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Sequencer66 Main Screen, Linux ALSA MIDI}
+   \label{fig:seq66_main_screen}
+\end{figure}
+
+   The following figure shows the user-interface used for
+   \textsl{Windows}.  It uses the Qt 5 framework.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.65]{new/seq66-first-screen-0-96-qt.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Sequencer66 Main Screen, Qt 5 Interface, With Colors}
+   \label{fig:seq66_main_screen_qt}
+\end{figure}
+
+   The \textsl{Sequencer66} main window appears, as shown above.
+%  \figureref{fig:seq66_main_screen}, and
+%  \figureref{fig:seq66_main_screen_qt}.
+   These figures have some differences from the \textsl{Seq24} main window
+   and from each other, but the functionality is about the same.
+   Most features, including the "look" of the application,
+   can be configured via the "rc" and "user"
+   configuration files or command-line options.
+   There are many new front-panel items in \textsl{Sequencer66}, but
+   the Qt and Gtkmm user-interfaces differ in details.
+
+   \begin{itemize}
+      \item Control buttons:
+      \begin{itemize}
+         \item Start, Stop, and Pause.
+         \item Toggle and show the status of "Live" mode versus "Song" mode.
+         \item Mute/show the mute status of all tracks.
+         \item Enable/disable the menu bar and show its status.
+         \item Set JACK Slave/Master transport, and
+            ALSA/JACK (native) mode.
+         \item Set the kind of time display, between "bars:beat:ticks"
+            and "hours:minute:seconds".
+         \item Panic button, to stop all tracks and turn off all notes.
+         \item Song-recording snap, the \textbf{S} button.
+         \item Tap Tempo, the \textbf{0} (zero) button.
+         \item Keep-queue toggling and status.
+      \end{itemize}
+      \item Current time in bars, beats, and ticks.
+      \item Song recording records all muting changes to the Song Editor.
+      \item Log Tempo, which inserts the current tempo into the tempo track
+         as an event.
+      \item Tempo recording, which inserts all tempo changes as tempo events.
+   \end{itemize}
+
+   Many of these buttons have configurable keystrokes as well.
+   See \sectionref{subsec:seq66_patterns_panel_bottom}.
+   Some of these items are not present in the Qt interface.
+
+\rhead{\rightmark}         % shows section number and section name
+
+% Menu
+
+\input{seq66_menu}
+
+% Patterns Panel
+
+\input{seq66_patterns_panel}
+
+% Pattern Editor
+
+\input{seq66_pattern_editor}
+
+% Song Editor
+
+\input{seq66_song_editor}
+
+% Event Editor
+
+\input{seq66_event_editor}
+
+% Import/Export
+
+\input{seq66_midi_export}
+
+% Tables of keyboard and mouse actions
+
+\input{seq66_kbd_mouse}
+
+% Meta-event support
+
+\input{seq66_meta_events}
+
+% Configuration file
+
+\input{seq66_rc_file}
+
+% User file
+
+\input{seq66_usr_file}
+
+% Playlists
+
+\input{seq66_playlist}
+
+% Qt / PortMidi / Windows version
+
+\input{seq66_qt_portmidi}
+
+% Man page
+
+\input{seq66_manpage}
+
+% Headless version
+
+\input{seq66_headless}
+
+% MIDI implementation chart
+
+% \pagebreak
+% \input{seq66_midi_impl_chart}
+% \pagebreak
+
+% Important Concepts
+
+\input{seq66_concepts}
+
+% Building and debugging Sequencer66
+
+\input{seq66_build}
+
+% Discussion of MIDI formats related to Seq24 and Sequencer66
+
+\input{seq66_midi_formats}
+
+% Discussion of JACK support
+
+\input{seq66_jack}
+
+% Acknowledgments
+
+\input{seq66_kudos}
+
+\section{Summary}
+\label{sec:summary}
+
+   Contact: If you have ideas about \textsl{Sequencer66} or a bug report, please
+   email us (at \url{mailto:ahlstromcj@gmail.com}).
+   If it's a bug report, please add \textbf{[BUG]} to the Subject, or use the
+   GitHub bug-reporting interface.
+
+% References
+
+\input{seq66_references}
+
+\printindex
+
+\end{document}
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

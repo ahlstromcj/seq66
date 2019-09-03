@@ -1,0 +1,177 @@
+%-------------------------------------------------------------------------------
+% seq66_midi_impl_chart
+%-------------------------------------------------------------------------------
+%
+% \file        seq66_midi_impl_chart.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2018-02-04
+% \update      2018-02-04
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides a reasonable facsimile of a MIDI Implementation Chart for
+%     Sequencer66.
+%
+%-------------------------------------------------------------------------------
+
+\section{MIDI Implementation Chart}
+\label{sec:midi_impl_chart}
+
+   This section provides a basic and still-in-progress MIDI implementation
+   chart for \textsl{Sequencer66}.
+
+   \begin{table}[htb]
+      \label{table:midi_impl_chart_top}
+      \begin{tabular}{l c r}
+         Sequencer66 Live MIDI &   & Date: \date{\today} \\
+         Seq66 rtmidi & \textbf{MIDI Implementation Chart} & Version 0.94 \\
+      \end{tabular}
+   \end{table}
+
+%  \begin{table}[htb]
+   \begin{table}[H]
+      \label{table:midi_impl_chart_main}
+      \begin{tabular}{| l | l | l | l |}
+
+% Each section is a row.
+
+         \cline{1-4}
+         \textbf{Function} &
+            \textbf{Transmitted} &
+            \textbf{Recognized} &
+            \textbf{Remarks} \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+            Basic & Default \\
+            Channel & Changed \\
+         \end{tabular} &
+            \makecell[l]{1-16 \\ 1-16} &
+            \makecell[l]{1-16 \\ 1-16} &
+            \makecell[l]{Songs sets out channel(s) \\ Config sets in port(s)} \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             & Default \\
+             Mode & Messages \\
+             & Altered \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             Note & \\
+             Number & True Voice \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             Velocity & Note ON \\
+             & Note OFF \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             After & Key's \\
+             Touch & Ch's \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             Pitch Bender & \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             Control & 1-127 \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             Prog & \\
+             Change & True No. \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             System Exclusive & \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             System & Song Pos \\
+             Common & Song Sel \\
+             & Tune \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             System & Clock \\
+             Real Time & Commands \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+         \begin{tabular}{l l}
+             & Local ON/OFF \\
+             Aux & All Notes OFF \\
+             Message & Active Sense \\
+             & Reset \\
+         \end{tabular} &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+         \cline{1-4}
+            Notes &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } &
+            \makecell[l]{ TODO \\ TODO } \\
+
+% Bottom of chart.
+
+         \cline{1-4}
+
+      \end{tabular}
+   \end{table}
+
+   \begin{table}[htb]
+      \label{table:midi_impl_chart_bottom}
+      \begin{tabular}{l l l}
+         Mode 1: OMNI ON, POLY  & Mode 2: OMNI ON, MONO  & -O- : Yes \\
+         Mode 3: OMNI OFF, POLY & Mode 4: OMNI OFF, MONO & -X- : No  \\
+      \end{tabular}
+   \end{table}
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

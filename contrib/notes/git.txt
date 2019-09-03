@@ -1,0 +1,361 @@
+Quick Reference for Git Processes on GitHub
+Chris Ahlstrom
+2015-09-09 to 2018-11-23
+
+Creating a GitHub Repository:
+
+First, I like to create the project on my computer.  Once the files
+are in place, run the following commands in the top directory of the
+project:
+
+    $ git init
+    $ git add .
+    $ git commit -m "Created this new and wonderful project."
+
+In GitHub, create the new repository (without the LICENSE and README
+files, which you can create locally).  Then copy the repository URL to the
+system clipboard.  We will call it $MY_GITHUB_URL.  Add the remote
+URL, verify it, and push your local repository to it.
+
+    $ git remote add origin $MY_GITHUB_URL
+    $ git remote -v
+    $ git push -u origin master
+
+Now you are ready to work, making changes locally and pushing them to
+GitHub.
+
+Create a Repository on Your Own Server:
+
+On a side note, if you want to create a local repository called "proj.git"
+on a machine with many users, who are all in the group "devs", initialize
+the repository to be "shared":
+
+    $ git init --bare --shared=group proj.git
+
+The --bare option avoids creating a working directory, which is desirable
+if the repository is to be shared.  The --shared option makes the
+repository group-writable and g+sx.  In the repository config file, make
+sure to find:
+
+    [core]
+    bare = true
+    sharedrepository = 1    (i.e. "true")
+
+Then change the group owner of the repository, if not already set to
+"devs" by git:
+
+    $ chgrp -R devs proj.git
+
+To get your code to this new bare repository, first go to the top-level
+directory in your code base (e.g. the "proj") directory.  Then:
+
+    $ git init
+    $ git add .
+    $ git commit -m "Initial commit before pushing to central repo."
+    $ git remote add origin ssh://user@theserver/srv/git/proj.git
+    $ git push --all origin   -or-   git push -u origin master
+
+This process is very similar to what done does for GitHub.
+
+Repository Management:
+
+   https://github.com/Kunena/Kunena-Forum/wiki/
+      Create-a-new-branch-with-git-and-manage-branches and others
+
+In a github fork, keep the master branch clean (no changes pending).
+Then you can create a branch from your master. Each time you want to
+commit a bug or a feature, create a branch for it, which is a copy of your
+master branch.
+
+When you do a pull request on a branch, you can continue to work on another
+branch and make another pull request on this other branch.
+
+Create the branch on your local machine and switch to it:
+
+    $ git checkout -b [name_of_your_branch]
+
+When the branch is ready, push the branch to your "origin" remote on
+GitHub:
+
+    $ git push origin [name_of_your_branch]
+
+Better, to make sure git pull will work, set an upstream branch:
+
+    $ git push -u origin [name_of_your_branch]
+
+When you want to commit something in your branch, be sure to first
+checkout the branch.
+
+If git claims you cannot check out a branch, just do the following command
+to tell your local git about any new branches:
+
+    $ git fetch
+
+Update your branch when the original branch from official repository has been
+updated:
+
+    $ git fetch [name_of_your_remote]
+
+(It is important to be aware that the fetch command does not do a merge,
+while a pull command does attempt to do a merge.  Doing a pull of one
+branch while the current branch is a different one is something one
+generally does not want to do.)
+
+Others can track your branch in this manner to simplify the git push
+command:
+
+    $ git checkout --track -b your_branch origin/your_branch
+    $ git commit -m "the relevant message"
+    $ git push
+
+Then you need to apply (merge) changes. If your branch is derived from the
+"develop" branch you need to do:
+
+    $ git checkout master
+    $ git merge [name_of_your_remote]/develop
+
+If you had set up an upstream branch, then this command will suffice: 
+
+    $ git merge develop
+
+One can add the --no-commit option to allow for inspecting the merge and
+doing further tweaking of the merge before committing the merge.
+
+Then make any minor tweaks or version stamping you need to make your
+master official.  Also, it is beneficial to tag the release (as discussed
+below) to make it easier for users to determine the differences between
+major/minor releases, without having to study a bunch of intermediate
+commits.
+
+One can also merge from master to a feature-branch without a checkout:
+
+    $ git merge master feature-branch
+
+You will probably also want to merge back any tweaks made to master back
+into your branch, if you intend to do further work in that branch:
+
+    $ git checkout develop
+    $ get merge master
+    $ git push origin develop
+
+Delete a branch on your local filesystem, use -d or -D (to force):
+
+    $ git branch -d [name_of_branch]
+
+Delete the branch on github:
+
+    $ git push origin :[name_of_branch]   -or-
+    $ git push origin --delete [name_of_branch]
+
+Follow that up with this command on all your local copies:
+
+    $ git fetch --all --prune                  -or-
+    $ git branch -d name_of_branch             (as noted above)
+
+Caching your credentials (be careful!):
+
+    $ git config credential.helper store
+
+Pulls and merges:
+
+    For a GitHub project, you can use the handy "Merge pull request"
+    button on your project page, or you can do it from the command line.
+
+    Step 1: From your project repository, check out a new branch and test
+            the changes.
+
+    $ git checkout -b TDeagan-mute_groups master        [or a branch]
+    $ git pull https://github.com/TDeagan/sequencer64.git mute_groups
+
+    Step 2: Verify that the changes are reasonable and correct, building
+            if you need to.  The following command will let you see
+            all the changes, and you can build and test if the changes look
+            suspicious.
+
+    $ git diff --name-only master                       How many files changed?
+    $ git difftool master                               View them (e.g.  gvimdiff)
+
+    Step 3: Merge the changes and update on GitHub.
+
+    $ git checkout master
+    $ git merge --no-ff TDeagan-mute_groups
+    $ git push origin master
+
+Trial merge:
+
+	To do a trial merge, pass in the --no-commit flag, but, to avoid a
+    fast-forward commit, also pass in --no-ff, like so:
+
+	$ git merge --no-commit --no-ff $BRANCH
+
+	To examine the staged changes:
+
+	$ git diff --cached
+
+	And you can undo the merge, even if it is a fast-forward merge:
+
+	$ git merge --abort
+
+	This still modifies the working copy.
+
+Tagging:
+
+    We want to tag release points (e.g. 0.9.9.xx) with a tag of the
+    same name.  We create an annotated tag, which adds information and
+    requires a commit message, and is meant for public consumption.
+
+    $ git log               [to get the commit hash, abcd1234 (fake example)]
+    $ git tag -a 0.9.9.xx -m "New version 0.9.9.xx tagged" abcd1234
+    $ git push origin 0.9.9.xx              - or -
+    $ git push origin --tags
+
+    Note that each tag to be published needs to be pushed as well.
+    Also note that, if the commit hash is missing, HEAD is assumed.
+    A user can get the tagged code via a command like the following.
+
+    $ git checkout -b version.xx 0.9.9.xx
+
+    But be careful about modifications; if committed, they represent new
+    work you might need to merge later, but the new work will not be part
+    of the tagged commit.
+
+    To get all of the tags for a project, a simple pull (of all items) is
+    necessary:
+
+    $ git pull
+
+    To show all of the tags present in the project, along with the commit
+    numbers for the tag and the tag operation:
+
+    $ git show-ref --tags
+
+    To show just the tag names:
+
+    $ git tag
+
+    Related to tags, one can generate a brief description of the current
+    commit, based from the latest tag, using the following call (with the
+    result shown):
+
+    $ git describe --tags --long
+    0.9.11-12-gca37826
+
+    This output says that the command was run after the 12th commit after
+    the 0.9.11 tag, and includes a hash code (after the "g", which simply
+    denotes that the "git" DVCS is being used) that can be used if the
+    commit changes, or there are many 12th commits.  Note that the output
+    also depends on the current branch that is checked out.  Also, there
+    is an --always option that can be added to grab the latest hash value
+    found even if no commit has yet been tagged (as is the case early on
+    in a project).
+
+    To check out a specific tag:
+
+    $ git fetch --all --tags --prune
+    $ git checkout tags/<tagname> [-b branch name]
+
+    The branch name is optional; you might not want to make a branch, and
+    just get the tagged version.
+
+    $ ./pack 0.94.6
+
+    This will pack up the code and Makefiles as a tar-file that can be
+    used to ./configure and build the code.
+
+Cherry-Picking:
+
+    If one makes a fix in a branch and wants just that commit to be merged
+    (into master), then do the following after committing the fix in the
+    branch, assuming the branch and master are both now clean:
+
+    $ git log                   # and record the last commit hash
+    $ git checkout master
+    $ git cherry-pick --edit a2d34fb
+
+    And then one can push the fix and the new tag.
+
+    See this article on why you should generally avoid cherry-picking
+    in git:
+
+        http://www.draconianoverlord.com/2013/09/07/no-cherry-picking.html
+
+Pull Requests:
+
+    When one gets an email about a pull request, there are a couple of
+    ways of dealing with it, given that it is an acceptable request.
+
+    First, one can go to the project GitHub page, and click on the "Merge
+    pull request" button.
+
+    Second, one can do something like this, from the command line:
+
+       $ git checkout -b otherproject-master master
+       $ git pull https://github.com/otherproject/sequencer64.git master
+       $ git checkout master 
+       $ git merge --no-ff otherproject-master
+       $ git  push origin master 
+
+Diffs:
+
+    Summarizing differences between commits, much like
+    "svn diff --summarize":
+
+        $ git diff --name-status <commit1> <commit2>
+
+    Then, if one has the following in the .gitconfig file:
+
+        [diff]
+            tool = gvimdiff
+        [difftool]
+            prompt = false
+
+    one can cycle through a series of diffs on the involved files with one
+    of the best diff viewers ever:
+
+        $ git difftool <commit1> <commit2>
+
+    Getting a list of files that have conflicts:
+
+        $ git diff --name-only --diff-filter=U
+
+Log information:
+
+    We add to our ChangeLog using the perl script "git2cl":
+
+        $ git2cl > cl.txt
+        $ gvim -O cl.txt ChangeLog
+          (copy stuff from cl.txt to ChangeLog and clean it up)
+
+    A quick way to summarize the files edited in the last few commits is:
+
+        $ git log --pretty --numstat --summary
+
+Listing files:
+
+    One often wants to do a quick edit or survey of modified files.
+    The following command is useful:
+
+        $ git ls-files -m
+
+    In bash, one can pass the list to vi(m):
+
+        $ vi $(git ls-files -m)
+
+    To list only untracked files:
+
+        $ git ls-files --others --exclude-standard
+
+Listing issues:
+
+    See https://adriansieber.com/download-github-issues-from-command-line/.
+
+    Browsing to the following URL will obtain a dump of all Sequencer64
+    issues:
+
+    https://api.github.com/repos/ahlstromcj/sequencer64/issues
+
+    This dump needs programming to whip it into human-readable form.
+
+    http -b https://api.github.com/repos/ahlstromcj/sequencer64/issues?state=all
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

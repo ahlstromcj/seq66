@@ -1,0 +1,427 @@
+%-------------------------------------------------------------------------------
+% seq66_kbd_mouse
+%-------------------------------------------------------------------------------
+%
+% \file        seq66_kbd_mouse.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2016-04-07
+% \update      2018-09-21
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides tables for keyboard and mouse support in Sequencer66.
+%
+%-------------------------------------------------------------------------------
+
+\section{Sequencer66 Keyboard and Mouse Actions}
+\label{sec:kbd_mouse_actions}
+
+   This section presents some tables summarizing keyboard and mouse actions
+   available in \textsl{Sequencer66}.
+   It does not cover mute keys and group keys, which are well
+   described in the keyboard options for the main window.
+   See \sectionref{paragraph:seq66_menu_file_options_keyboard}).
+   It does not cover the "fruity" mouse actions, though they are touched
+   on in \sectionref{paragraph:seq66_menu_file_options_mouse}.
+
+%  Any volunteers to fill in the table?
+
+   This section describes the keystrokes that are currently hardwired
+   in \textsl{Sequencer66}.
+   This description only includes
+   items not defined in the \textbf{File / Options}
+   dialog.  That is, hardwired values.
+   "KP" stands for "keypad".
+   \index{keys!focus}
+   The effect that keystrokes have depends upon
+   which window has the keyboard/mouse focus.
+   \index{keys!qt}
+   It must be noted that the Qt 5 user-interface does not (yet) support the
+   full set of keystrokes supported by the legacy Gtkmm-2.4 user-interface.
+
+\subsection{Main Window}
+\label{subsec:kbd_mouse_main_window}
+
+   The main window keystrokes are all defined via the options dialog
+   and "rc" configuration file, or are stock Gtk window-management keystrokes.
+   The main window has a very complete setup for live control of the MIDI tune
+   via keystrokes.  These actions are not included in
+   \tableref{table:main_window_support}.
+%  There may be some other keystrokes to be documented at some point.
+
+   \begin{table}[H]
+      \centering
+      \caption{Main Window Support}
+      \label{table:main_window_support}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action} & \textbf{Normal} & \textbf{Double} &
+            \textbf{Shift} & \textbf{Ctrl} & \textbf{Mod4} \\
+         \textbf{e} & --- & --- & --- & Open song editor & --- \\
+         \textbf{l} (el) & --- & --- & --- & Enter Learn mode & --- \\
+         Left-click slot & Mute/Unmute & New/Edit & Toggle other slots &
+            --- & --- \\
+         Right-click slot & Edit menu & --- & Edit menu & Edit Menu &
+            --- \\
+      \end{tabular}
+   \end{table}
+
+   The new mouse features of this window for \textsl{Sequencer66},
+   as noted in \sectionref{sec:seq66_patterns_panel}, are:
+
+   \begin{itemize}
+      \item \textsl{Shift-left-click}:
+         Over one pattern slot, this action toggles the mute/unmute
+         (armed/unarmed) status of all other patterns
+         (even the patterns in other, unseen sets).
+      \item \textsl{Left-double-click}:
+         Over a pattern slot, this action quickly toggles the mute/unmute status,
+         which is confusing.  But it ultimately brings up the pattern editor
+         (sequence editor) for that pattern.
+%        It acts like Ctrl-left-click.
+   \end{itemize}
+
+\subsection{Performance Editor Window}
+\label{subsec:kbd_mouse_performance_editor_window}
+
+   The "performance editor" window is also known as the "song editor" window.
+   It's main sections are the "piano roll" (perfroll) and the "performance
+   time" (perftime) sections, discussed in the following sections.
+   Also, some keystrokes are handled by the frame of the window.
+
+   \begin{itemize}
+      \item \texttt{Ctrl-z}. Undo.
+      \item \texttt{Ctrl-r}. Redo.
+   \end{itemize}
+
+\subsubsection{Performance Editor Piano Roll}
+\label{subsubsec:kbd_mouse_performance_editor_piano_roll}
+
+%  \begin{itemize}
+%     \item \texttt{Ctrl-x}. Cut.
+%     \item \texttt{Ctrl-c}. Copy.
+%     \item \texttt{Ctrl-v}. Paste.
+%     \item \texttt{Ctrl-z}. Undo.
+%     \item \texttt{Ctrl-r}. Redo.
+%     \item \texttt{Shift-Up}.   Move backward one small unit (which is...?)
+%     \item \texttt{Shift-Down}.   Move forward one small unit (which is...?)
+%     \item \texttt{Shift-Page Up}.   Move backward one frame.
+%     \item \texttt{Shift-Page Down}.   Move forward one frame.
+%     \item \texttt{Shift-Home, Shift-KP Home}.  Move to beginning of piano roll.
+%     \item \texttt{Shift-End, Shift-KP End}.  Move to end of piano roll.
+%     \item \texttt{Shift-z (Z)}.  Zoom in.
+%     \item \texttt{0}.  Set default zoom.
+%     \item \texttt{z}.  Zoom out.
+%     \item \texttt{Left}.  Move item left one snap unit.
+%     \item \texttt{Right}.  Move item right one snap unit.
+%     \item \texttt{Up}.  Move frame up one small scroll unit.
+%     \item \texttt{Down}.  Move frame down one small scroll unit.
+%     \item \texttt{Home}.  Move to top of piano roll.
+%     \item \texttt{End}.  Move to bottom of piano roll.
+%     \item \texttt{Page Up}.  Move up one frame (page-increment).
+%     \item \texttt{Page Down}.  Move down one frame (page-increment).
+%  \end{itemize}
+
+   Note that the keystrokes in this table
+   (see \tableref{table:perf_window_piano_roll})
+   require that the focus first be
+   assigned to the piano roll by left-clicking in an empty area within it.
+   Otherwise, another section of the performance editor might receive the
+   keystroke.
+
+   \begin{table}[H]
+      \centering
+      \caption{Performance Window Piano Roll}
+      \label{table:perf_window_piano_roll}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift}     & \textbf{Ctrl}   & \textbf{Mod4}      \\
+         Space             & Start playback  & ---                & ---                & ---             & ---                \\
+         Esc               & Stop playback   & ---                & ---                & ---             & ---                \\
+         Period (.)        & Pause playback  & ---                & ---                & ---             & ---                \\
+         Del               & Cut section     & ---                & ---                & ---             & ---                \\
+         c key             & ---             & ---                & ---                & Copy            & ---                \\
+         p key             & Paint mode      & ---                & ---                & ---             & ---                \\
+         v key             & ---             & ---                & ---                & Paste           & ---                \\
+         x key             & Escape paint    & ---                & ---                & Cut             & ---                \\
+         z key             & Zoom out        & ---                & ---                & Undo            & ---                \\
+         0 key             & Reset zoom      & ---                & ---                & ---             & ---                \\
+         Z key             & Zoom in         & ---                & ---                & Undo            & ---                \\
+         Left-arrow        & Move earlier    & ---                & ---                & ---             & ---                \\
+         Right-arrow       & Move later      & ---                & ---                & ---             & ---                \\
+         Left-click        & Select section  & ---                & ---                & ---             & ---                \\
+         Right-click       & Paint mode      & ---                & Paint mode         & Paint mode      & Lock Paint mode    \\
+         Scroll-up         & Scroll up       & ---                & Scroll Left        & Scroll Up       & ---                \\
+         Scroll-down       & Scroll down     & ---                & Scroll Right       & Scroll Down     & ---                \\
+      \end{tabular}
+   \end{table}
+
+   This section of the performance editor also handles the start, stop, and
+   pause keys.  These can be modified in the \textbf{Options / Keyboard} page.
+   A "section" in the performance editor is actually a box that
+   specifies a trigger for the pattern in that sequence/pattern slot.
+   Note that the "toggle other slots" action occurs only if shift-left-clicked
+   in the "names" area of the performance editor.
+   Left-click is used to select performance blocks if clicked within
+   a block, or to deselect them if clicked in an empty area of the piano roll.
+   Also note that all scrolling is done by the internal horizontal and vertical
+   step increments.
+   Some features of this window for \textsl{Sequencer66},
+   as noted in \sectionref{sec:seq66_song_editor}, are explained here:
+
+   \begin{itemize}
+      \item \textsl{p}:  Enters the paint mode, until right-click is pressed or
+         until the "x" key is pressed.
+      \item \textsl{x}:  Exits the paint mode.  Think of the made-up term
+         "x-scape".
+      \item \textsl{z}:  Zooms out the performance view.  It makes the view
+         look smaller, so that more of the performance can be seen.
+         Opening a second performance view is another way to see more
+         of the performance.
+      \item \textsl{0}:  Resets the zoom to its normal value.
+      \item \textsl{Z}:  Zooms in the performance view, making the view
+         larger, so that more details of the performance can be seen.
+%     \item \textsl{.}:  The period (configurable) is a new key devoted to the
+%        new pause functionality.
+      \item \textsl{Left Arrow}:  Moves the selected item to the left (earlier
+         in time) in the performance layout.
+      \item \textsl{Right Arrow}:  Moves the selected item to the right (later
+         in time) in the performance layout.
+      \item \textsl{Mod4-right-click, release}:  Locks the paint mode,
+         until right-click is pressed.
+      \item Once selected (rendered in grey), a pattern section (trigger)
+         can be moved by the mouse.
+         To move it using the left or right
+         arrow keys, the paint mode must be entered, but only via the "p"
+         key.
+%        -- the right mouse button deselects the greyed pattern.
+%        Too tricky, we might try fixing it later.
+   \end{itemize}
+
+\subsubsection{Performance Editor Time Section}
+\label{subsubsec:kbd_mouse_performance_editor_time_section}
+
+   \begin{itemize}
+      \item \texttt{l}.  Set to move L marker.
+      \item \texttt{r}.  Set to move R marker.
+      \item \texttt{x}.  Escape ("x-scape") the movement mode.
+      \item \texttt{Left}.  Move the selected marker left.
+      \item \texttt{Right}.  Move the selected marker right.
+   \end{itemize}
+
+   This section of the performance editor is also known as the "measure ruler"
+   or the "bar indicator", and is discussed in
+   \sectionref{subsubsec:seq66_song_editor_arrangement_panel_measures_ruler}.
+   See \tableref{table:performance_editor_time_section}.
+
+   \begin{table}[H]
+      \centering
+      \caption{Performance Editor Time Section}
+      \label{table:performance_editor_time_section}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
+         l                 & Move L [1]      & ---                & ---            & ---             & ---                \\
+         r                 & Move R [1]      & ---                & ---            & ---             & ---                \\
+         x                 & Escape Move     & ---                & ---            & ---             & ---                \\
+         Left-Click        & Set L [2]       & ---                & ---            & ---             & ---                \\
+         Middle-Click      & ---             & ---                & ---            & ---             & ---                \\
+         Right-Click       & Set R [2]       & ---                & ---            & ---             & ---                \\
+      \end{tabular}
+   \end{table}
+
+   \begin{enumerate}
+      \item Activates movement of this marker using the left and right arrow
+         keys.  Movement is in increments of the snap value.  This mode is
+         exited by pressing the 'x' key.  Also see note [2].
+      \item Controlled in the pertime section.
+   \end{enumerate}
+
+   The new features of this window for \textsl{Sequencer66},
+   as noted in
+   \sectionref{subsubsec:seq66_song_editor_arrangement_panel_measures_ruler},
+   are:
+
+   \begin{itemize}
+      \item \textsl{l}:  Enters a mode where the left and right arrow keys move
+         the L marker, until the "x" key is pressed.
+      \item \textsl{r}:  Enters a mode where the left and right arrow keys move
+         the R marker, until the "x" key is pressed.
+      \item \textsl{x}:  Exits the marker-movement  mode.
+   \end{itemize}
+
+\subsubsection{Performance Editor Names Section}
+\label{subsubsec:kbd_mouse_performance_editor_names_section}
+
+   \begin{table}[H]
+      \centering
+      \caption{Performance Editor Names Section}
+      \label{table:performance_editor_names}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action}   & \textbf{Normal}    & \textbf{Double}    & \textbf{Shift}        & \textbf{Ctrl}   & \textbf{Mod4}      \\
+         Left-Click        & Toggle track       & ---                & Toggle other tracks   & ---             & ---                \\
+         Middle-Click      & ---                & ---                & ---                   & ---             & ---                \\
+         Right-Click       & New/Edit menu      & ---                & ---                   & ---             & ---                \\
+      \end{tabular}
+   \end{table}
+
+\subsection{Pattern Editor}
+\label{subsec:kbd_mouse_pattern_editor}
+
+   The pattern/sequencer editor piano roll is a complex and powerful event
+   editor;
+   \tableref{table:pattern_editor_piano_roll},
+   doesn't begin to cover its functionality.
+   Here are some keystrokes handled by the main frame of the piano roll:
+
+   \begin{itemize}
+      \item \texttt{Ctrl-L}.  Bring up the LFO event modulation editor.
+      \item \texttt{Ctrl-W}.  Exit the sequence (pattern) editor.
+      \item \texttt{Ctrl-Page Up}.  Zoom in.
+      \item \texttt{Ctrl-Page Down}.  Zoom out.
+      \item \texttt{Shift-Page Up}.  Scroll leftward.
+      \item \texttt{Shift-Page Down}.  Scroll rightward.
+      \item \texttt{Shift-Home}.  Scroll leftward to the beginning.
+      \item \texttt{Shift-End}.  Scroll rightward to the end.
+%     \item \texttt{Shift-z (Z)}.  Zoom in.
+%     \item \texttt{0}.  Set default zoom.
+%     \item \texttt{z}.  Zoom out.
+      \item \texttt{Page Down}.  Scroll downward.
+      \item \texttt{Page Up}.  Scroll upward.
+      \item \texttt{Home}.  Scroll upward to the beginning.
+      \item \texttt{End}.  Scroll downward to the end.
+      \item \texttt{Delete}.  Deletes (not cuts) the currently-selected notes
+         in the piano roll; can be undone with the \textbf{Undo} button.
+   \end{itemize}
+
+\subsubsection{Pattern Editor Piano Roll}
+\label{subsubsec:kbd_mouse_pattern_editor_piano_roll}
+
+   Here are the keystrokes handled by the piano roll:
+   These keystrokes require that the focus be set to the piano roll by clicking
+   in it with the mouse.
+
+   \begin{itemize}
+%     \item \texttt{Ctrl-x}. Cut.
+%     \item \texttt{Ctrl-c}. Copy.
+%     \item \texttt{Ctrl-v}. Paste.
+%     \item \texttt{Ctrl-z}. Undo.
+      \item \texttt{Ctrl-r}. Redo.
+      \item \texttt{Ctrl-a}. Select all.
+      \item \texttt{Ctrl-Left}.  Shrink selected notes.
+      \item \texttt{Ctrl-Right}.  Grow selected notes.
+      \item \texttt{Delete}.  Remove selected notes.
+      \item \texttt{Backspade}.  Remove selected notes.
+      \item \texttt{Home.  Set sequence to beginnging of sequence}.  (Verify!)
+%     \item \texttt{Left}.  Move selected notes one snap left.
+%     \item \texttt{Down}.  Move selected notes one pitch downward.
+%     \item \texttt{Up}.  Move selected notes one pitch upward.
+      \item \texttt{Enter, Return}.
+         Paste the selected notes at the current position.
+%     \item \texttt{p}.  Enter "paint" (also known as "adding") mode.
+%     \item \texttt{x}.  Escape ("x-scape") the paint mode.
+   \end{itemize}
+
+   And here is the table, which includes items not described above:
+
+   \begin{table}[H]
+      \centering
+      \caption{Pattern Editor Piano Roll}
+      \label{table:pattern_editor_piano_roll}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
+         Del               & Delete Selected & ---                & ---            & ---             & ---                \\
+         c                 & ---             & ---                & ---            & Copy            & ---                \\
+         p                 & Paint mode      & ---                & ---            & ---             & ---                \\
+         v                 & ---             & ---                & ---            & Paste           & ---                \\
+         x                 & Escape Paint    & ---                & ---            & Cut             & ---                \\
+         z                 & Zoom Out        & ---                & Zoom In        & Undo            & ---                \\
+         0                 & Reset Zoom      & ---                & ---            & ---             & ---                \\
+         Left-Arrow        & Move Earlier [1] & ---               & ---            & ---             & ---                \\
+         Right-Arrow       & Move Later [1]  & ---                & ---            & ---             & ---                \\
+         Up-Arrow          & Increase Pitch  & ---                & ---            & ---             & ---                \\
+         Down-Arrow        & Decrease Pitch  & ---                & ---            & ---             & ---                \\
+         Left-Click        & Deselect        & ---                & ---            & ---             & ---                \\
+         Right-Click       & Paint mode      & ---                & Edit Menu      & Edit/Edit Menu  & Lock Paint mode    \\
+         Left-Middle-Click & Grow Selected   & ---                & Stretch Sel.   & ---             & ---                \\
+         Scroll-Up         & Zoom Time In    & ---                & Scroll Left    & Zoom Time In    & ---                \\
+         Scroll-Down       & Zoom Time Out   & ---                & Scroll Right   & Zoom Time Out   & ---                \\
+      \end{tabular}
+   \end{table}
+
+   \begin{enumerate}
+      \item Once selected (and thus rendered in grey), a pattern segment
+         can be moved by the mouse.  To move it using the left or right
+         arrow keys, the paint mode must be entered, but only via the
+         \texttt{p} key -- the right mouse button deselects the greyed pattern.
+         Too tricky, we might try fixing it later.
+   \end{enumerate}
+
+   Features of this window section for \textsl{Sequencer66}, as noted in
+   \sectionref{subsubsec:seq66_pattern_editor_piano_roll_items}, are:
+
+   \begin{itemize}
+      \item \textsl{p}:  Enters the paint mode, until right-click is pressed or
+         until the \texttt{x} key is pressed.  Notes are added
+         by clicking or click-dragging.
+      \item \textsl{x}:  Exits ("x-scapes") the paint mode.
+      \item \textsl{z}:  Zooms out.
+      \item \textsl{0}:  Resets zoom to its normal value.
+      \item \textsl{Z}:  Zooms in.
+      \item \textsl{.}:  The period (configurable) does the pause function.
+      \item \textsl{Left Arrow}:  Moves selected events to the left.
+      \item \textsl{Right Arrow}:  Moves selected events to the right.
+      \item \textsl{Up Arrow}:  Moves selected notes upward in pitch.
+      \item \textsl{Down Arrow}:  Moves selected notes downward in pitch.
+      \item \textsl{Mod4-Right-Click}:  Locks the paint mode, until right-click
+         is pressed again.
+   \end{itemize}
+
+\subsubsection{Pattern Editor Event Panel}
+\label{subsubsec:kbd_mouse_pattern_editor_event_panel}
+
+   \begin{itemize}
+      \item \texttt{Ctrl-x}. Cut.
+      \item \texttt{Ctrl-c}. Copy.
+      \item \texttt{Ctrl-v}. Paste.
+      \item \texttt{Ctrl-z}. Undo.
+      \item \texttt{Delete}.  Delete (not cut!) the selected events.
+      \item \texttt{p}.  Enter "paint" (also known as "adding") mode.
+      \item \texttt{x}.  Escape ("x-scape") the paint mode.
+   \end{itemize}
+
+\subsubsection{Pattern Editor Data Panel}
+\label{subsubsec:kbd_mouse_pattern_editor_data_panel}
+
+   Currently, no keystroke support is provided in the data panel.
+   One potential upgrade would be the ability to change the value of the event
+   with the Up and Down arrow keys.
+
+\subsubsection{Pattern Editor Virtual Keyboard}
+\label{subsubsec:kbd_mouse_pattern_editor_virtual_keyboard}
+
+   \begin{table}[H]
+      \centering
+      \caption{Pattern Editor Virtual Keyboard}
+      \label{table:pattern_editor_virtual_keyboard}
+      \begin{tabular}{l l l l l l}
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
+         Left-Click        & Play note       & ---                & ---            & ---             & ---                \\
+         Right-Click       & Toggle labels   & ---                & ---            & ---             & ---                \\
+      \end{tabular}
+   \end{table}
+
+\subsection{Event Editor}
+\label{subsec:kbd_mouse_event_editor}
+
+   \begin{itemize}
+      \item \texttt{Down}.  Move one slot down.
+      \item \texttt{Up}.  Move one slot up.
+      \item \texttt{Page Down}.  Move one frame down.
+      \item \texttt{Page Up}.  Move one frame up.
+      \item \texttt{Home}.  Move to top frame.
+      \item \texttt{End}.  Move to bottom frame.
+      \item \texttt{Asterisk, KP Multiply}.  Delete the currently-selected event.
+   \end{itemize}
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

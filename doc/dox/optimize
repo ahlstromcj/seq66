@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+#******************************************************************************
+# optimize
+#------------------------------------------------------------------------------
+##
+# \file       	optimize
+# \library    	Documentation
+# \author     	Chris Ahlstrom
+# \date       	2019-04-14
+# \update     	2019-05-05
+# \version    	$Revision$
+# \license    	See license.dox
+#
+#     This file attempts to optimize a PDF.
+#
+#		$1 is the base name of the PDF to be generated.
+#
+#------------------------------------------------------------------------------
+
+if test -f latex/refman.pdf ; then
+	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH \
+-sOutputFile="$1.pdf" latex/refman.pdf
+else
+	echo "ERROR: "$1" PDF not generated!!!"
+	exit 1
+fi
+
+popd
+
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 noet ft=sh
+#------------------------------------------------------------------------------

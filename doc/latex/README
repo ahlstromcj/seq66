@@ -1,0 +1,12 @@
+README for Sequencer66 LaTeX
+Chris Ahlstrom
+2019-08-13 to 2019-08-13
+
+This directory holds the documentation for Sequencer66.  The documentation is
+part of the project, and not a separate project.
+
+In addition, some basic documentation is not transferred from sequencer64-doc to
+here.  Thus, sometimes we will refer the reader to that project for background
+information.
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

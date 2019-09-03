@@ -1,0 +1,113 @@
+Sequencer64:
+
+    Snapshot:
+        Press:          Save current state; let user change playscreen arming.
+        Release:        Restore the saved state.
+        Idea:           Can we make restoration cued?
+    Mute-Groups:
+        Learn mode:     Press button, Ctrl-L, or get MIDI glearn control.
+        Save group:     According to selected group number, save current
+                        playscreen into group.
+        Apply group:    According to event, apply the desired mute group
+                        to the playscreen.
+        Disable:        Reverse apostrophe
+        Enable:         Apostrophe
+        Clear:          Remove all mute-groups.  They won't be saved to the MIDI
+                        file.  If a change, the user should be a prompt to save
+                        the MIDI file.  What about the 'rc' file?  The
+                        cleared mute-groups are save.
+        Reload:         Reload the mute-groups from the 'rc' file.
+    Muting:
+        Toggle:         Toggles arming on all patterns?  Or all patterns in
+                        playscreen?
+        Mute all:       Mute all patterns (in the playscreen?)
+        Unmute all:     Unmute all patterns (in the playscreen?)
+    Song Mode:          How does it interact with mute groups?
+                        Override them?
+    Home key:           Set playing screenset.  We don't enable a screenset just
+                        because it is in view.  That would cause confusion.  We
+                        select a screenset, and when we get to the one we want,
+                        we can then enable it.
+
+Processes:
+
+    learn_toggle()
+    shift_lock()
+    for all seqs in viewscreen, draw_sequence_on_pixmap(); requires getting seq
+        pointers by seq number; required iterating through seq events.
+    set_song_mode() from various interfaces
+    set_screenset()/set_playscreen() and update_screenset()
+    set_screenset()/set_viewscreen() and update_screenset()
+    Note that multiwid would require multi-view and multi-play screensets!
+
+    m_mute_group[1024]:
+
+        any_group_unmutes()
+        select_group_mute()
+        set_ & get_group_mute_state() [deprecated]
+        load_ & save_mute_group() [partial deprec?]
+        set_and_copy_mute_group()
+        clear_mute_groups()
+
+    m_mute_group_rc[1024]:
+
+        load_ & save_mute_group() [partial deprec?]
+
+    m_armed_statuses[1024]:
+
+        toggle_playing_tracks()
+
+    m_sequence_state[1024]:
+
+        save_playing_state() [snapshot]
+        restore_playing_state() [snapshot]
+
+    m_screenet_state[32]:
+
+        unqueue_sequences() [one seq]
+        save_current_screenset()
+        clear_current_screenset()
+
+    m_tracks_mute_state[32]:
+
+        set_and_copy_mute_group()
+        mute_group_tracks()
+        set_playing_screenset() [MIDI control play ss]
+        sequence_playing_change()
+
+Sequencer66 Ideas:
+
+    Triggers:
+
+        Move performer::selected_trigger() into triggers.  That class would
+        need access to performer to get the sequence pointer.  Same for:
+        select_triggers_in_range()
+        select_trigger()
+        unselect_all_triggers()
+
+    Undo/Redo:
+
+        Can we make classes for these?
+
+    For drawing the various representations of each sequence in a set, provide
+    one setmapper function that accepts a functor "void f(int seqnumber)".
+
+    Also need this functionality for a single sequence, all sequences, multiple
+    sets, and all sets.
+
+    Mute group toggle in addition to just set.
+
+    Will generally adhere to the above.  And simplify the handling of mute
+    groups.
+
+    We want to support the concept of playscreen vs viewscreen.  The playscreen
+    would play even in not in view in the GUI.  The visible screen, the
+    viewscreen, would not necessarily be playing.  The user could scroll to the
+    desired screen, do a bunch of stuff to it, without affecting playing (in Live
+    mode).  
+
+    Auto-play:  When a screenset comes into view, it is automatically queued for
+    playing.
+
+    All-play:   Turn on the playing of all sets.
+

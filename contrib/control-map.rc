@@ -1,0 +1,178 @@
+
+[comments]
+
+This is a test file.
+  
+Treat it with care.
+
+[midi-control-flags]
+
+# These variable values are new with seq66.
+
+load-key-control = true
+load-midi-control = true
+
+# The leftmost number on each line here is the pattern number, from
+# 0 to 31; or it is the group number, from 32 to 63, for up to 32 
+# groups; or it is an automation control number, from 64 to 95.
+# This internal MIDI control number is followed by three groups of
+# bracketed numbers, each providing three different type of control:
+#
+#    Normal:           [toggle]    [on]      [off]
+#    Playback:         [pause]     [start]   [stop]
+#    Playlist:         [by-value]  [next]    [previous] (if active)
+#
+# In each group, there are six numbers:
+#
+#    [on/off invert status d0 d1min d1max]
+#
+# 'on/off' enables/disables (1/0) the MIDI control for the pattern.
+# 'invert' (1/0) causes the opposite if data is outside the range.
+# 'status' is by MIDI event to match (channel is NOT ignored).
+# 'd0' is the first data value.  Example: if status is 144 (Note On),
+# then d0 represents Note 0.
+# 'd1min'/'d1max' are the range of second values that should match.
+# Example:  For a Note On for note 0, 0 and 127 indicate that any
+# Note On velocity will cause the MIDI control to take effect.
+#
+#  ---------------------------- pattern, group, or automation-slot number
+# |   ------------------------- key name (replaces the old integer value)
+# |  |       ------------------ on/off (indicate is the section is enabled)
+# |  |      | ----------------- inverse
+# |  |      | |  -------------- MIDI status (event) byte (e.g. note on)
+# |  |      | | |  ------------ data 1 (e.g. note number)
+# |  |      | | | |  ---------- data 2 min
+# |  |      | | | | |  -------- data 2 max
+# |  |      | | | | | |
+# v  v      v v v v v v
+# 0 "1"    [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
+#    Toggle          On              Off
+
+[loop-control]
+
+ 0 "1"         [0 0   0   0   0   0] [1 0 144   0   0 127] [1 0 128   0   0 127]
+ 1 "q"         [0 0   0   0   0   0] [1 0 144   1   0 127] [1 0 128   1   0 127]
+ 2 "a"         [0 0   0   0   0   0] [1 0 144   2   0 127] [1 0 128   2   0 127]
+ 3 "z"         [0 0   0   0   0   0] [1 0 144   3   0 127] [1 0 128   3   0 127]
+ 4 "2"         [0 0   0   0   0   0] [1 0 144   0   0 127] [1 0 128   0   0 127]
+ 5 "w"         [0 0   0   0   0   0] [1 0 144   1   0 127] [1 0 128   1   0 127]
+ 6 "s"         [0 0   0   0   0   0] [1 0 144   2   0 127] [1 0 128   2   0 127]
+ 7 "x"         [0 0   0   0   0   0] [1 0 144   3   0 127] [1 0 128   3   0 127]
+ 8 "3"         [0 0   0   0   0   0] [1 0 144   0   0 127] [1 0 128   0   0 127]
+ 9 "e"         [0 0   0   0   0   0] [1 0 144   1   0 127] [1 0 128   1   0 127]
+11 "d"         [0 0   0   0   0   0] [1 0 144   2   0 127] [1 0 128   2   0 127]
+11 "c"         [0 0   0   0   0   0] [1 0 144   3   0 127] [1 0 128   3   0 127]
+12 "4"         [0 0   0   0   0   0] [1 0 144   0   0 127] [1 0 128   0   0 127]
+13 "r"         [0 0   0   0   0   0] [1 0 144   1   0 127] [1 0 128   1   0 127]
+14 "f"         [0 0   0   0   0   0] [1 0 144   2   0 127] [1 0 128   2   0 127]
+15 "v"         [0 0   0   0   0   0] [1 0 144   3   0 127] [1 0 128   3   0 127]
+16 "5"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+17 "t"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+18 "g"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+19 "b"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+20 "6"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+21 "y"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+22 "h"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+23 "n"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+24 "7"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+25 "u"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+26 "j"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+27 "m"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+28 "8"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+29 "i"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+30 "k"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+31 ","         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+
+[mute-group-control]
+
+ 0 "!"         [1 0 141   0   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 1 "Q"         [1 0 141   1   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 2 "A"         [1 0 141   2   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 3 "Z"         [1 0 141   3   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 4 "@"         [1 0 141   0   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 5 "W"         [1 0 141   1   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 6 "S"         [1 0 141   2   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 7 "X"         [1 0 141   3   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 8 "#"         [1 0 141   0   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+ 9 "E"         [1 0 141   1   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+10 "D"         [1 0 141   2   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+11 "C"         [1 0 141   3   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+12 "$"         [1 0 141   0   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+13 "R"         [1 0 141   1   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+14 "F"         [1 0 141   2   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+15 "V"         [1 0 141   3   0 127] [0 0   0   0   0   0] [0 0   0   0   0   0]
+16 "%"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+17 "T"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+18 "G"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+19 "B"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+20 "^"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+21 "Y"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+22 "H"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+23 "N"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+24 "&"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+25 "U"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+26 "J"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+27 "M"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+28 "*"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+29 "I"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+30 "K"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+31 "<"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0]
+
+# ">" available
+
+[automation-control]
+
+# "BS" is the backspace (Ctrl-H) character, and indicates that there is no
+# keystroke for that control (because it's a tri-state control).  For a space
+# character, the name "Space" must be used, so that sscanf() does not get
+# confused.
+#
+# 36 controls so far
+
+ 0 "'"         [0 0   0   0   0   0] [1 0 144   8   1 127] [1 0 144   6   1 127] # BPM Up
+ 1 ";"         [0 0   0   0   0   0] [1 0 144   8   1 127] [1 0 144   6   1 127] # BPM Down
+ 2 "]"         [0 0   0   0   0   0] [1 0 144  15   1 127] [1 0 144  13   1 127] # Set Up
+ 3 "["         [0 0   0   0   0   0] [1 0 144  15   1 127] [1 0 144  13   1 127] # Set Down
+ 4 "KP_Home"   [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Replace/Solo
+ 5 "KP_."      [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Snapshot 1
+ 6 "o"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Queue
+ 7 "`"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Group Mute
+ 8 "l"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Group Learn
+ 9 "Home"      [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Playing Set
+10 "."         [1 0 144  20   1 127] [1 0 144  22   1 127] [1 0 144  18   1 127] # MIDI Pause/Start/Stop
+11 "F10"       [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Song Record
+12 "Sh_F1"     [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Solo
+13 "Sh_F2"     [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # MIDI Thru
+14 "PageUp"    [0 0   0   0   0   0] [1 0 144   9   1 127] [1 0 144   5   1 127] # BPM Page Up
+15 "PageDn"    [0 0   0   0   0   0] [1 0 144   9   1 127] [1 0 144   5   1 127] # BPM Page Down
+16 "Sh_F3"     [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Set-by-Number
+17 "Sh_F4"     [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # MIDI Record
+18 "Sh_F5"     [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # MIDI Quantized Record
+19 "F12"       [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Reset Sequence
+20 "F11"       [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # One-shot Queue
+21 "F6"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Fast-Forward
+22 "F5"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Rewind
+23 "F9"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Top
+24 "}"         [0 0   0   0   0   0] [1 0 144   4   1 127] [1 0 144   0   1 127] # Playlist (value/next/previous)
+25 "|"         [0 0   0   0   0   0] [1 0 144   3   1 127] [1 0 144   1   1 127] # Song in Playlist (value/next/previous)
+26 "Sh_F6"     [1 0 144  20   1 127] [1 0 144  22   1 127] [1 0 144  18   1 127] # EXPANSION 0
+27 "Space"     [1 0 144  20   1 127] [1 0 144  22   1 127] [1 0 144  18   1 127] # Start
+28 "Esc"       [1 0 144  20   1 127] [1 0 144  22   1 127] [1 0 144  18   1 127] # Stop
+29 "{"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Snapshot 2
+30 "F8"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Toggle All Mutes
+31 "F7"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Song Pointer Position
+32 "p"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Keep queue
+33 "/"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Slot shift
+34 "Null_f0"   [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 2
+35 "Null_f1"   [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 3
+
+# [extended-keys]
+#
+# These cannot apply for MIDI control:
+#
+# 20 "F2" "JACK Mode"   (Toggle JACK)
+# 21 "F3" "Menu Mode"
+# 22 "F4" "JACK Transport"
+# 19 "F1" "Song/Live"
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

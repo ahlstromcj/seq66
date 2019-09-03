@@ -1,0 +1,953 @@
+%-------------------------------------------------------------------------------
+% seq66_usr_file
+%-------------------------------------------------------------------------------
+%
+% \file        seq66_usr_file.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-08-31
+% \update      2018-10-28
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides the usr_file.
+%
+%-------------------------------------------------------------------------------
+
+\section{Sequencer66 "usr" Configuration File}
+\label{sec:seq66_usr_file}
+
+   There are two \textsl{Sequencer66} configuration files:
+   \texttt{sequencer66.rc} and \texttt{sequencer66.usr}.
+   See \sectionref{sec:seq66_rc_file}; it describes the "rc" file.
+   It is a bit different in how it is handled.
+
+   The \textsl{Sequencer66} "usr" (or "user")
+   configuration file provides a way to give more
+   informative names to the MIDI busses, MIDI channels, and MIDI controllers of
+   a given system setup.  This configuration will override the default values
+   of some drop-down lists and menu items, and make them reflect your names for
+   them.  In \textsl{Sequencer66} it, also includes some items that affect the
+   user-interface's look, and other new configuration items.
+
+   \index{usr!-u}
+   \index{usr!--user-save}
+   Unlike the "rc" file, the "user" file is \textsl{not} written every time
+   \textsl{Sequencer66} exits.  If the "user" files does not exist, one is
+   created, but it is normally not overwritten thereafter.  To
+   cause it to be overwritten at exit, run \textsl{Sequencer66} with the
+   \texttt{-u} or \texttt{--user-save} option:
+
+   \begin{verbatim}
+      $ seq66 --user-save
+   \end{verbatim}
+
+   This option is recommended when one installs a new version of
+   \textsl{Sequencer66}, which might add new options to the "user" file.
+   See \sectionref{sec:seq66_man_page}; it discusses more options involving the
+   "user" file.
+
+   Another difference between the "rc" file and the "user" file is that
+   the "user" file currently has no graphical user-interface dialog to
+   configure the "user" settings.  One has to edit the file manually.
+
+   The original purpose for the "user" file was to create familiar names for the
+   system MIDI devices.
+   By default, the list of MIDI devices that \textsl{Sequencer66} shows depends
+   on one's system setup and whether the manual-alsa-port option is specified
+   or not.  Here's our system, which has Timidity installed and running as a
+   service, and the \texttt{[manual-alsa-port]} option turned off, shown in a
+   composite view with all menus one can look at for MIDI settings:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.65]{buss/manual-0-buss-dropdown.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Sequencer66 Composite View of Native Devices}
+   \label{fig:seq66_manual_0_buss_dropdown}
+\end{figure}
+
+   At the top center, the dropdown menu contains the 5 MIDI busses/ports
+   supported by this computer.  At right, the MIDI channel shows
+   the channels numbers that can be picked for buss 0.  At bottom left, we see
+   the default controller values that \textsl{Sequencer66} includes.  We have
+   no idea if these correspond to any controllers that the selected MIDI buss
+   supports.  We \textsl{can} use this dropdown to see if any such controller
+   events are in the loaded MIDI file, of course; a solid black square
+   indicates that such an event was found in the pattern.
+
+   Assume we have 3 MIDI "buss" devices hooked to our system:
+   two Model "2x2" MIDI port devices, and an old PCR-30 MIDI controller
+   keyboard.  Let's number them:
+
+   \begin{enumerate}
+      \item Model 2x2 A
+      \item Model 2x2 B
+      \item PCR-30
+   \end{enumerate}
+
+   Then assume that we have nine different MIDI instruments in our kit.
+   Let's number them, too:
+
+   \begin{enumerate}
+      \item Waldorf Micro Q
+      \item SuperNova
+      \item DrumStation
+      \item TX81Z
+      \item WaveStation
+      \item ESI-2000
+      \item ES-1
+      \item ER-1
+      \item TB-303
+   \end{enumerate}
+
+   The Waldorf Micro Q, the SuperNova, and the DrumStation all have a large
+   number of special MIDI controller values for affecting the sound they
+   produce.  The DrumStation accepts MIDI controllers that change various
+   features of the sound of each type of drum it supports.
+
+   The buss devices can be configured to route certain
+   MIDI channels to certain MIDI devices.  Assume we have them
+   set up this way:
+
+   \begin{enumerate}
+      \item Model 2x2 A
+      \begin{itemize}
+         \item SuperNova: channels 1 to 8
+         \item TX81Z: channels 9 to 11
+         \item Waldorf Micro Q: channels 12 to 15
+         \item DrumStation: channel 16
+      \end{itemize}
+      \item Model 2x2 B
+      \begin{itemize}
+         \item WaveStation: channels 1 to 4
+         \item ESI-2000: channels 5 to 14
+         \item ES-1: channel 15
+         \item ER-1: channel 16
+      \end{itemize}
+      \item PCR-30
+      \begin{itemize}
+         \item TB-303: channel 1
+      \end{itemize}
+   \end{enumerate}
+
+   How can we get \textsl{Sequencer66} to show these items with the proper
+   names associated with each device, channel, and controller value?
+   We use the oddly-named \textbf{"user" configuration file}.
+
+   \index{sequencer66.usr}
+   \index{[sequencer66.usr]}   % for convenience
+   The \textsl{Seq24} configuration file was called
+   \texttt{.seq24usr}, and it was stored in the user's \texttt{\$HOME}
+   directory.
+   \textsl{Sequencer66} uses a new file-name
+   to take its place, with a fall-back to the original file-name if the new
+   file does not exist, or if \textsl{Sequencer66} is running in
+   \index{legacy mode}
+   legacy mode.
+   After one runs \textsl{Sequencer66} for the first time (or after deleting
+   the configuration files), it will generate a
+   \texttt{sequencer66.usr} file in your home directory:
+
+   \begin{verbatim}
+      /home/ahlstrom/.config/sequencer66/sequencer66.usr
+   \end{verbatim}
+
+   It allows you to give an alias to 
+   each MIDI bus, MIDI channel, and MIDI control 
+   codes, per channel.
+   The file-name is a bit misleading... do not confuse this file with the
+   \texttt{sequencer66.rc} file.
+
+   The process for setting up the user file is to:
+
+   \begin{enumber}
+      \item Define one or more MIDI busses, the name of each, and what
+         instruments are on which channels.  Each buss is configured in a
+         section of the form "\texttt{[user-midi-bus-X]}", where "X" ranges
+         from 0 on up.  Each buss then defines up to 16 channel entries.
+         Each entry includes the channel number and the number of a
+         section in the user-instrument section described next.
+      \item Define all of the instruments and their controller
+         names, if they have them.  Each instrument is configured in a
+         section of the form "\texttt{[user-instrument-X]}", where "X"
+         ranges from 0 on up.
+   \end{enumber}
+
+   Let's walk through the structure of this setup, since it is a little bit
+   tricky.  Here is a diagram of the relationships between the buss definitions
+   and instrument definitions:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user-busses-and-instruments.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Busses and Instruments in the "usr" File}
+   \label{fig:seq66_manual_user_busses_and_instruments}
+\end{figure}
+
+   The first section in the "usr" file (after \texttt{[comments]})
+   is \texttt{[user-midi-bus-definitions]}.  The solid diamond link, with the
+   "*" marker, indicates that this section contains an arbitrary number ("*")
+   of \texttt{[user-midi-bus-N]} sections, where "N" ranges from 0 on upward.
+   These correspond to the MIDI busses expected to be in the system, ignoring
+   the "announce" buss.
+
+   Each of the busses contains 16 (0 to 15) channel entries.
+   These channels are referred to as "instrument numbers", and are
+   represented as and linked to "instruments" in the
+   \texttt{[user-instrument-definitions]} section.  Each instrument contains up
+   to 128 controller values; these controller values are available in the
+   \textbf{Event} button in the Pattern Editor, and their names are shown.
+
+   So, each instrument is setup as a "channel" in a particular "buss".
+   In the Pattern Editor, when a particular buss and channel is selected,
+   the \textbf{Event} menu entries should match the controller entries set up
+   in the "usr" file.
+
+   Taking our list of devices and channels we created above, which
+   can be seen in the \textsl{Sequencer66} sample file
+   \texttt{contrib/configs/sequencer66.usr.example}, and 
+   deducting 1 from each device number and channel number (so that numbering
+   starts from 0), and consulting the device manuals to determine the
+   controller values it supports, we can assemble a "user" configuration file
+   that makes the setup visible in \textsl{Sequencer66}.
+
+   Peruse the next couple of sections to understand a bit about the format of
+   this file.  Look at the example files in the \texttt{contrib/configs}
+   directory as well, to see the whole thing put together.
+   Once satisfied, go to
+   \sectionref{subsec:seq66_usr_file_midi_bus_results}, and 
+   see what it all looks like.
+
+\subsection{"usr" File / MIDI Bus Definitions}
+\label{subsec:seq66_usr_file_midi_bus_definitions}
+
+   \index{usr!user-midi-bus-definitions}
+   \index{[user-midi-bus-definitions]}
+   This section begins with an
+   "INI" group marker \texttt{[user-midi-bus-definitions]}.
+   It defines the number of user busses that will be configured in this file.
+
+   \begin{verbatim}
+      [user-midi-bus-definitions]
+      3     # number of user-defined MIDI busses
+   \end{verbatim}
+
+   \index{usr!user-midi-bus-n}
+   \index{[user-midi-bus-n]}
+   This means that the \texttt{sequencer66.usr} file will have three MIDI buss
+   sections: [user-midi-bus-0], [user-midi-bus-1], and [user-midi-bus-2].
+   Here's is an annoted example of one such section:
+
+   \begin{verbatim}
+      [user-midi-bus-0]
+      2x2 A (SuperNova,Q,TX81Z,DrumStation)     # name of the device
+      16                                        # number of channels
+
+      # NOTE: Channels are 0-15, not 1-16.  Instruments set to -1 = GM
+
+      0 1                                       # channel and instrument
+      1 1      # Instrument #1 of the [user-instrument-definitions] section
+      2 1
+      . . .
+      7 1
+      8 3      # Instrument #3 of the [user-instrument-definitions] section
+      9 3
+      10 3
+      11 0     # Instrument #0 of the [user-instrument-definitions] section
+      12 0     # This is the Waldorf Micro Q device defined below
+      13 0
+      14 0
+      15 2     # Instrument #2 of the [user-instrument-definitions] section
+   \end{verbatim}
+
+   Here's an example of one that needs only one override:
+
+   \begin{verbatim}
+      [user-midi-bus-2]                         # Instrument 2, see ch. 15 above
+      PCR-30 (303)
+      1                                         # number of channels
+      0 8                                       # channel and instrument
+      # The rest default to -1... General MIDI
+   \end{verbatim}
+
+   Note that these user-instrument entries can be quickly disabled by changing
+   the count values to 0.
+   Also, these instrument-definition
+   sections are read from the "user" configuration file only if
+   the \texttt{--reveal-alsa-ports} option is \textsl{off} ("0");
+   this command-line option can also be specified in the
+   \texttt{[reveal-alsa-ports]} section of the "rc" file,
+   see \sectionref{subsec:seq66_rc_file_reveal_ports}, where this section is
+   discussed.
+   Otherwise, the actual port names reported by ALSA are shown.
+   The \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections
+   can be misleading if one wants to have access to the
+   actual ALSA ports that exist on the system.
+   Therefore, if the \texttt{--reveal-alsa-ports} option is turned on, then the
+   definitions in the "user" configuration file are \textsl{not} read from that
+   file.  The following figures show the results of various settings with an
+   active "user" file.  They have been clipped to save space.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-clock-m.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Clocks View, -m (--manual-alsa-ports)}
+   \label{fig:seq66_clock_m}
+\end{figure}
+
+   Above, the virtual (manual) output ports are shown just as created by
+   \textsl{Sequencer66}.
+   The \texttt{--reveal-alsa-ports} option is \textsl{off} here.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-input-m.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Inputs View with -m (--manual-alsa-ports) Option}
+   \label{fig:seq66_input_m}
+\end{figure}
+
+   Above, the single virtual (manual) input port is shown just as created by
+   \textsl{Sequencer66}.
+   Again, the \texttt{--reveal-alsa-ports} option is \textsl{off} here.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-clock-m-R.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Clocks View, -m (--manual-alsa-ports) and -R (--hide-alsa-ports)}
+   \label{fig:seq66_clock_m_R}
+\end{figure}
+
+   Above, by adding the "hide" ports option, the system port labels are
+   replaced by the labels from the "usr" file.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-clock-r.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Clocks View, -r (--reveal-alsa-ports)}
+   \label{fig:seq66_clock_r}
+\end{figure}
+
+   Above, the "reveal" ports option overrides the device names given in the
+   "usr" file, so that the native system names of the output ports are shown.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-input-r.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Inputs View with -r (--reveal-alsa-ports) Option}
+   \label{fig:seq66_input_r}
+\end{figure}
+
+   Above, the "reveal" ports option overrides the device names given in the
+   "usr" file, so that the native system names of the input ports are shown.
+   However, \textsl{Sequencer66} no longer overrides the
+   names of the input ports via the "usr" file.  This is done to
+   save some trouble in displaying the input port names, which are shown
+   only in this dialog.  We may consider offering a separate override section
+   for the input ports in the future.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-clock-R.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Clocks View with -R (--hide-alsa-ports) Option}
+   \label{fig:seq66_clock_R}
+\end{figure}
+
+   The figure above shows how hiding the system port names shows the names
+   defined in the "usr" file.  But notice that the actual port names are shown
+   in square brackets, for reference.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.50]{user/seq66-input-R.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Inputs View with -R (--hide-alsa-ports) Option}
+   \label{fig:seq66_input_R}
+\end{figure}
+
+   Although the "hide" ports option is specified above, this view is
+   currently also the normal view of the input ports, even with device names
+   defined in the "usr" file.
+   At this time, there's no real need to show the user-instrument names
+   on the input port.  If there turns out to be such a need, the definitions
+   would likely need to be different from the definitions for the output ports.
+   Another complexity is the possible existence, under ALSA, of the
+   \texttt{system:announce} port.
+
+\subsection{"usr" File / MIDI Instrument Definitions}
+\label{subsec:seq66_usr_file_midi_instrument_definitions}
+
+   \index{usr!user-instrument-definitions}
+   \index{[user-instrument-definitions]}
+   This section begins with an
+   "INI" group marker \texttt{[user-instrument-definitions]}.
+   It defines the number of user instruments that will be configured in this
+   file.  This section defines characteristics, such as
+   the meanings of MIDI controller values, of the instruments themselves,
+   not the MIDI busses to which they attached.
+
+   \begin{verbatim}
+      [user-instrument-definitions]
+      9     # number of user instrument
+   \end{verbatim}
+
+   \index{usr!user-instrument-n}
+   \index{[user-instrument-n]}
+   So this "usr" file will define 9 instruments.  We provide only one section
+   as an example.  Note that items without text default to the values
+   prescribed by the General MIDI (GM) specification.
+
+   \begin{verbatim}
+      [user-instrument-0]
+      Waldorf Micro Q                     # name of instrument
+      128                                 # number of MIDI controllers
+      0                                   # first controller value, unnamed
+      1 Modulation Wheel
+      2 Breath Control
+      3 
+      4 Foot Control
+         . . .
+      119
+      120 All Sound Off (0)
+      121 Reset All Controllers (0)
+      122 Local Control (0-127) (Off,On)
+      123 All Notes Off (0)
+      124                                 # defaults to GM
+      125 Unsupported
+      126 Unsupported
+      127                                 # defaults to GM
+   \end{verbatim}
+
+   Note the unnamed control numbers above.
+   An unnamed control number might be an unsupported control number.
+   It is termed to be "inactive".  In this case, the event menu of
+   the pattern editor will show the default name of this controller.
+   Again, though, the function denoted by this name might not be supported by
+   the device.  In that case, it might be better to call it "Unsupported".
+   See the examples above.
+   Here is an instrument that has synthesis parameters that can be controlled:
+
+   \begin{verbatim}
+      [user-instrument-1]
+      SuperNova
+      128
+      0 Bank Select MSB
+      1 Modulation Wheel
+      2 Breath Controller
+      3 Arp Pattern Select
+         . . .
+      121 Reset Controllers
+      122 Local Control [*]
+      123 All Notes Off
+      124 All Notes Off
+      125 All Notes Off
+      126 All Notes Off
+      127 All Notes Off
+   \end{verbatim}
+
+   Here is an instrument that perhaps has no controllers, or perhaps is simply
+   not configured by the musician yet:
+
+   \begin{verbatim}
+      [user-instrument-4]
+      WaveStation
+      0
+   \end{verbatim}
+
+   The sample file
+   \texttt{contrib/configs/sequencer66-timidity-yoshimi.usr.example}
+   contains examples of some other kinds of instruments.
+   It is a minimal resource, useful to study when creating one's own settings.
+
+\subsection{"usr" File / User Interface Settings}
+\label{subsec:seq66_usr_file_user_interface_settings}
+
+   \index{usr!user-interface-settings}
+   \index{[user-interface-settings]}
+   This section, new to \textsl{Sequencer66}, begins with an
+   "INI" group marker \texttt{[user-interface-settings]}.
+
+   It provides for a feature we will hopefully be able to complete some day:
+   the complete specificition of the appearance of the user-interface.
+   There is plenty of room to change the appearance of
+   \textsl{Sequencer66} already!  Please try the settings and see what you
+   like.
+
+   \index{usr!grid-style}
+   \begin{verbatim}
+      #   ======== Sequencer66-Specific Variables Section ========
+
+      [user-interface-settings]
+
+      # These settings specify the soon-to-be-modifiable sizes of
+      # the Sequencer66 user-interface elements.
+
+      # Specifies the style of the main-window grid of patterns.
+      #
+      # GTK:
+      #   0 = Normal style, matches the GTK theme, has brackets.
+      #   1 = White grid boxes that have brackets.
+      #   2 = Black grid boxes (no brackets, our favorite).
+      #
+      # Qt:
+      #   0 = Slot coloring matches Kepler34.
+      #   1 = Slot coloring more like GTK.
+      1       # grid_style
+   \end{verbatim}
+
+   \index{usr!grid-brackets}
+   \begin{verbatim}
+      # Specifies box style box around a main-window grid of patterns.
+      # 0  = Draw a whole box around the pattern slot.
+      # 1  = Draw brackets on the sides of the pattern slot.
+      # 2 and up = make the brackets thicker and thicker.
+      # -1 = same as 0, draw a box one-pixel thick.
+      # -2 and lower = draw a box, thicker and thicker.
+      2       # grid_brackets
+   \end{verbatim}
+
+   \index{usr!mainwnd-rows}
+   \index{variset}
+   \begin{verbatim}
+      # Specifies the number of rows in the main window.
+      # Values of 4 (the default) through 8 (the best alternative value)
+      # are allowed.
+      4       # mainwnd_rows
+   \end{verbatim}
+
+   \index{usr!mainwnd-cols}
+   \index{variset}
+   \begin{verbatim}
+      # Specifies the number of columns in the main window.
+      # At present, only values from 8 (the default) to 12 are supported.
+      8       # mainwnd_cols
+   \end{verbatim}
+
+   \index{usr!max-sets}
+   \begin{verbatim}
+      # Specifies the maximum number of sets, which defaults to 1024.
+      # It is currently never necessary to change this value.
+      32      # max_sets
+   \end{verbatim}
+
+   \index{usr!mainwid-border}
+   \begin{verbatim}
+      # Specifies the border width in the main window.
+      0      # mainwid_border
+   \end{verbatim}
+
+   \index{usr!mainwid-spacing}
+   \begin{verbatim}
+      # Specifies the border spacing in the main window.
+      2      # mainwid_spacing
+   \end{verbatim}
+
+   \index{usr!control-height}
+   \begin{verbatim}
+      # Specifies some quantity, it is not known what it means.
+      0      # control_height
+   \end{verbatim}
+
+   \index{usr!zoom}
+   \begin{verbatim}
+      # Specifies the initial zoom for the piano rolls.  Ranges from 1.
+      # to 32, and defaults to 2 unless changed here.
+      2      # zoom
+   \end{verbatim}
+
+   \index{usr!global-seq-feature}
+   \begin{verbatim}
+      # Specifies if the key, scale, and background sequence are to be
+      # applied to all sequences, or to individual sequences.  The
+      # behavior of Seq24 was to apply them to all sequences.  But
+      # Sequencer66 takes it further by applying it immediately, and
+      # by saving to the end of the MIDI file.  Note that these three
+      # values are stored in the MIDI file, not this configuration file.
+      # Also note that reading MIDI files not created with this feature
+      # will pick up this feature if active, and the file gets saved.
+      # It is contagious.
+      #
+      # 0 = Allow each sequence to have its own key/scale/background.
+      #     Settings are saved with each sequence.
+      # 1 = Apply these settings globally (similar to seq24).
+      #     Settings are saved in the global final section of the file.
+      1      # global_seq_feature
+   \end{verbatim}
+
+   \index{usr!use-new-font}
+   \begin{verbatim}
+      # Specifies if the old, console-style font, or the new anti-
+      # aliased font, is to be used as the font throughout the GUI.
+      # In legacy mode, the old font is the default.
+      #
+      # 0 = Use the old-style font.
+      # 1 = Use the new-style font.
+      1      # use_new_font
+   \end{verbatim}
+
+   \index{usr!allow-two-perfedits}
+   \begin{verbatim}
+      # Specifies if the user-interface will support two song editor
+      # windows being shown at the same time.  This makes it easier to
+      # edit songs with a large number of sequences.
+      #
+      # 0 = Allow only one song editor (performance editor).
+      # 1 = Allow two song editors.
+      1      # allow_two_perfedits
+   \end{verbatim}
+
+   \index{usr!perf-h-page-increment}
+   \begin{verbatim}
+      # Specifies the number of 4-measure blocks for horizontal page
+      # scrolling in the song editor.  The old default, 1, is a bit
+      # small.  The new default is 4.  The legal range is 1 to 6, where
+      # 6 is the width of the whole performance piano roll view.
+      4      # perf_h_page_increment
+   \end{verbatim}
+
+   \index{usr!perf-v-page-increment}
+   \begin{verbatim}
+      # Specifies the number of 1-track blocks for vertical page
+      # scrolling in the song editor.  The old default, 1, is a bit
+      # small.  The new default is 8.  The legal range is 1 to 18, where
+      # 18 is about the height of the whole performance piano roll view.
+      8      # perf_v_page_increment
+   \end{verbatim}
+
+   \index{usr!progress-bar-colored}
+   \begin{verbatim}
+      # Specifies if the progress bar is colored black, or a different
+      # color.  The following integer color values are supported:
+      # 
+      # 0 = black
+      # 1 = dark red
+      # 2 = dark green
+      # 3 = dark orange
+      # 4 = dark blue
+      # 5 = dark magenta
+      # 6 = dark cyan
+      6      # progress_bar_colored
+   \end{verbatim}
+
+   \index{usr!progress-bar-thick}
+   \begin{verbatim}
+      # Specifies if the progress bar is thicker.  The default is 1
+      # pixel.  The 'thick' value is 2 pixels.  (More than that is not
+      # useful.  Set this value to 1 to enable the feature, 0 to disable
+      # it.
+      1      # progress_bar_thick
+   \end{verbatim}
+
+   \index{usr!inverse-colors}
+   \begin{verbatim}
+      # Specifies using an alternate (darker) color palette.  The
+      # default is the normal palette.  Not all items in the user
+      # interface are altered by this setting, and it's not perfect.
+      # Set this value to 1 to enable the feature, 0 to disable it.
+      0      # inverse_colors
+   \end{verbatim}
+
+   \index{usr!window-redraw-rate}
+   \begin{verbatim}
+      # Specifies the window redraw rate for all windows that support
+      # that concept.  The default is 40 ms.  Some windows used 25 ms.
+      40     # window_redraw_rate
+   \end{verbatim}
+
+   \index{usr!use-more-icons}
+   \begin{verbatim}
+      # Specifies using icons for some of the user-interface buttons
+      # instead of text buttons.  This is purely a preference setting.
+      # If 0, text is used in some buttons (the main window buttons).
+      # Otherwise, icons are used.  One will have to experiment :-).
+      0      # use_more_icons (currently affects only main window)
+   \end{verbatim}
+
+   \index{multi-wid}
+   \index{usr!block-rows}
+   \begin{verbatim}
+      # Specifies the number of set window ('wid') rows to show.
+      # The long-standing default is 1, but 2 or 3 may also be set.
+      # Corresponds to 'r' in the '-o wid=rxc,f' option.
+      2      # block_rows (number of rows of set blocks/wids)
+   \end{verbatim}
+
+      This option is \textsl{not supported} in the Qt version.
+      Instead, the user can create an arbitrary number of
+      live-frame windows.
+
+   \index{multi-wid}
+   \index{usr!block-columns}
+   \begin{verbatim}
+      # Specifies the number of set window ('wid') columns to show.
+      # The long-standing default is 1, but 2 may also be set.
+      # Corresponds to 'c' in the '-o wid=rxc,f' option.
+      2      # block_columns (number of columns of set blocks/wids)
+   \end{verbatim}
+
+   \index{usr!block-independent}
+   \begin{verbatim}
+      # Specifies if the multiple set windows are 'in sync' or can
+      # be set to arbitrary set numbers independently.
+      # The default is false (0), means that there is a single set
+      # spinner, which controls the set number of the upper-left 'wid',
+      # and the rest of the set numbers follow sequentially.  If true
+      # (1), then each 'wid' can be set to any set-number.
+      # Corresponds to the 'f' (true, false, or 'indep') in the
+      # '-o wid=rxc,f' option.  Here, 1 is the same as 'indep' or false,
+      # and 0 is the same as f = true.  Backwards, so be careful.
+      1      # block_independent (separate set spinner for blocks/wids)
+   \end{verbatim}
+
+   Note that the window-redraw rate option is meant more for experimentation
+   than anything else.  It probably doesn't affect CPU usage much, but might
+   provide a smoother-running cursor on some systems.
+
+\subsection{"usr" File / User MIDI Settings}
+\label{subsec:seq66_usr_file_user_midi_settings}
+
+   \index{[user-midi-settings]}
+   This section begins with an
+   "INI" group marker \texttt{[user-midi-settings]}.
+   It supports files with different PPQN, and and allows one to specify the
+   global defaults for tempo, beats per measure, and so on.
+
+   \index{usr!midi-ppqn}
+   \begin{verbatim}
+      [user-midi-settings]
+
+      # These settings specify MIDI-specific value that might be
+      # better off as variables, rather than constants.
+      # Specifies parts-per-quarter note to use, if the MIDI file.
+      # does not override it.  Default is 192, but we'd like to go
+      # higher than that.  BEWARE:  STILL GETTING IT TO WORK!
+      192     # midi_ppqn
+   \end{verbatim}
+
+   \index{usr!midi-beats-per-measure}
+   \begin{verbatim}
+      # Specifies the default beats per measure, or beats per bar.
+      # The default value is 4.
+      4       # midi_beats_per_measure/bar
+   \end{verbatim}
+
+   \index{usr!midi-beats-per-minute}
+   \begin{verbatim}
+      # Specifies the default beats per minute.  The default value
+      # is 120, and the legal range is 1 to 600.
+      120     # midi_beats_per_minute
+   \end{verbatim}
+
+   \index{usr!midi-beat-width}
+   \begin{verbatim}
+      # Specifies the default beat width. The default value is 4.
+      4       # midi_beat_width
+   \end{verbatim}
+
+   \index{usr!midi-buss-override}
+   \begin{verbatim}
+      # Specifies the buss-number override. The default value is -1,
+      # which means that there is no buss override.  If a value
+      # from 0 to 31 is given, then that buss value overrides all
+      # buss values specified in all sequences/patterns.
+      # Change this value from -1 only if you want to use a single
+      # output buss, either for testing or convenience.  And don't
+      # save the MIDI afterwards, unless you really want to change
+      # all of its buss values.
+      -1     # midi_buss_override
+   \end{verbatim}
+
+   For the new 0.90 series, additional values for the
+   \texttt{[user-midi-settings]} section have been added:
+
+   \index{usr!velocity-override}
+   \begin{verbatim}
+      # Specifies the default velocity override when adding notes in the
+      # sequence/pattern editor.  This value is obtained via the 'Vol'
+      # button, and ranges from 0 (not recommended :-) to 127.  If the
+      # value is -1, then the incoming note velocity is preserved.
+      80     # velocity_override (-1 = 'Free')
+   \end{verbatim}
+
+   \index{usr!bpm-precision}
+   \begin{verbatim}
+      # Specifies the precision of the beats-per-minutes spinner and
+      # MIDI control over the BPM value.  The default is 0, which means
+      # the BPM is an integer.  Other values are 1 and 2 decimal digits
+      # of precision.
+      1      # bpm_precision
+   \end{verbatim}
+
+   \index{usr!bpm-step-increment}
+   \begin{verbatim}
+      # Specifies the step increment of the beats/minute spinner and
+      # MIDI control over the BPM value.  The default is 1. For a
+      # precision of 1 decimal point, 0.1 is a good value.  For a
+      # precision of 2 decimal points, 0.01 is a good value, but one
+      # might want somethings a little faster, like 0.05.
+      0.1    # bpm_step_increment
+   \end{verbatim}
+
+   \index{usr!bpm-page-increment}
+   \begin{verbatim}
+      # Specifies the page increment of the beats/minute field. It is
+      # used when the Page-Up/Page-Down keys are pressed while the BPM
+      # field has the keyboard focus.  The default value is 10.
+      5.0    # bpm_page_increment
+   \end{verbatim}
+
+   \index{usr!midi-bpm-minimum}
+   \begin{verbatim}
+		# Specifies the minimum value of beats/minute in tempo graphing.
+		# By default, the tempo graph ranges from 0.0 to 127.0.
+		# This value can be increased to give a magnified view of tempo.
+		0       # midi_bpm_minimum
+   \end{verbatim}
+
+   \index{usr!midi-bpm-maximum}
+   \begin{verbatim}
+		# Specifies the maximum value of beats/minute in tempo graphing.
+		# By default, the tempo graph ranges from 0.0 to 127.0.
+		# This value can be increased to give a magnified view of tempo.
+		360       # midi_bpm_maximum
+   \end{verbatim}
+
+   \index{usr!velocity-override}
+      The \texttt{velocity-override} option fixes a long standing (from
+      \textsl{Seq24}) bug where the actual incoming note velocity was always
+      replaced by a hard-wired value.
+
+   \index{usr!bpm-step-increment}
+   \index{usr!bpm-page-increment}
+      The \texttt{bpm-precision}, \texttt{bpm-step-increment}, and
+      \texttt{bpm-page-increment} values allow more precise control over tempo,
+      which makes it easier to match the tempo of external music sources.  Note
+      that the step-increment is used by the up/down arrow buttons, the up/down
+      arrow keys, and the MIDI BPM control values.  The page-increment is used
+      if the BPM field has focus and the Page-Up/Page-Down keys are pressed,
+      and new MIDI control values have been added to support coarse MIDI
+      control of tempo.
+
+   \index{usr!midi-bpm-minimum}
+   \index{usr!midi-bpm-maximum}
+		The \texttt{midi-bpm-minimum} and \texttt{midi-bpm-maximum} settings
+		are used in scaling the display of Tempo events.
+      By adjusting these values, one can more easily see the variations in
+      tempo.  In a main window pattern slot, or in the song editor tempo track,
+      this range is scaled to the full range of note values, 0 to 127.
+      Generally, one wants to select a range that keeps the main tempo line at
+      the middle height of the pattern display.
+
+   To obtain these new settings, remember to backup the existing
+   \textsl{sequencer66.usr}, then run \textsl{Sequencer66} with the
+   \texttt{--user-save} option, and then do a "diff" on the new file and the
+   original to merge any old values that need to be preserved.  Then make any
+   further tweaks to the new values.
+
+\subsection{"usr" File / User Options}
+\label{subsec:seq66_usr_file_user_options}
+
+   \index{[user-options]}
+   This section begins with an
+   "INI" group marker \texttt{[user-options]}.
+   It provides for additional options keyed by the
+   \texttt{-o}/\texttt{--option} options.
+   This group of options serves to expand the options that are available, since
+   \textsl{Sequencer66} is  running out of single-character options.
+   This group of options are shown below.
+
+   \index{usr!option-daemonize}
+   \begin{verbatim}
+		# The daemonize option is used in seq66cli to indicate that the
+		# application should be gracefully run as a service.
+		0       # option_daemonize
+   \end{verbatim}
+
+   If this option is not used when running \texttt{seq66cli}, then the
+   application stays in the console window and dumps informational output to
+   it.  If this option is in force, then the only way to affect
+   \texttt{seq66cli} is to send a signal (e.g. SIGKILL) to it, or use
+   MIDI control.
+
+   \index{usr!option-logfile}
+   \begin{verbatim}
+      # This value specifies an optional log-file that replaces output
+      # to standard output and standard error.  To indicate no log-file,
+      # the string "" is used.
+      "seq66.log"
+   \end{verbatim}
+
+   This log-file is written to the same directory as the "rc" and "usr" files.
+   If this file-name is empty, then a valid file-name must be specified
+   in the "--option log=filename.log" option.  Note that this file
+   is always written to the \textsl{Sequencer66} configuration directory.
+
+\subsection{"usr" File / Device and Control Names}
+\label{subsec:seq66_usr_file_midi_bus_results}
+
+   Okay, now we have this file copied to our home directory:
+
+   \begin{verbatim}
+      /home/ahlstrom/.config/sequencer66/sequencer66.usr
+   \end{verbatim}
+
+   If we'd already run \textsl{Sequencer66} at least once, we'd have
+   overwritten the skeleton sample file that \textsl{Sequencer66}
+   writes by default.  We now have a full-fledged "user" file.
+
+   However, because we don't actually have all that equipment (we got the
+   example from the Web, for cryin' out loud), let's see what we end up with
+   when we run \textsl{Sequencer66} this time and show the pattern editor
+   settings:
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.65]{buss/manual-0-userfile-buss-dropdown.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{Sequencer66 Composite View of Non-Native Devices}
+   \label{fig:seq66_manual_0_userfile_buss_dropdown}
+\end{figure}
+
+   Compare that diagram to \figureref{fig:seq66_manual_0_buss_dropdown}.
+   If the original figure, we saw the 5 native busses (ports) on our system,
+   their bare-bones channel numbers, and the default controller values.  In
+   this new figure, we see the three buss devices (ports), plus the two
+   Timidity ports.  If we stopped the Timidity service, these would go away.
+
+   Look at the selected buss, "[0]".  It's 16 channels are now associated with
+   the devices to which the channels have been assigned.
+   Thus, when we have a new pattern we've created in \textsl{Sequencer66},
+   we can assign it to exactly the buss and device we want.
+
+   If we don't have port-mappers installed, and thus have only one playback
+   device plugged into the buss, we can still create a setup that
+   shows the device and a specific program setup.  Doing so would be tedious,
+   but perhaps there's some automated way to do it?
+   Lastly, note the following figure.
+
+\begin{figure}[H]
+   \centering 
+%  \includegraphics[scale=0.65]{buss/manual-0-userfile-seq-buss-dropdowns.png}
+   \includegraphics[scale=0.65]{roll.png}
+   \caption{The MIDI Bus Menu for a Specific Pattern}
+   \label{fig:seq66_manual_0_userfile_seq_buss_dropdown}
+\end{figure}
+
+   This figure shows that we can also select the desired port and channel
+   directly from the main window.
+   There's more to the "user" configuration file than we've exposed here.
+%  but finding more information about this file has proven a bit tricky.
+
+%  Sometime we would like to create a "user" that sets up the
+%  \textsl{Yoshimi} 1.3.5+ software synthesizer as a device and instrument.
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

@@ -1,0 +1,159 @@
+TODO for Sequencer66 0.90.0 (Sequencer64 refactored for C++14 and Qt)
+Chris Ahlstrom
+2019-04-13 to 2019-08-26
+
+HOT ITEMS:
+
+    Differentiate between perf dirty and paint dirty for updating GUIs only once
+    after a sequence change.
+
+    Make the zoom dropdown in the seqroll sync with the zoom changes via
+    keystroke.  Same for the zoom of the seqtime and triggereditor (bad name).
+
+    Also test the MIDI control out feature to make sure the bit operators are
+    correct.  If so, the same change in seq64!
+
+List of To-Do Items for the Refactoring.  An asterisk means it should also be
+fixed in Seq64.
+
+seq_portmidi/src/finddefault.c *:
+
+    Eliminate find_default_device().  We do not want to use Java user preferences
+    for configuration information.
+
+seq_portmidi/src/pmwinmm.c *:
+seq_portmidi/src/pmmacosxcm.c *:
+
+    Figure out the proper client and port values for calls to pm_add_device().
+
+seq_portmidi/src/mastermidibus.cpp *:
+
+    Implement api_set_ppqn().
+    Implement api_set_beats_per_minute().
+    Declare and Implement api_flush().
+    Declare and Implement api_start().
+    Declare and Implement api_stop().
+    Declare and Implement api_continue_from().
+    Declare and Implement api_port_start().
+
+seq_rtmidi/src/midi_alsa_info.cpp *:
+
+    In api_get_midi_event(), implement support for:
+
+        SND_SEQ_EVENT_PORT_START.
+        SND_SEQ_EVENT_PORT_EXIT.
+        SND_SEQ_EVENT_PORT_CHANGE (could be difficult).
+
+Seq66qt5/seq66qt5.cpp *:
+
+    Implement gui_palette_qt5::load_inverse_palette().
+
+Seqtool/src/optionsfile.cpp (a low priority):
+
+    parse():  Investigate and fix all the TODOs.
+
+Seqtool/src/optionsfile.cpp (a low priority):
+
+    Investigate and fix all the TODOs.
+
+seq_qt5/src/qseqkeys.cpp:
+
+    paintEvent():
+
+seq_qt5/src/qseventslots.cpp:
+
+    delete_current_event(): set modify flag
+
+seq_qt5/src/qlfoframe.cpp:
+
+    on_focus_out_event():  Implement undo of calculations.
+
+seq_qt5/src/qseqbase.cpp:
+
+    set_scroll_y(): Use m_unit_height.
+
+seq_qt5/src/qseqbase.cpp:
+
+    mouseReleaseEvent():  Implement undirtying when undoing.
+
+seq_qt5/src/qsliveframe.cpp:
+
+    new_seq(): handle reenable/disable of the editor for each new sequence.
+    cut_seq(): add the warning dialog.
+    delete_seq(): add the warning dialog.
+
+seq_qt5/src/qperfroll.cpp:
+
+    Investigate the note at the top about passing values to constructors.
+    paintEvent(): handle DRAW_TEMPO
+
+seq_qt5/src/gui_palette_qt5.cpp:
+
+    get_color_inverse(): return black for NONE color.
+
+seq_qt5/src/qseqroll.cpp:
+
+    keyPressEvent():  Fix the zoom keys.
+
+seq_qt5/src/qsmainwnd.cpp:
+
+    Constructor:  Fix and unhide the PPQN combo-box.
+
+seq_qt5/src/qsliveframe.cpp:
+
+    While running, try to avoid drawing the empty slots over and over.
+
+libseq66/src/play/setmapper.cpp:
+
+    Implement select_triggers_in_range().
+
+libseq66/src/play/sequence.cpp:
+
+    Investigate and fix offset_triggers().
+
+libseq66/src/play/performer.cpp:
+
+    Implement solo, FF, rewind, and many more.  Investigate!!!
+
+    Implement error handling in various places.
+
+    put_settings(): Implement the to-do.
+    mute_group_control(): Implement it, a HIGH PRIORITY!
+
+libseq66/src/play/screenset.cpp:
+
+    Implement select_triggers_in_range().
+
+libseq66/src/midi/jack_assistant.cpp:
+
+    session_event():  Implement the quit functionality.
+    jack_session_callback():  Implement the quit functionality.
+
+libseq66/src/midi/editable_event.cpp:
+
+    set_status_from_string(): Implement the to-do functionality.
+
+libseq66/src/midi/wrkfile.cpp:
+
+    Implement the to-dos.
+
+libseq66/src/midi/midifile.cpp:
+
+    Implement the to-dos.  A HIGH PRIORITY.
+
+libseq66/src/cfg/mutegroupsfile.cpp:
+
+    Implement the to-dos?
+
+libseq66/src/cfg/usrsettings.cpp:
+
+    normalize(): Fix the calculation of the number of mute tracks.
+
+Many modules:
+
+    In general, support run-time changes in PPQN, a big task.
+    In general, support PPQN calculations other than "times 4", a big task.
+
+Lots of testing as well!
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

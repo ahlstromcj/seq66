@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qlfoframe</class>
+ <widget class="QFrame" name="qlfoframe">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>632</width>
+    <height>332</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Frame</string>
+  </property>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>10</y>
+     <width>421</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="m_lfo_main_label">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>LFO Data Editor</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLineEdit" name="m_value_text">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>280</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>100.0</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="m_range_text">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>280</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>100.0</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="m_speed_text">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>280</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>100.0</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="m_phase_text">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>280</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>360.0</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="m_button_close">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>280</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="m_value_slider">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>80</y>
+     <width>16</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Sets the DC offset of the modulating waveform.</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="m_phase_slider">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>80</y>
+     <width>16</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Sets the phase of the LFO.</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QSlider" name="m_range_slider">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>80</y>
+     <width>16</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Sets the depth of the LFO modulation.</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="m_wave_type_group">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>50</y>
+     <width>201</width>
+     <height>221</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Wave Type</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>173</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="m_wave_layout">
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_none">
+       <property name="text">
+        <string>&amp;None</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_sine">
+       <property name="text">
+        <string>Sine</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_saw">
+       <property name="text">
+        <string>Sawtooth</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_revsaw">
+       <property name="text">
+        <string>Re&amp;verse Sawtooth</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="m_radio_wave_triangle">
+       <property name="text">
+        <string>Triangle</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="m_phase_label">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>51</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Phase Shift</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="m_speed_label">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>51</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Periods</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="m_speed_slider">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>80</y>
+     <width>16</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>The number of periods per pattern divided by beat width.  For long patterns, set it higher.  Subject to an anti-aliasing effect, especially for short patterns.</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="m_value_label">
+   <property name="geometry">
+    <rect>
+     <x>21</x>
+     <y>51</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DC Offset</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="m_range_label">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>51</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Mod Range</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

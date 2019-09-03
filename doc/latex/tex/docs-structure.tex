@@ -1,0 +1,192 @@
+%-------------------------------------------------------------------------------
+% docs-structure
+%-------------------------------------------------------------------------------
+%
+% \file        docs-structure.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2015-04-20
+% \update      2019-08-15
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     This "include file" provides LaTeX options for a document.
+%
+%     Note that enumitem is an extension of enumerate, and comes from
+%     Debian's texlive-latex-recommended package.
+%
+%-------------------------------------------------------------------------------
+
+\usepackage{enumitem}         % setting the whitespace between and within lists
+\setlistdepth{9}
+\setlist{noitemsep}           % spacing within the list
+
+\usepackage{color}            % provide colors?
+\usepackage{nameref}          % Provide references by name instead of number
+\usepackage[colorlinks=true,linkcolor=webgreen,filecolor=webbrown,citecolor=webgreen]{hyperref}
+\definecolor{webgreen}{rgb}{0,.5,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+
+\usepackage{url}              % Required for including URLs
+\usepackage{hyperref}         % Required for including hyperlinks
+\usepackage{amsthm}           % Helps avoid "destination with same
+\usepackage[hypcap]{caption}  % make labels point to figure, not the caption
+\usepackage[pdftex]{graphicx} % Required for including images
+\graphicspath{{../images/}}   % Set the default folder for images
+\usepackage{float}            % For more control of location of Figures
+\usepackage{geometry}         % Page & text layout
+\geometry{
+  letterpaper,
+  top=2.5cm,
+  bottom=2.5cm,
+  left=2.5cm,
+  right=2.5cm
+}
+
+\usepackage{longtable}        % For making multi-page tables
+\usepackage{makeidx}          % For making an index
+
+% Try to reduce the space before or after verbatim sections.
+% Doesn't affect the spacing after the verbatim, though.
+
+\usepackage{etoolbox}
+\makeatletter
+\preto{\@verbatim}{\topsep=10pt \partopsep=0pt}
+\makeatother
+
+% Let's try to reduce the size of quotations.
+
+\usepackage{relsize,etoolbox}          % http://ctan.org/pkg/{relsize,etoolbox}
+\AtBeginEnvironment{quotation}{\smaller}   % Step font down one size relatively
+
+% For the MIDI Implementation Chart
+
+\usepackage{makecell}
+
+% This package isn't available easily on CentOS:
+%
+% \usepackage[subtle]{savetrees} % For tightening document vertical spacing
+
+\hypersetup{                  % HYPERLINKS
+% draft,                      % Uncomment removes links (e.g. for B&W printing)
+ colorlinks=true,
+ breaklinks=true,
+ bookmarksnumbered,
+ urlcolor=webbrown,
+ linkcolor=blue,              % RoyalBlue
+ citecolor=webgreen,
+ pdftitle={},
+ pdfauthor={\textcopyright},
+ pdfsubject={},
+ pdfkeywords={},
+ pdfcreator={pdfLaTeX},
+ pdfproducer={LaTeX with hyperref and ClassicThesis}
+}
+
+% Make an "enumber" style that makes all levels of enumerated lists show
+% arabic numerals.
+
+\newlist{enumber}{enumerate}{10}
+\setlist[enumber]{nolistsep,label=\arabic*.}
+
+% Make "paragraph" a fourth level, and make it shown in the table of
+% contents.
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+   {-2.5ex\@plus -1ex \@minus -.25ex}%
+   {1.25ex \@plus .25ex}%
+   {\normalfont\normalsize\bfseries}}
+\makeatother
+\setcounter{secnumdepth}{4} % how many sectioning levels to assign numbers to
+\setcounter{tocdepth}{4}    % how many sectioning levels to show in ToC
+
+% Provide a way of counting user-interface items without putting them in an
+% enumberation.
+
+\newcounter{ItemCounter}
+
+% Makes a numbered paragraph out of an item, and allows two index entries
+% for it.
+
+\newcommand{\itempar}[2] {
+   \noindent
+   \stepcounter{ItemCounter}
+   \textbf{\arabic{ItemCounter}. #1.}
+   \index{#1}
+   \index{#2}
+}
+
+% Provides for two forms of an option, as might be shown in a man page.
+
+\newcommand{\optionpar}[2] {
+   \textbf{\texttt{#1}} \textbf{\texttt{#2}} \\
+   \index{#1}
+   \index{#2}
+}
+
+% Now deprecated in preference to \itempar
+
+\newcommand{\settingdesc}[2] {
+   \textbf{#1}
+   \index{#1}
+   \index{#2}
+}
+
+% Make a full reference to a figure using its number, its name, and its page
+% number.  Very useful if you have a hard-copy of the document to deal with.
+
+\newcommand{\figureref}[1] {
+   Figure~\ref{#1}
+   "\nameref{#1}"
+   on page~\pageref{#1}\ignorespaces
+}
+
+% Make a full reference to a section using its number, its name, and its page
+% number.  Very useful if you have a hard-copy of the document to deal with.
+
+\newcommand{\sectionref}[1] {%
+   section~\ref{#1}
+   "\nameref{#1}"
+   on page~\pageref{#1}\ignorespaces
+}
+
+% Make a full reference to a "paragraph"  using its number, its name, and
+% its page number.  Very useful if you have a hard-copy of the document to
+% deal with.
+
+\newcommand{\paragraphref}[1] {%
+   paragraph~\ref{#1}
+   "\nameref{#1}"
+   on page~\pageref{#1}\ignorespaces
+}
+
+% Make a full reference to a table using its number, its name, and its page
+% number.  Very useful if you have a hard-copy of the document to deal with.
+
+\newcommand{\tableref}[1] {%
+   table~\ref{#1}
+   "\nameref{#1}"
+   on page~\pageref{#1}\ignorespaces
+}
+
+% For lining up enumerated items.  Doesn't really work well, better
+% to create a table.
+
+\newcommand{\itab}[1]{\hspace{0em}\rlap{#1}}
+\newcommand{\tab}[1]{\hspace{.1\textwidth}\rlap{#1}}
+
+% Change the fragction of the page that can be filled with graphics from 0.7
+% to 0.9.
+
+\renewcommand\floatpagefraction{.9}
+\renewcommand\dblfloatpagefraction{.9}
+\renewcommand\topfraction{.9}
+\renewcommand\dbltopfraction{.9}
+\renewcommand\bottomfraction{.9}
+
+\raggedbottom                          % avoid excessive vertical justification
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

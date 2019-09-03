@@ -1,0 +1,172 @@
+#if ! defined SEQ66_QPLAYLISTFRAME_HPP
+#define SEQ66_QPLAYLISTFRAME_HPP
+
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  seq66 is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with seq66; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          qsplaylistframe.hpp
+ *
+ *  This module declares/defines the base class for a simple playlist editor based
+ *  on Qt 5.
+ *
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2018-09-04
+ * \updates       2019-03-09
+ * \license       GNU GPLv2 or above
+ *
+ */
+
+#include <QFrame>
+
+#include "util/basic_macros.hpp"        /* nullptr and related macros       */
+
+class QTableWidgetItem;
+class QTimer;
+
+/*
+ * Do not document namespaces.
+ */
+
+namespace Ui
+{
+    class qplaylistframe;
+}
+
+/*
+ * Do not document namespaces, it breaks Doxygen.
+ */
+
+namespace seq66
+{
+    class performer;
+    class qsmainwnd;
+
+/**
+ *
+ */
+
+class qplaylistframe final : public QFrame
+{
+    friend class qsmainwnd;
+
+private:
+
+    /**
+     *  Provides human-readable names for the columns of the playlist and song
+     *  tables.
+     */
+
+    enum column_id_t
+    {
+        CID_MIDI_NUMBER,
+        CID_ITEM_NAME
+    };
+
+    Q_OBJECT
+
+public:
+
+    qplaylistframe
+    (
+        performer & p,
+        qsmainwnd * window,
+        QWidget * parent = nullptr
+    );
+
+    virtual ~qplaylistframe ();
+
+private:
+
+    void set_row_heights (int height);
+    void set_column_widths ();
+    void reset_playlist ();
+    void set_current_playlist ();
+    void set_current_song ();
+    void fill_playlists ();
+    void fill_songs ();
+    QTableWidgetItem * cell (bool isplaylist, int row, column_id_t col);
+
+    /**
+     * \getter m_performer
+     */
+
+    performer & perf ()
+    {
+        return m_performer;
+    }
+
+    bool load_playlist (const std::string & fullfilespec = "");
+
+protected:                          // overrides of event handlers
+
+    virtual void keyPressEvent (QKeyEvent *) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
+
+signals:
+
+private slots:
+
+    void handle_list_click_ex (int, int, int, int);
+    void handle_song_click_ex (int, int, int, int);
+    void handle_list_load_click ();
+    void handle_list_add_click ();
+    void handle_list_remove_click ();
+    void handle_list_save_click ();
+    void handle_song_add_click ();
+    void handle_song_remove_click ();
+    void handle_playlist_active_click ();
+    void conditional_update ();
+
+private:
+
+    Ui::qplaylistframe * ui;
+
+private:
+
+    /**
+     *  A timer for screen refreshing.
+     */
+
+    QTimer * m_timer;
+
+    /**
+     *  The performer object.
+     */
+
+    performer & m_performer;
+
+    /**
+     *  The main window parent of this frame.
+     */
+
+    qsmainwnd * m_parent;
+
+};          // class qplaylistframe
+
+}           // namespace seq66
+
+#endif      // SEQ66_QPLAYLISTFRAME_HPP
+
+/*
+ * qplaylistframe.hpp
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */
+
