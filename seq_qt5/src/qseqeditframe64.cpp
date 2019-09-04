@@ -1645,7 +1645,7 @@ qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
     int initialbus = seq_pointer()->get_midi_bus();
     seq_pointer()->set_midi_bus(bus, user_change);  /* user-modified value? */
-    ui->m_combo_bus->setCurrentIndex(0);            /* update_midi_bus(0)   */
+    ui->m_combo_bus->setCurrentIndex(bus);          /* UPDATE_MIDI_BUS(0)   */
     if (bus != initialbus && user_change)
     {
         int channel = seq_pointer()->get_midi_channel();

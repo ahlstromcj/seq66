@@ -128,7 +128,6 @@ qslivegrid::qslivegrid
     m_timer             (nullptr),
     m_msg_box           (nullptr),
     m_redraw_buttons    (true),
-    m_needs_update      (false),
     m_loop_buttons      (),
     m_x_min             (0),
     m_x_max             (0),
@@ -203,7 +202,7 @@ qslivegrid::set_playlist_name (const std::string & plname)
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qseqbase::needs_update(). All
+ *  update() only if necessary.  See qlivebase::needs_update(). All
  *  sequences are potentially checked.
  *
  *  Actually, we need a way to update only the loop slots in the grid layout,
@@ -214,9 +213,9 @@ void
 qslivegrid::conditional_update ()
 {
     bool ok = ! m_loop_buttons.empty();
-    if (m_needs_update || perf().is_running() && ok)    // perf().needs_update()
+    if (perf().is_running() || needs_update() && ok)    // perf().needs_update()
     {
-        m_needs_update = false;
+        set_needs_update(false);
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -661,7 +660,7 @@ qslivegrid::recreate_all_slots ()
     {
         clear_loop_buttons();
         m_redraw_buttons = true;                /* create_loop_buttons();   */
-        m_needs_update = true;
+        set_needs_update();
     }
     return result;
 }

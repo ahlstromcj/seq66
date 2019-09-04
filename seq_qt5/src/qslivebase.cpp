@@ -82,7 +82,8 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_adding_new        (false),
     m_can_paste         (false),
     m_has_focus         (false),
-    m_is_external       (is_nullptr(parent))
+    m_is_external       (is_nullptr(parent)),
+    m_needs_update      (false)
 {
     /*
      *  int fontsize = usr().scale_size(6);

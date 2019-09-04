@@ -573,8 +573,6 @@ qsmainwnd::qsmainwnd
 
     connect
     (
-        // ui->txtBankName, SIGNAL(textChanged(QString)),
-        // this, SLOT(update_bank_name(QString))
         ui->txtBankName, SIGNAL(textEdited(QString)),
         this, SLOT(update_bank_name(QString))
     );
@@ -2132,19 +2130,6 @@ qsmainwnd::update_bank_name (const QString &)
 }
 
 /**
- *  A virtual function to set the bank name in the user-interface.  Called by
- *  qslivebase::set_bank().
-
-void
-qsliveframe::set_bank_values (const std::string & bankname, int bankid)
-{
-    QString bname = bankname.c_str();
-    ui->txtBankName->setText(bname);       // now hidden
-    ui->spinBank->setValue(bankid);             // now hidden
-}
- */
-
-/**
  *
  */
 
@@ -2280,6 +2265,8 @@ void
 qsmainwnd::set_song_mute_on ()
 {
     perf().set_song_mute(mutegroups::muting::on);
+    if (not_nullptr(m_live_frame))
+        m_live_frame->set_needs_update();
 }
 
 /**
@@ -2290,6 +2277,8 @@ void
 qsmainwnd::set_song_mute_off ()
 {
     perf().set_song_mute(mutegroups::muting::off);
+    if (not_nullptr(m_live_frame))
+        m_live_frame->set_needs_update();
 }
 
 /**
@@ -2300,6 +2289,8 @@ void
 qsmainwnd::set_song_mute_toggle ()
 {
     perf().set_song_mute(mutegroups::muting::toggle);
+    if (not_nullptr(m_live_frame))
+        m_live_frame->set_needs_update();
 }
 
 /**

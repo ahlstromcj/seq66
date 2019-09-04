@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2019-09-03
+ * \updates       2019-09-04
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -115,11 +115,21 @@ public:
         return m_current_seq;
     }
 
+    bool needs_update () const
+    {
+        return m_needs_update;
+    }
+
 protected:
 
     performer & perf ()
     {
         return m_performer;
+    }
+
+    void set_needs_update (bool flag = true)
+    {
+        m_needs_update = flag;
     }
 
 protected:
@@ -302,6 +312,13 @@ protected:
      */
 
     bool m_is_external;
+
+    /**
+     *  Indicates a need for a button update, as opposed to a complete redraw
+     *  of all the buttons.
+     */
+
+    bool m_needs_update;
 
 };              // class qslivebase
 

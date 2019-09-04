@@ -403,6 +403,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 }
 #endif
 
+                // int fontsize = usr().scale_size(6); // EXPERIMENT
+                // m_text_font.setPointSize(fontsize);
+
                 painter.setPen(pen);
                 painter.setBrush(brush);
                 painter.setFont(m_text_font);
@@ -431,16 +434,16 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
 
-                if (rc().verbose())
-                {
+//              if (rc().verbose())
+//              {
                     if (m_seq->get_playing())
-                        title = "armed";
+                        title = "Armed";
                     else if (m_seq->get_queued())
-                        title = "queued";
+                        title = "Queued";
                     else if (m_seq->one_shot())
-                        title = "one-shot";
+                        title = "One-shot";
                     else
-                        title = "muted";
+                        title = "Muted";
 
                     box.setRect
                     (
@@ -448,7 +451,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                         m_top_left.m_w, m_top_left.m_h
                     );
                     painter.drawText(box, m_top_left.m_flags, title);
-                }
+//              }
             }
             draw_progress(painter, tick);
         }
