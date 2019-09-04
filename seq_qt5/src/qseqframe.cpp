@@ -112,7 +112,7 @@ qseqframe::on_sequence_change (seq::number seqno)
 {
     bool result = m_seq && seqno == m_seq->seq_number();
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("qseqframe::on_sequence_change(%d)\n", seqno);
 #endif
 

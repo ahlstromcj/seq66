@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-08-31
+ * \updates       2019-09-04
  * \license       GNU GPLv2 or above
  *
  *
@@ -47,7 +47,6 @@
 class QMenu;
 class QTimer;
 class QMessageBox;
-class QFont;
 
 /*
  * Do not document namespaces.
@@ -209,6 +208,7 @@ private:
     /**
      *  A two-dimensional vector of buttons containing a vector of rows, each
      *  row being a vector of columns.
+     *  The fastest varying index is the row: m_loop_buttons[column][row].
      */
 
     buttons m_loop_buttons;

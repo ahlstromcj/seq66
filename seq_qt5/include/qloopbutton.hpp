@@ -121,7 +121,7 @@ private:
      *  EXPERIMENTAL.
      */
 
-    int m_sine_table[32];
+    int m_sine_table[16];
     int m_sine_table_size;
 
     /**

@@ -554,8 +554,11 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             rectangle_x-2, rectangle_y-1, preview_w, preview_h
         );
 
-        int lowest;
-        int highest;
+        /*
+         * Draw the notes.
+         */
+
+        int lowest, highest;
         bool have_notes = s->minmax_notes(lowest, highest);
         if (have_notes)
         {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-03
+ * \updates       2019-09-04
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -430,6 +430,25 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     m_bottom_right.m_w, m_bottom_right.m_h
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
+
+                if (rc().verbose())
+                {
+                    if (m_seq->get_playing())
+                        title = "armed";
+                    else if (m_seq->get_queued())
+                        title = "queued";
+                    else if (m_seq->one_shot())
+                        title = "one-shot";
+                    else
+                        title = "muted";
+
+                    box.setRect
+                    (
+                        m_top_left.m_x, m_top_left.m_y + 10,
+                        m_top_left.m_w, m_top_left.m_h
+                    );
+                    painter.drawText(box, m_top_left.m_flags, title);
+                }
             }
             draw_progress(painter, tick);
         }
@@ -444,7 +463,8 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 }
 
 /**
- *
+ *      Draws the progress box, progress bar, and and indicator for non-empty
+ *      pattern slots.
  */
 
 void
@@ -455,9 +475,7 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
     const int penwidth = 2;
     bool qsnap = m_seq->snap_it();
     int c = m_seq->color();
-
-    initialize_sine_table();            // EXPERIMENTAL
-
+    initialize_sine_table();                        /* EXPERIMENTAL         */
     if (c == color_to_int(BLACK))
     {
         // pal.setColor(QPalette::Button, QColor(Qt::black));
@@ -487,7 +505,6 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
         // backcolor.setAlpha(100);
         // pen.setStyle(Qt::NoPen);
     }
-
     brush.setColor(backcolor);
     pen.setWidth(penwidth);
     painter.setPen(pen);
@@ -497,32 +514,35 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
         m_progress_box.m_x, m_progress_box.m_y,
         m_progress_box.m_w, m_progress_box.m_h
     );
-
-    /*
-     * Draw simple wave to indicate non-empty button.
-     */
-
-    if (m_sine_table_size > 0)
+    if (m_seq->event_count() > 0)
     {
-        int x = m_progress_box.m_x + 4;
-        int dx = m_progress_box.m_w / (m_sine_table_size - 1);
-        for (int i = 0; i < m_sine_table_size; ++i, x += dx)
+        /*
+         * Draw simple wave to indicate non-empty button.  We check the sequence
+         * event-count.  Another, slower, check is m_seq->minmax_notes(lo, hi))
+         */
+
+        if (m_sine_table_size > 0)
         {
-            int y = m_sine_table[i];
-            painter.drawRect(x, y, 1, 1);
+            int x = m_progress_box.m_x + 4;
+            int dx = m_progress_box.m_w / (m_sine_table_size - 1);
+            for (int i = 0; i < m_sine_table_size; ++i, x += dx)
+            {
+                int y = m_sine_table[i];
+                painter.drawRect(x, y, 1, 1);
+            }
         }
+
+        /*
+         * Draw vertical line for progress.
+         */
+
+        int lx = m_progress_box.m_x +
+            int(m_progress_box.m_w * double(tick) / m_seq->get_length());
+
+        int ly0 = m_progress_box.m_y + 1;
+        int ly1 = m_progress_box.m_y + m_progress_box.m_h - 1;
+        painter.drawLine(lx, ly1, lx, ly0);
     }
-
-    /*
-     * Draw vertical line for progress.
-     */
-
-    int lx = m_progress_box.m_x +
-        int(m_progress_box.m_w * double(tick) / m_seq->get_length());
-
-    int ly0 = m_progress_box.m_y + 1;
-    int ly1 = m_progress_box.m_y + m_progress_box.m_h - 1;
-    painter.drawLine(lx, ly1, lx, ly0);
 }
 
 /**

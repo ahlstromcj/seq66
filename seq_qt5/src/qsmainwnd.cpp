@@ -1083,18 +1083,18 @@ qsmainwnd::refresh ()
         );
          */
 
-        if (not_nullptr(m_live_frame))
-        {
-            if (perf().playlist_mode())
-            {
-                if (m_is_title_dirty)
-                    m_live_frame->set_playlist_name(perf().playlist_song());
-            }
-            else
-                m_live_frame->set_playlist_name("");
-        }
         if (m_is_title_dirty)
         {
+            if (not_nullptr(m_live_frame))
+            {
+                if (perf().playlist_mode())
+                {
+                    if (m_is_title_dirty)
+                        m_live_frame->set_playlist_name(perf().playlist_song());
+                }
+                else
+                    m_live_frame->set_playlist_name("");
+            }
             m_is_title_dirty = false;
             update_window_title();
         }

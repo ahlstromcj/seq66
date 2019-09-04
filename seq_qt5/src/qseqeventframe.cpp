@@ -259,7 +259,9 @@ qseqeventframe::on_sequence_change (seq::number seqno)
         {
             initialize_table();
         }
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("qseqeventframe::on_sequence_change(%d)\n", seqno);
+#endif
     }
     return result;
 }

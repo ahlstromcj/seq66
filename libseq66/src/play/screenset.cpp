@@ -331,7 +331,7 @@ screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
     {
         seqno -= m_set_offset;          /* convert to 0-to-31 range */
         row = seqno % m_rows;
-        column = (seqno / m_rows) % m_columns;
+        column = (seqno / m_rows);      //  % m_columns;    // TEST
     }
     return result;
 }

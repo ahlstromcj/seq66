@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2019-08-30
+ * \updates       2019-09-03
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -45,6 +45,10 @@
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QEvent;
+
+/*
+ * Do not document a namespace, it can break Doxygen.
+ */
 
 namespace seq66
 {
@@ -88,12 +92,17 @@ public:
 
     int rows () const
     {
-        return m_mainwnd_rows;
+        return m_mainwnd_rows;      // should use performer::rows() !!!!
     }
 
     int columns () const
     {
-        return m_mainwnd_cols;
+        return m_mainwnd_cols;      // should use performer::columns() !!!!
+    }
+
+    int seqs_in_set () const
+    {
+        return rows() * columns();
     }
 
     int spacing () const

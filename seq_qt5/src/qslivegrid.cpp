@@ -24,17 +24,44 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-08-30
+ * \updates       2019-09-04
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
  *  meant to replace (eventually) qsliveframe, and uses buttons and draws
- *  faster.
+ *  faster.  However, we had to disable button callbacks and use keypresses
+ *  directly in order to implement double-click and drag-and-drop
+ *  functionality.
  *
- *  Cons:
+ *  A two-dimensional vector of buttons containing a vector of rows, each
+ *  row being a vector of columns.
  *
- *      #. Double-click is not implemented.
- *      #. Drag and drop is not implemented.
+ *  Screen view and loo-grid slot numbers:
+ *
+\verbatim
+        Column      0   1   2   3   4   5   6   7
+        Row 0       0   4   8  12  16  20  24  28
+        Row 1       1   5   9  13  17  21  25  29
+        Row 2       2   6  10  14  18  22  26  30
+        Row 3       3   7  11  15  19  23  27  31
+\endverbatim
+ *
+ *  Button/Gridrow (m_loop_buttons[column][row]) view slot numbers:
+ *
+\verbatim
+        Row         0   1   2   3   [one gridrow, a vector of slotbuttons]
+        Column
+           0        0   1   2   3
+           1        4   5   6   7
+           2        8   9  10  11
+           3       12  13  14  15
+           4       16  17  18  19
+           5       20  21  22  23
+           6       24  25  26  27
+           7       28  29  30  31
+\endverbatim
+ *
+ *  The fastest varying index is the row: m_loop_buttons[column][row].
  */
 
 #include <QMenu>
@@ -128,15 +155,6 @@ qslivegrid::qslivegrid
     ui->setNumberLabel->hide();
     ui->txtBankName->hide();
     ui->spinBank->hide();
-
-    // Might already be done in the base class
-    // set_bank(0);
-
-    /*
-     * This row, except for ui->labelPlaylistSong, are no longer used.
-     * We'll just hide them for now, though.
-     */
-
     ui->labelPlaylistSong->setText("");
 
     /*
@@ -199,11 +217,11 @@ qslivegrid::conditional_update ()
     if (m_needs_update || perf().is_running() && ok)    // perf().needs_update()
     {
         m_needs_update = false;
-        for (int row = 0; row < rows(); ++row)
+        for (int column = 0; column < columns(); ++column)
         {
-            for (int column = 0; column < columns(); ++column)
+            for (int row = 0; row < rows(); ++row)
             {
-                qslotbutton * pb = m_loop_buttons[row][column];
+                qslotbutton * pb = m_loop_buttons[column][row];
                 if (not_nullptr(pb))
                 {
                     seq::pointer s = pb->loop();
@@ -211,7 +229,7 @@ qslivegrid::conditional_update ()
                     {
                         // For some reason, with themes like Crux, when the
                         // button is checked, something immediately unchecks it
-                        // again.  The result if flickering while playback is
+                        // again.  The result is flickering while playback is
                         // in progress.
                         //
                         // bool armed = s->get_playing();
@@ -221,7 +239,6 @@ qslivegrid::conditional_update ()
                     else
                         pb->reupdate(false);
                 }
-                // ++offset;
             }
         }
     }
@@ -247,11 +264,14 @@ qslivegrid::create_loop_buttons ()
     m_slot_w = (fw - m_space_cols - 1) / columns() - sc_button_padding;
     m_slot_h = (fh - m_space_rows - 1) / rows() - sc_button_padding;
     for (int row = 0; row < rows(); ++row)
+        ui->loopGridLayout->setRowMinimumHeight(row, m_slot_w + spacing());
+
+    for (int column = 0; column < columns(); ++column)
     {
         gridrow buttonrow;                      /* vector for push-buttons  */
-        ui->loopGridLayout->setRowMinimumHeight(row, m_slot_w + spacing());
-        for (int column = 0; column < columns(); ++column, ++seqno)
+        for (int row = 0; row < rows(); ++row, ++seqno)
         {
+            // printf("Cell (%d, %d); seq #%d ---> ", row, column, seqno);
             qslotbutton * temp = create_one_button(seqno);
             buttonrow.push_back(temp);
         }
@@ -271,11 +291,11 @@ qslivegrid::clear_loop_buttons ()
 {
     if (! m_loop_buttons.empty())
     {
-        for (int row = 0; row < rows(); ++row)
+        for (int column = 0; column < columns(); ++column)
         {
-            for (int column = 0; column < columns(); ++column)
+            for (int row = 0; row < rows(); ++row)
             {
-                qslotbutton * pb = m_loop_buttons[row][column];
+                qslotbutton * pb = m_loop_buttons[column][row];
                 if (not_nullptr(pb))
                     delete pb;
             }
@@ -293,9 +313,9 @@ qslivegrid::measure_loop_buttons ()
 {
     m_slot_w = m_slot_h = m_x_max = m_y_max = 0;
     m_x_min = m_y_min = 99999;
-    for (int row = 0; row < rows(); ++row)
+    for (int column = 0; column < columns(); ++column)
     {
-        for (int column = 0; column < columns(); ++column)
+        for (int row = 0; row < rows(); ++row)
         {
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))
@@ -372,6 +392,7 @@ qslivegrid::create_one_button (int seqno)
     bool enabled = perf().is_screenset_active(seqno);
     const QSize btnsize = QSize(m_slot_w, m_slot_h);
     std::string snstring;
+    // printf("cell (%d, %d); seq #%d\n", row, column, seqno);
     ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_h + spacing());
     if (valid)
         snstring = std::to_string(seqno);
@@ -551,8 +572,8 @@ qslotbutton *
 qslivegrid::button (int row, int column)
 {
     qslotbutton * result = nullptr;
-    if (! m_loop_buttons.empty() && ! m_loop_buttons[row].empty())
-        result = m_loop_buttons[row][column];
+    if (! m_loop_buttons.empty() && ! m_loop_buttons[column].empty())
+        result = m_loop_buttons[column][row];
 
     return result;
 }
@@ -613,9 +634,9 @@ qslivegrid::delete_all_slots ()
     if (result)
     {
         bool failed = false;
-        for (int row = 0; row < rows(); ++row)
+        for (int column = 0; column < columns(); ++column)
         {
-            for (int column = 0; column < columns(); ++column)
+            for (int row = 0; row < rows(); ++row)
             {
                 result = delete_slot(row, column);
                 if (! result)
@@ -640,6 +661,7 @@ qslivegrid::recreate_all_slots ()
     {
         clear_loop_buttons();
         m_redraw_buttons = true;                /* create_loop_buttons();   */
+        m_needs_update = true;
     }
     return result;
 }
@@ -655,9 +677,9 @@ qslivegrid::refresh_all_slots ()
     if (result)
     {
         seq::number offset = perf().playscreen_offset();
-        for (int row = 0; row < rows(); ++row)
+        for (int column = 0; column < columns(); ++column)
         {
-            for (int column = 0; column < columns(); ++column)
+            for (int row = 0; row < rows(); ++row)
             {
                 seq::pointer s = perf().get_sequence(offset);
                 if (not_nullptr(s))
@@ -685,7 +707,7 @@ qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
     if (result)
     {
         ui->loopGridLayout->addWidget(newslot, row, column);
-        m_loop_buttons[row][column] = newslot;
+        m_loop_buttons[column][row] = newslot;
     }
     return result;
 }
@@ -784,6 +806,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             {
                 (void) pb->toggle_checked();
                 m_button_down = true;
+                update();           // 2019-09-04 TEST
             }
 #endif
         }
@@ -846,7 +869,8 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
         {
             if (perf().is_seq_active(m_current_seq))
             {
-                perf().sequence_playing_toggle(m_current_seq);  /* banner */
+                // This seems wrong to do.
+                // perf().sequence_playing_toggle(m_current_seq);  /* banner */
                 m_adding_new = false;
                 update();
             }
@@ -1119,9 +1143,9 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
 void
 qslivegrid::reupdate ()
 {
-    for (int row = 0; row < rows(); ++row)
+    for (int column = 0; column < columns(); ++column)
     {
-        for (int column = 0; column < columns(); ++column)
+        for (int row = 0; row < rows(); ++row)
         {
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))
@@ -1166,7 +1190,8 @@ qslivegrid::alter_sequence (seq::number seqno)
     if (perf().seq_to_grid(seqno, row, column))
     {
         qslotbutton * pb = create_one_button(seqno);
-        (void) modify_slot(pb, row, column);
+        if (modify_slot(pb, row, column))           // EXPERIMENTAL
+            (void) recreate_all_slots();
     }
 }
 
@@ -1405,9 +1430,9 @@ qslivegrid::popup_menu ()
 void
 qslivegrid::show_loop_buttons ()
 {
-    for (int row = 0; row < rows(); ++row)
+    for (int column = 0; column < columns(); ++column)
     {
-        for (int column = 0; column < columns(); ++column)
+        for (int row = 0; row < rows(); ++row)
         {
             qslotbutton * pb = button(row, column);
             if (not_nullptr(pb))

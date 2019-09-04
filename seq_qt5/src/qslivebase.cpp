@@ -64,12 +64,14 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_parent            (window),
     m_font              (),
     m_bank_id           (p.playscreen_number()),            // EXPERIMENTAL
-    m_mainwnd_rows      (usr().mainwnd_rows()),
-    m_mainwnd_cols      (usr().mainwnd_cols()),
+//  m_mainwnd_rows      (usr().mainwnd_rows()),             // should use perf
+//  m_mainwnd_cols      (usr().mainwnd_cols()),             // should use perf
+    m_mainwnd_rows      (p.rows()),
+    m_mainwnd_cols      (p.columns()),
     m_mainwid_spacing   (usr().mainwid_spacing()),
     m_space_rows        (m_mainwid_spacing * m_mainwnd_rows),
     m_space_cols        (m_mainwid_spacing * m_mainwnd_cols),
-    m_screenset_slots   (m_mainwnd_rows * m_mainwnd_cols),
+    m_screenset_slots   (m_mainwnd_rows * m_mainwnd_cols),  // should use perf!
     m_slot_w            (0),
     m_slot_h            (0),
     m_last_metro        (0),
