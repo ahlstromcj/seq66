@@ -1,8 +1,6 @@
 README for Sequencer66 0.90.0 (Sequencer64 refactored for C++11/14 and Qt)
 Chris Ahlstrom
-2015-09-10 to 2019-09-02
-
-HURRICANE DORIAN EDITION.
+2015-09-10 to 2019-09-05
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -15,27 +13,33 @@ of krufty buildup.  Changes:
         -   Removed the Gtkmm implementations, now using only Qt 5.
         -   Added a tab for management of sets.
         -   Added a tab for management of mute-groups.
+        -   Added a live frame using buttons to match Qt theming. The original
+            implement is available as a "user" option.
     -   Configuration files:
-        -   Combined the configuration for keystrokes and MIDI control.
-        -   Separated MIDI control and mute-group setting into their own files
+        -   Unified keystroke control and MIDI control into a "*.ctrl" file.
+            Specifies MIDI In controls for controlling Seq66 remotely, and MIDI
+            Out controls for displaying Seq66 status in grid controllers (e.g.
+            LaunchPad).
+        -   Separated MIDI control and mute-group setting into their own files,
             with support for hex notation.
+        -   Supported configuration files: "*.rc", "*.usr", "*.ctrl", "*.mutes",
+            and "*.playlist".
     -   Internal:
-        -   More consistent use of modern C++.
+        -   More consistent use of modern C++, including lambda functions.
         -   Additional performer callbacks to reduce the need for polling in the
-            user-interface.
+            user-interface.  Still in progress.
 
-Seq66 has builds for ALSA, PortMidi, JACK, Qt 5, Windows, and a
-command-line/daemon.
+Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 
 ALSA/JACK support: Seq66qt5/qseq66
 GUI-less application: Seq66cli/seq66cli [not yet!]
-Windows/PortMidi: Seq66qt5/qpseq66.exe
+Windows/PortMidi: Seq66qt5/qpseq66.exe [not yet!]
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "portmidi"
-engine.  Windows MIDI devices are detected, inaccessible devices are ignored,
-and playback (e.g. to the Windows wavetable synthesizer) work. It is built
-easily via Qt Creator or qmake, using MingW.  The Qt 5 GUI is the only official
-GUI of Seq66.
+engine (for Windows).  Windows MIDI devices are detected, inaccessible devices
+are ignored, and playback (e.g. to the Windows wavetable synthesizer) work. It
+is built easily via Qt Creator or qmake, using MingW.  The Qt 5 GUI is the only
+official GUI of Seq66.
 
 See the INSTALL file for build-from-source instructions for Linux or Windows,
 and using a conventional source tarball.

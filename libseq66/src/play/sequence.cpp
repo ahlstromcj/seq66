@@ -151,6 +151,7 @@ sequence::sequence (int ppqn)
     m_off_from_snap             (false),
     m_song_playback_block       (false),
     m_song_recording            (false),
+    m_song_recording_snap       (false),
     m_song_record_tick          (0),
     m_overwrite_recording       (false),
     m_loop_reset                (false),
@@ -1194,6 +1195,11 @@ sequence::toggle_queued ()
  *  If we are playing the song data (sequence on/off triggers, we are in
  *  playback mode.  And if we are song-recording, we then keep growing the
  *  sequence's song-data triggers.
+ *
+ *  Note that the song_playback_block() is handled in the trigger::play()
+ *  function.  If we have reached a new chunk of drawn patterns in the song
+ *  data, and we are not recording, then trigger unsets the playback block on
+ *  this pattern's events.
  *
  *  The trigger calculations have been offloaded to the triggers::play()
  *  function.  Its return value and side-effects tell if there's a change in
@@ -6175,10 +6181,13 @@ sequence::song_recording_start (midipulse tick, bool snap)
 void
 sequence::song_recording_stop (midipulse tick)
 {
-    midipulse len = m_length - (tick % m_length);
     m_song_playback_block = m_song_recording = false;
-    m_triggers.grow_trigger(m_song_record_tick, tick, len);
-    m_off_from_snap = true;
+    if (m_song_recording_snap)
+    {
+        midipulse len = m_length - (tick % m_length);
+        m_triggers.grow_trigger(m_song_record_tick, tick, len);
+        m_off_from_snap = true;
+    }
 }
 
 /**

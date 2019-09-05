@@ -244,6 +244,12 @@ triggers::play
     bool trigger_state = false;
     for (auto & t : m_triggers)
     {
+        /*
+         *  If we have reached a new chunk of drawn patterns in the song data,
+         *  and we are not recording, then trigger unsets the playback block on
+         *  this pattern's events.
+         */
+
         if (t.at_trigger_transition(start_tick, end_tick))
             m_parent.song_playback_block(false);
 

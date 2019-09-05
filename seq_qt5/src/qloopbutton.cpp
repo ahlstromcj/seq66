@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-04
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -65,6 +65,16 @@
  */
 
 #define SEQ66_USE_BACKGROUND_ROLE_COLOR
+
+/**
+ *  Alpha values for various states, not yet members, not yet configurable.
+ */
+
+const int s_alpha_playing       = 255;
+const int s_alpha_muted         = 100;
+const int s_alpha_qsnap         = 180;
+const int s_alpha_queued        = 148;
+const int s_alpha_oneshot       = 148;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -434,24 +444,21 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
 
-//              if (rc().verbose())
-//              {
-                    if (m_seq->get_playing())
-                        title = "Armed";
-                    else if (m_seq->get_queued())
-                        title = "Queued";
-                    else if (m_seq->one_shot())
-                        title = "One-shot";
-                    else
-                        title = "Muted";
+                if (m_seq->get_playing())
+                    title = "Armed";
+                else if (m_seq->get_queued())
+                    title = "Queued";
+                else if (m_seq->one_shot())
+                    title = "One-shot";
+                else
+                    title = "Muted";
 
-                    box.setRect
-                    (
-                        m_top_left.m_x, m_top_left.m_y + 10,
-                        m_top_left.m_w, m_top_left.m_h
-                    );
-                    painter.drawText(box, m_top_left.m_flags, title);
-//              }
+                box.setRect
+                (
+                    m_top_left.m_x, m_top_left.m_y + 12,
+                    m_top_left.m_w, m_top_left.m_h
+                );
+                painter.drawText(box, m_top_left.m_flags, title);
             }
             draw_progress(painter, tick);
         }
@@ -484,29 +491,38 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
         // pal.setColor(QPalette::Button, QColor(Qt::black));
         // pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
     }
+
+    /*
+     * Draw progress box.
+     */
+
     gui_palette_qt5::Color backcolor = slotpal().get_color_fix(PaletteColor(c));
-    if (qsnap)
+    if (qsnap)                                      /* playing, queued, ... */
     {
-        backcolor.setAlpha(210);
+        backcolor.setAlpha(s_alpha_qsnap);
         pen.setColor(Qt::gray);                     /* instead of Qt::black */
         pen.setStyle(Qt::SolidLine);
     }
+    else if (m_seq->get_playing())                  /* armed, playing       */
+    {
+        backcolor.setAlpha(s_alpha_playing);
+    }
     else if (m_seq->get_queued())
     {
-        backcolor.setAlpha(180);
+        backcolor.setAlpha(s_alpha_queued);
         pen.setWidth(penwidth);
         pen.setStyle(Qt::SolidLine);
     }
     else if (m_seq->one_shot())                     /* one-shot queued      */
     {
-        backcolor.setAlpha(180);
+        backcolor.setAlpha(s_alpha_oneshot);
         pen.setColor(Qt::darkGray);
         pen.setStyle(Qt::DotLine);
     }
-    else
+    else                                            /* unarmed, muted       */
     {
-        // backcolor.setAlpha(100);
-        // pen.setStyle(Qt::NoPen);
+        backcolor.setAlpha(s_alpha_muted);
+        pen.setStyle(Qt::SolidLine);
     }
     brush.setColor(backcolor);
     pen.setWidth(penwidth);
@@ -534,6 +550,10 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
                 painter.drawRect(x, y, 1, 1);
             }
         }
+
+#ifdef USE_THIS_PATTERN_DRAWING_CODE        // NOT READY
+        midipulse length = m_seq->get_length();
+#endif  // USE_THIS_PATTERN_DRAWING_CODE
 
         /*
          * Draw vertical line for progress.
