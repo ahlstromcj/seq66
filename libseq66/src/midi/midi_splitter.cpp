@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2019-02-07
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -37,8 +37,9 @@
 #include "cfg/settings.hpp"             /* seq66::choose_ppqn()             */
 #include "midi/event_list.hpp"          /* seq66::event_list                */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
-#include "play/performer.hpp"             /* seq66::performer                   */
+#include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "util/palette.hpp"             /* seq66::PaletteColor              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -127,6 +128,7 @@ midi_splitter::log_main_sequence (sequence & seq, int seqnum)
     if (is_nullptr(m_smf0_main_sequence))
     {
         seq.sort_events();
+        seq.color(color_to_int(CYAN));
         m_smf0_main_sequence = &seq;
         m_smf0_seq_number = seqnum;
         infoprint("SMF 0 main sequence logged");
@@ -188,7 +190,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
                      */
 
                     sequence * s = new sequence(ppqn);
-                    if (split_channel(*m_smf0_main_sequence, s, chan))
+                    if (split_channel(p, *m_smf0_main_sequence, s, chan))
                         p.install_sequence(s, seqnum);
                     else
                         delete s;   /* empty sequence, not even meta events */
@@ -245,6 +247,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
 bool
 midi_splitter::split_channel
 (
+    const performer & p,
     const sequence & main_seq,
     sequence * s,
     int channel
@@ -264,6 +267,12 @@ midi_splitter::split_channel
         );
     }
 
+    /*
+     * It is necessary to (redundantly, it turns out) set the master MIDI buss
+     * first, before setting the other sequence parameters.
+     */
+
+    s->set_master_midi_bus(p.master_bus());
     s->set_name(std::string(tmp));
     s->set_midi_channel(channel);
     s->set_midi_bus(main_seq.get_midi_bus());
@@ -271,7 +280,8 @@ midi_splitter::split_channel
 
     midipulse length_in_ticks = 0;      /* an accumulator of delta times    */
     const event_list & evl = main_seq.events();
-    for (event_list::const_iterator i = evl.begin(); i != evl.end(); ++i)
+//  for (event_list::const_iterator i = evl.begin(); i != evl.end(); ++i)
+    for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
         const event & er = event_list::cdref(i);
         if (er.is_ex_data())

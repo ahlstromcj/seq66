@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2019-01-27
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  *  Seq66 can also split an SMF 0 file into multiple tracks, effectively
@@ -114,6 +114,7 @@ private:
 
     bool split_channel
     (
+        const performer & p,
         const sequence & main_seq,
         sequence * seq,
         int channel

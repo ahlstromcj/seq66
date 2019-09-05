@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-08-31
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -797,6 +797,7 @@ performer::install_sequence (sequence * s, int seqno, bool fileload)
         s->set_master_midi_bus(m_master_bus.get());
         s->sort_events();                   /* sort the events now          */
         s->set_length();                    /* final verify_and_link()      */
+        s->empty_coloring();                /* yellow color if no events    */
         if (s->get_length() < barlength)    /* pad sequence to a measure    */
             s->set_length(barlength, false);
 

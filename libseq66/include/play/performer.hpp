@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-08-28
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  * 2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -1249,6 +1249,11 @@ public:
     }
 
     mastermidibus * master_bus ()
+    {
+        return m_master_bus.get();
+    }
+
+    const mastermidibus * master_bus () const
     {
         return m_master_bus.get();
     }

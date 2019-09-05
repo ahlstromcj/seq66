@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-08-20
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -287,8 +287,6 @@ sequence::partial_assign (const sequence & rhs)
 
 /**
  * \setter m_seq_color
- *      Provides the color-palette value to set.
- *  Sets the color, if it is a different color.
  *
  * \param c
  *      Provides the index into the color-palette.  The only rules here are
@@ -312,6 +310,18 @@ sequence::color (int c)
         }
     }
     return result;
+}
+
+/**
+ * If empty, sets the color to classic Sequencer64 yellow.  Called by performer
+ * when installing a sequence.
+ */
+
+void
+sequence::empty_coloring ()
+{
+    if (event_count() == 0)
+        (void) color(color_to_int(YELLOW));
 }
 
 /**
@@ -478,10 +488,10 @@ sequence::pop_trigger_redo ()
  */
 
 void
-sequence::set_master_midi_bus (mastermidibus * mmb)
+sequence::set_master_midi_bus (const mastermidibus * mmb)
 {
     automutex locker(m_mutex);
-    m_master_bus = mmb;
+    m_master_bus = const_cast<mastermidibus *>(mmb);
 }
 
 /**
@@ -4562,7 +4572,7 @@ sequence::draw
 sequence::get_next_note (note_info & niout) const
 {
     niout.ni_tick_finish = 0;
-    while (m_iterator_draw != m_events.end())   /* not threadsafe           */
+    while (m_iterator_draw != m_events.cend())          /* not threadsafe   */
     {
         draw status = get_note_info(niout, m_iterator_draw);
         ++m_iterator_draw;
@@ -4583,7 +4593,7 @@ sequence::get_next_note_ex
     event_list::const_iterator & evi
 ) const
 {
-    while (evi != m_events.end())
+    while (evi != m_events.cend())
     {
         draw status = get_note_info(niout, evi);
         ++evi;
@@ -4701,7 +4711,7 @@ sequence::get_next_event (midibyte & status, midibyte & cc)
 void
 sequence::reset_ex_iterator (event_list::const_iterator & evi) const
 {
-    evi = m_events.begin();
+    evi = m_events.cbegin();
 }
 
 /**
@@ -4720,13 +4730,13 @@ sequence::reset_interval
 {
     bool result = false;
     bool got_beginning = false;
-    event_list::const_iterator iter = m_events.begin();
+    event_list::const_iterator iter = m_events.cbegin();
     it0 = iter;
-    it1 = m_events.end();
+    it1 = m_events.cend();
     for
     (
-        event_list::const_iterator iter = m_events.begin();
-        iter != m_events.end(); ++iter
+        event_list::const_iterator iter = m_events.cbegin();
+        iter != m_events.cend(); ++iter
     )
     {
         midipulse t = iter->timestamp();
@@ -4982,14 +4992,15 @@ void
 sequence::set_midi_bus (char mb, bool user_change)
 {
     automutex locker(m_mutex);
-    off_playing_notes();                /* off notes except initial         */
     if (mb != m_bus)
     {
+        off_playing_notes();            /* off notes except initial         */
         m_bus = mb;
         if (user_change)
             modify();                   /* no easy way to undo this, though */
+
+        set_dirty();                    /* this is for display updating     */
     }
-    set_dirty();                        /* this is for display updating     */
 }
 
 /**
@@ -5429,14 +5440,15 @@ void
 sequence::set_midi_channel (midibyte ch, bool user_change)
 {
     automutex locker(m_mutex);
-    off_playing_notes();
     if (ch != m_midi_channel)
     {
+        off_playing_notes();
         m_midi_channel = ch;
         if (user_change)
             modify();                   /* no easy way to undo this, though */
+
+        set_dirty();                    /* this is for display updating     */
     }
-    set_dirty();                        /* this is for display updating     */
 }
 
 /**
@@ -5943,7 +5955,7 @@ sequence::show_events () const
         seq_number(), name().c_str(), get_midi_channel(), event_count()
     );
     const event_list & evl = events();
-    for (auto i = evl.begin(); i != evl.end(); ++i)
+    for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
         const event & er = event_list::cdref(i);
         std::string evdump = to_string(er);

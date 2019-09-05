@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-07-28
+ * \updates       2019-09-05
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -166,9 +166,9 @@ public:
         return m_events.begin();
     }
 
-    const_iterator begin () const
+    const_iterator cbegin () const
     {
-        return m_events.begin();
+        return m_events.cbegin();
     }
 
     iterator end ()
@@ -176,9 +176,9 @@ public:
         return m_events.end();
     }
 
-    const_iterator end () const
+    const_iterator cend () const
     {
-        return m_events.end();
+        return m_events.cend();
     }
 
     /**

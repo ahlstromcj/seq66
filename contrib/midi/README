@@ -1,0 +1,66 @@
+MIDI Sample and Test Files
+Chris Ahlstrom
+2015-09-11 to 2019-09-05
+
+This directory contains contributed MIDI files for examples and testing.
+Also see the test files from the midicvt as described in
+midicvt-test-files.txt; we found a few bugs to fix, and potential features
+to add, by loading them into Sequencer64.  Some of these files have been
+resaved with the new features.  For example, see the various versions of
+the "example1" file.
+
+   1Bar.midi:
+
+        A small sample to play with.  Was also saved (accidentally)
+        with a buss-override of 5, so the buss will not appear in the pattern
+        editor unless it happens to exist.  Also added notes and used the LFO
+        editor to set DC = 64, Mod Range = 64, Periods = 7.77, Phase Shift = 0.21,
+        and Waveform = 1 (Sine wave).  Also added some extra notes after
+        modulation, which shows that we do not handle two different velocities at
+        the same time value.
+
+   2Bars.midi:
+
+        A 2-bar sample.  Also shows different values of velocity, but added
+        via the mouse on the data pane.
+
+   allofarow.mid:
+
+        A file having a lot of empty tracks and one filled track.
+        In Sequencer64, it loads as 140 BPM, but plays really slowly.
+        In seq24, it loads as 120 BPM, but plays somewhat normally!
+
+   click_4_4.midi:
+   
+        Holds a click-track for use with the Seq24-session script.
+
+   reset.mid:
+   
+        A file that resets all MIDI channels.
+
+   CountryStrum.midi:
+
+        This file is the CountryStrum.mid SMF 0 file imported into
+        Sequencer64, with the SMF 0 track removed, and all the sequences
+        moved over to the leftmost position in the main window.
+
+Also see the "data" directory which contains some MIDI/WRK files that get
+installed:
+
+   b4uacuse-gm-patchless.midi:
+
+      A GM version of an Eric Clapton and Robert Cray tune, "Before You
+      Accuse Me", suitable for playback with (for example) QSynth.
+
+   colours.midi:
+
+      Demonstrates using colors with patterns.
+
+   longhair.wrk:
+   oxygen4b.wrk:
+
+      Cakewalk files we created many years ago.
+
+Also see the Sequencer64 project for a lot more sample files and test files.
+
+# vim: sw=3 ts=3 wm=8 et ft=sh

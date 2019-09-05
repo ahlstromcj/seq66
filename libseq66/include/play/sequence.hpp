@@ -955,6 +955,7 @@ public:
     }
 
     bool color (int c);
+    void empty_coloring ();
 
     /**
      * \getter m_seq_edit_mode
@@ -1611,7 +1612,7 @@ public:
         return m_bus;
     }
 
-    void set_master_midi_bus (mastermidibus * mmb);
+    void set_master_midi_bus (const mastermidibus * mmb);
     int select_note_events
     (
         midipulse tick_s, int note_h,

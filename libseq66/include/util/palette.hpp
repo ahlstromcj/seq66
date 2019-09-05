@@ -61,10 +61,8 @@ enum class progress_colors
 };
 
 /**
- *  A new type to support the concept of sequence color.  This feature cannot
- *  be used in the current versions of Seq66, because their color is
- *  determined by the font bitmap.  The color will be a number pointing to an
- *  RGB entry in a palette.  A future feature, we're making room for it here.
+ *  A type to support the concept of sequence color.  The color is a number
+ *  pointing to an RGB entry in a palette.
  *
  *  This enumeration provide as stock palette of colors.  For example,
  *  Kepler34 creates a color-map in this manner:
