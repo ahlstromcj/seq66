@@ -67,6 +67,12 @@
 #define SEQ66_USE_BACKGROUND_ROLE_COLOR
 
 /**
+ *  Selects showing a sine wave versus the real data.
+ */
+
+bool s_draw_events = true;
+
+/**
  *  Alpha values for various states, not yet members, not yet configurable.
  */
 
@@ -168,6 +174,7 @@ qloopbutton::qloopbutton
     m_prog_fore_color   (Qt::green),
     m_text_font         (),
     m_text_initialized  (false),
+    m_draw_background   (true),
     m_top_left          (),
     m_top_right         (),
     m_bottom_left       (),
@@ -258,10 +265,8 @@ qloopbutton::initialize_sine_table ()
         int i;
         double r;
         for (i = 0, r = 0.0; i < count; ++i, r += dr)
-        {
-            // m_sine_table[i] = int(1.0 + sin(r) * h + y) / 2;
             m_sine_table[i] = y + int((1.0 + sin(r)) * h) / 2;
-        }
+
         m_sine_table_size = count;
     }
 }
@@ -460,6 +465,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_top_left.m_flags, title);
             }
+            initialize_sine_table();
+            draw_progress_box(painter);
+            draw_pattern(painter);
             draw_progress(painter, tick);
         }
         else
@@ -475,26 +483,55 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 /**
  *      Draws the progress box, progress bar, and and indicator for non-empty
  *      pattern slots.
+ *
+ * Idea:
+ *
+ *      Merge this inside of drawing the events!
  */
 
 void
 qloopbutton::draw_progress (QPainter & painter, midipulse tick)
 {
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
+    QPen pen(Qt::black);
+    const int rectangle_x = m_progress_box.m_x + 3;
+    const int rectangle_y = m_progress_box.m_y + 1;
+    const int rectangle_w = m_progress_box.m_w - 6;
+    const int rectangle_h = m_progress_box.m_h - 2;
+    const midipulse slength = m_seq->get_length();
+    pen.setWidth(2);
+    pen.setStyle(Qt::SolidLine);
+    painter.setBrush(brush);
+    painter.setPen(pen);
+
+    /*
+     * Draw vertical line for progress.
+     */
+
+    int lx = rectangle_x + int(rectangle_w * tick / slength);
+    int ly0 = rectangle_y;
+    int ly1 = rectangle_y + rectangle_h;
+    painter.drawLine(lx, ly1, lx, ly0);
+}
+
+/**
+ *      Draws the progress box, progress bar, and and indicator for non-empty
+ *      pattern slots.
+ */
+
+void
+qloopbutton::draw_progress_box (QPainter & painter)
+{
+    QBrush brush(m_prog_back_color, Qt::SolidPattern);
     QPen pen(text_color());
     const int penwidth = 2;
     bool qsnap = m_seq->snap_it();
     int c = m_seq->color();
-    initialize_sine_table();                        /* EXPERIMENTAL         */
     if (c == color_to_int(BLACK))
     {
         // pal.setColor(QPalette::Button, QColor(Qt::black));
         // pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
     }
-
-    /*
-     * Draw progress box.
-     */
 
     gui_palette_qt5::Color backcolor = slotpal().get_color_fix(PaletteColor(c));
     if (qsnap)                                      /* playing, queued, ... */
@@ -533,38 +570,129 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
         m_progress_box.m_x, m_progress_box.m_y,
         m_progress_box.m_w, m_progress_box.m_h
     );
+}
+
+/**
+ *      Draws the progress box, progress bar, and and indicator for non-empty
+ *      pattern slots.
+ */
+
+void
+qloopbutton::draw_pattern (QPainter & painter)
+{
     if (m_seq->event_count() > 0)
     {
-        /*
-         * Draw simple wave to indicate non-empty button.  We check the sequence
-         * event-count.  Another, slower, check is m_seq->minmax_notes(lo, hi))
-         */
-
-        if (m_sine_table_size > 0)
+        QBrush brush(m_prog_back_color, Qt::SolidPattern);
+        QPen pen(text_color());
+        const int rectangle_x = m_progress_box.m_x + 3;
+        const int rectangle_y = m_progress_box.m_y + 1;
+        const int rectangle_w = m_progress_box.m_w - 6;
+        const int rectangle_h = m_progress_box.m_h - 2;
+        const midipulse slength = m_seq->get_length();
+        pen.setWidth(1);
+        if (s_draw_events)
         {
-            int x = m_progress_box.m_x + 4;
-            int dx = m_progress_box.m_w / (m_sine_table_size - 1);
-            for (int i = 0; i < m_sine_table_size; ++i, x += dx)
+            int lowest, highest;
+            bool have_notes = m_seq->minmax_notes(lowest, highest);
+            int height = SEQ66_MAX_DATA_VALUE;
+            if (have_notes)
             {
-                int y = m_sine_table[i];
-                painter.drawRect(x, y, 1, 1);
+                /*
+                 * Added an octave of padding above and below for looks.
+                 */
+
+                highest += 12;
+                if (highest > SEQ66_MAX_DATA_VALUE)
+                    highest = SEQ66_MAX_DATA_VALUE;
+
+                lowest -= 12;
+                if (lowest < 0)
+                    lowest = 0;
+
+                height = highest - lowest;
+            }
+
+            if (! m_seq->transposable())
+                pen.setColor(Qt::red);
+
+            pen.setWidth(1);
+            m_seq->reset_draw_marker();             /* reset loop iterator      */
+            for (;;)
+            {
+                sequence::note_info ni;             /* only two members used!   */
+                sequence::draw dt = m_seq->get_next_note(ni);
+                int tick_s_x = (ni.start() * rectangle_w) / slength;
+                int tick_f_x = (ni.finish() * rectangle_w) / slength;
+                if (dt == sequence::draw::finish)
+                    break;
+
+#define DRAW_SHORT_NOTES
+#if defined DRAW_SHORT_NOTES
+                if (! sequence::is_draw_note(dt))
+                    tick_f_x = tick_s_x + 1;
+                else if (tick_f_x <= tick_s_x)
+                    tick_f_x = tick_s_x + 1;
+#else
+                if (! sequence::is_draw_note(dt) || ni.length() <= 1)
+                    continue;
+#endif
+
+                int note_y = rectangle_h * (ni.note() - lowest) / height;
+
+#if defined DRAW_TEMPO_LINE
+                if (dt == sequence::draw::tempo)
+                {
+                    pen.setWidth(2);
+                    pen.setColor(Qt::magenta);      // TODO: tempo_paint();
+                }
+                else
+                {
+                    pen.setWidth(1);
+                    pen.setColor(Qt::black);
+                }
+#endif
+
+                int sx = rectangle_x + tick_s_x;        /* start x          */
+                int fx = rectangle_x + tick_f_x;        /* finish x         */
+                note_y += rectangle_y;                  /* start & finish y */
+                painter.setPen(pen);
+                painter.drawLine(sx, note_y, fx, note_y);
+
+#if defined DRAW_PROGRESS_IN_EVENTS
+                if (tick >= ni.start() - 16 && tick <= ni.start() + 16)
+                {
+                    pen.setWidth(2);
+                    pen.setStyle(Qt::SolidLine);
+                    painter.setBrush(brush);
+                    painter.setPen(pen);
+                    int lx = rectangle_x + int(rectangle_w * tick / slength);
+                    int ly0 = rectangle_y;
+                    int ly1 = rectangle_y + rectangle_h;
+                    painter.drawLine(lx, ly1, lx, ly0);
+                    m_progress_drawn = true;
+                }
+#endif
             }
         }
+        else
+        {
+            /*
+             * Draw simple wave to indicate non-empty button.  We check the
+             * sequence event-count.  Another, slower, check is
+             * m_seq->minmax_notes(lo, hi))
+             */
 
-#ifdef USE_THIS_PATTERN_DRAWING_CODE        // NOT READY
-        midipulse length = m_seq->get_length();
-#endif  // USE_THIS_PATTERN_DRAWING_CODE
-
-        /*
-         * Draw vertical line for progress.
-         */
-
-        int lx = m_progress_box.m_x +
-            int(m_progress_box.m_w * double(tick) / m_seq->get_length());
-
-        int ly0 = m_progress_box.m_y + 1;
-        int ly1 = m_progress_box.m_y + m_progress_box.m_h - 1;
-        painter.drawLine(lx, ly1, lx, ly0);
+            if (m_sine_table_size > 0)
+            {
+                int x = m_progress_box.m_x + 4;
+                int dx = m_progress_box.m_w / (m_sine_table_size - 1);
+                for (int i = 0; i < m_sine_table_size; ++i, x += dx)
+                {
+                    int y = m_sine_table[i];
+                    painter.drawRect(x, y, 1, 1);
+                }
+            }
+        }
     }
 }
 

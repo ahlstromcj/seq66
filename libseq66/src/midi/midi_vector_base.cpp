@@ -475,7 +475,7 @@ midi_vector_base::fill_proprietary ()
      *  However, for now, write it anyway for consistency with Seq32.
      */
 
-    bool transpose = m_sequence.get_transposable();
+    bool transpose = m_sequence.transposable();
     add_variable(0);                            /* no delta time    */
     put(0xFF);
     put(0x7F);

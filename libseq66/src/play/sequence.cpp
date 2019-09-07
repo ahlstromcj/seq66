@@ -1260,16 +1260,12 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / m_length;
         midipulse offset_base = times_played * m_length;
-        int transpose = get_transposable() ? m_parent->get_transpose() : 0 ;
+        int transpose = transposable() ? m_parent->get_transpose() : 0 ;
         event_list::iterator e = m_events.begin();
         while (e != m_events.end())
         {
             event & er = event_list::dref(e);
             midipulse stamp = er.timestamp() + offset_base;
-
-//          if (er.timestamp() > tick)              // EXPERIMENTAL
-//              break;                              // EXPERIMENTAL
-
             if (stamp >= start_tick_offset && stamp <= end_tick_offset)
             {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -5721,7 +5717,7 @@ sequence::shift_notes (midipulse ticks)
 void
 sequence::apply_song_transpose ()
 {
-    int transpose = get_transposable() ? m_parent->get_transpose() : 0 ;
+    int transpose = transposable() ? m_parent->get_transpose() : 0 ;
     if (transpose != 0)
     {
         automutex locker(m_mutex);

@@ -551,7 +551,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent)
      *  Transpose button.
      */
 
-    bool cantranspose = seq_pointer()->get_transposable();
+    bool cantranspose = seq_pointer()->transposable();
     qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
     ui->m_toggle_transpose->setCheckable(true);
     ui->m_toggle_transpose->setChecked(cantranspose);

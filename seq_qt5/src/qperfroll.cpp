@@ -867,7 +867,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         sequence::note_info ni;
                         sequence::draw dt;
                         seq->reset_draw_marker();
-                        if (seq->get_transposable())
+                        if (seq->transposable())
                             pen.setColor(Qt::black);
                         else
                             pen.setColor(Qt::red);

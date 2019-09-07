@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-08-25
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -259,6 +259,11 @@ public:
        midipulse finish () const
        {
            return ni_tick_finish;
+       }
+
+       midipulse length () const
+       {
+           return ni_tick_finish - ni_tick_start;
        }
 
        int note () const
@@ -1195,7 +1200,7 @@ public:
      * \getter m_transposable
      */
 
-    bool get_transposable () const
+    bool transposable () const
     {
         return m_transposable;
     }

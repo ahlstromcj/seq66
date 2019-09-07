@@ -566,7 +566,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             int length = s->get_length();
             Color drawcolor = pencolor;         // fg_color();
             Color eventcolor = pencolor;        // fg_color();
-            if (! s->get_transposable())
+            if (! s->transposable())
             {
                 eventcolor = red();
                 drawcolor = red();
@@ -600,7 +600,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
                     pen.setWidth(2);
                     drawcolor = tempo_paint();
-                    note_y = m_slot_w -
+                    note_y = m_slot_h -         // NOT w!!!
                          m_slot_h * (ni.note() + 1) / SEQ66_MAX_DATA_VALUE;
                 }
                 else

@@ -166,6 +166,7 @@ private:
      */
 
     bool m_text_initialized;
+    bool m_draw_background;
     textbox m_top_left;
     textbox m_top_right;
     textbox m_bottom_left;
@@ -201,6 +202,8 @@ public:
 protected:
 
     virtual void draw_progress (QPainter & p, midipulse tick) override;
+    void draw_progress_box (QPainter & painter);
+    void draw_pattern (QPainter & painter);
 
     void initialize_sine_table ();
 
