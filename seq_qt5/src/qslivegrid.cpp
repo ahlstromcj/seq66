@@ -213,7 +213,7 @@ void
 qslivegrid::conditional_update ()
 {
     bool ok = ! m_loop_buttons.empty();
-    if (perf().is_running() || needs_update() && ok)    // perf().needs_update()
+    if (perf().is_running() || needs_update() && ok)
     {
         set_needs_update(false);
         for (int column = 0; column < columns(); ++column)
@@ -226,13 +226,15 @@ qslivegrid::conditional_update ()
                     seq::pointer s = pb->loop();
                     if (s)
                     {
-                        // For some reason, with themes like Crux, when the
-                        // button is checked, something immediately unchecks it
-                        // again.  The result is flickering while playback is
-                        // in progress.
-                        //
-                        // bool armed = s->get_playing();
-                        // pb->set_checked(armed);
+                        /*
+                         * For some reason, with themes like Crux, when the
+                         * button is checked, something immediately unchecks it
+                         * again.  The result is flickering in playback.
+                         *
+                         * bool armed = s->get_playing();
+                         * pb->set_checked(armed);
+                         */
+
                         pb->reupdate(true);
                     }
                     else

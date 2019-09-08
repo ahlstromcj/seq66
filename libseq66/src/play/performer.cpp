@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-09-05
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -216,9 +216,7 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
  */
 
 performer::performer (int ppqn, int rows, int columns) :
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
     m_play_set              (),
-#endif
     m_play_list             (new playlist(*this, "<empty>", rc())),
     m_song_start_mode       (sequence::playback::live),
     m_start_from_perfedit   (false),
@@ -806,6 +804,8 @@ performer::install_sequence (sequence * s, int seqno, bool fileload)
 
         if (! fileload)
             modify();
+
+        mapper().fill_play_set(m_play_set);
 
 #ifdef USE_MIDI_CONTROL_OUT_ACTIVE                          // not present
         midi_control_out().send_seq_event
@@ -1397,11 +1397,7 @@ performer::set_playing_screenset (screenset::number setno)
     {
         announce_playscreen();              /* inform control-out       */
         unset_queued_replace();
-
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
         mapper().fill_play_set(m_play_set);
-#endif
-
         for (auto notify : m_notify)
             (void) notify->on_set_change(setno);
     }
@@ -1509,7 +1505,6 @@ performer::clear_song ()
 void
 performer::reset_sequences (bool pause)
 {
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
     void (sequence::* f) (bool) = pause ? &sequence::pause : &sequence::stop ;
     bool songmode = song_mode();
     for (auto & seqi : m_play_set)
@@ -1517,9 +1512,12 @@ performer::reset_sequences (bool pause)
         sequence * s = seqi.get();
         (s->*f)(songmode);
     }
-#else
-    mapper().reset_sequences(pause, m_playback_mode);
-#endif
+
+    /*
+     * Is this useful???
+     *
+     * mapper().reset_sequences(pause, m_playback_mode);
+     */
 
     if (m_master_bus)
         m_master_bus->flush();                          /* flush MIDI buss  */
@@ -3170,14 +3168,9 @@ void
 performer::play (midipulse tick)
 {
     set_tick(tick);
-
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
     bool songmode = m_playback_mode == sequence::playback::song;
     for (auto seqi : m_play_set)
         seqi->play_queue(tick, songmode, m_resume_note_ons);
-#else
-    mapper().play(tick, m_playback_mode, m_resume_note_ons);
-#endif
 
     if (not_nullptr(m_master_bus))
         m_master_bus->flush();                      /* flush MIDI buss  */

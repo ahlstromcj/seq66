@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-03
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,11 +60,7 @@ public:
 
     private:
 
-        int m_x;
-        int m_y;
-        int m_w;
-        int m_h;
-        int m_flags;
+        int m_x, m_y, m_w, m_h, m_flags;
         std::string m_label;
 
     public:
@@ -83,10 +79,7 @@ public:
 
     private:
 
-        int m_x;
-        int m_y;
-        int m_w;
-        int m_h;
+        int m_x, m_y, m_w, m_h;
 
     public:
 
@@ -121,8 +114,8 @@ private:
      *  EXPERIMENTAL.
      */
 
-    int m_sine_table[16];
-    int m_sine_table_size;
+    int m_fingerprint[32];
+    int m_fingerprint_size;
 
     /**
      *  Provides a pointer to the sequence displayed by this button.  Note that
@@ -206,15 +199,16 @@ protected:
     void draw_pattern (QPainter & painter);
 
     void initialize_sine_table ();
+    void initialize_fingerprint ();
 
     int sine_table_y (int i) const
     {
-        return m_sine_table[i];
+        return m_fingerprint[i];
     }
 
     int sine_table_size () const
     {
-        return m_sine_table_size;
+        return m_fingerprint_size;
     }
 
 private:

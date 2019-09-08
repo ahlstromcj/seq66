@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-08-18
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -966,12 +966,10 @@ public:
 
 private:
 
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
     void fill_play_set (screenset::playset & p)
     {
         play_screen()->fill_play_set(p);
     }
-#endif
 
     container::iterator add_set (screenset::number setno);
     container::iterator find_by_value (screenset::number setno);

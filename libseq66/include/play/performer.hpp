@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-09-05
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  * 2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -265,8 +265,6 @@ public:
 
 private:
 
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
-
     /**
      *  When the screenset changes, we put only the existing sequences in this
      *  vector to try to save time in the play() function.
@@ -275,8 +273,6 @@ private:
      */
 
     std::vector<seq::pointer> m_play_set;
-
-#endif
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32

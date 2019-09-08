@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-05
+ * \updates       2019-09-08
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -70,7 +70,8 @@
  *  Selects showing a sine wave versus the real data.
  */
 
-bool s_draw_events = true;
+bool s_draw_events = false;
+bool s_use_sine = false;
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -166,8 +167,8 @@ qloopbutton::qloopbutton
     QWidget * parent
 ) :
     qslotbutton         (slotnumber, label, hotkey, parent),
-    m_sine_table        (),
-    m_sine_table_size   (0),
+    m_fingerprint       (),
+    m_fingerprint_size  (0),
     m_seq               (seqp),
     m_is_checked        (m_seq->get_playing()),
     m_prog_back_color   (Qt::black),
@@ -255,9 +256,9 @@ qloopbutton::initialize_text ()
 void
 qloopbutton::initialize_sine_table ()
 {
-    if (m_sine_table_size == 0)
+    if (m_fingerprint_size == 0)
     {
-        int count = int(sizeof(m_sine_table) / sizeof(int));
+        int count = int(sizeof(m_fingerprint) / sizeof(int));
         int y = m_progress_box.y();
         int h = m_progress_box.h();
         double rmax = 2.0 * M_PI;
@@ -265,10 +266,78 @@ qloopbutton::initialize_sine_table ()
         int i;
         double r;
         for (i = 0, r = 0.0; i < count; ++i, r += dr)
-            m_sine_table[i] = y + int((1.0 + sin(r)) * h) / 2;
+            m_fingerprint[i] = y + int((1.0 + sin(r)) * h) / 2;
 
-        m_sine_table_size = count;
+        m_fingerprint_size = count;
     }
+}
+
+/**
+ *
+ */
+
+void
+qloopbutton::initialize_fingerprint ()
+{
+    int n0, n1;
+    bool have_notes = m_seq->minmax_notes(n0, n1);
+    if (m_fingerprint_size == 0 && have_notes)
+    {
+        int i1 = int(sizeof(m_fingerprint) / sizeof(int));
+        int x0 = m_progress_box.m_x + 3;
+        int x1 = x0 + m_progress_box.m_w - 6;
+        int xw = x1 - x0;
+        int y0 = m_progress_box.m_y + 1;
+        int y1 = y0 + m_progress_box.m_h - 2;
+        int yh = y1 - y0;
+        midipulse t1 = m_seq->get_length();             /* t0 = 0           */
+        int nh = SEQ66_MAX_DATA_VALUE;
+printf("qloopbutton::initialize_fingerprint ()\n");
+
+        /*
+         * Added an octave of padding above and below for looks.
+         */
+
+        n1 += 12;
+        if (n1 > SEQ66_MAX_DATA_VALUE)
+            n1 = SEQ66_MAX_DATA_VALUE;
+
+        n0 -= 12;
+        if (n0 < 0)
+            n0 = 0;
+
+        nh = n1 - n0;
+        m_seq->reset_draw_marker();                     /* loop iterator    */
+        for (;;)
+        {
+            sequence::note_info ni;                     /* two members used */
+            sequence::draw dt = m_seq->get_next_note(ni);
+            if (dt != sequence::draw::finish)
+            {
+                int x = (ni.start() * xw) / t1 + x0;    /* ni.finish()      */
+                int y = yh * (ni.note() - n0) / nh + y0;
+                int i = i1 * (x - x0) / xw;
+                if (i < 0)
+                    i = 0;
+
+                if (i > i1)
+                    i = i1;
+
+                m_fingerprint[i] = y;
+            }
+            else
+                break;
+        }
+        m_fingerprint_size = i1;
+    }
+    /*
+        else
+        {
+            int y = m_progress_box.y();
+            for (int i = 0; i < count; ++i)
+                m_fingerprint[i] = y;
+        }
+    */
 }
 
 /**
@@ -465,7 +534,11 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_top_left.m_flags, title);
             }
-            initialize_sine_table();
+            if (s_use_sine)
+                initialize_sine_table();
+            else
+                initialize_fingerprint();
+
             draw_progress_box(painter);
             draw_pattern(painter);
             draw_progress(painter, tick);
@@ -494,23 +567,17 @@ qloopbutton::draw_progress (QPainter & painter, midipulse tick)
 {
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
     QPen pen(Qt::black);
-    const int rectangle_x = m_progress_box.m_x + 3;
-    const int rectangle_y = m_progress_box.m_y + 1;
-    const int rectangle_w = m_progress_box.m_w - 6;
-    const int rectangle_h = m_progress_box.m_h - 2;
-    const midipulse slength = m_seq->get_length();
+    midipulse t1 = m_seq->get_length();
+    int lx = m_progress_box.m_x + 3;
+    int xw = m_progress_box.m_w - 6;
+    int ly0 = m_progress_box.m_y + 1;
+    int lyh = m_progress_box.m_h - 2;
+    int ly1 = ly0 + lyh;
+    lx += int(xw * tick / t1);
     pen.setWidth(2);
     pen.setStyle(Qt::SolidLine);
     painter.setBrush(brush);
     painter.setPen(pen);
-
-    /*
-     * Draw vertical line for progress.
-     */
-
-    int lx = rectangle_x + int(rectangle_w * tick / slength);
-    int ly0 = rectangle_y;
-    int ly1 = rectangle_y + rectangle_h;
     painter.drawLine(lx, ly1, lx, ly0);
 }
 
@@ -584,11 +651,11 @@ qloopbutton::draw_pattern (QPainter & painter)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(text_color());
-        const int rectangle_x = m_progress_box.m_x + 3;
-        const int rectangle_y = m_progress_box.m_y + 1;
-        const int rectangle_w = m_progress_box.m_w - 6;
-        const int rectangle_h = m_progress_box.m_h - 2;
-        const midipulse slength = m_seq->get_length();
+        int lx0 = m_progress_box.m_x + 3;
+        int ly0 = m_progress_box.m_y + 1;
+        int lxw = m_progress_box.m_w - 6;
+        int lyh = m_progress_box.m_h - 2;
+        midipulse t1 = m_seq->get_length();
         pen.setWidth(1);
         if (s_draw_events)
         {
@@ -616,34 +683,28 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(Qt::red);
 
             pen.setWidth(1);
-            m_seq->reset_draw_marker();             /* reset loop iterator      */
+            m_seq->reset_draw_marker();             /* reset loop iterator  */
             for (;;)
             {
-                sequence::note_info ni;             /* only two members used!   */
+                sequence::note_info ni;             /* only 2 members used! */
                 sequence::draw dt = m_seq->get_next_note(ni);
-                int tick_s_x = (ni.start() * rectangle_w) / slength;
-                int tick_f_x = (ni.finish() * rectangle_w) / slength;
+                int tick_s_x = (ni.start() * lxw) / t1;
+                int tick_f_x = (ni.finish() * lxw) / t1;
                 if (dt == sequence::draw::finish)
                     break;
 
-#define DRAW_SHORT_NOTES
-#if defined DRAW_SHORT_NOTES
                 if (! sequence::is_draw_note(dt))
                     tick_f_x = tick_s_x + 1;
                 else if (tick_f_x <= tick_s_x)
                     tick_f_x = tick_s_x + 1;
-#else
-                if (! sequence::is_draw_note(dt) || ni.length() <= 1)
-                    continue;
-#endif
 
-                int note_y = rectangle_h * (ni.note() - lowest) / height;
+                int y = lyh * (ni.note() - lowest) / height;
 
 #if defined DRAW_TEMPO_LINE
                 if (dt == sequence::draw::tempo)
                 {
                     pen.setWidth(2);
-                    pen.setColor(Qt::magenta);      // TODO: tempo_paint();
+                    pen.setColor(Qt::magenta);      /* tempo_paint()    */
                 }
                 else
                 {
@@ -652,26 +713,11 @@ qloopbutton::draw_pattern (QPainter & painter)
                 }
 #endif
 
-                int sx = rectangle_x + tick_s_x;        /* start x          */
-                int fx = rectangle_x + tick_f_x;        /* finish x         */
-                note_y += rectangle_y;                  /* start & finish y */
+                int sx = lx0 + tick_s_x;            /* start x          */
+                int fx = lx0 + tick_f_x;            /* finish x         */
+                y += ly0;                           /* start & finish y */
                 painter.setPen(pen);
-                painter.drawLine(sx, note_y, fx, note_y);
-
-#if defined DRAW_PROGRESS_IN_EVENTS
-                if (tick >= ni.start() - 16 && tick <= ni.start() + 16)
-                {
-                    pen.setWidth(2);
-                    pen.setStyle(Qt::SolidLine);
-                    painter.setBrush(brush);
-                    painter.setPen(pen);
-                    int lx = rectangle_x + int(rectangle_w * tick / slength);
-                    int ly0 = rectangle_y;
-                    int ly1 = rectangle_y + rectangle_h;
-                    painter.drawLine(lx, ly1, lx, ly0);
-                    m_progress_drawn = true;
-                }
-#endif
+                painter.drawLine(sx, y, fx, y);
             }
         }
         else
@@ -682,13 +728,13 @@ qloopbutton::draw_pattern (QPainter & painter)
              * m_seq->minmax_notes(lo, hi))
              */
 
-            if (m_sine_table_size > 0)
+            if (m_fingerprint_size > 0)
             {
                 int x = m_progress_box.m_x + 4;
-                int dx = m_progress_box.m_w / (m_sine_table_size - 1);
-                for (int i = 0; i < m_sine_table_size; ++i, x += dx)
+                int dx = m_progress_box.m_w / (m_fingerprint_size - 1);
+                for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
                 {
-                    int y = m_sine_table[i];
+                    int y = m_fingerprint[i];
                     painter.drawRect(x, y, 1, 1);
                 }
             }

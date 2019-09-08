@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-07-21
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -61,10 +61,12 @@
  *  CPU usage of this program when playing.  Without being connected to a
  *  synthesizer, playing the "b4uacuse" MIDI file in Live mode, with no pattern
  *  armed, the program eats up one whole CPU on an i7.  Setting this macro cuts
- *  that roughly in half... except whwn a pattern is armed.
+ *  that roughly in half... except when a pattern is armed.
+ *
+ *  Now permanent option.
+ *
+ * #define SEQ66_USE_PLAY_SET_EXPERIMENT
  */
-
-#define SEQ66_USE_PLAY_SET_EXPERIMENT
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -400,10 +402,7 @@ private:
 
     seq::number clamp (seq::number seqno) const;
     seq::pointer find_by_number (seq::number seqno);
-
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
     void fill_play_set (playset & p);
-#endif
 
     seq::number play_seq (int delta)
     {

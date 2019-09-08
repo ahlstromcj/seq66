@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-08-24
+ * \updates       2019-09-07
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -766,8 +766,6 @@ screenset::find_by_number (seq::number seqno)
     return seqit != m_container.end() ? seqit->loop() : s_dummy ;
 }
 
-#if defined SEQ66_USE_PLAY_SET_EXPERIMENT
-
 /**
  *  Fills the performer's play-set.
  */
@@ -779,16 +777,9 @@ screenset::fill_play_set (playset & p)
     for (auto & s : m_container)
     {
         if (s.active())
-        {
-            // sequence * seqptr = s.loop().get();
-            // p.push_back(seqptr);
-
             p.push_back(s.loop());
-        }
     }
 }
-
-#endif  // defined SEQ66_USE_PLAY_SET_EXPERIMENT
 
 /**
  *
