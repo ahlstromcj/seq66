@@ -209,6 +209,9 @@ public:
      *  Adds an event to the internal event list in an optionally sorted
      *  manner.
      *
+     *  Note that, for speed, it is better to call append() for each event, and
+     *  then later sort them.
+     *
      * \param e
      *      Provides the event to be added to the list.
      *

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-24
- * \updates       2019-09-05
+ * \updates       2019-09-08
  * \license       GNU GPLv2 or above
  *
  *  We have recently updated this module to put Set Tempo events into the
@@ -280,7 +280,6 @@ midi_splitter::split_channel
 
     midipulse length_in_ticks = 0;      /* an accumulator of delta times    */
     const event_list & evl = main_seq.events();
-//  for (event_list::const_iterator i = evl.begin(); i != evl.end(); ++i)
     for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
         const event & er = event_list::cdref(i);
@@ -289,21 +288,22 @@ midi_splitter::split_channel
             if (channel == 0 || er.is_sysex())
             {
                 length_in_ticks = er.timestamp();
-                if (s->add_event(er))   /* adds the event and sorts them    */
-                    result = true;      /* an event got added               */
+                if (s->append_event(er))    /* adds event, no sorting       */
+                    result = true;          /* the event got added          */
             }
         }
         else if (er.check_channel(channel))
         {
             length_in_ticks = er.timestamp();
-            if (s->add_event(er))       /* adds the event and sorts them    */
-                result = true;          /* an event got added               */
+            if (s->append_event(er))        /* adds event, no sorting       */
+                result = true;              /* the event got added          */
         }
     }
 
     /*
      * No triggers to add.  Whew!  And setting the length is now a no-brainer,
      * since the tick value is that of the last logged event in the sequence.
+     * Also, sort all the events after they have been appended.
      */
 
     s->set_length(length_in_ticks);

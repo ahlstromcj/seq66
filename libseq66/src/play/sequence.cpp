@@ -1233,7 +1233,7 @@ sequence::play
     automutex locker(m_mutex);
     bool trigger_turning_off = false;       /* turn off after in-frame play */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
-    midipulse end_tick = tick;
+    midipulse end_tick = tick;              /* ditto                        */
     if (m_song_mute)
     {
         set_playing(false);
@@ -1268,8 +1268,8 @@ sequence::play
             midipulse stamp = er.timestamp() + offset_base;
             if (stamp >= start_tick_offset && stamp <= end_tick_offset)
             {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 /*
                  * When we've reach the play state, we always find that start =
                  * stamp = end, and offset is a constant equal to the first
@@ -1314,9 +1314,14 @@ sequence::play
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,
                  * but it does prevent one CPU from being hammered at 100%.
+                 * However, it also makes the live-grid progress bar jittery
+                 * when unmuted.
+                 *
+                 * millisleep(1);                      // EXPERIMENTAL
                  */
 
-                millisleep(1);                      /* EXPERIMENTAL         */
+                if (calculate_measures() > 4)
+                    microsleep(1);                  /* EXPERIMENTAL         */
             }
         }
     }

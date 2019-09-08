@@ -292,7 +292,6 @@ qloopbutton::initialize_fingerprint ()
         int yh = y1 - y0;
         midipulse t1 = m_seq->get_length();             /* t0 = 0           */
         int nh = SEQ66_MAX_DATA_VALUE;
-printf("qloopbutton::initialize_fingerprint ()\n");
 
         /*
          * Added an octave of padding above and below for looks.

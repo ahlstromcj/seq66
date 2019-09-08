@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2018-01-27
+ * \updates       2019-09-08
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -852,17 +852,38 @@ void
 millisleep (unsigned long ms)
 {
 #if defined SEQ66_PLATFORM_LINUX
-    (void) usleep((useconds_t) (ms * 1000));
+    (void) usleep((useconds_t)(ms * 1000));
 #elif defined SEQ66_PLATFORM_UNIX
    struct timeval tv;
    struct timeval * tvptr = &tv;
    tv.tv_usec = long(ms % 1000) * 1000;
-   tv.tv_sec = long(ms / 1000;
+   tv.tv_sec = long(ms / 1000);
    (void) select(0, 0, 0, 0, tvptr);
-#elif defined SEQ66_PLATFORM_WINDOWS              // or SEQ66_PLATFORM_MINGW
+#elif defined SEQ66_PLATFORM_WINDOWS                // or SEQ66_PLATFORM_MINGW
    Sleep((DWORD) ms);
 #endif
 }
+
+/**
+ *
+ */
+
+void
+microsleep (unsigned long us)
+{
+#if defined SEQ66_PLATFORM_LINUX
+    (void) usleep((useconds_t)(us));
+#elif defined SEQ66_PLATFORM_UNIX
+   struct timeval tv;
+   struct timeval * tvptr = &tv;
+   tv.tv_usec = long(us % 1000000);
+   tv.tv_sec = long(us / 1000000);
+   (void) select(0, 0, 0, 0, tvptr);
+#elif defined SEQ66_PLATFORM_WINDOWS                // or SEQ66_PLATFORM_MINGW
+   Sleep((DWORD) us / 1000);                        // TODO: FIXME
+#endif
+}
+
 
 }           // namespace seq66
 

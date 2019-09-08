@@ -1,11 +1,13 @@
 TODO for Sequencer66 0.90.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-08-26
+2019-04-13 to 2019-09-08
 
 HOT ITEMS:
 
-    Differentiate between perf dirty and paint dirty for updating GUIs only once
-    after a sequence change.
+    Set changing does not work!
+
+    Conversion from SMF 0 to SMF 1 is slow.  Speed it up greatly or add a
+    progress bar..
 
     Make the zoom dropdown in the seqroll sync with the zoom changes via
     keystroke.  Same for the zoom of the seqtime and triggereditor (bad name).

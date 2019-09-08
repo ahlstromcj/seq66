@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-04
+ * \updates       2019-09-08
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -720,7 +720,8 @@ qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
 void
 qslivegrid::update_bank (int bankid)
 {
-    qslivebase::update_bank(bankid);    /* (void) recreate_all_slots(); */
+    qslivebase::update_bank(bankid);
+    (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
 }
 
 /**
