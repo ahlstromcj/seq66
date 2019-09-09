@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-05
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -48,7 +48,7 @@
  *      point, and add better locking coverage if necessary.
  */
 
-#include <string.h>                     /* C::memset()                      */
+#include <cstring>                      /* std::memset()                    */
 
 #include "cfg/scales.hpp"
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
@@ -621,8 +621,9 @@ sequence::calculate_measures () const
 }
 
 /**
- *  Encapsulates a calculation needed in the qseqbase class (and elsewhere).  We
- *  could just assume m_unit_measures is always up-to-date and use that value.
+ *  Encapsulates a calculation needed in the qseqbase class (and elsewhere).
+ *  We could just assume m_unit_measures is always up-to-date and use that
+ *  value.
  *
  * \return
  *      Returns the whole number of measure in the current length of the
@@ -1315,12 +1316,16 @@ sequence::play
                  * Putting this sleep here doesn't reduce the total CPU load,
                  * but it does prevent one CPU from being hammered at 100%.
                  * However, it also makes the live-grid progress bar jittery
-                 * when unmuted.
+                 * when unmuted, for shorter patterns, which play()
+                 * relentlessly here.
                  *
-                 * millisleep(1);                      // EXPERIMENTAL
+                 *      millisleep(1);
+                 *
+                 * Another possible criteria is note_count(), but currently
+                 * that is a looping (time-eating) function.
                  */
 
-                if (calculate_measures() > 4)
+                if (measure_threshold())
                     microsleep(1);                  /* EXPERIMENTAL         */
             }
         }
@@ -4519,7 +4524,7 @@ sequence::reset_draw_trigger_marker ()
  */
 
 bool
-sequence::minmax_notes (int & lowest, int & highest)
+sequence::minmax_notes (int & lowest, int & highest) // const
 {
     automutex locker(m_mutex);
     bool result = false;
@@ -4553,6 +4558,23 @@ sequence::minmax_notes (int & lowest, int & highest)
     }
     lowest = low;
     highest = high;
+    return result;
+}
+
+/**
+ *
+ */
+
+int
+sequence::note_count () // const
+{
+    automutex locker(m_mutex);
+    int result = 0;
+    for (auto & er : m_events)
+    {
+        if (er.is_note_on())
+            ++result;
+    }
     return result;
 }
 
@@ -5404,7 +5426,7 @@ sequence::title () const
     {
         char mtemp[16];                         /* holds measures as string */
         char fulltemp[32];                      /* seq name + measures      */
-        memset(fulltemp, ' ', sizeof fulltemp);
+        std::memset(fulltemp, ' ', sizeof fulltemp);
         snprintf(mtemp, sizeof mtemp, " %d", measures);
         for (int i = 0; i < int(m_name.size()); ++i)
         {
@@ -6248,21 +6270,6 @@ sequence::expand_recording () const
         }
     }
     return result;
-}
-
-/**
- *  Kepler34
- */
-
-int
-sequence::get_measures ()
-{
-    int units = get_beats_per_bar() * (m_ppqn * 4) / get_beat_width();
-    int measures = get_length() / units;
-    if (get_length() % (units != 0))
-        ++measures;
-
-    return measures;
 }
 
 /**

@@ -886,8 +886,8 @@ qsmainwnd::open_file (const std::string & fn)
         if (not_nullptr(m_edit_frame))
             m_edit_frame->update_draw_geometry();
 
-        edit_container::iterator ei;
-        for (ei = m_open_editors.begin(); ei != m_open_editors.end(); ++ei)
+        // edit_container::iterator ei;
+        for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); ++ei)
         {
             qseqeditex * qep = ei->second;      /* save the pointer         */
             qep->update_draw_geometry();

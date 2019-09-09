@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-09-07
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -984,6 +984,8 @@ public:
 
     void modify ();
     int event_count () const;
+    int note_count () /*const*/;
+    bool minmax_notes (int & lowest, int & highest) /*const*/;
 
     /*
      * seqdata and lfownd hold for undo
@@ -1048,6 +1050,11 @@ public:
     void set_name (const std::string & name = "");
     int calculate_measures () const;
     int get_measures () const;
+
+    bool measure_threshold () const
+    {
+        return calculate_measures() > 4;
+    }
 
     /**
      * \getter m_ppqn
@@ -1292,12 +1299,6 @@ public:
             measures * get_beats_per_bar() * (m_ppqn * 4) / get_beat_width()
         );
     }
-
-    /**
-     *  Kepler34
-     */
-
-    int get_measures ();
 
     bool apply_length (int bpb, int ppqn, int bw, int measures = 1);
     int extend (midipulse len);
@@ -1783,7 +1784,6 @@ public:
         note_info & niout,
         event_list::const_iterator & evi
     ) const;
-    bool minmax_notes (int & lowest, int & highest);
     bool get_next_event (midibyte & status, midibyte & cc);
     bool get_next_event_match
     (
@@ -1797,10 +1797,6 @@ public:
         event_list::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
-//  (
-//      midipulse & tick_on, midipulse & tick_off,
-//      bool & selected, midipulse & tick_offset
-//  );
     void quantize_events
     (
         midibyte status, midibyte cc,
@@ -1830,28 +1826,16 @@ public:
         return m_musical_key;
     }
 
-    /**
-     * \setter m_musical_key
-     */
-
     void musical_key (int key)
     {
         if (key >= SEQ66_KEY_OF_C && key < SEQ66_OCTAVE_SIZE)
             m_musical_key = midibyte(key);
     }
 
-    /**
-     * \getter m_musical_scale
-     */
-
     midibyte musical_scale () const
     {
         return m_musical_scale;
     }
-
-    /**
-     * \setter m_musical_scale
-     */
 
     void musical_scale (int scale)
     {
@@ -1880,10 +1864,6 @@ public:
     void show_events () const;
     void copy_events (const event_list & newevents);
 
-    /**
-     * \getter m_note_length
-     */
-
     midipulse note_off_margin () const
     {
         return m_note_off_margin;
@@ -1908,20 +1888,12 @@ public:
 
     void overwrite_recording (bool ovwr);
 
-    /**
-     * \getter m_overwrite_recording
-     */
-
     bool overwrite_recording ()
     {
         return m_overwrite_recording;
     }
 
     void loop_reset (bool reset);
-
-    /**
-     * \getter m_loop_reset
-     */
 
     bool loop_reset ()
     {
@@ -2051,7 +2023,8 @@ public:
 
     static bool is_draw_note (draw dt)
     {
-        return dt == sequence::draw::note_on || dt == sequence::draw::note_off;
+        return dt == sequence::draw::linked ||
+            dt == sequence::draw::note_on || dt == sequence::draw::note_off;
     }
 
 private:

@@ -70,7 +70,6 @@
  *  Selects showing a sine wave versus the real data.
  */
 
-bool s_draw_events = false;
 bool s_use_sine = false;
 
 /**
@@ -658,7 +657,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         int lyh = m_progress_box.m_h - 2;
         midipulse t1 = m_seq->get_length();
         pen.setWidth(1);
-        if (s_draw_events)
+        if (! m_seq->measure_threshold())     // (m_seq->note_count() <= 64)
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);
