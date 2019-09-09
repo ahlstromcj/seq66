@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-07
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -170,6 +170,7 @@ public:
 
     qloopbutton
     (
+        const qslivegrid * const slotparent,
         seq::number slotnumber,
         const std::string & label,
         const std::string & hotkey,

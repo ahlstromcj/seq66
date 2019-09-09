@@ -1,0 +1,59 @@
+2019-09-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/midi/event_list.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qslivegrid.cpp: Provisional
+	fix to ragged live-grid progress-bar, fixed main set spinbox, sped
+	up SMF 0 conversion immensely.
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	seq_qt5/include/qloopbutton.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qslivegrid.cpp: Got grid fingerprint display working,
+	but ragged when unmuted.
+
+2019-09-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qloopbutton.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsliveframe.cpp: 
+	Currently refactoring live-grid loop-buttons for speed.
+
+2019-09-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, libseq66/src/play/sequence.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/src/qloopbutton.cpp: Fixed a
+	bug in live-frame snap coloring, sequence.
+	* contrib/midi/README, libseq66/include/midi/event_list.hpp,
+	libseq66/include/midi/midi_splitter.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/palette.hpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp: 
+	Fixed SMF 0 handling, still slow, fixed coloring.
+
+2019-09-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/include/qslivebase.hpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixing grid
+	refresh and buss handling.
+	* libseq66/src/play/screenset.cpp, seq_qt5/include/qloopbutton.hpp,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqframe.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qsliveframe.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Improvements to grid button handling.
+
+2019-09-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qseqtime.cpp: Fixed too-small sprintf buffer in
+	qseqtime.
+	* New master.
+

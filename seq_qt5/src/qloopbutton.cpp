@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-08
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -160,13 +160,14 @@ qloopbutton::progbox::set (int w, int h)
 
 qloopbutton::qloopbutton
 (
+    const qslivegrid * const slotparent,
     seq::number slotnumber,
     const std::string & label,
     const std::string & hotkey,
     seq::pointer seqp,
     QWidget * parent
 ) :
-    qslotbutton         (slotnumber, label, hotkey, parent),
+    qslotbutton         (slotparent, slotnumber, label, hotkey, parent),
     m_fingerprint       (),
     m_fingerprint_size  (0),
     m_seq               (seqp),
@@ -292,6 +293,8 @@ qloopbutton::initialize_fingerprint ()
         int yh = y1 - y0;
         midipulse t1 = m_seq->get_length();             /* t0 = 0           */
         int nh = SEQ66_MAX_DATA_VALUE;
+        for (int i = 0; i < i1; ++i)
+            m_fingerprint[i] = 0;
 
         /*
          * Added an octave of padding above and below for looks.
@@ -318,8 +321,7 @@ qloopbutton::initialize_fingerprint ()
                 int i = i1 * (x - x0) / xw;
                 if (i < 0)
                     i = 0;
-
-                if (i > i1)
+                else if (i > i1)
                     i = i1;
 
                 m_fingerprint[i] = y;
@@ -734,7 +736,8 @@ qloopbutton::draw_pattern (QPainter & painter)
                 for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
                 {
                     int y = m_fingerprint[i];
-                    painter.drawRect(x, y, 1, 1);
+                    if (y > 0)
+                        painter.drawRect(x, y, 1, 1);
                 }
             }
         }

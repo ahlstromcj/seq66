@@ -25,9 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2019-07-03
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
+ *  This object is just a QPushButton with number label.  See seq66::qslivegrid
+ *  for its usage.
  */
 
 #include <QPainter>
@@ -61,18 +63,21 @@ qslotbutton::slotpal ()
 
 qslotbutton::qslotbutton
 (
+    const qslivegrid * const slotparent,
     seq::number slotnumber,
     const std::string & label,
     const std::string & hotkey,
     QWidget * parent
 ) :
     QPushButton         (parent),
+    m_slot_parent       (slotparent),
     m_slot_number       (slotnumber),
     m_label             (label),
     m_hotkey            (hotkey),
     m_back_color        (Qt::black),
     m_fore_color        (Qt::white),
     m_text_color        (Qt::black),
+    m_slot_width        (0),
     m_is_checkable      (false),
     m_is_dirty          (true)
 {
@@ -126,10 +131,14 @@ qslotbutton::setup ()
 
     std::string snstring = std::to_string(m_slot_number);
     setText(snstring.c_str());
+    if (m_slot_width == 0)
+    {
+        m_slot_width = width(); // printf("slot width = %d\n", m_slot_width);
+    }
 }
 
 /**
- *
+ *  A silly little wrapper for the Qt update() function.
  */
 
 void

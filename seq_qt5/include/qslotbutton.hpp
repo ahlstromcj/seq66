@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2019-08-25
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
@@ -42,7 +42,7 @@
 #include "play/seq.hpp"                 /* seq66::seq sequence-plus class   */
 
 /**
- *  It is impossible to recreate live-frame features like drap-and-drop
+ *  It is impossible to recreate live-frame features like drag-and-drop
  *  patterns, using Qt slots for toggle or press actions.  This macro disables
  *  the use of slots.  Leave it be unless experimenting.
  */
@@ -56,6 +56,7 @@
 namespace seq66
 {
     class performer;
+    class qslivegrid;
 
 /**
  * The timebar for the sequence editor
@@ -67,6 +68,13 @@ class qslotbutton : public QPushButton
     friend class qslivegrid;
 
 protected:
+
+    /**
+     *  Holds a pointer to the parent, needed to evaluated changes in
+     *  user-interface size.
+     */
+
+    const qslivegrid * const m_slot_parent;
 
     /**
      *  Indicates the sequence number of the slot.  Needed when the slot is
@@ -112,6 +120,12 @@ protected:
     QColor m_text_color;
 
     /**
+     *  Holds the current width of the button, useful in scaling font size.
+     */
+
+    int m_slot_width;
+
+    /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots
      *  need to be enabled, but not checkable, so that we can do different
      *  things with them.  We could probably just hook up a different callback
@@ -131,6 +145,7 @@ public:
 
     qslotbutton
     (
+        const qslivegrid * const slotparent,
         seq::number slotnumber,
         const std::string & label,
         const std::string & hotkey,
@@ -177,6 +192,11 @@ public:
 
 protected:
 
+    const qslivegrid * slot_parent () const
+    {
+        return m_slot_parent;
+    }
+
     void make_checkable ()
     {
         m_is_checkable = true;;
@@ -212,6 +232,16 @@ protected:
 protected:
 
     static gui_palette_qt5 & slotpal ();
+
+    int slot_width () const
+    {
+        return m_slot_width;
+    }
+
+    void slot_width (int w)
+    {
+        m_slot_width = w;
+    }
 
 };          // class qslotbutton
 

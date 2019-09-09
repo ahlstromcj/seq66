@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-08
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -132,7 +132,8 @@ qslivegrid::qslivegrid
     m_x_min             (0),
     m_x_max             (0),
     m_y_min             (0),
-    m_y_max             (0)
+    m_y_max             (0),
+    m_base_width        (0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setFocusPolicy(Qt::StrongFocus);
@@ -345,6 +346,8 @@ qslivegrid::measure_loop_buttons ()
             }
         }
     }
+    if (m_base_width == 0)
+        m_base_width = m_slot_w;
 }
 
 /**
@@ -403,7 +406,7 @@ qslivegrid::create_one_button (int seqno)
     qslotbutton * temp;
     if (pattern)
     {
-        temp = new qloopbutton(seqno, snstring, hotkey, pattern);
+        temp = new qloopbutton(this, seqno, snstring, hotkey, pattern);
 
 #if ! defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
         connect
@@ -421,7 +424,7 @@ qslivegrid::create_one_button (int seqno)
     }
     else
     {
-        temp = new qslotbutton(seqno, snstring, hotkey);
+        temp = new qslotbutton(this, seqno, snstring, hotkey);
 
 #if ! defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
         connect

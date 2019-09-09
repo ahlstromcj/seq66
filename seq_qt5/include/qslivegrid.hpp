@@ -221,8 +221,12 @@ private:
     int m_x_max;
     int m_y_min;
     int m_y_max;
-    int m_x_slot_size;
-    int m_y_slot_size;
+
+    /**
+     *  Holds the initial width of the button, useful in scaling font size.
+     */
+
+    int m_base_width;
 
 };              // class qslivegrid
 
