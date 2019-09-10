@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-31
+ * \updates       2019-09-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -807,7 +807,12 @@ qsmainwnd::show_open_file_dialog ()
         file = QFileDialog::getOpenFileName
         (
             this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
-            tr("MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)")
+            tr
+            (
+                "MIDI files (*.midi *.mid *.MID);;"
+                "WRK files (*.wrk *.WRK);;"
+                "All files (*)"
+            )
         );
     }
     if (! file.isEmpty())                   /* if the user did not cancel   */

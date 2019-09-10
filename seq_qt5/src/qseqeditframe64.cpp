@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-08-16
+ * \updates       2019-09-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2994,6 +2994,32 @@ qseqeditframe64::thru_change (bool /*ischecked*/)
     bool thru_active = ui->m_toggle_thru->isChecked();
     bool record_active = ui->m_toggle_record->isChecked();
     perf().set_thru(record_active, thru_active, seq_pointer());
+    update_midi_tooltips();
+}
+
+/**
+ *
+ *  Duplicative code.  See record_change(), thru_change(), q_record_change().
+ */
+
+void
+qseqeditframe64::update_midi_tooltips ()
+{
+    bool thru_active = ui->m_toggle_thru->isChecked();
+    bool record_active = ui->m_toggle_record->isChecked();
+    bool qrecord_active = ui->m_toggle_qrecord->isChecked();
+    ui->m_toggle_thru->setToolTip
+    (
+        thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
+    );
+    ui->m_toggle_record->setToolTip
+    (
+        record_active ? "MIDI Record Active" : "MIDI Record Inactive"
+    );
+    ui->m_toggle_qrecord->setToolTip
+    (
+        qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
+    );
 }
 
 /**
@@ -3013,6 +3039,7 @@ qseqeditframe64::record_change (bool /*ischecked*/)
     bool thru_active = ui->m_toggle_thru->isChecked();
     bool record_active = ui->m_toggle_record->isChecked();
     perf().set_recording(record_active, thru_active, seq_pointer());
+    update_midi_tooltips();
 }
 
 /**
@@ -3033,6 +3060,8 @@ qseqeditframe64::q_record_change (bool ischecked)
     perf().set_quantized_recording(ischecked, seq_pointer());
     if (ui->m_toggle_qrecord->isChecked() && ! ui->m_toggle_record->isChecked())
         ui->m_toggle_record->setChecked(true);
+
+    update_midi_tooltips();
 }
 
 /**
