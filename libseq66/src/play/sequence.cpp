@@ -2103,9 +2103,6 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
             {
                 event e = er;                       /* copy event           */
                 e.unmark();                         /* unmark the new event */
-#if ! defined SEQ66_USE_EVENT_LIST
-                e.unlink();                         /* unlink the new event */
-#endif
                 int newnote = e.get_note() + delta_note;
                 if (newnote >= 0 && newnote < c_num_keys)
                 {
@@ -2116,11 +2113,7 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
 
                     e.set_timestamp(newts);
                     e.select();                     /* keep it selected     */
-#if defined SEQ66_USE_EVENT_LIST
-                    add_event(e);                   /* append() + sort()    */
-#else
                     append_event(e);                /* no sorting is done   */
-#endif
                     modify();
                 }
             }

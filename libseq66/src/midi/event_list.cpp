@@ -232,12 +232,7 @@ event_list::get_length () const
 bool
 event_list::append (const event & e)
 {
-#if defined SEQ66_USE_EVENT_LIST
-    m_events.push_front(e);             /* std::list operation          */
-#else
     m_events.push_back(e);              /* std::vector operation        */
-#endif
-
     m_is_modified = true;
     if (e.is_tempo())
         m_has_tempo = true;
@@ -290,12 +285,6 @@ event_list::append (const event & e)
 void
 event_list::merge (event_list & el, bool presort)
 {
-#if defined SEQ66_USE_EVENT_LIST
-    if (presort)
-        el.sort();                          /* el.m_events.sort();          */
-
-    m_events.merge(el.m_events);            /* this clears el.m_events!     */
-#else
     Events destination;
     if (presort)                            /* should always be true here!  */
         el.sort();                          /* el.m_events.sort();          */
@@ -308,7 +297,6 @@ event_list::merge (event_list & el, bool presort)
         el.m_events.end(),
         std::back_inserter(destination)
     );
-#endif
 }
 
 /**

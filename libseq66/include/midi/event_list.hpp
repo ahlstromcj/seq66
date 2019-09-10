@@ -54,17 +54,12 @@
  *  We will now try std::vector for the event list.
  */
 
+#include <algorithm>                    /* std::sort(), std::merge()    */
 #include <string>
 #include <stack>
+#include <vector>                       /* std::vector                  */
 
 #include "midi/event.hpp"
-
-#if defined SEQ66_USE_EVENT_LIST
-#include <list>                         /* std::list                    */
-#else
-#include <algorithm>                    /* std::sort(), std::merge()    */
-#include <vector>                       /* std::vector                  */
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -109,11 +104,7 @@ private:
 
 public:
 
-#if defined SEQ66_USE_EVENT_LIST
-    using Events = std::list<event>;
-#else
     using Events = std::vector<event>;
-#endif
     using iterator = Events::iterator;
     using const_iterator = Events::const_iterator;
     using reverse_iterator = Events::reverse_iterator;
@@ -310,11 +301,7 @@ public:
 
     void sort ()
     {
-#if defined SEQ66_USE_EVENT_LIST
-        m_events.sort();
-#else
         std::sort(m_events.begin(), m_events.end());
-#endif
     }
 
     /**

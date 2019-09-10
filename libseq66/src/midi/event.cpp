@@ -134,13 +134,8 @@ event::event (const event & rhs)
     m_channel       (rhs.m_channel),
     m_data          (),                     /* a two-element array      */
     m_sysex         (rhs.m_sysex),          /* copies a vector of data  */
-#if defined SEQ66_USE_EVENT_LIST
-    m_linked        (nullptr),              /* pointer, not yet handled */
-    m_has_link      (false),                /* must indicate that fact  */
-#else
     m_linked        (rhs.m_linked),         /* for vector implemenation */
     m_has_link      (rhs.m_has_link),       /* m_linked has 2 linkers!  */
-#endif
     m_selected      (rhs.m_selected),
     m_marked        (rhs.m_marked),
     m_painted       (rhs.m_painted)
@@ -180,13 +175,8 @@ event::operator = (const event & rhs)
         m_data[0]       = rhs.m_data[0];
         m_data[1]       = rhs.m_data[1];
         m_sysex         = rhs.m_sysex;
-#if defined SEQ66_USE_EVENT_LIST
-        m_linked        = nullptr;
-        m_has_link      = false;                    /* rhs.m_has_link       */
-#else
         m_linked        = rhs.m_linked;             /* vector implemenation */
         m_has_link      = rhs.m_has_link;           /* two linkers!         */
-#endif
         m_selected      = rhs.m_selected;           /* false instead?       */
         m_marked        = rhs.m_marked;             /* false instead?       */
         m_painted       = rhs.m_painted;            /* false instead?       */
@@ -234,8 +224,8 @@ event::~event ()
  *      This worked better than a list, for loading MIDI events, but may cause
  *      the upper limit of the number of playing sequences to drop a little, due
  *      to the overhead of incrementing multimap iterators versus list
- *      iterators).  Now we allow swapping between the list and vector
- *      implementations.  Search for occurrences of SEQ66_USE_EVENT_LIST.
+ *      iterators).  Now we use only the std::vector implementation, slightly
+ *      faster than using std::list.
  *
  * \param rhs
  *      The object to be compared against.

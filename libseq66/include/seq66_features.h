@@ -168,14 +168,6 @@
 
 #define SEQ66_USE_BLACK_SELECTION_BOX
 
-/**
- * This macro indicates to use an std::list rather than an std::vector.
- * For more history, see SEQ_USE_EVENT_LIST in this file in the Sequencer64
- * project.
- */
-
-#undef SEQ66_USE_EVENT_LIST
-
 #endif      // SEQ66_FEATURES_H
 
 /*

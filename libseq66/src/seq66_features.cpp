@@ -180,9 +180,7 @@ seq_build_details ()
         << "  PortMIDI support on" << std::endl
 #endif
         << "  Event editor on" << std::endl
-#if defined SEQ66_USE_EVENT_LIST
-        << "  Event list (vs vector) on" << std::endl
-#endif
+        << "  Vector for event list on" << std::endl
         << "  Follow progress bar on" << std::endl
 #if defined SEQ66_EDIT_SEQUENCE_HIGHLIGHT
         << "  Highlight edit pattern on" << std::endl

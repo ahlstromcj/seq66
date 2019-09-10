@@ -317,30 +317,6 @@ MANUALLY-DEFINED MACROS IN CODE:
         The highlighting follows whichever pattern editor or event editor has
         the focus.
 
-    SEQ66_USE_EVENT_MAP:
-
-        Was defined in the seq66_features.h module.  It enabled the usage of an
-        std::multimap, instead of an std::list, to store MIDI events.  Because
-        the code does a lot of sorting of events, using the std::multimap is
-        actually a lot faster (especially under debug mode, where it takes
-        many seconds for a medium-size MIDI file to load using the std::list
-        implementation).
-
-        However, the std::multimap proved to be the limiting factor during
-        playback. For the large MIDI file, contrib/midi/b4uacuse-stress.midi, on
-        our slow single-core test machine, the amount of data was simply
-        unplayable.  So the std::list implementation is back in usage, but with
-        a difference.  When loading the MIDI file, no sorting is done until all
-        of the events have been added to a sequence.  This make the loading
-        process as fast as the std::multimap, but with a much better throughput
-        for playback. On the other hand....
-
-    SEQ66_USE_EVENT_LIST:
-
-        We have replaced std::list with std::vector for even better throughput;
-        the former still has node pointers to deal with, which slows simple
-        iteration down.  There are many complications, though.
-
     SEQ66_STAZED_SONG_MODE_BUTTON:
 
         Enables a Live/Song-mode toggle-button on the main window, so
