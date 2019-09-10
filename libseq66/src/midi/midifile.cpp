@@ -898,10 +898,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_data(d0, d1);                   /* set data and add */
 
                     /*
-                     * Replaced s->add_event() with s->append_event().  The
-                     * latter doesn't sort events; sort after we get them all.
-                     * Also, it is kind of weird we change the channel for the
-                     * whole sequence here.
+                     * s->append_event() doesn't sort events; sort after we
+                     * get them all.  Also, it is kind of weird we change the
+                     * channel for the whole sequence here.
                      */
 
                     s->append_event(e);                   /* does not sort    */
@@ -917,9 +916,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_data(d0);                     /* set data and add */
 
                     /*
-                     * We replace s->add_event() with s->append_event().
-                     * The latter doesn't sort events; they're sorted after we
-                     * read them all.
+                     * s->append_event() doesn't sort events; they're sorted
+                     * after we read them all.
                      */
 
                     s->append_event(e);                 /* does not sort    */

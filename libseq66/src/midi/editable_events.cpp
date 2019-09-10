@@ -223,13 +223,9 @@ editable_events::load_events ()
 {
     bool result;
     int original_count = m_sequence.events().count();
-    for
-    (
-        event_list::const_iterator ei = m_sequence.events().begin();
-        ei != m_sequence.events().end(); ++ei
-    )
+    for (const auto & ei : m_sequence.events())
     {
-        if (! add(event_list::cdref(ei)))
+        if (! add(ei))
             break;
     }
     result = count() == original_count;
@@ -270,10 +266,9 @@ editable_events::save_events ()
     if (result)
     {
         m_sequence.events().clear();
-        for (const_iterator ei = events().begin(); ei != events().end(); ++ei)
+        for (const auto & ei : events())
         {
-            event ev = cdref(ei);               /* actually a conversion!   */
-            if (! m_sequence.add_event(ev))     /* also sorts the events    */
+            if (! m_sequence.add_event(ei.second))  /* sorts the events     */
                 break;
         }
         result = m_sequence.events().count () == count();
@@ -289,8 +284,8 @@ void
 editable_events::print () const
 {
     printf("editable_events[%d]:\n", count());
-    for (Events::const_iterator i = m_events.begin(); i != m_events.end(); ++i)
-        cdref(i).print();
+    for (const auto & i : events())
+        i.second.print();
 }
 
 #if defined USE_VERIFY_AND_LINK                  /* not yet ready */
@@ -309,11 +304,10 @@ editable_events::print () const
 void
 editable_events::clear_links ()
 {
-    for (Events::iterator i = m_events.begin(); i != m_events.end(); ++i)
+    for (auto & e : m_events)
     {
-        event & e = dref(i);
-        e.unmark();
-        e.unlink();                     /* used to be e.clear_link()        */
+        e.second.unmark();
+        e.second.unlink();              /* used to be e.clear_link()        */
     }
 }
 
@@ -331,12 +325,12 @@ void
 editable_events::verify_and_link (midipulse slength)
 {
     clear_links();
-    for (event_list::iterator on = m_events.begin(); on != m_events.end(); on++)
+    for (auto & on : m_events)
     {
-        event & eon = dref(on);
+        event & eon = on.second;
         if (eon.is_note_on())               /* Note On, find its Note Off   */
         {
-            event_list::iterator off = on;  /* get next possible Note Off   */
+            auto off = on.second;           /* get next possible Note Off   */
             off++;
             bool endfound = false;
             while (off != m_events.end())
@@ -395,8 +389,8 @@ editable_events::verify_and_link (midipulse slength)
 void
 editable_events::mark_all ()
 {
-    for (Events::iterator i = m_events.begin(); i != m_events.end(); ++i)
-        dref(i).mark();
+    for (auto & i : m_events)
+        e.second.mark();
 }
 
 /**
@@ -406,8 +400,8 @@ editable_events::mark_all ()
 void
 editable_events::unmark_all ()
 {
-    for (Events::iterator i = m_events.begin(); i != m_events.end(); ++i)
-        dref(i).unmark();
+    for (auto & e : m_events)
+        e.second.unmark();
 }
 
 /**
@@ -429,14 +423,14 @@ editable_events::unmark_all ()
 void
 editable_events::mark_out_of_range (midipulse slength)
 {
-    for (Events::iterator i = m_events.begin(); i != m_events.end(); ++i)
+    for (auto & e : m_events)
     {
-        event & e = dref(i);
-        if (e.timestamp() > slength)
+        event & er = e.second;
+        if (er.timestamp() > slength)
         {
-            e.mark();                           /* we have to prune it  */
-            if (e.is_linked())
-                e.link()->mark();
+            er.mark();                          /* we have to prune it  */
+            if (er.is_linked())
+                er.link()->mark();
         }
     }
 }

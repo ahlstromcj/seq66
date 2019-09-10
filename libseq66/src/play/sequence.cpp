@@ -1262,7 +1262,7 @@ sequence::play
         midipulse times_played = m_last_tick / m_length;
         midipulse offset_base = times_played * m_length;
         int transpose = transposable() ? m_parent->get_transpose() : 0 ;
-        event_list::iterator e = m_events.begin();
+        auto e = m_events.begin();
         while (e != m_events.end())
         {
             event & er = event_list::dref(e);
@@ -1286,9 +1286,12 @@ sequence::play
 #endif
                 if (transpose != 0 && er.is_note()) /* includes Aftertouch  */
                 {
-                    event transposed_event = er;    /* assign ALL members   */
-                    transposed_event.transpose_note(transpose);
-                    put_event_on_bus(transposed_event);
+                    // COMMENTED TO AVOID NEEDLESS COPYING
+                    // event transposed_event = er;    /* assign ALL members   */
+                    // transposed_event.transpose_note(transpose);
+                    // put_event_on_bus(transposed_event);
+                    er.transpose_note(transpose);
+                    put_event_on_bus(er);
                 }
                 else
                 {
@@ -1360,7 +1363,7 @@ sequence::verify_and_link ()
 void
 sequence::link_new ()
 {
-    automutex locker(m_mutex);
+    // COMMENTED OUT, locked elsewhere: automutex locker(m_mutex);
     m_events.link_new();
 }
 
@@ -3463,7 +3466,7 @@ sequence::check_loop_reset ()
  *      -   If not playing, but the event is a Note On or Note Off, we add it
  *          and keep track of it.
  *
- *  If MIDI Thru is enabled, the event is put on the buss.
+ *  If MIDI Thru is enabled, the event is also put on the buss.
  *
  *  We are adding a feature where events are rejected if their channel
  *  doesn't match that of the sequence.  This has been a complaint of some
@@ -3524,7 +3527,7 @@ sequence::stream_event (event & ev)
                 if (ev.is_note_on() && m_rec_vol > SEQ66_PRESERVE_VELOCITY)
                     ev.set_note_velocity(m_rec_vol);    /* modify incoming  */
 
-                add_event(ev);                          /* more locking     */
+                add_event(ev);                          /* locks and sorts  */
                 set_dirty();
             }
             else
@@ -3566,9 +3569,9 @@ sequence::stream_event (event & ev)
             }
         }
         if (m_thru)
-            put_event_on_bus(ev);                       /* more locking     */
+            put_event_on_bus(ev);                       /* removed locking  */
 
-        link_new();                                     /* more locking     */
+        link_new();                                     /* removed locking  */
         if (m_quantized_rec && m_parent->is_pattern_playing())
         {
             if (ev.is_note_off())
@@ -3872,8 +3875,8 @@ sequence::intersect_notes
         if (position_note == eon.get_note() && eon.is_note_on())
         {
             off = on;                   /* find next "off" event for note   */
-            ++off;                      /* hopefully, this is it!           */
-            event & eoff = event_list::dref(off);   /* access the event itself          */
+            ++off;                                  /* hope this is it!     */
+            event & eoff = event_list::dref(off);   /* access event itself  */
 
             /*
              *  (eon.get_note() != eoff.get_note() || eoff.is_note_on())
@@ -3963,6 +3966,8 @@ sequence::intersect_events
 
 /**
  *  Grows a trigger.  See triggers::grow_trigger() for more information.
+ *  We need to keep the automutex here because qperfroll calls this function
+ *  directly.
  *
  * \param tickfrom
  *      The desired from-value back which to expand the trigger, if necessary.
@@ -4754,7 +4759,8 @@ bool
 sequence::reset_interval
 (
     midipulse t0, midipulse t1,
-    event_list::const_iterator & it0, event_list::const_iterator & it1
+    event_list::const_iterator & it0,
+    event_list::const_iterator & it1
 ) const
 {
     bool result = false;
@@ -4942,14 +4948,7 @@ sequence::get_next_event_match
 
 bool
 sequence::next_trigger (trigger & trig)
-// (
-//     midipulse & tick_on, midipulse & tick_off, bool & selected,
-//     midipulse & offset
-// )
 {
-//  return m_triggers.next(tick_on, tick_off, selected, offset);
-//  return m_triggers.next(trig);
-
     trig = m_triggers.next();
     return trig.is_valid();
 }
@@ -5519,7 +5518,7 @@ sequence::print_triggers () const
 void
 sequence::put_event_on_bus (event & ev)
 {
-    automutex locker(m_mutex);
+    // COMMENTED OUT, locked elsewhere: automutex locker(m_mutex);
     midibyte note = ev.get_note();
     bool skip = false;
     if (ev.is_note_on())
@@ -6234,7 +6233,10 @@ sequence::resume_note_ons (midipulse tick)
                 midipulse on = ei.timestamp();      /* see banner notes */
                 midipulse off = link->timestamp();
                 if (on < (tick % m_length) && off > (tick % m_length))
+                {
+                    automutex locker(m_mutex);
                     put_event_on_bus(ei);
+                }
             }
         }
     }

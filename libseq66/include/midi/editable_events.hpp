@@ -161,6 +161,11 @@ public:
         return m_events;
     }
 
+    const Events & events () const
+    {
+        return m_events;
+    }
+
     iterator begin ()
     {
         return m_events.begin();
