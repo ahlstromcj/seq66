@@ -1131,11 +1131,12 @@ bool
 qseqeditframe64::on_sequence_change (seq::number seqno)
 {
     // We GOT WOIK TODO!
-    // perf().notify_sequence_change(seqno);
 
     if (seqno == seq_pointer()->seq_number())
     {
         m_seqroll->set_redraw();        // more?
+        // m_seqdata->set_dirty();      // doesn't cause a refresh
+        // printf("on_sequence_change()\n"); // never called
     }
     return true;
 }
@@ -2214,7 +2215,7 @@ qseqeditframe64::follow_progress (bool expand)
         {
             midipulse prog = seq_pointer()->progress_value();
             int newx = tix_to_pix(prog);
-            hadjust->setValue(newx);                // set_dirty(); needed?
+            hadjust->setValue(newx);
         }
         else                                        /* use for non-recording */
         {
