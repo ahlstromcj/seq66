@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-03
+ * \updates       2019-09-12
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -941,14 +941,13 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     snap_x(snapped_x);
     snap_y(snapped_y);
     current_y(snapped_y);
-    drop_y(snapped_y);                  /* y is always snapped */
+    drop_y(snapped_y);                              /* y is always snapped  */
     if (paste())
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
+        s->paste_selected(tick_s, note);            /* s->push_undo()       */
         paste(false);
-        s->push_undo();
-        s->paste_selected(tick_s, note);
-        set_dirty();
+        set_needs_update();                         /* set_dirty();         */
     }
     else
     {
@@ -1523,8 +1522,6 @@ qseqroll::sizeHint () const
 {
     int h = m_keyarea_y + 1;
     int w = m_parent_frame->width();
-//  int z = zoom();
-//  int len = int(seq_pointer()->get_length()) / z;
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
         len = w;

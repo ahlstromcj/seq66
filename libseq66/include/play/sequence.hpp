@@ -1041,7 +1041,7 @@ public:
         return m_have_redo;
     }
 
-    void push_undo (bool hold = false);             // adds stazed parameter
+    void push_undo (bool hold = false);     /* adds stazed parameter    */
     void pop_undo ();
     void pop_redo ();
     void push_trigger_undo ();
@@ -1683,15 +1683,15 @@ public:
     void copy_selected ();
     void cut_selected (bool copyevents = true);
     void paste_selected (midipulse tick, int note);
-    void get_selected_box
+    bool get_selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    void get_onsets_selected_box
+    bool get_onsets_selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    void get_clipboard_box
+    bool get_clipboard_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );

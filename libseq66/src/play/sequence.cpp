@@ -376,11 +376,11 @@ sequence::push_undo (bool hold)
 {
     automutex locker(m_mutex);
     if (hold)
-        m_events_undo.push(m_events_undo_hold);     // stazed
+        m_events_undo.push(m_events_undo_hold);     /* stazed   */
     else
         m_events_undo.push(m_events);
 
-    set_have_undo();                                // stazed
+    set_have_undo();                                /* stazed   */
 }
 
 /**
@@ -1531,19 +1531,21 @@ sequence::unpaint_all ()
  *      Side-effect return reference for the low note.
  */
 
-void
+bool
 sequence::get_selected_box
 (
     midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
 )
 {
     automutex locker(m_mutex);
+    bool result = false;
     tick_s = m_maxbeats * m_ppqn;
     tick_f = 0;
     note_h = 0;
     note_l = SEQ66_MIDI_COUNT_MAX;
     for (auto & e : m_events)
     {
+        result = true;
         if (e.is_selected())
         {
             midipulse time = e.timestamp();
@@ -1561,6 +1563,7 @@ sequence::get_selected_box
                 note_h = note;
         }
     }
+    return result;
 }
 
 /**
@@ -1582,13 +1585,14 @@ sequence::get_selected_box
  *      Side-effect return reference for the low note.
  */
 
-void
+bool
 sequence::get_onsets_selected_box
 (
     midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
 )
 {
     automutex locker(m_mutex);
+    bool result = false;
     tick_s = m_maxbeats * m_ppqn;
     tick_f = 0;
     note_h = 0;
@@ -1603,6 +1607,7 @@ sequence::get_onsets_selected_box
              */
 
             midipulse time = e.timestamp();
+            result = true;
             if (time < tick_s)
                 tick_s = time;
 
@@ -1617,6 +1622,7 @@ sequence::get_onsets_selected_box
                 note_h = note;
         }
     }
+    return result;
 }
 
 /**
@@ -1641,7 +1647,7 @@ sequence::get_onsets_selected_box
  *      Side-effect return reference for the low note.
  */
 
-void
+bool
 sequence::get_clipboard_box
 (
     midipulse & tick_s, int & note_h,
@@ -1649,6 +1655,7 @@ sequence::get_clipboard_box
 )
 {
     automutex locker(m_mutex);
+    bool result = false;
     tick_s = m_maxbeats * m_ppqn;
     tick_f = 0;
     note_h = 0;
@@ -1659,16 +1666,20 @@ sequence::get_clipboard_box
     }
     else
     {
-        for (auto i = m_clipboard.begin(); i != m_clipboard.end(); ++i)
+        result = true;                  /* FIXME */
+//      for (auto i = m_clipboard.begin(); i != m_clipboard.end(); ++i)
+        for (auto & e : m_clipboard)
         {
-            midipulse time = event_list::dref(i).timestamp();
+//          midipulse time = event_list::dref(i).timestamp();
+//          int note = event_list::dref(i).get_note();
+            midipulse time = e.timestamp();
+            int note = e.get_note();
             if (time < tick_s)
                 tick_s = time;
 
             if (time > tick_f)
                 tick_f = time;
 
-            int note = event_list::dref(i).get_note();
             if (note < note_l)
                 note_l = note;
 
@@ -1676,6 +1687,7 @@ sequence::get_clipboard_box
                 note_h = note;
         }
     }
+    return result;
 }
 
 /**
@@ -2685,19 +2697,13 @@ sequence::paste_selected (midipulse tick, int note)
     {
         automutex locker(m_mutex);
         event_list clipbd = m_clipboard;            /* copy the clipboard   */
-        m_events_undo.push(m_events);               /* push_undo(), no lock */
-        for (auto i = clipbd.begin(); i != clipbd.end(); ++i)
+        int highest_note = 0;
+        push_undo();                                /* push undo, no lock   */
+        for (auto & e : clipbd)
         {
-            event & e = event_list::dref(i);
             midipulse t = e.timestamp();
             e.set_timestamp(t + tick);
-        }
-
-        int highest_note = 0;
-        for (auto i = clipbd.begin(); i != clipbd.end(); ++i)
-        {
-            event & e = event_list::dref(i);
-            if (e.is_note_on() || e.is_note_off())
+            if (e.is_note())                        /* includes Aftertouch  */
             {
                 midibyte n = e.get_note();
                 if (n > highest_note)
@@ -2706,10 +2712,9 @@ sequence::paste_selected (midipulse tick, int note)
         }
 
         int note_delta = note - highest_note;
-        for (auto i = clipbd.begin(); i != clipbd.end(); ++i)
+        for (auto & e : clipbd)
         {
-            event & e = event_list::dref(i);
-            if (e.is_note())                        /* Note On or Note Off  */
+            if (e.is_note())                        /* includes Aftertouch  */
             {
                 midibyte n = e.get_note();
                 e.set_note(n + note_delta);
@@ -2718,10 +2723,11 @@ sequence::paste_selected (midipulse tick, int note)
 
         /*
          * Suitable for std::list and std::vector.  The std::multimap no longer
-         * supported.
+         * supported.  Note that merge() requires m_events and Clipbd to be
+         * sorted first.
          */
 
-        m_events.merge(clipbd, false);          /* don't presort clipboard  */
+        m_events.merge(clipbd);                 /* will presort clipboard   */
         verify_and_link();
         reset_draw_marker();
         modify();
@@ -2836,7 +2842,7 @@ sequence::change_event_data_range
 
         if (good)
         {
-#if defined USE_SET_HOLD_UNDO                                /* issue #130       */
+#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
             if (! get_hold_undo())                      /* stazed           */
                 set_hold_undo(true);
 #endif
@@ -2966,7 +2972,7 @@ sequence::change_event_data_relative
         if (good)
         {
             int newdata = d1 + newval;                  /* "scale" data     */
-#if defined USE_SET_HOLD_UNDO                                /* issue #130       */
+#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
             if (! get_hold_undo())                      /* stazed           */
                 set_hold_undo(true);
 #endif
@@ -3083,7 +3089,7 @@ sequence::change_event_data_lfo
 
         if (is_set)
         {
-#if defined USE_SET_HOLD_UNDO                                /* issue #130       */
+#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
             if (! get_hold_undo())
                 set_hold_undo(true);
 #endif

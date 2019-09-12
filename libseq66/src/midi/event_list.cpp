@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-05-18
+ * \updates       2019-09-12
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -269,34 +269,42 @@ event_list::append (const event & e)
  *
  *  For std::multimap, sorting is automatic.  However, unless
  *  move-construction is supported, merging will be less efficient than for
- *  the list version.  Also, we need a way to include duplicates of each
- *  event, so we need to use a multi-map.  Once all this setup, merging is
- *  really just insertion.  And, since sorting isn't needed, the multimap
- *  actually turns out to be faster.
+ *  the list (now a vector) version.
  *
  * \param el
  *      Provides the event list to be merged into the current event list.
  *
  * \param presort
  *      If true, the events are presorted.  This is a requirement for merging
- *      an std::list, but is a no-op for the std::multimap implementation.
+ *      an std::list or std::vector, but is a no-op for the std::multimap
+ *      implementation [which no longer exists].
  */
 
 void
 event_list::merge (event_list & el, bool presort)
 {
-    Events destination;
+#ifdef USE_THIS_CRASHING_CODE
+    Events destination;                     /* a vector of MIDI events      */
     if (presort)                            /* should always be true here!  */
+    {
+        sort();                             /* sort ourselves to be sure    */
         el.sort();                          /* el.m_events.sort();          */
-
+    }
     std::merge
     (
-        m_events.begin(),
-        m_events.end(),
-        el.m_events.begin(),
-        el.m_events.end(),
-        std::back_inserter(destination)
+        m_events.begin(), m_events.end(),
+        el.m_events.begin(), el.m_events.end(),
+        destination.begin()     // std::back_inserter(destination)
     );
+    m_events = destination;
+#else
+    if (presort)                            /* not really necessary here    */
+        el.sort();                          /* el.m_events.sort();          */
+
+    m_events.reserve(m_events.size(), el.m_events.size());
+    m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
+    std::sort(m_events.begin(), m_events.end());    /* event_list::sort()   */
+#endif
 }
 
 /**
