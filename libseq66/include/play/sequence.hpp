@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-09-09
+ * \updates       2019-09-12
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -300,7 +300,7 @@ private:
      * Documented at the definition point in the cpp module.
      */
 
-    static event_list m_events_clipboard;   /* shared between sequences */
+    static event_list m_clipboard;   /* shared between sequences */
 
     /**
      *  For pause support, we need a way for the sequence to find out if JACK

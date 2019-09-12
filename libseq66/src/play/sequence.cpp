@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-09
+ * \updates       2019-09-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -104,7 +104,7 @@ sequence::note_info::show () const
  *  allows for copy/paste between patterns.
  */
 
-event_list sequence::m_events_clipboard;
+event_list sequence::m_clipboard;
 
 /**
  *  Provides the default name/title for the sequence.
@@ -1624,6 +1624,8 @@ sequence::get_onsets_selected_box
  *  this function and get_selected_box().  Also note we could return a boolean
  *  indicating if the return values were filled in.
  *
+ *  This function is called in qstriggereditor and in qseqroll.
+ *
  * \threadsafe
  *
  * \param [out] tick_s
@@ -1642,7 +1644,8 @@ sequence::get_onsets_selected_box
 void
 sequence::get_clipboard_box
 (
-    midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+    midipulse & tick_s, int & note_h,
+    midipulse & tick_f, int & note_l
 )
 {
     automutex locker(m_mutex);
@@ -1650,17 +1653,13 @@ sequence::get_clipboard_box
     tick_f = 0;
     note_h = 0;
     note_l = SEQ66_MIDI_COUNT_MAX;
-    if (m_events_clipboard.empty())     /* m_events_clipboard.count() == 0 */
+    if (m_clipboard.empty())
     {
         tick_s = tick_f = note_h = note_l = 0;
     }
     else
     {
-        for
-        (
-            auto i = m_events_clipboard.begin();
-            i != m_events_clipboard.end(); ++i
-        )
+        for (auto i = m_clipboard.begin(); i != m_clipboard.end(); ++i)
         {
             midipulse time = event_list::dref(i).timestamp();
             if (time < tick_s)
@@ -2547,20 +2546,20 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
  *  by user 0rel, of events being modified after being added to the clipboard.
  *  So we add his reconstruction fix here as well.  To summarize the steps:
  *
- *      -#  Clear the m_events_clipboard.  NO!  If we have no events to
+ *      -#  Clear the m_clipboard.  NO!  If we have no events to
  *          copy to the clipboard, we do not want to clear it.  This kills
  *          cut-and-paste functionality.
  *      -#  Add all selected events in this clipboard to the sequence.
  *      -#  Normalize the timestamps of the events in the clip relative to the
  *          timestamp of the first selected event.  (Is this really needed?)
- *      -#  Reconstruct/reconstitute the m_events_clipboard.
+ *      -#  Reconstruct/reconstitute the m_clipboard.
  *
  *  This process is a bit easier to manage than erase/insert on events because
  *  std::multimap has no erase() function that returns the next valid
  *  iterator.  Also, we use a local clipboard first, to save on copying.
  *  We've enhanced the error-checking, too.
  *
- *  Finally, note that m_events_clipboard is a static member of sequence, so:
+ *  Finally, note that m_clipboard is a static member of sequence, so:
  *
  *      -#  Copying can be done between sequences.
  *      -#  Access to it needs to be protected by a mutex.
@@ -2576,30 +2575,22 @@ sequence::copy_selected ()
     for (auto & e : m_events)
     {
         if (e.is_selected())
-            clipbd.add(e);
+            clipbd.add(e);                              /* sorts every time */
     }
     if (! clipbd.empty())
     {
         midipulse first_tick = event_list::dref(clipbd.begin()).timestamp();
         if (first_tick >= 0)
         {
-            for (auto & e : m_events)
+            for (auto & e : clipbd)                     /* 2019-09-12       */
             {
                 midipulse t = e.timestamp();
                 if (t >= first_tick)
-                    e.set_timestamp(t - first_tick);
+                    e.set_timestamp(t - first_tick);    /* slide left!      */
             }
         }
-        m_events_clipboard = clipbd;
+        m_clipboard = clipbd;
     }
-
-    /*
-     * Issue #40 This seems to break cut-and-paste in the sequence editor
-     * when the events have been *cut*, as opposed to copied.
-     *
-     * else
-     *   m_events_clipboard.clear();
-     */
 }
 
 /**
@@ -2690,10 +2681,10 @@ sequence::cut_selected (bool copyevents)
 void
 sequence::paste_selected (midipulse tick, int note)
 {
-    if (! m_events_clipboard.empty())
+    if (! m_clipboard.empty())
     {
         automutex locker(m_mutex);
-        event_list clipbd = m_events_clipboard;     /* copy the clipboard   */
+        event_list clipbd = m_clipboard;            /* copy the clipboard   */
         m_events_undo.push(m_events);               /* push_undo(), no lock */
         for (auto i = clipbd.begin(); i != clipbd.end(); ++i)
         {

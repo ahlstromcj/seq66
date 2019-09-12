@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-09-10
+ * \updates       2019-09-12
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1257,6 +1257,8 @@ qseqeditframe64::conditional_update ()
         follow_progress();
     }
     (void) seq_pointer()->check_loop_reset();
+    if (seq_pointer()->is_dirty_edit())
+        set_dirty();
 }
 
 /**
@@ -3009,6 +3011,7 @@ qseqeditframe64::update_midi_tooltips ()
     bool thru_active = ui->m_toggle_thru->isChecked();
     bool record_active = ui->m_toggle_record->isChecked();
     bool qrecord_active = ui->m_toggle_qrecord->isChecked();
+    bool playing = seq_pointer()->get_playing();
     ui->m_toggle_thru->setToolTip
     (
         thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
@@ -3021,6 +3024,7 @@ qseqeditframe64::update_midi_tooltips ()
     (
         qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
     );
+    ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
 }
 
 /**
@@ -3134,7 +3138,7 @@ qseqeditframe64::set_dirty ()
         seq::number seqno = seq_pointer()->seq_number();
         perf().notify_sequence_change(seqno);
     }
-    m_seqroll->set_redraw();
+    update_draw_geometry();     // m_seqroll->set_redraw();
 }
 
 /**

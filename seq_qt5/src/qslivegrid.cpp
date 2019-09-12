@@ -214,7 +214,10 @@ void
 qslivegrid::conditional_update ()
 {
     bool ok = ! m_loop_buttons.empty();
-    if (perf().is_running() || needs_update() && ok)
+    if (! ok)
+        return;
+
+    if (perf().is_running() || needs_update())
     {
         set_needs_update(false);
         for (int column = 0; column < columns(); ++column)
