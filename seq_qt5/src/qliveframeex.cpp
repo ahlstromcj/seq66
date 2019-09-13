@@ -155,7 +155,8 @@ qliveframeex::update_draw_geometry ()
 }
 
 /**
- *
+ *  This function is called when focus changes.  We forward the call to the
+ *  actual live-frame or live-grid.
  */
 
 void

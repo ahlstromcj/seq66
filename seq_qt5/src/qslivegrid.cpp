@@ -217,7 +217,7 @@ qslivegrid::conditional_update ()
     if (! ok)
         return;
 
-    if (perf().is_running() || needs_update())
+    if (perf().is_running() || needs_update()) // || perf().needs_update())
     {
         set_needs_update(false);
         for (int column = 0; column < columns(); ++column)

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-04
+ * \updates       2019-09-13
  * \license       GNU GPLv2 or above
  *
  *
@@ -149,7 +149,7 @@ private:
     bool recreate_all_slots ();
     bool refresh_all_slots ();
     bool modify_slot (qslotbutton * newslot, int row, int column);
-
+    void alter_sequence (seq::number seqno);
     void slot_press (int seqno);
     void create_loop_buttons ();
     void clear_loop_buttons ();
@@ -178,7 +178,6 @@ private slots:
     void edit_sequence ();
     void edit_sequence_ex ();
     void edit_events ();
-    void alter_sequence (seq::number seqno);
     void copy_sequence ();
     void cut_sequence ();
     void paste_sequence ();

@@ -150,10 +150,6 @@ qsliveframe::qsliveframe (performer & p, qsmainwnd * window, QWidget * parent) :
     ui->setNumberLabel->hide();
     ui->txtBankName->hide();
     ui->spinBank->hide();
-
-    // Might already be done in the base class
-    // set_bank(0);
-
     ui->labelPlaylistSong->setText("");
 
     m_font.setPointSize(15);
@@ -1350,15 +1346,10 @@ qsliveframe::changeEvent (QEvent * event)
         if (isActiveWindow())
         {
             m_has_focus = true;             // widget is now active
-
-            // perf().set_screenset(m_bank_id);
-
             (void) perf().set_playing_screenset(m_bank_id);
         }
         else
-        {
             m_has_focus = false;            // widget is now inactive
-        }
     }
 }
 

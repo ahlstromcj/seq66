@@ -301,7 +301,7 @@ event_list::merge (event_list & el, bool presort)
     if (presort)                            /* not really necessary here    */
         el.sort();                          /* el.m_events.sort();          */
 
-    m_events.reserve(m_events.size(), el.m_events.size());
+    m_events.reserve(m_events.size() + el.m_events.size());
     m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
     std::sort(m_events.begin(), m_events.end());    /* event_list::sort()   */
 #endif
