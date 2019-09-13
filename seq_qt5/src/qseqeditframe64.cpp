@@ -365,8 +365,7 @@ static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
  *      to null.
  */
 
-qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent)
- :
+qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     qseqframe           (p, seqid, parent),
     ui                  (new Ui::qseqeditframe64),
     m_lfo_wnd           (nullptr),
@@ -1270,8 +1269,11 @@ qseqeditframe64::conditional_update ()
 void
 qseqeditframe64::update_seq_name ()
 {
-    seq_pointer()->set_name(ui->m_entry_name->text().toStdString());
+    // seq_pointer()->set_name(ui->m_entry_name->text().toStdString());
+    std::string name = ui->m_entry_name->text().toStdString();
+    perf().set_sequence_name(seq_pointer(), name);
     set_dirty();
+    // perf().notify_sequence_change(seqno);
 }
 
 /**

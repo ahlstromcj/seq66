@@ -1968,6 +1968,22 @@ performer::set_right_tick (midipulse tick, bool setstart)
     }
 }
 
+/**
+ *
+ */
+
+void
+performer::set_sequence_name (seq::pointer s, const std::string & name)
+{
+    if (s)
+    {
+        s->set_name(name);
+        set_needs_update();             /* tell all GUIs to refresh. BUG!   */
+        modify();
+        // notify_sequence_change(seqno);               /* modify()     */
+    }
+}
+
 /*
  * -------------------------------------------------------------------------
  *  Recording
@@ -2008,7 +2024,7 @@ performer::set_recording (bool record_active, bool thru_active, seq::pointer s)
  * \param record_active
  *      Provides the current status of the Record button.
  *
- * \param seq
+ * \param seqno
  *      The sequence number; the resulting pointer is checked.
  *
  * \param toggle
@@ -2017,9 +2033,9 @@ performer::set_recording (bool record_active, bool thru_active, seq::pointer s)
  */
 
 void
-performer::set_recording (bool record_active, int seq, bool toggle)
+performer::set_recording (bool record_active, seq::number seqno, bool toggle)
 {
-    seq::pointer s = get_sequence(seq);
+    seq::pointer s = get_sequence(seqno);
     if (s)
         s->set_input_recording(record_active, toggle);
 }
@@ -5013,12 +5029,13 @@ performer::automation_record
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
+        seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_recording(false, d1, true);           /* toggles */
+            set_recording(false, seqno, true);           /* toggles */
         else if (a == automation::action::on)
-            set_recording(true, d1);
+            set_recording(true, seqno);
         else if (a == automation::action::off)
-            set_recording(false, d1);
+            set_recording(false, seqno);
     }
     return true;
 }

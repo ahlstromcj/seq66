@@ -1549,16 +1549,17 @@ public:
             m_master_bus->set_sequence_input(active, s.get());
     }
 
+    void set_sequence_name (seq::pointer s, const std::string & name);
+
+    // KEEP
     void set_recording (bool rec_active, bool thru_active, seq::pointer s);
-    void set_recording (bool rec_active, int seqno, bool toggle = false);
-    void set_quantized_recording (bool rec_active, seq::pointer s);
-    void set_quantized_recording (bool rec_active, int seqno, bool toggle = false);
 
-    /*
-     * From jfrey-xx on GitHub.
-     */
+    // INVESTIGATING
+    void set_recording (bool rec_active, seq::number seqno, bool toggle = false);
 
-    void overwrite_recording
+    void set_quantized_recording (bool active, seq::pointer s);
+    void set_quantized_recording (bool active, int seqno, bool toggle = false);
+    void overwrite_recording                    /* From jfrey-xx on GitHub  */
     (
         bool oactive, int seqno, bool toggle = false
     );
@@ -2471,7 +2472,7 @@ public:
      *      null pointer is returned.
      */
 
-    const seq::pointer get_sequence (int seqno) const
+    const seq::pointer get_sequence (seq::number seqno) const
     {
         return mapper().loop(seqno);    // .get();
     }

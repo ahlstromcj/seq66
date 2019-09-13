@@ -187,6 +187,11 @@ public:
         return SEQ66_SEQUENCE_LIMIT;
     }
 
+    static number all ()
+    {
+        return SEQ66_ALL_TRACKS;
+    }
+
     static number none ()
     {
         return SEQ66_UNASSIGNED;

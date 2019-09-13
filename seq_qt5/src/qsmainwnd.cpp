@@ -891,7 +891,6 @@ qsmainwnd::open_file (const std::string & fn)
         if (not_nullptr(m_edit_frame))
             m_edit_frame->update_draw_geometry();
 
-        // edit_container::iterator ei;
         for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); ++ei)
         {
             qseqeditex * qep = ei->second;      /* save the pointer         */
@@ -1478,7 +1477,7 @@ qsmainwnd::showqsbuildinfo ()
 void
 qsmainwnd::load_editor (int seqid)
 {
-    edit_container::iterator ei = m_open_editors.find(seqid);
+    auto ei = m_open_editors.find(seqid);
     if (ei == m_open_editors.end())                         /* 1 editor/seq */
     {
         ui->EditTabLayout->removeWidget(m_edit_frame);      /* no ptr check */
@@ -1499,7 +1498,7 @@ qsmainwnd::load_editor (int seqid)
 void
 qsmainwnd::load_event_editor (int seqid)
 {
-    edit_container::iterator ei = m_open_editors.find(seqid);
+    auto ei = m_open_editors.find(seqid);
     if (ei == m_open_editors.end())                         /* 1 editor/seq */
     {
         ui->EventTabLayout->removeWidget(m_event_frame);    /* no ptr check */
@@ -1565,7 +1564,7 @@ qsmainwnd::load_qseqedit (int seqid)
 {
     if (perf().is_seq_active(seqid))
     {
-        edit_container::iterator ei = m_open_editors.find(seqid);
+        auto ei = m_open_editors.find(seqid);
         if (ei == m_open_editors.end())
         {
             /*
@@ -1603,9 +1602,9 @@ qsmainwnd::load_qseqedit (int seqid)
  */
 
 void
-qsmainwnd::remove_editor (int seqid)
+qsmainwnd::remove_editor (int seqno)
 {
-    edit_container::iterator ei = m_open_editors.find(seqid);
+    auto ei = m_open_editors.find(seqno);
     if (ei != m_open_editors.end())
         m_open_editors.erase(ei);
 }
@@ -1619,8 +1618,7 @@ qsmainwnd::remove_editor (int seqid)
 void
 qsmainwnd::remove_all_editors ()
 {
-    edit_container::iterator ei;
-    for (ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
+    for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
     {
         qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei++);         /* remove pointer, inc iterator */
@@ -1723,7 +1721,7 @@ qsmainwnd::load_live_frame (int ssnum)
 {
     if (ssnum >= 0 && ssnum < usr().max_sets())
     {
-        live_container::iterator ei = m_open_live_frames.find(ssnum);
+        auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
         {
             qliveframeex * ex = new qliveframeex(perf(), ssnum, this);
@@ -1755,7 +1753,7 @@ qsmainwnd::load_live_frame (int ssnum)
 void
 qsmainwnd::remove_live_frame (int ssnum)
 {
-    live_container::iterator ei = m_open_live_frames.find(ssnum);
+    auto ei = m_open_live_frames.find(ssnum);
     if (ei != m_open_live_frames.end())
         m_open_live_frames.erase(ei);
 }
@@ -1769,10 +1767,10 @@ qsmainwnd::remove_live_frame (int ssnum)
 void
 qsmainwnd::remove_all_live_frames ()
 {
-    live_container::iterator ei;
     for
     (
-        ei = m_open_live_frames.begin(); ei != m_open_live_frames.end(); /*++ei*/
+        auto ei = m_open_live_frames.begin();
+        ei != m_open_live_frames.end(); /*++ei*/
     )
     {
         qliveframeex * lep = ei->second;    /* save the pointer             */
@@ -2417,6 +2415,15 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
     }
     report_message(os.str(), good);
     return good;
+}
+
+/**
+ *
+ */
+
+bool
+qsmainwnd:: on_sequence_change (seq::number setno)
+{
 }
 
 /**

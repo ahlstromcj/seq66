@@ -5251,6 +5251,10 @@ sequence::set_quantized_recording (bool qr)
  *  Do we need a quantized recording version, or is setting the
  *  quantized-recording flag sufficient?
  *
+ *  Except if already Thru and trying to turn recording (input) off, set input
+ *  on here no matter what, because even if m_thru, input could have been
+ *  replaced in another sequence.
+ *
  * \param record_active
  *      Provides the desired status to set recording.
  *
@@ -5265,19 +5269,7 @@ sequence::set_input_recording (bool record_active, bool toggle)
     if (toggle)
         record_active = ! m_recording;
 
-    /*
-     * Except if already Thru and trying to turn recording (input) off,
-     * set input on here no matter what, because even if m_thru, input could
-     * have been replaced in another sequence.
-     */
-
-    /*
-     * LET's try commenting out the conditional.
-     */
-
-    ////// if (record_active || ! m_thru)
-        m_master_bus->set_sequence_input(record_active, this);
-
+    m_master_bus->set_sequence_input(record_active, this);
     set_recording(record_active);
 }
 
@@ -5383,7 +5375,7 @@ sequence::set_name (const std::string & name)
     else
         m_name = name;                                /* legacy behavior  */
 
-    set_dirty_mp();
+    set_dirty();
 }
 
 /**
@@ -5403,14 +5395,6 @@ sequence::title () const
 {
     int measures = calculate_measures();
     bool showmeasures = true;
-
-    /*
-     * TODO???
-     *
-     *  if (not_nullptr(m_parent))
-     *      showmeasures = m_parent->show_ui_sequence_key();
-     */
-
     if (measures > 0 && showmeasures)           /* do we have bars to show? */
     {
         char mtemp[16];                         /* holds measures as string */

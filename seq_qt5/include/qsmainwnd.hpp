@@ -153,6 +153,7 @@ protected:
     (
         const keystroke & k, bool success
     ) override;
+    virtual bool on_sequence_change (seq::number setno) override;
 
     virtual void keyPressEvent (QKeyEvent * event) override;
 
@@ -202,16 +203,16 @@ private:
 private:
 
     /**
-     *  A typedef for keeping track of external sequence edits.
+     *  An alias for keeping track of external sequence edits.
      */
 
-    typedef std::map<int, qseqeditex *> edit_container;
+    using edit_container = std::map<int, qseqeditex *>;
 
     /**
-     *  A typedef for keeping track of external live-frames.
+     *  An alias for keeping track of external live-frames.
      */
 
-    typedef std::map<int, qliveframeex *> live_container;
+    using live_container = std::map<int, qliveframeex *>;
 
 private:
 
