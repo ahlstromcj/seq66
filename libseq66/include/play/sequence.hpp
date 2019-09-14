@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-09-12
+ * \updates       2019-09-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -57,6 +57,7 @@
  *  -   unassigned().  Returns the value of -1 for sequence number.
  */
 
+#include <atomic>                       /* std::atomic<bool> for dirt   */
 #include <string>
 #include <stack>
 
@@ -567,7 +568,7 @@ private:
      *      -   Cause mainwid to update a given sequence in the live frame.
      */
 
-    mutable bool m_dirty_main;
+    mutable std::atomic<bool> m_dirty_main;
 
     /**
      *  Provides the main is-edited flag. In Seq24, it was:
@@ -579,7 +580,7 @@ private:
      *          seqevent panes.
      */
 
-    mutable bool m_dirty_edit;
+    mutable std::atomic<bool> m_dirty_edit;
 
     /**
      *  Provides performance dirty flagflag.
@@ -590,7 +591,7 @@ private:
      *      -   Used in perfroll to redraw each "dirty perf" sequence.
      */
 
-    mutable bool m_dirty_perf;
+    mutable std::atomic<bool> m_dirty_perf;
 
     /**
      *  Provides the names dirtiness flag.
@@ -601,7 +602,7 @@ private:
      *      -   Used in perfnames to redraw each "dirty names" sequence.
      */
 
-    mutable bool m_dirty_names;
+    mutable std::atomic<bool> m_dirty_names;
 
     /**
      *  Indicates that the sequence is currently being edited.

@@ -1439,9 +1439,9 @@ jack_assistant::output (jack_scratchpad & pad)
 {
     if (m_jack_running)
     {
-        double jack_ticks_converted;                // MAY NEED long typedef
-        double jack_ticks_delta;                    // MAY NEED long typedef
-        pad.js_init_clock = false;                  // no init until a good lock
+        double jack_ticks_converted;
+        double jack_ticks_delta;
+        pad.js_init_clock = false;              /* no init until a good lock */
         m_jack_transport_state = jack_transport_query(m_jack_client, &m_jack_pos);
 
         /*

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-11
+ * \updates       2019-09-14
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -381,6 +381,13 @@ private:
 public:
 
     event ();
+    event
+    (
+        midipulse tstamp,
+        midibyte status,
+        midibyte d0,
+        midibyte d1
+    );
     event (const event & rhs);
     event & operator = (const event & rhs);
     virtual ~event ();
@@ -712,10 +719,10 @@ public:
      *      The second byte value to set.
      */
 
-    void set_data (midibyte d1, midibyte d2)
+    void set_data (midibyte d0, midibyte d1)
     {
-        m_data[0] = d1 & 0x7F;
-        m_data[1] = d2 & 0x7F;
+        m_data[0] = d0 & 0x7F;
+        m_data[1] = d1 & 0x7F;
     }
 
     /**

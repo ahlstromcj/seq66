@@ -36,7 +36,7 @@
  */
 
 #include "app_limits.h"                 /* SEQ66 defined macros             */
-#include "midi/midibytes.hpp"           /* seq66::midipulse typedef         */
+#include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
 
 #if defined SEQ66_JACK_SUPPORT
 

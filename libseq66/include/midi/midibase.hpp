@@ -37,7 +37,7 @@
 
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
 #include "midi/midibus_common.hpp"      /* values and e_clock enumeration   */
-#include "midi/midibytes.hpp"           /* seq66::midibyte typedef          */
+#include "midi/midibytes.hpp"           /* seq66::midibyte alias            */
 #include "util/automutex.hpp"           /* seq66::recmutex recursive mutex  */
 
 /**

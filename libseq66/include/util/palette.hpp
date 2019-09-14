@@ -138,12 +138,6 @@ class palette
 
 private:
 
-    /*
-     *  Provides a type definition for the color-class of interest.
-     *
-     * typedef COLOR Color;
-     */
-
     /**
      *  Provides an associative container of pointers to the color-class COLOR.
      *  A vector could be used instead of a map.
@@ -155,10 +149,7 @@ public:
 
     palette ();                         /* initially empty, filled by add() */
 
-    void add
-    (
-        PaletteColor index, const COLOR & color, const std::string & name
-    );
+    void add (PaletteColor index, const COLOR & c, const std::string & name);
     const COLOR & get_color (PaletteColor index) const;
     const std::string & get_color_name (PaletteColor index) const;
 

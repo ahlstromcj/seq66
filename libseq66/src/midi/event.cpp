@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-06-09
+ * \updates       2019-09-14
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -86,11 +86,11 @@ namespace seq66
 {
 
 /**
- *  This constructor simply initializes all of the class members.
+ *  This constructor simply initializes all of the class members to default
+ *  values.
  */
 
-event::event ()
- :
+event::event () :
     m_timestamp     (0),
     m_status        (EVENT_NOTE_OFF),
     m_channel       (EVENT_NULL_CHANNEL),
@@ -103,6 +103,45 @@ event::event ()
     m_painted       (false)
 {
     m_data[0] = m_data[1] = 0;
+}
+
+/**
+ *  This constructor initializes some of the class members to default
+ *  values, and provides the most oft-changed values a parameters.
+ *
+ * \param tstamp
+ *      Provides the timestamp of this event.
+ *
+ * \param status
+ *      Provides the status value.  The channel nybble is cleared, since the
+ *      channel is generally provided by the settings of the sequence.
+ *
+ * \param d0
+ *      Provides the first data byte.  There is no default value.
+ *
+ * \param d1
+ *      Provides the second data byte.  There is no default value.
+ */
+
+event::event
+(
+    midipulse tstamp,
+    midibyte status,
+    midibyte d0,
+    midibyte d1
+) :
+    m_timestamp     (tstamp),
+    m_status        (status & EVENT_CLEAR_CHAN_MASK),
+    m_channel       (EVENT_NULL_CHANNEL),
+    m_data          (),                     /* a two-element array  */
+    m_sysex         (),                     /* an std::vector       */
+    m_linked        (nullptr),
+    m_has_link      (false),
+    m_selected      (false),
+    m_marked        (false),
+    m_painted       (false)
+{
+    set_data(d0, d1);
 }
 
 /**
@@ -261,20 +300,20 @@ event::transpose_note (int tn)
 }
 
 /**
- *  Sets the m_status member to the value of status.  If a_status is a
+ *  Sets the m_status member to the value of status.  If \a status is a
  *  channel event, then the channel portion of the status is cleared using
  *  a bitwise AND against EVENT_CLEAR_CHAN_MASK.  This version is basically
  *  the Seq24 version with the additional setting of the Seq66-specific
  *  m_channel member.
  *
- *  Found in yet another fork of seq66: // ORL fait de la merde
+ *  Found in yet another fork of seq24: // ORL fait de la merde
  *  He also provided a very similar routine: set_status_midibus().
  *
  *  Stazed:
  *
  *      The record parameter, if true, does not clear channel portion
  *      on record for channel specific recording. The channel portion is
- *      cleared in sequence::stream_event() by calling set_status() (a_record
+ *      cleared in sequence::stream_event() by calling set_status() (record
  *      = false) after the matching channel is determined.  Otherwise, we use
  *      a bitwise AND to clear the channel portion of the status.  All events
  *      will be stored without the channel nybble.  This is necessary since
@@ -287,7 +326,7 @@ event::transpose_note (int tn)
  *
  * \param status
  *      The status byte, perhaps read from a MIDI file or edited in the
- *      sequencer's event editor.  Sometime, this byte will have the channel
+ *      sequencer's event editor.  Sometimes, this byte will have the channel
  *      nybble masked off.  If that is the case, the eventcode/channel
  *      overload of this function is more appropriate.
  */

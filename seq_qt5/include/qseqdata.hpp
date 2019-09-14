@@ -43,7 +43,7 @@
 #include <QPainter>
 #include <QPen>
 
-#include "midi/midibytes.hpp"           /* midibyte, midipulse typedefs     */
+#include "midi/midibytes.hpp"           /* midibyte, midipulse aliases      */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
 /*

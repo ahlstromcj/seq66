@@ -143,7 +143,7 @@ public:
  *      Error description.
  */
 
-typedef void (* rterror_callback)
+using rterror_callback = void (*)
 (
     rterror::Type type,
     const std::string & errormsg,

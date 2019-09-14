@@ -21,7 +21,7 @@
 #include <vector>                           /* std::vector container        */
 
 #include "midi/event.hpp"                   /* seq66::event namespace       */
-#include "midi/midibytes.hpp"               /* seq66::midibyte typedef      */
+#include "midi/midibytes.hpp"               /* seq66::midibyte alias        */
 
 /**
  * This was the version of the RtMidi library from which this reimplementation
@@ -104,7 +104,7 @@ public:
      *  (with bounds-checking) by operator [].
      */
 
-    typedef std::vector<midibyte> container;
+    using container = std::vector<midibyte>;
 
 private:
 
@@ -189,7 +189,7 @@ public:
  *  pointer has been replaced by a reference.
  */
 
-typedef void (* rtmidi_callback_t)
+using rtmidi_callback_t = void (*)
 (
     midi_message & message,             /* includes the timestamp already */
     void * userdata

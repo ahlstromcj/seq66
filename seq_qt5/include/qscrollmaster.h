@@ -62,9 +62,9 @@ class qscrollmaster : public QScrollArea
 
 private:
 
-    typedef std::list<QScrollBar *> container;
-    typedef std::list<QScrollBar *>::iterator iterator;
-    typedef std::list<QScrollBar *>::const_iterator const_iterator;
+    using container = std::list<QScrollBar *>;
+    using iterator = std::list<QScrollBar *>::iterator;
+    using const_iterator = std::list<QScrollBar *>::const_iterator;
 
 private:
 

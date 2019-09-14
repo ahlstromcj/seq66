@@ -95,13 +95,12 @@ namespace seq66
  *  and above).
  */
 
-typedef struct
+using q_key_spec_t = struct
 {
     std::string gks_key_name;       /**< The djinned up name of the key.    */
     unsigned gks_gdk_key_value;     /**< The key's value in Gtkmm 2.4.      */
     unsigned gks_qt_key_value;      /**< The key's value in Qt 5.           */
-
-} q_key_spec_t;
+};
 
 /**
  *  Provides a data type to convert from incoming Qt 5 key() and text() values
@@ -113,7 +112,7 @@ typedef struct
  *  "rc" configuration file.
  */
 
-typedef std::map<unsigned, q_key_spec_t> QtGtkKeyMap;
+using QtGtkKeyMap = std::map<unsigned, q_key_spec_t>;
 
 /**
  *  The initializer list for the QtGtkKeyMap structure.  Requires C++11 and
@@ -176,12 +175,12 @@ static QtGtkKeyMap sg_key_map =
 
 #else
 
-typedef struct
+using keycode_spec_t = struct
 {
     unsigned keycode;
     q_key_spec_t keyspec;
 
-} keycode_spec_t;
+};
 
 static keycode_spec_t sg_key_map_spec [] =
 {

@@ -41,7 +41,7 @@
 #include <QList>
 
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
-#include "midi/midibytes.hpp"           /* typedef midibpm                  */
+#include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
 /*

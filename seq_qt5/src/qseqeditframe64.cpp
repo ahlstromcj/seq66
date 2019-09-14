@@ -1269,7 +1269,6 @@ qseqeditframe64::conditional_update ()
 void
 qseqeditframe64::update_seq_name ()
 {
-    // seq_pointer()->set_name(ui->m_entry_name->text().toStdString());
     std::string name = ui->m_entry_name->text().toStdString();
     perf().set_sequence_name(seq_pointer(), name);
     set_dirty();

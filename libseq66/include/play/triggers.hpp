@@ -241,7 +241,7 @@ class triggers
 public:
 
     /**
-     *  Provides a typedef introduced by Stazed to make the trigger grow/move
+     *  Provides an alias introduced by Stazed to make the trigger grow/move
      *  code easier to understand.
      */
 

@@ -3205,22 +3205,26 @@ sequence::add_note
         }
         if (! ignore)
         {
-            event e;
+            event e
+            (
+                tick, EVENT_NOTE_ON, note,
+                hardwire ? midibyte(m_note_on_velocity) : velocity
+            );
             if (paint)
                 e.paint();
 
-            e.set_status(EVENT_NOTE_ON);
-            e.set_data(note, hardwire ? midibyte(m_note_on_velocity) : velocity);
-            e.set_timestamp(tick);
+//          e.set_status(EVENT_NOTE_ON);
+//          e.set_data(note, hardwire ? midibyte(m_note_on_velocity) : velocity);
+//          e.set_timestamp(tick);
             add_event(e);
-
-            e.set_status(EVENT_NOTE_OFF);
 
             /*
              * Will be consistent with how m_note_on_velocity is handled above;
              * enable 0 velocity (a standard?) for note off when not playing.
+             * MISSING:  LINKING THE NOTES!
              */
 
+            e.set_status(EVENT_NOTE_OFF);
             e.set_data(note, hardwire ? midibyte(m_note_off_velocity) : 0);
             e.set_timestamp(tick + len);
             result = add_event(e);
@@ -3409,13 +3413,13 @@ sequence::add_event
             }
             (void) remove_marked();
         }
-        event e;
+        event e(tick, status, d0, d1);
         if (paint)
             e.paint();
 
-        e.set_status(status);
-        e.set_data(d0, d1);
-        e.set_timestamp(tick);
+//      e.set_status(status);
+//      e.set_data(d0, d1);
+//      e.set_timestamp(tick);
         result = add_event(e);
     }
     if (result)
@@ -3614,6 +3618,10 @@ sequence::set_dirty ()
  *  flag to false.  Not sure that we need to lock a boolean on modern
  *  processors.
  *
+ *  At this point, another thread might read the initial value of the flag,
+ *  before it is falsified.  Since it is used to initiate updates in callers,
+ *  the penalty is that the caller updates when it doesn't have to.
+ *
  * \threadsafe
  *
  * \return
@@ -3623,9 +3631,8 @@ sequence::set_dirty ()
 bool
 sequence::is_dirty_names () const
 {
-    automutex locker(m_mutex);
-    bool result = m_dirty_names;
-    m_dirty_names = false;              /* mutable */
+    bool result = m_dirty_names;        /* atomic   */
+    m_dirty_names = false;              /* mutable  */
     return result;
 }
 
@@ -3643,9 +3650,8 @@ sequence::is_dirty_names () const
 bool
 sequence::is_dirty_main () const
 {
-    automutex locker(m_mutex);
-    bool result = m_dirty_main;
-    m_dirty_main = false;               /* mutable */
+    bool result = m_dirty_main;         /* atomic   */
+    m_dirty_main = false;               /* mutable  */
     return result;
 }
 
@@ -3662,9 +3668,8 @@ sequence::is_dirty_main () const
 bool
 sequence::is_dirty_perf () const
 {
-    automutex locker(m_mutex);
-    bool result = m_dirty_perf;
-    m_dirty_perf = false;               /* mutable */
+    bool result = m_dirty_perf;         /* atomic   */
+    m_dirty_perf = false;               /* mutable  */
     return result;
 }
 
@@ -3681,9 +3686,8 @@ sequence::is_dirty_perf () const
 bool
 sequence::is_dirty_edit () const
 {
-    automutex locker(m_mutex);
-    bool result = m_dirty_edit;
-    m_dirty_edit = false;               /* mutable */
+    bool result = m_dirty_edit;         /* atomic   */
+    m_dirty_edit = false;               /* mutable  */
     return result;
 }
 
@@ -3703,9 +3707,9 @@ void
 sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
-    event e;
-    e.set_status(EVENT_NOTE_ON);
-    e.set_data(note, midibyte(m_note_on_velocity)); // SEQ66_MIDI_COUNT_MAX-1
+    event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
+//  e.set_status(EVENT_NOTE_ON);
+//  e.set_data(note, midibyte(m_note_on_velocity));
     m_master_bus->play(m_bus, &e, m_midi_channel);
     m_master_bus->flush();
 }
@@ -3725,9 +3729,9 @@ void
 sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
-    event e;
-    e.set_status(EVENT_NOTE_OFF);
-    e.set_data(note, midibyte(m_note_off_velocity));
+    event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
+//  e.set_status(EVENT_NOTE_OFF);
+//  e.set_data(note, midibyte(m_note_off_velocity));
     m_master_bus->play(m_bus, &e, m_midi_channel);
     m_master_bus->flush();
 }
@@ -5493,7 +5497,6 @@ sequence::print_triggers () const
 void
 sequence::put_event_on_bus (event & ev)
 {
-    // COMMENTED OUT, locked elsewhere: automutex locker(m_mutex);
     midibyte note = ev.get_note();
     bool skip = false;
     if (ev.is_note_on())
@@ -5525,11 +5528,11 @@ sequence::off_playing_notes ()
 {
     automutex locker(m_mutex);
     event e;
+    e.set_status(EVENT_NOTE_OFF);
     for (int x = 0; x < c_midi_notes; ++x)
     {
         while (m_playing_notes[x] > 0)
         {
-            e.set_status(EVENT_NOTE_OFF);
             e.set_data(x, midibyte(127));               /* or is 0 better?  */
             m_master_bus->play(m_bus, &e, m_midi_channel);
             if (m_playing_notes[x] > 0)
@@ -5564,10 +5567,7 @@ sequence::off_playing_notes ()
  */
 
 int
-sequence::select_events
-(
-    midibyte status, midibyte cc, bool inverse
-)
+sequence::select_events (midibyte status, midibyte cc, bool inverse)
 {
     automutex locker(m_mutex);
     midibyte d0, d1;

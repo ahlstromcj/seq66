@@ -42,7 +42,7 @@
 #include <QPen>
 
 #include "app_limits.h"                 /* SEQ66_SEQKEY_HEIGHT macro        */
-#include "midi/midibytes.hpp"           /* seq66::midibyte, other typedefs  */
+#include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
 #include "qseqbase.hpp"                 /* seq66::qseqbase base class       */
 
 /*

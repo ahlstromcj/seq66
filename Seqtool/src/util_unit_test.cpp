@@ -40,7 +40,7 @@
 #include <iomanip>
 
 #include "seq66-config.h"               /* SEQ66_SEQTOOL_TESTING_SUPPORT    */
-#include "midi/midibytes.hpp"           /* seq66::midibool alias/typedef    */
+#include "midi/midibytes.hpp"           /* seq66::midibool alias            */
 #include "util/strfunctions.hpp"        /* seq66::strfunctions module       */
 
 #if defined SEQ66_SEQTOOL_TESTING_SUPPORT

@@ -35,7 +35,7 @@
 #include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
 
 /*
- * uint32_t typedef for 32-bit code
+ * uint32_t alias for 32-bit code
  */
 
 #if defined SEQ66_PLATFORM_32_BIT
