@@ -28,10 +28,9 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-09-07
+ * \updates       2019-09-14
  * \license       GNU GPLv2 or above
  *
- * 2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
  */
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
@@ -562,7 +561,7 @@ private:
      *  by the c_tempo_track SeqSpec possibly present in the song's MIDI file.
      */
 
-    int m_tempo_track_number;
+    seq::number m_tempo_track_number;
 
     /**
      *  Augments the beats/bar and beat-width with the additional values
@@ -739,11 +738,8 @@ private:
      * Not sure that we need this code; we'll think about it some more.  One
      * issue with it is that we really can't keep good track of the modify
      * flag in this case, in general.
-     */
-
-    /*
-     * Used for undo track modification support.
      *
+     * Used for undo track modification support.
      * Is is worth creating an "undo" class????
      */
 
@@ -769,7 +765,7 @@ private:
 
     std::vector<seq::number> m_redo_vect;
 
-    /*
+    /**
      *  Can register here for events.  Used in mainwnd and perform.
      *  Now wrapped in the enregister() function, so no longer public.
      *
@@ -855,10 +851,6 @@ public:
     void unregister (callbacks * pfcb);
     void notify_sequence_change (seq::number seqno);
     void notify_ui_change (seq::number seqno);
-
-    /**
-     * \getter m_is_modfied
-     */
 
     bool modified () const
     {
@@ -1195,7 +1187,7 @@ public:
 #endif
     }
 
-    int tempo_track_number () const
+    seq::number tempo_track_number () const
     {
         return m_tempo_track_number;
     }
@@ -1208,7 +1200,7 @@ public:
      *      beat-width in the JACK assistant object.
      */
 
-    void tempo_track_number (int tempotrack)
+    void tempo_track_number (seq::number tempotrack)
     {
         if (tempotrack >= 0 && tempotrack < SEQ66_SEQUENCE_MAXIMUM)
             m_tempo_track_number = tempotrack;
@@ -1226,7 +1218,7 @@ public:
 
     void set_32nds_per_quarter (int tpq)
     {
-        m_32nds_per_quarter = tpq;              // needs validation
+        m_32nds_per_quarter = tpq;          // needs validation
     }
 
     int get_32nds_per_quarter () const
@@ -1542,42 +1534,33 @@ public:
 
 public:
 
-    void set_sequence_input (bool active, seq::pointer s)
-    {
-        bool ok = bool(m_master_bus) && bool(s);
-        if (ok)
-            m_master_bus->set_sequence_input(active, s.get());
-    }
-
-    void set_sequence_name (seq::pointer s, const std::string & name);
-
-    // KEEP
-    void set_recording (bool rec_active, bool thru_active, seq::pointer s);
-
-    // INVESTIGATING
-    void set_recording (bool rec_active, seq::number seqno, bool toggle = false);
-
-    void set_quantized_recording (bool active, seq::pointer s);
-    void set_quantized_recording (bool active, int seqno, bool toggle = false);
+    bool set_sequence_input (seq::pointer s, bool active);
+    bool set_sequence_name (seq::pointer s, const std::string & name);
+    bool set_recording (seq::pointer s, bool rec_active, bool thru_active);
+    bool set_quantized_recording (seq::pointer s, bool active);
+    void set_quantized_recording
+    (
+        bool active, seq::number seqno, bool toggle = false
+    );
     void overwrite_recording                    /* From jfrey-xx on GitHub  */
     (
-        bool oactive, int seqno, bool toggle = false
+        bool oactive, seq::number seqno, bool toggle = false
     );
-    void set_thru (bool rec_active, bool thru_active, seq::pointer s);
-    void set_thru (bool thru_active, int seqno, bool toggle = false);
+    bool set_thru (seq::pointer s, bool recactive, bool thru_active);
+    void set_thru (bool thru_active, seq::number seqno, bool toggle = false);
     bool selected_trigger
     (
-        int seqno, midipulse droptick,
+        seq::number seqno, midipulse droptick,
         midipulse & tick0, midipulse & tick1
     );
 
 #if defined SEQ66_SONG_BOX_SELECT
 
     bool selection_operation (SeqOperation func);
-    void box_insert (int dropseq, midipulse droptick);
-    void box_delete (int dropseq, midipulse droptick);
-    void box_toggle_sequence (int dropseq, midipulse droptick);
-    void box_unselect_sequences (int dropseq);
+    void box_insert (seq::number dropseq, midipulse droptick);
+    void box_delete (seq::number dropseq, midipulse droptick);
+    void box_toggle_sequence (seq::number dropseq, midipulse droptick);
+    void box_unselect_sequences (seq::number dropseq);
     void box_move_triggers (midipulse tick);
     void box_offset_triggers (midipulse offset);
 
@@ -1782,8 +1765,8 @@ public:
         bool inverse = false
     );
     void unset_queued_replace (bool clearbits = true);
-    void sequence_playing_toggle (int seqno);
-    void sequence_playing_change (int seqno, bool on);
+    void sequence_playing_toggle (seq::number seqno);
+    void sequence_playing_change (seq::number seqno, bool on);
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const
@@ -1804,7 +1787,7 @@ public:
      *      The sequence number of the sequence to turn on.
      */
 
-    void sequence_playing_on (int seqno)
+    void sequence_playing_on (seq::number seqno)
     {
         sequence_playing_change(seqno, true);
     }
@@ -1816,7 +1799,7 @@ public:
      *      The sequence number of the sequence to turn off.
      */
 
-    void sequence_playing_off (int seqno)
+    void sequence_playing_off (seq::number seqno)
     {
         sequence_playing_change(seqno, false);
     }
@@ -1875,7 +1858,10 @@ public:
         return mapper().any_mutes();
     }
 
-    bool install_sequence (sequence * seq, int seqno, bool fileload = false);
+    bool install_sequence
+    (
+        sequence * seq, seq::number seqno, bool fileload = false
+    );
     void inner_start (bool songmode);
     void inner_stop (bool midiclock = false);
 
@@ -1937,7 +1923,7 @@ public:
     void stop_key ();
     void group_learn (bool flag);
     void group_learn_complete (const keystroke & k, bool good = true);
-    bool needs_update (int seqno = SEQ66_ALL_TRACKS) const;
+    bool needs_update (seq::number seqno = SEQ66_ALL_TRACKS) const;
 
     midipulse get_tick () const
     {
@@ -2065,7 +2051,7 @@ public:
      *      null pointer is returned.
      */
 
-    seq::pointer loop (int seqno)
+    seq::pointer loop (seq::number seqno)
     {
         return mapper().loop(seqno);
     }
@@ -2074,7 +2060,7 @@ public:
      *  Retrieves the actual sequence. This is the const version.
      */
 
-    const seq::pointer loop (int seqno) const
+    const seq::pointer loop (seq::number seqno) const
     {
         return mapper().loop(seqno);
     }
@@ -2091,7 +2077,7 @@ public:
 
     void sequence_key (int seq);                            // encapsulation
     std::string sequence_label (const sequence & seq);
-    std::string sequence_label (int seqno);                 // for qperfnames
+    std::string sequence_label (seq::number seqno);         // for qperfnames
     std::string sequence_title (const sequence & seq);
     std::string main_window_title (const std::string & fn = "");
     std::string sequence_window_title (const sequence & seq);
@@ -2186,7 +2172,7 @@ public:
         mapper().copy_triggers(m_left_tick, m_right_tick);
     }
 
-    void push_trigger_undo (int track = SEQ66_ALL_TRACKS);
+    void push_trigger_undo (seq::number track = seq::all());
     void pop_trigger_undo ();
     void pop_trigger_redo ();
 
@@ -2204,19 +2190,19 @@ public:
      *      trigger state is true.
      */
 
-    bool get_trigger_state (int seqno, midipulse tick) const
+    bool get_trigger_state (seq::number seqno, midipulse tick) const
     {
         const seq::pointer s = get_sequence(seqno);
         return not_nullptr(s) ? s->get_trigger_state(tick) : false ;
     }
 
-    void add_trigger (int seqno, midipulse tick);
-    void delete_trigger (int seqno, midipulse tick);
-    void add_or_delete_trigger (int seqno, midipulse tick);
-    void split_trigger (int seqno, midipulse tick);
-    void paste_trigger (int seqno, midipulse tick);
-    void paste_or_split_trigger (int seqno, midipulse tick);
-    bool intersect_triggers (int seqno, midipulse tick);
+    void add_trigger (seq::number seqno, midipulse tick);
+    void delete_trigger (seq::number seqno, midipulse tick);
+    void add_or_delete_trigger (seq::number seqno, midipulse tick);
+    void split_trigger (seq::number seqno, midipulse tick);
+    void paste_trigger (seq::number seqno, midipulse tick);
+    void paste_or_split_trigger (seq::number seqno, midipulse tick);
+    bool intersect_triggers (seq::number seqno, midipulse tick);
 
     midipulse get_max_trigger () const
     {
@@ -2234,7 +2220,7 @@ public:
      *      Returns true if the sequence has the three properties noted above.
      */
 
-    bool is_exportable (int seqno) const
+    bool is_exportable (seq::number seqno) const
     {
         return mapper().is_exportable(seqno);
     }
@@ -2252,22 +2238,22 @@ public:
      *      false.  Returns false if the pattern was invalid.
      */
 
-    bool is_dirty_main (int seqno) const
+    bool is_dirty_main (seq::number seqno) const
     {
         return mapper().is_dirty_main(seqno);
     }
 
-    bool is_dirty_edit (int seqno) const
+    bool is_dirty_edit (seq::number seqno) const
     {
         return mapper().is_dirty_edit(seqno);
     }
 
-    bool is_dirty_perf (int seqno) const
+    bool is_dirty_perf (seq::number seqno) const
     {
         return mapper().is_dirty_perf(seqno);
     }
 
-    bool is_dirty_names (int seqno) const
+    bool is_dirty_names (seq::number seqno) const
     {
         return mapper().is_dirty_names(seqno);
     }
@@ -2309,20 +2295,20 @@ public:
 
     screenset::number set_playing_screenset (screenset::number setno);
 
-    bool is_screenset_valid (int sset) const
+    bool is_screenset_valid (screenset::number sset) const
     {
         return mapper().is_screenset_valid(sset);
     }
 
-    bool toggle_other_seqs (int seqno, bool isshiftkey);   /* mainwid      */
-    bool toggle_other_names (int seqno, bool isshiftkey);  /* perfnames    */
+    bool toggle_other_seqs (seq::number seqno, bool isshiftkey);   /* mainwid   */
+    bool toggle_other_names (seq::number seqno, bool isshiftkey);  /* perfnames */
 
     /**
      *  Toggles sequences.  Useful in perfnames, taken from perfnames ::
      *  on_button_press_event() so that it can be re-used in qperfnames.
      */
 
-    bool toggle_sequences (int seqno, bool isshiftkey)
+    bool toggle_sequences (seq::number seqno, bool isshiftkey)
     {
         return toggle_other_names(seqno, isshiftkey);
     }
@@ -2369,7 +2355,7 @@ public:
 
 #endif
 
-    bool select_trigger (int dropseq, midipulse droptick);
+    bool select_trigger (seq::number dropseq, midipulse droptick);
 
     void unselect_all_triggers ()
     {
@@ -2388,7 +2374,7 @@ public:
         return get_screenset_notepad(bank);
     }
 
-    const std::string & screenset_notepad (int sset) const
+    const std::string & screenset_notepad (screenset::number sset) const
     {
         return mapper().name(static_cast<screenset::number>(sset));
     }
@@ -2412,12 +2398,12 @@ public:
      *  as an integer.
      */
 
-    int color (int seqno) const
+    int color (seq::number seqno) const
     {
         return mapper().color(seqno);
     }
 
-    bool color (int seqno, int c)
+    bool color (seq::number seqno, int c)
     {
         bool result = mapper().color(seqno, c);
         if (result)
@@ -2484,17 +2470,17 @@ public:
      *      We will replace this with loop() eventually.
      */
 
-    seq::pointer get_sequence (int seqno)
+    seq::pointer get_sequence (seq::number seqno)
     {
         return mapper().loop(seqno);    // .get();
     }
 
-    const seq::pointer sequence_pointer (int seqno) const
+    const seq::pointer sequence_pointer (seq::number seqno) const
     {
         return mapper().loop(seqno);
     }
 
-    seq::pointer sequence_pointer (int seqno)
+    seq::pointer sequence_pointer (seq::number seqno)
     {
         return mapper().loop(seqno);
     }
@@ -2505,13 +2491,10 @@ public:         // GUI-support functions
      * Deals with the editing mode of the specific sequence.
      */
 
-    sequence::editmode edit_mode (int seqnum) const
+    sequence::editmode edit_mode (seq::number seqno) const
     {
-        const seq::pointer sp = loop(seqnum);
-        if (sp)
-            return sp->edit_mode();
-        else
-            return sequence::editmode(0);
+        const seq::pointer sp = loop(seqno);
+        return sp ? sp->edit_mode() : sequence::editmode::note ;
     }
 
     /*
@@ -2538,16 +2521,12 @@ public:         // GUI-support functions
      *      determines if the duration of events matters (note) or not (drum).
      */
 
-    void edit_mode (int seqnum, sequence::editmode ed)
+    void edit_mode (seq::number seqno, sequence::editmode ed)
     {
-        seq::pointer sp = loop(seqnum);
+        seq::pointer sp = loop(seqno);
         if (sp)
             sp->edit_mode(ed);
     }
-
-    /**
-     *  Overload.
-     */
 
     void edit_mode (sequence & s, sequence::editmode ed)
     {
@@ -2586,9 +2565,9 @@ public:         // GUI-support functions
      *      Returns true if the screen-set has an active pattern.
      */
 
-    bool is_screenset_active (int sset)
+    bool is_screenset_active (screenset::number sset)
     {
-        return mapper().is_screenset_active(static_cast<screenset::number>(sset));
+        return mapper().is_screenset_active(sset);
     }
 
     /**
@@ -2601,12 +2580,9 @@ public:         // GUI-support functions
      *      Returns true if the screen-set is found in the std::map container.
      */
 
-    bool is_screenset_available (int sset)
+    bool is_screenset_available (screenset::number sset)
     {
-        return mapper().is_screenset_available
-        (
-            static_cast<screenset::number>(sset)
-        );
+        return mapper().is_screenset_available(sset);
     }
 
     /**
@@ -2618,10 +2594,10 @@ public:         // GUI-support functions
 
     void set_screenset_notepad (const std::string & note)
     {
-        mapper().name(note);    // set_screenset_notepad(m_screenset, note)
+        mapper().name(note);
     }
 
-    void song_recording_stop () //  void song_recording_start ();
+    void song_recording_stop ()
     {
         mapper().song_recording_stop(m_current_tick);
     }
@@ -2663,6 +2639,7 @@ public:         // GUI-support functions
 
 private:
 
+    bool set_recording (seq::number seqno, bool active, bool toggle = false);
     void reset_sequences (bool pause = false);
     bool log_current_tempo ();
     bool create_master_bus ();

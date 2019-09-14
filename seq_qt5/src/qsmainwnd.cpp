@@ -399,7 +399,7 @@ qsmainwnd::qsmainwnd
     connect
     (
         ui->btnRecord, SIGNAL(clicked(bool)),
-        this, SLOT(set_recording(bool))
+        this, SLOT(song_recording(bool))
     );
     qt_set_icon(song_rec_on_xpm, ui->btnRecord);
 
@@ -522,7 +522,7 @@ qsmainwnd::qsmainwnd
      *  connect
      *  (
      *      ui->btnRecSnap, SIGNAL(clicked(bool)),
-     *      this, SLOT(set_recording_snap(bool))
+     *      this, SLOT(song_recording_snap(bool))
      *  );
      *  qt_set_icon(snap_xpm, ui->btnRecSnap);
      */
@@ -727,7 +727,7 @@ qsmainwnd::start_playing ()
  */
 
 void
-qsmainwnd::set_recording (bool record)
+qsmainwnd::song_recording (bool record)
 {
     perf().song_recording(record);
 }
@@ -750,7 +750,7 @@ qsmainwnd::set_song_mode (bool song_mode)
     }
     else
     {
-        set_recording(false);
+        song_recording(false);
         ui->btnRecord->setChecked(false);
         ui->btnRecord->setEnabled(false);
         if (! usr().use_more_icons())
@@ -2424,6 +2424,7 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
 bool
 qsmainwnd:: on_sequence_change (seq::number setno)
 {
+    return false;
 }
 
 /**

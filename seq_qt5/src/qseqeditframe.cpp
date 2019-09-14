@@ -286,22 +286,25 @@ qseqeditframe::qseqeditframe
     actionSelectAll->setShortcut(tr("Ctrl+A"));
     connect
     (
-        actionSelectAll, SIGNAL(triggered(bool)), this, SLOT(selectAllNotes())
+        actionSelectAll, SIGNAL(triggered(bool)), this, SLOT(select_all_notes())
     );
     menuSelect->addAction(actionSelectAll);
 
     QAction * actionSelectInverse = new QAction(tr("Inverse selection"), m_popup);
     actionSelectInverse->setShortcut(tr("Ctrl+Shift+I"));
-    connect(actionSelectInverse, SIGNAL(triggered(bool)),
-            this, SLOT(inverseNoteSelection()));
+    connect
+    (
+        actionSelectInverse, SIGNAL(triggered(bool)),
+        this, SLOT(inverseNoteSelection())
+    );
     menuSelect->addAction(actionSelectInverse);
 
-    QAction *actionQuantize = new QAction(tr("Quantize"), m_popup);
+    QAction * actionQuantize = new QAction(tr("Quantize"), m_popup);
     actionQuantize->setShortcut(tr("Ctrl+Q"));
     connect(actionQuantize, SIGNAL(triggered(bool)), this, SLOT(quantizeNotes()));
     menuTiming->addAction(actionQuantize);
 
-    QAction *actionTighten = new QAction(tr("Tighten"), m_popup);
+    QAction * actionTighten = new QAction(tr("Tighten"), m_popup);
     actionTighten->setShortcut(tr("Ctrl+T"));
     connect(actionTighten, SIGNAL(triggered(bool)), this, SLOT(tightenNotes()));
     menuTiming->addAction(actionTighten);
@@ -329,7 +332,6 @@ qseqeditframe::qseqeditframe
         else
             menuPitch->addSeparator();
     }
-
     m_popup->addMenu(menuSelect);
     m_popup->addMenu(menuTiming);
     m_popup->addMenu(menuPitch);
@@ -341,7 +343,6 @@ qseqeditframe::qseqeditframe
 
     ui->lblEventSelect->hide();
     ui->cmbEventSelect->hide();
-
     connect
     (
         ui->txtSeqName, SIGNAL(textChanged()), this, SLOT(updateSeqName())
@@ -420,16 +421,16 @@ qseqeditframe::qseqeditframe
         ui->cmbRecVol, SIGNAL(currentIndexChanged(int)),
         this, SLOT(updateRecVol())
     );
-    connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(toggleMidiPlay(bool)));
+    connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_play(bool)));
     qt_set_icon(play_xpm, ui->btnPlay);
 
-    connect(ui->btnQRec, SIGNAL(clicked(bool)), this, SLOT(toggleMidiQRec(bool)));
+    connect(ui->btnQRec, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_qrec(bool)));
     qt_set_icon(quantize_xpm, ui->btnQRec);
 
-    connect(ui->btnRec, SIGNAL(clicked(bool)), this, SLOT(toggleMidiRec(bool)));
+    connect(ui->btnRec, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_rec(bool)));
     qt_set_icon(rec_xpm, ui->btnRec);
 
-    connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggleMidiThru(bool)));
+    connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_thru(bool)));
     qt_set_icon(thru_xpm, ui->btnThru);
 
     m_timer = new QTimer(this);                             // redraw timer !!!
@@ -802,7 +803,7 @@ qseqeditframe::updateRecVol ()
  */
 
 void
-qseqeditframe::toggleMidiPlay (bool newval)
+qseqeditframe::toggle_midi_play (bool newval)
 {
     seq_pointer()->set_playing(newval);
 }
@@ -815,7 +816,7 @@ qseqeditframe::toggleMidiPlay (bool newval)
  */
 
 void
-qseqeditframe::toggleMidiQRec (bool newval)
+qseqeditframe::toggle_midi_qrec (bool newval)
 {
     seq_pointer()->set_quantized_recording(newval);
 }
@@ -828,11 +829,12 @@ qseqeditframe::toggleMidiQRec (bool newval)
  */
 
 void
-qseqeditframe::toggleMidiRec (bool newval)
+qseqeditframe::toggle_midi_rec (bool newval)
 {
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
+        // ???????????
         masterbus->set_sequence_input(true, seq_pointer().get());
         seq_pointer()->set_recording(newval);
     }
@@ -843,11 +845,12 @@ qseqeditframe::toggleMidiRec (bool newval)
  */
 
 void
-qseqeditframe::toggleMidiThru (bool newval)
+qseqeditframe::toggle_midi_thru (bool newval)
 {
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
+        // ???????????
         masterbus->set_sequence_input(true, seq_pointer().get());
         seq_pointer()->set_thru(newval);
     }
@@ -858,7 +861,7 @@ qseqeditframe::toggleMidiThru (bool newval)
  */
 
 void
-qseqeditframe::selectAllNotes()
+qseqeditframe::select_all_notes()
 {
     seq_pointer()->select_events(EVENT_NOTE_ON, 0);
     seq_pointer()->select_events(EVENT_NOTE_OFF, 0);

@@ -1,6 +1,6 @@
 TODO for Sequencer66 0.90.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-09-12
+2019-04-13 to 2019-09-14
 
 HOT ITEMS:
 
@@ -11,13 +11,17 @@ HOT ITEMS:
     Should also be able to change title in the event editor!
 
     Change tooltips on edit frame MIDI buttons to show current status, for
-    themes that do not show status clearly.
+    themes that do not show status clearly.  Still need to do it for the
+    arm/mute button in qseqeditframe64.
 
     Make the zoom dropdown in the seqroll sync with the zoom changes via
     keystroke.  Same for the zoom of the seqtime and triggereditor (bad name).
 
     Also test the MIDI control out feature to make sure the bit operators are
     correct.  If so, the same change in seq64!
+
+    When copying a large track and pasting into a smaller one, consider altering
+    the length of the smaller track to match.
 
 List of To-Do Items for the Refactoring.  An asterisk means it should also be
 fixed in Seq64.

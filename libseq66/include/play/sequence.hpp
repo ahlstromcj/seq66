@@ -835,48 +835,25 @@ public:
         m_scale = scale;
     }
 
-    /**
-     * \getter m_events
-     *      Non-const version.
-     */
-
     event_list & events ()
     {
         return m_events;
     }
-
-    /**
-     * \getter m_events
-     *      Const version.
-     */
 
     const event_list & events () const
     {
         return m_events;
     }
 
-    /**
-     * \getter m_events.any_selected_notes()
-     */
-
     bool any_selected_notes () const
     {
         return m_events.any_selected_notes();
     }
 
-    /**
-     * \getter m_triggers
-     *      This is the const version.
-     */
-
     const triggers::List & triggerlist () const
     {
         return m_triggers.triggerlist();
     }
-
-    /**
-     * \getter m_triggers
-     */
 
     triggers::List & triggerlist ()
     {
@@ -926,10 +903,6 @@ public:
         return m_triggers.get_trigger_paste_tick();
     }
 
-    /**
-     * \getter m_seq_number as a string
-     */
-
     std::string seq_number_string () const
     {
         char temp[16];
@@ -962,20 +935,10 @@ public:
     bool color (int c);
     void empty_coloring ();
 
-    /**
-     * \getter m_seq_edit_mode
-     *      A feature adapted from Kepler34.
-     */
-
     editmode edit_mode () const
     {
         return m_seq_edit_mode;
     }
-
-    /**
-     * \setter m_seq_edit_mode
-     *      A feature adapted from Kepler34.
-     */
 
     void edit_mode (editmode mode)
     {
@@ -993,18 +956,10 @@ public:
 
     void set_hold_undo (bool hold);
 
-    /**
-     * \getter m_events_undo_hold.count()
-     */
-
     int get_hold_undo () const
     {
         return m_events_undo_hold.count();
     }
-
-    /**
-     * \setter m_have_undo
-     */
 
     void set_have_undo ()
     {
@@ -1012,10 +967,6 @@ public:
         if (m_have_undo)                            /* ca 2016-08-16        */
             modify();                               /* have pending changes */
     }
-
-    /**
-     * \getter m_have_undo
-     */
 
     bool have_undo () const
     {
@@ -1031,10 +982,6 @@ public:
     {
         m_have_redo = m_events_redo.size() > 0;
     }
-
-    /**
-     * \getter m_have_redo
-     */
 
     bool have_redo () const
     {
@@ -1056,11 +1003,6 @@ public:
         return calculate_measures() > 4;
     }
 
-    /**
-     * \getter m_ppqn
-     *      Provided as a convenience for the editable_events class.
-     */
-
     int get_ppqn () const
     {
         return int(m_ppqn);
@@ -1068,22 +1010,12 @@ public:
 
     void set_beats_per_bar (int beatspermeasure);
 
-    /**
-     * \getter m_time_beats_per_measure
-     */
-
     int get_beats_per_bar () const
     {
         return int(m_time_beats_per_measure);
     }
 
     void set_beat_width (int beatwidth);
-
-    /**
-     * \getter m_time_beat_width
-     *
-     * \threadsafe
-     */
 
     int get_beat_width () const
     {
@@ -1104,54 +1036,30 @@ public:
         );
     }
 
-    /**
-     * \setter m_clocks_per_metronome
-     */
-
     void clocks_per_metronome (int cpm)
     {
         m_clocks_per_metronome = cpm;       // needs validation
     }
-
-    /**
-     * \getter m_clocks_per_metronome
-     */
 
     int clocks_per_metronome () const
     {
         return m_clocks_per_metronome;
     }
 
-    /**
-     * \setter m_32nds_per_quarter
-     */
-
     void set_32nds_per_quarter (int tpq)
     {
         m_32nds_per_quarter = tpq;              // needs validation
     }
-
-    /**
-     * \getter m_32nds_per_quarter
-     */
 
     int get_32nds_per_quarter () const
     {
         return m_32nds_per_quarter;
     }
 
-    /**
-     * \setter m_us_per_quarter_note
-     */
-
     void us_per_quarter_note (long upqn)
     {
         m_us_per_quarter_note = upqn;       // needs validation
     }
-
-    /**
-     * \getter m_us_per_quarter_note
-     */
 
     long us_per_quarter_note () const
     {
@@ -1191,10 +1099,6 @@ public:
         set_dirty_mp();
     }
 
-    /**
-     * \getter m_song_mute
-     */
-
     bool get_song_mute () const
     {
         return m_song_mute;
@@ -1203,20 +1107,12 @@ public:
     void apply_song_transpose ();
     void set_transposable (bool flag);
 
-    /**
-     * \getter m_transposable
-     */
-
     bool transposable () const
     {
         return m_transposable;
     }
 
     std::string title () const;
-
-    /**
-     * \getter m_name
-     */
 
     const std::string & name () const
     {
@@ -1232,45 +1128,25 @@ public:
         return m_name == sm_default_name;
     }
 
-    /**
-     * \getter sm_default_name
-     */
-
     static const std::string & default_name ()
     {
         return sm_default_name;
     }
-
-    /**
-     * \setter m_editing
-     */
 
     void set_editing (bool edit)
     {
         m_editing = edit;
     }
 
-    /**
-     * \getter m_editing
-     */
-
     bool get_editing () const
     {
         return m_editing;
     }
 
-    /**
-     * \setter m_raise
-     */
-
     void set_raise (bool edit)
     {
         m_raise = edit;
     }
-
-    /**
-     * \getter m_raise
-     */
 
     bool get_raise (void) const
     {
@@ -1287,10 +1163,6 @@ public:
         bool adjust_triggers = true,
         bool verify = true
     );
-
-    /**
-     *  Kepler34
-     */
 
     void set_measures (int measures)
     {
@@ -1317,10 +1189,6 @@ public:
             get_beats_per_bar(), int(m_ppqn), get_beat_width(), meas
         );
     }
-
-    /**
-     * \getter m_length
-     */
 
     midipulse get_length () const
     {
@@ -1367,18 +1235,10 @@ public:
     void toggle_playing (midipulse tick, bool resumenoteons);
     void toggle_queued ();
 
-    /**
-     * \getter m_queued
-     */
-
     bool get_queued () const
     {
         return m_queued;
     }
-
-    /**
-     * \getter m_queued_tick
-     */
 
     midipulse get_queued_tick () const
     {
@@ -1398,27 +1258,15 @@ public:
     void set_quantized_recording (bool qr);
     void set_input_recording (bool record_active, bool toggle = false);
 
-    /**
-     * \getter m_recording
-     */
-
     bool get_recording () const
     {
         return m_recording;
     }
 
-    /**
-     * \getter m_expanded_recording
-     */
-
     void expanded_recording (bool expand)
     {
         m_expanded_recording = expand;
     }
-
-    /**
-     * \setter m_expanded_recording
-     */
 
     bool expanded_recording ()
     {
@@ -1598,20 +1446,12 @@ public:
     void copy_triggers (midipulse start_tick, midipulse distance);
     void clear_triggers ();
 
-    /**
-     * \getter m_trigger_offset
-     */
-
     midipulse get_trigger_offset () const
     {
         return m_trigger_offset;
     }
 
     void set_midi_bus (char mb, bool user_change = false);
-
-    /**
-     * \getter m_bus
-     */
 
     char get_midi_bus () const
     {
@@ -1816,10 +1656,6 @@ public:
 #if defined USE_STAZED_COMPANDING
     void multiply_pattern (double multiplier);
 #endif
-
-    /**
-     * \getter m_musical_key
-     */
 
     midibyte musical_key () const
     {

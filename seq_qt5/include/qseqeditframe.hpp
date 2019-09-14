@@ -145,11 +145,11 @@ private slots:
     void updateBackgroundSeq (int newindex);
     void toggleEditorMode ();
     void updateRecVol ();
-    void toggleMidiPlay (bool newVal);
-    void toggleMidiThru (bool newVal);
-    void toggleMidiQRec (bool newVal);
-    void toggleMidiRec (bool newVal);
-    void selectAllNotes ();
+    void toggle_midi_play (bool newval);
+    void toggle_midi_thru (bool newval);
+    void toggle_midi_qrec (bool newval);
+    void toggle_midi_rec (bool newval);
+    void select_all_notes ();
     void inverseNoteSelection ();
     void quantizeNotes ();
     void tightenNotes ();

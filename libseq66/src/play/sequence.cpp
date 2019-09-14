@@ -5206,8 +5206,9 @@ sequence::set_playing (bool p)
 /**
  * \setter m_recording and m_notes_on
  *
- *  This function sets m_notes_on to 0, but this should be done only if the
- *  recording status has changed.
+ *  This function sets m_notes_on to 0, only if the recording status has
+ *  changed.  It is called by set_input_recording().  We probably need to
+ *  explicitly turn off all playing notes; not sure yet.
  *
  * \threadsafe
  */

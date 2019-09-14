@@ -299,9 +299,9 @@ private slots:
     void stop_playing ();
     void set_song_mode (bool song_mode);
     void toggle_song_mode ();
-    void set_recording (bool record);
+    void song_recording (bool record);
 
-    void set_recording_snap (bool /*snap*/)
+    void song_recording_snap (bool /*snap*/)
     {
         /*
          * This will always be in force: perf().song_record_snap(snap);

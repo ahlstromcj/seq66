@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-09-07
+ * \updates       2019-09-13
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -629,7 +629,7 @@ performer::sequence_label (const sequence & seq)
  */
 
 std::string
-performer::sequence_label (int seqno)
+performer::sequence_label (seq::number seqno)
 {
     const seq::pointer s = get_sequence(seqno);
     return s ? sequence_label(*s) : std::string("") ;
@@ -779,7 +779,7 @@ performer::main_window_title (const std::string & file_name)
  */
 
 bool
-performer::install_sequence (sequence * s, int seqno, bool fileload)
+performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
 {
     bool result = mapper().install_sequence(s, seqno);
     if (result)
@@ -1135,7 +1135,7 @@ performer::set_screenset_notepad
  */
 
 bool
-performer::needs_update (int seq) const
+performer::needs_update (seq::number seqno) const
 {
     bool result = false;
     if (m_is_busy)
@@ -1154,10 +1154,10 @@ performer::needs_update (int seq) const
             }
             else
             {
-                if (sequence::none(seq))
+                if (sequence::all(seqno))
                     result = mapper().needs_update();       /* check all    */
                 else
-                    result = is_dirty_main(seq);            /* check one    */
+                    result = is_dirty_main(seqno);          /* check one    */
             }
         }
     }
@@ -1972,16 +1972,18 @@ performer::set_right_tick (midipulse tick, bool setstart)
  *
  */
 
-void
+bool
 performer::set_sequence_name (seq::pointer s, const std::string & name)
 {
-    if (s)
+    bool result = bool(s);
+    if (result)
     {
         s->set_name(name);
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
         modify();
         // notify_sequence_change(seqno);               /* modify()     */
     }
+    return result;
 }
 
 /*
@@ -1991,7 +1993,22 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
  */
 
 /**
- *  Encapsulates code used by seqedit::record_change_callback().
+ *
+ */
+
+bool
+performer::set_sequence_input (seq::pointer s, bool active)
+{
+    bool result = bool(m_master_bus) && bool(s);
+    if (result)
+        m_master_bus->set_sequence_input(active, s.get());
+
+    return result;
+}
+
+/**
+ *  Encapsulates code used by the sequence editing frames' recording-change
+ *  callbacks.
  *
  * \param record_active
  *      Provides the current status of the Record button.
@@ -2004,40 +2021,44 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
  *      checked.
  */
 
-void
-performer::set_recording (bool record_active, bool thru_active, seq::pointer s)
+bool
+performer::set_recording (seq::pointer s, bool record_active, bool thru_active)
 {
-    if (not_nullptr(s))
+    bool result = not_nullptr(s);
+    if (result)
     {
         if (! thru_active)
-            set_sequence_input(record_active, s);
+            result = set_sequence_input(s, record_active);
 
-        s->set_recording(record_active);
+        if (result)
+            s->set_recording(record_active);
     }
+    return result;
 }
 
 /**
- *  Encapsulates code used by seqedit::record_change_callback().  However,
- *  this function depends on the sequence, not the seqedit, for obtaining
- *  the thru status.
- *
- * \param record_active
- *      Provides the current status of the Record button.
+ *  Encapsulates code used internally by performer's automation mechanism.
  *
  * \param seqno
  *      The sequence number; the resulting pointer is checked.
+ *
+ * \param record_active
+ *      Provides the current status of the Record button.
  *
  * \param toggle
  *      If true, ignore the first flag and let the sequence toggle its
  *      setting.  Passed along to sequence::set_input_recording().
  */
 
-void
-performer::set_recording (bool record_active, seq::number seqno, bool toggle)
+bool
+performer::set_recording (seq::number seqno, bool record_active, bool toggle)
 {
     seq::pointer s = get_sequence(seqno);
-    if (s)
+    bool result = bool(s);
+    if (result)
         s->set_input_recording(record_active, toggle);
+
+    return result;
 }
 
 /**
@@ -2051,11 +2072,14 @@ performer::set_recording (bool record_active, seq::number seqno, bool toggle)
  *      validity.
  */
 
-void
-performer::set_quantized_recording (bool record_active, seq::pointer s)
+bool
+performer::set_quantized_recording (seq::pointer s, bool record_active)
 {
-    if (s)
+    bool result = bool(s);
+    if (result)
         s->set_quantized_recording(record_active);
+
+    return result;
 }
 
 /**
@@ -2144,16 +2168,19 @@ performer::overwrite_recording (bool oactive, int seq, bool toggle)
  *      checked.
  */
 
-void
-performer::set_thru (bool record_active, bool thru_active, seq::pointer s)
+bool
+performer::set_thru (seq::pointer s, bool record_active, bool thru_active)
 {
-    if (s)
+    bool result = bool(s);
+    if (result)
     {
         if (! record_active)
-            set_sequence_input(thru_active, s);
+            result = set_sequence_input(s, thru_active);
 
-        s->set_thru(thru_active);
+        if (result)
+            s->set_thru(thru_active);
     }
+    return result;
 }
 
 /**
@@ -3268,7 +3295,7 @@ performer::selection_operation (SeqOperation func)
  */
 
 void
-performer::box_insert (int dropseq, midipulse droptick)
+performer::box_insert (seq::number dropseq, midipulse droptick)
 {
     seq::pointer s = get_sequence(dropseq);
     if (s)
@@ -3295,7 +3322,7 @@ performer::box_insert (int dropseq, midipulse droptick)
  */
 
 void
-performer::box_delete (int dropseq, midipulse droptick)
+performer::box_delete (seq::number dropseq, midipulse droptick)
 {
     seq::pointer s = get_sequence(dropseq);
     if (s)
@@ -3317,7 +3344,7 @@ performer::box_delete (int dropseq, midipulse droptick)
  */
 
 void
-performer::box_toggle_sequence (int dropseq, midipulse droptick)
+performer::box_toggle_sequence (seq::number dropseq, midipulse droptick)
 {
     selection::const_iterator s = m_selected_seqs.find(dropseq);
     if (s != m_selected_seqs.end())
@@ -3332,7 +3359,7 @@ performer::box_toggle_sequence (int dropseq, midipulse droptick)
  */
 
 void
-performer::box_unselect_sequences (int dropseq)
+performer::box_unselect_sequences (seq::number dropseq)
 {
     if (m_selected_seqs.find(dropseq) == m_selected_seqs.end())
     {
@@ -3404,7 +3431,7 @@ performer::box_offset_triggers (midipulse offset)
  */
 
 bool
-performer::select_trigger (int dropseq, midipulse droptick)
+performer::select_trigger (seq::number dropseq, midipulse droptick)
 {
     seq::pointer s = get_sequence(dropseq);
     bool result = bool(s);
@@ -3439,7 +3466,7 @@ performer::select_trigger (int dropseq, midipulse droptick)
 bool
 performer::selected_trigger
 (
-    int seqno, midipulse droptick,
+    seq::number seqno, midipulse droptick,
     midipulse & tick0, midipulse & tick1
 )
 {
@@ -3462,7 +3489,7 @@ performer::selected_trigger
  */
 
 void
-performer::add_trigger (int seqno, midipulse tick)
+performer::add_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3486,7 +3513,7 @@ performer::add_trigger (int seqno, midipulse tick)
  */
 
 void
-performer::delete_trigger (int seqno, midipulse tick)
+performer::delete_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3509,7 +3536,7 @@ performer::delete_trigger (int seqno, midipulse tick)
  */
 
 void
-performer::add_or_delete_trigger (int seqno, midipulse tick)
+performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3540,7 +3567,7 @@ performer::add_or_delete_trigger (int seqno, midipulse tick)
  */
 
 void
-performer::split_trigger (int seqno, midipulse tick)
+performer::split_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3566,7 +3593,7 @@ performer::split_trigger (int seqno, midipulse tick)
  */
 
 void
-performer::paste_trigger (int seqno, midipulse tick)
+performer::paste_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3588,7 +3615,7 @@ performer::paste_trigger (int seqno, midipulse tick)
  */
 
 void
-performer::paste_or_split_trigger (int seqno, midipulse tick)
+performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
@@ -3619,7 +3646,7 @@ performer::paste_or_split_trigger (int seqno, midipulse tick)
  */
 
 bool
-performer::intersect_triggers (int seqno, midipulse tick)
+performer::intersect_triggers (seq::number seqno, midipulse tick)
 {
     bool result = false;
     seq::pointer s = get_sequence(seqno);
@@ -3976,9 +4003,9 @@ performer::group_learn_complete (const keystroke & k, bool good)
  */
 
 void
-performer::sequence_playing_toggle (int seq)
+performer::sequence_playing_toggle (seq::number seqno)
 {
-    seq::pointer s = get_sequence(seq);
+    seq::pointer s = get_sequence(seqno);
     if (s)
     {
         bool is_queue = midi_controls().is_queue();
@@ -3997,17 +4024,17 @@ performer::sequence_playing_toggle (int seq)
         {
             if (m_queued_replace_slot != SEQ66_NO_QUEUED_SOLO)
             {
-                if (seq != m_queued_replace_slot)
+                if (seqno != m_queued_replace_slot)
                 {
                     unset_queued_replace(false);    /* do not clear bits    */
-                    save_queued(seq);
+                    save_queued(seqno);
                 }
             }
             else
-                save_queued(seq);
+                save_queued(seqno);
 
-            unqueue_sequences(seq);
-            m_queued_replace_slot = seq;
+            unqueue_sequences(seqno);
+            m_queued_replace_slot = seqno;
         }
         else if (is_queue)
         {
@@ -4095,7 +4122,7 @@ performer::sequence_playing_toggle (int seq)
  */
 
 bool
-performer::toggle_other_names (int seqno, bool isshiftkey)
+performer::toggle_other_names (seq::number seqno, bool isshiftkey)
 {
     bool result = is_seq_active(seqno);
     if (result)
@@ -4119,7 +4146,7 @@ performer::toggle_other_names (int seqno, bool isshiftkey)
  */
 
 void
-performer::sequence_playing_change (int seqno, bool on)
+performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_controls().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
