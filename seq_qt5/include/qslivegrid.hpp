@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-13
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  *
@@ -114,6 +114,7 @@ private:                            // overrides of qslivebase functions
 
     virtual void update_bank (int bank) override;
     virtual void update_bank_name () override;
+    virtual void update_sequence (seq::number seqno) override;
     virtual void reupdate () override;
     virtual void update_geometry () override;
     virtual void change_event (QEvent *) override;

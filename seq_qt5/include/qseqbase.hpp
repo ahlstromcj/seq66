@@ -104,7 +104,7 @@ public:
     virtual void set_needs_update () override
     {
         qbase::set_needs_update();
-        perf().notify_ui_change(seq_pointer()->seq_number());
+        perf().notify_ui_change(seq_pointer()->seq_number());       // FIXME
     }
 
 protected:

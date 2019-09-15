@@ -174,7 +174,6 @@ namespace seq66
  *  Static data members.  These items apply to all of the instances of seqedit,
  *  and are passed on to the following constructors:
  *
- *  -   seqdata TODO
  *  -   seqevent TODO
  *  -   seqroll TODO
  *  -   seqtime TODO
@@ -1262,17 +1261,14 @@ qseqeditframe64::conditional_update ()
 
 /**
  *  Handles edits of the sequence title.
- *
- *  We could let seq66::sequence handle all this!!!!!!!
  */
 
 void
 qseqeditframe64::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
-    perf().set_sequence_name(seq_pointer(), name);
-    set_dirty();
-    // perf().notify_sequence_change(seqno);
+    if (perf().set_sequence_name(seq_pointer(), name))
+        set_dirty();
 }
 
 /**
@@ -1322,7 +1318,7 @@ qseqeditframe64::reset_beats_per_measure ()
     ui->m_combo_bpm->setCurrentIndex(SEQ66_DEFAULT_BEATS_PER_MEASURE - 1);
 
     seq::number seqno = seq_pointer()->seq_number();
-    perf().notify_sequence_change(seqno);
+    perf().notify_sequence_change(seqno);       // FIXME
 }
 
 /**
@@ -3130,7 +3126,7 @@ qseqeditframe64::set_dirty ()
     {
         qseqframe::set_dirty();
         seq::number seqno = seq_pointer()->seq_number();
-        perf().notify_sequence_change(seqno);
+        perf().notify_sequence_change(seqno);       // FIXME
     }
     update_draw_geometry();     // m_seqroll->set_redraw();
 }

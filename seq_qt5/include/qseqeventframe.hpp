@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-05-25
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -114,6 +114,8 @@ private:
     void set_seq_lengths (const std::string & mevents);
     void set_seq_channel (const std::string & channel);
 
+    std::string make_seq_title ();
+
     void set_event_category (const std::string & c);
     void set_event_timestamp (const std::string & ts);
     void set_event_name (const std::string & n);
@@ -148,6 +150,7 @@ private slots:
     void handle_modify ();
     void handle_save ();
     void handle_cancel ();
+    void update_seq_name ();
 
 private:
 

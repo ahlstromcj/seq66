@@ -554,9 +554,6 @@ qsmainwnd::qsmainwnd
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, usr().max_sets() - 1);
 
-    // TODO: set_bank(0);
-    // which will call  m_live_frame->set_bank(int(perf().playscreen_number()));
-
     /*
      * Set Number.
      */
@@ -1409,8 +1406,6 @@ qsmainwnd::show_import_dialog ()
                     ui->spinBpm->setValue(perf().bpm());
                     ui->spinBpm->setDecimals(usr().bpm_precision());
                     ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-
-                    // TODO:  call set_bank(int(perf().playscreen_number()));
                     if (not_nullptr(m_live_frame))
                         m_live_frame->set_bank(int(perf().playscreen_number()));
                 }
@@ -2422,9 +2417,11 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
  */
 
 bool
-qsmainwnd:: on_sequence_change (seq::number setno)
+qsmainwnd:: on_sequence_change (seq::number seqno)
 {
-    return false;
+    bool result = not_nullptr(m_live_frame);
+    m_live_frame->update_sequence(seqno);
+    return result;
 }
 
 /**

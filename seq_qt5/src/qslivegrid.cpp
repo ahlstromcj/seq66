@@ -745,6 +745,16 @@ qslivegrid::update_bank_name ()
 }
 
 /**
+ *
+ */
+
+void
+qslivegrid::update_sequence (seq::number seqno)
+{
+    alter_sequence(seqno);
+}
+
+/**
  *  Converts the (x, y) coordinates of a click into a sequence/pattern ID.
  *  Normally, these values can range from 0 to 31, representing one of 32
  *  slots in the live frame.  But sets may be larger or smaller.

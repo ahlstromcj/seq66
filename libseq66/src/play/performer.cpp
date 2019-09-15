@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-09-13
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -1978,10 +1978,11 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
     bool result = bool(s);
     if (result)
     {
+        seq::number seqno = s->seq_number();
         s->set_name(name);
-        set_needs_update();             /* tell all GUIs to refresh. BUG!   */
         modify();
-        // notify_sequence_change(seqno);               /* modify()     */
+        notify_sequence_change(seqno);
+        set_needs_update();             /* tell GUIs to refresh. FIXME  */
     }
     return result;
 }

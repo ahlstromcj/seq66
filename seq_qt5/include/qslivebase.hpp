@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2019-09-04
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -37,7 +37,6 @@
  */
 
 #include <QFrame>
-
 #include <functional>                   /* std::function, function objects  */
 
 #include "gui_palette_qt5.hpp"
@@ -110,7 +109,7 @@ public:
         return m_mainwid_spacing;
     }
 
-    int current_seq () const
+    seq::number current_seq () const
     {
         return m_current_seq;
     }
@@ -139,9 +138,15 @@ protected:
     bool delete_seq ();
     bool paste_seq ();
     virtual void update_bank (int bank);
+
     virtual void update_bank_name ()
     {
-        // no code
+        // no code, see qslivegrid versus qsliveframe
+    }
+
+    virtual void update_sequence (seq::number /*seqno*/)
+    {
+        // no code (yet), see qslivegrid versus qsliveframe
     }
 
     virtual void color_by_number (int i) = 0;   /* implemented!!!   */
@@ -274,7 +279,7 @@ protected:
      *  indicated by clicking in the live frame.
      */
 
-    int m_current_seq;
+    seq::number m_current_seq;
 
     /**
      *  Indicates previously-selected sequence number when copying it.

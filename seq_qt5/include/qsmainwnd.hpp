@@ -217,7 +217,7 @@ private:
 private:
 
     Ui::qsmainwnd * ui;
-    qslivebase * m_live_frame;              // qsliveframe * m_live_frame;
+    qslivebase * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;
     qseqeditframe * m_edit_frame;

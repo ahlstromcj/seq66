@@ -181,36 +181,9 @@
      <number>14</number>
     </property>
     <item>
-     <widget class="QLabel" name="label_seq_name">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
+     <widget class="QLineEdit" name="m_entry_name">
       <property name="text">
-       <string>Seq. Number and Name</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+       <string>0. Sequence Name</string>
       </property>
      </widget>
     </item>
@@ -491,7 +464,7 @@
      <widget class="QSplitter" name="del_ins_mod_splitter">
       <property name="maximumSize">
        <size>
-        <width>224</width>
+        <width>228</width>
         <height>24</height>
        </size>
       </property>

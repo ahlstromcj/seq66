@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-05-25
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -93,24 +93,15 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     /*
-     * Caption.  Not yet applicable to this object, which is currently just
-     * embedded in the main window tabs.
+     * Sequence Title.
      */
 
-#if USE_CAPTION_FOR_TITLE                           /* we're only in frame  */
-    std::string title = SEQ66_APP_NAME " #";        /* main window title    */
-    title += m_seq->seq_number_string();
-    title += " \"";
-    title += m_seq->name();
-    title += "\"";
-    setWindowTitle(title.c_str());
-#else
-    std::string title = m_seq->seq_number_string();
-    title += ". \"";
-    title += m_seq->name();
-    title += "\"";
-    set_seq_title(title);
-#endif
+    connect
+    (
+        ui->m_entry_name, SIGNAL(textChanged(const QString &)),
+        this, SLOT(update_seq_name())
+    );
+    set_seq_title(make_seq_title());
 
     std::string ts_ppqn = std::to_string(m_seq->get_beats_per_bar());
     ts_ppqn += "/";
@@ -342,7 +333,21 @@ qseqeventframe::initialize_table ()
 }
 
 /**
- *  Sets ui->label_seq_name to the title.
+ *
+ */
+
+std::string
+qseqeventframe::make_seq_title ()
+{
+    std::string title = m_seq->seq_number_string();
+    title += ". \"";
+    title += m_seq->name();
+    title += "\"";
+    return title;
+}
+
+/**
+ *  Sets ui->m_entry_name to the title.
  *
  * \param title
  *      The name of the sequence.
@@ -351,8 +356,25 @@ qseqeventframe::initialize_table ()
 void
 qseqeventframe::set_seq_title (const std::string & title)
 {
-    ui->label_seq_name->setText(title.c_str());
+    ui->m_entry_name->setText(title.c_str());
 }
+
+/**
+ *  Handles edits of the sequence title.
+ */
+
+void
+qseqeventframe::update_seq_name ()
+{
+    std::string name = ui->m_entry_name->text().toStdString();
+    if (perf().set_sequence_name(m_seq, name))
+    {
+        // causes stack overflow
+        // set_seq_title(make_seq_title());
+        set_dirty();
+    }
+}
+
 
 /**
  *  Sets ui->label_time_sig to the time-signature string.
@@ -384,7 +406,7 @@ qseqeventframe::set_seq_channel (const std::string & ch)
 /**
  *  Sets the number of measure and the number of events string.
  *
- *      m_eventslots->seq_pointer()->calculate_measures()
+ *      m_eventslots->m_seq->calculate_measures()
  *
  *  Combines set_seq_count() and set_length() into one function.
  */
@@ -737,7 +759,7 @@ qseqeventframe::handle_save ()
         if (ok)
         {
             seq::number seqno = m_seq->seq_number();
-            perf().notify_sequence_change(seqno);
+            perf().notify_sequence_change(seqno);       // FIXME
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
         }
