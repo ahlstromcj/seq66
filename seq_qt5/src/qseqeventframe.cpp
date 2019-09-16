@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-15
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -138,7 +138,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
      */
 
     QStringList columns;
-    columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1";
+    columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
     set_row_heights(SEQ66_EVENT_ROW_HEIGHT);
     set_column_widths(ui->eventTableWidget->width() - SEQ66_EVENT_TABLE_FIX);
@@ -284,6 +284,7 @@ qseqeventframe::set_row_height (int row, int height)
  *
  *      -   100 +  164 +   72 +    72 +    72 = 480
  *      -  0.20 + 0.30 + 0.10 +  0.20 +  0.20 = 1.00
+ *                               0.15 +  0.15 + 0.10 ("Link")
  */
 
 void
@@ -292,8 +293,9 @@ qseqeventframe::set_column_widths (int total_width)
     ui->eventTableWidget->setColumnWidth(0, int(0.20f * total_width));
     ui->eventTableWidget->setColumnWidth(1, int(0.30f * total_width));
     ui->eventTableWidget->setColumnWidth(2, int(0.10f * total_width));
-    ui->eventTableWidget->setColumnWidth(3, int(0.20f * total_width));
-    ui->eventTableWidget->setColumnWidth(4, int(0.20f * total_width));
+    ui->eventTableWidget->setColumnWidth(3, int(0.15f * total_width));
+    ui->eventTableWidget->setColumnWidth(4, int(0.15f * total_width));
+    ui->eventTableWidget->setColumnWidth(5, int(0.10f * total_width));
 }
 
 /**
@@ -312,10 +314,6 @@ qseqeventframe::initialize_table ()
             ui->eventTableWidget->clearContents();
             ui->eventTableWidget->setRowCount(rows);
             set_row_heights(SEQ66_EVENT_ROW_HEIGHT);
-//          for (int r = 0; r < rows; ++r)
-//          {
-//              ui->eventTableWidget->setRowHeight(r, SEQ66_EVENT_ROW_HEIGHT);
-//          }
             if (m_eventslots->load_table())
             {
                 m_eventslots->select_event(0);      /* first row */
@@ -525,7 +523,8 @@ qseqeventframe::set_event_line
     const std::string & evname,
     const std::string & evchannel,
     const std::string & evdata0,
-    const std::string & evdata1
+    const std::string & evdata1,
+    const std::string & linktime
 )
 {
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
@@ -547,6 +546,10 @@ qseqeventframe::set_event_line
     qtip = cell(row, column_id::data_1);
     if (not_nullptr(qtip))
         qtip->setText(evdata1.c_str());
+
+    qtip = cell(row, column_id::link);
+    if (not_nullptr(qtip))
+        qtip->setText(linktime.c_str());
 }
 
 /**
@@ -696,6 +699,7 @@ qseqeventframe::handle_insert ()
         std::string name = ui->entry_ev_name->text().toStdString();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
+        std::string linktime;       /* TODO TODO TODO */
         bool has_events = m_eventslots->insert_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
         if (has_events)
@@ -704,7 +708,7 @@ qseqeventframe::handle_insert ()
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
             set_row_height(cr, SEQ66_EVENT_ROW_HEIGHT);
-            set_event_line(cr, ts, name, chan, data0, data1);
+            set_event_line(cr, ts, name, chan, data0, data1, linktime);
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
         }

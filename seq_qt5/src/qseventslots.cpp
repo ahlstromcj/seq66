@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-05-25
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -134,15 +134,8 @@ qseventslots::load_events ()
                 if (increment_bottom() == SEQ66_NULL_EVENT_INDEX)
                     break;
             }
-
-            for
-            (
-                editable_events::iterator ei = m_event_container.begin();
-                ei != m_event_container.end(); ++ei
-            )
-            {
-                ei->second.analyze();       /* creates the event strings    */
-            }
+            for (auto & ei : m_event_container)
+                ei.second.analyze();        /* creates the event strings    */
         }
         else
             result = false;
@@ -167,13 +160,10 @@ qseventslots::load_table ()
     if (m_event_count > 0)
     {
         int row = 0;
-        for
-        (
-            editable_events::const_iterator ei = m_event_container.begin();
-            ei != m_event_container.end(); ++ei, ++row
-        )
+        for (auto & ei : m_event_container)
         {
-            set_table_event(ei, row);
+            set_table_event(ei.second, row);
+            ++row;
         }
     }
     return result;
@@ -242,13 +232,13 @@ qseventslots::set_current_event
 void
 qseventslots::set_table_event
 (
-    const editable_events::const_iterator ei,
+    const editable_event & ev,
     int index
 )
 {
     std::string data_0;
     std::string data_1;
-    const editable_event & ev = editable_events::cdref(ei);
+    std::string linktime;
     if (ev.is_ex_data())
     {
         data_0 = ev.ex_data_string();
@@ -262,11 +252,17 @@ qseventslots::set_table_event
         data_0 = tmp;
         snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT, int(d1), int(d1));
         data_1 = tmp;
+        if (ev.is_linked())
+        {
+            editable_event * lev = dynamic_cast<editable_event *>(ev.link());
+            if (not_nullptr(lev))
+                linktime = lev->timestamp_string();
+        }
     }
     m_parent.set_event_line
     (
         index, ev.timestamp_string(), ev.status_string(),
-        ev.channel_string(), data_0, data_1
+        ev.channel_string(), data_0, data_1, linktime
     );
 }
 
@@ -683,19 +679,9 @@ qseventslots::save_events ()
     if (result)
     {
         event_list newevents;
-        for
-        (
-            editable_events::iterator ei = m_event_container.begin();
-            ei != m_event_container.end(); ++ei
-        )
+        for (auto & ei : m_event_container)
         {
-            /*
-             * Have to add the seq66 namespace to distinguish it from
-             * Gtk::Widget::event.
-             */
-
-            seq66::event e = editable_events::cdref(ei);    /* a conversion */
-            result = newevents.add(e);
+            result = newevents.add(ei.second);
             if (! result)
                 break;
         }

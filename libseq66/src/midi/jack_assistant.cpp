@@ -1037,7 +1037,7 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
  *
  * \param tick
  *      If using Song mode for this call then this value is set as the
- *      "current tick" value.  If it's value is bad (SEQ66_NULL_MIDIPULSE),
+ *      "current tick" value.  If it's value is bad (null_midipulse),
  *      then this parameter is set to 0 before being used.
  */
 

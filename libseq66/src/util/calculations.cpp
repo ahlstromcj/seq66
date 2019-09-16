@@ -257,7 +257,7 @@ pulses_to_string (midipulse p)
  *
  * \param p
  *      The number of MIDI pulses (clocks, divisions, ticks, you name it) to
- *      be converted.  If the value is SEQ66_NULL_MIDIPULSE, it is converted
+ *      be converted.  If the value is null_midipulse, it is converted
  *      to 0, because callers don't generally worry about such niceties, and
  *      the least we can do is convert illegal measure-strings (like
  *      "000:0:000") to a legal value.
@@ -531,7 +531,7 @@ measurestring_to_pulses
  *
  * \return
  *      Returns the absolute pulses that mark this duration.  If the
- *      pulse-value cannot be calculated, then SEQ66_NULL_MIDIPULSE is
+ *      pulse-value cannot be calculated, then null_midipulse is
  *      returned.
  */
 
@@ -542,7 +542,7 @@ midi_measures_to_pulses
     const midi_timing & seqparms
 )
 {
-    midipulse result = SEQ66_NULL_MIDIPULSE;
+    midipulse result = null_midipulse;
     int m = measures.measures() - 1;                /* true measure count   */
     int b = measures.beats() - 1;
     if (m < 0)

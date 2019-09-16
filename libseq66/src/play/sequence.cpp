@@ -384,10 +384,9 @@ sequence::push_undo (bool hold)
 }
 
 /**
- *  If there are items on the undo list, this function pushes the
- *  event-list into the redo-list, puts the top of the undo-list into the
- *  event-list, pops from the undo-list, calls verify_and_link(), and then
- *  calls unselect().
+ *  If there are items on the undo list, this function pushes the event-list
+ *  into the redo-list, puts the top of the undo-list into the event-list, pops
+ *  from the undo-list, calls verify_and_link(), and then calls unselect().
  *
  *  We would like to be able to set performer's modify flag to false here, but
  *  other sequences might still be in a modified state.  We could add a modify
@@ -1355,15 +1354,12 @@ sequence::verify_and_link ()
 }
 
 /**
- *  Links a new event.
- *
- * \threadsafe
+ *  Links a new event.  Locked elsewhere, no need for automutex locker(m_mutex);
  */
 
 void
 sequence::link_new ()
 {
-    // COMMENTED OUT, locked elsewhere: automutex locker(m_mutex);
     m_events.link_new();
 }
 
@@ -3213,21 +3209,20 @@ sequence::add_note
             if (paint)
                 e.paint();
 
-//          e.set_status(EVENT_NOTE_ON);
-//          e.set_data(note, hardwire ? midibyte(m_note_on_velocity) : velocity);
-//          e.set_timestamp(tick);
-            add_event(e);
-
-            /*
-             * Will be consistent with how m_note_on_velocity is handled above;
-             * enable 0 velocity (a standard?) for note off when not playing.
-             * MISSING:  LINKING THE NOTES!
-             */
-
-            e.set_status(EVENT_NOTE_OFF);
-            e.set_data(note, hardwire ? midibyte(m_note_off_velocity) : 0);
-            e.set_timestamp(tick + len);
             result = add_event(e);
+            if (result)
+            {
+                /*
+                 * Will be consistent with how m_note_on_velocity is handled
+                 * above; enable 0 velocity (a standard?) for note off when not
+                 * playing.
+                 */
+
+                e.set_status(EVENT_NOTE_OFF);
+                e.set_data(note, hardwire ? midibyte(m_note_off_velocity) : 0);
+                e.set_timestamp(tick + len);
+                result = add_event(e);
+            }
         }
         if (result)
             verify_and_link();
@@ -3417,9 +3412,6 @@ sequence::add_event
         if (paint)
             e.paint();
 
-//      e.set_status(status);
-//      e.set_data(d0, d1);
-//      e.set_timestamp(tick);
         result = add_event(e);
     }
     if (result)

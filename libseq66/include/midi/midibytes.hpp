@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-09-03
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -73,7 +73,6 @@ namespace seq66
 /**
  *  Provides a fairly common type definition for a byte value.  This can be
  *  used for a MIDI buss/port number or for a MIDI channel number.
- *  See the SEQ66_INVALID_MIDIBYTE macro.
  */
 
 using midibyte = unsigned char;
@@ -136,7 +135,7 @@ using colorbyte = char;
  *  is_null_midipulse().
  */
 
-#define SEQ66_NULL_MIDIPULSE            (-1)        /* ULONG_MAX */
+const long null_midipulse = (-1);       /* ULONG_MAX */
 
 /**
  *  Distinguishes a long value from the unsigned long values implicit in MIDI
@@ -176,7 +175,8 @@ using midistring = std::basic_string<midibyte>;
 using midibooleans = std::vector<midibool>;
 
 /**
- *  Maximum and unusable values.  use these value to avoid sign issues.
+ *  Maximum and unusable values.  Use these value to avoid sign issues.
+ *  Only c_midishort is used right now.  Also see null_midipulse.
  */
 
 const midibyte c_midibyte_max = midibyte(0xFF);
@@ -411,14 +411,14 @@ public:
 };              // class midi_timing
 
 /**
- *  Compares a midipulse value to SEQ66_NULL_MIDIPULSE.  By "null" in this
+ *  Compares a midipulse value to null_midipulse.  By "null" in this
  *  case, we mean "unusable", not 0.  Sigh, it's always something.
  */
 
 inline bool
 is_null_midipulse (midipulse p)
 {
-    return p == SEQ66_NULL_MIDIPULSE;
+    return p == null_midipulse;
 }
 
 }               // namespace seq66

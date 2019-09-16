@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-15
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,7 +79,8 @@ private:
         eventname,
         channel,
         data_0,
-        data_1
+        data_1,
+        link
     };
 
     Q_OBJECT
@@ -128,7 +129,8 @@ private:
         const std::string & evname,
         const std::string & evchannel,
         const std::string & evdata0,
-        const std::string & evdata1
+        const std::string & evdata1,
+        const std::string & linktime
     );
     void set_dirty (bool flag = true);
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-03-10
+ * \updates       2019-09-15
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -343,7 +343,7 @@ private:
     );
     void set_table_event
     (
-        const editable_events::const_iterator ei,
+        const editable_event & ev,
         int index
     );
     bool insert_event (const editable_event & edev);
