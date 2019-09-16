@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-10
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -370,7 +370,7 @@ editable_event::editable_event (const editable_events & parent)
  :
     event               (),
     m_parent            (parent),
-    m_dn_linked         (nullptr),
+    m_link_time         (0),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -381,8 +381,8 @@ editable_event::editable_event (const editable_events & parent)
     m_name_channel      (),
     m_name_data         ()
 {
-    if (is_linked())
-        dnlink(this);
+//  if (is_linked())
+//      m_link_time = ev.timestamp();
 }
 
 /**
@@ -398,7 +398,7 @@ editable_event::editable_event
 ) :
     event               (ev),
     m_parent            (parent),
-    m_dn_linked         (nullptr),
+    m_link_time         (0),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -409,9 +409,8 @@ editable_event::editable_event
     m_name_channel      (),
     m_name_data         ()
 {
-    // analyze();               // DO IT NOW OR LATER?
     if (is_linked())
-        dnlink(this);
+        m_link_time = ev.timestamp();
 }
 
 /**
@@ -434,6 +433,7 @@ editable_event::editable_event (const editable_event & rhs)
  :
     event               (rhs),
     m_parent            (rhs.m_parent),
+    m_link_time         (rhs.m_link_time),
     m_category          (rhs.m_category),
     m_name_category     (rhs.m_name_category),
     m_format_timestamp  (rhs.m_format_timestamp),
@@ -444,8 +444,7 @@ editable_event::editable_event (const editable_event & rhs)
     m_name_channel      (rhs.m_name_channel),
     m_name_data         (rhs.m_name_data)
 {
-    if (is_linked())
-        dnlink(this);
+    // No other code
 }
 
 /*
@@ -466,6 +465,7 @@ editable_event::operator = (const editable_event & rhs)
     {
         event::operator =(rhs);
     //  m_parent            = rhs.m_parent;         // cannot copy a reference
+        m_link_time         = rhs.m_link_time;
         m_category          = rhs.m_category;
         m_name_category     = rhs.m_name_category;
         m_format_timestamp  = rhs.m_format_timestamp;
@@ -475,8 +475,6 @@ editable_event::operator = (const editable_event & rhs)
         m_name_seqspec      = rhs.m_name_seqspec;
         m_name_channel      = rhs.m_name_channel;
         m_name_data         = rhs.m_name_data;
-        if (is_linked())
-            dnlink(this);
     }
     return *this;
 }

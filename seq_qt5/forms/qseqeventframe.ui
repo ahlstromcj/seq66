@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>849</width>
-    <height>521</height>
+    <width>822</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -35,7 +35,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>520</width>
+         <width>548</width>
          <height>360</height>
         </size>
        </property>
@@ -171,13 +171,19 @@
      <item row="0" column="1">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
-        <number>14</number>
+        <number>24</number>
        </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetNoConstraint</enum>
        </property>
        <item>
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="loop_number_label">
+         <property name="maximumSize">
+          <size>
+           <width>72</width>
+           <height>36</height>
+          </size>
+         </property>
          <property name="text">
           <string>Loop #</string>
          </property>
@@ -185,6 +191,12 @@
        </item>
        <item>
         <widget class="QLineEdit" name="m_entry_name">
+         <property name="maximumSize">
+          <size>
+           <width>248</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>Loop Name</string>
          </property>
@@ -315,7 +327,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>210</width>
+             <width>164</width>
              <height>24</height>
             </size>
            </property>
@@ -356,7 +368,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>210</width>
+             <width>164</width>
              <height>24</height>
             </size>
            </property>
@@ -380,7 +392,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>268</width>
+           <width>250</width>
            <height>24</height>
           </size>
          </property>
@@ -396,7 +408,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>48</width>
+            <width>36</width>
             <height>24</height>
            </size>
           </property>
@@ -436,7 +448,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>48</width>
+            <width>36</width>
             <height>24</height>
            </size>
           </property>
@@ -473,7 +485,7 @@
         <widget class="QSplitter" name="del_ins_mod_splitter">
          <property name="maximumSize">
           <size>
-           <width>224</width>
+           <width>228</width>
            <height>24</height>
           </size>
          </property>
@@ -556,6 +568,12 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Deletes all of the events in this pattern.</string>
          </property>
@@ -581,7 +599,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>16777215</width>
+            <width>128</width>
             <height>24</height>
            </size>
           </property>
@@ -604,7 +622,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>16777215</width>
+            <width>48</width>
             <height>24</height>
            </size>
           </property>

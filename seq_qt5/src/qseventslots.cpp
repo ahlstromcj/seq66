@@ -254,9 +254,14 @@ qseventslots::set_table_event
         data_1 = tmp;
         if (ev.is_linked())
         {
+            midipulse lt = ev.link_time();
+            linktime = pulses_to_measurestring(lt, m_event_container.timing());
+
+#if 0
             editable_event * lev = ev.dnlink();     /* slightly \tricky */
             if (not_nullptr(lev))
                 linktime = lev->timestamp_string();
+#endif
         }
     }
     m_parent.set_event_line

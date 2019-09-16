@@ -90,7 +90,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     m_is_dirty              (false)
 {
     ui->setupUi(this);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     /*
      * Sequence Title.
@@ -281,20 +281,17 @@ qseqeventframe::set_row_height (int row, int height)
 
 /**
  *  Scales the columns against the provided window width.
- *
- *      -   100 +  164 +   72 +    72 +    72 = 480
- *      -  0.20 + 0.30 + 0.10 +  0.20 +  0.20 = 1.00
- *                               0.15 +  0.15 + 0.10 ("Link")
  */
 
 void
 qseqeventframe::set_column_widths (int total_width)
 {
+    printf("total event-frame width = %d\n", total_width);
     ui->eventTableWidget->setColumnWidth(0, int(0.15f * total_width));
-    ui->eventTableWidget->setColumnWidth(1, int(0.35f * total_width));
+    ui->eventTableWidget->setColumnWidth(1, int(0.30f * total_width));
     ui->eventTableWidget->setColumnWidth(2, int(0.10f * total_width));
-    ui->eventTableWidget->setColumnWidth(3, int(0.15f * total_width));
-    ui->eventTableWidget->setColumnWidth(4, int(0.15f * total_width));
+    ui->eventTableWidget->setColumnWidth(3, int(0.125f * total_width));
+    ui->eventTableWidget->setColumnWidth(4, int(0.125f * total_width));
     ui->eventTableWidget->setColumnWidth(5, int(0.20f * total_width));
 }
 

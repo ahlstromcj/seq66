@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2019-04-10
+ * \updates       2019-09-16
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -288,12 +288,11 @@ private:
     const editable_events & m_parent;
 
     /**
-     *  This event is used to link NoteOns and NoteOffs together.  The NoteOn
-     *  points to the NoteOff, and the NoteOff points to the NoteOn.  See, for
-     *  example, event_list::link_note().
+     *  Holds the linked event's timestamp (if applicable), for display in the
+     *  event table.
      */
 
-    editable_event * m_dn_linked;
+    midipulse m_link_time;
 
     /**
      *  Indicates the overall category of this event, which will be
@@ -319,7 +318,7 @@ private:
     timestamp_format_t m_format_timestamp;
 
     /**
-     *  Holds the string version of the MIDI pulses time-stamp.
+     *  Holds the string version of the MIDI pulse's time-stamp.
      */
 
     std::string m_name_timestamp;
@@ -383,15 +382,9 @@ public:
         // Empty body
     }
 
-    void dnlink (editable_event * ev)
+    midipulse link_time () const
     {
-        m_dn_linked = ev;
-        // m_has_link = not_nullptr(ev);
-    }
-
-    editable_event * dnlink () const
-    {
-        return m_dn_linked;
+        return m_link_time;
     }
 
 public:
