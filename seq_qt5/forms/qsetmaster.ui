@@ -25,193 +25,132 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <widget class="QPushButton" name="m_button_close">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>380</y>
-     <width>151</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Close this window.</string>
-   </property>
-   <property name="text">
-    <string>Close</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="m_set_name_text">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>380</y>
-     <width>321</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="m_set_number_text">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>380</y>
-     <width>61</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QWidget" name="gridLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>401</width>
-     <height>171</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="setGridLayout"/>
-  </widget>
-  <widget class="QPlainTextEdit" name="m_set_contents_text">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>190</y>
-     <width>401</width>
-     <height>181</height>
-    </rect>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="m_button_show">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>380</y>
-     <width>141</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Show a condensed list of the sets and their tracks/loops/patterns.</string>
-   </property>
-   <property name="text">
-    <string>Show All Set Tracks</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="m_button_down">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>350</y>
-     <width>71</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Move the selected set down in the list.</string>
-   </property>
-   <property name="text">
-    <string>Set Down</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="m_button_up">
-   <property name="geometry">
-    <rect>
-     <x>730</x>
-     <y>350</y>
-     <width>71</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Move the selected set up in the list.</string>
-   </property>
-   <property name="text">
-    <string>Set Up</string>
-   </property>
-  </widget>
-  <widget class="QTableWidget" name="m_set_table">
-   <property name="geometry">
-    <rect>
-     <x>450</x>
-     <y>10</y>
-     <width>361</width>
-     <height>331</height>
-    </rect>
-   </property>
-   <property name="alternatingRowColors">
-    <bool>true</bool>
-   </property>
-   <property name="rowCount">
-    <number>32</number>
-   </property>
-   <property name="columnCount">
-    <number>3</number>
-   </property>
-   <attribute name="horizontalHeaderVisible">
-    <bool>true</bool>
-   </attribute>
-   <attribute name="verticalHeaderVisible">
-    <bool>false</bool>
-   </attribute>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <row/>
-   <column/>
-   <column/>
-   <column/>
-  </widget>
-  <widget class="QPushButton" name="m_button_delete">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>350</y>
-     <width>141</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="toolTip">
-    <string>Deletes the selected set.  No undo! Careful!</string>
-   </property>
-   <property name="text">
-    <string>Delete Selected Set</string>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <layout class="QGridLayout" name="setGridLayout"/>
+   </item>
+   <item row="0" column="2" rowspan="2" colspan="3">
+    <widget class="QTableWidget" name="m_set_table">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="rowCount">
+      <number>32</number>
+     </property>
+     <property name="columnCount">
+      <number>3</number>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <row/>
+     <column/>
+     <column/>
+     <column/>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2" colspan="2">
+    <widget class="QPlainTextEdit" name="m_set_contents_text">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="m_button_delete">
+     <property name="toolTip">
+      <string>Deletes the selected set.  No undo! Careful!</string>
+     </property>
+     <property name="text">
+      <string>Delete Selected Set</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="m_button_down">
+     <property name="toolTip">
+      <string>Move the selected set down in the list.</string>
+     </property>
+     <property name="text">
+      <string>Set Down</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4">
+    <widget class="QPushButton" name="m_button_up">
+     <property name="toolTip">
+      <string>Move the selected set up in the list.</string>
+     </property>
+     <property name="text">
+      <string>Set Up</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLineEdit" name="m_set_number_text">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="m_set_name_text"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="m_button_show">
+     <property name="toolTip">
+      <string>Show a condensed list of the sets and their tracks/loops/patterns.</string>
+     </property>
+     <property name="text">
+      <string>Show All Set Tracks</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3" colspan="2">
+    <widget class="QPushButton" name="m_button_close">
+     <property name="toolTip">
+      <string>Close this window.</string>
+     </property>
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

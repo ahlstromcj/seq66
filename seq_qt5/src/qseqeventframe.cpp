@@ -290,12 +290,12 @@ qseqeventframe::set_row_height (int row, int height)
 void
 qseqeventframe::set_column_widths (int total_width)
 {
-    ui->eventTableWidget->setColumnWidth(0, int(0.20f * total_width));
-    ui->eventTableWidget->setColumnWidth(1, int(0.30f * total_width));
+    ui->eventTableWidget->setColumnWidth(0, int(0.15f * total_width));
+    ui->eventTableWidget->setColumnWidth(1, int(0.35f * total_width));
     ui->eventTableWidget->setColumnWidth(2, int(0.10f * total_width));
     ui->eventTableWidget->setColumnWidth(3, int(0.15f * total_width));
     ui->eventTableWidget->setColumnWidth(4, int(0.15f * total_width));
-    ui->eventTableWidget->setColumnWidth(5, int(0.10f * total_width));
+    ui->eventTableWidget->setColumnWidth(5, int(0.20f * total_width));
 }
 
 /**

@@ -45,7 +45,7 @@
  *  area of the event editor.
  */
 
-#define SEQ66_EVENT_DATA_FMT    "0x%02x (%d)"
+#define SEQ66_EVENT_DATA_FMT    "0x%02x:%d"
 
 /*
  * Do not document the namespace; it breaks Doxygen.
