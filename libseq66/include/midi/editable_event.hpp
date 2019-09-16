@@ -288,6 +288,14 @@ private:
     const editable_events & m_parent;
 
     /**
+     *  This event is used to link NoteOns and NoteOffs together.  The NoteOn
+     *  points to the NoteOff, and the NoteOff points to the NoteOn.  See, for
+     *  example, event_list::link_note().
+     */
+
+    editable_event * m_dn_linked;
+
+    /**
      *  Indicates the overall category of this event, which will be
      *  subgroup::channel_message, subgroup::system_message,
      *  subgroup::meta_event, and subgroup::prop_event.  The subgroup::name
@@ -373,6 +381,17 @@ public:
     virtual ~editable_event ()
     {
         // Empty body
+    }
+
+    void dnlink (editable_event * ev)
+    {
+        m_dn_linked = ev;
+        // m_has_link = not_nullptr(ev);
+    }
+
+    editable_event * dnlink () const
+    {
+        return m_dn_linked;
     }
 
 public:

@@ -41,6 +41,8 @@
 #include "midi/event_list.hpp"          /* seq66::event_list::event_key */
 #include "midi/editable_event.hpp"      /* seq66::editable_event        */
 
+#undef  USE_VERIFY_AND_LINK                  /* not yet ready !!!! */
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -127,7 +129,7 @@ public:
      *  This destructor current is a rote virtual function override.
      */
 
-    virtual ~editable_events ()         // VIRTUAL???
+    virtual ~editable_events ()
     {
         // Empty body
     }

@@ -163,15 +163,6 @@ event_list::operator = (const event_list & rhs)
 }
 
 /**
- *  A rote destructor.
- */
-
-event_list::~event_list ()
-{
-    // No code needed
-}
-
-/**
  *  Provides the length of the events in MIDI pulses.  This function gets the
  *  iterator for the last element and returns its length value.
  *

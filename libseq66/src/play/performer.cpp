@@ -1975,7 +1975,7 @@ performer::set_right_tick (midipulse tick, bool setstart)
 bool
 performer::set_sequence_name (seq::pointer s, const std::string & name)
 {
-    bool result = bool(s);
+    bool result = bool(s) && (name != s->name());
     if (result)
     {
         seq::number seqno = s->seq_number();

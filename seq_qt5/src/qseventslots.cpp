@@ -254,7 +254,7 @@ qseventslots::set_table_event
         data_1 = tmp;
         if (ev.is_linked())
         {
-            editable_event * lev = dynamic_cast<editable_event *>(ev.link());
+            editable_event * lev = ev.dnlink();     /* slightly \tricky */
             if (not_nullptr(lev))
                 linktime = lev->timestamp_string();
         }

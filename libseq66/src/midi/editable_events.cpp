@@ -77,6 +77,10 @@ editable_events::editable_events (sequence & seq, midibpm bpm)
  *  This copy constructor initializes most of the class members.
  *  Note that we need to reconstitute the event links here, as well.
  *
+ * \note
+ *      Like event_list::verify_and_link(), this class counts on the caller
+ *      (in this case, the user-interface instead of the sequence), to call it.
+ *
  * \param rhs
  *      Provides the editable_events object to be copied.
  */
@@ -88,9 +92,9 @@ editable_events::editable_events (const editable_events & rhs)
     m_sequence          (rhs.m_sequence),
     m_midi_parameters   (rhs.m_midi_parameters)
 {
-#if defined USE_VERIFY_AND_LINK                  /* not yet ready */
-    if (m_events.count() > 1)
-        m_events.verify_and_link();
+#if defined USE_VERIFY_AND_LINK_USEFUL           /* not yet ready */
+    if (m_events.size() > 1)
+        verify_and_link();
 #endif
 }
 
@@ -115,9 +119,9 @@ editable_events::operator = (const editable_events & rhs)
         m_current_event     = rhs.m_current_event;
         m_midi_parameters   = rhs.m_midi_parameters;
         m_sequence.partial_assign(rhs.m_sequence);
-#if defined USE_VERIFY_AND_LINK                  /* not yet ready */
-        if (m_events.count() > 1)
-            m_events.verify_and_link();
+#if defined USE_VERIFY_AND_LINK_USEFUL           /* not yet ready */
+        if (m_events.size() > 1)
+            verify_and_link();
 #endif
     }
     return *this;
@@ -137,7 +141,8 @@ editable_events::get_length () const
     midipulse result = 0;
     if (count() > 0)
     {
-        const_reverse_iterator lci = m_events.rbegin(); /* get last element */
+//      const_reverse_iterator lci = m_events.rbegin(); /* get last element */
+        auto lci = m_events.rbegin(); /* get last element */
         result = lci->second.timestamp();               /* get length value */
     }
     return result;
@@ -189,13 +194,9 @@ editable_events::add (const editable_event & e)
 {
     size_t count = m_events.size();         /* save initial size            */
     event_list::event_key key(e);           /* create the key value         */
-
-    /*
-     * EventsPair
-     */
-
-    auto p = std::make_pair(key, e);
-    iterator ei = m_events.insert(p);       /* std::multimap operation      */
+    auto p = std::make_pair(key, e);        /* EventsPair                   */
+//  iterator ei = m_events.insert(p);       /* std::multimap operation      */
+    auto ei = m_events.insert(p);           /* std::multimap operation      */
     bool result = m_events.size() == (count + 1);
     if (result)
         current_event(ei);
@@ -211,7 +212,7 @@ editable_events::add (const editable_event & e)
  *  Note that the new events will not have valid links (actually, no links).
  *  These links are used for associating Note Off events with their respective
  *  Note On events.  To be consistent, we must take the time to reconstitute
- *  these links, using event_list::verify_and_link().
+ *  these links, using editable_events::verify_and_link().
  *
  * \return
  *      Returns true if the size of the final editable_event container matches
@@ -232,7 +233,7 @@ editable_events::load_events ()
 
 #if defined USE_VERIFY_AND_LINK                  /* not yet ready */
     if (result && count() > 1)
-        m_events.verify_and_link();
+        verify_and_link(m_sequence.get_length());
 #endif
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -324,15 +325,15 @@ editable_events::clear_links ()
 void
 editable_events::verify_and_link (midipulse slength)
 {
-    clear_links();
-    for (auto & on : m_events)
+    clear_links();                          /* no sorting, multimap in use  */
+    for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
-        event & eon = on.second;
+        event & eon = on->second;            /* event part of editable_event */
         if (eon.is_note_on())               /* Note On, find its Note Off   */
         {
-            auto off = on.second;           /* get next possible Note Off   */
-            off++;
             bool endfound = false;
+            auto off = on;                  /* get next possible Note Off   */
+            off++;
             while (off != m_events.end())
             {
                 event & eoff = dref(off);
@@ -389,7 +390,7 @@ editable_events::verify_and_link (midipulse slength)
 void
 editable_events::mark_all ()
 {
-    for (auto & i : m_events)
+    for (auto & e : m_events)
         e.second.mark();
 }
 

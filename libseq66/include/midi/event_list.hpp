@@ -150,7 +150,10 @@ public:
     event_list ();
     event_list (const event_list & a_rhs);
     event_list & operator = (const event_list & a_rhs);
-    ~event_list ();
+    virtual ~event_list ()
+    {
+        // No code needed
+    }
 
     iterator begin ()
     {

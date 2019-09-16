@@ -150,11 +150,12 @@ event::event
  *  channel-splitting feature.  Many of the members are not set to useful
  *  values when the MIDI file is read, so we don't handle them for now.
  *
- *  Note that now events are also copied when creating the editable_events
- *  container, so this function is even more important.  The event links, for
- *  linking Note Off events to their respective Note On events, are dropped.
- *  Generally, they will need to be reconstituted by calling the
- *  event_list::verify_and_link() function.
+ * \warning
+ *      Note that now events are also copied when creating the editable_events
+ *      container, so this function is even more important.  The event links,
+ *      for linking Note Off events to their respective Note On events, are
+ *      dropped.  Generally, they will need to be reconstituted by calling the
+ *      event_list::verify_and_link() function.
  *
  * \warning
  *      This function does not yet copy the SysEx data.  The inclusion

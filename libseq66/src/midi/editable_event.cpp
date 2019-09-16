@@ -370,6 +370,7 @@ editable_event::editable_event (const editable_events & parent)
  :
     event               (),
     m_parent            (parent),
+    m_dn_linked         (nullptr),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -380,7 +381,8 @@ editable_event::editable_event (const editable_events & parent)
     m_name_channel      (),
     m_name_data         ()
 {
-    // Empty body
+    if (is_linked())
+        dnlink(this);
 }
 
 /**
@@ -396,6 +398,7 @@ editable_event::editable_event
 ) :
     event               (ev),
     m_parent            (parent),
+    m_dn_linked         (nullptr),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -407,6 +410,8 @@ editable_event::editable_event
     m_name_data         ()
 {
     // analyze();               // DO IT NOW OR LATER?
+    if (is_linked())
+        dnlink(this);
 }
 
 /**
@@ -439,7 +444,8 @@ editable_event::editable_event (const editable_event & rhs)
     m_name_channel      (rhs.m_name_channel),
     m_name_data         (rhs.m_name_data)
 {
-    // Empty body
+    if (is_linked())
+        dnlink(this);
 }
 
 /*
@@ -469,6 +475,8 @@ editable_event::operator = (const editable_event & rhs)
         m_name_seqspec      = rhs.m_name_seqspec;
         m_name_channel      = rhs.m_name_channel;
         m_name_data         = rhs.m_name_data;
+        if (is_linked())
+            dnlink(this);
     }
     return *this;
 }
