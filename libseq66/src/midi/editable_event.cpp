@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-16
+ * \updates       2019-09-17
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -58,7 +58,7 @@ editable_event::sm_category_names [] =
     { (unsigned short)(subgroup::system_message),    "System Message"    },
     { (unsigned short)(subgroup::meta_event),        "Meta Event"        },
     { (unsigned short)(subgroup::prop_event),        "Proprietary Event" },
-    { SEQ66_END_OF_MIDIBYTES_TABLE,                  ""                 }
+    { SEQ66_END_OF_MIDIBYTES_TABLE,                  ""                  }
 };
 
 /**
@@ -146,7 +146,7 @@ editable_event::sm_meta_event_names [] =
     { 0x59, "Key Sig"                   },      // FF 59 02 sf mi
     { 0x7F, "Seq Spec"                  },      // FF 7F len id data (seq66 prop)
     { 0xFF, "Illegal meta event"        },      // indicator of problem
-    { SEQ66_END_OF_MIDIBYTES_TABLE, ""   }       // terminator
+    { SEQ66_END_OF_MIDIBYTES_TABLE, ""   }      // terminator
 };
 
 /**
@@ -195,7 +195,7 @@ editable_event::sm_meta_lengths [] =
     { 0x59, 2   },                              // "Key Sig"
     { 0x7F, 0   },                              // "Seq Spec"
     { 0xFF, 0   },                              // "Illegal meta event"
-    { SEQ66_END_OF_MIDIBYTES_TABLE, 0 }          // terminator
+    { SEQ66_END_OF_MIDIBYTES_TABLE, 0 }         // terminator
 };
 
 /**
@@ -221,7 +221,7 @@ editable_event::sm_prop_event_names [] =
     { 0x11, "Key"                       },
     { 0x12, "Scale"                     },
     { 0x13, "Background sequence"       },
-    { SEQ66_END_OF_MIDIBYTES_TABLE, ""  }                      // terminator
+    { SEQ66_END_OF_MIDIBYTES_TABLE, ""  }       // terminator
 };
 
 /**
@@ -381,8 +381,7 @@ editable_event::editable_event (const editable_events & parent)
     m_name_channel      (),
     m_name_data         ()
 {
-//  if (is_linked())
-//      m_link_time = ev.timestamp();
+    // No code needed
 }
 
 /**
@@ -464,7 +463,11 @@ editable_event::operator = (const editable_event & rhs)
     if (this != &rhs)
     {
         event::operator =(rhs);
-    //  m_parent            = rhs.m_parent;         // cannot copy a reference
+
+        /*
+         * m_parent         = rhs.m_parent;         // cannot copy a reference
+         */
+
         m_link_time         = rhs.m_link_time;
         m_category          = rhs.m_category;
         m_name_category     = rhs.m_name_category;

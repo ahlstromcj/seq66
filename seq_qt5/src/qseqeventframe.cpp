@@ -90,7 +90,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     m_is_dirty              (false)
 {
     ui->setupUi(this);
-    // setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     /*
      * Sequence Title.

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>822</width>
-    <height>532</height>
+    <width>826</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,7 +24,7 @@
     <enum>QLayout::SetNoConstraint</enum>
    </property>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_3">
+    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,0">
      <property name="sizeConstraint">
       <enum>QLayout::SetNoConstraint</enum>
      </property>
@@ -39,14 +39,14 @@
        <property name="minimumSize">
         <size>
          <width>548</width>
-         <height>360</height>
+         <height>500</height>
         </size>
        </property>
        <property name="toolTip">
         <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
        </property>
        <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustIgnored</enum>
+        <enum>QAbstractScrollArea::AdjustToContents</enum>
        </property>
        <property name="alternatingRowColors">
         <bool>true</bool>
@@ -179,19 +179,6 @@
        <property name="sizeConstraint">
         <enum>QLayout::SetNoConstraint</enum>
        </property>
-       <item>
-        <widget class="QLabel" name="loop_number_label">
-         <property name="maximumSize">
-          <size>
-           <width>72</width>
-           <height>36</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Loop #</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QLineEdit" name="m_entry_name">
          <property name="maximumSize">
@@ -395,7 +382,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>250</width>
+           <width>244</width>
            <height>24</height>
           </size>
          </property>
@@ -486,9 +473,15 @@
        </item>
        <item>
         <widget class="QSplitter" name="del_ins_mod_splitter">
+         <property name="minimumSize">
+          <size>
+           <width>240</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>228</width>
+           <width>224</width>
            <height>24</height>
           </size>
          </property>
@@ -571,10 +564,16 @@
          <property name="enabled">
           <bool>false</bool>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>240</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>200</width>
-           <height>16777215</height>
+           <width>240</width>
+           <height>24</height>
           </size>
          </property>
          <property name="toolTip">
