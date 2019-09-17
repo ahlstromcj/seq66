@@ -288,10 +288,10 @@ qseqeventframe::set_column_widths (int total_width)
 {
     printf("total event-frame width = %d\n", total_width);
     ui->eventTableWidget->setColumnWidth(0, int(0.15f * total_width));
-    ui->eventTableWidget->setColumnWidth(1, int(0.30f * total_width));
+    ui->eventTableWidget->setColumnWidth(1, int(0.25f * total_width));
     ui->eventTableWidget->setColumnWidth(2, int(0.10f * total_width));
-    ui->eventTableWidget->setColumnWidth(3, int(0.125f * total_width));
-    ui->eventTableWidget->setColumnWidth(4, int(0.125f * total_width));
+    ui->eventTableWidget->setColumnWidth(3, int(0.140f * total_width));
+    ui->eventTableWidget->setColumnWidth(4, int(0.140f * total_width));
     ui->eventTableWidget->setColumnWidth(5, int(0.20f * total_width));
 }
 

@@ -20,6 +20,9 @@
    <string>Events</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetNoConstraint</enum>
+   </property>
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_3">
      <property name="sizeConstraint">

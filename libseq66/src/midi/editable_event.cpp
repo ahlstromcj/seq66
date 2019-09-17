@@ -410,7 +410,7 @@ editable_event::editable_event
     m_name_data         ()
 {
     if (is_linked())
-        m_link_time = ev.timestamp();
+        m_link_time = ev.link()->timestamp();
 }
 
 /**
