@@ -923,7 +923,7 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
     static int s_count = 0;
     printf("qseqeditframe64::resizeEvent(%d)\n", s_count++);
 #endif
-    QWidget::resizeEvent(qrep);
+    QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 
 /**

@@ -60,6 +60,7 @@ qseqtime::qseqtime
     m_font                  ()
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    m_font.setPointSize(6);
     m_timer = new QTimer(this);                             // redraw timer !!!
     m_timer->setInterval(2 * usr().window_redraw_rate());   // 50
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -94,26 +95,14 @@ qseqtime::conditional_update ()
 void
 qseqtime::paintEvent (QPaintEvent *)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqtime::paintEvent(%d) zoom = %d\n", s_count++, zoom());
-#endif
-
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
-    m_font.setPointSize(6);
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-
-    /*
-     * Draw the border
-     */
-
-    painter.drawRect
+    painter.drawRect                    /* draw the border  */
     (
         c_keyboard_padding_x, 0, size().width(), size().height() - 1
     );
@@ -195,7 +184,7 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
     printf("qseqtime::resizeEvent(%d)\n", s_count++);
 #endif
 
-    qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
+    QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 
 /**
@@ -235,7 +224,9 @@ qseqtime::mouseMoveEvent(QMouseEvent *)
 QSize
 qseqtime::sizeHint() const
 {
-    return QSize(xoffset(seq_pointer()->get_length()) + 100, 22);
+    int len = tix_to_pix(seq_pointer()->get_length()) + 100;
+    return QSize(len, 22);
+//  return QSize(xoffset(seq_pointer()->get_length()) + 100, 22);
 }
 
 }           // namespace seq66
