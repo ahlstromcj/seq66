@@ -76,7 +76,7 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_slot_h            (0),
     m_last_metro        (0),
     m_alpha             (0),
-    m_current_seq       (sequence::unassigned()),
+    m_current_seq       (seq::unassigned()),
     m_button_down       (false),
     m_moving            (false),
     m_adding_new        (false),

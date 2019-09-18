@@ -28,12 +28,31 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-08-18
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
  *  to save on a bunch of arrays.  It adds the extra information about sequences
  *  that was formerly provided by separate arrays.
+ *
+ * Special static test functions:
+ *
+ *  -   maximum(). Returns the maximum supported usable sequence
+ *      number (plus one), which is 1024, but could be increased to 2048.  To
+ *      clarify, usable sequence number range from 0 to 1023.
+ *  -   limit().  Returns 2048 (0x0800), which indicates a legal value that
+ *      represents "no background" sequence when present in a Sequencer66 MIDI
+ *      file.
+ *  -   legal(seqno). Returns true if the sequence number is between 0 and
+ *      2048.
+ *  -   valid(seqno). Returns true if the sequence number is between 0 and 2047.
+ *  -   none(seqno). Returns true if the sequence number is -1.
+ *  -   disabled(seqno). Return true if the sequence number is limit().
+ *  -   null(seqno).
+ *  -   all(seqno). Returns true if the sequence number is -1.  To be used only
+ *      in the context of functions and can work on one sequence or all of them.
+ *      The caller should pass sequence::unassigned() as the sequence number.
+ *  -   unassigned().  Returns the value of -1 for sequence number.
  */
 
 #include <memory>                       /* std::shared_ptr<>                */
@@ -180,21 +199,94 @@ public:
     seq & operator = (const seq &) = default;
     seq (seq &&) = default;
     seq & operator = (seq &&) = default;
-    ~seq ();                    /* = default */
+    ~seq ();
+
+    /**
+     *  The limiting sequence number, in macro form.  This value indicates that
+     *  no background sequence value has been assigned yet.  See the value
+     *  seqedit::m_initial_sequence, which was originally set to -1 directly.
+     *  However, we have issues saving a negative number in MIDI, so we will
+     *  use the "proprietary" track's bogus sequence number, which doubles the
+     *  1024 sequences we can support.  Values between 0 (inclusive) and 2048
+     *  (exclusive) are valid.  But 2048 is a <i> legal</i> value, used only
+     *  for disabling the selection of a background sequence.
+     */
 
     static number limit ()
     {
-        return number(sequence::limit());
+        return 2048;                    /* 0x0800   */
     }
+
+    /**
+     *  Defines the constant number of sequences/patterns.  This value has
+     *  historically been 1024, which is 32 patterns per set times 32 sets.  But
+     *  we don't want to support any more than this value, based on trials with
+     *  the b4uacuse-stress.midi file, which has only about 4 sets (128 patterns)
+     *  and pretty much loads up a CPU.
+     */
+
+    static int maximum ()
+    {
+        return 1024;
+    }
+
+    /**
+     *  Indicates that all patterns will be processed by a function taking a
+     *  seq::number parameter.
+     */
 
     static number all ()
     {
-        return number(sequence::all());
+        return (-2);
     }
+
+    /**
+     *  Indicates that a sequence number has not been assigned.
+     */
 
     static number unassigned ()
     {
-        return number(sequence::unassigned());
+        return (-1);
+    }
+
+    /**
+     *  A convenient macro function to test against limit().  Although above
+     *  the range of usable loop numbers, it is a legal value.
+     *  Compare this to the valid() function.
+     */
+
+    static bool legal (int seqno)
+    {
+        return seqno >= 0 && seqno <= limit();
+    }
+
+    /**
+     *  Checks if a the sequence number is an assigned one, i.e. not equal to
+     *  -1.  Replaces the null() function.
+     */
+
+    static bool none (int seqno)
+    {
+        return seqno == unassigned();
+    }
+
+    /**
+     *  Similar to legal(), but excludes limit().
+     */
+
+    static bool valid (int seqno)
+    {
+        return seqno >= 0 && seqno < maximum();
+    }
+
+    /**
+     *  A convenient function to test against sequence::limit().
+     *  This function does not allow that value as a valid value to use.
+     */
+
+    static bool disabled (int seqno)
+    {
+        return seqno == limit();
     }
 
     const pointer loop () const

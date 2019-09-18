@@ -168,11 +168,11 @@ sequence::sequence (int ppqn)
     m_scale                     (0),
     m_name                      (),
     m_last_tick                 (0),
-    m_queued_tick               (0),                /*ee performer::play()  */
-    m_trigger_offset            (0),                /* for record-keeping   */
+    m_queued_tick               (0),
+    m_trigger_offset            (0),
     m_maxbeats                  (c_maxbeats),
     m_ppqn                      (choose_ppqn(ppqn)),
-    m_seq_number                (unassigned()),     /* may set later        */
+    m_seq_number                (unassigned()),
     m_seq_color                 (SEQ66_COLOR_NONE), /* PaletteColor::NONE   */
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
@@ -187,7 +187,7 @@ sequence::sequence (int ppqn)
     m_note_off_velocity         (SEQ66_DEFAULT_NOTE_OFF_VELOCITY),
     m_musical_key               (SEQ66_KEY_OF_C),
     m_musical_scale             (int(scales::off)),
-    m_background_sequence       (SEQ66_SEQUENCE_LIMIT),
+    m_background_sequence       (sequence::limit()),
     m_mutex                     (),
     m_note_off_margin           (2)
 {
@@ -5185,13 +5185,6 @@ sequence::set_playing (bool p)
         m_playing = p;
         if (! p)
             off_playing_notes();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        if (p)
-            printf("seq %d on\n", seq_number());
-        else
-            printf("seq %d off\n", seq_number());
-#endif
 
         set_dirty();
     }

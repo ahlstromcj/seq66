@@ -888,7 +888,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     );
     popup_sequence_menu();              /* create the initial popup menu    */
 
-    if (sequence::valid(seq_pointer()->background_sequence()))
+    if (seq::valid(seq_pointer()->background_sequence()))
         m_bgsequence = seq_pointer()->background_sequence();
 
     set_background_sequence(m_bgsequence);
@@ -2018,7 +2018,7 @@ qseqeditframe64::popup_sequence_menu ()
         )
     );
     QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(sequence::limit()));
+    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
     (void) perf().sets_function(setfunc, slotfunc);
@@ -2040,7 +2040,7 @@ qseqeditframe64::popup_sequence_menu ()
     }
 
     QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(sequence::limit()));
+    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
     int seqsinset = usr().seqs_in_set();
@@ -2096,11 +2096,11 @@ qseqeditframe64::set_background_sequence (int seqnum)
     if (usr().global_seq_feature())
         usr().seqedit_bgsequence(seqnum);
 
-    if (sequence::disabled(seqnum) || ! perf().is_seq_active(seqnum))
+    if (seq::disabled(seqnum) || ! perf().is_seq_active(seqnum))
     {
         ui->m_entry_sequence->setText("Off");
         if (not_nullptr(m_seqroll))
-            m_seqroll->set_background_sequence(false, sequence::limit());
+            m_seqroll->set_background_sequence(false, seq::limit());
     }
     seq::pointer s = perf().get_sequence(seqnum);
     if (not_nullptr(s))

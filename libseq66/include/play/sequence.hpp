@@ -36,25 +36,6 @@
  *
  *  We've offloaded most of the trigger code to the triggers class in its own
  *  module, and now just call its member functions to do the actual work.
- *
- * Special static test functions:
- *
- *  -   maximum(). Returns the maximum supported usable sequence
- *      number (plus one), which is 1024, but could be increased to 2048.  To
- *      clarify, usable sequence number range from 0 to 1023.
- *  -   limit().  Returns 2048 (0x0800), which indicates a legal value that
- *      represents "no background" sequence when present in a Sequencer66 MIDI
- *      file.
- *  -   legal(seqno). Returns true if the sequence number is between 0 and
- *      2048.
- *  -   valid(seqno). Returns true if the sequence number is between 0 and 2047.
- *  -   none(seqno). Returns true if the sequence number is -1.
- *  -   disabled(seqno). Return true if the sequence number is limit().
- *  -   null(seqno).
- *  -   all(seqno). Returns true if the sequence number is -1.  To be used only
- *      in the context of functions and can work on one sequence or all of them.
- *      The caller should pass sequence::unassigned() as the sequence number.
- *  -   unassigned().  Returns the value of -1 for sequence number.
  */
 
 #include <atomic>                       /* std::atomic<bool> for dirt   */
@@ -69,21 +50,6 @@
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex   */
 #include "util/calculations.hpp"        /* measures_to_ticks()          */
 #include "util/palette.hpp"             /* enum class ThumbColor        */
-
-/**
- *  The maximum sequence number, in macro form.  This value indicates that no
- *  background sequence value has been assigned yet.  See the value
- *  seqedit::m_initial_sequence, which was originally set to -1 directly.
- *  However, we have issues saving a negative number in MIDI, so we will use
- *  the "proprietary" track's bogus sequence number, which doubles the 1024
- *  sequences we can support.  Values between 0 (inclusive) and
- *  SEQ66_SEQUENCE_LIMIT (exclusive) are valid.  But SEQ66_SEQUENCE_LIMIT is a
- *  <i> legal</i> value, used only for disabling the selection of a background
- *  sequence.
- */
-
-#define SEQ66_SEQUENCE_LIMIT            2048    /* 0x0800 */
-#define SEQ66_SEQUENCE_MAXIMUM          1024
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -924,7 +890,7 @@ public:
 
     void seq_number (int seqno)
     {
-        if (seqno >= 0 && seqno <= int(SHRT_MAX) && none(m_seq_number))
+        if (seqno >= 0 && seqno <= int(SHRT_MAX))
             m_seq_number = short(seqno);
     }
 
@@ -1685,17 +1651,9 @@ public:
         return int(m_background_sequence);
     }
 
-    /**
-     * \setter m_background_sequence
-     *      Only partial validation at present, we do not want the upper
-     *      limit to be hard-wired at this time.  Disabling the sequence
-     *      number [setting it to limit()] is valid.
-     */
-
     void background_sequence (int bs)
     {
-        if (legal(bs))
-            m_background_sequence = short(bs);
+        m_background_sequence = short(bs);      /* no validation */
     }
 
     void show_events () const;
@@ -1744,104 +1702,6 @@ public:
 
 public:
 
-    /**
-     *  Defines the constant number of sequences/patterns.  This value has
-     *  historically been 1024, which is 32 patterns per set times 32 sets.  But
-     *  we don't want to support any more than this value, based on trials with
-     *  the b4uacuse-stress.midi file, which has only about 4 sets (128 patterns)
-     *  and pretty much loads up a CPU.
-     */
-
-    static int maximum ()
-    {
-        return SEQ66_SEQUENCE_MAXIMUM;
-    }
-
-    /**
-     *  The above-maximum sequence number, in macro form.  This value indicates
-     *  that no background sequence value has been assigned yet.  See the value
-     *  seqedit::m_initial_sequence, which was originally set to -1 directly.
-     *  However, we have issues saving a negative number in MIDI, so we will use
-     *  the "proprietary" track's bogus sequence number, which doubles the 1024
-     *  sequences we can support.  Values between 0 (inclusive) and
-     *  sequence_limit(), exclusive, are valid.  It is a <i> legal</i> value,
-     *  used for disabling the selection of a background sequence.
-     */
-
-    static int limit ()
-    {
-        return SEQ66_SEQUENCE_LIMIT;
-    }
-
-    /**
-     *  A convenient macro function to test against sequence_limit().
-     *  Although above the range of usable loop numbers, it is a legal value.
-     *  Compare this to the valid() function.
-     */
-
-    static bool legal (int seqno)
-    {
-        return seqno >= 0 && seqno <= limit();     /* SEQ66_IS_LEGAL_SEQUENCE  */
-    }
-
-    /**
-     *  Similar to legal(), but excludes sequence::limit().
-     */
-
-    static bool valid (int seqno)
-    {
-        return seqno >= 0 && seqno < maximum();
-    }
-
-    /**
-     *  Checks if a the sequence number is an assigned one, i.e. not equal to
-     *  -1.
-     */
-
-    static bool none (int seqno)
-    {
-        return seqno == unassigned();
-    }
-
-    /**
-     *  A convenient function to test against sequence::limit().
-     *  This function does not allow that value as a valid value to use.
-     */
-
-    static bool disabled (int seqno)
-    {
-        return seqno == limit();
-    }
-
-    /**
-     *  A convenient function to test against SEQ66_SEQUENCE_LIMIT.  This
-     *  function does not allow SEQ66_SEQUENCE_LIMIT as a valid value to use.
-     */
-
-    static bool null (int seqno)
-    {
-        return none(seqno);
-    }
-
-    /**
-     *  Indicates that all patterns will be processed by a function taking a
-     *  seq::number parameter.
-     */
-
-    static int all ()
-    {
-        return (-2);
-    }
-
-    /**
-     *  Indicates that a sequence number has not been assigned.
-     */
-
-    static int unassigned ()
-    {
-        return (-1);
-    }
-
     static int loop_record (record r)
     {
         return static_cast<int>(r);
@@ -1860,6 +1720,16 @@ public:
     }
 
 private:
+
+    static int unassigned ()
+    {
+        return (-1);
+    }
+
+    static int limit ()
+    {
+        return 2048;                    /* 0x0800   */
+    }
 
     bool event_in_range
     (

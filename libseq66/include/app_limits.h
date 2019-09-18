@@ -52,7 +52,7 @@
 /**
  *  Indicates an unusable integer value, for general usage.  There are some more
  *  specific macros for this value (-1), as well.  Now replaced by
- *  seq::unassigned()/sequence::unassigned.
+ *  seq::unassigned().
  *
  * #define SEQ66_UNASSIGNED                (-1)
  */

@@ -82,7 +82,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc().show_midi() etc.     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile                   */
 #include "play/performer.hpp"           /* must precede wrkfile.hpp !       */
-#include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "play/seq.hpp"                 /* seq66::sequence, seq66::seq      */
 
 namespace seq66
 {
@@ -158,12 +158,12 @@ wrkfile::wrkfile
     midifile        (name, ppqn, true, playlistmode),
     m_wrk_data      (),
     m_performer     (nullptr),
-    m_screen_set    (sequence::unassigned()),
+    m_screen_set    (seq::unassigned()),
     m_importing     (false),
     m_seq_number    (0),
-    m_track_number  (sequence::unassigned()),
+    m_track_number  (seq::unassigned()),
     m_track_name    (),
-    m_track_channel (sequence::unassigned()),
+    m_track_channel (seq::unassigned()),
     m_track_count   (0),
     m_track_time    (0),
     m_current_seq   (nullptr)

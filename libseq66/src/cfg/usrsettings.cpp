@@ -102,7 +102,7 @@
 #include "seq66_features.hpp"           /* SEQ66_USE_ZOOM_POWER_OF_2        */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "cfg/usrsettings.hpp"          /* seq66::usr_settings              */
-#include "play/sequence.hpp"            /* seq66::sequence::limit()         */
+#include "play/seq.hpp"                 /* seq66::seq::limit()              */
 
 /**
  *  Provide limits for the option "--option scale=x.y".
@@ -218,7 +218,7 @@ usrsettings::usrsettings () :
     m_global_seq_feature_save   (true),
     m_seqedit_scale             (int(scales::off)),
     m_seqedit_key               (SEQ66_KEY_OF_C),
-    m_seqedit_bgsequence        (sequence::limit()),
+    m_seqedit_bgsequence        (seq::limit()),
     m_use_new_font              (false),
     m_allow_two_perfedits       (false),
     m_h_perf_page_increment     (1),
@@ -545,7 +545,7 @@ usrsettings::set_defaults ()
     m_global_seq_feature_save = true;
     m_seqedit_scale = int(scales::off);         // scales::off to < scales::max
     m_seqedit_key = SEQ66_KEY_OF_C;             // range: 0-11
-    m_seqedit_bgsequence = sequence::limit();   // range -1, 0, 1, 2, ...
+    m_seqedit_bgsequence = seq::limit();        // range -1, 0, 1, 2, ...
     m_use_new_font = true;
     m_allow_two_perfedits = true;
     m_h_perf_page_increment = 4;

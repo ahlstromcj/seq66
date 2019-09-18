@@ -223,8 +223,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_reposition            (false),
     m_excell_FF_RW          (1.0),
     m_FF_RW_button_type     (ff_rw::none),
-    m_old_seqno             (sequence::unassigned()),
-    m_current_seqno         (sequence::unassigned()),
+    m_old_seqno             (seq::unassigned()),
+    m_current_seqno         (seq::unassigned()),
     m_moving_seq            (),
     m_seq_clipboard         (),
     m_clocks                (),                 /* vector wrapper class     */
@@ -1154,7 +1154,7 @@ performer::needs_update (seq::number seqno) const
             }
             else
             {
-                if (seqno == sequence::all())
+                if (seqno == seq::all())
                     result = mapper().needs_update();       /* check all    */
                 else
                     result = is_dirty_main(seqno);          /* check one    */

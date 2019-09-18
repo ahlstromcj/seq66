@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2019-04-11
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -36,7 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "midi/midi_vector_base.hpp"    /* seq66::midi_vector_base ABC      */
 #include "play/performer.hpp"           /* seq66::performer master class    */
-#include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "play/seq.hpp"                 /* seq66::seq                       */
 #include "util/calculations.hpp"        /* log2_time_sig_value(), etc.      */
 
 /*
@@ -454,7 +454,7 @@ midi_vector_base::fill_proprietary ()
             add_long(c_musicscale);
             put(m_sequence.musical_scale());
         }
-        if (sequence::valid(m_sequence.background_sequence()))
+        if (seq::valid(m_sequence.background_sequence()))
         {
             add_variable(0);                        /* b'ground seq.    */
             put(0xFF);

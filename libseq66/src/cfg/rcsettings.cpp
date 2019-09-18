@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2019-08-31
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -46,7 +46,7 @@
 #include "seq66_features.hpp"           /* seq66::set_app_name(), etc.      */
 #include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
-#include "play/sequence.hpp"            /* seq66::sequence::maximum()       */
+#include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
 #include "util/strfunctions.hpp"        /* strncompare()                    */
 
@@ -730,8 +730,8 @@ rcsettings::tempo_track_number (int track)
 {
     if (track < 0)
         track = 0;
-    else if (track >= sequence::maximum())
-        track = sequence::maximum() - 1;
+    else if (track >= seq::maximum())
+        track = seq::maximum() - 1;
 
     m_tempo_track_number = track;
 }

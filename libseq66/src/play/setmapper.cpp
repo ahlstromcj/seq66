@@ -284,7 +284,7 @@ setmapper::screen (seq::number seqno)
     }
     else if (seqno >= 0 && seqno < m_set_count)
     {
-        if (seqno < SEQ66_SEQUENCE_LIMIT)
+        if (seqno < seq::limit())
         {
             container::iterator newset = add_set(s);
             return newset->second;

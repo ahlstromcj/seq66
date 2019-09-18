@@ -769,13 +769,13 @@ qslivegrid::update_sequence (seq::number seqno)
  *
  * \return
  *      Returns the sequence/pattern number.  If not found, then a -1 (the
- *      value sequence::unassigned) is returned.
+ *      value seq::unassigned) is returned.
  */
 
 int
 qslivegrid::seq_id_from_xy (int click_x, int click_y)
 {
-    int result = sequence::unassigned();
+    int result = seq::unassigned();
     int row, column;
     if (get_slot_coordinate(click_x, click_y, row, column))
          result = int(perf().calculate_seq(row, column));
@@ -803,7 +803,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
     );
 #endif
 
-    bool assigned = m_current_seq != sequence::unassigned();
+    bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
         /* printf("mouse press unassigned\n");  */
@@ -847,7 +847,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
 void
 qslivegrid::slot_press (int seqno)
 {
-    if (seqno != sequence::unassigned())
+    if (seqno != seq::unassigned())
     {
         m_current_seq = seqno;
         m_button_down = true;
@@ -875,7 +875,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
     );
 #endif
 
-    bool assigned = m_current_seq != sequence::unassigned();
+    bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
         /* printf("mouse release unassigned\n");    */

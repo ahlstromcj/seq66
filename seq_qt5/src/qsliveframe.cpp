@@ -864,7 +864,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
      * dragging a sequence - toggle playing.
      */
 
-    bool assigned = m_current_seq != sequence::unassigned();
+    bool assigned = m_current_seq != seq::unassigned();
     if (assigned && event->button() == Qt::LeftButton && ! m_moving)
     {
         if (perf().is_seq_active(m_current_seq))

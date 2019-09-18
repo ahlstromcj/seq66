@@ -218,7 +218,7 @@ qseqroll::scroll_offset (int x)
  *
  * \param seq
  *      Provides the sequence number, which is checked against
- *      sequence::legal() before being used.  This macro allows
+ *      seq::legal() before being used.  This macro allows
  *      the value SEQ66_SEQUENCE_LIMIT (2048), which disables the background
  *      sequence.
  */
@@ -228,7 +228,7 @@ qseqroll::set_background_sequence (bool state, int seq)
 {
     if (state != m_drawing_background_seq && m_background_sequence != seq)
     {
-        if (sequence::legal(seq))
+        if (seq::legal(seq))
         {
             m_drawing_background_seq = state;
             m_background_sequence = seq;
