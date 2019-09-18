@@ -89,7 +89,7 @@ qseqroll::qseqroll
     m_chord                 (0),
     m_key                   (0),
     m_note_length           (p.ppqn() * 4 / 16),
-    m_background_sequence   (SEQ66_UNASSIGNED),
+    m_background_sequence   (seq::unassigned()),
     m_drawing_background_seq (false),
     m_status                (0),
     m_cc                    (0),
@@ -919,7 +919,7 @@ qseqroll::draw_drum_notes
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG
     static int s_count = 0;
     printf("qseqeditframe64::resizeEvent(%d)\n", s_count++);
 #endif
@@ -1120,8 +1120,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         if (event->button() == Qt::RightButton)
             set_adding(true);
     }
-//  if (is_dirty())                                 /* something changed?   */
-//      s->set_dirty();
 }
 
 /**

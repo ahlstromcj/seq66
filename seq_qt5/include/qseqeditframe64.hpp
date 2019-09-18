@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-09-10
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -88,6 +88,7 @@ namespace Ui
 namespace seq66
 {
     class qlfoframe;
+    class qseqeditex;
     class screenset;
 
 /**
@@ -99,6 +100,7 @@ namespace seq66
 class qseqeditframe64 final : public qseqframe
 {
     friend class qlfoframe;
+    friend class qseqeditex;
 
     Q_OBJECT
 
@@ -113,7 +115,6 @@ public:
     virtual ~qseqeditframe64 ();
 
     void initialize_panels ();
-    void update_draw_geometry ();
     void set_editor_mode (sequence::editmode mode);
     void follow_progress (bool expand = false);
 
@@ -137,6 +138,7 @@ protected:      // QWidget overrides
 
 private:
 
+    void update_draw_geometry ();
     void remove_lfo_frame ();
     QIcon * create_menu_image (bool state);
 

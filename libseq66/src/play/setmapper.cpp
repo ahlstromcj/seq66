@@ -123,9 +123,9 @@ setmapper::setmapper
     m_container             (),                         /* screensets map   */
     m_sequence_count        (0),
     m_sequence_max          (m_set_size * m_set_count), /* c_max_sequence   */
-    m_sequence_high         (SEQ66_UNASSIGNED),
-    m_edit_sequence         (SEQ66_UNASSIGNED),
-    m_playscreen            (SEQ66_UNASSIGNED),
+    m_sequence_high         (seq::unassigned()),
+    m_edit_sequence         (seq::unassigned()),
+    m_playscreen            (seq::unassigned()),
     m_playscreen_pointer    (nullptr),
     m_tracks_mute_state     (m_set_size, false)
 {
@@ -303,7 +303,7 @@ setmapper::screen (seq::number seqno)
 int
 setmapper::screenset_index (screenset::number setno) const
 {
-    int result = SEQ66_UNASSIGNED;
+    int result = seq::unassigned();
     int index = 0;
     for (const auto & sset : m_container)
     {
@@ -429,13 +429,13 @@ setmapper::sets_function (screenset::sethandler s, screenset::slothandler p)
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 setmapper::set_dirty (seq::number seqno)
 {
-    if (seqno == SEQ66_ALL_TRACKS)
+    if (seqno == seq::all())
     {
         for (auto & sset : m_container)         /* screenset reference  */
             sset.second.set_dirty();
@@ -452,13 +452,13 @@ setmapper::set_dirty (seq::number seqno)
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 setmapper::toggle (seq::number seqno)
 {
-    if (seqno == SEQ66_ALL_TRACKS)
+    if (seqno == seq::all())
     {
         for (auto & sset : m_container)         /* screenset reference  */
             sset.second.toggle();
@@ -505,13 +505,13 @@ setmapper::toggle_playing_tracks ()
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 setmapper::toggle_song_mute (seq::number seqno)
 {
-    if (seqno == SEQ66_ALL_TRACKS)
+    if (seqno == seq::all())
     {
         for (auto & sset : m_container)         /* screenset reference  */
             sset.second.toggle_song_mute();
@@ -671,13 +671,13 @@ setmapper::learn_armed_statuses ()
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 setmapper::apply_song_transpose (seq::number seqno)
 {
-    if (seqno == SEQ66_ALL_TRACKS)
+    if (seqno == seq::all())
     {
         for (auto & sset : m_container)         /* screenset reference  */
             sset.second.apply_song_transpose();
@@ -772,13 +772,13 @@ setmapper::select_triggers_in_range
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 setmapper::unselect_triggers (seq::number seqno)
 {
-    if (seqno == SEQ66_ALL_TRACKS)
+    if (seqno == seq::all())
     {
         for (auto & sset : m_container)         /* screenset reference  */
             sset.second.unselect_triggers();
@@ -808,7 +808,7 @@ setmapper::unselect_triggers (seq::number seqno)
  *      rightward.
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
@@ -821,7 +821,7 @@ setmapper::move_triggers
     if (righttick > lefttick)
     {
         midipulse distance = righttick - lefttick;
-        if (seqno == SEQ66_ALL_TRACKS)
+        if (seqno == seq::all())
         {
             for (auto & sset : m_container)     /* screenset reference  */
                 sset.second.move_triggers(lefttick, distance, direction);
@@ -848,7 +848,7 @@ setmapper::move_triggers
  *  marker to the R marker.
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
@@ -860,7 +860,7 @@ setmapper::copy_triggers
     if (righttick > lefttick)
     {
         midipulse distance = righttick - lefttick;
-        if (seqno == SEQ66_ALL_TRACKS)
+        if (seqno == seq::all())
         {
             for (auto & sset : m_container)     /* screenset reference  */
                 sset.second.copy_triggers(lefttick, distance);

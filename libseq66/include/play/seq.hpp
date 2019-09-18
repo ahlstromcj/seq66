@@ -184,17 +184,17 @@ public:
 
     static number limit ()
     {
-        return SEQ66_SEQUENCE_LIMIT;
+        return number(sequence::limit());
     }
 
     static number all ()
     {
-        return seq::number(sequence::all_tracks());
+        return number(sequence::all());
     }
 
     static number unassigned ()
     {
-        return seq::number(sequence::unassigned());
+        return number(sequence::unassigned());
     }
 
     const pointer loop () const

@@ -2477,7 +2477,7 @@ qsmainwnd::changeEvent (QEvent * event)
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
-    // useful?
+    // printf("qsmainwnd::resizeEvent()\n");
 }
 
 /**

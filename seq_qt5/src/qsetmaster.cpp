@@ -102,8 +102,8 @@ qsetmaster::qsetmaster
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_set_buttons           (), /* [DEFAULT_SET_ROWS][DEFAULT_SET_COLUMNS] */
-    m_current_set           (SEQ66_UNASSIGNED),
-    m_current_row           (SEQ66_UNASSIGNED),
+    m_current_set           (seq::unassigned()),
+    m_current_row           (seq::unassigned()),
     m_current_row_count     (perf().screenset_count()),
     m_needs_update          (true),
     m_is_permanent          (embedded)

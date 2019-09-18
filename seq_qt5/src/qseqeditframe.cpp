@@ -728,6 +728,24 @@ qseqeditframe::updateBackgroundSeq (int /*newindex*/)
 }
 
 /**
+ *  Here, we will need to recreate the current viewport, if not the whole damn
+ *  seqroll.
+ */
+
+void
+qseqeditframe::resizeEvent (QResizeEvent * qrep)
+{
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    static int s_count = 0;
+    printf("qseqeditframe::resizeEvent(%d)\n", s_count++);
+#endif
+
+    update_draw_geometry();
+    qrep->ignore();             // qseqframe::resizeEvent(qrep)
+}
+
+/**
  *  Updates the geometry of all of the sub-panels.
  */
 

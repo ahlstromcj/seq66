@@ -1080,7 +1080,6 @@ qseqeditframe64::paintEvent (QPaintEvent * qpep)
         "qseqeditframe64::paintEvent(%d) at (x,y,w,h) = (%d, %d, %d, %d)\n",
         s_count++, r.x(), r.y(), r.width(), r.height()
     );
-    // ui->rollScrollArea->adjust_for_resize();
 #endif
 
     qpep->ignore();                         /* QFrame::paintEvent(qpep)     */
@@ -1100,7 +1099,8 @@ qseqeditframe64::resizeEvent (QResizeEvent * qrep)
     printf("qseqeditframe64::resizeEvent(%d)\n", s_count++);
 #endif
 
-    qrep->ignore();                         /* qseqframe::resizeEvent(qrep) */
+    update_draw_geometry();
+    qrep->ignore();             // qseqframe::resizeEvent(qrep)
 }
 
 /**
@@ -3128,7 +3128,7 @@ qseqeditframe64::set_dirty ()
         seq::number seqno = seq_pointer()->seq_number();
         perf().notify_sequence_change(seqno);       // FIXME
     }
-    update_draw_geometry();     // m_seqroll->set_redraw();
+    update_draw_geometry();
 }
 
 /**

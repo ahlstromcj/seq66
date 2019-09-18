@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-09-15
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -834,7 +834,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
  *
  * \param seq
  *      The prospective sequence number of the new sequence.  If not set to
- *      SEQ66_UNASSIGNED (-1), then the sequence is also installed.
+ *      seq::unassigned() (-1), then the sequence is also installed.
  *
  * \return
  *      Returns true if the sequence is valid.  Do not use the
@@ -846,7 +846,7 @@ performer::new_sequence (seq::number seq)
 {
     sequence * seqptr = new (std::nothrow) sequence(ppqn());
     bool result = not_nullptr(seqptr);
-    if (result && seq != SEQ66_UNASSIGNED)
+    if (result && seq != seq::unassigned())
         result = install_sequence(seqptr, seq);
 
     return result;
@@ -1126,7 +1126,7 @@ performer::set_screenset_notepad
  *  needs_update() function.  Most useful in seqedit or qseqedit.
  *
  * \param seq
- *      The sequence to check.  If set to SEQ66_ALL_TRACKS, the default, check
+ *      The sequence to check.  If set to seq::all(), the default, check
  *      them all, exiting when the first dirty one is found.
  *
  * \return
@@ -1154,7 +1154,7 @@ performer::needs_update (seq::number seqno) const
             }
             else
             {
-                if (sequence::all(seqno))
+                if (seqno == sequence::all())
                     result = mapper().needs_update();       /* check all    */
                 else
                     result = is_dirty_main(seqno);          /* check one    */
@@ -3672,14 +3672,14 @@ performer::intersect_triggers (seq::number seqno, midipulse tick)
  * \param track
  *      A new parameter (found in the stazed seq32 code) that allows this
  *      function to operate on a single track.  A parameter value of
- *      SEQ66_ALL_TRACKS (-1, the default) implements the original behavior.
+ *      seq::all() (-1, the default) implements the original behavior.
  */
 
 void
 performer::push_trigger_undo (int track)
 {
     m_undo_vect.push_back(track);                       /* stazed   */
-    if (track == SEQ66_ALL_TRACKS)
+    if (track == seq::all())
     {
         mapper().push_trigger_undo();
     }
@@ -3712,7 +3712,7 @@ performer::pop_trigger_undo ()
         int track = m_undo_vect.back();
         m_undo_vect.pop_back();
         m_redo_vect.push_back(track);
-        if (track == SEQ66_ALL_TRACKS)
+        if (track == seq::all())
         {
             mapper().pop_trigger_undo();
         }
@@ -3740,7 +3740,7 @@ performer::pop_trigger_redo ()
         int track = m_redo_vect.back();
         m_redo_vect.pop_back();
         m_undo_vect.push_back(track);
-        if (track == SEQ66_ALL_TRACKS)
+        if (track == seq::all())
         {
             mapper().pop_trigger_redo();
         }

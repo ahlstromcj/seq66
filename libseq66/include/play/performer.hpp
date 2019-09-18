@@ -266,9 +266,14 @@ private:
 
     /**
      *  When the screenset changes, we put only the existing sequences in this
-     *  vector to try to save time in the play() function.
-     *
-     * std::vector<sequence *> m_play_set;
+     *  vector to try to save time in the play() function.  This "play-set"
+     *  feature offloads the performer::play() work to a special short vector
+     *  only active sequences.  We're desperately trying to reduce the CPU
+     *  usage of this program when playing.  Without being connected to a
+     *  synthesizer, playing the "b4uacuse" MIDI file in Live mode, with no
+     *  pattern armed, the program eats up one whole CPU on an i7.  Setting
+     *  this macro cuts that roughly in half... except when a pattern is
+     *  armed.
      */
 
     std::vector<seq::pointer> m_play_set;
@@ -276,8 +281,7 @@ private:
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
      *  play-list. Important: This object is now owned by perform.
-     *
-     *  It might be much better to have this be a real member!
+     *  It might be much better to have this be a real member.
      */
 
     std::unique_ptr<playlist> m_play_list;
@@ -1581,7 +1585,7 @@ public:
     bool launch (int ppqn);
     void finish ();
     bool activate ();
-    bool new_sequence (seq::number seq = SEQ66_UNASSIGNED);
+    bool new_sequence (seq::number seq = seq::unassigned());
     bool remove_sequence (seq::number seq);     /* seqmenu & mainwid    */
     bool copy_sequence (seq::number seq);
     bool cut_sequence (seq::number seq);
@@ -1923,7 +1927,7 @@ public:
     void stop_key ();
     void group_learn (bool flag);
     void group_learn_complete (const keystroke & k, bool good = true);
-    bool needs_update (seq::number seqno = SEQ66_ALL_TRACKS) const;
+    bool needs_update (seq::number seqno = seq::all()) const;
 
     midipulse get_tick () const
     {

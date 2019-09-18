@@ -174,14 +174,10 @@ screenset::add (sequence * s, seq::number seqno)
             seq sseq = seqinfo(i);
             if (! sseq.active())            /* seq already in slot?     */
             {
-//              seq newseq(s);
-//              sseq.loop(s);
                 result = sseq.activate(s, seqno);
-//              result = newseq.activate(seqno);
                 if (result)
                 {
                     m_container[i] = sseq;
-//                  m_container[i] = newseq;
                     break;
                 }
             }
@@ -533,13 +529,13 @@ screenset::sets_function (sethandler s, slothandler p)
  *  Sets one sequence (or all of them) to be dirty.
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 screenset::set_dirty (seq::number seqno)
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -584,7 +580,7 @@ screenset::max_trigger () const
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
@@ -594,7 +590,7 @@ screenset::move_triggers
     bool direction, seq::number seqno
 )
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -784,7 +780,7 @@ screenset::fill_play_set (playset & p)
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
@@ -793,7 +789,7 @@ screenset::copy_triggers
     midipulse lefttick, midipulse distance, seq::number seqno
 )
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -853,13 +849,13 @@ screenset::select_triggers_in_range
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 screenset::unselect_triggers (seq::number seqno)
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -944,7 +940,7 @@ screenset::mute ()
 void
 screenset::toggle (seq::number seqno)
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -991,7 +987,7 @@ screenset::play (midipulse tick, sequence::playback mode, bool resumenoteons)
 void
 screenset::toggle_song_mute (seq::number seqno)
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {
@@ -1061,13 +1057,13 @@ screenset::learn_armed_statuses ()
 /**
  *
  * \param seqno
- *      Either a track number or SEQ66_ALL_TRACKS (the default value).
+ *      Either a track number or seq::all() (the default value).
  */
 
 void
 screenset::apply_song_transpose (seq::number seqno)
 {
-    if (sequence::all(seqno))
+    if (seqno == seq::all())
     {
         for (auto & s : m_container)
         {

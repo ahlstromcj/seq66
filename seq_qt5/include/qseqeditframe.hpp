@@ -94,6 +94,7 @@ namespace seq66
     class qseqtime;
     class qseqroll;
     class qseqdata;
+    class qsmainwnd;
     class qstriggereditor;
 
 /**
@@ -104,6 +105,8 @@ namespace seq66
 
 class qseqeditframe final : public qseqframe
 {
+    friend class qsmainwnd;
+
     Q_OBJECT
 
 public:
@@ -116,13 +119,17 @@ public:
     );
     virtual ~qseqeditframe ();
 
-    void update_draw_geometry ();
     void setEditorMode (sequence::editmode mode); // set a new editing mode
+
+protected:      // QWidget overrides
+
+    virtual void resizeEvent (QResizeEvent *) override;
 
 private:
 
     virtual void set_dirty () override;
     void initialize_panels ();
+    void update_draw_geometry ();
 
 signals:
 

@@ -924,7 +924,7 @@ public:
 
     void seq_number (int seqno)
     {
-        if (seqno >= 0 && seqno <= int(SHRT_MAX) && unassigned(m_seq_number))
+        if (seqno >= 0 && seqno <= int(SHRT_MAX) && none(m_seq_number))
             m_seq_number = short(seqno);
     }
 
@@ -1800,7 +1800,7 @@ public:
 
     static bool none (int seqno)
     {
-        return seqno == SEQ66_UNASSIGNED;
+        return seqno == unassigned();
     }
 
     /**
@@ -1828,14 +1828,9 @@ public:
      *  seq::number parameter.
      */
 
-    static int all_tracks ()
+    static int all ()
     {
         return (-2);
-    }
-
-    static bool all (int seqno)
-    {
-        return seqno == (-2);
     }
 
     /**

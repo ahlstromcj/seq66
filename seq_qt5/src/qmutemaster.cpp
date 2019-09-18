@@ -98,7 +98,7 @@ qmutemaster::qmutemaster
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_group_buttons         (),                             /* 2-D arrary   */
-    m_current_group         (SEQ66_UNASSIGNED),
+    m_current_group         (seq::unassigned()),
     m_group_count           (perf().mutegroup_count()),
     m_modify_active         (false),
     m_needs_update          (true)

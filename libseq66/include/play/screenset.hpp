@@ -51,21 +51,9 @@
 /**
  *  Similar to SEQ66_SEQUENCE_LIMIT, indicates an item that is outside the legal
  *  range.
- */
-
-#define SEQ66_SET_LIMIT                 2048
-
-/**
- *  This experimental option offloads the performer::play() work to a special
- *  short vector only active sequences.  We're desperately trying to reduce the
- *  CPU usage of this program when playing.  Without being connected to a
- *  synthesizer, playing the "b4uacuse" MIDI file in Live mode, with no pattern
- *  armed, the program eats up one whole CPU on an i7.  Setting this macro cuts
- *  that roughly in half... except when a pattern is armed.
  *
- *  Now permanent option.
+ *  #define SEQ66_SET_LIMIT                 2048
  *
- * #define SEQ66_USE_PLAY_SET_EXPERIMENT
  */
 
 /*
@@ -238,7 +226,7 @@ public:
 
     static number limit ()
     {
-        return SEQ66_SET_LIMIT;
+        return 2048;
     }
 
     static number none ()
@@ -419,7 +407,7 @@ private:
     void set_last_ticks (midipulse tick);
 
     midipulse max_trigger () const;
-    void unselect_triggers (seq::number seqno = SEQ66_ALL_TRACKS);
+    void unselect_triggers (seq::number seqno = seq::all());
     void select_triggers_in_range
     (
         seq::number seqlow, seq::number seqhigh,
@@ -428,12 +416,12 @@ private:
     void move_triggers
     (
         midipulse lefttick, midipulse distance,
-        bool direction, seq::number seqno = SEQ66_ALL_TRACKS
+        bool direction, seq::number seqno = seq::all()
     );
     void copy_triggers
     (
         midipulse lefttick, midipulse distance,
-        seq::number seqno = SEQ66_ALL_TRACKS
+        seq::number seqno = seq::all()
     );
     void push_trigger_undo ();
     void pop_trigger_undo ();
@@ -457,14 +445,14 @@ private:
     bool add (sequence *, seq::number seqno);
     bool remove (seq::number seqno);
     void reset_sequences (bool pause, sequence::playback mode);
-    void set_dirty (seq::number seqno = SEQ66_ALL_TRACKS);
-    void toggle (seq::number seqno = SEQ66_ALL_TRACKS);
-    void toggle_song_mute (seq::number seqno = SEQ66_ALL_TRACKS);
+    void set_dirty (seq::number seqno = seq::all());
+    void toggle (seq::number seqno = seq::all());
+    void toggle_song_mute (seq::number seqno = seq::all());
     void arm ();
     void mute ();
     void apply_armed_statuses ();
     bool learn_armed_statuses ();
-    void apply_song_transpose (seq::number seqno = SEQ66_ALL_TRACKS);
+    void apply_song_transpose (seq::number seqno = seq::all());
     void sequence_playing_change (seq::number seqno, bool on, bool qinprogress);
     void save_queued (seq::number repseq); // save_current_screenset ()
     void unqueue (seq::number hotseq);

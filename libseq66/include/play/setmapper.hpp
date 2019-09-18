@@ -433,7 +433,7 @@ private:
             set_edit_sequence(seq::unassigned());
     }
 
-    void set_dirty (seq::number seqno = SEQ66_ALL_TRACKS);
+    void set_dirty (seq::number seqno = seq::all());
 
     /**
      * \getter m_edit_sequence
@@ -593,7 +593,7 @@ private:
             sset.second.set_last_ticks(tick);
     }
 
-    void apply_song_transpose (seq::number seqno = SEQ66_ALL_TRACKS);
+    void apply_song_transpose (seq::number seqno = seq::all());
     midipulse max_trigger () const;
 
 #if defined SEQ66_SONG_BOX_SELECT
@@ -606,16 +606,16 @@ private:
 
 #endif
 
-    void unselect_triggers (seq::number seqno = SEQ66_ALL_TRACKS);
+    void unselect_triggers (seq::number seqno = seq::all());
     void move_triggers
     (
         midipulse lefttick, midipulse righttick,
-        bool direction, seq::number seqno = SEQ66_ALL_TRACKS
+        bool direction, seq::number seqno = seq::all()
     );
     void copy_triggers
     (
         midipulse lefttick, midipulse righttick,
-        seq::number seqno = SEQ66_ALL_TRACKS
+        seq::number seqno = seq::all()
     );
 
     void push_trigger_undo ()
@@ -752,8 +752,8 @@ private:
         armed(seqno, false);
     }
 
-    void toggle (seq::number seqno = SEQ66_ALL_TRACKS);
-    void toggle_song_mute (seq::number seqno = SEQ66_ALL_TRACKS);
+    void toggle (seq::number seqno = seq::all());
+    void toggle_song_mute (seq::number seqno = seq::all());
     void toggle_playing_tracks ();
 
     void arm ()

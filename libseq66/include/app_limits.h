@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2019-08-06
+ * \updates       2019-09-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -51,17 +51,19 @@
 
 /**
  *  Indicates an unusable integer value, for general usage.  There are some more
- *  specific macros for this value (-1), as well.
+ *  specific macros for this value (-1), as well.  Now replaced by
+ *  seq::unassigned()/sequence::unassigned.
+ *
+ * #define SEQ66_UNASSIGNED                (-1)
  */
-
-#define SEQ66_UNASSIGNED                (-1)
 
 /**
  *  Some functions take a sequence (loop, pattern) number, but can also work on
- *  all sequences in a set.  This value indicates to do the latter.
+ *  all sequences in a set.  This value indicates to do the latter. Also
+ *  replaced.
+ *
+ * #define SEQ66_ALL_TRACKS                (-2)
  */
-
-#define SEQ66_ALL_TRACKS                (-2)
 
 /**
  *  This macro defines the amount of overlap between horizontal "pages" that
