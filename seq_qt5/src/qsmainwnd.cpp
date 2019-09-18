@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-09
+ * \updates       2019-09-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1879,19 +1879,31 @@ qsmainwnd::tabWidgetClicked (int newIndex)
     {
         if (newIndex == Tab_Edit)
         {
-            if (seqid == SEQ66_UNASSIGNED)          /* no, make a new one   */
+            bool ignore = false;
+            if (seqid == seq::unassigned())         /* no, make a new one   */
             {
-                seqid = perf().playscreen_offset();
-                (void) perf().new_sequence(seqid);
+                /*
+                 * This is too mysterious, and not sure we want to bother to
+                 * update the live tab to show a new sequence.  Will think about
+                 * it.
+                 *
+                 * seqid = perf().playscreen_offset();
+                 * (void) perf().new_sequence(seqid);
+                 */
+
+                ignore = true;
             }
 
-            seq::pointer seq = perf().get_sequence(seqid);
-            if (seq)
+            if (! ignore)
             {
-                m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
-                ui->EditTabLayout->addWidget(m_edit_frame);
-                m_edit_frame->show();
-                update();
+                seq::pointer seq = perf().get_sequence(seqid);
+                if (seq)
+                {
+                    m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
+                    ui->EditTabLayout->addWidget(m_edit_frame);
+                    m_edit_frame->show();
+                    update();
+                }
             }
         }
     }
@@ -1900,19 +1912,30 @@ qsmainwnd::tabWidgetClicked (int newIndex)
     {
         if (newIndex == Tab_Events)
         {
-            if (seqid == SEQ66_UNASSIGNED)          /* no, make a new one  */
+            bool ignore = false;
+            if (seqid == seq::unassigned())         /* no, make a new one   */
             {
-                seqid = perf().playscreen_offset();
-                (void) perf().new_sequence(seqid);
-            }
+                /*
+                 * This is too mysterious, and not sure we want to bother to
+                 * update the live tab to show a new sequence.  Will think about
+                 * it.
+                 *
+                 * seqid = perf().playscreen_offset();
+                 * (void) perf().new_sequence(seqid);
+                 */
 
-            seq::pointer seq = perf().get_sequence(seqid);
-            if (seq)
+                ignore = true;
+            }
+            if (! ignore)
             {
-                m_event_frame = new qseqeventframe(perf(), seqid, ui->EditTab);
-                ui->EventTabLayout->addWidget(m_event_frame);
-                m_event_frame->show();
-                update();
+                seq::pointer seq = perf().get_sequence(seqid);
+                if (seq)
+                {
+                    m_event_frame = new qseqeventframe(perf(), seqid, ui->EditTab);
+                    ui->EventTabLayout->addWidget(m_event_frame);
+                    m_event_frame->show();
+                    update();
+                }
             }
         }
     }

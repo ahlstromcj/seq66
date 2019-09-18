@@ -53,7 +53,7 @@
  *  -   null(seqno).
  *  -   all(seqno). Returns true if the sequence number is -1.  To be used only
  *      in the context of functions and can work on one sequence or all of them.
- *      The caller should pass unassigned() as the sequence number.
+ *      The caller should pass sequence::unassigned() as the sequence number.
  *  -   unassigned().  Returns the value of -1 for sequence number.
  */
 
@@ -924,7 +924,7 @@ public:
 
     void seq_number (int seqno)
     {
-        if (seqno >= 0 && seqno <= int(SHRT_MAX) && none(m_seq_number))
+        if (seqno >= 0 && seqno <= int(SHRT_MAX) && unassigned(m_seq_number))
             m_seq_number = short(seqno);
     }
 
@@ -1828,14 +1828,14 @@ public:
      *  seq::number parameter.
      */
 
-    static bool all (int seqno)
-    {
-        return seqno == SEQ66_ALL_TRACKS;
-    }
-
     static int all_tracks ()
     {
-        return SEQ66_ALL_TRACKS;
+        return (-2);
+    }
+
+    static bool all (int seqno)
+    {
+        return seqno == (-2);
     }
 
     /**
@@ -1844,7 +1844,7 @@ public:
 
     static int unassigned ()
     {
-        return SEQ66_UNASSIGNED;
+        return (-1);
     }
 
     static int loop_record (record r)

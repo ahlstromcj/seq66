@@ -264,7 +264,7 @@ screenset::active_count () const
 seq::number
 screenset::first_seq () const
 {
-    seq::number result = seq::none();
+    seq::number result = seq::unassigned();
     for (auto & s : m_container)
     {
         if (s.active())

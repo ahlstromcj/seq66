@@ -406,7 +406,8 @@ private:
 
     seq::number play_seq (int delta)
     {
-        return offset() != seq::none() ? offset() + delta : seq::none() ;
+        return offset() != seq::unassigned() ?
+            offset() + delta : seq::unassigned() ;
     }
 
     void clear_queued ();

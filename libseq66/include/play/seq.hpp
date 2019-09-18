@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-08-04
+ * \updates       2019-08-18
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -189,12 +189,12 @@ public:
 
     static number all ()
     {
-        return SEQ66_ALL_TRACKS;
+        return seq::number(sequence::all_tracks());
     }
 
-    static number none ()
+    static number unassigned ()
     {
-        return SEQ66_UNASSIGNED;
+        return seq::number(sequence::unassigned());
     }
 
     const pointer loop () const
@@ -260,9 +260,10 @@ private:
     std::string to_string (int index) const;
     void show (int index = 0) const;
 
-    int seq_number () const
+    seq::number seq_number () const
     {
-        return active() ? int(m_seq->seq_number()) : sequence::unassigned() ;
+        return active() ?
+            seq::number(m_seq->seq_number()) : seq::unassigned() ;
     }
 
     void change_seq_number (seq::number seqno)

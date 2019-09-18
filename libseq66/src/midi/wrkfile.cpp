@@ -158,17 +158,17 @@ wrkfile::wrkfile
     midifile        (name, ppqn, true, playlistmode),
     m_wrk_data      (),
     m_performer     (nullptr),
-    m_screen_set    (SEQ66_UNASSIGNED),
+    m_screen_set    (sequence::unassigned()),
     m_importing     (false),
     m_seq_number    (0),
-    m_track_number  (SEQ66_UNASSIGNED),
+    m_track_number  (sequence::unassigned()),
     m_track_name    (),
-    m_track_channel (SEQ66_UNASSIGNED),
+    m_track_channel (sequence::unassigned()),
     m_track_count   (0),
     m_track_time    (0),
     m_current_seq   (nullptr)
 {
-    //
+    // No other code
 }
 
 /**

@@ -266,8 +266,8 @@ private:
     {
         m_container.clear();                    /* unconditional zappage!   */
         m_sequence_count = 0;
-        m_sequence_high = seq::none();
-        m_edit_sequence = seq::none();
+        m_sequence_high = seq::unassigned();
+        m_edit_sequence = seq::unassigned();
     }
 
     int sequence_count () const
@@ -408,7 +408,7 @@ private:
      * \setter m_edit_sequence
      *
      * \param seqno
-     *      Pass in seq::none() (-1) to disable the edit-sequence number
+     *      Pass in seq::unassigned() (-1) to disable the edit-sequence number
      *      unconditionally.  Use unset_edit_sequence() to disable it if it
      *      matches the current edit-sequence number.
      */
@@ -430,7 +430,7 @@ private:
     void unset_edit_sequence (seq::number seqno)
     {
         if (is_edit_sequence(seqno))
-            set_edit_sequence(seq::none());
+            set_edit_sequence(seq::unassigned());
     }
 
     void set_dirty (seq::number seqno = SEQ66_ALL_TRACKS);
@@ -445,7 +445,7 @@ private:
 
     bool is_edit_sequence (seq::number seqno) const
     {
-        return (m_edit_sequence != seq::none()) &&
+        return (m_edit_sequence != seq::unassigned()) &&
             (seqno == m_edit_sequence);
     }
 
