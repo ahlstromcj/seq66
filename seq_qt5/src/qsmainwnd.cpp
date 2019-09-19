@@ -2477,7 +2477,9 @@ qsmainwnd::changeEvent (QEvent * event)
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
-    // printf("qsmainwnd::resizeEvent()\n");
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("qsmainwnd::resizeEvent()\n");
+#endif
 }
 
 /**

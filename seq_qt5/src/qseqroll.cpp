@@ -919,9 +919,9 @@ qseqroll::draw_drum_notes
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     static int s_count = 0;
-    printf("qseqeditframe64::resizeEvent(%d)\n", s_count++);
+    printf("qseqroll::resizeEvent(%d)\n", s_count++);
 #endif
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }

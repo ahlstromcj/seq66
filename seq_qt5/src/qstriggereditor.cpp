@@ -309,14 +309,12 @@ qstriggereditor::mousePressEvent (QMouseEvent *event)
                  * Add note, length = little less than snap.
                  */
 
-                if
+                bool dropit = ! seq_pointer()->select_events
                 (
-                    ! seq_pointer()->select_events
-                    (
-                        tick_s, tick_f, m_status, m_cc,
-                        sequence::select::would_select
-                    )
-                )
+                    tick_s, tick_f, m_status, m_cc,
+                    sequence::select::would_select
+                );
+                if (dropit)
                 {
                     seq_pointer()->push_undo();
                     drop_event(tick_s);
@@ -324,14 +322,12 @@ qstriggereditor::mousePressEvent (QMouseEvent *event)
             }
             else                                /* selecting */
             {
-                if
+                bool selectit = ! seq_pointer()->select_events
                 (
-                    ! seq_pointer()->select_events
-                    (
-                        tick_s, tick_f, m_status, m_cc,
-                        sequence::select::selected
-                    )
-                )
+                    tick_s, tick_f, m_status, m_cc,
+                    sequence::select::selected
+                );
+                if (selectit)
                 {
                     if (! (event->modifiers() & Qt::ControlModifier))
                         seq_pointer()->unselect();
@@ -356,15 +352,12 @@ qstriggereditor::mousePressEvent (QMouseEvent *event)
                         // needs update
                     }
                 }
-
-                if
+                selectit = seq_pointer()->select_events
                 (
-                    seq_pointer()->select_events
-                    (
-                        tick_s, tick_f, m_status, m_cc,
-                        sequence::select::selected
-                    )
-                )
+                    tick_s, tick_f, m_status, m_cc,
+                    sequence::select::selected
+                );
+                if (selectit)
                 {
                     /*
                      * Get the box that selected elements are in.
@@ -383,7 +376,7 @@ qstriggereditor::mousePressEvent (QMouseEvent *event)
                      * events.
                      */
 
-                    w = w - x;
+                    w -= x;
                     selection().set
                     (
                         x, w, (qc_eventarea_y - qc_eventevent_y) / 2,

@@ -2905,9 +2905,8 @@ performer::input_func ()
 
                     /*
                      *  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are
-                     *  currently filtered in midi_jack.
-                     *
-                     *  Send out the current event, if "dumping".
+                     *  filtered in midi_jack.  Send out the current event, if
+                     *  "dumping".
                      */
 
                     if (ev.get_status() <= EVENT_MIDI_SYSEX)
