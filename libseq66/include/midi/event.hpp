@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-14
+ * \updates       2019-09-19
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -845,6 +845,31 @@ public:
     }
 
     /**
+     *  Determines if this event is a note-on event and is not already linked.
+     */
+
+    bool linkable ()
+    {
+        return is_note_on() && ! is_linked();
+    }
+
+    /**
+     *  Determines if a note-off event is linkable to this event (which is
+     *  checked to be a note-on event).
+     */
+
+    bool linkable (event & eoff)
+    {
+        return
+        (
+            // is_note_on() &&
+            eoff.is_note_off() &&
+            eoff.get_note() == get_note() &&
+            ! eoff.is_linked()
+        );
+    }
+
+    /**
      *  Sets m_has_link and sets m_link to the provided event pointer.
      *
      * \param ev
@@ -874,14 +899,6 @@ public:
         m_has_link = false;
         m_linked = nullptr;
     }
-
-/*
-    void clear_link ()
-    {
-        m_has_link = false;
-        m_linked = nullptr;
-    }
-    */
 
     void paint ()
     {

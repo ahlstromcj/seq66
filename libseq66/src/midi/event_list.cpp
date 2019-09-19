@@ -106,10 +106,6 @@ event_list::event_key::operator < (const event_key & rhs) const
         return (m_timestamp < rhs.m_timestamp);
 }
 
-/*
- * Section: event_list
- */
-
 /**
  *  Principal constructor.
  */
@@ -312,7 +308,7 @@ event_list::link_new ()
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
         event & eon = dref(on);
-        if (eon.is_note_on() && ! eon.is_linked())  /* note on, unlinked?   */
+        if (eon.linkable())
         {
             auto off = on;                          /* point to note on     */
             ++off;                                  /* get next element     */
@@ -321,10 +317,9 @@ event_list::link_new ()
             {
                 event & eoff = dref(off);
                 endfound = link_new_note(eon, eoff);
+                ++off;
                 if (endfound)
                     break;
-
-                ++off;
             }
             if (! endfound)
             {
@@ -333,10 +328,9 @@ event_list::link_new ()
                 {
                     event & eoff = dref(off);
                     endfound = link_note(eon, eoff);
+                    ++off;
                     if (endfound)
                         break;
-
-                    ++off;
                 }
             }
         }
@@ -359,11 +353,7 @@ event_list::link_new ()
 bool
 event_list::link_new_note (event & eon, event & eoff)
 {
-    bool result =                       /* Off, == notes, not linked    */
-    (
-        eoff.is_note_off() && eoff.get_note() == eon.get_note() &&
-            ! eoff.is_linked()
-    );
+    bool result = eon.linkable(eoff);
     if (result)
     {
         eon.link(&eoff);                /* link + mark                  */
@@ -388,11 +378,7 @@ event_list::link_new_note (event & eon, event & eoff)
 bool
 event_list::link_note (event & eon, event & eoff)
 {
-    bool result =                       /* Off, == notes, not marked    */
-    (
-        eoff.is_note_off() && eoff.get_note() == eon.get_note() &&
-            ! eoff.is_marked()
-    );
+    bool result = eon.linkable(eoff);
     if (result)
     {
         eon.link(&eoff);                /* link + mark                  */

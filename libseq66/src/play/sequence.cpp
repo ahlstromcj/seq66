@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-12
+ * \updates       2019-09-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1663,11 +1663,8 @@ sequence::get_clipboard_box
     else
     {
         result = true;                  /* FIXME */
-//      for (auto i = m_clipboard.begin(); i != m_clipboard.end(); ++i)
         for (auto & e : m_clipboard)
         {
-//          midipulse time = event_list::dref(i).timestamp();
-//          int note = event_list::dref(i).get_note();
             midipulse time = e.timestamp();
             int note = e.get_note();
             if (time < tick_s)
@@ -3548,10 +3545,13 @@ sequence::stream_event (event & ev)
                     ++m_notes_on;
                 }
                 else if (ev.is_note_off())
+                {
+                    if (m_notes_on > 0)
                     --m_notes_on;
 
-                if (m_notes_on <= 0)
-                    m_last_tick += m_snap_tick;
+                    if (m_notes_on == 0)
+                        m_last_tick += m_snap_tick;
+                }
             }
         }
         if (m_thru)
@@ -3564,8 +3564,10 @@ sequence::stream_event (event & ev)
             {
                 midipulse timestamp = ev.timestamp();
                 midibyte note = ev.get_note();
-                select_note_events(timestamp, note, timestamp, note,
-                select::selecting);
+                select_note_events
+                (
+                    timestamp, note, timestamp, note, select::selecting
+                );
                 quantize_events(EVENT_NOTE_ON, 0, m_snap_tick, 1, true);
             }
         }
@@ -3700,8 +3702,6 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-//  e.set_status(EVENT_NOTE_ON);
-//  e.set_data(note, midibyte(m_note_on_velocity));
     m_master_bus->play(m_bus, &e, m_midi_channel);
     m_master_bus->flush();
 }
@@ -3722,8 +3722,6 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-//  e.set_status(EVENT_NOTE_OFF);
-//  e.set_data(note, midibyte(m_note_off_velocity));
     m_master_bus->play(m_bus, &e, m_midi_channel);
     m_master_bus->flush();
 }
