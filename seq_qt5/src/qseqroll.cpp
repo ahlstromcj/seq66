@@ -1277,21 +1277,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        if (! perf().is_pattern_playing())
+        if (perf().is_pattern_playing())
         {
-            if (event->key() == Qt::Key_Space)
-            {
-                m_parent_frame->start_playing();
-            }
-            else if (event->key() == Qt::Key_Escape)
-            {
-                m_parent_frame->stop_playing();
-            }
-            else if (event->key() == Qt::Key_Period)
-            {
-                m_parent_frame->pause_playing();
-            }
-            else if (event->key() == Qt::Key_Home)
+            // no code yet
+        }
+        else
+        {
+            if (event->key() == Qt::Key_Home)
             {
                 s->set_last_tick(0);
                 set_needs_update();

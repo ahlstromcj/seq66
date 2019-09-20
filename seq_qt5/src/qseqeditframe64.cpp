@@ -1123,6 +1123,39 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 
 /**
  *
+ *  We could simplify this a bit by creating a keystroke object.
+ *  See qseqroll.
+ */
+
+void
+qseqeditframe64::keyPressEvent (QKeyEvent * event)
+{
+    if (perf().is_pattern_playing())
+    {
+        if (event->key() == Qt::Key_Space)
+            stop_playing();
+        else if (event->key() == Qt::Key_Period)
+            pause_playing();
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Space)
+            start_playing();
+    }
+}
+
+/**
+ *
+ */
+
+void
+qseqeditframe64::keyReleaseEvent (QKeyEvent *)
+{
+    // no code
+}
+
+/**
+ *
  */
 
 bool

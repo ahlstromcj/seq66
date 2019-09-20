@@ -136,6 +136,8 @@ protected:      // QWidget overrides
     virtual void paintEvent (QPaintEvent * ) override;
     virtual void resizeEvent (QResizeEvent *) override;
     virtual void wheelEvent (QWheelEvent *) override;
+    virtual void keyPressEvent (QKeyEvent *) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
 
 private:
 
