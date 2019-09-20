@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-08-12
+ * \updates       2019-09-20
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -122,6 +122,21 @@ public:
         int zoom = SEQ66_DEFAULT_ZOOM
     );
     virtual ~qbase ();
+
+    void stop_playing ()
+    {
+        perf().auto_stop();
+    }
+
+    void pause_playing ()
+    {
+        perf().auto_pause();
+    }
+
+    void start_playing ()
+    {
+        perf().auto_play();
+    }
 
 protected:
 

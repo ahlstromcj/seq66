@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-12
+ * \updates       2019-09-20
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -270,7 +270,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     QBrush brush(Qt::white);                // QBrush brush(Qt::NoBrush);
     QPen pen(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
-    m_edit_mode = qseqbase::perf().edit_mode(seq_pointer()->seq_number());
+    m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
     m_frame_ticks = pix_to_tix(r.width());
 
 #if defined SEQ66_SEQROLL_PLAYHEAD_RENDER
@@ -1258,7 +1258,9 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
 }
 
 /**
- *  Handles keystrokes for note movement, zoom, and more.
+ *  Handles keystrokes for note movement, zoom, and more.  These key names are
+ *  located in /usr/include/x86_64-linux-gnu/qt5/QtCore/qnamespace.h (for
+ *  Debian/Ubuntu Linux).
  *
  *  We could simplify this a bit by creating a keystroke object.
  */
@@ -1275,11 +1277,21 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        // TODO: get these working and fix the 1:1 zoom in combo-dropdown.
-
-        if (! qseqbase::perf().is_pattern_playing())
+        if (! perf().is_pattern_playing())
         {
-            if (event->key() == Qt::Key_Home)
+            if (event->key() == Qt::Key_Space)
+            {
+                m_parent_frame->start_playing();
+            }
+            else if (event->key() == Qt::Key_Escape)
+            {
+                m_parent_frame->stop_playing();
+            }
+            else if (event->key() == Qt::Key_Period)
+            {
+                m_parent_frame->pause_playing();
+            }
+            else if (event->key() == Qt::Key_Home)
             {
                 s->set_last_tick(0);
                 set_needs_update();
