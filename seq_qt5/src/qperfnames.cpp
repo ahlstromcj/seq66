@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-05-12
+ * \updates       2019-09-21
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -39,7 +39,7 @@
  * \todo
  *      When bringing up this dialog, and starting play from it, some
  *      extra horizontal lines are drawn for some of the sequences.  This
- *      happens even in seq66, so this is long standing behavior.  Is it
+ *      happens even in seq64, so this is long standing behavior.  Is it
  *      useful, and how?  Where is it done?  In perfroll?
  */
 
@@ -66,9 +66,8 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
  :
     QWidget             (parent),
     gui_palette_qt5     (),
-    m_performer         (p),
+    qperfbase           (p),
     m_font              ("Monospace"),
-    m_sequence_max      (c_max_sequence),       // FIXME!!!!!
     m_nametext_x        (6 * 2 + 6 * 20),       // not used!
     m_nametext_y        (c_names_y),
     m_set_text_y        (m_nametext_y * p.seqs_in_set() / 2)
@@ -85,21 +84,24 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
 }
 
 /**
- *
+ *  A pass-along function for the parent frame to call.
  */
 
-qperfnames::~qperfnames ()
+void
+qperfnames::reupdate ()
 {
-    // no code
+    update();
 }
 
 /**
- *
+ *  Draws the sequence names down the side of the performance roll.
  */
 
 void
 qperfnames::paintEvent (QPaintEvent *)
 {
+    int y_s = 0;
+    int y_f = height() / m_nametext_y;
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush(Qt::lightGray);
@@ -108,23 +110,18 @@ qperfnames::paintEvent (QPaintEvent *)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-
-    int y_s = 0;
-    int y_f = height() / m_nametext_y;
-    painter.drawRect(0, 0, width(), height() - 1);          // draw border
+    painter.drawRect(0, 0, width(), height() - 1);      // rectangle and border
     for (int y = y_s; y <= y_f; ++y)
     {
         int seq_id = y;
-        if (seq_id < seq66::c_max_sequence)      // FIXME!!!!!
+        if (seq_id < int(perf().sequence_max()))
         {
-            // int i = seq_id;
-            // int i_nametext_y = ;
             int rect_x = 6 * 2 + 4;
             int rect_y = m_nametext_y * seq_id;
             int rect_w = c_names_x - 15;
-            if (seq_id % c_seqs_in_set == 0)     // if first seq in bank
+            if (seq_id % c_seqs_in_set == 0)            // if 1st seq in bank
             {
-                pen.setColor(Qt::black);        // black boxes to mark each bank
+                pen.setColor(Qt::black);                // black boxes, each bank
                 brush.setColor(Qt::black);
                 brush.setStyle(Qt::SolidPattern);
                 painter.setPen(pen);
@@ -132,13 +129,13 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.drawRect(1, name_y(seq_id) + 1, 15, m_nametext_y - 1);
 
                 char ss[4];
-                int bankId = seq_id / c_seqs_in_set;
+                int bankId = seq_id / perf().seqs_in_set();
                 snprintf(ss, sizeof ss, "%2d", bankId);
 
-                pen.setColor(Qt::white);        // draw bank number here
+                pen.setColor(Qt::white);                // for bank number
                 painter.setPen(pen);
                 painter.drawText(1, rect_y + 15, ss);
-                pen.setColor(Qt::black);        // offset, bank name sideways
+                pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
                 painter.save();
                 QString bankName(perf().bank_name(bankId).c_str());
@@ -207,7 +204,7 @@ qperfnames::paintEvent (QPaintEvent *)
 QSize
 qperfnames::sizeHint () const
 {
-    return QSize(c_names_x, m_nametext_y * seq66::c_max_sequence + 1);
+    return QSize(c_names_x, m_nametext_y * perf().sequence_max() + 1);
 }
 
 /**
@@ -226,8 +223,8 @@ int
 qperfnames::convert_y (int y)
 {
     int seq = y / m_nametext_y;            // + m_sequence_offset;
-    if (seq >= m_sequence_max)
-        seq = m_sequence_max - 1;
+    if (seq >= perf().sequence_max())
+        seq = perf().sequence_max() - 1;
     else if (seq < 0)
         seq = 0;
 
@@ -243,7 +240,7 @@ qperfnames::mousePressEvent (QMouseEvent * ev)
 {
     int y = int(ev->y());
     int seqnum = convert_y(y);
-    if (ev->button() == Qt::LeftButton)  // (SEQ66_CLICK_LEFT(ev->button))
+    if (ev->button() == Qt::LeftButton)
     {
         bool isshiftkey = (ev->modifiers() & Qt::ShiftModifier) != 0;
         (void) perf().toggle_sequences(seqnum, isshiftkey);

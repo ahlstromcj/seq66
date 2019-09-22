@@ -318,19 +318,18 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         (
             file, "[midi-control-out-settings]", "buss"
         );
+
         int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
         s = get_variable
         (
             file, "[midi-control-out-settings]", "enabled"
         );
+
         bool enabled = string_to_bool(s);
         midicontrolout & mctrl = rc_ref().midi_control_out();
         mctrl.initialize(sequences, buss);
         mctrl.is_enabled(enabled);
-
-        // Sequence actions
-
-        for (int i = 0; i < sequences; ++i)
+        for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
         {
             if (! next_data_line(file))
                 return make_error_message("midi-control-out", "no data");
@@ -354,7 +353,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mctrl.set_seq_event(i, midicontrolout::seqaction::remove, d);
         }
 
-        // Non-sequence actions
+        /* Non-sequence actions */
 
         read_ctrl_event(file, mctrl, midicontrolout::action::play);
         read_ctrl_event(file, mctrl, midicontrolout::action::stop);
@@ -396,13 +395,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             midicontrolout::action::learn_off
         );
         result = ! is_error();
-
-        /*
-         * Let performer do this!!!!!
-         *
-         * if (result)
-         *    rc_ref().set_midi_control_out(mctrl);
-         */
     }
     else
         rc_ref().midi_control_out().is_enabled(false);  /* blank section    */

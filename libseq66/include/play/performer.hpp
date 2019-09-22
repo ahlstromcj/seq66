@@ -75,8 +75,8 @@ class performer
     friend class jack_assistant;
     friend class midifile;
     friend class rcfile;
-    friend class playlist;              // new feature for 0.96.0
-    friend class qperfeditframe66;
+    friend class playlist;
+    friend class qperfeditframe64;
     friend class qsliveframe;
     friend class qsmainwnd;
     friend class sequence;              // for setting tempo from events

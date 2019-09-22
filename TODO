@@ -1,14 +1,12 @@
 TODO for Sequencer66 0.90.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-09-14
+2019-04-13 to 2019-09-20
 
 HOT ITEMS:
 
     Load a song with Song triggers; go to the song tab; select File/New. Note
-    that the perfroll clears, but not the perfnames!
-
-    When changing the title of a pattern, need to update the live-grid.
-    Should also be able to change title in the event editor!
+    that the perfroll clears, but not the perfnames!  We need to derive all
+    qperf GUIs from qperfbase.
 
     Change tooltips on edit frame MIDI buttons to show current status, for
     themes that do not show status clearly.  Still need to do it for the

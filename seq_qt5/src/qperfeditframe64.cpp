@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2019-08-09
+ * \updates       2019-09-21
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -123,7 +123,6 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
         ui->cmbGridSnap->insertItem(i, combo_text);
     }
     ui->cmbGridSnap->setCurrentIndex(3);
-
     connect
     (
         ui->cmbGridSnap, SIGNAL(currentIndexChanged(int)),
@@ -141,10 +140,7 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
      * editor frame.
      */
 
-    m_perfnames = new qperfnames
-    (
-        m_mainperf, ui->namesScrollArea
-    );
+    m_perfnames = new qperfnames(m_mainperf, ui->namesScrollArea);
     ui->namesScrollArea->setWidget(m_perfnames);
     ui->namesScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->namesScrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -462,11 +458,6 @@ qperfeditframe64::update_transpose (int index)
 void
 qperfeditframe64::set_transpose (int transpose)
 {
-    /*
-    char b[12];
-    snprintf(b, sizeof b, "%+d", transpose);
-    m_entry_xpose->set_text(b);
-     */
     perf().all_notes_off();
     perf().set_transpose(transpose);
 }
@@ -479,17 +470,20 @@ qperfeditframe64::set_transpose (int transpose)
 void
 qperfeditframe64::update_sizes ()
 {
+    m_perfnames->updateGeometry();
     m_perfroll->updateGeometry();
     m_perftime->updateGeometry();
 }
 
 /**
- *  Calls set_needs_update() on child element to react to zoom actions.
+ *  Calls set_needs_update() on child element to react to zoom actions. But
+ *  qperfnames has no timer, so we update it directly.
  */
 
 void
 qperfeditframe64::set_needs_update ()
 {
+    m_perfnames->reupdate();
     m_perfroll->set_needs_update();
     m_perftime->set_needs_update();
 }
@@ -501,12 +495,7 @@ qperfeditframe64::set_needs_update ()
 void
 qperfeditframe64::markerCollapse ()
 {
-    /*
-     * Can't performer do both of these calls?
-     */
-
-    perf().push_trigger_undo();
-    perf().move_triggers(false);
+    perf().collapse();
 }
 
 /**
@@ -516,8 +505,7 @@ qperfeditframe64::markerCollapse ()
 void
 qperfeditframe64::markerExpand ()
 {
-    perf().push_trigger_undo();
-    perf().move_triggers(true);
+    perf().expand();
 }
 
 /**
@@ -527,8 +515,7 @@ qperfeditframe64::markerExpand ()
 void
 qperfeditframe64::markerExpandCopy ()
 {
-    perf().push_trigger_undo();
-    perf().copy_triggers();
+    perf().copy();
 }
 
 /**

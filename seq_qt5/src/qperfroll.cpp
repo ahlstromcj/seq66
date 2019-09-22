@@ -129,7 +129,7 @@ qperfroll::~qperfroll ()
 void
 qperfroll::conditional_update ()
 {
-    if (needs_update())
+    if (check_needs_update() || perf().needs_update())
     {
         if (perf().follow_progress())
             follow_progress();              /* keep up with progress    */

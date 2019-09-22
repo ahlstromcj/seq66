@@ -36,7 +36,7 @@
 #include <QPainter>
 #include <QPen>
 
-#include "qperfbase.hpp"                /* for constants, not base class    */
+#include "qperfbase.hpp"                /* for constants and base class    */
 #include "gui_palette_qt5.hpp"
 #include "play/sequence.hpp"
 
@@ -47,21 +47,30 @@
 namespace seq66
 {
     class performer;
+    class qperfeditframe64;
 
 /**
  * Sequence labels for the side of the song editor
  */
 
-class qperfnames final : public QWidget, gui_palette_qt5
+class qperfnames final : public QWidget, gui_palette_qt5, qperfbase
 {
+    friend class qperfeditframe64;
+
     Q_OBJECT
 
 public:
 
     qperfnames (performer & p, QWidget * parent);
-    virtual ~qperfnames ();
+
+    virtual ~qperfnames ()
+    {
+        // no code
+    }
 
 protected:
+
+    void reupdate ();
 
     int name_x (int i)
     {
@@ -83,11 +92,6 @@ protected:
 
 private:
 
-    performer & perf ()
-    {
-        return m_performer;
-    }
-
     int convert_y (int y);
 
 signals:
@@ -96,20 +100,12 @@ public slots:
 
 private:
 
-    performer & m_performer;
     QFont m_font;
-
-    /**
-     *  The maximum number of sequences, currently 32 x 32 = 1024.
-     */
-
-    const int m_sequence_max;
-
     int m_nametext_x;
     int m_nametext_y;
 
     /*
-     * Save a frequent calculations.
+     * Saves a frequent calculation.
      */
 
     int m_set_text_y;

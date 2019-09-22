@@ -72,7 +72,7 @@ qperfeditex::qperfeditex (performer & p, qsmainwnd * parent)
  :
     QWidget             (nullptr),
     ui                  (new Ui::qperfeditex),
-    m_performer           (p),
+    m_performer         (p),
     m_edit_parent       (parent),
     m_edit_frame        (nullptr)
 {

@@ -92,7 +92,7 @@ qperftime::~qperftime ()
 void
 qperftime::conditional_update ()
 {
-    if (needs_update())
+    if (check_needs_update() || perf().needs_update())
         update();
 }
 
@@ -104,6 +104,8 @@ void
 qperftime::paintEvent (QPaintEvent * /*qpep*/)
 {
     /* QRect r = qpep->rect(); */
+
+    int xwidth = width();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -112,8 +114,6 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     painter.setBrush(brush);
     painter.setFont(m_font);
     painter.drawRect(0, 0, width(), height());
-
-    int xwidth = width();
     if (! is_initialized())
         set_initialized();
 

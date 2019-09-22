@@ -31,8 +31,8 @@
  * \updates       2019-08-07
  * \license       GNU GPLv2 or above
  *
- *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
- *  perfroll (piano roll), will zoom the view horizontally.
+ *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
+ *  zoom the view horizontally. Other keys are also available.
  */
 
 #include <QFrame>
@@ -69,7 +69,6 @@ namespace seq66
 
 class qperfeditframe64 final : public QFrame
 {
-
     friend class qsmainwnd;
     friend class qperfroll;
 
