@@ -1,12 +1,12 @@
 #******************************************************************************
-# Makefile.am (sequencer6r)
+# Makefile.am (seq66)
 #------------------------------------------------------------------------------
 ##
 # \file        Makefile.am
-# \library     sequencer64 application
+# \library     sequencer66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
-# \update      2018-03-09
+# \update      2019-09-22
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -24,6 +24,7 @@ EXTRA_DIST = \
  copy.xpm \
  del.xpm \
  down.xpm \
+ drum_mode.xpm \
  drum.xpm \
  expand.xpm \
  follow.xpm \
@@ -59,11 +60,8 @@ EXTRA_DIST = \
  scale.xpm \
  SEQ66_24x24.xpm \
  seq66_32.xpm \
- seq66_logo_legacy.xpm \
- seq66_logo.xpm \
  seq66.xpm \
  seq-editor.xpm \
- SEQUENCER-66_24x24.xpm \
  sequences.xpm \
  seq.xpm \
  snap.xpm \

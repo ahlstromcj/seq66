@@ -1,6 +1,6 @@
-Data Directory
+Data Directory for Seq66 0.90.1
 Chris Ahlstrom
-2018-01-02 to 2018-05-27
+2018-01-02 to 2019-09-23
 
 This directory contains files to be installed in the ${prefix}/share
 directory (e.g. /usr/share or /usr/local/share) on Linux, or in the
@@ -8,7 +8,8 @@ installation directory (e.g.  C:/Program Files (x86)/Seq66/data) on
 Windows.
 
 The files include alternate configuration files that the user can copy to
-$HOME/.config/seq66 and modify to satisfaction, and sample
-Seq66 MIDI files.
+$HOME/.config/sequencer64 [or C:/Users/YourName/AppData/Local/seq66 on
+Windows] and modify to satisfaction, plus some sample Sequencer66 MIDI
+files.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

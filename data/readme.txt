@@ -1,16 +1,18 @@
-readme.txt for Seq66 0.96.1
+readme.txt for Seq66 0.90.1
 Chris Ahlstrom
-2015-09-10 to 2018-10-29
+2015-09-10 to 2019-09-23
 
-Seq66 is a reboot of seq66, extending it with new features and bug fixes.
-It is a "live performance" sequencer, with the musician creating and
-controlling a number of patter loops.
+Seq66 is a refactoring of a reboot of seq24, extending it with new features
+and bug fixes.  It is a "live performance" sequencer, with the musician
+creating and controlling a number of patter loops.
 
-An extensive manual is found at:
+An extensive manual for the original is found at:
 
-    https://github.com/ahlstromcj/seq66-doc.git
+    https://github.com/ahlstromcj/sequencer64-doc.git
+
+It covers most of what seq66 can do, and will have to suffice for now.
     
-Prebuilt Debian packages, Windows installers, and source tarballs are
+Prebuilt Debian packages, Windows installers, and source tarballs will be
 available here:
 
     https://github.com/ahlstromcj/seq66-packages.git
@@ -26,6 +28,9 @@ Windows support:
     features.  It is about 90% complete, but very useable. In the meantime,
     some configuration can be done manually in the "rc" and "usr" files.  See
     README.windows for more information.
+
+    See the file C:\Program Files(x86)\Seq66\data for README.windows,
+    which explains some things to watch for with Windows.
 
 See the INSTALL file for build-from-source instructions or using a
 conventional source tarball.  This file is part of:

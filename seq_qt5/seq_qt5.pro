@@ -6,7 +6,7 @@
 # \library    	qplseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2019-08-05
+# \update      2019-09-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -71,12 +71,13 @@ FORMS += forms/qlfoframe.ui \
 
 HEADERS += \
  include/gui_palette_qt5.hpp \
- include/qclocklayout.hpp \
  include/qbase.hpp \
+ include/qclocklayout.hpp \
  include/qeditbase.hpp \
  include/qinputcheckbox.hpp \
  include/qlfoframe.hpp \
  include/qliveframeex.hpp \
+ include/qloopbutton.hpp \
  include/qmutemaster.hpp \
  include/qperfbase.hpp \
  include/qperfeditex.hpp \
@@ -103,14 +104,15 @@ HEADERS += \
  include/qskeymaps.hpp \
  include/qsliveframe.hpp \
  include/qslivegrid.hpp \
+ include/qslotbutton.hpp \
  include/qsmacros.hpp \
  include/qsmaintime.hpp \
  include/qsmainwnd.hpp \
  include/qstriggereditor.hpp \
- include/qt5_helpers.hpp \
  include/qsbuildinfo.hpp \
  include/qseqeventframe.hpp \
- include/qsetmaster.hpp
+ include/qsetmaster.hpp \
+ include/qt5_helpers.hpp
 
 SOURCES += src/gui_palette_qt5.cpp \
  src/qbase.cpp \
@@ -119,6 +121,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qinputcheckbox.cpp \
  src/qlfoframe.cpp \
  src/qliveframeex.cpp \
+ src/qloopbutton.cpp \
  src/qmutemaster.cpp
  src/qperfbase.cpp \
  src/qperfeditex.cpp \
@@ -145,6 +148,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qskeymaps.cpp \
  src/qsliveframe.cpp \
  src/qslivegrid.cpp \
+ src/qslotbutton.cpp \
  src/qsmaintime.cpp \
  src/qsmainwnd.cpp \
  src/qstriggereditor.cpp \
