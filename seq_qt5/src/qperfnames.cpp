@@ -128,7 +128,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.setBrush(brush);
                 painter.drawRect(1, name_y(seq_id) + 1, 15, m_nametext_y - 1);
 
-                char ss[4];
+                char ss[16];
                 int bankId = seq_id / perf().seqs_in_set();
                 snprintf(ss, sizeof ss, "%2d", bankId);
 

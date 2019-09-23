@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2019-04-11
+ * \updates       2019-09-23
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -29,7 +29,7 @@
 #include <string>
 
 #include "seq66_features.hpp"           /* platform and config macros       */
-#include "basic_macros.h"               /* C-compatible definitions         */
+#include "util/basic_macros.h"          /* C-compatible definitions         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-29
- * \updates       2019-08-03
+ * \updates       2019-09-23
  * \license       GNU GPLv2 or above
  *
  *  We need a way to grab part of the pixmap so that we can restore it when the
@@ -83,7 +83,7 @@
 #include <QSize>
 #include <QWidget>
 
-#include "basic_macros.hpp"             /* provides the not_nullptr() macro */
+#include "util/basic_macros.hpp"        /* provides the not_nullptr() macro */
 #include "qrollframe.hpp"               /* seq66::qrollframe class          */
 
 /*

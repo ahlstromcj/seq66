@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2019-08-05
+# \update      2019-09-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -130,9 +130,7 @@ thisdir = $(top_srcdir)/seq_qt5
 formsdir = $(top_srcdir)/seq_qt5/forms
 resourcedir = $(top_srcdir)/resources
 libseq66_incdir = $(top_srcdir)/libseq66/include
-libseq66_cfgdir = $(top_srcdir)/libseq66/include/cfg
-libseq66_ctrldir = $(top_srcdir)/libseq66/include/ctrl
-libseq66_utildir = $(top_srcdir)/libseq66/include/util
+
 libseq66_libs = -L$(libseq66_libdir) -lseq66
 libseq66_file = $(libseq66_libdir)/libseq66.la
 seq_rtmidi_incdir = $(top_srcdir)/seq_rtmidi/include
@@ -170,9 +168,6 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(thisdir) \
  -I$(libseq66_incdir) \
- -I$(libseq66_cfgdir) \
- -I$(libseq66_ctrldir) \
- -I$(libseq66_utildir) \
  -I$(seq_portmidi_incdir) \
  -I$(seq_rtmidi_incdir) \
  -I$(resourcedir) \

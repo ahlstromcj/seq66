@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2019-08-05
+# \update      2019-09-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -83,9 +83,9 @@ pkginclude_HEADERS = \
  qperfroll.hpp \
  qperftime.hpp \
  qplaylistframe.hpp \
+ qrollframe.hpp \
  qsabout.hpp \
  qsbuildinfo.hpp \
- qrollframe.hpp \
  qscrollmaster.h \
  qseditoptions.hpp \
  qseqbase.hpp \
