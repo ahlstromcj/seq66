@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2019-08-04
+ * \updates       2019-09-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -205,7 +205,8 @@ void
 qmutemaster::setup_table ()
 {
     QStringList columns;
-    columns << "Group" << "Active" << "Mute Key" << "Group Name (future)";
+    int w = ui->m_group_table->width();
+    columns << "Group" << "Active" << "Key" << "Group Name (future)";
     ui->m_group_table->setHorizontalHeaderLabels(columns);
     ui->m_group_table->setSelectionBehavior(QAbstractItemView::SelectRows);
     connect
@@ -213,7 +214,7 @@ qmutemaster::setup_table ()
         ui->m_group_table, SIGNAL(currentCellChanged(int, int, int, int)),
         this, SLOT(mute_table_click_ex(int, int, int, int))
     );
-    set_column_widths(ui->m_group_table->width() - SEQ66_TABLE_FIX);
+    set_column_widths(w - SEQ66_TABLE_FIX);
     const int rows = ui->m_group_table->rowCount();
     for (int r = 0; r < rows; ++r)
         ui->m_group_table->setRowHeight(r, SEQ66_TABLE_ROW_HEIGHT);
@@ -228,10 +229,10 @@ qmutemaster::setup_table ()
 void
 qmutemaster::set_column_widths (int total_width)
 {
-    ui->m_group_table->setColumnWidth(0, int(0.15f * total_width));
-    ui->m_group_table->setColumnWidth(1, int(0.15f * total_width));
-    ui->m_group_table->setColumnWidth(2, int(0.20f * total_width));
-    ui->m_group_table->setColumnWidth(3, int(0.50f * total_width));
+    ui->m_group_table->setColumnWidth(0, int(0.10f * total_width));
+    ui->m_group_table->setColumnWidth(1, int(0.10f * total_width));
+    ui->m_group_table->setColumnWidth(2, int(0.10f * total_width));
+    ui->m_group_table->setColumnWidth(3, int(0.70f * total_width));
 }
 
 /**
