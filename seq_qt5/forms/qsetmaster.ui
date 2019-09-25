@@ -31,6 +31,12 @@
    </item>
    <item row="0" column="2" rowspan="2" colspan="3">
     <widget class="QTableWidget" name="m_set_table">
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="alternatingRowColors">
       <bool>true</bool>
      </property>

@@ -1449,7 +1449,7 @@ public:
 
     bool jack_song_mode () const
     {
-        return song_mode () && ! is_jack_running();
+        return song_mode() && ! is_jack_running();
     }
 
     void playback_mode (sequence::playback playbackmode)

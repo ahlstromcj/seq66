@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2019-06-02
+ * \updates       2019-09-25
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -159,6 +159,7 @@ private:
         m_modify_active = flag;
     }
 
+    void set_bin_hex (bool bin_checked);
     void set_column_widths (int total_width);
     void setup_table ();
     bool initialize_table ();
@@ -179,9 +180,12 @@ private slots:
     void conditional_update ();
     void mute_table_click_ex
     (
-        int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
+        int row, int /*column*/,
+        int /*prevrow*/, int /*prevcolumn*/
     );
     void clear_mutes ();
+    void slot_bin_mode (bool ischecked);
+    void slot_hex_mode (bool ischecked);
     void slot_modify ();
     void slot_reset ();
     void slot_down ();

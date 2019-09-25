@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2019-09-24
+ * \updates       2019-09-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -106,6 +106,23 @@ qmutemaster::qmutemaster
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    /*
+     * Connect the bin/hex radio buttons and set them as per the configured
+     * status at start-up.
+     */
+
+    connect
+    (
+        ui->m_radio_binary, SIGNAL(toggled(bool)),
+        this, SLOT(slot_bin_mode(bool))
+    );
+    connect
+    (
+        ui->m_radio_hex, SIGNAL(toggled(bool)),
+        this, SLOT(slot_hex_mode(bool))
+    );
+    set_bin_hex(! perf().mutes().group_format_hex());
 
     ui->m_button_modify->setEnabled(true);
     connect(ui->m_button_modify, SIGNAL(clicked()), this, SLOT(slot_modify()));
@@ -445,6 +462,43 @@ qmutemaster::update_group_buttons (bool tomodify)
             temp->setEnabled(enabled);
         }
     }
+}
+
+void
+qmutemaster::set_bin_hex (bool bin_checked)
+{
+    if (bin_checked)
+    {
+        ui->m_radio_binary->setChecked(true);
+        ui->m_radio_hex->setChecked(false);
+    }
+    else
+    {
+        ui->m_radio_binary->setChecked(false);
+        ui->m_radio_hex->setChecked(true);
+    }
+}
+
+/**
+ *
+ */
+
+void
+qmutemaster::slot_bin_mode (bool ischecked)
+{
+    perf().mutes().group_format_hex(! ischecked);
+    set_bin_hex(ischecked);
+}
+
+/**
+ *
+ */
+
+void
+qmutemaster::slot_hex_mode (bool ischecked)
+{
+    perf().mutes().group_format_hex(ischecked);
+    set_bin_hex(! ischecked);
 }
 
 /**

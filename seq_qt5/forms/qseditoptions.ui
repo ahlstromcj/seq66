@@ -305,7 +305,7 @@
       <attribute name="title">
        <string>&amp;JACK</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBoxJackTransport">
+      <widget class="QGroupBox" name="r_group_jack_transport">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -319,19 +319,6 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-      <widget class="QGroupBox" name="groupBoxJackStartMode">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>170</y>
-         <width>591</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>JACK Start Mode</string>
        </property>
       </widget>
       <widget class="QPushButton" name="btnJackConnect">
@@ -400,25 +387,38 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidgetJack">
+      <widget class="QGroupBox" name="r_group_jack_start">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>190</y>
-         <width>251</width>
-         <height>61</height>
+         <x>10</x>
+         <y>180</y>
+         <width>591</width>
+         <height>91</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="vertLayoutJackStartMode">
+       <property name="title">
+        <string>JACK Start</string>
+       </property>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>31</x>
+         <y>210</y>
+         <width>94</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QRadioButton" name="rbLiveMode">
+         <widget class="QRadioButton" name="radio_live_mode">
           <property name="text">
            <string>&amp;Live Mode</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="rbSongMode">
+         <widget class="QRadioButton" name="radio_song_mode">
           <property name="text">
            <string>&amp;Song Mode</string>
           </property>

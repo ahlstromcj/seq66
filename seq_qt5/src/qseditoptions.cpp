@@ -119,6 +119,17 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(update_note_resume())
     );
 
+    connect
+    (
+        ui->radio_live_mode, SIGNAL(toggled(bool)),
+        this, SLOT(slot_live_mode(bool))
+    );
+    connect
+    (
+        ui->radio_song_mode, SIGNAL(toggled(bool)),
+        this, SLOT(slot_song_mode(bool))
+    );
+
     /*
      * Display tab.
      */
@@ -214,6 +225,35 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 qseditoptions::~qseditoptions ()
 {
     delete ui;
+}
+
+void
+qseditoptions::slot_live_mode (bool ischecked)
+{
+    perf().song_mode(! ischecked);
+    set_song_live(! ischecked);
+}
+
+void
+qseditoptions::slot_song_mode (bool ischecked)
+{
+    perf().song_mode(ischecked);
+    set_song_live(ischecked);
+}
+
+void
+qseditoptions::set_song_live (bool is_song)
+{
+    if (is_song)
+    {
+        ui->radio_live_mode->setChecked(true);
+        ui->radio_song_mode->setChecked(false);
+    }
+    else
+    {
+        ui->radio_live_mode->setChecked(false);
+        ui->radio_song_mode->setChecked(true);
+    }
 }
 
 /**

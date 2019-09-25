@@ -86,6 +86,33 @@ private:
 
 private:
 
+    void set_song_live (bool is_song);
+
+    void on_spinBoxClockStartModulo_valueChanged (int arg1);
+    void on_plainTextEditTempoTrack_textChanged ();
+    void on_pushButtonTempoTrack_clicked ();
+    void on_checkBoxRecordByChannel_clicked (bool checked);
+    void on_chkJackConditional_stateChanged (int arg1);
+
+private slots:
+
+    void slot_live_mode (bool ischecked);
+    void slot_song_mode (bool ischecked);
+    void update_jack_connect ();
+    void update_jack_disconnect ();
+    void update_master_cond ();
+    void update_time_master ();
+    void update_transport_support ();
+    void update_jack_midi ();
+    void okay ();
+    void cancel ();
+    void update_note_resume ();
+    void update_key_height ();
+    void update_ui_scaling (const QString &);
+    void update_pattern_editor ();
+
+private:
+
     Ui::qseditoptions * ui;
 
     seq66::performer & m_perf;
@@ -103,27 +130,6 @@ private:
     bool m_backup_NoteResume;
     bool m_backup_JackMidi;
     int m_backup_KeyHeight;
-
-private slots:
-
-    void update_jack_connect ();
-    void update_jack_disconnect ();
-    void update_master_cond ();
-    void update_time_master ();
-    void update_transport_support ();
-    void update_jack_midi ();
-    void okay ();
-    void cancel ();
-    void update_note_resume ();
-    void update_key_height ();
-    void update_ui_scaling (const QString &);
-    void update_pattern_editor ();
-
-    void on_spinBoxClockStartModulo_valueChanged (int arg1);
-    void on_plainTextEditTempoTrack_textChanged ();
-    void on_pushButtonTempoTrack_clicked ();
-    void on_checkBoxRecordByChannel_clicked (bool checked);
-    void on_chkJackConditional_stateChanged (int arg1);
 
 };          // class qseditoptions
 
