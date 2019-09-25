@@ -56,7 +56,7 @@
  */
 
 #define SEQ66_TEST_NAME          "seqtool"
-#define SEQ66_TEST_VERSION       0.90.0
+#define SEQ66_TEST_VERSION       0.90.1
 #define DEFAULT_AUTHOR           "Chris Ahlstrom"
 
 int

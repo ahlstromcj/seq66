@@ -25,7 +25,7 @@
  * \library       sequencer64 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-06-03
+ * \updates       2019-09-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -126,9 +126,12 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (! s.empty())
         rc_ref().mute_groups().columns(string_to_int(s));
 
-    s = get_variable(file, "[mute-group-flags]", "write-legacy-mutes");
+    s = get_variable(file, "[mute-group-flags]", "groups-format");
     if (! s.empty())
-        rc_ref().mute_groups().write_legacy_mutes(string_to_int(s));
+    {
+        bool usehex = (s == "hex");
+        rc_ref().mute_groups().group_format_hex(usehex);
+    }
 
     /*
      * TODO: see if we want a flag similar to rcsettings::load_midi_controls()
@@ -204,7 +207,7 @@ bool
 mutegroupsfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.90.0 (and above) mute-groups configuration file\n"
+        << "# Seq66 0.90.1 (and above) mute-groups configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -236,10 +239,16 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# tag, and simply add the basename (e.g. nanomutes.mutes) on a\n"
         "# separate line.\n"
         "#\n"
-        "# The 'save-mutes-to' has three options: 'both' writes the mutes\n"
-        "# information to both the mutes and the MIDI file, while 'midi'\n"
-        "# writes them only to the MIDI file, and 'mutes' only to the mutes\n"
-        "# file.\n"
+        "# save-mutes-to: 'both' writes the mutes value to both the mutes\n"
+        "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
+        "# and 'mutes' only to the mutesfile.\n"
+        "# \n"
+        "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
+        "# grid.  For now, keep these values at 4 and 8.\n"
+        "# \n"
+        "# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means\n"
+        "# to write them as hexadecimal numbers (e.g. 0xff), which will be\n"
+        "# useful with larger set sizes.\n"
         ;
 
 	bool result = write_mute_groups(file);
@@ -307,15 +316,16 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
+        bool usehex = rc_ref().mute_groups().group_format_hex();
         std::string save = rc_ref().mute_group_save_label();
-        std::string wr(bool_string(rc_ref().mute_groups().write_legacy_mutes()));
+        std::string gf = usehex ? "hex" : "bin" ;
         int rows = rc_ref().mute_groups().rows();
         int columns = rc_ref().mute_groups().columns();
         file << "\n[mute-group-flags]\n\n"
             << "save-mutes-to = " << save << "\n"
             << "mute-group-rows = " << rows << "\n"
             << "mute-group-columns = " << columns << "\n"
-            << "write-legacy-mutes = " << wr << "\n"
+            << "groups-format = " << gf << "\n"
             ;
 
         file << "\n[mute-groups]\n\n" <<
@@ -331,7 +341,7 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         {
             int gmute = stz.first;
             const mutegroup & m = stz.second;
-            std::string stanza = write_stanza_bits(m.get());
+            std::string stanza = write_stanza_bits(m.get(), usehex);
             if (! stanza.empty())
             {
                 file << std::setw(2) << gmute << " " << stanza << std::endl;

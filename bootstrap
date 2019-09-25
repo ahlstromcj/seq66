@@ -94,7 +94,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.90.0-2019-05-05)
+Usage: ./bootstrap [options]                             (0.90.1-2019-09-24)
 
  'bootstrap' sets up GNU automake and libtool support for the Seq66
  projects, and creates the 'configure' script.  It can super-clean the

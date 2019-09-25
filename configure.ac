@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-09-02
+dnl \update        2019-09-24
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -92,7 +92,7 @@ AC_SUBST(PACKAGE)
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 AC_SUBST(CLIENT_NAME)
 
-VERSION="0.90.0"
+VERSION="0.90.1"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -416,8 +416,8 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-09-02"
-#define VERSION "0.90.0"
+#define VERSION_DATE_SHORT "2019-09-24"
+#define VERSION "0.90.1"
 
 )
 

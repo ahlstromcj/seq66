@@ -39,6 +39,7 @@
 #include <QTimer>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/mutegroups.hpp"          /* seq66::mutegroup, mutegroups     */
 #include "qmutemaster.hpp"              /* seq66::qmutemaster, this class   */
@@ -129,6 +130,9 @@ qmutemaster::qmutemaster
     ui->m_button_close->hide();         /* should eliminate eventually      */
     create_group_buttons();
     connect(ui->m_button_clear_all, SIGNAL(clicked()), this, SLOT(clear_mutes()));
+
+    ui->m_mute_basename->setPlainText(rc().mute_group_filename().c_str());
+    ui->m_mute_basename->setEnabled(false);
 
     perf().enregister(this);            /* register this for notifications  */
     setup_table();                      /* row and column sizing            */
@@ -229,10 +233,10 @@ qmutemaster::setup_table ()
 void
 qmutemaster::set_column_widths (int total_width)
 {
-    ui->m_group_table->setColumnWidth(0, int(0.10f * total_width));
-    ui->m_group_table->setColumnWidth(1, int(0.10f * total_width));
+    ui->m_group_table->setColumnWidth(0, int(0.125f * total_width));
+    ui->m_group_table->setColumnWidth(1, int(0.125f * total_width));
     ui->m_group_table->setColumnWidth(2, int(0.10f * total_width));
-    ui->m_group_table->setColumnWidth(3, int(0.70f * total_width));
+    ui->m_group_table->setColumnWidth(3, int(0.65f * total_width));
 }
 
 /**

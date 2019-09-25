@@ -1,6 +1,6 @@
-INSTALL for Sequencer66 v. 0.90.0 and above
+INSTALL for Sequencer66 v. 0.90.1 and above
 Chris Ahlstrom
-2015-09-10 to 2019-08-18
+2015-09-10 to 2019-09-24
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily

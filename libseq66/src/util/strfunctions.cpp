@@ -416,7 +416,8 @@ tokenize_stanzas
  *
  * \param newstyle
  *      If true (the default), then hexadecimal values are written, in groups
- *      of 8 bits.
+ *      of 8 bits.  Hexadecimal values are better when set-size is greater than
+ *      the legacy value, 32.
  *
  * \return
  *      Returns the assembled string, of the form "[ bits ]".

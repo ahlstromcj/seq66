@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-06-02
+ * \updates       2019-09-24
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups from
@@ -121,11 +121,12 @@ private:
     int m_columns;
 
     /**
-     *  Indicates that the user wants to store the mute-groups in the legacy
-     *  format, and not as a bit-packed hexadecimal number.
+     *  If true, writes the output to a mutes file in hex format.  The default
+     *  is binary (0 or 1) format, but for larger mute-groups, hex form (0x00 to
+     *  0xff) will save a lot of space.
      */
 
-    bool m_write_legacy_mutes;
+    bool m_group_format_hex;
 
     /**
      *  Indicates if the control values were loaded from an "rc" configuration
@@ -209,10 +210,6 @@ public:
     mutegroups & operator = (mutegroups &&) = default;
     ~mutegroups () = default;
 
-    /**
-     * \getter m_container_name
-     */
-
     const std::string & name () const
     {
         return m_container_name;
@@ -224,10 +221,6 @@ public:
             m_container_name = nm;
     }
 
-    /**
-     * \getter m_rows
-     */
-
     int rows () const
     {
         return m_rows;
@@ -238,18 +231,10 @@ public:
         m_rows = r;
     }
 
-    /**
-     * \getter m_write_legacy_mutes
-     */
-
-    bool write_legacy_mutes () const
+    bool group_format_hex () const
     {
-        return m_write_legacy_mutes;
+        return m_group_format_hex;
     }
-
-    /**
-     * \getter m_columns
-     */
 
     int columns () const
     {
@@ -273,27 +258,15 @@ public:
 
     mutegroup::number calculate_mute (int row, int column) const;
 
-    /**
-     * \getter m_loaded_from_rc
-     */
-
     bool loaded_from_rc () const
     {
         return m_loaded_from_rc;
     }
 
-    /**
-     * \setter m_write_legacy_mutes
-     */
-
-    void write_legacy_mutes (bool flag)
+    void group_format_hex (bool flag)
     {
-        m_write_legacy_mutes = flag;
+        m_group_format_hex = flag;
     }
-
-    /**
-     * \setter m_loaded_from_rc
-     */
 
     void loaded_from_rc (bool flag)
     {

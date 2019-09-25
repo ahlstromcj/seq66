@@ -1,6 +1,6 @@
-README for Sequencer66 0.90.0 (Sequencer64 refactored for C++11/14 and Qt)
+README for Sequencer66 0.90.1 (Sequencer64 refactored for C++11/14 and Qt)
 Chris Ahlstrom
-2015-09-10 to 2019-09-05
+2015-09-10 to 2019-09-24
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -10,11 +10,12 @@ Seq66 is a refactoring of Sequencer64 for better use of C++, and removing a lot
 of krufty buildup.  Changes:
 
     -   User interface:
-        -   Removed the Gtkmm implementations, now using only Qt 5.
+        -   Removed the Gtkmm implementations, now using only Qt 5.  It has
+            issues, but cross-platform support seems more complete.
         -   Added a tab for management of sets.
         -   Added a tab for management of mute-groups.
         -   Added a live frame using buttons to match Qt theming. The original
-            implement is available as a "user" option.
+            implementation is available as a "user" option.
     -   Configuration files:
         -   Unified keystroke control and MIDI control into a "*.ctrl" file.
             Specifies MIDI In controls for controlling Seq66 remotely, and MIDI
@@ -46,6 +47,10 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.90.1:
+        -   A raft of bug fixes and user-interface improvements.
+        -   Many tweaks to try to make the performer and the user-interface even
+            faster.
     -   Version 0.90.0:
         -   The application and documentation are now (barely) suitable for
             public consumption, after residing on a server (a Toshiba laptop) at

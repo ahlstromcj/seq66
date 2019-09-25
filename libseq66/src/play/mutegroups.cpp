@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-05-04
+ * \updates       2019-09-24
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -66,7 +66,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_container_name            ("Default"),
     m_rows                      (rows),
     m_columns                   (columns),
-    m_write_legacy_mutes        (false),
+    m_group_format_hex          (false),
     m_loaded_from_rc            (false),
     m_group_event               (false),
     m_group_error               (false),
@@ -101,7 +101,7 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_container_name            (name),
     m_rows                      (rows),
     m_columns                   (columns),
-    m_write_legacy_mutes        (false),
+    m_group_format_hex          (false),
     m_loaded_from_rc            (false),
     m_group_event               (false),
     m_group_error               (false),
