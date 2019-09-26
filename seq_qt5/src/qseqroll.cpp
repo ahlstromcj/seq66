@@ -47,6 +47,8 @@
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 #include "qrollframe.hpp"               /* seq66::qrollframe class          */
 
+#include "gui_palette_qt5.hpp"
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -392,7 +394,9 @@ qseqroll::paintEvent (QPaintEvent * qpep)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + m_key_y);
-        pen.setColor("orange");         /*  pen.setColor(Qt::black);    */
+
+//      pen.setColor("orange");         /*  pen.setColor(Qt::black);    */
+        pen.setColor(gui_palette_qt5::sel_paint());
         painter.setPen(pen);
 
         /*
@@ -715,7 +719,7 @@ qseqroll::draw_notes
             if (m_note_width > 3)
             {
                 if (ni.selected())
-                    brush.setColor("orange");
+                    brush.setColor("orange");       /* always orange */
                 else
                     brush.setColor(Qt::white);
 

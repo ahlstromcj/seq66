@@ -489,7 +489,7 @@ public:
      * \getter m_sel_paint
      */
 
-    const Color & sel_paint () const
+    static const Color & sel_paint () //  const
     {
         return m_sel_paint;
     }

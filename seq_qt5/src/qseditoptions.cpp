@@ -24,11 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-31
+ * \updates       2019-09-25
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
  */
+
+#include <QButtonGroup>
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -47,12 +49,23 @@
 #include "forms/qseditoptions.ui.h"
 #endif
 
+
 /*
  *  Do not document the namespace, it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  Button numbering for JACK Start Mode radio-buttons.
+ */
+
+enum radio_button_t
+{
+    radio_button_live,
+    radio_button_song
+};
 
 /**
  *
@@ -119,6 +132,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(update_note_resume())
     );
 
+/*
     connect
     (
         ui->radio_live_mode, SIGNAL(toggled(bool)),
@@ -128,6 +142,32 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->radio_song_mode, SIGNAL(toggled(bool)),
         this, SLOT(slot_song_mode(bool))
+    );
+    */
+
+    /*
+     * Create a button group to manage the mutual status of the JACK Live and
+     * Song Mode buttons.
+     */
+
+    QButtonGroup * bgroup = new QButtonGroup(this);
+    bgroup->addButton(ui->radio_live_mode, radio_button_live);
+    bgroup->addButton(ui->radio_song_mode, radio_button_song);
+
+	int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
+	foreach (QAbstractButton * button, bgroup->buttons())
+	{
+		if (bgroup->id(button) == rbid)
+		{
+			button->setChecked(true);
+			break;
+		}
+	}
+
+    connect
+    (
+        bgroup, SIGNAL(buttonClicked(int)),
+        this, SLOT(slot_jack_mode(int))
     );
 
     /*
@@ -227,32 +267,20 @@ qseditoptions::~qseditoptions ()
     delete ui;
 }
 
-void
-qseditoptions::slot_live_mode (bool ischecked)
-{
-    perf().song_mode(! ischecked);
-    set_song_live(! ischecked);
-}
+/**
+ *
+ */
 
 void
-qseditoptions::slot_song_mode (bool ischecked)
+qseditoptions::slot_jack_mode (int buttonno)
 {
-    perf().song_mode(ischecked);
-    set_song_live(ischecked);
-}
-
-void
-qseditoptions::set_song_live (bool is_song)
-{
-    if (is_song)
+    if (buttonno == radio_button_live)
     {
-        ui->radio_live_mode->setChecked(true);
-        ui->radio_song_mode->setChecked(false);
+        perf().song_mode(false);
     }
-    else
+    else if (buttonno == radio_button_song)
     {
-        ui->radio_live_mode->setChecked(false);
-        ui->radio_song_mode->setChecked(true);
+        perf().song_mode(true);
     }
 }
 

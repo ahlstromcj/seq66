@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2018-08-31
+ * \updates       2018-09-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -86,8 +86,6 @@ private:
 
 private:
 
-    void set_song_live (bool is_song);
-
     void on_spinBoxClockStartModulo_valueChanged (int arg1);
     void on_plainTextEditTempoTrack_textChanged ();
     void on_pushButtonTempoTrack_clicked ();
@@ -96,8 +94,7 @@ private:
 
 private slots:
 
-    void slot_live_mode (bool ischecked);
-    void slot_song_mode (bool ischecked);
+    void slot_jack_mode (int buttonno);
     void update_jack_connect ();
     void update_jack_disconnect ();
     void update_master_cond ();
@@ -114,9 +111,7 @@ private slots:
 private:
 
     Ui::qseditoptions * ui;
-
-    seq66::performer & m_perf;
-
+    performer & m_perf;
     bool m_is_initialized;
 
     /*

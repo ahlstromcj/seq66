@@ -399,17 +399,20 @@
        <property name="title">
         <string>JACK Start</string>
        </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>31</x>
          <y>210</y>
-         <width>94</width>
-         <height>50</height>
+         <width>104</width>
+         <height>52</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QVBoxLayout" name="radio_group_layout">
         <item>
          <widget class="QRadioButton" name="radio_live_mode">
           <property name="text">

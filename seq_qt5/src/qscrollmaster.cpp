@@ -93,27 +93,15 @@ qscrollmaster::scrollContentsBy (int dx, int dy)
     if (! m_v_scrollbars.empty())
     {
         int vvalue = m_self_v_scrollbar->value();
-        for
-        (
-            iterator vit = m_v_scrollbars.begin();
-            vit != m_v_scrollbars.end(); ++vit
-        )
-        {
-            (*vit)->setValue(vvalue);
-        }
+        for (auto vit : m_v_scrollbars)
+            vit->setValue(vvalue);
     }
 
     if (! m_h_scrollbars.empty())
     {
         int hvalue = m_self_h_scrollbar->value();
-        for
-        (
-            iterator hit = m_h_scrollbars.begin();
-            hit != m_h_scrollbars.end(); ++hit
-        )
-        {
-            (*hit)->setValue(hvalue);
-        }
+        for (auto hit : m_h_scrollbars)
+            hit->setValue(hvalue);
     }
     QScrollArea::scrollContentsBy(dx, dy);
 }
@@ -221,8 +209,6 @@ qscrollmaster::adjust_for_resize ()
    horizontalScrollBar()->setPageStep(view.width());
    verticalScrollBar()->setRange(0, widg.height() - view.height());
    horizontalScrollBar()->setRange(0, widg.width() - view.width());
-
-   // updateWidgetPosition();
 }
 
 /*

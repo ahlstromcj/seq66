@@ -105,7 +105,7 @@ STATIC_COLOR gui_palette_qt5::m_tempo_paint        = Color("magenta"); // dark
 #if defined SEQ66_USE_BLACK_SELECTION_BOX
 STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("black");
 #else
-STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("dark_orange");
+STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("orange");
 #endif
 
 /**
@@ -181,12 +181,10 @@ gui_palette_qt5::~gui_palette_qt5 ()
 }
 
 /**
- *  Provides an alternate color palette, somewhat constrained by the colors
- *  in the font bitmaps.
- *
- *  Inverse is not a complete inverse.  It is more like a "night" mode.
- *  However, there are still some bright colors even in this mode.  Some
- *  colors, such as the selection color (orange) are the same in either mode.
+ *  Provides an alternate color palette.  Inverse is not a complete inverse.  It
+ *  is more like a "night" mode.  However, there are still some bright colors
+ *  even in this mode.  Some colors, such as the selection color (orange) are
+ *  the same in either mode.
  *
  * \param inverse
  *      If true, load the alternate palette.  Otherwise, load the default
@@ -203,13 +201,8 @@ gui_palette_qt5::load_inverse_palette (bool inverse)
         m_lt_grey_paint = Color("grey50");
         m_blk_paint     = Color("white");
         m_wht_paint     = Color("black");
-#if defined USE_ALTERNATE_KEY_COLOR             /* which looks better?      */
-        m_blk_key_paint = Color("light grey");  /* too difficult to grok    */
-        m_wht_key_paint = Color("black");
-#else
         m_blk_key_paint = Color("black");
         m_wht_key_paint = Color("grey");
-#endif
         m_tempo_paint   = Color("magenta");
 #if defined SEQ66_USE_BLACK_SELECTION_BOX
         m_sel_paint     = Color("white");
@@ -231,7 +224,7 @@ gui_palette_qt5::load_inverse_palette (bool inverse)
 #if defined SEQ66_USE_BLACK_SELECTION_BOX
         m_sel_paint     = Color("black");
 #else
-        m_sel_paint     = Color("dark orange");
+        m_sel_paint     = Color("orange");
 #endif
         m_is_inverse    = false;
     }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2019-08-17
+ * \updates       2019-09-26
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -163,12 +163,12 @@
  */
 
 /**
- *  A color option.
+ *  A color option.  We prefer orange for selection boxes.
  */
 
-#define SEQ66_USE_BLACK_SELECTION_BOX
+#undef  SEQ66_USE_BLACK_SELECTION_BOX
 
-#endif      // SEQ66_FEATURES_H
+#endif          // SEQ66_FEATURES_H
 
 /*
  * seq66_features.h

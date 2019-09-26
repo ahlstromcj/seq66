@@ -63,8 +63,6 @@ class qscrollmaster : public QScrollArea
 private:
 
     using container = std::list<QScrollBar *>;
-    using iterator = std::list<QScrollBar *>::iterator;
-    using const_iterator = std::list<QScrollBar *>::const_iterator;
 
 private:
 
@@ -131,9 +129,9 @@ protected:      // QWidget overrides
     virtual void wheelEvent (QWheelEvent *) override;
     virtual void scrollContentsBy (int dx, int dy) override;
 
-};          // class qscrollmaster
+};              // class qscrollmaster
 
-#endif      // SEQ66_QSCROLLMASTER_H
+#endif          // SEQ66_QSCROLLMASTER_H
 
 /*
  * qscrollmaster.h
