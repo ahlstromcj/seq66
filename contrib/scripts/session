@@ -1,0 +1,466 @@
+#!/bin/bash
+#
+#******************************************************************************
+# session
+#------------------------------------------------------------------------------
+##
+# \file        session
+# \library     Home/Audio
+# \author      Chris Ahlstrom
+# \date        2014-03-18
+# \update      2015-01/28
+# \version     $Revision$
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+#     This script provides a way to make a pretty specific connection setup
+#     on Linux using JACK.
+#
+#     See the file seq-session-layout.odg (LibreOffice Draw file).
+#
+#     This provides an extended version of seq-session that can also
+#     stop/start the mpd and jackd daemons.
+#
+#  Dependencies:
+#
+#     -  sudo and the text noted below in a file in /etc/sudoers.d
+#     -  jackd and jack_connect
+#     -  aplay (for listing devices)
+#     -  a2jmidid
+#     -  zita-j2a
+#     -  qjackctl
+#     -  yoshimi (software synthesizer)
+#     -  seq24 (MIDI loop application)
+#
+#  systemctl-doers:
+#
+#     Create this file in /etc/sudoers.d, with the following line of text:
+#
+#        myusername myhostname =NOPASSWD:
+#           /bin/systemctl stop mpd,/bin/systemctl start mpd
+#
+#     This is actually one line of text.  It is specific to Debian Sid
+#     (unstable) running systemd.  It will differ between systems.
+#
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# die $exitcode $project $errormessage
+#------------------------------------------------------------------------------
+#
+# Unfortunately, we need to figure out to get failure data from a daemon.
+#
+#------------------------------------------------------------------------------
+
+function die()
+{
+   EXITCODE=$1
+   CURPROJECT=$2
+   MESSAGE="? [$CURPROJECT] $3"
+   MESSAGE+=$'\n'
+   shift 3
+   while [ "$1" != "" ] ; do
+      MESSAGE+="  "
+      MESSAGE+="$1"
+      MESSAGE+=$'\n'
+      shift
+   done
+
+   if [ "$DOLOG" == "yes" ] && [ "$LOGFILENAME" != "" ] ; then
+      echo "$MESSAGE" >> $LOGFILENAME
+   fi
+
+   echo "$MESSAGE"
+   echo "Run this script with the --help option for more information."
+   echo "Will stop all processes already started."
+   echo ""
+   DOTEARDOWN="yes"
+   exit $EXITCODE
+}
+
+#------------------------------------------------------------------------------
+# State variables
+#------------------------------------------------------------------------------
+
+DOSETUP="yes"
+DOTEARDOWN="no"
+DOHELP="no"
+DOADVICE="yes"
+DOQJACKCTL="yes"
+DOA2JMIDID="yes"
+DOZITAJ2A="yes"
+DOSEQ24="yes"
+DOYOSHIMI="yes"
+DOYOSHCONNECT="yes"
+DOMIDICONNECT="yes"
+DOSKIPCONNECTS="no"
+SEQ24SONG="$HOME/Home/Audio/Seq24/click_4_4.midi"
+YOSHSTATE="$HOME/.config/yoshimi/yoshimi.state"
+
+#------------------------------------------------------------------------------
+# USB Audio detection
+#------------------------------------------------------------------------------
+#
+#     Figures out the device numbers for our USB audio device.  Might also
+#     search for "CODEC", instead of "USB". Depends on the system.
+#
+# HWUSB="hw:2"
+#
+#------------------------------------------------------------------------------
+
+MAINHWUSB=$(aplay -l | grep USB | awk '{ print substr($2, 0, 1) }')
+if [ "$MAINHWUSB" == "" ] ; then
+   DOZITAJ2A="no"
+   echo "Warning: No USB audio device plugged in."
+else
+   SUBHWUSB=$(aplay -l | grep USB | awk '{ print substr($8, 0, 1) }')
+   export HWUSB="hw:$MAINHWUSB"        # HWUSB="hw:$MAINHWUSB,$SUBHWUSB"
+fi
+
+#------------------------------------------------------------------------------
+# Options-processing loop
+#------------------------------------------------------------------------------
+
+if [ $# -ge 1 ] ; then
+
+   while [ "$1" != "" ] ; do
+
+      case "$1" in
+
+         --setup | -s | --start | setup | start)
+            DOSETUP="yes"
+            DOTEARDOWN="no"
+            ;;
+
+         --teardown | -t | --stop | teardown | stop)
+            DOSETUP="no"
+            DOTEARDOWN="yes"
+            DOADVICE="no"
+            ;;
+
+         --no-advice | --na | no-advice | na)
+            DOADVICE="no"
+            ;;
+
+         --no-connects | no-connects | --sc | sc)
+            DOSKIPCONNECTS="yes"
+            ;;
+
+         --j2a | j2a)
+            DOZITAJ2A="yes"
+            shift
+            if [ "$1" != "" ] ; then
+               export HWUSB="$1"
+            fi
+            ;;
+
+         --no-j2a | no-j2a)
+            DOZITAJ2A="no"
+            ;;
+
+         --song | song)
+            shift
+            if [ "$1" != "" ] ; then
+               SEQ24SONG="$1"
+            fi
+            ;;
+
+         --state | state)
+            shift
+            if [ "$1" != "" ] ; then
+               YOSHSTATE="$1"
+            fi
+            ;;
+
+         --help | help)
+            DOHELP="yes"
+            DOSETUP="no"
+            DOADVICE="no"
+            ;;
+
+      esac
+      shift
+   done
+fi
+
+if [ "$DOSETUP" == "yes" ] ; then
+
+#------------------------------------------------------------------------------
+# Stop MPD and start JACK
+#------------------------------------------------------------------------------
+
+sudo systemctl stop mpd
+
+# jackd MORE OPTIONS  SEE JUST BELOW
+
+#------------------------------------------------------------------------------
+# QJackCtl
+#------------------------------------------------------------------------------
+#
+#     Run qjackctl and start jack, with this setting in ~/.jackdrc or
+#     ~/.config/rncbc.org/QjackCtl.conf:
+#
+#        /usr/bin/jackd -dalsa -dhw:0 -r48000 -p1024 -n2
+#
+#     Can also add --active-patchbay=<path>
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOQJACKCTL" == "yes" ] ; then
+      echo "Starting QJackCtl and JACK:"
+      echo "   qjackctl --start"
+      qjackctl --start &
+      sleep 2
+   fi
+
+#------------------------------------------------------------------------------
+# a2jmidid
+#------------------------------------------------------------------------------
+#
+#     Start the ALSA-to-JACK bridge, bridging the hardware ports as well as
+#     the software ports.
+#
+#     An alternative is a2jmidi_bridge, which creates only one MIDI capture
+#     (readable) output port and a writable ALSA playback client.
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOA2JMIDID" == "yes" ] ; then
+      echo "Starting ALSA-to-JACK bridge:"
+      echo "   a2jmidid --export-hw"
+      a2jmidid --export-hw &
+      sleep 2
+   fi
+
+#------------------------------------------------------------------------------
+# zita-j2a
+#------------------------------------------------------------------------------
+#
+#     Create a writable audio client/port accessible from JACK, to support
+#     audio output to the USB audio device.  Note that we'll need a way to
+#     detect the correct hw port for this device, which is named "CODEC" on
+#     my Linux box.
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOZITAJ2A" == "yes" ] ; then
+      echo "Starting Zira JACK-to-ALSA bridge:"
+      echo "   zita-j2a -d $HWUSB"
+      if [ "$HWUSB" == "" ] ; then
+         echo "? Need to export HWUSB=hw:X, use 'aplay -l' to find X."
+      else
+         zita-j2a -d $HWUSB &
+         sleep 2
+      fi
+   fi
+
+#------------------------------------------------------------------------------
+# seq24
+#------------------------------------------------------------------------------
+#
+#     With .seq24rc containing:
+#
+#        [manual-alsa-ports]
+#        1
+#
+#     or using the --manual_alsa_ports option on the command line.
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOSEQ24" == "yes" ] ; then
+      echo "Starting seq24 sequencer with song '$SEQ24SONG':"
+      echo "   seq24 --manual_alsa_ports ..."
+      seq24  --manual_alsa_ports "$SEQ24SONG" &
+      sleep 2
+   fi
+
+#------------------------------------------------------------------------------
+# yoshimi and jack_connect
+#------------------------------------------------------------------------------
+#
+#     Start yoshimi and bug out.  Starts it with options to use JACK MIDI
+#     input, JACK audio output, and to auto-connect to JACK audio.
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOYOSHIMI" == "yes" ] ; then
+      if [ "$DOZITAJ2A" == "yes" ] ; then
+         if [ "$DOYOSHCONNECT" == yes ] ; then
+            echo "Starting yoshimi soft synth:"
+            echo "   yoshimi -j -J --state=$YOSHSTATE"
+            yoshimi -j -J --state=$YOSHSTATE &
+            sleep 2
+            echo "jack_connect yoshimi:left zita-j2a:playback_1"
+            if [ "$DOSKIPCONNECTS" == "no" ] ; then
+               jack_connect yoshimi:left zita-j2a:playback_1
+            else
+               echo "... skipped."
+            fi
+            echo "jack_connect yoshimi:right zita-j2a:playback_2"
+            if [ "$DOSKIPCONNECTS" == "no" ] ; then
+               jack_connect yoshimi:right zita-j2a:playback_2
+            else
+               echo "... skipped."
+            fi
+         else
+            echo "Starting yoshimi synthesizer, unconnected to audio:"
+            echo "   yoshimi -j -J --state=$YOSHSTATE"
+            yoshimi -j -J --state=$YOSHSTATE &
+         fi
+      else
+         if [ "$DOYOSHCONNECT" == yes ] ; then
+            echo "Starting yoshimi synthesizer, output to default audio:"
+            echo "   yoshimi -j -J -K --state=$YOSHSTATE"
+            yoshimi -j -J -K --state=$YOSHSTATE &
+            sleep 2
+            echo "jack_connect yoshimi:left system:playback_1"
+            if [ "$DOSKIPCONNECTS" == "no" ] ; then
+               jack_connect yoshimi:left system:playback_1
+            else
+               echo "... skipped."
+            fi
+            sleep 1
+            echo "jack_connect yoshimi:right system:playback_2"
+            if [ "$DOSKIPCONNECTS" == "no" ] ; then
+               jack_connect yoshimi:right system:playback_2
+            else
+               echo "... skipped."
+            fi
+         else
+            echo "Starting yoshimi synthesizer, unconnected to audio:"
+            echo "   yoshimi -j -J --state=$YOSHSTATE"
+            yoshimi -j -J --state=$YOSHSTATE &
+         fi
+      fi
+   fi
+
+#------------------------------------------------------------------------------
+# Other
+#------------------------------------------------------------------------------
+#
+#     Other connections for setup.  The names of JACK ports can be found
+#     using the jack_lsp command.  Unfortunately, the exact names can
+#     change, and thus the connection commands can therefore FAIL.
+#
+#     jack_connect "a2j:seq24 [131] (capture): [1] seq24 1" "yoshimi:midi in"
+#     jack_connect "a2j:nanoKEY2 [20] (capture): nanoKEY2 MIDI 1"
+#         "a2j:seq24 [131] (playback): seq24 in"
+#
+#------------------------------------------------------------------------------
+
+   if [ "$DOMIDICONNECT" == yes ] ; then
+      sleep 2
+      NANOKEYOUT=$(jack_lsp | grep "nanoKEY2.*capture")
+      SEQ24IN=$(jack_lsp | grep "seq24.*playback")
+      SEQ24OUT=$(jack_lsp | grep "seq24.*capture.* 1$")
+
+      echo "jack_connect '$SEQ24OUT' output to"
+      echo "   'yoshimi:midi in'"
+      if [ "$DOSKIPCONNECTS" == "no" ] ; then
+         jack_connect "$SEQ24OUT" "yoshimi:midi in"
+      else
+         echo "... skipped."
+      fi
+      echo "jack_connect '$NANOKEYOUT' to"
+      echo "   '$SEQ24IN'"
+      if [ "$DOSKIPCONNECTS" == "no" ] ; then
+         jack_connect "$NANOKEYOUT" "$SEQ24IN"
+      else
+         echo "... skipped."
+      fi
+   fi
+
+fi
+
+if [ "$DOTEARDOWN" == "yes" ] ; then
+
+   echo "Killing yoshimi..."
+   killall yoshimi
+   sleep 1
+   echo "Killing seq24..."
+   killall seq24
+   sleep 1
+   echo "Killing a2jmidid..."
+   killall a2jmidid
+   sleep 1
+   echo "Killing zita-j2a..."
+   killall zita-j2a
+   sleep 1
+   echo "Killing qjackctl..."
+   killall qjackctl
+   sleep 1
+   echo "Killing jackd..."
+   killall jackd
+   echo "Restarting mpd..."
+   sudo systemctl start mpd
+
+fi
+
+if [ "$DOHELP" == "yes" ] ; then
+
+   cat << E_O_F
+
+seq-session v 0.1 2014-09-21
+
+   Usage: seq-session [ options | --help]
+
+This script helps you set up for doing MIDI work using JACK, Seq24,
+and the Yoshimi software synthesizer.
+
+Options:
+
+   --setup        The default, this option starts all the applications, with
+   --start        pauses in between to allow settling.
+    -s
+   --teardown     This option stop all of the applications in reverse order.
+   --stop
+    -t
+   --j2a [hw:x]   Start a writable client to get access to another audio output
+                  device.  This is now the default, and the hardware device
+                  is detected
+   --state file   Open the file as the Yoshimi state file.  The default value
+                  is '$YOSHSTATE'.
+   --no-advice    Don't show the 'advice' after running the script.
+   --no-connects  Don't make connections.  Useful for debugging.
+   --help         Show this help banner and the advice.
+E_O_F
+
+fi
+
+if [ "$DOADVICE" == "yes" ] ; then
+
+   cat << E_O_F
+
+Check or make the following settings; jack_connect makes most of them:
+
+   -  Verify that Yoshimi, Seq24, QJackCtl, and JACK are running.
+   -  In QJackCtl's Audio tab, verify that Yoshimi is connected to "System"
+      or, for USB audio output, "Zita-j2a".
+   -  In QJackCtl's MIDI tab, connect "seq24 [131](capture): [1] seq24 1" to
+      "yoshimi: midi in", if not already connected by jack_connect.
+   -  In Seq24, open the file "~/Home/Audio/Seq24/click_4_4.midi".
+      Right-click on the "Updown Clicks" pattern and edit it.  Verify that
+      the output bus is set to [1] seq24 1, and that the MIDI channel is 2.
+      Turn on the "sequence dumps to MIDI buss" button.
+   -  In Yoshimi, do Instrument / Show Instrument Bank, and select Drums.
+      Then select "Drums Kit1b" or "CR78 Combo".  Close that dialog; set
+      Midi Chan to 2. (One can also save the state of Yoshimi in a file
+      with the same base-name as the MIDI sequence you create, and open that
+      state file to achieve the settings very quickly.)
+   -  In Seq24, verify that "Updown Clicks" is selected.  Click the play
+      button and verify that the pattern plays.
+   -  In the QJackCtls MIDI tab, connect keyboard to "a2j / seq24 [131](playback):
+      seq24 in".  In Seq24, edit the "Keyboard" pattern (empty) and make
+      sure that the output bus is set to [1] seq24 1, and that the MIDI
+      channel is 1.  In Yoshimi, set Part 2 to MIDI channel 1 and pick the
+      desired patch from the desired instrument bank.  Make sure the part is
+      "Enabled". Now you should be able to play along with the beat.
+   -  Open a mixer application (e.g. XFce4-mixer), and make sure the audio
+      output (default or USB audio) is turned up enough to hear.
+
+E_O_F
+
+fi
+
+#------------------------------------------------------------------------------
+# vim: ft=sh
+#------------------------------------------------------------------------------
