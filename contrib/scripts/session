@@ -8,9 +8,8 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2014-03-18
-# \update      2015-01/28
+# \update      2019-09-27
 # \version     $Revision$
-# \license     $XPC_SUITE_GPL_LICENSE$
 #
 #     This script provides a way to make a pretty specific connection setup
 #     on Linux using JACK.
@@ -95,6 +94,8 @@ DOMIDICONNECT="yes"
 DOSKIPCONNECTS="no"
 SEQ24SONG="$HOME/Home/Audio/Seq24/click_4_4.midi"
 YOSHSTATE="$HOME/.config/yoshimi/yoshimi.state"
+# SYSCONTROL="systemctl"
+SYSCONTRL="service"
 
 #------------------------------------------------------------------------------
 # USB Audio detection
@@ -188,9 +189,7 @@ if [ "$DOSETUP" == "yes" ] ; then
 # Stop MPD and start JACK
 #------------------------------------------------------------------------------
 
-sudo systemctl stop mpd
-
-# jackd MORE OPTIONS  SEE JUST BELOW
+sudo $SYSCONTROL stop mpd
 
 #------------------------------------------------------------------------------
 # QJackCtl
@@ -206,7 +205,7 @@ sudo systemctl stop mpd
 #------------------------------------------------------------------------------
 
    if [ "$DOQJACKCTL" == "yes" ] ; then
-      echo "Starting QJackCtl and JACK:"
+      echo "Starting QJackCtl/JACK:"
       echo "   qjackctl --start"
       qjackctl --start &
       sleep 2
