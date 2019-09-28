@@ -54,9 +54,9 @@
    The original purpose for the "user" file was to create familiar names for the
    system MIDI devices.
    By default, the list of MIDI devices that \textsl{Sequencer66} shows depends
-   on one's system setup and whether the manual-alsa-port option is specified
+   on one's system setup and whether the manual-port option is specified
    or not.  Here's our system, which has Timidity installed and running as a
-   service, and the \texttt{[manual-alsa-port]} option turned off, shown in a
+   service, and the \texttt{[manual-port]} option turned off, shown in a
    composite view with all menus one can look at for MIDI settings:
 
 \begin{figure}[H]
@@ -276,16 +276,16 @@
    the count values to 0.
    Also, these instrument-definition
    sections are read from the "user" configuration file only if
-   the \texttt{--reveal-alsa-ports} option is \textsl{off} ("0");
+   the \texttt{--reveal-ports} option is \textsl{off} ("0");
    this command-line option can also be specified in the
-   \texttt{[reveal-alsa-ports]} section of the "rc" file,
+   \texttt{[reveal-ports]} section of the "rc" file,
    see \sectionref{subsec:seq66_rc_file_reveal_ports}, where this section is
    discussed.
    Otherwise, the actual port names reported by ALSA are shown.
    The \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections
    can be misleading if one wants to have access to the
    actual ALSA ports that exist on the system.
-   Therefore, if the \texttt{--reveal-alsa-ports} option is turned on, then the
+   Therefore, if the \texttt{--reveal-ports} option is turned on, then the
    definitions in the "user" configuration file are \textsl{not} read from that
    file.  The following figures show the results of various settings with an
    active "user" file.  They have been clipped to save space.
@@ -294,31 +294,31 @@
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-clock-m.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Clocks View, -m (--manual-alsa-ports)}
+   \caption{Clocks View, -m (--manual-ports)}
    \label{fig:seq66_clock_m}
 \end{figure}
 
    Above, the virtual (manual) output ports are shown just as created by
    \textsl{Sequencer66}.
-   The \texttt{--reveal-alsa-ports} option is \textsl{off} here.
+   The \texttt{--reveal-ports} option is \textsl{off} here.
 
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-input-m.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Inputs View with -m (--manual-alsa-ports) Option}
+   \caption{Inputs View with -m (--manual-ports) Option}
    \label{fig:seq66_input_m}
 \end{figure}
 
    Above, the single virtual (manual) input port is shown just as created by
    \textsl{Sequencer66}.
-   Again, the \texttt{--reveal-alsa-ports} option is \textsl{off} here.
+   Again, the \texttt{--reveal-ports} option is \textsl{off} here.
 
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-clock-m-R.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Clocks View, -m (--manual-alsa-ports) and -R (--hide-alsa-ports)}
+   \caption{Clocks View, -m (--manual-ports) and -R (--hide-ports)}
    \label{fig:seq66_clock_m_R}
 \end{figure}
 
@@ -329,7 +329,7 @@
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-clock-r.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Clocks View, -r (--reveal-alsa-ports)}
+   \caption{Clocks View, -r (--reveal-ports)}
    \label{fig:seq66_clock_r}
 \end{figure}
 
@@ -340,7 +340,7 @@
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-input-r.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Inputs View with -r (--reveal-alsa-ports) Option}
+   \caption{Inputs View with -r (--reveal-ports) Option}
    \label{fig:seq66_input_r}
 \end{figure}
 
@@ -356,7 +356,7 @@
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-clock-R.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Clocks View with -R (--hide-alsa-ports) Option}
+   \caption{Clocks View with -R (--hide-ports) Option}
    \label{fig:seq66_clock_R}
 \end{figure}
 
@@ -368,7 +368,7 @@
    \centering 
 %  \includegraphics[scale=0.50]{user/seq66-input-R.png}
    \includegraphics[scale=0.65]{roll.png}
-   \caption{Inputs View with -R (--hide-alsa-ports) Option}
+   \caption{Inputs View with -R (--hide-ports) Option}
    \label{fig:seq66_input_R}
 \end{figure}
 

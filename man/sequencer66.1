@@ -107,23 +107,23 @@ This option does not exist.
 Instead, specify the file itself as the last command-line argument.
 
 .TP 8
-.B \-m, \-\-manual-alsa-ports
+.B \-m, \-\-manual-ports
 Sequencer66 won't attach ALSA MIDI ports, it will make "manual" (virtual) ports.
 Instead, it will create is own set of virtual input and output busses/ports.
 Not support in the PortMIDI build.
 
 .TP 8
-.B \-a, \-\-auto-alsa-ports
-Sequencer66 will attach ALSA ports.  Useful for overriding the
+.B \-a, \-\-auto-ports
+Sequencer66 will attach ALSA/JACK ports.  Useful for overriding the
 sequencer66.rc configuration file when set up to use manual (virtual) ports.
 
 .TP 8
-.B \-r, \-\-reveal-alsa-ports
-Do not use the 'user' definition for port names, used the actual
-port names reported by ALSA.
+.B \-r, \-\-reveal-ports
+Do not use the 'user' definition for port names, use the actual
+port names reported by ALSA/JACK.
 
 .TP 8
-.B \-r, \-\-hide-alsa-ports
+.B \-r, \-\-hide-ports
 Use the 'user' definition for port names (useful for overriding a
 configuration).
 

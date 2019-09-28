@@ -108,8 +108,8 @@ rcsettings::rcsettings () :
     m_with_jack_midi            (false),
 #endif
     m_song_start_mode           (false),
-    m_manual_alsa_ports         (false),
-    m_reveal_alsa_ports         (false),
+    m_manual_ports              (false),
+    m_reveal_ports              (false),
     m_print_keys                (false),
     m_device_ignore             (false),
     m_device_ignore_num         (0),
@@ -180,8 +180,8 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_with_jack_master_cond     (rhs.m_with_jack_master_cond),
     m_with_jack_midi            (rhs.m_with_jack_midi),
     m_song_start_mode           (rhs.m_song_start_mode),
-    m_manual_alsa_ports         (rhs.m_manual_alsa_ports),
-    m_reveal_alsa_ports         (rhs.m_reveal_alsa_ports),
+    m_manual_ports              (rhs.m_manual_ports),
+    m_reveal_ports              (rhs.m_reveal_ports),
     m_print_keys                (rhs.m_print_keys),
     m_device_ignore             (rhs.m_device_ignore),
     m_device_ignore_num         (rhs.m_device_ignore_num),
@@ -247,8 +247,8 @@ rcsettings::operator = (const rcsettings & rhs)
         m_with_jack_master_cond     = rhs.m_with_jack_master_cond;
         m_with_jack_midi            = rhs.m_with_jack_midi;
         m_song_start_mode           = rhs.m_song_start_mode;
-        m_manual_alsa_ports         = rhs.m_manual_alsa_ports;
-        m_reveal_alsa_ports         = rhs.m_reveal_alsa_ports;
+        m_manual_ports              = rhs.m_manual_ports;
+        m_reveal_ports              = rhs.m_reveal_ports;
         m_print_keys                = rhs.m_print_keys;
         m_device_ignore             = rhs.m_device_ignore;
         m_device_ignore_num         = rhs.m_device_ignore_num;
@@ -324,8 +324,8 @@ rcsettings::set_defaults ()
     m_with_jack_midi            = false;
 #endif
     m_song_start_mode           = false;
-    m_manual_alsa_ports         = false;
-    m_reveal_alsa_ports         = false;
+    m_manual_ports              = false;
+    m_reveal_ports              = false;
     m_print_keys                = false;
     m_device_ignore             = false;
     m_device_ignore_num         = 0;

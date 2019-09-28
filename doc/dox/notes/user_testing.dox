@@ -59,12 +59,12 @@ as it will determine what MIDI devices are available, and we don't want that
 setting:
 
 \verbatim
-   [manual-alsa-ports]
+   [manual-ports]
 
    # Set to 1 if you want seq66 to create its own ALSA ports and
    # not connect to other clients
 
-   0   # number of manual ALSA ports
+   0   # number of manual ports
 \endverbatim
 
 Next, run the newly-built version of Seq66.  If desired, use the --bus
@@ -72,8 +72,8 @@ option described below to force the buss number to the buss you need, as shown
 in the second version of the command:
 
 \verbatim
-   $ seq66/seq66 &
-   $ seq66/seq66 --bus 5 &
+   $ seq66 &
+   $ seq66 --bus 5 &
 \endverbatim
 
 In <i>File / Options / MIDI Clock</i>, observe the MIDI inputs made available

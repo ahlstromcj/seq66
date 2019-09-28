@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2019-09-01
+ * \updates       2019-09-28
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -86,11 +86,11 @@ cmdlineopts::s_long_options [] =
     {"help",                0, 0, 'h'},
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
-    {"home",                required_argument, 0, 'H'}, /* new */
-    {"bus",                 required_argument, 0, 'b'}, /* new */
-    {"buss",                required_argument, 0, 'B'}, /* new */
-    {"ppqn",                required_argument, 0, 'q'}, /* new */
-    {"legacy",              0, 0, 'l'},                 /* new */
+    {"home",                required_argument, 0, 'H'},
+    {"bus",                 required_argument, 0, 'b'},
+    {"buss",                required_argument, 0, 'B'},
+    {"ppqn",                required_argument, 0, 'q'},
+    {"legacy",              0, 0, 'l'},
     {"show-midi",           0, 0, 's'},
     {"show-keys",           0, 0, 'k'},
     {"inverse",             0, 0, 'K'},
@@ -108,18 +108,18 @@ cmdlineopts::s_long_options [] =
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
 #endif
-    {"manual-alsa-ports",   0, 0, 'm'},
-    {"auto-alsa-ports",     0, 0, 'a'},
-    {"reveal-alsa-ports",   0, 0, 'r'},                 /* new */
-    {"hide-alsa-ports",     0, 0, 'R'},                 /* new */
-    {"alsa",                0, 0, 'A'},                 /* new */
+    {"manual-ports",        0, 0, 'm'},
+    {"auto-ports",          0, 0, 'a'},
+    {"reveal-ports",        0, 0, 'r'},
+    {"hide-ports",          0, 0, 'R'},
+    {"alsa",                0, 0, 'A'},
     {"pass-sysex",          0, 0, 'P'},
     {"user-save",           0, 0, 'u'},
-    {"record-by-channel",   0, 0, 'd'},                 /* new */
-    {"legacy-record",       0, 0, 'D'},                 /* new */
-    {"config",              required_argument, 0, 'c'}, /* new */
-    {"rc",                  required_argument, 0, 'f'}, /* new */
-    {"usr",                 required_argument, 0, 'F'}, /* new */
+    {"record-by-channel",   0, 0, 'd'},
+    {"legacy-record",       0, 0, 'D'},
+    {"config",              required_argument, 0, 'c'},
+    {"rc",                  required_argument, 0, 'f'},
+    {"usr",                 required_argument, 0, 'F'},
 
     /*
      * New app-specific options, for easier expansion.  The -o/--option
@@ -174,9 +174,9 @@ cmdlineopts::s_help_1a =
 "                            always relative to $HOME.  The default is\n"
 "                            .config/seq66.\n"
 "   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
-"   -m, --manual-alsa-ports  Don't attach system ALSA ports. Use virtual ports.\n"
+"   -m, --manual-ports       Don't attach system ALSA ports. Use virtual ports.\n"
 "                            Not supported in the PortMIDI version.\n"
-"   -a, --auto-alsa-ports    Attach ALSA ports (overrides the 'rc' file).\n"
+"   -a, --auto-ports         Attach ALSA ports (overrides the 'rc' file).\n"
 "                            Use to expose system ALSA ports to JACK (e.g.\n"
 "                            using a2jmidid).\n"
     ;
@@ -187,8 +187,8 @@ cmdlineopts::s_help_1a =
 
 const std::string
 cmdlineopts::s_help_1b =
-"   -r, --reveal-alsa-ports  Do not use the 'user' definitions for port names.\n"
-"   -R, --hide-alsa-ports    Use the 'user' definitions for port names.\n"
+"   -r, --reveal-ports       Do not use the 'user' definitions for port names.\n"
+"   -R, --hide-ports         Use the 'user' definitions for port names.\n"
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
@@ -611,7 +611,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
  *  usr().set_defaults() at the appropriate time, which is before any parsing
  *  of the command-line options.  The caller can then use the command-line to
  *  make any modifications to the setting that will be used here.  The biggest
- *  example is the -r/--reveal-alsa-ports option, which determines if the MIDI
+ *  example is the -r/--reveal-ports option, which determines if the MIDI
  *  buss definition strings are read from the 'user' configuration file.
  *
  *  Instead of the legacy Seq24 names, we use the new configuration
@@ -628,8 +628,8 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
 \endverbatim
  *
  *  We were parsing the user-file first, but we now need to parse the rc-file
- *  first, to get the manual-alsa-ports option, so that we can avoid overriding
- *  the port names that the ALSA system provides, if the manual-alsa-option is
+ *  first, to get the manual-ports option, so that we can avoid overriding
+ *  the port names that the ALSA system provides, if the manual-option is
  *  false.
  *
  * \param [out] errmessage
@@ -825,7 +825,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'a':
-            seq66::rc().manual_alsa_ports(false);
+            seq66::rc().manual_ports(false);
             break;
 
         case 'B':                           /* --buss for the oldsters      */
@@ -917,7 +917,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'm':
-            seq66::rc().manual_alsa_ports(true);
+            seq66::rc().manual_ports(true);
             break;
 
         case 'N':
@@ -950,12 +950,12 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'R':
-            seq66::rc().reveal_alsa_ports(false);
+            seq66::rc().reveal_ports(false);
             printf("[Showing user-configured port names]\n");
             break;
 
         case 'r':
-            seq66::rc().reveal_alsa_ports(true);
+            seq66::rc().reveal_ports(true);
             printf("[Showing native system port names]\n");
             break;
 

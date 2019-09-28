@@ -937,7 +937,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
    That sample would be written one had started up \textsl{Sequencer66} in
-   manual-alsa-mode.  On our system, where we have Timidity running, and
+   manual-mode.  On our system, where we have Timidity running, and
    erroneously have also specified 3 MIDI busses that we do not have, in the
    \texttt{sequencer66.usr} file:
 
@@ -1232,7 +1232,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
    There is no user-interface item for the following value, but
-   it does correspond to the \texttt{--manual-alsa-ports} command-line
+   it does correspond to the \texttt{--manual-ports} command-line
    option.
 
 \subsection{"rc" File / Manual ALSA Ports}
@@ -1254,9 +1254,9 @@ but we're not completely sure how it works yet.
          \textsl{QJackCtl} application.)
    \end{enumerate}
 
-   \index{[manual-alsa-ports]}
+   \index{[manual-ports]}
    \begin{verbatim}
-      [manual-alsa-ports]
+      [manual-ports]
       # Set to 1 to have sequencer66 create its own ALSA ports and not
       # connect to other clients.  Use 1 to expose all 16 MIDI ports to
       # JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
@@ -1265,15 +1265,15 @@ but we're not completely sure how it works yet.
       1
    \end{verbatim}
 
-   \index{--auto-alsa-ports}
-   The opposite of \texttt{--manual-alsa-ports}
-   is \texttt{--auto-alsa-ports}.  The auto-alsa-ports option
+   \index{--auto-ports}
+   The opposite of \texttt{--manual-ports}
+   is \texttt{--auto-ports}.  The auto-ports option
    forces \textsl{Sequencer66} to use the system's existing ALSA ports.
    This is necessary in order to play tunes through software synthesizers that
    use ALSA MIDI.
 
-   \index{jack!manual-alsa-ports}
-   Turning on the manual-alsa-ports option is necessary if one
+   \index{jack!manual-ports}
+   Turning on the manual-ports option is necessary if one
    wants to use the legacy \textsl{Sequencer66} (\texttt{sequencer66})
    with JACK.
    It is \textsl{not} necessary if using the native JACK MIDI version,
@@ -1294,17 +1294,17 @@ but we're not completely sure how it works yet.
 
    Again, this option applies to both ALSA and native JACK.
 
-   \index{[reveal-alsa-ports]}
+   \index{[reveal-ports]}
    \begin{verbatim}
-      [reveal-alsa-ports]
+      [reveal-ports]
       # Set to 1 to have sequencer66 ignore any system port names
       # declared in the 'user' configuration file.  Use this option if
       # you want to be able to see the port names as detected by ALSA.
       1   # flag for reveal ALSA ports
    \end{verbatim}
 
-   \index{jack!reveal-alsa-ports}
-   Turning on the reveal-alsa-ports option is necessary if one
+   \index{jack!reveal-ports}
+   Turning on the reveal-ports option is necessary if one
    wants to see the actual ALSA port names defined by the system.
    It will ignore the settings in the "user" configuration file's
    \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections.

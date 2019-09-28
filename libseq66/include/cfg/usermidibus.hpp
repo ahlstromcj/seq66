@@ -72,7 +72,7 @@ struct usermidibus_t
     /**
      *  Provides the user's desired name for the MIDI bus.  For example,
      *  "2x2 A" for some kind of MIDI card or USB MIDI cable.  If
-     *  manual-alsa-ports is enabled, this could be something like
+     *  manual-ports is enabled, this could be something like
      *  "[0] seq66 0", and that is what should be shown in that case.
      */
 

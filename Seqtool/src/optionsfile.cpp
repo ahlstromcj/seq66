@@ -702,7 +702,7 @@ optionsfile::parse ()
         if (line_after(file, "[manual-alsa-ports]"))
         {
             sscanf(scanline(), "%ld", &flag);
-            rc_ref().manual_alsa_ports(bool(flag));
+            rc_ref().manual_ports(bool(flag));
         }
         if (line_after(file, "[reveal-alsa-ports]"))
         {
@@ -712,8 +712,8 @@ optionsfile::parse ()
              */
 
             sscanf(scanline(), "%ld", &flag);
-            if (! rc_ref().reveal_alsa_ports())
-                rc_ref().reveal_alsa_ports(bool(flag));
+            if (! rc_ref().reveal_ports())
+                rc_ref().reveal_ports(bool(flag));
         }
 
         if (line_after(file, "[last-used-dir]"))

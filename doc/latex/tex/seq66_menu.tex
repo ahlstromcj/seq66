@@ -275,17 +275,17 @@
 %        For example, running MIDI software synthesizers such as
 %        \textsl{Timidity} and \textsl{Yoshimi} will add extra output devices
 %        (playback ports) to a system.
-      \item The setting of the "manual ALSA ports" option, which tells
+      \item The setting of the "manual-ports" option, which tells
          \textsl{Sequencer66} to set up virtual MIDI ports.
          It is enabled by the
-         \texttt{--manual-alsa-ports} command-line option or the
-         \texttt{[manual-alsa-ports]} section of the
+         \texttt{--manual-ports} command-line option or the
+         \texttt{[manual-ports]} section of the
          \texttt{sequencer66.rc} configuration file, described in
          \sectionref{subsec:seq66_rc_file_manual_ports}.
       \item The setting of the \textsl{Sequencer66}-specific
          "reveal ALSA ports" option,
-         \texttt{--reveal-alsa-ports} command-line option or the
-         \texttt{[reveal-alsa-ports]} section of the
+         \texttt{--reveal-ports} command-line option or the
+         \texttt{[reveal-ports]} section of the
          \texttt{sequencer66.rc} configuration file, described in
          \sectionref{subsec:seq66_rc_file_reveal_ports}.
    \end{itemize}
@@ -294,8 +294,8 @@
    and the \textsl{Timidity} and \textsl{Yoshimi} (in ALSA mode) software
    synthesizers were running.  \textsl{Sequencer66} was also running,
    without virtual ports enabled, and \texttt{--alsa} turned on.
-%  with the option of "manual ALSA ports" (\texttt{-m} or
-%  \texttt{--manual-alsa-ports}) and ALSA (\texttt{-A} or
+%  with the option of "manual-ports" (\texttt{-m} or
+%  \texttt{--manual-ports}) and ALSA (\texttt{-A} or
 %  \texttt{--alsa} turned on.
    Here are the devices shown when running \textsl{aplaymidi}
    from the command-line:
@@ -336,12 +336,12 @@
 %  above!  What's up with that!?  Need the -m option!
 
    Turning to \figureref{fig:seq66_midi_clock_4_devices_manual_1},
-   with the option of "manual ALSA ports" (\texttt{-m} or
-   \texttt{--manual-alsa-ports}) and ALSA in force,
+   with the option of "manual-ports" (\texttt{-m} or
+   \texttt{--manual-ports}) and ALSA in force,
    note the 16 devices provided by \textsl{Sequencer66}.
 %  Also note that its first value is 1, not 0, due to
 %  the MIDI Thru port occupying slot 0.
-   This figure shows the result with the "manual ALSA option" turned on.
+   This figure shows the result with "manual-ports" turned on.
    Remember that this option also applies to the native JACK MIDI
    mode of \textsl{Sequencer66}.
 
@@ -507,7 +507,7 @@
    \label{fig:seq66_midi_clock_4_devices_manual_0}
 \end{figure}
 
-   In the figure above, with the "manual ALSA option" is turned off, and
+   In the figure above, with "manual-ports" turned off, and
    all of the real (non-virtual) devices that can be driven by MIDI output are
    shown, including the MIDI Thru port, and
 %  the MIDI port on the \textsl{E-MU XMidi1x1} USB cable,
@@ -525,7 +525,7 @@
    MIDI ports and connections.
 
    \index{todo!manual alsa gui option}
-   There is currently no user-interface item corresponding to the "manual ALSA"
+   There is currently no user-interface item corresponding to the "manual-ports"
    command-line and "rc" configuration file option.
    We should rename this option to "virtual"
    eventually, since it can also apply to JACK MIDI.
@@ -551,10 +551,10 @@
 % Should the above be offset re 0, not 1?  Check it out!!!
 
    We see that we can record MIDI from the MIDI Thru port, from the USB MIDI
-   cable, and MIDI from any of the 16 output ports provided by the manual ALSA
+   cable, and MIDI from any of the 16 output ports provided by the manual
    port mode of \textsl{Sequencer66}.
 
-   If the "manual ALSA ports" option is turned \textsl{off} (e.g. by using the
+   If the "manual-ports" option is turned \textsl{off} (e.g. by using the
    \texttt{-a} option),
    then the only item in the \textbf{MIDI Input} tab is the single MIDI input
    buss provided by \textsl{Sequencer66}:  \textbf{[0] seq66 0}.
@@ -597,13 +597,13 @@
    the list of existing hardware will be ignored, and those values will be
    shown instead.
    (This feature can be overridden with the
-   \texttt{--reveal-alsa-ports} (\texttt{-r}) option.)
+   \texttt{--reveal-ports} (\texttt{-r}) option.)
 
 %  New in \textsl{Sequencer66} is the option to record MIDI input into
 %  more than one pattern based on the MIDI channel, as discussed below.
 
    If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
-   \texttt{--auto-alsa-ports} option, then
+   \texttt{--auto-ports} option, then
    the input ports from the system are shown:
 
 \begin{figure}[H]

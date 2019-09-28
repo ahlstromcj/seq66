@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-04-05
+ * \updates       2019-09-28
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -158,7 +158,7 @@ usrfile::parse ()
      *  names of the ports that are found.
      */
 
-    if (! rc_ref().reveal_alsa_ports())
+    if (! rc_ref().reveal_ports())
     {
         /*
          * [user-midi-bus-definitions]

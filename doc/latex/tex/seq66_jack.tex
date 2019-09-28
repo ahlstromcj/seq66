@@ -270,7 +270,7 @@
    The manual-versus-normal port support for JACK MIDI is essentially the same
    as that for ALSA.  Currently, the same option name is used (we will provide
    a more generic option-name soon).
-   The \texttt{-m}/\texttt{--manual-alsa-ports} option actually provides what
+   The \texttt{-m}/\texttt{--manual-ports} option actually provides what
    are known as "virtual" ports.  These are ports that do not represent
    hardware, but are created by applications to allow them to connect to other
    applications or MIDI devices.
@@ -283,8 +283,8 @@
 
    So, if one wants \textsl{seq66} to automatically connect to all existing
    JACK MIDI ports, \textsl{do not} use the
-   \texttt{-m}/\texttt{--manual-alsa-ports} option... use the
-   \texttt{-a}/\texttt{--auto-alsa-ports} option.  Both options apply to both
+   \texttt{-m}/\texttt{--manual-ports} option... use the
+   \texttt{-a}/\texttt{--auto-ports} option.  Both options apply to both
    ALSA and JACK, but we do not want to change the option-names at this time.
 
    If one wants the freedom to make the connections oneself, or with a session

@@ -100,7 +100,7 @@ mastermidibus::activate ()
 /**
  *  Provides the PortMidi implementation needed for the init() function.
  *  Unlike the seq24 ALSA implementation, this version does NOT support the
- *  --manual-alsa-ports option.  It initializes as many input and output MIDI
+ *  --manual-ports option.  It initializes as many input and output MIDI
  *  devices as are found by Pm_CountDevices(), and the flags
  *  PmDeviceInfo::input and output determine what category of MIDI device it
  *  is.

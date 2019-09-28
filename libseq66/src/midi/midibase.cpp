@@ -78,7 +78,7 @@ int midibase::m_clock_mod = 16 * 4;
  *  port.
  *
  *  This constructor is the one that seems to be the one that is used for
- *  the MIDI input and output busses, when the [manual-alsa-ports] option is
+ *  the MIDI input and output busses, when the [manual-ports] option is
  *  <i> not </i> in force.  Also used for the announce buss, and in the
  *  mastermidibase::port_start() function.
  *

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-04-14
+ * \updates       2019-09-28
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -181,10 +181,10 @@ rcfile::~rcfile ()
  *
  *      This section covers....  One common value is 64.
  *
- *  [manual-alsa-ports]
+ *  [manual-ports]
  *
- *      Set to 1 if you want seq66 to create its own ALSA ports and not connect
- *      to other clients.
+ *      Set to 1 if you want seq66 to create its own virtual ports and not
+ *      connect to other clients.
  *
  *  [last-used-dir]
  *
@@ -459,12 +459,12 @@ rcfile::parse ()
         sscanf(scanline(), "%d", &track);
         rc_ref().tempo_track_number(track); /* MIDI file can override this  */
     }
-    if (line_after(file, "[manual-alsa-ports]"))
+    if (line_after(file, "[manual-ports]"))
     {
         sscanf(scanline(), "%d", &flag);
-        rc_ref().manual_alsa_ports(bool(flag));
+        rc_ref().manual_ports(bool(flag));
     }
-    if (line_after(file, "[reveal-alsa-ports]"))
+    if (line_after(file, "[reveal-ports]"))
     {
         /*
          * If this flag is already raised, it was raised on the command line,
@@ -472,8 +472,8 @@ rcfile::parse ()
          */
 
         sscanf(scanline(), "%d", &flag);
-        if (! rc_ref().reveal_alsa_ports())
-            rc_ref().reveal_alsa_ports(bool(flag));
+        if (! rc_ref().reveal_ports())
+            rc_ref().reveal_ports(bool(flag));
     }
 
     if (line_after(file, "[last-used-dir]"))
@@ -822,33 +822,33 @@ rcfile::write ()
         ;
 
     /*
-     * Manual ALSA ports
+     * Manual ports
      */
 
     file
-        << "\n[manual-alsa-ports]\n\n"
-           "# Set to 1 to have seq66 create its own ALSA ports and not\n"
+        << "\n[manual-ports]\n\n"
+           "# Set to 1 to have seq66 create its own ALSA/JACK ports and not\n"
            "# connect to other clients.  Use 1 to expose all 16 MIDI ports to\n"
            "# JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports\n"
            "# already running on one's computer, or to use the autoconnect\n"
            "# feature (Seq66 connects to existing JACK ports on startup.\n"
            "\n"
-        << (rc_ref().manual_alsa_ports() ? "1" : "0")
-        << "   # flag for manual ALSA ports\n"
+        << (rc_ref().manual_ports() ? "1" : "0")
+        << "   # flag for manual ports\n"
         ;
 
     /*
-     * Reveal ALSA ports
+     * Reveal ports
      */
 
     file
-        << "\n[reveal-alsa-ports]\n\n"
+        << "\n[reveal-ports]\n\n"
            "# Set to 1 to have seq66 ignore any system port names\n"
-           "# declared in the 'user' configuration file.  Use this option if\n"
-           "# you want to be able to see the port names as detected by ALSA.\n"
+           "# declared in the 'user' configuration file.  Use this option to\n"
+           "# be able to see the port names as detected by ALSA/JACK.\n"
            "\n"
-        << (rc_ref().reveal_alsa_ports() ? "1" : "0")
-        << "   # flag for reveal ALSA ports\n"
+        << (rc_ref().reveal_ports() ? "1" : "0")
+        << "   # flag for reveal ports\n"
         ;
 
 #if defined USE_FRUITY_CODE
@@ -890,7 +890,7 @@ rcfile::write ()
         ;
 
     file
-        << "# Set to 1 to allow Seq66 to split performerance editor\n"
+        << "# Set to 1 to allow Seq66 to split performance editor\n"
            "# triggers at the closest snap position, instead of splitting the\n"
            "# trigger exactly in its middle.  Remember that the split is\n"
            "# activated by a middle click.\n"
@@ -924,8 +924,8 @@ rcfile::write ()
         "# song_start_mode (applies mainly if JACK is enabled).\n\n"
         "# 0 = Playback in live mode. Allows muting and unmuting of loops.\n"
         "#     from the main (patterns) window.  Disables both manual and\n"
-        "#     automatic muting and unmuting from the performerance window.\n"
-        "# 1 = Playback uses the song (performerance) editor's data and mute\n"
+        "#     automatic muting and unmuting from the performance window.\n"
+        "# 1 = Playback uses the song (performance) editor's data and mute\n"
         "#     controls, regardless of which window was used to start the\n"
         "#     playback.\n\n"
         << rc_ref().song_start_mode() << "   # song_start_mode\n\n"

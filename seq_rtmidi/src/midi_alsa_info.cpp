@@ -524,7 +524,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
         errprint("snd_seq_event_input() failure");
         return false;
     }
-    if (! rc().manual_alsa_ports())
+    if (! rc().manual_ports())
     {
         switch (ev->type)
         {

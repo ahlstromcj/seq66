@@ -266,12 +266,12 @@ private:
     bool m_with_jack_midi;          /**< Use JACK MIDI.                     */
     bool m_song_start_mode;         /**< Use song mode versus live mode.    */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
-    bool m_manual_alsa_ports;       /**< [manual-alsa-ports] setting.       */
-    bool m_reveal_alsa_ports;       /**< [reveal-alsa-ports] setting.       */
+    bool m_manual_ports;            /**< [manual-ports] setting.            */
+    bool m_reveal_ports;            /**< [reveal-ports] setting.            */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     bool m_device_ignore;           /**< From seq66 module, unused!         */
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
-    interaction m_interaction_method;           /**< [interaction-method]   */
+    interaction m_interaction_method;   /**< [interaction-method]           */
 
     /**
      *  Indicates if empty mute-groups get saved to the MIDI file.
@@ -640,14 +640,14 @@ public:
         return m_filter_by_channel;
     }
 
-    bool manual_alsa_ports () const
+    bool manual_ports () const
     {
-        return m_manual_alsa_ports;
+        return m_manual_ports;
     }
 
-    bool reveal_alsa_ports () const
+    bool reveal_ports () const
     {
-        return m_reveal_alsa_ports;
+        return m_reveal_ports;
     }
 
     bool print_keys () const
@@ -921,14 +921,14 @@ protected:
         m_filter_by_channel = flag;
     }
 
-    void manual_alsa_ports (bool flag)
+    void manual_ports (bool flag)
     {
-        m_manual_alsa_ports = flag;
+        m_manual_ports = flag;
     }
 
-    void reveal_alsa_ports (bool flag)
+    void reveal_ports (bool flag)
     {
-        m_reveal_alsa_ports = flag;
+        m_reveal_ports = flag;
     }
 
     void print_keys (bool flag)

@@ -87,7 +87,7 @@ mastermidibus::~mastermidibus ()
 
 /**
  *  Initializes the RtMidi implementation.  Two different styles are
- *  supported.  If the --manual-alsa-ports option is in force, then 16 virtual
+ *  supported.  If the --manual-ports option is in force, then 16 virtual
  *  output ports and one virtual input port are created.  They are given names
  *  that make it clear which application (seq66) has set them up.  They are
  *  not connected to anything.  The user will have to use a connection GUI
@@ -133,7 +133,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
 {
     m_midi_master.api_set_ppqn(ppqn);
     m_midi_master.api_set_beats_per_minute(bpm);
-    if (rc().manual_alsa_ports())                       /* virtual ports    */
+    if (rc().manual_ports())                            /* virtual ports    */
     {
         int num_buses = SEQ66_ALSA_OUTPUT_BUSS_MAX;     /* not just ALSA!   */
         m_midi_master.clear();                          /* ignore system    */

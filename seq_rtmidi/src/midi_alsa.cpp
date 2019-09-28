@@ -105,7 +105,7 @@ namespace seq66
  *  already-initialized midi_info object.
  *
  *  This constructor is the only one that is used for the MIDI input and
- *  output busses, whether the [manual-alsa-ports] option is in force or not.
+ *  output busses, whether the [manual-ports] option is in force or not.
  *  The actual setup of a normal or virtual port is done in the api_*_init_*()
  *  routines.
  *
@@ -160,7 +160,7 @@ midi_alsa::~midi_alsa ()
 
 /**
  *  Initialize the MIDI output port.  This initialization is done when the
- *  "manual ALSA ports" option is not in force.
+ *  "manual-ports" option is not in force.
  *
  *  This initialization is like the "open_port()" function of the RtMidi
  *  library, with the addition of the snd_seq_connect_to() call involving
@@ -371,7 +371,7 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
 
 /**
  *  Initialize the output in a different way.  This version of initialization
- *  is used by mastermidi_alsa in the "manual ALSA ports" clause.  This code
+ *  is used by mastermidi_alsa in the "manual-ports" clause.  This code
  *  is also very similar to the same function in the
  *  midibus::api_init_out_sub() function of midibus::api_init_out_sub().
  *
