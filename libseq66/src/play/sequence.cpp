@@ -368,7 +368,8 @@ sequence::event_count () const
  *
  * \param hold
  *      A new parameter for the stazed undo/redo support, not yet used.
- *      If true, then the events go into the undo-hold-list.
+ *      If true (the default is false), then the events go into the
+ *      undo-hold-list.
  */
 
 void
@@ -1509,7 +1510,7 @@ sequence::unpaint_all ()
 
 /**
  *  Returns the 'box' of the selected items.  Note the common-code betweem
- *  this function and get_clipboard_box().  Also note we could return a
+ *  this function and clipboard_box().  Also note we could return a
  *  boolean indicating if the return values were filled in.
  *
  * \threadsafe
@@ -1528,7 +1529,7 @@ sequence::unpaint_all ()
  */
 
 bool
-sequence::get_selected_box
+sequence::selected_box
 (
     midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
 )
@@ -1564,7 +1565,7 @@ sequence::get_selected_box
 
 /**
  *  Returns the 'box' of the selected items for only Note On values.
- *  Compare to get_selected_box().
+ *  Compare to selected_box().
  *
  * \threadsafe
  *
@@ -1582,7 +1583,7 @@ sequence::get_selected_box
  */
 
 bool
-sequence::get_onsets_selected_box
+sequence::onsets_selected_box
 (
     midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
 )
@@ -1623,7 +1624,7 @@ sequence::get_onsets_selected_box
 
 /**
  *  Returns the 'box' of the clipboard items.  Note the common-code betweem
- *  this function and get_selected_box().  Also note we could return a boolean
+ *  this function and selected_box().  Also note we could return a boolean
  *  indicating if the return values were filled in.
  *
  *  This function is called in qstriggereditor and in qseqroll.
@@ -1644,7 +1645,7 @@ sequence::get_onsets_selected_box
  */
 
 bool
-sequence::get_clipboard_box
+sequence::clipboard_box
 (
     midipulse & tick_s, int & note_h,
     midipulse & tick_f, int & note_l

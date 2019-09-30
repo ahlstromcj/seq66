@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-03
+ * \updates       2019-09-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -296,9 +296,13 @@ private:
     int m_note_width;
     int m_note_y;
     int m_note_height;
-    int m_key_y;                // dimensions of height
-    int m_keyarea_y;
     int m_keypadding_x;
+
+    /**
+     *  Hold the note value first grabbed when starting a move.
+     */
+
+    int m_last_base_note;
 
 signals:
 

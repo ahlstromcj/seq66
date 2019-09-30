@@ -223,27 +223,6 @@ qeditbase::convert_x (int x, midipulse & tick)
 
 /**
  *
-
-void
-qeditbase::convert_xy (int x, int y, midipulse & tick, int & seq)
-{
-    //  tick = x * m_zoom;
-    //  seq = (m_total_height - y - 2) / m_unit_height;
-
-    midipulse tick_offset =  0;                 // again, always 0!!!
-    tick = x * m_scale_zoom;
-    seq = y / c_names_y;
-    tick += tick_offset;
-    if (seq >= c_max_sequence)
-        seq = c_max_sequence - 1;
-
-    if (seq < 0)
-        seq = 0;
-}
- */
-
-/**
- *
  */
 
 void

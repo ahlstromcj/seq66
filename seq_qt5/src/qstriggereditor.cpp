@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-12
+ * \updates       2019-09-30
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -365,7 +365,7 @@ qstriggereditor::mousePressEvent (QMouseEvent *event)
 
                     int note;
                     moving_init(true);
-                    seq_pointer()->get_selected_box(tick_s, note, tick_f, note);
+                    seq_pointer()->selected_box(tick_s, note, tick_f, note);
                     tick_f += tick_w;
                     convert_t(tick_s, x);   /* convert box to X,Y values */
                     convert_t(tick_f, w);
@@ -588,7 +588,7 @@ qstriggereditor::start_paste ()
 
     midipulse tick_s, tick_f;
     int note_h, note_l, x, w;
-    seq_pointer()->get_clipboard_box(tick_s, note_h, tick_f, note_l);
+    seq_pointer()->clipboard_box(tick_s, note_h, tick_f, note_l);
     convert_t(tick_s, x);           /* convert box to X,Y values */
     convert_t(tick_f, w);
 

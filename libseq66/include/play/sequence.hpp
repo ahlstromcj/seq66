@@ -1490,15 +1490,15 @@ public:
     void copy_selected ();
     void cut_selected (bool copyevents = true);
     void paste_selected (midipulse tick, int note);
-    bool get_selected_box
+    bool selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    bool get_onsets_selected_box
+    bool onsets_selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    bool get_clipboard_box
+    bool clipboard_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );

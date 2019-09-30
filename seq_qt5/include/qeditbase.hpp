@@ -61,8 +61,8 @@ const int c_keyboard_padding_x = 6;     /* Qt version of keys padding       */
  *  So we will use the font's numeric accessors soon.
  */
 
-const int c_names_x         = 6 * 24;
-const int c_names_y         = 22;
+const int c_names_x         = 6 * 24;   /* used in qperfroll, qperfnames    */
+const int c_names_y         = 22;       /* used in qperfroll, qperfnames    */
 const int c_perf_scale_x    = 32;       /* units are ticks per pixel        */
 const int c_perf_max_zoom   = 8;        /* limit the amount of perf zoom    */
 
@@ -260,7 +260,7 @@ protected:
     int m_scroll_offset_y;
 
     /**
-     *  See qseqroll::keyY.
+     *  Provides the height of a unit.  For qseqroll, this is note height.
      */
 
     int m_unit_height;
@@ -647,7 +647,7 @@ protected:
 
     void snap_y (int & y)
     {
-        y -= y % c_names_y;     // m_unit_height;
+        y -= y % m_unit_height;             /* not c_names_y    */
     }
 
     void snap_current_y ()
