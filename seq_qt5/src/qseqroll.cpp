@@ -107,15 +107,14 @@ qseqroll::qseqroll
     m_keypadding_x          (c_keyboard_padding_x),
     m_last_base_note        (-1)
 {
-    setAttribute(Qt::WA_StaticContents);            // promising!
-    setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
+    setAttribute(Qt::WA_StaticContents);
+    setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     set_snap(seqp->get_snap_tick());
-
     show();
-    m_timer = new QTimer(this);                          // redraw timer !!!
-    m_timer->setInterval(2 * usr().window_redraw_rate());    // 20
+    m_timer = new QTimer(this);
+    m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect
     (
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
@@ -895,7 +894,6 @@ qseqroll::draw_drum_notes
             if (ni.selected())
             {
                 brush.setColor(gui_palette_qt5::sel_paint());
-//              brush.setColor("orange");       // Qt::red
             }
             else if (m_edit_mode == sequence::editmode::drum)
                 brush.setColor(Qt::red);
@@ -1262,7 +1260,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
         s->remove_selected();
-        set_dirty();
+        set_needs_update();             // set_dirty();
     }
     else
     {
@@ -1353,7 +1351,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             case Qt::Key_X:
 
                 s->cut_selected();
-                set_dirty();
+                set_needs_update();             // set_dirty();
                 break;
 
             case Qt::Key_C:
@@ -1364,7 +1362,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             case Qt::Key_V:
 
                 start_paste();
-                set_dirty();
+                set_needs_update();             // set_dirty();
                 setCursor(Qt::CrossCursor);     // EXPERIMENT
                 break;
 
@@ -1377,6 +1375,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 }
                 else
                     s->pop_undo();
+
+                set_needs_update();
                 break;
 
             case Qt::Key_A:
