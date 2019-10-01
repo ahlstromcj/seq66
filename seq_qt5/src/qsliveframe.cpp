@@ -788,8 +788,6 @@ qsliveframe::update_bank_name ()
  *
  *  Compare this function to setmapper::set_get().
  *
- * TODO: could move into qslivebase!
- *
  * \param click_x
  *      The x-coordinate of the mouse click.
  *
@@ -1114,11 +1112,6 @@ qsliveframe::new_seq ()
     }
     if (perf().new_sequence(m_current_seq))
         perf().get_sequence(m_current_seq)->set_dirty();
-
-    /*
-     * TODO: reenable - disabled opening the editor for each new seq
-     *    callEditor(m_main_perf->get_sequence(m_current_seq));
-     */
 }
 
 /**
@@ -1294,9 +1287,8 @@ qsliveframe::copy_sequence ()
 }
 
 /**
- *  TODO: dialog warning that the editor is the reason
- *  this seq cant be cut
- *
+ * \todo
+ *      Dialog warning that the editor is the reason this seq cant be cut.
  */
 
 void
@@ -1304,6 +1296,7 @@ qsliveframe::cut_sequence ()
 {
     if (qslivebase::cut_seq())
     {
+        // TODO
     }
 }
 

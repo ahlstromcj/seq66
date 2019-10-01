@@ -66,9 +66,6 @@
  *              it is copied from ~/.config/sequencer64/NAME.playlist to
  *              ~/.config/seq66/NAME.playlist.  This works only if
  *              the [playlist] file-name does not include a path.
- *              TODO TODO:  The current method is WRONG.
- *              TODO TODO:  The current method is WRONG.
- *              TODO TODO:  The current method is WRONG.
  *      -#  The 'usr' file is simply copied from ~/.config/sequencer64/IN.usr
  *          to ~/.config/seq66/OUT.usr.
  *

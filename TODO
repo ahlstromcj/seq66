@@ -1,15 +1,29 @@
 TODO for Sequencer66 0.90.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-09-28
+2019-04-13 to 2019-10-01
 
 HOT ITEMS:
 
     Why is the manual ALSA ports setting not written in rcfile? Same for reveal
     ports!
 
+    Just double-clicking on a sequence to get the seqedit frame dirties the
+    song!
+
+    Tons of TODOs in performer!
+
+    Do:
+
+        -   In qseqroll, replace reset_draw_marker().
+        -   In qsmainwnd, implement and unhide the PPQN combo box, and save the
+            setting.
+        -   Implement setmapper::select_triggers_in_range().
+        -   Implement screenset::select_triggers_in_range().
+        -   Investigate sequence::offset_triggers() usage.
+
     Load a song with Song triggers; go to the song tab; select File/New. Note
     that the perfroll clears, but not the perfnames!  We need to derive all
-    qperf GUIs from qperfbase.
+    qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
 
     Change tooltips on edit frame MIDI buttons to show current status, for
     themes that do not show status clearly.  Still need to do it for the

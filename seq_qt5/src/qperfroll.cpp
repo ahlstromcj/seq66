@@ -881,17 +881,12 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             if (dt == sequence::draw::finish)
                                 break;
 
-                            /*
-                             * TODO:  handle sequence::draw::tempo
-                             */
-
                             midipulse ts = ni.start() * length_w;
                             midipulse tf = ni.finish() * length_w;
                             int note_y =
                             (
                                 cny - (cny * (ni.note() - note0)) / height
                             ) + 1;
-
                             midipulse tick_s_x = (ts/length) + tick_marker_x;
                             midipulse tick_f_x = (tf/length) + tick_marker_x;
                             if (sequence::is_draw_note(dt))

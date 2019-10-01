@@ -103,8 +103,9 @@ qseqframe::~qseqframe ()
 }
 
 /**
- *  TODO:  check for dirtiness (perhaps), clear the table and settings,
- *         an reload as if starting again.
+ *  \todo
+ *      Check for dirtiness (perhaps), clear the table and settings, an reload
+ *      as if starting again.
  */
 
 bool

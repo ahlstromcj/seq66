@@ -309,7 +309,7 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         );
         m_line_adjust = false;
         if (ok)
-            set_dirty();                /* TODO: do this for undo/redo  */
+            set_dirty();
     }
     else if (m_relative_adjust)
         m_relative_adjust = false;

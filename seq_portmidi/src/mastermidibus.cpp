@@ -243,8 +243,6 @@ mastermidibus::api_get_midi_event (event * in)
     /*
      * Some keyboards send Note On with velocity 0 for Note Off.  The event
      * class already has this check available.
-     *
-     * if (in->get_status() == EVENT_NOTE_ON && in->get_note_velocity() == 0x00)
      */
 
     if (in->is_note_off_recorded())
@@ -254,23 +252,25 @@ mastermidibus::api_get_midi_event (event * in)
 }
 
 /**
- *  Not yet implemented.
+ *  Not yet implemented.  There is no PPQN code in the original PortMIDI
+ *  project.
  */
 
 void
 mastermidibus::api_set_ppqn (int /*ppqn*/)
 {
-    // TODO
+    // no code
 }
 
 /**
- *  Not yet implemented.
+ *  Not yet implemented.  There is no BPM code in the original PortMIDI
+ *  project.  Tempo is set via a timer (at least in their test application).
  */
 
 void
 mastermidibus::api_set_beats_per_minute (midibpm /*bpm*/)
 {
-    // TODO
+    // no code
 }
 
 }           // namespace seq66

@@ -408,13 +408,10 @@ gui_palette_qt5::get_color_inverse (PaletteColor index) const
         r = a - r;
         g = a - g;
         b = a - b;
-        return gui_palette_qt5::Color(r, g, b, a);
+        return Color(r, g, b, a);
     }
     else
-    {
-        // TODO: return black
-    }
-    return c;
+        return m_black;
 }
 
 /**

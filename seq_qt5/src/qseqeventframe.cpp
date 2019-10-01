@@ -231,7 +231,6 @@ qseqeventframe::~qseqeventframe()
  *  TODO:
  *      Check for dirtiness (perhaps), clear the table and settings,
  *      an reload as if starting again.
- *
  */
 
 bool
@@ -699,7 +698,7 @@ qseqeventframe::handle_insert ()
         std::string name = ui->entry_ev_name->text().toStdString();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
-        std::string linktime;       /* TODO TODO TODO */
+        std::string linktime;
         bool has_events = m_eventslots->insert_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
         if (has_events)

@@ -388,9 +388,6 @@ optionsfile::parse ()
         {
             long key = 0, seq = 0;
             sscanf(scanline(), "%ld %ld", &key, &seq);
-
-            ///// TODO: p.set_key_event(key, seq);
-
             ok = merge_key(automation::category::loop, key, seq);
             if (ok)
                 ok = next_data_line(file);
@@ -609,8 +606,6 @@ optionsfile::parse ()
             warnprint("WARNING:  no [extended-keys] section");
         }
 
-        ///// TODO:  p.keys().set_keys(ktx);       /* copy into performer keys   */
-
         long flag = 0;
         if (line_after(file, "[jack-transport]"))
         {
@@ -627,9 +622,8 @@ optionsfile::parse ()
 
             next_data_line(file);
             sscanf(scanline(), "%ld", &flag);
-            ////// TODO: p.song_start_mode(bool(flag));
-
             rc_ref().song_start_mode(bool(flag));
+
             if (next_data_line(file))
             {
                 sscanf(scanline(), "%ld", &flag);
@@ -662,8 +656,6 @@ optionsfile::parse ()
                     count = sscanf(scanline(), "%ld %ld", &bus, &bus_on);
                     if (count == 2)
                     {
-                        ///// TODO:  p.add_input(bool(bus_on));
-
                         rc_ref().inputs().set(bus, bool(bus_on));
                         ++b;
                     }
@@ -671,9 +663,6 @@ optionsfile::parse ()
                     {
                         bool flag = bool(bus);
                         rc_ref().filter_by_channel(flag);
-
-                        ///// TODO: p.filter_by_channel(flag);  /* important! */
-
                         toggleprint("Filter-by-channel", flag);
                     }
                 }
@@ -688,8 +677,6 @@ optionsfile::parse ()
         {
             long ticks = 64;
             sscanf(scanline(), "%ld", &ticks);
-            ///// TODO: midibus::set_clock_mod(ticks);
-
             rc_ref().set_clock_mod(ticks);
         }
         if (line_after(file, "[midi-meta-events]"))
@@ -697,7 +684,6 @@ optionsfile::parse ()
             int track = 0;
             sscanf(scanline(), "%d", &track);
             rc_ref().tempo_track_number(track);
-            ///// TODO: p.set_tempo_track_number(track);    /* MIDI file can override this  */
         }
         if (line_after(file, "[manual-alsa-ports]"))
         {
@@ -933,9 +919,6 @@ optionsfile::parse_mute_group_section ()
             {
                 int v = 0;
                 sscanf(scanline(), "%d", &v);
-
-                // TODO: Support for "mutes" option.
-
                 result = rc_ref().mute_group_save
                 (
                     v ? std::string("midi") : std::string("both")
@@ -1022,11 +1005,6 @@ optionsfile::parse_midi_control_section (const std::string & fname)
                 &b[0], &b[1], &b[2], &b[3], &b[4], &b[5],
                 &c[0], &c[1], &c[2], &c[3], &c[4], &c[5]
             );
-
-            ///// TODO: p.midi_control_toggle(i).set(a);
-            ///// TODO: p.midi_control_on(i).set(b);
-            ///// TODO: p.midi_control_off(i).set(c);
-
             if (sequence < 32)
             {
                 cat = automation::category::loop;

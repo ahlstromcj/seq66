@@ -171,12 +171,7 @@ namespace seq66
  */
 
 /**
- *  Static data members.  These items apply to all of the instances of seqedit,
- *  and are passed on to the following constructors:
- *
- *  -   seqevent TODO
- *  -   seqroll TODO
- *  -   seqtime TODO
+ *  Static data members.  These items apply to all of the instances of seqedit.
  *
  *  The snap and note-length defaults would be good to write to the "user"
  *  configuration file.  The scale and key would be nice to write to the

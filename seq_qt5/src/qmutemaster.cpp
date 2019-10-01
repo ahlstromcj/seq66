@@ -188,16 +188,10 @@ qmutemaster::conditional_update ()
         midibooleans mutes = perf().get_mutes(group);
         if (int(mutes.size()) == perf().group_size())
         {
-            // TODO:  sort of access to mute-group parameters.
-
             for (int row = 0; row < perf().mute_rows(); ++row)
             {
                 for (int column = 0; column < perf().mute_columns(); ++column)
                 {
-                    /*
-                     * TODO: make group-size its own set of values.
-                     */
-
                     int group = int(perf().calculate_mute(row, column));
                     bool enabled = bool(mutes[group]);
                     m_group_buttons[row][column]->setEnabled(enabled);

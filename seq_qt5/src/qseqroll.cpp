@@ -829,16 +829,10 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unit_height()) - unit_height() - 1 + 2;
+            m_note_y = total_height() - (ni.note() * unit_height()) -
+                unit_height() - 1 + 2;
+
             m_note_height = unit_height();
-
-#ifdef USE_THIS_CODE
-            int in_shift = 0;
-            int length_add = 0;
-#endif
-
-            // IFFY, because we should ignore length for drum notes
-
             if (dt == sequence::draw::linked)
             {
                 if (ni.finish() >= ni.start())
@@ -853,27 +847,12 @@ qseqroll::draw_drum_notes
             else
                 m_note_width = tix_to_pix(16);
 
-#ifdef USE_THIS_CODE
-            if (dt == sequence::draw::note_on)
-            {
-                in_shift = 0;
-                length_add = 2;
-            }
-            if (dt == sequence::draw::note_off)
-            {
-                in_shift = -1;
-                length_add = 1;
-            }
-#endif
-
             pen.setColor(Qt::black);
             if (background)                     // draw background note
             {
-#ifdef USE_THIS_CODE
                 length_add = 1;
                 pen.setColor(Qt::darkCyan);     // note border color
                 brush.setColor(Qt::darkCyan);
-#endif
             }
             else
             {
@@ -892,9 +871,7 @@ qseqroll::draw_drum_notes
              */
 
             if (ni.selected())
-            {
                 brush.setColor(gui_palette_qt5::sel_paint());
-            }
             else if (m_edit_mode == sequence::editmode::drum)
                 brush.setColor(Qt::red);
             else
@@ -905,10 +882,6 @@ qseqroll::draw_drum_notes
                 draw_drum_note(painter);    // background
         }
     }
-
-    /*
-     * Draw the events end.
-     */
 }
 
 /**

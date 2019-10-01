@@ -211,12 +211,8 @@ qseqrollpix::qseqrollpix
 {
     /*
      * Avoid intensively annoying repaints... thanks Qtractor!
-     *
-     * TODO:  look at qtractorMidiThumbView::paintEvent(),
-     *        qtractorMidiThumbView::updatePlayHead().
      */
 
-    // setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_OpaquePaintEvent);
     setFocusPolicy(Qt::StrongFocus);
@@ -1122,7 +1118,6 @@ void
 qseqrollpix::keyPressEvent (QKeyEvent * event)
 {
     bool dirty = false;
-//  keystroke kkey = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
         seq_pointer()->remove_selected();
@@ -1130,8 +1125,6 @@ qseqrollpix::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        // TODO: get these working and fix the 1:1 zoom in combo-dropdown.
-
         if (! perf().is_pattern_playing())
         {
             if (event->key() == Qt::Key_Home)
@@ -1659,11 +1652,6 @@ qseqrollpix::draw_notes
     pen.setColor(Qt::black);            /* draw boxes from sequence */
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
-
-    /*
-     * TODO: use reset_ex_iterator() or reset_interval().
-     */
-
     s->reset_draw_marker();
     for (;;)
     {
@@ -1816,11 +1804,6 @@ qseqrollpix::draw_drum_notes
     pen.setColor(Qt::red);              /* draw red boxes from drum loop    */
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
-
-    /*
-     * TODO: use reset_ex_iterator() or reset_interval().
-     */
-
     s->reset_draw_marker();
     for (;;)
     {

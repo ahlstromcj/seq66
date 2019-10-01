@@ -172,13 +172,6 @@ main (int argc, char * argv [])
                 errprint("performer::launch() failed");
         }
 
-        /*
-         * TODO
-         *
-        if (seq66::usr().inverse_colors())
-            seq66::gui_palette_qt5::load_inverse_palette(true);
-         */
-
         std::string midifname;                      /* start out blank      */
         std::string extant_errmsg = "unspecified error";
         bool extant_msg_active = false;             /* a kludge             */
