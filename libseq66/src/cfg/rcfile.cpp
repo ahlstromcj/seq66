@@ -881,7 +881,7 @@ rcfile::write ()
 #endif  // USE_FRUITY_CODE
 
     file
-        << "# Set to 1 to allow Seq66 to stay in note-adding mode when\n"
+        << "\n# Set to 1 to allow Seq66 to stay in note-adding mode when\n"
            "# the right-click is released while holding the Mod4 (Super or\n"
            "# Windows) key.\n"
            "\n"

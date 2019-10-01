@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-09-20
+ * \updates       2019-10-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1283,8 +1283,13 @@ qseqeditframe64::conditional_update ()
         follow_progress();
     }
     (void) seq_pointer()->check_loop_reset();
-    if (seq_pointer()->is_dirty_edit())
-        set_dirty();
+
+    /*
+     * Never set dirt in this timer function!
+     *
+     * if (seq_pointer()->is_dirty_edit())
+     *    set_dirty();
+     */
 }
 
 /**
@@ -2159,11 +2164,11 @@ void
 qseqeditframe64::set_data_type (midibyte status, midibyte control)
 {
     char hex[8];
-    char type[32];                                  /* was 80 */
+    char type[32];
     snprintf(hex, sizeof hex, "[0x%02X]", status);
     m_editing_status = status;                      /* not yet used, though */
     m_editing_cc = control;                         /* not yet used, though */
-    m_seqevent->set_data_type(status, control);
+    m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
     m_seqdata->set_data_type(status, control);
     if (status == EVENT_NOTE_OFF)
         snprintf(type, sizeof type, "Note Off");

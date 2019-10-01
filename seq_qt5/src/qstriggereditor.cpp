@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-30
+ * \updates       2019-10-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -73,8 +73,8 @@ qstriggereditor::qstriggereditor
     ),
     m_timer             (nullptr),
     m_key_y             (keyheight),
-    m_status            (EVENT_NOTE_ON),
-    m_cc                (0)
+    m_status            (c_midibyte_max),           // (EVENT_NOTE_ON)
+    m_cc                (c_midibyte_max)            // (0)
 {
     setAttribute(Qt::WA_StaticContents);            // promising!
     setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
@@ -672,9 +672,20 @@ qstriggereditor::set_adding (bool a)
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)
 {
-    m_status = status;
-    m_cc = control;
-    set_dirty();
+    if (m_status == c_midibyte_max && m_cc == c_midibyte_max)
+    {
+        m_status = EVENT_NOTE_ON;
+        m_cc = 0;
+    }
+    else
+    {
+        if (status != m_status || control != m_cc)
+        {
+            m_status = status;
+            m_cc = control;
+            set_dirty();
+        }
+    }
 }
 
 }           // namespace seq66

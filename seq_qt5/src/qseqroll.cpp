@@ -850,7 +850,7 @@ qseqroll::draw_drum_notes
             pen.setColor(Qt::black);
             if (background)                     // draw background note
             {
-                length_add = 1;
+                //// length_add = 1;
                 pen.setColor(Qt::darkCyan);     // note border color
                 brush.setColor(Qt::darkCyan);
             }

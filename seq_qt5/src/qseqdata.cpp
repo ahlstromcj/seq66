@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-27
+ * \updates       2019-10-01
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -62,17 +62,17 @@ qseqdata::qseqdata
     qseqbase            (p, seqp, zoom, snap),
     m_timer             (nullptr),
     m_font              (),
-    m_status            (EVENT_NOTE_ON),    // edit note velocity for now
-    m_cc                (1),
+    m_status            (c_midibyte_max),           // (EVENT_NOTE_ON)
+    m_cc                (c_midibyte_max),           // (1) (0???)
     m_line_adjust       (false),
     m_relative_adjust   (false),
     m_dragging          (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(6);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer = new QTimer(this);                             // redraw timer !!!
     m_timer->setInterval(4 * usr().window_redraw_rate());   // 20
-    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
 
@@ -384,11 +384,22 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
  */
 
 void
-qseqdata::set_data_type (midibyte status, midibyte control = 0)
+qseqdata::set_data_type (midibyte status, midibyte control)
 {
-    m_status = status;
-    m_cc = control;
-    set_dirty();
+    if (m_status == c_midibyte_max && m_cc == c_midibyte_max)
+    {
+        m_status = EVENT_NOTE_ON;
+        m_cc = 0;
+    }
+    else
+    {
+        if (status != m_status || control != m_cc)
+        {
+            m_status = status;
+            m_cc = control;
+            set_dirty();
+        }
+    }
 }
 
 }           // namespace seq66

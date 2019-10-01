@@ -80,7 +80,7 @@ public:
 
     virtual ~qstriggereditor ();
 
-    void set_data_type (midibyte a_status, midibyte a_control);
+    void set_data_type (midibyte status, midibyte control);
 
 protected:
 
