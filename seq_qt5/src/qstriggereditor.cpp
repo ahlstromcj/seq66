@@ -103,7 +103,7 @@ qstriggereditor::~qstriggereditor ()
 void
 qstriggereditor::conditional_update ()
 {
-    if (check_needs_update())   //  || perf().needs_update())
+    if (check_needs_update())
         update();
 }
 

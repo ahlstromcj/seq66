@@ -186,10 +186,6 @@ qsmainwnd::qsmainwnd
 
     ui->cmbPPQN->hide();
 
-    /**
-     *
-     */
-
     std::string ppqnstr = std::to_string(p.ppqn());
     ui->lineEditPpqn->setText(ppqnstr.c_str());
 

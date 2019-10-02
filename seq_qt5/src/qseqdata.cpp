@@ -62,17 +62,17 @@ qseqdata::qseqdata
     qseqbase            (p, seqp, zoom, snap),
     m_timer             (nullptr),
     m_font              (),
-    m_status            (c_midibyte_max),           // (EVENT_NOTE_ON)
-    m_cc                (c_midibyte_max),           // (1) (0???)
+    m_status            (c_midibyte_max),
+    m_cc                (c_midibyte_max),
     m_line_adjust       (false),
     m_relative_adjust   (false),
     m_dragging          (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(6);
+    m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
-    m_timer = new QTimer(this);                             // redraw timer !!!
-    m_timer->setInterval(4 * usr().window_redraw_rate());   // 20
+    m_timer->setInterval(4 * usr().window_redraw_rate());
     m_timer->start();
 }
 

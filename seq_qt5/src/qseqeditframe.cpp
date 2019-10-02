@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-29
+ * \updates       2019-10-02
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -433,8 +433,8 @@ qseqeditframe::qseqeditframe
     connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_thru(bool)));
     qt_set_icon(thru_xpm, ui->btnThru);
 
-    m_timer = new QTimer(this);                             // redraw timer !!!
-    m_timer->setInterval(2 * usr().window_redraw_rate());   // 20
+    m_timer = new QTimer(this);
+    m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect
     (
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
@@ -495,8 +495,12 @@ qseqeditframe::~qseqeditframe ()
 void
 qseqeditframe::conditional_update ()
 {
-    if (seq_pointer()->is_dirty_edit())
-        set_dirty();
+    /*
+     *  It is stupid to set dirt in an update function!
+     *
+     * if (seq_pointer()->is_dirty_edit())
+     *    set_dirty();
+     */
 }
 
 /**
