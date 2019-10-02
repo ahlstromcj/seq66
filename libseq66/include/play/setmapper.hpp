@@ -595,17 +595,11 @@ private:
 
     void apply_song_transpose (seq::number seqno = seq::all());
     midipulse max_trigger () const;
-
-#if defined SEQ66_SONG_BOX_SELECT
-
     void select_triggers_in_range
     (
         seq::number seqlow, seq::number seqhigh,
         midipulse tickstart, midipulse tickfinish
     );
-
-#endif
-
     void unselect_triggers (seq::number seqno = seq::all());
     void move_triggers
     (

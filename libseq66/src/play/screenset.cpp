@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-09-07
+ * \updates       2019-10-02
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -806,13 +806,19 @@ screenset::copy_triggers
 }
 
 /**
+ *  Selects the set of triggers bounded by a low and high sequence number and
+ *  a low and high tick selection.  If there is an inactive sequence in this
+ *  range, it is simply ignored.  Also, will not cross a set boundary.  The
+ *  setmapper makes sure this is the case before calling this function.
  *
  * \param seqlow
- *      Provides the low track to be selected.
+ *      Provides the low track to be selected, the low sequence number in the
+ *      pattern range.
  *
  * \param seqhigh
- *      Provides the high track to be selected.  If not in the same set, nothing
- *      is done.  We need a way to report that.
+ *      Provides the high track to be selected.  The high sequence number in
+ *      the pattern range.  If not in the same set, nothing is done.  We need
+ *      a way to report that.
  *
  * \param tick_start
  *      Provides the low end of the box.
@@ -828,22 +834,26 @@ screenset::select_triggers_in_range
     midipulse tick_start, midipulse tick_finish
 )
 {
-    /*
-    /////////////// TODO TODO TODO
-
-    for (int s = seqlow; s <= seqhigh; ++s)
+#ifdef SEQ66_SONG_BOX_SELECT
+    for (seq::number s = seqlow; s <= seqhigh; ++s)
     {
-        auto seqit = m_container.find(s);
-        if (seqit != m_container.end())
-            seqit->loop()->unselect_triggers();
+        auto lambdafunc = [s] (const seq & sseq) ->
+            bool { return sseq.seq_number() == s; };
 
-        if (goodddd)
+        auto seqit = std::find_if
+        (
+            m_container.begin(), m_container.end(), lambdafunc
+        );
+        if (seqit != m_container.end())
         {
-            for (long tick = tick_start; tick <= tick_finish; ++tick)
-                sequence->select_trigger(tick);
+            if (seqit->loop()->unselect_triggers())
+            {
+                for (long tick = tick_start; tick <= tick_finish; ++tick)
+                    seqit->loop()->select_trigger(tick);
+            }
         }
     }
-     */
+#endif      // SEQ66_SONG_BOX_SELECT
 }
 
 /**

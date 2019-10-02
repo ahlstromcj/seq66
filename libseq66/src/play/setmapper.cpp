@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-08-23
+ * \updates       2019-10-02
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -719,8 +719,6 @@ setmapper::max_trigger () const
     return result;
 }
 
-#if defined SEQ66_SONG_BOX_SELECT
-
 /**
  *
  * \param seqlow
@@ -748,26 +746,20 @@ setmapper::select_triggers_in_range
     screenset::number sethigh = seq_set(seqhigh);
     if (setlow == sethigh)
     {
-        /*
-         * TODO TODO TODO
-         *
-        auto setiterator = m_container.find(setno);
+        auto setiterator = m_container.find(setlow);
         if (setiterator != m_container.end())
         {
             setiterator->second.select_triggers_in_range
             (
-                seqlow, seqhigh tick_start, tick_finish
+                seqlow, seqhigh, tick_start, tick_finish
             );
         }
-         */
     }
     else
     {
         // What to do?
     }
 }
-
-#endif  // defined SEQ66_SONG_BOX_SELECT
 
 /**
  *
