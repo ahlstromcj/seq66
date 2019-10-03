@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-30
+ * \updates       2019-10-03
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -86,7 +86,7 @@ qseqroll::qseqroll
     m_timer                 (nullptr),
     m_progbar_width         (usr().progress_bar_thick() ? 2 : 1),
     m_roll_frame            (m_progbar_width),
-    m_scale                 (0),
+    m_scale                 (scales::off),
     m_pos                   (0),
     m_chord                 (0),
     m_key                   (0),
@@ -488,7 +488,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.setPen(pen);
 
-    int octkey = SEQ66_OCTAVE_SIZE - m_key;         /* used three times     */
+    int octkey = c_octave_size - m_key;             /* used three times     */
     for (int key = 1; key <= c_num_keys; ++key)     /* for each note row    */
     {
         int remkeys = c_num_keys - key;             /* remaining keys       */
@@ -498,9 +498,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          * Set line colour dependent on the note row we're on.
          */
 
-        if ((modkey % SEQ66_OCTAVE_SIZE) == 0)
+        if ((modkey % c_octave_size) == 0)
             pen.setColor(Qt::darkGray);
-        else if ((modkey % SEQ66_OCTAVE_SIZE) == (SEQ66_OCTAVE_SIZE-1))
+        else if ((modkey % c_octave_size) == (c_octave_size-1))
             pen.setColor(Qt::lightGray);
 
         pen.setStyle(Qt::SolidLine);
@@ -515,9 +515,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             y -= (0.5 * unit_height());
 
         painter.drawLine(r.x(), y, r.x()+r.width(), y);
-        if (m_scale != static_cast<int>(scales::off))
+        if (m_scale != scales::off)
         {
-            if (! c_scales_policy[m_scale][(modkey - 1) % SEQ66_OCTAVE_SIZE])
+            if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
                 pen.setColor(Qt::lightGray);
                 brush.setColor(Qt::lightGray);
@@ -1608,9 +1608,9 @@ qseqroll::set_key (int key)
 void
 qseqroll::set_scale (int scale)
 {
-    if (m_scale != scale)
+    if (int(m_scale) != scale)
     {
-        m_scale = scale;
+        m_scale = static_cast<scales>(scale);
         if (is_initialized())
             set_dirty();
     }

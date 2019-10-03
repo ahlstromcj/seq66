@@ -135,7 +135,7 @@ qseqkeys::paintEvent (QPaintEvent *)
         );
 
         int keyvalue = c_num_keys - i - 1;
-        int key = keyvalue % SEQ66_OCTAVE_SIZE;
+        int key = keyvalue % c_octave_size;
         if (is_black_key(key))                  /* draw black keys          */
         {
             pen.setStyle(Qt::SolidLine);

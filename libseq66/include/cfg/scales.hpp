@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2018-12-01
+ * \updates       2019-10-03
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Now includes the
@@ -38,26 +38,36 @@
 
 #include "util/basic_macros.hpp"        /* seq66_platform_macros.h too      */
 
-/**
- *  A manifest constant for the normal number of semitones in an
- *  equally-tempered octave.
- */
-
-const int SEQ66_OCTAVE_SIZE = 12;
-
-/**
- *  A constant for clarification of the value of zero, which, in the context
- *  of a musical key, is the default key of C.
- */
-
-const int SEQ66_KEY_OF_C = 0;
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  A manifest constant for the normal number of semitones in an
+ *  equally-tempered octave.
+ */
+
+const int c_octave_size = 12;
+
+/**
+ *  A constant for clarification of the value of zero, which, in the context
+ *  of a musical key, is the default key of C.
+ */
+
+const int c_key_of_C = 0;
+
+/**
+ *  An inline function to test that an integer in a legal key value.
+ */
+
+inline bool
+legal_key (int k)
+{
+    return k >= c_key_of_C && k < c_octave_size;
+}
 
 /**
  *  Corresponds to the small number of musical scales that the application
@@ -88,6 +98,28 @@ enum class scales
 };
 
 /**
+ *  Avoids a cast in order to use scales::max as an initializer.
+ */
+
+const int c_scales_off = int(scales::off);
+
+/**
+ *  Avoids a cast in order to use scales::max as an array size.
+ */
+
+const int c_scales_max = int(scales::max);
+
+/**
+ *  An inline function to test that an integer in a legal scale value.
+ */
+
+inline bool
+legal_scale (int s)
+{
+    return s >= c_scales_off && s < c_scales_max;
+}
+
+/**
  *  Each value in the kind of scale is denoted by a true value in these
  *  arrays.  See the following sites for more information:
  *
@@ -115,7 +147,7 @@ enum class scales
 \endverbatim
  */
 
-const bool c_scales_policy[int(scales::max)][SEQ66_OCTAVE_SIZE] =
+const bool c_scales_policy[c_scales_max][c_octave_size] =
 {
     {                                                   /* off = chromatic */
         true, true, true, true, true, true,
@@ -211,7 +243,7 @@ const bool c_scales_policy[int(scales::max)][SEQ66_OCTAVE_SIZE] =
 \endverbatim
  */
 
-const int c_scales_transpose_up[int(scales::max)][SEQ66_OCTAVE_SIZE] =
+const int c_scales_transpose_up[c_scales_max][c_octave_size] =
 {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
     { 2, 0, 2, 0, 1, 2, 0, 2, 0, 2, 0, 1},              /* major           */
@@ -278,7 +310,7 @@ const int c_scales_transpose_up[int(scales::max)][SEQ66_OCTAVE_SIZE] =
  *
  */
 
-const int c_scales_transpose_dn[int(scales::max)][SEQ66_OCTAVE_SIZE] =
+const int c_scales_transpose_dn[c_scales_max][c_octave_size] =
 {
     { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},  /* off = chromatic */
     { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major           */
@@ -297,7 +329,7 @@ const int c_scales_transpose_dn[int(scales::max)][SEQ66_OCTAVE_SIZE] =
  *  This array is easier to read, but not yet used in actual code.
  */
 
-const int c_scales_transpose_dn_neg[int(scales::max)][SEQ66_OCTAVE_SIZE] =
+const int c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
 {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
     { 1, 0, 2, 0, 2, 1, 0, 2, 0, 2, 0, 2},              /* major           */
@@ -316,7 +348,7 @@ const int c_scales_transpose_dn_neg[int(scales::max)][SEQ66_OCTAVE_SIZE] =
  *  The names of the currently-supported scales.
  */
 
-const std::string c_scales_text[int(scales::max)] =
+const std::string c_scales_text[c_scales_max] =
 {
     "Off (Chromatic)",
     "Major (Ionian)",
@@ -334,7 +366,7 @@ const std::string c_scales_text[int(scales::max)] =
  *  window.
  */
 
-const std::string c_key_text[SEQ66_OCTAVE_SIZE] =
+const std::string c_key_text[c_octave_size] =
 {
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
 };

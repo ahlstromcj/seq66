@@ -436,7 +436,7 @@ midi_vector_base::fill_proprietary ()
          * feature is not in force.
          */
 
-        if (m_sequence.musical_key() != SEQ66_KEY_OF_C)
+        if (m_sequence.musical_key() != c_key_of_C)
         {
             add_variable(0);                        /* key selection dt */
             put(0xFF);
@@ -445,7 +445,7 @@ midi_vector_base::fill_proprietary ()
             add_long(c_musickey);
             put(m_sequence.musical_key());
         }
-        if (m_sequence.musical_scale() != int(scales::off))
+        if (m_sequence.musical_scale() != c_scales_off)
         {
             add_variable(0);                        /* scale selection  */
             put(0xFF);

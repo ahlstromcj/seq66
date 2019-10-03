@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-29
+ * \updates       2019-10-03
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -39,8 +39,9 @@
 
 #include <QWidget>
 
-#include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
+#include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
+#include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
 
 /**
  *  Trying to erase the progress-bar (playhead) without redrawing the whole
@@ -206,7 +207,7 @@ private:
      *  Indicates the musical scale in force for this sequence.
      */
 
-    int m_scale;
+    scales m_scale;
 
     /**
      *  A position value.  Need to clarify what exactly this member is used

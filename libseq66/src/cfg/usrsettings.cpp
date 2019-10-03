@@ -216,8 +216,8 @@ usrsettings::usrsettings () :
     m_control_height            (0),
     m_current_zoom              (0),            // 0 is unsafe, but a feature
     m_global_seq_feature_save   (true),
-    m_seqedit_scale             (int(scales::off)),
-    m_seqedit_key               (SEQ66_KEY_OF_C),
+    m_seqedit_scale             (c_scales_off),
+    m_seqedit_key               (c_key_of_C),
     m_seqedit_bgsequence        (seq::limit()),
     m_use_new_font              (false),
     m_allow_two_perfedits       (false),
@@ -543,8 +543,8 @@ usrsettings::set_defaults ()
     m_control_height = 0;                       // range: 0-4?
     m_current_zoom = SEQ66_DEFAULT_ZOOM;        // range: 1-128
     m_global_seq_feature_save = true;
-    m_seqedit_scale = int(scales::off);         // scales::off to < scales::max
-    m_seqedit_key = SEQ66_KEY_OF_C;             // range: 0-11
+    m_seqedit_scale = c_scales_off;             // scales::off to < scales::max
+    m_seqedit_key = c_key_of_C;                 // range: 0-11
     m_seqedit_bgsequence = seq::limit();        // range -1, 0, 1, 2, ...
     m_use_new_font = true;
     m_allow_two_perfedits = true;

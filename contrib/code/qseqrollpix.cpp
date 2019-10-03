@@ -272,7 +272,7 @@ qseqrollpix::create_pixmap (int ww, int wh)
          * adjusted for the octave and scroll offset.
          */
 
-        int octkey = SEQ66_OCTAVE_SIZE - m_key;
+        int octkey = c_octave_size - m_key;
         for (int key = 1; key <= c_num_keys; ++key) /* for each note row    */
         {
             int modkey = c_num_keys - key - scroll_offset_key() + octkey;
@@ -283,13 +283,13 @@ qseqrollpix::create_pixmap (int ww, int wh)
 
             if (fruity_lines)
             {
-                if ((modkey % SEQ66_OCTAVE_SIZE) == 0)
+                if ((modkey % c_octave_size) == 0)
                 {
                     pen.setColor(Qt::darkGray);
                     pen.setStyle(Qt::SolidLine);
                     painter.setPen(pen);
                 }
-                else if ((modkey % SEQ66_OCTAVE_SIZE) == (SEQ66_OCTAVE_SIZE-1))
+                else if ((modkey % c_octave_size) == (c_octave_size-1))
                 {
                     pen.setColor(Qt::lightGray);
                     pen.setStyle(Qt::SolidLine);
@@ -308,7 +308,7 @@ qseqrollpix::create_pixmap (int ww, int wh)
             painter.drawLine(0, y, ww, y);
             if (m_scale != static_cast<int>(scales::off))
             {
-                if (! c_scales_policy[m_scale][(modkey - 1) % SEQ66_OCTAVE_SIZE])
+                if (! c_scales_policy[m_scale][(modkey - 1) % c_octave_size])
                 {
                     pen.setColor(Qt::lightGray);
                     brush.setColor(Qt::lightGray);

@@ -185,8 +185,8 @@ sequence::sequence (int ppqn)
     m_rec_vol                   (SEQ66_PRESERVE_VELOCITY),
     m_note_on_velocity          (SEQ66_DEFAULT_NOTE_ON_VELOCITY),
     m_note_off_velocity         (SEQ66_DEFAULT_NOTE_OFF_VELOCITY),
-    m_musical_key               (SEQ66_KEY_OF_C),
-    m_musical_scale             (int(scales::off)),
+    m_musical_key               (c_key_of_C),
+    m_musical_scale             (c_scales_off),
     m_background_sequence       (sequence::limit()),
     m_mutex                     (),
     m_note_off_margin           (2)
@@ -5629,22 +5629,22 @@ sequence::transpose_notes (int steps, int scale)
                 e.unmark();
                 int note = e.get_note();
                 bool off_scale = false;
-                if (transpose_table[note % SEQ66_OCTAVE_SIZE] == 0)
+                if (transpose_table[note % c_octave_size] == 0)
                 {
                     off_scale = true;
                     note -= 1;
                 }
                 for (int x = 0; x < steps; ++x)
-                    note += transpose_table[note % SEQ66_OCTAVE_SIZE];
+                    note += transpose_table[note % c_octave_size];
 
                 if (off_scale)
                     note += 1;
 
                 e.set_note(note);
-                transposed_events.add(e);   // , false);    sort afterward
+                transposed_events.add(e);
             }
             else
-                er.unmark();                        /* ignore, no transpose */
+                er.unmark();                        /* ignore, no transpose  */
         }
         (void) remove_marked();                     /* remove original notes */
         m_events.merge(transposed_events);          /* events get presorted  */

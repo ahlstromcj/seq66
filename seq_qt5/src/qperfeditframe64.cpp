@@ -224,9 +224,9 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     qt_set_icon(transpose_xpm, ui->btnTranspose);
 
     char num[16];
-    for (int t = -SEQ66_OCTAVE_SIZE; t <= SEQ66_OCTAVE_SIZE; ++t)
+    for (int t = -c_octave_size; t <= c_octave_size; ++t)
     {
-        int index = t + SEQ66_OCTAVE_SIZE;
+        int index = t + c_octave_size;
         if (t != 0)
         {
             snprintf
@@ -240,7 +240,7 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
 
         ui->comboTranspose->insertItem(index, num);
     }
-    ui->comboTranspose->setCurrentIndex(SEQ66_OCTAVE_SIZE);
+    ui->comboTranspose->setCurrentIndex(c_octave_size);
     connect
     (
         ui->comboTranspose, SIGNAL(currentIndexChanged(int)),
@@ -438,8 +438,8 @@ qperfeditframe64::reset_transpose ()
 void
 qperfeditframe64::update_transpose (int index)
 {
-    int transpose = index - SEQ66_OCTAVE_SIZE;
-    if (transpose >= -SEQ66_OCTAVE_SIZE && transpose <= SEQ66_OCTAVE_SIZE)
+    int transpose = index - c_octave_size;
+    if (transpose >= -c_octave_size && transpose <= c_octave_size)
     {
         if (perf().get_transpose() != transpose)
             set_transpose(transpose);

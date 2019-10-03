@@ -827,7 +827,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(reset_key())
     );
 
-    for (int key = 0; key < SEQ66_OCTAVE_SIZE; ++key)
+    for (int key = 0; key < c_octave_size; ++key)
     {
         QString combo_text = c_key_text[key].c_str();
         ui->m_combo_key->insertItem(key, combo_text);
@@ -838,7 +838,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_key, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_key(int))
     );
-    if (seq_pointer()->musical_key() != SEQ66_KEY_OF_C)
+    if (seq_pointer()->musical_key() != c_key_of_C)
         set_key(seq_pointer()->musical_key());
     else
         set_key(m_key);
@@ -855,7 +855,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(reset_scale())
     );
 
-    for (int scale = 0; scale < int(scales::max); ++scale)
+    for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
         QString combo_text = c_scales_text[scale].c_str();
         ui->m_combo_scale->insertItem(scale, combo_text);
@@ -866,7 +866,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_scale, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_scale(int))
     );
-    if (seq_pointer()->musical_scale() != int(scales::off))
+    if (seq_pointer()->musical_scale() != c_scales_off)
         set_scale(seq_pointer()->musical_scale());
     else
         set_scale(m_scale);
@@ -2472,7 +2472,7 @@ qseqeditframe64::slot_reset_zoom ()
 void
 qseqeditframe64::update_key (int index)
 {
-    if (index != m_key && index >= 0 && index < SEQ66_OCTAVE_SIZE)
+    if (index != m_key && legal_key(index))
     {
         set_key(index);
         set_dirty();
@@ -2486,7 +2486,7 @@ qseqeditframe64::update_key (int index)
 void
 qseqeditframe64::set_key (int key)
 {
-    if (key >= 0 && key < SEQ66_OCTAVE_SIZE)
+    if (legal_key(key))
     {
         ui->m_combo_key->setCurrentIndex(key);
         if (not_nullptr(m_seqroll))
@@ -2513,7 +2513,7 @@ qseqeditframe64::reset_key ()
 void
 qseqeditframe64::update_scale (int index)
 {
-    if (index != m_scale && index >= int(scales::off) && index < int(scales::max))
+    if (index != m_scale && legal_scale(index))
     {
         set_scale(index);
         set_dirty();
@@ -2527,7 +2527,7 @@ qseqeditframe64::update_scale (int index)
 void
 qseqeditframe64::set_scale (int scale)
 {
-    if (scale >= 0 && scale < int(scales::max))
+    if (legal_scale(scale))
     {
         ui->m_combo_scale->setCurrentIndex(scale);
         if (not_nullptr(m_seqroll))

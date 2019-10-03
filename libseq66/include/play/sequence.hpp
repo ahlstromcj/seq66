@@ -741,7 +741,7 @@ private:
     /**
      *  Holds a copy of the musical key for this sequence, which we now
      *  support writing to this sequence.  If the value is
-     *  SEQ66_KEY_OF_C, then there is no musical key to be set.
+     *  c_key_of_C, then there is no musical key to be set.
      */
 
     midibyte m_musical_key;
@@ -1631,7 +1631,7 @@ public:
 
     void musical_key (int key)
     {
-        if (key >= SEQ66_KEY_OF_C && key < SEQ66_OCTAVE_SIZE)
+        if (legal_key(key))
             m_musical_key = midibyte(key);
     }
 
@@ -1642,7 +1642,7 @@ public:
 
     void musical_scale (int scale)
     {
-        if (scale >= int(scales::off) && scale < int(scales::max))
+        if (legal_scale(scale))
             m_musical_scale = midibyte(scale);
     }
 

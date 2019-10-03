@@ -62,7 +62,7 @@
 
 #include "app_limits.h"                 /* macros for the application       */
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
-#include "cfg/scales.hpp"               /* SEQ66_KEY_OF_C etc.              */
+#include "cfg/scales.hpp"               /* c_key_of_C etc.              */
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
 #include "midi/midibytes.hpp"           /* midibpm type alias               */
@@ -332,7 +332,7 @@ private:
     /**
      *  Replaces seqedit::m_initial_key as the repository for the key to
      *  apply when a sequence is loaded into the sequence editor.  Its default
-     *  value is SEQ66_KEY_OF_C.  Although this value is now stored in the
+     *  value is c_key_of_C.  Although this value is now stored in the
      *  usrsettings class, it always comes from the currently loaded MIDI
      *  file, if present.  If m_global_seq_feature_save is true, this variable
      *  is stored in the "proprietary" track at the end of the file, under the
@@ -1398,7 +1398,7 @@ public:
 
     void seqedit_scale (int scale)
     {
-        if (scale >= int(scales::off) && scale < int(scales::max))
+        if (legal_scale(scale))
             m_seqedit_scale = scale;
     }
 
@@ -1417,7 +1417,7 @@ public:
 
     void seqedit_key (int key)
     {
-        if (key >= SEQ66_KEY_OF_C && key < SEQ66_OCTAVE_SIZE)
+        if (legal_key(key))
             m_seqedit_key = key;
     }
 
@@ -1439,8 +1439,7 @@ public:
 
     void seqedit_bgsequence (int seqnum)
     {
-        // if (SEQ66_IS_LEGAL_SEQUENCE(seqnum)) // offload to seqmanager?
-            m_seqedit_bgsequence = seqnum;
+        m_seqedit_bgsequence = seqnum;
     }
 
     /**
