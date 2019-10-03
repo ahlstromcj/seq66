@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-10-01
+ * \updates       2019-10-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2513,25 +2513,24 @@ qseqeditframe64::reset_key ()
 void
 qseqeditframe64::update_scale (int index)
 {
-    if (index != m_scale && legal_scale(index))
-    {
-        set_scale(index);
-        set_dirty();
-    }
+    set_scale(index);
 }
 
 /**
- *
+ *  For internal use only.
  */
 
 void
 qseqeditframe64::set_scale (int scale)
 {
-    if (legal_scale(scale))
+    if (scale != m_scale && legal_scale(scale))
     {
+        m_scale = scale;
         ui->m_combo_scale->setCurrentIndex(scale);
         if (not_nullptr(m_seqroll))
             m_seqroll->set_scale(scale);
+
+        set_dirty();
     }
 }
 
@@ -2542,9 +2541,7 @@ qseqeditframe64::set_scale (int scale)
 void
 qseqeditframe64::reset_scale ()
 {
-    ui->m_combo_scale->setCurrentIndex(0);
-    if (not_nullptr(m_seqroll))
-        m_seqroll->set_scale(0);
+    set_scale(0);
 }
 
 /**

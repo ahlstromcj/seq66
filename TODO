@@ -1,13 +1,10 @@
 TODO for Sequencer66 0.90.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-10-02
+2019-04-13 to 2019-10-03
 
 HOT ITEMS:
 
     Tons of TODOs in performer!
-
-    When resetting the musical scale back to Off in seqedit, need to refresh
-    even though there is now no background scale.
 
     Do:
 
