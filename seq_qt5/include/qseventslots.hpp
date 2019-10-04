@@ -138,25 +138,22 @@ private:
      *  The index of the event that is 0th in the visible list of events.
      *  It is used in numbering the events that are shown in the event-slot
      *  frame.  Do not confuse it with m_current_index, which is relative to
-     *  the frame, not the container-beginning.
+     *  the frame, not the container-beginning.  DEPRECATE?
      */
 
     int m_top_index;
 
     /**
-     *  Indicates the index of the current event within the frame.
-     *  This event will also be pointed to by the m_current_event iterator.
-     *  Do not confuse it with m_top_index, which is relative to the
-     *  container-beginning, not the frame.
-     *
-     *  THIS WILL EVENTUALLY GO AWAY.  See m_current_row instead.
+     *  Still in use :-(
      */
 
     int m_current_index;
 
     /**
      *  Indicates the current row (and index of the current event) in the
-     *  event table.
+     *  event table.  This event will also be pointed to by the
+     *  m_current_event iterator.  Do not confuse it with m_top_index, which
+     *  is relative to the container-beginning, not the frame.
      */
 
     int m_current_row;
@@ -277,11 +274,6 @@ public:
     int top_index () const
     {
         return m_top_index;
-    }
-
-    int current_index () const
-    {
-        return m_current_index;
     }
 
     int current_row () const

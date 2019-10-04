@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-10-03
+ * \updates       2019-10-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -86,7 +86,6 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     ui                      (new Ui::qseqeventframe),
     m_seq                   (p.sequence_pointer(seqid)),
     m_eventslots            (new qseventslots(p, *this, m_seq)),
-    m_current_row           (0),
     m_is_dirty              (false)
 {
     ui->setupUi(this);
@@ -376,11 +375,7 @@ qseqeventframe::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
     if (perf().set_sequence_name(m_seq, name))
-    {
-        // causes stack overflow
-        // set_seq_title(make_seq_title());
         set_dirty();
-    }
 }
 
 
@@ -588,18 +583,31 @@ qseqeventframe::set_dirty (bool flag)
 }
 
 /**
- *
+ *  Needs to be define in cpp file due to being an incomplete type in the
+ *  header.
+ */
+
+int
+qseqeventframe::current_row () const
+{
+    return m_eventslots->current_row();
+}
+
+/**
+ *  Needs to be define in cpp file due to being an incomplete type in the
+ *  header.
  */
 
 void
-qseqeventframe::set_current_row (int row)
+qseqeventframe::current_row (int row)
 {
+
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     int checkrow = ui->eventTableWidget->currentRow();
     printf("row %d; checkrow %d\n", row, checkrow);
 #endif
-    m_current_row = row;
 
+    m_eventslots->current_row(row);
 }
 
 /**
@@ -610,7 +618,7 @@ void
 qseqeventframe::handle_table_click (int row, int /*column*/)
 {
     m_eventslots->select_event(row);
-    set_current_row(row);
+    current_row(row);
 }
 
 /**
@@ -624,7 +632,7 @@ qseqeventframe::handle_table_click_ex
 )
 {
     m_eventslots->select_event(row);
-    set_current_row(row);
+    current_row(row);
 }
 
 /**
@@ -681,7 +689,7 @@ qseqeventframe::handle_delete ()
                     next, QItemSelectionModel::Rows
                 );
                 m_eventslots->select_event(cr);
-                set_current_row(cr);
+                current_row(cr);
             }
         }
         set_seq_lengths(get_lengths());
@@ -709,7 +717,7 @@ qseqeventframe::handle_insert ()
         std::string name = ui->entry_ev_name->text().toStdString();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
-        std::string linktime;
+        std::string linktime;                   /* empty, no link time yet  */
         bool has_events = m_eventslots->insert_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
         if (has_events)
@@ -738,14 +746,24 @@ qseqeventframe::handle_modify ()
 {
     if (m_eventslots)
     {
+        int cr = current_row();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->entry_ev_name->text().toStdString();
+
+        /*
+         * Which one is better?  The one use would allow for events on more
+         * than one channel in this pattern/loop.
+         *
+         * std::string chan = std::to_string(int(m_seq->get_midi_channel()));
+         */
+
+        std::string chan = m_eventslots->current_event().channel_string();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
+        std::string linktime;                   /* empty, no link time yet  */
         (void) m_eventslots->modify_current_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
-        // set_current_event(iterator, index);   -- OR --
-        // set_table_event(ev, m_eventslots.current_row());
+        set_event_line(cr, ts, name, chan, data0, data1, linktime);
     }
 }
 

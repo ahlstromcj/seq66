@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-16
+ * \updates       2019-10-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -141,7 +141,8 @@ private:
 private:
 
     QTableWidgetItem * cell (int row, column_id col);
-    void set_current_row (int row);
+    void current_row (int row);
+    int current_row () const;
 
 private slots:
 
@@ -174,12 +175,6 @@ private:
      */
 
     std::unique_ptr<qseventslots> m_eventslots;
-
-    /**
-     *  Indicates the current row.
-     */
-
-    int m_current_row;
 
     /**
      *  Indicates a modification is active.
