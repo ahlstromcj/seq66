@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-16
+ * \updates       2019-10-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,25 +42,25 @@
 #include "forms/qseqeventframe.ui.h"
 #endif
 
-/**
- *  For correcting the width of the event table.  It tries to account for the
- *  width of the vertical scroll-bar, plus a bit more.
- */
-
-#define SEQ66_EVENT_TABLE_FIX           48
-
-/**
- *  Specifies the current hardwired value for set_row_heights().
- */
-
-#define SEQ66_EVENT_ROW_HEIGHT          18
-
 /*
  *  Do not document the name space.
  */
 
 namespace seq66
 {
+
+/**
+ *  For correcting the width of the event table.  It tries to account for the
+ *  width of the vertical scroll-bar, plus a bit more.
+ */
+
+const int c_event_table_fix = 48;
+
+/**
+ *  Specifies the current hardwired value for set_row_heights().
+ */
+
+const int c_event_row_height = 18;
 
 /**
  *
@@ -140,8 +140,8 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     QStringList columns;
     columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
-    set_row_heights(SEQ66_EVENT_ROW_HEIGHT);
-    set_column_widths(ui->eventTableWidget->width() - SEQ66_EVENT_TABLE_FIX);
+    set_row_heights(c_event_row_height);
+    set_column_widths(ui->eventTableWidget->width() - c_event_table_fix);
 
     /*
      * Doesn't make the table read-only.  We want that for now, until we can
@@ -185,6 +185,17 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
         this, SLOT(handle_insert())
     );
     ui->button_ins->setEnabled(true);
+
+    /*
+     * Modify button.
+     */
+
+    connect
+    (
+        ui->button_modify, SIGNAL(clicked(bool)),
+        this, SLOT(handle_modify())
+    );
+    ui->button_modify->setEnabled(true);
 
     /*
      * Save button.
@@ -308,7 +319,7 @@ qseqeventframe::initialize_table ()
         {
             ui->eventTableWidget->clearContents();
             ui->eventTableWidget->setRowCount(rows);
-            set_row_heights(SEQ66_EVENT_ROW_HEIGHT);
+            set_row_heights(c_event_row_height);
             if (m_eventslots->load_table())
             {
                 m_eventslots->select_event(0);      /* first row */
@@ -706,7 +717,7 @@ qseqeventframe::handle_insert ()
             std::string chan = m_eventslots->current_event().channel_string();
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
-            set_row_height(cr, SEQ66_EVENT_ROW_HEIGHT);
+            set_row_height(cr, c_event_row_height);
             set_event_line(cr, ts, name, chan, data0, data1, linktime);
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
@@ -733,6 +744,8 @@ qseqeventframe::handle_modify ()
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
         (void) m_eventslots->modify_current_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
+        // set_current_event(iterator, index);   -- OR --
+        // set_table_event(ev, m_eventslots.current_row());
     }
 }
 

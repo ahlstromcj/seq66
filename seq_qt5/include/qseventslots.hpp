@@ -206,18 +206,10 @@ public:
         // I got nothin'
     }
 
-    /**
-     * \getter m_event_container.get_length()
-     */
-
     midipulse get_length () const
     {
         return m_event_container.get_length();
     }
-
-    /**
-     * \getter m_current_event
-     */
 
     const editable_event & current_event () const
     {
@@ -243,10 +235,6 @@ public:
     {
         return m_event_count == 0;
     }
-
-    /**
-     * \getter m_event_count
-     */
 
     int count () const
     {
@@ -286,36 +274,25 @@ public:
         return m_line_maximum - m_line_overlap;
     }
 
-    /**
-     * \getter m_top_index
-     */
-
     int top_index () const
     {
         return m_top_index;
     }
-
-    /**
-     * \getter m_current_index
-     */
 
     int current_index () const
     {
         return m_current_index;
     }
 
-    /**
-     * \getter m_current_row
-     */
-
     int current_row () const
     {
         return m_current_row;
     }
 
-    /**
-     * \getter m_pager_index
-     */
+    void current_row (int row)
+    {
+        m_current_row = row;
+    }
 
     int pager_index () const
     {
@@ -323,10 +300,6 @@ public:
     }
 
 private:
-
-    /**
-     * \getter m_seq const version
-     */
 
     const seq::pointer seq_pointer () const
     {

@@ -3005,6 +3005,10 @@ void
 qseqeditframe64::play_change (bool ischecked)
 {
     seq_pointer()->set_playing(ischecked);
+    ui->m_toggle_play->setToolTip
+    (
+        ischecked ? "Track is armed" : "Track is unarmed"
+    );
 }
 
 /**

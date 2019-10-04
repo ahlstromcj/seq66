@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-16
+ * \updates       2019-10-04
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -366,7 +366,7 @@ qseventslots::insert_event (const editable_event & edev)
              * if (m_event_container.is_valid_iterator(nev))
              */
 
-            editable_events::iterator nev = m_event_container.current_event();
+            auto nev = m_event_container.current_event();
             page_topper(nev);
             m_parent.set_dirty();
         }
@@ -506,7 +506,7 @@ qseventslots::delete_current_event ()
 
     if (result)
     {
-        editable_events::iterator oldcurrent = m_current_iterator;
+        auto oldcurrent = m_current_iterator;
         int oldcount = m_event_container.count();
         if (oldcount > 1)
         {
@@ -797,7 +797,7 @@ qseventslots::page_topper (editable_events::iterator newcurrent)
 
     if (ok)
     {
-        editable_events::iterator ei = m_event_container.begin();
+        auto ei = m_event_container.begin();
         int botindex = 0;
         while (ei != newcurrent)
         {
@@ -833,7 +833,7 @@ qseventslots::page_topper (editable_events::iterator newcurrent)
                  * Count carefully!
                  */
 
-                editable_events::iterator ei = m_event_container.begin();
+                auto ei = m_event_container.begin();
                 int pageup = botindex - line_maximum();
                 if (pageup < 0)
                 {
@@ -885,7 +885,7 @@ qseventslots::select_event (int event_index, bool full_redraw)
 
     if (ok)
     {
-        editable_events::iterator ei = m_top_iterator;
+        auto ei = m_top_iterator;
         ok = ei != m_event_container.end();
         if (ok && (event_index > 0))
         {
@@ -935,7 +935,7 @@ qseventslots::decrement_top ()
 int
 qseventslots::increment_top ()
 {
-    editable_events::iterator ei = m_top_iterator;
+    auto ei = m_top_iterator;
     if (ei != m_event_container.end())
     {
         ++ei;
@@ -988,7 +988,7 @@ qseventslots::decrement_current ()
 int
 qseventslots::increment_current ()
 {
-    editable_events::iterator ei = m_current_iterator;
+    auto ei = m_current_iterator;
     if (ei != m_event_container.end())
     {
         int result = SEQ66_NULL_EVENT_INDEX;
@@ -1043,7 +1043,7 @@ qseventslots::increment_bottom ()
     int result = SEQ66_NULL_EVENT_INDEX;
     if (m_bottom_iterator != m_event_container.end())
     {
-        editable_events::iterator old = m_bottom_iterator++;
+        auto old = m_bottom_iterator++;
         if (m_bottom_iterator != m_event_container.end())
             result = 0;
         else
