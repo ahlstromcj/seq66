@@ -5007,7 +5007,6 @@ $as_echo "#define _GNU_SOURCE 1" >>confdefs.h
 
 
 
-
 case `pwd` in
   *\ * | *\	*)
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Libtool does not cope well with whitespace in \`pwd\`" >&5
@@ -16344,8 +16343,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 
-
-
 LT_RELEASE="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
 
 
@@ -19440,7 +19437,7 @@ _ACEOF
 WARNFLAGS="-Wall -pedantic -Wno-parentheses $WARNINGS"
 APIDEF="-DAPI_VERSION=\"$SEQ66_API_VERSION\""
 SPEEDFLAGS="-ffast-math"
-COMMONFLAGS="$WARNFLAGS -D_REENTRANT $APIDEF $DBGFLAGS $STACKCHK $NOERRLOG $NOTHISPTR"
+COMMONFLAGS="$WARNFLAGS -D_REENTRANT $APIDEF $DBGFLAGS"
 WARNINGS_DISABLED="-Wno-unused-parameter -Wno-non-virtual-dtor"
 
 
@@ -20753,7 +20750,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
         ;;
 esac
-
 
 
 CFLAGS="$COMMONFLAGS"
@@ -23446,13 +23442,13 @@ $as_echo "$SEQ66_APP_NAME" >&6; };
 
 cat << E_O_F
 
-Run 'make' to build the selected application.  Run 'make install' as
-root/sudo to install the selected application.  Some tests can be run
-using the seq66tools project.  Do 'make dist', etc. to create gzip
-and other archives.  To build the PDF documentation, make sure Doxygen and
-TexLive are installed, change to the doc/dox directory, and run './make_dox
-reference'.  To clean the documentation, run './make_dox clean'.  'install' and
-'uninstall' are other options for make_dox.
+Run 'make' to build the application.  Run 'make install' as root/sudo to install
+the application.  Some tests can be run using the Seqtool project.  Do
+'make dist', etc. to create gzip and other archives.  To build the PDF
+documentation, make sure Doxygen, Graphviz, and TexLive are installed, change
+to the doc/dox directory, and run './make_dox reference'.  To clean the
+documentation, run './make_dox clean'.  'install' and 'uninstall' are other
+options for make_dox.
 
 E_O_F
 

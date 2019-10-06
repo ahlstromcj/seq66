@@ -161,10 +161,6 @@ if BUILD_QTMIDI
 SUBDIRS += seq_qt5 Seq66qt5
 endif
 
-### if BUILD_RTCLI
-### SUBDIRS += seq_rtmidi Seq64cli
-### endif
-
 if BUILD_SEQTOOL
 SUBDIRS += Seqtool
 endif

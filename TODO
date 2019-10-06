@@ -1,6 +1,6 @@
 TODO for Sequencer66 0.90.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-10-03
+2019-04-13 to 2019-10-04
 
 HOT ITEMS:
 
@@ -18,13 +18,6 @@ HOT ITEMS:
     Load a song with Song triggers; go to the song tab; select File/New. Note
     that the perfroll clears, but not the perfnames!  We need to derive all
     qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
-
-    Change tooltips on edit frame MIDI buttons to show current status, for
-    themes that do not show status clearly.  Still need to do it for the
-    arm/mute button in qseqeditframe64.
-
-    Make the zoom dropdown in the seqroll sync with the zoom changes via
-    keystroke.  Same for the zoom of the seqtime and triggereditor (bad name).
 
     Also test the MIDI control out feature to make sure the bit operators are
     correct.  If so, the same change in seq64!

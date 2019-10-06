@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-10-03
+ * \updates       2019-10-06
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Now includes the
@@ -36,7 +36,7 @@
 
 #include <string>
 
-#include "util/basic_macros.hpp"        /* seq66_platform_macros.h too      */
+#include "midi/midibytes.hpp"           /* seq66::midibytes                 */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -44,6 +44,29 @@
 
 namespace seq66
 {
+
+    class event_list;                   /* forward reference                */
+
+/**
+ *
+ */
+
+enum class keys
+{
+    C,                              /*  0 */
+    Csharp,                         /*  1 */
+    D,                              /*  2 */
+    Dsharp,                         /*  3 */
+    E,                              /*  4 */
+    F,                              /*  5 */
+    Fsharp,                         /*  6 */
+    G,                              /*  7 */
+    Gsharp,                         /*  8 */
+    A,                              /*  9 */
+    Asharp,                         /* 10 */
+    B,                              /* 11 */
+    max                             /* size of set */
+};
 
 /**
  *  A manifest constant for the normal number of semitones in an
@@ -94,7 +117,7 @@ enum class scales
     blues,
     major_pentatonic,
     minor_pentatonic,
-    max                     // a "maximum" or "size of set" value.
+    max                             /* a "maximum" or "size of set" value   */
 };
 
 /**
@@ -147,7 +170,8 @@ legal_scale (int s)
 \endverbatim
  */
 
-const bool c_scales_policy[c_scales_max][c_octave_size] =
+const bool
+c_scales_policy[c_scales_max][c_octave_size] =
 {
     {                                                   /* off = chromatic */
         true, true, true, true, true, true,
@@ -243,7 +267,8 @@ const bool c_scales_policy[c_scales_max][c_octave_size] =
 \endverbatim
  */
 
-const int c_scales_transpose_up[c_scales_max][c_octave_size] =
+const int
+c_scales_transpose_up[c_scales_max][c_octave_size] =
 {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
     { 2, 0, 2, 0, 1, 2, 0, 2, 0, 2, 0, 1},              /* major           */
@@ -310,7 +335,8 @@ const int c_scales_transpose_up[c_scales_max][c_octave_size] =
  *
  */
 
-const int c_scales_transpose_dn[c_scales_max][c_octave_size] =
+const int
+c_scales_transpose_dn[c_scales_max][c_octave_size] =
 {
     { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},  /* off = chromatic */
     { -1,  0, -2,  0, -2, -1,  0, -2,  0, -2,  0, -2},  /* major           */
@@ -329,7 +355,8 @@ const int c_scales_transpose_dn[c_scales_max][c_octave_size] =
  *  This array is easier to read, but not yet used in actual code.
  */
 
-const int c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
+const int
+c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
 {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},              /* off = chromatic */
     { 1, 0, 2, 0, 2, 1, 0, 2, 0, 2, 0, 2},              /* major           */
@@ -348,7 +375,8 @@ const int c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
  *  The names of the currently-supported scales.
  */
 
-const std::string c_scales_text[c_scales_max] =
+const std::string
+c_scales_text[c_scales_max] =
 {
     "Off (Chromatic)",
     "Major (Ionian)",
@@ -366,7 +394,8 @@ const std::string c_scales_text[c_scales_max] =
  *  window.
  */
 
-const std::string c_key_text[c_octave_size] =
+const std::string
+c_key_text[c_octave_size] =
 {
     "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
 };
@@ -376,7 +405,8 @@ const std::string c_key_text[c_octave_size] =
  *  window.
  */
 
-const std::string c_interval_text[16] =
+const std::string
+c_interval_text[16] =
 {
     "P1", "m2", "M2", "m3", "M3", "P4", "TT", "P5",
     "m6", "M6", "m7", "M7", "P8", "m9", "M9", ""
@@ -388,7 +418,8 @@ const std::string c_interval_text[16] =
  *  appears if the user has selected a musical scale like Major or Minor.
  */
 
-const std::string c_chord_text[8] =
+const std::string
+c_chord_text[8] =
 {
     "I", "II", "III", "IV", "V", "VI", "VII", "VIII"
 };
@@ -408,7 +439,8 @@ const int c_chord_number = 40;
  *  for the null terminator.  A good case for using std::string here. :-)
  */
 
-const std::string c_chord_table_text[c_chord_number] =
+const std::string
+c_chord_table_text[c_chord_number] =
 {
     "Off",    "Major",       "Majb5",      "minor",   "minb5",
     "sus2",   "sus4",        "aug",        "augsus4", "tri",
@@ -434,7 +466,8 @@ const int c_chord_size = 6;
  *  note offsets for the chord.
  */
 
-const int c_chord_table[c_chord_number][c_chord_size] =
+const int
+c_chord_table[c_chord_number][c_chord_size] =
 {
     { 0, -1, 0, 0, 0, 0 },      /* Off          */
     { 0, 4, 7, -1, 0, 0 },      /* Major        */
@@ -477,6 +510,24 @@ const int c_chord_table[c_chord_number][c_chord_size] =
     { 0, 3, 7, 11, 17, -1 },    /* m-Maj7add11  */
     { 0, 3, 7, 11, 21, -1 }     /* m-Maj7add13  */
 };
+
+/*
+ *  Free functions for scales.
+ */
+
+extern double midi_note_frequency (midibyte note);
+extern bool analyze_note
+(
+    midibyte note,
+    keys & outkey,
+    int & outoctave
+);
+extern bool analyze_notes
+(
+    const event_list & evlist,
+    keys & outkey,
+    scales & outscale
+);
 
 }           // namespace seq66
 

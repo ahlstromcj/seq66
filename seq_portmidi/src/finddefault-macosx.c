@@ -42,6 +42,8 @@
 #include "pmmacosxcm.h"
 #include "readbinaryplist.h"
 
+#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
+
 /**
  *  Parse preference files, find default device, search devices --
  * This parses the preference file(s) once for input and once for
@@ -98,6 +100,8 @@ find_default_device (char * path, int input, PmDeviceID id)
 
     return id;
 }
+
+#endif  // SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 
 /*
  * finddefault_macosx.c

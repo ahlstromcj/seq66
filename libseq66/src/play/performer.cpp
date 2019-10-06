@@ -1017,8 +1017,8 @@ performer::set_ppqn (int p)
         m_jack_asst.set_ppqn(p);
 #endif
 
-        m_one_measure = p * 4;                  // simplistic!
-        m_right_tick = m_one_measure * 4;       // ditto
+        m_one_measure = p * 4;                  /* simplistic!  */
+        m_right_tick = m_one_measure * 4;       /* ditto        */
     }
 }
 
@@ -2406,7 +2406,7 @@ performer::output_func ()
         }
         else
         {
-            pad.js_current_tick = 0.0;      // tick and tick fraction
+            pad.js_current_tick = 0.0;      /* tick and tick fraction       */
             pad.js_total_tick = 0.0;
             m_current_tick = 0.0;
         }
@@ -2456,8 +2456,8 @@ performer::output_func ()
             long delta_us = delta * 1000;
 #else
             clock_gettime(CLOCK_REALTIME, &current);
-            delta.tv_sec  = current.tv_sec - last.tv_sec;       // delta!
-            delta.tv_nsec = current.tv_nsec - last.tv_nsec;     // delta!
+            delta.tv_sec  = current.tv_sec - last.tv_sec;
+            delta.tv_nsec = current.tv_nsec - last.tv_nsec;
             long delta_us = (delta.tv_sec * 1000000) + (delta.tv_nsec / 1000);
 #endif
             midibpm bpm  = m_master_bus->get_beats_per_minute();
@@ -2487,7 +2487,7 @@ performer::output_func ()
             }
 
 #if defined SEQ66_JACK_SUPPORT
-            bool jackrunning = m_jack_asst.output(pad);     // offloaded code
+            bool jackrunning = m_jack_asst.output(pad);
             if (jackrunning)
             {
                 // No additional code needed besides the output() call above.
@@ -2544,7 +2544,7 @@ performer::output_func ()
             if (change_position)
             {
                 set_orig_ticks(m_starting_tick);
-                m_starting_tick = m_left_tick;      // restart at left marker
+                m_starting_tick = m_left_tick;      /* restart at L marker  */
                 m_reposition = false;
             }
 
@@ -2597,26 +2597,18 @@ performer::output_func ()
 #if defined SEQ66_JACK_SUPPORT
                             if (m_jack_asst.transport_not_starting())
                             {
-                                play(rtick - 1);                    // play!
+                                play(rtick - 1);
                                 printf("perf::play jack not transport(%ld)\n", rtick);
                             }
 #endif
                         }
                         else
                         {
-                            play(rtick - 1);                        // play!
+                            play(rtick - 1);
                             printf("perf::play jack running(%ld)\n", rtick);
                         }
 
-
                         midipulse ltick = get_left_tick();
-
-                        /*
-                         * This doesn't seem to be needed:
-                         *
-                         * reset_sequences();                       // reset!
-                         */
-
                         set_orig_ticks(ltick);
                         m_current_tick = double(ltick) + leftover_tick;
                         pad.js_current_tick = double(ltick) + leftover_tick;
@@ -2637,28 +2629,14 @@ performer::output_func ()
                     {
 #endif
                         midipulse jackrtick = pad.js_current_tick;
-                        play(midipulse(jackrtick));                 // play!
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                        printf
-                        (
-                            "perf::play jack running nostart(%ld)\n",
-                            jackrtick
-                        );
-#endif
+                        play(midipulse(jackrtick));
 #if defined SEQ66_JACK_SUPPORT
                     }
 #endif
                 }
                 else
                 {
-                    play (midipulse(pad.js_current_tick));           // play!
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                    printf
-                    (
-                        "perf::play jack not running (%g)\n",
-                        pad.js_current_tick
-                    );
-#endif
+                    play (midipulse(pad.js_current_tick));
                 }
 
                 /*
@@ -2865,9 +2843,8 @@ performer::input_func ()
                 if (m_master_bus->get_midi_event(&ev))
                 {
                     /*
-                     * Used when starting from the beginning of the song.
-                     * Obey the MIDI time clock.  Comments moved to the
-                     * banner.
+                     * Used when starting from the beginning of the song.  Obey
+                     * the MIDI time clock.  Comments moved to the banner.
                      */
 
                     if (ev.get_status() == EVENT_MIDI_START)
@@ -2894,11 +2871,11 @@ performer::input_func ()
                     else if (ev.get_status() == EVENT_MIDI_CLOCK)
                     {
                         if (m_midiclockrunning)
-                            m_midiclocktick += SEQ66_MIDI_CLOCK_INCREMENT;  // 8
+                            m_midiclocktick += SEQ66_MIDI_CLOCK_INCREMENT;
                     }
                     else if (ev.get_status() == EVENT_MIDI_SONG_POS)
                     {
-                        midibyte d0, d1;                // see note in banner
+                        midibyte d0, d1;            /* see note in banner   */
                         ev.get_data(d0, d1);
                         m_midiclockpos = combine_bytes(d0, d1);
                     }
@@ -2914,20 +2891,12 @@ performer::input_func ()
                         /*
                          *  Test for MIDI control events even if "dumping".
                          *  Otherwise, we cannot handle any more control events
-                         *  once recording is turned on.  WARNING:  This can
-                         *  slow down recording, so we check only for recording
-                         *  status now.
+                         *  once recording is turned on.  Warning:  This can
+                         *  slow down recording:  ! midi_control_record();
                          */
 
                         if (m_master_bus->is_dumping())
                         {
-                            /*
-                             * Check for all events, not just record-control,
-                             * to prevent unwanted recordings. Issue #150?
-                             *
-                             * if (! midi_control_record())
-                             */
-
                             if (! midi_control_event(ev))
                             {
                                 ev.set_timestamp(get_tick());
@@ -3139,7 +3108,7 @@ void
 performer::auto_play ()
 {
     bool songmode = song_mode();
-    bool onekey = false;        // keys().start() == keys().stop();
+    bool onekey = false;                /* keys().start() == keys().stop(); */
     bool isplaying = false;
     if (onekey)
     {
@@ -3229,7 +3198,7 @@ performer::all_notes_off ()
 {
     mapper().all_notes_off();
     if (m_master_bus)
-        m_master_bus->flush();                  /* flush the MIDI buss  */
+        m_master_bus->flush();                      /* flush MIDI buss  */
 }
 
 /**
@@ -4018,7 +3987,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         bool is_oneshot = midi_controls().is_oneshot();
         if (is_oneshot && ! s->get_playing())
         {
-            s->toggle_one_shot();           // why not just turn on???
+            s->toggle_one_shot();                   /* why not just turn on */
         }
         else if (is_queue && is_replace)
         {
@@ -4046,7 +4015,8 @@ performer::sequence_playing_toggle (seq::number seqno)
             {
                 set_sequence_control_status
                 (
-                    automation::action::off, automation::ctrlstatus::replace
+                    automation::action::off,
+                    automation::ctrlstatus::replace
                 );
                 off_sequences();
             }
@@ -4380,7 +4350,7 @@ performer::populate_default_ops ()
         (
             opcontrol::category_name(automation::category::mute_group),
             automation::category::mute_group,
-            automation::slot::mute_group,    // opnumber
+            automation::slot::mute_group,                       /* opnumber */
             [this] (automation::action a, int d0, int d1, bool inverse)
             {
                 return mute_group_control(a, d0, d1, inverse);
@@ -4591,7 +4561,7 @@ performer::mute_group_control
 
             if (a == automation::action::toggle)
             {
-                (void) apply_mutes(gn);     // select_and_mute_group(gn);
+                (void) apply_mutes(gn);
             }
             else if (a == automation::action::on)
             {
@@ -5677,7 +5647,7 @@ performer::sm_auto_func_list [] =
         automation::slot::pattern_edit, &performer::automation_edit_pending
     },
     { automation::slot::event_edit, &performer::automation_event_pending },
-    { automation::slot::song_mode, &performer::automation_song_mode          },
+    { automation::slot::song_mode, &performer::automation_song_mode      },
     { automation::slot::toggle_jack, &performer::automation_toggle_jack  },
     { automation::slot::menu_mode, &performer::automation_menu_mode      },
     {

@@ -77,7 +77,7 @@
  *  be no way of knowing the number of tracks before parsing them all.
  */
 
-#include <cmath>
+#include <cmath>                        /* for the pow() function           */
 
 #include "cfg/settings.hpp"             /* seq66::rc().show_midi() etc.     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile                   */

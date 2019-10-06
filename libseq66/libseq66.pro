@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2019-06-17
+# \update      2019-10-06
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -106,6 +106,7 @@ SOURCES += \
  src/cfg/rcfile.cpp \
  src/cfg/rcsettings.cpp \
  src/cfg/recent.cpp \
+ src/cfg/scales.cpp \
  src/cfg/settings.cpp \
  src/cfg/userinstrument.cpp \
  src/cfg/usermidibus.cpp \

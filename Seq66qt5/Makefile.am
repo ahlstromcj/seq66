@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2019-03-09
+# \update      2019-10-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -96,12 +96,11 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 # 	try to test SEQ66_RTMIDI_SUPPORT and SEQ66_PORTMIDI_SUPPORT until we have
 # 	to.
 #
-#   -I$(top_srcdir)/seq_portmidi/include
-#
 #------------------------------------------------------------------------------
 
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
+ -I$(top_srcdir)/seq_portmidi/include \
  -I$(top_srcdir)/seq_rtmidi/include \
  -I$(top_srcdir)/seq_qt5/include \
  $(QT_CXXFLAGS) \

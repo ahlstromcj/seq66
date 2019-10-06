@@ -120,7 +120,7 @@ pm_term (void)
     pm_winmm_term();
 }
 
-#if defined SEQ66_PORTMIDI_USE_JAVA_PREFS
+#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 
 /**
  *  Gets the default MIDI device by querying the Windows Registry.
@@ -227,7 +227,7 @@ pm_get_default_device_id (int is_input, char * key)
     return id;
 }
 
-#endif  // SEQ66_PORTMIDI_USE_JAVA_PREFS
+#endif  // SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 
 #if defined SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
 

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-09-24
+dnl \update        2019-10-05
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -127,9 +127,6 @@ SEQ66_LIBTOOL_VERSION="$SEQ66_LT_CURRENT.$SEQ66_LT_REVISION.$SEQ66_LT_AGE"
 
 dnl 1.b. Set up the version strings.  The primary version string of interest
 dnl      is SEQ66_API_VERSION.
-dnl
-dnl API_VERSION="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
-dnl AC_SUBST([API_VERSION])
 
 SEQ66_API_VERSION="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
 AC_SUBST([SEQ66_API_VERSION])
@@ -154,23 +151,14 @@ dnl
 dnl Initialize libtool in the default manner, which turns on shared
 dnl libraries if available, and enable static libraries if they do not conflict
 dnl with shared libraries.  Also sets the shell variable LIBTOOL_DEPS.
-dnl
 dnl The latest GNU documentation specifies version 2 of libtool, but Debian
 dnl testing provides only 1.5 (Debian unstable now provides 2.4).  So we don't
 dnl use these new macros, just the older, deprecated macros.
-
-dnl NEW
 
 AC_PROG_LIBTOOL
 
 LT_PREREQ([2.4.2])
 LT_INIT([win32-dll])
-
-dnl AC_SUBST([LIBTOOL_DEPS])
-dnl
-dnl See <http://www.delorie.com/gnu/docs/libtool/libtool_27.html> for the
-dnl usage of LIBTOOL_DEPS.
-
 LT_RELEASE="$SEQ66_API_MAJOR.$SEQ66_API_MINOR"
 AC_SUBST([LT_RELEASE])
 
@@ -228,11 +216,6 @@ if test -z "$DOXYGEN"; then
     AC_MSG_WARN([Doxygen not found, FYI only, not to worry])
 fi
 
-dnl Checks for the Cygwin environment. If present, sets shell variable
-dnl CYGWIN to 'yes'; if not present, sets CYGWIN to the empty string.
-dnl Commented out, use AC_CANONICAL_HOST instead.
-dnl Obsolete: AC_CYGWIN
-dnl
 dnl Windows support in Linux.  Might be unnecessary though, though.
 
 AC_ARG_ENABLE(mingw,
@@ -416,7 +399,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-09-24"
+#define VERSION_DATE_SHORT "2019-10-05"
 #define VERSION "0.90.1"
 
 )
@@ -434,18 +417,18 @@ AC_XPC_DEBUGGING
 
 dnl 8.  Set up other options in the compiler macros.
 dnl
-dnl -Wno-error=date-time breaks the build on KX Studio (gcc 4.8)
-dnl
-dnl Not present on gcc 4.8: -Wno-error=date-time
-dnl WARNFLAGS="-Wall -Wextra -pedantic -Wno-error=date-time $WARNINGS"
-dnl
+dnl -Wno-error=date-time breaks the build on KX Studio (gcc 4.8), removed.
 dnl gcc 8 uncovers a warnings issue in libsigc++, so remove -Wextra for now,
 dnl and add -Wno-parentheses.
+dnl
+dnl m4/xpc_debug.m4 defines DBGFLAGS to enable debugging/coverage/profiling.
+dnl m4/xpc_errorlog.m4 defines NOERRLOG.  Currently not used.
+dnl m4/xpc_thisptr.m4 defines NOTHISPTR.  Currently not used.
 
 WARNFLAGS="-Wall -pedantic -Wno-parentheses $WARNINGS"
 APIDEF="-DAPI_VERSION=\"$SEQ66_API_VERSION\""
 SPEEDFLAGS="-ffast-math"
-COMMONFLAGS="$WARNFLAGS -D_REENTRANT $APIDEF $DBGFLAGS $STACKCHK $NOERRLOG $NOTHISPTR"
+COMMONFLAGS="$WARNFLAGS -D_REENTRANT $APIDEF $DBGFLAGS"
 WARNINGS_DISABLED="-Wno-unused-parameter -Wno-non-virtual-dtor"
 
 dnl Check for MinGW. Workaround for libtool's DLL_EXPORT stupidity.
@@ -456,8 +439,7 @@ dnl
 dnl AX_PTHREAD
 dnl
 dnl That macro will cause output of just what tools are being used to build
-dnl code.
-dnl VERBCFLAGS="-v"
+dnl code:  VERBCFLAGS="-v"
 
 VERBCFLAGS=""
 
@@ -485,8 +467,6 @@ case "$host_os" in
 esac
 
 dnl Note the c++14 option.
-
-dnl ORIGINAL: CFLAGS="$CFLAGS $COMMONFLAGS"
 
 CFLAGS="$COMMONFLAGS"
 CXXFLAGS="$CFLAGS -std=c++14 -Wno-variadic-macros -Wno-deprecated-declarations"
@@ -547,13 +527,13 @@ AC_MSG_RESULT([$SEQ66_APP_NAME]);
 
 cat << E_O_F
 
-Run 'make' to build the selected application.  Run 'make install' as
-root/sudo to install the selected application.  Some tests can be run
-using the seq66tools project.  Do 'make dist', etc. to create gzip
-and other archives.  To build the PDF documentation, make sure Doxygen and
-TexLive are installed, change to the doc/dox directory, and run './make_dox
-reference'.  To clean the documentation, run './make_dox clean'.  'install' and
-'uninstall' are other options for make_dox.
+Run 'make' to build the application.  Run 'make install' as root/sudo to install
+the application.  Some tests can be run using the Seqtool project.  Do
+'make dist', etc. to create gzip and other archives.  To build the PDF
+documentation, make sure Doxygen, Graphviz, and TexLive are installed, change
+to the doc/dox directory, and run './make_dox reference'.  To clean the
+documentation, run './make_dox clean'.  'install' and 'uninstall' are other
+options for make_dox.
 
 E_O_F
 

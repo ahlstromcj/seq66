@@ -43,7 +43,9 @@ extern "C"
 {
 #endif
 
+#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 extern PmDeviceID find_default_device (char * path, int input, PmDeviceID);
+#endif  // SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 
 #if defined __cplusplus
 }               // extern "C"

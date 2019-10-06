@@ -43,7 +43,7 @@ void pm_macosxcm_term(void);
  * We use our own configuration setup for Seq66.
  */
 
-#if defined SEQ66_PORTMIDI_USE_JAVA_PREFS
+#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 PmDeviceID find_default_device (char * path, int input, PmDeviceID id);
 #endif
 

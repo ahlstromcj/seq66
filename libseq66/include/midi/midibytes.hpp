@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-09-16
+ * \updates       2019-10-06
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -175,14 +175,15 @@ using midistring = std::basic_string<midibyte>;
 using midibooleans = std::vector<midibool>;
 
 /**
- *  Maximum and unusable values.  Use these value to avoid sign issues.
- *  Only c_midishort is used right now.  Also see null_midipulse.
+ *  Maximum and unusable values.  Use these values to avoid sign issues.
+ *  Also see null_midipulse.
  */
 
-const midibyte c_midibyte_max = midibyte(0xFF);
-const bussbyte c_bussbyte_max = bussbyte(0xFF);
-const midishort c_midishort_max = midishort(0xFFFF);
-const midilong c_midilong_max = midilong(0xFFFFFFFF);
+const midibyte c_midibyte_max       = midibyte(0xFF);
+const midibyte c_midibyte_data_max  = midibyte(0x80);
+const bussbyte c_bussbyte_max       = bussbyte(0xFF);
+const midishort c_midishort_max     = midishort(0xFFFF);
+const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
 /**
  *  Provides a data structure to hold the numeric equivalent of the measures

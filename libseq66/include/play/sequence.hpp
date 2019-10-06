@@ -38,18 +38,18 @@
  *  module, and now just call its member functions to do the actual work.
  */
 
-#include <atomic>                       /* std::atomic<bool> for dirt   */
+#include <atomic>                       /* std::atomic<bool> for dirt       */
 #include <string>
 #include <stack>
 
-#include "seq66_features.hpp"           /* various feature #defines     */
-#include "cfg/scales.hpp"               /* key and scale constants      */
-#include "midi/event_list.hpp"          /* seq66::event_list            */
-#include "midi/midibus.hpp"             /* seq66::midibus               */
-#include "play/triggers.hpp"            /* seq66::triggers, etc.        */
-#include "util/automutex.hpp"           /* seq66::recmutex, automutex   */
-#include "util/calculations.hpp"        /* measures_to_ticks()          */
-#include "util/palette.hpp"             /* enum class ThumbColor        */
+#include "seq66_features.hpp"           /* various feature #defines         */
+#include "cfg/scales.hpp"               /* key and scale constants          */
+#include "midi/event_list.hpp"          /* seq66::event_list                */
+#include "midi/midibus.hpp"             /* seq66::midibus                   */
+#include "play/triggers.hpp"            /* seq66::triggers, etc.            */
+#include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
+#include "util/calculations.hpp"        /* measures_to_ticks()              */
+#include "util/palette.hpp"             /* enum class ThumbColor            */
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That

@@ -617,9 +617,15 @@
      </item>
      <item>
       <widget class="QComboBox" name="m_combo_key">
-       <property name="maximumSize">
+       <property name="minimumSize">
         <size>
          <width>40</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>48</width>
          <height>32</height>
         </size>
        </property>
@@ -861,8 +867,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>798</width>
-            <height>56</height>
+            <width>799</width>
+            <height>57</height>
            </rect>
           </property>
           <property name="sizePolicy">

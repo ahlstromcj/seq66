@@ -70,6 +70,8 @@ match_string (FILE * inf, char * s)
     return *s == 0;
 }
 
+#if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
+
 /**
  *  Parse preference files, find default device, search devices.
  *
@@ -100,8 +102,6 @@ find_default_device (char * path, int input, PmDeviceID id)
     int c, i;
     if (! pref_1)
         goto nopref; // cannot find preference file
-
-printf("find_default_device (char * path, int input, PmDeviceID id)\n");
 
     // full_name will be larger than necessary
 
@@ -188,6 +188,8 @@ nopref:
 
     return id;
 }
+
+#endif  // SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 
 /*
  * finddefault.c
