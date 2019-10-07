@@ -32,6 +32,8 @@
  *  functions.
  */
 
+#include <algorithm>                    /* std::rotate() function           */
+
 #include "midi/midibytes.hpp"           /* seq66::midi_timing, _measures    */
 
 /*
@@ -156,6 +158,21 @@ midi_booleans::midi_booleans (int count) :
 }
 
 /**
+ *  Construct from an array of booleans.
+ */
+
+midi_booleans::midi_booleans (const bool * barray, int count) :
+    m_booleans  ()
+{
+    if (not_nullptr(barray) && count > 0)
+    {
+        for (int i = 0; i < count; ++i)
+            m_booleans.push_back(midibool(barray[i]));
+    }
+}
+
+
+/**
  *  Constructs a vector and fills it.
  */
 
@@ -189,6 +206,92 @@ midi_booleans::operator = (const midi_booleans & rhs)
     }
     return *this;
 }
+
+/**
+ *  Rotates the boolean vector by the given count.  Turns out the good old STL
+ *  has an easy solution to this task.
+ *
+ * \param count
+ *      If positive, the vector is rotated leftward (subtracts from the index
+ *      of higher elements).  If negative, the vector is rotated rightward
+ *      (low index items move to a higher index).
+ */
+
+void
+midi_booleans::rotate (int count)
+{
+    if (count != 0)
+    {
+        if (count > 0)
+        {
+            std::rotate                 /* rotate left  */
+            (
+                m_booleans.begin(),
+                m_booleans.begin() + std::size_t(count),
+                m_booleans.end()
+            );
+        }
+        else
+        {
+            std::rotate                 /* rotate left  */
+            (
+                m_booleans.begin(),
+                m_booleans.begin() + m_booleans.size() - std::size_t(count),
+                m_booleans.end()
+            );
+        }
+    }
+}
+
+/**
+ *
+ */
+
+midibool &
+midi_booleans::operator [] (std::size_t index)
+{
+    static midibool s_default_value = midibool(false);
+    return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
+}
+
+/**
+ *
+ */
+
+midibool
+midi_booleans::operator [] (std::size_t index) const
+{
+    static midibool s_default_value = midibool(false);
+    return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
+}
+
+/**
+ *
+ */
+
+bool
+midi_booleans::match (const midi_booleans & rhs) const
+{
+    return m_booleans == rhs.m_booleans;
+}
+
+/**
+ *
+ */
+
+std::string
+midi_booleans::fingerprint () const
+{
+    std::string result;
+    for (auto mb : m_booleans)
+    {
+        bool bit = bool(mb);
+        result += bit ? "1" : "0" ;
+    }
+    result += "\n";
+    return result;
+}
+
 
 }           // namespace seq66
 

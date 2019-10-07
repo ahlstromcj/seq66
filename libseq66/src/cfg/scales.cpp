@@ -50,7 +50,6 @@
 \endverbatim
  */
 
-#include <algorithm>                    /* std::rotate() function           */
 #include <cmath>                        /* for the pow() function           */
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
@@ -137,7 +136,7 @@ analyze_note
  *  c_scales_max values in the the c_scales_policy[] array and see if the
  *  booleans in the scratchpad match.  If so, we have a match for a C scale.
  *  Otherwise, go to the next scales value, shift/rotate the scratchpad
- *  rightward, and look for a match.
+ *  leftward, and look for a match.
  *
  * \return
  *      Returns true if the analysis was workable.
@@ -154,11 +153,8 @@ analyze_notes
     bool result = evlist.count() > 0;
     if (result)
     {
-        midibooleans scratchpad;                    /* [c_octave_size]  */
+        midi_booleans scratchpad(c_octave_size);
         int notecount = 0;
-        for (int n = 0; n < c_octave_size; ++n)
-            scratchpad.push_back(midibool(false));
-
         for (auto e = evlist.cbegin(); e != evlist.cend(); ++e)
         {
             const event & er = event_list::cdref(e);
@@ -184,27 +180,50 @@ analyze_notes
 
         if (result)
         {
-            for (int k = c_key_of_C; k != c_key_of_max; ++k)
+            constexpr std::initializer_list<keys> keyslist =
             {
-                // TODO TODO TODO TODO TODO TODO TODO TODO 
+                keys::C, keys::Csharp, keys::D, keys::Dsharp,
+                keys::E, keys::F, keys::Fsharp, keys::G, keys::Gsharp,
+                keys::A, keys::Asharp, keys::B
+            };
+            result = false;
+            for (auto k : keyslist)
+            {
+                for (int s = c_scales_off; s < c_scales_max; ++s)
+                {
+                    midi_booleans policy(&c_scales_policy[s][0], c_octave_size);
+                    if (scratchpad.match(policy))
+                    {
+
+                        outkey = k;
+                        outscale = static_cast<scales>(s);
+                        result = true;
+                        break;
+                    }
+                }
+                if (result)
+                {
+                    break;
+                }
+                else
+                {
+                    scratchpad.rotate(1);
+                }
             }
         }
     }
     return result;
 }
 
-/**
- *  Rotates a 12-element scratch pad buffer describing a scale. Rotates the
- *  current scale to scale + 1.  For example, a scale buffer meant for the key
- *  of C is rotated to represent C#.  Turns out the good old STL has an easy
- *  solution to this task.
- */
-
-void
-rotate_scales_scratchpad (midibooleans & scratchpad)
+#if 0
+std::string
+show_key_and_scale (keys k, scales s)
 {
-    std::rotate(scratchpad.begin(), scratchpad.begin() + 1, scratchpad.end());
+    std::string result;
+
+    return result;
 }
+#endif
 
 }           // namespace seq66
 

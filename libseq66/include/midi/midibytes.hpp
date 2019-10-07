@@ -446,9 +446,17 @@ private:
 public:
 
     midi_booleans (int count = 0);
+    midi_booleans (const bool * barray, int count);
     midi_booleans (const midibooleans & mbs);
     midi_booleans (const midi_booleans & mbs);
     midi_booleans & operator = (const midi_booleans & rhs);
+
+    midibool & operator [] (std::size_t index);
+    midibool operator [] (std::size_t index) const;
+
+    void rotate (int count);
+    bool match (const midi_booleans & rhs) const;
+    std::string fingerprint () const;
 
 };              // class midi_booleans
 

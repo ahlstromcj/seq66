@@ -143,6 +143,7 @@ private:
 
     void update_draw_geometry ();
     void remove_lfo_frame ();
+    void analyze_seq_notes ();
     QIcon * create_menu_image (bool state);
 
 signals:

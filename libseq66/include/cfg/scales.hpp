@@ -536,7 +536,6 @@ extern bool analyze_notes
     keys & outkey,
     scales & outscale
 );
-extern void rotate_scales_scratchpad (bool scratchpad []);
 
 }           // namespace seq66
 

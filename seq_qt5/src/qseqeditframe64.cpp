@@ -309,7 +309,7 @@ s_lookup_zoom (int zoom)
 
 /**
  *  Looks up a chord name and returns its index.  Note that the chord names
- *  are defined in the scales.h file.
+ *  are defined in the scales.hpp file.
  *
  *  CURRENTLY NOT NEEDED.  Macroed out to avoid a warning.
  */
@@ -564,7 +564,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     /*
      * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
-     * in the scales.h header file.
+     * in the scales.hpp header file.
      */
 
 #if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
@@ -1136,6 +1136,8 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     {
         if (event->key() == Qt::Key_Space)
             start_playing();
+        else if (event->key() == Qt::Key_A)
+            analyze_seq_notes();
     }
 }
 
@@ -3231,6 +3233,25 @@ QWidget *
 qseqeditframe64::rollwidget () const
 {
     return ui->rollScrollArea->widget();
+}
+
+/**
+ *
+ */
+
+void
+qseqeditframe64::analyze_seq_notes ()
+{
+    keys outkey;
+    scales outscale;
+    if (analyze_notes(seq_pointer()->events(), outkey, outscale))
+    {
+        printf
+        (
+            "key %d, scaled %d\n",
+            static_cast<int>(outkey), static_cast<int>(outscale)
+        );
+    }
 }
 
 }           // namespace seq66
