@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-10-06
+ * \updates       2019-10-07
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -185,6 +185,12 @@ const bussbyte c_bussbyte_max       = bussbyte(0xFF);
 const midishort c_midishort_max     = midishort(0xFFFF);
 const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
+/*
+ * -------------------------------------------------------------------------
+ *  midi_measures
+ * -------------------------------------------------------------------------
+ */
+
 /**
  *  Provides a data structure to hold the numeric equivalent of the measures
  *  string "measures:beats:divisions" ("m:b:d").  More commonly known as
@@ -288,6 +294,12 @@ public:
     }
 
 };          // class midi_measures
+
+/*
+ * -------------------------------------------------------------------------
+ *  midi_timing
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  We anticipate the need to have a small structure holding the parameters
@@ -410,6 +422,35 @@ public:
     }
 
 };              // class midi_timing
+
+/*
+ * -------------------------------------------------------------------------
+ *  midi_booleans
+ * -------------------------------------------------------------------------
+ */
+
+/**
+ *  Provides a more functional wrapper for the midibooleans vector.
+ */
+
+class midi_booleans
+{
+private:
+
+    /**
+     *  The vector of midibools
+     */
+
+    midibooleans m_booleans;
+
+public:
+
+    midi_booleans (int count = 0);
+    midi_booleans (const midibooleans & mbs);
+    midi_booleans (const midi_booleans & mbs);
+    midi_booleans & operator = (const midi_booleans & rhs);
+
+};              // class midi_booleans
 
 /**
  *  Compares a midipulse value to null_midipulse.  By "null" in this

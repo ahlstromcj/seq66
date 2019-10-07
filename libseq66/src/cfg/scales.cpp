@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2019-10-05
+ * \updates       2019-10-07
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of all the scale interval patterns if you are working with
@@ -50,6 +50,7 @@
 \endverbatim
  */
 
+#include <algorithm>                    /* std::rotate() function           */
 #include <cmath>                        /* for the pow() function           */
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
@@ -132,6 +133,12 @@ analyze_note
 /**
  *  Analyzes a set of notes to see what key and scale best fits the notes.
  *
+ *  To get the kind of scale, we first need to go through each of the
+ *  c_scales_max values in the the c_scales_policy[] array and see if the
+ *  booleans in the scratchpad match.  If so, we have a match for a C scale.
+ *  Otherwise, go to the next scales value, shift/rotate the scratchpad
+ *  rightward, and look for a match.
+ *
  * \return
  *      Returns true if the analysis was workable.
  */
@@ -147,12 +154,10 @@ analyze_notes
     bool result = evlist.count() > 0;
     if (result)
     {
-        bool scratchpad[c_octave_size];
+        midibooleans scratchpad;                    /* [c_octave_size]  */
         int notecount = 0;
         for (int n = 0; n < c_octave_size; ++n)
-            scratchpad[n] = false;
-
-//      for (const auto & e : evlist)
+            scratchpad.push_back(midibool(false));
 
         for (auto e = evlist.cbegin(); e != evlist.cend(); ++e)
         {
@@ -168,7 +173,7 @@ analyze_notes
                 if (result)
                 {
                     int n = static_cast<int>(thekey);
-                    scratchpad[n] = true;
+                    scratchpad[n] = midibool(true);
                 }
                 else
                     break;
@@ -179,16 +184,26 @@ analyze_notes
 
         if (result)
         {
-            // TODO:
-            //
-            //  To get the kind of scale, we first need to go through each of
-            //  the c_scales_max values in the the c_scales_policy[] array and
-            //  see if the booleans in the scratchpad match.  If so, we have a
-            //  match for a C scale. Otherwise, go to the next scales value,
-            //  shift/rotate the scratchpad, and look for a match.
+            for (int k = c_key_of_C; k != c_key_of_max; ++k)
+            {
+                // TODO TODO TODO TODO TODO TODO TODO TODO 
+            }
         }
     }
     return result;
+}
+
+/**
+ *  Rotates a 12-element scratch pad buffer describing a scale. Rotates the
+ *  current scale to scale + 1.  For example, a scale buffer meant for the key
+ *  of C is rotated to represent C#.  Turns out the good old STL has an easy
+ *  solution to this task.
+ */
+
+void
+rotate_scales_scratchpad (midibooleans & scratchpad)
+{
+    std::rotate(scratchpad.begin(), scratchpad.begin() + 1, scratchpad.end());
 }
 
 }           // namespace seq66

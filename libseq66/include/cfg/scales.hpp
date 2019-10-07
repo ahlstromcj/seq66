@@ -22,15 +22,16 @@
 /**
  * \file          scales.hpp
  *
- *  This module declares/defines just the scales-related global variables.
+ *  This module declares/defines the scales-related global variables and
+ *  functions.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-10-06
+ * \updates       2019-10-07
  * \license       GNU GPLv2 or above
  *
- *  These values were moved from the globals module.  Now includes the
+ *  These values were moved from the globals module.  Includes the
  *  chord-generation data.
  */
 
@@ -45,7 +46,7 @@
 namespace seq66
 {
 
-    class event_list;                   /* forward reference                */
+class event_list;                       /* forward reference                */
 
 /**
  *
@@ -80,7 +81,14 @@ const int c_octave_size = 12;
  *  of a musical key, is the default key of C.
  */
 
-const int c_key_of_C = 0;
+const int c_key_of_C = static_cast<int>(keys::C);
+
+/**
+ *  A constant for clarification of the value of zero, which, in the context
+ *  of a musical key, is the default key of C.
+ */
+
+const int c_key_of_max = static_cast<int>(keys::max);
 
 /**
  *  An inline function to test that an integer in a legal key value.
@@ -528,6 +536,7 @@ extern bool analyze_notes
     keys & outkey,
     scales & outscale
 );
+extern void rotate_scales_scratchpad (bool scratchpad []);
 
 }           // namespace seq66
 

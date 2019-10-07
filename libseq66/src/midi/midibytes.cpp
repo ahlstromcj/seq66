@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2018-11-09
+ * \updates       2019-10-07
  * \license       GNU GPLv2 or above
  *
  *  These classes were originally structures, but now they are "constant"
@@ -40,6 +40,12 @@
 
 namespace seq66
 {
+
+/*
+ * -------------------------------------------------------------------------
+ *  midi_measures
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Default constructor for midi_measures.
@@ -78,6 +84,12 @@ midi_measures::midi_measures
 {
     // Empty body
 }
+
+/*
+ * -------------------------------------------------------------------------
+ *  midi_timing
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Defaults constructor for midi_timing.
@@ -121,6 +133,61 @@ midi_timing::midi_timing
     m_ppqn                  (ppqn)
 {
     // Empty body
+}
+
+/*
+ * -------------------------------------------------------------------------
+ *  midi_booleans
+ * -------------------------------------------------------------------------
+ */
+
+/**
+ *  Constructs either an empty set or a set of false values.
+ */
+
+midi_booleans::midi_booleans (int count) :
+    m_booleans  ()
+{
+    if (count > 0)
+    {
+        for (int i = 0; i < count; ++i)
+            m_booleans.push_back(midibool(false));
+    }
+}
+
+/**
+ *  Constructs a vector and fills it.
+ */
+
+midi_booleans::midi_booleans (const midibooleans & mbs) :
+    m_booleans  ()
+{
+    for (size_t i = 0; i < mbs.size(); ++i)
+        m_booleans.push_back(mbs[i]);
+}
+
+/**
+ *  Copies a vector.
+ */
+
+midi_booleans::midi_booleans (const midi_booleans & mbs) :
+    m_booleans  (mbs.m_booleans)
+{
+    // no code
+}
+
+/**
+ *  Assigns a vector.
+ */
+
+midi_booleans &
+midi_booleans::operator = (const midi_booleans & rhs)
+{
+    if (this != &rhs)
+    {
+        m_booleans = rhs.m_booleans;
+    }
+    return *this;
 }
 
 }           // namespace seq66
