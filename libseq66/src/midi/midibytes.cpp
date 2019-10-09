@@ -270,9 +270,25 @@ midi_booleans::operator [] (std::size_t index) const
  */
 
 bool
-midi_booleans::match (const midi_booleans & rhs) const
+midi_booleans::match (const midi_booleans & rhs, int count) const
 {
-    return m_booleans == rhs.m_booleans;
+    if (count > 0)
+    {
+        int actualcount = 0;
+        for (std::size_t i = 0; i < m_booleans.size(); ++i)
+        {
+            bool target = bool(m_booleans[i]);
+            bool policy = bool(rhs.m_booleans[i]);
+            if (target)                             /* a note exists here   */
+            {
+                if (policy)
+                    ++actualcount;                  /* note matches policy  */
+            }
+        }
+        return actualcount >= count;
+    }
+    else
+        return m_booleans == rhs.m_booleans;
 }
 
 /**
@@ -292,6 +308,22 @@ midi_booleans::fingerprint () const
     return result;
 }
 
+/**
+ *
+ */
+
+int
+midi_booleans::true_count () const
+{
+    int result = 0;
+    for (auto mb : m_booleans)
+    {
+        bool bit = bool(mb);
+        if (bit)
+            ++result;
+    }
+    return result;
+}
 
 }           // namespace seq66
 

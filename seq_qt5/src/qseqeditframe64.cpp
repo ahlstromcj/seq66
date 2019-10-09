@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-10-03
+ * \updates       2019-10-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -829,7 +829,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     for (int key = 0; key < c_octave_size; ++key)
     {
-        QString combo_text = c_key_text[key].c_str();
+        QString combo_text = musical_key_name(key).c_str();
         ui->m_combo_key->insertItem(key, combo_text);
     }
     ui->m_combo_key->setCurrentIndex(m_key);
@@ -857,7 +857,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
-        QString combo_text = c_scales_text[scale].c_str();
+        QString combo_text = musical_scale_name(scale).c_str();
         ui->m_combo_scale->insertItem(scale, combo_text);
     }
     ui->m_combo_scale->setCurrentIndex(m_scale);
@@ -3246,12 +3246,16 @@ qseqeditframe64::analyze_seq_notes ()
     scales outscale;
     if (analyze_notes(seq_pointer()->events(), outkey, outscale))
     {
+        int k = static_cast<int>(outkey);
+        int s = static_cast<int>(outscale);
         printf
         (
-            "key %d, scaled %d\n",
-            static_cast<int>(outkey), static_cast<int>(outscale)
+            "key %s (%d), scale %s (%d)\n",
+            musical_key_name(k).c_str(),
+            k, musical_scale_name(s).c_str(), s
         );
     }
+    // MORE TO DO
 }
 
 }           // namespace seq66

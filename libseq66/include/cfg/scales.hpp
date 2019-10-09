@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-10-07
+ * \updates       2019-10-09
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -394,7 +394,7 @@ c_scales_text[c_scales_max] =
     "Whole Tone",
     "Blues",
     "Pentatonic Major",
-    "Pentatonic Minor",
+    "Pentatonic Minor"
 };
 
 /**
@@ -523,6 +523,8 @@ c_chord_table[c_chord_number][c_chord_size] =
  *  Free functions for scales.
  */
 
+extern std::string musical_key_name (int k);
+extern std::string musical_scale_name (int s);
 extern double midi_note_frequency (midibyte note);
 extern bool analyze_note
 (

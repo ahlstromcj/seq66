@@ -455,8 +455,9 @@ public:
     midibool operator [] (std::size_t index) const;
 
     void rotate (int count);
-    bool match (const midi_booleans & rhs) const;
+    bool match (const midi_booleans & rhs, int count = 0) const;
     std::string fingerprint () const;
+    int true_count () const;
 
 };              // class midi_booleans
 

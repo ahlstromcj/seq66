@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2019-10-07
+ * \updates       2019-10-09
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of all the scale interval patterns if you are working with
@@ -61,6 +61,34 @@
 
 namespace seq66
 {
+
+/**
+ *
+ */
+
+std::string
+musical_key_name (int k)
+{
+    std::string result = "Unsupported";
+    if (legal_key(k))
+        result = c_key_text[k];
+
+    return result;
+}
+
+/**
+ *
+ */
+
+std::string
+musical_scale_name (int s)
+{
+    std::string result = "Unsupported";
+    if (legal_scale(s))
+        result = c_scales_text[s];
+
+    return result;
+}
 
 /**
  *  Convert a MIDI note number to frequency.  The formula, based on A4 (note 69)
@@ -159,9 +187,8 @@ analyze_notes
         {
             const event & er = event_list::cdref(e);
             keys thekey;
-            scales thescale;
             int theoctave;
-            if (er.is_note())
+            if (er.is_note_on())
             {
                 ++notecount;
                 midibyte note = er.get_note();
@@ -187,43 +214,43 @@ analyze_notes
                 keys::A, keys::Asharp, keys::B
             };
             result = false;
-            for (auto k : keyslist)
+            for (auto ken : keyslist)
             {
                 for (int s = c_scales_off; s < c_scales_max; ++s)
                 {
                     midi_booleans policy(&c_scales_policy[s][0], c_octave_size);
-                    if (scratchpad.match(policy))
-                    {
 
-                        outkey = k;
+                    printf("scratchpad true count = %d\n", scratchpad.true_count());
+
+                    if (scratchpad.match(policy, scratchpad.true_count()))
+                    {
+                        outkey = ken;
                         outscale = static_cast<scales>(s);
                         result = true;
                         break;
                     }
+
+                    std::string scratchprint = scratchpad.fingerprint();
+                    std::string policyprint = policy.fingerprint();
+                    int k = static_cast<int>(ken);
+                    printf
+                    (
+                        "key %s (%d), scale %s (%d): "
+                        "fingerprint: %s; policy: %s\n",
+                        musical_key_name(k).c_str(), k,
+                        musical_scale_name(s).c_str(), s,
+                        scratchprint.c_str(), policyprint.c_str()
+                    );
                 }
                 if (result)
-                {
                     break;
-                }
                 else
-                {
                     scratchpad.rotate(1);
-                }
             }
         }
     }
     return result;
 }
-
-#if 0
-std::string
-show_key_and_scale (keys k, scales s)
-{
-    std::string result;
-
-    return result;
-}
-#endif
 
 }           // namespace seq66
 

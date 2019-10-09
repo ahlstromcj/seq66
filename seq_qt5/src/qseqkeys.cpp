@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-27
+ * \updates       2019-10-09
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -174,7 +174,7 @@ qseqkeys::paintEvent (QPaintEvent *)
                 snprintf                            /* see scales.hpp       */
                 (
                     note, sizeof note, "%2s%1d",
-                    c_key_text[key].c_str(), octave
+                    musical_key_name(key).c_str(), octave
                 );
                 pen.setColor(Qt::black);            /* "Cx" octave labels   */
                 pen.setStyle(Qt::SolidLine);
