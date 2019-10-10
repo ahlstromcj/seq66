@@ -266,12 +266,6 @@ usrsettings::usrsettings () :
     m_seqs_in_set               (0),            // set correctly in normalize()
     m_gmute_tracks              (0),            // same as max-tracks
     m_max_sequence              (0),
-    m_seqarea_x                 (0),
-    m_seqarea_y                 (0),
-    m_seqarea_seq_x             (0),
-    m_seqarea_seq_y             (0),
-    m_mainwid_x                 (0),
-    m_mainwid_y                 (0),
     m_mainwnd_x                 (780),          // constant
     m_mainwnd_y                 (412),          // constant
     m_save_user_config          (false),
@@ -374,12 +368,6 @@ usrsettings::usrsettings (const usrsettings & rhs) :
     m_seqs_in_set               (rhs.m_seqs_in_set),
     m_gmute_tracks              (rhs.m_gmute_tracks),
     m_max_sequence              (rhs.m_max_sequence),
-    m_seqarea_x                 (rhs.m_seqarea_x),
-    m_seqarea_y                 (rhs.m_seqarea_y),
-    m_seqarea_seq_x             (rhs.m_seqarea_seq_x),
-    m_seqarea_seq_y             (rhs.m_seqarea_seq_y),
-    m_mainwid_x                 (rhs.m_mainwid_x),
-    m_mainwid_y                 (rhs.m_mainwid_y),
     m_mainwnd_x                 (rhs.m_mainwnd_x),
     m_mainwnd_y                 (rhs.m_mainwnd_y),
     m_save_user_config          (rhs.m_save_user_config),
@@ -613,20 +601,6 @@ usrsettings::normalize ()
     m_max_sequence = m_seqs_in_set * m_max_sets;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;         /* TODO!        */
     m_total_seqs = m_seqs_in_set * m_max_sets;
-    m_seqarea_x = m_text_x * m_seqchars_x;
-    m_seqarea_y = m_text_y * m_seqchars_y;
-    m_seqarea_seq_x = m_text_x * 13;
-    m_seqarea_seq_y = m_text_y * 2;
-    m_mainwid_x =
-    (
-        (m_seqarea_x + m_mainwid_spacing) * m_mainwnd_cols - m_mainwid_spacing +
-            m_mainwid_border * 2
-    );
-    m_mainwid_y =
-    (
-        (m_seqarea_y + m_mainwid_spacing) * m_mainwnd_rows +
-             m_control_height + m_mainwid_border * 2
-    );
 }
 
 /**
@@ -920,46 +894,6 @@ usrsettings::seqchars_y (int value)
         m_seqchars_y = value;
         normalize();
     }
-}
-
-/**
- * \setter m_seqarea_x
- */
-
-void
-usrsettings::seqarea_x (int value)
-{
-    m_seqarea_x = value;
-}
-
-/**
- * \setter m_seqarea_y
- */
-
-void
-usrsettings::seqarea_y (int value)
-{
-    m_seqarea_y = value;
-}
-
-/**
- * \setter m_seqarea_seq_x
- */
-
-void
-usrsettings::seqarea_seq_x (int value)
-{
-    m_seqarea_seq_x = value;
-}
-
-/**
- * \setter m_seqarea_seq_y
- */
-
-void
-usrsettings::seqarea_seq_y (int value)
-{
-    m_seqarea_seq_y = value;
 }
 
 /**
@@ -1274,50 +1208,6 @@ usrsettings::block_columns (int count)
 #endif
 }
 
-/*
- *  Derived calculations
- */
-
-/**
- *  Replaces the hard-wired calculation in the mainwid module.
- *  Affected by the c_mainwid_border and c_mainwid_spacing values.
- *
- * \return
- *      Returns the width, in pixels, of a mainwid grid.
- */
-
-int
-usrsettings::mainwid_width () const
-{
-    int result = (m_seqarea_x + m_mainwid_spacing) * m_mainwnd_cols -
-        m_mainwid_spacing + m_mainwid_border * 2 + mainwid_width_fudge() * 2;
-
-    return scale_size(result);
-}
-
-/**
- *  Replaces the hard-wired calculation in the mainwid module.
- *  Affected by the c_mainwid_border and c_control_height values.
- *
- * \change ca 2017-08-13 Issue #104.
- *      Add 8 to the height calculation until we can figure out how to adjust
- *      for button height increases due to adding the main-window time-stamp
- *      field.
- *
- * \return
- *      Returns the height, in pixels, of a mainwid grid.
- */
-
-int
-usrsettings::mainwid_height () const
-{
-    int result = (c_seqarea_y + c_mainwid_spacing) * m_mainwnd_rows +
-         (c_control_height + c_mainwid_border * 2) + // MAINWID_HEIGHT_FUDGE
-         mainwid_height_fudge() * 2;
-
-    return scale_size(result);
-}
-
 /**
  *  Provides a debug dump of basic information to help debug a
  *  surprisingly intractable problem with all busses having the name and
@@ -1364,19 +1254,14 @@ usrsettings::dump_summary ()
     printf
     (
         "   seqchars_x(), _y() = %d, %d\n"
-        "   seqarea_x(), _y() = %d, %d\n"
-        "   seqarea_seq_x(), _y() = %d, %d\n"
         "   mainwid_border() = %d\n"
         "   mainwid_spacing() = %d\n"
         "   mainwid_x(), _y() = %d, %d\n"
         "   control_height() = %d\n"
         ,
         seqchars_x(), seqchars_y(),
-        seqarea_x(), seqarea_y(),
-        seqarea_seq_x(), seqarea_seq_y(),
         mainwid_border(),
         mainwid_spacing(),
-        mainwid_x(), mainwid_y(),
         control_height()
     );
     printf("\n");

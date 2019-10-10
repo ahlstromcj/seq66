@@ -86,20 +86,6 @@ const int c_redraw_ms = 40;
 #endif
 
 /**
- *  Provides a visible tweak for the seq66::usrsettings::mainwid_height()
- *  function.
- */
-
-const int MAINWID_WIDTH_FUDGE = 2;
-
-/**
- *  Provides a visible tweak for the seq66::usrsettings::mainwid_height()
- *  function.
- */
-
-const int MAINWID_HEIGHT_FUDGE = 4;
-
-/**
  *  Holds the current values of sequence settings and settings that can
  *  modify the number of sequences and the configuration of the
  *  user-interface.  These settings will eventually be made part of the
@@ -705,29 +691,6 @@ private:
     int m_max_sequence;
 
     /**
-     *  The m_seqarea_x and m_seqarea_y constants are derived from the
-     *  width and heights of the default character set, and the number of
-     *  characters in width, and the number of lines, in a
-     *  pattern/sequence box.
-     *
-     *  Compare these two constants to m_seqarea_seq_x(y), which was in
-     *  mainwid.h, but is now in this file.
-     */
-
-    int m_seqarea_x;
-    int m_seqarea_y;
-
-    /**
-     *  These values delineate the smaller rectangle inside of a mainwid cell,
-     *  wherein the sequence events are drawn. Doesn't look at all like it is
-     *  based on the size of characters.  These values are used only in the
-     *  mainwid module.
-     */
-
-    int m_seqarea_seq_x;
-    int m_seqarea_seq_y;
-
-    /**
      *  The width of the main pattern/sequence grid, in pixels.  Affected by
      *  the m_mainwid_border and m_mainwid_spacing values, as well a
      *  m_window_scale.  Replaces c_mainwid_x.
@@ -917,10 +880,6 @@ public:
         return private_instrument(index);
     }
 
-    /**
-     * \getter m_midi_buses.size()
-     */
-
     int bus_count () const
     {
         return int(m_midi_buses.size());
@@ -928,27 +887,15 @@ public:
 
     void set_bus_instrument (int index, int channel, int instrum);
 
-    /**
-     * \getter m_midi_buses[buss].instrument[channel]
-     */
-
      int bus_instrument (int buss, int channel)
      {
           return bus(buss).instrument(channel);
      }
 
-    /**
-     * \getter m_midi_buses[buss].name
-     */
-
     const std::string & bus_name (int buss)
     {
         return bus(buss).name();
     }
-
-    /**
-     * \getter m_instruments.size()
-     */
 
     int instrument_count () const
     {
@@ -980,19 +927,15 @@ public:
         return instrument(instrum).name();
     }
 
-    /**
-     * \getter m_instruments[instrument].controllers_active[controller]
-     */
-
     bool instrument_controller_active (int instrum, int cc)
     {
         return instrument(instrum).controller_active(cc);
     }
 
     /**
-     *      A convenience function so that the caller doesn't have to get the
-     *      instrument number from the bus_instrument() member function.
-     *      It also has a shorter name.
+     *  A convenience function so that the caller doesn't have to get the
+     *  instrument number from the bus_instrument() member function.  It also
+     *  has a shorter name.
      */
 
     bool controller_active (int buss, int channel, int cc)
@@ -1000,10 +943,6 @@ public:
         int instrum = bus_instrument(buss, channel);
         return instrument(instrum).controller_active(cc);
     }
-
-    /**
-     * \getter m_instruments[instrument].controllers_active[controller]
-     */
 
     const std::string & instrument_controller_name (int instrum, int cc)
     {
@@ -1024,10 +963,6 @@ public:
     }
 
 public:
-
-    /**
-     * \getter m_window_scale
-     */
 
     float window_scale () const
     {
@@ -1117,27 +1052,15 @@ public:
         return m_grid_style == grid::black;
     }
 
-    /**
-     * \getter m_grid_brackets
-     */
-
     int grid_brackets () const
     {
         return m_grid_brackets;
     }
 
-    /**
-     * \getter m_mainwnd_rows
-     */
-
     int mainwnd_rows () const
     {
         return m_mainwnd_rows;
     }
-
-    /**
-     * \getter m_mainwnd_cols
-     */
 
     int mainwnd_cols () const
     {
@@ -1171,45 +1094,25 @@ public:
         );
     }
 
-    /**
-     * \getter m_seqs_in_set, dependent member
-     */
-
     int seqs_in_set () const
     {
         return m_seqs_in_set;
     }
-
-    /**
-     * \getter m_gmute_tracks, dependent member
-     */
 
     int gmute_tracks () const
     {
         return m_gmute_tracks;
     }
 
-    /**
-     * \getter m_max_sets
-     */
-
     int max_sets () const
     {
         return m_max_sets;
     }
 
-    /**
-     * \getter m_max_sequence, dependent member
-     */
-
     int max_sequence () const
     {
         return m_max_sequence;
     }
-
-    /**
-     * \getter m_total_seqs
-     */
 
     int total_seqs () const
     {
@@ -1253,42 +1156,6 @@ public:
     }
 
     /**
-     * \getter m_seqarea_x, not user modifiable, not saved
-     */
-
-    int seqarea_x () const
-    {
-        return scale_size(m_seqarea_x);
-    }
-
-    /**
-     * \getter m_seqarea_y, not user modifiable, not saved
-     */
-
-    int seqarea_y () const
-    {
-        return scale_size(m_seqarea_y);
-    }
-
-    /**
-     * \getter m_seqarea_seq_x, not user modifiable, not saved
-     */
-
-    int seqarea_seq_x () const
-    {
-        return scale_size(m_seqarea_seq_x);
-    }
-
-    /**
-     * \getter m_seqarea_seq_y, not user modifiable, not saved
-     */
-
-    int seqarea_seq_y () const
-    {
-        return scale_size(m_seqarea_seq_y);
-    }
-
-    /**
      * \getter m_mainwid_border
      */
 
@@ -1306,24 +1173,6 @@ public:
         return scale_size(m_mainwid_spacing);
     }
 
-    /**
-     * \getter m_mainwid_x, dependent member
-     */
-
-    int mainwid_x () const
-    {
-        return scale_size(m_mainwid_x);
-    }
-
-    /**
-     * \getter m_mainwid_y, dependent member
-     */
-
-    int mainwid_y () const
-    {
-        return scale_size(m_mainwid_y);
-    }
-
     int mainwnd_x () const;
     int mainwnd_y () const;
 
@@ -1333,7 +1182,7 @@ public:
 
     int mainwid_border_x () const
     {
-        return scale_size(m_mainwid_border + mainwid_width_fudge());
+        return scale_size(m_mainwid_border);
     }
 
     /**
@@ -1342,7 +1191,7 @@ public:
 
     int mainwid_border_y () const
     {
-        return scale_size(m_mainwid_border + mainwid_width_fudge());
+        return scale_size(m_mainwid_border);
     }
 
     /**
@@ -1354,10 +1203,6 @@ public:
         return m_control_height;
     }
 
-    /**
-     * \getter m_current_zoom
-     */
-
     int zoom () const
     {
         return m_current_zoom;
@@ -1365,36 +1210,20 @@ public:
 
     void zoom (int value);      /* seqedit can change this one */
 
-    /**
-     * \getter m_global_seq_feature_save
-     */
-
     bool global_seq_feature () const
     {
         return m_global_seq_feature_save;
     }
-
-    /**
-     * \setter m_global_seq_feature_save
-     */
 
     void global_seq_feature (bool flag)
     {
         m_global_seq_feature_save = flag;
     }
 
-    /**
-     * \getter m_seqedit_scale
-     */
-
     int seqedit_scale () const
     {
         return m_seqedit_scale;
     }
-
-    /**
-     * \setter m_seqedit_scale
-     */
 
     void seqedit_scale (int scale)
     {
@@ -1402,28 +1231,16 @@ public:
             m_seqedit_scale = scale;
     }
 
-    /**
-     * \getter m_seqedit_key
-     */
-
     int seqedit_key () const
     {
         return m_seqedit_key;
     }
-
-    /**
-     * \setter m_seqedit_key
-     */
 
     void seqedit_key (int key)
     {
         if (legal_key(key))
             m_seqedit_key = key;
     }
-
-    /**
-     * \getter m_seqedit_bgsequence
-     */
 
     int seqedit_bgsequence () const
     {
@@ -1442,126 +1259,70 @@ public:
         m_seqedit_bgsequence = seqnum;
     }
 
-    /**
-     * \getter m_use_new_font
-     */
-
     bool use_new_font () const
     {
         return m_use_new_font;
     }
-
-    /**
-     * \getter m_allow_two_perfedits
-     */
 
     bool allow_two_perfedits () const
     {
         return m_allow_two_perfedits;
     }
 
-    /**
-     * \getter m_h_perf_page_increment
-     */
-
     int perf_h_page_increment () const
     {
         return m_h_perf_page_increment;
     }
-
-    /**
-     * \getter m_v_perf_page_increment
-     */
 
     int perf_v_page_increment () const
     {
         return m_v_perf_page_increment;
     }
 
-    /**
-     * \getter m_progress_bar_colored
-     */
-
     int progress_bar_colored () const
     {
         return m_progress_bar_colored;
     }
-
-    /**
-     * \getter m_progress_bar_thick
-     */
 
     bool progress_bar_thick () const
     {
         return m_progress_bar_thick;
     }
 
-    /**
-     * \accessor m_inverse_colors
-         */
-
     bool inverse_colors () const
     {
         return m_inverse_colors;
     }
-
-    /**
-     * \getter m_window_redraw_rate_ms
-     */
 
     int window_redraw_rate () const
     {
         return m_window_redraw_rate_ms;
     }
 
-    /**
-     * \getter m_use_more_icons
-     */
-
     bool use_more_icons () const
     {
         return m_use_more_icons;
     }
-
-    /**
-     * \getter m_mainwid_block_rows
-     */
 
     int block_rows () const
     {
         return m_mainwid_block_rows;
     }
 
-    /**
-     * \getter m_mainwid_block_cols
-     */
-
     int block_columns () const
     {
         return m_mainwid_block_cols;
     }
-
-    /**
-     * \getter m_mainwid_block_independent
-     */
 
     int block_independent () const
     {
         return m_mainwid_block_independent;
     }
 
-    /**
-     * \getter m_save_user_config
-     */
-
     bool save_user_config () const
     {
         return m_save_user_config;
     }
-
-    /**
-     * \setter m_save_user_config
-     */
 
     void save_user_config (bool flag)
     {
@@ -1569,10 +1330,6 @@ public:
     }
 
 protected:
-
-    /**
-     * \getter m_grid_brackets
-     */
 
     void grid_brackets (int thickness)
     {
@@ -1595,10 +1352,6 @@ protected:
     void text_y (int value);
     void seqchars_x (int value);
     void seqchars_y (int value);
-    void seqarea_x (int value);
-    void seqarea_y (int value);
-    void seqarea_seq_x (int value);
-    void seqarea_seq_y (int value);
     void mainwid_border (int value);
     void mainwid_spacing (int value);
     void control_height (int value);
@@ -1627,54 +1380,30 @@ public:
         return m_midi_ppqn;
     }
 
-    /**
-     * \getter m_file_ppqn
-     */
-
     int file_ppqn () const
     {
         return m_file_ppqn;
     }
-
-    /**
-     * \setter m_file_ppqn
-     */
 
     void file_ppqn (int p)
     {
         m_file_ppqn = p;        // LATER: validate
     }
 
-    /**
-     * \getter m_midi_beats_per_measure
-     */
-
     int midi_beats_per_bar () const
     {
         return m_midi_beats_per_measure;
     }
-
-    /**
-     * \getter m_midi_bpm_minimum
-     */
 
     midibpm midi_bpm_minimum () const
     {
         return m_midi_bpm_minimum;
     }
 
-    /**
-     * \getter m_midi_beats_per_minute
-     */
-
     midibpm midi_beats_per_minute () const
     {
         return m_midi_beats_per_minute;
     }
-
-    /**
-     * \getter m_midi_bpm_maximum
-     */
 
     midibpm midi_bpm_maximum () const
     {
@@ -1686,99 +1415,55 @@ public:
         return SEQ66_TAP_BUTTON_TIMEOUT;
     }
 
-    /**
-     * \getter m_midi_beat_width
-     */
-
     int midi_beat_width () const
     {
         return m_midi_beat_width;
     }
-
-    /**
-     * \getter m_midi_buss_override
-     */
 
     midibyte midi_buss_override () const
     {
         return m_midi_buss_override;
     }
 
-    /**
-     * \getter m_velocity_override
-     */
-
     int velocity_override () const
     {
         return m_velocity_override;
     }
-
-    /**
-     * \getter m_bpm_precision
-     */
 
     int bpm_precision () const
     {
         return m_bpm_precision;
     }
 
-    /**
-     * \getter m_bpm_step_increment
-     */
-
     midibpm bpm_step_increment () const
     {
         return m_bpm_step_increment;
     }
-
-    /**
-     * \getter m_bpm_page_increment
-     */
 
     midibpm bpm_page_increment () const
     {
         return m_bpm_page_increment;
     }
 
-    /**
-     * \getter mc_min_zoom
-     */
-
     int min_zoom () const
     {
         return mc_min_zoom;
     }
-
-    /**
-     * \getter mc_max_zoom
-     */
 
     int max_zoom () const
     {
         return mc_max_zoom;
     }
 
-    /**
-     * \getter mc_baseline_ppqn
-     */
-
     int baseline_ppqn () const
     {
         return mc_baseline_ppqn;
     }
 
-    /**
-     * \getter m_user_option_daemonize
-     */
-
     bool option_daemonize () const
     {
         return m_user_option_daemonize;
     }
-
-    /**
-     * \getter m_user_use_logfile
-     */
 
     bool option_use_logfile () const
     {
@@ -1787,36 +1472,20 @@ public:
 
     std::string option_logfile () const;
 
-    /**
-     * \getter m_work_around_play_image
-     */
-
     bool work_around_play_image () const
     {
         return m_work_around_play_image;
     }
-
-    /**
-     * \getter m_work_around_transpose_image
-     */
 
     bool work_around_transpose_image () const
     {
         return m_work_around_transpose_image;
     }
 
-    /**
-     * \getter m_user_ui_key_height
-     */
-
     int key_height () const
     {
         return m_user_ui_key_height;
     }
-
-    /**
-     * \getter m_user_ui_seqedit_in_tab
-     */
 
     bool use_new_seqedit () const
     {
@@ -1824,10 +1493,6 @@ public:
     }
 
 public:         // used in main application module and the usrfile class
-
-    /**
-     * \setter m_use_new_font
-     */
 
     void use_new_font (bool flag)
     {
@@ -1847,45 +1512,25 @@ public:         // used in main application module and the usrfile class
     void perf_h_page_increment (int inc);
     void perf_v_page_increment (int inc);
 
-    /**
-     * \setter m_progress_bar_colored
-     */
-
     void progress_bar_colored (int palcode)
     {
         m_progress_bar_colored = palcode;
     }
-
-    /**
-     * \setter m_progress_bar_thick
-     */
 
     void progress_bar_thick (bool flag)
     {
         m_progress_bar_thick = flag;
     }
 
-    /**
-     * \setter m_inverse_colors
-     */
-
     void inverse_colors (bool flag)
     {
         m_inverse_colors = flag;
     }
 
-    /**
-     * \setter m_window_redraw_rate_ms
-     */
-
     void window_redraw_rate (int ms)
     {
         m_window_redraw_rate_ms = ms;
     }
-
-    /**
-     * \setter m_use_more_icons
-     */
 
     void use_more_icons (bool flag)
     {
@@ -1895,54 +1540,30 @@ public:         // used in main application module and the usrfile class
     void block_rows (int count);
     void block_columns (int count);
 
-    /**
-     * \setter m_mainwid_block_independent
-     */
-
     void block_independent (bool flag)
     {
         m_mainwid_block_independent = flag;
     }
-
-    /**
-     * \setter m_user_option_daemonize
-     */
 
     void option_daemonize (bool flag)
     {
         m_user_option_daemonize = flag;
     }
 
-    /**
-     * \setter m_user_use_logfile
-     */
-
     void option_use_logfile (bool flag)
     {
         m_user_use_logfile = flag;
     }
-
-    /**
-     * \setter m_user_option_logfile
-     */
 
     void option_logfile (const std::string & logfile)
     {
         m_user_option_logfile = logfile;
     }
 
-    /**
-     * \setter m_work_around_play_image
-     */
-
     void work_around_play_image (bool flag)
     {
         m_work_around_play_image = flag;
     }
-
-    /**
-     * \setter m_work_around_transpose_image
-     */
 
     void work_around_transpose_image (bool flag)
     {
@@ -1975,31 +1596,6 @@ public:         // used in main application module and the usrfile class
     void bpm_precision (int precision);
     void bpm_step_increment (midibpm increment);
     void bpm_page_increment (midibpm increment);
-
-    /*
-     * Derived calculations
-     */
-
-    int mainwid_width () const;
-    int mainwid_height () const;
-
-    /**
-     * \getter MAINWID_WIDTH_FUDGE / 2
-     */
-
-    int mainwid_width_fudge () const
-    {
-        return MAINWID_WIDTH_FUDGE / 2;
-    }
-
-    /**
-     * \getter MAINWID_HEIGTH_FUDGE / 2
-     */
-
-    int mainwid_height_fudge () const
-    {
-        return MAINWID_HEIGHT_FUDGE / 2;
-    }
 
 protected:
 
