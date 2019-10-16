@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2019-08-12
+ * \updates       2019-10-16
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -44,26 +44,6 @@
 #include "app_limits.h"                 /* SEQ66_DEFAULT_PPQN               */
 #include "midi/midibytes.hpp"           /* midipulse alias and much more    */
 
-/**
- *  The MIDI beat clock (also known as "MIDI timing clock" or "MIDI clock") is
- *  a clock signal that is broadcast via MIDI to ensure that several
- *  MIDI-enabled devices or sequencers stay in synchronization.  Do not
- *  confuse it with "MIDI timecode".
- *
- *  The standard MIDI beat clock ticks every 24 times every quarter note
- *  (crotchet).
- *
- *  Unlike MIDI timecode, the MIDI beat clock is tempo-dependent. Clock events
- *  are sent at a rate of 24 ppqn (pulses per quarter note). Those pulses are
- *  used to maintain a synchronized tempo for synthesizers that have
- *  BPM-dependent voices and also for arpeggiator synchronization.
- *
- *  The following macro represents the standard MIDI clock rate in
- *  pulses-per-quarter-note.
- */
-
-#define SEQ66_MIDI_CLOCK_IN_PPQN               24
-
 /*
  * Global functions in the seq66 namespace for MIDI timing calculations.
  */
@@ -78,11 +58,11 @@ namespace seq66
 
 enum class wave
 {
-    NONE               = 0,    /**< No waveform, never used.           */
-    SINE               = 1,    /**< Sine wave modulation.              */
-    SAWTOOTH           = 2,    /**< Saw-tooth (ramp) modulation.       */
-    REVERSE_SAWTOOTH   = 3,    /**< Reverse saw-tooth (decay).         */
-    TRIANGLE           = 4     /**< No waveform, never used.           */
+    none               = 0,    /**< No waveform, never used.           */
+    sine               = 1,    /**< Sine wave modulation.              */
+    sawtooth           = 2,    /**< Saw-tooth (ramp) modulation.       */
+    reverse_sawtooth   = 3,    /**< Reverse saw-tooth (decay).         */
+    triangle           = 4     /**< No waveform, never used.           */
 };
 
 /*
@@ -347,43 +327,31 @@ ticks_to_delta_time_us (midipulse delta_ticks, midibpm bpm, int ppqn)
 }
 
 /**
- *  Calculates the duration of a clock tick based on PPQN and BPM settings.
+ *  The MIDI beat clock (also known as "MIDI timing clock" or "MIDI clock") is
+ *  a clock signal that is broadcast via MIDI to ensure that several
+ *  MIDI-enabled devices or sequencers stay in synchronization.  Do not
+ *  confuse it with "MIDI timecode".
  *
- * \deprecated
- *      This is a somewhat bogus calculation used only for "statistical"
- *      output in the old performer module.  Name changed to reflect this
- *      unfortunate fact.  Use pulse_length_us() instead.
+ *  The standard MIDI beat clock ticks every 24 times every quarter note
+ *  (crotchet).
  *
-\verbatim
-                       60000000 ppqn
-        us = ---------------------------------
-              MIDI_CLOCK_IN_PPQN * bpm * ppqn
-\endverbatim
- *
- *  MIDI_CLOCK_IN_PPQN is 24.
- *
- * \param bpm
- *      Provides the beats-per-minute value.  No sanity check is made.  If
- *      this value is 0, we'll get an arithmetic exception.
- *
- * \param ppqn
- *      Provides the pulses-per-quarter-note value.  No sanity check is
- *      made.  If this value is 0, we'll get an arithmetic exception.
- *
- * \return
- *      Returns the clock tick duration in microseconds.  If either parameter
- *      is invalid, this will crash.  Who wants to waste time on value checks
- *      here? :-D
+ *  Unlike MIDI timecode, the MIDI beat clock is tempo-dependent. Clock events
+ *  are sent at a rate of 24 ppqn (pulses per quarter note). Those pulses are
+ *  used to maintain a synchronized tempo for synthesizers that have
+ *  BPM-dependent voices and also for arpeggiator synchronization.
+ *  The following value represents the standard MIDI clock rate in
+ *  beats-per-quarter-note.
  */
 
-inline double
-clock_tick_duration_bogus (midibpm bpm, int ppqn)
+inline int
+midi_clock_beats_per_qn ()
 {
-    return (ppqn / SEQ66_MIDI_CLOCK_IN_PPQN) * 60000000.0 / (bpm * ppqn);
+    return 24;
 }
 
 /**
- *  A simple calculation to convert PPQN to MIDI clock ticks.
+ *  A simple calculation to convert PPQN to MIDI clock ticks, which are emitting
+ *  24 times per quarter note.
  *
  * \param ppqn
  *      The number of pulses per quarter note.  For example, the default value
@@ -396,7 +364,7 @@ clock_tick_duration_bogus (midibpm bpm, int ppqn)
 inline int
 clock_ticks_from_ppqn (int ppqn)
 {
-    return ppqn / SEQ66_MIDI_CLOCK_IN_PPQN;
+    return ppqn / midi_clock_beats_per_qn();
 }
 
 /**
@@ -407,13 +375,13 @@ clock_ticks_from_ppqn (int ppqn)
  *      The number of pulses per quarter note.
  *
  * \return
- *      The double value of ppqn / 24 [SEQ66_MIDI_CLOCK_IN_PPQN]_is returned.
+ *      The double value of ppqn / 24 [midi_clock_beats_per_qn] is returned.
  */
 
 inline double
 double_ticks_from_ppqn (int ppqn)
 {
-    return ppqn / double(SEQ66_MIDI_CLOCK_IN_PPQN);
+    return ppqn / double(midi_clock_beats_per_qn());
 }
 
 /**

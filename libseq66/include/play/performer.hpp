@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-09-14
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -674,6 +674,12 @@ private:
      */
 
     int m_midiclocktick;
+
+    /**
+     *  We need to adjust the clock increment for the PPQN that is in force.
+     */
+
+    int m_midiclockincrement;
 
     /**
      *  More MIDI clock support.

@@ -482,7 +482,7 @@ midi_vector_base::fill_proprietary ()
     put(0x05);                                  /* long + midibyte  */
     add_long(c_transpose);
     put(transpose);                             /* a boolean byte   */
-    if (m_sequence.color() != SEQ66_COLOR_NONE)
+    if (m_sequence.color() != c_seq_color_none)
     {
         add_variable(0);                            /* key selection dt */
         put(0xFF);

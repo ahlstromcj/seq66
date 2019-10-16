@@ -24,10 +24,8 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-09-18
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
- *
- *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
  *
  *  Also read the comments in the Sequencer64 version of this module,
  *  perform.
@@ -134,6 +132,62 @@
  *          -#  c.signal()
  *          -#  Join the output and input threads.
  *
+ * MIDI CLOCK Support:
+ *
+ *    MIDI beat clock (MIDI timing clock or MIDI clock) is a clock signal that
+ *    is broadcast via MIDI to ensure that several MIDI-enabled devices such as
+ *    a synthesizer or music sequencer stay in synchronization.  MIDI beat clock
+ *    is tempo-dependent. Clock events are sent at a rate of 24 times every
+ *    quarter note. Those pulses maintain a synchronized tempo for synthesizers
+ *    with BPM-dependent voices, and for arpeggiator synchronization. Location
+ *    information is specified using the Song Position Pointer (SPP) although
+ *    many simple MIDI devices ignore this message.  Because of limitations in
+ *    MIDI and synthesizers, devices driven by MIDI beat clock are often subject
+ *    to clock drift.
+ *
+ *    Note that 24 is represented by SEQ64_MIDI_CLOCK_IN_PPQN in the
+ *    calculations.cpp module.
+ *
+ *    On output:
+ *
+ *    -   perform::m_usemidiclock starts at false;
+ *    -   It is set to false in pause_playing().
+ *    -   It is set to the midiclock parameter of inner_stop().
+ *    -   If m_usemidiclock is true:
+ *        -   It affects m_midiclocktick in output.
+ *        -   The position in output cannot be repositioned.
+ *        -   The tick location cannot be changed.
+ *
+ *    On input:
+ *
+ *    -   If MIDI Start is received, m_midiclockrunning and m_usemidiclock
+ *        become true, and m_midiclocktick and m_midiclockpos become 0.
+ *    -   If MIDI Continue is received, m_midiclockrunning is set to true and
+ *        we start according to song-mode.
+ *    -   If MIDI Stop is received, m_midiclockrunning is set to false,
+ *        m_midiclockpos is set to the current tick (!), all_notes_off(), and
+ *        inner_stop(true) [sets m_usemidiclock = true].
+ *    -   If MIDI Clock is received, and m_midiclockrunning is true, then
+ *        m_midiclocktick += m_midiclockincrement.
+ *    -   If MIDI Song Position is received, then m_midiclockpos is set as per
+ *        in data in this event.
+ *    -   MIDI Active Sense and MIDI Reset are currently filtered by the JACK
+ *        implementation.
+ *
+ * Locking:
+ *
+ *      -#  The flags m_inputing and m_outputing start out true.
+ *      -#  When the perform starts, the input thread starts.
+ *      -#  When the perform starts, the output thread then starts.
+ *      -#  The output thread then waits on the condition variable for
+ *          inner_start() to set is_running() to true. It then proceeds to run
+ *          forever.
+ *      -#  In the destructor, the flags m_inputing and m_outputing are set to
+ *          false, and the condition variable is signalled.  This causes the
+ *          output thread to exit.  The input thread detects that m_inputing is
+ *          false and exits.
+ *      -#  The two threads are then joined.
+ *
  * Threads:
  *
  *  https://eli.thegreenplace.net/2016/c11-threads-affinity-and-hyperthreading/
@@ -152,6 +206,46 @@
  *
  *      The PSR field is the OS identifier for the core each TID (thread id)
  *      is utilizing.
+ *
+ * pthreads:
+ *
+ *      We were using sched_setscheduler(), but user gresade reported issue
+ *      #179, with some jitter in playback/recording, and we noticed that the
+ *      man page indicated to use the pthread_setsched_param function instead
+ *      when using pthreads, which Sequencer64 does use in Linux.
+ *
+ *      http://ccrma.stanford.edu/planetccrma/software/understandlowlat.html:
+ *
+ *          Summarizing, you need tuned drivers that do not disable interrupts
+ *          for long, low latency patches in the kernel so that the scheduler
+ *          runs often enough and your application itself has to run with the
+ *          SCHED_FIFO scheduling policy so that it gets the best chance of
+ *          grabbing the processor when it needs it.
+ *
+ *          When everything is in place things work incredibly well. The system
+ *          can be running an audio task with no dropouts and a few milliseconds
+ *          of latency while the computer is being loaded with disk accesses,
+ *          screen refreshes and whatnot. The mouse gets jerky, windows update
+ *          very slowly but not a dropout to be heard.
+ *
+ *      http://www.informit.com/articles/article.aspx?p=101760&seqNum=4:
+ *
+ *          Two or more SCHED_FIFO tasks at the same priority run round robin.
+ *          If a SCHED_FIFO task is runnable, all tasks at a lower priority
+ *          cannot run until it finishes.
+ *
+ *          SCHED_RR is identical to SCHED_FIFO except that each process can
+ *          only run until it exhausts a predetermined timeslice. That is,
+ *          SCHED_RR is SCHED_FIFO with timeslices—it is a real-time
+ *          round-robin scheduling algorithm.
+ *
+ *          Real-time priorities range inclusively from one to MAX_RT_PRIO
+ *          minus one. By default, MAX_RT_PRIO is 100—therefore, the default
+ *          real-time priority range is one to 99. This priority space is
+ *          shared with the nice values of SCHED_OTHER tasks; they use the
+ *          space from MAX_RT_PRIO to (MAX_RT_PRIO + 40). By default, this
+ *          means the –20 to +19 nice range maps directly onto the 100 to 140
+ *          priority range.
  *
  * Settings lifecycle:
  *
@@ -189,14 +283,6 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
-
-
-/**
- *  The amount to increment the MIDI clock pulses.  MIDI clock normal comes
- *  out at 24 PPQN, so I am not sure why this is 8.
- */
-
-#define SEQ66_MIDI_CLOCK_INCREMENT      8
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -277,6 +363,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_usemidiclock          (false),            /* MIDI Clock support   */
     m_midiclockrunning      (false),
     m_midiclocktick         (0),
+    m_midiclockincrement    (clock_ticks_from_ppqn(m_ppqn)),
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pause    */
     m_edit_sequence         (-1),
@@ -1074,7 +1161,8 @@ performer::inner_start (bool songmode)
  *  sequence.
  *
  * \param midiclock
- *      If true, indicates that the MIDI clock should be used.
+ *      If true, indicates that the MIDI clock should be used.  The default
+ *      value is false.
  */
 
 void
@@ -1082,7 +1170,7 @@ performer::inner_stop (bool midiclock)
 {
     start_from_perfedit(false);
     m_is_running = false;
-    reset_sequences();
+    reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
 }
 
@@ -1776,6 +1864,36 @@ performer::launch_output_thread ()
     }
     m_out_thread = std::thread(&performer::output_func, this);
     m_out_thread_launched = true;
+    if (rc().priority())                        /* Not in MinGW RCB     */
+    {
+        struct sched_param schp;
+        memset(&schp, 0, sizeof(sched_param));
+        schp.sched_priority = 1;                /* Linux range: 1 to 99 */
+#ifdef SEQ66_PLATFORM_PTHREADS
+        int rc = pthread_setschedparam
+        (
+            m_out_thread.native_handle(), SCHED_FIFO, &schp
+        );
+#else
+        int rc = sched_setscheduler
+        (
+            m_out_thread.native_handle(), SCHED_FIFO, &schp
+        );
+#endif
+        if (rc != 0)
+        {
+            errprint            // error_message ()
+            (
+                "output_thread: couldn't set scheduler to FIFO, "
+                "need root priviledges."
+            );
+            pthread_exit(0);
+        }
+        else
+        {
+            infoprint("[Output priority set to 1]");
+        }
+    }
 }
 
 /**
@@ -1793,6 +1911,36 @@ performer::launch_input_thread ()
     }
     m_in_thread = std::thread(&performer::input_func, this);
     m_in_thread_launched = true;
+    if (rc().priority())                        /* Not in MinGW RCB     */
+    {
+        struct sched_param schp;
+        memset(&schp, 0, sizeof(sched_param));
+        schp.sched_priority = 1;                /* Linux range: 1 to 99 */
+#ifdef SEQ66_PLATFORM_PTHREADS
+        int rc = pthread_setschedparam
+        (
+            m_in_thread.native_handle(), SCHED_FIFO, &schp
+        );
+#else
+        int rc = sched_setscheduler
+        (
+            m_in_thread.native_handle(), SCHED_FIFO, &schp
+        );
+#endif
+        if (rc != 0)
+        {
+            errprint            // error_message ()
+            (
+                "output_thread: couldn't set scheduler to FIFO, "
+                "need root priviledges."
+            );
+            pthread_exit(0);
+        }
+        else
+        {
+            infoprint("[Output priority set to 1]");
+        }
+    }
 }
 
 /**
@@ -2871,7 +3019,7 @@ performer::input_func ()
                     else if (ev.get_status() == EVENT_MIDI_CLOCK)
                     {
                         if (m_midiclockrunning)
-                            m_midiclocktick += SEQ66_MIDI_CLOCK_INCREMENT;
+                            m_midiclocktick += m_midiclockincrement;
                     }
                     else if (ev.get_status() == EVENT_MIDI_SONG_POS)
                     {
@@ -2880,11 +3028,29 @@ performer::input_func ()
                         m_midiclockpos = combine_bytes(d0, d1);
                     }
 
+#ifdef USE_ACTIVE_SENSE_AND_RESET
+
                     /*
                      *  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are
                      *  filtered in midi_jack.  Send out the current event, if
                      *  "dumping".
                      */
+
+                    else if
+                    (
+                        ev.get_status() == EVENT_MIDI_ACTIVE_SENSE ||
+                        ev.get_status() == EVENT_MIDI_RESET
+                    )
+                    {
+                        /*
+                         * Ignore these events on input.  MIGHT NOT BE VALID.
+                         * STILL INVESTIGATING.
+                         */
+
+                        return;
+                    }
+
+#endif  // USE_ACTIVE_SENSE_AND_RESET
 
                     if (ev.get_status() <= EVENT_MIDI_SYSEX)
                     {
@@ -2897,7 +3063,14 @@ performer::input_func ()
 
                         if (m_master_bus->is_dumping())
                         {
-                            if (! midi_control_event(ev))
+                            if (midi_control_event(ev))
+                            {
+#ifdef PLATFORM_DEBUG_TMI
+                                std::string estr = to_string(ev);
+                                printf("MIDI control event %s\n", estr.c_str());
+#endif
+                            }
+                            else
                             {
                                 ev.set_timestamp(get_tick());
                                 if (rc().show_midi())

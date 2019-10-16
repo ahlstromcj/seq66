@@ -173,7 +173,7 @@ sequence::sequence (int ppqn)
     m_maxbeats                  (c_maxbeats),
     m_ppqn                      (choose_ppqn(ppqn)),
     m_seq_number                (unassigned()),
-    m_seq_color                 (SEQ66_COLOR_NONE), /* PaletteColor::NONE   */
+    m_seq_color                 (c_seq_color_none), /* PaletteColor::NONE   */
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
     m_snap_tick                 (int(m_ppqn) / 4),
@@ -302,7 +302,7 @@ bool
 sequence::color (int c)
 {
     bool result = false;
-    if (c >= 0 || c == SEQ66_COLOR_NONE)
+    if (c >= 0 || c == c_seq_color_none)
     {
         if (colorbyte(c) != m_seq_color)
         {
@@ -322,7 +322,7 @@ void
 sequence::empty_coloring ()
 {
     if (event_count() == 0)
-        (void) color(color_to_int(YELLOW));
+        (void) color(color_to_int(yellow));
 }
 
 /**
@@ -2225,7 +2225,7 @@ midipulse
 sequence::clip_timestamp (midipulse ontime, midipulse offtime)
 {
     if (offtime <= ontime)
-        offtime = ontime + m_snap_tick - note_off_margin();
+        offtime = ontime + get_snap_tick() - note_off_margin();
     else if (offtime >= m_length)
         offtime = m_length - note_off_margin();
 
@@ -3428,7 +3428,7 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (m_overwrite_recording)
+    if (m_overwrite_recording && m_length > 0)
     {
         midipulse tstamp = m_parent->get_tick() % m_length;
         if (tstamp < (m_ppqn / 4))
@@ -3539,7 +3539,7 @@ sequence::stream_event (event & ev)
                     m_events_undo.push(m_events);       /* push_undo()      */
                     add_note                            /* more locking     */
                     (
-                        mod_last_tick(), m_snap_tick - m_note_off_margin,
+                        mod_last_tick(), get_snap_tick() - m_note_off_margin,
                         ev.get_note(), false, velocity
                     );
                     set_dirty();
@@ -3551,7 +3551,7 @@ sequence::stream_event (event & ev)
                     --m_notes_on;
 
                     if (m_notes_on == 0)
-                        m_last_tick += m_snap_tick;
+                        m_last_tick += get_snap_tick();
                 }
             }
         }
@@ -3569,7 +3569,7 @@ sequence::stream_event (event & ev)
                 (
                     timestamp, note, timestamp, note, select::selecting
                 );
-                quantize_events(EVENT_NOTE_ON, 0, m_snap_tick, 1, true);
+                quantize_events(EVENT_NOTE_ON, 0, get_snap_tick(), 1, true);
             }
         }
     }
@@ -5491,7 +5491,7 @@ sequence::put_event_on_bus (event & ev)
         if (m_playing_notes[note] == 0)
             skip = true;
         else
-            --m_playing_notes[note];    // m_playing_notes[note]--;
+            --m_playing_notes[note];
     }
     if (! skip)
     {
@@ -5517,10 +5517,10 @@ sequence::off_playing_notes ()
     {
         while (m_playing_notes[x] > 0)
         {
-            e.set_data(x, midibyte(127));               /* or is 0 better?  */
+            e.set_data(x, midibyte(0));               /* or is 127 better?  */
             m_master_bus->play(m_bus, &e, m_midi_channel);
             if (m_playing_notes[x] > 0)
-                --m_playing_notes[x];                   // m_playing_notes[x]--;
+                --m_playing_notes[x];
         }
     }
     m_master_bus->flush();

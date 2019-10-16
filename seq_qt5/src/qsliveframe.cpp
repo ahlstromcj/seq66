@@ -965,11 +965,11 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
              */
 
             QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
-            int firstcolor = color_to_int(NONE);
-            int lastcolor = color_to_int(GREY);
+            int firstcolor = color_to_int(none);
+            int lastcolor = color_to_int(grey);
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
-                if (c != color_to_int(BLACK))
+                if (c != color_to_int(black))
                 {
                     PaletteColor pc = PaletteColor(c);
                     QString cname = get_color_name(pc).c_str();     // for now
@@ -984,8 +984,8 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             }
 
             QMenu * submenuColour = new QMenu(tr("More colors"));
-            firstcolor = color_to_int(DK_RED);
-            lastcolor = color_to_int(DK_GREY);
+            firstcolor = color_to_int(dk_red);
+            lastcolor = color_to_int(dk_grey);
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);

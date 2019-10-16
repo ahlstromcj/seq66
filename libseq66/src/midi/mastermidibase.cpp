@@ -192,7 +192,7 @@ mastermidibase::emit_clock (midipulse tick)
     automutex locker(m_mutex);
 
     /*
-     * Doesn't do anything: api_clock();
+     * Doesn't do anything: api_clock().  But where do we call flush()?
      */
 
     m_outbus_array.clock(tick);

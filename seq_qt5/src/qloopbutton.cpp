@@ -348,8 +348,8 @@ void
 qloopbutton::setup ()
 {
     QPalette pal = palette();
-    int c = m_seq ? m_seq->color() : color_to_int(NONE) ;
-    if (c == color_to_int(BLACK))
+    int c = m_seq ? m_seq->color() : color_to_int(none) ;
+    if (c == color_to_int(black))
     {
         pal.setColor(QPalette::Button, QColor(Qt::black));
         pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
@@ -594,7 +594,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     const int penwidth = 2;
     bool qsnap = m_seq->snap_it();
     int c = m_seq->color();
-    if (c == color_to_int(BLACK))
+    if (c == color_to_int(black))
     {
         // pal.setColor(QPalette::Button, QColor(Qt::black));
         // pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));

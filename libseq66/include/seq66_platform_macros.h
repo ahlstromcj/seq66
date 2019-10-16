@@ -11,10 +11,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-11
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
  *
- *  Copyright (C) 2013-2018 Chris Ahlstrom <ahlstromcj@gmail.com>
+ *  Copyright (C) 2013-2019 Chris Ahlstrom <ahlstromcj@gmail.com>
  *
  *  We need a uniform way to specify OS and compiler features without
  *  littering the code with macros from disparate compilers.  Put all
@@ -146,6 +146,7 @@
 
 #define SEQ66_PLATFORM_UNIX
 #define SEQ66_PLATFORM_POSIX_API
+#define SEQ66_PLATFORM_PTHREADS
 
 #endif                                  /* SEQ66_PLATFORM_LINUX                   */
 

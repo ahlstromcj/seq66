@@ -1256,7 +1256,6 @@ usrsettings::dump_summary ()
         "   seqchars_x(), _y() = %d, %d\n"
         "   mainwid_border() = %d\n"
         "   mainwid_spacing() = %d\n"
-        "   mainwid_x(), _y() = %d, %d\n"
         "   control_height() = %d\n"
         ,
         seqchars_x(), seqchars_y(),

@@ -57,7 +57,7 @@
  *  integer in the seq66::sequence class.
  */
 
-#define SEQ66_COLOR_NONE                (-1)
+const int c_seq_color_none = (-1);
 
 /**
  *

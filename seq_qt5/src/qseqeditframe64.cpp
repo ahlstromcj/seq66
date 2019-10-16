@@ -1055,6 +1055,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
 qseqeditframe64::~qseqeditframe64 ()
 {
+    m_timer->stop();
     delete ui;
 }
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-08-19
+ * \updates       2019-10-16
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -135,31 +135,31 @@ gui_palette_qt5::gui_palette_qt5 ()
     int colorcode = usr().progress_bar_colored();
     switch (colorcode)
     {
-    case static_cast<int>(progress_colors::BLACK):
+    case static_cast<int>(progress_colors::black):
         m_progress_color = m_black;
         break;
 
-    case static_cast<int>(progress_colors::DARK_RED):
+    case static_cast<int>(progress_colors::dark_red):
         m_progress_color = m_dk_red;
         break;
 
-    case static_cast<int>(progress_colors::DARK_GREEN):
+    case static_cast<int>(progress_colors::dark_green):
         m_progress_color = m_dk_green;
         break;
 
-    case static_cast<int>(progress_colors::DARK_ORANGE):
+    case static_cast<int>(progress_colors::dark_orange):
         m_progress_color = m_dk_orange;
         break;
 
-    case static_cast<int>(progress_colors::DARK_BLUE):
+    case static_cast<int>(progress_colors::dark_blue):
         m_progress_color = m_dk_blue;
         break;
 
-    case static_cast<int>(progress_colors::DARK_MAGENTA):
+    case static_cast<int>(progress_colors::dark_magenta):
         m_progress_color = m_dk_magenta;
         break;
 
-    case static_cast<int>(progress_colors::DARK_CYAN):
+    case static_cast<int>(progress_colors::dark_cyan):
         m_progress_color = m_dk_cyan;
         break;
     }
@@ -260,65 +260,65 @@ gui_palette_qt5::initialize ()
      */
 
     m_palette.clear();                                      /* just in case */
-    m_palette.add(PaletteColor::BLACK,       m_black,    "Black");
-    m_palette.add(PaletteColor::RED,         m_red,      "Red");
-    m_palette.add(PaletteColor::GREEN,       m_green,    "Green");
-    m_palette.add(PaletteColor::YELLOW,      m_yellow,   "Yellow");
-    m_palette.add(PaletteColor::BLUE,        m_blue,     "Blue");
-    m_palette.add(PaletteColor::MAGENTA,     m_magenta,  "Magenta");
-    m_palette.add(PaletteColor::CYAN,        m_cyan,     "Cyan");
-    m_palette.add(PaletteColor::WHITE,       m_white,    "White");
-    m_palette.add(PaletteColor::ORANGE,      m_orange,   "Orange");
-    m_palette.add(PaletteColor::PINK,        m_pink,     "Pink");
-    m_palette.add(PaletteColor::GREY,        m_grey,     "Gray");        // hmmmm
+    m_palette.add(PaletteColor::black,       m_black,    "Black");
+    m_palette.add(PaletteColor::red,         m_red,      "Red");
+    m_palette.add(PaletteColor::green,       m_green,    "Green");
+    m_palette.add(PaletteColor::yellow,      m_yellow,   "Yellow");
+    m_palette.add(PaletteColor::blue,        m_blue,     "Blue");
+    m_palette.add(PaletteColor::magenta,     m_magenta,  "Magenta");
+    m_palette.add(PaletteColor::cyan,        m_cyan,     "Cyan");
+    m_palette.add(PaletteColor::white,       m_white,    "White");
+    m_palette.add(PaletteColor::orange,      m_orange,   "Orange");
+    m_palette.add(PaletteColor::pink,        m_pink,     "Pink");
+    m_palette.add(PaletteColor::grey,        m_grey,     "Gray");        // hmmmm
 
-    m_palette.add(PaletteColor::DK_BLACK,    m_dk_black, "Dk Black");    // hmmmm
-    m_palette.add(PaletteColor::DK_RED,      m_dk_red,   "Dk Red");
-    m_palette.add(PaletteColor::DK_GREEN,    m_dk_green, "Dk Green");
+    m_palette.add(PaletteColor::dk_black,    m_dk_black, "Dk Black");    // hmmmm
+    m_palette.add(PaletteColor::dk_red,      m_dk_red,   "Dk Red");
+    m_palette.add(PaletteColor::dk_green,    m_dk_green, "Dk Green");
 
     /*
      * Weird, this shows up as black!  Same in Gtkmm!
      * m_palette.add(PaletteColor::DK_YELLOW, m_dk_yellow, "Dk Yellow");
      */
 
-    m_palette.add(PaletteColor::DK_YELLOW,   m_yellow,   "Dk Yellow");
-    m_palette.add(PaletteColor::DK_BLUE,     m_dk_blue,  "Dk Blue");
-    m_palette.add(PaletteColor::DK_MAGENTA,  m_dk_magenta, "Dk Magenta");
-    m_palette.add(PaletteColor::DK_CYAN,     m_dk_cyan,  "Dk Cyan");
-    m_palette.add(PaletteColor::DK_WHITE,    m_dk_white, "Dk White");    // hmmmm
-    m_palette.add(PaletteColor::DK_ORANGE,   m_dk_orange, "Dk Orange");
-    m_palette.add(PaletteColor::DK_PINK,     m_dk_pink,  "Dk Pink");
-    m_palette.add(PaletteColor::DK_GREY,     m_dk_grey,  "Dk Grey");     // hmmmm
-    m_palette.add(PaletteColor::NONE,        m_white,    "None");
+    m_palette.add(PaletteColor::dk_yellow,   m_yellow,   "Dk Yellow");
+    m_palette.add(PaletteColor::dk_blue,     m_dk_blue,  "Dk Blue");
+    m_palette.add(PaletteColor::dk_magenta,  m_dk_magenta, "Dk Magenta");
+    m_palette.add(PaletteColor::dk_cyan,     m_dk_cyan,  "Dk Cyan");
+    m_palette.add(PaletteColor::dk_white,    m_dk_white, "Dk White");    // hmmmm
+    m_palette.add(PaletteColor::dk_orange,   m_dk_orange, "Dk Orange");
+    m_palette.add(PaletteColor::dk_pink,     m_dk_pink,  "Dk Pink");
+    m_palette.add(PaletteColor::dk_grey,     m_dk_grey,  "Dk Grey");     // hmmmm
+    m_palette.add(PaletteColor::none,        m_white,    "None");
 
     /*
      * Pen/inverse colors
      */
 
     m_pen_palette.clear();                  /* just in case */
-    m_pen_palette.add(PaletteColor::BLACK,   m_white, "white");
-    m_pen_palette.add(PaletteColor::RED,     m_white, "white");
-    m_pen_palette.add(PaletteColor::GREEN,   m_white, "white");
-    m_pen_palette.add(PaletteColor::YELLOW,  m_black, "black");
-    m_pen_palette.add(PaletteColor::BLUE,    m_white, "white");
-    m_pen_palette.add(PaletteColor::MAGENTA, m_white, "white");
-    m_pen_palette.add(PaletteColor::CYAN,    m_black, "black");
-    m_pen_palette.add(PaletteColor::WHITE,   m_black, "black");
-    m_pen_palette.add(PaletteColor::ORANGE,  m_white, "white");
-    m_pen_palette.add(PaletteColor::PINK,    m_black, "black");
-    m_pen_palette.add(PaletteColor::GREY,    m_black, "black");
-    m_pen_palette.add(PaletteColor::DK_BLACK, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_RED,  m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_GREEN, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_YELLOW, m_black, "black");
-    m_pen_palette.add(PaletteColor::DK_BLUE, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_MAGENTA, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_CYAN, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_WHITE, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_ORANGE, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_PINK, m_white, "white");
-    m_pen_palette.add(PaletteColor::DK_GREY, m_white, "white");
-    m_pen_palette.add(PaletteColor::NONE,    m_black, "black");
+    m_pen_palette.add(PaletteColor::black,   m_white, "white");
+    m_pen_palette.add(PaletteColor::red,     m_white, "white");
+    m_pen_palette.add(PaletteColor::green,   m_white, "white");
+    m_pen_palette.add(PaletteColor::yellow,  m_black, "black");
+    m_pen_palette.add(PaletteColor::blue,    m_white, "white");
+    m_pen_palette.add(PaletteColor::magenta, m_white, "white");
+    m_pen_palette.add(PaletteColor::cyan,    m_black, "black");
+    m_pen_palette.add(PaletteColor::white,   m_black, "black");
+    m_pen_palette.add(PaletteColor::orange,  m_white, "white");
+    m_pen_palette.add(PaletteColor::pink,    m_black, "black");
+    m_pen_palette.add(PaletteColor::grey,    m_black, "black");
+    m_pen_palette.add(PaletteColor::dk_black, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_red,  m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_green, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_yellow, m_black, "black");
+    m_pen_palette.add(PaletteColor::dk_blue, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_magenta, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_cyan, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_white, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_orange, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_pink, m_white, "white");
+    m_pen_palette.add(PaletteColor::dk_grey, m_white, "white");
+    m_pen_palette.add(PaletteColor::none,    m_black, "black");
 }
 
 /**
@@ -369,7 +369,7 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
 {
     if (m_palette.no_color(index))
     {
-        return m_palette.get_color(PaletteColor::NONE);
+        return m_palette.get_color(PaletteColor::none);
     }
     else
     {
@@ -387,7 +387,7 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
  *
  * \param index
  *      Indicates which color to get.  This index is checked for range, and, if
- *      out of range, the default color object, indexed by PaletteColor::NONE,
+ *      out of range, the default color object, indexed by PaletteColor::none,
  *      is returned.
  *
  * \param index
@@ -401,7 +401,7 @@ gui_palette_qt5::Color
 gui_palette_qt5::get_color_inverse (PaletteColor index) const
 {
     gui_palette_qt5::Color c = m_palette.get_color(index);
-    if (index != PaletteColor::NONE)
+    if (index != PaletteColor::none)
     {
         int r, g, b, a;
         c.getRgb(&r, &g, &b, &a);

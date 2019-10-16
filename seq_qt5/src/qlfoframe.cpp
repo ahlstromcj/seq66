@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-03-10
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -101,17 +101,17 @@ qlfoframe::qlfoframe
     m_range         (64.0),
     m_speed         (0.0),
     m_phase         (0.0),
-    m_wave          (wave::SINE)
+    m_wave          (wave::sine)
 {
     ui->setupUi(this);
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
 
     m_wave_group = new QButtonGroup(this);
-    m_wave_group->addButton(ui->m_radio_wave_none, int(wave::NONE));
-    m_wave_group->addButton(ui->m_radio_wave_sine, int(wave::SINE));
-    m_wave_group->addButton(ui->m_radio_wave_saw, int(wave::SAWTOOTH));
-    m_wave_group->addButton(ui->m_radio_wave_revsaw, int(wave::REVERSE_SAWTOOTH));
-    m_wave_group->addButton(ui->m_radio_wave_triangle, int(wave::TRIANGLE));
+    m_wave_group->addButton(ui->m_radio_wave_none, int(wave::none));
+    m_wave_group->addButton(ui->m_radio_wave_sine, int(wave::sine));
+    m_wave_group->addButton(ui->m_radio_wave_saw, int(wave::sawtooth));
+    m_wave_group->addButton(ui->m_radio_wave_revsaw, int(wave::reverse_sawtooth));
+    m_wave_group->addButton(ui->m_radio_wave_triangle, int(wave::triangle));
     ui->m_radio_wave_sine->setChecked(true);    /* match m_wave member init */
     connect
     (

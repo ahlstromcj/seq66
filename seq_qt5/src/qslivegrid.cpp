@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-09
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1343,10 +1343,7 @@ qslivegrid::popup_menu ()
 
         if (! m_is_external)
         {
-            QAction * editevents = new QAction
-            (
-                tr("Edit e&vents in tab"), m_popup
-            );
+            QAction * editevents = new QAction(tr("E&vents Tab"), m_popup);
             m_popup->addAction(editevents);
             connect
             (
@@ -1356,11 +1353,11 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
-        int firstcolor = color_to_int(NONE);
-        int lastcolor = color_to_int(GREY);
+        int firstcolor = color_to_int(none);
+        int lastcolor = color_to_int(grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
-            if (c != color_to_int(BLACK))
+            if (c != color_to_int(black))
             {
                 PaletteColor pc = PaletteColor(c);
                 QString cname = get_color_name(pc).c_str();
@@ -1375,8 +1372,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * submenuColour = new QMenu(tr("More colors"));
-        firstcolor = color_to_int(DK_RED);
-        lastcolor = color_to_int(DK_GREY);
+        firstcolor = color_to_int(dk_red);
+        lastcolor = color_to_int(dk_grey);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);

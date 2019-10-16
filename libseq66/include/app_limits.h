@@ -215,7 +215,7 @@
  *  right now, but keep the values from 8 to 16 for sanity's sake.
  */
 
-#define SEQ66_SEQKEY_HEIGHT                8
+#define SEQ66_SEQKEY_HEIGHT               10
 
 /**
  *  Default value of the width (number of columns) of the slot toggle keys.

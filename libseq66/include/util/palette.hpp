@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2019-06-26
+ * \updates       2019-10-15
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -51,13 +51,13 @@ namespace seq66
 
 enum class progress_colors
 {
-    BLACK        = 0,
-    DARK_RED,
-    DARK_GREEN,
-    DARK_ORANGE,
-    DARK_BLUE,
-    DARK_MAGENTA,
-    DARK_CYAN
+    black,
+    dark_red,
+    dark_green,
+    dark_orange,
+    dark_blue,
+    dark_magenta,
+    dark_cyan
 };
 
 /**
@@ -76,38 +76,36 @@ enum class progress_colors
 
 enum class PaletteColor
 {
-
  /* Seq64 */            /* Kepler34 */
 
-    NONE = -1,          // indicates no color chosen, default color
-    BLACK = 0,          //  0 WHITE
-    RED,                //  1 RED
-    GREEN,              //  2 GREEN
-    YELLOW,             //  3 BLUE
-    BLUE,               //  4 YELLOW
-    MAGENTA,            //  5 PURPLE
-    CYAN,               //  6 PINK
-    WHITE,              //  7 ORANGE
-    ORANGE,             // N/A
-    PINK,               // N/A
-    GREY,               // N/A
-    DK_BLACK,           //  8 place-holder
-    DK_RED,             //  9 N/A
-    DK_GREEN,           // 10 N/A
-    DK_YELLOW,          // 11 N/A
-    DK_BLUE,            // 12 N/A
-    DK_MAGENTA,         // 13 N/A
-    DK_CYAN,            // 14 N/A
-    DK_WHITE,           // 15 N/A
-    DK_ORANGE,          // N/A
-    DK_PINK,            // N/A
-    DK_GREY,            // N/A
-    MAX,                // first illegal value, not in color set
-
+    none = -1,          // indicates no color chosen, default color
+    black = 0,          //  0 WHITE
+    red,                //  1 RED
+    green,              //  2 GREEN
+    yellow,             //  3 BLUE
+    blue,               //  4 YELLOW
+    magenta,            //  5 PURPLE
+    cyan,               //  6 PINK
+    white,              //  7 ORANGE
+    orange,             //    N/A
+    pink,               //    N/A
+    grey,               //    N/A
+    dk_black,           //  8 place-holder
+    dk_red,             //  9 N/A
+    dk_green,           // 10 N/A
+    dk_yellow,          // 11 N/A
+    dk_blue,            // 12 N/A
+    dk_magenta,         // 13 N/A
+    dk_cyan,            // 14 N/A
+    dk_white,           // 15 N/A
+    dk_orange,          //    N/A
+    dk_pink,            //    N/A
+    dk_grey,            //    N/A
+    max                 // first illegal value, not in color set
 };
 
 /**
- *  A macro to handle older versions of C++.
+ *  A macro to simplify converting a PaletteColor to a simple integer.
  */
 
 #define color_to_int(x)  static_cast<int>( PaletteColor :: x )
@@ -163,7 +161,7 @@ public:
 
     bool no_color (PaletteColor index) const
     {
-        return index == PaletteColor::NONE;
+        return index == PaletteColor::none;
     }
 
     /*
@@ -185,8 +183,8 @@ public:
 
 /**
  *  Creates the palette, and inserts a default COLOR color object as
- *  the NONE entry.  This color has to be static so that it is always around
- *  to be used.
+ *  the PaletteColor::none entry.  This color has to be static so that it is
+ *  always around to be used.
  */
 
 template <typename COLOR>
@@ -195,7 +193,7 @@ palette<COLOR>::palette ()
     m_container   ()
 {
     static COLOR color;
-    add(PaletteColor::NONE, color, "None");
+    add(PaletteColor::none, color, "None");
 }
 
 /**
@@ -234,7 +232,7 @@ palette<COLOR>::add
  *
  * \param index
  *      Indicates which color to get.  This index is checked for range, and, if
- *      out of range, the default color object, indexed by PaletteColor::NONE,
+ *      out of range, the default color object, indexed by PaletteColor::none,
  *      is returned.  However, an exception will be thrown if the color does
  *      not exist, which should be the case only via programmer error.
  *
@@ -246,13 +244,13 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (PaletteColor index) const
 {
-    if (index >= PaletteColor::BLACK && index < PaletteColor::MAX)
+    if (index >= PaletteColor::black && index < PaletteColor::max)
     {
         return *m_container.at(index).ppt_color;
     }
     else
     {
-        return *m_container.at(PaletteColor::NONE).ppt_color;
+        return *m_container.at(PaletteColor::none).ppt_color;
     }
 }
 
@@ -264,13 +262,13 @@ template <typename COLOR>
 const std::string &
 palette<COLOR>::get_color_name (PaletteColor index) const
 {
-    if (index >= PaletteColor::BLACK && index < PaletteColor::MAX)
+    if (index >= PaletteColor::black && index < PaletteColor::max)
     {
         return m_container.at(index).ppt_color_name;
     }
     else
     {
-        return m_container.at(PaletteColor::NONE).ppt_color_name;
+        return m_container.at(PaletteColor::none).ppt_color_name;
     }
 }
 

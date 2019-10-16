@@ -1390,22 +1390,22 @@ wave_func (double angle, wave wavetype)
     double result = 0.0;
     switch (wavetype)
     {
-    case wave::SINE:
+    case wave::sine:
 
         result = sin(angle * PI * 2.0);
         break;
 
-    case wave::SAWTOOTH:
+    case wave::sawtooth:
 
         result = (angle - int(angle)) * 2.0 - 1.0;
         break;
 
-    case wave::REVERSE_SAWTOOTH:
+    case wave::reverse_sawtooth:
 
         result = (angle - int(angle)) * -2.0 + 1.0;
         break;
 
-    case wave::TRIANGLE:
+    case wave::triangle:
     {
         double tmp = angle * 2.0;
         result = (tmp - int(tmp));
@@ -1440,22 +1440,22 @@ wave_type_name (wave wavetype)
     std::string result = "None";
     switch (wavetype)
     {
-    case wave::SINE:
+    case wave::sine:
 
         result = "Sine";
         break;
 
-    case wave::SAWTOOTH:
+    case wave::sawtooth:
 
         result = "Ramp Up Saw";
         break;
 
-    case wave::REVERSE_SAWTOOTH:
+    case wave::reverse_sawtooth:
 
         result = "Decay Saw";
         break;
 
-    case wave::TRIANGLE:
+    case wave::triangle:
 
         result = "Triangle";
         break;
