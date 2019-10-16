@@ -1588,6 +1588,8 @@ qsmainwnd::load_qseqedit (int seqid)
  *  editor window to tell its parent (this) that it is going away.  Note that
  *  this does not delete the editor, it merely removes the pointer to it.
  *
+ * TODO:  BACKPORT THIS FIX TO SEQ64!!!
+ *
  * \param seqid
  *      The sequence number that the editor represented.
  */
@@ -1597,7 +1599,12 @@ qsmainwnd::remove_editor (int seqno)
 {
     auto ei = m_open_editors.find(seqno);
     if (ei != m_open_editors.end())
+    {
+        qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei);
+        if (not_nullptr(qep))
+            delete qep;                     /* delete the pointer           */
+    }
 }
 
 /**

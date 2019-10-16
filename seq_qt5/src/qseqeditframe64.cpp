@@ -1159,6 +1159,7 @@ qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 bool
 qseqeditframe64::on_sequence_change (seq::number seqno)
 {
+#if 0
     // We GOT WOIK TODO!
 
     if (seqno == seq_pointer()->seq_number())
@@ -1167,6 +1168,7 @@ qseqeditframe64::on_sequence_change (seq::number seqno)
         // m_seqdata->set_dirty();      // doesn't cause a refresh
         // printf("on_sequence_change()\n"); // never called
     }
+#endif
     return true;
 }
 

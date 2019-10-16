@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-19
+ * \updates       2019-10-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3420,17 +3420,20 @@ sequence::add_event
 
 /**
  *  Handles loop/replace status on behalf of seqrolls.  This sets the
- *  loop-reset status, which is check in the stream_event() function in this
- *  module.
+ *  loop-reset status, which is checked in the stream_event() function in this
+ *  module.  This status is set when the time-stamp remainder is less than a
+ *  quarter note, meaning we have just gotten back to the beginning of the
+ *  loop.
  */
 
 bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (m_overwrite_recording && m_length > 0)
+    if (m_overwrite_recording && m_parent->is_running() && m_length > 0)
     {
         midipulse tstamp = m_parent->get_tick() % m_length;
+printf("check loop reset\n");
         if (tstamp < (m_ppqn / 4))
         {
             loop_reset(true);

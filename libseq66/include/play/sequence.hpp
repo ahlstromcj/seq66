@@ -1697,7 +1697,6 @@ public:
 
     midipulse handle_size (midipulse start, midipulse finish);
     void handle_edit_action (edit action, int var);
-
     bool check_loop_reset ();
 
 public:
