@@ -401,9 +401,9 @@ private:
      * Documented in the cpp file.
      */
 
-    static int m_initial_snap;
-    static int m_initial_note_length;
-    static int m_initial_chord;
+    static int sm_initial_snap;
+    static int sm_initial_note_length;
+    static int sm_initial_chord;
 
 };          // class qseqeditframe64
 

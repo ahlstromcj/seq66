@@ -1,6 +1,6 @@
 TODO for Sequencer66 0.90.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-10-04
+2019-04-13 to 2019-10-17
 
 HOT ITEMS:
 
@@ -8,6 +8,7 @@ HOT ITEMS:
 
     Do:
 
+        -   After importing to a set, reload that set to make changes visible.
         -   In qseqroll, replace reset_draw_marker().
         -   In qsmainwnd, implement and unhide the PPQN combo box, and save the
             setting.

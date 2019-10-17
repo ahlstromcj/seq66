@@ -21,7 +21,7 @@
  * \library       Seqtool (from the Seq66 project)
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2018-12-19
+ * \updates       2019-10-17
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -1004,8 +1004,9 @@ faker::sm_auto_func_list [] =
         seq66::automation::slot::song_pointer,
         &faker::automation_song_pointer
     },
-    { seq66::automation::slot::keep_queue, &faker::automation_keep_queue    },
-    { seq66::automation::slot::reserved_34, &faker::automation_no_op        },
+    { seq66::automation::slot::keep_queue,  &faker::automation_keep_queue   },
+    { seq66::automation::slot::slot_shift,  &faker::automation_no_op        },
+    { seq66::automation::slot::mutes_clear, &faker::automation_no_op        },
     { seq66::automation::slot::reserved_35, &faker::automation_no_op        },
 
     /*

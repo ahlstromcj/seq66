@@ -69,15 +69,15 @@
 #include "pixmaps/zoom_in.xpm"
 #include "pixmaps/zoom_out.xpm"
 
+namespace seq66
+{
+
 /**
  *  Helps with making the page leaps slightly smaller than the width of the
  *  piano roll scroll area.  Same value as used in qseqeditframe64.
  */
 
-#define SEQ66_PROGRESS_PAGE_OVERLAP_QT      80
-
-namespace seq66
-{
+static const int c_progress_page_overlap = 80;
 
 /**
  *  Principal constructor, has a reference to a performer object.
@@ -301,7 +301,7 @@ qperfeditframe64::follow (bool ischecked)
 void
 qperfeditframe64::follow_progress ()
 {
-    int w = ui->rollScrollArea->width() - SEQ66_PROGRESS_PAGE_OVERLAP_QT;
+    int w = ui->rollScrollArea->width() - c_progress_page_overlap;
     if (w > 0)
     {
         QScrollBar * hadjust = ui->rollScrollArea->h_scroll();

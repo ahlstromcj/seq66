@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-18
+ * \updates       2019-10-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -167,10 +167,6 @@ qsmainwnd::qsmainwnd
     m_perf_frame_visible    (false),
     m_current_main_set      (0)
 {
-#if ! defined SEQ66_PLATFORM_CPP_11
-    initialize_key_map();
-#endif
-
     ui->setupUi(this);
 
     QRect screen = QApplication::desktop()->screenGeometry();
@@ -1209,7 +1205,7 @@ qsmainwnd::save_file (const std::string & fname)
             filename = file_extension_set(filename, ".midi");
             os
                 << "Will save the Cakewalk WRK file " << wrkname
-                << " only in Seq66 format as " << filename
+                << " in Seq66 format as " << filename
                 ;
             report_message(os.str(), true);
         }
@@ -1369,19 +1365,6 @@ qsmainwnd::show_import_dialog ()
 {
     m_import_dialog->exec();
     QStringList filePaths = m_import_dialog->selectedFiles();
-
-    /*
-     * Rather than rely on the user remembering to set the destination
-     * screen-set, prompt for the set/bank number.  Could make this a user
-     * option at some point.
-     *
-     *  bool ok;
-     *  int sset = QInputDialog::getInt
-     *  (
-     *      this, tr("Import to Bank"),
-     *      tr("Destination screen-set/bank"), 1, 0, usr().max_sets() - 1, 1, &ok
-     *  );
-     */
 
     bool ok = filePaths.length() > 0;
     if (ok)
@@ -1559,9 +1542,8 @@ qsmainwnd::load_qseqedit (int seqid)
         if (ei == m_open_editors.end())
         {
             /*
-             * First, make sure the sequence exists.  We should consider
-             * creating it if it does not exist.  So many features, so little
-             * time.
+             * Make sure the sequence exists.  We should consider creating it if
+             * it does not exist.  So many features, so little time.
              */
 
             if (perf().is_seq_active(seqid))
@@ -1570,12 +1552,7 @@ qsmainwnd::load_qseqedit (int seqid)
                 if (not_nullptr(ex))
                 {
                     ex->show();
-#if defined SEQ66_PLATFORM_CPP_11
                     std::pair<int, qseqeditex *> p = std::make_pair(seqid, ex);
-#else
-                    std::pair<int, qseqeditex *> p =
-                        std::make_pair<int, qseqeditex *>(seqid, ex);
-#endif
                     m_open_editors.insert(p);
                 }
             }
@@ -1587,8 +1564,6 @@ qsmainwnd::load_qseqedit (int seqid)
  *  Removes the editor window from the list.  This function is called by the
  *  editor window to tell its parent (this) that it is going away.  Note that
  *  this does not delete the editor, it merely removes the pointer to it.
- *
- * TODO:  BACKPORT THIS FIX TO SEQ64!!!
  *
  * \param seqid
  *      The sequence number that the editor represented.
@@ -1726,12 +1701,7 @@ qsmainwnd::load_live_frame (int ssnum)
             if (not_nullptr(ex))
             {
                 ex->show();
-#if defined SEQ66_PLATFORM_CPP_11
                 std::pair<int, qliveframeex *> p = std::make_pair(ssnum, ex);
-#else
-                std::pair<int, qliveframeex *> p =
-                    std::make_pair<int, qliveframeex *>(ssnum, ex);
-#endif
                 m_open_live_frames.insert(p);
             }
         }

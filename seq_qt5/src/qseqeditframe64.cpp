@@ -149,13 +149,6 @@ QWidget container?
 #include "pixmaps/zoom.xpm"             /* zoom_in/_out combo-box           */
 #include "pixmaps/chord3-inv.xpm"
 
-/**
- *  Helps with making the page leaps slightly smaller than the width of the
- *  piano roll scroll area.  Same value as used in qperfeditframe64.
- */
-
-#define SEQ66_PROGRESS_PAGE_OVERLAP_QT      80
-
 /*
  *  Do not document the name space.
  */
@@ -189,9 +182,9 @@ namespace seq66
  *  the snap ticks to the actual PPQN ratio.
  */
 
-int qseqeditframe64::m_initial_snap         = SEQ66_DEFAULT_PPQN / 4;
-int qseqeditframe64::m_initial_note_length  = SEQ66_DEFAULT_PPQN / 4;
-int qseqeditframe64::m_initial_chord        = 0;
+int qseqeditframe64::sm_initial_snap         = SEQ66_DEFAULT_PPQN / 4;
+int qseqeditframe64::sm_initial_note_length  = SEQ66_DEFAULT_PPQN / 4;
+int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
  * To reduce the amount of written code, we use a static array to
@@ -369,12 +362,12 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_minidata_popup    (nullptr),
     m_beats_per_bar     (seq_pointer()->get_beats_per_bar()),
     m_beat_width        (seq_pointer()->get_beat_width()),
-    m_snap              (m_initial_snap),
-    m_note_length       (m_initial_note_length),
-    m_scale             (usr().seqedit_scale()),        // m_initial_scale
-    m_chord             (0),    // (usr().seqedit_chord()),  // m_initial_chord
-    m_key               (usr().seqedit_key()),          // m_initial_key
-    m_bgsequence        (usr().seqedit_bgsequence()),   // m_initial_sequence
+    m_snap              (sm_initial_snap),
+    m_note_length       (sm_initial_note_length),
+    m_scale             (usr().seqedit_scale()),        // sm_initial_scale
+    m_chord             (0),
+    m_key               (usr().seqedit_key()),          // sm_initial_key
+    m_bgsequence        (usr().seqedit_bgsequence()),   // sm_initial_sequence
     m_measures          (0),                            // fixed below
 #if defined USE_STAZED_ODD_EVEN_SELECTION
     m_pp_whole          (0),
@@ -759,7 +752,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_snap, SIGNAL(clicked(bool)),
         this, SLOT(reset_grid_snap())
     );
-    set_snap(m_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
+    set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
@@ -767,7 +760,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_note, SIGNAL(clicked(bool)),
         this, SLOT(reset_note_length())
     );
-    set_note_length(m_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
+    set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     /*
      *  Zoom In and Zoom Out:  Rather than two buttons, we use one and
@@ -1618,7 +1611,7 @@ qseqeditframe64::set_chord (int chord)
     if (chord >= 0 && chord < c_chord_number)
     {
         ui->m_combo_chord->setCurrentIndex(chord);
-        m_chord = m_initial_chord = chord;
+        m_chord = sm_initial_chord = chord;
         if (not_nullptr(m_seqroll))
             m_seqroll->set_chord(chord);
     }
@@ -2317,7 +2310,7 @@ qseqeditframe64::set_snap (midipulse s)
     if (s > 0 && s != m_snap)
     {
         m_snap = int(s);
-        m_initial_snap = int(s);
+        sm_initial_snap = int(s);
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 
@@ -2383,7 +2376,7 @@ qseqeditframe64::set_note_length (int notelength)
 #endif
 
     m_note_length = notelength;
-    m_initial_note_length = notelength;
+    sm_initial_note_length = notelength;
     if (not_nullptr(m_seqroll))
         m_seqroll->set_note_length(notelength);
 }

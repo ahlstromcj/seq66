@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-24
- * \updates       2019-03-09
+ * \updates       2019-10-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -47,13 +47,7 @@ namespace seq66
  *  Free functions in the seq66 namespace.
  */
 
-#if ! defined SEQ66_PLATFORM_CPP_11
-extern void initialize_key_map ();
-#endif
-
-extern unsigned qt_map_to_gdk (unsigned qtkey, unsigned qttext);
 extern std::string qt_key_name (unsigned qtkey, unsigned qttext);
-extern unsigned gdk_map_to_qt (unsigned gdkkeycode);
 
 }               // namespace seq66
 
