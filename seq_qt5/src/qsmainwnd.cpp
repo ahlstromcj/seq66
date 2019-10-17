@@ -1364,10 +1364,9 @@ void
 qsmainwnd::show_import_dialog ()
 {
     m_import_dialog->exec();
-    QStringList filePaths = m_import_dialog->selectedFiles();
 
-    bool ok = filePaths.length() > 0;
-    if (ok)
+    QStringList filePaths = m_import_dialog->selectedFiles();
+    if (filePaths.length() > 0)
     {
         for (int i = 0; i < filePaths.length(); ++i)
         {
@@ -1376,17 +1375,20 @@ qsmainwnd::show_import_dialog ()
             {
                 try
                 {
+                    int setno = int(perf().playscreen_number());
                     std::string fn = path.toStdString();
                     bool is_wrk = file_extension_match(fn, "wrk");
                     midifile * f = is_wrk ?
                         new wrkfile(fn) : new midifile(fn, ppqn()) ;
 
-                    f->parse(perf(), int(perf().playscreen_number()));
-                    ui->spinBpm->setValue(perf().bpm());
-                    ui->spinBpm->setDecimals(usr().bpm_precision());
-                    ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-                    if (not_nullptr(m_live_frame))
-                        m_live_frame->set_bank(int(perf().playscreen_number()));
+                    if (f->parse(perf(), setno))
+                    {
+                        ui->spinBpm->setValue(perf().bpm());
+                        ui->spinBpm->setDecimals(usr().bpm_precision());
+                        ui->spinBpm->setSingleStep(usr().bpm_step_increment());
+                        if (not_nullptr(m_live_frame))
+                            m_live_frame->update_bank(setno); // set_bank(setno)
+                    }
                 }
                 catch (...)
                 {

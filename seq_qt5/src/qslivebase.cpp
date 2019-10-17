@@ -116,6 +116,9 @@ qslivebase::set_bank ()
 /**
  *  Roughly similar to mainwid::log_screenset().
  *
+ *  Note that, for import, we will have already set the bank to be filled in,
+ *  and so must do the work even if the bank ID has not changed.
+ *
  * \return
  *      Returns true if the bank was successfully changed.
  */
@@ -123,7 +126,11 @@ qslivebase::set_bank ()
 bool
 qslivebase::set_bank (int bankid, bool hasfocus)
 {
-    bool result = bankid != m_bank_id && perf().is_screenset_valid(bankid);
+    /*
+     * bool result = bankid != m_bank_id && perf().is_screenset_valid(bankid);
+     */
+
+    bool result = perf().is_screenset_valid(bankid);
     if (result)
     {
         m_bank_id = bankid;
