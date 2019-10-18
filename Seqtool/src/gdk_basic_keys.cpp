@@ -137,7 +137,17 @@ gdk_key_name (unsigned gdkkeycode)
 {
     if (gdkkeycode <= 0x7f)
     {
-        return lookup_qt_key_name(gdkkeycode);  /* from the keymap module   */
+        /*
+         * return lookup_qt_key_name(gdkkeycode);
+         */
+
+        char tmp[16];
+        if (gdkkeycode < ' ')
+            snprintf(tmp, sizeof tmp, "Ctrl-%c", char(gdkkeycode - 64));
+        else
+            snprintf(tmp, sizeof tmp, "%c", char(gdkkeycode));
+
+        return std::string(tmp);
     }
     else
     {

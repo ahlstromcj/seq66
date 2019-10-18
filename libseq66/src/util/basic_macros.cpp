@@ -161,7 +161,7 @@ bool
 warn_message (const std::string & msg)
 {
     if (is_debug())
-        std::cout << "[WARNING: " << msg << "]" << std::endl;
+        std::cout << "[Warning: " << msg << "]" << std::endl;
 
     return true;
 }
@@ -321,7 +321,7 @@ msgprintf (msg_level lev, std::string fmt, ...)
 
         case msg_level::warn:
 
-            std::cout << "[WARNING: " << output << "]" << std::endl;
+            std::cout << "[Warning: " << output << "]" << std::endl;
             break;
 
         case msg_level::error:

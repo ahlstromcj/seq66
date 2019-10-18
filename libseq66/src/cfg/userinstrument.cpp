@@ -107,7 +107,7 @@ userinstrument::set_defaults ()
     m_is_valid = false;
     m_controller_count = 0;
     m_instrument_def.instrument.clear();
-    for (int c = 0; c < SEQ66_MIDI_CONTROLLER_MAX; ++c)
+    for (int c = 0; c < c_midi_controller_max; ++c)
     {
         m_instrument_def.controllers_active[c] = false;
         m_instrument_def.controllers[c].clear();
@@ -152,7 +152,7 @@ userinstrument::set_controller
     bool isactive
 )
 {
-    if (m_is_valid && c >= 0 && c < SEQ66_MIDI_CONTROLLER_MAX)
+    if (m_is_valid && c >= 0 && c < c_midi_controller_max)
     {
         m_instrument_def.controllers[c] = cname;
         m_instrument_def.controllers_active[c] = isactive;
@@ -181,7 +181,7 @@ const std::string &
 userinstrument::controller_name (int c) const
 {
     static const std::string s_empty;
-    if (m_is_valid && c >= 0 && c < SEQ66_MIDI_CONTROLLER_MAX)
+    if (m_is_valid && c >= 0 && c < c_midi_controller_max)
         return m_instrument_def.controllers[c];
     else
         return s_empty;
@@ -202,7 +202,7 @@ userinstrument::controller_name (int c) const
 bool
 userinstrument::controller_active (int c) const
 {
-    if (m_is_valid && c >= 0 && c < SEQ66_MIDI_CONTROLLER_MAX)
+    if (m_is_valid && c >= 0 && c < c_midi_controller_max)
         return m_instrument_def.controllers_active[c];
     else
         return false;
@@ -220,7 +220,7 @@ void
 userinstrument::copy_definitions (const userinstrument & rhs)
 {
     m_instrument_def.instrument = rhs.m_instrument_def.instrument;
-    for (int c = 0; c < SEQ66_MIDI_CONTROLLER_MAX; ++c)
+    for (int c = 0; c < c_midi_controller_max; ++c)
     {
         m_instrument_def.controllers_active[c] =
             rhs.m_instrument_def.controllers_active[c];

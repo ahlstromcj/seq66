@@ -62,17 +62,6 @@ extern usrsettings & usr ();
 extern int choose_ppqn (int ppqn = SEQ66_USE_DEFAULT_PPQN);
 extern void set_defaults ();
 
-/**
- *  Shows a message if in verbose mode.
- */
-
-inline void
-verbose_message (const std::string & msg)
-{
-    if (rc().verbose() && ! msg.empty())
-        printf("%s\n", msg.c_str());
-}
-
 }           // namespace seq66
 
 #endif      // SEQ66_SETTINGS_HPP

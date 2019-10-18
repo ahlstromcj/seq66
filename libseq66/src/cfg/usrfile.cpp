@@ -234,7 +234,7 @@ usrfile::parse ()
 
                 ccname[0] = 0;                              // clear the buffer
                 sscanf(scanline(), "%d %[^\n]", &c, ccname);
-                if (c >= 0 && c < SEQ66_MIDI_CONTROLLER_MAX)      // 128
+                if (c >= 0 && c < c_midi_controller_max)      // 128
                 {
                     std::string name(ccname);
                     if (name.empty())

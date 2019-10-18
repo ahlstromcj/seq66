@@ -879,7 +879,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'h':
             show_help();
-            result = SEQ66_NULL_OPTION_INDEX;
+            result = c_null_option_index;
             break;
 
         case 'i':                           /* ignore ALSA device           */
@@ -986,7 +986,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'V':
             std::cout << versiontext << seq66::seq_build_details();
-            result = SEQ66_NULL_OPTION_INDEX;
+            result = c_null_option_index;
             break;
 
         case 'X':
@@ -999,14 +999,14 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case '#':
             printf("%s\n", SEQ66_VERSION);
-            result = SEQ66_NULL_OPTION_INDEX;
+            result = c_null_option_index;
             break;
 
         default:
             break;
         }
     }
-    if (result != SEQ66_NULL_OPTION_INDEX)
+    if (result != c_null_option_index)
     {
         std::size_t applen = strlen("seq66");
         std::string appname(argv[0]);           /* "seq66", "./seq66", etc. */

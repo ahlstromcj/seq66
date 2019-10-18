@@ -66,7 +66,7 @@ const int c_max_instruments = SEQ66_DEFAULT_INSTRUMENT_MAX;
  *  number of MIDI controllers that can be supported.
  */
 
-const int SEQ66_MIDI_CONTROLLER_MAX = 128;
+const int c_midi_controller_max = 128;
 
 /**
  *  This structure corresponds to <code> [user-instrument-N] </code>
@@ -91,7 +91,7 @@ struct userinstrument_t
      *  this name might be empty.
      */
 
-    std::string controllers[SEQ66_MIDI_CONTROLLER_MAX];
+    std::string controllers[c_midi_controller_max];
 
     /**
      *  Provides a flag that indicates if each of up to 128 controller is
@@ -99,7 +99,7 @@ struct userinstrument_t
      *  or a General MIDI device.
      */
 
-    bool controllers_active[SEQ66_MIDI_CONTROLLER_MAX];
+    bool controllers_active[c_midi_controller_max];
 };
 
 /**
@@ -182,7 +182,7 @@ public:
 
     int controller_max () const
     {
-        return SEQ66_MIDI_CONTROLLER_MAX;
+        return c_midi_controller_max;
     }
 
     const std::string & controller_name (int c) const;  // getter

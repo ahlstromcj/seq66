@@ -57,7 +57,7 @@ class rcsettings;
  *  help-related option was specified.
  */
 
-const int SEQ66_NULL_OPTION_INDEX = 99999;
+const int c_null_option_index = 99999;
 
 /**
  *  A wrapper class so that the whole class can be a friend.

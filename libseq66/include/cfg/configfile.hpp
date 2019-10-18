@@ -48,14 +48,15 @@ namespace seq66
 /**
  *  Currently these strings are just for reference, and not yet used in the
  *  code.
+ *
+ *  std::string filetag = "config-type";
+ *  std::string ctrltag = "ctrl";
+ *  std::string mutetag = "mutes";
+ *  std::string rctag   = "rc";
+ *  std::string usrtag  = "usr";
+ *  std::string playtag = "playlist";
+ *
  */
-
-#define filetag = "config-type";
-#define ctrltag = "ctrl";               /* new extension to replace "rc"    */
-#define mutetag = "mutes";              /* new extension to replace "rc"    */
-#define rctag   = "rc";
-#define usrtag  = "usr";
-#define playtag = "playlist";
 
 /*
  * Forward references.

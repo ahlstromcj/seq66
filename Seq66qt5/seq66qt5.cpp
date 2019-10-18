@@ -99,7 +99,7 @@ main (int argc, char * argv [])
     (void) seq66::cmdlineopts::parse_command_line_options(argc, argv);
     bool is_help = seq66::cmdlineopts::help_check(argc, argv);
     bool ok = true;
-    int optionindex = -1;   // SEQ66_NULL_OPTION_INDEX;
+    int optionindex = -1;
     if (! is_help)
     {
         /*

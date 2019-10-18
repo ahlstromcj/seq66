@@ -1152,17 +1152,14 @@ qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 bool
 qseqeditframe64::on_sequence_change (seq::number seqno)
 {
-#if 0
-    // We GOT WOIK TODO!
-
-    if (seqno == seq_pointer()->seq_number())
+    bool result = seqno == seq_pointer()->seq_number();
+    if (result)
     {
-        m_seqroll->set_redraw();        // more?
-        // m_seqdata->set_dirty();      // doesn't cause a refresh
-        // printf("on_sequence_change()\n"); // never called
+        m_seqroll->set_redraw();
+        m_seqdata->set_dirty();                 // doesn't cause a refresh
+        printf("on_sequence_change()\n");       // never called
     }
-#endif
-    return true;
+    return result;
 }
 
 /**
@@ -1281,13 +1278,6 @@ qseqeditframe64::conditional_update ()
         follow_progress();
     }
     (void) seq_pointer()->check_loop_reset();
-
-    /*
-     * Never set dirt in this timer function!
-     *
-     * if (seq_pointer()->is_dirty_edit())
-     *    set_dirty();
-     */
 }
 
 /**

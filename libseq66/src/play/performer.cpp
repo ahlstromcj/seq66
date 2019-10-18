@@ -744,18 +744,10 @@ performer::sequence_title (const sequence & seq)
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        if (usr().window_scaled_down())
-        {
-            char temp[12];
-            snprintf(temp, sizeof temp, "%.11s", seq.title().c_str());
-            result = std::string(temp);
-        }
-        else
-        {
-            char temp[16];
-            snprintf(temp, sizeof temp, "%.14s", seq.title().c_str());
-            result = std::string(temp);
-        }
+        char temp[16];
+        const char * fmt =  usr().window_scaled_down() ? "%.11s" : "%.14s" ;
+        snprintf(temp, sizeof temp, fmt, seq.title().c_str());
+        result = std::string(temp);
     }
     return result;
 }
@@ -1228,7 +1220,7 @@ performer::needs_update (seq::number seqno) const
     bool result = false;
     if (m_is_busy)
     {
-        printf("performer busy!\n");
+        (void) warn_message("performer busy!");
     }
     else
     {
@@ -1904,11 +1896,6 @@ performer::launch_output_thread ()
 void
 performer::launch_input_thread ()
 {
-    if (rc().verbose())
-    {
-        unsigned num_cpus = std::thread::hardware_concurrency();
-        infoprintf("%u CPUs detected", num_cpus);
-    }
     m_in_thread = std::thread(&performer::input_func, this);
     m_in_thread_launched = true;
     if (rc().priority())                        /* Not in MinGW RCB     */
@@ -2010,7 +1997,7 @@ performer::set_tick (midipulse tick)
     if (difference > 100)
     {
         s_last_tick = tick;
-        printf("perform tick = %ld\n", m_tick);
+        infoprintf("perform tick = %ld\n", m_tick);
         fflush(stdout);
     }
     if (tick == 0)
@@ -2532,7 +2519,7 @@ performer::output_func ()
         }
 #if defined SEQ66_PLATFORM_DEBUG
         if (rc().verbose())
-            printf("output_func() running on CPU #%d\n", sched_getcpu());
+            infoprintf("output_func() running on CPU #%d\n", sched_getcpu());
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -2744,17 +2731,11 @@ performer::output_func ()
                         {
 #if defined SEQ66_JACK_SUPPORT
                             if (m_jack_asst.transport_not_starting())
-                            {
                                 play(rtick - 1);
-                                printf("perf::play jack not transport(%ld)\n", rtick);
-                            }
 #endif
                         }
                         else
-                        {
                             play(rtick - 1);
-                            printf("perf::play jack running(%ld)\n", rtick);
-                        }
 
                         midipulse ltick = get_left_tick();
                         set_orig_ticks(ltick);
@@ -3067,7 +3048,7 @@ performer::input_func ()
                             {
 #ifdef PLATFORM_DEBUG_TMI
                                 std::string estr = to_string(ev);
-                                printf("MIDI control event %s\n", estr.c_str());
+                                infoprintf("MIDI ctrl event %s\n", estr.c_str());
 #endif
                             }
                             else

@@ -870,16 +870,14 @@ public:
         return m_triggers.get_trigger_paste_tick();
     }
 
-    std::string seq_number_string () const
-    {
-        char temp[16];
-        snprintf(temp, sizeof temp, "%d", int(m_seq_number));
-        return std::string(temp);
-    }
-
     int seq_number () const
     {
         return int(m_seq_number);
+    }
+
+    std::string seq_number_string () const
+    {
+        return std::to_string(seq_number());
     }
 
     /**
