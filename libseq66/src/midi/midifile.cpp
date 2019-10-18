@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-03
+ * \updates       2019-10-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2365,11 +2365,10 @@ midifile::write (performer & p, bool doseqspec)
         {
             char file_buffer[SEQ66_MIDI_LINE_MAX];  /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
-            std::list<midibyte>::iterator it;
-            for (it = m_char_list.begin(); it != m_char_list.end(); ++it)
+            for (auto c : m_char_list)              /* list of midibytes    */
             {
-                char c = *it;
-                file.write(&c, 1);
+                char kc = char(c);
+                file.write(&kc, 1);
             }
             m_char_list.clear();
         }
@@ -2511,10 +2510,9 @@ midifile::write_song (performer & p)
                      */
 
                     midipulse previous_ts = 0;
-                    const triggers::List & trigs = seq.get_triggers();
-                    triggers::List::const_iterator i;
-                    for (i = trigs.begin(); i != trigs.end(); ++i)
-                        previous_ts = lst.song_fill_seq_event(*i, previous_ts);
+                    const auto & trigs = seq.get_triggers();
+                    for (auto & t : trigs)
+                        previous_ts = lst.song_fill_seq_event(t, previous_ts);
 
                     if (! trigs.empty())        /* adjust the sequence length */
                     {
@@ -2549,12 +2547,10 @@ midifile::write_song (performer & p)
         {
             char file_buffer[SEQ66_MIDI_LINE_MAX];  /* enable bufferization */
             file.rdbuf()->pubsetbuf(file_buffer, sizeof file_buffer);
-
-            std::list<midibyte>::const_iterator it;
-            for (it = m_char_list.begin(); it != m_char_list.end(); ++it)
+            for (auto c : m_char_list)
             {
-                const char c = *it;
-                file.write(&c, 1);
+                char kc = char(c);
+                file.write(&kc, 1);
             }
             m_char_list.clear();
         }

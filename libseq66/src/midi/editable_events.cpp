@@ -119,7 +119,7 @@ editable_events::operator = (const editable_events & rhs)
         m_current_event     = rhs.m_current_event;
         m_midi_parameters   = rhs.m_midi_parameters;
         m_sequence.partial_assign(rhs.m_sequence);
-#if defined USE_VERIFY_AND_LINK_USEFUL           /* not yet ready */
+#if defined USE_VERIFY_AND_LINK_USEFUL              /* not yet ready    */
         if (m_events.size() > 1)
             verify_and_link();
 #endif
@@ -141,9 +141,8 @@ editable_events::get_length () const
     midipulse result = 0;
     if (count() > 0)
     {
-//      const_reverse_iterator lci = m_events.rbegin(); /* get last element */
-        auto lci = m_events.rbegin(); /* get last element */
-        result = lci->second.timestamp();               /* get length value */
+        auto lci = m_events.rbegin();               /* get last element */
+        result = lci->second.timestamp();           /* get length value */
     }
     return result;
 }
@@ -169,7 +168,7 @@ editable_events::add (const event & e)
 /**
  *  Adds an editable event to the internal event list.  For the std::multimap
  *  implementation, this is an option if we want to make sure the insertion
- *  succeed:
+ *  succeeded:
  *
 \verbatim
  *      std::pair<Events::iterator, bool> result = m_events.insert(p);
@@ -195,7 +194,6 @@ editable_events::add (const editable_event & e)
     size_t count = m_events.size();         /* save initial size            */
     event_list::event_key key(e);           /* create the key value         */
     auto p = std::make_pair(key, e);        /* EventsPair                   */
-//  iterator ei = m_events.insert(p);       /* std::multimap operation      */
     auto ei = m_events.insert(p);           /* std::multimap operation      */
     bool result = m_events.size() == (count + 1);
     if (result)

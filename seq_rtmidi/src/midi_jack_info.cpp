@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2019-02-10
+ * \updates       2019-10-18
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -90,14 +90,8 @@ jack_process_io (jack_nframes_t nframes, void * arg)
              * appropriately.
              */
 
-            std::vector<midi_jack *>::iterator mi;
-            for
-            (
-                mi = self->m_jack_ports.begin();
-                mi != self->m_jack_ports.end(); ++mi
-            )
+            for (auto mj : self->m_jack_ports)      /* midi_jack pointers   */
             {
-                midi_jack * mj = *mi;
                 midi_jack_data * mjp = &mj->jack_data();
                 if (mj->parent_bus().is_input_port())
                     (void) jack_process_rtmidi_input(nframes, mjp);
@@ -441,13 +435,8 @@ midi_jack_info::api_connect ()
     }
     if (result)
     {
-        for
-        (
-            std::vector<midibus *>::iterator it = bus_container().begin();
-            it != bus_container().end(); ++it
-        )
+        for (auto m : bus_container())              /* midibus pointers */
         {
-            midibus * m = *it;
             if (! m->is_virtual_port())
             {
                 result = m->api_connect();

@@ -540,10 +540,8 @@ midi_vector_base::song_fill_seq_event
     for (int p = 0; p <= times_played; ++p)
     {
         midipulse delta_time = 0;
-        event_list::Events::iterator i;
-        for (i = m_sequence.events().begin(); i != m_sequence.events().end(); ++i)
+        for (auto & e : m_sequence.events())
         {
-            const event & e = event_list::cdref(i);
             midipulse timestamp = e.timestamp() + timestamp_adjust;
             if (timestamp >= trig.tick_start())     /* at/after trigger     */
             {
@@ -735,10 +733,8 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
     midipulse timestamp = 0;
     midipulse deltatime = 0;
     midipulse prevtimestamp = 0;
-    for (event_list::iterator i = evl.begin(); i != evl.end(); ++i)
+    for (auto & e : evl)
     {
-        event & er = event_list::dref(i);
-        const event & e = er;
         timestamp = e.timestamp();
         deltatime = timestamp - prevtimestamp;
         if (deltatime < 0)                          /* midipulse == long    */
@@ -766,19 +762,11 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
         put(0x7F);
         add_variable((triggercount * 3 * 4) + 4);       /* 3 long ints plus...  */
         add_long(c_triggers_new);                       /* ...the triggers code */
-        for
-        (
-            triggers::List::iterator ti = triggerlist.begin();
-            ti != triggerlist.end(); ++ti
-        )
+        for (auto & t : triggerlist)
         {
-            /*
-             * Similar to the code in song_fill_seq_trigger().
-             */
-
-            add_long(ti->tick_start());
-            add_long(ti->tick_end());
-            add_long(ti->offset());
+            add_long(t.tick_start());
+            add_long(t.tick_end());
+            add_long(t.offset());
         }
         fill_proprietary ();
     }

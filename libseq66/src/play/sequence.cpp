@@ -3855,8 +3855,8 @@ sequence::intersect_notes
 )
 {
     automutex locker(m_mutex);
-    event_list::iterator on = m_events.begin();
-    event_list::iterator off = m_events.begin();
+    auto on = m_events.begin();
+    auto off = m_events.begin();
     while (on != m_events.end())
     {
         event & eon = event_list::dref(on);

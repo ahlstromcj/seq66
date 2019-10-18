@@ -192,7 +192,7 @@ qt_key_name (unsigned qtkey, unsigned qttext)
     {
         if (qtkey >= 0x1000000)
         {
-            QtGtkKeyMap::const_iterator gi = sg_key_map.find(qtkey);
+            auto gi = sg_key_map.find(qtkey);
             if (gi != sg_key_map.end())
                 return gi->second.gks_key_name;
             else

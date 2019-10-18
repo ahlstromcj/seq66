@@ -2838,7 +2838,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * SEQ66_MIDI_COUNT_MAX);
     event_list::const_iterator cev;
-    seq_pointer()->reset_ex_iterator(cev);                   /* reset_draw_marker()  */
+    seq_pointer()->reset_ex_iterator(cev);      /* reset_draw_marker()  */
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
     {
         switch (status)

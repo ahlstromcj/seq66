@@ -3399,7 +3399,6 @@ bool
 performer::selection_operation (SeqOperation func)
 {
     bool result = false;
-    selection::iterator s;
     for (auto s : m_selected_seqs)
         func(s);                        /* not "*s" */
 
@@ -3469,7 +3468,7 @@ performer::box_delete (seq::number dropseq, midipulse droptick)
 void
 performer::box_toggle_sequence (seq::number dropseq, midipulse droptick)
 {
-    selection::const_iterator s = m_selected_seqs.find(dropseq);
+    auto s = m_selected_seqs.find(dropseq);
     if (s != m_selected_seqs.end())
         box_delete(*s, droptick);
     else
@@ -3501,7 +3500,6 @@ performer::box_unselect_sequences (seq::number dropseq)
 void
 performer::box_move_triggers (midipulse tick)
 {
-    selection::const_iterator s;
     for (auto s : m_selected_seqs)
     {
         seq::pointer selseq = get_sequence(s);
@@ -3520,7 +3518,6 @@ performer::box_move_triggers (midipulse tick)
 void
 performer::box_offset_triggers (midipulse offset)
 {
-    selection::const_iterator s;
     for (auto s : m_selected_seqs)
     {
         seq::pointer selseq = get_sequence(s);

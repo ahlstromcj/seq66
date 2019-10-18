@@ -127,7 +127,7 @@ qseqdata::sizeHint () const
  *      assigned a value inside the function, but d1 was 0 afterward.  So we
  *      decided to bite the bullet and ditch this call:
  *
- *      seq_pointer()->get_next_event_kepler(m_status, m_cc, tick, d0, d1, selected)
+ * seq_pointer()->get_next_event_kepler(m_status, m_cc, tick, d0, d1, selected)
  *
  *      Instead, we create an iterator and use sequence::get_next_event_ex().
  */

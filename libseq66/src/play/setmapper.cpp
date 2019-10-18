@@ -141,7 +141,7 @@ void
 setmapper::reset ()
 {
     clear();
-    container::iterator setp = add_set(0);
+    auto setp = add_set(0);
     if (setp != m_container.end())
         (void) set_playscreen(0);
 
@@ -286,7 +286,7 @@ setmapper::screen (seq::number seqno)
     {
         if (seqno < seq::limit())
         {
-            container::iterator newset = add_set(s);
+            auto newset = add_set(s);
             return newset->second;
         }
         else
@@ -362,7 +362,7 @@ setmapper::add_sequence (sequence * s, int seqno)
                  * This should never happen here; taken care of in
                  * install_sequence()!
                  *
-                 *      container::iterator setp = add_set(setno);
+                 *      auto setp = add_set(setno);
                  *      result = setp != m_container.end();
                  *      if (result)
                  *          result = setp->second.add(s, seqno);
@@ -549,7 +549,7 @@ setmapper::install_sequence (sequence * s, seq::number seqno)
     auto setiterator = m_container.find(setno);
     if (setiterator == m_container.end())
     {
-        container::iterator setp = add_set(setno);
+        auto setp = add_set(setno);
         result = setp != m_container.end();
     }
 #if 0
@@ -914,7 +914,7 @@ setmapper::set_playscreen (screenset::number setno)
         }
         else
         {
-            container::iterator setp = add_set(setno);
+            auto setp = add_set(setno);
             if (setp != m_container.end())
             {
                 set_playscreen(setno);

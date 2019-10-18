@@ -814,6 +814,9 @@ qseqroll::draw_drum_notes
 
     /*
      * TODO: use reset_ex_iterator() or reset_interval().
+     *
+     *  event_list::const_iterator evi;
+     *  s->reset_ex_iterator(evi);
      */
 
     s->reset_draw_marker();

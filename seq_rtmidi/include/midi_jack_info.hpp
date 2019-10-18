@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2019-02-09
+ * \updates       2019-10-18
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *    We need to have a way to get all of the JACK information of
@@ -49,13 +49,15 @@ class midi_jack_info : public midi_info
 
 private:
 
+    using portlist = std::vector<midi_jack *>;
+
     /**
      *  Holds the port data.  Not for use with the multi-client option.
      *  This list is iterated in the input and output portions of the JACK
-     *  process callback.
+     *  process callback.  This class does not own the pointers.
      */
 
-    std::vector<midi_jack *> m_jack_ports;
+    portlist m_jack_ports;
 
     /**
      *  Holds the JACK sequencer client pointer so that it can be used

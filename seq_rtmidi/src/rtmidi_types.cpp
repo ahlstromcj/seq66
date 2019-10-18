@@ -54,13 +54,9 @@ midi_message::show () const
     else
     {
         fprintf(stderr, "midi_message:\n");
-        for
-        (
-            container::const_iterator ci = m_bytes.begin();
-            ci != m_bytes.end(); ++ci
-        )
+        for (auto c : m_bytes)
         {
-            fprintf(stderr, " 0x%2x", int(*ci));
+            fprintf(stderr, " 0x%2x", int(c));
         }
         fprintf(stderr, "\n");
         fflush(stderr);
