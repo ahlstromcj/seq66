@@ -97,7 +97,7 @@ set PROJECT_VERSION=0.90.1
 set PROJECT_DRIVE=C:
 set PROJECT_BASE=\Users\Chris\Documents\Home
 set PROJECT_ROOT=..\seq66
-set PROJECT_FILE=qpseq66.pro
+set PROJECT_FILE=seq66.pro
 set PROJECT_7ZIP="qpseq66-release-package-%PROJECT_VERSION%.7z"
 set SHADOW_DIR=seq66-release
 set APP_DIR=Seq66qt5
@@ -120,7 +120,7 @@ del /S /Q %SHADOW_DIR% > NUL
 mkdir %SHADOW_DIR%
 cd %SHADOW_DIR%
 
-:: qmake -makefile -recursive "CONFIG += release" ..\seq66\qpseq66.pro
+:: qmake -makefile -recursive "CONFIG += release" ..\seq66\seq66.pro
 
 cd
 echo qmake -makefile -recursive %CONFIG_SET% %PROJECT_ROOT%\%PROJECT_FILE%

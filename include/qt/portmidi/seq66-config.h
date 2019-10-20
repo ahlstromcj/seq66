@@ -29,18 +29,21 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2018-12-01
+ * \updates       2019-10-20
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
  *  qtcreator/qmake.  That build uses PortMidi in order to support both Linux
  *  and Windows. Hence no support for JACK or LASH, for example.
- *  However, it still defines some things that are available on GNU/Linux
+ *  However, it still defines some things that are available on GNU/Linux/MingW
  *  systems.
  *
  *  Note that there is a native (i.e. automake) Linux Qt build that uses
  *  RtMidi, so that JACK is supported.  However, LASH support is not being
  *  ported to seq66.
+ *
+ *  Note:  This header file is NOT auto-generated.  Therefore, the date and
+ *  version information below must be edited by hand when needed.
  */
 
 #ifdef _INCLUDE_SEQ___CONFIG_H
@@ -48,11 +51,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2018-12-01"
+#define SEQ66_VERSION_DATE_SHORT "2019-10-20"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.90.0"
+#define SEQ66_VERSION "0.90.1"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -76,10 +79,7 @@
 #endif
 
 /**
- * Names this version of application.
- *
- *  "qpl" means "Qt PortMidi Linux-based".  On Windows, consider "Linux"
- *  to be "MingW32" :-).
+ * Names this version of application.  "qp" means "Qt PortMidi-based".
  */
 
 #ifndef SEQ66_APP_NAME

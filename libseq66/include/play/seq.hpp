@@ -194,7 +194,7 @@ public:
      *  Most of these functions are compiler generated.
      */
 
-    seq (sequence * s = nullptr);
+    seq ();
     seq (const seq &) = default;
     seq & operator = (const seq &) = default;
     seq (seq &&) = default;
@@ -340,9 +340,9 @@ public:
 
 private:
 
-    bool activate (sequence * s, number seqnum);
-    bool activate (number seqnum, bool active = true);
-    bool deactivate(number seqnum);
+    bool activate (sequence * s, number seqno);
+    bool activate (number seqno, bool active = true);
+    bool deactivate ();
     bool is_exportable () const;
     bool is_dirty_main () const;
     bool is_dirty_edit () const;

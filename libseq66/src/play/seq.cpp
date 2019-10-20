@@ -87,12 +87,11 @@ namespace seq66
  *  Initialize the members.  The computer-generated default constructor does
  *  not clear the boolean members.
  *
- * \param s
- *      A pointer to the sequence to be managed.  If null, then this object is
- *      not useable.
+ *  Please note that the activate() function must be called before this object
+ *  can be used.
  */
 
-seq::seq (sequence * s) :
+seq::seq () :
     m_seq                       (),         /* seq::pointer, shared pointer */
     m_seq_active                (false),    /* indicates a valid pointer    */
     m_was_active_main           (false),
@@ -103,11 +102,7 @@ seq::seq (sequence * s) :
     m_armed_status              (false),
     m_queued                    (false)
 {
-    m_seq.reset();
-//  if (not_nullptr(s))
-//      loop(s);                            /* add it and set "active"      */
-
-
+    m_seq.reset();                          /* must call seq::activate(s)   */
 }
 
 /**
@@ -185,7 +180,7 @@ seq::activate (number seqno, bool active)
  */
 
 bool
-seq::deactivate (number seqno)
+seq::deactivate ()
 {
     bool result = not_nullptr(m_seq);
     if (m_seq_active)

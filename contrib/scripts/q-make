@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+#   Makes the qseq66 application using qmake instead of automake.  Run
+#   this script from a shadow directory.
+#
+#   This script is almost a very cut-down Linux version of the
+#   nsis/build_release_package.bat DOS batch script.
+
+CONFIGURATION="release"
+ROOTPATH="../seq66"
+PROJECT="seq66.pro"
+
+if [ "$1" == "-d" ] || [ "$1" == "--debug" ] ; then
+    CONFIGURATION="debug"
+fi
+
+CONFIGSET="CONFIG += $CONFIGURATION"
+
+# qmake -makefile -recursive "CONFIG += release" ../seq66/seq66.pro
+
+echo "qmake -makefile -recursive '$CONFIGSET' $ROOTPATH/$PROJECT"
+qmake -makefile -recursive "$CONFIGSET" $ROOTPATH/$PROJECT
+if [ $? == 0 ] ; then
+    echo "make"
+    make
+    if [ $? == 0 ] ; then
+        echo "The call to make failed."
+    fi
+else
+    echo "The call to qmake failed."
+fi
+
+echo "Please check make.log for errors and warnings."
+
