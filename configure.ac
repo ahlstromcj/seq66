@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-10-15
+dnl \update        2019-10-20
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -20,7 +20,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.90.0], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.90.1], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 export PKG_CONFIG=$(which pkg-config)
@@ -399,7 +399,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-10-15"
+#define VERSION_DATE_SHORT "2019-10-20"
 #define VERSION "0.90.1"
 
 )

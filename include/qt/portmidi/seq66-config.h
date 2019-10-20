@@ -44,6 +44,11 @@
  *
  *  Note:  This header file is NOT auto-generated.  Therefore, the date and
  *  version information below must be edited by hand when needed.
+ *
+ *      SEQ66_VERSION_DATE_SHORT
+ *      SEQ66_PACKAGE_STRING
+ *      SEQ66_PACKAGE_VERSION
+ *      SEQ66_VERSION
  */
 
 #ifdef _INCLUDE_SEQ___CONFIG_H
@@ -289,7 +294,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.90.0"
+#define SEQ66_PACKAGE_STRING "Seq66 0.90.1"
 #endif
 
 /* Define to the one symbol short name of this package. */
@@ -304,7 +309,7 @@
 
 /* Define to the version of this package. */
 #ifndef SEQ66_PACKAGE_VERSION
-#define SEQ66_PACKAGE_VERSION "0.90.0"
+#define SEQ66_PACKAGE_VERSION "0.90.1"
 #endif
 
 /*
@@ -350,11 +355,6 @@
 
 #ifndef SEQ66_STDC_HEADERS
 #define SEQ66_STDC_HEADERS 1
-#endif
-
-/* Version number of package */
-#ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.90.0"
 #endif
 
 /* Indicates limited Windows support */

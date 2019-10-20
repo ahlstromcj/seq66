@@ -1,13 +1,13 @@
 readme.windows for Seq66 0.90.1
 Chris Ahlstrom
-2018-05-13 to 2019-09-23
+2018-05-13 to 2019-10-20
 
 This README file provides the things you need to know to run the new native
 Windows implmentation of seq66, an executable called qpseq66.exe.  It
 provides some notes on Seq66 and Windows.  We mostly use Windows 10;
 some features might differ in Windows 7 or Windows 2012+ Server.
 
-There is a portable ZIP package for qpseq66 and an NSIS-based installer.
+There will be a portable ZIP package for qpseq66 and an NSIS-based installer.
 See https://github.com/ahlstromcj/seq66-packages.  For documentation,
 see https://github.com/ahlstromcj/seq66-doc.  Some minor features are
 still missing from the Windows version, such as keyboard configuration.
@@ -155,9 +155,13 @@ Configuration Files For Windows:
         qpseq66.rc          The main usage parameters for Seq66.
         qpseq66.usr         Supplemental options, not all supported in
                             Windows yet.
+        qpseq66.ctrl        Provides the MIDI input controls and output controls
+                            that let one control Seq66 via MIDI and display some
+                            status items to LaunchPad-like devices.
+        qpseq66.mutes       Offloads the mute settings to a separate file.
 
     To access AppData, highlight the username directory, then append
-    "AppData" to the end of "C:\username".  It is a Windows thang.
+    "AppData" to the end of "C:\Users\username".  It is a Windows thang.
 
 	As of this time (2018-05-13) these settings are the only way to
 	alter the ports accessed, in the Windows version of Seq66.

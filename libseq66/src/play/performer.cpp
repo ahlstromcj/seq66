@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-10-15
+ * \updates       2019-10-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1883,7 +1883,7 @@ performer::launch_output_thread ()
         }
         else
         {
-            infoprint("[Output priority set to 1]");
+            infoprint("Output priority set to 1");
         }
     }
 }
@@ -1925,7 +1925,7 @@ performer::launch_input_thread ()
         }
         else
         {
-            infoprint("[Output priority set to 1]");
+            infoprint("Input priority set to 1");
         }
     }
 }

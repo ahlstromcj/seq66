@@ -1,6 +1,6 @@
-INSTALL for Sequencer66 v. 0.90.1 and above
+INSTALL for Seq66 v. 0.90.1 and above
 Chris Ahlstrom
-2015-09-10 to 2019-09-24
+2015-09-10 to 2019-10-20
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily
@@ -16,6 +16,9 @@ Different versions of the program can be built:
         build it in Windows, specify the Mingw library and tools when installing
         QtCreator.  There are build issues using qmake on older 32-bit/Qt 5.3
         systems; C++11 somehow cannot be defined.
+    -   qpseq66. The same as qseq66, except that the internal "portmidi"
+        implementation is used as the MIDI engine.  Requires Qmake to build on
+        Linux and Windows.
     -   seq66cli.  A GUI-less version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
 
@@ -174,19 +177,19 @@ Qmake-based Install:
     
     The Qmake-based build is designed *only* to use the PortMidi library and
     the new Kepler34-based Qt 5 user interface.  This user interface is
-    currently still missing some functions of the Gtkmm 2.4 user interface,
-    but the Seq66 libraries are used internally.
+    currently similar to the Gtkmm 2.4 user interface, but supports a slightly
+    different feature set, and uses the Seq66 libraries internally.
 
     The first way to use this build is to run QtCreator and load the
-    qpseq66.pro file.  This method can be used if you do not care for the
+    seq66.pro file.  This method can be used if you do not care for the
     command-line.  However, if the installer for QtCreator did not
     set up the default "kit" properly, create a good kit manually.
-    If the kit is set up properly, the "qpseq66.pro" entry in the left
+    If the kit is set up properly, the "seq66.pro" entry in the left
     project panel will show the other "pro" files as subprojects.  Note that
     a successful build will put the generated files in a "shadow" directory
     parallel with the "seq66" directory, such as:
     
-        build-qpseq66-Desktop_Qt_5_10_1_MinGW_32bit-Debug
+        build-seq66-Desktop_Qt_5_10_1_MinGW_32bit-Debug
     
     Do not forget to "Configure Project" before trying to build it!
 
@@ -196,9 +199,9 @@ Qmake-based Install:
         $ cd ..
         $ mkdir debug-build
         $ cd debug-build
-        $ qmake -makefile -recursive "CONFIG += debug" ../seq66/qpseq66.pro
+        $ qmake -makefile -recursive "CONFIG += debug" ../seq66/seq66.pro
         $ make
-        $ gdb ./Seq66qt/qpseq66 (for debugging)
+        $ gdb ./Seq66qt/seq66 (for debugging)
 
     One can also use "CONFIG += release", or just leave that off entirely.
     We get a nice build that works under Linux or Windows.  Currently, we have

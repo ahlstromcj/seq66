@@ -1,10 +1,10 @@
-Sequencer66 Licensing 0.90.1
+Seq66 Licensing 0.90.1
 Chris Ahlstrom
-2015-09-10 to 2019-09-24
+2015-09-10 to 2019-10-20
 
 Applications:
 
-   The Sequencer66 application license is either the GNU GPLv2
+   The Seq66 application license is either the GNU GPLv2
    or the GNU GPLv3.  Generally, projects that originate with me use
    the latter license, while projects I have extended may specify the
    former license.
@@ -34,7 +34,7 @@ Applications:
 
 Libraries:
 
-   The Sequencer66 library license is the GNU LGPLv3.
+   The Seq66 library license is the GNU LGPLv3.
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published
@@ -55,7 +55,7 @@ Libraries:
 
 Documentation:
 
-   The Sequencer66 documentation license is the GNU FDLv1.3.
+   The Seq66 documentation license is the GNU FDLv1.3.
 
    This documentation is free documentation; you can redistribute it and/or
    modify it under the terms of the GNU Free Documentation License as
