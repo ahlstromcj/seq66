@@ -1,3 +1,431 @@
+2019-10-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, configure, configure.ac, data/README, data/license.txt,
+	data/readme.txt, data/readme.windows, include/config.h.in,
+	include/qt/portmidi/seq66-config.h, libseq66/src/play/performer.cpp: 
+	Version 0.90.1 pending.
+	* contrib/scripts/q-make, include/qt/portmidi/seq66-config.h,
+	libseq66/include/play/seq.hpp, libseq66/libseq66.pro,
+	libseq66/src/play/seq.cpp, nsis/build_release_package.bat,
+	seq66.pro: Fixes made to the qmake build process.
+
+2019-10-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/midi/editable_events.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/play/triggers.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qskeymaps.cpp, seq_rtmidi/include/midi_jack_info.hpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	More iterator cleanup.
+	* Seq66qt5/seq66qt5.cpp, Seqtool/src/gdk_basic_keys.cpp,
+	libseq66/include/cfg/cmdlineopts.hpp,
+	libseq66/include/cfg/configfile.hpp,
+	libseq66/include/cfg/settings.hpp,
+	libseq66/include/cfg/userinstrument.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/userinstrument.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/main_impl.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/src/qseqeditframe64.cpp: 
+	Fixes to seqtool and random cleanup.
+
+2019-10-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qslivebase.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed bank
+	import refresh.
+	* README, Seqtool/src/faker.cpp, TODO, include/config.h.in,
+	libseq66/include/app_limits.h, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qskeymaps.hpp, seq_qt5/src/qperfeditframe64.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qskeymaps.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed non-deletion of closed seqedit,
+	code cleanup.
+
+2019-10-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qseqeditex.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	non-removal of the seqedit frames when closed.
+	* configure.ac, libseq66/include/app_limits.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/seq66_platform_macros.h,
+	libseq66/include/util/calculations.hpp,
+	libseq66/include/util/palette.hpp,
+	libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/midi/midi_splitter.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/util/calculations.cpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qlfoframe.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsliveframe.cpp, seq_qt5/src/qslivegrid.cpp: Forward
+	porting seq64 fixes, in progress.
+
+2019-10-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/usrsettings.hpp,
+	libseq66/src/cfg/usrsettings.cpp: Partial clean-out of unused user
+	settings.
+
+2019-10-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/midibytes.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/midibytes.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqkeys.cpp: Still struggling with scale analysis.
+
+2019-10-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/midibytes.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/midibytes.cpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp: Note analysis mostly in place.
+	* libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/midibytes.hpp, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/midibytes.cpp: Added midi_booleans class to
+	midibytes.
+
+2019-10-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.am, Seq66qt5/Makefile.am, TODO, configure, configure.ac,
+	include/config.h.in, libseq66/include/cfg/scales.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/cfg/scales.cpp,
+	libseq66/src/midi/wrkfile.cpp, libseq66/src/play/performer.cpp,
+	seq_portmidi/include/finddefault.h,
+	seq_portmidi/include/pmmacosxcm.h,
+	seq_portmidi/src/finddefault-macosx.c,
+	seq_portmidi/src/finddefault.c, seq_portmidi/src/pmwin.c,
+	seq_qt5/forms/qseqeditframe64.ui: Interim check-in, adding scale
+	analysis.
+
+2019-10-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp: 
+	Fixed Modify handling in event frame, need Close button.
+	* seq_qt5/include/qseventslots.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Working on update-handling in the
+	event frame.
+
+2019-10-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, seq_qt5/src/qseqeditframe64.cpp: Fixed display of no-scale.
+	* : commit a104e07db9c2829239909e4b663702304179dabe Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Thu Oct 3 05:52:45 2019
+	-0400
+
+2019-10-02  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/setmapper.cpp: 
+	Added partial box trigger selection.
+	* seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp: Fixed
+	dirt bug in opening Edit tab.
+
+2019-10-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/src/cfg/rcfile.cpp,
+	seq_qt5/include/qstriggereditor.hpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Fixed seqframe dirtiness.
+	* Seq66qt5/seq66qt5.cpp, Seqtool/src/converter.cpp,
+	Seqtool/src/optionsfile.cpp, TODO, contrib/code/qseqrollpix.cpp,
+	seq_portmidi/src/mastermidibus.cpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqframe.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qsliveframe.cpp: Whittled
+	down a few TODOs, added more.
+
+2019-09-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/src/qseqroll.cpp: Fixed issue of seqroll undo not being
+	shown.
+	* libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qeditbase.hpp,
+	seq_qt5/include/qseqroll.hpp, seq_qt5/src/qeditbase.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qstriggereditor.cpp: Fixed
+	issue moving notes with mouse.
+
+2019-09-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seqtool/src/optionsfile.cpp, TODO, contrib/scripts/session,
+	data/qseq66.rc, doc/dox/notes/user_testing.dox,
+	doc/latex/tex/seq66_jack.tex, doc/latex/tex/seq66_manpage.tex,
+	doc/latex/tex/seq66_menu.tex, doc/latex/tex/seq66_rc_file.tex,
+	doc/latex/tex/seq66_usr_file.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/cfg/usermidibus.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrfile.cpp,
+	libseq66/src/midi/midibase.cpp, man/sequencer66.1,
+	seq_portmidi/src/mastermidibus.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp: Updating session script and
+	fixing manual/auto ports command-line switches.
+
+2019-09-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/binfuncs, contrib/scripts/session: Added binfuncs
+	script.
+	* contrib/scripts/Jack, contrib/scripts/session: Added some
+	preliminary Jack scripts.
+
+2019-09-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/seq66_features.h,
+	seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/include/gui_palette_qt5.hpp,
+	seq_qt5/include/qscrollmaster.h, seq_qt5/include/qseditoptions.hpp,
+	seq_qt5/src/gui_palette_qt5.cpp, seq_qt5/src/qscrollmaster.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qseqroll.cpp: Fixed song
+	mode selection, tweaks to qscrollmaster and color.
+
+2019-09-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qseditoptions.ui,
+	seq_qt5/forms/qsetmaster.ui, seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qseditoptions.cpp: Mutes and options radio buttons in
+	progress.
+	* INSTALL, README, Seqtool/src/seqtool.cpp,
+	Seqtool/src/unit_tests.cpp, TODO, VERSION, bootstrap, configure,
+	configure.ac, configure.help, data/license.txt,
+	doc/dox/doxy-common.cfg, doc/latex/tex/sequencer66-user-manual.tex,
+	include/config.h.in, libseq66/include/play/mutegroups.hpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/play/mutegroups.cpp,
+	libseq66/src/util/strfunctions.cpp, man/seq66.1, man/seq66cli.1,
+	man/sequencer66.1, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/src/qmutemaster.cpp: Mutes UI and preparation for 0.90.1.
+
+2019-09-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/forms/qmutemaster.ui, seq_qt5/src/qmutemaster.cpp: 
+	Tweaking mutes master UI.
+
+2019-09-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, libseq66/include/util/basic_macros.hpp, seq66.pro,
+	seq_qt5/include/Makefile.am, seq_qt5/seq_qt5.pro,
+	seq_qt5/src/Makefile.am, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qrollframe.cpp: Fixed qmake build process.
+	* data/README, data/license.txt, data/readme.txt,
+	data/readme.windows, packages, resources/pixmaps/Makefile.am,
+	resources/pixmaps/SEQ66_24x24.xpm,
+	resources/pixmaps/SEQUENCER-66_24x24.xpm,
+	resources/pixmaps/route66rwb-32x32.xpm,
+	resources/pixmaps/route66rwb-66x66.xpm,
+	resources/pixmaps/seq66.xpm, resources/pixmaps/seq66_32.xpm,
+	resources/pixmaps/seq66_logo.xpm,
+	resources/pixmaps/seq66_logo_legacy.xpm, seq_qt5/seq_qt5.pro: 
+	Updated icons etc from 64 to 66.
+
+2019-09-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat,
+	seq_qt5/include/qperfbase.hpp,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/include/qperfnames.hpp, seq_qt5/src/qperfeditex.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qperftime.cpp: Added initial
+	NSIS files and fixed perfnames update.
+
+2019-09-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp: Moved
+	start/stop/pause to qsmainwnd.
+	* seq_qt5/include/qbase.hpp, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqroll.cpp: Added start/stop/pause to qbase and
+	qseqroll.
+
+2019-09-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/event.hpp,
+	libseq66/src/midi/event_list.cpp, libseq66/src/play/sequence.cpp: 
+	Refining verify_and_link().
+	* libseq66/src/play/performer.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp: Trying
+	to track down note-link error when recording from nanoKey2.
+
+2019-09-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/app_limits.h, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/midi/midi_vector_base.cpp,
+	libseq66/src/midi/wrkfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/setmapper.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qslivebase.cpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qslivegrid.cpp: Moved some static values from sequence
+	to seq.
+
+2019-09-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/app_limits.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/setmapper.cpp, seq_qt5/include/qseqeditframe.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qseqeditframe.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed seqroll expansion, seq-num
+	refactoring.
+	* libseq66/include/play/screenset.hpp,
+	libseq66/include/play/seq.hpp, libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/midi/wrkfile.cpp,
+	libseq66/src/play/screenset.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Refactoring seq number functions, might not build.
+
+2019-09-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* seq_qt5/forms/qsmainwnd.ui, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qseqtime.cpp: Partially fixed chopping off some of the
+	main-window tabs.
+	* libseq66/src/midi/editable_event.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/src/qseqeventframe.cpp: Still messing with table sizing.
+	* libseq66/src/midi/editable_event.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/src/qseqeventframe.cpp: 
+	Fixed linked-event timestamp, still working on event table sizing.
+
+2019-09-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/editable_event.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Interim check-in of event-frame
+	changes.
+	* seq_qt5/forms/qmutemaster.ui, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/forms/qsetmaster.ui, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: More tweaks to event table.
+	* libseq66/include/midi/editable_event.hpp,
+	libseq66/include/midi/editable_events.hpp,
+	libseq66/include/midi/event_list.hpp,
+	libseq66/src/midi/editable_event.cpp,
+	libseq66/src/midi/editable_events.cpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/event_list.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qseventslots.cpp: Got
+	links to appear, but table needs rework.
+	* libseq66/include/midi/midibytes.hpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/calculations.cpp,
+	seq_qt5/forms/qseqeventframe.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qseventslots.hpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseventslots.cpp: Trying to upgrade event-frame to show
+	links.
+
+2019-09-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/play/performer.cpp, seq_qt5/forms/qseqeventframe.ui,
+	seq_qt5/include/qseqbase.hpp, seq_qt5/include/qseqeventframe.hpp,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqeventframe.cpp, seq_qt5/src/qslivebase.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed round
+	trip editing of sequence title.
+
+2019-09-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seqtool/src/util_unit_test.cpp, libseq66/include/midi/event.hpp,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/include/unix/daemonize.hpp,
+	libseq66/include/util/palette.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qscrollmaster.h,
+	seq_qt5/include/qseqdata.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/include/qstriggereditor.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qskeymaps.cpp,
+	seq_rtmidi/include/rterror.hpp, seq_rtmidi/include/rtmidi_types.hpp: 
+	Interim check-in, replacing more typedefs and refactoring event
+	slightly.
+	* TODO, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qseqeditframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqeditframe.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Refactoring set_recording() and related
+	functions.
+
+2019-09-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/seq.hpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Refactoring seq-number parameters in performer, in progress.
+	* TODO, libseq66/src/midi/event_list.cpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/src/qliveframeex.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qslivegrid.cpp: Added cross-hair cursor for pasting,
+	other fixes.
+
+2019-09-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/midi/event_list.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixed paste in seqroll.
+	* TODO, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qslivegrid.cpp: May have fixed copy/paste issue, data
+	pane update on record.
+
+2019-09-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, seq_qt5/src/qseqeditframe64.cpp: Tinkering with
+	seqedit.
+
+2019-09-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, doc/dox/doxy-common.cfg,
+	libseq66/include/midi/event_list.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/event_list.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/seq66_features.cpp: Removed SEQ66_USE_EVENT_LIST macro,
+	vector permanently replaces list.
+	* libseq66/include/midi/editable_events.hpp,
+	libseq66/src/midi/editable_events.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/sequence.cpp: Some
+	event optimization.
+	* TODO, seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsmainwnd.cpp: 
+	Edit-frame 64 MIDI tooltips update, needed for dark themes.
+
+2019-09-09  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, libseq66/include/play/sequence.hpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Updated live-grid for short patterns.
+	* ChangeLog, seq_qt5/include/qloopbutton.hpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/include/qslotbutton.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qslotbutton.cpp: More screenshots, preparation for live
+	grid font scaling.
+
 2019-09-08  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* TODO, libseq66/include/midi/event_list.hpp,
