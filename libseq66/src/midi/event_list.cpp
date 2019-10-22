@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-09-12
+ * \updates       2019-10-21
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -474,6 +474,49 @@ event_list::clear_links ()
         e.unmark();
         e.unlink();                     /* used to be e.clear_link()        */
     }
+}
+
+/**
+ *  Tries to fix notes that started near the end of the pattern and wrapped
+ *  around to the beginning, by moving the note.
+ *
+ * \param snap
+ *      Provides the sequence's current snap value.  Notes that start at less
+ *      than half that from the end of the pattern, and end earlier in the
+ *      pattern, will be adjusted.
+ *
+ * \param seqlength
+ *      Provides the length of the pattern.
+ *
+ * \return
+ *      Returns true if a least one note was adjusted. There must be a note-on
+ *      that is linked and fits the criterion noted above.
+ */
+
+bool
+event_list::edge_fix (midipulse snap, midipulse seqlength)
+{
+    bool result = false;
+    for (auto & e : m_events)
+    {
+        if (e.is_note_on() && e.is_linked())
+        {
+            midipulse onstamp = e.timestamp();
+            midipulse maximum = seqlength - snap / 2;
+            if (onstamp > maximum)
+            {
+                midipulse delta = seqlength - onstamp;
+                midipulse offstamp = e.link()->timestamp();
+                if (offstamp < onstamp)
+                {
+                    e.set_timestamp(0);         /* move to the beginning    */
+                    e.link()->set_timestamp(offstamp + delta);
+                    result = true;
+                }
+            }
+        }
+    }
+    return result;
 }
 
 #if defined USE_FILL_TIME_SIG_AND_TEMPO

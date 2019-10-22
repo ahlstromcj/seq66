@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-09-05
+ * \updates       2019-10-21
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -55,8 +55,7 @@
  */
 
 #include <algorithm>                    /* std::sort(), std::merge()    */
-#include <string>
-#include <stack>
+#include <string>                       /* std::string                  */
 #include <vector>                       /* std::vector                  */
 
 #include "midi/event.hpp"
@@ -344,6 +343,7 @@ private:                                // functions for friend sequence
     void scan_meta_events ();
 #endif
     void verify_and_link (midipulse slength);
+    bool edge_fix (midipulse snap, midipulse seqlength);
     bool link_new_note (event & eon, event & eoff);
     bool link_note (event & eon, event & eoff);
     void link_tempos ();

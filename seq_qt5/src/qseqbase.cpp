@@ -73,7 +73,7 @@ qseqbase::qseqbase
     m_move_delta_y          (0),
     m_move_snap_offset_x    (0)
 {
-    set_snap(m_seq->get_snap_tick());
+    set_snap(m_seq->snap());
 }
 
 #if defined USE_SCROLLING_CODE    // not ready for this class

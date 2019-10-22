@@ -589,7 +589,6 @@ private:
 
     midibyte m_status;
     midibyte m_cc;
-    midipulse m_snap;         // replace m_snap_tick???
 
     int m_scale;
 
@@ -794,13 +793,20 @@ public:
 
     void partial_assign (const sequence & rhs);
 
+#if defined USE_SET_EDITING_FULL_SIGNATURE
+
+    /*
+     * Not needed, but kept based on Seq64's seqedit usage.
+     */
+
     void set_editing (midibyte status, midibyte cc, midipulse snap, int scale)
     {
         m_status = status;
         m_cc = cc;
-        m_snap = snap;
         m_scale = scale;
     }
+
+#endif
 
     event_list & events ()
     {
@@ -1240,12 +1246,12 @@ public:
 
     bool expand_recording () const;     /* does more checking for status    */
 
-    midipulse get_snap_tick () const
+    midipulse snap () const
     {
         return m_snap_tick;
     }
 
-    void set_snap_tick (int st);
+    void snap (int st);
 
     bool get_quantized_rec () const
     {
@@ -1542,6 +1548,7 @@ public:
     void unselect ();
     void verify_and_link ();
     void link_new ();
+    bool edge_fix ();
 
     /**
      *  A new function to re-link the tempo events added by the user.
@@ -1602,15 +1609,9 @@ public:
         event_list::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
-    void quantize_events
-    (
-        midibyte status, midibyte cc,
-        midipulse snap_tick, int divide, bool linked = false
-    );
     void push_quantize
     (
-        midibyte status, midibyte cc,
-        midipulse snap_tick, int divide, bool linked = false
+        midibyte status, midibyte cc, int divide, bool linked = false
     );
     void transpose_notes (int steps, int scale);
 
@@ -1734,6 +1735,10 @@ private:
         midipulse tick_s, midipulse tick_f
     ) const;
 
+    void quantize_events
+    (
+        midibyte status, midibyte cc, int divide, bool linked = false
+    );
     void set_parent (performer * p);
     void put_event_on_bus (event & ev);
     void reset_loop ();

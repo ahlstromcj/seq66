@@ -1907,8 +1907,7 @@ qseqeditframe64::inverse_note_selection ()
 void
 qseqeditframe64::quantize_notes ()
 {
-    seq_pointer()->push_undo();
-    seq_pointer()->quantize_events(EVENT_NOTE_ON, 0, seq_pointer()->get_snap_tick(), 1, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, true);
 }
 
 /**
@@ -1918,8 +1917,7 @@ qseqeditframe64::quantize_notes ()
 void
 qseqeditframe64::tighten_notes ()
 {
-    seq_pointer()->push_undo();
-    seq_pointer()->quantize_events(EVENT_NOTE_ON, 0, seq_pointer()->get_snap_tick(), 2, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 2, true);
 }
 
 /**
@@ -2304,7 +2302,7 @@ qseqeditframe64::set_snap (midipulse s)
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 
-        seq_pointer()->set_snap_tick(s);
+        seq_pointer()->snap(s);
         m_seqevent->set_snap(s);
     }
 }

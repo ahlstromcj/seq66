@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-03
+ * \updates       2019-10-21
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -111,7 +111,7 @@ qseqroll::qseqroll
     setAttribute(Qt::WA_OpaquePaintEvent);          /* no erase on repaint  */
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    set_snap(seqp->get_snap_tick());
+    set_snap(seqp->snap());
     show();
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
@@ -1364,6 +1364,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         }
         else
         {
+            /*
+             * Doesn't work.  Weird.
+             *
+            Qt::KeyboardModifiers mods = event->modifiers();
+            if (mods & (Qt::ShiftModifier | Qt::MetaModifier) == 0)
+             */
+
             if
             (
                 (event->modifiers() & Qt::ShiftModifier) == 0 &&
@@ -1372,6 +1379,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             {
                 switch (event->key())
                 {
+                case Qt::Key_F:
+
+                    if (s->edge_fix())
+                        set_needs_update();
+                    break;
+
                 case Qt::Key_P:
 
                     set_adding(true);

@@ -230,7 +230,7 @@ qseqeditframe::qseqeditframe
     QString snapText("1/");
     snapText.append
     (
-        QString::number(perf().ppqn() * 4 / seq_pointer()->get_snap_tick())
+        QString::number(perf().ppqn() * 4 / seq_pointer()->snap())
     );
     ui->cmbGridSnap->setCurrentText(snapText);
 
@@ -532,30 +532,30 @@ qseqeditframe::updateSeqName()
 void
 qseqeditframe::updateGridSnap (int snapindex)
 {
-    int snap;
+    int snapvalue;
     int p = perf().ppqn();              /* ppqn()   */
     switch (snapindex)
     {
-    case  0: snap = p * 4; break;
-    case  1: snap = p * 2; break;
-    case  2: snap = p * 1; break;
-    case  3: snap = p / 2; break;
-    case  4: snap = p / 4; break;
-    case  5: snap = p / 8; break;
-    case  6: snap = p / 16; break;
-    case  7: snap = p / 32; break;
-    case  8: snap = p * 4; break; // index 8 is a separator
-    case  9: snap = p * 4  / 3; break;
-    case 10: snap = p * 2  / 3; break;
-    case 11: snap = p * 1 / 3; break;
-    case 12: snap = p / 2 / 3; break;
-    case 13: snap = p / 4 / 3; break;
-    case 14: snap = p / 8 / 3; break;
-    case 15: snap = p / 16 / 3; break;
-    default: snap = p * 4; break;
+    case  0: snapvalue = p * 4; break;
+    case  1: snapvalue = p * 2; break;
+    case  2: snapvalue = p * 1; break;
+    case  3: snapvalue = p / 2; break;
+    case  4: snapvalue = p / 4; break;
+    case  5: snapvalue = p / 8; break;
+    case  6: snapvalue = p / 16; break;
+    case  7: snapvalue = p / 32; break;
+    case  8: snapvalue = p * 4; break; // index 8 is a separator
+    case  9: snapvalue = p * 4  / 3; break;
+    case 10: snapvalue = p * 2  / 3; break;
+    case 11: snapvalue = p * 1 / 3; break;
+    case 12: snapvalue = p / 2 / 3; break;
+    case 13: snapvalue = p / 4 / 3; break;
+    case 14: snapvalue = p / 8 / 3; break;
+    case 15: snapvalue = p / 16 / 3; break;
+    default: snapvalue = p * 4; break;
     }
-    m_seqroll->set_snap(snap);
-    seq_pointer()->set_snap_tick(snap);
+    m_seqroll->set_snap(snapvalue);
+    seq_pointer()->snap(snapvalue);
 }
 
 /**
@@ -907,8 +907,7 @@ qseqeditframe::inverseNoteSelection()
 void
 qseqeditframe::quantizeNotes()
 {
-    seq_pointer()->push_undo();
-    seq_pointer()->quantize_events(EVENT_NOTE_ON, 0, seq_pointer()->get_snap_tick(), 1, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, true);
 }
 
 /**
@@ -918,8 +917,7 @@ qseqeditframe::quantizeNotes()
 void
 qseqeditframe::tightenNotes()
 {
-    seq_pointer()->push_undo();
-    seq_pointer()->quantize_events(EVENT_NOTE_ON, 0, seq_pointer()->get_snap_tick(), 2, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 2, true);
 }
 
 /**

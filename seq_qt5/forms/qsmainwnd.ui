@@ -794,7 +794,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -894,7 +894,7 @@
       </widget>
       <widget class="QWidget" name="EventTab">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -913,7 +913,7 @@
         </property>
         <layout class="QVBoxLayout" name="EventTabLayout">
          <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
+          <enum>QLayout::SetMaximumSize</enum>
          </property>
         </layout>
        </widget>

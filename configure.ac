@@ -20,7 +20,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.90.1], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.90.2], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 export PKG_CONFIG=$(which pkg-config)
@@ -92,7 +92,7 @@ AC_SUBST(PACKAGE)
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 AC_SUBST(CLIENT_NAME)
 
-VERSION="0.90.1"
+VERSION="0.90.2"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -400,7 +400,7 @@ dnl      automatically for us.
 AH_TOP(
 
 #define VERSION_DATE_SHORT "2019-10-20"
-#define VERSION "0.90.1"
+#define VERSION "0.90.2"
 
 )
 

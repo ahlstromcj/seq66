@@ -93,7 +93,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.90.1
+set PROJECT_VERSION=0.90.2
 set PROJECT_DRIVE=C:
 set PROJECT_BASE=\Users\Chris\Documents\Home
 set PROJECT_ROOT=..\seq66

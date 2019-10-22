@@ -217,7 +217,7 @@ qseqrollpix::qseqrollpix
     setAttribute(Qt::WA_OpaquePaintEvent);
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    set_snap(seqp->get_snap_tick());
+    set_snap(seqp->snap_tick());
     show();
     m_timer = new QTimer(this);                          // redraw timer !!!
     m_timer->setInterval(usr().window_redraw_rate());    // 20

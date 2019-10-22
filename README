@@ -1,6 +1,6 @@
-README for Sequencer66 0.90.1 (Sequencer64 refactored for C++11/14 and Qt)
+README for Sequencer66 0.90.2 (Sequencer64 refactored for C++11/14 and Qt)
 Chris Ahlstrom
-2015-09-10 to 2019-10-17
+2015-09-10 to 2019-10-20
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -48,6 +48,8 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.90.2:
+        -   To be determined.
     -   Version 0.90.1:
         -   A raft of bug fixes and user-interface improvements.
         -   Many tweaks to try to make the performer and the user-interface even

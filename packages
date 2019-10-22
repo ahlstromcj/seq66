@@ -29,9 +29,9 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
 
-packages 0.4 2019-09-23
+packages 0.5 2019-10-20
 
-Usage:  ./packages [--dry-run] [--release [0.90.1] ]
+Usage:  ./packages [--dry-run] [--release [0.90.2] ]
 
 This script packs the contents of the current directory into the following
 packages:

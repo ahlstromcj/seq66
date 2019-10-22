@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-16
+ * \updates       2019-10-21
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -164,7 +164,6 @@ sequence::sequence (int ppqn)
     m_raise                     (false),
     m_status                    (0),
     m_cc                        (0),
-    m_snap                      (0),
     m_scale                     (0),
     m_name                      (),
     m_last_tick                 (0),
@@ -576,7 +575,6 @@ sequence::unit_measure () const
 midipulse
 sequence::expand_threshold () const
 {
-    // return get_length() - unit_measure() / 16;
     return get_length() - unit_measure() / 4;
 }
 
@@ -592,7 +590,6 @@ sequence::expand_threshold () const
 midipulse
 sequence::progress_value () const
 {
-    // return get_length() - (unit_measure() + unit_measure() / 16);
     return expand_threshold() - (unit_measure() + unit_measure() / 4);
 }
 
@@ -617,7 +614,7 @@ sequence::calculate_measures () const
     if (m_unit_measure == 0)
         calculate_unit_measure();
 
-    return 1 + (m_length - 1) / m_unit_measure;
+    return 1 + (get_length() - 1) / m_unit_measure;
 }
 
 /**
@@ -1162,7 +1159,7 @@ sequence::toggle_queued ()
 {
     automutex locker(m_mutex);
     m_queued = ! m_queued;
-    m_queued_tick = m_last_tick - mod_last_tick() + m_length;
+    m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
     set_dirty_mp();
 
@@ -1256,11 +1253,11 @@ sequence::play
     }
     if (m_playing)                          /* play notes in frame          */
     {
-        midipulse offset = m_length - m_trigger_offset;
+        midipulse offset = get_length() - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
         midipulse end_tick_offset = end_tick + offset;
-        midipulse times_played = m_last_tick / m_length;
-        midipulse offset_base = times_played * m_length;
+        midipulse times_played = m_last_tick / get_length();
+        midipulse offset_base = times_played * get_length();
         int transpose = transposable() ? m_parent->get_transpose() : 0 ;
         auto e = m_events.begin();
         while (e != m_events.end())
@@ -1286,10 +1283,6 @@ sequence::play
 #endif
                 if (transpose != 0 && er.is_note()) /* includes Aftertouch  */
                 {
-                    // COMMENTED TO AVOID NEEDLESS COPYING
-                    // event transposed_event = er;    /* assign ALL members   */
-                    // transposed_event.transpose_note(transpose);
-                    // put_event_on_bus(transposed_event);
                     er.transpose_note(transpose);
                     put_event_on_bus(er);
                 }
@@ -1313,7 +1306,7 @@ sequence::play
             if (e == m_events.end())                /* did we hit the end ? */
             {
                 e = m_events.begin();               /* yes, start over      */
-                offset_base += m_length;            /* for another go at it */
+                offset_base += get_length();        /* for another go at it */
 
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,
@@ -1351,7 +1344,23 @@ void
 sequence::verify_and_link ()
 {
     automutex locker(m_mutex);
-    m_events.verify_and_link(m_length);
+    m_events.verify_and_link(get_length());
+}
+
+/**
+ *
+ */
+
+bool
+sequence::edge_fix ()
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);                   /* push_undo(), no lock */
+    bool result = m_events.edge_fix(snap(), get_length());
+    if (result)
+        modify();
+
+    return result;
 }
 
 /**
@@ -1537,8 +1546,7 @@ sequence::selected_box
     automutex locker(m_mutex);
     bool result = false;
     tick_s = m_maxbeats * m_ppqn;
-    tick_f = 0;
-    note_h = 0;
+    tick_f = note_h = 0;
     note_l = SEQ66_MIDI_COUNT_MAX;
     for (auto & e : m_events)
     {
@@ -1591,8 +1599,7 @@ sequence::onsets_selected_box
     automutex locker(m_mutex);
     bool result = false;
     tick_s = m_maxbeats * m_ppqn;
-    tick_f = 0;
-    note_h = 0;
+    tick_f = note_h = 0;
     note_l = SEQ66_MIDI_COUNT_MAX;
     for (auto & e : m_events)
     {
@@ -1769,11 +1776,11 @@ sequence::select_note_events
     {
         if (er.get_note() <= note_h && er.get_note() >= note_l)
         {
-            midipulse stick = 0;                    // must be initialized
-            midipulse ftick = 0;                    // must be initialized
+            midipulse stick = 0;
+            midipulse ftick = 0;
             if (er.is_linked())
             {
-                event * ev = er.link();       // pointer
+                event * ev = er.link();
                 if (er.is_note_off())
                 {
                     stick = ev->timestamp();
@@ -2143,14 +2150,14 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
 midipulse
 sequence::trim_timestamp (midipulse t)
 {
-    if (t >= m_length)
-        t -= m_length;
+    if (t >= get_length())
+        t -= get_length();
 
     if (t < 0)                          /* only if midipulse is signed  */
-        t += m_length;
+        t += get_length();
 
     if (t == 0)
-        t = m_length - m_note_off_margin;
+        t = get_length() - m_note_off_margin;
 
     return t;
 }
@@ -2185,20 +2192,20 @@ sequence::trim_timestamp (midipulse t)
 midipulse
 sequence::adjust_timestamp (midipulse t, bool isnoteoff)
 {
-    if (t > m_length)
-        t -= m_length;
+    if (t > get_length())
+        t -= get_length();
 
     if (t < 0)                          /* only if midipulse is signed  */
-        t += m_length;
+        t += get_length();
 
     if (isnoteoff)
     {
         if (t == 0)
-            t = m_length - m_note_off_margin;
+            t = get_length() - m_note_off_margin;
     }
     else                                /* if (wrap)                    */
     {
-        if (t == m_length)
+        if (t == get_length())
             t = 0;
     }
     return t;
@@ -2225,9 +2232,9 @@ midipulse
 sequence::clip_timestamp (midipulse ontime, midipulse offtime)
 {
     if (offtime <= ontime)
-        offtime = ontime + get_snap_tick() - note_off_margin();
-    else if (offtime >= m_length)
-        offtime = m_length - note_off_margin();
+        offtime = ontime + snap() - note_off_margin();
+    else if (offtime >= get_length())
+        offtime = get_length() - note_off_margin();
 
     return offtime;
 }
@@ -2348,14 +2355,7 @@ sequence::grow_selected (midipulse delta)
                     event * off = er.link();
                     event e = *off;                 /* original off-event   */
                     midipulse offtime = off->timestamp();
-
-                    /*
-                     * midipulse ontime = er.timestamp();
-                     * midipulse newtime = clip_timestamp(ontime, offtime+delta);
-                     */
-
                     midipulse newtime = trim_timestamp(offtime + delta);
-
                     off->mark();                    /* kill old off event   */
                     er.unmark();                    /* keep old on event    */
                     e.unmark();                     /* keep new off event   */
@@ -2427,6 +2427,10 @@ sequence::randomize_selected
         }
     }
 }
+
+/**
+ *
+ */
 
 void
 sequence::adjust_data_handle (midibyte status, int adata)
@@ -2714,13 +2718,6 @@ sequence::paste_selected (midipulse tick, int note)
                 e.set_note(n + note_delta);
             }
         }
-
-        /*
-         * Suitable for std::list and std::vector.  The std::multimap no longer
-         * supported.  Note that merge() requires m_events and Clipbd to be
-         * sorted first.
-         */
-
         m_events.merge(clipbd);                 /* will presort clipboard   */
         verify_and_link();
         reset_draw_marker();
@@ -3050,10 +3047,10 @@ sequence::change_event_data_lfo
 )
 {
     automutex locker(m_mutex);
-    double dlength = double(m_length);
+    double dlength = double(get_length());
     double dbw = double(m_time_beat_width);
     bool have_selection = m_events.any_selected_events(status, cc);
-    if (m_length == 0)                      /* should never happen, though  */
+    if (get_length() == 0)                  /* should never happen, though  */
         dlength = double(m_ppqn);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -3377,7 +3374,8 @@ sequence::append_event (const event & er)
  *      The second data byte for the event (if needed).
  *
  * \param paint
- *      If true, the inserted event is marked for painting.
+ *      If true, the inserted event is marked for painting.  The default value
+ *      is false.
  */
 
 bool
@@ -3430,10 +3428,9 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (m_overwrite_recording && m_parent->is_running() && m_length > 0)
+    if (m_overwrite_recording && m_parent->is_running() && get_length() > 0)
     {
-        midipulse tstamp = m_parent->get_tick() % m_length;
-printf("check loop reset\n");
+        midipulse tstamp = m_parent->get_tick() % get_length();
         if (tstamp < (m_ppqn / 4))
         {
             loop_reset(true);
@@ -3506,7 +3503,7 @@ sequence::stream_event (event & ev)
             set_dirty();
         }
         ev.set_status(ev.get_status());         /* clear the channel nybble */
-        ev.mod_timestamp(m_length);             /* adjust tick re length    */
+        ev.mod_timestamp(get_length());             /* adjust tick re length    */
         if (m_recording)
         {
             if (m_parent->is_pattern_playing()) /* m_parent->is_running()   */
@@ -3542,7 +3539,7 @@ sequence::stream_event (event & ev)
                     m_events_undo.push(m_events);       /* push_undo()      */
                     add_note                            /* more locking     */
                     (
-                        mod_last_tick(), get_snap_tick() - m_note_off_margin,
+                        mod_last_tick(), snap() - m_note_off_margin,
                         ev.get_note(), false, velocity
                     );
                     set_dirty();
@@ -3554,7 +3551,7 @@ sequence::stream_event (event & ev)
                     --m_notes_on;
 
                     if (m_notes_on == 0)
-                        m_last_tick += get_snap_tick();
+                        m_last_tick += snap();
                 }
             }
         }
@@ -3572,7 +3569,7 @@ sequence::stream_event (event & ev)
                 (
                     timestamp, note, timestamp, note, select::selecting
                 );
-                quantize_events(EVENT_NOTE_ON, 0, get_snap_tick(), 1, true);
+                quantize_events(EVENT_NOTE_ON, 0, 1, true);
             }
         }
     }
@@ -3973,13 +3970,6 @@ void
 sequence::grow_trigger (midipulse tickfrom, midipulse tickto, midipulse len)
 {
     automutex locker(m_mutex);
-
-    /*
-     * This check doesn't hurt, but doesn't prevent creating the new trigger.
-     *
-     * if (! get_queued())
-     */
-
     m_triggers.grow_trigger(tickfrom, tickto, len);
 }
 
@@ -4014,11 +4004,11 @@ void
 sequence::set_trigger_offset (midipulse trigger_offset)
 {
     automutex locker(m_mutex);
-    if (m_length > 0)
+    if (get_length() > 0)
     {
-        m_trigger_offset = trigger_offset % m_length;
-        m_trigger_offset += m_length;
-        m_trigger_offset %= m_length;
+        m_trigger_offset = trigger_offset % get_length();
+        m_trigger_offset += get_length();
+        m_trigger_offset %= get_length();
     }
     else
     {
@@ -4981,8 +4971,8 @@ sequence::set_last_tick (midipulse tick)
 midipulse
 sequence::get_last_tick () const
 {
-    if (m_length > 0)
-        return (m_last_tick + m_length - m_trigger_offset) % m_length;
+    if (get_length() > 0)
+        return (m_last_tick + get_length() - m_trigger_offset) % get_length();
     else
         return m_last_tick - m_trigger_offset;
 }
@@ -5090,7 +5080,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
         result = true;
     }
     else
-        len = m_length;
+        len = get_length();
 
     /*
      * We should set the measures count here.
@@ -5272,7 +5262,7 @@ sequence::set_input_recording (bool record_active, bool toggle)
  */
 
 void
-sequence::set_snap_tick (int st)
+sequence::snap (int st)
 {
     automutex locker(m_mutex);
     m_snap_tick = st;
@@ -5678,9 +5668,9 @@ sequence::shift_notes (midipulse ticks)
 
                 midipulse timestamp = e.timestamp() + ticks;
                 if (timestamp < 0L)                 /* wraparound           */
-                    timestamp = m_length - ((-timestamp) % m_length);
+                    timestamp = get_length() - ((-timestamp) % get_length());
                 else
-                    timestamp %= m_length;
+                    timestamp %= get_length();
 
                 e.set_timestamp(timestamp);
                 shifted_events.add(e);
@@ -5766,8 +5756,7 @@ sequence::set_transposable (bool flag)
 void
 sequence::quantize_events
 (
-    midibyte status, midibyte cc,
-    midipulse snap_tick, int divide, bool linked
+    midibyte status, midibyte cc, int divide, bool linked
 )
 {
     automutex locker(m_mutex);
@@ -5802,14 +5791,14 @@ sequence::quantize_events
                 e.unmark();                     /* unmark copy of the event   */
 
                 midipulse t = e.timestamp();
-                midipulse t_remainder = t % snap_tick;
+                midipulse t_remainder = t % snap();
                 midipulse t_delta = 0;
-                if (t_remainder < snap_tick / 2)
+                if (t_remainder < snap() / 2)
                     t_delta = -(t_remainder / divide);
                 else
-                    t_delta = (snap_tick - t_remainder) / divide;
+                    t_delta = (snap() - t_remainder) / divide;
 
-                if ((t_delta + t) >= m_length)      /* wrap-around Note On    */
+                if ((t_delta + t) >= get_length())  /* wrap-around Note On    */
                     t_delta = -e.timestamp();
 
                 e.set_timestamp(e.timestamp() + t_delta);
@@ -5839,13 +5828,13 @@ sequence::quantize_events
                      */
 
                     if (ft < 0)                     /* unwrap Note Off      */
-                        ft += m_length;
+                        ft += get_length();
 
-                    if (ft == m_length)             /* trim it a little     */
+                    if (ft == get_length())         /* trim it a little     */
                         ft -= m_note_off_margin;
 
-                    if (ft > m_length)              /* wrap it around       */
-                        ft -= m_length;
+                    if (ft > get_length())          /* wrap it around       */
+                        ft -= get_length();
 
                     f.set_timestamp(ft);
                     quantized_events.add(f);
@@ -5872,10 +5861,6 @@ sequence::quantize_events
  *      The control-change value to quantize, again as selected in the pattern
  *      editor's data pane.  For Note Ons, this value should be set to 0.
  *
- * \param snap_tick
- *      The number of ticks to use for quantizing the events.  Usually, this
- *      is the snap value selected in the pattern editor.
- *
  * \param divide
  *      Provides a division value, usually either 1 ("quantize") or 2
  *      ("tighten").
@@ -5888,13 +5873,12 @@ sequence::quantize_events
 void
 sequence::push_quantize
 (
-    midibyte status, midibyte cc,
-    midipulse snap_tick, int divide, bool linked
+    midibyte status, midibyte cc, int divide, bool linked
 )
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);
-    quantize_events(status, cc, snap_tick, divide, linked);
+    quantize_events(status, cc, divide, linked);
 }
 
 #if defined USE_STAZED_COMPANDING
@@ -5919,7 +5903,7 @@ sequence::multiply_pattern (double multiplier)
         if (er.is_note_off())
             timestamp -= note_off_margin();
 
-        timestamp %= m_length;
+        timestamp %= get_length();
         er.set_timestamp(timestamp);
     }
     verify_and_link();
@@ -6101,7 +6085,7 @@ sequence::toggle_one_shot ()
     automutex locker(m_mutex);
     set_dirty_mp();
     m_one_shot = ! m_one_shot;
-    m_one_shot_tick = m_last_tick - mod_last_tick() + m_length;
+    m_one_shot_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
 }
 
@@ -6168,7 +6152,7 @@ sequence::song_recording_stop (midipulse tick)
     m_song_playback_block = m_song_recording = false;
     if (m_song_recording_snap)
     {
-        midipulse len = m_length - (tick % m_length);
+        midipulse len = get_length() - (tick % get_length());
         m_triggers.grow_trigger(m_song_record_tick, tick, len);
         m_off_from_snap = true;
     }
@@ -6194,7 +6178,7 @@ sequence::resume_note_ons (midipulse tick)
             {
                 midipulse on = ei.timestamp();      /* see banner notes */
                 midipulse off = link->timestamp();
-                if (on < (tick % m_length) && off > (tick % m_length))
+                if (on < (tick % get_length()) && off > (tick % get_length()))
                 {
                     automutex locker(m_mutex);
                     put_event_on_bus(ei);
@@ -6227,7 +6211,7 @@ sequence::expand_recording () const
             printf
             (
                 "tick %ld >= length %ld - measure %ld / 4\n",
-                tstamp, m_length, unit_measure()
+                tstamp, get_length(), unit_measure()
             );
 #endif
             result = true;
@@ -6341,22 +6325,22 @@ sequence::handle_edit_action (edit action, int var)
          * a new function to do that.
          */
 
-        push_quantize(EVENT_NOTE_ON, 0, m_snap, 1, true);
+        push_quantize(EVENT_NOTE_ON, 0, 1, true);
         break;
 
     case edit::quantize_events:
 
-        push_quantize(m_status, m_cc, m_snap, 1);
+        push_quantize(m_status, m_cc, 1);
         break;
 
     case edit::tighten_notes:
 
-        push_quantize(EVENT_NOTE_ON, 0, m_snap, 2, true);
+        push_quantize(EVENT_NOTE_ON, 0, 2, true);
         break;
 
     case edit::tighten_events:
 
-        push_quantize(m_status, m_cc, m_snap, 2);
+        push_quantize(m_status, m_cc, 2);
         break;
 
     case edit::transpose_notes:                 /* regular transpose    */

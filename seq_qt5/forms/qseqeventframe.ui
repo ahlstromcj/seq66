@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>826</width>
-    <height>533</height>
+    <width>910</width>
+    <height>3047</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,154 +24,11 @@
     <enum>QLayout::SetNoConstraint</enum>
    </property>
    <item row="0" column="0">
-    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,0">
+    <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,0,0">
      <property name="sizeConstraint">
       <enum>QLayout::SetNoConstraint</enum>
      </property>
-     <item row="0" column="0">
-      <widget class="QTableWidget" name="eventTableWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>548</width>
-         <height>500</height>
-        </size>
-       </property>
-       <property name="toolTip">
-        <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
-       </property>
-       <property name="sizeAdjustPolicy">
-        <enum>QAbstractScrollArea::AdjustToContents</enum>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <property name="gridStyle">
-        <enum>Qt::DashLine</enum>
-       </property>
-       <property name="rowCount">
-        <number>100</number>
-       </property>
-       <property name="columnCount">
-        <number>6</number>
-       </property>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <row/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-      </widget>
-     </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
         <number>24</number>
@@ -382,7 +239,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>244</width>
+           <width>250</width>
            <height>24</height>
           </size>
          </property>
@@ -481,7 +338,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>224</width>
+           <width>228</width>
            <height>24</height>
           </size>
          </property>
@@ -635,6 +492,153 @@
            <string>Close</string>
           </property>
          </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTableWidget" name="eventTableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>548</width>
+           <height>500</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::DashLine</enum>
+         </property>
+         <property name="rowCount">
+          <number>100</number>
+         </property>
+         <property name="columnCount">
+          <number>6</number>
+         </property>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
         </widget>
        </item>
       </layout>
