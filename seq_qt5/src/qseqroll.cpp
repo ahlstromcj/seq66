@@ -1391,13 +1391,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     set_needs_update();
                     break;
 
-                case Qt::Key_Q:                         /* quantize notes   */
-                    s->push_quantize(EVENT_NOTE_ON, 0, 1, false);
+                case Qt::Key_Q:                 /* quantize selected notes  */
+                    s->push_quantize(EVENT_NOTE_ON, 0, 1, true);
                     set_needs_update();
                     break;
 
-                case Qt::Key_T:                         /* quantize notes   */
-                    s->push_quantize(EVENT_NOTE_ON, 0, 2, false);
+                case Qt::Key_T:                 /* tighten selected notes   */
+                    s->push_quantize(EVENT_NOTE_ON, 0, 2, true);
                     set_needs_update();
                     break;
 

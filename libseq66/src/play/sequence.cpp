@@ -740,6 +740,7 @@ sequence::select_note_events
 )
 {
     int result = 0;
+    bool doselect = action == select::selecting || action == select::select_one;
     automutex locker(m_mutex);
     for (auto & e : m_events)
     {
@@ -748,8 +749,7 @@ sequence::select_note_events
 
         if (e.get_note() <= note_h && e.get_note() >= note_l)
         {
-            midipulse ts = 0;
-            midipulse tf = 0;
+            midipulse ts = 0, tf = 0;
             if (e.is_linked())
             {
                 event * ev = e.link();
@@ -774,11 +774,7 @@ sequence::select_note_events
                 bool ok = ((ts <= tf) && tand) || ((ts > tf) && tor);
 			    if (ok)
                 {
-                    /*
-                     * Could use a switch statement here.
-                     */
-
-                    if (action == select::selecting || action == select::select_one)
+                    if (doselect)
                     {
                         e.select();
                         ev->select();
@@ -844,11 +840,7 @@ sequence::select_note_events
                 ts = tf = e.timestamp();
                 if (ts >= tick_s - 17 && tf <= tick_f)
                 {
-                    /*
-                     * Could use a switch statement here.
-                     */
-
-                    if (action == select::selecting || action == select::select_one)
+                    if (doselect)
                     {
                         e.select();
                         ++result;
@@ -5727,10 +5719,15 @@ sequence::set_transposable (bool flag)
 }
 
 /**
- *  Grabs the specified events, puts them into a list, quantizes them against
- *  the snap ticks, and merges them in to the event container.  One confusing
- *  things is why the original versions of the events don't seem to be
- *  deleted.
+ *  Quantizes the currently-selected set of events that match the type of
+ *  event specified.  This function first marks the selected events.  Then it
+ *  grabs the matching events, puts them into a list of events to be quantized
+ *  and quantizes them against the snap ticks.  Linked events (which are
+ *  always Note On or Note Off) are adjusted as well, with Note Offs that wrap
+ *  around being adjust to be just at the end of the pattern.  This function
+ *  them removes the marked event from the sequence, and merges the quantized
+ *  events into the pattern's event container.  Finally, the modified event
+ *  list is verified and linked.
  *
  * \param status
  *      Indicates the type of event to be quantized.
@@ -5745,33 +5742,36 @@ sequence::set_transposable (bool flag)
  *
  * \param divide
  *      A rough indicator of the amount of quantization.  The only values used
- *      in the application are either 1 ("quantize") or 2 ("tighten").
- *      The latter value reduces the amount of change slightly.
+ *      in the application are either 1 ("quantize") or 2 ("tighten").  The
+ *      latter value reduces the amount of change slightly.  This value is not
+ *      tested for 0.
  *
- * \param linked
- *      False by default, this parameter indicates if marked events are to be
- *      relinked, as far as we can tell.
+ * \param fixlink
+ *      False by default, this parameter indicates if linked events are to be
+ *      adjusted against the length of the pattern
  */
 
 void
 sequence::quantize_events
 (
-    midibyte status, midibyte cc, int divide, bool linked
+    midibyte status, midibyte cc, int divide, bool fixlink
 )
 {
     automutex locker(m_mutex);
     if (mark_selected())
     {
         /*
-         * \note
-         *      Do NOT call push_undo() here; quantize_events() is used in
-         *      recording.  If you need the push_undo(), please use the
-         *      push_quantize() function!
+         * Do NOT call push_undo() here; quantize_events() is used in
+         * recording.  If you need the push_undo(), please use the
+         * push_quantize() function!
          */
 
         event_list quantized_events;
         for (auto & er : m_events)
         {
+            if (! er.is_marked())
+                continue;
+
             midibyte d0, d1;
             er.get_data(d0, d1);
             bool match = er.get_status() == status;
@@ -5781,18 +5781,12 @@ sequence::quantize_events
             else
                 canselect = match;              /* correct status, any cc     */
 
-            if (! er.is_marked())
-                canselect = false;
-
             if (canselect)
             {
                 event e = er;                   /* copy the event             */
-                er.select();                    /* selected original event    */
-                e.unmark();                     /* unmark copy of the event   */
-
                 midipulse t = e.timestamp();
                 midipulse t_remainder = t % snap();
-                midipulse t_delta = 0;
+                midipulse t_delta;
                 if (t_remainder < snap() / 2)
                     t_delta = -(t_remainder / divide);
                 else
@@ -5801,6 +5795,8 @@ sequence::quantize_events
                 if ((t_delta + t) >= get_length())  /* wrap-around Note On    */
                     t_delta = -e.timestamp();
 
+                er.select();                    /* selected original event    */
+                e.unmark();                     /* unmark copy of the event   */
                 e.set_timestamp(e.timestamp() + t_delta);
                 quantized_events.add(e);
 
@@ -5809,7 +5805,7 @@ sequence::quantize_events
                  * in this function are On, so the link must be only Note Off.
                  */
 
-                if (er.is_linked() && linked)
+                if (er.is_linked() && fixlink)
                 {
                     event f = *er.link();
                     midipulse ft = f.timestamp() + t_delta; /* seq32 */
@@ -5852,6 +5848,8 @@ sequence::quantize_events
  *  A new convenience function.  See the sequence::quantize_events() function
  *  for more information.  This function just does locking and a push-undo
  *  before calling that function.
+ *
+ *  Note that only selected events are subject to quantization.
  *
  * \param status
  *      The kind of event to quantize, such as Note On, or the event type
