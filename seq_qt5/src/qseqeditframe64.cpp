@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-10-09
+ * \updates       2019-10-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1907,7 +1907,7 @@ qseqeditframe64::inverse_note_selection ()
 void
 qseqeditframe64::quantize_notes ()
 {
-    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, false);
 }
 
 /**
@@ -2298,7 +2298,13 @@ qseqeditframe64::set_snap (midipulse s)
     if (s > 0 && s != m_snap)
     {
         m_snap = int(s);
-        sm_initial_snap = int(s);
+
+        /*
+         * ca 2019-10-23 Why are we modifying this internal value!!!
+         *
+         * sm_initial_snap = int(s);
+         */
+
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 

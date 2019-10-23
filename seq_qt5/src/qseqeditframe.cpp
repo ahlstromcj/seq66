@@ -907,7 +907,7 @@ qseqeditframe::inverseNoteSelection()
 void
 qseqeditframe::quantizeNotes()
 {
-    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, true);
+    seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, false);
 }
 
 /**

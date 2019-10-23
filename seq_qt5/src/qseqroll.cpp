@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-21
+ * \updates       2019-10-22
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -583,7 +583,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         else
         {
             pen.setColor(Qt::lightGray);        /* faint step lines         */
-            int tick_snap = tick - (tick % snap());
+            int tick_snap = tick - (tick % grid_snap());
             if (tick != tick_snap)
                 penstyle = Qt::DotLine;
         }
@@ -1388,6 +1388,16 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_P:
 
                     set_adding(true);
+                    set_needs_update();
+                    break;
+
+                case Qt::Key_Q:                         /* quantize notes   */
+                    s->push_quantize(EVENT_NOTE_ON, 0, 1, false);
+                    set_needs_update();
+                    break;
+
+                case Qt::Key_T:                         /* quantize notes   */
+                    s->push_quantize(EVENT_NOTE_ON, 0, 2, false);
                     set_needs_update();
                     break;
 

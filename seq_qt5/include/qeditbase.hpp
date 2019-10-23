@@ -119,12 +119,19 @@ protected:
     int m_padding_x;                        // c_keyboard_padding_x;
 
     /**
-     *  The grid-snap setting for the piano roll grid.  Same meaning as for the
+     *  The event-snap setting for the piano roll grid.  Same meaning as for the
      *  event-bar grid.  This value is the denominator of the note size used
      *  for the snap.
      */
 
     int m_snap;
+
+    /**
+     *  The permanent snap for drawing the grid.  This is not meant to change,
+     *  at least externally... there is no public setter provided.
+     */
+
+    int m_grid_snap;
 
     /**
      *  Provides the length of a beat, in ticks.
@@ -354,6 +361,11 @@ public:
     int snap () const
     {
         return m_snap;
+    }
+
+    int grid_snap () const
+    {
+        return m_grid_snap;             /* never changes */
     }
 
     midipulse beat_length () const
