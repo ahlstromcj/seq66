@@ -219,9 +219,6 @@ analyze_notes
                 for (int s = c_scales_off; s < c_scales_max; ++s)
                 {
                     midi_booleans policy(&c_scales_policy[s][0], c_octave_size);
-
-                    printf("scratchpad true count = %d\n", scratchpad.true_count());
-
                     if (scratchpad.match(policy, scratchpad.true_count()))
                     {
                         outkey = ken;

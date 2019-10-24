@@ -1735,7 +1735,7 @@ private:
         midipulse tick_s, midipulse tick_f
     ) const;
 
-    void quantize_events
+    bool quantize_events
     (
         midibyte status, midibyte cc, int divide, bool linked = false
     );

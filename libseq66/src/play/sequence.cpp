@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-21
+ * \updates       2019-10-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -50,15 +50,15 @@
 
 #include <cstring>                      /* std::memset()                    */
 
-#include "cfg/scales.hpp"
+#include "cfg/scales.hpp"               /* seq66 scales functions           */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "midi/event_list.hpp"          /* seq66::event_list                */
-#include "midi/mastermidibus.hpp"
+#include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "midi/midi_vector_base.hpp"    /* seq66::c_midi_notes              */
-#include "play/performer.hpp"
-#include "play/sequence.hpp"
+#include "play/performer.hpp"           /* seq66::performer                 */
+#include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
@@ -1340,7 +1340,8 @@ sequence::verify_and_link ()
 }
 
 /**
- *
+ *  Fixes selected notes that started near the very end of the pattern, due to a
+ *  clumsy keyboard artist (like the author of this module).
  */
 
 bool
@@ -5751,13 +5752,24 @@ sequence::set_transposable (bool flag)
  *      adjusted against the length of the pattern
  */
 
-void
+#define USE_NEW_CODE
+
+bool
 sequence::quantize_events
 (
     midibyte status, midibyte cc, int divide, bool fixlink
 )
 {
     automutex locker(m_mutex);
+#ifdef USE_NEW_CODE
+    bool result = m_events.quantize_events
+    (
+        status, cc, snap(), get_length(), divide, fixlink
+    );
+    if (result)
+        set_dirty();
+#else
+    bool result = false;
     if (mark_selected())
     {
         /*
@@ -5799,6 +5811,7 @@ sequence::quantize_events
                 e.unmark();                     /* unmark copy of the event   */
                 e.set_timestamp(e.timestamp() + t_delta);
                 quantized_events.add(e);
+                result = true;
 
                 /*
                  * The only events linked are notes; the status of all notes
@@ -5834,6 +5847,7 @@ sequence::quantize_events
 
                     f.set_timestamp(ft);
                     quantized_events.add(f);
+                    result = true;
                 }
             }
         }
@@ -5842,6 +5856,8 @@ sequence::quantize_events
         verify_and_link();
         set_dirty();                        /* tells perfedit to update     */
     }
+#endif
+    return result;
 }
 
 /**
@@ -5981,9 +5997,10 @@ sequence::copy_events (const event_list & newevents)
          * Another option, if we have a new sequence length value (in pulses)
          * would be to call sequence::set_length(len, adjust_triggers).  We do
          * need to re-evaluate the length (last timestamp) of the sequence.
+         * TODO!!!
          */
 
-        m_length = m_events.get_length();   /* get potentially new length   */
+        m_length = m_events.get_max_timestamp();
         verify_and_link();                  /* function uses m_length       */
     }
     set_dirty();

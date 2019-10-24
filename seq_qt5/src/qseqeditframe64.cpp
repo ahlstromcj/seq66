@@ -1129,9 +1129,14 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     else
     {
         if (event->key() == Qt::Key_Space)
+        {
             start_playing();
+        }
         else if (event->key() == Qt::Key_A)
-            analyze_seq_notes();
+        {
+            if ((event->modifiers() & Qt::ControlModifier) == 0)
+                analyze_seq_notes();
+        }
     }
 }
 

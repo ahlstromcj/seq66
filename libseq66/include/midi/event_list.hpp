@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-21
+ * \updates       2019-10-24
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -185,13 +185,7 @@ public:
         return int(m_events.size());
     }
 
-    midipulse get_length () const;
-
-    /**
-     *  Returns true if there are no events.
-     *
-     *  return m_events.size() == 0;
-     */
+    midipulse get_max_timestamp () const;
 
     bool empty () const
     {
@@ -223,18 +217,6 @@ public:
     }
 
     bool append (const event & e);
-
-    /**
-     *  Needed as a special case when std::list is used.
-     *
-     * \param e
-     *      Provides the event value to push at the back of the event list.
-     */
-
-    void push_back (const event & e)
-    {
-        m_events.push_back(e);
-    }
 
     bool is_modified () const
     {
@@ -342,8 +324,13 @@ private:                                // functions for friend sequence
 #if defined USE_FILL_TIME_SIG_AND_TEMPO
     void scan_meta_events ();
 #endif
-    void verify_and_link (midipulse slength);
+    void verify_and_link (midipulse slength = 0);
     bool edge_fix (midipulse snap, midipulse seqlength);
+    bool quantize_events
+    (
+        midibyte status, midibyte cc, int snap,
+        midipulse length, int divide, bool fixlink
+    );
     bool link_new_note (event & eon, event & eoff);
     bool link_note (event & eon, event & eoff);
     void link_tempos ();

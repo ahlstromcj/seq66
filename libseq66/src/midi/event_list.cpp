@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-21
+ * \updates       2019-10-23
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -170,7 +170,7 @@ event_list::operator = (const event_list & rhs)
  */
 
 midipulse
-event_list::get_length () const
+event_list::get_max_timestamp () const
 {
     midipulse result = 0;
     if (count() > 0)
@@ -451,8 +451,11 @@ event_list::verify_and_link (midipulse slength)
         }
     }
     unmark_all();
-    mark_out_of_range(slength);
-    (void) remove_marked();                 /* prune out-of-range events    */
+    if (slength > 0)
+    {
+        mark_out_of_range(slength);
+        (void) remove_marked();             /* prune out-of-range events    */
+    }
 
     /*
      *  Link the tempos in a separate pass (it makes the logic easier and the
@@ -477,8 +480,8 @@ event_list::clear_links ()
 }
 
 /**
- *  Tries to fix notes that started near the end of the pattern and wrapped
- *  around to the beginning, by moving the note.
+ *  Tries to fix the selected notes that started near the end of the pattern and
+ *  wrapped around to the beginning, by moving the note.
  *
  * \param snap
  *      Provides the sequence's current snap value.  Notes that start at less
@@ -497,24 +500,153 @@ bool
 event_list::edge_fix (midipulse snap, midipulse seqlength)
 {
     bool result = false;
-    for (auto & e : m_events)
+    if (mark_selected())
     {
-        if (e.is_note_on() && e.is_linked())
+        for (auto & e : m_events)
         {
-            midipulse onstamp = e.timestamp();
-            midipulse maximum = seqlength - snap / 2;
-            if (onstamp > maximum)
+            if (! e.is_marked())
+                continue;
+
+            if (e.is_note_on() && e.is_linked())
             {
-                midipulse delta = seqlength - onstamp;
-                midipulse offstamp = e.link()->timestamp();
-                if (offstamp < onstamp)
+                midipulse onstamp = e.timestamp();
+                midipulse maximum = seqlength - snap / 2;
+                if (onstamp > maximum)
                 {
-                    e.set_timestamp(0);         /* move to the beginning    */
-                    e.link()->set_timestamp(offstamp + delta);
+                    midipulse delta = seqlength - onstamp;
+                    midipulse offstamp = e.link()->timestamp();
+                    if (offstamp < onstamp)
+                    {
+                        e.set_timestamp(0);         /* move to the beginning    */
+                        e.link()->set_timestamp(offstamp + delta);
+                        result = true;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  Quantizes the currently-selected set of events that match the type of
+ *  event specified.  This function first marks the selected events.  Then it
+ *  grabs the matching events, puts them into a list of events to be quantized
+ *  and quantizes them against the snap ticks.  Linked events (which are
+ *  always Note On or Note Off) are adjusted as well, with Note Offs that wrap
+ *  around being adjust to be just at the end of the pattern.  This function
+ *  them removes the marked event from the sequence, and merges the quantized
+ *  events into the pattern's event container.  Finally, the modified event
+ *  list is verified and linked.
+ *
+ *  Seq32:
+ *
+ *      If ft is negative, then we have a Note Off
+ * previously wrapped before adjustment. Since the delta
+ * is based on the Note On (not wrapped), we must add back
+ * the m_length for the wrapping.  If the ft is then >=
+ * m_length, it will be deleted by verify_and_link(),
+ * which discards any notes (ON or OFF) that are >=
+ * m_length. So we must wrap if > m_length and trim if ==
+ * m_length.  Compare to trim_timestamp().
+ *
+ * \param status
+ *      Indicates the type of event to be quantized.
+ *
+ * \param cc
+ *      The desired control-change to count, if the event is a control-change.
+ *
+ * \param snap_tick
+ *      Provides the maximum amount to move the events.  Actually, events are
+ *      moved to the previous or next snap_tick value depend on whether they
+ *      are halfway to the next one or not.
+ *
+ * \param divide
+ *      A rough indicator of the amount of quantization.  The only values used
+ *      in the application are either 1 ("quantize") or 2 ("tighten").  The
+ *      latter value reduces the amount of change slightly.  This value is not
+ *      tested for 0.
+ *
+ * \param fixlink
+ *      False by default, this parameter indicates if linked events are to be
+ *      adjusted against the length of the pattern
+ */
+
+bool
+event_list::quantize_events
+(
+    midibyte status, midibyte cc, int snap,
+    midipulse length, int divide, bool fixlink
+)
+{
+    bool result = false;
+    if (mark_selected())
+    {
+        event_list quantized_events;
+        for (auto & er : m_events)
+        {
+            if (! er.is_marked())
+                continue;
+
+            midibyte d0, d1;
+            er.get_data(d0, d1);
+            bool match = er.get_status() == status;
+            bool canselect;
+            if (status == EVENT_CONTROL_CHANGE)
+                canselect = match && d0 == cc;  /* correct status, correct cc */
+            else
+                canselect = match;              /* correct status, any cc     */
+
+            if (canselect)
+            {
+                event e = er;                   /* copy the event             */
+                midipulse t = e.timestamp();
+                midipulse t_remainder = t % snap;
+                midipulse t_delta;
+                if (t_remainder < snap / 2)
+                    t_delta = -(t_remainder / divide);
+                else
+                    t_delta = (snap - t_remainder) / divide;
+
+                if ((t_delta + t) >= length)  /* wrap-around Note On    */
+                    t_delta = -e.timestamp();
+
+                er.select();                    /* selected original event    */
+                e.unmark();                     /* unmark copy of the event   */
+                e.set_timestamp(e.timestamp() + t_delta);
+                quantized_events.add(e);
+                result = true;
+
+                if (er.is_linked() && fixlink)
+                {
+                    /*
+                     * Only notes are linked; the status of all notes here are
+                     * On, so the link must be an Off.  Also see "Seq32" in
+                     * banner.
+                     */
+
+                    event f = *er.link();
+                    midipulse ft = f.timestamp() + t_delta; /* seq32 */
+                    f.unmark();
+                    er.link()->select();
+                    if (ft < 0)                     /* unwrap Note Off      */
+                        ft += length;
+
+                    if (ft > length)                /* wrap it around       */
+                        ft -= length;
+
+                    if (ft == length)               /* trim it a little     */
+                        ft -= 1;                    /* m_note_off_margin    */
+
+                    f.set_timestamp(ft);
+                    quantized_events.add(f);
                     result = true;
                 }
             }
         }
+        (void) remove_marked();
+        merge(quantized_events);
+        verify_and_link();
     }
     return result;
 }
