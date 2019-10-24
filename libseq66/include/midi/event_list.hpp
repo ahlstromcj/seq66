@@ -193,10 +193,8 @@ public:
     }
 
     /**
-     *  Adds an event to the internal event list in an optionally sorted
-     *  manner.
-     *
-     *  Note that, for speed, it is better to call append() for each event, and
+     *  Adds an event to the internal event list in a sorted manner.  Note
+     *  that, for speed, it is better to call append() for each event, and
      *  then later sort them.
      *
      * \param e
@@ -270,17 +268,19 @@ public:
 
     void clear ()
     {
-        m_events.clear();
-        m_is_modified = true;
+        if (! m_events.empty())
+        {
+            m_events.clear();
+            m_is_modified = true;
+        }
     }
 
     void merge (event_list & el, bool presort = true);
 
     /**
-     *  Sorts the event list; active only for the std::list or std::vector
-     *  implementation. For the vector, equivalent elements are not guaranteed
-     *  to keep their original relative order [see std::stable_sort(), which
-     *  we could try at some point].
+     *  Sorts the event list.  For the vector, equivalent elements are not
+     *  guaranteed to keep their original relative order [see
+     *  std::stable_sort(), which we could try at some point].
      */
 
     void sort ()
@@ -312,7 +312,12 @@ public:
         return *ie;
     }
 
-private:                                // functions for friend sequence
+private:                                /* internal quantization functions  */
+
+    bool add (Events & evlist, const event & e);
+    void merge (const Events & evlist);
+
+private:                                /* functions for friend sequence    */
 
     /*
      * The following functions provide internal for-loops that do not

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-23
+ * \updates       2019-10-24
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -231,6 +231,32 @@ event_list::append (const event & e)
 }
 
 /**
+ *  An internal function to add events to a temporary list.  Used in
+ *  quantization and tightening operations.
+ */
+
+bool
+event_list::add (Events & evlist, const event & e)
+{
+    evlist.push_back(e);                /* std::vector operation        */
+    std::sort(evlist.begin(), evlist.end());
+    return true;
+}
+
+/**
+ *  An internal function to merge events from a temporary list.  Used in
+ *  quantization and tightening operations.
+ */
+
+void
+event_list::merge (const Events & evlist)
+{
+    m_events.reserve(m_events.size() + evlist.size());
+    m_events.insert(m_events.end(), evlist.begin(), evlist.end());
+    std::sort(m_events.begin(), m_events.end());
+}
+
+/**
  *  Provides a merge operation for the event multimap analogous to the merge
  *  operation for the event list.  We have certain constraints to preserve, as
  *  the following discussion shows.
@@ -287,6 +313,10 @@ event_list::merge (event_list & el, bool presort)
 #else
     if (presort)                            /* not really necessary here    */
         el.sort();                          /* el.m_events.sort();          */
+
+    /*
+     * std::vector::insert(iterator pos, InputIterator 1st, InputIterator 2nd).
+     */
 
     m_events.reserve(m_events.size() + el.m_events.size());
     m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
@@ -582,7 +612,7 @@ event_list::quantize_events
     bool result = false;
     if (mark_selected())
     {
-        event_list quantized_events;
+        Events quantized_events;
         for (auto & er : m_events)
         {
             if (! er.is_marked())
@@ -614,7 +644,7 @@ event_list::quantize_events
                 er.select();                    /* selected original event    */
                 e.unmark();                     /* unmark copy of the event   */
                 e.set_timestamp(e.timestamp() + t_delta);
-                quantized_events.add(e);
+                add(quantized_events, e);
                 result = true;
 
                 if (er.is_linked() && fixlink)
@@ -639,7 +669,7 @@ event_list::quantize_events
                         ft -= 1;                    /* m_note_off_margin    */
 
                     f.set_timestamp(ft);
-                    quantized_events.add(f);
+                    add(quantized_events, f);
                     result = true;
                 }
             }

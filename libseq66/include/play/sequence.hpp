@@ -119,7 +119,7 @@ public:
         select_inverse_events,
         quantize_notes,
         quantize_events,
-        randomize_events,           // #ifdef USE_STAZED_RANDOMIZE_SUPPORT
+        randomize_events,
         tighten_events,
         tighten_notes,
         transpose_notes,            /* basic transpose          */
@@ -1458,19 +1458,6 @@ public:
 
     int select_linked (long tick_s, long tick_f, midibyte status);
 
-#if defined USE_STAZED_ODD_EVEN_SELECTION
-
-    /*
-     *  Given a note length (in ticks) and a boolean indicating even or odd,
-     *  select all notes where the note on even occurs exactly on an even (or
-     *  odd) multiple of note length.  Example use: select every note that
-     *  starts on an even eighth note beat.
-     */
-
-    int select_even_or_odd_notes (int note_len, bool even);
-
-#endif
-
     /**
      *  New convenience function.  What about Aftertouch events?  I think we
      *  need to select them as well in seqedit, so let's add that selection
@@ -1533,13 +1520,11 @@ public:
     void grow_selected (midipulse deltatick);
     void stretch_selected (midipulse deltatick);
 
-#if defined USE_STAZED_RANDOMIZE_SUPPORT
     void randomize_selected
     (
         midibyte status, midibyte control, int plus_minus
     );
     void adjust_data_handle (midibyte status, int data);
-#endif
 
     bool mark_selected ();
     bool remove_selected ();

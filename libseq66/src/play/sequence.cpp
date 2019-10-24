@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-23
+ * \updates       2019-10-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -637,407 +637,6 @@ sequence::get_measures () const
 
     return measures;
 }
-
-#if defined USE_STAZED_ODD_EVEN_SELECTION
-
-/**
- *  Selects every other note.  Enabled only if USE_STAZED_ODD_EVEN_SELECTION
- *  is defined.
- *
- * \param note_len
- *      The desired note lengths for the selection.
- *
- * \param even
- *      True if we want the even notes.
- *
- * \return
- *      Returns the number of notes selected.
- */
-
-int
-sequence::select_even_or_odd_notes (int note_len, bool even)
-{
-    int result = 0;
-    automutex locker(m_mutex);
-    unselect();
-    for (auto & e : m_events)
-    {
-        if (e.is_note_on())
-        {
-           midipulse tick = e.timestamp();
-            if ((tick % note_len) == 0)
-            {
-                /*
-                 * Note that from the user's point of view of even and odd,
-                 * we start counting from 1, not 0.
-                 */
-
-                int is_even = (tick / note_len) % 2;
-                if ((even && is_even) || (! even && ! is_even))
-                {
-                    e.select();
-                    ++result;
-                    if (e.is_linked())
-                    {
-                        event * note_off = e.link();
-                        note_off->select();
-                        ++result;
-                    }
-                }
-            }
-        }
-    }
-    return result;
-}
-
-/**
- *  Selects events in range provided: tick start, note high, tick end, and
- *  note low.
- *
- *  Be aware the the event::is_note() function is used, and that it includes
- *  Aftertouch events, which generally need to stick with their Note On
- *  counterparts.
- *
- *  If a "note" event is detected, then we skip it.  This is necessary since
- *  channel pressure and control change use d0 for seqdata, and d0 is returned
- *  by get_note().  This causes note selection to occasionally select them
- *  when their seqdata values are within range of the tick selection.  So
- *  therefore we want only Note Ons and Note Offs.
- *
- * \note
- *      The continuation below ("continue") is necessary since channel
- *      pressure and control change use d0 for seqdata [which is returned by
- *      get_note()]. This causes seqroll note selection to occasionally
- *      select them when their seqdata values are within the range of tick
- *      selection. So only, note ons and offs.  What about Aftertouch?
- *      We have the event::is_note() function for that.
- *
- * \param tick_s
- *      The starting tick.
- *
- * \param note_h
- *      The highest note selected.
- *
- * \param tick_f
- *      The ending, or finishing, tick.
- *
- * \param note_l
- *      The lowest note selected.
- *
- * \param action
- *      The action to performer on the selection.
- *
- * \return
- *      Returns the number of notes selected.
- */
-
-int
-sequence::select_note_events
-(
-    midipulse tick_s, int note_h,
-    midipulse tick_f, int note_l,
-    select action
-)
-{
-    int result = 0;
-    bool doselect = action == select::selecting || action == select::select_one;
-    automutex locker(m_mutex);
-    for (auto & e : m_events)
-    {
-        if (! e.is_note())              /* HMMMM, includes Aftertouch   */
-            continue;                   /* see the note in the banner   */
-
-        if (e.get_note() <= note_h && e.get_note() >= note_l)
-        {
-            midipulse ts = 0, tf = 0;
-            if (e.is_linked())
-            {
-                event * ev = e.link();
-                if (e.is_note_off())
-                {
-                    ts = ev->timestamp();
-                    tf = e.timestamp();
-                }
-                else if (e.is_note_on())
-                {
-                    ts = e.timestamp();
-                    tf = ev->timestamp();
-                }
-
-                /*
-                 * A pretty convoluted check!  Someone tell me what this is!
-                 *    :-D
-                 */
-
-                bool tand = (ts <= tick_f && tf >= tick_s);
-                bool tor =  (ts <= tick_f || tf >= tick_s);
-                bool ok = ((ts <= tf) && tand) || ((ts > tf) && tor);
-			    if (ok)
-                {
-                    if (doselect)
-                    {
-                        e.select();
-                        ev->select();
-                        ++result;
-                        if (action == select::select_one)
-                            break;
-                    }
-                    if (action == select::selected)
-                    {
-                        if (e.is_selected())
-                        {
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if (action == select::would_select)
-                    {
-                        result = 1;
-                        break;
-                    }
-                    if (action == select::deselect)
-                    {
-                        result = 0;
-                        e.unselect();
-                        ev->unselect();
-                    }
-
-                    /*
-                     * Don't toggle twice.
-                     */
-
-                    if (action == select::toggle && e.is_note_on())
-                    {
-                        if (e.is_selected())
-                        {
-                            e.unselect();
-                            ev->unselect();
-                        }
-                        else
-                        {
-                            e.select();
-                            ev->select();
-                        }
-                        ++result;
-                    }
-                    if (action == select::remove)
-                    {
-                        remove(i);
-                        remove(e);
-                        reset_draw_marker();
-                        ++result;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                /*
-                 * If NOT linked note on/off, then it is junk....  What is the
-                 * 17?  It used to be 16.
-                 */
-
-                ts = tf = e.timestamp();
-                if (ts >= tick_s - 17 && tf <= tick_f)
-                {
-                    if (doselect)
-                    {
-                        e.select();
-                        ++result;
-                        if (action == select::select_one)
-                            break;
-                    }
-                    if (action == select::selected)
-                    {
-                        if (e.is_selected())
-                        {
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if (action == select::would_select)
-                    {
-                        result = 1;
-                        break;
-                    }
-                    if (action == select::deselect)
-                    {
-                        result = 0;
-                        e.unselect();
-                    }
-                    if (action == select::toggle)
-                    {
-                        if (e.is_selected())
-                        {
-                            e.unselect();
-                            ++result;
-                        }
-                        else
-                        {
-                            e.select();
-                            ++result;
-                        }
-                    }
-                    if (action == select::remove)
-                    {
-                        remove(i);
-                        reset_draw_marker();
-                        ++result;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return result;
-}
-
-/**
- *  Use selected note ons if any.
- *
- * \param tick_s
- *      Provides the starting tick.
- *
- * \param tick_f
- *      Provides the ending (finishing) tick.
- *
- * \param status
- *      Provides the desired MIDI event to be selected.
- *
- * \param cc
- *      Provides the desired MIDI control value to be selected.
- *
- * \param dats
- *      Provides the center of a small data value range of plus or minus 2.
- *
- * \return
- *      Returns the number of events selected.
- */
-
-int
-sequence::select_event_handle
-(
-    midipulse tick_s, midipulse tick_f,
-    midibyte status, midibyte cc, int dats
-)
-{
-    int result = 0;
-    bool have_selection = false;
-    if (status == EVENT_NOTE_ON)                    // use a function!
-        have_selection = m_events.any_selected_events(status, cc);
-
-    for (auto & e : m_events)
-    {
-        if (event_in_range(e, status, tick_s, tick_f))
-        {
-            midibyte d0, d1;
-            e.get_data(d0, d1);
-            if (status == EVENT_CONTROL_CHANGE && d0 == cc)
-            {
-                if (d1 <= (dats + 2) && d1 >= (dats - 2))   // is it in range
-                {
-                    unselect();
-                    e.select();
-                    ++result;
-                    break;
-                }
-            }
-            if (status != EVENT_CONTROL_CHANGE)             // use a function!
-            {
-                if (e.is_note_msg(status) || status == EVENT_PITCH_WHEEL)
-                {
-                    if(d1 <= (dats+2) && d1 >= (dats-2))    // is it in range
-                    {
-                        if (have_selection)                 // note on only
-                        {
-                            if (e.is_selected())
-                            {
-                                unselect();                 // all events
-                                e.select();                 // only this one
-                                if (result)
-                                {
-                                    /*
-                                     * If we have a marked one, clear it.
-                                     */
-
-                                    for (auto & et : m_events)
-                                    {
-                                        if (e.is_marked())
-                                        {
-                                            et.unmark();
-                                            break;
-                                        }
-                                    }
-                                    --result;
-
-                                    // reset for marked flag at end
-
-                                    have_selection = false;
-                                }
-                                ++result;            // for the selected one
-                                break;
-                            }
-                            else        // NOT selected note on, but in range
-                            {
-                                if (! result)       // only mark the first one
-                                {
-                                    e.mark();       // marked for hold until done
-                                    ++result;       // indicate we got one
-                                }
-
-                                // keep going until we find a selected one if
-                                // any, or are done
-
-                                continue;
-                            }
-                        }
-                        else                      // NOT note on
-                        {
-                            unselect();
-                            e.select();
-                            ++result;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    if (d0 <= (dats + 2) && d0 >= (dats - 2))   // is it in range
-                    {
-                        unselect();
-                        e.select();
-                        ++result;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    /*
-     * Is it a note on that is unselected but in range? Then use it...
-     * have_selection will be set to false if we found a selected one in
-     * range.
-     */
-
-    if (result && have_selection)
-    {
-        for (auto & e : m_events)
-        {
-            if (e.is_marked())
-            {
-                unselect();
-                e.unmark();
-                e.select();
-                break;
-            }
-        }
-    }
-    set_dirty();
-    return result;
-}
-
-#endif  // USE_STAZED_SELECTION_EXTENSIONS
 
 /**
  *  Used with seqevent when selecting Note On or Note Off, this function will
@@ -1724,8 +1323,6 @@ sequence::get_num_selected_events (midibyte status, midibyte cc) const
     return m_events.count_selected_events(status, cc);
 }
 
-#if ! defined USE_STAZED_SELECTION_EXTENSIONS
-
 /**
  *  This function selects events in range of tick start, note high, tick end,
  *  and note low.  Returns the number selected.
@@ -1895,8 +1492,6 @@ sequence::select_note_events
     }
     return result;
 }
-
-#endif  // ! definded USE_STAZED_SELECTION_EXTENSIONS
 
 /**
  *  A convenience function used a couple of times.  Makes if-clauses
@@ -2372,8 +1967,6 @@ sequence::grow_selected (midipulse delta)
     }
 }
 
-#if defined USE_STAZED_RANDOMIZE_SUPPORT
-
 void
 sequence::randomize_selected
 (
@@ -2459,8 +2052,6 @@ sequence::adjust_data_handle (midibyte status, int adata)
         }
     }
 }
-
-#endif   // USE_STAZED_RANDOMIZE_SUPPORT
 
 /**
  *  Increments events the match the given status and control values.
@@ -5581,7 +5172,7 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
  *      transposed, but are not being transposed here.  Assuming they are
  *      selectable (another question!), the test for note-on and note-off is
  *      not sufficient, and so has been replaced by a call to
- *      event::is_note_msg().
+ *      event::is_note().
  *
  * \param steps
  *      The number of steps to transpose the notes.
@@ -5752,8 +5343,6 @@ sequence::set_transposable (bool flag)
  *      adjusted against the length of the pattern
  */
 
-#define USE_NEW_CODE
-
 bool
 sequence::quantize_events
 (
@@ -5761,102 +5350,13 @@ sequence::quantize_events
 )
 {
     automutex locker(m_mutex);
-#ifdef USE_NEW_CODE
     bool result = m_events.quantize_events
     (
         status, cc, snap(), get_length(), divide, fixlink
     );
     if (result)
         set_dirty();
-#else
-    bool result = false;
-    if (mark_selected())
-    {
-        /*
-         * Do NOT call push_undo() here; quantize_events() is used in
-         * recording.  If you need the push_undo(), please use the
-         * push_quantize() function!
-         */
 
-        event_list quantized_events;
-        for (auto & er : m_events)
-        {
-            if (! er.is_marked())
-                continue;
-
-            midibyte d0, d1;
-            er.get_data(d0, d1);
-            bool match = er.get_status() == status;
-            bool canselect;
-            if (status == EVENT_CONTROL_CHANGE)
-                canselect = match && d0 == cc;  /* correct status, correct cc */
-            else
-                canselect = match;              /* correct status, any cc     */
-
-            if (canselect)
-            {
-                event e = er;                   /* copy the event             */
-                midipulse t = e.timestamp();
-                midipulse t_remainder = t % snap();
-                midipulse t_delta;
-                if (t_remainder < snap() / 2)
-                    t_delta = -(t_remainder / divide);
-                else
-                    t_delta = (snap() - t_remainder) / divide;
-
-                if ((t_delta + t) >= get_length())  /* wrap-around Note On    */
-                    t_delta = -e.timestamp();
-
-                er.select();                    /* selected original event    */
-                e.unmark();                     /* unmark copy of the event   */
-                e.set_timestamp(e.timestamp() + t_delta);
-                quantized_events.add(e);
-                result = true;
-
-                /*
-                 * The only events linked are notes; the status of all notes
-                 * in this function are On, so the link must be only Note Off.
-                 */
-
-                if (er.is_linked() && fixlink)
-                {
-                    event f = *er.link();
-                    midipulse ft = f.timestamp() + t_delta; /* seq32 */
-                    f.unmark();
-                    er.link()->select();
-
-                    /*
-                     * Seq32: If ft is negative, then we have a Note Off
-                     * previously wrapped before adjustment. Since the delta
-                     * is based on the Note On (not wrapped), we must add back
-                     * the m_length for the wrapping.  If the ft is then >=
-                     * m_length, it will be deleted by verify_and_link(),
-                     * which discards any notes (ON or OFF) that are >=
-                     * m_length. So we must wrap if > m_length and trim if ==
-                     * m_length.  Compare to trim_timestamp().
-                     */
-
-                    if (ft < 0)                     /* unwrap Note Off      */
-                        ft += get_length();
-
-                    if (ft == get_length())         /* trim it a little     */
-                        ft -= m_note_off_margin;
-
-                    if (ft > get_length())          /* wrap it around       */
-                        ft -= get_length();
-
-                    f.set_timestamp(ft);
-                    quantized_events.add(f);
-                    result = true;
-                }
-            }
-        }
-        (void) remove_marked();
-        m_events.merge(quantized_events);
-        verify_and_link();
-        set_dirty();                        /* tells perfedit to update     */
-    }
-#endif
     return result;
 }
 
@@ -6309,28 +5809,10 @@ sequence::handle_edit_action (edit action, int var)
         select_events(m_status, m_cc, true);
         break;
 
-#if defined USE_STAZED_ODD_EVEN_SELECTION
-
-    case edit::select_even_notes:
-
-        select_even_or_odd_notes(var, true);
-        break;
-
-    case edit::select_odd_notes:
-
-        select_even_or_odd_notes(var, false);
-        break;
-
-#endif
-
-#if defined USE_STAZED_RANDOMIZE_SUPPORT
-
     case edit::randomize_events:
 
         randomize_selected(m_status, m_cc, var);
         break;
-
-#endif
 
     case edit::quantize_notes:
 
