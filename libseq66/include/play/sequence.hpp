@@ -1519,10 +1519,11 @@ public:
     void grow_selected (midipulse deltatick);
     void stretch_selected (midipulse deltatick);
 
-    void randomize_selected
+    bool randomize_selected
     (
         midibyte status, midibyte control, int plus_minus
     );
+    bool randomize_selected_notes (int jitter = 8, int range = 8);
     void adjust_data_handle (midibyte status, int data);
 
     bool mark_selected ();

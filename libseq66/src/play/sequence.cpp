@@ -965,13 +965,17 @@ sequence::link_new ()
 void
 sequence::remove (event_list::iterator evi)
 {
-    event & er = event_list::dref(evi);
-    if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
+    if (evi != m_events.end())
     {
-        m_master_bus->play(m_bus, &er, m_midi_channel);
-        --m_playing_notes[er.get_note()];                   // ugh
+        event & er = event_list::dref(evi);
+        if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
+        {
+            m_master_bus->play(m_bus, &er, m_midi_channel);
+            --m_playing_notes[er.get_note()];                   // ugh
+        }
+        (void) m_events.remove(evi);
+        modify();
     }
-    m_events.remove(evi);
 }
 
 /**
@@ -995,7 +999,8 @@ sequence::remove (event_list::iterator evi)
 void
 sequence::remove (event & e)
 {
-    (void) m_events.remove_event(e);
+    if (m_events.remove_event(e))
+        modify();
 }
 
 /**
@@ -1027,6 +1032,9 @@ sequence::remove_marked ()
 
     bool result = m_events.remove_marked();
     reset_draw_marker();
+    if (result)
+        modify();
+
     return result;
 }
 
@@ -1067,6 +1075,8 @@ sequence::remove_selected ()
         m_events_undo.push(m_events);           /* push_undo() without lock */
         result = m_events.remove_marked();
         reset_draw_marker();
+        if (result)
+            modify();
     }
     return result;
 }
@@ -1950,7 +1960,7 @@ sequence::grow_selected (midipulse delta)
  *
  */
 
-void
+bool
 sequence::randomize_selected
 (
     midibyte status, midibyte control, int plus_minus
@@ -1958,47 +1968,29 @@ sequence::randomize_selected
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
-    m_events.randomize_selected(status, control, plus_minus);
 
-#ifdef USE_THIS_CODE
-    int random;
-    midibyte data[2];
-    midibyte datitem;
-    int datidx = 0;
-    for (auto & e : m_events)
-    {
-        if (e.is_selected() && e.get_status() == status)
-        {
-            e.get_data(data[0], data[1]);           /* \tricky code */
-            if (event::is_two_byte_msg(status))
-                datidx = 1;
+    bool result = m_events.randomize_selected(status, control, plus_minus);
+    if (result)
+        modify();
 
-            if (event::is_one_byte_msg(status))
-                datidx = 0;
+    return result;
+}
 
-            datitem = data[datidx];
+/**
+ *
+ */
 
-            // See http://c-faq.com/lib/randrange.html
+bool
+sequence::randomize_selected_notes (int jitter, int range)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);               /* push_undo(), no lock  */
 
-            random = (rand() / (RAND_MAX / ((2 * plus_minus) + 1) + 1)) -
-                plus_minus;
+    bool result = m_events.randomize_selected_notes(get_length(), jitter, range);
+    if (result)
+        modify();
 
-            datitem += random;
-            if (datitem > c_max_midi_data_value)         /* 127 */
-                datitem = c_max_midi_data_value;
-
-            /*
-             * Not possible with an unsigned data type.
-             *
-             * else if (datitem < 0)
-             *     datitem = 0;
-             */
-
-            data[datidx] = datitem;
-            e.set_data(data[0], data[1]);
-        }
-    }
-#endif  // USE_THIS_CODE
+    return result;
 }
 
 /**
@@ -3074,13 +3066,13 @@ sequence::stream_event (event & ev)
             set_dirty();
         }
         ev.set_status(ev.get_status());         /* clear the channel nybble */
-        ev.mod_timestamp(get_length());             /* adjust tick re length    */
+        ev.mod_timestamp(get_length());         /* adjust tick re length    */
         if (m_recording)
         {
             if (m_parent->is_pattern_playing()) /* m_parent->is_running()   */
             {
                 if (ev.is_note_on() && m_rec_vol > SEQ66_PRESERVE_VELOCITY)
-                    ev.set_note_velocity(m_rec_vol);    /* modify incoming  */
+                    ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
                 add_event(ev);                          /* locks and sorts  */
                 set_dirty();
@@ -3100,7 +3092,7 @@ sequence::stream_event (event & ev)
                     bool keepvelocity =
                         m_rec_vol == SEQ66_PRESERVE_VELOCITY || m_rec_vol == 0;
 
-                    int velocity = int(ev.get_note_velocity());
+                    int velocity = int(ev.note_velocity());
                     if (velocity == 0)
                         velocity = SEQ66_DEFAULT_NOTE_ON_VELOCITY;
 
@@ -4208,7 +4200,7 @@ sequence::get_note_info
     niout.ni_tick_start     = drawevent.timestamp();
     niout.ni_note           = drawevent.get_note();
     niout.ni_selected       = drawevent.is_selected();
-    niout.ni_velocity       = drawevent.get_note_velocity();
+    niout.ni_velocity       = drawevent.note_velocity();
     if (isnoteon)
     {
         if (islinked)

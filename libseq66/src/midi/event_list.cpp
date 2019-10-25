@@ -682,52 +682,102 @@ event_list::quantize_events
 }
 
 /**
+ *  This function randomizes a portion of each selected event. If the event is
+ *  a two-byte message (note on/off, aftertouch, pitch wheel, or control
+ *  change), the second byte (e.g. velocity for notes) is altered. If the
+ *  event is one byte (program change or channel pressure), the first byte is
+ *  altered.
  *
+ *  See http://c-faq.com/lib/randrange.html for details.
  */
 
 bool
 event_list::randomize_selected
 (
-    midibyte status, midibyte control, int plus_minus
+    midibyte status, midibyte control, int range
 )
 {
     bool result = false;
-    int random;
-    midibyte data[2];
-    midibyte datitem;
-    int datidx = 0;
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.get_status() == status)
         {
-            result = true;
-            e.get_data(data[0], data[1]);           /* \tricky code */
-            if (event::is_two_byte_msg(status))
-                datidx = 1;
+            midibyte data[2];
+            e.get_data(data[0], data[1]);
 
-            if (event::is_one_byte_msg(status))
-                datidx = 0;
-
-            datitem = data[datidx];
-
-            // See http://c-faq.com/lib/randrange.html
-
-            random = (rand() / (RAND_MAX / ((2 * plus_minus) + 1) + 1)) -
-                plus_minus;
-
+            int datidx = event::is_two_byte_msg(status) ? 1 : 0 ;
+            midibyte datitem = data[datidx];
+            int random = rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
             datitem += random;
-            if (datitem > c_max_midi_data_value)         /* 127 */
+            if (datitem > c_max_midi_data_value)            /* 127 */
                 datitem = c_max_midi_data_value;
-
-            /*
-             * Not possible with an unsigned data type.
-             *
-             * else if (datitem < 0)
-             *     datitem = 0;
-             */
 
             data[datidx] = datitem;
             e.set_data(data[0], data[1]);
+            result = true;
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function randomizes a Note On or Note Off message, and more
+ *  thoroughly than randomize_selected().  We want to be able to jitter the
+ *  note event in time, and jitter the velocity (data byte d[1]) of the note.
+ *
+ * \param length
+ *      The length of the sequence containing the notes.
+ *
+ * \param jitter
+ *      Provides the amount of time jitter in ticks.  Defaults to 8.
+ *
+ * \param range
+ *      Provides the amount of velocity jitter.  Defaults to 8.
+ */
+
+bool
+event_list::randomize_selected_notes (midipulse length, int jitter, int range)
+{
+    bool result = false;
+    for (auto & e : m_events)
+    {
+        if (e.is_selected() && e.is_note())
+        {
+            if (range > 0)
+            {
+                int random = rand() / (RAND_MAX / (2*range + 1) + 1) - range;
+                if (random != 0)
+                {
+                    midibyte data[2];
+                    e.get_data(data[0], data[1]);
+
+                    int velocity = int(data[1]);
+                    velocity += random;
+                    if (velocity < 0)
+                        velocity = 0;
+                    else if (velocity > c_max_midi_data_value)
+                        velocity = c_max_midi_data_value;
+
+                    e.note_velocity(velocity);
+                    result = true;
+                }
+            }
+            if (jitter > 0)
+            {
+                int random = rand() / (RAND_MAX / (2*jitter + 1) + 1) - jitter;
+                if (random != 0)
+                {
+                    int tstamp = int(e.timestamp());
+                    tstamp += random;
+                    if (tstamp < 0)
+                        tstamp = 0;
+                    else if (tstamp > int(length))
+                        tstamp = int(length);
+
+                    e.set_timestamp(midipulse(tstamp));
+                    result = true;
+                }
+            }
         }
     }
     return result;

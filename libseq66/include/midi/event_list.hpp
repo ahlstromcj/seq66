@@ -340,6 +340,7 @@ private:                                /* functions for friend sequence    */
     (
         midibyte status, midibyte control, int plus_minus
     );
+    bool randomize_selected_notes (midipulse length, int jitter, int range);
     bool link_new_note (event & eon, event & eoff);
     bool link_note (event & eon, event & eoff);
     void link_tempos ();

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-22
+ * \updates       2019-10-25
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1403,7 +1403,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     break;
 
                 case Qt::Key_R:
-                    s->randomize_selected(EVENT_NOTE_ON, 0, c_randomize_range);
+                    s->randomize_selected_notes();  /* default jitter == 8  */
                     set_needs_update();
                     break;
 

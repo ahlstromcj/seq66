@@ -990,11 +990,6 @@ public:
 
     void transpose_note (int tn);
 
-    midibyte get_note_velocity () const
-    {
-        return m_data[1];
-    }
-
     /**
      *  Sets the note velocity, which is held in the second data byte, and
      *  clearing off the most-significant-bit, storing it in m_data[1].
@@ -1003,9 +998,15 @@ public:
      *      Provides the velocity value to set.
      */
 
-    void set_note_velocity (int vel)
+    void note_velocity (int vel)
     {
-        m_data[1] = vel & 0x7F;
+        if (is_note())
+            m_data[1] = midibyte(vel) & 0x7F;
+    }
+
+    midibyte note_velocity () const
+    {
+        return is_note() ? m_data[1] : 0 ;
     }
 
     /**
