@@ -250,7 +250,7 @@ usrsettings::usrsettings () :
     m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
     m_midi_bpm_minimum          (0),
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
-    m_midi_bpm_maximum          (SEQ66_MAX_DATA_VALUE),
+    m_midi_bpm_maximum          (c_max_midi_data_value),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
     m_midi_buss_override        (SEQ66_BAD_BUSS),
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
@@ -555,7 +555,7 @@ usrsettings::set_defaults ()
     m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
     m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;    // range: 20-500
-    m_midi_bpm_maximum = SEQ66_MAX_DATA_VALUE;      // range: ? to ???
+    m_midi_bpm_maximum = c_max_midi_data_value;     // range: ? to ???
     m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;   // range: 1-16, powers of 2
     m_midi_buss_override = SEQ66_BAD_BUSS;          // range: 1 to 32
     m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, range: 0 to 127

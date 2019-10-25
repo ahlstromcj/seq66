@@ -57,6 +57,12 @@ namespace seq66
 {
 
 /**
+ *  Default value for randomization.  Currently the only value supported.
+ */
+
+const int c_randomize_range = 4;        /* randomize range in ticks         */
+
+/**
  *
  */
 
@@ -1393,6 +1399,11 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
                     s->push_quantize(EVENT_NOTE_ON, 0, 1, true);
+                    set_needs_update();
+                    break;
+
+                case Qt::Key_R:
+                    s->randomize_selected(EVENT_NOTE_ON, 0, c_randomize_range);
                     set_needs_update();
                     break;
 

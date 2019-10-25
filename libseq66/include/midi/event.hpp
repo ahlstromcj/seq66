@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-19
+ * \updates       2019-10-24
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -92,6 +92,12 @@
 
 namespace seq66
 {
+
+/**
+ *  Replaces SEQ66_MAX_DATA_VALUE.
+ */
+
+const midibyte c_max_midi_data_value    = 127;
 
 /**
  *  This highest bit of the status byte is always 1.

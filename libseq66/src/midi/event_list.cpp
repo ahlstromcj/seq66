@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-24
+ * \updates       2019-10-25
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -681,6 +681,58 @@ event_list::quantize_events
     return result;
 }
 
+/**
+ *
+ */
+
+bool
+event_list::randomize_selected
+(
+    midibyte status, midibyte control, int plus_minus
+)
+{
+    bool result = false;
+    int random;
+    midibyte data[2];
+    midibyte datitem;
+    int datidx = 0;
+    for (auto & e : m_events)
+    {
+        if (e.is_selected() && e.get_status() == status)
+        {
+            result = true;
+            e.get_data(data[0], data[1]);           /* \tricky code */
+            if (event::is_two_byte_msg(status))
+                datidx = 1;
+
+            if (event::is_one_byte_msg(status))
+                datidx = 0;
+
+            datitem = data[datidx];
+
+            // See http://c-faq.com/lib/randrange.html
+
+            random = (rand() / (RAND_MAX / ((2 * plus_minus) + 1) + 1)) -
+                plus_minus;
+
+            datitem += random;
+            if (datitem > c_max_midi_data_value)         /* 127 */
+                datitem = c_max_midi_data_value;
+
+            /*
+             * Not possible with an unsigned data type.
+             *
+             * else if (datitem < 0)
+             *     datitem = 0;
+             */
+
+            data[datidx] = datitem;
+            e.set_data(data[0], data[1]);
+        }
+    }
+    return result;
+}
+
 #if defined USE_FILL_TIME_SIG_AND_TEMPO
 
 /**
@@ -835,6 +887,40 @@ event_list::mark_out_of_range (midipulse slength)
                 e.link()->mark();
         }
     }
+}
+
+/**
+ *  A helper function for sequence.
+ *  Finds the given event, and removes the first iterator
+ *  matching that.  If there are events that would match after that, they
+ *  remain in the container.  This matches seq24 behavior.
+ *
+ * \todo
+ *      Use the find() function to find the matching event more
+ *      conventionally.
+ *
+ * \param e
+ *      Provides a reference to the event to be removed.
+ *
+ * \return
+ *      Returns true if the event was found and removed.
+ */
+
+bool
+event_list::remove_event (event & e)
+{
+    bool result = false;
+    for (auto i = m_events.begin(); i != m_events.end(); ++i)
+    {
+        event & er = dref(i);
+        if (&e == &er)                  /* comparing pointers, not values   */
+        {
+            (void) remove(i);           /* an iterator is required here     */
+            result = true;
+            break;
+        }
+    }
+    return result;
 }
 
 /**
@@ -1020,6 +1106,52 @@ event_list::unselect_all ()
     for (auto & e : m_events)
         e.unselect();
 }
+
+#if defined USE_STAZED_SELECTION_EXTENSIONS
+
+/**
+ *  Used with seqevent when selecting Note On or Note Off, this function will
+ *  select the opposite linked event.  This is a Stazed selection fix we have
+ *  activated unilaterally.
+ *
+ * \param tick_s
+ *      Provides the starting tick.
+ *
+ * \param tick_f
+ *      Provides the ending (finishing) tick.
+ *
+ * \param status
+ *      Provides the desired MIDI event to be selected.
+ *
+ * \return
+ *      Returns the number of linked note notes selected.
+ */
+
+int
+event_list::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
+{
+    int result = 0;
+    for (auto & e : m_events)
+    {
+        bool ok = e.get_status() == status &&
+            e.timestamp() >= tick_s && e.timestamp() <= tick_f;
+
+        if (ok)
+        {
+            if (e.is_linked())
+            {
+                ++result;
+                if (e.is_selected())
+                    e.link()->select();
+                else
+                    e.link()->unselect();
+            }
+        }
+    }
+    return result;
+}
+
+#endif  // defined USE_STAZED_SELECTION_EXTENSIONS
 
 /**
  *  Prints a list of the currently-held events.  Useful for debugging.

@@ -625,12 +625,6 @@
 #define SEQ66_PRESERVE_VELOCITY         (-1)
 
 /**
- *  Defines the maximum MIDI data value.  This applies to note values as well.
- */
-
-#define SEQ66_MAX_DATA_VALUE             127
-
-/**
  *  An older value, previously used for both Note On and Note Off velocity.
  *  See the "Stazed" note in the sequence::add_note() function.
  */

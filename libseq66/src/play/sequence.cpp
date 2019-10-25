@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-24
+ * \updates       2019-10-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -638,6 +638,8 @@ sequence::get_measures () const
     return measures;
 }
 
+#if defined USE_STAZED_SELECTION_EXTENSIONS
+
 /**
  *  Used with seqevent when selecting Note On or Note Off, this function will
  *  select the opposite linked event.  This is a Stazed selection fix we have
@@ -659,29 +661,11 @@ sequence::get_measures () const
 int
 sequence::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
 {
-    int result = 0;
     automutex locker(m_mutex);
-    for (auto & e : m_events)
-    {
-        if
-        (
-            e.get_status() == status &&
-            e.timestamp() >= tick_s && e.timestamp() <= tick_f
-        )
-        {
-            if (e.is_linked())
-            {
-                if (e.is_selected())
-                    e.link()->select();
-                else
-                    e.link()->unselect();
-
-                ++result;
-            }
-        }
-    }
-    return result;
+    return m_events.select_linked(tick_s, tick_f, status);
 }
+
+#endif  // defined USE_STAZED_SELECTION_EXTENSIONS
 
 /**
  * \setter m_rec_vol
@@ -1011,22 +995,13 @@ sequence::remove (event_list::iterator evi)
 void
 sequence::remove (event & e)
 {
-    for (auto i = m_events.begin(); i != m_events.end(); ++i)
-    {
-        event & er = event_list::dref(i);
-        if (&e == &er)                  /* comparing pointers, not values   */
-        {
-            (void) m_events.remove(i);  /* an iterator is required here     */
-            break;
-        }
-    }
+    (void) m_events.remove_event(e);
 }
 
 /**
- *  Removes marked events.  Note how this function forwards the call to
+ *  Removes marked events.  Before removing the events, any Note Ons are turned
+ *  off, just in case.  This function forwards the call to
  *  m_event.remove_marked().
- *
- *  We have to make Note Offs before moving and cutting. Here or in event_list?
  *
  * \threadsafe
  *
@@ -1386,7 +1361,11 @@ sequence::select_note_events
                 bool tor = (stick <= tick_f) || (ftick >= tick_s);
                 if (((stick <= ftick) && tand) || ((stick > ftick) && tor))
                 {
-                    if (action == select::selecting || action == select::select_one)
+                    if
+                    (
+                        action == select::selecting ||
+                        action == select::select_one
+                    )
                     {
                         er.select();
                         ev->select();
@@ -1967,18 +1946,25 @@ sequence::grow_selected (midipulse delta)
     }
 }
 
+/**
+ *
+ */
+
 void
 sequence::randomize_selected
 (
     midibyte status, midibyte control, int plus_minus
 )
 {
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);               /* push_undo(), no lock  */
+    m_events.randomize_selected(status, control, plus_minus);
+
+#ifdef USE_THIS_CODE
     int random;
     midibyte data[2];
     midibyte datitem;
     int datidx = 0;
-    automutex locker(m_mutex);
-    m_events_undo.push(m_events);               /* push_undo(), no lock  */
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.get_status() == status)
@@ -1998,8 +1984,8 @@ sequence::randomize_selected
                 plus_minus;
 
             datitem += random;
-            if (datitem > SEQ66_MAX_DATA_VALUE)         /* 127 */
-                datitem = SEQ66_MAX_DATA_VALUE;
+            if (datitem > c_max_midi_data_value)         /* 127 */
+                datitem = c_max_midi_data_value;
 
             /*
              * Not possible with an unsigned data type.
@@ -2012,6 +1998,7 @@ sequence::randomize_selected
             e.set_data(data[0], data[1]);
         }
     }
+#endif  // USE_THIS_CODE
 }
 
 /**
@@ -2432,8 +2419,8 @@ sequence::change_event_data_range
 
             if (newdata < 0)
                 newdata = 0;
-            else if (newdata > SEQ66_MAX_DATA_VALUE)    /* 127              */
-                newdata = SEQ66_MAX_DATA_VALUE;
+            else if (newdata > c_max_midi_data_value)    /* 127              */
+                newdata = c_max_midi_data_value;
 
             /*
              * I think we can assume, at this point, that this is a good
@@ -2554,8 +2541,8 @@ sequence::change_event_data_relative
 
             if (newdata < 0)
                 newdata = 0;
-            else if (newdata > SEQ66_MAX_DATA_VALUE)    /* 127              */
-                newdata = SEQ66_MAX_DATA_VALUE;
+            else if (newdata > c_max_midi_data_value)    /* 127              */
+                newdata = c_max_midi_data_value;
 
             if (status == EVENT_NOTE_ON)
                 d1 = newdata;
@@ -4077,7 +4064,7 @@ sequence::reset_draw_trigger_marker ()
  *
  * \param lowest
  *      A reference parameter to return the note with the lowest value.
- *      if there are no notes, then it is set to SEQ66_MAX_DATA_VALUE, and
+ *      if there are no notes, then it is set to c_max_midi_data_value, and
  *      false is returned.
  *
  * \param highest
@@ -4095,7 +4082,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 {
     automutex locker(m_mutex);
     bool result = false;
-    int low = SEQ66_MAX_DATA_VALUE;
+    int low = c_max_midi_data_value;
     int high = -1;
     for (auto & er : m_events)
     {

@@ -1453,10 +1453,9 @@ public:
         midipulse tick_s, midipulse tick_f, midibyte status,
         midibyte cc, int data_s
     );
+    int select_linked (long tick_s, long tick_f, midibyte status);
 
 #endif
-
-    int select_linked (long tick_s, long tick_f, midibyte status);
 
     /**
      *  New convenience function.  What about Aftertouch events?  I think we

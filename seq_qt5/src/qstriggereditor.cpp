@@ -266,7 +266,7 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
  */
 
 void
-qstriggereditor::mousePressEvent (QMouseEvent *event)
+qstriggereditor::mousePressEvent (QMouseEvent * event)
 {
     int x, w, numsel;
     midipulse tick_s;

@@ -263,8 +263,8 @@ midi_vector_base::fill_seq_name (const std::string & name)
     put(0x03);                                      /* track name mark  */
 
     int len = name.length();
-    if (len > SEQ66_MAX_DATA_VALUE)                 /* 0x7F, 127        */
-        len = SEQ66_MAX_DATA_VALUE;
+    if (len > c_max_midi_data_value)                /* 0x7F, 127        */
+        len = c_max_midi_data_value;
 
     put(midibyte(len));                             /* length of name   */
     for (int i = 0; i < len; ++i)

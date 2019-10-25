@@ -77,6 +77,7 @@
 
 #include "app_limits.h"
 #include "cfg/settings.hpp"
+#include "midi/event.hpp"
 #include "util/calculations.hpp"
 
 #if ! defined PI
@@ -1244,13 +1245,13 @@ tempo_us_to_bytes (midibyte t[3], int tempo_us)
 midibyte
 tempo_to_note_value (midibpm tempovalue)
 {
-    double slope = double(SEQ66_MAX_DATA_VALUE);
+    double slope = double(c_max_midi_data_value);
     slope /= usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
     double note = (tempovalue - usr().midi_bpm_minimum()) * slope;
     if (note < 0.0)
         note = 0.0;
-    else if (note > double(SEQ66_MAX_DATA_VALUE))
-        note = double(SEQ66_MAX_DATA_VALUE);
+    else if (note > double(c_max_midi_data_value))
+        note = double(c_max_midi_data_value);
 
     return midibyte(note);
 }
@@ -1318,7 +1319,7 @@ note_value_to_tempo (midibyte note)
 {
     double slope = usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
     slope *= double(note);
-    slope /= double(SEQ66_MAX_DATA_VALUE);
+    slope /= double(c_max_midi_data_value);
     slope += usr().midi_bpm_minimum();
     return slope;
 }

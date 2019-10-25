@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-24
+ * \updates       2019-10-25
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -336,6 +336,10 @@ private:                                /* functions for friend sequence    */
         midibyte status, midibyte cc, int snap,
         midipulse length, int divide, bool fixlink
     );
+    bool randomize_selected
+    (
+        midibyte status, midibyte control, int plus_minus
+    );
     bool link_new_note (event & eon, event & eoff);
     bool link_note (event & eon, event & eoff);
     void link_tempos ();
@@ -344,6 +348,7 @@ private:                                /* functions for friend sequence    */
     void mark_out_of_range (midipulse slength);
     void mark_all ();
     void unmark_all ();
+    bool remove_event (event & e);
     bool remove_marked ();
     void unpaint_all ();
     int count_selected_notes () const;
@@ -352,6 +357,11 @@ private:                                /* functions for friend sequence    */
     bool any_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
     void unselect_all ();
+
+#if defined USE_STAZED_SELECTION_EXTENSIONS
+    int select_linked (midipulse tick_s, midipulse tick_f, midibyte status);
+#endif
+
     void print () const;
 
     const Events & events () const
