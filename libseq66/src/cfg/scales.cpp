@@ -53,7 +53,7 @@
 #include <cmath>                        /* for the pow() function           */
 
 #include "cfg/scales.hpp"               /* seq66::scales declarations       */
-#include "midi/event_list.hpp"          /* seq66::event_list                */
+#include "midi/eventlist.hpp"          /* seq66::eventlist                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -173,7 +173,7 @@ analyze_note
 bool
 analyze_notes
 (
-    const event_list & evlist,
+    const eventlist & evlist,
     keys & outkey,
     scales & outscale
 )
@@ -185,7 +185,7 @@ analyze_notes
         int notecount = 0;
         for (auto e = evlist.cbegin(); e != evlist.cend(); ++e)
         {
-            const event & er = event_list::cdref(e);
+            const event & er = eventlist::cdref(e);
             keys thekey;
             int theoctave;
             if (er.is_note_on())

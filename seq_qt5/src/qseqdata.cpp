@@ -155,7 +155,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
 
     char digits[4];
-    event_list::const_iterator cev;
+    eventlist::const_iterator cev;
     seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
@@ -265,7 +265,7 @@ qseqdata::mousePressEvent (QMouseEvent * event)
 
     bool would_select = s->select_events
     (
-        tick_start, tick_finish, m_status, m_cc, sequence::select::would_select
+        tick_start, tick_finish, m_status, m_cc, eventlist::select::would_select
     );
     if (would_select)
         m_relative_adjust = true;

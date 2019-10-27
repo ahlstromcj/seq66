@@ -78,7 +78,7 @@ editable_events::editable_events (sequence & seq, midibpm bpm)
  *  Note that we need to reconstitute the event links here, as well.
  *
  * \note
- *      Like event_list::verify_and_link(), this class counts on the caller
+ *      Like eventlist::verify_and_link(), this class counts on the caller
  *      (in this case, the user-interface instead of the sequence), to call it.
  *
  * \param rhs
@@ -192,7 +192,7 @@ bool
 editable_events::add (const editable_event & e)
 {
     size_t count = m_events.size();         /* save initial size            */
-    event_list::event_key key(e);           /* create the key value         */
+    eventlist::event_key key(e);           /* create the key value         */
     auto p = std::make_pair(key, e);        /* EventsPair                   */
     auto ei = m_events.insert(p);           /* std::multimap operation      */
     bool result = m_events.size() == (count + 1);
@@ -290,7 +290,7 @@ editable_events::print () const
 #if defined USE_VERIFY_AND_LINK                  /* not yet ready */
 
 /*
- *  These functions are DUPLICATES of the functions in event_list.
+ *  These functions are DUPLICATES of the functions in eventlist.
  *  We would like to be able to re-use this code somehow, perhaps by
  *  making them member template functions, templated on the type of
  *  event container.

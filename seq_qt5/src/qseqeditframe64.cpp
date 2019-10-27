@@ -674,7 +674,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         std::bind
         (
             &qseqeditframe64::do_action, this,
-            sequence::edit::quantize_notes, 0
+            eventlist::edit::quantize_notes, 0
         )
     );
 
@@ -2692,7 +2692,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * SEQ66_MIDI_COUNT_MAX);
-    event_list::const_iterator cev;
+    eventlist::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
     {
@@ -2846,7 +2846,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * SEQ66_MIDI_COUNT_MAX);
-    event_list::const_iterator cev;
+    eventlist::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);      /* reset_draw_marker()  */
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
     {
@@ -3190,7 +3190,7 @@ qseqeditframe64::update_draw_geometry()
  */
 
 void
-qseqeditframe64::do_action (sequence::edit action, int var)
+qseqeditframe64::do_action (eventlist::edit action, int var)
 {
     seq_pointer()->handle_edit_action(action, var);
     set_dirty();

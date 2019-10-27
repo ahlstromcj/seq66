@@ -64,7 +64,7 @@ HEADERS += include/app_limits.h \
  include/ctrl/opcontainer.hpp \
  include/ctrl/opcontrol.hpp \
  include/midi/event.hpp \
- include/midi/event_list.hpp \
+ include/midi/eventlist.hpp \
  include/midi/midibytes.hpp \
  include/midi/midi_vector_base.hpp \
  include/midi/midi_vector.hpp \
@@ -126,7 +126,7 @@ SOURCES += src/main_impl.cpp \
  src/midi/editable_event.cpp \
  src/midi/editable_events.cpp \
  src/midi/event.cpp \
- src/midi/event_list.cpp \
+ src/midi/eventlist.cpp \
  src/midi/jack_assistant.cpp \
  src/midi/mastermidibase.cpp \
  src/midi/midibase.cpp \

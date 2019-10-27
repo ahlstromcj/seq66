@@ -155,7 +155,7 @@ event::event
  *      container, so this function is even more important.  The event links,
  *      for linking Note Off events to their respective Note On events, are
  *      dropped.  Generally, they will need to be reconstituted by calling the
- *      event_list::verify_and_link() function.
+ *      eventlist::verify_and_link() function.
  *
  * \warning
  *      This function does not yet copy the SysEx data.  The inclusion

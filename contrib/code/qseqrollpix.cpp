@@ -802,7 +802,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                     ! seq_pointer()->select_note_events
                     (
                         tick_s, note, tick_s, note,
-                        sequence::select::would_select
+                        eventlist::select::would_select
                     )
                 )
                 {
@@ -821,7 +821,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                     isSelected = seq_pointer()->select_note_events
                     (
                         tick_s, note, tick_f, note,
-                        sequence::select::selected
+                        eventlist::select::selected
                     );
                     break;
 
@@ -830,7 +830,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                     isSelected = seq_pointer()->select_note_events
                     (
                         tick_s, note, tick_f, note,
-                        sequence::select::is_onset
+                        eventlist::select::is_onset
                     );
                     break;
                 }
@@ -847,7 +847,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                         numsel = seq_pointer()->select_note_events
                         (
                             tick_s, note, tick_f, note,
-                            sequence::select::select_one
+                            eventlist::select::select_one
                         );
                         break;
 
@@ -856,7 +856,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                         numsel = seq_pointer()->select_note_events
                         (
                             tick_s, note, tick_f, note,
-                            sequence::select::select_one
+                            eventlist::select::select_one
                         );
                         break;
                     }
@@ -878,7 +878,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                     isSelected = seq_pointer()->select_note_events
                     (
                         tick_s, note, tick_f, note,
-                        sequence::select::selected
+                        eventlist::select::selected
                     );
                     break;
 
@@ -886,7 +886,7 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
 
                     isSelected = seq_pointer()->select_note_events
                     (
-                        tick_s, note, tick_f, note, sequence::select::is_onset
+                        tick_s, note, tick_f, note, eventlist::select::is_onset
                     );
                     break;
                 }
@@ -1004,7 +1004,7 @@ qseqrollpix::mouseReleaseEvent (QMouseEvent * event)
                 seq_pointer()->select_note_events
                 (
                     tick_s, note_h, tick_f, note_l,
-                    sequence::select::selecting
+                    eventlist::select::selecting
                 );
                 break;
 
@@ -1015,7 +1015,7 @@ qseqrollpix::mouseReleaseEvent (QMouseEvent * event)
                 seq_pointer()->select_note_events
                 (
                     tick_s, note_h, tick_f, note_l,
-                    sequence::select::onset
+                    eventlist::select::onset
                 );
                 break;
             }

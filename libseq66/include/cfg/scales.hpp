@@ -46,7 +46,7 @@
 namespace seq66
 {
 
-class event_list;                       /* forward reference                */
+class eventlist;                       /* forward reference                */
 
 /**
  *
@@ -534,7 +534,7 @@ extern bool analyze_note
 );
 extern bool analyze_notes
 (
-    const event_list & evlist,
+    const eventlist & evlist,
     keys & outkey,
     scales & outscale
 );

@@ -29,7 +29,7 @@
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
- *  a verify_and_link() function like that of the event_list container.
+ *  a verify_and_link() function like that of the eventlist container.
  *  Eventually, we want to support that feature, so that we can delete a Note
  *  On event and have the corresponding Note Off event automatically deleted
  *  as well.
@@ -256,12 +256,6 @@ qseventslots::set_table_event
         {
             midipulse lt = ev.link_time();
             linktime = pulses_to_measurestring(lt, m_event_container.timing());
-
-#if 0
-            editable_event * lev = ev.dnlink();     /* slightly \tricky */
-            if (not_nullptr(lev))
-                linktime = lev->timestamp_string();
-#endif
         }
     }
     m_parent.set_event_line
@@ -683,7 +677,7 @@ qseventslots::save_events ()
 
     if (result)
     {
-        event_list newevents;
+        eventlist newevents;
         for (auto & ei : m_event_container)
         {
             result = newevents.add(ei.second);

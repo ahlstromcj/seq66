@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-09-20
+ * \updates       2019-10-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -217,7 +217,7 @@ private slots:
 
 private:        // slot helper functions
 
-    void do_action (sequence::edit action, int var);
+    void do_action (eventlist::edit action, int var);
     void popup_tool_menu ();
     void popup_sequence_menu ();
     void repopulate_event_menu (int buss, int channel);

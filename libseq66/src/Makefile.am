@@ -166,7 +166,7 @@ libseq66_la_SOURCES = \
  midi/editable_event.cpp \
  midi/editable_events.cpp \
  midi/event.cpp \
- midi/event_list.cpp \
+ midi/eventlist.cpp \
  midi/jack_assistant.cpp \
  midi/mastermidibase.cpp \
  midi/midibase.cpp \

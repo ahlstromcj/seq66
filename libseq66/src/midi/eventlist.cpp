@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          event_list.cpp
+ * \file          eventlist.cpp
  *
  *  This module declares/defines a class for handling MIDI events in a list
  *  container.
@@ -25,13 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-25
+ * \updates       2019-10-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
  *  tempo) have been added to the container.
  *
- *  This module also defines the  event_list::event_key object.  Although the
+ *  This module also defines the  eventlist::event_key object.  Although the
  *  main MIDI container are now back to using std::list (with sorting after
  *  loading).
  */
@@ -39,7 +39,7 @@
 #include <stdio.h>                      /* C::printf()                  */
 
 #include "util/basic_macros.hpp"
-#include "midi/event_list.hpp"
+#include "midi/eventlist.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -61,7 +61,7 @@ namespace seq66
  *      information.
  */
 
-event_list::event_key::event_key (midipulse tstamp, int rank)
+eventlist::event_key::event_key (midipulse tstamp, int rank)
  :
     m_timestamp (tstamp),
     m_rank      (rank)
@@ -78,7 +78,7 @@ event_list::event_key::event_key (midipulse tstamp, int rank)
  *      Provides the event key to be copied.
  */
 
-event_list::event_key::event_key (const event & rhs)
+eventlist::event_key::event_key (const event & rhs)
  :
     m_timestamp (rhs.timestamp()),
     m_rank      (rhs.get_rank())
@@ -98,7 +98,7 @@ event_list::event_key::event_key (const event & rhs)
  */
 
 bool
-event_list::event_key::operator < (const event_key & rhs) const
+eventlist::event_key::operator < (const event_key & rhs) const
 {
     if (m_timestamp == rhs.m_timestamp)
         return (m_rank < rhs.m_rank);
@@ -110,9 +110,10 @@ event_list::event_key::operator < (const event_key & rhs) const
  *  Principal constructor.
  */
 
-event_list::event_list ()
+eventlist::eventlist ()
  :
     m_events                (),
+    m_length                (0),
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false)
@@ -127,7 +128,7 @@ event_list::event_list ()
  *      Provides the event list to be copied.
  */
 
-event_list::event_list (const event_list & rhs)
+eventlist::eventlist (const eventlist & rhs)
  :
     m_events                (rhs.m_events),
     m_is_modified           (rhs.m_is_modified),
@@ -145,8 +146,8 @@ event_list::event_list (const event_list & rhs)
  *      Provides the event list to be assigned.
  */
 
-event_list &
-event_list::operator = (const event_list & rhs)
+eventlist &
+eventlist::operator = (const eventlist & rhs)
 {
     if (this != &rhs)
     {
@@ -170,7 +171,7 @@ event_list::operator = (const event_list & rhs)
  */
 
 midipulse
-event_list::get_max_timestamp () const
+eventlist::get_max_timestamp () const
 {
     midipulse result = 0;
     if (count() > 0)
@@ -217,7 +218,7 @@ event_list::get_max_timestamp () const
  */
 
 bool
-event_list::append (const event & e)
+eventlist::append (const event & e)
 {
     m_events.push_back(e);              /* std::vector operation        */
     m_is_modified = true;
@@ -236,7 +237,7 @@ event_list::append (const event & e)
  */
 
 bool
-event_list::add (Events & evlist, const event & e)
+eventlist::add (Events & evlist, const event & e)
 {
     evlist.push_back(e);                /* std::vector operation        */
     std::sort(evlist.begin(), evlist.end());
@@ -249,7 +250,7 @@ event_list::add (Events & evlist, const event & e)
  */
 
 void
-event_list::merge (const Events & evlist)
+eventlist::merge (const Events & evlist)
 {
     m_events.reserve(m_events.size() + evlist.size());
     m_events.insert(m_events.end(), evlist.begin(), evlist.end());
@@ -273,6 +274,8 @@ event_list::merge (const Events & evlist)
  *  lvalue or an rvalue, or whether the value-type supports move-construction
  *  or not.
  *
+ *  std::vector::insert(iterator pos, InputIterator 1st, InputIterator 2nd)
+ *
  *  Each element of T is inserted at the position that corresponds to its
  *  value according to the strict weak ordering defined by operator <. The
  *  resulting order of equivalent elements is stable (i.e. equivalent elements
@@ -294,45 +297,25 @@ event_list::merge (const Events & evlist)
  */
 
 void
-event_list::merge (event_list & el, bool presort)
+eventlist::merge (eventlist & el, bool presort)
 {
-#ifdef USE_THIS_CRASHING_CODE
-    Events destination;                     /* a vector of MIDI events      */
-    if (presort)                            /* should always be true here!  */
-    {
-        sort();                             /* sort ourselves to be sure    */
-        el.sort();                          /* el.m_events.sort();          */
-    }
-    std::merge
-    (
-        m_events.begin(), m_events.end(),
-        el.m_events.begin(), el.m_events.end(),
-        destination.begin()     // std::back_inserter(destination)
-    );
-    m_events = destination;
-#else
     if (presort)                            /* not really necessary here    */
         el.sort();                          /* el.m_events.sort();          */
 
-    /*
-     * std::vector::insert(iterator pos, InputIterator 1st, InputIterator 2nd).
-     */
-
     m_events.reserve(m_events.size() + el.m_events.size());
     m_events.insert(m_events.end(), el.m_events.begin(), el.m_events.end());
-    std::sort(m_events.begin(), m_events.end());    /* event_list::sort()   */
-#endif
+    std::sort(m_events.begin(), m_events.end());
 }
 
 /**
  *  Links a new event.  This function checks for a note on, then look for
- *  its note off.  This function is provided in the event_list because it
+ *  its note off.  This function is provided in the eventlist because it
  *  does not depend on any external data.  Also note that any desired
  *  thread-safety must be provided by the caller.
  */
 
 void
-event_list::link_new ()
+eventlist::link_new ()
 {
     bool endfound = false;
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
@@ -381,7 +364,7 @@ event_list::link_new ()
  */
 
 bool
-event_list::link_new_note (event & eon, event & eoff)
+eventlist::link_new_note (event & eon, event & eoff)
 {
     bool result = eon.linkable(eoff);
     if (result)
@@ -406,7 +389,7 @@ event_list::link_new_note (event & eon, event & eoff)
  */
 
 bool
-event_list::link_note (event & eon, event & eoff)
+eventlist::link_note (event & eon, event & eoff)
 {
     bool result = eon.linkable(eoff);
     if (result)
@@ -444,7 +427,7 @@ event_list::link_note (event & eon, event & eoff)
  */
 
 void
-event_list::verify_and_link (midipulse slength)
+eventlist::verify_and_link (midipulse slength)
 {
     clear_links();
     sort();                                 /* IMPORTANT!                   */
@@ -500,7 +483,7 @@ event_list::verify_and_link (midipulse slength)
  */
 
 void
-event_list::clear_links ()
+eventlist::clear_links ()
 {
     for (auto & e : m_events)
     {
@@ -527,7 +510,7 @@ event_list::clear_links ()
  */
 
 bool
-event_list::edge_fix (midipulse snap, midipulse seqlength)
+eventlist::edge_fix (midipulse snap, midipulse seqlength)
 {
     bool result = false;
     if (mark_selected())
@@ -603,15 +586,16 @@ event_list::edge_fix (midipulse snap, midipulse seqlength)
  */
 
 bool
-event_list::quantize_events
+eventlist::quantize_events
 (
     midibyte status, midibyte cc, int snap,
-    midipulse length, int divide, bool fixlink
+    int divide, bool fixlink
 )
 {
     bool result = false;
     if (mark_selected())
     {
+        midipulse length = get_length();
         Events quantized_events;
         for (auto & er : m_events)
         {
@@ -682,6 +666,99 @@ event_list::quantize_events
 }
 
 /**
+ *  Consolidates the adjustment of timestamps in a pattern.
+ *
+ *  -   If the timestamp plus the delta is greater that m_length, we do
+ *      round robin magic.
+ *  -   If the timestamp is greater than m_length, then it is wrapped
+ *      around to the beginning.
+ *  -   If the timestamp equals m_length, then it is set to 0, and later,
+ *      trimmed.
+ *  -   If the timestamp is less than 0, then it is set to the end.
+ *
+ *  Taken from similar code in move_selected_notes() and grow_selected().  Be
+ *  careful using this function.
+ *
+ * \param t
+ *      Provides the timestamp to be adjusted based on m_length.
+ *
+ * \param isnoteoff
+ *      Used for "expanding" the timestamp from 0 to just less than m_length,
+ *      if necessary.  Should be set to true only for Note Off events; it
+ *      defaults to false, which means to wrap the events around the end of
+ *      the sequence if necessary, and is used only in movement, not in growth.
+ *
+ * \return
+ *      Returns the adjusted timestamp.
+ */
+
+midipulse
+eventlist::adjust_timestamp (midipulse t, bool isnoteoff)
+{
+    midipulse seqlength = get_length();
+    if (t > seqlength)
+        t -= seqlength;
+
+    if (t < 0)                          /* only if midipulse is signed  */
+        t += seqlength;
+
+    if (isnoteoff)
+    {
+        if (t == 0)
+            t = seqlength - 1;          /* m_note_off_margin            */
+    }
+    else                                /* if (wrap)                    */
+    {
+        if (t == seqlength)
+            t = 0;
+    }
+    return t;
+}
+
+/**
+ *  Removes and adds selected notes in position.  Also currently moves any
+ *  other events in the range of the selection.
+ *
+ *  Another thing this function does is wrap-around when movement occurs.
+ *  Any events (except Note Off) that will start just after the END of the
+ *  pattern will be wrapped around to the beginning of the pattern.
+ *
+ * \param delta_tick
+ *      Provides the amount of time to move the selected notes.  Note that it
+ *      also applies to events.  Note-Off events are expanded to m_length if
+ *      their timestamp would be 0.  All other events will wrap around to 0.
+ *
+ * \param delta_note
+ *      Provides the amount of pitch to move the selected notes.  This value
+ *      is applied only to Note (On and Off) events.  Also, if this value
+ *      would bring a note outside the range of 0 to 127, that note is not
+ *      changed and the event is not moved.
+ */
+
+bool
+eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
+{
+    bool result = false;
+    for (auto & er : m_events)
+    {
+        if (er.is_selected() && er.is_note())
+        {
+            int newnote = er.get_note() + delta_note;
+            if (newnote >= 0 && newnote < c_num_keys)
+            {
+                midipulse newts = er.timestamp() + delta_tick;
+                newts = adjust_timestamp(newts, er.is_note_off());
+                if (er.is_note())                /* Note On or Note Off  */
+                    er.set_note(midibyte(newnote));
+
+                er.set_timestamp(newts);
+            }
+        }
+    }
+    return result;
+}
+
+/**
  *  This function randomizes a portion of each selected event. If the event is
  *  a two-byte message (note on/off, aftertouch, pitch wheel, or control
  *  change), the second byte (e.g. velocity for notes) is altered. If the
@@ -692,7 +769,7 @@ event_list::quantize_events
  */
 
 bool
-event_list::randomize_selected
+eventlist::randomize_selected
 (
     midibyte status, midibyte control, int range
 )
@@ -736,9 +813,10 @@ event_list::randomize_selected
  */
 
 bool
-event_list::randomize_selected_notes (midipulse length, int jitter, int range)
+eventlist::randomize_selected_notes (int jitter, int range)
 {
     bool result = false;
+    midipulse length = get_length();
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.is_note())
@@ -793,7 +871,7 @@ event_list::randomize_selected_notes (midipulse length, int jitter, int range)
  */
 
 void
-event_list::scan_meta_events ()
+eventlist::scan_meta_events ()
 {
     m_has_tempo = false;
     m_has_time_signature = false;
@@ -822,7 +900,7 @@ event_list::scan_meta_events ()
  */
 
 void
-event_list::link_tempos ()
+eventlist::link_tempos ()
 {
     clear_tempo_links();
     for (auto t = m_events.begin(); t != m_events.end(); ++t)
@@ -851,7 +929,7 @@ event_list::link_tempos ()
  */
 
 void
-event_list::clear_tempo_links ()
+eventlist::clear_tempo_links ()
 {
     for (auto & e : m_events)
     {
@@ -868,7 +946,7 @@ event_list::clear_tempo_links ()
  */
 
 bool
-event_list::mark_selected ()
+eventlist::mark_selected ()
 {
     bool result = false;
     for (auto & e : m_events)
@@ -888,7 +966,7 @@ event_list::mark_selected ()
  */
 
 void
-event_list::mark_all ()
+eventlist::mark_all ()
 {
     for (auto & e : m_events)
         e.mark();
@@ -899,7 +977,7 @@ event_list::mark_all ()
  */
 
 void
-event_list::unmark_all ()
+eventlist::unmark_all ()
 {
     for (auto & e : m_events)
         e.unmark();
@@ -922,7 +1000,7 @@ event_list::unmark_all ()
  */
 
 void
-event_list::mark_out_of_range (midipulse slength)
+eventlist::mark_out_of_range (midipulse slength)
 {
     for (auto & e : m_events)
     {
@@ -957,7 +1035,7 @@ event_list::mark_out_of_range (midipulse slength)
  */
 
 bool
-event_list::remove_event (event & e)
+eventlist::remove_event (event & e)
 {
     bool result = false;
     for (auto i = m_events.begin(); i != m_events.end(); ++i)
@@ -984,7 +1062,7 @@ event_list::remove_event (event & e)
  */
 
 bool
-event_list::remove_marked ()
+eventlist::remove_marked ()
 {
     bool result = false;
     auto i = m_events.begin();
@@ -1007,7 +1085,7 @@ event_list::remove_marked ()
  */
 
 void
-event_list::unpaint_all ()
+eventlist::unpaint_all ()
 {
     for (auto & e : m_events)
         e.unpaint();
@@ -1018,7 +1096,7 @@ event_list::unpaint_all ()
  */
 
 int
-event_list::count_selected_notes () const
+eventlist::count_selected_notes () const
 {
     int result = 0;
     for (auto & e : m_events)
@@ -1031,7 +1109,7 @@ event_list::count_selected_notes () const
 
 /**
  *  Indicates that at least one note is selected.  Acts like
- *  event_list::count_selected_notes(), but stops after finding a selected
+ *  eventlist::count_selected_notes(), but stops after finding a selected
  *  note.
  *
  * \return
@@ -1039,7 +1117,7 @@ event_list::count_selected_notes () const
  */
 
 bool
-event_list::any_selected_notes () const
+eventlist::any_selected_notes () const
 {
     bool result = false;
     for (auto & e : m_events)
@@ -1071,7 +1149,7 @@ event_list::any_selected_notes () const
  */
 
 int
-event_list::count_selected_events (midibyte status, midibyte cc) const
+eventlist::count_selected_events (midibyte status, midibyte cc) const
 {
     int result = 0;
     for (auto & e : m_events)
@@ -1097,7 +1175,7 @@ event_list::count_selected_events (midibyte status, midibyte cc) const
 
 /**
  *  Indicates that at least one matching event is selected.  Acts like
- *  event_list::count_selected_events(), but stops after finding a selected
+ *  eventlist::count_selected_events(), but stops after finding a selected
  *  note.
  *
  * \return
@@ -1105,7 +1183,7 @@ event_list::count_selected_events (midibyte status, midibyte cc) const
  */
 
 bool
-event_list::any_selected_events (midibyte status, midibyte cc) const
+eventlist::any_selected_events (midibyte status, midibyte cc) const
 {
     bool result = false;
     for (auto & e : m_events)
@@ -1140,7 +1218,7 @@ event_list::any_selected_events (midibyte status, midibyte cc) const
  */
 
 void
-event_list::select_all ()
+eventlist::select_all ()
 {
     for (auto & e : m_events)
         e.select();
@@ -1151,10 +1229,345 @@ event_list::select_all ()
  */
 
 void
-event_list::unselect_all ()
+eventlist::unselect_all ()
 {
     for (auto & e : m_events)
         e.unselect();
+}
+
+/**
+ *  Select all events in the given range, and returns the number
+ *  selected.  Note that there is also an overloaded version of this
+ *  function.
+ *
+ * \threadsafe
+ *
+ * \param tick_s
+ *      The start time of the selection.
+ *
+ * \param tick_f
+ *      The finish time of the selection.
+ *
+ * \param status
+ *      The desired event in the selection.  Now, as a new feature, tempo
+ *      events are also selectable, in addition to events selected by this
+ *      parameter.
+ *
+ * \param cc
+ *      The desired control-change in the selection, if the event is a
+ *      control-change.
+ *
+ * \param action
+ *      The desired selection action.
+ *
+ * \return
+ *      Returns the number of events selected.
+ */
+
+int
+eventlist::select_events
+(
+    midipulse tick_s, midipulse tick_f,
+    midibyte status, midibyte cc, select action
+)
+{
+    int result = 0;
+    for (auto & er : m_events)
+    {
+        if (event_in_range(er, status, tick_s, tick_f))
+        {
+            midibyte d0, d1;
+            er.get_data(d0, d1);
+            if (er.is_tempo() || event::is_desired_cc_or_not_cc(status, cc, d0))
+            {
+                if (action == select::selecting)
+                {
+                    er.select();
+                    ++result;
+                }
+                if (action == select::select_one)
+                {
+                    er.select();
+                    ++result;
+                    break;
+                }
+                if (action == select::selected)
+                {
+                    if (er.is_selected())
+                    {
+                        result = 1;
+                        break;
+                    }
+                }
+                if (action == select::would_select)
+                {
+                    result = 1;
+                    break;
+                }
+                if (action == select::toggle)
+                {
+                    if (er.is_selected())
+                        er.unselect();
+                    else
+                        er.select();
+                }
+                if (action == select::remove)
+                {
+                    remove_event(er);           // reset_draw_marker();
+                    ++result;
+                    break;
+                }
+                if (action == select::deselect)
+                    er.unselect();
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  This function selects events in range of tick start, note high, tick end,
+ *  and note low.
+ *
+ *  Compare this function to the convenience function select_all_notes(), which
+ *  doesn't use range information.
+ *
+ *  Note that we have not offloaded this function to eventlist because it
+ *  depends on the sequence::select enumeration, and we're too lazy at the
+ *  moment to move that enumeration to eventlist.
+ *
+ * \threadsafe
+ *
+ * \param tick_s
+ *      The start time of the selection.
+ *
+ * \param note_h
+ *      The high note of the selection, inclusive.
+ *
+ * \param tick_f
+ *      The finish time of the selection.
+ *
+ * \param note_l
+ *      The low note of the selection, inclusive.
+ *
+ * \param action
+ *      The action to perform, one of the values of the sequence::select
+ *      enumeration.
+ *
+ * \return
+ *      Returns the number of events acted on, or 0 if no desired event was
+ *      found.
+ */
+
+int
+eventlist::select_note_events
+(
+    midipulse tick_s, int note_h,
+    midipulse tick_f, int note_l, select action
+)
+{
+    int result = 0;
+    for (auto & er : m_events)
+    {
+        if (er.get_note() <= note_h && er.get_note() >= note_l)
+        {
+            midipulse stick = 0, ftick = 0;
+            if (er.is_linked())
+            {
+                event * ev = er.link();
+                if (er.is_note_off())
+                {
+                    stick = ev->timestamp();    /* time of the Note On  */
+                    ftick = er.timestamp();     /* time of the Note Off */
+                }
+                else if (er.is_note_on())
+                {
+                    ftick = ev->timestamp();    /* time of the Note Off */
+                    stick = er.timestamp();     /* time of the Note On  */
+                }
+
+#define USE_THIS_CONVOLUTED_CHECK
+#if defined USE_THIS_CONVOLUTED_CHECK
+
+                /*
+                 * "tand" indicates that the event start is less than the finish
+                 * parameter, and the event finish is greater than the start
+                 * parameter.
+                 *
+                 * "tor" is the OR of these two tests, and is needed when the
+                 * event start is greater than the finish, which occurs in a
+                 * note-off.
+                 *
+                 * Not sure why so complex; all we need to know is that both the
+                 * start and end times are within the desired range. However,
+                 * then we cannot click on a note to select it.  Odd!
+                 */
+
+                bool tand = (stick <= tick_f) && (ftick >= tick_s);
+                bool tor = (stick <= tick_f) || (ftick >= tick_s);
+                bool ok = tand || ((stick > ftick) && tor);
+#else
+                bool ok_start = (stick >= tick_s) && (stick <= tick_f);
+                bool ok_finish = (ftick >= tick_s) && (ftick <= tick_f);
+                bool ok = ok_start && ok_finish;
+#endif
+                if (ok)
+                {
+                    if (action == select::selecting)
+                    {
+                        er.select();
+                        ev->select();
+                        ++result;
+                    }
+                    if (action == select::select_one)
+                    {
+                        er.select();
+                        ev->select();
+                        ++result;
+                        break;
+                    }
+                    if (action == select::selected)
+                    {
+                        if (er.is_selected())
+                        {
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if (action == select::would_select)
+                    {
+                        result = 1;
+                        break;
+                    }
+                    if (action == select::deselect)
+                    {
+                        er.unselect();
+                        ev->unselect();
+                        result = 0;                 /* no break;            */
+                    }
+                    if (action == select::toggle && er.is_note_on())
+                    {
+                        if (er.is_selected())       /* don't toggle twice   */
+                        {
+                            er.unselect();
+                            ev->unselect();
+                        }
+                        else
+                        {
+                            er.select();
+                            ev->select();
+                        }
+                        ++result;
+                    }
+                    if (action == select::remove)
+                    {
+                        remove_event(er);
+                        remove_event(*ev);      // reset_draw_marker();
+                        ++result;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                /*
+                 * Here, the note event is not linked, and so the event is
+                 * considered "junk".  We still handle the event itself.
+                 * There's no way to fix it except by an expensive
+                 * verify_and_link() call!
+                 */
+
+#if defined SEQ66_PLATFORM_DEBUG
+                errprint("sequence::select_note_events(): unlinked note");
+#endif
+                stick = ftick = er.timestamp();
+                if (stick >= (tick_s - 16) && ftick <= tick_f)  /* why -16? */
+                {
+                    if (action == select::selecting)
+                    {
+                        er.select();
+                        ++result;
+                    }
+                    if (action == select::select_one)
+                    {
+                        er.select();
+                        ++result;
+                        break;
+                    }
+                    if (action == select::selected)
+                    {
+                        if (er.is_selected())
+                        {
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if (action == select::would_select)
+                    {
+                        result = 1;
+                        break;
+                    }
+                    if (action == select::deselect)
+                    {
+                        result = 0;
+                        er.unselect();
+                    }
+                    if (action == select::toggle)
+                    {
+                        ++result;
+                        if (er.is_selected())
+                            er.unselect();
+                        else
+                            er.select();
+                    }
+                    if (action == select::remove)
+                    {
+                        remove_event(er);           // reset_draw_marker();
+                        ++result;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  A convenience function used a couple of times.  Makes if-clauses
+ *  easier to read.
+ *
+ * \param e
+ *      Provides the event to be checked.
+ *
+ * \param status
+ *      Provides the event type that must be matched.  However, Set Tempo
+ *      events will always be matched.
+ *
+ * \param tick_s
+ *      The lower end of the range of timestamps that the event must fall
+ *      within.
+ *
+ * \param tick_f
+ *      The upper end of the range of timestamps that the event must fall
+ *      within.
+ *
+ * \return
+ *      Returns true if the event matchs all of the restrictions noted.
+ */
+
+bool
+eventlist::event_in_range
+(
+    const event & e, midibyte status,
+    midipulse tick_s, midipulse tick_f
+) const
+{
+    bool result = e.is_tempo() || e.get_status() == status;
+    if (result)
+        result = e.timestamp() >= tick_s && e.timestamp() <= tick_f;
+
+    return result;
 }
 
 #if defined USE_STAZED_SELECTION_EXTENSIONS
@@ -1178,7 +1591,7 @@ event_list::unselect_all ()
  */
 
 int
-event_list::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
+eventlist::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
 {
     int result = 0;
     for (auto & e : m_events)
@@ -1208,7 +1621,7 @@ event_list::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
  */
 
 void
-event_list::print () const
+eventlist::print () const
 {
     printf("events[%d]:\n", count());
     for (auto & e : m_events)
@@ -1218,7 +1631,7 @@ event_list::print () const
 }           // namespace seq66
 
 /*
- * event_list.cpp
+ * eventlist.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

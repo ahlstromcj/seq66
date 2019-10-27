@@ -38,7 +38,7 @@
 
 #include <map>                          /* std::multimap                */
 
-#include "midi/event_list.hpp"          /* seq66::event_list::event_key */
+#include "midi/eventlist.hpp"          /* seq66::eventlist::event_key */
 #include "midi/editable_event.hpp"      /* seq66::editable_event        */
 
 #undef  USE_VERIFY_AND_LINK                  /* not yet ready !!!! */
@@ -65,14 +65,14 @@ private:
 
     /**
      *  Types to use to with the multimap implementation.  These typenames are
-     *  identical to those used in event_list, but of course they are in the
-     *  editable_events scope instead.  See the event_list class; that class
-     *  once again uses std::list, but still defines event_list::event_key for
+     *  identical to those used in eventlist, but of course they are in the
+     *  editable_events scope instead.  See the eventlist class; that class
+     *  once again uses std::list, but still defines eventlist::event_key for
      *  use here.  We think the std::list implementation breaks editing, so
      *  we're going back to the std::map implementation for the event-editor.
      */
 
-    using Key = event_list::event_key;
+    using Key = eventlist::event_key;
     using EventsPair = std::pair<Key, editable_event>;
     using Events = std::multimap<Key, editable_event>;
     using iterator = Events::iterator;

@@ -581,21 +581,6 @@ triggers::split (midipulse splittick)
 void
 triggers::half_split (midipulse splittick)
 {
-#if 0
-    auto i = m_triggers.begin();
-    while (i != m_triggers.end())
-	{
-        if ( i->tick_start() <= splittick && i->tick_end() >= splittick )
-        {
-            long tick = i->tick_end() - i->tick_start();
-            ++tick;
-            tick /= 2;
-            split(*i, i->tick_start() + tick);
-            break;
-        }
-        ++i;
-    }
-#endif
     for (auto & t : m_triggers)
     {
         if (t.tick_start() <= splittick && t.tick_end() >= splittick)

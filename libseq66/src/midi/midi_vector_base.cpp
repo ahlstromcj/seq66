@@ -708,7 +708,7 @@ midi_vector_base::song_fill_seq_trigger
 void
 midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 {
-    event_list evl = m_sequence.events();           /* used below */
+    eventlist evl = m_sequence.events();           /* used below */
     evl.sort();
     if (doseqspec)
         fill_seq_number(track);

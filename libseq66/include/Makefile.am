@@ -113,7 +113,7 @@ pkginclude_HEADERS = \
  midi/editable_event.hpp \
  midi/editable_events.hpp \
  midi/event.hpp \
- midi/event_list.hpp \
+ midi/eventlist.hpp \
  midi/jack_assistant.hpp \
  midi/mastermidibase.hpp \
  midi/mastermidibus.hpp \

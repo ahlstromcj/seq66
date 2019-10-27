@@ -53,7 +53,7 @@
 #include "cfg/scales.hpp"               /* seq66 scales functions           */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "seq66_features.hpp"           /* various feature #defines         */
-#include "midi/event_list.hpp"          /* seq66::event_list                */
+#include "midi/eventlist.hpp"          /* seq66::eventlist                */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "midi/midi_vector_base.hpp"    /* seq66::c_midi_notes              */
@@ -64,26 +64,20 @@
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
 
-/**
- *  Enables and marks a user's patch for issue #95.
- */
-
-#define LAYK_PULL_REQUEST_95
-
-/**
- *  This value is used as the minimal increment for growing a trigger during
- *  song-recording.  This value was originally 10, but let's us a power of 2.
- *  This increment allows the rest of the threads to notice the change.
- */
-
-#define SEQ66_SONG_RECORD_INC      16
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  This value is used as the minimal increment for growing a trigger during
+ *  song-recording.  This value was originally 10, but lets us a power of 2.
+ *  This increment allows the rest of the threads to notice the change.
+ */
+
+static const int c_song_record_increment = 16;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -104,7 +98,7 @@ sequence::note_info::show () const
  *  allows for copy/paste between patterns.
  */
 
-event_list sequence::m_clipboard;
+eventlist sequence::m_clipboard;
 
 /**
  *  Provides the default name/title for the sequence.
@@ -190,14 +184,10 @@ sequence::sequence (int ppqn)
     m_mutex                     (),
     m_note_off_margin           (2)
 {
+    m_events.set_length(m_length);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
-
-    /*
-     * This is the C++11 way to initialize m_playing_notes[p] for all p.
-     */
-
-    for (auto & p : m_playing_notes)            /* no notes are playing now */
+    for (auto & p : m_playing_notes)        /* no notes are playing now     */
         p = 0;
 }
 
@@ -246,37 +236,37 @@ sequence::partial_assign (const sequence & rhs)
     if (this != &rhs)
     {
         automutex locker(m_mutex);
-        m_parent        = rhs.m_parent;             /* a pointer, careful!  */
-        m_events        = rhs.m_events;
-        m_triggers      = rhs.m_triggers;
-        m_channel_match = rhs.m_channel_match;
-        m_midi_channel  = rhs.m_midi_channel;
-        m_bus           = rhs.m_bus;
-        m_transposable  = rhs.m_transposable;
-        m_master_bus    = rhs.m_master_bus;         /* a pointer, be aware! */
-        m_was_playing   = false;
-        m_playing       = false;
-        m_recording     = false;
-        m_expanded_recording  = rhs.m_expanded_recording;
-        m_overwrite_recording = rhs.m_overwrite_recording;
-        m_scale         = rhs.m_scale;
-        m_name          = rhs.m_name;
-        m_ppqn          = rhs.m_ppqn;
-        m_seq_color     = rhs.m_seq_color;
-        m_seq_edit_mode = rhs.m_seq_edit_mode;
-        m_length        = rhs.m_length;
-        m_snap_tick     = rhs.m_snap_tick;
-        m_time_beats_per_measure = rhs.m_time_beats_per_measure;
-        m_time_beat_width        = rhs.m_time_beat_width;
-        m_clocks_per_metronome   = rhs.m_clocks_per_metronome;
-        m_32nds_per_quarter      = rhs.m_32nds_per_quarter;
-        m_us_per_quarter_note    = rhs.m_us_per_quarter_note;
-        m_rec_vol                = rhs.m_rec_vol;
-        m_note_on_velocity       = rhs.m_note_on_velocity;
-        m_note_off_velocity      = rhs.m_note_off_velocity;
-        m_musical_key            = rhs.m_musical_key;
-        m_musical_scale          = rhs.m_musical_scale;
-        m_background_sequence    = rhs.m_background_sequence;
+        m_parent                    = rhs.m_parent;         /* a pointer    */
+        m_events                    = rhs.m_events;
+        m_triggers                  = rhs.m_triggers;
+        m_channel_match             = rhs.m_channel_match;
+        m_midi_channel              = rhs.m_midi_channel;
+        m_bus                       = rhs.m_bus;
+        m_transposable              = rhs.m_transposable;
+        m_master_bus                = rhs.m_master_bus;     /* a pointer    */
+        m_was_playing               = false;
+        m_playing                   = false;
+        m_recording                 = false;
+        m_expanded_recording        = rhs.m_expanded_recording;
+        m_overwrite_recording       = rhs.m_overwrite_recording;
+        m_scale                     = rhs.m_scale;
+        m_name                      = rhs.m_name;
+        m_ppqn                      = rhs.m_ppqn;
+        m_seq_color                 = rhs.m_seq_color;
+        m_seq_edit_mode             = rhs.m_seq_edit_mode;
+        m_length                    = rhs.m_length;
+        m_snap_tick                 = rhs.m_snap_tick;
+        m_time_beats_per_measure    = rhs.m_time_beats_per_measure;
+        m_time_beat_width           = rhs.m_time_beat_width;
+        m_clocks_per_metronome      = rhs.m_clocks_per_metronome;
+        m_32nds_per_quarter         = rhs.m_32nds_per_quarter;
+        m_us_per_quarter_note       = rhs.m_us_per_quarter_note;
+        m_rec_vol                   = rhs.m_rec_vol;
+        m_note_on_velocity          = rhs.m_note_on_velocity;
+        m_note_off_velocity         = rhs.m_note_off_velocity;
+        m_musical_key               = rhs.m_musical_key;
+        m_musical_scale             = rhs.m_musical_scale;
+        m_background_sequence       = rhs.m_background_sequence;
         for (auto & p : m_playing_notes)            /* no notes playing now */
             p = 0;
 
@@ -339,7 +329,7 @@ sequence::set_hold_undo (bool hold)
     if (hold)
         m_events_undo_hold = m_events;
     else
-       m_events_undo_hold.clear();
+        m_events_undo_hold.clear();
 }
 
 /**
@@ -820,7 +810,7 @@ sequence::play
 
         if (song_recording())
         {
-            grow_trigger(song_record_tick(), end_tick, SEQ66_SONG_RECORD_INC);
+            grow_trigger(song_record_tick(), end_tick, c_song_record_increment);
             set_dirty_mp();                 /* force redraw                 */
         }
         if (playback_mode)                  /* song mode: on/off triggers   */
@@ -837,7 +827,7 @@ sequence::play
         auto e = m_events.begin();
         while (e != m_events.end())
         {
-            event & er = event_list::dref(e);
+            event & er = eventlist::dref(e);
             midipulse stamp = er.timestamp() + offset_base;
             if (stamp >= start_tick_offset && stamp <= end_tick_offset)
             {
@@ -963,11 +953,11 @@ sequence::link_new ()
  */
 
 void
-sequence::remove (event_list::iterator evi)
+sequence::remove (eventlist::iterator evi)
 {
     if (evi != m_events.end())
     {
-        event & er = event_list::dref(evi);
+        event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
             m_master_bus->play(m_bus, &er, m_midi_channel);
@@ -1018,16 +1008,10 @@ bool
 sequence::remove_marked ()
 {
     automutex locker(m_mutex);
-    for (auto & e : m_events)           /* see issue #95                */
+    for (auto & e : m_events)
     {
-        if (e.is_marked())
-        {
-            if (e.is_note_on())         /* or maybe just e.is_note()?   */
-            {
-                midibyte note_to_play = e.get_note();
-                play_note_off(int(note_to_play));
-            }
-        }
+        if (e.is_marked() && e.is_note_on())
+            play_note_off(int(e.get_note()));
     }
 
     bool result = m_events.remove_marked();
@@ -1117,7 +1101,8 @@ sequence::unpaint_all ()
 bool
 sequence::selected_box
 (
-    midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+    midipulse & tick_s, int & note_h,
+    midipulse & tick_f, int & note_l
 )
 {
     automutex locker(m_mutex);
@@ -1165,12 +1150,16 @@ sequence::selected_box
  *
  * \param [out] note_l
  *      Side-effect return reference for the low note.
+ *
+ * \return
+ *      Returns true if a selected Note On event is found.
  */
 
 bool
 sequence::onsets_selected_box
 (
-    midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
+    midipulse & tick_s, int & note_h,
+    midipulse & tick_f, int & note_l
 )
 {
     automutex locker(m_mutex);
@@ -1188,7 +1177,6 @@ sequence::onsets_selected_box
              */
 
             midipulse time = e.timestamp();
-            result = true;
             if (time < tick_s)
                 tick_s = time;
 
@@ -1201,6 +1189,8 @@ sequence::onsets_selected_box
 
             if (note > note_h)
                 note_h = note;
+
+            result = true;
         }
     }
     return result;
@@ -1310,10 +1300,14 @@ sequence::get_num_selected_events (midibyte status, midibyte cc) const
 
 /**
  *  This function selects events in range of tick start, note high, tick end,
- *  and note low.  Returns the number selected.
+ *  and note low.
  *
- *  Compare this function to the convenience function select_all_notes(),
- *  which doesn't use range information.
+ *  Compare this function to the convenience function select_all_notes(), which
+ *  doesn't use range information.
+ *
+ *  Note that we have not offloaded this function to eventlist because it
+ *  depends on the sequence::select enumeration, and we're too lazy at the
+ *  moment to move that enumeration to eventlist.
  *
  * \threadsafe
  *
@@ -1321,17 +1315,17 @@ sequence::get_num_selected_events (midibyte status, midibyte cc) const
  *      The start time of the selection.
  *
  * \param note_h
- *      The high note of the selection.
+ *      The high note of the selection, inclusive.
  *
  * \param tick_f
  *      The finish time of the selection.
  *
  * \param note_l
- *      The low note of the selection.
+ *      The low note of the selection, inclusive.
  *
  * \param action
- *      The action to performer, one of e_select, e_select_one, e_is_selected,
- *      e_would_select, e_deselect, e_toggle_selection, and e_remove_one.
+ *      The action to perform, one of the values of the sequence::select
+ *      enumeration.
  *
  * \return
  *      Returns the number of events acted on, or 0 if no desired event was
@@ -1342,180 +1336,15 @@ int
 sequence::select_note_events
 (
     midipulse tick_s, int note_h,
-    midipulse tick_f, int note_l, select action
+    midipulse tick_f, int note_l, eventlist::select action
 )
 {
-    int result = 0;
     automutex locker(m_mutex);
-    for (auto & er : m_events)
-    {
-        if (er.get_note() <= note_h && er.get_note() >= note_l)
-        {
-            midipulse stick = 0;
-            midipulse ftick = 0;
-            if (er.is_linked())
-            {
-                event * ev = er.link();
-                if (er.is_note_off())
-                {
-                    stick = ev->timestamp();
-                    ftick = er.timestamp();
-                }
-                else if (er.is_note_on())
-                {
-                    ftick = ev->timestamp();
-                    stick = er.timestamp();
-                }
-
-                bool tand = (stick <= tick_f) && (ftick >= tick_s);
-                bool tor = (stick <= tick_f) || (ftick >= tick_s);
-                if (((stick <= ftick) && tand) || ((stick > ftick) && tor))
-                {
-                    if
-                    (
-                        action == select::selecting ||
-                        action == select::select_one
-                    )
-                    {
-                        er.select();
-                        ev->select();
-                        ++result;
-                        if (action == select::select_one)
-                            break;
-                    }
-                    if (action == select::selected)
-                    {
-                        if (er.is_selected())
-                        {
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if (action == select::would_select)
-                    {
-                        result = 1;
-                        break;
-                    }
-                    if (action == select::deselect)
-                    {
-                        result = 0;
-                        er.unselect();
-                        ev->unselect();
-                    }
-                    if (action == select::toggle && er.is_note_on())
-                    {
-                        ++result;
-                        if (er.is_selected())       // don't toggle twice
-                        {
-                            er.unselect();
-                            ev->unselect();
-                        }
-                        else
-                        {
-                            er.select();
-                            ev->select();
-                        }
-                    }
-                    if (action == select::remove)
-                    {
-                        remove(er);
-                        remove(*ev);
-                        reset_draw_marker();
-                        ++result;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                stick = ftick = er.timestamp();
-                if (stick >= tick_s - 16 && ftick <= tick_f)
-                {
-                    if
-                    (
-                        action == select::selecting ||
-                        action == select::select_one
-                    )
-                    {
-                        er.select();
-                        ++result;
-                        if (action == select::select_one)
-                            break;
-                    }
-                    if (action == select::selected)
-                    {
-                        if (er.is_selected())
-                        {
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if (action == select::would_select)
-                    {
-                        result = 1;
-                        break;
-                    }
-                    if (action == select::deselect)
-                    {
-                        result = 0;
-                        er.unselect();
-                    }
-                    if (action == select::toggle)
-                    {
-                        ++result;
-                        if (er.is_selected())
-                            er.unselect();
-                        else
-                            er.select();
-                    }
-                    if (action == select::remove)
-                    {
-                        remove(er);
-                        reset_draw_marker();
-                        ++result;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    return result;
-}
-
-/**
- *  A convenience function used a couple of times.  Makes if-clauses
- *  easier to read.
- *
- * \param e
- *      Provides the event to be checked.
- *
- * \param status
- *      Provides the event type that must be matched.  However, Set Tempo
- *      events will always be matched.
- *
- * \param tick_s
- *      The lower end of the range of timestamps that the event must fall
- *      within.
- *
- * \param tick_f
- *      The upper end of the range of timestamps that the event must fall
- *      within.
- *
- * \return
- *      Returns true if the event matchs all of the restrictions noted.
- */
-
-bool
-sequence::event_in_range
-(
-    const event & e, midibyte status,
-    midipulse tick_s, midipulse tick_f
-) const
-{
-    bool result = e.is_tempo() || e.get_status() == status;
-    if (result)
-        result = e.timestamp() >= tick_s && e.timestamp() <= tick_f;
-
+    int result = m_events.select_note_events
+    (
+        tick_s, note_h, tick_f, note_l, action
+    );
+    reset_draw_marker();
     return result;
 }
 
@@ -1552,60 +1381,12 @@ int
 sequence::select_events
 (
     midipulse tick_s, midipulse tick_f,
-    midibyte status, midibyte cc,
-    select action
+    midibyte status, midibyte cc, eventlist::select action
 )
 {
-    int result = 0;
     automutex locker(m_mutex);
-    for (auto & er : m_events)
-    {
-        if (event_in_range(er, status, tick_s, tick_f))
-        {
-            midibyte d0, d1;
-            er.get_data(d0, d1);
-            if (er.is_tempo() || event::is_desired_cc_or_not_cc(status, cc, d0))
-            {
-                if (action == select::selecting || action == select::select_one)
-                {
-                    er.select();
-                    ++result;
-                    if (action == select::select_one)
-                        break;
-                }
-                if (action == select::selected)
-                {
-                    if (er.is_selected())
-                    {
-                        result = 1;
-                        break;
-                    }
-                }
-                if (action == select::would_select)
-                {
-                    result = 1;
-                    break;
-                }
-                if (action == select::toggle)
-                {
-                    if (er.is_selected())
-                        er.unselect();
-                    else
-                        er.select();
-                }
-                if (action == select::deselect)
-                    er.unselect();
-
-                if (action == select::remove)
-                {
-                    remove(er);
-                    reset_draw_marker();
-                    ++result;
-                    break;
-                }
-            }
-        }
-    }
+    int result = m_events.select_events(tick_s, tick_f, status, cc, action);
+    reset_draw_marker();
     return result;
 }
 
@@ -1679,37 +1460,16 @@ sequence::unselect ()
  *      changed and the event is not moved.
  */
 
-void
+bool
 sequence::move_selected_notes (midipulse delta_tick, int delta_note)
 {
-    if (mark_selected())                            /* locked recursively   */
-    {
-        automutex locker(m_mutex);
-        m_events_undo.push(m_events);               /* push_undo(), no lock */
-        for (auto & er : m_events)
-        {
-            if (er.is_marked())                     /* is it being moved ?  */
-            {
-                event e = er;                       /* copy event           */
-                e.unmark();                         /* unmark the new event */
-                int newnote = e.get_note() + delta_note;
-                if (newnote >= 0 && newnote < c_num_keys)
-                {
-                    midipulse newts = e.timestamp() + delta_tick;
-                    newts = adjust_timestamp(newts, e.is_note_off());
-                    if (e.is_note())                /* Note On or Note Off  */
-                        e.set_note(midibyte(newnote));
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);                  /* push_undo(), no lock */
+    bool result = m_events.move_selected_notes(delta_tick, delta_note);
+    if (result)
+        modify();
 
-                    e.set_timestamp(newts);
-                    e.select();                     /* keep it selected     */
-                    append_event(e);                /* no sorting is done   */
-                    modify();
-                }
-            }
-        }
-        if (remove_marked())
-            verify_and_link();                      /* may re-sort the list */
-    }
+    return result;
 }
 
 /**
@@ -1736,55 +1496,6 @@ sequence::trim_timestamp (midipulse t)
     if (t == 0)
         t = get_length() - m_note_off_margin;
 
-    return t;
-}
-
-/**
- *  A new function to consolidate the adjustment of timestamps in a pattern.
- *
- *      -   If the timestamp plus the delta is greater that m_length, we do
- *          round robin magic.
- *      -   If the timestamp is greater than m_length, then it is wrapped
- *          around to the beginning.
- *      -   If the timestamp equals m_length, then it is set to 0, and later,
- *          trimmed.
- *      -   If the timestamp is less than 0, then it is set to the end.
- *
- *  Taken from similar code in move_selected_notes() and grow_selected().  Be
- *  careful using this function.
- *
- * \param t
- *      Provides the timestamp to be adjusted based on m_length.
- *
- * \param isnoteoff
- *      Used for "expanding" the timestamp from 0 to just less than m_length,
- *      if necessary.  Should be set to true only for Note Off events; it
- *      defaults to false, which means to wrap the events around the end of
- *      the sequence if necessary, and is used only in movement, not in growth.
- *
- * \return
- *      Returns the adjusted timestamp.
- */
-
-midipulse
-sequence::adjust_timestamp (midipulse t, bool isnoteoff)
-{
-    if (t > get_length())
-        t -= get_length();
-
-    if (t < 0)                          /* only if midipulse is signed  */
-        t += get_length();
-
-    if (isnoteoff)
-    {
-        if (t == 0)
-            t = get_length() - m_note_off_margin;
-    }
-    else                                /* if (wrap)                    */
-    {
-        if (t == get_length())
-            t = 0;
-    }
     return t;
 }
 
@@ -1986,7 +1697,7 @@ sequence::randomize_selected_notes (int jitter, int range)
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
 
-    bool result = m_events.randomize_selected_notes(get_length(), jitter, range);
+    bool result = m_events.randomize_selected_notes(jitter, range);
     if (result)
         modify();
 
@@ -2059,15 +1770,12 @@ sequence::increment_selected (midibyte astat, midibyte /*acontrol*/)
     automutex locker(m_mutex);
     for (auto & er : m_events)
     {
-        if (er.is_selected())
+        if (er.is_selected() && er.get_status() == astat)
         {
-            if (er.get_status() == astat)   // && er.get_control == acontrol
-            {
-                if (event::is_two_byte_msg(astat))
-                    er.increment_data2();
-                else if (event::is_one_byte_msg(astat))
-                    er.increment_data1();
-            }
+            if (event::is_two_byte_msg(astat))
+                er.increment_data2();
+            else if (event::is_one_byte_msg(astat))
+                er.increment_data1();
         }
     }
 }
@@ -2144,7 +1852,7 @@ void
 sequence::copy_selected ()
 {
     automutex locker(m_mutex);
-    event_list clipbd;
+    eventlist clipbd;
     for (auto & e : m_events)
     {
         if (e.is_selected())
@@ -2152,7 +1860,7 @@ sequence::copy_selected ()
     }
     if (! clipbd.empty())
     {
-        midipulse first_tick = event_list::dref(clipbd.begin()).timestamp();
+        midipulse first_tick = eventlist::dref(clipbd.begin()).timestamp();
         if (first_tick >= 0)
         {
             for (auto & e : clipbd)                     /* 2019-09-12       */
@@ -2202,7 +1910,7 @@ sequence::cut_selected (bool copyevents)
  *  Also, we've moved external calls to push_undo() into this function.
  *  The caller shouldn't have to do that.
  *
- *  The event_keys used to access/sort the multimap event_list is not updated
+ *  The event_keys used to access/sort the multimap eventlist is not updated
  *  after changing timestamp/rank of the stored events.  Regenerating all
  *  key/value pairs before merging them solves this issue, so that
  *  the order of events in the sequence will be preserved.  This action is not
@@ -2257,7 +1965,7 @@ sequence::paste_selected (midipulse tick, int note)
     if (! m_clipboard.empty())
     {
         automutex locker(m_mutex);
-        event_list clipbd = m_clipboard;            /* copy the clipboard   */
+        eventlist clipbd = m_clipboard;            /* copy the clipboard   */
         int highest_note = 0;
         push_undo();                                /* push undo, no lock   */
         for (auto & e : clipbd)
@@ -3130,7 +2838,8 @@ sequence::stream_event (event & ev)
                 midibyte note = ev.get_note();
                 select_note_events
                 (
-                    timestamp, note, timestamp, note, select::selecting
+                    timestamp, note, timestamp, note,
+                    eventlist::select::selecting
                 );
                 quantize_events(EVENT_NOTE_ON, 0, 1, true);
             }
@@ -3419,12 +3128,12 @@ sequence::intersect_notes
     auto off = m_events.begin();
     while (on != m_events.end())
     {
-        event & eon = event_list::dref(on);
+        event & eon = eventlist::dref(on);
         if (position_note == eon.get_note() && eon.is_note_on())
         {
             off = on;                   /* find next "off" event for note   */
             ++off;                                  /* hope this is it!     */
-            event & eoff = event_list::dref(off);   /* access event itself  */
+            event & eoff = eventlist::dref(off);   /* access event itself  */
 
             /*
              *  (eon.get_note() != eoff.get_note() || eoff.is_note_on())
@@ -4165,7 +3874,7 @@ sequence::draw
 sequence::get_next_note_ex
 (
     note_info & niout,
-    event_list::const_iterator & evi
+    eventlist::const_iterator & evi
 ) const
 {
     while (evi != m_events.cend())
@@ -4190,10 +3899,10 @@ sequence::draw
 sequence::get_note_info
 (
     note_info & niout,
-    event_list::const_iterator & evi
+    eventlist::const_iterator & evi
 ) const
 {
-    const event & drawevent = event_list::cdref(evi);
+    const event & drawevent = eventlist::cdref(evi);
     bool isnoteon = drawevent.is_note_on();
     bool islinked = drawevent.is_linked();
     niout.ni_tick_finish    = 0;
@@ -4265,7 +3974,7 @@ sequence::get_next_event (midibyte & status, midibyte & cc)
     while (m_iterator_draw != m_events.end())       /* NOT THREADSAFE!!!    */
     {
         midibyte d1;
-        const event & drawevent = event_list::cdref(m_iterator_draw);
+        const event & drawevent = eventlist::cdref(m_iterator_draw);
         status = drawevent.get_status();
         drawevent.get_data(cc, d1);
         inc_draw_marker();
@@ -4284,7 +3993,7 @@ sequence::get_next_event (midibyte & status, midibyte & cc)
  */
 
 void
-sequence::reset_ex_iterator (event_list::const_iterator & evi) const
+sequence::reset_ex_iterator (eventlist::const_iterator & evi) const
 {
     evi = m_events.cbegin();
 }
@@ -4300,18 +4009,18 @@ bool
 sequence::reset_interval
 (
     midipulse t0, midipulse t1,
-    event_list::const_iterator & it0,
-    event_list::const_iterator & it1
+    eventlist::const_iterator & it0,
+    eventlist::const_iterator & it1
 ) const
 {
     bool result = false;
     bool got_beginning = false;
-    event_list::const_iterator iter = m_events.cbegin();
+    eventlist::const_iterator iter = m_events.cbegin();
     it0 = iter;
     it1 = m_events.cend();
     for
     (
-        event_list::const_iterator iter = m_events.cbegin();
+        eventlist::const_iterator iter = m_events.cbegin();
         iter != m_events.cend(); ++iter
     )
     {
@@ -4373,13 +4082,13 @@ sequence::get_next_event_ex
 (
     midibyte & status,
     midibyte & cc,
-    event_list::const_iterator & evi
+    eventlist::const_iterator & evi
 )
 {
     if (evi != m_events.end())
     {
         midibyte d1;                            /* will be ignored          */
-        const event & ev = event_list::cdref(evi);
+        const event & ev = eventlist::cdref(evi);
         status = ev.get_status();
         ev.get_data(cc, d1);
         return true;                /* we have a good one; update and return */
@@ -4432,13 +4141,13 @@ bool
 sequence::get_next_event_match
 (
     midibyte status, midibyte cc,
-    event_list::const_iterator & evi,
+    eventlist::const_iterator & evi,
     int /* evtype [see macro below] */
 )
 {
     while (evi != m_events.end())
     {
-        const event & drawevent = event_list::cdref(evi);
+        const event & drawevent = eventlist::cdref(evi);
         bool istempo = drawevent.is_tempo();
         bool ok = drawevent.get_status() == status || istempo;
         if (! ok)
@@ -4649,6 +4358,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
      * We should set the measures count here.
      */
 
+    m_events.set_length(len);
     m_triggers.set_length(len);         /* must precede adjust call         */
     if (adjust_triggers)
         m_triggers.adjust_offsets_to_length(len);
@@ -5166,7 +4876,7 @@ sequence::transpose_notes (int steps, int scale)
     if (mark_selected())                            /* mark original notes  */
     {
         automutex locker(m_mutex);
-        event_list transposed_events;
+        eventlist transposed_events;
         const int * transpose_table;
         m_events_undo.push(m_events);               /* push_undo(), no lock  */
         if (steps < 0)
@@ -5220,7 +4930,7 @@ sequence::shift_notes (midipulse ticks)
     if (mark_selected())
     {
         automutex locker(m_mutex);
-        event_list shifted_events;
+        eventlist shifted_events;
         m_events_undo.push(m_events);               /* push_undo(), no lock */
         for (auto & er : m_events)
         {
@@ -5329,10 +5039,7 @@ sequence::quantize_events
 )
 {
     automutex locker(m_mutex);
-    bool result = m_events.quantize_events
-    (
-        status, cc, snap(), get_length(), divide, fixlink
-    );
+    bool result = m_events.quantize_events(status, cc, snap(), divide, fixlink);
     if (result)
         set_dirty();
 
@@ -5421,10 +5128,10 @@ sequence::show_events () const
         "sequence #%d '%s': channel %d, events %d\n",
         seq_number(), name().c_str(), get_midi_channel(), event_count()
     );
-    const event_list & evl = events();
+    const eventlist & evl = events();
     for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
-        const event & er = event_list::cdref(i);
+        const event & er = eventlist::cdref(i);
         std::string evdump = to_string(er);
         printf("%s", evdump.c_str());
     }
@@ -5454,7 +5161,7 @@ sequence::show_events () const
  */
 
 void
-sequence::copy_events (const event_list & newevents)
+sequence::copy_events (const eventlist & newevents)
 {
     automutex locker(m_mutex);
     m_events.clear();
@@ -5599,7 +5306,7 @@ sequence::off_one_shot ()
 
 /**
  *  Starts the growing of the sequence for Song recording.  This process
- *  starts by adding a chunk of SEQ66_SONG_RECORD_INC ticks to the
+ *  starts by adding a chunk of c_song_record_increment ticks to the
  *  trigger, which allows the rest of the threads to notice the change.
  *
  * \question
@@ -5613,7 +5320,7 @@ sequence::off_one_shot ()
 void
 sequence::song_recording_start (midipulse tick, bool snap)
 {
-    add_trigger(tick, SEQ66_SONG_RECORD_INC);
+    add_trigger(tick, c_song_record_increment);
     m_song_recording_snap = snap;
     m_song_record_tick = tick;
     m_song_recording = true;
@@ -5760,40 +5467,40 @@ sequence::update_recording (int index)
  *  sequence::m_events) onto the stack (as a single entry).
  *
  * \todo
- *      Move this code into sequence (without the redraw call).
+ *      Move this code into eventlist (without the redraw call).
  */
 
 void
-sequence::handle_edit_action (edit action, int var)
+sequence::handle_edit_action (eventlist::edit action, int var)
 {
     switch (action)
     {
-    case edit::select_all_notes:
+    case eventlist::edit::select_all_notes:
 
         select_all_notes();
         break;
 
-    case edit::select_inverse_notes:
+    case eventlist::edit::select_inverse_notes:
 
         select_all_notes(true);
         break;
 
-    case edit::select_all_events:
+    case eventlist::edit::select_all_events:
 
         select_events(m_status, m_cc);
         break;
 
-    case edit::select_inverse_events:
+    case eventlist::edit::select_inverse_events:
 
         select_events(m_status, m_cc, true);
         break;
 
-    case edit::randomize_events:
+    case eventlist::edit::randomize_events:
 
         randomize_selected(m_status, m_cc, var);
         break;
 
-    case edit::quantize_notes:
+    case eventlist::edit::quantize_notes:
 
         /*
          * sequence::quantize_events() is used in recording as well, so we do
@@ -5804,28 +5511,28 @@ sequence::handle_edit_action (edit action, int var)
         push_quantize(EVENT_NOTE_ON, 0, 1, true);
         break;
 
-    case edit::quantize_events:
+    case eventlist::edit::quantize_events:
 
         push_quantize(m_status, m_cc, 1);
         break;
 
-    case edit::tighten_notes:
+    case eventlist::edit::tighten_notes:
 
         push_quantize(EVENT_NOTE_ON, 0, 2, true);
         break;
 
-    case edit::tighten_events:
+    case eventlist::edit::tighten_events:
 
         push_quantize(m_status, m_cc, 2);
         break;
 
-    case edit::transpose_notes:                 /* regular transpose    */
+    case eventlist::edit::transpose_notes:      /* regular transpose    */
 
         transpose_notes(var, 0);
         set_dirty();                            /* updates perfedit     */
         break;
 
-    case edit::transpose_harmonic:              /* harmonic transpose   */
+    case eventlist::edit::transpose_harmonic:   /* harmonic transpose   */
 
         transpose_notes(var, m_scale);
         set_dirty();                            /* updates perfedit     */
@@ -5833,12 +5540,12 @@ sequence::handle_edit_action (edit action, int var)
 
 #if defined USE_STAZED_COMPANDING
 
-    case edit::expand_pattern:
+    case eventlist::edit::expand_pattern:
 
         multiply_pattern(2.0);
         break;
 
-    case edit::compress_pattern:
+    case eventlist::edit::compress_pattern:
         multiply_pattern(0.5);
         break;
 #endif

@@ -1,5 +1,5 @@
-#if ! defined SEQ66_EVENT_LIST_HPP
-#define SEQ66_EVENT_LIST_HPP
+#if ! defined SEQ66_EVENTLIST_HPP
+#define SEQ66_EVENTLIST_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,7 +20,7 @@
  */
 
 /**
- * \file          event_list.hpp
+ * \file          eventlist.hpp
  *
  *  This module provides a stand-alone module for the event-list container
  *  used by the application.
@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-25
+ * \updates       2019-10-27
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -68,14 +68,68 @@ namespace seq66
 {
 
 /**
- *  The event_list class is a receptable for MIDI events.
+ *  The number of MIDI notes supported.  The notes range from 0 to 127.
  */
 
-class event_list
+const int c_num_keys = 128;
+
+/**
+ *  The eventlist class is a receptable for MIDI events.
+ */
+
+class eventlist
 {
     friend class editable_events;       // access to event_key class
     friend class midifile;              // access to print()
     friend class sequence;              // any_selected_notes()
+
+public:
+
+    /**
+     * Actions.  These variables represent actions that can be applied to a
+     * selection of notes.  One idea would be to add a swing-quantize action.
+     * We will reserve the value here, for notes only; not yet used or part of
+     * the action menu.
+     */
+
+    enum class edit
+    {
+        select_all_notes = 1,
+        select_all_events,
+        select_inverse_notes,
+        select_inverse_events,
+        quantize_notes,
+        quantize_events,
+        randomize_events,
+        tighten_events,
+        tighten_notes,
+        transpose_notes,            /* basic transpose          */
+        reserved,                   /* later: quantize_swing    */
+        transpose_harmonic,         /* harmonic transpose       */
+        expand_pattern,
+        compress_pattern,
+        select_even_notes,
+        select_odd_notes,
+        swing_notes                 /* swing quantize           */
+    };
+
+    /**
+     *  This enumeration is used in selecting events and note.  Se the
+     *  select_note_events() and select_events() functions.
+     */
+
+    enum class select
+    {
+        selecting,      /**< Selection in progress.                     */
+        select_one,     /**< To select a single event.                  */
+        selected,       /**< The events are selected.                   */
+        would_select,   /**< The events would be selected.              */
+        deselect,       /**< To deselect event under the cursor.        */
+        toggle,         /**< Toggle selection under cursor.             */
+        remove,         /**< To remove one note under the cursor.       */
+        onset,          /**< Kepler34, To select a single onset.        */
+        is_onset        /**< New, from Kepler34, onsets selected.       */
+    };
 
 private:
 
@@ -118,6 +172,13 @@ private:
     Events m_events;
 
     /**
+     *  Holds the length of the sequence holding this event-list,
+     *  in pulses (ticks).  See sequence::m_length.
+     */
+
+    midipulse m_length;
+
+    /**
      *  A flag to indicate if an event was added or removed.  We may need to
      *  give client code a way to reload the sequence.  This is currently an
      *  issue when a seqroll and an eventedit/eventslots are active for the
@@ -146,10 +207,10 @@ private:
 
 public:
 
-    event_list ();
-    event_list (const event_list & a_rhs);
-    event_list & operator = (const event_list & a_rhs);
-    virtual ~event_list ()
+    eventlist ();
+    eventlist (const eventlist & a_rhs);
+    eventlist & operator = (const eventlist & a_rhs);
+    virtual ~eventlist ()
     {
         // No code needed
     }
@@ -216,6 +277,11 @@ public:
 
     bool append (const event & e);
 
+    midipulse get_length () const
+    {
+        return m_length;
+    }
+
     bool is_modified () const
     {
         return m_is_modified;
@@ -275,7 +341,7 @@ public:
         }
     }
 
-    void merge (event_list & el, bool presort = true);
+    void merge (eventlist & el, bool presort = true);
 
     /**
      *  Sorts the event list.  For the vector, equivalent elements are not
@@ -334,13 +400,15 @@ private:                                /* functions for friend sequence    */
     bool quantize_events
     (
         midibyte status, midibyte cc, int snap,
-        midipulse length, int divide, bool fixlink
+        int divide, bool fixlink
     );
+    midipulse adjust_timestamp (midipulse t, bool isnoteoff);
+    bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool randomize_selected
     (
         midibyte status, midibyte control, int plus_minus
     );
-    bool randomize_selected_notes (midipulse length, int jitter, int range);
+    bool randomize_selected_notes (int jitter, int range);
     bool link_new_note (event & eon, event & eoff);
     bool link_note (event & eon, event & eoff);
     void link_tempos ();
@@ -358,6 +426,21 @@ private:                                /* functions for friend sequence    */
     bool any_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
     void unselect_all ();
+    int select_events
+    (
+        midipulse tick_s, midipulse tick_f,
+        midibyte status, midibyte cc, select action
+    );
+    int select_note_events
+    (
+        midipulse tick_s, int note_h,
+        midipulse tick_f, int note_l, select action
+    );
+    bool event_in_range
+    (
+        const event & e, midibyte status,
+        midipulse tick_s, midipulse tick_f
+    ) const;
 
 #if defined USE_STAZED_SELECTION_EXTENSIONS
     int select_linked (midipulse tick_s, midipulse tick_f, midibyte status);
@@ -370,14 +453,19 @@ private:                                /* functions for friend sequence    */
         return m_events;
     }
 
-};          // class event_list
+    void set_length (midipulse len)
+    {
+        m_length = len;
+    }
+
+};          // class eventlist
 
 }           // namespace seq66
 
-#endif      // SEQ66_EVENT_LIST_HPP
+#endif      // SEQ66_EVENTLIST_HPP
 
 /*
- * event_list.hpp
+ * eventlist.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

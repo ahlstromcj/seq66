@@ -75,39 +75,6 @@ qperfbase::horizSizeHint () const
     return hint;
 }
 
-#if 0
-
-/**
- *  Handles changes to the PPQN value in one place.  Useful mainly at startup
- *  time for adjusting the user-interface zooming.
- *
- *  The m_ticks_per_bar member replaces the global ppqn times 16.  This
- *  construct is parts-per-quarter-note times 4 quarter notes times 4
- *  sixteenth notes in a bar.  (We think...)
- *
- *  The m_scale member starts out at c_perf_scale_x, which is 32 ticks
- *  per pixel at the default tick rate of 192 PPQN.  We adjust this now.
- *  But note that this calculation still involves the c_perf_scale_x constant.
- *
- * \todo
- *      Resolve the issue of c_perf_scale_x versus m_scale in perfroll.
- */
-
-bool
-qperfbase::set_ppqn (int p)
-{
-    bool result = qbase::set_ppqn(p);
-    if (result)
-    {
-        m_scale_zoom = zoom() * m_scale;
-        m_beat_length = ppqn();
-        m_measure_length = m_beat_length * 4;       /* what about beat width? */
-    }
-    return result;
-}
-
-#endif
-
 /**
  *
  */

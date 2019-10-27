@@ -552,14 +552,6 @@ setmapper::install_sequence (sequence * s, seq::number seqno)
         auto setp = add_set(setno);
         result = setp != m_container.end();
     }
-#if 0
-    else
-    {
-        seq::pointer sp = loop(seqno);
-        if (sp)
-            (void) remove_sequence(seqno);
-    }
-#endif
     if (result)
         result = add_sequence(s, seqno);
 

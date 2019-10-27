@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-01
+ * \updates       2019-10-26
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -185,7 +185,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
     pen.setColor(Qt::black);
     pen.setStyle(Qt::SolidLine);
 
-    event_list::const_iterator cev;
+    eventlist::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_match(m_status, m_cc, cev))
     {
@@ -268,10 +268,7 @@ qstriggereditor::resizeEvent (QResizeEvent * qrep)
 void
 qstriggereditor::mousePressEvent (QMouseEvent * event)
 {
-    int x, w, numsel;
-    midipulse tick_s;
-    midipulse tick_f;
-    midipulse tick_w;
+    midipulse tick_s, tick_f, tick_w;
     convert_x(qc_eventevent_x, tick_w);
 
     /*
@@ -312,7 +309,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                 bool dropit = ! seq_pointer()->select_events
                 (
                     tick_s, tick_f, m_status, m_cc,
-                    sequence::select::would_select
+                    eventlist::select::would_select
                 );
                 if (dropit)
                 {
@@ -325,18 +322,36 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                 bool selectit = ! seq_pointer()->select_events
                 (
                     tick_s, tick_f, m_status, m_cc,
-                    sequence::select::selected
+                    eventlist::select::selected
                 );
                 if (selectit)
                 {
                     if (! (event->modifiers() & Qt::ControlModifier))
                         seq_pointer()->unselect();
 
-                    numsel = seq_pointer()->select_events
+#ifdef USE_STAZED_SELECTION_EXTENSIONS
+
+                    /*
+                     * Stazed: if we didn't select anything (user clicked empty
+                     * space), then unselect all notes, and start selecting.
+                     */
+
+                    int numsel = 0;
+                    if (event::is_strict_note_msg(m_status))
+                    {
+                        numsel = seq_pointer()->select_linked
+                        (
+                            tick_s, tick_f, m_status
+                        );
+                        m_seq.set_dirty();
+                    }
+#else
+                    int numsel = seq_pointer()->select_events
                     (
                         tick_s, tick_f, m_status, m_cc,
-                        sequence::select::select_one
+                        eventlist::select::select_one
                     );
+#endif
 
                     /*
                      * If we didn't select anything (the user clicked empty
@@ -349,13 +364,13 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                     }
                     else
                     {
-                        // needs update
+                        // Needs update; unselecte?
                     }
                 }
                 selectit = seq_pointer()->select_events
                 (
                     tick_s, tick_f, m_status, m_cc,
-                    sequence::select::selected
+                    eventlist::select::selected
                 );
                 if (selectit)
                 {
@@ -363,7 +378,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                      * Get the box that selected elements are in.
                      */
 
-                    int note;
+                    int note, x, w;
                     moving_init(true);
                     seq_pointer()->selected_box(tick_s, note, tick_f, note);
                     tick_f += tick_w;
@@ -416,27 +431,38 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
 void
 qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
 {
-    midipulse tick_s;
-    midipulse tick_f;
-    int x, w;
     current_x(int(event->x()) - c_keyboard_padding_x);
     if (moving())
         snap_current_x();
 
     int delta_x = current_x() - drop_x();
-    midipulse delta_tick;
     if (event->button() == Qt::LeftButton)
     {
         if (selecting())
         {
+            midipulse tick_s, tick_f;
+            int x, w;
             x_to_w(drop_x(), current_x(), x, w);
             convert_x(x, tick_s);
             convert_x(x + w, tick_f);
-            seq_pointer()->select_events
+            (void) seq_pointer()->select_events
             (
                 tick_s, tick_f, m_status, m_cc,
-                sequence::select::selecting
+                eventlist::select::selecting
             );
+
+#ifdef USE_STAZED_SELECTION_EXTENSIONS
+
+            /*
+             * Stazed: if we didn't select anything (user clicked empty
+             * space), then unselect all notes, and start selecting.
+             */
+
+            if (event::is_strict_note_msg(m_status))
+                (void) m_seq.select_linked(tick_s, tick_f, m_status);
+
+            m_seq.set_dirty();                  /* WHY? */
+#endif
         }
 
         if (moving())
@@ -445,6 +471,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
              * Adjust for snap, then convert deltas into screen coordinates.
              */
 
+            midipulse delta_tick;
             delta_x -= move_snap_offset_x();
             convert_x(delta_x, delta_tick);
 
@@ -550,12 +577,12 @@ qstriggereditor::keyReleaseEvent (QKeyEvent *)
 }
 
 /**
- *  This function checks the minimums and maximums, then fills in the x, y,
- *  width and height values.
+ *  This function checks the minimums and maximums, then fills in the x and w
+ *  values.
  */
 
 void
-qstriggereditor::x_to_w (int  x1, int  x2, int & x, int & w)
+qstriggereditor::x_to_w (int x1, int x2, int & x, int & w)
 {
     if ( x1 <  x2)
     {

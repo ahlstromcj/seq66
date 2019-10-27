@@ -354,7 +354,7 @@ private:
     /**
      *  This event is used to link NoteOns and NoteOffs together.  The NoteOn
      *  points to the NoteOff, and the NoteOff points to the NoteOn.  See, for
-     *  example, event_list::link_note().
+     *  example, eventlist::link_note().
      */
 
     event * m_linked;

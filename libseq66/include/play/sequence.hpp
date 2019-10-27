@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-09-14
+ * \updates       2019-10-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,7 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* key and scale constants          */
-#include "midi/event_list.hpp"          /* seq66::event_list                */
+#include "midi/eventlist.hpp"          /* seq66::eventlist                */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
@@ -64,12 +64,6 @@ const int c_seq_color_none = (-1);
  */
 
 const int c_maxbeats    = 0xFFFF;
-
-/**
- *
- */
-
-const int c_num_keys    = 128;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -102,52 +96,6 @@ public:
     {
         live,
         song
-    };
-
-    /**
-     * Actions.  These variables represent actions that can be applied to a
-     * selection of notes.  One idea would be to add a swing-quantize action.
-     * We will reserve the value here, for notes only; not yet used or part of
-     * the action menu.
-     */
-
-    enum class edit
-    {
-        select_all_notes = 1,
-        select_all_events,
-        select_inverse_notes,
-        select_inverse_events,
-        quantize_notes,
-        quantize_events,
-        randomize_events,
-        tighten_events,
-        tighten_notes,
-        transpose_notes,            /* basic transpose          */
-        reserved,                   /* later: quantize_swing    */
-        transpose_harmonic,         /* harmonic transpose       */
-        expand_pattern,
-        compress_pattern,
-        select_even_notes,
-        select_odd_notes,
-        swing_notes                 /* swing quantize           */
-    };
-
-    /**
-     *  This enumeration is used in selecting events and note.  Se the
-     *  select_note_events() and select_events() functions.
-     */
-
-    enum class select
-    {
-        selecting,      /**< Selection in progress.                     */
-        select_one,     /**< To select a single event.                  */
-        selected,       /**< The events are selected.                   */
-        would_select,   /**< The events would be selected.              */
-        deselect,       /**< To deselect event under the cursor.        */
-        toggle,         /**< Toggle selection under cursor.             */
-        remove,         /**< To remove one note under the cursor.       */
-        onset,          /**< Kepler34, To select a single onset.        */
-        is_onset        /**< New, from Kepler34, onsets selected.       */
     };
 
     /**
@@ -259,7 +207,7 @@ private:
      *  facility.
      */
 
-    using eventstack = std::stack<event_list>;
+    using eventstack = std::stack<eventlist>;
 
 private:
 
@@ -267,7 +215,7 @@ private:
      * Documented at the definition point in the cpp module.
      */
 
-    static event_list m_clipboard;   /* shared between sequences */
+    static eventlist m_clipboard;   /* shared between sequences */
 
     /**
      *  For pause support, we need a way for the sequence to find out if JACK
@@ -287,7 +235,7 @@ private:
      *  is the default.
      */
 
-    event_list m_events;
+    eventlist m_events;
 
     /**
      *  Holds the list of triggers associated with the sequence, used in the
@@ -301,7 +249,7 @@ private:
      *  seqdata support.
      */
 
-    event_list m_events_undo_hold;
+    eventlist m_events_undo_hold;
 
     /**
      *  A stazed flag indicating that we have some undo information.
@@ -333,7 +281,7 @@ private:
      *  An iterator for drawing events.
      */
 
-    mutable event_list::const_iterator m_iterator_draw;
+    mutable eventlist::const_iterator m_iterator_draw;
 
     /**
      *  A new feature for recording, based on a "stazed" feature.  If true
@@ -808,12 +756,12 @@ public:
 
 #endif
 
-    event_list & events ()
+    eventlist & events ()
     {
         return m_events;
     }
 
-    const event_list & events () const
+    const eventlist & events () const
     {
         return m_events;
     }
@@ -1355,7 +1303,7 @@ public:
     bool append_event (const event & er);
 
     /**
-     *  Calls event_list::sort().
+     *  Calls eventlist::sort().
      */
 
     void sort_events ()
@@ -1433,12 +1381,12 @@ public:
     int select_note_events
     (
         midipulse tick_s, int note_h,
-        midipulse tick_f, int note_l, select action
+        midipulse tick_f, int note_l, eventlist::select action
     );
     int select_events
     (
         midipulse tick_s, midipulse tick_f,
-        midibyte status, midibyte cc, select action
+        midibyte status, midibyte cc, eventlist::select action
     );
     int select_events
     (
@@ -1492,10 +1440,9 @@ public:
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
     );
-    midipulse adjust_timestamp (midipulse t, bool isnoteoff);
     midipulse trim_timestamp (midipulse t);
     midipulse clip_timestamp (midipulse ontime, midipulse offtime);
-    void move_selected_notes (midipulse deltatick, int deltanote);
+    bool move_selected_notes (midipulse deltatick, int deltanote);
     bool stream_event (event & ev);
     bool change_event_data_range
     (
@@ -1563,35 +1510,35 @@ public:
     void inc_draw_marker ();
     void reset_draw_marker ();
     void reset_draw_trigger_marker ();
-    void reset_ex_iterator (event_list::const_iterator & evi) const;
+    void reset_ex_iterator (eventlist::const_iterator & evi) const;
     bool reset_interval
     (
         midipulse t0, midipulse t1,
-        event_list::const_iterator & it0,
-        event_list::const_iterator & it1
+        eventlist::const_iterator & it0,
+        eventlist::const_iterator & it1
     ) const;
     draw get_note_info
     (
         note_info & niout,
-        event_list::const_iterator & evi
+        eventlist::const_iterator & evi
     ) const;
     draw get_next_note (note_info & niout) const;
     draw get_next_note_ex
     (
         note_info & niout,
-        event_list::const_iterator & evi
+        eventlist::const_iterator & evi
     ) const;
     bool get_next_event (midibyte & status, midibyte & cc);
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
-        event_list::const_iterator & ev,
+        eventlist::const_iterator & ev,
         int evtype = EVENTS_ALL
     );
     bool get_next_event_ex
     (
         midibyte & status, midibyte & cc,
-        event_list::const_iterator & evi
+        eventlist::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
     void push_quantize
@@ -1641,7 +1588,7 @@ public:
     }
 
     void show_events () const;
-    void copy_events (const event_list & newevents);
+    void copy_events (const eventlist & newevents);
 
     midipulse note_off_margin () const
     {
@@ -1680,7 +1627,7 @@ public:
     }
 
     midipulse handle_size (midipulse start, midipulse finish);
-    void handle_edit_action (edit action, int var);
+    void handle_edit_action (eventlist::edit action, int var);
     bool check_loop_reset ();
 
 public:
@@ -1714,12 +1661,6 @@ private:
         return 2048;                    /* 0x0800   */
     }
 
-    bool event_in_range
-    (
-        const event & e, midibyte status,
-        midipulse tick_s, midipulse tick_f
-    ) const;
-
     bool quantize_events
     (
         midibyte status, midibyte cc, int divide, bool linked = false
@@ -1730,7 +1671,7 @@ private:
     void set_trigger_offset (midipulse trigger_offset);
     void adjust_trigger_offsets_to_length (midipulse newlen);
     midipulse adjust_offset (midipulse offset);
-    void remove (event_list::iterator i);
+    void remove (eventlist::iterator i);
     void remove (event & e);
     void remove_all ();
 

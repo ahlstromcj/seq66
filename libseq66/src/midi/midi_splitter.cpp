@@ -35,7 +35,7 @@
 #include <fstream>
 
 #include "cfg/settings.hpp"             /* seq66::choose_ppqn()             */
-#include "midi/event_list.hpp"          /* seq66::event_list                */
+#include "midi/eventlist.hpp"          /* seq66::eventlist                */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
@@ -279,10 +279,10 @@ midi_splitter::split_channel
     s->zero_markers();
 
     midipulse length_in_ticks = 0;      /* an accumulator of delta times    */
-    const event_list & evl = main_seq.events();
+    const eventlist & evl = main_seq.events();
     for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
-        const event & er = event_list::cdref(i);
+        const event & er = eventlist::cdref(i);
         if (er.is_ex_data())
         {
             if (channel == 0 || er.is_sysex())

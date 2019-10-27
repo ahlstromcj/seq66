@@ -628,7 +628,7 @@ qseqroll::draw_notes
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
-    event_list::const_iterator evi;
+    eventlist::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
     {
@@ -821,7 +821,7 @@ qseqroll::draw_drum_notes
     /*
      * TODO: use reset_ex_iterator() or reset_interval().
      *
-     *  event_list::const_iterator evi;
+     *  eventlist::const_iterator evi;
      *  s->reset_ex_iterator(evi);
      */
 
@@ -962,7 +962,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
 
                 bool would_select = ! s->select_note_events
                 (
-                    tick_s, note, tick_s, note, sequence::select::would_select
+                    tick_s, note, tick_s, note, eventlist::select::would_select
                 );
                 if (would_select)
                 {
@@ -979,7 +979,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     is_selected = s->select_note_events
                     (
                         tick_s, note, tick_f, note,
-                        sequence::select::is_onset
+                        eventlist::select::is_onset
                     );
                 }
                 else
@@ -987,7 +987,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     is_selected = s->select_note_events
                     (
                         tick_s, note, tick_f, note,
-                        sequence::select::selected
+                        eventlist::select::selected
                     );
                 }
                 if (! is_selected)
@@ -1001,7 +1001,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         numsel = s->select_note_events
                         (
                             tick_s, note, tick_f, note,
-                            sequence::select::onset             // select_one
+                            eventlist::select::onset             // select_one
                         );
                     }
                     else
@@ -1009,7 +1009,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         numsel = s->select_note_events
                         (
                             tick_s, note, tick_f, note,
-                            sequence::select::select_one
+                            eventlist::select::select_one
                         );
                     }
                     if (numsel == 0)    /* none selected, start selection box */
@@ -1024,14 +1024,14 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 {
                     is_selected = s->select_note_events
                     (
-                        tick_s, note, tick_f, note, sequence::select::is_onset
+                        tick_s, note, tick_f, note, eventlist::select::is_onset
                     );
                 }
                 else
                 {
                     is_selected = s->select_note_events
                     (
-                        tick_s, note, tick_f, note, sequence::select::selected
+                        tick_s, note, tick_f, note, eventlist::select::selected
                     );
                 }
                 if (is_selected)
@@ -1123,11 +1123,11 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             (
                 drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
             );
-            sequence::select selmode = sequence::select::selecting;
+            eventlist::select selmode = eventlist::select::selecting;
             convert_xy(x, y, tick_s, note_h);
             convert_xy(x + w, y + h, tick_f, note_l);
             if (m_edit_mode == sequence::editmode::drum)
-                selmode = sequence::select::onset;
+                selmode = eventlist::select::onset;
 
             numsel = seq_pointer()->select_note_events
             (
