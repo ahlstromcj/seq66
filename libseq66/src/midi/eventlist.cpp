@@ -1570,6 +1570,206 @@ eventlist::event_in_range
     return result;
 }
 
+bool
+eventlist::get_selected_events_interval
+(
+    midipulse & first, midipulse & last
+) const
+{
+    bool result = false;
+    midipulse first_ev = midipulse(0x7fffffff);     /* timestamp lower limit */
+    midipulse last_ev = midipulse(0x00000000);      /* timestamp upper limit */
+    for (auto & er : m_events)
+    {
+        if (er.is_selected())
+        {
+            if (er.timestamp() < first_ev)
+            {
+                first_ev = er.timestamp();
+                result = true;
+            }
+            if (er.timestamp() >= last_ev)
+            {
+                last_ev = er.timestamp();
+                result = true;
+            }
+        }
+    }
+    if (result)
+    {
+        first = first_ev;
+        last = last_ev;
+    }
+    return result;
+}
+
+/**
+ *  Performs a stretch operation on the selected events.  This should move
+ *  a note off event, according to old comments, but it doesn't seem to do
+ *  that.  See the grow_selected() function.  Rather, it moves any event in
+ *  the selection.
+ *
+ *  Also, we've moved external calls to push_undo() into this function.
+ *  The caller shouldn't have to do that.
+ *
+ *  Finally, we don't need to mark the selected, only to remove the unmodified
+ *  versions later.  Just adjust their timestamps directly.
+ *
+ * \param delta_tick
+ *      Provides the amount of time to stretch the selected notes.
+ */
+
+bool
+eventlist::stretch_selected (midipulse delta)
+{
+    midipulse first_ev, last_ev;
+    bool result = get_selected_events_interval(first_ev, last_ev);
+    if (result)
+    {
+        midipulse old_len = last_ev - first_ev;
+        midipulse new_len = old_len + delta;
+        if (new_len > 1 && old_len > 0)
+        {
+            float ratio = float(new_len) / float(old_len);
+            result = false;
+            for (auto & er : m_events)
+            {
+                if (er.is_selected())
+                {
+                    midipulse t = er.timestamp();
+                    midipulse nt = midipulse(ratio * (t - first_ev)) + first_ev;
+                    er.set_timestamp(nt);
+                    result = true;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  The original description was "Moves note off event."  But this also gets
+ *  called when simply selecting a second note via a ctrl-left-click, even in
+ *  seq66.  And, though it doesn't move Note Off events, it does reconstruct
+ *  them.
+ *
+ *  This function grows/shrinks only Note On events that are marked and linked.
+ *  If an event is not linked, this function now ignores the event's timestamp,
+ *  rather than risk a segfault on a null pointer.  Compare this function to
+ *  the stretch_selected() and move_selected_notes() functions.
+ *
+ *  This function would strip out non-Notes, but now it at least preserves
+ *  them and moves them, to try to preserve their relative position re the
+ *  notes.
+ *
+ *  In any case, we want to mark the original off-event for deletion, otherwise
+ *  we get duplicate off events, for example in the "Begin/End" pattern in the
+ *  test.midi file.
+ *
+ *  This function now tries to prevent pathological growth, such as trying to
+ *  shrink the notes to zero length or less, or stretch them beyond the length
+ *  of the sequence.  Otherwise we get weird and unexpected results.  Also,
+ *  we've moved external calls to push_undo() into this function.  The caller
+ *  shouldn't have to do that.
+ *
+ *  A comment on terminology:  The user "selects" notes, while the sequencer
+ *  "marks" notes. The first thing this function does is mark all the selected
+ *  notes.
+ *
+ * \threadsafe
+ *
+ * \param delta
+ *      An offset for each linked event's timestamp.
+ */
+
+bool
+eventlist::grow_selected (midipulse delta)
+{
+    bool result = false;
+    for (auto & er : m_events)
+    {
+        if (er.is_selected())
+        {
+            if (er.is_note())
+            {
+                if (er.is_note_on() && er.is_linked())
+                {
+                    event * off = er.link();
+                    event e = *off;                 /* original off-event   */
+                    midipulse offtime = off->timestamp();
+                    midipulse newtime = trim_timestamp(offtime + delta);
+                    e.set_timestamp(newtime);       /* new off-time         */
+                    result = true;
+                }
+            }
+            else                                    /* non-Note event       */
+            {
+                midipulse ontime = er.timestamp();
+                midipulse newtime = clip_timestamp(ontime, ontime + delta);
+                er.set_timestamp(newtime);           /* adjust time-stamp    */
+                result = true;
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *  A new function to consolidate the adjustment of timestamps in a pattern.
+ *  Similar to adjust_timestamp, but it doesn't have an \a isnoteoff
+ *  parameter.
+ *
+ * \param t
+ *      Provides the timestamp to be adjusted based on m_length.
+ *
+ * \return
+ *      Returns the adjusted timestamp.
+ */
+
+midipulse
+eventlist::trim_timestamp (midipulse t) const
+{
+    if (t >= get_length())
+        t -= get_length();
+
+    if (t < 0)                          /* only if midipulse is signed  */
+        t += get_length();
+
+    if (t == 0)
+        t = get_length() - 1;           /* m_note_off_margin;           */
+
+    return t;
+}
+
+/**
+ *  A new function to consolidate the growth/shrinkage of timestamps in a
+ *  pattern.  If the new (off) timestamp is less than the on-time, it is
+ *  clipped to the snap value.  If it is greater than the length of the
+ *  sequence, then it is clipped to the sequence length.  No wrap-around.
+ *
+ * \param ontime
+ *      Provides the original time, which limits the amount of negative
+ *      adjustment that can be done.
+ *
+ * \param offtime
+ *      Provides the timestamp to be adjusted and clipped.
+ *
+ * \return
+ *      Returns the adjusted timestamp.
+ */
+
+midipulse
+eventlist::clip_timestamp (midipulse ontime, midipulse offtime) const
+{
+    const int sc_snap = 48;         /* TODO */
+    if (offtime <= ontime)
+        offtime = ontime + sc_snap - 1;         /* note_off_margin();   */
+    else if (offtime >= get_length())
+        offtime = get_length() - 1;             /* note_off_margin();   */
+
+    return offtime;
+}
+
 #if defined USE_STAZED_SELECTION_EXTENSIONS
 
 /**

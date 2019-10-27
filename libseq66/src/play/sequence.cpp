@@ -1473,68 +1473,9 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
 }
 
 /**
- *  A new function to consolidate the adjustment of timestamps in a pattern.
- *  Similar to adjust_timestamp, but it doesn't have an \a isnoteoff
- *  parameter.
- *
- * \param t
- *      Provides the timestamp to be adjusted based on m_length.
- *
- * \return
- *      Returns the adjusted timestamp.
- */
-
-midipulse
-sequence::trim_timestamp (midipulse t)
-{
-    if (t >= get_length())
-        t -= get_length();
-
-    if (t < 0)                          /* only if midipulse is signed  */
-        t += get_length();
-
-    if (t == 0)
-        t = get_length() - m_note_off_margin;
-
-    return t;
-}
-
-/**
- *  A new function to consolidate the growth/shrinkage of timestamps in a
- *  pattern.  If the new (off) timestamp is less than the on-time, it is
- *  clipped to the snap value.  If it is greater than the length of the
- *  sequence, then it is clipped to the sequence length.  No wrap-around.
- *
- * \param ontime
- *      Provides the original time, which limits the amount of negative
- *      adjustment that can be done.
- *
- * \param offtime
- *      Provides the timestamp to be adjusted and clipped.
- *
- * \return
- *      Returns the adjusted timestamp.
- */
-
-midipulse
-sequence::clip_timestamp (midipulse ontime, midipulse offtime)
-{
-    if (offtime <= ontime)
-        offtime = ontime + snap() - note_off_margin();
-    else if (offtime >= get_length())
-        offtime = get_length() - note_off_margin();
-
-    return offtime;
-}
-
-/**
- *  Performs a stretch operation on the selected events.  This should move
- *  a note off event, according to old comments, but it doesn't seem to do
- *  that.  See the grow_selected() function.  Rather, it moves any event in
- *  the selection.
- *
- *  Also, we've moved external calls to push_undo() into this function.
- *  The caller shouldn't have to do that.
+ *  Performs a stretch operation on the selected events.  Also, we've moved
+ *  external calls to push_undo() into this function.  The caller shouldn't have
+ *  to do that.
  *
  * \threadsafe
  *
@@ -1542,48 +1483,16 @@ sequence::clip_timestamp (midipulse ontime, midipulse offtime)
  *      Provides the amount of time to stretch the selected notes.
  */
 
-void
+bool
 sequence::stretch_selected (midipulse delta_tick)
 {
-    if (mark_selected())
-    {
-        automutex locker(m_mutex);
-        unsigned first_ev = 0x7fffffff;             /* timestamp lower limit */
-        unsigned last_ev = 0x00000000;              /* timestamp upper limit */
-        m_events_undo.push(m_events);               /* push_undo(), no lock  */
-        for (auto & er : m_events)
-        {
-            if (er.is_selected())
-            {
-                event * e = &er;
-                if (e->timestamp() < midipulse(first_ev))
-                    first_ev = e->timestamp();
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);           /* push_undo(), no lock  */
+    bool result = m_events.stretch_selected(delta_tick);
+    if (result)
+        modify();
 
-                if (e->timestamp() > midipulse(last_ev))
-                    last_ev = e->timestamp();
-            }
-        }
-        unsigned old_len = last_ev - first_ev;
-        unsigned new_len = old_len + delta_tick;
-        if (new_len > 1)
-        {
-            float ratio = float(new_len) / float(old_len);
-            mark_selected();                        /* locked recursively   */
-            for (auto & er : m_events)
-            {
-                if (er.is_marked())
-                {
-                    event n = er;                   /* copy the event       */
-                    midipulse t = er.timestamp();
-                    n.set_timestamp(midipulse(ratio * (t - first_ev)) + first_ev);
-                    n.unmark();
-                    add_event(n);
-                }
-            }
-            if (remove_marked())
-                verify_and_link();
-        }
-    }
+    return result;
 }
 
 /**
@@ -1627,44 +1536,16 @@ sequence::stretch_selected (midipulse delta_tick)
  *      An offset for each linked event's timestamp.
  */
 
-void
+bool
 sequence::grow_selected (midipulse delta)
 {
-    if (mark_selected())                            /* locked recursively   */
-    {
-        automutex locker(m_mutex);                  /* lock it again, dude  */
-        m_events_undo.push(m_events);               /* push_undo(), no lock */
-        for (auto & er : m_events)
-        {
-            if (er.is_note())
-            {
-                if (er.is_marked() && er.is_note_on() && er.is_linked())
-                {
-                    event * off = er.link();
-                    event e = *off;                 /* original off-event   */
-                    midipulse offtime = off->timestamp();
-                    midipulse newtime = trim_timestamp(offtime + delta);
-                    off->mark();                    /* kill old off event   */
-                    er.unmark();                    /* keep old on event    */
-                    e.unmark();                     /* keep new off event   */
-                    e.set_timestamp(newtime);       /* new off-time         */
-                    add_event(e);                   /* add fixed off event  */
-                    modify();
-                }
-            }
-            else if (er.is_marked())                /* non-Note event?      */
-            {
-                event e = er;                       /* copy original event  */
-                midipulse ontime = er.timestamp();
-                midipulse newtime = clip_timestamp(ontime, ontime + delta);
-                e.set_timestamp(newtime);           /* adjust time-stamp    */
-                add_event(e);                       /* add adjusted event   */
-                modify();
-            }
-        }
-        if (remove_marked())
-            verify_and_link();
-    }
+    automutex locker(m_mutex);                  /* lock it again, dude  */
+    m_events_undo.push(m_events);               /* push_undo(), no lock */
+    bool result = m_events.grow_selected(delta);
+    if (result)
+        modify();
+
+    return result;
 }
 
 /**

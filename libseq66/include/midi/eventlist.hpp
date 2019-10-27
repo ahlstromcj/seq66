@@ -441,6 +441,14 @@ private:                                /* functions for friend sequence    */
         const event & e, midibyte status,
         midipulse tick_s, midipulse tick_f
     ) const;
+    bool get_selected_events_interval
+    (
+        midipulse & first, midipulse & last
+    ) const;
+    bool stretch_selected (midipulse delta);
+    bool grow_selected (midipulse delta);
+    midipulse trim_timestamp (midipulse t) const;
+    midipulse clip_timestamp (midipulse ontime, midipulse offtime) const;
 
 #if defined USE_STAZED_SELECTION_EXTENSIONS
     int select_linked (midipulse tick_s, midipulse tick_f, midibyte status);

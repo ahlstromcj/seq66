@@ -207,7 +207,7 @@ analyze_notes
 
         if (result)
         {
-            constexpr std::initializer_list<keys> keyslist =
+            const /*constexpr*/ std::initializer_list<keys> keyslist =
             {
                 keys::C, keys::Csharp, keys::D, keys::Dsharp,
                 keys::E, keys::F, keys::Fsharp, keys::G, keys::Gsharp,

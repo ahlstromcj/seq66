@@ -1463,9 +1463,8 @@ public:
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);
-    void grow_selected (midipulse deltatick);
-    void stretch_selected (midipulse deltatick);
-
+    bool grow_selected (midipulse deltatick);
+    bool stretch_selected (midipulse deltatick);
     bool randomize_selected
     (
         midibyte status, midibyte control, int plus_minus
