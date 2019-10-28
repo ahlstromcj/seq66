@@ -514,33 +514,28 @@ bool
 eventlist::edge_fix (midipulse snap, midipulse seqlength)
 {
     bool result = false;
-    if (mark_selected())
+    for (auto & e : m_events)
     {
-        for (auto & e : m_events)
+        if (e.is_selected() && e.is_note_on() && e.is_linked())
         {
-            if (! e.is_marked())
-                continue;
-
-            if (e.is_note_on() && e.is_linked())
+            midipulse onstamp = e.timestamp();
+            midipulse maximum = seqlength - snap / 2;
+            if (onstamp > maximum)
             {
-                midipulse onstamp = e.timestamp();
-                midipulse maximum = seqlength - snap / 2;
-                if (onstamp > maximum)
+                midipulse delta = seqlength - onstamp;
+                midipulse offstamp = e.link()->timestamp();
+                if (offstamp < onstamp)
                 {
-                    midipulse delta = seqlength - onstamp;
-                    midipulse offstamp = e.link()->timestamp();
-                    if (offstamp < onstamp)
-                    {
-                        e.set_timestamp(0);         /* move to beginning    */
-                        e.link()->set_timestamp(offstamp + delta);
-                        result = true;
-                    }
+                    e.set_timestamp(0);         /* move to beginning    */
+                    e.link()->set_timestamp(offstamp + delta);
+                    result = true;
                 }
             }
         }
-        if (result)
-            sort();                                 /* timestamps altered   */
     }
+    if (result)
+        sort();                                 /* timestamps altered   */
+
     return result;
 }
 
@@ -1741,6 +1736,81 @@ eventlist::grow_selected (midipulse delta, int snap)
 
     return result;
 }
+
+/**
+ *
+ */
+
+bool
+eventlist::copy_selected (eventlist & clipbd)
+{
+    bool result = false;
+    for (auto & e : m_events)
+    {
+        if (e.is_selected())
+            clipbd.add(e);                              /* sorts every time */
+    }
+    if (! clipbd.empty())
+    {
+        midipulse first_tick = dref(clipbd.begin()).timestamp();
+        if (first_tick >= 0)
+        {
+            for (auto & e : clipbd)                     /* 2019-09-12       */
+            {
+                midipulse t = e.timestamp();
+                if (t >= first_tick)
+                {
+                    e.set_timestamp(t - first_tick);    /* slide left!      */
+                    result = true;
+                }
+            }
+            if (result)
+                std::sort(clipbd.m_events.begin(), clipbd.m_events.end());
+        }
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
+{
+    bool result = false;
+    if (! clipbd.empty())
+    {
+        int highest_note = 0;
+        for (auto & e : clipbd)
+        {
+            midipulse t = e.timestamp();
+            e.set_timestamp(t + tick);
+            result = true;
+            if (e.is_note())                    /* includes Aftertouch      */
+            {
+                midibyte n = e.get_note();
+                if (n > highest_note)
+                    highest_note = n;
+            }
+        }
+
+        int note_delta = note - highest_note;
+        for (auto & e : clipbd)
+        {
+            if (e.is_note())                    /* includes Aftertouch      */
+            {
+                midibyte n = e.get_note();
+                e.set_note(n + note_delta);
+                result = true;
+            }
+        }
+        merge(clipbd);                          /* will presort clipboard   */
+        verify_and_link();
+    }
+    return result;
+}
+
 
 /**
  *  A new function to consolidate the adjustment of timestamps in a pattern.

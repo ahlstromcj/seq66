@@ -1417,9 +1417,9 @@ public:
     int get_num_selected_notes () const;
     int get_num_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
-    void copy_selected ();
+    bool copy_selected ();
     void cut_selected (bool copyevents = true);
-    void paste_selected (midipulse tick, int note);
+    bool paste_selected (midipulse tick, int note);
     bool selected_box
     (
         midipulse & tick_s, int & note_h, midipulse & tick_f, int & note_l
@@ -1532,11 +1532,11 @@ public:
         eventlist::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
-    void push_quantize
+    bool push_quantize
     (
         midibyte status, midibyte cc, int divide, bool linked = false
     );
-    void transpose_notes (int steps, int scale);
+    bool transpose_notes (int steps, int scale);
 
 #if defined USE_STAZED_SHIFT_SUPPORT
     void shift_notes (midipulse ticks);

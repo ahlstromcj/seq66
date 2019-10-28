@@ -28,14 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-27
+ * \updates       2019-10-28
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
  *  module, so that it is easier to try to replace it with some better
  *  container later.
- *
- *  We should leverage "for-each" functionality.
  *
  *  List versus Map:  #if defined or derivation from an interface?  For our
  *  purposes, #if defined might be simplest, and we only want to pick the
@@ -51,7 +49,7 @@
  *
  * https://baptiste-wicht.com/posts/2012/12/cpp-benchmark-vector-list-deque.html
  *
- *  We will now try std::vector for the event list.
+ *  We will now use std::vector for the event list.
  */
 
 #include <algorithm>                    /* std::sort(), std::merge()    */
@@ -460,6 +458,8 @@ private:                                /* functions for friend sequence    */
     ) const;
     bool stretch_selected (midipulse delta);
     bool grow_selected (midipulse delta, int snap);
+    bool copy_selected (eventlist & clipbd);
+    bool paste_selected (eventlist & clipbd, midipulse tick, int note);
     midipulse trim_timestamp (midipulse t) const;
     midipulse clip_timestamp
     (

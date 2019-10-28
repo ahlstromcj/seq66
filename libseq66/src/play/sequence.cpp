@@ -1728,30 +1728,16 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
  * \threadsafe
  */
 
-void
+bool
 sequence::copy_selected ()
 {
     automutex locker(m_mutex);
     eventlist clipbd;
-    for (auto & e : m_events)
-    {
-        if (e.is_selected())
-            clipbd.add(e);                              /* sorts every time */
-    }
-    if (! clipbd.empty())
-    {
-        midipulse first_tick = eventlist::dref(clipbd.begin()).timestamp();
-        if (first_tick >= 0)
-        {
-            for (auto & e : clipbd)                     /* 2019-09-12       */
-            {
-                midipulse t = e.timestamp();
-                if (t >= first_tick)
-                    e.set_timestamp(t - first_tick);    /* slide left!      */
-            }
-        }
+    bool result = m_events.copy_selected(clipbd);
+    if (result)
         m_clipboard = clipbd;
-    }
+
+    return result;
 }
 
 /**
@@ -1812,7 +1798,7 @@ sequence::cut_selected (bool copyevents)
  *
  *  There was an issue with copy/pasting a whole sequence.  The pasted events
  *  did not go to their destination, but overlayed the original events.  This
- *  bugs also occurred in Seq24 0.9.2.  It occurs with the allofarow.mid file
+ *  bug also occurred in Seq24 0.9.2.  It occurs with the allofarow.mid file
  *  when doing Ctrl-A Ctrl-C Ctrl-V Move-Mouse Left-Click.  It turns out the
  *  original code was checking only the first event to see if it was a Note
  *  event.  For sequences that started with a Control Change or Program Change
@@ -1839,41 +1825,19 @@ sequence::cut_selected (bool copyevents)
  *      higher than the original copy.
  */
 
-void
+bool
 sequence::paste_selected (midipulse tick, int note)
 {
-    if (! m_clipboard.empty())
+    automutex locker(m_mutex);
+    eventlist clipbd = m_clipboard;             /* copy the clipboard   */
+    push_undo();                                /* push undo, no lock   */
+    bool result = m_events.paste_selected(clipbd, tick, note);
+    if (result)
     {
-        automutex locker(m_mutex);
-        eventlist clipbd = m_clipboard;            /* copy the clipboard   */
-        int highest_note = 0;
-        push_undo();                                /* push undo, no lock   */
-        for (auto & e : clipbd)
-        {
-            midipulse t = e.timestamp();
-            e.set_timestamp(t + tick);
-            if (e.is_note())                        /* includes Aftertouch  */
-            {
-                midibyte n = e.get_note();
-                if (n > highest_note)
-                    highest_note = n;
-            }
-        }
-
-        int note_delta = note - highest_note;
-        for (auto & e : clipbd)
-        {
-            if (e.is_note())                        /* includes Aftertouch  */
-            {
-                midibyte n = e.get_note();
-                e.set_note(n + note_delta);
-            }
-        }
-        m_events.merge(clipbd);                 /* will presort clipboard   */
-        verify_and_link();
         reset_draw_marker();
         modify();
     }
+    return result;
 }
 
 /**
@@ -1956,7 +1920,7 @@ sequence::change_event_data_range
          */
 
         bool match = er.get_status() == status;
-        bool good;                          /* event::is_desired_cc_or_not_cc */
+        bool good;                          /* is_desired_cc_or_not_cc      */
         if (status == EVENT_CONTROL_CHANGE)
             good = match && d0 == cc;       /* correct status & correct cc  */
         else
@@ -2121,28 +2085,17 @@ sequence::change_event_data_relative
 
             if (newdata < 0)
                 newdata = 0;
-            else if (newdata > c_max_midi_data_value)    /* 127              */
+            else if (newdata > c_max_midi_data_value)   /* 127              */
                 newdata = c_max_midi_data_value;
 
-            if (status == EVENT_NOTE_ON)
-                d1 = newdata;
+            /*
+             * Two-byte messages: Note On/Off, Aftertouch, Control, Pitch.
+             * One-byte messages: Proram or Channel Pressure.
+             */
 
-            if (status == EVENT_NOTE_OFF)
-                d1 = newdata;
-
-            if (status == EVENT_AFTERTOUCH)
-                d1 = newdata;
-
-            if (status == EVENT_CONTROL_CHANGE)
-                d1 = newdata;
-
-            if (status == EVENT_PROGRAM_CHANGE)
-                d0 = newdata;                           /* d0 == new patch  */
-
-            if (status == EVENT_CHANNEL_PRESSURE)
-                d0 = newdata;                           /* d0 == pressure   */
-
-            if (status == EVENT_PITCH_WHEEL)
+            if (event::is_one_byte_msg(status))
+                d0 = newdata;
+            else
                 d1 = newdata;
 
             er.set_data(d0, d1);
@@ -4753,56 +4706,46 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
  *      The scale to make the notes adhere to while transposing.
  */
 
-void
+bool
 sequence::transpose_notes (int steps, int scale)
 {
-    /*
-     * TODO: just transpose the selected note.
-     */
-
-    if (mark_selected())                            /* mark original notes  */
+    automutex locker(m_mutex);
+    const int * transposetable;
+    bool result = false;
+    m_events_undo.push(m_events);               /* push_undo(), no lock  */
+    if (steps < 0)
     {
-        automutex locker(m_mutex);
-        eventlist transposed_events;
-        const int * transpose_table;
-        m_events_undo.push(m_events);               /* push_undo(), no lock  */
-        if (steps < 0)
-        {
-            transpose_table = &c_scales_transpose_dn[scale][0];     /* down */
-            steps *= -1;
-        }
-        else
-            transpose_table = &c_scales_transpose_up[scale][0];     /* up   */
-
-        for (auto & er : m_events)
-        {
-            if (er.is_marked() && er.is_note())     /* transposable event?  */
-            {
-                event e = er;
-                e.unmark();
-                int note = e.get_note();
-                bool off_scale = false;
-                if (transpose_table[note % c_octave_size] == 0)
-                {
-                    off_scale = true;
-                    note -= 1;
-                }
-                for (int x = 0; x < steps; ++x)
-                    note += transpose_table[note % c_octave_size];
-
-                if (off_scale)
-                    note += 1;
-
-                e.set_note(note);
-                transposed_events.add(e);
-            }
-            else
-                er.unmark();                        /* ignore, no transpose  */
-        }
-        (void) remove_marked();                     /* remove original notes */
-        m_events.merge(transposed_events);          /* events get presorted  */
-        verify_and_link();
+        transposetable = &c_scales_transpose_dn[scale][0];     /* down */
+        steps *= -1;
     }
+    else
+        transposetable = &c_scales_transpose_up[scale][0];     /* up   */
+
+    for (auto & er : m_events)
+    {
+        if (er.is_selected() && er.is_note())   /* transposable event?  */
+        {
+            int note = er.get_note();
+            bool off_scale = false;
+            if (transposetable[note % c_octave_size] == 0)
+            {
+                off_scale = true;
+                note -= 1;
+            }
+            for (int x = 0; x < steps; ++x)
+                note += transposetable[note % c_octave_size];
+
+            if (off_scale)
+                note += 1;
+
+            er.set_note(note);
+            result = true;
+        }
+    }
+    if (result)
+        set_dirty();                                // modify() as well?
+
+    return result;
 }
 
 #if defined USE_STAZED_SHIFT_SUPPORT
@@ -4814,34 +4757,26 @@ sequence::transpose_notes (int steps, int scale)
 void
 sequence::shift_notes (midipulse ticks)
 {
-    if (mark_selected())
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);               /* push_undo(), no lock */
+    for (auto & er : m_events)
     {
-        automutex locker(m_mutex);
-        eventlist shifted_events;
-        m_events_undo.push(m_events);               /* push_undo(), no lock */
-        for (auto & er : m_events)
+        if (er.is_selected() && er.is_note())   /* shiftable event?     */
         {
-            if (er.is_marked() && er.is_note())     /* shiftable event?     */
-            {
-                event e = er;
-                e.unmark();
+            midipulse timestamp = er.timestamp() + ticks;
+            if (timestamp < 0L)                 /* wraparound           */
+                timestamp = get_length() - ((-timestamp) % get_length());
+            else
+                timestamp %= get_length();
 
-                midipulse timestamp = e.timestamp() + ticks;
-                if (timestamp < 0L)                 /* wraparound           */
-                    timestamp = get_length() - ((-timestamp) % get_length());
-                else
-                    timestamp %= get_length();
-
-                e.set_timestamp(timestamp);
-                shifted_events.add(e);
-            }
+            er.set_timestamp(timestamp);
+            result = true;
         }
-        (void) remove_marked();
-
-        shifted_events.sort();
-        m_events.merge(shifted_events);
-        verify_and_link();
-        set_dirty();                        /* tells perfedit to update     */
+    }
+    if (result)
+    {
+        m_events.sort();
+        set_dirty();                            /* seqedit to update    */
     }
 }
 
@@ -4957,7 +4892,7 @@ sequence::quantize_events
  *      this parameter is false.
  */
 
-void
+bool
 sequence::push_quantize
 (
     midibyte status, midibyte cc, int divide, bool linked
@@ -4965,7 +4900,7 @@ sequence::push_quantize
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);
-    quantize_events(status, cc, divide, linked);
+    return quantize_events(status, cc, divide, linked);     /* sets dirty   */
 }
 
 #if defined USE_STAZED_COMPANDING
