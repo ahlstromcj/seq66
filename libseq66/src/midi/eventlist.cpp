@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-27
+ * \updates       2019-10-28
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -114,6 +114,7 @@ eventlist::eventlist ()
  :
     m_events                (),
     m_length                (0),
+    mc_note_off_margin      (2),
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false)
@@ -131,6 +132,8 @@ eventlist::eventlist ()
 eventlist::eventlist (const eventlist & rhs)
  :
     m_events                (rhs.m_events),
+    m_length                (rhs.m_length),
+    mc_note_off_margin      (rhs.mc_note_off_margin),
     m_is_modified           (rhs.m_is_modified),
     m_has_tempo             (rhs.m_has_tempo),
     m_has_time_signature    (rhs.m_has_time_signature)
@@ -163,11 +166,8 @@ eventlist::operator = (const eventlist & rhs)
  *  Provides the length of the events in MIDI pulses.  This function gets the
  *  iterator for the last element and returns its length value.
  *
- *  TODO: Don't we need to add the length of the event to the result, it it has
- *  a length???
- *
  * \return
- *      Returns the timestamp of the latest event in the container.
+ *      Returns the timestamp of the last event in the container.
  */
 
 midipulse
@@ -423,7 +423,8 @@ eventlist::link_note (event & eon, event & eoff)
  *      function safely.
  *
  * \param slength
- *      Provides the length beyond which events will be pruned.
+ *      Provides the length beyond which events will be pruned. Normally the
+ *      called supplies sequence::get_length().
  */
 
 void
@@ -530,13 +531,15 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
                     midipulse offstamp = e.link()->timestamp();
                     if (offstamp < onstamp)
                     {
-                        e.set_timestamp(0);         /* move to the beginning    */
+                        e.set_timestamp(0);         /* move to beginning    */
                         e.link()->set_timestamp(offstamp + delta);
                         result = true;
                     }
                 }
             }
         }
+        if (result)
+            sort();                                 /* timestamps altered   */
     }
     return result;
 }
@@ -554,14 +557,12 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
  *
  *  Seq32:
  *
- *      If ft is negative, then we have a Note Off
- * previously wrapped before adjustment. Since the delta
- * is based on the Note On (not wrapped), we must add back
- * the m_length for the wrapping.  If the ft is then >=
- * m_length, it will be deleted by verify_and_link(),
- * which discards any notes (ON or OFF) that are >=
- * m_length. So we must wrap if > m_length and trim if ==
- * m_length.  Compare to trim_timestamp().
+ *      If ft is negative, then we have a Note Off previously wrapped before
+ *      adjustment. Since the delta is based on the Note On (not wrapped), we
+ *      must add back the m_length for the wrapping.  If the ft is then >=
+ *      m_length, it will be deleted by verify_and_link(), which discards any
+ *      notes (ON or OFF) that are >= m_length. So we must wrap if > m_length
+ *      and trim if == m_length.  Compare to trim_timestamp().
  *
  * \param status
  *      Indicates the type of event to be quantized.
@@ -650,7 +651,7 @@ eventlist::quantize_events
                         ft -= length;
 
                     if (ft == length)               /* trim it a little     */
-                        ft -= 1;                    /* m_note_off_margin    */
+                        ft -= note_off_margin();
 
                     f.set_timestamp(ft);
                     add(quantized_events, f);
@@ -659,8 +660,8 @@ eventlist::quantize_events
             }
         }
         (void) remove_marked();
-        merge(quantized_events);
-        verify_and_link();
+        merge(quantized_events);                    /* also sorts events    */
+        verify_and_link();                          /* sorts them again!!!  */
     }
     return result;
 }
@@ -705,7 +706,7 @@ eventlist::adjust_timestamp (midipulse t, bool isnoteoff)
     if (isnoteoff)
     {
         if (t == 0)
-            t = seqlength - 1;          /* m_note_off_margin            */
+            t = seqlength - note_off_margin();
     }
     else                                /* if (wrap)                    */
     {
@@ -752,9 +753,13 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
                     er.set_note(midibyte(newnote));
 
                 er.set_timestamp(newts);
+                result = true;
             }
         }
     }
+    if (result)
+        sort();                                 /* timestamps altered   */
+
     return result;
 }
 
@@ -769,10 +774,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
  */
 
 bool
-eventlist::randomize_selected
-(
-    midibyte status, midibyte control, int range
-)
+eventlist::randomize_selected (midibyte status, midibyte control, int range)
 {
     bool result = false;
     for (auto & e : m_events)
@@ -817,6 +819,12 @@ eventlist::randomize_selected_notes (int jitter, int range)
 {
     bool result = false;
     midipulse length = get_length();
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("Before randomization\n");
+    print();
+#endif
+
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.is_note())
@@ -858,6 +866,14 @@ eventlist::randomize_selected_notes (int jitter, int range)
             }
         }
     }
+    if (result)
+        sort();                                 /* timestamps altered   */
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("After randomization\n");
+    print();
+#endif
+
     return result;
 }
 
@@ -1570,6 +1586,10 @@ eventlist::event_in_range
     return result;
 }
 
+/**
+ *
+ */
+
 bool
 eventlist::get_selected_events_interval
 (
@@ -1642,6 +1662,8 @@ eventlist::stretch_selected (midipulse delta)
                     result = true;
                 }
             }
+            if (result)
+                sort();                             /* timestamps altered   */
         }
     }
     return result;
@@ -1683,7 +1705,7 @@ eventlist::stretch_selected (midipulse delta)
  */
 
 bool
-eventlist::grow_selected (midipulse delta)
+eventlist::grow_selected (midipulse delta, int snap)
 {
     bool result = false;
     for (auto & er : m_events)
@@ -1705,12 +1727,18 @@ eventlist::grow_selected (midipulse delta)
             else                                    /* non-Note event       */
             {
                 midipulse ontime = er.timestamp();
-                midipulse newtime = clip_timestamp(ontime, ontime + delta);
-                er.set_timestamp(newtime);           /* adjust time-stamp    */
+                midipulse newtime = clip_timestamp
+                (
+                    ontime, ontime + delta, snap
+                );
+                er.set_timestamp(newtime);          /* adjust time-stamp    */
                 result = true;
             }
         }
     }
+    if (result)
+        sort();                                     /* timestamps altered   */
+
     return result;
 }
 
@@ -1736,7 +1764,7 @@ eventlist::trim_timestamp (midipulse t) const
         t += get_length();
 
     if (t == 0)
-        t = get_length() - 1;           /* m_note_off_margin;           */
+        t = get_length() - note_off_margin();
 
     return t;
 }
@@ -1759,13 +1787,12 @@ eventlist::trim_timestamp (midipulse t) const
  */
 
 midipulse
-eventlist::clip_timestamp (midipulse ontime, midipulse offtime) const
+eventlist::clip_timestamp (midipulse ontime, midipulse offtime, int snap) const
 {
-    const int sc_snap = 48;         /* TODO */
     if (offtime <= ontime)
-        offtime = ontime + sc_snap - 1;         /* note_off_margin();   */
+        offtime = ontime + snap - note_off_margin();
     else if (offtime >= get_length())
-        offtime = get_length() - 1;             /* note_off_margin();   */
+        offtime = get_length() - note_off_margin();
 
     return offtime;
 }

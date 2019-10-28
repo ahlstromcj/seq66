@@ -179,6 +179,14 @@ private:
     midipulse m_length;
 
     /**
+     *  Provides the number of ticks to shave off of the end of painted notes.
+     *  Also used when the user attempts to shrink a note to zero (or less
+     *  than zero) length.
+     */
+
+    const midipulse mc_note_off_margin;
+
+    /**
      *  A flag to indicate if an event was added or removed.  We may need to
      *  give client code a way to reload the sequence.  This is currently an
      *  issue when a seqroll and an eventedit/eventslots are active for the
@@ -280,6 +288,11 @@ public:
     midipulse get_length () const
     {
         return m_length;
+    }
+
+    midipulse note_off_margin () const
+    {
+        return mc_note_off_margin;
     }
 
     bool is_modified () const
@@ -446,9 +459,12 @@ private:                                /* functions for friend sequence    */
         midipulse & first, midipulse & last
     ) const;
     bool stretch_selected (midipulse delta);
-    bool grow_selected (midipulse delta);
+    bool grow_selected (midipulse delta, int snap);
     midipulse trim_timestamp (midipulse t) const;
-    midipulse clip_timestamp (midipulse ontime, midipulse offtime) const;
+    midipulse clip_timestamp
+    (
+        midipulse ontime, midipulse offtime, int snap
+    ) const;
 
 #if defined USE_STAZED_SELECTION_EXTENSIONS
     int select_linked (midipulse tick_s, midipulse tick_f, midibyte status);

@@ -717,14 +717,6 @@ private:
 
     mutable recmutex m_mutex;
 
-    /**
-     *  Provides the number of ticks to shave off of the end of painted notes.
-     *  Also used when the user attempts to shrink a note to zero (or less
-     *  than zero) length.
-     */
-
-    const midipulse m_note_off_margin;
-
 private:
 
     /*
@@ -1588,11 +1580,6 @@ public:
 
     void show_events () const;
     void copy_events (const eventlist & newevents);
-
-    midipulse note_off_margin () const
-    {
-        return m_note_off_margin;
-    }
 
     void calculate_unit_measure () const;
     midipulse unit_measure () const;

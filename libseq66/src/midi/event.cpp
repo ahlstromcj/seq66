@@ -236,6 +236,24 @@ event::~event ()
 }
 
 /**
+ *  Sometimes we need to alter the event completely.
+ */
+
+void
+event::set_data
+(
+    midipulse tstamp,
+    midibyte status,
+    midibyte d0,
+    midibyte d1
+)
+{
+    set_timestamp(tstamp);
+    set_status(status);
+    set_data(d0, d1);
+}
+
+/**
  *  If the current timestamp equal the event's timestamp, then this
  *  function returns true if the current rank is less than the event's
  *  rank.

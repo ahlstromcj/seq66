@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-25
+ * \updates       2019-10-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -181,8 +181,7 @@ sequence::sequence (int ppqn)
     m_musical_key               (c_key_of_C),
     m_musical_scale             (c_scales_off),
     m_background_sequence       (sequence::limit()),
-    m_mutex                     (),
-    m_note_off_margin           (2)
+    m_mutex                     ()
 {
     m_events.set_length(m_length);
     m_triggers.set_ppqn(int(m_ppqn));
@@ -1541,7 +1540,7 @@ sequence::grow_selected (midipulse delta)
 {
     automutex locker(m_mutex);                  /* lock it again, dude  */
     m_events_undo.push(m_events);               /* push_undo(), no lock */
-    bool result = m_events.grow_selected(delta);
+    bool result = m_events.grow_selected(delta, snap());
     if (result)
         modify();
 
@@ -2259,9 +2258,10 @@ sequence::change_event_data_lfo
  *  Adds a note of a given length and  note value, at a given tick
  *  location.  It adds a single Note-On/Note-Off pair.
  *
- *  The paint parameter indicates if we care about the painted event,
- *  so then the function runs though the events and deletes the painted
- *  ones that overlap the ones we want to add.
+ *  The paint parameter indicates if we care about the painted event, so then
+ *  the function runs though the events and deletes the painted ones that
+ *  overlap the ones we want to add.  An event is painted if manually
+ *  created in the seqroll.  There is also a case in the add_chord() function.
  *
  *  Also note that push_undo() is not incorporated into this function, for
  *  the sake of speed.
@@ -2283,7 +2283,7 @@ sequence::change_event_data_lfo
  *      generate Note Off messages, but don't implement velocity features,
  *      will transmit Note Off messages with a preset velocity of 64.
  *
- *  Also, we now see that seq66 never used the recording-velocity member
+ *  Also, we see that seq24 never used the recording-velocity member
  *  (m_rec_vol).  We use it to modify the new m_note_on_velocity member if
  *  the user changes it in the seqedit window.
  *
@@ -2325,9 +2325,8 @@ sequence::add_note
         automutex locker(m_mutex);
         bool hardwire = velocity == SEQ66_PRESERVE_VELOCITY;
         bool ignore = false;
-        if (paint)                        /* see the banner above */
+        if (paint)                              /* see the banner above */
         {
-            result = true;
             for (auto & er : m_events)
             {
                 if (er.is_painted() && er.is_note_on() && er.timestamp() == tick)
@@ -2337,14 +2336,15 @@ sequence::add_note
                         ignore = true;
                         break;
                     }
-                    er.mark();
+                    er.mark();                  /* mark for removal     */
                     if (er.is_linked())
-                        er.link()->mark();
+                        er.link()->mark();      /* mark for removal     */
 
                     set_dirty();
                 }
             }
             (void) remove_marked();
+            result = true;
         }
         if (! ignore)
         {
@@ -2365,9 +2365,11 @@ sequence::add_note
                  * playing.
                  */
 
-                e.set_status(EVENT_NOTE_OFF);
-                e.set_data(note, hardwire ? midibyte(m_note_off_velocity) : 0);
-                e.set_timestamp(tick + len);
+                e.set_data
+                (
+                    tick + len, EVENT_NOTE_OFF, note,
+                    hardwire ? midibyte(m_note_off_velocity) : 0
+                );
                 result = add_event(e);
             }
         }
@@ -2691,7 +2693,7 @@ sequence::stream_event (event & ev)
                     m_events_undo.push(m_events);       /* push_undo()      */
                     add_note                            /* more locking     */
                     (
-                        mod_last_tick(), snap() - m_note_off_margin,
+                        mod_last_tick(), snap() - m_events.note_off_margin(),
                         ev.get_note(), false, velocity
                     );
                     set_dirty();
@@ -4754,6 +4756,10 @@ sequence::select_events (midibyte status, midibyte cc, bool inverse)
 void
 sequence::transpose_notes (int steps, int scale)
 {
+    /*
+     * TODO: just transpose the selected note.
+     */
+
     if (mark_selected())                            /* mark original notes  */
     {
         automutex locker(m_mutex);
@@ -4978,11 +4984,11 @@ sequence::multiply_pattern (double multiplier)
     {
         midipulse timestamp = er.timestamp();
         if (er.is_note_off())
-            timestamp += note_off_margin();
+            timestamp += m_events.note_off_margin();
 
         timestamp *= multiplier;
         if (er.is_note_off())
-            timestamp -= note_off_margin();
+            timestamp -= m_events.note_off_margin();
 
         timestamp %= get_length();
         er.set_timestamp(timestamp);
@@ -5021,9 +5027,8 @@ sequence::show_events () const
 /**
  *  Copies an external container of events into the current container,
  *  effectively replacing all of its events.  Compare this function to the
- *  remove_all() function.  Copying the container is a lot of work, but
- *  fairly fast, even with an std::multimap as the container.  Also note that
- *  we have to recalculate the length of the sequence.
+ *  remove_all() function.  Copying the container is a lot of work, but fast.
+ *  Also note that we have to recalculate the length of the sequence.
  *
  * \threadsafe
  *      Note that we had to consolidate the replacement of all the events in
@@ -5062,12 +5067,23 @@ sequence::copy_events (const eventlist & newevents)
     {
         /*
          * Another option, if we have a new sequence length value (in pulses)
-         * would be to call sequence::set_length(len, adjust_triggers).  We do
-         * need to re-evaluate the length (last timestamp) of the sequence.
-         * TODO!!!
+         * would be to call sequence::set_length(len, adjust_triggers).  We
+         * need to make sure the length is rounded up to the next quarter note.
+         * Actually, should make it a full measure size!
          */
 
-        m_length = m_events.get_max_timestamp();
+        midipulse len = m_events.get_max_timestamp();
+#ifdef USE_THIS_READY_CODE
+        int qncount = len / int(ppqn());    /* number of quarter notes      */
+        if (len % ppqn() != 0)
+        {
+            qncount = get_beats_per_bar();  /* set to size of measure       */
+            while (qncount * ppqn() <= len)
+                ++qcount;                   /* shouldn't ever happen        */
+        }
+        len = qncount * ppqn();
+#endif
+        m_length = len;
         verify_and_link();                  /* function uses m_length       */
     }
     set_dirty();

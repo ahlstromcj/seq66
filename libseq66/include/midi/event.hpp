@@ -379,7 +379,9 @@ private:
     bool m_marked;
 
     /**
-     *  Answers the question "is this event being painted."
+     *  Answers the question "is this event being painted."  This setting is
+     *  made by sequence::add_event() or add_note() if the paint parameter is
+     *  true (it defaults to false).
      */
 
     bool m_painted;
@@ -730,6 +732,12 @@ public:
         m_data[0] = d0 & 0x7F;
         m_data[1] = d1 & 0x7F;
     }
+
+    /**
+     *  Yet another overload.
+     */
+
+    void set_data (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
 
     /**
      *  Retrieves only the first  data byte from m_data[] and copies it into
