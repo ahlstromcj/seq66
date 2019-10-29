@@ -649,20 +649,14 @@ qseventslots::modify_current_event
 }
 
 /**
- *  Writes the events back to the sequence.  Also sets the dirty flag for the
- *  sequence, via the sequence::add_event() function, but this doesn't seem to
- *  set the performer dirty flag.  So now we pass the modification buck to the
- *  parent, who passes it to the performer object.
- *
- *  We added a copy_events() function in the sequence class to replace
- *  add_event() for the purpose of reconstructing the events container for the
- *  sequence.  It is locked by a mutex, and so will not draw until all is
- *  done, preventing a nasty segfault (all segfaults are nasty).
+ *  Writes the events back to the sequence.  Added a copy_events() function in
+ *  the sequence class for the purpose of reconstructing the events container
+ *  for the sequence.  It is locked by a mutex, and so will not draw until all
+ *  is done, preventing a segfault.
  *
  *  We create a new plain event container here, and then passing it to the new
  *  locked/threadsafe sequence::copy_events() function that clears the
  *  sequence container and copies the events from the parameter container.
- *
  *  Note that this code will operate event if all events were deleted.
  *
  * \return

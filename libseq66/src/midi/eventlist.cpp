@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-28
+ * \updates       2019-10-29
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -437,9 +437,9 @@ eventlist::verify_and_link (midipulse slength)
         event & eon = dref(on);
         if (eon.is_note_on())               /* Note On, find its Note Off   */
         {
+            bool endfound = false;
             auto off = on;                  /* next possible Note Off...    */
             ++off;                          /* ...starting here             */
-            bool endfound = false;
             while (off != m_events.end())
             {
                 event & eoff = dref(off);
@@ -1067,6 +1067,7 @@ eventlist::remove_event (event & e)
  *  value to avoid incrementing a now-invalid iterator.
  *
  * \threadsafe
+ * \deprecated
  *
  * \return
  *      Returns true if at least one event was removed.
@@ -1080,6 +1081,36 @@ eventlist::remove_marked ()
     while (i != m_events.end())
     {
         if (dref(i).is_marked())
+        {
+            auto t = remove(i);
+            i = t;
+            result = true;
+        }
+        else
+            ++i;
+    }
+    return result;
+}
+
+/**
+ *  Removes selected events.  Note how this function handles removing a
+ *  value to avoid incrementing a now-invalid iterator.
+ *
+ *  We want to get rid of the concept of marking events.  Selected events can
+ *  be handled directly in the event container.
+ *
+ * \return
+ *      Returns true if at least one event was removed.
+ */
+
+bool
+eventlist::remove_selected ()
+{
+    bool result = false;
+    auto i = m_events.begin();
+    while (i != m_events.end())
+    {
+        if (dref(i).is_selected())
         {
             auto t = remove(i);
             i = t;

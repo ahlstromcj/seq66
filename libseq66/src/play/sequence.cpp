@@ -1053,14 +1053,12 @@ sequence::remove_selected ()
 {
     bool result = false;
     automutex locker(m_mutex);
-    if (m_events.mark_selected())
-    {
-        m_events_undo.push(m_events);           /* push_undo() without lock */
-        result = m_events.remove_marked();
-        reset_draw_marker();
-        if (result)
-            modify();
-    }
+    m_events_undo.push(m_events);               /* push_undo() without lock */
+    result = m_events.remove_selected();
+    reset_draw_marker();
+    if (result)
+        modify();
+
     return result;
 }
 
@@ -1759,13 +1757,10 @@ sequence::cut_selected (bool copyevents)
     if (copyevents)
         copy_selected();
 
-    if (mark_selected())                            /* locked recursively   */
+    if (remove_selected())
     {
-        if (remove_marked())
-        {
-            set_dirty();                            /* do it for the caller */
-            modify();
-        }
+        set_dirty();                            /* do it for the caller */
+        modify();
     }
 }
 
@@ -2273,12 +2268,12 @@ sequence::add_note
 )
 {
     bool result = false;
-    if (tick >= 0 && note >= 0 && note < c_num_keys)
+    if (note >= 0 && note < c_num_keys)
     {
         automutex locker(m_mutex);
         bool hardwire = velocity == SEQ66_PRESERVE_VELOCITY;
         bool ignore = false;
-        if (paint)                              /* see the banner above */
+        if (paint)                                  /* see the banner above */
         {
             for (auto & er : m_events)
             {
@@ -2289,9 +2284,9 @@ sequence::add_note
                         ignore = true;
                         break;
                     }
-                    er.mark();                  /* mark for removal     */
+                    er.mark();                      /* mark for removal     */
                     if (er.is_linked())
-                        er.link()->mark();      /* mark for removal     */
+                        er.link()->mark();          /* mark for removal     */
 
                     set_dirty();
                 }

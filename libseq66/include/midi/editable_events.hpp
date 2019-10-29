@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2019-07-28
+ * \updates       2019-10-29
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -306,6 +306,7 @@ private:
 #if defined USE_VERIFY_AND_LINK                  /* not yet ready */
     void clear_links ();
     void verify_and_link (midipulse slength);
+    bool link_note (event & eon, event & eoff);
     void mark_all ();
     void unmark_all ();
     void mark_out_of_range (midipulse slength);

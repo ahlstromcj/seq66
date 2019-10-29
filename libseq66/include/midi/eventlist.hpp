@@ -429,7 +429,8 @@ private:                                /* functions for friend sequence    */
     void mark_all ();
     void unmark_all ();
     bool remove_event (event & e);
-    bool remove_marked ();
+    bool remove_marked ();                  /* deprecated   */
+    bool remove_selected ();
     void unpaint_all ();
     int count_selected_notes () const;
     bool any_selected_notes () const;

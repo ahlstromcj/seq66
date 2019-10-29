@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2019-05-18
+ * \updates       2019-10-29
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_events
@@ -324,6 +324,7 @@ void
 editable_events::verify_and_link (midipulse slength)
 {
     clear_links();                          /* no sorting, multimap in use  */
+    sort();                                 /* IMPORTANT!                   */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
         event & eon = on->second;            /* event part of editable_event */
@@ -331,53 +332,76 @@ editable_events::verify_and_link (midipulse slength)
         {
             bool endfound = false;
             auto off = on;                  /* get next possible Note Off   */
-            off++;
+            ++off;
             while (off != m_events.end())
             {
-                event & eoff = dref(off);
-                if                          /* Off, == notes, not marked    */
-                (
-                    eoff.is_note_off() &&
-                    eoff.get_note() == eon.get_note() &&
-                    ! eoff.is_marked()
-                )
+                /*
+                 * TODO:  Use link-note
+                 */
+
+                event & eoff = dref(off);   /* Off, == notes, not marked    */
+                if (eon.linkable(eoff))
                 {
-                    eon.link(&eoff);                    /* link + mark */
+                    eon.link(&eoff);                        /* link + mark  */
                     eoff.link(&eon);
                     eon.mark();
                     eoff.mark();
                     endfound = true;
                     break;
                 }
-                off++;
+                ++off;
             }
             if (! endfound)
             {
                 off = m_events.begin();
                 while (off != on)
                 {
+                    /*
+                     * TODO:  Use link-note
+                     */
+
                     event & eoff = dref(off);
-                    if
-                    (
-                        eoff.is_note_off() &&
-                        eoff.get_note() == eon.get_note() &&
-                        ! eoff.is_marked()
-                    )
+                    if (eon.linkable(eoff))
                     {
-                        eon.link(&eoff);                /* link + mark */
+                        eon.link(&eoff);                    /* link + mark  */
                         eoff.link(&eon);
                         eon.mark();
                         eoff.mark();
                         endfound = true;
                         break;
                     }
-                    off++;
+                    ++off;
                 }
             }
         }
     }
     unmark_all();
-    mark_out_of_range(slength);
+    mark_out_of_range(slength);                             /* what for???  */
+}
+
+/**
+ *  The same as link_new_note(), except that it checks is_marked() instead of
+ *  is_linked().
+ */
+
+bool
+editable_events::link_note (event & eon, event & eoff)
+{
+    bool result = eon.linkable(eoff);
+    if (result)
+    {
+        eon.link(&eoff);                /* link + mark                  */
+        eoff.link(&eon);
+
+        /*
+         * Not sure why we bother to mark here, when we unmark them
+         * all afterward in preparation for potential pruning.
+         *
+         *  eon.mark();
+         *  eoff.mark();
+         */
+    }
+    return result;
 }
 
 /**

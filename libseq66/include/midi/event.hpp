@@ -373,7 +373,8 @@ private:
     bool m_selected;
 
     /**
-     *  Answers the question "is this event marked in processing."
+     *  Answers the question "is this event marked in processing."  This marking
+     *  is more of an internal function for purposes of reorganizing events.
      */
 
     bool m_marked;
@@ -869,17 +870,17 @@ public:
 
     /**
      *  Determines if a note-off event is linkable to this event (which is
-     *  checked to be a note-on event).
+     *  checked to be a note-on event).  A test used in verify_and_link().
+     *
+     * \param e
+     *      Normally this is a Note Off event.
      */
 
-    bool linkable (event & eoff)
+    bool linkable (event & e)
     {
         return
         (
-            // is_note_on() &&
-            eoff.is_note_off() &&
-            eoff.get_note() == get_note() &&
-            ! eoff.is_linked()
+            e.is_note_off() && e.get_note() == get_note() && ! e.is_linked()
         );
     }
 
