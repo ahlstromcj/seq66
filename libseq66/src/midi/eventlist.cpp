@@ -589,44 +589,36 @@ eventlist::quantize_events
 )
 {
     bool result = false;
-    if (mark_selected())
+    midipulse seqlength = get_length();
+    for (auto & er : m_events)
     {
-        midipulse length = get_length();
-        Events quantized_events;
-        for (auto & er : m_events)
+        if (er.is_selected())
         {
-            if (! er.is_marked())
-                continue;
-
             midibyte d0, d1;
             er.get_data(d0, d1);
             bool match = er.get_status() == status;
             bool canselect;
             if (status == EVENT_CONTROL_CHANGE)
-                canselect = match && d0 == cc;  /* correct status, correct cc */
+                canselect = match && d0 == cc;  /* correct status and cc    */
             else
-                canselect = match;              /* correct status, any cc     */
+                canselect = match;              /* correct status, any cc   */
 
             if (canselect)
             {
-                event e = er;                   /* copy the event             */
+                event e = er;                   /* copy the event           */
                 midipulse t = e.timestamp();
-                midipulse t_remainder = t % snap;
-                midipulse t_delta;
-                if (t_remainder < snap / 2)
-                    t_delta = -(t_remainder / divide);
+                midipulse tremainder = t % snap;
+                midipulse tdelta;
+                if (tremainder < snap / 2)
+                    tdelta = -(tremainder / divide);
                 else
-                    t_delta = (snap - t_remainder) / divide;
+                    tdelta = (snap - tremainder) / divide;
 
-                if ((t_delta + t) >= length)  /* wrap-around Note On    */
-                    t_delta = -e.timestamp();
+                if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
+                    tdelta = -e.timestamp();
 
-                er.select();                    /* selected original event    */
-                e.unmark();                     /* unmark copy of the event   */
-                e.set_timestamp(e.timestamp() + t_delta);
-                add(quantized_events, e);
+                er.set_timestamp(e.timestamp() + tdelta);
                 result = true;
-
                 if (er.is_linked() && fixlink)
                 {
                     /*
@@ -635,29 +627,26 @@ eventlist::quantize_events
                      * banner.
                      */
 
-                    event f = *er.link();
-                    midipulse ft = f.timestamp() + t_delta; /* seq32 */
-                    f.unmark();
-                    er.link()->select();
+                    event & f = *er.link();
+                    midipulse ft = f.timestamp() + tdelta; /* seq32 */
                     if (ft < 0)                     /* unwrap Note Off      */
-                        ft += length;
+                        ft += seqlength;
 
-                    if (ft > length)                /* wrap it around       */
-                        ft -= length;
+                    if (ft > seqlength)             /* wrap it around       */
+                        ft -= seqlength;
 
-                    if (ft == length)               /* trim it a little     */
+                    if (ft == seqlength)            /* trim it a little     */
                         ft -= note_off_margin();
 
                     f.set_timestamp(ft);
-                    add(quantized_events, f);
                     result = true;
                 }
             }
         }
-        (void) remove_marked();
-        merge(quantized_events);                    /* also sorts events    */
-        verify_and_link();                          /* sorts them again!!!  */
     }
+    if (result)
+        verify_and_link();                          /* sorts them again!!!  */
+
     return result;
 }
 
