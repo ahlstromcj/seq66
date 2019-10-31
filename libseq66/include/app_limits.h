@@ -523,7 +523,7 @@
  *  user-interface.
  */
 
-#define SEQ66_MAXIMUM_BEATS_PER_MEASURE   16
+#define SEQ66_MAXIMUM_BEATS_PER_MEASURE   20
 
 /**
  *  Minimum number of measures in the official length of a pattern.

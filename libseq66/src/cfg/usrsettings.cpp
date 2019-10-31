@@ -983,13 +983,17 @@ usrsettings::midi_ppqn (int value)
 
 /**
  * \setter m_midi_beats_per_measure
- *      This value can be set from 1 to 16.  The default value is 4.
+ *      This value can be set from 1 to 20.  The default value is 4.
  */
 
 void
 usrsettings::midi_beats_per_bar (int value)
 {
-    if (value >= 1 && value <= 16)
+    if
+    (
+        value >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
+        value <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
+    )
         m_midi_beats_per_measure = value;
 }
 
