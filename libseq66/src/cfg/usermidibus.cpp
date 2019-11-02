@@ -107,7 +107,7 @@ usermidibus::set_defaults ()
     m_is_valid = false;
     m_channel_count = 0;
     m_midi_bus_def.alias.clear();
-    for (int channel = 0; channel < SEQ66_MIDI_BUS_CHANNEL_MAX; ++channel)
+    for (int channel = 0; channel < c_midichannel_max; ++channel)
         m_midi_bus_def.instrument[channel] = SEQ66_GM_INSTRUMENT_FLAG;
 }
 
@@ -126,7 +126,7 @@ usermidibus::set_defaults ()
 int
 usermidibus::instrument (int channel) const
 {
-    if (m_is_valid && channel >= 0 && channel < SEQ66_MIDI_BUS_CHANNEL_MAX)
+    if (m_is_valid && channel >= 0 && channel < c_midichannel_max)
         return m_midi_bus_def.instrument[channel];
     else
         return SEQ66_GM_INSTRUMENT_FLAG;
@@ -147,7 +147,7 @@ usermidibus::instrument (int channel) const
 void
 usermidibus::set_instrument (int channel, int instrum)
 {
-    if (m_is_valid && channel >= 0 && channel < SEQ66_MIDI_BUS_CHANNEL_MAX)
+    if (m_is_valid && channel >= 0 && channel < c_midichannel_max)
     {
         m_midi_bus_def.instrument[channel] = instrum;
         if (instrum != SEQ66_GM_INSTRUMENT_FLAG)
@@ -164,7 +164,7 @@ void
 usermidibus::copy_definitions (const usermidibus & rhs)
 {
     m_midi_bus_def.alias = rhs.m_midi_bus_def.alias;
-    for (int channel = 0; channel < SEQ66_MIDI_BUS_CHANNEL_MAX; ++channel)
+    for (int channel = 0; channel < c_midichannel_max; ++channel)
     {
         m_midi_bus_def.instrument[channel] =
             rhs.m_midi_bus_def.instrument[channel];

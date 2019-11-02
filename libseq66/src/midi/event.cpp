@@ -314,7 +314,7 @@ void
 event::transpose_note (int tn)
 {
     int note = int(m_data[0]) + tn;
-    if (note >= 0 && note < SEQ66_MIDI_COUNT_MAX)
+    if (note >= 0 && note < c_midibyte_data_max)
         m_data[0] = midibyte(note);
 }
 

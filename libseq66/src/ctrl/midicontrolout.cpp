@@ -95,7 +95,7 @@ midicontrolout::initialize (int count, int buss)
     if (count > 0)
     {
         m_is_enabled = true;
-        if (buss >= 0 && buss < SEQ66_DEFAULT_BUSS_MAX)
+        if (buss >= 0 && buss < c_busscount_max)
             m_buss = bussbyte(buss);
 
         m_screenset_size = count;

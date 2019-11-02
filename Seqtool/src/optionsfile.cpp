@@ -321,7 +321,7 @@ optionsfile::parse ()
         if (ok)
         {
             sscanf(scanline(), "%ld", &buses);
-            ok = next_data_line(file) && buses > 0 && buses <= SEQ66_DEFAULT_BUSS_MAX;
+            ok = next_data_line(file) && buses > 0 && buses <= c_busscount_max;
         }
         if (ok)
         {

@@ -175,15 +175,36 @@ using midistring = std::basic_string<midibyte>;
 using midibooleans = std::vector<midibool>;
 
 /**
+ *  Defines the maximum number of MIDI values, and one more than the
+ *  highest MIDI value, which is 17.
+ *
+ * #define SEQ66_MIDI_COUNT_MAX              128
+ */
+
+const midibyte c_midibyte_data_max  = midibyte(0x80);
+
+/**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
  *  Also see null_midipulse.
  */
 
 const midibyte c_midibyte_max       = midibyte(0xFF);
-const midibyte c_midibyte_data_max  = midibyte(0x80);
 const bussbyte c_bussbyte_max       = bussbyte(0xFF);
 const midishort c_midishort_max     = midishort(0xFFFF);
 const midilong c_midilong_max       = midilong(0xFFFFFFFF);
+
+/**
+ *  Default value for c_max_busses.
+ */
+
+const int c_busscount_max          = 32;    /* was SEQ66_DEFAULT_BUSS_MAX   */
+
+/**
+ *  Indicates the maximum number of MIDI channels, counted internally from 0
+ *  to 15, and by humans (sequencer user-interfaces) from 1 to 16.
+ */
+
+const int c_midichannel_max        = 16;    /* was SEQ66_MIDI_CHANNEL_MAX   */
 
 /*
  * -------------------------------------------------------------------------

@@ -1059,7 +1059,7 @@ usrsettings::midi_beat_width (int bw)
 void
 usrsettings::midi_buss_override (midibyte buss)
 {
-    if (buss < SEQ66_DEFAULT_BUSS_MAX || SEQ66_NO_BUSS_OVERRIDE(buss))
+    if (buss < c_busscount_max || SEQ66_NO_BUSS_OVERRIDE(buss))
         m_midi_buss_override = buss;
 }
 

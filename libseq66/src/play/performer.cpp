@@ -277,7 +277,6 @@
 #include <cmath>                        /* std::round()                     */
 #include <cstring>                      /* std::memset()                    */
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_BUSS_MAX           */
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
@@ -600,7 +599,7 @@ performer::reload_mute_groups (std::string & errmessage)
  *  set_input() function passes the setting along to the input busarray.
  *
  * \param bus
- *      Provides the buss number, less than SEQ66_DEFAULT_BUSS_MAX (32).
+ *      Provides the buss number, less than c_busscount_max (32).
  *
  * \param active
  *      Indicates whether the buss or the user-interface feature is active or
@@ -610,7 +609,7 @@ performer::reload_mute_groups (std::string & errmessage)
 void
 performer::set_input_bus (bussbyte bus, bool active)
 {
-    if (bus < SEQ66_DEFAULT_BUSS_MAX)                   /* 32 busses        */
+    if (bus < c_busscount_max)                      /* 32 busses        */
     {
         if (m_master_bus->set_input(bus, active))
         {

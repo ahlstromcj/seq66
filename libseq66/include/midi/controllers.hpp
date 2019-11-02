@@ -36,7 +36,7 @@
 
 #include <string>
 
-#include "app_limits.h"                 /* SEQ66_MIDI_COUNT_MAX constant */
+#include "midibytes.hpp"                /* seq66::c_midibyte_data_max (128) */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -53,7 +53,7 @@ namespace seq66
  *  We could make this list a configuration option.  Overkill?
  */
 
-extern const std::string c_controller_names[SEQ66_MIDI_COUNT_MAX];
+extern const std::string c_controller_names[c_midibyte_data_max];
 
 }           // namespace seq66
 

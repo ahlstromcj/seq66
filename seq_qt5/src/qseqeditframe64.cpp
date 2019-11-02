@@ -1700,7 +1700,7 @@ void
 qseqeditframe64::repopulate_midich_combo (int buss)
 {
     ui->m_combo_channel->clear();
-    for (int channel = 0; channel < SEQ66_MIDI_BUS_CHANNEL_MAX; ++channel)
+    for (int channel = 0; channel < c_midichannel_max; ++channel)
     {
         char b[4];                                  /* 2 digits or less  */
         snprintf(b, sizeof b, "%2d", channel + 1);
@@ -1730,7 +1730,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
 void
 qseqeditframe64::update_midi_channel (int index)
 {
-    if (index >= 0 && index < SEQ66_MIDI_CHANNEL_MAX)
+    if (index >= 0 && index < c_midichannel_max)
     {
         seq_pointer()->set_midi_channel(index);
         set_dirty();
@@ -2683,7 +2683,7 @@ qseqeditframe64::set_event_entry
 void
 qseqeditframe64::repopulate_event_menu (int buss, int channel)
 {
-    bool ccs[SEQ66_MIDI_COUNT_MAX];
+    bool ccs[c_midibyte_data_max];
     bool note_on = false;
     bool note_off = false;
     bool aftertouch = false;
@@ -2691,7 +2691,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
-    memset(ccs, false, sizeof(bool) * SEQ66_MIDI_COUNT_MAX);
+    memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
     eventlist::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
@@ -2837,7 +2837,7 @@ qseqeditframe64::data ()
 void
 qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
 {
-    bool ccs[SEQ66_MIDI_COUNT_MAX];
+    bool ccs[c_midibyte_data_max];
     bool note_on = false;
     bool note_off = false;
     bool aftertouch = false;
@@ -2845,7 +2845,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
-    memset(ccs, false, sizeof(bool) * SEQ66_MIDI_COUNT_MAX);
+    memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
     eventlist::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);      /* reset_draw_marker()  */
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
@@ -2943,7 +2943,7 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
      *  the track, if any.
      */
 
-    const int itemcount = SEQ66_MIDI_COUNT_MAX;             /* 128          */
+    const int itemcount = c_midibyte_data_max;              /* 128          */
     for (int item = 0; item < itemcount; ++item)
     {
         std::string controller_name(c_controller_names[item]);

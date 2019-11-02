@@ -28,13 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2019-10-16
+ * \updates       2019-11-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
  *  "Patterns Panel" or "Sequences Window", which is visually presented by
  *  the Gtk::Window-derived class called mainwnd (now qsmainwnd in the Qt 5
- *  version of the application..
+ *  version of the application.
  *
  *  The Patterns Panel contains an 8-by-4 grid of "pattern boxes" or
  *  "sequence boxes".  All of the patterns in this grid comprise what is
@@ -60,13 +60,6 @@
  */
 
 #define SEQ66_SEQUENCE_MAXIMUM          1024
-
-/**
- *  Indicates the maximum number of MIDI channels, counted internally from 0
- *  to 15, and by humans (sequencer user-interfaces) from 1 to 16.
- */
-
-#define SEQ66_MIDI_CHANNEL_MAX            16
 
 /**
  *  The canonical set size.  Used in relation to the keystrokes used to access
@@ -217,12 +210,6 @@
  */
 
 #define SEQ66_NO_BUSS_OVERRIDE(b)         (midibyte(b) == SEQ66_BAD_BUSS)
-
-/**
- *  Default value for c_max_busses.
- */
-
-#define SEQ66_DEFAULT_BUSS_MAX            32
 
 /**
  *  The number of ALSA busses supported.  See mastermidibus::init().
@@ -592,13 +579,6 @@
  */
 
 /**
- *  Defines the maximum number of MIDI values, and one more than the
- *  highest MIDI value, which is 17.
- */
-
-#define SEQ66_MIDI_COUNT_MAX              128
-
-/**
  *  Defines the minimum Note On velocity.
  */
 
@@ -648,8 +628,8 @@
  *  Provides a sanity check for transposition values.
  */
 
-#define SEQ66_TRANSPOSE_UP_LIMIT        (SEQ66_MIDI_COUNT_MAX / 2)
-#define SEQ66_TRANSPOSE_DOWN_LIMIT      (-SEQ66_MIDI_COUNT_MAX / 2)
+#define SEQ66_TRANSPOSE_UP_LIMIT        (128 / 2)
+#define SEQ66_TRANSPOSE_DOWN_LIMIT      (-128 / 2)
 
 /**
  *  Indicates the maximum number of recently-opened MIDI file-names we will

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2019-03-10
+ * \updates       2019-11-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -83,7 +83,8 @@ qinputcheckbox::qinputcheckbox
 }
 
 /**
- *  Sets up the user-interface for one MIDI input buss.
+ *  Sets up the user-interface for one MIDI input buss. If the port is an ALSA
+ *  "announce" port (an input system port), it will be disabled.
  */
 
 void
@@ -93,10 +94,10 @@ qinputcheckbox::setup_ui ()
     if (not_nullptr(masterbus))
     {
         QString busname = masterbus->get_midi_in_bus_name(m_bus).c_str();
-        m_chkbox_inputactive = new QCheckBox(busname);
-
         bool inputing = masterbus->get_input(m_bus);
+        m_chkbox_inputactive = new QCheckBox(busname);
         m_chkbox_inputactive->setChecked(inputing);
+        m_chkbox_inputactive->setEnabled(! perf().is_input_system_port(m_bus));
     }
 }
 

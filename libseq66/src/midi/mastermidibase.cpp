@@ -65,7 +65,7 @@ mastermidibase::mastermidibase
     int ppqn,
     midibpm bpm
 ) :
-    m_max_busses        (c_max_busses),
+    m_max_busses        (c_busscount_max),
     m_bus_announce      (nullptr),      /* used only for ALSA announce bus  */
     m_inbus_array       (),
     m_outbus_array      (),
@@ -193,6 +193,7 @@ mastermidibase::emit_clock (midipulse tick)
 
     /*
      * Doesn't do anything: api_clock().  But where do we call flush()?
+     * Do we even need to flush clock?
      */
 
     m_outbus_array.clock(tick);
@@ -251,23 +252,25 @@ mastermidibase::flush ()
 
 /**
  *  Stops all notes on all channels on all busses.  Adapted from Oli Kester's
- *  Kepler34 project.
+ *  Kepler34 project.  Whether the buss is active or not is ultimately checked
+ *  in the busarray::play() function.  A bit wasteful, but do we really care?
  */
 
 void
 mastermidibase::panic ()
 {
+    automutex locker(m_mutex);
     event e;
     e.set_status(EVENT_NOTE_OFF);
     flush();
-    for (int bus = 0; bus < SEQ66_DEFAULT_BUSS_MAX; ++bus)
+    for (int bus = 0; bus < c_busscount_max; ++bus)
     {
-        for (int channel = 0; channel < SEQ66_MIDI_CHANNEL_MAX; ++channel)
+        for (int channel = 0; channel < c_midichannel_max; ++channel)
         {
-            for (int note = 0; note < SEQ66_MIDI_COUNT_MAX; ++note)
+            for (int note = 0; note < c_midibyte_data_max; ++note)
             {
-                e.set_data(note, SEQ66_MAX_NOTE_ON_VELOCITY);   /* 0 better? */
-                play(bus, &e, channel);
+                e.set_data(note, 0);            /* values > 0 do expression */
+                m_outbus_array.play(bus, &e, channel); // play(bus, &e, channel);
             }
         }
     }

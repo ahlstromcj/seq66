@@ -37,7 +37,8 @@
 
 #include <string>
 
-#include "app_limits.h"
+#include "app_limits.h"                 /* SEQ66_GM_INSTRUMENT_FLAG         */
+#include "midi/midibytes.hpp"           /* c_midichannel_max                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -45,20 +46,6 @@
 
 namespace seq66
 {
-
-/**
- *  Provides the maximum number of MIDI buss definitions supported in the
- *  "user" file.
- */
-
-const int c_max_busses = SEQ66_DEFAULT_BUSS_MAX;
-
-/**
- *  Manifest constant for the maximum number of "instrument" values in a
- *  usermidibus_t structure.
- */
-
-const int SEQ66_MIDI_BUS_CHANNEL_MAX = 16;
 
 /**
  *  This structure corresponds to <code> [user-midi-bus-0] </code>
@@ -86,7 +73,7 @@ struct usermidibus_t
      *  configuration file.
      */
 
-    int instrument[SEQ66_MIDI_BUS_CHANNEL_MAX];
+    int instrument[c_midichannel_max];
 };
 
 /**
@@ -172,7 +159,7 @@ public:
     }
 
     /**
-     * \getter SEQ66_MIDI_BUS_CHANNEL_MAX
+     * \getter c_midichannel_max
      * \return
      *      Returns the maximum number of MIDI buss channels.
      *      Remember that the instrument channels for each MIDI buss
@@ -181,7 +168,7 @@ public:
 
     int channel_max () const
     {
-        return SEQ66_MIDI_BUS_CHANNEL_MAX;
+        return c_midichannel_max;
     }
 
     int instrument (int channel) const;                     // getter

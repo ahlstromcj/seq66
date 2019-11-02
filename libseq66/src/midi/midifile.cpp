@@ -1603,7 +1603,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             int busscount = int(read_long());
 
 #if defined USE_MIDI_CLOCK_IN_SONGS
-            if (busscount > SEQ66_DEFAULT_BUSS_MAX)
+            if (busscount > c_busscount_max)
             {
                 (void) set_error_dump
                 (

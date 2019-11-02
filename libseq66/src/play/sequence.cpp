@@ -1106,7 +1106,7 @@ sequence::selected_box
     bool result = false;
     tick_s = m_maxbeats * m_ppqn;
     tick_f = note_h = 0;
-    note_l = SEQ66_MIDI_COUNT_MAX;
+    note_l = c_midibyte_data_max;
     for (auto & e : m_events)
     {
         result = true;
@@ -1163,7 +1163,7 @@ sequence::onsets_selected_box
     bool result = false;
     tick_s = m_maxbeats * m_ppqn;
     tick_f = note_h = 0;
-    note_l = SEQ66_MIDI_COUNT_MAX;
+    note_l = c_midibyte_data_max;
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.is_note_on())
@@ -1227,7 +1227,7 @@ sequence::clipboard_box
     tick_s = m_maxbeats * m_ppqn;
     tick_f = 0;
     note_h = 0;
-    note_l = SEQ66_MIDI_COUNT_MAX;
+    note_l = c_midibyte_data_max;
     if (m_clipboard.empty())
     {
         tick_s = tick_f = note_h = note_l = 0;
@@ -1605,8 +1605,8 @@ sequence::adjust_data_handle (midibyte status, int adata)
                 datidx = 0;
 
             datitem = adata;
-            if (datitem > (SEQ66_MIDI_COUNT_MAX - 1))
-                datitem = (SEQ66_MIDI_COUNT_MAX - 1);
+            if (datitem > (c_midibyte_data_max - 1))
+                datitem = (c_midibyte_data_max - 1);
 
             /*
              * Not possible with an unsigned value
@@ -2189,8 +2189,8 @@ sequence::change_event_data_lfo
             int newdata = value + wave_func(angle, w) * range;
             if (newdata < 0)
                 newdata = 0;
-            else if (newdata > (SEQ66_MIDI_COUNT_MAX - 1))
-                newdata = SEQ66_MIDI_COUNT_MAX - 1;
+            else if (newdata > (c_midibyte_data_max - 1))
+                newdata = c_midibyte_data_max - 1;
 
             if (event::is_two_byte_msg(status))
                 d1 = newdata;

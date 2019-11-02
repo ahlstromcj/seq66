@@ -154,6 +154,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     bgroup->addButton(ui->radio_live_mode, radio_button_live);
     bgroup->addButton(ui->radio_song_mode, radio_button_song);
 
+    /*
+     * Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
+     */
+
 	int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
 	foreach (QAbstractButton * button, bgroup->buttons())
 	{
@@ -234,7 +238,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     /*
      * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
-     * in the groupBoxInputs widget.  No need for a separate class.
+     * in the groupBoxInputs widget.  No need for a separate class.  However,
+     * note that our qinputcheckbox class controls the activation, in the GUI,
+     * of each input port, based on its buss status.
      */
 
     QVBoxLayout * vboxinputs = new QVBoxLayout;

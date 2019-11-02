@@ -81,7 +81,7 @@ void
 midi_splitter::initialize ()
 {
     m_smf0_channels_count = 0;
-    for (int i = 0; i < SEQ66_MIDI_CHANNEL_MAX; ++i)
+    for (int i = 0; i < c_midichannel_max; ++i)
         m_smf0_channels[i] = false;
 }
 
@@ -180,7 +180,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
         if (m_smf0_channels_count > 0)
         {
             int seqnum = screenset * usr().seqs_in_set();
-            for (int chan = 0; chan < SEQ66_MIDI_CHANNEL_MAX; ++chan, ++seqnum)
+            for (int chan = 0; chan < c_midichannel_max; ++chan, ++seqnum)
             {
                 if (m_smf0_channels[chan])
                 {

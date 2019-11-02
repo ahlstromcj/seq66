@@ -316,7 +316,21 @@
 
    Note that \textsl{Yoshimi} does not appear.  Perhaps
    \texttt{aplaymidi} does not subscribe properly to all ALSA notifications.
-   \textsl{Sequencer66} will detect it.
+   A better command might be this one (a different setup than above):
+
+   \begin{verbatim}
+      $ aconnect -lio
+      client 0: 'System' [type=kernel]
+          0 'Timer           '
+          1 'Announce        '
+         Connecting To: 15:0, 128:0
+      client 14: 'Midi Through' [type=kernel]
+          0 'Midi Through Port-0'
+      client 129: 'yoshimi' [type=user,pid=26335]
+          0 'input           '
+   \end{verbatim}
+
+   \textsl{Sequencer66} will detect \textsl{Yoshimi}.
    One can also run the following command instead:
 
    \begin{verbatim}

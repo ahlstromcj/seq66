@@ -46,7 +46,7 @@ namespace seq66
  *  only by the seqedit class.
  */
 
-const std::string c_controller_names[SEQ66_MIDI_COUNT_MAX] =
+const std::string c_controller_names[c_midibyte_data_max] =
 {
     "0 Bank Select",
     "1 Modulation Wheel ",

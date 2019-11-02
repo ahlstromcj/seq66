@@ -111,7 +111,7 @@ namespace seq66
  *
  *  Also used for the announce buss, and in the mastermidi_alsa::port_start()
  *  function.  There's currently some overlap between local/dest client and
- *  port numbers and the buss and port numbers of the new midibase interface.
+ *  port numbers and the buss and port numbers of the midibase interface.
  *  Also, note that the rcfile module uses the master buss to get the
  *  buss names when it writes the file.
  *
@@ -120,10 +120,9 @@ namespace seq66
  *  to use seq_client_name(), but it comes up unresolved by the damned GNU
  *  linker!  The obvious fixes don't work!
  *
- *  Another issue (2017-05-27):  ALSA returns "130" as the client ID.  That is
- *  our ALSA ID, not the ID of the client we are representing.  Thus, we
- *  should not set the buss ID and name of the parent-bus; these have already
- *  been determined.
+ *  ALSA returns "130" as the client ID.  That is our ALSA ID, not the ID of the
+ *  client we are representing.  Thus, we should not set the buss ID and name of
+ *  the parent-bus; these have already been determined.
  *
  * \param parentbus
  *      Provides much of the infor about this ALSA buss.

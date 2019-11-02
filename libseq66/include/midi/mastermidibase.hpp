@@ -69,7 +69,7 @@ protected:
 
     /**
      *  The maximum number of busses supported.  Set to c_max_busses
-     *  (SEQ66_DEFAULT_BUSS_MAX = 32) for now.
+     *  (c_busscount_max = 32) for now.
      */
 
     int m_max_busses;
