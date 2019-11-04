@@ -446,6 +446,9 @@ private:
 
     /**
      *  Indicates if overwrite recording of notes in a loop is in force.
+     *  In this mode, shortly after then end of the pattern length, the existing
+     *  notes are erased.  This lets the player try again and again to get the
+     *  pattern perfect.
      */
 
     bool m_overwrite_recording;

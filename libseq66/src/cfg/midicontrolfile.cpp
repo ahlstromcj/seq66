@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-06-19
+ * \updates       2019-11-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -220,43 +220,65 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (loadmidi || loadkeys)
     {
         bool good = line_after(file, "[loop-control]");
-        while (good)                        /* not at end of section?   */
+        int count = 0;
+        while (good)                            /* not at end of section?   */
         {
-            if (! line().empty())           /* any value in section?    */
+            if (! line().empty())               /* any value in section?    */
                 good = parse_control_stanza(automation::category::loop);
 
             if (good)
+            {
                 good = next_data_line(file);
+                ++count;
+            }
+        }
+        if (count > 0)
+        {
+            infoprintf("%d loop-control lines loaded", count);
         }
 
         good = line_after(file, "[mute-group-control]");
-        while (good)                        /* not at end of section?   */
+        count = 0;
+        while (good)                            /* not at end of section?   */
         {
-            if (! line().empty())           /* any value in section?    */
+            if (! line().empty())               /* any value in section?    */
                 good = parse_control_stanza(automation::category::mute_group);
 
             if (good)
+            {
                 good = next_data_line(file);
+                ++count;
+            }
+        }
+        if (count > 0)
+        {
+            infoprintf("%d mute-group-control lines loaded", count);
         }
 
         good = line_after(file, "[automation-control]");
-        while (good)                        /* not at end of section?   */
+        count = 0;
+        while (good)                            /* not at end of section?   */
         {
-            if (! line().empty())           /* any value in section?    */
+            if (! line().empty())               /* any value in section?    */
                 good = parse_control_stanza(automation::category::automation);
 
             if (good)
+            {
                 good = next_data_line(file);
+                ++count;
+            }
+        }
+        if (count > 0)
+        {
+            infoprintf("%d automation-control lines loaded", count);
         }
     }
-
     if (loadmidi && m_temp_midi_controls.count() > 0)
     {
         rc_ref().midi_controls().clear();
         rc_ref().midi_controls().inactive_allowed(m_allow_inactive);
         rc_ref().midi_controls() = m_temp_midi_controls;
     }
-
     if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
     {
         rc_ref().key_controls().clear();

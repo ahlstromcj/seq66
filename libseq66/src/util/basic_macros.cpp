@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2019-04-21
+ * \updates       2019-11-03
  * \license       GNU GPLv2 or above
  *
  *  These functions are used in macros such as func_message().
@@ -181,8 +181,13 @@ bool
 error_message (const std::string & msg)
 {
     if (is_debug())
-        std::cerr << "[ERROR: " << msg << "]" << std::endl;
+    {
+        std::string errmsg = msg;
+        if (errmsg.empty())
+            errmsg = "Empty error message; ask the programmer to investigate";
 
+        std::cerr << "[ERROR: " << errmsg << "]" << std::endl;
+    }
     return false;
 }
 

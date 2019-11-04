@@ -207,6 +207,10 @@ main (int argc, char * argv [])
                         infomsg += std::to_string(pp);
                         ok = seq66::info_message(infomsg);
                     }
+                    else
+                    {
+                        seq66::errormsg(errmsg);
+                    }
                 }
                 else
                 {

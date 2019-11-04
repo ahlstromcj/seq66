@@ -323,7 +323,7 @@ performer::performer (int ppqn, int rows, int columns) :
     (
         m_mute_groups, SEQ66_DEFAULT_SET_MAX, rows, columns
     ),
-    m_queued_replace_slot   (-1),   // REFACTOR
+    m_queued_replace_slot   (-1),               // REFACTOR
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
@@ -1474,7 +1474,7 @@ performer::set_playing_screenset (screenset::number setno)
 {
     if (mapper().set_playing_screenset(setno))
     {
-        announce_playscreen();              /* inform control-out       */
+        announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set);
         for (auto notify : m_notify)
@@ -3956,9 +3956,9 @@ performer::set_keep_queue (bool activate)
  *  playing state is restored.  Then the given status is reversed in
  *  control-status.
  *
- *  If the given status includes automation::ctrlstatus::queue, this is a signal to
- *  stop queuing (which is already in place elsewhere).  It also unsets the new
- *  queue-replace feature.
+ *  If the given status includes automation::ctrlstatus::queue, this is a signal
+ *  to stop queuing (which is already in place elsewhere).  It also unsets the
+ *  new queue-replace feature.
  *
  * \param a
  *      The action to be applied.  Toggle and On set the status, and Off unsets
@@ -4095,14 +4095,14 @@ performer::group_learn_complete (const keystroke & k, bool good)
 
 /**
  *  If the given sequence is active, then it is toggled as per the current value
- *  of control-status.  If control-status is automation::ctrlstatus::queue,
- *  then the sequence's toggle_queued() function is called.  This is the "mod
- *  queue" implementation.
+ *  of control-status.  If control-status is automation::ctrlstatus::queue, then
+ *  the sequence's toggle_queued() function is called.  This is the "mod queue"
+ *  implementation.
  *
- *  Otherwise, if it is automation::ctrlstatus::replace, then the status is unset,
- *  and all sequences are turned off.  Then the sequence's toggle-playing()
- *  function is called, which should turn it back on.  This is the "mod replace"
- *  implementation; it is like a Solo.  But can it be undone?
+ *  Otherwise, if it is automation::ctrlstatus::replace, then the status is
+ *  unset, and all sequences are turned off.  Then the sequence's
+ *  toggle-playing() function is called, which should turn it back on.  This is
+ *  the "mod replace" implementation; it is like a Solo.  But can it be undone?
  *
  *  This function is called in sequence_key() to implement a toggling of the
  *  sequence of the pattern slot in the current screen-set that is represented
@@ -5343,7 +5343,22 @@ performer::automation_playlist
 }
 
 /**
+ *  This function calls the seq66::read_midi_file() free function, and then sets
+ *  the PPQN value.
  *
+ * \param fn
+ *      Provides the full path file-specification for the MIDI file.
+ *
+ * \param [out] pp
+ *      Provides the destination for the effective PPQN, generally read from the
+ *      file.
+ *
+ * \param [out] errmsg
+ *      Provides the destination for an error message, if any.
+ *
+ * \return
+ *      Returns true if the function succeeded.  If false is returned, there
+ *      should be an errmsg to display.
  */
 
 bool

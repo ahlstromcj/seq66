@@ -1162,7 +1162,9 @@ qseqeditframe64::on_sequence_change (seq::number seqno)
     {
         m_seqroll->set_redraw();
         m_seqdata->set_dirty();                 // doesn't cause a refresh
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("on_sequence_change()\n");       // never called
+#endif
     }
     return result;
 }
@@ -1176,7 +1178,7 @@ qseqeditframe64::on_automation_change (automation::slot s)
 {
     if (s == automation::slot::start || s == automation::slot::stop)
     {
-        m_seqroll->set_redraw();        // more?
+        m_seqroll->set_redraw();                // more? data and event panes?
     }
     return true;
 }
@@ -1282,7 +1284,16 @@ qseqeditframe64::conditional_update ()
     {
         follow_progress();
     }
-    (void) seq_pointer()->check_loop_reset();
+    if (seq_pointer()->check_loop_reset())
+    {
+        /*
+         * Now we need to update the event and data panes.  Note that the notes
+         * update during the next pass through the loop only if more notes come
+         * in on the input buss.
+         */
+
+        set_dirty();
+    }
 }
 
 /**
