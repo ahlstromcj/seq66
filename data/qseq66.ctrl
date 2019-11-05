@@ -10,7 +10,7 @@
 # and its contents with a [midi-control-file] tag, and simply add the
 # basename (e.g. nanomap.ctrl) on a separate line.
 
-[Sequencer66]
+[Seq66]
 
 config-type = "ctrl"
 version = 0

@@ -6,7 +6,7 @@
 # This file replaces the [mute-group] section, making it a little
 # easier to manage multiple sets of mute groups.
 
-[Sequencer66]
+[Seq66]
 
 config-type = "mutes"
 version = 0
@@ -21,7 +21,7 @@ version = 0
  a '#' or '[', or that are blank, are ignored.  Start lines that must
  be blank with a space.)
 
-# This file holds the mute-groups configuration for Sequencer66.
+# This file holds the mute-groups configuration for Seq66.
 # It follows the format of the 'rc' configuration file, but is
 # stored separately for convenience.  It is always stored in the
 # main configuration directory.  To use this file, replace the

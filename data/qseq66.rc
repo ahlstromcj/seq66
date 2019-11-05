@@ -7,7 +7,7 @@
 # It loosely follows the format of the seq24 'rc' configuration
 # file, but adds some new options, and is no longer compatible.
 
-[Sequencer66]
+[Seq66]
 
 config-type = "rc"
 version = 0

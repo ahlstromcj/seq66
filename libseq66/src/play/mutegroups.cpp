@@ -37,7 +37,6 @@
 
 #include <iomanip>                      /* std::setw manipulator            */
 #include <iostream>                     /* std::cerr to note errors         */
-#include <map>                          /* std::map<> for mutegroup storage     */
 
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
 

@@ -13,7 +13,7 @@
 # The next section is only a marker to help better control configuration
 # management.
 
-[Sequencer66]
+[Seq66]
 
 config-type = "ctrl"
 version = 0

@@ -228,6 +228,7 @@ protected:
     (
         std::ifstream & file,
         const std::string & tag,
+        int position = 0,
         bool strip = true
     );
     bool next_data_line (std::ifstream & file, bool strip = true);

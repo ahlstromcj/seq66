@@ -587,7 +587,7 @@ usrfile::write ()
 
     file <<
     "\n"
-    "[Sequencer66]\n\n"
+    "[Seq66]\n\n"
     "config-type = \"usr\"\n"
     "version = 0\n"
         ;

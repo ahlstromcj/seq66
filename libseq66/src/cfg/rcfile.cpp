@@ -39,9 +39,9 @@
  *
  *  Note that the parse() and write() functions process sections in a
  *  different order!  The reason this does not mess things up is that the
- *  line_after() function always rescans from the beginning of the file.  As
- *  long as each section's sub-values are read and written in the same order,
- *  there will be no problem.
+ *  line_after() function, by default, rescans from the beginning of the file.
+ *  As long as each section's sub-values are read and written in the same
+ *  order, there will be no problem.
  *
  *  This file no longer supports LASH setup.  Eventually, we will add more
  *  modern session management.
@@ -224,7 +224,7 @@ rcfile::parse ()
     }
     file.seekg(0, std::ios::beg);                           /* seek to start */
 
-    std::string s = get_variable(file, "[Sequencer66]", "version");
+    std::string s = get_variable(file, "[Seq66]", "version");
     if (! s.empty())
     {
         int version = string_to_int(s);
@@ -267,9 +267,10 @@ rcfile::parse ()
     {
         /*
          * This call causes parsing to skip all of the header material.
-         * Please note that the line_after() function always starts from the
+         * Please note that the line_after() function starts from the
          * beginning of the file every time.  A lot a rescanning!  But it goes
-         * fast these days.
+         * fast these days.  There is a new position argument, but it is not
+         * used here.
          */
 
         ok = parse_midi_control_section(name());
@@ -669,7 +670,7 @@ rcfile::write ()
     "# It loosely follows the format of the seq24 'rc' configuration\n"
     "# file, but adds some new options, and is no longer compatible.\n"
     "\n"
-    "[Sequencer66]\n\n"
+    "[Seq66]\n\n"
     "config-type = \"rc\"\n"
     "version = 0\n"
         ;

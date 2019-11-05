@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-03-26
+ * \updates       2019-11-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -95,7 +95,7 @@ std::string
 configfile::parse_comments (std::ifstream & file)
 {
     std::string result;
-    if (line_after(file, "[comments]", false))  /* get 1st line w/out strip */
+    if (line_after(file, "[comments]", 0, false))   /* 1st line w/out strip */
     {
         do
         {
@@ -436,6 +436,11 @@ configfile::next_section (std::ifstream & file, const std::string & tag)
  *      with this tag.  Normally, the tag is a section marker, such as
  *      "[user-interface]".  Best to assume an exact match is needed.
  *
+ * \param position
+ *      Indicates the position to seek to, which defaults to 0
+ *      (std::iso::beg).  A non-default value is useful to speed up parsing in
+ *      cases where sections are always ordered.
+ *
  * \param strip
  *      If true (the default), trims white space and strips out hash-tag
  *      comments, but only in lines after the tag is found.
@@ -449,12 +454,13 @@ configfile::line_after
 (
     std::ifstream & file,
     const std::string & tag,
+    int position,
     bool strip
 )
 {
     bool result = false;
     file.clear();                               /* clear the file flags     */
-    file.seekg(0, std::ios::beg);               /* reseek to the beginning  */
+    file.seekg(std::streampos(position), std::ios::beg); /* seek to spot    */
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {

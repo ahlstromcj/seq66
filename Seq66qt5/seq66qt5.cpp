@@ -209,7 +209,7 @@ main (int argc, char * argv [])
                     }
                     else
                     {
-                        seq66::errormsg(errmsg);
+                        seq66::error_message(errmsg);
                     }
                 }
                 else

@@ -516,7 +516,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     "# and its contents with a [midi-control-file] tag, and simply add the\n"
     "# basename (e.g. nanomap.ctrl) on a separate line.\n"
     "\n"
-    "[Sequencer66]\n\n"
+    "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
     "version = 0\n"
         ;

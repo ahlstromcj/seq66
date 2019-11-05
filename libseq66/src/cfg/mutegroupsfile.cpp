@@ -222,7 +222,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
      */
 
     file <<
-        "[Sequencer66]\n\n"
+        "[Seq66]\n\n"
         "config-type = \"mutes\"\n"
         "version = 0\n"
         "\n"
@@ -231,7 +231,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# blank line by adding a space character to the line.\n\n"
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
-        "# This file holds the mute-groups configuration for Sequencer66.\n"
+        "# This file holds the mute-groups configuration for Seq66.\n"
         "# It follows the format of the 'rc' configuration file, but is\n"
         "# stored separately for convenience.  It is always stored in the\n"
         "# main configuration directory.  To use this file, replace the\n"

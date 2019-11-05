@@ -8,7 +8,7 @@
 # alias (alternate name) to each MIDI bus, MIDI channel, and MIDI
 # control codes per channel.
 
-[Sequencer66]
+[Seq66]
 
 config-type = "usr"
 version = 0

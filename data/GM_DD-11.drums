@@ -1,0 +1,320 @@
+# Generated mostly by 'midicvtpp --csv-drum tests/csvfiles/GM_DD-11_Drums.csv
+#   --output dddrums.ini', then heavily modified to simplify for Seq66.
+#
+# midicvtpp v 0.4.1.0
+#
+# This file provides easy-to-use settings for remapping some MIDI events
+# so that a MIDI file for a specific device plays back in General MIDI (GM).
+# This file consists of one unnamed section and a number of named sections
+# as described below.  Note that the 'name' values can be empty, if you don't
+# want to key them in.
+
+[Seq66]
+
+config-type = "drums"
+version = 0
+
+#  map-type         Types of maps in this file: 'drum', 'patch', or 'multi'.
+#  gm-channel       Indicates the drum channel for GM.  Usually 10.
+#  reverse          Reverse mapping. Usually better as a command-line option.
+
+map-type = drum
+gm-channel = 10
+reverse = false
+
+# The drum section:
+#
+#  [Drum 35].  Marks a GM drum-change section, one per instrument.
+#
+#  gm-name          GM name for the drum assigned to the input note.
+#  gm-note          Input note number, same as the section number.
+#                   note.
+#  dev-note         GM MIDI note value whose GM sound best matches the sound
+#                   described by dev-name.  The gm-note value is converted to
+#                   the dev-note value (unless reverse mapping is activated).
+#                   Note that the actual GM drum might not match what the old
+#                   MIDI hardware put ut.
+
+[ Drum 35 ]
+
+gm-name = "Acoustic Bass Drum"
+gm-note = 35
+dev-note = 35
+
+[ Drum 36 ]
+
+gm-name = "Bass Drum 1"
+gm-note = 36
+dev-note = 36
+
+[ Drum 37 ]
+
+gm-name = "Side Stick"
+gm-note = 37
+dev-note = 80
+
+[ Drum 38 ]
+
+gm-name = "Acoustic Snare"
+gm-note = 38
+dev-note = 40
+
+[ Drum 39 ]
+
+gm-name = "Hand Clap"
+gm-note = 39
+dev-note = 39
+
+[ Drum 40 ]
+
+gm-name = "Electric Snare"
+gm-note = 40
+dev-note = 40
+
+[ Drum 41 ]
+
+gm-name = "Low Floor Tom"
+gm-note = 41
+dev-note = 41
+
+[ Drum 42 ]
+
+gm-name = "Closed Hi-Hat"
+gm-note = 42
+dev-note = 47
+
+[ Drum 43 ]
+
+gm-name = "High Floor Tom"
+gm-note = 43
+dev-note = 50
+
+[ Drum 44 ]
+
+gm-name = "Pedal Hi-Hat"
+gm-note = 44
+dev-note = 36
+
+[ Drum 45 ]
+
+gm-name = "Low Tom"
+gm-note = 45
+dev-note = 35
+
+[ Drum 46 ]
+
+gm-name = "Open Hi-Hat"
+gm-note = 46
+dev-note = 46
+
+[ Drum 47 ]
+
+gm-name = "Low-Mid Tom"
+gm-note = 47
+dev-note = 47
+
+[ Drum 48 ]
+
+gm-name = "Hi-Mid Tom"
+gm-note = 48
+dev-note = 45
+
+[ Drum 49 ]
+
+gm-name = "Crash Cymbal 1"
+gm-note = 49
+dev-note = 38
+
+[ Drum 50 ]
+
+gm-name = "High Tom"
+gm-note = 50
+dev-note = 48
+
+[ Drum 51 ]
+
+gm-name = "Ride Cymbal 1"
+gm-note = 51
+dev-note = 76
+
+[ Drum 52 ]
+
+gm-name = "Chinese Cymbal"
+gm-note = 52
+dev-note = 40
+
+[ Drum 53 ]
+
+gm-name = "Ride Bell"
+gm-note = 53
+dev-note = 50
+
+[ Drum 54 ]
+
+gm-name = "Tambourine"
+gm-note = 54
+dev-note = 39
+
+[ Drum 55 ]
+
+gm-name = "Splash Cymbal"
+gm-note = 55
+dev-note = 56
+
+[ Drum 56 ]
+
+gm-name = "Cowbell"
+gm-note = 56
+dev-note = 70
+
+[ Drum 57 ]
+
+gm-name = "Crash Cymbal 2"
+gm-note = 57
+dev-note = 42
+
+[ Drum 58 ]
+
+gm-name = "Vibraslap"
+gm-note = 58
+dev-note = 58
+
+[ Drum 59 ]
+
+gm-name = "Ride Cymbal 2"
+gm-note = 59
+dev-note = 46
+
+[ Drum 60 ]
+
+gm-name = "Hi Bongo"
+gm-note = 60
+dev-note = 49
+
+[ Drum 61 ]
+
+gm-name = "Low Bongo"
+gm-note = 61
+dev-note = 57
+
+[ Drum 62 ]
+
+gm-name = "Mute Hi Conga"
+gm-note = 62
+dev-note = 51
+
+[ Drum 63 ]
+
+gm-name = "Open Hi Conga"
+gm-note = 63
+dev-note = 59
+
+[ Drum 64 ]
+
+gm-name = "Low Conga"
+gm-note = 64
+dev-note = 64
+
+[ Drum 65 ]
+
+gm-name = "High Timbale"
+gm-note = 65
+dev-note = 63
+
+[ Drum 66 ]
+
+gm-name = "Low Timbale"
+gm-note = 66
+dev-note = 62
+
+[ Drum 67 ]
+
+gm-name = "High Agogo"
+gm-note = 67
+dev-note = 61
+
+[ Drum 68 ]
+
+gm-name = "Low Agogo"
+gm-note = 68
+dev-note = 60
+
+[ Drum 69 ]
+
+gm-name = "Cabasa"
+gm-note = 69
+dev-note = 66
+
+[ Drum 70 ]
+
+gm-name = "Maracas"
+gm-note = 70
+dev-note = 65
+
+[ Drum 71 ]
+
+gm-name = "Short Whistle"
+gm-note = 71
+dev-note = 71
+
+[ Drum 72 ]
+
+gm-name = "Long Whistle"
+gm-note = 72
+dev-note = 75
+
+[ Drum 73 ]
+
+gm-name = "Short Guiro"
+gm-note = 73
+dev-note = 75
+
+[ Drum 74 ]
+
+gm-name = "Long Guiro"
+gm-note = 74
+dev-note = 68
+
+[ Drum 75 ]
+
+gm-name = "Claves"
+gm-note = 75
+dev-note = 67
+
+[ Drum 76 ]
+
+gm-name = "Hi Wood Block"
+gm-note = 76
+dev-note = 73
+
+[ Drum 77 ]
+
+gm-name = "Low Wood Block"
+gm-note = 77
+dev-note = 74
+
+[ Drum 78 ]
+
+gm-name = "Mute Cuica"
+gm-note = 78
+dev-note = 71
+
+[ Drum 79 ]
+
+gm-name = "Open Cuica"
+gm-note = 79
+dev-note = 55
+
+[ Drum 80 ]
+
+gm-name = "Mute Triangle"
+gm-note = 80
+dev-note = 44
+
+[ Drum 81 ]
+
+gm-name = "Open Triangle"
+gm-note = 81
+dev-note = 40
+
+# vim: ts=3 sw=3 et ft=dosini
