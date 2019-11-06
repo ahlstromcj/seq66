@@ -99,6 +99,49 @@ notemapper::add (int devnote, int gmnote, const std::string & gmname)
     return result;
 }
 
+/**
+ *  Looks up the device-note in the map, decides if the map is a reversed
+ *  map or note, and then reconstructs the "drum" section in a string.
+ */
+
+std::string
+notemapper::to_string (int devnote)
+{
+    std::string result;
+    int gmnote;
+    const std::string & gmname;
+    auto noteiterator = m_note_map.find(devnote);
+    if (noteiterator != m_note_map.end())
+    {
+        notepair & np = noteiterator.second;
+        int gmnote;
+        int devnote;
+        if (map_reversed)
+        {
+            gmnote = np.dev_value();
+            devnote = np.gm_value();
+        }
+        else
+        {
+            devnote = np.dev_value();
+            gmnote = np.gm_value();
+        }
+        result = "\n[ Drum ";
+        result += std::to_string(gmnote);
+        result += "]\n\n";
+        result += "gm-name = \"";
+        result += np.gm_name();
+        result += "\"\n"
+        result += "gm-note = ";
+        result += np.gm_value();
+        result += "\n";
+        result += "dev-note = ";
+        result += np.dev_value();
+        result += "\n";
+    }
+    return result;
+}
+
 /*
  * notemapper.cpp
  *

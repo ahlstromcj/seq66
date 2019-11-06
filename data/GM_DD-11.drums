@@ -14,11 +14,13 @@
 config-type = "drums"
 version = 0
 
+[notemap-flags]
+
 #  map-type         Types of maps in this file: 'drum', 'patch', or 'multi'.
 #  gm-channel       Indicates the drum channel for GM.  Usually 10.
 #  reverse          Reverse mapping. Usually better as a command-line option.
 
-map-type = drum
+map-type = drums
 gm-channel = 10
 reverse = false
 

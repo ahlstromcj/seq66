@@ -17,26 +17,24 @@
  */
 
 /**
- * \file          mutegroupsfile.cpp
+ * \file          notemapfile.cpp
  *
  *  This module declares/defines the base class for managing the reading and
  *  writing of the mute-group sections of the "rc" file.
  *
  * \library       sequencer64 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
- * \date          2018-11-13
- * \updates       2019-09-24
+ * \date          2019-11-05
+ * \updates       2019-11-06
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <iomanip>                      /* std::setw()                      */
 
-#include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
-#include "cfg/settings.hpp"             /* seq66::rc(), as rc_ref()         */
-#include "play/mutegroups.hpp"          /* seq66::mutegroups, etc.          */
-#include "util/calculations.hpp"        /* seq66::string_to_bool(), etc.    */
-#include "util/strfunctions.hpp"        /* seq66::write_stanza_bits()       */
+#include "cfg/notemapfile.hpp"          /* seq66::notemapfile class         */
+#include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
+#include "util/calculations.hpp"        /* seq66::string_to_bool()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -48,29 +46,26 @@ namespace seq66
 /**
  *  Principal constructor.
  *
+ * \param mapper
+ *      Provides the notemapper reference to be acted upon.
+ *
  * \param filename
  *      Provides the name of the mute-groups file; this is usually a full path
  *      file-specification to the "mutes" file using this object.
  *
  * \param rcs
- *      The source/destination for the configuration information.
- *
- * \param allowinactive
- *      If true (the default is false), allow inactive (all 0's) mute-groups
- *      to be read and stored.
+ *      The configfile currently requires and rcsetting object, but it is not
+ *      yet used here.
  */
 
-mutegroupsfile::mutegroupsfile
+notemapfile::notemapfile
 (
+    notemapper & mapper,
     const std::string & filename,
-    rcsettings & rcs,
-    bool allowinactive
+    rcsettings & rcs
 ) :
-    configfile              (filename, rcs),
-    m_legacy_format         (true),                 // true only for now
-    m_allow_inactive        (allowinactive),
-    m_section_count         (mutegroup::ROWS_DEFAULT),
-    m_mute_count            (mutegroup::COLS_DEFAULT)
+    configfile      (filename, rcs),
+    m_note_mapper   (mapper)
 {
     // Empty body
 }
@@ -79,7 +74,7 @@ mutegroupsfile::mutegroupsfile
  *  A rote destructor.
  */
 
-mutegroupsfile::~mutegroupsfile ()
+notemapfile::~notemapfile ()
 {
     // ~configfile() called automatically
 }
@@ -98,7 +93,7 @@ mutegroupsfile::~mutegroupsfile ()
  */
 
 bool
-mutegroupsfile::parse_stream (std::ifstream & file)
+notemapfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to start    */
@@ -106,51 +101,43 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     /*
      * [comments] Header commentary is skipped during parsing.  However, we
      * now try to read an optional comment block.  This block is part of the
-     * mutegroups container, not part of the rcsettings object.
+     * notemap container, not part of the rcsettings object.
      */
 
     std::string s = parse_comments(file);
     if (! s.empty())
-        rc_ref().mute_groups().comments_block().set(s);
-
-    s = get_variable(file, "[mute-group-flags]", "save-mutes-to");
-    if (! s.empty())
-        rc_ref().mute_group_save(s);
-
-    s = get_variable(file, "[mute-group-flags]", "mute-group-rows");
-    if (! s.empty())
-        rc_ref().mute_groups().rows(string_to_int(s));
-
-    s = get_variable(file, "[mute-group-flags]", "mute-group-columns");
-    if (! s.empty())
-        rc_ref().mute_groups().columns(string_to_int(s));
-
-    s = get_variable(file, "[mute-group-flags]", "groups-format");
-    if (! s.empty())
     {
-        bool usehex = (s == "hex");
-        rc_ref().mute_groups().group_format_hex(usehex);
+        // rc_ref().mute_groups().comments_block().set(s);
+
+        if (rc().verbose()
+            std::cout << s;
     }
 
-    /*
-     * TODO: see if we want a flag similar to rcsettings::load_midi_controls()
-     *       for mute groups.
-     */
+    s = get_variable(file, "[notemap-flags]", "map-type");
+    if (! s.empty())
+        mapper().map_type(s);
 
+    s = get_variable(file, "[notemap-flags]", "gm-channel");
+    if (! s.empty())
+        mapper().gm_channel(std::to_int(s));
+
+    s = get_variable(file, "[notemap-flags]", "reverse");
+    if (! s.empty())
+        mapper().map_type(string_to_bool(s));
+
+    // CONTINUE HERE
+    // CONTINUE HERE
+    // CONTINUE HERE
     bool good = line_after(file, "[mute-groups]");
     rc_ref().mute_groups().clear();
     while (good)                        /* not at end of section?   */
     {
         if (! line().empty())           /* any value in section?    */
         {
-            good = parse_mutes_stanza();
+            good = /// parse_mutes_stanza();
             if (good)
                 good = next_data_line(file);
         }
-    }
-    if (rc_ref().mute_groups().count() == 0)
-    {
-        rc_ref().mute_groups().reset_defaults();
     }
     return result;
 }
@@ -168,7 +155,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
  */
 
 bool
-mutegroupsfile::parse ()
+notemapfile::parse ()
 {
     bool result = true;
     std::ifstream file(name(), std::ios::in | std::ios::ate);
@@ -180,8 +167,7 @@ mutegroupsfile::parse ()
     {
         errprintf
         (
-            "mutegroups::parse(): error opening %s for reading",
-            name().c_str()
+            "notemap::parse(): error opening %s for reading", name().c_str()
         );
         result = false;
     }
@@ -203,7 +189,7 @@ mutegroupsfile::parse ()
  */
 
 bool
-mutegroupsfile::write_stream (std::ofstream & file)
+notemapfile::write_stream (std::ofstream & file)
 {
     file
         << "# Seq66 0.90.1 (and above) mute-groups configuration file\n"
@@ -211,8 +197,8 @@ mutegroupsfile::write_stream (std::ofstream & file)
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
         << "#\n"
-        << "# This file replaces the [mute-group] section, making it a little\n"
-        << "# easier to manage multiple sets of mute groups.\n"
+        << "# This file can be used to convert the percussion of non-GM devices\n"
+        << "# to GM, as best as permitted by GM percussion.\n"
         << "\n"
         ;
 
@@ -222,7 +208,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
 
     file <<
         "[Seq66]\n\n"
-        "config-type = \"mutes\"\n"
+        "config-type = \"drums\"\n"
         "version = 0\n"
         "\n"
         "# The [comments] section can document this file.  Lines starting\n"
@@ -230,27 +216,18 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# blank line by adding a space character to the line.\n\n"
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
-        "# This file holds the mute-groups configuration for Seq66.\n"
-        "# It follows the format of the 'rc' configuration file, but is\n"
-        "# stored separately for convenience.  It is always stored in the\n"
-        "# main configuration directory.  To use this file, replace the\n"
-        "# [mute-group] section and its contents with a [mute-group-file]\n"
-        "# tag, and simply add the basename (e.g. nanomutes.mutes) on a\n"
-        "# separate line.\n"
+        "# This file holds the drum-note mapping configuration for Seq66.\n"
+        "# It is always stored in the main configuration directory.  To use\n"
+        "# this file, ... we need to add a user-nterface for it.  TODO!\n"
         "#\n"
-        "# save-mutes-to: 'both' writes the mutes value to both the mutes\n"
-        "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
-        "# and 'mutes' only to the mutesfile.\n"
+        "# map-type: drum; indicates what kind of mapping is done, open for\n"
+        "# future expansion.\n"
         "# \n"
-        "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
-        "# grid.  For now, keep these values at 4 and 8.\n"
-        "# \n"
-        "# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means\n"
-        "# to write them as hexadecimal numbers (e.g. 0xff), which will be\n"
-        "# useful with larger set sizes.\n"
+        "# gm-channel: Indicates the channel to be enforced for the converted\n"
+        "# events.\n"
         ;
 
-	bool result = write_mute_groups(file);
+	bool result = write_map_entries(file);
 	if (result)
 	{
 		file
@@ -273,7 +250,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
  */
 
 bool
-mutegroupsfile::write ()
+notemapfile::write ()
 {
     std::ofstream file(name(), std::ios::out | std::ios::trunc);
     bool result = file.is_open();
@@ -310,37 +287,16 @@ static const char * const sg_scanf_fmt_1 =
  */
 
 bool
-mutegroupsfile::write_mute_groups (std::ofstream & file)
+notemapfile::write_map_entries (std::ofstream & file)
 {
     bool result = file.is_open();
     if (result)
     {
-        bool usehex = rc_ref().mute_groups().group_format_hex();
-        std::string save = rc_ref().mute_group_save_label();
-        std::string gf = usehex ? "hex" : "bin" ;
-        int rows = rc_ref().mute_groups().rows();
-        int columns = rc_ref().mute_groups().columns();
-        file << "\n[mute-group-flags]\n\n"
-            << "save-mutes-to = " << save << "\n"
-            << "mute-group-rows = " << rows << "\n"
-            << "mute-group-columns = " << columns << "\n"
-            << "groups-format = " << gf << "\n"
-            ;
-
-        file << "\n[mute-groups]\n\n" <<
-        "# All mute-group values are saved in this 'mutes' file, even if they\n"
-        "# all are zero; but if all are zero, they will be stripped out from\n"
-        "# the MIDI file by the strip-empty-mutes functionality. If a hex number\n"
-        "# is used, then each number represents a bit mask, rather than a single\n"
-        "# bit.\n"
-        "\n"
-            ;
-
         for (const auto & stz : rc_ref().mute_groups().list())
         {
             int gmute = stz.first;
             const mutegroup & m = stz.second;
-            std::string stanza = write_stanza_bits(m.get(), usehex);
+//          std::string stanza = write_stanza_bits(m.get(), usehex);
             if (! stanza.empty())
             {
                 file << std::setw(2) << gmute << " " << stanza << std::endl;
@@ -366,7 +322,7 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
  */
 
 bool
-mutegroupsfile::parse_mutes_stanza ()
+notemapfile::parse_mutes_stanza ()
 {
     int group = string_to_int(line());
     bool result = group >= 0 && group < 512;            /* a sanity check   */
@@ -383,7 +339,7 @@ mutegroupsfile::parse_mutes_stanza ()
 }           // namespace seq66
 
 /*
- * mutegroupsfile.cpp
+ * notemapfile.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

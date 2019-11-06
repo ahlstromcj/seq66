@@ -193,46 +193,17 @@ private:
  private:
 
     /**
-     *    Provides a nice tag name for the setup, nothing more.  It can be
-     *    anything.  A common value is the name of the program that the INI
-     *    file is meant for.
-     *
-     *    The name of this attribute in the INI file is "setup-name".  Case
-     *    is significant.
-     */
-
-    std::string m_setup_name;
-
-    /**
-     *    Saves the name of the INI file, which can be useful in the
-     *    show_maps() function.
-     */
-
-    std::string m_ini_filespec;
-
-    /**
-     *    Saves the name of the input MIDI file, for information only.
-     */
-
-    std::string m_in_filename;
-
-    /**
-     *    Saves the name of the output MIDI file, for information only.
-     */
-
-    std::string m_out_filename;
-
-    /**
      *    Indicates what kind of mapping is allegedly provided by the file.
      *    This can be one of the following values:
      *
-     *       -  "drum".  The file describes mapping one pitch/channel to
+     *       -  "drums".  The file describes mapping one pitch/channel to
      *          another pitch/channel, used mostly for coercing old drum
      *          machines to something akin to a General MIDI kit.
-     *       -  "patch".  The file describes program (patch) mappings, used
+     *       -  "patches".  The file describes program (patch) mappings, used
      *          to map old devices patch change values to General MIDI.
-     *       -  "multi".  The file describes both "drum" and "patch"
-     *          mappings.
+     *          Not yet supported.
+     *       -  "multi".  The file describes both "drums" and "patchs"
+     *          mappings.  Not yet supported.
      *
      *    The name of this attribute in the INI file is "map-type".  Case
      *    is significant.
@@ -370,26 +341,6 @@ private:
        );
     }
 
-    const std::string & setup_name () const
-    {
-       return m_setup_name;
-    }
-
-    const std::string & ini_filename () const
-    {
-       return m_ini_filespec;
-    }
-
-    const std::string & in_filename () const
-    {
-       return m_in_filename;
-    }
-
-    const std::string & out_filename () const
-    {
-       return m_out_filename;
-    }
-
     const std::string & map_type () const
     {
        return m_map_type;
@@ -415,33 +366,38 @@ private:
        return m_is_valid;
     }
 
-    /**
-     * \getter m_note_map
-     *    Returns a reference to the note map.  The weird thing was that,
-     *    when I had left the reference operator out, show_note_map() would
-     *    show a lot of notes missing from the map, as if copying the map
-     *    wasn't working properly!!!
-     */
-
     const midimap & note_map () const
     {
        return m_note_map;
     }
-
-    /**
-     * \getter m_map_reversed
-     */
 
     bool map_reversed () const
     {
        return m_map_reversed;
     }
 
- };
+public:
 
-}                 // namespace seq66
+    void map_type (const std::string & mp)
+    {
+        m_map_type = mp;
+    }
 
-#endif            // SEQ66_NOTEMAPPER_HPP
+    void map_reversed (bool flag)
+    {
+        m_map_reversed = flag;
+    }
+
+    void gm_channel (int ch)
+    {
+       m_gm_channel = ch - 1;
+    }
+
+};                  // class notemapper
+
+}                   // namespace seq66
+
+#endif              // SEQ66_NOTEMAPPER_HPP
 
  /*
   * notemapper.hpp
