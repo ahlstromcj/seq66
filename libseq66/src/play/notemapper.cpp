@@ -59,16 +59,17 @@ namespace seq66
 
 notemap::notemap
 (
-   int devvalue,
-   int gmvalue,
-   const std::string & gmname
+    int devvalue,
+    int gmvalue,
+    const std::string & gmname
 ) :
-   m_dev_value    (devvalue),
-   m_gm_value     (gmvalue),
-   m_gm_name      (gmname),
-   m_remap_count  (0)
+    basesettings   (),
+    m_dev_value    (devvalue),
+    m_gm_value     (gmvalue),
+    m_gm_name      (gmname),
+    m_remap_count  (0)
 {
-   // no other code
+    // no other code
 }
 
 /**

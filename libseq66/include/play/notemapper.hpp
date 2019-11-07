@@ -61,6 +61,8 @@
 #include <map>
 #include <string>
 
+#include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
+
 namespace seq66
 {
 
@@ -76,8 +78,8 @@ namespace seq66
   *    functions that can be used in the C library libmidifilex.
   */
 
- class notemapper
- {
+class notemapper final : public basesettings
+{
 
     friend void show_maps
     (

@@ -111,7 +111,11 @@ mutegroupsfile::parse_stream (std::ifstream & file)
 
     std::string s = parse_comments(file);
     if (! s.empty())
+    {
         rc_ref().mute_groups().comments_block().set(s);
+        if (rc().verbose()
+            std::cout << s;
+    }
 
     s = get_variable(file, "[mute-group-flags]", "save-mutes-to");
     if (! s.empty())
