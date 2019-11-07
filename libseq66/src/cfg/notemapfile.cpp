@@ -107,8 +107,6 @@ notemapfile::parse_stream (std::ifstream & file)
     std::string s = parse_comments(file);
     if (! s.empty())
     {
-        // rc_ref().mute_groups().comments_block().set(s);
-
         if (rc().verbose()
             std::cout << s;
     }
@@ -125,19 +123,39 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
         mapper().map_type(string_to_bool(s));
 
-    // CONTINUE HERE
-    // CONTINUE HERE
-    // CONTINUE HERE
-    bool good = line_after(file, "[mute-groups]");
-    rc_ref().mute_groups().clear();
+    /*
+     * This function gets the position before the first "Drum" section.
+     * But it also, like line_after(), gets the line().
+     *
+     * MOVE TO CONFIGFILE
+     */
+
+    int note = (-1);
+    int position = find_tag(file, "[ Drum");
+    good = position > 0;
+    if (good)
+    {
+        printf("drum line %s\n", line().c_str();  // JUST A TEST
+        note = get_tag_value(line());
+    }
+    if (note == (-1))
+    {
+        errprint("No [Drum 00] tag value found");
+        good = false;
+    }
     while (good)                        /* not at end of section?   */
     {
-        if (! line().empty())           /* any value in section?    */
+        std::string tag = "[Drum ";
+        tag += std::to_string(note);
+        tag += "]";
+        good = line_after(file, tag);
+        if (good)
         {
             good = /// parse_mutes_stanza();
             if (good)
                 good = next_data_line(file);
         }
+        ++note;
     }
     return result;
 }

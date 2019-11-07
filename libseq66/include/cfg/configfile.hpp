@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-06-07
+ * \updates       2019-11-06
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -106,6 +106,12 @@ protected:
      */
 
     std::string m_line;
+
+    /**
+     *  Holds the stream position before a line is obtained.
+     */
+
+    std::streampos m_prev_pos;
 
 public:
 
@@ -231,6 +237,8 @@ protected:
         int position = 0,
         bool strip = true
     );
+    int find_tag (std::ifstream & file, const std::string & tag);
+    int get_tag_value (const std::string & tag);
     bool next_data_line (std::ifstream & file, bool strip = true);
     bool next_section (std::ifstream & file, const std::string & tag);
     std::string get_variable

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-11-05
+ * \updates       2019-11-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,7 +64,8 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_rc            (rcs),
     m_error_message (),
     m_name          (name),
-    m_line          ()                  /* input std::string                */
+    m_line          (),
+    m_prev_pos      (0)
 {
     // no code needed
 }
@@ -148,7 +149,7 @@ configfile::make_error_message
  *  get_line().
  *
  * \param file
- *      The refernce to the opened input file-stream.
+ *      The reference to the opened input file-stream.
  *
  * \param strip
  *      If true, then strip out any following comment in the line, as denoted
@@ -163,6 +164,7 @@ configfile::make_error_message
 bool
 configfile::get_line (std::ifstream & file, bool strip)
 {
+    m_prev_pos = file.tellg();
     (void) std::getline(file, m_line);
     if (strip)
     {
@@ -174,15 +176,14 @@ configfile::get_line (std::ifstream & file, bool strip)
     std::cout << "line: '" << m_line << "'" << std::endl;
 #endif
 
-    return file.good();             // TOO MUCH: && ! m_line.empty();
+    return file.good();
 }
 
 /**
- *  Gets the next line of data from an input stream.  If the line starts with
- *  a number-sign, or a null, it is skipped, to try the next line.  This
- *  occurs until a section marker ("[") or an EOF is encountered.
- *
- *  Member m_line is a "return" value (side-effect).
+ *  Gets the next line of data from an input stream.  If the line starts with a
+ *  number-sign, or a null, it is skipped, to try the next line.  This occurs
+ *  until a section marker ("[") or an EOF is encountered.  Member m_line is a
+ *  "return" value (side-effect).
  *
  * \param file
  *      Points to an input stream.  We converted this item to a reference;
@@ -197,10 +198,9 @@ configfile::get_line (std::ifstream & file, bool strip)
  *
  * \return
  *      Returns true if a presumed data line was found.  False is returned if
- *      not found before an EOF or a section marker ("[") is found.  This is a
- *      a new (ca 2016-02-14) feature of this function, to assist in adding
- *      new data to the file without crapping out on old-style configuration
- *      files.
+ *      not found before an EOF or a section marker ("[") is found.  This is a a
+ *      new (ca 2016-02-14) feature of this function, to assist in adding new
+ *      data to the file without crapping out on old-style configuration files.
  */
 
 bool
@@ -482,6 +482,72 @@ configfile::line_after
     if (result)
         result = next_data_line(file, strip);   /* might preserve space etc */
 
+    return result;
+}
+
+/**
+ *  Like line_after, finds a tag, but merely marks the position preceding the
+ *  tag.  The idea is to find a number of tags that might be ordered by number.
+ *
+ * \param file
+ *      Points to the input file stream.
+ *
+ * \param tag
+ *      Provides a tag to be found, which, for this function, is usually a
+ *      partial tag, such as "[ Drum".
+ *
+ * \return
+ *      Returns the position of the line before the tag, converted to an
+ *      integer.
+ */
+
+int
+configfile::find_tag (std::ifstream & file, const std::string & tag)
+{
+    int result = 0;
+    file.clear();                               /* clear the file flags     */
+    file.seekg(0, std::ios::beg);               /* seek to the beginning    */
+    bool ok = get_line(file, true);             /* trims spaces/comments    */
+    while (ok)                                  /* includes the EOF check   */
+    {
+        result = strncompare(m_line, tag, tag.length());
+        if (result)
+        {
+            result = int(m_prev_pos);
+            break;
+        }
+        else
+        {
+            if (file.bad())
+            {
+                errprint("bad file stream reading config file");
+            }
+        }
+    }
+    return result;
+}
+
+/**
+ *
+ * \verbatim
+ *      [Drum 33]
+ * \endverbatim
+ */
+
+int
+configfile::get_tag_value (const std::string & tag)
+{
+    int result = (-1);
+    auto pos = tag.find_first_of("0123456789");
+    if (pos != std::string::npos)
+    {
+        std::string buff = tag.substr(pos);     /* "35]" */
+        result = std::stoi(buff);
+    }
+    else
+    {
+        errprintf("[%s] tag has no intger value", tag.c_str());
+    }
     return result;
 }
 
