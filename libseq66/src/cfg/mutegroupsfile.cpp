@@ -31,6 +31,7 @@
  */
 
 #include <iomanip>                      /* std::setw()                      */
+#include <iostream>                     /* std::cout                        */
 
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
 #include "cfg/settings.hpp"             /* seq66::rc(), as rc_ref()         */
@@ -113,7 +114,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (! s.empty())
     {
         rc_ref().mute_groups().comments_block().set(s);
-        if (rc().verbose()
+        if (rc().verbose())
             std::cout << s;
     }
 

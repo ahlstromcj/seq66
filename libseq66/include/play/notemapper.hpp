@@ -185,12 +185,12 @@ private:
      *    another set of values.
      */
 
-    using midimap = std::map<int, notemap>;
-    using iterator = midimap::iterator iterator;
-    using const_iterator = midimap::const_iterator const_iterator;
-    using midimap_pair = std::pair<int, notemap>;
-    using midimap_result = std::pair<iterator, bool>;
-    using intmap_result = std::pair<std::map<int, int>::iterator, bool>;
+    using midimap = std::map<int, notepair>;
+//  using iterator = midimap::iterator;
+//  using const_iterator = midimap::const_iterator;
+//  using midimap_pair = std::pair<int, notepair>;
+//  using midimap_result = std::pair<iterator, bool>;
+//  using intmap_result = std::pair<std::map<int, int>::iterator, bool>;
 
  private:
 

@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2019-06-17
+# \update      2019-11-08
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -88,6 +88,7 @@ pkginclude_HEADERS = \
  cfg/configfile.hpp \
  cfg/midicontrolfile.hpp \
  cfg/mutegroupsfile.hpp \
+ cfg/notemapfile.hpp \
  cfg/rcfile.hpp \
  cfg/rcsettings.hpp \
  cfg/recent.hpp \
@@ -129,6 +130,7 @@ pkginclude_HEADERS = \
  play/clockslist.hpp \
  play/inputslist.hpp \
  play/mutegroups.hpp \
+ play/notemapper.hpp \
  play/mutegroup.hpp \
  play/performer.hpp \
  play/playlist.hpp \

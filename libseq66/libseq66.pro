@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2019-10-20
+# \update      2019-11-08
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -44,6 +44,7 @@ HEADERS += include/app_limits.h \
  include/cfg/configfile.hpp \
  include/cfg/midicontrolfile.hpp \
  include/cfg/mutegroupsfile.hpp \
+ include/cfg/notemapfile.hpp \
  include/cfg/rcfile.hpp \
  include/cfg/rcsettings.hpp \
  include/cfg/recent.hpp \
@@ -72,6 +73,7 @@ HEADERS += include/app_limits.h \
  include/play/inputslist.hpp \
  include/play/mutegroup.hpp \
  include/play/mutegroups.hpp \
+ include/play/notemapper.hpp \
  include/play/performer.hpp \
  include/play/playlist.hpp \
  include/play/screenset.hpp \
@@ -101,6 +103,7 @@ SOURCES += src/main_impl.cpp \
  src/cfg/configfile.cpp \
  src/cfg/midicontrolfile.cpp \
  src/cfg/mutegroupsfile.cpp \
+ src/cfg/notemapfile.cpp \
  src/cfg/rcfile.cpp \
  src/cfg/rcsettings.cpp \
  src/cfg/recent.cpp \
@@ -138,6 +141,7 @@ SOURCES += src/main_impl.cpp \
  src/midi/wrkfile.cpp \
  src/play/mutegroup.cpp \
  src/play/mutegroups.cpp \
+ src/play/notemapper.cpp \
  src/play/performer.cpp \
  src/play/playlist.cpp \
  src/play/screenset.cpp \

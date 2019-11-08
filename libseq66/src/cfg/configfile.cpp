@@ -267,9 +267,9 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  *      Provides the variablename to be found in the specified tag section.
  *
  * \return
- *      If the "variablename = value" clause is found, then the
- *      the value that is read is returned.  Otherwise, an empty string is
- *      returned, which might be an error.
+ *      If the "variablename = value" clause is found, then the the value that
+ *      is read is returned.  Otherwise, an empty string is returned, which
+ *      might be an error.
  */
 
 std::string
@@ -277,11 +277,12 @@ configfile::get_variable
 (
     std::ifstream & file,
     const std::string & tag,
-    const std::string & variablename
+    const std::string & variablename,
+    int position
 )
 {
     std::string result;
-    bool good = line_after(file, tag);
+    bool good = line_after(file, tag, position);
     while (good)                                /* not at end of section?   */
     {
         if (! line().empty())                   /* any value in section?    */
@@ -528,6 +529,8 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
 }
 
 /**
+ *  Extracts an integer value from a tag like the following.  For this entry,
+ *  the tag to use is "[Drum".
  *
  * \verbatim
  *      [Drum 33]

@@ -245,7 +245,8 @@ protected:
     (
         std::ifstream & file,
         const std::string & tag,
-        const std::string & variablename
+        const std::string & variablename,
+        int position = 0
     );
 
 };          // class configfile

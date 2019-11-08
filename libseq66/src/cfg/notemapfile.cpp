@@ -25,15 +25,16 @@
  * \library       sequencer64 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2019-11-06
+ * \updates       2019-11-08
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <iomanip>                      /* std::setw()                      */
+#include <iostream>                     /* std::cout                        */
 
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile class         */
-#include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
+#include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
 #include "util/calculations.hpp"        /* seq66::string_to_bool()          */
 
 /*
@@ -108,7 +109,7 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
     {
         mapper().comments_block().set(s);
-        if (rc().verbose()
+        if (rc().verbose())
             std::cout << s;
     }
 
@@ -118,11 +119,11 @@ notemapfile::parse_stream (std::ifstream & file)
 
     s = get_variable(file, "[notemap-flags]", "gm-channel");
     if (! s.empty())
-        mapper().gm_channel(std::to_int(s));
+        mapper().gm_channel(std::stoi(s));
 
     s = get_variable(file, "[notemap-flags]", "reverse");
     if (! s.empty())
-        mapper().map_type(string_to_bool(s));
+        mapper().map_reversed(string_to_bool(s));
 
     /*
      * This function gets the position before the first "Drum" section.
@@ -133,10 +134,10 @@ notemapfile::parse_stream (std::ifstream & file)
 
     int note = (-1);
     int position = find_tag(file, "[ Drum");
-    good = position > 0;
+    bool good = position > 0;
     if (good)
     {
-        printf("drum line %s\n", line().c_str();  // JUST A TEST
+        printf("drum line %s\n", line().c_str());  // JUST A TEST
         note = get_tag_value(line());
     }
     if (note == (-1))
@@ -149,12 +150,26 @@ notemapfile::parse_stream (std::ifstream & file)
         std::string tag = "[Drum ";
         tag += std::to_string(note);
         tag += "]";
-        good = line_after(file, tag);
+
+        int devnote;
+        int gmnote;
+        std::string gmname = get_variable(file, tag, "gm-name", position);
+        good = ! gmname.empty();
         if (good)
         {
-            good = /// parse_mutes_stanza();
+            std::string tmp = get_variable(file, tag, "gm-note", position);
+            good = ! tmp.empty();
             if (good)
-                good = next_data_line(file);
+            {
+                gmnote = std::stoi(tmp);
+                tmp = get_variable(file, tag, "dev-note", position);
+                good = ! tmp.empty();
+                if (good)
+                    devnote = std::stoi(tmp);
+
+                if (good)
+                    good = mapper().add(devnote, gmnote, gmname);
+            }
         }
         ++note;
     }
@@ -309,6 +324,7 @@ bool
 notemapfile::write_map_entries (std::ofstream & file)
 {
     bool result = file.is_open();
+#if USE_THIS_TODO
     if (result)
     {
         for (const auto & stz : rc_ref().mute_groups().list())
@@ -327,31 +343,7 @@ notemapfile::write_map_entries (std::ofstream & file)
             }
         }
     }
-    return result;
-}
-
-/**
- *  We need the format of a mute-group stanza to be more flexible.
- *  Should it match the set size?
- *
- *  We want to support the misleading format "[ b b b... ] [ b b b...] ...",
- *  as well as a new format "[ 0xbb ] [ 0xbb ] ...".
- *
- *  This function handles the current line of data from the mutes file.
- */
-
-bool
-notemapfile::parse_mutes_stanza ()
-{
-    int group = string_to_int(line());
-    bool result = group >= 0 && group < 512;            /* a sanity check   */
-    if (result)
-    {
-        midibooleans groupmutes;
-        result = parse_stanza_bits(groupmutes, line());
-        if (result)
-            result = rc_ref().mute_groups().load(group, groupmutes);
-    }
+#endif
     return result;
 }
 

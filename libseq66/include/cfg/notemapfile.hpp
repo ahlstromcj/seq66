@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2019-11-05
+ * \updates       2019-11-08
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -68,7 +68,7 @@ public:
 
     notemapfile
     (
-        notemapper & m_note_mapper;
+        notemapper & m_note_mapper,
         const std::string & filename,
         rcsettings & rcs
     );

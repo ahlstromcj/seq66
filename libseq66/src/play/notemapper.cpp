@@ -57,7 +57,7 @@ namespace seq66
  *    value.
  */
 
-notemap::notemap
+notepair::notepair
 (
     int devvalue,
     int gmvalue,
@@ -83,13 +83,13 @@ notemapper::add (int devnote, int gmnote, const std::string & gmname)
     if (m_reverse)
     {
         notepair np(devnote, gmnote, gmname);
-        auto p = std::make_pair(, m);
+        auto p = std::make_pair(gmnote, devnote);
         (void) m_note_map.insert(p);
     }
     else
     {
         notepair np(gmnote, devnote, gmname);
-        auto p = std::make_pair(, m);
+        auto p = std::make_pair(devnote, gmnote);
         (void) m_note_map.insert(p);
     }
 
