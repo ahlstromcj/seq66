@@ -31,7 +31,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-05
+ * \updates       2019-11-08
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -108,7 +108,7 @@ private:
      *  class as well.
      */
 
-    class notepair
+    class pair
     {
 
     private:
@@ -146,10 +146,11 @@ private:
 
      public:
 
-        notepair () = delete;
-        notepair (int devvalue, int gmvalue, const std::string & gmname);
-        notepair (const notepair &) = default;
-        notepair & operator = (const notepair &) = default;
+        pair () = delete;
+        pair (int devvalue, int gmvalue, const std::string & gmname);
+        pair (const pair &) = default;
+        pair & operator = (const pair &) = default;
+        ~pair () = default;
 
         int dev_value () const
         {
@@ -176,7 +177,7 @@ private:
            return m_remap_count;
         }
 
-     };       // class notepair
+     };         // nested class pair
 
  private:
 
@@ -185,12 +186,7 @@ private:
      *    another set of values.
      */
 
-    using midimap = std::map<int, notepair>;
-//  using iterator = midimap::iterator;
-//  using const_iterator = midimap::const_iterator;
-//  using midimap_pair = std::pair<int, notepair>;
-//  using midimap_result = std::pair<iterator, bool>;
-//  using intmap_result = std::pair<std::map<int, int>::iterator, bool>;
+    using map = std::map<int, pair>;
 
  private:
 
@@ -214,17 +210,16 @@ private:
     std::string m_map_type;
 
     /**
-     *    Provides the number of records (lines) or sections in the INI
-     *    file.  Indicates the number of items being remapped.
      *
-     *    This attribute ("record-count") does not appear in the INI file,
-     *    as it is calculated as the file is read.
-     *
-     * \warning
-     *    Only applies to "drum" mappings at present.  MUST FIX!
      */
 
-    int m_record_count;
+    int m_note_minimum;
+
+    /**
+     *
+     */
+
+    int m_note_maximum;
 
     /**
      *    Provides the channel to use for General MIDI drums.  This value
@@ -273,15 +268,7 @@ private:
      *    converted from GM mapping to device mapping.
      */
 
-    midimap m_note_map;
-
-    /**
-     *    Provides the mapping between channels (optional).  If
-     *    m_map_reversed is true, then the mapping of channels is reversed.
-     *    There's no need for channel names with this one.
-     */
-
-    std::map<int, int> m_channel_map;
+    map m_note_map;
 
     /**
      *    Indicates if the setup is valid.
@@ -291,20 +278,12 @@ private:
 
  public:
 
-    notemapper ();                      // an unnamed,  no-change mapping
-    notemapper                          // arguments are passed to initree
-    (
-       const std::string & name,
-       const std::string & filespec  = "",    // for behavior like C version
-       bool reverse_it               = false,
-       int filter_channel            = NOT_ACTIVE,
-       bool reject_it                = false,
-       const std::string & infile    = "",
-       const std::string & outfile   = ""
-    );
+    notemapper ();
+    notemapper (const notemapper &) = default;
+    notemapper & operator = (const notemapper &) = default;
+    ~notemapper () = default;
 
-    bool add (int devnote, int gmnote, const std::string & gmname);
-    int repitch (int channel, int input);
+    std::string to_string (int devnote);
 
     /**
      *    Determines if the value parameter is usable, or "active".
@@ -343,14 +322,22 @@ private:
        );
     }
 
+    bool add (int devnote, int gmnote, const std::string & gmname);
+    int repitch (int channel, int input);
+
     const std::string & map_type () const
     {
        return m_map_type;
     }
 
-    int record_count () const
+    int note_minimum () const
     {
-       return m_record_count;
+       return m_note_minimum;
+    }
+
+    int note_maximum () const
+    {
+       return m_note_maximum;
     }
 
     int gm_channel () const
@@ -368,7 +355,7 @@ private:
        return m_is_valid;
     }
 
-    const midimap & note_map () const
+    const map & note_map () const
     {
        return m_note_map;
     }

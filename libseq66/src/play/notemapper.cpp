@@ -28,7 +28,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-05
+ * \updates       2019-11-08
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -57,13 +57,12 @@ namespace seq66
  *    value.
  */
 
-notepair::notepair
+notemapper::pair::pair
 (
     int devvalue,
     int gmvalue,
     const std::string & gmname
 ) :
-    basesettings   (),
     m_dev_value    (devvalue),
     m_gm_value     (gmvalue),
     m_gm_name      (gmname),
@@ -76,27 +75,49 @@ notepair::notepair
  *
  */
 
+notemapper::notemapper () :
+    basesettings        (),
+    m_map_type          (),
+    m_note_minimum      (999),
+    m_note_maximum      (0),
+    m_gm_channel        (0),
+    m_device_channel    (0),
+    m_map_reversed      (false),
+    m_note_map          (),
+    m_is_valid          (false)
+{
+    //
+}
+
+/**
+ *
+ */
+
 bool
 notemapper::add (int devnote, int gmnote, const std::string & gmname)
 {
     auto count = m_note_map.size();
-    if (m_reverse)
+    if (m_map_reversed)
     {
-        notepair np(devnote, gmnote, gmname);
-        auto p = std::make_pair(gmnote, devnote);
+        pair np(devnote, gmnote, gmname);
+        auto p = std::make_pair(gmnote, np);
         (void) m_note_map.insert(p);
     }
     else
     {
-        notepair np(gmnote, devnote, gmname);
-        auto p = std::make_pair(devnote, gmnote);
+        pair np(gmnote, devnote, gmname);
+        auto p = std::make_pair(devnote, np);
         (void) m_note_map.insert(p);
     }
 
-    bool result = m_note_map.size() == (sz + 1);
+    bool result = m_note_map.size() == (count + 1);
     if (! result)
-        std::cerr << "Duplicate note pair " << gmute << std::endl;
-
+    {
+        std::cerr
+            << "Duplicate note pair " << devnote << " & " << gmnote
+            << std::endl
+            ;
+    }
     return result;
 }
 
@@ -109,15 +130,13 @@ std::string
 notemapper::to_string (int devnote)
 {
     std::string result;
-    int gmnote;
-    const std::string & gmname;
     auto noteiterator = m_note_map.find(devnote);
     if (noteiterator != m_note_map.end())
     {
-        notepair & np = noteiterator.second;
+        pair & np = noteiterator->second;
         int gmnote;
         int devnote;
-        if (map_reversed)
+        if (map_reversed())
         {
             gmnote = np.dev_value();
             devnote = np.gm_value();
@@ -132,16 +151,18 @@ notemapper::to_string (int devnote)
         result += "]\n\n";
         result += "gm-name = \"";
         result += np.gm_name();
-        result += "\"\n"
+        result += "\"\n";
         result += "gm-note = ";
-        result += np.gm_value();
+        result += gmnote;
         result += "\n";
         result += "dev-note = ";
-        result += np.dev_value();
+        result += devnote;
         result += "\n";
     }
     return result;
 }
+
+}           // namespace seq66
 
 /*
  * notemapper.cpp
