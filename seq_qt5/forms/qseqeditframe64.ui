@@ -885,7 +885,7 @@
      <item>
       <layout class="QHBoxLayout" name="eventHorizLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="btnAuxFunction">
          <property name="minimumSize">
           <size>
            <width>48</width>

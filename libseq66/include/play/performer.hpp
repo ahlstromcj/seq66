@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-10-15
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -42,7 +42,7 @@
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
 #include "play/inputslist.hpp"          /* list of boolean input settings   */
 #include "play/mutegroups.hpp"          /* class seq66::mutegroups          */
-#include "play/playlist.hpp"            /* seq66::playlist, 0.96 and above  */
+#include "play/playlist.hpp"            /* seq66::playlist                  */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition (variable)      */
@@ -62,7 +62,12 @@
 namespace seq66
 {
 
+/*
+ * Forward references.
+ */
+
 class keystroke;
+class notemapper;
 class rcsettings;
 
 /**
@@ -71,7 +76,6 @@ class rcsettings;
 
 class performer
 {
-
     friend class jack_assistant;
     friend class midifile;
     friend class rcfile;
@@ -285,6 +289,14 @@ private:
      */
 
     std::unique_ptr<playlist> m_play_list;
+
+    /**
+     *  Provides an optional play-list, loosely patterned after Stazed's Seq32
+     *  play-list. Important: This object is now owned by perform.
+     *  It might be much better to have this be a real member.
+     */
+
+    std::unique_ptr<notemapper> m_note_mapper;
 
     /**
      *  If true, playback is done in Song mode, not Live mode.
@@ -898,6 +910,7 @@ public:
         int & ppqn,
         std::string & errmsg
     );
+    bool open_note_mapper (const std::string & notefile);
 
     /*
      * Start of playlist accessors.  Playlist functionality.
@@ -1062,6 +1075,8 @@ public:
      */
 
 public:
+
+    bool repitch_selected (const std::string & nmapfile, sequence & s);
 
     setmapper & mapper ()
     {

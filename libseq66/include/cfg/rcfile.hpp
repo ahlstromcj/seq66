@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-03-26
+ * \updates       2019-11-08
  * \license       GNU GPLv2 or above
  *
  *  The ~/.seq66rc or ~/.config/seq66.rc files are

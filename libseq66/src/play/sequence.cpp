@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-28
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -53,10 +53,11 @@
 #include "cfg/scales.hpp"               /* seq66 scales functions           */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "seq66_features.hpp"           /* various feature #defines         */
-#include "midi/eventlist.hpp"          /* seq66::eventlist                */
+#include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus             */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "midi/midi_vector_base.hpp"    /* seq66::c_midi_notes              */
+#include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
@@ -1698,6 +1699,30 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
             }
         }
     }
+}
+
+/**
+ *
+ */
+
+bool
+sequence::repitch_selected (const notemapper & nmap)
+{
+    automutex locker(m_mutex);
+    bool result = false;
+    push_undo();
+    for (auto & e : m_events)
+    {
+        if (e.is_note() && e.is_selected())
+        {
+            midibyte pitch, velocity;                       /* d0 & d1  */
+            e.get_data(pitch, velocity);
+            pitch = midibyte(nmap.convert(int(pitch)));
+            e.set_data(pitch, velocity);
+            result = true;
+        }
+    }
+    return result;
 }
 
 /**

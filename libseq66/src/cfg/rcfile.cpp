@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-09-28
+ * \updates       2019-11-09
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -215,21 +215,22 @@ rcfile::parse ()
     std::ifstream file(name(), std::ios::in | std::ios::ate);
     if (! file.is_open())
     {
-        errprintf
+        char temp[128];
+        snprintf
         (
-            "rcfile::parse(): error opening %s for reading\n",
-            name().c_str()
+            temp, sizeof temp,
+            "rcfile::parse(): error opening %s for reading\n", name().c_str()
         );
-        return false;
+        return make_error_message("parse", temp);
     }
-    file.seekg(0, std::ios::beg);                           /* seek to start */
+    file.seekg(0, std::ios::beg);                       /* seek to start    */
 
     std::string s = get_variable(file, "[Seq66]", "version");
     if (! s.empty())
     {
         int version = string_to_int(s);
         if (version != rc_ref().ordinal_version())
-            errprint("'rc' ordinal version changed!");
+            (void) make_error_message("parse", "'rc' ordinal version changed!");
     }
 
     /*
@@ -342,23 +343,29 @@ rcfile::parse ()
         for (int i = 0; i < buses; ++i)
         {
             int bus, bus_on;
-            sscanf(scanline(), "%d %d", &bus, &bus_on);
-
-            /*
-             *  The first call ignores the bus number that was read.  The
-             *  second call indirectly accesses the mastermidibus, which does
-             *  not exist yet.
-             *
-             *      p.add_clock(static_cast<e_clock>(bus_on));
-             *      p.set_clock_bus(bus, static_cast<e_clock>(bus_on));
-             */
-
-            rc_ref().clocks().set(bus, static_cast<e_clock>(bus_on));
-            ok = next_data_line(file);
-            if (! ok)
+            int count = sscanf(scanline(), "%d %d", &bus, &bus_on);
+            ok = count == 2;
+            if (ok)
             {
-                if (i < (buses-1))
-                    return make_error_message("midi-clock data line missing");
+                rc_ref().clocks().set(bus, static_cast<e_clock>(bus_on));
+                ok = next_data_line(file);
+                if (! ok)
+                {
+                    if (i < (buses-1))
+                    {
+                        return make_error_message
+                        (
+                            "midi-clock", "data line is missing"
+                        );
+                    }
+                }
+            }
+            else
+            {
+                return make_error_message
+                (
+                    "midi-clock", "data line needs 2 values"
+                );
             }
         }
     }
@@ -371,7 +378,7 @@ rcfile::parse ()
          *      return make_error_message("midi-clock");
          *
          *  And let's use the new e_clock::disabled code instead of
-         *  e_clock::off.  LATER.
+         *  e_clock::off.  LATER?
          */
 
         rc_ref().clocks().add(e_clock::off, "Bad clock count");
@@ -385,24 +392,20 @@ rcfile::parse ()
     int flag = 0;
     if (line_after(file, "[jack-transport]"))
     {
-        sscanf(scanline(), "%d", &flag);
+        sscanf(scanline(), "%d", &flag);                /* 1 */
         rc_ref().with_jack_transport(bool(flag));
-
         next_data_line(file);
-        sscanf(scanline(), "%d", &flag);
+        sscanf(scanline(), "%d", &flag);                /* 2 */
         rc_ref().with_jack_master(bool(flag));
-
         next_data_line(file);
-        sscanf(scanline(), "%d", &flag);
+        sscanf(scanline(), "%d", &flag);                /* 3 */
         rc_ref().with_jack_master_cond(bool(flag));
-
         next_data_line(file);
-        sscanf(scanline(), "%d", &flag);
+        sscanf(scanline(), "%d", &flag);                /* 4 */
         rc_ref().song_start_mode(bool(flag));
-
         if (next_data_line(file))
         {
-            sscanf(scanline(), "%d", &flag);
+            sscanf(scanline(), "%d", &flag);            /* 5 */
             rc_ref().with_jack_midi(bool(flag));
         }
     }
@@ -446,7 +449,7 @@ rcfile::parse ()
         }
     }
     else
-        return make_error_message("midi-input");
+        return make_error_message("midi-input", "this section tag is missing");
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
     {
@@ -454,16 +457,37 @@ rcfile::parse ()
         sscanf(scanline(), "%ld", &ticks);
         rc_ref().set_clock_mod(ticks);      ///// midibus::set_clock_mod(ticks);
     }
+    else
+    {
+        return make_error_message
+        (
+            "midi-clock-mod-ticks", "this section tag is missing"
+        );
+    }
     if (line_after(file, "[midi-meta-events]"))
     {
         int track = 0;
         sscanf(scanline(), "%d", &track);
         rc_ref().tempo_track_number(track); /* MIDI file can override this  */
     }
+    else
+    {
+        return make_error_message
+        (
+            "midi-meta_events", "this section tag is missing"
+        );
+    }
     if (line_after(file, "[manual-ports]"))
     {
         sscanf(scanline(), "%d", &flag);
         rc_ref().manual_ports(bool(flag));
+    }
+    else
+    {
+        return make_error_message
+        (
+            "manual-ports", "this section tag is missing"
+        );
     }
     if (line_after(file, "[reveal-ports]"))
     {
@@ -476,13 +500,25 @@ rcfile::parse ()
         if (! rc_ref().reveal_ports())
             rc_ref().reveal_ports(bool(flag));
     }
-
+    else
+    {
+        return make_error_message
+        (
+            "reveal-ports", "this section tag is missing"
+        );
+    }
     if (line_after(file, "[last-used-dir]"))
     {
         if (! line().empty())
             rc_ref().last_used_dir(line()); // FIXME: check for valid path
     }
-
+    else
+    {
+        return make_error_message
+        (
+            "last-used-dir", "this section tag is missing"
+        );
+    }
     if (line_after(file, "[recent-files]"))
     {
         int count;
@@ -501,7 +537,13 @@ rcfile::parse ()
                 break;
         }
     }
-
+    else
+    {
+        return make_error_message
+        (
+            "recent-files", "this section tag is missing"
+        );
+    }
     if (line_after(file, "[playlist]"))
     {
         bool exists = false;
@@ -538,33 +580,76 @@ rcfile::parse ()
             rc_ref().playlist_filename("");
         }
     }
+    else
+    {
+        /* A missing playlist section is not an error. */
+    }
+    if (line_after(file, "[note-mapper]"))
+    {
+        bool exists = false;
+        std::string fname = trimline();
+        exists = ! fname.empty() && fname != "\"\"";
+        if (exists)
+        {
+            /*
+             * Prepend the home configuration directory and, if needed,
+             * the playlist extension.
+             */
+
+            fname = rc_ref().make_config_filespec(fname, ".drums");
+            exists = file_exists(fname);
+            if (exists)
+            {
+                rc_ref().notemap_filename(fname);
+            }
+            else
+                file_error("no such note mapping", fname);
+        }
+        if (! exists)
+            rc_ref().notemap_filename("");
+    }
+    else
+    {
+        /* A missing note-mapper section is not an error. */
+    }
 
     int method = 0;
+
+#if defined USE_FRUITY_CODE         /* will not be supported in seq66   */
+
     if (line_after(file, "[interaction-method]"))
-        sscanf(scanline(), "%d", &method);
-
-    /*
-     * This now returns true if the value was correct, we should check it.
-     */
-
-    if (! rc_ref().interaction_method(method))
-        return make_error_message("interaction-method", "illegal value");
-
-    if (next_data_line(file))
     {
         sscanf(scanline(), "%d", &method);
-        rc_ref().allow_mod4_mode(method != 0);
+
+        /*
+         * This now returns true if the value was correct, we should check it.
+         */
+
+        if (! rc_ref().interaction_method(method))
+            return make_error_message("interaction-method", "illegal value");
+
+        if (next_data_line(file))
+        {
+            sscanf(scanline(), "%d", &method);
+            rc_ref().allow_mod4_mode(method != 0);
+        }
+        if (next_data_line(file))
+        {
+            sscanf(scanline(), "%d", &method);
+            rc_ref().allow_snap_split(method != 0);
+        }
+        if (next_data_line(file))
+        {
+            sscanf(scanline(), "%d", &method);
+            rc_ref().allow_click_edit(method != 0);
+        }
     }
-    if (next_data_line(file))
+    else
     {
-        sscanf(scanline(), "%d", &method);
-        rc_ref().allow_snap_split(method != 0);
+        /* A missing interaction-method section is not an error. */
     }
-    if (next_data_line(file))
-    {
-        sscanf(scanline(), "%d", &method);
-        rc_ref().allow_click_edit(method != 0);
-    }
+
+#endif  // USE_FRUITY_CODE
 
     /*
      *  Support for [lash-session] has been removed.
@@ -660,7 +745,7 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.90.0 (and above) rc configuration file\n"
+        << "# Seq66 0.90.2 (and above) rc configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -683,9 +768,8 @@ rcfile::write ()
     "# The [comments] section holds the user's documentation for this file.\n"
     "# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;\n"
     "# add a blank line by adding a space character to the line.\n"
+        << "\n[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         ;
-
-    file << "\n[comments]\n\n" << rc_ref().comments_block().text() << "\n";
 
     if (rc_ref().use_midi_control_file())
     {
@@ -852,7 +936,7 @@ rcfile::write ()
         << "   # flag for reveal ports\n"
         ;
 
-#if defined USE_FRUITY_CODE
+#if defined USE_FRUITY_CODE         /* will not be supported in seq66   */
 
     /*
      * Interaction-method
@@ -991,8 +1075,9 @@ rcfile::write ()
         ;
 
     file << "\n"
-        "# Provides the name of a play-list.  If there is none, use '\"\"'.\n"
-        "# Or set the flag above to 0.\n\n"
+        "# Provides the name of a play-list. If there is none, use '\"\"',\n"
+        "# or set the flag above to 0. Use the extension '.playlist'.\n"
+        "\n"
         ;
 
     std::string plname = rc_ref().playlist_filespec();
@@ -1000,6 +1085,22 @@ rcfile::write ()
     if (! plname.empty())
     {
         fspec = file_extension_set(rc_ref().playlist_filespec(), ".playlist");
+        fspec = rc_ref().trim_home_directory(fspec);
+    }
+    file << fspec << "\n\n";
+    file
+        << "[note-mapper]\n\n"
+        "# Provides the name of a note-map file. If there is none, use '\"\"'.\n"
+        "# Use the extension '.drums'.  This file is used only when the user\n"
+        "# invokes the note-conversion operation in the pattern editor.\n"
+        "\n"
+        ;
+
+    std::string nmname = rc_ref().notemap_filespec();
+    fspec = "\"\"";
+    if (! nmname.empty())
+    {
+        fspec = file_extension_set(rc_ref().notemap_filespec(), ".drums");
         fspec = rc_ref().trim_home_directory(fspec);
     }
     file << fspec << "\n\n";

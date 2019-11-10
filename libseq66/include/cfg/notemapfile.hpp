@@ -89,7 +89,7 @@ public:
 
 private:
 
-    bool write_map_entries (std::ofstream & file);
+    bool write_map_entries (std::ofstream & file) const;
 
     notemapper & mapper ()
     {

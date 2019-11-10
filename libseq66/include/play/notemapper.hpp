@@ -114,6 +114,13 @@ private:
     private:
 
         /**
+         *  Indicates if this is a reversed pair.  This boolean is needed to
+         *  determine whether the dev-note or the gm-note is the key value.
+         */
+
+        const bool m_is_reverse;
+
+        /**
          *  The incoming note number from a non-GM compliant device.  This
          *  value is used as a "key" value in a map.
          */
@@ -147,7 +154,11 @@ private:
      public:
 
         pair () = delete;
-        pair (int devvalue, int gmvalue, const std::string & gmname);
+        pair
+        (
+            int devvalue, int gmvalue,
+            const std::string & gmname, bool reverse
+        );
         pair (const pair &) = default;
         pair & operator = (const pair &) = default;
         ~pair () = default;
@@ -176,6 +187,8 @@ private:
         {
            return m_remap_count;
         }
+
+        std::string to_string () const;
 
      };         // nested class pair
 
@@ -283,7 +296,8 @@ private:
     notemapper & operator = (const notemapper &) = default;
     ~notemapper () = default;
 
-    std::string to_string (int devnote);
+    int convert (int incoming) const;
+    std::string to_string (int devnote) const;
 
     /**
      *    Determines if the value parameter is usable, or "active".
@@ -355,7 +369,7 @@ private:
        return m_is_valid;
     }
 
-    const map & note_map () const
+    const map & list () const
     {
        return m_note_map;
     }

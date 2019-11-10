@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2019-09-18
+ * \updates       2019-11-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -131,6 +131,7 @@ rcsettings::rcsettings () :
     m_use_mute_group_file       (false),
     m_mute_group_filename       (),
     m_playlist_filename         (),
+    m_notemap_filename          (),
     m_application_name          (seq_app_name()),
     m_app_client_name           (seq_client_name()),
     m_tempo_track_number        (0),
@@ -198,6 +199,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_midi_control_filename     (rhs.m_midi_control_filename),
     m_use_mute_group_file       (rhs.m_use_mute_group_file),
     m_playlist_filename         (rhs.m_playlist_filename),
+    m_notemap_filename          (rhs.m_notemap_filename),
     m_application_name          (rhs.m_application_name),
     m_app_client_name           (rhs.m_app_client_name),
     m_tempo_track_number        (rhs.m_tempo_track_number),
@@ -265,6 +267,7 @@ rcsettings::operator = (const rcsettings & rhs)
         m_midi_control_filename     = rhs.m_midi_control_filename;
         m_use_mute_group_file       = rhs.m_use_mute_group_file;
         m_playlist_filename         = rhs.m_playlist_filename;
+        m_notemap_filename          = rhs.m_notemap_filename;
 
         /*
          * const: m_application_name = rhs.m_application_name;
@@ -350,6 +353,7 @@ rcsettings::set_defaults ()
     m_use_mute_group_file       = false;
     m_mute_group_filename.clear();
     m_playlist_filename.clear();                    // empty by default
+    m_notemap_filename.clear();                     // empty by default
 
     /*
      * const: m_application_name = seq_app_name();
@@ -650,6 +654,25 @@ rcsettings::playlist_filespec () const
             result = listname;
         else
             result = home_config_directory() + listname;
+    }
+    return result;
+}
+
+/**
+ *  Constructs the note-mapper filespec.
+ */
+
+std::string
+rcsettings::notemap_filespec () const
+{
+    std::string result;
+    std::string notemap_name = notemap_filename();
+    if (! notemap_name.empty())
+    {
+        if (name_has_directory(notemap_name))
+            result = notemap_name;
+        else
+            result = home_config_directory() + notemap_name;
     }
     return result;
 }

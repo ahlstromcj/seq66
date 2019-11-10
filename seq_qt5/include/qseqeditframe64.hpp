@@ -251,6 +251,7 @@ private:        // setters and getters
     );
     void set_data_type (midibyte status, midibyte control = 0);
     void set_recording_volume (int recvol);
+    void remap_notes (bool status);
     QWidget * rollview ();
     QWidget * rollwidget () const;
 

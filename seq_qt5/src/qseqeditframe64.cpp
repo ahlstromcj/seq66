@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-10-23
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1026,6 +1026,12 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(update_recording_volume(int))
     );
     set_recording_volume(usr().velocity_override());
+
+    connect
+    (
+        ui->btnAuxFunction, SIGNAL(clicked(bool)),
+        this, SLOT(remap_notes())
+    );
 
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
@@ -3155,6 +3161,27 @@ qseqeditframe64::set_recording_volume (int recvol)
 {
     seq_pointer()->set_rec_vol(recvol); /* save to the sequence settings    */
     usr().velocity_override(recvol);    /* save to the "usr" config file    */
+}
+
+/**
+ *  Here, we need to get the filespec, create a notemapper, fill it from the
+ *  notemapfile, and iterate through the notes, converting them.
+ *
+ */
+
+void
+qseqeditframe64::remap_notes (bool /* status */ )
+{
+    std::string filename = rc().notemap_filespec();
+    sequence & s = *seq_pointer();
+    if (perf().repitch_selected(filename, s))
+    {
+        set_dirty();
+    }
+    else
+    {
+        // need to display error message somehow
+    }
 }
 
 /**

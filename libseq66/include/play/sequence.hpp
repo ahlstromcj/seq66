@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-10-27
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,7 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* key and scale constants          */
-#include "midi/eventlist.hpp"          /* seq66::eventlist                */
+#include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
@@ -71,7 +71,12 @@ const int c_maxbeats    = 0xFFFF;
 
 namespace seq66
 {
+    /*
+     * Forward references.
+     */
+
     class mastermidibus;
+    class notemapper;
     class performer;
 
 /**
@@ -1420,6 +1425,7 @@ public:
     int get_num_selected_notes () const;
     int get_num_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
+    bool repitch_selected (const notemapper & nmap);
     bool copy_selected ();
     void cut_selected (bool copyevents = true);
     bool paste_selected (midipulse tick, int note);

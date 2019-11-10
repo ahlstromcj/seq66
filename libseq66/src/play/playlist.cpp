@@ -81,6 +81,10 @@ playlist::song_list playlist::sm_dummy;
  *      Provides the name of the options file; this is usually a full path
  *      file-specification.
  *
+ * \param rcs
+ *      Provides a reference to an "rc" settings object to hold current options
+ *      and modified options.
+ *
  * \param show_on_stdout
  *      If true (the default is false), then the list/song information is
  *      written to stdout, to help with debugging.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-24
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -702,18 +702,22 @@ public:
     }
 
     /**
-     *  Clears the most-significant-bit of the d1 parameter, and sets it into
-     *  the first byte of m_data.  The second byte of data is zeroed.  The
-     *  data bytes are in a two-byte array member, m_data.  This setter is
-     *  useful for Program Change and Channel Pressure events.
+     *  Clears the most-significant-bit of the d0 parameter, and sets it into
+     *  the first byte of m_data.  The data bytes are in a two-byte array
+     *  member, m_data.  This setter is useful for Program Change and Channel
+     *  Pressure events.
      *
-     * \param d1
+     * \warning
+     *      The second byte of m_data[] is zeroed.  If it needs to be preserved,
+     *      use the two-byte get_data() and set_data() functions.
+     *
+     * \param d0
      *      The byte value to set as the first data byte.
      */
 
-    void set_data (midibyte d1)
+    void set_data (midibyte d0)
     {
-        m_data[0] = d1 & 0x7F;
+        m_data[0] = d0 & 0x7F;
         m_data[1] = 0;                  /* not strictly necessary   */
     }
 
@@ -741,7 +745,7 @@ public:
     void set_data (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
 
     /**
-     *  Retrieves only the first  data byte from m_data[] and copies it into
+     *  Retrieves only the first data byte from m_data[] and copies it into
      *  the parameter.
      *
      * \param d0 [out]

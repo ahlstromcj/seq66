@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2019-08-31
+ * \updates       2019-11-08
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -377,6 +377,13 @@ private:
     std::string m_playlist_filename;
 
     /**
+     *  Provides the name of a note-mapping file to use.  This is a feature
+     *  adapted and modified from our "midicvt" project.
+     */
+
+    std::string m_notemap_filename;
+
+    /**
      *  Holds the application name, e.g. "seq66", "seq66portmidi", or
      *  "qseq66".  This is a constant, set to SEQ66_APP_NAME.  Also see the
      *  seq_app_name() function.
@@ -432,6 +439,7 @@ public:
     std::string mute_group_filespec () const;
     std::string playlist_filespec () const;
     void clear_playlist ();
+    std::string notemap_filespec () const;
 
     virtual void set_defaults () override;
 
@@ -783,6 +791,11 @@ public:
         return m_playlist_filename;
     }
 
+    const std::string & notemap_filename () const
+    {
+        return m_notemap_filename;
+    }
+
     const std::string & user_filename () const
     {
         return m_user_filename;
@@ -987,6 +1000,11 @@ protected:
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
     void user_filename (const std::string & value);
+
+    void notemap_filename (const std::string & fn)
+    {
+        m_notemap_filename = fn;
+    }
 
 };          // class rcsettings
 

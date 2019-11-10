@@ -1,5 +1,5 @@
 /*
- * midicvtpp - A MIDI-text-MIDI translater
+ * This file is part of seq66.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-08
+ * \updates       2019-11-10
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -61,18 +61,53 @@ notemapper::pair::pair
 (
     int devvalue,
     int gmvalue,
-    const std::string & gmname
+    const std::string & gmname,
+    bool reverse
 ) :
-    m_dev_value    (devvalue),
-    m_gm_value     (gmvalue),
-    m_gm_name      (gmname),
-    m_remap_count  (0)
+    m_is_reverse    (reverse),
+    m_dev_value     (devvalue),
+    m_gm_value      (gmvalue),
+    m_gm_name       (gmname),
+    m_remap_count   (0)
 {
     // no other code
 }
 
 /**
- *
+ *  Looks up the device-note in the map, decides if the map is a reversed
+ *  map or note, and then reconstructs the "drum" section in a string.
+ */
+
+std::string
+notemapper::pair::to_string () const
+{
+    std::string result;
+    int gmnote;
+    int devnote;
+    if (m_is_reverse)
+    {
+        devnote = gm_value();
+        gmnote = dev_value();
+    }
+    else
+    {
+        gmnote = gm_value();
+        devnote = dev_value();
+    }
+    result += "gm-name = \"";
+    result += gm_name();
+    result += "\"\n";
+    result += "gm-note = ";
+    result += gmnote;
+    result += "\n";
+    result += "dev-note = ";
+    result += devnote;
+    result += "\n";
+    return result;
+}
+
+/**
+ *  Default constructor for the note-mapper.
  */
 
 notemapper::notemapper () :
@@ -99,13 +134,13 @@ notemapper::add (int devnote, int gmnote, const std::string & gmname)
     auto count = m_note_map.size();
     if (m_map_reversed)
     {
-        pair np(devnote, gmnote, gmname);
+        pair np(devnote, gmnote, gmname, true);
         auto p = std::make_pair(gmnote, np);
         (void) m_note_map.insert(p);
     }
     else
     {
-        pair np(gmnote, devnote, gmname);
+        pair np(gmnote, devnote, gmname, false);
         auto p = std::make_pair(devnote, np);
         (void) m_note_map.insert(p);
     }
@@ -122,42 +157,45 @@ notemapper::add (int devnote, int gmnote, const std::string & gmname)
 }
 
 /**
+ *  Looks up an incoming note, and, if found, returns the mapped note value.
+ *
+ * \param incoming
+ *      The note to be remapped.
+ *
+ * \return
+ *      Returns the mapped note, if found.  Otherwise, the original note is
+ *      returned.
+ */
+
+int
+notemapper::convert (int incoming) const
+{
+    int result = incoming;
+    auto noteiterator = m_note_map.find(incoming);
+    if (noteiterator != m_note_map.end())
+        result = noteiterator->second.gm_value();
+
+    return result;
+}
+
+/**
  *  Looks up the device-note in the map, decides if the map is a reversed
  *  map or note, and then reconstructs the "drum" section in a string.
  */
 
 std::string
-notemapper::to_string (int devnote)
+notemapper::to_string (int devnote) const
 {
     std::string result;
     auto noteiterator = m_note_map.find(devnote);
     if (noteiterator != m_note_map.end())
     {
-        pair & np = noteiterator->second;
-        int gmnote;
-        int devnote;
-        if (map_reversed())
-        {
-            gmnote = np.dev_value();
-            devnote = np.gm_value();
-        }
-        else
-        {
-            devnote = np.dev_value();
-            gmnote = np.gm_value();
-        }
-        result = "\n[ Drum ";
+        const pair & np = noteiterator->second;
+        int gmnote = map_reversed() ? np.dev_value() : np.gm_value();
+        result = "[Drum ";
         result += std::to_string(gmnote);
         result += "]\n\n";
-        result += "gm-name = \"";
-        result += np.gm_name();
-        result += "\"\n";
-        result += "gm-note = ";
-        result += gmnote;
-        result += "\n";
-        result += "dev-note = ";
-        result += devnote;
-        result += "\n";
+        result += np.to_string();
     }
     return result;
 }

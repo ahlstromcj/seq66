@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-10-20
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -278,9 +278,11 @@
 #include <cstring>                      /* std::memset()                    */
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
+#include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
+#include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 
 /*
@@ -303,6 +305,7 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 performer::performer (int ppqn, int rows, int columns) :
     m_play_set              (),
     m_play_list             (new playlist(*this, "<empty>", rc())),
+    m_note_mapper           (new notemapper()),
     m_song_start_mode       (sequence::playback::live),
     m_start_from_perfedit   (false),
     m_reposition            (false),
@@ -1600,6 +1603,20 @@ performer::reset_sequences (bool pause)
 
     if (m_master_bus)
         m_master_bus->flush();                          /* flush MIDI buss  */
+}
+
+/**
+ *
+ */
+
+bool
+performer::repitch_selected (const std::string & nmapfile, sequence & s)
+{
+    bool result = open_note_mapper(nmapfile);
+    if (result)
+        result = s.repitch_selected(*m_note_mapper);
+
+    return result;
 }
 
 /**
@@ -5375,6 +5392,25 @@ performer::read_midi_file
     {
         set_ppqn(pp);
         errmsg.clear();
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+performer::open_note_mapper (const std::string & notefile)
+{
+    bool result = false;
+    m_note_mapper.reset(new notemapper());
+    if (m_note_mapper)
+    {
+        notemapfile nmf(*m_note_mapper, notefile, rc());
+        result = nmf.parse();
+        if (! result)
+            (void) error_message(nmf.error_message());
     }
     return result;
 }

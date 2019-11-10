@@ -226,7 +226,7 @@ bool
 notemapfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.90.1 (and above) mute-groups configuration file\n"
+        << "# Seq66 0.90.2 (and above) note-mapper configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -290,7 +290,7 @@ notemapfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        pathprint("Writing mute-groups configuration", name());
+        pathprint("Writing note-mapper configuration", name());
         result = write_stream(file);
         file.close();
     }
@@ -302,15 +302,7 @@ notemapfile::write ()
 }
 
 /**
- *  The default long format for writing mute groups.
- */
-
-static const char * const sg_scanf_fmt_1 =
-    "%d [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ] "
-      " [ %d %d %d %d %d %d %d %d ] [ %d %d %d %d %d %d %d %d ]";
-
-/**
- *  Writes the [mute-group] section to the given file stream.  This can also
+ *  Writes the [note-mapper] section to the given file stream.  This can also
  *  be called by the rcfile object to just dump the data into that file.
  *
  * \param file
@@ -321,29 +313,17 @@ static const char * const sg_scanf_fmt_1 =
  */
 
 bool
-notemapfile::write_map_entries (std::ofstream & file)
+notemapfile::write_map_entries (std::ofstream & file) const
 {
     bool result = file.is_open();
-#if USE_THIS_TODO
     if (result)
     {
-        for (const auto & stz : rc_ref().mute_groups().list())
+        for (const auto & mapentry : m_note_mapper.list())
         {
-            int gmute = stz.first;
-            const mutegroup & m = stz.second;
-//          std::string stanza = write_stanza_bits(m.get(), usehex);
-            if (! stanza.empty())
-            {
-                file << std::setw(2) << gmute << " " << stanza << std::endl;
-            }
-            else
-            {
-                result = false;
-                break;
-            }
+            file << "[Drum " << mapentry.second.dev_value() << "]";
+            file << mapentry.second.to_string();
         }
     }
-#endif
     return result;
 }
 
