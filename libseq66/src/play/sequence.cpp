@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-10
+ * \updates       2019-11-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the

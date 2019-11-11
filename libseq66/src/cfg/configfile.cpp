@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-11-06
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -328,7 +328,7 @@ configfile::get_variable
                     }
                     if (havequotes)
                     {
-                        result = line().substr(qpos, qpos2 - qpos);
+                        result = line().substr(qpos + 1, qpos2 - qpos - 1);
                     }
                     else
                     {
@@ -495,7 +495,7 @@ configfile::line_after
  *
  * \param tag
  *      Provides a tag to be found, which, for this function, is usually a
- *      partial tag, such as "[ Drum".
+ *      partial tag, such as "[Drum".  Spaces are signficant!
  *
  * \return
  *      Returns the position of the line before the tag, converted to an
@@ -505,14 +505,14 @@ configfile::line_after
 int
 configfile::find_tag (std::ifstream & file, const std::string & tag)
 {
-    int result = 0;
+    int result = (-1);
     file.clear();                               /* clear the file flags     */
     file.seekg(0, std::ios::beg);               /* seek to the beginning    */
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {
-        result = strncompare(m_line, tag, tag.length());
-        if (result)
+        bool match = strncompare(m_line, tag, tag.length());
+        if (match)
         {
             result = int(m_prev_pos);
             break;
@@ -523,6 +523,8 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
             {
                 errprint("bad file stream reading config file");
             }
+            else
+                ok = get_line(file);            /* trims the white space    */
         }
     }
     return result;

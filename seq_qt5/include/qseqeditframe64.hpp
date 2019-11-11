@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-10-27
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -187,6 +187,7 @@ private slots:
     void quantize_notes ();
     void tighten_notes ();
     void transpose_notes ();
+    void remap_notes ();
 
     /*
      * More slots.
@@ -251,7 +252,6 @@ private:        // setters and getters
     );
     void set_data_type (midibyte status, midibyte control = 0);
     void set_recording_volume (int recvol);
-    void remap_notes (bool status);
     QWidget * rollview ();
     QWidget * rollwidget () const;
 

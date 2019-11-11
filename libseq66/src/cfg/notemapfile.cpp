@@ -25,7 +25,7 @@
  * \library       sequencer64 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2019-11-08
+ * \updates       2019-11-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -125,53 +125,48 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
         mapper().map_reversed(string_to_bool(s));
 
-    /*
-     * This function gets the position before the first "Drum" section.
-     * But it also, like line_after(), gets the line().
-     *
-     * MOVE TO CONFIGFILE
-     */
-
     int note = (-1);
-    int position = find_tag(file, "[ Drum");
+    int position = find_tag(file, "[Drum ");
     bool good = position > 0;
     if (good)
     {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("drum line %s\n", line().c_str());  // JUST A TEST
+#endif
         note = get_tag_value(line());
     }
     if (note == (-1))
     {
-        errprint("No [Drum 00] tag value found");
+        errprint("No [Drum nn] tag value found");
         good = false;
     }
-    while (good)                        /* not at end of section?   */
+    if (good)
     {
-        std::string tag = "[Drum ";
-        tag += std::to_string(note);
-        tag += "]";
-
-        int devnote;
-        int gmnote;
-        std::string gmname = get_variable(file, tag, "gm-name", position);
-        good = ! gmname.empty();
-        if (good)
+        for (int in_note = note; in_note < int(c_midibyte_data_max); ++in_note)
         {
-            std::string tmp = get_variable(file, tag, "gm-note", position);
-            good = ! tmp.empty();
+            char tagtmp[16];
+            snprintf(tagtmp, sizeof tagtmp, "[Drum %d]", in_note);
+            std::string tag = tagtmp;
+            std::string gmname = get_variable(file, tag, "gm-name");
+            good = ! gmname.empty();
             if (good)
             {
-                gmnote = std::stoi(tmp);
-                tmp = get_variable(file, tag, "dev-note", position);
+                std::string tmp = get_variable(file, tag, "gm-note");
                 good = ! tmp.empty();
                 if (good)
-                    devnote = std::stoi(tmp);
-
-                if (good)
-                    good = mapper().add(devnote, gmnote, gmname);
+                {
+                    int gmnote = std::stoi(tmp);
+                    std::string devname = get_variable(file, tag, "dev-name");
+                    tmp = get_variable(file, tag, "dev-note");
+                    good = ! tmp.empty();
+                    if (good)
+                    {
+                        int devnote = std::stoi(tmp);
+                        good = mapper().add(devnote, gmnote, devname, gmname);
+                    }
+                }
             }
         }
-        ++note;
     }
     return result;
 }
@@ -196,6 +191,8 @@ notemapfile::parse ()
     if (file.is_open())
     {
         result = parse_stream(file);
+        if (result && rc().verbose())
+            mapper().show();
     }
     else
     {

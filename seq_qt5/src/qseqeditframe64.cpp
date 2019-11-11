@@ -3166,22 +3166,12 @@ qseqeditframe64::set_recording_volume (int recvol)
 /**
  *  Here, we need to get the filespec, create a notemapper, fill it from the
  *  notemapfile, and iterate through the notes, converting them.
- *
  */
 
 void
-qseqeditframe64::remap_notes (bool /* status */ )
+qseqeditframe64::remap_notes ()
 {
-    std::string filename = rc().notemap_filespec();
-    sequence & s = *seq_pointer();
-    if (perf().repitch_selected(filename, s))
-    {
-        set_dirty();
-    }
-    else
-    {
-        // need to display error message somehow
-    }
+    (void) repitch_selected();
 }
 
 /**
@@ -3196,6 +3186,8 @@ qseqeditframe64::set_dirty ()
         qseqframe::set_dirty();
         seq::number seqno = seq_pointer()->seq_number();
         perf().notify_sequence_change(seqno);       // FIXME
+        m_seqroll->set_redraw();
+        m_seqdata->set_dirty();                 // doesn't cause a refresh
     }
     update_draw_geometry();
 }

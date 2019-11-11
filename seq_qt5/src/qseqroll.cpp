@@ -1370,13 +1370,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         }
         else
         {
-            /*
-             * Doesn't work.  Weird.
-             *
-            Qt::KeyboardModifiers mods = event->modifiers();
-            if (mods & (Qt::ShiftModifier | Qt::MetaModifier) == 0)
-             */
-
             if
             (
                 (event->modifiers() & Qt::ShiftModifier) == 0 &&
@@ -1385,6 +1378,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             {
                 switch (event->key())
                 {
+                case Qt::Key_C:
+
+                    if (m_parent_frame->repitch_selected())
+                        set_needs_update();
+                    break;
+
                 case Qt::Key_F:
 
                     if (s->edge_fix())

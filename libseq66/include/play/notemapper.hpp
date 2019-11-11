@@ -31,7 +31,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-08
+ * \updates       2019-11-11
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -80,7 +80,6 @@ namespace seq66
 
 class notemapper final : public basesettings
 {
-
     friend void show_maps
     (
         const std::string & tag,
@@ -136,6 +135,12 @@ private:
         const int m_gm_value;
 
         /**
+         *  The name of the key as represented by the non-GM device.
+         */
+
+        const std::string m_dev_name;
+
+        /**
          *    The name of the GM drum note or patch that is replacing the
          *    device's drum note of patch.  Sometimes there is no exact
          *    replacement, so it is good to know what GM sound is replacing the
@@ -157,7 +162,9 @@ private:
         pair
         (
             int devvalue, int gmvalue,
-            const std::string & gmname, bool reverse
+            const std::string & devname,
+            const std::string & gmname,
+            bool reverse
         );
         pair (const pair &) = default;
         pair & operator = (const pair &) = default;
@@ -171,6 +178,11 @@ private:
         int gm_value () const
         {
            return m_gm_value;
+        }
+
+        const std::string & dev_name () const
+        {
+           return m_dev_name;
         }
 
         const std::string & gm_name () const
@@ -189,6 +201,7 @@ private:
         }
 
         std::string to_string () const;
+        void show () const;
 
      };         // nested class pair
 
@@ -298,6 +311,7 @@ private:
 
     int convert (int incoming) const;
     std::string to_string (int devnote) const;
+    void show () const;
 
     /**
      *    Determines if the value parameter is usable, or "active".
@@ -336,7 +350,11 @@ private:
        );
     }
 
-    bool add (int devnote, int gmnote, const std::string & gmname);
+    bool add
+    (
+        int devnote, int gmnote,
+        const std::string & devname, const std::string & gmname
+    );
     int repitch (int channel, int input);
 
     const std::string & map_type () const

@@ -37,7 +37,8 @@
 #include <iomanip>                      /* std::setw manipulator            */
 #include <iostream>                     /* std::cerr to note errors         */
 
-#include "play/notemapper.hpp"          /* this module's functions and stuff   */
+#include "play/notemapper.hpp"          /* this module's functions & stuff  */
+#include "util/basic_macros.hpp"        /* seq66::bool_string()             */
 
 namespace seq66
 {
@@ -61,12 +62,14 @@ notemapper::pair::pair
 (
     int devvalue,
     int gmvalue,
+    const std::string & devname,
     const std::string & gmname,
     bool reverse
 ) :
     m_is_reverse    (reverse),
     m_dev_value     (devvalue),
     m_gm_value      (gmvalue),
+    m_dev_name      (devname),
     m_gm_name       (gmname),
     m_remap_count   (0)
 {
@@ -107,6 +110,22 @@ notemapper::pair::to_string () const
 }
 
 /**
+ *
+ */
+
+void
+notemapper::pair::show () const
+{
+    std::cout
+        << "'" << dev_name() << "' "
+        << dev_value() << " --> "
+        << gm_value() << " '"
+        << gm_name() << "'"
+        << std::endl
+        ;
+}
+
+/**
  *  Default constructor for the note-mapper.
  */
 
@@ -129,20 +148,34 @@ notemapper::notemapper () :
  */
 
 bool
-notemapper::add (int devnote, int gmnote, const std::string & gmname)
+notemapper::add
+(
+    int devnote, int gmnote,
+    const std::string & devname, const std::string & gmname
+)
 {
     auto count = m_note_map.size();
     if (m_map_reversed)
     {
-        pair np(devnote, gmnote, gmname, true);
+        pair np(gmnote, devnote, devname, gmname, true);    /* reversed     */
         auto p = std::make_pair(gmnote, np);
         (void) m_note_map.insert(p);
+        if (devnote < m_note_minimum)
+            m_note_minimum = devnote;
+
+        if (devnote > m_note_maximum)
+            m_note_maximum = devnote;
     }
     else
     {
-        pair np(gmnote, devnote, gmname, false);
+        pair np(devnote, gmnote, devname, gmname, false);   /* not reversed */
         auto p = std::make_pair(devnote, np);
         (void) m_note_map.insert(p);
+        if (gmnote < m_note_minimum)
+            m_note_minimum = gmnote;
+
+        if (gmnote > m_note_maximum)
+            m_note_maximum = gmnote;
     }
 
     bool result = m_note_map.size() == (count + 1);
@@ -198,6 +231,30 @@ notemapper::to_string (int devnote) const
         result += np.to_string();
     }
     return result;
+}
+
+/**
+ *
+ */
+
+void
+notemapper::show () const
+{
+    std::cout
+        << "Note-map Size: " << list().size() << "\n"
+        << "         Type: " << map_type() << "\n"
+        << "     Reversed: " << bool_string(map_reversed()) << "\n"
+        << " Note Minimum: " << note_minimum() << "\n"
+        << " Note Maximum: " << note_maximum() << "\n"
+        << "  Dev Channel: " << std::dec << device_channel() << "\n"
+        << "   GM Channel: " << std::dec << gm_channel() << "\n"
+        << std::endl
+        ;
+    for (auto & np : list())
+    {
+        std::cout << "Key " << np.first << ": ";
+        np.second.show();
+    }
 }
 
 }           // namespace seq66

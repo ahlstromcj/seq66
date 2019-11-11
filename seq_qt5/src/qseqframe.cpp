@@ -125,6 +125,27 @@ qseqframe::on_sequence_change (seq::number seqno)
 }
 
 /**
+ *
+ */
+
+bool
+qseqframe::repitch_selected ()
+{
+    std::string filename = rc().notemap_filespec();
+    sequence & s = *seq_pointer();
+    bool result = perf().repitch_selected(filename, s);
+    if (result)
+    {
+        set_dirty();
+    }
+    else
+    {
+        // need to display error message somehow
+    }
+    return result;
+}
+
+/**
  *  Sets the zoom parameter, z.  If valid, then the m_zoom member is set.
  *  The new setting is passed to the roll, time, data, and event panels
  *  [which each call their own set_dirty() functions].
