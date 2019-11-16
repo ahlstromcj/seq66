@@ -1,7 +1,7 @@
-# Seq66 0.90.0 (and above) rc configuration file
+# Seq66 0.90.2 (and above) rc configuration file
 #
-# /home/user/.config/seq66/qseq66.rc
-# Written on 2019-08-15 05:37:03
+# /home/ahlstrom/.config/seq66/qseq66.rc
+# Written on 2019-11-13 08:02:29
 #
 # This file holds the main configuration options for Seq66.
 # It loosely follows the format of the seq24 'rc' configuration
@@ -87,7 +87,7 @@ qseq66.mutes
 
 [manual-ports]
 
-# Set to 1 to have seq66 create its own ALSA ports and not
+# Set to 1 to have seq66 create its own ALSA/JACK ports and not
 # connect to other clients.  Use 1 to expose all 16 MIDI ports to
 # JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
 # already running on one's computer, or to use the autoconnect
@@ -98,17 +98,18 @@ qseq66.mutes
 [reveal-ports]
 
 # Set to 1 to have seq66 ignore any system port names
-# declared in the 'user' configuration file.  Use this option if
-# you want to be able to see the port names as detected by ALSA.
+# declared in the 'user' configuration file.  Use this option to
+# be able to see the port names as detected by ALSA/JACK.
 
 0   # flag for reveal ports
+
 # Set to 1 to allow Seq66 to stay in note-adding mode when
 # the right-click is released while holding the Mod4 (Super or
 # Windows) key.
 
 0   # allow_mod4_mode
 
-# Set to 1 to allow Seq66 to split performerance editor
+# Set to 1 to allow Seq66 to split performance editor
 # triggers at the closest snap position, instead of splitting the
 # trigger exactly in its middle.  Remember that the split is
 # activated by a middle click.
@@ -144,8 +145,8 @@ qseq66.mutes
 
 # 0 = Playback in live mode. Allows muting and unmuting of loops.
 #     from the main (patterns) window.  Disables both manual and
-#     automatic muting and unmuting from the performerance window.
-# 1 = Playback uses the song (performerance) editor's data and mute
+#     automatic muting and unmuting from the performance window.
+# 1 = Playback uses the song (performance) editor's data and mute
 #     controls, regardless of which window was used to start the
 #     playback.
 
@@ -173,15 +174,21 @@ qseq66.mutes
 
 # Last-used and currently-active directory:
 
-/home/user/Home/seq66/data
+/home/ahlstrom/Home/git/seq66/contrib/midi
 
 [recent-files]
 
 # Holds a list of the last few recently-loaded MIDI files.
 
-1
+7
 
-/home/user/Home/seq66/data/b4uacuse-gm-patchless.midi
+/home/ahlstrom/Home/git/seq66/contrib/midi/mute-song.midi
+/home/ahlstrom/Home/git/seq66/data/b4uacuse-gm-patchless.midi
+/home/ahlstrom/Home/git/seq66/contrib/midi/bad-linking.midi
+/home/ahlstrom/Home/git/seq66/contrib/midi/1Bar.midi
+/home/ahlstrom/Home/git/seq66/data/b.midi
+/home/ahlstrom/Home/git/seq66/data/colours.midi
+/home/ahlstrom/Home/git/seq66/data/colours-qt.midi
 
 [playlist]
 
@@ -190,11 +197,19 @@ qseq66.mutes
 
 0
 
-# Provides the name of a play-list.  If there is none, use '""'.
-# Or set the flag above to 0.
+# Provides the name of a play-list. If there is none, use '""',
+# or set the flag above to 0. Use the extension '.playlist'.
 
 ""
 
-# End of /home/user/.config/seq66/qseq66.rc
+[note-mapper]
+
+# Provides the name of a note-map file. If there is none, use '""'.
+# Use the extension '.drums'.  This file is used only when the user
+# invokes the note-conversion operation in the pattern editor.
+
+GM_DD-11.drums
+
+# End of /home/ahlstrom/.config/seq66/qseq66.rc
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini
