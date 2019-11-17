@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-09-15
+ * \updates       2019-11-16
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -144,16 +144,18 @@ private:
     int m_top_index;
 
     /**
-     *  Still in use :-(
+     *  Indicates the current row (and index of the current event) in the
+     *  event table.  This event will also be pointed to by the
+     *  m_current_event iterator.  Do not confuse it with m_top_index, which
+     *  is relative to the container-beginning, not the frame.
      */
 
     int m_current_index;
 
     /**
-     *  Indicates the current row (and index of the current event) in the
-     *  event table.  This event will also be pointed to by the
-     *  m_current_event iterator.  Do not confuse it with m_top_index, which
-     *  is relative to the container-beginning, not the frame.
+     *  Indicates where the user click in the list of events.  It is the index
+     *  of the selection. Semi-redundant, used only externally, by
+     *  qseqeventframe.
      */
 
     int m_current_row;
@@ -187,12 +189,7 @@ private:
 
 public:
 
-    qseventslots
-    (
-        performer & p,
-        qseqeventframe & parent,
-        seq::pointer seqp
-    );
+    qseventslots (performer & p, qseqeventframe & parent, seq::pointer seqp);
 
     /**
      *  Let's provide a do-nothing virtual destructor.
@@ -300,17 +297,20 @@ private:
 
     bool load_events ();
     bool load_table ();
+    std::string events_to_string () const;
     void set_current_event
     (
         const editable_events::iterator ei,
         int index,
         bool full_redraw = true
     );
-    void set_table_event
+    void set_table_event (const editable_event & ev, int index);
+    std::string event_to_string
     (
         const editable_event & ev,
-        int index
-    );
+        int index,
+        bool usehex = false
+    ) const;
     bool insert_event (const editable_event & edev);
     bool insert_event
     (

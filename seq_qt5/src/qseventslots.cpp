@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-10-04
+ * \updates       2019-11-16
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -170,6 +170,26 @@ qseventslots::load_table ()
 }
 
 /**
+ *
+ */
+
+std::string
+qseventslots::events_to_string () const
+{
+    std::string result;
+    if (m_event_count > 0)
+    {
+        int row = 0;
+        for (auto & ei : m_event_container)
+        {
+            result += event_to_string(ei.second, row);
+            ++row;
+        }
+    }
+    return result;
+}
+
+/**
  *  Set the current event, which is the event that is highlighted.  Note in
  *  the snprintf() calls that the first digit is part of the data byte, so
  *  that translation is easier.
@@ -219,13 +239,12 @@ qseventslots::set_current_event
         ev.category_string(), ev.timestamp_string(), ev.status_string(),
         data_0, data_1
     );
-    m_current_row   = index;
-    m_current_index = index;
+    m_current_row = m_current_index = index;
     m_current_iterator = ei;
 }
 
 /**
- *  Similar to set_current_event(), but fill in the table row with data,
+ *  Similar to set_current_event(), but fills in the table row with data,
  *  rather than filling the side fields for the current event.
  */
 
@@ -263,6 +282,54 @@ qseventslots::set_table_event
         index, ev.timestamp_string(), ev.status_string(),
         ev.channel_string(), data_0, data_1, linktime
     );
+}
+
+/**
+ *
+ */
+
+std::string
+qseventslots::event_to_string
+(
+    const editable_event & ev, int index, bool usehex
+) const
+{
+    std::string data_0;
+    std::string data_1;
+    std::string linktime;
+    if (ev.is_ex_data())
+    {
+        data_0 = ev.ex_data_string();
+        data_1 = "None";
+        linktime = "None";
+    }
+    else
+    {
+        const char * fmt = usehex ? "0x%02x" : "%5d";
+        char tmp[32];
+        midibyte d0, d1;
+        ev.get_data(d0, d1);
+        snprintf(tmp, sizeof tmp, fmt, int(d0));
+        data_0 = tmp;
+        snprintf(tmp, sizeof tmp, fmt, int(d1));
+        data_1 = tmp;
+        if (ev.is_linked())
+        {
+            midipulse lt = ev.link_time();
+            linktime = pulses_to_measurestring(lt, m_event_container.timing());
+        }
+        else
+            linktime = "None";
+    }
+    char line[132];
+    snprintf
+    (
+        line, sizeof line, "%4d %s %12s %5s %5s %5s %12s\n",
+        index, ev.timestamp_string().c_str(), ev.status_string().c_str(),
+        ev.channel_string().c_str(), data_0.c_str(), data_1.c_str(),
+        linktime.c_str()
+    );
+    return std::string(line);
 }
 
 /**
@@ -568,8 +635,7 @@ qseventslots::delete_current_event ()
         int newcount = m_event_container.count();
         if (newcount == 0)
         {
-            m_top_index = 0;
-            m_current_index = 0;
+            m_top_index = m_current_index = 0;
             m_top_iterator = m_current_iterator =
                 m_bottom_iterator = m_event_container.end();
         }
@@ -753,10 +819,8 @@ qseventslots::page_movement (int new_value)
             }
             else
             {
-                set_current_event
-                (
-                    m_current_iterator, m_current_index + movement
-                );
+                int newindex = m_current_index + movement;
+                set_current_event(m_current_iterator, newindex);
             }
         }
     }
@@ -801,8 +865,7 @@ qseventslots::page_topper (editable_events::iterator newcurrent)
         {
             if (ok)
             {
-                m_pager_index = 0;
-                m_top_index = 0;
+                m_pager_index = m_top_index = 0;
                 m_top_iterator = m_event_container.begin();
                 m_line_count = m_event_count;
                 m_current_iterator = newcurrent;

@@ -27,16 +27,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-10-04
+ * \updates       2019-11-17
  * \license       GNU GPLv2 or above
  *
  */
 
-#include <QFrame>
-
+#include <QFrame>                       /* used as a base class             */
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 
-#include "play/performer.hpp"           /* seq66::performer::callbacks      */
+#include "play/performer.hpp"           /* seq66::performer::callbacks base */
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 #include "util/basic_macros.hpp"        /* nullptr and related macros       */
 
@@ -87,13 +86,7 @@ private:
 
 public:
 
-    qseqeventframe
-    (
-        performer & p,
-        int seqid,
-        QWidget * parent = nullptr
-    );
-
+    qseqeventframe (performer & p, int seqid, QWidget * parent = nullptr);
     virtual ~qseqeventframe ();
 
 protected:
@@ -114,9 +107,6 @@ private:
     void set_seq_time_sig_and_ppqn (const std::string & sig);
     void set_seq_lengths (const std::string & mevents);
     void set_seq_channel (const std::string & channel);
-
-    std::string make_seq_title ();
-
     void set_event_category (const std::string & c);
     void set_event_timestamp (const std::string & ts);
     void set_event_name (const std::string & n);
@@ -133,9 +123,8 @@ private:
         const std::string & linktime
     );
     void set_dirty (bool flag = true);
-
     bool initialize_table ();
-
+    std::string make_seq_title ();
     std::string get_lengths ();
 
 private:
@@ -152,6 +141,7 @@ private slots:
     void handle_insert ();
     void handle_modify ();
     void handle_save ();
+    void handle_dump ();
     void handle_cancel ();
     void update_seq_name ();
 
@@ -170,8 +160,7 @@ private:
 
     /**
      *  This object holds an editable_events container, and helps this
-     *  user-interface class manage the list of events.  We might be able to
-     *  simplify it.
+     *  user-interface class manage the list of events.
      */
 
     std::unique_ptr<qseventslots> m_eventslots;

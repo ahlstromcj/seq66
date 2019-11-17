@@ -399,7 +399,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-11-08"
+#define VERSION_DATE_SHORT "2019-11-17"
 #define VERSION "0.90.2"
 
 )

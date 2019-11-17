@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>910</width>
-    <height>3047</height>
+    <height>885</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,7 +21,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="sizeConstraint">
-    <enum>QLayout::SetNoConstraint</enum>
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_3" columnstretch="1,0,0">
@@ -239,7 +239,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>250</width>
+           <width>244</width>
            <height>24</height>
           </size>
          </property>
@@ -338,7 +338,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>228</width>
+           <width>230</width>
            <height>24</height>
           </size>
          </property>
@@ -357,7 +357,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>72</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -380,7 +380,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>72</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -403,7 +403,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>72</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -429,7 +429,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>240</width>
+           <width>244</width>
            <height>24</height>
           </size>
          </property>
@@ -442,6 +442,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="button_dump">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QSplitter" name="save_close_splitter">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -450,9 +457,15 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>48</width>
             <height>24</height>
            </size>
           </property>
@@ -473,15 +486,21 @@
           <property name="enabled">
            <bool>false</bool>
           </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>48</width>
             <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>48</width>
+            <width>128</width>
             <height>24</height>
            </size>
           </property>
@@ -528,83 +547,11 @@
           <enum>Qt::DashLine</enum>
          </property>
          <property name="rowCount">
-          <number>100</number>
+          <number>28</number>
          </property>
          <property name="columnCount">
           <number>6</number>
          </property>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
          <row/>
          <row/>
          <row/>

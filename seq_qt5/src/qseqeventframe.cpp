@@ -208,6 +208,17 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     ui->button_save->setEnabled(false);
 
     /*
+     * Dump button.
+     */
+
+    connect
+    (
+        ui->button_dump, SIGNAL(clicked(bool)),
+        this, SLOT(handle_dump())
+    );
+    ui->button_dump->setEnabled(true);
+
+    /*
      * Load the data.
      */
 
@@ -583,7 +594,7 @@ qseqeventframe::set_dirty (bool flag)
 }
 
 /**
- *  Needs to be define in cpp file due to being an incomplete type in the
+ *  Needs to be defined in cpp file due to being an incomplete type in the
  *  header.
  */
 
@@ -594,7 +605,7 @@ qseqeventframe::current_row () const
 }
 
 /**
- *  Needs to be define in cpp file due to being an incomplete type in the
+ *  Needs to be defined in cpp file due to being an incomplete type in the
  *  header.
  */
 
@@ -796,9 +807,29 @@ qseqeventframe::handle_save ()
             perf().notify_sequence_change(seqno);       // FIXME
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
+            if (rc().verbose())
+            {
+                std::string dump = m_eventslots->events_to_string();
+                printf("%s", dump.c_str());
+            }
         }
     }
 }
+
+/**
+ *
+ */
+
+void
+qseqeventframe::handle_dump ()
+{
+    if (m_eventslots)
+    {
+        std::string dump = m_eventslots->events_to_string();
+        printf("%s", dump.c_str());
+    }
+}
+
 
 /**
  *  Cancels the edits and closes the dialog box.  In order for removing the
