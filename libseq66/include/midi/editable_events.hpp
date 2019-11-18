@@ -73,7 +73,7 @@ private:
      */
 
     using Key = eventlist::event_key;
-    using EventsPair = std::pair<Key, editable_event>;
+//  using EventsPair = std::pair<Key, editable_event>;
     using Events = std::multimap<Key, editable_event>;
     using iterator = Events::iterator;
     using const_iterator = Events::const_iterator;
