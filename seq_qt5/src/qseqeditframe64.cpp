@@ -429,11 +429,9 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     );
 #endif
 
-    for
-    (
-        int b = SEQ66_MINIMUM_BEATS_PER_MEASURE - 1;
-        b <= SEQ66_MAXIMUM_BEATS_PER_MEASURE - 1; ++b
-    )
+    int minimum = SEQ66_MINIMUM_BEATS_PER_MEASURE - 1;
+    int maximum = SEQ66_MAXIMUM_BEATS_PER_MEASURE - 1;
+    for (int b = minimum; b <= maximum; ++b)
     {
         QString combo_text = QString::number(b + 1);
         ui->m_combo_bpm->insertItem(b, combo_text);

@@ -766,13 +766,10 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 
     for (int seq = 0; seq < setsize; ++seq)
     {
+        int minimum = static_cast<int>(midicontrolout::seqaction::arm);
+        int maximum = static_cast<int>(midicontrolout::seqaction::max);
         file << seq;
-        for
-        (
-            int a = static_cast<int>(midicontrolout::seqaction::arm);
-            a < static_cast<int>(midicontrolout::seqaction::max);
-            ++a
-        )
+        for (int a = minimum; a < maximum; ++a)
         {
             event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
             bool active = mco.seq_event_is_active

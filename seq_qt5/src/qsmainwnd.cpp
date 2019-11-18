@@ -1737,14 +1737,10 @@ qsmainwnd::remove_live_frame (int ssnum)
 void
 qsmainwnd::remove_all_live_frames ()
 {
-    for
-    (
-        auto ei = m_open_live_frames.begin();
-        ei != m_open_live_frames.end(); /*++ei*/
-    )
+    for (auto i = m_open_live_frames.begin(); i != m_open_live_frames.end() ; )
     {
-        qliveframeex * lep = ei->second;    /* save the pointer             */
-        m_open_live_frames.erase(ei++);     /* remove pointer, inc iterator */
+        qliveframeex * lep = i->second;     /* save the pointer             */
+        m_open_live_frames.erase(i++);      /* remove pointer, inc iterator */
         if (not_nullptr(lep))
             delete lep;                     /* delete the pointer           */
     }
@@ -2095,20 +2091,8 @@ qsmainwnd::panic()
 void
 qsmainwnd::update_bank (int bankid)
 {
-#if defined USE_PRE_2019_09_02_CODE
-    screenset::number setno = m_current_main_set; // perf().playscreen_number()
-    if (bankid != int(setno))
-    {
-        setno = screenset::number(bankid);
-        m_current_main_set = setno;
-        bankid = int(perf().set_playing_screenset(setno));
-        if (not_nullptr(m_live_frame))
-            m_live_frame->update_bank(bankid);
-    }
-#else
-        if (not_nullptr(m_live_frame))
-            m_live_frame->update_bank(bankid);
-#endif
+    if (not_nullptr(m_live_frame))
+        m_live_frame->update_bank(bankid);
 }
 
 /**
