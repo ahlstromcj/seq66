@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2019-08-27
+ * \updates       2019-11-18
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist:
@@ -991,11 +991,9 @@ playlist::select_list_by_index (int index, bool selectsong)
 {
     bool result = false;
     int count = 0;
-    for
-    (
-        auto pci = m_play_lists.begin(); pci != m_play_lists.end();
-        ++pci, ++count
-    )
+    auto minimum = m_play_lists.begin();
+    auto maximum = m_play_lists.end();
+    for (auto pci = minimum; pci != maximum; ++pci, ++count)
     {
         if (count == index)
         {
@@ -1032,11 +1030,9 @@ playlist::select_list_by_midi (int ctrl, bool selectsong)
 {
     bool result = false;
     int count = 0;
-    for
-    (
-        auto pci = m_play_lists.begin(); pci != m_play_lists.end();
-        ++pci, ++count
-    )
+    auto minimum = m_play_lists.begin();
+    auto maximum = m_play_lists.end();
+    for (auto pci = minimum; pci != maximum; ++pci, ++count)
     {
         int midinumber = pci->second.ls_midi_number;
         if (midinumber == ctrl)
@@ -1216,11 +1212,9 @@ playlist::remove_list (int index)
 {
     bool result = false;
     int count = 0;
-    for
-    (
-        auto pci = m_play_lists.begin(); pci != m_play_lists.end();
-        /*++pci,*/ ++count
-    )
+    auto minimum = m_play_lists.begin();
+    auto maximum = m_play_lists.end();
+    for (auto pci = minimum; pci != maximum; /* ++pci, */ ++count)
     {
         if (count == index)
         {
@@ -1246,11 +1240,9 @@ void
 playlist::reorder_play_list ()
 {
     int index = 0;
-    for
-    (
-        auto pci = m_play_lists.begin(); pci != m_play_lists.end();
-        ++pci, ++index
-    )
+    auto minimum = m_play_lists.begin();
+    auto maximum = m_play_lists.end();
+    for (auto pci = minimum; pci != maximum; ++pci, ++index)
     {
         play_list_t & p = pci->second;
         p.ls_index = index;

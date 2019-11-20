@@ -595,16 +595,6 @@ setmapper::remove_sequence (int seqno)
 setmapper::container::iterator
 setmapper::find_by_value (screenset::number setno)
 {
-#if defined THIS_CODE_WORKS                     // hint: it does not
-    container::iterator result = std::find_if
-    (
-        m_container.begin(), m_container.end(),
-        [setno] (std::pair<screenset::number, screenset> & p) -> bool
-        {
-            return p.second.set_number() == setno;
-        }
-    );
-#else
     auto result = m_container.end();
     for (auto it = m_container.begin(); it != m_container.end(); ++it)
     {
@@ -614,7 +604,6 @@ setmapper::find_by_value (screenset::number setno)
             break;
         }
     }
-#endif
     return result;
 }
 

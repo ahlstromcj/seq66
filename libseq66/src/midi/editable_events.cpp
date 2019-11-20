@@ -192,7 +192,7 @@ bool
 editable_events::add (const editable_event & e)
 {
     size_t count = m_events.size();         /* save initial size            */
-    eventlist::event_key key(e);           /* create the key value         */
+    eventlist::event_key key(e);            /* create the key value         */
     auto p = std::make_pair(key, e);        /* EventsPair                   */
     auto ei = m_events.insert(p);           /* std::multimap operation      */
     bool result = m_events.size() == (count + 1);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-11
+ * \updates       2019-11-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -3871,14 +3871,10 @@ sequence::reset_interval
 {
     bool result = false;
     bool got_beginning = false;
-    eventlist::const_iterator iter = m_events.cbegin();
+    auto iter = m_events.cbegin();
     it0 = iter;
     it1 = m_events.cend();
-    for
-    (
-        eventlist::const_iterator iter = m_events.cbegin();
-        iter != m_events.cend(); ++iter
-    )
+    for (auto iter = m_events.cbegin(); iter != m_events.cend(); ++iter)
     {
         midipulse t = iter->timestamp();
         if (t >= t0)
