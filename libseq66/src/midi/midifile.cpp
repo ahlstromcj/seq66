@@ -91,6 +91,22 @@ namespace seq66
 {
 
 /**
+ *  Name of the initial text meta events (00 through 07).
+ */
+
+const std::string midifile::sm_meta_text_labels[8] =
+{
+    "Seq number",
+    "Text",
+    "Copyright",
+    "Track Name",
+    "Instrument Name",
+    "Lyric",
+    "Marker",
+    "Cue Point"
+};
+
+/**
  *  Principal constructor.
  *
  * \param name
@@ -1167,26 +1183,27 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             break;
 
                         /*
-                         * Handled in the "default" clause.
+                         * Handled above:
                          *
-                         * case EVENT_META_TEXT_EVENT:      // FF 01 ...
-                         * case EVENT_META_COPYRIGHT:       // FF 02 ...
-                         * case EVENT_META_INSTRUMENT:      // FF 04 ...
-                         * case EVENT_META_LYRIC:           // FF 05 ...
-                         * case EVENT_META_MARKER:          // FF 06 ...
-                         * case EVENT_META_CUE_POINT:       // FF 07 ...
-                         * case EVENT_META_MIDI_CHANNEL:    // FF 20 ...
-                         * case EVENT_META_MIDI_PORT:       // FF 21 ...
-                         * case EVENT_META_SMPTE_OFFSET:    // FF 54 ...
+                         * case EVENT_META_TRACK_NAME:       // FF 03 ...
                          */
 
-                        case EVENT_META_LYRIC:              // FF 05 len text
-
-                            (void) set_error_dump
-                            (
-                                "Unsupported Lyric event, skipping..."
-                            );
-                            m_pos += len;               /* eat the rest     */
+                        case EVENT_META_TEXT_EVENT:      // FF 01 len text
+                        case EVENT_META_COPYRIGHT:       // FF 02 ...
+                        case EVENT_META_INSTRUMENT:      // FF 04 ...
+                        case EVENT_META_LYRIC:           // FF 05 ...
+                        case EVENT_META_MARKER:          // FF 06 ...
+                        case EVENT_META_CUE_POINT:       // FF 07 ...
+                        {
+                            int index = int(mtype);
+                            if (index >= 0 && index < 8)
+                            {
+                                std::string msg = "Skipping unsupported event: ";
+                                msg += sm_meta_text_labels[index];
+                                (void) set_error_dump(msg);
+                                m_pos += len;           /* eat the rest     */
+                            }
+                        }
                         break;
 
                         default:
@@ -1200,10 +1217,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 bool ok = e.append_meta_data(mtype, bt);
                                 if (ok)
                                     s->append_event(e);
-
-                                // Obsolete:
-                                // for (int i = 0; i < int(len); ++i)
-                                //     (void) read_byte(); /* ignore the rest  */
                             }
                             else
                                 return false;

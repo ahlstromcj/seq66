@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-03-17
+ * \updates       2019-11-20
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -150,6 +150,8 @@ public:
         export_song,
         export_midi
     };
+
+    static const std::string sm_meta_text_labels[8];
 
 private:
 
