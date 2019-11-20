@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-18
+ * \updates       2019-11-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1179,6 +1179,15 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                          * case EVENT_META_MIDI_PORT:       // FF 21 ...
                          * case EVENT_META_SMPTE_OFFSET:    // FF 54 ...
                          */
+
+                        case EVENT_META_LYRIC:              // FF 05 len text
+
+                            (void) set_error_dump
+                            (
+                                "Unsupported Lyric event, skipping..."
+                            );
+                            m_pos += len;               /* eat the rest     */
+                        break;
 
                         default:
 
