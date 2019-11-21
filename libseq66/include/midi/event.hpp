@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-10
+ * \updates       2019-11-21
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -100,7 +100,8 @@ namespace seq66
 const midibyte c_max_midi_data_value    = 127;
 
 /**
- *  This highest bit of the status byte is always 1.
+ *  This highest bit of the STATUS byte is always 1.  If this bit is not set,
+ *  then the MIDI byte is a DATA byte.
  */
 
 const midibyte EVENT_STATUS_BIT         = 0x80;
@@ -197,18 +198,18 @@ const midibyte EVENT_MIDI_META           = 0xFF;    // an escape code
  */
 
 const midibyte EVENT_META_SEQ_NUMBER     = 0x00;
-const midibyte EVENT_META_TEXT_EVENT     = 0x01;    // not yet handled
-const midibyte EVENT_META_COPYRIGHT      = 0x02;    // not yet handled
+const midibyte EVENT_META_TEXT_EVENT     = 0x01;    // skipped
+const midibyte EVENT_META_COPYRIGHT      = 0x02;    // skipped
 const midibyte EVENT_META_TRACK_NAME     = 0x03;
-const midibyte EVENT_META_INSTRUMENT     = 0x04;    // not yet handled
-const midibyte EVENT_META_LYRIC          = 0x05;    // not yet handled
-const midibyte EVENT_META_MARKER         = 0x06;    // not yet handled
-const midibyte EVENT_META_CUE_POINT      = 0x07;    // not yet handled
-const midibyte EVENT_META_MIDI_CHANNEL   = 0x20;    // not yet handled, obsolete
-const midibyte EVENT_META_MIDI_PORT      = 0x21;    // not yet handled, obsolete
+const midibyte EVENT_META_INSTRUMENT     = 0x04;    // skipped
+const midibyte EVENT_META_LYRIC          = 0x05;    // skipped
+const midibyte EVENT_META_MARKER         = 0x06;    // skipped
+const midibyte EVENT_META_CUE_POINT      = 0x07;    // skipped
+const midibyte EVENT_META_MIDI_CHANNEL   = 0x20;    // skipped, obsolete
+const midibyte EVENT_META_MIDI_PORT      = 0x21;    // skipped, obsolete
 const midibyte EVENT_META_END_OF_TRACK   = 0x2F;
 const midibyte EVENT_META_SET_TEMPO      = 0x51;
-const midibyte EVENT_META_SMPTE_OFFSET   = 0x54;    // not yet handled
+const midibyte EVENT_META_SMPTE_OFFSET   = 0x54;    // skipped
 const midibyte EVENT_META_TIME_SIGNATURE = 0x58;
 const midibyte EVENT_META_KEY_SIGNATURE  = 0x59;
 const midibyte EVENT_META_SEQSPEC        = 0x7F;
@@ -218,7 +219,7 @@ const midibyte EVENT_META_SEQSPEC        = 0x7F;
  *  an illegal meta type.
  */
 
-const midibyte EVENT_META_ILLEGAL        = 0xFF;      // a problem code
+const midibyte EVENT_META_ILLEGAL        = 0xFF;    // a problem code
 
 /**
  *  This value of 0xFF is Seq66's channel value that indicates that
@@ -452,6 +453,30 @@ public:
     bool check_channel (int channel) const
     {
         return m_channel == EVENT_NULL_CHANNEL || midibyte(channel) == m_channel;
+    }
+
+    /**
+     *  Static test for the status bit.
+     *
+     * \return
+     *      Returns true if the status bit is set.
+     */
+
+    static bool is_status (midibyte m)
+    {
+        return (m & EVENT_STATUS_BIT) != 0x00;
+    }
+
+    /**
+     *  Static test for the status bit.
+     *
+     * \return
+     *      Returns true if the status bit is not set.
+     */
+
+    static bool is_data (midibyte m)
+    {
+        return (m & EVENT_STATUS_BIT) == 0x00;
     }
 
     /**

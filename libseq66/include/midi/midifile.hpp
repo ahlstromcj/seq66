@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-20
+ * \updates       2019-11-21
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -123,9 +123,10 @@ namespace seq66
      * Forward references.
      */
 
+    class event;
     class midi_splitter;
-    class performer;
     class midi_vector;
+    class performer;
 
 /**
  *  This class handles the parsing and writing of MIDI files.  In addition to
@@ -382,7 +383,13 @@ protected:
     midilong read_varinum ();
     bool read_byte_array (midibyte * b, size_t len);
     bool read_byte_array (midistring & b, size_t len);
+    bool read_meta_data (sequence * s, event & e, midibyte metatype, size_t len);
     void read_gap (size_t sz);
+
+    void skip (midilong sz)             /* compare to read_gap()    */
+    {
+        m_pos += sz;                    /* sz can be 0 or negative  */
+    }
 
     void write_long (midilong value);
     void write_split_long (unsigned highbytes, unsigned lowbytes);

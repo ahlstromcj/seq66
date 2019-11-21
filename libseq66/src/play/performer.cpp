@@ -2013,7 +2013,7 @@ performer::set_tick (midipulse tick)
     if (difference > 100)
     {
         s_last_tick = tick;
-        infoprintf("perform tick = %ld\n", m_tick);
+        infoprintf("perform tick = %ld", m_tick);
         fflush(stdout);
     }
     if (tick == 0)
@@ -2535,7 +2535,7 @@ performer::output_func ()
         }
 #if defined SEQ66_PLATFORM_DEBUG
         if (rc().verbose())
-            infoprintf("output_func() running on CPU #%d\n", sched_getcpu());
+            infoprintf("output_func() running on CPU #%d", sched_getcpu());
 #endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -3064,7 +3064,7 @@ performer::input_func ()
                             {
 #ifdef PLATFORM_DEBUG_TMI
                                 std::string estr = to_string(ev);
-                                infoprintf("MIDI ctrl event %s\n", estr.c_str());
+                                infoprintf("MIDI ctrl event %s", estr.c_str());
 #endif
                             }
                             else

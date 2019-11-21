@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2019-07-25
+ * \updates       2019-11-21
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -291,7 +291,7 @@ main (int argc, char * argv [])
             {
                 errprint(extant_errmsg.c_str());
             }
-            else
+            else if (! errmessage.empty())
             {
                 errprint(errmessage.c_str());
             }

@@ -274,7 +274,7 @@ midi_alsa_info::get_all_port_info ()
                      * client-name of 'VMPK Output'.
                      */
 
-                    infoprintf("Non-I/O port '%s'\n", clientname.c_str());
+                    infoprintf("Non-I/O port '%s'", clientname.c_str());
                 }
             }
         }

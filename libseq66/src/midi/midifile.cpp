@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-20
+ * \updates       2019-11-21
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -359,6 +359,27 @@ midifile::read_byte_array (midibyte * b, size_t len)
 }
 
 /**
+ *  A helper function for arbitrary, otherwise unhandled meta data.
+ */
+
+bool
+midifile::read_meta_data (sequence * s, event & e, midibyte metatype, size_t len)
+{
+    bool result = checklen(len, metatype);
+    if (result)
+    {
+        std::vector<midibyte> bt;
+        for (int i = 0; i < int(len); ++i)
+            bt.push_back(read_byte());
+
+        bool ok = e.append_meta_data(metatype, bt);
+        if (ok)
+            s->append_event(e);
+    }
+    return result;
+}
+
+/**
  *  A overload function to simplify reading midi_control data from the MIDI
  *  file.  It uses a midistring object instead of a buffer.
  *
@@ -416,7 +437,8 @@ midifile::read_varinum ()
 
 /**
  *  Jumps/skips the given number of bytes in the data stream.  If too large,
- *  the position is left at the end.
+ *  the position is left at the end.  Primarily used in the derived class
+ *  wrkfile.
  *
  * \param sz
  *      Provides the gap size, in bytes.
@@ -873,8 +895,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 Delta = read_varinum();         /* get time delta           */
                 laststatus = status;
                 status = m_data[m_pos];         /* get next status byte     */
-                if ((status & 0x80) == 0x00)    /* is it a status bit ?     */
-                    status = laststatus;        /* no, it's running status  */
+                if (event::is_data(status))     /* is it a data byte ?      */
+                    status = laststatus;        /* yes, it's running status */
                 else
                     ++m_pos;                    /* it's a status, increment */
 
@@ -885,7 +907,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                  */
 
                 RunningTime += Delta;           /* add in the time          */
-                if (m_use_scaled_ppqn)         /* adjust time via ppqn     */
+                if (m_use_scaled_ppqn)          /* adjust time via ppqn     */
                 {
                     CurrentTime = RunningTime * m_ppqn / m_file_ppqn;
                     e.set_timestamp(CurrentTime);
@@ -1023,7 +1045,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 }
                             }
                             else
-                                m_pos += len;           /* eat it           */
+                                skip(len);              /* eat it           */
                             break;
 
                         case EVENT_META_TIME_SIGNATURE: /* FF 58 04 n d c b */
@@ -1061,7 +1083,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     s->append_event(e);        /* new 0.93 */
                             }
                             else
-                                m_pos += len;           /* eat it           */
+                                skip(len);              /* eat it           */
                             break;
 
 #if defined USE_KEY_SIGNATURE_DATA
@@ -1179,48 +1201,55 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     seqspec
                                 );
                             }
-                            m_pos += len;               /* eat the rest     */
+                            skip(len);                  /* eat it           */
                             break;
 
                         /*
-                         * Handled above:
-                         *
-                         * case EVENT_META_TRACK_NAME:       // FF 03 ...
+                         * Handled above: EVENT_META_TRACK_NAME
                          */
 
-                        case EVENT_META_TEXT_EVENT:      // FF 01 len text
-                        case EVENT_META_COPYRIGHT:       // FF 02 ...
-                        case EVENT_META_INSTRUMENT:      // FF 04 ...
-                        case EVENT_META_LYRIC:           // FF 05 ...
-                        case EVENT_META_MARKER:          // FF 06 ...
-                        case EVENT_META_CUE_POINT:       // FF 07 ...
-                        {
-                            int index = int(mtype);
-                            if (index >= 0 && index < 8)
+                        case EVENT_META_TEXT_EVENT:      /* FF 01 len text  */
+                        case EVENT_META_COPYRIGHT:       /* FF 02 ...       */
+                        case EVENT_META_INSTRUMENT:      /* FF 04 ...       */
+                        case EVENT_META_LYRIC:           /* FF 05 ...       */
+                        case EVENT_META_MARKER:          /* FF 06 ...       */
+                        case EVENT_META_CUE_POINT:       /* FF 07 ...       */
+
+                            if (rc().verbose())
                             {
-                                std::string msg = "Skipping unsupported event: ";
-                                msg += sm_meta_text_labels[index];
-                                (void) set_error_dump(msg);
-                                m_pos += len;           /* eat the rest     */
+                                int index = int(mtype);
+                                if (index >= 0 && index < 8)
+                                {
+                                    std::string m = "Skipping meta: ";
+                                    m += sm_meta_text_labels[index];
+                                    (void) set_error_dump(m);
+                                }
                             }
-                        }
-                        break;
+                            skip(len);                  /* eat it           */
+                            break;
+
+                        case EVENT_META_MIDI_CHANNEL:   /* FF 20 01 cc      */
+
+                            (void) read_meta_data(s, e, mtype, len);
+                            break;
+
+                        case EVENT_META_MIDI_PORT:      /* FF 21 01 pp      */
+
+                            (void) read_meta_data(s, e, mtype, len);
+                            break;
+
+                        case EVENT_META_SMPTE_OFFSET:   /* FF 54 03 t t t   */
+
+                            (void) read_meta_data(s, e, mtype, len);
+                            break;
 
                         default:
 
-                            if (checklen(len, mtype))
+                            if (rc().verbose())
                             {
-                                std::vector<midibyte> bt;
-                                for (int i = 0; i < int(len); ++i)
-                                    bt.push_back(read_byte());
-
-                                bool ok = e.append_meta_data(mtype, bt);
-                                if (ok)
-                                    s->append_event(e);
+                                std::string m = "Illegal meta value skipped";
+                                (void) set_error_dump(m);
                             }
-                            else
-                                return false;
-
                             break;
                         }
                     }
@@ -1251,15 +1280,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 if (! e.append_sysex(b)) /* SysEx end byte? */
                                     break;
                             }
-                            m_pos += len;               /* skip the rest    */
+                            skip(len);                  /* eat it           */
 #else
-                            m_pos += len;               /* skip it          */
+                            skip(len);                  /* eat it           */
                             if (m_data[m_pos-1] != 0xF7)
                             {
-                                (void) set_error_dump
-                                (
-                                    "SysEx terminator byte F7 not found"
-                                );
+                                std::string m = "SysEx terminator F7 not found";
+                                (void) set_error_dump(m);
                             }
 #endif
                         }
@@ -1312,13 +1339,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             }
             else                                        /* fatal in 1st one */
             {
-                result = set_error_dump
-                (
-                    "Unsupported MIDI track ID on first track.", ID
-                );
+                result = set_error_dump("First track unsupported track ID", ID);
                 break;
             }
-            m_pos += TrackLength;
+            skip(TrackLength);
         }
     }                                                   /* for each track   */
     return result;
@@ -1413,7 +1437,7 @@ midifile::parse_prop_header (int file_size)
         midibyte status = (result & 0x00FF0000) >> 16;      /* 2-byte shift */
         if (status == 0xFF)
         {
-            m_pos -= 2;                         /* back up to meta type     */
+            skip(-2);                           /* back up to meta type     */
             midibyte type = read_byte();        /* get meta type            */
             if (type == 0x7F)                   /* SeqSpec event marker     */
             {
@@ -1540,7 +1564,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         }
     }
     else
-        m_pos -= 4;                                 /* unread the "ID code" */
+        skip(-4);                                   /* unread the "ID code" */
 
     if (result)
     {
@@ -1580,7 +1604,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 
             if (ctrls > c_max_sequence)
             {
-                m_pos -= 4;
+                skip(-4);
                 (void) set_error_dump
                 (
                     "Bad MIDI-control sequence count, fixing.\n"
@@ -1631,7 +1655,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
                 (
                     "Bad buss count, fixing; please save the file now."
                 );
-                m_pos -= 4;
+                skip(-4);
                 busscount = int(read_byte());
             }
 #endif  // defined USE_MIDI_CLOCK_IN_SONGS
