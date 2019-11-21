@@ -456,15 +456,28 @@ public:
     }
 
     /**
-     *  Static test for the status bit.
+     *  Static test for the status bit.  This test also works for detecting a
+     *  Voice Category status. This function is used to see if the running
+     *  status needs to be stored.
      *
      * \return
-     *      Returns true if the status bit is set.
+     *      Returns true if the status bit is set, for values less than 0xF0.
      */
 
     static bool is_status (midibyte m)
     {
-        return (m & EVENT_STATUS_BIT) != 0x00;
+        return (m >= 0x80) && (m < 0xF0);
+    }
+
+    /**
+     *  Checks for a System Category status, which is supposed to clear any
+     *  running status.  We also allow 0xff to clear running status to prevent
+     *  errors in reading a file.
+     */
+
+    static bool clear_status (midibyte m)
+    {
+        return (m >= 0xF0) && (m <= 0xF7) || (m == 0xFF);
     }
 
     /**

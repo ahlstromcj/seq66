@@ -69,6 +69,20 @@
  *  defined in the globals module) is preceded by the sequencer-specific
  *  prefix, 0xFF 0x7F len id/date). By default, the new format is used.
  *  In Seq66, the old format is no longer supported.
+ *
+ * Running status:
+ *
+ *      A recommended approach for a receiving device is to maintain its
+ *      "running status buffer" as so:
+ *
+ *      -#  Buffer is cleared (ie, set to 0) at power up.
+ *      -#  Buffer stores the status when a Voice Category Status (ie, 0x80
+ *          to 0xEF) is received.
+ *      -#  Buffer is cleared when a System Common Category Status (ie, 0xF0
+ *          to 0xF7) is received.
+ *      -#  Nothing is done to the buffer when a RealTime Category message is
+ *          received.
+ *      -#  Any data bytes are ignored when the buffer is 0.
  */
 
 #include <fstream>                      /* std::ifstream and std::ofstream  */
@@ -375,6 +389,37 @@ midifile::read_meta_data (sequence * s, event & e, midibyte metatype, size_t len
         bool ok = e.append_meta_data(metatype, bt);
         if (ok)
             s->append_event(e);
+    }
+    return result;
+}
+
+/**
+ *  A overload function to simplify reading midi_control data from the MIDI
+ *  file.  It uses a standard string object instead of a buffer.
+ *
+ * \param b
+ *      The std::string to receive the data.
+ *
+ * \param len
+ *      The number of bytes to be read.
+ *
+ * \return
+ *      Returns true if any bytes were read.  The string \a b will be empty if
+ *      false is returned.
+ */
+
+bool
+midifile::read_string (std::string & b, size_t len)
+{
+    bool result = len > 0;
+    b.clear();
+    if (result)
+    {
+        if (len > b.capacity())
+            b.reserve(len);
+
+        for (size_t i = 0; i < len; ++i)
+            b.push_back(read_byte());
     }
     return result;
 }
@@ -877,7 +922,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             bool timesig_set = false;               /* seq66 style wins     */
             midishort seqnum = c_midishort_max;     /* either read or set   */
             midibyte status = 0;
-            midibyte laststatus;
+            midibyte runningstatus = 0;
             midilong seqspec = 0;                   /* sequencer-specific   */
             bool done = false;                      /* done for each track  */
             sequence * s = create_sequence(p);      /* create new sequence  */
@@ -893,12 +938,19 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             {
                 event e;                        /* safer here, if "slower"  */
                 Delta = read_varinum();         /* get time delta           */
-                laststatus = status;
                 status = m_data[m_pos];         /* get next status byte     */
-                if (event::is_data(status))     /* is it a data byte ?      */
-                    status = laststatus;        /* yes, it's running status */
+                if (event::is_status(status))
+                {
+                    runningstatus = status;
+                    skip(1);
+                }
+                else if (event::clear_status(status))
+                    runningstatus = 0;
+
+                if (runningstatus > 0)          /* running status in force? */
+                    status = runningstatus;     /* yes, use running status  */
                 else
-                    ++m_pos;                    /* it's a status, increment */
+                    skip(1);                    /* it's a status, increment */
 
                 e.set_status(status);           /* set the members in event */
 
@@ -1086,14 +1138,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 skip(len);              /* eat it           */
                             break;
 
-#if defined USE_KEY_SIGNATURE_DATA
-
-                        /*
-                         * Commented out, now unhandled meta events are
-                         * created for saving to the output file later.
-                         */
-
-                        case EVENT_META_KEY_SIGNATURE:  /* FF 59 00         */
+                        case EVENT_META_KEY_SIGNATURE:  /* FF 59 02 ss kk   */
 
                             if (len == 2)
                             {
@@ -1105,13 +1150,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 if (ok)
                                     s->append_event(e);
                             }
+                            else
+                                skip(len);              /* eat it           */
                             break;
 
-#endif  // USE_KEY_SIGNATURE_DATA
+                        case EVENT_META_SEQSPEC:      /* FF F7 = SeqSpec    */
 
-                        case EVENT_META_SEQSPEC:          /* FF F7 = SeqSpec  */
-
-                            if (len > 4)                  /* FF 7F len data   */
+                            if (len > 4)              /* FF 7F len data     */
                             {
                                 seqspec = read_long();
                                 len -= 4;
@@ -1220,12 +1265,20 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int index = int(mtype);
                                 if (index >= 0 && index < 8)
                                 {
-                                    std::string m = "Skipping meta: ";
-                                    m += sm_meta_text_labels[index];
-                                    (void) set_error_dump(m);
+                                    std::string text;
+                                    if (read_string(text, len))
+                                    {
+                                        std::string m = "Skipping meta: ";
+                                        m += sm_meta_text_labels[index];
+                                        m += " '";
+                                        m += text;
+                                        m += "'";
+                                        (void) set_error_dump(m);
+                                    }
                                 }
                             }
-                            skip(len);                  /* eat it           */
+                            else
+                                skip(len);              /* eat it           */
                             break;
 
                         case EVENT_META_MIDI_CHANNEL:   /* FF 20 01 cc      */
@@ -1302,7 +1355,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                 default:
 
-                    return set_error_dump
+                    /*
+                     * Some files (e.g. 2rock.mid, which has "00 24 40"
+                     * hanging out there all alone at offset 0xba) have junk
+                     * in them.
+                     */
+
+                    /* return */ set_error_dump
                     (
                         "Unsupported MIDI event", midilong(status)
                     );
