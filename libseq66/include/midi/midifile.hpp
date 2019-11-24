@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-21
+ * \updates       2019-11-24
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -279,7 +279,6 @@ public:
         bool playlistmode   = false
     );
     virtual ~midifile ();
-
     virtual bool parse (performer & p, int screenset = 0, bool importing = false);
     virtual bool write (performer & p, bool doseqspec = true);
 
@@ -320,9 +319,9 @@ public:
      *  Current position in the data stream.
      */
 
-    size_t get_file_pos ()
+    size_t pos ()
     {
-        return m_pos;           // return m_d->m_IOStream->device()->pos();
+        return m_pos;
     }
 
 protected:
@@ -330,7 +329,7 @@ protected:
     virtual sequence * create_sequence (performer & p);
     virtual bool finalize_sequence
     (
-        performer & p, sequence * seq, int seqnum, int screenset
+        performer & p, sequence & seq, int seqnum, int screenset
     );
 
     bool verify_mode () const
@@ -384,7 +383,7 @@ protected:
     bool read_byte_array (midibyte * b, size_t len);
     bool read_byte_array (midistring & b, size_t len);
     bool read_string (std::string & b, size_t len);
-    bool read_meta_data (sequence * s, event & e, midibyte metatype, size_t len);
+    bool read_meta_data (sequence & s, event & e, midibyte metatype, size_t len);
     void read_gap (size_t sz);
 
     void skip (midilong sz)             /* compare to read_gap()    */

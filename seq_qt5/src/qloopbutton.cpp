@@ -330,14 +330,6 @@ qloopbutton::initialize_fingerprint ()
         }
         m_fingerprint_size = i1;
     }
-    /*
-        else
-        {
-            int y = m_progress_box.y();
-            for (int i = 0; i < count; ++i)
-                m_fingerprint[i] = y;
-        }
-    */
 }
 
 /**
@@ -680,8 +672,12 @@ qloopbutton::draw_pattern (QPainter & painter)
             }
 
             if (! m_seq->transposable())
+            {
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("sequence #%d is not transposable\n", m_seq->seq_number());
+#endif
                 pen.setColor(Qt::red);
-
+            }
             pen.setWidth(1);
             m_seq->reset_draw_marker();             /* reset loop iterator  */
             for (;;)

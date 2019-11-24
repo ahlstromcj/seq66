@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2019-04-11
+ * \updates       2019-11-22
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -160,50 +160,6 @@
 #endif
 
 #endif  // SEQ66_PLATFORM_GNU
-
-/**
- *  A macro to prepend a fully qualified function name to a string.
- *  Currently defined in the rtmidi library due to an weird inability
- *  to resolve circular references involving message_concatenate() and
- *  the mastermidibus() class!
- */
-
-#if defined __cplusplus
-#define func_message(x) seq66::message_concatenate(__func__, x ## .c_str())
-#endif
-
-/**
- *    Provides reporting macros (which happens to match Chris's XPC message
- *    functions.
- */
-
-#define errprint(x)         (void) seq66::error_message(x)
-#define warnprint(x)        (void) seq66::warn_message(x)
-#define infoprint(x)        (void) seq66::info_message(x)
-
-/**
- *  Usage:      errprintfunc(cstring);
- *
- *    Provides an error reporting macro that includes the function name.
- */
-
-#if defined __cplusplus
-#define errprintfunc(x) seq66::msgprintf(seq66::msg_level::error, \
- "%s: %s\n", __func__, x)
-#else
-#define errprintfunc(x) fprintf(stderr, "%s: %s\n", __func__, x)
-#endif
-
-/**
- *  Usage:      errprintf(format, cstring|value);
- *
- *    Provides an error reporting macro that requires a sprintf() format
- *    specifier as well.
- */
-
-#define errprintf(fmt, x)   msgprintf(seq66::msg_level::error, fmt, x)
-#define warnprintf(fmt, x)  msgprintf(seq66::msg_level::warn, fmt, x)
-#define infoprintf(fmt, x)  msgprintf(seq66::msg_level::info, fmt, x)
 
 /**
  *  Usage:      apiprint(function_name, context_tag);

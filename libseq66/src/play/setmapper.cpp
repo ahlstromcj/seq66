@@ -40,7 +40,7 @@
  *
  *  Create a new sequence from a file:
  *
- *      -#  midifile::finalize_sequence(p, seqptr, seqno, screenset).
+ *      -#  midifile::finalize_sequence(p, seqref, seqno, screenset).
  *          This function calculates the preferred seq number from the number
  *          in the MIDI file and the desired destination screenset.
  *      -#  performer::add_sequence(seqptr, prefseqnum).  We need to keep the

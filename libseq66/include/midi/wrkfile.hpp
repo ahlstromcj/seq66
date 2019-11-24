@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2019-02-17
+ * \updates       2019-11-24
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -240,9 +240,12 @@ public:
         int ppqn            = SEQ66_USE_DEFAULT_PPQN,
         bool playlistmode   = false
     );
-    virtual ~wrkfile ();
+    virtual ~wrkfile () override;
 
-    virtual bool parse (performer & p, int screenset = 0, bool importing = false);
+    virtual bool parse
+    (
+        performer & p, int screenset = 0, bool importing = false
+    ) override;
     double get_real_time (midipulse ticks) const;
 
 private:
@@ -265,11 +268,11 @@ private:
         return m_performer;
     }
 
-    virtual sequence * create_sequence (performer & p);
+    virtual sequence * create_sequence (performer & p) override;
     virtual bool finalize_sequence
     (
-        performer & p, sequence * seq, int seqnum, int screenset
-    );
+        performer & p, sequence & seq, int seqnum, int screenset
+    ) override;
     void next_track
     (
         int trackno,

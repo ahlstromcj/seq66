@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-02
+ * \updates       2019-11-22
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -137,12 +137,7 @@ namespace seq66
  *      to null.
  */
 
-qseqeditframe::qseqeditframe
-(
-    performer & p,
-    int seqid,
-    QWidget * parent
-) :
+qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     qseqframe           (p, seqid, parent),
     ui                  (new Ui::qseqeditframe),
     m_container         (nullptr),
@@ -151,7 +146,7 @@ qseqeditframe::qseqeditframe
     m_palette           (new QPalette()),
     m_popup             (nullptr),
     m_timer             (nullptr),
-    m_snap              (0),
+    m_snap              (SEQ66_DEFAULT_PPQN / 4),
     m_edit_mode         (perf().edit_mode(seqid))
 {
     ui->setupUi(this);

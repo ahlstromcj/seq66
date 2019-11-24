@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2019-10-16
+ * \updates       2019-11-23
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -138,9 +138,10 @@ extern int zoom_power_of_2 (int ppqn);
 extern int beat_pow2 (int logbase2);
 extern int power (int base, int exponent);
 extern midibyte beat_log2 (int value);
-extern double tempo_us_from_bytes (const midibyte tt[3]);
+extern midibpm tempo_us_from_bytes (const midibyte tt[3]);
 extern void tempo_us_to_bytes (midibyte t[3], int tempo_us);
 extern midibyte tempo_to_note_value (midibpm tempo);
+extern midibpm fix_tempo (midibpm bpm);
 extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 

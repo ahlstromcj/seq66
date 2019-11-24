@@ -873,7 +873,7 @@ editable_event::analyze ()
     (void) format_timestamp();
     if (status >= EVENT_NOTE_OFF && status <= EVENT_PITCH_WHEEL)
     {
-        midibyte ch = channel();
+        midibyte ch = channel() + 1;
         midibyte d0, d1;
         get_data(d0, d1);
         category(subgroup::channel_message);
@@ -929,9 +929,11 @@ editable_event::analyze ()
     }
     else
     {
-        // Would try to detect SysEx versus Meta message versus SeqSpec here.
-        // Then set either m_name_meta and/or m_name_seqspec.
-        // ALso see eventslots::set_current_event().
+        /*
+         * Would try to detect SysEx versus Meta message versus SeqSpec here.
+         * Then set either m_name_meta and/or m_name_seqspec.
+         * ALso see eventslots::set_current_event().
+         */
     }
 }
 

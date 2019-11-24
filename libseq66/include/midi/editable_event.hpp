@@ -130,7 +130,6 @@ private:
          */
 
         prop_event         /* sm_prop_event_names[]        */
-
     };
 
     /**
@@ -189,7 +188,6 @@ private:
          */
 
         std::string event_name;
-
     };
 
     /**
@@ -214,7 +212,6 @@ private:
          */
 
         unsigned short event_length;
-
     };
 
     /**

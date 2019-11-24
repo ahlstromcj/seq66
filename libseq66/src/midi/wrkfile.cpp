@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2019-08-04
+ * \updates       2019-11-24
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -485,7 +485,7 @@ bool
 wrkfile::finalize_sequence
 (
     performer & p,
-    sequence * seq,
+    sequence & seq,
     int seqnum,
     int screenset
 )
@@ -629,7 +629,7 @@ wrkfile::next_track
 }
 
 /**
- *
+ *  This override finalizes a WRK track, if the sequence doesn't already exist.
  */
 
 void
@@ -640,19 +640,16 @@ wrkfile::finalize_track ()
         m_current_seq->set_length(m_track_time);
         (void) finalize_sequence
         (
-            *m_performer, m_current_seq, m_track_number, m_screen_set
+            *m_performer, *m_current_seq, m_track_number, m_screen_set
         );
     }
 }
 
 /**
- * Emitted after reading the global variables chunk:
- *
- * This record contains miscellaneous Cakewalk global variables that can
- * be retrieved using individual getters.
- *
- * See getNow(), getFrom(), getThru(), etc.  However, we will expose only
- * the values needed by Seq66.
+ * Emitted after reading the global variables chunk: This record contains
+ * miscellaneous Cakewalk global variables that can be retrieved using
+ * individual getters.  See getNow(), getFrom(), getThru(), etc.  However, we
+ * will expose only the values needed by Seq66.
  *
  * Fixed-point ratio value of tempo offset 1, 2, or 3.
  *
@@ -2195,7 +2192,7 @@ wrkfile::read_chunk ()
     if (ck != WC_END_CHUNK)
     {
         int ck_len = read_32_bit();
-        size_t start_pos = get_file_pos();
+        size_t start_pos = pos();
         size_t final_pos = start_pos + ck_len;
         read_raw_data(ck_len);
         read_seek(start_pos);       // TODO: check the return value

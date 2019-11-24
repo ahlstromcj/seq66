@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-11-10
+ * \updates       2019-11-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1272,6 +1272,8 @@ performer::set_beats_per_minute (midibpm bpm)
         bpm = SEQ66_MINIMUM_BPM;
     else if (bpm > SEQ66_MAXIMUM_BPM)
         bpm = SEQ66_MAXIMUM_BPM;
+    else
+        bpm = fix_tempo(bpm);
 
     if (bpm != m_bpm)
     {

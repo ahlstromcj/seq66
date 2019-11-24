@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2019-08-12
+ * \updates       2019-11-23
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -1170,12 +1170,12 @@ beat_log2 (int value)
  *      Returns the result of converting the bytes to a double value.
  */
 
-double
+midibpm
 tempo_us_from_bytes (const midibyte tt[3])
 {
-    double result = double(tt[0]);
-    result = (result * 256) + double(tt[1]);
-    result = (result * 256) + double(tt[2]);
+    midibpm result = midibpm(tt[0]);
+    result = (result * 256) + midibpm(tt[1]);
+    result = (result * 256) + midibpm(tt[2]);
     return result;
 }
 
@@ -1254,6 +1254,37 @@ tempo_to_note_value (midibpm tempovalue)
         note = double(c_max_midi_data_value);
 
     return midibyte(note);
+}
+
+/**
+ *  Fixes the tempo value, truncating it to the number of digits of tempo
+ *  precision (0, 1, or 2) specified by "bpm_precision" in the "usr" file.
+ *
+ * \param bpm
+ *      The uncorrected BPM value.
+ *
+ * \return
+ *      Returns the BPM truncated to the desired precision.
+ */
+
+midibpm
+fix_tempo (midibpm bpm)
+{
+    int precision = usr().bpm_precision();  /* 0/1/2 digits past decimal */
+    if (precision > 0)
+    {
+        bpm *= 10.0;
+        if (precision == 2)
+            bpm *= 10.0;
+    }
+    bpm = trunc(bpm);
+    if (precision > 0)
+    {
+        bpm /= 10.0;
+        if (precision == 2)
+            bpm /= 10.0;
+    }
+    return bpm;
 }
 
 /**

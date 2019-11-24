@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-21
+ * \updates       2019-11-24
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -377,7 +377,7 @@ midifile::read_byte_array (midibyte * b, size_t len)
  */
 
 bool
-midifile::read_meta_data (sequence * s, event & e, midibyte metatype, size_t len)
+midifile::read_meta_data (sequence & s, event & e, midibyte metatype, size_t len)
 {
     bool result = checklen(len, metatype);
     if (result)
@@ -388,7 +388,7 @@ midifile::read_meta_data (sequence * s, event & e, midibyte metatype, size_t len
 
         bool ok = e.append_meta_data(metatype, bt);
         if (ok)
-            s->append_event(e);
+            s.append_event(e);
     }
     return result;
 }
@@ -925,33 +925,40 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             midibyte runningstatus = 0;
             midilong seqspec = 0;                   /* sequencer-specific   */
             bool done = false;                      /* done for each track  */
-            sequence * s = create_sequence(p);      /* create new sequence  */
+            sequence * sp = create_sequence(p);     /* create new sequence  */
             midilong len;                           /* important counter!   */
             midibyte d0, d1;                        /* was data[2];         */
-            if (is_nullptr(s))
+            if (is_nullptr(sp))
             {
                 set_error_dump("MIDI file parse: sequence allocation failed");
                 return false;
             }
+            sequence & s = *sp;                 /* references are better    */
             RunningTime = 0;                    /* reset time               */
             while (! done)                      /* get each event in track  */
             {
-                event e;                        /* safer here, if "slower"  */
-                Delta = read_varinum();         /* get time delta           */
-                status = m_data[m_pos];         /* get next status byte     */
-                if (event::is_status(status))
+                event e;
+                Delta = read_varinum();                     /* time delta   */
+                status = m_data[m_pos];                     /* current byte */
+                if (event::is_status(status))               /* 0x80 bit?    */
                 {
-                    runningstatus = status;
-                    skip(1);
+                    skip(1);                                /* get to d0    */
+                    if (event::is_system_common(status))    /* 0xF0 to 0xF7 */
+                        runningstatus = 0;                  /* clear it     */
+                    else if (! event::is_realtime(status))  /* 0xF8 to 0xFF */
+                        runningstatus = status;             /* log status   */
                 }
-                else if (event::clear_status(status))
-                    runningstatus = 0;
-
-                if (runningstatus > 0)          /* running status in force? */
-                    status = runningstatus;     /* yes, use running status  */
                 else
-                    skip(1);                    /* it's a status, increment */
+                {
+                    /*
+                     * Handle data values. If in running status, set that as
+                     * status; the next value to be read is the d0 value.
+                     * If not running status, is this an ERROR?
+                     */
 
+                    if (runningstatus > 0)      /* running status in force? */
+                        status = runningstatus; /* yes, use running status  */
+                }
                 e.set_status(status);           /* set the members in event */
 
                 /*
@@ -988,13 +995,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_data(d0, d1);                   /* set data and add */
 
                     /*
-                     * s->append_event() doesn't sort events; sort after we
+                     * s.append_event() doesn't sort events; sort after we
                      * get them all.  Also, it is kind of weird we change the
                      * channel for the whole sequence here.
                      */
 
-                    s->append_event(e);                   /* does not sort    */
-                    s->set_midi_channel(channel);         /* set MIDI channel */
+                    s.append_event(e);                    /* does not sort    */
+                    s.set_midi_channel(channel);          /* set MIDI channel */
                     if (is_smf0)
                         m_smf0_splitter.increment(channel);
                     break;
@@ -1006,12 +1013,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_data(d0);                     /* set data and add */
 
                     /*
-                     * s->append_event() doesn't sort events; they're sorted
+                     * s.append_event() doesn't sort events; they're sorted
                      * after we read them all.
                      */
 
-                    s->append_event(e);                 /* does not sort    */
-                    s->set_midi_channel(channel);       /* set midi channel */
+                    s.append_event(e);                  /* does not sort    */
+                    s.set_midi_channel(channel);        /* set midi channel */
                     if (is_smf0)
                         m_smf0_splitter.increment(channel);
                     break;
@@ -1044,7 +1051,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 TrackName[i] = char(read_byte());
 
                             TrackName[len] = '\0';
-                            s->set_name(TrackName);
+                            s.set_name(TrackName);
                             break;
 
                         case EVENT_META_END_OF_TRACK:   /* FF 2F 00         */
@@ -1053,8 +1060,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                              *  if (Delta == 0) ++CurrentTime;
                              */
 
-                            s->set_length(CurrentTime, false);
-                            s->zero_markers();
+                            s.set_length(CurrentTime, false);
+                            s.zero_markers();
                             done = true;
                             break;
 
@@ -1087,13 +1094,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                             gotfirst = true;
                                             p.set_beats_per_minute(bpm);
                                             p.us_per_quarter_note(int(tt));
-                                            s->us_per_quarter_note(int(tt));
+                                            s.us_per_quarter_note(int(tt));
                                         }
                                     }
 
                                     bool ok = e.append_meta_data(mtype, bt, 3);
                                     if (ok)
-                                        s->append_event(e);    /* new 0.93 */
+                                        s.append_event(e);    /* new 0.93 */
                                 }
                             }
                             else
@@ -1112,10 +1119,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 int cc = read_byte();               // cc
                                 int bb = read_byte();               // bb
                                 int bw = beat_pow2(logbase2);
-                                s->set_beats_per_bar(bpm);
-                                s->set_beat_width(bw);
-                                s->clocks_per_metronome(cc);
-                                s->set_32nds_per_quarter(bb);
+                                s.set_beats_per_bar(bpm);
+                                s.set_beat_width(bw);
+                                s.clocks_per_metronome(cc);
+                                s.set_32nds_per_quarter(bb);
                                 if (track == 0)
                                 {
                                     p.set_beats_per_bar(bpm);
@@ -1132,7 +1139,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 bool ok = e.append_meta_data(mtype, bt, 4);
                                 if (ok)
-                                    s->append_event(e);        /* new 0.93 */
+                                    s.append_event(e);
                             }
                             else
                                 skip(len);              /* eat it           */
@@ -1148,7 +1155,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 bool ok = e.append_meta_data(mtype, bt, 2);
                                 if (ok)
-                                    s->append_event(e);
+                                    s.append_event(e);
                             }
                             else
                                 skip(len);              /* eat it           */
@@ -1166,13 +1173,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                             if (seqspec == c_midibus)
                             {
-                                s->set_midi_bus(read_byte());
+                                s.set_midi_bus(read_byte());
                                 --len;
                             }
                             else if (seqspec == c_midich)
                             {
                                 midibyte channel = read_byte();
-                                s->set_midi_channel(channel);
+                                s.set_midi_channel(channel);
                                 if (is_smf0)
                                     m_smf0_splitter.increment(channel);
 
@@ -1183,8 +1190,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 timesig_set = true;
                                 int bpm = int(read_byte());
                                 int bw = int(read_byte());
-                                s->set_beats_per_bar(bpm);
-                                s->set_beat_width(bw);
+                                s.set_beats_per_bar(bpm);
+                                s.set_beat_width(bw);
                                 p.set_beats_per_bar(bpm);
                                 p.set_beat_width(bw);
                                 len -= 2;
@@ -1198,7 +1205,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     midilong on = read_long();
                                     midilong length = read_long() - on;
                                     len -= 8;
-                                    s->add_trigger(on, length, 0, false);
+                                    s.add_trigger(on, length, 0, false);
                                 }
                             }
                             else if (seqspec == c_triggers_new)
@@ -1210,32 +1217,32 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     len -= 12;
-                                    add_trigger(*s, p);
+                                    add_trigger(s, p);
                                 }
                             }
                             else if (seqspec == c_musickey)
                             {
-                                s->musical_key(read_byte());
+                                s.musical_key(read_byte());
                                 --len;
                             }
                             else if (seqspec == c_musicscale)
                             {
-                                s->musical_scale(read_byte());
+                                s.musical_scale(read_byte());
                                 --len;
                             }
                             else if (seqspec == c_backsequence)
                             {
-                                s->background_sequence(int(read_long()));
+                                s.background_sequence(int(read_long()));
                                 len -= 4;
                             }
                             else if (seqspec == c_transpose)
                             {
-                                s->set_transposable(read_byte() != 0);
+                                s.set_transposable(read_byte() != 0);
                                 --len;
                             }
                             else if (seqspec == c_seq_color)
                             {
-                                s->color(read_byte());
+                                s.color(read_byte());
                                 --len;
                             }
                             else if (SEQ66_IS_PROPTAG(seqspec))
@@ -1370,7 +1377,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             }                          /* while not done loading Trk chunk */
 
             if (buss_override != SEQ66_BAD_BUSS)
-                s->set_midi_bus(buss_override);
+                s.set_midi_bus(buss_override);
 
             /*
              * Sequence has been filled, add it to the performance or SMF 0
@@ -1382,12 +1389,12 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 seqnum = track;
 
             if (is_smf0)
-                (void) m_smf0_splitter.log_main_sequence(*s, seqnum);
+                (void) m_smf0_splitter.log_main_sequence(s, seqnum);
             else
                 finalize_sequence(p, s, seqnum, screenset);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-            s->print();
+            s.print();
 #endif
         }
         else
@@ -1434,13 +1441,13 @@ bool
 midifile::finalize_sequence
 (
     performer & p,
-    sequence * s,
+    sequence & s,
     int seqnum,
     int screenset
 )
 {
     int preferred_seqnum = seqnum + screenset * usr().seqs_in_set();
-    return p.install_sequence(s, preferred_seqnum, true);   /* file load */
+    return p.install_sequence(&s, preferred_seqnum, true);
 }
 
 /**
@@ -3029,6 +3036,15 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
     m_disable_reported = true;
     return false;
 }
+
+/**
+ *
+
+void
+midifile::handle_note ()
+{
+}
+ */
 
 /**
  *  A global function to unify the opening of a MIDI or WRK file.  It also

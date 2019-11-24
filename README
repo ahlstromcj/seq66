@@ -49,7 +49,9 @@ and using a conventional source tarball.
 Recent changes:
 
     -   Version 0.90.2:
-        -   To be determined.
+        -   Lots of code cleanup.
+        -   Added truncation of BPM to precision in "usr" file.
+        -   Digging into reading a strange MIDI file.
     -   Version 0.90.1:
         -   A raft of bug fixes and user-interface improvements.
         -   Many tweaks to try to make the performer and the user-interface even

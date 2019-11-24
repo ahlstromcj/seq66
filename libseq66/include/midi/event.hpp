@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-21
+ * \updates       2019-11-24
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -40,6 +40,13 @@
  *  One thing we need to add to this event class is a way to encapsulate
  *  Meta events.  First, we use the existing event::sysex to hold
  *  this data.
+ *
+ *  The MIDI protocol consists of MIDI events that carry four types of messages:
+ *
+ *      -   Voice messages.  0x80 to 0xEF; includes channel information.
+ *      -   System common messages.  0xF0 (SysEx) to 0xF7 (End of SysEx)
+ *      -   System realtime messages. 0xF8 to 0xFF.
+ *      -   Meta messages. 0xFF is the flag, followed by type, length, and data.
  */
 
 #include <string>                       /* used in to_string()              */
@@ -119,23 +126,24 @@ const midibyte EVENT_STATUS_BIT         = 0x80;
  *  be dealt with.  Not sure yet, but the cost is minimal.
  */
 
-const midibyte EVENT_ANY                = 0x00;      // our own value
-const midibyte EVENT_NOTE_OFF           = 0x80;      // 0kkkkkkk 0vvvvvvv
-const midibyte EVENT_NOTE_ON            = 0x90;      // 0kkkkkkk 0vvvvvvv
-const midibyte EVENT_AFTERTOUCH         = 0xA0;      // 0kkkkkkk 0vvvvvvv
-const midibyte EVENT_CONTROL_CHANGE     = 0xB0;      // 0ccccccc 0vvvvvvv
-const midibyte EVENT_PROGRAM_CHANGE     = 0xC0;      // 0ppppppp
-const midibyte EVENT_CHANNEL_PRESSURE   = 0xD0;      // 0vvvvvvv
-const midibyte EVENT_PITCH_WHEEL        = 0xE0;      // 0lllllll 0mmmmmmm
+const midibyte EVENT_ANY                = 0x00u;      // our own value
+const midibyte EVENT_NOTE_OFF           = 0x80u;      // 0kkkkkkk 0vvvvvvv
+const midibyte EVENT_NOTE_ON            = 0x90u;      // 0kkkkkkk 0vvvvvvv
+const midibyte EVENT_AFTERTOUCH         = 0xA0u;      // 0kkkkkkk 0vvvvvvv
+const midibyte EVENT_CONTROL_CHANGE     = 0xB0u;      // 0ccccccc 0vvvvvvv
+const midibyte EVENT_PROGRAM_CHANGE     = 0xC0u;      // 0ppppppp
+const midibyte EVENT_CHANNEL_PRESSURE   = 0xD0u;      // 0vvvvvvv
+const midibyte EVENT_PITCH_WHEEL        = 0xE0u;      // 0lllllll 0mmmmmmm
 
 /**
- *  Control Change Messages.
+ *  Control Change Messages.  This is a small subset of the roughly 40 control
+ *  changes.
  */
 
-const midibyte EVENT_CTRL_VOLUME        = 0x07;
-const midibyte EVENT_CTRL_BALANCE       = 0x08;
-const midibyte EVENT_CTRL_PAN           = 0x0A;
-const midibyte EVENT_CTRL_EXPRESSION    = 0x0B;
+const midibyte EVENT_CTRL_VOLUME        = 0x07u;
+const midibyte EVENT_CTRL_BALANCE       = 0x08u;
+const midibyte EVENT_CTRL_PAN           = 0x0Au;
+const midibyte EVENT_CTRL_EXPRESSION    = 0x0Bu;
 
 /**
  *  System Messages.
@@ -162,24 +170,24 @@ const midibyte EVENT_CTRL_EXPRESSION    = 0x0B;
  *      -   http://www.midi.org/techspecs/midimessages.php
  */
 
-const midibyte EVENT_MIDI_REALTIME       = 0xF0;    // 0xFn when masked
-const midibyte EVENT_MIDI_SYSEX          = 0xF0;    // redundant, see below
-const midibyte EVENT_MIDI_QUARTER_FRAME  = 0xF1;    // system common > 0 bytes
-const midibyte EVENT_MIDI_SONG_POS       = 0xF2;    // 2 data bytes
-const midibyte EVENT_MIDI_SONG_SELECT    = 0xF3;    // 1 data byte, not used
-const midibyte EVENT_MIDI_SONG_F4        = 0xF4;    // undefined
-const midibyte EVENT_MIDI_SONG_F5        = 0xF5;    // undefined
-const midibyte EVENT_MIDI_TUNE_SELECT    = 0xF6;    // 0 data bytes, not used
-const midibyte EVENT_MIDI_SYSEX_END      = 0xF7;    // redundant, see below
-const midibyte EVENT_MIDI_SYSEX_CONTINUE = 0xF7;    // redundant, see below
-const midibyte EVENT_MIDI_CLOCK          = 0xF8;    // no data bytes
-const midibyte EVENT_MIDI_SONG_F9        = 0xF9;    // undefined
-const midibyte EVENT_MIDI_START          = 0xFA;    // no data bytes
-const midibyte EVENT_MIDI_CONTINUE       = 0xFB;    // no data bytes
-const midibyte EVENT_MIDI_STOP           = 0xFC;    // no data bytes
-const midibyte EVENT_MIDI_SONG_FD        = 0xFD;    // undefined
-const midibyte EVENT_MIDI_ACTIVE_SENSE   = 0xFE;    // 0 data bytes, not used
-const midibyte EVENT_MIDI_RESET          = 0xFF;    // 0 data bytes, not used
+const midibyte EVENT_MIDI_REALTIME       = 0xF0u;   // 0xFn when masked
+const midibyte EVENT_MIDI_SYSEX          = 0xF0u;   // redundant, see below
+const midibyte EVENT_MIDI_QUARTER_FRAME  = 0xF1u;   // system common > 0 bytes
+const midibyte EVENT_MIDI_SONG_POS       = 0xF2u;   // 2 data bytes
+const midibyte EVENT_MIDI_SONG_SELECT    = 0xF3u;   // 1 data byte, not used
+const midibyte EVENT_MIDI_SONG_F4        = 0xF4u;   // undefined
+const midibyte EVENT_MIDI_SONG_F5        = 0xF5u;   // undefined
+const midibyte EVENT_MIDI_TUNE_SELECT    = 0xF6u;   // 0 data bytes, not used
+const midibyte EVENT_MIDI_SYSEX_END      = 0xF7u;   // redundant, see below
+const midibyte EVENT_MIDI_SYSEX_CONTINUE = 0xF7u;   // redundant, see below
+const midibyte EVENT_MIDI_CLOCK          = 0xF8u;   // no data bytes
+const midibyte EVENT_MIDI_SONG_F9        = 0xF9u;   // undefined
+const midibyte EVENT_MIDI_START          = 0xFAu;   // no data bytes
+const midibyte EVENT_MIDI_CONTINUE       = 0xFBu;   // no data bytes
+const midibyte EVENT_MIDI_STOP           = 0xFCu;   // no data bytes
+const midibyte EVENT_MIDI_SONG_FD        = 0xFDu;   // undefined
+const midibyte EVENT_MIDI_ACTIVE_SENSE   = 0xFEu;   // 0 data bytes, not used
+const midibyte EVENT_MIDI_RESET          = 0xFFu;   // 0 data bytes, not used
 
 /**
  *  0xFF is a MIDI "escape code" used in MIDI files to introduce a MIDI meta
@@ -188,7 +196,7 @@ const midibyte EVENT_MIDI_RESET          = 0xFF;    // 0 data bytes, not used
  *  to the sequencer by other MIDI participants.
  */
 
-const midibyte EVENT_MIDI_META           = 0xFF;    // an escape code
+const midibyte EVENT_MIDI_META           = 0xFFu;   // an escape code
 
 /**
  *  Provides values for the currently-supported Meta events, and many others:
@@ -197,29 +205,29 @@ const midibyte EVENT_MIDI_META           = 0xFF;    // an escape code
  *      -   Time Signature (0x58)
  */
 
-const midibyte EVENT_META_SEQ_NUMBER     = 0x00;
-const midibyte EVENT_META_TEXT_EVENT     = 0x01;    // skipped
-const midibyte EVENT_META_COPYRIGHT      = 0x02;    // skipped
-const midibyte EVENT_META_TRACK_NAME     = 0x03;
-const midibyte EVENT_META_INSTRUMENT     = 0x04;    // skipped
-const midibyte EVENT_META_LYRIC          = 0x05;    // skipped
-const midibyte EVENT_META_MARKER         = 0x06;    // skipped
-const midibyte EVENT_META_CUE_POINT      = 0x07;    // skipped
-const midibyte EVENT_META_MIDI_CHANNEL   = 0x20;    // skipped, obsolete
-const midibyte EVENT_META_MIDI_PORT      = 0x21;    // skipped, obsolete
-const midibyte EVENT_META_END_OF_TRACK   = 0x2F;
-const midibyte EVENT_META_SET_TEMPO      = 0x51;
-const midibyte EVENT_META_SMPTE_OFFSET   = 0x54;    // skipped
-const midibyte EVENT_META_TIME_SIGNATURE = 0x58;
-const midibyte EVENT_META_KEY_SIGNATURE  = 0x59;
-const midibyte EVENT_META_SEQSPEC        = 0x7F;
+const midibyte EVENT_META_SEQ_NUMBER     = 0x00u;
+const midibyte EVENT_META_TEXT_EVENT     = 0x01u;   // skipped
+const midibyte EVENT_META_COPYRIGHT      = 0x02u;   // skipped
+const midibyte EVENT_META_TRACK_NAME     = 0x03u;
+const midibyte EVENT_META_INSTRUMENT     = 0x04u;   // skipped
+const midibyte EVENT_META_LYRIC          = 0x05u;   // skipped
+const midibyte EVENT_META_MARKER         = 0x06u;   // skipped
+const midibyte EVENT_META_CUE_POINT      = 0x07u;   // skipped
+const midibyte EVENT_META_MIDI_CHANNEL   = 0x20u;   // skipped, obsolete
+const midibyte EVENT_META_MIDI_PORT      = 0x21u;   // skipped, obsolete
+const midibyte EVENT_META_END_OF_TRACK   = 0x2Fu;
+const midibyte EVENT_META_SET_TEMPO      = 0x51u;
+const midibyte EVENT_META_SMPTE_OFFSET   = 0x54u;   // skipped
+const midibyte EVENT_META_TIME_SIGNATURE = 0x58u;
+const midibyte EVENT_META_KEY_SIGNATURE  = 0x59u;
+const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
 
 /**
  *  As a "type" (overloaded on channel) value for a Meta event, 0xFF indicates
  *  an illegal meta type.
  */
 
-const midibyte EVENT_META_ILLEGAL        = 0xFF;    // a problem code
+const midibyte EVENT_META_ILLEGAL        = 0xFFu;   // a problem code
 
 /**
  *  This value of 0xFF is Seq66's channel value that indicates that
@@ -232,15 +240,15 @@ const midibyte EVENT_META_ILLEGAL        = 0xFF;    // a problem code
  *  into each event when the event is played or is written to a MIDI file.
  */
 
-const midibyte EVENT_NULL_CHANNEL        = 0xFF;
+const midibyte EVENT_NULL_CHANNEL        = 0xFFu;
 
 /**
  *  These file masks are used to obtain or to mask off the channel data from a
  *  status byte.
  */
 
-const midibyte EVENT_GET_CHAN_MASK       = 0x0F;
-const midibyte EVENT_CLEAR_CHAN_MASK     = 0xF0;
+const midibyte EVENT_GET_CHAN_MASK       = 0x0Fu;
+const midibyte EVENT_CLEAR_CHAN_MASK     = 0xF0u;
 
 /**
  *  Variable from the "stazed" extras.  We reversed the parts of each token
@@ -456,28 +464,49 @@ public:
     }
 
     /**
-     *  Static test for the status bit.  This test also works for detecting a
-     *  Voice Category status. This function is used to see if the running
-     *  status needs to be stored.
+     *  Static test for the status bit.
      *
      * \return
-     *      Returns true if the status bit is set, for values less than 0xF0.
+     *      Returns true if the status bit is set.  Covers 0x80 to 0xFF.
      */
 
     static bool is_status (midibyte m)
     {
-        return (m >= 0x80) && (m < 0xF0);
+        return (m & 0x80) != 0x00;
+    }
+
+    /**
+     *  Static test for detecting a Voice Category status.  The allowed range is
+     *  0x80 to 0xEF.
+     *
+     * \return
+     *      Returns true if the value is in the range noted above.
+     */
+
+    static bool is_voice (midibyte m)
+    {
+        return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
     }
 
     /**
      *  Checks for a System Category status, which is supposed to clear any
-     *  running status.  We also allow 0xff to clear running status to prevent
-     *  errors in reading a file.
+     *  running status.  We do not also allow 0xff to clear running status to
+     *  prevent errors in reading a file.  An ISSUE!
      */
 
-    static bool clear_status (midibyte m)
+    static bool is_system_common (midibyte m)
     {
-        return (m >= 0xF0) && (m <= 0xF7) || (m == 0xFF);
+        return m >= EVENT_MIDI_SYSEX && m <= EVENT_MIDI_SYSEX_END;
+    }
+
+    /**
+     *  Checks for a Realtime Category status, which ignores running status.
+     *  Ranges from 0xF8 to 0xFF.
+     */
+
+    static bool is_realtime (midibyte m)
+    {
+        return m >= EVENT_MIDI_CLOCK;   // && m <= EVENT_MIDI_RESET always true
     }
 
     /**
