@@ -1650,7 +1650,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
          * equipment to apply to all songs.
          *
          * Furthermore, we would need to load these control settings into a
-         * midicontainer (see ctrl/midicontainer modules).
+         * midicontrolin (see ctrl/midicontrolin modules).
          *
          * And, lastly, Seq24 never wrote these controls to the file.  It merely
          * wrote the c_midictrl code, followed by a long 0.

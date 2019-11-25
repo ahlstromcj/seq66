@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2019-11-08
+# \update      2019-11-25
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -156,7 +156,8 @@ libseq66_la_SOURCES = \
  ctrl/keycontrol.cpp \
  ctrl/keymap.cpp \
  ctrl/keystroke.cpp \
- ctrl/midicontainer.cpp \
+ ctrl/midicontrolin.cpp \
+ ctrl/midicontrolbase.cpp \
  ctrl/midicontrol.cpp \
  ctrl/midicontrolout.cpp \
  ctrl/midioperation.cpp \

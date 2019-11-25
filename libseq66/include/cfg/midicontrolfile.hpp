@@ -38,7 +38,7 @@
 
 #include "cfg/configfile.hpp"           /* seq66::configfile base class     */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
-#include "ctrl/midicontainer.hpp"       /* seq66::midicontainer class       */
+#include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "ctrl/opcontrol.hpp"           /* seq66::optcontrol and automation */
 
@@ -153,7 +153,7 @@ private:
      *  Provides a default-filled midicontrol container.
      */
 
-    midicontainer m_temp_midi_controls;
+    midicontrolin m_temp_midi_controls;
 
     /**
      *  Provides the storage for the mute-groups data.
@@ -190,7 +190,7 @@ public:
 
 public:
 
-    bool container_to_stanzas (const midicontainer & mc);
+    bool container_to_stanzas (const midicontrolin & mc);
     void show_stanzas () const;
 
 protected:

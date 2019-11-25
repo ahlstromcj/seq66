@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2019-11-08
+# \update      2019-11-25
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -103,8 +103,9 @@ pkginclude_HEADERS = \
  ctrl/keycontainer.hpp \
  ctrl/keymap.hpp \
  ctrl/keystroke.hpp \
- ctrl/midicontainer.hpp \
+ ctrl/midicontrolin.hpp \
  ctrl/midicontrol.hpp \
+ ctrl/midicontrolbase.hpp \
  ctrl/midicontrolout.hpp \
  ctrl/midioperation.hpp \
  ctrl/opcontainer.hpp \

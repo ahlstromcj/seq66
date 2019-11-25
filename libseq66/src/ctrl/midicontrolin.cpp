@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          midicontainer.cpp
+ * \file          midicontrolin.cpp
  *
  *  This module declares/defines a container for key-ordinals and MIDI
  *  operation information.
@@ -68,7 +68,7 @@
  *
  *  Key/MIDI control setup written to new "ctrl" file:
  *
- *      Writing of the midicontainer occurs only during conversion from
+ *      Writing of the midicontrolin occurs only during conversion from
  *      old-style "rc" file to new-style "ctrl" file using the seqtool
  *      application.  In that case, the container needs iteration in the
  *      following order:
@@ -86,7 +86,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class       */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
-#include "ctrl/midicontainer.hpp"       /* seq66::midicontainer class       */
+#include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -100,7 +100,7 @@ namespace seq66
  *  either false or some other form of zero.
  */
 
-midicontainer::midicontainer () :
+midicontrolin::midicontrolin () :
     m_container         (),
     m_container_name    ("Default MIDI Controls"),
     m_comments_block    (),
@@ -117,7 +117,7 @@ midicontainer::midicontainer () :
  *  action code.  The rest of the members can be set via the set() function.
  */
 
-midicontainer::midicontainer (const std::string & name) :
+midicontrolin::midicontrolin (const std::string & name) :
     m_container         (),
     m_container_name    (name),
     m_comments_block    (),
@@ -144,7 +144,7 @@ midicontainer::midicontainer (const std::string & name) :
  */
 
 bool
-midicontainer::add (const midicontrol & mc)
+midicontrolin::add (const midicontrol & mc)
 {
     bool result = false;
     auto sz = m_container.size();
@@ -186,7 +186,7 @@ midicontainer::add (const midicontrol & mc)
  */
 
 void
-midicontainer::add_blank_controls (const keycontainer & kc)
+midicontrolin::add_blank_controls (const keycontainer & kc)
 {
     for (const auto & kpair : kc.container())
     {
@@ -226,7 +226,7 @@ midicontainer::add_blank_controls (const keycontainer & kc)
  */
 
 bool
-midicontainer::merge_key
+midicontrolin::merge_key
 (
     automation::category opcat,
     const std::string & keyname,
@@ -270,7 +270,7 @@ midicontainer::merge_key
  */
 
 const midicontrol &
-midicontainer::control (const midicontrol::key & k) const
+midicontrolin::control (const midicontrol::key & k) const
 {
     static midicontrol sm_midicontrol_dummy;
     if (have_controls())
@@ -287,7 +287,7 @@ midicontainer::control (const midicontrol::key & k) const
  */
 
 void
-midicontainer::show () const
+midicontrolin::show () const
 {
     using namespace std;
     int index = 0;
@@ -315,7 +315,7 @@ midicontainer::show () const
 }           // namespace seq66
 
 /*
- * midicontainer.cpp
+ * midicontrolin.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

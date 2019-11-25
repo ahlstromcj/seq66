@@ -935,13 +935,13 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
 }
 
 /**
- *  Note that midicontainer is a multimap, and it can hold multiple
+ *  Note that midicontrolin is a multimap, and it can hold multiple
  *  midicontrols for a givem midicontrol::key, so that the same event can
  *  trigger multiple operations/actions.
  */
 
 bool
-midicontrolfile::container_to_stanzas (const midicontainer & mc)
+midicontrolfile::container_to_stanzas (const midicontrolin & mc)
 {
     bool result = mc.count() > 0;
     if (result)

@@ -47,12 +47,10 @@ namespace seq66
 
 midicontrolout::midicontrolout ()
  :
+    midicontrolbase     (SEQ66_MIDI_CONTROL_OUT_BUSS),
     m_master_bus        (nullptr),
-    m_buss              (SEQ66_MIDI_CONTROL_OUT_BUSS),
     m_seq_events        (),
     m_events            (),
-    m_is_blank          (true),
-    m_is_enabled        (false),
     m_screenset_size    (0),
     m_screenset_offset  (0)
 {
@@ -74,13 +72,13 @@ midicontrolout::midicontrolout ()
  *      The number of controls to allocate.  Normally, this is 32, but larger
  *      values can now be handled.
  *
- * \param buss
+ * \param bus
  *      The buss number, which can range from 0 to 31, and defaults to
  *      SEQ66_MIDI_CONTROL_OUT_BUSS (15).
  */
 
 void
-midicontrolout::initialize (int count, int buss)
+midicontrolout::initialize (int count, int bus)
 {
     event dummy_event;
     actions actionstemp;
@@ -90,13 +88,13 @@ midicontrolout::initialize (int count, int buss)
     apt.apt_action_status = false;
     m_seq_events.clear();
     m_events.clear();
-    m_is_blank = true;
-    m_is_enabled = false;
+    is_blank(true);
+    is_enabled(false);
     if (count > 0)
     {
-        m_is_enabled = true;
-        if (buss >= 0 && buss < c_busscount_max)
-            m_buss = bussbyte(buss);
+        is_enabled(true);
+        if (bus >= 0 && bus < c_busscount_max)
+            buss(bussbyte(bus));
 
         m_screenset_size = count;
         for (int a = 0; a < static_cast<int>(seqaction::max); ++a)
@@ -237,7 +235,7 @@ midicontrolout::send_seq_event (int seq, seqaction what, bool flush)
                     "send_seq_event(%s): %s\n", act.c_str(), evstring.c_str()
                 );
 #endif
-                m_master_bus->play(m_buss, &ev, ev.channel());
+                m_master_bus->play(buss(), &ev, ev.channel());
                 if (flush)
                     m_master_bus->flush();
             }
@@ -288,7 +286,7 @@ midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
         int w = static_cast<int>(what);
         m_seq_events[seq][w].apt_action_event = ev;
         m_seq_events[seq][w].apt_action_status = true;
-        m_is_blank = false;     // ???
+        is_blank(false);     // ???
     }
 }
 
@@ -311,7 +309,7 @@ midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
         ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
         m_seq_events[seq][w].apt_action_event = ev;
         m_seq_events[seq][w].apt_action_status = bool(eva[outindex::enabled]);
-        m_is_blank = false;     // ???
+        is_blank(false);     // ???
     }
 }
 
@@ -348,7 +346,7 @@ midicontrolout::send_event (action what)
                     "send_event(%s): %s\n", act.c_str(), evstring.c_str()
                 );
 #endif
-            m_master_bus->play(m_buss, &ev, ev.channel());
+            m_master_bus->play(buss(), &ev, ev.channel());
             m_master_bus->flush();
         }
     }
@@ -403,7 +401,7 @@ midicontrolout::set_event (action what, event & ev)
         int w = static_cast<int>(what);
         m_events[w].apt_action_event = ev;
         m_events[w].apt_action_status = true;
-        m_is_blank = false;     // ???
+        is_blank(false);     // ???
     }
 }
 

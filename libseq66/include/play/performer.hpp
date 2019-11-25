@@ -34,7 +34,7 @@
  */
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
-#include "ctrl/midicontainer.hpp"       /* class seq66::midicontainer       */
+#include "ctrl/midicontrolin.hpp"       /* class seq66::midicontrolin       */
 #include "ctrl/midicontrolout.hpp"      /* seq64::midicontrolout            */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "midi/jack_assistant.hpp"      /* optional seq66::jack_assistant   */
@@ -375,7 +375,7 @@ private:                            /* key, midi, and op container section  */
      *  Provides a default-filled midicontrol container.
      */
 
-    midicontainer m_midi_controls;
+    midicontrolin m_midi_controls;
 
     /**
      *  Provides the class encapsulating MIDI control output.
@@ -2731,12 +2731,12 @@ public:                                 /* access functions for the containers *
         return m_key_controls.mute_key(mute_number);
     }
 
-    const midicontainer & midi_controls () const
+    const midicontrolin & midi_controls () const
     {
         return m_midi_controls;
     }
 
-    midicontainer & midi_controls ()
+    midicontrolin & midi_controls ()
     {
         return m_midi_controls;
     }

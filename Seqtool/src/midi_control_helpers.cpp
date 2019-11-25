@@ -31,7 +31,7 @@
 
 #include <string>
 
-#include "ctrl/midicontainer.hpp"       /* seq66::midicontainer class       */
+#include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 #include "midi_control_helpers.hpp"     /* constructor_test_t & functions   */
 
 /*

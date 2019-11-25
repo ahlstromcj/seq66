@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2019-11-08
+# \update      2019-11-25
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -58,7 +58,8 @@ HEADERS += include/app_limits.h \
  include/ctrl/keycontrol.hpp \
  include/ctrl/keycontainer.hpp \
  include/ctrl/keymap.hpp \
- include/ctrl/midicontainer.hpp \
+ include/ctrl/midicontrolin.hpp \
+ include/ctrl/midicontrolbase.hpp \
  include/ctrl/midicontrol.hpp \
  include/ctrl/midicontrolout.hpp \
  include/ctrl/midioperation.hpp \
@@ -118,7 +119,8 @@ SOURCES += src/main_impl.cpp \
  src/ctrl/keycontrol.cpp \
  src/ctrl/keymap.cpp \
  src/ctrl/keystroke.cpp \
- src/ctrl/midicontainer.cpp \
+ src/ctrl/midicontrolin.cpp \
+ src/ctrl/midicontrolbase.cpp \
  src/ctrl/midicontrol.cpp \
  src/ctrl/midicontrolout.cpp \
  src/ctrl/midioperation.cpp \

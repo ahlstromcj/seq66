@@ -35,7 +35,7 @@
 #include <memory>                       /* std::unique_ptr<>                */
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
-#include "ctrl/midicontainer.hpp"       /* class seq66::keycontainer        */
+#include "ctrl/midicontrolin.hpp"       /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 
 /**
@@ -90,7 +90,7 @@ private:
      *  Provides a default-filled midicontrol container.
      */
 
-    seq66::midicontainer m_midicontrols;
+    seq66::midicontrolin m_midicontrols;
 
     /**
      *  Used for testing the populating of an opcontainer.

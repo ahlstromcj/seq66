@@ -51,7 +51,7 @@
  *       --------               |                 ----------------------
  *      |  Old   |--------------                 | [loop-control]       |
  *      | [keys] |                               | [mute-group-control] |
- *       --------   midicontainer::merge_key()   | [automation-control] |
+ *       --------   midicontrolin::merge_key()   | [automation-control] |
  *                                                ----------------------
 \endverbatim
  */
@@ -170,11 +170,11 @@ optionsfile::make_error_message
  *  Then rcsettings::add_midicontrol_stanza() uses the loop category code,
  *  pattern number, and the 3 blocks of values to create 3 midicontrol
  *  objects, and a bogus key-name, "Null_ff", to add these 3 object to the
- *  midicontainer.
+ *  midicontrolin.
  *
  *  Later, we get the legacy key control from its section, getting the key
  *  value and the pattern number.  We have to look up the pattern category
- *  code and the pattern number in the midicontainer, and for all matches
+ *  code and the pattern number in the midicontrolin, and for all matches
  *  (there should be 3), modify the key-name of those objects.
  */
 

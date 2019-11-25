@@ -45,7 +45,7 @@
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "cfg/recent.hpp"               /* seq66::recent class              */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
-#include "ctrl/midicontainer.hpp"       /* seq66::midicontainer class       */
+#include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 #include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
 #include "play/mutegroups.hpp"          /* list of mute groups              */
 #include "play/clockslist.hpp"          /* list of seq66::e_clock settings  */
@@ -226,7 +226,7 @@ private:
      *  keystroke controls and MIDI controls.
      */
 
-    midicontainer m_midicontainer;
+    midicontrolin m_midicontrolin;
 
     /**
      *  Holds the MIDI control out stanzas.
@@ -493,14 +493,14 @@ public:
         return m_load_midi_controls;
     }
 
-    const midicontainer & midi_controls () const
+    const midicontrolin & midi_controls () const
     {
-        return m_midicontainer;
+        return m_midicontrolin;
     }
 
-    midicontainer & midi_controls ()
+    midicontrolin & midi_controls ()
     {
-        return m_midicontainer;
+        return m_midicontrolin;
     }
 
     bool add_midicontrol_stanza

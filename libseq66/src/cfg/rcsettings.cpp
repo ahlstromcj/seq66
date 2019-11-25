@@ -85,7 +85,7 @@ rcsettings::rcsettings () :
     m_load_key_controls         (true),
     m_keycontainer              ("rc"),
     m_load_midi_controls        (true),
-    m_midicontainer             ("rc"),
+    m_midicontrolin             ("rc"),
     m_midi_control_out          (),
     m_show_ui_sequence_key      (true),
     m_show_ui_sequence_number   (true),
@@ -137,7 +137,7 @@ rcsettings::rcsettings () :
     m_tempo_track_number        (0),
     m_recent_files              ()
 {
-    m_midicontainer.inactive_allowed(true);
+    m_midicontrolin.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
 
@@ -162,7 +162,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_load_key_controls         (rhs.m_load_key_controls),
     m_keycontainer              (rhs.m_keycontainer),
     m_load_midi_controls        (rhs.m_load_midi_controls),
-    m_midicontainer             (rhs.m_midicontainer),
+    m_midicontrolin             (rhs.m_midicontrolin),
     m_midi_control_out          (rhs.m_midi_control_out),
     m_show_ui_sequence_key      (rhs.m_show_ui_sequence_key),
     m_show_ui_sequence_number   (rhs.m_show_ui_sequence_number),
@@ -205,7 +205,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_tempo_track_number        (rhs.m_tempo_track_number),
     m_recent_files              (rhs.m_recent_files)
 {
-    m_midicontainer.inactive_allowed(true);
+    m_midicontrolin.inactive_allowed(true);
 }
 
 /**
@@ -230,7 +230,7 @@ rcsettings::operator = (const rcsettings & rhs)
         m_load_key_controls         = rhs.m_load_key_controls;
         m_keycontainer              = rhs.m_keycontainer;
         m_load_midi_controls        = rhs.m_load_midi_controls;
-        m_midicontainer             = rhs.m_midicontainer;
+        m_midicontrolin             = rhs.m_midicontrolin;
         m_midi_control_out          = rhs.m_midi_control_out;
         m_show_ui_sequence_key      = rhs.m_show_ui_sequence_key;
         m_show_ui_sequence_number   = rhs.m_show_ui_sequence_number;
@@ -302,7 +302,7 @@ rcsettings::set_defaults ()
     m_load_midi_controls        = true;
 
     /*
-     * m_midicontainer.clear();             // what is best?
+     * m_midicontrolin.clear();             // what is best?
      * m_midi_control_out.clear();          // does not exist
      */
 
@@ -1035,7 +1035,7 @@ rcsettings::user_filename (const std::string & value)
 }
 
 /**
- *  Adds three midicontrol objects to the midicontainer, one each for the
+ *  Adds three midicontrol objects to the midicontrolin, one each for the
  *  toggle, on, and off actions.
  *
  *  Compare this function, rcsettings::add_midicontrol_stanza(), as called in
@@ -1112,12 +1112,12 @@ rcsettings::add_midicontrol_stanza
 
         midicontrol mcoff(kn, cat, automation::action::off, s, nslot);
         mcoff.set(c);
-        result = m_midicontainer.add(mctoggle);
+        result = m_midicontrolin.add(mctoggle);
         if (result)
-            result = m_midicontainer.add(mcon);
+            result = m_midicontrolin.add(mcon);
 
         if (result)
-            result = m_midicontainer.add(mcoff);
+            result = m_midicontrolin.add(mcoff);
     }
     else if (opcontrol::is_automation(cat))
     {
@@ -1130,12 +1130,12 @@ rcsettings::add_midicontrol_stanza
 
         midicontrol mcoff(kn, cat, automation::action::off, s, 0);
         mcoff.set(c);
-        result = m_midicontainer.add(mctoggle);
+        result = m_midicontrolin.add(mctoggle);
         if (result)
-            result = m_midicontainer.add(mcon);
+            result = m_midicontrolin.add(mcon);
 
         if (result)
-            result = m_midicontainer.add(mcoff);
+            result = m_midicontrolin.add(mcoff);
     }
     else
         result = false;
@@ -1144,7 +1144,7 @@ rcsettings::add_midicontrol_stanza
 }
 
 /**
- *  Adds three blank midicontrol objects to the midicontainer, one each for
+ *  Adds three blank midicontrol objects to the midicontrolin, one each for
  *  the toggle, on, and off actions.  These are always category::automation
  *  objects, and cover the cases (usually GUI or mode controls) where there
  *  are no associated midicontrols.

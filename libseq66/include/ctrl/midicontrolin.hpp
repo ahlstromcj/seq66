@@ -1,5 +1,5 @@
-#if ! defined SEQ66_MIDICONTAINER_HPP
-#define SEQ66_MIDICONTAINER_HPP
+#if ! defined SEQ66_MIDICONTROLIN_HPP
+#define SEQ66_MIDICONTROLIN_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,7 +20,7 @@
  */
 
 /**
- * \file          midicontainer.hpp
+ * \file          midicontrolin.hpp
  *
  *  This module declares/defines the class for holding MIDI operation data for
  *  the application.
@@ -57,7 +57,7 @@ namespace seq66
  *  control should do.
  */
 
-class midicontainer
+class midicontrolin
 {
 
 public:
@@ -130,13 +130,13 @@ private:
 
 public:
 
-    midicontainer ();
-    midicontainer (const std::string & name);
-    midicontainer (const midicontainer &) = default;
-    midicontainer & operator = (const midicontainer &) = default;
-    midicontainer (midicontainer &&) = default;
-    midicontainer & operator = (midicontainer &&) = default;
-    ~midicontainer () = default;
+    midicontrolin ();
+    midicontrolin (const std::string & name);
+    midicontrolin (const midicontrolin &) = default;
+    midicontrolin & operator = (const midicontrolin &) = default;
+    midicontrolin (midicontrolin &&) = default;
+    midicontrolin & operator = (midicontrolin &&) = default;
+    ~midicontrolin () = default;
 
     const std::string & name () const
     {
@@ -278,14 +278,14 @@ public:
 
     void show () const;
 
-};              // class midicontainer
+};              // class midicontrolin
 
 }               // namespace seq66
 
-#endif          // SEQ66_MIDICONTAINER_HPP
+#endif          // SEQ66_MIDICONTROLIN_HPP
 
 /*
- * midicontainer.hpp
+ * midicontrolin.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

@@ -42,7 +42,7 @@
 
 #include "seq66-config.h"               /* SEQ66_SEQTOOL_TESTING_SUPPORT    */
 #include "ctrl/keymap.hpp"              /* seq66::keymap functions          */
-#include "ctrl/midicontainer.hpp"       /* seq66::midicontrol class         */
+#include "ctrl/midicontrolin.hpp"       /* seq66::midicontrol class         */
 
 #if defined SEQ66_SEQTOOL_TESTING_SUPPORT
 

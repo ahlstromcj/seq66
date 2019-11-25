@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2019-06-19
+ * \updates       2019-11-25
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -40,8 +40,9 @@
 
 #include <vector>                       /* std::vector<>                    */
 
-#include "midi/mastermidibus.hpp"
-#include "midi/event.hpp"
+#include "ctrl/midicontrolbase.hpp"     /* seq66::midicontrolbase class     */
+#include "midi/event.hpp"               /* seq66::event class               */
+#include "midi/mastermidibus.hpp"       /* seq66::mastermidibus class       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -57,7 +58,7 @@ class performer;
  *  to igorangst!
  */
 
-class midicontrolout
+class midicontrolout : public midicontrolbase       // final ?
 {
 
 public:
@@ -166,14 +167,6 @@ private:
     mastermidibus * m_master_bus;
 
     /**
-     *  Provides the MIDI output buss, that is the port number for MIDI output.
-     *  Currently, this value is hard-wired to 15, and the user must be sure to
-     *  avoid using this buss value for music.
-     */
-
-    bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
-
-    /**
      *  Provides the events to be sent out for sequence status changes.
      */
 
@@ -184,18 +177,6 @@ private:
      */
 
     actions m_events;
-
-    /**
-     *  Indicates that this container is "empty".
-     */
-
-    bool m_is_blank;
-
-    /**
-     *  Indicates that this container is disabled.
-     */
-
-    bool m_is_enabled;
 
     /**
      *  Holds the screenset size, to use rather than calling the container.
@@ -224,31 +205,6 @@ public:
     void set_master_bus (mastermidibus * mmbus)
     {
         m_master_bus = mmbus;
-    }
-
-    bussbyte buss () const
-    {
-        return m_buss;
-    }
-
-    bool is_blank () const
-    {
-        return m_is_blank;
-    }
-
-    bool is_enabled () const
-    {
-        return m_is_enabled;
-    }
-
-    void is_enabled (bool flag)
-    {
-        m_is_enabled = flag;
-    }
-
-    bool is_disabled () const
-    {
-        return ! is_enabled();
     }
 
     int screenset_size () const

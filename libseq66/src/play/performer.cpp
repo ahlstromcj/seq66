@@ -257,7 +257,7 @@
  *          MIDI control containers.
  *          -#  In the keycontainer constructor, it calls its set_defaults()
  *              function to set up the default keystrokes.
- *          -#  The midicontainer does not do this.  It remains empty.
+ *          -#  The midicontrolin does not do this.  It remains empty.
  *      -#  The performer constructor creates its own key and MIDI control
  *          containers.  Again, only the keycontainer has default values in
  *          it.

@@ -57,7 +57,7 @@ namespace seq66
 class keycontainer
 {
 
-    friend class midicontainer;
+    friend class midicontrolin;
 
 public:
 

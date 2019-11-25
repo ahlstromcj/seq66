@@ -29,7 +29,7 @@
  * \license       GNU GPLv2 or above
  *
  *  The idea behind the MIDI control automation setup is that an incoming event
- *  can be looked up in a midicontainer object, based on its event status byte,
+ *  can be looked up in a midicontrolin object, based on its event status byte,
  *  the first data byte, and a range for values for the second data byte.
  *
  *  The control also contains an automation slot number with indicates which of
