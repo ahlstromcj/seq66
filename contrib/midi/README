@@ -1,6 +1,6 @@
 MIDI Sample and Test Files
 Chris Ahlstrom
-2015-09-11 to 2019-11-20
+2015-09-11 to 2019-11-24
 
 This directory contains contributed MIDI files for examples and testing.
 Also see the test files from the midicvt as described in
@@ -24,6 +24,12 @@ the "example1" file.
         A 2-bar sample.  Also shows different values of velocity, but added
         via the mouse on the data pane.
 
+   2rock.mid:
+
+        This drum file we found has "Lyric" sections in it that broke
+        reading of the MIDI file.  So this is a new test case.  It resulted
+        in a fix to the handling of running status.
+
    allofarow.mid:
 
         A file having a lot of empty tracks and one filled track.
@@ -43,11 +49,6 @@ the "example1" file.
         This file is the CountryStrum.mid SMF 0 file imported into
         Sequencer64, with the SMF 0 track removed, and all the sequences
         moved over to the leftmost position in the main window.
-
-   2rock.mid:
-
-        This drum file we found has "Lyric" sections in it that broke
-        reading of the MIDI file.  So this is a new test case.
 
 Also see the "data" directory which contains some MIDI/WRK files that get
 installed:

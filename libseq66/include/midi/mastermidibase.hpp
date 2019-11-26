@@ -217,16 +217,6 @@ public:
         return m_beats_per_minute;
     }
 
-    /**
-     * \getter m_beats_per_minute
-     *      This is a second version.
-
-    midibpm get_bpm () const
-    {
-        return m_beats_per_minute;
-    }
-     */
-
     int get_ppqn () const
     {
         return m_ppqn;
@@ -262,21 +252,17 @@ public:
     void panic ();                                          /* kepler34 func  */
     void set_sequence_input (bool state, sequence * seq);
     void dump_midi_input (event in);                        /* seq32 function */
-
     std::string get_midi_out_bus_name (bussbyte bus);
     std::string get_midi_in_bus_name (bussbyte bus);
-
     int poll_for_midi ();
     bool is_more_input ();
     bool get_midi_event (event * in);
-
     bool set_clock (bussbyte bus, e_clock clock_type);
     bool set_input (bussbyte bus, bool inputing);
     bool get_input (bussbyte bus);
     bool is_input_system_port (bussbyte bus);
     e_clock get_clock (bussbyte bus);
     void copy_io_busses ();
-
     void set_ppqn (int ppqn);
     void set_beats_per_minute (midibpm bpm);
 

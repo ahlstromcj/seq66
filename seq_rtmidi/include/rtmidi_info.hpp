@@ -282,27 +282,15 @@ public:
         return get_api_info()->port_list();
     }
 
-    /**
-     * \getter sm_selected_api
-     */
-
     static rtmidi_api & selected_api ()
     {
         return sm_selected_api;
     }
 
-    /**
-     * \getter m_info_api const version
-     */
-
     const midi_info * get_api_info () const
     {
         return m_info_api;
     }
-
-    /**
-     * \getter m_info_api non-const version
-     */
 
     midi_info * get_api_info ()
     {
@@ -315,10 +303,6 @@ protected:
     {
         return get_api_info()->api_connect();
     }
-
-    /**
-     * \setter sm_selected_api
-     */
 
     static void selected_api (const rtmidi_api & api)
     {
@@ -343,10 +327,6 @@ protected:
         }
         return result;
     }
-
-    /**
-     * \setter m_info_api
-     */
 
     void delete_api ()
     {

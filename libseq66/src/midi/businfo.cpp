@@ -722,10 +722,13 @@ busarray::poll_for_midi ()
 bool
 busarray::get_midi_event (event * inev)
 {
+    int count = 0;
     for (auto & bi : m_container)       /* vector of businfo copies     */
     {
         if (bi.bus()->get_midi_event(inev))
+        {
             return true;
+        }
     }
     return false;
 }

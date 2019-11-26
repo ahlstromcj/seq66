@@ -266,6 +266,23 @@ mastermidibus::activate ()
  *  primitive poll, which exits when some data is obtained, or sleeps a
  *  millisecond in note data is obtained.
  *
+ *  For JACK polling, call the base-class implementation:
+ *
+ *      -   mastermidibase::api_poll_for_midi()
+ *      -   busarray::poll_for_midi()
+ *      -   businfo::poll_for_midi()
+ *      -   midibus::poll_for_midi() [midibase::poll_for_midi()]
+ *      -   midibase::api_poll_for_midi(), a virtual function overridden
+ *          for JACK (and ALSA).
+ *
+ *  Otherwise, the call sequence is:
+ *
+ *      -   rtmidi_info::api_poll_for_midi()
+ *      -   rtmidi_info::get_api_info()->api_poll_for_midi()
+ *      -   midi_alsa_info::api_poll_for_midi()
+ *      -   poll() on the ALSA descriptors; a return > 0 means that number of
+ *          events are ready
+ *
  * \return
  *      Returns the number of input MIDI events waiting.
  */
@@ -274,7 +291,7 @@ int
 mastermidibus::api_poll_for_midi ()
 {
     if (m_use_jack_polling)
-        return mastermidibase::api_poll_for_midi(); /* default poll */
+        return mastermidibase::api_poll_for_midi(); /* inbus-array poll */
     else
         return m_midi_master.api_poll_for_midi();
 }
@@ -289,9 +306,13 @@ bool
 mastermidibus::api_get_midi_event (event * inev)
 {
     if (m_use_jack_polling)
+    {
         return m_inbus_array.get_midi_event(inev);
+    }
     else
+    {
         return m_midi_master.api_get_midi_event(inev);
+    }
 }
 
 }           // namespace seq66
