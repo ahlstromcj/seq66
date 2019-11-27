@@ -165,47 +165,25 @@ public:
 
 public:
 
-    /**
-     * \getter m_connected
-     */
-
     bool is_port_open () const
     {
         return m_connected;
     }
-
-    /**
-     * \getter m_master_info
-     */
 
     midi_info & master_info ()
     {
         return m_master_info;
     }
 
-    /**
-     * \getter m_master_info
-     *      The const version.
-     */
-
     const midi_info & master_info () const
     {
         return m_master_info;
     }
 
-    /**
-     * \getter m_parent_bus
-     */
-
     midibus & parent_bus ()
     {
         return m_parent_bus;
     }
-
-    /**
-     * \getter m_parent_bus
-     *      The const version.
-     */
 
     const midibus & parent_bus () const
     {
@@ -229,18 +207,10 @@ public:
 
 protected:
 
-    /**
-     * \setter m_connected
-     */
-
     void set_port_open ()
     {
         m_connected = true;
     }
-
-    /**
-     * \getter &m_input_data
-     */
 
     rtmidi_in_data * input_data ()
     {

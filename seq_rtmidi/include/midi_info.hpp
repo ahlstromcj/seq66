@@ -309,55 +309,30 @@ public:
         // Empty body
     }
 
-    /**
-     * \getter m_midi_mode_input
-     */
-
     bool midi_mode () const
     {
         return m_midi_mode_input;
     }
-
-    /**
-     * \setter m_midi_mode_input
-     */
 
     void midi_mode (bool flag)
     {
         m_midi_mode_input = flag;
     }
 
-    /**
-     * \getter m_midi_handle
-     */
-
     void * midi_handle ()
     {
         return m_midi_handle;
     }
-
-    /**
-     * \getter m_input
-     */
 
     midi_port_info & input_ports ()
     {
         return m_input;
     }
 
-    /**
-     * \getter m_output
-     */
-
     midi_port_info & output_ports ()
     {
         return m_output;
     }
-
-    /**
-     * \getter
-     *      Total port count.
-     */
 
     int full_port_count () const
     {
@@ -369,10 +344,6 @@ public:
         m_input.clear();
         m_output.clear();
     }
-
-    /**
-     * \getter m_app_name
-     */
 
     const std::string & app_name () const
     {
@@ -440,10 +411,6 @@ public:
     {
         return true;
     }
-
-    /**
-     *
-     */
 
     virtual int get_port_count () const
     {
@@ -536,27 +503,15 @@ protected:
             m_bus_container.push_back(const_cast<midibus *>(m));
     }
 
-    /**
-     * \setter m_global_queue
-     */
-
     void global_queue (int q)
     {
         m_global_queue = q;
     }
 
-    /**
-     * \setter m_midi_handle
-     */
-
     void midi_handle (void * h)
     {
         m_midi_handle = h;
     }
-
-    /**
-     * \getter m_bus_container
-     */
 
     std::vector<midibus *> & bus_container ()
     {
@@ -578,10 +533,6 @@ private:
     {
         return m_midi_mode_input ? m_input : m_output ;
     }
-
-    /**
-     * \getter m_input or m_output
-     */
 
     midi_port_info & ref_midi_port_info ()
     {

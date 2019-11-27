@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-02-10
+ * \updates       2019-11-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -42,6 +42,8 @@
 #include "midi/event.hpp"               /* seq66::event                     */
 #include "mastermidibus_rm.hpp"         /* seq66::mastermidibus, RtMIDI     */
 #include "midibus_rm.hpp"               /* seq66::midibus, RtMIDI           */
+
+#define SEQ66_USE_JACK_POLLING_FLAG     /* until we reconcile ALSA/JACK     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -290,10 +292,14 @@ mastermidibus::activate ()
 int
 mastermidibus::api_poll_for_midi ()
 {
+#if defined SEQ66_USE_JACK_POLLING_FLAG
     if (m_use_jack_polling)
         return mastermidibase::api_poll_for_midi(); /* inbus-array poll */
     else
         return m_midi_master.api_poll_for_midi();
+#else
+    return mastermidibase::api_poll_for_midi();     /* inbus-array poll */
+#endif
 }
 
 /**
@@ -305,14 +311,14 @@ mastermidibus::api_poll_for_midi ()
 bool
 mastermidibus::api_get_midi_event (event * inev)
 {
+#if defined SEQ66_USE_JACK_POLLING_FLAG
     if (m_use_jack_polling)
-    {
         return m_inbus_array.get_midi_event(inev);
-    }
     else
-    {
         return m_midi_master.api_get_midi_event(inev);
-    }
+#else
+    return m_inbus_array.get_midi_event(inev);
+#endif
 }
 
 }           // namespace seq66

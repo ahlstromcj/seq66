@@ -229,18 +229,10 @@ public:
         return m_midi_info.full_port_count();
     }
 
-    /**
-     * \getter m_midi_api const version
-     */
-
     const midi_api * get_api () const
     {
         return m_midi_api;
     }
-
-    /**
-     * \getter m_midi_api non-const version
-     */
 
     midi_api * get_api ()
     {
@@ -249,19 +241,11 @@ public:
 
 protected:
 
-    /**
-     * \setter m_midi_api
-     */
-
     void set_api (midi_api * ma)
     {
         if (not_nullptr(ma))
             m_midi_api = ma;
     }
-
-    /**
-     * \setter m_midi_api
-     */
 
     void delete_api ()
     {

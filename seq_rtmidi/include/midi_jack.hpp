@@ -92,27 +92,15 @@ public:
         return m_jack_data.m_jack_client;
     }
 
-    /**
-     * \getter m_jack_data
-     */
-
     midi_jack_data & jack_data()
     {
         return m_jack_data;
     }
 
-    /**
-     * \getter m_remote_port_name
-     */
-
     const std::string & remote_port_name () const
     {
         return m_remote_port_name;
     }
-
-    /**
-     * \setter m_remote_port_name
-     */
 
     void remote_port_name (const std::string & s)
     {
@@ -131,18 +119,10 @@ public:
 
 protected:
 
-    /**
-     * \setter m_jack_data.m_jack_client
-     */
-
     void client_handle (jack_client_t * handle)
     {
         m_jack_data.m_jack_client = handle;
     }
-
-    /**
-     * \setter m_jack_data.m_jack_port
-     */
 
     void port_handle (jack_port_t * handle)
     {
@@ -182,15 +162,7 @@ protected:
         return false;
     }
 
-    /*
-     *  This is an input function that is implemented fully only by
-     *  midi_in_jack.  Use the default null poll in midi_api instead.
-     *
-     *  virtual int api_poll_for_midi ()
-     *  {
-     *      return 0;
-     *  }
-     */
+    // virtual int api_poll_for_midi ();        // see midi_in_jack
 
     virtual void api_play (event * e24, midibyte channel);
     virtual void api_sysex (event * e24);
