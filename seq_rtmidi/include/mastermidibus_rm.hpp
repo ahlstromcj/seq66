@@ -51,7 +51,7 @@ namespace seq66
  *  Windows, but not JACK or Mac OSX.
  */
 
-class mastermidibus : public mastermidibase
+class mastermidibus final : public mastermidibase
 {
     friend class midi_alsa_info;
     friend class midi_jack_info;
@@ -83,19 +83,19 @@ public:
     );
     virtual ~mastermidibus ();
 
-    virtual bool activate ();
+    virtual bool activate () override;
 
 protected:
 
-    virtual bool api_get_midi_event (event * in);
-    virtual int api_poll_for_midi ();
-    virtual void api_init (int ppqn, midibpm bpm);
+    virtual bool api_get_midi_event (event * in) override;
+    virtual int api_poll_for_midi () override;
+    virtual void api_init (int ppqn, midibpm bpm) override;
 
     /**
      *  Provides MIDI API-specific functionality for the set_ppqn() function.
      */
 
-    virtual void api_set_ppqn (int p)
+    virtual void api_set_ppqn (int p) override
     {
         m_midi_master.api_set_ppqn(p);
     }
@@ -105,12 +105,12 @@ protected:
      *  set_beats_per_minute() function.
      */
 
-    virtual void api_set_beats_per_minute (midibpm b)
+    virtual void api_set_beats_per_minute (midibpm b) override
     {
         m_midi_master.api_set_beats_per_minute(b);
     }
 
-    virtual void api_flush ()
+    virtual void api_flush () override
     {
         m_midi_master.api_flush();
     }

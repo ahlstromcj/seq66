@@ -144,12 +144,12 @@ protected:
 protected:
 
 //  virtual bool open_client () = 0;    // replaces "connect()"
-    virtual bool api_connect ();
-    virtual bool api_init_out ();       // still in progress
-    virtual bool api_init_in ();
-    virtual bool api_init_out_sub ();
-    virtual bool api_init_in_sub ();
-    virtual bool api_deinit_in ();
+    virtual bool api_connect () override;
+    virtual bool api_init_out () override;
+    virtual bool api_init_in () override;
+    virtual bool api_init_out_sub () override;
+    virtual bool api_init_in_sub () override;
+    virtual bool api_deinit_in () override;
 
     /**
      * \return
@@ -157,23 +157,23 @@ protected:
      *      fully only by midi_in_jack.
      */
 
-    virtual bool api_get_midi_event (event *)
+    virtual bool api_get_midi_event (event *) override
     {
         return false;
     }
 
     // virtual int api_poll_for_midi ();        // see midi_in_jack
 
-    virtual void api_play (event * e24, midibyte channel);
-    virtual void api_sysex (event * e24);
-    virtual void api_flush ();
-    virtual void api_continue_from (midipulse tick, midipulse beats);
-    virtual void api_start ();
-    virtual void api_stop ();
-    virtual void api_clock (midipulse tick);
-    virtual void api_set_ppqn (int ppqn);
-    virtual void api_set_beats_per_minute (midibpm bpm);
-    virtual std::string api_get_port_name ();
+    virtual void api_play (event * e24, midibyte channel) override;
+    virtual void api_sysex (event * e24) override;
+    virtual void api_flush () override;
+    virtual void api_continue_from (midipulse tick, midipulse beats) override;
+    virtual void api_start () override;
+    virtual void api_stop () override;
+    virtual void api_clock (midipulse tick) override;
+    virtual void api_set_ppqn (int ppqn) override;
+    virtual void api_set_beats_per_minute (midibpm bpm) override;
+    virtual std::string api_get_port_name () override;
 
 private:
 
@@ -187,7 +187,7 @@ private:
  *  The class for handling JACK MIDI input.
  */
 
-class midi_in_jack: public midi_jack
+class midi_in_jack final : public midi_jack
 {
 
 protected:
@@ -199,8 +199,8 @@ public:
     midi_in_jack (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_in_jack ();
 
-    virtual int api_poll_for_midi ();
-    virtual bool api_get_midi_event (event *);
+    virtual int api_poll_for_midi () override;
+    virtual bool api_get_midi_event (event *) override;
 
 private:
 
@@ -221,7 +221,7 @@ private:
  *  The JACK MIDI output API class.
  */
 
-class midi_out_jack: public midi_jack
+class midi_out_jack final : public midi_jack
 {
 
 public:

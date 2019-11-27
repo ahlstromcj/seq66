@@ -42,7 +42,7 @@ namespace seq66
  *  The class for handling JACK MIDI port enumeration.
  */
 
-class midi_jack_info : public midi_info
+class midi_jack_info final : public midi_info
 {
     friend class midi_jack;
     friend int jack_process_io (jack_nframes_t nframes, void * arg);
@@ -98,17 +98,20 @@ public:
         return m_jack_client;
     }
 
-    virtual bool api_get_midi_event (event * inev);
-    virtual bool api_connect ();
-    virtual int api_poll_for_midi ();       /* disposable??? */
-    virtual void api_set_ppqn (int p);
-    virtual void api_set_beats_per_minute (midibpm b);
-    virtual void api_port_start (mastermidibus & masterbus, int bus, int port);
-    virtual void api_flush ();
+    virtual bool api_get_midi_event (event * inev) override;
+    virtual bool api_connect () override;
+    virtual int api_poll_for_midi () override;
+    virtual void api_set_ppqn (int p) override;
+    virtual void api_set_beats_per_minute (midibpm b) override;
+    virtual void api_port_start
+    (
+        mastermidibus & masterbus, int bus, int port
+    ) override;
+    virtual void api_flush () override;
 
 private:
 
-    virtual int get_all_port_info ();
+    virtual int get_all_port_info () override;
 
     /**
      * \getter m_jack_client

@@ -240,7 +240,6 @@ midi_api::cancel_callback ()
  *
  * \return
  *      Always returns 0, after a milliseconds's sleep.
- */
 
 int
 midi_api::api_poll_for_midi ()
@@ -248,6 +247,7 @@ midi_api::api_poll_for_midi ()
     millisleep(1);
     return 0;
 }
+ */
 
 }           // namespace seq66
 

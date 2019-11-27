@@ -285,6 +285,9 @@ mastermidibus::activate ()
  *      -   poll() on the ALSA descriptors; a return > 0 means that number of
  *          events are ready
  *
+ *  Because of some reasons long forgotten, the ALSA "rtmidi" framework here
+ *  handles MIDI via the midi_alsa_info object.
+ *
  * \return
  *      Returns the number of input MIDI events waiting.
  */

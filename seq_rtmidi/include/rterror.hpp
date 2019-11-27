@@ -123,7 +123,7 @@ public:
      *  Returns the thrown error message as a c-style string.
      */
 
-    virtual const char * what () const noexcept
+    virtual const char * what () const noexcept override
     {
         return m_message.c_str();
     }

@@ -521,6 +521,22 @@ midi_alsa::api_deinit_in ()
  *      return 0;
  *  }
  *
+
+int
+midi_in_alsa::api_poll_for_midi ()
+{
+    rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    // BOGUS
+    if (rtindata->using_callback())
+    {
+        millisleep(1);
+        return 0;
+    }
+    else
+    {
+        millisleep(1);
+        return rtindata->queue().count();
+    }
+}
  */
 
 /**

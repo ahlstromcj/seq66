@@ -68,87 +68,87 @@ protected:
 
 public:
 
-    virtual bool api_connect ()
+    virtual bool api_connect () override
     {
         return get_api()->api_connect();
     }
 
-    virtual void api_play (event * e24, midibyte channel)
+    virtual void api_play (event * e24, midibyte channel) override
     {
         get_api()->api_play(e24, channel);
     }
 
-    virtual void api_continue_from (midipulse tick, midipulse beats)
+    virtual void api_continue_from (midipulse tick, midipulse beats) override
     {
         get_api()->api_continue_from(tick, beats);
     }
 
-    virtual void api_start ()
+    virtual void api_start () override
     {
         get_api()->api_start();
     }
 
-    virtual void api_stop ()
+    virtual void api_stop () override
     {
         get_api()->api_stop();
     }
 
-    virtual void api_clock (midipulse tick)
+    virtual void api_clock (midipulse tick) override
     {
         get_api()->api_clock(tick);
     }
 
-    virtual void api_set_ppqn (int ppqn)
+    virtual void api_set_ppqn (int ppqn) override
     {
         get_api()->api_set_ppqn(ppqn);
     }
 
-    virtual void api_set_beats_per_minute (midibpm bpm)
+    virtual void api_set_beats_per_minute (midibpm bpm) override
     {
         get_api()->api_set_beats_per_minute(bpm);
     }
 
-    virtual bool api_init_out ()
+    virtual bool api_init_out () override
     {
         return get_api()->api_init_out();
     }
 
-    virtual bool api_init_out_sub ()
+    virtual bool api_init_out_sub () override
     {
         return get_api()->api_init_out_sub();
     }
 
-    virtual bool api_init_in ()
+    virtual bool api_init_in () override
     {
         return get_api()->api_init_in();
     }
 
-    virtual bool api_init_in_sub ()
+    virtual bool api_init_in_sub () override
     {
         return get_api()->api_init_in_sub();
     }
 
-    virtual bool api_deinit_in ()
+    virtual bool api_deinit_in () override
     {
         return get_api()->api_deinit_in();
     }
 
-    virtual bool api_get_midi_event (event * inev)
+    virtual bool api_get_midi_event (event * inev) override
     {
         return get_api()->api_get_midi_event(inev);
     }
 
-    virtual int api_poll_for_midi ()
+    virtual int api_poll_for_midi () override
     {
         return get_api()->api_poll_for_midi();
     }
 
-    virtual void api_sysex (event * e24)
+    virtual void api_sysex (event * e24) override
     {
         get_api()->api_sysex(e24);
     }
 
-    virtual void api_flush ()
+    virtual void api_flush () override
     {
         get_api()->api_flush();
     }

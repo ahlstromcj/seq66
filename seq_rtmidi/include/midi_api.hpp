@@ -129,7 +129,7 @@ public:
         return true;
     }
 
-    virtual int api_poll_for_midi ();   /* now has a default implementation */
+    virtual int api_poll_for_midi () = 0;   /* now has a default implementation */
     virtual bool api_init_out () = 0;
     virtual bool api_init_out_sub () = 0;
     virtual bool api_init_in () = 0;

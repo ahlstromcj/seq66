@@ -141,17 +141,17 @@ public:
 
 protected:
 
-    virtual bool api_init_out ();
-    virtual bool api_init_in ();
-    virtual bool api_init_out_sub ();
-    virtual bool api_init_in_sub ();
-    virtual bool api_deinit_in ();
+    virtual bool api_init_out () override;
+    virtual bool api_init_in () override;
+    virtual bool api_init_out_sub () override;
+    virtual bool api_init_in_sub () override;
+    virtual bool api_deinit_in () override;
 
     /**
      * ALSA get MIDI events via the midi_alsa_info object at present.
      */
 
-    virtual bool api_get_midi_event (event *)
+    virtual bool api_get_midi_event (event *) override
     {
         return false;
     }
@@ -162,15 +162,15 @@ protected:
      * virtual int api_poll_for_midi ();
      */
 
-    virtual void api_play (event * e24, midibyte channel);
-    virtual void api_sysex (event * e24);
-    virtual void api_flush ();
-    virtual void api_continue_from (midipulse tick, midipulse beats);
-    virtual void api_start ();
-    virtual void api_stop ();
-    virtual void api_clock (midipulse tick);
-    virtual void api_set_ppqn (int ppqn);
-    virtual void api_set_beats_per_minute (midibpm bpm);
+    virtual void api_play (event * e24, midibyte channel) override;
+    virtual void api_sysex (event * e24) override;
+    virtual void api_flush () override;
+    virtual void api_continue_from (midipulse tick, midipulse beats) override;
+    virtual void api_start () override;
+    virtual void api_stop () override;
+    virtual void api_clock (midipulse tick) override;
+    virtual void api_set_ppqn (int ppqn) override;
+    virtual void api_set_beats_per_minute (midibpm bpm) override;
 
 private:
 
@@ -182,12 +182,14 @@ private:
  *  This class implements the ALSA version of a MIDI input object.
  */
 
-class midi_in_alsa : public midi_alsa
+class midi_in_alsa final : public midi_alsa
 {
 
 public:
 
     midi_in_alsa (midibus & parentbus, midi_info & masterinfo);
+
+    // virtual int api_poll_for_midi () override;
 
 };          // class midi_in_alsa
 
@@ -195,7 +197,7 @@ public:
  *  This class implements the ALSA version of a MIDI output object.
  */
 
-class midi_out_alsa : public midi_alsa
+class midi_out_alsa final : public midi_alsa
 {
 
 public:

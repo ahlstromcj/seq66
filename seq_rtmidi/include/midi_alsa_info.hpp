@@ -34,7 +34,7 @@ namespace seq66
  *  The class for handling ALSA MIDI input.
  */
 
-class midi_alsa_info : public midi_info
+class midi_alsa_info final : public midi_info
 {
 
 private:
@@ -92,16 +92,19 @@ public:
         return m_alsa_seq;
     }
 
-    virtual bool api_get_midi_event (event * inev);
-    virtual int api_poll_for_midi ();
-    virtual void api_set_ppqn (int p);
-    virtual void api_set_beats_per_minute (midibpm b);
-    virtual void api_port_start (mastermidibus & masterbus, int bus, int port);
-    virtual void api_flush ();
+    virtual bool api_get_midi_event (event * inev) override;
+    virtual int api_poll_for_midi () override;
+    virtual void api_set_ppqn (int p) override;
+    virtual void api_set_beats_per_minute (midibpm b) override;
+    virtual void api_port_start
+    (
+        mastermidibus & masterbus, int bus, int port
+    ) override;
+    virtual void api_flush () override;
 
 private:
 
-    virtual int get_all_port_info ();
+    virtual int get_all_port_info () override;
 
 };          // class midi_alsa_info
 
