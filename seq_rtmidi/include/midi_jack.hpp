@@ -162,7 +162,10 @@ protected:
         return false;
     }
 
-    // virtual int api_poll_for_midi ();        // see midi_in_jack
+    virtual int api_poll_for_midi ()
+    {
+        return 0;
+    }
 
     virtual void api_play (event * e24, midibyte channel) override;
     virtual void api_sysex (event * e24) override;

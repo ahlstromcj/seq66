@@ -157,10 +157,13 @@ protected:
     }
 
     /*
-     * Use the default null poll in midi_api instead.
-     *
-     * virtual int api_poll_for_midi ();
+     * The actual polling is handled by midi_alsa_info.  What a mess!
      */
+
+    virtual int api_poll_for_midi ()
+    {
+        return 0;
+    }
 
     virtual void api_play (event * e24, midibyte channel) override;
     virtual void api_sysex (event * e24) override;
