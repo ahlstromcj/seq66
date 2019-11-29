@@ -474,16 +474,19 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         pen.setWidth(1);
         pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
-        painter.drawText(base_x + c_text_x, base_y + 4, 80, 80, 1, title);
+        painter.drawText
+        (
+            base_x + c_text_x, base_y + 4, 80, 80, Qt::AlignLeft, title
+        );
 
         std::string sl = perf().sequence_label(*s);
         QString label(sl.c_str());
-        painter.drawText(base_x + 8, base_y + m_slot_h - 5, label);
+        int y = base_y + m_slot_h - 5;
+        painter.drawText(base_x + 8, y, label);
         if (rc().show_ui_sequence_key())
         {
             QString key = perf().lookup_slot_key(seq).c_str();
             int x = base_x + m_slot_w - 15;                 /* was "- 10"   */
-            int y = base_y + m_slot_h - 5;
             painter.drawText(x, y, key);
         }
 
@@ -706,13 +709,15 @@ qsliveframe::draw_slot (seq::number sn)
         int ly = base_y + (m_slot_h / 2) + 5;
         char snum[8];
         snprintf(snum, sizeof snum, "%d", sn);
+
+        QString ls(snum);
         m_font.setPointSize(8);
         pen.setColor(Qt::white);
         pen.setWidth(1);
         pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
         painter.setFont(m_font);
-        painter.drawText(lx, ly, snum);
+        painter.drawText(lx, ly, ls);
     }
     return true;
 }

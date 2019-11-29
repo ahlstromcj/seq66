@@ -24,7 +24,8 @@ dnl   It defines the symbol DBGFLAGS, which you should add to the COMMONFLAGS
 dnl   for the compiler call.  Optimization is turned off, and the symbols
 dnl   DEBUG, _DEBUG, and NWIN32 are defined.  Actually, we now do not define
 dnl   any macros related to Windows in this file.  It's for debugging, not OS
-dnl   detection!
+dnl   detection!  The GDBFLAGS macro is used internally to add gdb-specific
+dnl   debug options.
 dnl
 dnl   In addition, the WARNINGS setting is changed to make sure all warnings
 dnl   are shown.

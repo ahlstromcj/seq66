@@ -132,19 +132,20 @@ qperfnames::paintEvent (QPaintEvent *)
                 int bankId = seq_id / perf().seqs_in_set();
                 snprintf(ss, sizeof ss, "%2d", bankId);
 
+                QString bankss(ss);
                 pen.setColor(Qt::white);                // for bank number
                 painter.setPen(pen);
-                painter.drawText(1, rect_y + 15, ss);
+                painter.drawText(1, rect_y + 15, bankss);
                 pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
                 painter.save();
-                QString bankName(perf().bank_name(bankId).c_str());
+                QString bankname(perf().bank_name(bankId).c_str());
                 painter.translate
                 (
-                    12, rect_y + m_set_text_y + bankName.length() * 4
+                    12, rect_y + m_set_text_y + bankname.length() * 4
                 );
                 painter.rotate(270);
-                painter.drawText(0, 0, bankName);
+                painter.drawText(0, 0, bankname);
                 painter.restore();
             }
             if (perf().is_seq_active(seq_id))
@@ -159,6 +160,7 @@ qperfnames::paintEvent (QPaintEvent *)
                     s->name().c_str(), s->get_midi_channel() + 1
                 );
 
+                QString chinfo(name);
                 if (muted)
                 {
                     brush.setColor(Qt::black);
@@ -179,10 +181,10 @@ qperfnames::paintEvent (QPaintEvent *)
                     pen.setColor(Qt::black);
                 }
                 painter.setPen(pen);
-                painter.drawText(18, rect_y + 10, name);
+                painter.drawText(18, rect_y + 10, chinfo);
                 painter.drawText(18, rect_y + 20, sname.c_str());
                 painter.drawRect(name_x(2), name_y(seq_id), 11, m_nametext_y);
-                painter.drawText(name_x(5), name_y(seq_id) + 15, "M");
+                painter.drawText(name_x(5), name_y(seq_id) + 15, QString("M"));
             }
             else
             {

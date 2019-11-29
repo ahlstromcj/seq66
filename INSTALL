@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.90.2 and above
 Chris Ahlstrom
-2015-09-10 to 2019-10-20
+2015-09-10 to 2019-11-28
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily
@@ -414,6 +414,8 @@ DEPENDENCIES:
          that "5" is in the list, and then add this line to your .bashrc file:
 
             export QT_SELECT=5
+
+        This allows builds in bash to use the correct version of Qt.
 
    Documentation (now optional, must be built manually):
 

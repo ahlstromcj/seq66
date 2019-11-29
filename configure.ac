@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-11-24
+dnl \update        2019-11-29
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -303,7 +303,7 @@ if test "$qtmidi" != "no"; then
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the Qt/rtmidi version of application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name for Qt/rtmidi])
     AM_PATH_ALSA(0.9.0)
-    AX_HAVE_QT
+    AX_HAVE_QT_EX
     AC_MSG_RESULT([qt user-interface build enabled.]);
 fi
 
@@ -399,7 +399,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-11-24"
+#define VERSION_DATE_SHORT "2019-11-29"
 #define VERSION "0.90.2"
 
 )

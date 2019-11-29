@@ -143,14 +143,12 @@ qsmaintime::paintEvent (QPaintEvent *)
     }
     if (beats_per_measure() < 10)       // draw beat number (if there's space)
     {
+        int x = (metro + 1) * boxwidth - (m_font.pointSize() + 2);
+        int y = height() * 0.3 + m_font.pointSize();
         pen.setColor(Qt::black);
         pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
-        painter.drawText
-        (
-            (metro + 1) * boxwidth - (m_font.pointSize() + 2),
-            height() * 0.3 + m_font.pointSize(), QString::number(metro + 1)
-        );
+        painter.drawText(x, y, QString::number(metro + 1));
     }
 
 #if defined USE_METRONOME_FADE
@@ -171,7 +169,7 @@ qsmaintime::paintEvent (QPaintEvent *)
 }
 
 /**
- *
+ *  Need names for both 150 and 2.4!!!
  */
 
 QSize

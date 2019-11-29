@@ -143,7 +143,9 @@ qseqtime::paintEvent (QPaintEvent *)
             painter.setPen(pen);
             painter.drawLine(x_offset, 0, x_offset, size().height());
             snprintf(bar, sizeof bar, "%ld", tick / ticks_per_bar + 1);
-            painter.drawText(x_offset + 3, 10, bar);
+
+            QString qbar(bar);
+            painter.drawText(x_offset + 3, 10, qbar);
         }
         else if (tick % ticks_per_beat == 0)
         {
