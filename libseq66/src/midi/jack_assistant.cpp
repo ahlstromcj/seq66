@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2019-04-27
+ * \updates       2019-11-30
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -1842,7 +1842,7 @@ jack_assistant::client () const
 void
 jack_timebase_callback
 (
-    jack_transport_state_t state,           // currently unused !!!
+    jack_transport_state_t /*state*/,
     jack_nframes_t nframes,
     jack_position_t * pos,
     int new_pos,

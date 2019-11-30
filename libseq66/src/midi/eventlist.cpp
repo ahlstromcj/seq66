@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-10-29
+ * \updates       2019-11-29
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -758,7 +758,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
  */
 
 bool
-eventlist::randomize_selected (midibyte status, midibyte control, int range)
+eventlist::randomize_selected (midibyte status, int range)
 {
     bool result = false;
     for (auto & e : m_events)
@@ -803,12 +803,6 @@ eventlist::randomize_selected_notes (int jitter, int range)
 {
     bool result = false;
     midipulse length = get_length();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("Before randomization\n");
-    print();
-#endif
-
     for (auto & e : m_events)
     {
         if (e.is_selected() && e.is_note())
@@ -852,11 +846,6 @@ eventlist::randomize_selected_notes (int jitter, int range)
     }
     if (result)
         sort();                                 /* timestamps altered   */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("After randomization\n");
-    print();
-#endif
 
     return result;
 }
@@ -1943,6 +1932,22 @@ eventlist::print () const
     printf("events[%d]:\n", count());
     for (auto & e : m_events)
         e.print();
+}
+
+/**
+ *  Constructs a list of the currently-held events.  Useful for debugging.
+ */
+
+std::string
+eventlist::to_string () const
+{
+    std::string result = "Events (";
+    result += std::to_string(count());
+    result += "):\n";
+    for (auto & e : m_events)
+        result += e.to_string();
+
+    return result;
 }
 
 }           // namespace seq66

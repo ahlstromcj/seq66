@@ -24,7 +24,7 @@ message($$_PRO_FILE_PWD_)
 
 QT += core gui widgets
 TEMPLATE = lib
-CONFIG += staticlib config_prl qtc_runnable
+CONFIG += staticlib config_prl qtc_runnable c++14
 
 # These are needed to set up seq66_platform_macros:
 

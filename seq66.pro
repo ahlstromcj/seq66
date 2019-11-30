@@ -28,7 +28,7 @@
 
 TEMPLATE = subdirs
 SUBDIRS =  libseq66 seq_portmidi seq_qt5 Seq66qt5
-CONFIG += static link_prl ordered qtc_runnable c++11
+CONFIG += static link_prl ordered qtc_runnable c++14
 
 # None of these seem to work on 32-bit Linux using Qt 5.3:
 #

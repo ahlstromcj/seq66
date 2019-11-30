@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-14
+ * \updates       2019-11-30
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -615,38 +615,55 @@ event::append_sysex (midibyte data)
 void
 event::print () const
 {
-    std::string flags;
-    if (is_linked())
-        flags += "L";
+    std::string buffer = to_string();
+    printf("%s", buffer.c_str());
+}
 
-    if (is_marked())
-        flags += "M";
+/**
+ *  Prints out the timestamp, data size, the current status byte, channel
+ *  (which is the type value for Meta events), any SysEx or
+ *  Meta data if present, or the two data bytes for the status byte.
+ *
+ *  There's really no percentage in converting this code to use std::cout, we
+ *  feel.  We might want to make it contingent on the --verbose option at some
+ *  point.
+ */
 
-    if (is_selected())
-        flags += "S";
+std::string
+event::to_string () const
+{
+    char tmp[64];
+    (void) snprintf(tmp, sizeof tmp, "[%06ld] (", long(m_timestamp));
 
-    if (is_painted())
-        flags += "P";
-
-    printf
+    std::string result = tmp;
+    result += is_linked() ? "L" : " ";
+    result += is_marked() ? "M" : " ";
+    result += is_selected() ? "S" : " ";
+    result += is_painted() ? "P" : " ";
+    result += ") ";
+    (void) snprintf
     (
-        "[%06ld] (%s) status %02X chan/type %02X d0=%d d1=%d\n",
-        m_timestamp, flags.c_str(), unsigned(m_status), unsigned(m_channel),
+        tmp, sizeof tmp, "status %02X chan/type %02X d0=%d d1=%d\n",
+        unsigned(m_status), unsigned(m_channel),
         int(m_data[0]), int(m_data[1])
     );
+    result += tmp;
     if (is_sysex() || is_meta())
     {
         bool use_linefeeds = get_sysex_size() > 8;
-        printf("ex[%d]:   ", get_sysex_size());
+        (void) snprintf(tmp, sizeof tmp, "SysEx/Meta[%d]:   ", get_sysex_size());
+        result += tmp;
         for (int i = 0; i < get_sysex_size(); ++i)
         {
             if (use_linefeeds && (i % 16) == 0)
-                printf("\n         ");
+                result += "\n         ";
 
-            printf("%02X ", m_sysex[i]);
+            (void) snprintf(tmp, sizeof tmp, "%02X ", m_sysex[i]);
+            result += tmp;
         }
-        printf("\n");
+        result += "\n";
     }
+    return result;
 }
 
 /**

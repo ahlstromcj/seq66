@@ -23,7 +23,7 @@ message($$_PRO_FILE_PWD_)
 QT += core gui widgets
 TARGET = qpseq66
 TEMPLATE += app
-CONFIG += static qtc_runnable
+CONFIG += static qtc_runnable c++14
 
 # These are needed to set up seq66_platform_macros:
 

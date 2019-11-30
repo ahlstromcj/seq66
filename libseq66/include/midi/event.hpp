@@ -1239,6 +1239,7 @@ public:
     }
 
     void print () const;
+    std::string to_string () const;
 
     /**
      *  This function is used in sorting MIDI status events (e.g. note

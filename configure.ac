@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-11-29
+dnl \update        2019-11-30
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -399,7 +399,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-11-29"
+#define VERSION_DATE_SHORT "2019-11-30"
 #define VERSION "0.90.2"
 
 )
@@ -419,13 +419,14 @@ dnl 8.  Set up other options in the compiler macros.
 dnl
 dnl -Wno-error=date-time breaks the build on KX Studio (gcc 4.8), removed.
 dnl gcc 8 uncovers a warnings issue in libsigc++, so remove -Wextra for now,
-dnl and add -Wno-parentheses.
+dnl and add -Wno-parentheses.  2019-11-30: Add it back, to match qmake's use of
+dnl equivalent -W option, to uncover more issues.
 dnl
 dnl m4/xpc_debug.m4 defines DBGFLAGS to enable debugging/coverage/profiling.
 dnl m4/xpc_errorlog.m4 defines NOERRLOG.  Currently not used.
 dnl m4/xpc_thisptr.m4 defines NOTHISPTR.  Currently not used.
 
-WARNFLAGS="-Wall -pedantic -Wno-parentheses $WARNINGS"
+WARNFLAGS="-Wall -Wextra -pedantic -Wno-parentheses $WARNINGS"
 APIDEF="-DAPI_VERSION=\"$SEQ66_API_VERSION\""
 SPEEDFLAGS="-ffast-math"
 COMMONFLAGS="$WARNFLAGS -D_REENTRANT $APIDEF $DBGFLAGS"

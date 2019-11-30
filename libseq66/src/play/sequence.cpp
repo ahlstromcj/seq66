@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-18
+ * \updates       2019-11-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1547,19 +1547,27 @@ sequence::grow_selected (midipulse delta)
 }
 
 /**
+ *  Randomizes the selected notes.  Adapted from Seq32 with the unused control
+ *  parameter removed.
  *
+ * \param status
+ *      The kind of events to be randomized.
+ *
+ * \param plus_minus
+ *      The range of the randomization.
+ *
+ * \return
+ *      Returns true if the randomization was performed.  If true, the sequence
+ *      is flagged as modified.
  */
 
 bool
-sequence::randomize_selected
-(
-    midibyte status, midibyte control, int plus_minus
-)
+sequence::randomize_selected (midibyte status, int plus_minus)
 {
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo(), no lock  */
 
-    bool result = m_events.randomize_selected(status, control, plus_minus);
+    bool result = m_events.randomize_selected(status, plus_minus);
     if (result)
         modify();
 
@@ -4561,16 +4569,31 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
 }
 
 /**
- *  Prints a list of the currently-held events.
+ *  Constructs a list of the currently-held events.  We do it by brute force,
+ *  not by std::sstream.
  *
  * \threadunsafe
  */
 
-void
-sequence::print () const
+std::string
+sequence::to_string () const
 {
-    printf("Seq %d '%s':\n", seq_number(), name().c_str());
-    m_events.print();
+    std::string result = "Pattern ";
+    result += std::to_string(seq_number());
+    result +=  " '";
+    result += name();
+    result += "'\n";
+    result += "Channel ";
+    result += std::to_string(get_midi_channel() + 1);
+    result += ", Bus ";
+    result += std::to_string(get_midi_bus());
+    result += "\n Transposeable: ";
+    result += bool_string(transposable());
+    result += "\n Length (ticks): ";
+    result += std::to_string(get_length());
+    result += "Events:\n";
+    result += m_events.to_string();
+    return result;
 }
 
 /**
@@ -4955,7 +4978,7 @@ sequence::multiply_pattern (double multiplier)
 
 /**
  *  A member function to dump a summary of events stored in the event-list of
- *  a sequence.
+ *  a sequence.  Later, use to_string().
  */
 
 void
@@ -4970,7 +4993,7 @@ sequence::show_events () const
     for (auto i = evl.cbegin(); i != evl.cend(); ++i)
     {
         const event & er = eventlist::cdref(i);
-        std::string evdump = to_string(er);
+        std::string evdump = er.to_string();
         printf("%s", evdump.c_str());
     }
 }
@@ -5345,7 +5368,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
 
     case eventlist::edit::randomize_events:
 
-        randomize_selected(m_status, m_cc, var);
+        randomize_selected(m_status, var);
         break;
 
     case eventlist::edit::quantize_notes:

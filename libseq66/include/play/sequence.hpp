@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-11-10
+ * \updates       2019-11-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1283,7 +1283,7 @@ public:
     }
 
     void set_midi_channel (midibyte ch, bool user_change = false);
-    void print () const;
+    std::string to_string () const;
     void print_triggers () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
@@ -1372,7 +1372,7 @@ public:
 
     void set_midi_bus (char mb, bool user_change = false);
 
-    char get_midi_bus () const
+    midibyte get_midi_bus () const
     {
         return m_bus;
     }
@@ -1466,13 +1466,9 @@ public:
     void decrement_selected (midibyte status, midibyte /*control*/);
     bool grow_selected (midipulse deltatick);
     bool stretch_selected (midipulse deltatick);
-    bool randomize_selected
-    (
-        midibyte status, midibyte control, int plus_minus
-    );
+    bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter = 8, int range = 8);
     void adjust_data_handle (midibyte status, int data);
-
     bool mark_selected ();
     bool remove_selected ();
     bool remove_marked ();                      /* a forwarding function */
