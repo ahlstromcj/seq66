@@ -188,8 +188,7 @@ midi_queue::pop_front ()
     midi_message result;
     if (m_size != 0)
     {
-        midi_message & mmr = m_ring[m_front];
-        result = mmr;
+        result = m_ring[m_front];
         pop();
     }
     return result;

@@ -1361,6 +1361,10 @@ midi_in_jack::api_poll_for_midi ()
  *  One result (we think) is odd artifacts in the seqroll when recording
  *  and passing through.
  *
+ * \todo
+ *      Return a bussbyte or c_bussbyte_max value instead of a boolean. However,
+ *      we need to be able to get the buss byte from rtmidi_in_data.
+ *
  * \param inev
  *      Provides the destination for the MIDI event.
  *
@@ -1425,6 +1429,10 @@ midi_in_jack::api_get_midi_event (event * inev)
             }
 #endif
 
+            midibyte st = mm[0];
+
+#if defined SEQ66_PLATFORM_DEBUG
+
             /*
              * For now, ignore certain messages; they're not handled by the
              * performer object.  Could be handled there, but saves some
@@ -1432,7 +1440,6 @@ midi_in_jack::api_get_midi_event (event * inev)
              * to performer so it is available for frameworks beside JACK.
              */
 
-            midibyte st = mm[0];
             if (rc().verbose())
             {
                 static int s_count = 0;
@@ -1460,6 +1467,9 @@ midi_in_jack::api_get_midi_event (event * inev)
                 }
                 fflush(stdout);
             }
+
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
             if (st == EVENT_MIDI_ACTIVE_SENSE || st == EVENT_MIDI_RESET)
             {
                 result = false;             /* seq66-packages #4      */

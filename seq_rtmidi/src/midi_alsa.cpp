@@ -509,18 +509,12 @@ midi_alsa::api_deinit_in ()
     return true;
 }
 
+#if defined USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
+
 /*
  *  This function is supposed to poll for MIDI data, but the current
  *  ALSA implementation DOES NOT USE THIS FUNCTION.  Commented out.
- *  This kills startup: return master_info().api_poll_for_midi();
- *
- *  int
- *  midi_alsa::api_poll_for_midi ()
- *  {
- *      millisleep(1);
- *      return 0;
- *  }
- *
+ */
 
 int
 midi_in_alsa::api_poll_for_midi ()
@@ -537,7 +531,8 @@ midi_in_alsa::api_poll_for_midi ()
         return rtindata->queue().count();
     }
 }
- */
+
+#endif  // defined USE_MIDI_ALSA_POLL
 
 /**
  *  Defines the size of the MIDI event buffer, which should be large enough to

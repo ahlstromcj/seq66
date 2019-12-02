@@ -27,7 +27,7 @@
  * This was the version of the RtMidi library from which this reimplementation
  * was forked.  However, the divergence from RtMidi by this library is now
  * very great... only the idea of selecting the MIDI API at runtime, and the
- * queuing and call-back mechanism  have been preserved.
+ * queuing and call-back mechanism, have been preserved.
  */
 
 #define SEQ66_RTMIDI_VERSION "2.1.1"        /* revision at fork time        */
@@ -217,32 +217,24 @@ public:
     midi_queue ();
     ~midi_queue ();
 
-    /**
-     * \getter m_size == 0
-     */
-
     bool empty () const
     {
         return m_size == 0;
     }
-
-    /**
-     * \getter m_size == 0
-     */
 
     int count () const
     {
         return int(m_size);
     }
 
-    /**
-     * \return
-     *      Returns true if the queue size is at maximum.
-     */
-
     bool full () const
     {
         return m_size == m_ring_size;
+    }
+
+    const midi_message & front () const
+    {
+        return m_ring[m_front];
     }
 
     bool add (const midi_message & mmsg);
@@ -251,16 +243,7 @@ public:
     void allocate (unsigned queuesize = SEQ66_DEFAULT_QUEUE_SIZE);
     void deallocate ();
 
-    /**
-     * \getter m_ring[m_front]
-     */
-
-    const midi_message & front () const
-    {
-        return m_ring[m_front];
-    }
-
-};
+};          // class midi_queue
 
 /**
  *  The rtmidi_in_data structure is used to pass private class data to the
@@ -288,18 +271,10 @@ public:
 
     rtmidi_in_data ();
 
-    /**
-     * \getter m_queue const
-     */
-
     const midi_queue & queue () const
     {
         return m_queue;
     }
-
-    /**
-     * \getter m_queue non-const
-     */
 
     midi_queue & queue ()
     {
@@ -371,18 +346,10 @@ public:
         m_using_callback = flag;
     }
 
-    /**
-     * \getter m_api_data const
-     */
-
     const void * api_data () const
     {
         return m_api_data;
     }
-
-    /**
-     * \getter m_api_data non-const
-     */
 
     void * api_data ()
     {
@@ -394,36 +361,20 @@ public:
         m_api_data = dataptr;
     }
 
-    /**
-     * \getter m_user_data const
-     */
-
     const void * user_data () const
     {
         return m_user_data;
     }
-
-    /**
-     * \getter m_user_data const
-     */
 
     void * user_data ()
     {
         return m_user_data;
     }
 
-    /**
-     * \setter m_user_data
-     */
-
     void user_data (void * dataptr)
     {
         m_user_data = dataptr;
     }
-
-    /**
-     * \getter m_user_callback
-     */
 
     rtmidi_callback_t user_callback () const
     {

@@ -182,6 +182,9 @@ mastermidibus::api_init (int ppqn, midibpm /*bpm*/)
  *  Grab a MIDI event.  This function ssumes that [api_]poll_for_midi() has
  *  been called to "prime the pump".
  *
+ * \todo
+ *      Return a bussbyte or c_bussbyte_max value instead of a boolean.
+ *
  * \param in
  *      Provides the destination point for the event to be filled.
  *
@@ -194,9 +197,9 @@ mastermidibus::api_get_midi_event (event * in)
 {
     bool result = false;
     int count = m_inbus_array.count();
-    for (int i = 0; i < count; ++i)
+    for (int b = 0; b < count; ++b)
     {
-        midibus * m = m_inbus_array.bus(i);
+        midibus * m = m_inbus_array.bus(b);
         if (m->m_inputing)
         {
             PmEvent pme;

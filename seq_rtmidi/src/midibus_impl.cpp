@@ -231,6 +231,9 @@ midibus_impl::api_poll_for_midi ()
 /**
  *  Gets a MIDI event.
  *
+ * \todo
+ *      Return a bussbyte or c_bussbyte_max value instead of a boolean.
+ *
  * \param inev
  *      The location to deposit the MIDI event data.
  *

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-10-07
+ * \updates       2019-12-01
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -46,7 +46,7 @@
  */
 
 #include <vector>                       /* std::vector<midibool>            */
-#include <string>
+#include <string>                       /* std::string class                */
 #include <climits>                      /* ULONG_MAX and other limits       */
 
 #include "util/basic_macros.hpp"        /* insure build macros defined      */
@@ -127,17 +127,6 @@ using ctrlkey = unsigned;
 using colorbyte = char;
 
 /**
- *  We need a unique midipulse value that can be used to be indicate a bad,
- *  unusable pulse value (type definition midipulse).  This value should be
- *  modified if the alias of midipulse is changed.  For a signed long value,
- *  -1 can be used.  For an unsigned long value, ULONG_MAX is probably best.
- *  To avoid issues, when testing for this value, use the inline function
- *  is_null_midipulse().
- */
-
-const long null_midipulse = (-1);       /* ULONG_MAX */
-
-/**
  *  Distinguishes a long value from the unsigned long values implicit in MIDI
  *  time measurements.
  *
@@ -175,6 +164,17 @@ using midistring = std::basic_string<midibyte>;
 using midibooleans = std::vector<midibool>;
 
 /**
+ *  We need a unique midipulse value that can be used to be indicate a bad,
+ *  unusable pulse value (type definition midipulse).  This value should be
+ *  modified if the alias of midipulse is changed.  For a signed long value,
+ *  -1 can be used.  For an unsigned long value, ULONG_MAX is probably best.
+ *  To avoid issues, when testing for this value, use the inline function
+ *  is_null_midipulse().
+ */
+
+const midipulse c_null_midipulse = -1;  /* ULONG_MAX if we convert later    */
+
+/**
  *  Defines the maximum number of MIDI values, and one more than the
  *  highest MIDI value, which is 17.
  *
@@ -185,7 +185,7 @@ const midibyte c_midibyte_data_max  = midibyte(0x80);
 
 /**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
- *  Also see null_midipulse.
+ *  Also see c_null_midipulse.
  */
 
 const midibyte c_midibyte_max       = midibyte(0xFF);
@@ -197,7 +197,7 @@ const midilong c_midilong_max       = midilong(0xFFFFFFFF);
  *  Default value for c_max_busses.
  */
 
-const int c_busscount_max          = 32;    /* was SEQ66_DEFAULT_BUSS_MAX   */
+const int c_busscount_max           = 32;
 
 /**
  *  Indicates the maximum number of MIDI channels, counted internally from 0
@@ -483,14 +483,26 @@ public:
 };              // class midi_booleans
 
 /**
- *  Compares a midipulse value to null_midipulse.  By "null" in this
+ *  Compares a midipulse value to c_null_midipulse.  By "null" in this
  *  case, we mean "unusable", not 0.  Sigh, it's always something.
  */
 
 inline bool
 is_null_midipulse (midipulse p)
 {
-    return p == null_midipulse;
+    return p == c_null_midipulse;
+}
+
+/**
+ *  Compares a bussbyte value to the maximum value.  The maximum value is well
+ *  over the c_busscount_max = 32 value, being 0xff = 255, and thus is a useful
+ *  flag value to indicate an unusable bussbyte.
+ */
+
+inline bool
+is_null_bussbyte (bussbyte b)
+{
+    return b == c_bussbyte_max;
 }
 
 }               // namespace seq66

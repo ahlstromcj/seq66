@@ -531,6 +531,9 @@ midi_jack_info::api_poll_for_midi ()
 /**
  *  Grab a MIDI event.
  *
+ * \todo
+ *      Return a bussbyte or c_bussbyte_max value instead of a boolean.
+ *
  * \param inev
  *      The event to be set based on the found input event.  We should make
  *      this value a reference someday.  Not used here.

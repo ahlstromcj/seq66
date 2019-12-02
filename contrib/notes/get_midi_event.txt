@@ -1,0 +1,81 @@
+
+ALSA:
+
+    startup:
+
+        performer::input_func()
+            mastermidibase::get_midi_event() [via m_master_bus pointer]
+
+    click on MIDI Input / [2] 20:0 nanoKEY2 MIDI 1
+
+        performer::input_func()
+            mastermidibase::get_midi_event() [via m_master_bus pointer]
+
+            about 15 times!
+
+    keyboard press:
+
+        performer::input_func()
+            mastermidibase::get_midi_event()        [mastermidibase.cpp]
+                mastermidibus::api_get_midi_event() [mastermidibus.cpp]
+                No use-jack-polling
+                    midi_alsa_info::api_get_midi_event() [via m_midi_master]
+                    rtmidi_into::api_get_midi_event()    [same call]
+                        get_api_info()->api_get_midi_event()
+                            midi_alsa_info::api_get_midi_event() [again !!!]
+                            [but in midi_alsa_info.cpp]
+                            [returns false, no way to access buss #]
+
+        mastermidibase::get_midi_event()
+        mastermidibus::api_get_midi_event()
+        midi_alsa_info::api_get_midi_event()
+
+        mastermidibase::get_midi_event()
+        mastermidibus::api_get_midi_event()
+        midi_alsa_info::api_get_midi_event()
+
+snd_seq_event_t:
+
+    snd_seq_addr_t source : client = 20, port = 0 [20:0 is the nanoKey2]
+    snd_seq_addr_t dest : client = 129, port = 8 [not shown by aplay/recordmid]
+
+snd_seq_addr_t:
+
+    .source:
+
+        unsigned char client
+        unsigned char port
+
+    int snd_seq_client_id (snd_seq_t * seq), this returns the ALSA client ID,
+    which we could use to look up the Seq64 buss number.
+
+    Is midi_alsa_info::m_alsa_seq a pointer to snd_seq_t? YES.  It is opened in
+    midi_alsa_info's constructor.  The it gets the pollfd[m_num_poll_descriptors]
+    value.  In midi_alsa_info::get_all_port_info() loops to call
+    snd_seq_query_next_port(), snd_seq_client_info_get_client(),
+    snd_seq_port_info_get_port().  The client number and port number returned by
+    these values are added to "input_ports()", midi_alsa_info.cpp#252.
+
+    Can we do a lookup?
+
+JACK:
+
+
+    mastermidibase::get_midi_event()
+        mastermidibus::api_get_midi_event() with jack polling
+        m_use_jack_polling: m_inbus_array.get_midi_event()
+            busarray::get_midi_event()
+                loop through buscontainer [can get bus number at first event*]
+                    midibase::get_midi_event()
+                        midibus::api_get_midi_event() [seq_rtmidi midibus.cpp]
+                            rtmidi::api_get_midi_event()
+                                midi_in_jack::api_get_midi_event()
+                                    get rtmidi_in_data pointer from m_jack_data
+                                    breakpoint at midi_jack.cpp#1385
+                                        midi_message constructor
+
+
+    * can we do a more random/round-robin lookup?
+
+
+
