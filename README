@@ -51,7 +51,7 @@ Recent changes:
     -   Version 0.90.2:
         -   Lots of code cleanup.
         -   Added truncation of BPM to precision in "usr" file.
-        -   Digging into reading a strange MIDI file.
+        -   Fixed at bug in handling running status; backported to Seq64.
     -   Version 0.90.1:
         -   A raft of bug fixes and user-interface improvements.
         -   Many tweaks to try to make the performer and the user-interface even

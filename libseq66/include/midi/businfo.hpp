@@ -255,11 +255,7 @@ public:
 
     midibus * bus (bussbyte b)
     {
-        midibus * result = nullptr;
-        if (b < bussbyte(count()))
-            result = m_container[b].bus();
-
-        return result;
+        return b < bussbyte(count()) ? m_container[b].bus() : nullptr ;
     }
 
     /**
@@ -350,12 +346,12 @@ public:
 
     void set_all_clocks ()
     {
-        for (auto & bi : m_container)       /* vector of businfo copies         */
+        for (auto & bi : m_container)           /* vector of businfo copies */
             bi.bus()->set_clock(bi.init_clock());
     }
 
     e_clock get_clock (bussbyte bus) const;
-    std::string get_midi_bus_name (int bus);        // full version
+    std::string get_midi_bus_name (int bus);    /* full version of name     */
     void print () const;
     void port_exit (int client, int port);
     bool set_input (bussbyte bus, bool inputing);

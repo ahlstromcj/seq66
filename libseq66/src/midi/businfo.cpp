@@ -84,18 +84,17 @@ namespace seq66
 
 businfo::businfo (midibus * bus)
  :
-    m_bus           (),
+    m_bus           (),                 /* this is an std::shared_ptr<>     */
     m_active        (false),
     m_initialized   (false),
-    m_init_clock    (e_clock::off),      /* could end up disabled as well    */
+    m_init_clock    (e_clock::off),     /* could end up disabled as well    */
     m_init_input    (false)
 {
     m_bus.reset(bus);                   /* also see initialize()            */
 }
 
 /**
- *  Copy constructor.  It does not replicate the pointed-to object, because the
- *  std::shared_ptr<> is a move-only type; the copy constructor is not supported.
+ *  Copy constructor.
  *
  * \param rhs
  *      The source object to be copied.
@@ -109,7 +108,7 @@ businfo::businfo (const businfo & rhs)
     m_init_clock    (rhs.m_init_clock),
     m_init_input    (rhs.m_init_input)
 {
-    // m_bus = std::move(rhs.m_bus) ---> used shared_ptr instead
+    // no other code needed
 }
 
 /**
@@ -140,45 +139,36 @@ businfo::businfo (const businfo & rhs)
  *          as "active" and "initialized" anyway.  The settings from the "rc"
  *          file determine which inputs will operate.
  *
+ *  We still have a potential conflict between "active", "initialized", and
+ *  "disabled".
+ *
+ *      "Active" is used for:  enabling play(), set_clock(), get_clock(),
+ *      get_midi_bus_name(), set_input(), get_input(), is_system_port(),
+ *      replacement_port().
+ *
+ *      "Initialized" is used for: . . .
+ *
+ *      "Disabled" is currently used to making an OS-disabled, non-openable port
+ *      a non-fatal error.
+ *
  * \return
  *      Returns true if the buss is value, and it could be initialized (as an
- *      output port or a virtual output port.
+ *      output port or a virtual output port.  If bus has been "disabled"
+ *      (e_clock::disabled), skip this port and return true.
  */
 
 bool
 businfo::initialize ()
 {
-    bool result = not_nullptr(bus());       /* a bit too tricky now */
+    bool result = not_nullptr(bus());           /* a bit too tricky now     */
     if (result)
     {
-        /*
-         *  If bus has been "disabled" (e_clock::disabled), skip this port and
-         *  return true.  However, we still have a potential conflict
-         *  between "active", "initialized", and "disabled".
-         *
-         *  "Active" is used for:  enabling play(), set_clock(), get_clock(),
-         *  get_midi_bus_name(), set_input(), get_input(), is_system_port(),
-         *  replacement_port().
-         *
-         *  "Initialized" is used for: . . .
-         *
-         *  "Disabled" is currently used to making an OS-disabled,
-         *  non-openable port a non-fatal error.
-         */
-
-        if (bus()->port_disabled())
-        {
-            // int bussnumber = bus()->get_bus_index();
-            // result = mymasterbus.set_clock(bussnumber, e_clock::disabled);
-        }
-        else
+        if (! bus()->port_disabled())           /* is port enabled?         */
         {
             if (! bus()->is_input_port())       /* not built in master bus  */
             {
-                if (bus()->is_virtual_port())
-                    result = bus()->init_out_sub();
-                else
-                    result = bus()->init_out();
+                result =  bus()->is_virtual_port() ?
+                    bus()->init_out_sub() : bus()->init_out() ;
             }
             if (result)
                 activate();                     /* "initialized" & "active" */
@@ -254,12 +244,11 @@ businfo::print () const
  */
 
 /**
- *  A new class to hold a number of MIDI busses and flags for more controlled
+ *  A new class to hold a vector of MIDI busses and flags for more controlled
  *  access than using arrays of booleans and pointers.
  */
 
-busarray::busarray () :
-    m_container     ()
+busarray::busarray () : m_container()
 {
     // Empty body
 }
@@ -301,18 +290,23 @@ busarray::~busarray ()
 bool
 busarray::add (midibus * bus, e_clock clock)
 {
-    size_t count = m_container.size();
-    businfo b(bus);
-    b.init_clock(clock);
-    m_container.push_back(b);
+    bool result = not_nullptr(bus);
+    if (result)
+    {
+        size_t count = m_container.size();
+        businfo b(bus);
+        b.init_clock(clock);
+        m_container.push_back(b);                       /* creates a copy   */
 #if defined SEQ66_SHOW_API_CALLS
-    printf
-    (
-        "Added output bus %s, clock %d\n",
-        bus->display_name().c_str(), int(clock)
-    );
+        printf
+        (
+            "Added output bus %s, clock %d\n",
+            bus->display_name().c_str(), int(clock)
+        );
 #endif
-    return m_container.size() == (count + 1);
+        result = m_container.size() == (count + 1);
+    }
+    return result;
 }
 
 /**
@@ -339,24 +333,28 @@ busarray::add (midibus * bus, e_clock clock)
 bool
 busarray::add (midibus * bus, bool inputing)
 {
-    size_t count = m_container.size();
-    businfo b(bus);
-    if (inputing)
+    bool result = not_nullptr(bus);
+    if (result)
     {
-        bool was_inputing = bus->get_input();
-        if (! was_inputing)
-            bus->set_input(inputing);       /* will call init_in()          */
-    }
-    b.init_input(inputing);                 /* sets the flag, important     */
-    m_container.push_back(b);               /* now we can push a copy       */
+        size_t count = m_container.size();
+        businfo b(bus);
+        if (inputing)
+        {
+            if (! bus->get_input())
+                bus->set_input(inputing);       /* will call init_in()      */
+        }
+        b.init_input(inputing);                 /* sets the flag, important */
+        m_container.push_back(b);               /* now we can push a copy   */
 #if defined SEQ66_SHOW_API_CALLS
-    printf
-    (
-        "Added input bus %s, inputing = %s\n",
-        bus->display_name().c_str(), inputing ? "yes" : "no"
-    );
+        printf
+        (
+            "Added input bus %s, inputing = %s\n",
+            bus->display_name().c_str(), inputing ? "yes" : "no"
+        );
 #endif
-    return m_container.size() == (count + 1);
+        result = m_container.size() == (count + 1);
+    }
+    return result;
 }
 
 /**
@@ -371,7 +369,7 @@ bool
 busarray::initialize ()
 {
     bool result = true;
-    for (auto & bi : m_container)       /* vector of businfo copies     */
+    for (auto & bi : m_container)           /* vector of businfo copies     */
     {
         if (! bi.initialize())
             result = false;
@@ -419,7 +417,7 @@ busarray::play (bussbyte bus, event * e24, midibyte channel)
  *      Provides the type of clocking for the buss.
  *
  * \return
- *      Returns true if the change was made.
+ *      Returns true if the change was made.  It is made only if needed.
  */
 
 bool
@@ -578,7 +576,7 @@ busarray::print () const
 void
 busarray::port_exit (int client, int port)
 {
-    for (auto & bi : m_container)       /* vector of businfo copies         */
+    for (auto & bi : m_container)               /* vector of businfo copies */
     {
         if (bi.bus()->match(client, port))
            bi.deactivate();
@@ -697,7 +695,7 @@ int
 busarray::poll_for_midi ()
 {
     int result = 0;
-    for (auto & bi : m_container)       /* vector of businfo copies     */
+    for (auto & bi : m_container)               /* vector of businfo copies */
     {
         result = bi.bus()->poll_for_midi();
         if (result > 0)
@@ -722,12 +720,10 @@ busarray::poll_for_midi ()
 bool
 busarray::get_midi_event (event * inev)
 {
-    for (auto & bi : m_container)       /* vector of businfo copies     */
+    for (auto & bi : m_container)               /* vector of businfo copies */
     {
         if (bi.bus()->get_midi_event(inev))
-        {
             return true;
-        }
     }
     return false;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-24
+ * \updates       2019-12-08
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -1150,6 +1150,31 @@ public:
         return is_note_off_velocity(m_status, m_data[1]);
     }
 
+    bool is_midi_start () const
+    {
+        return m_status == EVENT_MIDI_START;
+    }
+
+    bool is_midi_continue () const
+    {
+        return m_status == EVENT_MIDI_CONTINUE;
+    }
+
+    bool is_midi_stop () const
+    {
+        return m_status == EVENT_MIDI_STOP;
+    }
+
+    bool is_midi_clock () const
+    {
+        return m_status == EVENT_MIDI_CLOCK;
+    }
+
+    bool is_midi_song_pos () const
+    {
+        return m_status == EVENT_MIDI_SONG_POS;
+    }
+
     void adjust_note_off ();
 
     /**
@@ -1183,6 +1208,11 @@ public:
     bool is_sysex () const
     {
         return m_status == EVENT_MIDI_SYSEX;
+    }
+
+    bool below_sysex () const
+    {
+        return m_status <= EVENT_MIDI_SYSEX;
     }
 
     /**

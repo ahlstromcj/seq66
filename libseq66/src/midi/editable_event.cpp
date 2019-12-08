@@ -24,16 +24,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-09-17
+ * \updates       2019-12-07
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
  *  object.
  */
 
-#include <stdlib.h>                     /* atoi(3) and atof(3) for 32-bit   */
+#include <cstdlib>                      /* atoi(3) and atof(3) for 32-bit   */
 
-#include "util//basic_macros.hpp"
 #include "midi/editable_event.hpp"      /* seq66::editable_event            */
 #include "midi/editable_events.hpp"     /* seq66::editable_events multimap  */
 
@@ -689,7 +688,7 @@ editable_event::set_status_from_string
                  * event from it.
                  */
 
-                double bpm = atof(sd0.c_str());
+                double bpm = std::atof(sd0.c_str());
                 if (bpm > 0.0f)
                 {
                     midibyte t[4];
@@ -712,14 +711,14 @@ editable_event::set_status_from_string
                 std::string::size_type pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
                 {
-                    int nn = atoi(sd0.c_str());
+                    int nn = std::atoi(sd0.c_str());
                     int dd = nn;
                     int cc = 0x18;
                     int bb = 0x08;
                     ++pos;
 
                     std::string sd0_partial = sd0.substr(pos);  // drop "nn/"
-                    dd = atoi(sd0_partial.c_str());             // get dd
+                    dd = std::atoi(sd0_partial.c_str());             // get dd
                     if (dd > 0)
                     {
                         pos = sd0.find_first_of(" ", pos);      // bypass dd

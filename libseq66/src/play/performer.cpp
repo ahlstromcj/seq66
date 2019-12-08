@@ -2910,7 +2910,7 @@ performer::output_func ()
  *      Starts the MIDI Time Clock.  Kepler34 does "stop();
  *      set_playback_mode(false); start();" in its version of this event.
  *      This sets the playback mode to Live mode. This behavior seems
- *      reasonable, though function names Sequencer64 uses are different.
+ *      reasonable, though the function names Seq66 uses are different.
  *
  * EVENT_MIDI_CONTINUE:
  *
@@ -2989,69 +2989,7 @@ performer::input_func ()
             {
                 if (m_master_bus->get_midi_event(&ev))
                 {
-                    /*
-                     * Used when starting from the beginning of the song.  Obey
-                     * the MIDI time clock.  Comments moved to the banner.
-                     */
-
-                    if (ev.get_status() == EVENT_MIDI_START)
-                    {
-                        stop();                                 /* Kepler34 */
-                        song_start_mode(sequence::playback::live);
-                        start(song_mode());
-                        m_midiclockrunning = m_usemidiclock = true;
-                        m_midiclocktick = m_midiclockpos = 0;
-                    }
-                    else if (ev.get_status() == EVENT_MIDI_CONTINUE)
-                    {
-                        m_midiclockrunning = true;
-                        song_mode(false);                       /* Kepler34 */
-                        start(song_mode());
-                    }
-                    else if (ev.get_status() == EVENT_MIDI_STOP)
-                    {
-                        m_midiclockrunning = false;
-                        all_notes_off();
-                        inner_stop(true);
-                        m_midiclockpos = get_tick();
-                    }
-                    else if (ev.get_status() == EVENT_MIDI_CLOCK)
-                    {
-                        if (m_midiclockrunning)
-                            m_midiclocktick += m_midiclockincrement;
-                    }
-                    else if (ev.get_status() == EVENT_MIDI_SONG_POS)
-                    {
-                        midibyte d0, d1;            /* see note in banner   */
-                        ev.get_data(d0, d1);
-                        m_midiclockpos = combine_bytes(d0, d1);
-                    }
-
-#ifdef USE_ACTIVE_SENSE_AND_RESET
-
-                    /*
-                     *  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are
-                     *  filtered in midi_jack.  Send out the current event, if
-                     *  "dumping".
-                     */
-
-                    else if
-                    (
-                        ev.get_status() == EVENT_MIDI_ACTIVE_SENSE ||
-                        ev.get_status() == EVENT_MIDI_RESET
-                    )
-                    {
-                        /*
-                         * Ignore these events on input.  MIGHT NOT BE VALID.
-                         * STILL INVESTIGATING.
-                         */
-
-                        return;
-                    }
-
-#endif  // USE_ACTIVE_SENSE_AND_RESET
-
-                    if (ev.get_status() <= EVENT_MIDI_SYSEX)
+                    if (ev.below_sysex())
                     {
                         /*
                          *  Test for MIDI control events even if "dumping".
@@ -3108,7 +3046,44 @@ performer::input_func ()
                         }
 #endif
                     }
-                    if (ev.get_status() == EVENT_MIDI_SYSEX)
+                    else if (ev.is_midi_start())
+                    {
+                        /*
+                         * Used when starting from the beginning of the song.
+                         * Obey the MIDI time clock.  Comments in the banner.
+                         */
+
+                        stop();                                 /* Kepler34 */
+                        song_start_mode(sequence::playback::live);
+                        start(song_mode());
+                        m_midiclockrunning = m_usemidiclock = true;
+                        m_midiclocktick = m_midiclockpos = 0;
+                    }
+                    else if (ev.is_midi_continue())
+                    {
+                        m_midiclockrunning = true;
+                        song_mode(false);                       /* Kepler34 */
+                        start(song_mode());
+                    }
+                    else if (ev.is_midi_stop())
+                    {
+                        m_midiclockrunning = false;
+                        all_notes_off();
+                        inner_stop(true);
+                        m_midiclockpos = get_tick();
+                    }
+                    else if (ev.is_midi_clock())
+                    {
+                        if (m_midiclockrunning)
+                            m_midiclocktick += m_midiclockincrement;
+                    }
+                    else if (ev.is_midi_song_pos())
+                    {
+                        midibyte d0, d1;            /* see note in banner   */
+                        ev.get_data(d0, d1);
+                        m_midiclockpos = combine_bytes(d0, d1);
+                    }
+                    else if (ev.is_sysex())         /* what about channel?  */
                     {
 #if defined USE_STAZED_PARSE_SYSEX               // more code to incorporate!!!
                         if (global_use_sysex)
@@ -3120,6 +3095,36 @@ performer::input_func ()
                         if (rc().pass_sysex())
                             m_master_bus->sysex(&ev);
                     }
+#ifdef USE_ACTIVE_SENSE_AND_RESET
+
+                    /*
+                     */
+
+                    else
+                    {
+                        /*
+                         * Ignore these events on input.  MIGHT NOT BE VALID.
+                         * STILL INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and
+                         * EVENT_MIDI_RESET are filtered in midi_jack.  Send out
+                         * the current event, if "dumping".
+                         *
+                         * ev.get_status() ==
+                         * EVENT_MIDI_ACTIVE_SENSE  handled elsewhere
+                         * EVENT_MIDI_RESET handled elsewhere
+                         * EVENT_MIDI_QUARTER_FRAME
+                         * EVENT_MIDI_SONG_SELECT
+                         * EVENT_MIDI_SONG_F4
+                         * EVENT_MIDI_SONG_F5
+                         * EVENT_MIDI_TUNE_SELECT
+                         * EVENT_MIDI_SYSEX_END
+                         * EVENT_MIDI_SYSEX_CONTINUE
+                         * EVENT_MIDI_SONG_F9
+                         * EVENT_MIDI_SONG_FD
+                         */
+
+                        return;
+                    }
+#endif  // USE_ACTIVE_SENSE_AND_RESET
                 }
             } while (m_master_bus->is_more_input());
         }

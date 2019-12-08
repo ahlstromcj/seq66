@@ -1,10 +1,33 @@
 TODO for Sequencer66 0.90.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-10-20
+2019-04-13 to 2019-12-08
 
 HOT ITEMS:
 
-    Tons of TODOs in performer!
+	From: zigmhount <notifications@github.com>
+	Subject: [Question/Feature request] Live midi pattern recording (#188)
+
+    I havve followed closely the development of the midi control output to use
+    with my Akai APC Mini - awesome. The only think I miss now is to easily
+    record a midi pattern in an empty slot without too much fiddling with the
+    mouse or keyboard, as in a live setup.
+
+    My ideal feature would be e.g.
+
+    1. when an empty pattern is selected (on the control surface)
+    2. to automatically open the pattern editor
+    3. automatically activate Dump Data to MIDI Bus
+    4. automatically activate Midi pass-through
+    5. automatically activate Record Midi data
+    6. automatically set Merge to Expand the sequence to fit recording
+    7. and manually select the midi output to the synth.
+
+	How easy/difficult would it be to implement keyboard or midi shortcuts to
+	these buttons (steps 2 to 6), or preset them for every new pattern editor?
+
+Support a non-channel pattern (e.g. to contain patch info).
+
+Tons of TODOs in performer!
 
     Do:
 
