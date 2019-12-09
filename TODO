@@ -1,6 +1,6 @@
 TODO for Sequencer66 0.90.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-12-08
+2019-04-13 to 2019-12-09
 
 HOT ITEMS:
 
@@ -25,7 +25,18 @@ HOT ITEMS:
 	How easy/difficult would it be to implement keyboard or midi shortcuts to
 	these buttons (steps 2 to 6), or preset them for every new pattern editor?
 
-Support a non-channel pattern (e.g. to contain patch info).
+Patterns:
+
+    -   Support a non-channel pattern (e.g. to contain patch info).
+    -   Set pattern editor focus to grid at start unless it is a new one.
+    -   Make it center on notes if not visible.
+    -   Still some weird note events in 2rock, above measure 20, when scrolling
+        via the scrollbar; okay when clicking the scrollbar. Fine when scrolling
+        during playback.
+    -   Make sure Esc/Space work in pattern editor.  Consider adding the
+        start/stop buttons.
+    -   When loading 2rock pattern 10(1) into the editor, adjust the length
+        dropdown to match!
 
 Tons of TODOs in performer!
 

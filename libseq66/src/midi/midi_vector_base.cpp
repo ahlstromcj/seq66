@@ -131,7 +131,7 @@ midi_vector_base::add_short (midishort x)
  *  Adds an event to the container.  It handles regular MIDI events separately
  *  from "extended" (our term) MIDI events (SysEx and Meta events).
  *
- *  For normal MIDI events, if the sequence's MIDI channel is
+ *  For normal MIDI events, if the sequence's MIDI channel is c_midibyte_max ==
  *  EVENT_NULL_CHANNEL == 0xFF, then it is the copy of an SMF 0 sequence that
  *  the midi_splitter created.  We want to be able to save it along with the
  *  other tracks, but won't be able to read it back if all the channels are
@@ -161,8 +161,8 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte channel = m_sequence.get_midi_channel();
         midibyte st = e.get_status();
         add_variable(deltatime);                    /* encode delta_time    */
-        if (channel == EVENT_NULL_CHANNEL)
-            put(st | e.channel());              /* channel from event   */
+        if (event::is_null_channel(channel))
+            put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
 

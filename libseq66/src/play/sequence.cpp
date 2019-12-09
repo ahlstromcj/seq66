@@ -4466,7 +4466,6 @@ sequence::set_input_thru (bool thru_active, bool toggle)
      * LET's try putting in the original conditional.
      */
 
-    //// if (thru_active or ! m_recording)
      if (! m_recording)
         m_master_bus->set_sequence_input(thru_active, this);
 

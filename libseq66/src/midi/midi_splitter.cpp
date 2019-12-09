@@ -196,7 +196,7 @@ midi_splitter::split (performer & p, int screenset, int ppqn)
                         delete s;   /* empty sequence, not even meta events */
                 }
             }
-            m_smf0_main_sequence->set_midi_channel(EVENT_NULL_CHANNEL);
+            m_smf0_main_sequence->set_midi_channel();   // EVENT_NULL_CHANNEL
             p.install_sequence(m_smf0_main_sequence, seqnum);
         }
     }

@@ -227,7 +227,7 @@ const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
  *  an illegal meta type.
  */
 
-const midibyte EVENT_META_ILLEGAL        = 0xFFu;   // a problem code
+const midibyte EVENT_META_ILLEGAL        = 0xFFu;   /* a problem code       */
 
 /**
  *  This value of 0xFF is Seq66's channel value that indicates that
@@ -240,7 +240,7 @@ const midibyte EVENT_META_ILLEGAL        = 0xFFu;   // a problem code
  *  into each event when the event is played or is written to a MIDI file.
  */
 
-const midibyte EVENT_NULL_CHANNEL        = 0xFFu;
+const midibyte EVENT_NULL_CHANNEL        = 0xFFu;   /* see c_midibyte_max   */
 
 /**
  *  These file masks are used to obtain or to mask off the channel data from a
@@ -649,6 +649,11 @@ public:
     static bool is_strict_note_msg (midibyte m)
     {
         return m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF;
+    }
+
+    static bool is_null_channel (midibyte channel)
+    {
+        return channel == EVENT_NULL_CHANNEL;
     }
 
     /**

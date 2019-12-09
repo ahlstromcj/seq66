@@ -851,7 +851,6 @@ qseqeditframe::toggle_midi_rec (bool newval)
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
-        // ???????????
         masterbus->set_sequence_input(true, seq_pointer().get());
         seq_pointer()->set_recording(newval);
     }
@@ -867,7 +866,6 @@ qseqeditframe::toggle_midi_thru (bool newval)
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
-        // ???????????
         masterbus->set_sequence_input(true, seq_pointer().get());
         seq_pointer()->set_thru(newval);
     }

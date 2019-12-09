@@ -1279,10 +1279,14 @@ public:
 
     bool is_smf_0 () const
     {
-        return m_midi_channel == EVENT_NULL_CHANNEL;
+        return event::is_null_channel(m_midi_channel);  // EVENT_NULL_CHANNEL
     }
 
-    void set_midi_channel (midibyte ch, bool user_change = false);
+    void set_midi_channel
+    (
+        midibyte ch = EVENT_NULL_CHANNEL,
+        bool user_change = false
+    );
     std::string to_string () const;
     void print_triggers () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);

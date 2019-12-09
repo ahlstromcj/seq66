@@ -724,6 +724,14 @@ mastermidibase::get_midi_event (event * ev)
  *  The portmidi version only sets m_seq and m_dumping_input, but it seems
  *  like all the code below would apply to any mastermidibus.
  *
+ * Usages:
+ *
+ *  -   portmidi mastermidibus::api_init()
+ *  -   qseqeditframe::toggle_midi_rec() and _thru()
+ *  -   sequence::set_input_recording() and _thru()
+ *  -   performer::set_sequence_input() [called only internally]
+ *  -   performer::set_recording() and _thru() [see line above]
+ *
  * \threadsafe
  *
  * \param state

@@ -152,7 +152,8 @@ protected:
     bool m_filter_by_channel;
 
     /**
-     *  Points to the sequence object.
+     *  Points to the sequence object.  Set in set_sequence_input().  See that
+     *  function's description.
      */
 
     sequence * m_seq;
