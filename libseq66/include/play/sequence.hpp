@@ -39,8 +39,8 @@
  */
 
 #include <atomic>                       /* std::atomic<bool> for dirt       */
-#include <string>
-#include <stack>
+#include <stack>                        /* std::stack<eventlist>            */
+#include <string>                       /* std::string                      */
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* key and scale constants          */
@@ -299,12 +299,18 @@ private:
 
     /**
      *  Contains the proper MIDI channel for this sequence.  However, if this
-     *  value is EVENT_NULL_CHANNEL (0xFF), then this sequence is an SMF 0
+     *  value is c_midibyte_max (0xFF), then this sequence is an SMF 0
      *  track, and has no single channel.  Please note that this is the output
      *  channel.
      */
 
     midibyte m_midi_channel;
+
+    /**
+     *
+     */
+
+    bool m_no_channel;
 
     /**
      *  Contains the proper MIDI bus number for this sequence.
@@ -1270,7 +1276,7 @@ public:
 
     midibyte get_midi_channel () const
     {
-        return m_midi_channel;
+        return m_no_channel ? c_midibyte_max : m_midi_channel;
     }
 
     /**
@@ -1279,12 +1285,12 @@ public:
 
     bool is_smf_0 () const
     {
-        return event::is_null_channel(m_midi_channel);  // EVENT_NULL_CHANNEL
+        return is_null_channel(m_midi_channel);
     }
 
     void set_midi_channel
     (
-        midibyte ch = EVENT_NULL_CHANNEL,
+        midibyte ch = c_midibyte_max,
         bool user_change = false
     );
     std::string to_string () const;

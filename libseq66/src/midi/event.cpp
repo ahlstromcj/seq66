@@ -93,7 +93,7 @@ namespace seq66
 event::event () :
     m_timestamp     (0),
     m_status        (EVENT_NOTE_OFF),
-    m_channel       (EVENT_NULL_CHANNEL),
+    m_channel       (c_midibyte_max),
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -132,7 +132,7 @@ event::event
 ) :
     m_timestamp     (tstamp),
     m_status        (status & EVENT_CLEAR_CHAN_MASK),
-    m_channel       (EVENT_NULL_CHANNEL),
+    m_channel       (c_midibyte_max),
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -356,7 +356,7 @@ event::set_status (midibyte status)
     if (status >= EVENT_MIDI_SYSEX)             /* 0xF0 and above           */
     {
         m_status = status;
-        m_channel = EVENT_NULL_CHANNEL;         /* channel "not applicable" */
+        m_channel = c_midibyte_max;             /* channel "not applicable" */
     }
     else
     {
@@ -382,7 +382,7 @@ event::set_status (midibyte status)
  */
 
 void
-event::set_status (midibyte eventcode, midibyte channel)
+event::set_channel_status (midibyte eventcode, midibyte channel)
 {
     m_status = eventcode;               /* already masked against 0xF0      */
     m_channel = channel;                /* already masked against 0x0F      */

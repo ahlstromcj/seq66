@@ -38,7 +38,7 @@
 #include <string>
 
 #include "app_limits.h"                 /* SEQ66_GM_INSTRUMENT_FLAG         */
-#include "midi/midibytes.hpp"           /* c_midichannel_max                */
+#include "midi/midibytes.hpp"           /* seq66::c_midichannel_max         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -161,9 +161,9 @@ public:
     /**
      * \getter c_midichannel_max
      * \return
-     *      Returns the maximum number of MIDI buss channels.
+     *      Returns the maximum number of MIDI channels.
      *      Remember that the instrument channels for each MIDI buss
-     *      range from 0 to 15 (MIDI_BUS_CHANNEL_MAX-1).
+     *      range from 0 to 15 (c_midichannel_max).
      */
 
     int channel_max () const

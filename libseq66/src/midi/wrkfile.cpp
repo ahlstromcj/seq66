@@ -875,7 +875,7 @@ wrkfile::NoteArray (int track, int events)
 
                 isnoteoff = is_note_off_velocity(eventcode, d1);
                 if (isnoteoff)
-                    e.set_status(EVENT_NOTE_OFF, channel);
+                    e.set_channel_status(EVENT_NOTE_OFF, channel);
 
                 e.set_data(d0, d1);
                 m_current_seq->append_event(e);
@@ -884,7 +884,7 @@ wrkfile::NoteArray (int track, int events)
                     event e;
                     timemax = time + midilong(dur);
                     e.set_timestamp(timemax);
-                    e.set_status(EVENT_NOTE_OFF, channel);
+                    e.set_channel_status(EVENT_NOTE_OFF, channel);
                     e.set_data(d0, 0);
                     m_current_seq->append_event(e);
                 }
@@ -970,7 +970,7 @@ wrkfile::NoteArray (int track, int events)
                 );
             }
             event e;
-            e.set_status(EVENT_CONTROL_CHANGE, channel);
+            e.set_channel_status(EVENT_CONTROL_CHANGE, channel);
             e.set_data(EVENT_CTRL_EXPRESSION, d1);
             m_current_seq->append_event(e);
         }
@@ -1174,7 +1174,7 @@ wrkfile::Stream_chunk ()
 
             isnoteoff = is_note_off_velocity(eventcode, d1);
             if (isnoteoff)
-                e.set_status(EVENT_NOTE_OFF, channel);
+                e.set_channel_status(EVENT_NOTE_OFF, channel);
 
             e.set_data(d0, d1);
             m_current_seq->append_event(e);
@@ -1183,7 +1183,7 @@ wrkfile::Stream_chunk ()
                 event e;
                 timemax = time + midilong(dur);
                 e.set_timestamp(timemax);
-                e.set_status(EVENT_NOTE_OFF, channel);
+                e.set_channel_status(EVENT_NOTE_OFF, channel);
                 e.set_data(d0, 0);
                 m_current_seq->append_event(e);
             }
@@ -1724,7 +1724,7 @@ wrkfile::TrackPatch ()
     }
 
     event e;
-    e.set_status(EVENT_PROGRAM_CHANGE, m_track_channel);
+    e.set_channel_status(EVENT_PROGRAM_CHANGE, m_track_channel);
     e.set_data(patch);
     m_current_seq->append_event(e);
 }
@@ -2045,7 +2045,7 @@ wrkfile::TrackVol ()
     }
 
     event e;
-    e.set_status(EVENT_CONTROL_CHANGE, m_track_channel);
+    e.set_channel_status(EVENT_CONTROL_CHANGE, m_track_channel);
     e.set_data(EVENT_CTRL_VOLUME, midibyte(vol));
     m_current_seq->append_event(e);
 }

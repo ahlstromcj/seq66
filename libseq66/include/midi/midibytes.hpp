@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-12-01
+ * \updates       2019-12-11
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -45,9 +45,9 @@
  *  information.
  */
 
-#include <vector>                       /* std::vector<midibool>            */
-#include <string>                       /* std::string class                */
 #include <climits>                      /* ULONG_MAX and other limits       */
+#include <string>                       /* std::string class                */
+#include <vector>                       /* std::vector<midibool>            */
 
 #include "util/basic_macros.hpp"        /* insure build macros defined      */
 
@@ -177,19 +177,17 @@ const midipulse c_null_midipulse = -1;  /* ULONG_MAX if we convert later    */
 /**
  *  Defines the maximum number of MIDI values, and one more than the
  *  highest MIDI value, which is 17.
- *
- * #define SEQ66_MIDI_COUNT_MAX              128
  */
 
-const midibyte c_midibyte_data_max  = midibyte(0x80);
+const midibyte c_midibyte_data_max  = midibyte(0x80u);
 
 /**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
  *  Also see c_null_midipulse.
  */
 
-const midibyte c_midibyte_max       = midibyte(0xFF);
-const bussbyte c_bussbyte_max       = bussbyte(0xFF);
+const midibyte c_midibyte_max       = midibyte(0xFFu);
+const bussbyte c_bussbyte_max       = bussbyte(0xFFu);
 const midishort c_midishort_max     = midishort(0xFFFF);
 const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
@@ -204,7 +202,7 @@ const int c_busscount_max           = 32;
  *  to 15, and by humans (sequencer user-interfaces) from 1 to 16.
  */
 
-const int c_midichannel_max        = 16;    /* was SEQ66_MIDI_CHANNEL_MAX   */
+const int c_midichannel_max         = 16;
 
 /*
  * -------------------------------------------------------------------------
@@ -503,6 +501,17 @@ inline bool
 is_null_bussbyte (bussbyte b)
 {
     return b == c_bussbyte_max;
+}
+
+/**
+ *  Compares a channel value to the maximum value.  Will replace the event static
+ *  function of the same name.
+ */
+
+inline bool
+is_null_channel (midibyte c)
+{
+    return c == c_midibyte_max;
 }
 
 }               // namespace seq66

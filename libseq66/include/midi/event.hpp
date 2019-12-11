@@ -227,20 +227,7 @@ const midibyte EVENT_META_SEQSPEC        = 0x7Fu;
  *  an illegal meta type.
  */
 
-const midibyte EVENT_META_ILLEGAL        = 0xFFu;   /* a problem code       */
-
-/**
- *  This value of 0xFF is Seq66's channel value that indicates that
- *  the event's m_channel value is bogus.  However, it also means that the
- *  channel, if applicable to the event, is encoded in the m_status byte
- *  itself.  This is our work around to be able to hold a multi-channel SMF 0
- *  track in a sequence.  In a Seq66 SMF 0 track, every event has a
- *  channel.  In a Seq66 SMF 1 track, the events do not have a channel.
- *  Instead, the channel is a global value of the sequence, and is stuffed
- *  into each event when the event is played or is written to a MIDI file.
- */
-
-const midibyte EVENT_NULL_CHANNEL        = 0xFFu;   /* see c_midibyte_max   */
+const midibyte EVENT_META_ILLEGAL        = c_midibyte_max;  /* problem code */
 
 /**
  *  These file masks are used to obtain or to mask off the channel data from a
@@ -448,8 +435,16 @@ public:
     }
 
     /**
-     *  Checks the channel number to see if the event's channel matches it, or
-     *  if the event has no channel.  Used in the SMF 0 track-splitting code.
+     *  Checks the channel number to see if the event's channel matches it, or if
+     *  the event has no channel.  Used in the SMF 0 track-splitting code.  The
+     *  value of 0xFF is Seq66's channel value that indicates that the event's
+     *  m_channel value is bogus.  However, it also means that the channel, if
+     *  applicable to the event, is encoded in the m_status byte itself.  This is
+     *  our work around to be able to hold a multi-channel SMF 0 track in a
+     *  sequence.  In a Seq66 SMF 0 track, every event has a channel.  In a Seq66
+     *  SMF 1 track, the events do not have a channel.  Instead, the channel is a
+     *  global value of the sequence, and is stuffed into each event when the
+     *  event is played or is written to a MIDI file.
      *
      * \param channel
      *      The channel to check.
@@ -460,7 +455,7 @@ public:
 
     bool check_channel (int channel) const
     {
-        return m_channel == EVENT_NULL_CHANNEL || midibyte(channel) == m_channel;
+        return m_channel == c_midibyte_max || midibyte(channel) == m_channel;
     }
 
     /**
@@ -651,11 +646,6 @@ public:
         return m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF;
     }
 
-    static bool is_null_channel (midibyte channel)
-    {
-        return channel == EVENT_NULL_CHANNEL;
-    }
-
     /**
      *  Static test for channel messages that are either not control-change
      *  messages, or are and match the given controller value.
@@ -711,7 +701,7 @@ public:
     }
 
     void set_status (midibyte status);
-    void set_status (midibyte eventcode, midibyte channel);
+    void set_channel_status (midibyte eventcode, midibyte channel);
     void set_meta_status (midibyte metatype);
     void set_status_keep_channel (midibyte eventcode);
 
@@ -723,13 +713,13 @@ public:
      * \param channel
      *      The channel byte to be set.  It is masked to ensure the value
      *      ranges from 0x0 to 0xF.  This update should be safe, but we could
-     *      allow EVENT_NULL_CHANNEL if issues are uncovered.
+     *      allow c_midibyte_max if issues are uncovered.
      */
 
     virtual void set_channel (midibyte channel)
     {
-        m_channel = (channel == EVENT_NULL_CHANNEL) ?
-            EVENT_NULL_CHANNEL : (channel & EVENT_GET_CHAN_MASK) ;
+        m_channel = (channel == c_midibyte_max) ?
+            c_midibyte_max : (channel & EVENT_GET_CHAN_MASK) ;
     }
 
     /**
