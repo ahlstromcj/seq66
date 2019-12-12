@@ -161,7 +161,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte channel = m_sequence.get_midi_channel();
         midibyte st = e.get_status();
         add_variable(deltatime);                    /* encode delta_time    */
-        if (event::is_null_channel(channel))
+        if (is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
@@ -422,18 +422,17 @@ midi_vector_base::fill_proprietary ()
     put(0xFF);
     put(0x7F);
     put(0x05);
-    add_long(c_midich);
+    add_long(c_midich);                             /* channel override */
     put(m_sequence.get_midi_channel());
     if (! usr().global_seq_feature())
     {
         /**
-         * New feature: save more sequence-specific values, if not legacy
-         * format and not saved globally.  We use a single byte for the
-         * key and scale, and a long for the background sequence.  We save
-         * these values only if they are different from the defaults; in
-         * most cases they will have been left alone by the user.  We save
-         * per-sequence values here only if the global-background-sequence
-         * feature is not in force.
+         * New feature: save more sequence-specific values, if not saved
+         * globally.  We use a single byte for the key and scale, and a long for
+         * the background sequence.  We save these values only if they are
+         * different from the defaults; in most cases they will have been left
+         * alone by the user.  We save per-sequence values here only if the
+         * global-background-sequence feature is not in force.
          */
 
         if (m_sequence.musical_key() != c_key_of_C)

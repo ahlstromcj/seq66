@@ -128,6 +128,7 @@ sequence::sequence (int ppqn)
     m_iterator_draw             (m_events.begin()),
     m_channel_match             (false),        // stazed
     m_midi_channel              (0),
+    m_no_channel                (false),
     m_bus                       (0),
     m_song_mute                 (false),
     m_transposable              (true),
@@ -4538,7 +4539,8 @@ sequence::title () const
  *
  * \param ch
  *      The MIDI channel to set as the output channel number for this
- *      sequence.
+ *      sequence.  This value can range from 0 to 15, but greater values are
+ *      converted to c_midibyte_max = 0xFF.
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -4554,8 +4556,11 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
+        m_no_channel = ch >= c_midichannel_max;
         off_playing_notes();
-        m_midi_channel = ch;
+        if (! m_no_channel)
+            m_midi_channel = ch;
+
         if (user_change)
             modify();                   /* no easy way to undo this, though */
 
@@ -4631,7 +4636,8 @@ sequence::put_event_on_bus (event & ev)
     }
     if (! skip)
     {
-        m_master_bus->play(m_bus, &ev, m_midi_channel);
+        midibyte channel = m_no_channel ? ev.channel() : m_midi_channel ;
+        m_master_bus->play(m_bus, &ev, channel);
         m_master_bus->flush();
     }
 }

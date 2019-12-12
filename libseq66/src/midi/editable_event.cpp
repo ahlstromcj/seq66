@@ -655,7 +655,7 @@ editable_event::set_status_from_string
     {
         midibyte newstatus = midibyte(value);
         midibyte d0 = string_to_midibyte(sd0);
-        set_status(newstatus, channel());   /* pass along code & channel */
+        set_channel_status(newstatus, channel());   /* pass in code, channel */
         if (is_one_byte_msg(newstatus))
         {
             set_data(d0);

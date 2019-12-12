@@ -1715,7 +1715,7 @@ void
 qseqeditframe64::repopulate_midich_combo (int buss)
 {
     ui->m_combo_channel->clear();
-    for (int channel = 0; channel < c_midichannel_max; ++channel)
+    for (int channel = 0; channel <= c_midichannel_max; ++channel)
     {
         char b[4];                                  /* 2 digits or less  */
         snprintf(b, sizeof b, "%2d", channel + 1);
@@ -1726,28 +1726,41 @@ qseqeditframe64::repopulate_midich_combo (int buss)
             name += " ";
             name += s;
         }
-        QString combo_text(name.c_str());
-        ui->m_combo_channel->insertItem(channel, combo_text);
+        if (channel == c_midichannel_max)
+        {
+            QString combo_text("Any");
+            ui->m_combo_channel->insertItem(c_midichannel_max, combo_text);
+        }
+        else
+        {
+            QString combo_text(name.c_str());
+            ui->m_combo_channel->insertItem(channel, combo_text);
+        }
     }
-    ui->m_combo_channel->setCurrentIndex(seq_pointer()->get_midi_channel());
+    midibyte chindex = seq_pointer()->get_midi_channel();
+    if (is_null_channel(chindex))
+        chindex = c_midichannel_max;
+
     connect
     (
         ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_midi_channel(int))
     );
+    ui->m_combo_channel->setCurrentIndex(chindex);
     set_midi_channel(seq_pointer()->get_midi_channel());
 }
 
 /**
- *
+ *  Note that c_midichannel_max is a legal value, too.  It is remapped in
+ *  sequence::set_midi_channel().
  */
 
 void
 qseqeditframe64::update_midi_channel (int index)
 {
-    if (index >= 0 && index < c_midichannel_max)
+    if (index >= 0 && index <= c_midichannel_max)
     {
-        seq_pointer()->set_midi_channel(index);
+        seq_pointer()->set_midi_channel(index);     /* also handles "Any"   */
         set_dirty();
     }
 }
@@ -1782,7 +1795,10 @@ void
 qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
 {
     int initialchan = seq_pointer()->get_midi_channel();
-    ui->m_combo_channel->setCurrentIndex(midichannel);
+    int chindex = is_null_channel(midichannel) ?
+        c_midichannel_max : midichannel ;
+
+    ui->m_combo_channel->setCurrentIndex(chindex);
     seq_pointer()->set_midi_channel(midichannel, user_change);
     if (midichannel != initialchan && user_change)
     {

@@ -990,7 +990,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     d0 = read_byte();                     /* was data[0]      */
                     d1 = read_byte();                     /* was data[1]      */
                     if (is_note_off_velocity(eventcode, d1))
-                        e.set_status(EVENT_NOTE_OFF, channel); /* vel 0==off  */
+                        e.set_channel_status(EVENT_NOTE_OFF, channel);
 
                     e.set_data(d0, d1);                   /* set data and add */
 
@@ -1488,9 +1488,9 @@ midifile::finalize_sequence
  *
  * \return
  *      Returns the control-tag value found.  These are the values, such as
- *      c_midich, found in the globals module, that indicate the type of
- *      sequencer-specific data that comes next.  If there is not enough
- *      data to process, then 0 is returned.
+ *      c_midich, found in the midi_vector_base module, that indicate the type of
+ *      sequencer-specific data that comes next.  If there is not enough data to
+ *      process, then 0 is returned.
  */
 
 midilong

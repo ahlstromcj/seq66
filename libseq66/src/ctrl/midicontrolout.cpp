@@ -83,7 +83,7 @@ midicontrolout::initialize (int count, int bus)
     event dummy_event;
     actions actionstemp;
     actionpair apt;
-    dummy_event.set_status(0, 0);           /* set status and channel       */
+    dummy_event.set_channel_status(0, 0);   /* set status and channel       */
     apt.apt_action_event = dummy_event;
     apt.apt_action_status = false;
     m_seq_events.clear();
@@ -305,7 +305,7 @@ midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
     {
         int w = static_cast<int>(what);
         event ev;
-        ev.set_status(eva[outindex::status], eva[outindex::channel]); /* tricky */
+        ev.set_channel_status(eva[outindex::status], eva[outindex::channel]);
         ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
         m_seq_events[seq][w].apt_action_event = ev;
         m_seq_events[seq][w].apt_action_status = bool(eva[outindex::enabled]);
@@ -423,7 +423,7 @@ midicontrolout::set_event (action what, int * eva)
     {
         int w = static_cast<int>(what);
         event ev;
-        ev.set_status(eva[outindex::status], eva[outindex::channel]); /* tricky */
+        ev.set_channel_status(eva[outindex::status], eva[outindex::channel]);
         ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
         m_events[w].apt_action_event = ev;
         m_events[w].apt_action_status = bool(eva[outindex::enabled]);
