@@ -682,7 +682,7 @@ bool
 string_to_bool (const std::string & s, bool defalt)
 {
     return s.empty() ?  defalt :
-        (s == "1" || s == "true" || s == "TRUE" || s == "yes" || s == "YES");
+        (s == "1" || s == "true" || s == "TRUE" || s == "yes" || s == "YES") ;
 }
 
 /**

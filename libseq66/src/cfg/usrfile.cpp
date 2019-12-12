@@ -536,6 +536,21 @@ usrfile::parse ()
         }
     }
 
+    std::string s = get_variable(file, "[new-pattern-editor]", "armed");
+    usr().new_pattern_armed(string_to_bool(s));
+
+    s = get_variable(file, "[new-pattern-editor]", "thru");
+    usr().new_pattern_thru(string_to_bool(s));
+
+    s = get_variable(file, "[new-pattern-editor]", "record");
+    usr().new_pattern_record(string_to_bool(s));
+
+    s = get_variable(file, "[new-pattern-editor]", "qrecord");
+    usr().new_pattern_qrecord(string_to_bool(s));
+
+    s = get_variable(file, "[new-pattern-editor]", "record-style");
+    usr().new_pattern_thru(string_to_int(s));   // FIXME
+
     /*
      * We have all of the data.  Close the file.
      */
@@ -1249,6 +1264,28 @@ usrfile::write ()
 
     uscratch = usr().use_new_seqedit();
     file << uscratch << "       # (user_ui_) use_new_seqedit\n";
+
+    /*
+     * [new-pattern-editor]
+     */
+
+    file <<
+        "\n[new-pattern-editor]\n"
+        "\n"
+        "# This section contains the setup values for recording when a new\n"
+        "# pattern is opened. For flexibility, a new pattern means only that\n"
+        "# the pattern has the default name, 'Unititled'. These values save time\n"
+        "# during a live recording session.\n"
+        "\n"
+        ;
+
+    std::string v = bool_string(usr().new_pattern_armed());
+    file << "armed = " << v << "\n";
+
+    v = bool_string(usr().new_pattern_thru());
+    file << "thru = " << v << "\n";
+
+    // MORE TO COME
 
     /*
      * End of file.
