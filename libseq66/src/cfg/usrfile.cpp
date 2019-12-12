@@ -549,7 +549,7 @@ usrfile::parse ()
     usr().new_pattern_qrecord(string_to_bool(s));
 
     s = get_variable(file, "[new-pattern-editor]", "record-style");
-    usr().new_pattern_thru(string_to_int(s));   // FIXME
+    usr().new_pattern_record_style(string_to_int(s));   // FIXME
 
     /*
      * We have all of the data.  Close the file.
@@ -1285,7 +1285,17 @@ usrfile::write ()
     v = bool_string(usr().new_pattern_thru());
     file << "thru = " << v << "\n";
 
-    // MORE TO COME
+    v = bool_string(usr().new_pattern_record());
+    file << "record = " << v << "\n";
+
+    v = bool_string(usr().new_pattern_qrecord());
+    file << "qrecord = " << v << "\n";
+
+    v = bool_string(usr().new_pattern_qrecord());
+    file << "qrecord = " << v << "\n";
+
+    v = std::to_string(usr().new_pattern_record_style());
+    file << "record-style = " << v << "\n"; // FIXME
 
     /*
      * End of file.

@@ -1053,6 +1053,11 @@ public:
         return m_name == sm_default_name;
     }
 
+    bool is_new_pattern () const
+    {
+        return is_default_name();
+    }
+
     static const std::string & default_name ()
     {
         return sm_default_name;

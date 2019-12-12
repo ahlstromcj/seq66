@@ -60,12 +60,10 @@
 #include <string>
 #include <vector>
 
-#include "app_limits.h"                 /* macros for the application       */
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
-#include "cfg/scales.hpp"               /* c_key_of_C etc.              */
+#include "cfg/scales.hpp"               /* seq66::keys and seq66::scales    */
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
-#include "midi/midibytes.hpp"           /* midibpm type alias               */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
