@@ -10,7 +10,7 @@
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
-#  	This module provides an packaging makefile for the sequencer64
+#  	This module provides an packaging makefile for the seq66
 #  	pixmaps.
 #
 #------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-TODO for Sequencer66 0.90.2 (Sequencer64 refactored for C++14 and Qt)
+TODO for Seq66 0.90.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
 2019-04-13 to 2019-12-09
 
@@ -53,9 +53,6 @@ Tons of TODOs in performer!
     Load a song with Song triggers; go to the song tab; select File/New. Note
     that the perfroll clears, but not the perfnames!  We need to derive all
     qperf GUIs from qperfbase.  Actually, they both clear, only if clicked on.
-
-    Also test the MIDI control out feature to make sure the bit operators are
-    correct.  If so, the same change in seq64!
 
     When copying a large track and pasting into a smaller one, consider altering
     the length of the smaller track to match.

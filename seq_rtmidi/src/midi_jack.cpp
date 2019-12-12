@@ -12,9 +12,9 @@
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
  *  Gary Scavone, April 2011.
  *
- *  In this Sequencer66 refactoring of RtMidi, we have to warp the RtMidi
+ *  In this Seq66 refactoring of RtMidi, we have to warp the RtMidi
  *  model, where ports are opened directly by the application, to the
- *  Sequencer66 midibus model, where the port object is created, but
+ *  Seq66 midibus model, where the port object is created, but
  *  initialized after creation.  This proved very challenging -- it took a
  *  long time to get the midi_alsa implementation working, and still more time
  *  to get the midi_jack implementation solid.  So to call this code "rtmidi"
@@ -22,15 +22,15 @@
  *
  *  There is an additional issue with JACK ports.  First, think of our ALSA
  *  implementation.  We have two modes:  manual (virtual) and real (normal)
- *  ports.  In ALSA, the manual mode exposes Sequencer66 ports (1 input port,
+ *  ports.  In ALSA, the manual mode exposes Seq66 ports (1 input port,
  *  16 output ports) to which other applications can connect.  The real/normal
  *  mode, via a midi_alsa_info object, determines the list of existing ALSA
- *  ports in the system, and then Sequencer66 ports are created (via the
+ *  ports in the system, and then Seq66 ports are created (via the
  *  midibus) that are local, but connected to these "destination" system
  *  ports.
  *
  *  In JACK, we can do something similar.  Use the manual/virtual mode to
- *  allow Sequencer66 (seq66) to be connected manually via something like
+ *  allow Sequencer64 (seq66) to be connected manually via something like
  *  QJackCtl or a session manager.  Use the real/normal mode to connect
  *  automatically to whatever is already present.  Currently, though, new
  *  devices that appear in the system won't be accessible until a restart.
@@ -143,9 +143,9 @@
  *  GitHub issue #165: enabled a build and run with no JACK support.
  */
 
-#include "seq66-config.h"
+#include "util/calculations.hpp"        /* seq66::extract_port_name()       */
 
-#if defined SEQ66_JACK_SUPPORT
+#ifdef SEQ66_JACK_SUPPORT
 
 #include <sstream>
 
@@ -157,8 +157,6 @@
 #include "midi/jack_assistant.hpp"      /* seq66::jack_status_pair_t        */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_jack.hpp"                /* seq66::midi_jack                 */
-#include "util/basic_macros.hpp"        /* C++ version of easy macros       */
-#include "util/calculations.hpp"        /* seq66::extract_port_name()       */
 
 /**
  *  Delimits the size of the JACK ringbuffer.
@@ -199,10 +197,9 @@ namespace seq66
  *  The ALSA code polls for events, and that model is also available here.
  *  We're still working exactly how it will work best.
  *
- *  This function used to be static, but now we make if available to
+ *  This function used to be static, but now we make it available to
  *  midi_jack_info.  Also note the s_null_detected flag.  It is used only to
- *  have the apiprint() debug messages appear only once, for better
- *  trouble-shooting.  THIS CODE SHOULD BE A COMPILE-TIME OPTION.
+ *  have the apiprint() debug messages appear only once, for trouble-shooting.
  *
  * \param nframes
  *    The frame number to be processed.
@@ -218,6 +215,29 @@ int
 jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
+
+#ifdef SEQ66_USE_DEBUG_OUTPUT
+    rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
+    static bool s_null_detected = false;
+    if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
+    {
+        if (! s_null_detected)
+        {
+            s_null_detected = true;
+            apiprint("jack_process_rtmidi_input", "null jack port");
+        }
+        return 0;
+    }
+    if (is_nullptr(rtindata))
+    {
+        if (! s_null_detected)
+        {
+            s_null_detected = true;
+            apiprint("jack_process_rtmidi_input", "null rtmidi_in_data");
+        }
+        return 0;
+    }
+#endif  // SEQ66_USE_DEBUG_OUTPUT
 
     /*
      * Since this is an input port, buff is the area that contains data from
@@ -325,10 +345,32 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
     static size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
+#ifdef SEQ66_USE_DEBUG_OUTPUT
+    static bool s_null_detected = false;
+    if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
+    {
+        if (! s_null_detected)
+        {
+            s_null_detected = true;
+            apiprint("jack_process_rtmidi_output", "null jack port");
+        }
+        return 0;
+    }
+    if (is_nullptr(jackdata->m_jack_buffsize))      /* port set up?         */
+    {
+        if (! s_null_detected)
+        {
+            s_null_detected = true;
+            apiprint("jack_process_rtmidi_output", "null jack buffer");
+        }
+        return 0;
+    }
+#endif  // SEQ66_USE_DEBUG_OUTPUT
+
     void * buf = jack_port_get_buffer(jackdata->m_jack_port, nframes);
     jack_midi_clear_buffer(buf);                    /* no nullptr test      */
 
-#if defined SEQ66_SHOW_API_CALLS_TMI
+#ifdef SEQ66_SHOW_API_CALLS_TMI
     printf
     (
         "%d frames for jack port %lx\n",
@@ -365,7 +407,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
                 jackdata->m_jack_buffmessage, mididata, size_t(space)
             );
 
-#if defined SEQ66_SHOW_API_CALLS_TMI
+#ifdef SEQ66_SHOW_API_CALLS_TMI
             printf("%d bytes read: ", space);
             for (int i = 0; i < space; ++i)
                 printf("%x ", (unsigned char)(mididata[i]));
@@ -388,7 +430,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
 /**
  *  Note that this constructor also adds its object to the midi_jack_info port
  *  list, so that the JACK callback functions can iterate through all of the
- *  JACK ports in use by this application, performering work on them.
+ *  JACK ports in use by this application, performing work on them.
  *
  * \param parentbus
  *      Provides a reference to the midibus that represents this object.
@@ -487,8 +529,8 @@ midi_jack::api_init_out ()
  *  This function is called when we are processing the list of system input
  *  ports. We want to create an output port of a similar name, but with the
  *  application as client, and connect it to this sytem input port.  We want to
- *  follow the model we got from seq66, rather than the RtMidi model, so that we
- *  do not have to rework (and probably break) the seq66 model.
+ *  follow the model we got from seq24, rather than the RtMidi model, so that we
+ *  do not have to rework (and probably break) the seq24 model.
  *
  *  We can't use the API port name here at this time, because it comes up
  *  empty.  It comes up empty because we haven't yet registered the ports,
@@ -714,7 +756,7 @@ midi_jack::api_play (event * e24, midibyte channel)
     if (e24->is_two_bytes())                    /* \change ca 2017-04-26 */
         message.push(d1);
 
-#if defined SEQ66_SHOW_API_CALLS_TMI
+#ifdef SEQ66_SHOW_API_CALLS_TMI
     printf("midi_jack::play()\n");
 #endif
 
@@ -746,7 +788,7 @@ midi_jack::send_message (const midi_message & message)
     bool result = nbytes > 0;
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#ifdef PLATFORM_DEBUG_TMI
         message.show();
 #endif
         int count1 = jack_ringbuffer_write
@@ -862,7 +904,7 @@ midi_jack::api_clock (midipulse tick)
 {
     if (tick >= 0)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#ifdef PLATFORM_DEBUG_TMI
         midibase::show_clock("JACK", tick);
 #endif
     }
@@ -1127,7 +1169,7 @@ midi_jack::connect_port
             (
                 client_handle(), srcportname.c_str(), destportname.c_str()
             );
-#if defined SEQ66_SHOW_API_CALLS_TMI
+#ifdef SEQ66_SHOW_API_CALLS_TMI
             printf("Parent bus:\n");
             parent_bus().show_bus_values();
             printf
@@ -1215,7 +1257,7 @@ midi_jack::register_port (bool input, const std::string & portname)
             client_handle(), shortname.c_str(), JACK_DEFAULT_MIDI_TYPE,
             flag, buffsize
         );
-#if defined SEQ66_SHOW_API_CALLS_TMI
+#ifdef SEQ66_SHOW_API_CALLS_TMI
         std::string flagname = input ? "JackPortIsOutput" : "JackPortIsInput" ;
         printf("Parent bus:\n");
         parent_bus().show_bus_values();
@@ -1296,7 +1338,7 @@ midi_jack::create_ringbuffer (size_t rbsize)
  */
 
 /**
- *  Principal constructor.  For Sequencer66, we don't current need to create
+ *  Principal constructor.  For Seq66, we don't current need to create
  *  a midi_in_jack object; all that is needed is created via the
  *  api_init_in*() functions.  Also, this constructor still needs to do
  *  something with queue size.
@@ -1351,19 +1393,16 @@ midi_in_jack::api_poll_for_midi ()
 
 /**
  *  Gets a MIDI event.  This implementation gets a midi_message off the front
- *  of the queue and converts it to a Sequencer66 event.
+ *  of the queue and converts it to a Seq66 event.
  *
- *  Issue #4 "Bug with Yamaha PSR in JACK native mode" in the
- *  seq66-packages project has been fixed.  For now, we ignore
- *  system messages.  Yamaha keyboards like my PSS-790 constantly emit
- *  active sensing messages (0xfe) which are not logged, and the previous
- *  event (typically pitch wheel 0xe0 0x0 0x40) is continually emitted.
- *  One result (we think) is odd artifacts in the seqroll when recording
- *  and passing through.
- *
- * \todo
- *      Return a bussbyte or c_bussbyte_max value instead of a boolean. However,
- *      we need to be able to get the buss byte from rtmidi_in_data.
+ * \change ca 2017-11-04
+ *      Issue #4 "Bug with Yamaha PSR in JACK native mode" in the
+ *      seq66-packages project has been fixed.  For now, we ignore
+ *      system messages.  Yamaha keyboards like my PSS-790 constantly emit
+ *      active sensing messages (0xfe) which are not logged, and the previous
+ *      event (typically pitch wheel 0xe0 0x0 0x40) is continually emitted.
+ *      One result (we think) is odd artifacts in the seqroll when recording
+ *      and passing through.
  *
  * \param inev
  *      Provides the destination for the MIDI event.
@@ -1408,13 +1447,12 @@ midi_in_jack::api_get_midi_event (event * inev)
              *  The Yamaha PSS-790 is constantly emitting Active Sense events.
              */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#ifdef SEQ66_USE_SYSEX_PROCESSING
 
             /**
              *  We will only get EVENT_SYSEX on the first packet of MIDI data;
              *  the rest we have to poll for.  SysEx processing is currently
-             *  disabled.  The code that follows has a big bug!  SO WHAT IS
-             *  THE BUG???
+             *  disabled.  The code that follows has a big bug!
              */
 
             midibyte buffer[0x1000];        /* temporary buffer for Sysex   */
@@ -1429,17 +1467,14 @@ midi_in_jack::api_get_midi_event (event * inev)
             }
 #endif
 
-            midibyte st = mm[0];
-
-#if defined SEQ66_PLATFORM_DEBUG
-
             /*
              * For now, ignore certain messages; they're not handled by the
-             * performer object.  Could be handled there, but saves some
+             * perform object.  Could be handled there, but saves some
              * processing time if done here.  Also could move the output code
-             * to performer so it is available for frameworks beside JACK.
+             * to perform so it is available for frameworks beside JACK.
              */
 
+            midibyte st = mm[0];
             if (rc().verbose())
             {
                 static int s_count = 0;
@@ -1467,12 +1502,9 @@ midi_in_jack::api_get_midi_event (event * inev)
                 }
                 fflush(stdout);
             }
-
-#endif  // defined SEQ66_PLATFORM_DEBUG
-
             if (st == EVENT_MIDI_ACTIVE_SENSE || st == EVENT_MIDI_RESET)
             {
-                result = false;             /* seq66-packages #4      */
+                result = false;             /* sequencer64-packages #4      */
             }
             else
             {
@@ -1498,7 +1530,7 @@ midi_in_jack::~midi_in_jack()
  */
 
 /**
- *  Principal constructor.  For Sequencer66, we don't current need to create
+ *  Principal constructor.  For Seq66, we don't current need to create
  *  a midi_out_jack object; all that is needed is created via the
  *  api_init_out*() functions.
  *

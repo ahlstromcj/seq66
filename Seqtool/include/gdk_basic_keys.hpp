@@ -32,7 +32,7 @@
  *
  *  This file is provided as a convenience so that we have some reasonable
  *  and universal set of basic PC keys to use in Seq64-to-Seq66 conversions.
- *  It is a cut-down version of the libseq64/include/gdk_basic_keys.h file.
+ *  It is a cut-down version of the libseq6seq66lude/gdk_basic_keys.h file.
  *  Shamelessly derived from the following files:
  *
  *      /usr/include/gtk-2.0/gdk/gdkkeysyms-compat.h

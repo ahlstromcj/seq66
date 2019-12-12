@@ -83,7 +83,7 @@ static void CALLBACK winmm_streamout_callback
     DWORD_PTR dwParam2
 );
 
-#if defined SEQ64_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_PROCESSING
 static void CALLBACK winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg,

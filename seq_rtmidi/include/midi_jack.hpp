@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2018-09-14
+ * \updates       2019-12-11
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -23,10 +23,12 @@
 
 #include <string>
 
+#include "seq66_features.hpp"
 #include "midi_api.hpp"
 
 #if defined SEQ66_JACK_SUPPORT
 
+#include "midi_jack_data.hpp"           /* seq66::midi_jack_data            */
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
 
 /*

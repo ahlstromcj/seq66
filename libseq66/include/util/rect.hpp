@@ -2,7 +2,7 @@
 #define SEQ66_RECT_HPP
 
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 /**
  * \file          rect.hpp
  *
- *  This module declares/defines the base class for a Sequencer64 rectangle.
+ *  This module declares/defines the base class for a Seq66 rectangle.
  *
- * \library       sequencer64 application
+ * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-09-16
  * \updates       2019-01-27

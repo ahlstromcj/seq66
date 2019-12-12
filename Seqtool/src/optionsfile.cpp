@@ -267,7 +267,7 @@ optionsfile::parse ()
             {
                 /*
                  *  The current version of rcsettings specifies the directory
-                 *  "sequencer66", not sequencer64".  The user can specify another
+                 *  "seq66", not sequencer64".  The user can specify another
                  *  directory.  However, mostly, that won't happen.  We need to
                  *  revert to the legacy default directory in the file-path.
                  */
@@ -473,7 +473,7 @@ optionsfile::parse ()
         sscanf(scanline(), "%u %u %u %u %u", &k1, &k2, &k3, &k4, &k5);
 
         /*
-         * In Seq24 (and hence Sequencer64), the "mod" MIDI controls
+         * In Seq24 (and hence Seq66), the "mod" MIDI controls
          * roughly overlapped with certain keystrokes, though not completely.
          *
          *    &ktx.kpt_replace &ktx.kpt_queue &ktx.kpt_snapshot_1

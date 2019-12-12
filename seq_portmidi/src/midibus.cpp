@@ -1,5 +1,5 @@
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *  This module declares/defines the base class for MIDI I/O under one of
  *  Windows' audio frameworks.
  *
- * \library       sequencer64 application
+ * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
  * \updates       2019-02-10

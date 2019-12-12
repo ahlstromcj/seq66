@@ -1,5 +1,5 @@
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

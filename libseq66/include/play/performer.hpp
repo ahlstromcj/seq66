@@ -35,7 +35,7 @@
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/midicontrolin.hpp"       /* class seq66::midicontrolin       */
-#include "ctrl/midicontrolout.hpp"      /* seq64::midicontrolout            */
+#include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout            */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "midi/jack_assistant.hpp"      /* optional seq66::jack_assistant   */
 #include "midi/mastermidibus.hpp"       /* seq66::mastermidibus ALSA/JACK   */

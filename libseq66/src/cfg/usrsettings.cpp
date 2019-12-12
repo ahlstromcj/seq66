@@ -293,8 +293,12 @@ usrsettings::usrsettings () :
      */
 
     m_user_ui_key_height        (SEQ66_SEQKEY_HEIGHT),
-    m_user_ui_seqedit_in_tab    (true)
-
+    m_user_ui_seqedit_in_tab    (true),
+    m_new_pattern_armed         (false),
+    m_new_pattern_thru          (false),
+    m_new_pattern_record        (false),
+    m_new_pattern_qrecord       (false),
+    m_new_pattern_record_style  (0)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -395,7 +399,12 @@ usrsettings::usrsettings (const usrsettings & rhs) :
      */
 
     m_user_ui_key_height        (rhs.m_user_ui_key_height),
-    m_user_ui_seqedit_in_tab    (rhs.m_user_ui_seqedit_in_tab)
+    m_user_ui_seqedit_in_tab    (rhs.m_user_ui_seqedit_in_tab),
+    m_new_pattern_armed         (rhs.m_new_pattern_armed),
+    m_new_pattern_thru          (rhs.m_new_pattern_thru),
+    m_new_pattern_record        (rhs.m_new_pattern_record),
+    m_new_pattern_qrecord       (rhs.m_new_pattern_qrecord),
+    m_new_pattern_record_style  (rhs.m_new_pattern_record_style)
 {
     // Empty body; no need to call normalize() here.
 }
@@ -505,6 +514,11 @@ usrsettings::operator = (const usrsettings & rhs)
 
         m_user_ui_key_height = rhs.m_user_ui_key_height;
         m_user_ui_seqedit_in_tab = rhs.m_user_ui_seqedit_in_tab;
+        m_new_pattern_armed = rhs.m_new_pattern_armed;
+        m_new_pattern_thru = rhs.m_new_pattern_thru;
+        m_new_pattern_record = rhs.m_new_pattern_record;
+        m_new_pattern_qrecord = rhs.m_new_pattern_qrecord;
+        m_new_pattern_record_style = rhs.m_new_pattern_record_style;
     }
     return *this;
 }
@@ -578,6 +592,11 @@ usrsettings::set_defaults ()
     m_work_around_transpose_image = false;
     m_user_ui_key_height = SEQ66_SEQKEY_HEIGHT;
     m_user_ui_seqedit_in_tab = true;
+    m_new_pattern_armed = false;
+    m_new_pattern_thru = false;
+    m_new_pattern_record = false;
+    m_new_pattern_qrecord = false;
+    m_new_pattern_record_style = 0;
     normalize();                            // recalculate derived values
 }
 

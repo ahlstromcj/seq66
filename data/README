@@ -8,7 +8,7 @@ installation directory (e.g.  C:/Program Files (x86)/Seq66/data) on
 Windows.
 
 The files include alternate configuration files that the user can copy to
-$HOME/.config/sequencer64 [or C:/Users/YourName/AppData/Local/seq66 on
+$HOME/.config/seq66 [or C:/Users/YourName/AppData/Local/seq66 on
 Windows] and modify to satisfaction, plus some sample Seq66 MIDI files.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

@@ -44,7 +44,7 @@
 /**
  *  The number of MIDI notes in what?  This value is used in the sequence
  *  module.  It looks like it is the maximum number of notes that
- *  seq24/sequencer64 can have playing at one time.  In other words,
+ *  seq24/seq66 can have playing at one time.  In other words,
  *  "only" 256 simultaneously-playing notes can be managed.
  *  Internal global.  Will hide later.
  */

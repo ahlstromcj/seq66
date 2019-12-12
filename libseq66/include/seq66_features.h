@@ -32,7 +32,7 @@
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
- *    unimplemented features.  Some options (the "SEQ64_xxx" options)
+ *    unimplemented features.  Some options (the "SEQ66_xxx" options)
  *    might be experimental, or not, but are definitely supported, if defined,
  *    and may become configure-time options.
  *
@@ -40,7 +40,7 @@
  *    "configure" script generated using the configure.ac file.  These
  *    options are things that a normal user or a seq24 aficianado might want to
  *    disable.  They are defined as desired, in the auto-generated
- *    seq64-config.h file in the top-level "include" directory.
+ *    seq66-config.h file in the top-level "include" directory.
  *
  *    The rest of the options can be modified only by editing the source code
  *    (soon to be this file) to enable or disable features.  These options are

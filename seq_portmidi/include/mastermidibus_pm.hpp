@@ -2,7 +2,7 @@
 #define SEQ66_MASTERMIDIBUS_PM_HPP
 
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq24/sequencer66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  *
  *  This module declares/defines the base class for MIDI I/O for Windows.
  *
- * \library       sequencer64 application
+ * \library       sequencer66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
  * \updates       2019-03-10

@@ -187,7 +187,7 @@ static struct charpair_t s_character_mapping [] =
  *  shifted on a standard American keyboard.  Currently also assumes the ASCII
  *  character set.
  *
- *  There's an oddity here:  the shift of '2' is the '@' character, but seq64
+ *  There's an oddity here:  the shift of '2' is the '@' character, but seq66
  *  seems to have treated it like the '"' character. Some others were treated
  *  the same:
  *

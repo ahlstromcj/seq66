@@ -22,7 +22,7 @@
  *  This module declares/defines the base class for managing the reading and
  *  writing of the mute-group sections of the "rc" file.
  *
- * \library       sequencer64 application
+ * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
  * \updates       2019-11-10

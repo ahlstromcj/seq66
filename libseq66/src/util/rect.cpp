@@ -1,5 +1,5 @@
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  *  This module declares/defines the concrete class for a rectangle.
  *
- * \library       sequencer64 application
+ * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2017-09-16
  * \updates       2019-03-10

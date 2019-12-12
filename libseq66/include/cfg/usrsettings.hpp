@@ -846,6 +846,18 @@ private:
 
     bool m_user_ui_seqedit_in_tab;
 
+    /**
+     *  [new-pattern-editor]
+     *
+     *  A new feature, in progress.
+     */
+
+    bool m_new_pattern_armed;
+    bool m_new_pattern_thru;
+    bool m_new_pattern_record;
+    bool m_new_pattern_qrecord;
+    int m_new_pattern_record_style;     /* merge/legacy, overwrite, expand */
+
 public:
 
     usrsettings ();
@@ -1492,6 +1504,31 @@ public:
         return m_user_ui_seqedit_in_tab;
     }
 
+    bool new_pattern_armed () const
+    {
+        return m_new_pattern_armed;
+    }
+
+    bool new_pattern_thru () const
+    {
+        return m_new_pattern_thru;
+    }
+
+    bool new_pattern_record () const
+    {
+        return m_new_pattern_record;
+    }
+
+    bool new_pattern_qrecord () const
+    {
+        return m_new_pattern_qrecord;
+    }
+
+    int new_pattern_record_style () const
+    {
+        return m_new_pattern_record_style;
+    }
+
 public:         // used in main application module and the usrfile class
 
     void use_new_font (bool flag)
@@ -1588,6 +1625,31 @@ public:         // used in main application module and the usrfile class
     void use_new_seqedit (bool f)
     {
         m_user_ui_seqedit_in_tab = f;
+    }
+
+    void new_pattern_armed (bool flag)
+    {
+        m_new_pattern_armed = flag;
+    }
+
+    void new_pattern_thru (bool flag)
+    {
+        m_new_pattern_thru = flag;
+    }
+
+    void new_pattern_record (bool flag)
+    {
+        m_new_pattern_record = flag;
+    }
+
+    void new_pattern_qrecord (bool flag)
+    {
+        m_new_pattern_qrecord = flag;
+    }
+
+    void new_pattern_record_style (int style)
+    {
+        m_new_pattern_record_style = style;
     }
 
     void midi_ppqn (int ppqn);

@@ -1,5 +1,5 @@
 /*
- *  This file is part of seq24/sequencer64.
+ *  This file is part of seq66.
  *
  *  seq24 is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *  This module declares/defines just some of the global (gasp!) variables
  *  in this application.
  *
- * \library       sequencer64 application
+ * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
  * \updates       2018-11-26

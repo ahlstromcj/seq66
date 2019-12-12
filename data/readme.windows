@@ -175,7 +175,7 @@ Keystroke Support:
     Some keystrokes are hardwired, but a number of them can be configured by
     editing the "rc" file directly.  This file is well-documented enough that it
     can be edited with care, so no Qt 5 keystroke editor will be provided.
-    If you are afraid to edit, find a Linux user of Sequencer64 and get them to
+    If you are afraid to edit, find a Linux user of Seq66 and get them to
     edit one for you.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

@@ -2412,7 +2412,7 @@ sequence::add_chord (int chord, midipulse tick, midipulse len, int note)
 
 /**
  *  Adds an event to the internal event list in a sorted manner.  Then it
- *  reset the draw-marker and sets the dirty flag.
+ *  resets the draw-marker and sets the dirty flag.
  *
  *  Currently, when reading a MIDI file [see the midifile::parse() function],
  *  only the main events (notes, after-touch, pitch, program changes, etc.)
@@ -2587,17 +2587,14 @@ sequence::check_loop_reset ()
  *
  *  If MIDI Thru is enabled, the event is also put on the buss.
  *
- *  We are adding a feature where events are rejected if their channel
- *  doesn't match that of the sequence.  This has been a complaint of some
- *  people.  Could modify the add_event() and add_note() functions, but
- *  better to do it here for comprehensive event support.  Also have to make
- *  sure the event-channel is preserved before this function is called, and
- *  also need to make sure that the channel is appended on both playback and
- *  in saving of the MIDI file.
+ *  This function supports rejecting events if their channel doesn't match that
+ *  of the sequence.  We do it here for comprehensive event support.  Also make
+ *  sure the event-channel is preserved before this function is called, and also
+ *  need to make sure that the channel is appended on both playback and in
+ *  saving of the MIDI file.
  *
- *  We are also adding the usage, at last, of the m_rec_vol member, including
- *  the "Free" menu entry in seqedit, which sets the velocity to
- *  SEQ66_PRESERVE_VELOCITY (-1).
+ *  The m_rec_vol member includes the "Free" menu entry in seqedit, which sets
+ *  the velocity to SEQ66_PRESERVE_VELOCITY (-1).
  *
  * \todo
  *      When we feel like debugging, we will replace the global is-playing
@@ -2647,7 +2644,6 @@ sequence::stream_event (event & ev)
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
 
                 add_event(ev);                          /* locks and sorts  */
-                set_dirty();
             }
             else
             {
@@ -2677,7 +2673,7 @@ sequence::stream_event (event & ev)
                         mod_last_tick(), snap() - m_events.note_off_margin(),
                         ev.get_note(), false, velocity
                     );
-                    set_dirty();
+//////////////      set_dirty();
                     ++m_notes_on;
                 }
                 else if (ev.is_note_off())

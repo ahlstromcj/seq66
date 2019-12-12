@@ -17,15 +17,15 @@
 \section{Patterns Panel}
 \label{sec:seq66_patterns_panel}
 
-   \textsl{Sequencer66} works with patterns (loops, tracks, or
+   \textsl{Seq66} works with patterns (loops, tracks, or
    sequences) that are repeated throughout a song.
    One composes and edits small patterns,
    and combines them to create a full song.  This is a powerful way
    to work, and makes one productive within an hour.
 
-   The \textsl{Sequencer66 Patterns Panel} is the
+   The \textsl{Seq66 Patterns Panel} is the
    \index{main window}
-   \textbf{main window} of \textsl{Sequencer66}.
+   \textbf{main window} of \textsl{Seq66}.
    See \figureref{fig:seq66_main_screen}.
    It is called the "main window" or the "patterns window".
    It is here one creates a set of patterns
@@ -37,8 +37,8 @@
    \index{mode!live}
    \index{mode!song}
    When the Patterns Panel has the application focus,
-   and \textsl{Sequencer66} is \textsl{not} running in \textbf{Song} mode,
-   it puts \textsl{Sequencer66} in \textbf{Live} mode.
+   and \textsl{Seq66} is \textsl{not} running in \textbf{Song} mode,
+   it puts \textsl{Seq66} in \textbf{Live} mode.
    The musician can
    control the playback and muting/unmuting of each pattern in
    the song, while it is playing, from within this window.
@@ -47,17 +47,17 @@
    \index{mode!song}
    If the song editor (see \sectionref{sec:seq66_song_editor})
    has the input focus, it controls the muting/unmuting of
-   each pattern, and \textsl{Sequencer66} runs in \textbf{Song} mode.
+   each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
    (There are ways to override this behavior.)
 
-%  However, if \textsl{Sequencer66} is using JACK transport, then, instead of
+%  However, if \textsl{Seq66} is using JACK transport, then, instead of
 %  the behavior described above, live versus song mode is controlled by the
 %  JACK start mode option (see the \textbf{JACK Start mode} item in
 %  \sectionref{paragraph:seq66_menu_file_options_jack_sync}).
 
    For exposition, we break the Patterns Panel
    into a menu bar, a top panel, a pattern panel, and a bottom panel.
-   The \textsl{Sequencer66} menu bar is discussed in
+   The \textsl{Seq66} menu bar is discussed in
    \sectionref{sec:seq66_menu}.
    The Qt and Gtkmm user-interfaces differ in the arrangement of buttons and
    panels; and the Qt interface uses tabs.
@@ -79,7 +79,7 @@
 %    \label{fig:pattern_window_top_panel_items}
 % \end{figure}
 
-%  But, if compiled with \texttt{SEQ64\_STAZED\_MENU\_BUTTONS} defined,
+%  But, if compiled with \texttt{SEQ66\_STAZED\_MENU\_BUTTONS} defined,
 %  there are some extra buttons available:
 
 \begin{figure}[H]
@@ -99,8 +99,8 @@
    same functionality.
    See \figureref{fig:seq66_main_screen_qt}.
 
-%  If \textsl{Sequencer66} was built with
-%  \texttt{SEQ64\_MENU\_BUTTON\_PIXMAPS} defined, then the buttons have icons
+%  If \textsl{Seq66} was built with
+%  \texttt{SEQ66\_MENU\_BUTTON\_PIXMAPS} defined, then the buttons have icons
 %  on them; otherwise they have text.  The figure shows what they look like,
 %  and how they look with the song/live and toggle-menu functions activated.
  
@@ -265,7 +265,7 @@
    \index{group-learn!auto-shift}
    \index{shift-lock}
    \index{group-learn!shift-lock}
-   To avoid this issue with the \texttt{Shift} key, \textsl{Sequencer66} now
+   To avoid this issue with the \texttt{Shift} key, \textsl{Seq66} now
    "shift-locks" the keys while group-learn is in progress, so
    that none of the keys, whether letters or the punctuation characters above
    the numbers, need the \texttt{Shift} key to be held, to learn them.
@@ -279,7 +279,7 @@
    needed to call up the mute-group that was learned.
 
    There is another way for mute-group learn to fail.
-   With the recent ability of \textsl{Sequencer66} to increase the set size via
+   With the recent ability of \textsl{Seq66} to increase the set size via
    the \texttt{--option sets=8x12} (for example), there can be fewer than 32
    mute-groups available.   This can be seen by viewing
    \textbf{File / Options / Keyboard} when larger set-sizes are in force:
@@ -401,7 +401,7 @@
    each box delimited by brace-like lines at left and right.
    Each filled box represents a loop or pattern.
    One sees only 32 loops at a time in the main panel (but many more than
-   32 loops can be supported by \textsl{Sequencer66}).
+   32 loops can be supported by \textsl{Seq66}).
    \index{screen-set}
    This group of 32 loops is called a "screen-set", as discussed in
    \sectionref{subsubsec:concepts_terms_screen_set}.
@@ -501,7 +501,7 @@
 
    \begin{itemize}
       \item \textbf{Empty background}.  Whether the classic gray pattern
-         of \textsl{Seq24}, or the many patterns of \textsl{Sequencer66},
+         of \textsl{Seq24}, or the many patterns of \textsl{Seq66},
          including all black with yellow sequence numbers, this
          slot coloring indicates that the slot is unused.
       \item \textbf{White background}.  Unarmed (muted) patterns show black
@@ -686,7 +686,7 @@
          returns to the beginning of the box every time that pattern starts
          over again.
          \index{empty pattern}
-         With \textsl{Sequencer66}, an imported empty pattern will no longer
+         With \textsl{Seq66}, an imported empty pattern will no longer
          needlessly scroll.
          However, if a pattern has even a single event (say, a program change),
          it will scroll.
@@ -736,14 +736,14 @@
          That same pattern also shows that it is queued, which means that it
          will toggle its playing status when the pattern next begins again.
       \item \textbf{Alternate font}.
-         Later builds of \textsl{Sequencer66} are now built with a new font.
+         Later builds of \textsl{Seq66} are now built with a new font.
          See \figureref{fig:pattern_window_main_panel_items}.  It shows the new
          font. 
          The old font can be selected in the "user" configuration file, and is
-         also selected automatically if \textsl{Sequencer66} is run in the
+         also selected automatically if \textsl{Seq66} is run in the
          \textsl{legacy} mode.
       \item \textbf{Sequence number}.
-         Later builds of \textsl{Sequencer66} are now built with the option to
+         Later builds of \textsl{Seq66} are now built with the option to
          also show the sequence number in the pattern box, if the "show
          sequence numbers" option is on.
          This option can be set in the "user" configuration file.
@@ -1000,7 +1000,7 @@
 
    \itempar{MIDI Bus}{pattern!midi bus}
    Selecting this filled-box right-click menu item brings up a list
-   of the up to 16 MIDI output busses that \textsl{Sequencer66} supports.
+   of the up to 16 MIDI output busses that \textsl{Seq66} supports.
    For each of these buss items, another pop-up menu allows one
    to specify the MIDI output channel for that buss.
 
@@ -1243,7 +1243,7 @@
 
    \index{queue!replace}
    \index{queue!solo}
-   \textsl{Sequencer66} provides an extension to the replace/solo functionality
+   \textsl{Seq66} provides an extension to the replace/solo functionality
    that is called "queued-replace" or "queued-solo".  In this feature, when
    the "keep queue" function is activated, the replace function is queued so
    that it does not occur until the next time the patterns loop.
@@ -1356,7 +1356,7 @@
 
    The bottom panel of the Patterns window provides way to control the
    overall playback of the song.  It has changed quite a bit over the last few
-   versions of \textsl{Sequencer66}, and we have not yet caught up with the
+   versions of \textsl{Seq66}, and we have not yet caught up with the
    diagrams. And the Qt user-interface adds more changes.
    Refer to the diagram of the whole window, for now.
 
@@ -1423,7 +1423,7 @@
 %  after configuring with the \texttt{--disable-pause} option.)
 
    \itempar{Song Record}{pattern!song record}
-   Song-recording in \textsl{Sequencer66} is adopted from the
+   Song-recording in \textsl{Seq66} is adopted from the
    \textsl{Kepler34} project.
    This feature takes live muting changes and records them as
    triggers in the \textbf{Song Editor}.
@@ -1486,7 +1486,7 @@
    track (pattern slot \#0) or the alternate tempo track if defined,
    and only if it is active.  According to the MIDI standard, such events
    should be present \textsl{only} in the first track,
-   and so \textsl{Sequencer66} follows this rule, and also makes tempo events
+   and so \textsl{Seq66} follows this rule, and also makes tempo events
    officially supported.  They can be edited in the 
    \textbf{Pattern Editor} or in the
    \textbf{Event Editor}.
@@ -1542,10 +1542,10 @@
 \subsection{Patterns / Multiple Panels}
 \label{subsec:seq66_patterns_panel_multiple}
 
-%  If \textsl{Sequencer66} is built with the \texttt{--enable-multiwid}
-%  \textsl{Sequencer66} has a "multiwid" option, this defines the 
-%  \texttt{SEQ64\_MULTI\_MAINWID} macro, and allows for
-   \textsl{Sequencer66} has a "multiwid" option, which
+%  If \textsl{Seq66} is built with the \texttt{--enable-multiwid}
+%  \textsl{Seq66} has a "multiwid" option, this defines the 
+%  \texttt{SEQ66\_MULTI\_MAINWID} macro, and allows for
+   \textsl{Seq66} has a "multiwid" option, which
    allows for
    \index{multi-wid}
    multiple live panels showing more than one set at a time.
