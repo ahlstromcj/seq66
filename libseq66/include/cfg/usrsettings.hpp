@@ -1540,6 +1540,11 @@ public:
         return m_new_pattern_recordstyle;
     }
 
+    int new_pattern_recordcode () const
+    {
+        return static_cast<int>(m_new_pattern_recordstyle);
+    }
+
 public:         // used in main application module and the usrfile class
 
     void use_new_font (bool flag)

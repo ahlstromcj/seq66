@@ -140,7 +140,8 @@ sequence::sequence (int ppqn)
     m_playing                   (false),
     m_recording                 (false),
     m_expanded_recording        (false),
-    m_quantized_rec             (false),
+    m_overwrite_recording       (false),
+    m_quantized_recording       (false),
     m_thru                      (false),
     m_queued                    (false),
     m_one_shot                  (false),
@@ -150,7 +151,6 @@ sequence::sequence (int ppqn)
     m_song_recording            (false),
     m_song_recording_snap       (false),
     m_song_record_tick          (0),
-    m_overwrite_recording       (false),
     m_loop_reset                (false),
     m_unit_measure              (0),
     m_dirty_main                (true),
@@ -249,8 +249,8 @@ sequence::partial_assign (const sequence & rhs)
         m_was_playing               = false;
         m_playing                   = false;
         m_recording                 = false;
-        m_expanded_recording        = rhs.m_expanded_recording;
-        m_overwrite_recording       = rhs.m_overwrite_recording;
+        m_expanded_recording        = false;    // rhs.m_expanded_recording;
+        m_overwrite_recording       = false;    // rhs.m_overwrite_recording;
         m_scale                     = rhs.m_scale;
         m_name                      = rhs.m_name;
         m_ppqn                      = rhs.m_ppqn;
@@ -2675,7 +2675,6 @@ sequence::stream_event (event & ev)
                         mod_last_tick(), snap() - m_events.note_off_margin(),
                         ev.get_note(), false, velocity
                     );
-//////////////      set_dirty();
                     ++m_notes_on;
                 }
                 else if (ev.is_note_off())
@@ -2692,7 +2691,7 @@ sequence::stream_event (event & ev)
             put_event_on_bus(ev);                       /* removed locking  */
 
         link_new();                                     /* removed locking  */
-        if (m_quantized_rec && m_parent->is_pattern_playing())
+        if (m_quantized_recording && m_parent->is_pattern_playing())
         {
             if (ev.is_note_off())
             {
@@ -4322,6 +4321,14 @@ sequence::set_playing (bool p)
  *  changed.  It is called by set_input_recording().  We probably need to
  *  explicitly turn off all playing notes; not sure yet.
  *
+ * \param record
+ *      If true, recording is to be set.  If false, all recording-related
+ *      variables are set to false.
+ *
+ * \param quantize
+ *      If true, and recording is true, then recording will be quantized.
+ *      Defaults to false.
+ *
  * \threadsafe
  */
 
@@ -4331,13 +4338,16 @@ sequence::set_recording (bool r)
     automutex locker(m_mutex);
     if (r != m_recording)
     {
-        m_notes_on = 0;         // is there a more robust way to do this?
-        m_recording = r;
+        m_notes_on = 0;                 /* reset the step-edit note counter */
+        if (r)
+            m_recording = true;
+        else
+            m_recording = m_quantized_recording = false;
     }
 }
 
 /**
- * \setter m_quantized_rec
+ * \setter m_quantized_recording
  *
  *  What about doing this?
  *
@@ -4350,10 +4360,11 @@ void
 sequence::set_quantized_recording (bool qr)
 {
     automutex locker(m_mutex);
-    if (qr != m_quantized_rec)
+    if (qr != m_quantized_recording)
     {
-        m_notes_on = 0;         // is there a more robust way to do this?
-        m_quantized_rec = qr;
+        m_quantized_recording = qr;
+        if (qr)
+            set_recording(true);     /* make sure this is on too */
     }
 }
 
@@ -4397,19 +4408,6 @@ sequence::snap (int st)
 {
     automutex locker(m_mutex);
     m_snap_tick = st;
-}
-
-/**
- * \setter m_overwrite_recording
- *
- * \threadsafe
- */
-
-void
-sequence::overwrite_recording (bool ovwr)
-{
-    automutex locker(m_mutex);
-    m_overwrite_recording = ovwr;
 }
 
 /**
@@ -5295,6 +5293,19 @@ sequence::expand_recording () const
 }
 
 /**
+ * \setter m_overwrite_recording
+ *
+ * \threadsafe
+ */
+
+void
+sequence::set_overwrite_recording (bool ovwr)
+{
+    automutex locker(m_mutex);
+    m_overwrite_recording = ovwr;
+}
+
+/**
  *  Code to help user-interface callers.
  */
 
@@ -5311,20 +5322,20 @@ sequence::update_recording (int index)
         {
         case recordstyle::merge:
 
-            overwrite_recording(false);
-            expanded_recording(false);
+            set_overwrite_recording(false);
+            set_expanded_recording(false);
             break;
 
         case recordstyle::overwrite:
 
-            overwrite_recording(true);
-            expanded_recording(false);
+            set_overwrite_recording(true);
+            set_expanded_recording(false);
             break;
 
         case recordstyle::expand:
 
-            overwrite_recording(false);
-            expanded_recording(true);
+            set_overwrite_recording(false);
+            set_expanded_recording(true);
             break;
 
         default:

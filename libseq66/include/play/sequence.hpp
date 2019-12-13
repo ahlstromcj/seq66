@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-11-29
+ * \updates       2019-12-13
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -44,7 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* key and scale constants          */
-#include "cfg/settings.hpp"             /* enum class record                */
+#include "cfg/usrsettings.hpp"          /* enum class record                */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
@@ -370,10 +370,19 @@ private:
     bool m_expanded_recording;
 
     /**
+     *  Indicates if overwrite recording of notes in a loop is in force.
+     *  In this mode, shortly after then end of the pattern length, the existing
+     *  notes are erased.  This lets the player try again and again to get the
+     *  pattern perfect.
+     */
+
+    bool m_overwrite_recording;
+
+    /**
      *  True if recording in quantized mode.
      */
 
-    bool m_quantized_rec;
+    bool m_quantized_recording;
 
     /**
      *  True if recording in MIDI-through mode.
@@ -442,15 +451,6 @@ private:
      */
 
     midipulse m_song_record_tick;
-
-    /**
-     *  Indicates if overwrite recording of notes in a loop is in force.
-     *  In this mode, shortly after then end of the pattern length, the existing
-     *  notes are erased.  This lets the player try again and again to get the
-     *  pattern perfect.
-     */
-
-    bool m_overwrite_recording;
 
     /**
      *  Indicates if the play marker has gone to the beginning of the sequence
@@ -1172,7 +1172,7 @@ public:
         return get_queued() && (get_queued_tick() <= tick);
     }
 
-    void set_recording (bool record_active);
+    void set_recording (bool record);
     void set_quantized_recording (bool qr);
     void set_input_recording (bool record_active, bool toggle = false);
 
@@ -1181,17 +1181,23 @@ public:
         return m_recording;
     }
 
-    void expanded_recording (bool expand)
+    void set_expanded_recording (bool expand)
     {
         m_expanded_recording = expand;
     }
 
-    bool expanded_recording ()
+    bool expanded_recording () const
     {
         return m_expanded_recording;
     }
 
     bool expand_recording () const;     /* does more checking for status    */
+    void set_overwrite_recording (bool ovwr);
+
+    bool overwrite_recording () const
+    {
+        return m_overwrite_recording;
+    }
 
     midipulse snap () const
     {
@@ -1200,9 +1206,9 @@ public:
 
     void snap (int st);
 
-    bool get_quantized_rec () const
+    bool get_quantized_recording () const
     {
-        return m_quantized_rec;
+        return m_quantized_recording;
     }
 
     void set_thru (bool thru_active);                               // seqedit
@@ -1606,16 +1612,9 @@ public:
         return m_channel_match;
     }
 
-    void overwrite_recording (bool ovwr);
-
-    bool overwrite_recording ()
-    {
-        return m_overwrite_recording;
-    }
-
     void loop_reset (bool reset);
 
-    bool loop_reset ()
+    bool loop_reset () const
     {
         return m_loop_reset;
     }

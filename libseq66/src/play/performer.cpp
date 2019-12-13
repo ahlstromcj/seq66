@@ -2259,12 +2259,11 @@ performer::set_quantized_recording (bool record_active, int seq, bool toggle)
     if (s)
     {
         if (toggle)
-            s->set_quantized_recording(! s->get_quantized_rec());
+            s->set_quantized_recording(! s->get_quantized_recording());
         else
             s->set_quantized_recording(record_active);
     }
 }
-
 
 /**
  *  Set recording for overwrite.
@@ -2305,7 +2304,7 @@ performer::overwrite_recording (bool oactive, int seq, bool toggle)
         if (oactive)
             s->loop_reset(true);
 
-        s->overwrite_recording(oactive);
+        s->set_overwrite_recording(oactive);
     }
 }
 

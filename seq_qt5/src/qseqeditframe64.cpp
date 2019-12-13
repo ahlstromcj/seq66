@@ -662,7 +662,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
      * Quantize Button.  This is the "Q" button, and indicates to
      * quantize (just?) notes.  Compare it to the Quantize menu entry,
      * which quantizes events.  Note the usage of std::bind()... this feature
-     * requires C++11.
+     * requires C++11. Also see q_record_change(), which handles on-the-fly
+     * quantization while recording.
      */
 
     qt_set_icon(quantize_xpm, ui->m_button_quantize);
@@ -988,14 +989,21 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     int lrreplace = sequence::loop_record(recordstyle::overwrite);
     int lrexpand = sequence::loop_record(recordstyle::expand);
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
-    ui->m_combo_rec_type->insertItem(lrreplace, "Replace");
+    ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_record_type(int))
     );
-    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
+    if (seq_pointer()->is_new_pattern())
+    {
+        ui->m_combo_rec_type->setCurrentIndex(usr().new_pattern_recordcode());
+    }
+    else
+    {
+        ui->m_combo_rec_type->setCurrentIndex(lrmerge);
+    }
 
     /*
      * Recording Volume Button and Combo Box
