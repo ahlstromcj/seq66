@@ -35,7 +35,8 @@
 
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile class         */
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
-#include "util/calculations.hpp"        /* seq66::string_to_bool()          */
+#include "util/calculations.hpp"        /* seq66::current_data_time()       */
+#include "util/strfunctions.hpp"        /* seq66::string_to_bool()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

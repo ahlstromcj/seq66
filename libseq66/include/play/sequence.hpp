@@ -44,6 +44,7 @@
 
 #include "seq66_features.hpp"           /* various feature #defines         */
 #include "cfg/scales.hpp"               /* key and scale constants          */
+#include "cfg/settings.hpp"             /* enum class record                */
 #include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/midibus.hpp"             /* seq66::midibus                   */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
@@ -101,19 +102,6 @@ public:
     {
         live,
         song
-    };
-
-    /**
-     *  Provides the supported looping recording modes.  These values are used
-     *  by the seqedit class, which provides a button with a popup menu to
-     *  select one of these recording modes.
-     */
-
-    enum class record
-    {
-        legacy,         /**< Incoming events are merged into the loop.  */
-        overwrite,      /**< Incoming events overwrite the loop.        */
-        expand          /**< Incoming events increase size of loop.     */
     };
 
     /**
@@ -1638,7 +1626,7 @@ public:
 
 public:
 
-    static int loop_record (record r)
+    static int loop_record (recordstyle r)
     {
         return static_cast<int>(r);
     }

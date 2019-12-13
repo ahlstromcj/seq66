@@ -122,8 +122,6 @@ extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
 extern std::string formatted (const std::string & fmt, va_list args);
-extern const std::string & bool_string (bool x);
-extern char bool_char (bool x);
 extern bool is_debug ();
 
 /**

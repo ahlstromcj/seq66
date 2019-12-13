@@ -298,7 +298,7 @@ usrsettings::usrsettings () :
     m_new_pattern_thru          (false),
     m_new_pattern_record        (false),
     m_new_pattern_qrecord       (false),
-    m_new_pattern_record_style  (0)
+    m_new_pattern_recordstyle   (recordstyle::merge)
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
@@ -404,7 +404,7 @@ usrsettings::usrsettings (const usrsettings & rhs) :
     m_new_pattern_thru          (rhs.m_new_pattern_thru),
     m_new_pattern_record        (rhs.m_new_pattern_record),
     m_new_pattern_qrecord       (rhs.m_new_pattern_qrecord),
-    m_new_pattern_record_style  (rhs.m_new_pattern_record_style)
+    m_new_pattern_recordstyle   (rhs.m_new_pattern_recordstyle)
 {
     // Empty body; no need to call normalize() here.
 }
@@ -518,7 +518,7 @@ usrsettings::operator = (const usrsettings & rhs)
         m_new_pattern_thru = rhs.m_new_pattern_thru;
         m_new_pattern_record = rhs.m_new_pattern_record;
         m_new_pattern_qrecord = rhs.m_new_pattern_qrecord;
-        m_new_pattern_record_style = rhs.m_new_pattern_record_style;
+        m_new_pattern_recordstyle = rhs.m_new_pattern_recordstyle;
     }
     return *this;
 }
@@ -596,7 +596,7 @@ usrsettings::set_defaults ()
     m_new_pattern_thru = false;
     m_new_pattern_record = false;
     m_new_pattern_qrecord = false;
-    m_new_pattern_record_style = 0;
+    m_new_pattern_recordstyle = recordstyle::merge;
     normalize();                            // recalculate derived values
 }
 

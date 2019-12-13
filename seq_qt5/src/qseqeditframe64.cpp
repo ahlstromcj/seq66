@@ -979,15 +979,15 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     /*
      * Recording Merge, Replace, Extend Button.  Provides a button to set the
-     * recording style to "legacy" (when looping, merge new incoming events
+     * recording style to "merge" (when looping, merge new incoming events
      * into the pattern), "overwrite" (replace events with incoming events),
      * and "expand" (increase the size of the loop to accomodate new events).
      */
 
-    int lrlegacy = sequence::loop_record(sequence::record::legacy);
-    int lrreplace = sequence::loop_record(sequence::record::overwrite);
-    int lrexpand = sequence::loop_record(sequence::record::expand);
-    ui->m_combo_rec_type->insertItem(lrlegacy, "Merge");
+    int lrmerge = sequence::loop_record(recordstyle::merge);
+    int lrreplace = sequence::loop_record(recordstyle::overwrite);
+    int lrexpand = sequence::loop_record(recordstyle::expand);
+    ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Replace");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
     connect
@@ -995,7 +995,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_record_type(int))
     );
-    ui->m_combo_rec_type->setCurrentIndex(lrlegacy);
+    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
 
     /*
      * Recording Volume Button and Combo Box
@@ -1056,7 +1056,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         if (usr().new_pattern_qrecord())
         {
         }
-        if (usr().new_pattern_record_style() == ...)
+        if (usr().new_pattern_recordstyle() == ...)
         {
         }
          */
@@ -2830,7 +2830,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
         {
             /*
              * Do we really want the default controller name to start?
-             * That's what the legacy Seq24 code does!  We need to document
+             * That's what the merge Seq24 code does!  We need to document
              * it in the seq66-doc and seq66-doc projects.  Also, there
              * was a bug in Seq24 where the instrument number was use re 1
              * to get the proper instrument... it needs to be decremented to

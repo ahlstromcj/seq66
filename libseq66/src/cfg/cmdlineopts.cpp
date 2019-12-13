@@ -56,8 +56,9 @@
 #include "cfg/usrfile.hpp"              /* seq66::usrfile class             */
 #include "unix/daemonize.hpp"           /* seqg4::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* not_nullptr() and other macros   */
-#include "util/calculations.hpp"        /* string-to-numbers functions      */
+/// #include "util/calculations.hpp"        /* string-to-numbers functions      */
 #include "util/filefunctions.hpp"       /* file_accessible(), etc.          */
+#include "util/strfunctions.hpp"        /* string-to-numbers functions      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

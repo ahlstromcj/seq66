@@ -64,6 +64,7 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_rc            (rcs),
     m_error_message (),
     m_name          (name),
+    m_version       ("0"),
     m_line          (),
     m_prev_pos      (0)
 {
@@ -81,8 +82,7 @@ std::string
 configfile::trimline () const
 {
     std::string result = line();
-    result = trim(result);
-    return result;
+    return trim(result);
 }
 
 /**
@@ -105,6 +105,17 @@ configfile::parse_comments (std::ifstream & file)
 
         } while (next_data_line(file, false));  /* ditto                    */
     }
+    return result;
+}
+
+/**
+ *
+ */
+
+std::string
+configfile::parse_version (std::ifstream & file)
+{
+    std::string result = get_variable(file, "[Seq66]", "version");
     return result;
 }
 

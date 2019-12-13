@@ -61,6 +61,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() settings access      */
 #include "play/sequence.hpp"            /* the "parent" of the triggers     */
 #include "play/triggers.hpp"            /* seq66::triggers helper class     */
+#include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1310,7 +1311,7 @@ triggers::print (const std::string & seqname) const
         (
             "  tick_start = %ld; tick_end = %ld; offset = %ld; selected = %s\n",
             t.tick_start(), t.tick_end(), t.offset(),
-            bool_string(t.selected()).c_str()
+            bool_to_string(t.selected()).c_str()
         );
     }
 }

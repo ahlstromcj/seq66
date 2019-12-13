@@ -83,6 +83,7 @@
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile                   */
 #include "play/performer.hpp"           /* must precede wrkfile.hpp !       */
 #include "play/seq.hpp"                 /* seq66::sequence, seq66::seq      */
+#include "util/strfunctions.cpp"        /* seq66::bool_to_string()          */
 
 namespace seq66
 {
@@ -573,8 +574,8 @@ wrkfile::Track_chunk ()
             "            : ch %d port %d selected %s\n"
             "            : muted %s loop %s pitch %d vel %d\n",
             trackno, track_name.c_str(),
-            channel, ibyte(port), bool_string(selected).c_str(),
-            bool_string(muted).c_str(), bool_string(loop).c_str(),
+            channel, ibyte(port), bool_to_string(selected).c_str(),
+            bool_to_string(muted).c_str(), bool_to_string(loop).c_str(),
             pitch, velocity
         );
     }
@@ -1529,7 +1530,7 @@ wrkfile::Sysex_chunk ()
                 "Sysex chunk : bank %d length %d name-length %d "
                 "'%s' autosend %s\n",
                 bank, len, namelen, name.c_str(),
-                bool_string(autosend).c_str()
+                bool_to_string(autosend).c_str()
             );
         }
     }
@@ -1563,7 +1564,7 @@ wrkfile::Sysex2_chunk ()
                 "Sysex2 chunk: bank %d length %d name-length %d '%s' "
                 "port %d autosend %s\n",
                 bank, len, namelen, name.c_str(), ibyte(port),
-                bool_string(autosend).c_str()
+                bool_to_string(autosend).c_str()
             );
         }
     }
@@ -1597,7 +1598,7 @@ wrkfile::NewSysex_chunk ()
                 "New Sysex   : bank %d length %d name-length %d"
                 "'%s' port %d autosend %s\n",
                 bank, len, namelen, name.c_str(), ibyte(port),
-                bool_string(autosend).c_str()
+                bool_to_string(autosend).c_str()
             );
         }
     }
@@ -1892,8 +1893,8 @@ wrkfile::NewTrack ()
             "New Track   : Tr %d ch %d key %d port %d "
             "selected %s muted %s loop %s\n",
             int(trackno), int(channel), int(key), ibyte(port),
-            bool_string(selected).c_str(), bool_string(muted).c_str(),
-            bool_string(loop).c_str()
+            bool_to_string(selected).c_str(), bool_to_string(muted).c_str(),
+            bool_to_string(loop).c_str()
         );
         printf
         (

@@ -35,6 +35,7 @@
 
 #include "midi/editable_event.hpp"      /* seq66::editable_event            */
 #include "midi/editable_events.hpp"     /* seq66::editable_events multimap  */
+#include "util/strfunctions.hpp"        /* seq66::strings_match(), etc.     */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

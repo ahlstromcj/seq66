@@ -380,30 +380,6 @@ formatted (const std::string & fmt, va_list args)
     return result;
 }
 
-/**
- *  Easy conversion from boolean to string, "true" or "false".
- */
-
-const std::string &
-bool_string (bool x)
-{
-    static const std::string s_true { "true" };
-    static const std::string s_false { "false" };
-    return x ? s_true : s_false ;
-}
-
-/**
- *  Easy conversion from boolean to character, "T" or "F".
- */
-
-char
-bool_char (bool x)
-{
-    static char s_true { 'T' };
-    static char s_false { 'F' };
-    return x ? s_true : s_false ;
-}
-
 }           // namespace seq66
 
 /*

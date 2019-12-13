@@ -284,6 +284,7 @@
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
+#include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

@@ -43,7 +43,7 @@
 syn keyword XPCC errno errprintfunc infoprintfunc warnprintfunc
 syn keyword XPCC strerrprintfunc strerrorprintfunc strerrnoprintfunc
 
-syn keyword XPCC atomic_int_t bool_string bool_to_code debugprint_func
+syn keyword XPCC atomic_int_t bool_to_string bool_to_code debugprint_func
 syn keyword XPCC EXTERN_C_DEC EXTERN_C_END find_data_t
 syn keyword XPCC find_function_t find_type_t ftw_function_t
 syn keyword XPCC is_invalid_handle is_invalid_thread

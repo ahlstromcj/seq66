@@ -84,6 +84,19 @@ const int c_redraw_ms = 40;
 #endif
 
 /**
+ *  Provides the supported looping recording modes.  These values are used
+ *  by the seqedit class, which provides a button with a popup menu to
+ *  select one of these recording modes.
+ */
+
+enum class recordstyle
+{
+    merge,          /**< Incoming events are merged into the loop.  */
+    overwrite,      /**< Incoming events overwrite the loop.        */
+    expand          /**< Incoming events increase size of loop.     */
+};
+
+/**
  *  Holds the current values of sequence settings and settings that can
  *  modify the number of sequences and the configuration of the
  *  user-interface.  These settings will eventually be made part of the
@@ -854,7 +867,7 @@ private:
     bool m_new_pattern_thru;
     bool m_new_pattern_record;
     bool m_new_pattern_qrecord;
-    int m_new_pattern_record_style;     /* merge/legacy, overwrite, expand */
+    recordstyle m_new_pattern_recordstyle;
 
 public:
 
@@ -1522,9 +1535,9 @@ public:
         return m_new_pattern_qrecord;
     }
 
-    int new_pattern_record_style () const
+    recordstyle new_pattern_recordstyle () const
     {
-        return m_new_pattern_record_style;
+        return m_new_pattern_recordstyle;
     }
 
 public:         // used in main application module and the usrfile class
@@ -1645,9 +1658,9 @@ public:         // used in main application module and the usrfile class
         m_new_pattern_qrecord = flag;
     }
 
-    void new_pattern_record_style (int style)
+    void new_pattern_recordstyle (recordstyle style)
     {
-        m_new_pattern_record_style = style;
+        m_new_pattern_recordstyle = style;
     }
 
     void midi_ppqn (int ppqn);

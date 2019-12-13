@@ -124,15 +124,6 @@ extern midipulse string_to_pulses
     const std::string & s,
     const midi_timing & mt
 );
-extern bool string_to_bool (const std::string & s, bool defalt = false);
-extern double string_to_double (const std::string & s, double defalt = 0.0);
-extern long string_to_long (const std::string & s, long defalt = 0L);
-extern int string_to_int (const std::string & s, int defalt = 0);
-extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
-extern std::string shorten_file_spec (const std::string & fpath, int leng);
-extern bool string_not_void (const std::string & s);
-extern bool string_is_void (const std::string & s);
-extern bool strings_match (const std::string & target, const std::string & x);
 extern int log2_time_sig_value (int tsd);
 extern int zoom_power_of_2 (int ppqn);
 extern int beat_pow2 (int logbase2);

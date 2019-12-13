@@ -64,6 +64,7 @@
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
+#include "util/strfunctions.hpp"        /* bool_to_string()                 */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -4588,7 +4589,7 @@ sequence::to_string () const
     result += ", Bus ";
     result += std::to_string(get_midi_bus());
     result += "\n Transposeable: ";
-    result += bool_string(transposable());
+    result += bool_to_string(transposable());
     result += "\n Length (ticks): ";
     result += std::to_string(get_length());
     result += "Events:\n";
@@ -5300,25 +5301,27 @@ sequence::expand_recording () const
 bool
 sequence::update_recording (int index)
 {
-    record rectype = static_cast<record>(index);
-    bool result = rectype >= record::legacy && rectype <= record::expand;
+    recordstyle rectype = static_cast<recordstyle>(index);
+    bool result = rectype >= recordstyle::merge &&
+        rectype <= recordstyle::expand;
+
     if (result)
     {
         switch (rectype)
         {
-        case record::legacy:
+        case recordstyle::merge:
 
             overwrite_recording(false);
             expanded_recording(false);
             break;
 
-        case record::overwrite:
+        case recordstyle::overwrite:
 
             overwrite_recording(true);
             expanded_recording(false);
             break;
 
-        case record::expand:
+        case recordstyle::expand:
 
             overwrite_recording(false);
             expanded_recording(true);

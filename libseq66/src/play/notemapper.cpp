@@ -38,7 +38,7 @@
 #include <iostream>                     /* std::cerr to note errors         */
 
 #include "play/notemapper.hpp"          /* this module's functions & stuff  */
-#include "util/basic_macros.hpp"        /* seq66::bool_string()             */
+#include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
 namespace seq66
 {
@@ -243,7 +243,7 @@ notemapper::show () const
     std::cout
         << "Note-map Size: " << list().size() << "\n"
         << "         Type: " << map_type() << "\n"
-        << "     Reversed: " << bool_string(map_reversed()) << "\n"
+        << "     Reversed: " << bool_to_string(map_reversed()) << "\n"
         << " Note Minimum: " << note_minimum() << "\n"
         << " Note Maximum: " << note_maximum() << "\n"
         << "  Dev Channel: " << std::dec << device_channel() << "\n"

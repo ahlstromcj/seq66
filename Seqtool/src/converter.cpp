@@ -346,7 +346,7 @@ converter::show ()
     if (rc().verbose())
     {
         using namespace std;
-        std::string exists = bool_string(m_input_file_exists);
+        std::string exists = bool_to_string(m_input_file_exists);
         cout
             << "In base file-name:          '" << m_in_base_filename << "'\n"
             << "Out base file-name:         '" << m_out_base_filename << "'\n"

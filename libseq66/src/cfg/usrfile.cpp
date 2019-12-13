@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-09-28
+ * \updates       2019-12-13
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -61,11 +61,10 @@ namespace seq66
  *      object.
  */
 
-usrfile::usrfile (const std::string & name, rcsettings & rcs)
-  :
+usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    // Empty body
+    version("1");                       /* a new version on 2019-12-12      */
 }
 
 /**
@@ -133,10 +132,7 @@ usrfile::parse ()
     std::ifstream file(name().c_str(), std::ios::in | std::ios::ate);
     if (! file.is_open())
     {
-        errprintf
-        (
-            "usrfile::parse(): error opening %s\n", name().c_str()
-        );
+        errprintf("usrfile::parse(): error opening %s\n", name().c_str());
         return false;
     }
     file.seekg(0, std::ios::beg);                       /* seek to start    */
@@ -149,6 +145,20 @@ usrfile::parse ()
     std::string comments = parse_comments(file);
     if (! comments.empty())
         usr().comments_block().set(comments);
+
+    comments = parse_version(file);
+    if (comments.empty())
+    {
+        usr().save_user_config(true);
+    }
+    else
+    {
+        int fileversion = string_to_int(comments);
+        int codeversion = string_to_int(version());
+        if (fileversion < codeversion)
+            usr().save_user_config(true);
+    }
+
 
     /*
      *  Next, if we're using the manual or hide ALSA port options specified in
@@ -548,8 +558,14 @@ usrfile::parse ()
     s = get_variable(file, "[new-pattern-editor]", "qrecord");
     usr().new_pattern_qrecord(string_to_bool(s));
 
+    recordstyle rs = recordstyle::merge;
     s = get_variable(file, "[new-pattern-editor]", "record-style");
-    usr().new_pattern_record_style(string_to_int(s));   // FIXME
+    if (s == "overwrite")
+        rs = recordstyle::overwrite;
+    else if (s == "expand")
+        rs = recordstyle::expand;
+
+    usr().new_pattern_recordstyle(rs);
 
     /*
      * We have all of the data.  Close the file.
@@ -601,10 +617,9 @@ usrfile::write ()
         ;
 
     file <<
-    "\n"
-    "[Seq66]\n\n"
-    "config-type = \"usr\"\n"
-    "version = 0\n"
+        "\n[Seq66]\n\n"
+        "config-type = \"usr\"\n"
+        "version = " << version() << "\n"
         ;
 
     file <<
@@ -1279,23 +1294,28 @@ usrfile::write ()
         "\n"
         ;
 
-    std::string v = bool_string(usr().new_pattern_armed());
+    std::string v = bool_to_string(usr().new_pattern_armed());
     file << "armed = " << v << "\n";
 
-    v = bool_string(usr().new_pattern_thru());
+    v = bool_to_string(usr().new_pattern_thru());
     file << "thru = " << v << "\n";
 
-    v = bool_string(usr().new_pattern_record());
+    v = bool_to_string(usr().new_pattern_record());
     file << "record = " << v << "\n";
 
-    v = bool_string(usr().new_pattern_qrecord());
+    v = bool_to_string(usr().new_pattern_qrecord());
     file << "qrecord = " << v << "\n";
 
-    v = bool_string(usr().new_pattern_qrecord());
+    v = bool_to_string(usr().new_pattern_qrecord());
     file << "qrecord = " << v << "\n";
 
-    v = std::to_string(usr().new_pattern_record_style());
-    file << "record-style = " << v << "\n"; // FIXME
+    std::string rs = "merge";
+    if (usr().new_pattern_recordstyle() == recordstyle::overwrite)
+        rs = "overwrite";
+    else if (usr().new_pattern_recordstyle() == recordstyle::expand)
+        rs = "expand";
+
+    file << "record-style = " << rs << "\n";
 
     /*
      * End of file.

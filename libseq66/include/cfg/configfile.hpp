@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-11-06
+ * \updates       2019-12-13
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -98,6 +98,14 @@ private:
 
     std::string m_name;
 
+    /**
+     *  Provides the current version of the derived configuration file.  Mostly
+     *  useful to turn on the "--user-save" option for changes in the format of
+     *  the "usr" file.
+     */
+
+    std::string m_version;
+
 protected:
 
     /**
@@ -136,6 +144,7 @@ public:
     virtual bool write () = 0;
 
     std::string parse_comments (std::ifstream & file);
+    std::string parse_version (std::ifstream & file);
 
     /**
      *  Provides the input file-name, to keep m_name private.
@@ -147,6 +156,11 @@ public:
     const std::string & name () const
     {
         return m_name;
+    }
+
+    const std::string & version () const
+    {
+        return m_version;
     }
 
     const std::string & error_message () const
@@ -167,9 +181,11 @@ protected:
         const std::string & additional = ""
     );
 
-    /**
-     *
-     */
+    void version (const std::string & v)
+    {
+        if (! v.empty())
+            m_version = v;
+    }
 
     rcsettings & rc_ref ()
     {

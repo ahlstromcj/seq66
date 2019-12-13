@@ -61,6 +61,17 @@ extern std::string string_replace
     const std::string & target,
     const std::string & replacement
 );
+extern bool string_to_bool (const std::string & s, bool defalt = false);
+extern double string_to_double (const std::string & s, double defalt = 0.0);
+extern long string_to_long (const std::string & s, long defalt = 0L);
+extern int string_to_int (const std::string & s, int defalt = 0);
+extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
+extern std::string shorten_file_spec (const std::string & fpath, int leng);
+extern bool string_not_void (const std::string & s);
+extern bool string_is_void (const std::string & s);
+extern bool strings_match (const std::string & target, const std::string & x);
+extern const std::string & bool_to_string (bool x);
+extern char bool_to_char (bool x);
 extern int tokenize_stanzas
 (
     std::vector<std::string> & tokens,

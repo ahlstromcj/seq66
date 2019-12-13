@@ -324,11 +324,6 @@ bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
     bool result = true;
-
-    /**
-     * [midi-control-out]
-     */
-
     if (line_after(file, "[midi-control-out]"))
     {
         std::string s = get_variable
@@ -595,8 +590,8 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
-        std::string k(bool_string(rc_ref().load_key_controls()));
-        std::string m(bool_string(rc_ref().load_midi_controls()));
+        std::string k(bool_to_string(rc_ref().load_key_controls()));
+        std::string m(bool_to_string(rc_ref().load_midi_controls()));
         file
             << "\n[midi-control-flags]\n\n"
             << "load-key-controls = " << k << "\n"
