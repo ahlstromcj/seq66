@@ -941,6 +941,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_toggle_play, SIGNAL(toggled(bool)),
         this, SLOT(play_change(bool))
     );
+    if (seq_pointer()->is_new_pattern())
+        play_change(usr().new_pattern_armed());
 
     /*
      * MIDI Thru Button.
@@ -953,6 +955,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_toggle_thru, SIGNAL(toggled(bool)),
         this, SLOT(thru_change(bool))
     );
+    if (seq_pointer()->is_new_pattern())
+        thru_change(usr().new_pattern_thru());
 
     /*
      * MIDI Record Button.
@@ -965,6 +969,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_toggle_record, SIGNAL(toggled(bool)),
         this, SLOT(record_change(bool))
     );
+    if (seq_pointer()->is_new_pattern())
+        record_change(usr().new_pattern_record());
 
     /*
      * MIDI Quantized Record Button.
@@ -977,6 +983,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_toggle_qrecord, SIGNAL(toggled(bool)),
         this, SLOT(q_record_change(bool))
     );
+    if (seq_pointer()->is_new_pattern())
+        q_record_change(usr().new_pattern_qrecord());
 
     /*
      * Recording Merge, Replace, Extend Button.  Provides a button to set the
@@ -997,13 +1005,9 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(update_record_type(int))
     );
     if (seq_pointer()->is_new_pattern())
-    {
-        ui->m_combo_rec_type->setCurrentIndex(usr().new_pattern_recordcode());
-    }
-    else
-    {
-        ui->m_combo_rec_type->setCurrentIndex(lrmerge);
-    }
+        lrmerge = usr().new_pattern_recordcode();
+
+    ui->m_combo_rec_type->setCurrentIndex(lrmerge);
 
     /*
      * Recording Volume Button and Combo Box
@@ -3068,6 +3072,7 @@ void
 qseqeditframe64::play_change (bool ischecked)
 {
     seq_pointer()->set_playing(ischecked);
+    ui->m_toggle_play->setChecked(ischecked);
     ui->m_toggle_play->setToolTip
     (
         ischecked ? "Track is armed" : "Track is unarmed"
@@ -3083,11 +3088,15 @@ qseqeditframe64::play_change (bool ischecked)
  */
 
 void
-qseqeditframe64::thru_change (bool /*ischecked*/)
+qseqeditframe64::thru_change (bool ischecked)
 {
+#if defined USE_OLD_IMPLEMENTATION
     bool thru_active = ui->m_toggle_thru->isChecked();
     bool record_active = ui->m_toggle_record->isChecked();
     perf().set_thru(seq_pointer(), record_active, thru_active);
+#else
+    ui->m_toggle_thru->setChecked(ischecked);
+#endif
     update_midi_tooltips();
 }
 

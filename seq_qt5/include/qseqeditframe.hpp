@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-03-09
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -130,6 +130,7 @@ private:
     virtual void set_dirty () override;
     void initialize_panels ();
     void update_draw_geometry ();
+    void update_midi_tooltips ();
 
 signals:
 
@@ -152,10 +153,10 @@ private slots:
     void updateBackgroundSeq (int newindex);
     void toggleEditorMode ();
     void updateRecVol ();
-    void toggle_midi_play (bool newval);
-    void toggle_midi_thru (bool newval);
-    void toggle_midi_qrec (bool newval);
-    void toggle_midi_rec (bool newval);
+    void toggle_play (bool newval);
+    void toggle_thru (bool newval);
+    void toggle_qrec (bool newval);
+    void toggle_rec (bool newval);
     void select_all_notes ();
     void inverseNoteSelection ();
     void quantizeNotes ();

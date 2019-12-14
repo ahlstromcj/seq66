@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-12-13
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1172,18 +1172,23 @@ public:
         return get_queued() && (get_queued_tick() <= tick);
     }
 
-    void set_recording (bool record);
-    void set_quantized_recording (bool qr);
-    void set_input_recording (bool record_active, bool toggle = false);
+    void recording (bool record);
+    void quantized_recording (bool qr);
+    void input_recording (bool record_active, bool toggle = false);
 
-    bool get_recording () const
+    bool recording () const
     {
         return m_recording;
     }
 
-    void set_expanded_recording (bool expand)
+    bool quantized_recording () const
     {
-        m_expanded_recording = expand;
+        return m_quantized_recording;
+    }
+
+    bool quantizing () const
+    {
+        return m_recording && m_quantized_recording;
     }
 
     bool expanded_recording () const
@@ -1191,8 +1196,18 @@ public:
         return m_expanded_recording;
     }
 
+    bool expanding () const
+    {
+        return m_recording && m_expanded_recording;
+    }
+
+    void expanded_recording (bool expand)
+    {
+        m_expanded_recording = expand;
+    }
+
     bool expand_recording () const;     /* does more checking for status    */
-    void set_overwrite_recording (bool ovwr);
+    void overwrite_recording (bool ovwr);
 
     bool overwrite_recording () const
     {
@@ -1205,12 +1220,6 @@ public:
     }
 
     void snap (int st);
-
-    bool get_quantized_recording () const
-    {
-        return m_quantized_recording;
-    }
-
     void set_thru (bool thru_active);                               // seqedit
     void set_input_thru (bool thru_active, bool toggle = false);    // performer
 
@@ -1652,6 +1661,11 @@ private:
     static int limit ()
     {
         return 2048;                    /* 0x0800   */
+    }
+
+    mastermidibus * master_bus ()
+    {
+        return m_master_bus;
     }
 
     bool quantize_events

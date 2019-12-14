@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-03-10
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,7 +34,6 @@
 
 #include "seq66-config.h"
 #include "play/performer.hpp"
-#include "play/sequence.hpp"
 #include "qseqeditex.hpp"
 #include "qseqeditframe64.hpp"
 #include "qsmainwnd.hpp"
@@ -58,6 +57,8 @@ namespace seq66
 {
 
 /**
+ *  Creates the window holding the external edit frame, and creates that frame
+ *  [qseqeditframe64] as well.
  *
  * \param p
  *      Provides the performer object to use for interacting with this sequence.
@@ -104,7 +105,8 @@ qseqeditex::~qseqeditex()
 }
 
 /**
- *
+ *  Tells the parent window to remove this container frame when the user closes
+ *  it.
  */
 
 void
@@ -115,7 +117,7 @@ qseqeditex::closeEvent (QCloseEvent *)
 }
 
 /**
- *
+ *  Tells the contained edit frame that it needs to update itself.
  */
 
 void

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-29
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -249,8 +249,12 @@ sequence::partial_assign (const sequence & rhs)
         m_was_playing               = false;
         m_playing                   = false;
         m_recording                 = false;
-        m_expanded_recording        = false;    // rhs.m_expanded_recording;
-        m_overwrite_recording       = false;    // rhs.m_overwrite_recording;
+        m_expanded_recording        = false;
+        m_overwrite_recording       = false;
+        m_quantized_recording       = false;
+        m_song_recording            = false;
+        m_song_recording_snap       = false;
+        m_song_record_tick          = 0;
         m_scale                     = rhs.m_scale;
         m_name                      = rhs.m_name;
         m_ppqn                      = rhs.m_ppqn;
@@ -962,7 +966,7 @@ sequence::remove (eventlist::iterator evi)
         event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
-            m_master_bus->play(m_bus, &er, m_midi_channel);
+            master_bus()->play(m_bus, &er, m_midi_channel);
             --m_playing_notes[er.get_note()];                   // ugh
         }
         (void) m_events.remove(evi);
@@ -2565,7 +2569,7 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (m_overwrite_recording && m_parent->is_running() && get_length() > 0)
+    if (overwrite_recording() && m_parent->is_running() && get_length() > 0)
     {
         midipulse tstamp = m_parent->get_tick() % get_length();
         if (tstamp < (m_ppqn / 4))
@@ -2638,7 +2642,7 @@ sequence::stream_event (event & ev)
         }
         ev.set_status(ev.get_status());         /* clear the channel nybble */
         ev.mod_timestamp(get_length());         /* adjust tick re length    */
-        if (m_recording)
+        if (recording())
         {
             if (m_parent->is_pattern_playing()) /* m_parent->is_running()   */
             {
@@ -2691,7 +2695,7 @@ sequence::stream_event (event & ev)
             put_event_on_bus(ev);                       /* removed locking  */
 
         link_new();                                     /* removed locking  */
-        if (m_quantized_recording && m_parent->is_pattern_playing())
+        if (quantizing() && m_parent->is_pattern_playing())
         {
             if (ev.is_note_off())
             {
@@ -2836,8 +2840,8 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    m_master_bus->play(m_bus, &e, m_midi_channel);
-    m_master_bus->flush();
+    master_bus()->play(m_bus, &e, m_midi_channel);
+    master_bus()->flush();
 }
 
 /**
@@ -2856,8 +2860,8 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    m_master_bus->play(m_bus, &e, m_midi_channel);
-    m_master_bus->flush();
+    master_bus()->play(m_bus, &e, m_midi_channel);
+    master_bus()->flush();
 }
 
 /**
@@ -4318,7 +4322,7 @@ sequence::set_playing (bool p)
  * \setter m_recording and m_notes_on
  *
  *  This function sets m_notes_on to 0, only if the recording status has
- *  changed.  It is called by set_input_recording().  We probably need to
+ *  changed.  It is called by input_recording().  We probably need to
  *  explicitly turn off all playing notes; not sure yet.
  *
  * \param record
@@ -4333,16 +4337,16 @@ sequence::set_playing (bool p)
  */
 
 void
-sequence::set_recording (bool r)
+sequence::recording (bool r)
 {
     automutex locker(m_mutex);
-    if (r != m_recording)
+    if (r != recording())
     {
         m_notes_on = 0;                 /* reset the step-edit note counter */
         if (r)
             m_recording = true;
         else
-            m_recording = m_quantized_recording = false;
+            m_recording = m_quantized_recording = false;    /* CAREFUL! */
     }
 }
 
@@ -4351,20 +4355,20 @@ sequence::set_recording (bool r)
  *
  *  What about doing this?
  *
- *      m_master_bus->set_sequence_input(record_active, this);
+ *      master_bus()->set_sequence_input(record_active, this);
  *
  * \threadsafe
  */
 
 void
-sequence::set_quantized_recording (bool qr)
+sequence::quantized_recording (bool qr)
 {
     automutex locker(m_mutex);
     if (qr != m_quantized_recording)
     {
         m_quantized_recording = qr;
         if (qr)
-            set_recording(true);     /* make sure this is on too */
+            recording(true);        /* make sure this is on too */
     }
 }
 
@@ -4388,13 +4392,13 @@ sequence::set_quantized_recording (bool qr)
  */
 
 void
-sequence::set_input_recording (bool record_active, bool toggle)
+sequence::input_recording (bool record_active, bool toggle)
 {
     if (toggle)
         record_active = ! m_recording;
 
-    m_master_bus->set_sequence_input(record_active, this);
-    set_recording(record_active);
+    master_bus()->set_sequence_input(record_active, this);
+    recording(record_active);
 }
 
 /**
@@ -4463,7 +4467,7 @@ sequence::set_input_thru (bool thru_active, bool toggle)
      */
 
      if (! m_recording)
-        m_master_bus->set_sequence_input(thru_active, this);
+        master_bus()->set_sequence_input(thru_active, this);
 
     set_thru(thru_active);
 }
@@ -4636,8 +4640,8 @@ sequence::put_event_on_bus (event & ev)
     if (! skip)
     {
         midibyte channel = m_no_channel ? ev.channel() : m_midi_channel ;
-        m_master_bus->play(m_bus, &ev, channel);
-        m_master_bus->flush();
+        master_bus()->play(m_bus, &ev, channel);
+        master_bus()->flush();
     }
 }
 
@@ -4659,12 +4663,12 @@ sequence::off_playing_notes ()
         while (m_playing_notes[x] > 0)
         {
             e.set_data(x, midibyte(0));               /* or is 127 better?  */
-            m_master_bus->play(m_bus, &e, m_midi_channel);
+            master_bus()->play(m_bus, &e, m_midi_channel);
             if (m_playing_notes[x] > 0)
                 --m_playing_notes[x];
         }
     }
-    m_master_bus->flush();
+    master_bus()->flush();
 }
 
 /**
@@ -5274,7 +5278,7 @@ bool
 sequence::expand_recording () const
 {
     bool result = false;
-    if (m_recording && m_expanded_recording)
+    if (expanding())
     {
         midipulse tstamp = m_last_tick;     // m_parent->get_tick() % m_length;
         if (tstamp >= expand_threshold())
@@ -5299,7 +5303,7 @@ sequence::expand_recording () const
  */
 
 void
-sequence::set_overwrite_recording (bool ovwr)
+sequence::overwrite_recording (bool ovwr)
 {
     automutex locker(m_mutex);
     m_overwrite_recording = ovwr;
@@ -5322,20 +5326,20 @@ sequence::update_recording (int index)
         {
         case recordstyle::merge:
 
-            set_overwrite_recording(false);
-            set_expanded_recording(false);
+            overwrite_recording(false);
+            expanded_recording(false);
             break;
 
         case recordstyle::overwrite:
 
-            set_overwrite_recording(true);
-            set_expanded_recording(false);
+            overwrite_recording(true);
+            expanded_recording(false);
             break;
 
         case recordstyle::expand:
 
-            set_overwrite_recording(false);
-            set_expanded_recording(true);
+            overwrite_recording(false);
+            expanded_recording(true);
             break;
 
         default:

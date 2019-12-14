@@ -753,12 +753,8 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
     {
         if (not_nullptr(seq))
         {
-            if (state)
+            if (state)                  /* add sequence if not already in   */
             {
-                /*
-                 * Add the sequence if not already added.
-                 */
-
                 bool have_seq_already = false;
                 for (size_t i = 0; i < m_vector_sequence.size(); ++i)
                 {
@@ -771,12 +767,8 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
                 if (! have_seq_already)
                     m_vector_sequence.push_back(seq);
             }
-            else
+            else                        /* remove sequence if already in    */
             {
-                /*
-                 * If the sequence is already in the vector, remove it.
-                 */
-
                 for (size_t i = 0; i < m_vector_sequence.size(); ++i)
                 {
                     if (m_vector_sequence[i] == seq)
@@ -790,14 +782,7 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
                 m_dumping_input = true;
         }
         else if (! state)
-        {
-            /*
-             * No sequence and false state means we don't want to record, so
-             * clear the vector.
-             */
-
-            m_vector_sequence.clear();
-        }
+            m_vector_sequence.clear();  /* don't record, and clear vector   */
     }
     else
     {

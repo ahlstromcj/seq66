@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-11-22
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -416,16 +416,21 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         ui->cmbRecVol, SIGNAL(currentIndexChanged(int)),
         this, SLOT(updateRecVol())
     );
-    connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_play(bool)));
+
+    ui->btnPlay->setCheckable(true);
+    connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(toggle_play(bool)));
     qt_set_icon(play_xpm, ui->btnPlay);
 
-    connect(ui->btnQRec, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_qrec(bool)));
+    ui->btnQRec->setCheckable(true);
+    connect(ui->btnQRec, SIGNAL(clicked(bool)), this, SLOT(toggle_qrec(bool)));
     qt_set_icon(quantize_xpm, ui->btnQRec);
 
-    connect(ui->btnRec, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_rec(bool)));
+    ui->btnRec->setCheckable(true);
+    connect(ui->btnRec, SIGNAL(clicked(bool)), this, SLOT(toggle_rec(bool)));
     qt_set_icon(rec_xpm, ui->btnRec);
 
-    connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggle_midi_thru(bool)));
+    ui->btnThru->setCheckable(true);
+    connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggle_thru(bool)));
     qt_set_icon(thru_xpm, ui->btnThru);
 
     m_timer = new QTimer(this);
@@ -812,6 +817,37 @@ qseqeditframe::updateRecVol ()
 }
 
 /**
+ *  Updates tool tips according to current status.
+ */
+
+void
+qseqeditframe::update_midi_tooltips ()
+{
+    /*
+     * Here, we could check the sequence status directly and force it.
+     * Something to think about.
+     */
+
+    bool thru_active = ui->btnThru->isChecked();
+    bool record_active = ui->btnRec->isChecked();
+    bool qrecord_active = ui->btnQRec->isChecked();
+    bool playing = seq_pointer()->get_playing();
+    ui->btnThru->setToolTip
+    (
+        thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
+    );
+    ui->btnRec->setToolTip
+    (
+        record_active ? "MIDI Record Active" : "MIDI Record Inactive"
+    );
+    ui->btnQRec->setToolTip
+    (
+        qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
+    );
+    ui->btnPlay->setToolTip(playing ? "Armed" : "Muted");
+}
+
+/**
  *  Toggles the mute status of the sequence.  This also updates,
  *  indirectly, the Live frame view.
  *
@@ -820,9 +856,10 @@ qseqeditframe::updateRecVol ()
  */
 
 void
-qseqeditframe::toggle_midi_play (bool newval)
+qseqeditframe::toggle_play (bool newval)
 {
     seq_pointer()->set_playing(newval);
+    update_midi_tooltips();
 }
 
 /**
@@ -833,9 +870,10 @@ qseqeditframe::toggle_midi_play (bool newval)
  */
 
 void
-qseqeditframe::toggle_midi_qrec (bool newval)
+qseqeditframe::toggle_qrec (bool newval)
 {
-    seq_pointer()->set_quantized_recording(newval);
+    seq_pointer()->quantized_recording(newval);
+    update_midi_tooltips();
 }
 
 /**
@@ -846,13 +884,14 @@ qseqeditframe::toggle_midi_qrec (bool newval)
  */
 
 void
-qseqeditframe::toggle_midi_rec (bool newval)
+qseqeditframe::toggle_rec (bool newval)
 {
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
         masterbus->set_sequence_input(true, seq_pointer().get());
-        seq_pointer()->set_recording(newval);
+        seq_pointer()->recording(newval);
+        update_midi_tooltips();
     }
 }
 
@@ -861,13 +900,14 @@ qseqeditframe::toggle_midi_rec (bool newval)
  */
 
 void
-qseqeditframe::toggle_midi_thru (bool newval)
+qseqeditframe::toggle_thru (bool newval)
 {
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
         masterbus->set_sequence_input(true, seq_pointer().get());
         seq_pointer()->set_thru(newval);
+        update_midi_tooltips();
     }
 }
 

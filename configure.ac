@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2019-12-08
+dnl \update        2019-12-14
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -25,10 +25,7 @@ AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 export PKG_CONFIG=$(which pkg-config)
 AC_CANONICAL_HOST
-
-dnl AM_INIT_AUTOMAKE([dist-bzip2 subdir-objects])
 AM_INIT_AUTOMAKE([dist-bzip2])
-
 AC_CONFIG_HEADER([include/config.h])
 
 dnl Prepends "SEQ66_" to the macro definitions, for a better guarantee of
@@ -399,7 +396,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2019-12-08"
+#define VERSION_DATE_SHORT "2019-12-14"
 #define VERSION "0.90.2"
 
 )

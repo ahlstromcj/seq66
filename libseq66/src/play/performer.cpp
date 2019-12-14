@@ -2186,7 +2186,7 @@ performer::set_recording (seq::pointer s, bool record_active, bool thru_active)
             result = set_sequence_input(s, record_active);
 
         if (result)
-            s->set_recording(record_active);
+            s->recording(record_active);
     }
     return result;
 }
@@ -2202,7 +2202,7 @@ performer::set_recording (seq::pointer s, bool record_active, bool thru_active)
  *
  * \param toggle
  *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::set_input_recording().
+ *      setting.  Passed along to sequence::input_recording().
  */
 
 bool
@@ -2211,7 +2211,7 @@ performer::set_recording (seq::number seqno, bool record_active, bool toggle)
     seq::pointer s = get_sequence(seqno);
     bool result = bool(s);
     if (result)
-        s->set_input_recording(record_active, toggle);
+        s->input_recording(record_active, toggle);
 
     return result;
 }
@@ -2232,14 +2232,14 @@ performer::set_quantized_recording (seq::pointer s, bool record_active)
 {
     bool result = bool(s);
     if (result)
-        s->set_quantized_recording(record_active);
+        s->quantized_recording(record_active);
 
     return result;
 }
 
 /**
  *  Sets quantized recording.  This isn't quite consistent with setting
- *  regular recording, which uses sequence::set_input_recording().
+ *  regular recording, which uses sequence::input_recording().
  *
  * \param record_active
  *      Provides the current status of the Record button.
@@ -2249,7 +2249,7 @@ performer::set_quantized_recording (seq::pointer s, bool record_active)
  *
  * \param toggle
  *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::set_input_recording().
+ *      setting.  Passed along to sequence::input_recording().
  */
 
 void
@@ -2259,9 +2259,9 @@ performer::set_quantized_recording (bool record_active, int seq, bool toggle)
     if (s)
     {
         if (toggle)
-            s->set_quantized_recording(! s->get_quantized_recording());
+            s->quantized_recording(! s->quantized_recording());
         else
-            s->set_quantized_recording(record_active);
+            s->quantized_recording(record_active);
     }
 }
 
@@ -2304,7 +2304,7 @@ performer::overwrite_recording (bool oactive, int seq, bool toggle)
         if (oactive)
             s->loop_reset(true);
 
-        s->set_overwrite_recording(oactive);
+        s->overwrite_recording(oactive);
     }
 }
 

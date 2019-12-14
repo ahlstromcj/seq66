@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2019-09-28
+ * \updates       2019-12-14
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -56,7 +56,6 @@
 #include "cfg/usrfile.hpp"              /* seq66::usrfile class             */
 #include "unix/daemonize.hpp"           /* seqg4::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* not_nullptr() and other macros   */
-/// #include "util/calculations.hpp"        /* string-to-numbers functions      */
 #include "util/filefunctions.hpp"       /* file_accessible(), etc.          */
 #include "util/strfunctions.hpp"        /* string-to-numbers functions      */
 
@@ -69,7 +68,8 @@ namespace seq66
 
 /**
  *  Sets up the "hardwired" version text for Seq66.  This value
- *  ultimately comes from the configure.ac script.
+ *  ultimately comes from the configure.ac script, and available in the
+ *  seq66_features module.
  */
 
 const std::string
@@ -78,7 +78,7 @@ cmdlineopts::versiontext = seq_version_text();
 /**
  *  A structure for command parsing that provides the long forms of
  *  command-line arguments, and associates them with their respective
- *  short form.  Note the terminating null structure..
+ *  short form.  Note the terminating null structure.
  */
 
 struct option

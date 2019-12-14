@@ -42,8 +42,9 @@
  *  RtMidi, so that JACK is supported.  However, LASH support is not being
  *  ported to seq66.
  *
- *  Note:  This header file is NOT auto-generated.  Therefore, the date and
- *  version information below must be edited by hand when needed.
+ *  Note:  This header file is NOT auto-generated for the portmidi build.
+ *  Therefore, the date and version information below must be edited by hand
+ *  when needed.
  *
  *      SEQ66_VERSION_DATE_SHORT
  *      SEQ66_PACKAGE_STRING
@@ -56,7 +57,7 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2019-10-20"
+#define SEQ66_VERSION_DATE_SHORT "2019-12-14"
 #endif
 
 #ifndef SEQ66_VERSION
