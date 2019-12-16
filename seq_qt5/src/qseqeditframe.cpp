@@ -408,8 +408,8 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
      *  );
      */
 
-    connect(ui->btnDrum, SIGNAL(clicked(bool)), this, SLOT(toggleEditorMode()));
     qt_set_icon(drum_xpm, ui->btnDrum);
+    connect(ui->btnDrum, SIGNAL(clicked(bool)), this, SLOT(toggleEditorMode()));
 
     connect
     (
@@ -418,20 +418,30 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     );
 
     ui->btnPlay->setCheckable(true);
-    connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(toggle_play(bool)));
     qt_set_icon(play_xpm, ui->btnPlay);
-
-    ui->btnQRec->setCheckable(true);
-    connect(ui->btnQRec, SIGNAL(clicked(bool)), this, SLOT(toggle_qrec(bool)));
-    qt_set_icon(quantize_xpm, ui->btnQRec);
+    connect(ui->btnPlay, SIGNAL(toggled(bool)), this, SLOT(toggle_play(bool)));
+    if (seq_pointer()->is_new_pattern())
+        toggle_play(usr().new_pattern_armed());
 
     ui->btnRec->setCheckable(true);
-    connect(ui->btnRec, SIGNAL(clicked(bool)), this, SLOT(toggle_rec(bool)));
     qt_set_icon(rec_xpm, ui->btnRec);
+    connect(ui->btnRec, SIGNAL(toggled(bool)), this, SLOT(toggle_rec(bool)));
+    if (seq_pointer()->is_new_pattern())
+        toggle_rec(usr().new_pattern_record());
+
+    ui->btnQRec->setCheckable(true);
+    qt_set_icon(quantize_xpm, ui->btnQRec);
+    connect(ui->btnQRec, SIGNAL(toggled(bool)), this, SLOT(toggle_qrec(bool)));
+    if (seq_pointer()->is_new_pattern())
+        toggle_qrec(usr().new_pattern_qrecord());
 
     ui->btnThru->setCheckable(true);
-    connect(ui->btnThru, SIGNAL(clicked(bool)), this, SLOT(toggle_thru(bool)));
     qt_set_icon(thru_xpm, ui->btnThru);
+    connect(ui->btnThru, SIGNAL(toggled(bool)), this, SLOT(toggle_thru(bool)));
+    if (seq_pointer()->is_new_pattern())
+        toggle_thru(usr().new_pattern_thru());
+
+    update_midi_buttons();
 
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
@@ -828,22 +838,26 @@ qseqeditframe::update_midi_buttons ()
      * Something to think about.
      */
 
-    bool thru_active = ui->btnThru->isChecked();
-    bool record_active = ui->btnRec->isChecked();
-    bool qrecord_active = ui->btnQRec->isChecked();
+    bool thru_active = seq_pointer()->thru();
+    bool record_active = seq_pointer()->recording();
+    bool qrecord_active = seq_pointer()->quantized_recording();
     bool playing = seq_pointer()->playing();
+    ui->btnThru->setChecked(thru_active);
     ui->btnThru->setToolTip
     (
         thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
     );
+    ui->btnRec->setChecked(record_active);
     ui->btnRec->setToolTip
     (
         record_active ? "MIDI Record Active" : "MIDI Record Inactive"
     );
+    ui->btnQRec->setChecked(qrecord_active);
     ui->btnQRec->setToolTip
     (
         qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
     );
+    ui->btnPlay->setChecked(playing);
     ui->btnPlay->setToolTip(playing ? "Armed" : "Muted");
 }
 

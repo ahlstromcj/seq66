@@ -1048,32 +1048,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_seqroll->progress_follow(seqwidth > scrollwidth);
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
 
-    /*
-     * Set up the buttons if this is a "new pattern".
-     */
-
-    if (seq_pointer()->is_new_pattern())
-    {
-        /*
-         * TODO
-        if (usr().new_pattern_armed())
-        {
-        }
-        if (usr().new_pattern_thru())
-        {
-        }
-        if (usr().new_pattern_record())
-        {
-        }
-        if (usr().new_pattern_qrecord())
-        {
-        }
-        if (usr().new_pattern_recordstyle() == ...)
-        {
-        }
-         */
-    }
-
+    update_midi_buttons();
     set_initialized();
 
     m_timer = new QTimer(this);                             /* redraw timer */

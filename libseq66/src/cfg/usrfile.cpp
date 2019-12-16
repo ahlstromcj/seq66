@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-12-13
+ * \updates       2019-12-16
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -1303,9 +1303,6 @@ usrfile::write ()
 
     v = bool_to_string(usr().new_pattern_record());
     file << "record = " << v << "\n";
-
-    v = bool_to_string(usr().new_pattern_qrecord());
-    file << "qrecord = " << v << "\n";
 
     v = bool_to_string(usr().new_pattern_qrecord());
     file << "qrecord = " << v << "\n";
