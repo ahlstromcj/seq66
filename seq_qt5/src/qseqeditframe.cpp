@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-14
+ * \updates       2019-12-16
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -821,7 +821,7 @@ qseqeditframe::updateRecVol ()
  */
 
 void
-qseqeditframe::update_midi_tooltips ()
+qseqeditframe::update_midi_buttons ()
 {
     /*
      * Here, we could check the sequence status directly and force it.
@@ -831,7 +831,7 @@ qseqeditframe::update_midi_tooltips ()
     bool thru_active = ui->btnThru->isChecked();
     bool record_active = ui->btnRec->isChecked();
     bool qrecord_active = ui->btnQRec->isChecked();
-    bool playing = seq_pointer()->get_playing();
+    bool playing = seq_pointer()->playing();
     ui->btnThru->setToolTip
     (
         thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
@@ -851,48 +851,43 @@ qseqeditframe::update_midi_tooltips ()
  *  Toggles the mute status of the sequence.  This also updates,
  *  indirectly, the Live frame view.
  *
- * \param newval
+ * \param ischecked
  *      True if the sequence/pattern is to be playing.
  */
 
 void
-qseqeditframe::toggle_play (bool newval)
+qseqeditframe::toggle_play (bool ischecked)
 {
-    seq_pointer()->set_playing(newval);
-    update_midi_tooltips();
-}
-
-/**
- *  Toggles the quantized recording status of the sequence.
- *
- * \param newval
- *      True if the sequence/pattern is to be quantized recorded.
- */
-
-void
-qseqeditframe::toggle_qrec (bool newval)
-{
-    seq_pointer()->quantized_recording(newval);
-    update_midi_tooltips();
+    if (seq_pointer()->set_playing(ischecked))
+        update_midi_buttons();
 }
 
 /**
  *  Toggles the recording status of the sequence.
  *
- * \param newval
+ * \param ischecked
  *      True if the sequence/pattern is to be recorded.
  */
 
 void
-qseqeditframe::toggle_rec (bool newval)
+qseqeditframe::toggle_rec (bool ischecked)
 {
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
-    {
-        masterbus->set_sequence_input(true, seq_pointer().get());
-        seq_pointer()->recording(newval);
-        update_midi_tooltips();
-    }
+    if (perf().set_recording(seq_pointer(), ischecked, false))
+        update_midi_buttons();
+}
+
+/**
+ *  Toggles the quantized recording status of the sequence.
+ *
+ * \param ischecked
+ *      True if the sequence/pattern is to be quantized recorded.
+ */
+
+void
+qseqeditframe::toggle_qrec (bool ischecked)
+{
+    if (perf().set_quantized_recording(seq_pointer(), ischecked, false))
+        update_midi_buttons();
 }
 
 /**
@@ -900,15 +895,10 @@ qseqeditframe::toggle_rec (bool newval)
  */
 
 void
-qseqeditframe::toggle_thru (bool newval)
+qseqeditframe::toggle_thru (bool ischecked)
 {
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
-    {
-        masterbus->set_sequence_input(true, seq_pointer().get());
-        seq_pointer()->set_thru(newval);
-        update_midi_tooltips();
-    }
+    if (perf().set_thru(seq_pointer(), ischecked, false))
+        update_midi_buttons();
 }
 
 /**

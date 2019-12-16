@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-12-14
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -860,8 +860,8 @@ public:
 
     void modify ();
     int event_count () const;
-    int note_count () /*const*/;
-    bool minmax_notes (int & lowest, int & highest) /*const*/;
+    int note_count ();
+    bool minmax_notes (int & lowest, int & highest);
 
     /*
      * seqdata and lfownd hold for undo
@@ -877,7 +877,7 @@ public:
     void set_have_undo ()
     {
         m_have_undo = m_events_undo.size() > 0;
-        if (m_have_undo)                            /* ca 2016-08-16        */
+        if (m_have_undo)
             modify();                               /* have pending changes */
     }
 
@@ -887,8 +887,7 @@ public:
     }
 
     /**
-     * \setter m_have_redo
-     *      No reliable way to "unmodify" the performance here.
+     *  No reliable way to "unmodify" the performance here.
      */
 
     void set_have_redo ()
@@ -961,7 +960,7 @@ public:
 
     void set_32nds_per_quarter (int tpq)
     {
-        m_32nds_per_quarter = tpq;              // needs validation
+        m_32nds_per_quarter = tpq;          // needs validation
     }
 
     int get_32nds_per_quarter () const
@@ -1043,7 +1042,7 @@ public:
 
     bool is_new_pattern () const
     {
-        return is_default_name();
+        return is_default_name();       /* any better way?  */
     }
 
     static const std::string & default_name ()
@@ -1132,9 +1131,9 @@ public:
      * Documented at the definition point in the cpp module.
      */
 
-    void set_playing (bool p);
+    bool set_playing (bool p);
 
-    bool get_playing () const
+    bool playing () const
     {
         return m_playing;
     }
@@ -1146,8 +1145,8 @@ public:
 
     bool toggle_playing ()
     {
-        set_playing(! get_playing());
-        return get_playing();
+        set_playing(! playing());
+        return playing();
     }
 
     void toggle_playing (midipulse tick, bool resumenoteons);
@@ -1164,7 +1163,7 @@ public:
     }
 
     /**
-     *  Helper function for performer.
+     *  Helper functions for performer.
      */
 
     bool check_queued_tick (midipulse tick) const
@@ -1172,9 +1171,10 @@ public:
         return get_queued() && (get_queued_tick() <= tick);
     }
 
-    void recording (bool record);
-    void quantized_recording (bool qr);
-    void input_recording (bool record_active, bool toggle = false);
+    bool set_recording (bool recordon, bool toggle = false);
+    bool set_quantized_recording (bool qr, bool toggle = false);
+    bool set_overwrite_recording (bool ovwr, bool toggle = false);
+    bool set_thru (bool thru_active, bool toggle = false);
 
     bool recording () const
     {
@@ -1207,11 +1207,15 @@ public:
     }
 
     bool expand_recording () const;     /* does more checking for status    */
-    void overwrite_recording (bool ovwr);
 
-    bool overwrite_recording () const
+    bool overwriting () const
     {
-        return m_overwrite_recording;
+        return m_recording && m_overwrite_recording;
+    }
+
+    bool thru () const
+    {
+        return m_thru;
     }
 
     midipulse snap () const
@@ -1220,14 +1224,6 @@ public:
     }
 
     void snap (int st);
-    void set_thru (bool thru_active);                               // seqedit
-    void set_input_thru (bool thru_active, bool toggle = false);    // performer
-
-    bool get_thru () const
-    {
-        return m_thru;
-    }
-
     void off_one_shot ();
     void song_recording_start (midipulse tick, bool snap = false);
     void song_recording_stop (midipulse tick);
@@ -1254,7 +1250,7 @@ public:
 
     bool snap_it () const
     {
-        return get_playing() && (get_queued() || off_from_snap());
+        return playing() && (get_queued() || off_from_snap());
     }
 
     bool song_playback_block () const
@@ -1320,10 +1316,6 @@ public:
     );
     bool append_event (const event & er);
 
-    /**
-     *  Calls eventlist::sort().
-     */
-
     void sort_events ()
     {
         m_events.sort();
@@ -1365,13 +1357,11 @@ public:
         midipulse tick, bool adjust_offset,
         triggers::grow which = triggers::grow::move
     );
-
     void offset_triggers
     (
         midipulse offset,
         triggers::grow editmode = triggers::grow::move
     );
-
     bool selected_trigger
     (
         midipulse droptick, midipulse & tick0, midipulse & tick1
@@ -1388,13 +1378,12 @@ public:
         return m_trigger_offset;
     }
 
-    void set_midi_bus (char mb, bool user_change = false);
-
     midibyte get_midi_bus () const
     {
         return m_bus;
     }
 
+    void set_midi_bus (char mb, bool user_change = false);
     void set_master_midi_bus (const mastermidibus * mmb);
     int select_note_events
     (
@@ -1528,31 +1517,26 @@ public:
     bool reset_interval
     (
         midipulse t0, midipulse t1,
-        eventlist::const_iterator & it0,
-        eventlist::const_iterator & it1
+        eventlist::const_iterator & it0, eventlist::const_iterator & it1
     ) const;
     draw get_note_info
     (
-        note_info & niout,
-        eventlist::const_iterator & evi
+        note_info & niout, eventlist::const_iterator & evi
     ) const;
     draw get_next_note (note_info & niout) const;
     draw get_next_note_ex
     (
-        note_info & niout,
-        eventlist::const_iterator & evi
+        note_info & niout, eventlist::const_iterator & evi
     ) const;
     bool get_next_event (midibyte & status, midibyte & cc);
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
-        eventlist::const_iterator & ev,
-        int evtype = EVENTS_ALL
+        eventlist::const_iterator & ev, int evtype = EVENTS_ALL
     );
     bool get_next_event_ex
     (
-        midibyte & status, midibyte & cc,
-        eventlist::const_iterator & evi
+        midibyte & status, midibyte & cc, eventlist::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
     bool push_quantize

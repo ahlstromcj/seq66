@@ -78,6 +78,13 @@ protected:
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual QSize sizeHint() const override;
 
+private:
+
+    virtual void update_midi_buttons () override
+    {
+        // TODO
+    }
+
 signals:
 
 private slots:

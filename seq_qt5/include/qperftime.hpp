@@ -81,6 +81,10 @@ public:
 
     void set_guides (midipulse snap, midipulse measure);
 
+private:
+
+    // virtual void update_midi_buttons () override { // TODO }
+
 protected:      // override Qt event handlers
 
     virtual void paintEvent (QPaintEvent *) override;

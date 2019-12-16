@@ -33,7 +33,7 @@
  *  Provides an abstract base class so that both the old and the new Qt
  *  sequence-edit frames can be supported.
  *
- *  For now, we're only abstracting the zoom functionality.  Later, we
+ *  For now, we're abstracting the zoom functionality.  Later, we
  *  can abstract other code common between the two frames.
  */
 
@@ -43,7 +43,7 @@
 #include "play/seq.hpp"                 /* seq66::seq::pointer & sequence   */
 
 /*
- *  Forward declarations.  The Qt header files are in the cpp file.
+ *  Forward declarations.  Some Qt header files are in the cpp file.
  */
 
 class QWidget;

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-11-23
+ * \updates       2019-12-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -613,7 +613,7 @@ performer::reload_mute_groups (std::string & errmessage)
 void
 performer::set_input_bus (bussbyte bus, bool active)
 {
-    if (bus < c_busscount_max)                      /* 32 busses        */
+    if (bus < c_busscount_max)                      /* 32 busses max    */
     {
         if (m_master_bus->set_input(bus, active))
         {
@@ -952,17 +952,17 @@ performer::new_sequence (seq::number seq)
  */
 
 bool
-performer::remove_sequence (seq::number seq)
+performer::remove_sequence (seq::number seqno)
 {
     /*
      * What about notify_sequence_change()?  Checking in-edit status?
      */
 
-    bool result = mapper().remove_sequence(seq);
+    bool result = mapper().remove_sequence(seqno);
     if (result)
         modify();
 
-    midi_control_out().send_seq_event(seq, midicontrolout::seqaction::remove);
+    midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
     return result;
 }
 
@@ -971,12 +971,12 @@ performer::remove_sequence (seq::number seq)
  */
 
 bool
-performer::copy_sequence (seq::number seq)
+performer::copy_sequence (seq::number seqno)
 {
-    bool result = is_seq_active(seq);
+    bool result = is_seq_active(seqno);
     if (result)
     {
-        const seq::pointer s = get_sequence(seq);
+        const seq::pointer s = get_sequence(seqno);
         result = bool(s);
         if (result)
             m_seq_clipboard.partial_assign(*s);
@@ -1490,7 +1490,10 @@ performer::set_playing_screenset (screenset::number setno)
 }
 
 /**
+ *  Removes the given screenset, then notifies all subscribers.
  *
+ * \return
+ *      Returns true if the set was found (and removed).
  */
 
 bool
@@ -1811,7 +1814,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     if (result)
     {
         sn = s->seq_number();
-        if (s->get_playing())
+        if (s->playing())
         {
             midi_control_out().send_seq_event
             (
@@ -2148,27 +2151,13 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
  */
 
 /**
- *
- */
-
-bool
-performer::set_sequence_input (seq::pointer s, bool active)
-{
-    bool result = bool(m_master_bus) && bool(s);
-    if (result)
-        m_master_bus->set_sequence_input(active, s.get());
-
-    return result;
-}
-
-/**
  *  Encapsulates code used by the sequence editing frames' recording-change
  *  callbacks.
  *
- * \param record_active
+ * \param recordon
  *      Provides the current status of the Record button.
  *
- * \param thru_active
+ * \param thruon  CHANGING TO TOGGLE!
  *      Provides the current status of the Thru button.
  *
  * \param s
@@ -2177,27 +2166,23 @@ performer::set_sequence_input (seq::pointer s, bool active)
  */
 
 bool
-performer::set_recording (seq::pointer s, bool record_active, bool thru_active)
+performer::set_recording (seq::pointer s, bool recordon, bool toggle)
 {
-    bool result = not_nullptr(s);
+    bool result = bool(s);
     if (result)
-    {
-        if (! thru_active)
-            result = set_sequence_input(s, record_active);
+        result = s->set_recording(recordon, toggle);
 
-        if (result)
-            s->recording(record_active);
-    }
     return result;
 }
 
 /**
- *  Encapsulates code used internally by performer's automation mechanism.
+ *  Encapsulates code used internally by performer's automation mechanism. This
+ *  is a private function.
  *
  * \param seqno
  *      The sequence number; the resulting pointer is checked.
  *
- * \param record_active
+ * \param recordon
  *      Provides the current status of the Record button.
  *
  * \param toggle
@@ -2206,20 +2191,16 @@ performer::set_recording (seq::pointer s, bool record_active, bool thru_active)
  */
 
 bool
-performer::set_recording (seq::number seqno, bool record_active, bool toggle)
+performer::set_recording (seq::number seqno, bool recordon, bool toggle)
 {
     seq::pointer s = get_sequence(seqno);
-    bool result = bool(s);
-    if (result)
-        s->input_recording(record_active, toggle);
-
-    return result;
+    return set_recording(s, recordon, toggle);
 }
 
 /**
  *  Sets quantized recording in the way used by seqedit.
  *
- * \param record_active
+ * \param recordon
  *      The setting desired for the quantized-recording flag.
  *
  * \param s
@@ -2228,11 +2209,11 @@ performer::set_recording (seq::number seqno, bool record_active, bool toggle)
  */
 
 bool
-performer::set_quantized_recording (seq::pointer s, bool record_active)
+performer::set_quantized_recording (seq::pointer s, bool recordon, bool toggle)
 {
     bool result = bool(s);
     if (result)
-        s->quantized_recording(record_active);
+        result = s->set_quantized_recording(recordon, toggle);
 
     return result;
 }
@@ -2241,7 +2222,7 @@ performer::set_quantized_recording (seq::pointer s, bool record_active)
  *  Sets quantized recording.  This isn't quite consistent with setting
  *  regular recording, which uses sequence::input_recording().
  *
- * \param record_active
+ * \param recordon
  *      Provides the current status of the Record button.
  *
  * \param seq
@@ -2249,33 +2230,23 @@ performer::set_quantized_recording (seq::pointer s, bool record_active)
  *
  * \param toggle
  *      If true, ignore the first flag and let the sequence toggle its
- *      setting.  Passed along to sequence::input_recording().
+ *      setting.  Passed along to sequence::set_recording().
  */
 
-void
-performer::set_quantized_recording (bool record_active, int seq, bool toggle)
+bool
+performer::set_quantized_recording (seq::number seqno, bool recordon, bool toggle)
 {
-    seq::pointer s = get_sequence(seq);
-    if (s)
-    {
-        if (toggle)
-            s->quantized_recording(! s->quantized_recording());
-        else
-            s->quantized_recording(record_active);
-    }
+    seq::pointer s = get_sequence(seqno);
+    return set_quantized_recording(s, recordon, toggle);
 }
 
 /**
- *  Set recording for overwrite.
+ *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
+ *  GitHub.
  *
- * \todo
- *      Might probably as well
- *      create(bool rec_active, bool thru_active, sequence * s).
- *
- * Pull request #150:
- *
- *      Ask for a reset explicitly upon toggle-on, since we don't have the GUI
- *      to control for progress.
+ *  Pull request #150: Ask for a reset explicitly upon toggle-on, since we don't
+ *  have the GUI to control for progress.  This is implemented in sequence's
+ *  version of this function.
  *
  * \param oactive
  *      Provides the current status of the overwrite mode.
@@ -2288,33 +2259,45 @@ performer::set_quantized_recording (bool record_active, int seq, bool toggle)
  *      setting.  Passed along to sequence::set_overwrite_rec().
  */
 
-void
-performer::overwrite_recording (bool oactive, int seq, bool toggle)
+bool
+performer::set_overwrite_recording (seq::pointer s, bool oactive, bool toggle)
 {
-    seq::pointer s = get_sequence(seq);
-    if (s)
-    {
-        if (toggle)
-            oactive = ! s->overwrite_recording();
+    bool result = bool(s);
+    if (result)
+        result = s->set_overwrite_recording(oactive, toggle);
 
-        /*
-         * On overwrite, the sequence will reset no matter what is here.
-         */
+    return result;
+}
 
-        if (oactive)
-            s->loop_reset(true);
+/**
+ *  Set recording for overwrite.  This feature was obtained from jfrey-xx on
+ *  GitHub.
+ *
+ * \param oactive
+ *      Provides the current status of the overwrite mode.
+ *
+ * \param seq
+ *      The sequence number; the resulting pointer is checked.
+ *
+ * \param toggle
+ *      If true, ignore the first flag and let the sequence toggle its
+ *      setting.  Passed along to sequence::set_overwrite_rec().
+ */
 
-        s->overwrite_recording(oactive);
-    }
+bool
+performer::set_overwrite_recording (seq::number seqno, bool oactive, bool toggle)
+{
+    seq::pointer s = get_sequence(seqno);
+    return set_overwrite_recording(s, oactive, toggle);
 }
 
 /**
  *  Encapsulates code used by seqedit::thru_change_callback().
  *
- * \param record_active
+ * \param recordon
  *      Provides the current status of the Record button.
  *
- * \param thru_active
+ * \param thruon
  *      Provides the current status of the Thru button.
  *
  * \param s
@@ -2323,17 +2306,12 @@ performer::overwrite_recording (bool oactive, int seq, bool toggle)
  */
 
 bool
-performer::set_thru (seq::pointer s, bool record_active, bool thru_active)
+performer::set_thru (seq::pointer s, bool thruon, bool toggle)
 {
     bool result = bool(s);
     if (result)
-    {
-        if (! record_active)
-            result = set_sequence_input(s, thru_active);
+        result = s->set_thru(thruon, toggle);
 
-        if (result)
-            s->set_thru(thru_active);
-    }
     return result;
 }
 
@@ -2342,7 +2320,7 @@ performer::set_thru (seq::pointer s, bool record_active, bool thru_active)
  *  function depends on the sequence, not the seqedit, for obtaining the
  *  recording status.
  *
- * \param thru_active
+ * \param thruon
  *      Provides the current status of the Thru button.
  *
  * \param seq
@@ -2353,12 +2331,11 @@ performer::set_thru (seq::pointer s, bool record_active, bool thru_active)
  *      setting.  Passed along to sequence::set_input_thru().
  */
 
-void
-performer::set_thru (bool thru_active, int seq, bool toggle)
+bool
+performer::set_thru (seq::number seqno, bool thruon, bool toggle)
 {
-    seq::pointer s = get_sequence(seq);
-    if (s)
-        s->set_input_thru(thru_active, toggle);
+    seq::pointer s = get_sequence(seqno);
+    return set_thru(s, thruon, toggle);
 }
 
 /*
@@ -4159,7 +4136,7 @@ performer::sequence_playing_toggle (seq::number seqno)
          */
 
         bool is_oneshot = midi_controls().is_oneshot();
-        if (is_oneshot && ! s->get_playing())
+        if (is_oneshot && ! s->playing())
         {
             s->toggle_one_shot();                   /* why not just turn on */
         }
@@ -5115,12 +5092,13 @@ performer::automation_thru
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
+        seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_thru(false, d1, true);           /* toggles */
+            set_thru(seqno, false, true);                       /* toggles  */
         else if (a == automation::action::on)
-            set_thru(true, d1);
+            set_thru(seqno, true, false);                       /* on       */
         else if (a == automation::action::off)
-            set_thru(false, d1);
+            set_thru(seqno, false, false);                      /* off      */
     }
     return true;
 }
@@ -5202,11 +5180,11 @@ performer::automation_record
     {
         seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_recording(false, seqno, true);           /* toggles */
+            set_recording(seqno, false, true);                  /* toggles  */
         else if (a == automation::action::on)
-            set_recording(true, seqno);
+            set_recording(seqno, true, false);                  /* on       */
         else if (a == automation::action::off)
-            set_recording(false, seqno);
+            set_recording(seqno, false, false);                 /* off      */
     }
     return true;
 }
@@ -5225,12 +5203,13 @@ performer::automation_quan_record
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
+        seq::number seqno = seq::number(d1);
         if (a == automation::action::toggle)
-            set_quantized_recording(false, d1, true);           /* toggles */
+            set_quantized_recording(seqno, false, true);        /* toggles  */
         else if (a == automation::action::on)
-            set_quantized_recording(true, d1);
+            set_quantized_recording(seqno, true, false);        /* on       */
         else if (a == automation::action::off)
-            set_quantized_recording(false, d1);
+            set_quantized_recording(seqno, false, false);       /* off      */
     }
     return true;
 }
@@ -5239,7 +5218,7 @@ performer::automation_quan_record
  *  Implements reset_seq.  It determines if pattern recording merges notes or
  *  overwrites them upon loop-return.
  *
- *  TODO:  What about the "extend sequence" mode?  What about inverse?
+ *  TODO:  What about the "extend sequence" mode?  What about the return codes?
  */
 
 bool
@@ -5250,13 +5229,16 @@ performer::automation_reset_seq
 {
     std::string name = "Reset Sequence";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)
-        overwrite_recording(false, d1, true);           /* toggles */
-    else if (a == automation::action::on)
-        overwrite_recording(true, d1);
-    else if (a == automation::action::off)
-        overwrite_recording(false, d1);
-
+    if (! inverse)
+    {
+        seq::number seqno = seq::number(d1);
+        if (a == automation::action::toggle)
+            set_overwrite_recording(seqno, false, true);        /* toggles  */
+        else if (a == automation::action::on)
+            set_overwrite_recording(seqno, true, false);        /* on       */
+        else if (a == automation::action::off)
+            set_overwrite_recording(seqno, false, false);       /* off      */
+    }
     return true;
 }
 

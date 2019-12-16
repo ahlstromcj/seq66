@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-09
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -53,7 +53,6 @@
 
 #include <QPainter>
 #include <QPaintEvent>
-
 #include <cmath>                        /* std::sin(radians)                */
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
@@ -170,7 +169,7 @@ qloopbutton::qloopbutton
     m_fingerprint       (),
     m_fingerprint_size  (0),
     m_seq               (seqp),
-    m_is_checked        (m_seq->get_playing()),
+    m_is_checked        (m_seq->playing()),
     m_prog_back_color   (Qt::black),
     m_prog_fore_color   (Qt::green),
     m_text_font         (),
@@ -510,7 +509,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
 
-                if (m_seq->get_playing())
+                if (m_seq->playing())
                     title = "Armed";
                 else if (m_seq->get_queued())
                     title = "Queued";
@@ -599,7 +598,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setColor(Qt::gray);                     /* instead of Qt::black */
         pen.setStyle(Qt::SolidLine);
     }
-    else if (m_seq->get_playing())                  /* armed, playing       */
+    else if (m_seq->playing())                      /* armed, playing       */
     {
         backcolor.setAlpha(s_alpha_playing);
     }

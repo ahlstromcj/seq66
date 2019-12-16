@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-11-10
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -3065,65 +3065,44 @@ qseqeditframe64::show_lfo_frame ()
 }
 
 /**
+ *  Duplicative code.  See record_change(), thru_change(), q_record_change().
+ */
+
+void
+qseqeditframe64::update_midi_buttons ()
+{
+    bool thru_active = seq_pointer()->thru();
+    bool record_active = seq_pointer()->recording();
+    bool qrecord_active = seq_pointer()->quantized_recording();
+    bool playing = seq_pointer()->playing();
+    ui->m_toggle_thru->setChecked(thru_active);
+    ui->m_toggle_thru->setToolTip
+    (
+        thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
+    );
+    ui->m_toggle_record->setChecked(record_active);
+    ui->m_toggle_record->setToolTip
+    (
+        record_active ? "MIDI Record Active" : "MIDI Record Inactive"
+    );
+    ui->m_toggle_qrecord->setChecked(qrecord_active);
+    ui->m_toggle_qrecord->setToolTip
+    (
+        qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
+    );
+    ui->m_toggle_play->setChecked(playing);
+    ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
+}
+
+/**
  *  Passes the play status to the sequence object.
  */
 
 void
 qseqeditframe64::play_change (bool ischecked)
 {
-    seq_pointer()->set_playing(ischecked);
-    ui->m_toggle_play->setChecked(ischecked);
-    ui->m_toggle_play->setToolTip
-    (
-        ischecked ? "Track is armed" : "Track is unarmed"
-    );
-}
-
-/**
- *  Passes the MIDI Thru status to the performer object.  Both
- *  record_change_callback() and thru_change_callback() will call
- *  set_sequence_input() for the same sequence. We only need to call it if it is
- *  not already set, if setting. And, we should not unset it if the
- *  m_toggle_thru->get_active() is true.
- */
-
-void
-qseqeditframe64::thru_change (bool ischecked)
-{
-#if defined USE_OLD_IMPLEMENTATION
-    bool thru_active = ui->m_toggle_thru->isChecked();
-    bool record_active = ui->m_toggle_record->isChecked();
-    perf().set_thru(seq_pointer(), record_active, thru_active);
-#else
-    ui->m_toggle_thru->setChecked(ischecked);
-#endif
-    update_midi_tooltips();
-}
-
-/**
- *  Duplicative code.  See record_change(), thru_change(), q_record_change().
- */
-
-void
-qseqeditframe64::update_midi_tooltips ()
-{
-    bool thru_active = ui->m_toggle_thru->isChecked();
-    bool record_active = ui->m_toggle_record->isChecked();
-    bool qrecord_active = ui->m_toggle_qrecord->isChecked();
-    bool playing = seq_pointer()->get_playing();
-    ui->m_toggle_thru->setToolTip
-    (
-        thru_active ? "MIDI Thru Active" : "MIDI Thru Inactive"
-    );
-    ui->m_toggle_record->setToolTip
-    (
-        record_active ? "MIDI Record Active" : "MIDI Record Inactive"
-    );
-    ui->m_toggle_qrecord->setToolTip
-    (
-        qrecord_active ? "Quantized Record Active" : "Quantized Record Inactive"
-    );
-    ui->m_toggle_play->setToolTip(playing ? "Armed" : "Muted");
+    if (seq_pointer()->set_playing(ischecked))
+        update_midi_buttons();
 }
 
 /**
@@ -3135,12 +3114,10 @@ qseqeditframe64::update_midi_tooltips ()
  */
 
 void
-qseqeditframe64::record_change (bool /*ischecked*/)
+qseqeditframe64::record_change (bool ischecked)
 {
-    bool thru_active = ui->m_toggle_thru->isChecked();
-    bool record_active = ui->m_toggle_record->isChecked();
-    perf().set_recording(seq_pointer(), record_active, thru_active);
-    update_midi_tooltips();
+    if (perf().set_recording(seq_pointer(), ischecked, false))
+        update_midi_buttons();
 }
 
 /**
@@ -3158,11 +3135,23 @@ qseqeditframe64::record_change (bool /*ischecked*/)
 void
 qseqeditframe64::q_record_change (bool ischecked)
 {
-    perf().set_quantized_recording(seq_pointer(), ischecked);
-    if (ui->m_toggle_qrecord->isChecked() && ! ui->m_toggle_record->isChecked())
-        ui->m_toggle_record->setChecked(true);
+    if (perf().set_quantized_recording(seq_pointer(), ischecked, false))
+        update_midi_buttons();
+}
 
-    update_midi_tooltips();
+/**
+ *  Passes the MIDI Thru status to the performer object.  Both
+ *  record_change_callback() and thru_change_callback() will call
+ *  set_sequence_input() for the same sequence. We only need to call it if it is
+ *  not already set, if setting. And, we should not unset it if the
+ *  m_toggle_thru->get_active() is true.
+ */
+
+void
+qseqeditframe64::thru_change (bool ischecked)
+{
+    if (perf().set_thru(seq_pointer(), ischecked, false))
+        update_midi_buttons();
 }
 
 /**

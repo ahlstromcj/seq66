@@ -329,7 +329,7 @@ public:
 
     void save_snapshot ()
     {
-        m_snapshot_status = active () ? m_seq->get_playing() : false ;
+        m_snapshot_status = active () ? m_seq->playing() : false ;
     }
 
     void restore_snapshot ()

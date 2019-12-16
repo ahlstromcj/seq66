@@ -740,18 +740,22 @@ mastermidibase::get_midi_event (event * ev)
  *      record button.
  *
  * \param seq
- *      Provides the sequence object to be logged as the mastermidibase's
- *      sequence.  Can also be used to set a null pointer, to disable the
- *      sequence setting.
+ *      Provides the sequence pointer to be logged as the mastermidibase's
+ *      current sequence.  Can also be used to set a null pointer, to disable
+ *      the sequence setting.
+ *
+ * \return
+ *      Returns true if the sequence pointer is not null.
  */
 
-void
+bool
 mastermidibase::set_sequence_input (bool state, sequence * seq)
 {
     automutex locker(m_mutex);
+    bool result = not_nullptr(seq);
     if (m_filter_by_channel)
     {
-        if (not_nullptr(seq))
+        if (result)
         {
             if (state)                  /* add sequence if not already in   */
             {
@@ -789,6 +793,7 @@ mastermidibase::set_sequence_input (bool state, sequence * seq)
         m_seq = seq;
         m_dumping_input = state;
     }
+    return result;
 }
 
 /**

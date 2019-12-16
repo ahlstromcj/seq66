@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-10-15
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -235,7 +235,7 @@ qslivegrid::conditional_update ()
                          * button is checked, something immediately unchecks it
                          * again.  The result is flickering in playback.
                          *
-                         * bool armed = s->get_playing();
+                         * bool armed = s->playing();
                          * pb->set_checked(armed);
                          */
 
@@ -691,7 +691,7 @@ qslivegrid::refresh_all_slots ()
                 seq::pointer s = perf().get_sequence(offset);
                 if (not_nullptr(s))
                 {
-                    bool armed = s->get_playing();
+                    bool armed = s->playing();
                     qslotbutton * pb = button(row, column);
                     pb->set_checked(armed);
                     pb->reupdate(true);

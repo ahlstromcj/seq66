@@ -251,11 +251,11 @@ public:
     void print () const;
     void flush ();
     void panic ();                                          /* kepler34 func  */
-    void set_sequence_input (bool state, sequence * seq);
     void dump_midi_input (event in);                        /* seq32 function */
     std::string get_midi_out_bus_name (bussbyte bus);
     std::string get_midi_in_bus_name (bussbyte bus);
     int poll_for_midi ();
+    bool set_sequence_input (bool state, sequence * seq);
     bool is_more_input ();
     bool get_midi_event (event * in);
     bool set_clock (bussbyte bus, e_clock clock_type);

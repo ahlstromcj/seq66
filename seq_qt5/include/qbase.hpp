@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-09-20
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -233,6 +233,10 @@ public:
     {
         m_needs_update = true;
     }
+
+protected:
+
+    virtual void update_midi_buttons () = 0;
 
 };          // class qbase
 

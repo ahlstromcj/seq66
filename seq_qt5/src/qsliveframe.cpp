@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-30
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -317,7 +317,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         int c = s->color();
         int base_x, base_y;
         calculate_base_sizes(seq, base_x, base_y);  /* side-effects         */
-        if (s->get_playing())                       /* playing, no queueing */
+        if (s->playing())                           /* playing, no queueing */
         {
             brush.setColor(Qt::black);
             pen.setColor(Qt::white);
@@ -340,11 +340,11 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             painter.setPen(pen);
             painter.setBrush(brush);
             painter.setFont(m_font);
-            if (s->get_playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
                 // no code
             }
-            else if (s->get_playing())          /* playing, no queueing */
+            else if (s->playing())              /* playing, no queueing */
             {
                 Color backcolor(Qt::black);
                 brush.setColor(backcolor);
@@ -379,7 +379,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             const int penwidth = 3;             /* 2                    */
             pen.setColor(Qt::black);
             pen.setStyle(Qt::SolidLine);
-            if (s->get_playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
                 Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
@@ -391,7 +391,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
                 painter.setBrush(brush);
                 draw_box(painter, base_x, base_y, m_slot_w + 1, m_slot_h + 1);
             }
-            else if (s->get_playing())          /* playing, no queueing */
+            else if (s->playing())              /* playing, no queueing */
             {
                 Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
@@ -446,11 +446,11 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
         if (m_gtkstyle_border)
         {
-            if (s->get_playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
                 pen.setColor(Qt::white);
             }
-            else if (s->get_playing())          /* playing, no queueing     */
+            else if (s->playing())              /* playing, no queueing     */
             {
                 pen.setColor(Qt::white);
             }
@@ -502,11 +502,11 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             show_color_rgb(backcolor);
 #endif
             brush.setColor(backcolor);
-            if (s->get_playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
                 backcolor = Qt::gray;
             }
-            else if (s->get_playing())          /* playing, no queueing */
+            else if (s->playing())              /* playing, no queueing */
             {
                 if (no_color(c))
                 {
@@ -628,12 +628,12 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             a_tick %= length;
 
             midipulse tick_x = a_tick * preview_w / length;
-            if (s->get_playing())
+            if (s->playing())
                 pen.setColor(Qt::red);
             else
                 pen.setColor(Qt::black);
 
-            if (s->get_playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->playing() && (s->get_queued() || s->off_from_snap()))
                 pen.setColor(Qt::green);
             else if (s->one_shot())
                 pen.setColor(Qt::blue);

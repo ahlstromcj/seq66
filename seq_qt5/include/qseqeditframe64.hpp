@@ -27,14 +27,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-11-10
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  */
 
-#include <QFrame>
-
-#include "qseqframe.hpp"                /* seq66::qseqframe                 */
+#include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
 #include "play/sequence.hpp"            /* seq66::sequence::editmode        */
 #include "play/setmapper.hpp"           /* seq66::setmapper and others      */
 
@@ -126,6 +124,7 @@ private:        // performer::callback overrides
 
 private:        // qbase and qseqframe overrides
 
+    virtual void update_midi_buttons () override;
     virtual void set_dirty () override;
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
@@ -214,7 +213,6 @@ private slots:
     void update_recording_volume (int index);
     void reset_recording_volume ();
     void follow (bool ischecked);
-    void update_midi_tooltips ();
 
 private:        // slot helper functions
 

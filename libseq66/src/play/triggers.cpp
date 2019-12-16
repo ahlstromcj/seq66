@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2019-10-18
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -279,7 +279,7 @@ triggers::play
      * we are not improvising.
      */
 
-    bool ok = trigger_state != m_parent.get_playing();
+    bool ok = trigger_state != m_parent.playing();
     if (ok)
         ok = ! m_parent.song_playback_block();
 
@@ -308,7 +308,7 @@ triggers::play
         }
     }
 
-    bool offplay = m_triggers.empty() && m_parent.get_playing();
+    bool offplay = m_triggers.empty() && m_parent.playing();
     if (offplay)
         offplay = ! m_parent.song_playback_block();
 

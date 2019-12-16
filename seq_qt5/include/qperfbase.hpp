@@ -87,6 +87,13 @@ protected:
         seq66::rect & r
     );
 
+private:
+
+    virtual void update_midi_buttons () override
+    {
+        // TODO, in the derived qperf classes.
+    }
+
 };          // class qperfbase
 
 }           // namespace seq66

@@ -355,7 +355,7 @@ public:
     bool armed (seq::number seqno) const
     {
         const seq::pointer track = seqinfo(seqno).loop();
-        return track ? track->get_playing() : false ;
+        return track ? track->playing() : false ;
     }
 
     bool armed_status (seq::number seqno) const

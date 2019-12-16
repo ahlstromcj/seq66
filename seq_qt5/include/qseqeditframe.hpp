@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-14
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -52,7 +52,7 @@
  */
 
 #include "play/sequence.hpp"            /* sequence::editmode enumeration   */
-#include "qseqframe.hpp"                /* seq66::qseqframe                 */
+#include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
 
 /**
  *  Specifies the base size of the main window. The size in the "ui" file is
@@ -127,10 +127,10 @@ protected:      // QWidget overrides
 
 private:
 
+    virtual void update_midi_buttons () override;
     virtual void set_dirty () override;
     void initialize_panels ();
     void update_draw_geometry ();
-    void update_midi_tooltips ();
 
 signals:
 

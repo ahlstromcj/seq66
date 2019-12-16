@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-12-14
+ * \updates       2019-12-16
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -711,7 +711,7 @@ void
 sequence::toggle_playing (midipulse tick, bool resumenoteons)
 {
     toggle_playing();
-    if (get_playing() && resumenoteons)
+    if (playing() && resumenoteons)
         resume_note_ons(tick);
 
     m_off_from_snap = false;
@@ -741,7 +741,7 @@ sequence::toggle_queued ()
     {
         if (m_queued)
             mco->send_seq_event(number(), midi_control_out::seq_action_queue);
-        else if (get_playing())
+        else if (playing())
             mco->send_seq_event(number(), midi_control_out::seq_action_arm);
         else
             mco->send_seq_event(number(), midi_control_out::seq_action_mute);
@@ -2569,7 +2569,7 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (overwrite_recording() && m_parent->is_running() && get_length() > 0)
+    if (overwriting() && m_parent->is_running() && get_length() > 0)
     {
         midipulse tstamp = m_parent->get_tick() % get_length();
         if (tstamp < (m_ppqn / 4))
@@ -2634,7 +2634,7 @@ sequence::stream_event (event & ev)
          *      how?
          */
 
-        if (overwrite_recording() && loop_reset())
+        if (overwriting() && loop_reset())
         {
             loop_reset(false);
             remove_all();                       /* clear old items          */
@@ -3541,7 +3541,7 @@ sequence::paste_trigger (midipulse paste_tick)
 void
 sequence::stop (bool song_mode)
 {
-    bool state = get_playing();
+    bool state = playing();
     off_playing_notes();
     set_playing(false);
     zero_markers();                         /* sets the "last-tick" value   */
@@ -3564,7 +3564,7 @@ sequence::stop (bool song_mode)
 void
 sequence::pause (bool song_mode)
 {
-    bool state = get_playing();
+    bool state = playing();
     off_playing_notes();
     if (! song_mode)
         set_playing(state);
@@ -4202,7 +4202,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
 {
     automutex locker(m_mutex);
     bool result = false;
-    bool was_playing = get_playing();
+    bool was_playing = playing();
     set_playing(false);                 /* turn everything off              */
     if (len > 0)
     {
@@ -4302,11 +4302,12 @@ sequence::extend (midipulse len)
  *      playing.
  */
 
-void
+bool
 sequence::set_playing (bool p)
 {
     automutex locker(m_mutex);
-    if (p != get_playing())
+    bool result = p != playing();
+    if (result)
     {
         m_playing = p;
         if (! p)
@@ -4316,63 +4317,16 @@ sequence::set_playing (bool p)
     }
     m_queued = false;
     m_one_shot = false;
+    return result;
 }
 
 /**
  * \setter m_recording and m_notes_on
  *
  *  This function sets m_notes_on to 0, only if the recording status has
- *  changed.  It is called by input_recording().  We probably need to
+ *  changed.  It is called by set_recording().  We probably need to
  *  explicitly turn off all playing notes; not sure yet.
  *
- * \param record
- *      If true, recording is to be set.  If false, all recording-related
- *      variables are set to false.
- *
- * \param quantize
- *      If true, and recording is true, then recording will be quantized.
- *      Defaults to false.
- *
- * \threadsafe
- */
-
-void
-sequence::recording (bool r)
-{
-    automutex locker(m_mutex);
-    if (r != recording())
-    {
-        m_notes_on = 0;                 /* reset the step-edit note counter */
-        if (r)
-            m_recording = true;
-        else
-            m_recording = m_quantized_recording = false;    /* CAREFUL! */
-    }
-}
-
-/**
- * \setter m_quantized_recording
- *
- *  What about doing this?
- *
- *      master_bus()->set_sequence_input(record_active, this);
- *
- * \threadsafe
- */
-
-void
-sequence::quantized_recording (bool qr)
-{
-    automutex locker(m_mutex);
-    if (qr != m_quantized_recording)
-    {
-        m_quantized_recording = qr;
-        if (qr)
-            recording(true);        /* make sure this is on too */
-    }
-}
-
-/**
  *  Like performer::set_sequence_input(), but it uses the internal recording
  *  status directly, rather than getting it from seqedit.
  *
@@ -4383,7 +4337,7 @@ sequence::quantized_recording (bool qr)
  *  on here no matter what, because even if m_thru, input could have been
  *  replaced in another sequence.
  *
- * \param record_active
+ * \param recordon
  *      Provides the desired status to set recording.
  *
  * \param toggle
@@ -4391,14 +4345,110 @@ sequence::quantized_recording (bool qr)
  *      value is false.
  */
 
-void
-sequence::input_recording (bool record_active, bool toggle)
+bool
+sequence::set_recording (bool recordon, bool toggle)
 {
+    automutex locker(m_mutex);
     if (toggle)
-        record_active = ! m_recording;
+        recordon = ! m_recording;
 
-    master_bus()->set_sequence_input(record_active, this);
-    recording(record_active);
+    bool result = recordon != m_recording;
+    if (result)
+        result = master_bus()->set_sequence_input(recordon, this);
+
+    if (result)
+    {
+        m_notes_on = 0;                 /* reset the step-edit note counter */
+        if (recordon)
+            m_recording = true;
+        else
+            m_recording = m_quantized_recording = false;    /* CAREFUL! */
+    }
+    return result;
+}
+
+/**
+ * \setter m_quantized_recording
+ *
+ *  What about doing this?
+ *
+ *      master_bus()->set_sequence_input(recordon, this);
+ *
+ * \threadsafe
+ */
+
+bool
+sequence::set_quantized_recording (bool qr, bool toggle)
+{
+    automutex locker(m_mutex);
+    if (toggle)
+        qr = ! m_quantized_recording;
+
+    bool result = qr != m_quantized_recording;
+    if (result)
+    {
+        m_quantized_recording = qr;
+        if (qr)
+            result = set_recording(true, false);
+    }
+    return result;
+}
+
+/**
+ * \threadsafe
+ */
+
+bool
+sequence::set_overwrite_recording (bool ovwr, bool toggle)
+{
+    automutex locker(m_mutex);
+    if (toggle)
+        ovwr = ! m_overwrite_recording;
+
+    bool result = ovwr != m_overwrite_recording;
+    if (result)
+    {
+        m_overwrite_recording = ovwr;
+        if (ovwr)
+            loop_reset(true);   /* on overwrite, always reset the sequence  */
+    }
+    return result;
+}
+
+/**
+ *
+ * \param thru_active
+ *      Provides the desired status to set the through state.
+ *
+ * \param toggle
+ *      If true, ignore the first parameter and toggle the flag.  The default
+ *      value is false.
+ */
+
+bool
+sequence::set_thru (bool thruon, bool toggle)
+{
+    automutex locker(m_mutex);
+    if (toggle)
+        thruon = ! m_thru;
+
+    bool result = thruon != m_thru;
+    if (result)
+    {
+        /*
+         * Except if already recording and trying to turn Thru (hence input)
+         * off, set input to here no matter what, because even in m_recording,
+         * input could have been replaced in another sequence.
+         * LET's try putting in the original conditional.
+         */
+
+         if (! m_recording)
+            result = master_bus()->set_sequence_input(thruon, this);
+
+        if (result)
+            m_thru = thruon;
+    }
+    return result;
 }
 
 /**
@@ -4425,51 +4475,6 @@ sequence::loop_reset (bool reset)
 {
     automutex locker(m_mutex);
     m_loop_reset = reset;
-}
-
-/**
- * \setter m_thru
- *
- * \threadsafe
- */
-
-void
-sequence::set_thru (bool r)
-{
-    automutex locker(m_mutex);
-    m_thru = r;
-}
-
-/**
- *  Like performer::set_sequence_input(), but it uses the internal thru
- *  status directly, rather than getting it from seqedit.
- *
- * \param thru_active
- *      Provides the desired status to set the through state.
- *
- * \param toggle
- *      If true, ignore the first parameter and toggle the flag.  The default
- *      value is false.
- */
-
-void
-sequence::set_input_thru (bool thru_active, bool toggle)
-{
-    if (toggle)
-        thru_active = ! m_thru;
-
-    /*
-     * Except if already recording and trying to turn Thru (hence input) off,
-     * set input to here no matter what, because even in m_recording,
-     * input could have been replaced in another sequence.
-     *
-     * LET's try putting in the original conditional.
-     */
-
-     if (! m_recording)
-        master_bus()->set_sequence_input(thru_active, this);
-
-    set_thru(thru_active);
 }
 
 /**
@@ -5297,19 +5302,6 @@ sequence::expand_recording () const
 }
 
 /**
- * \setter m_overwrite_recording
- *
- * \threadsafe
- */
-
-void
-sequence::overwrite_recording (bool ovwr)
-{
-    automutex locker(m_mutex);
-    m_overwrite_recording = ovwr;
-}
-
-/**
  *  Code to help user-interface callers.
  */
 
@@ -5326,19 +5318,19 @@ sequence::update_recording (int index)
         {
         case recordstyle::merge:
 
-            overwrite_recording(false);
+            set_overwrite_recording(false, false);
             expanded_recording(false);
             break;
 
         case recordstyle::overwrite:
 
-            overwrite_recording(true);
+            set_overwrite_recording(true, false);
             expanded_recording(false);
             break;
 
         case recordstyle::expand:
 
-            overwrite_recording(false);
+            set_overwrite_recording(false, false);
             expanded_recording(true);
             break;
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-11-10
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -1559,20 +1559,11 @@ public:
 
 public:
 
-    bool set_sequence_input (seq::pointer s, bool active);
     bool set_sequence_name (seq::pointer s, const std::string & name);
-    bool set_recording (seq::pointer s, bool rec_active, bool thru_active);
-    bool set_quantized_recording (seq::pointer s, bool active);
-    void set_quantized_recording
-    (
-        bool active, seq::number seqno, bool toggle = false
-    );
-    void overwrite_recording                    /* From jfrey-xx on GitHub  */
-    (
-        bool oactive, seq::number seqno, bool toggle = false
-    );
-    bool set_thru (seq::pointer s, bool recactive, bool thru_active);
-    void set_thru (bool thru_active, seq::number seqno, bool toggle = false);
+    bool set_recording (seq::pointer s, bool active, bool toggle);
+    bool set_quantized_recording (seq::pointer s, bool active, bool toggle);
+    bool set_overwrite_recording (seq::pointer s, bool active, bool toggle);
+    bool set_thru (seq::pointer s, bool active, bool toggle);
     bool selected_trigger
     (
         seq::number seqno, midipulse droptick,
@@ -2664,10 +2655,13 @@ public:         // GUI-support functions
 
 private:
 
-    bool set_recording (seq::number seqno, bool active, bool toggle = false);
-    void reset_sequences (bool pause = false);
+    bool set_recording (seq::number seqno, bool active, bool toggle);
+    bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
+    bool set_overwrite_recording (seq::number seqno, bool active, bool toggle);
+    bool set_thru (seq::number seqno, bool active, bool toggle);
     bool log_current_tempo ();
     bool create_master_bus ();
+    void reset_sequences (bool pause = false);
 
 #if defined USE_STAZED_PARSE_SYSEX
     void parse_sysex (event ev);

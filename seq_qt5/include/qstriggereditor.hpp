@@ -93,6 +93,13 @@ protected:
     virtual void keyReleaseEvent (QKeyEvent *) override;
     virtual QSize sizeHint () const override;
 
+private:
+
+    virtual void update_midi_buttons () override
+    {
+        // no code needed, no buttons or statuses to update at this time
+    }
+
 signals:
 
 public slots:

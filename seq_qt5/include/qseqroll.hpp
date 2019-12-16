@@ -150,6 +150,13 @@ protected:      // overrides for painting, mouse/keyboard events, & size hints
 
 private:
 
+    virtual void update_midi_buttons () override
+    {
+        // no code needed, no buttons or statuses to update at this time
+    }
+
+private:
+
     void move_selected_notes (int dx, int dy);
     void grow_selected_notes (int dx);
     void snap_y (int & y);

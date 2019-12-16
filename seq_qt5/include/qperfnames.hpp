@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-15
+ * \updates       2019-12-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -82,7 +82,11 @@ protected:
         return m_nametext_y * i;
     }
 
-protected:
+private:
+
+    // virtual void update_midi_buttons () override { // TODO }
+
+protected:          // Qt overrides
 
     virtual void paintEvent (QPaintEvent *) override;
     virtual void mousePressEvent (QMouseEvent *) override;
