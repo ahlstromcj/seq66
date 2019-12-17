@@ -104,13 +104,20 @@
 #include "cfg/usrsettings.hpp"          /* seq66::usr_settings              */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 
+/*
+ *  Do not document a namespace; it breaks Doxygen.
+ */
+
+namespace seq66
+{
+
 /**
  *  Provide limits for the option "--option scale=x.y".
  */
 
-#define SEQ66_WINDOW_SCALE_MIN          0.5f
-#define SEQ66_WINDOW_SCALE_DEFAULT      1.0f
-#define SEQ66_WINDOW_SCALE_MAX          3.0f
+const double c_window_scale_min         = 0.5f;
+const double c_window_scale_default     = 1.0f;
+const double c_window_scale_max         = 3.0f;
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.
@@ -185,13 +192,6 @@ const int c_mainwid_spacing = 2;            // try 4 or 6 instead of 2
 
 const int c_control_height = 0;
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
-namespace seq66
-{
-
 /**
  *  Default constructor.
  */
@@ -210,7 +210,7 @@ usrsettings::usrsettings () :
     m_mainwnd_rows              (SEQ66_DEFAULT_SET_ROWS),
     m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
     m_max_sets                  (SEQ66_DEFAULT_SET_MAX),
-    m_window_scale              (SEQ66_WINDOW_SCALE_DEFAULT),
+    m_window_scale              (c_window_scale_default),
     m_mainwid_border            (0),
     m_mainwid_spacing           (0),
     m_control_height            (0),
@@ -539,7 +539,7 @@ usrsettings::set_defaults ()
     m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
     m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
     m_max_sets = SEQ66_DEFAULT_SET_MAX;         // range: 32-64
-    m_window_scale = SEQ66_WINDOW_SCALE_DEFAULT; // range: 0.5 to 3.0
+    m_window_scale = c_window_scale_default;    // range: 0.5 to 3.0
     m_mainwid_border = c_mainwid_border;        // range: 0-3, try 2 or 3
     m_mainwid_spacing = c_mainwid_spacing;      // range: 2-6, try 4 or 6
     m_control_height = 0;                       // range: 0-4?
@@ -769,7 +769,7 @@ usrsettings::set_instrument_controllers
 void
 usrsettings::window_scale (float winscale)
 {
-    if (winscale >= SEQ66_WINDOW_SCALE_MIN && winscale <= SEQ66_WINDOW_SCALE_MAX)
+    if (winscale >= c_window_scale_min && winscale <= c_window_scale_max)
     {
         m_window_scale = winscale;
         normalize();
