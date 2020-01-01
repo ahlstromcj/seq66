@@ -206,7 +206,6 @@ enum class slot
     slot_shift,         /**< 33: Used for sets > 32 patterns.               */
     mutes_clear,        /**< 34: Set all mute groups to unarmed.            */
     reserved_35,        /**< 35: Reserved for expansion.                    */
-
     pattern_edit,       /**< 36: GUI action, bring up pattern for editing.  */
     event_edit,         /**< 37: GUI action, bring up the event editor.     */
     song_mode,          /**< 38: GUI. Toggle between Song Mode & Live Mode. */

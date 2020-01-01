@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-12-15
+ * \updates       2020-01-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -712,9 +712,9 @@ private:
     /**
      *  Hold the number of the currently-in-edit sequence.  Moved this status
      *  from seqmenu into performer for better centralized management.
-     */
 
     seq::number m_edit_sequence;
+     */
 
     /**
      *  It may be a good idea to eventually centralize all of the dirtiness of
@@ -805,7 +805,7 @@ private:
      *  this function is "=".
      */
 
-    mutable bool m_seq_edit_pending;
+    mutable bool m_seq_edit_pending;        // m_call_seq_edit;
 
     /**
      *  Set to true if automation_event_pending() is called.  It is reset by the
@@ -813,7 +813,7 @@ private:
      *  this function is "-".
      */
 
-    mutable bool m_event_edit_pending;
+    mutable bool m_event_edit_pending;      // m_call_seq_eventedit;
 
     /**
      *  Incremented when automation_slot_shift() is called.  It is reset by the
@@ -822,14 +822,14 @@ private:
      *  this function is "/".
      */
 
-    mutable int m_slot_shift_count;
+    mutable int m_slot_shift;               // m_call_seq_shift;
 
     /**
-     *  Holds the loop number in the case of using the slot-shift key.  It is
+     *  Holds the loop number in the case of using the edit keys.  It is
      *  reset when the slot-shift key is struck.
      */
 
-    mutable seq::number m_pending_loop;
+    mutable seq::number m_pending_loop;     // m_call_seq_number;
 
 private:
 
@@ -1711,7 +1711,7 @@ public:
      *      invalid or null.
      */
 
-    bool is_seq_active (int seq) const
+    bool is_seq_active (seq::number seq) const
     {
         return mapper().is_seq_active(seq);
     }
@@ -2091,7 +2091,7 @@ public:
         mapper().set_last_ticks(tick);
     }
 
-    void sequence_key (int seq);                            // encapsulation
+    void sequence_key (seq::number seq);                    // encapsulation
     std::string sequence_label (const sequence & seq);
     std::string sequence_label (seq::number seqno);         // for qperfnames
     std::string sequence_title (const sequence & seq);
@@ -2805,23 +2805,55 @@ private:
 
 public:
 
-    bool seq_edit_pending () const
+    void clear_seq_edits ();
+
+    bool check_seq_edits () const
     {
-        bool result = m_seq_edit_pending;
-        m_seq_edit_pending = false;
-        return result;
+        return m_seq_edit_pending || m_event_edit_pending;
     }
 
-    bool event_edit_pending () const
+    void toggle_seq_edit ()
     {
-        bool result = m_event_edit_pending;
-        m_event_edit_pending = false;
-        return result;
+        m_seq_edit_pending = ! m_seq_edit_pending;
     }
 
-    seq::number pending_loop () const
+    void toggle_event_edit ()
+    {
+        m_event_edit_pending = ! m_event_edit_pending;
+    }
+
+    bool seq_edit_pending () const;
+    bool event_edit_pending () const;
+
+    seq::number pending_loop () const           // call_seq_number()
     {
         return m_pending_loop;
+    }
+
+    void pending_loop (seq::number n) const     // call_seq_number()
+    {
+        m_pending_loop = n;
+    }
+
+    int increment_slot_shift () const;
+
+    int slot_shift () const
+    {
+        return m_slot_shift;
+    }
+
+    void clear_slot_shift () const
+    {
+        m_slot_shift = 0;               /* mutable */
+    }
+
+    /*
+     * This is just a very fast check meant for use in some GUI timers.
+     */
+
+    bool check_seqno (int seqno) const
+    {
+        return seqno != seq::unassigned();
     }
 
     bool loop_control                   /* [loop-control]       */
@@ -2832,7 +2864,6 @@ public:
     (
         seq66::automation::action a, int d0, int d1, bool inverse
     );
-
     bool populate_default_ops ();
     bool add_automation                 /* [automation-control] */
     (

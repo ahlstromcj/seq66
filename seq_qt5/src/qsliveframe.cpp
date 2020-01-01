@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-15
+ * \updates       2020-01-01
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -197,6 +197,7 @@ qsliveframe::set_playlist_name (const std::string & plname)
 void
 qsliveframe::conditional_update ()
 {
+    sequence_key_check();
     if (perf().needs_update())
         update();
 }
@@ -1132,8 +1133,8 @@ qsliveframe::new_live_frame ()
 }
 
 /**
- *  Emits the signal_call_editor() signal.  In qsmainwnd, this signal is connected to
- *  the loadEditor() slot.
+ *  Emits the signal_call_editor() signal.  In qsmainwnd, this signal is
+ *  connected to the loadEditor() slot.
  */
 
 void
@@ -1143,8 +1144,8 @@ qsliveframe::edit_seq ()
 }
 
 /**
- *  Emits the signal_call_editor_ex() signal.  In qsmainwnd, this signal is connected to
- *  the loadEditorEx() slot.
+ *  Emits the signal_call_editor_ex() signal.  In qsmainwnd, this signal is
+ *  connected to the loadEditorEx() slot.
  */
 
 void
@@ -1164,6 +1165,31 @@ qsliveframe::edit_events ()
 }
 
 /**
+ *  Handles any existing pattern-key statuses.  Used in the timer callback.
+ *
+ *  NOT YET ACTIVE.
+ */
+
+void
+qsliveframe::sequence_key_check ()
+{
+    seq::number seqno = perf().pending_loop();
+    if (perf().check_seqno(seqno))
+    {
+#ifdef PLATFORM_DEBUG_TMI
+        printf("key for seq %d\n", seqno);
+#endif
+        m_current_seq = seqno;
+        if (perf().seq_edit_pending())
+            edit_seq_ex();
+        else if (perf().event_edit_pending())
+            edit_events();
+        else
+            perf().sequence_key(seqno);                     /* toggle loop  */
+    }
+}
+
+/**
  *
  */
 
@@ -1171,9 +1197,6 @@ bool
 qsliveframe::handle_key_press (const keystroke & k)
 {
     bool done = perf().midi_control_keystroke(k);
-    if (done)
-    {
-    }
     if (! done)
     {
         if (perf().seq_edit_pending())              /* self-resetting   */

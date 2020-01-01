@@ -125,6 +125,8 @@ private:
     seq::number seq_id_from_xy (int click_x, int click_y);
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
+    void sequence_key (int seq);
+    void sequence_key_check ();
 
 signals:
 

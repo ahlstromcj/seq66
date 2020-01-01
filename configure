@@ -2634,7 +2634,6 @@ ac_configure="$SHELL $ac_aux_dir/configure"  # Please don't use this var.
 
 
 
-export PKG_CONFIG=$(which pkg-config)
 # Make sure we can run config.sub.
 $SHELL "$ac_aux_dir/config.sub" sun4 >/dev/null 2>&1 ||
   as_fn_error $? "cannot run $SHELL $ac_aux_dir/config.sub" "$LINENO" 5
@@ -3287,6 +3286,7 @@ fi
 
 ac_config_headers="$ac_config_headers include/config.h"
 
+export PKG_CONFIG=$(which pkg-config)
 
 
 

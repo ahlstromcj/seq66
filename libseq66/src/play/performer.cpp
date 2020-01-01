@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2019-12-16
+ * \updates       2020-01-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -369,7 +369,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockincrement    (clock_ticks_from_ppqn(m_ppqn)),
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pause    */
-    m_edit_sequence         (-1),
+//  m_edit_sequence         (seq::unassigned()),
     m_is_modified           (false),
 #if defined SEQ66_SONG_BOX_SELECT
     m_selected_seqs         (),
@@ -385,8 +385,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_notify                (),
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
-    m_slot_shift_count      (0),
-    m_pending_loop          (0)
+    m_slot_shift            (0),
+    m_pending_loop          (seq::unassigned())
 {
     /*
      * Generally will be parsing the 'rc' files after creating the performer.
@@ -911,8 +911,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
  *  counted.  Also, adding a new sequence from the user-interface is a
  *  significant modification, so the "is modified" flag gets set.
  *
- * \change ca 2016-05-15
- *      If enabled, wire in the MIDI buss override.
+ *  If enabled, wire in the MIDI buss override.
  *
  * \param seq
  *      The prospective sequence number of the new sequence.  If not set to
@@ -2027,19 +2026,7 @@ performer::set_tick (midipulse tick)
 
 #endif  // SEQ66_PLATFORM_DEBUG_TMI
 
-    m_tick = tick;
-
-    /*
-     * \change ca 2017-12-30 Issue #123
-     *      This code, when enabled, causes the progress to be continually
-     *      reset to 0 when JACK Transport is active.
-     *
-     *  if (m_jack_asst.is_running())
-     *      position_jack(tick);
-     *  master_bus().continue_from(tick);
-     */
-
-    m_current_tick = tick;
+    m_tick = m_current_tick = tick;
 }
 
 /**
@@ -3203,15 +3190,14 @@ performer::start_playing (bool songmode)
  *  We still need to make restarting pick up at the same place in ALSA mode;
  *  in JACK mode, JACK transport takes care of that feature.
  *
- * \change ca 2016-10-11
- *      User layk noted this call, and it makes sense to not do this here,
- *      since it is unknown at this point what the actual status is.  Note
- *      that we STILL need to FOLLOW UP on calls to pause_playing() and
- *      stop_playing() in perfedit, mainwnd, etc.
+ *  User layk noted this call, and it makes sense to not do this here, since it
+ *  is unknown at this point what the actual status is.  Note that we STILL
+ *  need to FOLLOW UP on calls to pause_playing() and stop_playing() in
+ *  perfedit, mainwnd, etc.
  *
  *      is_pattern_playing(false);
  *
- *      But what about is_running()?
+ *  But what about is_running()?
  *
  * \param songmode
  *      Indicates that, if resuming play, it should play in Song mode (true)
@@ -3791,7 +3777,7 @@ performer::intersect_triggers (seq::number seqno, midipulse tick)
  * \param track
  *      A new parameter (found in the stazed seq32 code) that allows this
  *      function to operate on a single track.  A parameter value of
- *      seq::all() (-1, the default) implements the original behavior.
+ *      seq::all() (-2, the default) implements the original behavior.
  */
 
 void
@@ -3818,7 +3804,7 @@ performer::push_trigger_undo (int track)
  * \todo
  *      Look at seq32/src/perform.cpp and the perform ::
  *      push_trigger_undo(track) function, which has a track parameter that
- *      has a -1 values the supports all tracks.  It requires two new vectors
+ *      has a -1 value that supports all tracks.  It requires two new vectors
  *      (one for undo, one for redo), two new flags (likewise).  We've put
  *      this code in place, no longer macroed out, now permanent.
  */
@@ -4095,6 +4081,37 @@ performer::group_learn_complete (const keystroke & k, bool good)
 }
 
 /**
+ *  Handle a sequence key to toggle the playing of an active pattern in
+ *  the selected screen-set.  This function is use in mainwnd when toggling
+ *  the mute/unmute setting using keyboard keys.
+ *
+ * \param seq
+ *      The sequence's control-key number, which is relative to the current
+ *      screen-set.
+ */
+
+void
+performer::sequence_key (seq::number seq)
+{
+    if (check_seqno(seq))
+    {
+        seq += playscreen_offset();
+        if (is_seq_active(seq))
+        {
+            if (slot_shift() > 0)
+                seq += slot_shift() * mapper().set_size();
+
+#ifdef PLATFORM_DEBUG
+            infoprintf("Toggled pattern #%d\n", seq);
+#endif
+
+            sequence_playing_toggle(seq);
+            clear_seq_edits();
+        }
+    }
+}
+
+/**
  *  If the given sequence is active, then it is toggled as per the current value
  *  of control-status.  If control-status is automation::ctrlstatus::queue, then
  *  the sequence's toggle_queued() function is called.  This is the "mod queue"
@@ -4272,6 +4289,86 @@ performer::sequence_playing_change (seq::number seqno, bool on)
     bool qinprogress = midi_controls().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
 }
+
+/*
+ * Seq/Event-edit pending flag support.
+ */
+
+/**
+ *
+ */
+
+void
+performer::clear_seq_edits ()
+{
+    m_seq_edit_pending = m_event_edit_pending = false;
+    m_pending_loop = seq::unassigned();
+}
+
+/**
+ *  Checks the seq-edit key, and then clears the seq-edit member variables
+ *  if seq-edit is pending.  Generally, the pending_loop() function must be
+ *  called before this function to retrieve the pattern number in force for the
+ *  pending seq-edit call.
+ *
+ * \return
+ *      Returns the value of m_seq_edit_pending.
+ */
+
+bool
+performer::seq_edit_pending () const
+{
+    bool result = m_seq_edit_pending;
+    if (result)
+    {
+        result = pending_loop() != seq::unassigned();
+        m_seq_edit_pending = false;
+        pending_loop(seq::unassigned());
+    }
+    return result;
+}
+
+/**
+ *  Checks the event-edit key, and then clears the event-edit member variables
+ *  if event-edit is pending.  Generally, the pending_loop() function must be
+ *  called before this function to retrieve the pattern number in force for the
+ *  pending event-edit call.
+ *
+ * \return
+ *      Returns the value of m_event_edit_pending.
+ */
+
+bool
+performer::event_edit_pending () const
+{
+    bool result = m_event_edit_pending;
+    if (result)
+    {
+        result = pending_loop() != seq::unassigned();
+        m_event_edit_pending = false;
+        pending_loop(seq::unassigned());
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+int
+performer::increment_slot_shift () const
+{
+    ++m_slot_shift;
+    if (slot_shift() > 2)
+        clear_slot_shift();
+
+    return slot_shift();
+}
+
+/*
+ * End of Seq/Event-edit pending flag support.
+ */
+
 
 /**
  *  Handle a control key.  The caller (e.g. a Qt key-press event handler) grabs
@@ -4623,10 +4720,14 @@ performer::loop_control
     bool result = sn >= 0;
     if (result && ! inverse)
     {
-        if (m_slot_shift_count > 0)
+        /*
+         * Also see sequence_key()
+         */
+
+        if (slot_shift() > 0)
         {
-            sn += m_slot_shift_count * mapper().set_size();
-            m_slot_shift_count = 0;
+            sn += slot_shift() * mapper().set_size();
+            clear_slot_shift();
         }
         m_pending_loop = sn;
         if (m_seq_edit_pending || m_event_edit_pending)
@@ -5657,14 +5758,11 @@ performer::automation_slot_shift
 {
     std::string name = "Shift count ";
     bool result = false;
-    name += std::to_string(m_slot_shift_count + 1);
+    name += std::to_string(slot_shift() + 1);
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
-        ++m_slot_shift_count;
-        if (m_slot_shift_count > mapper().max_slot_shift())
-            m_slot_shift_count = 0;
-
+        (void) increment_slot_shift();
         result = true;
     }
     return result;
@@ -5684,7 +5782,7 @@ performer::automation_mutes_clear
 {
     std::string name = "Mutes clear";
     bool result = false;
-    name += std::to_string(m_slot_shift_count + 1);
+    name += std::to_string(slot_shift() + 1);
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {

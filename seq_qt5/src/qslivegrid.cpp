@@ -1022,8 +1022,8 @@ qslivegrid::new_live_frame ()
 }
 
 /**
- *  Emits the signal_call_editor() signal.  In qsmainwnd, this signal is connected to
- *  the load_editor() slot.
+ *  Emits the signal_call_editor() signal.  In qsmainwnd, this signal is
+ *  connected to the load_editor() slot.
  */
 
 void
@@ -1033,8 +1033,8 @@ qslivegrid::edit_sequence ()
 }
 
 /**
- *  Emits the signal_call_editor_ex() signal.  In qsmainwnd, this signal is connected to
- *  the loadEditorEx() slot.
+ *  Emits the signal_call_editor_ex() signal.  In qsmainwnd, this signal is
+ *  connected to the loadEditorEx() slot.
  */
 
 void
