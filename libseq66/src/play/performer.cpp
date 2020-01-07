@@ -369,7 +369,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockincrement    (clock_ticks_from_ppqn(m_ppqn)),
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pause    */
-//  m_edit_sequence         (seq::unassigned()),
     m_is_modified           (false),
 #if defined SEQ66_SONG_BOX_SELECT
     m_selected_seqs         (),
@@ -4101,8 +4100,8 @@ performer::sequence_key (seq::number seq)
             if (slot_shift() > 0)
                 seq += slot_shift() * mapper().set_size();
 
-#ifdef PLATFORM_DEBUG
-            infoprintf("Toggled pattern #%d\n", seq);
+#if defined SEQ66_PLATFORM_DEBUG
+            infoprintf("Toggled pattern #%d", seq);
 #endif
 
             sequence_playing_toggle(seq);
@@ -4188,7 +4187,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 );
                 off_sequences();
             }
-            s->toggle_playing();
+            (void) s->toggle_playing();
         }
 
         /*
@@ -4733,6 +4732,9 @@ performer::loop_control
         if (m_seq_edit_pending || m_event_edit_pending)
         {
             result = false;             /* let the caller handle it */
+#if defined SEQ66_PLATFORM_DEBUG
+            infoprint("loop_control(): edit pending");
+#endif
         }
         else
         {
@@ -5756,7 +5758,7 @@ performer::automation_slot_shift
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    std::string name = "Shift count ";
+    std::string name = "Slot shift ";
     bool result = false;
     name += std::to_string(slot_shift() + 1);
     print_parameters(name, a, d0, d1, inverse);

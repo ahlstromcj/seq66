@@ -30,7 +30,6 @@
  *  This class is the Qt counterpart to the mainwid class.
  */
 
-#include <QErrorMessage>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPainter>
@@ -44,10 +43,6 @@
 #include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
-
-#if defined SEQ66_PLATFORM_DEBUG
-#include <qnamespace.h>
-#endif
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -157,7 +152,7 @@ qsliveframe::qsliveframe (performer & p, qsmainwnd * window, QWidget * parent) :
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
 
     m_timer = new QTimer(this);         /* timer for regular redraws    */
-    m_timer->setInterval(usr().window_redraw_rate());
+    m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
@@ -852,23 +847,19 @@ qsliveframe::mousePressEvent (QMouseEvent * event)
 }
 
 /**
+ *  First, get the sequence number we clicked on.  Then, if we're on a valid
+ *  sequence, hit the left mouse button, and are not dragging a sequence --
+ *  toggle playing.
  *
  */
 
 void
 qsliveframe::mouseReleaseEvent (QMouseEvent *event)
 {
-    /* get the sequence number we clicked on */
-
-    m_current_seq = seq_id_from_xy(event->x(), event->y());
+    m_current_seq = seq_id_from_xy(event->x(), event->y());     /* first    */
     m_button_down = false;
 
-    /*
-     * if we're on a valid sequence, hit the left mouse button, and are not
-     * dragging a sequence - toggle playing.
-     */
-
-    bool assigned = m_current_seq != seq::unassigned();
+    bool assigned = m_current_seq != seq::unassigned();         /* then     */
     if (assigned && event->button() == Qt::LeftButton && ! m_moving)
     {
         if (perf().is_seq_active(m_current_seq))
@@ -1055,7 +1046,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
 }
 
 /**
- *
+ *  Drag a sequence between slots; save the sequence and clear the old slot.
  */
 
 void
@@ -1067,11 +1058,6 @@ qsliveframe::mouseMoveEvent (QMouseEvent * event)
         bool not_editing = ! perf().is_seq_in_edit(m_current_seq);
         if (seqid != m_current_seq && ! m_moving && not_editing)
         {
-            /*
-             * Drag a sequence between slots; save the sequence and clear the
-             * old slot.
-             */
-
             if (perf().move_sequence(m_current_seq))
             {
                 m_moving = true;
@@ -1082,6 +1068,7 @@ qsliveframe::mouseMoveEvent (QMouseEvent * event)
 }
 
 /**
+ *
  */
 
 void
@@ -1093,7 +1080,11 @@ qsliveframe::mouseDoubleClickEvent (QMouseEvent * event)
     }
     else
     {
-        int m_current_seq = seq_id_from_xy(event->x(), event->y());
+        /*
+         * MAKE SURE THIS FIX IS OK.
+         */
+
+        /* int */ m_current_seq = seq_id_from_xy(event->x(), event->y());
         if (! perf().is_seq_active(m_current_seq))
         {
             if (perf().new_sequence(m_current_seq))
@@ -1166,8 +1157,6 @@ qsliveframe::edit_events ()
 
 /**
  *  Handles any existing pattern-key statuses.  Used in the timer callback.
- *
- *  NOT YET ACTIVE.
  */
 
 void
@@ -1176,7 +1165,7 @@ qsliveframe::sequence_key_check ()
     seq::number seqno = perf().pending_loop();
     if (perf().check_seqno(seqno))
     {
-#ifdef PLATFORM_DEBUG_TMI
+#ifdef PLATFORM_DEBUG
         printf("key for seq %d\n", seqno);
 #endif
         m_current_seq = seqno;
@@ -1184,8 +1173,8 @@ qsliveframe::sequence_key_check ()
             edit_seq_ex();
         else if (perf().event_edit_pending())
             edit_events();
-        else
-            perf().sequence_key(seqno);                     /* toggle loop  */
+//      else
+//          perf().sequence_key(seqno);                     /* toggle loop  */
     }
 }
 
@@ -1197,7 +1186,11 @@ bool
 qsliveframe::handle_key_press (const keystroke & k)
 {
     bool done = perf().midi_control_keystroke(k);
-    if (! done)
+    if (done)
+    {
+        // Currently no code
+    }
+    else
     {
         if (perf().seq_edit_pending())              /* self-resetting   */
         {

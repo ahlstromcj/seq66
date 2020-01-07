@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-09-15
+ * \updates       2020-01-01
  * \license       GNU GPLv2 or above
  *
  *
@@ -141,7 +141,6 @@ private:
     qslotbutton * create_one_button (int seqno);
     qslotbutton * button (int row, int column);
     qslotbutton * find_button (int seqno);
-
     bool get_slot_coordinate (int x, int y, int & row, int & column);
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
@@ -160,6 +159,7 @@ private:
     void handle_loop (bool checked, qslotbutton * pb, int row, int column);
     void handle_loop_press (qslotbutton * pb, int row, int column);
     void popup_menu ();
+    void sequence_key_check ();
 
 #if defined SEQ66_PLATFORM_DEBUG
     void show_loop_buttons ();

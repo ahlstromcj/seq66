@@ -217,6 +217,7 @@ qslivegrid::conditional_update ()
     if (! ok)
         return;
 
+    sequence_key_check();
     if (perf().is_running() || needs_update()) // || perf().needs_update())
     {
         set_needs_update(false);
@@ -932,7 +933,10 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
 }
 
 /**
- *
+ *  Drag a sequence between slots; save the sequence into a "moving sequence"
+ *  in the performer, and clear the old slot. But what if the user lets go of
+ *  the pattern in the same slot?  To DO!  Also, this call does a
+ *  partial-assign and removal all the time.
  */
 
 void
@@ -944,13 +948,6 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
         bool not_editing = ! perf().is_seq_in_edit(m_current_seq);
         if (seqno != m_current_seq && ! m_moving && not_editing)
         {
-            /*
-             * Drag a sequence between slots; save the sequence into a "moving
-             * sequence" in the performer, and clear the old slot. But what if
-             * the user lets go of the pattern in the same slot?  To DO!
-             * Also, this call does a partial-assign and removal all the time.
-             */
-
             if (perf().move_sequence(m_current_seq))
             {
                 m_moving = true;
@@ -967,13 +964,13 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
 void
 qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 {
-    m_current_seq = seq_id_from_xy(event->x(), event->y());
     if (m_adding_new)
     {
         new_sequence();
     }
     else
     {
+        m_current_seq = seq_id_from_xy(event->x(), event->y());
         if (! perf().is_seq_active(m_current_seq))
         {
             if (perf().new_sequence(m_current_seq))
@@ -1054,6 +1051,34 @@ qslivegrid::edit_events ()
 }
 
 /**
+ *  Handles any existing pattern-key statuses.  Used in the timer callback.
+ */
+
+void
+qslivegrid::sequence_key_check ()
+{
+    seq::number seqno = perf().pending_loop();
+    if (perf().check_seqno(seqno))
+    {
+#ifdef SEQ66_PLATFORM_DEBUG_TMI
+        printf("key for seq %d\n", seqno);
+#endif
+        m_current_seq = seqno;
+        if (perf().seq_edit_pending())
+            edit_sequence_ex();
+        else if (perf().event_edit_pending())
+            edit_events();
+
+        /*
+         * Currently ends up geing handled in performer's loop-control function.
+         *
+        else
+            perf().sequence_key(seqno);                     // toggle loop  //
+         */
+    }
+}
+
+/**
  *
  */
 
@@ -1061,25 +1086,21 @@ bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
     bool done = perf().midi_control_keystroke(k);
+    if (perf().seq_edit_pending())                      /* self-resetting   */
+    {
+        signal_call_editor_ex(perf().pending_loop());
+        done = true;
+    }
+    else if (perf().event_edit_pending())               /* self-resetting   */
+    {
+        signal_call_edit_events(perf().pending_loop());
+        done = true;
+    }
     if (done)
-    {
-        // Currently no code
-    }
-    if (! done)
-    {
-        if (perf().seq_edit_pending())              /* self-resetting   */
-        {
-            signal_call_editor_ex(perf().pending_loop());
-            done = true;
-        }
-        else if (perf().event_edit_pending())       /* self-resetting   */
-        {
-            signal_call_edit_events(perf().pending_loop());
-            done = true;
-        }
-        else
-            done = m_parent->handle_key_press(k);
-    }
+        (void) m_parent->handle_key_press(k);
+    else
+        done = m_parent->handle_key_press(k);
+
     return done;
 }
 
@@ -1093,7 +1114,7 @@ qslivegrid::handle_key_release (const keystroke & k)
     bool done = perf().midi_control_keystroke(k);
     if (! done)
     {
-        // so far, nothing needed upon key release, but...
+        // so far, nothing extra needed upon key release, but...
     }
     return done;
 }

@@ -696,8 +696,9 @@ sequence::set_rec_vol (int recvol)
 }
 
 /**
- *  Toggles the playing status of this sequence.  How exactly does this
- *  differ from toggling the mute status?
+ *  Toggles the playing status of this sequence.  How exactly does this differ
+ *  from toggling the mute status?  The midipulse and bool parameters of the
+ *  overload of this function are new, to support song-recording.
  *
  * \param tick
  *      The position from which to resume Note Ons, if appplicable. Resuming
@@ -710,7 +711,7 @@ sequence::set_rec_vol (int recvol)
 void
 sequence::toggle_playing (midipulse tick, bool resumenoteons)
 {
-    toggle_playing();
+    set_playing(! playing());
     if (playing() && resumenoteons)
         resume_note_ons(tick);
 
@@ -822,7 +823,7 @@ sequence::play
         if (playback_mode)                  /* song mode: on/off triggers   */
             trigger_turning_off = m_triggers.play(start_tick, end_tick);
     }
-    if (m_playing)                          /* play notes in frame          */
+    if (playing())                          /* play notes in frame          */
     {
         midipulse offset = get_length() - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;

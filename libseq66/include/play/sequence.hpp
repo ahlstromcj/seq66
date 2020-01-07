@@ -1138,11 +1138,6 @@ public:
         return m_playing;
     }
 
-    /*
-     * The midipulse and bool parameters of the overload of this function are
-     * new, to support song-recording.
-     */
-
     bool toggle_playing ()
     {
         set_playing(! playing());

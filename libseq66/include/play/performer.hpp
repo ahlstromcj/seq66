@@ -710,13 +710,6 @@ private:
 private:
 
     /**
-     *  Hold the number of the currently-in-edit sequence.  Moved this status
-     *  from seqmenu into performer for better centralized management.
-
-    seq::number m_edit_sequence;
-     */
-
-    /**
      *  It may be a good idea to eventually centralize all of the dirtiness of
      *  a performance here.  All the GUIs use a performer.
      */
