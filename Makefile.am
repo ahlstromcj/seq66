@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2019-03-09
+# \updates     2020-02-09
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -20,8 +20,6 @@
 #-----------------------------------------------------------------------------
 # Packing targets
 #-----------------------------------------------------------------------------
-
-# AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2 subdir-objects
 
 AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
 MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
@@ -159,6 +157,10 @@ endif
 
 if BUILD_QTMIDI
 SUBDIRS += seq_qt5 Seq66qt5
+endif
+
+if BUILD_RTCLI
+SUBDIRS += Seq66cli
 endif
 
 if BUILD_SEQTOOL

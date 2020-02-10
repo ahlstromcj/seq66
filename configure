@@ -20767,7 +20767,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile man/Makefile data/Makefile"
+ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile"
 
 
 
@@ -21947,6 +21947,7 @@ do
     "seq_qt5/src/Makefile") CONFIG_FILES="$CONFIG_FILES seq_qt5/src/Makefile" ;;
     "resources/pixmaps/Makefile") CONFIG_FILES="$CONFIG_FILES resources/pixmaps/Makefile" ;;
     "Seq66qt5/Makefile") CONFIG_FILES="$CONFIG_FILES Seq66qt5/Makefile" ;;
+    "Seq66cli/Makefile") CONFIG_FILES="$CONFIG_FILES Seq66cli/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
 

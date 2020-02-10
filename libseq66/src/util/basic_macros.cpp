@@ -306,14 +306,13 @@ msgprintf (msg_level lev, std::string fmt, ...)
 {
     if (is_debug() && ! fmt.empty())
     {
-        va_list args;                                       /* Step 1       */
-
         /*
          * cppcheck: Using reference 'fmt' as parameter for va_start() results
          * in undefined behaviour.  Also claims we need to add a va_end(), so we
          * did, below, on 2019-04-21.
          */
 
+        va_list args;                                       /* Step 1       */
         va_start(args, fmt);
 
         std::string output = formatted(fmt, args);          /* Steps 2 & 3  */
@@ -334,7 +333,6 @@ msgprintf (msg_level lev, std::string fmt, ...)
             std::cerr << "[ERROR: " << output << "]" << std::endl;
             break;
         }
-
         va_end(args);                                       /* 2019-04-21   */
     }
 }
@@ -369,7 +367,6 @@ formatted (const std::string & fmt, va_list args)
     const char * const szfmt = fmt.c_str();
     int ilen = std::vsnprintf(NULL, 0, szfmt, args_copy);
     va_end(args_copy);
-
     if (ilen > 0)
     {
         std::vector<char> dest(ilen + 1);                   /* Step 3       */

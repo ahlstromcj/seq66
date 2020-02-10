@@ -9,7 +9,7 @@
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
- *    Copyright (C) 2005-2017 by Chris Ahlstrom
+ *    Copyright (C) 2005-2020 by Chris Ahlstrom
  *
  *    This program is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -67,6 +67,20 @@ extern bool reroute_stdio
     const std::string & logfile = "",
     bool closem = false
 );
+
+/*
+ * Basic session handling from use falkTX, circa 2020-02-02.  The following
+ * function is internal.
+ *
+ *      extern void session_handler (int sig);
+ *
+ * The following functions return status booleans that the caller can use to
+ * determine what to do.
+ */
+
+extern void session_setup ();
+extern bool session_close ();
+extern bool session_save ();
 
 }        // namespace seq66
 

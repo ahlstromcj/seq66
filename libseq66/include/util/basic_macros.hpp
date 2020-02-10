@@ -104,9 +104,9 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 
 #if defined __cplusplus
 #define errprintfunc(x) seq66::msgprintf(seq66::msg_level::error, \
- "%s: %s\n", __func__, x)
+ "%s: %s", __func__, x)
 #else
-#define errprintfunc(x) fprintf(stderr, "%s: %s\n", __func__, x)
+#define errprintfunc(x) fprintf(stderr, "%s: %s", __func__, x)
 #endif
 
 extern std::string message_concatenate

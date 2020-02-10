@@ -121,7 +121,8 @@ rtmidi_info::rtmidi_info
                 }
             }
         }
-        errprintfunc("no system support for specified API");
+        else
+            errprintfunc("no system support for specified API");
     }
 
     std::vector<rtmidi_api> apis;

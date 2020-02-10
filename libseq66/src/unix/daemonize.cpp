@@ -3,11 +3,11 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2019-02-09
+ * \updates       2020-02-09
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2018 by Chris Ahlstrom
+ *  Copyright (C) 2005-2020 by Chris Ahlstrom
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -64,6 +64,10 @@
 #include "unix/daemonize.hpp"           /* daemonization functions & macros */
 #include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path() etc.      */
+
+#if defined SEQ66_PLATFORM_LINUX
+#include <signal.h>                     /* struct sigaction                 */
+#endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
 
@@ -253,7 +257,7 @@ daemonize
 void
 undaemonize (uint32_t previous_umask)
 {
-   syslog(LOG_NOTICE, "daemon exited");
+   syslog(LOG_NOTICE, "seq66 daemon exited");
    closelog();
    if (previous_umask != 0)
       (void) umask(previous_umask);          /* restore user mask             */
@@ -364,6 +368,118 @@ reroute_stdio (const std::string & logfile, bool closem)
     }
     return result;
 }
+
+#if defined SEQ66_PLATFORM_LINUX
+
+/*
+ * TODO:  Make these values atomic?
+ */
+
+static bool sg_needs_close = false;
+static bool sg_needs_save = false;
+
+/**
+ *  Provides a basic session handler, called upon receipt of a POSIX signal.
+ *
+ *  Note that SIGSTOP and SIGKILL cannot be blocked, ignored, or caught by a
+ *  handler.  Also note that SIGKILL bypass the SIGTERM handler; it is a last
+ *  resort for runaway processes that don't respond to SIGTERM.
+ */
+
+static void
+session_handler (int sig)
+{
+    printf("sig = %d\n", sig);
+#if defined SEQ66_PLATFORM_DEBUG
+    psignal(sig, "Signal caught");
+#endif
+    switch (sig)
+    {
+    case SIGINT:                        /* 2: Ctrl-C "terminal interrupt"   */
+
+        sg_needs_close = true;
+        break;
+
+    case SIGTERM:                       /* 15: "terminate process"          */
+
+        sg_needs_close = true;
+        break;
+
+    case SIGUSR1:                       /* 10: "user-defined signal 1       */
+
+        sg_needs_save = true;
+        break;
+    }
+}
+
+/**
+ *  Sets up the application to intercept SIGINT, SIGTERM, and SIGUSR1.
+ */
+
+void
+session_setup ()
+{
+    struct sigaction action;
+    memset(&action, 0, sizeof action);
+    action.sa_handler = session_handler;
+    sigaction(SIGINT, &action, NULL);                   /* SIGINT is 2      */
+    sigaction(SIGTERM, &action, NULL);                  /* SIGTERM is 15    */
+    sigaction(SIGUSR1, &action, NULL);                  /* SIGUSR1 is 10    */
+}
+
+/**
+ *  Returns the boolean to indicate a request to close the application.
+ */
+
+bool
+session_close ()
+{
+    bool result = sg_needs_close;
+#if defined SEQ66_PLATFORM_DEBUG
+    if (result)
+        printf("Application marked for close....\n");
+#endif
+    sg_needs_close = false;
+    return result;
+}
+
+/**
+ *  Returns the boolean to indicate a request to save the current sequence file.
+ */
+
+bool
+session_save ()
+{
+    bool result = sg_needs_save;
+#if defined SEQ66_PLATFORM_DEBUG
+    if (result)
+        printf("Application marked for file_save....\n");
+#endif
+    sg_needs_save = false;
+    return result;
+}
+
+#else
+
+void
+session_setup ()
+{
+    // no code at this time
+}
+
+bool
+session_close ()
+{
+    return false;
+}
+
+bool
+session_save ()
+{
+    return false;
+}
+
+#endif
 
 }           // namespace seq66
 

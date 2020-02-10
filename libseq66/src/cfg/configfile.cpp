@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-11-10
+ * \updates       2020-01-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -63,6 +63,7 @@ namespace seq66
 configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_rc            (rcs),
     m_error_message (),
+    m_is_error      (false),
     m_name          (name),
     m_version       ("0"),
     m_line          (),

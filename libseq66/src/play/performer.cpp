@@ -407,10 +407,9 @@ performer::performer (int ppqn, int rows, int columns) :
 performer::~performer ()
 {
     m_io_active = m_is_running = false;
-    cv().signal();                          /* signal the end of play       */
-
     reset_sequences();                      /* stop all output upon exit    */
     announce_exit();
+    cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
 

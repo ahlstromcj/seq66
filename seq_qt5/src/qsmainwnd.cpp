@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-17
+ * \updates       2020-02-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -68,6 +68,13 @@
 #include "util/calculations.hpp"        /* pulse_to_measurestring(), etc.   */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
+
+/*
+ *  A signal handler is defined in daemonize.cpp, used for quick & dirty
+ *  signal handling.  Thanks due to user falkTX!
+ */
+
+#include "unix/daemonize.hpp"
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -1031,6 +1038,17 @@ qsmainwnd::remove_set_master ()
 void
 qsmainwnd::refresh ()
 {
+    if (session_close())
+    {
+        m_timer->stop();
+        close();
+        return;
+    }
+    if (session_save())
+    {
+        save_file();
+    }
+
     int active_screenset = int(perf().playscreen_number());
     std::string b = std::to_string(active_screenset);
     ui->entry_active_set->setText(b.c_str());

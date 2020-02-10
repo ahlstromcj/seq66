@@ -118,13 +118,10 @@ main (int argc, char * argv [])
         if (seq66::cmdlineopts::parse_o_options(argc, argv))
         {
             /**
-             * The user may have specified the "wid" or other -o options that
-             * are also set up in the "usr" file.  The command line needs to
-             * take precedence.  The "log" option is processed early in the
-             * startup sequence.  These same settings are made in the
-             * cmdlineopts module.
-             *
-             * Now handled via optind incrementing:     ++optionindex;
+             * The user may have specified -o options that are also set up in
+             * the "usr" file.  The command line needs to take precedence.  The
+             * "log" option is processed early in the startup sequence.  These
+             * same settings are made in the cmdlineopts module.
              */
 
             std::string logfile = seq66::usr().option_logfile();
@@ -132,18 +129,13 @@ main (int argc, char * argv [])
                 (void) seq66::reroute_stdio(logfile);
         }
 
-        seq66::performer p                      /* main performance object      */
+        seq66::performer p                  /* the main performance object  */
         (
             SEQ66_USE_DEFAULT_PPQN,
             seq66::usr().mainwnd_rows(),
             seq66::usr().mainwnd_cols()
         );
-
-        /*
-         * For testing.
-         */
-
-        if (seq66::rc().verbose())
+        if (seq66::rc().verbose())          /* use for trouble-shooting     */
         {
             seq66::rc().key_controls().show();
             seq66::rc().midi_controls().show();
