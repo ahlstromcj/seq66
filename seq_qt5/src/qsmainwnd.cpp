@@ -1276,6 +1276,8 @@ qsmainwnd::save_file_as ()
  *  update the the current file-name, but does update the recent-file
  *  information at this time.
  *
+ *  This function is ESSENTIALLY EQUIVALENT to export_song()!!!
+ *
  * \param fname
  *      The full path-name to the file to be written.  If empty (the default),
  *      then the user is prompted for the file-name.
@@ -1327,6 +1329,8 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
  *  MIDI file, stripping out the Seq66 SeqSpec information.  Does not
  *  update the current file-name, but does update the the recent-file
  *  information at this time.
+ *
+ *  This function is ESSENTIALLY EQUIVALENT to export_file_as_midi()!!!
  *
  * \param fname
  *      The full path-name to the file to be written.  If empty (the default),

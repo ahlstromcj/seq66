@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-02-09
+dnl \update        2020-02-18
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -20,7 +20,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.90.2], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.90.3], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -86,10 +86,14 @@ PACKAGE="seq66"
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_SUBST(PACKAGE)
 
+AC_DEFINE(APP_NAME, ["seq66"], "The default name of the Seq66 executable")
+AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
+AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
+build_os="'$(uname -srvm)'"
+AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "Distro where build was done")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
-AC_SUBST(CLIENT_NAME)
 
-VERSION="0.90.2"
+VERSION="0.90.3"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -298,6 +302,7 @@ dnl and portmidi builds.
 if test "$qtmidi" != "no"; then
     build_qtmidi="yes"
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the Qt/rtmidi version of application])
+    AC_DEFINE(APP_TYPE, ["qt5"], [Names the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name for Qt/rtmidi])
     AM_PATH_ALSA(0.9.0)
     AX_HAVE_QT_EX
@@ -314,6 +319,7 @@ AC_ARG_ENABLE(cli,
 if test "$cli" != "no"; then
     AC_MSG_RESULT([rtmidi command-line build enabled.]);
     AC_DEFINE(APP_NAME, ["seq66cli"], [Names the CLI version of application])
+    AC_DEFINE(APP_TYPE, ["cli"], [Names the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
@@ -382,7 +388,12 @@ if test "$testing" != "no"; then
 fi
 
 AC_SUBST(APP_NAME)
+AC_SUBST(APP_TYPE)
+AC_SUBST(APP_ENGINE)
+AC_SUBST(APP_BUILD_OS)
+AC_SUBST(CLIENT_NAME)
 AC_SUBST(CONFIG_NAME)
+
 AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_RTMIDI], [test "$build_rtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
@@ -396,8 +407,8 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-02-09"
-#define VERSION "0.90.2"
+#define VERSION_DATE_SHORT "2020-02-18"
+#define VERSION "0.90.3"
 
 )
 
@@ -527,7 +538,7 @@ AC_MSG_RESULT([$SEQ66_APP_NAME]);
 cat << E_O_F
 
 Run 'make' to build the application.  Run 'make install' as root/sudo to install
-the application.  Some tests can be run using the Seqtool project.  Do
+the application.  Some tests can be run using the Seqtool project, if built.  Do
 'make dist', etc. to create gzip and other archives.  To build the PDF
 documentation, make sure Doxygen, Graphviz, and TexLive are installed, change
 to the doc/dox directory, and run './make_dox reference'.  To clean the

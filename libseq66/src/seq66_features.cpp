@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2019-09-01
+ * \updates       2020-02-18
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -51,6 +51,9 @@ namespace seq66
  */
 
 static std::string s_app_name = SEQ66_APP_NAME;
+static std::string s_app_type = SEQ66_APP_TYPE;
+static std::string s_app_engine = SEQ66_APP_ENGINE;
+static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
 static std::string s_client_name = SEQ66_CLIENT_NAME;
 static std::string s_version = SEQ66_VERSION;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
@@ -58,7 +61,7 @@ static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_GIT_VERSION
     " " SEQ66_VERSION_DATE_SHORT "\n";
 
 /**
- *  Returns the current name of the application.
+ *  Sets the current name of the application.
  */
 
 void
@@ -68,7 +71,37 @@ set_app_name (const std::string & aname)
 }
 
 /**
- *  Returns the current base name of the client port.
+ *  Sets the current type of the application.
+ */
+
+void
+set_app_type (const std::string & atype)
+{
+    s_app_type = atype;
+}
+
+/**
+ *
+ */
+
+void
+set_app_engine (const std::string & aengine)
+{
+    s_app_engine = aengine;
+}
+
+/**
+ *
+ */
+
+void
+set_app_build_os (const std::string & abuild_os)
+{
+    s_app_build_os = abuild_os;
+}
+
+/**
+ *  Sets the current base name of the client port.
  */
 
 void
@@ -90,6 +123,36 @@ const std::string &
 seq_app_name ()
 {
     return s_app_name;
+}
+
+/**
+ *
+ */
+
+const std::string &
+seq_app_type ()
+{
+    return s_app_type;
+}
+
+/**
+ *
+ */
+
+const std::string &
+seq_app_engine ()
+{
+    return s_app_engine;
+}
+
+/**
+ *
+ */
+
+const std::string &
+seq_app_build_os ()
+{
+    return s_app_build_os;
 }
 
 /**
@@ -168,63 +231,59 @@ seq_build_details ()
 {
     std::ostringstream result;
     result
-        << "Build features:" << std::endl
-        << "  C++ version " << std::to_string(__cplusplus) << std::endl
-#if defined SEQ66_RTMIDI_SUPPORT
-        << "  Native JACK/ALSA (rtmidi) on" << std::endl
-#endif
-#if defined SEQ66_ALSAMIDI_SUPPORT
-        << "  ALSA-only MIDI support on" << std::endl
+        << "Built " << __DATE__ << " " << __TIME__ "\n"
+        << "  C++ version " << std::to_string(__cplusplus) << "\n"
+        << "  App name: " << seq_app_name()
+        << "; type " << seq_app_type()
+        << "; engine " << seq_app_engine() << "\n"
+        << "  Build OS: " << seq_app_build_os() << "\n"
+#ifdef SEQ66_RTMIDI_SUPPORT
+        << "  Native JACK/ALSA (rtmidi)\n"
 #endif
 #if defined SEQ66_PORTMIDI_SUPPORT
-        << "  PortMIDI support on" << std::endl
+        << "  PortMIDI\n"
 #endif
-        << "  Event editor on" << std::endl
-        << "  Vector for event list on" << std::endl
-        << "  Follow progress bar on" << std::endl
-#if defined SEQ66_EDIT_SEQUENCE_HIGHLIGHT
-        << "  Highlight edit pattern on" << std::endl
+        << "  Event editor\n"
+        << "  Follow progress bar\n"
+#if defined SEQ66_EDIT_SEQUENCE_HIGHLIGHT       // undefined
+        << "  Highlight edit pattern\n"
 #endif
 #if defined SEQ66_HIGHLIGHT_EMPTY_SEQS
-        << "  Highlight empty patterns on" << std::endl
+        << "  Highlight empty patterns\n"
 #endif
 #if defined SEQ66_JACK_SESSION
-        << "  JACK session on" << std::endl
+        << "  JACK session\n"
 #endif
 #if defined SEQ66_JACK_SUPPORT
-        << "  JACK support on" << std::endl
+        << "  JACK support\n"
 #endif
-        << "  LASH support OBSOLETE, REMOVED" << std::endl
-        << "  MIDI vector (vs list) on" << std::endl
-        << "  Seq32 chord generator on" << std::endl
-        << "  Seq32 LFO window on" << std::endl
-        << "  Seq32 menu buttons on" << std::endl
-        << "  Seq32 transpose on" << std::endl
-        << "  BPM Tap button on" << std::endl
-        << "  Solid piano-roll grid on" << std::endl
+#if defined SEQ66_LASH_SUPPORT
+        << "  LASH support\n"
+#endif
+        << "  Seq32 chord generator, LFO window, menu buttons, transpose\n"
+        << "  BPM Tap button, solid piano-roll grid\n"
+        << "  Song performance recording\n"
 #if defined SEQ66_JE_PATTERN_PANEL_SCROLLBARS
-        << "  Main window scroll-bars on" << std::endl
+        << "  Main window scroll-bars\n"
 #endif
 #if defined SEQ66_SHOW_COLOR_PALETTE
-        << "  Optional pattern coloring on" << std::endl
+        << "  Optional pattern coloring\n"
 #endif
-        << "  Song performerance recording on" << std::endl
 #if defined SEQ66_SONG_BOX_SELECT
-        << "  Box song selection on" << std::endl
+        << "  Box song selection\n"
 #endif
 #if defined SEQ66_PLATFORM_WINDOWS
-        << "  Windows support on" << std::endl
+        << "  Windows support\n"
 #endif
-        << "  Pause support on" << std::endl
-        << "  Save time-sig/tempo on" << std::endl
+        << "  Pause support\n"
+        << "  Save time-sig/tempo\n"
 #if defined SEQ66_PLATFORM_DEBUG
-        << "  Debug code on" << std::endl
+        << "  Debug code\n"
 #endif
-        << "  " << s_bitness << " support enabled" << std::endl
-        << std::endl
-    << "Options are enabled/disabled via the configure script," << std::endl
-    << "libseq66/include/seq66_features.hpp, or the build-specific" << std::endl
-    << "seq66-config.h file in include or in include/qt/portmidi" << std::endl
+        << "  " << s_bitness << "\n\n"
+    << "Options are enabled/disabled via the configure script,\n"
+    << "libseq66/include/seq66_features.h(pp), or the build-specific\n"
+    << "seq66-config.h file in include/ or in include/qt/portmidi/" << std::endl
     ;
     return result.str();
 }

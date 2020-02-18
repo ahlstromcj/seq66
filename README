@@ -1,6 +1,6 @@
 README for Sequencer66 0.90.2 (Sequencer64 refactored for C++11/14 and Qt)
 Chris Ahlstrom
-2015-09-10 to 2020-02-09
+2015-09-10 to 2020-02-16
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -48,13 +48,17 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.90.3:
+        -   Added signal handling (e.g. for nsm-proxy) from user falkTX.
+            Used in the CLI and Qt versions to trigger file save and
+            application exit.
+        -   Added code to define the engine used and the exact "uname a-" of the
+            operating system on which the build was done, for the --version
+            option.
     -   Version 0.90.2:
         -   Lots of code cleanup.
         -   Added truncation of BPM to precision in "usr" file.
         -   Fixed at bug in handling running status; backported to Seq64.
-        -   Added signal handling (e.g. for nsm-proxy) from user falkTX.
-            Used in the CLI and Qt versions to trigger file save and
-            application exit.
     -   Version 0.90.1:
         -   A raft of bug fixes and user-interface improvements.
         -   Many tweaks to try to make the performer and the user-interface even
