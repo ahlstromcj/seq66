@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-09-18
+ * \updates       2020-02-18
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -265,7 +265,7 @@ public:
      *  -1.  Replaces the null() function.
      */
 
-    static bool none (int seqno)
+    static bool none (number seqno)
     {
         return seqno == unassigned();
     }
@@ -274,7 +274,7 @@ public:
      *  Similar to legal(), but excludes limit().
      */
 
-    static bool valid (int seqno)
+    static bool valid (number seqno)
     {
         return seqno >= 0 && seqno < maximum();
     }
@@ -284,7 +284,7 @@ public:
      *  This function does not allow that value as a valid value to use.
      */
 
-    static bool disabled (int seqno)
+    static bool disabled (number seqno)
     {
         return seqno == limit();
     }

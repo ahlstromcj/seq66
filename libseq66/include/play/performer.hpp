@@ -795,34 +795,35 @@ private:
     /**
      *  Set to true if automation_edit_pending() is called.  It is reset by the
      *  caller as a side-effect.  The usual (but configurable) keystroke for
-     *  this function is "=".
+     *  this function is "=". In Sequencer64 this was m_call_seq_edit.
      */
 
-    mutable bool m_seq_edit_pending;        // m_call_seq_edit;
+    mutable bool m_seq_edit_pending;
 
     /**
      *  Set to true if automation_event_pending() is called.  It is reset by the
      *  caller as a side-effect.  The usual (but configurable) keystroke for
-     *  this function is "-".
+     *  this function is "-". In Sequencer64 this was m_call_seq_eventedit.
      */
 
-    mutable bool m_event_edit_pending;      // m_call_seq_eventedit;
+    mutable bool m_event_edit_pending;
+
+    /**
+     *  Holds the loop number in the case of using the edit keys.  It is
+     *  reset when the slot-shift key is struck. In Sequencer64 this was
+     *  m_call_seq_number.
+     */
+
+    mutable seq::number m_pending_loop;
 
     /**
      *  Incremented when automation_slot_shift() is called.  It is reset by the
      *  caller once the keystroke is handled.  It is used for toggling patterns
      *  from 32 to 63 and 64 to 95. The usual (but configurable) keystroke for
-     *  this function is "/".
+     *  this function is "/". In Sequencer64 this was m_call_seq_shift.
      */
 
-    mutable int m_slot_shift;               // m_call_seq_shift;
-
-    /**
-     *  Holds the loop number in the case of using the edit keys.  It is
-     *  reset when the slot-shift key is struck.
-     */
-
-    mutable seq::number m_pending_loop;     // m_call_seq_number;
+    mutable int m_slot_shift;
 
 private:
 
@@ -2800,11 +2801,6 @@ public:
 
     void clear_seq_edits ();
 
-    bool check_seq_edits () const
-    {
-        return m_seq_edit_pending || m_event_edit_pending;
-    }
-
     void toggle_seq_edit ()
     {
         m_seq_edit_pending = ! m_seq_edit_pending;
@@ -2815,24 +2811,42 @@ public:
         m_event_edit_pending = ! m_event_edit_pending;
     }
 
-    bool seq_edit_pending () const;
-    bool event_edit_pending () const;
+    bool seq_edit_pending () const
+    {
+        return m_seq_edit_pending;
+    }
 
-    seq::number pending_loop () const           // call_seq_number()
+    bool event_edit_pending () const
+    {
+        return m_event_edit_pending;
+    }
+
+    bool call_seq_edits () const
+    {
+        return m_seq_edit_pending || m_event_edit_pending;
+    }
+
+    seq::number pending_loop () const
     {
         return m_pending_loop;
     }
 
-    void pending_loop (seq::number n) const     // call_seq_number()
+    void pending_loop (seq::number n) const
     {
         m_pending_loop = n;
     }
 
-    int increment_slot_shift () const;
-
     int slot_shift () const
     {
         return m_slot_shift;
+    }
+
+    int increment_slot_shift () const
+    {
+        if (++m_slot_shift > 2)
+            clear_slot_shift();
+
+        return slot_shift();
     }
 
     void clear_slot_shift () const
@@ -2844,9 +2858,13 @@ public:
      * This is just a very fast check meant for use in some GUI timers.
      */
 
-    bool check_seqno (int seqno) const
+    bool got_seqno (seq::number & s) const
     {
-        return seqno != seq::unassigned();
+        bool result = seq::none(pending_loop());
+        if (result)
+            s = pending_loop();
+
+        return result;
     }
 
     bool loop_control                   /* [loop-control]       */

@@ -384,8 +384,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_notify                (),
     m_seq_edit_pending      (false),
     m_event_edit_pending    (false),
-    m_slot_shift            (0),
-    m_pending_loop          (seq::unassigned())
+    m_pending_loop          (seq::unassigned()),
+    m_slot_shift            (0)
 {
     /*
      * Generally will be parsing the 'rc' files after creating the performer.
@@ -4091,22 +4091,15 @@ performer::group_learn_complete (const keystroke & k, bool good)
 void
 performer::sequence_key (seq::number seq)
 {
-    if (check_seqno(seq))
+    seq += playscreen_offset();
+    if (is_seq_active(seq))
     {
-        seq += playscreen_offset();
-        if (is_seq_active(seq))
-        {
-            if (slot_shift() > 0)
-                seq += slot_shift() * mapper().set_size();
+        if (slot_shift() > 0)
+            seq += slot_shift() * mapper().set_size();
 
-#if defined SEQ66_PLATFORM_DEBUG
-            infoprintf("Toggled pattern #%d", seq);
-#endif
-
-            sequence_playing_toggle(seq);
-            clear_seq_edits();
-        }
+        sequence_playing_toggle(seq);
     }
+    clear_seq_edits();                      /* save the caller the trouble  */
 }
 
 /**
@@ -4293,7 +4286,8 @@ performer::sequence_playing_change (seq::number seqno, bool on)
  */
 
 /**
- *
+ *  Sets the edit-pending flags to false, and disabled the pending sequence
+ *  number.
  */
 
 void
@@ -4301,66 +4295,6 @@ performer::clear_seq_edits ()
 {
     m_seq_edit_pending = m_event_edit_pending = false;
     m_pending_loop = seq::unassigned();
-}
-
-/**
- *  Checks the seq-edit key, and then clears the seq-edit member variables
- *  if seq-edit is pending.  Generally, the pending_loop() function must be
- *  called before this function to retrieve the pattern number in force for the
- *  pending seq-edit call.
- *
- * \return
- *      Returns the value of m_seq_edit_pending.
- */
-
-bool
-performer::seq_edit_pending () const
-{
-    bool result = m_seq_edit_pending;
-    if (result)
-    {
-        result = pending_loop() != seq::unassigned();
-        m_seq_edit_pending = false;
-        pending_loop(seq::unassigned());
-    }
-    return result;
-}
-
-/**
- *  Checks the event-edit key, and then clears the event-edit member variables
- *  if event-edit is pending.  Generally, the pending_loop() function must be
- *  called before this function to retrieve the pattern number in force for the
- *  pending event-edit call.
- *
- * \return
- *      Returns the value of m_event_edit_pending.
- */
-
-bool
-performer::event_edit_pending () const
-{
-    bool result = m_event_edit_pending;
-    if (result)
-    {
-        result = pending_loop() != seq::unassigned();
-        m_event_edit_pending = false;
-        pending_loop(seq::unassigned());
-    }
-    return result;
-}
-
-/**
- *
- */
-
-int
-performer::increment_slot_shift () const
-{
-    ++m_slot_shift;
-    if (slot_shift() > 2)
-        clear_slot_shift();
-
-    return slot_shift();
 }
 
 /*

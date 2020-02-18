@@ -1162,19 +1162,32 @@ qsliveframe::edit_events ()
 void
 qsliveframe::sequence_key_check ()
 {
-    seq::number seqno = perf().pending_loop();
-    if (perf().check_seqno(seqno))
+    seq::number seqno;
+    bool ok = perf().got_seqno(seqno);
+    if (perf().seq_edit_pending())
     {
-#ifdef PLATFORM_DEBUG
-        printf("key for seq %d\n", seqno);
-#endif
-        m_current_seq = seqno;
-        if (perf().seq_edit_pending())
+        if (ok)
+        {
             edit_seq_ex();
-        else if (perf().event_edit_pending())
+            perf().clear_seq_edits();
+        }
+    }
+    else if (perf().event_edit_pending())
+    {
+        if (ok)
+        {
             edit_events();
-//      else
-//          perf().sequence_key(seqno);                     /* toggle loop  */
+            perf().clear_seq_edits();
+        }
+    }
+    else if (ok)
+    {
+        /*
+         * Currently ends up handled in performer's loop-control function.
+         *
+        else
+            perf().sequence_key(seqno);                     // toggle loop  //
+         */
     }
 }
 
@@ -1192,14 +1205,20 @@ qsliveframe::handle_key_press (const keystroke & k)
     }
     else
     {
-        if (perf().seq_edit_pending())              /* self-resetting   */
+        /*
+         * TODO: just let the timer callback handle this!!!
+         */
+
+        if (perf().seq_edit_pending())
         {
             signal_call_editor_ex(perf().pending_loop());
+            perf().clear_seq_edits();
             done = true;
         }
-        else if (perf().event_edit_pending())       /* self-resetting   */
+        else if (perf().event_edit_pending())
         {
             signal_call_edit_events(perf().pending_loop());
+            perf().clear_seq_edits();
             done = true;
         }
         else

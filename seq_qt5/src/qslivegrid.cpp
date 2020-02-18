@@ -1057,20 +1057,28 @@ qslivegrid::edit_events ()
 void
 qslivegrid::sequence_key_check ()
 {
-    seq::number seqno = perf().pending_loop();
-    if (perf().check_seqno(seqno))
+    seq::number seqno;
+    bool ok = perf().got_seqno(seqno);
+    if (perf().seq_edit_pending())
     {
-#ifdef SEQ66_PLATFORM_DEBUG_TMI
-        printf("key for seq %d\n", seqno);
-#endif
-        m_current_seq = seqno;
-        if (perf().seq_edit_pending())
+        if (ok)
+        {
             edit_sequence_ex();
-        else if (perf().event_edit_pending())
+            perf().clear_seq_edits();
+        }
+    }
+    else if (perf().event_edit_pending())
+    {
+        if (ok)
+        {
             edit_events();
-
+            perf().clear_seq_edits();
+        }
+    }
+    else if (ok)
+    {
         /*
-         * Currently ends up geing handled in performer's loop-control function.
+         * Currently ends up handled in performer's loop-control function.
          *
         else
             perf().sequence_key(seqno);                     // toggle loop  //
