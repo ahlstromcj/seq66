@@ -455,7 +455,7 @@ rcfile::parse ()
     {
         long ticks = 64;
         sscanf(scanline(), "%ld", &ticks);
-        rc_ref().set_clock_mod(ticks);      ///// midibus::set_clock_mod(ticks);
+        rc_ref().set_clock_mod(ticks);
     }
     else
     {

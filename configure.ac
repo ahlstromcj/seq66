@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-02-18
+dnl \update        2020-03-02
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -35,9 +35,6 @@ AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 AC_GCC_VERSION
 AC_LANG([C])
 AC_LANG([C++])
-
-dnl AC_PROG_AWK
-
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_CXXCPP
@@ -271,6 +268,34 @@ fi
 
 dnl LASH support has been REMOVED!
 
+dnl Enable NSM support.  Not yet ready for prime time.
+
+AC_ARG_ENABLE(nsm,
+  AS_HELP_STRING([--enable-nsm], [Enable NSM support (default=no)]),
+  [ac_nsm=$enableval],
+  [ac_nsm=no])
+
+dnl Check for optional LIBLO library.
+
+if test "x$ac_liblo" = "xyes"; then
+   PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
+   if test "x$ac_liblo" = "xyes"; then
+      AC_DEFINE(CONFIG_LIBLO, 1, [Define if LIBLO library is available.])
+      ac_cflags="$ac_cflags $LIBLO_CFLAGS"
+      ac_libs="$ac_libs $LIBLO_LIBS"
+   else
+      AC_MSG_WARN([*** LIBLO library not found.])
+      AC_MSG_WARN([*** OSC/NSM service support will be disabled.])
+      ac_nsm="no"
+   fi
+else
+   ac_nsm="no"
+fi
+
+if test "x$ac_nsm" = "xyes"; then
+   AC_DEFINE(NSM_SESSION, 1, [Define if NSM support is available.])
+fi
+
 dnl "RtMidi" support.  This is now the default build for Seq66.
 
 AC_ARG_ENABLE(rtmidi,
@@ -278,10 +303,13 @@ AC_ARG_ENABLE(rtmidi,
     [rtmidi=$enableval],
     [rtmidi=yes])
 
+dnl AC_DEFINE(APP_TYPE, ["qt"], [Names the UI of the application])
+
 if test "$rtmidi" != "no"; then
     build_rtmidi="yes"
     build_portmidi="no"
     AC_DEFINE(APP_NAME, ["seq66"], [Names the JACK/ALSA version of application])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(CONFIG_NAME, ["seq66"], [Configuration file name])
     AC_DEFINE(RTMIDI_SUPPORT, 1, [Indicates if rtmidi is enabled])
     AM_PATH_ALSA(0.9.0)
@@ -302,6 +330,7 @@ dnl and portmidi builds.
 if test "$qtmidi" != "no"; then
     build_qtmidi="yes"
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the Qt/rtmidi version of application])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(APP_TYPE, ["qt5"], [Names the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name for Qt/rtmidi])
     AM_PATH_ALSA(0.9.0)
@@ -319,7 +348,9 @@ AC_ARG_ENABLE(cli,
 if test "$cli" != "no"; then
     AC_MSG_RESULT([rtmidi command-line build enabled.]);
     AC_DEFINE(APP_NAME, ["seq66cli"], [Names the CLI version of application])
+    AC_DEFINE(APP_CLI, [1], [Indicate the CLI version of application])
     AC_DEFINE(APP_TYPE, ["cli"], [Names the UI of the application])
+    AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
     AC_DEFINE(CONFIG_NAME, ["seq66cli"], [Configuration file name])
     if test "x$mingw" != "xyes" ; then
         build_rtcli="yes"
@@ -407,7 +438,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-02-18"
+#define VERSION_DATE_SHORT "2020-03-02"
 #define VERSION "0.90.3"
 
 )
@@ -475,7 +506,7 @@ case "$host_os" in
         ;;
 esac
 
-dnl Note the c++14 option.
+dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
 
 CFLAGS="$COMMONFLAGS"
 CXXFLAGS="$CFLAGS -std=c++14 -Wno-variadic-macros -Wno-deprecated-declarations"

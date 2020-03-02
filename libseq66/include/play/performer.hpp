@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-01-01
+ * \updates       2020-02-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -2860,7 +2860,7 @@ public:
 
     bool got_seqno (seq::number & s) const
     {
-        bool result = seq::none(pending_loop());
+        bool result = seq::assigned(pending_loop());
         if (result)
             s = pending_loop();
 

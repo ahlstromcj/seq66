@@ -688,6 +688,8 @@ X_CFLAGS
 XMKMF
 ALSA_LIBS
 ALSA_CFLAGS
+LIBLO_LIBS
+LIBLO_CFLAGS
 JACK_LIBS
 JACK_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -852,6 +854,7 @@ enable_libtool_lock
 enable_mingw
 enable_jack
 enable_jack_session
+enable_nsm
 enable_rtmidi
 with_alsa_prefix
 with_alsa_inc_prefix
@@ -885,6 +888,8 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 JACK_CFLAGS
 JACK_LIBS
+LIBLO_CFLAGS
+LIBLO_LIBS
 XMKMF
 XPCCUT_CFLAGS
 XPCCUT_LIBS
@@ -1537,6 +1542,7 @@ Optional Features:
   --enable-mingw          Enable MingW Windows support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
+  --enable-nsm            Enable NSM support (default=no)
   --enable-rtmidi         Enable rtmidi build, the default engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --enable-qt             Enable Qt5 user-interface build
@@ -1585,6 +1591,9 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   JACK_CFLAGS C compiler flags for JACK, overriding pkg-config
   JACK_LIBS   linker flags for JACK, overriding pkg-config
+  LIBLO_CFLAGS
+              C compiler flags for LIBLO, overriding pkg-config
+  LIBLO_LIBS  linker flags for LIBLO, overriding pkg-config
   XMKMF       Path to xmkmf, Makefile generator for X Window System
   XPCCUT_CFLAGS
               C compiler flags for XPCCUT, overriding pkg-config
@@ -3324,8 +3333,6 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -16973,6 +16980,111 @@ fi
 
 
 
+# Check whether --enable-nsm was given.
+if test "${enable_nsm+set}" = set; then :
+  enableval=$enable_nsm; ac_nsm=$enableval
+else
+  ac_nsm=no
+fi
+
+
+
+if test "x$ac_liblo" = "xyes"; then
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBLO" >&5
+$as_echo_n "checking for LIBLO... " >&6; }
+
+if test -n "$LIBLO_CFLAGS"; then
+    pkg_cv_LIBLO_CFLAGS="$LIBLO_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"liblo\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "liblo") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LIBLO_CFLAGS=`$PKG_CONFIG --cflags "liblo" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$LIBLO_LIBS"; then
+    pkg_cv_LIBLO_LIBS="$LIBLO_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"liblo\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "liblo") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LIBLO_LIBS=`$PKG_CONFIG --libs "liblo" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        LIBLO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "liblo" 2>&1`
+        else
+	        LIBLO_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "liblo" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$LIBLO_PKG_ERRORS" >&5
+
+	ac_liblo="no"
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	ac_liblo="no"
+else
+	LIBLO_CFLAGS=$pkg_cv_LIBLO_CFLAGS
+	LIBLO_LIBS=$pkg_cv_LIBLO_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	ac_liblo="yes"
+fi
+   if test "x$ac_liblo" = "xyes"; then
+
+$as_echo "#define CONFIG_LIBLO 1" >>confdefs.h
+
+      ac_cflags="$ac_cflags $LIBLO_CFLAGS"
+      ac_libs="$ac_libs $LIBLO_LIBS"
+   else
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** LIBLO library not found." >&5
+$as_echo "$as_me: WARNING: *** LIBLO library not found." >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** OSC/NSM service support will be disabled." >&5
+$as_echo "$as_me: WARNING: *** OSC/NSM service support will be disabled." >&2;}
+      ac_nsm="no"
+   fi
+else
+   ac_nsm="no"
+fi
+
+if test "x$ac_nsm" = "xyes"; then
+
+$as_echo "#define NSM_SESSION 1" >>confdefs.h
+
+fi
+
+
 # Check whether --enable-rtmidi was given.
 if test "${enable_rtmidi+set}" = set; then :
   enableval=$enable_rtmidi; rtmidi=$enableval
@@ -16981,11 +17093,15 @@ else
 fi
 
 
+
 if test "$rtmidi" != "no"; then
     build_rtmidi="yes"
     build_portmidi="no"
 
 $as_echo "#define APP_NAME \"seq66\"" >>confdefs.h
+
+
+$as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 
 $as_echo "#define CONFIG_NAME \"seq66\"" >>confdefs.h
@@ -17216,6 +17332,9 @@ if test "$qtmidi" != "no"; then
     build_qtmidi="yes"
 
 $as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
+
+
+$as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 
 $as_echo "#define APP_TYPE \"qt5\"" >>confdefs.h
@@ -18333,7 +18452,13 @@ $as_echo "rtmidi command-line build enabled." >&6; };
 $as_echo "#define APP_NAME \"seq66cli\"" >>confdefs.h
 
 
+$as_echo "#define APP_CLI 1" >>confdefs.h
+
+
 $as_echo "#define APP_TYPE \"cli\"" >>confdefs.h
+
+
+$as_echo "#define APP_ENGINE \"rtmidi\"" >>confdefs.h
 
 
 $as_echo "#define CONFIG_NAME \"seq66cli\"" >>confdefs.h

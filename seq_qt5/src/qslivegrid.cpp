@@ -400,7 +400,6 @@ qslivegrid::create_one_button (int seqno)
     bool enabled = perf().is_screenset_active(seqno);
     const QSize btnsize = QSize(m_slot_w, m_slot_h);
     std::string snstring;
-    // printf("cell (%d, %d); seq #%d\n", row, column, seqno);
     ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_h + spacing());
     if (valid)
         snstring = std::to_string(seqno);
@@ -1063,6 +1062,7 @@ qslivegrid::sequence_key_check ()
     {
         if (ok)
         {
+            m_current_seq = seqno;
             edit_sequence_ex();
             perf().clear_seq_edits();
         }
@@ -1071,6 +1071,7 @@ qslivegrid::sequence_key_check ()
     {
         if (ok)
         {
+            m_current_seq = seqno;
             edit_events();
             perf().clear_seq_edits();
         }
@@ -1087,21 +1088,22 @@ qslivegrid::sequence_key_check ()
 }
 
 /**
+ *  This function needs some fixing.
  *
+ *  The handling of seq-edit and event-edit is done via setting flags in
+ *  performer and responding to them in the timer function.
  */
 
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
     bool done = perf().midi_control_keystroke(k);
-    if (perf().seq_edit_pending())                      /* self-resetting   */
+    if (perf().seq_edit_pending())
     {
-        signal_call_editor_ex(perf().pending_loop());
         done = true;
     }
-    else if (perf().event_edit_pending())               /* self-resetting   */
+    else if (perf().event_edit_pending())
     {
-        signal_call_edit_events(perf().pending_loop());
         done = true;
     }
     if (done)

@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2019-11-25
+# \update      2020-03-02
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -83,6 +83,8 @@ HEADERS += include/app_limits.h \
  include/play/setmapper.hpp \
  include/play/triggers.hpp \
  include/qt/qsmacros.hpp \
+ include/session/nsm.h \
+ include/session/nsmclient.hpp \
  include/unix/daemonize.hpp \
  include/util/automutex.hpp \
  include/util/basic_macros.h \
@@ -151,6 +153,7 @@ SOURCES += src/main_impl.cpp \
  src/play/sequence.cpp \
  src/play/setmapper.cpp \
  src/play/triggers.cpp \
+ src/session/nsmclient \
  src/unix/daemonize.cpp \
  src/util/automutex.cpp \
  src/util/basic_macros.cpp \

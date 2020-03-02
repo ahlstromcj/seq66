@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2019-04-28
+ * \updates     2020-02-28
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -84,7 +84,7 @@ static void CALLBACK winmm_streamout_callback
 );
 
 #if defined SEQ66_USE_SYSEX_PROCESSING
-static void CALLBACK winmm_out_callback
+/* static */ void CALLBACK winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg,
     DWORD_PTR dwInstance, DWORD_PTR dwParam1,
@@ -527,7 +527,6 @@ static MIDIHDR *
 allocate_sysex_buffer (long data_size)
 {
     LPMIDIHDR hdr = (LPMIDIHDR) pm_alloc(MIDIHDR_SYSEX_SIZE(data_size));
-    MIDIEVENT * evt;
     if (not_nullptr(hdr))
     {
         MIDIEVENT * evt = (MIDIEVENT *)(hdr + 1);   /* placed after header */
@@ -601,7 +600,7 @@ allocate_sysex_buffers (midiwinmm_type m, long data_size)
  *
  */
 
-static LPMIDIHDR
+/* static */ LPMIDIHDR
 get_free_sysex_buffer (PmInternal * midi)
 {
     LPMIDIHDR r = nullptr;
@@ -652,6 +651,7 @@ found_sysex_buffer:
 
 /**
  *
+ *  Cycle through buffers, modulo m->num_buffers.
  */
 
 static LPMIDIHDR
@@ -664,9 +664,7 @@ get_free_output_buffer (PmInternal * midi)
         int i;
         for (i = 0; i < m->num_buffers; ++i)
         {
-            /* cycle through buffers, modulo m->num_buffers */
-
-            m->next_buffer++;
+            m->next_buffer++;                       /* cycle through    */
             if (m->next_buffer >= m->num_buffers)
                 m->next_buffer = 0;
 
@@ -675,7 +673,9 @@ get_free_output_buffer (PmInternal * midi)
                 goto found_buffer;
         }
 
-        /* after scanning every buffer and not finding anything, block */
+        /*
+         *  After scanning every buffer and not finding anything, block.
+         */
 
         if (WaitForSingleObject(m->buffer_signal, 1000) == WAIT_TIMEOUT)
         {
@@ -1906,10 +1906,11 @@ winmm_synchronize (PmInternal * midi)
  * winmm_out_callback -- recycle sysex buffers
  */
 
-static void CALLBACK
+/* static */ void CALLBACK
 winmm_out_callback
 (
-    HMIDIOUT hmo, UINT wMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2
+    HMIDIOUT hmo, UINT wMsg, DWORD dwInstance,
+    DWORD dwParam1, DWORD dwParam2
 )
 {
     PmInternal * midi = (PmInternal *) dwInstance;
@@ -1932,8 +1933,6 @@ winmm_out_callback
         );
         assert(ret == MMSYSERR_NOERROR);
     }
-
-
     err = SetEvent(m->buffer_signal);   /* notify sender, buffer available  */
     assert(err);                        /* false -> error                   */
 }

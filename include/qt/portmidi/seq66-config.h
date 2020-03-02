@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-02-16
+ * \updates       2020-02-25
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -90,6 +90,20 @@
 
 #ifndef SEQ66_APP_NAME
 #define SEQ66_APP_NAME "qpseq66"
+#endif
+
+#ifndef SEQ66_APP_TYPE
+#define SEQ66_APP_TYPE "qt"
+#endif
+
+#undef SEQ66_APP_CLI
+
+#ifndef SEQ66_APP_ENGINE
+#define SEQ66_APP_ENGINE "portmidi"
+#endif
+
+#ifndef SEQ66_APP_BUILD_OS
+#define SEQ66_APP_BUILD_OS "Windows"
 #endif
 
 /**
@@ -267,16 +281,11 @@
 #endif
 
 /*
- * Define to enable multiple main windows.
- *
- *      NOT AVAILABLE YET IN QT USER INTERFACE.
+ * Define to enable multiple main windows.  Not to be supported in Seq66.
  */
 
-#ifndef SEQ66_QT5_USER_INTERFACE
-#ifndef SEQ66_MULTI_MAINWID
-#define SEQ66_MULTI_MAINWID 1
-#endif
-#endif
+#undef SEQ66_QT5_USER_INTERFACE
+#undef SEQ66_MULTI_MAINWID
 
 /* Name of package */
 #ifndef SEQ66_PACKAGE

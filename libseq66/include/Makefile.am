@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2019-11-25
+# \update      2002-03-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -141,6 +141,8 @@ pkginclude_HEADERS = \
  play/setmapper.hpp \
  play/triggers.hpp \
  qt/qsmacros.hpp \
+ sessions/nsm.h \
+ sessions/nsmclient.hpp \
  unix/daemonize.hpp \
  util/automutex.hpp \
  util/basic_macros.h \

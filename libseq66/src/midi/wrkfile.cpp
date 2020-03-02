@@ -83,7 +83,7 @@
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile                   */
 #include "play/performer.hpp"           /* must precede wrkfile.hpp !       */
 #include "play/seq.hpp"                 /* seq66::sequence, seq66::seq      */
-#include "util/strfunctions.cpp"        /* seq66::bool_to_string()          */
+#include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 
 namespace seq66
 {

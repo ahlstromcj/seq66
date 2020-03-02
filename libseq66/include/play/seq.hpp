@@ -270,6 +270,11 @@ public:
         return seqno == unassigned();
     }
 
+    static bool assigned (number seqno)
+    {
+        return seqno != unassigned();
+    }
+
     /**
      *  Similar to legal(), but excludes limit().
      */
