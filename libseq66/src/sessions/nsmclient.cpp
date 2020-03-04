@@ -28,7 +28,8 @@
  * \updates       2020-03-02
  * \license       GNU GPLv2 or above
  *
- *  nsmclient is an NSM OSC client agent.
+ *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
+ *  comprises a simple Open Sound Control (OSC) based protocol.
  *
  *  The Non project contains a daemon, nsmd, which is an implementation of
  *  the server side of the NSM API. nsmd is controlled by the non-session-manager
@@ -39,11 +40,24 @@
  *
  *  Process:
  *
- *      -#  Find out if the NSM URL is defined in the host environment, and
+ *      -#  Find out if NSM_URL is defined in the host environment, and
  *          create the nsmclient object on the heap if so. The
  *          create_nsmclient() should be used; it returns a "unique pointer".
  *          (We may need to provide specific factory functions for Qt, Gtkmm,
  *          and command-line versions of the application.)
+ *      -#  If NSM_URL is valid and reachable, send the following "sssiii"
+ *          message to the provided address as soon as ready to respond to the
+ *          /nsm/client/open event.  api_version_major and api_version_minor
+ *          must be the two parts of the version number of the NSM API.
+ *          If registering JACK clients, application_name must be passed to
+ *          jack_client_open.  capabilities is a string containing a list of
+ *          the capabilities the client possesses, e.g. :dirty:switch:progress:
+ *          executable_name must be the executable name that launched the
+ *          program (e.g argv[0]).
+\verbatim
+    /nsm/server/announce s:application_name s:capabilities s:executable_name
+         i:api_version_major i:api_version_minor i:pid
+\endverbatim
  *      -#  Connect up callbacks (e.g. signals in Qt) for the following events:
  *          -   Open NSM session. The caller should first see if this nsmclient
  *              is active.  If so, close the session, which checks the
@@ -51,9 +65,11 @@
  *          -   Save NSM session.
  *          -   Show NSM session.
  *          -   Hide NSM session.
+ *      -#  Applications must not register JACK clients until receiving an
+ *          open message, which provides a unique client name prefix suitable
+ *          for passing to JACK.
  *      -#  Call nsmclient::announce(APP_TITLE, ":switch:dirty:optional-gui:") if
  *          using a GUI.
- *
  *
  *  New session:
  *
@@ -121,6 +137,15 @@ static const char * s_nsm_reply = "/reply";
 static const char * s_nsm_list = "/nsm/session/list";   /* see banner above */
 static const char * s_nsm_session_loaded = "/nsm/client/session_is_loaded";
 static const char * s_nsm_show_opt_gui = "/nsm/client/show_optional_gui";
+#endif
+
+#if defined SEQ66_NSM_ADDITIONAL_MESSAGES
+/nsm/server/new s:project_name
+/nsm/server/close
+/nsm/server/abort
+/nsm/server/quit
+/nsm/server/list
+/nsm/server/broadcast
 #endif
 
 static const char * s_nsm_gui_hidden = "/nsm/client/gui_is_hidden";
@@ -655,7 +680,7 @@ nsmclient::open_session ()
 }
 
 /**
- *
+ *  TODO? Send close message, quit, abort?
  */
 
 bool
