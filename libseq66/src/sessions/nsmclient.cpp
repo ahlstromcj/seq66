@@ -71,6 +71,25 @@
  *      -#  Call nsmclient::announce(APP_TITLE, ":switch:dirty:optional-gui:") if
  *          using a GUI.
  *
+ *  NSM_URL:
+ *
+ *      The NSM_URL environment variable is used to inform clients of how to
+ *      reach the nsmd daemon, which can be started as follows:
+ *
+ *          nsmd [--osc-port portnum] [--session-root path] [--detach]
+ *
+ *      In the following setting, 18440 is the 'portnum'.  127.0.0.1 is the
+ *      local host (the computer on which all NSM-related apps are running.
+ *
+ *          NSM_URL=osc.udp://127.0.0.1:18440/
+ *          NSM_URL=osc.udp://mlsleno:15325/        (on developer laptop)
+ *
+ *      Note that, if running an nsm_proxy client, this variable may need to be
+ *      passed on the command-line (in typical bash fashion).
+ *
+ *      Also see the file contrib/non/nsmopen.sh for examples, and "oscsend
+ *      --help".
+ *
  *  New session:
  *
  *      TODO
