@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# YOSHPATH="/usr/bin"
+
+YOSHPATH="/usr/local/bin"
+ROOTPATH="/home/ahlstrom/Home/ca/mls/git/"
+CFGPATH="$ROOTPATH/yoshimi-cookbook/sequencer64/b4uacuse"
+SEQPATH="$ROOTPATH/seq66/"
+BINPATH="$SEQPATH/Seq66qt5/"
+$YOSHPATH/yoshimi $1 --state=$CFGPATH/yoshimi-b4uacuse-gm.state &> /dev/null &
+aplaymidi -l
+$BINPATH/qseq66 -b 1 $SEQPATH/contrib/midi/mute-song.midi

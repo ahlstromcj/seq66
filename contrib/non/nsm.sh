@@ -1,15 +1,37 @@
 #!/bin/sh
+#------------------------------------------------------------------------------
+##
+# \file        nsm.sh
+# \library     contrib/non
+# \author      Chris Ahlstrom
+# \date        2020-03-05 to 2020-03-06
+# \version     $Revision$
+# \license     GNU GPLv2 or above, or more generous
 #
 # Invoke as:
 #
-#   nsmopen.sh projectname
+#   nsm.sh projectname
+#
+#------------------------------------------------------------------------------
 
 PROJECT=$1  #for better readability
 
 # The following command returns a line to provide the NSM_URL, which we use to
-# set NSM_URL.
+# set NSM_URL.  For example:
+#
+#       M_URL=osc.udp://mlsleno:12885/
 
 eval $(nsmd --detach)
+
+# Note that "nsdm --help" leaves out some options that available. Here are
+# all the options:
+#
+#   --detach:       Detach from console and fork a new process.
+#   --session-root: Set the session path.  Defaults to "$HOME/NSM Sessions".
+#   --osc-port:     Provides the UDP port number. Otherwise, it is random.
+#   --gui-url:      Connects to the GUI here.  Sends the message
+#                   "/nsm/gui/server_announce".
+#
 
 # Keep in brackets so that PID and nsm are in the same group. Otherwise,
 # the wait below will complain.  Remember to check (the PID) when the

@@ -5,8 +5,8 @@
 # \file       	Makefile.am
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
-# \date       	2018-11-11
-# \update      2020-03-07
+# \date       	2020-03-08
+# \update      2020-03-08
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -77,82 +77,9 @@ AM_CXXFLAGS = \
 #----------------------------------------------------------------------------
 
 pkginclude_HEADERS = \
- app_limits.h \
- main_impl.hpp \
- seq66_features.h \
- seq66_features.hpp \
- seq66_platform_macros.h \
- cfg/basesettings.hpp \
- cfg/cmdlineopts.hpp \
- cfg/comments.hpp \
- cfg/configfile.hpp \
- cfg/midicontrolfile.hpp \
- cfg/mutegroupsfile.hpp \
- cfg/notemapfile.hpp \
- cfg/rcfile.hpp \
- cfg/rcsettings.hpp \
- cfg/recent.hpp \
- cfg/scales.hpp \
- cfg/settings.hpp \
- cfg/userinstrument.hpp \
- cfg/usermidibus.hpp \
- cfg/usrfile.hpp \
- cfg/usrsettings.hpp \
- ctrl/automation.hpp \
- ctrl/keycontrol.hpp \
- ctrl/keycontainer.hpp \
- ctrl/keymap.hpp \
- ctrl/keystroke.hpp \
- ctrl/midicontrolin.hpp \
- ctrl/midicontrol.hpp \
- ctrl/midicontrolbase.hpp \
- ctrl/midicontrolout.hpp \
- ctrl/midioperation.hpp \
- ctrl/opcontainer.hpp \
- ctrl/opcontrol.hpp \
- midi/businfo.hpp \
- midi/controllers.hpp \
- midi/editable_event.hpp \
- midi/editable_events.hpp \
- midi/event.hpp \
- midi/eventlist.hpp \
- midi/jack_assistant.hpp \
- midi/mastermidibase.hpp \
- midi/mastermidibus.hpp \
- midi/midibase.hpp \
- midi/midibus_common.hpp \
- midi/midibus.hpp \
- midi/midibytes.hpp \
- midi/midifile.hpp \
- midi/midi_splitter.hpp \
- midi/midi_vector_base.hpp \
- midi/midi_vector.hpp \
- midi/wrkfile.hpp \
- play/clockslist.hpp \
- play/inputslist.hpp \
- play/mutegroups.hpp \
- play/notemapper.hpp \
- play/mutegroup.hpp \
- play/performer.hpp \
- play/playlist.hpp \
- play/screenset.hpp \
- play/seq.hpp \
- play/sequence.hpp \
- play/setmapper.hpp \
- play/triggers.hpp \
- qt/qsmacros.hpp \
- unix/daemonize.hpp \
- util/automutex.hpp \
- util/basic_macros.h \
- util/basic_macros.hpp \
- util/calculations.hpp \
- util/condition.hpp \
- util/filefunctions.hpp \
- util/palette.hpp \
- util/recmutex.hpp \
- util/rect.hpp \
- util/strfunctions.hpp \
- util/victor.hpp
+ nsm/nsm.hpp \
+ nsm/nsmclient.hpp \
+ nsm/nsmmessages.hpp
 
 #******************************************************************************
 # uninstall-hook

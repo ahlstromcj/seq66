@@ -1,4 +1,3 @@
-
 /*************************************************************************/
 /* Copyright (C) 2012 Jonathan Moore Liles                               */
 /*                                                                       */
@@ -15,8 +14,10 @@
 /* PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER        */
 /* TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR      */
 /* PERFORMANCE OF THIS SOFTWARE.                                         */
+/*                                                                       */
+/* For Seq66, this file is included FOR REFERENCE ONLY.                  */
+/*                                                                       */
 /*************************************************************************/
-
 
 /*************************************************************/
 /* A simple, callback based C API for NSM clients.           */

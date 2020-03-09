@@ -81,6 +81,7 @@ top_srcdir = @top_srcdir@
 builddir = @abs_top_builddir@
 
 libseq66dir = $(builddir)/libseq66/src/.libs
+libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
 libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 
@@ -98,6 +99,8 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 #
 #------------------------------------------------------------------------------
 
+# -I$(top_srcdir)/libsessions/include BACKSLASH
+
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
  -I$(top_srcdir)/seq_portmidi/include \
@@ -105,7 +108,9 @@ AM_CXXFLAGS = \
  -I$(top_srcdir)/seq_qt5/include \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
- $(LASH_CFLAGS)
+ $(LIBLO_CFLAGS) \
+ $(LASH_CFLAGS) \
+ $(NSM_CFLAGS)
 
 #******************************************************************************
 # libmath
@@ -151,7 +156,8 @@ libraries = \
 dependencies = \
  $(libseq_rtmididir)/libseq_rtmidi.la \
  $(libseq_qt5dir)/libseq_qt5.la \
- $(libseq66dir)/libseq66.la
+ $(libseq66dir)/libseq66.la \
+ $(libsessionsdir)/libsessions.la
 
 #******************************************************************************
 # The programs to build
@@ -163,9 +169,11 @@ bin_PROGRAMS = qseq66
 # seq66
 #----------------------------------------------------------------------------
 
+# need to add SESSIONS_LIBS
+
 qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(dependencies)
-qseq66_LDADD = $(libraries) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+qseq66_LDADD = $(libraries) $(LIBLO_LIBS) $(NSM_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 # Testing

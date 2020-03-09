@@ -1,16 +1,16 @@
 #******************************************************************************
-# Makefile.am (libseq66/src)
+# Makefile.am (libsessions/src)
 #------------------------------------------------------------------------------
 ##
 # \file       	Makefile.am
-# \library    	libseq66 library
+# \library    	libsessions library
 # \author     	Chris Ahlstrom
-# \date       	2018-11-11
+# \date       	2020-03-08
 # \update      2020-03-08
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
-# 		This module provides an Automake makefile for the libseq66 C/C++
+# 		This module provides an Automake makefile for the libsessions C/C++
 # 		library.
 #
 #------------------------------------------------------------------------------
@@ -116,8 +116,7 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(top_srcdir)/include \
  -I$(top_srcdir)/libseq66/include \
- -I$(top_srcdir)/seq_portmidi/include \
- -I$(top_srcdir)/seq_rtmidi/include \
+ -I$(top_srcdir)/libsessions/include \
  $(ALSA_CFLAGS) \
  $(JACK_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\"
@@ -126,81 +125,19 @@ AM_CXXFLAGS = \
 # The library to build, a libtool-based library
 #------------------------------------------------------------------------------
 
-lib_LTLIBRARIES = libseq66.la
+lib_LTLIBRARIES = libsessions.la
 
 #******************************************************************************
 # Source files
 #----------------------------------------------------------------------------
 
-libseq66_la_SOURCES = \
- main_impl.cpp \
- seq66_features.cpp \
- cfg/basesettings.cpp \
- cfg/cmdlineopts.cpp \
- cfg/comments.cpp \
- cfg/configfile.cpp \
- cfg/midicontrolfile.cpp \
- cfg/mutegroupsfile.cpp \
- cfg/notemapfile.cpp \
- cfg/rcfile.cpp \
- cfg/rcsettings.cpp \
- cfg/recent.cpp \
- cfg/scales.cpp \
- cfg/settings.cpp \
- cfg/userinstrument.cpp \
- cfg/usermidibus.cpp \
- cfg/usrfile.cpp \
- cfg/usrsettings.cpp \
- ctrl/automation.cpp \
- ctrl/keycontainer.cpp \
- ctrl/keycontrol.cpp \
- ctrl/keymap.cpp \
- ctrl/keystroke.cpp \
- ctrl/midicontrolin.cpp \
- ctrl/midicontrolbase.cpp \
- ctrl/midicontrol.cpp \
- ctrl/midicontrolout.cpp \
- ctrl/midioperation.cpp \
- ctrl/opcontainer.cpp \
- ctrl/opcontrol.cpp \
- midi/businfo.cpp \
- midi/controllers.cpp \
- midi/editable_event.cpp \
- midi/editable_events.cpp \
- midi/event.cpp \
- midi/eventlist.cpp \
- midi/jack_assistant.cpp \
- midi/mastermidibase.cpp \
- midi/midibase.cpp \
- midi/midibytes.cpp \
- midi/midifile.cpp \
- midi/midi_splitter.cpp \
- midi/midi_vector_base.cpp \
- midi/midi_vector.cpp \
- midi/wrkfile.cpp \
- play/mutegroup.cpp \
- play/mutegroups.cpp \
- play/notemapper.cpp \
- play/performer.cpp \
- play/playlist.cpp \
- play/screenset.cpp \
- play/seq.cpp \
- play/sequence.cpp \
- play/setmapper.cpp \
- play/triggers.cpp \
- unix/daemonize.cpp \
- util/automutex.cpp \
- util/basic_macros.cpp \
- util/calculations.cpp \
- util/condition.cpp \
- util/filefunctions.cpp \
- util/palette.cpp \
- util/recmutex.cpp \
- util/rect.cpp \
- util/strfunctions.cpp
+libsessions_la_SOURCES = \
+ nsm/nsm.cpp \
+ nsm/nsmclient.cpp \
+ nsm/nsmmessages.cpp
 
-libseq66_la_LDFLAGS = -version-info $(version)
-libseq66_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
+libsessions_la_LDFLAGS = -version-info $(version)
+libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)
 
 #******************************************************************************
 # uninstall-hook
@@ -215,7 +152,7 @@ uninstall-hook:
 	@echo "Note:  you may want to remove $(libdir) manually"
 
 #******************************************************************************
-# Makefile.am (libseq66/src)
+# Makefile.am (libsessions/src)
 #------------------------------------------------------------------------------
 # 	vim: ts=3 sw=3 ft=automake
 #------------------------------------------------------------------------------

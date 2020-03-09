@@ -1,8 +1,8 @@
-#if ! defined SEQ66_NSMCLIENT_HPP
-#define SEQ66_NSMCLIENT_HPP
+#if ! defined SEQ66_NSM_HPP
+#define SEQ66_NSM_HPP
 
 /**
- * \file          nsmclient.hpp
+ * \file          nsm.hpp
  *
  *    This module provides macros for generating simple messages, MIDI
  *    parameters, and more.
@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-03-01
+ * \updates       2020-03-08
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -19,12 +19,7 @@
 
 #include "seq66_features.hpp"
 
-#if defined SEQ66_NSM_SESSION
 #include <lo/lo.h>                      /* library for the OSC protocol     */
-#include "sessions/nsm.h"               /* copied directly from NSM project */
-#endif
-
-#include <memory>                       /* std::unique_ptr<>                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -34,15 +29,15 @@ namespace seq66
 {
 
 /**
- *  nsmclient is an NSM OSC client agent.
+ *  nsm is an NSM OSC server/client base class.
  */
 
-class nsmclient
+class nsm
 {
 
 public:
 
-	enum class nsmreply
+	enum class reply
 	{
 		ok               =  0,
 		general          = -1,
@@ -61,13 +56,29 @@ private:
 
     static std::string sm_nsm_default_ext;
 
-private:
+protected:          // private:
 
-#if defined SEQ66_NSM_SESSION
+    /**
+     *  Provides a reference (a void pointer) to an OSC service. See
+     *  /usr/include/lo/lo_types.h.
+     */
+
 	lo_address m_lo_address;
+
+    /**
+     *  Provides a reference (a void pointer) to a thread "containing"
+     *  an OSC server. See /usr/include/lo/lo_types.h.
+     */
+
 	lo_server_thread m_lo_thread;
+
+    /**
+     *  Provides a reference (a void pointer) to an object representing an
+     *  an OSC server. See /usr/include/lo/lo_types.h.
+     */
+
 	lo_server m_lo_server;
-#endif
+
 	bool m_active;
 	bool m_dirty;
     int m_dirty_count;
@@ -82,18 +93,17 @@ private:
 
 public:
 
-	nsmclient
+	nsm
     (
         const std::string & nsm_url,
         const std::string & nsm_file    = "",
         const std::string & nsm_ext     = ""
     );
-	~nsmclient ();
+	virtual ~nsm ();
 
-    static std::string default_ext ()
-    {
-        return sm_nsm_default_ext;
-    }
+public:
+
+    bool lo_is_valid () const;
 
 	bool is_active() const              // session activation accessor
     {
@@ -151,41 +161,32 @@ public:
 
 	// Session client methods.
 
-	void announce (const std::string & app_name, const std::string & capabilities);
-	void dirty (bool is_dirty);
+	void dirty (bool isdirty);
     void update_dirty_count (bool flag = true);
-	void visible (bool is_visible);
+	void visible (bool isvisible);
 	void progress (float percent);
 	void message (int priority, const std::string & mesg);
 
 	// Session client reply methods.
 
-	void open_reply (nsmreply replycode = nsmreply::ok);
-	void save_reply (nsmreply replycode = nsmreply::ok);
+	void open_reply (reply replycode = reply::ok);
+	void save_reply (reply replycode = reply::ok);
 
 	void open_reply (bool ok)
     {
-        open_reply(ok ? nsmreply::ok : nsmreply::general);
+        open_reply(ok ? reply::ok : reply::general);
         if (ok)
             m_dirty = false;
     }
 
 	void save_reply (bool ok)
     {
-        save_reply(ok ? nsmreply::ok : nsmreply::general);
+        save_reply(ok ? reply::ok : reply::general);
         if (ok)
             m_dirty = false;
     }
 
 	// Server methods response methods.
-
-	void announce_error (const std::string & mesg);
-	void announce_reply
-    (
-		const std::string & mesg,
-		const std::string & manager,
-		const std::string & capabilities
-    );
 
 	void nsm_open
     (
@@ -194,10 +195,12 @@ public:
 		const std::string & client_id
     );
 
-	void nsm_save ();
-	void nsm_loaded ();
-	void nsm_show ();
-	void nsm_hide ();
+	virtual void nsm_save ();
+	virtual void nsm_label (const std::string & label);
+	virtual void nsm_loaded ();
+	virtual void nsm_show ();
+	virtual void nsm_hide ();
+
     void nsm_debug (const std::string & tag);
 
     /*
@@ -208,42 +211,32 @@ public:
     bool save_session ();
     bool close_session ();
 
-protected:
+public:
 
-	void nsm_reply (const std::string & path, nsmreply replycode);
+    /*
+     * Used by the free-function OSC callbacks.
+     */
 
-/*
- *
-signals:                            // Session client callbacks.
+	void announce (const std::string & app_name, const std::string & capabilities);
+	void announce_error (const std::string & mesg);
+	void announce_reply
+    (
+		const std::string & mesg,
+		const std::string & manager,
+		const std::string & capabilities
+    );
+	void nsm_reply (const std::string & path, reply replycode);
 
-	void active (bool is_active);
-	void open ();
-	void save ();
-	void loaded ();
-	void show ();
-	void hide ();
- *
- */
+    const char * nsm_reply_message (reply replycode);
 
-};          // class nsmclient
-
-/*
- *  External helper functions.
- */
-
-extern std::string get_nsm_url ();
-extern std::unique_ptr<nsmclient> create_nsmclient
-(
-    const std::string & nsmfile,
-    const std::string & nsmext
-);
-
-#endif      // SEQ66_NSMCLIENT_HPP
+};          // class nsm
 
 }           // namespace seq66
 
+#endif      // SEQ66_NSM_HPP
+
 /*
- * nsmclient.hpp
+ * nsm.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

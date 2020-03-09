@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2020-02-09
+# \updates     2020-03-08
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -153,6 +153,10 @@ endif
 
 if BUILD_PORTMIDI
 SUBDIRS += seq_portmidi
+endif
+
+if BUILD_SESSIONS
+SUBDIRS += libsessions
 endif
 
 if BUILD_QTMIDI

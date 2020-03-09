@@ -651,18 +651,20 @@ DOPROFILE_TRUE
 COVFLAGS
 DOCOVERAGE_FALSE
 DOCOVERAGE_TRUE
-BUILD_SEQTOOL_FALSE
-BUILD_SEQTOOL_TRUE
 BUILD_WINDOWS_FALSE
 BUILD_WINDOWS_TRUE
-BUILD_PORTMIDI_FALSE
-BUILD_PORTMIDI_TRUE
-BUILD_RTCLI_FALSE
-BUILD_RTCLI_TRUE
+BUILD_SESSIONS_FALSE
+BUILD_SESSIONS_TRUE
+BUILD_SEQTOOL_FALSE
+BUILD_SEQTOOL_TRUE
 BUILD_RTMIDI_FALSE
 BUILD_RTMIDI_TRUE
+BUILD_RTCLI_FALSE
+BUILD_RTCLI_TRUE
 BUILD_QTMIDI_FALSE
 BUILD_QTMIDI_TRUE
+BUILD_PORTMIDI_FALSE
+BUILD_PORTMIDI_TRUE
 CONFIG_NAME
 CLIENT_NAME
 APP_BUILD_OS
@@ -688,6 +690,8 @@ X_CFLAGS
 XMKMF
 ALSA_LIBS
 ALSA_CFLAGS
+NSM_LIBS
+NSM_CFLAGS
 LIBLO_LIBS
 LIBLO_CFLAGS
 JACK_LIBS
@@ -1542,7 +1546,7 @@ Optional Features:
   --enable-mingw          Enable MingW Windows support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
-  --enable-nsm            Enable NSM support (default=no)
+  --enable-nsm            Enable NSM support (default=yes)
   --enable-rtmidi         Enable rtmidi build, the default engine
   --disable-alsatest      Do not try to compile and run a test Alsa program
   --enable-qt             Enable Qt5 user-interface build
@@ -4916,11 +4920,12 @@ case $host_os in #(
 esac
 
 
-build_qtmidi="yes"
-build_rtmidi="yes"
 build_portmidi="no"
+build_qtmidi="yes"
 build_rtcli="no"
+build_rtmidi="yes"
 build_seqtool="no"
+build_sessions="yes"
 build_testing="no"
 need_qt="yes"
 
@@ -16395,6 +16400,7 @@ seq66doxygendir="${datadir}/doc/seq66-${SEQ66_API_VERSION}"
 
 
 CFLAGS="${CFLAGS}"
+ac_cflags="${CFLAGS}"
 
 
 
@@ -16984,12 +16990,12 @@ fi
 if test "${enable_nsm+set}" = set; then :
   enableval=$enable_nsm; ac_nsm=$enableval
 else
-  ac_nsm=no
+  ac_nsm=yes
 fi
 
 
 
-if test "x$ac_liblo" = "xyes"; then
+if test "$ac_nsm" = "yes"; then
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBLO" >&5
@@ -17068,21 +17074,31 @@ $as_echo "#define CONFIG_LIBLO 1" >>confdefs.h
       ac_cflags="$ac_cflags $LIBLO_CFLAGS"
       ac_libs="$ac_libs $LIBLO_LIBS"
    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** LIBLO library not found." >&5
-$as_echo "$as_me: WARNING: *** LIBLO library not found." >&2;}
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: *** OSC/NSM service support will be disabled." >&5
-$as_echo "$as_me: WARNING: *** OSC/NSM service support will be disabled." >&2;}
+      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LIBLO library not found, OSC/NSM support disabled." >&5
+$as_echo "$as_me: WARNING: LIBLO library not found, OSC/NSM support disabled." >&2;}
       ac_nsm="no"
    fi
 else
    ac_nsm="no"
 fi
 
-if test "x$ac_nsm" = "xyes"; then
+NSM_CFLAGS=
+NSM_LIBS=
+
+
+if test "$ac_nsm" != "no"; then
 
 $as_echo "#define NSM_SESSION 1" >>confdefs.h
 
+    build_sessions="yes"
+    NSM_CFLAGS="-I ../libsession/include"
+    NSM_LIBS="-llo -L$(builddir)/libsessions/src/.libs/ -lsessions"
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: sessions/nsm library build enabled." >&5
+$as_echo "sessions/nsm library build enabled." >&6; };
 fi
+
+
+
 
 
 # Check whether --enable-rtmidi was given.
@@ -17321,14 +17337,14 @@ fi
 
 # Check whether --enable-qt was given.
 if test "${enable_qt+set}" = set; then :
-  enableval=$enable_qt; qtmidi=$enableval
+  enableval=$enable_qt; ac_qtmidi=$enableval
 else
-  qtmidi=yes
+  ac_qtmidi=yes
 fi
 
 
 
-if test "$qtmidi" != "no"; then
+if test "$ac_qtmidi" != "no"; then
     build_qtmidi="yes"
 
 $as_echo "#define APP_NAME \"qseq66\"" >>confdefs.h
@@ -19349,20 +19365,20 @@ fi
 
 
 
+ if test "$build_portmidi" = "yes"; then
+  BUILD_PORTMIDI_TRUE=
+  BUILD_PORTMIDI_FALSE='#'
+else
+  BUILD_PORTMIDI_TRUE='#'
+  BUILD_PORTMIDI_FALSE=
+fi
+
  if test "$build_qtmidi" = "yes"; then
   BUILD_QTMIDI_TRUE=
   BUILD_QTMIDI_FALSE='#'
 else
   BUILD_QTMIDI_TRUE='#'
   BUILD_QTMIDI_FALSE=
-fi
-
- if test "$build_rtmidi" = "yes"; then
-  BUILD_RTMIDI_TRUE=
-  BUILD_RTMIDI_FALSE='#'
-else
-  BUILD_RTMIDI_TRUE='#'
-  BUILD_RTMIDI_FALSE=
 fi
 
  if test "$build_rtcli" = "yes"; then
@@ -19373,20 +19389,12 @@ else
   BUILD_RTCLI_FALSE=
 fi
 
- if test "$build_portmidi" = "yes"; then
-  BUILD_PORTMIDI_TRUE=
-  BUILD_PORTMIDI_FALSE='#'
+ if test "$build_rtmidi" = "yes"; then
+  BUILD_RTMIDI_TRUE=
+  BUILD_RTMIDI_FALSE='#'
 else
-  BUILD_PORTMIDI_TRUE='#'
-  BUILD_PORTMIDI_FALSE=
-fi
-
- if test "$build_windows" = "yes"; then
-  BUILD_WINDOWS_TRUE=
-  BUILD_WINDOWS_FALSE='#'
-else
-  BUILD_WINDOWS_TRUE='#'
-  BUILD_WINDOWS_FALSE=
+  BUILD_RTMIDI_TRUE='#'
+  BUILD_RTMIDI_FALSE=
 fi
 
  if test "$build_seqtool" = "yes"; then
@@ -19395,6 +19403,22 @@ fi
 else
   BUILD_SEQTOOL_TRUE='#'
   BUILD_SEQTOOL_FALSE=
+fi
+
+ if test "$build_sessions" = "yes"; then
+  BUILD_SESSIONS_TRUE=
+  BUILD_SESSIONS_FALSE='#'
+else
+  BUILD_SESSIONS_TRUE='#'
+  BUILD_SESSIONS_FALSE=
+fi
+
+ if test "$build_windows" = "yes"; then
+  BUILD_WINDOWS_TRUE=
+  BUILD_WINDOWS_FALSE='#'
+else
+  BUILD_WINDOWS_TRUE='#'
+  BUILD_WINDOWS_FALSE=
 fi
 
 
@@ -20920,7 +20944,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile"
+ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile libsessions/Makefile libsessions/include/Makefile libsessions/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile"
 
 
 
@@ -21061,28 +21085,32 @@ if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${BUILD_QTMIDI_TRUE}" && test -z "${BUILD_QTMIDI_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_QTMIDI\" was never defined.
+if test -z "${BUILD_PORTMIDI_TRUE}" && test -z "${BUILD_PORTMIDI_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_PORTMIDI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${BUILD_RTMIDI_TRUE}" && test -z "${BUILD_RTMIDI_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_RTMIDI\" was never defined.
+if test -z "${BUILD_QTMIDI_TRUE}" && test -z "${BUILD_QTMIDI_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_QTMIDI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_RTCLI_TRUE}" && test -z "${BUILD_RTCLI_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_RTCLI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${BUILD_PORTMIDI_TRUE}" && test -z "${BUILD_PORTMIDI_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_PORTMIDI\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${BUILD_WINDOWS_TRUE}" && test -z "${BUILD_WINDOWS_FALSE}"; then
-  as_fn_error $? "conditional \"BUILD_WINDOWS\" was never defined.
+if test -z "${BUILD_RTMIDI_TRUE}" && test -z "${BUILD_RTMIDI_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_RTMIDI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_SEQTOOL_TRUE}" && test -z "${BUILD_SEQTOOL_FALSE}"; then
   as_fn_error $? "conditional \"BUILD_SEQTOOL\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_SESSIONS_TRUE}" && test -z "${BUILD_SESSIONS_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_SESSIONS\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_WINDOWS_TRUE}" && test -z "${BUILD_WINDOWS_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_WINDOWS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DOCOVERAGE_TRUE}" && test -z "${DOCOVERAGE_FALSE}"; then
@@ -22084,6 +22112,9 @@ do
     "libseq66/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/Makefile" ;;
     "libseq66/include/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/include/Makefile" ;;
     "libseq66/src/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/src/Makefile" ;;
+    "libsessions/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/Makefile" ;;
+    "libsessions/include/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/include/Makefile" ;;
+    "libsessions/src/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/src/Makefile" ;;
     "Seqtool/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/Makefile" ;;
     "Seqtool/forms/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/forms/Makefile" ;;
     "Seqtool/include/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/include/Makefile" ;;

@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2019-04-11
+ * \updates       2020-03-07
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -32,6 +32,10 @@
 
 #if SEQ66_HAVE_LIMITS_H
 #include <limits.h>                     /* PATH_MAX                         */
+#endif
+
+#if defined SEQ66_PLATFORM_GLIBC        /* TO DO!!!!                        */
+#include <sys/auxv.h>                   /* getauxvalue() glibc function     */
 #endif
 
 #if ! defined SEQ66_PLATFORM_POSIX_API  /* Microsoft compiler               */
@@ -1382,6 +1386,32 @@ set_current_directory (const std::string & path)
             errprintf("could not set current directory '%s'", path.c_str());
         }
     }
+    return result;
+}
+
+
+/**
+ *
+ *  An alternative on Linux to using either /proc/self/exe or argv[0] is using
+ *  the information passed by the ELF interpreter, made available by glibc.  The
+ *  getauxval() function is a glibc extension; check so that it doesn't return
+ *  NULL (indicating that the ELF interpreter hasn't provided the AT_EXECFN
+ *  parameter). This is never actually a problem on Linux.
+ */
+
+std::string
+executable_full_path ()
+{
+    std::string result;
+
+#if defined SEQ66_PLATFORM_GLIBC        /* TO DO!!!!                        */
+    const char * p = (const char *) getauxval(AT_EXECFN);
+    if (not_nullptr(p))
+    {
+        result = p;
+    }
+#endif
+
     return result;
 }
 

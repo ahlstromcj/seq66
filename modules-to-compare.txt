@@ -1,0 +1,14 @@
+
+       modified:   configure
+        modified:   configure.ac
+        modified:   include/config.h.in
+        modified:   include/qt/portmidi/seq64-config.h
+        modified:   libseq64/include/perform.hpp
+        modified:   libseq64/src/perform.cpp
+        modified:   seq_gtkmm2/src/mainwnd.cpp
+        modified:   seq_portmidi/src/pmwinmm.c
+        modified:   seq_qt5/include/qsliveframe.hpp
+        modified:   seq_qt5/seq_qt5.pro
+        modified:   seq_qt5/src/qseqeditframe64.cpp
+        modified:   seq_qt5/src/qsliveframe.cpp
+

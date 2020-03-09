@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-03-02
+dnl \update        2020-03-09
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -51,11 +51,12 @@ AS_CASE([$host_os], [*mingw*], [windows_host=yes], [windows_host=no])
 dnl Note that the BUILD_XXXX macros "merely" select which subdirectories we
 dnl descend into during the build.
 
-build_qtmidi="yes"
-build_rtmidi="yes"
 build_portmidi="no"
+build_qtmidi="yes"
 build_rtcli="no"
+build_rtmidi="yes"
 build_seqtool="no"
+build_sessions="yes"
 build_testing="no"
 need_qt="yes"
 
@@ -189,6 +190,7 @@ AC_SUBST(seq66doxygendir)
 dnl 4. Get external flags, if any.
 
 CFLAGS="${CFLAGS}"
+ac_cflags="${CFLAGS}"
 
 dnl Check for header files.  Added more to support daemonization.
 
@@ -269,32 +271,45 @@ fi
 dnl LASH support has been REMOVED!
 
 dnl Enable NSM support.  Not yet ready for prime time.
+dnl HOWEVER, ENABLED BY DEFAULT WHILE WE DEVELOP IT.
 
 AC_ARG_ENABLE(nsm,
-  AS_HELP_STRING([--enable-nsm], [Enable NSM support (default=no)]),
+  AS_HELP_STRING([--enable-nsm], [Enable NSM support (default=yes)]),
   [ac_nsm=$enableval],
-  [ac_nsm=no])
+  [ac_nsm=yes])
 
-dnl Check for optional LIBLO library.
+dnl Check for optional LIBLO library, needed for NSM support.
 
-if test "x$ac_liblo" = "xyes"; then
+if test "$ac_nsm" = "yes"; then
    PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
    if test "x$ac_liblo" = "xyes"; then
       AC_DEFINE(CONFIG_LIBLO, 1, [Define if LIBLO library is available.])
       ac_cflags="$ac_cflags $LIBLO_CFLAGS"
       ac_libs="$ac_libs $LIBLO_LIBS"
    else
-      AC_MSG_WARN([*** LIBLO library not found.])
-      AC_MSG_WARN([*** OSC/NSM service support will be disabled.])
+      AC_MSG_WARN([LIBLO library not found, OSC/NSM support disabled.])
       ac_nsm="no"
    fi
 else
    ac_nsm="no"
 fi
 
-if test "x$ac_nsm" = "xyes"; then
-   AC_DEFINE(NSM_SESSION, 1, [Define if NSM support is available.])
+NSM_CFLAGS=
+NSM_LIBS=
+
+dnl Krufty!!!
+dnl NSM_LIBS="-l lo -L ../libsessions/src/.libs/ -lsessions"
+
+if test "$ac_nsm" != "no"; then
+    AC_DEFINE(NSM_SESSION, 1, [Define if NSM support is available.])
+    build_sessions="yes"
+    NSM_CFLAGS="-I ../libsession/include"
+    NSM_LIBS="-llo -L$(builddir)/libsessions/src/.libs/ -lsessions"
+    AC_MSG_RESULT([sessions/nsm library build enabled.]);
 fi
+
+AC_SUBST(NSM_CFLAGS)
+AC_SUBST(NSM_LIBS)
 
 dnl "RtMidi" support.  This is now the default build for Seq66.
 
@@ -321,13 +336,13 @@ dnl application.
 
 AC_ARG_ENABLE(qt,
     [AS_HELP_STRING(--enable-qt, [Enable Qt5 user-interface build])],
-    [qtmidi=$enableval],
-    [qtmidi=yes])
+    [ac_qtmidi=$enableval],
+    [ac_qtmidi=yes])
 
 dnl Will set the default to yes later.  Will need to distinguish between rtmidi
 dnl and portmidi builds.
 
-if test "$qtmidi" != "no"; then
+if test "$ac_qtmidi" != "no"; then
     build_qtmidi="yes"
     AC_DEFINE(APP_NAME, ["qseq66"], [Names the Qt/rtmidi version of application])
     AC_DEFINE(APP_ENGINE, ["rtmidi"], [Names the MIDI engine of the application])
@@ -425,12 +440,13 @@ AC_SUBST(APP_BUILD_OS)
 AC_SUBST(CLIENT_NAME)
 AC_SUBST(CONFIG_NAME)
 
-AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
-AM_CONDITIONAL([BUILD_RTMIDI], [test "$build_rtmidi" = "yes"])
-AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
 AM_CONDITIONAL([BUILD_PORTMIDI], [test "$build_portmidi" = "yes"])
-AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
+AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
+AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
+AM_CONDITIONAL([BUILD_RTMIDI], [test "$build_rtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_SEQTOOL], [test "$build_seqtool" = "yes"])
+AM_CONDITIONAL([BUILD_SESSIONS], [test "$build_sessions" = "yes"])
+AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 
 dnl 6.0  Top portion of the config.h/seq66-config.h header files.  The
 dnl      seq66-config.h header file has "SEQ66_" prepended to these
@@ -438,7 +454,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-03-02"
+#define VERSION_DATE_SHORT "2020-03-09"
 #define VERSION "0.90.3"
 
 )
@@ -539,6 +555,9 @@ AC_CONFIG_FILES([
  libseq66/Makefile
  libseq66/include/Makefile
  libseq66/src/Makefile
+ libsessions/Makefile
+ libsessions/include/Makefile
+ libsessions/src/Makefile
  Seqtool/Makefile
  Seqtool/forms/Makefile
  Seqtool/include/Makefile
