@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-03-08
+ * \updates       2020-03-09
  * \license       GNU GPLv2 or above
  *
  *  nsm is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -363,11 +363,11 @@ nsm::nsm
         ADD_METHOD(nsm_cli_open(), "sss", osc_nsm_open);
         ADD_METHOD(nsm_cli_save(), "", osc_nsm_save);
         ADD_METHOD(nsm_cli_is_loaded(), "", osc_nsm_session_loaded);
+        ADD_METHOD(nsm_cli_label(), "", osc_nsm_label);
         ADD_METHOD(nsm_cli_show_opt_gui(), "", osc_nsm_show);
         ADD_METHOD(nsm_cli_hide_opt_gui(), "", osc_nsm_hide);
         lo_server_thread_start(m_lo_thread);
     }
-
     if (m_nsm_ext.empty())
         m_nsm_ext = nsm_default_ext();
 }

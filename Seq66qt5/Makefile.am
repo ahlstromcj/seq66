@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2019-10-04
+# \update      2020-03-09
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -99,10 +99,9 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 #
 #------------------------------------------------------------------------------
 
-# -I$(top_srcdir)/libsessions/include BACKSLASH
-
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
+ -I$(top_srcdir)/libsessions/include \
  -I$(top_srcdir)/seq_portmidi/include \
  -I$(top_srcdir)/seq_rtmidi/include \
  -I$(top_srcdir)/seq_qt5/include \
@@ -137,6 +136,9 @@ libmath = -lm
 #
 # $(libmath)
 #
+#  The libsessions library is handled via the NSM_LIBS macro, since some users
+#  might not want to build in Non Session Manager support.
+#
 #----------------------------------------------------------------------------
 
 libraries = \
@@ -168,8 +170,6 @@ bin_PROGRAMS = qseq66
 #******************************************************************************
 # seq66
 #----------------------------------------------------------------------------
-
-# need to add SESSIONS_LIBS
 
 qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(dependencies)

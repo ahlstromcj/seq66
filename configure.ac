@@ -299,13 +299,16 @@ NSM_LIBS=
 
 dnl Krufty!!!
 dnl NSM_LIBS="-l lo -L ../libsessions/src/.libs/ -lsessions"
+dnl NSM_LIBS="-llo -L$(builddir)/libsessions/src/.libs/ -lsessions"
 
 if test "$ac_nsm" != "no"; then
     AC_DEFINE(NSM_SESSION, 1, [Define if NSM support is available.])
     build_sessions="yes"
-    NSM_CFLAGS="-I ../libsession/include"
-    NSM_LIBS="-llo -L$(builddir)/libsessions/src/.libs/ -lsessions"
+    NSM_CFLAGS="-I ../libsessions/include"
+    NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     AC_MSG_RESULT([sessions/nsm library build enabled.]);
+else
+    build_sessions="no"
 fi
 
 AC_SUBST(NSM_CFLAGS)
