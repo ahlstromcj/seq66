@@ -44,7 +44,6 @@ private:
 	std::string m_client_id;
     std::string m_nsm_file;
     std::string m_nsm_ext;
-    std::string m_nsm_url;
 
 public:
 
@@ -95,52 +94,47 @@ public:
         return m_nsm_ext;
     }
 
-    const std::string & nsm_url () const
-    {
-        return m_nsm_url;
-    }
-
 	// Session client methods.
 
-	void announce (const std::string & app_name, const std::string & capabilities);
-	void visible (bool is_visible);
-	void progress (float percent);
-	void message (int priority, const std::string & mesg);
+#if defined THESE_METHODS_ARE_NEEDED
+	virtual void announce
+    (
+        const std::string & app_name,
+        const std::string & capabilities
+    );
+	virtual void visible (bool is_visible);
 
 	// Server methods response methods.
 
-	void announce_error (const std::string & mesg);
-	void announce_reply
+	virtual void announce_error (const std::string & mesg);
+	virtual void announce_reply
     (
 		const std::string & mesg,
 		const std::string & manager,
 		const std::string & capabilities
     );
-
-	void nsm_open
+	virtual void nsm_open
     (
 		const std::string & path_name,
 		const std::string & display_name,
 		const std::string & client_id
     );
-
 	virtual void nsm_save ();
-
-	virtual void nsm_label (const std::string & /*label*/)
-    {
-    }
-
 	virtual void nsm_loaded ();
+	virtual void nsm_label (const std::string & /*label*/);
 	virtual void nsm_show ();
 	virtual void nsm_hide ();
+	virtual void progress (float percent);
+	virtual void message (int priority, const std::string & mesg);
+    virtual bool save_session ();
+    virtual bool close_session ();
+#endif  // THESE_METHODS_ARE_NEEDED
 
     /*
      * Prospective caller helpers a la qtractorMainForm.
      */
 
-    bool open_session ();
-    bool save_session ();
-    bool close_session ();
+    virtual bool open_session ();
 
 protected:
 
@@ -165,7 +159,6 @@ signals:                            // Session client callbacks.
  *  External helper functions.
  */
 
-extern std::string get_nsm_url ();
 extern std::unique_ptr<nsmclient> create_nsmclient
 (
     const std::string & nsmfile,

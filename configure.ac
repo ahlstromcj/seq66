@@ -296,6 +296,7 @@ fi
 
 NSM_CFLAGS=
 NSM_LIBS=
+NSM_DEPS=
 
 dnl Krufty!!!
 dnl NSM_LIBS="-l lo -L ../libsessions/src/.libs/ -lsessions"
@@ -306,6 +307,7 @@ if test "$ac_nsm" != "no"; then
     build_sessions="yes"
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
+    NSM_DEPS="../libsessions/src/.libs/libsessions.la"
     AC_MSG_RESULT([sessions/nsm library build enabled.]);
 else
     build_sessions="no"
@@ -313,6 +315,7 @@ fi
 
 AC_SUBST(NSM_CFLAGS)
 AC_SUBST(NSM_LIBS)
+AC_SUBST(NSM_DEPS)
 
 dnl "RtMidi" support.  This is now the default build for Seq66.
 

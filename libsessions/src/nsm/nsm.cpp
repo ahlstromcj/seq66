@@ -332,9 +332,9 @@ osc_nsm_hide
 
 nsm::nsm
 (
-    const std::string & nsm_url,
-    const std::string & nsm_file,
-    const std::string & nsm_ext
+    const std::string & nsmurl,
+    const std::string & nsmfile,
+    const std::string & nsmext
 ) :
     m_lo_address    (),
     m_lo_thread     (),
@@ -342,16 +342,17 @@ nsm::nsm
     m_active        (false),
     m_dirty         (false),
     m_dirty_count   (0),
+
     m_manager       (),
     m_capabilities  (),
     m_path_name     (),
     m_display_name  (),
     m_client_id     (),
-    m_nsm_file      (nsm_file),
-    m_nsm_ext       (nsm_ext),
-    m_nsm_url       (nsm_url)
+    m_nsm_file      (nsmfile),
+    m_nsm_ext       (nsmext),
+    m_nsm_url       (nsmurl)
 {
-    m_lo_address = lo_address_new_from_url(nsm_url.c_str());
+    m_lo_address = lo_address_new_from_url(nsm_url().c_str());
 
     const int proto = lo_address_get_protocol(m_lo_address);
     m_lo_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);

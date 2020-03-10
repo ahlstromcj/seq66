@@ -95,9 +95,9 @@ public:
 
 	nsm
     (
-        const std::string & nsm_url,
-        const std::string & nsm_file    = "",
-        const std::string & nsm_ext     = ""
+        const std::string & nsmurl,
+        const std::string & nsmfile = "",
+        const std::string & nsmext  = ""
     );
 	virtual ~nsm ();
 
@@ -163,9 +163,10 @@ public:
 
 	void dirty (bool isdirty);
     void update_dirty_count (bool flag = true);
-	void visible (bool isvisible);
-	void progress (float percent);
-	void message (int priority, const std::string & mesg);
+
+	virtual void visible (bool isvisible);
+	virtual void progress (float percent);
+	virtual void message (int priority, const std::string & mesg);
 
 	// Session client reply methods.
 
@@ -188,15 +189,17 @@ public:
 
 	// Server methods response methods.
 
-	void nsm_open
+	virtual void nsm_open
     (
 		const std::string & path_name,
 		const std::string & display_name,
 		const std::string & client_id
     );
-
 	virtual void nsm_save ();
-	virtual void nsm_label (const std::string & label);
+	virtual void nsm_label (const std::string & /*label*/)
+    {
+        // no code
+    }
 	virtual void nsm_loaded ();
 	virtual void nsm_show ();
 	virtual void nsm_hide ();
@@ -207,9 +210,9 @@ public:
      * Prospective caller helpers a la qtractorMainForm.
      */
 
-    bool open_session ();
-    bool save_session ();
-    bool close_session ();
+    virtual bool open_session ();
+    virtual bool save_session ();
+    virtual bool close_session ();
 
 public:
 
@@ -217,9 +220,13 @@ public:
      * Used by the free-function OSC callbacks.
      */
 
-	void announce (const std::string & app_name, const std::string & capabilities);
-	void announce_error (const std::string & mesg);
-	void announce_reply
+	virtual void announce
+    (
+        const std::string & app_name,
+        const std::string & capabilities
+    );
+	virtual void announce_error (const std::string & mesg);
+	virtual void announce_reply
     (
 		const std::string & mesg,
 		const std::string & manager,
@@ -230,6 +237,12 @@ public:
     const char * nsm_reply_message (reply replycode);
 
 };          // class nsm
+
+/*
+ *  External helper functions.
+ */
+
+extern std::string get_nsm_url ();
 
 }           // namespace seq66
 

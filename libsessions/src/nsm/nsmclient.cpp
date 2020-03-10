@@ -138,9 +138,6 @@
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
 #endif
 
-#define NSM_API_VERSION_MAJOR 1
-#define NSM_API_VERSION_MINOR 0
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -165,8 +162,7 @@ nsmclient::nsmclient
     m_display_name  (),
     m_client_id     (),
     m_nsm_file      (nsmfile),
-    m_nsm_ext       (nsmext),
-    m_nsm_url       (nsmurl)
+    m_nsm_ext       (nsmext)
 {
     //
 }
@@ -179,147 +175,6 @@ nsmclient::~nsmclient ()
 {
     // no code so far
 }
-
-// Session client methods.
-
-void
-nsmclient::announce
-(
-    const std::string & appname,
-    const std::string & capabilities
-)
-{
-    nsm::announce(appname, capabilities);
-}
-
-// Session client methods.
-
-void
-nsmclient::visible (bool isvisible)
-{
-    if (is_active())
-    {
-        const char * path = nsm_visible_msg(isvisible);
-        if (m_lo_address && m_lo_server)
-            lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
-
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("visible(%s): %s\n", bool_to_string(isvisible).c_str(), path);
-#endif
-    }
-}
-
-void
-nsmclient::progress (float percent)
-{
-    if (is_active())
-    {
-        if (m_lo_address && m_lo_server)
-        {
-            lo_send_from
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-                nsm_cli_progress(), "f", percent
-            );
-        }
-
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("progress(%g)\n", percent);
-#endif
-    }
-}
-
-void
-nsmclient::message (int priority, const std::string & mesg)
-{
-    if (is_active())
-    {
-        if (m_lo_address && m_lo_server)
-        {
-            lo_send_from
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-                nsm_cli_message(), "is", priority, mesg.c_str()
-            );
-        }
-
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("message(%d, %s\n", priority, mesg.c_str());
-#endif
-    }
-}
-
-/*
-// Session client reply methods.
-
-void
-nsmclient::open_reply (reply replycode)
-{
-    nsm_reply(nsm_cli_open(), replycode);
-}
-
-void
-nsmclient::save_reply (reply replycode)
-{
-    nsm_reply(nsm_cli_save(), replycode);
-}
-*/
-
-// Server announce error.
-
-// Client open callback.
-
-void
-nsmclient::nsm_open
-(
-    const std::string & path_name,
-    const std::string & display_name,
-    const std::string & client_id
-)
-{
-    m_path_name = path_name;
-    m_display_name = display_name;
-    m_client_id = client_id;
-    nsm_debug("nsm_open");
-    // emit open();
-}
-
-// Client save callback.
-
-void
-nsmclient::nsm_save ()
-{
-    nsm_debug("nsm_save");
-    // emit save();
-}
-
-// Client loaded callback.
-
-void
-nsmclient::nsm_loaded ()
-{
-    nsm_debug("nsm_loaded");
-    // emit loaded();
-}
-
-// Client show optional GUI.
-
-void
-nsmclient::nsm_show ()
-{
-    nsm_debug("nsm_show");
-    // emit show();
-}
-
-// Client hide optional GUI.
-
-void
-nsmclient::nsm_hide ()
-{
-    nsm_debug("nsm_show");
-    // emit hide();
-}
-
 /*
  * Prospective caller helpers a la qtractorMainForm.
  */
@@ -335,68 +190,13 @@ nsmclient::nsm_hide ()
 bool
 nsmclient::open_session ()
 {
-    bool result = is_active();
+    bool result = nsm::open_session();
     if (result)
     {
         // m_dirty_count = 0;
         // m_dirty = false;
         m_nsm_file.clear();
     }
-    return result;
-}
-
-/**
- *  TODO? Send close message, quit, abort?
- */
-
-bool
-nsmclient::close_session ()
-{
-    bool result = true;
-    if (is_active())
-    {
-        m_dirty_count = 0;
-    }
-    return result;
-}
-
-/**
- *  The caller should call this function, then check the result before saving the
- *  "session".
- */
-
-bool
-nsmclient::save_session ()
-{
-    bool result = is_active();
-    if (result)
-    {
-        m_dirty_count = 0;
-        m_dirty = false;
-
-        /*
-         * Done by caller m_nsm_file.clear();
-         */
-    }
-    return result;
-}
-
-/**
- *  See if there is NSM "present" on the host computer.
- */
-
-std::string
-get_nsm_url ()
-{
-    std::string result;
-#if defined _GNU_SOURCE
-    char * url = secure_getenv(nsm_url());
-#else
-    char * url = getenv(nsm_url());
-#endif
-    if (not_nullptr(url) && strlen(url) > 0)
-        result = std::string(url);
-
     return result;
 }
 
