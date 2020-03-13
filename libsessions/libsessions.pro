@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-08
-# \update      2020-03-08
+# \update      2020-03-11
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -32,11 +32,13 @@ CONFIG(debug, debug|release) {
 
 HEADERS += include/nsm/nsm.hpp \
  include/nsm/nsmclient.hpp \
- include/nsm/nsmmessages.hpp
+ include/nsm/nsmmessages.hpp \
+ include/nsm/nsmserver.hpp
 
 SOURCES += src/nsm/nsm.cpp \
  src/nsm/nsmclient.cpp \
- src/nsm/nsmmessages.cpp
+ src/nsm/nsmmessages.cpp \
+ src/nsm/nsmserver.cpp
 
 # INCLUDEPATH = ../include/qt/portmidi ../seq_portmidi/include include
 

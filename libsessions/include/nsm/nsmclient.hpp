@@ -35,6 +35,44 @@ namespace seq66
 class nsmclient : public nsm
 {
 
+public:
+
+    /**
+     *
+     * \var none
+     *      Indicates no capabilities; provided for completeness or
+     *      error-checking.
+     *
+     * \var cswitch
+     *      The client is capable of responding to multiple open messages
+     *      without restarting. The string for this value is "switch", but that
+     *      is a reserved word in C/C++.
+     *
+     * \var dirty
+     *      The client knows when it has unsaved changes.
+     *
+     * \var progress
+     *      The client can send progress updates during time-consuming
+     *      operations.
+     *
+     * \var message
+     *      The client can send textual status updates.
+     *
+     * \var optional_gui
+     *      The client has a optional GUI.
+     */
+
+    enum class caps
+    {
+        none,
+        cswitch,
+        dirty,
+        progress,
+        message,
+        optional_gui
+    };
+
+
 private:
 
 	std::string m_manager;

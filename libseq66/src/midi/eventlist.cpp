@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2019-11-29
+ * \updates       2020-03-12
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -574,7 +574,7 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
  *      A rough indicator of the amount of quantization.  The only values used
  *      in the application are either 1 ("quantize") or 2 ("tighten").  The
  *      latter value reduces the amount of change slightly.  This value is not
- *      tested for 0.
+ *      tested for 0.  The caller should do it.
  *
  * \param fixlink
  *      False by default, this parameter indicates if linked events are to be
@@ -607,7 +607,7 @@ eventlist::quantize_events
             {
                 event e = er;                   /* copy the event           */
                 midipulse t = e.timestamp();
-                midipulse tremainder = t % snap;
+                midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
                 midipulse tdelta;
                 if (tremainder < snap / 2)
                     tdelta = -(tremainder / divide);

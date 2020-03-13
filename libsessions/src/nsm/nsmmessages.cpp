@@ -147,6 +147,10 @@ nsm_cli_show_opt_gui ()
     return sm_cli_show_opt_gui.c_str();
 }
 
+/**
+ *
+ */
+
 const char *
 nsm_gui_announce ()
 {
@@ -230,6 +234,12 @@ nsm_srv_abort ()
     static const std::string sm_srv_abort("/nsm/server/abort");
     return sm_srv_abort.c_str();
 }
+
+/**
+ *  A client should not consider itself to be under session management until it
+ *  receives this response. For example, the Non applications activate their
+ *  "SM" blinkers at this time.
+ */
 
 const char *
 nsm_srv_announce ()

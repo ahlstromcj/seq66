@@ -443,18 +443,18 @@ nsm::dirty (bool isdirty)
 }
 
 void
-nsm::update_dirty_count (bool flag)
+nsm::update_dirty_count (bool updatedirt)
 {
-    if (flag)
+    if (updatedirt)
         ++m_dirty_count;
     else
         m_dirty_count = 0;
 
     if (is_active())
     {
-        if (! m_dirty && flag)
+        if (! m_dirty && updatedirt)
             m_dirty = true;
-        else if (m_dirty && ! flag)
+        else if (m_dirty && ! updatedirt)
             m_dirty = false;
     }
 }
@@ -695,7 +695,7 @@ nsm::nsm_loaded ()
     // emit loaded();
 }
 
-#if defined USE_SAMPLE_CODE
+#if defined USE_THIS_CODE
 
 /**
  *  This sample is from nsm-proxy
@@ -781,8 +781,8 @@ nsm::open_session ()
 bool
 nsm::close_session ()
 {
-    bool result = true;
-    if (is_active())
+    bool result = is_active();
+    if (result)
     {
         m_dirty_count = 0;
     }
@@ -809,6 +809,65 @@ nsm::save_session ()
     }
     return result;
 }
+
+#if defined USE_THIS_CODE
+
+/**
+ *  Construct a message of the form:
+ *
+\verbatim
+    /nsm/server/announce s:application_name s:capabilities
+        s:executable_name i:api_version_major
+        i:api_version_minor i:pid
+\verbatim
+ *
+ *  Do we really need this function? See nsm::announce() above!
+ *
+ *  exename must be the executable name that the program was launched with.
+ *  For C programs, this is simply the value of argv[0]. Note that hardcoding
+ *  the name of the program here is not the same as using, as the user may have
+ *  launched the program from a script with a different name using exec, or
+ *  have created a symlink to the program.
+ */
+
+std::string
+nsm::construct_server_announce
+(
+    const std::string & appname,
+    const std::string & exename,
+    const std::string & capabilities,
+)
+{
+    std::string result(nsm_srv_announce());
+    result += " ";
+    result += "s:";
+    result += appname;
+    result += "s:";
+    result += capabilities;
+    result += "s:";
+    result += exename;
+    result += "i:";
+    result += std::to_string(NSM_API_VERSION_MAJOR)
+    result += "i:";
+    result += std::to_string(NSM_API_VERSION_MINOR)
+    result += "i:";
+    result += std::to_string(int(getpid()));
+    return result;
+}
+
+/**
+ * HMMMMM.
+ */
+
+std::string
+nsm::construct_caps (srvcaps c)
+{
+    std::string result = ":";
+
+    return result;
+}
+
+#endif  // defined USE_THIS_CODE
 
 /**
  *  See if there is NSM "present" on the host computer.

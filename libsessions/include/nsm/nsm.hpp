@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-03-08
+ * \updates       2020-03-11
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -18,6 +18,7 @@
  */
 
 #include "seq66_features.hpp"
+#include "util/basic_macros.h"
 
 #include <lo/lo.h>                      /* library for the OSC protocol     */
 
@@ -51,6 +52,67 @@ public:
 		bad_project      = -9,
 		create_failed    = -10
 	};
+
+    /**
+     *
+     * \var none
+     *      Indicates no capabilities; provided for completeness or
+     *      error-checking.
+     *
+     * \var server_control
+     *      The server provides client-to-server control.
+     *
+     * \var broadcast
+     *      The server responds to the "/nsm/server/broadcast" message.
+     *
+     * \var optional_gui
+     *      The server responds to "optional-gui" messages.  If this capability
+     *      is not present, then clients with "optional-gui" must always keep
+     *      themselves visible.
+     */
+
+    enum class srvcaps
+    {
+        none,
+        server_control,
+        broadcast,
+        optional_gui
+    };
+
+    /**
+     *
+     * \var none
+     *      Indicates no capabilities; provided for completeness or
+     *      error-checking.
+     *
+     * \var cswitch
+     *      The client is capable of responding to multiple open messages
+     *      without restarting. The string for this value is "switch", but that
+     *      is a reserved word in C/C++.
+     *
+     * \var dirty
+     *      The client knows when it has unsaved changes.
+     *
+     * \var progress
+     *      The client can send progress updates during time-consuming
+     *      operations.
+     *
+     * \var message
+     *      The client can send textual status updates.
+     *
+     * \var optional_gui
+     *      The client has a optional GUI.
+     */
+
+    enum class clientcaps
+    {
+        none,
+        cswitch,
+        dirty,
+        progress,
+        message,
+        optional_gui
+    };
 
 private:
 
@@ -108,6 +170,16 @@ public:
 	bool is_active() const              // session activation accessor
     {
         return m_active;
+    }
+
+    bool is_a_client (const nsm * p)
+    {
+        return not_nullptr(p) && p->is_active();
+    }
+
+    bool not_a_client (const nsm * p)
+    {
+        return is_nullptr(p) || ! p->is_active();
     }
 
 	// Session manager accessors.
@@ -173,17 +245,17 @@ public:
 	void open_reply (reply replycode = reply::ok);
 	void save_reply (reply replycode = reply::ok);
 
-	void open_reply (bool ok)
+	void open_reply (bool loaded)
     {
-        open_reply(ok ? reply::ok : reply::general);
-        if (ok)
+        open_reply(loaded ? reply::ok : reply::general);
+        if (loaded)
             m_dirty = false;
     }
 
-	void save_reply (bool ok)
+	void save_reply (bool saved)
     {
-        save_reply(ok ? reply::ok : reply::general);
-        if (ok)
+        save_reply(saved ? reply::ok : reply::general);
+        if (saved)
             m_dirty = false;
     }
 

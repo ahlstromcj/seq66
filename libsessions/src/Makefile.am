@@ -6,7 +6,7 @@
 # \library    	libsessions library
 # \author     	Chris Ahlstrom
 # \date       	2020-03-08
-# \update      2020-03-08
+# \update      2020-03-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -134,7 +134,8 @@ lib_LTLIBRARIES = libsessions.la
 libsessions_la_SOURCES = \
  nsm/nsm.cpp \
  nsm/nsmclient.cpp \
- nsm/nsmmessages.cpp
+ nsm/nsmmessages.cpp \
+ nsm/nsmserver.cpp
 
 libsessions_la_LDFLAGS = -version-info $(version)
 libsessions_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS)

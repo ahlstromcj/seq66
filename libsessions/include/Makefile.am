@@ -79,7 +79,8 @@ AM_CXXFLAGS = \
 pkginclude_HEADERS = \
  nsm/nsm.hpp \
  nsm/nsmclient.hpp \
- nsm/nsmmessages.hpp
+ nsm/nsmmessages.hpp \
+ nsm/nsmserver.hpp
 
 #******************************************************************************
 # uninstall-hook

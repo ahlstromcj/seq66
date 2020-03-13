@@ -200,6 +200,10 @@ nsmclient::open_session ()
     return result;
 }
 
+/**
+ *
+ */
+
 std::unique_ptr<nsmclient>
 create_nsmclient
 (

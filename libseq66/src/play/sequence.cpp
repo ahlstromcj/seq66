@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-12-16
+ * \updates       2020-03-13
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4907,8 +4907,8 @@ sequence::set_transposable (bool flag)
  * \param divide
  *      A rough indicator of the amount of quantization.  The only values used
  *      in the application are either 1 ("quantize") or 2 ("tighten").  The
- *      latter value reduces the amount of change slightly.  This value is not
- *      tested for 0.
+ *      latter value reduces the amount of change slightly.  This value is
+ *      tested for 0, and the function just returns if that is the case.
  *
  * \param fixlink
  *      False by default, this parameter indicates if linked events are to be
@@ -4922,6 +4922,9 @@ sequence::quantize_events
 )
 {
     automutex locker(m_mutex);
+    if (divide == 0)
+        return false;
+
     bool result = m_events.quantize_events(status, cc, snap(), divide, fixlink);
     if (result)
         set_dirty();
