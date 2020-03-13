@@ -25,6 +25,7 @@ AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE([dist-bzip2])
+AC_DEFINE(_GNU_SOURCE, 1, [gnu source])
 AC_CONFIG_HEADER([include/config.h])
 export PKG_CONFIG=$(which pkg-config)
 
@@ -32,12 +33,18 @@ dnl Prepends "SEQ66_" to the macro definitions, for a better guarantee of
 dnl avoiding naming conflicts in macros.
 
 AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
-AC_GCC_VERSION
-AC_LANG([C])
-AC_LANG([C++])
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_CXXCPP
+
+dnl On a Debian Sid laptop, we have found that gcc/g++ version 9 breaks
+dnl configuration with the error 'C++ preprocessor "/lib/cpp" fails sanity
+dnl check' (it cannot find limits.h!!!), so we try version 8 first.
+dnl
+dnl AC_GCC_VERSION
+dnl AC_LANG([C])
+dnl AC_LANG([C++])
+
+AC_PROG_CC([gcc-8 gcc])
+AC_PROG_CXX([g++-8 g++])
+AC_PROG_CXXCPP([cpp-8 cpp])
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
@@ -143,7 +150,6 @@ dnl 1.d. Set up the suite name and current-project name.
 
 SEQ66_PROJECT_NAME="SEQ66"
 AC_SUBST([SEQ66_PROJECT_NAME])
-AC_DEFINE(_GNU_SOURCE, 1, [gnu source])
 
 dnl 2. Libtool
 dnl
@@ -195,8 +201,7 @@ ac_cflags="${CFLAGS}"
 dnl Check for header files.  Added more to support daemonization.
 
 AC_HEADER_STDC
-AC_CHECK_HEADERS([getopt.h])
-AC_CHECK_HEADERS([string.h])
+AC_CHECK_HEADERS([getopt.h string.h limits.h])
 AC_CHECK_HEADERS([stdarg.h stdio.h stddef.h stdlib.h string.h])
 AC_CHECK_HEADERS([limits.h ctype.h sys/time.h time.h errno.h])
 AC_CHECK_HEADERS([fcntl.h sys/stat.h sys/sysctl.h])
