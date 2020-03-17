@@ -75,7 +75,7 @@ public:
         // no code needed
     }
 
-protected:
+protected:      // Qt overrides
 
     virtual void paintEvent (QPaintEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
@@ -83,6 +83,7 @@ protected:
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
     virtual QSize sizeHint() const override;
+    virtual void wheelEvent (QWheelEvent * ev) override;
 
 signals:
 

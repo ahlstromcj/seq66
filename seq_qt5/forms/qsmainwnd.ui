@@ -1006,7 +1006,7 @@
      <x>0</x>
      <y>0</y>
      <width>864</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1024,6 +1024,7 @@
     <addaction name="separator"/>
     <addaction name="actionImport_MIDI"/>
     <addaction name="separator"/>
+    <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
@@ -1057,7 +1058,7 @@
     <string>&amp;New</string>
    </property>
    <property name="toolTip">
-    <string>Create new Seq64 MIDI file.</string>
+    <string>Create new Seq66 MIDI file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -1079,7 +1080,7 @@
     <string>&amp;Open...</string>
    </property>
    <property name="toolTip">
-    <string>Open a MIDI or Seq64 MIDI file.</string>
+    <string>Open a MIDI or Seq66 MIDI file.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -1090,7 +1091,7 @@
     <string>Open &amp;Playlist...</string>
    </property>
    <property name="toolTip">
-    <string>Open a Seq64 playlist file.</string>
+    <string>Open a Seq66 playlist file.</string>
    </property>
   </action>
   <action name="actionRecent">
@@ -1120,7 +1121,7 @@
     <string>&amp;Save</string>
    </property>
    <property name="toolTip">
-    <string>Save MIDI file in Seq64 format.</string>
+    <string>Save MIDI file in Seq66 format.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -1131,7 +1132,7 @@
     <string>Save &amp;As...</string>
    </property>
    <property name="toolTip">
-    <string>Save As a Seq64 MIDI file with a different name.</string>
+    <string>Save As a Seq66 MIDI file with a different name.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -1175,7 +1176,7 @@
     <string>Export &amp;MIDI Only</string>
    </property>
    <property name="toolTip">
-    <string>Export without Seq64 SeqSpecs.</string>
+    <string>Export without Seq66 SeqSpecs.</string>
    </property>
   </action>
   <action name="actionSongEditor">
@@ -1232,6 +1233,14 @@
    </property>
    <property name="toolTip">
     <string>Toggles the mute status of all tracks in the current set.</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Session</string>
    </property>
   </action>
  </widget>

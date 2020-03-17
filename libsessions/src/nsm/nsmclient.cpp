@@ -44,19 +44,8 @@
  *          create_nsmclient() should be used; it returns a "unique pointer".
  *          (We may need to provide specific factory functions for Qt, Gtkmm,
  *          and command-line versions of the application.)
- *      -#  If NSM_URL is valid and reachable, send the following "sssiii"
- *          message to the provided address as soon as ready to respond to the
- *          /nsm/client/open event.  api_version_major and api_version_minor
- *          must be the two parts of the version number of the NSM API.
- *          If registering JACK clients, application_name must be passed to
- *          jack_client_open.  capabilities is a string containing a list of
- *          the capabilities the client possesses, e.g. :dirty:switch:progress:
- *          executable_name must be the executable name that launched the
- *          program (e.g argv[0]).
-\verbatim
-    /nsm/server/announce s:application_name s:capabilities s:executable_name
-         i:api_version_major i:api_version_minor i:pid
-\endverbatim
+ *      -#  If NSM_URL is valid and reachable, call the nsm::announce()
+ *          function.
  *      -#  Connect up callbacks (e.g. signals in Qt) for the following events:
  *          -   Open NSM session. The caller should first see if this nsmclient
  *              is active.  If so, close the session, which checks the

@@ -1,6 +1,6 @@
-README for Sequencer66 0.90.2 (Sequencer64 refactored for C++11/14 and Qt)
+README for Seq66 0.90.3 (Sequencer64 refactored for C++11/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-02-16
+2015-09-10 to 2020-03-14
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -30,6 +30,8 @@ of krufty buildup.  Changes:
         -   More consistent use of modern C++, including lambda functions.
         -   Additional performer callbacks to reduce the need for polling in the
             user-interface.  Still in progress.
+    -   Non Session Manager.  Working on support for this manager, there is a
+        lot of investigation to do.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 

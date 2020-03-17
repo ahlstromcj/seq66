@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-30
+ * \updates       2020-03-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -110,6 +110,7 @@ public:
         performer & p,
         const std::string & midifilename    = "",
         int ppqn                            = SEQ66_USE_DEFAULT_PPQN,
+        bool usensm                         = false,
         QWidget * parent                    = nullptr
     );
     virtual ~qsmainwnd ();
@@ -131,7 +132,17 @@ public:
         show_open_list_dialog();
     }
 
+    bool use_nsm () const
+    {
+        return m_use_nsm;
+    }
+
 protected:
+
+    void use_nsm (bool flag)
+    {
+        m_use_nsm = flag;
+    }
 
     /**
      * \setter m_ppqn
@@ -239,6 +250,12 @@ private:
     qmutemaster * m_mute_master;
 
     /**
+     *  Duty now for the future!
+     */
+
+    bool m_use_nsm;
+
+    /**
      *  Provides a workaround for a race condition when a MIDI file-name is
      *  provided on the command line.  This would cause the title to be
      *  "unnamed".
@@ -315,18 +332,21 @@ private slots:
     void update_beat_length (int blIndex);
     void open_recent_file ();
     void new_file ();
+    void new_session ();
     bool save_file (const std::string & fname = "");
+    bool save_session ();
     bool save_file_as ();
     bool export_file_as_midi (const std::string & fname = "");
     bool export_song (const std::string & fname = "");
     void quit ();
-    void show_import_dialog ();           /* import MIDI into current bank    */
+    void show_import_dialog ();             /* import MIDI to current bank  */
+    void import_into_session ();            /* for support of NSM           */
     void show_open_file_dialog ();
     void show_open_list_dialog ();
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);
-    void refresh ();                    /* redraw certain GUI elements      */
+    void refresh ();                        /* redraw certain GUI elements  */
     void load_editor (int seqid);
     void load_event_editor (int seqid);
     void load_qseqedit (int seqid);

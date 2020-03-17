@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2019-11-21
+ * \updates       2020-03-15
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -225,11 +225,15 @@ main (int argc, char * argv [])
              * Push the qsmainwnd window onto the stack.  Also be sure to pass
              * along the PPQN value, which might be different than the default
              * (192), and affects some of the child objects of qsmainwnd.
+             * Also note the future support for NSM.
              */
 
             seq66_window.reset
             (
-                new seq66::qsmainwnd(p, midifname, seq66::usr().midi_ppqn())
+                new seq66::qsmainwnd
+                (
+                    p, midifname, seq66::usr().midi_ppqn(), false /*usensm*/
+                )
             );
             seq66_window->show();
             if (seq66::rc().verbose())
@@ -269,7 +273,7 @@ main (int argc, char * argv [])
                 seq66_window->show_message_box(errmessage);
 
             exit_status = app.exec();           /* run main window loop     */
-            p.finish();                         /* tear down performerer    */
+            p.finish();                         /* tear down performer      */
             p.put_settings(seq66::rc());        /* copy latest settings     */
             if (seq66::rc().auto_option_save())
                 (void) seq66::cmdlineopts::write_options_files();

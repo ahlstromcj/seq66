@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-02-10
+ * \updates       2020-03-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -141,6 +141,7 @@ qsmainwnd::qsmainwnd
     performer & p,
     const std::string & midifilename,
     int ppqn,
+    bool usensm,
     QWidget * parent
 ) :
     QMainWindow             (parent),
@@ -166,6 +167,7 @@ qsmainwnd::qsmainwnd
     m_dialog_build_info     (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
+    m_use_nsm               (usensm),
     m_is_title_dirty        (true),
     m_ppqn                  (ppqn),     /* can specify 0 for file ppqn  */
     m_tick_time_as_bbt      (true),
@@ -256,17 +258,6 @@ qsmainwnd::qsmainwnd
     if (not_nullptr(m_playlist_frame))
         ui->PlaylistTabLayout->addWidget(m_playlist_frame);
 
-    /*
-     * File menu.  Connect the GUI elements to event handlers.
-     */
-
-    connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
-    connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
-    connect
-    (
-        ui->actionSave_As, SIGNAL(triggered(bool)),
-        this, SLOT(save_file_as())
-    );
     connect
     (
         ui->actionExportSong, SIGNAL(triggered(bool)),
@@ -277,16 +268,140 @@ qsmainwnd::qsmainwnd
         ui->actionExportMIDI, SIGNAL(triggered(bool)),
         this, SLOT(export_file_as_midi())
     );
+
+    /*
+     * File / Import MIDI to Current Set...
+     */
+
     connect
     (
         ui->actionImport_MIDI, SIGNAL(triggered(bool)),
         this, SLOT(show_import_dialog())
     );
-    connect
-    (
-        ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(show_open_file_dialog())
-    );
+
+    if (use_nsm())
+    {
+        /*
+         * File /New.  NSM version.
+         */
+
+        ui->actionNew->setText("New session...");
+        ui->actionNew->setToolTip("Start a new management session.");
+        connect
+        (
+            ui->actionNew, SIGNAL(triggered(bool)),
+            this, SLOT(new_session())
+        );
+
+        /*
+         * File / Import into Session. Do we need an "Open Session"?
+         */
+
+        ui->actionOpen->setText("Import into Session...");
+        ui->actionOpen->setToolTip
+        (
+            "Import a MIDI or Seq66 MIDI file into the current session."
+        );
+        connect
+        (
+            ui->actionOpen, SIGNAL(triggered(bool)),
+            this, SLOT(import_into_session())
+        );
+
+        /*
+         * File / Save Session.
+         */
+
+        ui->actionNew->setText("Save session");
+        ui->actionNew->setToolTip("Save the current state of the session.");
+        connect
+        (
+            ui->actionSave, SIGNAL(triggered(bool)),
+            this, SLOT(save_session())
+        );
+
+        /*
+         * File / Save As...
+         */
+
+        ui->actionSave_As->setVisible(false);
+
+        /*
+         * File / Export from Session
+         */
+
+        ui->actionSave_As->setText("Export from Session...");
+        ui->actionSave_As->setToolTip("Save as a Seq66 MIDI file only.");
+        connect
+        (
+            ui->actionSave_As, SIGNAL(triggered(bool)),
+            this, SLOT(save_file_as())
+        );
+
+        /*
+         * File / Close.  TODO.
+         */
+
+        ui->actionClose->setText("Close");
+        ui->actionClose->setToolTip("Disconnect from session management.");
+        connect(ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit()));
+    }
+    else
+    {
+        /*
+         * File / New.  Connect the GUI elements to event handlers.
+         */
+
+        ui->actionNew->setText("New");
+        ui->actionNew->setToolTip("Create a new Seq66 MIDI file.");
+        connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
+
+        /*
+         * File / Open.
+         */
+
+        ui->actionOpen->setText("Open...");
+        ui->actionOpen->setToolTip("Open a MIDI or Seq66 MIDI file.");
+        connect
+        (
+            ui->actionOpen, SIGNAL(triggered(bool)),
+            this, SLOT(show_open_file_dialog())
+        );
+
+        /*
+         * File / Save
+         */
+
+        ui->actionNew->setText("Save");
+        ui->actionNew->setToolTip("Save as a Seq66 MIDI file.");
+        connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
+
+        /*
+         * File / Save As...
+         */
+
+        ui->actionSave_As->setText("Save &As...");
+        ui->actionSave_As->setToolTip("Save as a different Seq66 MIDI file.");
+        connect
+        (
+            ui->actionSave_As, SIGNAL(triggered(bool)),
+            this, SLOT(save_file_as())
+        );
+
+        /*
+         * File / Close.  Hide it.
+         */
+
+        ui->actionClose->setVisible(false);
+
+        /*
+         * File / Recent MIDI files
+         */
+
+        create_action_connections();
+        create_action_menu();
+        update_recent_files_menu();
+    }
     connect
     (
         ui->actionOpenPlaylist, SIGNAL(triggered(bool)),
@@ -574,14 +689,6 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * Other setups.
-     */
-
-    create_action_connections();
-    create_action_menu();
-    update_recent_files_menu();
-
-    /*
      *  The MIDI file is now opened and read in the performer before the
      *  creation of this window, to avoid issues with unset PPQN values
      *  causing segfaults.
@@ -788,6 +895,16 @@ qsmainwnd::edit_bpm ()
 {
     double bpm = ui->spinBpm->value();
     perf().set_beats_per_minute(midibpm(bpm));
+}
+
+/**
+ *
+ */
+
+void
+qsmainwnd::import_into_session ()
+{
+    // Duty now for the future!
 }
 
 /**
@@ -1198,6 +1315,24 @@ qsmainwnd::new_file ()
         redo_live_frame();
         remove_all_editors();
     }
+}
+
+void
+qsmainwnd::new_session ()
+{
+    // Duty now for the future!
+}
+
+/**
+ *
+ */
+
+bool
+qsmainwnd::save_session ()
+{
+    // Duty now for the future!
+
+    return false;
 }
 
 /**
@@ -2028,6 +2163,11 @@ qsmainwnd::quit ()
 {
     if (check())
     {
+        if (use_nsm())
+        {
+            // save_session();
+            // close_session();
+        }
         remove_all_editors();
         QCoreApplication::exit();
     }

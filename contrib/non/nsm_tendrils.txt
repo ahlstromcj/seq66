@@ -1,0 +1,138 @@
+NSM Notes for Seq66 (nsm_tendrils.txt)
+Chris Ahlstrom
+2020-03-14 to 2020-03-14
+
+These notes are based on the NSM API text, and indicate where changes would need
+to be made when NSM support is compiled in.
+
+Qt UI Version
+
+    qsmainwnd:
+
+        File/New:  Change from calling new_file() to calling new_session().
+
+        File/Open: Disable (remove from the menu) this option.  May need to
+        create a new function called open_session().
+
+        File/Import to Session:  Add this menu item, add a function called
+        import_into_session().
+
+        File/Save: Change from calling save_file() to calling save_session(), a
+        counterpart to open_session().  All project-specific data created by a
+        client must be stored in the per-client storage area provided by NSM.
+
+        File/Save As: Disable (remove from the menu) this option.
+
+        File/Export from Session:  Add this menu item, which acts like the
+        original version of Save As, but uses a user-specified directory.
+
+        File/Close:  Add this menu item to call close_session() or
+        disconnect_session().
+
+        File/Quit or Exit: Call quit(), but also close_session() or
+        save_session().
+
+    connect_to_session():
+
+        - Call create_nsmclient() and return "true" if it all worked.
+        - Get everything ready to be able to respond to /nsm/client/open.
+        - Call nsm::announce() to send /nsm/server/announce.
+          It should provide the app-name, capabilities string, exe-name, and pid.
+          The app-name should match the JACK-client name.
+          See the nsm constructor.
+        - The server will respond:
+
+            /reply "/nsm/server/announce" s:message s:name_of_session_manager
+                s:server_capabilities
+
+          Upon receiving this message, the client is under session management.
+          An error response (see NSM_API.txt, line 243):
+
+            /error "/nsm/server/announce" i:error_code s:error_message
+
+        - Receive the open message, which calls nsm::nsm_open().
+        - Get the unique client name, then call jack_client_open().
+          The application must not register with JACK (or any other subsystem
+          requiring unique names) until it receives an open message from NSM.
+
+    Client Control Messages:
+
+        - These messages must be accepted, the action completed or errored, and a
+          response (/reply or /error) must be sent back.
+        - Quit: close cleanly immediately upon receipt of SIGTERM, even if
+          changes would be lost.  When a session is closed the application will
+          receive this signal soon after having responded to a save message.
+        - Open: See NSM_API, line 280 on.  Too complex to note here. NSM provides
+          a path to the project-instance-specific path.  The client will open the
+          project or create a new one.  Applications with the :switch: capability
+          should close their JACK clients and re-create them with using the new
+          client_id. Re-registering is necessary with JACK.  The client must
+          respond to the 'open' message with:
+              /reply "/nsm/client/open" s:message  OR
+              /error "/nsm/client/open" i:error_code s:message
+        - Save: The /nsm/client/save message will only be delivered after a
+          previous open message, and may be sent any number of times within the
+          course of a session.  The client must respond to the 'save' message
+          with:
+              /reply "/nsm/client/save" s:message OR 
+              /error "/nsm/client/save" i:error_code s:message
+        - /nsm/client/session_is_loaded.  This message does not require a
+          response.
+        - /nsm/client/show_optional_gui and /nsm/client/hide_optional_gui.
+          No response needed.
+        - /nsm/client/gui_is_hidden and /nsm/client/gui_is_shown.
+          If the client specified optional-gui, then it must send this
+          message whenever the state of visibility of the GUI has changed. It
+          also must send this message after it's announce message to indicate the
+          initial visibility state of the optional GUI.
+        - /nsm/client/progress f:progress.  When using the progress feature,
+          the final response to the save or open message is still required.
+        - /nsm/client/is_dirty and /nsm/client/is_clean.  Clients may send
+          is_dirty and is_clean messages.  Clients with this capability include
+          :dirty: in their announce.
+        - Status.  /nsm/client/message i:priority s:message.  Clients may send
+          status updates to the server for possible display to the user.
+        - Client to Server Control.  If the server publishes :server_control:,
+          clients can initiate action by the server. A client might implement a
+          'Save All' option which sends a /nsm/server/save message to the server.
+
+    Session Manager Server Control:
+
+        -  The server responds to the following messages with these replies:
+           /reply s:path s:message
+           /error s:path i:error_code s:message
+           Here are the messages:
+        -  /nsm/server/save.  Adds a client to the current session.
+        -  /nsm/server/open s:project_name.  Saves the current session.
+        -  /nsm/server/new s:project_name.  Saves the current session and loads a
+           new session.
+        -  /nsm/server/duplicate s:new_project.  Saves the current session and
+           creates a new session.
+        -  /nsm/server/close.  Saves and closes the current session, makes a
+           copy, and opens it.
+        -  /nsm/server/abort.  Saves and closes the current session.
+        -  /nsm/server/quit.  Closes the current session WITHOUT SAVING
+        -  /nsm/server/?????.  Saves and closes the current session and
+           terminates the server.
+        -  /nsm/server/list.  Lists available projects. One /reply message will
+           be sent for each existing project.
+
+    Client-to-client Communication: If the server includes :broadcast: in its
+    capability string, then clients may send broadcast messages to each other
+    through the NSM server. Clients may send messages to the server at the path
+    /nsm/server/broadcast.
+
+        -  /nsm/server/broadcast s:path [arguments...].  See NSM_API.txt, line
+           559.
+
+        The Non programs use this feature to establish peer to peer OSC
+        communication by symbolic names (client IDs) without having to remember
+        the OSC URLs of peers across sessions.
+
+    Other:
+
+        Files required by the project but external to it (e.g. audio samples)
+        should be referenced by creating a symbolic link within the assigned
+        session area.
+
+

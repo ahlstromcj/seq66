@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-03-09
+ * \updates       2020-03-17
  * \license       GNU GPLv2 or above
  *
  *  nsm is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -197,7 +197,7 @@ osc_nsm_open
     if (is_nullptr(pnsmc))
         return -1;
 
-    pnsmc->nsm_open(&argv[0]->s, &argv[1]->s, &argv[2]->s);
+    pnsmc->open(&argv[0]->s, &argv[1]->s, &argv[2]->s);
     return 0;
 }
 
@@ -216,7 +216,7 @@ osc_nsm_save
     if (is_nullptr(pnsmc))
         return -1;
 
-    pnsmc->nsm_save();                  /* a virtual function   */
+    pnsmc->save();                  /* a virtual function   */
     return 0;
 }
 
@@ -235,7 +235,7 @@ osc_nsm_session_loaded
     if (is_nullptr(pnsmc))
         return -1;
 
-    pnsmc->nsm_loaded();
+    pnsmc->loaded();
     return 0;
 }
 
@@ -255,7 +255,7 @@ osc_nsm_label
         return -1;
 
     std::string label = std::string(&argv[0]->s);
-    pnsmc->nsm_label(label);            /* a virtual function */
+    pnsmc->label(label);            /* a virtual function */
     return 0;
 }
 
@@ -279,7 +279,7 @@ osc_nsm_show
     if (is_nullptr(pnsmc))
         return -1;
 
-    pnsmc->nsm_show();                  /* a virtual function   */
+    pnsmc->show();                  /* a virtual function   */
 
 //  lo_send_from(m_lo_address, losrv, LO_TT_IMMEDIATE, "/reply", "ss", path, "OK");
     return 0;
@@ -305,7 +305,7 @@ osc_nsm_hide
     if (pnsmc == NULL)
         return -1;
 
-    pnsmc->nsm_hide();
+    pnsmc->hide();
 //
 //  Why is this reply different from the show-gui version?
 //
@@ -318,6 +318,29 @@ osc_nsm_hide
     return 0;
 }
 
+/**
+ *
+ */
+
+static int
+osc_nsm_broadcast
+(
+    const char * path,
+    const char * /* types */,
+    lo_arg ** /* argv */,
+    int /* argc */,
+    lo_message msg,
+    void * user_data
+)
+{
+    nsm * pnsmc = static_cast<nsm *>(user_data);
+    if (pnsmc == NULL)
+        return -1;
+
+    pnsmc->broadcast(path, msg);
+    return 0;
+}
+
 //
 // MORE OSC CALLBACKS:
 //
@@ -327,7 +350,8 @@ osc_nsm_hide
 // osc_update() : nsm_update() virtual function
 
 /**
- *
+ *  This constructor should (currently) not be called unless the NSM URL was
+ *  found to be good.
  */
 
 nsm::nsm
@@ -353,24 +377,48 @@ nsm::nsm
     m_nsm_url       (nsmurl)
 {
     m_lo_address = lo_address_new_from_url(nsm_url().c_str());
-
-    const int proto = lo_address_get_protocol(m_lo_address);
-    m_lo_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
-    if (m_lo_thread)
+    if (not_nullptr(m_lo_address))
     {
-        m_lo_server = lo_server_thread_get_server(m_lo_thread);
-        ADD_METHOD(nsm_basic_error(), "sis", osc_nsm_error);
-        ADD_METHOD(nsm_basic_reply(), "ssss", osc_nsm_reply);
-        ADD_METHOD(nsm_cli_open(), "sss", osc_nsm_open);
-        ADD_METHOD(nsm_cli_save(), "", osc_nsm_save);
-        ADD_METHOD(nsm_cli_is_loaded(), "", osc_nsm_session_loaded);
-        ADD_METHOD(nsm_cli_label(), "", osc_nsm_label);
-        ADD_METHOD(nsm_cli_show_opt_gui(), "", osc_nsm_show);
-        ADD_METHOD(nsm_cli_hide_opt_gui(), "", osc_nsm_hide);
-        lo_server_thread_start(m_lo_thread);
+        const int proto = lo_address_get_protocol(m_lo_address);
+        m_lo_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
+        if (not_nullptr(m_lo_thread))
+        {
+            m_lo_server = lo_server_thread_get_server(m_lo_thread);
+            if (not_nullptr(m_lo_server))
+            {
+                ADD_METHOD(nsm_basic_error(), "sis", osc_nsm_error);
+                ADD_METHOD(nsm_basic_reply(), "ssss", osc_nsm_reply);
+                ADD_METHOD(nsm_cli_open(), "sss", osc_nsm_open);
+                ADD_METHOD(nsm_cli_save(), "", osc_nsm_save);
+                ADD_METHOD(NULL, NULL, osc_nsm_broadcast);
+                ADD_METHOD(nsm_cli_is_loaded(), "", osc_nsm_session_loaded);
+                ADD_METHOD(nsm_cli_label(), "", osc_nsm_label);
+                ADD_METHOD(nsm_cli_show_opt_gui(), "", osc_nsm_show);
+                ADD_METHOD(nsm_cli_hide_opt_gui(), "", osc_nsm_hide);
+                lo_server_thread_start(m_lo_thread);
+                if (m_nsm_ext.empty())
+                    m_nsm_ext = nsm_default_ext();
+            }
+            else
+            {
+#if defined SEQ66_PLATFORM_DEBUG
+                printf("nsm::nsm(): bad server\n");
+#endif
+            }
+        }
+        else
+        {
+#if defined SEQ66_PLATFORM_DEBUG
+            printf("nsm::nsm(): bad thread\n");
+#endif
+        }
     }
-    if (m_nsm_ext.empty())
-        m_nsm_ext = nsm_default_ext();
+    else
+    {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("nsm::nsm(): bad address\n");
+#endif
+    }
 }
 
 /**
@@ -391,13 +439,33 @@ nsm::~nsm ()
 bool
 nsm::lo_is_valid () const
 {
-    return not_nullptr_2(m_lo_address, m_lo_server);
+    if (is_nullptr_2(m_lo_address, m_lo_server))
+        m_active = false;
+
+    return m_active;    // && not_nullptr_2(m_lo_address, m_lo_server);
 }
 
-// Session client methods.
+/**
+ *  Provides a client-announce function.
+ *
+ *  If NSM_URL is valid and reachable, call this function to send the following
+ *  "sssiii" message to the provided address as soon as ready to respond to the
+ *  /nsm/client/open event.  api_version_major and api_version_minor must be
+ *  the two parts of the version number of the NSM API.  If registering JACK
+ *  clients, application_name must be passed to jack_client_open.  capabilities
+ *  is a string containing a list of the capabilities the client possesses,
+ *  e.g.  :dirty:switch:progress: executable_name must be the executable name
+ *  that launched the program (e.g argv[0]).
+ *
+\verbatim
+    /nsm/server/announce s:application_name s:capabilities s:executable_name
+         i:api_version_major i:api_version_minor i:pid
+\endverbatim
+ *
+ */
 
 void
-nsm::announce                           // server announce???
+nsm::announce
 (
     const std::string & appname,
     const std::string & capabilities
@@ -428,14 +496,11 @@ nsm::announce                           // server announce???
 void
 nsm::dirty (bool isdirty)
 {
-    if (m_active)
+    if (lo_is_valid())
     {
         const char * path = nsm_dirty_msg(isdirty);
-        if (lo_is_valid())
-        {
-            lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
-            m_dirty = true;
-        }
+        lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
+        m_dirty = true;
 #if defined SEQ66_PLATFORM_DEBUG
         printf("dirty(%s): %s\n", bool_to_string(isdirty).c_str(), path);
 #endif
@@ -462,52 +527,94 @@ nsm::update_dirty_count (bool updatedirt)
 void
 nsm::visible (bool isvisible)
 {
-    if (m_active)
+    if (lo_is_valid())
     {
         const char * path = nsm_visible_msg(isvisible);
-        if (lo_is_valid())
-            lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
-
+        lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
 #if defined SEQ66_PLATFORM_DEBUG
         printf("visible(%s): %s\n", bool_to_string(isvisible).c_str(), path);
 #endif
     }
 }
 
+/**
+ *  Call this function to send a progress indication to the session manager.
+ *
+ * \param percent
+ *      The indication of progress, ranging from 0.0 to 100.0.
+ */
+
 void
 nsm::progress (float percent)
 {
-    if (m_active)
+    if (lo_is_valid())
     {
-        if (lo_is_valid())
-        {
-            lo_send_from
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-                nsm_cli_progress(), "f", percent
-            );
-        }
-
+        lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            nsm_cli_progress(), "f", percent
+        );
 #if defined SEQ66_PLATFORM_DEBUG
         printf("progress(%g)\n", percent);
 #endif
     }
 }
 
+/**
+ *  Send out the indication of dirtiness status.
+ */
+
+void
+nsm::is_dirty ()
+{
+    if (lo_is_valid())
+    {
+        lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            nsm_cli_is_dirty(), ""
+        );
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("is_dirty()\n");
+#endif
+    }
+}
+
+/**
+ *  Send out the indication of cleanliness status.
+ */
+
+void
+nsm::is_clean ()
+{
+    if (lo_is_valid())
+    {
+        lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            nsm_cli_is_clean(), ""
+        );
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("is_clean()\n");
+#endif
+    }
+}
+
+/**
+ *
+ */
+
+
 void
 nsm::message (int priority, const std::string & mesg)
 {
-    if (m_active)
+    if (lo_is_valid())
     {
-        if (lo_is_valid())
-        {
-            lo_send_from
-            (
-                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-                nsm_cli_message(), "is", priority, mesg.c_str()
-            );
-        }
-
+        lo_send_from
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            nsm_cli_message(), "is", priority, mesg.c_str()
+        );
 #if defined SEQ66_PLATFORM_DEBUG
         printf("message(%d, %s\n", priority, mesg.c_str());
 #endif
@@ -590,7 +697,9 @@ nsm::announce_error (const std::string & mesg)
     m_display_name.clear();
     m_client_id.clear();
     // emit active(false);
+#if defined SEQ66_PLATFORM_DEBUG
     printf("NSM: Failed to register with server: %s.\n", mesg.c_str());
+#endif
 }
 
 // Server announce reply.
@@ -616,7 +725,17 @@ nsm::announce_reply
     //      lo_address_get_url(lo_message_get_source(mesg);
     // );
 
-    printf("NSM: Successfully registered with server: %s.\n", mesg.c_str());
+#if defined SEQ66_PLATFORM_DEBUG
+    printf
+    (
+        "NSM: Successfully registered with server:\n"
+        "Message: '%s'\n"
+        "Manager: '%s'\n"
+        "Caps:    '%s'\n"
+        ,
+        mesg.c_str(), manager.c_str(), capabilities.c_str()
+    );
+#endif
 }
 
 /**
@@ -626,17 +745,22 @@ nsm::announce_reply
 void
 nsm::nsm_debug (const std::string & tag)
 {
-    if (! tag.empty())
+    if (tag.empty())
     {
 #if defined SEQ66_PLATFORM_DEBUG
         printf
         (
-            "nsm::%s: path_name='%s' display_name='%s' client_id='%s'",
-            tag.c_str(),
+            "nsm: path_name='%s' display_name='%s' client_id='%s'\n",
             m_path_name.c_str(),
             m_display_name.c_str(),
             m_client_id.c_str()
         );
+#endif
+    }
+    else
+    {
+#if defined SEQ66_PLATFORM_DEBUG
+        printf("nsm: %s\n", tag.c_str());
 #endif
     }
 }
@@ -646,7 +770,7 @@ nsm::nsm_debug (const std::string & tag)
  */
 
 void
-nsm::nsm_open
+nsm::open
 (
     const std::string & pathname,
     const std::string & displayname,
@@ -656,16 +780,20 @@ nsm::nsm_open
     m_path_name = pathname;
     m_display_name = displayname;
     m_client_id = clientid;
-    nsm_debug("nsm_open");
+    nsm_debug("open");
     // emit open();
 }
 
 // Client save callback.
 
 void
-nsm::nsm_save ()
+nsm::save ()
 {
-    nsm_debug("nsm_save");
+    nsm_debug("save");
+    //
+    // Here, zyn gets a character message and an error code, and replies with
+    // either a reply or an error-reply.
+    //
     // emit save();
     //
     // From nsm-proxy:
@@ -689,10 +817,19 @@ nsm::nsm_save ()
 // Client loaded callback.
 
 void
-nsm::nsm_loaded ()
+nsm::loaded ()
 {
-    nsm_debug("nsm_loaded");
+    nsm_debug("loaded");
     // emit loaded();
+}
+
+void
+nsm::label (const std::string & label)
+{
+    std::string tag("label: '");
+    tag += label;
+    tag += "'";
+    nsm_debug(tag); // no code
 }
 
 #if defined USE_THIS_CODE
@@ -709,6 +846,12 @@ show_gui ()
     {
         char executable[] = "nsm-proxy-gui";
         MESSAGE("Launching %s\n", executable);
+
+        /*
+         * Note that "url" would need to be freed, as per the liblo
+         * documentation.
+         */
+
         char * url = lo_server_get_url(losrv);
         char * args[] = { executable, strdup( "--connect-to" ), url, NULL };
         if (-1 == execvp(executable, args))
@@ -729,24 +872,46 @@ show_gui ()
  */
 
 void
-nsm::nsm_show ()
+nsm::show ()
 {
-    nsm_debug("nsm_show");
+    nsm_debug("show");
     // emit show();
 }
 
 // Client hide optional GUI.
 
 void
-nsm::nsm_hide ()
+nsm::hide ()
 {
-    nsm_debug("nsm_hide");
+    nsm_debug("hide");
     // emit hide();
     //
     // From nsm-proxy:
     //
     // if (gui_pid)
     //  kill(gui_pid, SIGTERM);
+}
+
+/**
+ *  The lo_message type is a typedef of a void pointer, as are most of the "lo_"
+ *  types.
+ */
+
+void
+nsm::broadcast (const std::string & path, lo_message msg)
+{
+    nsm_debug("broadcast");
+    if (lo_is_valid())
+    {
+        lo_send_message_from
+        (
+            m_lo_address, m_lo_server, nsm_srv_broadcast(), msg
+        );
+    }
+    // emit broadcast();
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("nsm::broadcast(%s)\n", path.c_str());
+#endif
 }
 
 /*
@@ -852,18 +1017,6 @@ nsm::construct_server_announce
     result += std::to_string(NSM_API_VERSION_MINOR)
     result += "i:";
     result += std::to_string(int(getpid()));
-    return result;
-}
-
-/**
- * HMMMMM.
- */
-
-std::string
-nsm::construct_caps (srvcaps c)
-{
-    std::string result = ":";
-
     return result;
 }
 

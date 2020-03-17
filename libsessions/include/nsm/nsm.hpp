@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-03-11
+ * \updates       2020-03-17
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -53,67 +53,6 @@ public:
 		create_failed    = -10
 	};
 
-    /**
-     *
-     * \var none
-     *      Indicates no capabilities; provided for completeness or
-     *      error-checking.
-     *
-     * \var server_control
-     *      The server provides client-to-server control.
-     *
-     * \var broadcast
-     *      The server responds to the "/nsm/server/broadcast" message.
-     *
-     * \var optional_gui
-     *      The server responds to "optional-gui" messages.  If this capability
-     *      is not present, then clients with "optional-gui" must always keep
-     *      themselves visible.
-     */
-
-    enum class srvcaps
-    {
-        none,
-        server_control,
-        broadcast,
-        optional_gui
-    };
-
-    /**
-     *
-     * \var none
-     *      Indicates no capabilities; provided for completeness or
-     *      error-checking.
-     *
-     * \var cswitch
-     *      The client is capable of responding to multiple open messages
-     *      without restarting. The string for this value is "switch", but that
-     *      is a reserved word in C/C++.
-     *
-     * \var dirty
-     *      The client knows when it has unsaved changes.
-     *
-     * \var progress
-     *      The client can send progress updates during time-consuming
-     *      operations.
-     *
-     * \var message
-     *      The client can send textual status updates.
-     *
-     * \var optional_gui
-     *      The client has a optional GUI.
-     */
-
-    enum class clientcaps
-    {
-        none,
-        cswitch,
-        dirty,
-        progress,
-        message,
-        optional_gui
-    };
-
 private:
 
     static std::string sm_nsm_default_ext;
@@ -141,7 +80,13 @@ protected:          // private:
 
 	lo_server m_lo_server;
 
-	bool m_active;
+    /**
+     *  This item is mutable because it can be falsified if the server and
+     *  address are found to be null.
+     */
+
+	mutable bool m_active;
+
 	bool m_dirty;
     int m_dirty_count;
 	std::string m_manager;
@@ -238,6 +183,8 @@ public:
 
 	virtual void visible (bool isvisible);
 	virtual void progress (float percent);
+	virtual void is_dirty ();
+	virtual void is_clean ();
 	virtual void message (int priority, const std::string & mesg);
 
 	// Session client reply methods.
@@ -261,22 +208,19 @@ public:
 
 	// Server methods response methods.
 
-	virtual void nsm_open
+	virtual void open
     (
 		const std::string & path_name,
 		const std::string & display_name,
 		const std::string & client_id
     );
-	virtual void nsm_save ();
-	virtual void nsm_label (const std::string & /*label*/)
-    {
-        // no code
-    }
-	virtual void nsm_loaded ();
-	virtual void nsm_show ();
-	virtual void nsm_hide ();
-
-    void nsm_debug (const std::string & tag);
+	virtual void save ();
+	virtual void label (const std::string & label);
+	virtual void loaded ();
+	virtual void show ();
+	virtual void hide ();
+	virtual void broadcast (const std::string & path, lo_message msg);
+    virtual void nsm_debug (const std::string & tag);
 
     /*
      * Prospective caller helpers a la qtractorMainForm.
