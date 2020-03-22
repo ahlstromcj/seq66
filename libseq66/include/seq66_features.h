@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2019-09-26
+ * \updates       2020-03-22
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -122,8 +122,7 @@
  *    - SEQ66_HIGHLIGHT_EMPTY_SEQS
  *    - SEQ66_JACK_SESSION
  *    - SEQ66_JACK_SUPPORT
- *      Provides support for up to a 3 x 2 array of mainwids.  Now a configure
- *      option.
+ *    - SEQ64_LASH_SUPPORT
  */
 
 /*

@@ -6,12 +6,12 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-03-13
+dnl \update        2020-03-22
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
-dnl   This script is for the Seq66 project, a repacking and fixing
-dnl   of seq66 v0.9.2 and a direct fork from sequencer24.
+dnl   This script is for the Seq66 project, a repackaging and fixing
+dnl   of sequencer64.
 dnl
 dnl   Process this file with bootstrap (autoconf) to produce a configure
 dnl   script.  Run "./bootstrap --help" for more information.
@@ -273,7 +273,26 @@ else
     AC_MSG_NOTICE([JACK disabled in the configuration.]);
 fi
 
-dnl LASH support has been REMOVED!
+dnl LASH support has been added back!
+
+AC_ARG_ENABLE(lash,
+    [AS_HELP_STRING(--enable-lash, [Enable LASH support (deprecated)])],
+    [lash=$enableval],
+    [lash=no])
+
+if test "$lash" != "no"; then
+    PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0, lash_found="yes", lash_found="no")
+    if test "$lash_found" = "yes"; then
+        AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH])
+        AC_SUBST(LASH_CFLAGS)
+        AC_SUBST(LASH_LIBS)
+        AC_MSG_RESULT([LASH support enabled.]);
+    else
+        AC_MSG_WARN([LASH not found, session support will not be built.])
+    fi
+else
+    AC_MSG_NOTICE([LASH support disabled.]);
+fi
 
 dnl Enable NSM support.  Not yet ready for prime time.
 dnl HOWEVER, ENABLED BY DEFAULT WHILE WE DEVELOP IT.
@@ -465,7 +484,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-03-13"
+#define VERSION_DATE_SHORT "2020-03-22"
 #define VERSION "0.90.3"
 
 )

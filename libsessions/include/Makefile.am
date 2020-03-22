@@ -69,6 +69,7 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(top_srcdir)/include \
  $(JACK_CFLAGS) \
+ $(LASH_CFLAGS) \
  -DSEQ66_GIT_VERSION=\"$(git_info)\" \
  -Wall $(MM_WFLAGS)
 
@@ -77,6 +78,7 @@ AM_CXXFLAGS = \
 #----------------------------------------------------------------------------
 
 pkginclude_HEADERS = \
+ lash/lash.hpp \
  nsm/nsm.hpp \
  nsm/nsmclient.hpp \
  nsm/nsmmessages.hpp \

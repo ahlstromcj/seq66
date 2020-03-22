@@ -255,16 +255,16 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# useful with larger set sizes.\n"
         ;
 
-	bool result = write_mute_groups(file);
-	if (result)
-	{
-		file
-			<< "\n# End of " << name() << "\n#\n"
-			<< "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-			;
-	}
-	else
-		file_error("failed to write", name());
+    bool result = write_mute_groups(file);
+    if (result)
+    {
+        file
+            << "\n# End of " << name() << "\n#\n"
+            << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+            ;
+    }
+    else
+        file_error("failed to write", name());
 
     return result;
 }

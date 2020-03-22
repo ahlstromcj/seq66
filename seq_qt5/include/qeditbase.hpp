@@ -537,8 +537,8 @@ protected:
 
     void clear_action_flags ()
     {
-		m_selecting = m_moving = m_growing = m_paste = m_moving_init =
-			 m_painting = false;
+        m_selecting = m_moving = m_growing = m_paste = m_moving_init =
+             m_painting = false;
     }
 
     void selecting (bool v)

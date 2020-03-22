@@ -58,18 +58,18 @@
           0    -- -- Thru Mode   mode=-1 port=0 chan=9 key+=0 vel+=10 port=-1
           0    -- -- Unknown Chunk 31 (0x1f)   size=4
 \endverbatim
- *	-# Track data:
+ *    -# Track data:
 \verbatim
-		  0     0  7 Track       name1='Right hand  (99' name2=' | 00 Stereo Pi'
-		  0     0 -- Track Name                Right hand  (99 | 00 Stereo Piano
-		 60     0  0 Note                      key=55 vel=64 dur=15
-		 75     0  0 Note                      key=56 vel=64 dur=15
+          0     0  7 Track       name1='Right hand  (99' name2=' | 00 Stereo Pi'
+          0     0 -- Track Name                Right hand  (99 | 00 Stereo Piano
+         60     0  0 Note                      key=55 vel=64 dur=15
+         75     0  0 Note                      key=56 vel=64 dur=15
           . . .
-	  47040     0  0 Note                      key=63 vel=64 dur=480
-	  47040     0  0 Note                      key=55 vel=64 dur=480
-		  0     0 -- Track Patch               0
-		  0     0 -- Track Volume              127
-		  0    -- -- Unknown Chunk 29 (0x1d)   size=6
+      47040     0  0 Note                      key=63 vel=64 dur=480
+      47040     0  0 Note                      key=55 vel=64 dur=480
+          0     0 -- Track Patch               0
+          0     0 -- Track Volume              127
+          0    -- -- Unknown Chunk 29 (0x1d)   size=6
 \endverbatim
  *
  *  And the rest of the tracks follow the same pattern.  A couple empty tracks

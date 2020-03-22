@@ -1,3 +1,6 @@
+#if ! defined SEQ66_QT5NSMANAGER_HPP
+#define SEQ66_QT5NSMANAGER_HPP
+
 /*
  *  This file is part of seq66.
  *
@@ -25,23 +28,17 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-03-15
+ * \updates       2020-03-18
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
  *  would style it, "eldritch") gtkmm-2.4 implementation of Seq66.
  */
 
-// #include <QApplication>                 /* QApplication etc.                */
+#include <QObject>                      /* Qt 5 QObject class               */
 #include <memory>                       /* std::unique_ptr<>                */
 
-// #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
-// #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
-// #include "unix/daemonize.hpp"           /* seqg4::reroute_stdio()           */
-#include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
-// #include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
-// #include "qsmainwnd.hpp"                /* the main window of qt5nsmanager      */
 
 /**
  *
@@ -49,25 +46,50 @@
  *      Returns success or failure.
  */
 
-class qt5nsmanager
+class qt5nsmanager : public QObject
 {
-private:
-
-    std::unique_ptr<performer> m_performer;
+	Q_OBJECT
 
 public:
 
-    qt5nsmanager ();
-    ~qt5nsmanager ();
+    qt5nsmanager (QObject * parent = nullptr);
+    virtual ~qt5nsmanager ();
 
     bool create_session ();
     bool recreate_session ();
     bool create_window ();
     void close_session ();
 
+signals:        /* signals sent by session client callbacks */
+
+	void sig_active (bool isactive);
+	void sig_open ();
+	void sig_save ();
+	void sig_loaded ();
+	void sig_show ();
+	void sig_hide ();
+
+private:
+
+#if defined SEQ66_NSM_SESSION
+
+    /**
+     *  The optional NSM client.
+     */
+
+    std::unique_ptr<nsmclient> m_nsm_client;
+
+#endif
+
+    std::unique_ptr<performer> m_performer;
+
+};          // class qt5nsmanager
+
+#endif      // SEQ66_QT5NSMANAGER_HPP
+
 /*
  * qt5nsmanager.hpp
  *
- * vim: sw=4 ts=4 wm=4 et ft=hpp
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
 

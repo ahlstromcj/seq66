@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2019-11-08
+ * \updates       2020-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -92,6 +92,9 @@ rcsettings::rcsettings () :
     m_clock_mod                 (64),
     m_verbose                   (false),
     m_auto_option_save          (true),     /* legacy seq24 behavior    */
+#if defined SEQ66_LASH_SUPPORT
+    m_lash_support              (false),
+#endif
     m_allow_mod4_mode           (false),
     m_allow_snap_split          (false),
     m_allow_click_edit          (true),
@@ -169,6 +172,9 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_clock_mod                 (rhs.m_clock_mod),
     m_verbose                   (rhs.m_verbose),
     m_auto_option_save          (rhs.m_auto_option_save),
+#if defined SEQ66_LASH_SUPPORT
+    m_lash_support              (rhs.m_lash_support),
+#endif
     m_allow_mod4_mode           (rhs.m_allow_mod4_mode),
     m_allow_snap_split          (rhs.m_allow_snap_split),
     m_allow_click_edit          (rhs.m_allow_click_edit),
@@ -237,6 +243,9 @@ rcsettings::operator = (const rcsettings & rhs)
         m_clock_mod                 = rhs.m_clock_mod;
         m_verbose                   = rhs.m_verbose;
         m_auto_option_save          = rhs.m_auto_option_save;
+#if defined SEQ66_LASH_SUPPORT
+        m_lash_support              = rhs.m_lash_support;
+#endif
         m_allow_mod4_mode           = rhs.m_allow_mod4_mode;
         m_allow_snap_split          = rhs.m_allow_snap_split;
         m_allow_click_edit          = rhs.m_allow_click_edit;
@@ -311,6 +320,9 @@ rcsettings::set_defaults ()
     m_clock_mod                 = 64;
     m_verbose                   = false;
     m_auto_option_save          = true;     /* legacy seq24 setting */
+#if defined SEQ66_LASH_SUPPORT
+    m_lash_support              = false;
+#endif
     m_allow_mod4_mode           = false;
     m_allow_snap_split          = false;
     m_allow_click_edit          = true;

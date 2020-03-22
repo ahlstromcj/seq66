@@ -4,13 +4,13 @@
 # pack (Seq66)
 #------------------------------------------------------------------------------
 ##
-# \file       	pack
-# \library    	Seq66
-# \author     	Chris Ahlstrom
-# \date       	2015-09-10
-# \update     	2018-12-02
-# \version    	$Revision$
-# \license    	$XPC_SUITE_GPL_LICENSE$
+# \file           pack
+# \library        Seq66
+# \author         Chris Ahlstrom
+# \date           2015-09-10
+# \update         2018-12-02
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
 #
 #  Packs up the current project directory, ignoring some of the derived
 #  junk and the version-control infrastructure.

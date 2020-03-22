@@ -20,7 +20,7 @@
  * \file          notemapfile.cpp
  *
  *  This module declares/defines the base class for managing the reading and
- *  writing of the mute-group sections of the "rc" file.
+ *  writing of the note-map sections of the "rc" file.
  *
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
@@ -52,7 +52,7 @@ namespace seq66
  *      Provides the notemapper reference to be acted upon.
  *
  * \param filename
- *      Provides the name of the mute-groups file; this is usually a full path
+ *      Provides the name of the note-map file; this is usually a full path
  *      file-specification to the "mutes" file using this object.
  *
  * \param rcs
@@ -259,16 +259,16 @@ notemapfile::write_stream (std::ofstream & file)
         "# events.\n"
         ;
 
-	bool result = write_map_entries(file);
-	if (result)
-	{
-		file
-			<< "\n# End of " << name() << "\n#\n"
-			<< "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
-			;
-	}
-	else
-		file_error("failed to write", name());
+    bool result = write_map_entries(file);
+    if (result)
+    {
+        file
+            << "\n# End of " << name() << "\n#\n"
+            << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+            ;
+    }
+    else
+        file_error("failed to write", name());
 
     return result;
 }

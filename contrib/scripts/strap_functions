@@ -4,13 +4,13 @@
 # strap_functions (project)
 #------------------------------------------------------------------------------
 ##
-# \file       	strap_functions
-# \library    	Any project
-# \author     	Chris Ahlstrom
-# \date       	2018-11-09
-# \update     	2019-08-14
-# \version    	$Revision$
-# \license    	$XPC_SUITE_GPL_LICENSE$
+# \file           strap_functions
+# \library        Any project
+# \author         Chris Ahlstrom
+# \date           2018-11-09
+# \update         2019-08-14
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
 #
 #     The above is modified by the following to remove even the mild GPL
 #     restrictions:
@@ -444,18 +444,18 @@ function clean_debfiles()
 
    # These come from using the control-split file on a trial basis.
 
-#	rm -f debian/libseq66-dev.substvars
-#	rm -rf debian/libseq66-dev/
-#	rm -f debian/libseq66.substvars
-#	rm -rf debian/libseq66/
-#	rm -f debian/seq-gtkmm2-dev.substvars
-#	rm -rf debian/seq-gtkmm2-dev/
-#	rm -f debian/seq-gtkmm2.substvars
-#	rm -rf debian/seq-gtkmm2/
-#	rm -f debian/seq-rtmidi-dev.substvars
-#	rm -rf debian/seq-rtmidi-dev/
-#	rm -f debian/seq-rtmidi.substvars
-#	rm -rf debian/seq-rtmidi/
+#    rm -f debian/libseq66-dev.substvars
+#    rm -rf debian/libseq66-dev/
+#    rm -f debian/libseq66.substvars
+#    rm -rf debian/libseq66/
+#    rm -f debian/seq-gtkmm2-dev.substvars
+#    rm -rf debian/seq-gtkmm2-dev/
+#    rm -f debian/seq-gtkmm2.substvars
+#    rm -rf debian/seq-gtkmm2/
+#    rm -f debian/seq-rtmidi-dev.substvars
+#    rm -rf debian/seq-rtmidi-dev/
+#    rm -f debian/seq-rtmidi.substvars
+#    rm -rf debian/seq-rtmidi/
 
    echo "clean-debfiles() not yet ready."
 }

@@ -4,13 +4,13 @@
 # bootstrap (Seq66)
 #------------------------------------------------------------------------------
 ##
-# \file       	bootstrap
-# \library    	Seq66
-# \author     	Chris Ahlstrom
-# \date       	2018-11-09
-# \update     	2020-03-09
-# \version    	$Revision$
-# \license    	$XPC_SUITE_GPL_LICENSE$
+# \file           bootstrap
+# \library        Seq66
+# \author         Chris Ahlstrom
+# \date           2018-11-09
+# \update         2020-03-09
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
 #
 #     The above is modified by the following to remove even the mild GPL
 #     restrictions:

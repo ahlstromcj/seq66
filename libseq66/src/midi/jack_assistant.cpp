@@ -1804,7 +1804,7 @@ jack_assistant::client () const
  *  pos.frame_rate variable. This would occur when there was a rapid change of
  *  frame position by another client... i.e. qjackctl.  From the JACK API:
  *
- *      pos	address of the position structure for the next cycle; pos->frame
+ *      pos: address of the position structure for the next cycle; pos->frame
  *      will be its frame number. If new_pos is FALSE, this structure contains
  *      extended position information from the current cycle.  If TRUE, it
  *      contains whatever was set by the requester.  The timebase_callback's

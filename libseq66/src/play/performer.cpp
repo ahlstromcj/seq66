@@ -770,11 +770,11 @@ performer::sequence_title (const sequence & seq)
 std::string
 performer::sequence_window_title (const sequence & seq)
 {
-	std::string result = seq_app_name();
+    std::string result = seq_app_name();
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        int ppqn = seq.get_ppqn();					/* choose_ppqn(m_ppqn);	*/
+        int ppqn = seq.get_ppqn();                    /* choose_ppqn(m_ppqn);    */
         char temp[32];
         snprintf(temp, sizeof temp, " (%d ppqn)", ppqn);
         result += " #";
@@ -803,11 +803,11 @@ performer::sequence_window_title (const sequence & seq)
 std::string
 performer::main_window_title (const std::string & file_name)
 {
-	std::string result = seq_app_name() + std::string(" - ");
-	std::string itemname = "unnamed";
-	int ppqn = choose_ppqn(m_ppqn);
-	char temp[32];
-	snprintf(temp, sizeof temp, " (%d ppqn) ", ppqn);
+    std::string result = seq_app_name() + std::string(" - ");
+    std::string itemname = "unnamed";
+    int ppqn = choose_ppqn(m_ppqn);
+    char temp[32];
+    snprintf(temp, sizeof temp, " (%d ppqn) ", ppqn);
     if (file_name.empty())
     {
         if (! rc().midi_filename().empty())
@@ -824,7 +824,7 @@ performer::main_window_title (const std::string & file_name)
     {
         itemname = file_name;
     }
-	result += itemname + std::string(temp);
+    result += itemname + std::string(temp);
     return result;
 }
 
@@ -1447,14 +1447,14 @@ performer::tap_bpm_timeout ()
 bool
 performer::log_current_tempo ()
 {
-	seq::pointer s = get_sequence(tempo_track_number());
-	bool result = bool(s);
-	if (result)
-	{
-		midipulse tick = get_tick();
-		midibpm bpm = get_beats_per_minute();
-		seq66::event e = create_tempo_event(tick, bpm);     /* event.cpp    */
-		if (s->add_event(e))                                /* sorts too    */
+    seq::pointer s = get_sequence(tempo_track_number());
+    bool result = bool(s);
+    if (result)
+    {
+        midipulse tick = get_tick();
+        midibpm bpm = get_beats_per_minute();
+        seq66::event e = create_tempo_event(tick, bpm);     /* event.cpp    */
+        if (s->add_event(e))                                /* sorts too    */
         {
             s->link_tempos();
             s->set_dirty();
@@ -1463,8 +1463,8 @@ performer::log_current_tempo ()
 
             notify_sequence_change(tempo_track_number());   /* modify()     */
         }
-	}
-	return result;
+    }
+    return result;
 }
 
 /**
@@ -3607,7 +3607,7 @@ performer::add_trigger (seq::number seqno, midipulse tick)
 }
 
 /**
- *	Delete the existing specified trigger.
+ *    Delete the existing specified trigger.
  *
  * \param seqno
  *      Indicates the sequence that needs to have its trigger handled.
@@ -3629,8 +3629,8 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
 }
 
 /**
- *	Add a new trigger if nothing is selected, otherwise delete the existing
- *	trigger.
+ *    Add a new trigger if nothing is selected, otherwise delete the existing
+ *    trigger.
  *
  * \param seqno
  *      Indicates the sequence that needs to have its trigger handled.

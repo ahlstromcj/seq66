@@ -158,15 +158,15 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Note that "foreach" is a Qt-specific keyword, not a C++ keyword.
      */
 
-	int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
-	foreach (QAbstractButton * button, bgroup->buttons())
-	{
-		if (bgroup->id(button) == rbid)
-		{
-			button->setChecked(true);
-			break;
-		}
-	}
+    int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
+    foreach (QAbstractButton * button, bgroup->buttons())
+    {
+        if (bgroup->id(button) == rbid)
+        {
+            button->setChecked(true);
+            break;
+        }
+    }
 
     connect
     (

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-21
- * \updates       2019-08-22
+ * \updates       2020-03-20
  * \license       GNU GPLv2 or above
  *
  *  This class is used for encapsulating keystrokes, and is used for some Qt 5
@@ -79,24 +79,19 @@ namespace seq66
  *  Types of modifiers, essentially the set from gtk-2.0/gdk/gdktypes.h.
  *  We have to tweak the names to avoid redeclaration errors and to
  *  "personalize" the values.  We change "GDK" to "SEQ66".
- *
- *  Since we're getting events from, say Gtk-2.4, but using our (matching)
- *  values for comparison, use the CAST_EQUIVALENT() macro to compare them.
- *  Note that we might still end up having to a remapping (e.g. if trying to
- *  get the code to work with the Qt framework).
  */
 
 using seq_modifier_t = enum seq_modifier_t_for_linkage
 {
     SEQ66_NO_MASK           = 0,
     SEQ66_SHIFT_MASK        = 1,                // Shift modifier key
-    SEQ66_LOCK_MASK	        = 1 << 1,           // Lock (scroll)? modifier key
+    SEQ66_LOCK_MASK         = 1 << 1,           // Lock (scroll)? modifier key
     SEQ66_CONTROL_MASK      = 1 << 2,           // Ctrl modifier key
-    SEQ66_MOD1_MASK	        = 1 << 3,           // Alt modifier key
-    SEQ66_MOD2_MASK	        = 1 << 4,           // Num Lock modifier key
-    SEQ66_MOD3_MASK	        = 1 << 5,           // Hyper_L (?)
-    SEQ66_MOD4_MASK	        = 1 << 6,           // Super/Windoze modifier key
-    SEQ66_MOD5_MASK	        = 1 << 7,           // Mode_Switch (?)
+    SEQ66_MOD1_MASK         = 1 << 3,           // Alt modifier key
+    SEQ66_MOD2_MASK         = 1 << 4,           // Num Lock modifier key
+    SEQ66_MOD3_MASK         = 1 << 5,           // Hyper_L (?)
+    SEQ66_MOD4_MASK         = 1 << 6,           // Super/Windoze modifier key
+    SEQ66_MOD5_MASK         = 1 << 7,           // Mode_Switch (?)
     SEQ66_BUTTON1_MASK      = 1 << 8,
     SEQ66_BUTTON2_MASK      = 1 << 9,
     SEQ66_BUTTON3_MASK      = 1 << 10,
@@ -260,7 +255,7 @@ public:
 
     bool mod_control () const
     {
-        return bool(m_modifier & SEQ66_CONTROL_MASK);   // GDK_CONTROL_MASK
+        return bool(m_modifier & SEQ66_CONTROL_MASK);
     }
 
     /**

@@ -379,7 +379,7 @@ DEPENDENCIES:
 
    Code:
 
-	  -  libasound2-dev
+      -  libasound2-dev
       -  libjack-jackd2-dev
       -  liblash-compat-dev (optional)
       -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,

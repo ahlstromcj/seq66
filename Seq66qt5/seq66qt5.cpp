@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-03-15
+ * \updates       2020-03-22
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -42,6 +42,10 @@
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
 #include "qsmainwnd.hpp"                /* the main window of seq66qt5      */
+
+#if defined SEQ66_LASH_SUPPORT
+#include "lash/lash.hpp"                /* seq66::lash_driver functions     */
+#endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 #include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message()  */
@@ -147,8 +151,7 @@ main (int argc, char * argv [])
          * Otherwise, seq66 will not register with LASH (if enabled) in a
          * timely fashion.  Also, we always have to launch, even if an error
          * occurred, to avoid a segfault and show at least a minimal message.
-         *
-         * Note:  LASH support not present in Sequencer66.
+         * LASH support is now back in Seq66.
          */
 
         if (ok)
@@ -272,6 +275,15 @@ main (int argc, char * argv [])
             else
                 seq66_window->show_message_box(errmessage);
 
+#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_LASH_SUPPORT
+            if (seq66::rc().lash_support())
+                seq66::create_lash_driver(p, argc, argv);
+            else
+#endif
+                seq66::session_setup();
+#endif
+
             exit_status = app.exec();           /* run main window loop     */
             p.finish();                         /* tear down performer      */
             p.put_settings(seq66::rc());        /* copy latest settings     */
@@ -279,6 +291,11 @@ main (int argc, char * argv [])
                 (void) seq66::cmdlineopts::write_options_files();
             else
                 printf("[auto-option-save off, not saving config files]\n");
+
+#if defined SEQ66_LASH_SUPPORT
+            if (seq66::rc().lash_support())
+                seq66::delete_lash_driver();        /* deleted only exists  */
+#endif
         }
         else
         {

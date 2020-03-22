@@ -38,8 +38,8 @@ eval $(nsmd --detach)
 # GUI closes.
 
 {
-	non-session-manager --nsm-url $NSM_URL &
-	PID=$!
+    non-session-manager --nsm-url $NSM_URL &
+    PID=$!
 }
 
 # Leave NSM time to start up. Otherwise, one will see some glitched

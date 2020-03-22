@@ -31,10 +31,42 @@
  *  Duty now for the future!
  */
 
-#include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
-#include "play/performer.hpp"           /* seq66::performer                 */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
+
+/*
+ *-------------------------------------------------------------------------
+ *  Optional NSM support
+ *-------------------------------------------------------------------------
+ */
+
+/*
+ *-------------------------------------------------------------------------
+ * qt5nsmanager
+ *-------------------------------------------------------------------------
+ */
+
+/**
+ *
+ */
+
+qt5nsmanager::qt5nsmanager (QObject * parent) :
+    QObject         (parent),
+#if defined SEQ66_NSM_SESSION
+    m_nsm_client    ()
+#endif
+    m_performer     ()
+{
+}
+
+/**
+ *
+ */
+
+qt5nsmanager::~qt5nsmanager ()
+{
+    // no code yet
+}
 
 /**
  *

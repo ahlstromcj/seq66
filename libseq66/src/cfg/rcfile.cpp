@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-11-09
+ * \updates       2020-03-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -43,7 +43,7 @@
  *  As long as each section's sub-values are read and written in the same
  *  order, there will be no problem.
  *
- *  This file no longer supports LASH setup.  Eventually, we will add more
+ *  This file now (again) supports LASH setup.  Eventually, we will add more
  *  modern session management.
  *
  *  Finally, note that seq66 no longer supports the Seq24 file format;
@@ -615,7 +615,7 @@ rcfile::parse ()
 
     int method = 0;
 
-#if defined USE_FRUITY_CODE         /* will not be supported in seq66   */
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
 
     if (line_after(file, "[interaction-method]"))
     {
@@ -649,11 +649,15 @@ rcfile::parse ()
         /* A missing interaction-method section is not an error. */
     }
 
-#endif  // USE_FRUITY_CODE
+#endif  // SEQ66_USE_FRUITY_CODE
 
-    /*
-     *  Support for [lash-session] has been removed.
-     */
+#if defined SEQ66_LASH_SUPPORT
+        if (line_after(file, "[lash-session]"))
+        {
+            sscanf(scanline(), "%d", &method);
+            rc().lash_support(method != 0);
+        }
+#endif
 
     method = 1;                 /* preserve seq24 option if not present     */
     line_after(file, "[auto-option-save]");
@@ -936,7 +940,7 @@ rcfile::write ()
         << "   # flag for reveal ports\n"
         ;
 
-#if defined USE_FRUITY_CODE         /* will not be supported in seq66   */
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
 
     /*
      * Interaction-method
@@ -963,7 +967,7 @@ rcfile::write ()
         << "\n" << rc_ref().interaction_method() << "   # interaction_method\n\n"
         ;
 
-#endif  // USE_FRUITY_CODE
+#endif  // SEQ66_USE_FRUITY_CODE
 
     file
         << "\n# Set to 1 to allow Seq66 to stay in note-adding mode when\n"
@@ -1019,12 +1023,17 @@ rcfile::write ()
         << rc_ref().with_jack_midi()  << "   # with_jack_midi\n"
         ;
 
-    /*
-     * seq66:  No longer supports LASH session management.
-     *
-     *  file << "\n"
-     *      "[lash-session]\n\n"
-     */
+#if defined SEQ66_LASH_SUPPORT
+        file << "\n"
+            "[lash-session]\n\n"
+            "# Set this value to 0 to disable LASH session management.\n"
+            "# Set it to 1 to enable LASH session management.\n"
+            "# This value will have no effect if LASH support is not built in.\n"
+            "\n"
+            << (rc().lash_support() ? "1" : "0")
+            << "     # LASH session management support flag\n"
+            ;
+#endif
 
     file << "\n"
         "[auto-option-save]\n\n"

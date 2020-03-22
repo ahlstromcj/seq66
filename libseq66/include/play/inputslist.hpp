@@ -106,7 +106,7 @@ public:
 
     /**
      *  Saves the clock settings read from the "rc" file so that they can be
-	 *  passed to the mastermidibus after it is created.
+     *  passed to the mastermidibus after it is created.
 
      * \param clocktype
      *      The clock value read from the "rc" file.
@@ -149,7 +149,7 @@ public:
             m_master_inputs[bus].in_name = name;
     }
 
-	/**
+    /**
      * \getter m_master_inputs[bus]
      *
      *  What about m_master_bus->get_input(bus)?

@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2020-03-13"
+#define VERSION_DATE_SHORT "2020-03-22"
 #define VERSION "0.90.3"
 
 
@@ -117,6 +117,9 @@
 
 /* Define to enable JACK driver */
 #undef JACK_SUPPORT
+
+/* Define to enable LASH */
+#undef LASH_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR

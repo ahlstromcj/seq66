@@ -290,8 +290,8 @@
 #endif
 
 /**
- *	Provides a way to flag unused parameters at each "usage", without disabling
- *	them globally.  Use it like this:
+ *  Provides a way to flag unused parameters at each "usage", without disabling
+ *  them globally.  Use it like this:
  *
  *     void foo(int UNUSED(bar)) { ... }
  *     static void UNUSED_FUNCTION(foo)(int bar) { ... }

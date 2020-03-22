@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2020-03-01
+ * \updates       2020-03-19
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -261,7 +261,7 @@ seq_build_details ()
         << "  LASH support\n"
 #endif
 #if defined SEQ66_NSM_SESSION
-        << "  NSM/OSC support\n"
+        << "  Non Session Manager (NSM/OSC) support\n"
 #endif
         << "  Seq32 chord generator, LFO window, menu buttons, transpose\n"
         << "  BPM Tap button, solid piano-roll grid\n"

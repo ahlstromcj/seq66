@@ -88,6 +88,10 @@ cmdlineopts::s_long_options [] =
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
     {"home",                required_argument, 0, 'H'},
+#ifdef SEQ66_LASH_SUPPORT
+    {"lash",                0, 0, 'L'},
+    {"no-lash",             0, 0, 'n'},
+#endif
     {"bus",                 required_argument, 0, 'b'},
     {"buss",                required_argument, 0, 'B'},
     {"ppqn",                required_argument, 0, 'q'},
@@ -151,18 +155,11 @@ cmdlineopts::s_long_options [] =
  */
 
 const std::string
-cmdlineopts::s_arg_list = "AaB:b:Cc:F:f:H:hi:JjKkM:mNoPpq:RrtSsU:uVvX:x:#";
+cmdlineopts::s_arg_list =
+    "AaB:b:Cc:F:f:H:hi:JjKkLM:mNnoPpq:RrtSsU:uVvX:x:#";
 
 /**
  *  Provides help text.
- */
-
-/*
-static const std::string s_help_0 =
-    "%s v %s"
-    " A reboot of the seq24 live sequencer.\n"
-    "Usage: %s [options] [MIDI filename]\n"
-    ;
  */
 
 const std::string
@@ -174,6 +171,10 @@ cmdlineopts::s_help_1a =
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
 "                            always relative to $HOME.  The default is\n"
 "                            .config/seq66.\n"
+#ifdef SEQ66_LASH_SUPPORT
+"   -L, --lash               Activate built-in LASH support.\n"
+"   -n, --no-lash            Do not activate built-in LASH support.\n"
+#endif
 "   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
 "   -m, --manual-ports       Don't attach system ALSA ports. Use virtual ports.\n"
 "                            Not supported in the PortMIDI version.\n"
@@ -906,6 +907,13 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             seq66::usr().inverse_colors(true);
             break;
 
+#ifdef SEQ66_LASH_SUPPORT
+        case 'L':
+            seq66::rc().lash_support(true);
+            printf("[Activating LASH support]\n");
+            break;
+#endif
+
         case 'M':
 
             seq66::rc().song_start_mode(string_to_int(soptarg) > 0);
@@ -925,6 +933,13 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             seq66::rc().with_jack_midi(false);
             printf("[Deactivating JACK MIDI]\n");
             break;
+
+#ifdef SEQ66_LASH_SUPPORT
+        case 'n':
+            seq66::rc().lash_support(false);
+            printf("[Deactivating LASH support]\n");
+            break;
+#endif
 
         case 'o':
 

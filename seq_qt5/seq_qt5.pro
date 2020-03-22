@@ -2,13 +2,13 @@
 # seq_qt5.pro (qpseq66)
 #------------------------------------------------------------------------------
 ##
-# \file       	seq_qt5.pro
-# \library    	qpseq66 application
-# \author     	Chris Ahlstrom
-# \date       	2018-04-08
-# \update      2019-09-23
-# \version    	$Revision$
-# \license    	$XPC_SUITE_GPL_LICENSE$
+# \file           seq_qt5.pro
+# \library        qpseq66 application
+# \author         Chris Ahlstrom
+# \date           2018-04-08
+# \update         2019-09-23
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
 #
 # Created by and for Qt Creator This file was created for editing the project
 # sources only.  You may attempt to use it for building too, by modifying this
@@ -170,5 +170,5 @@ INCLUDEPATH = include \
 #******************************************************************************
 # seq_qt5.pro (qpseq66)
 #------------------------------------------------------------------------------
-# 	vim: ts=3 sw=3 ft=automake
+# vim: ts=3 sw=3 ft=automake
 #------------------------------------------------------------------------------

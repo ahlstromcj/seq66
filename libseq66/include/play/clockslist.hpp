@@ -110,7 +110,7 @@ public:
 
     /**
      *  Saves the clock settings read from the "rc" file so that they can be
-	 *  passed to the mastermidibus after it is created.
+     *  passed to the mastermidibus after it is created.
 
      * \param clocktype
      *      The clock value read from the "rc" file.
@@ -150,8 +150,8 @@ public:
             m_master_clocks[bus].out_name = name;
     }
 
-	/**
-    * \getter m_master_bus->get_clock(bus);  DO WE NEED THIS ONE????
+    /**
+     * \getter m_master_bus->get_clock(bus);  DO WE NEED THIS ONE????
      */
 
     e_clock get (bussbyte bus) const

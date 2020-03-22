@@ -565,7 +565,7 @@ playlist::write ()
     file
         << "\n"
         << "# End of " << name() << "\n#\n"
-        << "# vim: sw=4 ts=4 wm=4 et ft=sh\n"   /* ft=sh for nice colors */
+        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"   /* ft for nice colors */
         ;
 
     file.close();
