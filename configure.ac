@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-03-22
+dnl \update        2020-03-24
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -278,7 +278,7 @@ dnl LASH support has been added back!
 AC_ARG_ENABLE(lash,
     [AS_HELP_STRING(--enable-lash, [Enable LASH support (deprecated)])],
     [lash=$enableval],
-    [lash=no])
+    [lash=yes])
 
 if test "$lash" != "no"; then
     PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0, lash_found="yes", lash_found="no")
@@ -286,7 +286,8 @@ if test "$lash" != "no"; then
         AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH])
         AC_SUBST(LASH_CFLAGS)
         AC_SUBST(LASH_LIBS)
-        AC_MSG_RESULT([LASH support enabled.]);
+        AC_MSG_RESULT([LASH and NSM support enabled.]);
+        ac_nsm=yes
     else
         AC_MSG_WARN([LASH not found, session support will not be built.])
     fi
@@ -484,7 +485,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-03-22"
+#define VERSION_DATE_SHORT "2020-03-24"
 #define VERSION "0.90.3"
 
 )
@@ -554,7 +555,7 @@ esac
 
 dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
 
-CFLAGS="$COMMONFLAGS"
+CFLAGS="$CFLAGS $COMMONFLAGS"
 CXXFLAGS="$CFLAGS -std=c++14 -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 

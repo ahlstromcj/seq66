@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2020-03-07
+# \update      2020-03-24
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -34,7 +34,6 @@ CONFIG(debug, debug|release) {
 }
 
 HEADERS += include/app_limits.h \
- include/main_impl.hpp \
  include/seq66_features.h \
  include/seq66_features.hpp \
  include/seq66_platform_macros.h \
@@ -83,9 +82,6 @@ HEADERS += include/app_limits.h \
  include/play/setmapper.hpp \
  include/play/triggers.hpp \
  include/qt/qsmacros.hpp \
- include/session/nsm.hpp \
- include/session/nsmclient.hpp \
- include/session/nsmmessages.hpp \
  include/unix/daemonize.hpp \
  include/util/automutex.hpp \
  include/util/basic_macros.h \
@@ -99,8 +95,7 @@ HEADERS += include/app_limits.h \
  include/util/strfunctions.hpp \
  include/util/victor.hpp
 
-SOURCES += src/main_impl.cpp \
- src/seq66_features.cpp \
+SOURCES += src/seq66_features.cpp \
  src/cfg/basesettings.cpp \
  src/cfg/cmdlineopts.cpp \
  src/cfg/comments.cpp \
@@ -154,9 +149,6 @@ SOURCES += src/main_impl.cpp \
  src/play/sequence.cpp \
  src/play/setmapper.cpp \
  src/play/triggers.cpp \
- src/session/nsm.cpp \
- src/session/nsmclient.cpp \
- src/session/nsmmessages.cpp \
  src/unix/daemonize.cpp \
  src/util/automutex.cpp \
  src/util/basic_macros.cpp \

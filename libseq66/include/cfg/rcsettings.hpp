@@ -253,10 +253,10 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
-    bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
 #if defined SEQ66_LASH_SUPPORT
     bool m_lash_support;            /**< Enable LASH, if compiled in.       */
 #endif
+    bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
     bool m_allow_snap_split;        /**< Allow snap-split of a trigger.     */
     bool m_allow_click_edit;        /**< Allow double-click edit pattern.   */
     bool m_show_midi;               /**< Show MIDI events to console.       */

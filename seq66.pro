@@ -24,6 +24,8 @@
 #
 #       Seqtool
 #
+#   TO DO:  Eventually included libsessions, conditionally.
+#
 #------------------------------------------------------------------------------
 
 TEMPLATE = subdirs

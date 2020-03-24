@@ -70,9 +70,6 @@ qt5nsmanager::~qt5nsmanager ()
 
 /**
  *
- * \return
- *      Returns EXIT_SUCCESS (0) or EXIT_FAILURE, depending on the status of
- *      the run.
  */
 
 bool
@@ -80,41 +77,65 @@ qt5nsmanager::create_session ()
 {
 }
 
+/**
+ *
+ */
+
 bool
 qt5nsmanager::create_window ()
 {
     std::unique_ptr<seq66::qsmainwnd> seq66_window;
-    if (ok)
-    {
-        /*
-         * Push the qsmainwnd window onto the stack.  Also be sure to pass
-         * along the PPQN value, which might be different than the default
-         * (192), and affects some of the child objects of qsmainwnd.
-         * Also note the future support for NSM.
-         */
 
-        seq66_window.reset
+    /*
+     * Push the qsmainwnd window onto the stack.  Also be sure to pass
+     * along the PPQN value, which might be different than the default
+     * (192), and affects some of the child objects of qsmainwnd.
+     * Also note the future support for NSM.
+     */
+
+    seq66_window.reset
+    (
+        new seq66::qsmainwnd
         (
-            new seq66::qsmainwnd
-            (
-                p, midifname, seq66::usr().midi_ppqn(), false /*usensm*/
-            )
-        );
-        seq66_window->show();
-        if (seq66::rc().verbose())
-            p.show_patterns();
-    }
+            *perf(), midifname, seq66::usr().midi_ppqn(), false /*usensm*/
+        )
+    );
+
+    /*
+     * Let NSM handle this....
+     */
+
+    seq66_window->show();
 }
 
+/**
+ *
+ */
+
 void
-qt5nsmanager::close_session ()
+qt5nsmanager::show_message (const std::string & msg)
 {
-    p.finish();                                 /* tear down performer      */
-    p.put_settings(seq66::rc());                /* copy latest settings     */
-    if (seq66::rc().auto_option_save())
-        (void) seq66::cmdlineopts::write_options_files();
-    else
-        printf("[auto-option-save off, not saving config files]\n");
+    m_seq66_window->show_message_box(msg);
+}
+
+/**
+ *
+ */
+
+void
+qt5nsmanager::show_error (const std::string & msg)
+{
+#if defined SEQ66_PORTMIDI_SUPPORT
+
+    if (Pm_error_present())
+    {
+        errmsg = std::string(Pm_hosterror_message());
+        m_seq66_window->show_message_box(msg);
+    }
+
+#endif
+
+    error_message(msg);
 }
 
 /*

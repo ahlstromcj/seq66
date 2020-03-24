@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.90.2 and above
+INSTALL for Seq66 v. 0.90.3 and above
 Chris Ahlstrom
-2015-09-10 to 2019-11-28
+2015-09-10 to 2022-03-24
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily
@@ -163,10 +163,20 @@ Advanced Steps:
        of the project.  The branch is included in the resulting tarball name;
        the usual branch would be "master".
 
-Disabling JACK:
+Pipe Option:
 
-    Those who do not want to use the deprecated legacy Seq66 project
-    (ALSA only) may want to do an rtmidi build without JACK enabled.  TODO.
+    The gcc -pipe option uses pipes, rather than temporary files, for
+    communication between the various stages of compilation. This fails to work
+    on some systems where the assembler is unable to read from a pipe; the
+    GNU assembler can do it.
+
+    $ CFLAGS="-pipe" ./bootstrap -ed
+
+        or
+
+    $ CFLAGS="-pipe" ./configure --enable-debug --disable-shared
+
+    Then do the normal make.
 
 Qmake-based Install:
 
@@ -381,7 +391,8 @@ DEPENDENCIES:
 
       -  libasound2-dev
       -  libjack-jackd2-dev
-      -  liblash-compat-dev (optional)
+      -  liblash-compat-dev (optional, needed for LASH support)
+      -  liblo-dev (optional, needed for NSM/OSC support)
       -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
          and brings in libpng-tools)
 

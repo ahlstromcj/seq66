@@ -61,8 +61,7 @@
  */
 
 /**
- *  A future feature to more flexibly handle a daemonizable build.  See the
- *  in-progress module main_impl.cpp, still very provisional.
+ *  A future feature to more flexibly handle a daemonizable build.
  */
 
 #undef SEQ66_DAEMON_SUPPORT

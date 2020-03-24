@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2020-03-09
+# \update         2020-03-24
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2020-03-09"
+export SEQ66_SCRIPT_EDIT_DATE="2020-03-24"
 export SEQ66_LIBRARY_API_VERSION="0.90"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.90.0"
 
@@ -64,6 +64,7 @@ checkdir libseq66
 #------------------------------------------------------------------------------
 
 DOBOOTSTRAP="yes"
+DOLASH="yes"
 DONSM="yes"
 DOCLEAN="no"
 DODEBUG="no"
@@ -95,7 +96,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.90.3-2020-03-09)
+Usage: ./bootstrap [options]                             (0.90.3-2020-03-24)
 
  'bootstrap' sets up GNU automake and libtool support for the Seq66
  projects, and creates the 'configure' script.  It can super-clean the
@@ -180,8 +181,9 @@ if [ $# -ge 1 ] ; then
             ;;
 
          --no-nsm)
+            DOLASH="no"
             DONSM="no"
-            EXTRAFLAGS+=" --disable-nsm"
+            EXTRAFLAGS+=" --disable-nsm --disable-lash"
             ;;
 
          --portmidi | -pm | --pm)

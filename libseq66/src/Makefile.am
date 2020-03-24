@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-03-08
+# \update      2020-03-24
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -133,7 +133,6 @@ lib_LTLIBRARIES = libseq66.la
 #----------------------------------------------------------------------------
 
 libseq66_la_SOURCES = \
- main_impl.cpp \
  seq66_features.cpp \
  cfg/basesettings.cpp \
  cfg/cmdlineopts.cpp \
@@ -188,6 +187,7 @@ libseq66_la_SOURCES = \
  play/sequence.cpp \
  play/setmapper.cpp \
  play/triggers.cpp \
+ sessions/smanager.cpp \
  unix/daemonize.cpp \
  util/automutex.cpp \
  util/basic_macros.cpp \

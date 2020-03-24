@@ -5,14 +5,17 @@
 # \file        libsessions.pro
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
-# \date        2020-03-08
-# \update      2020-03-11
+# \date        2020-03-24
+# \update      2020-03-24
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
 # Important:
 #
-#      This project file is designed only for Qt 5 (and above?).
+#      This project file is designed only for Qt 5 (and above?).  However,
+#      on a 32-bit Linux system with an old version of Qt (5.3), the build
+#      fails due to std::unique_ptr not being defined, even with the c++11
+#      flag added.
 #
 #------------------------------------------------------------------------------
 
@@ -20,7 +23,7 @@ message($$_PRO_FILE_PWD_)
 
 TEMPLATE = lib
 CONFIG += staticlib config_prl qtc_runnable c++14
-TARGET = sessions
+TARGET = seq66
 
 # These are needed to set up seq66_platform_macros:
 
@@ -30,17 +33,17 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-HEADERS += include/nsm/nsm.hpp \
+HEADERS += include/lash/lash.hpp \
+ include/nsm/nsm.hpp \
  include/nsm/nsmclient.hpp \
- include/nsm/nsmmessages.hpp \
- include/nsm/nsmserver.hpp
+ include/nsm/nsmmessages.hpp
 
-SOURCES += src/nsm/nsm.cpp \
+SOURCES += src/lash/lash.cpp \
+ src/nsm/nsm.cpp \
  src/nsm/nsmclient.cpp \
  src/nsm/nsmmessages.cpp \
- src/nsm/nsmserver.cpp
 
-# INCLUDEPATH = ../include/qt/portmidi ../seq_portmidi/include include
+INCLUDEPATH = ../include/qt/portmidi ../seq_portmidi/include include
 
 #******************************************************************************
 # libsessions.pro (qpseq66)
