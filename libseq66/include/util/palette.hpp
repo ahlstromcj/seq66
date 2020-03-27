@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2019-10-15
+ * \updates       2020-03-27
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -37,6 +37,7 @@
  */
 
 #include <map>                          /* std::map container class         */
+#include <string>                       /* std::string class                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -131,7 +132,6 @@ class palette
     {
         const COLOR * ppt_color;
         std::string ppt_color_name;
-
     };
 
 private:
