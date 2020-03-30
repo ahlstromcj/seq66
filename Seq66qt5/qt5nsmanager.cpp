@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-03-15
+ * \updates       2020-03-30
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -33,6 +33,11 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
+#include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
+#include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
+
+namespace seq66
+{
 
 /*
  *-------------------------------------------------------------------------
@@ -52,8 +57,9 @@
 
 qt5nsmanager::qt5nsmanager (QObject * parent) :
     QObject         (parent),
+    smanager        (),
 #if defined SEQ66_NSM_SESSION
-    m_nsm_client    ()
+    m_nsm_client    (),
 #endif
     m_performer     ()
 {
@@ -75,6 +81,7 @@ qt5nsmanager::~qt5nsmanager ()
 bool
 qt5nsmanager::create_session ()
 {
+    return false;
 }
 
 /**
@@ -84,7 +91,7 @@ qt5nsmanager::create_session ()
 bool
 qt5nsmanager::create_window ()
 {
-    std::unique_ptr<seq66::qsmainwnd> seq66_window;
+    std::unique_ptr<qsmainwnd> seq66_window;
 
     /*
      * Push the qsmainwnd window onto the stack.  Also be sure to pass
@@ -95,9 +102,10 @@ qt5nsmanager::create_window ()
 
     seq66_window.reset
     (
-        new seq66::qsmainwnd
+        new qsmainwnd
         (
-            *perf(), midifname, seq66::usr().midi_ppqn(), false /*usensm*/
+            *perf(), midi_filename(),
+            usr().midi_ppqn(), false /*usensm*/
         )
     );
 
@@ -106,6 +114,7 @@ qt5nsmanager::create_window ()
      */
 
     seq66_window->show();
+    return bool(seq66_window);
 }
 
 /**
@@ -113,9 +122,10 @@ qt5nsmanager::create_window ()
  */
 
 void
-qt5nsmanager::show_message (const std::string & msg)
+qt5nsmanager::show_message (const std::string & /*msg*/)
 {
-    m_seq66_window->show_message_box(msg);
+    // TODO:
+    // m_seq66_window->show_message_box(msg);
 }
 
 /**
@@ -123,20 +133,23 @@ qt5nsmanager::show_message (const std::string & msg)
  */
 
 void
-qt5nsmanager::show_error (const std::string & msg)
+qt5nsmanager::show_error (const std::string & /*msg*/)
 {
 #if defined SEQ66_PORTMIDI_SUPPORT
 
     if (Pm_error_present())
     {
         errmsg = std::string(Pm_hosterror_message());
-        m_seq66_window->show_message_box(msg);
+        // TODO:
+        // m_seq66_window->show_message_box(msg);
     }
 
 #endif
 
-    error_message(msg);
+    //// TODO: error_message(msg);
 }
+
+}           // namespace seq66
 
 /*
  * qt5nsmanager.cpp

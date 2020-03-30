@@ -222,10 +222,6 @@ file_error (const std::string & tag, const std::string & filename)
 /**
  *  Shows a path-name (or other C++ string) as an info message.
  *
- * \todo
- *      Using this function in place of file_message() or other means of
- *      printing file specifications.
- *
  * \param tag
  *      Provides the text to precede the name of the path.
  *

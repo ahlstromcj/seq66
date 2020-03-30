@@ -138,7 +138,8 @@ public:
 
     /**
      *  Provides mutually-exclusive codes for the mouse-handling used by the
-     *  application.  Moved here from the globals.h module.
+     *  application.  Moved here from the globals.h module.  The fruity mode
+     *  will probably never be supported in seq66, though.
      */
 
     enum class interaction
@@ -174,7 +175,7 @@ public:
     {
         mutes,          /**< Save mute groups to "mutes" files.     */
         midi,           /**< Write mute groups only to MIDI file.   */
-        both,           /** Write the mute groups to both files.    */
+        both,           /**< Write the mute groups to both files.   */
         maximum         /**< Keep this last... a size value.        */
     };
 

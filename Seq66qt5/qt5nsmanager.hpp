@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-03-18
+ * \updates       2020-03-30
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -38,15 +38,21 @@
 #include <QObject>                      /* Qt 5 QObject class               */
 #include <memory>                       /* std::unique_ptr<>                */
 
+#include "sessions/smanager.hpp"        /* seq66::smanager                  */
 #include "play/performer.hpp"           /* seq66::performer                 */
+
+#if defined SEQ66_NSM_SESSION
+#include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
+#endif
+
+namespace seq66
+{
 
 /**
  *
- * \return
- *      Returns success or failure.
  */
 
-class qt5nsmanager : public QObject
+class qt5nsmanager : public QObject, smanager
 {
 	Q_OBJECT
 
@@ -55,10 +61,14 @@ public:
     qt5nsmanager (QObject * parent = nullptr);
     virtual ~qt5nsmanager ();
 
-    bool create_session ();
-    bool recreate_session ();
-    bool create_window ();
-    void close_session ();
+    virtual bool create_session ();
+    virtual bool create_window ();
+    virtual bool close_session ();
+
+    virtual bool run ()
+    {
+        // TODO
+    }
 
 signals:        /* signals sent by session client callbacks */
 
@@ -68,6 +78,11 @@ signals:        /* signals sent by session client callbacks */
 	void sig_loaded ();
 	void sig_show ();
 	void sig_hide ();
+
+private:
+
+    virtual void show_message (const std::string & msg);
+    virtual void show_error (const std::string & msg);
 
 private:
 
@@ -84,6 +99,8 @@ private:
     std::unique_ptr<performer> m_performer;
 
 };          // class qt5nsmanager
+
+}           // namespace seq66
 
 #endif      // SEQ66_QT5NSMANAGER_HPP
 

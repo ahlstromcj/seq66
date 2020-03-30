@@ -3109,6 +3109,7 @@ read_midi_file
             rc().midi_filename(fn);             /* save current file-name   */
             rc().add_recent_file(fn);           /* Oli Kester's Kepler34!   */
             p.announce_playscreen();            /* tell MIDI control out    */
+            pathprint("Read", fn);
         }
         else
         {

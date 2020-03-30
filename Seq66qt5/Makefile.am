@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-03-09
+# \update      2020-03-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -109,8 +109,8 @@ AM_CXXFLAGS = \
  $(QT_CXXFLAGS) \
  $(JACK_CFLAGS) \
  $(LIBLO_CFLAGS) \
- $(LASH_CFLAGS) \
- $(NSM_CFLAGS)
+ $(NSM_CFLAGS) \
+ $(LASH_CFLAGS)
 
 #******************************************************************************
 # libmath
@@ -159,9 +159,9 @@ libraries = \
 
 dependencies = \
  $(NSM_DEPS) \
+ $(libseq_rtmididir)/libseq_rtmidi.la \
  $(libseq_qt5dir)/libseq_qt5.la \
- $(libseq66dir)/libseq66.la \
- $(libseq_rtmididir)/libseq_rtmidi.la
+ $(libseq66dir)/libseq66.la
 
 #******************************************************************************
 # The programs to build
@@ -173,7 +173,7 @@ bin_PROGRAMS = qseq66
 # seq66
 #----------------------------------------------------------------------------
 
-qseq66_SOURCES = seq66qt5.cpp
+qseq66_SOURCES = seq66qt5.cpp qt5nsmanager.cpp qt5nsmanager.hpp 
 qseq66_DEPENDENCIES = $(dependencies)
 qseq66_LDADD = $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 

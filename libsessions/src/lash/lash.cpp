@@ -191,8 +191,6 @@ lash::init ()
         lash_event_t * event = lash_event_new_with_type(LASH_Client_Name);
         if (not_nullptr(event))
         {
-            // lash_event_set_string(event, "Seq24");
-
             lash_event_set_string(event, "Seq66");
             lash_send_event(m_client, event);
             printf("[Connected to LASH]\n");
@@ -234,18 +232,17 @@ lash::start ()
 #if defined SEQ66_LASH_SUPPORT
     if (init())
     {
-        /*
-         * Let the perform object carry the GUI burden.
-         *
-         *  Glib::signal_timeout().connect
-         *  (
-         *      sigc::mem_fun(*this, &lash::process_events), 250
-         *  );
-         */
-
         ////////////// TODO
         ////////////// TODO
+        // We need a function that will connect this lash object to a periodic
+        // signal timeout handler with SEQ66_LASH_TIMEOUT = 250 ms, and
+        // call the lash::process_events() function.
+        //
         // m_perform.gui().lash_timeout_connect(this);
+        //
+        // We should also fix lash::handle_event() so that it uses the current
+        // filename to save.
+        //
         ////////////// TODO
         ////////////// TODO
     }

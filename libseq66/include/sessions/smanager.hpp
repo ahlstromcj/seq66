@@ -57,22 +57,23 @@ public:
 
 private:
 
-    pointer m_perf_ptr;
+    pointer m_perf_pointer;
+
+    std::string m_midi_filename;
 
     std::string m_extant_errmsg = "unspecified error";
+
     bool m_extant_msg_active = false;
 
 public:
 
-    smanager
-    (
-    );
+    smanager ();
+
     virtual ~smanager ()
     {
         // currently no additional code needed
     }
 
-    pointer create_performer ();
     bool main_settings (int argc, char * argv []);
     bool open_playlist ();
     std::string open_midi_file (const std::string & fname);
@@ -87,26 +88,43 @@ public:
         return m_extant_errmsg;
     }
 
+    const std::string & midi_filename () const
+    {
+        return m_midi_filename;
+    }
+
     virtual bool create_session ();
     virtual bool close_session ();
-    virtual bool create_window ();
-
+    virtual bool create_window ();      /* does mostly nothing by default   */
     virtual void show_message (const std::string & msg);
     virtual void show_error (const std::string & msg);
+    virtual bool run () = 0;            /* app.exec(); run main window loop */
 
-    virtual bool run () = 0;        // app.exec(); run main window loop
+#if defined SEQ66_PORTMIDI_SUPPORT
+    bool portmidi_error_check () const;
+#endif
 
 protected:
 
     const performer * perf () const
     {
-        return m_perf_ptr.get();
+        return m_perf_pointer.get();
     }
 
     performer * perf ()
     {
-        return m_perf_ptr.get();
+        return m_perf_pointer.get();
     }
+
+    void set_error_message (const std::string & message = "")
+    {
+        m_extant_errmsg = message;
+        m_extant_msg_active = ! message.empty();
+    }
+
+private:
+
+    pointer create_performer ();
 
 };          // class smanager
 
