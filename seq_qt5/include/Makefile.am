@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2019-09-23
+# \update      2020-03-30
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -110,7 +110,8 @@ pkginclude_HEADERS = \
  qsmaintime.hpp \
  qsmainwnd.hpp \
  qstriggereditor.hpp \
- qt5_helpers.hpp
+ qt5_helpers.hpp \
+ qt5nsmanager.hpp 
 
 #******************************************************************************
 # uninstall-hook

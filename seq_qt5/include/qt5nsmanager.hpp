@@ -68,6 +68,7 @@ public:
     virtual bool run ()
     {
         // TODO
+        return false;
     }
 
 signals:        /* signals sent by session client callbacks */

@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2019-09-23
+# \update      2020-03-30
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -130,9 +130,12 @@ thisdir = $(top_srcdir)/seq_qt5
 formsdir = $(top_srcdir)/seq_qt5/forms
 resourcedir = $(top_srcdir)/resources
 libseq66_incdir = $(top_srcdir)/libseq66/include
+libsessions_incdir = $(top_srcdir)/libsessions/include
 
 libseq66_libs = -L$(libseq66_libdir) -lseq66
 libseq66_file = $(libseq66_libdir)/libseq66.la
+libsessions_libs = -L$(libseq66_libdir) -lsessions
+libsessions_file = $(libseq66_libdir)/libsessions.la
 seq_rtmidi_incdir = $(top_srcdir)/seq_rtmidi/include
 seq_portmidi_incdir = $(top_srcdir)/seq_portmidi/include
 
@@ -168,6 +171,7 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(thisdir) \
  -I$(libseq66_incdir) \
+ -I$(libsessions_incdir) \
  -I$(seq_portmidi_incdir) \
  -I$(seq_rtmidi_incdir) \
  -I$(resourcedir) \
@@ -278,7 +282,8 @@ moc_qt_headers = \
  ../include/qslivegrid.hpp \
  ../include/qsmaintime.hpp \
  ../include/qsmainwnd.hpp \
- ../include/qstriggereditor.hpp
+ ../include/qstriggereditor.hpp \
+ ../include/qt5nsmanager.hpp
 
 moc_sources = $(moc_qt_headers:.hpp=.moc.cpp)
 
@@ -353,6 +358,7 @@ libseq_qt5_la_SOURCES = \
  qsmainwnd.cpp \
  qstriggereditor.cpp \
  qt5_helpers.cpp \
+ qt5nsmanager.cpp \
  $(moc_sources)
 
 libseq_qt5_la_LDFLAGS = -version-info $(version)

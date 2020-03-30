@@ -173,7 +173,7 @@ bin_PROGRAMS = qseq66
 # seq66
 #----------------------------------------------------------------------------
 
-qseq66_SOURCES = seq66qt5.cpp qt5nsmanager.cpp qt5nsmanager.hpp 
+qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(dependencies)
 qseq66_LDADD = $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 

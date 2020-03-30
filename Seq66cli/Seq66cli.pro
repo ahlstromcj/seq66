@@ -1,8 +1,8 @@
 #******************************************************************************
-# Seq66qt5.pro (Seq66qt5)
+# Seq66cli.pro (Seq66cli)
 #------------------------------------------------------------------------------
 ##
-# \file       	Seq66qt5.pro
+# \file       	Seq66cli.pro
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
@@ -21,7 +21,7 @@
 message($$_PRO_FILE_PWD_)
 
 QT += core gui widgets
-TARGET = qpseq66
+TARGET = seq66cli
 TEMPLATE += app
 CONFIG += static qtc_runnable c++14
 
@@ -33,7 +33,7 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-SOURCES += seq66qt5.cpp
+SOURCES += seq66cli.cpp
 
 INCLUDEPATH = \
  ../include/qt/portmidi \
@@ -99,7 +99,7 @@ unix:!macx: LIBS += \
 windows: LIBS += -lwinmm
 
 #******************************************************************************
-# Seq66qt5.pro (Seq66qt5)
+# Seq66cli.pro (Seq66cli)
 #------------------------------------------------------------------------------
 # 	vim: ts=3 sw=3 ft=automake
 #------------------------------------------------------------------------------
