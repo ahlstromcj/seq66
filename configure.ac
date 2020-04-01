@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-03-24
+dnl \update        2020-04-01
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -36,15 +36,17 @@ AX_PREFIX_CONFIG_H([include/seq66-config.h], [seq66])
 
 dnl On a Debian Sid laptop, we have found that gcc/g++ version 9 breaks
 dnl configuration with the error 'C++ preprocessor "/lib/cpp" fails sanity
-dnl check' (it cannot find limits.h!!!), so we try version 8 first.
+dnl check' (it cannot find limits.h!!!), so we try version 8 first.  And that
+dnl cannot be installed on Debian Sid (2020-03-31), so we fall back to
+dnl version 7.
 dnl
 dnl AC_GCC_VERSION
 dnl AC_LANG([C])
 dnl AC_LANG([C++])
 
-AC_PROG_CC([gcc-8 gcc])
-AC_PROG_CXX([g++-8 g++])
-AC_PROG_CXXCPP([cpp-8 cpp])
+AC_PROG_CC([gcc-8 gcc-7 gcc])
+AC_PROG_CXX([g++-8 g++-7 g++])
+AC_PROG_CXXCPP([cpp-8 cpp-7 cpp])
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
@@ -380,7 +382,7 @@ if test "$ac_qtmidi" != "no"; then
     AC_DEFINE(APP_TYPE, ["qt5"], [Names the UI of the application])
     AC_DEFINE(CONFIG_NAME, ["qseq66"], [Configuration file name for Qt/rtmidi])
     AM_PATH_ALSA(0.9.0)
-    AX_HAVE_QT_EX
+    AX_HAVE_QT_MIN
     AC_MSG_RESULT([qt user-interface build enabled.]);
 fi
 
@@ -485,7 +487,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-03-24"
+#define VERSION_DATE_SHORT "2020-03-31"
 #define VERSION "0.90.3"
 
 )

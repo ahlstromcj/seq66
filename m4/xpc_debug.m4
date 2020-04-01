@@ -106,19 +106,19 @@ AC_DEFUN([AC_XPC_DEBUGGING],
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$profile" = "xprof" ; then
          PROFLAGS="-p"
          PROLDFLAGS="-p"
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(prof)
       elif test "x$profile" = "xgprof" ; then
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(prof)
       else
          AC_MSG_RESULT(no)
@@ -156,15 +156,15 @@ yes=gdb)],
       AM_CONDITIONAL(DODEBUG, test x$debug = xyes)
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-ggdb"
+         GDBFLAGS="-g"
          AC_MSG_RESULT(yes)
       else
          if test "x$OPTFLAGS" = "x" ; then
@@ -176,7 +176,7 @@ yes=gdb)],
    fi
    AC_SUBST([DBGFLAGS])
    AC_DEFINE_UNQUOTED([DBGFLAGS], [$DBGFLAGS],
-   [Define DBGFLAGS=-ggdb -O0 -DDEBUG -fno-inline if debug support is wanted.])
+   [Define DBGFLAGS=-g -O0 -DDEBUG -fno-inline if debug support is wanted.])
 
 ])
 
