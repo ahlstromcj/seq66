@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2020-03-30
+# \update      2020-04-06
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -256,6 +256,7 @@ moc_qt_headers = \
  ../include/qinputcheckbox.hpp \
  ../include/qlfoframe.hpp \
  ../include/qliveframeex.hpp \
+ ../include/qloopbutton.hpp \
  ../include/qmutemaster.hpp \
  ../include/qperfeditex.hpp \
  ../include/qperfeditframe64.hpp \
@@ -362,7 +363,9 @@ libseq_qt5_la_SOURCES = \
  $(moc_sources)
 
 libseq_qt5_la_LDFLAGS = -version-info $(version)
-libseq_qt5_la_LIBADD = $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+libseq_qt5_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
+
+# libseq_qt5_la_LIBADD = $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
 
 #******************************************************************************
 # uninstall-hook
