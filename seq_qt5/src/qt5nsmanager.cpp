@@ -31,6 +31,8 @@
  *  Duty now for the future!
  */
 
+#include <QApplication>                 /* QApplication etc.                */
+
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
@@ -55,13 +57,13 @@ namespace seq66
  *
  */
 
-qt5nsmanager::qt5nsmanager (QObject * parent) :
+qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
     QObject         (parent),
     smanager        (),
+    m_application   (app),
 #if defined SEQ66_NSM_SESSION
-    m_nsm_client    (),
+    m_nsm_client    ()
 #endif
-    m_performer     ()
 {
 }
 
@@ -85,36 +87,57 @@ qt5nsmanager::create_session ()
 }
 
 /**
+ *  Push the qsmainwnd window onto the stack.  Also be sure to pass along the
+ *  PPQN value, which might be different than the default (192), and affects
+ *  some of the child objects of qsmainwnd.  Also note the future support for
+ *  NSM.
  *
  */
 
 bool
 qt5nsmanager::create_window ()
 {
-    std::unique_ptr<qsmainwnd> seq66_window;
+    performer * p = perf();
+    bool result = not_nullptr(p);
+    if (result)
+    {
+        std::string mfname = midi_filename();
+        int ppqn = usr().midi_ppqn();
+        bool usensm = false;
+        m_window.reset(new qsmainwnd(*p, mfname, ppqn, usensm));
+        result = bool(m_window);
+        if (result)
+        {
+            /*
+             * Let NSM handle this eventually....
+             */
 
-    /*
-     * Push the qsmainwnd window onto the stack.  Also be sure to pass
-     * along the PPQN value, which might be different than the default
-     * (192), and affects some of the child objects of qsmainwnd.
-     * Also note the future support for NSM.
-     */
+            m_window->show();
+            (void) smanager::create_window();   /* minor internal house-keeping */
+        }
+    }
+    return result;
+}
 
-    seq66_window.reset
-    (
-        new qsmainwnd
-        (
-            *perf(), midi_filename(),
-            usr().midi_ppqn(), false /*usensm*/
-        )
-    );
+/**
+ *
+ */
 
-    /*
-     * Let NSM handle this....
-     */
+bool
+qt5nsmanager::close_session ()
+{
+    return true;
+}
 
-    seq66_window->show();
-    return bool(seq66_window);
+/**
+ *
+ */
+
+bool
+qt5nsmanager::run ()
+{
+    int exit_status = m_application.exec();     /* run main window loop     */
+    return exit_status == EXIT_SUCCESS;
 }
 
 /**
@@ -122,10 +145,12 @@ qt5nsmanager::create_window ()
  */
 
 void
-qt5nsmanager::show_message (const std::string & /*msg*/)
+qt5nsmanager::show_message (const std::string & msg)
 {
-    // TODO:
-    // m_seq66_window->show_message_box(msg);
+    if (error_active())
+        m_window->show_message_box(error_message());
+    else
+        m_window->show_message_box(msg);
 }
 
 /**
@@ -148,6 +173,11 @@ qt5nsmanager::show_error (const std::string & /*msg*/)
 
     //// TODO: error_message(msg);
 }
+
+/**
+ *
+ */
+
 
 }           // namespace seq66
 

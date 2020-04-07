@@ -76,7 +76,8 @@ public:
 
     bool main_settings (int argc, char * argv []);
     bool open_playlist ();
-    std::string open_midi_file (const std::string & fname);
+    bool create_performer ();
+    std::string open_midi_file (const std::string & fname, std::string & msg);
 
     bool error_active () const
     {
@@ -101,7 +102,7 @@ public:
     virtual bool run () = 0;            /* app.exec(); run main window loop */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-    bool portmidi_error_check () const;
+    bool portmidi_error_check (std::string & msg) const;
 #endif
 
 protected:
@@ -116,15 +117,7 @@ protected:
         return m_perf_pointer.get();
     }
 
-    void set_error_message (const std::string & message = "")
-    {
-        m_extant_errmsg = message;
-        m_extant_msg_active = ! message.empty();
-    }
-
-private:
-
-    pointer create_performer ();
+    void set_error_message (const std::string & message = "");
 
 };          // class smanager
 

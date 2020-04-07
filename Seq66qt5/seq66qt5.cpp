@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-03-22
+ * \updates       2020-04-04
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -33,22 +33,16 @@
  */
 
 #include <QApplication>                 /* QApplication etc.                */
-#include <memory>                       /* std::unique_ptr<>                */
 
-#include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
-#include "play/performer.hpp"           /* seq66::performer                 */
-#include "unix/daemonize.hpp"           /* seqg4::reroute_stdio()           */
-#include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
-#include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
-#include "qsmainwnd.hpp"                /* the main window of seq66qt5      */
+#include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
 
 #if defined SEQ66_LASH_SUPPORT
 #include "lash/lash.hpp"                /* seq66::lash_driver functions     */
 #endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message()  */
+#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message() */
 #endif
 
 /**
@@ -77,238 +71,64 @@ main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
-    seq66::set_app_name(SEQ66_APP_NAME);    /* "qseq66" by default          */
-    seq66::rc().set_defaults();             /* start out with normal values */
-    seq66::usr().set_defaults();            /* start out with normal values */
-
-    /*
-     * -o log=file.ext early
-     */
-
-    (void) seq66::cmdlineopts::parse_log_option(argc, argv);
-
-    /**
-     * Set up objects that are specific to the GUI.  Pass them to the
-     * performer constructor.  Then parse any command-line options to see if
-     * they might affect what gets read from the 'rc' or 'user' configuration
-     * files.  They will be parsed again later so that they can still override
-     * whatever other settings were made via the configuration files.
-     *
-     * However, we currently have a issue where the mastermidibus created by
-     * the performer object gets the default PPQN value, because the "user"
-     * configuration file has not been read at that point.  See the
-     * performer::launch() function.
-     */
-
-    (void) seq66::cmdlineopts::parse_command_line_options(argc, argv);
-    bool is_help = seq66::cmdlineopts::help_check(argc, argv);
-    bool ok = true;
-    int optionindex = -1;
-    if (! is_help)
+    std::string errormessage;               /* just in case                 */
+    seq66::qt5nsmanager sm(app);            /* NEW, currently just a helper */
+    bool result = sm.main_settings(argc, argv); // bool ok = true;
+    if (result)
     {
-        /*
-         *  If parsing fails, report it and disable usage of the application
-         *  and saving bad garbage out when exiting.  Still must launch,
-         *  otherwise a segfault occurs via dependencies in the qsmainwnd.
-         */
+        result = sm.create_performer();
+        if (result)
+            result = sm.open_playlist();
 
-        std::string errmessage;                     /* just in case!        */
-        ok = seq66::cmdlineopts::parse_options_files(errmessage, argc, argv);
-        if (! ok)
+        if (result)
         {
-            errprintf("parse_options_files(): %s\n", errmessage.c_str());
-        }
-        optionindex = seq66::cmdlineopts::parse_command_line_options(argc, argv);
-        if (seq66::cmdlineopts::parse_o_options(argc, argv))
-        {
-            /**
-             * The user may have specified -o options that are also set up in
-             * the "usr" file.  The command line needs to take precedence.  The
-             * "log" option is processed early in the startup sequence.  These
-             * same settings are made in the cmdlineopts module.
-             */
-
-            std::string logfile = seq66::usr().option_logfile();
-            if (seq66::usr().option_use_logfile() && ! logfile.empty())
-                (void) seq66::reroute_stdio(logfile);
-        }
-
-        seq66::performer p                  /* the main performance object  */
-        (
-            SEQ66_USE_DEFAULT_PPQN,
-            seq66::usr().mainwnd_rows(),
-            seq66::usr().mainwnd_cols()
-        );
-        if (seq66::rc().verbose())          /* use for trouble-shooting     */
-        {
-            seq66::rc().key_controls().show();
-            seq66::rc().midi_controls().show();
-            seq66::rc().mute_groups().show();
-        }
-
-        /*
-         * Issue #100, moved this call to before creating the qsmainwnd.
-         * Otherwise, seq66 will not register with LASH (if enabled) in a
-         * timely fashion.  Also, we always have to launch, even if an error
-         * occurred, to avoid a segfault and show at least a minimal message.
-         * LASH support is now back in Seq66.
-         */
-
-        if (ok)
-        {
-            /*
-             * If this is the first time Seq66 is being run, this will always
-             * fail, so ignore the return code.
-             */
-
-            (void) p.get_settings(seq66::rc());
-            ok = p.launch(seq66::usr().midi_ppqn());
-            if (! ok)
-                errprint("performer::launch() failed");
-        }
-
-        std::string midifname;                      /* start out blank      */
-        std::string extant_errmsg = "unspecified error";
-        bool extant_msg_active = false;             /* a kludge             */
-        std::string errmsg = "unspecified error";
-        if (ok)
-        {
-            std::string playlistname = seq66::rc().playlist_filespec();
-            if (seq66::rc().playlist_active() && ! playlistname.empty())
+            std::string fname = sm.midi_filename();
+            if (! fname.empty())
             {
-                ok = p.open_playlist(playlistname, seq66::rc().verbose());
-                if (ok)
-                {
-                    ok = p.open_current_song();     /* p.playlist_test()    */
-                }
-                else
-                {
-                    extant_errmsg = p.playlist_error_message();
-                    extant_msg_active = true;
-                    ok = true;                      /* avoid early exit     */
-                }
-            }
-            if (optionindex < argc)                 /* MIDI filename given? */
-            {
-                std::string fname = argv[optionindex];
-                if (seq66::file_accessible(fname))
-                {
-                    int pp = p.ppqn();
-                    midifname = fname;
-                    ok = p.read_midi_file(fname, pp, errmsg);
-                    if (ok)
-                    {
-                        std::string infomsg = "PPQN set to ";
-                        infomsg += std::to_string(pp);
-                        ok = seq66::info_message(infomsg);
-                    }
-                    else
-                    {
-                        seq66::error_message(errmsg);
-                    }
-                }
-                else
-                {
-                    char temp[256];
-                    (void) snprintf
-                    (
-                        temp, sizeof temp,
-                        "? MIDI file not found: %s", fname.c_str()
-                    );
-                    printf("%s\n", temp);
-                    ok = false;
-                    errmsg = temp;
-                }
+                fname = sm.open_midi_file(fname, errormessage);
+                result = ! fname.empty();
             }
         }
-        std::unique_ptr<seq66::qsmainwnd> seq66_window;
-        if (ok)
-        {
-            /*
-             * Push the qsmainwnd window onto the stack.  Also be sure to pass
-             * along the PPQN value, which might be different than the default
-             * (192), and affects some of the child objects of qsmainwnd.
-             * Also note the future support for NSM.
-             */
+        if (result)
+            result = sm.create_window();
+    }
 
-            seq66_window.reset
-            (
-                new seq66::qsmainwnd
-                (
-                    p, midifname, seq66::usr().midi_ppqn(), false /*usensm*/
-                )
-            );
-            seq66_window->show();
-            if (seq66::rc().verbose())
-                p.show_patterns();
-        }
-
-        /*
-         * Having this here after creating the main window may cause issue
-         * #100, where ladish doesn't see seq66's ports in time.
-         *
-         *  p.launch(seq66::usr().midi_ppqn());
-         *
-         * We also check for any "fatal" PortMidi errors, so we can display
-         * them.  But we still want to keep going, in order to at least
-         * generate the log-files and configuration files to
-         * C:/Users/me/AppData/Local/seq66 or ~/.config/seq66.
-         */
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-        if (ok)
+
+    /*
+     * We check for any "fatal" PortMidi errors, so we can display
+     * them.  But we still want to keep going, in order to at least
+     * generate the log-files and configuration files to
+     * C:/Users/me/AppData/Local/seq66 or ~/.config/seq66.
+     */
+
+    if (result)
+    {
+        if (sm.portmidi_error_check(errmsg))
         {
-            if (Pm_error_present())
-            {
-                ok = false;
-                errmsg = std::string(Pm_hosterror_message());
-                seq66_window->show_message_box(errmsg);
-            }
+            result = false;
+            seq66_window->show_message_box(errmsg);
+            sm.show_message(errmsg);
         }
-#endif
+    }
+#endif  // SEQ66_PORTMIDI_SUPPORT
 
 
-        if (ok)
-        {
-            if (extant_msg_active)
-                seq66_window->show_message_box(extant_errmsg);
-            else
-                seq66_window->show_message_box(errmessage);
+    if (result)     // ????
+    {
 
-#if defined SEQ66_PLATFORM_LINUX
+#if defined SEQ66_PLATFORM_LINUX_MOVE_TO_SMANAGER
 #if defined SEQ66_LASH_SUPPORT
-            if (seq66::rc().lash_support())
-                seq66::create_lash_driver(p, argc, argv);
-            else
-#endif
-                seq66::session_setup();
-#endif
-
-            exit_status = app.exec();           /* run main window loop     */
-            p.finish();                         /* tear down performer      */
-            p.put_settings(seq66::rc());        /* copy latest settings     */
-            if (seq66::rc().auto_option_save())
-                (void) seq66::cmdlineopts::write_options_files();
-            else
-                printf("[auto-option-save off, not saving config files]\n");
-
-#if defined SEQ66_LASH_SUPPORT
-            if (seq66::rc().lash_support())
-                seq66::delete_lash_driver();        /* deleted only exists  */
-#endif
-        }
+        if (seq66::rc().lash_support())
+            seq66::create_lash_driver(p, argc, argv);
         else
-        {
-            (void) seq66::cmdlineopts::write_options_files("erroneous");
-            if (extant_msg_active)
-            {
-                errprint(extant_errmsg.c_str());
-            }
-            else if (! errmessage.empty())
-            {
-                errprint(errmessage.c_str());
-            }
-        }
+#endif
+            seq66::session_setup();
+#endif
+
+        exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
+        (void) sm.close_session();
     }
     return exit_status;
 }

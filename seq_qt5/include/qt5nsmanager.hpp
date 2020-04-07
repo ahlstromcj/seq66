@@ -40,10 +40,13 @@
 
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
 #if defined SEQ66_NSM_SESSION
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
 #endif
+
+class QApplication;
 
 namespace seq66
 {
@@ -52,24 +55,21 @@ namespace seq66
  *
  */
 
-class qt5nsmanager : public QObject, smanager
+class qt5nsmanager : public QObject, public smanager
 {
 	Q_OBJECT
 
 public:
 
-    qt5nsmanager (QObject * parent = nullptr);
+    qt5nsmanager (QApplication & app, QObject * parent = nullptr);
     virtual ~qt5nsmanager ();
 
     virtual bool create_session ();
     virtual bool create_window ();
     virtual bool close_session ();
-
-    virtual bool run ()
-    {
-        // TODO
-        return false;
-    }
+    virtual bool run ();
+    virtual void show_message (const std::string & msg);
+    virtual void show_error (const std::string & msg);
 
 signals:        /* signals sent by session client callbacks */
 
@@ -82,22 +82,21 @@ signals:        /* signals sent by session client callbacks */
 
 private:
 
-    virtual void show_message (const std::string & msg);
-    virtual void show_error (const std::string & msg);
-
-private:
+    QApplication & m_application;
 
 #if defined SEQ66_NSM_SESSION
 
     /**
-     *  The optional NSM client.
+     *  The optional NSM client.  This item is not in the base class,
+     *  smanager, because that class is meant to allow the option of building
+     *  without NSM, but still simplifying the application's main() function.
      */
 
     std::unique_ptr<nsmclient> m_nsm_client;
 
 #endif
 
-    std::unique_ptr<performer> m_performer;
+    std::unique_ptr<qsmainwnd> m_window;
 
 };          // class qt5nsmanager
 
