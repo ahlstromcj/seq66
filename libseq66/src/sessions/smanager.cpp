@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-04-06
+ * \updates       2020-04-09
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -71,7 +71,9 @@ namespace seq66
 {
 
 /**
- *
+ *  Does the usual construction.  It also calls set_defaults() from the
+ *  settings.cpp module in order to guarantee that we have rc() and usr()
+ *  available.  See that function for more information.
  */
 
 smanager::smanager () :
@@ -85,6 +87,8 @@ smanager::smanager () :
      *
      * m_perf_pointer = create_performer();
      */
+
+    set_defaults();
 }
 
 /**
@@ -113,8 +117,6 @@ smanager::main_settings (int argc, char * argv [])
 {
     bool result = false;                /* EXIT_FAILURE                 */
     set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default          */
-    rc().set_defaults();                /* start out with normal values */
-    usr().set_defaults();               /* start out with normal values */
 
     /*
      * -o log=file.ext early
@@ -202,6 +204,11 @@ smanager::main_settings (int argc, char * argv [])
 
 /**
  *  This function is currently meant to be called by the owner of this smanager.
+ *  This call must occur before creating the application main window.
+ *  Otherwise, seq66 will not register with LASH (if enabled) in a timely
+ *  fashion.  Also, we always have to launch, even if an error occurred, to
+ *  avoid a segfault and show at least a minimal message.  LASH support is now
+ *  back in Seq66.
  */
 
 bool
@@ -211,39 +218,27 @@ smanager::create_performer ()
     int ppqn = usr().midi_ppqn();
     int rows = usr().mainwnd_rows();
     int cols = usr().mainwnd_cols();
-    performer * p = new performer(ppqn, rows, cols);
-    pointer up(p);
-    result = bool(up);
+    pointer p(new (std::nothrow) performer(ppqn, rows, cols));
+    result = bool(p);
     if (result)
     {
-        if (rc().verbose())             /* handy for trouble-shooting       */
+        if (rc().verbose())                     /* good for trouble-shoots  */
         {
             rc().key_controls().show();
             rc().midi_controls().show();
             rc().mute_groups().show();
         }
-
-        /*
-         * This call must occur before creating the application main window.
-         * Otherwise, seq66 will not register with LASH (if enabled) in a
-         * timely fashion.  Also, we always have to launch, even if an error
-         * occurred, to avoid a segfault and show at least a minimal message.
-         * LASH support is now back in Seq66.
-         */
-
-        /*
-         * If this is the first time Seq66 is being run, this will always
-         * fail, so ignore the return code.
-         */
-
-        result = up->get_settings(rc());
+        result = p->get_settings(rc());
         if (result)
         {
-            result = up->launch(usr().midi_ppqn());
+            result = p->launch(usr().midi_ppqn());
             if (result)
             {
-                performer * p = up.get();
-                m_perf_pointer.reset(p);        /* change the ownership */
+                /*
+                 * Odd.  Cannot just use operator =, must move as well.
+                 */
+
+                m_perf_pointer = std::move(p);      /* change the ownership */
             }
             else
             {

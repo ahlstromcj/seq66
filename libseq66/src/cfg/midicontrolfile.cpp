@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-11-03
+ * \updates       2020-04-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -234,7 +234,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         }
         if (count > 0)
         {
-            infoprintf("%d loop-control lines loaded", count);
+            infoprintf("%d loop-control lines", count);
         }
 
         good = line_after(file, "[mute-group-control]");
@@ -252,7 +252,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         }
         if (count > 0)
         {
-            infoprintf("%d mute-group-control lines loaded", count);
+            infoprintf("%d mute-group-control lines", count);
         }
 
         good = line_after(file, "[automation-control]");
@@ -270,7 +270,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
         }
         if (count > 0)
         {
-            infoprintf("%d automation-control lines loaded", count);
+            infoprintf("%d automation-control lines", count);
         }
     }
     if (loadmidi && m_temp_midi_controls.count() > 0)

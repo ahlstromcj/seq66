@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-03-30
+ * \updates       2020-04-08
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -103,17 +103,19 @@ qt5nsmanager::create_window ()
     {
         std::string mfname = midi_filename();
         int ppqn = usr().midi_ppqn();
-        bool usensm = false;
-        m_window.reset(new qsmainwnd(*p, mfname, ppqn, usensm));
-        result = bool(m_window);
+        bool usensm = false;                    /* TODO                     */
+        qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, ppqn, usensm);
+        result = not_nullptr(qm);
         if (result)
         {
+            m_window.reset(qm);
+
             /*
              * Let NSM handle this eventually....
              */
 
             m_window->show();
-            (void) smanager::create_window();   /* minor internal house-keeping */
+            (void) smanager::create_window();   /* internal house-keeping   */
         }
     }
     return result;

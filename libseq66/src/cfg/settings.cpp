@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2019-03-14
+ * \updates       2019-04-10
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -43,12 +43,6 @@ namespace seq66
 {
 
 /**
- *  Provides the replacement for all of the other "global_xxx" variables.
- */
-
-static rcsettings g_rcsettings;
-
-/**
  *  Returns a reference to the global rcsettings object.  Why a function
  *  instead of direct variable access?  Encapsulation.  We are then free to
  *  change the way "global" settings are accessed, without changing client
@@ -61,17 +55,13 @@ static rcsettings g_rcsettings;
 rcsettings &
 rc ()
 {
-    return g_rcsettings;
+    static rcsettings s_rcsettings;
+    return s_rcsettings;
 }
 
 /**
  *  Provides the replacement for all of the other settings in the "user"
  *  configuration file, plus some of the "constants" in the globals module.
- */
-
-static usrsettings g_usrsettings;
-
-/**
  *  Returns a reference to the global usrsettings object, for better
  *  encapsulation.
  *
@@ -82,6 +72,7 @@ static usrsettings g_usrsettings;
 usrsettings &
 usr ()
 {
+    static usrsettings g_usrsettings;
     return g_usrsettings;
 }
 
@@ -95,7 +86,6 @@ set_defaults ()
     rc().set_defaults();
     usr().set_defaults();
 }
-
 
 /**
  *  Common code for handling PPQN settings.  Putting it here means we can

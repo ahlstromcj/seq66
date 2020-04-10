@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-01-01
+ * \updates       2020-04-07
  * \license       GNU GPLv2 or above
  *
  *
@@ -61,6 +61,7 @@ namespace seq66
     class keystroke;
     class performer;
     class qsmainwnd;
+    class qslotbutton;
 
 /**
  *

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-27
+ * \updates       2020-04-08
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -141,21 +141,27 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
         m_midi_master.clear();                          /* ignore system    */
         for (int i = 0; i < num_buses; ++i)             /* output busses    */
         {
-            midibus * m = new midibus
+            midibus * m = new (std::nothrow) midibus
             (
                 m_midi_master, i, SEQ66_MIDI_VIRTUAL_PORT,
                 SEQ66_MIDI_OUTPUT_PORT,
                 i /* bussoverride */                    /* breaks ALSA?     */
             );
-            m_outbus_array.add(m, clock(i));            /* must come 1st    */
-            m_midi_master.add_output(m);                /* must come 2nd    */
+            if (not_nullptr(m))
+            {
+                m_outbus_array.add(m, clock(i));        /* must come 1st    */
+                m_midi_master.add_output(m);            /* must come 2nd    */
+            }
         }
-        midibus * m = new midibus
+        midibus * m = new (std::nothrow) midibus
         (
             m_midi_master, 0, SEQ66_MIDI_VIRTUAL_PORT, SEQ66_MIDI_INPUT_PORT
         );
-        m_inbus_array.add(m, input(0));                 /* must come 1st    */
-        m_midi_master.add_input(m);                     /* must come 2nd    */
+        if (not_nullptr(m))
+        {
+            m_inbus_array.add(m, input(0));             /* must come 1st    */
+            m_midi_master.add_input(m);                 /* must come 2nd    */
+        }
         port_list("virtual");
     }
     else
@@ -173,36 +179,42 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             {
                 bool isvirtual = m_midi_master.get_virtual(i);
                 bool issystem = m_midi_master.get_system(i);
-                midibus * m = new midibus
+                midibus * m = new (std::nothrow) midibus
                 (
                     m_midi_master, i, isvirtual, isinput,
                     SEQ66_NO_BUS, issystem
                 );
-                if (swap_io)
-                    m_outbus_array.add(m, clock(i));    /* must come 1st    */
-                else
-                    m_inbus_array.add(m, input(i));     /* must come 1st    */
+                if (not_nullptr(m))
+                {
+                    if (swap_io)
+                        m_outbus_array.add(m, clock(i));
+                    else
+                        m_inbus_array.add(m, input(i));
 
-                m_midi_master.add_bus(m);               /* must come 2nd    */
+                    m_midi_master.add_bus(m);           /* must come 2nd    */
+                }
             }
-
             m_midi_master.midi_mode(SEQ66_MIDI_OUTPUT_PORT);    /* ugh! */
+
             unsigned outports = m_midi_master.get_port_count();
             for (unsigned i = 0; i < outports; ++i)
             {
                 bool isvirtual = m_midi_master.get_virtual(i);
                 bool issystem = m_midi_master.get_system(i);
-                midibus * m = new midibus
+                midibus * m = new (std::nothrow) midibus
                 (
                     m_midi_master, i, isvirtual, isoutput,
                     SEQ66_NO_BUS, issystem
                 );
-                if (swap_io)
-                    m_inbus_array.add(m, input(i));     /* must come 1st    */
-                else
-                    m_outbus_array.add(m, clock(i));    /* must come 1st    */
+                if (not_nullptr(m))
+                {
+                    if (swap_io)
+                        m_inbus_array.add(m, input(i));
+                    else
+                        m_outbus_array.add(m, clock(i));
 
-                m_midi_master.add_bus(m);               /* must come 2nd    */
+                    m_midi_master.add_bus(m);           /* must come 2nd    */
+                }
             }
         }
     }

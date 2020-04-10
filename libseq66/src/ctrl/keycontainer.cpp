@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-06-01
+ * \updates       2020-04-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -93,12 +93,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
 {
     bool result = false;
     auto sz = m_container.size();
-
-    /*
-     * auto --> std::pair<int, keycontrol>;
-     */
-
-    auto p = std::make_pair(ordinal, op);
+    auto p = std::make_pair(ordinal, op);   /* std::pair<int, keycontrol>   */
     (void) m_container.insert(p);
     result = m_container.size() == (sz + 1);
     if (result)
@@ -113,19 +108,16 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
     }
     else
     {
-        if (rc().verbose())
-        {
-            std::string tag = is_invalid_ordinal(ordinal) ?
-                "Invalid" : "Duplicate" ;
+        std::string tag = is_invalid_ordinal(ordinal) ?
+            "Invalid" : "Duplicate" ;
 
-            std::cerr
-                << tag << " key (#" << ordinal
-                << " = '" << qt_ordinal_keyname(ordinal) << "')"
-                << " for '" << op.name()
-                << "' Category " << op.category_name()
-                << std::endl
-                ;
-        }
+        std::cerr
+            << tag << " key (#" << ordinal
+            << " = '" << qt_ordinal_keyname(ordinal) << "')"
+            << " for '" << op.name()
+            << "' Category " << op.category_name()
+            << std::endl
+            ;
     }
     return result;
 }
@@ -405,9 +397,16 @@ keycontainer::add_defaults ()
         std::string nametag = opcontrol::slot_name(s);
         std::string keyname = s_keys_automation[auslot].kd_name;
         ctrlkey ordinal = qt_keyname_ordinal(keyname);
-        keycontrol kc(nametag, keyname, c, a, s, auslot);
-        if (! add(ordinal, kc) && int(ordinal) != (-1))
-            break;
+        if (is_invalid_ordinal(ordinal))
+        {
+            /* not sure we want to see a message here */
+        }
+        else
+        {
+            keycontrol kc(nametag, keyname, c, a, s, auslot);
+            if (! add(ordinal, kc))     /*  && int(ordinal) != (-1))    */
+                break;
+        }
     }
     m_loaded_from_rc = false;
 }

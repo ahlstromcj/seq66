@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-04-27
+ * \updates       2020-04-08
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -137,13 +137,16 @@ midi_alsa_info::midi_alsa_info
         (
             m_alsa_seq, POLLIN
         );
-        m_poll_descriptors = new pollfd[m_num_poll_descriptors];
-        snd_seq_poll_descriptors
-        (
-            m_alsa_seq, m_poll_descriptors, m_num_poll_descriptors, POLLIN
-        );
-        snd_seq_set_output_buffer_size(m_alsa_seq, c_midibus_output_size);
-        snd_seq_set_input_buffer_size(m_alsa_seq, c_midibus_input_size);
+        m_poll_descriptors = new (std::nothrow) pollfd[m_num_poll_descriptors];
+        if (not_nullptr(m_poll_descriptors))
+        {
+            snd_seq_poll_descriptors
+            (
+                m_alsa_seq, m_poll_descriptors, m_num_poll_descriptors, POLLIN
+            );
+            snd_seq_set_output_buffer_size(m_alsa_seq, c_midibus_output_size);
+            snd_seq_set_input_buffer_size(m_alsa_seq, c_midibus_input_size);
+        }
     }
 }
 
@@ -438,10 +441,16 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
             if (test >= 0)
                 bus_slot = test;
 
-            midibus * m = new midibus(masterbus.m_midi_master, bus_slot);
-            m->is_virtual_port(false);
-            m->is_input_port(false);
-            masterbus.m_outbus_array.add(m, e_clock::off);   /* disabled? */
+            midibus * m = new (std::nothrow) midibus
+            (
+                masterbus.m_midi_master, bus_slot
+            );
+            if (not_nullptr(m))
+            {
+                m->is_virtual_port(false);
+                m->is_input_port(false);
+                masterbus.m_outbus_array.add(m, e_clock::off);
+            }
         }
         if (CAP_FULL_READ(cap) && ALSA_CLIENT_CHECK(pinfo)) /* inputs */
         {
@@ -450,23 +459,33 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
             if (test >= 0)
                 bus_slot = test;
 
-            midibus * m = new midibus(masterbus.m_midi_master, bus_slot);
-            m->is_virtual_port(false);
-            m->is_input_port(true);                  // was false BEWARE BREAKAGE
-            masterbus.m_inbus_array.add(m, false);
+            midibus * m = new (std::nothrow) midibus
+            (
+                masterbus.m_midi_master, bus_slot
+            );
+            if (not_nullptr(m))
+            {
+                m->is_virtual_port(false);
+                m->is_input_port(true);
+                masterbus.m_inbus_array.add(m, false);
+            }
         }
     }                                           /* end loop for clients */
 
     /*
-     * Get the number of MIDI input poll file descriptors.
+     * Get the number of MIDI input poll file descriptors.  This is done in the
+     * constructor, too!
      */
 
     m_num_poll_descriptors = snd_seq_poll_descriptors_count(m_alsa_seq, POLLIN);
-    m_poll_descriptors = new pollfd[m_num_poll_descriptors]; /* allocate info */
-    snd_seq_poll_descriptors                        /* get input descriptors */
-    (
-        m_alsa_seq, m_poll_descriptors, m_num_poll_descriptors, POLLIN
-    );
+    m_poll_descriptors = new (std::nothrow) pollfd[m_num_poll_descriptors];
+    if (not_nullptr(m_poll_descriptors))
+    {
+        snd_seq_poll_descriptors                    /* get input descriptors */
+        (
+            m_alsa_seq, m_poll_descriptors, m_num_poll_descriptors, POLLIN
+        );
+    }
 }
 
 /**

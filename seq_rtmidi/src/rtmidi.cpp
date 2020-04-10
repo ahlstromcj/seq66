@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-02-10
+ * \updates       2020-04-08
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  An abstract base class for realtime MIDI input/output.
@@ -182,11 +182,16 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == RTMIDI_API_UNIX_JACK)
                 {
-#if defined SEQ66_BUILD_UNIX_JACK
-#if defined SEQ66_JACK_SUPPORT
-                    set_api(new midi_in_jack(parent_bus(), midiinfo));
-                    got_an_api = true;
-#endif
+#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+                    midi_in_jack * mijp = new (std::nothrow) midi_in_jack
+                    (
+                        parent_bus(), midiinfo
+                    );
+                    if (not_nullptr(mijp))
+                    {
+                        set_api(mijp);
+                        got_an_api = true;
+                    }
 #endif
                 }
             }
@@ -195,23 +200,39 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 if (api == RTMIDI_API_LINUX_ALSA)
                 {
 #if defined SEQ66_BUILD_LINUX_ALSA
-                    set_api(new midi_in_alsa(parent_bus(), midiinfo));
+                    midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
+                    (
+                        parent_bus(), midiinfo
+                    );
+                    if (not_nullptr(miap))
+                    {
+                        set_api(miap);
+                        got_an_api = true;
+                    }
 #endif
                 }
             }
         }
         else if (api == RTMIDI_API_UNIX_JACK)
         {
-#if defined SEQ66_BUILD_UNIX_JACK
-#if defined SEQ66_JACK_SUPPORT
-            set_api(new midi_in_jack(parent_bus(), midiinfo));
-#endif
+#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+            midi_in_jack * mijp = new (std::nothrow) midi_in_jack
+            (
+                parent_bus(), midiinfo
+            );
+            if (not_nullptr(mijp))
+                set_api(mijp);
 #endif
         }
         else if (api == RTMIDI_API_LINUX_ALSA)
         {
 #if defined SEQ66_BUILD_LINUX_ALSA
-            set_api(new midi_in_alsa(parent_bus(), midiinfo));
+            midi_in_alsa * miap = new (std::nothrow) midi_in_alsa
+            (
+                parent_bus(), midiinfo
+            );
+            if (not_nullptr(miap))
+                set_api(miap);
 #endif
         }
     }
@@ -327,11 +348,16 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
             {
                 if (api == RTMIDI_API_UNIX_JACK)
                 {
-#if defined SEQ66_BUILD_UNIX_JACK
-#if defined SEQ66_JACK_SUPPORT
-                    set_api(new midi_out_jack(parent_bus(), midiinfo));
-                    got_an_api = true;
-#endif
+#if defined SEQ66_BUILD_UNIX_JACK && defined SEQ66_JACK_SUPPORT
+                    midi_out_jack * mojp = new (std::nothrow) midi_out_jack
+                    (
+                        parent_bus(), midiinfo
+                    );
+                    if (not_nullptr(mojp))
+                    {
+                        set_api(mojp);
+                        got_an_api = true;
+                    }
 #endif
                 }
             }
@@ -340,7 +366,15 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
                 if (api == RTMIDI_API_LINUX_ALSA)
                 {
 #if defined SEQ66_BUILD_LINUX_ALSA
-                    set_api(new midi_out_alsa(parent_bus(), midiinfo));
+                    midi_out_alsa * moap = new (std::nothrow) midi_out_alsa
+                    (
+                        parent_bus(), midiinfo
+                    );
+                    if (not_nullptr(moap))
+                    {
+                        set_api(moap);
+                        got_an_api = true;
+                    }
 #endif
                 }
             }
@@ -349,16 +383,36 @@ rtmidi_out::openmidi_api (rtmidi_api api, rtmidi_info & info)
         {
 #if defined SEQ66_BUILD_UNIX_JACK
 #if defined SEQ66_JACK_SUPPORT
-            set_api(new midi_out_jack(parent_bus(), midiinfo));
+            midi_out_jack * mojp = new (std::nothrow) midi_out_jack
+            (
+                parent_bus(), midiinfo
+            );
+            if (not_nullptr(mojp))
+            {
+                set_api(mojp);
+                got_an_api = true;
+            }
 #endif
 #endif
         }
         else if (api == RTMIDI_API_LINUX_ALSA)
         {
 #if defined SEQ66_BUILD_LINUX_ALSA
-            set_api(new midi_out_alsa(parent_bus(), midiinfo));
+            midi_out_alsa * moap = new (std::nothrow) midi_out_alsa
+            (
+                parent_bus(), midiinfo
+            );
+            if (not_nullptr(moap))
+            {
+                set_api(moap);
+                got_an_api = true;
+            }
 #endif
         }
+    }
+    if (! got_an_api)
+    {
+        errprintfunc("could not create an API");
     }
 }
 

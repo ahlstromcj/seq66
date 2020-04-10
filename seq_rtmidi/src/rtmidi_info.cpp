@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-08
- * \updates       2019-02-10
+ * \updates       2020-04-08
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  An abstract base class for realtime MIDI input/output.  This class
@@ -212,7 +212,13 @@ rtmidi_info::openmidi_api
         if (rc().with_jack_midi())
         {
 #if defined SEQ66_JACK_SUPPORT
-            result = set_api_info(new midi_jack_info(appname, ppqn, bpm));
+            midi_jack_info * mjip = new (std::nothrow) midi_jack_info
+            (
+                appname, ppqn, bpm
+            );
+            result = not_nullptr(mjip);
+            if (result)
+                result = set_api_info(mjip);
 #else
             result = false;
 #endif
@@ -236,7 +242,13 @@ rtmidi_info::openmidi_api
 #if defined SEQ66_BUILD_LINUX_ALSA
     if (api == RTMIDI_API_LINUX_ALSA)
     {
-        result = set_api_info(new midi_alsa_info(appname, ppqn, bpm));
+        midi_alsa_info * maip = new (std::nothrow) midi_alsa_info
+        (
+            appname, ppqn, bpm
+        );
+        result = not_nullptr(maip);
+        if (result)
+            result = set_api_info(maip);
     }
 #endif
 
