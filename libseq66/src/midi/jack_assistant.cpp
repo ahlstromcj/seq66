@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2019-11-30
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -843,6 +843,7 @@ jack_assistant::init ()
 bool
 jack_assistant::deinit ()
 {
+    bool result = true;
     if (m_jack_running)
     {
         m_jack_running = false;
@@ -861,17 +862,23 @@ jack_assistant::deinit ()
 
         apiprint("jack_deactivate", "sync");
         if (jack_deactivate(m_jack_client) != 0)
+        {
             (void) error_message("Can't deactivate JACK sync client");
+            result = false;
+        }
 
         if (jack_client_close(m_jack_client) != 0)
+        {
             (void) error_message("Can't close JACK sync client");
-
+        }
         apiprint("deinit", "sync");
     }
-    if (! m_jack_running)
+    if (m_jack_running)
+        (void) info_message("JACK sync NOT disabled");
+    else
         (void) info_message("JACK sync disabled");
 
-    return m_jack_running;
+    return result;
 }
 
 /**

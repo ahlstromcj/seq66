@@ -1,7 +1,7 @@
-# Seq66 0.90.0 (and above) mute-groups configuration file
+# Seq66 0.90.1 (and above) mute-groups configuration file
 #
-# /home/user/.config/seq66/qseq66.mutes
-# Written on 2019-08-15 05:37:03
+# /home/ahlstrom/.config/seq66/qseq66.mutes
+# Written on 2020-04-22 08:02:33
 #
 # This file replaces the [mute-group] section, making it a little
 # easier to manage multiple sets of mute groups.
@@ -29,17 +29,23 @@ version = 0
 # tag, and simply add the basename (e.g. nanomutes.mutes) on a
 # separate line.
 #
-# The 'save-mutes-to' has three options: 'both' writes the mutes
-# information to both the mutes and the MIDI file, while 'midi'
-# writes them only to the MIDI file, and 'mutes' only to the mutes
-# file.
+# save-mutes-to: 'both' writes the mutes value to both the mutes
+# and the MIDI file; 'midi' writes only to the MIDI file; and
+# and 'mutes' only to the mutesfile.
+# 
+# mute-group-rows and mute-group-columns: Specifies the size of the
+# grid.  For now, keep these values at 4 and 8.
+# 
+# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means
+# to write them as hexadecimal numbers (e.g. 0xff), which will be
+# useful with larger set sizes.
 
 [mute-group-flags]
 
 save-mutes-to = midi
 mute-group-rows = 4
 mute-group-columns = 8
-write-legacy-mutes = false
+groups-format = bin
 
 [mute-groups]
 
@@ -49,39 +55,39 @@ write-legacy-mutes = false
 # is used, then each number represents a bit mask, rather than a single
 # bit.
 
- 0 [ 0x00 0x00 0x00 0x00 ]
- 1 [ 0x00 0x00 0x00 0x00 ]
- 2 [ 0x00 0x00 0x00 0x00 ]
- 3 [ 0x00 0x00 0x00 0x00 ]
- 4 [ 0x00 0x00 0x00 0x00 ]
- 5 [ 0x00 0x00 0x00 0x00 ]
- 6 [ 0x00 0x00 0x00 0x00 ]
- 7 [ 0x00 0x00 0x00 0x00 ]
- 8 [ 0x00 0x00 0x00 0x00 ]
- 9 [ 0x00 0x00 0x00 0x00 ]
-10 [ 0x00 0x00 0x00 0x00 ]
-11 [ 0x00 0x00 0x00 0x00 ]
-12 [ 0x00 0x00 0x00 0x00 ]
-13 [ 0x00 0x00 0x00 0x00 ]
-14 [ 0x00 0x00 0x00 0x00 ]
-15 [ 0x00 0x00 0x00 0x00 ]
-16 [ 0x00 0x00 0x00 0x00 ]
-17 [ 0x00 0x00 0x00 0x00 ]
-18 [ 0x00 0x00 0x00 0x00 ]
-19 [ 0x00 0x00 0x00 0x00 ]
-20 [ 0x00 0x00 0x00 0x00 ]
-21 [ 0x00 0x00 0x00 0x00 ]
-22 [ 0x00 0x00 0x00 0x00 ]
-23 [ 0x00 0x00 0x00 0x00 ]
-24 [ 0x00 0x00 0x00 0x00 ]
-25 [ 0x00 0x00 0x00 0x00 ]
-26 [ 0x00 0x00 0x00 0x00 ]
-27 [ 0x00 0x00 0x00 0x00 ]
-28 [ 0x00 0x00 0x00 0x00 ]
-29 [ 0x00 0x00 0x00 0x00 ]
-30 [ 0x00 0x00 0x00 0x00 ]
-31 [ 0x00 0x00 0x00 0x00 ]
+ 0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 1 1 1 1 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 2 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 3 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 4 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 5 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 6 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 7 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 8 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+ 9 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+10 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+11 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+12 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+13 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+14 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+15 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+16 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+17 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+18 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+19 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+20 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+21 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+22 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+23 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+24 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+25 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+26 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+27 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+28 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+29 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 
-# End of /home/user/.config/seq66/qseq66.mutes
+# End of /home/ahlstrom/.config/seq66/qseq66.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-02-02
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -1589,7 +1589,7 @@ public:
     bool clear_all (bool clearplaylist);
     bool clear_song ();
     bool launch (int ppqn);
-    void finish ();
+    bool finish ();
     bool activate ();
     bool new_sequence (seq::number seq = seq::unassigned());
     bool remove_sequence (seq::number seq);     /* seqmenu & mainwid    */

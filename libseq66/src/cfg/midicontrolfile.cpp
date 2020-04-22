@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-04-10
+ * \updates       2020-04-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -757,6 +757,16 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "\n"
         << setsize << " " << buss << " " << (disabled ? "0" : "1")
         << "     # screenset size, output buss, enabled (1) /disabled (0)\n\n"
+        ;
+    file <<
+        "\n"
+        "# These control events are laid out in this order: \n"
+        "#\n"
+        "#     [ enabled channel status d0 d1 ]\n"
+        "#\n"
+        "# where enabled is 1. Also, the order of the lines that follow must\n"
+        "# must be preserved.\n"
+        "\n"
         ;
 
     for (int seq = 0; seq < setsize; ++seq)

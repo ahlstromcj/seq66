@@ -137,7 +137,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     m_midi_master.api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
-        int num_buses = SEQ66_ALSA_OUTPUT_BUSS_MAX;     /* not just ALSA!   */
+        int num_buses = SEQ66_OUTPUT_BUSS_MAX;
         m_midi_master.clear();                          /* ignore system    */
         for (int i = 0; i < num_buses; ++i)             /* output busses    */
         {

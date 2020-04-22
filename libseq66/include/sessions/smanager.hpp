@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-24
- * \updates       2020-03-24
+ * \updates       2020-04-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -74,6 +74,7 @@ public:
         // currently no additional code needed
     }
 
+    bool is_session_mgmt_active () const;
     bool main_settings (int argc, char * argv []);
     bool open_playlist ();
     bool create_performer ();
@@ -120,6 +121,12 @@ protected:
     void set_error_message (const std::string & message = "");
 
 };          // class smanager
+
+/*
+ *  External helper functions.
+ */
+
+extern std::string get_nsm_url ();
 
 }           // namespace seq66
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-03-22
+ * \updates       2020-04-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -92,9 +92,7 @@ rcsettings::rcsettings () :
     m_clock_mod                 (64),
     m_verbose                   (false),
     m_auto_option_save          (true),     /* legacy seq24 behavior    */
-#if defined SEQ66_LASH_SUPPORT
     m_lash_support              (false),
-#endif
     m_allow_mod4_mode           (false),
     m_allow_snap_split          (false),
     m_allow_click_edit          (true),
@@ -112,6 +110,7 @@ rcsettings::rcsettings () :
 #endif
     m_song_start_mode           (false),
     m_manual_ports              (false),
+    m_manual_port_count         (SEQ66_OUTPUT_BUSS_MAX),
     m_reveal_ports              (false),
     m_print_keys                (false),
     m_device_ignore             (false),
@@ -172,9 +171,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_clock_mod                 (rhs.m_clock_mod),
     m_verbose                   (rhs.m_verbose),
     m_auto_option_save          (rhs.m_auto_option_save),
-#if defined SEQ66_LASH_SUPPORT
     m_lash_support              (rhs.m_lash_support),
-#endif
     m_allow_mod4_mode           (rhs.m_allow_mod4_mode),
     m_allow_snap_split          (rhs.m_allow_snap_split),
     m_allow_click_edit          (rhs.m_allow_click_edit),
@@ -188,6 +185,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_with_jack_midi            (rhs.m_with_jack_midi),
     m_song_start_mode           (rhs.m_song_start_mode),
     m_manual_ports              (rhs.m_manual_ports),
+    m_manual_port_count         (rhs.m_manual_port_count),
     m_reveal_ports              (rhs.m_reveal_ports),
     m_print_keys                (rhs.m_print_keys),
     m_device_ignore             (rhs.m_device_ignore),
@@ -243,9 +241,7 @@ rcsettings::operator = (const rcsettings & rhs)
         m_clock_mod                 = rhs.m_clock_mod;
         m_verbose                   = rhs.m_verbose;
         m_auto_option_save          = rhs.m_auto_option_save;
-#if defined SEQ66_LASH_SUPPORT
         m_lash_support              = rhs.m_lash_support;
-#endif
         m_allow_mod4_mode           = rhs.m_allow_mod4_mode;
         m_allow_snap_split          = rhs.m_allow_snap_split;
         m_allow_click_edit          = rhs.m_allow_click_edit;
@@ -259,6 +255,7 @@ rcsettings::operator = (const rcsettings & rhs)
         m_with_jack_midi            = rhs.m_with_jack_midi;
         m_song_start_mode           = rhs.m_song_start_mode;
         m_manual_ports              = rhs.m_manual_ports;
+        m_manual_port_count         = rhs.m_manual_port_count;
         m_reveal_ports              = rhs.m_reveal_ports;
         m_print_keys                = rhs.m_print_keys;
         m_device_ignore             = rhs.m_device_ignore;
@@ -320,9 +317,7 @@ rcsettings::set_defaults ()
     m_clock_mod                 = 64;
     m_verbose                   = false;
     m_auto_option_save          = true;     /* legacy seq24 setting */
-#if defined SEQ66_LASH_SUPPORT
     m_lash_support              = false;
-#endif
     m_allow_mod4_mode           = false;
     m_allow_snap_split          = false;
     m_allow_click_edit          = true;
@@ -340,6 +335,7 @@ rcsettings::set_defaults ()
 #endif
     m_song_start_mode           = false;
     m_manual_ports              = false;
+    m_manual_port_count         = SEQ66_OUTPUT_BUSS_MAX;
     m_reveal_ports              = false;
     m_print_keys                = false;
     m_device_ignore             = false;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-03-22
+ * \updates       2020-04-19
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -130,7 +130,7 @@ rcfile::~rcfile ()
  *      if present, in favor of reading the MIDI control information from a
  *      separate file.  This allows the user to switch between different setups
  *      without having to mess with editing the "rc" file much.  The next data
- *      line after this section tag should be a filename.  If there is none, or
+ *      line after section should be a filename.  If there is none, or
  *      if it is set to "", then the [midi-control] section is used, if present.
  *      If neither are present, this is a fatal error.
  *
@@ -355,7 +355,7 @@ rcfile::parse ()
                     {
                         return make_error_message
                         (
-                            "midi-clock", "data line is missing"
+                            "midi-clock", "data line missing"
                         );
                     }
                 }
@@ -449,7 +449,7 @@ rcfile::parse ()
         }
     }
     else
-        return make_error_message("midi-input", "this section tag is missing");
+        return make_error_message("midi-input", "section is missing");
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
     {
@@ -461,7 +461,7 @@ rcfile::parse ()
     {
         return make_error_message
         (
-            "midi-clock-mod-ticks", "this section tag is missing"
+            "midi-clock-mod-ticks", "section is missing"
         );
     }
     if (line_after(file, "[midi-meta-events]"))
@@ -474,20 +474,23 @@ rcfile::parse ()
     {
         return make_error_message
         (
-            "midi-meta_events", "this section tag is missing"
+            "midi-meta_events", "section is missing"
         );
     }
     if (line_after(file, "[manual-ports]"))
     {
         sscanf(scanline(), "%d", &flag);
         rc_ref().manual_ports(bool(flag));
+        if (next_data_line(file))
+        {
+            int count;
+            sscanf(scanline(), "%d", &count);
+            rc().manual_port_count(count);
+        }
     }
     else
     {
-        return make_error_message
-        (
-            "manual-ports", "this section tag is missing"
-        );
+        return make_error_message("manual-ports", "section is missing");
     }
     if (line_after(file, "[reveal-ports]"))
     {
@@ -502,10 +505,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message
-        (
-            "reveal-ports", "this section tag is missing"
-        );
+        return make_error_message("reveal-ports", "section is missing");
     }
     if (line_after(file, "[last-used-dir]"))
     {
@@ -514,10 +514,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message
-        (
-            "last-used-dir", "this section tag is missing"
-        );
+        return make_error_message("last-used-dir", "section is missing");
     }
     if (line_after(file, "[recent-files]"))
     {
@@ -539,10 +536,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message
-        (
-            "recent-files", "this section tag is missing"
-        );
+        return make_error_message("recent-files", "section is missing");
     }
     if (line_after(file, "[playlist]"))
     {
@@ -921,9 +915,11 @@ rcfile::write ()
            "# JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports\n"
            "# already running on one's computer, or to use the autoconnect\n"
            "# feature (Seq66 connects to existing JACK ports on startup.\n"
+           "# A new feature is to change the number of ports; defaults to 16.\n"
            "\n"
         << (rc_ref().manual_ports() ? "1" : "0")
-        << "   # flag for manual ports\n"
+        << "   # flag for manual (virtual) ALSA or JACK ports\n"
+        << rc().manual_port_count() << "   # number of manual/virtual ports\n"
         ;
 
     /*
@@ -1020,7 +1016,7 @@ rcfile::write ()
         << rc_ref().song_start_mode() << "   # song_start_mode\n\n"
         "# jack_midi - Enable JACK MIDI, which is a separate option from\n"
         "# JACK Transport.\n\n"
-        << rc_ref().with_jack_midi()  << "   # with_jack_midi\n"
+        << rc_ref().with_jack_midi() << "   # with_jack_midi\n"
         ;
 
 #if defined SEQ66_LASH_SUPPORT

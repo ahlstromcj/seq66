@@ -2638,10 +2638,12 @@ midifile::write_song (performer & p)
 
                         midipulse seqend = end_trigger.tick_end();
                         midipulse measticks = seq.measures_to_ticks();
-                        midipulse remainder = seqend % measticks;
-                        if (remainder != measticks - 1)
-                            seqend += measticks - remainder - 1;
-
+                        if (measticks > 0)
+                        {
+                            midipulse remainder = seqend % measticks;
+                            if (remainder != measticks - 1)
+                                seqend += measticks - remainder - 1;
+                        }
                         lst.song_fill_seq_trigger(end_trigger, seqend, previous_ts);
                     }
                     write_track(lst);

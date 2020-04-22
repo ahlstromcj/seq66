@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-03-17
+ * \updates       2020-04-15
  * \license       GNU GPLv2 or above
  *
  *  nsm is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -84,8 +84,7 @@
  *      session.
  */
 
-#include <stdlib.h>                     /* C geteven() or secure_getenv()   */
-#include <string.h>                     /* C strlen(), strcmp()             */
+#include <cstring>                      /* C strlen(), strcmp()             */
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
@@ -93,6 +92,7 @@
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsm.hpp"                  /* seq66::nsm class                 */
 #include "nsm/nsmmessages.hpp"          /* seq66::nsm message functions     */
+#include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
 
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
@@ -1029,16 +1029,7 @@ nsm::construct_server_announce
 std::string
 get_nsm_url ()
 {
-    std::string result;
-#if defined _GNU_SOURCE
-    char * url = secure_getenv(nsm_url());
-#else
-    char * url = getenv(nsm_url());
-#endif
-    if (not_nullptr(url) && strlen(url) > 0)
-        result = std::string(url);
-
-    return result;
+    return get_session_url(nsm_url());
 }
 
 }           // namespace seq66

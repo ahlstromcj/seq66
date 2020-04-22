@@ -62,8 +62,9 @@ qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
     smanager        (),
     m_application   (app),
 #if defined SEQ66_NSM_SESSION
-    m_nsm_client    ()
+    m_nsm_client    (),
 #endif
+    m_window        ()
 {
 }
 
@@ -83,7 +84,7 @@ qt5nsmanager::~qt5nsmanager ()
 bool
 qt5nsmanager::create_session ()
 {
-    return false;
+    return smanager::create_session();
 }
 
 /**
@@ -122,13 +123,13 @@ qt5nsmanager::create_window ()
 }
 
 /**
- *
+ *  Will do more with this later.
  */
 
 bool
 qt5nsmanager::close_session ()
 {
-    return true;
+    return smanager::close_session();
 }
 
 /**

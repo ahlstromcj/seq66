@@ -24,19 +24,19 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-04-09
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  *  The process:
  *
- *      1. Call main_settings(argc, argv).  It sets defaults, does some parsing
+ *      -# Call main_settings(argc, argv).  It sets defaults, does some parsing
  *         of command-line options and files.  It saves the MIDI file-name, if
  *         provided.
- *      2. Call create_performer(), which could delete an existing performer.
+ *      -# Call create_performer(), which could delete an existing performer.
  *         It then launches the performer.  Save the unique-pointer.
- *      3. Call open_playlist().  It will open it, if specified and possible.
- *      4. If the MIDI file-name is set, open it via a call to open_midi_file().
- *      5. If a user-interface is needed, create a unique-pointer to it, then
+ *      -# Call open_playlist().  It will open it, if specified and possible.
+ *      -# If the MIDI file-name is set, open it via a call to open_midi_file().
+ *      -# If a user-interface is needed, create a unique-pointer to it, then
  *         show it.  This will remove any previous pointer.  The function is
  *         virtual, create_window().
  *
@@ -45,8 +45,10 @@
  *      PortMidi handling shall be done by the main() of the application. ???
  */
 
-#include "seq66_features.hpp"           /* set_app_name()                   */
+#include <cstdlib>                      /* C getenv() or secure_getenv()   */
+#include <cstring>                      /* C strlen(), strcmp()             */
 
+#include "seq66_features.hpp"           /* set_app_name()                   */
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
@@ -60,7 +62,7 @@
 #endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message()  */
+#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message() */
 #endif
 
 /*
@@ -333,46 +335,47 @@ smanager::create_session ()
         create_lash_driver(p, argc, argv);
     else
 #endif
-        session_setup();
+        session_setup();             /* daemonize: set basic signal handlers */
 #endif
-    return false;
+    return true;
 }
 
 bool
 smanager::close_session ()
 {
-    perf()->finish();                           /* tear down performer      */
+    bool result = perf()->finish();             /* tear down performer      */
     perf()->put_settings(rc());                 /* copy latest settings     */
-    if (true)                                   /* TODO */
-    {
-        (void) cmdlineopts::write_options_files("erroneous");
-        if (error_active())
-        {
-            errprint(error_message().c_str());
-        }
-//      else if (! errmessage.empty())
-//      {
-//          errprint(errmessage.c_str());
-//      }
-    }
-    else
+    if (result)
     {
         if (rc().auto_option_save())
             (void) cmdlineopts::write_options_files();
         else
             printf("[auto-option-save off, not saving config files]\n");
     }
+    else
+    {
+        (void) cmdlineopts::write_options_files("erroneous");
+        if (error_active())
+        {
+            errprint(error_message().c_str());
+        }
+    }
 
 #if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
     if (rc().lash_support())
-        delete_lash_driver();            /* deleted only exists      */
+        delete_lash_driver();
 #endif
 
-    return true;
+#if defined SEQ66_PLATFORM_LINUX
+    session_close();                /* daemonize: mark the app for exit     */
+#endif
+
+    return result;
 }
 
 /**
- *
+ *  There is, of course, no window in this base class.  Therefore, we just show
+ *  patterns if in verbose mode.
  */
 
 bool

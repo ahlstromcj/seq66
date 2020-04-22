@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2019-12-14
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -125,6 +125,8 @@ cmdlineopts::s_long_options [] =
     {"config",              required_argument, 0, 'c'},
     {"rc",                  required_argument, 0, 'f'},
     {"usr",                 required_argument, 0, 'F'},
+    {"User",                0, 0, 'Z'},
+    {"Native",              0, 0, 'z'},
 
     /*
      * New app-specific options, for easier expansion.  The -o/--option
@@ -146,17 +148,26 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxx x  xxx  *xx xxxxx xxxxx  xx    x
+         xxxxxx x  xx  xx xxx x  xxx  *xx xxxxx xxxxx  xx  aax
 \endverbatim
  *
  *  * Also note that 'o' options argument cannot be included here due to
  *  issues involving parse_o_options(), but it is *reserved* here, without the
  *  argument indicator.
+ *
+ * Manual + User mode '-Z' versus Auto + Native mode '-z':
+ *
+ *      Creates virtual ports '-m' and hides the native names for the ports '-R'
+ *      in favor of the 'user' definition of the names of ports and channels.
+ *
+ *      The opposite (native) setting uses '-a' and '-r'.
+ *
+ *      Both modes turn on the --user-save (-u) option.
  */
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:F:f:H:hi:JjKkLM:mNnoPpq:RrtSsU:uVvX:x:#";
+    "AaB:b:Cc:F:f:H:hi:JjKkLM:mNnoPpq:RrtSsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -283,7 +294,7 @@ cmdlineopts::s_help_4b =
 " seq66cli:\n"
 "              daemonize     Makes this application fork to the background.\n"
 "              no-daemonize  Or not.  These options do not apply to Windows.\n"
-"              mutes=value   Sets saving of mute-groups: 'mutes', 'midi',.\n"
+"              mutes=value   Sets saving of mute-groups: 'mutes', 'midi', or\n"
 "                            'both'.\n"
 "\n"
 "The 'daemonize' option works only in the CLI build. The 'sets' option works in\n"
@@ -544,8 +555,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             {
                                 if
                                 (
-                                    arg == "mutes" ||
-                                    arg == "midi" ||
+                                    arg == "mutes" || arg == "midi" ||
                                     arg == "both"
                                 )
                                 {
@@ -1013,8 +1023,23 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             seq66::rc().interaction_method(string_to_int(soptarg));
             break;
 
+        case 'Z':
+            seq66::rc().manual_ports(true);
+            seq66::rc().reveal_ports(false);
+            seq66::usr().save_user_config(true);
+            printf("[User mode: Manual ports and user-configured port names]\n");
+            break;
+
+        case 'z':
+            seq66::rc().manual_ports(false);
+            seq66::rc().reveal_ports(true);
+            seq66::usr().save_user_config(true);
+            printf("[Native mode: Native ports and port names]\n");
+            break;
+
         case '#':
             printf("%s\n", SEQ66_VERSION);
+            std::cout << SEQ66_VERSION << std::endl;
             result = c_null_option_index;
             break;
 

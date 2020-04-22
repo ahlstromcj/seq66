@@ -1,7 +1,7 @@
 # Seq66 0.90.0 (and above) user configuration file
 #
-# /home/user/.config/seq66/qseq66.usr
-# Written on 2019-08-15 05:34:20
+# /home/ahlstrom/.config/seq66/qseq66.usr
+# Written on 2019-12-13 05:41:48
 #
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
@@ -11,7 +11,7 @@
 [Seq66]
 
 config-type = "usr"
-version = 0
+version = 1
 
 # The [comments] section lets one document this file.  Lines starting
 # with '#' and '[' are ignored.  Blank lines are ignored.  To show a
@@ -259,7 +259,7 @@ version = 0
 192       # midi_ppqn, --ppqn p
 
 # Specifies the default beats per measure, or beats per bar.
-# The default value is 4.
+# The default value is 4, the range is 1 to 20.
 
 4       # midi_beats_per_measure/bar
 
@@ -377,6 +377,19 @@ version = 0
 
 1       # (user_ui_) use_new_seqedit
 
-# End of /home/user/.config/seq66/qseq66.usr
+[new-pattern-editor]
+
+# This section contains the setup values for recording when a new
+# pattern is opened. For flexibility, a new pattern means only that
+# the pattern has the default name, 'Unititled'. These values save time
+# during a live recording session.
+
+armed = true
+thru = true
+record = true
+qrecord = false
+record-style = merge
+
+# End of /home/ahlstrom/.config/seq66/qseq66.usr
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

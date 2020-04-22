@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-03-24
+# \update      2020-04-15
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -102,10 +102,6 @@ git_info = "$(git_version) $(git_branch)"
 #******************************************************************************
 # Compiler and linker flags
 #
-#  $(GTKMM_CFLAGS)
-#
-#  -I$(top_srcdir)/seq_gtkmm2/include
-#
 #	Unfortunately, we need to add the platform-specific include directories
 #	because we include the performer module in some modules, and it includes
 #	the platform-specific stuff.
@@ -188,6 +184,7 @@ libseq66_la_SOURCES = \
  play/setmapper.cpp \
  play/triggers.cpp \
  sessions/smanager.cpp \
+ sessions/smfunctions.cpp \
  unix/daemonize.cpp \
  util/automutex.cpp \
  util/basic_macros.cpp \

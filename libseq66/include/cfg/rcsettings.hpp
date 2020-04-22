@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2019-11-08
+ * \updates       2020-04-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -254,9 +254,7 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
-#if defined SEQ66_LASH_SUPPORT
     bool m_lash_support;            /**< Enable LASH, if compiled in.       */
-#endif
     bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
     bool m_allow_snap_split;        /**< Allow snap-split of a trigger.     */
     bool m_allow_click_edit;        /**< Allow double-click edit pattern.   */
@@ -271,6 +269,7 @@ private:
     bool m_song_start_mode;         /**< Use song mode versus live mode.    */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
+    int m_manual_port_count;        /**< [manual-ports] port count.         */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     bool m_device_ignore;           /**< From seq66 module, unused!         */
@@ -553,12 +552,10 @@ public:
         return m_auto_option_save;
     }
 
-#if defined SEQ66_LASH_SUPPORT
     bool lash_support () const
     {
         return m_lash_support;
     }
-#endif
 
     bool allow_mod4_mode () const
     {
@@ -662,6 +659,11 @@ public:
     bool manual_ports () const
     {
         return m_manual_ports;
+    }
+
+    int manual_port_count () const
+    {
+        return m_manual_port_count;
     }
 
     bool reveal_ports () const
@@ -900,12 +902,10 @@ protected:
         m_auto_option_save = flag;
     }
 
-#if defined SEQ66_LASH_SUPPORT
     void lash_support (bool flag)
     {
         m_lash_support = flag;
     }
-#endif
 
     void allow_mod4_mode (bool flag)
     {
@@ -955,6 +955,14 @@ protected:
     void manual_ports (bool flag)
     {
         m_manual_ports = flag;
+    }
+
+    void manual_port_count (int count)
+    {
+        if (count <= 0)
+            count = SEQ66_OUTPUT_BUSS_MAX;
+
+        m_manual_port_count = count;
     }
 
     void reveal_ports (bool flag)

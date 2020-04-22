@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-01-01
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1959,12 +1959,15 @@ performer::launch_input_thread ()
  *  the set_port_statuses() function defined in the mastermidibase module.
  */
 
-void
+bool
 performer::finish ()
 {
-    (void) deinit_jack_transport();
-    if (m_master_bus)
+    bool ok = deinit_jack_transport();
+    bool result = bool(m_master_bus);
+    if (result)
         m_master_bus->get_port_statuses(m_clocks, m_inputs);
+
+    return ok && result;
 }
 
 /**
@@ -2348,7 +2351,7 @@ performer::set_jack_mode (bool jack_button_active)
         if (jack_button_active)
             init_jack_transport();
         else
-            deinit_jack_transport();
+            (void) deinit_jack_transport();
     }
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst.set_jack_mode(is_jack_running());    /* seqroll keybinding  */

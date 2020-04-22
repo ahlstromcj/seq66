@@ -215,7 +215,7 @@
  *  The number of ALSA busses supported.  See mastermidibus::init().
  */
 
-#define SEQ66_ALSA_OUTPUT_BUSS_MAX        16
+#define SEQ66_OUTPUT_BUSS_MAX           16
 
 /**
  *  Flags an unspecified buss number.  Two spellings are provided, one for

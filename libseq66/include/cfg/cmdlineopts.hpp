@@ -39,7 +39,7 @@
 #include "seq66_features.hpp"           /* seq66::seq_version_text()        */
 
 #if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
-#include <getopt.h>
+#include <getopt.h>                     /* struct option s_long_options []  */
 #endif
 
 /*

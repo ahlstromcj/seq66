@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-04-04
+ * \updates       2020-04-22
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -118,17 +118,22 @@ main (int argc, char * argv [])
     if (result)     // ????
     {
 
-#if defined SEQ66_PLATFORM_LINUX_MOVE_TO_SMANAGER
-#if defined SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT_MOVE_TO_LASHMANAGER
         if (seq66::rc().lash_support())
             seq66::create_lash_driver(p, argc, argv);
         else
 #endif
-            seq66::session_setup();
-#endif
 
-        exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
-        (void) sm.close_session();
+        result = sm.create_session();
+        if (result)
+        {
+            exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
+            result = sm.close_session();
+            if (! result)
+            {
+                sm.show_message("error closing session; debug time!");
+            }
+        }
     }
     return exit_status;
 }
