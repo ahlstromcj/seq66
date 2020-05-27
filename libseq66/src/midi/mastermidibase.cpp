@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2019-04-14
+ * \updates       2019-05-27
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -37,6 +37,7 @@
 #include "midi/event.hpp"               /* seq66::event                     */
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase            */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 
 /*
@@ -621,11 +622,11 @@ mastermidibase::api_poll_for_midi ()
     if (result > 0)
     {
         if (result <= 2)
-            millisleep(1);              /* is this sensible?    */
+            (void) microsleep(100);              /* is this sensible?    */
     }
     else
     {
-        millisleep(1);
+        (void) microsleep(100);
     }
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-12-08
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -416,18 +416,10 @@ public:
         m_timestamp = time;
     }
 
-    /**
-     * \getter m_timestamp
-     */
-
     midipulse timestamp () const
     {
         return m_timestamp;
     }
-
-    /**
-     * \getter m_channel
-     */
 
     midibyte channel () const
     {
@@ -609,6 +601,15 @@ public:
     }
 
     /**
+     *  Static test for sense/reset messages.
+     */
+
+    static bool is_sense_or_reset (midibyte m)
+    {
+        return m == EVENT_MIDI_ACTIVE_SENSE || m == EVENT_MIDI_RESET;
+    }
+
+    /**
      *  Static test for messages that involve notes and velocity: Note On,
      *  Note Off, and Aftertouch.  This function requires that the channel
      *  nybble has already been masked off.
@@ -704,6 +705,12 @@ public:
     void set_channel_status (midibyte eventcode, midibyte channel);
     void set_meta_status (midibyte metatype);
     void set_status_keep_channel (midibyte eventcode);
+    bool set_midi_event
+    (
+        midipulse timestamp,
+        const midibyte * buffer,
+        int count
+    );
 
     /**
      *  Sets the channel "nybble", without modifying the status "nybble".
@@ -876,9 +883,9 @@ public:
         m_data[1] = (m_data[1] - 1) & 0x7F;
     }
 
-    bool append_sysex (midibyte * data, int len);
+    bool append_sysex (const midibyte * data, int len);
     bool append_sysex (midibyte data);
-    bool append_meta_data (midibyte metatype, midibyte * data, int len);
+    bool append_meta_data (midibyte metatype, const midibyte * data, int len);
     bool append_meta_data (midibyte metatype, const std::vector<midibyte> & data);
     void restart_sysex ();              // kind of useless
 
@@ -1211,6 +1218,17 @@ public:
     }
 
     /**
+     *  Indicates if the event is a Sense event or a Reset event.
+     *  Currently ignored by Sequencer64.
+     */
+
+    bool is_sense_reset ()
+    {
+        return m_status == EVENT_MIDI_ACTIVE_SENSE ||
+            m_status == EVENT_MIDI_RESET;
+    }
+
+    /**
      *  Indicates if the event is a Meta event or not.
      *  We're overloading the SysEx support to handle Meta events as well.
      */
@@ -1264,6 +1282,7 @@ public:
     }
 
     void print () const;
+    void print_note (bool is_a_link = false) const;
     std::string to_string () const;
 
     /**

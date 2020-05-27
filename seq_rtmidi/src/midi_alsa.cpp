@@ -522,12 +522,12 @@ midi_in_alsa::api_poll_for_midi ()
     rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    // BOGUS
     if (rtindata->using_callback())
     {
-        millisleep(1);
+        (void) microsleep(100);
         return 0;
     }
     else
     {
-        millisleep(1);
+        (void) microsleep(100);
         return rtindata->queue().count();
     }
 }

@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2019-10-18
+ * \updates       2020-05-27
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -44,6 +44,7 @@
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_jack.hpp"                /* seq66::midi_jack_info            */
 #include "midi_jack_info.hpp"           /* seq66::midi_jack_info            */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 #include "util/calculations.hpp"        /* extract_port_names()             */
 
@@ -524,7 +525,7 @@ midi_jack_info::api_port_start
 int
 midi_jack_info::api_poll_for_midi ()
 {
-    millisleep(1);
+    (void) microsleep(100);
     return 0;
 }
 

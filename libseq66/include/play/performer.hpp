@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-04-22
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -2745,7 +2745,7 @@ public:                                 /* access functions for the containers *
     }
 
     bool midi_control_keystroke (const keystroke & k);
-    bool midi_control_event (const event & ev);
+    bool midi_control_event (const event & ev, bool recording = false);
 
 private:
 
@@ -2778,6 +2778,7 @@ private:
 
     void output_func ();
     void input_func ();
+    bool poll_cycle ();
     void launch_input_thread ();
     void launch_output_thread ();
 

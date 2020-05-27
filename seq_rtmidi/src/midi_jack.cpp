@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-04-27
+ * \updates       2019-05-27
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -156,6 +156,7 @@
 #include "midi/jack_assistant.hpp"      /* seq66::jack_status_pair_t        */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_jack.hpp"                /* seq66::midi_jack                 */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 
 /**
  *  Delimits the size of the JACK ringbuffer.
@@ -1377,12 +1378,12 @@ midi_in_jack::api_poll_for_midi ()
     rtmidi_in_data * rtindata = m_jack_data.m_jack_rtmidiin;
     if (rtindata->using_callback())
     {
-        millisleep(1);
+        (void) microsleep(100);
         return 0;
     }
     else
     {
-        millisleep(1);
+        (void) microsleep(100);
         return rtindata->queue().count();
     }
 }
@@ -1418,51 +1419,9 @@ midi_in_jack::api_get_midi_event (event * inev)
     if (result)
     {
         midi_message mm = rtindata->queue().pop_front();
-        inev->set_timestamp(mm.timestamp());
-        if (mm.count() == 3)
+        result = inev->set_midi_event(mm.timestamp(), mm.data(), mm.count());
+        if (result)
         {
-            inev->set_status_keep_channel(mm[0]);
-            inev->set_data(mm[1], mm[2]);
-            if (inev->is_note_off_recorded())
-            {
-                midibyte channel = mm[0] & EVENT_GET_CHAN_MASK;
-                midibyte status = EVENT_NOTE_OFF | channel;
-                inev->set_status_keep_channel(status);
-            }
-        }
-        else if (mm.count() == 2)
-        {
-            inev->set_status_keep_channel(mm[0]);
-            inev->set_data(mm[1]);
-        }
-        else
-        {
-            /*
-             * TMI: infoprint("No-data system information encountered?");
-             *
-             *  The Yamaha PSS-790 is constantly emitting Active Sense events.
-             */
-
-#ifdef SEQ66_USE_SYSEX_PROCESSING
-
-            /**
-             *  We will only get EVENT_SYSEX on the first packet of MIDI data;
-             *  the rest we have to poll for.  SysEx processing is currently
-             *  disabled.  The code that follows has a big bug!
-             */
-
-            midibyte buffer[0x1000];        /* temporary buffer for Sysex   */
-            inev->set_sysex_size(mm.count());
-            if (buffer[0] == EVENT_MIDI_SYSEX)
-            {
-                inev->restart_sysex();      /* set up for sysex if needed   */
-                if (! inev->append_sysex(buffer, mm.count()))
-                {
-                    errprint("event::append_sysex() failed");
-                }
-            }
-#endif
-
             /*
              * For now, ignore certain messages; they're not handled by the
              * perform object.  Could be handled there, but saves some
@@ -1498,14 +1457,10 @@ midi_in_jack::api_get_midi_event (event * inev)
                 }
                 fflush(stdout);
             }
-            if (st == EVENT_MIDI_ACTIVE_SENSE || st == EVENT_MIDI_RESET)
-            {
-                result = false;             /* sequencer64-packages #4      */
-            }
+            if (event::is_sense_or_reset(st))
+                result = false;
             else
-            {
                 inev->set_status(st);
-            }
         }
     }
     return result;

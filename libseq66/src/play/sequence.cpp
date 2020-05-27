@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-03-13
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -61,6 +61,7 @@
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/triggers.hpp"            /* seq66::triggers, etc.            */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/automutex.hpp"           /* seq66::mutex, automutex          */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
@@ -894,7 +895,7 @@ sequence::play
                  */
 
                 if (measure_threshold())
-                    microsleep(1);                  /* EXPERIMENTAL         */
+                    (void) microsleep(1);           /* EXPERIMENTAL         */
             }
         }
     }

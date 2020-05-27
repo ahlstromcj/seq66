@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-04-22
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -284,6 +284,7 @@
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
 
 /*
@@ -2799,16 +2800,8 @@ performer::output_func ()
                 delta_us = long(next_clock_delta_us);
 
             if (delta_us > 0)
-            {
-#if defined SEQ66_PLATFORM_WINDOWS
-                delta = delta_us / 1000;
-                Sleep(delta);
-#else
-                delta.tv_sec = delta_us / 1000000;
-                delta.tv_nsec = (delta_us % 1000000) * 1000;
-                nanosleep(&delta, NULL);                    /* a Linux API  */
-#endif
-            }
+                (void) microsleep(delta_us);            /* daemonize.hpp    */
+
             if (pad.js_jack_stopped)
                 inner_stop();
         }
@@ -2875,7 +2868,9 @@ performer::output_func ()
  *      Starts the MIDI Time Clock.  Kepler34 does "stop();
  *      set_playback_mode(false); start();" in its version of this event.
  *      This sets the playback mode to Live mode. This behavior seems
- *      reasonable, though the function names Seq66 uses are different.
+ *      reasonable, though the function names Seq66 uses are different.  Used when
+ *      starting from the beginning of the song.  Obey the MIDI time clock.
+ *      Comments in the banner.
  *
  * EVENT_MIDI_CONTINUE:
  *
@@ -2937,163 +2932,154 @@ performer::output_func ()
  *      It seems specific to certain Yamaha devices, but might prove useful
  *      later.
  *
- *  For events less than or equal to SysEx, we call midi_control_event()
- *  to handle the MIDI controls that Sequencer64 supports.  (These are
- *  configurable in the "rc" configuration file.)
+ *  For events less than or equal to SysEx, we call midi_control_event() to handle
+ *  the MIDI controls that Sequencer64 supports.  (These are configurable in the
+ *  "rc" configuration file.) We test for MIDI control events even if "dumping".
+ *  Otherwise, we cannot handle any more control events once recording is turned
+ *  on.  Warning:  This can slow down recording.
+ *
+ *  We currently ignore these events on input.  MIGHT NOT BE VALID.  STILL
+ *  INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are filtered in
+ *  midi_jack.  Send out the current event, if "dumping".  ev.get_status() ==
+ *
+ *      EVENT_MIDI_ACTIVE_SENSE  handled elsewhere
+ *      EVENT_MIDI_RESET handled elsewhere
+ *      EVENT_MIDI_QUARTER_FRAME
+ *      EVENT_MIDI_SONG_SELECT
+ *      EVENT_MIDI_SONG_F4
+ *      EVENT_MIDI_SONG_F5
+ *      EVENT_MIDI_TUNE_SELECT
+ *      EVENT_MIDI_SYSEX_END
+ *      EVENT_MIDI_SYSEX_CONTINUE
+ *      EVENT_MIDI_SONG_F9
+ *      EVENT_MIDI_SONG_FD
  */
 
 void
 performer::input_func ()
 {
-    event ev;
-    while (m_io_active)              /* perhaps we should lock this variable */
+    while (m_io_active)                 /* should we lock this variable?    */
     {
-        if (m_master_bus->poll_for_midi() > 0)
+        if (! poll_cycle())
+            return;
+    }
+}
+
+/**
+ *  A helper function for input_func().
+ */
+
+bool
+performer::poll_cycle ()
+{
+    bool result = true;
+    if (m_master_bus->poll_for_midi() > 0)
+    {
+        do
         {
-            do
+            event ev;
+            if (m_master_bus->get_midi_event(&ev))
             {
-                if (m_master_bus->get_midi_event(&ev))
+                if (ev.below_sysex())
                 {
-                    if (ev.below_sysex())
+                    if (m_master_bus->is_dumping())     /* see banner   */
                     {
-                        /*
-                         *  Test for MIDI control events even if "dumping".
-                         *  Otherwise, we cannot handle any more control events
-                         *  once recording is turned on.  Warning:  This can
-                         *  slow down recording:  ! midi_control_record();
-                         */
-
-                        if (m_master_bus->is_dumping())
+                        if (midi_control_event(ev, true))
                         {
-                            if (midi_control_event(ev))
-                            {
 #ifdef PLATFORM_DEBUG_TMI
-                                std::string estr = to_string(ev);
-                                infoprintf("MIDI ctrl event %s", estr.c_str());
+                            std::string estr = to_string(ev);
+                            infoprintf("MIDI ctrl event %s", estr.c_str());
 #endif
-                            }
-                            else
-                            {
-                                ev.set_timestamp(get_tick());
-                                if (rc().show_midi())
-                                    ev.print();
-
-                                if (m_filter_by_channel)
-                                    m_master_bus->dump_midi_input(ev);
-                                else
-                                    m_master_bus->get_sequence()->stream_event(ev);
-                            }
                         }
                         else
                         {
+                            ev.set_timestamp(get_tick());
+#ifdef PLATFORM_DEBUG_TMI
+                            ev.print_note();
+#endif
                             if (rc().show_midi())
                                 ev.print();
 
-                            (void) midi_control_event(ev);
+                            if (m_filter_by_channel)
+                                m_master_bus->dump_midi_input(ev);
+                            else
+                                m_master_bus->get_sequence()->stream_event(ev);
                         }
-
-#if defined USE_STAZED_PARSE_SYSEX               // more code to incorporate!!!
-                        if (global_use_sysex)
-                        {
-                            if (FF_RW_button_type != FF_RW_RELEASE)
-                            {
-                                if (ev.is_note_off())
-                                {
-                                    /*
-                                     * Notes 91 G5 & 96 C6 on YPT = FF/RW keys
-                                     */
-
-                                    midibyte n = ev.get_note();
-                                    if (n == 91 || n == 96)
-                                        FF_RW_button_type = FF_RW_RELEASE;
-                                }
-                            }
-                        }
-#endif
                     }
-                    else if (ev.is_midi_start())
+                    else
                     {
-                        /*
-                         * Used when starting from the beginning of the song.
-                         * Obey the MIDI time clock.  Comments in the banner.
-                         */
-
-                        stop();                                 /* Kepler34 */
-                        song_start_mode(sequence::playback::live);
-                        start(song_mode());
-                        m_midiclockrunning = m_usemidiclock = true;
-                        m_midiclocktick = m_midiclockpos = 0;
-                    }
-                    else if (ev.is_midi_continue())
-                    {
-                        m_midiclockrunning = true;
-                        song_mode(false);                       /* Kepler34 */
-                        start(song_mode());
-                    }
-                    else if (ev.is_midi_stop())
-                    {
-                        m_midiclockrunning = false;
-                        all_notes_off();
-                        inner_stop(true);
-                        m_midiclockpos = get_tick();
-                    }
-                    else if (ev.is_midi_clock())
-                    {
-                        if (m_midiclockrunning)
-                            m_midiclocktick += m_midiclockincrement;
-                    }
-                    else if (ev.is_midi_song_pos())
-                    {
-                        midibyte d0, d1;            /* see note in banner   */
-                        ev.get_data(d0, d1);
-                        m_midiclockpos = combine_bytes(d0, d1);
-                    }
-                    else if (ev.is_sysex())         /* what about channel?  */
-                    {
-#if defined USE_STAZED_PARSE_SYSEX               // more code to incorporate!!!
-                        if (global_use_sysex)
-                            parse_sysex(ev);
-#endif
                         if (rc().show_midi())
                             ev.print();
 
-                        if (rc().pass_sysex())
-                            m_master_bus->sysex(&ev);
+                        (void) midi_control_event(ev);
                     }
-#ifdef USE_ACTIVE_SENSE_AND_RESET
-
-                    /*
-                     */
-
-                    else
-                    {
-                        /*
-                         * Ignore these events on input.  MIGHT NOT BE VALID.
-                         * STILL INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and
-                         * EVENT_MIDI_RESET are filtered in midi_jack.  Send out
-                         * the current event, if "dumping".
-                         *
-                         * ev.get_status() ==
-                         * EVENT_MIDI_ACTIVE_SENSE  handled elsewhere
-                         * EVENT_MIDI_RESET handled elsewhere
-                         * EVENT_MIDI_QUARTER_FRAME
-                         * EVENT_MIDI_SONG_SELECT
-                         * EVENT_MIDI_SONG_F4
-                         * EVENT_MIDI_SONG_F5
-                         * EVENT_MIDI_TUNE_SELECT
-                         * EVENT_MIDI_SYSEX_END
-                         * EVENT_MIDI_SYSEX_CONTINUE
-                         * EVENT_MIDI_SONG_F9
-                         * EVENT_MIDI_SONG_FD
-                         */
-
-                        return;
-                    }
-#endif  // USE_ACTIVE_SENSE_AND_RESET
                 }
-            } while (m_master_bus->is_more_input());
-        }
+                else if (ev.is_midi_start())
+                {
+                    stop();                                 /* Kepler34 */
+                    song_start_mode(sequence::playback::live);
+                    start(song_mode());
+                    m_midiclockrunning = m_usemidiclock = true;
+                    m_midiclocktick = m_midiclockpos = 0;
+#ifdef PLATFORM_DEBUG
+                if (rc().verbose_option())
+                    infoprint("MIDI Start");
+#endif
+                }
+                else if (ev.is_midi_continue())
+                {
+                    m_midiclockrunning = true;
+                    song_mode(false);                       /* Kepler34 */
+                    start(song_mode());
+#ifdef PLATFORM_DEBUG
+                if (rc().verbose_option())
+                    infoprint("MIDI Continue");
+#endif
+                }
+                else if (ev.is_midi_stop())
+                {
+                    m_midiclockrunning = false;
+                    all_notes_off();
+                    inner_stop(true);
+                    m_midiclockpos = get_tick();
+#ifdef PLATFORM_DEBUG
+                if (rc().verbose_option())
+                    infoprint("MIDI Stop");
+#endif
+                }
+                else if (ev.is_midi_clock())
+                {
+                    if (m_midiclockrunning)
+                        m_midiclocktick += m_midiclockincrement;
+                }
+                else if (ev.is_midi_song_pos())
+                {
+                    midibyte d0, d1;            /* see note in banner   */
+                    ev.get_data(d0, d1);
+                    m_midiclockpos = combine_bytes(d0, d1);
+                }
+                else if (ev.is_sysex())         /* what about channel?  */
+                {
+                    if (rc().show_midi())
+                        ev.print();
+
+                    if (rc().pass_sysex())
+                        m_master_bus->sysex(&ev);
+                }
+#if defined USE_ACTIVE_SENSE_AND_RESET
+                else if (ev.is_sense_reset())
+                {
+                    return false;                       /* see banner */
+                }
+#endif
+                else
+                {
+                    /* ignore the event */
+                }
+            }
+        } while (m_master_bus->is_more_input());
     }
+    return result;
 }
 
 /**
@@ -4442,13 +4428,17 @@ performer::midi_control_keystroke (const keystroke & k)
  * \param ev
  *      The MIDI event to process.
  *
+ * \param recording
+ *      This parameter, if true, restricts the handled controls to start, stop, and
+ *      record.
+ *
  * \return
  *      Returns true if the event was valid and usable, and the call to the
  *      automation function returned true.
  */
 
 bool
-performer::midi_control_event (const event & ev)
+performer::midi_control_event (const event & ev, bool recording)
 {
     midicontrol::key k(ev);
     const midicontrol & incoming = m_midi_controls.control(k);
@@ -4459,11 +4449,23 @@ performer::midi_control_event (const event & ev)
         const midioperation & mop = m_operations.operation(s);
         if (mop.is_usable())
         {
-            automation::action a = incoming.action_code();
-            bool invert = incoming.inverse_active();
-            int d0 = incoming.d0();
-            int index = incoming.control_code();        /* in lieu of d1()  */
-            result = mop.call(a, d0, index, invert);
+            bool process_the_action = true;
+            if (recording)
+            {
+                process_the_action = s == automation::slot::start ||
+                    s == automation::slot::stop ||
+                    s == automation::slot::record ;
+            }
+            if (process_the_action)
+            {
+                automation::action a = incoming.action_code();
+                bool invert = incoming.inverse_active();
+                int d0 = incoming.d0();
+                int index = incoming.control_code();        /* in lieu of d1()  */
+                result = mop.call(a, d0, index, invert);
+            }
+            else
+                result = false;
         }
     }
     return result;

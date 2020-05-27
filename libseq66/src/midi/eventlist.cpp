@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-03-12
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -317,7 +317,6 @@ eventlist::merge (eventlist & el, bool presort)
 void
 eventlist::link_new ()
 {
-    bool endfound = false;
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
         event & eon = dref(on);
@@ -325,14 +324,16 @@ eventlist::link_new ()
         {
             auto off = on;                          /* point to note on     */
             ++off;                                  /* get next element     */
-            endfound = false;
+
+            bool endfound = false;
             while (off != m_events.end())
             {
                 event & eoff = dref(off);
-                endfound = link_new_note(eon, eoff);
-                ++off;
+                endfound = link_note(eon, eoff);
                 if (endfound)
                     break;
+
+                ++off;
             }
             if (! endfound)
             {
@@ -341,15 +342,15 @@ eventlist::link_new ()
                 {
                     event & eoff = dref(off);
                     endfound = link_note(eon, eoff);
-                    ++off;
                     if (endfound)
                         break;
+
+                    ++off;
                 }
             }
         }
     }
 }
-
 
 /**
  *  THINK ABOUT IT:  If we're in legacy merge mode for a loop, the Note Off is
@@ -364,31 +365,6 @@ eventlist::link_new ()
  */
 
 bool
-eventlist::link_new_note (event & eon, event & eoff)
-{
-    bool result = eon.linkable(eoff);
-    if (result)
-    {
-        eon.link(&eoff);                /* link + mark                  */
-        eoff.link(&eon);
-
-        /*
-         * Not sure why we bother to mark here, when we unmark them
-         * all afterward in preparation for potential pruning.
-         *
-         *  eon.mark();
-         *  eoff.mark();
-         */
-    }
-    return result;
-}
-
-/**
- *  The same as link_new_note(), except that it checks is_marked() instead of
- *  is_linked().
- */
-
-bool
 eventlist::link_note (event & eon, event & eoff)
 {
     bool result = eon.linkable(eoff);
@@ -396,14 +372,6 @@ eventlist::link_note (event & eon, event & eoff)
     {
         eon.link(&eoff);                /* link + mark                  */
         eoff.link(&eon);
-
-        /*
-         * Not sure why we bother to mark here, when we unmark them
-         * all afterward in preparation for potential pruning.
-         *
-         *  eon.mark();
-         *  eoff.mark();
-         */
     }
     return result;
 }
@@ -1932,6 +1900,21 @@ eventlist::print () const
     printf("events[%d]:\n", count());
     for (auto & e : m_events)
         e.print();
+}
+
+/**
+ *  Prints a list of the currently-held events.  Useful for debugging.
+ */
+
+void
+eventlist::print_notes (const std::string & tag) const
+{
+    if (count() > 0)
+    {
+        printf("Notes %s:\n", tag.c_str());
+        for (auto & e : m_events)
+            e.print_note();
+    }
 }
 
 /**

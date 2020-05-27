@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-02-10
+ * \updates       2020-05-27
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -233,21 +233,6 @@ midi_api::cancel_callback ()
         error(rterror::WARNING, m_error_string);
     }
 }
-
-/**
- *  We now provide a default version, since this usage is common and we don't
- *  like having so many overrides.
- *
- * \return
- *      Always returns 0, after a milliseconds's sleep.
-
-int
-midi_api::api_poll_for_midi ()
-{
-    millisleep(1);
-    return 0;
-}
- */
 
 }           // namespace seq66
 

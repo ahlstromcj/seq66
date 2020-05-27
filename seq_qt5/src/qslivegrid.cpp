@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2019-12-15
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -73,6 +73,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid (qsliveframe)  */

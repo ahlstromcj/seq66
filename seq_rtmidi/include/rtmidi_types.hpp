@@ -148,6 +148,11 @@ public:
         return reinterpret_cast<const char *>(&m_bytes[0]);
     }
 
+    const midibyte * data () const
+    {
+        return m_bytes.data();
+    }
+
     int count () const
     {
         return int(m_bytes.size());

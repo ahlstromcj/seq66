@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2019-09-08
+ * \updates       2020-05-27
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -563,13 +563,6 @@ protected:
     virtual void api_clock (midipulse tick) = 0;
 
 };          // class midibase
-
-/*
- *  Free functions
- */
-
-extern void millisleep (unsigned long ms);
-extern void microsleep (unsigned long us);
 
 }           // namespace seq66
 

@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-04-08
+ * \updates       2020-05-27
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -59,6 +59,7 @@
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
+#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/calculations.hpp"        /* seq66::tempo_us_from_bpm()       */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
@@ -356,7 +357,7 @@ midi_alsa_info::api_poll_for_midi ()
 {
     int result = poll(m_poll_descriptors, m_num_poll_descriptors, 1000);
     if (result == 0)
-        millisleep(1);
+        (void) microsleep(100);
 
     return result;
 }
@@ -604,55 +605,25 @@ midi_alsa_info::api_get_midi_event (event * inev)
         return false;
     }
 
-    inev->set_timestamp(ev->time.tick);
-    inev->set_status_keep_channel(buffer[0]);
-
-    /**
-     *  We will only get EVENT_SYSEX on the first packet of MIDI data;
-     *  the rest we have to poll for.  SysEx processing is currently
-     *  disabled.
+    /*
+     *  Note that ev->time.tick is always 0!  (Same in Seq32).
      */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
-    inev->set_sysex_size(bytes);            /* why here? why not in "if"?   */
-    if (buffer[0] == EVENT_MIDI_SYSEX)
+    result = inev->set_midi_event(ev->time.tick, buffer, bytes);
+    if (result)
     {
-        inev->restart_sysex();              /* set up for sysex if needed   */
-        sysex = inev->append_sysex(buffer, bytes);
-    }
-    else
-    {
-#endif
-        /*
-         *  Some keyboards send Note On with velocity 0 for Note Off, so we
-         *  take care of that situation here by creating a Note Off event,
-         *  with the channel nybble preserved. Note that we call
-         *  event::set_status_keep_channel() instead of using stazed's
-         *  set_status function with the "record" parameter.  We do need to
-         *  mask in the actual channel number!
-         */
-
-        inev->set_data(buffer[1], buffer[2]);
-        if (inev->is_note_off_recorded())
+        while (sysex)               /* sysex might be more than one message */
         {
-            midibyte channel = buffer[0] & EVENT_GET_CHAN_MASK;
-            midibyte status = EVENT_NOTE_OFF | channel;
-            inev->set_status_keep_channel(status);
+            snd_seq_event_input(m_alsa_seq, &ev);
+            long bytes = snd_midi_event_decode
+            (
+                midi_ev, buffer, sizeof(buffer), ev
+            );
+            if (bytes > 0)
+                sysex = inev->append_sysex(buffer, bytes);
+            else
+                sysex = false;
         }
-        sysex = false;
-
-#if defined SEQ66_USE_SYSEX_PROCESSING
-    }
-#endif
-
-    while (sysex)       /* sysex messages might be more than one message */
-    {
-        snd_seq_event_input(m_alsa_seq, &ev);
-        long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof(buffer), ev);
-        if (bytes > 0)
-            sysex = inev->append_sysex(buffer, bytes);
-        else
-            sysex = false;
     }
     snd_midi_event_free(midi_ev);
     return true;
