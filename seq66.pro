@@ -6,7 +6,7 @@
 # \library      qpseq66 application
 # \author       Chris Ahlstrom
 # \date         2018-11-15
-# \update       2019-10-20
+# \update       2020-05-30
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -31,6 +31,8 @@
 TEMPLATE = subdirs
 SUBDIRS =  libseq66 seq_portmidi seq_qt5 Seq66qt5
 CONFIG += static link_prl ordered qtc_runnable c++14
+!defined(MIDILIB, var):MIDILIB = portmidi
+message("MIDILIB is set to: $${MIDILIB}")
 
 # None of these seem to work on 32-bit Linux using Qt 5.3:
 #
@@ -42,8 +44,9 @@ QMAKE_CXXFLAGS += -std=c++14
 # Use automake to build this side app:
 #
 # Seqtool.depends = libseq66
+# Seq66qt5.depends = libseq66 seq_portmidi seq_qt5
 
-Seq66qt5.depends = libseq66 seq_portmidi seq_qt5
+Seq66qt5.depends = libseq66 seq_$$(MIDILIB) seq_qt5
 
 #******************************************************************************
 # seq66.pro (qpseq66)
