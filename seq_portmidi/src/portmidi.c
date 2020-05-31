@@ -359,12 +359,20 @@ Pm_set_hosterror_message (const char * msg)
 
 /**
  * \getter pm_host_error_message
+ *
+ * \return
+ *      Returns &pm_hosterror_message[0].  But, if the message buffer is empty
+ *      (the first character is null), an internal (static) dummy message
+ *      pointer is returned instead, so as not to cause exceptions in C++
+ *      callers.
  */
 
 const char *
 Pm_hosterror_message (void)
 {
-    return &pm_hosterror_message[0];
+    static const char * s_unknown_msg = "Unspecified portmidi error";
+    return pm_hosterror_message[0] == '\0' ?
+        s_unknown_msg : &pm_hosterror_message[0] ;
 }
 
 #if defined PM_CHECK_ERRORS

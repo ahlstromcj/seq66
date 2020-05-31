@@ -27,7 +27,7 @@
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2020-03-24
+ * \date          2020-05-30
  * \updates       2020-04-12
  * \license       GNU GPLv2 or above
  *
@@ -53,17 +53,42 @@ class smanager
 
 public:
 
+    /**
+     *  Provides a unique pointer to a performer, to enable the performer to
+     *  be recreated.
+     */
+
     using pointer = std::unique_ptr<performer>;
 
 private:
 
+    /**
+     *  Provides a pointer to the performer to be managed.  This performer can
+     *  be removed and recreated as needed (e.g. when another MIDI device
+     *  comes online.)
+     */
+
     pointer m_perf_pointer;
+
+    /**
+     *  Hold the name of the currently-loaded MIDI file.
+     */
 
     std::string m_midi_filename;
 
-    std::string m_extant_errmsg = "unspecified error";
+    /**
+     *  Holds the current error message.  Mutable because it is not part of
+     *  the true state of the session manager.
+     */
 
-    bool m_extant_msg_active = false;
+    mutable std::string m_extant_errmsg = "unspecified error";
+
+    /**
+     *  Holds the current error state.  Mutable because it is not part of
+     *  the true state of the session manager.
+     */
+
+    mutable bool m_extant_msg_active = false;
 
 public:
 
@@ -118,7 +143,7 @@ protected:
         return m_perf_pointer.get();
     }
 
-    void set_error_message (const std::string & message = "");
+    void set_error_message (const std::string & message = "") const;
 
 };          // class smanager
 

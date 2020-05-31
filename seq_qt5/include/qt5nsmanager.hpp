@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-03-30
+ * \updates       2020-05-31
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -68,8 +68,8 @@ public:
     virtual bool create_window ();
     virtual bool close_session ();
     virtual bool run ();
-    virtual void show_message (const std::string & msg);
-    virtual void show_error (const std::string & msg);
+    virtual void show_message (const std::string & msg) const;
+    virtual void show_error (const std::string & msg) const;
 
 signals:        /* signals sent by session client callbacks */
 

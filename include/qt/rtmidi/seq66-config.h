@@ -1,5 +1,5 @@
-#ifndef SEQ66_QT_PORTMIDI_CONFIG_H
-#define SEQ66_QT_PORTMIDI_CONFIG_H
+#ifndef SEQ66_QT_RTMIDI_CONFIG_H
+#define SEQ66_QT_RTMIDI_CONFIG_H
 
 /*
  *  This file is part of seq66.
@@ -20,29 +20,36 @@
  */
 
 /**
- * \file          seq66-config.h for Qt/PortMidi
+ * \file          seq66-config.h for Qt/RtMidi
  *
  *  This module provides platform/build-specific configuration that is not
- *  modifiable via a "configure" operation.  It is meant for the hardwired
- *  qmake build of the PortMidi Linux and Windows versions.
+ *  modifiable via a "configure" operation.  It is meant for those who do not want
+ *  to use automake to build the Linux/Qt version of seq66.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2018-11-10
+ * \date          2020-05-31
  * \updates       2020-05-31
  * \license       GNU GPLv2 or above
  *
- *  Qt Portmidi Linux and Windows versions, hardwired for use with
- *  qtcreator/qmake.  That build uses PortMidi in order to support both Linux
- *  and Windows. Hence no support for JACK or LASH, for example.
- *  However, it still defines some things that are available on GNU/Linux/MingW
- *  systems.
+ *  Qt Rtmidi Linux and Windows versions, hardwired for use with
+ *  qtcreator/qmake instead of using GNU autotools.
  *
- *  Note that there is a native (i.e. automake) Linux Qt build that uses
- *  RtMidi, so that JACK is supported.  However, LASH support is not being
- *  ported to seq66.
+ *  One motivation for creating a Qt build for this version of seq66 is that, one
+ *  a Debian Sid/Unstable laptop with gcc/g++ version 9 as the compiler, we get
+ *  this error when building for debug more (but not for release mode):
  *
- *  Note:  This header file is NOT auto-generated for the portmidi build.
+ *      /usr/bin/ld:
+ *      /home/.../seq66/seq_qt5/src/.libs/libseq_qt5.a(qloopbutton.o):
+ *      undefined reference to symbol
+ *      '_ZN8QPainter8drawTextERK6QRectFiRK7QStringPS0_@@Qt_5'
+ *      /usr/bin/ld:
+ *      /usr/lib/x86_64-linux-gnu/libQt5Gui.so: error adding symbols: DSO
+ *          missing from command line
+ *
+ *  Why is that "Qt_5" namespace tacked onto the end of that symbol?
+ *
+ *  Note:  This header file is NOT auto-generated for the rtmidi build.
  *  Therefore, the date and version information below must be edited by hand
  *  when needed.
  *
@@ -93,21 +100,21 @@
 /* "Distro where build was done" */
 
 #ifndef SEQ66_APP_BUILD_OS
-#define SEQ66_APP_BUILD_OS "'Windows/Mac/qmake'"
+#define SEQ66_APP_BUILD_OS "'Linux/qmake'"
 #endif
 
 /**
  * Names this version of application, plus the engine in use, and the type of
  * application.  Useful in Help / Build Info.
- * "qp" means "Qmake/Qt PortMidi-based".
+ * "qr" means "Qmake/Qt PortMidi-based".
  */
 
 #ifndef SEQ66_APP_ENGINE
-#define SEQ66_APP_ENGINE "portmidi"
+#define SEQ66_APP_ENGINE "rtmidi"
 #endif
 
 #ifndef SEQ66_APP_NAME
-#define SEQ66_APP_NAME "qpseq66"
+#define SEQ66_APP_NAME "qrseq66"
 #endif
 
 #ifndef SEQ66_APP_TYPE
@@ -127,10 +134,13 @@
 #endif
 
 /*
- * The LIBLO library is unavailable on Windows.  Don't know about Mac!
+ * Define if LIBLO library is available.  If you get an error, either undefine
+ * this value or install the liblo-dev package.
  */
 
-#undef SEQ66_CONFIG_LIBLO
+#ifndef SEQ66_CONFIG_LIBLO
+#define SEQ66_CONFIG_LIBLO 1
+#endif
 
 /*
  * Names the configuration file for this version of application. The "q"
@@ -138,7 +148,7 @@
  */
 
 #ifndef SEQ66_CONFIG_NAME
-#define SEQ66_CONFIG_NAME "qpseq66"
+#define SEQ66_CONFIG_NAME "qrseq66"
 #endif
 
 /*
@@ -146,10 +156,10 @@
  * wanted.
  */
 
-#undef SEQ66_COVFLAGS 
+#undef SEQ66_COVFLAGS
 
 /*
- * Define DBGFLAGS=-ggdb -O0 -DDEBUG -fno-inline if debug support is wanted.
+ * Define DBGFLAGS=-g -O0 -DDEBUG -fno-inline if debug support is wanted.
  */
 
 #ifndef SEQ66_DBGFLAGS
@@ -282,14 +292,20 @@
 #endif
 
 /*
- * Define to value 1 to enable JACK session.  Purely experimental, probably
- * won't work.
+ * Define to enable JACK session.
  */
 
-#undef SEQ66_JACK_SESSION
-#undef SEQ66_JACK_SUPPORT
-#undef SEQ66_LASH_SUPPORT
-#undef SEQ66_NSM_SESSION
+#ifndef SEQ66_JACK_SESSION
+#define SEQ66_JACK_SESSION 1
+#endif
+
+/*
+ * Define to enable JACK driver.
+ */
+
+#ifndef SEQ66_JACK_SUPPORT
+#define SEQ66_JACK_SUPPORT 1
+#endif
 
 /*
  * Define to enable highlighting empty sequences
@@ -301,16 +317,32 @@
 #endif
 #endif
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/*
+ * Define to enable LASH.
+ */
+
+#ifndef SEQ66_LASH_SUPPORT
+#define SEQ66_LASH_SUPPORT 1
+#endif
+
+/*
+ * Define to the sub-directory where libtool stores uninstalled libraries.
+ * Useless for qmake, but keep it for now.
+ */
+
 #ifndef SEQ66_LT_OBJDIR
 #define SEQ66_LT_OBJDIR ".libs/"
 #endif
 
+#undef SEQ66_MULTI_MAINWID
+
 /*
- * Define to enable multiple main windows.  Not to be supported in Seq66.
+ * Define if NSM support is available.
  */
 
-#undef SEQ66_MULTI_MAINWID
+#ifndef SEQ66_NSM_SESSION
+#define SEQ66_NSM_SESSION 1
+#endif
 
 /* Name of package */
 #ifndef SEQ66_PACKAGE
@@ -343,12 +375,12 @@
 #endif
 
 /*
- * Indicates if PortMidi support is enabled.
+ * Indicates that rtmidi support is enabled.
  */
 
-#ifndef SEQ66_PORTMIDI_SUPPORT
-#define SEQ66_PORTMIDI_SUPPORT 1
-#undef SEQ66_RTMIDI_SUPPORT
+#ifndef SEQ66_RTMIDI_SUPPORT
+#undef SEQ66_PORTMIDI_SUPPORT 1
+#define SEQ66_RTMIDI_SUPPORT 1
 #endif
 
 /*
@@ -400,10 +432,10 @@
 #undef SEQ66_RTMIDI_SUPPORT
 #endif
 
-#endif  // SEQ66_QT_PORTMIDI_CONFIG_H
+#endif  // SEQ66_QT_RTMIDI_CONFIG_H
 
 /*
- * seq66-config.h for Qt/PortMidi
+ * seq66-config.h for Qt/RtMidi
  *
  * vim: sw=4 ts=4 wm=4 et ft=c
  */

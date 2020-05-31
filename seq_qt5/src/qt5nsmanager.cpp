@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-04-08
+ * \updates       2020-05-31
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -148,7 +148,7 @@ qt5nsmanager::run ()
  */
 
 void
-qt5nsmanager::show_message (const std::string & msg)
+qt5nsmanager::show_message (const std::string & msg) const
 {
     if (error_active())
         m_window->show_message_box(error_message());
@@ -161,26 +161,35 @@ qt5nsmanager::show_message (const std::string & msg)
  */
 
 void
-qt5nsmanager::show_error (const std::string & /*msg*/)
+qt5nsmanager::show_error (const std::string & msg) const
 {
 #if defined SEQ66_PORTMIDI_SUPPORT
 
-    if (Pm_error_present())
+    if (msg.empty())
     {
-        errmsg = std::string(Pm_hosterror_message());
-        // TODO:
-        // m_seq66_window->show_message_box(msg);
+        if (Pm_error_present())
+        {
+            std::string errmsg = std::string(Pm_hosterror_message());
+            m_window->show_message_box(errmsg);
+        }
+    }
+    else
+    {
+        set_error_message(msg);
+        m_window->show_message_box(msg);
+    }
+
+#else
+
+    if (msg.empty())
+    {
+        set_error_message(msg);
+        m_window->show_message_box(msg);
     }
 
 #endif
 
-    //// TODO: error_message(msg);
 }
-
-/**
- *
- */
-
 
 }           // namespace seq66
 

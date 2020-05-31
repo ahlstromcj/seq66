@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-04-22
+ * \updates       2020-05-30
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -376,6 +376,9 @@ smanager::close_session ()
 /**
  *  There is, of course, no window in this base class.  Therefore, we just show
  *  patterns if in verbose mode.
+ *
+ * \return
+ *      Always returns false.
  */
 
 bool
@@ -387,8 +390,17 @@ smanager::create_window ()
     return false;
 }
 
+/**
+ *  Sets the error flag and the error message, which a both mutable so we can
+ *  safely call this function under any circumstances.
+ *
+ * \param message
+ *      Provides the message to be set. If empty, the message-active flag and
+ *      the message are both cleared.
+ */
+
 void
-smanager::set_error_message (const std::string & message)
+smanager::set_error_message (const std::string & message) const
 {
     m_extant_errmsg = message;
     m_extant_msg_active = ! message.empty();
@@ -432,6 +444,11 @@ smanager::show_error (const std::string & msg)
 #if defined SEQ66_PORTMIDI_SUPPORT
 
 /**
+ *  Checks for a PortMidi error, storing the message if applicable.
+ *
+ * \param [out] errmsg
+ *      Provides a destination for the PortMidi error.  It is cleared if there
+ *      is no error.
  *
  * \return
  *      Returns true if there is an error.  In this case, the caller should show
@@ -444,8 +461,13 @@ smanager::portmidi_error_check (std::string & errmsg) const
     bool result = Pm_error_present();
     if (result)
     {
-        set_error_message(std::string(Pm_hosterror_message()));
+        std::string pmerrmsg = std::string(Pm_hosterror_message());
+        set_error_message(pmerrmsg);
+        errmsg = pmerrmsg;
     }
+    else
+        errmsg.clear();
+
     return result;
 }
 

@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2019-09-23
+# \update         2020-05-31
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -110,7 +110,8 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qsmaintime.hpp \
  include/qsmainwnd.hpp \
  include/qstriggereditor.hpp \
- include/qt5_helpers.hpp
+ include/qt5_helpers.hpp \
+ include/qt5nsmanager.hpp
 
 SOURCES += src/gui_palette_qt5.cpp \
  src/qbase.cpp \
@@ -154,7 +155,8 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qsmaintime.cpp \
  src/qsmainwnd.cpp \
  src/qstriggereditor.cpp \
- src/qt5_helpers.cpp
+ src/qt5_helpers.cpp \
+ src/qt5nsmanager.cpp
 
 # The output of the uic command goes to the seq_qt5/forms directory in
 # the shadow directory, and cannot be located unless the OUT_PWD macro

@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-04-22
+ * \updates       2020-05-30
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -97,25 +97,31 @@ main (int argc, char * argv [])
 #if defined SEQ66_PORTMIDI_SUPPORT
 
     /*
-     * We check for any "fatal" PortMidi errors, so we can display
-     * them.  But we still want to keep going, in order to at least
-     * generate the log-files and configuration files to
+     * We check for any "fatal" PortMidi errors, so we can display them.  But
+     * we still want to keep going, in order to at least generate the
+     * log-files and "erroneous" configuration files to
      * C:/Users/me/AppData/Local/seq66 or ~/.config/seq66.
      */
 
     if (result)
     {
+        std::string errmsg;
         if (sm.portmidi_error_check(errmsg))
         {
-            result = false;
-            seq66_window->show_message_box(errmsg);
+            /*
+             * TODO???
+             *
+             * seq66_window->show_message_box(errmsg);
+             */
+
             sm.show_message(errmsg);
+            result = false;
         }
     }
 #endif  // SEQ66_PORTMIDI_SUPPORT
 
 
-    if (result)     // ????
+    if (result)
     {
 
 #if defined SEQ66_LASH_SUPPORT_MOVE_TO_LASHMANAGER
