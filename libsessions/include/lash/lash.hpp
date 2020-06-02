@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-03-22
+ * \updates       2020-06-01
  * \license       GNU GPLv2 or above
  *
  *  Some believe that LASH support is going by the wayside, perhaps being
@@ -35,6 +35,7 @@
  *  application level.
  */
 
+#include "seq66-config.h"                   /* compiler feature macros      */
 #include "util/basic_macros.h"          /* platform and debugging macros    */
 
 #if defined SEQ66_LASH_SUPPORT

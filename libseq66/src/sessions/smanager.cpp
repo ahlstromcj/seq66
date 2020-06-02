@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-05-30
+ * \updates       2020-06-02
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -211,6 +211,10 @@ smanager::main_settings (int argc, char * argv [])
  *  fashion.  Also, we always have to launch, even if an error occurred, to
  *  avoid a segfault and show at least a minimal message.  LASH support is now
  *  back in Seq66.
+ *
+ * \return
+ *      Returns false if the performer wasn't able to be created and launch3e.
+ *      Other failures, such as not getting good setting, are ignored.
  */
 
 bool
@@ -224,28 +228,18 @@ smanager::create_performer ()
     result = bool(p);
     if (result)
     {
-        if (rc().verbose())                     /* good for trouble-shoots  */
+        bool ok = p->get_settings(rc());
+        m_perf_pointer = std::move(p);              /* change the ownership */
+        if (ok && rc().verbose())               /* for trouble-shoots   */
         {
             rc().key_controls().show();
             rc().midi_controls().show();
             rc().mute_groups().show();
         }
-        result = p->get_settings(rc());
-        if (result)
+        result = perf()->launch(usr().midi_ppqn());
+        if (! result)
         {
-            result = p->launch(usr().midi_ppqn());
-            if (result)
-            {
-                /*
-                 * Odd.  Cannot just use operator =, must move as well.
-                 */
-
-                m_perf_pointer = std::move(p);      /* change the ownership */
-            }
-            else
-            {
-                errprint("performer::launch() failed");
-            }
+            errprint("performer::launch() failed");
         }
     }
     else

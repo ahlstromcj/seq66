@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2020-03-30
+# \update      2020-06-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -21,7 +21,6 @@
 message($$_PRO_FILE_PWD_)
 
 QT += core gui widgets
-TARGET = qpseq66
 TEMPLATE += app
 CONFIG += static qtc_runnable c++14
 
@@ -33,13 +32,26 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
+contains (CONFIG, rtmidi) {
+   TARGET = qrseq66
+   MIDILIB = rtmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+   DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
+} else {
+   TARGET = qpseq66
+   MIDILIB = portmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+   DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
+}
+message($${DEFINES})
+
 SOURCES += seq66qt5.cpp
 
 INCLUDEPATH = \
- ../include/qt/portmidi \
+ ../include/qt/$${MIDILIB} \
  ../libseq66/include \
- ../libsession/include \
- ../seq_portmidi/include \
+ ../libsessions/include \
+ ../seq_$${MIDILIB}/include \
  ../seq_qt5/include
 
 # Sometimes some midifile and rect member functions cannot be found at link
@@ -54,7 +66,7 @@ win32:CONFIG(release, debug|release) {
  LIBS += \
   -Wl,--start-group \
   -L$$OUT_PWD/../libseq66/release -lseq66 \
-  -L$$OUT_PWD/../seq_portmidi/release -lseq_portmidi \
+  -L$$OUT_PWD/../seq_$${MIDILIB}/release -lseq_$${MIDILIB} \
   -L$$OUT_PWD/../seq_qt5/release -lseq_qt5 \
   -Wl,--end-group
 }
@@ -62,7 +74,7 @@ else:win32:CONFIG(debug, debug|release) {
  LIBS += \
   -Wl,--start-group \
   -L$$OUT_PWD/../libseq66/debug -lseq66 \
-  -L$$OUT_PWD/../seq_portmidi/debug -lseq_portmidi \
+  -L$$OUT_PWD/../seq_$${MIDILIB}/debug -lseq_$${MIDILIB} \
   -L$$OUT_PWD/../seq_qt5/debug -lseq_qt5 \
   -Wl,--end-group
 }
@@ -70,14 +82,14 @@ else:unix {
 LIBS += \
  -Wl,--start-group \
  -L$$OUT_PWD/../libseq66 -lseq66 \
- -L$$OUT_PWD/../seq_portmidi -lseq_portmidi \
+ -L$$OUT_PWD/../seq_$${MIDILIB} -lseq_$${MIDILIB} \
  -L$$OUT_PWD/../seq_qt5 -lseq_qt5 \
  -Wl,--end-group
 }
 
 DEPENDPATH += \
  $$PWD/../libseq66 \
- $$PWD/../seq_portmidi \
+ $$PWD/../seq_$${MIDILIB} \
  $$PWD/../seq_qt5
 
 # Works in Linux with "CONFIG += debug".
@@ -85,7 +97,7 @@ DEPENDPATH += \
 unix {
  PRE_TARGETDEPS += \
   $$OUT_PWD/../libseq66/libseq66.a \ 
-  $$OUT_PWD/../seq_portmidi/libseq_portmidi.a \ 
+  $$OUT_PWD/../seq_$${MIDILIB}/libseq_$${MIDILIB}.a \ 
   $$OUT_PWD/../seq_qt5/libseq_qt5.a
 }
 

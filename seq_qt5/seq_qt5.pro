@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2020-05-31
+# \update         2020-06-01
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -32,6 +32,16 @@ CONFIG(debug, debug|release) {
    DEFINES += DEBUG
 } else {
    DEFINES += NDEBUG
+}
+
+contains (CONFIG, rtmidi) {
+   MIDILIB = rtmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+   DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
+} else {
+   MIDILIB = portmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+   DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 }
 
 TARGET = seq_qt5
@@ -163,9 +173,10 @@ SOURCES += src/gui_palette_qt5.cpp \
 # is used to find that directory.
 
 INCLUDEPATH = include \
- ../include/qt/portmidi \
+ ../include/qt/$${MIDILIB} \
  ../libseq66/include \
- ../seq_portmidi/include \
+ ../libsessions/include \
+ ../seq_$${MIDILIB}/include \
  ../resources \
  $$OUT_PWD
 

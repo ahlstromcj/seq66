@@ -6,7 +6,7 @@
 # \library      qpseq66 application
 # \author       Chris Ahlstrom
 # \date         2018-11-15
-# \update       2020-05-30
+# \update       2020-06-01
 # \version      $Revision$
 # \license      $XPC_SUITE_GPL_LICENSE$
 #
@@ -24,32 +24,29 @@
 #
 #       Seqtool
 #
-#   TO DO:
-#
-#   Eventually include libsessions, conditionally.  It can be used only if
-#   MIDILIB is set to "rtmidi".
-#
 #------------------------------------------------------------------------------
 
 TEMPLATE = subdirs
 CONFIG += static link_prl ordered qtc_runnable c++14
-!defined(MIDILIB, var):MIDILIB = portmidi
-SUBDIRS =  libseq66 seq_$${MIDILIB} seq_qt5 Seq66qt5
+contains (CONFIG, rtmidi) {
+    SUBDIRS =  libseq66 libsessions seq_rtmidi seq_qt5 Seq66qt5
+    Seq66qt5.depends = libseq66 libsessions seq_rtmidi seq_qt5
+} else {
+    SEQ66_MIDILIB = portmidi
+    SUBDIRS =  libseq66 seq_portmidi seq_qt5 Seq66qt5
+    Seq66qt5.depends = libseq66 seq_portmidi seq_qt5
+}
 message("SUBDIRS is set to: $${SUBDIRS}")
 
-# None of these seem to work on 32-bit Linux using Qt 5.3:
+# These do not work on 32-bit Linux using Qt 5.3:
 #
-# CONFIG += c++14
-# QMAKE_CXXFLAGS += -std=gnu++14
+# CONFIG += c++14 -or-  QMAKE_CXXFLAGS += -std=gnu++14
 
 QMAKE_CXXFLAGS += -std=c++14
 
-# Use automake to build this side app:
+# Use only automake to build this side app, for now:
 #
 # Seqtool.depends = libseq66
-# Seq66qt5.depends = libseq66 seq_portmidi seq_qt5
-
-Seq66qt5.depends = libseq66 seq_$(MIDILIB) seq_qt5
 
 #******************************************************************************
 # seq66.pro (qpseq66)

@@ -33,7 +33,6 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-
 # Target file directory:
 # DESTDIR = bin
 #

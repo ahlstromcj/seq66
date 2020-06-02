@@ -3,10 +3,10 @@
 #------------------------------------------------------------------------------
 ##
 # \file        libsessions.pro
-# \library     qseq66 and qpseq66 application
+# \library     qseq66 and qrseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-03-24
+# \update      2020-06-01
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,6 +33,16 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
+contains (CONFIG, rtmidi) {
+   MIDILIB = rtmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+   DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
+} else {
+   MIDILIB = portmidi
+   DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+   DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
+}
+
 HEADERS += include/lash/lash.hpp \
  include/nsm/nsm.hpp \
  include/nsm/nsmclient.hpp \
@@ -43,7 +53,10 @@ SOURCES += src/lash/lash.cpp \
  src/nsm/nsmclient.cpp \
  src/nsm/nsmmessages.cpp \
 
-INCLUDEPATH = ../include/qt/portmidi ../seq_portmidi/include include
+INCLUDEPATH = ../include/qt/rtmidi \
+ ../libseq66/include \
+ ../seq_rtmidi/include \
+ include
 
 #******************************************************************************
 # libsessions.pro (qpseq66)

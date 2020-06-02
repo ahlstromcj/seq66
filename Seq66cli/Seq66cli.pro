@@ -38,7 +38,7 @@ SOURCES += seq66cli.cpp
 INCLUDEPATH = \
  ../include/qt/portmidi \
  ../libseq66/include \
- ../libsession/include \
+ ../libsessions/include \
  ../seq_portmidi/include \
  ../seq_qt5/include
 

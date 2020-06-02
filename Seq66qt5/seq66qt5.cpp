@@ -76,7 +76,7 @@ main (int argc, char * argv [])
     bool result = sm.main_settings(argc, argv); // bool ok = true;
     if (result)
     {
-        result = sm.create_performer();
+        result = sm.create_performer();     /* fails if performer not made  */
         if (result)
             result = sm.open_playlist();
 
@@ -86,13 +86,14 @@ main (int argc, char * argv [])
             if (! fname.empty())
             {
                 fname = sm.open_midi_file(fname, errormessage);
-                result = ! fname.empty();
+                if (fname.empty())
+                {
+                    warnprintf("Could not open %s\n", fname.c_str());
+                }
             }
-        }
-        if (result)
             result = sm.create_window();
+        }
     }
-
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 

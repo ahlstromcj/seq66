@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2018-05-15
+# \update      2020-06-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -32,6 +32,9 @@ CONFIG(debug, debug|release) {
 } else {
    DEFINES += NDEBUG
 }
+
+DEFINES += "SEQ66_MIDILIB=\\\"portmidi\\\""
+DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 
 TARGET = seq_portmidi
 

@@ -39,7 +39,6 @@
 #include <memory>                       /* std::unique_ptr<>                */
 
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
-#include "play/performer.hpp"           /* seq66::performer                 */
 #include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
 #if defined SEQ66_NSM_SESSION

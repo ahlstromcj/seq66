@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2020-05-29
-# \update      2020-05-29
+# \update      2020-06-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -24,6 +24,7 @@ message($$_PRO_FILE_PWD_)
 
 TEMPLATE = lib
 CONFIG += staticlib config_prl qtc_runnable
+TARGET = seq_rtmidi
 
 # These are needed to set up seq66_platform_macros:
 
@@ -33,9 +34,8 @@ CONFIG(debug, debug|release) {
    DEFINES += NDEBUG
 }
 
-TARGET = seq_rtmidi
-
-# Common:
+DEFINES += "SEQ66_MIDILIB=\\\"rtmidi\\\""
+DEFINES += "SEQ66_RTMIDI_SUPPORT=1"
 
 HEADERS += \
  include/mastermidibus_rm.hpp \
@@ -51,13 +51,10 @@ HEADERS += \
  include/rterror.hpp \
  include/rtmidi.hpp \
  include/rtmidi_info.hpp \
- seq66_rtmidi_features.h
+ include/seq66_rtmidi_features.h
 
-# Mac OSX, Windows:
-#
-#  Not supported.  Use the portmidi build, not the rtmidi build.
-
-# Common:
+# Mac OSX and Windows currently are not supported by the internal rtmidi
+# library.  Use the portmidi build, not the rtmidi build.
 
 SOURCES += \
  src/mastermidibus.cpp \

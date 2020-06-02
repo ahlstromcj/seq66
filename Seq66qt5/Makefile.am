@@ -103,6 +103,7 @@ libseq_qt5dir = $(builddir)/seq_qt5/src/.libs
 
 AM_CXXFLAGS = \
  -I$(top_srcdir)/libseq66/include \
+ -I$(top_srcdir)/libsessions/include \
  -I$(top_srcdir)/seq_portmidi/include \
  -I$(top_srcdir)/seq_rtmidi/include \
  -I$(top_srcdir)/seq_qt5/include \

@@ -1,5 +1,9 @@
-#ifndef SEQ66_QT_RTMIDI_CONFIG_H
-#define SEQ66_QT_RTMIDI_CONFIG_H
+#ifdef SEQ66_RTMIDI_SUPPORT
+
+#ifndef SEQ66_QT_MIDILIB_CONFIG
+#define SEQ66_QT_MIDILIB_CONFIG
+
+#undef SEQ66_PORTMIDI_SUPPORT
 
 /*
  *  This file is part of seq66.
@@ -375,15 +379,6 @@
 #endif
 
 /*
- * Indicates that rtmidi support is enabled.
- */
-
-#ifndef SEQ66_RTMIDI_SUPPORT
-#undef SEQ66_PORTMIDI_SUPPORT 1
-#define SEQ66_RTMIDI_SUPPORT 1
-#endif
-
-/*
  * Define PROFLAGS=-pg (gprof) or -p (prof) if profile support is wanted.
  */
 
@@ -413,26 +408,12 @@
 #define SEQ66_STDC_HEADERS 1
 #endif
 
-/* Define to 1 if the X Window System is missing or not being used. */
-/* #undef X_DISPLAY_MISSING */
-
-/* gnu source */
 #ifndef SEQ66__GNU_SOURCE
 #define SEQ66__GNU_SOURCE 1
 #endif
 
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
-
-#ifdef SEQ66_PORTMIDI_SUPPORT
-#undef SEQ66_RTMIDI_SUPPORT
-#endif
-
-#ifdef SEQ66_WINDOWS_SUPPORT
-#undef SEQ66_RTMIDI_SUPPORT
-#endif
-
-#endif  // SEQ66_QT_RTMIDI_CONFIG_H
+#endif  // SEQ66_QT_MIDILIB_CONFIG
+#endif  // SEQ66_RTMIDI_SUPPORT
 
 /*
  * seq66-config.h for Qt/RtMidi
