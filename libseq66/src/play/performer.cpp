@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-05-27
+ * \updates       2020-06-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -888,7 +888,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
 
         mapper().fill_play_set(m_play_set);
 
-#ifdef USE_MIDI_CONTROL_OUT_ACTIVE                          // not present
+#if defined USE_MIDI_CONTROL_OUT_ACTIVE                // not present
         midi_control_out().send_seq_event
         (
             seqnum, midicontrolout::action::activate   /* flushes  */
@@ -1165,6 +1165,7 @@ performer::inner_stop (bool midiclock)
     m_is_running = false;
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
+    midi_control_out().send_event(midicontrolout::action::stop);
 }
 
 /**
@@ -1881,7 +1882,7 @@ performer::launch_output_thread ()
         struct sched_param schp;
         memset(&schp, 0, sizeof(sched_param));
         schp.sched_priority = 1;                /* Linux range: 1 to 99 */
-#ifdef SEQ66_PLATFORM_PTHREADS
+#if defined SEQ66_PLATFORM_PTHREADS
         int rc = pthread_setschedparam
         (
             m_out_thread.native_handle(), SCHED_FIFO, &schp
@@ -1923,7 +1924,7 @@ performer::launch_input_thread ()
         struct sched_param schp;
         memset(&schp, 0, sizeof(sched_param));
         schp.sched_priority = 1;                /* Linux range: 1 to 99 */
-#ifdef SEQ66_PLATFORM_PTHREADS
+#if defined SEQ66_PLATFORM_PTHREADS
         int rc = pthread_setschedparam
         (
             m_in_thread.native_handle(), SCHED_FIFO, &schp
@@ -2544,7 +2545,6 @@ performer::output_func ()
          *  See note 1 in the function banner.
          */
 
-
         bool ok = jack_song_mode() && ! m_dont_reset_ticks;
         m_dont_reset_ticks = false;
         if (ok)
@@ -2822,7 +2822,7 @@ performer::output_func ()
         else
         {
             if (is_jack_master())                       // running Live Master
-                position_jack(song_mode(), 0);      // ca 2016-01-21
+                position_jack(song_mode(), 0);
         }
         if (! m_usemidiclock)                           // stop by MIDI event?
         {
@@ -2863,14 +2863,24 @@ performer::output_func ()
  *
  *      8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
  *
+ * http://midi.teragonaudio.com/tech/midispec/seq.htm
+ *
+ *      Provides a description of how the following events and Song Position
+ *      work.
+ *
  * EVENT_MIDI_START:
  *
- *      Starts the MIDI Time Clock.  Kepler34 does "stop();
- *      set_playback_mode(false); start();" in its version of this event.
- *      This sets the playback mode to Live mode. This behavior seems
- *      reasonable, though the function names Seq66 uses are different.  Used when
- *      starting from the beginning of the song.  Obey the MIDI time clock.
- *      Comments in the banner.
+ *      Starts the MIDI Time Clock.  The Master sends this message, which
+ *      alerts the slave that, upon receipt of the very next MIDI Clock
+ *      message, the slave should start playback.  MIDI Start puts the slave
+ *      in "play mode", and the receipt of that first MIDI Clock marks the
+ *      initial downbeat of the song.  MIDI B
+ *
+ *      Kepler34 does "stop(); set_playback_mode(false); start();" in its
+ *      version of this event.  This sets the playback mode to Live mode. This
+ *      behavior seems reasonable, though the function names Seq66 uses are
+ *      different.  Used when starting from the beginning of the song.  Obey
+ *      the MIDI time clock.  Comments in the banner.
  *
  * EVENT_MIDI_CONTINUE:
  *
@@ -2881,6 +2891,11 @@ performer::output_func ()
  *      playback mode to Live mode.
  *
  * EVENT_MIDI_STOP:
+ *
+ *      A master stops the slave simultaneously by sending a MIDI Stop
+ *      message. The master may then continue to send MIDI Clocks at the rate
+ *      of its tempo, but the slave should ignore these, and not advance its
+ *      song position.
  *
  *      Do nothing, just let the system pause.  Since we're not getting ticks
  *      after the stop, the song won't advance when start is received, we'll
@@ -2980,13 +2995,13 @@ performer::poll_cycle ()
             event ev;
             if (m_master_bus->get_midi_event(&ev))
             {
-                if (ev.below_sysex())
+                if (ev.below_sysex())                   /* below 0xF0   */
                 {
                     if (m_master_bus->is_dumping())     /* see banner   */
                     {
                         if (midi_control_event(ev, true))
                         {
-#ifdef PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                             std::string estr = to_string(ev);
                             infoprintf("MIDI ctrl event %s", estr.c_str());
 #endif
@@ -2994,7 +3009,7 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
-#ifdef PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                             ev.print_note();
 #endif
                             if (rc().show_midi())
@@ -3016,36 +3031,39 @@ performer::poll_cycle ()
                 }
                 else if (ev.is_midi_start())
                 {
-                    stop();                                 /* Kepler34 */
                     song_start_mode(sequence::playback::live);
-                    start(song_mode());
                     m_midiclockrunning = m_usemidiclock = true;
                     m_midiclocktick = m_midiclockpos = 0;
-#ifdef PLATFORM_DEBUG
-                if (rc().verbose_option())
-                    infoprint("MIDI Start");
-#endif
+                    auto_stop();
+                    auto_play();
+                    if (rc().verbose())
+                        infoprint("MIDI Start");
                 }
                 else if (ev.is_midi_continue())
                 {
-                    m_midiclockrunning = true;
-                    song_mode(false);                       /* Kepler34 */
-                    start(song_mode());
-#ifdef PLATFORM_DEBUG
-                if (rc().verbose_option())
-                    infoprint("MIDI Continue");
-#endif
+                    song_start_mode(sequence::playback::live);
+                    m_midiclockpos = get_tick();            // EXPERIMENTAL
+                    m_dont_reset_ticks = true;
+                    m_midiclockrunning = m_usemidiclock = true;
+
+                    /*
+                     * Not sure why, but doing this twice works.
+                     */
+
+                    auto_pause(); auto_play();
+                    auto_pause(); auto_play();
+                    if (rc().verbose())
+                        infoprint("MIDI Continue");
                 }
                 else if (ev.is_midi_stop())
                 {
+                    all_notes_off();                        /* needed?      */
+                    m_usemidiclock = true;
                     m_midiclockrunning = false;
-                    all_notes_off();
-                    inner_stop(true);
                     m_midiclockpos = get_tick();
-#ifdef PLATFORM_DEBUG
-                if (rc().verbose_option())
-                    infoprint("MIDI Stop");
-#endif
+                    auto_stop();
+                    if (rc().verbose())
+                        infoprint("MIDI Stop");
                 }
                 else if (ev.is_midi_clock())
                 {
@@ -3337,10 +3355,10 @@ void
 performer::panic ()
 {
     stop_playing();
-    inner_stop();
+    inner_stop();                                   /* force inner stop     */
     mapper().panic();
     if (m_master_bus)
-        m_master_bus->panic();                  /* flush the MIDI buss  */
+        m_master_bus->panic();                      /* flush the MIDI buss  */
 
     set_tick(0);
 }
@@ -4042,12 +4060,7 @@ void
 performer::group_learn (bool learning)
 {
     mapper().group_learn(learning);
-    midi_control_out().send_event
-    (
-        learning ?
-            midicontrolout::action::learn_on :
-                midicontrolout::action::learn_off
-    );
+    midi_control_out().send_learning(learning);
     for (auto notify : m_notify)
         (void) notify->on_group_learn(learning);
 }

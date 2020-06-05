@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-05-26
+ * \updates       2020-06-02
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -443,7 +443,7 @@ event::set_midi_event
     bool result = true;
     set_timestamp(timestamp);
     set_sysex_size(count);
-#ifdef PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     printf
     (
         "set_midi_event([%ld], status %02x, d0 %02X, d1 %02X, %d bytes)\n",
@@ -465,6 +465,11 @@ event::set_midi_event
     {
         set_status_keep_channel(buffer[0]);
         set_data(buffer[1]);
+    }
+    else if (count == 1)
+    {
+        set_status(buffer[0]);
+        clear_data();
     }
     else
     {
@@ -525,7 +530,7 @@ event::adjust_note_off ()
 
 /**
  *  Deletes and clears out the SYSEX buffer.  (The m_sysex member used to be a
- *  pointer.)
+ *  pointer.)  This function also causes get_sysex_size() to return 0.
  */
 
 void
@@ -552,23 +557,22 @@ event::restart_sysex ()
  *      Returns false if there was an EVENT_MIDI_SYSEX_END byte in the
  *      appended data, or if an error occurred, and the caller needs to stop
  *      trying to process the data.  We're not quite sure what to do with any
- *      extra data remains.
+ *      extra data that remains.
  */
 
 bool
 event::append_sysex (const midibyte * data, int dsize)
 {
-    bool result = false;
-    if (not_nullptr(data) && (dsize > 0))
+    bool result = not_nullptr(data) && (dsize > 0);
+    if (result)
     {
-        result = true;
         for (int i = 0; i < dsize; ++i)
         {
             m_sysex.push_back(data[i]);
             if (data[i] == EVENT_MIDI_SYSEX_END)
             {
                 result = false;
-                break;                  /* is this the right think to do? */
+                break;                  /* is this the right thing to do? */
             }
         }
     }
@@ -666,6 +670,9 @@ event::append_meta_data (midibyte metatype, const std::vector<midibyte> & data)
  * \param data
  *      A single MIDI byte of data, assumed to be part of a SYSEX message
  *      event.
+ *
+ * \return
+ *      Returns true if the event is not a SysEx-end event.
  */
 
 bool

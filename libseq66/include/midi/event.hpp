@@ -814,6 +814,15 @@ public:
     void set_data (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
 
     /**
+     *  Clears the data, useful in reusing an event to hold incoming MIDI.
+     */
+
+    void clear_data ()
+    {
+        m_data[0] = m_data[1] = 0;
+    }
+
+    /**
      *  Retrieves only the first data byte from m_data[] and copies it into
      *  the parameter.
      *
@@ -887,7 +896,7 @@ public:
     bool append_sysex (midibyte data);
     bool append_meta_data (midibyte metatype, const midibyte * data, int len);
     bool append_meta_data (midibyte metatype, const std::vector<midibyte> & data);
-    void restart_sysex ();              // kind of useless
+    void restart_sysex ();
 
     /**
      *  Resets and adds ex data.

@@ -315,6 +315,11 @@ public:
 
     void send_event (action what);
 
+    void send_learning (bool learning)
+    {
+        send_event(learning ? action::learn_on : action::learn_off);
+    }
+
     /**
      * Getter for non-sequence action events.
      *

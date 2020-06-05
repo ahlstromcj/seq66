@@ -1877,9 +1877,8 @@ public:
 
     void inner_start ()
     {
-        inner_start(song_start_mode() == sequence::playback::song);
+        inner_start(song_mode());                       /* versus live mode */
     }
-
 
     /**
      *  If JACK is not running, call inner_start() with the given state.

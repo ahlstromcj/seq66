@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-05-27
+ * \updates       2020-06-02
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -535,7 +535,6 @@ bool
 midi_alsa_info::api_get_midi_event (event * inev)
 {
     snd_seq_event_t * ev;
-    bool sysex = false;
     bool result = false;
     midibyte buffer[0x1000];                /* temporary buffer for MIDI data */
     int remcount = snd_seq_event_input(m_alsa_seq, &ev);
@@ -594,8 +593,44 @@ midi_alsa_info::api_get_midi_event (event * inev)
         return false;
     }
 
-    long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof(buffer), ev);
-    if (bytes <= 0)
+    /*
+     *  Note that ev->time.tick is always 0!  (Same in Seq32).
+     */
+
+    long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev);
+    if (bytes > 0)
+    {
+        result = inev->set_midi_event(ev->time.tick, buffer, bytes);
+        if (result)
+        {
+            /*
+             * Not sure about this handling of SysEx data. Apparently one can get
+             * only up to ALSA buffer size (4096) of data.  Also, the
+             * snd_seq_event_input() function is said to block!
+             */
+
+            bool sysex = inev->is_sysex();
+            while (sysex)           /* sysex might be more than one message */
+            {
+                int remcount = snd_seq_event_input(m_alsa_seq, &ev);
+                long bytes = snd_midi_event_decode
+                (
+                    midi_ev, buffer, sizeof buffer, ev
+                );
+                if (bytes > 0)
+                {
+                    sysex = inev->append_sysex(buffer, bytes);
+                    if (remcount == 0)
+                        sysex = false;
+                }
+                else
+                    sysex = false;
+            }
+        }
+        snd_midi_event_free(midi_ev);
+        return true;
+    }
+    else
     {
         /*
          * This happens even at startup, before anything is really happening.
@@ -604,29 +639,6 @@ midi_alsa_info::api_get_midi_event (event * inev)
         snd_midi_event_free(midi_ev);
         return false;
     }
-
-    /*
-     *  Note that ev->time.tick is always 0!  (Same in Seq32).
-     */
-
-    result = inev->set_midi_event(ev->time.tick, buffer, bytes);
-    if (result)
-    {
-        while (sysex)               /* sysex might be more than one message */
-        {
-            snd_seq_event_input(m_alsa_seq, &ev);
-            long bytes = snd_midi_event_decode
-            (
-                midi_ev, buffer, sizeof(buffer), ev
-            );
-            if (bytes > 0)
-                sysex = inev->append_sysex(buffer, bytes);
-            else
-                sysex = false;
-        }
-    }
-    snd_midi_event_free(midi_ev);
-    return true;
 }
 
 }           // namespace seq66
