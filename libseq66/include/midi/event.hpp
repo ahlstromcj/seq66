@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-05-27
+ * \updates       2020-06-06
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -951,11 +951,15 @@ public:
     }
 
     /**
-     *  Determines if a note-off event is linkable to this event (which is
-     *  checked to be a note-on event).  A test used in verify_and_link().
+     *  Determines if a Note Off event is linkable to this event (which is
+     *  assumed to be a Note On event).  A test used in verify_and_link().
      *
      * \param e
      *      Normally this is a Note Off event.
+     *
+     * \return
+     *      Returns true if the event is a Note Off, it's the same note as
+     *      this note, and the Note Off is not yet linked.
      */
 
     bool linkable (event & e)
@@ -1223,7 +1227,7 @@ public:
 
     bool below_sysex () const
     {
-        return m_status <= EVENT_MIDI_SYSEX;
+        return m_status < EVENT_MIDI_SYSEX;
     }
 
     /**

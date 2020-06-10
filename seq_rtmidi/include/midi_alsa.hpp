@@ -192,7 +192,7 @@ public:
 
     midi_in_alsa (midibus & parentbus, midi_info & masterinfo);
 
-    // virtual int api_poll_for_midi () override;
+    virtual int api_poll_for_midi () override;
 
 };          // class midi_in_alsa
 

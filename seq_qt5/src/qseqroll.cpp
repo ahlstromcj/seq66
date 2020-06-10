@@ -120,7 +120,7 @@ qseqroll::qseqroll
     set_snap(seqp->snap());
     show();
     m_timer = new QTimer(this);
-    m_timer->setInterval(2 * usr().window_redraw_rate());
+    m_timer->setInterval(1 * usr().window_redraw_rate());
     QObject::connect
     (
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())

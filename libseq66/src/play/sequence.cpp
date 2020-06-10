@@ -2696,7 +2696,14 @@ sequence::stream_event (event & ev)
         if (m_thru)
             put_event_on_bus(ev);                       /* removed locking  */
 
-        link_new();                                     /* removed locking  */
+        /*
+         * EXPERIMENTAL.
+         * We don't need to link note events until a note-off comes in.
+         */
+
+        if (ev.is_note_off())
+            link_new();                                 /* removed locking  */
+
         if (quantizing() && m_parent->is_pattern_playing())
         {
             if (ev.is_note_off())

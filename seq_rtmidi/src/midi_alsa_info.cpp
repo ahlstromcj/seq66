@@ -355,9 +355,13 @@ midi_alsa_info::api_set_beats_per_minute (midibpm b)
 int
 midi_alsa_info::api_poll_for_midi ()
 {
+#if defined USE_SLEEPY_POLL
     int result = poll(m_poll_descriptors, m_num_poll_descriptors, 1000);
     if (result == 0)
         (void) microsleep(100);
+#else
+    int result = poll(m_poll_descriptors, m_num_poll_descriptors, 100);
+#endif
 
     return result;
 }
@@ -471,7 +475,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
                 masterbus.m_inbus_array.add(m, false);
             }
         }
-    }                                           /* end loop for clients */
+    }                                               /* end loop for clients */
 
     /*
      * Get the number of MIDI input poll file descriptors.  This is done in the
@@ -586,7 +590,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
         return false;
 
     snd_midi_event_t * midi_ev;                     /* make ALSA MIDI parser */
-    int rc = snd_midi_event_new(sizeof(buffer), &midi_ev);
+    int rc = snd_midi_event_new(sizeof buffer, &midi_ev);
     if (rc < 0 || is_nullptr(midi_ev))
     {
         errprint("snd_midi_event_new() failed");

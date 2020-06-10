@@ -977,7 +977,12 @@ performer::copy_sequence (seq::number seqno)
         const seq::pointer s = get_sequence(seqno);
         result = bool(s);
         if (result)
+        {
             m_seq_clipboard.partial_assign(*s);
+
+            //
+            // midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
+        }
     }
     return result;
 }
@@ -1140,6 +1145,7 @@ performer::inner_start (bool songmode)
         is_running(true);
         cv().signal();
     }
+    midi_control_out().send_event(midicontrolout::action::play);
 }
 
 /**
@@ -2995,11 +3001,11 @@ performer::poll_cycle ()
             event ev;
             if (m_master_bus->get_midi_event(&ev))
             {
-                if (ev.below_sysex())                   /* below 0xF0   */
+                if (ev.below_sysex())                       /* below 0xF0   */
                 {
-                    if (m_master_bus->is_dumping())     /* see banner   */
+                    if (m_master_bus->is_dumping())         /* see banner   */
                     {
-                        if (midi_control_event(ev, true))
+                        if (midi_control_event(ev, true))   /* quick check  */
                         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
                             std::string estr = to_string(ev);
@@ -3057,7 +3063,7 @@ performer::poll_cycle ()
                 }
                 else if (ev.is_midi_stop())
                 {
-                    all_notes_off();                        /* needed?      */
+                    all_notes_off();
                     m_usemidiclock = true;
                     m_midiclockrunning = false;
                     m_midiclockpos = get_tick();
@@ -3072,11 +3078,11 @@ performer::poll_cycle ()
                 }
                 else if (ev.is_midi_song_pos())
                 {
-                    midibyte d0, d1;            /* see note in banner   */
+                    midibyte d0, d1;                /* see note in banner   */
                     ev.get_data(d0, d1);
                     m_midiclockpos = combine_bytes(d0, d1);
                 }
-                else if (ev.is_sysex())         /* what about channel?  */
+                else if (ev.is_sysex())             /* what about channel?  */
                 {
                     if (rc().show_midi())
                         ev.print();
@@ -3087,7 +3093,7 @@ performer::poll_cycle ()
 #if defined USE_ACTIVE_SENSE_AND_RESET
                 else if (ev.is_sense_reset())
                 {
-                    return false;                       /* see banner */
+                    return false;                   /* see note in banner   */
                 }
 #endif
                 else
@@ -3226,6 +3232,7 @@ performer::pause_playing (bool songmode)
         m_usemidiclock = false;
         m_start_from_perfedit = false;      /* act like stop_playing()      */
     }
+    midi_control_out().send_event(midicontrolout::action::pause);
 }
 
 /**

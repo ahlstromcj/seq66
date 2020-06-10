@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2019-02-10
+ * \updates       2020-06-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -509,12 +509,17 @@ midi_alsa::api_deinit_in ()
     return true;
 }
 
-#if defined USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
-
-/*
+/**
  *  This function is supposed to poll for MIDI data, but the current
  *  ALSA implementation DOES NOT USE THIS FUNCTION.  Commented out.
+ *
+ *  Instead, this function, called indirectly via mastermidibase ::
+ *  is_more_input(), always returns 0.  And if we try to return the ALSA poll
+ *  via master_info().api_poll_for_midi(), note input from a keyboard is
+ *  problematic.
  */
+
+#if defined USE_MIDI_ALSA_POLL          // LEAVE UNDEFINED
 
 int
 midi_in_alsa::api_poll_for_midi ()
@@ -530,6 +535,14 @@ midi_in_alsa::api_poll_for_midi ()
         (void) microsleep(100);
         return rtindata->queue().count();
     }
+}
+
+#else
+
+int
+midi_in_alsa::api_poll_for_midi ()
+{
+    return 0;                       /* master_info().api_poll_for_midi();   */
 }
 
 #endif  // defined USE_MIDI_ALSA_POLL

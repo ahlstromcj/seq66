@@ -322,10 +322,9 @@ eventlist::link_new ()
         event & eon = dref(on);
         if (eon.linkable())
         {
+            bool endfound = false;                  /* end-of-note flag     */
             auto off = on;                          /* point to note on     */
             ++off;                                  /* get next element     */
-
-            bool endfound = false;
             while (off != m_events.end())
             {
                 event & eoff = dref(off);
@@ -335,19 +334,32 @@ eventlist::link_new ()
 
                 ++off;
             }
+
+            /*
+             * This is a Stazed addition; not in seq24.  Not sure that we need it,
+             * commmented out for testing.  It looks like it can handle cases
+             * where the Note Off comes before the Note On (i.e. the note wraps
+             * around to the beginning of the pattern).  However, it has some
+             * oddities, like unlinked notes.
+             */
+
+#if defined SEQ66_USE_STAZED_LINK_NEW_EXTENSION
             if (! endfound)
             {
                 off = m_events.begin();
                 while (off != on)
                 {
                     event & eoff = dref(off);
-                    endfound = link_note(eon, eoff);
-                    if (endfound)
-                        break;
-
+                    if (eon.linkable(eoff))
+                    {
+                        endfound = link_note(eon, eoff);
+                        if (endfound)
+                            break;
+                    }
                     ++off;
                 }
             }
+#endif
         }
     }
 }
@@ -362,6 +374,9 @@ eventlist::link_new ()
  *  keyboard.
  *
  *  Careful!
+ *
+ * \return
+ *      Returns true if the notes were linked.
  */
 
 bool
@@ -404,6 +419,7 @@ eventlist::verify_and_link (midipulse slength)
     {
         event & eon = dref(on);
         if (eon.is_note_on())               /* Note On, find its Note Off   */
+//      if (eon.linkable())                 /* Note On and not yet linked   */
         {
             bool endfound = false;
             auto off = on;                  /* next possible Note Off...    */
