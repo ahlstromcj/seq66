@@ -3048,7 +3048,7 @@ performer::poll_cycle ()
                 else if (ev.is_midi_continue())
                 {
                     song_start_mode(sequence::playback::live);
-                    m_midiclockpos = get_tick();            // EXPERIMENTAL
+                    m_midiclockpos = get_tick();
                     m_dont_reset_ticks = true;
                     m_midiclockrunning = m_usemidiclock = true;
 

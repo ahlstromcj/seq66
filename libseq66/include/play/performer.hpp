@@ -689,6 +689,8 @@ private:
 
     /**
      *  We need to adjust the clock increment for the PPQN that is in force.
+     *  Higher PPQN need a longer increment than SEQ64_MIDI_CLOCK_INCREMENT (8)
+     *  to get 24 clocks per quarter note.
      */
 
     int m_midiclockincrement;
