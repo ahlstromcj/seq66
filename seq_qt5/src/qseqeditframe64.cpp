@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-12-15
+ * \updates       2020-06-15
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -383,6 +383,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_timer             (nullptr)
 {
     ui->setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);                 /* part of issue #4 */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     initialize_panels();
 

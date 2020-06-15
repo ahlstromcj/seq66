@@ -414,7 +414,6 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
         set_adding(false);
     }
     clear_action_flags();
-    //// m_adding_pressed = false;      // WHYYYYYY?
     mBoxSelect = false;
     mLastTick = 0;
     set_needs_update();                 /* force a redraw                   */

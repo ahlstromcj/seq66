@@ -2018,21 +2018,10 @@ public:
      *      Provides a reference to the desired sequence.
      */
 
-#if SEQ66_HIGHLIGHT_EMPTY_SEQS
-
     bool highlight (const sequence & seq) const
     {
         return seq.event_count() == 0;
     }
-
-#else
-
-    bool highlight (const sequence & /*seq*/) const
-    {
-        return false;
-    }
-
-#endif
 
     /**
      *  True if the sequence is an SMF 0 sequence.

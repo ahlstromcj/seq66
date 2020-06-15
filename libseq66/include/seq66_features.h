@@ -67,15 +67,6 @@
 #undef SEQ66_DAEMON_SUPPORT
 
 /**
- *  We need to disable some features not yet available in the Qt 5 user
- *  interface.
- */
-
-#if defined SEQ66_QTMIDI_SUPPORT
-#define SEQ66_QT5_USER_INTERFACE
-#endif
-
-/**
  *  Kepler34 has a drum edit mode that we are still exploring and adding,
  *  marked by the following macro to keep it out of the way until the feature
  *  is ready for prime time.  Currently builds but is incomplete and not
@@ -83,22 +74,6 @@
  */
 
 #undef SEQ66_SEQUENCE_EDIT_MODE
-
-/**
- *  Kepler34 has a feature for coloring sequence patterns.  However, it
- *  forces every MIDI file to carry 1024 instances of color information.
- *  Compiles, but don't enable until we decide it's worth storing an extra
- *  1024 bytes in the MIDI file.  Instead, see SEQ66_SHOW_COLOR_PALETTE.
- */
-
-#undef USE_KEPLER34_SEQUENCE_COLOR
-
-/**
- *  A better way to implement the Kepler34 sequence-color feature.  Here,
- *  each sequence that has color has an optional SeqSpec for pattern color.
- */
-
-#define SEQ66_SHOW_COLOR_PALETTE
 
 /**
  *  Kepler34 allows the user to select (and move) more than one sequence in
@@ -118,7 +93,6 @@
  * Configure-time options.
  *
  *    - SEQ66_HAVE_LIBASOUND
- *    - SEQ66_HIGHLIGHT_EMPTY_SEQS
  *    - SEQ66_JACK_SESSION
  *    - SEQ66_JACK_SUPPORT
  *    - SEQ64_LASH_SUPPORT
@@ -136,18 +110,6 @@
  *
  *  #undef  SEQ66_USE_AUTO_SCREENSET_QUEUE
  */
-
-/**
- *  Try to highlight the selected pattern using black-on-cyan
- *  coloring, in addition to the red progress bar marking that already exists.
- *  Moved from seqmenu.  Seems to work pretty well now.
- */
-
-#if defined SEQ66_QTMIDI_SUPPORT
-#undef SEQ66_EDIT_SEQUENCE_HIGHLIGHT    /* not ready in Qt 5 support        */
-#else
-#define SEQ66_EDIT_SEQUENCE_HIGHLIGHT
-#endif
 
 /**
  *  This special value of zoom sets the zoom according to a power of two

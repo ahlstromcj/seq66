@@ -62,12 +62,6 @@ SEQ66_LT_CURRENT = @SEQ66_LT_CURRENT@
 SEQ66_LT_REVISION = @SEQ66_LT_REVISION@
 SEQ66_LT_AGE = @SEQ66_LT_AGE@
 
-# XPCCUTPP_CFLAGS = @XPCCUTPP_CFLAGS@
-# XPCCUT_CFLAGS = @XPCCUT_CFLAGS@
-
-XPCCUTPP_LIBS = @XPCCUTPP_LIBS@
-XPCCUT_LIBS = @XPCCUT_LIBS@
-
 QT_CXXFLAGS = @QT_CXXFLAGS@
 
 QT_MOC = @QT_MOC@
@@ -158,12 +152,6 @@ version = $(SEQ66_API_MAJOR):$(SEQ66_API_MINOR):$(SEQ66_API_PATCH)
 #     -  None of ALSA, JACK, or LASH CFLAGS seem to be defined.
 #     -  We include "-I.." and require that the Qt5-generated modules be
 #        included as:   "#include "qt/generated_module.h".
-#
-# Do we need these flags in a GUI library?  I think not.
-#
-# $(ALSA_CFLAGS)
-# $(JACK_CFLAGS)
-# $(LASH_CFLAGS)
 #
 #------------------------------------------------------------------------------
 
@@ -364,8 +352,6 @@ libseq_qt5_la_SOURCES = \
 
 libseq_qt5_la_LDFLAGS = -version-info $(version)
 libseq_qt5_la_LIBADD = $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
-
-# libseq_qt5_la_LIBADD = $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS)
 
 #******************************************************************************
 # uninstall-hook

@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 # YOSHPATH="/usr/bin"
+#
+# Starts Yoshimi with our oft-used GM patch setup for Yoshimi.
 
 YOSHPATH="/usr/local/bin"
 REPOPATH="Home/ca/mls/git"

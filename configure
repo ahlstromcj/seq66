@@ -19176,7 +19176,6 @@ fi
    PROFLAGS=
    PROLDFLAGS=
    OPTFLAGS=
-   GDBFLAGS=
    DBGFLAGS=
    MORFLAGS=
 
@@ -19259,21 +19258,21 @@ fi
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       elif test "x$profile" = "xprof" ; then
          PROFLAGS="-p"
          PROLDFLAGS="-p"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: prof" >&5
 $as_echo "prof" >&6; }
       elif test "x$profile" = "xgprof" ; then
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: prof" >&5
 $as_echo "prof" >&6; }
       else
@@ -19322,17 +19321,17 @@ fi
 
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       elif test "x$debug" = "xdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       else
@@ -19342,7 +19341,7 @@ $as_echo "yes" >&6; }
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
       fi
-      DBGFLAGS="$DBGFLAGS $GDBFLAGS $OPTFLAGS $MORFLAGS"
+      DBGFLAGS="$DBGFLAGS $OPTFLAGS $MORFLAGS"
    fi
 
 
@@ -20673,7 +20672,7 @@ esac
 
 
 CFLAGS="$CFLAGS $COMMONFLAGS"
-CXXFLAGS="$CFLAGS -std=c++14 -Wno-variadic-macros -Wno-deprecated-declarations"
+CXXFLAGS="$CFLAGS -std=gnu++1y -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
  if test x$gnuwin = xyes; then

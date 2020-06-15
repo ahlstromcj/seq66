@@ -85,10 +85,6 @@
 #define SEQ66_PACKAGE_VERSION "0.90.3"
 #endif
 
-#ifndef SEQ66_QT5_USER_INTERFACE
-#define SEQ66_QT5_USER_INTERFACE
-#endif
-
 /**
  *  This macro helps us adapt our "ui" includes to freaking qmake's
  *  conventions.  We used "userinterface.ui.h", while qmake is stuck on
@@ -309,16 +305,6 @@
 
 #ifndef SEQ66_JACK_SUPPORT
 #define SEQ66_JACK_SUPPORT 1
-#endif
-
-/*
- * Define to enable highlighting empty sequences
- */
-
-#ifndef SEQ66_QT5_USER_INTERFACE
-#ifndef SEQ66_HIGHLIGHT_EMPTY_SEQS
-#define SEQ66_HIGHLIGHT_EMPTY_SEQS 1
-#endif
 #endif
 
 /*

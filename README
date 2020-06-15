@@ -1,6 +1,6 @@
 README for Seq66 0.90.3 (Sequencer64 refactored for C++11/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-03-14
+2015-09-10 to 2020-06-14
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -17,6 +17,10 @@ of krufty buildup.  Changes:
         -   Added a live frame using buttons to match Qt theming. The original
             implementation is available as a "user" option.
         -   Cleanup of unused Gtkmm-to-Qt code.
+        -   The user can pick a color for each sequence, to make it more
+            distinguishable.  The default color is NONE (a white color) that
+            is not stored in the track.  Otherwise, this color is saved in a
+            SeqSpec associated with the track.
     -   Configuration files:
         -   Unified keystroke control and MIDI control into a "*.ctrl" file.
             Specifies MIDI In controls for controlling Seq66 remotely, and MIDI

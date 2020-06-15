@@ -41,8 +41,6 @@
  *          as if they were one object.
  */
 
-// #include <QWidget>
-
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "qseqdata.hpp"
 #include "qseqframe.hpp"

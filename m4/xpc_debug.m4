@@ -6,7 +6,7 @@ dnl \file       	xpc_debug.m4
 dnl \library    	xpc_suite subproject
 dnl \author     	Chris Ahlstrom
 dnl \date       	2008-03-04
-dnl \updates      2017-09-02
+dnl \updates      2020-06-14
 dnl \version    	$Revision$
 dnl \license    	$XPC_SUITE_GPL_LICENSE$
 dnl
@@ -24,8 +24,7 @@ dnl   It defines the symbol DBGFLAGS, which you should add to the COMMONFLAGS
 dnl   for the compiler call.  Optimization is turned off, and the symbols
 dnl   DEBUG, _DEBUG, and NWIN32 are defined.  Actually, we now do not define
 dnl   any macros related to Windows in this file.  It's for debugging, not OS
-dnl   detection!  The GDBFLAGS macro is used internally to add gdb-specific
-dnl   debug options.
+dnl   detection!
 dnl
 dnl   In addition, the WARNINGS setting is changed to make sure all warnings
 dnl   are shown.
@@ -50,7 +49,6 @@ AC_DEFUN([AC_XPC_DEBUGGING],
    PROFLAGS=
    PROLDFLAGS=
    OPTFLAGS=
-   GDBFLAGS=
    DBGFLAGS=
    MORFLAGS=
 
@@ -106,19 +104,19 @@ AC_DEFUN([AC_XPC_DEBUGGING],
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$profile" = "xprof" ; then
          PROFLAGS="-p"
          PROLDFLAGS="-p"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(prof)
       elif test "x$profile" = "xgprof" ; then
          PROFLAGS="-pg"
          PROLDFLAGS="-pg"
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(prof)
       else
          AC_MSG_RESULT(no)
@@ -156,15 +154,15 @@ yes=gdb)],
       AM_CONDITIONAL(DODEBUG, test x$debug = xyes)
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         GDBFLAGS="-g"
+         DBGFLAGS="-g"
          AC_MSG_RESULT(yes)
       else
          if test "x$OPTFLAGS" = "x" ; then
@@ -172,7 +170,7 @@ yes=gdb)],
          fi
          AC_MSG_RESULT(no)
       fi
-      DBGFLAGS="$DBGFLAGS $GDBFLAGS $OPTFLAGS $MORFLAGS"
+      DBGFLAGS="$DBGFLAGS $OPTFLAGS $MORFLAGS"
    fi
    AC_SUBST([DBGFLAGS])
    AC_DEFINE_UNQUOTED([DBGFLAGS], [$DBGFLAGS],

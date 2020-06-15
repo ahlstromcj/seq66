@@ -245,12 +245,7 @@ seq_build_details ()
 #endif
         << "  Event editor\n"
         << "  Follow progress bar\n"
-#if defined SEQ66_EDIT_SEQUENCE_HIGHLIGHT       // undefined
-        << "  Highlight edit pattern\n"
-#endif
-#if defined SEQ66_HIGHLIGHT_EMPTY_SEQS
         << "  Highlight empty patterns\n"
-#endif
 #if defined SEQ66_JACK_SESSION
         << "  JACK session\n"
 #endif
@@ -269,9 +264,7 @@ seq_build_details ()
 #if defined SEQ66_JE_PATTERN_PANEL_SCROLLBARS
         << "  Main window scroll-bars\n"
 #endif
-#if defined SEQ66_SHOW_COLOR_PALETTE
-        << "  Optional pattern coloring\n"
-#endif
+        << "  Pattern coloring\n"
 #if defined SEQ66_SONG_BOX_SELECT
         << "  Box song selection\n"
 #endif

@@ -1,0 +1,12 @@
+#!/bin/bash
+# This script runs libtool in order to execute a debugger.  For our projects,
+# the setup must avoid the --disable-share option.  So do this for our project:
+#
+# First edit the MYDEBUGGER macro to use your favorite debugger.
+#
+# $ ./bootstrap --full-clean            [just to be sare]
+# $ ./bootstaps                         [just create the configure script]
+# $ ./configure --enable-debug          [can add "=gdb" if desired]
+
+MYDEBUGGER=cgdb
+libtool --mode=execute $MYDEBUGGER $*

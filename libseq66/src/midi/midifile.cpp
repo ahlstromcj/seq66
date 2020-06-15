@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-11-24
+ * \updates       2020-06-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1864,32 +1864,6 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             if (tempotrack > 0)
                 p.tempo_track_number(tempotrack);
         }
-
-#if defined USE_KEPLER34_SEQUENCE_COLOR       // DO NOT ENABLE, see SEQ66_SHOW_COLOR_PALETTE
-
-        /**
-         * Kepler34 (see Oli Kester's project on GitHub) supports coloring
-         * the sequence slots in the "mainwid". We want to support something
-         * similar.  However, we might reserve this feature for coloring mute
-         * groups.  Furthermore, we don't want to save 1024 bytes for color.
-         * Save them with the sequences that actually use them.
-         */
-
-        seqspec = parse_prop_header(file_size);
-        if (seqspec == c_seq_color)
-        {
-            for (int track = 0; track < p.sequence_high(); ++track)
-            {
-                if (p.is_seq_active(track))
-                {
-                    int colour = int(read_byte());  /* read_short() or byte! */
-                    if (colour > 0)
-                        p.color(track, colour);
-                }
-            }
-        }
-
-#endif  // USE_KEPLER34_SEQUENCE_COLOR
 
 #if defined SEQ66_SEQUENCE_EDIT_MODE
 

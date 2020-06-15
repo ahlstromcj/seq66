@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.90.3 and above
 Chris Ahlstrom
-2015-09-10 to 2022-04-08
+2015-09-10 to 2020-06-14
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily
@@ -96,25 +96,18 @@ Advanced Steps:
        option "--enable-silent-rules" can be added to the ./configure command.
        Otherwise:
 
-       $ ./bootstrap --enable-release [ -rm | -cli | -am | -pm  | -qt ]
-       $ ./bootstrap -er [ -rm | -cli | -am | -pm  | -qt ]
+       $ ./bootstrap --enable-release [ -rm | -cli | -qt ]
+       $ ./bootstrap -er [ -rm | -cli | -qt ]
 
-       Note that the options in brackets are optional.  The additional options
-       select the kind of Seq66 to build.  There is now no default, but
-       -rm is most likely what you want, for a Linux build.
+       Note that the options in brackets are optional.  The default is
+       equivalent to "-rm -qt".
 
        For debugging without libtool getting in the way, just run the
        following command, which will add the --enable-debug and
        --disable-shared options to a configure run:
 
-       $ ./bootstrap --enable-debug [ -rm | -cli | -am | -pm  | -qt ]
-       $ ./bootstrap -ed [ -rm | -cli | -am | -pm  | -qt ]
-
-       Other combinations can work.  For example, the following bootstrap
-       sets up for debugging and to build both the command-line and
-       Qt5/rtmidi application:
-
-       $ ./bootstrap -ed -cli -qt
+       $ ./bootstrap --enable-debug [ -rm | -cli | -qt ]
+       $ ./bootstrap -ed [ -rm | -cli | -qt ]
 
        There are also configure options as described below, and conditional
        macros in the header files.  The configure options can be supplied to
@@ -147,9 +140,9 @@ Advanced Steps:
    5.  See the additional features that can be enabled, below, using 
        build macros.
 
-   6.  Also grab the Seq66 User Manual from:
+   6.  Also grab the Sequencer64 User Manual from:
 
-            http://github.com/ahlstromcj/seq66-doc.git
+            http://github.com/ahlstromcj/sequencer64-doc.git
 
        It contains a prebuilt PDF version of the manual, as well as the
        LaTeX files needed to rebuild it.
@@ -178,6 +171,22 @@ Pipe Option:
 
     Then do the normal make.
 
+Debugging:
+
+    Normally, one can bootstrap or configure with the --enable-debug option.
+    However, on some machines (e.g. Debian Sid running gcc 9), the debug build
+    fails because it cannot find one of the library symbols.  In that case,
+    one can either use a qmake debug build or the following sequence of
+    commands:
+
+    $ ./bootstrap --full-clean
+    $ ./bootstrap
+    $ ./configure --enable-debug    [note the lack of "--disable-shared"]
+    $ make &> make.log              [verify that there are no errors]
+    $ libtool --mode=execute gdb ./Seq66qt5/qseq66
+
+    We use cgdb instead of gdb for debugging.
+
 Qmake-based Install:
 
     A build based on QtCreator and Qmake is available, to build the project on
@@ -185,10 +194,13 @@ Qmake-based Install:
     numerous "gotchas" with QtCreator, QMake, and the internal Seq66
     "architecture".
     
-    The Qmake-based build is designed *only* to use the PortMidi library and
-    the new Kepler34-based Qt 5 user interface.  This user interface is
-    currently similar to the Gtkmm 2.4 user interface, but supports a slightly
-    different feature set, and uses the Seq66 libraries internally.
+    The Qmake-based build is designed to use the local PortMidi library (by
+    default), which is necessary for running Seq66 on Windows or Mac OSX.  It
+    can be configured to build using the local RtMidi library by adding
+    "rtmidi" to the CONFIG variable (see below).  The Qmake build also uses
+    the Kepler34-based Qt 5 user interface.  This user interface is currently
+    similar to the Gtkmm 2.4 user interface, but supports a slightly different
+    feature set, and uses the Seq66 libraries internally.
 
     The first way to use this build is to run QtCreator and load the
     seq66.pro file.  This method can be used if you do not care for the
@@ -216,13 +228,18 @@ Qmake-based Install:
     One can also use "CONFIG += release", or just leave that off entirely.
     We get a nice build that works under Linux or Windows.  Currently, we have
     tried only using the "mingw" tools in Windows, not the "msvc" (Microsoft)
-    tools.  For debugging, gdb can be used, but QtCreator is an easier
-    debugging interface.
+    tools.  For debugging, QtCreator can be used.
 
     To create an installer package for Windows, see the instructions at the
     top of the "nsis/Seq66Setup.nsi" file. One can build the Seq66
     application in Windows, and then build the installer for it in Windows or
     Linux!
+
+    The Qmake setup uses "PortMidi" by default, but an "RtMidi" version can be
+    built as well:
+
+        $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
+        $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
 
 CONFIGURE OPTIONS FOR APPLICATION FEATURES:
 
@@ -234,64 +251,42 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
         library.  This option enables the usage of native JACK MIDI which will
         fall back to ALSA if JACK is not running.  Builds Seq66rtmidi/seq66.
 
-    --enable-alsamidi --disable-rtmidi
+    --enable-nsm
+    --disable-nsm
 
-        Defines SEQ66_ALSAMIDI_SUPPORT to build the original Seq66.
-        This build is not quite the same, since we have refactored the midibus
-        and mastermidibus modules, and added the businfo module.  Builds
-        Seq66/seq66.  Note that "rtmidi" must be explicitly
-        disabled at this time.
-        
-    --disable-highlight
-
-        Undefines the SEQ66_HIGHLIGHT_EMPTY_SEQS  macro, which is otherwise
-        defined by default.  If defined, the application will highlight empty
-        sequences/patterns by coloring them yellow. Gtkmm only.
+        Controls the SEQ66_NSM_SESSION support macro, which is defined by
+        default.  This will allow the Non Session Manager to control Seq66.
+        However this support is still in progress.
 
     --enable-lash
 
-        Defines the SEQ66_LASH_SUPPORT macro, which is now undefined
-        by default.  Use this if you still use LASH session management.
+        Defines the SEQ66_LASH_SUPPORT macro, which is undefined by default.
+        Use this if you still use LASH session management.  However this
+        support is still in progress.
 
     --disable-jack
     
         Undefines the SEQ66_JACK_SUPPORT macro, which is otherwise defined
         by default.  This option is not viable for the "rtmidi" version of
-        Seq66, which incorporates a couple of JACK modules.
+        Seq66, which incorporates a couple of JACK modules, but is useful in
+        the Windows/OSX builds.
 
     --disable-jack-session
 
         Undefines the SEQ66_JACK_SESSION macro, which is defined if JACK
-        support is defined, and the jack/session.h file is found.
+        support is defined, and the jack/session.h file is found, but is
+        useful in the Windows/OSX builds.
 
     --enable-portmidi
     --enable-rtmidi
-    --enable-alsamidi
 
         We have gotten a few alternate implementations to work.  The normal
         build is effectively --enable-rtmidi.  The --enable-portmidi flag
         creates a new application, seq66portmidi, that is based on using ALSA
-        on Linux via the PortMidi application.  If we get a nice
-        implementation of gtkmm2 for Windows working, we ought to have the
-        Windows version we were looking at.  The macros are:
+        on Linux via the local "PortMidi" library.
 
         SEQ66_PORTMIDI_SUPPORT
         SEQ66_RTMIDI_SUPPORT
-
-        They are used only in the --version output.
-
-    --disable-mainscroll
-
-        Undefines SEQ66_JE_PATTERN_PANEL_SCROLLBARS.  This macro enables
-        a new scroll-bar feature in the main window, from user jean-emmanuel,
-        in preparation for a larger number of patterns in the main window.
-
-    --disable-multiwid
-
-        Undefines SEQ66_MULTI_MAINWID.  This macro enables showing multiple
-        main window sets in up to a 3-row by 2-column matrix, with Set
-        spinners for each windows, or one for the whole group.  This option
-        is not perfect, but can be useful.  Gtkmm only.
 
 MANUALLY-DEFINED MACROS IN CODE:
 
@@ -301,15 +296,6 @@ MANUALLY-DEFINED MACROS IN CODE:
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
 
-    SEQ66_SHOW_COLOR_PALETTE:
-
-        If enabled (will be the default), this feature allows the user to pick
-        a color for each sequence, to make it more distinguishable.  The
-        default color is NONE (a white color) that is not stored in the track.
-        Otherwise, this color is saved in a SeqSpec associated with the track.
-        This differs from the Kepler34 implementation, which stores 1024
-        color values no matter what.
-
     SEQ66_SONG_BOX_SELECT:
 
         This feature is meant to become a permanent part of Seq66
@@ -317,25 +303,8 @@ MANUALLY-DEFINED MACROS IN CODE:
         Song editor.  Currently, this can be done by selecting a pattern, then
         holding the Shift key while selecting more patterns.  Eventually,
         the ability to box-select mutliple patterns, like Kepler34, will be
-        added.  However, this will be a long time in coming, as I have churned
-        a lot trying to get it to work.  However, it is available if
-        building for Qt support (i.e. SEQ66_QTMIDI_SUPPORT is defined).
-
-    SEQ66_EDIT_SEQUENCE_HIGHLIGHT:
-
-        Provides the option to highlight the currently-editing sequence
-        in the main window view and in the song editor.  If the sequence is
-        muted, it is highlighted in black text on a cyan background.  If
-        it is unmuted, it is highlighted in cyan text on a black background.
-        The highlighting follows whichever pattern editor or event editor has
-        the focus.
-
-    SEQ66_STAZED_SONG_MODE_BUTTON:
-
-        Enables a Live/Song-mode toggle-button on the main window, so
-        that one can choose the mode directly, rather than focussing the
-        main window versus the song-editor window.  Comes from the Seq32
-        project.
+        added.  However, this will be a long time coming, as we have churned
+        a lot trying to get it to work.
 
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
@@ -344,10 +313,10 @@ MANUALLY-DEFINED MACROS IN CODE:
         old or experimental code around in case we decide it was the better
         code after all.  Generally, you do not want to change the status of
         these macros unless you are very familiar with the code and willing to
-        temporarily break stuff or add annoying console output.
-        The "TMI" in some denotes debug code that dumps too much information
-        (TMI) to the console, so has to be enabled by editing it on those
-        occasions where you really want it.
+        temporarily break stuff or add annoying console output.  The "TMI" in
+        some denotes debug code that dumps too much information (TMI) to the
+        console, so has to be enabled by editing it on those occasions where
+        you really want it.
 
         We have incorporated some very useful code from the Seq32 project
         of the user "stazed".  He includes some new features and some bug
@@ -363,6 +332,8 @@ MANUALLY-DEFINED MACROS IN CODE:
         before we make our version of its conversion to the Qt library.
 
         SEQ66_SEQUENCE_EDIT_MODE
+
+        See libseq66/src/midi/midifile.cpp for details.
 
 REPORTING ISSUES:
 
@@ -410,6 +381,7 @@ DEPENDENCIES:
       -  libtool
       -  Qt 5.  Install qtcreator only if you want it, as it installs 650 Mb
          worth of files.  One can just install the bare minimum:
+
          -  qt5-default (Important!)
          -  qtbase5-dev
          -  qtbase5-dev-tools
@@ -462,14 +434,15 @@ DEPENDENCIES:
 
    MingW:
 
-      Avoid use of AC_CYGWIN and AC_MINGW32.
+      Avoid use of AC_CYGWIN and AC_MINGW32.  Specify the mingw compiler for
+      Qmake/Qt5 builds.
 
    Other:
 
      -  git
      -  vim or emacs
 
-   JACK Testing (optional):
+   Testing (optional):
 
       - qjackctl
       - a2jmidid (exposes Seq24 ALSA MIDI ports to JACK)
@@ -477,5 +450,6 @@ DEPENDENCIES:
       - klick (a command-line metronome)
       - qtractor or other MIDI sequencers
       - gmidimonitor or (better) midisnoop
+      - sendmidi
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-03-15
+ * \updates       2020-06-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1625,7 +1625,9 @@ qsmainwnd::load_editor (int seqid)
 }
 
 /**
- *
+ *  This function first looks to see if a piano roll editor is already open for
+ *  this sequence.  If so, we will not open the event-editor frame, to avoid
+ *  conflicts.
  */
 
 void
@@ -1734,10 +1736,17 @@ qsmainwnd::remove_editor (int seqno)
     auto ei = m_open_editors.find(seqno);
     if (ei != m_open_editors.end())
     {
-        qseqeditex * qep = ei->second;      /* save the pointer             */
         m_open_editors.erase(ei);
-        if (not_nullptr(qep))
-            delete qep;                     /* delete the pointer           */
+
+        /*
+         * Deleting this pointer makes qseq66 segfault, and valgrind doesn't
+         * seem to show any leak.  Commented out.  This fixes issue #4.  It
+         * also needs to be backported to Sequencer64.
+         *
+         * qseqeditex * qep = ei->second;   // save the pointer
+         * if (not_nullptr(qep))
+         *     delete qep;                  // delete the pointer
+         */
     }
 }
 

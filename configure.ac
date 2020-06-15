@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-06-13
+dnl \update        2020-06-14
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -487,7 +487,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-06-13"
+#define VERSION_DATE_SHORT "2020-06-14"
 #define VERSION "0.90.3"
 
 )
@@ -556,9 +556,12 @@ case "$host_os" in
 esac
 
 dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
+dnl Trying out gnu++14 or gnu++1y (they don't work) instead, to see if we can
+dnl eliminate the problem of debug linkage on our Debian Sid machine, which
+dnl uses g++ version 9.
 
 CFLAGS="$CFLAGS $COMMONFLAGS"
-CXXFLAGS="$CFLAGS -std=c++14 -Wno-variadic-macros -Wno-deprecated-declarations"
+CXXFLAGS="$CFLAGS -std=gnu++1y -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
 AM_CONDITIONAL(GNU_WIN, test x$gnuwin = xyes)
