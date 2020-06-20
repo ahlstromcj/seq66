@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-25
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -379,6 +379,7 @@ qseditoptions::cancel ()
     rc().with_jack_master(m_backup_TimeMaster);
     rc().with_jack_midi(m_backup_JackMidi);
     usr().key_height(m_backup_KeyHeight);
+    usr().resume_note_ons(m_backup_NoteResume);
     perf().resume_note_ons(m_backup_NoteResume);
     syncWithInternals();
     close();
@@ -422,6 +423,10 @@ qseditoptions::syncWithInternals ()
     ui->chkJackMaster->setDisabled(! rc().with_jack_transport());
     ui->chkJackConditional->setDisabled(! rc().with_jack_transport());
 
+    /*
+     * Both these options are usr() options now.
+     */
+
     ui->chkNoteResume->setChecked(perf().resume_note_ons());
     ui->spinKeyHeight->setValue(usr().key_height());
 
@@ -434,13 +439,20 @@ qseditoptions::syncWithInternals ()
  *  Updates the performer::result_note_ons() setting in accord with the
  *  user-interface, and then calls syncWithInternals(), perhaps needlessly, to
  *  make sure the user-interface items correctly represent the settings.
+ *  Resolves issue #5.
  */
 
 void
 qseditoptions::update_note_resume ()
 {
-    perf().resume_note_ons(ui->chkNoteResume->isChecked());
-    syncWithInternals();
+    bool resumenotes = ui->chkNoteResume->isChecked();
+    if (m_is_initialized && perf().resume_note_ons() != resumenotes)
+    {
+        usr().save_user_config(true);
+        usr().resume_note_ons(resumenotes);
+        perf().resume_note_ons(resumenotes);
+        syncWithInternals();
+    }
 }
 
 /**

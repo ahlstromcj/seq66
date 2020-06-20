@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-05-27
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -798,7 +798,7 @@ sequence::play
 (
     midipulse tick,
     bool playback_mode,
-    bool /*resume_note_ons*/
+    bool resumenoteons
 )
 {
     automutex locker(m_mutex);
@@ -822,7 +822,12 @@ sequence::play
             set_dirty_mp();                 /* force redraw                 */
         }
         if (playback_mode)                  /* song mode: on/off triggers   */
-            trigger_turning_off = m_triggers.play(start_tick, end_tick);
+        {
+            trigger_turning_off = m_triggers.play
+            (
+                start_tick, end_tick, resumenoteons
+            );
+        }
     }
     if (playing())                          /* play notes in frame          */
     {
@@ -5267,6 +5272,9 @@ sequence::song_recording_stop (midipulse tick)
  *  If the Note-On event is after the Note-Off event, the pattern wraps around,
  *  so that we play it now to resume.
  *
+ *  One question is where is best to do the locking of put_event_on_bus().  In
+ *  retrospect, probably better to do it just once, instead of for each event.
+ *
  * \param tick
  *      The current tick-time, in MIDI pulses.
  */
@@ -5274,6 +5282,7 @@ sequence::song_recording_stop (midipulse tick)
 void
 sequence::resume_note_ons (midipulse tick)
 {
+    automutex locker(m_mutex);                          /* better here?     */
     for (auto & ei : m_events)
     {
         if (ei.is_note_on())
@@ -5281,13 +5290,11 @@ sequence::resume_note_ons (midipulse tick)
             event * link = ei.link();
             if (not_nullptr(link))
             {
-                midipulse on = ei.timestamp();      /* see banner notes */
+                midipulse on = ei.timestamp();          /* see banner notes */
                 midipulse off = link->timestamp();
-                if (on < (tick % get_length()) && off > (tick % get_length()))
-                {
-                    automutex locker(m_mutex);
+                midipulse remainder = tick % get_length();
+                if (on < remainder && off > remainder)
                     put_event_on_bus(ei);
-                }
             }
         }
     }

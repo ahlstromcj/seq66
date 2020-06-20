@@ -235,20 +235,20 @@ triggers::play
 (
     midipulse & start_tick,
     midipulse & end_tick,
-    bool resume_note_ons
+    bool resumenoteons
 )
 {
-    midipulse tick = start_tick;            /* saved for later              */
     bool result = false;                    /* turns off after frame play   */
+    bool trigger_state = false;
+    midipulse tick = start_tick;            /* saved for later              */
     midipulse trigger_offset = 0;
     midipulse trigger_tick = 0;
-    bool trigger_state = false;
     for (auto & t : m_triggers)
     {
         /*
          *  If we have reached a new chunk of drawn patterns in the song data,
-         *  and we are not recording, then trigger unsets the playback block on
-         *  this pattern's events.
+         *  and we are not recording, then trigger unsets the playback block
+         *  on this pattern's events.
          */
 
         if (t.at_trigger_transition(start_tick, end_tick))
@@ -276,7 +276,7 @@ triggers::play
     /*
      * Had triggers in the slice, not equal to current state.  Therefore, it
      * is time to change the sequence trigger state.  We only change state if
-     * we are not improvising.
+     * we are not improvising (i.e. playing "Live").
      */
 
     bool ok = trigger_state != m_parent.playing();
@@ -296,9 +296,10 @@ triggers::play
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
+             * Fixed for issue #5.
              */
 
-            if (resume_note_ons)
+            if (resumenoteons)
                 m_parent.resume_note_ons(tick);
         }
         else

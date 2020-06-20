@@ -364,7 +364,7 @@ main
             seq66::midicontrolfile file(sg_control_file, seq66::rc(), true);
             infoprint("Processing --control option...");
             bool reddit = file.parse();         // allow inactive!!!
-            (void) p.get_settings(seq66::rc());
+            (void) p.get_settings(seq66::rc(), seq66::usr());
             infoprint("KEYS");
             p.key_controls().show();
             infoprint("MIDI");

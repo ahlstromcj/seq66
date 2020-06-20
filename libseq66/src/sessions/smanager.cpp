@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-06-02
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -228,7 +228,7 @@ smanager::create_performer ()
     result = bool(p);
     if (result)
     {
-        bool ok = p->get_settings(rc());
+        bool ok = p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
         if (ok && rc().verbose())               /* for trouble-shoots   */
         {
@@ -338,7 +338,7 @@ bool
 smanager::close_session ()
 {
     bool result = perf()->finish();             /* tear down performer      */
-    perf()->put_settings(rc());                 /* copy latest settings     */
+    perf()->put_settings(rc(), usr());          /* copy latest settings     */
     if (result)
     {
         if (rc().auto_option_save())

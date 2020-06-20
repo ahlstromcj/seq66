@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-05
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -338,11 +338,11 @@ performer::performer (int ppqn, int rows, int columns) :
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
-    m_is_busy               (false),            /* FOR NOW */
+    m_is_busy               (false),                /* for now */
     m_looping               (false),
     m_song_recording        (false),
     m_song_record_snap      (false),
-    m_resume_note_ons       (false),
+    m_resume_note_ons       (usr().resume_note_ons()),
     m_current_tick          (0.0),
     m_playback_mode         (sequence::playback::live),
     m_ppqn                  (choose_ppqn(ppqn)),    /* okay???? */
@@ -391,7 +391,7 @@ performer::performer (int ppqn, int rows, int columns) :
     /*
      * Generally will be parsing the 'rc' files after creating the performer.
      *
-     * (void) get_settings(rc());
+     * (void) get_settings(rc(), usr());
      */
 
     (void) populate_default_ops();
@@ -499,7 +499,7 @@ performer::notify_ui_change (seq::number seqno)
  */
 
 bool
-performer::get_settings (const rcsettings & rcs)
+performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 {
     int buses = rcs.clocks().count();
     bool result = buses > 0;
@@ -531,6 +531,7 @@ performer::get_settings (const rcsettings & rcs)
     filter_by_channel(rcs.filter_by_channel());
     tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
     m_midi_ctrl_out = rcs.midi_control_out();
+    m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
 
@@ -554,7 +555,7 @@ performer::get_settings (const rcsettings & rcs)
  */
 
 bool
-performer::put_settings (rcsettings & rcs)
+performer::put_settings (rcsettings & rcs, usrsettings & usrs)
 {
     bool pb = song_mode();
     m_master_bus->get_port_statuses(m_clocks, m_inputs);
@@ -566,6 +567,7 @@ performer::put_settings (rcsettings & rcs)
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
     rcs.tempo_track_number(m_tempo_track_number);
+    usrs.resume_note_ons(m_resume_note_ons);
     return true;
 }
 
@@ -586,7 +588,7 @@ performer::reload_mute_groups (std::string & errmessage)
     bool result = cmdlineopts::parse_mute_groups(rc(), errmessage);
     if (result)
     {
-        result = get_settings(rc());
+        result = get_settings(rc(), usr());
     }
     else
     {
@@ -980,8 +982,8 @@ performer::copy_sequence (seq::number seqno)
         {
             m_seq_clipboard.partial_assign(*s);
 
-            //
-            // midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
+            // midi_control_out().send_seq_event
+            // (seqno, midicontrolout::seqaction::remove);
         }
     }
     return result;
@@ -3334,7 +3336,7 @@ performer::play (midipulse tick)
     set_tick(tick);
     bool songmode = m_playback_mode == sequence::playback::song;
     for (auto seqi : m_play_set)
-        seqi->play_queue(tick, songmode, m_resume_note_ons);
+        seqi->play_queue(tick, songmode, resume_note_ons());
 
     if (not_nullptr(m_master_bus))
         m_master_bus->flush();                      /* flush MIDI buss  */

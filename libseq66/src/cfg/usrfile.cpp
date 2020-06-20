@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-12-16
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -64,7 +64,8 @@ namespace seq66
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    version("1");                       /* a new version on 2019-12-12      */
+    /* version("1");                    // a new version on 2019-12-12      */
+    version("2");                       /* a new version on 2020-06-20      */
 }
 
 /**
@@ -531,7 +532,10 @@ usrfile::parse ()
     }
 
     /*
-     * [user-ui-tweaks]
+     * [user-ui-tweaks].  The variables in this section are, in this order:
+     * key-height and use-new-seqedit, which are currently not supporting the
+     * new DOS-INI variable setting feature supported by get_variable().
+     * The note-resume option is now implemented as per issue #5.
      */
 
     if (line_after(file, "[user-ui-tweaks]"))
@@ -544,6 +548,9 @@ usrfile::parse ()
             sscanf(scanline(), "%d", &scratch);
             usr().use_new_seqedit(scratch != 0);
         }
+
+        std::string s = get_variable(file, "[user-ui-tweaks]", "note-resume");
+        usr().resume_note_ons(string_to_bool(s));
     }
 
     std::string s = get_variable(file, "[new-pattern-editor]", "armed");
@@ -604,7 +611,7 @@ usrfile::write ()
      */
 
     file
-        << "# Seq66 0.90.0 (and above) user configuration file\n"
+        << "# Seq66 0.90.3 (and above) user configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -613,7 +620,8 @@ usrfile::write ()
         "# This is a seq66.usr file. Edit it and place it in the\n"
         "# $HOME/.config/seq66 directory. It allows one to provide an\n"
         "# alias (alternate name) to each MIDI bus, MIDI channel, and MIDI\n"
-        "# control codes per channel.\n"
+        "# control codes per channel. It has additional options not present\n"
+        "# in Sequencer64, and also supports DOS INI variable setting.\n"
         ;
 
     file <<
@@ -1273,12 +1281,19 @@ usrfile::write ()
         "# then the new, larger, more functional pattern editor can be\n"
         "# used in the 'Edit' tab.  This setting also has the side-effect\n"
         "# of making the whole Seq66 window larger.\n"
-        "# Currently used only in the Qt GUI.\n"
         "\n"
         ;
 
     uscratch = usr().use_new_seqedit();
     file << uscratch << "       # (user_ui_) use_new_seqedit\n";
+
+    std::string v = bool_to_string(usr().resume_note_ons());
+    file << "\n"
+        "# The note-resume option, if active, causes any notes in progress\n"
+        "# to be resumed when the pattern is toggled back on.\n"
+        "\n"
+        << "note-resume = " << v << "\n"
+        ;
 
     /*
      * [new-pattern-editor]
@@ -1295,7 +1310,7 @@ usrfile::write ()
         "\n"
         ;
 
-    std::string v = bool_to_string(usr().new_pattern_armed());
+    v = bool_to_string(usr().new_pattern_armed());
     file << "armed = " << v << "\n";
 
     v = bool_to_string(usr().new_pattern_thru());

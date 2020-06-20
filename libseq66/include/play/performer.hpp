@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-05-27
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -69,6 +69,7 @@ namespace seq66
 class keystroke;
 class notemapper;
 class rcsettings;
+class usrsettings;
 
 /**
  *  This class supports the performance mode.
@@ -504,6 +505,8 @@ private:
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
+     *  Note that this setting is settable in the user interface, and is a
+     *  usrsettings value.
      */
 
     bool m_resume_note_ons;
@@ -887,8 +890,8 @@ public:
         m_is_modified = true;
     }
 
-    bool get_settings (const rcsettings & rcs);
-    bool put_settings (rcsettings & rcs);
+    bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
+    bool put_settings (rcsettings & rcs, usrsettings & usrs);
 
     std::string sets_to_string () const
     {
