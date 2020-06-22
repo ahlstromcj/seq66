@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-15
+ * \updates       2020-06-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -285,7 +285,7 @@ qsmainwnd::qsmainwnd
          * File /New.  NSM version.
          */
 
-        ui->actionNew->setText("New session...");
+        ui->actionNew->setText("&New session...");
         ui->actionNew->setToolTip("Start a new management session.");
         connect
         (
@@ -297,7 +297,7 @@ qsmainwnd::qsmainwnd
          * File / Import into Session. Do we need an "Open Session"?
          */
 
-        ui->actionOpen->setText("Import into Session...");
+        ui->actionOpen->setText("&Import into Session...");
         ui->actionOpen->setToolTip
         (
             "Import a MIDI or Seq66 MIDI file into the current session."
@@ -312,7 +312,7 @@ qsmainwnd::qsmainwnd
          * File / Save Session.
          */
 
-        ui->actionNew->setText("Save session");
+        ui->actionNew->setText("&Save session");
         ui->actionNew->setToolTip("Save the current state of the session.");
         connect
         (
@@ -330,7 +330,7 @@ qsmainwnd::qsmainwnd
          * File / Export from Session
          */
 
-        ui->actionSave_As->setText("Export from Session...");
+        ui->actionSave_As->setText("&Export from Session...");
         ui->actionSave_As->setToolTip("Save as a Seq66 MIDI file only.");
         connect
         (
@@ -342,7 +342,7 @@ qsmainwnd::qsmainwnd
          * File / Close.  TODO.
          */
 
-        ui->actionClose->setText("Close");
+        ui->actionClose->setText("&Close");
         ui->actionClose->setToolTip("Disconnect from session management.");
         connect(ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit()));
     }
@@ -352,7 +352,7 @@ qsmainwnd::qsmainwnd
          * File / New.  Connect the GUI elements to event handlers.
          */
 
-        ui->actionNew->setText("New");
+        ui->actionNew->setText("&New");
         ui->actionNew->setToolTip("Create a new Seq66 MIDI file.");
         connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
 
@@ -360,7 +360,7 @@ qsmainwnd::qsmainwnd
          * File / Open.
          */
 
-        ui->actionOpen->setText("Open...");
+        ui->actionOpen->setText("&Open...");
         ui->actionOpen->setToolTip("Open a MIDI or Seq66 MIDI file.");
         connect
         (
@@ -372,8 +372,8 @@ qsmainwnd::qsmainwnd
          * File / Save
          */
 
-        ui->actionNew->setText("Save");
-        ui->actionNew->setToolTip("Save as a Seq66 MIDI file.");
+        ui->actionSave->setText("&Save");
+        ui->actionSave->setToolTip("Save as a Seq66 MIDI file.");
         connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
 
         /*

@@ -787,7 +787,7 @@ sequence::toggle_queued ()
  *      format.  False indicates that the playback is controlled by the main
  *      window, in live mode.
  *
- * \param resume_note_ons
+ * \param resumenoteons
  *      A song-recording parameter.
  *
  * \threadsafe
@@ -5285,17 +5285,13 @@ sequence::resume_note_ons (midipulse tick)
     automutex locker(m_mutex);                          /* better here?     */
     for (auto & ei : m_events)
     {
-        if (ei.is_note_on())
+        if (ei.is_note_on() && ei.is_linked())
         {
-            event * link = ei.link();
-            if (not_nullptr(link))
-            {
-                midipulse on = ei.timestamp();          /* see banner notes */
-                midipulse off = link->timestamp();
-                midipulse remainder = tick % get_length();
-                if (on < remainder && off > remainder)
-                    put_event_on_bus(ei);
-            }
+            midipulse on = ei.timestamp();              /* see banner notes */
+            midipulse off = ei.link()->timestamp();
+            midipulse remainder = tick % get_length();
+            if (on < remainder && off > remainder)
+                put_event_on_bus(ei);
         }
     }
 }

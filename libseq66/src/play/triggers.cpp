@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2019-12-15
+ * \updates       2020-06-20
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -222,7 +222,7 @@ triggers::pop_redo ()
  *      Provides the ending tick value, and returns the modified value as a
  *      side-effect.
  *
- * \param resume_note_ons
+ * \param resumenoteons
  *      Indicates what to do with notes when song-recording.
  *
  * \return

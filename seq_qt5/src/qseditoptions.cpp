@@ -132,19 +132,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(update_note_resume())
     );
 
-/*
-    connect
-    (
-        ui->radio_live_mode, SIGNAL(toggled(bool)),
-        this, SLOT(slot_live_mode(bool))
-    );
-    connect
-    (
-        ui->radio_song_mode, SIGNAL(toggled(bool)),
-        this, SLOT(slot_song_mode(bool))
-    );
-    */
-
     /*
      * Create a button group to manage the mutual status of the JACK Live and
      * Song Mode buttons.
@@ -427,7 +414,7 @@ qseditoptions::syncWithInternals ()
      * Both these options are usr() options now.
      */
 
-    ui->chkNoteResume->setChecked(perf().resume_note_ons());
+    ui->chkNoteResume->setChecked(usr().resume_note_ons());
     ui->spinKeyHeight->setValue(usr().key_height());
 
     char tmp[16];

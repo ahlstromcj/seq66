@@ -25,18 +25,18 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-13
+ * \updates       2020-06-22
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
  *  tempo) have been added to the container.
  *
- *  This module also defines the  eventlist::event_key object.  Although the
+ *  This module also defines the eventlist::event_key object.  Although the
  *  main MIDI container are now back to using std::list (with sorting after
  *  loading).
  */
 
-#include <stdio.h>                      /* C::printf()                  */
+#include <cstdio>                       /* std::printf()                    */
 
 #include "util/basic_macros.hpp"
 #include "midi/eventlist.hpp"
@@ -991,10 +991,9 @@ eventlist::mark_out_of_range (midipulse slength)
 }
 
 /**
- *  A helper function for sequence.
- *  Finds the given event, and removes the first iterator
- *  matching that.  If there are events that would match after that, they
- *  remain in the container.  This matches seq24 behavior.
+ *  A helper function for sequence.  Finds the given event, and removes the
+ *  first iterator matching that.  If there are events that would match after
+ *  that, they remain in the container.  This matches seq24 behavior.
  *
  * \todo
  *      Use the find() function to find the matching event more
@@ -1072,7 +1071,7 @@ eventlist::remove_selected ()
     auto i = m_events.begin();
     while (i != m_events.end())
     {
-        if (dref(i).is_selected())
+        if (i->is_selected())
         {
             auto t = remove(i);
             i = t;
@@ -1913,7 +1912,7 @@ eventlist::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
 void
 eventlist::print () const
 {
-    printf("events[%d]:\n", count());
+    std::printf("events[%d]:\n", count());
     for (auto & e : m_events)
         e.print();
 }
@@ -1927,7 +1926,7 @@ eventlist::print_notes (const std::string & tag) const
 {
     if (count() > 0)
     {
-        printf("Notes %s:\n", tag.c_str());
+        std::printf("Notes %s:\n", tag.c_str());
         for (auto & e : m_events)
             e.print_note();
     }

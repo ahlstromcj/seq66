@@ -1290,8 +1290,7 @@ usrfile::write ()
     std::string v = bool_to_string(usr().resume_note_ons());
     file << "\n"
         "# The note-resume option, if active, causes any notes in progress\n"
-        "# to be resumed when the pattern is toggled back on.\n"
-        "\n"
+        "# to be resumed when the pattern is toggled back on.\n\n"
         << "note-resume = " << v << "\n"
         ;
 

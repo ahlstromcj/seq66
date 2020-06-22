@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-25
+ * \updates       2020-06-22
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -637,6 +637,9 @@ qseqroll::draw_notes
         if (dt == sequence::draw::finish)
             break;
 
+        if (dt == sequence::draw::tempo)
+            continue;
+
 #if defined SEQ66_PLATFORM_DEBUG_TMI
             static int s_count = 0;
             if (s_count < 16)
@@ -823,15 +826,21 @@ qseqroll::draw_drum_notes
      *
      *  eventlist::const_iterator evi;
      *  s->reset_ex_iterator(evi);
+     *
+     *  s->reset_draw_marker();
      */
 
-    s->reset_draw_marker();
+    eventlist::const_iterator evi;
+    s->reset_ex_iterator(evi);
     for (;;)
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note(ni);
+        sequence::draw dt = s->get_next_note_ex(ni, evi);
         if (dt == sequence::draw::finish)
             break;
+
+        if (dt == sequence::draw::tempo)
+            continue;
 
         bool start_in = ni.start() >= start_tick && ni.start() < end_tick;
         bool linkedin = dt == sequence::draw::linked && start_in;

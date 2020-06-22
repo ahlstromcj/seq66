@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-01-13
+ * \updates       2020-06-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -265,6 +265,18 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  *  should be obvious, whereas in the Seq24 implementation we had to append a
  *  comment to make it easier for the user to comprehend the configuration file.
  *
+ *  Check-point 1:
+ *
+ *      See if there is any space after the variable name, but before the "="
+ *      sign.  If so, the first space, not the "=" sign, terminates the variable
+ *      name.
+ *
+ *  Check-point 2:
+ *      Now get the first non-space after the "=" sign.  If there is a quote
+ *      character ("=" or "'"), then see if there a match quote, and get
+ *      everything inside the quotes.  Otherwise, grab the first token on the
+ *      value (right) side.
+ *
  * \warning
  *      This function assumes that the next_data_line() function
  *
@@ -294,19 +306,19 @@ configfile::get_variable
 )
 {
     std::string result;
-    bool good = line_after(file, tag, position);
-    while (good)                                /* not at end of section?   */
+    for
+    (
+        bool done = ! line_after(file, tag, position); ! done;
+        done = ! next_data_line(file)
+    )
     {
         if (! line().empty())                   /* any value in section?    */
         {
             std::string::size_type epos = line().find_first_of("=");
-            good = epos != std::string::npos;
-            if (good)
+            if (epos != std::string::npos)
             {
                 /*
-                 * See if there is any space after the variable name, but
-                 * before the "=" sign.  If so, the first space, not the "="
-                 * sign, terminates the variable name.
+                 *  Check-point 1
                  */
 
                 std::string::size_type spos = line().find_first_of(" ");
@@ -317,11 +329,7 @@ configfile::get_variable
                 if (vname == variablename)
                 {
                     /*
-                     *  Now get the first non-space after the "=" sign.  If
-                     *  there is a quote character ("=" or "'"), then see if
-                     *  there a match quote, and get everything inside the
-                     *  quotes.  Otherwise, grab the first token on the value
-                     *  (right) side.
+                     *  Check-point 2
                      */
 
                     bool havequotes = false;
@@ -349,17 +357,18 @@ configfile::get_variable
                         {
                             epos = line().find_first_of(" ", spos);
                             result = line().substr(spos, epos-spos);
+                            break;
                         }
                     }
                 }
+                else
+                    continue;
             }
             else
                 continue;
         }
         else
             break;
-
-        good = next_data_line(file);            /* not at end of section?   */
     }
     return result;
 }
