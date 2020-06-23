@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-01
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -93,7 +93,7 @@ qseqdata::~qseqdata ()
 void
 qseqdata::conditional_update ()
 {
-    if (check_needs_update())   //  || perf().needs_update())
+    if (check_needs_update())
         update();
 }
 
@@ -155,7 +155,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     painter.drawRect(0, 0, width() - 1, height() - 1);  /* data-box border  */
 
     char digits[4];
-    eventlist::const_iterator cev;
+    event::buffer::const_iterator cev;
     seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());

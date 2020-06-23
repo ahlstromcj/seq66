@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-06
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -291,6 +291,42 @@ public:
 
     using sysex = std::vector<midibyte>;
 
+    /**
+     *  The data buffer for MIDI events.  This item replaces the
+     *  eventlist::Events type definition so that we can replace event
+     *  pointers with iterators, safely.
+     */
+
+    using buffer = std::vector<event>;
+    using iterator = buffer::iterator;
+    using const_iterator = buffer::const_iterator;
+    using reverse_iterator = buffer::reverse_iterator;
+    using const_reverse_iterator = buffer::const_reverse_iterator;
+
+public:
+
+    /**
+     *  Provides a key value for an event.  Its types match the
+     *  m_timestamp and get_rank() function of the event class.
+     */
+
+    class key
+    {
+
+    private:
+
+        midipulse m_timestamp;  /**< The primary key-value for the key. */
+        int m_rank;             /**< The sub-key-value for the key.     */
+
+    public:
+
+        key (midipulse tstamp, int rank);
+        key (const event & e);
+        bool operator < (const key & rhs) const;
+        key (const key & ek) = default;
+        key & operator = (const key & ek) = default;
+    };
+
 private:
 
     /**
@@ -350,10 +386,10 @@ private:
     /**
      *  This event is used to link NoteOns and NoteOffs together.  The NoteOn
      *  points to the NoteOff, and the NoteOff points to the NoteOn.  See, for
-     *  example, eventlist::link_note().
+     *  example, eventlist::link_notes().
      */
 
-    event * m_linked;
+    iterator m_linked;
 
     /**
      *  Indicates that a link has been made.  This item is used [via
@@ -945,7 +981,7 @@ public:
      *  Determines if this event is a note-on event and is not already linked.
      */
 
-    bool linkable ()
+    bool on_linkable ()
     {
         return is_note_on() && ! is_linked();
     }
@@ -955,18 +991,18 @@ public:
      *  assumed to be a Note On event).  A test used in verify_and_link().
      *
      * \param e
-     *      Normally this is a Note Off event.
+     *      Normally this is a Note Off event.  This status is required.
      *
      * \return
      *      Returns true if the event is a Note Off, it's the same note as
      *      this note, and the Note Off is not yet linked.
      */
 
-    bool linkable (event & e)
+    bool off_linkable (event & e)
     {
         return
         (
-            e.is_note_off() && e.get_note() == get_note() && ! e.is_linked()
+            e.is_note_off() && (e.get_note() == get_note()) && ! e.is_linked()
         );
     }
 
@@ -979,15 +1015,15 @@ public:
      *      correct.
      */
 
-    void link (event * ev)
+    void link (iterator ev)
     {
         m_linked = ev;
-        m_has_link = not_nullptr(ev);
+        m_has_link = true;
     }
 
-    event * link () const
+    iterator link () const
     {
-        return m_linked;
+        return m_linked;        /* iterator could be invalid, though    */
     }
 
     bool is_linked () const
@@ -998,7 +1034,6 @@ public:
     void unlink ()
     {
         m_has_link = false;
-        m_linked = nullptr;
     }
 
     void paint ()

@@ -105,7 +105,7 @@
  *  bytes into this buffer. Clients must write normalized MIDI data to the
  *  port - no running status and no (1-byte) realtime messages interspersed
  *  with other messages (realtime messages are fine when they occur on their
- *  own).  Events must be written in order, sorted by their offsets.  JACK
+ *  own).  The events must be written in order, sorted by their offsets.  JACK
  *  will not sort the events, and will refuse to store out-of-order events.
  *  The offset ranges from 0 to nframes, where nframes is a parameter passed
  *  to the callback.

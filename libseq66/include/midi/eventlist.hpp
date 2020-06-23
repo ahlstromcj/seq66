@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-05-26
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -77,7 +77,6 @@ const int c_num_keys = 128;
 
 class eventlist
 {
-    friend class editable_events;       // access to event_key class
     friend class midifile;              // access to print()
     friend class sequence;              // any_selected_notes()
 
@@ -132,42 +131,10 @@ public:
 private:
 
     /**
-     *  Provides a key value for an event map.  Its types match the
-     *  m_timestamp and get_rank() function of this event class.
-     */
-
-    class event_key
-    {
-
-    private:
-
-        midipulse m_timestamp;  /**< The primary key-value for the key. */
-        int m_rank;             /**< The sub-key-value for the key.     */
-
-    public:
-
-        event_key (midipulse tstamp, int rank);
-        event_key (const event & e);
-        bool operator < (const event_key & rhs) const;
-        event_key (const event_key & ek) = default;
-        event_key & operator = (const event_key & ek) = default;
-    };
-
-public:
-
-    using Events = std::vector<event>;
-    using iterator = Events::iterator;
-    using const_iterator = Events::const_iterator;
-    using reverse_iterator = Events::reverse_iterator;
-    using const_reverse_iterator = Events::const_reverse_iterator;
-
-private:
-
-    /**
      *  This list holds the current pattern/sequence events.
      */
 
-    Events m_events;
+    event::buffer m_events;
 
     /**
      *  Holds the length of the sequence holding this event-list,
@@ -221,22 +188,22 @@ public:
         // No code needed
     }
 
-    iterator begin ()
+    event::buffer::iterator begin ()
     {
         return m_events.begin();
     }
 
-    const_iterator cbegin () const
+    event::buffer::const_iterator cbegin () const
     {
         return m_events.cbegin();
     }
 
-    iterator end ()
+    event::buffer::iterator end ()
     {
         return m_events.end();
     }
 
-    const_iterator cend () const
+    event::buffer::const_iterator cend () const
     {
         return m_events.cend();
     }
@@ -332,9 +299,9 @@ public:
      *      is now empty.
      */
 
-    iterator remove (iterator ie)
+    event::buffer::iterator remove (event::buffer::iterator ie)
     {
-        iterator result = m_events.erase(ie);
+        event::buffer::iterator result = m_events.erase(ie);
         m_is_modified = true;
         return result;
     }
@@ -372,7 +339,7 @@ public:
      *      Provides the iterator to the event to which to get a reference.
      */
 
-    static event & dref (iterator ie)
+    static event & dref (event::buffer::iterator ie)
     {
         return *ie;
     }
@@ -384,15 +351,15 @@ public:
      *      Provides the iterator to the event to which to get a reference.
      */
 
-    static const event & cdref (const_iterator ie)
+    static const event & cdref (event::buffer::const_iterator ie)
     {
         return *ie;
     }
 
 private:                                /* internal quantization functions  */
 
-    bool add (Events & evlist, const event & e);
-    void merge (const Events & evlist);
+    bool add (event::buffer & evlist, const event & e);
+    void merge (const event::buffer & evlist);
 
 private:                                /* functions for friend sequence    */
 
@@ -417,7 +384,12 @@ private:                                /* functions for friend sequence    */
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter, int range);
-    bool link_note (event & eon, event & eoff);
+//  bool link_notes (event & eon, event & eoff);
+    bool link_notes
+    (
+        event::buffer::iterator & eon,
+        event::buffer::iterator & eoff
+    );
     void link_tempos ();
     void clear_tempo_links ();
     bool mark_selected ();
@@ -471,7 +443,7 @@ private:                                /* functions for friend sequence    */
     std::string to_string () const;
     void print_notes (const std::string & tag = "") const;
 
-    const Events & events () const
+    const event::buffer & events () const
     {
         return m_events;
     }

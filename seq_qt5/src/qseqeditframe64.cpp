@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-06-15
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2738,7 +2738,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    eventlist::const_iterator cev;
+    event::buffer::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
     {
@@ -2892,8 +2892,8 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    eventlist::const_iterator cev;
-    seq_pointer()->reset_ex_iterator(cev);      /* reset_draw_marker()  */
+    event::buffer::const_iterator cev;
+    seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
     {
         switch (status)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2019-10-29
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_events
@@ -192,7 +192,7 @@ bool
 editable_events::add (const editable_event & e)
 {
     size_t count = m_events.size();         /* save initial size            */
-    eventlist::event_key key(e);            /* create the key value         */
+    event::key key(e);                      /* create the key value         */
     auto p = std::make_pair(key, e);        /* EventsPair                   */
     auto ei = m_events.insert(p);           /* std::multimap operation      */
     bool result = m_events.size() == (count + 1);
@@ -335,22 +335,15 @@ editable_events::verify_and_link (midipulse slength)
             ++off;
             while (off != m_events.end())
             {
-                /*
-                 * TODO:  Use link-note
-                 */
-
                 event & eoff = dref(off);   /* Off, == notes, not marked    */
-                if (eon.linkable(eoff))
-                {
-                    eon.link(&eoff);                        /* link + mark  */
-                    eoff.link(&eon);
-                    eon.mark();
-                    eoff.mark();
-                    endfound = true;
+                endfound = link_notes(eon, eoff);
+                if (endfound)
                     break;
-                }
+
                 ++off;
             }
+
+#if defined SEQ66_USE_STAZED_LINK_NEW_EXTENSION
             if (! endfound)
             {
                 off = m_events.begin();
@@ -361,18 +354,14 @@ editable_events::verify_and_link (midipulse slength)
                      */
 
                     event & eoff = dref(off);
-                    if (eon.linkable(eoff))
-                    {
-                        eon.link(&eoff);                    /* link + mark  */
-                        eoff.link(&eon);
-                        eon.mark();
-                        eoff.mark();
-                        endfound = true;
+                    endfound = link_notes(eon, eoff);
+                    if (endfound)
                         break;
-                    }
+
                     ++off;
                 }
             }
+#endif
         }
     }
     unmark_all();
@@ -380,26 +369,16 @@ editable_events::verify_and_link (midipulse slength)
 }
 
 /**
- *  The same as link_new_note(), except that it checks is_marked() instead of
- *  is_linked().
  */
 
 bool
-editable_events::link_note (event & eon, event & eoff)
+editable_events::link_notes (event & eon, event & eoff)
 {
-    bool result = eon.linkable(eoff);
+    bool result = eon.off_linkable(eoff);
     if (result)
     {
-        eon.link(&eoff);                /* link + mark                  */
+        eon.link(&eoff);
         eoff.link(&eon);
-
-        /*
-         * Not sure why we bother to mark here, when we unmark them
-         * all afterward in preparation for potential pruning.
-         *
-         *  eon.mark();
-         *  eoff.mark();
-         */
     }
     return result;
 }

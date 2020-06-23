@@ -180,12 +180,14 @@ qstriggereditor::paintEvent (QPaintEvent *)
         painter.drawLine(x_offset, 1, x_offset, qc_eventarea_y);
     }
 
-    /* draw boxes from sequence */
+    /*
+     * Draw boxes from sequence.
+     */
 
     pen.setColor(Qt::black);
     pen.setStyle(Qt::SolidLine);
 
-    eventlist::const_iterator cev;
+    event::buffer::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_match(m_status, m_cc, cev))
     {

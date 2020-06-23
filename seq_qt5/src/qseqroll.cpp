@@ -628,7 +628,7 @@ qseqroll::draw_notes
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
-    eventlist::const_iterator evi;
+    event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
     {
@@ -821,16 +821,7 @@ qseqroll::draw_drum_notes
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
 
-    /*
-     * TODO: use reset_ex_iterator() or reset_interval().
-     *
-     *  eventlist::const_iterator evi;
-     *  s->reset_ex_iterator(evi);
-     *
-     *  s->reset_draw_marker();
-     */
-
-    eventlist::const_iterator evi;
+    event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
     {
@@ -868,7 +859,6 @@ qseqroll::draw_drum_notes
             pen.setColor(Qt::black);
             if (background)                     // draw background note
             {
-                //// length_add = 1;
                 pen.setColor(Qt::darkCyan);     // note border color
                 brush.setColor(Qt::darkCyan);
             }

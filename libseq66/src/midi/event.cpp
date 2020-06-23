@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-02
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -69,6 +69,8 @@
  *
  *  In Seq24/Seq66, the Meta events are handled directly, and they
  *  set up sequence parameters.
+ *
+ *  This module also defines the event::key object.
  */
 
 #include <cstring>                      /* std::memcpy()                    */
@@ -84,6 +86,12 @@
 
 namespace seq66
 {
+
+/*
+ * --------------------------------------------------------------
+ *  event
+ * --------------------------------------------------------------
+ */
 
 /**
  *  This constructor simply initializes all of the class members to default
@@ -716,7 +724,7 @@ event::print_note (bool is_a_link) const
         );
         if (is_linked() && ! is_a_link)
         {
-            event * mylink = link();
+            const_iterator mylink = link();
             printf(": Link ");
             mylink->print_note(true);
         }
@@ -847,6 +855,76 @@ event::set_tempo (midibpm tempo)
     tempo_us_to_bytes(t, us);
     set_sysex(t, 3);
 }
+
+/*
+ * --------------------------------------------------------------
+ *  event::key
+ * --------------------------------------------------------------
+ */
+
+/**
+ *  Principal event::key constructor.
+ *
+ * \param tstamp
+ *      The time-stamp is the primary part of the key.  It is the most
+ *      important key item.
+ *
+ * \param rank
+ *      Rank is an arbitrary number used to prioritize events that have the
+ *      same time-stamp.  See the event::get_rank() function for more
+ *      information.
+ */
+
+event::key::key (midipulse tstamp, int rank)
+ :
+    m_timestamp (tstamp),
+    m_rank      (rank)
+{
+    // Empty body
+}
+
+/**
+ *  Event-based constructor.  This constructor makes it even easier to
+ *  create an key.  Note that the call to event::get_rank() makes a
+ *  simple calculation based on the status of the event.
+ *
+ * \param rhs
+ *      Provides the event key to be copied.
+ */
+
+event::key::key (const event & rhs)
+ :
+    m_timestamp (rhs.timestamp()),
+    m_rank      (rhs.get_rank())
+{
+    // Empty body
+}
+
+/**
+ *  Provides the minimal operator needed to sort events using an key.
+ *
+ * \param rhs
+ *      Provides the event key to be compared against.
+ *
+ * \return
+ *      Returns true if the rank and timestamp of the current object are less
+ *      than those of rhs.
+ */
+
+bool
+event::key::operator < (const key & rhs) const
+{
+    if (m_timestamp == rhs.m_timestamp)
+        return (m_rank < rhs.m_rank);
+    else
+        return (m_timestamp < rhs.m_timestamp);
+}
+
+/*
+ * --------------------------------------------------------------
+ *  Free functions
+ * --------------------------------------------------------------
+ */
 
 /**
  *  A free function to convert an event into an informative string, just

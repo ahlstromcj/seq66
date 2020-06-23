@@ -555,7 +555,7 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
  *  eventually processing gets swamped until we kill VMPK.  And we now have a
  *  note sounding even though neither app is running.  Really screws up ALSA!
  *
- * Events:
+ * ALSA events:
  *
  *      -  SND_SEQ_EVENT_PORT_START
  *      -  SND_SEQ_EVENT_PORT_EXIT

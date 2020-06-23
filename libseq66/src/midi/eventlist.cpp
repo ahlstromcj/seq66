@@ -25,15 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-22
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
  *  tempo) have been added to the container.
- *
- *  This module also defines the eventlist::event_key object.  Although the
- *  main MIDI container are now back to using std::list (with sorting after
- *  loading).
  */
 
 #include <cstdio>                       /* std::printf()                    */
@@ -47,64 +43,6 @@
 
 namespace seq66
 {
-
-/**
- *  Principal event_key constructor.
- *
- * \param tstamp
- *      The time-stamp is the primary part of the key.  It is the most
- *      important key item.
- *
- * \param rank
- *      Rank is an arbitrary number used to prioritize events that have the
- *      same time-stamp.  See the event::get_rank() function for more
- *      information.
- */
-
-eventlist::event_key::event_key (midipulse tstamp, int rank)
- :
-    m_timestamp (tstamp),
-    m_rank      (rank)
-{
-    // Empty body
-}
-
-/**
- *  Event-based constructor.  This constructor makes it even easier to
- *  create an event_key.  Note that the call to event::get_rank() makes a
- *  simple calculation based on the status of the event.
- *
- * \param rhs
- *      Provides the event key to be copied.
- */
-
-eventlist::event_key::event_key (const event & rhs)
- :
-    m_timestamp (rhs.timestamp()),
-    m_rank      (rhs.get_rank())
-{
-    // Empty body
-}
-
-/**
- *  Provides the minimal operator needed to sort events using an event_key.
- *
- * \param rhs
- *      Provides the event key to be compared against.
- *
- * \return
- *      Returns true if the rank and timestamp of the current object are less
- *      than those of rhs.
- */
-
-bool
-eventlist::event_key::operator < (const event_key & rhs) const
-{
-    if (m_timestamp == rhs.m_timestamp)
-        return (m_rank < rhs.m_rank);
-    else
-        return (m_timestamp < rhs.m_timestamp);
-}
 
 /**
  *  Principal constructor.
@@ -237,7 +175,7 @@ eventlist::append (const event & e)
  */
 
 bool
-eventlist::add (Events & evlist, const event & e)
+eventlist::add (event::buffer & evlist, const event & e)
 {
     evlist.push_back(e);                /* std::vector operation        */
     std::sort(evlist.begin(), evlist.end());
@@ -250,7 +188,7 @@ eventlist::add (Events & evlist, const event & e)
  */
 
 void
-eventlist::merge (const Events & evlist)
+eventlist::merge (const event::buffer & evlist)
 {
     m_events.reserve(m_events.size() + evlist.size());
     m_events.insert(m_events.end(), evlist.begin(), evlist.end());
@@ -312,36 +250,33 @@ eventlist::merge (eventlist & el, bool presort)
  *  its note off.  This function is provided in the eventlist because it
  *  does not depend on any external data.  Also note that any desired
  *  thread-safety must be provided by the caller.
+ *
+ * SEQ66_USE_STAZED_LINK_NEW_EXTENSION: This is a Stazed addition; not in
+ * seq24.  Not sure that we need it, commmented out for testing.  It looks
+ * like it can handle cases where the Note Off comes before the Note On (i.e.
+ * the note wraps around to the beginning of the pattern).  However, it has
+ * some oddities, like unlinked notes.
  */
 
 void
 eventlist::link_new ()
 {
+    sort();                                         /* IMPORTANT!           */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
-        event & eon = dref(on);
-        if (eon.linkable())
+        if (on->on_linkable())
         {
             bool endfound = false;                  /* end-of-note flag     */
             auto off = on;                          /* point to note on     */
             ++off;                                  /* get next element     */
             while (off != m_events.end())
             {
-                event & eoff = dref(off);
-                endfound = link_note(eon, eoff);
+                endfound = link_notes(on, off);
                 if (endfound)
                     break;
 
                 ++off;
             }
-
-            /*
-             * This is a Stazed addition; not in seq24.  Not sure that we need it,
-             * commmented out for testing.  It looks like it can handle cases
-             * where the Note Off comes before the Note On (i.e. the note wraps
-             * around to the beginning of the pattern).  However, it has some
-             * oddities, like unlinked notes.
-             */
 
 #if defined SEQ66_USE_STAZED_LINK_NEW_EXTENSION
             if (! endfound)
@@ -349,13 +284,10 @@ eventlist::link_new ()
                 off = m_events.begin();
                 while (off != on)
                 {
-                    event & eoff = dref(off);
-                    if (eon.linkable(eoff))
-                    {
-                        endfound = link_note(eon, eoff);
-                        if (endfound)
-                            break;
-                    }
+                    endfound = link_notes(on, off);
+                    if (endfound)
+                        break;
+
                     ++off;
                 }
             }
@@ -375,18 +307,30 @@ eventlist::link_new ()
  *
  *  Careful!
  *
+ * \param eon
+ *      Provides an event already known to satisfy the event::on_linkable()
+ *      function.
+ *
+ * \param eoff
+ *      Provides an event that will be checked according to
+ *      event::off_linkable().
+ *
  * \return
  *      Returns true if the notes were linked.
  */
 
 bool
-eventlist::link_note (event & eon, event & eoff)
+eventlist::link_notes
+(
+    event::buffer::iterator & eon,
+    event::buffer::iterator & eoff
+)
 {
-    bool result = eon.linkable(eoff);
+    bool result = eon->off_linkable(*eoff);
     if (result)
     {
-        eon.link(&eoff);                /* link + mark                  */
-        eoff.link(&eon);
+        eon->link(eoff);
+        eoff->link(eon);
     }
     return result;
 }
@@ -394,6 +338,9 @@ eventlist::link_note (event & eon, event & eoff)
 /**
  *  This function verifies state: all note-ons have an off, and it links
  *  note-offs with their note-ons.
+ *
+ *  It also links the tempos in a separate pass (it makes the logic easier and
+ *  the amount of time should be unnoticeable to the user.
  *
  * Stazed (seq32):
  *
@@ -414,52 +361,13 @@ void
 eventlist::verify_and_link (midipulse slength)
 {
     clear_links();
-    sort();                                 /* IMPORTANT!                   */
-    for (auto on = m_events.begin(); on != m_events.end(); ++on)
-    {
-        event & eon = dref(on);
-        if (eon.is_note_on())               /* Note On, find its Note Off   */
-//      if (eon.linkable())                 /* Note On and not yet linked   */
-        {
-            bool endfound = false;
-            auto off = on;                  /* next possible Note Off...    */
-            ++off;                          /* ...starting here             */
-            while (off != m_events.end())
-            {
-                event & eoff = dref(off);
-                endfound = link_note(eon, eoff);
-                if (endfound)
-                    break;
-
-                ++off;
-            }
-            if (! endfound)
-            {
-                off = m_events.begin();
-                while (off != on)
-                {
-                    event & eoff = dref(off);
-                    endfound = link_note(eon, eoff);
-                    if (endfound)
-                        break;
-
-                    ++off;
-                }
-            }
-        }
-    }
-    unmark_all();
+    link_new();
     if (slength > 0)
     {
+        unmark_all();
         mark_out_of_range(slength);
         (void) remove_marked();             /* prune out-of-range events    */
     }
-
-    /*
-     *  Link the tempos in a separate pass (it makes the logic easier and the
-     *  amount of time should be unnoticeable to the user.
-     */
-
     link_tempos();
 }
 
@@ -692,6 +600,9 @@ eventlist::adjust_timestamp (midipulse t, bool isnoteoff)
  *  Any events (except Note Off) that will start just after the END of the
  *  pattern will be wrapped around to the beginning of the pattern.
  *
+ *  After this function, we also have to call verify_and_link(), which sorts and
+ *  relinks the notes from scratch.
+ *
  * \param delta_tick
  *      Provides the amount of time to move the selected notes.  Note that it
  *      also applies to events.  Note-Off events are expanded to m_length if
@@ -717,7 +628,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
             {
                 midipulse newts = er.timestamp() + delta_tick;
                 newts = adjust_timestamp(newts, er.is_note_off());
-                if (er.is_note())                /* Note On or Note Off  */
+                if (er.is_note())                   /* Note On or Note Off  */
                     er.set_note(midibyte(newnote));
 
                 er.set_timestamp(newts);
@@ -726,7 +637,7 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
         }
     }
     if (result)
-        sort();                                 /* timestamps altered   */
+        verify_and_link();                          /* sort and relink      */
 
     return result;
 }
@@ -739,6 +650,9 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
  *  altered.
  *
  *  See http://c-faq.com/lib/randrange.html for details.
+ *
+ *  Note that we do not need to call verify_and_link() here, since we are not
+ *  altering the timestamps or the note values.
  */
 
 bool
@@ -771,6 +685,9 @@ eventlist::randomize_selected (midibyte status, int range)
  *  This function randomizes a Note On or Note Off message, and more
  *  thoroughly than randomize_selected().  We want to be able to jitter the
  *  note event in time, and jitter the velocity (data byte d[1]) of the note.
+ *  The note pitch (d[0]) is not altered.
+ *
+ *  Since we jitter the timestamps, we have to call verify_and_link() afterward.
  *
  * \param length
  *      The length of the sequence containing the notes.
@@ -829,7 +746,7 @@ eventlist::randomize_selected_notes (int jitter, int range)
         }
     }
     if (result)
-        sort();                                 /* timestamps altered   */
+        verify_and_link();                          /* sort and relink      */
 
     return result;
 }
@@ -878,18 +795,18 @@ eventlist::link_tempos ()
     clear_tempo_links();
     for (auto t = m_events.begin(); t != m_events.end(); ++t)
     {
-        event & e = dref(t);
-        if (e.is_tempo())
+        // event & e = dref(t);
+        if (t->is_tempo())
         {
             auto t2 = t;                    /* next possible Set Tempo...   */
             ++t2;                           /* ...starting here             */
             while (t2 != m_events.end())
             {
-                event & et2 = dref(t2);
-                if (et2.is_tempo())
+                // event & et2 = dref(t2);
+                if (t2->is_tempo())
                 {
-                    e.link(&et2);                   /* link + mark          */
-                    break;                          /* tempos link one way  */
+                    t->link(t2);
+                    break;                  /* tempos link only one way     */
                 }
                 ++t2;
             }
@@ -907,7 +824,7 @@ eventlist::clear_tempo_links ()
     for (auto & e : m_events)
     {
         if (e.is_tempo())
-            e.unlink();                 /* was e.clear_link()   */
+            e.unlink();
     }
 }
 
@@ -1003,7 +920,8 @@ eventlist::mark_out_of_range (midipulse slength)
  *      Provides a reference to the event to be removed.
  *
  * \return
- *      Returns true if the event was found and removed.
+ *      Returns true if the event was found and removed.  This function
+ *      returns immediately after the event is removed.
  */
 
 bool
@@ -1028,7 +946,6 @@ eventlist::remove_event (event & e)
  *  value to avoid incrementing a now-invalid iterator.
  *
  * \threadsafe
- * \deprecated
  *
  * \return
  *      Returns true if at least one event was removed.
@@ -1038,10 +955,9 @@ bool
 eventlist::remove_marked ()
 {
     bool result = false;
-    auto i = m_events.begin();
-    while (i != m_events.end())
+    for (auto i = m_events.begin(); i != m_events.end(); /*++i*/)
     {
-        if (dref(i).is_marked())
+        if (i->is_marked())
         {
             auto t = remove(i);
             i = t;
@@ -1068,8 +984,7 @@ bool
 eventlist::remove_selected ()
 {
     bool result = false;
-    auto i = m_events.begin();
-    while (i != m_events.end())
+    for (auto i = m_events.begin(); i != m_events.end(); /*++i*/)
     {
         if (i->is_selected())
         {
@@ -1080,6 +995,9 @@ eventlist::remove_selected ()
         else
             ++i;
     }
+    if (result)
+        verify_and_link();
+
     return result;
 }
 
@@ -1377,7 +1295,7 @@ eventlist::select_note_events
             midipulse stick = 0, ftick = 0;
             if (er.is_linked())
             {
-                event * ev = er.link();
+                event::buffer::iterator ev = er.link();
                 if (er.is_note_off())
                 {
                     stick = ev->timestamp();    /* time of the Note On  */
@@ -1703,7 +1621,7 @@ eventlist::grow_selected (midipulse delta, int snap)
             {
                 if (er.is_note_on() && er.is_linked())
                 {
-                    event * off = er.link();
+                    event::buffer::iterator off = er.link();
                     event e = *off;                 /* original off-event   */
                     midipulse offtime = off->timestamp();
                     midipulse newtime = trim_timestamp(offtime + delta);
@@ -1798,7 +1716,7 @@ eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
             }
         }
         merge(clipbd);                          /* will presort clipboard   */
-        verify_and_link();
+        verify_and_link();                      /* vice remove_selected()   */
     }
     return result;
 }
@@ -1918,7 +1836,7 @@ eventlist::print () const
 }
 
 /**
- *  Prints a list of the currently-held events.  Useful for debugging.
+ *  Prints a list of the currently-held notes.  Useful for debugging.
  */
 
 void

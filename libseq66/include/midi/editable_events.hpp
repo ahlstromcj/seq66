@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2019-10-29
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -38,10 +38,9 @@
 
 #include <map>                          /* std::multimap                */
 
-#include "midi/eventlist.hpp"          /* seq66::eventlist::event_key */
 #include "midi/editable_event.hpp"      /* seq66::editable_event        */
 
-#undef  USE_VERIFY_AND_LINK                  /* not yet ready !!!! */
+#undef  USE_VERIFY_AND_LINK             /* not yet ready !!!!           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -66,14 +65,13 @@ private:
     /**
      *  Types to use to with the multimap implementation.  These typenames are
      *  identical to those used in eventlist, but of course they are in the
-     *  editable_events scope instead.  See the eventlist class; that class
-     *  once again uses std::list, but still defines eventlist::event_key for
-     *  use here.  We think the std::list implementation breaks editing, so
-     *  we're going back to the std::map implementation for the event-editor.
+     *  editable_events scope instead.  We should consider transitioning to
+     *  the event::buffer (vector) implementation.
+     *
+     *  Also too much re-do here from eventlist!
      */
 
-    using Key = eventlist::event_key;
-//  using EventsPair = std::pair<Key, editable_event>;
+    using Key = event::key;
     using Events = std::multimap<Key, editable_event>;
     using iterator = Events::iterator;
     using const_iterator = Events::const_iterator;
@@ -306,7 +304,7 @@ private:
 #if defined USE_VERIFY_AND_LINK                  /* not yet ready */
     void clear_links ();
     void verify_and_link (midipulse slength);
-    bool link_note (event & eon, event & eoff);
+    bool link_notes (event & eon, event & eoff);
     void mark_all ();
     void unmark_all ();
     void mark_out_of_range (midipulse slength);

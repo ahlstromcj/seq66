@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2019-12-15
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -274,7 +274,7 @@ private:
      *  An iterator for drawing events.
      */
 
-    mutable eventlist::const_iterator m_iterator_draw;
+    mutable event::buffer::const_iterator m_iterator_draw;
 
     /**
      *  A new feature for recording, based on a "stazed" feature.  If true
@@ -1508,30 +1508,30 @@ public:
     void inc_draw_marker ();
     void reset_draw_marker ();
     void reset_draw_trigger_marker ();
-    void reset_ex_iterator (eventlist::const_iterator & evi) const;
+    void reset_ex_iterator (event::buffer::const_iterator & evi) const;
     bool reset_interval
     (
         midipulse t0, midipulse t1,
-        eventlist::const_iterator & it0, eventlist::const_iterator & it1
+        event::buffer::const_iterator & it0, event::buffer::const_iterator & it1
     ) const;
     draw get_note_info
     (
-        note_info & niout, eventlist::const_iterator & evi
+        note_info & niout, event::buffer::const_iterator & evi
     ) const;
     draw get_next_note (note_info & niout) const;
     draw get_next_note_ex
     (
-        note_info & niout, eventlist::const_iterator & evi
+        note_info & niout, event::buffer::const_iterator & evi
     ) const;
     bool get_next_event (midibyte & status, midibyte & cc);
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
-        eventlist::const_iterator & ev, int evtype = EVENTS_ALL
+        event::buffer::const_iterator & ev, int evtype = EVENTS_ALL
     );
     bool get_next_event_ex
     (
-        midibyte & status, midibyte & cc, eventlist::const_iterator & evi
+        midibyte & status, midibyte & cc, event::buffer::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
     bool push_quantize
@@ -1657,7 +1657,7 @@ private:
     void set_trigger_offset (midipulse trigger_offset);
     void adjust_trigger_offsets_to_length (midipulse newlen);
     midipulse adjust_offset (midipulse offset);
-    void remove (eventlist::iterator i);
+    void remove (event::buffer::iterator i);
     void remove (event & e);
     void remove_all ();
 

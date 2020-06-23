@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-20
+ * \updates       2020-06-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -966,7 +966,7 @@ sequence::link_new ()
  */
 
 void
-sequence::remove (eventlist::iterator evi)
+sequence::remove (event::buffer::iterator evi)
 {
     if (evi != m_events.end())
     {
@@ -1028,10 +1028,11 @@ sequence::remove_marked ()
     }
 
     bool result = m_events.remove_marked();
-    reset_draw_marker();
     if (result)
+    {
         modify();
-
+        reset_draw_marker();                    /* is this necessary?       */
+    }
     return result;
 }
 
@@ -1049,7 +1050,9 @@ sequence::mark_selected ()
 {
     automutex locker(m_mutex);
     bool result = m_events.mark_selected();
-    reset_draw_marker();
+    if (result)
+        reset_draw_marker();                    /* is this necessary?       */
+
     return result;
 }
 
@@ -1065,14 +1068,16 @@ sequence::mark_selected ()
 bool
 sequence::remove_selected ()
 {
-    bool result = false;
     automutex locker(m_mutex);
     m_events_undo.push(m_events);               /* push_undo() without lock */
-    result = m_events.remove_selected();
-    reset_draw_marker();
-    if (result)
-        modify();
 
+    bool result = m_events.remove_selected();
+    if (result)
+    {
+        set_dirty();                            /* do it for the caller     */
+        modify();
+        reset_draw_marker();                    /* is this necessary?       */
+    }
     return result;
 }
 
@@ -1355,7 +1360,9 @@ sequence::select_note_events
     (
         tick_s, note_h, tick_f, note_l, action
     );
-    reset_draw_marker();
+    if (result > 0)
+        reset_draw_marker();
+
     return result;
 }
 
@@ -1397,7 +1404,9 @@ sequence::select_events
 {
     automutex locker(m_mutex);
     int result = m_events.select_events(tick_s, tick_f, status, cc, action);
-    reset_draw_marker();
+    if (result > 0)
+        reset_draw_marker();
+
     return result;
 }
 
@@ -1478,8 +1487,10 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
     m_events_undo.push(m_events);                  /* push_undo(), no lock */
     bool result = m_events.move_selected_notes(delta_tick, delta_note);
     if (result)
+    {
+        set_dirty();
         modify();
-
+    }
     return result;
 }
 
@@ -1501,8 +1512,15 @@ sequence::stretch_selected (midipulse delta_tick)
     m_events_undo.push(m_events);           /* push_undo(), no lock  */
     bool result = m_events.stretch_selected(delta_tick);
     if (result)
-        modify();
+    {
+        /*
+         * Necessary here?
+         *
+         * m_events.verify_and_link(get_length());
+         */
 
+        modify();
+    }
     return result;
 }
 
@@ -1554,8 +1572,15 @@ sequence::grow_selected (midipulse delta)
     m_events_undo.push(m_events);               /* push_undo(), no lock */
     bool result = m_events.grow_selected(delta, snap());
     if (result)
-        modify();
+    {
+        /*
+         * Necessary here?
+         *
+         * m_events.verify_and_link(get_length());
+         */
 
+        modify();
+    }
     return result;
 }
 
@@ -1582,8 +1607,10 @@ sequence::randomize_selected (midibyte status, int plus_minus)
 
     bool result = m_events.randomize_selected(status, plus_minus);
     if (result)
+    {
+        set_dirty();
         modify();
-
+    }
     return result;
 }
 
@@ -1599,8 +1626,10 @@ sequence::randomize_selected_notes (int jitter, int range)
 
     bool result = m_events.randomize_selected_notes(jitter, range);
     if (result)
+    {
+        set_dirty();
         modify();
-
+    }
     return result;
 }
 
@@ -1743,6 +1772,9 @@ sequence::repitch_selected (const notemapper & nmap)
             result = true;
         }
     }
+    if (result)
+        verify_and_link();
+
     return result;
 }
 
@@ -1803,11 +1835,7 @@ sequence::cut_selected (bool copyevents)
     if (copyevents)
         copy_selected();
 
-    if (remove_selected())
-    {
-        set_dirty();                            /* do it for the caller */
-        modify();
-    }
+    (void) remove_selected();                   /* works and modifies       */
 }
 
 /**
@@ -1817,7 +1845,7 @@ sequence::cut_selected (bool copyevents)
  *  Also, we've moved external calls to push_undo() into this function.
  *  The caller shouldn't have to do that.
  *
- *  The event_keys used to access/sort the multimap eventlist is not updated
+ *  The event::key used to access/sort the multimap eventlist is not updated
  *  after changing timestamp/rank of the stored events.  Regenerating all
  *  key/value pairs before merging them solves this issue, so that
  *  the order of events in the sequence will be preserved.  This action is not
@@ -1875,7 +1903,7 @@ sequence::paste_selected (midipulse tick, int note)
     bool result = m_events.paste_selected(clipbd, tick, note);
     if (result)
     {
-        reset_draw_marker();
+        reset_draw_marker();                    /* is this necessary?       */
         modify();
     }
     return result;
@@ -2466,7 +2494,7 @@ sequence::add_event (const event & er)
     bool result = m_events.add(er);     /* post/auto-sorts by time & rank   */
     if (result)
     {
-        reset_draw_marker();
+        reset_draw_marker();                    /* is this necessary?       */
         set_dirty();
     }
     else
@@ -3753,7 +3781,7 @@ sequence::draw
 sequence::get_next_note_ex
 (
     note_info & niout,
-    eventlist::const_iterator & evi
+    event::buffer::const_iterator & evi
 ) const
 {
     while (evi != m_events.cend())
@@ -3778,7 +3806,7 @@ sequence::draw
 sequence::get_note_info
 (
     note_info & niout,
-    eventlist::const_iterator & evi
+    event::buffer::const_iterator & evi
 ) const
 {
     const event & drawevent = eventlist::cdref(evi);
@@ -3872,7 +3900,7 @@ sequence::get_next_event (midibyte & status, midibyte & cc)
  */
 
 void
-sequence::reset_ex_iterator (eventlist::const_iterator & evi) const
+sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
 {
     evi = m_events.cbegin();
 }
@@ -3888,8 +3916,8 @@ bool
 sequence::reset_interval
 (
     midipulse t0, midipulse t1,
-    eventlist::const_iterator & it0,
-    eventlist::const_iterator & it1
+    event::buffer::const_iterator & it0,
+    event::buffer::const_iterator & it1
 ) const
 {
     bool result = false;
@@ -3909,7 +3937,7 @@ sequence::reset_interval
             }
             if (iter->is_linked())
             {
-                event * ev = iter->link();
+                event::buffer::const_iterator ev = iter->link();
                 if (ev->timestamp() >= t1)
                 {
                     result = true;
@@ -3957,7 +3985,7 @@ sequence::get_next_event_ex
 (
     midibyte & status,
     midibyte & cc,
-    eventlist::const_iterator & evi
+    event::buffer::const_iterator & evi
 )
 {
     if (evi != m_events.end())
@@ -4016,7 +4044,7 @@ bool
 sequence::get_next_event_match
 (
     midibyte status, midibyte cc,
-    eventlist::const_iterator & evi,
+    event::buffer::const_iterator & evi,
     int /* evtype [see macro below] */
 )
 {
