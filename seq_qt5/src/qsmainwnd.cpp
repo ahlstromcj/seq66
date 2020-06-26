@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-22
+ * \updates       2020-06-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -177,6 +177,11 @@ qsmainwnd::qsmainwnd
     m_current_main_set      (0)
 {
     ui->setupUi(this);
+
+    /*
+     * TODO: const QRect QDesktopWidget::screenGeometry(int) const’ is
+     * deprecated: Use QGuiApplication::screens()
+     */
 
     QRect screen = QApplication::desktop()->screenGeometry();
     int x = (screen.width() - width()) / 2;             // center on screen
@@ -2417,7 +2422,10 @@ qsmainwnd::set_song_mute_on ()
 {
     perf().set_song_mute(mutegroups::muting::on);
     if (not_nullptr(m_live_frame))
+    {
         m_live_frame->set_needs_update();
+        m_live_frame->refresh();
+    }
 }
 
 /**
@@ -2429,7 +2437,10 @@ qsmainwnd::set_song_mute_off ()
 {
     perf().set_song_mute(mutegroups::muting::off);
     if (not_nullptr(m_live_frame))
+    {
         m_live_frame->set_needs_update();
+        m_live_frame->refresh();
+    }
 }
 
 /**
@@ -2441,7 +2452,10 @@ qsmainwnd::set_song_mute_toggle ()
 {
     perf().set_song_mute(mutegroups::muting::toggle);
     if (not_nullptr(m_live_frame))
+    {
         m_live_frame->set_needs_update();
+        m_live_frame->refresh();
+    }
 }
 
 /**

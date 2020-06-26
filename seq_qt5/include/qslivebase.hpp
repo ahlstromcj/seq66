@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2019-09-15
+ * \updates       2020-06-26
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -154,6 +154,16 @@ protected:
     virtual bool recreate_all_slots ()
     {
         return false;
+    }
+
+    virtual void refresh ()
+    {
+        // no code in the base class
+    }
+
+    virtual void refresh (seq::number /*seqno*/)
+    {
+        // no code in the base class
     }
 
 private:            // pure virtual functions

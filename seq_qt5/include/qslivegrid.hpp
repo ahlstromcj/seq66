@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-04-07
+ * \updates       2020-06-26
  * \license       GNU GPLv2 or above
  *
  *
@@ -103,6 +103,13 @@ public:
     virtual ~qslivegrid ();
 
 private:                            // overrides of qslivebase functions
+
+    virtual void refresh ()
+    {
+        (void) refresh_all_slots();
+    }
+
+    virtual void refresh (seq::number seqno);
 
     virtual void color_by_number (int i) override;
     virtual void set_playlist_name (const std::string & plname = "") override;

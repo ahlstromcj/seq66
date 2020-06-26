@@ -1130,6 +1130,9 @@ qseqeditframe64::wheelEvent (QWheelEvent * qwep)
 }
 
 /**
+ *  Once the user has clicked on the qseqroll, the Space key can be used to
+ *  start, stop, and restart playback.  The Period key can be used to pause
+ *  and start (at the same position) playback.
  *
  *  We could simplify this a bit by creating a keystroke object.
  *  See qseqroll.
@@ -1147,7 +1150,7 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     }
     else
     {
-        if (event->key() == Qt::Key_Space)
+        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
         {
             start_playing();
         }

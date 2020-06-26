@@ -216,6 +216,8 @@ sequence::~sequence ()
 void
 sequence::modify ()
 {
+    // reset_draw_marker();                    /* is this necessary?       */
+    set_dirty();
     if (not_nullptr(m_parent))
         m_parent->modify();
 }
@@ -1029,10 +1031,8 @@ sequence::remove_marked ()
 
     bool result = m_events.remove_marked();
     if (result)
-    {
         modify();
-        reset_draw_marker();                    /* is this necessary?       */
-    }
+
     return result;
 }
 
@@ -1073,11 +1073,8 @@ sequence::remove_selected ()
 
     bool result = m_events.remove_selected();
     if (result)
-    {
-        set_dirty();                            /* do it for the caller     */
         modify();
-        reset_draw_marker();                    /* is this necessary?       */
-    }
+
     return result;
 }
 
@@ -1487,10 +1484,8 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
     m_events_undo.push(m_events);                  /* push_undo(), no lock */
     bool result = m_events.move_selected_notes(delta_tick, delta_note);
     if (result)
-    {
-        set_dirty();
         modify();
-    }
+
     return result;
 }
 
@@ -1512,15 +1507,8 @@ sequence::stretch_selected (midipulse delta_tick)
     m_events_undo.push(m_events);           /* push_undo(), no lock  */
     bool result = m_events.stretch_selected(delta_tick);
     if (result)
-    {
-        /*
-         * Necessary here?
-         *
-         * m_events.verify_and_link(get_length());
-         */
-
         modify();
-    }
+
     return result;
 }
 
@@ -1572,15 +1560,8 @@ sequence::grow_selected (midipulse delta)
     m_events_undo.push(m_events);               /* push_undo(), no lock */
     bool result = m_events.grow_selected(delta, snap());
     if (result)
-    {
-        /*
-         * Necessary here?
-         *
-         * m_events.verify_and_link(get_length());
-         */
-
         modify();
-    }
+
     return result;
 }
 
@@ -1607,10 +1588,8 @@ sequence::randomize_selected (midibyte status, int plus_minus)
 
     bool result = m_events.randomize_selected(status, plus_minus);
     if (result)
-    {
-        set_dirty();
         modify();
-    }
+
     return result;
 }
 
@@ -1626,10 +1605,8 @@ sequence::randomize_selected_notes (int jitter, int range)
 
     bool result = m_events.randomize_selected_notes(jitter, range);
     if (result)
-    {
-        set_dirty();
         modify();
-    }
+
     return result;
 }
 
@@ -1902,10 +1879,8 @@ sequence::paste_selected (midipulse tick, int note)
     push_undo();                                /* push undo, no lock   */
     bool result = m_events.paste_selected(clipbd, tick, note);
     if (result)
-    {
-        reset_draw_marker();                    /* is this necessary?       */
         modify();
-    }
+
     return result;
 }
 
@@ -2494,8 +2469,7 @@ sequence::add_event (const event & er)
     bool result = m_events.add(er);     /* post/auto-sorts by time & rank   */
     if (result)
     {
-        reset_draw_marker();                    /* is this necessary?       */
-        set_dirty();
+        modify();
     }
     else
     {
@@ -3940,10 +3914,7 @@ sequence::reset_interval
                 event::buffer::const_iterator ev = iter->link();
                 if (ev->timestamp() >= t1)
                 {
-                    result = true;
-
-                    // What about terminating iterator ????????????????
-
+                    result = true;  // What about terminating iterator ??
                     break;
                 }
             }
@@ -4056,7 +4027,7 @@ sequence::get_next_event_match
         if (! ok)
             ok = status == EVENT_ANY;
 
-#if defined USE_STAZED_SELECTION_EXTENSIONS          // LATER
+#if defined USE_STAZED_SELECTION_EXTENSIONS
         if (ok)
         {
             if (evtype == EVENTS_UNSELECTED && drawevent.is_selected())
@@ -4687,7 +4658,7 @@ sequence::put_event_on_bus (event & ev)
     midibyte note = ev.get_note();
     bool skip = false;
     if (ev.is_note_on())
-        ++m_playing_notes[note];        // m_playing_notes[note]++;
+        ++m_playing_notes[note];
 
     if (ev.is_note_off())
     {
@@ -4845,7 +4816,7 @@ sequence::transpose_notes (int steps, int scale)
         }
     }
     if (result)
-        set_dirty();                                // modify() as well?
+        modify();
 
     return result;
 }
@@ -5126,7 +5097,6 @@ sequence::copy_events (const eventlist & newevents)
         m_length = len;
         verify_and_link();                  /* function uses m_length       */
     }
-    set_dirty();
     modify();
 }
 

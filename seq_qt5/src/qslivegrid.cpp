@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-05-27
+ * \updates       2020-06-26
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -278,7 +278,6 @@ qslivegrid::create_loop_buttons ()
         gridrow buttonrow;                      /* vector for push-buttons  */
         for (int row = 0; row < rows(); ++row, ++seqno)
         {
-            // printf("Cell (%d, %d); seq #%d ---> ", row, column, seqno);
             qslotbutton * temp = create_one_button(seqno);
             buttonrow.push_back(temp);
         }
@@ -509,7 +508,7 @@ qslivegrid::paintEvent (QPaintEvent * /*qpep*/)
 {
     if (m_redraw_buttons)
     {
-        create_loop_buttons();
+        create_loop_buttons();                  /* refresh_all_slots()  */
         m_redraw_buttons = false;
     }
 
@@ -675,7 +674,39 @@ qslivegrid::recreate_all_slots ()
 }
 
 /**
- *  Currently not used.
+ *
+ */
+
+void
+qslivegrid::refresh (seq::number seqno)
+{
+    int row, column;
+    if (perf().seq_to_grid(seqno, row, column))
+    {
+        seq::pointer s = perf().get_sequence(seqno);
+        if (not_nullptr(s))
+        {
+            bool armed = s->playing();
+            qslotbutton * pb = button(row, column);
+            pb->set_checked(armed);
+            pb->reupdate(true);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            printf
+            (
+                "button(%d, %d) = %s\n", row, column, armed ? "on" : "off"
+            );
+#endif
+        }
+    }
+}
+
+/**
+ *  This function helps the caller (usually qsmainwnd) tell all the buttons to
+ *  show their current state.  One big use case is when the command is given
+ *  to mute, unmute, or toggle all of the patterns.
+ *
+ *  We still need to be able to refresh individual buttons when MIDI control
+ *  or Song playback changes the state of a pattern.
  */
 
 bool
@@ -696,6 +727,13 @@ qslivegrid::refresh_all_slots ()
                     qslotbutton * pb = button(row, column);
                     pb->set_checked(armed);
                     pb->reupdate(true);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                    printf
+                    (
+                        "button(%d, %d) = %s\n", row, column,
+                        armed ? "on" : "off"
+                    );
+#endif
                 }
                 ++offset;
             }
@@ -753,6 +791,15 @@ void
 qslivegrid::update_sequence (seq::number seqno)
 {
     alter_sequence(seqno);
+
+    /*
+     * EXPERIMENTAL ca 2020-06-26
+     * Try to reset the status of the current sequence's buttons based on this
+     * update_sequence() function being called from the performer's
+     * on_sequence_change() callback.
+     */
+
+    refresh(seqno);
 }
 
 /**
@@ -1082,8 +1129,8 @@ qslivegrid::sequence_key_check ()
         /*
          * Currently ends up handled in performer's loop-control function.
          *
-        else
-            perf().sequence_key(seqno);                     // toggle loop  //
+         * else
+         *     perf().sequence_key(seqno);                 // toggle loop  //
          */
     }
 }

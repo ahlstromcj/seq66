@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-23
+ * \updates       2020-06-24
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -229,9 +229,9 @@ eventlist::merge (const event::buffer & evlist)
  *      Provides the event list to be merged into the current event list.
  *
  * \param presort
- *      If true, the events are presorted.  This is a requirement for merging
- *      an std::list or std::vector, but is a no-op for the std::multimap
- *      implementation [which no longer exists].
+ *      If true (the default), then the events are presorted.  This is a
+ *      requirement for merging an std::list or std::vector, but is a no-op
+ *      for the std::multimap implementation (which no longer exists).
  */
 
 void
@@ -386,8 +386,8 @@ eventlist::clear_links ()
 }
 
 /**
- *  Tries to fix the selected notes that started near the end of the pattern and
- *  wrapped around to the beginning, by moving the note.
+ *  Tries to fix the selected notes that started near the end of the pattern
+ *  and wrapped around to the beginning, by moving the note.
  *
  * \param snap
  *      Provides the sequence's current snap value.  Notes that start at less
@@ -426,7 +426,7 @@ eventlist::edge_fix (midipulse snap, midipulse seqlength)
         }
     }
     if (result)
-        sort();                                 /* timestamps altered   */
+        verify_and_link();                      /* sorts as well        */
 
     return result;
 }
@@ -795,14 +795,12 @@ eventlist::link_tempos ()
     clear_tempo_links();
     for (auto t = m_events.begin(); t != m_events.end(); ++t)
     {
-        // event & e = dref(t);
         if (t->is_tempo())
         {
             auto t2 = t;                    /* next possible Set Tempo...   */
             ++t2;                           /* ...starting here             */
             while (t2 != m_events.end())
             {
-                // event & et2 = dref(t2);
                 if (t2->is_tempo())
                 {
                     t->link(t2);
@@ -1234,7 +1232,7 @@ eventlist::select_events
                 }
                 if (action == select::remove)
                 {
-                    remove_event(er);           // reset_draw_marker();
+                    remove_event(er);
                     ++result;
                     break;
                 }
@@ -1383,7 +1381,7 @@ eventlist::select_note_events
                     if (action == select::remove)
                     {
                         remove_event(er);
-                        remove_event(*ev);      // reset_draw_marker();
+                        remove_event(*ev);
                         ++result;
                         break;
                     }
@@ -1443,7 +1441,7 @@ eventlist::select_note_events
                     }
                     if (action == select::remove)
                     {
-                        remove_event(er);           // reset_draw_marker();
+                        remove_event(er);
                         ++result;
                         break;
                     }
@@ -1568,7 +1566,7 @@ eventlist::stretch_selected (midipulse delta)
                 }
             }
             if (result)
-                sort();                             /* timestamps altered   */
+                verify_and_link();                  /* sorts as well        */
         }
     }
     return result;
@@ -1580,10 +1578,10 @@ eventlist::stretch_selected (midipulse delta)
  *  seq66.  And, though it doesn't move Note Off events, it does reconstruct
  *  them.
  *
- *  This function grows/shrinks only Note On events that are marked and linked.
- *  If an event is not linked, this function now ignores the event's timestamp,
- *  rather than risk a segfault on a null pointer.  Compare this function to
- *  the stretch_selected() and move_selected_notes() functions.
+ *  This function grows/shrinks only Note On events that are linked.  If an
+ *  event is not linked, this function ignores the event's timestamp, rather
+ *  than risk a segfault on a null pointer.  Compare this function to the
+ *  stretch_selected() and move_selected_notes() functions.
  *
  *  This function would strip out non-Notes, but now it at least preserves
  *  them and moves them, to try to preserve their relative position re the
@@ -1600,7 +1598,7 @@ eventlist::stretch_selected (midipulse delta)
  *  shouldn't have to do that.
  *
  *  A comment on terminology:  The user "selects" notes, while the sequencer
- *  "marks" notes. The first thing this function does is mark all the selected
+ *  "marks" notes. This function no longer bothers to mark all the selected
  *  notes.
  *
  * \threadsafe
@@ -1642,7 +1640,7 @@ eventlist::grow_selected (midipulse delta, int snap)
         }
     }
     if (result)
-        sort();                                     /* timestamps altered   */
+        verify_and_link();                          /* sorts as well        */
 
     return result;
 }
