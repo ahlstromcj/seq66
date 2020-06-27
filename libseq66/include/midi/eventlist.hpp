@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-23
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -384,11 +384,10 @@ private:                                /* functions for friend sequence    */
     bool move_selected_notes (midipulse delta_tick, int delta_note);
     bool randomize_selected (midibyte status, int plus_minus);
     bool randomize_selected_notes (int jitter, int range);
-//  bool link_notes (event & eon, event & eoff);
     bool link_notes
     (
-        event::buffer::iterator & eon,
-        event::buffer::iterator & eoff
+        event::buffer::iterator eon,
+        event::buffer::iterator eoff
     );
     void link_tempos ();
     void clear_tempo_links ();
@@ -441,7 +440,7 @@ private:                                /* functions for friend sequence    */
 
     void print () const;
     std::string to_string () const;
-    void print_notes (const std::string & tag = "") const;
+    void print_notes (const std::string & tag = "in list") const;
 
     const event::buffer & events () const
     {

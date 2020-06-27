@@ -255,7 +255,8 @@ eventlist::merge (eventlist & el, bool presort)
  * seq24.  Not sure that we need it, commmented out for testing.  It looks
  * like it can handle cases where the Note Off comes before the Note On (i.e.
  * the note wraps around to the beginning of the pattern).  However, it has
- * some oddities, like unlinked notes.
+ * some oddities, like unlinked notes.  We will enable this option if we can
+ * figure out what is going wrong.
  */
 
 void
@@ -284,8 +285,7 @@ eventlist::link_new ()
                 off = m_events.begin();
                 while (off != on)
                 {
-                    endfound = link_notes(on, off);
-                    if (endfound)
+                    if (link_notes(on, off))
                         break;
 
                     ++off;
@@ -322,11 +322,11 @@ eventlist::link_new ()
 bool
 eventlist::link_notes
 (
-    event::buffer::iterator & eon,
-    event::buffer::iterator & eoff
+    event::buffer::iterator eon,
+    event::buffer::iterator eoff
 )
 {
-    bool result = eon->off_linkable(*eoff);
+    bool result = eon->off_linkable(eoff);
     if (result)
     {
         eon->link(eoff);
@@ -364,7 +364,12 @@ eventlist::verify_and_link (midipulse slength)
     link_new();
     if (slength > 0)
     {
-        unmark_all();
+        /*
+         *  Already done by clear_links():
+         *
+         *      unmark_all();
+         */
+
         mark_out_of_range(slength);
         (void) remove_marked();             /* prune out-of-range events    */
     }
@@ -381,7 +386,7 @@ eventlist::clear_links ()
     for (auto & e : m_events)
     {
         e.unmark();
-        e.unlink();                     /* used to be e.clear_link()        */
+        e.unlink();
     }
 }
 
@@ -497,8 +502,7 @@ eventlist::quantize_events
 
             if (canselect)
             {
-                event e = er;                   /* copy the event           */
-                midipulse t = e.timestamp();
+                midipulse t = er.timestamp();
                 midipulse tremainder = snap > 0 ? (t % snap) : 0 ;
                 midipulse tdelta;
                 if (tremainder < snap / 2)
@@ -507,9 +511,9 @@ eventlist::quantize_events
                     tdelta = (snap - tremainder) / divide;
 
                 if ((tdelta + t) >= seqlength)  /* wrap-around Note On      */
-                    tdelta = -e.timestamp();
+                    tdelta = -t;
 
-                er.set_timestamp(e.timestamp() + tdelta);
+                er.set_timestamp(t + tdelta);
                 result = true;
                 if (er.is_linked() && fixlink)
                 {
@@ -519,8 +523,8 @@ eventlist::quantize_events
                      * banner.
                      */
 
-                    event & f = *er.link();
-                    midipulse ft = f.timestamp() + tdelta; /* seq32 */
+                    event::buffer::iterator f = er.link();
+                    midipulse ft = f->timestamp() + tdelta; /* seq32 */
                     if (ft < 0)                     /* unwrap Note Off      */
                         ft += seqlength;
 
@@ -530,7 +534,7 @@ eventlist::quantize_events
                     if (ft == seqlength)            /* trim it a little     */
                         ft -= note_off_margin();
 
-                    f.set_timestamp(ft);
+                    f->set_timestamp(ft);
                     result = true;
                 }
             }
@@ -1605,6 +1609,12 @@ eventlist::stretch_selected (midipulse delta)
  *
  * \param delta
  *      An offset for each linked event's timestamp.
+ *
+ * \param snap
+ *      The snap amount for the growth.  Currently used only for non-notes.
+ *
+ * \return
+ *      Returns true if at least one time-stamp was altered.
  */
 
 bool
@@ -1620,10 +1630,9 @@ eventlist::grow_selected (midipulse delta, int snap)
                 if (er.is_note_on() && er.is_linked())
                 {
                     event::buffer::iterator off = er.link();
-                    event e = *off;                 /* original off-event   */
                     midipulse offtime = off->timestamp();
                     midipulse newtime = trim_timestamp(offtime + delta);
-                    e.set_timestamp(newtime);       /* new off-time         */
+                    off->set_timestamp(newtime);    /* new off-time         */
                     result = true;
                 }
             }
@@ -1840,9 +1849,9 @@ eventlist::print () const
 void
 eventlist::print_notes (const std::string & tag) const
 {
+    std::printf("Notes %s:\n", tag.c_str());
     if (count() > 0)
     {
-        std::printf("Notes %s:\n", tag.c_str());
         for (auto & e : m_events)
             e.print_note();
     }

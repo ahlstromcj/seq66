@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-23
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -705,10 +705,11 @@ sequence::set_rec_vol (int recvol)
  *
  * \param tick
  *      The position from which to resume Note Ons, if appplicable. Resuming
- *      is a song-recording feature.
+ *      is a song-playback/song-recording feature.
  *
  * \param resumenoteons
- *      A song-recording option.
+ *      A song-recording option.  (This option, "note-resume", is stored in
+ *      the "usr" file.
  */
 
 void
@@ -907,7 +908,9 @@ sequence::play
         }
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
-        set_playing(false);
+    {
+        notify_trigger(false);                      // set_playing(false);
+    }
 
     m_last_tick = end_tick + 1;                     /* for next frame       */
     m_was_playing = m_playing;
@@ -928,8 +931,9 @@ sequence::verify_and_link ()
 }
 
 /**
- *  Fixes selected notes that started near the very end of the pattern, due to a
- *  clumsy keyboard artist (like the author of this module).
+ *  Fixes selected notes that started near the very end of the pattern, due to
+ *  a clumsy keyboard artist (like the author of this module). Used by
+ *  qseqroll.
  */
 
 bool
@@ -1558,6 +1562,7 @@ sequence::grow_selected (midipulse delta)
 {
     automutex locker(m_mutex);                  /* lock it again, dude  */
     m_events_undo.push(m_events);               /* push_undo(), no lock */
+
     bool result = m_events.grow_selected(delta, snap());
     if (result)
         modify();
@@ -3168,6 +3173,22 @@ sequence::set_trigger_offset (midipulse trigger_offset)
         errprint("set_trigger_offset(): seq length = 0");
         m_trigger_offset = trigger_offset;
     }
+}
+
+/**
+ *  Changes the playing state and notifies the parent performer's subscribers
+ *  that the sequence has changed state based on a trigger.
+ *
+ * \param on
+ *      Set to true if the sequence is to be turned on.  Otherwise it is to be
+ *      turned off.
+ */
+
+void
+sequence::notify_trigger (bool on)
+{
+    set_playing(on);
+    m_parent->notify_trigger_change(seq_number());
 }
 
 /**
@@ -5267,8 +5288,48 @@ sequence::song_recording_stop (midipulse tick)
 }
 
 /**
- *  If the Note-On event is after the Note-Off event, the pattern wraps around,
- *  so that we play it now to resume.
+ *  If we're playing a recorded pattern (one that has Song-mode triggers), and
+ *  the user pauses playing in the middle of some notes, upon restart we want
+ *  to replay the Note Ons that are before the current tick and before the
+ *  Note On's linked Note Off.
+ *
+\verbatim
+         t                     tick      t+length
+         ----------------------------------------------------------------
+         |                       :       |                               |
+       A |        on XXXXXXXXXXXXXXX off |        on XXXXXXXXXXXXXXX off |
+         |                       :       |                               |
+       B |        on XXXXX off   :       |        on XXXXX off           |
+         |                       :       |                               |
+       C | off XXXXXXXXXXX on    :       | off XXXXXXXXXXX on            |
+         |                       :       |                               |
+       D | XXXXXXX off      on XXXXXXXXXX| XXXXXXX off      on XXXXXXXXXX|
+         |                       :       |                               |
+       E | XXXXXXX off           : on XXX| XXXXXXX off             on XXX|
+         |                       :       |                               |
+         ----------------------------------------------------------------
+                   Wn                               Wn+1
+\endverbatim
+ *
+ *  where Wn is the current window of the pattern length (demarcated by times
+ *  t to t+length-1), and tick is the tick at which the user paused playback.
+ *  Let T = tick % length.  Assuming all notes are linked properly, we have
+ *  the following cases:
+ *
+ *      A: on <  T, off > T, so emit the Note On again.
+ *      B: on < T, off < T, no note events to emit.
+ *      C: same disposition as B.
+ *      D: on < T and > off, so emit the Note On again.
+ *      E: on > tick, emit the Note On normally.
+ *
+ *  Currently, cases D and E are not handled because we have disabled handling
+ *  note wrap-around for now.  See eventlist::link_new() and the
+ *  SEQ66_USE_STAZED_LINK_NEW_EXTENSION macro.
+ *
+ * We think this explanation in the Kepler34 code is incorrect:
+ *
+ *      "If the Note-On event is after the Note-Off event, the pattern wraps
+ *      around, so that we play it now to resume."
  *
  *  One question is where is best to do the locking of put_event_on_bus().  In
  *  retrospect, probably better to do it just once, instead of for each event.
@@ -5287,8 +5348,8 @@ sequence::resume_note_ons (midipulse tick)
         {
             midipulse on = ei.timestamp();              /* see banner notes */
             midipulse off = ei.link()->timestamp();
-            midipulse remainder = tick % get_length();
-            if (on < remainder && off > remainder)
+            midipulse T = tick % get_length();
+            if (on < T && (off > T || on > off))
                 put_event_on_bus(ei);
         }
     }

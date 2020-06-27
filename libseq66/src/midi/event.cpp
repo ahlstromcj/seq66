@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-23
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -719,7 +719,7 @@ event::print_note (bool is_a_link) const
         std::string type = is_note_on() ? "On" : "Off" ;
         printf
         (
-            "[%06ld] Note %s Key %02X Vel %02X Ch %02X ",
+            "[%06ld] Note %s #%02X Vel %02X Ch %02X ",
             m_timestamp, type.c_str(), m_data[0], m_data[1], m_channel
         );
         if (is_linked() && ! is_a_link)

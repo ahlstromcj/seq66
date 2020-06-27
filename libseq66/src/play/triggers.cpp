@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-06-20
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -248,7 +248,8 @@ triggers::play
         /*
          *  If we have reached a new chunk of drawn patterns in the song data,
          *  and we are not recording, then trigger unsets the playback block
-         *  on this pattern's events.
+         *  on this pattern's events.  The song_playback_block() function
+         *  deals with live-play recording of triggers.
          */
 
         if (t.at_trigger_transition(start_tick, end_tick))
@@ -285,14 +286,14 @@ triggers::play
 
     if (ok)
     {
-        if (trigger_state)                              /* turning on   */
+        if (trigger_state)                              /* turning on       */
         {
             if (trigger_tick < m_parent.m_last_tick)
-                start_tick = m_parent.m_last_tick;      /* side-effect  */
+                start_tick = m_parent.m_last_tick;      /* side-effect      */
             else
-                start_tick = trigger_tick;              /* side-effect  */
+                start_tick = trigger_tick;              /* side-effect      */
 
-            m_parent.set_playing(true);
+            m_parent.notify_trigger(true);  // m_parent.set_playing(true);
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
@@ -313,9 +314,15 @@ triggers::play
     if (offplay)
         offplay = ! m_parent.song_playback_block();
 
-    if (offplay)
-        m_parent.set_playing(false);                    /* stop playing     */
+    if (offplay)                                    /* stop playing     */
+    {
+        /*
+         * Not yet sure we should do a trigger notification here, as opposed
+         * to the original call: m_parent.set_playing(false);
+         */
 
+        m_parent.notify_trigger(false);
+    }
     m_parent.set_trigger_offset(trigger_offset);
     return result;
 }

@@ -1079,6 +1079,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (can_grow)
                     {
                         growing(true);
+printf("growing(true)\n");
                         s->selected_box(tick_s, note, tick_f, note_l);
                         convert_tn_box_to_rect
                         (
@@ -1187,6 +1188,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     }
 
     clear_action_flags();               /* turn off all the action flags    */
+printf("growing(false)\n");
     seq_pointer()->unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
         seq_pointer()->set_dirty();
@@ -1490,9 +1492,13 @@ qseqroll::move_selected_notes (int dx, int dy)
     }
 }
 
+#if defined USE_GROW_SELECTED_NOTES_FUNCTION
+
 /**
  *  Proposed new function to encapsulate the movement of selections even
  *  more fully.
+ *
+ *  Currently no one calls this function!
  *
  * \param dx
  *      The amount to grow the selection horizontally.  Values are -1 (left one
@@ -1511,6 +1517,8 @@ qseqroll::grow_selected_notes (int dx)
         seq_pointer()->grow_selected(snap_x);
     }
 }
+
+#endif // defined USE_GROW_SELECTED_NOTES_FUNCTION
 
 /**
  *  Provides the base sizing of the piano roll.  If less than the width of the

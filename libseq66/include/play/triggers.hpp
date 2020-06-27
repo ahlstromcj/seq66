@@ -157,7 +157,9 @@ public:
 
     /**
      *  Test if the input parameters indicate we are touching a trigger
-     *  transtion.
+     *  transition.  If we have reached a new chunk of drawn pattern in the
+     *  Song data, and we are not recording, we unset the playback-block on
+     *  this sequence's events.
      *
      * \param s
      *      The starting tick.

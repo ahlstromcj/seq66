@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-20
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -471,6 +471,17 @@ performer::notify_ui_change (seq::number seqno)
 {
     for (auto notify : m_notify)
         (void) notify->on_ui_change(seqno);
+}
+
+/**
+ *
+ */
+
+void
+performer::notify_trigger_change (seq::number seqno)
+{
+    for (auto notify : m_notify)
+        (void) notify->on_trigger_change(seqno);
 }
 
 /*

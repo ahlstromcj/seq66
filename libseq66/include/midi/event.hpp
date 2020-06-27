@@ -998,11 +998,13 @@ public:
      *      this note, and the Note Off is not yet linked.
      */
 
-    bool off_linkable (event & e)
+    bool off_linkable (buffer::iterator & eoff)
     {
         return
         (
-            e.is_note_off() && (e.get_note() == get_note()) && ! e.is_linked()
+            eoff->is_note_off() &&
+            (eoff->get_note() == get_note()) &&
+            ! eoff->is_linked()
         );
     }
 
@@ -1010,9 +1012,9 @@ public:
      *  Sets m_has_link and sets m_link to the provided event pointer.
      *
      * \param ev
-     *      Provides a pointer to the event value to set.  If null, then
-     *      m_has_link is set to false, to guarantee that is_linked() is
-     *      correct.
+     *      Provides a pointer to the event value to set.  Since we're using
+     *      an iterator, we can't use a null-pointer test that.  We assume the
+     *      caller has checked that the value is not end() for the container.
      */
 
     void link (iterator ev)

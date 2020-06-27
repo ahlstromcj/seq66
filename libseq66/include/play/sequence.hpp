@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-06-23
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -409,7 +409,7 @@ private:
     bool m_one_shot;
 
     /**
-     *  A Member from the Kepler34 project, set in sequence ::
+     *  A member from the Kepler34 project, set in sequence ::
      *  toggle_one_shot() to m_last_tick adjusted to the length of the
      *  sequence.  Compare this member to m_queued_tick.
      */
@@ -794,24 +794,10 @@ public:
         return m_triggers.number_selected();
     }
 
-    /**
-     *  Sets the tick for pasting.
-     *
-     * \param tick
-     *      Provides the pulse value to set.
-     */
-
     void set_trigger_paste_tick (midipulse tick)
     {
         m_triggers.set_trigger_paste_tick(tick);
     }
-
-    /**
-     *  Gets the tick for pasting.
-     *
-     * \return
-     *      Returns the current pulse value.
-     */
 
     midipulse get_trigger_paste_tick () const
     {
@@ -827,12 +813,6 @@ public:
     {
         return std::to_string(seq_number());
     }
-
-    /**
-     * \setter m_seq_number
-     *      This setter will set the sequence number only if it has not
-     *      already been set.
-     */
 
     void seq_number (int seqno)
     {
@@ -1316,6 +1296,7 @@ public:
         m_events.sort();
     }
 
+    void notify_trigger (bool on);
     void add_trigger
     (
         midipulse tick, midipulse len,

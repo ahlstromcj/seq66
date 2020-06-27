@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-06-20
+ * \updates       2020-06-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -112,13 +112,13 @@ public:
     /**
      *  A nested class used for notification of group-learn and other changes.
      *  The easiest way to use this class is by inheriting from it, then
-     *  overriding the virtual functions defined withing.  If that leads to
-     *  multiple inheritance, well, for our use cases, that is not an issue, as
-     *  we will not copy the user-interface classes anyway.  For an example, see
-     *  one of the user-interface classes, such as qsmainwnd.
+     *  overriding the virtual functions defined within.  If that leads to
+     *  multiple inheritance, well, for our use cases, that is not an issue,
+     *  as we will not copy the user-interface classes anyway.  For an
+     *  example, see one of the user-interface classes, such as qsmainwnd.
      *
      *  In each of the callbacks declared/defined below, the \a state
-     *  parameter indicates the state to which the object is
+     *  parameter indicates the state to which the object is transitioning.
      */
 
     class callbacks
@@ -148,12 +148,14 @@ public:
 
         enum class index
         {
-            group_learn,
-            group_learn_complete,
-            mutes_change,
-            set_change,
-            sequence_change,
-            automation_change
+            group_learn,            /**< Group-learn turned on.             */
+            group_learn_complete,   /**< Group-learn turned off.            */
+            mutes_change,           /**< Change in the mute-state.          */
+            set_change,             /**< Change in the active screen-set.   */
+            sequence_change,        /**< New, deleted, or pasted pattern.   */
+            automation_change,      /**< A start or stop control occurred.  */
+            ui_change,              /**< Indicates a user-interface action. */
+            trigger_change          /**< A trigger changed pattern muting.  */
         };
 
     public:
@@ -202,6 +204,11 @@ public:
         }
 
         virtual bool on_ui_change (seq::number /* seqno */)
+        {
+            return false;
+        }
+
+        virtual bool on_trigger_change (seq::number /* seqno */)
         {
             return false;
         }
@@ -872,6 +879,7 @@ public:
     void unregister (callbacks * pfcb);
     void notify_sequence_change (seq::number seqno);
     void notify_ui_change (seq::number seqno);
+    void notify_trigger_change (seq::number seqno);
 
     bool modified () const
     {
