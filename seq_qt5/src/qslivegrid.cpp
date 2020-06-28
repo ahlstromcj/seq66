@@ -784,22 +784,18 @@ qslivegrid::update_bank_name ()
 }
 
 /**
+ *  This function causes all slots to ultimately be deleted and flagged for
+ * reconstruction.  That's a lot of work, and only occurs if a sequence slot
+ * is created, deleted, or pasted.
  *
+ * \param seqno
+ *      Provides the number of the pattern being created, deleted, or pasted.
  */
 
 void
 qslivegrid::update_sequence (seq::number seqno)
 {
     alter_sequence(seqno);
-
-    /*
-     * EXPERIMENTAL ca 2020-06-26
-     * Try to reset the status of the current sequence's buttons based on this
-     * update_sequence() function being called from the performer's
-     * on_sequence_change() callback.
-     */
-
-    refresh(seqno);
 }
 
 /**

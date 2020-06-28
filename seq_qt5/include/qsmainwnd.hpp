@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-03-15
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -164,7 +164,8 @@ protected:
     (
         const keystroke & k, bool success
     ) override;
-    virtual bool on_sequence_change (seq::number setno) override;
+    virtual bool on_sequence_change (seq::number seqno) override;
+    virtual bool on_trigger_change (seq::number seqno) override;
 
     virtual void keyPressEvent (QKeyEvent * event) override;
 

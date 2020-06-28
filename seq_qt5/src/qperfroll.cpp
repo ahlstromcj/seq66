@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-24
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -91,13 +91,15 @@ qperfroll::qperfroll
     m_grow_direction    (false),
     m_adding_pressed    (false)
 {
-    // EXPERIMENTS.  Messes up repaint, would need work as is qseqroll.
-    //
-    // setAttribute(Qt::WA_StaticContents);            // promising!
-    // setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
+    /*
+     * EXPERIMENTS.  Messes up repaint, would need work as would qseqroll.
+     *
+     * setAttribute(Qt::WA_StaticContents);            // promising!
+     * setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
+     */
 
-    setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    setFocusPolicy(Qt::StrongFocus);
     if (ppqn() == 0 || ppqn() > SEQ66_MAXIMUM_PPQN)
     {
         printf("qperfroll() ppqn == %d, changing to %d\n", ppqn(), p.ppqn());
@@ -105,10 +107,10 @@ qperfroll::qperfroll
     }
     m_roll_length_ticks  = perf().get_max_trigger();
     m_roll_length_ticks -= (m_roll_length_ticks % (ppqn() * 16));
-    m_roll_length_ticks += ppqn() * 64;              // ?????
+    m_roll_length_ticks += ppqn() * 64;                     // ?????
     m_font.setPointSize(6);
-    m_timer = new QTimer(this);                             // timer for redraws
-    m_timer->setInterval(2 * usr().window_redraw_rate());       // 50
+    m_timer = new QTimer(this);                             // redraw timer
+    m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
@@ -169,8 +171,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 
     if (is_initialized())
     {
-        // xwidth = r.width();
-        // r = qpep->rect();
+        // xwidth = r.width(); r = qpep->rect();
     }
     else
         set_initialized();
@@ -265,21 +266,15 @@ qperfroll::mousePressEvent(QMouseEvent *event)
             m_adding_pressed = true;
             if (not_nullptr(dropseq))
             {
-                midipulse seq_length = dropseq->get_length();
                 bool trigger_state = dropseq->get_trigger_state(tick);
                 if (trigger_state)
-                {
                     delete_trigger(m_drop_sequence, tick);
-                }
                 else
-                {
-                    /*
-                     * ca 2019-02-06 Issue #171.  Always snap.
-                     */
-
-                    tick = tick - (tick % seq_length);
                     add_trigger(m_drop_sequence, tick);
-                }
+            }
+            else
+            {
+                errprint("No perfroll drop sequence");
             }
         }
         else                /* we aren't holding the right mouse btn */
@@ -292,11 +287,9 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                  * and this ends up setting the perf modify flag.  And at best
                  * we are only selecting.
                  *
-                 * perf().push_trigger_undo();
-                 */
-
-                /*
-                 * If current loop is not in selection range, bin it.
+                 *      perf().push_trigger_undo();
+                 *
+                 * If the current loop is not in selection range, bin it.
                  */
 
                 if
@@ -544,73 +537,104 @@ qperfroll::keyPressEvent (QKeyEvent * event)
 {
     bool handled = false;
     bool dirty = false;
-    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+    if (perf().is_pattern_playing())
     {
-        handled = true;
-        perf().push_trigger_undo();                 // delete selected notes
-        for (int seqid = m_seq_l; seqid <= m_seq_h; seqid++)
+        if (event->key() == Qt::Key_Space)
         {
-            if (perf().is_seq_active(seqid))
+            handled = true;
+            stop_playing();
+        }
+        else if (event->key() == Qt::Key_Period)
+        {
+            handled = true;
+            pause_playing();
+        }
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
+        {
+            handled = true;
+            start_playing();
+        }
+        else if (event->key() == Qt::Key_P)
+        {
+            handled = true;
+            set_adding(true);
+        }
+        else if (event->key() == Qt::Key_X)
+        {
+            handled = true;
+            set_adding(false);
+        }
+        if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+        {
+            handled = true;
+            perf().push_trigger_undo();                 // delete selected notes
+            for (int seqid = m_seq_l; seqid <= m_seq_h; seqid++)
             {
-                if (perf().get_sequence(seqid)->delete_selected_triggers())
+                if (perf().is_seq_active(seqid))
+                {
+                    if (perf().get_sequence(seqid)->delete_selected_triggers())
+                        dirty = true;
+                }
+            }
+        }
+        if (event->modifiers() & Qt::ControlModifier)   // Ctrl + ... events
+        {
+            seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+            switch (event->key())
+            {
+            case Qt::Key_X:
+                handled = true;
+                perf().push_trigger_undo();
+                if (dropseq->cut_selected_trigger())
                     dirty = true;
+                break;
+
+            case Qt::Key_C:
+                handled = true;
+                dropseq->copy_selected_trigger();
+                break;
+
+            case Qt::Key_V:
+                handled = dirty = true;
+                perf().push_trigger_undo();
+                dropseq->paste_trigger();
+                break;
+
+            case Qt::Key_Z:
+                handled = true;
+                if (event->modifiers() & Qt::ShiftModifier)
+                {
+                    dirty = true;
+                    perf().pop_trigger_redo();
+                }
+                else
+                {
+                    perf().pop_trigger_undo();
+                }
+                break;
             }
         }
-    }
-    if (event->modifiers() & Qt::ControlModifier)   // Ctrl + ... events
-    {
-        seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
-        switch (event->key())
+        else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
         {
-        case Qt::Key_X:
-            handled = true;
-            perf().push_trigger_undo();
-            if (dropseq->cut_selected_trigger())
-                dirty = true;
-            break;
-
-        case Qt::Key_C:
-            handled = true;
-            dropseq->copy_selected_trigger();
-            break;
-
-        case Qt::Key_V:
-            handled = dirty = true;
-            perf().push_trigger_undo();
-            dropseq->paste_trigger();
-            break;
-
-        case Qt::Key_Z:
-            handled = true;
-            if (event->modifiers() & Qt::ShiftModifier)
+            if (event->key() == Qt::Key_Z)
             {
-                dirty = true;
-                perf().pop_trigger_redo();
+                handled = true;
+                m_parent_frame->zoom_in();
             }
-            else
-            {
-                perf().pop_trigger_undo();
-            }
-            break;
         }
-    }
-    else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
-    {
-        if (event->key() == Qt::Key_Z)
+        else if (event->key() == Qt::Key_Z)
         {
             handled = true;
-            m_parent_frame->zoom_in();
+            m_parent_frame->zoom_out();
         }
-    }
-    else if (event->key() == Qt::Key_Z)
-    {
-        handled = true;
-        m_parent_frame->zoom_out();
-    }
-    else if (event->key() == Qt::Key_0)
-    {
-        handled = true;
-        m_parent_frame->reset_zoom();
+        else if (event->key() == Qt::Key_0)
+        {
+            handled = true;
+            m_parent_frame->reset_zoom();
+        }
     }
     if (handled)
     {
@@ -785,10 +809,10 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
         int seqid = y;
         if (perf().is_seq_active(seqid))
         {
-            seq::pointer seq =  perf().get_sequence(seqid);
-            midipulse seq_length = seq->get_length();
+            seq::pointer seq = perf().get_sequence(seqid);
+            midipulse seqlength = seq->get_length();
             seq->reset_draw_trigger_marker();
-            int length_w = seq_length / scale_zoom();
+            int length_w = seqlength / scale_zoom();
             trigger trig;
             while (seq->next_trigger(trig))
             {
@@ -848,11 +872,14 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     pen.setColor(Qt::black);
                     painter.setPen(pen);
 
+/*
                     midipulse t =
                     (
-                        trig.tick_start() - (trig.tick_start() % seq_length) +
-                        (trig.offset() % seq_length) - seq_length
+                        trig.tick_start() - (trig.tick_start() % seqlength) +
+                        (trig.offset() % seqlength) - seqlength
                     );
+*/
+                    midipulse t = trig.trigger_marker(seqlength);
                     while (t < trig.tick_end())
                     {
                         int note0;
@@ -862,7 +889,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int height = note1 - note0;
                         height += 2;
 
-                        int length = seq->get_length();
                         sequence::note_info ni;
                         sequence::draw dt;
                         seq->reset_draw_marker();
@@ -874,11 +900,16 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int cny = c_names_y - 6;
                         int tick_marker_x = tix_to_pix(t) - x_offset;
                         painter.setPen(pen);
-                        do
+                        for (;;)
                         {
                             dt = seq->get_next_note(ni);
                             if (dt == sequence::draw::finish)
                                 break;
+
+                            if (dt == sequence::draw::tempo)
+                            {
+                                continue;       // TODO: tempo
+                            }
 
                             midipulse ts = ni.start() * length_w;
                             midipulse tf = ni.finish() * length_w;
@@ -886,8 +917,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             (
                                 cny - (cny * (ni.note() - note0)) / height
                             ) + 1;
-                            midipulse tick_s_x = (ts/length) + tick_marker_x;
-                            midipulse tick_f_x = (tf/length) + tick_marker_x;
+                            midipulse tick_s_x = (ts/seqlength) + tick_marker_x;
+                            midipulse tick_f_x = (tf/seqlength) + tick_marker_x;
                             if (sequence::is_draw_note(dt))
                                 tick_f_x = tick_s_x + 1;
 
@@ -908,9 +939,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                                     tick_f_x, y + note_y
                                 );
                             }
-
-                        } while (dt != sequence::draw::finish);
-
+                        }
                         if (t > trig.tick_start())
                         {
                             /*
@@ -921,7 +950,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             painter.setPen(pen);
                             painter.drawRect(tick_marker_x, y + 4, 1, h - 8);
                         }
-                        t += seq_length;
+                        t += seqlength;
                     }
                 }
             }

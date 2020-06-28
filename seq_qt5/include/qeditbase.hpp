@@ -152,8 +152,8 @@ protected:
     bool m_selecting;
 
     /**
-     *  Set when in note-adding mode.  This flag was moved from both
-     *  the fruity and the seq66 seqroll classes.
+     *  Set when in note-adding or trigger-adding mode.  This flag was moved
+     *  from both the fruity and the seq66 seqroll classes.
      */
 
     bool m_adding;

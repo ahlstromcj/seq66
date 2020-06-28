@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-27
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -451,7 +451,9 @@ performer::unregister (callbacks * pfcb)
 }
 
 /**
- *  Called by qseqeventframe only!
+ *  Called by qseqeventframe.  This function will eventually cause a call to
+ *  recreate all the slot buttons in qslivegrid, and when qslivegrid ::
+ *  refresh() is called, it can find all the buttons deleted.
  */
 
 void
@@ -1482,7 +1484,7 @@ performer::log_current_tempo ()
             if (tick > s->get_length())
                 s->set_length(tick);
 
-            notify_sequence_change(tempo_track_number());   /* modify()     */
+            modify();   // notify_sequence_change(seqno) too problematic
         }
     }
     return result;
@@ -3629,7 +3631,7 @@ performer::add_trigger (seq::number seqno, midipulse tick)
         tick -= tick % seqlength;
         push_trigger_undo(seqno);
         s->add_trigger(tick, seqlength);
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 
@@ -3651,7 +3653,7 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->delete_trigger(tick);
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 
@@ -3683,7 +3685,7 @@ performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
             midipulse seqlength = s->get_length();
             s->add_trigger(tick, seqlength);
         }
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 
@@ -3709,7 +3711,7 @@ performer::split_trigger (seq::number seqno, midipulse tick)
 #else
         s->split_trigger(tick);
 #endif
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 
@@ -3731,7 +3733,7 @@ performer::paste_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->paste_trigger(tick);
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 
@@ -3758,7 +3760,7 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         else
             s->paste_trigger(tick);
 
-        notify_sequence_change(seqno);                      /* modify()     */
+        modify();       // notify_sequence_change(seqno) too problematic
     }
 }
 

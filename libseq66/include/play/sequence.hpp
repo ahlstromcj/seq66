@@ -1273,7 +1273,6 @@ public:
         bool user_change = false
     );
     std::string to_string () const;
-    void print_triggers () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
     bool add_note
@@ -1296,6 +1295,7 @@ public:
         m_events.sort();
     }
 
+    void print_triggers () const;
     void notify_trigger (bool on);
     void add_trigger
     (

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-26
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2587,7 +2587,23 @@ bool
 qsmainwnd:: on_sequence_change (seq::number seqno)
 {
     bool result = not_nullptr(m_live_frame);
-    m_live_frame->update_sequence(seqno);
+    if (result)
+        m_live_frame->update_sequence(seqno);
+
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+qsmainwnd:: on_trigger_change (seq::number seqno)
+{
+    bool result = not_nullptr(m_live_frame);
+    if (result)
+        m_live_frame->refresh(seqno);
+
     return result;
 }
 

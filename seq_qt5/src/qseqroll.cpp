@@ -1249,7 +1249,10 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     {
         if (perf().is_pattern_playing())
         {
-            // no code yet
+            /*
+             * The space and period keystrokes are andled at the top of
+             * qseqeditframe64::keyPressEvent().
+             */
         }
         else
         {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2019-08-10
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -225,6 +225,15 @@ public:
     void selected (bool s)
     {
         m_selected = s;
+    }
+
+    /**
+     *  Encapsulates a qperfroll trigger calculation.
+     */
+
+    midipulse trigger_marker (midipulse len)
+    {
+        return m_tick_start - (m_tick_start % len) + (m_offset % len) - len;
     }
 
 };          // class trigger
