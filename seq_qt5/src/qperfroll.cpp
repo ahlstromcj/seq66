@@ -56,6 +56,14 @@ namespace seq66
 {
 
 /**
+ *  Initial sizing for the perf-roll.
+ */
+
+const int c_background_x     = (SEQ66_DEFAULT_PPQN * 4 * 16) / c_perf_scale_x;
+const int c_size_box_w       = 6;                /* 3 is too small */
+const int c_size_box_click_w = c_size_box_w + 1 ;
+
+/**
  *
  */
 
@@ -310,8 +318,8 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                  * Check for corner drag to grow sequence start.
                  */
 
-                int clickminus = c_perfroll_size_box_click_w - 1;
-                int clickbox = c_perfroll_size_box_click_w * scale_zoom();
+                int clickminus = c_size_box_click_w - 1;
+                int clickbox = c_size_box_click_w * scale_zoom();
                 if
                 (
                     tick >= start_tick && tick <= start_tick + clickbox &&
@@ -810,9 +818,9 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
         if (perf().is_seq_active(seqid))
         {
             seq::pointer seq = perf().get_sequence(seqid);
-            midipulse seqlength = seq->get_length();
+            midipulse lens = seq->get_length();
             seq->reset_draw_trigger_marker();
-            int length_w = seqlength / scale_zoom();
+            int lenw = lens / scale_zoom();
             trigger trig;
             while (seq->next_trigger(trig))
             {
@@ -822,15 +830,18 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int x_off = tix_to_pix(trig.tick_end());
                     int w = x_off - x_on + 1;
                     int x = x_on;
-                    int y = c_names_y * seqid + 1;  // + 2
-                    int h = c_names_y - 2; // - 4
-                    x -= x_offset;   // adjust to screen coordinates
+                    int xmax = x + w;
+                    int y = c_names_y * seqid + 1;
+                    int h = c_names_y - 2;
+                    x -= x_offset;                  /* adjust  */
                     if (trig.selected())
-                        pen.setColor("orange");      /* Qt::red */
+                        pen.setColor("orange");     /* Qt::red */
                     else
                         pen.setColor(Qt::black);
 
-                    // Get seq's assigned colour and beautify it.
+                    /*
+                     * Get the seq's assigned colour and beautify it.
+                     */
 
                     int c = perf().color(seqid);
                     Color backcolor = get_color_fix(PaletteColor(c));
@@ -861,25 +872,18 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     painter.setPen(pen);
                     painter.drawRect
                     (
-                        x, y, c_perfroll_size_box_w, c_perfroll_size_box_w
+                        x, y, c_size_box_w, c_size_box_w
                     );
                     painter.drawRect              // seq grab handle right
                     (
-                        x + w - c_perfroll_size_box_w,
-                        y + h - c_perfroll_size_box_w,
-                        c_perfroll_size_box_w, c_perfroll_size_box_w
+                        xmax - c_size_box_w,
+                        y + h - c_size_box_w,
+                        c_size_box_w, c_size_box_w
                     );
                     pen.setColor(Qt::black);
                     painter.setPen(pen);
 
-/*
-                    midipulse t =
-                    (
-                        trig.tick_start() - (trig.tick_start() % seqlength) +
-                        (trig.offset() % seqlength) - seqlength
-                    );
-*/
-                    midipulse t = trig.trigger_marker(seqlength);
+                    midipulse t = trig.trigger_marker(lens);
                     while (t < trig.tick_end())
                     {
                         int note0;
@@ -889,8 +893,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int height = note1 - note0;
                         height += 2;
 
-                        sequence::note_info ni;
-                        sequence::draw dt;
                         seq->reset_draw_marker();
                         if (seq->transposable())
                             pen.setColor(Qt::black);
@@ -898,28 +900,31 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             pen.setColor(Qt::red);
 
                         int cny = c_names_y - 6;
-                        int tick_marker_x = tix_to_pix(t) - x_offset;
+                        int marker_x = tix_to_pix(t) - x_offset;
                         painter.setPen(pen);
                         for (;;)
                         {
-                            dt = seq->get_next_note(ni);
+                            sequence::note_info ni;
+                            sequence::draw dt = seq->get_next_note(ni);
                             if (dt == sequence::draw::finish)
                                 break;
 
-                            if (dt == sequence::draw::tempo)
-                            {
-                                continue;       // TODO: tempo
-                            }
+                            /*
+                             * This code breaks drawing the note lines!
+                             *
+                             * if (dt == sequence::draw::tempo)
+                             *     continue;       // TODO: tempo
+                             */
 
-                            midipulse ts = ni.start() * length_w;
-                            midipulse tf = ni.finish() * length_w;
+                            midipulse tick_s = ni.start();
+                            midipulse tick_f = ni.finish();
                             int note_y =
                             (
                                 cny - (cny * (ni.note() - note0)) / height
-                            ) + 1;
-                            midipulse tick_s_x = (ts/seqlength) + tick_marker_x;
-                            midipulse tick_f_x = (tf/seqlength) + tick_marker_x;
-                            if (sequence::is_draw_note(dt))
+                            ) + 1 + y;
+                            int tick_s_x = tick_s * lenw / lens + marker_x;
+                            int tick_f_x = tick_f * lenw / lens + marker_x;
+                            if (sequence::is_draw_note_onoff(dt))
                                 tick_f_x = tick_s_x + 1;
 
                             if (tick_f_x <= tick_s_x)
@@ -928,15 +933,14 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             if (tick_s_x < x)
                                 tick_s_x = x;
 
-                            if (tick_f_x > x + w)
-                                tick_f_x = x + w;
+                            if (tick_f_x > xmax)
+                                tick_f_x = xmax;
 
-                            if (tick_f_x >= x && tick_s_x <= x + w)
+                            if (tick_f_x >= x && tick_s_x <= xmax)
                             {
                                 painter.drawLine
                                 (
-                                    tick_s_x, y + note_y,
-                                    tick_f_x, y + note_y
+                                    tick_s_x, note_y, tick_f_x, note_y
                                 );
                             }
                         }
@@ -948,9 +952,9 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
                             pen.setColor(QColor(190, 190, 190, 220));
                             painter.setPen(pen);
-                            painter.drawRect(tick_marker_x, y + 4, 1, h - 8);
+                            painter.drawRect(marker_x, y + 4, 1, h - 8);
                         }
-                        t += seqlength;
+                        t += lens;
                     }
                 }
             }

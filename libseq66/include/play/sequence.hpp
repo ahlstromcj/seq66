@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-06-27
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1609,6 +1609,15 @@ public:
     {
         return dt == sequence::draw::linked ||
             dt == sequence::draw::note_on || dt == sequence::draw::note_off;
+    }
+
+    /**
+     *  Necessary for drawing notes in a perf roll.  Why?
+     */
+
+    static bool is_draw_note_onoff (draw dt)
+    {
+        return dt == sequence::draw::note_on || dt == sequence::draw::note_off;
     }
 
 private:

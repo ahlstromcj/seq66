@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-10
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -40,14 +40,6 @@
 #include "gui_palette_qt5.hpp"
 #include "qperfbase.hpp"
 #include "util/rect.hpp"
-
-/**
- *  Initial sizing for the perf-roll.
- */
-
-const int c_perfroll_background_x = (SEQ66_DEFAULT_PPQN * 4 * 16) / c_perf_scale_x;
-const int c_perfroll_size_box_w = 6;                /* 3 is too small */
-const int c_perfroll_size_box_click_w = c_perfroll_size_box_w + 1 ;
 
 /*
  *  Forward references.
