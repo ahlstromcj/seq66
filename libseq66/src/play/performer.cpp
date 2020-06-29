@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-28
+ * \updates       2020-06-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3196,6 +3196,16 @@ performer::start_playing (bool songmode)
     {
         if (is_jack_master())
             position_jack(false);
+
+        /*
+         * Experimental
+         */
+
+        if (resume_note_ons())
+        {
+            for (auto seqi : m_play_set)
+                seqi->resume_note_ons(get_tick());
+        }
     }
     start_jack();
     start(songmode);                                    /* song mode       */

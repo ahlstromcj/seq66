@@ -909,9 +909,8 @@ sequence::play
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
     {
-        notify_trigger(false);                      // set_playing(false);
+        set_playing(false);
     }
-
     m_last_tick = end_tick + 1;                     /* for next frame       */
     m_was_playing = m_playing;
 }
@@ -3176,22 +3175,6 @@ sequence::set_trigger_offset (midipulse trigger_offset)
 }
 
 /**
- *  Changes the playing state and notifies the parent performer's subscribers
- *  that the sequence has changed state based on a trigger.
- *
- * \param on
- *      Set to true if the sequence is to be turned on.  Otherwise it is to be
- *      turned off.
- */
-
-void
-sequence::notify_trigger (bool on)
-{
-    set_playing(on);
-    m_parent->notify_trigger_change(seq_number());
-}
-
-/**
  *  Splits a trigger.  This is the public overload of split_trigger.
  *
  * \threadsafe
@@ -3702,6 +3685,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
                 result = true;
             }
         }
+#if 0           // TEMPORARY
         else if (er.is_tempo())
         {
             midibyte notebyte = tempo_to_note_value(er.tempo());
@@ -3712,6 +3696,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 
             result = true;
         }
+#endif
     }
     lowest = low;
     highest = high;
@@ -4237,7 +4222,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
     automutex locker(m_mutex);
     bool result = false;
     bool was_playing = playing();
-    set_playing(false);                 /* turn everything off              */
+    set_playing(false);                     /* turn everything off          */
     if (len > 0)
     {
         if (len < midipulse(m_ppqn / 4))
@@ -4254,7 +4239,7 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
      */
 
     m_events.set_length(len);
-    m_triggers.set_length(len);         /* must precede adjust call         */
+    m_triggers.set_length(len);             /* must precede adjust call     */
     if (adjust_triggers)
         m_triggers.adjust_offsets_to_length(len);
 
@@ -4327,6 +4312,17 @@ sequence::extend (midipulse len)
 }
 
 /**
+ *  Notifies the parent performer's subscribers that the sequence has
+ *  changed state based on a trigger or action.
+ */
+
+void
+sequence::notify_trigger ()
+{
+    m_parent->notify_trigger_change(seq_number());
+}
+
+/**
  *  Sets the playing state of this sequence.  When playing, and the sequencer
  *  is running, notes get dumped to the ALSA buffers.
  *
@@ -4348,6 +4344,8 @@ sequence::set_playing (bool p)
             off_playing_notes();
 
         set_dirty();
+        notify_trigger();
+
 #if defined USE_THIS_CODE
         THIS REALLY BELONGS IN PERFORM
         midi_control_out * mco = m_parent->get_midi_control_out();

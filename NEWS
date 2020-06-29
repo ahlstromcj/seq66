@@ -1,17 +1,8 @@
-NEWS for Sequencer66 0.90.0
+NEWS for Sequencer66 0.90.3
 Chris Ahlstrom
 2015-07-10 to 2019-03-09
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
-
-Older major updates:
-
-Pull Request #150 from user jfrey-xx:
-
-    While the commit messages should be self-explanatory, here is a list of
-    the current modifications:
-
-    -    TBD
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

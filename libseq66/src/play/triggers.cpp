@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-06-27
+ * \updates       2020-06-29
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -293,7 +293,7 @@ triggers::play
             else
                 start_tick = trigger_tick;              /* side-effect      */
 
-            m_parent.notify_trigger(true);  // m_parent.set_playing(true);
+            m_parent.set_playing(true);
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
@@ -321,7 +321,7 @@ triggers::play
          * to the original call: m_parent.set_playing(false);
          */
 
-        m_parent.notify_trigger(false);
+        m_parent.set_playing(false);
     }
     m_parent.set_trigger_offset(trigger_offset);
     return result;

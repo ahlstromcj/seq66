@@ -237,9 +237,12 @@ qslivegrid::conditional_update ()
                          * button is checked, something immediately unchecks it
                          * again.  The result is flickering in playback.
                          *
-                         * bool armed = s->playing();
-                         * pb->set_checked(armed);
+                         * Trying again, EXPERIMENTAL, the next two lines work
+                         * with Crux so far.
                          */
+
+                        bool armed = s->playing();
+                        pb->set_checked(armed);
 
                         pb->reupdate(true);
                     }

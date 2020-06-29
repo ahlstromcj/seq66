@@ -1297,10 +1297,11 @@ void
 qseqeditframe64::conditional_update ()
 {
     bool expandrec = seq_pointer()->expand_recording();
+    update_midi_buttons();                      /* mirror current states    */
     if (expandrec)
     {
         set_measures(get_measures() + 1);
-        follow_progress(expandrec);         /* keep up with progress    */
+        follow_progress(expandrec);             /* keep up with progress    */
     }
     else if (perf().follow())
     {

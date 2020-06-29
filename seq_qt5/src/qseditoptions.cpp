@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-20
+ * \updates       2020-06-28
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -432,13 +432,16 @@ qseditoptions::syncWithInternals ()
 void
 qseditoptions::update_note_resume ()
 {
-    bool resumenotes = ui->chkNoteResume->isChecked();
-    if (m_is_initialized && perf().resume_note_ons() != resumenotes)
+    if (m_is_initialized)
     {
-        usr().save_user_config(true);
-        usr().resume_note_ons(resumenotes);
-        perf().resume_note_ons(resumenotes);
-        syncWithInternals();
+        bool resumenotes = ui->chkNoteResume->isChecked();
+        if (perf().resume_note_ons() != resumenotes)
+        {
+            usr().save_user_config(true);
+            usr().resume_note_ons(resumenotes);
+            perf().resume_note_ons(resumenotes);
+            syncWithInternals();
+        }
     }
 }
 

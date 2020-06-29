@@ -1,6 +1,6 @@
 README for Seq66 0.90.3 (Sequencer64 refactored for C++11/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-06-14
+2015-09-10 to 2020-06-29
 
 EXPERIMENTAL.  I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -41,7 +41,8 @@ Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 
 ALSA/JACK support: Seq66qt5/qseq66
 GUI-less application: Seq66cli/seq66cli [not yet!]
-Windows/PortMidi: Seq66qt5/qpseq66.exe [not yet!]
+Qt/Windows/PortMidi: Seq66qt5/qpseq66.exe [not yet!]
+Qt/RtMidi: Seq66qt5/qrseq66
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "portmidi"
 engine (for Windows).  Windows MIDI devices are detected, inaccessible devices
@@ -61,6 +62,11 @@ Recent changes:
         -   Added code to define the engine used and the exact "uname a-" of the
             operating system on which the build was done, for the --version
             option.
+        -   Fixed issue #5 to save/restore note-on resumes and get them
+            working in Live mode and Song mode.
+        -   Fixed issues with perfoll and grid-button rendering, synch between
+            button and seqedit mute status, growing notes in the seqroll, and
+            more.
     -   Version 0.90.2:
         -   Lots of code cleanup.
         -   Added truncation of BPM to precision in "usr" file.

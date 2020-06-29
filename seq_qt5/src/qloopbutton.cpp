@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-12-15
+ * \updates       2020-06-29
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -248,7 +248,7 @@ qloopbutton::initialize_text ()
 }
 
 /**
- *  Creates and array of absolute locations for the sine-wave in the
+ *  Creates an array of absolute locations for a sine-wave in the
  *  progress-box.
  */
 
@@ -272,7 +272,8 @@ qloopbutton::initialize_sine_table ()
 }
 
 /**
- *
+ *  This function examines the current sequence to determine how many notes it
+ *  has, and the range of note values (pitches).
  */
 
 void
@@ -307,11 +308,12 @@ qloopbutton::initialize_fingerprint ()
             n0 = 0;
 
         nh = n1 - n0;
-        m_seq->reset_draw_marker();                     /* loop iterator    */
+        event::buffer::const_iterator evi;
+        m_seq->reset_ex_iterator(evi);
         for (;;)
         {
             sequence::note_info ni;                     /* two members used */
-            sequence::draw dt = m_seq->get_next_note(ni);
+            sequence::draw dt = m_seq->get_next_note_ex(ni, evi);
             if (dt != sequence::draw::finish)
             {
                 int x = (ni.start() * xw) / t1 + x0;    /* ni.finish()      */
@@ -332,7 +334,8 @@ qloopbutton::initialize_fingerprint ()
 }
 
 /**
- *
+ *  Sets up the foreground and background colors of the button and the
+ *  appropriate setAutoFillBackground() setting.
  */
 
 void
@@ -351,8 +354,8 @@ qloopbutton::setup ()
             slotpal().get_color_fix(PaletteColor(c));
 
         /*
-         * Rather than having a black progress area, make it match the specified
-         * sequence color.
+         * Rather than having a black progress area, make it match the
+         * specified sequence color.
          *
          *      pal.setColor(QPalette::Button, backcolor);
          *
@@ -425,16 +428,17 @@ qloopbutton::reupdate (bool all)
 /**
  *  Draws the text and progress panel.
  *
- *           ----------------------------------
- *          | Title                     Length |
- *          |                                  |
- *          |                                  |
- *          |                                  |
- *          | buss-chan 4/4             hotkey |
- *           ----------------------------------
+\verbatim
+             ----------------------------
+            | Title               Length |
+            |                            |
+            |                            |
+            | buss-chan 4/4       hotkey |
+             ----------------------------
+\endverbatim
  *
  *  Note that we first call QPushButton::paintEvent(pev) to make sure that the
- *  click highlights/unhighlight this checkable button.  And this call muse be
+ *  click highlights/unhighlight this checkable button.  And this call must be
  *  done first, otherwise the application segfaults.
  */
 
@@ -631,8 +635,13 @@ qloopbutton::draw_progress_box (QPainter & painter)
 }
 
 /**
- *      Draws the progress box, progress bar, and and indicator for non-empty
- *      pattern slots.
+ *  Draws the progress box, progress bar, and and indicator for non-empty
+ *  pattern slots.  Two style of drawing are done:
+ *
+ *      -   If sequence::measure_threshold() is true, then the calculated
+ *          number of measures is greater than 4.  We don't need to draw the
+ *          whole set of notes.  Instead, we draw the calculated finger print.
+ *      -   Otherwise, the sequence is short and we draw it normally.
  */
 
 void
@@ -648,7 +657,21 @@ qloopbutton::draw_pattern (QPainter & painter)
         int lyh = m_progress_box.m_h - 2;
         midipulse t1 = m_seq->get_length();
         pen.setWidth(1);
-        if (! m_seq->measure_threshold())     // (m_seq->note_count() <= 64)
+        if (m_seq->measure_threshold())         // not m_seq->note_count() <= 64
+        {
+            if (m_fingerprint_size > 0)
+            {
+                int x = m_progress_box.m_x + 4;
+                int dx = m_progress_box.m_w / (m_fingerprint_size - 1);
+                for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
+                {
+                    int y = m_fingerprint[i];
+                    if (y > 0)
+                        painter.drawRect(x, y, 1, 1);
+                }
+            }
+        }
+        else
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);
@@ -693,7 +716,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 else if (tick_f_x <= tick_s_x)
                     tick_f_x = tick_s_x + 1;
 
-                int y = lyh * (ni.note() - lowest) / height;
+                int y = lyh * (highest - ni.note()) / height;
 
 #if defined DRAW_TEMPO_LINE
                 if (dt == sequence::draw::tempo)
@@ -713,26 +736,6 @@ qloopbutton::draw_pattern (QPainter & painter)
                 y += ly0;                           /* start & finish y */
                 painter.setPen(pen);
                 painter.drawLine(sx, y, fx, y);
-            }
-        }
-        else
-        {
-            /*
-             * Draw simple wave to indicate non-empty button.  We check the
-             * sequence event-count.  Another, slower, check is
-             * m_seq->minmax_notes(lo, hi))
-             */
-
-            if (m_fingerprint_size > 0)
-            {
-                int x = m_progress_box.m_x + 4;
-                int dx = m_progress_box.m_w / (m_fingerprint_size - 1);
-                for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
-                {
-                    int y = m_fingerprint[i];
-                    if (y > 0)
-                        painter.drawRect(x, y, 1, 1);
-                }
             }
         }
     }

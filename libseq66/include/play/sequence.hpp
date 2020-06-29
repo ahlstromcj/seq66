@@ -1295,8 +1295,8 @@ public:
         m_events.sort();
     }
 
+    void notify_trigger ();
     void print_triggers () const;
-    void notify_trigger (bool on);
     void add_trigger
     (
         midipulse tick, midipulse len,

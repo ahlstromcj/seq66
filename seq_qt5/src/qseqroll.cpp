@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-22
+ * \updates       2020-06-29
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1079,7 +1079,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (can_grow)
                     {
                         growing(true);
-printf("growing(true)\n");
                         s->selected_box(tick_s, note, tick_f, note_l);
                         convert_tn_box_to_rect
                         (
@@ -1188,7 +1187,6 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     }
 
     clear_action_flags();               /* turn off all the action flags    */
-printf("growing(false)\n");
     seq_pointer()->unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
         seq_pointer()->set_dirty();
