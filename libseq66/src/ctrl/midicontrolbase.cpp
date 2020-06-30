@@ -55,7 +55,7 @@ midicontrolbase::midicontrolbase (int buss)
     m_is_blank          (true),
     m_is_enabled        (false)
 {
-    // initialize(SEQ66_DEFAULT_SET_SIZE);
+    // No code needed
 }
 
 }           // namespace seq66

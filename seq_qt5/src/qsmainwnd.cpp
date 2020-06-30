@@ -2188,8 +2188,8 @@ qsmainwnd::quit ()
 }
 
 /**
- *  By experimenting, we see that qsliveframe gets all of the keystrokes.  So we
- *  moved much of the processing to that class.  If the event isn't handled
+ *  By experimenting, we see that qsliveframe gets all of the keystrokes.  So
+ *  we moved much of the processing to that class.  If the event isn't handled
  *  there, then qsmainwnd::handle_key_press() is called.
  *
  *  If we reimplement this handler, it is very important to call

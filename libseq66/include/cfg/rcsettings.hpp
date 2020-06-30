@@ -227,7 +227,7 @@ private:
      *  keystroke controls and MIDI controls.
      */
 
-    midicontrolin m_midicontrolin;
+    midicontrolin m_midi_control_in;
 
     /**
      *  Holds the MIDI control out stanzas.
@@ -498,12 +498,12 @@ public:
 
     const midicontrolin & midi_controls () const
     {
-        return m_midicontrolin;
+        return m_midi_control_in;
     }
 
     midicontrolin & midi_controls ()
     {
-        return m_midicontrolin;
+        return m_midi_control_in;
     }
 
     bool add_midicontrol_stanza

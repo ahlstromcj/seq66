@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-29
+ * \updates       2020-06-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -320,8 +320,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
-    m_midi_controls         ("MIDI controls"),
-    m_midi_ctrl_out         (),
+    m_midi_control_in       ("MIDI input controls"),
+    m_midi_control_out         (),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
     m_set_mapper                                /* accessed via mapper()    */
@@ -535,15 +535,15 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
         m_key_controls = rcs.key_controls();
 
     if (rcs.midi_controls().count() > 0)            /* could be 0-sized     */
-        m_midi_controls = rcs.midi_controls();
+        m_midi_control_in = rcs.midi_controls();
     else if (rcs.key_controls().count() > 0)
-        m_midi_controls.add_blank_controls(m_key_controls);
+        m_midi_control_in.add_blank_controls(m_key_controls);
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
     song_mode(rcs.song_start_mode());               /* boolean setter       */
     filter_by_channel(rcs.filter_by_channel());
     tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
-    m_midi_ctrl_out = rcs.midi_control_out();
+    m_midi_control_out = rcs.midi_control_out();
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -575,7 +575,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
     rcs.key_controls() = m_key_controls;
-    rcs.midi_controls() = m_midi_controls;
+    rcs.midi_controls() = m_midi_control_in;
     rcs.mute_groups() = m_mute_groups;
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
@@ -1603,7 +1603,13 @@ performer::clear_song ()
  *  master MIDI buss.
  *
  *  Could use a member function pointer to avoid having to code two loops.
- *  We did it.
+ *  We did it.  Note that std::shared_ptr does not support operator::->*, so
+ *  we have to get() the pointer.
+ *
+ *  Another option is to call mapper().reset_sequences(pause, playback_mode()).
+ *  This would result in a call to screenset::reset_sequences(), which does
+ *  the same thing but also checks the sequence for being active.  Is it worth
+ *  it?
  *
  * \param pause
  *      Try to prevent notes from lingering on pause if true.  By default, it
@@ -1616,16 +1622,7 @@ performer::reset_sequences (bool pause)
     void (sequence::* f) (bool) = pause ? &sequence::pause : &sequence::stop ;
     bool songmode = song_mode();
     for (auto & seqi : m_play_set)
-    {
-        sequence * s = seqi.get();
-        (s->*f)(songmode);
-    }
-
-    /*
-     * Is this useful???
-     *
-     * mapper().reset_sequences(pause, m_playback_mode);
-     */
+        (seqi.get()->*f)(songmode);
 
     if (m_master_bus)
         m_master_bus->flush();                          /* flush MIDI buss  */
@@ -1815,10 +1812,8 @@ performer::announce_exit ()
         {
             midi_control_out().send_seq_event
             (
-                i, midicontrolout::seqaction::remove, false
+                i, midicontrolout::seqaction::remove
             );
-            if (m_master_bus)
-                m_master_bus->flush();
         }
     }
 }
@@ -1838,14 +1833,14 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
         {
             midi_control_out().send_seq_event
             (
-                sn, midicontrolout::seqaction::arm, false
+                sn, midicontrolout::seqaction::arm
             );
         }
         else
         {
             midi_control_out().send_seq_event
             (
-                sn, midicontrolout::seqaction::mute, false
+                sn, midicontrolout::seqaction::mute
             );
         }
     }
@@ -1853,7 +1848,7 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     {
         midi_control_out().send_seq_event
         (
-            sn, midicontrolout::seqaction::remove, false
+            sn, midicontrolout::seqaction::remove
         );
     }
     return result;
@@ -3197,18 +3192,14 @@ performer::start_playing (bool songmode)
         if (is_jack_master())
             position_jack(false);
 
-        /*
-         * Experimental
-         */
-
-        if (resume_note_ons())
+        if (resume_note_ons())                          /* for issue #5     */
         {
             for (auto seqi : m_play_set)
                 seqi->resume_note_ons(get_tick());
         }
     }
     start_jack();
-    start(songmode);                                    /* song mode       */
+    start(songmode);                                    /* Song vs Live     */
     for (auto notify : m_notify)
         (void) notify->on_automation_change(automation::slot::start);
 }
@@ -3526,7 +3517,7 @@ performer::box_move_triggers (midipulse tick)
     for (auto s : m_selected_seqs)
     {
         seq::pointer selseq = get_sequence(s);
-        if (selseq)
+        if (selseq)                                 /* needlessly safe  */
             selseq->move_triggers(tick, true);
     }
 }
@@ -3544,7 +3535,7 @@ performer::box_offset_triggers (midipulse offset)
     for (auto s : m_selected_seqs)
     {
         seq::pointer selseq = get_sequence(s);
-        if (selseq)
+        if (selseq)                                 /* needlessly safe  */
             selseq->offset_triggers(offset);
     }
 }
@@ -4486,7 +4477,7 @@ bool
 performer::midi_control_event (const event & ev, bool recording)
 {
     midicontrol::key k(ev);
-    const midicontrol & incoming = m_midi_controls.control(k);
+    const midicontrol & incoming = m_midi_control_in.control(k);
     bool result = incoming.is_usable();
     if (result)
     {

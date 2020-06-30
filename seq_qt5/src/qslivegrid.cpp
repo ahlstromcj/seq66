@@ -871,7 +871,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             {
                 (void) pb->toggle_checked();
                 m_button_down = true;
-                update();           // 2019-09-04 TEST
+                update();
             }
 #endif
         }

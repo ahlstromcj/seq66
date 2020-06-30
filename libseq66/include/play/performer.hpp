@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-06-27
+ * \updates       2020-06-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -383,13 +383,13 @@ private:                            /* key, midi, and op container section  */
      *  Provides a default-filled midicontrol container.
      */
 
-    midicontrolin m_midi_controls;
+    midicontrolin m_midi_control_in;
 
     /**
      *  Provides the class encapsulating MIDI control output.
      */
 
-    midicontrolout m_midi_ctrl_out;
+    midicontrolout m_midi_control_out;
 
     /**
      *  Provides a default-filled mutegroups container.
@@ -2276,12 +2276,12 @@ public:
 
     const midicontrolout & midi_control_out () const
     {
-        return m_midi_ctrl_out;
+        return m_midi_control_out;
     }
 
     midicontrolout & midi_control_out ()
     {
-        return m_midi_ctrl_out;
+        return m_midi_control_out;
     }
 
     void set_needs_update (bool flag = true)
@@ -2722,12 +2722,12 @@ public:                                 /* access functions for the containers *
 
     const midicontrolin & midi_controls () const
     {
-        return m_midi_controls;
+        return m_midi_control_in;
     }
 
     midicontrolin & midi_controls ()
     {
-        return m_midi_controls;
+        return m_midi_control_in;
     }
 
     const mutegroups & mutes () const

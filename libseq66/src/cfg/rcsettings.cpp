@@ -85,7 +85,7 @@ rcsettings::rcsettings () :
     m_load_key_controls         (true),
     m_keycontainer              ("rc"),
     m_load_midi_controls        (true),
-    m_midicontrolin             ("rc"),
+    m_midi_control_in             ("rc"),
     m_midi_control_out          (),
     m_show_ui_sequence_key      (true),
     m_show_ui_sequence_number   (true),
@@ -139,7 +139,7 @@ rcsettings::rcsettings () :
     m_tempo_track_number        (0),
     m_recent_files              ()
 {
-    m_midicontrolin.inactive_allowed(true);
+    m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
 
@@ -164,7 +164,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_load_key_controls         (rhs.m_load_key_controls),
     m_keycontainer              (rhs.m_keycontainer),
     m_load_midi_controls        (rhs.m_load_midi_controls),
-    m_midicontrolin             (rhs.m_midicontrolin),
+    m_midi_control_in             (rhs.m_midi_control_in),
     m_midi_control_out          (rhs.m_midi_control_out),
     m_show_ui_sequence_key      (rhs.m_show_ui_sequence_key),
     m_show_ui_sequence_number   (rhs.m_show_ui_sequence_number),
@@ -209,7 +209,7 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_tempo_track_number        (rhs.m_tempo_track_number),
     m_recent_files              (rhs.m_recent_files)
 {
-    m_midicontrolin.inactive_allowed(true);
+    m_midi_control_in.inactive_allowed(true);
 }
 
 /**
@@ -234,7 +234,7 @@ rcsettings::operator = (const rcsettings & rhs)
         m_load_key_controls         = rhs.m_load_key_controls;
         m_keycontainer              = rhs.m_keycontainer;
         m_load_midi_controls        = rhs.m_load_midi_controls;
-        m_midicontrolin             = rhs.m_midicontrolin;
+        m_midi_control_in             = rhs.m_midi_control_in;
         m_midi_control_out          = rhs.m_midi_control_out;
         m_show_ui_sequence_key      = rhs.m_show_ui_sequence_key;
         m_show_ui_sequence_number   = rhs.m_show_ui_sequence_number;
@@ -308,7 +308,7 @@ rcsettings::set_defaults ()
     m_load_midi_controls        = true;
 
     /*
-     * m_midicontrolin.clear();             // what is best?
+     * m_midi_control_in.clear();             // what is best?
      * m_midi_control_out.clear();          // does not exist
      */
 
@@ -1120,12 +1120,12 @@ rcsettings::add_midicontrol_stanza
 
         midicontrol mcoff(kn, cat, automation::action::off, s, nslot);
         mcoff.set(c);
-        result = m_midicontrolin.add(mctoggle);
+        result = m_midi_control_in.add(mctoggle);
         if (result)
-            result = m_midicontrolin.add(mcon);
+            result = m_midi_control_in.add(mcon);
 
         if (result)
-            result = m_midicontrolin.add(mcoff);
+            result = m_midi_control_in.add(mcoff);
     }
     else if (opcontrol::is_automation(cat))
     {
@@ -1138,12 +1138,12 @@ rcsettings::add_midicontrol_stanza
 
         midicontrol mcoff(kn, cat, automation::action::off, s, 0);
         mcoff.set(c);
-        result = m_midicontrolin.add(mctoggle);
+        result = m_midi_control_in.add(mctoggle);
         if (result)
-            result = m_midicontrolin.add(mcon);
+            result = m_midi_control_in.add(mcon);
 
         if (result)
-            result = m_midicontrolin.add(mcoff);
+            result = m_midi_control_in.add(mcoff);
     }
     else
         result = false;

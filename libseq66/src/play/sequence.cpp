@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-27
+ * \updates       2020-06-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -699,6 +699,19 @@ sequence::set_rec_vol (int recvol)
 }
 
 /**
+ *  A simple version of toggle_playing().
+ *
+ * \return
+ *      Returns true if playing.
+ */
+
+bool
+sequence::toggle_playing ()
+{
+    return toggle_playing(m_parent->get_tick(), m_parent->resume_note_ons());
+}
+
+/**
  *  Toggles the playing status of this sequence.  How exactly does this differ
  *  from toggling the mute status?  The midipulse and bool parameters of the
  *  overload of this function are new, to support song-recording.
@@ -712,7 +725,7 @@ sequence::set_rec_vol (int recvol)
  *      the "usr" file.
  */
 
-void
+bool
 sequence::toggle_playing (midipulse tick, bool resumenoteons)
 {
     set_playing(! playing());
@@ -720,6 +733,7 @@ sequence::toggle_playing (midipulse tick, bool resumenoteons)
         resume_note_ons(tick);
 
     m_off_from_snap = false;
+    return playing();
 }
 
 /**
@@ -730,7 +744,7 @@ sequence::toggle_playing (midipulse tick, bool resumenoteons)
  * \threadsafe
  */
 
-void
+bool
 sequence::toggle_queued ()
 {
     automutex locker(m_mutex);
@@ -752,6 +766,8 @@ sequence::toggle_queued ()
             mco->send_seq_event(number(), midi_control_out::seq_action_mute);
     }
     */
+
+    return true;
 }
 
 /**
@@ -3016,21 +3032,18 @@ sequence::intersect_notes
         event & eon = eventlist::dref(on);
         if (position_note == eon.get_note() && eon.is_note_on())
         {
-            off = on;                   /* find next "off" event for note   */
+            off = on;                               /* for next "off"       */
             ++off;                                  /* hope this is it!     */
-            event & eoff = eventlist::dref(off);   /* access event itself  */
 
             /*
-             *  (eon.get_note() != eoff.get_note() || eoff.is_note_on())
-             *
-             *  Not quite De Morgan's Law below.  It sounds like we want to
-             *  find the next Note Off event for the current Note On that
+             *  Find the next Note Off event for the current Note On that
              *  matches the mouse position.
              */
 
             bool notematch = false;
             for ( ; off != m_events.end(); ++off)
             {
+                event & eoff = eventlist::dref(off);
                 if (eon.get_note() == eoff.get_note() && eoff.is_note_off())
                 {
                     notematch = true;
@@ -3039,6 +3052,7 @@ sequence::intersect_notes
             }
             if (notematch)
             {
+                event & eoff = eventlist::dref(off);
                 midipulse ontime = eon.timestamp();
                 midipulse offtime = eoff.timestamp();
                 if (ontime <= position && position <= offtime)
@@ -3685,7 +3699,6 @@ sequence::minmax_notes (int & lowest, int & highest) // const
                 result = true;
             }
         }
-#if 0           // TEMPORARY
         else if (er.is_tempo())
         {
             midibyte notebyte = tempo_to_note_value(er.tempo());
@@ -3696,7 +3709,6 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 
             result = true;
         }
-#endif
     }
     lowest = low;
     highest = high;
@@ -3708,7 +3720,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
  */
 
 int
-sequence::note_count () // const
+sequence::note_count ()
 {
     automutex locker(m_mutex);
     int result = 0;
@@ -5158,13 +5170,13 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
     if (check_queued_tick(tick))
     {
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
-        toggle_playing(tick, resumenoteons);
+        (void) toggle_playing(tick, resumenoteons);
     }
     if (one_shot() && one_shot_tick() <= tick)
     {
         play(one_shot_tick() - 1, playbackmode, resumenoteons);
-        toggle_playing(tick, resumenoteons);
-        toggle_queued();        /* queue it to mute it again after one play */
+        (void) toggle_playing(tick, resumenoteons);
+        (void) toggle_queued(); /* queue it to mute it again after one play */
     }
     play(tick, playbackmode, resumenoteons);
 }
@@ -5206,7 +5218,7 @@ sequence::handle_size (midipulse start, midipulse finish)
  *  m_one_shot_tick according to m_last_tick and m_length.
  */
 
-void
+bool
 sequence::toggle_one_shot ()
 {
     automutex locker(m_mutex);
@@ -5214,6 +5226,7 @@ sequence::toggle_one_shot ()
     m_one_shot = ! m_one_shot;
     m_one_shot_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
+    return m_one_shot;
 }
 
 /**

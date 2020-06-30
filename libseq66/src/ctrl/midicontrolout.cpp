@@ -196,6 +196,8 @@ action_to_string (midicontrolout::action a)
 }
 
 /**
+ *  Send out notification about playing status of a sequence.
+ *
  * \todo
  *      Need to handle screen sets. Since sequences themselves are ignorant about
  *      the current screen set, maybe we can centralise this knowledge inside
@@ -208,6 +210,15 @@ action_to_string (midicontrolout::action a)
  * Also, maybe consider adding an option to the config file, making this behavior
  * optional: So either absolute sequence actions (let the receiver do the
  * math...), or sending events relative (modulo) the current screen set.
+ *
+ * \param seq
+ *      The index of the sequence.
+ *
+ * \param what
+ *      The status action of the sequence.
+ *
+ * \param flush
+ *      Flush MIDI buffer after sending (default true).
  */
 
 void
@@ -249,20 +260,29 @@ midicontrolout::send_seq_event (int seq, seqaction what, bool flush)
  */
 
 void
-midicontrolout::clear_sequences ()
+midicontrolout::clear_sequences (bool flush)
 {
     if (is_enabled())
     {
         for (int seq = 0; seq < screenset_size(); ++seq)
             send_seq_event(seq, midicontrolout::seqaction::remove, false);
 
-        if (not_nullptr(m_master_bus))
+        if (flush && not_nullptr(m_master_bus))
             m_master_bus->flush();
     }
 }
 
 /**
+ * Getter for sequence action events.
  *
+ * \param seq
+ *      The index of the sequence.
+ *
+ * \param what
+ *      The action to be notified.
+ *
+ * \return
+ *      The MIDI event to be sent.
  */
 
 event
@@ -275,7 +295,16 @@ midicontrolout::get_seq_event (int seq, seqaction what) const
 }
 
 /**
+ * Register a MIDI event for a given sequence action.
  *
+ * \param seq
+ *      The index of the sequence.
+ *
+ * \param what
+ *      The action to be notified.
+ *
+ * \param ev
+ *      The MIDI event to be sent.
  */
 
 void
@@ -291,11 +320,22 @@ midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
 }
 
 /**
+ *  Register a MIDI event for a given sequence action.
+ *
  * \tricky
  *      We have to call the overloaded two-parameter version of set_status()
  *      in lieu of calling set_status() and set_channel(), because the
  *      single-parameter set_status() assumes the channel nybble is present.
  *      This is too tricky.
+ *
+ * \param seq
+ *      The index of the sequence.
+ *
+ * \param what
+ *      The action to be notified.
+ *
+ * \param ev
+ *      Raw int array representing The MIDI event to be sent.
  */
 
 void
@@ -309,12 +349,21 @@ midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
         ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
         m_seq_events[seq][w].apt_action_event = ev;
         m_seq_events[seq][w].apt_action_status = bool(eva[outindex::enabled]);
-        is_blank(false);     // ???
+        is_blank(false);
     }
 }
 
 /**
+ * Checks if a sequence status event is active.
  *
+ * \param seq
+ *      The index of the sequence.
+ *
+ * \param what
+ *      The action to be notified.
+ *
+ * \return
+ *      Returns true if the respective event is active.
  */
 
 bool
@@ -326,7 +375,10 @@ midicontrolout::seq_event_is_active (int seq, seqaction what) const
 }
 
 /**
+ * Send out notification about non-sequence actions.
  *
+ * \param what
+ *      The action to be notified.
  */
 
 void
@@ -352,10 +404,6 @@ midicontrolout::send_event (action what)
     }
 }
 
-/**
- *
- */
-
 event
 midicontrolout::get_event (action what) const
 {
@@ -366,7 +414,13 @@ midicontrolout::get_event (action what) const
 }
 
 /**
+ * Getter for non-sequence action events.
  *
+ * \param what
+ *      The action to be notified.
+ *
+ * \return
+ *      The MIDI event to be sent.
  */
 
 std::string
@@ -390,7 +444,13 @@ midicontrolout::get_event_str (action what) const
 }
 
 /**
+ * Register a MIDI event for a given non-sequence action.
  *
+ * \param what
+ *      The action to be notified.
+ *
+ * \param event
+ *      The MIDI event to be sent.
  */
 
 void
@@ -406,7 +466,8 @@ midicontrolout::set_event (action what, event & ev)
 }
 
 /**
- *  An overload taking an array of 5 integers.
+ *  Register a MIDI event for a given non-sequence action.  An overload taking
+ *  an array of 5 integers.
  *
  * \param what
  *      Provides the action code to be set.
@@ -431,7 +492,13 @@ midicontrolout::set_event (action what, int * eva)
 }
 
 /**
+ * Checks if an event is active.
  *
+ * \param what
+ *      The action to be notified.
+ *
+ * \return
+ *      Returns true if the respective event is active.
  */
 
 bool

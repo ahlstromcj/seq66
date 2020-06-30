@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-04-19
+ * \updates       2020-06-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -342,6 +342,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             file, "[midi-control-out-settings]", "enabled"
         );
 
+        /*
+         * Set up the default-constructed midicontrolout object with its buss,
+         * setsize, and enabled values.  Then read in the control-out data.
+         * The performer sets the masterbus later on.
+         */
+
         bool enabled = string_to_bool(s);
         midicontrolout & mctrl = rc_ref().midi_control_out();
         mctrl.initialize(sequences, buss);
@@ -498,7 +504,7 @@ midicontrolfile::write_ctrl_event
 bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
-    file << "# Seq66 0.90.0 (and above) MIDI control configuration file\n"
+    file << "# Seq66 0.90.3 (and above) MIDI control configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -513,7 +519,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     "\n"
     "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
-    "version = 0\n"
+    "version = 1\n"
         ;
 
     /*
@@ -530,9 +536,12 @@ midicontrolfile::write_stream (std::ofstream & file)
 
     bool result = write_midi_control(file);
     if (result)
+        result = write_midi_control_out(file);
+
+    if (result)
     {
         file
-            << "\n\n# End of " << name() << "\n#\n"
+            << "\n# End of " << name() << "\n#\n"
             << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
             ;
     }
@@ -721,24 +730,27 @@ midicontrolfile::write_ctrl_pair
 bool
 midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
-    bool result = false;
     midicontrolout & mco = rc_ref().midi_control_out();
-    if (mco.is_blank())
-        return true;
 
     int setsize = mco.screenset_size();
     int buss = int(mco.buss());
     bool disabled = mco.is_disabled();
-    if (! disabled && mco.is_blank())
+    if (mco.is_blank())
+    {
+        setsize = SEQ66_DEFAULT_SET_SIZE;
+        buss = SEQ66_MIDI_CONTROL_OUT_BUSS;
         disabled = true;
+    }
 
+    bool result = setsize > 0 && buss >= 0;         /* light sanity check */
     file <<
         "\n"
         "[midi-control-out-settings]\n"
         "\n"
-        << "set-size = " << mco.screenset_size()
-        << "buss = " << mco.buss()
-        << "enabled = " << (mco.is_enabled() ? "true" : "false")
+        << "set-size = " << setsize << "\n"
+        << "buss = " << buss << "\n"
+        << "enabled = " << (disabled ? "false" : "true")
+        << "\n"
         ;
 
     file <<
@@ -756,7 +768,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "#       Arm         Mute       Queue      Delete\n"
         "\n"
         << setsize << " " << buss << " " << (disabled ? "0" : "1")
-        << "     # screenset size, output buss, enabled (1) /disabled (0)\n\n"
+        << "     # screenset size, output buss, enabled (1) /disabled (0)\n"
         ;
     file <<
         "\n"
@@ -769,43 +781,50 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "\n"
         ;
 
-    for (int seq = 0; seq < setsize; ++seq)
+    if (mco.is_blank())
     {
-        int minimum = static_cast<int>(midicontrolout::seqaction::arm);
-        int maximum = static_cast<int>(midicontrolout::seqaction::max);
-        file << seq;
-        for (int a = minimum; a < maximum; ++a)
+        for (int seq = 0; seq < setsize; ++seq)
         {
-            event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
-            bool active = mco.seq_event_is_active
-            (
-                seq, midicontrolout::seqaction(a)
-            );
-            midibyte d0, d1;
-
-            /*
-             * bool eia = mco.seq_event_is_active
-             * (
-             *     seq, (midicontrolout::seqaction) a
-             * );
-             */
-
-            ev.get_data(d0, d1);
-            file
-                << " ["
-                << (active ? "1" : "0") << " "
-                << unsigned(ev.channel()) << " "
-                << unsigned(ev.get_status()) << " "
-                << unsigned(d0) << " "
-                << unsigned(d1)
-                << "]"
-                ;
+            file << seq << " [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n";
         }
-        file << "\n";
     }
+    else
+    {
+        for (int seq = 0; seq < setsize; ++seq)
+        {
+            int minimum = static_cast<int>(midicontrolout::seqaction::arm);
+            int maximum = static_cast<int>(midicontrolout::seqaction::max);
+            file << seq;
+            for (int a = minimum; a < maximum; ++a)
+            {
+                event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
+                bool active = mco.seq_event_is_active
+                (
+                    seq, midicontrolout::seqaction(a)
+                );
+                midibyte d0, d1;
 
-    file << "\n";
+                /*
+                 * bool eia = mco.seq_event_is_active
+                 * (
+                 *     seq, (midicontrolout::seqaction) a
+                 * );
+                 */
 
+                ev.get_data(d0, d1);
+                file
+                    << " ["
+                    << (active ? "1" : "0") << " "
+                    << unsigned(ev.channel()) << " "
+                    << unsigned(ev.get_status()) << " "
+                    << unsigned(d0) << " "
+                    << unsigned(d1)
+                    << "]"
+                    ;
+            }
+            file << "\n";
+        }
+    }
     write_ctrl_event(file, mco, midicontrolout::action::play);
     write_ctrl_event(file, mco, midicontrolout::action::stop);
     write_ctrl_event(file, mco, midicontrolout::action::pause);

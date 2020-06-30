@@ -438,7 +438,7 @@
        <item>
         <widget class="QCheckBox" name="chkNoteResume">
          <property name="text">
-          <string>&amp;Resume playback of Note Ons at sequence toggle</string>
+          <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
          </property>
         </widget>
        </item>

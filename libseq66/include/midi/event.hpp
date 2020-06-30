@@ -981,7 +981,7 @@ public:
      *  Determines if this event is a note-on event and is not already linked.
      */
 
-    bool on_linkable ()
+    bool on_linkable () const
     {
         return is_note_on() && ! is_linked();
     }
@@ -998,7 +998,7 @@ public:
      *      this note, and the Note Off is not yet linked.
      */
 
-    bool off_linkable (buffer::iterator & eoff)
+    bool off_linkable (buffer::iterator & eoff) const
     {
         return
         (

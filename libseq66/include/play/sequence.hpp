@@ -1118,14 +1118,9 @@ public:
         return m_playing;
     }
 
-    bool toggle_playing ()
-    {
-        set_playing(! playing());
-        return playing();
-    }
-
-    void toggle_playing (midipulse tick, bool resumenoteons);
-    void toggle_queued ();
+    bool toggle_playing ();
+    bool toggle_playing (midipulse tick, bool resumenoteons);
+    bool toggle_queued ();
 
     bool get_queued () const
     {
@@ -1244,7 +1239,7 @@ public:
     }
 
     void resume_note_ons (midipulse tick);
-    void toggle_one_shot ();
+    bool toggle_one_shot ();
 
     bool is_dirty_main () const;
     bool is_dirty_edit () const;

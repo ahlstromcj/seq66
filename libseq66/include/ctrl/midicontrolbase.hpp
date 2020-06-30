@@ -31,10 +31,14 @@
  * \updates       2019-11-25
  * \license       GNU GPLv2 or above
  *
+ *  Provides the base class for midicontrolout.
  *
+ * Warning:
+ *
+ *      It is NOT a base class for midicontrol or midicontrolin!
  */
 
-#include "midi/midibytes.hpp"           /* seq66::bussyte data type         */
+#include "midi/midibytes.hpp"           /* seq66::bussbyte data type        */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -59,8 +63,8 @@ private:
 
     /**
      *  Provides the MIDI output buss, that is the port number for MIDI output.
-     *  Currently, this value is hard-wired to 15, and the user must be sure to
-     *  avoid using this buss value for music.
+     *  This value defaults to 0, and the user must be sure to avoid using
+     *  this buss value for music, or redefine the buss.
      */
 
     bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
