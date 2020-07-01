@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-06-30
+ * \updates       2020-07-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -286,6 +286,10 @@
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "unix/daemonize.hpp"           /* seq66::microsleep()              */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#include <timeapi.h>                    /* Win32 timeGetTime()              */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -2518,10 +2522,6 @@ performer::output_func ()
                     break;
             }
         }
-#if defined SEQ66_PLATFORM_DEBUG
-        if (rc().verbose())
-            infoprintf("output_func() running on CPU #%d", sched_getcpu());
-#endif
 
 #if defined SEQ66_PLATFORM_WINDOWS
         long last;                          /* beginning time               */
@@ -2531,6 +2531,10 @@ performer::output_func ()
         struct timespec last;               /* beginning time               */
         struct timespec current;            /* current time                 */
         struct timespec delta;              /* current - last               */
+#if defined SEQ66_PLATFORM_DEBUG
+        if (rc().verbose())
+            infoprintf("output_func() running on CPU #%d", sched_getcpu());
+#endif
 #endif
 
         jack_scratchpad pad;
