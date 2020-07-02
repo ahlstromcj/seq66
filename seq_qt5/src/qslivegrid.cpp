@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-06-26
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -243,7 +243,6 @@ qslivegrid::conditional_update ()
 
                         bool armed = s->playing();
                         pb->set_checked(armed);
-
                         pb->reupdate(true);
                     }
                     else
@@ -261,7 +260,7 @@ qslivegrid::conditional_update ()
  *  The slot-sizes are provisional sizes, will be adjusted according to the size
  *  of the layout grid.
  *
- *  Note that this function is called only in paintEvent(), and only when.
+ *  Note that this function is called only in paintEvent(), and only when
  *  m_redraw_buttons is true.
  */
 
@@ -411,91 +410,16 @@ qslivegrid::create_one_button (int seqno)
     seq::pointer pattern = perf().loop(seqno);      /* can be null      */
     qslotbutton * temp;
     if (pattern)
-    {
         temp = new qloopbutton(this, seqno, snstring, hotkey, pattern);
-
-#if ! defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
-        connect
-        (
-            temp, &qslotbutton::toggled,
-            [=] (bool checked) { handle_loop(checked, temp, row, column); }
-        );
-        connect
-        (
-            temp, &qslotbutton::pressed,
-            [=] { handle_loop_press(temp, row, column); }
-        );
-#endif
-
-    }
     else
-    {
         temp = new qslotbutton(this, seqno, snstring, hotkey);
 
-#if ! defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
-        connect
-        (
-            temp, &qslotbutton::pressed,
-            [=] { handle_slot(temp, row, column); }
-        );
-#endif
-
-    }
     ui->loopGridLayout->addWidget(temp, row, column);
     temp->setFixedSize(btnsize);
     temp->show();
     temp->setEnabled(enabled);
     setup_button(temp);
     return temp;
-}
-
-/**
- *  The callback function for pressing an empty (slot) button.  Unfortunately,
- *  the "toggled" callback isn't activated until the mouse-button is released.
- */
-
-void
-qslivegrid::handle_slot (qslotbutton * pb, int row, int column)
-{
-    if (not_nullptr(pb))
-    {
-        seq::number seqno = perf().calculate_seq(row, column);
-        slot_press(seqno);                          // EXPERIMENTAL
-        m_adding_new = false;
-    }
-}
-
-/**
- *  The callback function for pressing a pattern (loop) button.
- *
- *  When clicking and dragging a loop...  We cannot do that, the button soaks
- *  up left-click actions.  Might eventually remove this function completely,
- *  not even macroize it.
- */
-
-void
-qslivegrid::handle_loop (bool checked, qslotbutton * pb, int row, int column)
-{
-    if (not_nullptr(pb))
-    {
-        seq::number seqno = perf().calculate_seq(row, column);
-        perf().sequence_playing_change(seqno, checked);
-    }
-}
-
-/**
- *  Might eventually remove this function completely, not even macroize it.
- */
-
-void
-qslivegrid::handle_loop_press (qslotbutton * pb, int row, int column)
-{
-    if (not_nullptr(pb))
-    {
-        seq::number seqno = perf().calculate_seq(row, column);
-        (void) pb->toggle_checked();
-        slot_press(seqno);
-    }
 }
 
 /**
@@ -691,14 +615,18 @@ qslivegrid::refresh (seq::number seqno)
         {
             bool armed = s->playing();
             qslotbutton * pb = button(row, column);
-            pb->set_checked(armed);
-            pb->reupdate(true);
+            if (not_nullptr(pb))
+            {
+                pb->set_checked(armed);
+                pb->reupdate(true);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-            printf
-            (
-                "button(%d, %d) = %s\n", row, column, armed ? "on" : "off"
-            );
+                printf
+                (
+                    "button(%d, %d) = %s\n", row, column,
+                    armed ? "on" : "off"
+                );
 #endif
+            }
         }
     }
 }
@@ -832,6 +760,16 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
 
 /**
  *  Sets m_current_seq based on the position of the mouse over the live frame.
+ *  For the left button:
+ *
+ *  -   No modifier.  The button is looked up by the position of the mouse.
+ *      If it has a sequence pointer, then the button's toggle_checked()
+ *      function is called, which does what it says, plus toggles the
+ *      sequence.  The sequence tells the performer to notify all subscribers
+ *      of the on_trigger_change() function.
+ *  -   Control key.  Create a new sequence.
+ *  -   Shift key.  Create a new live frame with a screen-set offset by the
+ *      button number times the size of a screenset.  A bit tricky.
  *
  * \param event
  *      Provides the mouse event.
@@ -853,8 +791,7 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
     bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
-        /* printf("mouse press unassigned\n");  */
-        return;
+        return;                 /* printf("mouse press unassigned\n");  */
     }
     if (event->button() == Qt::LeftButton)
     {
@@ -864,16 +801,21 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
             new_live_frame();
         else if (assigned)
         {
-#if defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
+            /*
+             * This actually gets a qloopbutton.  Don't be fooled like I was.
+             */
+
             qslotbutton * pb = find_button(m_current_seq);
             seq::pointer s = pb->loop();
             if (s)
             {
-                (void) pb->toggle_checked();
                 m_button_down = true;
-                update();
+                if (not_nullptr(pb))
+                    (void) pb->toggle_checked();
+
+                // EXPERIMENTAL COMMENTING OUT
+                // update();
             }
-#endif
         }
     }
     if (event->button() == Qt::RightButton)
@@ -925,8 +867,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
     bool assigned = m_current_seq != seq::unassigned();
     if (! assigned)
     {
-        /* printf("mouse release unassigned\n");    */
-        return;
+        return;                 /* printf("mouse release unassigned\n"); */
     }
     if (event->button() == Qt::LeftButton)
     {
@@ -934,8 +875,6 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
         {
             if (perf().is_seq_active(m_current_seq))
             {
-                // This seems wrong to do.
-                // perf().sequence_playing_toggle(m_current_seq);  /* banner */
                 m_adding_new = false;
                 update();
             }
@@ -1185,7 +1124,7 @@ qslivegrid::handle_key_release (const keystroke & k)
  *  much as possible.  The logic here is an admixture of events that we will
  *  have to sort out.
  *
- *  Note that the QKeyEWvent::key() function does not distinguish between
+ *  Note that the QKeyEvent::key() function does not distinguish between
  *  capital and non-capital letters, so we use the text() function (returning
  *  the Unicode text the key generated) for this purpose and provide a the
  *  QS_TEXT_CHAR() macro to make it obvious.
@@ -1205,13 +1144,17 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
     bool done = handle_key_press(k);
     if (done)
     {
-        update();
+        // EXPERIMENTAL COMMENT-OUT
+        // update();
     }
     else
     {
         done = m_parent->handle_key_press(k);
         if (done)
-            update();
+        {
+            // EXPERIMENTAL COMMENT-OUT
+            // update();
+        }
         else
             QWidget::keyPressEvent(event);      /* not event->ignore()? */
     }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-01
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4108,30 +4108,6 @@ performer::group_learn_complete (const keystroke & k, bool good)
 }
 
 /**
- *  Handle a sequence key to toggle the playing of an active pattern in
- *  the selected screen-set.  This function is use in mainwnd when toggling
- *  the mute/unmute setting using keyboard keys.
- *
- * \param seq
- *      The sequence's control-key number, which is relative to the current
- *      screen-set.
- */
-
-void
-performer::sequence_key (seq::number seq)
-{
-    seq += playscreen_offset();
-    if (is_seq_active(seq))
-    {
-        if (slot_shift() > 0)
-            seq += slot_shift() * mapper().set_size();
-
-        sequence_playing_toggle(seq);
-    }
-    clear_seq_edits();                      /* save the caller the trouble  */
-}
-
-/**
  *  If the given sequence is active, then it is toggled as per the current value
  *  of control-status.  If control-status is automation::ctrlstatus::queue, then
  *  the sequence's toggle_queued() function is called.  This is the "mod queue"
@@ -4142,7 +4118,7 @@ performer::sequence_key (seq::number seq)
  *  toggle-playing() function is called, which should turn it back on.  This is
  *  the "mod replace" implementation; it is like a Solo.  But can it be undone?
  *
- *  This function is called in sequence_key() to implement a toggling of the
+ *  This function is called in loop_control() to implement a toggling of the
  *  sequence of the pattern slot in the current screen-set that is represented
  *  by the keystroke.
  *
@@ -4208,7 +4184,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 );
                 off_sequences();
             }
-            (void) s->toggle_playing();
+            s->toggle_playing();
         }
 
         /*
@@ -4308,6 +4284,7 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_controls().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
+    notify_trigger_change(seqno);
 }
 
 /*
@@ -4697,10 +4674,6 @@ performer::loop_control
     bool result = sn >= 0;
     if (result && ! inverse)
     {
-        /*
-         * Also see sequence_key()
-         */
-
         if (slot_shift() > 0)
         {
             sn += slot_shift() * mapper().set_size();

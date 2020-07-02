@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-28
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -34,11 +34,12 @@
  *  behavior of the pattern slots.
  */
 
-#include <QDesktopWidget>               /* needed for screenGeometry() call */
 #include <QErrorMessage>
 #include <QFileDialog>
+#include <QGuiApplication>              /* used for QScreen geometry() call */
 #include <QMessageBox>
 #include <QResizeEvent>
+#include <QScreen>                      /* Qscreen                          */
 #include <QTimer>
 
 #include <sstream>                      /* std::ostringstream               */
@@ -117,6 +118,24 @@ static const int Tab_Set_Master     = 5;
 static const int Tab_Mute_Master    = 6;
 
 /**
+ *  Given a display coordinate, looks up the screen and returns its geometry.
+ *
+ *  If no screen was found, return the primary screen's geometry
+ */
+
+static QRect
+desktop_rectangle (const QPoint & p)
+{
+    QList<QScreen *> screens = QGuiApplication::screens();
+    Q_FOREACH(const QScreen *screen, screens)
+    {
+        if (screen->geometry().contains(p))
+            return screen->geometry();
+    }
+    return QGuiApplication::primaryScreen()->geometry();
+}
+
+/**
  *  Provides the main window for the application.
  *
  * \param p
@@ -178,13 +197,9 @@ qsmainwnd::qsmainwnd
 {
     ui->setupUi(this);
 
-    /*
-     * TODO: const QRect QDesktopWidget::screenGeometry(int) const’ is
-     * deprecated: Use QGuiApplication::screens()
-     */
-
-    QRect screen = QApplication::desktop()->screenGeometry();
-    int x = (screen.width() - width()) / 2;             // center on screen
+    QPoint pt;                                  /* default at (0, 0)        */
+    QRect screen = desktop_rectangle(pt);       /* avoids deprecated func   */
+    int x = (screen.width() - width()) / 2;     /* center on the screen     */
     int y = (screen.height() - height()) / 2;
     move(x, y);
 
@@ -1087,13 +1102,13 @@ qsmainwnd::update_window_title (const std::string & fn)
     }
     else
     {
-        int pp = choose_ppqn();                 // choose_ppqn(ppqn());
+        int pp = choose_ppqn();
         char temp[16];
         snprintf(temp, sizeof temp, " (%d ppqn) ", pp);
         itemname = fn;
         itemname += temp;
     }
-    itemname += " [*]";                         // required by Qt 5
+    itemname += " [*]";                             /* required by Qt 5 */
 
     QString fname = QString::fromLocal8Bit(itemname.c_str());
     setWindowTitle(fname);
@@ -1206,12 +1221,13 @@ qsmainwnd::refresh ()
     else
     {
         /*
-         * Use on_group_learn() to change this.
+         * We now use the on_group_learn() callback to change this.
          *
-        qt_set_icon
-        (
-            perf().is_group_learn() ? learn2_xpm : learn_xpm, ui->button_learn
-        );
+         *  qt_set_icon
+         *  (
+         *      perf().is_group_learn() ? learn2_xpm : learn_xpm,
+         *      ui->button_learn
+         *  );
          */
 
         if (m_is_title_dirty)
@@ -1292,7 +1308,6 @@ qsmainwnd::filename_prompt (const std::string & prompt)
         this, tr(prompt.c_str()), rc().last_used_dir().c_str(),
         tr("MIDI files (*.midi *.mid);;All files (*)")
     );
-
     if (! file.isEmpty())
     {
         QFileInfo fileInfo(file);
@@ -2073,7 +2088,10 @@ qsmainwnd::tabWidgetClicked (int newIndex)
                 seq::pointer seq = perf().get_sequence(seqid);
                 if (seq)
                 {
-                    m_event_frame = new qseqeventframe(perf(), seqid, ui->EditTab);
+                    m_event_frame = new qseqeventframe
+                    (
+                        perf(), seqid, ui->EditTab
+                    );
                     ui->EventTabLayout->addWidget(m_event_frame);
                     m_event_frame->show();
                     update();

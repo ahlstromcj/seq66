@@ -11,7 +11,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-10-15
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2019 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -48,7 +48,6 @@
  *       -  SEQ66_PLATFORM_MINGW
  *       -  SEQ66_PLATFORM_CYGWIN
  *    -  API:
- *       -  SEQ66_PLATFORM_WINDOWS_API (Windows and MingW)
  *       -  SEQ66_PLATFORM_POSIX_API (alternative to POSIX)
  *    -  Language:
  *       -  SEQ66_PLATFORM_CPP_11
@@ -94,7 +93,6 @@
 #undef SEQ66_PLATFORM_XSI
 #undef SEQ66_PLATFORM_MINGW
 #undef SEQ66_PLATFORM_CYGWIN
-#undef SEQ66_PLATFORM_WINDOWS_API
 #undef SEQ66_PLATFORM_POSIX_API
 #undef SEQ66_PLATFORM_CPP_11
 #undef SEQ66_PLATFORM_CPP_14
@@ -108,16 +106,13 @@
 
 #if defined Windows                     /* defined by nar-maven-plugin      */
 #define SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PLATFORM_WINDOWS_API
 #else
 #if defined _WIN32 || defined _WIN64    /* defined by Microsoft compiler    */
 #define SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PLATFORM_WINDOWS_API
 #define Windows
 #else
 #if defined WIN32 || defined WIN64      /* defined by Mingw compiler        */
 #define SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PLATFORM_WINDOWS_API
 #define Windows
 #endif
 #endif
@@ -186,7 +181,7 @@
 #if defined _WIN32 && ! defined _WIN64
 
 #if ! defined WIN32
-#define WIN32                          /* defined for legacy purposes         */
+#define WIN32                          /* defined for legacy purposes        */
 #endif
 
 #if ! defined SEQ66_PLATFORM_32_BIT
@@ -194,7 +189,7 @@
 #endif
 
 #endif
-#endif                                 /* SEQ66_PLATFORM_WINDOWS                    */
+#endif                                 /* SEQ66_PLATFORM_WINDOWS            */
 
 /**
  *  Provides macros that mean 64-bit, and only 64-bit.
@@ -219,7 +214,7 @@
 #endif
 
 #endif
-#endif                                 /* SEQ66_PLATFORM_WINDOWS                    */
+#endif                                 /* SEQ66_PLATFORM_WINDOWS            */
 
 /**
  *  Provides macros that mean 64-bit versus 32-bit when gcc or g++ are
@@ -261,7 +256,6 @@
 #if defined _MSC_VER
 #define SEQ66_PLATFORM_MSVC
 #define SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PLATFORM_WINDOWS_API
 #endif
 
 #if defined __GNUC__
@@ -282,7 +276,6 @@
 #if defined __MINGW32__ || defined __MINGW64__
 #define SEQ66_PLATFORM_MINGW
 #define SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PLATFORM_WINDOWS_API
 #endif
 
 #if defined __CYGWIN32__
@@ -333,21 +326,21 @@
 
 #if defined SEQ66_PLATFORM_MSVC
 
-#if _MSC_VER >= 1700                /* __cplusplus value doesn't work, MS!    */
+#if _MSC_VER >= 1700                /* __cplusplus value doesn't work, MS!  */
 #define SEQ66_PLATFORM_CPP_11
 #endif
 
 #else
 
-#if __cplusplus >= 201103L          /* i.e. C++11                             */
+#if __cplusplus >= 201103L          /* i.e. C++11                           */
 #define SEQ66_PLATFORM_CPP_11
 #endif
 
-#if __cplusplus >= 201402L          /* i.e. C++14                             */
+#if __cplusplus >= 201402L          /* i.e. C++14                           */
 #define SEQ66_PLATFORM_CPP_14
 #endif
 
-#if __cplusplus >= 201703L          /* i.e. C++17                             */
+#if __cplusplus >= 201703L          /* i.e. C++17                           */
 #define SEQ66_PLATFORM_CPP_17
 #endif
 
@@ -396,13 +389,12 @@
 #endif
 
 /**
- *
  *  SEQ66_PLATFORM_POSIX_ERROR is returned from a string function when it has
  *  processed an error.  It indicates that an error is in force.  Normally,
  *  the caller then uses this indicator to set a class-based error message.
  *  This macro defines the integer value returned by many POSIX functions when
- *  they fail -- minus one (-1).  The EXIT_FAILURE and SEQ66_PLATFORM_POSIX_ERROR
- *  macros also have the same value.
+ *  they fail -- minus one (-1).  The EXIT_FAILURE and
+ *  SEQ66_PLATFORM_POSIX_ERROR macros also have the same value.
  *
  * \note
  *      Rather than testing this value directory, the macro functions
@@ -426,19 +418,19 @@
  *       -  set_posix_error()
  *
  * \note
- *      -   Some functions return values other than SEQ66_PLATFORM_POSIX_ERROR when
- *          an error occurs.
- *      -   Some functions return values other than SEQ66_PLATFORM_POSIX_SUCCESS
- *          when the function succeeds.
+ *      -   Some functions return values other than SEQ66_PLATFORM_POSIX_ERROR
+ *          when an error occurs.
+ *      -   Some functions return values other than
+ *          SEQ66_PLATFORM_POSIX_SUCCESS when the function succeeds.
  *      -   Please refer to the online documentation for these quixotic
  *          functions, and decide which macro one want to use for the test, if
  *          any.
  *      -   In some case, one might want to use a clearer test.  For example,
- *          the socket functions return a result that is SEQ66_PLATFORM_POSIX_ERROR
- *          (-1) if the function fails, but non-zero integer values are
- *          returned if the function succeeds.  For these functions, the
- *          is_valid_socket() and not_valid_socket() macros are much more
- *          appropriate to use.
+ *          the socket functions return a result that is
+ *          SEQ66_PLATFORM_POSIX_ERROR (-1) if the function fails, but
+ *          non-zero integer values are returned if the function succeeds.
+ *          For these functions, the is_valid_socket() and not_valid_socket()
+ *          macros are much more appropriate to use.
  *
  *//*-------------------------------------------------------------------------*/
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-06-26
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *
@@ -162,9 +162,6 @@ private:
     void clear_loop_buttons ();
     void measure_loop_buttons ();
     void setup_button (qslotbutton * pb);
-    void handle_slot (qslotbutton * pb, int row, int column);
-    void handle_loop (bool checked, qslotbutton * pb, int row, int column);
-    void handle_loop_press (qslotbutton * pb, int row, int column);
     void popup_menu ();
     void sequence_key_check ();
 

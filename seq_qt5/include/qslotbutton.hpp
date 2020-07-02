@@ -28,26 +28,22 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2019-09-09
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
+ *  It is impossible to recreate live-frame features like drag-and-drop
+ *  patterns, using Qt slots for toggle or press actions.  The qslivegrid
+ *  class disables the use of slots.  Instead, it calculates the button number
+ *  based on the mouse pointer and handles the button operation on behalf of
+ *  the button.
  */
 
-#include <string>
-
 #include <QPushButton>
+#include <string>
 
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5::Color    */
 #include "play/seq.hpp"                 /* seq66::seq sequence-plus class   */
-
-/**
- *  It is impossible to recreate live-frame features like drag-and-drop
- *  patterns, using Qt slots for toggle or press actions.  This macro disables
- *  the use of slots.  Leave it be unless experimenting.
- */
-
-#define SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

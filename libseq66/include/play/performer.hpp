@@ -2086,7 +2086,6 @@ public:
         mapper().set_last_ticks(tick);
     }
 
-    void sequence_key (seq::number seq);                    // encapsulation
     std::string sequence_label (const sequence & seq);
     std::string sequence_label (seq::number seqno);         // for qperfnames
     std::string sequence_title (const sequence & seq);

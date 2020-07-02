@@ -38,7 +38,7 @@
 #include <sys/auxv.h>                   /* getauxvalue() glibc function     */
 #endif
 
-#if ! defined SEQ66_PLATFORM_POSIX_API  /* Microsoft compiler               */
+#if defined SEQ66_PLATFORM_WINDOWS      /* Microsoft compiler               */
 
 #include <dir.h>                        /* file-name info and getcwd()      */
 #include <io.h>                         /* _access_s()                      */
@@ -935,11 +935,11 @@ make_directory_path (const std::string & directory_name)
 
                 if (! file_exists(currdir))     /* subdirectory exists?     */
                 {
-#if defined SEQ66_PLATFORM_POSIX_API
+#if defined SEQ66_PLATFORM_WINDOWS
+                    int retcode = S_MKDIR(currdir);
+#else
                     mode_t pathmode = 0755;     /* rwxr-xr-x                */
                     int retcode = S_MKDIR(currdir, pathmode);
-#else
-                    int retcode = S_MKDIR(currdir);
 #endif
                     if (retcode == -1)
                         more = result = false;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2019-09-09
+ * \updates       2020-07-02
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -58,7 +58,8 @@ qslotbutton::slotpal ()
 }
 
 /**
- *
+ *  Note that we make the button transparent to mouse events.  It lets them
+ *  through for the parent to handle.
  */
 
 qslotbutton::qslotbutton
@@ -81,9 +82,7 @@ qslotbutton::qslotbutton
     m_is_checkable      (false),
     m_is_dirty          (true)
 {
-#if defined SEQ66_SLOTBUTTON_TRANSPARENT_TO_MOUSE
     setAttribute(Qt::WA_TransparentForMouseEvents);
-#endif
 }
 
 /**
