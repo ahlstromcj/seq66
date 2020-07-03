@@ -63,7 +63,7 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_performer         (p),
     m_parent            (window),
     m_font              (),
-    m_bank_id           (p.playscreen_number()),            // EXPERIMENTAL
+    m_bank_id           (p.playscreen_number()),
     m_mainwnd_rows      (p.rows()),
     m_mainwnd_cols      (p.columns()),
     m_mainwid_spacing   (usr().mainwid_spacing()),

@@ -60,16 +60,18 @@
 #include "qloopbutton.hpp"
 
 /**
- *
+ *  An attempt to use the inverse of the background color for drawing text.
+ *  It doesn't work with some GTK themes.
  */
 
 #define SEQ66_USE_BACKGROUND_ROLE_COLOR
 
 /**
- *  Selects showing a sine wave versus the real data.
+ *  Selects showing a sine wave versus the real data.  More for build-time
+ *  playing and testing than run-time configuration.
  */
 
-bool s_use_sine = false;
+const bool s_use_sine = false;
 
 /**
  *  Alpha values for various states, not yet members, not yet configurable.
@@ -354,12 +356,9 @@ qloopbutton::setup ()
             slotpal().get_color_fix(PaletteColor(c));
 
         /*
-         * Rather than having a black progress area, make it match the
-         * specified sequence color.
-         *
-         *      pal.setColor(QPalette::Button, backcolor);
-         *
-         *  However, it comes out unfixed, actually a good effect.
+         * Rather than having a black progress area, we could make it match
+         * the specified sequence color.  However, it comes out unfixed,
+         * actually a good effect.
          */
 
         pal.setColor(QPalette::Button, backcolor);
@@ -431,7 +430,10 @@ qloopbutton::reupdate (bool all)
 \verbatim
              ----------------------------
             | Title               Length |
-            |                            |
+            | Armed                      |
+            |        ------------        |
+            |       |  P A N E L |       |
+            |        ------------        |
             |                            |
             | buss-chan 4/4       hotkey |
              ----------------------------
@@ -451,7 +453,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
         QPainter painter(this);
         if (m_seq)
         {
-            midipulse tick = m_seq->get_last_tick();    // perf().get_tick()
+            midipulse tick = m_seq->get_last_tick();
             if (initialize_text() || tick == 0)
             {
                 QRectF box
@@ -466,11 +468,10 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 #if defined SEQ66_USE_BACKGROUND_ROLE_COLOR
 
                 /*
-                 * This color gets the background we painted, not the background
+                 * This call gets the background we painted, not the background
                  * actually shown by the current Qt 5 theme.
                  *
                  *      QColor trueback = this->palette().button().color();
-                 *
                  */
 
                 QWidget * rent = this->parentWidget();
@@ -482,8 +483,11 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 }
 #endif
 
-                // int fontsize = usr().scale_size(6); // EXPERIMENT
-                // m_text_font.setPointSize(fontsize);
+                /*
+                 * EXPERIMENTAL.
+                 * int fontsize = usr().scale_size(6);
+                 * m_text_font.setPointSize(fontsize);
+                 */
 
                 painter.setPen(pen);
                 painter.setBrush(brush);
@@ -701,10 +705,10 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(Qt::red);
             }
             pen.setWidth(1);
-            m_seq->reset_draw_marker();             /* reset loop iterator  */
+            m_seq->reset_draw_marker();                 /* reset iterator   */
             for (;;)
             {
-                sequence::note_info ni;             /* only 2 members used! */
+                sequence::note_info ni;                 /* 2 members used!  */
                 sequence::draw dt = m_seq->get_next_note(ni);
                 int tick_s_x = (ni.start() * lxw) / t1;
                 int tick_f_x = (ni.finish() * lxw) / t1;
@@ -722,7 +726,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 if (dt == sequence::draw::tempo)
                 {
                     pen.setWidth(2);
-                    pen.setColor(Qt::magenta);      /* tempo_paint()    */
+                    pen.setColor(Qt::magenta);          /* tempo_paint()    */
                 }
                 else
                 {
@@ -731,9 +735,9 @@ qloopbutton::draw_pattern (QPainter & painter)
                 }
 #endif
 
-                int sx = lx0 + tick_s_x;            /* start x          */
-                int fx = lx0 + tick_f_x;            /* finish x         */
-                y += ly0;                           /* start & finish y */
+                int sx = lx0 + tick_s_x;                /* start x          */
+                int fx = lx0 + tick_f_x;                /* finish x         */
+                y += ly0;                               /* start & finish y */
                 painter.setPen(pen);
                 painter.drawLine(sx, y, fx, y);
             }
@@ -742,23 +746,23 @@ qloopbutton::draw_pattern (QPainter & painter)
 }
 
 /**
- *
+ *  This event occurs only upon a click.
  */
 
 void
 qloopbutton::focusInEvent (QFocusEvent *)
 {
-    m_text_initialized = false;        // occurs only with a click
+    m_text_initialized = false;
 }
 
 /**
- *
+ *  This event occurs only upon a click.
  */
 
 void
 qloopbutton::focusOutEvent (QFocusEvent *)
 {
-    m_text_initialized = false;        // occurs only with a click
+    m_text_initialized = false;
 }
 
 }           // namespace seq66

@@ -927,7 +927,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         convert_xy(snapped_x, snapped_y, tick_s, note);
         s->paste_selected(tick_s, note);            /* s->push_undo()       */
         paste(false);
-        setCursor(Qt::ArrowCursor);                 // EXPERIMENTAL
+        setCursor(Qt::ArrowCursor);
         set_needs_update();                         /* set_dirty();         */
     }
     else

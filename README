@@ -1,28 +1,30 @@
-README for Seq66 0.90.3 (Sequencer64 refactored for C++11/14 and Qt 5)
+README for Seq66 0.90.3 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-06-30
+2015-09-10 to 2020-07-03
 
-EXPERIMENTAL.  I have put a lot of work into this new version, but there are
+I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
 email me at ahlstromcj@gmail.com.
 
-Seq66 is a refactoring of Sequencer64 for better use of C++, and removing a lot
-of krufty buildup.  Changes:
+Seq66 is a refactoring of Sequencer64 for better use of C++ and for removing a
+lot of krufty buildup.  Major changes:
 
     -   User interface:
-        -   Removed the Gtkmm implementations, now using only Qt 5.  It has
-            issues, but cross-platform support seems more complete.
-        -   Added a tab for management of sets.
-        -   Added a tab for management of mute-groups.
+        -   Removed the Gtkmm implementations, now using only Qt 5 since its
+            cross-platform support seems more complete.  Also removed the
+            "grid of sets" feature in favor of unlimited external grid
+            windows.
+        -   Added tabs for management of sets, mute-groups, Song mode, pattern
+            editing, event-editing, and play-lists.
         -   Added a live frame using buttons to match Qt theming. The original
             implementation is available as a "user" option.
         -   Cleanup of unused Gtkmm-to-Qt code.
-        -   The user can pick a color for each sequence, to make it more
-            distinguishable.  The default color is NONE (a white color) that
-            is not stored in the track.  Otherwise, this color is saved in a
-            SeqSpec associated with the track.
+        -   A color for each sequence can be chosen to make it more
+            distinguishable.  The default NONE (white) that is not stored in
+            the track.  Otherwise, the color is saved in a SeqSpec associated
+            with the track.
     -   Configuration files:
-        -   Unified keystroke control and MIDI control into a "*.ctrl" file.
+        -   Unified keystroke control and MIDI control into a ".ctrl" file.
             Specifies MIDI In controls for controlling Seq66 remotely, and MIDI
             Out controls for displaying Seq66 status in grid controllers (e.g.
             LaunchPad).
@@ -68,6 +70,7 @@ Recent changes:
             button and seqedit mute status, growing notes in the seqroll, and
             more.
         -   Added writing of blank [midi-control-out] section.
+        -   Fixed flickering when muting/unmuting patterns via keystrokes.
     -   Version 0.90.2:
         -   Lots of code cleanup.
         -   Added truncation of BPM to precision in "usr" file.

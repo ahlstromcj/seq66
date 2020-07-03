@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2019-03-10
+ * \updates       2020-07-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -434,7 +434,6 @@ qplaylistframe::handle_list_click_ex
             fill_songs();
             set_current_playlist();
             ui->tablePlaylistSongs->selectRow(0);
-            //  m_parent->xxxxxxxxx();
         }
     }
 }
@@ -458,7 +457,6 @@ qplaylistframe::handle_song_click_ex
         if (perf().open_select_song_by_index(row, true))
         {
             set_current_song();
-            // EXPERIMENT
             m_parent->recreate_all_slots();
         }
     }
@@ -483,7 +481,7 @@ void
 qplaylistframe::handle_list_add_click ()
 {
     // if (not_nullptr(m_parent))
-    //    m_parent->open_playlist();
+    //    m_parent->TODO();
 }
 
 /**
@@ -494,7 +492,7 @@ void
 qplaylistframe::handle_list_remove_click ()
 {
     // if (not_nullptr(m_parent))
-    //    m_parent->open_playlist();
+    //    m_parent->TODO();
 }
 
 /**
@@ -505,11 +503,12 @@ void
 qplaylistframe::handle_list_save_click ()
 {
     // if (not_nullptr(m_parent))
-    //    m_parent->open_playlist();
+    //    m_parent->TODO();
 }
 
 /**
- *
+ *  These values depend on correct information edited into the Song text
+ *  fields.  We should support loading a song from a file-selection dialog.
  */
 
 void
@@ -517,12 +516,6 @@ qplaylistframe::handle_song_add_click ()
 {
     if (not_nullptr(m_parent))
     {
-        /*
-         * These values depend on correct information edited into the Song
-         * text fields.  We should support loading a song from a
-         * file-selection dialog.
-         */
-
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
         std::string nstr = ui->editSongNumber->text().toStdString();
@@ -530,11 +523,12 @@ qplaylistframe::handle_song_add_click ()
         int index = perf().song_count() + 1;
         if (! perf().add_song(index, midinumber, name, directory))
         {
-            // report error
+            /*
+             * TODO: report error
+             */
         }
+        m_parent->recreate_all_slots();
     }
-    // EXPERIMENTAL
-    m_parent->recreate_all_slots();
 }
 
 /**
@@ -544,8 +538,8 @@ qplaylistframe::handle_song_add_click ()
 void
 qplaylistframe::handle_song_remove_click ()
 {
-    // if (not_nullptr(m_parent))
-    //    m_parent->open_playlist();
+     // if (not_nullptr(m_parent))
+     //     m_parent->TODO();
 }
 
 /**
@@ -556,7 +550,7 @@ void
 qplaylistframe::handle_playlist_active_click ()
 {
     // if (not_nullptr(m_parent))
-    //    m_parent->open_playlist();
+    //    m_parent->TODO();
 }
 
 /**

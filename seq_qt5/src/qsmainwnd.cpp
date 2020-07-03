@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-02
+ * \updates       2020-07-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2222,11 +2222,14 @@ qsmainwnd::keyPressEvent (QKeyEvent * event)
 
 /**
  *  Handles some hard-wired keystrokes.
- *
  *  The arrow keys support moving forward and backward through the playlists
  *  and the songs they specify.  These functions are also supported by the MIDI
  *  automation apparatus, but are not yet supported by the keystroke automation
- *  apparatus.
+ *  apparatus. [Is this still true???]
+ *
+ *  Note that changing the playlist name will cause a reupdate of all of the
+ *  window, including the pattern buttons in qslivegrid, causing flickering of
+ *  all armed pattern buttons.
  *
  * \param k
  *      Provides a wrapper for the key event.
@@ -2253,7 +2256,9 @@ qsmainwnd::handle_key_press (const keystroke & k)
         result = perf().open_previous_list();
     }
     m_is_title_dirty = result;
-    m_live_frame->set_playlist_name(perf().playlist_song());
+    if (result)
+        m_live_frame->set_playlist_name(perf().playlist_song());
+
     return result;
 }
 

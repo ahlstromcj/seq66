@@ -2018,7 +2018,8 @@ qseqeditframe64::sequences ()
 #define SET_BG_SEQ(seq) \
     std::bind(&qseqeditframe64::set_background_sequence, this, seq)
 
-#if defined USE_SLOT_HANDLER        // EXPERIMENTAL
+#undef USE_SLOT_HANDLER
+#if defined USE_SLOT_HANDLER
 
 /**
  *  For each set that is present, add a menu popup.  Then, for each active
@@ -2044,7 +2045,7 @@ qseqeditframe64::add_back_sequence
 (
     QMenu ** menusset,
     seq::pointer s,
-    seq::number // sn
+    seq::number /* seqno */
 )
 {
     bool result = bool(s) && not_nullptr(menusset);
@@ -2098,7 +2099,7 @@ qseqeditframe64::popup_sequence_menu ()
     (void) perf().sets_function(setfunc, slotfunc);
 }
 
-#else
+#else   // USE_SLOT_HANDLER
 
 /**
  *  Builds the Tools popup menu on the fly.  Analogous to seqedit ::
@@ -2353,13 +2354,6 @@ qseqeditframe64::set_snap (midipulse s)
     if (s > 0 && s != m_snap)
     {
         m_snap = int(s);
-
-        /*
-         * ca 2019-10-23 Why are we modifying this internal value!!!
-         *
-         * sm_initial_snap = int(s);
-         */
-
         if (not_nullptr(m_seqroll))
             m_seqroll->set_snap(s);
 

@@ -919,7 +919,7 @@ sequence::play
                  */
 
                 if (measure_threshold())
-                    (void) microsleep(1);           /* EXPERIMENTAL         */
+                    (void) microsleep(1);
             }
         }
     }
@@ -2724,7 +2724,6 @@ sequence::stream_event (event & ev)
             put_event_on_bus(ev);                       /* removed locking  */
 
         /*
-         * EXPERIMENTAL.
          * We don't need to link note events until a note-off comes in.
          */
 

@@ -232,15 +232,6 @@ qslivegrid::conditional_update ()
                     seq::pointer s = pb->loop();
                     if (s)
                     {
-                        /*
-                         * For some reason, with themes like Crux, when the
-                         * button is checked, something immediately unchecks it
-                         * again.  The result is flickering in playback.
-                         *
-                         * Trying again, EXPERIMENTAL, the next two lines work
-                         * with Crux so far.
-                         */
-
                         bool armed = s->playing();
                         pb->set_checked(armed);
                         pb->reupdate(true);
@@ -584,7 +575,9 @@ qslivegrid::delete_all_slots ()
 }
 
 /**
- *  Deletes all the slot-buttons, and recreates them from scratch.
+ *  Deletes all the slot-buttons, and recreates them from scratch.  This is
+ *  done by setting m_redraw_buttons and letting create_loop_buttons() be
+ *  called in paintEvent().
  */
 
 bool
@@ -594,7 +587,7 @@ qslivegrid::recreate_all_slots ()
     if (result)
     {
         clear_loop_buttons();
-        m_redraw_buttons = true;                /* create_loop_buttons();   */
+        m_redraw_buttons = true;
         set_needs_update();
     }
     return result;
@@ -608,7 +601,7 @@ void
 qslivegrid::refresh (seq::number seqno)
 {
     int row, column;
-    if (perf().seq_to_grid(seqno, row, column))
+    if (perf().seq_to_grid(seqno, row, column))             /* side-effects */
     {
         seq::pointer s = perf().get_sequence(seqno);
         if (not_nullptr(s))
@@ -803,18 +796,18 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
         {
             /*
              * This actually gets a qloopbutton.  Don't be fooled like I was.
+             * The toggle call does its own button update.
              */
 
             qslotbutton * pb = find_button(m_current_seq);
-            seq::pointer s = pb->loop();
-            if (s)
+            if (not_nullptr(pb))
             {
-                m_button_down = true;
-                if (not_nullptr(pb))
+                seq::pointer s = pb->loop();
+                if (s)
+                {
+                    m_button_down = true;
                     (void) pb->toggle_checked();
-
-                // EXPERIMENTAL COMMENTING OUT
-                // update();
+                }
             }
         }
     }
@@ -871,17 +864,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
     }
     if (event->button() == Qt::LeftButton)
     {
-        if (! m_moving)
-        {
-            if (perf().is_seq_active(m_current_seq))
-            {
-                m_adding_new = false;
-                update();
-            }
-            else
-                m_adding_new = true;
-        }
-        else if (m_moving)
+        if (m_moving)
         {
             /*
              * If it's the left mouse button and we're moving a pattern between
@@ -892,7 +875,17 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
 
             m_moving = false;
             if (perf().finish_move(m_current_seq))
-                (void) recreate_all_slots();    // reupdate(); // update();
+                (void) recreate_all_slots();
+        }
+        else
+        {
+            if (perf().is_seq_active(m_current_seq))
+            {
+                m_adding_new = false;
+                // update(); EXPERIMENTAL COMMENTING OUT
+            }
+            else
+                m_adding_new = true;
         }
     }
 
@@ -1092,9 +1085,12 @@ qslivegrid::handle_key_press (const keystroke & k)
     {
         done = true;
     }
+
+#if 0   // why was this code active?  If you found out, write it up!
     if (done)
         (void) m_parent->handle_key_press(k);
     else
+#endif
         done = m_parent->handle_key_press(k);
 
     return done;
@@ -1144,19 +1140,17 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
     bool done = handle_key_press(k);
     if (done)
     {
-        // EXPERIMENTAL COMMENT-OUT
-        // update();
+        // update(); // EXPERIMENTAL COMMENT-OUT
     }
     else
     {
         done = m_parent->handle_key_press(k);
         if (done)
         {
-            // EXPERIMENTAL COMMENT-OUT
-            // update();
+            // update(); // EXPERIMENTAL COMMENT-OUT
         }
         else
-            QWidget::keyPressEvent(event);      /* not event->ignore()? */
+            QWidget::keyPressEvent(event);          /* event->ignore()?     */
     }
 }
 
@@ -1172,7 +1166,7 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
     if (done)
         update();
     else
-        QWidget::keyReleaseEvent(event);            /* event->ignore()      */
+        QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
 }
 
 /**
@@ -1229,7 +1223,7 @@ qslivegrid::alter_sequence (seq::number seqno)
     if (perf().seq_to_grid(seqno, row, column))
     {
         qslotbutton * pb = create_one_button(seqno);
-        if (modify_slot(pb, row, column))           // EXPERIMENTAL
+        if (modify_slot(pb, row, column))
             (void) recreate_all_slots();
     }
 }

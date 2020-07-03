@@ -4127,6 +4127,8 @@ performer::group_learn_complete (const keystroke & k, bool good)
  *  31 (by default).  This function also supports the queued-replace
  *  (queued-solo) feature.
  *
+ *  One-shots are allowed only if we are not playing this sequence.
+ *
  * \param seq
  *      The sequence number of the sequence to be potentially toggled.
  *      This value must be a valid and active sequence number. If in
@@ -4143,11 +4145,6 @@ performer::sequence_playing_toggle (seq::number seqno)
     {
         bool is_queue = midi_controls().is_queue();
         bool is_replace = midi_controls().is_replace();
-
-        /*
-         * One-shots are allowed only if we are not playing this sequence.
-         */
-
         bool is_oneshot = midi_controls().is_oneshot();
         if (is_oneshot && ! s->playing())
         {
@@ -4690,7 +4687,15 @@ performer::loop_control
         else
         {
             if (a == automation::action::toggle)
+            {
                 sequence_playing_toggle(sn);
+
+#if 0   // experimental, seems to help flickering a bit
+                seq::pointer s = get_sequence(sn);
+                if (s)
+                    s->toggle_playing();
+#endif
+            }
             else if (a == automation::action::on)
                 sequence_playing_change(sn, true);
             else if (a == automation::action::off)

@@ -111,7 +111,9 @@ public:
 private:
 
     /**
-     *  EXPERIMENTAL.
+     *  Provides a buffer that represents a condensed version of long
+     *  patterns, so that we don't have to waste time drawing hundreds of
+     *  events in the tiny box centered in the pattern button.
      */
 
     int m_fingerprint[32];
