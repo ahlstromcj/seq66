@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2019-09-01
+ * \updates 2020-07-04
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -36,9 +36,10 @@
  */
 
 #include <string>
+
 #include "seq66_features.hpp"           /* seq66::seq_version_text()        */
 
-#if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
+#if defined SEQ66_PLATFORM_MING_OR_UNIX
 #include <getopt.h>                     /* struct option s_long_options []  */
 #endif
 

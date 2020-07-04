@@ -24,17 +24,28 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-06-23
+ * \updates       2020-07-04
  * \license       GNU GPLv2 or above
  *
- *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
- *
- *  Seq66 needs a mutex for sequencer operations. We have finally, after a week
- *  of monkeying around with std::condition_variable, which requires std::mutex,
- *  decided to stick with the old pthreads implementation for now.
+ *  Seq66 needs a mutex for sequencer operations. We have finally, after a
+ *  week of monkeying around with std::condition_variable, which requires
+ *  std::mutex, decided to stick with the old pthreads implementation for now.
  */
 
-#include "util/recmutex.hpp"
+#include "seq66_platform_macros.h"      /* pick the compiler and platform   */
+#include "util/recmutex.hpp"            /* seq66::recmutex                  */
+
+/**
+ *  The MingW compiler (at least on Windows) and the Microsoft Visual Studio
+ *  compiler do not support the pthread PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+ *  macro.
+ */
+
+#if defined SEQ66_PLATFORM_MING_OR_WINDOWS
+#define MUTEX_INITIALIZER   PTHREAD_RECURSIVE_MUTEX_INITIALIZER
+#else
+#define MUTEX_INITIALIZER   PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -61,49 +72,34 @@ recmutex::init_global_mutex ()
     if (! s_global_mutex_initialized)
     {
         s_global_mutex_initialized = true;
-
-#if defined PLATFORM_MINGW
-        recmutex::sm_global_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-#else
-        recmutex::sm_global_mutex = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-#endif
+        recmutex::sm_global_mutex = MUTEX_INITIALIZER;
     }
 }
 
 /**
- *  The constructor assigns the global recursive mutex to the local locking
- *  mutex.
+ *  Constructor for recmutex.
  */
-
-#ifdef USE_IFFY_GLOBAL_MUTEX
-
-recmutex::recmutex () :
-    m_mutex_lock (sm_global_mutex)
-{
-    init_global_mutex();                /* or move to lock()/unlock()?      */
-}
-
-#else   // USE_IFFY_GLOBAL_MUTEX
 
 recmutex::recmutex () :
     m_mutex_lock ()                     /* uninitialized pthread_mutex_t    */
 {
     init_global_mutex();                /* might not need global mutex, tho */
-
-#if defined SEQ66_PLATFORM_MINGW
-    m_mutex_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
-#else
-    m_mutex_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-#endif
+    m_mutex_lock = MUTEX_INITIALIZER;
 }
 
-#endif  // USE_IFFY_GLOBAL_MUTEX
+/**
+ *  Locks the recmutex.
+ */
 
 void
 recmutex::lock () const
 {
     pthread_mutex_lock(&m_mutex_lock);
 }
+
+/**
+ *  Unlocks the recmutex.
+ */
 
 void
 recmutex::unlock () const

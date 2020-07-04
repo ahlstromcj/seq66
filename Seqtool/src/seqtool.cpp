@@ -21,7 +21,7 @@
  * \library       Seqtool (from the Seq66 project)
  * \author        Chris Ahlstrom
  * \date          2018-11-11
- * \updates       2019-04-11
+ * \updates       2020-07-04
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -41,7 +41,7 @@
 
 #include "seq66_platform_macros.h"      /* detect the compiler environment  */
 
-#if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
+#if defined SEQ66_PLATFORM_MING_OR_UNIX
 #include <getopt.h>
 #endif
 

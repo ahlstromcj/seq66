@@ -11,7 +11,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-02
+ * \updates       2020-07-04
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2019 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -46,6 +46,7 @@
  *       -  SEQ66_PLATFORM_GNU
  *       -  SEQ66_PLATFORM_XSI
  *       -  SEQ66_PLATFORM_MINGW
+ *       -  SEQ66_PLATFORM_MING_OR_WINDOWS
  *       -  SEQ66_PLATFORM_CYGWIN
  *    -  API:
  *       -  SEQ66_PLATFORM_POSIX_API (alternative to POSIX)
@@ -89,6 +90,7 @@
 #undef SEQ66_PLATFORM_DEBUG
 #undef SEQ66_PLATFORM_RELEASE
 #undef SEQ66_PLATFORM_MSVC
+#undef SEQ66_MING_OR_WINDOWS
 #undef SEQ66_PLATFORM_GNU
 #undef SEQ66_PLATFORM_XSI
 #undef SEQ66_PLATFORM_MINGW
@@ -344,6 +346,22 @@
 #define SEQ66_PLATFORM_CPP_17
 #endif
 
+#endif
+
+/**
+ *  Kind of a Windows-with-MingW-matching-Visual-Studio macro.
+ */
+
+#if defined SEQ66_PLATFORM_MSVC || defined SEQ66_PLATFORM_MINGW
+#define SEQ66_PLATFORM_MING_OR_WINDOWS
+#endif
+
+/**
+ *  A UNIX or MingW macro.
+ */
+
+#if defined SEQ66_PLATFORM_UNIX || defined SEQ66_PLATFORM_MINGW
+#define SEQ66_PLATFORM_MING_OR_UNIX
 #endif
 
 /**

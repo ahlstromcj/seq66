@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-03-07
+ * \updates       2020-07-04
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -44,6 +44,7 @@
 #include <io.h>                         /* _access_s()                      */
 #include <share.h>                      /* _SH_DENYNO                       */
 
+#if defined SEQ66_PLATFORM_MSVC         /* versus Windows with Qt+MingW     */
 #define F_OK        0x00                /* existence                        */
 #define X_OK        0x01                /* executable, not useful w/Windows */
 #define W_OK        0x02                /* writability                      */
@@ -64,6 +65,25 @@
 
 using stat_t = struct _stat;
 
+#else                                   /* not SEQ66_PLATFORM_MSVC: Mingw   */
+
+#define S_ACCESS    _access_s           /* Microsoft's safe access()        */
+#define S_CHDIR     chdir
+#define S_CLOSE     _close              /* Microsoft's close()              */
+#define S_FOPEN     fopen_s             /* Microsoft's safe fopen()         */
+#define S_GETCWD    _getcwd             /* Microsoft's getcwd()             */
+#define S_LSEEK     _lseek              /* Microsoft's lseek()              */
+#define S_MKDIR     mkdir
+#define S_OPEN      _sopen_s            /* Microsoft's safe open()          */
+#define S_RMDIR     rmdir
+#define S_STAT      stat
+#define S_MAX_FNAME _MAX_FNAME          /* Microsoft's filename size (260!) */
+#define S_MAX_PATH  _MAX_PATH           /* Microsoft's path size (260!)     */
+
+using stat_t = struct stat;
+
+#endif                                  /* SEQ66_PLATFORM_MSVC      */
+
 #else                                   /* non-Microsoft stuff follows      */
 
 #include <unistd.h>
@@ -83,9 +103,17 @@ using stat_t = struct _stat;
 
 using stat_t = struct stat;
 
-#endif                                  /* SEQ66_PLATFORM_MSVC                    */
+#endif                                  /* SEQ66_PLATFORM_WINDOWS           */
+
+/**
+ *  A macro for the error code when a file does not exist.
+ */
 
 #define ERRNO_FILE_DOESNT_EXIST     2   /* true in Windows and Linux        */
+
+/**
+ *  A more comprehensible name for the type of errno.
+ */
 
 using errno_t = int;
 
@@ -96,7 +124,11 @@ using errno_t = int;
 namespace seq66
 {
 
-#if defined SEQ66_PLATFORM_MSVC || defined SEQ66_PLATFORM_MINGW
+/*
+ *  Almost equivalent to SEQ66_PLATFORM_WINDOWS.
+ */
+
+#if defined SEQ66_PLATFORM_MING_OR_WINDOWS
 
 /**
  *  An internal function to assist other copying functions.  All parameters
@@ -115,8 +147,9 @@ namespace seq66
  *
  * \param sourcelimit
  *      An optional number of characters to which to limit the source string.
- *      The caller does not need to guarantee that it is not longer than the
- *      actual length of the source; the copying stops at the null character.
+ *      It defaults to 0.  The caller does not need to guarantee that it is
+ *      not longer than the actual length of the source; the copying stops at
+ *      the null character.
  *
  *      -   If 0, the limit is set to the length of the source.
  *      -   If greater than the actual length of the source, the limit is set
@@ -135,16 +168,16 @@ s_stringcopy
    char * destination,
    size_t destsize,
    const char * source,
-   size_t sourcelimit
+   size_t sourcelimit = 0
 )
 {
     bool result = false;
-    size_t length = strlen(source);              /* inefficient             */
-    *destination = 0;
+    size_t length = strlen(source);             /* inefficient              */
+    *destination = 0;                           /* empty out destination    */
     if (sourcelimit > length || sourcelimit == 0)
         sourcelimit = length;
 
-    if (sourcelimit <= INT_MAX)
+    if (sourcelimit <= INT_MAX)                 /* just a sanity check      */
     {
         /*
          * This code checks the length of the source string, and decides
@@ -155,13 +188,13 @@ s_stringcopy
 #if defined SEQ66_PLATFORM_MSVC
 
         int rcode;
-        size_t count = _TRUNCATE;                 /* overloaded parameter!!  */
-        if (sourcelimit < destsize)               /* truncation impossible   */
+        size_t count = _TRUNCATE;                /* overloaded parameter!!  */
+        if (sourcelimit < destsize)              /* truncation impossible   */
         {
             destsize = sourcelimit + 1;
             count = sourcelimit;
         }
-        rcode = strncpy_s                         /* guaranteed null byte    */
+        rcode = strncpy_s                        /* guaranteed null byte    */
         (
             destination, destsize, source, count
         );
@@ -170,12 +203,12 @@ s_stringcopy
         else
             warn_message(T_("stringcopy truncation"));
 #else
-        if (sourcelimit < destsize)               /* truncation impossible   */
+        if (sourcelimit < destsize)              /* truncation impossible   */
         {
             destsize = sourcelimit + 1;
             result = true;
         }
-        else                                      /* truncation definite     */
+        else                                     /* truncation definite     */
             warn_message(T_("stringcopy truncation"));
 
         (void) strncpy(destination, source, destsize);
@@ -185,7 +218,7 @@ s_stringcopy
     return result;
 }
 
-#endif  // defined SEQ66_PLATFORM_MSVC || defined SEQ66_PLATFORM_MINGW
+#endif  // defined SEQ66_PLATFORM_MING_OR_WINDOWS
 
 /**
  *  A static function to make safer copies of a system error message than does
@@ -214,7 +247,7 @@ string_errno (errno_t errnum)
     bool ok = true;                     /* start optimistically             */
     dest[0] = 0;                        /* make it an empty string to start */
 
-#if defined SEQ66_PLATFORM_MSVC || defined SEQ66_PLATFORM_MINGW
+#if defined SEQ66_PLATFORM_MING_OR_WINDOWS
 #define ELAST (EWOULDBLOCK + 1)         /* Can change at vendor whim!       */
 
     if (errnum != 0)
@@ -234,7 +267,9 @@ string_errno (errno_t errnum)
 
 #elif defined SEQ66_PLATFORM_GNU
 
-    char * msg = strerror_r(int(errnum), dest, sizeof dest);
+    // This currently gets compiled in Qt/Mingw on Windows.
+    // char * msg = strerror_r(int(errnum), dest, sizeof dest);
+    char * msg = strerror(int(errnum));
     (void) strncpy(dest, msg, sizeof dest - 1);
 
 #else
@@ -625,7 +660,7 @@ file_open (const std::string & filename, const std::string & mode)
     FILE * filehandle = nullptr;
     if (file_name_good(filename) && ! mode.empty())
     {
-#if defined SEQ66_PLATFORM_MSVC
+#if defined SEQ66_PLATFORM_WINDOWS      /* MSVC undefined in Qt on Windows  */
         int errnum = (int) S_FOPEN(&filehandle, filename.c_str(), mode.c_str());
         if (errnum != 0)
             filehandle = nullptr;
@@ -1106,7 +1141,7 @@ get_full_path (const std::string & path)
     std::string result;
     if (file_name_good(path))
     {
-#if defined SEQ66_PLATFORM_MSVC
+#if defined SEQ66_PLATFORM_WINDOWS      /* _MSVC not defined in Qt          */
         char temp[256];
         char * resolved_path = _fullpath(temp, path.c_str(), 256);
 #else

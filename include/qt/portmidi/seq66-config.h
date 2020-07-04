@@ -146,7 +146,7 @@
  * wanted.
  */
 
-#undef SEQ66_COVFLAGS 
+#undef SEQ66_COVFLAGS
 
 /*
  * Define DBGFLAGS=-ggdb -O0 -DDEBUG -fno-inline if debug support is wanted.

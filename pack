@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2015-09-10
-# \update         2018-12-02
+# \update         2020-07-04
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -55,7 +55,7 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
 
-pack 0.6 2018-11-09
+pack 0.6 2020-07-04
 
 Usage:  ./pack [--dry-run] [--clean] [--release package] [--diffs] [tag]
 
@@ -92,7 +92,7 @@ incorporates the branch name into the name of the tarball.
 
 Finally, it packs up 'configure', Makefile.in files, and other necessary files.
 Do './bootstrap --full-clean' first, or './pack --clean', if you don't want
-these files and want to start from scratch and build something difference from
+these files and want to start from scratch and build something different from
 the default build.
 E_O_F
 
@@ -201,7 +201,6 @@ else
  --exclude="Seq66cli/seq66cli" \
  --exclude="Seqtool/src/seqtool" \
  --exclude="config.h" \
- --exclude="seq66-config.h" \
  --exclude="config.status" \
  --exclude="libtool" \
  --exclude="Makefile" \

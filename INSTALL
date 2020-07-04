@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.90.3 and above
 Chris Ahlstrom
-2015-09-10 to 2020-07-03
+2015-09-10 to 2020-07-04
 
 Getting Seq66 requires building the code or going to the
 seq66-packages site on GitHub.  The bootstrap setup is primarily
@@ -34,7 +34,7 @@ from source code:
     -   Advanced Steps
     -   Qmake-based Install (Linux and Windows)
 
-Linux Distro Package:
+Linux Distro Package (seq64):
 
     Your favorite Linux distro may have put seq64/sequencer64 into a distro
     package.  For example, Arch Linux and KXStudio have packages.  Here is a
@@ -251,6 +251,10 @@ Qmake-based Install:
 
         $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
         $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
+
+    To build a Windows NSIS installation package, the DOS batch script
+    nsis/build_release_package.bat can be used.  See the top of that file for
+    the procedure to follow.
 
 CONFIGURE OPTIONS FOR APPLICATION FEATURES:
 

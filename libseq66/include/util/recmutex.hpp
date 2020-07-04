@@ -30,8 +30,6 @@
  * \updates       2019-04-22
  * \license       GNU GPLv2 or above
  *
- * 2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
- *
  */
 
 #include <memory>                       /* std::unique_ptr                  */

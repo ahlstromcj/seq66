@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-02
+ * \updates       2020-07-04
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -288,7 +288,8 @@
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-#include <timeapi.h>                    /* Win32 timeGetTime()              */
+#include <windows.h>                    /* LPCWSTR and RECT for mmsyste.h   */
+#include <mmsystem.h>                   /* Win32 timeGetTime() [!timeapi.h] */
 #endif
 
 /*
