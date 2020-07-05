@@ -41,7 +41,6 @@
 #include <QResizeEvent>
 #include <QScreen>                      /* Qscreen                          */
 #include <QTimer>
-
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 

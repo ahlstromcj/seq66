@@ -28,9 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-04-12
+ * \updates       2020-07-05
  * \license       GNU GPLv2 or above
  *
+ *  This class provides a process for starting, running, restarting, and
+ *  closing down the Seq66 application, even without session management.  One
+ *  of the goals is to be able to reload the performer when the set of MIDI
+ *  devices in the system changes.
  */
 
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
@@ -121,7 +125,7 @@ public:
     }
 
     virtual bool create_session ();
-    virtual bool close_session ();
+    virtual bool close_session (bool ok = true);
     virtual bool create_window ();      /* does mostly nothing by default   */
     virtual void show_message (const std::string & msg);
     virtual void show_error (const std::string & msg);

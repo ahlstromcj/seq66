@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-05-30
+ * \updates       2020-07-05
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -136,12 +136,16 @@ main (int argc, char * argv [])
         {
             exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
             result = sm.close_session();
-            if (! result)
-            {
-                sm.show_message("error closing session; debug time!");
-            }
         }
+        else
+            result = sm.close_session(false);
     }
+    else
+        result = sm.close_session(false);
+
+    if (! result)
+        sm.show_message("Error in session; see erroneous.* files");
+
     return exit_status;
 }
 

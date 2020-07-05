@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-05-31
+ * \updates       2020-07-05
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -127,9 +127,9 @@ qt5nsmanager::create_window ()
  */
 
 bool
-qt5nsmanager::close_session ()
+qt5nsmanager::close_session (bool ok)
 {
-    return smanager::close_session();
+    return smanager::close_session(ok);
 }
 
 /**

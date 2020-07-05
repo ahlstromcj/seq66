@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-06-20
+ * \updates       2020-07-05
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -323,30 +323,46 @@ smanager::open_midi_file (const std::string & fname, std::string & errmsg)
 bool
 smanager::create_session ()
 {
-#if defined SEQ66_PLATFORM_LINUX
-#if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
+#if defined SEQ66_PLATFORM_LINUX && defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
     if (rc().lash_support())
         create_lash_driver(p, argc, argv);
     else
 #endif
-        session_setup();             /* daemonize: set basic signal handlers */
-#endif
+    session_setup();             /* daemonize: set basic signal handlers */
     return true;
 }
 
+/**
+ *  Closes the session, with an option to handle errors in the session.
+ *
+ * \param ok
+ *      Indicates if an error occurred, or not.  The default is true, which
+ *      indicates "no problem".
+ *
+ * \return
+ *      Returns the ok parameter if false, otherwise, the result of finishing up
+ *      is returned.
+ */
+
 bool
-smanager::close_session ()
+smanager::close_session (bool ok)
 {
     bool result = perf()->finish();             /* tear down performer      */
     perf()->put_settings(rc(), usr());          /* copy latest settings     */
-    if (result)
+    if (ok)
     {
-        if (rc().auto_option_save())
-            (void) cmdlineopts::write_options_files();
-        else
-            printf("[auto-option-save off, not saving config files]\n");
+        if (result)
+        {
+            if (rc().auto_option_save())
+                (void) cmdlineopts::write_options_files();
+            else
+                printf("[auto-option-save off, not saving config files]\n");
+        }
     }
     else
+        result = false;
+
+    if (! result)
     {
         (void) cmdlineopts::write_options_files("erroneous");
         if (error_active())
@@ -355,15 +371,12 @@ smanager::close_session ()
         }
     }
 
-#if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
+#if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE_YET
     if (rc().lash_support())
         delete_lash_driver();
 #endif
 
-#if defined SEQ66_PLATFORM_LINUX
     session_close();                /* daemonize: mark the app for exit     */
-#endif
-
     return result;
 }
 

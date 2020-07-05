@@ -366,7 +366,6 @@ nsm::nsm
     m_active        (false),
     m_dirty         (false),
     m_dirty_count   (0),
-
     m_manager       (),
     m_capabilities  (),
     m_path_name     (),

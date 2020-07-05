@@ -1058,9 +1058,15 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 }
 
 /**
- *  Saves all options to the "rc" and "user" configuration files.
- *  This function gets any legacy global variables, on the theory that they
- *  might have been changed.
+ *  Saves all options to the "rc" and "user" configuration files.  This
+ *  function gets any legacy global variables, on the theory that they might
+ *  have been changed.
+ *
+ * \note
+ *      If an error occurs, the files "erroneous.rc" and "erroneousl.usr" will
+ *      be written as a aid to trouble-shooting.  However, if the normal "rc"
+ *      file specified alternate "mutes" and "ctrl" files, those will be
+ *      written to their specified names, not "erroneous" names.
  *
  * \param errrcname
  *      This value, if not empty, provides an altername base name for the
