@@ -1,19 +1,18 @@
 README for Seq66 0.90.3 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-07-03
+2015-09-10 to 2020-07-05
 
-I have put a lot of work into this new version, but there are
-still things to do and bugs to fix.  For now, if you have a specific request,
-email me at ahlstromcj@gmail.com.
+I have put a lot of work into this new version, but there are still things to do
+and bugs to fix.  For now, if you have a specific request, email me at
+ahlstromcj@gmail.com.
 
 Seq66 is a refactoring of Sequencer64 for better use of C++ and for removing a
 lot of krufty buildup.  Major changes:
 
     -   User interface:
         -   Removed the Gtkmm implementations, now using only Qt 5 since its
-            cross-platform support seems more complete.  Also removed the
-            "grid of sets" feature in favor of unlimited external grid
-            windows.
+            cross-platform support seems more complete.  Removed the "grid of
+            sets" feature in favor of unlimited external grid windows.
         -   Added tabs for management of sets, mute-groups, Song mode, pattern
             editing, event-editing, and play-lists.
         -   Added a live frame using buttons to match Qt theming. The original
@@ -71,6 +70,7 @@ Recent changes:
             more.
         -   Added writing of blank [midi-control-out] section.
         -   Fixed flickering when muting/unmuting patterns via keystrokes.
+        -   Got the Windows version to build.
     -   Version 0.90.2:
         -   Lots of code cleanup.
         -   Added truncation of BPM to precision in "usr" file.
