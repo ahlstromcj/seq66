@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2020-07-01
+# \update         2020-07-06
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -96,7 +96,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.90.3-2020-07-01)
+Usage: ./bootstrap [options]                             (0.90.4-2020-07-06)
 
  'bootstrap' sets up GNU automake and libtool support for the Seq66
  projects, and creates the 'configure' script.  It can super-clean the

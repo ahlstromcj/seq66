@@ -94,7 +94,8 @@ HEADERS += include/app_limits.h \
  include/qt/qsmacros.hpp \
  include/sessions/smanager.hpp \
  include/sessions/smfunctions.hpp \
- include/unix/daemonize.hpp \
+ include/os/daemonize.hpp \
+ include/os/timing.hpp \
  include/util/automutex.hpp \
  include/util/basic_macros.h \
  include/util/basic_macros.hpp \
@@ -163,7 +164,8 @@ SOURCES += src/seq66_features.cpp \
  src/play/triggers.cpp \
  src/sessions/smanager.cpp \
  src/sessions/smfunctions.cpp \
- src/unix/daemonize.cpp \
+ src/os/daemonize.cpp \
+ src/os/timing.cpp \
  src/util/automutex.cpp \
  src/util/basic_macros.cpp \
  src/util/calculations.cpp \

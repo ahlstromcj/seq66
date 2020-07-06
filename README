@@ -1,6 +1,6 @@
-README for Seq66 0.90.3 (Sequencer64 refactored for C++/14 and Qt 5)
+README for Seq66 0.90.4 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-07-03
+2015-09-10 to 2020-07-06
 
 I have put a lot of work into this new version, but there are
 still things to do and bugs to fix.  For now, if you have a specific request,
@@ -57,6 +57,8 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.90.4:
+        -   Some refactoring to improve Windows builds.
     -   Version 0.90.3:
         -   Added signal handling (e.g. for nsm-proxy) from user falkTX.
             Used in the CLI and Qt versions to trigger file save and
@@ -71,18 +73,6 @@ Recent changes:
             more.
         -   Added writing of blank [midi-control-out] section.
         -   Fixed flickering when muting/unmuting patterns via keystrokes.
-    -   Version 0.90.2:
-        -   Lots of code cleanup.
-        -   Added truncation of BPM to precision in "usr" file.
-        -   Fixed at bug in handling running status; backported to Seq64.
-    -   Version 0.90.1:
-        -   A raft of bug fixes and user-interface improvements.
-        -   Many tweaks to try to make the performer and the user-interface even
-            faster.
-    -   Version 0.90.0:
-        -   The application and documentation are now (barely) suitable for
-            public consumption, after residing on a server (a Toshiba laptop) at
-            home for months.
 
 This package is oriented to developers and users who do not mind building from
 source, with a little help.

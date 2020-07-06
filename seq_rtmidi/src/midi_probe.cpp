@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone, 2003-2012; refactoring by Chris Ahlstrom
  * \date          2016-11-19
- * \updates       2020-05-27
+ * \updates       2020-07-06
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  We include this test code in our library, rather than in a separate
@@ -21,8 +21,8 @@
 
 #include "midi_probe.hpp"
 #include "midibus_rm.hpp"
-#include "rtmidi.hpp"                   /* rtmidi_in and rt_midi_out */
-#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
+#include "rtmidi.hpp"                   /* rtmidi_in and rt_midi_out        */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/basic_macros.hpp"
 
 /*

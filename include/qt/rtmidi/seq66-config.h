@@ -70,11 +70,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-06-29"
+#define SEQ66_VERSION_DATE_SHORT "2020-07-06"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.90.3"
+#define SEQ66_VERSION "0.90.4"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -82,7 +82,7 @@
 #endif
 
 #ifndef SEQ66_PACKAGE_VERSION
-#define SEQ66_PACKAGE_VERSION "0.90.3"
+#define SEQ66_PACKAGE_VERSION "0.90.4"
 #endif
 
 /**
@@ -351,7 +351,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.90.3"
+#define SEQ66_PACKAGE_STRING "Seq66 0.90.4"
 #endif
 
 /* Define to the one symbol short name of this package. */

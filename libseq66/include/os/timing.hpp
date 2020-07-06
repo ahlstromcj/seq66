@@ -1,11 +1,11 @@
-#if ! defined SEQ66_DAEMONIZE_HPP
-#define SEQ66_DAEMONIZE_HPP
+#if ! defined SEQ66_TIMING_HPP
+#define SEQ66_TIMING_HPP
 
 /**
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2020-05-25
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -30,18 +30,6 @@
  *    as a daemon.
  */
 
-#include <string>
-
-#include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
-
-/*
- * uint32_t alias for 32-bit code
- */
-
-#if defined SEQ66_PLATFORM_32_BIT
-using uint32_t = unsigned int;
-#endif
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -50,48 +38,17 @@ namespace seq66
 {
 
 /*
- *  Free functions.
- *    These functions do a lot of the work of dealing with UNIX daemons.
+ *  Free functions for Linux and Windows support.
  */
 
-extern bool check_daemonize (int argc, char * argv []);
-extern uint32_t daemonize
-(
-    const std::string & appname,
-    const std::string & cwd         = ".",
-    int mask                        = 0
-);
-extern void undaemonize (uint32_t previous_umask);
-
-/*
- * Linux and Windows support.
- */
-
-extern bool reroute_stdio
-(
-    const std::string & logfile = "",
-    bool closem = false
-);
 extern bool microsleep (int us);
 extern bool millisleep (int ms);
-
-/*
- * Basic session handling from use falkTX, circa 2020-02-02.  The following
- * function is internal.
- *
- *      extern void session_handler (int sig);
- *
- * The following functions return status booleans that the caller can use to
- * determine what to do.
- */
-
-extern void session_setup ();
-extern bool session_close ();
-extern bool session_save ();
+extern long microtime ();
+extern long millitime ();
 
 }        // namespace seq66
 
-#endif   // SEQ66_DAEMONIZE_HPP
+#endif   // SEQ66_TIMING_HPP
 
 /*
  * vim: ts=4 sw=4 et ft=cpp

@@ -3,11 +3,11 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2020-07-04
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2020 by Chris Ahlstrom
+ *  Copyright (C) 2005-2018 by Chris Ahlstrom
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -61,22 +61,27 @@
 #include <stdlib.h>                     /* EXIT_FAILURE for 32-bit builds   */
 #include <string.h>                     /* strlen() etc.                    */
 
-#include "unix/daemonize.hpp"           /* daemonization functions & macros */
+#include "os/daemonize.hpp"             /* daemonization functions & macros */
 #include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path() etc.      */
 
 #if defined SEQ66_PLATFORM_LINUX
-#include <sched.h>                      /* C::sched_yield()                 */
-#include <signal.h>                     /* struct sigaction                 */
-#include <time.h>                       /* C::nanosleep(2)                  */
-#include <unistd.h>                     /* usleep() or select()             */
-#endif
 
-#if defined SEQ66_PLATFORM_WINDOWS
+#include <fcntl.h>                      /* O_RDWR flag                      */
+#include <signal.h>                     /* struct sigaction                 */
+#include <sys/stat.h>                   /* umask(), etc.                    */
+#include <syslog.h>                     /* syslog() and related constants   */
+#include <unistd.h>                     /* exit(), setsid()                 */
+
+#define STD_CLOSE       close
+#define STD_OPEN        open
+#define STD_O_RDWR      O_RDWR
+#define DEV_NULL        "/dev/null"
+
+#elif defined SEQ66_PLATFORM_WINDOWS
 
 /*
- * For Windows, only the reroute_stdio() and microsleep() functions are
- * defined, currently.
+ * For Windows, only the reroute_stdio() function is defined, currently.
  */
 
 #include <windows.h>                    /* WaitForSingleObject(), INFINITE  */
@@ -89,35 +94,7 @@
 #define STD_O_RDWR      _O_RDWR
 #define DEV_NULL        "NUL"
 
-/*
- *  Do not document a namespace; it breaks Doxygen.
- */
-
-namespace seq66
-{
-
-#else
-
-#if SEQ66_HAVE_SYS_STAT_H
-#include <sys/stat.h>                   /* umask(), etc.                    */
 #endif
-
-#if SEQ66_HAVE_SYSLOG_H
-#include <syslog.h>                     /* syslog() and related constants   */
-#endif
-
-#if SEQ66_HAVE_UNISTD_H
-#include <unistd.h>                     /* exit(), setsid()                 */
-#endif
-
-#if SEQ66_HAVE_FCNTL_H
-#include <fcntl.h>                      /* O_RDWR flag                      */
-#endif
-
-#define STD_CLOSE       close
-#define STD_OPEN        open
-#define STD_O_RDWR      O_RDWR
-#define DEV_NULL        "/dev/null"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -271,8 +248,6 @@ undaemonize (uint32_t previous_umask)
 
 #endif      // SEQ66_PLATFORM_POSIX_API
 
-#endif      // SEQ66_PLATFORM_WINDOWS
-
 /**
  * \todo
  *    Implement "daemonizing" for Windows, including redirection to the
@@ -374,143 +349,6 @@ reroute_stdio (const std::string & logfile, bool closem)
     }
     return result;
 }
-
-/**
- *  This free-function in the seq64 namespace provides a way to suspend a
- *  thread for a small amount of time.
- *
- * \linux
- *      We can use the usleep(3) function.
- *
- * \unix
- *    In POSIX, select() can return early if any signal occurs.  We don't
- *    correct for that here at this time.  Actually, it is a convenient
- *    feature, and we wish that Sleep() would provide it.
- *
- * \win32
- *    In Windows, the Sleep(0) function does not sleep, but it does cede
- *    control of the thread to the operating system, which then schedules
- *    another thread to run.
- *
- * \warning
- *    Please note that this function isn't all that accurate for small
- *    sleep values, due to the time taken to set up the operation, and
- *    resolution issues in many operating systems.
- *
- * \param ms
- *    The number of milliseconds to "sleep".  If set to 0, then a sched_yield()
- *    is called, similar to Sleep(0) in Windows.  Does select() do this
- *    automatically?  In any case, microsleep(0) will do it.
- *
- * \return
- *    Returns true if the ms parameter was 0 or greater.
- */
-
-bool
-millisleep (int ms)
-{
-    bool result = ms >= 0;
-    if (result)
-    {
-#if defined SEQ66_PLATFORM_LINUX
-        result = microsleep(ms * 1000);
-#elif defined SEQ66_PLATFORM_UNIX
-        struct timeval tv;
-        struct timeval * tvptr = &tv;
-        tv.tv_usec = long(ms % 1000) * 1000;
-        tv.tv_sec = long(ms / 1000;
-        result = select(0, 0, 0, 0, tvptr) != (-1);
-#elif defined SEQ66_PLATFORM_WINDOWS              // or PLATFORM_MINGW
-        result = microsleep(ms * 1000);
-#endif
-    }
-    return result;
-}
-
-#ifdef SEQ66_PLATFORM_LINUX
-
-/**
- *  Sleeps for the given number of microseconds. nanosleep() is a Linux
- *  function which has some advantage over sleep(3) and usleep(3), such as not
- *  interacting with signals.  It seems that it supports a non-busy wait.
- *
- * \param us
- *      Provides the desired number of microseconds to wait.  If set to 0, then
- *      a sched_yield() is called, similar to Sleep(0) in Windows.
- *
- * \return
- *      Returns true if the full sleep occurred, or if interruped by a signal.
- */
-
-bool
-microsleep (int us)
-{
-    bool result = us >= 0;
-    if (result)
-    {
-        if (us == 0)
-        {
-            sched_yield();
-        }
-        else
-        {
-            struct timespec ts;
-            ts.tv_sec = us / 1000000;
-            ts.tv_nsec = (us % 1000000) * 1000;
-
-            int rc = nanosleep(&ts, NULL);
-            result = rc == 0 || rc == EINTR;
-        }
-    }
-    return result;
-}
-
-#endif  // PLATFORM_LINUX
-
-#ifdef SEQ66_PLATFORM_WINDOWS
-
-/**
- *  This implementation comes from https://gist.github.com/ngryman/6482577 and
- *  performs busy-waiting, meaning it will NOT relinquish the processor.
- *
- * \param us
- *      Provides the desired number of microseconds to wait.
- *
- * \return
- *      Returns true only if all calls succeeded.  It doesn't matter if the
- *      wait completed, at this point.
- */
-
-bool
-microsleep (int us)
-{
-    bool result = us >= 0;
-    if (result)
-    {
-        if (us == 0)
-        {
-            Sleep(0);
-        }
-        else
-        {
-            HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
-            bool result = timer != NULL;
-            if (result)
-            {
-                LARGE_INTEGER ft;
-                ft.QuadPart = -(10 * (__int64) us);
-                result = SetWaitableTimer(timer, &ft, 0, NULL, NULL, 0) != 0;
-                if (result)
-                    result = WaitForSingleObject(timer, INFINITE) != WAIT_FAILED;
-
-                CloseHandle(timer);
-            }
-        }
-    }
-    return result;
-}
-
-#endif // SEQ66_PLATFORM_WINDOWS
 
 #if defined SEQ66_PLATFORM_LINUX
 
@@ -624,7 +462,7 @@ session_save ()
     return false;
 }
 
-#endif
+#endif  // defined SEQ66_PLATFORM_LINUX
 
 }           // namespace seq66
 

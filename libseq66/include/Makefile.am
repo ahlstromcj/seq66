@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-04-15
+# \update      2020-07-06
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -142,7 +142,8 @@ pkginclude_HEADERS = \
  qt/qsmacros.hpp \
  sessions/smanager.hpp \
  sessions/smfunctions.hpp \
- unix/daemonize.hpp \
+ os/daemonize.hpp \
+ os/timing.hpp \
  util/automutex.hpp \
  util/basic_macros.h \
  util/basic_macros.hpp \

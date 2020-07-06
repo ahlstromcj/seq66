@@ -1,8 +1,21 @@
-NEWS for Sequencer66 0.90.3
+NEWS for Sequencer66 0.90.4
 Chris Ahlstrom
-2015-07-10 to 2019-03-09
+2015-07-10 to 2019-07-06
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
+
+    -   Version 0.90.2:
+        -   Lots of code cleanup.
+        -   Added truncation of BPM to precision in "usr" file.
+        -   Fixed at bug in handling running status; backported to Seq64.
+    -   Version 0.90.1:
+        -   A raft of bug fixes and user-interface improvements.
+        -   Many tweaks to try to make the performer and the user-interface even
+            faster.
+    -   Version 0.90.0:
+        -   The application and documentation are now (barely) suitable for
+            public consumption, after residing on a server (a Toshiba laptop) at
+            home for months.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

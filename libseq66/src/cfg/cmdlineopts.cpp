@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-04-22
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -54,7 +54,6 @@
 #include "cfg/rcfile.hpp"               /* seq66::rcfile class              */
 #include "cfg/settings.hpp"             /* seq66::rc() and usr() access     */
 #include "cfg/usrfile.hpp"              /* seq66::usrfile class             */
-#include "unix/daemonize.hpp"           /* seqg4::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* not_nullptr() and other macros   */
 #include "util/filefunctions.hpp"       /* file_accessible(), etc.          */
 #include "util/strfunctions.hpp"        /* string-to-numbers functions      */
@@ -276,7 +275,7 @@ cmdlineopts::s_help_4a =
 "                            If '=filename' is not provided, then the filename\n"
 "                            specified in '[user-options]' in the 'usr' file is\n"
 "                            used.\n"
-"              wid=RxC,F     NOT SUPPORTED in Seq66. Use external frame windows.\n"
+"              wid=RxC,F     UNSUPPORTED in Seq66. Use external live windows.\n"
 "              sets=RxC      Modifies the rows and columns in a set from the\n"
 "                            default of 4x8.  Supported values of R are 4 to 8,\n"
 "                            and C can range from 8 to 12. If not 4x8, seq66 is\n"
@@ -288,7 +287,7 @@ cmdlineopts::s_help_4a =
 
 const std::string
 cmdlineopts::s_help_4b =
-"              scale=x.y     Changes the size of the main window. Can range from\n"
+"              scale=x.y     Changes size of the main window. Can range from\n"
 "                            0.5 to 3.0.\n"
 "\n"
 " seq66cli:\n"
@@ -606,7 +605,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
         std::string logfile = usr().option_logfile();
         if (! logfile.empty())
         {
-#if defined SEQ66_PLATFORM_LINUX_TMI                /* let main() call this */
+#if defined SEQ66_PLATFORM_LINUX_MOVED              /* let main() call this */
             (void) reroute_stdio(logfile);
 #endif
             result = true;

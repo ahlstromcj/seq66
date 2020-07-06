@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-05-27
+ * \updates       2019-07-06
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -156,7 +156,7 @@
 #include "midi/jack_assistant.hpp"      /* seq66::jack_status_pair_t        */
 #include "midibus_rm.hpp"               /* seq66::midibus for rtmidi        */
 #include "midi_jack.hpp"                /* seq66::midi_jack                 */
-#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 
 /**
  *  Delimits the size of the JACK ringbuffer.

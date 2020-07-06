@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-06-13
+ * \updates       2020-07-06
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -59,7 +59,7 @@
 #include "midi/event.hpp"               /* seq66::event and other tokens    */
 #include "midi/midibus_common.hpp"      /* from the libseq66 sub-project    */
 #include "midi_alsa_info.hpp"           /* seq66::midi_alsa_info            */
-#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "util/calculations.hpp"        /* seq66::tempo_us_from_bpm()       */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 

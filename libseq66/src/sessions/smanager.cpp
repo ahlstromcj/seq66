@@ -53,7 +53,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
-#include "unix/daemonize.hpp"           /* seq66::reroute_stdio()           */
+#include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
 

@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2020-02-09
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -40,7 +40,7 @@
 
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
-#include "unix/daemonize.hpp"           /* seq66::daemonize()               */
+#include "os/daemonize.hpp"             /* seq66::daemonize()               */
 #include "midi/midifile.hpp"            /* seq66::midifile to open the file */
 #include "play/performer.hpp"           /* seq66::perform, the main object  */
 

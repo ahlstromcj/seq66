@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-02-28
+ * \updates     2020-07-06
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -84,12 +84,14 @@ static void CALLBACK winmm_streamout_callback
 );
 
 #if defined SEQ66_USE_SYSEX_PROCESSING
+
 /* static */ void CALLBACK winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg,
     DWORD_PTR dwInstance, DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
 );
+
 #endif
 
 static void winmm_out_delete (PmInternal * midi);
@@ -265,7 +267,7 @@ pm_winmm_general_inputs (void)
                     "MMSystem",                         /* subsystem name   */
                     (char *) midi_in_caps[i].szPname,   /* interface name   */
                     TRUE,                               /* it is an input   */
-                    (void *) i,                         /* descriptor???    */
+                    (void *) (long) i,                  /* descriptor???    */
                     &pm_winmm_in_dictionary,            /* pm_fns_type      */
                     i,                                  /* client number    */
                     0                                   /* port, TODO       */
@@ -312,7 +314,8 @@ pm_winmm_mapper_input (void)
         pm_add_device
         (
             "MMSystem", (char *) devname, TRUE,
-            (void *) MIDIMAPPER, &pm_winmm_in_dictionary,
+            (void *) MIDIMAPPER,
+            &pm_winmm_in_dictionary,
             0, 0                                    /* client/port, TODO    */
         );
     }
@@ -356,7 +359,8 @@ pm_winmm_general_outputs (void)
             pm_add_device
             (
                 "MMSystem", (char *) midi_out_caps[i].szPname, FALSE,
-                (void *) i, &pm_winmm_out_dictionary,
+                (void *) (long) i,
+                &pm_winmm_out_dictionary,
                 i, 0                                /* client/port, TODO    */
             );
         }
@@ -395,7 +399,8 @@ pm_winmm_mapper_output (void)
         pm_add_device
         (
             "MMSystem", (char *) midi_out_mapper_caps.szPname, FALSE,
-            (void *) MIDIMAPPER, &pm_winmm_out_dictionary,
+            (void *) MIDIMAPPER,
+            &pm_winmm_out_dictionary,
             0, 0                                    /* client/port, TODO    */
         );
     }
@@ -865,7 +870,8 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     int max_sysex_len = midi->buffer_len * 4;
     int num_input_buffers = max_sysex_len / INPUT_SYSEX_LEN;
     midiwinmm_type m;
-    DWORD dwDevice = (DWORD) pm_descriptors[i].descriptor;
+    UINT_PTR dev = (UINT_PTR) pm_descriptors[i].descriptor;
+    DWORD dwDevice = (DWORD) (dev & 0xFFFFFFFF);
 
     /* create system dependent device data */
 
@@ -1910,7 +1916,7 @@ winmm_synchronize (PmInternal * midi)
 winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg, DWORD dwInstance,
-    DWORD dwParam1, DWORD dwParam2
+    DWORD_PTR dwParam1, DWORD_PTR dwParam2
 )
 {
     PmInternal * midi = (PmInternal *) dwInstance;

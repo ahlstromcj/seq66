@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-04
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -284,13 +284,8 @@
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
-#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::microsleep(), millitime() */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
-
-#if defined SEQ66_PLATFORM_WINDOWS
-#include <windows.h>                    /* LPCWSTR and RECT for mmsyste.h   */
-#include <mmsystem.h>                   /* Win32 timeGetTime() [!timeapi.h] */
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -2524,18 +2519,13 @@ performer::output_func ()
             }
         }
 
-#if defined SEQ66_PLATFORM_WINDOWS
         long last;                          /* beginning time               */
         long current;                       /* current time                 */
         long delta;                         /* current - last               */
-#else
-        struct timespec last;               /* beginning time               */
-        struct timespec current;            /* current time                 */
-        struct timespec delta;              /* current - last               */
-#if defined SEQ66_PLATFORM_DEBUG
+
+#if defined SEQ66_PLATFORM_DEBUG && defined SEQ66_PLATFORM_LINUX
         if (rc().verbose())
             infoprintf("output_func() running on CPU #%d", sched_getcpu());
-#endif
 #endif
 
         jack_scratchpad pad;
@@ -2577,29 +2567,16 @@ performer::output_func ()
         }
 
         int ppqn = m_master_bus->get_ppqn();
-
-#if defined SEQ66_PLATFORM_WINDOWS
-        last = timeGetTime();                   /* start time position      */
-#else
-        clock_gettime(CLOCK_REALTIME, &last);   /* start time position      */
-#endif
-
+        last = millitime();                     /* depends on OS            */
         while (is_running())
         {
             /**
              *  See note 2 in the function banner.
              */
 
-#if defined SEQ66_PLATFORM_WINDOWS
-            current = timeGetTime();
+            current = microtime();
             delta = current - last;
-            long delta_us = delta * 1000;
-#else
-            clock_gettime(CLOCK_REALTIME, &current);
-            delta.tv_sec  = current.tv_sec - last.tv_sec;
-            delta.tv_nsec = current.tv_nsec - last.tv_nsec;
-            long delta_us = (delta.tv_sec * 1000000) + (delta.tv_nsec / 1000);
-#endif
+            long delta_us = delta;
             midibpm bpm  = m_master_bus->get_beats_per_minute();
 
             /*
@@ -2787,24 +2764,15 @@ performer::output_func ()
              */
 
             last = current;
-
-#if defined SEQ66_PLATFORM_WINDOWS
-            current = timeGetTime();
+            current = microtime();
             delta = current - last;
-            long elapsed_us = delta * 1000;
-#else
-            clock_gettime(CLOCK_REALTIME, &current);
-            delta.tv_sec  = current.tv_sec  - last.tv_sec;
-            delta.tv_nsec = current.tv_nsec - last.tv_nsec;
-            long elapsed_us = (delta.tv_sec * 1000000) + (delta.tv_nsec / 1000);
-#endif
 
             /**
              * Now we want to trigger every c_thread_trigger_width_us, and it
              * took us delta_us to play().  Also known as the "sleeping_us".
              */
 
-            delta_us = c_thread_trigger_width_us - elapsed_us;
+            delta_us = c_thread_trigger_width_us - delta;
 
             /**
              * Check MIDI clock adjustment.  We replaced "60000000.0f / m_ppqn
@@ -2821,7 +2789,7 @@ performer::output_func ()
                 delta_us = long(next_clock_delta_us);
 
             if (delta_us > 0)
-                (void) microsleep(delta_us);            /* daemonize.hpp    */
+                (void) microsleep(delta_us);            /* timing.hpp       */
 
             if (pad.js_jack_stopped)
                 inner_stop();
@@ -4688,15 +4656,7 @@ performer::loop_control
         else
         {
             if (a == automation::action::toggle)
-            {
                 sequence_playing_toggle(sn);
-
-#if 0   // experimental, seems to help flickering a bit
-                seq::pointer s = get_sequence(sn);
-                if (s)
-                    s->toggle_playing();
-#endif
-            }
             else if (a == automation::action::on)
                 sequence_playing_change(sn, true);
             else if (a == automation::action::off)

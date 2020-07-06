@@ -73,7 +73,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "unix/daemonize.hpp"           /* seq66::microsleep()              */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid (qsliveframe)  */
