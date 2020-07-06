@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-03-07
+ * \updates       2020-07-06
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -17,13 +17,6 @@
  */
 
 #include <string>
-
-/**
- *  All file-specifications in Sequencer66 use the UNIX path separator.
- *  No matter what the operating system.
- */
-
-#define SEQ66_PATH_SLASH                "/"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -58,14 +51,10 @@ extern bool name_has_directory (const std::string & filename);
 extern bool make_directory (const std::string & pathname);
 extern bool make_directory_path (const std::string & directory_name);
 extern bool delete_directory (const std::string & filename);
-
-#if defined USE_THIS_DANGEROUS_FUNCTION
-extern bool delete_directory_path (const std::string & dirname);
-#endif
-
 extern bool set_current_directory (const std::string & path);
 extern std::string get_current_directory ();
 extern std::string get_full_path (const std::string & path);
+extern char path_slash ();
 extern std::string normalize_path
 (
     const std::string & path,

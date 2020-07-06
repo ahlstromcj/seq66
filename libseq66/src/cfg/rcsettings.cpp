@@ -53,8 +53,7 @@
 /**
  *  Select the HOME or LOCALAPPDATA environment variables depending on whether
  *  building for Windows or not. LOCALAPPDATA points to the root of the
- *  Windows user's configuration directory, AppData/Local.  Also select the
- *  appropriate directory separator for SEQ66_PATH_SLASH.
+ *  Windows user's configuration directory, AppData/Local.
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -407,16 +406,16 @@ rcsettings::home_config_directory () const
         if (env != NULL)
         {
             std::string home(env);                  /* std::getenv(HOME)    */
-            result = home + SEQ66_PATH_SLASH;       /* e.g. /home/username/ */
+            result = home + path_slash();       /* e.g. /home/username/ */
             result += config_directory();           /* seq66 directory      */
 #if defined SEQ66_PLATFORM_UNIX
-            result += SEQ66_PATH_SLASH;
+            result += path_slash();
 #endif
             bool ok = make_directory(result);
             if (ok)
             {
 #if defined SEQ66_PLATFORM_WINDOWS
-                result += SEQ66_PATH_SLASH;
+                result += path_slash();
 #endif
                 m_full_config_directory = normalize_path(result);
             }

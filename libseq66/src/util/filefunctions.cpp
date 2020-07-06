@@ -7,16 +7,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-04
+ * \updates       2020-07-06
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
  *    much more than that.  These functions are adapted from our xpc_basic
  *    project.
  *
- *    In addition, internally we want to handle all file-specifications in UNIX
- *    format, even if the name includes Window's constructs such as "C:".  So
- *    the normalize_path() function (which converts both ways) is used heavily.
+ *    In addition, internally we want to handle all file-specifications in
+ *    UNIX format, even if the name includes Window's constructs such as "C:".
+ *    So the normalize_path() function (which converts both ways) is used
+ *    heavily.  For OS calls, we want to use the native format.
  */
 
 #include <algorithm>                    /* std::replace() function          */
@@ -29,6 +30,21 @@
 #include "util/basic_macros.hpp"        /* support and platform macros      */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
+
+/**
+ *  All file-specifications in Sequencer66 use the UNIX path separator.
+ *  No matter what the operating system.
+ */
+
+#if defined SEQ66_PLATFORM_WINDOWS
+#define SEQ66_PATH_SLASH                '\\'
+#else
+#define SEQ66_PATH_SLASH                '/'
+#endif
+
+/*
+ *  More legacy configuration macros.
+ */
 
 #if SEQ66_HAVE_LIMITS_H
 #include <limits.h>                     /* PATH_MAX                         */
@@ -1021,72 +1037,6 @@ delete_directory (const std::string & filename)
     return result;
 }
 
-#if defined USE_THIS_DANGEROUS_FUNCTION
-
-/**
- *  Deletes a directory from bottom to top.  This function first makes sure that
- *  the name is valid, using the file_name_good() function.  It will also refuse
- *  to remove a root directory (a directory name starting with '/' or something
- *  like 'C:\') OR A HOME DIRECTORY like /home/username or
- *  C:/Users/username/AppData/Local.
- *
- * \param filename
- *      Provides the name of the path to be removed.
- *
- * \return
- *      Returns 'true' if the delete operation(s) succeeded.  It also returns
- *      'true' if the directory did not exist in the first place.
- */
-
-bool
-delete_directory_path (const std::string & dirname)
-{
-    bool result = file_name_good(dirname);
-    if (result)
-        result = ! is_path_rooted(dirname);
-
-    if (result)
-    {
-        result = delete_directory(dirname);    // delete final sub-directory
-        if (result)
-        {
-            char currdir[S_MAX_PATH];
-            int slash = xpc_path_slash(dirname);    // determine path separator
-            if (xpc_string_copy(currdir, sizeof(currdir), dirname))
-            {
-                for (;;)
-                {
-                    char * slasher = strrchr(currdir, slash);
-                    if (not_nullptr(slasher))
-                    {
-                        while (*slasher == slash)  // handle consecutive slashes
-                            *slasher-- = 0;
-
-                        if (strlen(currdir) > 0)
-                        {
-                            if
-                            (
-                                (strcmp(currdir, ".") != 0) &&
-                                (strcmp(currdir, "..") != 0)
-                            )
-                            result = delete_directory(currdir);
-                            if (! result)
-                                break;
-                        }
-                        else
-                            break;
-                    }
-                    else
-                        break;
-                }
-            }
-        }
-    }
-    return result;
-}
-
-#endif  // defined USE_THIS_DANGEROUS_FUNCTION
-
 /**
  *  Provides the path name of the current working directory.  This function is
  *  a wrapper for getcwd() and other such functions.  It obtains the current
@@ -1167,8 +1117,20 @@ get_full_path (const std::string & path)
 }
 
 /**
+ *  Returns the default path separator. Based on the operating system:  a
+ *  backslash for Windows and (laughing) CPM and DOS, and a forward slash
+ *  for UNIXen.
+ */
+
+char
+path_slash ()
+{
+    return SEQ66_PATH_SLASH;
+}
+
+/**
  *  Makes sure that the path-name is a UNIX path, separated by forward slashes
- *  (the solidus).
+ *  (the solidus), or a Windows path, separated by back slashes..
  *
  * \param path
  *      Provides the path, which should be a full path-name.
