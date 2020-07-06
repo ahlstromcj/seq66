@@ -3,8 +3,6 @@
 #define VERSION_DATE_SHORT "2020-07-06"
 #define VERSION "0.90.4"
 
-
-
 /* "Distro where build was done" */
 #undef APP_BUILD_OS
 
