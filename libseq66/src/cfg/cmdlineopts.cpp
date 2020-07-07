@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-06
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -297,7 +297,7 @@ cmdlineopts::s_help_4b =
 "                            'both'.\n"
 "\n"
 "The 'daemonize' option works only in the CLI build. The 'sets' option works in\n"
-"the CLI build as well.  Specify the '--user-save' option to make these options\n"
+"the CLI build.  Specify the '--user-save' option to make these options\n"
 "permanent in the seq66.usr configuration file.\n"
 "\n"
     ;
@@ -308,11 +308,12 @@ cmdlineopts::s_help_4b =
 
 const std::string
 cmdlineopts::s_help_5 =
-"--ppqn works pretty well. Saving a MIDI file also saves the PPQN value.\n"
+"--ppqn works well. Saving a MIDI file saves the new PPQN value.\n"
 "If no JACK options are shown above, they were disabled in the build\n"
 "configuration. Command-line options can be sticky; most of them\n"
 "get saved to the configuration files when Seq66 exits.  See the\n"
-"user manual at https://github.com/ahlstromcj/seq66-doc.\n"
+"Sequencer64 user manual at https://github.com/ahlstromcj/sequencer64-doc.\n"
+"It is close enough to Seq66 functionality to be useful, for now.\n"
     ;
 
 /**

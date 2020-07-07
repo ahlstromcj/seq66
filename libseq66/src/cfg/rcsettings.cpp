@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-07-06
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -84,7 +84,7 @@ rcsettings::rcsettings () :
     m_load_key_controls         (true),
     m_keycontainer              ("rc"),
     m_load_midi_controls        (true),
-    m_midi_control_in             ("rc"),
+    m_midi_control_in           ("rc"),
     m_midi_control_out          (),
     m_show_ui_sequence_key      (true),
     m_show_ui_sequence_number   (true),
@@ -435,7 +435,14 @@ rcsettings::home_config_directory () const
 }
 
 /**
+ *  Checks to see if the provided string matches the home configuration
+ *  directory name, up to the length of that directory name.
  *
+ * \param name
+ *      Provides the name to be checked.
+ *
+ * \return
+ *      Returns true if the name matches the home directory path.
  */
 
 bool
@@ -543,12 +550,12 @@ rcsettings::config_filespec () const
 }
 
 /**
- *  Conditionally trims a file-specification of its home-directory path.
- *  This function is meant to be used for more flexible specification of the
- *  specified 'ctrl', 'mutes', and 'playlist' files.  If there is no directory,
- *  then the file is in the current configuration directory.  The same is true
- *  if the home directory is present, but we don't need it.  If there is another
- *  directory, whether relative or not, we need to keep it.
+ *  Conditionally trims a file-specification of its home-directory path.  This
+ *  function is meant to be used for more flexible specification of the
+ *  specified 'ctrl', 'mutes', and 'playlist' files.  If there is no
+ *  directory, then the file is in the current configuration directory.  The
+ *  same is true if the home directory is present, but we don't need it.  If
+ *  there is another directory, whether relative or not, we need to keep it.
  */
 
 std::string
@@ -568,7 +575,9 @@ rcsettings::trim_home_directory (const std::string & filepath)
 /**
  *  Constructs an alternate full path and file specification for the "rc"
  *  file.  This function is useful in writing to an alternate "rc" file when a
- *  fatal error occurs.
+ *  fatal error occurs.  Also note that the configuration file specification
+ *  can never be empty or blank (equal to this string: "").  See the
+ *  strfunction module's is_empty_string() function.
  *
  * \param altname
  *      Provides the base-name of the alternate file, including the extension.
@@ -607,8 +616,10 @@ rcsettings::user_filespec () const
 {
     std::string result = home_config_directory();
     if (! result.empty())
+    {
         result += user_filename();
-
+        result = os_normalize_path(result);     /* change to OS's slash     */
+    }
     return result;
 }
 
@@ -930,7 +941,9 @@ rcsettings::jack_session_uuid (const std::string & value)
 void
 rcsettings::last_used_dir (const std::string & value)
 {
-    if (! value.empty())
+    if (value.empty())
+        m_last_used_dir = empty_string();       /* "" from strfunctions */
+    else
         m_last_used_dir = get_full_path(value);
 }
 
@@ -1018,7 +1031,7 @@ rcsettings::config_filename () const
 void
 rcsettings::playlist_filename (const std::string & value)
 {
-    if (value.empty() || value == "\"\"")
+    if (is_empty_string(value))     // if (value.empty() || value == "\"\"")
     {
         clear_playlist();
     }

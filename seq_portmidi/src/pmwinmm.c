@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-06
+ * \updates     2020-07-07
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -71,24 +71,27 @@
 
 static void CALLBACK winmm_in_callback
 (
-    HMIDIIN hMidiIn,
-    WORD wMsg, DWORD_PTR dwInstance,
-    DWORD_PTR dwParam1, DWORD_PTR dwParam2
+    HMIDIIN hMidiIn, WORD wMsg,
+    DWORD_PTR dwInstance,
+    DWORD_PTR dwParam1,
+    DWORD_PTR dwParam2
 );
 
 static void CALLBACK winmm_streamout_callback
 (
     HMIDIOUT hmo, UINT wMsg,
-    DWORD_PTR dwInstance, DWORD_PTR dwParam1,
+    DWORD_PTR dwInstance,
+    DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
 );
 
 #if defined SEQ66_USE_SYSEX_PROCESSING
 
-/* static */ void CALLBACK winmm_out_callback
+void CALLBACK winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg,
-    DWORD_PTR dwInstance, DWORD_PTR dwParam1,
+    DWORD_PTR dwInstance,
+    DWORD_PTR dwParam1,
     DWORD_PTR dwParam2
 );
 
@@ -1912,11 +1915,13 @@ winmm_synchronize (PmInternal * midi)
  * winmm_out_callback -- recycle sysex buffers
  */
 
-/* static */ void CALLBACK
+void CALLBACK
 winmm_out_callback
 (
-    HMIDIOUT hmo, UINT wMsg, DWORD dwInstance,
-    DWORD_PTR dwParam1, DWORD_PTR dwParam2
+    HMIDIOUT hmo, UINT wMsg,
+    DWORD_PTR dwInstance,
+    DWORD_PTR dwParam1,
+    DWORD_PTR dwParam2
 )
 {
     PmInternal * midi = (PmInternal *) dwInstance;

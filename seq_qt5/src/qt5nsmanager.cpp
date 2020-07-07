@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-07-05
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -150,10 +150,13 @@ qt5nsmanager::run ()
 void
 qt5nsmanager::show_message (const std::string & msg) const
 {
-    if (error_active())
-        m_window->show_message_box(error_message());
-    else
-        m_window->show_message_box(msg);
+    if (m_window)
+    {
+        if (error_active())
+            m_window->show_message_box(error_message());
+        else
+            m_window->show_message_box(msg);
+    }
 }
 
 /**
@@ -163,31 +166,30 @@ qt5nsmanager::show_message (const std::string & msg) const
 void
 qt5nsmanager::show_error (const std::string & msg) const
 {
+    if (m_window)
+    {
 #if defined SEQ66_PORTMIDI_SUPPORT
-
-    if (msg.empty())
-    {
-        if (Pm_error_present())
+        if (msg.empty())
         {
-            std::string errmsg = std::string(Pm_hosterror_message());
-            m_window->show_message_box(errmsg);
+            if (Pm_error_present())
+            {
+                std::string errmsg = std::string(Pm_hosterror_message());
+                m_window->show_message_box(errmsg);
+            }
         }
-    }
-    else
-    {
-        set_error_message(msg);
-        m_window->show_message_box(msg);
-    }
-
+        else
+        {
+            set_error_message(msg);
+            m_window->show_message_box(msg);
+        }
 #else
-
-    if (msg.empty())
-    {
-        set_error_message(msg);
-        m_window->show_message_box(msg);
-    }
-
+        if (msg.empty())
+        {
+            set_error_message(msg);
+            m_window->show_message_box(msg);
+        }
 #endif
+    }
 
 }
 

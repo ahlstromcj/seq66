@@ -308,11 +308,11 @@
 #endif
 
 /*
- * Define to enable LASH.
+ * Define to enable LASH.  Disabled for the Qt "rtmidi" build.
  */
 
 #ifndef SEQ66_LASH_SUPPORT
-#define SEQ66_LASH_SUPPORT 1
+#undef SEQ66_LASH_SUPPORT
 #endif
 
 /*

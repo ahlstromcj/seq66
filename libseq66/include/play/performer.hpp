@@ -881,6 +881,15 @@ public:
     void notify_ui_change (seq::number seqno);
     void notify_trigger_change (seq::number seqno);
 
+    bool session_support () const                   /* PROVISIONAL          */
+    {
+#if defined SEQ66_LASH_SUPPORT
+        return true;
+#else
+        return false;
+#endif
+    }
+
     bool modified () const
     {
         return m_is_modified;

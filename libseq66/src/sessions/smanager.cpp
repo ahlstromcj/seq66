@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-07-05
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -90,7 +90,7 @@ smanager::smanager () :
      * m_perf_pointer = create_performer();
      */
 
-    set_defaults();
+    set_configuration_defaults();
 }
 
 /**
@@ -340,15 +340,19 @@ smanager::create_session ()
  *      indicates "no problem".
  *
  * \return
- *      Returns the ok parameter if false, otherwise, the result of finishing up
- *      is returned.
+ *      Returns the ok parameter if false, otherwise, the result of finishing
+ *      up is returned.
  */
 
 bool
 smanager::close_session (bool ok)
 {
-    bool result = perf()->finish();             /* tear down performer      */
-    perf()->put_settings(rc(), usr());          /* copy latest settings     */
+    bool result = not_nullptr(perf());
+    if (result)
+    {
+        result = perf()->finish();             /* tear down performer       */
+        perf()->put_settings(rc(), usr());     /* copy latest settings      */
+    }
     if (ok)
     {
         if (result)

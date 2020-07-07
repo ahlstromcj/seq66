@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-04-19
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -449,7 +449,7 @@ rcfile::parse ()
         }
     }
     else
-        return make_error_message("midi-input", "section is missing");
+        return make_error_message("midi-input", "data lines missing");
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
     {
@@ -461,7 +461,7 @@ rcfile::parse ()
     {
         return make_error_message
         (
-            "midi-clock-mod-ticks", "section is missing"
+            "midi-clock-mod-ticks", "data lines missing"
         );
     }
     if (line_after(file, "[midi-meta-events]"))
@@ -474,7 +474,7 @@ rcfile::parse ()
     {
         return make_error_message
         (
-            "midi-meta_events", "section is missing"
+            "midi-meta_events", "data lines missing"
         );
     }
     if (line_after(file, "[manual-ports]"))
@@ -490,7 +490,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message("manual-ports", "section is missing");
+        (void) make_error_message("manual-ports", "data line missing");
     }
     if (line_after(file, "[reveal-ports]"))
     {
@@ -505,7 +505,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message("reveal-ports", "section is missing");
+        (void) make_error_message("reveal-ports", "data line missing");
     }
     if (line_after(file, "[last-used-dir]"))
     {
@@ -514,7 +514,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message("last-used-dir", "section is missing");
+         (void) make_error_message("last-used-dir", "data line missing");
     }
     if (line_after(file, "[recent-files]"))
     {
@@ -536,7 +536,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message("recent-files", "section is missing");
+        (void) make_error_message("recent-files", "data lines missing");
     }
     if (line_after(file, "[playlist]"))
     {
@@ -620,7 +620,7 @@ rcfile::parse ()
          */
 
         if (! rc_ref().interaction_method(method))
-            return make_error_message("interaction-method", "illegal value");
+            (void) make_error_message("interaction-method", "illegal value");
 
         if (next_data_line(file))
         {
@@ -1046,10 +1046,14 @@ rcfile::write ()
         << "     # auto-save-options-on-exit support flag\n"
         ;
 
+    std::string lud = rc_ref().last_used_dir();
+    if (lud.empty())
+        lud = "\"\"";
+
     file << "\n"
         "[last-used-dir]\n\n"
         "# Last-used and currently-active directory:\n\n"
-        << rc_ref().last_used_dir() << "\n"
+        << lud << "\n"
         ;
 
     /*

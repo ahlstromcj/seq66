@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-01-12
+ * \updates       2020-07-07
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -38,6 +38,8 @@ const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
  * Global (free) string functions.
  */
 
+extern bool is_empty_string (const std::string & item);
+extern std::string empty_string ();
 extern std::string strip_comments (const std::string & item);
 extern std::string strip_quotes (const std::string & item);
 extern std::string add_quotes (const std::string & item);
@@ -91,9 +93,9 @@ extern bool parse_stanza_bits
     const std::string & mutestanza
 );
 
-#endif      // SEQ66_STRFUNCTIONS_HPP
-
 }           // namespace seq66
+
+#endif      // SEQ66_STRFUNCTIONS_HPP
 
 /*
  * strfunctions.hpp

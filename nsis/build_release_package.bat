@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-07-06
+:: \update      2020-07-07
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -22,22 +22,36 @@
 ::       2. Requires QtCreator to be installed, and configured to provide
 ::          the 32-bit Mingw tools, including mingw32-make.exe, and
 ::          qmake.exe.  The PATH must included the path to both executables.
-::          We have not tried using the Microsoft C++ compiler yet.
+::          See "Path Additions" below.  We have not tried
+::          using the Microsoft C++ compiler yet.
 ::       3. Requires 7-Zip to be installed and accessible from the DOS
 ::          command-line, as 7z.exe.
 ::
-:: Instructions:
+:: Path Additions:
+::
+::       1. C:\Qt\Qt5.12.9\5.12.9\mingw73_32\bin
+::       2. C:\Qt\Qt5.12.9\Tools\mingw73_32\bin
+::
+::      Depending on the versions some things will be different.
+::
+::       a. For earlier versions of Qt, might need to remove "Qt" from the
+::          "Qt5.12.9" subdirectories.
+::       b. Might also need to change the "73" version number in "mingw73_32".
+::       c. Can also change to 64-bit:  "mingw73_64".  In this case warnings or
+::          errors might be exposed in the Windows PortMidi C files.
+::
+:: Build Instructions:
 ::
 ::      Note that steps 5 through 9 can be performed on Linux with the
-::      "packages" script.
+::      "packages" script.  On my Windows build machine, the source is placed
+::      in C:\Users\chris\Documents\Home\seq66.
 ::
 ::       1. Before running this script, modify the environment variables below
 ::          in this batch file for your specific setup, including
 ::          PROJECT_VERSION, PROJECT_DRIVE, and PROJECT_BASE.
-::       2. Also edit seq66/nsis/Seq66Constants.nsh
-::          to specify the current date and Seq66 version number.
-::          The macros to modify are: VER_NUMBER (e.g. "0.95") and
-::          VER_REVISION (e.g. "1", as in "0.95.1").
+::       2. Also edit seq66/nsis/Seq66Constants.nsh to specify the current
+::          date and Seq66 version number.  The macros to modify are:
+::          VER_NUMBER (e.g. "0.95") and VER_REVISION (e.g. "1", as in "0.95.1").
 ::       3. a. In Windows Explorer, make sure there is no existing Qt Creator
 ::             build or shadow directory/configuration, especially a Debug
 ::             configuration.

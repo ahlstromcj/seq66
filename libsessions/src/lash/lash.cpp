@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-01
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  *  Not totally sure that the LASH support is completely finished, at this
@@ -85,10 +85,11 @@ static lash * s_global_lash_driver = nullptr;
  *      LASH driver was already created.
  */
 
+#if defined SEQ66_LASH_SUPPORT
+
 bool
 create_lash_driver (performer & p, int argc, char ** argv)
 {
-#if defined SEQ66_LASH_SUPPORT
     bool result = is_nullptr(s_global_lash_driver);
     if (result)
     {
@@ -102,10 +103,17 @@ create_lash_driver (performer & p, int argc, char ** argv)
         }
     }
     return result;
-#else
-    return false;
-#endif
 }
+
+#else
+
+bool
+create_lash_driver (performer & p, int, char **)
+{
+    return p.session_support(); // or just "false"
+}
+
+#endif
 
 /**
  *  Provides access to the lash object.
@@ -153,20 +161,27 @@ delete_lash_driver ()
  *      The command-line arguments.
  */
 
+#if defined SEQ66_LASH_SUPPORT
+
 lash::lash (performer & p, int argc, char ** argv) :
     m_perform           (p),
-#if defined SEQ66_LASH_SUPPORT
     m_client            (nullptr),
     m_lash_args         (nullptr),
     m_is_lash_supported (true)
-#else
-    m_is_lash_supported (false)
-#endif
 {
-#if defined SEQ66_LASH_SUPPORT
     m_lash_args = lash_extract_args(&argc, &argv);
-#endif
 }
+
+#else
+
+lash::lash (performer & p, int , char **) :
+    m_perform           (p),
+    m_is_lash_supported (false)
+{
+    // no LASH support
+}
+
+#endif
 
 #if defined SEQ66_LASH_SUPPORT
 
@@ -213,13 +228,23 @@ lash::init ()
  *      The ALSA client ID to be set.
  */
 
+#if defined SEQ66_LASH_SUPPORT
+
 void
 lash::set_alsa_client_id (int id)
 {
-#if defined SEQ66_LASH_SUPPORT
     lash_alsa_client_id(m_client, id);
-#endif
 }
+
+#else
+
+void
+lash::set_alsa_client_id (int)
+{
+    // No LASH support
+}
+
+#endif
 
 /**
  *  Process any LASH events every 250 msec, which is an arbitrarily chosen

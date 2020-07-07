@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2019-01-12
+ * \updates       2020-07-07
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -20,12 +20,41 @@
 #include "util/calculations.hpp"        /* seq66::string_to_int()           */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
+/**
+ *  A more readable way to depict the string "".
+ */
+
+#define SEQ66_DOUBLE_QUOTES     "\"\""
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+/**
+ *  Provides a way to work with a visible empty string (e.g. in a
+ *  configuration file).  This function returns true if the string really is
+ *  empty, or just contains two double quotes ("").
+ *
+ *  See the add_quotes() function and the SEQ66_DOUBLE_QUOTES macro.
+ */
+
+bool
+is_empty_string (const std::string & item)
+{
+    return item.empty() || item == SEQ66_DOUBLE_QUOTES;
+}
+
+/**
+ *  Returns "" as a string for external callers.
+ */
+
+std::string empty_string ()
+{
+    return std::string(SEQ66_DOUBLE_QUOTES);
+}
 
 /**
  *  Strips the comments from a string.  The algorithm moves to the "#"
@@ -132,7 +161,7 @@ add_quotes (const std::string & item)
     std::string result;
     if (item.empty())
     {
-        result = "\"\"";
+        result = SEQ66_DOUBLE_QUOTES;
     }
     else
     {

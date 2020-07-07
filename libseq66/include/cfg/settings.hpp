@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2019-03-14
+ * \updates       2019-07-07
  * \license       GNU GPLv2 or above
  *
  *  A couple of universal helper functions remain as inline functions in the
@@ -60,7 +60,7 @@ namespace seq66
 extern rcsettings & rc ();
 extern usrsettings & usr ();
 extern int choose_ppqn (int ppqn = SEQ66_USE_DEFAULT_PPQN);
-extern void set_defaults ();
+extern void set_configuration_defaults ();
 
 }           // namespace seq66
 

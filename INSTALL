@@ -277,7 +277,7 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
 
         Defines the SEQ66_LASH_SUPPORT macro, which is undefined by default.
         Use this if you still use LASH session management.  However this
-        support is still in progress.
+        support is still in progress for Seq66.
 
     --disable-jack
     

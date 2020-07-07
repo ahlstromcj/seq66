@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2019-04-10
+ * \updates       2019-07-07
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -81,7 +81,7 @@ usr ()
  */
 
 void
-set_defaults ()
+set_configuration_defaults ()
 {
     rc().set_defaults();
     usr().set_defaults();

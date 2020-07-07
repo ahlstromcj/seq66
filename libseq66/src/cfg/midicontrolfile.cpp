@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-06-30
+ * \updates       2020-07-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -355,7 +355,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
         {
             if (! next_data_line(file))
-                return make_error_message("midi-control-out", "no data");
+            {
+                (void) make_error_message("midi-control-out", "no data");
+                break;
+            }
 
             int a[5], b[5], c[5], d[5];
             int sequence = 0;

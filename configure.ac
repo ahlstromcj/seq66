@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-07-06
+dnl \update        2020-07-07
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -275,12 +275,12 @@ else
     AC_MSG_NOTICE([JACK disabled in the configuration.]);
 fi
 
-dnl LASH support has been added back!
+dnl LASH support has been added back!  However, it is disabled by default.
 
 AC_ARG_ENABLE(lash,
     [AS_HELP_STRING(--enable-lash, [Enable LASH support (deprecated)])],
     [lash=$enableval],
-    [lash=yes])
+    [lash=no])
 
 if test "$lash" != "no"; then
     PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0, lash_found="yes", lash_found="no")
@@ -487,7 +487,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-07-06"
+#define VERSION_DATE_SHORT "2020-07-07"
 #define VERSION "0.90.4"
 
 )
