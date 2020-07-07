@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-04-19
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -431,7 +431,7 @@ rcsettings::home_config_directory () const
         return result;
     }
     else
-        return m_full_config_directory;
+        return os_normalize_path(m_full_config_directory);
 }
 
 /**
@@ -535,8 +535,10 @@ rcsettings::config_filespec () const
 {
     std::string result = home_config_directory();
     if (! result.empty())
+    {
         result += config_filename();
-
+        result = os_normalize_path(result);     /* change to OS's slash     */
+    }
     return result;
 }
 
@@ -661,6 +663,8 @@ rcsettings::playlist_filespec () const
             result = listname;
         else
             result = home_config_directory() + listname;
+
+        result = os_normalize_path(result);
     }
     return result;
 }
@@ -680,6 +684,8 @@ rcsettings::notemap_filespec () const
             result = notemap_name;
         else
             result = home_config_directory() + notemap_name;
+
+        result = os_normalize_path(result);
     }
     return result;
 }
@@ -705,6 +711,8 @@ rcsettings::midi_control_filespec () const
             result = ctlfilename;
         else
             result = home_config_directory() + ctlfilename;
+
+        result = os_normalize_path(result);
     }
     return result;
 }
@@ -730,6 +738,8 @@ rcsettings::mute_group_filespec () const
             result = mutefilename;
         else
             result = home_config_directory() + mutefilename;
+
+        result = os_normalize_path(result);
     }
     return result;
 }
@@ -987,6 +997,16 @@ rcsettings::config_filename (const std::string & value)
 }
 
 /**
+ *
+ */
+
+const std::string &
+rcsettings::config_filename () const
+{
+    return m_config_filename;
+}
+
+/**
  * \setter m_playlist_filename ("playlist")
  *
  * \param value
@@ -1009,6 +1029,16 @@ rcsettings::playlist_filename (const std::string & value)
         if (m_playlist_filename.find(".") == std::string::npos)
             m_playlist_filename += ".playlist";
     }
+}
+
+/**
+ *
+ */
+
+const std::string &
+rcsettings::playlist_filename () const
+{
+    return m_playlist_filename;
 }
 
 /**

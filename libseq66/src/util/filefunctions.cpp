@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-06
+ * \updates       2020-07-07
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1130,7 +1130,7 @@ path_slash ()
 
 /**
  *  Makes sure that the path-name is a UNIX path, separated by forward slashes
- *  (the solidus), or a Windows path, separated by back slashes..
+ *  (the solidus), or a Windows path, separated by back slashes.
  *
  * \param path
  *      Provides the path, which should be a full path-name.
@@ -1173,6 +1173,22 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
         }
     }
     return result;
+}
+
+/**
+ *
+ */
+
+std::string
+os_normalize_path (const std::string & path)
+{
+#if defined SEQ66_PLATFORM_UNIX
+    bool to_unix = true;
+#else
+    bool to_unix = false;
+#endif
+
+    return normalize_path(path, to_unix);
 }
 
 /**

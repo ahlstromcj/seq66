@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-04-19
+ * \updates       2020-07-06
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -443,7 +443,6 @@ public:
     std::string playlist_filespec () const;
     void clear_playlist ();
     std::string notemap_filespec () const;
-
     virtual void set_defaults () override;
 
     const clockslist & clocks () const
@@ -789,20 +788,14 @@ public:
     bool has_home_config_path (const std::string & name);
     std::string trim_home_directory (const std::string & filepath);
 
-    const std::string & config_filename () const
-    {
-        return m_config_filename;
-    }
+    const std::string & config_filename () const;
 
     bool playlist_active () const
     {
         return m_playlist_active;
     }
 
-    const std::string & playlist_filename () const
-    {
-        return m_playlist_filename;
-    }
+    const std::string & playlist_filename () const;
 
     const std::string & notemap_filename () const
     {
