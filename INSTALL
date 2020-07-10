@@ -1,11 +1,11 @@
 INSTALL for Seq66 v. 0.90.4 and above
 Chris Ahlstrom
-2015-09-10 to 2020-07-06
+2015-09-10 to 2020-07-08
 
-Getting Seq66 requires building the code or going to the
-seq66-packages site on GitHub.  The bootstrap setup is primarily
-aimed at developers, but is easy to use with the instructions below.
-Different versions of the program can be built:
+Getting Seq66 requires building the code or going to the sequencer64-packages
+site on GitHub.  The bootstrap setup is primarily aimed at developers, but is
+easy to use with the instructions below.  Different versions of the program
+can be built:
 
     -   qseq66.  RtMidi version, with a Qt5 user-interface a la Kepler34.
         Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA; support
@@ -23,8 +23,10 @@ Different versions of the program can be built:
         console or as a daemon, controlled via MIDI and playlists.
 
     We provide a portable Windows Zip package and a Windows installer in
-    the "seq66-packages" project in GitHub.  It is also fairly easy to
-    build the Windows version using QtCreator/qmake.
+    the "sequencer64-packages" project in GitHub, in the seq66 subdirectory.
+    It is also fairly easy to build the Windows version using QtCreator/qmake.
+    See nsis/build_release_package.bat; it not only builds it using qmake and
+    mingw, but also describes how to create Windows packages.
 
 Below are sections for various ways of installing this project by building
 from source code:
@@ -244,7 +246,7 @@ Qmake-based Install:
     To create an installer package for Windows, see the instructions at the
     top of the "nsis/Seq66Setup.nsi" file. One can build the Seq66
     application in Windows, and then build the installer for it in Windows or
-    Linux!
+    Linux (makensis).
 
     The Qmake setup uses "PortMidi" by default, but an "RtMidi" version can be
     built as well:
@@ -386,6 +388,8 @@ DEPENDENCIES:
 
       -  libatk-adaptor (and its dependencies)
       -  libgail-common (and its dependencies)
+      -  Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to be
+         installed.  Not sure what is up with that.
 
    Build tools:
 

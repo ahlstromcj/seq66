@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-07
+ * \updates       2020-07-09
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -757,7 +757,7 @@ file_create_for_write (const std::string & filename)
 bool
 file_close (FILE * filehandle, const std::string & filename)
 {
-    bool result = not_nullptr_assert(filehandle, T_("file_close null handle"));
+    bool result = not_nullptr_assert(filehandle, T_("file_close() null handle"));
     if (result)
     {
         int rcode = fclose(filehandle);
@@ -765,8 +765,10 @@ file_close (FILE * filehandle, const std::string & filename)
     }
     else
     {
-//      if (! filename.empty())
-//          errprintex(filename, T_("File"));
+        /*
+         * if (! filename.empty())
+         *     errprintex(filename, T_("File"));
+         */
     }
     return result;
 }
@@ -834,6 +836,44 @@ file_copy
         }
         else
             warn_message(T_("filenames are equivalent"));
+    }
+    return result;
+}
+
+/**
+ *  Appends a character buffer to a file in the configuration directory.
+ *  Useful for dumping error information, such as under PortMidi in Windows.
+ *
+ * \param filename
+ *      Provides the full path to the file plus the file-name and
+ *      file-extension.  One way to create such a path is using the
+ *      rcsettings::config_filespec() function.
+ *
+ * \param data
+ *      Provides the string data to write, already formatted and ready to go.
+ *
+ * \return
+ *      Returns true if all steps in the process succeeded.
+ */
+
+bool
+file_append_log
+(
+    const std::string & filename,
+    const std::string & data
+)
+{
+    FILE * fp = file_open(filename, "a");           /* open for appending   */
+    bool result = not_nullptr(fp);
+    if (result)
+    {
+        size_t rc = fwrite(data.data(), sizeof(char), data.size(), fp);
+        if (rc < data.size())
+        {
+            errprintf("could not write to '%s'", filename.c_str());
+            result = false;
+        }
+        (void) fclose(fp);
     }
     return result;
 }

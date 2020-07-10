@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2020-03-16
+ * \updates       2020-07-09
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -180,6 +180,41 @@
 #else
 #define apiprint(name, tag)
 #endif
+
+#if ! defined __cplusplus
+
+/**
+ *    Provides reporting macros (which happens to match Chris's XPC message
+ *    functions.  For C++ code, these macros are defined in basic_macros.hpp.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
+
+#define errprint(x)             fprintf(stderr, "%s\n", x)
+#define errprintf(fmt, x)       fprintf(stderr, fmt, x)
+#define errprintfunc(x)         fprintf(stderr, "%s: %s\n", __func__, x)
+
+#define warnprint(x)            fprintf(stderr, "%s!\n", x)
+#define warnprintf(fmt, x)      fprintf(stderr, fmt, x)
+
+#define infoprint(x)            fprintf(stderr, "%s\n", x)
+#define infoprintf(fmt, x)      fprintf(stderr, fmt, x)
+
+#else
+
+#define errprint(x)
+#define errprintf(fmt, x)
+#define errprintfunc(x)
+
+#define warnprint(x)
+#define warnprintf(fmt, x)
+
+#define infoprint(x)
+#define infoprintf(fmt, x)
+
+#endif          // SEQ66_PLATFORM_DEBUG
+
+#endif          // ! C++
 
 #endif          // SEQ66_BASIC_MACROS_H
 

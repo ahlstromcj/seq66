@@ -27,7 +27,7 @@
  * \library     seq66 application
  * \author      Chris Ahlstrom
  * \date        2018-04-21
- * \updates     2018-04-24
+ * \updates     2020-07-09
  * \license     GNU GPLv2 or above
  *
  */
@@ -36,11 +36,24 @@
 
 #include "pminternal.h"
 
+/*
+ *  Without this #define, the InitializeCriticalSectionAndSpinCount() function
+ *  is undefined.  This version level means "Windows 2000 and higher".
+ */
+
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
+
 #if defined __cplusplus
 extern "C"
 {
 #endif
 
+extern void pm_log_buffer_alloc ();
+extern void pm_log_buffer_free ();
+extern void pm_log_buffer_append (const char * msg);
+extern const char * pm_log_buffer ();
 extern const char * midi_io_get_dev_caps_error
 (
     const char * devicename,

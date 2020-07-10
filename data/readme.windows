@@ -62,11 +62,13 @@ Inaccessible Devices:
     We still have some minor issues at start up and at exit, but are now able
     to play a tune on the wavetable synthesizer using the "-b 2" option.
 
-    When you first run qpseq66 on Windows, it will create two new configuration
+    When you first run qpseq66 on Windows, it will create four new configuration
     files:
 
         C:\Users\username\AppData\Local\seq66\qpseq66.rc
         C:\Users\username\AppData\Local\seq66\qpseq66.usr
+        C:\Users\username\AppData\Local\seq66\qpseq66.ctrl
+        C:\Users\username\AppData\Local\seq66\qpseq66.mutes
     
     Inaccessible devices are noted in the "[midi-clock]" section of
     "C:\Users\username\AppData\Local\seq66\qpseq66.rc" by a "-1" value.

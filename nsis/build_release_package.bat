@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-07-07
+:: \update      2020-07-08
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -62,8 +62,8 @@
 ::             as "seq66", change to it, and run
 ::             "..\seq66\nsis\build_release_package.bat".
 ::       4. The result is a file such as "qpseq66-release-package-0.95.1.7z".
-::          It is found in ../seq66/seq66-release/Seq66qt5.  Also, a
-::          log file is made in ../seq66/seq66-release/make.log,
+::          It is found in seq66/../seq66-release/Seq66qt5.  Also, a
+::          log file is made in seq66/../seq66-release/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
 ::          find these files, search for "seq66-release".
 ::       5. In Linux (have not tried NSIS in Windows yet), copy this 7z file

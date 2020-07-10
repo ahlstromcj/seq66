@@ -56,13 +56,11 @@
 
 #include <windows.h>
 
-/*
- * #include <tchar.h>
- */
-
 /**
  *  This macro is part of Microsoft's tchar.h, but we want to use it only as
  *  a marker for now.
+ *
+ *      #include <tchar.h>
  */
 
 #define _T(x)           ((char *)(x))

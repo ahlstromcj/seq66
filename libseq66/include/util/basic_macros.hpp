@@ -65,6 +65,8 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define not_nullptr_assert(ptr, context) (not_nullptr(ptr))
 #endif
 
+#if defined __cplusplus
+
 /**
  *  A macro to prepend a fully qualified function name to a string.
  *  Currently defined in the rtmidi library due to an weird inability
@@ -72,13 +74,12 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
  *  the mastermidibus() class!
  */
 
-#if defined __cplusplus
 #define func_message(x) seq66::message_concatenate(__func__, x ## .c_str())
-#endif
 
 /**
  *    Provides reporting macros (which happens to match Chris's XPC message
- *    functions.
+ *    functions.  For C code, these macros are defined in basic_macros.h
+ *    instead.
  */
 
 #define errprint(x)         (void) seq66::error_message(x)
@@ -95,6 +96,8 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define errprintf(fmt, x)   msgprintf(seq66::msg_level::error, fmt, x)
 #define warnprintf(fmt, x)  msgprintf(seq66::msg_level::warn, fmt, x)
 #define infoprintf(fmt, x)  msgprintf(seq66::msg_level::info, fmt, x)
+
+#endif  // C++
 
 /**
  *  Usage:      errprintfunc(cstring);

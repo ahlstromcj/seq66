@@ -323,11 +323,12 @@ smanager::open_midi_file (const std::string & fname, std::string & errmsg)
 bool
 smanager::create_session ()
 {
-#if defined SEQ66_PLATFORM_LINUX && defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
+#if defined SEQ66_LASH_SUPPORT
     if (rc().lash_support())
         create_lash_driver(p, argc, argv);
     else
 #endif
+
     session_setup();             /* daemonize: set basic signal handlers */
     return true;
 }

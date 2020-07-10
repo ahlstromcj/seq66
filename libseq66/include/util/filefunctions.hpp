@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-07
+ * \updates       2020-07-09
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -46,6 +46,11 @@ extern bool file_copy
 (
     const std::string & file,
     const std::string & newfile
+);
+extern bool file_append_log
+(
+    const std::string & filename,
+    const std::string & data
 );
 extern bool name_has_directory (const std::string & filename);
 extern bool make_directory (const std::string & pathname);

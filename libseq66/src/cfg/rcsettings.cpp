@@ -581,10 +581,10 @@ rcsettings::trim_home_directory (const std::string & filepath)
  *
  * \param altname
  *      Provides the base-name of the alternate file, including the extension.
- *      Example:  "erroneous.rc".
+ *      Examples are "erroneous.rc" or "mydumpfile.log".
  *
  * \return
- *      If home_config_directory() returns a non-empty string, alternate
+ *      If home_config_directory() returns a non-empty string, the alternate
  *      normal "rc" configuration file-name is appended to that result, and
  *      returned.  Otherwise, an empty string is returned.
  */

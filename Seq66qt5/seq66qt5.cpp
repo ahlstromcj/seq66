@@ -42,7 +42,9 @@
 #endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-#include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message() */
+#include "portmidi.h"                   /* Pm_error_present(), ...          */
+#include "pmerrmm.h"                    /* pm_log_buffer()           */
+#include "util/filefunctions.hpp"       /* seq66::file_append_log()         */
 #endif
 
 /**
@@ -109,28 +111,25 @@ main (int argc, char * argv [])
         std::string errmsg;
         if (sm.portmidi_error_check(errmsg))
         {
-            /*
-             * TODO???
-             *
-             * seq66_window->show_message_box(errmsg);
-             */
-
             sm.show_message(errmsg);
             result = false;
+#if defined SEQ66_PLATFORM_WINDOWS
+            const char * pmerrmsg = pm_log_buffer();
+            if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
+            {
+                std::string path = seq66::rc().config_filespec("portmidi.log");
+                errmsg += "\n\n";
+                errmsg += std::string(pmerrmsg);
+                (void) seq66::file_append_log(path, errmsg);
+            }
+#endif
         }
     }
-#endif  // SEQ66_PORTMIDI_SUPPORT
 
+#endif  // SEQ66_PORTMIDI_SUPPORT
 
     if (result)
     {
-
-#if defined SEQ66_LASH_SUPPORT_MOVE_TO_LASHMANAGER
-        if (seq66::rc().lash_support())
-            seq66::create_lash_driver(p, argc, argv);
-        else
-#endif
-
         result = sm.create_session();
         if (result)
         {
