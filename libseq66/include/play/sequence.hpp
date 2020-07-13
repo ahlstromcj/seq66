@@ -307,7 +307,7 @@ private:
     midibyte m_bus;
 
     /**
-     *  Provides a flag for the song playback mode muting.
+     *  Provides a flag for pattern playback song muting.
      */
 
     bool m_song_mute;

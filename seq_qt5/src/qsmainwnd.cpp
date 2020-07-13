@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-06
+ * \updates       2020-07-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -862,9 +862,9 @@ qsmainwnd::song_recording (bool record)
  */
 
 void
-qsmainwnd::set_song_mode (bool song_mode)
+qsmainwnd::set_song_mode (bool songmode)
 {
-    if (song_mode)
+    if (songmode)
     {
         ui->btnRecord->setEnabled(true);
         if (! usr().use_more_icons())
@@ -878,21 +878,7 @@ qsmainwnd::set_song_mode (bool song_mode)
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Live");
     }
-    perf().song_mode(song_mode);    /* playback & song_start */
-}
-
-/**
- *  Toggles the song mode.  Note that calling this function will trigger the
- *  button signal callback, set_song_mode().  It only operates if the patterns
- *  are not playing.  This function must be in the cpp module, where the
- *  button header file is included.
- */
-
-void
-qsmainwnd::toggle_song_mode ()
-{
-    if (! perf().is_pattern_playing())
-        ui->btnSongPlay->setEnabled(perf().toggle_song_mode());
+    perf().song_mode(songmode);         /* playback & song_start */
 }
 
 /**
@@ -1190,6 +1176,14 @@ qsmainwnd::refresh ()
     ui->entry_active_set->setText(b.c_str());
     if (ui->button_keep_queue->isChecked() != perf().is_keep_queue())
         ui->button_keep_queue->setChecked(perf().is_keep_queue());
+
+#if USE_THIS_EXPERIMENTAL_CODE
+    if (ui->btnSongPlay->isChecked() != perf().is_song())
+    {
+        set_song_mode(perf().is_song());
+        ui->btnSongPlay->setChecked(perf().is_song());
+    }
+#endif
 
     if (perf().is_pattern_playing())
     {

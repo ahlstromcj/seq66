@@ -79,8 +79,8 @@ EOF
 			AC_MSG_ERROR([Unable to get Win32 lib dir from environment.])
 			AC_MSG_ERROR([use --with-winlib=DIR to set it manually])
 		fi
-		CC="cl -nologo -GX -D__WIN32__ -D_MT -D_WIN32_WINNT=0x0400 -I$win32inc"
-		CXX="cl -nologo -GX -D__WIN32__ -D_MT -D_WIN32_WINNT=0x0400 -I$win32inc"
+		CC="cl -nologo -GX -D__WIN32__ -D_MT -D_WIN32_WINNT=0x0500 -I$win32inc"
+		CXX="cl -nologo -GX -D__WIN32__ -D_MT -D_WIN32_WINNT=0x0500 -I$win32inc"
 		LD="link /libpath:$win32lib"
 		AS=masm
 	fi

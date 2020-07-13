@@ -1,0 +1,201 @@
+A Summary of Win32 Multimedia Functions, Structures, and the MIDI Mapper
+Chris Ahlstrom
+2020-07-05 to 2020-07-11
+
+MMRESULT midiOutOpen
+(
+    LPHMIDIOUT phmo,
+    UINT       uDeviceID,
+    DWORD_PTR  dwCallback,
+    DWORD_PTR  dwInstance,
+    DWORD      fdwOpen
+)
+
+    phmo:       Pointer to an HMIDIOUT handle. This location is filled with a
+                handle identifying the opened MIDI output device.
+
+    uDeviceID:  Identifier of the MIDI output device that is to be opened.
+                This value ranges from 0 on up to the number of devices minus
+                1.  MIDIMAPPER is a -1 value, but is a legal device
+                identifier.
+
+    dwCallback: Pointer to a callback, event handle, thread identifier, or a
+                handle of a window or thread called during MIDI playback to
+                process messages related to the progress of the playback. If
+                no callback is desired, specify NULL.  See the prototype for
+                MidiOutProc() below.
+
+    dwInstance: User instance data passed to the callback. This parameter is
+                not used with window callbacks or threads.
+
+    fdwOpen:    Callback flag for opening the device.  See below.
+
+Return values:
+
+    MMSYSERR_NOERROR        Successful.  Same as PortMidi pmNoError enum
+                            value.
+    MIDIERR_NODEVICE        No MIDI port found. Occurs only when the mapper
+                            is opened.
+    MMSYSERR_ALLOCATED      The specified resource is already allocated.
+    MMSYSERR_BADDEVICEID    The specified device identifier is out of range.
+    MMSYSERR_INVALPARAM     The specified pointer or structure is invalid.
+    MMSYSERR_NOMEM          The system is unable to allocate or lock memory.
+
+If a function is chosen to receive callback information, the following messages
+are sent to the function to indicate the progress of MIDI output: MOM_OPEN,
+MOM_CLOSE, and MOM_DONE.
+
+MMRESULT midiInOpen
+(
+    LPHMIDIIN  phmi,
+    UINT       uDeviceID,
+    DWORD_PTR  dwCallback,
+    DWORD_PTR  dwInstance,
+    DWORD      fdwOpen
+)
+
+    The parameters are similar to midiOutOpen().  The callback flags are the
+    same, plus the following:
+
+    MIDI_IO_STATUS      When this parameter also specifies CALLBACK_FUNCTION,
+                        MIM_MOREDATA messages are sent to the callback
+                        function as well as MIM_DATA messages. Or, if this
+                        parameter also specifies CALLBACK_WINDOW,
+                        MM_MIM_MOREDATA messages are sent to the window as
+                        well as MM_MIM_DATA messages. This flag does not
+                        affect event or thread callbacks.
+
+    The return values are the same, with the following addition:
+
+    MMSYSERR_INVALFLAG  The flags specified by dwFlags are invalid.
+
+    If a function is chosen to receive callback information, the following
+    messages are sent to the function to indicate the progress of MIDI input:
+    MIM_OPEN, MIM_CLOSE, MIM_DATA, MIM_LONGDATA, MIM_ERROR, MIM_LONGERROR, and
+    MIM_MOREDATA.
+
+Callback functions:
+
+    void CALLBACK MidiOutProc       // Do not call multimedia functions here!
+    (
+        HMIDIOUT  hmo,              // Handle to the MIDI device.
+        UINT      wMsg,             // MIDI output message code (MOM_xxx above).
+        DWORD_PTR dwInstance,       // Pointer to the instance data.
+        DWORD_PTR dwParam1,         // A message parameter.
+        DWORD_PTR dwParam2          // A message parameter.
+    )
+
+    void CALLBACK MidiInProc       // Do not call multimedia functions here!
+    (
+        HMIDIOUT  hmo,              // Handle to the MIDI device.
+        UINT      wMsg,             // MIDI output message code (MOM_xxx above).
+        DWORD_PTR dwInstance,       // Pointer to the instance data.
+        DWORD_PTR dwParam1,         // A message parameter.
+        DWORD_PTR dwParam2          // A message parameter.
+    )
+
+Callback flags:
+
+    CALLBACK_EVENT      The dwCallback parameter is an event handle. This
+                        callback mechanism is for output only.
+    CALLBACK_FUNCTION   The dwCallback parameter is a callback function address.
+    CALLBACK_NULL       There is no callback mechanism. The default setting.
+    CALLBACK_THREAD     The dwCallback parameter is a thread identifier.
+    CALLBACK_WINDOW     The dwCallback parameter is a window handle.
+
+Enumeration functions:
+
+    MMRESULT midiOutGetDevCaps
+    (
+        UINT          uDeviceID,    // MIDIMAPPER or 0, 1, ....
+        LPMIDIOUTCAPS pmoc,         // Pointer to a capabilities structure.
+        UINT          cbmoc         // The size of the structure, can be 0.
+    )
+
+    MMRESULT midiOutGetDevCaps
+    (
+        UINT          uDeviceID,    // MIDIMAPPER or 0, 1, ....
+        LPMIDIOUTCAPS pmoc,         // Pointer to a capabilities structure.
+        UINT          cbmoc         // The size of the structure, can be 0.
+    )
+
+    Note that uDeviceID can also be a properly-cast device handle!
+
+    UINT midiOutGetNumDevs ()
+    MMRESULT midiOutClose (HMIDIOUT hmo)
+    UINT midiInGetNumDevs ()
+    MMRESULT midiInClose (HMIDIOUT hmi)
+
+Additional return codes:
+
+    MIDIERR_STILLPLAYING    Buffers are still in the queue.
+    MMSYSERR_INVALHANDLE    The specified device handle is invalid.
+
+MIDI Mapper:
+
+    Channel Map: A channel map redirects channel messages (e.g. Note On) to a
+    destination channel on a destination output device, with an optional patch
+    map to modify the message. MIDI system messages are sent to all MIDI
+    output devices listed in a channel map.
+
+    Patch Map:  A patch map affects Program Change and Volume Controller
+    messages.  It provides a destination program-change value, a volume
+    scaler, and an optional Key Map (not discussed here).
+
+    There are 16 entries in the Channel Map, each pointing to a line in a
+    Patch Map (up to 16 total Patch Maps), and each cell points to a Key Map,
+    one possible for every entry of every patch map.
+
+    Based on the Microsoft documentation, it would seem that the MIDI Mapper
+    is an output device.  That is, a sequencer will send MIDI to it in order
+    to do playback.
+
+    Coolsoft notes follow.  Windows XP came bundled with MIDIMapper (device
+    0) and the Microsoft GS Wavetable Synth (MGWS, device 1), so by default we
+    have MIDI Out to 0 --> MIDIMapper --> MWGS --> audio.
+
+    Virtual MIDI Synth disables MIDI Mapper settings on Win 8 (Win 10?)
+
+	The instructions on the VirtualMidiSynth website [http://coolsoft.altervista.org/en/virtualmidisynth/faq#faq12], specifically under the Default MIDI output device configurationssection explain how to re-enable the default MIDI synth.
+
+	Folders to delete:
+
+		C:/Windows/System32/VirtualMIDISynth
+		C:/Windows/SysWOW64/VirtualMIDISynt (only on 64bit systems)
+
+	Registry keys to delete:
+
+		HKEY_LOCAL_MACHINE/SOFTWARE/CoolSoft VirtualMIDISynth
+		HKEY_LOCAL_MACHINE/SOFTWARE/Wow6432Node/CoolSoft VirtualMIDISynth
+			 (only on 64bit systems)
+
+	Registry keys to edit:
+
+        These keys contain the registered multimedia drivers on the system. To
+        reset the registry to default state, set all midi* subkeys (midi, midi1,
+        midi2, ..., midi9) values to wdmaud.drv.
+
+	HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows NT/CurrentVersion/Drivers32
+	HKEY_LOCAL_MACHINE/SOFTWARE/Wow6432Node/Microsoft/Windows NT/CurrentVersion/Drivers32 (only on 64bit systems)
+
+	Default MIDI output device configurations:
+
+        The following keys contains the default MIDI device configured for
+        MidiMapper (up to Windows 7 included) and Windows Media Player. NOTE:
+        if WMP keys are missing they will be recreated at next Windows Media
+        Player configuration change / close / reopen.
+
+    HKEY_CURRENT_USER/Software/Microsoft/Windows/CurrentVersion/Multimedia/MIDIMap
+    --> szPname = Microsoft GS Wavetable Synth (up to Windows 7 included)
+
+    HKEY_CURRENT_USER/Software/Microsoft/ActiveMovie/devenum{4EFE2452-168A-11D1-BC76-00C04FB9453B}/Default
+    MidiOut Device --> MidiOutId = FFFFFFFF
+
+    HKEY_CURRENT_USER/Software/Microsoft/ActiveMovie/devenum
+    64-bit{4EFE2452-168A-11D1-BC76-00C04FB9453B}/Default MidiOut Device -->
+    MidiOutId = FFFFFFFF (only on 64bit systems)
+
+    See the script in contrib/scripts/windows/VMS_fixes.reg.
+
+# vim: sw=4 ts=4 wm=4 et ft=sh
+

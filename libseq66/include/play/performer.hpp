@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-06-30
+ * \updates       2020-07-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -1380,10 +1380,10 @@ public:
 #endif
     }
 
-    bool get_toggle_jack () const
+    bool get_jack_mode () const
     {
 #if defined SEQ66_JACK_SUPPORT
-        return m_jack_asst.get_jack_mode();          // m_toggle_jack;
+        return m_jack_asst.get_jack_mode();
 #else
         return false;
 #endif
@@ -1494,12 +1494,26 @@ public:
         m_playback_mode = playbackmode;
     }
 
-    sequence::playback toggle_song_start_mode ()
-    {
-        m_song_start_mode = m_song_start_mode == sequence::playback::live ?
-            sequence::playback::song : sequence::playback::live;
+    sequence::playback toggle_song_start_mode ();
 
-        return m_song_start_mode;
+    bool is_song_mode () const
+    {
+        return m_song_start_mode == sequence::playback::song;
+    }
+
+    bool is_song_mode (sequence::playback p) const
+    {
+        return p == sequence::playback::song;
+    }
+
+    bool is_live_mode () const
+    {
+        return m_song_start_mode == sequence::playback::live;
+    }
+
+    bool is_live_mode (sequence::playback p) const
+    {
+        return p == sequence::playback::live;
     }
 
     void song_start_mode (sequence::playback p)
@@ -1614,7 +1628,7 @@ public:
     bool finish ();
     bool activate ();
     bool new_sequence (seq::number seq = seq::unassigned());
-    bool remove_sequence (seq::number seq);     /* seqmenu & mainwid    */
+    bool remove_sequence (seq::number seq);
     bool copy_sequence (seq::number seq);
     bool cut_sequence (seq::number seq);
     bool paste_sequence (seq::number seq);
@@ -2626,12 +2640,7 @@ public:         // GUI-support functions
         return mapper().seq_in_playscreen(seq);
     }
 
-    void song_recording (bool f)
-    {
-        m_song_recording = f;
-        if (! f)
-            song_recording_stop();
-    }
+    void song_recording (bool f);
 
     void song_record_snap (bool f)
     {

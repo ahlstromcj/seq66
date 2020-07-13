@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2018-05-13
- * \updates     2019-04-11
+ * \updates     2020-07-12
  * \license     GNU GPLv2 or above
 
  *  This file needs to implement:
@@ -72,9 +72,14 @@ pm_init (void)
      * atexit(pm_exit);
      */
 
-    pm_initialized = TRUE;
-    if (! err)
+    if (err != pmNoError)
     {
+        Pm_set_initialized(FALSE);
+    }
+    else
+    {
+        Pm_set_initialized(TRUE);
+
 #if defined SEQ66_PORTMIDI_USE_JAVA_PREFS
         pm_default_input_device_id = find_default_device
         (

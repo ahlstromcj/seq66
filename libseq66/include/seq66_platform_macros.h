@@ -11,7 +11,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-04
+ * \updates       2020-07-11
  * \license       GNU GPLv2 or above
  *
  *  Copyright (C) 2013-2019 Chris Ahlstrom <ahlstromcj@gmail.com>
@@ -279,6 +279,20 @@
 #define SEQ66_PLATFORM_MINGW
 #define SEQ66_PLATFORM_WINDOWS
 #endif
+
+#if defined SEQ66_PLATFORM_WINDOWS
+
+/*
+ *  Without this #define, the InitializeCriticalSectionAndSpinCount() function
+ *  is undefined.  This version level means "Windows 2000 and higher".
+ *  For Windows 10, the value would be 0x0A00.
+ */
+
+#if ! defined _WIN32_WINNT
+#define _WIN32_WINNT        0x0500
+#endif
+
+#endif  // defined SEQ66_PLATFORM_WINDOWS
 
 #if defined __CYGWIN32__
 #define SEQ66_PLATFORM_CYGWIN

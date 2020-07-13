@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2019-07-21 (removed experimental commented-out code)
+ * \updates     2020-07-12
  * \license     GNU GPLv2 or above
  *
  * Written by:
@@ -39,12 +39,12 @@
 #include <alsa/asoundlib.h>
 
 #include "seq66_platform_macros.h"      /* UNUSED() parameter macro         */
-#include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
-#include "portmidi.h"
-#include "pmutil.h"
-#include "pmlinuxalsa.h"
-#include "porttime.h"
 #include "pmlinux.h"
+#include "pmlinuxalsa.h"
+#include "pmutil.h"
+#include "portmidi.h"
+#include "porttime.h"
+#include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
 
 /*
  *  I used many print statements to debug this code. I left them in the
@@ -157,14 +157,14 @@ alsa_use_queue (void)
         s_queue = snd_seq_alloc_queue(s_seq);
         if (s_queue < 0)
         {
-            pm_hosterror = s_queue;
+            Pm_set_hosterror(s_queue);
             return pmHostError;
         }
         snd_seq_queue_tempo_alloca(&tempo);
         snd_seq_queue_tempo_set_tempo(tempo, Pt_Get_Tempo_Microseconds());
         snd_seq_queue_tempo_set_ppq(tempo, Pt_Get_Ppqn());
-        pm_hosterror = snd_seq_set_queue_tempo(s_seq, s_queue, tempo);
-        if (pm_hosterror < 0)
+        Pm_set_hosterror(snd_seq_set_queue_tempo(s_seq, s_queue, tempo));
+        if (Pm_hosterror() < 0)
             return pmHostError;
 
         snd_seq_start_queue(s_seq, s_queue, NULL);
@@ -302,10 +302,13 @@ alsa_out_open (PmInternal * midi, void * UNUSED(driverinfo))
  free_desc:
 
     pm_free(desc);
-    pm_hosterror = err;
+    Pm_set_hosterror(err);
     if (err < 0)
     {
-        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN, err);
+        get_alsa_error_text
+        (
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, err
+        );
     }
     return pmHostError;
 }
@@ -404,14 +407,15 @@ alsa_out_close (PmInternal * midi)
     if (! desc)
         return pmBadPtr;
 
-    pm_hosterror =
-        snd_seq_disconnect_to(s_seq, desc->this_port, desc->client, desc->port);
-
-    if (pm_hosterror)
+    Pm_set_hosterror
+    (
+        snd_seq_disconnect_to(s_seq, desc->this_port, desc->client, desc->port)
+    );
+    if (Pm_hosterror() != pmNoError)
     {
         /*
          * If there's an error, try to delete the port anyway, but don't
-         * change the pm_hosterror value so we retain the first error
+         * change the Pm_hosterror() value so we retain the first error.
          */
 
         snd_seq_delete_port(s_seq, desc->this_port);
@@ -419,10 +423,10 @@ alsa_out_close (PmInternal * midi)
     else
     {
         /*
-         * If there's no error, delete the port and retain any error
+         * If there's no error, delete the port and retain any error.
          */
 
-        pm_hosterror = snd_seq_delete_port(s_seq, desc->this_port);
+        Pm_set_hosterror(snd_seq_delete_port(s_seq, desc->this_port));
     }
     if (midi->latency > 0)
         alsa_unuse_queue();
@@ -430,11 +434,11 @@ alsa_out_close (PmInternal * midi)
     snd_midi_event_free(desc->parser);
     midi->descriptor = nullptr;    /* destroy pointer to signify "closed" */
     pm_free(desc);
-    if (pm_hosterror)
+    if (Pm_hosterror() != pmNoError)
     {
         get_alsa_error_text
         (
-            pm_hosterror_text, PM_HOST_ERROR_MSG_LEN, pm_hosterror
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, Pm_hosterror()
         );
         return pmHostError;
     }
@@ -531,10 +535,13 @@ alsa_in_open (PmInternal * midi, void * UNUSED(driverinfo))
  free_desc:
 
     pm_free(desc);
-    pm_hosterror = err;
+    Pm_set_hosterror(err);
     if (err < 0)
     {
-        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN, err);
+        get_alsa_error_text
+        (
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, err
+        );
     }
     return pmHostError;
 }
@@ -550,44 +557,52 @@ alsa_in_close (PmInternal * midi)
     if (! desc)
         return pmBadPtr;
 
-    pm_hosterror = snd_seq_disconnect_from
+    Pm_set_hosterror
     (
-        s_seq, desc->this_port, desc->client, desc->port
+        snd_seq_disconnect_from
+        (
+            s_seq, desc->this_port, desc->client, desc->port
+        )
     );
-    if (pm_hosterror)
+    if (Pm_hosterror() != pmNoError)
     {
         snd_seq_delete_port(s_seq, desc->this_port);    /* try to close port */
     }
     else
     {
-        pm_hosterror = snd_seq_delete_port(s_seq, desc->this_port);
+        Pm_set_hosterror(snd_seq_delete_port(s_seq, desc->this_port));
     }
     alsa_unuse_queue();
     pm_free(desc);
-    if (pm_hosterror)
+    if (Pm_hosterror() != pmNoError)
     {
-        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN,
-            pm_hosterror);
-
+        get_alsa_error_text
+        (
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, Pm_hosterror()
+        );
         return pmHostError;
     }
     return pmNoError;
 }
 
 /**
- * \note
- *      ALSA documentation is vague. This is supposed to remove any pending
- *      output messages. If you can test and confirm this code is correct,
- *      please update this comment.  Unfortunately, I can't even compile it --
- *      my ALSA version does not implement snd_seq_remove_events_t, so this
- *      does not compile. I'll try again, but it looks like I'll need to
- *      upgrade my entire Linux OS. -- RBD
+ *  ALSA documentation is vague. This is supposed to remove any pending output
+ *  messages. If you can test and confirm this code is correct, please update
+ *  this comment.  Unfortunately, I can't even compile it -- my ALSA version does
+ *  not implement snd_seq_remove_events_t, so this does not compile. I'll try
+ *  again, but it looks like I'll need to upgrade my entire Linux OS. -- RBD
+ *
+ *  This is still true for Debian Sid in 2020!  The snd_seq_remove_events_t
+ *  "structure" yields the following error:
+ *
+ *      error: storage size of ‘info’ isn’t known: snd_seq_remove_events_t info;
  */
 
+#if defined SND_SEQ_REMOVE_EVENTS_SUPPORTED
+
 static PmError
-alsa_abort (PmInternal * UNUSED(midi))
+alsa_abort (PmInternal * midi)
 {
-    /*
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
     snd_seq_remove_events_t info;
     snd_seq_addr_t addr;
@@ -595,21 +610,28 @@ alsa_abort (PmInternal * UNUSED(midi))
     addr.port = desc->port;
     snd_seq_remove_events_set_dest(&info, &addr);
     snd_seq_remove_events_set_condition(&info, SND_SEQ_REMOVE_DEST);
-    pm_hosterror = snd_seq_remove_events(s_seq, &info);
-    if (pm_hosterror)
+    Pm_hosterror(snd_seq_remove_events(s_seq, &info));
+    if (Pm_hosterror() != pmNoError)
     {
-        get_alsa_error_text(pm_hosterror_text, PM_HOST_ERROR_MSG_LEN, pm_hosterror);
+        get_alsa_error_text
+        (
+            Pm_hosterror_text_mutable(), PM_HOST_ERROR_MSG_LEN, Pm_hosterror()
+        );
         return pmHostError;
     }
-    */
+    return pmNoError;
+}
 
+#else
+
+static PmError
+alsa_abort (PmInternal * UNUSED(midi))
+{
     printf("WARNING: alsa_abort() not implemented.\n");
     return pmNoError;
 }
 
-/*
- * Removed the #if defined GARBAGE code here.
- */
+#endif
 
 /**
  *
@@ -719,6 +741,7 @@ handle_event (snd_seq_event_t * ev)
     switch (ev->type)
     {
     case SND_SEQ_EVENT_NOTEON:
+
         pm_ev.message = Pm_Message(0x90 | ev->data.note.channel,
             ev->data.note.note & 0x7f, ev->data.note.velocity & 0x7f);
 
@@ -726,6 +749,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_NOTEOFF:
+
         pm_ev.message = Pm_Message(0x80 | ev->data.note.channel,
             ev->data.note.note & 0x7f, ev->data.note.velocity & 0x7f);
 
@@ -733,6 +757,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_KEYPRESS:
+
         pm_ev.message = Pm_Message(0xa0 | ev->data.note.channel,
             ev->data.note.note & 0x7f, ev->data.note.velocity & 0x7f);
 
@@ -740,6 +765,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_CONTROLLER:
+
         pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
             ev->data.control.param & 0x7f, ev->data.control.value & 0x7f);
 
@@ -747,6 +773,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_PGMCHANGE:
+
         pm_ev.message = Pm_Message(0xc0 | ev->data.note.channel,
             ev->data.control.value & 0x7f, 0);
 
@@ -754,6 +781,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_CHANPRESS:
+
         pm_ev.message = Pm_Message(0xd0 | ev->data.note.channel,
             ev->data.control.value & 0x7f, 0);
 
@@ -761,6 +789,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_PITCHBEND:
+
         pm_ev.message = Pm_Message(0xe0 | ev->data.note.channel,
             (ev->data.control.value + 0x2000) & 0x7f,
             ((ev->data.control.value + 0x2000) >> 7) & 0x7f);
@@ -769,6 +798,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_CONTROL14:
+
         if (ev->data.control.param < 0x20)
         {
             pm_ev.message = Pm_Message(0xb0 | ev->data.note.channel,
@@ -790,6 +820,7 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_SONGPOS:
+
         pm_ev.message = Pm_Message(0xf2,
             ev->data.control.value & 0x7f, (ev->data.control.value >> 7) & 0x7f);
 
@@ -797,46 +828,55 @@ handle_event (snd_seq_event_t * ev)
         break;
 
     case SND_SEQ_EVENT_SONGSEL:
+
         pm_ev.message = Pm_Message(0xf3, ev->data.control.value & 0x7f, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_QFRAME:
+
         pm_ev.message = Pm_Message(0xf1, ev->data.control.value & 0x7f, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_START:
+
         pm_ev.message = Pm_Message(0xfa, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_CONTINUE:
+
         pm_ev.message = Pm_Message(0xfb, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_STOP:
+
         pm_ev.message = Pm_Message(0xfc, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_CLOCK:
+
         pm_ev.message = Pm_Message(0xf8, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_TUNE_REQUEST:
+
         pm_ev.message = Pm_Message(0xf6, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_RESET:
+
         pm_ev.message = Pm_Message(0xff, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
 
     case SND_SEQ_EVENT_SENSING:
+
         pm_ev.message = Pm_Message(0xfe, 0, 0);
         pm_read_short(midi, &pm_ev);
         break;
@@ -963,7 +1003,7 @@ static void
 alsa_get_host_error (struct pm_internal_struct * midi, char * msg, unsigned len)
 {
     alsa_descriptor_type desc = (alsa_descriptor_type) midi->descriptor;
-    int err = (pm_hosterror || desc->error);
+    int err = ((Pm_hosterror() != pmNoError) || desc->error);
     get_alsa_error_text(msg, len, err);
 }
 
@@ -1042,6 +1082,7 @@ pm_linuxalsa_init (void)
     snd_seq_port_info_t * pinfo;
     unsigned caps;
     int err = snd_seq_open(&s_seq, "default", SND_SEQ_OPEN_DUPLEX, 0);
+    pm_log_buffer_alloc();               /* see portmidi.c & .h         */
     if (err < 0)
         return err;
 
@@ -1122,6 +1163,7 @@ pm_linuxalsa_term (void)
         pm_descriptor_index = 0;
         pm_descriptor_max = 0;
     }
+    pm_log_buffer_free();
 }
 
 /*

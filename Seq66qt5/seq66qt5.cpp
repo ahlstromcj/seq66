@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-07-05
+ * \updates       2020-07-12
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -43,7 +43,6 @@
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 #include "portmidi.h"                   /* Pm_error_present(), ...          */
-#include "pmerrmm.h"                    /* pm_log_buffer()           */
 #include "util/filefunctions.hpp"       /* seq66::file_append_log()         */
 #endif
 
@@ -103,27 +102,30 @@ main (int argc, char * argv [])
      * We check for any "fatal" PortMidi errors, so we can display them.  But
      * we still want to keep going, in order to at least generate the
      * log-files and "erroneous" configuration files to
-     * C:/Users/me/AppData/Local/seq66 or ~/.config/seq66.
+     * C:/Users/me/AppData/Local/seq66 or $HOME/.config/seq66.
      */
 
+    std::string errmsg;
     if (result)
     {
-        std::string errmsg;
         if (sm.portmidi_error_check(errmsg))
         {
             sm.show_message(errmsg);
-            result = false;
-#if defined SEQ66_PLATFORM_WINDOWS
-            const char * pmerrmsg = pm_log_buffer();
-            if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
-            {
-                std::string path = seq66::rc().config_filespec("portmidi.log");
-                errmsg += "\n\n";
-                errmsg += std::string(pmerrmsg);
-                (void) seq66::file_append_log(path, errmsg);
-            }
-#endif
+
+            /*
+             *
+             * result = false;
+             */
         }
+    }
+
+    const char * pmerrmsg = pm_log_buffer();
+    if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
+    {
+        std::string path = seq66::rc().config_filespec("portmidi.log");
+        errmsg += "\n";
+        errmsg += std::string(pmerrmsg);
+        (void) seq66::file_append_log(path, errmsg);
     }
 
 #endif  // SEQ66_PORTMIDI_SUPPORT
@@ -142,8 +144,12 @@ main (int argc, char * argv [])
     else
         result = sm.close_session(false);
 
-    if (! result)
-        sm.show_message("Error in session; see erroneous.* files");
+    /*
+     * Currently just re-shows the logged error message from portmidi.
+     *
+     *  if (! result)
+     *      sm.show_message("Error in session; see erroneous.* files");
+     */
 
     return exit_status;
 }

@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2019-04-11
+ * \updates     2020-07-12
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -71,12 +71,9 @@
  *    undefined.  Actually, for Seq66, the output can be re-routed to
  *    a log-file for trouble-shooting.
  *
- *    PM_CHECK_ERRORS more-or-less takes over error checking for return values,
- *    stopping your program and printing error messages when an error occurs.
- *    This also uses stdio for console text I/O.  For Seq66, we want to
- *    see these errors, all the time, and they can be redirected to a log file
- *    via the "-o log=filename.log" or "--option log=filename.log"
- *    command-line options.
+ *    For Seq66, we want to see these errors, all the time, and they can be
+ *    redirected to a log file via the "-o log=filename.log" or "--option
+ *    log=filename.log" command-line options.
  */
 
 #include <string.h>                     /* C::strcasestr() GNU function.    */
@@ -92,24 +89,13 @@
 
 #endif
 
-#include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
 
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
+#include "pmutil.h"
 #include "portmidi.h"
 #include "porttime.h"
-#include "pmutil.h"
-
-/*
- * Permanently activated!
- */
-
-#define PM_CHECK_ERRORS
-
-#if defined PM_CHECK_ERRORS
-#include <stdio.h>
-#endif
 
 /**
  *  MIDI status (event) values.
@@ -155,19 +141,19 @@
  *  (see pmmac.c:pm_init())
  */
 
-int pm_initialized = FALSE;
+static int pm_initialized = FALSE;
 
 /**
- *
+ *    Internal error code, not exposed to the application.
  */
 
-int pm_hosterror;
+static int pm_hosterror = FALSE;
 
 /**
- *
+ *    Internal error message, not exposed to the application.
  */
 
-char pm_hosterror_text[PM_HOST_ERROR_MSG_LEN];
+static char pm_hosterror_text[PM_HOST_ERROR_MSG_LEN];
 
 /**
  *
@@ -175,9 +161,9 @@ char pm_hosterror_text[PM_HOST_ERROR_MSG_LEN];
  *  function as well.
  */
 
-int pm_descriptor_max = 0;
-int pm_descriptor_index = 0;
-descriptor_type pm_descriptors = nullptr;
+int pm_descriptor_max = 0;                  /* declared in pminternal.h */
+int pm_descriptor_index = 0;                /* declared in pminternal.h */
+descriptor_type pm_descriptors = nullptr;   /* declared in pminternal.h */
 
 /*
  * Improved access to error messages and debugging features.  These will be
@@ -203,14 +189,14 @@ static int pm_exit_on_error = 1;
  *  A boolean to indicate the presence of a PortMidi error.
  */
 
-static int pm_error_present = 0;
+static int pm_error_present = FALSE;
 
 /**
  *  Like pm_host_error_text[], but will be exposed to the outside world and
  *  might contain additional information.
  */
 
-static char pm_hosterror_message [PM_HOST_ERROR_MSG_LEN];
+static char pm_error_message [PM_HOST_ERROR_MSG_LEN];
 
 /**
  *  Provides a case-insensitive implementation of strstr() that doesn't need a
@@ -267,6 +253,77 @@ strstrcase (const char * src, const char * target)
         result = not_nullptr(strstr(tempsrc, temptarget));
     }
     return result;
+}
+
+void
+Pm_set_hosterror_text (const char * msg)
+{
+    if (not_nullptr(msg))
+    {
+        int len = strlen(msg);
+        if (len > 0)
+            strncpy(&pm_hosterror_text[0], msg, len);
+        else
+            pm_hosterror_text[0] = 0;
+    }
+    else
+        pm_hosterror_text[0] = 0;
+}
+
+const char *
+Pm_hosterror_text (void)
+{
+    const char * result = nullptr;
+    if (strlen(pm_hosterror_text) > 0)
+        result = &pm_hosterror_text[0];
+
+    return result;
+}
+
+char *
+Pm_hosterror_text_mutable (void)
+{
+    return &pm_hosterror_text[0];
+}
+
+/**
+ * \setter pm_hosterror
+ */
+
+void
+Pm_set_hosterror (int flag)
+{
+    pm_hosterror = flag;
+}
+
+/**
+ * \getter pm_hosterror
+ */
+
+int
+Pm_hosterror (void)
+{
+    return pm_hosterror;
+}
+
+/**
+ * \setter pm_initialized
+ */
+
+void
+Pm_set_initialized (int flag)
+{
+    pm_initialized = flag;
+}
+
+/**
+ * \getter pm_initialized
+ */
+
+int
+Pm_initialized (void)
+{
+    return pm_initialized;
 }
 
 /**
@@ -333,69 +390,51 @@ Pm_error_present (void)
  * \setter pm_host_error_message
  *      Also sets pm_error_present; sets it to true if the message has a
  *      non-zero length, and false if 0 length or the pointer is null.
- *      Thus, "Pm_set_hosterror_message(nullptr)" is a good canonical way to
+ *      Thus, "Pm_set_error_message(nullptr)" is a good canonical way to
  *      clear the error message.
  */
 
 void
-Pm_set_hosterror_message (const char * msg)
+Pm_set_error_message (const char * msg)
 {
     if (not_nullptr(msg))
     {
         if (strlen(msg) == 0)
         {
-            pm_hosterror_message[0] = 0;
-            pm_error_present = FALSE;
+            pm_error_message[0] = 0;
+            Pm_set_error_present(FALSE);
         }
         else
         {
-            snprintf(pm_hosterror_message, sizeof pm_hosterror_message, "%s", msg);
-            pm_error_present = TRUE;
+            snprintf(pm_error_message, sizeof pm_error_message, "%s", msg);
+            Pm_set_error_present(TRUE);
+            pm_log_buffer_append(pm_error_message);
         }
     }
     else
-        pm_error_present = FALSE;
+    {
+        pm_error_message[0] = 0;
+        Pm_set_error_present(FALSE);
+    }
 }
 
 /**
  * \getter pm_host_error_message
  *
  * \return
- *      Returns &pm_hosterror_message[0].  But, if the message buffer is empty
+ *      Returns &pm_error_message[0].  But, if the message buffer is empty
  *      (the first character is null), an internal (static) dummy message
  *      pointer is returned instead, so as not to cause exceptions in C++
  *      callers.
  */
 
 const char *
-Pm_hosterror_message (void)
+Pm_error_message (void)
 {
     static const char * s_unknown_msg = "Unspecified portmidi error";
-    return pm_hosterror_message[0] == '\0' ?
-        s_unknown_msg : &pm_hosterror_message[0] ;
+    return pm_error_message[0] == '\0' ?
+        s_unknown_msg : &pm_error_message[0] ;
 }
-
-#if defined PM_CHECK_ERRORS
-
-/**
- *
- */
-
-static void
-prompt_and_exit (void)
-{
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    char line[PM_STRING_MAX];
-    printf("Type Enter...");
-    fgets(line, PM_STRING_MAX, stdin);
-#endif
-
-    if (pm_exit_on_error)
-        exit(-1);                       /* this will clean up open ports */
-}
-
-#endif      // PM_CHECK_ERRORS
 
 /**
  *  It seems pointless to allocate memory and copy the string, so do the work
@@ -413,15 +452,12 @@ pm_errmsg (PmError err, int deviceid)
             temp, sizeof temp, "PortMidi host error: [%d] '%s'\n",
             deviceid, pm_hosterror_text
         );
-        Pm_set_hosterror_message(temp);
-        pm_hosterror = FALSE;                       /* Why????              */
+        pm_log_buffer_append(temp);
+        Pm_set_error_message(temp);
+        Pm_set_hosterror(FALSE);                    /* clear internal flag  */
         pm_hosterror_text[0] = 0;                   /* clear the message    */
-#if defined PM_CHECK_ERRORS
-        printf("%s", temp);
-        prompt_and_exit();
-#endif
     }
-    else if (err < 0)
+    else if (err != pmNoError)
     {
         char temp[PM_STRING_MAX];
         const char * errmsg = Pm_GetErrorText(err);
@@ -430,11 +466,12 @@ pm_errmsg (PmError err, int deviceid)
             temp, sizeof temp, "PortMidi call failed: [%d] '%s'\n",
             deviceid, errmsg
         );
-        Pm_set_hosterror_message(temp);
-#if defined PM_CHECK_ERRORS
-        printf("%s", temp);
-        prompt_and_exit();
-#endif
+        Pm_set_error_message(temp);
+        pm_log_buffer_append(temp);
+    }
+    else
+    {
+        // Anything to clear if there is no error?
     }
     return err;
 }
@@ -457,7 +494,8 @@ pm_errmsg (PmError err, int deviceid)
  *      and 0 (false) if it is an output device.
  *
  * \param descriptor
- *      Provides additional information for a given API, we think.
+ *      Provides additional information for a given API, a device number or a
+ *      device handle, depending on the operating system or multi-media API.
  *
  * \param dictionary
  *      Indicates the function signature of MIDI handler functions, we think.
@@ -485,6 +523,7 @@ pm_add_device
     int client, int port
 )
 {
+    char temp[64];
     int ismapper = not_nullptr(strstrcase(name, "mapper"));
     if (pm_descriptor_index >= pm_descriptor_max)
     {
@@ -532,10 +571,10 @@ pm_add_device
     pm_descriptors[pm_descriptor_index].dictionary = dictionary;
     ++pm_descriptor_index;
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("Device '%s' added to PortMidi\n", name);
-#endif
-
+    snprintf(temp, sizeof temp, "PortMidi: Device %s added", name);
+    infoprint(temp);
+    (void) strcat(temp, "\n");
+    pm_log_buffer_append(temp);
     return pmNoError;
 }
 
@@ -810,6 +849,8 @@ Pm_GetErrorText (PmError errnum)
     return msg;
 }
 
+#if defined PM_GETHOSTERRORTEXT
+
 /**
  *  Translate portmidi host error into human readable message.  These strings
  *  are computed at run time, so client has to allocate storage.  After this
@@ -821,12 +862,10 @@ Pm_GetErrorText (PmError errnum)
 PMEXPORT void
 Pm_GetHostErrorText (char * msg, unsigned len)
 {
-    assert(msg);
-    assert(len > 0);
-    if (pm_hosterror)
+    if (Pm_hosterror())
     {
         strncpy(msg, (char *) pm_hosterror_text, len);
-        pm_hosterror = FALSE;
+        Pm_set_hosterror(FALSE);
 
         /*
          * Clear the message; not necessary, but it might help with debugging
@@ -838,6 +877,8 @@ Pm_GetHostErrorText (char * msg, unsigned len)
     else
         msg[0] = 0;                     /* no string to return */
 }
+
+#endif
 
 /**
  *  Test whether stream has a pending host error. Normally, the client finds
@@ -857,14 +898,14 @@ Pm_GetHostErrorText (char * msg, unsigned len)
 PMEXPORT int
 Pm_HasHostError (PortMidiStream * stream)
 {
-    if (pm_hosterror)
+    if (Pm_hosterror())
         return TRUE;
 
     if (stream)
     {
         PmInternal * midi = (PmInternal *) stream;
-        pm_hosterror = (*midi->dictionary->has_host_error)(midi);
-        if (pm_hosterror)
+        Pm_set_hosterror((*midi->dictionary->has_host_error)(midi));
+        if (Pm_hosterror())
         {
             midi->dictionary->host_error
             (
@@ -884,12 +925,17 @@ Pm_HasHostError (PortMidiStream * stream)
 PMEXPORT PmError
 Pm_Initialize (void)
 {
-    if (! pm_initialized)
+    if (! Pm_initialized())
     {
-        pm_hosterror = FALSE;
-        pm_hosterror_text[0] = 0;       /* the null string */
+        // pm_error_present = FALSE, pm_error_message[0] = 0
+        pm_descriptor_max = 0;              /* declared in pminternal.h */
+        pm_descriptor_index = 0;            /* declared in pminternal.h */
+        pm_descriptors = nullptr;           /* declared in pminternal.h */
+        Pm_set_error_message(nullptr);
+        Pm_set_hosterror(FALSE);
+        pm_hosterror_text[0] = 0;           /* the null string */
         pm_init();
-        pm_initialized = TRUE;
+        Pm_set_initialized(TRUE);
     }
     return pmNoError;
 }
@@ -902,7 +948,7 @@ Pm_Initialize (void)
 PMEXPORT PmError
 Pm_Terminate (void)
 {
-    if (pm_initialized)
+    if (Pm_initialized())
     {
         pm_term();
 
@@ -919,7 +965,7 @@ Pm_Terminate (void)
         }
         pm_descriptor_index = 0;
         pm_descriptor_max = 0;
-        pm_initialized = FALSE;
+        Pm_set_initialized(FALSE);
     }
     return pmNoError;
 }
@@ -973,7 +1019,7 @@ Pm_Read (PortMidiStream * stream, PmEvent * buffer, int32_t length)
     int deviceid = PORTMIDI_BAD_DEVICE_ID;
     PmError err = pmNoError;
     int n = 0;
-    pm_hosterror = FALSE;
+    Pm_set_hosterror(FALSE);
     if (is_nullptr(midi))
         err = pmBadPtr;
     else
@@ -994,7 +1040,7 @@ Pm_Read (PortMidiStream * stream, PmEvent * buffer, int32_t length)
             (
                 midi, pm_hosterror_text, PM_HOST_ERROR_MSG_LEN
             );
-            pm_hosterror = TRUE;
+            Pm_set_hosterror(TRUE);
         }
         return pm_errmsg(err, deviceid);
     }
@@ -1028,7 +1074,7 @@ Pm_Poll (PortMidiStream * stream)
     PmInternal * midi = (PmInternal *) stream;
     int deviceid = PORTMIDI_BAD_DEVICE_ID;
     PmError result = pmNoError;
-    pm_hosterror = FALSE;
+    Pm_set_hosterror(FALSE);
     if (is_nullptr(midi))
         result = pmBadPtr;
     else
@@ -1049,7 +1095,7 @@ Pm_Poll (PortMidiStream * stream)
             (
                 midi, pm_hosterror_text, PM_HOST_ERROR_MSG_LEN
             );
-           pm_hosterror = TRUE;
+           Pm_set_hosterror(TRUE);
         }
         return pm_errmsg(result, deviceid);
     }
@@ -1072,7 +1118,7 @@ pm_end_sysex (PmInternal * midi)
         (
             midi, pm_hosterror_text, PM_HOST_ERROR_MSG_LEN
         );
-        pm_hosterror = TRUE;
+        Pm_set_hosterror(TRUE);
     }
     return err;
 }
@@ -1100,7 +1146,7 @@ Pm_Write (PortMidiStream * stream, PmEvent * buffer, int32_t length)
     PmInternal * midi = (PmInternal *) stream;
     int deviceid = PORTMIDI_BAD_DEVICE_ID;
     PmError err = pmNoError;
-    pm_hosterror = FALSE;
+    Pm_set_hosterror(FALSE);
     int i;
     int bits;
     if (is_nullptr(midi))
@@ -1296,7 +1342,7 @@ pm_write_error:
         (
             midi, pm_hosterror_text, PM_HOST_ERROR_MSG_LEN
         );
-        pm_hosterror = TRUE;
+        Pm_set_hosterror(TRUE);
     }
 
 error_exit:
@@ -1427,34 +1473,22 @@ end_of_sysex:
 }
 
 /**
- *  Pm_OpenInput() and Pm_OpenOutput() open devices.
+ *  Pm_OpenInput() opens input devices.
  *
  *  stream is the address of a PortMidiStream pointer which will receive a
  *  pointer to the newly opened stream.
  *
- *  inputDevice is the id of the device used for input (see PmDeviceID above).
+ *  inputdev is the id of the device used for input (see PmDeviceID above).
  *
- *  inputDriverInfo is a pointer to an optional driver specific data structure
+ *  inputinfo is a pointer to an optional driver specific data structure
  *  containing additional information for device setup or handle processing.
- *  inputDriverInfo is never required for correct operation. If not used
- *  inputDriverInfo should be NULL.
- *
- *  outputDevice is the id of the device used for output (see PmDeviceID
- *  above.)
- *
- *  outputDriverInfo is a pointer to an optional driver specific data structure
- *  containing additional information for device setup or handle processing.
- *  outputDriverInfo is never required for correct operation. If not used
- *  outputDriverInfo should be NULL.
+ *  inputinfo is never required for correct operation. If not used
+ *  inputinfo should be NULL.
  *
  *  For input, the buffersize specifies the number of input events to be
- *  buffered waiting to be read using Pm_Read(). For output, buffersize
- *  specifies the number of output events to be buffered waiting for output.
- *  (In some cases -- see below -- PortMidi does not buffer output at all and
- *  merely passes data to a lower-level API, in which case buffersize is
- *  ignored.)
+ *  buffered waiting to be read using Pm_Read().
  *
- *  latency is the delay in milliseconds applied to timestamps to determine
+ *  'latency' is the delay in milliseconds applied to timestamps to determine
  *  when the output should actually occur. (If latency is < 0, 0 is assumed.)
  *  If latency is zero, timestamps are ignored and all output is delivered
  *  immediately. If latency is greater than zero, output is delayed until the
@@ -1493,41 +1527,40 @@ PMEXPORT PmError
 Pm_OpenInput
 (
     PortMidiStream ** stream,
-    PmDeviceID inputDevice,
-    void * inputDriverInfo,
-    int32_t bufferSize,
+    PmDeviceID inputdev,
+    void * inputinfo,
+    int32_t buffersize,
     PmTimeProcPtr time_proc,
     void * time_info
 )
 {
-    PmInternal * midi;
+    PmInternal * midi = (PmInternal *) pm_alloc(sizeof(PmInternal));
     PmError err = pmNoError;
-    pm_hosterror = FALSE;
-    if (not_nullptr(stream))
-        *stream = nullptr;
-    else
-        err = pmBadPtr;
-
-    if (inputDevice < 0 || inputDevice >= pm_descriptor_index)
-        err = pmInvalidDeviceId;
-    else if (! pm_descriptors[inputDevice].pub.input)
-        err = pmInvalidDeviceId;
-    else if (pm_descriptors[inputDevice].pub.opened)
-        err = pmDeviceOpen;
-
-    if (err != pmNoError)
-        goto error_return;
-
-    /* create portMidi internal data */
-
-    midi = (PmInternal *) pm_alloc(sizeof(PmInternal));
-    *stream = midi;
+    Pm_set_hosterror(FALSE);
     if (is_nullptr(midi))
     {
         err = pmInsufficientMemory;
         goto error_return;
     }
-    midi->device_id = inputDevice;
+    if (not_nullptr(stream))
+        *stream = nullptr;
+    else
+        err = pmBadPtr;
+
+    if (inputdev < 0 || inputdev >= pm_descriptor_index)
+        err = pmInvalidDeviceId;
+    else if (! pm_descriptors[inputdev].pub.input)
+        err = pmInvalidDeviceId;
+    else if (pm_descriptors[inputdev].pub.opened)
+        err = pmDeviceOpen;
+
+    if (err != pmNoError)
+        goto error_return;
+
+    if (not_nullptr(stream))
+        *stream = midi;
+
+    midi->device_id = inputdev;
     midi->write_flag = FALSE;
     midi->time_proc = time_proc;
     midi->time_info = time_info;
@@ -1539,10 +1572,10 @@ Pm_OpenInput
      * system-specific midi_out_open() method.
      */
 
-    if (bufferSize <= 0)
-        bufferSize = 256;                   /* default buffer size */
+    if (buffersize <= 0)
+        buffersize = 256;                   /* default buffer size */
 
-    midi->queue = Pm_QueueCreate(bufferSize, (int32_t) sizeof(PmEvent));
+    midi->queue = Pm_QueueCreate(buffersize, (int32_t) sizeof(PmEvent));
     if (! midi->queue)
     {
         /* free portMidi data */
@@ -1552,7 +1585,7 @@ Pm_OpenInput
         err = pmInsufficientMemory;
         goto error_return;
     }
-    midi->buffer_len = bufferSize;          /* portMidi input storage */
+    midi->buffer_len = buffersize;          /* portMidi input storage */
     midi->latency = 0;                      /* not used */
     midi->sysex_in_progress = FALSE;
     midi->sysex_message = 0;
@@ -1561,19 +1594,19 @@ Pm_OpenInput
     midi->channel_mask = 0xFFFF;
     midi->sync_time = 0;
     midi->first_message = TRUE;
-    midi->dictionary = pm_descriptors[inputDevice].dictionary;
+    midi->dictionary = pm_descriptors[inputdev].dictionary;
     midi->fill_base = nullptr;
     midi->fill_offset_ptr = nullptr;
     midi->fill_length = 0;
-    pm_descriptors[inputDevice].internalDescriptor = midi;
+    pm_descriptors[inputdev].internalDescriptor = midi;
 
     /* open system dependent input device */
 
-    err = (*midi->dictionary->open)(midi, inputDriverInfo);
+    err = (*midi->dictionary->open)(midi, inputinfo);
     if (err)
     {
         *stream = nullptr;
-        pm_descriptors[inputDevice].internalDescriptor = nullptr;
+        pm_descriptors[inputdev].internalDescriptor = nullptr;
 
         /* free portMidi data */
 
@@ -1584,7 +1617,7 @@ Pm_OpenInput
     {
         /* portMidi input open successful */
 
-        pm_descriptors[inputDevice].pub.opened = TRUE;
+        pm_descriptors[inputdev].pub.opened = TRUE;
     }
 
 error_return:
@@ -1595,53 +1628,66 @@ error_return:
      * and pm_hosterror_text.
      */
 
-    return pm_errmsg(err, inputDevice);
+    return pm_errmsg(err, inputdev);
 }
 
 /**
+ *  Pm_OpenOutput() opens output devices.
  *
+ *  outputdev is the id of the device used for output (see PmDeviceID
+ *  above.)
+ *
+ *  outputinfo is a pointer to an optional driver specific data structure
+ *  containing additional information for device setup or handle processing.
+ *  outputinfo is never required for correct operation. If not used
+ *  outputinfo should be NULL.
+ *
+ *  For output, buffersize specifies the number of output events to be buffered
+ *  waiting for output.  (In some cases -- see below -- PortMidi does not buffer
+ *  output at all and merely passes data to a lower-level API, in which case
+ *  buffersize is ignored.)
+ *
+ *  See Pm_OpenInput() for more information on parameters.
  */
 
 PMEXPORT PmError
 Pm_OpenOutput
 (
     PortMidiStream ** stream,
-    PmDeviceID outputDevice,
-    void * outputDriverInfo,
-    int32_t bufferSize,
+    PmDeviceID outputdev,
+    void * outputinfo,
+    int32_t buffersize,
     PmTimeProcPtr time_proc,
     void * time_info,
     int32_t latency
 )
 {
-    PmInternal * midi;
+    PmInternal * midi = (PmInternal *) pm_alloc(sizeof(PmInternal));
     PmError err = pmNoError;
-    pm_hosterror = FALSE;
-
+    Pm_set_hosterror(FALSE);
     if (not_nullptr(stream))
         *stream = nullptr;
     else
         err = pmBadPtr;
 
-    if (outputDevice < 0 || outputDevice >= pm_descriptor_index)
+    if (outputdev < 0 || outputdev >= pm_descriptor_index)
         err = pmInvalidDeviceId;
-    else if (! pm_descriptors[outputDevice].pub.output)
+    else if (! pm_descriptors[outputdev].pub.output)
         err = pmInvalidDeviceId;
-    else if (pm_descriptors[outputDevice].pub.opened)
+    else if (pm_descriptors[outputdev].pub.opened)
         err = pmDeviceOpen;
     if (err != pmNoError)
         goto error_return;
 
     /* create portMidi internal data */
 
-    midi = (PmInternal *) pm_alloc(sizeof(PmInternal));
     *stream = midi;
     if (! midi)
     {
         err = pmInsufficientMemory;
         goto error_return;
     }
-    midi->device_id = outputDevice;
+    midi->device_id = outputdev;
     midi->write_flag = TRUE;
     midi->time_proc = time_proc;
 
@@ -1660,7 +1706,7 @@ Pm_OpenOutput
         midi->time_proc = (PmTimeProcPtr) Pt_Time;
     }
     midi->time_info = time_info;
-    midi->buffer_len = bufferSize;
+    midi->buffer_len = buffersize;
     midi->queue = nullptr;                          /* unused by output     */
 
     /*
@@ -1679,23 +1725,26 @@ Pm_OpenOutput
     midi->channel_mask = 0xFFFF;
     midi->sync_time = 0;
     midi->first_message = TRUE;
-    midi->dictionary = pm_descriptors[outputDevice].dictionary;
+    midi->dictionary = pm_descriptors[outputdev].dictionary;
     midi->fill_base = nullptr;
     midi->fill_offset_ptr = nullptr;
     midi->fill_length = 0;
-    pm_descriptors[outputDevice].internalDescriptor = midi;
+    pm_descriptors[outputdev].internalDescriptor = midi;
 
-    /* open system dependent output device */
+    /*
+     * Open system-dependent output device, calling, for example,
+     * winmm_out_open().
+     */
 
-    err = (*midi->dictionary->open)(midi, outputDriverInfo);
+    err = (*midi->dictionary->open)(midi, outputinfo);
     if (err)
     {
         *stream = nullptr;
-        pm_descriptors[outputDevice].internalDescriptor = nullptr;
+        pm_descriptors[outputdev].internalDescriptor = nullptr;
         pm_free(midi);                          /* free portMidi data */
     }
     else
-        pm_descriptors[outputDevice].pub.opened = TRUE; /* input-open success */
+        pm_descriptors[outputdev].pub.opened = TRUE; /* input-open success */
 
 error_return:
 
@@ -1704,7 +1753,7 @@ error_return:
      * if a pmHostError occurs.
      */
 
-    return pm_errmsg(err, outputDevice);
+    return pm_errmsg(err, outputdev);
 }
 
 /**
@@ -1787,7 +1836,7 @@ Pm_Close (PortMidiStream * stream)
     int deviceid = PORTMIDI_BAD_DEVICE_ID;
     PmInternal * midi = (PmInternal *) stream;
     PmError err = pmNoError;
-    pm_hosterror = FALSE;
+    Pm_set_hosterror(FALSE);
     if (not_nullptr(pm_descriptors))
     {
         if (is_nullptr(midi))
@@ -1899,7 +1948,7 @@ Pm_Abort (PortMidiStream * stream)
         (
             midi, pm_hosterror_text, PM_HOST_ERROR_MSG_LEN
         );
-        pm_hosterror = TRUE;
+        Pm_set_hosterror(TRUE);
     }
     return pm_errmsg(err, deviceid);
 }
@@ -2012,7 +2061,6 @@ void
 pm_read_short (PmInternal * midi, PmEvent * event)
 {
     int status;
-    assert(midi != NULL);
 
     /* MIDI filtering is applied here */
 
@@ -2078,7 +2126,6 @@ pm_read_bytes
     int i = 0;              /* index into data, must not be unsigned (!) */
     PmEvent event;
     event.timestamp = timestamp;
-    assert(midi);
 
     /*
      * Note that since buffers may not have multiples of 4 bytes,
@@ -2235,6 +2282,7 @@ Pm_print_devices (void)
     int dev;
     for (dev = 0; dev < pm_descriptor_index; ++dev)
     {
+        char temp[PM_STRING_MAX];
         int status = Pm_device_opened(dev);
         const PmDeviceInfo * dev_info = Pm_GetDeviceInfo(dev);
         const char * io = dev_info->output == 1 ? "output" : "unknown" ;
@@ -2242,12 +2290,93 @@ Pm_print_devices (void)
         if (dev_info->input == 1)
             io = "input";
 
-        printf
+        snprintf
         (
-            "PortMidi %s %d: %s %s %s\n",
+            temp, sizeof temp, "PortMidi %s %d: %s %s %s",
             dev_info->interf, dev, dev_info->name, io, opstat
         );
+        infoprint(temp);
+        (void) strcat(temp, "\n");
+        pm_log_buffer_append(temp);
     }
+}
+
+/**
+ *  Provides a large buffer to hold all errors we log so that the application
+ *  can retrieve them.  The printf() call's don't always appear due to our
+ *  debugging symbols being undefined, so we want a more reliable/constrained
+ *  way to handle them.
+ *
+ *  Currently used only in Windows applications.
+ */
+
+static int s_pmlogmm_max_size       = 8192;
+static int s_pmlogmm_current_size   = 0;
+static char * s_pmlogmm_buffer      = nullptr;
+
+/**
+ *  Allocates the error-message buffer, and makes sure it is all zeroes.
+ *  We will not bother with reallocating a larger buffer until we find a need
+ *  for it.
+ */
+
+void
+pm_log_buffer_alloc (void)
+{
+    const char * msg = "INTERNAL PORTMIDI MESSAGES:\n\n";
+    s_pmlogmm_buffer = calloc(s_pmlogmm_max_size, sizeof(char));
+    pm_log_buffer_append(msg);
+}
+
+/**
+ *  Deallocates the error-message buffer.
+ */
+
+void
+pm_log_buffer_free (void)
+{
+    if (not_nullptr(s_pmlogmm_buffer))
+    {
+        free(s_pmlogmm_buffer);
+        s_pmlogmm_buffer = nullptr;
+        s_pmlogmm_current_size = 0;
+    }
+}
+
+/**
+ *  Appends a message to the message buffer.  The message should end in a
+ *  newline.
+ */
+
+void
+pm_log_buffer_append (const char * msg)
+{
+    if (not_nullptr(s_pmlogmm_buffer))
+    {
+        int currsize = s_pmlogmm_current_size;
+        int msgsize = strlen(msg);
+        if (msgsize > 0)
+        {
+            currsize += msgsize;
+            if (currsize < s_pmlogmm_max_size)
+            {
+                char * dest = s_pmlogmm_buffer + s_pmlogmm_current_size;
+                (void) strcpy(dest, msg);
+                s_pmlogmm_current_size = currsize;
+            }
+        }
+    }
+}
+
+/**
+ *  Provides read-only access to the message buffer.  The caller should check
+ *  this value for being null before using it.
+ */
+
+const char *
+pm_log_buffer (void)
+{
+    return (const char *) s_pmlogmm_buffer;
 }
 
 /*

@@ -45,10 +45,9 @@
 #include <stdlib.h>
 
 #include "util/basic_macros.h"          /* not_nullptr() macro, etc.        */
-#include "portmidi.h"
 #include "pmutil.h"
-#include "pminternal.h"
 #include "pmwinmm.h"
+#include "portmidi.h"
 
 #if defined SEQ66_PLATFORM_DEBUG
 #include <stdio.h>

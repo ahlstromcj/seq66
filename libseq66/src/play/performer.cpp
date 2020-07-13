@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-06
+ * \updates       2020-07-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2992,7 +2992,7 @@ performer::poll_cycle ()
                         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
                             std::string estr = to_string(ev);
-                            infoprintf("MIDI ctrl event %s", estr.c_str());
+                            infoprintf("MIDI ctrl event %s", estr);
 #endif
                         }
                         else
@@ -4201,6 +4201,32 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
         }
     }
+}
+
+/**
+ *
+ */
+
+sequence::playback
+performer::toggle_song_start_mode ()
+{
+    m_song_start_mode = m_song_start_mode == sequence::playback::live ?
+        sequence::playback::song : sequence::playback::live;
+
+    infoprint(is_live_mode() ? "Live Mode" : "Song Mode");
+    return m_song_start_mode;
+}
+
+/**
+ *
+ */
+
+void
+performer::song_recording (bool f)
+{
+    m_song_recording = f;
+    if (! f)
+        song_recording_stop();
 }
 
 /**
@@ -5712,7 +5738,10 @@ performer::automation_mutes_clear
 }
 
 /**
- *  TODO TODO TODO
+ *  Toggles the Song/Live mode, but only on a key press, not on a key release.
+ *
+ * \return
+ *      Always returns true.
  */
 
 bool
@@ -5721,18 +5750,20 @@ performer::automation_song_mode
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    std::string name = "Song mode toggle TODO";
-    bool result = false;
+    std::string name = "Song mode toggle";
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
-    {
-        // TODO
-    }
-    return result;
+        (void) toggle_song_start_mode();
+
+    return true;
 }
 
 /**
- *  TODO TODO TODO
+ *  Toggles the JACK transport mode, but only on a key press, not on a key
+ *  release.
+ *
+ * \return
+ *      Always returns true.
  */
 
 bool
@@ -5741,14 +5772,16 @@ performer::automation_toggle_jack
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    std::string name = "Toggle JACK Transport TODO";
-    bool result = false;
+    std::string name = "Toggle JACK Transport";
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
-        // TODO
+        std::string mode("JACK Transport ");
+        toggle_jack_mode();
+        mode += get_jack_mode() ? "On" : "Off" ;
+        infoprint(mode);
     }
-    return result;
+    return true;
 }
 
 /**

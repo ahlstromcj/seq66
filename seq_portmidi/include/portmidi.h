@@ -28,7 +28,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2018-05-11
+ * \updates     2020-07-12
  * \license     GNU GPLv2 or above
  *
  * Copyright (c) 1999-2000 Ross Bencina and Phil Burk
@@ -66,13 +66,7 @@ extern "C"
 {
 #endif
 
-#include "pminternal.h"             // midibyte_t typedef
-
-#if defined _WINDLL
-#define PMEXPORT                    __declspec(dllexport)
-#else
-#define PMEXPORT
-#endif
+#include "pminternal.h"             /* not quite internal now, refactoring  */
 
 /**
  *  A single PortMidiStream is a descriptor for an open MIDI device.
@@ -90,7 +84,9 @@ PMEXPORT PmError Pm_Initialize (void);
 PMEXPORT PmError Pm_Terminate (void);
 PMEXPORT int Pm_HasHostError (PortMidiStream * stream);
 PMEXPORT const char * Pm_GetErrorText (PmError errnum);
+#if defined PM_GETHOSTERRORTEXT
 PMEXPORT void Pm_GetHostErrorText (char * msg, unsigned int len);
+#endif
 PMEXPORT int Pm_CountDevices (void);
 
 #if defined SEQ66_PORTMIDI_DEFAULT_DEVICE_ID
@@ -321,17 +317,39 @@ PMEXPORT PmError Pm_WriteSysEx
  * New section for accessing static options in the portmidi module.
  */
 
+PMEXPORT void Pm_set_initialized (int flag);
+PMEXPORT int Pm_initialized (void);
+
 PMEXPORT void Pm_set_exit_on_error (int flag);
 PMEXPORT int Pm_exit_on_error (void);
+
 PMEXPORT void Pm_set_show_debug (int flag);
 PMEXPORT int Pm_show_debug (void);
+
 PMEXPORT void Pm_set_error_present (int flag);
 PMEXPORT int Pm_error_present (void);
-PMEXPORT void Pm_set_hosterror_message (const char * msg);
-PMEXPORT const char * Pm_hosterror_message (void);
+
+PMEXPORT void Pm_set_hosterror_text (const char * msg);
+PMEXPORT const char * Pm_hosterror_text (void);
+PMEXPORT char * Pm_hosterror_text_mutable (void);
+PMEXPORT void Pm_set_hosterror (int flag);
+PMEXPORT int Pm_hosterror ();
+
+PMEXPORT const char * Pm_error_message (void);
 PMEXPORT int Pm_device_opened (int deviceid);
 PMEXPORT int Pm_device_count (void);
 PMEXPORT void Pm_print_devices (void);
+
+/*
+ * New section for writing messages to a log buffer for better debugging.  We
+ * need to be able to trace what's happening, and not just see the first error
+ * that cropped up.
+ */
+
+PMEXPORT void pm_log_buffer_alloc (void);
+PMEXPORT void pm_log_buffer_free (void);
+PMEXPORT void pm_log_buffer_append (const char * msg);
+PMEXPORT const char * pm_log_buffer (void);
 
 #if defined __cplusplus
 }           // extern "C"

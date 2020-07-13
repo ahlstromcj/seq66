@@ -34,6 +34,8 @@
  *  pmwinmm.h header file.
  */
 
+#include "pminternal.h"                 /* PMDeviceID                       */
+
 #if defined __cplusplus
 extern "C"
 {

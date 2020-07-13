@@ -1,0 +1,35 @@
+
+PmDefaults is a stand-along application used to set preferences for MIDI input
+and output devices. The preferences are read by the PortMidi library when it is
+initialized, and the application can easily open the devices set by PmDefaults.
+In this way, PortMidi applications can run without any special code to offer
+device selection. Of course, advanced programs like Audacity can implement
+their own self-contained selection and preferences, ignoring preferences set by
+PmDefaults.
+
+To use PmDefaults, you must install it. Note that you must have the Java
+runtime system installed since PmDefaults is written in Java.
+
+When you run PmDefaults, you will see pull-down lists for Input and Output
+devices reported by your system to PortMidi. If you add or remove a device, for
+example by plugging/unplugging a USB interface or starting software that
+creates a virtual port, you might want to press the Refresh Device Lists button
+to update the choices.
+
+Select the input and output device(s) you wish to use and click the Update
+Preferences button. You can test devices: input from the selected input device
+causes the little indicator light to the right of the input selection to light
+up. To send a note-on to the selected output, press the Test button to the
+right of your selection.
+
+To set preferences to your current selections and make them visible to PortMidi
+applications, click the Update Preferences button.
+
+Once preferences are set with Update Preferences, you can exit PmDefaults, and
+the preferences will remain in effect until you change them. If you leave
+PmDefaults running, note that ports will be open (see the previous paragraph on
+testing) and that may prevent an application from opening a device. You should
+click on the Close/Release Ports button to close the devices held by PmDefaults
+before you try to open them with another application.
+
+

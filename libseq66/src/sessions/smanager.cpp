@@ -459,21 +459,21 @@ smanager::show_error (const std::string & msg)
  *  Checks for a PortMidi error, storing the message if applicable.
  *
  * \param [out] errmsg
- *      Provides a destination for the PortMidi error.  It is cleared if there
- *      is no error.
+ *      Provides a destination for the PortMidi error.  It is cleared if
+ *      there is no error.
  *
  * \return
- *      Returns true if there is an error.  In this case, the caller should show
- *      the error message.
+ *      Returns true if there is an error.  In this case, the caller should
+ *      show the error message.
  */
 
 bool
 smanager::portmidi_error_check (std::string & errmsg) const
 {
-    bool result = Pm_error_present();
+    bool result = bool(Pm_error_present());
     if (result)
     {
-        std::string pmerrmsg = std::string(Pm_hosterror_message());
+        std::string pmerrmsg = std::string(Pm_error_message());
         set_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }

@@ -77,7 +77,7 @@ pm_init ()
      * At least we get to assume UTF-8 here, rather than Window's UTF-16.
      */
 
-    pm_initialized = TRUE;
+    Pm_set_initialized(TRUE);
 
 #if defined SEQ66_PORTMIDI_FIND_DEFAULT_DEVICE
 #error find_default_device() no longer supported in Linux

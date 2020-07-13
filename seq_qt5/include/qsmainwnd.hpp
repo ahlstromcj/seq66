@@ -316,7 +316,6 @@ private slots:
     void pause_playing ();
     void stop_playing ();
     void set_song_mode (bool song_mode);
-    void toggle_song_mode ();
     void song_recording (bool record);
 
     void song_recording_snap (bool /*snap*/)

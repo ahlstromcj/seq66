@@ -1,0 +1,30 @@
+Windows Registry Editor Version 5.00
+ 
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Drivers32]
+"midi"="wdmaud.drv"
+"midi1"=-
+"midi2"=-
+"midi3"=-
+"midi4"=-
+"midi5"=-
+"midi6"=-
+"midi7"=-
+"midi8"=-
+"midi9"=-
+[HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Drivers32]
+"midi"="wdmaud.drv"
+"midi1"=-
+"midi2"=-
+"midi3"=-
+"midi4"=-
+"midi5"=-
+"midi6"=-
+"midi7"=-
+"midi8"=-
+"midi9"=-
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Multimedia\MIDIMap]
+"szPname"="Microsoft GS Wavetable Synth"
+[HKEY_CURRENT_USER\Software\Microsoft\ActiveMovie\devenum\{4EFE2452-168A-11D1-BC76-00C04FB9453B}\Default MidiOut Device]
+"MidiOutId"="FFFFFFFF"
+[HKEY_CURRENT_USER\Software\Microsoft\ActiveMovie\devenum 64-bit\{4EFE2452-168A-11D1-BC76-00C04FB9453B}\Default MidiOut Device]
+"MidiOutId"="FFFFFFFF"

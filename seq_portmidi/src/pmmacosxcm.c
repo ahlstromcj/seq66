@@ -56,12 +56,11 @@
 #include <CoreMIDI/MIDIServices.h>
 #include <CoreAudio/HostTime.h>
 
-#include "portmidi.h"
-#include "pmutil.h"
-#include "pminternal.h"
-#include "porttime.h"
 #include "pmmac.h"
 #include "pmmacosxcm.h"
+#include "pmutil.h"
+#include "portmidi.h"
+#include "porttime.h"
 
 /**
  *

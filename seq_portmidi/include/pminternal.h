@@ -27,7 +27,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2018-07-27
+ * \updates     2020-07-12
  * \license     GNU GPLv2 or above
  *
  * Here is a guide to implementers:
@@ -50,6 +50,12 @@
 #include <stdlib.h>
 
 #include "seq66_platform_macros.h"
+
+#if defined _WINDLL
+#define PMEXPORT                    __declspec(dllexport)
+#else
+#define PMEXPORT
+#endif
 
 /**
  *  Rather than having users install a special .h file for Windows, just put
@@ -289,35 +295,31 @@ typedef int PmDeviceID;
 
 typedef enum
 {
-    pmNoError = 0,
-    pmNoData = 0,
-    pmGotData = 1,
     pmHostError = -10000,
-    pmInvalidDeviceId,
-    pmInsufficientMemory,
-    pmBufferTooSmall,
-    pmBufferOverflow,
+    pmNoError = 0,                  /* MMSYSERR_NOERROR         */
+    pmNoData = 0,
+    pmGotData = 1,                  /* MMSYSERR_ERROR           */
+    pmInvalidDeviceId,              /* MMSYSERR_BADDEVICEID     */
+    pmInsufficientMemory,           /* MMSYSERR_NOTENABLED !    */
+    pmBufferTooSmall,               /* MMSYSERR_ALLOCATED       */
+    pmBufferOverflow,               /* MMSYSERR_INVALHANDLE !   */
     pmBadPtr,
-    pmBadData,
+    pmBadData,                      /* MMSYSERR_NOMEM !         */
     pmInternalError,
     pmBufferMaxSize,
     pmDeviceClosed,
-    pmDeviceOpen,
+    pmDeviceOpen,                   /* MSYSERR_INVALPARAM       */
     pmWriteToInput,
     pmReadFromOutput,
     pmErrOther,
 
     /*
-     * \note
-     *      If you add a new error type here, be sure to update
-     *      Pm_GetErrorText()!!
+     *  If you add a new error type here, be sure to update Pm_GetErrorText()!
      */
 
     pmErrMax
 
 } PmError;
-
-extern int pm_initialized;              /* see note in portmidi.c           */
 
 /*
  *  These are defined in system-specific file
@@ -325,13 +327,6 @@ extern int pm_initialized;              /* see note in portmidi.c           */
 
 extern void * pm_alloc (size_t s);
 extern void pm_free (void * ptr);
-
-/*
- *  If an error occurs while opening or closing a midi stream, set these.
- */
-
-extern int pm_hosterror;
-extern char pm_hosterror_text [PM_HOST_ERROR_MSG_LEN];
 
 struct pm_internal_struct;                  /* forward declaration  */
 
@@ -504,9 +499,9 @@ typedef struct
  */
 
 extern pm_fns_node pm_none_dictionary;
-extern int pm_descriptor_max;
 extern descriptor_type pm_descriptors;
 extern int pm_descriptor_index;
+extern int pm_descriptor_max;
 
 /**
  *

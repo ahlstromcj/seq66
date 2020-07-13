@@ -33,6 +33,8 @@
  *  System-specific definitions.
  */
 
+#include "pminternal.h"                 /* PMDeviceID                       */
+
 #if defined __cplusplus
 extern "C"
 {
