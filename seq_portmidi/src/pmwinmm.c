@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-12
+ * \updates     2020-07-14
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -1132,7 +1132,7 @@ winmm_in_close(PmInternal * midi)
         int err = midiInGetErrorText
         (
             Pm_hosterror(),
-            Pm_set_hosterror_text_mutable(),
+            Pm_hosterror_text_mutable(),
             PM_HOST_ERROR_MSG_LEN
         );
         if (err != MMSYSERR_NOERROR)

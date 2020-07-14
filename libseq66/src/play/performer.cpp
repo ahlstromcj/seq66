@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-13
+ * \updates       2020-07-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -284,7 +284,7 @@
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
-#include "os/timing.hpp"                /* seq66::microsleep(), millitime() */
+#include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
 
 /*
@@ -344,7 +344,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_record_snap      (false),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_current_tick          (0.0),
-    m_playback_mode         (sequence::playback::live),
     m_ppqn                  (choose_ppqn(ppqn)),    /* okay???? */
     m_bpm                   (SEQ66_DEFAULT_BPM),
     m_current_beats         (0),
@@ -1666,14 +1665,17 @@ performer::set_song_mute (mutegroups::muting op)
     switch (op)
     {
     case mutegroups::muting::on:
+
         mute_all_tracks(true);
         break;
 
     case mutegroups::muting::off:
+
         mute_all_tracks(false);
         break;
 
     case mutegroups::muting::toggle:
+
         toggle_all_tracks();
         break;
     }
@@ -1760,20 +1762,23 @@ performer::launch (int ppqn)
             ppqn = SEQ66_DEFAULT_PPQN;
 
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
-        if (activate())
+
+        bool ok = activate();
+        if (ok)
         {
             launch_input_thread();
             launch_output_thread();
-
-            /*
-             * Now we need to get and store the clocks and inputs that were
-             * created by the mastermidibus during api_init().
-             */
-
-            m_master_bus->copy_io_busses();
-            m_master_bus->get_port_statuses(m_clocks, m_inputs);
-            announce_playscreen();
         }
+
+        /*
+         * Get and store the clocks and inputs created (disabled or not) by
+         * the mastermidibus during api_init().
+         */
+
+        m_master_bus->copy_io_busses();
+        m_master_bus->get_port_statuses(m_clocks, m_inputs);
+        if (ok)
+            announce_playscreen();
     }
     return result;
 }
@@ -2567,7 +2572,7 @@ performer::output_func ()
         }
 
         int ppqn = m_master_bus->get_ppqn();
-        last = millitime();                     /* depends on OS            */
+        last = microtime();                     /* depends on OS            */
         while (is_running())
         {
             /**
@@ -3321,7 +3326,7 @@ void
 performer::play (midipulse tick)
 {
     set_tick(tick);
-    bool songmode = m_playback_mode == sequence::playback::song;
+    bool songmode = song_mode();
     for (auto seqi : m_play_set)
         seqi->play_queue(tick, songmode, resume_note_ons());
 
@@ -4210,10 +4215,11 @@ performer::sequence_playing_toggle (seq::number seqno)
 sequence::playback
 performer::toggle_song_start_mode ()
 {
-    m_song_start_mode = m_song_start_mode == sequence::playback::live ?
-        sequence::playback::song : sequence::playback::live;
-
-    infoprint(is_live_mode() ? "Live Mode" : "Song Mode");
+    song_start_mode
+    (
+        live_mode() ? sequence::playback::song : sequence::playback::live
+    );
+    infoprint(live_mode() ? "Live Mode" : "Song Mode");
     return m_song_start_mode;
 }
 

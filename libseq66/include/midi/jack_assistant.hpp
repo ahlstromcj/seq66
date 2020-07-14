@@ -497,10 +497,6 @@ public:
         set_follow_transport(! m_follow_transport);
     }
 
-    bool toggle_song_start_mode ();
-    bool song_start_mode () const;
-    void set_start_from_perfedit (bool start);
-
 #if defined SEQ66_PLATFORM_DEBUG
 
     jack_client_t * client () const;

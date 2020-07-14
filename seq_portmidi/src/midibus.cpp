@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-02-10
+ * \updates       2020-07-14
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -136,9 +136,14 @@ midibus::api_poll_for_midi ()
 /**
  *  Initializes the MIDI output port, for PortMidi.
  *
+ *  If there is an error, we set the clocking to e_clock::disable to indicate
+ *  we should not bother to use the port.
+ *
  * \return
  *      Returns true if the output port was successfully opened.
  */
+
+#define USE_ERROR_TEST_CODE
 
 bool
 midibus::api_init_out ()
@@ -147,16 +152,20 @@ midibus::api_init_out ()
     (
         &m_pms, queue_number(), NULL, 100, NULL, NULL, 0
     );
+
+#if defined USE_ERROR_TEST_CODE
+    warnprint("Testing failure in midibus::api_init_out()\n");
+    err = pmInvalidDeviceId;
+#endif
+
     bool result = err == pmNoError;
     if (! result)
     {
-        errprintf("Pm_OpenOutput(): %s\n", Pm_GetErrorText(err));
-
-        /*
-         *  Set the clocking to e_clock::disable to indicate we should
-         *  not bother to use the port.
-         */
-
+        errprintf
+        (
+            "Pm_OpenOutput(): %s; MIDI clock disabled\n",
+            Pm_GetErrorText(err)
+        );
         set_clock(e_clock::disabled);
     }
     return result;
@@ -177,6 +186,7 @@ midibus::api_init_in ()
     if (! result)
     {
         errprintf("Pm_OpenInput(): %s\n", Pm_GetErrorText(err));
+        set_input(false);
     }
     return result;
 }

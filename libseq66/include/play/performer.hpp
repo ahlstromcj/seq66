@@ -310,9 +310,7 @@ private:
      *  If true, playback is done in Song mode, not Live mode.
      *  This option is saved to and restored from the "rc"
      *  configuration file.  Sometimes called "JACK start mode", it used
-     *  to be a JACK setting, but now applies to any playback.  Do not confuse
-     *  this setting with m_playback_mode, which has a similar meaning but is
-     *  more transitory.
+     *  to be a JACK setting, but now applies to any playback.
      */
 
     sequence::playback m_song_start_mode;
@@ -524,14 +522,6 @@ private:
      */
 
     double m_current_tick;
-
-    /**
-     *  Specifies the playback mode.  There are two, "live" and "song", now
-     *  indicated by enumeration values defined at the top of this class
-     *  definition.
-     */
-
-    sequence::playback m_playback_mode;
 
     /**
      *  Holds the current PPQN for usage in various actions.
@@ -1463,55 +1453,29 @@ public:
      * ---------------------------------------------------------------------
      */
 
-    sequence::playback playback_mode () const
-    {
-        return m_playback_mode;
-    }
-
-    bool song_mode () const
-    {
-        return m_playback_mode == sequence::playback::song;
-    }
-
-    void song_mode (bool flag)
-    {
-        m_playback_mode = flag ?
-            sequence::playback::song : sequence::playback::live ;
-    }
-
-    bool toggle_song_mode ()
-    {
-        return toggle_song_start_mode() == sequence::playback::song;
-    }
-
     bool jack_song_mode () const
     {
         return song_mode() && ! is_jack_running();
     }
 
-    void playback_mode (sequence::playback playbackmode)
-    {
-        m_playback_mode = playbackmode;
-    }
-
     sequence::playback toggle_song_start_mode ();
 
-    bool is_song_mode () const
-    {
-        return m_song_start_mode == sequence::playback::song;
-    }
-
-    bool is_song_mode (sequence::playback p) const
+    bool song_mode (sequence::playback p) const
     {
         return p == sequence::playback::song;
     }
 
-    bool is_live_mode () const
+    bool live_mode () const
     {
         return m_song_start_mode == sequence::playback::live;
     }
 
-    bool is_live_mode (sequence::playback p) const
+    bool song_mode () const
+    {
+        return m_song_start_mode == sequence::playback::song;
+    }
+
+    bool live_mode (sequence::playback p) const
     {
         return p == sequence::playback::live;
     }
@@ -1529,6 +1493,17 @@ public:
     sequence::playback song_start_mode () const
     {
         return m_song_start_mode;
+    }
+
+    void song_mode (bool flag)
+    {
+        m_song_start_mode = flag ?
+            sequence::playback::song : sequence::playback::live ;
+    }
+
+    bool toggle_song_mode ()
+    {
+        return toggle_song_start_mode() == sequence::playback::song;
     }
 
     void FF_rewind ();

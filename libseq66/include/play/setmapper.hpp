@@ -327,7 +327,7 @@ private:
         mutes().group_mode(flag);
     }
 
-    void toggle_group_mode ()           // was toggle_mode_group_mute ()
+    void toggle_group_mode ()
     {
         mutes().toggle_group_mode();
     }

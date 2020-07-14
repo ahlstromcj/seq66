@@ -240,7 +240,7 @@ jack_transport_callback (jack_nframes_t nframes, void * arg)
                     p.inner_start(true);
                 }
                 else
-                    p.inner_start();    /* song_start_mode() parameter? */
+                    p.inner_start();
             }
             else        /* don't start, just reposition transport marker */
             {
@@ -541,40 +541,6 @@ jack_assistant::~jack_assistant ()
     /*
      * Anything to do?  Call deinit()?
      */
-}
-
-/**
- * \setter parent().toggle_song_start_mode()
- */
-
-bool
-jack_assistant::toggle_song_start_mode ()
-{
-    return parent().toggle_song_mode();
-}
-
-/**
- * \getter parent().song_start_mode()
- *
- *  We need to unify the song-start and playback-mode flags.
- *
- *      return parent().song_start_mode() == sequence::playback::song;
- */
-
-bool
-jack_assistant::song_start_mode () const
-{
-    return parent().song_mode();
-}
-
-/**
- * \setter parent().start_from_perfedit()
- */
-
-void
-jack_assistant::set_start_from_perfedit (bool start)
-{
-    parent().start_from_perfedit(start);
 }
 
 /**

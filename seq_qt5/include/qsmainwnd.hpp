@@ -211,6 +211,7 @@ private:
     void redo_live_frame ();
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
+    void show_song_mode (bool songmode);
 
 private:
 
@@ -249,6 +250,13 @@ private:
     qsbuildinfo * m_dialog_build_info;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
+
+    /**
+     *  Holds the current setting of the song mode, since
+     *  ui->btnSongPlay->isChecked() seems not to be reliable.
+     */
+
+    bool m_song_mode;
 
     /**
      *  Duty now for the future!

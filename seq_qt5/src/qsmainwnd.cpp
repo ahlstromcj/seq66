@@ -185,6 +185,7 @@ qsmainwnd::qsmainwnd
     m_dialog_build_info     (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
+    m_song_mode             (false),    /* perf().song_mode())          */
     m_use_nsm               (usensm),
     m_is_title_dirty        (true),
     m_ppqn                  (ppqn),     /* can specify 0 for file ppqn  */
@@ -520,10 +521,9 @@ qsmainwnd::qsmainwnd
         ui->btnSongPlay, SIGNAL(clicked(bool)),
         this, SLOT(set_song_mode(bool))
     );
+    ui->btnSongPlay->setCheckable(false);
     if (usr().use_more_icons())
         qt_set_icon(live_mode_xpm, ui->btnSongPlay);
-
-    set_song_mode(false);
 
     /*
      * Record-Song button.
@@ -748,6 +748,9 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     perf().enregister(this);            /* register this for notifications  */
     show();
+
+    show_song_mode(m_song_mode);
+
     m_timer = new QTimer(this);         /* refresh GUI element every few ms */
     m_timer->setInterval(3 * usr().window_redraw_rate());   // was 2
     connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
@@ -854,6 +857,25 @@ qsmainwnd::song_recording (bool record)
     perf().song_recording(record);
 }
 
+void
+qsmainwnd::show_song_mode (bool songmode)
+{
+    if (songmode)
+    {
+        ui->btnRecord->setEnabled(true);
+        if (! usr().use_more_icons())
+            ui->btnSongPlay->setText("Song");
+    }
+    else
+    {
+        ui->btnRecord->setChecked(false);
+        ui->btnRecord->setEnabled(false);
+        if (! usr().use_more_icons())
+            ui->btnSongPlay->setText("Live");
+    }
+}
+
+
 /**
  *  Sets the song mode, which is actually the JACK start mode.  If true, we
  *  are in playback/song mode.  If false, we are in live mode.  This
@@ -864,6 +886,7 @@ qsmainwnd::song_recording (bool record)
 void
 qsmainwnd::set_song_mode (bool songmode)
 {
+#ifdef USE_OLD_WAY
     if (songmode)
     {
         ui->btnRecord->setEnabled(true);
@@ -879,6 +902,12 @@ qsmainwnd::set_song_mode (bool songmode)
             ui->btnSongPlay->setText("Live");
     }
     perf().song_mode(songmode);         /* playback & song_start */
+#else
+    songmode = perf().toggle_song_mode();
+    show_song_mode(songmode);
+    if (! songmode)
+        song_recording(false);
+#endif
 }
 
 /**
@@ -1177,14 +1206,11 @@ qsmainwnd::refresh ()
     if (ui->button_keep_queue->isChecked() != perf().is_keep_queue())
         ui->button_keep_queue->setChecked(perf().is_keep_queue());
 
-#if USE_THIS_EXPERIMENTAL_CODE
-    if (ui->btnSongPlay->isChecked() != perf().is_song())
+    if (m_song_mode != perf().song_mode())
     {
-        set_song_mode(perf().is_song());
-        ui->btnSongPlay->setChecked(perf().is_song());
+        m_song_mode = perf().song_mode();
+        show_song_mode(m_song_mode);
     }
-#endif
-
     if (perf().is_pattern_playing())
     {
         /*

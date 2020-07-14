@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2019-01-28
+ * \updates       2020-07-14
  * \license       GNU GPLv2 or above
  *
  *  The businfo module defines the businfo and busarray classes so that we can
@@ -150,14 +150,12 @@ public:
 
     void activate ()
     {
-        m_active = true;
-        m_initialized = true;
+        m_active = m_initialized = true;
     }
 
     void deactivate ()
     {
-        m_active = false;
-        m_initialized = false;
+        m_active = m_initialized = false;
     }
 
     void init_clock (e_clock clocktype)

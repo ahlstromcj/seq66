@@ -1006,7 +1006,7 @@ rcfile::write ()
         "# master exists. Also must enable jack_transport (the user interface\n"
         "# forces this, and disables jack_master).\n\n"
         << rc_ref().with_jack_master_cond()  << "   # with_jack_master_cond\n\n"
-        "# song_start_mode (applies mainly if JACK is enabled).\n\n"
+        "# song_start_mode applies to JACK/ALSA/PortMidi.\n\n"
         "# 0 = Playback in live mode. Allows muting and unmuting of loops.\n"
         "#     from the main (patterns) window.  Disables both manual and\n"
         "#     automatic muting and unmuting from the performance window.\n"

@@ -927,12 +927,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'M':
 
             seq66::rc().song_start_mode(string_to_int(soptarg) > 0);
-
-            /*
-             * Call perform::get_settings() instead.
-             *
-             * p.song_mode(string_to_int(soptarg) > 0);
-             */
             break;
 
         case 'm':
