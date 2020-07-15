@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-13
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -275,6 +275,15 @@ public:
     };
 
 private:
+
+    /**
+     *  Indicates that an internal setup error occurred (e.g. a device could
+     *  not be set up in PortMidi).  In this case, we will eventually want to
+     *  emit an error prompt, though we keep going in order to populate the
+     *  "rc" file correctly.
+     */
+
+    bool m_error_pending;
 
     /**
      *  When the screenset changes, we put only the existing sequences in this
@@ -870,6 +879,11 @@ public:
     void notify_sequence_change (seq::number seqno);
     void notify_ui_change (seq::number seqno);
     void notify_trigger_change (seq::number seqno);
+
+    bool error_pending () const
+    {
+        return m_error_pending;
+    }
 
     bool session_support () const                   /* PROVISIONAL          */
     {

@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-09
+ * \updates       2020-07-15
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 
 #include "util/basic_macros.hpp"        /* support and platform macros      */
+#include "util/calculations.hpp"        /* seq66::current_date_time()       */
 #include "util/filefunctions.hpp"       /* free functions in seq66 n'space  */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
@@ -283,8 +284,10 @@ string_errno (errno_t errnum)
 
 #elif defined SEQ66_PLATFORM_GNU
 
-    // This currently gets compiled in Qt/Mingw on Windows.
-    // char * msg = strerror_r(int(errnum), dest, sizeof dest);
+    /*
+     * This code gets compiled in Qt/Mingw on Windows.
+     */
+
     char * msg = strerror(int(errnum));
     (void) strncpy(dest, msg, sizeof dest - 1);
 
@@ -867,8 +870,14 @@ file_append_log
     bool result = not_nullptr(fp);
     if (result)
     {
-        size_t rc = fwrite(data.data(), sizeof(char), data.size(), fp);
-        if (rc < data.size())
+        std::string log = "\n";
+        log += current_date_time();
+        log += "\n";
+        log += data.data();
+        log += "\n\n";
+
+        size_t rc = fwrite(log.data(), sizeof(char), log.size(), fp);
+        if (rc < log.size())
         {
             errprintf("could not write to '%s'", filename.c_str());
             result = false;

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-14
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the midibus class.
@@ -95,7 +95,8 @@ midibus::~midibus ()
  *  The original error-checking was too simplistic.  The PmError values of
  *  PmNoError, pmNoData, and pmGotData are actually "no error" codes, if you
  *  read /usr/include/portmidi.h, so we should not print a message if they
- *  occur.  FALSE and TRUE are just too limiting.
+ *  occur.  FALSE and TRUE are just too limiting.  FALSE == pmNoError and
+ *  pmNoData, and TRUE == any other value.
  *
  * \return
  *      Returns 0 if the polling succeeded, and 1 if it failed.
@@ -107,28 +108,10 @@ midibus::api_poll_for_midi ()
     if (not_nullptr(m_pms) && queue_number() >= 0)          /* buss number  */
     {
         PmError err = Pm_Poll(m_pms);
-
-        /*
-         * if (err == FALSE versus TRUE), too simplistic.  Besides, FALSE ==
-         * pmNoError and pmNoData, and TRUE == any other value.
-         */
-
         if (err == pmNoError || err == pmNoData)   // || err == pmGotData)
-        {
             return 0;
-        }
         else if (err == pmGotData)
-        {
             return 1;
-        }
-
-#if defined THIS_MAKES_SENSE                 /* it doesn't                   */
-        if (err == TRUE)                /* back to what it was          */
-        {
-            errprintf("Pm_Poll(): %s\n", Pm_GetErrorText(err));
-            return 1;
-        }
-#endif
     }
     return 0;
 }
@@ -142,8 +125,6 @@ midibus::api_poll_for_midi ()
  * \return
  *      Returns true if the output port was successfully opened.
  */
-
-#define USE_ERROR_TEST_CODE
 
 bool
 midibus::api_init_out ()

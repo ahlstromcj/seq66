@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-07
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -319,10 +319,10 @@ rcfile::parse ()
     if (ok)
         ok = line_after(file, "[midi-clock]");
 
-    long buses = 0;
+    int buses = 0;
     if (ok)
     {
-        sscanf(scanline(), "%ld", &buses);
+        sscanf(scanline(), "%d", &buses);
         ok = next_data_line(file) && buses > 0 && buses <= c_busscount_max;
     }
     if (ok)
@@ -430,8 +430,8 @@ rcfile::parse ()
             rc_ref().inputs().resize(size_t(buses));
             while (next_data_line(file))
             {
-                long bus, bus_on;
-                count = sscanf(scanline(), "%ld %ld", &bus, &bus_on);
+                int bus, bus_on;
+                count = sscanf(scanline(), "%d %d", &bus, &bus_on);
                 if (count == 2)
                 {
                     rc_ref().inputs().set(bus, bool(bus_on));
@@ -453,8 +453,8 @@ rcfile::parse ()
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
     {
-        long ticks = 64;
-        sscanf(scanline(), "%ld", &ticks);
+        int ticks = 64;
+        sscanf(scanline(), "%d", &ticks);
         rc_ref().set_clock_mod(ticks);
     }
     else

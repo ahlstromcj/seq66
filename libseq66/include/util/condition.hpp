@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-22
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  This module defines the class seq66::condition_var, which provides a common
@@ -110,17 +110,14 @@ public:
         m_mutex_lock.unlock();
     }
 
-    /*
-     * These function are implemented in the p_imple "object".
-     */
-
-    void signal ();
-    void wait ();
-
     recmutex & locker ()
     {
         return m_mutex_lock;
     }
+
+    void signal ();
+    void wait ();
+    void wait (int ms);
 
 };          // class condition
 

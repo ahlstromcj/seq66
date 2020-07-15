@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-27
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  2019-04-21 Reverted to commit 5b125f71 to stop GUI deadlock :-(
@@ -108,6 +108,18 @@ public:
         pthread_cond_wait(&m_cond, &(m_rec_mutex.native_locker()));
     }
 
+    /**
+     *  Nanoseconds:  convert milliseconds to microsecond
+     */
+
+    void wait (int ms)
+    {
+        struct timespec w;
+        w.tv_sec = long(ms / 1000);
+        w.tv_nsec = long((ms * 1000) % 1000000) * 1000;
+        pthread_cond_timedwait(&m_cond, &(m_rec_mutex.native_locker()), &w);
+    }
+
 };          // class mutex::impl for pthreads
 
 /**
@@ -146,15 +158,21 @@ condition::~condition () = default;
 condition & condition::operator = (condition &&) = default;
 
 void
-condition::signal () // const
+condition::signal ()
 {
     p_imple->signal();
 }
 
 void
-condition::wait () // const
+condition::wait ()
 {
     p_imple->wait();
+}
+
+void
+condition::wait (int ms)
+{
+    p_imple->wait(ms);
 }
 
 }           // namespace seq66

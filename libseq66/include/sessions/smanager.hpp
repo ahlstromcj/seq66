@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-07-05
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -127,13 +127,17 @@ public:
     virtual bool create_session ();
     virtual bool close_session (bool ok = true);
     virtual bool create_window ();      /* does mostly nothing by default   */
-    virtual void show_message (const std::string & msg);
-    virtual void show_error (const std::string & msg);
+    virtual void show_message (const std::string & msg) const;
+    virtual void show_error (const std::string & msg) const;
     virtual bool run () = 0;            /* app.exec(); run main window loop */
 
-#if defined SEQ66_PORTMIDI_SUPPORT
-    bool portmidi_error_check (std::string & msg) const;
-#endif
+    bool internal_error_check (std::string & msg) const;
+    void error_handling ();
+
+    bool internal_error_pending () const
+    {
+        return  bool(m_perf_pointer) ? m_perf_pointer->error_pending() : true ;
+    }
 
 protected:
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-07-07
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -57,7 +57,7 @@
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
 
-#if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE
+#if defined SEQ66_LASH_SUPPORT
 #include "lash/lash.hpp"                /* seq66::lash_driver functions     */
 #endif
 
@@ -180,12 +180,6 @@ smanager::main_settings (int argc, char * argv [])
                 if (file_accessible(fname))
                 {
                     m_midi_filename = fname;
-#if 0
-        THIS CODE HAS TO COME AFTER launch()
-                    std::string resultname = open_midi_file(fname, errmsg);
-                    result = ! resultname.empty();
-                    set_error_message(errmsg);
-#endif
                 }
                 else
                 {
@@ -376,7 +370,7 @@ smanager::close_session (bool ok)
         }
     }
 
-#if defined SEQ66_LASH_SUPPORT_NO_LASH_HERE_YET
+#if defined SEQ66_LASH_SUPPORT
     if (rc().lash_support())
         delete_lash_driver();
 #endif
@@ -420,12 +414,11 @@ smanager::set_error_message (const std::string & message) const
         printf("smanager error %s\n", message.c_str());
 }
 
-
 /*
  * Having this here after creating the main window may cause issue
  * #100, where ladish doesn't see seq66's ports in time.
  *
- *  perf()->launch(usr().midi_ppqn());
+ *      perf()->launch(usr().midi_ppqn());
  *
  * We also check for any "fatal" PortMidi errors, so we can display
  * them.  But we still want to keep going, in order to at least
@@ -438,7 +431,7 @@ smanager::set_error_message (const std::string & message) const
  */
 
 void
-smanager::show_message (const std::string & msg)
+smanager::show_message (const std::string & msg) const
 {
     seq66::info_message(msg);
 }
@@ -448,15 +441,14 @@ smanager::show_message (const std::string & msg)
  */
 
 void
-smanager::show_error (const std::string & msg)
+smanager::show_error (const std::string & msg) const
 {
     seq66::error_message(msg);
 }
 
-#if defined SEQ66_PORTMIDI_SUPPORT
-
 /**
- *  Checks for a PortMidi error, storing the message if applicable.
+ *  Checks for an internal (e.g. PortMidi) error, storing the message if
+ *  applicable.
  *
  * \param [out] errmsg
  *      Provides a destination for the PortMidi error.  It is cleared if
@@ -468,22 +460,84 @@ smanager::show_error (const std::string & msg)
  */
 
 bool
-smanager::portmidi_error_check (std::string & errmsg) const
+smanager::internal_error_check (std::string & errmsg) const
 {
+    std::string pmerrmsg;
+    errmsg.clear();
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+
+    /*
+     * We should eventually get this code into the midibus arena for PortMidi
+     * and for RtMidi support.
+     */
+
     bool result = bool(Pm_error_present());
     if (result)
     {
-        std::string pmerrmsg = std::string(Pm_error_message());
+        const char * perr = Pm_error_message();
+        if (not_nullptr(perr) && strlen(perr) > 0)
+            pmerrmsg = std::string(perr);
+    }
+
+#endif
+
+    if (result)
+    {
+        bool interror = internal_error_pending();
+        if (interror)
+        {
+            pmerrmsg +=
+                "Go to Edit / Preferences / MIDI Clock and "
+                "MIDI Input to see which devices are disabled."
+                ;
+        }
+    }
+    else
+    {
+        result = internal_error_pending();
+        if (result)
+        {
+            pmerrmsg =
+                "Internal Error: go to Edit / Preferences / MIDI Clock and "
+                "MIDI Input to see which devices are disabled.  Also check "
+                "seq66.log in the configuration directory."
+                ;
+        }
+    }
+    if (result)
+    {
         set_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
-    else
-        errmsg.clear();
-
     return result;
 }
 
+/**
+ *
+ */
+
+void
+smanager::error_handling ()
+{
+    std::string errmsg;
+    if (internal_error_check(errmsg))
+        show_message(errmsg);
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+    const char * pmerrmsg = pm_log_buffer();
+#else
+    const char * pmerrmsg = errmsg.c_str();
 #endif
+
+    if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
+    {
+        std::string path = seq66::rc().config_filespec("seq66.log");
+        errmsg += "\n";
+        errmsg += std::string(pmerrmsg);
+        (void) seq66::file_append_log(path, errmsg);
+    }
+}
 
 }           // namespace seq66
 

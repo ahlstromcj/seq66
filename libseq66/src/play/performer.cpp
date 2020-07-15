@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-14
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -305,6 +305,7 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
  */
 
 performer::performer (int ppqn, int rows, int columns) :
+    m_error_pending         (false),
     m_play_set              (),
     m_play_list             (new playlist(*this, "<empty>", rc())),
     m_note_mapper           (new notemapper()),
@@ -334,11 +335,11 @@ performer::performer (int ppqn, int rows, int columns) :
     m_in_thread             (),
     m_out_thread_launched   (false),
     m_in_thread_launched    (false),
-    m_io_active             (true),             /* must start out true      */
+    m_io_active             (true),                 /* must start true  */
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
-    m_is_busy               (false),                /* for now */
+    m_is_busy               (false),                /* try it for now   */
     m_looping               (false),
     m_song_recording        (false),
     m_song_record_snap      (false),
@@ -496,6 +497,10 @@ performer::notify_trigger_change (seq::number seqno)
  *  settings will eventually be copied to the mastermidibus, which might change
  *  them due to changes in plugged devices.
  *
+ *  The clocks and inputs values will later be updated wth the masterbus
+ *  clocks and inputs as retrieved at run-time.  Generally, we need at least
+ *  one output device, or we will fail.
+ *
  *  WHAT ABOUT THE PLAYLIST?
  *
  * \note
@@ -514,22 +519,14 @@ bool
 performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
 {
     int buses = rcs.clocks().count();
-    bool result = buses > 0;
+    int inputs = rcs.inputs().count();
+    bool result = buses > 0;                        /* at least 1 output    */
     if (result)
-    {
-        int inputs = rcs.inputs().count();
-        result = inputs > 0;
-        if (result)
-        {
-            /*
-             * These later need to be updated wth the masterbus clocks and
-             * inputs as retrieved at run-time.
-             */
+        m_clocks = rcs.clocks();
 
-            m_clocks = rcs.clocks();
-            m_inputs = rcs.inputs();
-        }
-    }
+    if (inputs > 0)
+        m_inputs = rcs.inputs();
+
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
@@ -1122,9 +1119,10 @@ performer::set_ppqn (int p)
 }
 
 /**
- *  Locks on m_condition_var.  Then, if not is_running(), the playback
- *  mode is set to the given state.  If that state is true, call
- *  off_sequences().  Set the running status, unlock, and signal the condition.
+ *  Locks on m_condition_var [accessed by function cv()].  Then, if not
+ *  is_running(), the playback mode is set to the given state.  If that state
+ *  is true, call off_sequences().  Set the running status, unlock, and signal
+ *  the condition.
  *
  *  Note that we reverse unlocking/signalling from what Seq64 does (BUG!!!)
  *  Manual unlocking should be done before notifying, to avoid waking waking up
@@ -1158,8 +1156,8 @@ performer::inner_start (bool songmode)
 
         is_running(true);
         cv().signal();
+        midi_control_out().send_event(midicontrolout::action::play);
     }
-    midi_control_out().send_event(midicontrolout::action::play);
 }
 
 /**
@@ -1769,6 +1767,8 @@ performer::launch (int ppqn)
             launch_input_thread();
             launch_output_thread();
         }
+        else
+            m_error_pending = true;
 
         /*
          * Get and store the clocks and inputs created (disabled or not) by
@@ -2515,10 +2515,14 @@ performer::output_func ()
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
         {
-            automutex lk(cv().locker());
+            automutex lk(cv().locker());    /* deadlock?                    */
             while (! is_running())
             {
+#if defined SEQ66_PLATFORM_WINDOWS          /* WINDOWS DEADLOCK!!!          */
+                cv().wait(100);
+#else
                 cv().wait();
+#endif
                 if (done())                 /* if stopping, kill the thread */
                     break;
             }

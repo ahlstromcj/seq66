@@ -668,11 +668,11 @@ cmdlineopts::parse_options_files
     int /* argc */, char * /* argv */ []
 )
 {
-    std::string rcn = seq66::rc().config_filespec();
+    std::string rcn = rc().config_filespec();
     bool result = true;
     if (file_accessible(rcn))
     {
-        seq66::rcfile options(rcn, seq66::rc());
+        rcfile options(rcn, rc());
         pathprint("Reading rc configuration", rcn);
         if (options.parse())
         {
@@ -707,10 +707,10 @@ cmdlineopts::parse_options_files
     }
     if (result)
     {
-        rcn = seq66::rc().user_filespec();
+        rcn = rc().user_filespec();
         if (file_accessible(rcn))
         {
-            seq66::usrfile ufile(rcn, seq66::rc());
+            usrfile ufile(rcn, rc());
             pathprint("Reading user configuration", rcn);
             if (ufile.parse())
             {
@@ -758,7 +758,7 @@ cmdlineopts::parse_mute_groups
 )
 {
     bool result = true;
-    std::string rcn = seq66::rc().config_filespec();
+    std::string rcn = rc().config_filespec();
 
     /*
      * The caller must make these calls, at the appropriate time, which is
@@ -770,7 +770,7 @@ cmdlineopts::parse_mute_groups
 
     if (file_accessible(rcn))
     {
-        seq66::rcfile options(rcn, rcs);
+        rcfile options(rcn, rcs);
         pathprint("Reading mute-group section of", rcn);
         if (options.parse_mute_group_section(rcn, true))
         {
@@ -829,35 +829,35 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         switch (c)
         {
         case 'A':
-            seq66::rc().with_jack_transport(false);
-            seq66::rc().with_jack_master(false);
-            seq66::rc().with_jack_master_cond(false);
-            seq66::rc().with_jack_midi(false);
+            rc().with_jack_transport(false);
+            rc().with_jack_master(false);
+            rc().with_jack_master_cond(false);
+            rc().with_jack_midi(false);
             infoprint("Forcing all-ALSA mode");
             break;
 
         case 'a':
-            seq66::rc().manual_ports(false);
+            rc().manual_ports(false);
             break;
 
         case 'B':                           /* --buss for the oldsters      */
         case 'b':                           /* --bus for the youngsters     */
-            seq66::usr().midi_buss_override(string_to_midibyte(soptarg));
+            usr().midi_buss_override(string_to_midibyte(soptarg));
             break;
 
         case 'C':
         case '3':
-            seq66::rc().with_jack_transport(true);
-            seq66::rc().with_jack_master(false);
-            seq66::rc().with_jack_master_cond(true);
+            rc().with_jack_transport(true);
+            rc().with_jack_master(false);
+            rc().with_jack_master_cond(true);
             break;
 
         case 'c':                           /* --config option              */
-            seq66::rc().set_config_files(soptarg);
+            rc().set_config_files(soptarg);
             break;
 
         case 'D':                           /* --legacy-record option       */
-            seq66::rc().filter_by_channel(false);
+            rc().filter_by_channel(false);
 
             /*
              * Call perform::get_settings() instead.
@@ -867,7 +867,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'd':                           /* --record-by-channel option   */
-            seq66::rc().filter_by_channel(true);
+            rc().filter_by_channel(true);
 
             /*
              * Call perform::get_settings() instead.
@@ -877,16 +877,16 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'F':                           /* --usr option                 */
-            seq66::rc().user_filename(soptarg);
+            rc().user_filename(soptarg);
             break;
 
         case 'f':                           /* --rc option                  */
-            seq66::rc().config_filename(soptarg);
+            rc().config_filename(soptarg);
             break;
 
         case 'H':
-            seq66::rc().config_directory(soptarg);
-            pathprint("Set home base to ", seq66::rc().config_directory());
+            rc().config_directory(soptarg);
+            pathprint("Set home base to ", rc().config_directory());
             break;
 
         case 'h':
@@ -895,52 +895,52 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'i':                           /* ignore ALSA device           */
-            seq66::rc().device_ignore(true);
-            seq66::rc().device_ignore_num(string_to_int(soptarg));
+            rc().device_ignore(true);
+            rc().device_ignore_num(string_to_int(soptarg));
             break;
 
         case 'J':
-            seq66::rc().with_jack_transport(true);
-            seq66::rc().with_jack_master(true);
-            seq66::rc().with_jack_master_cond(false);
+            rc().with_jack_transport(true);
+            rc().with_jack_master(true);
+            rc().with_jack_master_cond(false);
             break;
 
         case 'j':
-            seq66::rc().with_jack_transport(true);
+            rc().with_jack_transport(true);
             break;
 
         case 'k':
-            seq66::rc().print_keys(true);
+            rc().print_keys(true);
             break;
 
         case 'K':
-            seq66::usr().inverse_colors(true);
+            usr().inverse_colors(true);
             break;
 
 #ifdef SEQ66_LASH_SUPPORT
         case 'L':
-            seq66::rc().lash_support(true);
+            rc().lash_support(true);
             printf("[Activating LASH support]\n");
             break;
 #endif
 
         case 'M':
 
-            seq66::rc().song_start_mode(string_to_int(soptarg) > 0);
+            rc().song_start_mode(string_to_int(soptarg) > 0);
             break;
 
         case 'm':
-            seq66::rc().manual_ports(true);
+            rc().manual_ports(true);
             break;
 
         case 'N':
-            seq66::rc().with_jack_midi(false);
+            rc().with_jack_midi(false);
             printf("[Deactivating JACK MIDI]\n");
             break;
 
 #ifdef SEQ66_LASH_SUPPORT
         case 'n':
-            seq66::rc().lash_support(false);
+            rc().lash_support(false);
             printf("[Deactivating LASH support]\n");
             break;
 #endif
@@ -958,76 +958,76 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'P':
-            seq66::rc().pass_sysex(true);
+            rc().pass_sysex(true);
             break;
 
         case 'p':
-            seq66::rc().priority(true);
+            rc().priority(true);
             break;
 
         case 'q':
-            seq66::usr().midi_ppqn(string_to_int(soptarg));
+            usr().midi_ppqn(string_to_int(soptarg));
             break;
 
         case 'R':
-            seq66::rc().reveal_ports(false);
+            rc().reveal_ports(false);
             printf("[Showing user-configured port names]\n");
             break;
 
         case 'r':
-            seq66::rc().reveal_ports(true);
+            rc().reveal_ports(true);
             printf("[Showing native system port names]\n");
             break;
 
         case 'S':
-            seq66::rc().stats(true);
+            rc().stats(true);
             break;
 
         case 's':
-            seq66::rc().show_midi(true);
+            rc().show_midi(true);
             break;
 
         case 't':
-            seq66::rc().with_jack_midi(true);
+            rc().with_jack_midi(true);
             printf("[Activating native JACK MIDI]\n");
             break;
 
         case 'U':
-            seq66::rc().jack_session_uuid(soptarg);
+            rc().jack_session_uuid(soptarg);
             break;
 
         case 'u':
-            seq66::usr().save_user_config(true);    /* usr(), not rc()!     */
+            usr().save_user_config(true);    /* usr(), not rc()!     */
             break;
 
         case 'v':
-            seq66::rc().verbose(true);
+            rc().verbose(true);
             break;
 
         case 'V':
-            std::cout << versiontext << seq66::seq_build_details();
+            std::cout << versiontext << seq_build_details();
             result = c_null_option_index;
             break;
 
         case 'X':
-            seq66::rc().playlist_filename(soptarg); /* some validation done */
+            rc().playlist_filename(soptarg); /* some validation done */
             break;
 
         case 'x':
-            seq66::rc().interaction_method(string_to_int(soptarg));
+            rc().interaction_method(string_to_int(soptarg));
             break;
 
         case 'Z':
-            seq66::rc().manual_ports(true);
-            seq66::rc().reveal_ports(false);
-            seq66::usr().save_user_config(true);
+            rc().manual_ports(true);
+            rc().reveal_ports(false);
+            usr().save_user_config(true);
             printf("[User mode: Manual ports and user-configured port names]\n");
             break;
 
         case 'z':
-            seq66::rc().manual_ports(false);
-            seq66::rc().reveal_ports(true);
-            seq66::usr().save_user_config(true);
+            rc().manual_ports(false);
+            rc().reveal_ports(true);
+            usr().save_user_config(true);
             printf("[Native mode: Native ports and port names]\n");
             break;
 
@@ -1081,7 +1081,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
     std::string rcn;
     if (errrcname.empty())
     {
-        rcn = seq66::rc().config_filespec();
+        rcn = rc().config_filespec();
     }
     else
     {
@@ -1090,7 +1090,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
         rcn = rc().config_filespec(name);
     }
 
-    seq66::rcfile options(rcn, seq66::rc());
+    rcfile options(rcn, seq66::rc());
     if (options.write())
     {
         // Anything to do?
@@ -1101,7 +1101,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
     bool cansave = usr().save_user_config();
     if (errrcname.empty())
     {
-        rcn = seq66::rc().user_filespec();
+        rcn = rc().user_filespec();
         if (! cansave)
             cansave = ! file_exists(rcn);
     }
@@ -1115,7 +1115,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
 
     if (cansave)
     {
-        seq66::usrfile userstuff(rcn, seq66::rc());
+        usrfile userstuff(rcn, rc());
         if (userstuff.write())
         {
             // Anything to do?

@@ -131,7 +131,7 @@ microsleep (int us)
         {
             struct timespec ts;
             ts.tv_sec = us / 1000000;
-            ts.tv_nsec = (us % 1000000) * 1000;
+            ts.tv_nsec = (us % 1000000) * 1000;     /* 1000 ns granularity  */
 
             int rc = nanosleep(&ts, NULL);
             result = rc == 0 || rc == EINTR;

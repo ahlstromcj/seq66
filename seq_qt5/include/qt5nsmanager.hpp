@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-07-05
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -63,12 +63,12 @@ public:
     qt5nsmanager (QApplication & app, QObject * parent = nullptr);
     virtual ~qt5nsmanager ();
 
-    virtual bool create_session ();
-    virtual bool create_window ();
-    virtual bool close_session (bool ok = true);
-    virtual bool run ();
-    virtual void show_message (const std::string & msg) const;
-    virtual void show_error (const std::string & msg) const;
+    virtual bool create_session () override;
+    virtual bool close_session (bool ok = true) override;
+    virtual bool create_window () override;
+    virtual void show_message (const std::string & msg) const override;
+    virtual void show_error (const std::string & msg) const override;
+    virtual bool run () override;
 
 signals:        /* signals sent by session client callbacks */
 

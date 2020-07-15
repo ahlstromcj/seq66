@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-07-12
+ * \updates       2020-07-15
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -54,6 +54,11 @@
  *  parsing code to where the configuration file-names are changed from the
  *  command-line.  The last thing is to override any other settings via the
  *  command-line parameters.
+ *
+ *  We check for any "fatal" PortMidi errors, so we can display them.  But we
+ *  still want to keep going, in order to at least generate the log-files and
+ *  "erroneous" configuration files to C:/Users/me/AppData/Local/seq66 or
+ *  $HOME/.config/seq66.
  *
  * \param argc
  *      The number of command-line parameters, including the name of the
@@ -95,43 +100,9 @@ main (int argc, char * argv [])
             result = sm.create_window();
         }
     }
-
-#if defined SEQ66_PORTMIDI_SUPPORT
-
-    /*
-     * We check for any "fatal" PortMidi errors, so we can display them.  But
-     * we still want to keep going, in order to at least generate the
-     * log-files and "erroneous" configuration files to
-     * C:/Users/me/AppData/Local/seq66 or $HOME/.config/seq66.
-     */
-
-    std::string errmsg;
     if (result)
     {
-        if (sm.portmidi_error_check(errmsg))
-        {
-            sm.show_message(errmsg);
-
-            /*
-             *
-             * result = false;
-             */
-        }
-    }
-
-    const char * pmerrmsg = pm_log_buffer();
-    if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
-    {
-        std::string path = seq66::rc().config_filespec("portmidi.log");
-        errmsg += "\n";
-        errmsg += std::string(pmerrmsg);
-        (void) seq66::file_append_log(path, errmsg);
-    }
-
-#endif  // SEQ66_PORTMIDI_SUPPORT
-
-    if (result)
-    {
+        sm.error_handling();
         result = sm.create_session();
         if (result)
         {
