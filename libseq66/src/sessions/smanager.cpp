@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-07-15
+ * \updates       2020-07-16
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -479,9 +479,6 @@ smanager::internal_error_check (std::string & errmsg) const
         if (not_nullptr(perr) && strlen(perr) > 0)
             pmerrmsg = std::string(perr);
     }
-
-#endif
-
     if (result)
     {
         bool interror = internal_error_pending();
@@ -493,18 +490,21 @@ smanager::internal_error_check (std::string & errmsg) const
                 ;
         }
     }
-    else
+
+#else
+
+    bool result = internal_error_pending();
+    if (result)
     {
-        result = internal_error_pending();
-        if (result)
-        {
-            pmerrmsg =
-                "Internal Error: go to Edit / Preferences / MIDI Clock and "
-                "MIDI Input to see which devices are disabled.  Also check "
-                "seq66.log in the configuration directory."
-                ;
-        }
+        pmerrmsg =
+            "Internal Error: go to Edit / Preferences / MIDI Clock and "
+            "MIDI Input to see which devices are disabled.  Also check "
+            "seq66.log in the configuration directory."
+            ;
     }
+
+#endif
+
     if (result)
     {
         set_error_message(pmerrmsg);

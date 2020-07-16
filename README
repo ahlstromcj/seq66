@@ -1,8 +1,8 @@
 README for Seq66 0.90.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-07-14
+2015-09-10 to 2020-07-16
 
-I have put a lot of work into this new version, but there are still things to do
+There is a ton of work in this new version, but there are still things to do
 and bugs to fix.  For now, if you have a specific request, email me at
 ahlstromcj@gmail.com.
 
@@ -41,8 +41,8 @@ lot of krufty buildup.  Major changes:
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 
 ALSA/JACK support: Seq66qt5/qseq66
-GUI-less application: Seq66cli/seq66cli [not yet!]
-Qt/Windows/PortMidi: Seq66qt5/qpseq66.exe [not yet!]
+GUI-less application: Seq66cli/seq66cli
+Qt/Windows/PortMidi: Seq66qt5/qpseq66.exe
 Qt/RtMidi: Seq66qt5/qrseq66
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "portmidi"
@@ -57,7 +57,7 @@ and using a conventional source tarball.
 Recent changes:
 
     -   Version 0.90.5:
-        -   More refactoring to improve Windows builds.
+        -   More refactoring to improve Windows builds and fix deadlocks.
         -   Fixed a bug using millitime() instead of microtime().
         -   Added code to implement Song/Live and JACK Transport key toggles.
     -   Version 0.90.4:

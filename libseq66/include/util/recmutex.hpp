@@ -22,14 +22,21 @@
 /**
  * \file          recmutex.hpp
  *
- *  This module declares/defines the base class for mutexes.
+ *  This module declares/defines the base class for recursive mutexes.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-22
+ * \updates       2020-07-16
  * \license       GNU GPLv2 or above
  *
+ *  This recursive mutex is implemented in pthreads due to difficulties we had
+ *  with C++11's std::mutex.
+ *
+ *  We also had to implement a flag to indicate if locking was in place or
+ *  not, but only for Windows at this time.  Seems to work fine under Linux.
+ *  However, we're commenting it out for now and simply disabling the locking
+ *  of the condition variable's signal() call.  Could be really problematic.
  */
 
 #include <memory>                       /* std::unique_ptr                  */
@@ -77,6 +84,19 @@ private:
      */
 
     static native sm_global_mutex;
+
+#if defined SEQ66_USE_MUTEX_UNLOCKED_FLAG
+
+    /**
+     *  Indicates if the mutex is locked or not.  We are trying this concept
+     *  because of issues with the condition variable's mutex seeming to stay
+     *  locked (or exhibiting undefined behavior) in Windows, causing a
+     *  deadlock between waiting to play and starting play.
+     */
+
+    mutable bool m_is_locked;
+
+#endif
 
     /**
      *  Provides a mutex lock usable by a single module or class.

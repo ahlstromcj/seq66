@@ -1147,7 +1147,6 @@ performer::set_ppqn (int p)
 void
 performer::inner_start (bool songmode)
 {
-    automutex lk(cv().locker());        /* use the condition's recmutex */
     if (! is_running())
     {
         song_mode(songmode);            /* playback_mode(p)             */
@@ -1155,6 +1154,10 @@ performer::inner_start (bool songmode)
             off_sequences();
 
         is_running(true);
+
+#if ! defined SEQ66_PLATFORM_WINDOWS
+        automutex lk(cv().locker());    /* use the condition's recmutex */
+#endif
         cv().signal();
         midi_control_out().send_event(midicontrolout::action::play);
     }
@@ -2518,11 +2521,11 @@ performer::output_func ()
             automutex lk(cv().locker());    /* deadlock?                    */
             while (! is_running())
             {
-#if defined SEQ66_PLATFORM_WINDOWS          /* WINDOWS DEADLOCK!!!          */
-                cv().wait(100);
-#else
+// #if defined SEQ66_PLATFORM_WINDOWS          /* WINDOWS DEADLOCK!!!          */
+                // cv().wait(100);
+// #else
                 cv().wait();
-#endif
+// #endif
                 if (done())                 /* if stopping, kill the thread */
                     break;
             }
