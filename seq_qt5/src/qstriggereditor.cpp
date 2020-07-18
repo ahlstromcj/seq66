@@ -73,8 +73,8 @@ qstriggereditor::qstriggereditor
     ),
     m_timer             (nullptr),
     m_key_y             (keyheight),
-    m_status            (c_midibyte_max),           // (EVENT_NOTE_ON)
-    m_cc                (c_midibyte_max)            // (0)
+    m_status            (EVENT_NOTE_ON),
+    m_cc                (0)                         /* bank select  */
 {
     setAttribute(Qt::WA_StaticContents);            // promising!
     setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint

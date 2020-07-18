@@ -252,7 +252,7 @@ void
 qseqroll::set_redraw ()
 {
     m_draw_whole_grid = true;
-    set_needs_update();             // set_dirty();
+    set_dirty();    // set_needs_update(); // set_dirty();
 }
 
 /**
@@ -279,7 +279,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
     m_frame_ticks = pix_to_tix(r.width());
 
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER
+#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
     midipulse current_tick = seq_pointer()->get_last_tick();
     int frame = current_tick / m_frame_ticks;
     bool redraw = m_roll_frame.change_frame(frame);
@@ -337,7 +337,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     {
         call_draw_notes(painter, view);
 
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER
+#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
         if (m_roll_frame.regenerate(r, this))
         {
             QPainter p2(m_roll_frame.grid());
@@ -357,7 +357,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
      *  value, the current zoom, and the current scroll-offset x value.
      */
 
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER
+#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
     if (m_roll_frame.rendering())
         return;                         /* early exit; getting grid/notes   */
 

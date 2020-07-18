@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-06
- * \updates       2019-01-27
+ * \updates       2020-07-17
  * \license       GNU GPLv2 or above
  *
  *  This definition used to reside in the controllers.hpp file, but now more
@@ -170,12 +170,12 @@ const std::string c_controller_names[c_midibyte_data_max] =
     "119 ",
     "120 All Sound Off",
     "121 All Controllers Off",
-    "122 Local Keyboard (on/off)",
+    "122 Local Keyboard On/Off",
     "123 All Notes Off",
     "124 Omni Mode Off",
     "125 Omni Mode On",
-    "126 Mono Operation",
-    "127 Poly Operation"
+    "126 Mono On",
+    "127 Poly On"
 };
 
 }           // namespace seq66

@@ -70,11 +70,12 @@ public:
 
     qseqdata
     (
-        performer & perf,
+        performer & p,
         seq::pointer seqp,
         int zoom            = SEQ66_DEFAULT_ZOOM,
         int snap            = SEQ66_DEFAULT_SNAP,
-        QWidget * parent    = nullptr
+        QWidget * parent    = nullptr,
+        int xpadding        = 1
     );
 
     virtual ~qseqdata ();
@@ -121,6 +122,13 @@ private:
 
     QTimer * m_timer;
     QFont m_font;
+
+    /*
+     * A kludge to account for differences between the external and tabbed
+     * sequence-editing frames.
+     */
+
+    int m_keyboard_padding_x;
 
     /*
      * What events is the data window currently editing?

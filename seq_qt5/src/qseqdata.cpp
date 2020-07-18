@@ -56,17 +56,19 @@ qseqdata::qseqdata
     seq::pointer seqp,
     int zoom,
     int snap,
-    QWidget * parent
+    QWidget * parent,
+    int xpadding
 ) :
-    QWidget             (parent),
-    qseqbase            (p, seqp, zoom, snap),
-    m_timer             (nullptr),
-    m_font              (),
-    m_status            (c_midibyte_max),
-    m_cc                (c_midibyte_max),
-    m_line_adjust       (false),
-    m_relative_adjust   (false),
-    m_dragging          (false)
+    QWidget                 (parent),
+    qseqbase                (p, seqp, zoom, snap),
+    m_timer                 (nullptr),
+    m_font                  (),
+    m_keyboard_padding_x    (xpadding),
+    m_status                (EVENT_NOTE_ON),
+    m_cc                    (1),                /* modulation */
+    m_line_adjust           (false),
+    m_relative_adjust       (false),
+    m_dragging              (false)
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(6);
@@ -172,7 +174,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
              *  Convert to screen coordinates.
              */
 
-            int event_x = tix_to_pix(tick) + 1; /* + c_keyboard_padding_x;  */
+            int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
             bool selected = cev->is_selected();
             midibyte d0, d1;
             cev->get_data(d0, d1);

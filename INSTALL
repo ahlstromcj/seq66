@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.90.4 and above
+INSTALL for Seq66 v. 0.90.5 and above
 Chris Ahlstrom
-2015-09-10 to 2020-07-08
+2015-09-10 to 2020-07-18
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 site on GitHub.  The bootstrap setup is primarily aimed at developers, but is
@@ -383,6 +383,32 @@ DEPENDENCIES:
       -  liblo-dev (optional, needed for NSM/OSC support)
       -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
          and brings in libpng-tools)
+      -  libpthread (normally already included in a Linux distro)
+
+    Qt Builds:
+
+      This lists comes from the m4 file, and has been abbreviated.  Some of
+      these are surely not needed and we can eliminate them from the test at
+      some point. Left off are the initial "libQt" and final "5-dev" items in
+      the library names. The obviously necessary ones (*) come first; they are
+      specified in m4/ax_have_qt_min.m4, which provides the AX_HAVE_QT_MIN
+      test used in the configure.ac script. The rest of them seem to be
+      brought in as sub-dependencies, so make sure they are all installed if
+      your attempt to build qseq66 fails.
+
+      - Core *
+      - Gui *
+      - Widgets  *
+      - Xml
+      - OpenGL 
+      - PrintSupport 
+      - QuickTest 
+      - Concurrent 
+      - DBus 
+      - Qml 
+      - Network 
+      - Test 
+      - Sql
 
    Runtime:
 

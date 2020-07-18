@@ -1,6 +1,6 @@
-TODO for Seq66 0.90.2 (Sequencer64 refactored for C++14 and Qt)
+TODO for Seq66 0.90.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2019-12-09
+2019-04-13 to 2020-07-18
 
 HOT ITEMS:
 
@@ -25,7 +25,65 @@ HOT ITEMS:
 	How easy/difficult would it be to implement keyboard or midi shortcuts to
 	these buttons (steps 2 to 6), or preset them for every new pattern editor?
 
-Patterns:
+ISSUES:
+
+    #1: JACK Metadata MIDINAM support.  LV2 MIDNAM has been around for a
+    while. There has been discussion on #lad, and, now JACK 2 has metadata
+    implemented, Carla has started offering that MIDNAM information as
+    metadata on the midi-in port for a connecting sequencer to use.
+    STATUS: Not yet started.
+
+    #2: Failed to find matching components of a complete QT installation.
+    User: Make sure that dev versions of all the Qt libraries mentioned in
+    the DEPENDENCIES/ Qt Builds section of the INSTALL file are installed.
+    STATUS: Updated the INSTALL documentation.
+
+    #3: Open loop Pattern Editor window. On mouse wheel scroll event we expect
+    the piano-roll and notes sheet to scroll vertically.
+    STATUS: We had to disable mouse-wheel scrolling for some reason, so still
+    investigating the one.
+
+    #7: 'make install' doesn't install files.
+    STATUS: This is an Arch packaging issue.  Will investigate at some point.
+
+    #8: NSM Support? Similar to ahlstromcj/sequencer64#1 but now there is an
+    NSM fork, https://github.com/linuxaudio/new-session-manager.
+    STATUS: Initial framework to support restarting the performer module with
+    a new configuration is in place.  Will add the appropriate code to the
+    qt5nsmanager.  Will investigate the implications of the "new" session
+    manager.
+
+    #9: Change pattern in the Edit tab while on the Edit tab? I do not think I
+    can see anything currently.
+    STATUS:  In progress.  Fixing issues missed in the Edit tab.  Note that
+    the Edit tab will never have all the features of the external pattern
+    editor. There is just not enough room, for one thing.
+
+    #10: Right click-hold on pattern editor doesn't show draw pencil.
+    STATUS: Will do.  In both flavors of pattern editor, either a
+    left-right-hold click or a ctrl-right-hold click is supposed to draw a
+    note, but both are broken.  Using the "p" key to enable note-entry works.
+    They all show a hand instead of a pencil.
+
+    #11: Pattern editor: disabling the 'piano roll scrolls with playback'
+    button does not stop the scrolling.
+    STATUS: Will do.
+
+    #12: Note rendering problem. Having a long note, scrolling it out of
+    vision and back again leads to a problem.  (Only the first snap division
+    and last snap division of the note appears.
+    STATUS:  Weird, will do.
+
+    #13: Pattern editor: control event bar doesn't update/scroll. If I add or
+    remove a note, the related representation in the control bar below the
+    piano roll does not refresh. Also, if I scroll the view above, the control
+    bar stays in the same place.
+    STATUS:  In progress.  Related to issue #9.  Cannot duplicate the issue
+    with the control bar staying in the same place.  I found so far that the
+    event (trigger) bar and data (control) bar were not showing events due to
+    an error I made in setting the status/cc values each were to show.
+
+PATTERNS:
 
     -   Support a non-channel pattern (e.g. to contain patch info).
     -   Set pattern editor focus to grid at start unless it is a new one.

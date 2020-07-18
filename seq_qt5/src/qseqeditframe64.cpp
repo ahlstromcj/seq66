@@ -1173,7 +1173,7 @@ qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 }
 
 /**
- *
+ *  Currently this function is not called.  To be investigated
  */
 
 bool
@@ -1182,11 +1182,11 @@ qseqeditframe64::on_sequence_change (seq::number seqno)
     bool result = seqno == seq_pointer()->seq_number();
     if (result)
     {
-        m_seqroll->set_redraw();
-        m_seqdata->set_dirty();                 // doesn't cause a refresh
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("on_sequence_change()\n");       // never called
-#endif
+        // m_seqroll->set_redraw();                // also calls set_dirty()
+        // m_seqdata->set_dirty();                 // doesn't cause a refresh
+        // m_seqevent->set_dirty();                // how about this?
+
+        set_dirty();
     }
     return result;
 }
@@ -1256,7 +1256,7 @@ qseqeditframe64::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new qseqdata
     (
-        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea
+        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea, 1
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -2193,7 +2193,7 @@ qseqeditframe64::set_background_sequence (int seqnum)
 
 /**
  *  Sets the data type based on the given parameters.  This function uses the
- *  hardwired array c_controller_names.
+ *  hardwired array c_controller_names defined in the controllers.cpp module.
  *
  * \param status
  *      The current editing status.
@@ -3204,11 +3204,12 @@ qseqeditframe64::set_dirty ()
 {
     if (is_initialized())
     {
-        qseqframe::set_dirty();
-        seq::number seqno = seq_pointer()->seq_number();
-        perf().notify_sequence_change(seqno);       // FIXME
-        m_seqroll->set_redraw();
-        m_seqdata->set_dirty();                 // doesn't cause a refresh
+        // seq::number seqno = seq_pointer()->seq_number();
+        // perf().notify_sequence_change(seqno);   // FIXME
+        qseqframe::set_dirty();         // roll, time, date & event panes
+        // m_seqroll->set_redraw();        // also calls set_dirty();
+        // m_seqdata->set_dirty();         // doesn't cause a refresh
+        // m_seqevent->set_dirty();        // how about this?
     }
     update_draw_geometry();
 }

@@ -4068,10 +4068,7 @@ sequence::get_next_event_match
             if (ok)
             {
                 /*
-                 * The caller needs to use this iterator, and so must performer
-                 * the increment afterwards itself.
-                 *
-                 * ++evi;
+                 * The caller must increment it afterwards: ++evi
                  */
 
                 return true;

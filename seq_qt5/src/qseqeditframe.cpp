@@ -482,7 +482,10 @@ qseqeditframe::initialize_panels ()
         sequence::editmode::note, this
     );
     m_seqroll->update_edit_mode(m_edit_mode);
-    m_seqdata = new qseqdata(perf(), seq_pointer(), zoom(), m_snap, m_container);
+    m_seqdata = new qseqdata
+    (
+        perf(), seq_pointer(), zoom(), m_snap, m_container, 7 /* grrrrr */
+    );
     m_seqevent = new qstriggereditor
     (
         perf(), seq_pointer(), zoom(), m_snap, usr().key_height(), m_container
@@ -505,12 +508,29 @@ qseqeditframe::~qseqeditframe ()
 void
 qseqeditframe::conditional_update ()
 {
-    /*
-     *  It is stupid to set dirt in an update function!
-     *
-     * if (seq_pointer()->is_dirty_edit())
-     *    set_dirty();
-     */
+    bool expandrec = seq_pointer()->expand_recording();
+    update_midi_buttons();                      /* mirror current states    */
+    if (expandrec)
+    {
+        // TODO
+        // set_measures(get_measures() + 1);
+        // follow_progress(expandrec);             /* keep up with progress    */
+    }
+    else if (perf().follow())
+    {
+        // TODO
+        // follow_progress();
+    }
+    if (seq_pointer()->check_loop_reset() || seq_pointer()->is_dirty_edit())
+    {
+        /*
+         * Now we need to update the event and data panes.  Note that the notes
+         * update during the next pass through the loop only if more notes come
+         * in on the input buss.
+         */
+
+        set_dirty();
+    }
 }
 
 /**
@@ -716,6 +736,8 @@ qseqeditframe::updateSeqLength ()
     seq_pointer()->set_measures(measures);                       // ????
     m_seqtime->updateGeometry();
     m_seqroll->updateGeometry();
+    m_seqdata->updateGeometry();        // ca 2020-07-16
+    m_seqevent->updateGeometry();       // ca 2020-07-16
     m_container->adjustSize();
 }
 
@@ -770,6 +792,8 @@ qseqeditframe::update_draw_geometry ()
     ui->cmbSeqLen->setCurrentText(seqLenText);
     m_seqtime->updateGeometry();
     m_seqroll->updateGeometry();
+    m_seqdata->updateGeometry();        // ca 2020-07-16
+    m_seqevent->updateGeometry();       // ca 2020-07-16
     m_container->adjustSize();
 }
 
@@ -966,7 +990,7 @@ qseqeditframe::transposeNotes()
 {
     QAction * senderAction = (QAction *) sender();
     int transposeVal = senderAction->data().toInt();
-    seq_pointer()->push_undo();
+//  seq_pointer()->push_undo();         // ca 2020-07-16 done in sequence
     seq_pointer()->transpose_notes(transposeVal, 0);
 }
 
