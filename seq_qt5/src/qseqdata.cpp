@@ -254,7 +254,8 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     int mouse_y = event->y();
 
     /*
-     * If near an event (4px), do relative adjustment.
+     * If near an event (4px), do relative adjustment.  Do we need to
+     * push-undo here?  Not sure, won't change for now.
      */
 
     tick_start = pix_to_tix(mouse_x - 2);
@@ -274,10 +275,10 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     else
         m_line_adjust = true;   /* set new values for events under a line   */
 
-    drop_x(mouse_x);                        /* set values for line      */
+    drop_x(mouse_x);                            /* set values for line      */
     drop_y(mouse_y);
-    old_rect().clear();                     /* reset dirty redraw box   */
-    m_dragging = true;                      /* may be dragging now      */
+    old_rect().clear();                         /* reset dirty redraw box   */
+    m_dragging = true;                          /* may be dragging now      */
 }
 
 /**

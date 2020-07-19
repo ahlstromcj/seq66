@@ -990,7 +990,6 @@ qseqeditframe::transposeNotes()
 {
     QAction * senderAction = (QAction *) sender();
     int transposeVal = senderAction->data().toInt();
-//  seq_pointer()->push_undo();         // ca 2020-07-16 done in sequence
     seq_pointer()->transpose_notes(transposeVal, 0);
 }
 

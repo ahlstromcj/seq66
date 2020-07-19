@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-04
- * \updates       2019-07-24
+ * \updates       2020-07-19
  * \license       GNU GPLv2 or above
  *
  *  An alternative implementation to qseqroll.  That class redraws the whole
@@ -761,7 +761,6 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
         paste(false);
-        seq_pointer()->push_undo();
         seq_pointer()->paste_selected(tick_s, note);
         set_dirty();
     }
@@ -806,8 +805,8 @@ qseqrollpix::mousePressEvent (QMouseEvent * event)
                     )
                 )
                 {
-                    seq_pointer()->push_undo();
-                    seq_pointer()->add_note(tick_s, m_note_length - 2, note, true);
+                    midipulse len = m_note_length - 2;
+                    seq_pointer()->push_add_note(tick_s, len, note, true);
                     set_dirty();
                 }
             }
@@ -1036,7 +1035,6 @@ qseqrollpix::mouseReleaseEvent (QMouseEvent * event)
              */
 
             delta_note = delta_note - (c_num_keys - 1);
-            seq_pointer()->push_undo();
             seq_pointer()->move_selected_notes(delta_tick, delta_note);
             set_dirty();
         }
@@ -1049,7 +1047,6 @@ qseqrollpix::mouseReleaseEvent (QMouseEvent * event)
             /* convert deltas into screen corridinates */
 
             convert_xy(delta_x, delta_y, delta_tick, delta_note);
-            seq_pointer()->push_undo();
             if (event->modifiers() & Qt::ShiftModifier)
                 seq_pointer()->stretch_selected(delta_tick);
             else

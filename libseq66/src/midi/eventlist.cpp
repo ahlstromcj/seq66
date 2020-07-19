@@ -1536,8 +1536,8 @@ eventlist::get_selected_events_interval
  *  that.  See the grow_selected() function.  Rather, it moves any event in
  *  the selection.
  *
- *  Also, we've moved external calls to push_undo() into this function.
- *  The caller shouldn't have to do that.
+ *  Also, we've moved external push-undo into sequence functions.  The caller
+ *  shouldn't have to do that.
  *
  *  Finally, we don't need to mark the selected, only to remove the unmodified
  *  versions later.  Just adjust their timestamps directly.
@@ -1598,8 +1598,8 @@ eventlist::stretch_selected (midipulse delta)
  *  This function now tries to prevent pathological growth, such as trying to
  *  shrink the notes to zero length or less, or stretch them beyond the length
  *  of the sequence.  Otherwise we get weird and unexpected results.  Also,
- *  we've moved external calls to push_undo() into this function.  The caller
- *  shouldn't have to do that.
+ *  we've moved push-undo into sequence functions.  The caller shouldn't have
+ *  to do that.
  *
  *  A comment on terminology:  The user "selects" notes, while the sequencer
  *  "marks" notes. This function no longer bothers to mark all the selected

@@ -285,7 +285,6 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
         snap_current_x();
         convert_x(current_x(), tick_s);
         paste(false);
-        seq_pointer()->push_undo();
         seq_pointer()->paste_selected(tick_s, 0);
     }
     else
@@ -471,15 +470,12 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         {
             /*
              * Adjust for snap, then convert deltas into screen coordinates.
+             * Then move notes; not really notes, but still moves events.
              */
 
             midipulse delta_tick;
             delta_x -= move_snap_offset_x();
             convert_x(delta_x, delta_tick);
-
-            /* not really notes, but still moves events */
-
-            seq_pointer()->push_undo();
             seq_pointer()->move_selected_notes(delta_tick, 0);
         }
         set_adding(adding());

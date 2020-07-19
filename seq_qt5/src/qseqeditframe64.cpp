@@ -1984,7 +1984,6 @@ qseqeditframe64::transpose_notes ()
 {
     QAction * senderAction = (QAction *) sender();
     int transposeval = senderAction->data().toInt();
-    seq_pointer()->push_undo();
     seq_pointer()->transpose_notes(transposeval, 0);
 }
 
@@ -3236,9 +3235,8 @@ qseqeditframe64::update_draw_geometry()
 
 /**
  *  Implements the actions brought forth from the Tools (hammer) button.
- *
- *  Note that the push_undo() calls push all of the current events (in
- *  sequence::m_events) onto the stack (as a single entry).
+ *  Note that the push_undo(), called internally, pushes all of the current
+ *  events (in sequence::m_events) onto the stack (as a single entry).
  */
 
 void

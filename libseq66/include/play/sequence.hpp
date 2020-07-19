@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-06-28
+ * \updates       2020-07-19
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -847,6 +847,7 @@ public:
      * seqdata and lfownd hold for undo
      */
 
+    void lfo_hold_undo ();
     void set_hold_undo (bool hold);
 
     int get_hold_undo () const
@@ -1271,6 +1272,12 @@ public:
     void play (midipulse tick, bool playback_mode, bool resume = false);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
     bool add_note
+    (
+        midipulse tick, midipulse len, int note,
+        bool paint = false,
+        int velocity = SEQ66_PRESERVE_VELOCITY
+    );
+    bool push_add_note
     (
         midipulse tick, midipulse len, int note,
         bool paint = false,

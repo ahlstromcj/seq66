@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-06
+ * \updates       2020-07-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -339,6 +339,22 @@ sequence::set_hold_undo (bool hold)
         m_events_undo_hold = m_events;
     else
         m_events_undo_hold.clear();
+}
+
+/**
+ *  EXPERIMENTAL.
+ *  Combines get_hold_undo(), push_undo(true), and set_hold_undo(false).
+ */
+
+void
+sequence::lfo_hold_undo ()
+{
+    automutex locker(m_mutex);
+    if (m_events_undo_hold.count())
+    {
+        m_events_undo.push(m_events_undo_hold);     /* stazed   */
+        m_events_undo_hold.clear();
+    }
 }
 
 /**
@@ -2339,6 +2355,10 @@ sequence::add_note
     bool result = false;
     if (note >= 0 && note < c_num_keys)
     {
+        /*
+         * Question:  do we really need this, since we poll for input?
+         */
+
         automutex locker(m_mutex);
         bool hardwire = velocity == SEQ66_PRESERVE_VELOCITY;
         bool ignore = false;
@@ -2394,6 +2414,26 @@ sequence::add_note
             verify_and_link();
     }
     return result;
+}
+
+/**
+ *  Add note, preceded by a push-undo.  This is meant to be used only by the
+ *  user-interface, when manually entering notes.
+ */
+
+bool
+sequence::push_add_note
+(
+    midipulse tick, midipulse len, int note,
+    bool paint, int velocity
+)
+{
+    /*
+     * automutex locker(m_mutex);                   // necessary?
+     */
+
+    m_events_undo.push(m_events);                   /* push_undo(), no lock */
+    return add_note(tick, len, note, paint, velocity);
 }
 
 /**

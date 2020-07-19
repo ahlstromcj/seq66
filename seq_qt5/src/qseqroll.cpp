@@ -913,9 +913,10 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
 void
 qseqroll::mousePressEvent (QMouseEvent * event)
 {
+    seq::pointer s = seq_pointer();
     midipulse tick_s, tick_f;
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
-    seq::pointer s = seq_pointer();
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     snapped_x = norm_x = event->x() - m_keypadding_x;
     snapped_y = norm_y = event->y();
     snap_x(snapped_x);
@@ -925,10 +926,10 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     if (paste())
     {
         convert_xy(snapped_x, snapped_y, tick_s, note);
-        s->paste_selected(tick_s, note);            /* s->push_undo()       */
+        s->paste_selected(tick_s, note);
         paste(false);
         setCursor(Qt::ArrowCursor);
-        set_needs_update();                         /* set_dirty();         */
+        set_dirty();                                /* set_needs_update()   */
     }
     else
     {
@@ -965,8 +966,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 );
                 if (would_select)
                 {
-                    s->push_undo();                 /* leave this call here */
-                    s->add_note(tick_s, m_note_length - 2, note, true);
+                    s->push_add_note(tick_s, m_note_length - 2, note, true);
                     set_dirty();
                 }
             }
@@ -991,7 +991,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 }
                 if (! is_selected)
                 {
-                    if (! (event->modifiers() & Qt::ControlModifier))
+                    if (! isctrl)
                         s->unselect();
 
                     int numsel;
@@ -1035,11 +1035,11 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 }
                 if (is_selected)
                 {
-                    if                          /* moving - left click only */
-                    (
-                        event->button() == Qt::LeftButton &&
-                        ! (event->modifiers() & Qt::ControlModifier)
-                    )
+                    /*
+                     * Moving - left click only.
+                     */
+
+                    if (event->button() == Qt::LeftButton && ! isctrl)
                     {
                         moving_init(true);
                         set_dirty();
@@ -1072,8 +1072,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     (
                         event->button() == Qt::MiddleButton ||
                         (
-                            event->button() == Qt::LeftButton &&
-                            (event->modifiers() & Qt::ControlModifier)
+                            event->button() == Qt::LeftButton && isctrl
                         )
                     ) && m_edit_mode == sequence::editmode::note;
                     if (can_grow)
@@ -1088,6 +1087,11 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 }
             }
         }
+
+        /*
+         * TODO here and in sequencer64!!!!
+         */
+
         if (event->button() == Qt::RightButton)
             set_adding(true);
     }
@@ -1237,6 +1241,7 @@ void
 qseqroll::keyPressEvent (QKeyEvent * event)
 {
     bool dirty = false;
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     seq::pointer s = seq_pointer();
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
@@ -1297,7 +1302,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 move_selected_notes(0, -1);
                 set_dirty();
             }
-            else if (event->modifiers() & Qt::ControlModifier) // Ctrl + ...
+            else if (isctrl)
             {
                 /*
                  * We want to ignore Ctrl sequences here, so that Ctrl-Z's can
@@ -1328,7 +1333,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     (void) reset_zoom();
             }
         }
-        if (! dirty && (event->modifiers() & Qt::ControlModifier))
+        if (! dirty && isctrl)
         {
             switch (event->key())
             {
@@ -1395,7 +1400,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_P:
 
                     set_adding(true);
-                    set_needs_update();
                     break;
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
@@ -1416,7 +1420,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_X:
 
                     set_adding(false);
-                    set_needs_update();
                     break;
                 }
             }
@@ -1482,7 +1485,7 @@ qseqroll::move_selected_notes (int dx, int dy)
         int snap_x = dx * snap();                   /* time-stamp snap  */
         int snap_y = -dy;                           /* note pitch snap  */
         seq::pointer s = seq_pointer();
-        if (s->any_selected_notes())     /* redundant!       */
+        if (s->any_selected_notes())                /* redundant!       */
         {
             s->move_selected_notes(snap_x, snap_y);
         }
@@ -1566,21 +1569,21 @@ qseqroll::set_adding (bool a)
 {
     qseqbase::set_adding(a);
     if (a)
-        setCursor(Qt::PointingHandCursor);  // Qt::CrossCursor ?
+        setCursor(Qt::PointingHandCursor);      /* Qt doesn't have a pencil */
     else
         setCursor(Qt::ArrowCursor);
 
     /*
      * Don't set this unless something actually changes: set_dirty();
      */
+
+    set_needs_update();
 }
 
 /**
  *  The current (x, y) drop points are snapped, and the pasting flag is set to
- *  true.  Then this function
- *  Gets the box that selected elements are in, then adjusts for the clipboard
- *  being shifted to tick 0.
- *
+ *  true.  Then this function Gets the box that selected elements are in, then
+ *  adjusts for the clipboard being shifted to tick 0.
  */
 
 void

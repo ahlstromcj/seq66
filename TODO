@@ -41,7 +41,7 @@ ISSUES:
     #3: Open loop Pattern Editor window. On mouse wheel scroll event we expect
     the piano-roll and notes sheet to scroll vertically.
     STATUS: We had to disable mouse-wheel scrolling for some reason, so still
-    investigating the one.
+    investigating that one.
 
     #7: 'make install' doesn't install files.
     STATUS: This is an Arch packaging issue.  Will investigate at some point.
@@ -60,10 +60,11 @@ ISSUES:
     editor. There is just not enough room, for one thing.
 
     #10: Right click-hold on pattern editor doesn't show draw pencil.
-    STATUS: Will do.  In both flavors of pattern editor, either a
-    left-right-hold click or a ctrl-right-hold click is supposed to draw a
-    note, but both are broken.  Using the "p" key to enable note-entry works.
-    They all show a hand instead of a pencil.
+    STATUS: Qt does not have a pencil icon, so a pointing finger appears
+    instead.  To activate the pointing finger, do a right-hold. To then
+    add a note, while holding the right button, click the left button.
+    Using the "p" key to enable note-entry might be easier on the hands.
+    Use the "x" key to exit note entry.
 
     #11: Pattern editor: disabling the 'piano roll scrolls with playback'
     button does not stop the scrolling.
