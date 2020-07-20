@@ -535,7 +535,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                             if (scale > 1.75f)
                                                 scale = 1.75f;
 
-                                            usr().window_scale(scale);
+                                            (void) usr().window_scale(scale);
                                         }
 
                                         result = true;
@@ -545,11 +545,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             else if (optionname == "scale")
                             {
                                 if (arg.length() >= 1)
-                                {
-                                    float scale = float(string_to_double(arg));
-                                    usr().window_scale(scale);
-                                    result = true;
-                                }
+                                    result = usr().parse_window_scale(arg);
                             }
                             else if (optionname == "mutes")
                             {

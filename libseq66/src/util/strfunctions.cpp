@@ -762,6 +762,36 @@ tokenize_stanzas
 }
 
 /**
+ *  Tokenizes a string containing a pair of numbers separated by either spaces
+ *  or an 'x'.  Useful in grabbing dimensions.  Handles integers or basic
+ *  floats.
+ *
+ * \return
+ *      Returns the number of tokens converted: 0, 1, or 2.
+ */
+
+std::vector<std::string>
+tokenize
+(
+    const std::string & source,
+    const std::string delimiter     // = " "
+)
+{
+    std::vector<std::string> result;
+    std::size_t previous = 0;
+    std::size_t current = source.find(delimiter);
+    while (current != std::string::npos)
+    {
+        result.push_back(source.substr(previous, current - previous));
+        previous = current + 1;
+        current = source.find(delimiter, previous);
+    }
+    result.push_back(source.substr(previous, current - previous));
+    return result;
+}
+
+
+/**
  * \param bitbucket
  *      The vector of bit values to be written.  Currently, this function
  *      assumes that the number of bit values is perfectly divisible by 8.

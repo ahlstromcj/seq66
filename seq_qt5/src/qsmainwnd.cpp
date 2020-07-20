@@ -721,23 +721,23 @@ qsmainwnd::qsmainwnd
     if (usr().window_is_scaled())
     {
         /*
-         * This scales the full GUI, cool!  However, it can be overridden by the
-         * size of the new, larger, qseqeditframe64 frame.  We see the normal-size
-         * window come up, and then it jumps to the larger size.
+         * This scales the full GUI, cool!  However, it can be overridden by
+         * the size of the new, larger, qseqeditframe64 frame.  We see the
+         * normal-size window come up, and then it jumps to the larger size.
          */
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         int sh = SEQ66_QSMAINWND_WIDTH;
         int sw = SEQ66_QSMAINWND_HEIGHT;
         int width = usr().scale_size(sw);
-        int height = usr().scale_size(sh);
+        int height = usr().scale_size_y(sh);
 #endif
 
         QSize s = size();
         int h = s.height();
         int w = s.width();
         int width = usr().scale_size(w);
-        int height = usr().scale_size(h);
+        int height = usr().scale_size_y(h);
         resize(width, height);
         if (not_nullptr(m_live_frame))
             m_live_frame->repaint();
@@ -748,7 +748,6 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     perf().enregister(this);            /* register this for notifications  */
     show();
-
     show_song_mode(m_song_mode);
 
     m_timer = new QTimer(this);         /* refresh GUI element every few ms */

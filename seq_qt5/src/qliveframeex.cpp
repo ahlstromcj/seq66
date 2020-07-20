@@ -103,7 +103,7 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
         int h = s.height();
         int w = s.width();
         int width = usr().scale_size(w);
-        int height = usr().scale_size(h);
+        int height = usr().scale_size_y(h);
         resize(width, height);
         if (not_nullptr(m_live_frame))
             m_live_frame->repaint();

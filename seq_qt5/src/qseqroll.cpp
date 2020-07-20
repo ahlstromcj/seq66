@@ -45,8 +45,6 @@
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqframe.hpp"                /* interface class for seqedits     */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
-#include "qrollframe.hpp"               /* seq66::qrollframe class          */
-
 #include "gui_palette_qt5.hpp"
 
 /*

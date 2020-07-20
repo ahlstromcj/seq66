@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-28
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -417,8 +417,12 @@ qseditoptions::syncWithInternals ()
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
     ui->spinKeyHeight->setValue(usr().key_height());
 
-    char tmp[16];
-    snprintf(tmp, sizeof tmp, "%g", usr().window_scale());
+    char tmp[32];
+    snprintf
+    (
+        tmp, sizeof tmp, "%gx%g",
+        usr().window_scale(), usr().window_scale_y()
+    );
     ui->lineEditUiScaling->setText(tmp);
 }
 
@@ -470,9 +474,8 @@ void
 qseditoptions::update_ui_scaling (const QString & qs)
 {
     const std::string valuetext = qs.toStdString();
-    double value = std::stod(valuetext);
-    usr().window_scale(value);
-    usr().save_user_config(true);
+    if (usr().parse_window_scale(valuetext))
+        usr().save_user_config(true);
 }
 
 /**

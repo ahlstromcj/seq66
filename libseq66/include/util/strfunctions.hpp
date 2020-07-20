@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-07
+ * \updates       2020-07-20
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -80,6 +80,11 @@ extern int tokenize_stanzas
     const std::string & source,
     std::string::size_type bleft = 0,
     const std::string & brackets = ""
+);
+extern std::vector<std::string> tokenize
+(
+    const std::string & source,
+    const std::string delimiter = " "
 );
 extern std::string write_stanza_bits
 (

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-07-02
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -263,8 +263,17 @@ qslivegrid::create_loop_buttons ()
     int fh = ui->frame->height();
     m_slot_w = (fw - m_space_cols - 1) / columns() - sc_button_padding;
     m_slot_h = (fh - m_space_rows - 1) / rows() - sc_button_padding;
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf
+    (
+        "frame = %d x %d, slot = %d x %d, spacing = %d\n",
+        fw, fh, m_slot_w, m_slot_h, spacing()
+    );
+#endif
+
     for (int row = 0; row < rows(); ++row)
-        ui->loopGridLayout->setRowMinimumHeight(row, m_slot_w + spacing());
+        ui->loopGridLayout->setRowMinimumHeight(row, m_slot_h + spacing());
 
     for (int column = 0; column < columns(); ++column)
     {
@@ -393,7 +402,7 @@ qslivegrid::create_one_button (int seqno)
     bool enabled = perf().is_screenset_active(seqno);
     const QSize btnsize = QSize(m_slot_w, m_slot_h);
     std::string snstring;
-    ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_h + spacing());
+    ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
     if (valid)
         snstring = std::to_string(seqno);
 

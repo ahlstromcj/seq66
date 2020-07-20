@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2020-07-02
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
@@ -94,22 +94,6 @@ protected:
     std::string m_hotkey;
 
     /**
-     *  The background color of the whole button.  This value comes from the
-     *  sequence, which either has no color (white for muted, black for
-     *  unmuted), or a color specified and saved with the sequence.
-     */
-
-    QColor m_back_color;
-
-    /**
-     *  Provide the color of foreground drawing.  Generally, this is black for
-     *  the buttons, but for the qslotbutton, which is empty, and has a black
-     *  background, this is white or yellow.
-     */
-
-    QColor m_fore_color;
-
-    /**
      *  This color is black, except when the background color is dark.
      */
 
@@ -117,9 +101,9 @@ protected:
 
     /**
      *  Holds the current width of the button, useful in scaling font size.
-     */
 
     int m_slot_width;
+     */
 
     /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots
@@ -203,16 +187,6 @@ protected:
         return m_is_dirty;
     }
 
-    QColor back_color () const
-    {
-        return m_back_color;
-    }
-
-    QColor fore_color () const
-    {
-        return m_fore_color;
-    }
-
     QColor text_color () const
     {
         return m_text_color;
@@ -229,6 +203,11 @@ protected:
 
     static gui_palette_qt5 & slotpal ();
 
+    /*
+     * Currently unused
+     *
+     * m_slot_width        (0),
+
     int slot_width () const
     {
         return m_slot_width;
@@ -237,6 +216,13 @@ protected:
     void slot_width (int w)
     {
         m_slot_width = w;
+    }
+
+     */
+
+    void text_color (QColor c)
+    {
+        m_text_color = c;
     }
 
 };          // class qslotbutton

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-06-20
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -421,8 +421,12 @@ usrfile::parse ()
             if (next_data_line(file))
             {
                 float scale = 1.0f;
-                sscanf(scanline(), "%f", &scale);
-                usr().window_scale(scale);
+                float scaley = 1.0f;
+                int count = sscanf(scanline(), "%f %f", &scale, &scaley);
+                if (count == 1)
+                    usr().window_scale(scale);          /* x & y the same   */
+                else if (count == 2)
+                    usr().window_scale(scale, scaley);  /* x != y scale     */
             }
         }
     }
@@ -1068,12 +1072,11 @@ usrfile::write ()
     file << "\n"
         "# Specifies an enlargement of the main window of Seq66.\n"
         "# The normal value is 1.0, which is the legacy sizing.  If this\n"
-        "# value is between 1.0 and 3.0, it will increase the size of all\n"
-        "# of the main window elements proportionately. Same as the\n"
-        "# '-o scale=x.y' option.\n"
+        "# value is between 0.5 and 3.0, it will change the size of the main\n"
+        "# window proportionately. Same as the '-o scale=m.n[xp.q]' option.\n"
         "\n"
-        << usr().window_scale()
-        << "      # window_scale (scales the main window upwards in size)\n"
+        << usr().window_scale() << " " << usr().window_scale_y()
+        << "      # window_scale (scales main window width and height)\n"
         ;
 
     /*

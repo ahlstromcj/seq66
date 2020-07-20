@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-06-20
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -252,8 +252,8 @@ private:
     /**
      *  Provide a scale factor to increase the size of the main window
      *  and its internals.  Should be limited from 1.0 to 3.0, probably.
-     *  Right now we allow 0.5 to 3.0 (SEQ66_WINDOW_SCALE_MIN to
-     *  SEQ66_WINDOW_SCALE_DEFAULT).  This value is used by the following
+     *  Right now we allow 0.5 to 3.0 (c_window_scale_min to
+     *  c_window_scale_default).  This value is used by the following
      *  functions:
      *
      *      -    window_scale()
@@ -264,6 +264,14 @@ private:
      */
 
     float m_window_scale;
+
+    /**
+     *  A new item to allow scaling window width and height separately.  If in
+     *  the legal range, this item will scale the height.  Otherwise, the same
+     *  value of m_window_scale will be used for both dimensions.
+     */
+
+    float m_window_scale_y;
 
     /**
      *  These control sizes.  We'll try changing them and see what
@@ -703,7 +711,7 @@ private:
 
     /**
      *  The width of the main pattern/sequence grid, in pixels.  Affected by
-     *  the m_mainwid_border and m_mainwid_spacing values, as well a
+     *  the m_mainwid_border and m_mainwid_spacing values, as well as
      *  m_window_scale.  Replaces c_mainwid_x.
      */
 
@@ -711,8 +719,8 @@ private:
 
     /**
      *  The height of the main pattern/sequence grid, in pixels.  Affected by
-     *  the m_mainwid_border and m_control_height values, as well a
-     *  m_window_scale. Replaces c_mainwid_y.
+     *  the m_mainwid_border and m_control_height values, as well as
+     *  m_window_scale or m_window_scale_y. Replaces c_mainwid_y.
      */
 
     int m_mainwid_y;
@@ -938,7 +946,7 @@ public:
     );
 
     /**
-     * \getter m_instruments[instrument].instrument (name of instrument)
+     * \getter m_instruments[instrument].instrument (name of instrument).
      */
 
     const std::string & instrument_name (int instrum)
@@ -980,10 +988,10 @@ public:
     }
 
     /**
-     * \getter m_instruments[instrument].controllers_active[controller]
-     *      A convenience function so that the caller doesn't have to get the
-     *      instrument number from the bus_instrument() member function.
-     *      It also has a shorter name.
+     * \getter m_instruments[instrument].controllers_active[controller].
+     *  A convenience function so that the caller doesn't have to get the
+     *  instrument number from the bus_instrument() member function.  It also
+     *  has a shorter name.
      */
 
     const std::string & controller_name (int buss, int channel, int cc)
@@ -999,7 +1007,18 @@ public:
         return m_window_scale;
     }
 
-    void window_scale (float winscale);
+    float window_scale_x () const
+    {
+        return m_window_scale;
+    }
+
+    float window_scale_y () const
+    {
+        return m_window_scale_y;
+    }
+
+    bool window_scale (float winscale, float winscaley = 0.0);
+    bool parse_window_scale(const std::string & source);
 
     /**
      *  Returns true if we're increasing the size of the main window.
@@ -1009,7 +1028,7 @@ public:
 
     bool window_scaled_up () const
     {
-        return m_window_scale >= 1.01f;
+        return m_window_scale >= 1.01f || m_window_scale_y >= 1.01f;
     }
 
     /**
@@ -1020,7 +1039,7 @@ public:
 
     bool window_scaled_down () const
     {
-        return m_window_scale <= 0.99f;
+        return m_window_scale <= 0.99f || m_window_scale_y <= 0.99f;
     }
 
     /**
@@ -1037,14 +1056,18 @@ public:
         return int(m_window_scale * value + 0.5);
     }
 
+    int scale_size_y (int value) const
+    {
+        return int(m_window_scale_y * value + 0.5);
+    }
+
     int grid_style () const
     {
         return static_cast<int>(m_grid_style);
     }
 
     /**
-     * \getter m_grid_style
-     *      Checks for normal style.
+     * \getter m_grid_style: Checks for normal style.
      */
 
     bool grid_is_normal () const
@@ -1053,8 +1076,7 @@ public:
     }
 
     /**
-     * \getter m_grid_style
-     *      Checks for the white style.
+     * \getter m_grid_style: Checks for the white style.
      */
 
     bool grid_is_white () const
@@ -1063,8 +1085,7 @@ public:
     }
 
     /**
-     * \getter m_grid_style
-     *      Checks for the button style.
+     * \getter m_grid_style: Checks for the button style.
      */
 
     bool grid_is_button () const
@@ -1073,8 +1094,7 @@ public:
     }
 
     /**
-     * \getter m_grid_style
-     *      Checks for the black style.
+     * \getter m_grid_style: Checks for the black style.
      */
 
     bool grid_is_black () const
@@ -1099,8 +1119,8 @@ public:
 
     /**
      * \getter m_mainwnd_rows and m_mainwnd_cols
-     *      Returns true if either value is not the default.  This function is
-     *      the inverse of is_default_m.inwid_size().
+     *  Returns true if either value is not the default.  This function is the
+     *  inverse of is_default_m.inwid_size().
      */
 
     bool is_variset () const
@@ -1111,8 +1131,8 @@ public:
 
     /**
      * \getter m_mainwnd_rows and m_mainwnd_cols
-     *      Returns true if both values are the default.  This function is
-     *      the inverse of is_variset().
+     *  Returns true if both values are the default.  This function is the
+     *  inverse of is_variset().
      */
 
     bool is_default_mainwid_size () const
@@ -1159,7 +1179,7 @@ public:
     }
 
     /**
-     * \getter m_text_y, not user modifiable, not saved
+     * \getter m_text_y, not user modifiable, not saved.
      */
 
     int text_y () const
@@ -1168,7 +1188,7 @@ public:
     }
 
     /**
-     * \getter m_seqchars_x, not user modifiable, not saved
+     * \getter m_seqchars_x, not user modifiable, not saved.
      */
 
     int seqchars_x () const
@@ -1177,7 +1197,7 @@ public:
     }
 
     /**
-     * \getter m_seqchars_y, not user modifiable, not saved
+     * \getter m_seqchars_y, not user modifiable, not saved.
      */
 
     int seqchars_y () const
@@ -1185,18 +1205,10 @@ public:
         return m_seqchars_y;
     }
 
-    /**
-     * \getter m_mainwid_border
-     */
-
     int mainwid_border () const
     {
         return m_mainwid_border;
     }
-
-    /**
-     * \getter m_mainwid_spacing
-     */
 
     int mainwid_spacing () const
     {
@@ -1223,10 +1235,6 @@ public:
     {
         return scale_size(m_mainwid_border);
     }
-
-    /**
-     * \getter m_control_height
-     */
 
     int control_height () const
     {
@@ -1279,9 +1287,8 @@ public:
 
     /**
      * \setter m_seqedit_bgsequence
-     *      Note that SEQ66_IS_LEGAL_SEQUENCE() allows the
-     *      SEQ66_SEQUENCE_LIMIT (0x800 = 2048) value, to turn off the use of
-     *      a background sequence.
+     *  Note that SEQ66_IS_LEGAL_SEQUENCE() allows the SEQ66_SEQUENCE_LIMIT
+     *  (0x800 = 2048) value, to turn off the use of a background sequence.
      */
 
     void seqedit_bgsequence (int seqnum)
@@ -1400,10 +1407,6 @@ protected:
     void dump_summary();
 
 public:
-
-    /**
-     * \getter m_midi_ppqn
-     */
 
     int midi_ppqn () const
     {

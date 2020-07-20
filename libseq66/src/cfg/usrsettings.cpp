@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-06-20
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -103,6 +103,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "cfg/usrsettings.hpp"          /* seq66::usr_settings              */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
+#include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -211,6 +212,7 @@ usrsettings::usrsettings () :
     m_mainwnd_cols              (SEQ66_DEFAULT_SET_COLUMNS),
     m_max_sets                  (SEQ66_DEFAULT_SET_MAX),
     m_window_scale              (c_window_scale_default),
+    m_window_scale_y            (c_window_scale_default),
     m_mainwid_border            (0),
     m_mainwid_spacing           (0),
     m_control_height            (0),
@@ -318,6 +320,7 @@ usrsettings::usrsettings (const usrsettings & rhs) :
     m_mainwnd_cols              (rhs.m_mainwnd_cols),
     m_max_sets                  (rhs.m_max_sets),
     m_window_scale              (rhs.m_window_scale),
+    m_window_scale_y            (rhs.m_window_scale_y),
     m_mainwid_border            (rhs.m_mainwid_border),
     m_mainwid_spacing           (rhs.m_mainwid_spacing),
     m_control_height            (rhs.m_control_height),
@@ -429,6 +432,7 @@ usrsettings::operator = (const usrsettings & rhs)
         m_mainwnd_cols              = rhs.m_mainwnd_cols;
         m_max_sets                  = rhs.m_max_sets;
         m_window_scale              = rhs.m_window_scale;
+        m_window_scale_y            = rhs.m_window_scale_y;
         m_mainwid_border            = rhs.m_mainwid_border;
         m_mainwid_spacing           = rhs.m_mainwid_spacing;
         m_control_height            = rhs.m_control_height;
@@ -542,7 +546,8 @@ usrsettings::set_defaults ()
     m_mainwnd_rows = SEQ66_DEFAULT_SET_ROWS;    // range: 4-8
     m_mainwnd_cols = SEQ66_DEFAULT_SET_COLUMNS; // range: 8-8
     m_max_sets = SEQ66_DEFAULT_SET_MAX;         // range: 32-64
-    m_window_scale = c_window_scale_default;    // range: 0.5 to 3.0
+    m_window_scale = c_window_scale_default;    // range: 0.5 to 1.0 to 3.0
+    m_window_scale_y = c_window_scale_default;
     m_mainwid_border = c_mainwid_border;        // range: 0-3, try 2 or 3
     m_mainwid_spacing = c_mainwid_spacing;      // range: 2-6, try 4 or 6
     m_control_height = 0;                       // range: 0-4?
@@ -652,7 +657,7 @@ usrsettings::mainwnd_y () const
     else
     {
         return m_window_scale > 1.0f ?
-            m_mainwnd_y : int(scale_size(m_mainwnd_y)) ;
+            m_mainwnd_y : int(scale_size_y(m_mainwnd_y)) ;
     }
 }
 
@@ -767,17 +772,55 @@ usrsettings::set_instrument_controllers
 }
 
 /**
- * \setter m_window_scale
+ * \setter m_window_scale and m_window_scale_y
+ *
+ *  For small device screens (800x480), use winscale = 0.85 and winscaley =
+ *  0.55 approximately.
  */
 
-void
-usrsettings::window_scale (float winscale)
+bool
+usrsettings::window_scale (float winscale, float winscaley)
 {
-    if (winscale >= c_window_scale_min && winscale <= c_window_scale_max)
-    {
+    bool result =
+    (
+        winscale >= c_window_scale_min &&
+        winscale <= c_window_scale_max
+    );
+    if (result)
         m_window_scale = winscale;
+
+    if (winscaley >= c_window_scale_min && winscaley <= c_window_scale_max)
+        m_window_scale_y = winscaley;
+    else
+        m_window_scale_y = winscale;
+
+    if (result)
         normalize();
+
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+usrsettings::parse_window_scale (const std::string & source)
+{
+    bool result = false;
+    std::vector<std::string> tokens = seq66::tokenize(source, "x");
+    if (tokens.size() > 0)
+    {
+        double value1 = std::stod(tokens[0]);
+        if (tokens.size() > 1)
+        {
+            double value2 = std::stod(tokens[1]);
+            result = window_scale(value1, value2);
+        }
+        else
+            result = window_scale(value1);
     }
+    return result;
 }
 
 /**

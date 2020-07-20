@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2020-06-29
+ * \updates       2020-07-20
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -189,6 +189,10 @@ qloopbutton::qloopbutton
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
     set_checked(m_is_checked);
+    setMinimumSize(30, 30);
+
+    QWidget tmp;
+    text_color(tmp.palette().color(QPalette::ButtonText));
 }
 
 /**
@@ -204,12 +208,12 @@ qloopbutton::initialize_text ()
         int w = width();
         int h = height();
         int dx = usr().scale_size(2);
-        int dy = usr().scale_size(2);
+        int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
         int lx = dx;                            /* left x       */
         int ty = dy;                            /* top y        */
-        int bh = usr().scale_size(12);          /* box height   */
+        int bh = usr().scale_size_y(12);        /* box height   */
         int rx = int(0.50 * w) + lx - dx;       /* right x      */
         int by = int(0.85 * h);                 /* bottom y     */
 
