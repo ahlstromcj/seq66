@@ -1,0 +1,34 @@
+Seq66 Arch Linux Package Build
+Chris Ahlstrom
+2020-07-20 to 2020-07-20
+
+The directory "arch/package" holds a copy of the package build files for Arch
+Linux.
+
+TO BE DETERMINED: These files may be updated from the original build files via:
+
+    git subtree pull --prefix arch/package https://aur.archlinux.org/seq66-git.git master --squash
+
+This README also provides some handy links to the Arch build of Seq66.
+
+Package URL:
+
+    https://aur.archlinux.org/packages/seq66-git/
+
+Arch Package Guidelines:
+
+    https://wiki.archlinux.org/index.php/VCS_package_guidelines
+
+GitHub issues:
+
+    TBD
+
+Discussions:
+
+    https://www.linuxmusicians.com/viewtopic.php?f=4&t=15133&p=67807#p67807
+
+Working with git subtree:
+
+    https://www.atlassian.com/git/articles/alternatives-to-git-submodule-git-subtree
+
+# vim: sw=4 ts=4 wm=4 et ft=sh

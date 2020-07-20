@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Seq66
+GenericName=Seq66
+Comment=MIDI Loop Sequencer derived from seq24
+Comment[fr]=Séquenceur de boucle MIDI dérivé de seq24
+Icon=/usr/share/pixmaps/seq66.xpm
+
+Type=Application
+Categories=AudioVideo;Audio;
+
+Exec=qseq66
+Terminal=false

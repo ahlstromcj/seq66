@@ -1,6 +1,6 @@
 TODO for Seq66 0.90.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-07-18
+2019-04-13 to 2020-07-20
 
 HOT ITEMS:
 
@@ -40,11 +40,14 @@ ISSUES:
 
     #3: Open loop Pattern Editor window. On mouse wheel scroll event we expect
     the piano-roll and notes sheet to scroll vertically.
-    STATUS: We had to disable mouse-wheel scrolling for some reason, so still
-    investigating that one.
+    STATUS: We had to disable mouse-wheel scrolling for this reason: In
+    qseqkeys, we did not want the scroll wheel to accidentally scroll the piano
+    keys vertically.  Same for qscrollmaster, qseqeditframe64, except that we
+    note wheelEvent() is not called for some reason.
 
     #7: 'make install' doesn't install files.
-    STATUS: This is an Arch packaging issue.  Will investigate at some point.
+    STATUS: This is an Arch packaging issue.  Copied and modified the PKGBUILD
+    file from Sequencer64 and tweaked it.  Check it out.
 
     #8: NSM Support? Similar to ahlstromcj/sequencer64#1 but now there is an
     NSM fork, https://github.com/linuxaudio/new-session-manager.
