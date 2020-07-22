@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+#
+# \file        debian/rules
+# \library     seq66
+# \author      Chris Ahlstrom
+# \date        2015-09-11
+# \updates     2020-07-20
+# \version     $Revision$
+# \license     $XPC_SUITE_GPL_LICENSE$
+#
+# See debhelper(9).  Enables output of every command that modifies files on the
+# build system.  Also check out:
+#
+# https://www.debian.org/doc/manuals/debmake-doc/ch08.en.html#autotools-multi
+
+export DH_VERBOSE = 1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+#	dh $@ --with=autotools_dev
+
+%:
+	dh $@ --with autoreconf
+
+# override_dh_install:
+#	dh_missing --list-missing
+
+override_dh_auto_test:
+override_dh_usrlocal:
+override_dh_shlibdeps:
+	dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info -l$(shell pwd)/lib/x86_64-linux-gnu
+
+override_dh_strip:
+	dh_strip -Xlibseq66 -Xseq_rtmidi --dbg-package=seq66-dbg
+	dh_strip -Xseq66 -Xseq-rtmidi --dbg-package=libseq66-dbg
+	dh_strip -Xseq66 -Xlibseq66 -Xseq-rtmidi
+	dh_strip -Xseq66 -Xlibseq66 --dbg-package=seq-rtmidi-dbg
+
+# vim: ft=make

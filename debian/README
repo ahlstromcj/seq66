@@ -1,0 +1,101 @@
+Seq66 Debian Instructions
+Chris Ahlstrom
+2020-07-20 to 2020-07-20
+
+STILL IN PROGRESS
+
+There is a concise, recent, and fairly complete guide to creating a "deb"
+package in the Debian package called "maint-guide", which stores different
+versions of the "Debian New Maintainers' Guide" in
+/usr/share/doc/maint-guide.  The debhelper package (and perhaps some related
+packages) need to be installed in order to create a Seq66 DEB package.
+
+However, since the "rules" file was already provided by the Debian maintainer
+of seq24, the process of creating a "deb" file for Seq66 is relatively
+simple.
+
+0. First build the project normally:
+
+   a. ./bootstrap --full-clean
+   b. ./bootstrap -er -rm   # enable & configure an "rtmidi" Release build
+            - or -
+      ./bootstrap --static  # same, but also do a static Release build
+   c. make                  # optional, checks for build issues
+
+   If a build is not necessary, command b. is still necessary, because the
+   dh_clean command will otherwise error due to finding nothing to clean.
+
+1. Make sure the command console current directory is the top directory
+   of the project.
+
+2. Add a new entry to the debian/changelog to update the version number
+   as appropriate for this build.
+
+        seq66 (0.90.3-0) unstable; urgency=low
+
+        * See the source-code ChangeLog for the full list of changes.
+
+        -- Chris Ahlstrom <ahlstromcj@gmail.com>  Thu, 06 Oct 2016 12:00:00 +0400
+
+3. Run the following optional commands (they can be useful error checks):
+
+   $ debian/rules clean
+   $ debian/rules build
+
+   The build command also runs the (minimalist) test script.
+
+4. Run the following command:
+
+   $ fakeroot debian/rules binary
+
+   In the directory just above the top directory of the project, you will
+   find something like the following:
+   
+        seq66.90.3-0_amd64.deb, if built on a 64-bit system.
+        seq66.90.3-0_i386.deb, if built on a 32-bit system.
+
+5. Run the following command again to get rid of all the build products:
+
+   $ debian/rules clean
+
+   The following command is supposed to do all the steps, but our project,
+   being the "upstream" project, still has issues in some of the commands it
+   carries out:
+
+   $ dpkg-buildpackage -us -uc
+
+   This command works.  It specifies a binary-only build, without the need for
+   signing.
+
+   $ dpkg-buildpackage -b -rfakeroot -us -uc
+
+Dependencies:
+
+    libasound2 (>= 1.0.16)
+    libatk1.0-0 (>= 1.12.4)
+    libatkmm-1.6-1v5 (>= 2.24.0)
+    libc6 (>= 2.14)
+    libcairo2 (>= 1.2.4)
+    libcairomm-1.0-1v5 (>= 1.12.0)
+    libfontconfig1 (>= 2.11)
+    libfreetype-infinality6 (>= 2.4.0)
+    libgcc1 (>= 1:3.0)
+    libgdk-pixbuf2.0-0 (>= 2.22.0)
+    libglib2.0-0 (>= 2.16.0)
+    libglibmm-2.4-1v5 (>= 2.50.0)
+    libgtk2.0-0 (>= 2.8.0)
+    libgtkmm-2.4-1v5 (>= 1:2.24.0)
+    libjack-jackd2-0 (>= 1.9.5~dfsg-14) | libjack-0.116
+    liblash-compat-1debian0 (>= 1+dfsg0)
+    libpango-1.0-0 (>= 1.14.0)
+    libpangocairo-1.0-0 (>= 1.14.0)
+    libpangoft2-1.0-0 (>= 1.14.0)
+    libpangomm-1.4-1v5 (>= 2.40.0)
+    libsigc++-2.0-0v5 (>= 2.2.0)
+    libstdc++6 (>= 5.2)
+
+Packaging your project for Debian:
+
+    https://www.debian.org/doc/manuals/distribute-deb/distribute-deb.html
+
+# vim: sw=4 ts=4 wm=4 et ft=sh
