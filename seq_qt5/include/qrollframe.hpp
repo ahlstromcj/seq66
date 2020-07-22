@@ -32,9 +32,6 @@
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
- *
- *  User jean-emmanual added support for disabling the following of the
- *  progress bar during playback.  See the qseqbase::m_progress_follow member.
  */
 
 /*
@@ -58,7 +55,7 @@ class qrollframe
 {
 private:
 
-    QPixmap * m_grid_pixmap;    // std::unique_ptr<QPixmap> m_grid_pixmap;
+    QPixmap * m_grid_pixmap;                /* not std::unique_ptr<QPixmap> */
     bool m_rendering;
     int m_frame_number;
     int m_frame_width;
@@ -145,7 +142,7 @@ public:
     void restore_bar_area (QPainter & painter, int progx, int progy);
     void dump () const;
 
-};
+};          // class qrollframe
 
 }           // namespace seq66
 

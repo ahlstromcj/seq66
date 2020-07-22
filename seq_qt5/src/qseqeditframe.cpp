@@ -516,12 +516,12 @@ qseqeditframe::conditional_update ()
         // set_measures(get_measures() + 1);
         // follow_progress(expandrec);             /* keep up with progress    */
     }
-    else if (perf().follow())
+    else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
         // TODO
         // follow_progress();
     }
-    if (seq_pointer()->check_loop_reset() || seq_pointer()->is_dirty_edit())
+    if (seq_pointer()->check_loop_reset()) // || seq_pointer()->is_dirty_edit())
     {
         /*
          * Now we need to update the event and data panes.  Note that the notes
@@ -541,7 +541,7 @@ qseqeditframe::conditional_update ()
 void
 qseqeditframe::set_dirty ()
 {
-    qseqframe::set_dirty();         // BEWARE
+    qseqframe::set_dirty();
     update_draw_geometry();
 }
 
@@ -630,7 +630,6 @@ qseqeditframe::redo()
 
 /**
  *
-s   //popup menu over button
  */
 
 void
@@ -733,11 +732,11 @@ void
 qseqeditframe::updateSeqLength ()
 {
     int measures = ui->cmbSeqLen->currentText().toInt();
-    seq_pointer()->set_measures(measures);                       // ????
+    seq_pointer()->set_measures(measures);
     m_seqtime->updateGeometry();
     m_seqroll->updateGeometry();
-    m_seqdata->updateGeometry();        // ca 2020-07-16
-    m_seqevent->updateGeometry();       // ca 2020-07-16
+    m_seqdata->updateGeometry();
+    m_seqevent->updateGeometry();
     m_container->adjustSize();
 }
 
@@ -792,8 +791,8 @@ qseqeditframe::update_draw_geometry ()
     ui->cmbSeqLen->setCurrentText(seqLenText);
     m_seqtime->updateGeometry();
     m_seqroll->updateGeometry();
-    m_seqdata->updateGeometry();        // ca 2020-07-16
-    m_seqevent->updateGeometry();       // ca 2020-07-16
+    m_seqdata->updateGeometry();
+    m_seqevent->updateGeometry();
     m_container->adjustSize();
 }
 

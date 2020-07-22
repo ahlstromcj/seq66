@@ -2521,11 +2521,7 @@ performer::output_func ()
             automutex lk(cv().locker());    /* deadlock?                    */
             while (! is_running())
             {
-// #if defined SEQ66_PLATFORM_WINDOWS          /* WINDOWS DEADLOCK!!!          */
-                // cv().wait(100);
-// #else
                 cv().wait();
-// #endif
                 if (done())                 /* if stopping, kill the thread */
                     break;
             }

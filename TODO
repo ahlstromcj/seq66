@@ -1,29 +1,59 @@
 TODO for Seq66 0.90.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-07-18
+2019-04-13 to 2020-07-21
 
 HOT ITEMS:
 
-	From: zigmhount <notifications@github.com>
-	Subject: [Question/Feature request] Live midi pattern recording (#188)
+    From: zigmhount <notifications@github.com>
+    Subject: [Question/Feature request] Live midi pattern recording (#188)
 
-    I havve followed closely the development of the midi control output to use
-    with my Akai APC Mini - awesome. The only think I miss now is to easily
-    record a midi pattern in an empty slot without too much fiddling with the
-    mouse or keyboard, as in a live setup.
+        I havve followed closely the development of the midi control output to
+        use with my Akai APC Mini - awesome. The only think I miss now is to
+        easily record a midi pattern in an empty slot without too much
+        fiddling with the mouse or keyboard, as in a live setup.
 
-    My ideal feature would be e.g.
+        My ideal feature would be e.g.
 
-    1. when an empty pattern is selected (on the control surface)
-    2. to automatically open the pattern editor
-    3. automatically activate Dump Data to MIDI Bus
-    4. automatically activate Midi pass-through
-    5. automatically activate Record Midi data
-    6. automatically set Merge to Expand the sequence to fit recording
-    7. and manually select the midi output to the synth.
+        1. when an empty pattern is selected (on the control surface)
+        2. to automatically open the pattern editor
+        3. automatically activate Dump Data to MIDI Bus
+        4. automatically activate Midi pass-through
+        5. automatically activate Record Midi data
+        6. automatically set Merge to Expand the sequence to fit recording
+        7. and manually select the midi output to the synth.
 
-	How easy/difficult would it be to implement keyboard or midi shortcuts to
-	these buttons (steps 2 to 6), or preset them for every new pattern editor?
+        How easy/difficult would it be to implement keyboard or midi shortcuts
+        to these buttons (steps 2 to 6), or preset them for every new pattern
+        editor?
+
+    Investigate the test the playlist functionality.
+
+    Windows:
+
+        Figure out why Windows will not play through the default setup, which is
+        device 0 being the Microsoft MIDI Mapper redirecting to device 1, the
+        built-in wave-table synth.
+
+        Disable JACK-related elements for Windows, such as the JACK options.
+
+    When resizing, also recalculate the x and y scaling appropriately.
+
+    The corners and borders of the grid buttons are colored.  A problem?
+
+    Make sure grid button text colors are appropriate.
+
+    In main frame, try to highlight the start/stop/pause buttons
+    appropriately.  Also consider showing a small status bar.
+
+    Figure out a way to condense the external qseqedit frame to 800x480.
+
+    Finish off the NSM functionality.
+
+    Backports to Sequencer64:
+
+        -   qseqedit segfault fix
+        -   Resume-note-on fix
+        -   qseqedit 800x480 feature if successful
 
 ISSUES:
 

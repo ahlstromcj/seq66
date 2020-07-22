@@ -117,12 +117,12 @@ public:
     void set_editor_mode (sequence::editmode mode);
     void follow_progress (bool expand = false);
 
-private:        // performer::callback overrides
+private:        /* performer::callback overrides    */
 
     virtual bool on_automation_change (automation::slot s) override;
     virtual bool on_sequence_change (seq::number seqno) override;
 
-private:        // qbase and qseqframe overrides
+private:        /* qbase and qseqframe overrides    */
 
     virtual void update_midi_buttons () override;
     virtual void set_dirty () override;
@@ -130,7 +130,7 @@ private:        // qbase and qseqframe overrides
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
 
-protected:      // QWidget overrides
+protected:      /* QWidget overrides                */
 
     virtual void paintEvent (QPaintEvent * ) override;
     virtual void resizeEvent (QResizeEvent *) override;
@@ -212,9 +212,9 @@ private slots:
     void update_record_type (int index);
     void update_recording_volume (int index);
     void reset_recording_volume ();
-    void follow (bool ischecked);
+    void slot_follow (bool ischecked);
 
-private:        // slot helper functions
+private:        /* slot helper functions        */
 
     void do_action (eventlist::edit action, int var);
     void popup_tool_menu ();
@@ -225,7 +225,7 @@ private:        // slot helper functions
     bool add_back_set (QMenu ** qm, screenset & s, screenset::number index);
     bool add_back_sequence (QMenu ** qm, seq::pointer p, seq::number sn);
 
-private:        // setters and getters
+private:        /* setters and getters          */
 
     void set_beats_per_measure (int bpm);
     void set_beat_width (int bw);

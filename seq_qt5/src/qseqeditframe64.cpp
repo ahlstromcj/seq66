@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-06-23
+ * \updates       2020-07-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -42,7 +42,7 @@
  *      side, if needed).
  *
  *      Designate one of the interior scrolled widgets as the "master", probably
- *      the plot widget. Then do the following:
+ *      the plot widget. Then do this:
  *
  *      Set every QScrollArea's horizontal scroll bar policy to never show the
  *      scroll bars.  (Set) the master QScrollArea's horizontalScrollBar()'s
@@ -364,11 +364,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_beat_width        (seq_pointer()->get_beat_width()),
     m_snap              (sm_initial_snap),
     m_note_length       (sm_initial_note_length),
-    m_scale             (usr().seqedit_scale()),        // sm_initial_scale
+    m_scale             (usr().seqedit_scale()),
     m_chord             (0),
-    m_key               (usr().seqedit_key()),          // sm_initial_key
-    m_bgsequence        (usr().seqedit_bgsequence()),   // sm_initial_sequence
-    m_measures          (0),                            // fixed below
+    m_key               (usr().seqedit_key()),
+    m_bgsequence        (usr().seqedit_bgsequence()),
+    m_measures          (0),                            /* fixed below      */
 #if defined USE_STAZED_ODD_EVEN_SELECTION
     m_pp_whole          (0),
     m_pp_eighth         (0),
@@ -699,7 +699,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
      */
 
     ui->m_toggle_follow->setAutoDefault(false);
-    connect(ui->m_toggle_follow, SIGNAL(toggled(bool)), this, SLOT(follow(bool)));
+    connect
+    (
+        ui->m_toggle_follow, SIGNAL(toggled(bool)),
+        this, SLOT(slot_follow(bool))
+    );
 
     /**
      *  Fill "Snap" and "Note" Combo Boxes:
@@ -1108,7 +1112,7 @@ qseqeditframe64::resizeEvent (QResizeEvent * qrep)
 #endif
 
     update_draw_geometry();
-    qrep->ignore();             // qseqframe::resizeEvent(qrep)
+    qrep->ignore();                         /* qseqframe::resizeEvent(qrep) */
 }
 
 /**
@@ -1181,13 +1185,8 @@ qseqeditframe64::on_sequence_change (seq::number seqno)
 {
     bool result = seqno == seq_pointer()->seq_number();
     if (result)
-    {
-        // m_seqroll->set_redraw();                // also calls set_dirty()
-        // m_seqdata->set_dirty();                 // doesn't cause a refresh
-        // m_seqevent->set_dirty();                // how about this?
-
         set_dirty();
-    }
+
     return result;
 }
 
@@ -1303,7 +1302,7 @@ qseqeditframe64::conditional_update ()
         set_measures(get_measures() + 1);
         follow_progress(expandrec);             /* keep up with progress    */
     }
-    else if (perf().follow())
+    else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
         follow_progress();
     }
@@ -2252,7 +2251,7 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
  */
 
 void
-qseqeditframe64::follow (bool ischecked)
+qseqeditframe64::slot_follow (bool ischecked)
 {
     if (not_nullptr(m_seqroll))
         m_seqroll->progress_follow(ischecked);

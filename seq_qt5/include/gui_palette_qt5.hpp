@@ -57,7 +57,7 @@ class gui_palette_qt5
 public:
 
     /**
-     *  Provides a type for the color object.  The following uses are made of
+     *  Provides a type for the color object.  These uses are made of
      *  each color:
      *
      *  -   Black.  The background color of armed patterns.  The color of
@@ -296,241 +296,137 @@ public:
         return m_black;
     }
 
-    /**
-     * \getter m_dk_red
-     */
-
     const Color & dark_red () const
     {
         return m_dk_red;
     }
-
-    /**
-     * \getter m_dk_green
-     */
 
     const Color & dark_green () const
     {
         return m_dk_green;
     }
 
-    /**
-     * \getter m_dk_orange
-     */
-
     const Color & dark_orange () const
     {
         return m_dk_orange;
     }
-
-    /**
-     * \getter m_dk_blue
-     */
 
     const Color & dark_blue () const
     {
         return m_dk_blue;
     }
 
-    /**
-     * \getter m_dk_magenta
-     */
-
     const Color & dark_magenta () const
     {
         return m_dk_magenta;
     }
-
-    /**
-     * \getter m_dk_cyan
-     */
 
     const Color & dark_cyan () const
     {
         return m_dk_cyan;
     }
 
-    /**
-     * \getter m_white
-     */
-
     const Color & white () const
     {
         return m_white;
     }
-
-    /**
-     * \getter m_grey_paint
-     */
 
     const Color & grey_paint () const
     {
         return m_grey_paint;
     }
 
-    /**
-     * \getter m_dk_grey_paint
-     */
-
     const Color & dark_grey_paint () const
     {
         return m_dk_grey_paint;
     }
-
-    /**
-     * \getter m_lt_grey_paint
-     */
 
     const Color & light_grey_paint () const
     {
         return m_lt_grey_paint;
     }
 
-    /**
-     * \getter m_red
-     */
-
     const Color & red () const
     {
         return m_red;
     }
-
-    /**
-     * \getter m_orange
-     */
 
     const Color & orange () const
     {
         return m_orange;
     }
 
-    /**
-     * \getter m_yellow
-     */
-
     const Color & yellow () const
     {
         return m_yellow;
     }
-
-    /**
-     * \getter m_green
-     */
 
     const Color & green () const
     {
         return m_green;
     }
 
-    /**
-     * \getter m_magenta
-     */
-
     const Color & magenta () const
     {
         return m_magenta;
     }
-
-    /**
-     * \getter m_blue
-     */
 
     const Color & blue () const
     {
         return m_blue;
     }
 
-    /**
-     * \getter m_blk_paint
-     */
-
     const Color & black_paint () const
     {
         return m_blk_paint;
     }
-
-    /**
-     * \getter m_wht_paint
-     */
 
     const Color & white_paint () const
     {
         return m_wht_paint;
     }
 
-    /**
-     * \getter m_blk_key_paint
-     */
-
     const Color & black_key_paint () const
     {
         return m_blk_key_paint;
     }
-
-    /**
-     * \getter m_wht_key_paint
-     */
 
     const Color & white_key_paint () const
     {
         return m_wht_key_paint;
     }
 
-    /**
-     * \getter m_tempo_paint
-     */
-
     const Color & tempo_paint () const
     {
         return m_tempo_paint;
     }
 
-    /**
-     * \getter m_sel_paint
-     */
-
-    static const Color & sel_paint () //  const
+    static const Color & sel_paint ()
     {
         return m_sel_paint;
     }
-
-    /**
-     * \getter m_bg_color
-     */
 
     const Color & bg_color () const
     {
         return m_bg_color;
     }
 
-    /**
-     * \setter m_bg_color
-     */
-
     void bg_color (const Color & c)
     {
         m_bg_color = c;
     }
-
-    /**
-     * \getter m_fg_color
-     */
 
     const Color & fg_color () const
     {
         return m_fg_color;
     }
 
-    /**
-     * \setter m_fg_color
-     */
-
     void fg_color (const Color & c)
     {
         m_fg_color = c;
     }
 
-};          // gui_palette_qt5
+};          // class gui_palette_qt5
 
 /*
  *  Free functions for color.

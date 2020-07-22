@@ -32,7 +32,7 @@
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
- *  sequence and performance frames can be supported.  The following concepts
+ *  sequence and performance frames can be supported.  These concepts
  *  are in the queue to be supported:
  *
  *      -   PPQN.
@@ -201,7 +201,7 @@ public:
 
     virtual bool change_zoom (bool in)
     {
-        return in ? zoom_in() : zoom_out() ;    /* will call the override   */
+        return in ? zoom_in() : zoom_out() ;        /* calls the override   */
     }
 
     virtual bool reset_zoom ()
@@ -211,7 +211,7 @@ public:
 
     virtual int tix_to_pix (midipulse ticks) const
     {
-        int result = ticks / pulses_per_pixel(ppqn(), zoom());  // ticks / zoom()
+        int result = ticks / pulses_per_pixel(ppqn(), zoom());
         if (result < 1)
             result = 1;
 
@@ -220,13 +220,13 @@ public:
 
     virtual midipulse pix_to_tix (int x) const
     {
-        return x * pulses_per_pixel(ppqn(), zoom());            // x * zoom()
+        return x * pulses_per_pixel(ppqn(), zoom());
     }
 
     virtual void set_dirty ()
     {
         m_is_dirty = true;
-        perf().modify();                /* or should performer do this? */
+        perf().modify();                            /* is this okay?        */
     }
 
     virtual void set_needs_update ()

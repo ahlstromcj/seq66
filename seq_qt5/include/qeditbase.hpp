@@ -113,10 +113,13 @@ protected:
     int m_scale_zoom;
 
     /**
-     *
+     *  Provides additional padding to move items rightward to account for
+     *  slight differences in the layout of items inside the edit frames.  It
+     *  makes the time, roll, trigger/event, and data measures line up
+     *  properly.
      */
 
-    int m_padding_x;                        // c_keyboard_padding_x;
+    int m_padding_x;
 
     /**
      *  The event-snap setting for the piano roll grid.  Same meaning as for the
@@ -252,7 +255,7 @@ protected:
      *  notes/keys.
      */
 
-    int m_scroll_offset_v;  // int m_scroll_offset_seq; int m_scroll_offset_key;
+    int m_scroll_offset_v;
 
     /**
      *  The horizontal value of the scroll window in units of pixels.

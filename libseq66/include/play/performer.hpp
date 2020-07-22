@@ -84,12 +84,12 @@ class performer
     friend class qperfeditframe64;
     friend class qsliveframe;
     friend class qsmainwnd;
-    friend class sequence;              // for setting tempo from events
+    friend class sequence;
     friend class wrkfile;
 
 #if defined SEQ66_JACK_SUPPORT
 
-    friend int jack_sync_callback       // accesses perform::inner_start()
+    friend int jack_sync_callback
     (
         jack_transport_state_t state,
         jack_position_t * pos,
@@ -162,7 +162,7 @@ public:
 
         callbacks (performer & p) : m_performer(p)
         {
-            // Empty body
+            /* Empty body */
         }
 
         /**
@@ -258,9 +258,9 @@ public:
 
     enum class record_tempo
     {
-        log_event,                                  // RECORD_TEMPO_LOG_EVENT
-        on,                                         // RECORD_TEMPO_ON
-        off                                         // RECORD_TEMPO_OFF
+        log_event,
+        on,
+        off
     };
 
     /**
@@ -269,9 +269,9 @@ public:
 
     enum class ff_rw
     {
-        rewind  = -1,                               // FF_RW_REWIND
-        none    = 0,                                // FF_RW_NONE
-        forward = 1                                 // FF_RW_FORWARD
+        rewind  = -1,
+        none    =  0,
+        forward =  1
     };
 
 private:
@@ -685,10 +685,11 @@ private:
     bool m_usemidiclock;
 
     /**
-     *  More MIDI clock support.
+     *  More MIDI clock support.  Indicates if the MIDI clock is stopped or
+     *  started.
      */
 
-    bool m_midiclockrunning;            // stopped or started
+    bool m_midiclockrunning;
 
     /**
      *  More MIDI clock support.
@@ -1253,7 +1254,7 @@ public:
 
     void clocks_per_metronome (int cpm)
     {
-        m_clocks_per_metronome = cpm;       // needs validation
+        m_clocks_per_metronome = cpm;
     }
 
     int clocks_per_metronome () const
@@ -1263,7 +1264,7 @@ public:
 
     void set_32nds_per_quarter (int tpq)
     {
-        m_32nds_per_quarter = tpq;          // needs validation
+        m_32nds_per_quarter = tpq;
     }
 
     int get_32nds_per_quarter () const
@@ -1273,7 +1274,7 @@ public:
 
     void us_per_quarter_note (long upqn)
     {
-        m_us_per_quarter_note = upqn;       // needs validation
+        m_us_per_quarter_note = upqn;
     }
 
     long us_per_quarter_note () const
@@ -1401,7 +1402,7 @@ public:
 #else
     void set_jack_stop_tick (midipulse)
     {
-        // no code
+        /* no code needed */
     }
 #endif
 
@@ -1423,7 +1424,7 @@ public:
 #else
     void set_follow_transport (bool)
     {
-        // No code
+        /* no code needed */
     }
 #endif
 
@@ -1434,11 +1435,6 @@ public:
 #else
         return false;
 #endif
-    }
-
-    bool follow () const
-    {
-        return is_running() && get_follow_transport();
     }
 
     void toggle_follow_transport ()
@@ -2099,13 +2095,13 @@ public:
     }
 
     std::string sequence_label (const sequence & seq);
-    std::string sequence_label (seq::number seqno);         // for qperfnames
+    std::string sequence_label (seq::number seqno);         /* qperfnames   */
     std::string sequence_title (const sequence & seq);
     std::string main_window_title (const std::string & fn = "");
     std::string sequence_window_title (const sequence & seq);
 
-    void set_input_bus (bussbyte bus, bool input_active);   // used in options
-    void set_clock_bus (bussbyte bus, e_clock clocktype);   // used in options
+    void set_input_bus (bussbyte bus, bool input_active);   /* see options  */
+    void set_clock_bus (bussbyte bus, e_clock clocktype);   /* ditto        */
 
     /**
      *  Saves the clock settings read from the "rc" file so that they can be
@@ -2482,7 +2478,7 @@ public:
 
     const seq::pointer get_sequence (seq::number seqno) const
     {
-        return mapper().loop(seqno);    // .get();
+        return mapper().loop(seqno);
     }
 
     /**
@@ -2494,7 +2490,7 @@ public:
 
     seq::pointer get_sequence (seq::number seqno)
     {
-        return mapper().loop(seqno);    // .get();
+        return mapper().loop(seqno);
     }
 
     const seq::pointer sequence_pointer (seq::number seqno) const
@@ -2507,7 +2503,7 @@ public:
         return mapper().loop(seqno);
     }
 
-public:         // GUI-support functions
+public:         /* GUI-support functions */
 
     /*
      * Deals with the editing mode of the specific sequence.
@@ -2561,7 +2557,7 @@ public:         // GUI-support functions
 
     const std::string & current_screenset_notepad () const
     {
-        return mapper().name();     // get_screenset_notepad(m_screenset)
+        return mapper().name();
     }
 
     const std::string & get_screenset_notepad (screenset::number sn) const

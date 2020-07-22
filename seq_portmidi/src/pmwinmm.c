@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-14
+ * \updates     2020-07-22
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -32,10 +32,6 @@
  *      http://donyaquick.com/midi-on-windows/
  *      "Working with MIDI on Windows (Outside of a DAW)"
  */
-
-#if defined _MSC_VER
-#pragma warning(disable: 4133)      // stop warnings about implicit typecasts
-#endif
 
 #include <windows.h>
 #include <string.h>
@@ -76,9 +72,15 @@ static void CALLBACK winmm_streamout_callback
     DWORD_PTR dwParam2
 );
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+/*
+ * Note that this macro is undefined, as it is in the original PortMidi library.
+ * Do not confuse it with the SEQ66_USE_SYSEX_PROCESSING macro in
+ * seq66_features.h, which *is* defined.
+ */
 
-void CALLBACK winmm_out_callback
+#if defined SEQ66_USE_SYSEX_BUFFERS
+
+static void CALLBACK winmm_out_callback
 (
     HMIDIOUT hmo, UINT wMsg,
     DWORD_PTR dwInstance,
@@ -152,17 +154,19 @@ extern pm_fns_node pm_winmm_out_dictionary;
 
 #define MIDIHDR_SYSEX_SIZE(x) (MIDIHDR_SYSEX_BUFFER_LENGTH(x) + sizeof(MIDIHDR))
 
+#if defined SEQ66_USE_SYSEX_BUFFERS
+
 /**
  *  Size of a MIDIHDR with a buffer contaning multiple MIDIEVENT structures.
  */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
 #define MIDIHDR_SIZE(x) ((x) + sizeof(MIDIHDR))
-#endif
+
+#endif  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
- *  win32 mmedia system specific structure passed to midi callbacks;
- *  global winmm device info
+ *  win32 multi-media-system-specific structure passed to MIDI callbacks;
+ *  it is global WinMM device informations.
  */
 
 static MIDIINCAPS * midi_in_caps = nullptr;
@@ -181,11 +185,11 @@ static int midi_output_index = 0;
  *  not adopting a pointer for the descriptor universally.
  */
 
-static void * MIDI_MAPPER_pointer = ((void *) ((uintptr_t) MIDI_MAPPER));
-static UINT MIDI_MAPPER_uint      = ((UINT) MIDI_MAPPER);
+static void * PTR_MIDIMAPPER    = ((void *) ((uintptr_t) MIDI_MAPPER));
+static UINT UINT_MIDIMAPPER     = ((UINT) MIDI_MAPPER);
 
 /**
- *  This structure provides per-device information.
+ *  This complext structure provides per-device information.
  */
 
 typedef struct midiwinmm_struct
@@ -215,7 +219,7 @@ typedef struct midiwinmm_struct
      * a SysEx message is sent. The size of the buffer is fixed.
      */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
     LPMIDIHDR sysex_buffers[NUM_SYSEX_BUFFERS]; /**< Pool for SysEx data.   */
     int next_sysex_buffer;      /**< Index of next SysEx buffer to send.    */
 #endif
@@ -235,8 +239,12 @@ typedef struct midiwinmm_struct
 
 /**
  *  General MIDI device input queries.  If we can't open a particular system-level
- *  midi interface (winmm), we consider that system/API unavailable and move on
- *  without an error.  This function is called third.
+ *  MIDI interface (WinMM), we consider that system/API unavailable and move on
+ *  without an error.  This function is called third at startup.
+ *
+ *  In the original PortMidi implementation, midiInGetDevCaps() and pm_add_devices
+ *  are called for devices 0 to midiInGetNumDevs()-1.  Here, since we may have
+ *  already gotten an input mapper, we add to the device index appropriately.
  */
 
 static void
@@ -246,46 +254,42 @@ pm_winmm_general_inputs (void)
     midi_in_caps = midi_num_inputs > 0 ?
         pm_alloc(sizeof(MIDIINCAPS) * midi_num_inputs) : nullptr ;
 
-    if (is_nullptr(midi_in_caps))
+    if (is_nullptr(midi_in_caps))                       /* see banner notes */
     {
         pm_log_buffer_append("No input devices found.\n");
     }
     else
     {
         char temp[PM_STRING_MAX];
-        uintptr_t i;
         int ins = (int) midi_num_inputs;
         int in;
+        int index;
         snprintf(temp, sizeof temp, "%d MIDI inputs found\n", ins);
         pm_log_buffer_append(temp);
-        if (midi_input_index == 1)                      /* mapper-in found  */
-            ++midi_num_inputs;
-
-        for (i = midi_input_index, in = 0; i < midi_num_inputs; ++i, ++in)
+        for
+        (
+            in = 0, index = midi_input_index; in < (int) midi_num_inputs;
+            ++in, ++index
+        )
         {
-            int index = (int) i;
             WORD winerrcode = midiInGetDevCaps
             (
                 (UINT) in,                              /* 0 and up         */
                 (LPMIDIINCAPS) &midi_in_caps[in],
                 sizeof(MIDIINCAPS)
             );
-            const char * default_devname = "Unknown In";
             const char * devname = (const char *) midi_in_caps[in].szPname;
-            const char * name = strlen(devname) == 0 ? default_devname : devname ;
-            snprintf
-            (
-                temp, sizeof temp,
-                "[%d] MIDI input dev %d: '%s'\n",
-                index, in, name
-            );
-            pm_log_buffer_append(temp);
             if (winerrcode == MMSYSERR_NOERROR)
             {
+                snprintf
+                (
+                    temp, sizeof temp, "[%d] MIDI input dev %d: '%s'\n",
+                    index, in, devname
+                );
                 (void) pm_add_device                    /* ignore errors    */
                 (
                     "MMSystem",                         /* subsystem name   */
-                    (char *) name,                      /* interface name   */
+                    (char *) devname,                   /* interface name   */
                     TRUE,                               /* it is an input   */
                     (void *) in,                        /* void* descriptor */
                     &pm_winmm_in_dictionary,            /* pm_fns_type      */
@@ -295,19 +299,21 @@ pm_winmm_general_inputs (void)
             }
             else
             {
+                const char * name = strlen(devname) == 0 ?
+                    "Unknown Input" : devname ;
+
                 const char * errmsg = midi_io_get_dev_caps_error
                 (
                     name, "Input Devices: midiInGetDevCaps", winerrcode
                 );
                 snprintf
                 (
-                    temp, sizeof temp,
-                    "[%d] '%s' dev %d: error '%s'\n",
+                    temp, sizeof temp, "[%d] '%s' dev %d: error '%s'\n",
                     index, name, in, errmsg
                 );
                 errprint(temp);                         /* log to console   */
-                pm_log_buffer_append(temp);             /* log to buffer    */
             }
+            pm_log_buffer_append(temp);                 /* log to buffer    */
         }
     }
 }
@@ -316,7 +322,7 @@ pm_winmm_general_inputs (void)
  *  Tries to open the Windows MIDI Mapper, which is represented by the value
  *  MIDI_MAPPER = (-1), which is supposed to be a legal value.  If valid,
  *  what client and port numbers to we want to use?  However, it is not
- *  valid.  This function is called first.  Is it useless if the Coolsoft
+ *  valid.  This function is called first.  Is it still useless if the Coolsoft
  *  MIDI Mapper is installed?
  *
  * \note
@@ -330,7 +336,7 @@ pm_winmm_mapper_input (void)
 {
     WORD winerrcode = midiInGetDevCaps
     (
-        MIDI_MAPPER_uint,
+        UINT_MIDIMAPPER,
         (LPMIDIINCAPS) &midi_in_mapper_caps,
         sizeof(MIDIINCAPS)
     );
@@ -343,18 +349,18 @@ pm_winmm_mapper_input (void)
             "MMSystem",
             (char *) devname,
             TRUE,
-            MIDI_MAPPER_pointer,
+            PTR_MIDIMAPPER,
             &pm_winmm_in_dictionary,
             midi_input_index, midi_input_index          /* client/port 0    */
         );
         ++midi_input_index;
-        snprintf(temp, sizeof temp, "Mapper input '%s'\n", devname);
+        snprintf(temp, sizeof temp, "MIDI Mapper Input: '%s'\n", devname);
     }
     else
     {
         const char * errmsg = midi_io_get_dev_caps_error
         (
-            devname, "Mapper In: midiInGetDevCaps", winerrcode
+            devname, "MIDI Mapper: midiInGetDevCaps", winerrcode
         );
         snprintf(temp, sizeof temp, "'%s' error: '%s'\n", devname, errmsg);
         errprint(temp);                                 /* log to console   */
@@ -380,39 +386,35 @@ pm_winmm_general_outputs (void)
     else
     {
         char temp[PM_STRING_MAX];
-        uintptr_t i;
         int outs = (int) midi_num_outputs;
         int out;
+        int index;
         snprintf(temp, sizeof temp, "%d MIDI outputs found\n", outs);
         pm_log_buffer_append(temp);
-        if (midi_output_index == 1)                     /* mapper-out found */
-            ++midi_num_outputs;
-
-        for (i = midi_output_index, out = 0; i < midi_num_outputs; ++i, ++out)
+        for
+        (
+            out = 0, index = midi_output_index; out < (int) midi_num_outputs;
+            ++out, ++index
+        )
         {
-            int index = (int) i;
             DWORD winerrcode = midiOutGetDevCaps
             (
                 (UINT) out,                             /* 0 and up         */
                 (LPMIDIOUTCAPS) &midi_out_caps[out],
                 sizeof(MIDIOUTCAPS)
             );
-            const char * default_devname = "Unknown Out";
             const char * devname = (const char *) midi_out_caps[out].szPname;
-            const char * name = strlen(devname) == 0 ? default_devname : devname ;
-            snprintf
-            (
-                temp, sizeof temp,
-                "[%d] MIDI output dev %d: '%s'\n",
-                index, out, name
-            );
-            pm_log_buffer_append(temp);
             if (winerrcode == MMSYSERR_NOERROR)
             {
+                snprintf
+                (
+                    temp, sizeof temp, "[%d] MIDI output dev %d: '%s'\n",
+                    index, out, devname
+                );
                 (void) pm_add_device
                 (
                     "MMSystem",
-                    (char *) name,
+                    (char *) devname,
                     FALSE,
                     (void *) out,
                     &pm_winmm_out_dictionary,
@@ -422,19 +424,21 @@ pm_winmm_general_outputs (void)
             }
             else
             {
+                const char * name = strlen(devname) == 0 ?
+                    "Unknown Output" : devname ;
+
                 const char * errmsg = midi_io_get_dev_caps_error
                 (
                     name, "Output Devices : midiOutGetDevCaps", winerrcode
                 );
                 snprintf
                 (
-                    temp, sizeof temp,
-                    "[%d] '%s' dev %d: error '%s'\n",
+                    temp, sizeof temp, "[%d] '%s' dev %d: error '%s'\n",
                     index, name, out, errmsg
                 );
                 errprint(temp);                             /* log to console   */
-                pm_log_buffer_append(temp);                 /* log to buffer    */
             }
+            pm_log_buffer_append(temp);                     /* log to buffer    */
         }
     }
 }
@@ -451,7 +455,7 @@ pm_winmm_mapper_output (void)
 {
     WORD winerrcode = midiOutGetDevCaps
     (
-        MIDI_MAPPER_uint,
+        UINT_MIDIMAPPER,
         (LPMIDIOUTCAPS) &midi_out_mapper_caps,
         sizeof(MIDIOUTCAPS)
     );
@@ -464,7 +468,7 @@ pm_winmm_mapper_output (void)
             "MMSystem",
             (char *) devname,
             FALSE,
-            MIDI_MAPPER_pointer,
+            PTR_MIDIMAPPER,
             &pm_winmm_out_dictionary,
             midi_output_index, midi_output_index        /* client/port 0    */
         );
@@ -585,7 +589,7 @@ allocate_buffer (long data_size)
     return hdr;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
 
 /**
  * we're actually allocating more than data_size because the buffer
@@ -610,10 +614,10 @@ allocate_sysex_buffer (long data_size)
     return hdr;
 }
 
-#endif  // SEQ66_USE_SYSEX_PROCESSING
+#endif  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
- *  Buffers is an array of 'count' pointers to an IDIHDR/MIDIEVENT struct.
+ *  Buffers is an array of 'count' pointers to an MIDIHDR/MIDIEVENT struct.
  */
 
 static PmError
@@ -644,7 +648,7 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
     return pmNoError;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
 
 /**
  *
@@ -720,11 +724,24 @@ found_sysex_buffer:
     return r;
 }
 
-#endif      // SEQ66_USE_SYSEX_PROCESSING
+#endif      // SEQ66_USE_SYSEX_BUFFERS
 
 /**
+ *  1. Cycle through buffers, modulo m->num_buffers.
  *
- *  Cycle through buffers, modulo m->num_buffers.
+ *  2. Expand SysEx buffer.  If we're trying to send a sysex message, maybe the
+ *     message is too big and we need more message buffers.  Expand the buffer
+ *     pool by 128KB using 1024-byte buffers.  First, expand the buffers array if
+ *     necessary.
+ *
+ *  3. No Memory.  If no memory, we could return a no-memory error, but user
+ *     probably will be unprepared to deal with it. Maybe the MIDI driver is
+ *     temporarily hung so we should just wait.  I don't know the right answer,
+ *     but waiting is easier.
+ *
+ *  4. Just Keep Polling. Otherwise, we've allocated all NUM_EXPANSION_BUFFERS
+ *     buffers, and we have no free buffers to send. We'll just keep polling to
+ *     see if any buffers show up.
  */
 
 static LPMIDIHDR
@@ -737,7 +754,7 @@ get_free_output_buffer (PmInternal * midi)
         int i;
         for (i = 0; i < m->num_buffers; ++i)
         {
-            m->next_buffer++;                       /* cycle through    */
+            m->next_buffer++;                       /* 1. Cycle through     */
             if (m->next_buffer >= m->num_buffers)
                 m->next_buffer = 0;
 
@@ -757,29 +774,13 @@ get_free_output_buffer (PmInternal * midi)
                 "PortMidi warning: get_free_output_buffer() "
                 " wait timed out after 1000ms\n"
             );
-
-            /*
-             * If we're trying to send a sysex message, maybe the message is
-             * too big and we need more message buffers.  Expand the buffer
-             * pool by 128KB using 1024-byte buffers.  First, expand the
-             * buffers array if necessary.
-             */
-
-            if (! m->buffers_expanded)
+            if (! m->buffers_expanded)              /* 2. Expand SysEx buff */
             {
                 LPMIDIHDR * new_buffers = (LPMIDIHDR *) pm_alloc
                 (
                     (m->num_buffers + NUM_EXPANSION_BUFFERS) * sizeof(LPMIDIHDR)
                 );
-
-                /*
-                 * If no memory, we could return a no-memory error, but user
-                 * probably will be unprepared to deal with it. Maybe the MIDI
-                 * driver is temporarily hung so we should just wait.  I don't
-                 * know the right answer, but waiting is easier.
-                 */
-
-                if (is_nullptr(new_buffers))
+                if (is_nullptr(new_buffers))        /* 3. No Memory         */
                     continue;
 
                 /*
@@ -803,13 +804,7 @@ get_free_output_buffer (PmInternal * midi)
             if (m->num_buffers < m->max_buffers)
             {
                 r = allocate_buffer(EXPANSION_BUFFER_LEN);
-
-                /*
-                 * If no memory, we might not be dead; maybe the system is
-                 * hung and we can wait longer for a message buffer.
-                 */
-
-                if (is_nullptr(r))
+                if (is_nullptr(r))                  /* 3. No Memory (again) */
                     continue;
 
                 m->buffers[m->num_buffers++] = r;
@@ -817,9 +812,7 @@ get_free_output_buffer (PmInternal * midi)
             }
 
             /*
-             * Otherwise, we've allocated all NUM_EXPANSION_BUFFERS buffers,
-             * and we have no free buffers to send. We'll just keep polling
-             * to see if any buffers show up.
+             * 4. Just Keep Polling.
              */
         }
     }
@@ -926,7 +919,11 @@ allocate_input_buffer (HMIDIIN h, long buffer_len)
 
 
 /**
- * Should use UINT: DWORD dwDevice = (DWORD) descriptors[i].descriptor;
+ *  Should use UINT: DWORD dwDevice = (DWORD) descriptors[i].descriptor;
+ *
+ * \note
+ *      If we return an error code, the device will be closed and memory will be
+ *      freed. It's up to the caller to free the parameter "midi".
  */
 
 static PmError
@@ -944,9 +941,9 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     UINT dwDevice = (UINT) pm_descriptors[i].descriptor;
 #endif
 
-    if (dwDevice == MIDI_MAPPER_uint)
+    if (dwDevice == UINT_MIDIMAPPER)
     {
-        pm_log_buffer_append("Opening the MIDI mapper for input\n");
+        pm_log_buffer_append("Opening the MIDI Mapper for input\n");
     }
     else if (dwDevice < 32)            /* sanity check */
     {
@@ -984,7 +981,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     m->next_buffer = 0;                 /* not used for input */
     m->buffer_signal = 0;               /* not used for input */
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
     for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
         m->sysex_buffers[i] = nullptr;  /* not used for input */
 
@@ -1351,16 +1348,16 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     UINT dwDevice = (UINT) pm_descriptors[i].descriptor;
 #endif
 
-    if (dwDevice == MIDI_MAPPER_uint)
+    if (dwDevice == UINT_MIDIMAPPER)
     {
-        pm_log_buffer_append("Opening the MIDI mapper for output\n");
+        pm_log_buffer_append("Opening the MIDI Mapper for output\n");
     }
     else if (dwDevice < 32)            /* sanity check */
     {
         char temp[64];
         snprintf
         (
-            temp, sizeof temp, "Opening MIDI output device %d\n",
+            temp, sizeof temp, "Opening MIDI output device #%d\n",
             (int) dwDevice
         );
         pm_log_buffer_append(temp);
@@ -1381,12 +1378,10 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
 
     m->handle.out = nullptr;
     m->buffers = nullptr;
-    m->num_buffers = 0;
-    m->max_buffers = 0;
+    m->num_buffers = m->max_buffers = m->next_buffer = 0;
     m->buffers_expanded = FALSE;
-    m->next_buffer = 0;
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
     m->sysex_buffers[0] = nullptr;
     m->sysex_buffers[1] = nullptr;
     m->next_sysex_buffer = 0;
@@ -1395,11 +1390,9 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     m->last_time = 0;
     m->first_message = TRUE; /* we treat first message as special case */
     m->sysex_mode = FALSE;
-    m->sysex_word = 0;
-    m->sysex_byte_count = 0;
+    m->sysex_word = m->sysex_byte_count = 0;
     m->hdr = nullptr;
-    m->sync_time = 0;
-    m->delta = 0;
+    m->sync_time = m->delta = 0;
     m->error = MMSYSERR_NOERROR;
 
     /*
@@ -1410,7 +1403,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     m->buffer_signal = CreateEvent(NULL, FALSE, FALSE, NULL);
     if (is_nullptr(m->buffer_signal))
     {
-        // What to do???
+        errprint("Failed to create signal for output"); // What to do???
     }
     if (midi->latency == 0)                             /* open the device  */
     {
@@ -1444,7 +1437,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
             midiStreamOpen
             (
                 &m->handle.stream,                      /* device Handle    */
-                (LPUINT) & dwDevice,                    /* device ID ptr    */
+                (LPUINT) &dwDevice,                     /* device ID ptr    */
                 1,                                      /* must = 1         */
                 (DWORD_PTR) winmm_streamout_callback,
                 (DWORD_PTR) midi,                       /* callback data    */
@@ -1471,6 +1464,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
         output_buffer_len = STREAM_BUFFER_LEN;
         propdata.cbStruct = sizeof(MIDIPROPTEMPO);
         propdata.dwTempo = Pt_Get_Tempo_Microseconds(); /* us per quarter   */
+        infoprintf("tempo in us = %ld\n", (long) propdata.dwTempo);
         Pm_set_hosterror
         (
             midiStreamProperty
@@ -1484,6 +1478,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
 
         divdata.cbStruct = sizeof(MIDIPROPTEMPO);
         divdata.dwTimeDiv = Pt_Get_Ppqn();              /* divs per 1/4     */
+        infoprintf("time div = %ld\n", (long) divdata.dwTimeDiv);
         Pm_set_hosterror
         (
             midiStreamProperty
@@ -1560,7 +1555,7 @@ winmm_out_delete (PmInternal * midi)
         pm_free(m->buffers);
         m->max_buffers = 0;
 
-#if defined SEQ66_USE_SYSEX_PROCESSING  /* free the sysex buffers   */
+#if defined SEQ66_USE_SYSEX_BUFFERS  /* free the sysex buffers   */
         for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
             if (m->sysex_buffers[i]) pm_free(m->sysex_buffers[i]);
 #endif
@@ -1570,7 +1565,7 @@ winmm_out_delete (PmInternal * midi)
 }
 
 /*
- * see comments for winmm_in_close
+ *  See the comments for winmm_in_close().
  */
 
 static PmError
@@ -1619,7 +1614,10 @@ winmm_out_abort (PmInternal * midi)
 }
 
 /**
- *
+ *  Bytes recorded should be 0.  As pointed out by Nigel Brown, 20Sep06,
+ *  dwBytesRecorded should be zero. This is set in get_free_sysex_buffer().  The
+ *  msg length goes in dwBufferLength in spite of what Microsoft documentation
+ *  says (or doesn't say).
  */
 
 static PmError
@@ -1644,10 +1642,7 @@ winmm_write_flush
         else if (midi->latency == 0)
         {
             /*
-             * As pointed out by Nigel Brown, 20Sep06, dwBytesRecorded
-             * should be zero. This is set in get_free_sysex_buffer().
-             * The msg length goes in dwBufferLength in spite of what
-             * Microsoft documentation says (or doesn't say).
+             * Bytes recorded should be 0.
              */
 
             m->hdr->dwBufferLength = m->hdr->dwBytesRecorded;
@@ -1747,7 +1742,7 @@ winmm_write_short (PmInternal * midi, PmEvent * event)
 {
     midiwinmm_type m = (midiwinmm_type) midi->descriptor;
     PmError rslt = pmNoError;
-    if (not_nullptr(m))
+    if (is_nullptr(m))
         return pmHostError;
 
     if (midi->latency == 0)   /* use midiOut interface, ignore timestamps */
@@ -2014,7 +2009,7 @@ winmm_synchronize (PmInternal * midi)
     return real_time;
 }
 
-#if defined SEQ66_USE_SYSEX_PROCESSING
+#if defined SEQ66_USE_SYSEX_BUFFERS
 
 /**
  *  The winmm_out_callback()  recycles SysEx buffers.  A future optimization:
@@ -2059,7 +2054,7 @@ winmm_out_callback
     }
 }
 
-#endif  // SEQ66_USE_SYSEX_PROCESSING
+#endif  // SEQ66_USE_SYSEX_BUFFERS
 
 /**
  *  The winmm_streamout_callback() unprepares (frees) the buffer header.  Even
@@ -2189,7 +2184,7 @@ pm_winmm_term (void)
             midiwinmm_type m = (midiwinmm_type) midi->descriptor;
             if (m->handle.out)
             {
-                if (doneAny == 0)           /* close next open device   */
+                if (doneAny == 0)               /* close next open device   */
                 {
                     infoprint("Begin closing open devices...\n");
                     doneAny = 1;
@@ -2206,8 +2201,8 @@ pm_winmm_term (void)
                     char msg[PM_HOST_ERROR_MSG_LEN];
                     winmm_get_host_error(midi, msg, PM_HOST_ERROR_MSG_LEN);
                     snprintf(temp, sizeof temp, "[%d] '%s'\n", i, msg);
-                    pm_log_buffer_append(temp);  /* log to buffer    */
                     errprint(temp);                     /* log to console   */
+                    pm_log_buffer_append(temp);         /* log to buffer    */
                 }
                 (*midi->dictionary->close)(midi);       /* close all ports  */
             }
@@ -2228,8 +2223,8 @@ pm_winmm_term (void)
         const char * msg =
             "Warning: devices were left open. They have been closed.\n";
 
-        pm_log_buffer_append(msg);               /* log to buffer    */
         warnprint(msg);                                 /* log to console   */
+        pm_log_buffer_append(msg);                      /* log to buffer    */
     }
     pm_descriptor_index = 0;
     pm_log_buffer_free();
