@@ -209,7 +209,7 @@ qsmainwnd::qsmainwnd
      *  Hidden for now.
      */
 
-    ui->cmbPPQN->hide();
+    // ui->cmb_ppqn->hide();                    // COMMENTED OUT
 
     std::string ppqnstr = std::to_string(p.ppqn());
     ui->lineEditPpqn->setText(ppqnstr.c_str());

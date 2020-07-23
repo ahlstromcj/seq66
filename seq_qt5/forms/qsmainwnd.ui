@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
-    <height>726</height>
+    <width>904</width>
+    <height>729</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -54,187 +54,130 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="3" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,6,6">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
-      <item>
-       <widget class="QLabel" name="setNameLabel">
-        <property name="minimumSize">
-         <size>
-          <width>72</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Set</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="txtBankName">
-        <property name="minimumSize">
-         <size>
-          <width>550</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>New Set</string>
-        </property>
-        <property name="maxLength">
-         <number>128</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="4" column="9" colspan="2">
-     <widget class="QPushButton" name="btnPerfEdit">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="1" column="7">
+     <widget class="QComboBox" name="cmb_ppqn">
+      <property name="enabled">
+       <bool>false</bool>
       </property>
       <property name="minimumSize">
        <size>
-        <width>36</width>
+        <width>58</width>
         <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Changes the PPQN value of the current song.  Not yet ready at all.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="14">
+     <widget class="QWidget" name="verticalWidget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>256</width>
+        <height>0</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="layout_beat_ind">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="17">
+     <widget class="QSpinBox" name="spinBank">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>48</width>
-        <height>64</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Opens the external song-editor window.</string>
-      </property>
-      <property name="text">
-       <string>Perf</string>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>28</width>
-        <height>20</height>
+        <width>16777215</width>
+        <height>32</height>
        </size>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QLabel" name="seq66Label">
+    <item row="1" column="10">
+     <widget class="QLabel" name="label_ts_slash">
+      <property name="minimumSize">
+       <size>
+        <width>6</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>6</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="font">
        <font>
         <family>DejaVu Sans</family>
-        <pointsize>18</pointsize>
+        <pointsize>12</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string notr="true">Seq66</string>
+       <string>/</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
-    <item row="1" column="10" colspan="2">
-     <widget class="QLabel" name="label_HMS">
-      <property name="text">
-       <string>0:0:0</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="8">
-     <widget class="QComboBox" name="cmb_beat_length">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>58</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>58</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Global Beat Width (length of beat)</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="11">
-     <widget class="QPushButton" name="btn_set_HMS">
+    <item row="4" column="13">
+     <widget class="QLineEdit" name="lineEditPpqn">
       <property name="minimumSize">
        <size>
         <width>48</width>
-        <height>32</height>
+        <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>64</width>
-        <height>64</height>
+        <width>48</width>
+        <height>16777215</height>
        </size>
       </property>
-      <property name="toolTip">
-       <string>Switch between BBT and HMS timing in the clock at the top.</string>
-      </property>
       <property name="text">
-       <string>H:M:S</string>
+       <string>192</string>
+      </property>
+      <property name="maxLength">
+       <number>5</number>
+      </property>
+      <property name="frame">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
-    <item row="1" column="4">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="4" column="15" colspan="2">
+    <item row="4" column="16" colspan="2">
      <layout class="QHBoxLayout" name="lay_bpm">
       <item>
        <widget class="QPushButton" name="button_tap_bpm">
@@ -316,109 +259,259 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="7">
-     <widget class="QLabel" name="label_ts_slash">
-      <property name="minimumSize">
-       <size>
-        <width>6</width>
-        <height>0</height>
-       </size>
+    <item row="4" column="0" colspan="9">
+     <layout class="QHBoxLayout" name="lay_transport">
+      <property name="spacing">
+       <number>6</number>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>6</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>/</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+      <item>
+       <widget class="QPushButton" name="btnPanic">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Panic - send global note off signal</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnStop">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Stop playback.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnPause">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Pauses playback, so that the current location is preserved.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnPlay">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Start playback.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="autoRepeat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnRecord">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Record live sequence changes into the Song Editor.</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_keep_queue">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Shows and toggles the keep-queue status. Does not show one-shot queue status.</string>
+        </property>
+        <property name="text">
+         <string>Q</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="button_learn">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Mute Group Learn. Click the L button, then press a mute-group key to store the mute state of the sequences in the Shift of that key.</string>
+        </property>
+        <property name="text">
+         <string>L</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
-    <item row="1" column="5">
-     <widget class="QComboBox" name="cmb_beat_measure">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="1" column="4">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <property name="minimumSize">
+      <property name="sizeHint" stdset="0">
        <size>
-        <width>58</width>
-        <height>32</height>
+        <width>40</width>
+        <height>20</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>58</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Global Beats Per Measure</string>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-     </widget>
+     </spacer>
     </item>
     <item row="4" column="12">
-     <widget class="QPushButton" name="setMasterButton">
-      <property name="minimumSize">
-       <size>
-        <width>48</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Sets</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="7">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>PPQN</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="14">
-     <widget class="QLineEdit" name="entry_active_set">
-      <property name="minimumSize">
-       <size>
-        <width>36</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Shows the number of the active screen-set, including any active external live frame.</string>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="3">
-     <widget class="QComboBox" name="cmbPPQN">
-      <property name="minimumSize">
-       <size>
-        <width>44</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Changes the PPQN value of the current song.  Not yet ready at all.</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="8">
      <widget class="QPushButton" name="btnSongPlay">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -458,87 +551,160 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="13">
-     <widget class="QLabel" name="labelActiveSet">
-      <property name="text">
-       <string>Active Set</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="13">
-     <widget class="QWidget" name="verticalWidget" native="true">
+    <item row="3" column="15">
+     <widget class="QLineEdit" name="entry_active_set">
       <property name="minimumSize">
        <size>
-        <width>256</width>
-        <height>0</height>
+        <width>36</width>
+        <height>32</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="layout_beat_ind">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMaximumSize</enum>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-      </layout>
+      <property name="maximumSize">
+       <size>
+        <width>36</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Shows the number of the active screen-set, including any active external live frame.</string>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QPushButton" name="btnPanic">
+    <item row="3" column="12">
+     <widget class="QPushButton" name="setMasterButton">
+      <property name="minimumSize">
+       <size>
+        <width>48</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Sets</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,6,6">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <widget class="QLabel" name="setNameLabel">
+        <property name="minimumSize">
+         <size>
+          <width>72</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Set Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="txtBankName">
+        <property name="minimumSize">
+         <size>
+          <width>350</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>New Set</string>
+        </property>
+        <property name="maxLength">
+         <number>128</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="11">
+     <widget class="QComboBox" name="cmb_beat_length">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>32</width>
+        <width>58</width>
         <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>48</width>
-        <height>64</height>
+        <width>58</width>
+        <height>32</height>
        </size>
       </property>
       <property name="focusPolicy">
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="toolTip">
-       <string>Panic - send global note off signal</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>24</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>false</bool>
+       <string>Global Beat Width (length of beat)</string>
       </property>
      </widget>
     </item>
-    <item row="3" column="15">
+    <item row="1" column="13">
+     <widget class="QLabel" name="label_HMS">
+      <property name="text">
+       <string>0:0:0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="8">
+     <widget class="QComboBox" name="cmb_global_bus">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>58</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>58</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Allows setting the output bus for all patterns at once.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="16">
      <widget class="QLabel" name="setNumberLabel">
       <property name="minimumSize">
        <size>
@@ -557,7 +723,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0" colspan="19">
+    <item row="2" column="0" colspan="20">
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -782,251 +948,136 @@
       </widget>
      </widget>
     </item>
-    <item row="3" column="16">
-     <widget class="QSpinBox" name="spinBank">
+    <item row="4" column="15">
+     <widget class="QPushButton" name="btn_set_HMS">
       <property name="minimumSize">
        <size>
-        <width>40</width>
-        <height>0</height>
+        <width>48</width>
+        <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
+        <width>64</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Switch between BBT and HMS timing in the clock at the top.</string>
+      </property>
+      <property name="text">
+       <string>H:M:S</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="9">
+     <widget class="QComboBox" name="cmb_beat_measure">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>58</width>
         <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>58</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="toolTip">
+       <string>Global Beats Per Measure</string>
+      </property>
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="11">
+     <widget class="QPushButton" name="btnPerfEdit">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>36</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>48</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Opens the external song-editor window.</string>
+      </property>
+      <property name="text">
+       <string>Perf</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>28</width>
+        <height>20</height>
        </size>
       </property>
      </widget>
     </item>
-    <item row="4" column="6">
-     <widget class="QLineEdit" name="lineEditPpqn">
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="seq66Label">
       <property name="minimumSize">
        <size>
-        <width>48</width>
-        <height>0</height>
+        <width>72</width>
+        <height>32</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>48</width>
-        <height>16777215</height>
-       </size>
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+        <pointsize>18</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
-       <string>192</string>
+       <string notr="true">Seq66</string>
       </property>
-      <property name="maxLength">
-       <number>5</number>
-      </property>
-      <property name="frame">
-       <bool>false</bool>
+     </widget>
+    </item>
+    <item row="3" column="14">
+     <widget class="QLabel" name="labelActiveSet">
+      <property name="text">
+       <string>Active Set</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
      </widget>
     </item>
-    <item row="4" column="0" colspan="6">
-     <layout class="QHBoxLayout" name="lay_transport">
-      <property name="spacing">
-       <number>6</number>
+    <item row="4" column="14">
+     <widget class="QLabel" name="label_2">
+      <property name="maximumSize">
+       <size>
+        <width>48</width>
+        <height>32</height>
+       </size>
       </property>
-      <item>
-       <widget class="QPushButton" name="btnStop">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Stop playback.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checkable">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnPause">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Pauses playback, so that the current location is preserved.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnPlay">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Start playback.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoRepeat">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnRecord">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Record live sequence changes into the Song Editor.</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="button_keep_queue">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Shows and toggles the keep-queue status. Does not show one-shot queue status.</string>
-        </property>
-        <property name="text">
-         <string>Q</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="button_learn">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>32</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Mute Group Learn. Click the L button, then press a mute-group key to store the mute state of the sequences in the Shift of that key.</string>
-        </property>
-        <property name="text">
-         <string>L</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <property name="text">
+       <string>PPQN</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -1035,8 +1086,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>864</width>
-     <height>25</height>
+     <width>904</width>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
