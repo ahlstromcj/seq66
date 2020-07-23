@@ -207,9 +207,9 @@ main (int argc, char * argv [])
                     extant_msg_active = true;
                 }
             }
-            if (ok && optionindex < argc)           /* MIDI filename given?   */
+            if (ok && optionindex < argc)           /* MIDI filename given? */
             {
-                int ppqn = 0;
+                int ppqn = SEQ66_USE_FILE_PPQN;     /* i.e. the value 0     */
                 std::string fn = argv[optionindex];
                 ok = read_midi_file(p, fn, ppqn, extant_errmsg);
                 if (! ok)

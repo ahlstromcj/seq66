@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-27
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -780,6 +780,20 @@ event::to_string () const
 }
 
 /**
+ *
+ */
+
+void
+event::rescale (int oldppqn, int newppqn)
+{
+    set_timestamp(rescale_tick(timestamp(), oldppqn, newppqn));
+}
+
+/**
+ *  This function is used in sorting MIDI status events (e.g. note on/off,
+ *  aftertouch, control change, etc.)  The sort order is not determined by the
+ *  actual status values.
+ *
  *  The ranking, from high to low, is note off, note on, aftertouch, channel
  *  pressure, and pitch wheel, control change, and program changes.  The lower
  *  the ranking the more upfront an item comes in the sort order.

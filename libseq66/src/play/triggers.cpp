@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-06-29
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -69,6 +69,18 @@
 
 namespace seq66
 {
+
+/**
+ *
+ */
+
+void
+trigger::rescale (int oldppqn, int newppqn)
+{
+    m_tick_start = rescale_tick(m_tick_start, oldppqn, newppqn);
+    m_tick_end = rescale_tick(m_tick_end, oldppqn, newppqn);
+    m_offset = rescale_tick(m_offset, oldppqn, newppqn);
+}
 
 /**
  *  Principal constructor.
@@ -139,6 +151,42 @@ triggers::operator = (const triggers & rhs)
         m_length = rhs.m_length;
     }
     return *this;
+}
+
+/**
+ *
+ */
+
+bool
+triggers::rescale (int oldppqn, int newppqn)
+{
+    bool result = oldppqn > 0;
+    if (result)
+    {
+        for (auto & t : m_triggers)
+            t.rescale(oldppqn, newppqn);
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+triggers::change_ppqn (int p)
+{
+    bool result = p > 0;
+
+    // m_undo_stack.push(m_triggers); ???
+
+    if (result)
+    {
+        bool result = rescale(m_ppqn, p);
+        if (result)
+            set_ppqn(p);
+    }
+    return result;
 }
 
 /**

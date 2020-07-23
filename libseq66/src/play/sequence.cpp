@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-19
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -216,7 +216,6 @@ sequence::~sequence ()
 void
 sequence::modify ()
 {
-    // reset_draw_marker();                    /* is this necessary?       */
     set_dirty();
     if (not_nullptr(m_parent))
         m_parent->modify();
@@ -4205,6 +4204,7 @@ sequence::set_midi_bus (char mb, bool user_change)
         if (user_change)
             modify();                   /* no easy way to undo this, though */
 
+        notify_change();                /* more reliable than set dirty     */
         set_dirty();                    /* this is for display updating     */
     }
 }
@@ -4361,13 +4361,26 @@ sequence::extend (midipulse len)
 
 /**
  *  Notifies the parent performer's subscribers that the sequence has
+ *  changed in some way not based on a trigger or action.
+ */
+
+void
+sequence::notify_change ()
+{
+    if (not_nullptr(m_parent))
+        m_parent->notify_sequence_change(seq_number());
+}
+
+/**
+ *  Notifies the parent performer's subscribers that the sequence has
  *  changed state based on a trigger or action.
  */
 
 void
 sequence::notify_trigger ()
 {
-    m_parent->notify_trigger_change(seq_number());
+    if (not_nullptr(m_parent))
+        m_parent->notify_trigger_change(seq_number());
 }
 
 /**
@@ -5008,6 +5021,35 @@ sequence::quantize_events
     if (result)
         set_dirty();
 
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+sequence::change_ppqn (int p)
+{
+    automutex locker(m_mutex);
+    bool result = p >= SEQ66_MINIMUM_PPQN && p <= SEQ66_MAXIMUM_PPQN;
+    if (result)
+        result = p != m_ppqn;
+
+    if (result)
+    {
+        result = m_events.rescale(m_ppqn, p);
+        if (result)
+        {
+            m_ppqn = p;
+            result = apply_length
+            (
+                 get_beats_per_bar(), p, get_beat_width(), get_measures()
+            );
+            m_triggers.change_ppqn(p);
+            m_triggers.set_length(m_length);
+        }
+    }
     return result;
 }
 

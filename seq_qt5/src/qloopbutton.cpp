@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2020-07-20
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -703,7 +703,7 @@ qloopbutton::draw_pattern (QPainter & painter)
 
             if (! m_seq->transposable())
             {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                 printf("sequence #%d is not transposable\n", m_seq->seq_number());
 #endif
                 pen.setColor(Qt::red);

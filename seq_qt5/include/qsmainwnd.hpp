@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-28
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -336,8 +336,10 @@ private slots:
     void panic ();
     void update_bpm (double bpm);
     void edit_bpm ();
-    void updatebeats_per_measure (int bmIndex);
-    void update_beat_length (int blIndex);
+    void update_ppqn (int pindex);
+    void update_midi_bus (int bindex);
+    void update_beats_per_measure (int bmindex);
+    void update_beat_length (int blindex);
     void open_recent_file ();
     void new_file ();
     void new_session ();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-06-28
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -55,6 +55,7 @@
 namespace seq66
 {
     class sequence;
+    class triggers;
 
 /**
  *  This class hold a single trigger for a sequence object.  This class is used
@@ -64,6 +65,8 @@ namespace seq66
 
 class trigger
 {
+
+    friend class triggers;
 
 private:
 
@@ -236,6 +239,10 @@ public:
         return m_tick_start - (m_tick_start % len) + (m_offset % len) - len;
     }
 
+private:
+
+    void rescale (int oldppqn, int newppqn);
+
 };          // class trigger
 
 /**
@@ -361,6 +368,8 @@ public:
 
     triggers & operator = (const triggers & rhs);
 
+    bool change_ppqn (int p);
+
     /**
      * \setter m_ppqn
      *      We have to set this value after construction for best safety.
@@ -478,6 +487,7 @@ public:
 
 private:
 
+    bool rescale (int oldppqn, int newppqn);
     midipulse adjust_offset (midipulse offset);
     void offset_selected (midipulse tick, grow editmode);
     void split (trigger & t, midipulse splittick);

@@ -178,16 +178,6 @@ midifile::midifile
     m_data                      (),
     m_char_list                 (),
     m_global_bgsequence         (globalbgs),
-
-    /*
-     * \change ca 2018-07-30
-     * We need a better way to convert the file PPQN to the "legacy" value.
-     * Using the legacy mode is a stop-gap. An rc() or usr() option would be
-     * better.  See the "[user-midi-settings] midi_ppqn" option.
-     *
-     * m_use_default_ppqn          (ppqn == SEQ66_USE_DEFAULT_PPQN),
-     */
-
     m_use_scaled_ppqn           (true),
     m_ppqn                      (choose_ppqn(ppqn)),    /* can be 0     */
     m_file_ppqn                 (m_ppqn),               /* for now      */
@@ -3012,15 +3002,6 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
     m_disable_reported = true;
     return false;
 }
-
-/**
- *
-
-void
-midifile::handle_note ()
-{
-}
- */
 
 /**
  *  A global function to unify the opening of a MIDI or WRK file.  It also

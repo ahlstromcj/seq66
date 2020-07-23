@@ -424,6 +424,7 @@ private:                                /* functions for friend sequence    */
     (
         midipulse & first, midipulse & last
     ) const;
+    bool rescale (int oldppqn, int newppqn);
     bool stretch_selected (midipulse delta);
     bool grow_selected (midipulse delta, int snap);
     bool copy_selected (eventlist & clipbd);

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-07-21
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -93,7 +93,7 @@ QWidget container?
 #include <QMenu>
 #include <QPaintEvent>
 #include <QScrollBar>
-#include <QWidget>
+#include <QStandardItemModel>           /* for disabling combobox entries   */
 
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
 #include "midi/controllers.hpp"         /* seq66::c_controller_names[]      */
@@ -604,28 +604,31 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(reset_midi_bus())
     );
 
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
+    mastermidibus * mmb = perf().master_bus();
+    if (not_nullptr(mmb))
     {
-        for (int b = 0; b < masterbus->get_num_out_buses(); ++b)
+        for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
         {
-            /*
-             * \change ca 2018-11-03 Do not add disabled output busses.
-             */
-
-            if (! clock_is_disabled(masterbus->get_clock(b)))
+            bool disabled = clock_is_disabled(mmb->get_clock(buss));
+            ui->m_combo_bus->addItem
+            (
+                QString::fromStdString(mmb->get_midi_out_bus_name(buss))
+            );
+            if (disabled)
             {
-                ui->m_combo_bus->addItem
+                QStandardItemModel * model = qobject_cast<QStandardItemModel *>
                 (
-                    QString::fromStdString(masterbus->get_midi_out_bus_name(b))
+                    ui->m_combo_bus->model()
                 );
+                QStandardItem * item = model->item(buss);
+                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
             }
         }
         ui->m_combo_bus->setCurrentText
         (
             QString::fromStdString
             (
-                masterbus->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
+                mmb->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
             )
         );
     }
@@ -1655,12 +1658,12 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
+    mastermidibus * mmb = perf().master_bus();
+    if (not_nullptr(mmb))
     {
-        if (index >= 0 && index < masterbus->get_num_out_buses())
+        if (index >= 0 && index < mmb->get_num_out_buses())
         {
-            seq_pointer()->set_midi_bus(index);
+            seq_pointer()->set_midi_bus(index, true);
             set_dirty();
         }
     }
@@ -1679,7 +1682,8 @@ qseqeditframe64::reset_midi_bus ()
 
 /**
  *  Selects the given MIDI buss parameter in the main sequence object,
- *  so that it will use that buss.
+ *  so that it will use that buss.  Currently called only in the constructor.
+ *  Otherwise, see the update_midi_bus() function.
  *
  *  Should this change set the is-modified flag?  Where should validation
  *  against the ALSA or JACK buss limits occur?

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-15
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1098,10 +1098,11 @@ performer::finish_move (seq::number seq)
  *      to fix them.
  */
 
-void
+bool
 performer::set_ppqn (int p)
 {
-    if (m_ppqn != p)
+    bool result = m_ppqn != p;
+    if (result)
     {
         m_ppqn = p;
         if (m_master_bus)
@@ -1116,6 +1117,50 @@ performer::set_ppqn (int p)
         m_one_measure = p * 4;                  /* simplistic!  */
         m_right_tick = m_one_measure * 4;       /* ditto        */
     }
+    return result;
+}
+
+/**
+ *  Goes through all sets and sequences, updating the PPQN of the events and
+ *  triggers.
+ *
+ *  Currently operates only on the current screenset.
+ */
+
+bool
+performer::change_ppqn (int p)
+{
+    bool result = p >= SEQ66_MINIMUM_PPQN && p <= SEQ66_MAXIMUM_PPQN;
+    if (result)
+    {
+        if (result)
+        {
+            for (auto seqi : m_play_set)
+                seqi->change_ppqn(p);
+
+            result = set_ppqn(p);
+        }
+    }
+    return result;
+}
+
+/**
+ *  Goes through all sets and sequences, updating the buss to the same
+ *  (global) buss number.
+ *
+ *  Currently operates only on the current screenset.
+ */
+
+bool
+performer::change_all_busses (int b)
+{
+    bool result = b >= 0 && b <= SEQ66_OUTPUT_BUSS_MAX;
+    if (result)
+    {
+        for (auto seqi : m_play_set)
+            seqi->set_midi_bus(b, true);    /* calls notification funcion   */
+    }
+    return result;
 }
 
 /**

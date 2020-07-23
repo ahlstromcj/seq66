@@ -1297,6 +1297,7 @@ public:
         m_events.sort();
     }
 
+    void notify_change ();
     void notify_trigger ();
     void print_triggers () const;
     void add_trigger
@@ -1643,6 +1644,7 @@ private:
     (
         midibyte status, midibyte cc, int divide, bool linked = false
     );
+    bool change_ppqn (int p);
     void set_parent (performer * p);
     void put_event_on_bus (event & ev);
     void reset_loop ();

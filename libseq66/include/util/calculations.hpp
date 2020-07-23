@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2019-11-23
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -157,6 +157,33 @@ ppqn_is_valid (int ppqn)
         ppqn == SEQ66_USE_DEFAULT_PPQN ||
         (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
     );
+}
+
+/**
+ *  Formalizes the rescaling of ticks base on changing the PPQN.  For speed
+ *  the parameters are all assumed to be valid.  The PPQN values supported
+ *  explicity range from SEQ66_MINIMUM_PPQN (32) to SEQ66_MAXIMUM_PPQN
+ *  (19200).  The maximum tick value for 32-bit code is 2147483647.  At the
+ *  highest PPQN that's almost 28000 measures.  64-bit code maxes at over
+ *  9E18.
+ *
+ * \param tick
+ *      The tick value to be rescaled.
+ *
+ * \param oldppqn
+ *      The original PPQN.
+ *
+ * \param newppqn
+ *      The new PPQN.
+ *
+ * \return
+ *      Returns the new tick value.
+ */
+
+inline midipulse
+rescale_tick (midipulse tick, int oldppqn, int newppqn)
+{
+    return tick * newppqn / oldppqn;
 }
 
 /**

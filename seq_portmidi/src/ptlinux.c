@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2018-04-11
+ * \updates     2020-07-23
  * \license     GNU GPLv2 or above
  *
  * Implementation Notes (by Mark Nelson):
@@ -94,6 +94,38 @@ typedef struct
 static int pt_callback_proc_id = 0;
 
 /**
+ *  The ftime() function, which returns he current tim in seconds and
+ *  milliseconds since the Epoch, is deprecated in favor or clock_gettime(2).
+ *
+ *      struct timeb time_offset =
+ *      {
+ *          0, // time
+ *          0, // millitm
+ *          0, // timezone
+ *          0  // dstflag
+ *      };
+ */
+
+void
+Pt_ftime (struct timeb * tp)
+{
+    struct timespec temptime;
+    int rc = clock_gettime(CLOCK_REALTIME_COARSE, &temptime);
+    if (rc == 0)
+    {
+        tp->time = temptime.tv_sec;
+        tp->millitm = temptime.tv_nsec / 1000000;
+    }
+    else
+    {
+        tp->time = 0;
+        tp->millitm = 0;
+    }
+    tp->timezone = 0;
+    tp->dstflag = 0;
+}
+
+/**
  *  To kill a process, just increment the pt_callback_proc_id.
  *
  * printf("pt_callback_proc_id %d, id %d\n", pt_callback_proc_id, parameters->id);
@@ -134,7 +166,11 @@ Pt_Start (int resolution, PtCallback * callback, void * userData)
     if (time_started_flag)
         return ptNoError;
 
-    ftime(&time_offset);            /* need this set before process runs */
+    /*
+     * Need this set before process runs.
+     */
+
+    Pt_ftime(&time_offset);             // ftime(&time_offset);
     if (callback)
     {
         int res;
@@ -194,7 +230,7 @@ Pt_Time ()
 {
     long seconds, milliseconds;
     struct timeb now;
-    ftime(&now);
+    Pt_ftime(&now);                                     // ftime(&now);
     seconds = now.time - time_offset.time;
     milliseconds = now.millitm - time_offset.millitm;
     return seconds * 1000 + milliseconds;

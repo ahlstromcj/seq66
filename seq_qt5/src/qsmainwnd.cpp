@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-13
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -40,6 +40,7 @@
 #include <QMessageBox>
 #include <QResizeEvent>
 #include <QScreen>                      /* Qscreen                          */
+#include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <QTimer>
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
@@ -108,13 +109,46 @@ namespace seq66
  *  Manifest constant to indicate the location of each main-window tab.
  */
 
-static const int Tab_Live           = 0;
-static const int Tab_Song           = 1;
-static const int Tab_Edit           = 2;
-static const int Tab_Events         = 3;
-static const int Tab_Playlist       = 4;
-static const int Tab_Set_Master     = 5;
-static const int Tab_Mute_Master    = 6;
+static const int Tab_Live               =  0;
+static const int Tab_Song               =  1;
+static const int Tab_Edit               =  2;
+static const int Tab_Events             =  3;
+static const int Tab_Playlist           =  4;
+static const int Tab_Set_Master         =  5;
+static const int Tab_Mute_Master        =  6;
+
+/**
+ *  Manifest constants for the beat-measure and beat-length combo-boxes.
+ */
+
+static const int s_beat_measure_count   = 16;
+static const int s_beat_length_count    =  5;
+
+/**
+ *  Available PPQN values.  The default is 192, item #xx.  The first item uses the
+ *  edit text for a "File" value, which means that whatever was read from the file
+ *  is what holds.  The last item terminates the list.
+ */
+
+static const int s_ppqn_list [] =
+{
+    -1,         /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
+    0,          /* "File" (SEQ66_USE_FILE_PPQN)                             */
+    32,
+    48,
+    96,
+    192,
+    384,
+    768,
+    960,
+    1920,
+    3840,
+    7680,
+    9600,
+    19200,
+    -2          /* terminator   */
+};
+
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -204,22 +238,88 @@ qsmainwnd::qsmainwnd
     move(x, y);
 
     /*
-     * TODO.
      *  Combo-box for tweaking the PPQN.
-     *  Hidden for now.
      */
 
-    // ui->cmb_ppqn->hide();                    // COMMENTED OUT
+    bool ppqn_is_set = false;
+    for (int i = 0; ; ++i)
+    {
+        int ppqn = s_ppqn_list[i];
+        if (ppqn == SEQ66_USE_FILE_PPQN)
+        {
+            ui->cmb_ppqn->insertItem(i, "File");
+        }
+        else if (ppqn == SEQ66_USE_DEFAULT_PPQN)
+        {
+            std::string lbl = std::to_string(usr().midi_ppqn());
+            lbl += "*";
+            ui->cmb_ppqn->insertItem(i, lbl.c_str());
+        }
+        else if (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
+        {
+            QString combo_text = QString::number(ppqn);
+            ui->cmb_ppqn->insertItem(i, combo_text);
+            if (ppqn == p.ppqn())
+            {
+                ui->cmb_ppqn->setCurrentIndex(i);
+                ppqn_is_set = true;
+            }
+        }
+        else if (ppqn == -2)
+        {
+            break;
+        }
+    }
+    if (! ppqn_is_set)
+        ui->cmb_ppqn->setCurrentIndex(0);
+
+    // FOR NOW:
+
+    ui->cmb_ppqn->setEnabled(false);
+
+    //  float value=100.0;
+    //  int index = ui->combo->findData(value);
+    //  if ( index != -1 ) // -1 for not found
+    //      combo->setCurrentIndex(index);
 
     std::string ppqnstr = std::to_string(p.ppqn());
     ui->lineEditPpqn->setText(ppqnstr.c_str());
+    ui->lineEditPpqn->setReadOnly(true);
+
+    /*
+     * Global buss items.
+     */
+
+    mastermidibus * mmb = perf().master_bus();
+    if (not_nullptr(mmb))
+    {
+        ui->cmb_global_bus->addItem("None");
+        for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
+        {
+            bool disabled = clock_is_disabled(mmb->get_clock(buss));
+            ui->cmb_global_bus->addItem
+            (
+                QString::fromStdString(mmb->get_midi_out_bus_name(buss))
+            );
+            if (disabled)
+            {
+                int index = buss + 1;
+                QStandardItemModel * model = qobject_cast<QStandardItemModel *>
+                (
+                    ui->cmb_global_bus->model()
+                );
+                QStandardItem * item = model->item(index);
+                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+            }
+        }
+    }
 
     /*
      * Fill options for beats per measure in the combo box, and set the
      * default.
      */
 
-    for (int i = 0; i < 16; ++i)
+    for (int i = 0; i < s_beat_measure_count; ++i)
     {
         QString combo_text = QString::number(i + 1);
         ui->cmb_beat_measure->insertItem(i, combo_text);
@@ -227,10 +327,11 @@ qsmainwnd::qsmainwnd
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
-     * default.
+     * default.  Note that the actual value is selected via a switch statement in
+     * the update_beat_length() function.  See that function for the true story.
      */
 
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < s_beat_length_count; ++i)
     {
         QString combo_text = QString::number(pow(2, i));
         ui->cmb_beat_length->insertItem(i, combo_text);
@@ -620,6 +721,26 @@ qsmainwnd::qsmainwnd
     );
 
     /*
+     * PPQN combo-box
+     */
+
+    connect
+    (
+        ui->cmb_ppqn, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_ppqn(int))
+    );
+
+    /*
+     * Global buss combo-box
+     */
+
+    connect
+    (
+        ui->cmb_global_bus, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_midi_bus(int))
+    );
+
+    /*
      * Beat Length (Width) combo-box.
      */
 
@@ -636,7 +757,7 @@ qsmainwnd::qsmainwnd
     connect
     (
         ui->cmb_beat_measure, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(updatebeats_per_measure(int))
+        this, SLOT(update_beats_per_measure(int))
     );
 
     /*
@@ -1955,10 +2076,64 @@ qsmainwnd::remove_all_live_frames ()
  */
 
 void
-qsmainwnd::update_beat_length (int blIndex)
+qsmainwnd::update_ppqn (int pindex)
+{
+    int p = s_ppqn_list[pindex];
+    if (p > 0)
+    {
+        if (p == SEQ66_USE_FILE_PPQN)
+        {
+            p = m_ppqn;                 // TODO, how?
+        }
+        else if (p == SEQ66_USE_DEFAULT_PPQN)
+        {
+            p = usr().midi_ppqn();
+        }
+        if (perf().change_ppqn(p))
+        {
+            std::string ppqnstr = std::to_string(p);
+            ui->lineEditPpqn->setText(ppqnstr.c_str());
+            ppqn(p);
+        }
+    }
+}
+
+/**
+ *  Sets the MIDI bus to use for output for all sets and sequences. A convenience
+ *  when dealing with one MIDI output device.
+ *
+ * \param index
+ *      The index into the list of available MIDI buses.
+ */
+
+void
+qsmainwnd::update_midi_bus (int index)
+{
+    mastermidibus * mmb = perf().master_bus();
+    if (not_nullptr(mmb))
+    {
+        if (index == 0)
+        {
+            // Anything to do for the "None" entry?
+        }
+        else
+        {
+            --index;
+            if (index >= 0 && index < mmb->get_num_out_buses())
+                (void) perf().change_all_busses(index);
+        }
+    }
+}
+
+/**
+ *  We could set the value using pow(2, blindex).
+ */
+
+void
+qsmainwnd::update_beat_length (int blindex)
 {
     int bl;
-    switch (blIndex)
+    switch (blindex)
     {
     case 0:
         bl = 1;
@@ -2016,7 +2191,7 @@ qsmainwnd::update_beat_length (int blIndex)
  */
 
 void
-qsmainwnd::updatebeats_per_measure(int bmindex)
+qsmainwnd::update_beats_per_measure(int bmindex)
 {
     int bm = bmindex + 1;
     if (not_nullptr(m_beat_ind))

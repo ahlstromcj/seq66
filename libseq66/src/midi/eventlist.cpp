@@ -1531,6 +1531,22 @@ eventlist::get_selected_events_interval
 }
 
 /**
+ *
+ */
+
+bool
+eventlist::rescale (int oldppqn, int newppqn)
+{
+    bool result = oldppqn > 0;
+    if (result)
+    {
+        for (auto & er : m_events)
+            er.rescale(oldppqn, newppqn);
+    }
+    return result;
+}
+
+/**
  *  Performs a stretch operation on the selected events.  This should move
  *  a note off event, according to old comments, but it doesn't seem to do
  *  that.  See the grow_selected() function.  Rather, it moves any event in

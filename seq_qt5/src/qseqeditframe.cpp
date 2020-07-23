@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-16
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -81,6 +81,7 @@ QGridLayout     | y |                                                   | a |
 #include <QMenu>
 #include <QPalette>
 #include <QScrollArea>
+#include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <qmath.h>                      /* pow()                            */
 
 #include "cfg/settings.hpp"             /* seq66::usr()                     */
@@ -197,21 +198,31 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
 
     /* MIDI buss options */
 
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
+    mastermidibus * mmb = perf().master_bus();
+    if (not_nullptr(mmb))
     {
-        for (int i = 0; i < masterbus->get_num_out_buses(); ++i)
+        for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
         {
+            bool disabled = clock_is_disabled(mmb->get_clock(buss));
             ui->cmbMidiBus->addItem
             (
-                QString::fromStdString(masterbus->get_midi_out_bus_name(i))
+                QString::fromStdString(mmb->get_midi_out_bus_name(buss))
             );
+            if (disabled)
+            {
+                QStandardItemModel * model = qobject_cast<QStandardItemModel *>
+                (
+                    ui->cmbMidiBus->model()
+                );
+                QStandardItem * item = model->item(buss);
+                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+            }
         }
         ui->cmbMidiBus->setCurrentText
         (
             QString::fromStdString
             (
-                masterbus->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
+                mmb->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
             )
         );
     }

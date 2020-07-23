@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-15
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -2648,7 +2648,9 @@ public:         /* GUI-support functions */
     }
 
     void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
-    void set_ppqn (int p);
+    bool set_ppqn (int p);
+    bool change_ppqn (int p);
+    bool change_all_busses (int b);
 
 private:
 

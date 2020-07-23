@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-23
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -439,13 +439,6 @@ public:
      */
 
     bool operator < (const event & rhsevent) const;
-
-    /**
-     * \setter m_timestamp
-     *
-     * \param time
-     *      Provides the time value, in ticks, to set as the timestamp.
-     */
 
     void set_timestamp (midipulse time)
     {
@@ -1334,14 +1327,8 @@ public:
     void print () const;
     void print_note (bool is_a_link = false) const;
     std::string to_string () const;
-
-    /**
-     *  This function is used in sorting MIDI status events (e.g. note
-     *  on/off, aftertouch, control change, etc.)  The sort order is not
-     *  determined by the actual status values.
-     */
-
     int get_rank () const;
+    void rescale (int oldppqn, int newppqn);
 
 };          // class event
 
