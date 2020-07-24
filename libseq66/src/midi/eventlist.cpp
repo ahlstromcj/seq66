@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-24
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -34,8 +34,9 @@
 
 #include <cstdio>                       /* std::printf()                    */
 
-#include "util/basic_macros.hpp"
 #include "midi/eventlist.hpp"
+#include "util/basic_macros.hpp"
+#include "util/calculations.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -1542,6 +1543,8 @@ eventlist::rescale (int oldppqn, int newppqn)
     {
         for (auto & er : m_events)
             er.rescale(oldppqn, newppqn);
+
+        set_length(rescale_tick(get_length(), oldppqn, newppqn));
     }
     return result;
 }

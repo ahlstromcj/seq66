@@ -165,6 +165,8 @@ triggers::rescale (int oldppqn, int newppqn)
     {
         for (auto & t : m_triggers)
             t.rescale(oldppqn, newppqn);
+
+        set_length(rescale_tick(m_length, oldppqn, newppqn));
     }
     return result;
 }

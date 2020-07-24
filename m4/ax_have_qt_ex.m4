@@ -11,6 +11,7 @@
 #   Extended by C. Ahlstrom 2018-03-08 to support rcc.
 #   Modified by C. Ahlstrom 2019-11-29 to change the macro name to avoid
 #   conflicts and to remove (experimentally) the problematic uitools library.
+#   Modified by C. Ahlstrom 2020-07-24 to be in accord with the INSTALL file.
 #
 #   Searches $PATH and queries qmake for Qt include files, libraries and Qt
 #   binary utilities. The macro only supports Qt5 or later.
@@ -77,35 +78,19 @@ AC_DEFUN([AX_HAVE_QT_EX],
     am_have_qt_makefile=`mktemp`
     # http://qt-project.org/doc/qt-5/qmake-variable-reference.html#qt
     cat > $am_have_qt_pro << EOF
-qtHaveModule(axcontainer):       QT += axcontainer
-qtHaveModule(axserver):          QT += axserver
 qtHaveModule(concurrent):        QT += concurrent
 qtHaveModule(core):              QT += core
 qtHaveModule(dbus):              QT += dbus
-qtHaveModule(declarative):       QT += declarative
-qtHaveModule(designer):          QT += designer
 qtHaveModule(gui):               QT += gui
 qtHaveModule(widgets):           QT += widgets
-qtHaveModule(help):              QT += help
-qtHaveModule(multimedia):        QT += multimedia
-qtHaveModule(multimediawidgets): QT += multimediawidgets
 qtHaveModule(network):           QT += network
 qtHaveModule(opengl):            QT += opengl
 qtHaveModule(printsupport):      QT += printsupport
 qtHaveModule(qml):               QT += qml
-qtHaveModule(qmltest):           QT += qmltest
 qtHaveModule(x11extras):         QT += x11extras
-qtHaveModule(script):            QT += script
-qtHaveModule(scripttools):       QT += scripttools
-qtHaveModule(sensors):           QT += sensors
-qtHaveModule(serialport):        QT += serialport
 qtHaveModule(sql):               QT += sql
-qtHaveModule(svg):               QT += svg
 qtHaveModule(testlib):           QT += testlib
-qtHaveModule(webkit):            QT += webkit
-qtHaveModule(webkitwidgets):     QT += webkitwidgets
 qtHaveModule(xml):               QT += xml
-qtHaveModule(xmlpatterns):       QT += xmlpatterns
 percent.target = %
 percent.commands = @echo -n "\$(\$(@))\ "
 QMAKE_EXTRA_TARGETS += percent

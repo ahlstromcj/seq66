@@ -5041,6 +5041,7 @@ sequence::change_ppqn (int p)
         result = m_events.rescale(m_ppqn, p);
         if (result)
         {
+            m_length = rescale_tick(m_length, m_ppqn, p);
             m_ppqn = p;
             result = apply_length
             (

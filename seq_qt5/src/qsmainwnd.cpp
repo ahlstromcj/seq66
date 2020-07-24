@@ -273,9 +273,7 @@ qsmainwnd::qsmainwnd
     if (! ppqn_is_set)
         ui->cmb_ppqn->setCurrentIndex(0);
 
-    // FOR NOW:
-
-    ui->cmb_ppqn->setEnabled(false);
+    // FOR NOW: ui->cmb_ppqn->setEnabled(false);
 
     //  float value=100.0;
     //  int index = ui->combo->findData(value);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-06-27
+ * \updates       2020-07-23
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
