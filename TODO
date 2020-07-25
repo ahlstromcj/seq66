@@ -1,13 +1,13 @@
 TODO for Seq66 0.90.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-07-22
+2019-04-13 to 2020-07-25
 
 HOT ITEMS:
 
     From: zigmhount <notifications@github.com>
     Subject: [Question/Feature request] Live midi pattern recording (#188)
 
-        I havve followed closely the development of the midi control output to
+        I have followed closely the development of the midi control output to
         use with my Akai APC Mini - awesome. The only think I miss now is to
         easily record a midi pattern in an empty slot without too much
         fiddling with the mouse or keyboard, as in a live setup.
@@ -54,6 +54,9 @@ HOT ITEMS:
         -   qseqedit segfault fix
         -   Resume-note-on fix
         -   qseqedit 800x480 feature if successful
+
+    See if direct calls to midifile::write() [and parse()] can be replace by
+    the free-function versions defined in midifile.
 
 ISSUES:
 

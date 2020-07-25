@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2019-08-07
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
@@ -147,7 +147,6 @@ private:
     int m_snap;                 /* set snap-to in pulses/ticks  */
     int m_beats_per_measure;
     int m_beat_width;
-    int m_ppqn;                 /* might not need this          */
     qperfroll * m_perfroll;
     qperfnames * m_perfnames;
     qperftime * m_perftime;

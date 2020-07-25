@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-07-20
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -248,7 +248,7 @@ usrsettings::usrsettings () :
      */
 
     m_midi_ppqn                 (SEQ66_DEFAULT_PPQN),
-    m_file_ppqn                 (SEQ66_DEFAULT_PPQN),
+    m_file_ppqn                 (0),
     m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
     m_midi_bpm_minimum          (0),
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
@@ -572,8 +572,8 @@ usrsettings::set_defaults ()
     m_text_y = 12;                          // range: 12-12
     m_seqchars_x = 15;                      // range: 15-15
     m_seqchars_y =  5;                      // range: 5-5
-    m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 96 to 960, default 192
-    m_file_ppqn = SEQ66_DEFAULT_PPQN;       // range: 96 to 960, default 192
+    m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 32 to 19200, default 192
+    m_file_ppqn = 0;                        // range: 32 to 19200, default 0
     m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
     m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;    // range: 20-500

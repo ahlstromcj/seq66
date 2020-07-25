@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-20
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -1092,7 +1092,7 @@ usrfile::write ()
         "# Specifies parts-per-quarter note to use, if the MIDI file.\n"
         "# does not override it.  Default is 192, but we'd like to go\n"
         "# lower and higher than that. Set to 0 to use the PPQN from the\n"
-        "# MIDI file, rather than scaling its PPQN re this value.\n"
+        "# MIDI files, rather than scaling its PPQN re midi_ppqn().\n"
         "\n"
         << usr().midi_ppqn() << "       # midi_ppqn, --ppqn p\n"
         ;

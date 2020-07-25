@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-07-16
+ * \updates       2020-07-25
  * \license       GNU GPLv2 or above
  *
  *  The process:
@@ -39,14 +39,9 @@
  *      -# If a user-interface is needed, create a unique-pointer to it, then
  *         show it.  This will remove any previous pointer.  The function is
  *         virtual, create_window().
- *
- *  PortMidi:
- *
- *      PortMidi handling shall be done by the main() of the application. ???
  */
 
-#include <cstdlib>                      /* C getenv() or secure_getenv()   */
-#include <cstring>                      /* C strlen(), strcmp()             */
+#include <cstring>                      /* std::strlen()                    */
 
 #include "seq66_features.hpp"           /* set_app_name()                   */
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
@@ -215,7 +210,7 @@ bool
 smanager::create_performer ()
 {
     bool result = false;
-    int ppqn = usr().midi_ppqn();
+    int ppqn = choose_ppqn();                       /* usr().midi_ppqn()    */
     int rows = usr().mainwnd_rows();
     int cols = usr().mainwnd_cols();
     pointer p(new (std::nothrow) performer(ppqn, rows, cols));
@@ -224,13 +219,13 @@ smanager::create_performer ()
     {
         bool ok = p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
-        if (ok && rc().verbose())               /* for trouble-shoots   */
+        if (ok && rc().verbose())                   /* for trouble-shoots   */
         {
             rc().key_controls().show();
             rc().midi_controls().show();
             rc().mute_groups().show();
         }
-        result = perf()->launch(usr().midi_ppqn());
+        result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */
         if (! result)
         {
             errprint("performer::launch() failed");
@@ -293,20 +288,17 @@ std::string
 smanager::open_midi_file (const std::string & fname, std::string & errmsg)
 {
     std::string midifname;                          /* start out blank      */
-    if (file_accessible(fname))
+    bool result = perf()->read_midi_file(fname, errmsg);
+    if (result)
     {
-        int pp = perf()->ppqn();
-        bool result = perf()->read_midi_file(fname, pp, errmsg);
-        if (result)
-        {
-            std::string infomsg = "PPQN set to ";
-            infomsg += std::to_string(pp);
-            (void) seq66::info_message(infomsg);
-            midifname = fname;
-        }
-        else
-            (void) seq66::error_message(errmsg);
+        std::string infomsg = "PPQN set to ";
+        infomsg += std::to_string(perf()->ppqn());
+        (void) seq66::info_message(infomsg);
+        midifname = fname;
     }
+    else
+        (void) seq66::error_message(errmsg);
+
     return midifname;
 }
 
@@ -476,7 +468,7 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         const char * perr = Pm_error_message();
-        if (not_nullptr(perr) && strlen(perr) > 0)
+        if (not_nullptr(perr) && std::strlen(perr) > 0)
             pmerrmsg = std::string(perr);
     }
     if (result)
@@ -530,7 +522,7 @@ smanager::error_handling ()
     const char * pmerrmsg = errmsg.c_str();
 #endif
 
-    if (not_nullptr(pmerrmsg) && strlen(pmerrmsg) > 0)
+    if (not_nullptr(pmerrmsg) && std::strlen(pmerrmsg) > 0)
     {
         std::string path = seq66::rc().config_filespec("seq66.log");
         errmsg += "\n";

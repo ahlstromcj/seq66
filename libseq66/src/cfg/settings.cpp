@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2019-07-07
+ * \updates       2019-07-25
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -99,25 +99,23 @@ set_configuration_defaults ()
  *  files or the MIDI file, so we don't report issues when that happens.
  *
  * \param ppqn
- *      Provides the PPQN value to be used.  The legal values are:
+ *      Provides the PPQN value to be used. The default value is
+ *      SEQ66_USE_DEFAULT_PPQN.  Apart from that, the legal values are:
  *
- *      -   SEQ66_USE_FILE_PPQN (0).  Return 0.  The caller should then get
- *          the PPQN from the usr().file_ppqn() or usr().midi_ppqn() values,
- *          perhaps by calling this function again with no parameters. See the
- *          next option below.
+ *      -   SEQ66_USE_FILE_PPQN (0).  Start with usr().file_ppqn().  If this
+ *          is zero, there is no MIDI-file PPQN in force, so try
+ *          usr().midi_ppqn().  If still 0, then use SEQ66_DEFAULT_PPQN.
  *      -   SEQ66_USE_DEFAULT_PPQN (-1).  This is the default value of this
  *          parameter.  Behavior:
- *          -   Return the value of usr().midi_ppqn(), if in the range
- *              SEQ66_MINIMUM_PPQN to SEQ66_MAXIMUM_PPQN.  The default
- *              PPQN value can be changed (from 192 to another value) on the
- *              command-line (options "--ppqn" or "-q"), or in the "usr"
+ *          -   If usr().midi_ppqn() is SEQ66_USE_FILE_PPQN (0), try
+ *              usr().file_ppqn().
+ *          -   Otherwise try the value of usr().midi_ppqn(). This value is
+ *              set via command-line options "--ppqn" or in the "usr"
  *              configuration file at the "midi_ppqn" setting.
- *          -   If usr().midi_ppqn() is SEQ66_USE_FILE_PPQN (0), then return
- *              usr().file_ppqn() instead.  If that is invalid, return
- *              SEQ66_DEFAULT_PPQN (192).
- *          -   If usr().midi_ppqn() is invalid, return SEQ66_DEFAULT_PPQN.
- *      -   Legal PPQN.  Return it unchanged.
- *      -   Illegal PPQN.  Return SEQ66_DEFAULT_PPQN.
+ *      -   Other PPQN.  Use it unchanged.
+ *
+ *      If the resultant value is out of the range SEQ66_MINIMUM_PPQN to
+ *      SEQ66_MAXIMUM_PPQN, then return SEQ66_DEFAULT_PPQN.
  *
  * \return
  *      Returns the ppqn parameter, unless that parameter is one of the
@@ -128,30 +126,28 @@ int
 choose_ppqn (int ppqn)
 {
     int result = ppqn;
-    if (ppqn == SEQ66_USE_FILE_PPQN)
-    {
-        result = SEQ66_USE_FILE_PPQN;
-    }
-    else if (ppqn == SEQ66_USE_DEFAULT_PPQN)
+    if (result == SEQ66_USE_DEFAULT_PPQN)
     {
         if (usr().midi_ppqn() == SEQ66_USE_FILE_PPQN)
             result = usr().file_ppqn();
         else
             result = usr().midi_ppqn();
-
-        if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
-        {
-            if (result > SEQ66_USE_FILE_PPQN)
-            {
-                warnprint("Default & file PPQN out of range, setting PPQN = 192");
-            }
-            result = SEQ66_DEFAULT_PPQN;
-        }
     }
-    else if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
+    else if (result == SEQ66_USE_FILE_PPQN)
     {
-        warnprint("Provided PPQN out of range, setting PPQN = 192");
-        result = SEQ66_DEFAULT_PPQN;
+        result = usr().file_ppqn();
+    }
+    if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
+    {
+        if (result)
+        {
+            warnprint("File PPQN not yet set, setting PPQN = 192");
+        }
+        else
+        {
+            warnprint("Provided PPQN out of range, setting PPQN = 192");
+        }
+        result = SEQ66_DEFAULT_PPQN;                /* the legacy value 192 */
     }
     return result;
 }

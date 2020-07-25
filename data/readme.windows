@@ -1,6 +1,6 @@
-readme.windows for Seq66 0.90.4
+readme.windows for Seq66 0.90.5
 Chris Ahlstrom
-2018-05-13 to 2020-07-07
+2018-05-13 to 2020-07-24
 
 This README file provides the things you need to know to run the new native
 Windows implmentation of seq66, an executable called qpseq66.exe.  It
@@ -25,11 +25,18 @@ Inaccessible Devices:
     One issue is that the Microsoft MIDI Mapper, rumored to be removed in
     Windows 8 and beyond, is still detected by the PortMidi library used in
     qpseq66.  Another issue is that the built-in Microsoft wave-table
-    synthesizer is not accessible.
+    synthesizer is not accessible, because the MIDI Mapper grabs it.  So
+    Seq66 will detect this situation and disable the wave-table synthesizer,
+    instead using the MIDI Mapper (device 0) to access the synthesizer.
 
+    THIS PARAGRAPH MAY NO LONGER HOLD.
     When an error occurs, the files "erroneous.rc" and "erroneous.usr"
     are created.  They can be inspected, fixed, and renamed to
     "qpseq66.rc" and "qpseq66.usr", and with luck the startup will work.
+    THE ABOVE PARAGRAPH MAY NO LONGER HOLD.
+
+    There is a "seq6.log" file generated in the configuration directory,
+    C:/Users/chris/AppData/Local/seq66/, that can be informative, as well.
 
     We installed the CoolSoft MIDIMapper and VirtualMIDISYnth to try to get
     around these issues, and tried to turn off the system setup of "Allow

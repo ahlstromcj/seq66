@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-06-14
+ * \updates       2020-07-25
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -94,7 +94,7 @@
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "play/performer.hpp"           /* must precede midifile.hpp !      */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-#include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us()       */
+#include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
 /*
@@ -129,20 +129,20 @@ const std::string midifile::sm_meta_text_labels[8] =
  * \param ppqn
  *      Provides the initial value of the PPQN setting.  It is handled
  *      differently for parsing (reading) versus writing the MIDI file.
- *      -   Reading.
- *          -   If set to SEQ66_USE_DEFAULT_PPQN, the legacy application
- *              behavior is used.  The m_ppqn member is set to the default
- *              PPQN, usr.midi_ppqn().  The PPQN value read from the MIDI
- *              file is then use to scale the running-time of the sequence
- *              relative to DEFAULT_PPQN.
- *          -   If in the valid PPQN range, that is the value used.
- *          -   Otherwise, m_ppqn is set to the value read from the MIDI file.
- *              No scaling is done.  Since the value gets written, specify
- *              ppqn as 0, an obviously bogus value, to get this behavior.
+ *      -   Reading.  The caller of read_midi_file(), as well as the function
+ *          itself, determine the value of ppqn used here.  It is either 0 or
+ *          the result of seq66::choose_ppqn().
+ *          -   If set to SEQ66_USE_FILE_PPQN (0), then m_ppqn is set to the
+ *              value read from the MIDI file.  No PPQN scaling is done.
+ *          -   Otherwise, the ppqn value is used as is.  If the file uses a
+ *              different PPQN than 192, PPQN rescaling is done to make it
+ *              192.  The PPQN value read from the MIDI file is used to scale
+ *              the running-time of the sequence relative to
+ *              SEQ66_DEFAULT_PPQN.
  *      -   Writing.  This value is written to the MIDI file in the header
  *          chunk of the song.  Note that the caller must query for the
  *          PPQN set during parsing, and pass it to the constructor when
- *          preparing to write the file.  See how it is done in the mainwnd
+ *          preparing to write the file.  See how it is done in the qsmainwnd
  *          class.
  *
  * \param globalbgs
@@ -178,9 +178,9 @@ midifile::midifile
     m_data                      (),
     m_char_list                 (),
     m_global_bgsequence         (globalbgs),
-    m_use_scaled_ppqn           (true),
-    m_ppqn                      (choose_ppqn(ppqn)),    /* can be 0     */
-    m_file_ppqn                 (m_ppqn),               /* for now      */
+    m_use_scaled_ppqn           (ppqn != SEQ66_USE_FILE_PPQN),
+    m_ppqn                      (ppqn),                 /* can start as 0   */
+    m_file_ppqn                 (0),                    /* can change       */
     m_smf0_splitter             ()
 {
     // no other code needed
@@ -785,12 +785,16 @@ midifile::add_trigger (sequence & seq, midishort ppqn)
     midilong on = read_long();
     midilong off = read_long();
     midilong offset = read_long();
-    if (ppqn > 0)
+    if (ppqn > 0 && m_use_scaled_ppqn)
     {
-        on *= m_ppqn / ppqn;
-        off *= m_ppqn / ppqn;
-        offset *= m_ppqn / ppqn;
+//      on *= m_ppqn / ppqn;
+//      off *= m_ppqn / ppqn;
+//      offset *= m_ppqn / ppqn;
+        on = rescale_tick(on, ppqn, m_ppqn);        /* old PPQN, new PPQN   */
+        off = rescale_tick(off, ppqn, m_ppqn);
+        offset = rescale_tick(offset, ppqn, m_ppqn);
     }
+
     midilong length = off - on + 1;
     seq.add_trigger(on, length, offset, false);
 }
@@ -812,7 +816,7 @@ midifile::add_trigger (sequence & seq, midishort ppqn)
  *
  * PPQN:
  *
- *      Current time (RunningTime) is re the ppqn according to the file, we
+ *      Current time (runningtime) is re the ppqn according to the file, we
  *      have to adjust it to our own ppqn.  PPQN / ppqn gives us the ratio.
  *      (This change is not enough; a song with a ppqn of 120 plays too fast
  *      in Seq24, which has a constant ppqn of 192.  Triggers must also be
@@ -846,9 +850,9 @@ midifile::add_trigger (sequence & seq, midishort ppqn)
  *
  * End of Track:
  *
- *      "If Delta is 0, then another event happened at the same time as
+ *      "If delta is 0, then another event happened at the same time as
  *      track-end.  Class sequence discards the last note.  This fixes that.
- *      A native Seq24 file will always have a Delta >= 1." Not true!  We've
+ *      A native Seq24 file will always have a delta >= 1." Not true!  We've
  *      fixed the real issue by commenting the code that increments current
  *      time.  Question:  What if BPM is set *after* this event?
  *
@@ -893,17 +897,22 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     if (ppqn() == SEQ66_USE_FILE_PPQN)
     {
         ppqn(file_ppqn());
-        m_use_scaled_ppqn = false;
+        m_use_scaled_ppqn = false;                  /* redundant?           */
     }
     else
-        m_use_scaled_ppqn = file_ppqn() > 0;
+        m_use_scaled_ppqn = file_ppqn() > 0;        /* redundant?           */
 
-    p.set_ppqn(ppqn());
+    /*
+     * Call performer::change_ppqn() after parsing, instead:
+     *
+     * p.set_ppqn(ppqn());
+     */
+
     for (midishort track = 0; track < NumTracks; ++track)
     {
-        midipulse Delta;                            /* MIDI delta time      */
-        midipulse RunningTime;
-        midipulse CurrentTime = 0;
+        midipulse delta;                            /* MIDI delta time      */
+        midipulse runningtime;
+        midipulse currenttime = 0;
         char TrackName[SEQ66_TRACKNAME_MAX];        /* track name from file */
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
@@ -924,11 +933,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 return false;
             }
             sequence & s = *sp;                 /* references are better    */
-            RunningTime = 0;                    /* reset time               */
+            runningtime = 0;                    /* reset time               */
             while (! done)                      /* get each event in track  */
             {
                 event e;
-                Delta = read_varinum();                     /* time delta   */
+                delta = read_varinum();                     /* time delta   */
                 status = m_data[m_pos];                     /* current byte */
                 if (event::is_status(status))               /* 0x80 bit?    */
                 {
@@ -955,16 +964,16 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                  *  See "PPQN" section in banner.
                  */
 
-                RunningTime += Delta;           /* add in the time          */
+                runningtime += delta;           /* add in the time          */
                 if (m_use_scaled_ppqn)          /* adjust time via ppqn     */
                 {
-                    CurrentTime = RunningTime * m_ppqn / m_file_ppqn;
-                    e.set_timestamp(CurrentTime);
+                    currenttime = runningtime * m_ppqn / m_file_ppqn;
+                    e.set_timestamp(currenttime);
                 }
                 else
                 {
-                    CurrentTime = RunningTime;
-                    e.set_timestamp(CurrentTime);
+                    currenttime = runningtime;
+                    e.set_timestamp(currenttime);
                 }
 
                 midibyte eventcode = status & EVENT_CLEAR_CHAN_MASK;   /* F0 */
@@ -1047,10 +1056,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                         case EVENT_META_END_OF_TRACK:   /* FF 2F 00         */
 
                             /*
-                             *  if (Delta == 0) ++CurrentTime;
+                             *  if (delta == 0) ++currenttime;
                              */
 
-                            s.set_length(CurrentTime, false);
+                            s.set_length(currenttime, false);
                             s.zero_markers();
                             done = true;
                             break;
@@ -3011,6 +3020,9 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  *  performer::clear_all(), also does a clear-all, including the playlist, if
  *  its boolean parameter is set to true.
  *
+ * \todo
+ *      Tighten up wrkfile/midifile handling re PPQN!!!
+ *
  * \param [in,out] p
  *      Provides the performance object to update with information read from
  *      the file.
@@ -3018,11 +3030,10 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  * \param fn
  *      The full path specification for the file to be opened.
  *
- * \param [in,out] ppqn
- *      Provides the PPQN to start with.  It can also be SEQ66_USE_FILE_PPQN.
- *      If the function succeeds, it is updated with the (possibly new) PPQN,
- *      unless it is SEQ66_USE_FILE_PPQN, which is left as is for the call to
- *      decide what to do.
+ * \param out ppqn
+ *      Provides the PPQN to start with.  It can also be SEQ66_USE_FILE_PPQN,
+ *      SEQ66_USE_DEFAULT_PPQN, or a legitimate PPQN value.  The performer's
+ *      PPQN value is updated, and will affect the rest of the application.
  *
  * \param [out] errmsg
  *      If the function fails, this string is filled with the error message.
@@ -3038,7 +3049,7 @@ read_midi_file
 (
     performer & p,
     const std::string & fn,
-    int & ppqn,
+    int ppqn,                                   /* might get altered        */
     std::string & errmsg
 )
 {
@@ -3046,10 +3057,11 @@ read_midi_file
     if (result)
     {
         bool is_wrk = file_extension_match(fn, "wrk");
-
-        /*
-         * TODO:  tighten up wrkfile/midifile handling re PPQN!!!
-         */
+        bool usefileppqn = usr().midi_ppqn() == SEQ66_USE_FILE_PPQN;
+        if (usefileppqn)
+            ppqn = SEQ66_USE_FILE_PPQN;         /* no usr().file_ppqn() yet */
+        else
+            ppqn = choose_ppqn(ppqn);           /* re-evaluate parameter    */
 
         midifile * fp = is_wrk ? new wrkfile(fn, ppqn) : new midifile(fn, ppqn) ;
         std::unique_ptr<midifile> f(fp);
@@ -3057,11 +3069,12 @@ read_midi_file
         result = f->parse(p, 0);
         if (result)
         {
-            if (ppqn != SEQ66_USE_FILE_PPQN)    /* preserve this in parent  */
+            if (usefileppqn)
+            {
                 ppqn = f->ppqn();               /* get & return file PPQN   */
-
-            usr().file_ppqn(f->ppqn());         /* save the value from file */
-            p.set_ppqn(choose_ppqn());          /* set chosen PPQN for MIDI */
+                usr().file_ppqn(ppqn);          /* save the value from file */
+            }
+            p.change_ppqn(choose_ppqn(ppqn));   /* set chosen PPQN for MIDI */
             rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */
             rc().add_recent_file(fn);           /* Oli Kester's Kepler34!   */

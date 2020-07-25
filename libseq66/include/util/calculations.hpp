@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2020-07-23
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -137,6 +137,16 @@ extern unsigned short combine_bytes (midibyte b0, midibyte b1);
 extern midibpm note_value_to_tempo (midibyte note);
 
 /**
+ *  Indicates if the PPQN value is in the legal range of usable PPQN values.
+ */
+
+inline bool
+ppqn_in_range (int ppqn)
+{
+    return ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN;
+}
+
+/**
  *  Common code for handling PPQN settings.  Validates a PPQN value.
  *  The value SEQ66_USE_FILE_PPQN (0) is considered invalid by this function.
  *  Very few classes need that macro.
@@ -155,6 +165,7 @@ ppqn_is_valid (int ppqn)
     return
     (
         ppqn == SEQ66_USE_DEFAULT_PPQN ||
+        ppqn == SEQ66_USE_FILE_PPQN ||
         (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
     );
 }

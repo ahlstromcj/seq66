@@ -693,12 +693,12 @@ protected:
 
     virtual midipulse pix_to_tix (int x) const
     {
-        return x * pulses_per_pixel(ppqn(), m_scale_zoom);
+        return x * pulses_per_pixel(perf().ppqn(), m_scale_zoom);
     }
 
     virtual int tix_to_pix (midipulse ticks) const
     {
-        return ticks / pulses_per_pixel(ppqn(), m_scale_zoom);
+        return ticks / pulses_per_pixel(perf().ppqn(), m_scale_zoom);
     }
 
     midipulse position_tick (int pix)

@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-07-23
+dnl \update        2020-07-24
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -93,7 +93,8 @@ PACKAGE="seq66"
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE")
 AC_SUBST(PACKAGE)
 
-AC_DEFINE(APP_NAME, ["seq66"], "The default name of the Seq66 executable")
+dnl AC_DEFINE(APP_NAME, ["seq66"], "The default name of the Seq66 executable")
+
 AC_DEFINE(APP_TYPE, ["qt5"], "The type of the Seq66 executable, qt/cli")
 AC_DEFINE(APP_ENGINE, ["rtmidi"], "Seq66 MIDI engine, rtmidi/portmidi")
 build_os="'$(uname -srm)'"
@@ -487,7 +488,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-07-23"
+#define VERSION_DATE_SHORT "2020-07-24"
 #define VERSION "0.90.5"
 
 )

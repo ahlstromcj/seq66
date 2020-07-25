@@ -58,13 +58,13 @@ qbase::qbase (performer & p, int zoom) :
     performer::callbacks    (p),
     m_performer             (p),
     m_initial_zoom          (zoom > 0 ? zoom : SEQ66_DEFAULT_ZOOM),
-    m_zoom                  (zoom),                 // fixed below
-    m_ppqn                  (p.ppqn()),             // not choose_ppqn(ppqn))
+    m_zoom                  (zoom),         /* adjusted below               */
+    m_ppqn                  (p.ppqn()),     /* not choose_ppqn(ppqn))       */
     m_is_dirty              (false),
     m_needs_update          (true),
     m_is_initialized        (false)
 {
-    perf().enregister(this);            /* register this for notifications  */
+    perf().enregister(this);                /* register for notifications   */
 }
 
 /**

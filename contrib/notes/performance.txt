@@ -111,3 +111,48 @@ Sequencer66 Ideas:
 
     All-play:   Turn on the playing of all sets.
 
+PPQN Life Cycle:
+
+    Startup:
+
+        smanager::set_configuration_defaults(): rc() and usr().set_defaults():
+
+            usersettings::m_midi_ppqn = 192; m_file_ppqn = 0;
+
+        smanager::main_settings: cmdlineopts::parse_command_line_options():
+        smanager::main_settings: cmdlineopts::parse_options_files():
+
+            usersettings::m_midi_ppqn = value from "usr" file: 0 or legal
+            value, validated in usrsettings::midi_ppqn().
+
+        cmdlineopts::parse_command_line_options() again to override the files.
+
+        Store the MIDI filename provided on the command-line, if any.
+
+        smanager::create_performer():
+
+            choose_ppqn(-1) --> 0 --> 192
+            performer set up with m_ppqn = 192
+            performer::get_settings() from "rc" and "usr"
+            performer launched with ppqn = 192
+ *          master buss created with ppqn = 192, bpm = 120
+ *          master buss initialized via api_init() with ppqn = 192, bpm = 120
+
+        I/O threads launched in performer.
+
+    MIDI File Loaded at Startup, qseq66.usr specifies 0 for default PPQN:
+
+        smanager::open_midi_file():  leads to midifile being created with PPQN
+        = 0, which then gets changed when the PPQN is read from the file; this
+        turns off ppqn scaling and sets m_ppqn = m_file_ppqn in midifile.
+        Then this PPQN is passed to performer::set_ppqn().  Can this be done
+        later, to change_ppqn()?
+
+        After parsing, set usr().file_ppqn() to hold the value, and call
+        performer::change_ppqn().
+
+TODO:
+
+    midi_alsa_info and whole rtmidi API:
+
+        Combine api_set_ppqn() and api_set_beats_per_minute() if feasible.

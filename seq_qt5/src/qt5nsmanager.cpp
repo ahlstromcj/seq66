@@ -98,12 +98,12 @@ qt5nsmanager::create_session ()
 bool
 qt5nsmanager::create_window ()
 {
-    performer * p = perf();
-    bool result = not_nullptr(p);
+    bool result = not_nullptr(perf());
     if (result)
     {
+        performer * p = perf();
         std::string mfname = midi_filename();
-        int ppqn = usr().midi_ppqn();
+        int ppqn = p->ppqn();                   /* usr().midi_ppqn()        */
         bool usensm = false;                    /* TODO                     */
         qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, ppqn, usensm);
         result = not_nullptr(qm);

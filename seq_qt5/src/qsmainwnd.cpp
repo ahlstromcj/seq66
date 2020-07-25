@@ -259,7 +259,7 @@ qsmainwnd::qsmainwnd
         {
             QString combo_text = QString::number(ppqn);
             ui->cmb_ppqn->insertItem(i, combo_text);
-            if (ppqn == p.ppqn())
+            if (ppqn == perf().ppqn())
             {
                 ui->cmb_ppqn->setCurrentIndex(i);
                 ppqn_is_set = true;
@@ -273,14 +273,12 @@ qsmainwnd::qsmainwnd
     if (! ppqn_is_set)
         ui->cmb_ppqn->setCurrentIndex(0);
 
-    // FOR NOW: ui->cmb_ppqn->setEnabled(false);
-
     //  float value=100.0;
     //  int index = ui->combo->findData(value);
     //  if ( index != -1 ) // -1 for not found
     //      combo->setCurrentIndex(index);
 
-    std::string ppqnstr = std::to_string(p.ppqn());
+    std::string ppqnstr = std::to_string(perf().ppqn());
     ui->lineEditPpqn->setText(ppqnstr.c_str());
     ui->lineEditPpqn->setReadOnly(true);
 
@@ -1132,8 +1130,8 @@ void
 qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
-    int ppqn = m_ppqn;                      /* potential side-effect here   */
-    bool result = perf().read_midi_file(fn, ppqn, errmsg);
+    // int ppqn = m_ppqn;                 /* potential side-effect here   */
+    bool result = perf().read_midi_file(fn, errmsg);
     if (result)
     {
         redo_live_frame();
@@ -1524,7 +1522,12 @@ qsmainwnd::save_file (const std::string & fname)
         result = write_midi_file(perf(), filename, errmsg);
         if (result)
         {
-            rc().add_recent_file(filename);
+            /*
+             * Already done by write_midi_file().
+             *
+             * rc().add_recent_file(filename);
+             */
+
             update_recent_files_menu();
         }
         else
@@ -1600,10 +1603,10 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     else
     {
         midifile f(filename, choose_ppqn());
-        bool result = f.write(perf(), false);           /* no SeqSpec   */
+        bool result = f.write(perf(), false);           /* no SeqSpec       */
         if (result)
         {
-            rc().add_recent_file(rc().midi_filename());
+            rc().add_recent_file(rc().midi_filename()); /* not in write()   */
             update_recent_files_menu();
         }
         else

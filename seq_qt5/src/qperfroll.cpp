@@ -108,16 +108,16 @@ qperfroll::qperfroll
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
-    if (ppqn() == 0 || ppqn() > SEQ66_MAXIMUM_PPQN)
-    {
-        printf("qperfroll() ppqn == %d, changing to %d\n", ppqn(), p.ppqn());
-        set_ppqn(p.ppqn());
-    }
+//  if (ppqn() == 0 || ppqn() > SEQ66_MAXIMUM_PPQN)
+//  {
+//      printf("qperfroll() ppqn == %d, changing to %d\n", ppqn(), p.ppqn());
+        set_ppqn(perf().ppqn());
+//  }
     m_roll_length_ticks  = perf().get_max_trigger();
-    m_roll_length_ticks -= (m_roll_length_ticks % (ppqn() * 16));
-    m_roll_length_ticks += ppqn() * 64;                     // ?????
+    m_roll_length_ticks -= (m_roll_length_ticks % (perf().ppqn() * 16));
+    m_roll_length_ticks += perf().ppqn() * 64;
     m_font.setPointSize(6);
-    m_timer = new QTimer(this);                             // redraw timer
+    m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();

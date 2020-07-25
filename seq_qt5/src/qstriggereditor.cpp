@@ -141,7 +141,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
     int bwidth = seq_pointer()->get_beat_width();
     midipulse ticks_per_beat = 4 * perf().ppqn() / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
-    midipulse ticks_per_step = pulses_per_substep(ppqn(), zoom());
+    midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width());
     for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)

@@ -100,7 +100,6 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     m_snap                  (8),
     m_beats_per_measure     (4),
     m_beat_width            (4),
-    m_ppqn                  (p.ppqn()),     /* not choose_ppqn(ppqn)    */
     m_perfroll              (nullptr),
     m_perfnames             (nullptr),
     m_perftime              (nullptr)

@@ -1,6 +1,6 @@
-Seq66 Licensing 0.90.4
+Seq66 Licensing 0.90.5
 Chris Ahlstrom
-2015-09-10 to 2020-07-07
+2015-09-10 to 2020-07-24
 
 Applications:
 

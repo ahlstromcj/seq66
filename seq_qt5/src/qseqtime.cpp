@@ -117,10 +117,10 @@ qseqtime::paintEvent (QPaintEvent *)
 
     int bpbar = seq_pointer()->get_beats_per_bar();
     int bwidth = seq_pointer()->get_beat_width();
-    midipulse ticks_per_beat = (4 * ppqn()) / bwidth;
+    midipulse ticks_per_beat = (4 * perf().ppqn()) / bwidth;
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     int measures_per_line = zoom() * bwidth * bpbar * 2;
-    int ticks_per_step = pulses_per_substep(ppqn(), zoom());    // 6 * zoom()
+    int ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse starttick = scroll_offset() - (scroll_offset() % ticks_per_step);
     midipulse endtick = pix_to_tix(width()) + scroll_offset();
     if (measures_per_line <= 0)

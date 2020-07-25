@@ -43,8 +43,8 @@ static int s_pm_ppqn = 480;
 /**
  *  New functions to support setting the tempo and PPQN, as well as
  *  converting PortMidi time to MIDI pulses (ticks).  Note that the setting
- *  of PPQN here is roughly similar to seq66::choose_ppqn() in the settings
- *  module.
+ *  of PPQN here is much simpler than seq66::choose_ppqn() in the settings
+ *  module.  Here, if the value is 0, the default value 192 is used.
  */
 
 void

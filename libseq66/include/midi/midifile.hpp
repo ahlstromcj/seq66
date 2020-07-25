@@ -476,7 +476,7 @@ extern bool read_midi_file
 (
     performer & p,
     const std::string & fn,
-    int & ppqn,
+    int ppqn,
     std::string & errmsg
 );
 extern bool write_midi_file

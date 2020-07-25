@@ -34,12 +34,12 @@
 
 #include <fstream>
 
-#include "cfg/settings.hpp"             /* seq66::choose_ppqn()             */
-#include "midi/eventlist.hpp"          /* seq66::eventlist                */
+#include "cfg/settings.hpp"             /* seq66::usr().seqs_in_set()       */
+#include "midi/eventlist.hpp"           /* seq66::eventlist                 */
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-#include "util/palette.hpp"             /* seq66::PaletteColor              */
+// #include "util/palette.hpp"             /* seq66::PaletteColor              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

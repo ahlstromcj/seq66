@@ -540,8 +540,8 @@ private:
     int m_midi_ppqn;                     /* PPQN, parts per QN       */
 
     /**
-     *  Holds the PPQN read from the file, for use with the SEQ66_USE_FILE_PPQN
-     *  value.
+     *  Holds the PPQN read from the file, for use with the
+     *  SEQ66_USE_FILE_PPQN value (0) from app_limits.h.
      */
 
     int m_file_ppqn;

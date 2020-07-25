@@ -213,7 +213,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick = midipulse(event->x());
     tick *= scale_zoom();
-    tick += (m_4bar_offset * 16 * ppqn());
+    tick += (m_4bar_offset * 16 * perf().ppqn());
     tick -= (tick % snap());
     if (event->y() > height() * 0.5)
     {

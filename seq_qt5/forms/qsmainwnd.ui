@@ -838,13 +838,6 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="13">
-     <widget class="QLabel" name="label_HMS">
-      <property name="text">
-       <string>0:0:0</string>
-      </property>
-     </widget>
-    </item>
     <item row="4" column="11">
      <widget class="QPushButton" name="btnPerfEdit">
       <property name="sizePolicy">
@@ -1076,6 +1069,13 @@
       </property>
       <property name="text">
        <string>Set Master</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="12" colspan="2">
+     <widget class="QLabel" name="label_HMS">
+      <property name="text">
+       <string>0:0:0</string>
       </property>
      </widget>
     </item>

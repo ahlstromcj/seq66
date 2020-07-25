@@ -4636,8 +4636,6 @@ _ACEOF
 
 
 
-$as_echo "#define APP_NAME \"seq66\"" >>confdefs.h
-
 
 $as_echo "#define APP_TYPE \"qt5\"" >>confdefs.h
 

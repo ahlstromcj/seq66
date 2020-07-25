@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-23
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -533,10 +533,18 @@ private:
     double m_current_tick;
 
     /**
-     *  Holds the current PPQN for usage in various actions.
+     *  Holds the current PPQN for usage in various actions.  If
+     *  SEQ66_USE_FILE_PPQN (0) is the value, then m_file_ppqn will be used.
      */
 
     int m_ppqn;
+
+    /**
+     *  Holds the current PPQN from a MIDI file that has been read.  It might
+     *  be 0.
+     */
+
+    int m_file_ppqn;
 
     /**
      *  Holds the current BPM (beats per minute) for later usage.
@@ -928,7 +936,6 @@ public:
     bool read_midi_file
     (
         const std::string & fn,
-        int & ppqn,
         std::string & errmsg
     );
     bool open_note_mapper (const std::string & notefile);
@@ -1121,7 +1128,7 @@ public:
 
     int ppqn () const
     {
-        return m_ppqn;
+        return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
     }
 
     midibpm bpm () const

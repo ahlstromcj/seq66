@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-23
+ * \updates       2020-07-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -302,6 +302,13 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 
 /**
  *  This constructor...
+ *
+ * PPQN and choose_ppqn(p):
+ *
+ *      -   If p is SEQ66_USE_FILE_PPQN, that is the potential result.
+ *      -   If p is SEQ66_USE_DEFAULT_PPQN (-1, the default), then
+ *          usr().midi_ppqn() is checked. If SEQ66_USE_FILE_PPQN, then
+ *          usr().file_ppqn() is returned.
  */
 
 performer::performer (int ppqn, int rows, int columns) :
@@ -329,34 +336,35 @@ performer::performer (int ppqn, int rows, int columns) :
     (
         m_mute_groups, SEQ66_DEFAULT_SET_MAX, rows, columns
     ),
-    m_queued_replace_slot   (-1),               // REFACTOR
+    m_queued_replace_slot   (-1),                   /* REFACTOR             */
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
     m_out_thread_launched   (false),
     m_in_thread_launched    (false),
-    m_io_active             (true),                 /* must start true  */
+    m_io_active             (true),                 /* must start out true  */
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
-    m_is_busy               (false),                /* try it for now   */
+    m_is_busy               (false),                /* try flag for now     */
     m_looping               (false),
     m_song_recording        (false),
     m_song_record_snap      (false),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_current_tick          (0.0),
-    m_ppqn                  (choose_ppqn(ppqn)),    /* okay???? */
+    m_ppqn                  (choose_ppqn(ppqn)),
+    m_file_ppqn             (0),
     m_bpm                   (SEQ66_DEFAULT_BPM),
     m_current_beats         (0),
     m_base_time_ms          (0),
     m_last_time_ms          (0),
-    m_beats_per_bar         (4),                /* midifile or ....?    */
-    m_beat_width            (4),                /* midifile or ....?    */
+    m_beats_per_bar         (4),
+    m_beat_width            (4),
     m_tempo_track_number    (0),
-    m_clocks_per_metronome  (24),               /* midifile or ....?    */
-    m_32nds_per_quarter     (0),                /* midifile or ....?    */
-    m_us_per_quarter_note   (0),                /* midifile or ....?    */
-    m_master_bus            (),                 /* shared pointer       */
+    m_clocks_per_metronome  (24),
+    m_32nds_per_quarter     (0),
+    m_us_per_quarter_note   (0),
+    m_master_bus            (),                     /* shared pointer       */
     m_filter_by_channel     (false),
     m_one_measure           (0),
     m_left_tick             (0),
@@ -364,17 +372,17 @@ performer::performer (int ppqn, int rows, int columns) :
     m_starting_tick         (0),
     m_tick                  (0),
     m_jack_tick             (0),
-    m_usemidiclock          (false),            /* MIDI Clock support   */
+    m_usemidiclock          (false),                /* MIDI Clock support   */
     m_midiclockrunning      (false),
     m_midiclocktick         (0),
     m_midiclockincrement    (clock_ticks_from_ppqn(m_ppqn)),
     m_midiclockpos          (0),
-    m_dont_reset_ticks      (false),            /* support for pause    */
+    m_dont_reset_ticks      (false),                /* support for pause    */
     m_is_modified           (false),
 #if defined SEQ66_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
-    m_condition_var         (),                 /* private access: cv() */
+    m_condition_var         (),                     /* private access: cv() */
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst             (*this, SEQ66_DEFAULT_BPM, m_ppqn),
 #endif
@@ -1094,14 +1102,18 @@ performer::finish_move (seq::number seq)
  * \setter ppqn
  *      Also sets other related members.
  *
- *      Might also have to run though ALL patterns and user-interface objects
- *      to fix them.
+ *      While running it is better to call change_ppqn(), in order to run
+ *      though ALL patterns and user-interface objects to fix them.
+ *
+ * \param p
+ *      Provides a PPQN that should be different from the current value and be
+ *      in the legal range of PPQN values.
  */
 
 bool
 performer::set_ppqn (int p)
 {
-    bool result = m_ppqn != p;
+    bool result = m_ppqn != p && ppqn_in_range(p);
     if (result)
     {
         m_ppqn = p;
@@ -1130,16 +1142,13 @@ performer::set_ppqn (int p)
 bool
 performer::change_ppqn (int p)
 {
-    bool result = p >= SEQ66_MINIMUM_PPQN && p <= SEQ66_MAXIMUM_PPQN;
+    bool result = m_ppqn != p && ppqn_in_range(p);
     if (result)
     {
-        if (result)
-        {
-            for (auto seqi : m_play_set)
-                seqi->change_ppqn(p);
+        for (auto seqi : m_play_set)
+            seqi->change_ppqn(p);
 
-            result = set_ppqn(p);
-        }
+        result = set_ppqn(p);               /* set performer and master bus */
     }
     return result;
 }
@@ -1788,8 +1797,8 @@ performer::create_master_bus ()
  *  buss was an object, was too inflexible to handle a JACK implementation.
  *
  * \param ppqn
- *      Provides the PPQN value, which is either the default value (192) or is
- *      read from the "user" configuration file.
+ *      Provides the PPQN value, which is determined by the caller and assumed
+ *      to be valid.
  *
  * \todo
  *      We probably need a bpm parameter for consistency at some point.
@@ -1804,9 +1813,6 @@ performer::launch (int ppqn)
 #if defined SEQ66_JACK_SUPPORT
         init_jack_transport();
 #endif
-        if (ppqn == SEQ66_USE_FILE_PPQN)
-            ppqn = SEQ66_DEFAULT_PPQN;
-
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
 
         bool ok = activate();
@@ -5449,13 +5455,13 @@ performer::automation_playlist
 }
 
 /**
- *  This function calls the seq66::read_midi_file() free function, and then sets
- *  the PPQN value.
+ *  This function calls the seq66::read_midi_file() free function, and then
+ *  sets the PPQN value.
  *
  * \param fn
  *      Provides the full path file-specification for the MIDI file.
  *
- * \param [out] pp
+ * \param pp
  *      Provides the destination for the effective PPQN, generally read from the
  *      file.
  *
@@ -5471,17 +5477,11 @@ bool
 performer::read_midi_file
 (
     const std::string & fn,
-    int & pp,
     std::string & errmsg
 )
 {
-    pp = ppqn();                            /* potential side-effect here   */
-    bool result = seq66::read_midi_file(*this, fn, pp, errmsg);
-    if (result)
-    {
-        set_ppqn(pp);
-        errmsg.clear();
-    }
+    errmsg.clear();
+    bool result = seq66::read_midi_file(*this, fn, ppqn(), errmsg);
     return result;
 }
 
