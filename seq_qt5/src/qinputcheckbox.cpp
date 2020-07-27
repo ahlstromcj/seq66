@@ -25,12 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2019-11-02
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QWidget>
 
 #include "play/performer.hpp"
 #include "qinputcheckbox.hpp"

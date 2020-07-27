@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2019-08-07
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -59,15 +59,15 @@ qeditbase::qeditbase
     int total_height
 ) :
     qbase                   (p, initialzoom),
-    m_old                   (),
-    m_selected              (),
+    m_old                   (),                     /* past selection box   */
+    m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
-    m_scale_zoom            (m_scale * zoom()),
+    m_scale_zoom            (m_scale * zoom()),     /* see change_ppqn()    */
     m_padding_x             (padding),
     m_snap                  (snap),
     m_grid_snap             (snap),
-    m_beat_length           (p.ppqn()),
-    m_measure_length        (m_beat_length * 4),
+    m_beat_length           (p.ppqn()),             /* see change_ppqn()    */
+    m_measure_length        (m_beat_length * 4),    /* see change_ppqn()    */
     m_selecting             (false),
     m_adding                (false),
     m_moving                (false),
@@ -94,14 +94,13 @@ qeditbase::qeditbase
 }
 
 /**
- *
+ *  Why 2000?  I forget!
  */
 
 int
 qeditbase::horizSizeHint () const
 {
-    int hint = perf().get_max_trigger() / scale_zoom() + 2000;
-    return hint;
+    return perf().get_max_trigger() / scale_zoom() + 2000;
 }
 
 /**
@@ -163,16 +162,12 @@ qeditbase::set_zoom (int z)
  */
 
 bool
-qeditbase::set_ppqn (int p)
+qeditbase::change_ppqn (int p)
 {
-    bool result = qbase::set_ppqn(p);
-    if (result)
-    {
-        m_scale_zoom = zoom() * m_scale;
-        m_beat_length = ppqn();
-        m_measure_length = m_beat_length * 4;       /* what about beat width? */
-    }
-    return result;
+    m_scale_zoom = zoom() * m_scale;
+    m_beat_length = p;                          /* perf().ppqn()            */
+    m_measure_length = m_beat_length * 4;       /* what about beat width?   */
+    return true;
 }
 
 /**
@@ -202,7 +197,6 @@ qeditbase::snap_x (int & x)
 bool
 qeditbase::needs_update () const
 {
-    // bool result = const_cast<qeditbase *>(this)->check_dirty();
     bool result = qbase::needs_update();
     if (! result)
         result = perf().needs_update();
@@ -217,9 +211,7 @@ qeditbase::needs_update () const
 void
 qeditbase::convert_x (int x, midipulse & tick)
 {
-    midipulse tick_offset = 0;                  // it's always this!!!
-    tick = x * m_scale_zoom;
-    tick += tick_offset;
+    tick = pix_to_tix(x);                       /* x * m_scale_zoom */
 }
 
 /**

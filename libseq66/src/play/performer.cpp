@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-24
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -492,6 +492,17 @@ performer::notify_trigger_change (seq::number seqno)
 {
     for (auto notify : m_notify)
         (void) notify->on_trigger_change(seqno);
+}
+
+/**
+ *
+ */
+
+void
+performer::notify_resolution_change (int ppqn, midibpm bpm)
+{
+    for (auto notify : m_notify)
+        (void) notify->on_resolution_change(ppqn, bpm);
 }
 
 /*
@@ -1142,13 +1153,14 @@ performer::set_ppqn (int p)
 bool
 performer::change_ppqn (int p)
 {
-    bool result = m_ppqn != p && ppqn_in_range(p);
+    bool result = set_ppqn(p);                  /* performer & master bus   */
     if (result)
     {
         for (auto seqi : m_play_set)
             seqi->change_ppqn(p);
 
-        result = set_ppqn(p);               /* set performer and master bus */
+        if (result)
+            notify_resolution_change(get_ppqn(), get_beats_per_minute());
     }
     return result;
 }
@@ -1538,7 +1550,7 @@ performer::log_current_tempo ()
             if (tick > s->get_length())
                 s->set_length(tick);
 
-            modify();   // notify_sequence_change(seqno) too problematic
+            modify();   /* notify_sequence_change(seqno) too problematic    */
         }
     }
     return result;

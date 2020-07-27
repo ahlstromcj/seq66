@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2019-11-11
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -93,13 +93,6 @@ public:
 
 protected:
 
-    virtual bool on_sequence_change (seq::number seqno) override;
-
-    /*
-     * virtual bool on_group_learn (bool state) override;
-     * virtual bool on_set_change (screenset::number setno) override;
-     */
-
     const seq::pointer seq_pointer () const
     {
         return m_seq;
@@ -110,7 +103,7 @@ protected:
         return m_seq;
     }
 
-public:             // protected:
+public:
 
     virtual bool set_zoom (int z) override;
     virtual void set_dirty () override;

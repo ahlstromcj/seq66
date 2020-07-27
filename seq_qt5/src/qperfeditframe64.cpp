@@ -382,6 +382,28 @@ qperfeditframe64::set_guides ()
 }
 
 /**
+ *  TODO: Would be called by the parent perhaps, using the
+ *  on_resolution_change() function
+ */
+
+#ifdef TODO
+
+bool
+qperfeditframe64::change_ppqn (int ppqn)
+{
+    set_guides();
+}
+
+bool
+qperfeditframe64::change_bpm (int bpm)
+{
+    // nothing to do here, beats per minute does not affect the Song grid
+    // appearance.
+}
+
+#endif
+
+/**
  *  Pass-along function for zooming in.  Calls the same function for qperftime
  *  and qperfroll.
  */

@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-15
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -51,7 +51,7 @@
 \endverbatim
  */
 
-#include "play/sequence.hpp"            /* sequence::editmode enumeration   */
+#include "play/performer.hpp"           /* seq66::performer::callbacks      */
 #include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
 
 /**
@@ -103,7 +103,7 @@ namespace seq66
  *  the Gtkmm version's naming conventions.
  */
 
-class qseqeditframe final : public qseqframe
+class qseqeditframe final : public qseqframe, protected performer::callbacks
 {
     friend class qsmainwnd;
 
@@ -129,6 +129,30 @@ private:
 
     virtual void update_midi_buttons () override;
     virtual void set_dirty () override;
+    virtual bool change_ppqn (int ppqn) override;
+
+    virtual bool change_bpm (midibpm bpm) override
+    {
+        // anything to change when BPM changes?
+        return bpm > 0.0;
+    }
+
+    virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
+    virtual bool on_sequence_change (seq::number seqno) override
+    {
+        bool result = bool(seq_pointer()) && seqno == seq_pointer()->seq_number();
+        if (result)
+        {
+            // TODO
+        }
+        return result;
+    }
+
+    /*
+     * virtual bool on_group_learn (bool state) override;
+     * virtual bool on_set_change (screenset::number setno) override;
+     */
+
     void initialize_panels ();
     void update_draw_geometry ();
 

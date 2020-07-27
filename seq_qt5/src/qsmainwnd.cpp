@@ -192,7 +192,6 @@ qsmainwnd::qsmainwnd
 (
     performer & p,
     const std::string & midifilename,
-    int ppqn,
     bool usensm,
     QWidget * parent
 ) :
@@ -222,7 +221,6 @@ qsmainwnd::qsmainwnd
     m_song_mode             (false),    /* perf().song_mode())          */
     m_use_nsm               (usensm),
     m_is_title_dirty        (true),
-    m_ppqn                  (ppqn),     /* can specify 0 for file ppqn  */
     m_tick_time_as_bbt      (true),
     m_open_editors          (),
     m_open_live_frames      (),
@@ -863,10 +861,10 @@ qsmainwnd::qsmainwnd
     load_set_master();
     load_mute_master();
     ui->tabWidget->setCurrentIndex(Tab_Live);
-    perf().enregister(this);            /* register this for notifications  */
     show();
     show_song_mode(m_song_mode);
 
+    perf().enregister(this);            /* register this for notifications  */
     m_timer = new QTimer(this);         /* refresh GUI element every few ms */
     m_timer->setInterval(3 * usr().window_redraw_rate());   // was 2
     connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
@@ -880,6 +878,7 @@ qsmainwnd::qsmainwnd
 
 qsmainwnd::~qsmainwnd ()
 {
+    m_timer->stop();
     perf().unregister(this);            /* unregister this immediately      */
     delete ui;
 }
@@ -1043,8 +1042,8 @@ qsmainwnd::update_bpm (double bpm)
 void
 qsmainwnd::edit_bpm ()
 {
-    double bpm = ui->spinBpm->value();
-    perf().set_beats_per_minute(midibpm(bpm));
+    midibpm bpm = ui->spinBpm->value();
+    perf().set_beats_per_minute(bpm);
 }
 
 /**
@@ -1130,7 +1129,6 @@ void
 qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
-    // int ppqn = m_ppqn;                 /* potential side-effect here   */
     bool result = perf().read_midi_file(fn, errmsg);
     if (result)
     {
@@ -2084,7 +2082,7 @@ qsmainwnd::update_ppqn (int pindex)
     {
         if (p == SEQ66_USE_FILE_PPQN)
         {
-            p = m_ppqn;                 // TODO, how?
+            p = usr().file_ppqn();          // TODO, how?
         }
         else if (p == SEQ66_USE_DEFAULT_PPQN)
         {
@@ -2094,7 +2092,6 @@ qsmainwnd::update_ppqn (int pindex)
         {
             std::string ppqnstr = std::to_string(p);
             ui->lineEditPpqn->setText(ppqnstr.c_str());
-            ppqn(p);
         }
     }
 }
@@ -2701,7 +2698,7 @@ qsmainwnd::tap ()
     set_tap_button(perf().current_beats());
     if (perf().current_beats() > 1)             /* first one is useless */
     {
-        ui->spinBpm->setValue(double(bpm));
+        ui->spinBpm->setValue(bpm);
     }
 }
 

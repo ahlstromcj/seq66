@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-10-04
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -235,7 +235,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
 
     m_seq->set_editing(true);
     m_seq->set_dirty_mp();
-    perf().enregister(this);            /* register this for notifications  */
+    cb_perf().enregister(this);
 }
 
 /**
@@ -244,7 +244,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
 
 qseqeventframe::~qseqeventframe()
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);
     delete ui;
 }
 
@@ -385,7 +385,7 @@ void
 qseqeventframe::update_seq_name ()
 {
     std::string name = ui->m_entry_name->text().toStdString();
-    if (perf().set_sequence_name(m_seq, name))
+    if (cb_perf().set_sequence_name(m_seq, name))
         set_dirty();
 }
 
@@ -804,7 +804,7 @@ qseqeventframe::handle_save ()
         if (ok)
         {
             seq::number seqno = m_seq->seq_number();
-            perf().notify_sequence_change(seqno);       // FIXME
+            cb_perf().notify_sequence_change(seqno);       // FIXME
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
             if (rc().verbose())

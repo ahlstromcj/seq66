@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2019-03-10
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -57,6 +57,7 @@ namespace seq66
 {
 
 /**
+ *  This function wraps an external qperfeditframe64 frame.
  *
  * \param p
  *      Provides the performer object to use for interacting with this sequence.
@@ -107,7 +108,6 @@ qperfeditex::closeEvent (QCloseEvent *)
     if (not_nullptr(m_edit_parent))
         m_edit_parent->hide_qperfedit(true);
 }
-
 
 /**
  *  See usage in qsmainwnd.  It basically tells the edit-frame to update

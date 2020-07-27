@@ -27,13 +27,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2019-12-15
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "qseqframe.hpp"                /* QFrame and seq66::qseqframe      */
-#include "play/sequence.hpp"            /* seq66::sequence::editmode        */
+#include "play/performer.hpp"           /* seq66::performer::callbacks      */
 #include "play/setmapper.hpp"           /* seq66::setmapper and others      */
 
 /**
@@ -95,7 +95,7 @@ namespace seq66
  *  Kepler34's EditFrame class.
  */
 
-class qseqeditframe64 final : public qseqframe
+class qseqeditframe64 final : public qseqframe, protected performer::callbacks
 {
     friend class qlfoframe;
     friend class qseqeditex;
@@ -121,9 +121,11 @@ private:        /* performer::callback overrides    */
 
     virtual bool on_automation_change (automation::slot s) override;
     virtual bool on_sequence_change (seq::number seqno) override;
+    virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
 
 private:        /* qbase and qseqframe overrides    */
 
+    virtual bool change_ppqn (int ppqn) override;
     virtual void update_midi_buttons () override;
     virtual void set_dirty () override;
     virtual bool zoom_in () override;

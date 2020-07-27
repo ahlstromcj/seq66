@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-03-09
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -59,7 +59,10 @@ namespace seq66
  *  They are displayed as vertical lines with an accompanying numeric value.
  */
 
-class qseqdata final : public QWidget, public qseqbase
+class qseqdata final :
+    public QWidget,
+    public qseqbase,
+    protected performer::callbacks
 {
     friend class qseqroll;
     friend class qstriggereditor;

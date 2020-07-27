@@ -26,13 +26,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2019-08-17
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QRadioButton>
@@ -73,7 +72,7 @@ qclocklayout::qclocklayout
     QWidget                     (parent),
     m_performance               (p),
     m_bus                       (bus),
-    m_parent_widget             (parent),      // m_groupbox_clocks
+    m_parent_widget             (parent),           /* m_groupbox_clocks */
     m_horizlayout_clockline     (nullptr),
     m_spacer_clock              (nullptr),
     m_label_outputbusname       (nullptr),

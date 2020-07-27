@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2019-08-06
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -61,7 +61,7 @@ qperfbase::qperfbase
         p, zoom, snap, c_perf_scale_x, 0, unitheight, totalheight
     )
 {
-    // no code
+    // no code needed
 }
 
 /**
@@ -82,34 +82,28 @@ qperfbase::horizSizeHint () const
 void
 qperfbase::convert_x (int x, midipulse & tick)
 {
-    midipulse tick_offset = 0;                  // it's always this!!!
-    tick = x * m_scale_zoom;
-    tick += tick_offset;
+    tick = pix_to_tix(x);                   // x * m_scale_zoom + tick_offset
 }
 
 /**
- *
+ *  Converts an (x, y) point on the user interface to the corresponding tick and
+ *  patter number.
  */
 
 void
 qperfbase::convert_xy (int x, int y, midipulse & tick, int & seq)
 {
-    //  tick = x * m_zoom;
-    //  seq = (m_total_height - y - 2) / m_unit_height;
-
-    midipulse tick_offset =  0;                 // again, always 0!!!
-    tick = x * m_scale_zoom;
+    tick = pix_to_tix(x);                   // x * m_scale_zoom + tick_offset
     seq = y / c_names_y;
-    tick += tick_offset;
-    if (seq >= c_max_sequence)
-        seq = c_max_sequence - 1;
-
-    if (seq < 0)
+    if (seq >= perf().sequence_max())       // c_max_sequence)
+        seq = perf().sequence_max() - 1;    // c_max_sequence - 1;
+    else if (seq < 0)
         seq = 0;
 }
 
 /**
- *
+ *  Converts ticks to a user-interface x value, and converts a sequence number
+ *  to a y value.  A kind of inverse function of convert_xy().
  */
 
 void

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-07-03
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -151,6 +151,7 @@ qplaylistframe::qplaylistframe
 
 qplaylistframe::~qplaylistframe ()
 {
+    m_timer->stop();
     delete ui;
 }
 

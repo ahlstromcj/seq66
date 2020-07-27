@@ -182,6 +182,7 @@ qslivegrid::qslivegrid
 
 qslivegrid::~qslivegrid()
 {
+    m_timer->stop();
     clear_loop_buttons();               /* currently we use raw pointers    */
     if (not_nullptr(m_msg_box))
         delete m_msg_box;

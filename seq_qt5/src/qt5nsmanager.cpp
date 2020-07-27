@@ -93,6 +93,7 @@ qt5nsmanager::create_session ()
  *  some of the child objects of qsmainwnd.  Also note the future support for
  *  NSM.
  *
+ *  This function assumes that create_performer() has already been called.
  */
 
 bool
@@ -103,9 +104,8 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        int ppqn = p->ppqn();                   /* usr().midi_ppqn()        */
         bool usensm = false;                    /* TODO                     */
-        qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, ppqn, usensm);
+        qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
         result = not_nullptr(qm);
         if (result)
         {

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-28
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -57,13 +57,15 @@ namespace seq66
 {
     class performer;
     class qperfeditframe64;
-    class qperfeditframe;
 
 /**
  * The grid in the song editor for setting out sequences
  */
 
-class qperfroll final : public QWidget, private gui_palette_qt5, public qperfbase
+class qperfroll final :
+    public QWidget,
+    private gui_palette_qt5,
+    public qperfbase
 {
     friend class qperfeditframe64;  /* for scrolling a horizontal page  */
 
@@ -130,7 +132,6 @@ private:
     QFont m_font;
     int m_measure_length;
     int m_beat_length;
-    int m_roll_length_ticks;
     int m_drop_sequence;                    // sequence selection
     midipulse m_tick_s;                     // start of tick window
     midipulse m_tick_f;                     // end of tick window

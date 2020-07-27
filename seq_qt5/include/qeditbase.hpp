@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2019-08-12
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -503,7 +503,7 @@ public:
 
 public:
 
-    virtual bool set_ppqn (int ppqn) override;
+    virtual bool change_ppqn (int ppqn) override;
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;

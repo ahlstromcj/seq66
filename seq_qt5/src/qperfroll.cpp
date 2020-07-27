@@ -86,7 +86,6 @@ qperfroll::qperfroll
     m_font              (),
     m_measure_length    (0),
     m_beat_length       (0),
-    m_roll_length_ticks (0),
     m_drop_sequence     (0),
     m_tick_s            (0),
     m_tick_f            (0),
@@ -108,14 +107,6 @@ qperfroll::qperfroll
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
-//  if (ppqn() == 0 || ppqn() > SEQ66_MAXIMUM_PPQN)
-//  {
-//      printf("qperfroll() ppqn == %d, changing to %d\n", ppqn(), p.ppqn());
-        set_ppqn(perf().ppqn());
-//  }
-    m_roll_length_ticks  = perf().get_max_trigger();
-    m_roll_length_ticks -= (m_roll_length_ticks % (perf().ppqn() * 16));
-    m_roll_length_ticks += perf().ppqn() * 64;
     m_font.setPointSize(6);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
@@ -804,8 +795,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 {
     int y_s = 0;
     int y_f = r.height() / c_names_y;
-    midipulse tick_offset = 0;                  // long tick_offset = c_ppqn * 16;
-    int x_offset = tix_to_pix(tick_offset);     // ALWAYS ZERO!!!
+    midipulse tick_offset = 0;
+    int x_offset = tix_to_pix(tick_offset);             /* always zero!!!   */
     QBrush brush(Qt::NoBrush);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);

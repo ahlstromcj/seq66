@@ -29,12 +29,18 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2018-05-20
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
+ *  Provides the layout for a single MIDI output buss clocking user-interface
+ *  setup.
  */
 
 #include <QtWidgets/QWidget>
+
+/*
+ *  Forward references.
+ */
 
 class QButtonGroup;
 class QGroupBox;
@@ -47,25 +53,18 @@ class QSpacerItem;
  *  Do not document the namespace, it breaks Doxygen.
  */
 
-namespace Ui
-{
-    // class qclocklayout;
-}
-
 namespace seq66
 {
     class performer;
 
 /**
- * m_horizlayout_clockline holds all of these.
+ *  This class is a widget that supports a row of radio-buttons that let the
+ *  user set the type of clocking for each MIDI output buss:
  *
- * m_horizlayout_clockoffon holds the buttons: m_rbutton_portdisabled,
- * m_rbutton_clockoff, m_rbutton_clockonmod, m_rbutton_clockonpos.
- *
- * m_spacer_clock separates m_label_outputbusname from
- * m_horizlayout_clockoffon.
- *
- * m_groupbox_clocks hold all of these.
+ *      -   Disabled
+ *      -   Off.
+ *      -   On (Pos).
+ *      -   On (Mod).
  */
 
 class qclocklayout : public QWidget
@@ -74,12 +73,7 @@ class qclocklayout : public QWidget
 
 public:
 
-    qclocklayout
-    (
-        QWidget * parent,                 // QGroupBox, QObject * parent
-        performer & p,
-        int bus
-    );
+    qclocklayout (QWidget * parent, performer & p, int bus);
 
     virtual ~qclocklayout ()
     {
@@ -107,19 +101,78 @@ private slots:
 
 private:
 
+    /**
+     *  Provides a reference to the single performer object associated with the
+     *  MIDI output buss represented by this layout.  One question is will we
+     *  have to change the reference to a shared pointer.
+     */
+
     performer & m_performance;
+
+    /**
+     *  Provides the buss number, re 0, of the MIDI output bus represented by
+     *  this layout.
+     */
+
     int m_bus;
+
+    /**
+     *  TODO
+     */
+
     QWidget * m_parent_widget;                      /* currently not used   */
-    QHBoxLayout * m_horizlayout_clockline;          /* see layout() below   */
+
+    /**
+     * m_horizlayout_clockline holds the label and all of the radio buttons for
+     * a given MIDI output buss.
+     */
+
+    QHBoxLayout * m_horizlayout_clockline;          /* see layout()         */
+
+    /**
+     *  The spacer between the buss name and button-group.
+     */
+
     QSpacerItem * m_spacer_clock;
+
+    /**
+     *  The name of the MIDI output buss represented by this object.
+     */
+
     QLabel * m_label_outputbusname;
+
+    /**
+     *  Port disabled.  See the banner for the setup_ui() function.
+     */
+
     QRadioButton * m_rbutton_portdisabled;
+
+    /**
+     *  Clocking off.  See the banner for the setup_ui() function.
+     */
+
     QRadioButton * m_rbutton_clockoff;
+
+    /**
+     *  Clocking re position.  See the banner for the setup_ui() function.
+     */
+
     QRadioButton * m_rbutton_clockonpos;
+
+    /**
+     *  Clocking re clock-start modulo setting.  See the banner for the
+     *  setup_ui() function.
+     */
+
     QRadioButton * m_rbutton_clockonmod;
+
+    /**
+     *  Contains all of the radio-buttons.
+     */
+
     QButtonGroup * m_rbutton_group;
 
-};
+};          // class qclocklayout
 
 }           // namespace seq66
 

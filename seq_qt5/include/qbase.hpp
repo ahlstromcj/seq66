@@ -28,21 +28,23 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-12-15
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
  *  sequence and performance frames can be supported.  These concepts
  *  are in the queue to be supported:
  *
- *      -   PPQN.
- *      -   Zoom.
+ *      -   PPQN.  The performer now maintains the PPQN for the whole
+ *          application.  The user-interface classes have to deal with changes
+ *          in the PPQN.  (Some will also have to deal with changes in BPM,
+ *          beats per minute.)
+ *      -   Zoom.  Zoom interacts with PPQN.
  *      -   Dirtiness. This indicates if the user-interface should be drawn.
  */
 
 #include "app_limits.h"                 /* SEQ66_DEFAULT_ZOOM, _SNAP        */
-#include "cfg/settings.hpp"             /* seq66::choose_ppqn()             */
-#include "play/performer.hpp"           /* seq66::performer::callbacks      */
+#include "play/performer.hpp"           /* seq66::performer                 */
 
 /*
  * Do not document namespaces, it breaks Doxygen.
@@ -55,7 +57,7 @@ namespace seq66
  *  This frame is the basis for editing an individual MIDI sequence.
  */
 
-class qbase : protected performer::callbacks
+class qbase
 {
 
 private:
@@ -85,13 +87,6 @@ private:
      */
 
     int m_zoom;
-
-    /**
-     *  Holds a copy of the current PPQN for the sequence (and the entire MIDI
-     *  file).
-     */
-
-    int m_ppqn;
 
     /**
      *  Dirty!  Being dirty means that not only does the window need updating,
@@ -142,7 +137,7 @@ protected:
 
     int ppqn () const
     {
-        return m_ppqn;
+        return perf().ppqn();           /* go right to the source for PPQN  */
     }
 
     bool is_dirty () const
@@ -193,7 +188,13 @@ public:
 
 public:
 
-    virtual bool set_ppqn (int ppqn);
+    virtual bool change_ppqn (int ppqn) = 0;
+
+    virtual bool change_bpm (midibpm /*bpm*/)
+    {
+        return true;                                // no code in most cases
+    }
+
     virtual bool zoom_in ();
     virtual bool zoom_out ();
     virtual bool set_zoom (int z);

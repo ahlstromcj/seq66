@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-23
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -71,7 +71,6 @@ namespace Ui
 namespace seq66
 {
     class keystroke;
-    class performer;
     class qliveframeex;
     class qperfeditex;
     class qperfeditframe64;
@@ -92,7 +91,9 @@ namespace seq66
  * The main window of Kepler34.
  */
 
-class qsmainwnd final : public QMainWindow, protected performer::callbacks
+class qsmainwnd final :
+    public QMainWindow,
+    protected performer::callbacks
 {
     friend class qmutemaster;
     friend class qplaylistframe;
@@ -109,7 +110,6 @@ public:
     (
         performer & p,
         const std::string & midifilename    = "",
-        int ppqn                            = SEQ66_USE_DEFAULT_PPQN,
         bool usensm                         = false,
         QWidget * parent                    = nullptr
     );
@@ -124,7 +124,7 @@ public:
 
     int ppqn () const
     {
-        return m_ppqn;
+        return perf().ppqn();
     }
 
     void open_playlist ()
@@ -144,17 +144,6 @@ protected:
         m_use_nsm = flag;
     }
 
-    /**
-     * \setter m_ppqn
-     *      We can't set the PPQN value when the mainwnd is created, we have
-     *      to do it later, using this function.
-     */
-
-    void ppqn (int ppqn)
-    {
-        m_ppqn = ppqn;
-    }
-
     bool recreate_all_slots ();
 
 protected:
@@ -166,8 +155,9 @@ protected:
     ) override;
     virtual bool on_sequence_change (seq::number seqno) override;
     virtual bool on_trigger_change (seq::number seqno) override;
-
     virtual void keyPressEvent (QKeyEvent * event) override;
+
+protected:
 
     void report_message (const std::string & msg, bool good);
 
@@ -271,15 +261,6 @@ private:
      */
 
     bool m_is_title_dirty;
-
-    /**
-     *  Saves the PPQN value obtained from the MIDI file (or the default
-     *  value, the global ppqn, if SEQ66_USE_DEFAULT_PPQN was specified in
-     *  reading the MIDI file.  We need it early here to be able to pass it
-     *  along to child objects.
-     */
-
-    int m_ppqn;
 
     /**
      *  Indicates whether to show the time as bar:beats:ticks or as

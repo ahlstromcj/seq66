@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-23
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -61,6 +61,7 @@ qseqdata::qseqdata
 ) :
     QWidget                 (parent),
     qseqbase                (p, seqp, zoom, snap),
+    performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  (),
     m_keyboard_padding_x    (xpadding),
@@ -72,6 +73,7 @@ qseqdata::qseqdata
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(6);
+    perf().enregister(this);
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->setInterval(4 * usr().window_redraw_rate());
@@ -85,6 +87,7 @@ qseqdata::qseqdata
 qseqdata::~qseqdata ()
 {
     m_timer->stop();
+    perf().unregister(this);
 }
 
 /**

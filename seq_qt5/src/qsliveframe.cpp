@@ -166,6 +166,7 @@ qsliveframe::qsliveframe (performer & p, qsmainwnd * window, QWidget * parent) :
 
 qsliveframe::~qsliveframe()
 {
+    m_timer->stop();
     delete ui;
     if (not_nullptr(m_msg_box))
         delete m_msg_box;

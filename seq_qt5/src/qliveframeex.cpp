@@ -25,9 +25,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-16
- * \updates       2019-08-31
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
+ *  This frame holds an external "Live" window that shows the grid of buttons
+ *  for each set in the Seq66 MIDI file.
  */
 
 #include <QGridLayout>
@@ -86,19 +88,14 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-
     if (usr().grid_is_button())
         m_live_frame = new qslivegrid(p, parent, nullptr);
     else
         m_live_frame = new qsliveframe(p, parent, nullptr);
 
     layout->addWidget(m_live_frame);
-    if (usr().window_is_scaled())
+    if (usr().window_is_scaled())           /* use scaling if applicable    */
     {
-        /*
-         * Try scaling if applicable.
-         */
-
         QSize s = size();
         int h = s.height();
         int w = s.width();
@@ -113,11 +110,6 @@ qliveframeex::qliveframeex (performer & p, int ssnum, qsmainwnd * parent) :
     t += std::to_string(ssnum);
     setWindowTitle(t.c_str());
     show();
-
-    /*
-     * Hmmmmmmmmmmmmmmmmmmm
-     */
-
     m_live_frame->update_bank(ssnum);
     m_live_frame->show();
 }
@@ -133,7 +125,7 @@ qliveframeex::~qliveframeex()
 }
 
 /**
- *
+ *  Removes the child, which is the enclosed live frame.
  */
 
 void
@@ -144,7 +136,7 @@ qliveframeex::closeEvent (QCloseEvent *)
 }
 
 /**
- *
+ *  Updates the live frame.
  */
 
 void

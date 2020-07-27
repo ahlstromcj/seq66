@@ -28,12 +28,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2018-05-20
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QtWidgets/QWidget>
+
+/*
+ *  Forward reference.
+ */
 
 class QCheckBox;
 
@@ -46,15 +50,8 @@ namespace seq66
     class performer;
 
 /**
- * m_horizlayout_clockline holds all of these.
- *
- * m_horizlayout_clockoffon holds the buttons: m_chkbox_inputactive,
- * m_rbutton_clockoff, m_rbutton_clockonmod, m_rbutton_clockonpos.
- *
- * m_spacer_clock separates m_label_outputbusname from
- * m_horizlayout_clockoffon.
- *
- * m_groupbox_clocks hold all of these.
+ *  This class represent a single line holding the setting (enabled/disabled for
+ *  a single MIDI input buss.
  */
 
 class qinputcheckbox : public QWidget

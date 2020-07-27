@@ -1,6 +1,6 @@
 TODO for Seq66 0.90.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-07-25
+2019-04-13 to 2020-07-27
 
 HOT ITEMS:
 
@@ -57,6 +57,9 @@ HOT ITEMS:
 
     See if direct calls to midifile::write() [and parse()] can be replace by
     the free-function versions defined in midifile.
+
+    Make sure performer::ppqn() and bpm() always consistent with
+    get_ppqn() and get_beats_per_minute().
 
 ISSUES:
 

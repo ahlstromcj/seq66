@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-23
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -139,16 +139,17 @@ namespace seq66
  */
 
 qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
-    qseqframe           (p, seqid, parent),
-    ui                  (new Ui::qseqeditframe),
-    m_container         (nullptr),
-    m_layout_grid       (nullptr),
-    m_scroll_area       (nullptr),
-    m_palette           (new QPalette()),
-    m_popup             (nullptr),
-    m_timer             (nullptr),
-    m_snap              (SEQ66_DEFAULT_PPQN / 4),
-    m_edit_mode         (perf().edit_mode(seqid))
+    qseqframe               (p, seqid, parent),
+    performer::callbacks    (p),
+    ui                      (new Ui::qseqeditframe),
+    m_container             (nullptr),
+    m_layout_grid           (nullptr),
+    m_scroll_area           (nullptr),
+    m_palette               (new QPalette()),
+    m_popup                 (nullptr),
+    m_timer                 (nullptr),
+    m_snap                  (SEQ66_DEFAULT_PPQN / 4),
+    m_edit_mode             (perf().edit_mode(seqid))
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -453,7 +454,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         toggle_thru(usr().new_pattern_thru());
 
     update_midi_buttons();
-
+    perf().enregister(this);                /* register for notifications   */
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect
@@ -461,6 +462,17 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
     );
     m_timer->start();
+}
+
+/**
+ *  Provides stock deletion of the Qt user-interface.
+ */
+
+qseqeditframe::~qseqeditframe ()
+{
+    m_timer->stop();
+    perf().unregister(this);                /* unregister this immediately  */
+    delete ui;
 }
 
 /**
@@ -501,15 +513,6 @@ qseqeditframe::initialize_panels ()
     (
         perf(), seq_pointer(), zoom(), m_snap, usr().key_height(), m_container
     );
-}
-
-/**
- *  Provides stock deletion of the Qt user-interface.
- */
-
-qseqeditframe::~qseqeditframe ()
-{
-    delete ui;
 }
 
 /**
@@ -1001,6 +1004,36 @@ qseqeditframe::transposeNotes()
     QAction * senderAction = (QAction *) sender();
     int transposeVal = senderAction->data().toInt();
     seq_pointer()->transpose_notes(transposeVal, 0);
+}
+
+bool
+qseqeditframe::on_resolution_change (int ppqn, midibpm bpm)
+{
+#ifdef TODO
+    bool result = change_ppqn(ppqn);
+#else
+    bool result = true;
+#endif
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+qseqeditframe::change_ppqn (int ppqn)
+{
+#ifdef TODO
+    int zoom = usr().zoom();
+    set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
+    set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
+    if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
+        zoom = zoom_power_of_2(ppqn);
+
+    set_zoom(zoom);
+#endif
+    return true;
 }
 
 }           // namespace seq66

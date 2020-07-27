@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-04
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -104,7 +104,7 @@ qsetmaster::qsetmaster
     m_set_buttons           (), /* [DEFAULT_SET_ROWS][DEFAULT_SET_COLUMNS] */
     m_current_set           (seq::unassigned()),
     m_current_row           (seq::unassigned()),
-    m_current_row_count     (perf().screenset_count()),
+    m_current_row_count     (cb_perf().screenset_count()),
     m_needs_update          (true),
     m_is_permanent          (embedded)
 {
@@ -131,11 +131,11 @@ qsetmaster::qsetmaster
     connect(ui->m_button_delete, SIGNAL(clicked()), this, SLOT(slot_delete()));
     create_set_buttons();
 
-    perf().enregister(this);            /* register this for notifications  */
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with sets                   */
     (void) populate_default_ops();      /* load key-automation support      */
     handle_set(0, 0);                   /* guaranteed to be present         */
+    cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -152,7 +152,8 @@ qsetmaster::qsetmaster
 
 qsetmaster::~qsetmaster()
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    m_timer->stop();
+    cb_perf().unregister(this);
     delete ui;
 }
 
@@ -169,8 +170,8 @@ qsetmaster::conditional_update ()
         {
             for (int column = 0; column < SEQ66_DEFAULT_SET_COLUMNS; ++column)
             {
-                int setnumber = int(perf().calculate_set(row, column));
-                bool enabled = perf().is_screenset_available(setnumber);
+                int setnumber = int(cb_perf().calculate_set(row, column));
+                bool enabled = cb_perf().is_screenset_available(setnumber);
                 m_set_buttons[row][column]->setEnabled(enabled);
             }
         }
@@ -238,7 +239,7 @@ bool
 qsetmaster::initialize_table ()
 {
     bool result = false;
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     ui->m_set_table->clearContents();
     if (rows > 0)
     {
@@ -250,7 +251,7 @@ qsetmaster::initialize_table ()
                 std::placeholders::_1, std::placeholders::_2
             )
         );
-        (void) perf().sets_function(setfunc);
+        (void) cb_perf().sets_function(setfunc);
     }
     return result;
 }
@@ -328,7 +329,7 @@ qsetmaster::slot_table_click_ex
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     if (rows > 0 && row >= 0 && row < rows)
     {
         current_row(row);
@@ -345,7 +346,7 @@ qsetmaster::slot_table_click_ex
 void
 qsetmaster::closeEvent (QCloseEvent * event)
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);            /* unregister this immediately      */
     if (not_nullptr(m_main_window))
         m_main_window->remove_set_master();
 
@@ -377,9 +378,9 @@ qsetmaster::create_set_buttons ()
              * sequence in it.
              */
 
-            bool valid = row < perf().rows() && column < perf().columns();
-            int setnumber = int(perf().calculate_set(row, column));
-            bool enabled = perf().is_screenset_active(setnumber);
+            bool valid = row < cb_perf().rows() && column < cb_perf().columns();
+            int setnumber = int(cb_perf().calculate_set(row, column));
+            bool enabled = cb_perf().is_screenset_active(setnumber);
             std::string snstring;
             if (valid)
                 snstring = std::to_string(setnumber);
@@ -405,7 +406,7 @@ qsetmaster::create_set_buttons ()
 void
 qsetmaster::handle_set (int row, int column)
 {
-    screenset::number setno = perf().calculate_set(row, column);
+    screenset::number setno = cb_perf().calculate_set(row, column);
     handle_set(setno);
 }
 
@@ -418,9 +419,9 @@ qsetmaster::handle_set (int setno)
 {
     if (setno != m_current_set)
     {
-        perf().set_playing_screenset(setno);
+        cb_perf().set_playing_screenset(setno);
         ui->m_set_number_text->setText(std::to_string(setno).c_str());
-        ui->m_set_name_text->setText(perf().bank_name(setno).c_str());
+        ui->m_set_name_text->setText(cb_perf().bank_name(setno).c_str());
         m_current_set = setno;
 
         /*
@@ -428,7 +429,7 @@ qsetmaster::handle_set (int setno)
          *  number.
          */
 
-        ui->m_set_table->selectRow(perf().screenset_index(setno));
+        ui->m_set_table->selectRow(cb_perf().screenset_index(setno));
         set_needs_update();
     }
 
@@ -447,7 +448,7 @@ qsetmaster::slot_set_name ()
     if (m_current_set != screenset::none())
     {
         std::string name = ui->m_set_name_text->text().toStdString();
-        perf().set_screenset_notepad(m_current_set, name);
+        cb_perf().set_screenset_notepad(m_current_set, name);
         (void) initialize_table();      /* refill with sets */
     }
 }
@@ -459,7 +460,7 @@ qsetmaster::slot_set_name ()
 void
 qsetmaster::slot_show_sets ()
 {
-    ui->m_set_contents_text->setPlainText(perf().sets_to_string().c_str());
+    ui->m_set_contents_text->setPlainText(cb_perf().sets_to_string().c_str());
 }
 
 /**
@@ -471,7 +472,7 @@ qsetmaster::slot_show_sets ()
 void
 qsetmaster::slot_move_down ()
 {
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     if (rows > 1)                                   /* cannot move if 1 row */
     {
         int row = current_row();                    /* last row clicked     */
@@ -487,7 +488,7 @@ qsetmaster::slot_move_down ()
 void
 qsetmaster::slot_move_up ()
 {
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     if (rows > 1)                                   /* cannot move if 1 row */
     {
         int row = current_row();                    /* last row clicked     */
@@ -514,11 +515,11 @@ qsetmaster::move_helper (int oldrow, int newrow)
         {
             std::string snstring = c1->text().toStdString();
             int set1 = std::stoi(snstring);
-            if (perf().swap_sets(set0, set1))
+            if (cb_perf().swap_sets(set0, set1))
             {
                 (void) initialize_table();      /* refill with sets */
                 ui->m_set_table->selectRow(newrow);
-                perf().modify();
+                cb_perf().modify();
             }
         }
     }
@@ -531,7 +532,7 @@ qsetmaster::move_helper (int oldrow, int newrow)
 void
 qsetmaster::slot_delete ()
 {
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     if (rows > 1)                                   /* cannot move if 1 row */
     {
         int row = current_row();                    /* last row clicked     */
@@ -540,7 +541,7 @@ qsetmaster::slot_delete ()
             /*
              *  ui->m_set_table->removeRow(row);
              *  m_current_row = -1;
-             *  perf().modify();
+             *  cb_perf().modify();
              */
 
             QTableWidgetItem * qtip = cell(row, column_id::set_number);
@@ -548,7 +549,7 @@ qsetmaster::slot_delete ()
             {
                 std::string snstr = qtip->text().toStdString();
                 int setno = std::stoi(snstr);
-                if (perf().remove_set(setno))
+                if (cb_perf().remove_set(setno))
                     set_needs_update();
             }
         }
@@ -562,7 +563,7 @@ qsetmaster::slot_delete ()
 bool
 qsetmaster::on_set_change (screenset::number setno)
 {
-    int rows = perf().screenset_count();
+    int rows = cb_perf().screenset_count();
     bool result = m_current_set != setno || rows != m_current_row_count;
     if (result)
     {
@@ -626,7 +627,7 @@ qsetmaster::changeEvent (QEvent * event)
         {
             m_has_focus = true;             // widget is now active
 
-            (void) perf().set_playing_screenset(m_bank_id);
+            (void) cb_perf().set_playing_screenset(m_bank_id);
         }
         else
         {
@@ -644,7 +645,7 @@ bool
 qsetmaster::handle_key_press (const keystroke & k)
 {
     ctrlkey ordinal = k.key();
-    const keycontrol & kc = perf().key_controls().control(ordinal);
+    const keycontrol & kc = cb_perf().key_controls().control(ordinal);
     bool result = kc.is_usable();
     if (result)
     {
@@ -674,7 +675,7 @@ qsetmaster::handle_key_press (const keystroke & k)
 bool
 qsetmaster::handle_key_release (const keystroke & k)
 {
-    bool done = perf().midi_control_keystroke(k);
+    bool done = cb_perf().midi_control_keystroke(k);
     if (! done)
     {
     }

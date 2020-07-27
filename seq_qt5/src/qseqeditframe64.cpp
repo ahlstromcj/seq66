@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-07-23
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -353,34 +353,35 @@ static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
  */
 
 qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
-    qseqframe           (p, seqid, parent),
-    ui                  (new Ui::qseqeditframe64),
-    m_lfo_wnd           (nullptr),
-    m_tools_popup       (nullptr),
-    m_sequences_popup   (nullptr),
-    m_events_popup      (nullptr),
-    m_minidata_popup    (nullptr),
-    m_beats_per_bar     (seq_pointer()->get_beats_per_bar()),
-    m_beat_width        (seq_pointer()->get_beat_width()),
-    m_snap              (sm_initial_snap),
-    m_note_length       (sm_initial_note_length),
-    m_scale             (usr().seqedit_scale()),
-    m_chord             (0),
-    m_key               (usr().seqedit_key()),
-    m_bgsequence        (usr().seqedit_bgsequence()),
-    m_measures          (0),                            /* fixed below      */
+    qseqframe               (p, seqid, parent),
+    performer::callbacks    (p),
+    ui                      (new Ui::qseqeditframe64),
+    m_lfo_wnd               (nullptr),
+    m_tools_popup           (nullptr),
+    m_sequences_popup       (nullptr),
+    m_events_popup          (nullptr),
+    m_minidata_popup        (nullptr),
+    m_beats_per_bar         (seq_pointer()->get_beats_per_bar()),
+    m_beat_width            (seq_pointer()->get_beat_width()),
+    m_snap                  (sm_initial_snap),
+    m_note_length           (sm_initial_note_length),
+    m_scale                 (usr().seqedit_scale()),
+    m_chord                 (0),
+    m_key                   (usr().seqedit_key()),
+    m_bgsequence            (usr().seqedit_bgsequence()),
+    m_measures              (0),                        /* fixed below      */
 #if defined USE_STAZED_ODD_EVEN_SELECTION
-    m_pp_whole          (0),
-    m_pp_eighth         (0),
-    m_pp_sixteenth      (0),
+    m_pp_whole              (0),
+    m_pp_eighth             (0),
+    m_pp_sixteenth          (0),
 #endif
-    m_editing_status    (0),
-    m_editing_cc        (0),
-    m_first_event       (0),
-    m_first_event_name  ("(no events)"),
-    m_have_focus        (false),
-    m_edit_mode         (perf().edit_mode(seqid)),
-    m_timer             (nullptr)
+    m_editing_status        (0),
+    m_editing_cc            (0),
+    m_first_event           (0),
+    m_first_event_name      ("(no events)"),
+    m_have_focus            (false),
+    m_edit_mode             (perf().edit_mode(seqid)),
+    m_timer                 (nullptr)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);                 /* part of issue #4 */
@@ -759,6 +760,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_snap, SIGNAL(clicked(bool)),
         this, SLOT(reset_grid_snap())
     );
+
+    // see change_ppqn()
     set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     qt_set_icon(note_length_xpm, ui->m_button_note);
@@ -767,6 +770,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_note, SIGNAL(clicked(bool)),
         this, SLOT(reset_note_length())
     );
+    // see change_ppqn()
     set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     /*
@@ -810,6 +814,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(slot_update_zoom(int))
     );
 
+    // see change_ppqn()
     int zoom = usr().zoom();
     if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
         zoom = zoom_power_of_2(perf().ppqn());
@@ -1058,12 +1063,13 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     update_midi_buttons();
     set_initialized();
-
+    perf().enregister(this);                /* register for notifications   */
     m_timer = new QTimer(this);                             /* redraw timer */
     m_timer->setInterval(2 * usr().window_redraw_rate());   /* 20           */
     QObject::connect
     (
-        m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
+        m_timer, SIGNAL(timeout()),
+        this, SLOT(conditional_update())
     );
     m_timer->start();
 }
@@ -1075,6 +1081,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 qseqeditframe64::~qseqeditframe64 ()
 {
     m_timer->stop();
+    perf().unregister(this);                /* unregister this immediately  */
     delete ui;
 }
 
@@ -2417,6 +2424,7 @@ qseqeditframe64::set_note_length (int notelength)
     {
         double factor = double(perf().ppqn()) / double(m_original);
         notelength = int(notelength * factor + 0.5);
+        m_original_ppqn = perf().ppqn();
     }
 #endif
 
@@ -2435,6 +2443,34 @@ qseqeditframe64::reset_note_length ()
 {
     ui->m_combo_note->setCurrentIndex(4);
     update_draw_geometry();
+}
+
+bool
+qseqeditframe64::on_resolution_change (int ppqn, midibpm bpm)
+{
+#ifdef TODO
+    bool result = change_ppqn(ppqn);
+#else
+    bool result = true;
+#endif
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+qseqeditframe64::change_ppqn (int ppqn)
+{
+    int zoom = usr().zoom();
+    set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
+    set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
+    if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
+        zoom = zoom_power_of_2(ppqn);
+
+    set_zoom(zoom);
+    return true;
 }
 
 /**

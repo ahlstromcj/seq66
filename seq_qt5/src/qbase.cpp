@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-07-24
+ * \updates       2019-07-27
  * \license       GNU GPLv2 or above
  *
  *  We eventually want to migrate all user-interface widgets so that they
@@ -43,11 +43,7 @@ namespace seq66
 {
 
 /**
- *  Sets initial values and registers this class for performer callback
- *  notifications.
- *
- *  Question:   Do we want to leave the registering for derived classes, so that
- *              only those that will use the notification register?
+ *  Sets initial values for common Qt window/frames.
  *
  * \param p
  *      Provides the performer object to use for interacting with this sequence.
@@ -55,25 +51,24 @@ namespace seq66
  */
 
 qbase::qbase (performer & p, int zoom) :
-    performer::callbacks    (p),
     m_performer             (p),
     m_initial_zoom          (zoom > 0 ? zoom : SEQ66_DEFAULT_ZOOM),
     m_zoom                  (zoom),         /* adjusted below               */
-    m_ppqn                  (p.ppqn()),     /* not choose_ppqn(ppqn))       */
     m_is_dirty              (false),
     m_needs_update          (true),
     m_is_initialized        (false)
 {
-    perf().enregister(this);                /* register for notifications   */
+    // No code needed
 }
 
 /**
- *
+ *  This destructor unregisters this object from performer callback
+ *  notifications.
  */
 
 qbase::~qbase ()
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    // No code needed
 }
 
 /**
@@ -86,21 +81,7 @@ qbase::needs_update () const
 {
     bool result = m_needs_update || check_dirty();
     if (! result)
-        result = perf().needs_update();           // or perf().is_running()?
-
-    return result;
-}
-
-/**
- *
- */
-
-bool
-qbase::set_ppqn (int ppqn)
-{
-    bool result = ppqn_is_valid(ppqn);
-    if (result)
-        m_ppqn = choose_ppqn(ppqn);
+        result = perf().needs_update();
 
     return result;
 }
@@ -156,15 +137,11 @@ qbase::zoom_out ()
 bool
 qbase::set_zoom (int z)
 {
-    bool result = false;
-    if ((z >= usr().min_zoom()) && (z <= usr().max_zoom()))
+    bool result = z != m_zoom && z >= usr().min_zoom() && z <= usr().max_zoom();
+    if (result)
     {
-        if (z != m_zoom)
-        {
-            result = true;
-            m_zoom = z;
-            set_needs_update();
-        }
+        m_zoom = z;
+        set_needs_update();
     }
     return result;
 }

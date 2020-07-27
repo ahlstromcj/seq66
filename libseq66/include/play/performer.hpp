@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-24
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -155,7 +155,8 @@ public:
             sequence_change,        /**< New, deleted, or pasted pattern.   */
             automation_change,      /**< A start or stop control occurred.  */
             ui_change,              /**< Indicates a user-interface action. */
-            trigger_change          /**< A trigger changed pattern muting.  */
+            trigger_change,         /**< A trigger changed pattern muting.  */
+            resolution_change,      /**< A change in PPQN or BPM.           */
         };
 
     public:
@@ -213,12 +214,17 @@ public:
             return false;
         }
 
-        performer & perf ()
+        virtual bool on_resolution_change (int /* ppqn */, midibpm /* bpm */)
+        {
+            return false;
+        }
+
+        performer & cb_perf ()
         {
             return m_performer;
         }
 
-        const performer & perf () const
+        const performer & cb_perf () const
         {
             return m_performer;
         }
@@ -888,6 +894,7 @@ public:
     void notify_sequence_change (seq::number seqno);
     void notify_ui_change (seq::number seqno);
     void notify_trigger_change (seq::number seqno);
+    void notify_resolution_change (int ppqn, midibpm bpm);
 
     bool error_pending () const
     {
@@ -1130,6 +1137,11 @@ public:
     {
         return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
     }
+
+    /**
+     *  Only a nominal value.  The mastermidibus could be considered the true
+     *  value of BPM (and PPQN).
+     */
 
     midibpm bpm () const
     {
@@ -1777,10 +1789,16 @@ public:
      *      Returns the value of beats/minute from the master buss.
      */
 
-    midibpm get_beats_per_minute ()
+    midibpm get_beats_per_minute () const
     {
-        return m_master_bus ? m_master_bus->get_beats_per_minute() : 0.0 ;
+        return m_master_bus ? m_master_bus->get_beats_per_minute() : bpm() ;
     }
+
+    int get_ppqn () const
+    {
+        return m_master_bus ? m_master_bus->get_ppqn() : ppqn() ;
+    }
+
 
     midibpm update_tap_bpm ();
     bool tap_bpm_timeout ();

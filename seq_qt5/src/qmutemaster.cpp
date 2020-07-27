@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2019-09-25
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -100,7 +100,7 @@ qmutemaster::qmutemaster
     m_main_window           (mainparent),
     m_group_buttons         (),                             /* 2-D arrary   */
     m_current_group         (seq::unassigned()),
-    m_group_count           (perf().mutegroup_count()),
+    m_group_count           (cb_perf().mutegroup_count()),
     m_modify_active         (false),
     m_needs_update          (true)
 {
@@ -122,7 +122,7 @@ qmutemaster::qmutemaster
         ui->m_radio_hex, SIGNAL(toggled(bool)),
         this, SLOT(slot_hex_mode(bool))
     );
-    set_bin_hex(! perf().mutes().group_format_hex());
+    set_bin_hex(! cb_perf().mutes().group_format_hex());
 
     ui->m_button_modify->setEnabled(true);
     connect(ui->m_button_modify, SIGNAL(clicked()), this, SLOT(slot_modify()));
@@ -151,7 +151,7 @@ qmutemaster::qmutemaster
     ui->m_mute_basename->setPlainText(rc().mute_group_filename().c_str());
     ui->m_mute_basename->setEnabled(false);
 
-    perf().enregister(this);            /* register this for notifications  */
+    cb_perf().enregister(this);            /* register this for notifications  */
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with sets                   */
     handle_group(0, 0);                 /* guaranteed to be present         */
@@ -171,7 +171,8 @@ qmutemaster::qmutemaster
 
 qmutemaster::~qmutemaster()
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    m_timer->stop();
+    cb_perf().unregister(this);            /* unregister this immediately      */
     delete ui;
 }
 
@@ -185,14 +186,14 @@ qmutemaster::conditional_update ()
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
         mutegroup::number group = mutegroup::number(current_group());
-        midibooleans mutes = perf().get_mutes(group);
-        if (int(mutes.size()) == perf().group_size())
+        midibooleans mutes = cb_perf().get_mutes(group);
+        if (int(mutes.size()) == cb_perf().group_size())
         {
-            for (int row = 0; row < perf().mute_rows(); ++row)
+            for (int row = 0; row < cb_perf().mute_rows(); ++row)
             {
-                for (int column = 0; column < perf().mute_columns(); ++column)
+                for (int column = 0; column < cb_perf().mute_columns(); ++column)
                 {
-                    int group = int(perf().calculate_mute(row, column));
+                    int group = int(cb_perf().calculate_mute(row, column));
                     bool enabled = bool(mutes[group]);
                     m_group_buttons[row][column]->setEnabled(enabled);
                 }
@@ -209,7 +210,7 @@ qmutemaster::conditional_update ()
 void
 qmutemaster::clear_mutes ()
 {
-    perf().clear_mutes();
+    cb_perf().clear_mutes();
 }
 
 /**
@@ -257,7 +258,7 @@ qmutemaster::set_column_widths (int total_width)
 bool
 qmutemaster::set_current_group (int row)
 {
-    bool result = row >= 0 && row < perf().mutegroup_count();
+    bool result = row >= 0 && row < cb_perf().mutegroup_count();
     if (result)
     {
         result = row != current_group();
@@ -277,15 +278,15 @@ bool
 qmutemaster::initialize_table ()
 {
     bool result = false;
-    int rows = perf().mutegroup_count();
+    int rows = cb_perf().mutegroup_count();
     ui->m_group_table->clearContents();
     if (rows > 0)
     {
         for (int row = 0; row < rows; ++row)
         {
             mutegroup::number g = mutegroup::number(row);
-            int mutecount = perf().count_mutes(g);
-            std::string keyname = perf().lookup_mute_key(row);
+            int mutecount = cb_perf().count_mutes(g);
+            std::string keyname = cb_perf().lookup_mute_key(row);
             (void) group_line(g, mutecount, keyname);
         }
     }
@@ -364,7 +365,7 @@ qmutemaster::mute_table_click_ex
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    int rows = perf().mutegroup_count();
+    int rows = cb_perf().mutegroup_count();
     if (rows > 0 && row >= 0 && row < rows)
     {
         if (set_current_group(row))
@@ -388,7 +389,7 @@ qmutemaster::mute_table_click_ex
 void
 qmutemaster::closeEvent (QCloseEvent * event)
 {
-    perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);            /* unregister this immediately      */
     event->accept();
 }
 
@@ -407,11 +408,11 @@ void
 qmutemaster::create_group_buttons ()
 {
     const QSize btnsize = QSize(32, 32);
-    for (int row = 0; row < perf().mute_rows(); ++row)
+    for (int row = 0; row < cb_perf().mute_rows(); ++row)
     {
-        for (int column = 0; column < perf().mute_columns(); ++column)
+        for (int column = 0; column < cb_perf().mute_columns(); ++column)
         {
-            int group = int(perf().calculate_mute(row, column));
+            int group = int(cb_perf().calculate_mute(row, column));
             std::string gstring = std::to_string(group);
             QPushButton * temp = new QPushButton(gstring.c_str());
             ui->setGridLayout->addWidget(temp, row, column);
@@ -434,13 +435,13 @@ qmutemaster::create_group_buttons ()
 void
 qmutemaster::update_group_buttons (bool tomodify)
 {
-    midibooleans mutes = perf().get_mutes(current_group());
-    for (int row = 0; row < perf().mute_rows(); ++row)
+    midibooleans mutes = cb_perf().get_mutes(current_group());
+    for (int row = 0; row < cb_perf().mute_rows(); ++row)
     {
-        for (int column = 0; column < perf().mute_columns(); ++column)
+        for (int column = 0; column < cb_perf().mute_columns(); ++column)
         {
             QPushButton * temp = m_group_buttons[row][column];
-            int mute = int(perf().calculate_mute(row, column));
+            int mute = int(cb_perf().calculate_mute(row, column));
             std::string gstring = std::to_string(mute);
             bool enabled = bool(mutes[mute]);
             if (tomodify)
@@ -480,7 +481,7 @@ qmutemaster::set_bin_hex (bool bin_checked)
 void
 qmutemaster::slot_bin_mode (bool ischecked)
 {
-    perf().mutes().group_format_hex(! ischecked);
+    cb_perf().mutes().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
 }
 
@@ -491,7 +492,7 @@ qmutemaster::slot_bin_mode (bool ischecked)
 void
 qmutemaster::slot_hex_mode (bool ischecked)
 {
-    perf().mutes().group_format_hex(ischecked);
+    cb_perf().mutes().group_format_hex(ischecked);
     set_bin_hex(! ischecked);
 }
 
@@ -544,20 +545,20 @@ qmutemaster::slot_up ()
 void
 qmutemaster::handle_group (int row, int column)
 {
-    // mutegroup::number setno = perf().calculate_mute(row, column);
+    // mutegroup::number setno = cb_perf().calculate_mute(row, column);
     // handle_group(setno);
 
     if (modify())
     {
-        midibooleans mutes = perf().get_mutes(current_group());
-        int mute = int(perf().calculate_mute(row, column));
+        midibooleans mutes = cb_perf().get_mutes(current_group());
+        int mute = int(cb_perf().calculate_mute(row, column));
         std::string gstring = std::to_string(mute);
         bool enabled = ! bool(mutes[mute]);         /* toggle the mute  */
         if (enabled)
             gstring += "*";
 
         mutes[mute] = midibool(enabled);
-        if (perf().set_mutes(current_group(), mutes))
+        if (cb_perf().set_mutes(current_group(), mutes))
         {
             QPushButton * temp = m_group_buttons[row][column];
             temp->setText(gstring.c_str());
@@ -647,7 +648,7 @@ bool
 qmutemaster::handle_key_press (const keystroke & k)
 {
     ctrlkey ordinal = k.key();
-    const keycontrol & kc = perf().key_controls().control(ordinal);
+    const keycontrol & kc = cb_perf().key_controls().control(ordinal);
     bool result = kc.is_usable();
     if (result)
     {
@@ -662,7 +663,7 @@ qmutemaster::handle_key_press (const keystroke & k)
 bool
 qmutemaster::handle_key_release (const keystroke & k)
 {
-    bool done = perf().midi_control_keystroke(k);
+    bool done = cb_perf().midi_control_keystroke(k);
     if (! done)
     {
     }

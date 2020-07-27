@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2019-08-11
+ * \updates       2020-07-27
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -98,28 +98,6 @@ qseqframe::qseqframe
 qseqframe::~qseqframe ()
 {
     // perf().unregister(this);
-}
-
-/**
- *  \todo
- *      Check for dirtiness (perhaps), clear the table and settings, an reload
- *      as if starting again.
- */
-
-bool
-qseqframe::on_sequence_change (seq::number seqno)
-{
-    bool result = m_seq && seqno == m_seq->seq_number();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("qseqframe::on_sequence_change(%d)\n", seqno);
-#endif
-
-    if (result)
-    {
-        // TODO
-    }
-    return result;
 }
 
 /**

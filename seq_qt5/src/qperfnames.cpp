@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-21
+ * \updates       2020-07-26
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -119,7 +119,7 @@ qperfnames::paintEvent (QPaintEvent *)
             int rect_x = 6 * 2 + 4;
             int rect_y = m_nametext_y * seq_id;
             int rect_w = c_names_x - 15;
-            if (seq_id % c_seqs_in_set == 0)            // if 1st seq in bank
+            if (seq_id % perf().seqs_in_set() == 0)     // if 1st seq in bank
             {
                 pen.setColor(Qt::black);                // black boxes, each bank
                 brush.setColor(Qt::black);
