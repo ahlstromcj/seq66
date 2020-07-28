@@ -72,22 +72,13 @@
 
 /**
  *  pm_exit() is called when the program exits.  It calls pm_term() to make
- *  sure PortMidi is properly closed.  If SEQ66_PLATFORM_DEBUG is on, we prompt for
- *  input to avoid losing error messages.  Without this prompting, client
- *  console application cannot see one of its errors before closing.
+ *  sure PortMidi is properly closed.
  */
 
 static void
 pm_exit (void)
 {
     pm_term();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    char line[PM_STRING_MAX];
-    printf("Type Enter to exit...\n");
-    fgets(line, PM_STRING_MAX, stdin);
-#endif
-
 }
 
 /*

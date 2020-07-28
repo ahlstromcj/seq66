@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-27
+ * \updates       2020-07-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -120,10 +120,15 @@ qsetmaster::qsetmaster
     ui->m_button_up->setEnabled(false);
     ui->m_button_delete->setEnabled(false);
 
-    if (m_is_permanent)
-        ui->m_button_close->hide();
-    else
-        connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
+    /*
+     * This button is no longer available.  The set-master is always available
+     * in its tab.
+     *
+     * if (m_is_permanent)
+     *     ui->m_button_close->hide();
+     * else
+     *     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
+     */
 
     connect(ui->m_button_show, SIGNAL(clicked()), this, SLOT(slot_show_sets()));
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_move_down()));

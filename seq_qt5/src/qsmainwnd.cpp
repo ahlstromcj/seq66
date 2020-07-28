@@ -861,6 +861,7 @@ qsmainwnd::qsmainwnd
     load_set_master();
     load_mute_master();
     ui->tabWidget->setCurrentIndex(Tab_Live);
+    ui->tabWidget->setTabEnabled(Tab_Events, false);
     show();
     show_song_mode(m_song_mode);
 
@@ -1794,21 +1795,11 @@ qsmainwnd::load_event_editor (int seqid)
     auto ei = m_open_editors.find(seqid);
     if (ei == m_open_editors.end())                         /* 1 editor/seq */
     {
-        ui->EventTabLayout->removeWidget(m_event_frame);    /* no ptr check */
-        if (not_nullptr(m_event_frame))
-            delete m_event_frame;
-
-        /*
-         * First, make sure the sequence exists.  Consider creating it if it
-         * does not exist.
-         */
-
-        if (perf().is_seq_active(seqid))
+        if (make_event_frame(seqid))
         {
-            m_event_frame = new qseqeventframe(perf(), seqid, ui->EventTab);
-            ui->EventTabLayout->addWidget(m_event_frame);
-            m_event_frame->show();
+            ui->tabWidget->setTabEnabled(Tab_Events, true);
             ui->tabWidget->setCurrentIndex(Tab_Events);
+            update();
         }
     }
 }
@@ -2219,13 +2210,13 @@ qsmainwnd::update_beats_per_measure(int bmindex)
  */
 
 void
-qsmainwnd::tabWidgetClicked (int newIndex)
+qsmainwnd::tabWidgetClicked (int newindex)
 {
     bool isnull = is_nullptr(m_edit_frame);
     seq::number seqid = perf().first_seq();         /* seq in playscreen?   */
     if (isnull)
     {
-        if (newIndex == Tab_Edit)
+        if (newindex == Tab_Edit)
         {
             bool ignore = false;
             if (seqid == seq::unassigned())         /* no, make a new one   */
@@ -2258,7 +2249,7 @@ qsmainwnd::tabWidgetClicked (int newIndex)
     isnull = is_nullptr(m_event_frame);
     if (isnull)
     {
-        if (newIndex == Tab_Events)
+        if (newindex == Tab_Events)
         {
             bool ignore = false;
             if (seqid == seq::unassigned())         /* no, make a new one   */
@@ -2276,20 +2267,39 @@ qsmainwnd::tabWidgetClicked (int newIndex)
             }
             if (! ignore)
             {
-                seq::pointer seq = perf().get_sequence(seqid);
-                if (seq)
+                if (make_event_frame(seqid))
                 {
-                    m_event_frame = new qseqeventframe
-                    (
-                        perf(), seqid, ui->EditTab
-                    );
-                    ui->EventTabLayout->addWidget(m_event_frame);
-                    m_event_frame->show();
+                    ui->tabWidget->setCurrentIndex(Tab_Events);
                     update();
                 }
             }
         }
     }
+}
+
+/**
+ *  First, make sure the sequence exists.  Consider creating it if it does not
+ *  exist.
+ *
+ */
+
+bool
+qsmainwnd::make_event_frame (int seqid)
+{
+    seq::pointer seq = perf().get_sequence(seqid);
+    bool result = bool(seq);
+    if (result)
+    {
+        if (not_nullptr(m_event_frame))
+        {
+            ui->EventTabLayout->removeWidget(m_event_frame);
+            delete m_event_frame;
+        }
+        m_event_frame = new qseqeventframe(perf(), seqid, ui->EventTab);
+        ui->EventTabLayout->addWidget(m_event_frame);
+        m_event_frame->show();
+    }
+    return result;
 }
 
 /**

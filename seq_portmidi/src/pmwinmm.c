@@ -521,10 +521,11 @@ str_copy_len (char * dst, char * src, int len)
 
 /**
  *
- *  Note that input and output use different WinMM API calls.  Make sure there is
- *  an open device (m) to examine. If there is an error, then read and record the
- *  host error.  Note that the error codes returned by the get-error-text
- *  functions are for that function.  We disable those asserts here.
+ *  Note that input and output use different WinMM API calls.  Make sure there
+ *  is an open device (m) to examine. If there is an error, then read and
+ *  record the host error.  Note that the error codes returned by the
+ *  get-error-text functions are for that function.  We disable those asserts
+ *  here.
  *
  *  The precondition is that midi != null.
  */
@@ -532,16 +533,13 @@ str_copy_len (char * dst, char * src, int len)
 static void
 winmm_get_host_error (PmInternal * midi, char * msg, UINT len)
 {
-    midiwinmm_node * m = nullptr;
-    char * hdr1 = "Host error: ";
-    if (not_nullptr(midi))
-        m = (midiwinmm_node *) midi->descriptor;
-
-    if (not_nullptr(msg))
-        msg[0] = 0;                     /* set the result string to empty   */
+    midiwinmm_node * m = not_nullptr(midi) ?
+        (midiwinmm_node *) midi->descriptor : nullptr ;
 
     if (not_nullptr_2(m, msg))
     {
+        char * hdr1 = "Host error: ";
+        msg[0] = 0;                         /* set result string to empty   */
         if (pm_descriptors[midi->device_id].pub.input)
         {
             if (m->error != MMSYSERR_NOERROR)
@@ -552,7 +550,7 @@ winmm_get_host_error (PmInternal * midi, char * msg, UINT len)
                     m->error = MMSYSERR_NOERROR;
             }
         }
-        else                            /* output port                      */
+        else                                /* output port                  */
         {
             if (m->error != MMSYSERR_NOERROR)
             {
@@ -578,7 +576,7 @@ allocate_buffer (long data_size)
         hdr = (LPMIDIHDR) pm_alloc(MIDIHDR_SYSEX_SIZE(data_size));
         if (not_nullptr(hdr))
         {
-            MIDIEVENT * evt = (MIDIEVENT *)(hdr + 1);   /* placed after header */
+            MIDIEVENT * evt = (MIDIEVENT *)(hdr + 1); /* placed after header */
             hdr->lpData = (LPSTR) evt;
             hdr->dwBufferLength = MIDIHDR_SYSEX_BUFFER_LENGTH(data_size);
             hdr->dwBytesRecorded = 0;
@@ -917,7 +915,6 @@ allocate_input_buffer (HMIDIIN h, long buffer_len)
     return Pm_hosterror();
 }
 
-
 /**
  *  Should use UINT: DWORD dwDevice = (DWORD) descriptors[i].descriptor;
  *
@@ -950,8 +947,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
         char temp[64];
         snprintf
         (
-            temp, sizeof temp, "Opening MIDI input device %d\n",
-            (int) dwDevice
+            temp, sizeof temp, "Opening MIDI input device %d\n", (int) dwDevice
         );
         pm_log_buffer_append(temp);
     }
@@ -974,26 +970,26 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
         goto no_memory;
 
     m->handle.in = nullptr;
-    m->buffers = nullptr;               /* not used for input */
-    m->num_buffers = 0;                 /* not used for input */
-    m->max_buffers = FALSE;             /* not used for input */
-    m->buffers_expanded = 0;            /* not used for input */
-    m->next_buffer = 0;                 /* not used for input */
-    m->buffer_signal = 0;               /* not used for input */
+    m->buffers = nullptr;                   /* not used for input */
+    m->num_buffers = 0;                     /* not used for input */
+    m->max_buffers = FALSE;                 /* not used for input */
+    m->buffers_expanded = 0;                /* not used for input */
+    m->next_buffer = 0;                     /* not used for input */
+    m->buffer_signal = 0;                   /* not used for input */
 
 #if defined SEQ66_USE_SYSEX_BUFFERS
     for (i = 0; i < NUM_SYSEX_BUFFERS; ++i)
-        m->sysex_buffers[i] = nullptr;  /* not used for input */
+        m->sysex_buffers[i] = nullptr;      /* not used for input */
 
-    m->next_sysex_buffer = 0;           /* not used for input */
+    m->next_sysex_buffer = 0;               /* not used for input */
 #endif
 
     m->last_time = 0;
-    m->first_message = TRUE;            /* not used for input */
+    m->first_message = TRUE;                /* not used for input */
     m->sysex_mode = FALSE;
     m->sysex_word = 0;
     m->sysex_byte_count = 0;
-    m->hdr = nullptr;                   /* not used for input */
+    m->hdr = nullptr;                       /* not used for input */
     m->sync_time = 0;
     m->delta = 0;
     m->error = MMSYSERR_NOERROR;
@@ -1161,7 +1157,9 @@ winmm_in_close(PmInternal * midi)
  *  -RBD
  */
 
-static void FAR PASCAL
+// Say what!!!? static void FAR PASCAL
+
+static void
 winmm_in_callback
 (
     HMIDIIN hMidiIn,            /* midiInput device Handle                  */
@@ -1173,11 +1171,11 @@ winmm_in_callback
 {
     PmInternal * midi = (PmInternal *) dwInstance;
     midiwinmm_type m = (midiwinmm_type) midi->descriptor;
+    EnterCriticalSection(&m->lock);
     switch (wMsg)
     {
     case MIM_DATA:              /* see the notes above about re-entry etc.  */
     {
-        EnterCriticalSection(&m->lock);
         if ((dwParam1 & 0x80) == 0)
         {
             /*
@@ -1194,7 +1192,6 @@ winmm_in_callback
             event.message = (PmMessage) dwParam1;
             pm_read_short(midi, &event);
         }
-        LeaveCriticalSection(&m->lock);
         break;
     }
     case MIM_LONGDATA:
@@ -1203,7 +1200,6 @@ winmm_in_callback
         midibyte_t * data = (midibyte_t *) lpMidiHdr->lpData;
         unsigned processed = 0;
         int remaining = lpMidiHdr->dwBytesRecorded;
-        EnterCriticalSection(&m->lock);
         if (midi->time_proc)
             dwParam2 = (*midi->time_proc)(midi->time_info);
 
@@ -1245,12 +1241,10 @@ winmm_in_callback
             {
                 // TODO: handle the error
             }
-            LeaveCriticalSection(&m->lock);
         }
         else
         {
             midiInUnprepareHeader(hMidiIn, lpMidiHdr, sizeof(MIDIHDR));
-            LeaveCriticalSection(&m->lock);
             pm_free(lpMidiHdr);
         }
         break;
@@ -1276,6 +1270,7 @@ winmm_in_callback
     default:
         break;
     }
+    LeaveCriticalSection(&m->lock);
 }
 
 /*
@@ -1764,7 +1759,7 @@ winmm_write_short (PmInternal * midi, PmEvent * event)
          * Make sure we don't go backward in time
          */
 
-        when = when + m->delta + midi->latency;
+        when += m->delta + midi->latency;
         if (when < m->last_time)
             when = m->last_time;
 
@@ -1878,7 +1873,7 @@ winmm_end_sysex (PmInternal * midi, PmTimestamp timestamp)
 }
 
 /**
- *  Write a sysex byte.
+ *  Write a sysex byte.  What a long function!
  */
 
 static PmError

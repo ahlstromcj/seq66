@@ -777,6 +777,42 @@ qseqeditframe::updateBackgroundSeq (int /*newindex*/)
 }
 
 /**
+ *  Once the user has clicked on the qseqroll, the Space key can be used to
+ *  start, stop, and restart playback.  The Period key can be used to pause
+ *  and start (at the same position) playback.
+ *
+ *  We could simplify this a bit by creating a keystroke object.
+ *  See qseqroll.
+ */
+
+void
+qseqeditframe::keyPressEvent (QKeyEvent * event)
+{
+    if (perf().is_pattern_playing())
+    {
+        if (event->key() == Qt::Key_Space)
+            stop_playing();
+        else if (event->key() == Qt::Key_Period)
+            pause_playing();
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
+            start_playing();
+    }
+}
+
+/**
+ *
+ */
+
+void
+qseqeditframe::keyReleaseEvent (QKeyEvent *)
+{
+    // no code
+}
+
+/**
  *  Here, we will need to recreate the current viewport, if not the whole damn
  *  seqroll.
  */
@@ -1009,11 +1045,12 @@ qseqeditframe::transposeNotes()
 bool
 qseqeditframe::on_resolution_change (int ppqn, midibpm bpm)
 {
-#ifdef TODO
     bool result = change_ppqn(ppqn);
-#else
-    bool result = true;
-#endif
+    if (result)
+    {
+        infoprintf("PPQN = %d\n", ppqn);
+        infoprintf("BPM = %d\n", int(bpm));
+    }
     return result;
 }
 
@@ -1024,15 +1061,15 @@ qseqeditframe::on_resolution_change (int ppqn, midibpm bpm)
 bool
 qseqeditframe::change_ppqn (int ppqn)
 {
-#ifdef TODO
     int zoom = usr().zoom();
+#if 0
     set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
     set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
+#endif
     if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
         zoom = zoom_power_of_2(ppqn);
 
     set_zoom(zoom);
-#endif
     return true;
 }
 

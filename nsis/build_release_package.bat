@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-07-24
+:: \update      2020-07-28
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -109,6 +109,14 @@
  
 set PROJECT_VERSION=0.90.5
 set PROJECT_DRIVE=C:
+
+:: PROJECT_BASE is the directory that is the immediate parent of the seq66
+:: directory.  Adjust this value for your setup.
+::
+:: Mingw:
+::
+:: set PROJECT_BASE=\home\chris\Home\git
+
 set PROJECT_BASE=\Users\Chris\Documents\Home
 set PROJECT_ROOT=..\seq66
 set PROJECT_FILE=seq66.pro

@@ -224,10 +224,15 @@ public:
         return x * pulses_per_pixel(ppqn(), zoom());
     }
 
+    /**
+     *  This function is called only to set up the GUI, so don't call this
+     *  here.  Let the performer decide when a modification has occurred.
+     */
+
     virtual void set_dirty ()
     {
         m_is_dirty = true;
-        perf().modify();                            /* is this okay?        */
+        perf().modify();
     }
 
     virtual void set_needs_update ()

@@ -910,10 +910,10 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
         {
             if (m_current_seq < usr().max_sets())
             {
-                char temp[32];
+                char temp[48];
                 snprintf
                 (
-                    temp, sizeof temp, "Extern &live frame set %d",
+                    temp, sizeof temp, "External &live frame for set %d",
                     m_current_seq
                 );
                 QAction * liveframe = new QAction(tr(temp), m_popup);

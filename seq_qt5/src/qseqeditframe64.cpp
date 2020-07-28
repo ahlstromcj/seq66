@@ -2448,11 +2448,12 @@ qseqeditframe64::reset_note_length ()
 bool
 qseqeditframe64::on_resolution_change (int ppqn, midibpm bpm)
 {
-#ifdef TODO
     bool result = change_ppqn(ppqn);
-#else
-    bool result = true;
-#endif
+    if (result)
+    {
+        infoprintf("PPQN = %d\n", ppqn);
+        infoprintf("BPM = %d\n", int(bpm));
+    }
     return result;
 }
 

@@ -1330,10 +1330,11 @@ qslivegrid::popup_menu ()
     {
         if (m_current_seq < usr().max_sets())
         {
-            char temp[32];
+            char temp[48];
             snprintf
             (
-                temp, sizeof temp, "Extern &live frame set %d", m_current_seq
+                temp, sizeof temp, "External &live frame for set %d",
+                m_current_seq
             );
             QAction * livegrid = new QAction(tr(temp), m_popup);
             m_popup->addAction(livegrid);
@@ -1368,7 +1369,10 @@ qslivegrid::popup_menu ()
 
         if (! m_is_external)
         {
-            QAction * editevents = new QAction(tr("E&vents Tab"), m_popup);
+            QAction * editevents = new QAction
+            (
+                tr("Edit e&vents in tab"), m_popup
+            );
             m_popup->addAction(editevents);
             connect
             (

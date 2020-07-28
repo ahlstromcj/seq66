@@ -315,7 +315,7 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         );
         m_line_adjust = false;
         if (ok)
-            set_dirty();
+            set_needs_update();
     }
     else if (m_relative_adjust)
         m_relative_adjust = false;
@@ -362,7 +362,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             c_dataarea_y - adj_y_min - 1, c_dataarea_y - adj_y_max - 1
         );
         if (ok)
-            set_dirty();
+            set_needs_update();
     }
     else if (m_relative_adjust)
     {
@@ -375,7 +375,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             tick_s, tick_f, m_status, m_cc, adjy
         );
         if (ok)
-            set_dirty();
+            set_needs_update();
 
         /*
          * Move the drop location so we increment properly on next mouse move.
@@ -403,7 +403,7 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         {
             m_status = status;
             m_cc = control;
-            set_dirty();
+            set_needs_update();
         }
     }
 }

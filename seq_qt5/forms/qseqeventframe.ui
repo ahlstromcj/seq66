@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>885</height>
+    <width>929</width>
+    <height>909</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,6 +28,81 @@
      <property name="sizeConstraint">
       <enum>QLayout::SetNoConstraint</enum>
      </property>
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTableWidget" name="eventTableWidget">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>548</width>
+           <height>500</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
+         </property>
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustToContents</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::DashLine</enum>
+         </property>
+         <property name="rowCount">
+          <number>28</number>
+         </property>
+         <property name="columnCount">
+          <number>6</number>
+         </property>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <row/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+         <column/>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item row="0" column="2">
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="spacing">
@@ -174,7 +249,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>164</width>
+             <width>16777215</width>
              <height>24</height>
             </size>
            </property>
@@ -215,7 +290,7 @@
            </property>
            <property name="maximumSize">
             <size>
-             <width>164</width>
+             <width>16777215</width>
              <height>24</height>
             </size>
            </property>
@@ -239,7 +314,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>244</width>
+           <width>16777215</width>
            <height>24</height>
           </size>
          </property>
@@ -338,7 +413,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>16777215</width>
            <height>24</height>
           </size>
          </property>
@@ -351,7 +426,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>64</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -374,7 +449,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>64</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -397,7 +472,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>64</width>
+            <width>74</width>
             <height>24</height>
            </size>
           </property>
@@ -429,7 +504,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>244</width>
+           <width>16777215</width>
            <height>24</height>
           </size>
          </property>
@@ -443,6 +518,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="button_dump">
+         <property name="minimumSize">
+          <size>
+           <width>240</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="text">
           <string/>
          </property>
@@ -458,20 +545,20 @@
            <bool>false</bool>
           </property>
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="minimumSize">
            <size>
-            <width>48</width>
+            <width>240</width>
             <height>24</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>128</width>
+            <width>16777215</width>
             <height>24</height>
            </size>
           </property>
@@ -482,110 +569,6 @@
            <string>Save to Sequence</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="button_cancel">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>48</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>128</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Closes this editor without saving.</string>
-          </property>
-          <property name="text">
-           <string>Close</string>
-          </property>
-         </widget>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="0" column="0">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QTableWidget" name="eventTableWidget">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>548</width>
-           <height>500</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Shows the events in the pattern/sequence.  Events can be edited only with the controls at the right of this table.</string>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QAbstractScrollArea::AdjustToContents</enum>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="selectionBehavior">
-          <enum>QAbstractItemView::SelectRows</enum>
-         </property>
-         <property name="gridStyle">
-          <enum>Qt::DashLine</enum>
-         </property>
-         <property name="rowCount">
-          <number>28</number>
-         </property>
-         <property name="columnCount">
-          <number>6</number>
-         </property>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <row/>
-         <column/>
-         <column/>
-         <column/>
-         <column/>
-         <column/>
-         <column/>
         </widget>
        </item>
       </layout>

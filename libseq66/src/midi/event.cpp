@@ -861,13 +861,13 @@ event::tempo () const
  *  bytes.
  */
 
-void
+bool
 event::set_tempo (midibpm tempo)
 {
     double us = tempo_us_from_bpm(tempo);
     midibyte t[3];
     tempo_us_to_bytes(t, us);
-    set_sysex(t, 3);
+    return set_sysex(t, 3);
 }
 
 /*

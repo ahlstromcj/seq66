@@ -119,11 +119,13 @@ public:
     );
     virtual ~qseqeditframe ();
 
-    void setEditorMode (sequence::editmode mode); // set a new editing mode
+    void setEditorMode (sequence::editmode mode);
 
-protected:      // QWidget overrides
+protected:      /* QWidget overrides                */
 
     virtual void resizeEvent (QResizeEvent *) override;
+    virtual void keyPressEvent (QKeyEvent *) override;
+    virtual void keyReleaseEvent (QKeyEvent *) override;
 
 private:
 

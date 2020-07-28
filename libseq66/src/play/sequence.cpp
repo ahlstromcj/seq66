@@ -2054,7 +2054,7 @@ sequence::change_event_data_range
             if (er.is_tempo())
             {
                 midibpm tempo = note_value_to_tempo(midibyte(newdata));
-                er.set_tempo(tempo);
+                result = er.set_tempo(tempo);
             }
             else
             {
@@ -2064,8 +2064,10 @@ sequence::change_event_data_range
                     d1 = newdata;
 
                 er.set_data(d0, d1);
+                result = true;
             }
-            result = true;
+            if (result)
+                modify();
         }
     }
     return result;
@@ -2178,6 +2180,8 @@ sequence::change_event_data_relative
                 d1 = newdata;
 
             er.set_data(d0, d1);
+            result = true;
+            modify();
         }
     }
     return result;

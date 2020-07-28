@@ -1302,7 +1302,7 @@ public:
     }
 
     midibpm tempo () const;
-    void set_tempo (midibpm tempo);
+    bool set_tempo (midibpm tempo);
 
     /**
      *  Indicates if the event is a Time Signature event.  See
