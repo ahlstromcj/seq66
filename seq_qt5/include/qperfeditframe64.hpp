@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2020-07-24
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
@@ -40,8 +40,6 @@
 
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias           */
-
-class QPaintEvent;
 
 /*
  * Do not document namespaces, it breaks Doxygen.
@@ -110,7 +108,7 @@ public:
 
     void follow_progress ();
     void update_sizes ();
-    void set_needs_update ();
+    void set_dirty ();
 
 private:
 

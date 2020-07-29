@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-20
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -92,7 +92,7 @@ qperftime::~qperftime ()
 void
 qperftime::conditional_update ()
 {
-    if (check_needs_update() || perf().needs_update())
+    if (perf().needs_update() || check_dirty() )
         update();
 }
 

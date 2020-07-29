@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-23
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -415,7 +415,7 @@ sequence::pop_undo ()
     automutex locker(m_mutex);
     if (! m_events_undo.empty())                // stazed: m_list_undo
     {
-        m_events_redo.push(m_events);           // move to triggers module?
+        m_events_redo.push(m_events);
         m_events = m_events_undo.top();
         m_events_undo.pop();
         verify_and_link();
@@ -1611,8 +1611,8 @@ sequence::grow_selected (midipulse delta)
  *      The range of the randomization.
  *
  * \return
- *      Returns true if the randomization was performed.  If true, the sequence
- *      is flagged as modified.
+ *      Returns true if the randomization was performed.  If true, the
+ *      sequence is flagged as modified.
  */
 
 bool
@@ -1840,14 +1840,14 @@ sequence::copy_selected ()
  *      If true, copy the selected events before marking and removing them.
  */
 
-void
+bool
 sequence::cut_selected (bool copyevents)
 {
     push_undo();
     if (copyevents)
         copy_selected();
 
-    (void) remove_selected();                   /* works and modifies       */
+    return remove_selected();                   /* works and modifies   */
 }
 
 /**
@@ -5080,6 +5080,9 @@ sequence::change_ppqn (int p)
  * \param linked
  *      Set this value to true for tightening notes.  The default value of
  *      this parameter is false.
+ *
+ * \return
+ *      Returns true if the events were quantized.
  */
 
 bool
@@ -5559,7 +5562,7 @@ sequence::handle_edit_action (eventlist::edit action, int var)
 
     case eventlist::edit::randomize_events:
 
-        randomize_selected(m_status, var);
+        (void) randomize_selected(m_status, var);
         break;
 
     case eventlist::edit::quantize_notes:

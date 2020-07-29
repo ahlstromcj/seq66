@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-07-02
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *
@@ -106,6 +106,7 @@ private:                            // overrides of qslivebase functions
 
     virtual void refresh ()
     {
+        qslivebase::refresh();
         (void) refresh_all_slots();
     }
 
@@ -201,13 +202,6 @@ private:
      */
 
     bool m_redraw_buttons;
-
-    /**
-     *  Indicates a need for a button update, as opposed to a complete redraw
-     *  of all the buttons.
-     */
-
-    bool m_needs_update;
 
     /**
      *  A two-dimensional vector of buttons containing a vector of rows, each

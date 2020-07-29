@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2020-06-26
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -114,11 +114,6 @@ public:
         return m_current_seq;
     }
 
-    bool needs_update () const
-    {
-        return m_needs_update;
-    }
-
 protected:
 
     performer & perf ()
@@ -129,6 +124,13 @@ protected:
     void set_needs_update (bool flag = true)
     {
         m_needs_update = flag;
+    }
+
+    bool check_needs_update () const
+    {
+        bool result = m_needs_update;
+        m_needs_update = false;
+        return result;
     }
 
 protected:
@@ -158,7 +160,7 @@ protected:
 
     virtual void refresh ()
     {
-        // no code in the base class
+        set_needs_update();
     }
 
     virtual void refresh (seq::number /*seqno*/)
@@ -224,24 +226,24 @@ protected:
 
     /**
      *  Provide the font used for drawing text in qsliveframe.  Note that text
-     *  in the qslivegrid's qslotbuttons will use setText() for drawing the slot
-     *  numbers, and qloopbutton has its own font for the buttons.
+     *  in the qslivegrid's qslotbuttons will use setText() for drawing the
+     *  slot numbers, and qloopbutton has its own font for the buttons.
      */
 
     QFont m_font;
 
     /**
-     *  Kepler34 calls "screensets" by the name "banks".  Same as the screen-set
-     *  number.
+     *  Kepler34 calls "screensets" by the name "banks".  Same as the
+     *  screen-set number.
      */
 
     int m_bank_id;
 
     /**
      *  These values are assigned to the values given by the constants of
-     *  similar names in globals.h (obsolete), and we will make them parameters
-     *  or user-interface configuration items later.  Some of them already have
-     *  counterparts in the usrsettings class.
+     *  similar names in globals.h (obsolete), and we will make them
+     *  parameters or user-interface configuration items later.  Some of them
+     *  already have counterparts in the usrsettings class.
      */
 
     int m_mainwnd_rows;         /* from usr().mainwnd_rows()                */
@@ -251,8 +253,8 @@ protected:
     int m_space_cols;           /* ditto for columns (e.g. 2 * 8)           */
 
     /**
-     *  Provides a convenience variable for avoiding multiplications.
-     *  It is equal to m_mainwnd_rows * m_mainwnd_cols.
+     *  Provides a convenience variable for avoiding multiplications.  It is
+     *  equal to m_mainwnd_rows * m_mainwnd_cols.
      */
 
     const int m_screenset_slots;
@@ -333,7 +335,7 @@ protected:
      *  of all the buttons.
      */
 
-    bool m_needs_update;
+    mutable bool m_needs_update;
 
 };              // class qslivebase
 

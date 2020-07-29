@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -73,7 +73,7 @@ qseqdata::qseqdata
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(6);
-    perf().enregister(this);
+    cb_perf().enregister(this);
     m_timer = new QTimer(this);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->setInterval(4 * usr().window_redraw_rate());
@@ -87,18 +87,18 @@ qseqdata::qseqdata
 qseqdata::~qseqdata ()
 {
     m_timer->stop();
-    perf().unregister(this);
+    cb_perf().unregister(this);
 }
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qseqbase::needs_update().
+ *  update() only if necessary.  See qseqbase::dirty().
  */
 
 void
 qseqdata::conditional_update ()
 {
-    if (check_needs_update())
+    if (check_dirty())
         update();
 }
 
@@ -141,16 +141,6 @@ void
 qseqdata::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf
-    (
-        "qseqdata::paintEvent(%d) at (x,y,w,h) = (%d, %d, %d, %d) zoom = %d\n",
-        s_count++, r.x(), r.y(), r.width(), r.height(), zoom()
-    );
-#endif
-
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -235,12 +225,6 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 void
 qseqdata::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqdata::resizeEvent(%d)\n", s_count++);
-#endif
-
     qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
 
@@ -315,7 +299,7 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         );
         m_line_adjust = false;
         if (ok)
-            set_needs_update();
+            set_dirty();
     }
     else if (m_relative_adjust)
         m_relative_adjust = false;
@@ -362,7 +346,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             c_dataarea_y - adj_y_min - 1, c_dataarea_y - adj_y_max - 1
         );
         if (ok)
-            set_needs_update();
+            set_dirty();
     }
     else if (m_relative_adjust)
     {
@@ -375,7 +359,7 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
             tick_s, tick_f, m_status, m_cc, adjy
         );
         if (ok)
-            set_needs_update();
+            set_dirty();
 
         /*
          * Move the drop location so we increment properly on next mouse move.
@@ -403,7 +387,7 @@ qseqdata::set_data_type (midibyte status, midibyte control)
         {
             m_status = status;
             m_cc = control;
-            set_needs_update();
+            set_dirty();
         }
     }
 }

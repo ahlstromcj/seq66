@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -233,9 +233,9 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
      *  saving the file when exiting.
      */
 
+    cb_perf().enregister(this);
     m_seq->set_editing(true);
     m_seq->set_dirty_mp();
-    cb_perf().enregister(this);
 }
 
 /**

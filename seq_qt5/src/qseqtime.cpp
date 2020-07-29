@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-09-03
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,13 +78,13 @@ qseqtime::~qseqtime ()
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qseqbase::needs_update().
+ *  update() only if necessary.  See qseqbase::check_dirty().
  */
 
 void
 qseqtime::conditional_update ()
 {
-    if (check_needs_update())   //  || perf().needs_update())
+    if (perf().needs_update() || check_dirty())
         update();
 }
 

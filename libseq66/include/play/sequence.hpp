@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-07-19
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1413,7 +1413,7 @@ public:
     void select_all ();
     bool repitch_selected (const notemapper & nmap);
     bool copy_selected ();
-    void cut_selected (bool copyevents = true);
+    bool cut_selected (bool copyevents = true);
     bool paste_selected (midipulse tick, int note);
     bool selected_box
     (

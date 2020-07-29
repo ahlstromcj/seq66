@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-23
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -270,11 +270,6 @@ qsmainwnd::qsmainwnd
     }
     if (! ppqn_is_set)
         ui->cmb_ppqn->setCurrentIndex(0);
-
-    //  float value=100.0;
-    //  int index = ui->combo->findData(value);
-    //  if ( index != -1 ) // -1 for not found
-    //      combo->setCurrentIndex(index);
 
     std::string ppqnstr = std::to_string(perf().ppqn());
     ui->lineEditPpqn->setText(ppqnstr.c_str());
@@ -865,8 +860,8 @@ qsmainwnd::qsmainwnd
     show();
     show_song_mode(m_song_mode);
 
-    perf().enregister(this);            /* register this for notifications  */
-    m_timer = new QTimer(this);         /* refresh GUI element every few ms */
+    cb_perf().enregister(this);
+    m_timer = new QTimer(this);
     m_timer->setInterval(3 * usr().window_redraw_rate());   // was 2
     connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
     m_timer->start();
@@ -880,7 +875,7 @@ qsmainwnd::qsmainwnd
 qsmainwnd::~qsmainwnd ()
 {
     m_timer->stop();
-    perf().unregister(this);            /* unregister this immediately      */
+    cb_perf().unregister(this);
     delete ui;
 }
 
@@ -2646,10 +2641,7 @@ qsmainwnd::set_song_mute_on ()
 {
     perf().set_song_mute(mutegroups::muting::on);
     if (not_nullptr(m_live_frame))
-    {
-        m_live_frame->set_needs_update();
         m_live_frame->refresh();
-    }
 }
 
 /**
@@ -2661,10 +2653,7 @@ qsmainwnd::set_song_mute_off ()
 {
     perf().set_song_mute(mutegroups::muting::off);
     if (not_nullptr(m_live_frame))
-    {
-        m_live_frame->set_needs_update();
         m_live_frame->refresh();
-    }
 }
 
 /**
@@ -2676,10 +2665,7 @@ qsmainwnd::set_song_mute_toggle ()
 {
     perf().set_song_mute(mutegroups::muting::toggle);
     if (not_nullptr(m_live_frame))
-    {
-        m_live_frame->set_needs_update();
         m_live_frame->refresh();
-    }
 }
 
 /**

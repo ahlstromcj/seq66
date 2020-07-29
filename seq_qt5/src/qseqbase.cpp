@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-06
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -116,15 +116,13 @@ qseqbase::set_scroll_y (int y)
  */
 
 bool
-qseqbase::needs_update () const
+qseqbase::check_dirty () const
 {
-    bool dirty = check_dirty();
+    bool dirty = qeditbase::check_dirty();
     if (! dirty)
     {
         performer & ncp = const_cast<performer &>(perf());
         dirty = ncp.needs_update(seq_pointer()->seq_number());
-        if (! dirty)
-            dirty = qeditbase::needs_update();     // does another perf() test!!
     }
     return dirty;
 }

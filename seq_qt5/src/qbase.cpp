@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2019-07-27
+ * \updates       2019-07-29
  * \license       GNU GPLv2 or above
  *
  *  We eventually want to migrate all user-interface widgets so that they
@@ -55,35 +55,18 @@ qbase::qbase (performer & p, int zoom) :
     m_initial_zoom          (zoom > 0 ? zoom : SEQ66_DEFAULT_ZOOM),
     m_zoom                  (zoom),         /* adjusted below               */
     m_is_dirty              (false),
-    m_needs_update          (true),
     m_is_initialized        (false)
 {
     // No code needed
 }
 
 /**
- *  This destructor unregisters this object from performer callback
- *  notifications.
+ *  This destructor no longer does anything.
  */
 
 qbase::~qbase ()
 {
     // No code needed
-}
-
-/**
- *  Checks to see if the song is running or if the "dirty" flag had been
- *  set.  The obtuse code here helps in debugging.
- */
-
-bool
-qbase::needs_update () const
-{
-    bool result = m_needs_update || check_dirty();
-    if (! result)
-        result = perf().needs_update();
-
-    return result;
 }
 
 /**
@@ -141,7 +124,7 @@ qbase::set_zoom (int z)
     if (result)
     {
         m_zoom = z;
-        set_needs_update();
+        set_dirty();
     }
     return result;
 }

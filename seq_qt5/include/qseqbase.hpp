@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-20
- * \updates       2019-08-06
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
@@ -93,19 +93,7 @@ public:
         int total_height    =  1
     );
 
-    virtual bool needs_update () const override;
-
-    virtual void set_dirty () override
-    {
-        qbase::set_dirty();
-        set_needs_update();
-    }
-
-    virtual void set_needs_update () override
-    {
-        qbase::set_needs_update();
-        perf().notify_ui_change(seq_pointer()->seq_number());       // FIXME
-    }
+    virtual bool check_dirty () const override;
 
 protected:
 
@@ -149,17 +137,17 @@ protected:
 protected:
 
     /*
-     * We are not the owner of this pointer.
+     * We are not the owner of this shared pointer.
      */
 
     const seq::pointer seq_pointer () const
     {
-        return m_seq;   // .get();
+        return m_seq;
     }
 
     seq::pointer seq_pointer ()
     {
-        return m_seq;   // .get();
+        return m_seq;
     }
 
     /*

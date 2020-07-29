@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-07-20
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -205,7 +205,7 @@ qslivegrid::set_playlist_name (const std::string & plname)
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qlivebase::needs_update(). All
+ *  update() only if necessary.  See qlivebase::check_dirty(). All
  *  sequences are potentially checked.
  *
  *  Actually, we need a way to update only the loop slots in the grid layout,
@@ -220,9 +220,8 @@ qslivegrid::conditional_update ()
         return;
 
     sequence_key_check();
-    if (perf().is_running() || needs_update()) // || perf().needs_update())
+    if (perf().needs_update() || check_needs_update())
     {
-        set_needs_update(false);
         for (int column = 0; column < columns(); ++column)
         {
             for (int row = 0; row < rows(); ++row)
@@ -427,8 +426,8 @@ qslivegrid::create_one_button (int seqno)
  *  This override simply calls creates the slot/loop buttons.  We have to do
  *  it here, because only here do we know the final size of the grid.  This
  *  function is called about a half-dozen times at startup, which really
- *  messages with "redraw" flags in the buttons.  We need call the internal code
- *  here just once at startup.
+ *  messages with "redraw" flags in the buttons.  We need call the internal
+ *  code here just once at startup.
  */
 
 void

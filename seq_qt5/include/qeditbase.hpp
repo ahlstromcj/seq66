@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -194,15 +194,15 @@ protected:
     bool m_paste;
 
     /**
-     *  The x location of the mouse when dropped.  Would be good to allocate this
-     *  to a base class for all grid panels.
+     *  The x location of the mouse when dropped.  Would be good to allocate
+     *  this to a base class for all grid panels.
      */
 
     int m_drop_x;
 
     /**
-     *  The x location of the mouse when dropped.  Would be good to allocate this
-     *  to a base class for all grid panels.
+     *  The x location of the mouse when dropped.  Would be good to allocate
+     *  this to a base class for all grid panels.
      */
 
     int m_drop_y;
@@ -226,7 +226,8 @@ protected:
     int m_progress_x;
 
     /**
-     *  Provides the old location of the progress bar, for "playhead" tracking.
+     *  Provides the old location of the progress bar, for "playhead"
+     *  tracking.
      */
 
     int m_old_progress_x;
@@ -507,13 +508,7 @@ public:
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
-    virtual bool needs_update () const override;
-
-    virtual void set_dirty () override
-    {
-        qbase::set_dirty();
-        qbase::set_needs_update();
-    }
+    virtual bool check_dirty () const override;
 
     void set_snap (midipulse snap)
     {

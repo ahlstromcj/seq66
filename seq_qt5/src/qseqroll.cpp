@@ -137,13 +137,13 @@ qseqroll::~qseqroll ()
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qseqbase::needs_update().
+ *  update() only if necessary.  See qseqbase::check_dirty().
  */
 
 void
 qseqroll::conditional_update ()
 {
-    if (check_needs_update() || perf().needs_update())
+    if (perf().needs_update() || check_dirty())
     {
         if (progress_follow())
             follow_progress();              /* keep up with progress    */
@@ -250,7 +250,7 @@ void
 qseqroll::set_redraw ()
 {
     m_draw_whole_grid = true;
-    set_dirty();    // set_needs_update(); // set_dirty();
+    set_dirty();
 }
 
 /**
@@ -927,7 +927,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         s->paste_selected(tick_s, note);
         paste(false);
         setCursor(Qt::ArrowCursor);
-        set_dirty();                                /* set_needs_update()   */
+        set_dirty();
     }
     else
     {
@@ -1015,7 +1015,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                             selecting(true);
                     }
                     else
-                        set_needs_update();                     // set_dirty()
+                        set_dirty();
                 }
                 if (m_edit_mode == sequence::editmode::drum)
                 {
@@ -1135,7 +1135,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 tick_s, note_h, tick_f, note_l, selmode
             );
             if (numsel > 0)
-                set_needs_update();                         // set_dirty()
+                set_dirty();
         }
         if (moving())
         {
@@ -1243,8 +1243,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
     seq::pointer s = seq_pointer();
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
-        s->remove_selected();
-        set_needs_update();             // set_dirty();
+        if (s->remove_selected())
+            set_dirty();
     }
     else
     {
@@ -1260,7 +1260,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             if (event->key() == Qt::Key_Home)
             {
                 s->set_last_tick(0);
-                set_needs_update();
+                set_dirty();
             }
             else if (event->key() == Qt::Key_Left)
             {
@@ -1337,8 +1337,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             {
             case Qt::Key_X:
 
-                s->cut_selected();
-                set_needs_update();             // set_dirty();
+                if (s->cut_selected())
+                    set_dirty();
                 break;
 
             case Qt::Key_C:
@@ -1349,7 +1349,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             case Qt::Key_V:
 
                 start_paste();
-                set_needs_update();             // set_dirty();
+                set_dirty();
                 setCursor(Qt::CrossCursor);     // EXPERIMENT
                 break;
 
@@ -1363,13 +1363,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 else
                     s->pop_undo();
 
-                set_needs_update();
+                set_dirty();
                 break;
 
             case Qt::Key_A:
 
                 s->select_all();
-                set_needs_update();
+                set_dirty();
                 break;
             }
         }
@@ -1386,13 +1386,13 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 case Qt::Key_C:
 
                     if (m_parent_frame->repitch_selected())
-                        set_needs_update();
+                        set_dirty();
                     break;
 
                 case Qt::Key_F:
 
                     if (s->edge_fix())
-                        set_needs_update();
+                        set_dirty();
                     break;
 
                 case Qt::Key_P:
@@ -1401,18 +1401,20 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     break;
 
                 case Qt::Key_Q:                 /* quantize selected notes  */
-                    s->push_quantize(EVENT_NOTE_ON, 0, 1, true);
-                    set_needs_update();
+
+                    if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
+                        set_dirty();
                     break;
 
-                case Qt::Key_R:
-                    s->randomize_selected_notes();  /* default jitter == 8  */
-                    set_needs_update();
+                case Qt::Key_R:                 /* default jitter == 8      */
+
+                    if (s->randomize_selected_notes())
+                        set_dirty();
                     break;
 
                 case Qt::Key_T:                 /* tighten selected notes   */
-                    s->push_quantize(EVENT_NOTE_ON, 0, 2, true);
-                    set_needs_update();
+                    if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
+                        set_dirty();
                     break;
 
                 case Qt::Key_X:
@@ -1571,11 +1573,7 @@ qseqroll::set_adding (bool a)
     else
         setCursor(Qt::ArrowCursor);
 
-    /*
-     * Don't set this unless something actually changes: set_dirty();
-     */
-
-    set_needs_update();
+    set_dirty();
 }
 
 /**

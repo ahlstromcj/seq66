@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2020-07-26
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -195,9 +195,9 @@ qeditbase::snap_x (int & x)
  */
 
 bool
-qeditbase::needs_update () const
+qeditbase::check_dirty () const
 {
-    bool result = qbase::needs_update();
+    bool result = qbase::check_dirty();
     if (! result)
         result = perf().needs_update();
 

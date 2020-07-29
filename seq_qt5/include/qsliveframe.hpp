@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-31
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The qsliveframe is Sequencer66's analogue to the Gtkmm mainwid class.  These
@@ -65,7 +65,8 @@ namespace seq66
     class qsmainwnd;
 
 /**
- *
+ *  Provides the old version of the live-frame, where every "button" is drawn
+ *  from scratch.  Some might like this better than the qslivegrid.
  */
 
 class qsliveframe final : public qslivebase

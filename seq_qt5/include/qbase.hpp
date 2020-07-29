@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-07-22
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  Provides a abstract base class so that both the old and the new Qt
@@ -96,12 +96,6 @@ private:
     mutable bool m_is_dirty;
 
     /**
-     *  Indicates only that the user-interface needs to be updated.
-     */
-
-    mutable bool m_needs_update;
-
-    /**
      *  All ready to go.  This variable is to be used to keep from setting dirty
      *  status over and over while initializing the user-interface... which
      *  calls paintEvent() over and over.
@@ -157,20 +151,6 @@ protected:
 
 public:
 
-    bool check_dirty () const
-    {
-        bool result = m_is_dirty;
-        m_is_dirty = false;
-        return result;
-    }
-
-    bool check_needs_update () const
-    {
-        bool result = m_needs_update;
-        m_needs_update = false;
-        return result;
-    }
-
     void set_initialized (bool flag = true) const
     {
         m_is_initialized = flag;
@@ -188,6 +168,13 @@ public:
 
 public:
 
+    virtual bool check_dirty () const
+    {
+        bool result = m_is_dirty;
+        m_is_dirty = false;
+        return result;
+    }
+
     virtual bool change_ppqn (int ppqn) = 0;
 
     virtual bool change_bpm (midibpm /*bpm*/)
@@ -198,7 +185,6 @@ public:
     virtual bool zoom_in ();
     virtual bool zoom_out ();
     virtual bool set_zoom (int z);
-    virtual bool needs_update () const;
 
     virtual bool change_zoom (bool in)
     {
@@ -232,12 +218,6 @@ public:
     virtual void set_dirty ()
     {
         m_is_dirty = true;
-        perf().modify();
-    }
-
-    virtual void set_needs_update ()
-    {
-        m_needs_update = true;
     }
 
 protected:

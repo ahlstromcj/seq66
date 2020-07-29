@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -151,10 +151,10 @@ qmutemaster::qmutemaster
     ui->m_mute_basename->setPlainText(rc().mute_group_filename().c_str());
     ui->m_mute_basename->setEnabled(false);
 
-    cb_perf().enregister(this);            /* register this for notifications  */
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with sets                   */
     handle_group(0, 0);                 /* guaranteed to be present         */
+    cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));

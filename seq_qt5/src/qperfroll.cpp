@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-28
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -110,7 +110,11 @@ qperfroll::qperfroll
     m_font.setPointSize(6);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
-    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
+    QObject::connect
+    (
+        m_timer, SIGNAL(timeout()),
+        this, SLOT(conditional_update())
+    );
     m_timer->start();
 }
 
@@ -130,7 +134,7 @@ qperfroll::~qperfroll ()
 void
 qperfroll::conditional_update ()
 {
-    if (check_needs_update() || perf().needs_update())
+    if (perf().needs_update() || check_dirty())
     {
         if (perf().follow_progress())
             follow_progress();              /* keep up with progress    */
@@ -368,7 +372,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 half_split_trigger(m_drop_sequence, m_drop_tick);
         }
     }
-    set_needs_update();                 /* force a redraw                   */
+    set_dirty();                                    /* force a redraw       */
 }
 
 /**
@@ -408,7 +412,7 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
     clear_action_flags();
     mBoxSelect = false;
     mLastTick = 0;
-    set_needs_update();                 /* force a redraw                   */
+    set_dirty();                                    /* force a redraw       */
 }
 
 /**
@@ -516,7 +520,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
             }
         }
     }
-    else if (mBoxSelect)                    // box selection
+    else if (mBoxSelect)
     {
         current_x(event->x());
         current_y(event->y());
@@ -524,7 +528,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         convert_xy(0, current_y(), tick, m_drop_sequence);
     }
     mLastTick = tick;
-    set_needs_update();                 /* force a redraw                   */
+    set_dirty();                                    /* force a redraw       */
 }
 
 /**
@@ -637,7 +641,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     }
     if (handled)
     {
-        m_parent_frame->set_needs_update();
+        m_parent_frame->set_dirty();
         if (dirty)
             set_dirty();
     }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -88,7 +88,7 @@ qseqframe::qseqframe
     m_seqdata               (nullptr),
     m_seqevent              (nullptr)
 {
-    // perf().enregister(this);
+    // No code needed
 }
 
 /**
@@ -97,7 +97,7 @@ qseqframe::qseqframe
 
 qseqframe::~qseqframe ()
 {
-    // perf().unregister(this);
+    // No code needed
 }
 
 /**
@@ -122,9 +122,9 @@ qseqframe::repitch_selected ()
 }
 
 /**
- *  Sets the zoom parameter, z.  If valid, then the m_zoom member is set.
- *  The new setting is passed to the roll, time, data, and event panels
- *  [which each call their own set_dirty() functions].
+ *  Sets the horizontal (time) zoom parameter, z.  If valid, then the m_zoom
+ *  member is set.  The new setting is passed to the roll, time, data, and
+ *  event panels [which each call their own set_dirty() functions].
  *
  * \param z
  *      The desired zoom value, which is checked for validity.

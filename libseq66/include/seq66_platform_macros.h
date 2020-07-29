@@ -14,7 +14,7 @@
  * \updates       2020-07-11
  * \license       GNU GPLv2 or above
  *
- *  Copyright (C) 2013-2019 Chris Ahlstrom <ahlstromcj@gmail.com>
+ *  Copyright (C) 2013-2020 Chris Ahlstrom <ahlstromcj@gmail.com>
  *
  *  We need a uniform way to specify OS and compiler features without
  *  littering the code with macros from disparate compilers.  Put all

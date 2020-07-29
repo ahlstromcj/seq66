@@ -454,7 +454,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         toggle_thru(usr().new_pattern_thru());
 
     update_midi_buttons();
-    perf().enregister(this);                /* register for notifications   */
+    cb_perf().enregister(this);
     m_timer = new QTimer(this);
     m_timer->setInterval(2 * usr().window_redraw_rate());
     QObject::connect
@@ -471,7 +471,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
 qseqeditframe::~qseqeditframe ()
 {
     m_timer->stop();
-    perf().unregister(this);                /* unregister this immediately  */
+    cb_perf().unregister(this);
     delete ui;
 }
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-26
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -97,13 +97,13 @@ qstriggereditor::~qstriggereditor ()
 
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
- *  update() only if necessary.  See qseqbase::needs_update().
+ *  update() only if necessary.  See qseqbase::check_dirty().
  */
 
 void
 qstriggereditor::conditional_update ()
 {
-    if (check_needs_update())
+    if (perf().needs_update() || check_dirty())
         update();
 }
 
