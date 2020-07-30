@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-29
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -891,10 +891,11 @@ public:
 
     void enregister (callbacks * pfcb);             /* for notifications    */
     void unregister (callbacks * pfcb);
-    void notify_sequence_change (seq::number seqno);
-    void notify_ui_change (seq::number seqno);
-    void notify_trigger_change (seq::number seqno);
-    void notify_resolution_change (int ppqn, midibpm bpm);
+    void notify_set_change (screenset::number setno, bool mod = true);
+    void notify_sequence_change (seq::number seqno, bool mod = true);
+    void notify_ui_change (seq::number seqno, bool mod = true);
+    void notify_trigger_change (seq::number seqno, bool mod = true);
+    void notify_resolution_change (int ppqn, midibpm bpm, bool mod = true);
 
     bool error_pending () const
     {
@@ -2322,19 +2323,19 @@ public:
         m_needs_update = flag;
     }
 
-    bool slots_function (screenset::slothandler p)
+    bool slot_function (screenset::slothandler p)
     {
-        return mapper().slots_function(p);
+        return mapper().slot_function(p);
     }
 
-    bool sets_function (screenset::sethandler s)
+    bool set_function (screenset::sethandler s)
     {
-        return mapper().sets_function(s);
+        return mapper().set_function(s);
     }
 
-    bool sets_function (screenset::sethandler s, screenset::slothandler p)
+    bool set_function (screenset::sethandler s, screenset::slothandler p)
     {
-        return mapper().sets_function(s, p);
+        return mapper().set_function(s, p);
     }
 
     screenset::number set_playing_screenset (screenset::number setno);

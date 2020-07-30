@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-10-02
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -386,11 +386,11 @@ setmapper::add_sequence (sequence * s, int seqno)
 }
 
 /**
- *
+ *  For each screenset that exists, execute a set-handler function.
  */
 
 bool
-setmapper::sets_function (screenset::sethandler s)
+setmapper::set_function (screenset::sethandler s)
 {
     bool result = false;
     screenset::number index = 0;
@@ -398,7 +398,7 @@ setmapper::sets_function (screenset::sethandler s)
     {
         if (sset.second.usable())
         {
-            result = sset.second.sets_function(s, index++);
+            result = sset.second.set_function(s, index++);
             if (! result)
                 break;
         }
@@ -407,18 +407,38 @@ setmapper::sets_function (screenset::sethandler s)
 }
 
 /**
- *
+ *  Runs a set-handler and a slot-handler for each set.
  */
 
 bool
-setmapper::sets_function (screenset::sethandler s, screenset::slothandler p)
+setmapper::set_function (screenset::sethandler s, screenset::slothandler p)
 {
     bool result = false;
     for (auto & sset : m_container)                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
-            result = sset.second.sets_function(s, p);
+            result = sset.second.set_function(s, p);
+            if (! result)
+                break;
+        }
+    }
+    return result;
+}
+
+/**
+ *  Runs only a slot-handler for each slot (pattern) in each set.
+ */
+
+bool
+setmapper::set_function (screenset::slothandler p)
+{
+    bool result = false;
+    for (auto & sset : m_container)                 /* screenset reference  */
+    {
+        if (sset.second.usable())
+        {
+            result = sset.second.slot_function( p);
             if (! result)
                 break;
         }
@@ -589,7 +609,8 @@ setmapper::remove_sequence (int seqno)
 
 /**
  *  Does a brute-force lookup of the given set number, obtained by
- *  screenset::set_number().
+ *  screenset::set_number().  We must use the long form of the for loop here,
+ *  as far as we can tell.
  */
 
 setmapper::container::iterator
@@ -609,9 +630,10 @@ setmapper::find_by_value (screenset::number setno)
 
 /**
  * \tricky
- *      For use in the qsetmaster set-list, we need to look up the iterator to a
- *      set by value, not by key, because after the first swap there is no
- *      longer a correspondence between the key and the actual set-number value.
+ *      For use in the qsetmaster set-list, we need to look up the iterator to
+ *      a set by value, not by key, because after the first swap there is no
+ *      longer a correspondence between the key and the actual set-number
+ *      value.
  */
 
 bool

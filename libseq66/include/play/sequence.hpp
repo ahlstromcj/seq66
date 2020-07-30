@@ -468,8 +468,8 @@ private:
 
     /**
      *  The "m_dirty"  flags indicate that the content of the sequence has
-     *  changed due to recording, editing, performance management, or even (?) a
-     *  name change.  They all start out as "true" in the sequence constructor.
+     *  changed due to recording, editing, performance management, or a name
+     *  change.  They all start out as "true" in the sequence constructor.
      *
      *      -   The function sequence::set_dirty_mp() sets all but the "dirty
      *          edit" flag to true. It is set when modifying the BPM,

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-09-07
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -579,13 +579,21 @@ private:
         return false;
     }
 
-    bool slots_function (screenset::slothandler p)
-    {
-        return play_screen()->slots_function(p);
-    }
+    /*
+     * set_function(s) executes a set-handler for each set.
+     * set_function(s,p) runs a set-handler and a slot-handler for each set.
+     * set_function(p) runs the slot-handler for all patterns in all sets.
+     * slot_function(p) runs the slot-handler for the play-screen patterns.
+     */
 
-    bool sets_function (screenset::sethandler s);
-    bool sets_function (screenset::sethandler s, screenset::slothandler p);
+    bool set_function (screenset::sethandler s);
+    bool set_function (screenset::sethandler s, screenset::slothandler p);
+    bool set_function (screenset::slothandler p);
+
+    bool slot_function (screenset::slothandler p)
+    {
+        return play_screen()->slot_function(p);
+    }
 
     void set_last_ticks (midipulse tick)
     {

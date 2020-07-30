@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-01-01
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -720,14 +720,13 @@ qsliveframe::draw_slot (seq::number sn)
 }
 
 /**
- *
  *      m_last_tick_x[s] = 0;
  */
 
 void
 qsliveframe::draw_sequences ()
 {
-    (void) perf().slots_function(m_slot_function);
+    (void) perf().slot_function(m_slot_function);
 }
 
 /**

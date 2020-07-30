@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-28
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -256,7 +256,7 @@ qsetmaster::initialize_table ()
                 std::placeholders::_1, std::placeholders::_2
             )
         );
-        (void) cb_perf().sets_function(setfunc);
+        (void) cb_perf().set_function(setfunc);
     }
     return result;
 }

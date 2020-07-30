@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-29
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -459,17 +459,33 @@ performer::unregister (callbacks * pfcb)
 }
 
 /**
+ *
+ */
+
+void
+performer::notify_set_change (screenset::number setno, bool mod)
+{
+    for (auto notify : m_notify)
+        (void) notify->on_set_change(setno);
+
+    if (mod)
+        modify();                        // only if not load-modification
+}
+
+/**
  *  Called by qseqeventframe.  This function will eventually cause a call to
  *  recreate all the slot buttons in qslivegrid, and when qslivegrid ::
  *  refresh() is called, it can find all the buttons deleted.
  */
 
 void
-performer::notify_sequence_change (seq::number seqno)
+performer::notify_sequence_change (seq::number seqno, bool mod)
 {
-    modify();
     for (auto notify : m_notify)
         (void) notify->on_sequence_change(seqno);
+
+    if (mod)
+        modify();
 }
 
 /**
@@ -477,7 +493,7 @@ performer::notify_sequence_change (seq::number seqno)
  */
 
 void
-performer::notify_ui_change (seq::number seqno)
+performer::notify_ui_change (seq::number seqno, bool /*mod*/)
 {
     for (auto notify : m_notify)
         (void) notify->on_ui_change(seqno);
@@ -488,21 +504,28 @@ performer::notify_ui_change (seq::number seqno)
  */
 
 void
-performer::notify_trigger_change (seq::number seqno)
+performer::notify_trigger_change (seq::number seqno, bool mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_trigger_change(seqno);
+
+    if (mod)
+        modify();
 }
 
 /**
- *
+ *  Allows notification of changes in the PPQN and tempo (beats-per-minute,
+ *  BPM).
  */
 
 void
-performer::notify_resolution_change (int ppqn, midibpm bpm)
+performer::notify_resolution_change (int ppqn, midibpm bpm, bool mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_resolution_change(ppqn, bpm);
+
+    if (mod)
+        modify();
 }
 
 /*
@@ -1281,9 +1304,7 @@ performer::set_screenset_notepad
     bool changed = mapper().name(sn, notepad);
     if (changed)
     {
-        for (auto notify : m_notify)
-            (void) notify->on_set_change(sn);
-
+        notify_set_change(sn);
         if (! is_load_modification)
             modify();
     }
@@ -1569,8 +1590,7 @@ performer::set_playing_screenset (screenset::number setno)
         announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set);
-        for (auto notify : m_notify)
-            (void) notify->on_set_change(setno);
+        notify_set_change(setno);
     }
     return mapper().playscreen_number();
 }
@@ -1587,11 +1607,8 @@ performer::remove_set (screenset::number setno)
 {
     bool result = mapper().remove_set(setno);
     if (result)
-    {
-        modify();
-        for (auto notify : m_notify)
-            (void) notify->on_set_change(setno);
-    }
+        notify_set_change(setno);
+
     return result;
 }
 
@@ -1866,7 +1883,7 @@ performer::announce_playscreen ()
             &performer::announce_sequence, this,
             std::placeholders::_1, std::placeholders::_2
         );
-        slots_function(sh);
+        slot_function(sh);
         m_master_bus->flush();
     }
 }
@@ -1893,7 +1910,14 @@ performer::announce_exit ()
 }
 
 /**
+ * \param s
+ *      Provides the pointer to the sequence.
  *
+ * \param sn
+ *      Provides the sequence number to be used.  This item is normally used
+ *      to assign a sequence number to a new sequence in a
+ *      screenset::slothandler function, but here it is overwritten with the
+ *      existing number of the sequence.
  */
 
 bool
@@ -1927,6 +1951,39 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     }
     return result;
 }
+
+#ifdef USE_THIS_ESOTERICA
+
+bool
+performer::xxxxxx (seq::pointer s, seq::number /*sn*/)
+{
+    bool result = not_nullptr(s);
+    if (result)
+    {
+        s->set_beats_per_bar(bm);
+        s->set_measures(s->get_measures());
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+void
+performer::set_beats_per_measure (int bm)
+{
+    perf().set_beats_per_bar(bm);
+
+    screenset::slothandler sh = std::bind
+    (
+        &performer::announce_sequence, this,
+        std::placeholders::_1, std::placeholders::_2
+    );
+    mapper().set_function(sh);      /* run on all slots in all sets */
+}
+
+#endif
 
 /**
  *  Creates the output thread using output_thread_func().  This might be a
@@ -2217,8 +2274,7 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
     {
         seq::number seqno = s->seq_number();
         s->set_name(name);
-        modify();
-        notify_sequence_change(seqno);
+        notify_sequence_change(seqno);  /* also modify()'s              */
         set_needs_update();             /* tell GUIs to refresh. FIXME  */
     }
     return result;
@@ -3679,7 +3735,8 @@ performer::add_trigger (seq::number seqno, midipulse tick)
         tick -= tick % seqlength;
         push_trigger_undo(seqno);
         s->add_trigger(tick, seqlength);
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 
@@ -3701,7 +3758,8 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->delete_trigger(tick);
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 
@@ -3733,7 +3791,8 @@ performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
             midipulse seqlength = s->get_length();
             s->add_trigger(tick, seqlength);
         }
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 
@@ -3759,7 +3818,8 @@ performer::split_trigger (seq::number seqno, midipulse tick)
 #else
         s->split_trigger(tick);
 #endif
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 
@@ -3781,7 +3841,8 @@ performer::paste_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->paste_trigger(tick);
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 
@@ -3808,7 +3869,8 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         else
             s->paste_trigger(tick);
 
-        modify();       // notify_sequence_change(seqno) too problematic
+        // modify();       // notify_sequence_change(seqno) too problematic
+        notify_trigger_change(seqno);
     }
 }
 

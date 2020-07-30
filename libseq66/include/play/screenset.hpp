@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-09-07
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -89,8 +89,8 @@ public:
     /**
      *  Provides a type alias for a function that can be called on all
      *  sequences in a set.  A caller will create this function and pass it to
-     *  the slots_function() function.  The value for the seq::number parameter
-     *  is provided by slots_function(). See qseqeditframe64 ::
+     *  the slot_function() function.  The value for the seq::number parameter
+     *  is provided by slot_function(). See qseqeditframe64 ::
      *  popup_sequence_menu() for an example of the std::bind() call for this
      *  kind of function.
      */
@@ -100,7 +100,7 @@ public:
     /**
      *  Provides a type alias for a function that can be called on all slots in
      *  a set.  A caller will create this function and pass it to the
-     *  sets_function() function. See qseqeditframe64 :: popup_sequence_menu()
+     *  set_function() function. See qseqeditframe64 :: popup_sequence_menu()
      *  for an example of the std::bind() call for this kind of function.
      */
 
@@ -378,13 +378,19 @@ public:
     bool seq_to_grid (seq::number seqno, int & row, int & column) const;
     bool needs_update () const;
 
-    bool sets_function (sethandler s, screenset::number index)
+    /*
+     * set_function(s, index) runs a set-handler with the two arguments.
+     * set_function(s, p) runs a set-handler, then calls slot_function().
+     * slot_function(p) runs a slot-handler for all slots in this set.
+     */
+
+    bool set_function (sethandler s, screenset::number index)
     {
         return s(*this, index);
     }
 
-    bool sets_function (sethandler s, slothandler p);
-    bool slots_function (slothandler p);
+    bool set_function (sethandler s, slothandler p);
+    bool slot_function (slothandler p);
 
 private:
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2019-12-15
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -497,7 +497,7 @@ screenset::armed (seq::number seqno, bool flag)
  */
 
 bool
-screenset::slots_function (slothandler p)
+screenset::slot_function (slothandler p)
 {
     bool result = false;
     seq::number sn = m_set_offset;
@@ -511,16 +511,19 @@ screenset::slots_function (slothandler p)
 }
 
 /**
- *  Run a function on each set, and another function on each sequence in each
- *  set.
+ *  Run one function on this set, and another function on each sequence in
+ *  this set.
+ *
+ *  -   sethandler:  bool (screenset &, screenset::number)
+ *  -   slothandler: bool (seq::pointer, seq::number)
  */
 
 bool
-screenset::sets_function (sethandler s, slothandler p)
+screenset::set_function (sethandler s, slothandler p)
 {
     bool result = s(*this, 0);          /* handle the set, index not used   */
     if (result)
-        result = slots_function(p);     /* handle slots/sequences in set    */
+        result = slot_function(p);      /* handle slots/sequences in set    */
 
     return result;
 }

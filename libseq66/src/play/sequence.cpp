@@ -283,7 +283,8 @@ sequence::partial_assign (const sequence & rhs)
             p = 0;
 
         m_last_tick = 0;                            /* reset to tick 0      */
-        verify_and_link();
+        verify_and_link();                          /* NoteOn <---> NoteOff */
+        modify();                                   /* ca 2020-07-30        */
     }
 }
 
@@ -315,8 +316,8 @@ sequence::color (int c)
 }
 
 /**
- * If empty, sets the color to classic Sequencer64 yellow.  Called by performer
- * when installing a sequence.
+ * If empty, sets the color to classic Sequencer64 yellow.  Called by
+ * performer when installing a sequence.
  */
 
 void

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2169,28 +2169,35 @@ qsmainwnd::update_beat_length (int blindex)
 }
 
 /**
+ *  Sets the beats-per-measure for the beat indicator and the performer.
+ *  Also sets the beat length for all sequences, and
+ *  resets the number of measures, causing length to adjust to new b/m.
  *
- *  Also set beat length for all sequences.
- *  Reset number of measures, causing length to adjust to new b/m.
+ * \param bmindex
+ *      Provides the index into the list of beats.  This number is one less
+ *      than the actual beats-per-measure represent by that index.
  */
 
 void
-qsmainwnd::update_beats_per_measure(int bmindex)
+qsmainwnd::update_beats_per_measure (int bmindex)
 {
     int bm = bmindex + 1;
     if (not_nullptr(m_beat_ind))
         m_beat_ind->beats_per_measure(bm);
 
-    perf().set_beats_per_bar(bmindex + 1);
+#ifdef USE_THIS_ESOTERICA
+#else
+    perf().set_beats_per_bar(bm);
     for (int i = 0; i < c_max_sequence; ++i)
     {
         seq::pointer seq = perf().get_sequence(i);
         if (seq)
         {
-            seq->set_beats_per_bar(bmindex + 1);
+            seq->set_beats_per_bar(bm);
             seq->set_measures(seq->get_measures());
         }
     }
+#endif
     if (not_nullptr(m_edit_frame))
         m_edit_frame->update_draw_geometry();
 }
