@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-27
+ * \updates       2020-07-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -925,6 +925,7 @@ public:
     void modify ()
     {
         m_is_modified = true;
+        m_needs_update = true;          // kind of iffy
     }
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
@@ -2801,7 +2802,7 @@ private:
 
     void unmodify ()
     {
-        m_is_modified = false;
+        m_is_modified = false;                  /* m_needs_update = false;  */
     }
 
 private:

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-29
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -211,6 +211,10 @@ sequence::~sequence ()
  *  performance.  Probably not practical, in general.  We will probably keep
  *  track of the modification of the buss (port) and channel numbers, as per
  *  GitHub Issue #47.
+ *
+ *  Note that now we don't call performer::modify(), now we call its
+ *  notification function for sequence-changes, which notifies all subscribers
+ *  and also calls modify().
  */
 
 void
@@ -218,7 +222,7 @@ sequence::modify ()
 {
     set_dirty();
     if (not_nullptr(m_parent))
-        m_parent->modify();
+        m_parent->notify_sequence_change(seq_number()); /* m_parent->modify() */
 }
 
 /**
@@ -988,12 +992,17 @@ sequence::link_new ()
     m_events.link_new();
 }
 
+#if defined USE_SEQUENCE_REMOVE_EVENTS
+
+/*
+ * These functions are currently not used.  Might as well save some space-time.
+ */
+
 /**
  *  A helper function, which does not lock/unlock, so it is unsafe to call
- *  without supplying an iterator from the event-list.  We no longer
- *  bother checking the pointer.  If it is bad, all hope is lost.
- *  If the event is a note off, and that note is currently playing, then send
- *  a note off before removing the note.
+ *  without supplying an iterator from the event-list.  If the event is a note
+ *  off, and that note is currently playing, then send a note off before
+ *  removing the note.
  *
  * \threadunsafe
  *
@@ -1012,8 +1021,8 @@ sequence::remove (event::buffer::iterator evi)
             master_bus()->play(m_bus, &er, m_midi_channel);
             --m_playing_notes[er.get_note()];                   // ugh
         }
-        (void) m_events.remove(evi);
-        modify();
+        if (m_events.remove(evi))
+            modify();
     }
 }
 
@@ -1041,6 +1050,21 @@ sequence::remove (event & e)
     if (m_events.remove_event(e))
         modify();
 }
+
+/**
+ *  Clears all events from the event container.  Unsets the modified flag.
+ *  (Why?) Also see the new copy_events() function.
+ */
+
+void
+sequence::remove_all ()
+{
+    automutex locker(m_mutex);
+    m_events.clear();
+    m_events.unmodify();
+}
+
+#endif  // defined USE_SEQUENCE_REMOVE_EVENTS
 
 /**
  *  Removes marked events.  Before removing the events, any Note Ons are turned
@@ -2665,11 +2689,18 @@ sequence::check_loop_reset ()
  *
  *  If MIDI Thru is enabled, the event is also put on the buss.
  *
- *  This function supports rejecting events if their channel doesn't match that
+ *  This function supports rejecting events if the channel doesn't match that
  *  of the sequence.  We do it here for comprehensive event support.  Also make
  *  sure the event-channel is preserved before this function is called, and also
  *  need to make sure that the channel is appended on both playback and in
  *  saving of the MIDI file.
+ *
+ *  If in overwrite loop-record mode, any events after reset should clear the
+ *  old items from the previous pass through the loop.
+ *
+ * \todo
+ *      If the last event was a Note Off, we should clear it here, and
+ *      how?
  *
  *  The m_rec_vol member includes the "Free" menu entry in seqedit, which sets
  *  the velocity to SEQ66_PRESERVE_VELOCITY (-1).
@@ -2697,19 +2728,10 @@ sequence::stream_event (event & ev)
     bool result = channels_match(ev);           /* set if channel matches   */
     if (result)
     {
-        /**
-         * If in overwrite loop-record mode, any events after reset should
-         * clear the old items from the previous pass through the loop.
-         *
-         * \todo
-         *      If the last event was a Note Off, we should clear it here, and
-         *      how?
-         */
-
         if (overwriting() && loop_reset())
         {
             loop_reset(false);
-            remove_all();                       /* clear old items          */
+            m_events.clear();                   /* vice remove_all()        */
             set_dirty();
         }
         ev.set_status(ev.get_status());         /* clear the channel nybble */
@@ -4132,19 +4154,6 @@ sequence::next_trigger (trigger & trig)
 {
     trig = m_triggers.next();
     return trig.is_valid();
-}
-
-/**
- *  Clears all events from the event container.  Unsets the modified flag.
- *  (Why?) Also see the new copy_events() function.
- */
-
-void
-sequence::remove_all ()
-{
-    automutex locker(m_mutex);
-    m_events.clear();
-    m_events.unmodify();
 }
 
 /**

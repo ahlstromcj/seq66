@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-07-29
+ * \updates       2020-07-30
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1456,8 +1456,6 @@ public:
     bool randomize_selected_notes (int jitter = 8, int range = 8);
     void adjust_data_handle (midibyte status, int data);
     bool mark_selected ();
-    bool remove_selected ();
-    bool remove_marked ();                      /* a forwarding function */
     void unpaint_all ();
     void unselect ();
     void verify_and_link ();
@@ -1597,6 +1595,9 @@ public:
 
 public:
 
+    bool remove_selected ();
+    bool remove_marked ();                      /* a forwarding function */
+
     static int loop_record (recordstyle r)
     {
         return static_cast<int>(r);
@@ -1651,9 +1652,12 @@ private:
     void set_trigger_offset (midipulse trigger_offset);
     void adjust_trigger_offsets_to_length (midipulse newlen);
     midipulse adjust_offset (midipulse offset);
+
+#if defined USE_SEQUENCE_REMOVE_EVENTS
     void remove (event::buffer::iterator i);
     void remove (event & e);
     void remove_all ();
+#endif
 
     /**
      *  Checks to see if the event's channel matches the sequence's nominal

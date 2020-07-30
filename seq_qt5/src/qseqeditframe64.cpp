@@ -3243,12 +3243,10 @@ qseqeditframe64::set_dirty ()
 {
     if (is_initialized())
     {
-        // seq::number seqno = seq_pointer()->seq_number();
-        // perf().notify_sequence_change(seqno);   // FIXME
         qseqframe::set_dirty();         // roll, time, date & event panes
-        // m_seqroll->set_redraw();        // also calls set_dirty();
-        // m_seqdata->set_dirty();         // doesn't cause a refresh
-        // m_seqevent->set_dirty();        // how about this?
+        m_seqroll->set_redraw();        // also calls set_dirty();
+        m_seqdata->set_dirty();         // doesn't cause a refresh
+        m_seqevent->set_dirty();        // how about this?
     }
     update_draw_geometry();
 }
