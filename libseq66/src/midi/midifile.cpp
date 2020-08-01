@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-25
+ * \updates       2020-07-31
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -787,9 +787,6 @@ midifile::add_trigger (sequence & seq, midishort ppqn)
     midilong offset = read_long();
     if (ppqn > 0 && m_use_scaled_ppqn)
     {
-//      on *= m_ppqn / ppqn;
-//      off *= m_ppqn / ppqn;
-//      offset *= m_ppqn / ppqn;
         on = rescale_tick(on, ppqn, m_ppqn);        /* old PPQN, new PPQN   */
         off = rescale_tick(off, ppqn, m_ppqn);
         offset = rescale_tick(offset, ppqn, m_ppqn);
@@ -901,12 +898,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     }
     else
         m_use_scaled_ppqn = file_ppqn() > 0;        /* redundant?           */
-
-    /*
-     * Call performer::change_ppqn() after parsing, instead:
-     *
-     * p.set_ppqn(ppqn());
-     */
 
     for (midishort track = 0; track < NumTracks; ++track)
     {
@@ -3074,7 +3065,14 @@ read_midi_file
                 ppqn = f->ppqn();               /* get & return file PPQN   */
                 usr().file_ppqn(ppqn);          /* save the value from file */
             }
-            p.change_ppqn(choose_ppqn(ppqn));   /* set chosen PPQN for MIDI */
+            /*
+             * We don't use this call because we're not changing PPQN, we are
+             * setting it.
+             *
+             *      p.change_ppqn(choose_ppqn(ppqn));
+             */
+
+            p.set_ppqn(choose_ppqn(ppqn));      /* set chosen PPQN for MIDI */
             rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */
             rc().add_recent_file(fn);           /* Oli Kester's Kepler34!   */

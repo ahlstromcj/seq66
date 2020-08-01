@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-30
+ * \updates       2020-07-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2182,24 +2182,14 @@ void
 qsmainwnd::update_beats_per_measure (int bmindex)
 {
     int bm = bmindex + 1;
-    if (not_nullptr(m_beat_ind))
-        m_beat_ind->beats_per_measure(bm);
-
-#ifdef USE_THIS_ESOTERICA
-#else
-    perf().set_beats_per_bar(bm);
-    for (int i = 0; i < c_max_sequence; ++i)
+    if (perf().set_beats_per_measure(bm))
     {
-        seq::pointer seq = perf().get_sequence(i);
-        if (seq)
-        {
-            seq->set_beats_per_bar(bm);
-            seq->set_measures(seq->get_measures());
-        }
+        if (not_nullptr(m_beat_ind))
+            m_beat_ind->beats_per_measure(bm);
+
+        if (not_nullptr(m_edit_frame))
+            m_edit_frame->update_draw_geometry();
     }
-#endif
-    if (not_nullptr(m_edit_frame))
-        m_edit_frame->update_draw_geometry();
 }
 
 /**

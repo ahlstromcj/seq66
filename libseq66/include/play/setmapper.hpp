@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-30
+ * \updates       2020-07-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -1024,6 +1024,11 @@ private:
     const mutegroups & mutes () const
     {
         return m_mute_groups;
+    }
+
+    container & set_container ()        /* meant only for performer */
+    {
+        return m_container;
     }
 
 };              // class setmapper

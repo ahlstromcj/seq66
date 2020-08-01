@@ -80,6 +80,7 @@ namespace seq66
 
 class seq
 {
+    friend class performer;         /* provisional */
     friend class screenset;
     friend class setmapper;
 
@@ -94,8 +95,8 @@ public:
     using number = int;
 
     /**
-     *  Provides public access to the shared pointer for a sequence.  No more raw
-     *  pointers!  It cannot be a unique_ptr<> because m_seq needs to be
+     *  Provides public access to the shared pointer for a sequence.  No more
+     *  raw pointers!  It cannot be a unique_ptr<> because m_seq needs to be
      *  returned to callers.
      */
 

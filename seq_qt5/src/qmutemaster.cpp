@@ -540,14 +540,13 @@ qmutemaster::slot_up ()
 
 /**
  *  This function handles one of the mute buttons in the grid of group buttons.
+ *
+ *  Do we need to "unmodify" here?
  */
 
 void
 qmutemaster::handle_group (int row, int column)
 {
-    // mutegroup::number setno = cb_perf().calculate_mute(row, column);
-    // handle_group(setno);
-
     if (modify())
     {
         midibooleans mutes = cb_perf().get_mutes(current_group());
@@ -567,7 +566,7 @@ qmutemaster::handle_group (int row, int column)
 }
 
 /**
- * USELESS
+ *
  */
 
 void

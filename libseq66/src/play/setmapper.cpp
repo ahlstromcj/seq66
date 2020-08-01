@@ -438,7 +438,7 @@ setmapper::set_function (screenset::slothandler p)
     {
         if (sset.second.usable())
         {
-            result = sset.second.slot_function( p);
+            result = sset.second.slot_function(p);
             if (! result)
                 break;
         }
@@ -1170,7 +1170,7 @@ setmapper::select_and_mute_group (mutegroup::number group)
 
 /**
  *  Clears all the group-mute items, whether they came from the "rc" file
- *  or from the most recently-loaded Sequencer64 MIDI file.
+ *  or from the most recently-loaded Seq66 MIDI file.
  *
  * \sideeffect
  *      If true is returned, the modify flag is set, so that the user has the
@@ -1186,9 +1186,8 @@ setmapper::clear_mutes ()
 {
     bool result = false;
     if (m_mute_groups.clear())
-    {
-        result = true;          // performer SHOULD CALL modify();
-    }
+        result = true;
+
     return result;
 }
 

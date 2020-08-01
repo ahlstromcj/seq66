@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-07-30
+ * \updates       2020-08-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -278,6 +278,18 @@ public:
         rewind  = -1,
         none    =  0,
         forward =  1
+    };
+
+    /**
+     *  A visible representation of whether to "modify" the tune.  Some changes
+     *  do not require the tune to be saved before closing.
+     */
+
+    enum class change
+    {
+        no,
+        yes,
+        undo
     };
 
 private:
@@ -891,11 +903,15 @@ public:
 
     void enregister (callbacks * pfcb);             /* for notifications    */
     void unregister (callbacks * pfcb);
-    void notify_set_change (screenset::number setno, bool mod = true);
-    void notify_sequence_change (seq::number seqno, bool mod = true);
-    void notify_ui_change (seq::number seqno, bool mod = true);
-    void notify_trigger_change (seq::number seqno, bool mod = true);
-    void notify_resolution_change (int ppqn, midibpm bpm, bool mod = true);
+    void notify_set_change (screenset::number setno, change mod = change::yes);
+    void notify_mutes_change (screenset::number setno, change mod = change::yes);
+    void notify_sequence_change (seq::number seqno, change mod = change::yes);
+    void notify_ui_change (seq::number seqno, change mod = change::yes);
+    void notify_trigger_change (seq::number seqno, change mod = change::yes);
+    void notify_resolution_change
+    (
+        int ppqn, midibpm bpm, change mod = change::yes
+    );
 
     bool error_pending () const
     {
@@ -1232,6 +1248,8 @@ public:
         m_jack_asst.set_beats_per_measure(bpm);
 #endif
     }
+
+    bool set_beats_per_measure (int bpm);
 
     int get_beat_width () const
     {
@@ -1641,11 +1659,7 @@ public:
     bool move_sequence (seq::number seq);
     bool finish_move (seq::number seq);
     bool remove_set (screenset::number setno);
-
-    bool swap_sets (seq::number set0, seq::number set1)
-    {
-        return mapper().swap_sets(set0, set1);
-    }
+    bool swap_sets (seq::number set0, seq::number set1);
 
     bool is_seq_in_edit (int seq) const
     {
@@ -2018,16 +2032,12 @@ public:
     }
 
     bool set_mutes (mutegroup::number gmute, const midibooleans & bits);
-    void clear_mutes ();
+    bool learn_mutes (mutegroup::number group);
+    bool clear_mutes ();
 
     bool apply_mutes (mutegroup::number group)
     {
         return mapper().apply_mutes(group);
-    }
-
-    bool learn_mutes (mutegroup::number group)
-    {
-        return mapper().learn_mutes(true, group);   /* true == learn */
     }
 
     midibpm decrement_beats_per_minute ();

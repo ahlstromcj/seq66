@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-07-30
+ * \updates       2020-08-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -270,6 +270,23 @@
  *      -#  After ending, we get the latest settings from the performer, and
  *          copy them into the "global" rc().
  *      -#  The options are then written.
+ *
+ * Modify action:
+ *
+ *      A modify action is any change that would require the current MIDI tune
+ *      to be saved before closing the application or loading a new MIDI tune.
+ *      These actions include: a change in a song/pattern parameter setting;
+ *      modification of the triggers in the Song editor; a change in output buss
+ *      (though selection of the input buss is saved in the "rc" file); and
+ *      anything else? When they occur, performer :: modify() is called.
+ *
+ *      One issue with modification is that we don't have comprehensive tracking
+ *      of all "undo" operations, so that, once the modify flag is set, only
+ *      saving the MIDI tune will unset it.  See the calls to performer ::
+ *      unmodify().
+ *
+ *      Also note that some of the GUI windows have their own, unrelated,
+ *      modify() function.
  */
 
 #include <algorithm>                    /* std::find() for std::vector      */
@@ -463,13 +480,27 @@ performer::unregister (callbacks * pfcb)
  */
 
 void
-performer::notify_set_change (screenset::number setno, bool mod)
+performer::notify_set_change (screenset::number setno, change mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_set_change(setno);
 
-    if (mod)
-        modify();                        // only if not load-modification
+    if (mod == change::yes)
+        modify();
+}
+
+/**
+ *
+ */
+
+void
+performer::notify_mutes_change (mutegroup::number mutesno, change mod)
+{
+    for (auto notify : m_notify)
+        (void) notify->on_mutes_change(mutesno);
+
+    if (mod == change::yes)
+        modify();
 }
 
 /**
@@ -479,37 +510,38 @@ performer::notify_set_change (screenset::number setno, bool mod)
  */
 
 void
-performer::notify_sequence_change (seq::number seqno, bool mod)
+performer::notify_sequence_change (seq::number seqno, change mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_sequence_change(seqno);
 
-    if (mod)
+    if (mod == change::yes)
         modify();
 }
 
 /**
- *
+ *  This notification currently does not cause a modify action.
  */
 
 void
-performer::notify_ui_change (seq::number seqno, bool /*mod*/)
+performer::notify_ui_change (seq::number seqno, change /*mod*/)
 {
     for (auto notify : m_notify)
         (void) notify->on_ui_change(seqno);
 }
 
 /**
- *
+ *  This call is currently done only when adding, deleting, or modifying a
+ *  trigger.
  */
 
 void
-performer::notify_trigger_change (seq::number seqno, bool mod)
+performer::notify_trigger_change (seq::number seqno, change mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_trigger_change(seqno);
 
-    if (mod)
+    if (mod == change::yes)
         modify();
 }
 
@@ -519,12 +551,12 @@ performer::notify_trigger_change (seq::number seqno, bool mod)
  */
 
 void
-performer::notify_resolution_change (int ppqn, midibpm bpm, bool mod)
+performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
 {
     for (auto notify : m_notify)
         (void) notify->on_resolution_change(ppqn, bpm);
 
-    if (mod)
+    if (mod == change::yes)
         modify();
 }
 
@@ -665,7 +697,7 @@ performer::reload_mute_groups (std::string & errmessage)
 void
 performer::set_input_bus (bussbyte bus, bool active)
 {
-    if (bus < c_busscount_max)                      /* 32 busses max    */
+    if (bus < c_busscount_max)                          /* 32 busses max    */
     {
         if (m_master_bus->set_input(bus, active))
         {
@@ -691,8 +723,14 @@ performer::set_input_bus (bussbyte bus, bool active)
 void
 performer::set_clock_bus (bussbyte bus, e_clock clocktype)
 {
-    if (m_master_bus->set_clock(bus, clocktype))    /* checks bus index too */
-        set_clock(bus, clocktype);
+    if (bus < c_busscount_max)                          /* 32 busses max    */
+    {
+        if (m_master_bus->set_clock(bus, clocktype))    /* checks bus index */
+        {
+            set_clock(bus, clocktype);
+            mapper().set_dirty();
+        }
+    }
 }
 
 /*
@@ -1133,6 +1171,10 @@ performer::finish_move (seq::number seq)
  */
 
 /**
+ *  Sets the PPQN for the master buss, JACK assistant, and the performer.
+ *  Note that we do not set the modify flag or do notification notification
+ *  here.  See the change_ppqn() function instead.
+ *
  * \setter ppqn
  *      Also sets other related members.
  *
@@ -1170,7 +1212,10 @@ performer::set_ppqn (int p)
  *  Goes through all sets and sequences, updating the PPQN of the events and
  *  triggers.
  *
- *  Currently operates only on the current screenset.
+ *  Currently operates only on the current screenset.  We will fix this using a
+ *  lamdba function.
+ *
+ *  Note the it also, via notify_resolution_change(), sets the modify flag.
  */
 
 bool
@@ -1179,9 +1224,17 @@ performer::change_ppqn (int p)
     bool result = set_ppqn(p);                  /* performer & master bus   */
     if (result)
     {
-        for (auto seqi : m_play_set)
-            seqi->change_ppqn(p);
+        mapper().set_function
+        (
+            [p] (seq::pointer sp, seq::number /*sn*/)
+            {
+                bool result = bool(sp);
+                if (result)
+                    sp->change_ppqn(p);
 
+                return result;
+            }
+        );
         if (result)
             notify_resolution_change(get_ppqn(), get_beats_per_minute());
     }
@@ -1304,9 +1357,8 @@ performer::set_screenset_notepad
     bool changed = mapper().name(sn, notepad);
     if (changed)
     {
-        notify_set_change(sn);
-        if (! is_load_modification)
-            modify();
+        change mod = is_load_modification ? change::no : change::yes ;
+        notify_set_change(sn, mod);
     }
 }
 
@@ -1590,7 +1642,7 @@ performer::set_playing_screenset (screenset::number setno)
         announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set);
-        notify_set_change(setno);
+        notify_set_change(setno, change::no);
     }
     return mapper().playscreen_number();
 }
@@ -1609,6 +1661,23 @@ performer::remove_set (screenset::number setno)
     if (result)
         notify_set_change(setno);
 
+    return result;
+}
+
+/**
+ *  Swaps the sets, useful in moving sets around in the set-master (class
+ *  qsetmaster).
+ */
+
+bool
+performer::swap_sets (seq::number set0, seq::number set1)
+{
+    bool result = mapper().swap_sets(set0, set1);
+    if (result)
+    {
+        notify_set_change(set0);
+        notify_set_change(set1);
+    }
     return result;
 }
 
@@ -1842,9 +1911,7 @@ performer::launch (int ppqn)
     bool result = create_master_bus();  /* also calls set_port_statuses()   */
     if (result)
     {
-#if defined SEQ66_JACK_SUPPORT
-        init_jack_transport();
-#endif
+        (void) init_jack_transport();
         m_master_bus->init(ppqn, m_bpm);    /* calls api_init() per API     */
 
         bool ok = activate();
@@ -1952,38 +2019,35 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     return result;
 }
 
-#ifdef USE_THIS_ESOTERICA
+/**
+ *  Sets the beats per measure.
+ *
+ *  Note that a lambda function is used to make the changes.
+ */
 
 bool
-performer::xxxxxx (seq::pointer s, seq::number /*sn*/)
+performer::set_beats_per_measure (int bpm)
 {
-    bool result = not_nullptr(s);
+    bool result = bpm != m_beats_per_bar;
     if (result)
     {
-        s->set_beats_per_bar(bm);
-        s->set_measures(s->get_measures());
+        set_beats_per_bar(bpm);
+        mapper().set_function
+        (
+            [bpm] (seq::pointer sp, seq::number /*sn*/)
+            {
+                bool result = bool(sp);
+                if (result)
+                {
+                    sp->set_beats_per_bar(bpm);
+                    sp->set_measures(sp->get_measures());
+                }
+                return result;
+            }
+        );
     }
     return result;
 }
-
-/**
- *
- */
-
-void
-performer::set_beats_per_measure (int bm)
-{
-    perf().set_beats_per_bar(bm);
-
-    screenset::slothandler sh = std::bind
-    (
-        &performer::announce_sequence, this,
-        std::placeholders::_1, std::placeholders::_2
-    );
-    mapper().set_function(sh);      /* run on all slots in all sets */
-}
-
-#endif
 
 /**
  *  Creates the output thread using output_thread_func().  This might be a
@@ -2149,6 +2213,9 @@ performer::activate ()
  *  positioning (if applicable), calls the master bus's continue_from()
  *  function, and sets m_current_tick as well.
  *
+ *  For debugging: Display the tick values; normally this is too much
+ *  information.
+ *
  * \todo
  *      Do we really need m_current_tick???
  */
@@ -2156,13 +2223,7 @@ performer::activate ()
 void
 performer::set_tick (midipulse tick)
 {
-
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-
-    /*
-     * Display the tick values; normally this is too much information.
-     */
-
     static midipulse s_last_tick = 0;
     midipulse difference = tick - s_last_tick;
     if (difference > 100)
@@ -2173,8 +2234,7 @@ performer::set_tick (midipulse tick)
     }
     if (tick == 0)
         s_last_tick = 0;
-
-#endif  // SEQ66_PLATFORM_DEBUG_TMI
+#endif
 
     m_tick = m_current_tick = tick;
 }
@@ -2497,7 +2557,7 @@ performer::set_jack_mode (bool jack_button_active)
     if (! is_running())                         /* was global_is_running    */
     {
         if (jack_button_active)
-            init_jack_transport();
+            (void) init_jack_transport();
         else
             (void) deinit_jack_transport();
     }
@@ -3735,7 +3795,6 @@ performer::add_trigger (seq::number seqno, midipulse tick)
         tick -= tick % seqlength;
         push_trigger_undo(seqno);
         s->add_trigger(tick, seqlength);
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -3758,7 +3817,6 @@ performer::delete_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->delete_trigger(tick);
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -3791,7 +3849,6 @@ performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
             midipulse seqlength = s->get_length();
             s->add_trigger(tick, seqlength);
         }
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -3818,7 +3875,6 @@ performer::split_trigger (seq::number seqno, midipulse tick)
 #else
         s->split_trigger(tick);
 #endif
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -3841,7 +3897,6 @@ performer::paste_trigger (seq::number seqno, midipulse tick)
     {
         push_trigger_undo(seqno);
         s->paste_trigger(tick);
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -3869,7 +3924,6 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
         else
             s->paste_trigger(tick);
 
-        // modify();       // notify_sequence_change(seqno) too problematic
         notify_trigger_change(seqno);
     }
 }
@@ -4399,7 +4453,8 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
 }
 
 /**
- *  Changes the play-state of the given sequence.
+ *  Changes the play-state of the given sequence.  This does not cause a modify
+ *  action.
  *
  * \param seqno
  *      The number of the sequence to be turned on or off.
@@ -4413,7 +4468,7 @@ performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_controls().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
-    notify_trigger_change(seqno);
+    notify_trigger_change(seqno, change::no);
 }
 
 /*
@@ -4717,24 +4772,9 @@ performer::populate_default_ops ()
 }
 
 /**
- *
- */
-
-void
-performer::clear_mutes ()
-{
-    bool mutes_exist = m_mute_groups.any();
-    m_mute_groups.reset_defaults();         /* clears and adds all zeros    */
-    if (mutes_exist)
-    {
-        modify();
-        for (auto notify : m_notify)
-            (void) notify->on_mutes_change(mutegroup::unassigned());
-    }
-}
-
-/**
- *
+ *  Sets the given mute group.  If there is a change,  then the subscribers are
+ *  notified.  If the "rc" "save-mutes-to" setting indicates saving it to the
+ *  MIDI file, then this becomes a modify action.
  */
 
 bool
@@ -4747,14 +4787,49 @@ performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
         result = mapper().set_mutes(gmute, bits);
         if (result)
         {
-            modify();
-            for (auto notify : m_notify)
-                (void) notify->on_mutes_change(gmute);
+            change c = rc().mute_group_save_to_midi() ?
+                change::yes : change:: no ;
+
+            notify_mutes_change(mutegroup::unassigned(), c);
         }
     }
     return result;
 }
 
+/**
+ *  Clears the mute groups.  If there any to clear, then the subscribers are
+ *  notified.  If the "rc" "save-mutes-to" setting indicates saving it to the
+ *  MIDI file, then this becomes a modify action.
+ */
+
+bool
+performer::clear_mutes ()
+{
+    bool result = m_mute_groups.any();
+    m_mute_groups.reset_defaults();         /* clears and adds all zeros    */
+    if (result)
+    {
+        change c = rc().mute_group_save_to_midi() ? change::yes : change:: no ;
+        notify_mutes_change(mutegroup::unassigned(), c);
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+performer::learn_mutes (mutegroup::number group)
+{
+    bool result =  mapper().learn_mutes(true, group);   /* true == learn */
+    if (result)
+    {
+        change c = rc().mute_group_save_to_midi() ?  change::yes : change:: no ;
+        notify_mutes_change(group, c);
+    }
+    return result;
+}
 
 /*
  * -------------------------------------------------------------------------

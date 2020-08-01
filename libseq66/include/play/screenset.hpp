@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-30
+ * \updates       2020-07-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -75,6 +75,7 @@ namespace seq66
 
 class screenset
 {
+    friend class performer;         /* provisional */
     friend class setmapper;
 
 public:
@@ -470,6 +471,11 @@ private:
     bool color (seq::number seqno, int c);
     void set_seq_name (seq::number seqno, const std::string & name);
     bool name (const std::string & nm);
+
+    container & seq_container ()
+    {
+        return m_container;
+    }
 
     void is_playscreen (bool flag)
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-30
+ * \updates       2020-08-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -520,11 +520,11 @@ qsetmaster::move_helper (int oldrow, int newrow)
         {
             std::string snstring = c1->text().toStdString();
             int set1 = std::stoi(snstring);
-            if (cb_perf().swap_sets(set0, set1))
+            if (cb_perf().swap_sets(set0, set1))    /* a modify action      */
             {
-                (void) initialize_table();      /* refill with sets */
+                (void) initialize_table();          /* refill with sets     */
                 ui->m_set_table->selectRow(newrow);
-                cb_perf().modify();
+                set_needs_update();
             }
         }
     }
@@ -543,12 +543,6 @@ qsetmaster::slot_delete ()
         int row = current_row();                    /* last row clicked     */
         if (row >= 0 && row < rows)                 /* deleteable?          */
         {
-            /*
-             *  ui->m_set_table->removeRow(row);
-             *  m_current_row = -1;
-             *  cb_perf().modify();
-             */
-
             QTableWidgetItem * qtip = cell(row, column_id::set_number);
             if (not_nullptr(qtip))
             {

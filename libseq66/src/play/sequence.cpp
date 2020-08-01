@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-30
+ * \updates       2020-08-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4375,7 +4375,9 @@ sequence::extend (midipulse len)
 
 /**
  *  Notifies the parent performer's subscribers that the sequence has
- *  changed in some way not based on a trigger or action.
+ *  changed in some way not based on a trigger or action, and is hence a
+ *  modify action.  [The default change value is "yes" for performer ::
+ *  notify_sequence_change().]
  */
 
 void
@@ -4387,14 +4389,15 @@ sequence::notify_change ()
 
 /**
  *  Notifies the parent performer's subscribers that the sequence has
- *  changed state based on a trigger or action.
+ *  changed state based on a trigger or action.  This will not cause a modify
+ *  action.
  */
 
 void
 sequence::notify_trigger ()
 {
     if (not_nullptr(m_parent))
-        m_parent->notify_trigger_change(seq_number());
+        m_parent->notify_trigger_change(seq_number(), performer::change::no);
 }
 
 /**
