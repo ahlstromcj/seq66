@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-07-06
+ * \updates       2020-08-02
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -536,6 +536,21 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
     get_poll_descriptors();
 }
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+#define SHOW_EVENT 1
+
+static void
+s_show_event (snd_seq_event_t * ev, const char * tag)
+{
+    fprintf
+    (
+        stderr, "%s event 0x%x: client %d port %d\n",
+        tag, unsigned(ev->type), int(ev->source.client), int(ev->source.port)
+    );
+}
+
+#endif
+
 /**
  *  Grab a MIDI event.  First, a rather large buffer is allocated on the stack
  *  to hold the MIDI event data.  Next, if the --alsa-manual-ports option is
@@ -557,11 +572,22 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
  *
  * ALSA events:
  *
- *      -  SND_SEQ_EVENT_PORT_START
- *      -  SND_SEQ_EVENT_PORT_EXIT
- *      -  SND_SEQ_EVENT_PORT_CHANGE
- *      -  SND_SEQ_EVENT_PORT_SUBSCRIBED (not handled)
- *      -  SND_SEQ_EVENT_PORT_UNSUBSCRIBED (not handled)
+ *      The ALSA events are listed in the snd_seq_event_type enumeration in
+ *      /usr/lib/alsa/seq_event.h, where the "normal" MIDI events (from Note On
+ *      to Key Signature) have values ranging from 5 to almost 30.  But there are
+ *      some special ALSA events we need to handle in a different manner
+ *      (currently by ignoring them):
+ *
+ *      -  0x3c: SND_SEQ_EVENT_CLIENT_START
+ *      -  0x3d: SND_SEQ_EVENT_CLIENT_EXIT
+ *      -  0x3e: SND_SEQ_EVENT_CLIENT_CHANGE
+ *      -  0x3f: SND_SEQ_EVENT_PORT_START
+ *      -  0x40: SND_SEQ_EVENT_PORT_EXIT
+ *      -  0x41: SND_SEQ_EVENT_PORT_CHANGE
+ *      -  0x42: SND_SEQ_EVENT_PORT_SUBSCRIBED
+ *      -  0x43: SND_SEQ_EVENT_PORT_UNSUBSCRIBED
+ *
+ *  We will add more special events here as we find them.
  *
  * \todo
  *      Also, we need to consider using the new remcount return code to loop
@@ -593,6 +619,30 @@ midi_alsa_info::api_get_midi_event (event * inev)
     {
         switch (ev->type)
         {
+        case SND_SEQ_EVENT_CLIENT_START:
+
+            result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Client Start");
+#endif
+            break;
+
+        case SND_SEQ_EVENT_CLIENT_EXIT:
+
+            result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Client Exit");
+#endif
+            break;
+
+        case SND_SEQ_EVENT_CLIENT_CHANGE:
+
+            result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Client Change");
+#endif
+            break;
+
         case SND_SEQ_EVENT_PORT_START:
         {
             /*
@@ -605,6 +655,9 @@ midi_alsa_info::api_get_midi_event (event * inev)
              */
 
             result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Port Start");
+#endif
             break;
         }
         case SND_SEQ_EVENT_PORT_EXIT:
@@ -617,22 +670,47 @@ midi_alsa_info::api_get_midi_event (event * inev)
              */
 
             result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Port Exit");
+#endif
             break;
         }
         case SND_SEQ_EVENT_PORT_CHANGE:
         {
             result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Port Change");
+#endif
             break;
         }
+        case SND_SEQ_EVENT_PORT_SUBSCRIBED:
+
+            result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Port Subscribed");
+#endif
+            break;
+
+        case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
+
+            result = true;
+#if defined SHOW_EVENT
+            s_show_event(ev, "Port Unsubscribed");
+#endif
+            break;
+
         default:
+#if defined SHOW_EVENT
+            s_show_event(ev, "Other");
+#endif
             break;
         }
     }
     if (result)
         return false;
 
-    midibyte buffer[0x1000];                        /* 4096 buffer for data */
-    snd_midi_event_t * midi_ev;                     /* make ALSA MIDI parser */
+    midibyte buffer[0x1000];                    /* 4096 buffer for data     */
+    snd_midi_event_t * midi_ev;                 /* make ALSA MIDI parser    */
     int rc = snd_midi_event_new(sizeof buffer, &midi_ev);
     if (rc < 0 || is_nullptr(midi_ev))
     {
@@ -650,6 +728,12 @@ midi_alsa_info::api_get_midi_event (event * inev)
     long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev);
     if (bytes > 0)
     {
+#if defined SHOW_EVENT
+        for (int i = 0; i < int(bytes); ++i)
+        {
+            fprintf(stderr, "byte[%d] = 0x%x\n", i, unsigned(buffer[i]));
+        }
+#endif
         result = inev->set_midi_event(ev->time.tick, buffer, bytes);
         if (result)
         {
@@ -681,6 +765,9 @@ midi_alsa_info::api_get_midi_event (event * inev)
          */
 
         snd_midi_event_free(midi_ev);
+#if defined SHOW_EVENT
+        errprintf("snd_midi_event_decode() returned %ld", bytes);
+#endif
         return false;
     }
 }

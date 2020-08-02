@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2020-07-06
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -256,7 +256,7 @@ midibase::set_name
             snprintf
             (
                 name, sizeof name, "[%d] %d:%d %s:%s",
-                get_bus_index(), get_bus_id(), get_port_id(),
+                bus_index(), bus_id(), port_id(),
                 appname.c_str(), portname.c_str()
             );
             bus_name(appname);
@@ -268,7 +268,7 @@ midibase::set_name
         /*
          * See banner.
          *
-         * Old: std::string bname = usr().bus_name(get_port_id());
+         * Old: std::string bname = usr().bus_name(port_id());
          */
 
         char alias[80];                                     /* was 128  */
@@ -295,7 +295,7 @@ midibase::set_name
         snprintf                            /* copy the client name parts */
         (
             name, sizeof name, "[%d] %d:%d %s",
-            get_bus_index(), get_bus_id(), get_port_id(), alias
+            bus_index(), bus_id(), port_id(), alias
         );
     }
     display_name(name);
@@ -354,7 +354,7 @@ midibase::set_alt_name
         snprintf                            /* copy the client name parts */
         (
             alias, sizeof alias, "[%d] %d:%d %s:%s",
-            get_bus_index(), get_bus_id(), get_port_id(),
+            bus_index(), bus_id(), port_id(),
             bname.c_str(), pname.c_str()
         );
         bus_name(bname);
@@ -423,7 +423,7 @@ midibase::set_multi_name
         snprintf                            /* copy the client name parts */
         (
             alias, sizeof alias, "[%d] %d:%d %s:%s",
-            get_bus_index(), get_bus_id(), get_port_id(),
+            bus_index(), bus_id(), port_id(),
             bus_name().c_str(), port_name().c_str()
         );
         display_name(alias);

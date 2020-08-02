@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          midibus.cpp
+ * \file          midibus_impl.cpp (rtmidi)
  *
  *  This module declares/defines the base class for MIDI I/O under one of
  *  the rtmidi frameworks.
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2019-02-10
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -97,7 +97,7 @@ midibus_impl::midibus_impl
         rt.get_bus_name(index),
         rt.get_port_name(index),
         index,
-        bussoverride != SEQ66_NO_BUS ? bussoverride : rt.get_bus_id(index),
+        bussoverride != SEQ66_NO_BUS ? bussoverride : rt.bus_id(index),
         index,
         rt.global_queue(),
         rt.ppqn(), rt.bpm(),
@@ -118,7 +118,7 @@ midibus_impl::midibus_impl
          * number.
          */
 
-        if (get_bus_id() == SEQ66_NO_BUS)
+        if (bus_id() == SEQ66_NO_BUS)
             set_bus_id(0);
 
         if (port_name().empty())
@@ -126,7 +126,7 @@ midibus_impl::midibus_impl
             std::string pname = rc().application_name();
             pname += " midi ";
             pname += isinput ? "in " : "out ";
-            pname += std::to_string(get_port_id());
+            pname += std::to_string(port_id());
             port_name(pname);
         }
     }
@@ -134,11 +134,11 @@ midibus_impl::midibus_impl
     int portcount = rt.get_port_count();
     if (index < portcount)
     {
-        int id = rt.get_port_id(index);
+        int id = rt.port_id(index);
         if (id >= 0)
             set_port_id(id);
 
-        id = rt.get_bus_id(index);
+        id = rt.bus_id(index);
         if (id >= 0)
             set_bus_id(id);
 

@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          midibus.cpp
+ * \file          midibus.cpp (rtmidi)
  *
  *  This module declares/defines the base class for MIDI I/O under one of
  *  the rtmidi frameworks.
@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2019-02-10
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -118,7 +118,7 @@ midibus::midibus
          * number.
          */
 
-        if (get_bus_id() == SEQ66_NO_BUS)
+        if (bus_id() == SEQ66_NO_BUS)
             set_bus_id(0);
 
         if (port_name().empty())
@@ -126,7 +126,7 @@ midibus::midibus
             std::string pname = rc().application_name();
             pname += " midi ";
             pname += isinput ? "in " : "out ";
-            pname += std::to_string(get_port_id());
+            pname += std::to_string(port_id());
             port_name(pname);
         }
     }
@@ -443,7 +443,7 @@ midibus::api_clock (midipulse tick)
 }           // namespace seq66
 
 /*
- * midibus.cpp
+ * midibus.cpp (rtmidi)
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-07-06
+ * \updates       2020-08-02
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -656,11 +656,11 @@ bool
 midi_jack::api_init_out_sub ()
 {
     master_midi_mode(SEQ66_MIDI_OUTPUT_PORT);    /* this is necessary */
-    int portid = parent_bus().get_port_id();
+    int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
     {
-        portid = get_bus_index();
+        portid = bus_index();
         result = portid >= 0;
     }
     if (result)
@@ -695,16 +695,16 @@ bool
 midi_jack::api_init_in_sub ()
 {
     master_midi_mode(SEQ66_MIDI_INPUT_PORT);
-    int portid = parent_bus().get_port_id();
+    int portid = parent_bus().port_id();
     bool result = portid >= 0;
     if (! result)
     {
-        portid = get_bus_index();
+        portid = bus_index();
         result = portid >= 0;
     }
     if (result)
     {
-        std::string portname = master_info().get_port_name(get_bus_index());
+        std::string portname = master_info().get_port_name(bus_index());
         std::string portname2 = parent_bus().port_name();
         if (portname.empty())
         {
@@ -1019,8 +1019,8 @@ midi_jack::api_get_port_name ()
  *  Is UUID an output-only, input-only option, or both?
  *
 \verbatim
-    const char * name = master_info().get_bus_name(get_bus_index()).c_str();
-    const char * name = master_info().get_port_name(get_bus_index()).c_str();
+    const char * name = master_info().get_bus_name(bus_index()).c_str();
+    const char * name = master_info().get_port_name(bus_index()).c_str();
 \endverbatim
  *
  * \param input
@@ -1102,8 +1102,8 @@ midi_jack::close_client ()
         client_handle(nullptr);
         if (rc != 0)
         {
-            int index = get_bus_index();
-            int id = parent_bus().get_port_id();
+            int index = bus_index();
+            int id = parent_bus().port_id();
             m_error_string = "JACK closing port #";
             m_error_string += std::to_string(index);
             m_error_string += " (id ";

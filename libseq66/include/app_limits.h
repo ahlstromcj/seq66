@@ -220,10 +220,12 @@
 /**
  *  Flags an unspecified buss number.  Two spellings are provided, one for
  *  youngsters and one for old men.  :-D
+ *
+ *  Also note that the bussbyte type is an unsigned character. The
+ *  midibytes.hpp file defines c_bussbyte_max as the "no bus" value, 0xFF.
  */
 
-#define SEQ66_NO_BUS                    (-1)
-#define SEQ66_NO_BUSS                   (-1)
+#define SEQ66_NO_BUS                    (0xFF)
 #define SEQ66_BAD_BUS_ID                (unsigned(-1))
 
 /**

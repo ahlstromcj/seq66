@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2019-04-17
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -257,7 +257,20 @@ public:
     int poll_for_midi ();
     bool set_sequence_input (bool state, sequence * seq);
     bool is_more_input ();
-    bool get_midi_event (event * in);
+
+    /**
+     *  Grab a MIDI event via the currently-selected MIDI API.
+     *  No locking, so we make it an inline function.
+     *
+     * \param ev
+     *      The event to be set based on the found input event.
+     */
+
+    bool get_midi_event (event * in)
+    {
+        return api_get_midi_event(in);
+    }
+
     bool set_clock (bussbyte bus, e_clock clock_type);
     bool set_input (bussbyte bus, bool inputing);
     bool get_input (bussbyte bus);

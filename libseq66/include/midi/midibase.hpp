@@ -257,17 +257,17 @@ public:
 
     std::string connect_name () const;
 
-    int get_bus_index () const
+    int bus_index () const
     {
         return m_bus_index;
     }
 
-    int get_bus_id () const
+    int bus_id () const
     {
         return m_bus_id;
     }
 
-    int get_port_id () const
+    int port_id () const
     {
         return m_port_id;
     }

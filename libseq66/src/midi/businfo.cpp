@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2019-01-28
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -514,8 +514,8 @@ busarray::get_midi_bus_name (int bus)
                 snprintf
                 (
                     tmp, sizeof tmp, "[%d] %d:%d %s",
-                    bus, bi.bus()->get_bus_id(),
-                    bi.bus()->get_port_id(), portname.c_str()
+                    bus, bi.bus()->bus_id(),
+                    bi.bus()->port_id(), portname.c_str()
                 );
                 result = tmp;
             }
@@ -723,7 +723,12 @@ busarray::get_midi_event (event * inev)
     for (auto & bi : m_container)               /* vector of businfo copies */
     {
         if (bi.bus()->get_midi_event(inev))
+        {
+            bussbyte b = bussbyte(bi.bus()->bus_index());
+            inev->set_input_bus(b);
+            printf("event in on buss %d\n", int(b));
             return true;
+        }
     }
     return false;
 }

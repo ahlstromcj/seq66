@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-07-06
+ * \updates       2020-08-01
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -220,6 +220,13 @@ private:
      */
 
     bool m_load_midi_controls;
+
+    /**
+     *  Provides a way to pick which input buss will be used as the MIDI
+     *  controller device.
+     */
+
+    bussbyte m_midi_control_buss;
 
     /**
      *  Holds all of the MIDI controls stanzas, even one that are inactive.
@@ -493,6 +500,11 @@ public:
     bool load_midi_controls () const
     {
         return m_load_midi_controls;
+    }
+
+    bussbyte midi_control_buss () const
+    {
+        return m_midi_control_buss;
     }
 
     const midicontrolin & midi_controls () const
@@ -859,6 +871,11 @@ protected:
     void load_midi_controls (bool flag)
     {
         m_load_midi_controls = flag;
+    }
+
+    void midi_control_buss (bussbyte b)
+    {
+        m_midi_control_buss = b;     // TODO: VALIDATE
     }
 
     void show_ui_sequence_key (bool flag)

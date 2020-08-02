@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-23
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -330,6 +330,15 @@ public:
 private:
 
     /**
+     *  EXPERIMENTAL.
+     *
+     *  Indicates the input buss on which this event came in.  The default value
+     *  is unusable: c_bussbyte_max from the midibytes.hpp module.
+     */
+
+    bussbyte m_input_buss;
+
+    /**
      *  Provides the MIDI timestamp in ticks, otherwise known as the "pulses"
      *  in "pulses per quarter note" (PPQN).
      */
@@ -439,6 +448,17 @@ public:
      */
 
     bool operator < (const event & rhsevent) const;
+
+    void set_input_bus (bussbyte b)
+    {
+        if (b > 0 && b < c_bussbyte_max)
+            m_input_buss = b;
+    }
+
+    bussbyte input_bus () const
+    {
+        return m_input_buss;
+    }
 
     void set_timestamp (midipulse time)
     {

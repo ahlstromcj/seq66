@@ -3117,7 +3117,7 @@ performer::output_func ()
  *      data to control the sequencer, if it is valid for that action.
  *
  *      "Dumping" is set when a seqedit window is open and the user has
- *      clicked the "record MIDI" or "thru MIDI" button.  In this case, if the
+ *      clicked the "record MIDI" or "thru MIDI" button.  In this case, if
  *      seq32 support is in force, dump to it, else stream the event, with
  *      possibly multiple sequences set.  Otherwise, handle an incoming MIDI
  *      control event.
@@ -3180,7 +3180,7 @@ performer::poll_cycle ()
                     {
                         if (midi_control_event(ev, true))   /* quick check  */
                         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG
                             std::string estr = to_string(ev);
                             infoprintf("MIDI ctrl event %s", estr);
 #endif
@@ -3188,7 +3188,7 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG
                             ev.print_note();
 #endif
                             if (rc().show_midi())

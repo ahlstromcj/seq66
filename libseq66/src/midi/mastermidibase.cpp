@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2019-07-06
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -703,19 +703,6 @@ mastermidibase::port_exit (int client, int port)
     automutex locker(m_mutex);
     m_outbus_array.port_exit(client, port);
     m_inbus_array.port_exit(client, port);
-}
-
-/**
- *  Grab a MIDI event via the currently-selected MIDI API.
- *
- * \param ev
- *      The event to be set based on the found input event.
- */
-
-bool
-mastermidibase::get_midi_event (event * ev)
-{
-    return api_get_midi_event(ev);
 }
 
 /**

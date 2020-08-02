@@ -84,6 +84,7 @@ rcsettings::rcsettings () :
     m_load_key_controls         (true),
     m_keycontainer              ("rc"),
     m_load_midi_controls        (true),
+    m_midi_control_buss         (c_bussbyte_max),
     m_midi_control_in           ("rc"),
     m_midi_control_out          (),
     m_show_ui_sequence_key      (true),
@@ -163,7 +164,8 @@ rcsettings::rcsettings (const rcsettings & rhs) :
     m_load_key_controls         (rhs.m_load_key_controls),
     m_keycontainer              (rhs.m_keycontainer),
     m_load_midi_controls        (rhs.m_load_midi_controls),
-    m_midi_control_in             (rhs.m_midi_control_in),
+    m_midi_control_buss         (rhs.m_midi_control_buss),
+    m_midi_control_in           (rhs.m_midi_control_in),
     m_midi_control_out          (rhs.m_midi_control_out),
     m_show_ui_sequence_key      (rhs.m_show_ui_sequence_key),
     m_show_ui_sequence_number   (rhs.m_show_ui_sequence_number),
@@ -233,7 +235,8 @@ rcsettings::operator = (const rcsettings & rhs)
         m_load_key_controls         = rhs.m_load_key_controls;
         m_keycontainer              = rhs.m_keycontainer;
         m_load_midi_controls        = rhs.m_load_midi_controls;
-        m_midi_control_in             = rhs.m_midi_control_in;
+        m_midi_control_buss         = rhs.m_midi_control_buss;
+        m_midi_control_in           = rhs.m_midi_control_in;
         m_midi_control_out          = rhs.m_midi_control_out;
         m_show_ui_sequence_key      = rhs.m_show_ui_sequence_key;
         m_show_ui_sequence_number   = rhs.m_show_ui_sequence_number;
@@ -305,9 +308,10 @@ rcsettings::set_defaults ()
      */
 
     m_load_midi_controls        = true;
+    m_midi_control_buss         = c_bussbyte_max;
 
     /*
-     * m_midi_control_in.clear();             // what is best?
+     * m_midi_control_in.clear();           // what is best?
      * m_midi_control_out.clear();          // does not exist
      */
 

@@ -176,7 +176,7 @@ public:
 
     virtual int get_bus_id ()
     {
-        return get_api()->get_bus_id();
+        return get_api()->bus_id();
     }
 
     /**
@@ -196,7 +196,7 @@ public:
 
     virtual int get_port_id ()
     {
-        return get_api()->get_port_id();
+        return get_api()->port_id();
     }
 
     /**

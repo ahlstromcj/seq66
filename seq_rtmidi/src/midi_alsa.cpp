@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2020-06-09
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -138,8 +138,8 @@ midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo)
     (
         reinterpret_cast<snd_seq_t *>(masterinfo.midi_handle())
     ),
-    m_dest_addr_client  (parentbus.get_bus_id()),
-    m_dest_addr_port    (parentbus.get_port_id()),
+    m_dest_addr_client  (parentbus.bus_id()),
+    m_dest_addr_port    (parentbus.port_id()),
     m_local_addr_client (snd_seq_client_id(m_seq)),     /* our client ID    */
     m_local_addr_port   (-1),
     m_input_port_name   (rc().app_client_name() + " in")

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-07-07
+ * \updates       2020-08-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -212,6 +212,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     s = get_variable(file, "[midi-control-flags]", "load-midi-controls");
     rc_ref().load_midi_controls(string_to_bool(s));
 
+    s = get_variable(file, "[midi-control-flags]", "control-buss");
+    rc_ref().midi_control_buss(bussbyte(string_to_int(s)));
+
     bool loadmidi = rc_ref().load_midi_controls();
     bool loadkeys = rc_ref().load_key_controls();
     if (loadkeys)
@@ -324,31 +327,32 @@ bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
     bool result = true;
-    if (line_after(file, "[midi-control-out]"))
+    std::string s = get_variable
+    (
+        file, "[midi-control-out-settings]", "set-size"
+    );
+
+    int sequences = string_to_int(s, SEQ66_DEFAULT_SET_SIZE);
+    s = get_variable
+    (
+        file, "[midi-control-out-settings]", "buss"
+    );
+
+    int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
+    s = get_variable
+    (
+        file, "[midi-control-out-settings]", "enabled"
+    );
+
+    bool enabled = string_to_bool(s);
+    if (enabled && line_after(file, "[midi-control-out]"))
     {
-        std::string s = get_variable
-        (
-            file, "[midi-control-out-settings]", "set-size"
-        );
-        int sequences = string_to_int(s, SEQ66_DEFAULT_SET_SIZE);
-        s = get_variable
-        (
-            file, "[midi-control-out-settings]", "buss"
-        );
-
-        int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
-        s = get_variable
-        (
-            file, "[midi-control-out-settings]", "enabled"
-        );
-
         /*
          * Set up the default-constructed midicontrolout object with its buss,
          * setsize, and enabled values.  Then read in the control-out data.
          * The performer sets the masterbus later on.
          */
 
-        bool enabled = string_to_bool(s);
         midicontrolout & mctrl = rc_ref().midi_control_out();
         mctrl.initialize(sequences, buss);
         mctrl.is_enabled(enabled);
@@ -604,10 +608,15 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     {
         std::string k(bool_to_string(rc_ref().load_key_controls()));
         std::string m(bool_to_string(rc_ref().load_midi_controls()));
+        std::string b(std::to_string(bussbyte(rc_ref().midi_control_buss())));
         file
-            << "\n[midi-control-flags]\n\n"
+            <<
+        "\n[midi-control-flags]\n\n"
+        "# Note that setting 'load-midi-control' to 'false' will cause an\n"
+        "# empty MIDI control setup to be written!  Keep backups!\n\n"
             << "load-key-controls = " << k << "\n"
-            << "load-midi-control = " << m << "\n"
+            << "load-midi-controls = " << m << "\n"
+            << "control-buss = " << b << "\n"
             ;
 
         file <<

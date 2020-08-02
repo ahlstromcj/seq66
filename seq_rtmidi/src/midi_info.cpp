@@ -123,8 +123,8 @@ midi_port_info::add (const midibus * m)
 {
     add
     (
-        m->get_bus_id(), m->bus_name(),
-        m->get_port_id(), m->port_name(),
+        m->bus_id(), m->bus_name(),
+        m->port_id(), m->port_name(),
         m->is_virtual_port(), m->queue_number(),
         m->is_system_port(), m->is_input_port()
     );

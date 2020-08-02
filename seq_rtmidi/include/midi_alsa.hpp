@@ -119,20 +119,10 @@ public:
     midi_alsa (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_alsa ();
 
-    /**
-     * \getter m_dest_addr_client
-     *      The address of client.  Can we replace it with get_client_id()?
-     */
-
     virtual int get_client () const
     {
         return m_dest_addr_client;
     }
-
-    /**
-     * \getter m_dest_addr_port
-     *      Can we replace it with get_port_id()?
-     */
 
     virtual int get_port () const
     {
