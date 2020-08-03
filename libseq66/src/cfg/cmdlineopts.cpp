@@ -755,15 +755,6 @@ cmdlineopts::parse_mute_groups
 {
     bool result = true;
     std::string rcn = rc().config_filespec();
-
-    /*
-     * The caller must make these calls, at the appropriate time, which is
-     * before any parsing of the command-line options.
-     *
-     * seq66::rc().set_defaults();     // start out with normal values
-     * seq66::usr().set_defaults();    // ditto
-     */
-
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rcs);
@@ -854,22 +845,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'D':                           /* --legacy-record option       */
             rc().filter_by_channel(false);
-
-            /*
-             * Call perform::get_settings() instead.
-             *
-             * p.filter_by_channel(false);
-             */
             break;
 
         case 'd':                           /* --record-by-channel option   */
             rc().filter_by_channel(true);
-
-            /*
-             * Call perform::get_settings() instead.
-             *
-             * p.filter_by_channel(true);
-             */
             break;
 
         case 'F':                           /* --usr option                 */

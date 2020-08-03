@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-02
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -537,12 +537,12 @@ public:
 
     /**
      *  Checks for a Realtime Category status, which ignores running status.
-     *  Ranges from 0xF8 to 0xFF.
+     *  Ranges from 0xF8 to 0xFF,  and m <= EVENT_MIDI_RESET is always true.
      */
 
     static bool is_realtime (midibyte m)
     {
-        return m >= EVENT_MIDI_CLOCK;   // && m <= EVENT_MIDI_RESET always true
+        return m >= EVENT_MIDI_CLOCK;
     }
 
     /**
@@ -902,6 +902,20 @@ public:
     }
 
     /**
+     *  Two alternative getters for the data bytes.  Useful for one-offs.
+     */
+
+    midibyte d0 () const
+    {
+        return m_data[0];
+    }
+
+    midibyte d1 () const
+    {
+        return m_data[1];
+    }
+
+    /**
      *  Increments the first data byte (m_data[0]) and clears the most
      *  significant bit.
      */
@@ -1250,7 +1264,7 @@ public:
 
     bool is_one_byte () const
     {
-        return is_one_byte_msg(m_status);   // && 0xF0);
+        return is_one_byte_msg(m_status);
     }
 
     /**
@@ -1261,7 +1275,7 @@ public:
 
     bool is_two_bytes () const
     {
-        return is_two_byte_msg(m_status);   // && 0xF0);
+        return is_two_byte_msg(m_status);
     }
 
     /**

@@ -137,11 +137,6 @@ mutegroupsfile::parse_stream (std::ifstream & file)
         rc_ref().mute_groups().group_format_hex(usehex);
     }
 
-    /*
-     * TODO: see if we want a flag similar to rcsettings::load_midi_controls()
-     *       for mute groups.
-     */
-
     bool good = line_after(file, "[mute-groups]");
     rc_ref().mute_groups().clear();
     while (good)                        /* not at end of section?   */

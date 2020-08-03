@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-01
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -431,8 +431,14 @@ private:
 public:
 
     rcsettings ();
+
+#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
     rcsettings (const rcsettings & rhs);
     rcsettings & operator = (const rcsettings & rhs);
+#else
+    rcsettings (const rcsettings & rhs) = default;
+    rcsettings & operator = (const rcsettings & rhs) = default;
+#endif
     virtual ~rcsettings () = default;
 
     std::string make_config_filespec
@@ -497,7 +503,7 @@ public:
         return m_keycontainer;
     }
 
-    bool load_midi_controls () const
+    bool load_midi_control_in () const
     {
         return m_load_midi_controls;
     }
@@ -507,12 +513,12 @@ public:
         return m_midi_control_buss;
     }
 
-    const midicontrolin & midi_controls () const
+    const midicontrolin & midi_control_in () const
     {
         return m_midi_control_in;
     }
 
-    midicontrolin & midi_controls ()
+    midicontrolin & midi_control_in ()
     {
         return m_midi_control_in;
     }
@@ -868,7 +874,7 @@ protected:
         m_load_key_controls = flag;
     }
 
-    void load_midi_controls (bool flag)
+    void load_midi_control_in (bool flag)
     {
         m_load_midi_controls = flag;
     }

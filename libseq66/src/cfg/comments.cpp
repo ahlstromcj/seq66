@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
- * \updates       2018-11-26
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -40,22 +40,25 @@ namespace seq66
 {
 
 /**
- *  Default constructor.
+ *  Default constructor.  Here, we do not use the set() function.  Makes
+ *  debugging what caller's are doing with set() a little easier.
  */
 
 comments::comments (const std::string & comtext) :
-    m_comments_block    (comtext)
+    m_comments_block    (comtext),
+    m_comment_is_set    (false)
 {
     if (comtext.empty())
     {
-        set
-        (
-    "(Comments added to this section are preserved.  Lines starting with\n"
-    " a '#' or '[', or that are blank, are ignored.  Start lines that must\n"
-    " be blank with a space.)\n"
-        );
+        m_comments_block =
+        "Comments added to this section are preserved.  Lines starting with\n"
+        "a '#' or '[', or that are blank, are ignored.  Start lines that must\n"
+        "look empty with a space.\n"
+        ;
     }
 }
+
+#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
 
 /**
  *  Copy constructor.
@@ -88,6 +91,30 @@ comments::operator = (const comments & rhs)
         m_comments_block = rhs.m_comments_block;
     }
     return *this;
+}
+
+#endif // USE_COPY_ASSIGNMENT
+
+/**
+ *
+ */
+
+void
+comments::clear ()
+{
+    m_comments_block.clear();
+    m_comment_is_set = false;
+}
+
+/**
+ *
+ */
+
+void
+comments::set (const std::string & block)
+{
+    m_comments_block = block;
+    m_comment_is_set = ! m_comments_block.empty();
 }
 
 }           // namespace seq66

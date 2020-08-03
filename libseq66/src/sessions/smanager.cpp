@@ -222,7 +222,7 @@ smanager::create_performer ()
         if (ok && rc().verbose())                   /* for trouble-shoots   */
         {
             rc().key_controls().show();
-            rc().midi_controls().show();
+            rc().midi_control_in().show();
             rc().mute_groups().show();
         }
         result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-14
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.seq66rc </code> or <code> ~/.config/seq66.rc
@@ -187,7 +187,10 @@ optionsfile::merge_key
 )
 {
     std::string kn = seq66::gdk_key_name(key);
-    bool result = rc_ref().midi_controls().merge_key(opcat, kn, int(slotnumber));
+    bool result = rc_ref().midi_control_in().merge_key
+    (
+        opcat, kn, int(slotnumber)
+    );
     if (! result)
     {
 #if defined USE_WHICHEVER_IS_BETTER

@@ -149,6 +149,8 @@ rcsettings::rcsettings () :
 
 }
 
+#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
+
 /**
  *  Copy constructor.
  *
@@ -287,6 +289,8 @@ rcsettings::operator = (const rcsettings & rhs)
     }
     return *this;
 }
+
+#endif  // USE_EXPLICIT_COPY_ASSIGNMENT
 
 /**
  *  Sets the default values.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
- * \updates       2018-11-26
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -60,46 +60,40 @@ private:
 
     std::string m_comments_block;
 
+    /**
+     *  Indicates if some caller called the set() function.
+     */
+
+    bool m_comment_is_set;
+
 public:
 
     comments (const std::string & comtext = "");
+
+#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
     comments (const comments & rhs);
     comments & operator = (const comments & rhs);
-
-    /**
-     * \getter m_comments_block
-     */
+#else
+    comments (const comments & rhs) = default;
+    comments & operator = (const comments & rhs) = default;
+#endif
 
     const std::string & text () const
     {
         return m_comments_block;
     }
 
-    /**
-     * \setter m_comments_block
-     */
-
-    void clear ()
-    {
-        m_comments_block.clear();
-    }
-
-    /**
-     * \setter m_comments_block
-     */
-
-    void set (const std::string & block)
-    {
-        m_comments_block = block;
-    }
-
-    /**
-     * \setter m_comments_block
-     */
+    void clear ();
+    void set (const std::string & block);
 
     void append (const std::string & line)
     {
         m_comments_block += line;
+    }
+
+    bool is_set () const
+    {
+        return m_comment_is_set;
     }
 
 };          // class comments

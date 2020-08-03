@@ -1,0 +1,42 @@
+Quick Reference for Launchpad Mini
+Chris Ahlstrom
+2020-08-03 to 2020-08-03
+
+Some of this information was adopted from the PDF file
+launchpad-programmers-reference.pdf. That document notes that a Launchpad
+message is 3 bytes, and is of type Note Off (80h), Note On (90h), or a
+controller change (B0h).  However, on our Mini, we do not receive not offs
+(in ALSA)... we receive Note Ons with velocity 0.
+
+The Launchpad Mini has a top row of circular buttons numbered from 1 to 8.
+The next 8 rows start with 8 unlabeled square buttons with a circular button on
+the right, labelled with letters A through H.
+
+The top row emits 0xB0 ## 0x7f on press, and 0xB0 ## 0x00 on release, where:
+
+    0xB0    Control Change on channel 0 (i.e. channel 1).
+    ##      Ranges from 0x68 (104) to 0x6f (111) which are in the range of
+            undefined MIDI controllers.
+
+The other buttons issue 0x90 ## 0x7f on press, and 0x90 ## 0x0 on release,
+where:
+
+    0x90    Note On message on channel 0 (i.e. channel 1).
+    ##      The hex value of the note, as shown by the two-digit hex values
+            shown below.
+
+ (1)   (2)   (3)   (4)   (5)   (6)   (7)   (8)
+
+[00h] [01h] [02h] [03h] [04h] [05h] [06h] [07h]     (A) : 08h
+[11h] [11h] [12h] [13h] [14h] [15h] [16h] [17h]     (B) : 18h
+[22h] [21h] [22h] [23h] [24h] [25h] [26h] [27h]     (C) : 28h
+[33h] [31h] [32h] [33h] [34h] [35h] [36h] [37h]     (D) : 38h
+[44h] [41h] [42h] [43h] [44h] [45h] [46h] [47h]     (E) : 48h
+[55h] [51h] [52h] [53h] [54h] [55h] [56h] [57h]     (F) : 58h
+[66h] [61h] [62h] [63h] [64h] [65h] [66h] [67h]     (G) : 68h
+[77h] [71h] [72h] [73h] [74h] [75h] [76h] [77h]     (H) : 78h
+
+Not yet described:  the Drum Rack key layout.
+
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

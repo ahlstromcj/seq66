@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-01
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -1843,7 +1843,7 @@ public:
 
     bool is_keep_queue () const
     {
-        return midi_controls().is_keep_queue();
+        return midi_control_in().is_keep_queue();
     }
 
     /*
@@ -2761,12 +2761,12 @@ public:                                 /* access functions for the containers *
         return m_key_controls.mute_key(mute_number);
     }
 
-    const midicontrolin & midi_controls () const
+    const midicontrolin & midi_control_in () const
     {
         return m_midi_control_in;
     }
 
-    midicontrolin & midi_controls ()
+    midicontrolin & midi_control_in ()
     {
         return m_midi_control_in;
     }

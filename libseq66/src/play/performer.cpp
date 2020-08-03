@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-01
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -604,8 +604,8 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
-    if (rcs.midi_controls().count() > 0)            /* could be 0-sized     */
-        m_midi_control_in = rcs.midi_controls();
+    if (rcs.midi_control_in().count() > 0)          /* could be 0-sized     */
+        m_midi_control_in = rcs.midi_control_in();
     else if (rcs.key_controls().count() > 0)
         m_midi_control_in.add_blank_controls(m_key_controls);
 
@@ -645,7 +645,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
     rcs.key_controls() = m_key_controls;
-    rcs.midi_controls() = m_midi_control_in;
+    rcs.midi_control_in() = m_midi_control_in;
     rcs.mute_groups() = m_mute_groups;
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
@@ -1068,12 +1068,7 @@ performer::copy_sequence (seq::number seqno)
         const seq::pointer s = get_sequence(seqno);
         result = bool(s);
         if (result)
-        {
             m_seq_clipboard.partial_assign(*s);
-
-            // midi_control_out().send_seq_event
-            // (seqno, midicontrolout::seqaction::remove);
-        }
     }
     return result;
 }
@@ -2106,7 +2101,7 @@ performer::launch_output_thread ()
 #endif
         if (rc != 0)
         {
-            errprint            // error_message ()
+            errprint
             (
                 "output_thread: couldn't set scheduler to FIFO, "
                 "need root priviledges."
@@ -2148,7 +2143,7 @@ performer::launch_input_thread ()
 #endif
         if (rc != 0)
         {
-            errprint            // error_message ()
+            errprint
             (
                 "output_thread: couldn't set scheduler to FIFO, "
                 "need root priviledges."
@@ -4163,41 +4158,41 @@ performer::set_sequence_control_status
 
     if (set_it)
     {
-        if (midi_controls().is_snapshot(status))
+        if (midi_control_in().is_snapshot(status))
             save_snapshot();
 
-        midi_controls().add_status(status);
-        if (midi_controls().is_queue(status))
+        midi_control_in().add_status(status);
+        if (midi_control_in().is_queue(status))
             midi_control_out().send_event(midicontrolout::action::queue_on);
 
-        if (midi_controls().is_oneshot(status))
+        if (midi_control_in().is_oneshot(status))
             midi_control_out().send_event(midicontrolout::action::oneshot_on);
 
-        if (midi_controls().is_replace(status))
+        if (midi_control_in().is_replace(status))
             midi_control_out().send_event(midicontrolout::action::replace_on);
 
-        if (midi_controls().is_snapshot(status))
+        if (midi_control_in().is_snapshot(status))
             midi_control_out().send_event(midicontrolout::action::snap1_store);
     }
     else
     {
-        if (midi_controls().is_snapshot(status))
+        if (midi_control_in().is_snapshot(status))
             restore_snapshot();
 
-        if (midi_controls().is_queue(status))
+        if (midi_control_in().is_queue(status))
             unset_queued_replace();
 
-        midi_controls().remove_status(status);
-        if (midi_controls().is_queue(status))
+        midi_control_in().remove_status(status);
+        if (midi_control_in().is_queue(status))
             midi_control_out().send_event(midicontrolout::action::queue_off);
 
-        if (midi_controls().is_oneshot(status))
+        if (midi_control_in().is_oneshot(status))
             midi_control_out().send_event(midicontrolout::action::oneshot_off);
 
-        if (midi_controls().is_replace(status))
+        if (midi_control_in().is_replace(status))
             midi_control_out().send_event(midicontrolout::action::replace_off);
 
-        if (midi_controls().is_snapshot(status))
+        if (midi_control_in().is_snapshot(status))
             midi_control_out().send_event(midicontrolout::action::snap1_restore);
     }
 }
@@ -4220,7 +4215,7 @@ performer::unset_queued_replace (bool clearbits)
         m_queued_replace_slot = SEQ66_NO_QUEUED_SOLO;
         clear_snapshot();
         if (clearbits)
-            midi_controls().remove_queued_replace();
+            midi_control_in().remove_queued_replace();
     }
 }
 
@@ -4302,9 +4297,9 @@ performer::sequence_playing_toggle (seq::number seqno)
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
-        bool is_queue = midi_controls().is_queue();
-        bool is_replace = midi_controls().is_replace();
-        bool is_oneshot = midi_controls().is_oneshot();
+        bool is_queue = midi_control_in().is_queue();
+        bool is_replace = midi_control_in().is_replace();
+        bool is_oneshot = midi_control_in().is_oneshot();
         if (is_oneshot && ! s->playing())
         {
             s->toggle_one_shot();                   /* why not just turn on */
@@ -4466,7 +4461,7 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
 void
 performer::sequence_playing_change (seq::number seqno, bool on)
 {
-    bool qinprogress = midi_controls().is_queue();
+    bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
     notify_trigger_change(seqno, change::no);
 }
@@ -4635,7 +4630,8 @@ performer::midi_control_keystroke (const keystroke & k)
  *
  * \return
  *      Returns true if the event was valid and usable, and the call to the
- *      automation function returned true.
+ *      automation function returned true.  Returns false if the action was
+ *      not processed.
  */
 
 bool
@@ -4650,7 +4646,7 @@ performer::midi_control_event (const event & ev, bool recording)
         const midioperation & mop = m_operations.operation(s);
         if (mop.is_usable())
         {
-            bool process_the_action = true;
+            bool process_the_action = incoming.in_range(ev.d1());
             if (recording)
             {
                 process_the_action = s == automation::slot::start ||

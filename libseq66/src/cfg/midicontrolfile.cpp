@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-02
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -204,18 +204,15 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     std::string s = parse_comments(file);
     if (! s.empty())
-        rc_ref().midi_controls().comments_block().set(s);
+        m_temp_midi_controls.comments_block().set(s);
 
     s = get_variable(file, "[midi-control-flags]", "load-key-controls");
     rc_ref().load_key_controls(string_to_bool(s));
-
     s = get_variable(file, "[midi-control-flags]", "load-midi-controls");
-    rc_ref().load_midi_controls(string_to_bool(s));
-
+    rc_ref().load_midi_control_in(string_to_bool(s));
     s = get_variable(file, "[midi-control-flags]", "control-buss");
-    rc_ref().midi_control_buss(bussbyte(string_to_int(s)));
 
-    bool loadmidi = rc_ref().load_midi_controls();
+    bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
     if (loadkeys)
         m_temp_key_controls.clear();
@@ -278,9 +275,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     }
     if (loadmidi && m_temp_midi_controls.count() > 0)
     {
-        rc_ref().midi_controls().clear();
-        rc_ref().midi_controls().inactive_allowed(m_allow_inactive);
-        rc_ref().midi_controls() = m_temp_midi_controls;
+        rc_ref().midi_control_in().clear();
+        rc_ref().midi_control_in() = m_temp_midi_controls;
+        rc_ref().midi_control_in().inactive_allowed(m_allow_inactive);
     }
     if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
     {
@@ -534,12 +531,13 @@ midicontrolfile::write_stream (std::ofstream & file)
      */
 
     file << "\n"
-    "# The [comments] section holds the user's documentation for this file.\n"
+    "# [comments] holds the user's documentation for this control file.\n"
     "# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;\n"
-    "# add a blank line by adding a space character to the line.\n"
+    "# add an empty line by adding a space character to the line.\n"
         ;
 
-    file << "\n[comments]\n\n" << rc_ref().comments_block().text();
+    std::string s = rc_ref().midi_control_in().comments_block().text();
+    file << "\n[comments]\n\n" << s;
 
     bool result = write_midi_control(file);
     if (result)
@@ -573,7 +571,7 @@ midicontrolfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        result = container_to_stanzas(rc_ref().midi_controls());
+        result = container_to_stanzas(rc_ref().midi_control_in());
         if (result)
         {
             pathprint("Writing MIDI control configuration", name());
@@ -607,7 +605,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     if (result)
     {
         std::string k(bool_to_string(rc_ref().load_key_controls()));
-        std::string m(bool_to_string(rc_ref().load_midi_controls()));
+        std::string m(bool_to_string(rc_ref().load_midi_control_in()));
         std::string b(std::to_string(bussbyte(rc_ref().midi_control_buss())));
         file
             <<

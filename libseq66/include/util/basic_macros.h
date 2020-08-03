@@ -185,7 +185,8 @@
 
 /**
  *    Provides reporting macros (which happens to match Chris's XPC message
- *    functions.  For C++ code, these macros are defined in basic_macros.hpp.
+ *    functions.  For C++ code, these macros are defined in basic_macros.hpp
+ *    and are more convenient to use.
  */
 
 #if defined SEQ66_PLATFORM_DEBUG

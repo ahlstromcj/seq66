@@ -309,14 +309,6 @@ main
 {
     bool ok = true;
     seq66::set_app_name("seqtool");
-
-	/*
-     * Not needed so far, we use local instance of these settings objects.
-     *
-    seq66::rc().set_defaults();             // start out with normal values
-    seq66::usr().set_defaults();            // ditto
-     */
-
     (void) get_options(argc, argv);
     if (sg_do_testing)
         sg_do_help = false;
@@ -364,11 +356,11 @@ main
             seq66::midicontrolfile file(sg_control_file, seq66::rc(), true);
             infoprint("Processing --control option...");
             bool reddit = file.parse();         // allow inactive!!!
-            (void) p.get_settings(seq66::rc(), seq66::usr());
+            (void) p.eet_settings(seq66::rc(), seq66::usr());
             infoprint("KEYS");
             p.key_controls().show();
             infoprint("MIDI");
-            p.midi_controls().show();
+            p.midi_control_in().show();
             if (reddit)
             {
                 /*

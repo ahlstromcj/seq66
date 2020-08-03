@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-30
+ * \updates       2020-08-03
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -935,7 +935,7 @@ screenset::arm ()
 void
 screenset::mute ()
 {
-    for (auto & s : m_container)            // if (sequence::all(seqno))
+    for (auto & s : m_container)
     {
         if (s.active())                     /* guarantees a valid pointer */
         {
@@ -1120,9 +1120,13 @@ screenset::sequence_playing_change
         [ & seqno ] (const seq & sn) { return sn.seq_number() == seqno; }
     );
     if (seqit != m_container.end())
+    {
         seqit->sequence_playing_change(on, qinprogress);
+    }
     else
-        printf("sequence %d not found!\n", seqno);
+    {
+        infoprintf("pattern %d is empty", seqno);
+    }
 }
 
 /**

@@ -21,7 +21,7 @@
  * \library       Seqtool (from the Seq66 project)
  * \author        Chris Ahlstrom
  * \date          2018-12-07
- * \updates       2019-03-20
+ * \updates       2020-08-03
  * \version       $Revision$
  * \license       $XPC_SUITE_GPL_LICENSE$
  *
@@ -208,7 +208,7 @@ converter::parse ()
         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI
             midicontrolfile dummy("Dummy");
-            (void) dummy.container_to_stanzas(m_rc_settings.midi_controls());
+            (void) dummy.container_to_stanzas(m_rc_settings.midi_control_in());
             dummy.show_stanzas();
 #endif
         }

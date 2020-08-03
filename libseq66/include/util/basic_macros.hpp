@@ -79,7 +79,7 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 /**
  *    Provides reporting macros (which happens to match Chris's XPC message
  *    functions.  For C code, these macros are defined in basic_macros.h
- *    instead.
+ *    instead, and are not as "powerful".
  */
 
 #define errprint(x)         (void) seq66::error_message(x)

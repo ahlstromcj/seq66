@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-02
+ * \updates       2020-08-03
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -536,20 +536,27 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
     get_poll_descriptors();
 }
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
+/**
+ *  For debugging, we may expose the following static function for use for
+ *  normal (and usually copious) incoming MIDI events.  For less common
+ *  events, like port/client subscription, the debugging can be enabled by the
+ *  "--verbose" command-line option.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
 #define SHOW_EVENT 1
+#endif
 
 static void
 s_show_event (snd_seq_event_t * ev, const char * tag)
 {
     fprintf
     (
-        stderr, "%s event 0x%x: client %d port %d\n",
+        stderr, "[%s event 0x%x: client %d port %d]\n",
         tag, unsigned(ev->type), int(ev->source.client), int(ev->source.port)
     );
 }
 
-#endif
 
 /**
  *  Grab a MIDI event.  First, a rather large buffer is allocated on the stack
@@ -622,25 +629,22 @@ midi_alsa_info::api_get_midi_event (event * inev)
         case SND_SEQ_EVENT_CLIENT_START:
 
             result = true;
-#if defined SHOW_EVENT
+            if (rc().verbose())
             s_show_event(ev, "Client Start");
-#endif
             break;
 
         case SND_SEQ_EVENT_CLIENT_EXIT:
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Client Exit");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Client Exit");
             break;
 
         case SND_SEQ_EVENT_CLIENT_CHANGE:
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Client Change");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Client Change");
             break;
 
         case SND_SEQ_EVENT_PORT_START:
@@ -655,9 +659,8 @@ midi_alsa_info::api_get_midi_event (event * inev)
              */
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Port Start");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Port Start");
             break;
         }
         case SND_SEQ_EVENT_PORT_EXIT:
@@ -670,33 +673,29 @@ midi_alsa_info::api_get_midi_event (event * inev)
              */
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Port Exit");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Port Exit");
             break;
         }
         case SND_SEQ_EVENT_PORT_CHANGE:
         {
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Port Change");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Port Change");
             break;
         }
         case SND_SEQ_EVENT_PORT_SUBSCRIBED:
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Port Subscribed");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Port Subscribed");
             break;
 
         case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
 
             result = true;
-#if defined SHOW_EVENT
-            s_show_event(ev, "Port Unsubscribed");
-#endif
+            if (rc().verbose())
+                s_show_event(ev, "Port Unsubscribed");
             break;
 
         default:

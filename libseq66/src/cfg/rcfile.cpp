@@ -779,7 +779,7 @@ rcfile::write ()
 
         std::string mcfname = rc_ref().midi_control_filespec();
         midicontrolfile mcf(mcfname, rc_ref());
-        const midicontrolin & ctrls = rc_ref().midi_controls();
+        const midicontrolin & ctrls = rc_ref().midi_control_in();
         bool result = mcf.container_to_stanzas(ctrls);
         if (result)
         {
@@ -1141,7 +1141,7 @@ bool
 rcfile::write_midi_control (std::ofstream & file)
 {
     midicontrolfile mcf(name(), rc_ref());
-    bool result = mcf.container_to_stanzas(rc_ref().midi_controls());
+    bool result = mcf.container_to_stanzas(rc_ref().midi_control_in());
     if (result)
         result = mcf.write_midi_control(file);
 
