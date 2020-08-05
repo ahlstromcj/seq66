@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
- * \updates       2020-08-03
+ * \updates       2020-08-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -57,43 +57,6 @@ comments::comments (const std::string & comtext) :
         ;
     }
 }
-
-#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
-
-/**
- *  Copy constructor.
- *
- * \param rhs
- *      The source of the data for the copy.
- */
-
-comments::comments (const comments & rhs) :
-    m_comments_block    (rhs.m_comments_block)
-{
-    // Empty body
-}
-
-/**
- *  Principal assignment operator.
- *
- * \param rhs
- *      The source of the data for the assignment.
- *
- * \return
- *      Returns a reference to the destination for use in serial assignments.
- */
-
-comments &
-comments::operator = (const comments & rhs)
-{
-    if (this != &rhs)
-    {
-        m_comments_block = rhs.m_comments_block;
-    }
-    return *this;
-}
-
-#endif // USE_COPY_ASSIGNMENT
 
 /**
  *

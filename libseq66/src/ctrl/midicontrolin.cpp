@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-03-24
+ * \updates       2020-08-05
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -101,6 +101,7 @@ namespace seq66
  */
 
 midicontrolin::midicontrolin () :
+    midicontrolbase     (SEQ66_MIDI_CONTROL_IN_BUSS),   /* allows all busses */
     m_container         (),
     m_container_name    ("Default MIDI Controls"),
     m_comments_block    (),
@@ -109,7 +110,7 @@ midicontrolin::midicontrolin () :
     m_control_status    (automation::ctrlstatus::none),
     m_have_controls     (false)
 {
-    // no code
+    is_enabled(true);                   /* by default */
 }
 
 /**

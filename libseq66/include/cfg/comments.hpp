@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-26
- * \updates       2020-08-03
+ * \updates       2020-08-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -69,14 +69,8 @@ private:
 public:
 
     comments (const std::string & comtext = "");
-
-#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
-    comments (const comments & rhs);
-    comments & operator = (const comments & rhs);
-#else
     comments (const comments & rhs) = default;
     comments & operator = (const comments & rhs) = default;
-#endif
 
     const std::string & text () const
     {

@@ -668,8 +668,8 @@ midi_alsa::api_sysex (event * e24)
 }
 
 /**
- *  Flushes our local queue events out into ALSA.  This is also a midi_alsa_info
- *  function.
+ *  Flushes our local queue events out into ALSA.  This is also a
+ *  midi_alsa_info function.
  */
 
 void

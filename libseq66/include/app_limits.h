@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2019-11-02
+ * \updates       2020-08-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -90,6 +90,15 @@
  */
 
 #define SEQ66_DEFAULT_SET_SIZE            32
+
+/**
+ *  Default MIDI control input buss.  This value preserves the old behavior,
+ *  where the incoming MIDI events of a device on any buss would be acted on
+ *  (if specified in the MIDI control stanzas).  This value is the same as
+ *  c_bussbyte_max in the midibytes.hpp module.
+ */
+
+#define SEQ66_MIDI_CONTROL_IN_BUSS        0xFF
 
 /**
  *  Default MIDI control output buss.  It is used with igorangst's

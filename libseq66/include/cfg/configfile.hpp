@@ -173,6 +173,11 @@ public:
         return m_is_error;
     }
 
+    bool bad_position (int p) const
+    {
+        return p < 0;
+    }
+
 protected:
 
     bool make_error_message

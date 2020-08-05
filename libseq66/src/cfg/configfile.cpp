@@ -510,6 +510,7 @@ configfile::line_after
 /**
  *  Like line_after, finds a tag, but merely marks the position preceding the
  *  tag.  The idea is to find a number of tags that might be ordered by number.
+ *  Also useful when changes are made to tag names, to handle legacy versions.
  *
  * \param file
  *      Points to the input file stream.
@@ -520,7 +521,7 @@ configfile::line_after
  *
  * \return
  *      Returns the position of the line before the tag, converted to an
- *      integer.
+ *      integer.  If not found, -1 is returned.
  */
 
 int

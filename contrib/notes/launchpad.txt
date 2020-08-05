@@ -1,6 +1,6 @@
 Quick Reference for Launchpad Mini
 Chris Ahlstrom
-2020-08-03 to 2020-08-03
+2020-08-03 to 2020-08-05
 
 Some of this information was adopted from the PDF file
 launchpad-programmers-reference.pdf. That document notes that a Launchpad
@@ -25,6 +25,8 @@ where:
     ##      The hex value of the note, as shown by the two-digit hex values
             shown below.
 
+X-Y Key Layout (mapping mode 1):
+
  (1)   (2)   (3)   (4)   (5)   (6)   (7)   (8)
 
 [00h] [01h] [02h] [03h] [04h] [05h] [06h] [07h]     (A) : 08h
@@ -36,7 +38,72 @@ where:
 [66h] [61h] [62h] [63h] [64h] [65h] [66h] [67h]     (G) : 68h
 [77h] [71h] [72h] [73h] [74h] [75h] [76h] [77h]     (H) : 78h
 
-Not yet described:  the Drum Rack key layout.
+Drum Rack Key Layout (mapping mode 2):
 
+ (1)   (2)   (3)   (4)   (5)   (6)   (7)   (8)
+
+[40h] [41h] [42h] [43h] [60h] [61h] [62h] [63h]     (A) : 64h
+[3ch] [3dh] [3eh] [3fh] [5ch] [5dh] [5eh] [5fh]     (B) : 65h
+[38h] [39h] [3ah] [3bh] [58h] [59h] [5ah] [5bh]     (C) : 66h
+[34h] [35h] [36h] [37h] [54h] [55h] [56h] [57h]     (D) : 67h
+[30h] [31h] [32h] [33h] [50h] [51h] [52h] [53h]     (E) : 68h
+[2ch] [2dh] [2eh] [2fh] [4ch] [4dh] [4eh] [4fh]     (F) : 69h
+[28h] [29h] [2ah] [2bh] [48h] [49h] [4ah] [4bh]     (G) : 6ah
+[24h] [25h] [26h] [27h] [44h] [45h] [46h] [47h]     (H) : 6bh
+
+Set Grid LED:      90h key vel (vel = 00GGCKRR)
+
+    "key" is a value given in the active of the two layouts shown above.
+    The "vel" bits are: GG for Green brightness, C to clear the LED
+    setting of the other buffer, K to copy the data to both buffers, and
+    RR for Red brightness.
+
+    Brightness values range from 0 (Off) to 3 (Full).
+
+    Hex MSB  LSB  Color   Brightness
+        00GG CKRR
+    0Ch 0000 1100 Off     Off           12
+    0Dh 0000 1101 Red     Low           13
+    0Eh 0000 1110 Red     Medium        14
+    0Fh 0000 1111 Red     Full          15
+    1Ch 0001 1100 Green   Low           28
+    1Dh 0001 1101 Amber   Low           29
+    2Ch 0010 1100 Green   Medium        44
+    2Eh 0010 1110 Amber   Medium        46
+    3Ch 0011 1100 Green   Full          60
+    3Eh 0011 1110 Yellow  Full          62
+    3Fh 0011 1111 Amber   Full          63
+
+
+Reset:             B0h 00h 00h
+Mapping Mode:      B0h 00h 01h or 02h
+Double-buffer:     B0h 00h 20h-3dh (bits: 01CFU0D)
+Automap/Live LEDs: x
+
+C = Copy.    Copy LED states from displayed buffer to updating buffer.
+F = Flash.   Continually flip displayed buffer to make LEDS flash.
+U = Update.  Set buffer 0 or 1 as the updating buffer.
+D = Display. Set buffer 0 or 1 as the displaying buffer.
+
+The default state is no Flash; Updating = Displaying = 0; LED data
+displayed instantly.  This message also resets the flash timer.
+
+All LEDS On:       B0h 00h 7dh-7fh (low, medium, and full brightness)
+                   This command resets all other (see the Reset message).
+LED Duty Cycle:    B0h 1e-1fh ND
+
+N = numerator   = 0 to 0fh + 1
+D = denominator = 0 to 0fh + 3
+
+If N < 9, send B0h 1eh 10h x N-1 + D-3
+Otherwise send B0h 1fh 10h x N-9 + D-3
+
+Automap/Live LEDs: B0h, 68h-6fh data
+Rapid LED Update:  92h vel1 vel2
+
+Grid Button Out:   90h key vel (vel = 127 on press, 0 on release)
+Auto/Live Button:  B0h 68h-6fh vel (vel = 127 on press, 0 on release)
+
+More information can be found in the PDF.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

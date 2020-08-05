@@ -83,7 +83,7 @@ midicontrolout::initialize (int count, int bus)
     event dummy_event;
     actions actionstemp;
     actionpair apt;
-    dummy_event.set_channel_status(0, 0);   /* set status and channel       */
+    dummy_event.set_channel_status(0, 0);       /* set status and channel   */
     apt.apt_action_event = dummy_event;
     apt.apt_action_status = false;
     m_seq_events.clear();
@@ -93,7 +93,7 @@ midicontrolout::initialize (int count, int bus)
     if (count > 0)
     {
         is_enabled(true);
-        if (bus >= 0 && bus < c_busscount_max)
+        if (bus >= 0 && bus < c_busscount_max)  /* also note c_bussbyte_max */
             buss(bussbyte(bus));
 
         m_screenset_size = count;
@@ -215,7 +215,8 @@ action_to_string (midicontrolout::action a)
  *      The index of the sequence.
  *
  * \param what
- *      The status action of the sequence.
+ *      The status action of the sequence.  This indicates if the sequence is
+ *      playing, muted, queued, or deleted (removed, empty).
  *
  * \param flush
  *      Flush MIDI buffer after sending (default true).

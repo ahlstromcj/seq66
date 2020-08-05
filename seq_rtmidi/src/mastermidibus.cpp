@@ -308,12 +308,12 @@ int
 mastermidibus::api_poll_for_midi ()
 {
 #if defined SEQ66_USE_JACK_POLLING_FLAG
-    if (m_use_jack_polling)
-        return mastermidibase::api_poll_for_midi(); /* inbus-array poll */
+    if (m_use_jack_polling)                             /* run-time option  */
+        return mastermidibase::api_poll_for_midi();     /* inbus-array poll */
     else
-        return m_midi_master.api_poll_for_midi();
+        return m_midi_master.api_poll_for_midi();       /* ALSA poll        */
 #else
-    return mastermidibase::api_poll_for_midi();     /* inbus-array poll */
+    return mastermidibase::api_poll_for_midi();         /* inbus-array poll */
 #endif
 }
 

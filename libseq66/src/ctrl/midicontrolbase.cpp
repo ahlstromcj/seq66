@@ -49,8 +49,7 @@ namespace seq66
  * \dtor
  */
 
-midicontrolbase::midicontrolbase (int buss)
- :
+midicontrolbase::midicontrolbase (int buss) :
     m_buss              (buss),
     m_is_blank          (true),
     m_is_enabled        (false)

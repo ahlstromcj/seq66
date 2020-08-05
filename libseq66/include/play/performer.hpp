@@ -411,6 +411,15 @@ private:                            /* key, midi, and op container section  */
     midicontrolin m_midi_control_in;
 
     /**
+     *  EXPERIMENTAL.
+     *  Specifies a single buss that is allowed to apply MIDI control to the
+     *  application.  If set to c_bussbyte_max, any buss can control the
+     *  application.
+     */
+
+    bussbyte m_midi_control_buss;
+
+    /**
      *  Provides the class encapsulating MIDI control output.
      */
 

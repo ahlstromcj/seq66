@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-06
- * \updates       2019-02-10
+ * \updates       2020-08-04
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  This class is meant to collect a whole bunch of system MIDI information
@@ -128,6 +128,40 @@ midi_port_info::add (const midibus * m)
         m->is_virtual_port(), m->queue_number(),
         m->is_system_port(), m->is_input_port()
     );
+}
+
+/**
+ *  Retrieve the index of a client:port combination (e.g. in ALSA, the output
+ *  of the "aplaymidi -l" or "arecordmidi -l" commands) in the port-container.
+ *
+ * \param client
+ *      Provides the client number.
+ *
+ * \param port
+ *      Provides the port number, the number of a sub-port of the client.
+ *
+ * \return
+ *      Returns the index of the pair in the port container, which will match
+ *      up with the listing one sees in the "MIDI Input" or "MIDI Clocks"
+ *      pages in the "Preferences" dialog.  If not found, a -1 is returned.
+ */
+
+bussbyte
+midi_port_info::get_port_index (int client, int port)
+{
+    bussbyte result = c_bussbyte_max;
+    for (int i = 0; i < m_port_count; ++i)
+    {
+        if (m_port_container[i].m_client_number != client)
+            continue;
+
+        if (m_port_container[i].m_port_number == port)
+        {
+            result = bussbyte(i);
+            break;
+        }
+    }
+    return bussbyte(result);
 }
 
 /*

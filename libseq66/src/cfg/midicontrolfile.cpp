@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-03
+ * \updates       2020-08-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -129,23 +129,17 @@ midicontrolfile::stanza::set (const midicontrol & mc)
  *
  * \param rcs
  *      Source/destination for the configuration information.
- *
- * \param allowinactive
- *      If true, this object will allow inactive controls to be loaded into
- *      the map.
  */
 
 midicontrolfile::midicontrolfile
 (
     const std::string & filename,
-    rcsettings & rcs,
-    bool allowinactive
+    rcsettings & rcs
 ) :
     configfile              (filename, rcs),
     m_temp_key_controls     (),             /* used during reading only */
     m_temp_midi_controls    (),             /* used during reading only */
-    m_stanzas               (),             /* fill from rcs in writing */
-    m_allow_inactive        (allowinactive)
+    m_stanzas               ()              /* fill from rcs in writing */
 {
     // Empty body
 }
@@ -169,10 +163,12 @@ midicontrolfile::~midicontrolfile ()
  *      try to read an optional comment block.  This block is part of the MIDI
  *      container object, not part of the rcsettings object.
  *
- *  [midi-control-flags]
+ *  [midi-control-settings]  (was "midi-control-flags")
  *
  *      load-key-controls
  *      load-midi-controls
+ *      control-buss
+ *      midi-enabled
  *
  *  [midi-control] and [midi-control-file]
  *
@@ -200,18 +196,32 @@ bool
 midicontrolfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
-    file.seekg(0, std::ios::beg);                   /* seek to start    */
+    file.seekg(0, std::ios::beg);                   /* seek to the start    */
 
     std::string s = parse_comments(file);
     if (! s.empty())
         m_temp_midi_controls.comments_block().set(s);
 
-    s = get_variable(file, "[midi-control-flags]", "load-key-controls");
-    rc_ref().load_key_controls(string_to_bool(s));
-    s = get_variable(file, "[midi-control-flags]", "load-midi-controls");
-    rc_ref().load_midi_control_in(string_to_bool(s));
-    s = get_variable(file, "[midi-control-flags]", "control-buss");
+    std::string mctag = "[midi-control-settings]";  /* the new name for it  */
+    if (bad_position(find_tag(file, mctag)))
+        mctag = "[midi-control-flags]";             /* earlier name for it  */
 
+    s = get_variable(file, mctag, "load-key-controls");
+    rc_ref().load_key_controls(string_to_bool(s));
+    s = get_variable(file, mctag, "load-midi-controls");
+    rc_ref().load_midi_control_in(string_to_bool(s));
+    s = get_variable(file, mctag, "control-buss");
+
+    int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
+    if (buss >= 0 && buss < c_busscount_max)
+    {
+        bussbyte b = c_bussbyte_max;
+        b = bussbyte(buss);
+        m_temp_midi_controls.buss(b);
+    }
+    s = get_variable(file, mctag, "midi-enabled");
+
+    bool enabled = string_to_bool(s);
     bool loadmidi = rc_ref().load_midi_control_in();
     bool loadkeys = rc_ref().load_key_controls();
     if (loadkeys)
@@ -236,7 +246,6 @@ midicontrolfile::parse_stream (std::ifstream & file)
         {
             infoprintf("%d loop-control lines", count);
         }
-
         good = line_after(file, "[mute-group-control]");
         count = 0;
         while (good)                            /* not at end of section?   */
@@ -273,11 +282,12 @@ midicontrolfile::parse_stream (std::ifstream & file)
             infoprintf("%d automation-control lines", count);
         }
     }
+    m_temp_midi_controls.is_enabled(enabled);
     if (loadmidi && m_temp_midi_controls.count() > 0)
     {
         rc_ref().midi_control_in().clear();
         rc_ref().midi_control_in() = m_temp_midi_controls;
-        rc_ref().midi_control_in().inactive_allowed(m_allow_inactive);
+        rc_ref().midi_control_in().inactive_allowed(true);  /* always   */
     }
     if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
     {
@@ -317,6 +327,24 @@ midicontrolfile::parse ()
 }
 
 /**
+ *  These format statements assume the active and inverse flags are a single
+ *  digit (0 or 1), and that the rest of the values can optionally be preceded
+ *  by "0x" (which is a better format for displaying event statuses).
+ *
+ *  The "%10s" specifier scans for up to 10 non-whitespace characters.  The
+ *  double-quotes are stripped off after reading the key's name.
+ *
+ *  These format string are used in parse_control_stanza() and
+ *  parse_midi_control_out().
+ */
+
+static const char * const sg_scanf_fmt_ctrl_in =
+    "%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
+
+static const char * const sg_scanf_fmt_ctrl_out =
+    "%d [%d %i %i %i %i] [%d %i %i %i %i] [%d %i %i %i %i] [%d %i %i %i %i]";
+
+/**
  *  It is not an error for the "[midi-contro-out]" section to be missing.
  */
 
@@ -324,25 +352,23 @@ bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
     bool result = true;
-    std::string s = get_variable
-    (
-        file, "[midi-control-out-settings]", "set-size"
-    );
-
+    std::string mctag = "[midi-control-out-settings]";
+    std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, SEQ66_DEFAULT_SET_SIZE);
-    s = get_variable
-    (
-        file, "[midi-control-out-settings]", "buss"
-    );
+    s = get_variable(file, mctag, "output-buss");
+    if (s.empty())
+        s = get_variable(file, mctag, "buss");
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
-    s = get_variable
-    (
-        file, "[midi-control-out-settings]", "enabled"
-    );
+    s = get_variable(file, mctag, "enabled");
+
+    /*
+     * We need to read them anyway, for saving back at exit.  The enabled-flag
+     * will determine if they are used.
+     */
 
     bool enabled = string_to_bool(s);
-    if (enabled && line_after(file, "[midi-control-out]"))
+    if (line_after(file, "[midi-control-out]"))
     {
         /*
          * Set up the default-constructed midicontrolout object with its buss,
@@ -355,20 +381,11 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         mctrl.is_enabled(enabled);
         for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
         {
-            if (! next_data_line(file))
-            {
-                (void) make_error_message("midi-control-out", "no data");
-                break;
-            }
-
             int a[5], b[5], c[5], d[5];
             int sequence = 0;
-            sscanf
+            (void) sscanf                           /* LATER: count 'em     */
             (
-                scanline(),
-                "%d [%d %d %d %d %d] [%d %d %d %d %d]"
-                " [%d %d %d %d %d] [%d %d %d %d %d]",
-                &sequence,
+                scanline(), sg_scanf_fmt_ctrl_out, &sequence,
                 &a[0], &a[1], &a[2], &a[3], &a[4],
                 &b[0], &b[1], &b[2], &b[3], &b[4],
                 &c[0], &c[1], &c[2], &c[3], &c[4],
@@ -378,6 +395,11 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mctrl.set_seq_event(i, midicontrolout::seqaction::mute, b);
             mctrl.set_seq_event(i, midicontrolout::seqaction::queue, c);
             mctrl.set_seq_event(i, midicontrolout::seqaction::remove, d);
+            if (! next_data_line(file))
+            {
+                (void) make_error_message("midi-control-out", "no data");
+                break;
+            }
         }
 
         /* Non-sequence actions */
@@ -604,22 +626,32 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
+        int bb = int(rc_ref().midi_control_buss());
         std::string k(bool_to_string(rc_ref().load_key_controls()));
         std::string m(bool_to_string(rc_ref().load_midi_control_in()));
-        std::string b(std::to_string(bussbyte(rc_ref().midi_control_buss())));
-        file
-            <<
-        "\n[midi-control-flags]\n\n"
+        bool disabled = rc_ref().midi_control_in().is_disabled();
+        file <<
+        "\n[midi-control-settings]\n\n"
         "# Note that setting 'load-midi-control' to 'false' will cause an\n"
-        "# empty MIDI control setup to be written!  Keep backups!\n\n"
+        "# empty MIDI control setup to be written!  Keep backups! The \n"
+        "# control-buss value should range from 0 to the maximum buss available\n"
+        "# on your system.  If set, then only that buss will be allowed to\n"
+        "# provide MIDI control. A value of 255 or 0xff means any buss can.\n"
+        "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
+        "# are always enabled.\n\n"
             << "load-key-controls = " << k << "\n"
             << "load-midi-controls = " << m << "\n"
-            << "control-buss = " << b << "\n"
             ;
 
+        if (bb > bussbyte(c_busscount_max))
+            file << "control-buss = 0x" << std::hex << bb << std::dec << "\n";
+        else
+            file << "control-buss = " << bb << "\n";
+
+        file << "midi-enabled = " << (disabled ? "false" : "true") << "\n" ;
         file <<
         "\n"
-        "# This new style of control stanza incorporates key control as well.\n"
+        "# This style of control stanza incorporates key control as well.\n"
         "# The leftmost number on each line here is the pattern number (e.g.\n"
         "# 0 to 31); the group number, same range, for up to 32 groups; or it\n"
         "# it is an automation control number, again a similar range.\n"
@@ -646,15 +678,16 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# 'd1min'/'d1max' are the range of second values that should match.\n"
         "# Example:  For a Note On for note 0, 0 and 127 indicate that any\n"
         "# Note On velocity will cause the MIDI control to take effect.\n"
+        "# Hex values can be used; precede with '0x'.\n"
         "#\n"
         "#  ------------------------- Loop, group, or automation-slot number\n"
         "# |   ---------------------- Name of the key (see the key map)\n"
-        "# |  |    ------------------ On/off (indicate if section is enabled)\n"
-        "# |  |   | ----------------- Inverse\n"
-        "# |  |   | |  -------------- MIDI status (event) byte (e.g. Note On)\n"
-        "# |  |   | | |  ------------ Data 1 (e.g. Note number)\n"
-        "# |  |   | | | |  ---------- Data 2 min\n"
-        "# |  |   | | | | |  -------- Data 2 max\n"
+        "# |  |\n"
+        "# |  |    ------------------ Inverse\n"
+        "# |  |   |  ---------------- MIDI status/event byte (e.g. Note On)\n"
+        "# |  |   | |  -------------- Data 1 (e.g. Note number)\n"
+        "# |  |   | | |  ------------ Data 2 min\n"
+        "# |  |   | | | |  ---------- Data 2 max\n"
         "# |  |   | | | | | |\n"
         "# v  v   v v v v v v\n"
         "# 0 \"1\" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]\n"
@@ -758,7 +791,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "[midi-control-out-settings]\n"
         "\n"
         << "set-size = " << setsize << "\n"
-        << "buss = " << buss << "\n"
+        << "output-buss = " << buss << "\n"
         << "enabled = " << (disabled ? "false" : "true")
         << "\n"
         ;
@@ -767,19 +800,18 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "\n"
         "[midi-control-out]\n"
         "\n"
-        "#    ------------------- on/off (indicate is the section is enabled)\n"
-        "#    | ----------------- MIDI channel (0-15)\n"
-        "#    | | --------------- MIDI status (event) byte (e.g. note on)\n"
-        "#    | | | ------------- data 1 (e.g. note number)\n"
-        "#    | | | | ----------- data 2 (e.g. velocity)\n"
-        "#    | | | | |\n"
-        "#    v v v v v\n"
-        "#   [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n"
+        "#   --------------------- Pattern number (as applicable)\n"
+        "#  |   ------------------ on/off (indicate if action is enabled)\n"
+        "#  |  |  ---------------- MIDI channel (0-15)\n"
+        "#  |  | |  -------------- MIDI status/event byte (e.g. Note On)\n"
+        "#  |  | | |  ------------ data 1 (e.g. note number)\n"
+        "#  |  | | | |  ---------- data 2 (e.g. velocity)\n"
+        "#  |  | | | | |\n"
+        "#  v  v v v v v\n"
+        "# 31 [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n"
         "#       Arm         Mute       Queue      Delete\n"
-        "\n"
-        << setsize << " " << buss << " " << (disabled ? "0" : "1")
-        << "     # screenset size, output buss, enabled (1) /disabled (0)\n"
         ;
+
     file <<
         "\n"
         "# These control events are laid out in this order: \n"
@@ -804,7 +836,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         {
             int minimum = static_cast<int>(midicontrolout::seqaction::arm);
             int maximum = static_cast<int>(midicontrolout::seqaction::max);
-            file << seq;
+            file << std::setw(2) << seq << std::setw(0);
             for (int a = minimum; a < maximum; ++a)
             {
                 event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
@@ -813,28 +845,24 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
                     seq, midicontrolout::seqaction(a)
                 );
                 midibyte d0, d1;
-
-                /*
-                 * bool eia = mco.seq_event_is_active
-                 * (
-                 *     seq, (midicontrolout::seqaction) a
-                 * );
-                 */
+                char temp[48];
 
                 ev.get_data(d0, d1);
-                file
-                    << " ["
-                    << (active ? "1" : "0") << " "
-                    << unsigned(ev.channel()) << " "
-                    << unsigned(ev.get_status()) << " "
-                    << unsigned(d0) << " "
-                    << unsigned(d1)
-                    << "]"
-                    ;
+                (void) snprintf             /* much easier format!  */
+                (
+                    temp, sizeof temp, " [%d %2d 0x%02x %3d %2d]",
+                    active ? 1 : 0,
+                    int(ev.channel()),
+                    unsigned(ev.get_status()),
+                    int(d0),
+                    int(d1)
+                );
+                file << temp;
             }
             file << "\n";
         }
     }
+    file << "\n";
     write_ctrl_event(file, mco, midicontrolout::action::play);
     write_ctrl_event(file, mco, midicontrolout::action::stop);
     write_ctrl_event(file, mco, midicontrolout::action::pause);
@@ -872,18 +900,6 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 }
 
 /**
- *  This format statement assumes the active and inverse flags are a single
- *  digit (0 or 1), and that the rest of the values can optionally be preceded
- *  by "0x" (which is a better format for displaying event statuses).
- *
- *  The "%10s" specifier scans for up to 10 non-whitespace characters.  The
- *  double-quotes are stripped off after reading the key's name.
- */
-
-static const char * const sg_scanf_fmt_1 =
-    "%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
-
-/**
  *  For automation, slot and code are the same numeric value.
  */
 
@@ -896,9 +912,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     int a[6], b[6], c[6];
     int count = std::sscanf
     (
-        scanline(),
-        sg_scanf_fmt_1,
-        &opcode, &charname[0],
+        scanline(), sg_scanf_fmt_ctrl_in, &opcode, &charname[0],
         &a[0], &a[1], &a[2], &a[3], &a[4], &a[5],
         &b[0], &b[1], &b[2], &b[3], &b[4], &b[5],
         &c[0], &c[1], &c[2], &c[3], &c[4], &c[5]
@@ -914,30 +928,23 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             opslot = opcontrol::set_slot(opcode);
 
         /*
-         *  Create control objects, if active, using an empty
-         *  name to generate the "Pattern" name.
+         *  Create control objects, whether active or not.  We want to save
+         *  all objects in the file, to avoid altering the user's preferences.
          */
 
         std::string kn = strip_quotes(std::string(charname));
-        if (a[0] != 0 || m_allow_inactive)
-        {
-            midicontrol mc(kn, opcat, automation::action::toggle, opslot, opcode);
-            mc.set(a);
-            (void) m_temp_midi_controls.add(mc);
-        }
-        if (b[0] != 0 || m_allow_inactive)
-        {
-            midicontrol mc(kn, opcat, automation::action::on, opslot, opcode);
-            mc.set(b);
-            (void) m_temp_midi_controls.add(mc);
-        }
-        if (c[0] != 0 || m_allow_inactive)
-        {
-            midicontrol mc(kn, opcat, automation::action::off, opslot, opcode);
-            mc.set(c);
-            (void) m_temp_midi_controls.add(mc);
-        }
-        if (result && rc_ref().load_key_controls())
+        midicontrol mca(kn, opcat, automation::action::toggle, opslot, opcode);
+        mca.set(a);
+        (void) m_temp_midi_controls.add(mca);
+
+        midicontrol mcb(kn, opcat, automation::action::on, opslot, opcode);
+        mcb.set(b);
+        (void) m_temp_midi_controls.add(mcb);
+
+        midicontrol mcc(kn, opcat, automation::action::off, opslot, opcode);
+        mcc.set(c);
+        (void) m_temp_midi_controls.add(mcc);
+        if (rc_ref().load_key_controls())
         {
             /*
              *  Make reverse-lookup map<pattern, keystroke> for

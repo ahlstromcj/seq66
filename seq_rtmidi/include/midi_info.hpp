@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-12-05
- * \updates       2019-02-09
+ * \updates       2020-08-04
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *      We need to have a way to get all of the API information from each
@@ -122,6 +122,8 @@ public:
     {
         return m_port_count;
     }
+
+    bussbyte get_port_index (int client, int port);
 
     int get_bus_id (int index) const
     {

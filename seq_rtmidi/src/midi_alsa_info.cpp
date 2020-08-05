@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-03
+ * \updates       2020-08-04
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -543,17 +543,20 @@ midi_alsa_info::api_port_start (mastermidibus & masterbus, int bus, int port)
  *  "--verbose" command-line option.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 #define SHOW_EVENT 1
 #endif
 
-static void
-s_show_event (snd_seq_event_t * ev, const char * tag)
+void
+midi_alsa_info::show_event (snd_seq_event_t * ev, const char * tag)
 {
+    int c = int(ev->source.client);
+    int p = int(ev->source.port);
+    int b = int(input_ports().get_port_index(c, p));
     fprintf
     (
-        stderr, "[%s event 0x%x: client %d port %d]\n",
-        tag, unsigned(ev->type), int(ev->source.client), int(ev->source.port)
+        stderr, "[%s event[%d] = 0x%x: client %d port %d]\n",
+        tag, b, unsigned(ev->type), c, p
     );
 }
 
@@ -630,21 +633,21 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             result = true;
             if (rc().verbose())
-            s_show_event(ev, "Client Start");
+            show_event(ev, "Client Start");
             break;
 
         case SND_SEQ_EVENT_CLIENT_EXIT:
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Client Exit");
+                show_event(ev, "Client Exit");
             break;
 
         case SND_SEQ_EVENT_CLIENT_CHANGE:
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Client Change");
+                show_event(ev, "Client Change");
             break;
 
         case SND_SEQ_EVENT_PORT_START:
@@ -660,7 +663,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Port Start");
+                show_event(ev, "Port Start");
             break;
         }
         case SND_SEQ_EVENT_PORT_EXIT:
@@ -674,33 +677,33 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Port Exit");
+                show_event(ev, "Port Exit");
             break;
         }
         case SND_SEQ_EVENT_PORT_CHANGE:
         {
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Port Change");
+                show_event(ev, "Port Change");
             break;
         }
         case SND_SEQ_EVENT_PORT_SUBSCRIBED:
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Port Subscribed");
+                show_event(ev, "Port Subscribed");
             break;
 
         case SND_SEQ_EVENT_PORT_UNSUBSCRIBED:
 
             result = true;
             if (rc().verbose())
-                s_show_event(ev, "Port Unsubscribed");
+                show_event(ev, "Port Unsubscribed");
             break;
 
         default:
 #if defined SHOW_EVENT
-            s_show_event(ev, "Other");
+            show_event(ev, "Other");
 #endif
             break;
         }
@@ -736,7 +739,12 @@ midi_alsa_info::api_get_midi_event (event * inev)
         result = inev->set_midi_event(ev->time.tick, buffer, bytes);
         if (result)
         {
+            bussbyte b = input_ports().get_port_index
+            (
+                int(ev->source.client), int(ev->source.port)
+            );
             bool sysex = inev->is_sysex();
+            inev->set_input_bus(b);
             while (sysex)           /* sysex might be more than one message */
             {
                 int remcount = snd_seq_event_input(m_alsa_seq, &ev);

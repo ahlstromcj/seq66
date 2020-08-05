@@ -271,7 +271,7 @@ mastermidibase::panic ()
             for (int note = 0; note < c_midibyte_data_max; ++note)
             {
                 e.set_data(note, 0);            /* values > 0 do expression */
-                m_outbus_array.play(bus, &e, channel); // play(bus, &e, channel);
+                m_outbus_array.play(bus, &e, channel);
             }
         }
     }

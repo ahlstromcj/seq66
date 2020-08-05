@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-03
+ * \updates       2020-08-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -431,14 +431,8 @@ private:
 public:
 
     rcsettings ();
-
-#ifdef USE_EXPLICIT_COPY_ASSIGNMENT
-    rcsettings (const rcsettings & rhs);
-    rcsettings & operator = (const rcsettings & rhs);
-#else
     rcsettings (const rcsettings & rhs) = default;
     rcsettings & operator = (const rcsettings & rhs) = default;
-#endif
     virtual ~rcsettings () = default;
 
     std::string make_config_filespec

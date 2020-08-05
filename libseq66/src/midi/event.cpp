@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-23
+ * \updates       2020-08-04
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -99,9 +99,10 @@ namespace seq66
  */
 
 event::event () :
+    m_input_buss    (c_bussbyte_max),       /* 0xFF                 */
     m_timestamp     (0),
     m_status        (EVENT_NOTE_OFF),
-    m_channel       (c_midibyte_max),
+    m_channel       (c_midibyte_max),       /* 0xFF                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -138,9 +139,10 @@ event::event
     midibyte d0,
     midibyte d1
 ) :
+    m_input_buss    (c_bussbyte_max),       /* 0xFF                 */
     m_timestamp     (tstamp),
     m_status        (status & EVENT_CLEAR_CHAN_MASK),
-    m_channel       (c_midibyte_max),
+    m_channel       (c_midibyte_max),       /* 0xFF                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
     m_linked        (nullptr),
@@ -177,6 +179,7 @@ event::event
 
 event::event (const event & rhs)
  :
+    m_input_buss    (rhs.m_input_buss),
     m_timestamp     (rhs.m_timestamp),
     m_status        (rhs.m_status),
     m_channel       (rhs.m_channel),
@@ -217,6 +220,7 @@ event::operator = (const event & rhs)
 {
     if (this != &rhs)
     {
+        m_input_buss    = rhs.m_input_buss;
         m_timestamp     = rhs.m_timestamp;
         m_status        = rhs.m_status;
         m_channel       = rhs.m_channel;

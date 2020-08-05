@@ -451,7 +451,7 @@ public:
 
     void set_input_bus (bussbyte b)
     {
-        if (b > 0 && b < c_bussbyte_max)
+        if (b < c_bussbyte_max)                 /* unsigned, so always > 0  */
             m_input_buss = b;
     }
 

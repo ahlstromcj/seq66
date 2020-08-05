@@ -58,7 +58,7 @@ class performer;
  *  to igorangst!
  */
 
-class midicontrolout : public midicontrolbase
+class midicontrolout final : public midicontrolbase
 {
 
 public:
@@ -90,7 +90,7 @@ public:
         arm,
         mute,
         queue,
-        remove,     // delete,
+        remove,
         max
     };
 

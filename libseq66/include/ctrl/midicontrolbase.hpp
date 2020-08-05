@@ -67,7 +67,7 @@ private:
      *  this buss value for music, or redefine the buss.
      */
 
-    bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
+    bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_IN/OUT_BUSS   */
 
     /**
      *  Indicates that this container is "empty".

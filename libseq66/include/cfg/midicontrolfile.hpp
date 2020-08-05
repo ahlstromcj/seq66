@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-06-19
+ * \updates       2020-08-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -161,20 +161,13 @@ private:
 
     storage m_stanzas;
 
-    /**
-     *  If true, even inactive (all zero/false) stanzas are saved.
-     */
-
-    bool m_allow_inactive;
-
 public:
 
     midicontrolfile () = delete;
     midicontrolfile
     (
         const std::string & filename,
-        rcsettings & rcs,
-        bool allowinactive = false
+        rcsettings & rcs
     );
     midicontrolfile (const midicontrolfile &) = delete;
     midicontrolfile & operator = (const midicontrolfile &) = delete;

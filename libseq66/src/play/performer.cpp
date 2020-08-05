@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-03
+ * \updates       2020-08-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -346,7 +346,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
     m_midi_control_in       ("MIDI input controls"),
-    m_midi_control_out         (),
+    m_midi_control_buss     (c_bussbyte_max),   /* any buss can control app */
+    m_midi_control_out      (),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
     m_set_mapper                                /* accessed via mapper()    */
@@ -1972,14 +1973,22 @@ performer::announce_exit ()
 }
 
 /**
+ *  Provides a screenset::slothandler function to announce the current status
+ *  of a sequence to an external device via the midicontrolout container.
+ *  This function has to have both the sequence and its number as parameters,
+ *  and must return a boolean value.
+ *
  * \param s
  *      Provides the pointer to the sequence.
  *
  * \param sn
  *      Provides the sequence number to be used.  This item is normally used
- *      to assign a sequence number to a new sequence in a
- *      screenset::slothandler function, but here it is overwritten with the
- *      existing number of the sequence.
+ *      to assign a new sequence number to a new sequence in a screenset ::
+ *      slothandler function, but here it is overwritten with the existing
+ *      number of the sequence.
+ *
+ * \return
+ *      Returns true if the sequence pointer exists.
  */
 
 bool
@@ -3121,15 +3130,18 @@ performer::output_func ()
  *      It seems specific to certain Yamaha devices, but might prove useful
  *      later.
  *
- *  For events less than or equal to SysEx, we call midi_control_event() to handle
- *  the MIDI controls that Sequencer64 supports.  (These are configurable in the
- *  "rc" configuration file.) We test for MIDI control events even if "dumping".
- *  Otherwise, we cannot handle any more control events once recording is turned
- *  on.  Warning:  This can slow down recording.
+ *  For events less than or equal to SysEx, we call midi_control_event() to
+ *  handle the MIDI controls that Sequencer64 supports.  (These are
+ *  configurable in the "rc" configuration file.) We test for MIDI control
+ *  events even if "dumping".  Otherwise, we cannot handle any more control
+ *  events once recording is turned on.  Warning:  This can slow down
+ *  recording.
  *
  *  We currently ignore these events on input.  MIGHT NOT BE VALID.  STILL
- *  INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are filtered in
- *  midi_jack.  Send out the current event, if "dumping".  ev.get_status() ==
+ *  INVESTIGATING.  EVENT_MIDI_ACTIVE_SENSE and EVENT_MIDI_RESET are filtered
+ *  in midi_jack.  Send out the current event, if "dumping".
+ *
+ *  ev.get_status() ==
  *
  *      EVENT_MIDI_ACTIVE_SENSE  handled elsewhere
  *      EVENT_MIDI_RESET handled elsewhere
@@ -4336,6 +4348,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 off_sequences();
             }
             s->toggle_playing();
+            announce_sequence(s, 0);    /* 2nd parameter irrelevant here    */
         }
 
         /*
@@ -4637,32 +4650,39 @@ performer::midi_control_keystroke (const keystroke & k)
 bool
 performer::midi_control_event (const event & ev, bool recording)
 {
-    midicontrol::key k(ev);
-    const midicontrol & incoming = m_midi_control_in.control(k);
-    bool result = incoming.is_usable();
+    bool result = m_midi_control_in.is_enabled();
     if (result)
     {
-        automation::slot s = incoming.slot_number();
-        const midioperation & mop = m_operations.operation(s);
-        if (mop.is_usable())
+        midicontrol::key k(ev);
+        const midicontrol & incoming = m_midi_control_in.control(k);
+        result = incoming.is_usable();
+        if (result && m_midi_control_buss < c_bussbyte_max)
+            result = ev.input_bus() == m_midi_control_buss;
+
+        if (result)
         {
-            bool process_the_action = incoming.in_range(ev.d1());
-            if (recording)
+            automation::slot s = incoming.slot_number();
+            const midioperation & mop = m_operations.operation(s);
+            if (mop.is_usable())
             {
-                process_the_action = s == automation::slot::start ||
-                    s == automation::slot::stop ||
-                    s == automation::slot::record ;
+                bool process_the_action = incoming.in_range(ev.d1());
+                if (recording)
+                {
+                    process_the_action = s == automation::slot::start ||
+                        s == automation::slot::stop ||
+                        s == automation::slot::record ;
+                }
+                if (process_the_action)
+                {
+                    automation::action a = incoming.action_code();
+                    bool invert = incoming.inverse_active();
+                    int d0 = incoming.d0();
+                    int index = incoming.control_code(); /* in lieu of d1() */
+                    result = mop.call(a, d0, index, invert);
+                }
+                else
+                    result = false;
             }
-            if (process_the_action)
-            {
-                automation::action a = incoming.action_code();
-                bool invert = incoming.inverse_active();
-                int d0 = incoming.d0();
-                int index = incoming.control_code();        /* in lieu of d1()  */
-                result = mop.call(a, d0, index, invert);
-            }
-            else
-                result = false;
         }
     }
     return result;
