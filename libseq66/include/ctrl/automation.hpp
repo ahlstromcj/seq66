@@ -28,15 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-06-08
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
  *  unmuting, group control, and a number of additional controls to make
- *  Seq66 controllable without a graphical user interface.  See the cpp file for
- *  additional information.
- *
- *  It requires C++11 and above.
+ *  Seq66 controllable without a graphical user interface.  See the cpp file
+ *  for additional information.  This module requires C++11 and above.
  */
 
 #include <string>
@@ -212,7 +210,7 @@ enum class slot
     toggle_jack,        /**< 39: GUI. Toggle between JACK and ALSA support. */
     menu_mode,          /**< 40: GUI. Switch menu between enabled/disabled. */
     follow_transport,   /**< 41: GUI. Toggle between following JACK or not. */
-    reserved_42,        /**< 42: Reserved for expansion.                    */
+    panic,              /**< 42: The Panic Button.                          */
     reserved_43,        /**< 43: Reserved for expansion.                    */
     reserved_44,        /**< 44: Reserved for expansion.                    */
     reserved_45,        /**< 45: Reserved for expansion.                    */

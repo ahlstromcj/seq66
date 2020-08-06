@@ -323,7 +323,7 @@ keycontainer::add_defaults ()
         { "F11",       automation::action::on      },  // 39 toggle_jack
         { "F12",       automation::action::on      },  // 40 menu_mode
         { "F4",        automation::action::on      },  // 41 follow_transport
-        { "Null_f8",   automation::action::off     },  // 42 reserved_42
+        { "~",         automation::action::on      },  // 42 panic
         { "Null_f9",   automation::action::off     },  // 43 reserved_43
         { "Null_fa",   automation::action::off     },  // 44 reserved_44
         { "Null_fb",   automation::action::off     },  // 45 reserved_45

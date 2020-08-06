@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-05
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,7 +87,7 @@ class midicontrolfile final : public configfile
             return m_slot_control;
         }
 
-    };          // midicontrolfile::key
+    };              /* midicontrolfile::key     */
 
     class stanza
     {
@@ -135,7 +135,7 @@ class midicontrolfile final : public configfile
                 m_settings[action][part] : 0 ;
         }
 
-    };              // midicontrolfile::stanza
+    };              /* midicontrolfile::stanza  */
 
 public:
 
@@ -194,10 +194,6 @@ private:
     bool parse_midi_control_out (std::ifstream & file);
     void show_stanza (const stanza & stan) const;
 
-    /**
-     * \getter m_stanzas
-     */
-
     storage & stanzas ()
     {
         return m_stanzas;
@@ -205,31 +201,17 @@ private:
 
     bool write_midi_control (std::ofstream & file);
     bool write_midi_control_out (std::ofstream & file);
-    void read_ctrl_event
-    (
-        std::ifstream & file,
-        midicontrolout & mctrl,
-        midicontrolout::action a
-    );
-    void write_ctrl_event
-    (
-        std::ofstream & file,
-        midicontrolout & mctrl,
-        midicontrolout::action a
-    );
     void read_ctrl_pair
     (
         std::ifstream & file,
         midicontrolout & mctrl,
-        midicontrolout::action a1,
-        midicontrolout::action a2
+        midicontrolout::uiaction a
     );
     void write_ctrl_pair
     (
         std::ofstream & file,
         const midicontrolout & mctrl,
-        midicontrolout::action a1,
-        midicontrolout::action a2
+        midicontrolout::uiaction a
     );
 
 };              // class midicontrolfile

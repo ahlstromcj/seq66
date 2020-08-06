@@ -866,6 +866,8 @@ sequence::play
             (
                 start_tick, end_tick, resumenoteons
             );
+            // Causes a seqfault on song playback
+            // notify_change();                /* parent, subscriber, announce */
         }
     }
     if (playing())                          /* play notes in frame          */

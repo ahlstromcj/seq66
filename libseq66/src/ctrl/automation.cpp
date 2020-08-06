@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-06-09
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -290,7 +290,7 @@ s_slotnamelist [] =
     { slot::toggle_jack,      "toggle_jack"     },
     { slot::menu_mode,        "menu_mode"       },
     { slot::follow_transport, "follow_transport"},
-    { slot::reserved_42,      "reserved_42"     },
+    { slot::panic,            "panic"           },
     { slot::reserved_43,      "reserved_43"     },
     { slot::reserved_44,      "reserved_44"     },
     { slot::reserved_45,      "reserved_45"     },
@@ -312,23 +312,11 @@ std::string
 slot_to_string (slot s)
 {
     std::string result;
-#if USE_THIS_CODE
-    slot_pair * sptr = &s_slotnamelist[0];
-    for (int i = 0; ; ++i)
-    {
-        if (sptr->slotcode == s || sptr->slotcode == slot::illegal)
-        {
-            result = sptr->slotname;
-            break;
-        }
-    }
-#else
     if (s >= slot::bpm_up && s < slot::illegal)
     {
         int index = static_cast<int>(s);
         result = s_slotnamelist[index].slotname;
     }
-#endif
     return result;
 }
 

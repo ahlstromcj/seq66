@@ -1,7 +1,7 @@
-# Seq66 0.90.0 (and above) midi control configuration file
+# Seq66 0.90.5 (and above) midi control configuration file
 #
 # /home/ahlstrom/.config/sequencer66/rowclipsmap.ctrl
-# Written on 2019-01-19 09:09:19
+# Written on 2020-08-06 09:09:19
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -185,7 +185,7 @@ load-midi-control = true
 39 "F2"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Toggle JACK
 40 "F3"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Menu Mode
 41 "F4"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Follow JACK
-42 "Null_ff" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 42
+42 "~"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Panic
 43 "Null_ff" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 43
 44 "Null_ff" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 44
 45 "Null_ff" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 45

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-05
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -83,7 +83,7 @@
  *  toggle_jack:        GUI. Toggle between JACK and ALSA support.
  *  menu_mode:          GUI. Switch menu between enabled/disabled.
  *  follow_transport:   GUI. Toggle between following JACK or not.
- *  reserved_42:        Reserved for expansion.
+ *  panic:              Provides a panic button to stop all notes.
  *  reserved_43:        Reserved for expansion.
  *  reserved_44:        Reserved for expansion.
  *  reserved_45:        Reserved for expansion.
@@ -516,6 +516,8 @@ performer::notify_sequence_change (seq::number seqno, change mod)
     for (auto notify : m_notify)
         (void) notify->on_sequence_change(seqno);
 
+    seq::pointer s = get_sequence(seqno);
+//  announce_sequence(s, seqno);                /* though seqno overridden  */
     if (mod == change::yes)
         modify();
 }
@@ -983,7 +985,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
 #if defined USE_MIDI_CONTROL_OUT_ACTIVE                // not present
         midi_control_out().send_seq_event
         (
-            seqnum, midicontrolout::action::activate   /* flushes  */
+            seqnum, midicontrolout::uiaction::activate   /* flushes  */
         );
 #endif
     }
@@ -1051,6 +1053,9 @@ performer::remove_sequence (seq::number seqno)
     bool result = mapper().remove_sequence(seqno);
     if (result)
         modify();
+
+        /////////////////////////////////////////////////////
+        // notify_sequence_change(seqno);          /* also modify()'s          */
 
     midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
     return result;
@@ -1297,7 +1302,9 @@ performer::inner_start (bool songmode)
         automutex lk(cv().locker());    /* use the condition's recmutex */
 #endif
         cv().signal();
-        midi_control_out().send_event(midicontrolout::action::play);
+        send_event(midicontrolout::uiaction::play, true);
+        send_event(midicontrolout::uiaction::stop, false);
+        send_event(midicontrolout::uiaction::pause, false);
     }
 }
 
@@ -1324,7 +1331,9 @@ performer::inner_stop (bool midiclock)
     m_is_running = false;
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
-    midi_control_out().send_event(midicontrolout::action::stop);
+    send_event(midicontrolout::uiaction::stop, true);
+    send_event(midicontrolout::uiaction::play, false);
+    send_event(midicontrolout::uiaction::pause, false);
 }
 
 /**
@@ -1933,7 +1942,9 @@ performer::launch (int ppqn)
 }
 
 /**
- *
+ *  Announces the current mute states of the now-current play-screen.  This
+ *  function is handled by creating a slothandler that calls the
+ *  announce_sequence() function.
  */
 
 void
@@ -1952,7 +1963,8 @@ performer::announce_playscreen ()
 }
 
 /**
- *
+ *  This action is similar to announce_playscreen(), but it unconditionally
+ *  turns off (removes) all of the sequences.
  */
 
 void
@@ -3418,7 +3430,9 @@ performer::pause_playing (bool songmode)
         m_usemidiclock = false;
         m_start_from_perfedit = false;      /* act like stop_playing()      */
     }
-    midi_control_out().send_event(midicontrolout::action::pause);
+    send_event(midicontrolout::uiaction::play, false);
+    send_event(midicontrolout::uiaction::stop, false);
+    send_event(midicontrolout::uiaction::pause, true);
 }
 
 /**
@@ -4174,17 +4188,6 @@ performer::set_sequence_control_status
             save_snapshot();
 
         midi_control_in().add_status(status);
-        if (midi_control_in().is_queue(status))
-            midi_control_out().send_event(midicontrolout::action::queue_on);
-
-        if (midi_control_in().is_oneshot(status))
-            midi_control_out().send_event(midicontrolout::action::oneshot_on);
-
-        if (midi_control_in().is_replace(status))
-            midi_control_out().send_event(midicontrolout::action::replace_on);
-
-        if (midi_control_in().is_snapshot(status))
-            midi_control_out().send_event(midicontrolout::action::snap1_store);
     }
     else
     {
@@ -4195,18 +4198,29 @@ performer::set_sequence_control_status
             unset_queued_replace();
 
         midi_control_in().remove_status(status);
-        if (midi_control_in().is_queue(status))
-            midi_control_out().send_event(midicontrolout::action::queue_off);
-
-        if (midi_control_in().is_oneshot(status))
-            midi_control_out().send_event(midicontrolout::action::oneshot_off);
-
-        if (midi_control_in().is_replace(status))
-            midi_control_out().send_event(midicontrolout::action::replace_off);
-
-        if (midi_control_in().is_snapshot(status))
-            midi_control_out().send_event(midicontrolout::action::snap1_restore);
     }
+
+    if (midi_control_in().is_queue(status))
+        send_event(midicontrolout::uiaction::queue, set_it);
+
+    if (midi_control_in().is_oneshot(status))
+        send_event(midicontrolout::uiaction::oneshot, set_it);
+
+    if (midi_control_in().is_replace(status))
+        send_event(midicontrolout::uiaction::replace, set_it);
+
+    if (midi_control_in().is_snapshot(status))
+        send_event(midicontrolout::uiaction::snap1, set_it);
+}
+
+/**
+ *
+ */
+
+void
+performer::send_event (midicontrolout::uiaction a, bool on)
+{
+    midi_control_out().send_event(a, on);
 }
 
 /**
@@ -4335,6 +4349,8 @@ performer::sequence_playing_toggle (seq::number seqno)
         else if (is_queue)
         {
             s->toggle_queued();
+            // notify_sequence_change(seqno, change::no);
+            announce_sequence(s, 0);                /* 0 not used here      */
         }
         else
         {
@@ -4348,7 +4364,8 @@ performer::sequence_playing_toggle (seq::number seqno)
                 off_sequences();
             }
             s->toggle_playing();
-            announce_sequence(s, 0);    /* 2nd parameter irrelevant here    */
+            // notify_sequence_change(seqno, change::no);
+            announce_sequence(s, 0);                /* 0 not used here      */
         }
 
         /*
@@ -6047,6 +6064,26 @@ performer::automation_follow_transport
 }
 
 /**
+ *  TODO TODO TODO
+ */
+
+bool
+performer::automation_panic
+(
+    automation::action a, int d0, int d1, bool inverse
+)
+{
+    std::string name = "Panic!";
+    bool result = false;
+    print_parameters(name, a, d0, d1, inverse);
+    if (! inverse)
+    {
+        panic();
+    }
+    return result;
+}
+
+/**
  *  Provides a list of all the functions that can be configured to be called
  *  upon configured keystrokes or incoming MIDI messages.
  */
@@ -6116,7 +6153,7 @@ performer::sm_auto_func_list [] =
         automation::slot::follow_transport,
         &performer::automation_follow_transport
     },
-    { automation::slot::reserved_42, &performer::automation_no_op        },
+    { automation::slot::panic,       &performer::automation_panic        },
     { automation::slot::reserved_43, &performer::automation_no_op        },
     { automation::slot::reserved_44, &performer::automation_no_op        },
     { automation::slot::reserved_45, &performer::automation_no_op        },

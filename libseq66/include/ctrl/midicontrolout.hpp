@@ -26,9 +26,9 @@
  *  <i>output</i> of the application.
  *
  * \library       seq66 application
- * \author        Igor Angst (with modifications by C. Ahlstrom)
+ * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2019-11-25
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -54,8 +54,8 @@ namespace seq66
 class performer;
 
 /**
- *  Provides some management support for MIDI control... on output.  Many thanks
- *  to igorangst!
+ *  Provides some management support for MIDI control... on output.  Many
+ *  thanks to igorangst!
  */
 
 class midicontrolout final : public midicontrolbase
@@ -69,19 +69,19 @@ public:
      * \todo
      *      Additional sequence actions to consider: record on, record off.
      *
-     * \var action_play
+     * \var play
      *      Sequence is playing.
      *
-     * \var action_mute
+     * \var mute
      *      Sequence is muted.
      *
-     * \var action_queue
+     * \var queue
      *      Sequence is queued.
      *
-     * \var action_delete
+     * \var delete
      *      Sequence is deleted from its slot.
      *
-     * \var action_max
+     * \var max
      *      Marker for the maximum value of actions.
      */
 
@@ -95,28 +95,26 @@ public:
     };
 
     /**
-     *  Provides codes for various other actions.
+     *  Provides codes for various other actions.  This enumeration will
+     *  replace the action enumeration.  All items with have an On control and
+     *  an Off control.
      */
 
-    enum class action
+    enum class uiaction
     {
         play,
         stop,
         pause,
-        queue_on,
-        queue_off,
-        oneshot_on,
-        oneshot_off,
-        replace_on,
-        replace_off,
-        snap1_store,
-        snap1_restore,
-        snap2_store,
-        snap2_restore,
-        learn_on,
-        learn_off,
+        queue,
+        oneshot,
+        replace,
+        snap1,
+        snap2,
+        learn,
         max
     };
+
+private:
 
     /**
      *  Manifest constants for rcfile to use as array indices.
@@ -133,30 +131,53 @@ public:
     };
 
     /**
-     *  Provides a type to hold a MIDI-control-out event and its status.
-     *
-     *      action_pair_t;
+     *  Provides a type to hold a MIDI-control-out sequence event and its
+     *  status.  There are four of these for each sequence slot, one for each
+     *  of the seqactions of arm, mute, queue, and remove.
      */
 
     using actionpair = struct
     {
-        event apt_action_event;
         bool apt_action_status;
-
+        event apt_action_event;
     };
 
     /**
-     *
+     *  Holds an array of actionpairs, one for each item in the actions
+     *  enumeration.
      */
 
     using actions = std::vector<actionpair>;
 
     /**
      *  Provides a type for a vector of action pairs, which can be essentially
-     *  unlimited in size.
+     *  unlimited in size.  However, currently, the number needed is
+     *  action::max, or 15.
      */
 
     using actionlist = std::vector<actions>;
+
+    using actiontriplet = struct
+    {
+        bool att_action_status;
+        event att_action_event_on;
+        event att_action_event_off;
+    };
+
+    /**
+     *  Holds an array of actionpairs, one for each item in the uiaction
+     *  enumeration.
+     */
+
+    using uiactions = std::vector<actiontriplet>;
+
+    /**
+     *  Provides a type for a vector of uiaction pairs, which can be essentially
+     *  unlimited in size.  However, currently, the number needed is
+     *  uiaction::max, or 9.
+     */
+
+    using uiactionlist = std::vector<uiactions>;
 
 private:
 
@@ -167,16 +188,19 @@ private:
     mastermidibus * m_master_bus;
 
     /**
-     *  Provides the events to be sent out for sequence status changes.
+     *  Provides the events to be sent out for sequence status changes.  This
+     *  is a vector of vectors, by default of size 32 patterns by 4
+     *  seqactions.
      */
 
     actionlist m_seq_events;
 
     /**
-     *  Provides the events to be sent out for non-sequence actions.
+     *  Provides the events to be sent out for non-sequence actions.  This
+     *  item is a vector of uiaction::max = 9 actiontriplets.
      */
 
-    actions m_events;
+    uiactions m_ui_events;
 
     /**
      *  Holds the screenset size, to use rather than calling the container.
@@ -233,18 +257,16 @@ public:
     void set_seq_event (int seq, seqaction what, event & ev);
     void set_seq_event (int seq, seqaction what, int * ev);
     bool seq_event_is_active (int seq, seqaction what) const;
-    void send_event (action what);
+    bool event_is_active (uiaction what) const;
+    std::string get_event_str (uiaction what, bool on) const;
+    void set_event (uiaction what, bool enabled, event & on, event & off);
+    void set_event (uiaction what, bool enabled, int * onp, int * offp);
+    void send_event (uiaction what, bool on);
 
     void send_learning (bool learning)
     {
-        send_event(learning ? action::learn_on : action::learn_off);
+        send_event(uiaction::learn, learning);
     }
-
-    event get_event (action what) const;
-    std::string get_event_str (action what) const;
-    void set_event (action what, event & ev);
-    void set_event (action what, int * ev);
-    bool event_is_active (action what) const;
 
 };          // class midicontrolout
 
@@ -253,7 +275,7 @@ public:
  */
 
 extern std::string seqaction_to_string (midicontrolout::seqaction a);
-extern std::string action_to_string (midicontrolout::action a);
+extern std::string action_to_string (midicontrolout::uiaction a);
 
 }           // namespace seq66
 

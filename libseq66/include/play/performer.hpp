@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-03
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -2322,6 +2322,7 @@ public:
         return mapper().is_dirty_names(seqno);
     }
 
+    void send_event (midicontrolout::uiaction a, bool on);
     void announce_playscreen ();
     void announce_exit ();
     bool announce_sequence (seq::pointer s, seq::number /*sn*/);
@@ -3098,6 +3099,10 @@ public:
         automation::action a, int d0, int d1, bool inverse
     );
     bool automation_follow_transport
+    (
+        automation::action a, int d0, int d1, bool inverse
+    );
+    bool automation_panic
     (
         automation::action a, int d0, int d1, bool inverse
     );

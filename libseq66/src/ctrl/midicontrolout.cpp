@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2019-06-19
+ * \updates       2020-08-06
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -50,7 +50,7 @@ midicontrolout::midicontrolout ()
     midicontrolbase     (SEQ66_MIDI_CONTROL_OUT_BUSS),
     m_master_bus        (nullptr),
     m_seq_events        (),
-    m_events            (),
+    m_ui_events         (),
     m_screenset_size    (0),
     m_screenset_offset  (0)
 {
@@ -82,29 +82,32 @@ midicontrolout::initialize (int count, int bus)
 {
     event dummy_event;
     actions actionstemp;
-    actionpair apt;
     dummy_event.set_channel_status(0, 0);       /* set status and channel   */
-    apt.apt_action_event = dummy_event;
-    apt.apt_action_status = false;
     m_seq_events.clear();
-    m_events.clear();
-    is_blank(true);
+    m_ui_events.clear();
     is_enabled(false);
     if (count > 0)
     {
+        actionpair apt;
+        apt.apt_action_status = false;
+        apt.apt_action_event = dummy_event;
         is_enabled(true);
         if (bus >= 0 && bus < c_busscount_max)  /* also note c_bussbyte_max */
             buss(bussbyte(bus));
 
         m_screenset_size = count;
         for (int a = 0; a < static_cast<int>(seqaction::max); ++a)
-            actionstemp.push_back(apt);     /* a blank action-pair vector   */
+            actionstemp.push_back(apt);         /* blank action-pair vector */
 
         for (int c = 0; c < count; ++c)
             m_seq_events.push_back(actionstemp);
 
-        for (int a = 0; a < static_cast<int>(action::max); ++a)
-            m_events.push_back(apt);
+        actiontriplet att;
+        att.att_action_status = false;
+        att.att_action_event_on = dummy_event;
+        att.att_action_event_off = dummy_event;
+        for (int a = 0; a < static_cast<int>(uiaction::max); ++a)
+            m_ui_events.push_back(att);
     }
     else
         m_screenset_size = 0;
@@ -141,54 +144,36 @@ seqaction_to_string (midicontrolout::seqaction a)
  */
 
 std::string
-action_to_string (midicontrolout::action a)
+action_to_string (midicontrolout::uiaction a)
 {
     switch (a)
     {
-    case midicontrolout::action::play:
+    case midicontrolout::uiaction::play:
         return "play";
 
-    case midicontrolout::action::stop:
+    case midicontrolout::uiaction::stop:
         return "stop";
 
-    case midicontrolout::action::pause:
+    case midicontrolout::uiaction::pause:
         return "pause";
 
-    case midicontrolout::action::queue_on:
-        return "queue on";
+    case midicontrolout::uiaction::queue:
+        return "queue";
 
-    case midicontrolout::action::queue_off:
-        return "queue off";
+    case midicontrolout::uiaction::oneshot:
+        return "oneshot";
 
-    case midicontrolout::action::oneshot_on:
-        return "oneshot on";
+    case midicontrolout::uiaction::replace:
+        return "replace";
 
-    case midicontrolout::action::oneshot_off:
-        return "oneshot off";
+    case midicontrolout::uiaction::snap1:
+        return "snap1";
 
-    case midicontrolout::action::replace_on:
-        return "replace on";
+    case midicontrolout::uiaction::snap2:
+        return "snap2";
 
-    case midicontrolout::action::replace_off:
-        return "replace off";
-
-    case midicontrolout::action::snap1_store:
-        return "snap1 store";
-
-    case midicontrolout::action::snap1_restore:
-        return "snap1 restore";
-
-    case midicontrolout::action::snap2_store:
-        return "snap2 store";
-
-    case midicontrolout::action::snap2_restore:
-        return "snap2 restore";
-
-    case midicontrolout::action::learn_on:
-        return "learn on";
-
-    case midicontrolout::action::learn_off:
-        return "learn off";
+    case midicontrolout::uiaction::learn:
+        return "learn";
 
     default:
         return "unknown";
@@ -199,17 +184,17 @@ action_to_string (midicontrolout::action a)
  *  Send out notification about playing status of a sequence.
  *
  * \todo
- *      Need to handle screen sets. Since sequences themselves are ignorant about
- *      the current screen set, maybe we can centralise this knowledge inside
- *      this class, so before sending a sequence event, we check here if the
- *      sequence is in the active screen set, otherwise we drop the event. This
- *      requires that in the performer class, we do a "repaint" each time the
- *      screen set is changed.  For now, the size of the screenset is fixed to 32
- *      in this function.
+ *      Need to handle screen sets. Since sequences themselves are ignorant
+ *      about the current screen set, maybe we can centralise this knowledge
+ *      inside this class, so before sending a sequence event, we check here
+ *      if the sequence is in the active screen set, otherwise we drop the
+ *      event. This requires that in the performer class, we do a "repaint"
+ *      each time the screen set is changed.  For now, the size of the
+ *      screenset is fixed to 32 in this function.
  *
- * Also, maybe consider adding an option to the config file, making this behavior
- * optional: So either absolute sequence actions (let the receiver do the
- * math...), or sending events relative (modulo) the current screen set.
+ * Also, maybe consider adding an option to the config file, making this
+ * behavior optional: So either absolute sequence actions (let the receiver do
+ * the math...), or sending events relative (modulo) the current screen set.
  *
  * \param seq
  *      The index of the sequence.
@@ -375,62 +360,29 @@ midicontrolout::seq_event_is_active (int seq, seqaction what) const
         m_seq_events[seq][w].apt_action_status : false ;
 }
 
-/**
- * Send out notification about non-sequence actions.
- *
- * \param what
- *      The action to be notified.
- */
-
 void
-midicontrolout::send_event (action what)
+midicontrolout::send_event (uiaction what, bool on)
 {
-    if (is_enabled() && event_is_active(what))
+    if (is_enabled() && event_is_active(what) && not_nullptr(m_master_bus))
     {
         int w = static_cast<int>(what);
-        event ev = m_events[w].apt_action_event;
-        if (not_nullptr(m_master_bus))
-        {
-#ifdef SEQ66_PLATFORM_DEBUG_TMI
-                std::string act = action_to_string(w);
-                std::string evstring = to_string(ev);
-                printf
-                (
-                    "send_event(%s): %s\n", act.c_str(), evstring.c_str()
-                );
-#endif
-            m_master_bus->play(buss(), &ev, ev.channel());
-            m_master_bus->flush();
-        }
+        event ev = on ? m_ui_events[w].att_action_event_on :
+            m_ui_events[w].att_action_event_off ;
+
+        m_master_bus->play(buss(), &ev, ev.channel());
+        m_master_bus->flush();
     }
 }
 
-event
-midicontrolout::get_event (action what) const
-{
-    static event s_dummy_event;
-    int w = static_cast<int>(what);
-    return event_is_active(what) ?
-        m_events[w].apt_action_event : s_dummy_event ;
-}
-
-/**
- * Getter for non-sequence action events.
- *
- * \param what
- *      The action to be notified.
- *
- * \return
- *      The MIDI event to be sent.
- */
-
 std::string
-midicontrolout::get_event_str (action what) const
+midicontrolout::get_event_str (uiaction what, bool on) const
 {
-    if (what < action::max)              /* not event_is_active(what)!!  */
+    if (what < uiaction::max)
     {
         int w = static_cast<int>(what);
-        event ev(m_events[w].apt_action_event);
+        event ev = on ? m_ui_events[w].att_action_event_on :
+            m_ui_events[w].att_action_event_off ;
+
         midibyte d0, d1;
         ev.get_data(d0, d1);
         std::ostringstream str;
@@ -444,51 +396,40 @@ midicontrolout::get_event_str (action what) const
         return std::string("[0 0 0 0]");
 }
 
-/**
- * Register a MIDI event for a given non-sequence action.
- *
- * \param what
- *      The action to be notified.
- *
- * \param event
- *      The MIDI event to be sent.
- */
-
 void
-midicontrolout::set_event (action what, event & ev)
+midicontrolout::set_event (uiaction what, bool enabled, event & on, event & off)
 {
-    if (is_enabled() && what < action::max)
+    if (is_enabled() && what < uiaction::max)
     {
         int w = static_cast<int>(what);
-        m_events[w].apt_action_event = ev;
-        m_events[w].apt_action_status = true;
-        is_blank(false);     // ???
+        m_ui_events[w].att_action_event_on = on;
+        m_ui_events[w].att_action_event_off = off;
+        m_ui_events[w].att_action_status = enabled;
     }
 }
 
 /**
- *  Register a MIDI event for a given non-sequence action.  An overload taking
- *  an array of 5 integers.
  *
- * \param what
- *      Provides the action code to be set.
- *
- * \param eva
- *      A pointer to an array of 5 integers.  These are used to see if the event
- *      is enabled, and to provide parameters for reconstructing the event.
+ *  4 elements in each integer array
  */
 
 void
-midicontrolout::set_event (action what, int * eva)
+midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
 {
-    if (is_enabled() && what < action::max)
+    if (is_enabled() && what < uiaction::max)
     {
         int w = static_cast<int>(what);
+        int i = static_cast<int>(outindex::enabled);
         event ev;
-        ev.set_channel_status(eva[outindex::status], eva[outindex::channel]);
-        ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
-        m_events[w].apt_action_event = ev;
-        m_events[w].apt_action_status = bool(eva[outindex::enabled]);
+        ev.set_channel_status(onp[i+2], onp[i+1]);      /* status, channel  */
+        ev.set_data(onp[i+3], onp[i+4]);
+        m_ui_events[w].att_action_event_on = ev;
+
+        ev.set_channel_status(offp[i+2], offp[i+1]);    /* status, channel  */
+        ev.set_data(offp[i+3], offp[i+4]);
+        m_ui_events[w].att_action_event_on = ev;
+
+        m_ui_events[w].att_action_status = enabled;
     }
 }
 
@@ -503,10 +444,10 @@ midicontrolout::set_event (action what, int * eva)
  */
 
 bool
-midicontrolout::event_is_active (action what) const
+midicontrolout::event_is_active (uiaction what) const
 {
     int w = static_cast<int>(what);
-    return what < action::max ?  m_events[w].apt_action_status : false;
+    return what < uiaction::max ? m_ui_events[w].att_action_status : false ;
 }
 
 }           // namespace seq66
