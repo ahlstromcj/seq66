@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-06
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -285,6 +285,7 @@ public:
 
 extern std::string seqaction_to_string (midicontrolout::seqaction a);
 extern std::string action_to_string (midicontrolout::uiaction a);
+extern std::string action_to_type_string (midicontrolout::uiaction a);
 
 }           // namespace seq66
 

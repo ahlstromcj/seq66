@@ -181,6 +181,30 @@ action_to_string (midicontrolout::uiaction a)
 }
 
 /**
+ *  A "to_string" function for the control file.
+ */
+
+std::string
+action_to_type_string (midicontrolout::uiaction a)
+{
+    std::string result = "unknown";
+    switch (a)
+    {
+    case midicontrolout::uiaction::snap1:
+    case midicontrolout::uiaction::snap2:
+
+        result = "store/restore";
+        break;
+
+    default:
+
+        result = "on/off";                          /* the most common case */
+        break;
+    }
+    return result;
+}
+
+/**
  *  Send out notification about playing status of a sequence.
  *
  * \todo
@@ -296,12 +320,12 @@ midicontrolout::get_seq_event (int seq, seqaction what) const
 void
 midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
 {
-    if (is_enabled())
+    if (what < seqaction::max)
     {
         int w = static_cast<int>(what);
         m_seq_events[seq][w].apt_action_event = ev;
         m_seq_events[seq][w].apt_action_status = true;
-        is_blank(false);     // ???
+        is_blank(false);
     }
 }
 
@@ -327,7 +351,7 @@ midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
 void
 midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
 {
-    if (is_enabled() && what < seqaction::max)
+    if (what < seqaction::max)
     {
         int w = static_cast<int>(what);
         event ev;
@@ -410,12 +434,13 @@ midicontrolout::get_event_str (uiaction what, bool on) const
 void
 midicontrolout::set_event (uiaction what, bool enabled, event & on, event & off)
 {
-    if (is_enabled() && what < uiaction::max)
+    if (what < uiaction::max)
     {
         int w = static_cast<int>(what);
         m_ui_events[w].att_action_status = enabled;
         m_ui_events[w].att_action_event_on = on;
         m_ui_events[w].att_action_event_off = off;
+        is_blank(false);
     }
 }
 
@@ -427,7 +452,7 @@ midicontrolout::set_event (uiaction what, bool enabled, event & on, event & off)
 void
 midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
 {
-    if (is_enabled() && what < uiaction::max)
+    if (what < uiaction::max)
     {
         int w = static_cast<int>(what);
         m_ui_events[w].att_action_status = enabled;
@@ -440,6 +465,7 @@ midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
         ev.set_channel_status(offp[1], offp[0]);    /* status, channel  */
         ev.set_data(offp[2], offp[3]);              /* d1 and d2        */
         m_ui_events[w].att_action_event_off = ev;
+        is_blank(false);
     }
 }
 

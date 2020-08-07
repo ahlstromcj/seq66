@@ -13,7 +13,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 1
+version = 2
 
 # [comments] holds the user's documentation for this control file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
@@ -70,7 +70,7 @@ on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 load-key-controls = true
 load-midi-controls = true
-control-buss = 0xff
+control-buss = 1
 midi-enabled = true
 
 # This style of control stanza incorporates key control as well.

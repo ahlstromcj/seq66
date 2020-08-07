@@ -379,9 +379,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
          * The performer sets the masterbus later on.
          */
 
-        midicontrolout & mctrl = rc_ref().midi_control_out();
-        mctrl.initialize(sequences, buss);
-        mctrl.is_enabled(enabled);
+        midicontrolout & mco = rc_ref().midi_control_out();
+        mco.initialize(sequences, buss);
+        mco.is_enabled(enabled);
         for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
         {
             int a[5], b[5], c[5], d[5];
@@ -394,10 +394,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 &c[0], &c[1], &c[2], &c[3], &c[4],
                 &d[0], &d[1], &d[2], &d[3], &d[4]
             );
-            mctrl.set_seq_event(i, midicontrolout::seqaction::arm, a);
-            mctrl.set_seq_event(i, midicontrolout::seqaction::mute, b);
-            mctrl.set_seq_event(i, midicontrolout::seqaction::queue, c);
-            mctrl.set_seq_event(i, midicontrolout::seqaction::remove, d);
+            mco.set_seq_event(i, midicontrolout::seqaction::arm, a);
+            mco.set_seq_event(i, midicontrolout::seqaction::mute, b);
+            mco.set_seq_event(i, midicontrolout::seqaction::queue, c);
+            mco.set_seq_event(i, midicontrolout::seqaction::remove, d);
             if (! next_data_line(file))
             {
                 (void) make_error_message("midi-control-out", "no data");
@@ -407,29 +407,29 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
         /* Non-sequence actions */
 
-        bool ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::play);
+        bool ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::play);
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::stop);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::pause);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::pause);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::queue);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::queue);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::oneshot);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::oneshot);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::replace);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::replace);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap1);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap1);
 
         if (ok)
-            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap2);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap2);
 
-        (void) read_ctrl_pair(file, mctrl, midicontrolout::uiaction::learn);
+        (void) read_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
 
         if (! ok)
         {
@@ -458,7 +458,7 @@ bool
 midicontrolfile::read_ctrl_pair
 (
     std::ifstream & file,
-    midicontrolout & mctrl,
+    midicontrolout & mco,
     midicontrolout::uiaction a
 )
 {
@@ -472,7 +472,7 @@ midicontrolfile::read_ctrl_pair
     if (count < 9)
         ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-    mctrl.set_event(a, enabled, ev_on, ev_off);
+    mco.set_event(a, enabled, ev_on, ev_off);
     return next_data_line(file);
 }
 
@@ -578,10 +578,11 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
-        int bb = int(rc_ref().midi_control_buss());
+        const midicontrolin & mci = rc_ref().midi_control_in();
+        bool disabled = mci.is_disabled();
+        int bb = int(mci.buss());
         std::string k(bool_to_string(rc_ref().load_key_controls()));
         std::string m(bool_to_string(rc_ref().load_midi_control_in()));
-        bool disabled = rc_ref().midi_control_in().is_disabled();
         file <<
         "\n[midi-control-settings]\n\n"
         "# Note that setting 'load-midi-control' to 'false' will cause an\n"
@@ -705,21 +706,21 @@ bool
 midicontrolfile::write_ctrl_pair
 (
     std::ofstream & file,
-    const midicontrolout & mctrl,
+    const midicontrolout & mco,
     midicontrolout::uiaction a
 )
 {
-    bool active = mctrl.event_is_active(a);
-    std::string act1str = mctrl.get_event_str(a, true);
-    std::string act2str = mctrl.get_event_str(a, false);
+    bool active = mco.event_is_active(a);
+    std::string act1str = mco.get_event_str(a, true);
+    std::string act2str = mco.get_event_str(a, false);
     file
         << "# MIDI Control Out: " << action_to_string(a)
-        << " on/off or store/restore\n"
+        << " " << action_to_type_string(a) << "\n"
         << (active ? 1 : 0) << " "
         << act1str << " " << act2str << "\n\n"
         ;
 
-    return true;        /* TODO */
+    return file.good();
 }
 
 /**
@@ -730,17 +731,16 @@ midicontrolfile::write_ctrl_pair
 bool
 midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
-    midicontrolout & mco = rc_ref().midi_control_out();
-
+    const midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
     int buss = int(mco.buss());
     bool disabled = mco.is_disabled();
-    if (mco.is_blank())
-    {
-        setsize = SEQ66_DEFAULT_SET_SIZE;
-        buss = SEQ66_MIDI_CONTROL_OUT_BUSS;
-        disabled = true;
-    }
+//  if (mco.is_blank())
+//  {
+//      setsize = SEQ66_DEFAULT_SET_SIZE;
+//      buss = SEQ66_MIDI_CONTROL_OUT_BUSS;
+//      disabled = true;
+//  }
 
     bool result = setsize > 0 && buss >= 0;         /* light sanity check */
     file <<
@@ -941,8 +941,8 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
 #endif
         for (const auto & m : mc.container())
         {
-            const midicontrol & mctrl = m.second;
-            key k(mctrl);
+            const midicontrol & mco = m.second;
+            key k(mco);
             auto stanziter = m_stanzas.find(k);
             bool ok;
             if (stanziter != m_stanzas.end())
@@ -963,12 +963,12 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
                     << std::endl
                     ;
 #endif
-                stanziter->second.set(mctrl);
+                stanziter->second.set(mco);
                 ok = true;                      /* points to the found one  */
             }
             else
             {
-                stanza s(mctrl);                /* includes settings sect.  */
+                stanza s(mco);                /* includes settings sect.  */
                 auto sz = m_stanzas.size();
                 auto p = std::make_pair(k, s);
                 (void) m_stanzas.insert(p);
@@ -994,7 +994,7 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
             if (! ok)
             {
                 errprint("couldn't update midicontrol:");
-                mctrl.show(true);
+                mco.show(true);
                 result = false;
                 break;
             }

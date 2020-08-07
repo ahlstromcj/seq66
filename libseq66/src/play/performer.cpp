@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-06
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -648,6 +648,7 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.inputs() = m_inputs;
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
+    rcs.midi_control_out() = m_midi_control_out;
     rcs.mute_groups() = m_mute_groups;
     rcs.song_start_mode(pb);
     rcs.filter_by_channel(m_filter_by_channel);
