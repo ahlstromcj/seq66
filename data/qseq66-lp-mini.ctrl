@@ -1,7 +1,7 @@
-# Seq66 0.90.3 (and above) MIDI control configuration file
+# Seq66 0.90.5 (and above) MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
-# Written on 2020-08-06 08:55:08
+# Written on 2020-08-06 17:43:52
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -302,33 +302,32 @@ enabled = true
 # v  v v v v
 # 1 [0 0 0 0]
 
-# MIDI Control Out: play
-0 [0 0 0 0]
+# MIDI Control Out: play on/off or store/restore
+1 [0 0xb0 107 127] [0 0xb0 107 0]
 
-# MIDI Control Out: stop
-0 [0 0 0 0]
+# MIDI Control Out: stop on/off or store/restore
+1 [0 0xb0 105 127] [0 0xb0 105 0]
 
-# MIDI Control Out: pause
-0 [0 0 0 0]
+# MIDI Control Out: pause on/off or store/restore
+1 [0 0xb0 106 127] [0 0xb0 106 0]
 
-# MIDI Control Out: queue on/opposite
+# MIDI Control Out: queue on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
 
-# MIDI Control Out: oneshot on/opposite
+# MIDI Control Out: oneshot on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
 
-# MIDI Control Out: replace on/opposite
+# MIDI Control Out: replace on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
 
-# MIDI Control Out: snap1 store/opposite
+# MIDI Control Out: snap1 on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
 
-# MIDI Control Out: snap2 store/opposite
+# MIDI Control Out: snap2 on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
 
-# MIDI Control Out: learn on/opposite
+# MIDI Control Out: learn on/off or store/restore
 0 [0 0 0 0] [0 0 0 0]
-
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
 #

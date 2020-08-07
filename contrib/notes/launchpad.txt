@@ -1,6 +1,6 @@
 Quick Reference for Launchpad Mini
 Chris Ahlstrom
-2020-08-03 to 2020-08-05
+2020-08-03 to 2020-08-06
 
 Some of this information was adopted from the PDF file
 launchpad-programmers-reference.pdf. That document notes that a Launchpad
@@ -18,7 +18,7 @@ The top row emits 0xB0 ## 0x7f on press, and 0xB0 ## 0x00 on release, where:
     ##      Ranges from 0x68 (104) to 0x6f (111) which are in the range of
             undefined MIDI controllers.
 
-The other buttons issue 0x90 ## 0x7f on press, and 0x90 ## 0x0 on release,
+The other buttons also issue 0x90 ## 0x7f on press, and 0x90 ## 0x0 on release,
 where:
 
     0x90    Note On message on channel 0 (i.e. channel 1).
@@ -106,5 +106,15 @@ Grid Button Out:   90h key vel (vel = 127 on press, 0 on release)
 Auto/Live Button:  B0h 68h-6fh vel (vel = 127 on press, 0 on release)
 
 More information can be found in the PDF.
+
+For Seq66, we want to start with the basic keys, mapped to the top row of
+circular buttons (very tentative):
+
+                                Song*     Keep*   Grou*
+Panic*  Stop    Pause   Play    Record    Queue   Learn     ???*
+ 68h     69h     6ah     6bh     6ch       6dh     6eh      6fh
+ 104     105     106     107     108       109     110      111
+
+* means not yet supported
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

@@ -4,7 +4,7 @@
 "
 "  Language:      C/C++
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-09-04 to 2019-02-03
+"  Last Change:   2006-09-04 to 2020-08-06
 "  Project:       XPC Suite library project
 "  Usage:
 "
@@ -68,8 +68,8 @@ syn keyword cType thread unique_ptr value_type vector wstring
 " Operators, language constants, or manipulators
 "------------------------------------------------------------------------------
 
-syn keyword cppOperator cin cout cerr endl hex left nothrow new npos
-syn keyword cppOperator right setw
+syn keyword cppOperator cin cout cerr dec endl hex left nothrow new npos
+syn keyword cppOperator right setfill setw
 
 "------------------------------------------------------------------------------
 " Less common C data typedefs

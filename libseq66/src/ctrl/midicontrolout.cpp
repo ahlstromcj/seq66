@@ -374,6 +374,10 @@ midicontrolout::send_event (uiaction what, bool on)
     }
 }
 
+/**
+ *
+ */
+
 std::string
 midicontrolout::get_event_str (uiaction what, bool on) const
 {
@@ -387,8 +391,11 @@ midicontrolout::get_event_str (uiaction what, bool on) const
         ev.get_data(d0, d1);
         std::ostringstream str;
         str
-            << "[" << int(ev.channel()) << " "
-            << int(ev.get_status()) << " " << int(d0) << " " << int(d1) << "]"
+            << "["
+            << int(ev.channel()) << " 0x"
+            << std::hex << int(ev.get_status()) << " "
+            << std::dec << int(d0) << " " << int(d1)
+            << "]"
             ;
         return str.str();
     }
@@ -396,21 +403,25 @@ midicontrolout::get_event_str (uiaction what, bool on) const
         return std::string("[0 0 0 0]");
 }
 
+/**
+ *
+ */
+
 void
 midicontrolout::set_event (uiaction what, bool enabled, event & on, event & off)
 {
     if (is_enabled() && what < uiaction::max)
     {
         int w = static_cast<int>(what);
+        m_ui_events[w].att_action_status = enabled;
         m_ui_events[w].att_action_event_on = on;
         m_ui_events[w].att_action_event_off = off;
-        m_ui_events[w].att_action_status = enabled;
     }
 }
 
 /**
  *
- *  4 elements in each integer array
+ *  4 elements in each integer array: channel, status, d1, d2.
  */
 
 void
@@ -419,17 +430,15 @@ midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
     if (is_enabled() && what < uiaction::max)
     {
         int w = static_cast<int>(what);
-        int i = static_cast<int>(outindex::enabled);
         event ev;
-        ev.set_channel_status(onp[i+2], onp[i+1]);      /* status, channel  */
-        ev.set_data(onp[i+3], onp[i+4]);
-        m_ui_events[w].att_action_event_on = ev;
-
-        ev.set_channel_status(offp[i+2], offp[i+1]);    /* status, channel  */
-        ev.set_data(offp[i+3], offp[i+4]);
-        m_ui_events[w].att_action_event_on = ev;
-
         m_ui_events[w].att_action_status = enabled;
+        ev.set_channel_status(onp[1], onp[0]);      /* status, channel  */
+        ev.set_data(onp[2], onp[3]);                /* d1 and d2        */
+
+        m_ui_events[w].att_action_event_on = ev;
+        ev.set_channel_status(offp[1], offp[0]);    /* status, channel  */
+        ev.set_data(offp[2], offp[3]);              /* d1 and d2        */
+        m_ui_events[w].att_action_event_on = ev;
     }
 }
 

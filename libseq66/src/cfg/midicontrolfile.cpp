@@ -425,7 +425,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 }
 
 /**
- *
+ *  Reads the first digit, which is the "enabled" bit, plus a pair of stanzas
+ *  with four values in this order: channel, status, d1, and d2.
  */
 
 void
@@ -553,7 +554,6 @@ midicontrolfile::write ()
 bool
 midicontrolfile::write_midi_control (std::ofstream & file)
 {
-    using namespace std;                /* easier access to setw(), etc.    */
     bool result = file.is_open();
     if (result)
     {
@@ -648,27 +648,28 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             }
             int spacing = 8 - int(stan.key_name().size());
             file
-                << setw(2) << stan.slot_number()
+                << std::setw(2) << stan.slot_number()
                 << " \"" << stan.key_name() << "\""
-                << setw(spacing) << " "
+                << std::setw(spacing) << " "
                 ;
             for (int action = 0; action < automation::ACTCOUNT; ++action)
             {
                 file
                     << "["
-                    << setw(2) << stan.setting(action, 0)       /* active   */
-                    << setw(2) << stan.setting(action, 1)       /* inverse  */
-                    << " 0x" << setw(2) << setfill('0')
-                    << hex << stan.setting(action, 2)           /* status   */
-                    << setw(4) << setfill(' ')
-                    << dec << stan.setting(action, 3)           /* d0       */
-                    << setw(4)
-                    << dec << stan.setting(action, 4)           /* min      */
-                    << setw(4)
-                    << dec << stan.setting(action, 5)           /* max      */
-                    << " ] ";
+                    << std::setw(2) << stan.setting(action, 0)  /* active   */
+                    << std::setw(2) << stan.setting(action, 1)  /* inverse  */
+                    << " 0x" << std::setw(2) << std::setfill('0')
+                    << std::hex << stan.setting(action, 2)      /* status   */
+                    << std::setw(4) << std::setfill(' ')
+                    << std::dec << stan.setting(action, 3)      /* d0       */
+                    << std::setw(4)
+                    << std::dec << stan.setting(action, 4)      /* min      */
+                    << std::setw(4)
+                    << std::dec << stan.setting(action, 5)      /* max      */
+                    << " ] "
+                    ;
             }
-            file << " # " << stan.op_name() << endl;
+            file << " # " << stan.op_name() << std::endl;
         }
     }
     return result;
@@ -990,30 +991,29 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
 void
 midicontrolfile::show_stanza (const stanza & stan) const
 {
-    using namespace std;
-    cout
+    std::cout
         << "[" << stan.category_name() << "-control] "
-        << "'" << setw(7) << stan.key_name() << "'"
-        << " " << setw(2) << stan.slot_number() << " "
+        << "'" << std::setw(7) << stan.key_name() << "'"
+        << " " << std::setw(2) << stan.slot_number() << " "
         ;
 
     for (int action = 0; action < automation::ACTCOUNT; ++action)
     {
-        cout
+        std::cout
             << "["
-            << setw(2) << stan.setting(action, 0)       /* active           */
-            << setw(2) << stan.setting(action, 1)       /* inverse active   */
-            << " 0x" << setw(2) << setfill('0')
-            << hex << stan.setting(action, 2)           /* status           */
-            << setw(4) << setfill(' ')
-            << dec << stan.setting(action, 3)           /* d0               */
-            << setw(4)
-            << dec << stan.setting(action, 4)           /* min              */
-            << setw(4)
-            << dec << stan.setting(action, 5)           /* max              */
+            << std::setw(2) << stan.setting(action, 0)  /* active           */
+            << std::setw(2) << stan.setting(action, 1)  /* inverse active   */
+            << " 0x" << std::setw(2) << std::setfill('0')
+            << std::hex << stan.setting(action, 2)      /* status           */
+            << std::setw(4) << std::setfill(' ')
+            << std::dec << stan.setting(action, 3)      /* d0               */
+            << std::setw(4)
+            << std::dec << stan.setting(action, 4)      /* min              */
+            << std::setw(4)
+            << std::dec << stan.setting(action, 5)      /* max              */
             << " ] ";
     }
-    cout << stan.op_name() << endl;
+    std::cout << stan.op_name() << std::endl;
 }
 
 /**
