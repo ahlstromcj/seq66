@@ -339,13 +339,13 @@ midicontrolfile::parse ()
  */
 
 static const char * const sg_scanf_fmt_ctrl_in =
-    "%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
+"%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
 
 static const char * const sg_scanf_fmt_ctrl_out =
-    "%d [%d %i %i %i %i] [%d %i %i %i %i] [%d %i %i %i %i] [%d %i %i %i %i]";
+"%d [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
 
 static const char * const sg_scanf_fmt_ctrl_pair =
-    "%d [%i %i %i %i] [%i %i %i %i]";
+    "%d [ %i %i %i %i ] [ %i %i %i %i ]";
 
 /**
  *  It is not an error for the "[midi-contro-out]" section to be missing.
@@ -407,16 +407,38 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
         /* Non-sequence actions */
 
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::play);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::stop);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::pause);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::queue);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::oneshot);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::replace);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap1);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap2);
-        read_ctrl_pair(file, mctrl, midicontrolout::uiaction::learn);
-        result = ! is_error();
+        bool ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::play);
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::stop);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::pause);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::queue);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::oneshot);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::replace);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap1);
+
+        if (ok)
+            ok = read_ctrl_pair(file, mctrl, midicontrolout::uiaction::snap2);
+
+        (void) read_ctrl_pair(file, mctrl, midicontrolout::uiaction::learn);
+
+        if (! ok)
+        {
+             (void) make_error_message
+             (
+                "midi-control-out", "not enough control-pairs provided"
+            );
+        }
+        result = ok && ! is_error();
     }
     else
         rc_ref().midi_control_out().is_enabled(false);  /* blank section    */
@@ -427,9 +449,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 /**
  *  Reads the first digit, which is the "enabled" bit, plus a pair of stanzas
  *  with four values in this order: channel, status, d1, and d2.
+ *
+ *  This function assumes we have already got the line to read, and it gets
+ *  the next data line at the end.
  */
 
-void
+bool
 midicontrolfile::read_ctrl_pair
 (
     std::ifstream & file,
@@ -437,22 +462,18 @@ midicontrolfile::read_ctrl_pair
     midicontrolout::uiaction a
 )
 {
-    if (next_data_line(file))
-    {
-        int enabled, ev_on[4], ev_off[4];
-        int count = std::sscanf
-        (
-            scanline(), sg_scanf_fmt_ctrl_pair,
-            &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
-            &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
-        );
-        if (count < 9)
-            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
+    int enabled, ev_on[4], ev_off[4];
+    int count = std::sscanf
+    (
+        scanline(), sg_scanf_fmt_ctrl_pair,
+        &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
+        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
+    );
+    if (count < 9)
+        ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-        mctrl.set_event(a, enabled, ev_on, ev_off);
-    }
-    else
-        (void) make_error_message("midi-control-out", "missing data");
+    mctrl.set_event(a, enabled, ev_on, ev_off);
+    return next_data_line(file);
 }
 
 /**
@@ -477,7 +498,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     "\n"
     "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
-    "version = 1\n"
+    "version = 2\n"
         ;
 
     /*
@@ -676,10 +697,11 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 }
 
 /**
- *
+ *  Writes a MIDI user-interface-related data stanza of the form
+ *  "1 [ 0 0 0x00 0 ] [ 0 0 0x00 0 ]".
  */
 
-void
+bool
 midicontrolfile::write_ctrl_pair
 (
     std::ofstream & file,
@@ -696,10 +718,13 @@ midicontrolfile::write_ctrl_pair
         << (active ? 1 : 0) << " "
         << act1str << " " << act2str << "\n\n"
         ;
+
+    return true;        /* TODO */
 }
 
 /**
- *
+ *  Writes out the MIDI control data for the patterns and for the
+ *  user-interface actions.
  */
 
 bool

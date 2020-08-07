@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-06-18
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -137,7 +137,7 @@ public:
     midicontrolin & operator = (const midicontrolin &) = default;
     midicontrolin (midicontrolin &&) = default;
     midicontrolin & operator = (midicontrolin &&) = default;
-    ~midicontrolin () = default;
+    virtual ~midicontrolin () = default;
 
     const std::string & name () const
     {
@@ -210,8 +210,8 @@ public:
     }
 
     /*
-     * Use test_and() or test_or()?  We are testing for a single bit, so use the
-     * "and" test.
+     * Use test_and() or test_or()?  We are testing for a single bit, so use
+     * the "and" test.
      */
 
     bool is_replace () const

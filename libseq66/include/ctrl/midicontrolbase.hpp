@@ -84,6 +84,7 @@ private:
 public:
 
     midicontrolbase (int buss = 0);
+    virtual ~midicontrolbase () = default;
 
     bussbyte buss () const
     {

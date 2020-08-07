@@ -517,7 +517,6 @@ performer::notify_sequence_change (seq::number seqno, change mod)
         (void) notify->on_sequence_change(seqno);
 
     seq::pointer s = get_sequence(seqno);
-//  announce_sequence(s, seqno);                /* though seqno overridden  */
     if (mod == change::yes)
         modify();
 }
@@ -1302,9 +1301,7 @@ performer::inner_start (bool songmode)
         automutex lk(cv().locker());    /* use the condition's recmutex */
 #endif
         cv().signal();
-        send_event(midicontrolout::uiaction::play, true);
-        send_event(midicontrolout::uiaction::stop, false);
-        send_event(midicontrolout::uiaction::pause, false);
+        send_play_states(midicontrolout::uiaction::play);
     }
 }
 
@@ -1331,9 +1328,7 @@ performer::inner_stop (bool midiclock)
     m_is_running = false;
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
-    send_event(midicontrolout::uiaction::stop, true);
-    send_event(midicontrolout::uiaction::play, false);
-    send_event(midicontrolout::uiaction::pause, false);
+    send_play_states(midicontrolout::uiaction::stop);
 }
 
 /**
@@ -1981,6 +1976,7 @@ performer::announce_exit ()
                 i, midicontrolout::seqaction::remove
             );
         }
+        send_play_states(midicontrolout::uiaction::max);
     }
 }
 
@@ -3430,9 +3426,7 @@ performer::pause_playing (bool songmode)
         m_usemidiclock = false;
         m_start_from_perfedit = false;      /* act like stop_playing()      */
     }
-    send_event(midicontrolout::uiaction::play, false);
-    send_event(midicontrolout::uiaction::stop, false);
-    send_event(midicontrolout::uiaction::pause, true);
+    send_play_states(midicontrolout::uiaction::pause);
 }
 
 /**
@@ -4214,13 +4208,64 @@ performer::set_sequence_control_status
 }
 
 /**
- *
+ *  A help function to make the code a tad more readable.
  */
 
 void
 performer::send_event (midicontrolout::uiaction a, bool on)
 {
     midi_control_out().send_event(a, on);
+}
+
+/**
+ *  Sets the state of the Start, Stop, and Play button(s) as configured in the
+ *  "ctrl" file.  It first turns off all of the states (which might be mapped
+ *  to one button or to three buttons), then turns on the desired state.
+ *
+ * \param a
+ *      Provides the desired state to set, which is one of the following
+ *      values of uiaction: play, stop, and pause.  The corresponding event is
+ *      sent.  If another value (max is the best one to use), then all are
+ *      off.
+ */
+
+void
+performer::send_play_states (midicontrolout::uiaction a)
+{
+    bool play_on = false;
+    bool stop_on = false;
+    bool pause_on = false;
+    switch (a)
+    {
+        case midicontrolout::uiaction::play:
+
+            play_on = true;
+            break;
+
+        case midicontrolout::uiaction::stop:
+
+            stop_on = true;
+            break;
+
+        case midicontrolout::uiaction::pause:
+
+            pause_on = true;
+            break;
+
+        default:
+
+            /* leave them all off */
+            break;
+    }
+    send_event(midicontrolout::uiaction::play, false);
+    send_event(midicontrolout::uiaction::stop, false);
+    send_event(midicontrolout::uiaction::pause, false);
+    if (play_on)
+        send_event(midicontrolout::uiaction::play, true);
+    else if (stop_on)
+        send_event(midicontrolout::uiaction::stop, true);
+    else if (pause_on)
+        send_event(midicontrolout::uiaction::pause, true);
 }
 
 /**

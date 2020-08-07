@@ -1,7 +1,7 @@
 # Seq66 0.90.5 (and above) MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
-# Written on 2020-08-06 17:43:52
+# Written on 2020-08-07 09:58:39
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -54,6 +54,9 @@ A sample line.  Just need to fill in the key (note value) needed for this
 row and set the pattern number at the left:
  
  2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
+ 
+The Play, Pause, and Stop controls are all mapped to the top left button (#1)
+on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 [midi-control-settings]
 
@@ -303,31 +306,31 @@ enabled = true
 # 1 [0 0 0 0]
 
 # MIDI Control Out: play on/off or store/restore
-1 [0 0xb0 107 127] [0 0xb0 107 0]
+1 [ 0 0xb0 104 60 ] [ 0 0xb0 104 0 ]
 
 # MIDI Control Out: stop on/off or store/restore
-1 [0 0xb0 105 127] [0 0xb0 105 0]
+1 [ 0 0xb0 104 15 ] [ 0 0xb0 104 0 ]
 
 # MIDI Control Out: pause on/off or store/restore
-1 [0 0xb0 106 127] [0 0xb0 106 0]
+1 [ 0 0xb0 104 62 ] [ 0 0xb0 104 0 ]
 
 # MIDI Control Out: queue on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: oneshot on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: replace on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: snap1 on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: snap2 on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: learn on/off or store/restore
-0 [0 0 0 0] [0 0 0 0]
+0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
 #

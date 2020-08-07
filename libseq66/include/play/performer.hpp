@@ -2323,6 +2323,7 @@ public:
     }
 
     void send_event (midicontrolout::uiaction a, bool on);
+    void send_play_states (midicontrolout::uiaction a);
     void announce_playscreen ();
     void announce_exit ();
     bool announce_sequence (seq::pointer s, seq::number /*sn*/);

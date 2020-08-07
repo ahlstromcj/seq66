@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-06
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -391,16 +391,16 @@ midicontrolout::get_event_str (uiaction what, bool on) const
         ev.get_data(d0, d1);
         std::ostringstream str;
         str
-            << "["
+            << "[ "
             << int(ev.channel()) << " 0x"
             << std::hex << int(ev.get_status()) << " "
             << std::dec << int(d0) << " " << int(d1)
-            << "]"
+            << " ]"
             ;
         return str.str();
     }
     else
-        return std::string("[0 0 0 0]");
+        return std::string("[ 0 0 0 0 ]");
 }
 
 /**
@@ -430,15 +430,16 @@ midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
     if (is_enabled() && what < uiaction::max)
     {
         int w = static_cast<int>(what);
-        event ev;
         m_ui_events[w].att_action_status = enabled;
+
+        event ev;
         ev.set_channel_status(onp[1], onp[0]);      /* status, channel  */
         ev.set_data(onp[2], onp[3]);                /* d1 and d2        */
-
         m_ui_events[w].att_action_event_on = ev;
+
         ev.set_channel_status(offp[1], offp[0]);    /* status, channel  */
         ev.set_data(offp[2], offp[3]);              /* d1 and d2        */
-        m_ui_events[w].att_action_event_on = ev;
+        m_ui_events[w].att_action_event_off = ev;
     }
 }
 

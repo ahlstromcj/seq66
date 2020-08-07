@@ -102,22 +102,24 @@ public:
 
     enum class uiaction
     {
-        play,
-        stop,
-        pause,
-        queue,
+        play,           /* button   */
+        stop,           /* button   */
+        pause,          /* button   */
+        queue,          /* button?  */
         oneshot,
         replace,
         snap1,
         snap2,
-        learn,
+        learn,          /* button?  */
         max
     };
 
 private:
 
     /**
-     *  Manifest constants for rcfile to use as array indices.
+     *  Manifest constants for midicontrolfile to use as array indices.
+     *  These correspond to the MIDI Controls for UI (user-interface) actions;
+     *  see the uiactions enumeration.
      */
 
     enum outindex
@@ -144,7 +146,7 @@ private:
 
     /**
      *  Holds an array of actionpairs, one for each item in the actions
-     *  enumeration.
+     *  enumeration.  These apply to pattern/sequence actions.
      */
 
     using actions = std::vector<actionpair>;
@@ -156,6 +158,11 @@ private:
      */
 
     using actionlist = std::vector<actions>;
+
+    /**
+     *  Provides a place to hold MIDI control events in response to a
+     *  user-interface change, such as starting or stopping playback.
+     */
 
     using actiontriplet = struct
     {
@@ -172,9 +179,9 @@ private:
     using uiactions = std::vector<actiontriplet>;
 
     /**
-     *  Provides a type for a vector of uiaction pairs, which can be essentially
-     *  unlimited in size.  However, currently, the number needed is
-     *  uiaction::max, or 9.
+     *  Provides a type for a vector of uiaction pairs, which can be
+     *  essentially unlimited in size.  However, currently, the number needed
+     *  is uiaction::max, or 9.
      */
 
     using uiactionlist = std::vector<uiactions>;
@@ -182,7 +189,9 @@ private:
 private:
 
     /**
-     *  Provides the MIDI output master bus.
+     *  Provides the MIDI master bus, provided by the performer class.
+     *  The midicontrolout class does not own this pointer, and assumes that
+     *  it is correct.
      */
 
     mastermidibus * m_master_bus;
@@ -215,7 +224,7 @@ private:
      *  external controllers. For now, the size of the screen-set is hard-wired
      *  to 32.
      *
-     *  TODO: Make this behavior configurable via rcfile
+     *  TODO: Make this behavior configurable via midicontrolfile.
      */
 
     int m_screenset_offset;
@@ -225,7 +234,7 @@ public:
     midicontrolout ();
     midicontrolout (const midicontrolout &) = default;
     midicontrolout & operator = (const midicontrolout &) = default;
-    ~midicontrolout () = default;
+    virtual ~midicontrolout () = default;
 
     void initialize (int count, int buss = SEQ66_MIDI_CONTROL_OUT_BUSS);
 

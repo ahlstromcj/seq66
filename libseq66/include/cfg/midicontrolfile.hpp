@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-06
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -134,7 +134,6 @@ class midicontrolfile final : public configfile
             return action < automation::ACTCOUNT && part < automation::SUBCOUNT ?
                 m_settings[action][part] : 0 ;
         }
-
     };              /* midicontrolfile::stanza  */
 
 public:
@@ -171,8 +170,6 @@ public:
     );
     midicontrolfile (const midicontrolfile &) = delete;
     midicontrolfile & operator = (const midicontrolfile &) = delete;
-    midicontrolfile (midicontrolfile &&) = default;
-    midicontrolfile & operator = (midicontrolfile &&) = default;
     virtual ~midicontrolfile ();
 
     virtual bool parse () override;
@@ -185,8 +182,6 @@ public:
 
     bool container_to_stanzas (const midicontrolin & mc);
     void show_stanzas () const;
-
-protected:
 
 private:
 
@@ -201,13 +196,13 @@ private:
 
     bool write_midi_control (std::ofstream & file);
     bool write_midi_control_out (std::ofstream & file);
-    void read_ctrl_pair
+    bool read_ctrl_pair
     (
         std::ifstream & file,
         midicontrolout & mctrl,
         midicontrolout::uiaction a
     );
-    void write_ctrl_pair
+    bool write_ctrl_pair
     (
         std::ofstream & file,
         const midicontrolout & mctrl,

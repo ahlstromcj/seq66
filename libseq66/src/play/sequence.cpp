@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-01
+ * \updates       2020-08-07
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -866,8 +866,13 @@ sequence::play
             (
                 start_tick, end_tick, resumenoteons
             );
-            // Causes a seqfault on song playback
-            // notify_change();                /* parent, subscriber, announce */
+
+            /*
+             * Causes a segfault on song playback.  Probably a recursive call,
+             * it causes Qt to complain a few times, then crash.
+             *
+             * notify_change();     // parent, subscriber, announce
+             */
         }
     }
     if (playing())                          /* play notes in frame          */
@@ -5200,11 +5205,6 @@ sequence::copy_events (const eventlist & newevents)
         m_events.unmodify();
         m_length = 0;
     }
-    else
-    {
-        // WTF?
-    }
-
     m_iterator_draw = m_events.begin();     /* same as in reset_draw_marker */
     if (! m_events.empty())                 /* need at least 1 (2?) events  */
     {
