@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-06
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -1155,6 +1155,16 @@ public:
         return mapper().screenset_count();
     }
 
+    int screenset_max () const
+    {
+        return mapper().screenset_count();
+    }
+
+    int screenset_size () const
+    {
+        return mapper().screenset_size();
+    }
+
     int screenset_index (screenset::number setno) const
     {
         return mapper().screenset_index(setno);
@@ -1296,7 +1306,7 @@ public:
 
     void tempo_track_number (seq::number tempotrack)
     {
-        if (tempotrack >= 0 && tempotrack < SEQ66_SEQUENCE_MAXIMUM)
+        if (tempotrack >= 0 && tempotrack < sequence_max())
             m_tempo_track_number = tempotrack;
     }
 

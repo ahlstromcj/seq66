@@ -183,8 +183,6 @@ private:
     /**
      *  Saves the current playing state only for the current set.
      *  This is used in the new queue-replace (queue-solo) feature.
-     *
-     *      bool m_screenset_state[c_seqs_in_set];
      */
 
     bool m_queued;

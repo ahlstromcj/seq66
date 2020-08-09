@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-07-24
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -111,6 +111,18 @@
 
 namespace seq66
 {
+
+/**
+ *  The maximum number of patterns supported is given by the number of
+ *  patterns supported in the panel (32) times the maximum number of sets
+ *  (32), or 1024 patterns.  However, this value is now independent of the
+ *  maximum number of sets and the number of sequences in a set.  Instead,
+ *  we limit them to a constant value, which seems to be well above the
+ *  number of simultaneous playing sequences the application can support.
+ *  See SEQ66_SEQUENCE_MAXIMUM.
+ */
+
+const int c_max_sequence = SEQ66_SEQUENCE_MAXIMUM;
 
 /**
  *  Provide limits for the option "--option scale=x.y".
@@ -254,7 +266,7 @@ usrsettings::usrsettings () :
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
     m_midi_bpm_maximum          (c_max_midi_data_value),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
-    m_midi_buss_override        (SEQ66_BAD_BUSS),
+    m_midi_buss_override        (c_bussbyte_max),   /* is_null_bussbyte()   */
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
     m_bpm_precision             (SEQ66_DEFAULT_BPM_PRECISION),
     m_bpm_step_increment        (SEQ66_DEFAULT_BPM_STEP_INCREMENT),
@@ -579,7 +591,7 @@ usrsettings::set_defaults ()
     m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;    // range: 20-500
     m_midi_bpm_maximum = c_max_midi_data_value;     // range: ? to ???
     m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;   // range: 1-16, powers of 2
-    m_midi_buss_override = SEQ66_BAD_BUSS;          // range: 1 to 32
+    m_midi_buss_override = c_bussbyte_max;          // 0xFF
     m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, range: 0 to 127
     m_bpm_precision = SEQ66_DEFAULT_BPM_PRECISION;
     m_bpm_step_increment = SEQ66_DEFAULT_BPM_STEP_INCREMENT;
@@ -875,6 +887,8 @@ usrsettings::mainwnd_cols (int value)
 }
 
 /**
+ * \deprecated
+ *
  * \setter m_max_sets
  *      This value is not modified unless the value parameter is between 16
  *      and 32.  The default value is 32.  Dependent values are recalculated
@@ -888,7 +902,7 @@ usrsettings::mainwnd_cols (int value)
 void
 usrsettings::max_sets (int value)
 {
-    if (value >= SEQ66_MIN_SET_MAX && value <= SEQ66_DEFAULT_SET_MAX)
+    if (value > 0 && value <= SEQ66_DEFAULT_SET_MAX)
         m_max_sets = value;
 
     normalize();

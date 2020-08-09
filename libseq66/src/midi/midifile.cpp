@@ -1366,7 +1366,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                 }
             }                          /* while not done loading Trk chunk */
 
-            if (buss_override != SEQ66_BAD_BUSS)
+            if (buss_override != c_bussbyte_max)
                 s.set_midi_bus(buss_override);
 
             /*
@@ -1655,10 +1655,10 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 
             /*
              * Some old code wrote some bad files, we need to work around that
-             * and fix it.
+             * and fix it.  The value of max_sequence() is generally 1024.
              */
 
-            if (ctrls > c_max_sequence)
+            if (ctrls > usr().max_sequence())
             {
                 skip(-4);
                 (void) set_error_dump
@@ -1901,8 +1901,8 @@ midifile::parse_mute_groups (performer & p)
     long len = long(read_split_long(high, low));    /* not always 1024      */
     if (len > 0)
     {
-        unsigned groupcount = c_max_groups;         /* 32 groups by default */
-        unsigned setsize = c_seqs_in_set;           /* 32 seqs by default   */
+        unsigned groupcount = c_max_groups;         /* 32 groups by fiat    */
+        unsigned setsize = p.seqs_in_set();         /* 32 seqs by default   */
         p.mutes().clear();                          /* makes it empty       */
         if (len != 1024)
         {
@@ -2395,7 +2395,7 @@ midifile::write (performer & p, bool doseqspec)
     }
 
     /*
-     * Write out the active tracks.  The value of c_max_sequence is 1024.
+     * Write out the active tracks.
      * Note that we don't need to check the sequence pointer.
      */
 
@@ -2491,11 +2491,11 @@ midifile::write (performer & p, bool doseqspec)
  *      items can be kept in one file and exported all, individually, or in
  *      part by creating triggers and muting.
  *
- *  Write out the exportable tracks.  The value of c_max_sequence is 1024.
- *  Note that we don't need to check the sequence pointer.  We need to use
- *  the same criterion we used to count the tracks in the first place, not
- *  just if the track is active and unmuted.  Also, since we already know
- *  that an exportable track is valid, no need to check for a null pointer.
+ *  Write out the exportable tracks.  Note that we don't need to check the
+ *  sequence pointer.  We need to use the same criterion we used to count the
+ *  tracks in the first place, not just if the track is active and unmuted.
+ *  Also, since we already know that an exportable track is valid, no need to
+ *  check for a null pointer.
  *
  *  For each trigger in the sequence, add events to the list below; fill
  *  one-by-one in order, creating a single long sequence.  Then set a single
@@ -2694,16 +2694,15 @@ midifile::write_proprietary_track (performer & p)
         cnotesz += 2 + note.length();           /* short + note length      */
     }
 
-    unsigned groupcount = c_max_groups;              /* 32 */
-    unsigned setsize = c_seqs_in_set;              /* 32 */
+    unsigned groupcount = c_max_groups;         /* 32, the maximum          */
+    unsigned setsize = p.seqs_in_set();
     int gmutesz = 0;
     if (mutes.any())
     {
-        groupcount = unsigned(mutes.count());   /* number of actual groups  */
+        groupcount = unsigned(mutes.count());   /* no. of existing groups  */
         setsize = unsigned(mutes.group_size());
         gmutesz = 4 + groupcount * (4 + setsize * 4);
     }
-
     tracklength += seq_number_size();           /* bogus sequence number    */
     tracklength += track_name_size(PROP_TRACK_NAME);
     tracklength += prop_item_size(4);           /* c_midictrl               */
@@ -2755,12 +2754,6 @@ midifile::write_proprietary_track (performer & p)
     if (gmutesz > 0)
     {
         write_prop_header(c_mutegroups, gmutesz);   /* mute groups tag etc. */
-
-        /*
-         * write_long(c_gmute_tracks);              // data, not a tag
-         * write_long(c_max_sequence);              // data, not a tag
-         */
-
         write_split_long(groupcount, setsize);
         (void) write_mute_groups(p);
     }

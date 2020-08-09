@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-08-04
+ * \updates       2020-08-09
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -56,40 +56,24 @@
  *  maximum number of sets and the number of sequences in a set.  Instead,
  *  we limit them to a constant value, which seems to be well above the
  *  number of simultaneous playing sequences the application can support.
- *  See SEQ66_SEQUENCE_MAXIMUM.
  */
 
 #define SEQ66_SEQUENCE_MAXIMUM          1024
 
 /**
- *  The canonical set size.  Used in relation to the keystrokes used to access
- *  sequences (and mute-groups).
+ *  The canonical and default set size.  Used in relation to the keystrokes used
+ *  to access sequences (and mute-groups).
  */
 
 #define SEQ66_BASE_SET_SIZE               32
 
 /**
- *  Minimum value for c_max_sets.  The actual maximum number of sets will be
- *  reduced if we add rows (or columns) to each mainwid grid.  This is
- *  actually a derived value, but we still support a macro for it.
- */
-
-#define SEQ66_MIN_SET_MAX                 16
-
-/**
- *  Default value for c_max_sets.  The actual maximum number of sets will be
- *  reduced if we add rows (or columns) to each mainwid grid.  This is actually
- *  a derived value, but we still support a macro for it.
+ *  Default value for c_max_sets.  This is now a constant limit, as we can
+ *  always support 32 sets, and have enough keystrokes for no more than that
+ *  number.
  */
 
 #define SEQ66_DEFAULT_SET_MAX             32
-
-/**
- *  Default set size.  This may need to be adjusted.  It is used with
- *  igorangst's MIDI-control-out feature at present.
- */
-
-#define SEQ66_DEFAULT_SET_SIZE            32
 
 /**
  *  Default MIDI control input buss.  This value preserves the old behavior,
@@ -160,10 +144,10 @@
  *  as the default number.
  */
 
-#define SEQ66_MAX_SET_COLUMNS             12   // 8
+#define SEQ66_MAX_SET_COLUMNS             12
 
 /**
- *  Default value for c_seqs_in_set.
+ *  Default value for c_seqs_in_set, which is now used only in Seqtool.
  */
 
 #define SEQ66_DEFAULT_SEQS_IN_SET \
@@ -204,24 +188,9 @@
 #define SEQ66_SET_KEYS_COLUMNS             8
 
 /**
- *  No global buss override is in force if the global buss override number is
- *  this value (255).
- */
-
-#if defined __cplusplus
-#define SEQ66_BAD_BUSS                    (midibyte(255))
-#else
-#define SEQ66_BAD_BUSS                    ((midibyte)(255))
-#endif
-
-/**
- *  An easier macro for testing SEQ66_BAD_BUSS.
- */
-
-#define SEQ66_NO_BUSS_OVERRIDE(b)         (midibyte(b) == SEQ66_BAD_BUSS)
-
-/**
- *  The number of ALSA busses supported.  See mastermidibus::init().
+ *  The number of ALSA busses supported.  See mastermidibus::init().  Currently,
+ *  this is also the default number of "manual" (virtual) output ports created
+ *  in the manual-ports mode.
  */
 
 #define SEQ66_OUTPUT_BUSS_MAX           16

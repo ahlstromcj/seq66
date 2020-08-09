@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-#include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
+#include "cfg/settings.hpp"             /* seq66::usr() "global" settings   */
 #include "cfg/usrfile.hpp"              /* seq66::usrfile                   */
 #include "cfg/userinstrument.hpp"       /* seq66::userinstrument            */
 #include "util/calculations.hpp"        /* seq66::current_date_time()       */
@@ -311,7 +311,7 @@ usrfile::parse ()
 
         (void) next_data_line(file);
         sscanf(scanline(), "%d", &scratch);
-        usr().max_sets(scratch);            /* should ignore this setting */
+        usr().max_sets(scratch);                /* this setting deprecated  */
 
         (void) next_data_line(file);
         sscanf(scanline(), "%d", &scratch);
@@ -859,9 +859,9 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies the maximum number of sets, which defaults to 32.\n"
-        "# It is currently never necessary to change this value. In fact,\n"
-        "# it should be a derived value.\n"
+        "# Specifies the maximum number of sets, which defaults to 32. It is\n"
+        "# never necessary to change this value. It is based on set-size now.\n"
+        "# Do not change it. It is just informative.\n"
         "\n"
         << usr().max_sets() << "      # max_sets\n"
         ;

@@ -65,6 +65,13 @@
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
 
+/**
+ *  An easier macro for testing for an unusable buss number (0xFF).  Hmmm, we
+ *  could use is_null_bussbyte() in the midibytes.hpp module.
+ */
+
+#define SEQ66_NO_BUSS_OVERRIDE(b)         (bussbyte(b) == c_bussbyte_max)
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -1115,6 +1122,11 @@ public:
     int mainwnd_cols () const
     {
         return m_mainwnd_cols;
+    }
+
+    int set_size () const
+    {
+        return m_mainwnd_rows * m_mainwnd_cols;
     }
 
     /**

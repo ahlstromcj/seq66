@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-04
- * \updates       2019-11-24
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the WRK format, see, for example:
@@ -127,7 +127,9 @@ wrkfile::wrkfile_private::wrkfile_private ()
     m_PunchOutTime  (0),
     m_EndAllTime    (0),
     m_division      (120),
-//  m_codec         (0),
+#if defined USE_UNICODE_SUPPORT
+    m_codec         (0),
+#endif
     m_tempos        ()
 {
    // no code
@@ -608,7 +610,7 @@ wrkfile::next_track
     {
         m_track_channel = channel;
         m_track_name = trackname;
-        if (trackno >= 0 && trackno < c_max_sequence)   // see rcsettings
+        if (trackno >= 0 && trackno < usr().max_sequence())
         {
             m_track_number = trackno;   /* with a new number            */
         }

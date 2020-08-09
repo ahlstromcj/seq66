@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-04
+ * \updates       2020-08-09
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -69,38 +69,19 @@ namespace seq66
  */
 
 /**
- *  Number of patterns/sequences in the Patterns Panel, also known as a "set"
- *  or "screen set".  This value is 4 x 8 = 32 by default.  We have a few
- *  arrays that are allocated to this size, at present. Was c_mainwnd_rows *
- *  c_mainwnd_cols.  This value is now a variable in most contexts.  However,
- *  it is still important in saving and retrieving the [mute-group] section,
- *  which still relies on the old value of 32 patterns/set.
- */
-
-const int c_seqs_in_set = SEQ66_DEFAULT_SEQS_IN_SET;
-
-/**
  *  Maximum number of groups that can be supported.  Basically, the number of
- *  groups set in the "rc" file.  32 groups can be filled.
+ *  groups set in the "rc" file.  32 groups can be filled.  This is a permanent
+ *  maximum because we really can't support more than 32 keystrokes to support
+ *  selecting a mute-group.
  */
 
 const int c_max_groups = SEQ66_DEFAULT_GROUP_MAX;
 
 /**
- *  The maximum number of patterns supported is given by the number of
- *  patterns supported in the panel (32) times the maximum number of sets
- *  (32), or 1024 patterns.  However, this value is now independent of the
- *  maximum number of sets and the number of sequences in a set.  Instead,
- *  we limit them to a constant value, which seems to be well above the
- *  number of simultaneous playing sequences the application can support.
- *  See SEQ66_SEQUENCE_MAXIMUM.
- */
-
-const int c_max_sequence = SEQ66_SEQUENCE_MAXIMUM;
-
-/**
- *  Maximum number of screen sets that can be supported.  Basically, the
- *  number of times the Patterns Panel can be filled.  32 sets can be created.
+ *  Maximum number of screen sets that can be supported.  Basically, the number
+ *  of times the Patterns Panel can be filled.  Up to 32 sets can be created.
+ *  This is a permanent maximum because we really can't support more than 32
+ *  keystrokes to support selecting a screenset.
  */
 
 const int c_max_sets = SEQ66_DEFAULT_SET_MAX;

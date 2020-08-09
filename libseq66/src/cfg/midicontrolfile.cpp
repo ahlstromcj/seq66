@@ -357,7 +357,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     bool result = true;
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
-    int sequences = string_to_int(s, SEQ66_DEFAULT_SET_SIZE);
+    int sequences = string_to_int(s, SEQ66_BASE_SET_SIZE);
     s = get_variable(file, mctag, "output-buss");
     if (s.empty())
         s = get_variable(file, mctag, "buss");
@@ -735,13 +735,6 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     int setsize = mco.screenset_size();
     int buss = int(mco.buss());
     bool disabled = mco.is_disabled();
-//  if (mco.is_blank())
-//  {
-//      setsize = SEQ66_DEFAULT_SET_SIZE;
-//      buss = SEQ66_MIDI_CONTROL_OUT_BUSS;
-//      disabled = true;
-//  }
-
     bool result = setsize > 0 && buss >= 0;         /* light sanity check */
     file <<
         "\n"

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-30
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -907,7 +907,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
 
         if (! m_is_external)
         {
-            if (m_current_seq < usr().max_sets())
+            if (m_current_seq < perf().screenset_max())
             {
                 char temp[48];
                 snprintf

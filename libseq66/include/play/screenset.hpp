@@ -32,29 +32,15 @@
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
- *  to save on a bunch of arrays.  It manages screen-sets and mute-groups.
- *
- *  This module is meant to support the
- *  saved 'armed' statuses and the current states of the
- *  tracks or sets.  The members from the perform(er) class are:
- *
- *      -   bool m_armed_statuses[c_max_sequence];
- *      -   std::vector<bool> m_tracks_mute_state;
+ *  to save on a bunch of arrays.  It manages screen-sets and mute-groups.  This
+ *  module also supports the saved 'armed' statuses and the current states of
+ *  the tracks or sets.
  */
 
 #include <functional>                   /* std::function, function objects  */
-#include <map>                          /* std::map<>                       */
 #include <vector>                       /* std::vector<>                    */
 
 #include "play/seq.hpp"                 /* seq66::seq extension class       */
-
-/**
- *  Similar to SEQ66_SEQUENCE_LIMIT, indicates an item that is outside the legal
- *  range.
- *
- *  #define SEQ66_SET_LIMIT                 2048
- *
- */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -68,9 +54,6 @@ namespace seq66
  *  Holds the various statuses, including the pointer, for a single sequence
  *  (also known as a loop or pattern).  This small class consolidates data once
  *  held in separate arrays.
- *
- *  This object could also represent mute statuses, but that would waste a lot of
- *  memory.
  */
 
 class screenset

@@ -68,6 +68,17 @@
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
 
 /**
+ *  Number of patterns/sequences in the Patterns Panel, also known as a "set"
+ *  or "screen set".  This value is 4 x 8 = 32 by default.  We have a few
+ *  arrays that are allocated to this size, at present. Was c_mainwnd_rows *
+ *  c_mainwnd_cols.  This value is now a variable in most contexts.  However,
+ *  it is still important in saving and retrieving the [mute-group] section,
+ *  which still relies on the old value of 32 patterns/set.
+ */
+
+static const int c_seqs_in_set = SEQ66_DEFAULT_SEQS_IN_SET;
+
+/**
  *  Provides names for the mouse-handling used by the application.
  */
 
@@ -868,8 +879,6 @@ optionsfile::parse_mute_group_section ()
     if (result && gtrack > 0)
     {
         /*
-         * This loop is a bit odd.  We set groupmute, read it, increment it,
-         * and then read it again.  We could just use the i variable, I think.
          * Note that this layout is STILL dependent on c_seqs_in_set = 32.
          * However, though we keep this layout, the boundaries for a
          * non-default value of seqs-in-set may be used internally.

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-07-29
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1327,7 +1327,7 @@ qslivegrid::popup_menu ()
 
     if (! m_is_external)
     {
-        if (m_current_seq < usr().max_sets())
+        if (m_current_seq < perf().screenset_max())
         {
             char temp[48];
             snprintf

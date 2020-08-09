@@ -30,12 +30,8 @@
  * \updates       2019-09-24
  * \license       GNU GPLv2 or above
  *
- *  This module is meant to support the main mute groups and the mute groups from
- *  the 'rc' file.  The members from the perform(er) class are:
- *
- *      -   bool m_mute_group[c_max_sequence];
- *      -   bool m_mute_group_rc[c_max_sequence];
- *
+ *  This module is meant to support the main mute groups and the mute groups
+ *  from the 'mutes' file.
  */
 
 #include <map>                          /* std::map<> for mutegroup storage */
@@ -69,9 +65,9 @@ public:
 
     enum class muting
     {
-        toggle  = -1,                               // MUTE_TOGGLE
-        off     = 0,                                // MUTE_OFF
-        on      = 1                                 // MUTE_ON
+        toggle  = -1,
+        off     = 0,
+        on      = 1
     };
 
 public:

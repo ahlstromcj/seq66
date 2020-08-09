@@ -716,9 +716,6 @@ cmdlineopts::parse_options_files
                  * members here.  These changes must also be made after
                  * parsing the command line in the main module (e.g. in
                  * seq66rtmidi.cpp).
-                 *
-                 *  p.seqs_in_set(usr().seqs_in_set());
-                 *  p.max_sets(usr().max_sets());
                  */
             }
             else

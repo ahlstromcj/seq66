@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-07-30
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2127,8 +2127,8 @@ qseqeditframe64::popup_sequence_menu ()
     connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
     (void) m_sequences_popup->addAction(off);
     (void) m_sequences_popup->addSeparator();
-    int seqsinset = usr().seqs_in_set();
-    int maxset = usr().max_sets();
+    int seqsinset = perf().seqs_in_set();
+    int maxset = perf().screenset_max();
     for (int sset = 0; sset < maxset; ++sset)
     {
         QMenu * menusset = nullptr;

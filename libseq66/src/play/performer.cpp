@@ -974,7 +974,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
         if (s->get_length() < barlength)    /* pad sequence to a measure    */
             s->set_length(barlength, false);
 
-        if (buss_override != SEQ66_BAD_BUSS)
+        if (buss_override != c_bussbyte_max)
             s->set_midi_bus(buss_override);
 
         if (! fileload)
@@ -4959,7 +4959,7 @@ performer::loop_control
     {
         if (slot_shift() > 0)
         {
-            sn += slot_shift() * mapper().set_size();
+            sn += slot_shift() * mapper().screenset_size();
             clear_slot_shift();
         }
         m_pending_loop = sn;

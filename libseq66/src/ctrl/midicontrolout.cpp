@@ -36,7 +36,8 @@
 
 #include <sstream>                      /* std::ostringstream class         */
 
-#include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class    */
+#include "ctrl/midicontrolout.hpp"      /* seq66::midicontrolout class      */
+#include "cfg/settings.hpp"             /* seq66::usr() function            */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -54,7 +55,7 @@ midicontrolout::midicontrolout ()
     m_screenset_size    (0),
     m_screenset_offset  (0)
 {
-    initialize(SEQ66_DEFAULT_SET_SIZE);
+    initialize(usr().set_size());       /* buss value set in initialize()   */
 }
 
 /**

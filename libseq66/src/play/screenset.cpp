@@ -39,7 +39,6 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::stringstream                */
 
-#include "cfg/rcsettings.hpp"           /* c_max_sequence, etc.             */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 /*

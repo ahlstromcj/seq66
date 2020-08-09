@@ -28,20 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-31
+ * \updates       2020-08-08
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
  *  to save on a bunch of arrays.  It manages screen-sets and mute-groups.
- *
  *  This class is meant to support the main mute groups, the mute groups from
- *  the 'rc' file, the saved 'armed' statuses, and the current states of the
- *  tracks or sets.  The members from the perform(er) class are:
- *
- *      -   bool m_mute_group[c_max_sequence];
- *      -   bool m_mute_group_rc[c_max_sequence];
- *      -   bool m_armed_statuses[c_max_sequence];
- *      -   std::vector<bool> m_tracks_mute_state;
+ *  the 'mutes' file, the saved 'armed' statuses, and the current states of the
+ *  tracks or sets.
  *
  *  In this class, access is either to a given set, the playing set, or to a
  *  sequence number that ranges from 0 up to the maximum number of sequences
@@ -68,8 +62,7 @@ namespace seq66
 
 class setmapper
 {
-
-    friend class performer;
+    friend class performer;             /* a very good friend to have   */
 
 private:
 
@@ -122,10 +115,10 @@ private:
     container m_container;
 
     /**
-     *  Keeps track of created sequences, whether or not they are active.
-     *  Used by the install_sequence() function.  Note that this value is
-     *  not a suitable replacement for c_max_sequence/m_sequence_max, because
-     *  there can be inactive sequences amidst the active sequences.
+     *  Keeps track of created sequences, whether or not they are active.  Used
+     *  by the install_sequence() function.  Note that this value is not a
+     *  suitable replacement for m_sequence_max, because there can be inactive
+     *  sequences amidst the active sequences.
      */
 
     int m_sequence_count;
@@ -144,7 +137,7 @@ private:
      *  indicate no sequences loaded, and then contains the highest sequence
      *  number hitherto loaded, plus 1 so that it can be used as a for-loop
      *  limit similar to m_sequence_max.  It's maximum value should be
-     *  m_sequence_max (c_max_sequence).
+     *  m_sequence_max.
      *
      *  Currently meant only for limited context to try to squeeze a little
      *  extra speed out of playback.  There's no easy way to lower this value
@@ -255,11 +248,6 @@ private:
     int max_slot_shift () const
     {
         return m_set_size / SEQ66_BASE_SET_SIZE;
-    }
-
-    int set_size () const
-    {
-        return m_set_size;
     }
 
     void clear ()
@@ -918,6 +906,16 @@ public:
         return int(m_container.size()) - 1;     /* ignore the dummy set */
     }
 
+    int screenset_max () const
+    {
+        return m_set_count;
+    }
+
+    int screenset_size () const
+    {
+        return m_set_size;
+    }
+
     int screenset_index (screenset::number setno) const;
     bool install_sequence (sequence * s, int seqno);
     bool add_sequence (sequence * s, int seqno);
@@ -993,7 +991,8 @@ private:
     }
 
     /**
-     *  Clamps a screenset number to the range of 0 to one less than m_set_count.
+     *  Clamps a screenset number to the range of 0 to one less than
+     *  m_set_count.
      */
 
     screenset::number clamp (screenset::number offset) const

@@ -795,7 +795,7 @@ qsmainwnd::qsmainwnd
 
     QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
     ui->txtBankName->setText(bname);
-    ui->spinBank->setRange(0, usr().max_sets() - 1);
+    ui->spinBank->setRange(0, perf().screenset_size() - 1);
 
     /*
      * Set Number.
@@ -2004,7 +2004,7 @@ qsmainwnd::remove_qperfedit ()
 void
 qsmainwnd::load_live_frame (int ssnum)
 {
-    if (ssnum >= 0 && ssnum < usr().max_sets())
+    if (ssnum >= 0 && ssnum < perf().screenset_size())
     {
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
@@ -2150,7 +2150,7 @@ qsmainwnd::update_beat_length (int blindex)
     if (not_nullptr(m_beat_ind))
         m_beat_ind->beat_width(bl);
 
-    for (int i = 0; i < c_max_sequence; ++i) // set beat length, all sequences
+    for (int i = 0; i < perf().sequence_max(); ++i)
     {
         seq::pointer seq = perf().get_sequence(i);
         if (seq)

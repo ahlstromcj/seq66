@@ -82,7 +82,7 @@ qperfbase::horizSizeHint () const
 void
 qperfbase::convert_x (int x, midipulse & tick)
 {
-    tick = pix_to_tix(x);                   // x * m_scale_zoom + tick_offset
+    tick = pix_to_tix(x);               /* x * m_scale_zoom + tick_offset   */
 }
 
 /**
@@ -93,10 +93,10 @@ qperfbase::convert_x (int x, midipulse & tick)
 void
 qperfbase::convert_xy (int x, int y, midipulse & tick, int & seq)
 {
-    tick = pix_to_tix(x);                   // x * m_scale_zoom + tick_offset
+    tick = pix_to_tix(x);
     seq = y / c_names_y;
-    if (seq >= perf().sequence_max())       // c_max_sequence)
-        seq = perf().sequence_max() - 1;    // c_max_sequence - 1;
+    if (seq >= perf().sequence_max())
+        seq = perf().sequence_max() - 1;
     else if (seq < 0)
         seq = 0;
 }

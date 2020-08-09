@@ -35,33 +35,13 @@
  *
  *  The state-saving buffers are incorporated into a seq object, which,
  *  in a way, simply adds some more state variables to the seq66::sequence class.
- *  Summarizing these state-saving buffers, which were arrays:
- *
- *      -   m_armed_statuses[c_max_sequence].
- *          Used in perform::toggle_playing_tracks(), a feature copped from
- *          the Seq32 project. Flagged by m_armed_saved.
- *      -   m_seq_active[c_max_sequence] (seq24).
- *          Indicates if a pattern has any data in it, i.e. it is not empty,
- *          whether it is muted or not.
- *      -   m_was_active_main[c_max_sequence] (seq24).
- *          Used in perform::is_dirty_main().
- *      -   m_was_active_edit[c_max_sequence] (seq24).
- *          Used in perform::is_dirty_edit().
- *      -   m_was_active_perf[c_max_sequence] (seq24).
- *          Used in perform::is_dirty_perf().
- *      -   m_was_active_names[c_max_sequence] (seq24).
- *          Used in perform::is_dirty_names().
- *      -   m_sequence_state[c_max_sequence] (seq24).
- *          Used in unsetting the snapshot status (c_status_snapshot).
- *          perform::save_playing_state() uses this to preserve the playing
- *          status.
+ *  These state-saving buffers were arrays of hardwired size.
  */
 
 #include <iomanip>                      /* std::setw manipulator            */
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::stringstream                */
 
-#include "cfg/rcsettings.hpp"           /* c_max_sequence, etc.             */
 #include "play/seq.hpp"                 /* seq66::seq class                 */
 
 /*
@@ -71,12 +51,6 @@
 
 namespace seq66
 {
-
-/*
- * -------------------------------------------------------------------------
- * class seq
- * -------------------------------------------------------------------------
- */
 
 /**
  *  Default and principal constructor.

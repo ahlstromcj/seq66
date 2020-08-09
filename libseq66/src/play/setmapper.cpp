@@ -76,7 +76,6 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::stringstream                */
 
-#include "cfg/rcsettings.hpp"           /* c_max_sequence, etc.             */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
 #include "play/setmapper.hpp"           /* seq66::setmapper class           */
 
@@ -122,7 +121,7 @@ setmapper::setmapper
     m_columns               (columns),
     m_container             (),                         /* screensets map   */
     m_sequence_count        (0),
-    m_sequence_max          (m_set_size * m_set_count), /* c_max_sequence   */
+    m_sequence_max          (m_set_size * m_set_count),
     m_sequence_high         (seq::unassigned()),
     m_edit_sequence         (seq::unassigned()),
     m_playscreen            (seq::unassigned()),

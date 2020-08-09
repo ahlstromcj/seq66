@@ -79,7 +79,7 @@ qperfroll::qperfroll
     gui_palette_qt5     (),
     qperfbase
     (
-        p, zoom, snap, c_names_y, c_names_y * c_max_sequence
+        p, zoom, snap, c_names_y, c_names_y * p.sequence_max()
     ),
     m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
     m_timer             (nullptr),
@@ -236,7 +236,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 QSize
 qperfroll::sizeHint () const
 {
-    int height = c_names_y * c_max_sequence + 1;
+    int height = c_names_y * perf().sequence_max() + 1;
     int width = horizSizeHint();
     int w = m_parent_frame->width();
     if (width < w)
