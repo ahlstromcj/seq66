@@ -69,7 +69,6 @@ namespace Ui
 
 namespace seq66
 {
-    class performer;
     class qsmainwnd;
 
 /**

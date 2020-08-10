@@ -959,12 +959,12 @@ public:
 
     std::string sets_to_string () const
     {
-        return mapper().sets_to_string();
+        return mapper().sets_to_string();   // MASTER
     }
 
     void show_patterns () const
     {
-        mapper().show();
+        mapper().show();                    // MASTER, maybe?
     }
 
     bool read_midi_file
@@ -1152,22 +1152,22 @@ public:
 
     int screenset_count () const
     {
-        return mapper().screenset_count();
+        return mapper().screenset_count();      // MASTER
     }
 
     int screenset_max () const
     {
-        return mapper().screenset_count();
+        return mapper().screenset_max();        // MASTER
     }
 
     int screenset_size () const
     {
-        return mapper().screenset_size();
+        return mapper().screenset_size();       // INVESTIGATE
     }
 
     int screenset_index (screenset::number setno) const
     {
-        return mapper().screenset_index(setno);
+        return mapper().screenset_index(setno); // MASTER
     }
 
     int ppqn () const
@@ -1184,6 +1184,9 @@ public:
     {
         return m_bpm;                   /* only a nominal value */
     }
+
+    // int set_master_rows ()                   // MASTER
+    // int set_master_columns ()                // MASTER
 
     int rows () const
     {
@@ -1209,6 +1212,8 @@ public:
     {
         return mapper().mute_columns();
     }
+
+    // set_master_calculate_set ()              // MASTER
 
     screenset::number calculate_set (int row, int column) const
     {

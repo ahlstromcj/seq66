@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-07-06
+# \update      2020-08-10
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -138,6 +138,7 @@ pkginclude_HEADERS = \
  play/seq.hpp \
  play/sequence.hpp \
  play/setmapper.hpp \
+ play/setmaster.hpp \
  play/triggers.hpp \
  qt/qsmacros.hpp \
  sessions/smanager.hpp \

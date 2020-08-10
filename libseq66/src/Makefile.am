@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-07-06
+# \update      2020-08-10
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -183,6 +183,7 @@ libseq66_la_SOURCES = \
  play/seq.cpp \
  play/sequence.cpp \
  play/setmapper.cpp \
+ play/setmaster.cpp \
  play/triggers.cpp \
  sessions/smanager.cpp \
  sessions/smfunctions.cpp \

@@ -95,15 +95,19 @@ private:
     int m_set_count;
 
     /**
-     *  Storage for the number of rows.  Removed the const qualifier to avoid
-     *  issues with containers.
+     *  Storage for the number of rows in the layout of the set-master
+     *  (defaults to 4 rows).
+     *
+     *  Removed the const qualifier to avoid issues with containers.
      */
 
     int m_rows;
 
     /**
-     *  Storage for the number of columns.  Removed the const qualifier to
-     *  avoid issues with containers.
+     *  Storage for the number of columns in the layout of the set-master
+     *  (defaults to 8 rows).
+     *
+     *  Removed the const qualifier to avoid issues with containers.
      */
 
     int m_columns;
@@ -252,7 +256,7 @@ private:
 
     void clear ()
     {
-        m_container.clear();                    /* unconditional zappage!   */
+        sets().clear();                    /* unconditional zappage!   */
         m_sequence_count = 0;
         m_sequence_high = seq::unassigned();
         m_edit_sequence = seq::unassigned();
@@ -347,7 +351,7 @@ private:
 
     bool any_in_edit () const
     {
-        for (const auto & sset : m_container)
+        for (const auto & sset : sets())
         {
             if (sset.second.any_in_edit())
                 return true;
@@ -360,7 +364,7 @@ private:
 
     void reset_sequences (bool pause, sequence::playback mode)
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.reset_sequences(pause, mode);
     }
 
@@ -375,7 +379,7 @@ private:
          * the b4uacuse-stress MIDI file reveals a lot of crackling in Yoshimi
          * playback.
          *
-         * for (auto & sset : m_container)
+         * for (auto & sset : sets())
          *     sset.second.play(tick, mode, resumenoteons);
          */
 
@@ -502,7 +506,7 @@ private:
 
     void off_sequences ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.off_sequences();
     }
 
@@ -514,7 +518,7 @@ private:
 
     void song_recording_stop (midipulse current_tick)
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.song_recording_stop(current_tick);
     }
 
@@ -524,7 +528,7 @@ private:
 
     void clear_snapshot ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.clear_snapshot();
     }
 
@@ -537,7 +541,7 @@ private:
 
     void save_snapshot ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.save_snapshot();
     }
 
@@ -549,7 +553,7 @@ private:
 
     void restore_snapshot ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.restore_snapshot();
     }
 
@@ -559,7 +563,7 @@ private:
 
     bool needs_update () const
     {
-        for (const auto & sset : m_container)
+        for (const auto & sset : sets())
         {
             if (sset.second.needs_update())
                 return true;
@@ -585,7 +589,7 @@ private:
 
     void set_last_ticks (midipulse tick)
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.set_last_ticks(tick);
     }
 
@@ -610,19 +614,19 @@ private:
 
     void push_trigger_undo ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.push_trigger_undo();
     }
 
     void pop_trigger_undo ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.pop_trigger_undo();
     }
 
     void pop_trigger_redo ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.pop_trigger_redo();
     }
 
@@ -708,7 +712,7 @@ private:
 
     bool armed () const
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
         {
             if (sset.second.armed())
                 return true;
@@ -748,13 +752,13 @@ private:
 
     void arm ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.arm();
     }
 
     void mute ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.mute();
     }
 
@@ -768,7 +772,7 @@ private:
 
     void apply_armed_statuses ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.apply_armed_statuses();
     }
 
@@ -776,13 +780,13 @@ private:
 
     void all_notes_off ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.all_notes_off();
     }
 
     void panic ()
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
             sset.second.panic();
     }
 
@@ -838,8 +842,8 @@ public:
     const screenset & screen (seq::number seqno) const
     {
         screenset::number s = seq_set(seqno);
-        return m_container.find(s) != m_container.end() ?
-            m_container.at(s) : dummy_screenset() ;
+        return sets().find(s) != sets().end() ?
+            sets().at(s) : dummy_screenset() ;
     }
 
     const std::string & name () const
@@ -849,8 +853,8 @@ public:
 
     const std::string & name (screenset::number setno) const
     {
-        return m_container.find(setno) != m_container.end() ?
-            m_container.at(setno).name() : dummy_screenset().name() ;
+        return sets().find(setno) != sets().end() ?
+            sets().at(setno).name() : dummy_screenset().name() ;
     }
 
     bool name (const std::string & nm)
@@ -860,19 +864,19 @@ public:
 
     bool name (screenset::number setno, const std::string & nm)
     {
-        return m_container.find(setno) != m_container.end() ?
-            m_container.at(setno).name(nm) : false ;
+        return sets().find(setno) != sets().end() ?
+            sets().at(setno).name(nm) : false ;
     }
 
     bool is_screenset_active (screenset::number setno) const
     {
         return is_screenset_available(setno) ?
-            m_container.at(setno).active() : false ;
+            sets().at(setno).active() : false ;
     }
 
     bool is_screenset_available (screenset::number setno) const
     {
-        return m_container.find(setno) != m_container.end();
+        return sets().find(setno) != sets().end();
     }
 
     /**
@@ -903,7 +907,7 @@ public:
 
     int screenset_count () const
     {
-        return int(m_container.size()) - 1;     /* ignore the dummy set */
+        return int(sets().size()) - 1;     /* ignore the dummy set */
     }
 
     int screenset_max () const
@@ -976,7 +980,7 @@ private:
 
     bool remove_set (screenset::number setno)
     {
-        container::size_type count = m_container.erase(setno);
+        container::size_type count = sets().erase(setno);
         return count > 0;
     }
 
@@ -1007,12 +1011,12 @@ private:
 
     screenset & dummy_screenset ()
     {
-        return m_container.at(screenset::limit());
+        return sets().at(screenset::limit());
     }
 
     const screenset & dummy_screenset () const
     {
-        return m_container.at(screenset::limit());
+        return sets().at(screenset::limit());
     }
 
     mutegroups & mutes ()
@@ -1026,6 +1030,16 @@ private:
     }
 
     container & set_container ()        /* meant only for performer */
+    {
+        return m_container;
+    }
+
+    container & sets ()
+    {
+        return m_container;
+    }
+
+    const container & sets () const
     {
         return m_container;
     }

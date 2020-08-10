@@ -272,12 +272,14 @@ screenset::first_seq () const
 }
 
 /**
- *
+ *  The new version returns seq::unassigned if the row or column is out of
+ *  range.
  */
 
 seq::number
 screenset::calculate_seq (int row, int column) const
 {
+#ifdef USE_RANGE_CORRECTED_VERSION
     if (row < 0)
         row = 0;
     else if (row >= m_rows)
@@ -289,6 +291,12 @@ screenset::calculate_seq (int row, int column) const
         row = m_columns - 1;
 
     return m_set_offset + row + m_rows * column;
+#else
+    if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
+        return seq::unassigned();
+    else
+        return m_set_offset + row + m_rows * column;
+#endif
 }
 
 /**

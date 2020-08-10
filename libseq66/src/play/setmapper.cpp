@@ -141,7 +141,7 @@ setmapper::reset ()
 {
     clear();
     auto setp = add_set(0);
-    if (setp != m_container.end())
+    if (setp != sets().end())
         (void) set_playscreen(0);
 
     (void) add_set(screenset::limit());     /* created the dummy set    */
@@ -217,6 +217,10 @@ setmapper::seq_set (int & row, int & column, int seqno) const
     3   7   11  15  19  23  27  31
 \endverbatim
  *
+ *  However, this grid never changes.  There's a strong dependency on the
+ *  number of keys we can devote to this function (32) and the 4-rows by
+ *  8-columns heritage of Seq24.
+ *
  * \param row
  *      Provides the desired row, clamped to a legal value.
  *
@@ -224,13 +228,15 @@ setmapper::seq_set (int & row, int & column, int seqno) const
  *      Provides the desired row, clamped to a legal value.
  *
  * \return
- *      Returns the calculated set value, which will range from 0 to
- *      (m_rows * m_columns) - 1 = m_set_count.
+ *      Returns the calculated set number, which will range from 0 to
+ *      (m_rows * m_columns) - 1 = m_set_count.  If out of range,
+ *      set 0 is returned.
  */
 
 screenset::number
 setmapper::calculate_set (int row, int column) const
 {
+#ifdef USE_RANGE_CORRECTED_VERSION
     if (row < 0)
         row = 0;
     else if (row >= m_rows)
@@ -242,6 +248,12 @@ setmapper::calculate_set (int row, int column) const
         row = m_columns - 1;
 
     return row + m_rows * column;
+#else
+    if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
+        return 0;
+    else
+        return row + m_rows * column;
+#endif
 }
 
 /**
@@ -264,7 +276,7 @@ setmapper::add_set (screenset::number setno)
 {
     screenset newset(setno, m_rows, m_columns);
     auto setpair = std::make_pair(setno, newset);
-    auto resultpair = m_container.insert(setpair);
+    auto resultpair = sets().insert(setpair);
     return resultpair.first;
 }
 
@@ -277,9 +289,9 @@ screenset &
 setmapper::screen (seq::number seqno)
 {
     screenset::number s = seq_set(seqno);
-    if (m_container.find(s) != m_container.end())
+    if (sets().find(s) != sets().end())
     {
-        return m_container.at(s);
+        return sets().at(s);
     }
     else if (seqno >= 0 && seqno < m_set_count)
     {
@@ -304,7 +316,7 @@ setmapper::screenset_index (screenset::number setno) const
 {
     int result = seq::unassigned();
     int index = 0;
-    for (const auto & sset : m_container)
+    for (const auto & sset : sets())
     {
         if (sset.second.set_number() == setno)
         {
@@ -362,7 +374,7 @@ setmapper::add_sequence (sequence * s, int seqno)
                  * install_sequence()!
                  *
                  *      auto setp = add_set(setno);
-                 *      result = setp != m_container.end();
+                 *      result = setp != sets().end();
                  *      if (result)
                  *          result = setp->second.add(s, seqno);
                  */
@@ -393,7 +405,7 @@ setmapper::set_function (screenset::sethandler s)
 {
     bool result = false;
     screenset::number index = 0;
-    for (auto & sset : m_container)                 /* screenset reference  */
+    for (auto & sset : sets())                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
@@ -413,7 +425,7 @@ bool
 setmapper::set_function (screenset::sethandler s, screenset::slothandler p)
 {
     bool result = false;
-    for (auto & sset : m_container)                 /* screenset reference  */
+    for (auto & sset : sets())                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
@@ -433,7 +445,7 @@ bool
 setmapper::set_function (screenset::slothandler p)
 {
     bool result = false;
-    for (auto & sset : m_container)                 /* screenset reference  */
+    for (auto & sset : sets())                 /* screenset reference  */
     {
         if (sset.second.usable())
         {
@@ -456,14 +468,14 @@ setmapper::set_dirty (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
             sset.second.set_dirty();
     }
     else
     {
         screenset::number setno = seq_set(seqno);
-        auto setiterator = m_container.find(setno);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setno);
+        if (setiterator != sets().end())
             setiterator->second.set_dirty(seqno);
     }
 }
@@ -479,14 +491,14 @@ setmapper::toggle (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
             sset.second.toggle();
     }
     else
     {
         screenset::number setno = seq_set(seqno);
-        auto setiterator = m_container.find(setno);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setno);
+        if (setiterator != sets().end())
             setiterator->second.toggle(seqno);
     }
 }
@@ -532,14 +544,14 @@ setmapper::toggle_song_mute (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
             sset.second.toggle_song_mute();
     }
     else
     {
         screenset::number setno = seq_set(seqno);
-        auto setiterator = m_container.find(setno);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setno);
+        if (setiterator != sets().end())
             setiterator->second.toggle_song_mute(seqno);
     }
 }
@@ -565,11 +577,11 @@ setmapper::install_sequence (sequence * s, seq::number seqno)
 {
     bool result = true;
     screenset::number setno = seq_set(seqno);
-    auto setiterator = m_container.find(setno);
-    if (setiterator == m_container.end())
+    auto setiterator = sets().find(setno);
+    if (setiterator == sets().end())
     {
         auto setp = add_set(setno);
-        result = setp != m_container.end();
+        result = setp != sets().end();
     }
     if (result)
         result = add_sequence(s, seqno);
@@ -615,8 +627,8 @@ setmapper::remove_sequence (int seqno)
 setmapper::container::iterator
 setmapper::find_by_value (screenset::number setno)
 {
-    auto result = m_container.end();
-    for (auto it = m_container.begin(); it != m_container.end(); ++it)
+    auto result = sets().end();
+    for (auto it = sets().begin(); it != sets().end(); ++it)
     {
         if (it->second.set_number() == setno)
         {
@@ -640,7 +652,7 @@ setmapper::swap_sets (seq::number set0, seq::number set1)
 {
     auto item0 = find_by_value(set0);
     auto item1 = find_by_value(set1);
-    bool result = item0 != m_container.end() && item1 != m_container.end();
+    bool result = item0 != sets().end() && item1 != sets().end();
     if (result)
     {
         std::swap(item0->second, item1->second);
@@ -661,7 +673,7 @@ bool
 setmapper::learn_armed_statuses ()
 {
     bool result = false;
-    for (auto & sset : m_container)                     /* screenset ref    */
+    for (auto & sset : sets())                     /* screenset ref    */
     {
         bool ok = sset.second.learn_armed_statuses();
         if (ok)
@@ -681,14 +693,14 @@ setmapper::apply_song_transpose (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
             sset.second.apply_song_transpose();
     }
     else
     {
         screenset::number setno = seq_set(seqno);
-        auto setiterator = m_container.find(setno);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setno);
+        if (setiterator != sets().end())
             setiterator->second.apply_song_transpose(seqno);
     }
 }
@@ -712,7 +724,7 @@ midipulse
 setmapper::max_trigger () const
 {
     midipulse result = 0;
-    for (const auto & sset : m_container)
+    for (const auto & sset : sets())
     {
         midipulse t = sset.second.max_trigger();
         if (t > result)
@@ -748,8 +760,8 @@ setmapper::select_triggers_in_range
     screenset::number sethigh = seq_set(seqhigh);
     if (setlow == sethigh)
     {
-        auto setiterator = m_container.find(setlow);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setlow);
+        if (setiterator != sets().end())
         {
             setiterator->second.select_triggers_in_range
             (
@@ -774,14 +786,14 @@ setmapper::unselect_triggers (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : m_container)         /* screenset reference  */
+        for (auto & sset : sets())         /* screenset reference  */
             sset.second.unselect_triggers();
     }
     else
     {
         screenset::number setno = seq_set(seqno);
-        auto setiterator = m_container.find(setno);
-        if (setiterator != m_container.end())
+        auto setiterator = sets().find(setno);
+        if (setiterator != sets().end())
             setiterator->second.unselect_triggers(seqno);
     }
 }
@@ -817,14 +829,14 @@ setmapper::move_triggers
         midipulse distance = righttick - lefttick;
         if (seqno == seq::all())
         {
-            for (auto & sset : m_container)     /* screenset reference  */
+            for (auto & sset : sets())     /* screenset reference  */
                 sset.second.move_triggers(lefttick, distance, direction);
         }
         else
         {
             screenset::number setno = seq_set(seqno);
-            auto setiterator = m_container.find(setno);
-            if (setiterator != m_container.end())
+            auto setiterator = sets().find(setno);
+            if (setiterator != sets().end())
             {
                 setiterator->second.move_triggers
                 (
@@ -856,14 +868,14 @@ setmapper::copy_triggers
         midipulse distance = righttick - lefttick;
         if (seqno == seq::all())
         {
-            for (auto & sset : m_container)     /* screenset reference  */
+            for (auto & sset : sets())     /* screenset reference  */
                 sset.second.copy_triggers(lefttick, distance);
         }
         else
         {
             screenset::number setno = seq_set(seqno);
-            auto setiterator = m_container.find(setno);
-            if (setiterator != m_container.end())
+            auto setiterator = sets().find(setno);
+            if (setiterator != sets().end())
                 setiterator->second.copy_triggers(lefttick, distance, seqno);
         }
     }
@@ -902,12 +914,12 @@ setmapper::set_playscreen (screenset::number setno)
     bool result = setno >= 0 && setno < screenset::limit();
     if (result)
     {
-        auto sset = m_container.find(setno);
+        auto sset = sets().find(setno);
         result = false;
-        if (sset != m_container.end())
+        if (sset != sets().end())
         {
-            auto oldset = m_container.find(m_playscreen);
-            if (oldset != m_container.end())
+            auto oldset = sets().find(m_playscreen);
+            if (oldset != sets().end())
                 oldset->second.is_playscreen(false);
 
             m_playscreen = setno;
@@ -917,7 +929,7 @@ setmapper::set_playscreen (screenset::number setno)
         else
         {
             auto setp = add_set(setno);
-            if (setp != m_container.end())
+            if (setp != sets().end())
             {
                 set_playscreen(setno);
                 setp->second.is_playscreen(true);
@@ -927,7 +939,7 @@ setmapper::set_playscreen (screenset::number setno)
         if (! result)
             m_playscreen = 0;           /* use the always-present set 0 */
 
-        m_playscreen_pointer = &m_container.at(m_playscreen);
+        m_playscreen_pointer = &sets().at(m_playscreen);
     }
     return result;
 }
@@ -1045,8 +1057,8 @@ setmapper::sequence_playing_change
 {
     int offset;
     screenset::number setno = seq_set(offset, seqno);
-    auto setiterator = m_container.find(setno);
-    if (setiterator != m_container.end())
+    auto setiterator = sets().find(setno);
+    if (setiterator != sets().end())
     {
         setiterator->second.sequence_playing_change(seqno, on, qinprogress);
         if (setiterator->second.is_playscreen())
@@ -1114,7 +1126,7 @@ setmapper::mute_group_tracks ()
 {
     if (group_mode())
     {
-        for (auto & sset : m_container)
+        for (auto & sset : sets())
         {
             bool pscreen = sset.second.is_playscreen();
             int seqoffset = sset.second.offset();
@@ -1199,7 +1211,7 @@ setmapper::sets_to_string (bool showseqs) const
 {
     std::ostringstream result;
     result << "Sets" << (showseqs ? " and Sequences:" : ":") << std::endl;
-    for (auto & s : m_container)
+    for (auto & s : sets())
     {
         int keyvalue = int(s.first);
         if (keyvalue < screenset::limit())

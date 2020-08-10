@@ -60,11 +60,12 @@ class screenset
 {
     friend class performer;         /* provisional */
     friend class setmapper;
+    friend class setmaster;
 
 public:
 
     /**
-     *  Provides a more recognizable alias for a screen-set number:
+     *  Provides a more recognizable alias for a screen-set number,
      *  screenset::number.
      */
 

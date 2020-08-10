@@ -74,7 +74,8 @@
  *  toggle_mutes        TODO.
  *  song_pointer        TODO.
  *  keep_queue:         Key: Toggle (compare to "queue").
- *  slot_shift:         TODO.
+ *  slot_shift:         Each instance of this control add the set size to
+ *                      the key's configured slot/pattern value.
  *  mutes_clear:        Set all mute groups to unarmed.
  *  reserved_35:        Reserved for expansion.
  *  pattern_edit:       GUI action, bring up pattern for editing.
@@ -416,7 +417,6 @@ performer::performer (int ppqn, int rows, int columns) :
 {
     /*
      * Generally will be parsing the 'rc' files after creating the performer.
-     *
      * (void) get_settings(rc(), usr());
      */
 
