@@ -109,6 +109,7 @@ namespace seq66
 
 setmapper::setmapper
 (
+    setmaster & mc,
     mutegroups & mgs,
     int sets,
     int rows,
@@ -116,12 +117,12 @@ setmapper::setmapper
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
-    m_set_count             (sets),                     /* rows * columns?? */
+//  m_set_count             (sets),                     /* rows * columns?? */
     m_rows                  (rows),
     m_columns               (columns),
-    m_container             (),                         /* screensets map   */
+    m_set_master            (mc),
     m_sequence_count        (0),
-    m_sequence_max          (m_set_size * m_set_count),
+    m_sequence_max          (m_set_size * sets),
     m_sequence_high         (seq::unassigned()),
     m_edit_sequence         (seq::unassigned()),
     m_playscreen            (seq::unassigned()),
@@ -200,87 +201,6 @@ setmapper::seq_set (int & row, int & column, int seqno) const
 }
 
 /**
- *  Returns the set number for the given row and column.  Remember that the
- *  layout of sets matches that of sequences.  See the top banner of the
- *  setmapper.cpp file.  This function is useful for picking the correct set in
- *  the qsetmaster button array.
- *
- * Set Layout:
- *
- *  Like the sequences in the main (live) window, the set numbers are
- *  transposed, so that the set number increments vertically, not horizontally:
- *
-\verbatim
-    0   4   8   12  16  20  24  28
-    1   5   9   13  17  21  25  29
-    2   6   10  14  18  22  26  30
-    3   7   11  15  19  23  27  31
-\endverbatim
- *
- *  However, this grid never changes.  There's a strong dependency on the
- *  number of keys we can devote to this function (32) and the 4-rows by
- *  8-columns heritage of Seq24.
- *
- * \param row
- *      Provides the desired row, clamped to a legal value.
- *
- * \param row
- *      Provides the desired row, clamped to a legal value.
- *
- * \return
- *      Returns the calculated set number, which will range from 0 to
- *      (m_rows * m_columns) - 1 = m_set_count.  If out of range,
- *      set 0 is returned.
- */
-
-screenset::number
-setmapper::calculate_set (int row, int column) const
-{
-#ifdef USE_RANGE_CORRECTED_VERSION
-    if (row < 0)
-        row = 0;
-    else if (row >= m_rows)
-        row = m_rows - 1;
-
-    if (column < 0)
-        column = 0;
-    else if (column >= m_columns)
-        row = m_columns - 1;
-
-    return row + m_rows * column;
-#else
-    if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
-        return 0;
-    else
-        return row + m_rows * column;
-#endif
-}
-
-/**
- *  Creates and adds a screenset to the container.
- *
- *  This code revealed that, when items (screenset, seq, etc.) are to be
- *  stored in containers, it is best to not have const data member.  These
- *  make the assignment operator or constructor ill-formed, so that the
- *  compiler deletes these functions!  Then, calling std::make_pair() results
- *  in very mysterious error messages.
- *
- *  Auto types:
- *
- *      -   std::pair<screenset::number, screenset>
- *      -   std::pair<container::iterator, bool>
- */
-
-setmapper::container::iterator
-setmapper::add_set (screenset::number setno)
-{
-    screenset newset(setno, m_rows, m_columns);
-    auto setpair = std::make_pair(setno, newset);
-    auto resultpair = sets().insert(setpair);
-    return resultpair.first;
-}
-
-/**
  *  Look up the screen to be used, given the sequence number.  If the screen
  *  doesn't exist, and is a legal screenset number, then create it.
  */
@@ -293,7 +213,7 @@ setmapper::screen (seq::number seqno)
     {
         return sets().at(s);
     }
-    else if (seqno >= 0 && seqno < m_set_count)
+    else if (master().is_screenset_valid(s))    // (s >= 0 && s < m_set_count)
     {
         if (seqno < seq::limit())
         {
@@ -305,27 +225,6 @@ setmapper::screen (seq::number seqno)
     }
     else
         return dummy_screenset();
-}
-
-/**
- *
- */
-
-int
-setmapper::screenset_index (screenset::number setno) const
-{
-    int result = seq::unassigned();
-    int index = 0;
-    for (const auto & sset : sets())
-    {
-        if (sset.second.set_number() == setno)
-        {
-            result = index;
-            break;
-        }
-        ++index;
-    }
-    return result;
 }
 
 /**
@@ -358,7 +257,6 @@ setmapper::add_sequence (sequence * s, int seqno)
     bool result = false;
     if (not_nullptr(s))
     {
-        // screenset::number setno = seq_set(seqno);
         screenset & sset = screen(seqno);                   /* tricky !!!   */
         while (! result)
         {
@@ -391,67 +289,6 @@ setmapper::add_sequence (sequence * s, int seqno)
             ++m_sequence_count;
             if (seqno >= m_sequence_high)
                 m_sequence_high = seqno + 1;    /* no way to back out, tho */
-        }
-    }
-    return result;
-}
-
-/**
- *  For each screenset that exists, execute a set-handler function.
- */
-
-bool
-setmapper::set_function (screenset::sethandler s)
-{
-    bool result = false;
-    screenset::number index = 0;
-    for (auto & sset : sets())                 /* screenset reference  */
-    {
-        if (sset.second.usable())
-        {
-            result = sset.second.set_function(s, index++);
-            if (! result)
-                break;
-        }
-    }
-    return result;
-}
-
-/**
- *  Runs a set-handler and a slot-handler for each set.
- */
-
-bool
-setmapper::set_function (screenset::sethandler s, screenset::slothandler p)
-{
-    bool result = false;
-    for (auto & sset : sets())                 /* screenset reference  */
-    {
-        if (sset.second.usable())
-        {
-            result = sset.second.set_function(s, p);
-            if (! result)
-                break;
-        }
-    }
-    return result;
-}
-
-/**
- *  Runs only a slot-handler for each slot (pattern) in each set.
- */
-
-bool
-setmapper::set_function (screenset::slothandler p)
-{
-    bool result = false;
-    for (auto & sset : sets())                 /* screenset reference  */
-    {
-        if (sset.second.usable())
-        {
-            result = sset.second.slot_function(p);
-            if (! result)
-                break;
         }
     }
     return result;
@@ -614,50 +451,6 @@ setmapper::remove_sequence (int seqno)
         result = sset.remove(seqno);        /* it exists, remove it!        */
         if (result)
             --m_sequence_count;
-    }
-    return result;
-}
-
-/**
- *  Does a brute-force lookup of the given set number, obtained by
- *  screenset::set_number().  We must use the long form of the for loop here,
- *  as far as we can tell.
- */
-
-setmapper::container::iterator
-setmapper::find_by_value (screenset::number setno)
-{
-    auto result = sets().end();
-    for (auto it = sets().begin(); it != sets().end(); ++it)
-    {
-        if (it->second.set_number() == setno)
-        {
-            result = it;
-            break;
-        }
-    }
-    return result;
-}
-
-/**
- * \tricky
- *      For use in the qsetmaster set-list, we need to look up the iterator to
- *      a set by value, not by key, because after the first swap there is no
- *      longer a correspondence between the key and the actual set-number
- *      value.
- */
-
-bool
-setmapper::swap_sets (seq::number set0, seq::number set1)
-{
-    auto item0 = find_by_value(set0);
-    auto item1 = find_by_value(set1);
-    bool result = item0 != sets().end() && item1 != sets().end();
-    if (result)
-    {
-        std::swap(item0->second, item1->second);
-        item0->second.change_set_number(set1);      /* also changes seq #s  */
-        item1->second.change_set_number(set0);      /* also changes seq #s  */
     }
     return result;
 }
@@ -886,63 +679,6 @@ setmapper::copy_triggers
  * Play-screen
  * -------------------------------------------------------------------------
  */
-
-/**
- *  If the desired play-screen exists, unmark the current play-screen and mark
- *  the new one.
- *
- *  If there was a existing screen-set \a setno, just mark it (again).  [DO WE
- *  NEED TO CLEAR IT?]  Otherwise, if the set number is valid, then create a new
- *  screenset and set it as the play-screen.
- *
- *  We no longer check for a change in m_playscreen, because doing so leads to a
- *  segfault... bad set?
- *
- * \param setno
- *      Provides the desired set number.  This ranges from 0 to 2047, though
- *      generally the number of sets is 32 or lower.  There is a screenset
- *      #2048 that always exists in order to provide an inactive/dummy
- *      screenset.
- *
- * \return
- *      Returns true if the play-screen was able to be set.
- */
-
-bool
-setmapper::set_playscreen (screenset::number setno)
-{
-    bool result = setno >= 0 && setno < screenset::limit();
-    if (result)
-    {
-        auto sset = sets().find(setno);
-        result = false;
-        if (sset != sets().end())
-        {
-            auto oldset = sets().find(m_playscreen);
-            if (oldset != sets().end())
-                oldset->second.is_playscreen(false);
-
-            m_playscreen = setno;
-            sset->second.is_playscreen(true);
-            result = true;
-        }
-        else
-        {
-            auto setp = add_set(setno);
-            if (setp != sets().end())
-            {
-                set_playscreen(setno);
-                setp->second.is_playscreen(true);
-                result = true;
-            }
-        }
-        if (! result)
-            m_playscreen = 0;           /* use the always-present set 0 */
-
-        m_playscreen_pointer = &sets().at(m_playscreen);
-    }
-    return result;
-}
 
 /**
  *  Sets the screen-set that is active, based on the value of m_screenset.
@@ -1200,30 +936,6 @@ setmapper::clear_mutes ()
         result = true;
 
     return result;
-}
-
-/**
- *
- */
-
-std::string
-setmapper::sets_to_string (bool showseqs) const
-{
-    std::ostringstream result;
-    result << "Sets" << (showseqs ? " and Sequences:" : ":") << std::endl;
-    for (auto & s : sets())
-    {
-        int keyvalue = int(s.first);
-        if (keyvalue < screenset::limit())
-        {
-            result << "  Key " << int(s.first) << ": ";
-            if (s.second.usable())
-                result << s.second.to_string(showseqs);
-            else
-                result << std::endl;
-        }
-    }
-    return result.str();
 }
 
 /**

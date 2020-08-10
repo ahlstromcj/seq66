@@ -129,8 +129,8 @@ private:
 
 private:
 
-    static const int Rows = 4;
-    static const int Columns = 8;
+    static const int c_rows     = 4;
+    static const int c_columns  = 8;
 
 public:
 
@@ -147,9 +147,25 @@ public:
     setmaster & operator = (setmaster &&) = default;
     ~setmaster () = default;
 
+    static int Rows ()
+    {
+        return c_rows;
+    }
+
+    static int Columns ()
+    {
+        return c_columns;
+    }
+
 private:
 
     screenset::number calculate_set (int row, int column) const;
+
+    bool inside_set (int row, int column) const
+    {
+        return (row >= 0) && (row < m_rows) &&
+            (column >= 0) && (column < m_columns);
+    }
 
     void clear ()
     {
@@ -203,6 +219,12 @@ public:
     std::string sets_to_string (bool showseqs = true) const;
     void show (bool showseqs = true) const;
     bool set_playscreen (screenset::number setno);
+
+    screenset::number change_playscreen (int amount)
+    {
+        screenset::number result = m_playscreen + amount;
+        return set_playscreen(result);
+    }
 
     const std::string & name (screenset::number setno) const
     {
@@ -286,7 +308,7 @@ private:
         return m_container.at(screenset::limit());
     }
 
-    container & set_container ()        /* meant only for setmapper */
+    container & set_container ()        /* for setmapper and performer  */
     {
         return m_container;
     }

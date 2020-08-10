@@ -101,7 +101,7 @@ qsetmaster::qsetmaster
     m_operations            ("Set Master Operations"),
     m_timer                 (nullptr),
     m_main_window           (mainparent),
-    m_set_buttons           (), /* [DEFAULT_SET_ROWS][DEFAULT_SET_COLUMNS] */
+    m_set_buttons           (),         /* setmaster::Rows() and Columns()  */
     m_current_set           (seq::unassigned()),
     m_current_row           (seq::unassigned()),
     m_current_row_count     (cb_perf().screenset_count()),
@@ -171,12 +171,12 @@ qsetmaster::conditional_update ()
 {
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
-        for (int row = 0; row < SEQ66_DEFAULT_SET_ROWS; ++row)
+        for (int row = 0; row < setmaster::Rows(); ++row)
         {
-            for (int column = 0; column < SEQ66_DEFAULT_SET_COLUMNS; ++column)
+            for (int column = 0; column < setmaster::Columns(); ++column)
             {
-                int setnumber = int(cb_perf().calculate_set(row, column));
-                bool enabled = cb_perf().is_screenset_available(setnumber);
+                int setno = int(cb_perf().master_calculate_set(row, column));
+                bool enabled = cb_perf().is_screenset_available(setno);
                 m_set_buttons[row][column]->setEnabled(enabled);
             }
         }
@@ -293,11 +293,7 @@ qsetmaster::cell (screenset::number row, column_id col)
  */
 
 bool
-qsetmaster::set_line
-(
-    screenset & sset,
-    screenset::number row
-)
+qsetmaster::set_line (screenset & sset, screenset::number row)
 {
     bool result = false;
     QTableWidgetItem * qtip = cell(row, column_id::set_number);
@@ -367,28 +363,27 @@ qsetmaster::closeEvent (QCloseEvent * event)
  *  Note that the largest number of sets is 4 x 8 = 32.  This limitation is
  *  necessary because there are only so many available keys on the keyboard for
  *  pattern, mute-group, and set control.
+ *
+ *  A set button is valid if the set number falls within the true set count,
+ *  which might be less than 32 (e.g. it will be 16 sets with an 8x8 grid).
+ *  But for now we will allow all buttons to remain enabled.  A set button is
+ *  enabled if the set has at least one sequence in it.
  */
 
 void
 qsetmaster::create_set_buttons ()
 {
     const QSize btnsize = QSize(32, 32);
-    for (int row = 0; row < SEQ66_DEFAULT_SET_ROWS; ++row)
+    for (int row = 0; row < setmaster::Rows(); ++row)
     {
-        for (int column = 0; column < SEQ66_DEFAULT_SET_COLUMNS; ++column)
+        for (int column = 0; column < setmaster::Columns(); ++column)
         {
-            /*
-             * A set button is valid if the set number falls within the set
-             * size.  A set button is enabled if the set has at least one
-             * sequence in it.
-             */
-
-            bool valid = row < cb_perf().rows() && column < cb_perf().columns();
-            int setnumber = int(cb_perf().calculate_set(row, column));
-            bool enabled = cb_perf().is_screenset_active(setnumber);
+            bool valid = cb_perf().master_inside_set(row, column);
+            int setno = int(cb_perf().master_calculate_set(row, column));
+            bool enabled = cb_perf().is_screenset_available(setno);
             std::string snstring;
             if (valid)
-                snstring = std::to_string(setnumber);
+                snstring = std::to_string(setno);
 
             QPushButton * temp = new QPushButton(snstring.c_str());
             ui->setGridLayout->addWidget(temp, row, column);
@@ -411,7 +406,7 @@ qsetmaster::create_set_buttons ()
 void
 qsetmaster::handle_set (int row, int column)
 {
-    screenset::number setno = cb_perf().calculate_set(row, column);
+    screenset::number setno = cb_perf().master_calculate_set(row, column);
     handle_set(setno);
 }
 

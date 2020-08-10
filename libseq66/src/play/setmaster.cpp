@@ -52,8 +52,8 @@ namespace seq66
  */
 
 setmaster::setmaster () :
-    m_rows                  (Rows),
-    m_columns               (Columns),
+    m_rows                  (c_rows),
+    m_columns               (c_columns),
     m_set_count             (m_rows * m_columns),
     m_container             (),                         /* screensets map   */
     m_playscreen            (seq::unassigned()),

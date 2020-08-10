@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-08-08
+ * \updates       2020-08-10
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -42,10 +42,8 @@
  *  allowed in a given run of the application.
  */
 
-#include <map>                          /* std::map<>                       */
-
 #include "play/mutegroups.hpp"          /* seq66::mutegroups & mutegroup    */
-#include "play/screenset.hpp"           /* seq66::screenset and seq         */
+#include "play/setmaster.hpp"           /* seq66::seqmanager and seqstatus  */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -65,8 +63,6 @@ class setmapper
     friend class performer;             /* a very good friend to have   */
 
 private:
-
-    using container = std::map<screenset::number, screenset>;
 
     /**
      *  Provides a reference to an external mute group.  It can be used to mute
@@ -90,9 +86,9 @@ private:
      *  The maximum number of sets supported.  The main purpose for this value
      *  is as a sanity check for set lookup, not necessarily for limiting the
      *  number of sets.
-     */
 
-    int m_set_count;
+    int m_set_count;            // try to eliminate this one
+     */
 
     /**
      *  Storage for the number of rows in the layout of the set-master
@@ -113,10 +109,10 @@ private:
     int m_columns;
 
     /**
-     *  Holds a vector of screenset objects.  This container starts out empty.
+     *  Holds a master set of sets.
      */
 
-    container m_container;
+    setmaster & m_set_master;
 
     /**
      *  Keeps track of created sequences, whether or not they are active.  Used
@@ -197,6 +193,7 @@ public:
 
     setmapper
     (
+        setmaster & mc,
         mutegroups & mgs,
         int sets        = SEQ66_DEFAULT_SET_MAX,
         int rows        = SEQ66_DEFAULT_SET_ROWS,
@@ -205,13 +202,13 @@ public:
 
     /*
      * The move and copy constructors, the move and copy assignment operators,
-     * and the destructors are all compiler generated.
+     * and the destructors are all compiler generated, or are deleted.
      */
 
-    setmapper (const setmapper &) = default;
-    setmapper & operator = (const setmapper &) = default;
-    setmapper (setmapper &&) = default;
-    setmapper & operator = (setmapper &&) = default;
+    setmapper (const setmapper &) = delete;
+    setmapper & operator = (const setmapper &) = delete;
+    setmapper (setmapper &&) = delete;
+    setmapper & operator = (setmapper &&) = delete;
     ~setmapper () = default;
 
 private:
@@ -237,7 +234,17 @@ private:
 
     screenset::number seq_set (int & offset, seq::number s) const;
     screenset::number seq_set (int & row, int & column, seq::number s) const;
-    screenset::number calculate_set (int row, int column) const;
+
+    screenset::number calculate_set (int row, int column) const
+    {
+        return master().calculate_set(row, column);
+    }
+
+    bool inside_set (int row, int column) const
+    {
+        return (row >= 0) && (row < m_rows) &&
+            (column >= 0) && (column < m_columns);
+    }
 
     seq::number calculate_seq (int row, int column) const
     {
@@ -578,9 +585,20 @@ private:
      * slot_function(p) runs the slot-handler for the play-screen patterns.
      */
 
-    bool set_function (screenset::sethandler s);
-    bool set_function (screenset::sethandler s, screenset::slothandler p);
-    bool set_function (screenset::slothandler p);
+    bool set_function (screenset::sethandler s)
+    {
+        return master().set_function(s);
+    }
+
+    bool set_function (screenset::sethandler s, screenset::slothandler p)
+    {
+        return master().set_function(s, p);
+    }
+
+    bool set_function (screenset::slothandler p)
+    {
+        return master().set_function(p);
+    }
 
     bool slot_function (screenset::slothandler p)
     {
@@ -809,17 +827,26 @@ public:
 
     screenset * play_screen ()
     {
-        return m_playscreen_pointer;
+        return master().play_screen();
     }
 
     const screenset * play_screen () const
     {
-        return m_playscreen_pointer;
+        return master().play_screen();
     }
 
-    std::string sets_to_string (bool showseqs = true) const;
+    std::string sets_to_string (bool showseqs = true) const
+    {
+        return master().sets_to_string(showseqs);
+    }
+
     void show (bool showseqs = true) const;
-    bool set_playscreen (screenset::number setno);
+
+    bool set_playscreen (screenset::number setno)
+    {
+        return master().set_playscreen(setno);
+    }
+
     bool set_playing_screenset (screenset::number setno);
     screenset & screen (seq::number seqno);
 
@@ -829,14 +856,12 @@ public:
 
     screenset::number increment_screenset (int amount)
     {
-        screenset::number result = m_playscreen + amount;
-        return set_playscreen(result);
+        return master().change_playscreen(amount);
     }
 
     screenset::number decrement_screenset (int amount)
     {
-        screenset::number result = m_playscreen - amount;
-        return set_playscreen(result);
+        return master().change_playscreen(-amount);
     }
 
     const screenset & screen (seq::number seqno) const
@@ -848,35 +873,37 @@ public:
 
     const std::string & name () const
     {
-        return play_screen()->name();
+        return play_screen()->name();   // performer via master()?
     }
 
     const std::string & name (screenset::number setno) const
     {
-        return sets().find(setno) != sets().end() ?
-            sets().at(setno).name() : dummy_screenset().name() ;
+        return master().name(setno);
     }
 
     bool name (const std::string & nm)
     {
-        return play_screen()->name(nm);
+        return master().name(nm);   // return play_screen()->name(nm);
     }
 
     bool name (screenset::number setno, const std::string & nm)
     {
-        return sets().find(setno) != sets().end() ?
-            sets().at(setno).name(nm) : false ;
+        return master().name(setno, nm);
     }
 
     bool is_screenset_active (screenset::number setno) const
     {
-        return is_screenset_available(setno) ?
-            sets().at(setno).active() : false ;
+        return master().is_screenset_active(setno);
     }
 
     bool is_screenset_available (screenset::number setno) const
     {
-        return sets().find(setno) != sets().end();
+        return master().is_screenset_available(setno);
+    }
+
+    bool is_screenset_valid (screenset::number setno) const
+    {
+        return master().is_screenset_valid(setno);
     }
 
     /**
@@ -900,19 +927,14 @@ public:
         return group_mode() && play_screen()->seq_in_set(seqno);
     }
 
-    bool is_screenset_valid (screenset::number setno) const
-    {
-        return setno >= 0 && setno < m_set_count;
-    }
-
     int screenset_count () const
     {
-        return int(sets().size()) - 1;     /* ignore the dummy set */
+        return master().screenset_count();
     }
 
     int screenset_max () const
     {
-        return m_set_count;
+        return master().screenset_max();
     }
 
     int screenset_size () const
@@ -920,11 +942,19 @@ public:
         return m_set_size;
     }
 
-    int screenset_index (screenset::number setno) const;
+    int screenset_index (screenset::number setno) const
+    {
+        return master().screenset_index(setno);
+    }
+
     bool install_sequence (sequence * s, int seqno);
     bool add_sequence (sequence * s, int seqno);
     bool remove_sequence (seq::number seqno);
-    bool swap_sets (seq::number set0, seq::number set1);
+
+    bool swap_sets (seq::number set0, seq::number set1)
+    {
+        return master().swap_sets(set0, set1);
+    }
 
     mutegroup::number calculate_mute (int row, int column) const
     {
@@ -975,12 +1005,19 @@ private:
         play_screen()->fill_play_set(p);
     }
 
-    container::iterator add_set (screenset::number setno);
-    container::iterator find_by_value (screenset::number setno);
+    setmaster::container::iterator add_set (screenset::number setno)
+    {
+        return master().add_set(setno);
+    }
+
+    setmaster::container::iterator find_by_value (screenset::number setno)
+    {
+        return master().find_by_value(setno);
+    }
 
     bool remove_set (screenset::number setno)
     {
-        container::size_type count = sets().erase(setno);
+        setmaster::container::size_type count = sets().erase(setno);
         return count > 0;
     }
 
@@ -994,29 +1031,19 @@ private:
         return mutes().check_group(group);
     }
 
-    /**
-     *  Clamps a screenset number to the range of 0 to one less than
-     *  m_set_count.
-     */
-
     screenset::number clamp (screenset::number offset) const
     {
-        if (offset < 0)
-            return 0;
-        else if (offset >= m_set_count)
-            return m_set_count - 1;
-
-        return offset;
+        return master().clamp(offset);
     }
 
     screenset & dummy_screenset ()
     {
-        return sets().at(screenset::limit());
+        return master().dummy_screenset();
     }
 
     const screenset & dummy_screenset () const
     {
-        return sets().at(screenset::limit());
+        return master().dummy_screenset();
     }
 
     mutegroups & mutes ()
@@ -1029,19 +1056,24 @@ private:
         return m_mute_groups;
     }
 
-    container & set_container ()        /* meant only for performer */
+    setmaster & master ()
     {
-        return m_container;
+        return m_set_master;
     }
 
-    container & sets ()
+    const setmaster & master () const
     {
-        return m_container;
+        return m_set_master;
     }
 
-    const container & sets () const
+    setmaster::container & sets ()
     {
-        return m_container;
+        return m_set_master.set_container();
+    }
+
+    const setmaster::container & sets () const
+    {
+        return m_set_master.set_container();
     }
 
 };              // class setmapper

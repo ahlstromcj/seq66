@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-08
+ * \updates       2020-08-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -437,6 +437,15 @@ private:                            /* key, midi, and op container section  */
      */
 
     opcontainer m_operations;
+
+    /**
+     *  Pulls out the set-specific manipulations needed by the qsetmaster
+     *  user-interface class.  These are moved out of setmapper for increased
+     *  clarity.  The performer uses some of its functions directly, while the
+     *  setmapper can iterate over the container of sets in the set-master.
+     */
+
+    setmaster m_set_master;
 
     /**
      *  Manages extra sequence items formerly in separate arrays.
@@ -951,7 +960,7 @@ public:
     void modify ()
     {
         m_is_modified = true;
-        m_needs_update = true;          // kind of iffy
+        m_needs_update = true;              // kind of iffy
     }
 
     bool get_settings (const rcsettings & rcs, const usrsettings & usrs);
@@ -959,12 +968,12 @@ public:
 
     std::string sets_to_string () const
     {
-        return mapper().sets_to_string();   // MASTER
+        return master().sets_to_string();   // mapper()
     }
 
     void show_patterns () const
     {
-        mapper().show();                    // MASTER, maybe?
+        master().show();                    // mapper()
     }
 
     bool read_midi_file
@@ -1150,24 +1159,34 @@ public:
         return m_set_mapper;
     }
 
+    setmaster & master ()
+    {
+        return m_set_master;
+    }
+
+    const setmaster & master () const
+    {
+        return m_set_master;
+    }
+
     int screenset_count () const
     {
-        return mapper().screenset_count();      // MASTER
+        return master().screenset_count();      // mapper()
     }
 
     int screenset_max () const
     {
-        return mapper().screenset_max();        // MASTER
-    }
-
-    int screenset_size () const
-    {
-        return mapper().screenset_size();       // INVESTIGATE
+        return master().screenset_max();        // mapper()
     }
 
     int screenset_index (screenset::number setno) const
     {
-        return mapper().screenset_index(setno); // MASTER
+        return master().screenset_index(setno); // mapper()
+    }
+
+    int screenset_size () const
+    {
+        return mapper().screenset_size();
     }
 
     int ppqn () const
@@ -1184,9 +1203,6 @@ public:
     {
         return m_bpm;                   /* only a nominal value */
     }
-
-    // int set_master_rows ()                   // MASTER
-    // int set_master_columns ()                // MASTER
 
     int rows () const
     {
@@ -1213,11 +1229,24 @@ public:
         return mapper().mute_columns();
     }
 
-    // set_master_calculate_set ()              // MASTER
+    int master_calculate_set (int row, int column) const
+    {
+        return master().calculate_set(row, column);
+    }
 
     screenset::number calculate_set (int row, int column) const
     {
         return mapper().calculate_set(row, column);
+    }
+
+    bool inside_set (int row, int column) const
+    {
+        return mapper().inside_set(row, column);
+    }
+
+    bool master_inside_set (int row, int column) const
+    {
+        return master().inside_set(row, column);
     }
 
     seq::number calculate_seq (int row, int column) const

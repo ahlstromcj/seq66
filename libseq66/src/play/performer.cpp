@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-07
+ * \updates       2020-08-10
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -351,17 +351,19 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midi_control_out      (),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
+    m_set_master            (),                 /* always 4 x 8             */
     m_set_mapper                                /* accessed via mapper()    */
     (
-        m_mute_groups, SEQ66_DEFAULT_SET_MAX, rows, columns
+        m_set_master, m_mute_groups,
+        SEQ66_DEFAULT_SET_MAX, rows, columns
     ),
-    m_queued_replace_slot   (-1),                   /* REFACTOR             */
+    m_queued_replace_slot   (-1),               /* REFACTOR                 */
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
     m_out_thread_launched   (false),
     m_in_thread_launched    (false),
-    m_io_active             (true),                 /* must start out true  */
+    m_io_active             (true),             /* must start out true      */
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
