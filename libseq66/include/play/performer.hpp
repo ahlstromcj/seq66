@@ -1239,11 +1239,6 @@ public:
         return mapper().calculate_set(row, column);
     }
 
-    bool inside_set (int row, int column) const
-    {
-        return mapper().inside_set(row, column);
-    }
-
     bool master_inside_set (int row, int column) const
     {
         return master().inside_set(row, column);

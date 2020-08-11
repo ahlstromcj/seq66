@@ -240,11 +240,11 @@ private:
         return master().calculate_set(row, column);
     }
 
-    bool inside_set (int row, int column) const
-    {
-        return (row >= 0) && (row < m_rows) &&
-            (column >= 0) && (column < m_columns);
-    }
+//  bool inside_set (int row, int column) const
+//  {
+//      return (row >= 0) && (row < m_rows) &&
+//          (column >= 0) && (column < m_columns);
+//  }
 
     seq::number calculate_seq (int row, int column) const
     {
@@ -835,10 +835,10 @@ public:
         return master().play_screen();
     }
 
-    std::string sets_to_string (bool showseqs = true) const
-    {
-        return master().sets_to_string(showseqs);
-    }
+//  std::string sets_to_string (bool showseqs = true) const
+//  {
+//      return master().sets_to_string(showseqs);
+//  }
 
     void show (bool showseqs = true) const;
 
@@ -927,25 +927,25 @@ public:
         return group_mode() && play_screen()->seq_in_set(seqno);
     }
 
-    int screenset_count () const
-    {
-        return master().screenset_count();
-    }
-
-    int screenset_max () const
-    {
-        return master().screenset_max();
-    }
+//  int screenset_count () const
+//  {
+//      return master().screenset_count();
+//  }
+//
+//  int screenset_max () const
+//  {
+//      return master().screenset_max();
+//  }
 
     int screenset_size () const
     {
         return m_set_size;
     }
 
-    int screenset_index (screenset::number setno) const
-    {
-        return master().screenset_index(setno);
-    }
+//  int screenset_index (screenset::number setno) const
+//  {
+//      return master().screenset_index(setno);
+//  }
 
     bool install_sequence (sequence * s, int seqno);
     bool add_sequence (sequence * s, int seqno);

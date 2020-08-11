@@ -36,7 +36,7 @@
  *  A two-dimensional vector of buttons containing a vector of rows, each
  *  row being a vector of columns.
  *
- *  Screen view and loo-grid slot numbers:
+ *  Screen view and loop-grid slot numbers:
  *
 \verbatim
         Column      0   1   2   3   4   5   6   7

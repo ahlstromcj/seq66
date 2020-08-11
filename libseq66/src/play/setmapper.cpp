@@ -117,7 +117,6 @@ setmapper::setmapper
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
-//  m_set_count             (sets),                     /* rows * columns?? */
     m_rows                  (rows),
     m_columns               (columns),
     m_set_master            (mc),
@@ -141,11 +140,7 @@ void
 setmapper::reset ()
 {
     clear();
-    auto setp = add_set(0);
-    if (setp != sets().end())
-        (void) set_playscreen(0);
-
-    (void) add_set(screenset::limit());     /* created the dummy set    */
+    master().reset();
 }
 
 /**
@@ -173,7 +168,7 @@ setmapper::seq_set (int & offset, int seqno) const
 }
 
 /**
- *  Given the raw sequence number, returns the calculate set number and the
+ *  Given the raw sequence number, returns the calculated set number and the
  *  row and column of the sequence in the set.
  *
  * \param [out] row
@@ -213,7 +208,7 @@ setmapper::screen (seq::number seqno)
     {
         return sets().at(s);
     }
-    else if (master().is_screenset_valid(s))    // (s >= 0 && s < m_set_count)
+    else if (master().is_screenset_valid(s))
     {
         if (seqno < seq::limit())
         {
@@ -305,7 +300,7 @@ setmapper::set_dirty (seq::number seqno)
 {
     if (seqno == seq::all())
     {
-        for (auto & sset : sets())         /* screenset reference  */
+        for (auto & sset : sets())              /* screenset reference  */
             sset.second.set_dirty();
     }
     else
@@ -945,7 +940,7 @@ setmapper::clear_mutes ()
 void
 setmapper::show (bool showseqs) const
 {
-    std::cout << sets_to_string(showseqs);
+    std::cout << master().sets_to_string(showseqs);
 }
 
 }               // namespace seq66

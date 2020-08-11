@@ -1,6 +1,6 @@
 Quick Reference for Launchpad Mini
 Chris Ahlstrom
-2020-08-03 to 2020-08-06
+2020-08-03 to 2020-08-10
 
 Some of this information was adopted from the PDF file
 launchpad-programmers-reference.pdf. That document notes that a Launchpad
@@ -116,5 +116,19 @@ Panic*  Stop    Pause   Play    Record    Queue   Learn     ???*
  104     105     106     107     108       109     110      111
 
 * means not yet supported
+
+X-Y Key Layout (decimal version):
+
+ 104   105   106   107   108   109   110   111          : B0h
+ (1)   (2)   (3)   (4)   (5)   (6)   (7)   (8)
+                                                    90h
+[00 ] [01 ] [02 ] [03 ] [04 ] [05 ] [06 ] [07 ]     (A) :  08 
+[16 ] [17 ] [18 ] [19 ] [20 ] [21 ] [22 ] [23 ]     (B) :  24 
+[32 ] [33 ] [34 ] [35 ] [36 ] [37 ] [38 ] [39 ]     (C) :  40 
+[48 ] [49 ] [50 ] [51 ] [52 ] [53 ] [54 ] [55 ]     (D) :  56
+[64 ] [65 ] [66 ] [67 ] [68 ] [69 ] [70 ] [71 ]     (E) :  72 
+[80 ] [81 ] [82 ] [83 ] [84 ] [85 ] [86 ] [87 ]     (F) :  88 
+[96 ] [97 ] [98 ] [99 ] [100] [101] [102] [103]     (G) : 104 
+[112] [113] [114] [115] [116] [117] [118] [119]     (H) : 120 
 
 # vim: sw=4 ts=4 wm=8 et ft=sh
