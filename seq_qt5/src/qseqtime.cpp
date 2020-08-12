@@ -228,7 +228,6 @@ qseqtime::sizeHint() const
 {
     int len = tix_to_pix(seq_pointer()->get_length()) + 100;
     return QSize(len, 22);
-//  return QSize(xoffset(seq_pointer()->get_length()) + 100, 22);
 }
 
 }           // namespace seq66

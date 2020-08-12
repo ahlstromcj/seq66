@@ -209,9 +209,9 @@ public:
     screenset & operator = (screenset &&) = default;
     ~screenset () = default;
 
-    static number limit ()
+    static number limit ()                              /* seq::limit() */
     {
-        return 2048;
+        return SEQ66_SEQUENCE_LIMIT;                    /* 0x0800       */
     }
 
     static number none ()
@@ -375,7 +375,7 @@ public:
     }
 
     bool set_function (sethandler s, slothandler p);
-    bool slot_function (slothandler p);
+    bool slot_function (slothandler p, bool use_set_offset = true);
 
 private:
 

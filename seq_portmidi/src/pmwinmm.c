@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-22
+ * \updates     2020-08-12
  * \license     GNU GPLv2 or above
  *
  *  Check out this site:
@@ -1157,9 +1157,7 @@ winmm_in_close(PmInternal * midi)
  *  -RBD
  */
 
-// Say what!!!? static void FAR PASCAL
-
-static void
+static void CALLBACK
 winmm_in_callback
 (
     HMIDIIN hMidiIn,            /* midiInput device Handle                  */
@@ -2013,7 +2011,7 @@ winmm_synchronize (PmInternal * midi)
  *  something to flag empty buffers if we leave them prepared.
  */
 
-void CALLBACK
+static void CALLBACK
 winmm_out_callback
 (
     HMIDIOUT hmo,                // unused

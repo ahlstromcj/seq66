@@ -373,7 +373,7 @@ optionsfile::parse ()
 
         long keys = 0;
         sscanf(scanline(), "%ld", &keys);
-        ok = keys >= 0 && keys <= c_max_keys;
+        ok = keys >= 0 && keys <= c_max_set_keys;
         if (ok && keys > 0)
             ok = next_data_line(file);
 
@@ -420,7 +420,7 @@ optionsfile::parse ()
         line_after(file, "[keyboard-group]");
         long groups = 0;
         sscanf(scanline(), "%ld", &groups);
-        ok = groups >= 0 && groups <= c_max_keys;
+        ok = groups >= 0 && groups <= c_max_set_keys;
         if (ok && groups > 0)
             ok = next_data_line(file);
 
@@ -871,7 +871,8 @@ optionsfile::parse_mute_group_section ()
     bool result = next_data_line(file);
     if (result)
     {
-        result = gtrack == 0 || gtrack == (c_max_sets * c_max_keys); /* 1024 */
+        result = gtrack == 0 ||
+            gtrack == (c_max_sets * c_max_set_keys); /* 1024 */
     }
     if (! result)
         (void) make_error_message("mute-group");    /* abort the parsing!   */

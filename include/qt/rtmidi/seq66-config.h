@@ -27,21 +27,21 @@
  * \file          seq66-config.h for Qt/RtMidi
  *
  *  This module provides platform/build-specific configuration that is not
- *  modifiable via a "configure" operation.  It is meant for those who do not want
- *  to use automake to build the Linux/Qt version of seq66.
+ *  modifiable via a "configure" operation.  It is meant for those who do not
+ *  want to use automake to build the Linux/Qt version of seq66.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2020-08-05
+ * \updates       2020-08-12
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
  *  qtcreator/qmake instead of using GNU autotools.
  *
- *  One motivation for creating a Qt build for this version of seq66 is that, one
- *  a Debian Sid/Unstable laptop with gcc/g++ version 9 as the compiler, we get
- *  this error when building for debug more (but not for release mode):
+ *  One motivation for creating a Qt build for this version of seq66 is that,
+ *  one a Debian Sid/Unstable laptop with gcc/g++ version 9 as the compiler,
+ *  we get this error when building for debug more (but not for release mode):
  *
  *      /usr/bin/ld:
  *      /home/.../seq66/seq_qt5/src/.libs/libseq_qt5.a(qloopbutton.o):
@@ -70,7 +70,7 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-08-05"
+#define SEQ66_VERSION_DATE_SHORT "2020-08-12"
 #endif
 
 #ifndef SEQ66_VERSION
@@ -371,7 +371,6 @@
 #ifndef SEQ66_PROFLAGS
 #define SEQ66_PROFLAGS
 #endif
-
 
 /*
  * Indicates that Qt5 is enabled.  Currently not yet in configure.ac nor used in

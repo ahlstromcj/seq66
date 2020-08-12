@@ -281,13 +281,16 @@ osc_nsm_show
 
     pnsmc->show();                  /* a virtual function   */
 
-//  lo_send_from(m_lo_address, losrv, LO_TT_IMMEDIATE, "/reply", "ss", path, "OK");
+    //  lo_send_from
+    //  (
+    //      m_lo_address, losrv, LO_TT_IMMEDIATE, "/reply", "ss", path, "OK"
+    //  );
     return 0;
 }
 
 /**
- *
- *  This function could also be called osc_hide_gui().  See the nsm-proxy code.
+ *  This function could also be called osc_hide_gui().  See the nsm-proxy
+ *  code.
  */
 
 static int
@@ -306,15 +309,19 @@ osc_nsm_hide
         return -1;
 
     pnsmc->hide();
-//
-//  Why is this reply different from the show-gui version?
-//
-//  lo_send_from
-//  (
-//      m_lo_address, losrv, LO_TT_IMMEDIATE,
-//      nsm_cli_gui_hidden, "ss", path, "OK"
-//  );
-//  lo_send_from(m_lo_address, losrv, LO_TT_IMMEDIATE, "/reply", "ss", path, "OK");
+/*
+    Why is this reply different from the show-gui version?
+
+    lo_send_from
+    (
+        m_lo_address, losrv, LO_TT_IMMEDIATE,
+        nsm_cli_gui_hidden, "ss", path, "OK"
+    );
+    lo_send_from
+    (
+        m_lo_address, losrv, LO_TT_IMMEDIATE, "/reply", "ss", path, "OK"
+    );
+*/
     return 0;
 }
 
@@ -341,13 +348,12 @@ osc_nsm_broadcast
     return 0;
 }
 
-//
-// MORE OSC CALLBACKS:
-//
-// osc_stop_signal() : nsm_stop_signal() virtual function
-// osc_start() : nsm_start() virtual function
-// osc_kill() : nsm_kill() virtual function
-// osc_update() : nsm_update() virtual function
+/*
+   osc_stop_signal() : nsm_stop_signal() virtual function
+   osc_start() : nsm_start() virtual function
+   osc_kill() : nsm_kill() virtual function
+   osc_update() : nsm_update() virtual function
+ */
 
 /**
  *  This constructor should (currently) not be called unless the NSM URL was
@@ -490,7 +496,9 @@ nsm::announce
 #endif
 }
 
-// Session client methods.
+/*
+ * Session client methods.
+ */
 
 void
 nsm::dirty (bool isdirty)
@@ -620,7 +628,9 @@ nsm::message (int priority, const std::string & mesg)
     }
 }
 
-// Session client reply methods.
+/*
+ * Session client reply methods.
+ */
 
 void
 nsm::open_reply (reply replycode)
@@ -684,7 +694,9 @@ nsm::nsm_reply (const std::string & path, reply replycode)
 #endif
 }
 
-// Server announce error.
+/*
+ * Server announce error.
+ */
 
 void
 nsm::announce_error (const std::string & mesg)
@@ -701,7 +713,9 @@ nsm::announce_error (const std::string & mesg)
 #endif
 }
 
-// Server announce reply.
+/*
+ * Server announce reply.
+ */
 
 void
 nsm::announce_reply
@@ -783,7 +797,9 @@ nsm::open
     // emit open();
 }
 
-// Client save callback.
+/*
+ * Client save callback.
+ */
 
 void
 nsm::save ()
@@ -860,7 +876,11 @@ show_gui ()
         }
     }
     gui_pid = pid;
-//  lo_send_from(m_lo_address, losrv, LO_TT_IMMEDIATE, nsm_cli_gui_shown(), "");
+    //
+    // lo_send_from
+    // (
+    //      m_lo_address, losrv, LO_TT_IMMEDIATE, nsm_cli_gui_shown(), ""
+    // );
 }
 
 #endif  // USE_SAMPLE_CODE
@@ -877,7 +897,9 @@ nsm::show ()
     // emit show();
 }
 
-// Client hide optional GUI.
+/*
+ * Client hide optional GUI.
+ */
 
 void
 nsm::hide ()
@@ -892,8 +914,8 @@ nsm::hide ()
 }
 
 /**
- *  The lo_message type is a typedef of a void pointer, as are most of the "lo_"
- *  types.
+ *  The lo_message type is a typedef of a void pointer, as are most of the
+ *  "lo_" types.
  */
 
 void

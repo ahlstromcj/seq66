@@ -221,10 +221,9 @@ qseqroll::scroll_offset (int x)
  *      If true, the background sequence will be drawn.
  *
  * \param seq
- *      Provides the sequence number, which is checked against
- *      seq::legal() before being used.  This macro allows
- *      the value SEQ66_SEQUENCE_LIMIT (2048), which disables the background
- *      sequence.
+ *      Provides the sequence number, which is checked against seq::legal()
+ *      before being used.  This macro allows the value seq::limit (2048),
+ *      which disables the background sequence.
  */
 
 void

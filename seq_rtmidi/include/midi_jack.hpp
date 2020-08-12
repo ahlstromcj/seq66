@@ -145,7 +145,7 @@ protected:
 
 protected:
 
-//  virtual bool open_client () = 0;    // replaces "connect()"
+    //  virtual bool open_client () = 0;    // replaces "connect()"
     virtual bool api_connect () override;
     virtual bool api_init_out () override;
     virtual bool api_init_in () override;

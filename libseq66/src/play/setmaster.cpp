@@ -51,15 +51,15 @@ namespace seq66
  *  After creation, screenset 0 is created and set as the play-screen.
  */
 
-setmaster::setmaster () :
-    m_rows                  (c_rows),
-    m_columns               (c_columns),
+setmaster::setmaster (int setrows, int setcolumns) :
+    m_screenset_rows        (setrows),
+    m_screenset_columns     (setcolumns),
+    m_rows                  (c_rows),                   /* constant         */
+    m_columns               (c_columns),                /* constant         */
     m_set_count             (m_rows * m_columns),
-    m_container             (),                         /* screensets map   */
-    m_playscreen            (seq::unassigned()),
-    m_playscreen_pointer    (nullptr)
+    m_container             ()                          /* screensets map   */
 {
-    reset();
+    (void) reset();
 }
 
 /**
@@ -67,15 +67,16 @@ setmaster::setmaster () :
  *  play-screen, plus a "dummy" set.
  */
 
-void
+bool
 setmaster::reset ()
 {
     clear();
     auto setp = add_set(0);
-    if (setp != m_container.end())
-        (void) set_playscreen(0);
+    bool result = setp != m_container.end();
+    if (result)
+        (void) add_set(screenset::limit());         /* create the dummy set */
 
-    (void) add_set(screenset::limit());     /* created the dummy set    */
+    return result;
 }
 
 /**
@@ -139,7 +140,7 @@ setmaster::calculate_set (int row, int column) const
 setmaster::container::iterator
 setmaster::add_set (screenset::number setno)
 {
-    screenset newset(setno, m_rows, m_columns);
+    screenset newset(setno, m_screenset_rows, m_screenset_columns);
     auto setpair = std::make_pair(setno, newset);
     auto resultpair = m_container.insert(setpair);
     return resultpair.first;
@@ -269,69 +270,6 @@ setmaster::swap_sets (seq::number set0, seq::number set1)
         std::swap(item0->second, item1->second);
         item0->second.change_set_number(set1);      /* also changes seq #s  */
         item1->second.change_set_number(set0);      /* also changes seq #s  */
-    }
-    return result;
-}
-
-/*
- * -------------------------------------------------------------------------
- * Play-screen
- * -------------------------------------------------------------------------
- */
-
-/**
- *  If the desired play-screen exists, unmark the current play-screen and mark
- *  the new one.
- *
- *  If there was a existing screen-set \a setno, just mark it (again).  [DO WE
- *  NEED TO CLEAR IT?]  Otherwise, if the set number is valid, then create a new
- *  screenset and set it as the play-screen.
- *
- *  We no longer check for a change in m_playscreen, because doing so leads to a
- *  segfault... bad set?
- *
- * \param setno
- *      Provides the desired set number.  This ranges from 0 to 2047, though
- *      generally the number of sets is 32 or lower.  There is a screenset
- *      #2048 that always exists in order to provide an inactive/dummy
- *      screenset.
- *
- * \return
- *      Returns true if the play-screen was able to be set.
- */
-
-bool
-setmaster::set_playscreen (screenset::number setno)
-{
-    bool result = setno >= 0 && setno < screenset::limit();
-    if (result)
-    {
-        auto sset = m_container.find(setno);
-        result = false;
-        if (sset != m_container.end())
-        {
-            auto oldset = m_container.find(m_playscreen);
-            if (oldset != m_container.end())
-                oldset->second.is_playscreen(false);
-
-            m_playscreen = setno;
-            sset->second.is_playscreen(true);
-            result = true;
-        }
-        else
-        {
-            auto setp = add_set(setno);
-            if (setp != m_container.end())
-            {
-                set_playscreen(setno);
-                setp->second.is_playscreen(true);
-                result = true;
-            }
-        }
-        if (! result)
-            m_playscreen = 0;           /* use the always-present set 0 */
-
-        m_playscreen_pointer = &m_container.at(m_playscreen);
     }
     return result;
 }

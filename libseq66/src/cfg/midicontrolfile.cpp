@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-06
+ * \updates       2020-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -38,6 +38,12 @@
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
 #include "util/calculations.hpp"        /* seq66::string_to_bool(), etc.    */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
+
+/**
+ *  The same definition as in seq.hpp.
+ */
+
+#define SEQ66_BASE_SET_SIZE SEQ66_DEFAULT_SET_ROWS * SEQ66_DEFAULT_SET_COLUMNS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -360,10 +366,12 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     int sequences = string_to_int(s, SEQ66_BASE_SET_SIZE);
     s = get_variable(file, mctag, "output-buss");
     if (s.empty())
-        s = get_variable(file, mctag, "buss");
+        s = get_variable(file, mctag, "buss");          /* the old tag name */
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_OUT_BUSS);
-    s = get_variable(file, mctag, "enabled");
+    s = get_variable(file, mctag, "midi-enabled");
+    if (s.empty())
+        s = get_variable(file, mctag, "enabled");       /* the old tag name */
 
     /*
      * We need to read them anyway, for saving back at exit.  The enabled-flag
@@ -742,7 +750,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "\n"
         << "set-size = " << setsize << "\n"
         << "output-buss = " << buss << "\n"
-        << "enabled = " << (disabled ? "false" : "true")
+        << "midi-enabled = " << (disabled ? "false" : "true")
         << "\n"
         ;
 

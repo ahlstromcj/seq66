@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-08-09
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -48,24 +48,6 @@
  *  macros.  They just stand out more in code. Call us old school or old
  *  fools, you decide.  Hell, we still like snprintf() for some uses!
  */
-
-/**
- *  The maximum number of patterns supported is given by the number of
- *  patterns supported in the panel (32) times the maximum number of sets
- *  (32), or 1024 patterns.  However, this value is now independent of the
- *  maximum number of sets and the number of sequences in a set.  Instead,
- *  we limit them to a constant value, which seems to be well above the
- *  number of simultaneous playing sequences the application can support.
- */
-
-#define SEQ66_SEQUENCE_MAXIMUM          1024
-
-/**
- *  The canonical and default set size.  Used in relation to the keystrokes used
- *  to access sequences (and mute-groups).
- */
-
-#define SEQ66_BASE_SET_SIZE               32
 
 /**
  *  Default value for c_max_sets.  This is now a constant limit, as we can
@@ -128,7 +110,7 @@
  *  Default number of columns in the main-window's grid.
  */
 
-#define SEQ66_DEFAULT_SET_COLUMNS      8
+#define SEQ66_DEFAULT_SET_COLUMNS          8
 
 /**
  *  Minimum number of columns in the main-window's grid.  Currently the same
@@ -180,20 +162,12 @@
 #define SEQ66_SEQKEY_HEIGHT               10
 
 /**
- *  Default value of the width (number of columns) of the slot toggle keys.
- *  Again, this matches with number of columns in a set in the main window of
- *  the application.
- */
-
-#define SEQ66_SET_KEYS_COLUMNS             8
-
-/**
  *  The number of ALSA busses supported.  See mastermidibus::init().  Currently,
  *  this is also the default number of "manual" (virtual) output ports created
  *  in the manual-ports mode.
  */
 
-#define SEQ66_OUTPUT_BUSS_MAX           16
+#define SEQ66_OUTPUT_BUSS_MAX             16
 
 /**
  *  Flags an unspecified buss number.  Two spellings are provided, one for
@@ -240,28 +214,6 @@
  */
 
 #define SEQ66_PERFROLL_PAGE_FACTOR      4096
-
-/**
- *  Guessing that this describes the number of subdivisions of the grid in a
- *  beat on the perfroll user-interace.  Changing this doesn't change anything
- *  obvious in the user-interface, though.
- */
-
-#define SEQ66_PERFROLL_DIVS_PER_BEAT      16
-
-/**
- *  The maximum number of rows of mainwids we will support, regardless of
- *  screen resolution.
- */
-
-#define SEQ66_MAINWID_BLOCK_ROWS_MAX       3
-
-/**
- *  The maximum number of columns of mainwids we will support, regardless of
- *  screen resolution.
- */
-
-#define SEQ66_MAINWID_BLOCK_COLS_MAX       2
 
 /**
  *  This constant indicates that a configuration file numeric value is
@@ -616,7 +568,7 @@
  *  store.
  */
 
-#define SEQ66_RECENT_FILES_MAX          10
+#define SEQ66_RECENT_FILES_MAX           10
 
 #endif      // SEQ66_APP_LIMITS_H
 

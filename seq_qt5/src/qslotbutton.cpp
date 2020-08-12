@@ -85,13 +85,6 @@ qslotbutton::qslotbutton
     m_label             (label),
     m_hotkey            (hotkey),
     m_text_color        (Qt::black),
-
-    /*
-     * Currently unused
-     *
-     * m_slot_width        (0),
-     */
-
     m_is_checkable      (false),
     m_is_dirty          (true)
 {
@@ -143,13 +136,6 @@ qslotbutton::setup ()
 
     std::string snstring = std::to_string(m_slot_number);
     setText(snstring.c_str());
-
-    /*
-     * Currently unused
-     *
-     * if (m_slot_width == 0)
-     *     m_slot_width = width();
-     */
 }
 
 /**

@@ -1262,34 +1262,26 @@ usrsettings::option_logfile () const
 
 /**
  * \setter m_mainwid_block_rows
+ * \deprecated
  */
 
 void
 usrsettings::block_rows (int count)
 {
-#if defined SEQ66_MAINWID_BLOCK_ROWS_MAX
-    if (count > 0 && count <= SEQ66_MAINWID_BLOCK_ROWS_MAX)
-        m_mainwid_block_rows = count;
-#else
     if (count == 1)
         m_mainwid_block_rows = count;
-#endif
 }
 
 /**
  * \setter m_mainwid_block_cols
+ * \deprecated
  */
 
 void
 usrsettings::block_columns (int count)
 {
-#if defined SEQ66_MAINWID_BLOCK_ROWS_MAX
-    if (count > 0 && count <= SEQ66_MAINWID_BLOCK_COLS_MAX)
-        m_mainwid_block_cols = count;
-#else
     if (count == 1)
         m_mainwid_block_cols = count;
-#endif
 }
 
 /**

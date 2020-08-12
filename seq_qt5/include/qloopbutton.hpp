@@ -161,6 +161,7 @@ private:
      */
 
     bool m_text_initialized;
+    bool m_vert_compressed;
     bool m_draw_background;
     textbox m_top_left;
     textbox m_top_right;
@@ -224,6 +225,7 @@ private:
     virtual void paintEvent (QPaintEvent *) override;
     virtual void focusInEvent (QFocusEvent *) override;
     virtual void focusOutEvent (QFocusEvent *) override;
+    virtual void resizeEvent (QResizeEvent *) override;
 
     bool initialize_text ();
 

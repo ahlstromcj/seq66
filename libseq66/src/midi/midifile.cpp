@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-07-31
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1911,8 +1911,8 @@ midifile::parse_mute_groups (performer & p)
 
             /*
              * What about rows & columns?  Ultimately, the set-size must match
-             * that specified by the application's user-interface as must the rows
-             * and columns.
+             * that specified by the application's user-interface as must the
+             * rows and columns.
              */
         }
         for (unsigned g = 0; g < groupcount; ++g)
@@ -1921,11 +1921,12 @@ midifile::parse_mute_groups (performer & p)
             midilong group = read_long();
             for (unsigned s = 0; s < setsize; ++s)
             {
-                midilong gmutestate = read_long();  /* why a long for a bit!?   */
+                midilong gmutestate = read_long();  /* why long for a bit!? */
                 bool status = gmutestate != 0;
                 mutebits.push_back(midibool(status));
             }
-            mutes.load(group, mutebits);
+            if (! mutes.load(group, mutebits))
+                break;                              /* usually a duplicate  */
         }
     }
     return result;

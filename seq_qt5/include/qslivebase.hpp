@@ -28,19 +28,19 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2020-07-29
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
- *  Sequencer66's analogue to the Gtkmm mainwid class.  These classes display a
- *  grid of patterns (loops) that can be controlled via the grid.
+ *  Sequencer66's analogue to the Gtkmm mainwid class.  These classes display
+ *  a grid of patterns (loops) that can be controlled via the grid.
  */
 
 #include <QFrame>
-#include <functional>                   /* std::function, function objects  */
 
-#include "gui_palette_qt5.hpp"
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 base      */
 #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
+#include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QEvent;
@@ -52,7 +52,6 @@ class QEvent;
 namespace seq66
 {
     class keystroke;
-    class performer;
     class qsmainwnd;
 
 /**
@@ -91,12 +90,12 @@ public:
 
     int rows () const
     {
-        return m_mainwnd_rows;      // should use performer::rows() !!!!
+        return perf().rows();
     }
 
     int columns () const
     {
-        return m_mainwnd_cols;      // should use performer::columns() !!!!
+        return perf().columns();
     }
 
     int seqs_in_set () const
@@ -246,15 +245,13 @@ protected:
      *  already have counterparts in the usrsettings class.
      */
 
-    int m_mainwnd_rows;         /* from usr().mainwnd_rows()                */
-    int m_mainwnd_cols;         /* from usr().mainwnd_cols()                */
     int m_mainwid_spacing;      /* from usr().mainwid_spacing(): 2 to 16    */
     int m_space_rows;           /* total space between all rows (e.g. 2*4)  */
     int m_space_cols;           /* ditto for columns (e.g. 2 * 8)           */
 
     /**
      *  Provides a convenience variable for avoiding multiplications.  It is
-     *  equal to m_mainwnd_rows * m_mainwnd_cols.
+     *  equal to rows * columns.
      */
 
     const int m_screenset_slots;

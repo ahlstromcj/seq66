@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-07-20
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -232,16 +232,17 @@ private:
      *  patterns known as a "screen set".  We would like to be able to change
      *  this value from 4 to 8, and maybe allow the values of 5, 6, and 7 as
      *  well.  But if we could just get 8 working, then well would Seq66
-     *  deserve the 64 in its name.
+     *  deserve the 64 in its name, and it would also match the layouts of the
+     *  Launchpad series of controllers.
      */
 
     int m_mainwnd_rows;
 
     /**
-     *  Number of columns in the Patterns Panel.  The current value is 4, and
-     *  probably won't change, since other values depend on it.  Together with
-     *  m_mainwnd_rows, this value fixes the patterns grid into a 4 x 8 set of
-     *  patterns known as a "screen set".
+     *  Number of columns in the Patterns Panel.  The current value is 8, and
+     *  probably won't change, since other values depend on it and it is a
+     *  common grid size.  Together with m_mainwnd_rows, this value fixes the
+     *  patterns grid into a 4 x 8 set of patterns known as a "screen set".
      */
 
     int m_mainwnd_cols;
@@ -1131,8 +1132,7 @@ public:
 
     /**
      * \getter m_mainwnd_rows and m_mainwnd_cols
-     *  Returns true if either value is not the default.  This function is the
-     *  inverse of is_default_m.inwid_size().
+     *  Returns true if either value is not the default.
      */
 
     bool is_variset () const
@@ -1144,7 +1144,7 @@ public:
     /**
      * \getter m_mainwnd_rows and m_mainwnd_cols
      *  Returns true if both values are the default.  This function is the
-     *  inverse of is_variset().
+     *  "opposite" of is_variset().
      */
 
     bool is_default_mainwid_size () const
@@ -1154,6 +1154,16 @@ public:
             m_mainwnd_cols == SEQ66_DEFAULT_SET_COLUMNS &&
             m_mainwnd_rows == SEQ66_DEFAULT_SET_ROWS
         );
+    }
+
+    bool vertically_compressed () const
+    {
+        return m_mainwnd_rows > SEQ66_DEFAULT_SET_ROWS;
+    }
+
+    bool horizontally_compressed () const
+    {
+        return m_mainwnd_cols > SEQ66_DEFAULT_SET_COLUMNS;
     }
 
     int seqs_in_set () const
@@ -1299,8 +1309,9 @@ public:
 
     /**
      * \setter m_seqedit_bgsequence
-     *  Note that SEQ66_IS_LEGAL_SEQUENCE() allows the SEQ66_SEQUENCE_LIMIT
-     *  (0x800 = 2048) value, to turn off the use of a background sequence.
+     *
+     *      Note that seq::legal() allows the seq::limit() (0x800 = 2048)
+     *      value, to turn off the use of a background sequence.
      */
 
     void seqedit_bgsequence (int seqnum)

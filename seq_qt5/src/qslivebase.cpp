@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2019-08-30
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -32,7 +32,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "play/performer.hpp"           /* seq66::performer class           */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivebase.hpp"
 
@@ -64,12 +63,10 @@ qslivebase::qslivebase (performer & p, qsmainwnd * window, QWidget * parent) :
     m_parent            (window),
     m_font              (),
     m_bank_id           (p.playscreen_number()),
-    m_mainwnd_rows      (p.rows()),
-    m_mainwnd_cols      (p.columns()),
     m_mainwid_spacing   (usr().mainwid_spacing()),
-    m_space_rows        (m_mainwid_spacing * m_mainwnd_rows),
-    m_space_cols        (m_mainwid_spacing * m_mainwnd_cols),
-    m_screenset_slots   (m_mainwnd_rows * m_mainwnd_cols),  // should use perf!
+    m_space_rows        (m_mainwid_spacing * p.rows()),
+    m_space_cols        (m_mainwid_spacing * p.columns()),
+    m_screenset_slots   (p.rows() * p.columns()),
     m_slot_w            (0),
     m_slot_h            (0),
     m_last_metro        (0),

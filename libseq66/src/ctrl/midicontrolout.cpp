@@ -52,8 +52,7 @@ midicontrolout::midicontrolout ()
     m_master_bus        (nullptr),
     m_seq_events        (),
     m_ui_events         (),
-    m_screenset_size    (0),
-    m_screenset_offset  (0)
+    m_screenset_size    (0)
 {
     initialize(usr().set_size());       /* buss value set in initialize()   */
 }
@@ -112,6 +111,10 @@ midicontrolout::initialize (int count, int bus)
     }
     else
         m_screenset_size = 0;
+
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("midicontrolout::initialize(count = %d, bus = %d\n", count, bus);
+#endif
 }
 
 /**
@@ -221,8 +224,10 @@ action_to_type_string (midicontrolout::uiaction a)
  * behavior optional: So either absolute sequence actions (let the receiver do
  * the math...), or sending events relative (modulo) the current screen set.
  *
+ * \param index
+ *      The index into the m_seq_events[][] array.
+ *
  * \param seq
- *      The index of the sequence.
  *
  * \param what
  *      The status action of the sequence.  This indicates if the sequence is
@@ -233,20 +238,14 @@ action_to_type_string (midicontrolout::uiaction a)
  */
 
 void
-midicontrolout::send_seq_event (int seq, seqaction what, bool flush)
+midicontrolout::send_seq_event (int index, seqaction what, bool flush)
 {
     if (is_enabled())
     {
-        /*
-         *  This is not needed when called from screenset::slots_function(),
-         *  which starts the sequence number at the set-offset of the set.
-         */
-
-        seq -= m_screenset_offset;      // adjust relative to current screen-set
         int w = static_cast<int>(what);
-        if (m_seq_events[seq][w].apt_action_status)
+        if (m_seq_events[index][w].apt_action_status)
         {
-            event ev = m_seq_events[seq][w].apt_action_event;
+            event ev = m_seq_events[index][w].apt_action_event;
             if (not_nullptr(m_master_bus))
             {
 #ifdef SEQ66_PLATFORM_DEBUG_TMI

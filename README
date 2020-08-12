@@ -1,6 +1,6 @@
 README for Seq66 0.90.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-08-07
+2015-09-10 to 2020-08-12
 
 There is a ton of work in this new version, but there are still things to do
 and bugs to fix.  For now, if you have a specific request, email me at
@@ -45,11 +45,11 @@ GUI-less application: Seq66cli/seq66cli
 Qt/Windows/PortMidi: Seq66qt5/qpseq66.exe
 Qt/RtMidi: Seq66qt5/qrseq66
 
-Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "portmidi"
-engine (for Windows).  Windows MIDI devices are detected, inaccessible devices
-are ignored, and playback (e.g. to the Windows wavetable synthesizer) work. It
-is built easily via Qt Creator or qmake, using MingW.  The Qt 5 GUI is the only
-official GUI of Seq66.
+Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "rtmidi"
+(Linux) and "portmidi" (Windows) engines.  MIDI devices are detected,
+inaccessible devices are ignored, and playback (e.g. to the Windows wavetable
+synthesizer) work. It is built easily via Qt Creator or qmake, using MingW.
+The Qt 5 GUI is the only official GUI of Seq66.
 
 See the INSTALL file for build-from-source instructions for Linux or Windows,
 and using a conventional source tarball.
@@ -61,13 +61,14 @@ Recent changes:
             playback on a default Windows 10 install.
         -   Added code to implement Song/Live and JACK Transport key toggles.
         -   MIDI control improved for control and for status display by
-            devices like the Launchpad Mini. "ctrl" files upgraded.
+            devices like the Launchpad Mini, using new "ctrl" files.
         -   Fixes:
             -   Fixed a bug using millitime() instead of microtime().
             -   Issue #13, data and event/trigger panes not reflecting event
                 changes.  Change handling improved in general with more
                 performer callbacks.
             -   The data pane was some pixels off in the tabbed edit-frame.
+            -   Fix a lot of issue with using sets and an 8x8 Seq66 grid.
     -   Version 0.90.4:
         -   Some refactoring to improve Windows builds.
     -   Version 0.90.3:

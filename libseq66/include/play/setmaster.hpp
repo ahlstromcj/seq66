@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2020-08-10
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -43,6 +43,27 @@
 #include <map>                          /* std::map<>                       */
 
 #include "play/screenset.hpp"           /* seq66::screenset and seq         */
+
+/**
+ *  The base (or default) number of rows in a set, useful in handling the
+ *  slot-shift feature and the set-master user-interface.
+ */
+
+#define SEQ66_BASE_SET_ROWS                SEQ66_DEFAULT_SET_ROWS
+
+/**
+ *  The base (or default) number of columns in a set, useful in handling the
+ *  slot-shift feature and the set-master user-interface.
+ */
+
+#define SEQ66_BASE_SET_COLUMNS             SEQ66_DEFAULT_SET_COLUMNS
+
+/**
+ *  The canonical and default set size.  Used in relation to the keystrokes used
+ *  to access sequences (and mute-groups).
+ */
+
+#define SEQ66_BASE_SET_SIZE SEQ66_DEFAULT_SET_ROWS * SEQ66_DEFAULT_SET_COLUMNS
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -65,6 +86,23 @@ class setmaster
 private:
 
     using container = std::map<screenset::number, screenset>;
+
+    /**
+     *  Holds the number of rows to use when creating a new set.  We could use
+     *  the value in setmapper, but we might want the user-interface to create
+     *  sets directly at some point.
+     */
+
+    int m_screenset_rows;
+
+    /**
+     *  Holds the number of columns to use when creating a new set.  We could
+     *  use the value in setmapper, but we might want the user-interface to
+     *  create
+     *  sets directly at some point.
+     */
+
+    int m_screenset_columns;
 
     /**
      *  Storage for the number of rows in the layout of the set-master
@@ -99,22 +137,6 @@ private:
     container m_container;
 
     /**
-     *  Indicates which set is now in view and available for playback.
-     *  We guarantee this to be a valid value or a value (-1) that will be
-     *  ignored.  We're not fans of throwing things.
-     */
-
-    screenset::number m_playscreen;
-
-    /**
-     *  To save set lookup during a number of operations, this pointer, owned by
-     *  no one, really, stores a painter to the playing screen-set (play-screen)
-     *  in the containter.
-     */
-
-    screenset * m_playscreen_pointer;
-
-    /**
      *  Indicates if the m_saved_armed_statuses[] values are the saved state
      *  of the sequences, and can be restored.
      */
@@ -129,12 +151,16 @@ private:
 
 private:
 
-    static const int c_rows     = 4;
-    static const int c_columns  = 8;
+    static const int c_rows     = SEQ66_BASE_SET_ROWS;
+    static const int c_columns  = SEQ66_BASE_SET_COLUMNS;
 
 public:
 
-    setmaster ();
+    setmaster
+    (
+        int setrows     = SEQ66_BASE_SET_ROWS,
+        int setcolumns  = SEQ66_BASE_SET_COLUMNS
+    );
 
     /*
      * The move and copy constructors, the move and copy assignment operators,
@@ -182,60 +208,21 @@ private:
         return m_columns;
     }
 
-    void reset ();
-
     /*
      * set_function(s) executes a set-handler for each set.
      * set_function(s,p) runs a set-handler and a slot-handler for each set.
      * set_function(p) runs the slot-handler for all patterns in all sets.
+     * slot_function() uses the play-screen, and so is in setmapper, not here.
      */
 
     bool set_function (screenset::sethandler s);
     bool set_function (screenset::sethandler s, screenset::slothandler p);
     bool set_function (screenset::slothandler p);
 
-    bool slot_function (screenset::slothandler p)
-    {
-        return play_screen()->slot_function(p);
-    }
-
 public:
-
-    /**
-     *  Using std::map::operator [] is too problematic.  So we use at() and
-     *  avoid using illegal values.
-     */
-
-    screenset * play_screen ()
-    {
-        return m_playscreen_pointer;
-    }
-
-    const screenset * play_screen () const
-    {
-        return m_playscreen_pointer;
-    }
 
     std::string sets_to_string (bool showseqs = true) const;
     void show (bool showseqs = true) const;
-    bool set_playscreen (screenset::number setno);
-
-    screenset::number change_playscreen (int amount)
-    {
-        screenset::number result = m_playscreen + amount;
-        return set_playscreen(result);
-    }
-
-    const std::string & name (screenset::number setno) const
-    {
-        return m_container.find(setno) != m_container.end() ?
-            m_container.at(setno).name() : dummy_screenset().name() ;
-    }
-
-    bool name (const std::string & nm)
-    {
-        return play_screen()->name(nm);
-    }
 
     bool name (screenset::number setno, const std::string & nm)
     {
@@ -274,6 +261,7 @@ public:
 
 private:
 
+    bool reset ();
     container::iterator add_set (screenset::number setno);
     container::iterator find_by_value (screenset::number setno);
 

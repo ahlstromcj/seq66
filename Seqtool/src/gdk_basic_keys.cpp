@@ -81,7 +81,6 @@ static QtGtkKeyMap sg_key_map =
     { 0x00ec, { 0x60,      KNONE,  "`"        } },  // "Backtick"
     { 0xff08, { 0x1000003, KNONE,  "BkSpace"  } },  // "Backspace"
     { 0xff09, { 0x1000001, KNONE,  "Tab"      } },  // "Tab"
-//  { 0xff??, { 0x1000002, KSHIFT, "BkTab"    } },  // "Backtab"
     { 0xff0d, { 0x1000004, KNONE,  "Return"   } },  // "Return"
     { 0xff13, { 0x1000008, KNONE,  "Pause"    } },  // "Pause"
     { 0xff14, { 0x1000026, KNONE,  "ScrlLk"   } },  // "Scroll_Lock"

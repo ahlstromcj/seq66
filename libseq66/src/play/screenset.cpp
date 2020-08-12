@@ -91,9 +91,9 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
 void
 screenset::change_set_number (screenset::number setno)
 {
-    int seqno = m_set_number * m_set_size;
-    m_set_number  = setno;
-    m_set_offset  = seqno;
+    int seqno = m_set_number * m_set_size;  /* WHY NOT USE setno HERE???    */
+    m_set_number = setno;
+    m_set_offset = seqno;
     m_set_maximum = m_set_offset + m_set_size;
     for (auto & s : m_container)            /* renumber all the sequences   */
         s.change_seq_number(seqno++);       /* works only if seq is active  */
@@ -159,7 +159,7 @@ screenset::add (sequence * s, seq::number seqno)
             result = newseq.activate(seqno);    /* activate sequence        */
             if (result)
             {
-                seq::number index = seqno - m_set_offset;
+                seq::number index = seqno - offset();
                 m_container[index] = newseq;
             }
         }
@@ -168,7 +168,7 @@ screenset::add (sequence * s, seq::number seqno)
     bool result = false;
     if (not_nullptr(s))
     {
-        for (seq::number i = seqno - m_set_offset; i < m_set_maximum; ++i)
+        for (seq::number i = seqno - offset(); i < m_set_maximum; ++i)
         {
             seq sseq = seqinfo(i);
             if (! sseq.active())            /* seq already in slot?     */
@@ -208,7 +208,7 @@ screenset::remove (seq::number seqno)
     {
         seq newseq;                         /* non-functiona object         */
         sp->set_playing(false);             /* turns off all notes as well  */
-        m_container[seqno - m_set_offset] = newseq;
+        m_container[seqno - offset()] = newseq;
         result = true;
     }
     return result;
@@ -290,12 +290,12 @@ screenset::calculate_seq (int row, int column) const
     else if (column >= m_columns)
         row = m_columns - 1;
 
-    return m_set_offset + row + m_rows * column;
+    return offset() + row + m_rows * column;
 #else
     if (row < 0 || row >= m_rows || column < 0 || column >= m_columns)
         return seq::unassigned();
     else
-        return m_set_offset + row + m_rows * column;
+        return offset() + row + m_rows * column;
 #endif
 }
 
@@ -332,7 +332,7 @@ screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
     bool result = seq_in_set(seqno);
     if (result)
     {
-        seqno -= m_set_offset;          /* convert to 0-to-31 range */
+        seqno -= offset();          /* convert to 0-to-31 range */
         row = seqno % m_rows;
         column = (seqno / m_rows);
     }
@@ -404,8 +404,8 @@ screenset::needs_update () const
 seq::number
 screenset::clamp (seq::number seqno) const
 {
-    if (seqno >= m_set_offset)
-        seqno -= m_set_offset;
+    if (seqno >= offset())
+        seqno -= offset();
 
     if (seqno < 0)
         return 0;
@@ -498,16 +498,25 @@ screenset::armed (seq::number seqno, bool flag)
 }
 
 /**
- *  Runs a slot-handler function for all of the slots in this set.  Recall that
- *  a slot is a place to "store" a sequence, and a slot can be empty.  All slots
- *  can be drawn, but empty slots are drawn differently.
+ *  Runs a slot-handler function for all of the slots in this set.  Recall
+ *  that a slot is a place to "store" a sequence, and a slot can be empty.
+ *  All slots can be drawn, but empty slots are drawn differently in general.
+ *
+ * \param p
+ *      Provides a function with parameters of seq::pointer and seq::number.
+ *
+ * \param use_set_offset
+ *      If true, start the sequence counter from this set's seq::number
+ *      offset.  This is the default.  Otherwise, start from 0.  In this case,
+ *      if the true sequence number is needed, the function must get it from
+ *      the sequence itself.
  */
 
 bool
-screenset::slot_function (slothandler p)
+screenset::slot_function (slothandler p, bool use_set_offset)
 {
     bool result = false;
-    seq::number sn = m_set_offset;
+    seq::number sn = use_set_offset ? offset() : 0 ;
     for (auto & s : m_container)
     {
         result = p(s.loop(), sn++);         /* note post-increment of sn    */
@@ -1228,8 +1237,8 @@ screenset::apply_bits (const midibooleans & bits)
     if (result)
     {
         int bit = 0;
-        seq::number seqend = m_set_offset + m_set_size;
-        for (seq::number seqno = m_set_offset; seqno != seqend; ++seqno, ++bit)
+        seq::number seqend = offset() + m_set_size;
+        for (seq::number seqno = offset(); seqno != seqend; ++seqno, ++bit)
         {
             seq::pointer sp = find_by_number(seqno);
             if (sp)
@@ -1261,7 +1270,7 @@ screenset::learn_bits (midibooleans & bits)
     {
         int bit = 0;
         bits.clear();
-        for (seq::number s = m_set_offset; s != m_set_maximum; ++s, ++bit)
+        for (seq::number s = offset(); s != m_set_maximum; ++s, ++bit)
         {
             seq::pointer sp = find_by_number(s);
             if (sp)

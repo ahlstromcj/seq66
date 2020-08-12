@@ -61,4 +61,7 @@ main (int argc, const char ** argv)
     return 0;
 }
 
-// vim: sw=4 ts=4 wm=4 et ft=cpp
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */
+

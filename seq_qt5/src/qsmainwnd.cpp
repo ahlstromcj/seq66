@@ -801,6 +801,7 @@ qsmainwnd::qsmainwnd
      * Set Number.
      */
 
+    update_bank(0);             // EXPERIMENTAL ca 2020-08-11
     connect
     (
         ui->spinBank, SIGNAL(valueChanged(int)),
@@ -835,13 +836,6 @@ qsmainwnd::qsmainwnd
          * the size of the new, larger, qseqeditframe64 frame.  We see the
          * normal-size window come up, and then it jumps to the larger size.
          */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        int sh = SEQ66_QSMAINWND_WIDTH;
-        int sw = SEQ66_QSMAINWND_HEIGHT;
-        int width = usr().scale_size(sw);
-        int height = usr().scale_size_y(sh);
-#endif
 
         QSize s = size();
         int h = s.height();
@@ -1697,8 +1691,7 @@ qsmainwnd::show_import_dialog ()
                         ui->spinBpm->setValue(perf().bpm());
                         ui->spinBpm->setDecimals(usr().bpm_precision());
                         ui->spinBpm->setSingleStep(usr().bpm_step_increment());
-                        if (not_nullptr(m_live_frame))
-                            m_live_frame->update_bank(setno); // set_bank(setno)
+                        update_bank(setno);
                     }
                 }
                 catch (...)
@@ -2477,14 +2470,18 @@ qsmainwnd::panic()
 }
 
 /**
- *
+ *  The qslivebase::update_bank() function and its overrides do not take care
+ *  of chaning the performer's playing screenset.
  */
 
 void
 qsmainwnd::update_bank (int bankid)
 {
     if (not_nullptr(m_live_frame))
+    {
         m_live_frame->update_bank(bankid);
+        (void) perf().set_playing_screenset(m_live_frame->bank());
+    }
 }
 
 /**

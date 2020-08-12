@@ -100,12 +100,6 @@ protected:
     QColor m_text_color;
 
     /**
-     *  Holds the current width of the button, useful in scaling font size.
-
-    int m_slot_width;
-     */
-
-    /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots
      *  need to be enabled, but not checkable, so that we can do different
      *  things with them.  We could probably just hook up a different callback
@@ -202,23 +196,6 @@ protected:
 protected:
 
     static gui_palette_qt5 & slotpal ();
-
-    /*
-     * Currently unused
-     *
-     * m_slot_width        (0),
-
-    int slot_width () const
-    {
-        return m_slot_width;
-    }
-
-    void slot_width (int w)
-    {
-        m_slot_width = w;
-    }
-
-     */
 
     void text_color (QColor c)
     {

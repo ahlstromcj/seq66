@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-10
+ * \updates       2020-08-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -351,11 +351,10 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midi_control_out      (),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
-    m_set_master            (),                 /* always 4 x 8             */
+    m_set_master            (rows, columns),    /* 32 row x column sets     */
     m_set_mapper                                /* accessed via mapper()    */
     (
-        m_set_master, m_mute_groups,
-        SEQ66_DEFAULT_SET_MAX, rows, columns
+        m_set_master, m_mute_groups, rows, columns
     ),
     m_queued_replace_slot   (-1),               /* REFACTOR                 */
     m_transpose             (0),
@@ -367,7 +366,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_is_running            (false),
     m_is_pattern_playing    (false),
     m_needs_update          (true),
-    m_is_busy               (false),                /* try flag for now     */
+    m_is_busy               (false),            /* try this flag for now    */
     m_looping               (false),
     m_song_recording        (false),
     m_song_record_snap      (false),
@@ -385,7 +384,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_clocks_per_metronome  (24),
     m_32nds_per_quarter     (0),
     m_us_per_quarter_note   (0),
-    m_master_bus            (),                     /* shared pointer       */
+    m_master_bus            (),                 /* this is a shared pointer */
     m_filter_by_channel     (false),
     m_one_measure           (0),
     m_left_tick             (0),
@@ -393,17 +392,17 @@ performer::performer (int ppqn, int rows, int columns) :
     m_starting_tick         (0),
     m_tick                  (0),
     m_jack_tick             (0),
-    m_usemidiclock          (false),                /* MIDI Clock support   */
+    m_usemidiclock          (false),            /* MIDI Clock support       */
     m_midiclockrunning      (false),
     m_midiclocktick         (0),
     m_midiclockincrement    (clock_ticks_from_ppqn(m_ppqn)),
     m_midiclockpos          (0),
-    m_dont_reset_ticks      (false),                /* support for pause    */
+    m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
 #if defined SEQ66_SONG_BOX_SELECT
     m_selected_seqs         (),
 #endif
-    m_condition_var         (),                     /* private access: cv() */
+    m_condition_var         (),                 /* private access via cv()  */
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst             (*this, SEQ66_DEFAULT_BPM, m_ppqn),
 #endif
@@ -536,7 +535,7 @@ performer::notify_ui_change (seq::number seqno, change /*mod*/)
 
 /**
  *  This call is currently done only when adding, deleting, or modifying a
- *  trigger.
+ *  trigger.  NOT TRUE
  */
 
 void
@@ -547,6 +546,12 @@ performer::notify_trigger_change (seq::number seqno, change mod)
 
     if (mod == change::yes)
         modify();
+    else if (mod == change::no)
+    {
+        const seq::pointer s = get_sequence(seqno);
+        seqno %= screenset_size();
+        announce_sequence(s, seqno);
+    }
 }
 
 /**
@@ -1642,6 +1647,7 @@ performer::set_playing_screenset (screenset::number setno)
 {
     if (mapper().set_playing_screenset(setno))
     {
+        announce_exit(false);                       /* blank the device     */
         announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set);
@@ -1922,6 +1928,7 @@ performer::launch (int ppqn)
         {
             launch_input_thread();
             launch_output_thread();
+            (void) set_playing_screenset(0);    // ca 2020-08-11
         }
         else
             m_error_pending = true;
@@ -1943,6 +1950,9 @@ performer::launch (int ppqn)
  *  Announces the current mute states of the now-current play-screen.  This
  *  function is handled by creating a slothandler that calls the
  *  announce_sequence() function.
+ *
+ *  This version works only for the first screen-set!  The slot-handler
+ *  increments the seq-number beyond the size of a set automatically.
  */
 
 void
@@ -1955,7 +1965,7 @@ performer::announce_playscreen ()
             &performer::announce_sequence, this,
             std::placeholders::_1, std::placeholders::_2
         );
-        slot_function(sh);
+        slot_function(sh, false);           /* do not use the set-offset    */
         m_master_bus->flush();
     }
 }
@@ -1966,12 +1976,11 @@ performer::announce_playscreen ()
  */
 
 void
-performer::announce_exit ()
+performer::announce_exit (bool playstatesoff)
 {
     if (midi_control_out().is_enabled())
     {
         int setsize = midi_control_out().screenset_size();
-        midi_control_out().set_screenset_offset(0);
         for (int i = 0; i < setsize; ++i)
         {
             midi_control_out().send_seq_event
@@ -1979,7 +1988,8 @@ performer::announce_exit ()
                 i, midicontrolout::seqaction::remove
             );
         }
-        send_play_states(midicontrolout::uiaction::max);
+        if (playstatesoff)
+            send_play_states(midicontrolout::uiaction::max);
     }
 }
 
@@ -1989,14 +1999,16 @@ performer::announce_exit ()
  *  This function has to have both the sequence and its number as parameters,
  *  and must return a boolean value.
  *
+ *  Also note that slot_function() must be called with the use_set_offset
+ *  parameter set to false, in order to keep the slot number below the
+ *  set-size, otherwise a crash occurs.
+ *
  * \param s
  *      Provides the pointer to the sequence.
  *
  * \param sn
- *      Provides the sequence number to be used.  This item is normally used
- *      to assign a new sequence number to a new sequence in a screenset ::
- *      slothandler function, but here it is overwritten with the existing
- *      number of the sequence.
+ *      Provides the slot number to be used for display, and should range from
+ *      0 to the set-size.
  *
  * \return
  *      Returns true if the sequence pointer exists.
@@ -2008,7 +2020,6 @@ performer::announce_sequence (seq::pointer s, seq::number sn)
     bool result = not_nullptr(s);
     if (result)
     {
-        sn = s->seq_number();
         if (s->playing())
         {
             midi_control_out().send_seq_event
@@ -4397,8 +4408,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         else if (is_queue)
         {
             s->toggle_queued();
-            // notify_sequence_change(seqno, change::no);
-            announce_sequence(s, 0);                /* 0 not used here      */
+            announce_sequence(s, mapper().seq_to_offset(s));
         }
         else
         {
@@ -4412,8 +4422,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 off_sequences();
             }
             s->toggle_playing();
-            // notify_sequence_change(seqno, change::no);
-            announce_sequence(s, 0);                /* 0 not used here      */
+            announce_sequence(s, mapper().seq_to_offset(s));
         }
 
         /*
@@ -4961,7 +4970,19 @@ performer::loop_control
     {
         if (slot_shift() > 0)
         {
-            sn += slot_shift() * mapper().screenset_size();
+#if defined USE_OLD_STYLE_SLOT_SHIFT
+            sn += slot_shift() * screenset_size();
+#else
+            if (columns() == SEQ66_BASE_SET_COLUMNS)    /* setmaster.hpp    */
+            {
+                if (rows() > SEQ66_BASE_SET_ROWS)
+                    sn += slot_shift() * rows();        /* move down x rows */
+            }
+            else
+            {
+                sn += slot_shift() * screenset_size();
+            }
+#endif
             clear_slot_shift();
         }
         m_pending_loop = sn;

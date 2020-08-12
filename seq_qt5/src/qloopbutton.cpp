@@ -176,6 +176,7 @@ qloopbutton::qloopbutton
     m_prog_fore_color   (Qt::green),
     m_text_font         (),
     m_text_initialized  (false),
+    m_vert_compressed   (usr().vertically_compressed()),
     m_draw_background   (true),
     m_top_left          (),
     m_top_right         (),
@@ -211,12 +212,17 @@ qloopbutton::initialize_text ()
         int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
-        int lx = dx;                            /* left x       */
+        int lx = dx + 1;                        /* left x       */
         int ty = dy;                            /* top y        */
         int bh = usr().scale_size_y(12);        /* box height   */
-        int rx = int(0.50 * w) + lx - dx;       /* right x      */
+        int rx = int(0.50 * w) + lx - dx - 2;   /* right x      */
         int by = int(0.85 * h);                 /* bottom y     */
+        if (m_vert_compressed)
+            by = int(0.75 * h);                 /* bottom y     */
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("qloopbutton size = (%d, %d)\n", w, h);
+#endif
         /*
          * Code from performer::sequence_label().
          */
@@ -521,21 +527,24 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
 
-                if (m_seq->playing())
-                    title = "Armed";
-                else if (m_seq->get_queued())
-                    title = "Queued";
-                else if (m_seq->one_shot())
-                    title = "One-shot";
-                else
-                    title = "Muted";
+                if (! m_vert_compressed)
+                {
+                    if (m_seq->playing())
+                        title = "Armed";
+                    else if (m_seq->get_queued())
+                        title = "Queued";
+                    else if (m_seq->one_shot())
+                        title = "One-shot";
+                    else
+                        title = "Muted";
 
-                box.setRect
-                (
-                    m_top_left.m_x, m_top_left.m_y + 12,
-                    m_top_left.m_w, m_top_left.m_h
-                );
-                painter.drawText(box, m_top_left.m_flags, title);
+                    box.setRect
+                    (
+                        m_top_left.m_x, m_top_left.m_y + 12,
+                        m_top_left.m_w, m_top_left.m_h
+                    );
+                    painter.drawText(box, m_top_left.m_flags, title);
+                }
             }
             if (s_use_sine)
                 initialize_sine_table();
@@ -597,11 +606,14 @@ qloopbutton::draw_progress_box (QPainter & painter)
     const int penwidth = 2;
     bool qsnap = m_seq->snap_it();
     int c = m_seq->color();
+
+#if defined USE_COLOR_TO_INT_CALL_HERE
     if (c == color_to_int(black))
     {
-        // pal.setColor(QPalette::Button, QColor(Qt::black));
-        // pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
+        pal.setColor(QPalette::Button, QColor(Qt::black));
+        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
     }
+#endif
 
     gui_palette_qt5::Color backcolor = slotpal().get_color_fix(PaletteColor(c));
     if (qsnap)                                      /* playing, queued, ... */
@@ -767,6 +779,21 @@ void
 qloopbutton::focusOutEvent (QFocusEvent *)
 {
     m_text_initialized = false;
+}
+
+/**
+ *  This event occurs only upon a click.
+ */
+
+void
+qloopbutton::resizeEvent (QResizeEvent * qrep)
+{
+    QSize s = qrep->size();
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("qloopbutton::resizeEvent(%d, %d)\n", s.width(), s.height());
+#endif
+    m_vert_compressed = s.height() < 90;        // HARDWIRED EXPERIMENTALLY
+    QWidget::resizeEvent(qrep);
 }
 
 }           // namespace seq66

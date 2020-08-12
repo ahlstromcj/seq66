@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-07
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -217,18 +217,6 @@ private:
 
     int m_screenset_size;
 
-    /**
-     *  Current screen set offset. Since the sequences dispatch the output
-     *  messages, and sequences don't know about screen-sets, we need to do the
-     *  math in this class in order to send screen-set relative events out to
-     *  external controllers. For now, the size of the screen-set is hard-wired
-     *  to 32.
-     *
-     *  TODO: Make this behavior configurable via midicontrolfile.
-     */
-
-    int m_screenset_offset;
-
 public:
 
     midicontrolout ();
@@ -246,18 +234,6 @@ public:
     int screenset_size () const
     {
         return m_screenset_size;
-    }
-
-    /**
-     *  Set the current screen-set offset
-     *
-     * \param offset
-     *      New screen-set offset
-     */
-
-    void set_screenset_offset (int offset)
-    {
-        m_screenset_offset = offset;
     }
 
     void send_seq_event (int seq, seqaction what, bool flush = true);

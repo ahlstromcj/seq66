@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-08-10
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -83,12 +83,15 @@ private:
     int m_set_size;
 
     /**
-     *  The maximum number of sets supported.  The main purpose for this value
-     *  is as a sanity check for set lookup, not necessarily for limiting the
-     *  number of sets.
-
-    int m_set_count;            // try to eliminate this one
+     *  The maximum number of sets supported.  Currently, we allow only 1024
+     *  patterns, which by default allows for 32 sets of 32 patterns.  For an
+     *  8x8 grid, the number of sets is limited to 16, for now.
+     *
+     *  Eventually, we will increase the limit so that 32 sets is possible in
+     *  in 8x8 setup.
      */
+
+    int m_set_count;
 
     /**
      *  Storage for the number of rows in the layout of the set-master
@@ -127,7 +130,7 @@ private:
      *  A replacement for the c_max_sequence constant.  However, this value is
      *  already 32 * 32 = 1024, and is probably enough for any usage.  Famous
      *  last words?  Actually, this value could go up to 2047... 2048 is used
-     *  to indicate that there is no background sequence.
+     *  to indicate that there is no background sequence.  See seq::limit().
      */
 
     seq::number m_sequence_max;
@@ -147,25 +150,25 @@ private:
     seq::number m_sequence_high;
 
     /**
-     *  Hold the number of the currently-in-edit sequence.  Moving this
-     *  status from seqmenu into perform into setmapper for better centralized
+     *  Hold the number of the currently-in-edit sequence.  Moving this status
+     *  from seqmenu into perform into setmapper for better centralized
      *  management.
      */
 
     seq::number m_edit_sequence;
 
     /**
-     *  Indicates which set is now in view and available for playback.
-     *  We guarantee this to be a valid value or a value (-1) that will be
+     *  Indicates which set is now in view and available for playback.  We
+     *  guarantee this to be a valid value or a value (-1) that will be
      *  ignored.  We're not fans of throwing things.
      */
 
     screenset::number m_playscreen;
 
     /**
-     *  To save set lookup during a number of operations, this pointer, owned by
-     *  no one, really, stores a painter to the playing screen-set (play-screen)
-     *  in the containter.
+     *  To save set lookup during a number of operations, this pointer, owned
+     *  by no one, really, stores a painter to the playing screen-set
+     *  (play-screen) in the containter.
      */
 
     screenset * m_playscreen_pointer;
@@ -195,7 +198,6 @@ public:
     (
         setmaster & mc,
         mutegroups & mgs,
-        int sets        = SEQ66_DEFAULT_SET_MAX,
         int rows        = SEQ66_DEFAULT_SET_ROWS,
         int columns     = SEQ66_DEFAULT_SET_COLUMNS
     );
@@ -232,19 +234,23 @@ private:
         return clamp(seqno / m_set_size);
     }
 
-    screenset::number seq_set (int & offset, seq::number s) const;
-    screenset::number seq_set (int & row, int & column, seq::number s) const;
+    screenset::number seq_set (seq::number s, int & offset) const;
+    screenset::number seq_set (seq::number s, int & row, int & column) const;
 
     screenset::number calculate_set (int row, int column) const
     {
         return master().calculate_set(row, column);
     }
 
-//  bool inside_set (int row, int column) const
-//  {
-//      return (row >= 0) && (row < m_rows) &&
-//          (column >= 0) && (column < m_columns);
-//  }
+    /**
+     *  Gets the offset of the sequence (re 0) in its screen-set.  It assumes
+     *  the pointer is good.
+     */
+
+    int seq_to_offset (seq::pointer s) const
+    {
+        return s->seq_number() % m_set_size;
+    }
 
     seq::number calculate_seq (int row, int column) const
     {
@@ -261,12 +267,16 @@ private:
         return m_set_size / SEQ66_BASE_SET_SIZE;
     }
 
+    int slot_shift_delta () const
+    {
+        return SEQ66_BASE_SET_ROWS;
+    }
+
     void clear ()
     {
-        sets().clear();                    /* unconditional zappage!   */
+        master().clear();
         m_sequence_count = 0;
-        m_sequence_high = seq::unassigned();
-        m_edit_sequence = seq::unassigned();
+        m_sequence_high = m_edit_sequence = seq::unassigned();
     }
 
     int sequence_count () const
@@ -367,7 +377,7 @@ private:
     }
 
     bool is_seq_in_edit (seq::number seqno) const;
-    void reset ();
+    bool reset ();
 
     void reset_sequences (bool pause, sequence::playback mode)
     {
@@ -600,9 +610,9 @@ private:
         return master().set_function(p);
     }
 
-    bool slot_function (screenset::slothandler p)
+    bool slot_function (screenset::slothandler p, bool use_set_offset = true)
     {
-        return play_screen()->slot_function(p);
+        return play_screen()->slot_function(p, use_set_offset);
     }
 
     void set_last_ticks (midipulse tick)
@@ -810,6 +820,29 @@ private:
 
 public:
 
+    void show (bool showseqs = true) const;
+
+    /**
+     *  Using std::map::operator [] is too problematic.  So we use at() and
+     *  avoid using illegal values.
+     */
+
+    screenset * play_screen ()
+    {
+        return m_playscreen_pointer;
+    }
+
+    const screenset * play_screen () const
+    {
+        return m_playscreen_pointer;
+    }
+
+    screenset::number change_playscreen (int amount)
+    {
+        screenset::number result = m_playscreen + amount;
+        return set_playscreen(result);
+    }
+
     screenset::number playscreen_number () const
     {
         return m_playscreen;
@@ -820,48 +853,22 @@ public:
         return play_screen()->offset();
     }
 
-    /**
-     *  Using std::map::operator [] is too problematic.  So we use at() and
-     *  avoid using illegal values.
-     */
-
-    screenset * play_screen ()
-    {
-        return master().play_screen();
-    }
-
-    const screenset * play_screen () const
-    {
-        return master().play_screen();
-    }
-
-//  std::string sets_to_string (bool showseqs = true) const
-//  {
-//      return master().sets_to_string(showseqs);
-//  }
-
-    void show (bool showseqs = true) const;
-
-    bool set_playscreen (screenset::number setno)
-    {
-        return master().set_playscreen(setno);
-    }
-
+    bool set_playscreen (screenset::number setno);
     bool set_playing_screenset (screenset::number setno);
     screenset & screen (seq::number seqno);
 
-    /**
+    /*
      *  Encapsulates some calls used in mainwnd.
      */
 
     screenset::number increment_screenset (int amount)
     {
-        return master().change_playscreen(amount);
+        return change_playscreen(amount);
     }
 
     screenset::number decrement_screenset (int amount)
     {
-        return master().change_playscreen(-amount);
+        return change_playscreen(-amount);
     }
 
     const screenset & screen (seq::number seqno) const
@@ -878,17 +885,19 @@ public:
 
     const std::string & name (screenset::number setno) const
     {
-        return master().name(setno);
+        return sets().find(setno) != sets().end() ?
+            sets().at(setno).name() : dummy_screenset().name() ;
     }
 
     bool name (const std::string & nm)
     {
-        return master().name(nm);   // return play_screen()->name(nm);
+        return play_screen()->name(nm);
     }
 
     bool name (screenset::number setno, const std::string & nm)
     {
-        return master().name(setno, nm);
+        return sets().find(setno) != sets().end() ?
+            sets().at(setno).name(nm) : false ;
     }
 
     bool is_screenset_active (screenset::number setno) const
@@ -927,25 +936,10 @@ public:
         return group_mode() && play_screen()->seq_in_set(seqno);
     }
 
-//  int screenset_count () const
-//  {
-//      return master().screenset_count();
-//  }
-//
-//  int screenset_max () const
-//  {
-//      return master().screenset_max();
-//  }
-
     int screenset_size () const
     {
         return m_set_size;
     }
-
-//  int screenset_index (screenset::number setno) const
-//  {
-//      return master().screenset_index(setno);
-//  }
 
     bool install_sequence (sequence * s, int seqno);
     bool add_sequence (sequence * s, int seqno);

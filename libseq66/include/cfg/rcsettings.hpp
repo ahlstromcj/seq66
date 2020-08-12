@@ -92,7 +92,7 @@ const int c_max_sets = SEQ66_DEFAULT_SET_MAX;
  *  "[keyboard-group]" and "[keyboard-control]" sections.
  */
 
-const int c_max_keys = SEQ66_SET_KEYS_MAX;
+const int c_max_set_keys = SEQ66_SET_KEYS_MAX;
 
 /**
  *  This class contains "global" options that can be read from the "rc" file

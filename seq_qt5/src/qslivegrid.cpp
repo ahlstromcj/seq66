@@ -258,6 +258,7 @@ qslivegrid::conditional_update ()
 void
 qslivegrid::create_loop_buttons ()
 {
+    bool ok = true;
     int seqno = int(perf().playscreen_offset());
     int fw = ui->frame->width();
     int fh = ui->frame->height();
@@ -280,12 +281,24 @@ qslivegrid::create_loop_buttons ()
         gridrow buttonrow;                      /* vector for push-buttons  */
         for (int row = 0; row < rows(); ++row, ++seqno)
         {
-            qslotbutton * temp = create_one_button(seqno);
-            buttonrow.push_back(temp);
+            qslotbutton * pb = create_one_button(seqno);
+            if (not_nullptr(pb))
+            {
+                buttonrow.push_back(pb);
+            }
+            else
+            {
+                ok = false;
+                break;
+            }
         }
-        m_loop_buttons.push_back(buttonrow);
+        if (ok)
+            m_loop_buttons.push_back(buttonrow);
+        else
+            break;
     }
-    measure_loop_buttons();
+    if (ok)
+        measure_loop_buttons();
 }
 
 /**
@@ -397,29 +410,39 @@ qslivegrid::get_slot_coordinate (int x, int y, int & row, int & column)
 qslotbutton *
 qslivegrid::create_one_button (int seqno)
 {
+    qslotbutton * result = nullptr;
     int row, column;
     bool valid = perf().seq_to_grid(seqno, row, column);
-    bool enabled = perf().is_screenset_active(seqno);
-    const QSize btnsize = QSize(m_slot_w, m_slot_h);
-    std::string snstring;
-    ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
     if (valid)
-        snstring = std::to_string(seqno);
+    {
+        bool enabled = perf().is_screenset_active(seqno);
+        const QSize btnsize = QSize(m_slot_w, m_slot_h);
+        std::string snstring;
+        ui->loopGridLayout->setColumnMinimumWidth(column, m_slot_w + spacing());
+        if (valid)
+            snstring = std::to_string(seqno);
 
-    std::string hotkey = perf().lookup_slot_key(seqno);
-    seq::pointer pattern = perf().loop(seqno);      /* can be null      */
-    qslotbutton * temp;
-    if (pattern)
-        temp = new qloopbutton(this, seqno, snstring, hotkey, pattern);
+        std::string hotkey = perf().lookup_slot_key(seqno);
+        seq::pointer pattern = perf().loop(seqno);      /* can be null      */
+        if (pattern)
+            result = new qloopbutton(this, seqno, snstring, hotkey, pattern);
+        else
+            result = new qslotbutton(this, seqno, snstring, hotkey);
+
+        ui->loopGridLayout->addWidget(result, row, column);
+        result->setFixedSize(btnsize);
+        result->show();
+        result->setEnabled(enabled);
+        setup_button(result);
+#if defined SEQ66_PLATFORM_DEBUG_TMI    // can use to check the mapping
+        printf("seq %2d at (%d, %d)\n", seqno, row, column);
+#endif
+    }
     else
-        temp = new qslotbutton(this, seqno, snstring, hotkey);
-
-    ui->loopGridLayout->addWidget(temp, row, column);
-    temp->setFixedSize(btnsize);
-    temp->show();
-    temp->setEnabled(enabled);
-    setup_button(temp);
-    return temp;
+    {
+        errprintf("create_one_button(seq %d): invalid\n", seqno);
+    }
+    return result;
 }
 
 /**
@@ -1232,8 +1255,11 @@ qslivegrid::alter_sequence (seq::number seqno)
     if (perf().seq_to_grid(seqno, row, column))
     {
         qslotbutton * pb = create_one_button(seqno);
-        if (modify_slot(pb, row, column))
-            (void) recreate_all_slots();
+        if (not_nullptr(pb))
+        {
+            if (modify_slot(pb, row, column))
+                (void) recreate_all_slots();
+        }
     }
 }
 

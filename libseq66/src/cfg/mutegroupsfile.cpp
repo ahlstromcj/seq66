@@ -146,9 +146,12 @@ mutegroupsfile::parse_stream (std::ifstream & file)
             good = parse_mutes_stanza();
             if (good)
                 good = next_data_line(file);
+
+            if (! good)
+                break;
         }
     }
-    if (rc_ref().mute_groups().count() == 0)
+    if (rc_ref().mute_groups().count() <= 1)    /* a sanity check   */
     {
         rc_ref().mute_groups().reset_defaults();
     }

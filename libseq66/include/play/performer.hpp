@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-10
+ * \updates       2020-08-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -319,16 +319,16 @@ private:
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
-     *  play-list. Important: This object is now owned by perform.
-     *  It might be much better to have this be a real member.
+     *  play-list. Important: This object is now owned by perform.  It might
+     *  be much better to have this be a real member.
      */
 
     std::unique_ptr<playlist> m_play_list;
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
-     *  play-list. Important: This object is now owned by perform.
-     *  It might be much better to have this be a real member.
+     *  play-list. Important: This object is now owned by perform.  It might
+     *  be much better to have this be a real member.
      */
 
     std::unique_ptr<notemapper> m_note_mapper;
@@ -1171,17 +1171,17 @@ public:
 
     int screenset_count () const
     {
-        return master().screenset_count();      // mapper()
+        return master().screenset_count();
     }
 
     int screenset_max () const
     {
-        return master().screenset_max();        // mapper()
+        return master().screenset_max();
     }
 
     int screenset_index (screenset::number setno) const
     {
-        return master().screenset_index(setno); // mapper()
+        return master().screenset_index(setno);
     }
 
     int screenset_size () const
@@ -2105,7 +2105,7 @@ public:
 
     screenset::number playscreen_number () const
     {
-        return mapper().playscreen_number();
+        return mapper().playscreen_number();    // not in setmaster purview!
     }
 
     seq::number playscreen_offset () const
@@ -2364,8 +2364,8 @@ public:
     void send_event (midicontrolout::uiaction a, bool on);
     void send_play_states (midicontrolout::uiaction a);
     void announce_playscreen ();
-    void announce_exit ();
-    bool announce_sequence (seq::pointer s, seq::number /*sn*/);
+    void announce_exit (bool playstatesoff = true);
+    bool announce_sequence (seq::pointer s, seq::number sn);
     void set_midi_control_out ();
 
     const midicontrolout & midi_control_out () const
@@ -2383,9 +2383,9 @@ public:
         m_needs_update = flag;
     }
 
-    bool slot_function (screenset::slothandler p)
+    bool slot_function (screenset::slothandler p, bool use_set_offset = true)
     {
-        return mapper().slot_function(p);
+        return mapper().slot_function(p, use_set_offset);
     }
 
     bool set_function (screenset::sethandler s)
@@ -2801,9 +2801,9 @@ public:                                 /* access functions for the containers *
      * Looks up the slot-key (hot-key) for the given pattern number.
      */
 
-    const std::string & lookup_slot_key (int pattern_number) const
+    const std::string & lookup_slot_key (int seqno) const
     {
-        return m_key_controls.slot_key(pattern_number);
+        return m_key_controls.slot_key(seqno % screenset_size());
     }
 
     const std::string & lookup_mute_key (int mute_number) const

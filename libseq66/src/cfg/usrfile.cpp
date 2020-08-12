@@ -404,13 +404,13 @@ usrfile::parse ()
             if (next_data_line(file))
             {
                 sscanf(scanline(), "%d", &scratch);
-                if (scratch > 0 && scratch <= SEQ66_MAINWID_BLOCK_ROWS_MAX)
+                if (scratch > 0)
                     usr().block_rows(scratch);
             }
             if (next_data_line(file))
             {
                 sscanf(scanline(), "%d", &scratch);
-                if (scratch > 0 && scratch <= SEQ66_MAINWID_BLOCK_COLS_MAX)
+                if (scratch > 0)
                     usr().block_columns(scratch);
             }
             if (next_data_line(file))
@@ -1032,7 +1032,7 @@ usrfile::write ()
         "# The long-standing default is 1, but 2 or 3 may also be set.\n"
         "# Corresponds to R in the '-o wid=RxC,F' option.\n"
 #if ! defined SEQ66_MULTI_MAINWID
-        "# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.\n"
+        "# Support for this option is obsolete in Seq66.\n"
 #endif
         "\n"
         << usr().block_rows()
@@ -1044,7 +1044,7 @@ usrfile::write ()
         "# The long-standing default is 1, but 2 may also be set.\n"
         "# Corresponds to C in the '-o wid=RxC,F' option.\n"
 #if ! defined SEQ66_MULTI_MAINWID
-        "# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.\n"
+        "# Support for this option is obsolete in Seq66.\n"
 #endif
         "\n"
         << usr().block_columns()
@@ -1062,7 +1062,7 @@ usrfile::write ()
         "# '-o wid=RxC,F' option.  Here, 1 is the same as 'indep' or false,\n"
         "# and 0 is the same as f = true.  Backwards, so be careful.\n"
 #if ! defined SEQ66_MULTI_MAINWID
-        "# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.\n"
+        "# Support for this option is obsolete in Seq66.\n"
 #endif
         "\n"
         << (usr().block_independent() ? "1" : "0")

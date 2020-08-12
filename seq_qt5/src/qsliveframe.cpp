@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-08
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -237,8 +237,8 @@ qsliveframe::paintEvent (QPaintEvent *)
 void
 qsliveframe::calculate_base_sizes (seq::number sn, int & basex, int & basey)
 {
-    int i = (sn / m_mainwnd_rows) % m_mainwnd_cols;
-    int j =  sn % m_mainwnd_rows;
+    int i = (sn / perf().rows()) % perf().columns();
+    int j =  sn % perf().rows();
     basex = ui->frame->x() + 1 + (m_slot_w + m_mainwid_spacing) * i;
     basey = ui->frame->y() + 1 + (m_slot_h + m_mainwid_spacing) * j;
 }
@@ -302,8 +302,8 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
         int fw = ui->frame->width();
         int fh = ui->frame->height();
-        m_slot_w = (fw - m_space_cols - 1) / m_mainwnd_cols;
-        m_slot_h = (fh - m_space_rows - 1) / m_mainwnd_rows;
+        m_slot_w = (fw - m_space_cols - 1) / perf().columns();
+        m_slot_h = (fh - m_space_rows - 1) / perf().rows();
 
         /*
          * IDEA: Subtract 20 from height and add 10 to base y.
@@ -686,8 +686,8 @@ qsliveframe::draw_slot (seq::number sn)
     int fw = ui->frame->width();
     int fh = ui->frame->height();
     int base_x, base_y;
-    m_slot_w = (fw - m_space_cols - 1) / m_mainwnd_cols;
-    m_slot_h = (fh - m_space_rows - 1) / m_mainwnd_rows;
+    m_slot_w = (fw - m_space_cols - 1) / perf().columns();
+    m_slot_h = (fh - m_space_rows - 1) / perf().rows();
     calculate_base_sizes(sn, base_x, base_y);               /* side-effects */
     painter.drawRect(base_x, base_y, m_slot_w, m_slot_h);   /* black box    */
 
@@ -812,7 +812,7 @@ qsliveframe::seq_id_from_xy (int click_x, int click_y)
      * Is it in the box?
      */
 
-    if (x < 0 || x >= (w * m_mainwnd_cols) || y < 0 || y >= (h * m_mainwnd_rows))
+    if (x < 0 || x >= (w * perf().columns()) || y < 0 || y >= (h * perf().rows()))
         return -1;
 
     /*
@@ -827,7 +827,7 @@ qsliveframe::seq_id_from_xy (int click_x, int click_y)
 
     x /= w;
     y /= h;
-    seq::number seqid = (x * m_mainwnd_rows + y) + (m_bank_id * m_screenset_slots);
+    seq::number seqid = (x * perf().rows() + y) + (m_bank_id * m_screenset_slots);
     return seqid;
 }
 
@@ -1183,10 +1183,10 @@ qsliveframe::sequence_key_check ()
     else if (ok)
     {
         /*
-         * Currently ends up handled in performer's loop-control function.
+         * Ends up handled in performer's loop-control function.
          *
-        else
-            perf().sequence_key(seqno);                     // toggle loop  //
+         * else
+         *     perf().sequence_key(seqno);    // toggle loop
          */
     }
 }

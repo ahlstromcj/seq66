@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-02-18
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -39,7 +39,7 @@
  *
  *  -   maximum(). Returns the maximum supported usable sequence
  *      number (plus one), which is 1024, but could be increased to 2048.  To
- *      clarify, usable sequence number range from 0 to 1023.
+ *      clarify, usable sequence numbers range from 0 to 1023 at present.
  *  -   limit().  Returns 2048 (0x0800), which indicates a legal value that
  *      represents "no background" sequence when present in a Sequencer66 MIDI
  *      file.
@@ -59,6 +59,25 @@
 #include <map>                          /* std::map<>                       */
 
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+
+/**
+ *  The maximum number of patterns supported is given by the number of
+ *  patterns supported in the panel (32) times the maximum number of sets
+ *  (32), or 1024 patterns.  However, this value is now independent of the
+ *  maximum number of sets and the number of sequences in a set.  Instead,
+ *  we limit them to a constant value, which seems to be well above the
+ *  number of simultaneous playing sequences the application can support.
+ *  Based on seq::limit(), we can have patterns ranging from 0 to 2047.
+ *  For testing right now, we leave the old limit in place.
+ */
+
+#define SEQ66_SEQUENCE_MAXIMUM          1024
+
+/**
+ *  See seq::limit().
+ */
+
+#define SEQ66_SEQUENCE_LIMIT            2048
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -213,7 +232,7 @@ public:
 
     static number limit ()
     {
-        return 2048;                    /* 0x0800   */
+        return SEQ66_SEQUENCE_LIMIT;                    /* 0x0800   */
     }
 
     /**
@@ -226,7 +245,7 @@ public:
 
     static int maximum ()
     {
-        return 1024;
+        return SEQ66_SEQUENCE_MAXIMUM;
     }
 
     /**

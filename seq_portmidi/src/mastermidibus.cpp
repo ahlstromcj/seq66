@@ -25,7 +25,7 @@
  * \library       sequencer66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-04-11
+ * \updates       2019-08-12
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -223,7 +223,7 @@ mastermidibus::api_get_midi_event (event * in)
                  * in->set_timestamp(ts);
                  */
 
-                in->set_input(bussbyte(b));         // EXPERIMENTAL
+                in->set_input_bus(bussbyte(b));         // EXPERIMENTAL
                 in->set_status_keep_channel(Pm_MessageStatus(pme.message));
                 in->set_data
                 (

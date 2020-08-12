@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-30
+ * \updates       2020-08-11
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -111,24 +111,24 @@ setmapper::setmapper
 (
     setmaster & mc,
     mutegroups & mgs,
-    int sets,
     int rows,
     int columns
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
+    m_set_count             (seq::limit() / m_set_size),
     m_rows                  (rows),
     m_columns               (columns),
     m_set_master            (mc),
     m_sequence_count        (0),
-    m_sequence_max          (m_set_size * sets),
+    m_sequence_max          (m_set_size * m_set_count),
     m_sequence_high         (seq::unassigned()),
     m_edit_sequence         (seq::unassigned()),
     m_playscreen            (seq::unassigned()),
     m_playscreen_pointer    (nullptr),
     m_tracks_mute_state     (m_set_size, false)
 {
-    reset();
+    (void) reset();
 }
 
 /**
@@ -136,31 +136,35 @@ setmapper::setmapper
  *  play-screen, plus a "dummy" set.
  */
 
-void
+bool
 setmapper::reset ()
 {
     clear();
-    master().reset();
+    bool result = master().reset();     /* clear and create initial set */
+    if (result)
+        result = set_playscreen(0);
+
+    return result;
 }
 
 /**
  *  Given the raw sequence number, returns the calculated set number and the
  *  offset of the sequence in the set.
  *
+ * \param seqno
+ *      The raw sequence number.  Normally, this value can range from 0 to
+ *      1023, or whatever the maximum is based on set size and number of sets.
+ *
  * \param [out] offset
  *      Holds the calculated offset.  It will always be clamped from 0 to
  *      m_set_size.
- *
- * \param seqno
- *      The raw sequence number.  Normally, this value can range from 0 to 1023,
- *      or whatever the maximum is based on set size and number of sets.
  *
  * \return
  *      Returns the calculated set number.  It is clamped to a valid value.
  */
 
 screenset::number
-setmapper::seq_set (int & offset, int seqno) const
+setmapper::seq_set (seq::number seqno, int & offset) const
 {
     screenset::number result = clamp(seqno / m_set_size);
     offset = seqno % m_set_size;
@@ -171,22 +175,22 @@ setmapper::seq_set (int & offset, int seqno) const
  *  Given the raw sequence number, returns the calculated set number and the
  *  row and column of the sequence in the set.
  *
+ * \param seqno
+ *      The raw sequence number.  Normally, this value can range from 0 to 1023,
+ *      or whatever the maximum is based on set size and number of sets.
+ *
  * \param [out] row
  *      Holds the calculated row.  Clamped via the mod operator.
  *
  * \param [out] column
  *      Holds the calculated column.  Clamped via the mod operator.
  *
- * \param seqno
- *      The raw sequence number.  Normally, this value can range from 0 to 1023,
- *      or whatever the maximum is based on set size and number of sets.
- *
  * \return
  *      Returns the calculated set number.  It is clamped to a valid value.
  */
 
 screenset::number
-setmapper::seq_set (int & row, int & column, int seqno) const
+setmapper::seq_set (seq::number seqno, int & row, int & column) const
 {
     screenset::number result = clamp(seqno / m_set_size);
     int offset = seqno - result * m_set_size;
@@ -557,10 +561,6 @@ setmapper::select_triggers_in_range
             );
         }
     }
-    else
-    {
-        // What to do?
-    }
 }
 
 /**
@@ -676,6 +676,63 @@ setmapper::copy_triggers
  */
 
 /**
+ *  If the desired play-screen exists, unmark the current play-screen and mark
+ *  the new one.
+ *
+ *  If there was a existing screen-set \a setno, just mark it (again).  [DO WE
+ *  NEED TO CLEAR IT?]  Otherwise, if the set number is valid, then create a new
+ *  screenset and set it as the play-screen.
+ *
+ *  We no longer check for a change in m_playscreen, because doing so leads to a
+ *  segfault... bad set?
+ *
+ * \param setno
+ *      Provides the desired set number.  This ranges from 0 to 2047, though
+ *      generally the number of sets is 32 or lower.  There is a screenset
+ *      #2048 that always exists in order to provide an inactive/dummy
+ *      screenset.
+ *
+ * \return
+ *      Returns true if the play-screen was able to be set.
+ */
+
+bool
+setmapper::set_playscreen (screenset::number setno)
+{
+    bool result = setno >= 0 && setno < screenset::limit();
+    if (result)
+    {
+        auto sset = sets().find(setno);
+        result = false;
+        if (sset != sets().end())
+        {
+            auto oldset = sets().find(m_playscreen);
+            if (oldset != sets().end())
+                oldset->second.is_playscreen(false);
+
+            m_playscreen = setno;
+            sset->second.is_playscreen(true);
+            result = true;
+        }
+        else
+        {
+            auto setp = add_set(setno);
+            if (setp != sets().end())
+            {
+                set_playscreen(setno);
+                setp->second.is_playscreen(true);
+                result = true;
+            }
+        }
+        if (! result)
+            m_playscreen = 0;           /* use the always-present set 0 */
+
+        m_playscreen_pointer = &sets().at(m_playscreen);
+    }
+    return result;
+}
+
+/**
  *  Sets the screen-set that is active, based on the value of m_screenset.
  *  This function is called when one of the snapshot keys is pressed.
  *
@@ -787,7 +844,7 @@ setmapper::sequence_playing_change
 )
 {
     int offset;
-    screenset::number setno = seq_set(offset, seqno);
+    screenset::number setno = seq_set(seqno, offset);
     auto setiterator = sets().find(setno);
     if (setiterator != sets().end())
     {
@@ -810,7 +867,7 @@ setmapper::sequence_playscreen_change
 )
 {
     int offset;
-    screenset::number setno = seq_set(offset, seqno);
+    screenset::number setno = seq_set(seqno, offset);
     if (setno == play_screen()->set_number())
     {
         play_screen()->sequence_playing_change(seqno, on, qinprogress);
@@ -891,10 +948,6 @@ setmapper::mute_group_tracks ()
  *  This function is used only once, in select_and_mute_group().  It used to
  *  be called just select_mute_group(), but that's too easy to confuse with
  *  select_group_mute().
- *
- * \change tdeagan 2015-12-22 via git pull:
- *      git pull https://github.com/TDeagan/sequencer64.git mute_groups
- *      m_screenset replaces m_playscreen_offset.
  *
  * \param mutegroup
  *      Provides the mute-group to select.

@@ -251,8 +251,8 @@ alsa_out_open (PmInternal * midi, void * UNUSED(driverinfo))
 
     midi->descriptor = desc;
 
-//                 ((((int) (intptr_t) (x)) >> 8) & 0xff)
-//  desc->client = ((((int) (intptr_t) (client_port)) >> 8) & 0xff);
+    //                 ((((int) (intptr_t) (x)) >> 8) & 0xff)
+    //  desc->client = ((((int) (intptr_t) (client_port)) >> 8) & 0xff);
 
     desc->client = MASK_DESCRIPTOR_CLIENT(client_port);
     desc->port = MASK_DESCRIPTOR_PORT(client_port);

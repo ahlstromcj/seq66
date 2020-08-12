@@ -39,7 +39,6 @@
 #include "midi/midi_splitter.hpp"       /* seq66::midi_splitter             */
 #include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-// #include "util/palette.hpp"             /* seq66::PaletteColor              */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

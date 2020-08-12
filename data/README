@@ -1,11 +1,11 @@
-Data Directory for Seq66 0.90.4
+Data Directory for Seq66 0.90.5
 Chris Ahlstrom
-2018-01-02 to 2020-07-07
+2018-01-02 to 2020-08-12
 
 This directory contains files to be installed in the ${prefix}/share
 directory (e.g. /usr/share or /usr/local/share) on Linux, or in the
-installation directory (e.g.  C:/Program Files (x86)/Seq66/data) on
-Windows.
+installation ${install}/data directory (e.g. C:/Program Files (x86)/Seq66/data)
+on Windows.
 
 While Seq66 will create the configuration directory and configuration file
 the first time, we also supply some samples.  The files include alternate
@@ -14,6 +14,7 @@ configuration files that the user can copy to
     $HOME/.config/seq66                   (Linux)
     C:/Users/YourName/AppData/Local/seq66 (Windows)
 
-and modify to satisfaction, plus some sample Seq66 MIDI files.
+and modify to satisfaction, plus some sample Seq66 MIDI files, and MIDI
+in/out control for the Novation Launchpad Mini.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

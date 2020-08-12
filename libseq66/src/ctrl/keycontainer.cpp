@@ -108,16 +108,25 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
     }
     else
     {
-        std::string tag = is_invalid_ordinal(ordinal) ?
-            "Invalid" : "Duplicate" ;
+        /*
+         * Currently the "~" key (ordinal #126) is used only as a placeholder
+         * for loop-control entries above the normal 4x8 sets.  We don't want
+         * to spam the user on the console with 30+ of these reports.
+         */
 
-        std::cerr
-            << tag << " key (#" << ordinal
-            << " = '" << qt_ordinal_keyname(ordinal) << "')"
-            << " for '" << op.name()
-            << "' Category " << op.category_name()
-            << std::endl
-            ;
+        if (ordinal != 126)
+        {
+            std::string tag = is_invalid_ordinal(ordinal) ?
+                "Invalid" : "Duplicate" ;
+
+            std::cerr
+                << tag << " key (#" << ordinal
+                << " = '" << qt_ordinal_keyname(ordinal) << "')"
+                << " for '" << op.name()
+                << "' Category " << op.category_name()
+                << std::endl
+                ;
+        }
     }
     return result;
 }
