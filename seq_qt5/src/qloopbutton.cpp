@@ -176,7 +176,6 @@ qloopbutton::qloopbutton
     m_prog_fore_color   (Qt::green),
     m_text_font         (),
     m_text_initialized  (false),
-    m_vert_compressed   (usr().vertically_compressed()),
     m_draw_background   (true),
     m_top_left          (),
     m_top_right         (),
@@ -217,7 +216,7 @@ qloopbutton::initialize_text ()
         int bh = usr().scale_size_y(12);        /* box height   */
         int rx = int(0.50 * w) + lx - dx - 2;   /* right x      */
         int by = int(0.85 * h);                 /* bottom y     */
-        if (m_vert_compressed)
+        if (vert_compressed())
             by = int(0.75 * h);                 /* bottom y     */
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -527,7 +526,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 );
                 painter.drawText(box, m_bottom_right.m_flags, title);
 
-                if (! m_vert_compressed)
+                if (! vert_compressed())
                 {
                     if (m_seq->playing())
                         title = "Armed";
@@ -792,7 +791,7 @@ qloopbutton::resizeEvent (QResizeEvent * qrep)
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     printf("qloopbutton::resizeEvent(%d, %d)\n", s.width(), s.height());
 #endif
-    m_vert_compressed = s.height() < 90;        // HARDWIRED EXPERIMENTALLY
+    vert_compressed(s.height() < 90);        // HARDWIRED EXPERIMENTALLY
     QWidget::resizeEvent(qrep);
 }
 

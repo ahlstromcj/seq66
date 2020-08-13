@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-07
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -131,7 +131,12 @@ private:
 
 public:
 
-    midicontrolin ();
+    midicontrolin
+    (
+        int buss    = 0,                        /* NOT YET USED */
+        int rows    = SEQ66_DEFAULT_SET_ROWS,
+        int columns = SEQ66_DEFAULT_SET_COLUMNS
+    );
     midicontrolin (const std::string & name);
     midicontrolin (const midicontrolin &) = default;
     midicontrolin & operator = (const midicontrolin &) = default;

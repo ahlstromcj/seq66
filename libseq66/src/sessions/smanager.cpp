@@ -24,8 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-07-25
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
+ *
+ *  Note that this module is part of the libseq66 library, not the libsessions
+ *  library.  That is because it provides functionality that is useful even if
+ *  session support is not enabled.
  *
  *  The process:
  *
@@ -76,6 +80,7 @@ namespace seq66
 smanager::smanager () :
     m_perf_pointer      (),
     m_midi_filename     (),
+    m_is_help           (false),
     m_extant_errmsg     ("unspecified error"),
     m_extant_msg_active (false)
 {
@@ -137,7 +142,11 @@ smanager::main_settings (int argc, char * argv [])
     (void) cmdlineopts::parse_command_line_options(argc, argv);
     bool is_help = cmdlineopts::help_check(argc, argv);
     int optionindex = -1;
-    if (! is_help)
+    if (is_help)
+    {
+        m_is_help = true;
+    }
+    else
     {
         /*
          *  If parsing fails, report it and disable usage of the application
@@ -353,7 +362,7 @@ smanager::close_session (bool ok)
     else
         result = false;
 
-    if (! result)
+    if (! result && ! m_is_help)
     {
         (void) cmdlineopts::write_options_files("erroneous");
         if (error_active())

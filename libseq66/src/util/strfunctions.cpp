@@ -17,7 +17,7 @@
 
 #include <cctype>                       /* std::toupper() function          */
 
-#include "util/calculations.hpp"        /* seq66::string_to_int()           */
+// #include "util/calculations.hpp"        /* seq66::string_to_int()           */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /**
@@ -253,7 +253,8 @@ strcasecompare (const std::string & a, const std::string & b)
  *  Left-trims a set of characters from the string.
  *
  * \param str
- *      The prospective string to be trimmed.
+ *      The prospective string to be trimmed.  It must be a reference, and
+ *      must be non-const.
  *
  * \param chars
  *      The set of characters to be trimmed.  Defaults to SEQ66_TRIM_CHARS
@@ -277,7 +278,8 @@ ltrim (std::string & str, const std::string & chars)
  *  function.
  *
  * \param str
- *      The prospective string to be trimmed.
+ *      The prospective string to be trimmed.  It must be a reference, and
+ *      must be non-const.
  *
  * \param chars
  *      The set of characters to be trimmed.
@@ -298,7 +300,8 @@ rtrim (std::string & str, const std::string & chars)
  *  ltrim() and rtrim() functions combined.
  *
  * \param str
- *      The prospective string to be trimmed.
+ *      The prospective string to be trimmed.  It must be a reference, and
+ *      must be non-const.
  *
  * \param chars
  *      The set of characters to be trimmed.
@@ -438,7 +441,8 @@ string_to_double (const std::string & s, double defalt)
  *
  * \return
  *      Returns the signed long integer value represented by the string.
- *      If the string is empty or has no digits, then 0 is returned.
+ *      If the string is empty or has no digits, then the default value is
+ *      returned.
  */
 
 long

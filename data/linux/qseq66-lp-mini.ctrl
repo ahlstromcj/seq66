@@ -72,6 +72,9 @@ load-key-controls = true
 load-midi-controls = true
 control-buss = 1
 midi-enabled = true
+button-offset = 0
+button-rows = 4
+button-columns = 8
 
 # This style of control stanza incorporates key control as well.
 # The leftmost number on each line here is the pattern number (e.g.
@@ -239,7 +242,10 @@ midi-enabled = true
 
 set-size = 32
 output-buss = 1
-enabled = true
+midi-enabled = true
+button-offset = 0
+button-rows = 4
+button-columns = 8
 
 [midi-control-out]
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-12
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -216,6 +216,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     rc_ref().load_key_controls(string_to_bool(s));
     s = get_variable(file, mctag, "load-midi-controls");
     rc_ref().load_midi_control_in(string_to_bool(s));
+
+    bool loadmidi = rc_ref().load_midi_control_in();
+    bool loadkeys = rc_ref().load_key_controls();
     s = get_variable(file, mctag, "control-buss");
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
@@ -228,8 +231,13 @@ midicontrolfile::parse_stream (std::ifstream & file)
     s = get_variable(file, mctag, "midi-enabled");
 
     bool enabled = string_to_bool(s);
-    bool loadmidi = rc_ref().load_midi_control_in();
-    bool loadkeys = rc_ref().load_key_controls();
+    m_temp_midi_controls.is_enabled(enabled);
+
+    int offset = 0, rows = 0, columns = 0;
+    (void) parse_control_sizes(file, mctag, offset, rows, columns);
+    m_temp_midi_controls.offset(offset);
+    m_temp_midi_controls.rows(rows);
+    m_temp_midi_controls.columns(columns);
     if (loadkeys)
         m_temp_key_controls.clear();
 
@@ -288,7 +296,6 @@ midicontrolfile::parse_stream (std::ifstream & file)
             infoprintf("%d automation-control lines", count);
         }
     }
-    m_temp_midi_controls.is_enabled(enabled);
     if (loadmidi && m_temp_midi_controls.count() > 0)
     {
         rc_ref().midi_control_in().clear();
@@ -305,7 +312,48 @@ midicontrolfile::parse_stream (std::ifstream & file)
 }
 
 /**
- *  Gets the number of sequence definitions provided in the midi-control sections.
+ *  A helper function for parsing the MIDI Control I/O sections.
+ */
+
+bool
+midicontrolfile::parse_control_sizes
+(
+    std::ifstream & file,
+    const std::string & mctag,
+    int & newoffset,
+    int & newrows,
+    int & newcolumns
+)
+{
+    bool result = true;
+    int defaultrows = usr().mainwnd_rows();
+    int defaultcolumns = usr().mainwnd_cols();
+    std::string s = get_variable(file, mctag, "button-offset");
+    newoffset = string_to_int(s, 0);                /* currently constant   */
+    s = get_variable(file, mctag, "button-rows");
+
+    int rows = string_to_int(s, 0);
+    if (rows != defaultrows)
+    {
+        (void) make_error_message(mctag, "rows don't match pattern rows");
+        rows = defaultrows;
+    }
+    newrows = rows;
+    s = get_variable(file, mctag, "button-columns");
+
+    int columns = string_to_int(s, 0);
+    if (columns != defaultcolumns)
+    {
+        (void) make_error_message(mctag, "columns don't match pattern columns");
+        columns = defaultcolumns;
+    }
+    newcolumns = columns;
+    return result;
+}
+
+/**
+ *  Gets the number of sequence definitions provided in the midi-control
+ *  sections.
  *
  * \return
  *      Returns true if the file was able to be opened for reading.
@@ -379,6 +427,8 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
      */
 
     bool enabled = string_to_bool(s);
+    int offset = 0, rows = 0, columns = 0;
+    (void) parse_control_sizes(file, mctag, offset, rows, columns);
     if (line_after(file, "[midi-control-out]"))
     {
         /*
@@ -390,6 +440,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         midicontrolout & mco = rc_ref().midi_control_out();
         mco.initialize(sequences, buss);
         mco.is_enabled(enabled);
+        mco.offset(offset);
+        mco.rows(rows);
+        mco.columns(columns);
         for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
         {
             int a[5], b[5], c[5], d[5];
@@ -609,7 +662,12 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         else
             file << "control-buss = " << bb << "\n";
 
-        file << "midi-enabled = " << (disabled ? "false" : "true") << "\n" ;
+        file
+            << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
+            << "button-offset = " << mci.offset() << "\n"
+            << "button-rows = " << mci.rows() << "\n"
+            << "button-columns = " << mci.columns() << "\n"
+            ;
         file <<
         "\n"
         "# This style of control stanza incorporates key control as well.\n"
@@ -746,12 +804,13 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     bool result = setsize > 0 && buss >= 0;         /* light sanity check */
     file <<
         "\n"
-        "[midi-control-out-settings]\n"
-        "\n"
+        "[midi-control-out-settings]\n\n"
         << "set-size = " << setsize << "\n"
         << "output-buss = " << buss << "\n"
-        << "midi-enabled = " << (disabled ? "false" : "true")
-        << "\n"
+        << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
+        << "button-offset = " << mco.offset() << "\n"
+        << "button-rows = " << mco.rows() << "\n"
+        << "button-columns = " << mco.columns() << "\n"
         ;
 
     file <<

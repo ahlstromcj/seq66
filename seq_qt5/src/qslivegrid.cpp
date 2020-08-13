@@ -258,7 +258,6 @@ qslivegrid::conditional_update ()
 void
 qslivegrid::create_loop_buttons ()
 {
-    bool ok = true;
     int seqno = int(perf().playscreen_offset());
     int fw = ui->frame->width();
     int fh = ui->frame->height();
@@ -282,23 +281,11 @@ qslivegrid::create_loop_buttons ()
         for (int row = 0; row < rows(); ++row, ++seqno)
         {
             qslotbutton * pb = create_one_button(seqno);
-            if (not_nullptr(pb))
-            {
-                buttonrow.push_back(pb);
-            }
-            else
-            {
-                ok = false;
-                break;
-            }
+            buttonrow.push_back(pb);            /* always do this           */
         }
-        if (ok)
-            m_loop_buttons.push_back(buttonrow);
-        else
-            break;
+        m_loop_buttons.push_back(buttonrow);    /* always do this           */
     }
-    if (ok)
-        measure_loop_buttons();
+    measure_loop_buttons();                     /* always do this           */
 }
 
 /**
@@ -342,15 +329,15 @@ qslivegrid::measure_loop_buttons ()
             if (not_nullptr(pb))
             {
                 QRect r = pb->geometry();
-                if (m_slot_w == 0)         /* all buttons are the same size */
+                if (m_slot_w == 0)
                 {
-                    m_slot_w = r.width();
+                    m_slot_w = r.width();       /* all buttons same size    */
                     m_slot_h = r.height();
                 }
                 int x0 = r.x();
-                int x1 = x0 + r.width();
+                int x1 = x0 + m_slot_w;         /* r.width()  */
                 int y0 = r.y();
-                int y1 = y0 + r.height();
+                int y1 = y0 + m_slot_h;         /* r.height() */
                 if (x0 < m_x_min)
                     m_x_min = x0;
 
@@ -362,6 +349,10 @@ qslivegrid::measure_loop_buttons ()
 
                 if (y1 > m_y_max)
                     m_y_max = y1;
+            }
+            else
+            {
+                warnprint("qslivegrid::measure_loop_button(): null button");
             }
         }
     }

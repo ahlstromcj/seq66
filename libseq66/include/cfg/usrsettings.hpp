@@ -61,7 +61,7 @@
 #include <vector>
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
-#include "cfg/scales.hpp"               /* seq66::keys and seq66::scales    */
+#include "cfg/scales.hpp"               /* seq66::legal_key() and scale()   */
 #include "cfg/userinstrument.hpp"
 #include "cfg/usermidibus.hpp"
 
@@ -1074,36 +1074,20 @@ public:
         return static_cast<int>(m_grid_style);
     }
 
-    /**
-     * \getter m_grid_style: Checks for normal style.
-     */
-
     bool grid_is_normal () const
     {
         return m_grid_style == grid::normal;
     }
-
-    /**
-     * \getter m_grid_style: Checks for the white style.
-     */
 
     bool grid_is_white () const
     {
         return m_grid_style == grid::white;
     }
 
-    /**
-     * \getter m_grid_style: Checks for the button style.
-     */
-
     bool grid_is_button () const
     {
         return m_grid_style == grid::button;
     }
-
-    /**
-     * \getter m_grid_style: Checks for the black style.
-     */
 
     bool grid_is_black () const
     {

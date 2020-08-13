@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2020-07-20
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  This object is just a QPushButton with number label.  See seq66::qslivegrid
@@ -85,6 +85,7 @@ qslotbutton::qslotbutton
     m_label             (label),
     m_hotkey            (hotkey),
     m_text_color        (Qt::black),
+    m_vert_compressed   (usr().vertically_compressed()),
     m_is_checkable      (false),
     m_is_dirty          (true)
 {

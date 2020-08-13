@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-31
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -795,13 +795,13 @@ qsmainwnd::qsmainwnd
 
     QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
     ui->txtBankName->setText(bname);
-    ui->spinBank->setRange(0, perf().screenset_size() - 1);
+    ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
     /*
      * Set Number.
      */
 
-    update_bank(0);             // EXPERIMENTAL ca 2020-08-11
+    // update_bank(0);             // EXPERIMENTAL ca 2020-08-11
     connect
     (
         ui->spinBank, SIGNAL(valueChanged(int)),
@@ -1997,7 +1997,7 @@ qsmainwnd::remove_qperfedit ()
 void
 qsmainwnd::load_live_frame (int ssnum)
 {
-    if (ssnum >= 0 && ssnum < perf().screenset_size())
+    if (ssnum >= 0 && ssnum < perf().screenset_max())
     {
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())

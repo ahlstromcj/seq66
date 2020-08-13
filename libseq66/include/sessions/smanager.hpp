@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-07-15
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -79,6 +79,13 @@ private:
      */
 
     std::string m_midi_filename;
+
+    /**
+     *  Indicates if the --help or --version options were provided at
+     *  start-up.
+     */
+
+    bool m_is_help;
 
     /**
      *  Holds the current error message.  Mutable because it is not part of

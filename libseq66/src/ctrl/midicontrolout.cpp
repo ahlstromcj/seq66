@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-07
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -46,9 +46,13 @@
 namespace seq66
 {
 
-midicontrolout::midicontrolout ()
- :
-    midicontrolbase     (SEQ66_MIDI_CONTROL_OUT_BUSS),
+midicontrolout::midicontrolout
+(
+    int /*buss*/,       /* NOT YET USED */
+    int rows,
+    int columns
+) :
+    midicontrolbase     (SEQ66_MIDI_CONTROL_OUT_BUSS, rows, columns),
     m_master_bus        (nullptr),
     m_seq_events        (),
     m_ui_events         (),

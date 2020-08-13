@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-06-22
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -141,8 +141,10 @@ configfile::make_error_message
     const std::string & additional
 )
 {
-    std::string msg = "BAD OR MISSING DATA in [";
-    msg += sectionname;
+    std::string msg = "BAD data in [";
+    std::string trimmed(sectionname);
+    (void) trim(trimmed, "[]");
+    msg += trimmed;
     msg += "]: ";
     if (! additional.empty())
         msg += additional;

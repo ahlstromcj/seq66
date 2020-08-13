@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2019-11-25
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -49,10 +49,13 @@ namespace seq66
  * \dtor
  */
 
-midicontrolbase::midicontrolbase (int buss) :
+midicontrolbase::midicontrolbase (int buss, int rows, int columns) :
     m_buss              (buss),
     m_is_blank          (true),
-    m_is_enabled        (false)
+    m_is_enabled        (false),
+    m_offset            (0),            /* currently always 0   */
+    m_rows              (rows),
+    m_columns           (columns)
 {
     // No code needed
 }

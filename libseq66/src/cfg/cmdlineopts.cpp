@@ -524,6 +524,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                         int cols = string_to_int(arg.substr(p+1));
                                         usr().mainwnd_rows(rows);
                                         usr().mainwnd_cols(cols);
+#if defined SEQ66_USE_AUTO_SCALING
                                         if (rows > 4)
                                         {
                                             /*
@@ -532,12 +533,13 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                              */
 
                                             float scale = float(rows) / 4.0f;
-                                            if (scale > 1.75f)
-                                                scale = 1.75f;
+                                            float scaley = 1.0f;
+                                            if (scale > 1.5)
+                                                scale = 1.0;
 
-                                            (void) usr().window_scale(scale);
+                                            usr().window_scale(scale, scaley);
                                         }
-
+#endif
                                         result = true;
                                     }
                                 }

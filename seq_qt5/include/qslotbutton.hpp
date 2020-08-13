@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2020-07-20
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
@@ -98,6 +98,12 @@ protected:
      */
 
     QColor m_text_color;
+
+    /**
+     *  Indicates we are running with more than the usual number of rows, 4.
+     */
+
+    bool m_vert_compressed;
 
     /**
      *  Indicates if the button is checkable, or just clickable.  Empty slots

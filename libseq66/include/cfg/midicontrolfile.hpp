@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-07
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -177,6 +177,11 @@ public:
 
     bool parse_stream (std::ifstream & file);
     bool write_stream (std::ofstream & file);
+    bool parse_control_sizes
+    (
+        std::ifstream & file, const std::string & mctag,
+        int & offset, int & rows, int & columns
+    );
 
 public:
 

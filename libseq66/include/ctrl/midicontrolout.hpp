@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-11
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -219,7 +219,12 @@ private:
 
 public:
 
-    midicontrolout ();
+    midicontrolout
+    (
+        int buss    = 0,                        /* SET INDIRECTLY   */
+        int rows    = SEQ66_DEFAULT_SET_ROWS,
+        int columns = SEQ66_DEFAULT_SET_COLUMNS
+    );
     midicontrolout (const midicontrolout &) = default;
     midicontrolout & operator = (const midicontrolout &) = default;
     virtual ~midicontrolout () = default;

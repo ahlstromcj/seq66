@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2019-09-09
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -161,7 +161,6 @@ private:
      */
 
     bool m_text_initialized;
-    bool m_vert_compressed;
     bool m_draw_background;
     textbox m_top_left;
     textbox m_top_right;
@@ -204,6 +203,16 @@ protected:
 
     void initialize_sine_table ();
     void initialize_fingerprint ();
+
+    bool vert_compressed () const
+    {
+        return m_vert_compressed;
+    }
+
+    void vert_compressed (bool f)
+    {
+        m_vert_compressed = f;
+    }
 
     int sine_table_y (int i) const
     {
