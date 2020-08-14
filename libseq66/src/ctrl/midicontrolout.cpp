@@ -116,8 +116,8 @@ midicontrolout::initialize (int count, int bus)
     else
         m_screenset_size = 0;
 
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("midicontrolout::initialize(count = %d, bus = %d\n", count, bus);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("midicontrolout::initialize(count = %d, bus = %d)\n", count, bus);
 #endif
 }
 

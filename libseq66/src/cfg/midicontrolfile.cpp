@@ -234,7 +234,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
     m_temp_midi_controls.is_enabled(enabled);
 
     int offset = 0, rows = 0, columns = 0;
-    (void) parse_control_sizes(file, mctag, offset, rows, columns);
+    result =  parse_control_sizes(file, mctag, offset, rows, columns);
     m_temp_midi_controls.offset(offset);
     m_temp_midi_controls.rows(rows);
     m_temp_midi_controls.columns(columns);
@@ -335,7 +335,7 @@ midicontrolfile::parse_control_sizes
     int rows = string_to_int(s, 0);
     if (rows != defaultrows)
     {
-        (void) make_error_message(mctag, "rows don't match pattern rows");
+        result = make_error_message(mctag, "rows don't match pattern rows");
         rows = defaultrows;
     }
     newrows = rows;
@@ -344,7 +344,7 @@ midicontrolfile::parse_control_sizes
     int columns = string_to_int(s, 0);
     if (columns != defaultcolumns)
     {
-        (void) make_error_message(mctag, "columns don't match pattern columns");
+        result = make_error_message(mctag, "columns don't match pattern columns");
         columns = defaultcolumns;
     }
     newcolumns = columns;
@@ -408,7 +408,8 @@ static const char * const sg_scanf_fmt_ctrl_pair =
 bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
-    bool result = true;
+    bool result;
+    // bool result = true;
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, SEQ66_BASE_SET_SIZE);
@@ -428,7 +429,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
     bool enabled = string_to_bool(s);
     int offset = 0, rows = 0, columns = 0;
-    (void) parse_control_sizes(file, mctag, offset, rows, columns);
+    result = parse_control_sizes(file, mctag, offset, rows, columns);
     if (line_after(file, "[midi-control-out]"))
     {
         /*

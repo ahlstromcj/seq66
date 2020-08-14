@@ -98,22 +98,30 @@ main (int argc, char * argv [])
                 }
             }
             result = sm.create_window();
+            if (result)
+            {
+                sm.error_handling();
+                result = sm.create_session();
+                if (result)
+                {
+                    exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
+                    result = sm.close_session();
+                }
+                else
+                    result = sm.close_session(false);
+            }
         }
-    }
-    if (result)
-    {
-        sm.error_handling();
-        result = sm.create_session();
-        if (result)
-        {
-            exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
-            result = sm.close_session();
-        }
-        else
-            result = sm.close_session(false);
     }
     else
-        result = sm.close_session(false);
+    {
+        (void) sm.create_performer();
+        (void) sm.create_window();
+        sm.error_handling();
+        (void) sm.create_session();
+        (void) sm.run();
+        (void) sm.close_session(false);
+        exit_status = EXIT_FAILURE;
+    }
 
     /*
      * Currently just re-shows the logged error message from portmidi.

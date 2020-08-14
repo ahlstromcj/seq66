@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-15
+ * \updates       2020-08-13
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -255,11 +255,11 @@ rcfile::parse ()
             ok = parse_midi_control_section(fullpath, true);
             if (! ok)
             {
-                std::string info = "cannot parse file '";
+                std::string info = "'";
                 info += fullpath;
                 info += "'";
                 rc_ref().midi_control_filename("");
-                return make_error_message("midi-control-file", info);
+                return make_error_message("MIDI control file", info);
             }
         }
         rc_ref().use_midi_control_file(ok);             /* did it work?     */

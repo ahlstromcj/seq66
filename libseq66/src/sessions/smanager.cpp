@@ -158,7 +158,7 @@ smanager::main_settings (int argc, char * argv [])
         result = cmdlineopts::parse_options_files(errmessage, argc, argv);
         if (! result)
         {
-            errprintf("parse_options_files(): %s\n", errmessage.c_str());
+            errprint(errmessage.c_str());
         }
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
         if (cmdlineopts::parse_o_options(argc, argv))

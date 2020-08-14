@@ -141,11 +141,8 @@ configfile::make_error_message
     const std::string & additional
 )
 {
-    std::string msg = "BAD data in [";
-    std::string trimmed(sectionname);
-    (void) trim(trimmed, "[]");
-    msg += trimmed;
-    msg += "]: ";
+    std::string msg = sectionname;
+    msg += " error: ";
     if (! additional.empty())
         msg += additional;
 
