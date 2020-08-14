@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-07-28
+:: \update      2020-08-14
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -51,7 +51,7 @@
 ::          PROJECT_VERSION, PROJECT_DRIVE, and PROJECT_BASE.
 ::       2. Also edit seq66/nsis/Seq66Constants.nsh to specify the current
 ::          date and Seq66 version number.  The macros to modify are:
-::          VER_NUMBER (e.g. "0.95") and VER_REVISION (e.g. "1", as in "0.95.1").
+::          VER_NUMBER (e.g. "0.90") and VER_REVISION (e.g. "1", as in "0.90.1").
 ::       3. a. In Windows Explorer, make sure there is no existing Qt Creator
 ::             build or shadow directory/configuration, especially a Debug
 ::             configuration.
@@ -61,7 +61,7 @@
 ::          c. Alternatively, create a "shadow" directory at the same level
 ::             as "seq66", change to it, and run
 ::             "..\seq66\nsis\build_release_package.bat".
-::       4. The result is a file such as "qpseq66-release-package-0.95.1.7z".
+::       4. The result is a file such as "qpseq66-release-package-0.90.1.7z".
 ::          It is found in seq66/../seq66-release/Seq66qt5.  Also, a
 ::          log file is made in seq66/../seq66-release/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
@@ -69,32 +69,36 @@
 ::       5. In Linux (have not tried NSIS in Windows yet), copy this 7z file
 ::          to the root seq66 directory.
 ::       6. Use 7zip to extract this file; it will unpack the contents into
-::          the 'release' directory.  Then move the 7z file out of the way.
+::          the directory called 'release': seq66/release, which contains the
+::          qpseq66.exe file, DLL files, data, etc. Then move the 7z file
+::          out of the way, for example to the directory about the seq66
+::          directory.  Here are the commands:
 ::
-::          $ 7z x qpseq66-release-package-0.95.2.7z
-::          $ mv qpseq66-release-package-0.95.2.7z ..
+::          $ 7z x qpseq66-release-package-0.90.2.7z
+::          $ mv qpseq66-release-package-0.90.2.7z ..
 ::
 ::       7. Change to the seq66/nsis directory and run:
 ::
 ::          $ makensis Seq66Setup.nsi
 ::
-::       8. The installer is seq66/release/seq66_setup_0.95.1.exe.
-::          Move it out of this directory to a safe place for transport.
-::          For example:
+::       8. The installer is seq66/release/seq66_setup_0.90.1.exe, and it is
+::          in the 'release' directory.  Move it out of this directory to a
+::          safe place for transport. For example, assuming the current
+::          directory is 'release':
 ::
-::          $ mv seq66_setup_0.95.1.exe ../../seq66-packages/latest
+::          $ mv seq66_setup_0.90.1.exe ../../seq66-packages/latest
 ::
 ::       9. Make a portable Zip package:
 ::
 ::          $ mv release/ qpseq66
-::          $ zip -u -r qpseq66-portable-0.95.1-0.zip qpseq66/
-::          $ mv qpseq66-portable-0.95.1-0.zip ../seq66-packages/latest
+::          $ zip -u -r qpseq66-portable-0.90.1-0.zip qpseq66/
+::          $ mv qpseq66-portable-0.90.1-0.zip ../seq66-packages/latest
 ::
 ::      10. Make a standard Linux source/configure tarball for a version
 ::          built using bootstrap (to generate the "configure" script):
 ::
-::          $ ./pack --release rtmidi 0.95.1
-::          $ mv ../seq66-master-rtmidi-0.95.1.tar.xz \
+::          $ ./pack --release rtmidi 0.90.1
+::          $ mv ../seq66-master-rtmidi-0.90.1.tar.xz \
 ::                  ../seq66-packages/latest
 ::
 ::          where "rtmidi" can be replaced with whatever the current build
@@ -183,7 +187,7 @@ copy %PROJECT_ROOT%\%AUX_DIR%\*.playlist %OUTPUT_DIR%\%AUX_DIR%
 ::
 :: Then, in Linux, "cd" to the "nsis" directory and run
 ::
-::      makensis Seq66Setup_V0.95.nsi
+::      makensis Seq66Setup_V0.90.nsi
 ::
 :: pushd Seq66qt5
 :: 7z a -r qppseq66-nsis-ready-package-DATE.7z release\*

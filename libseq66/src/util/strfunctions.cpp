@@ -17,7 +17,6 @@
 
 #include <cctype>                       /* std::toupper() function          */
 
-// #include "util/calculations.hpp"        /* seq66::string_to_int()           */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /**
@@ -317,7 +316,7 @@ trim (std::string & str, const std::string & chars)
 }
 
 /**
- *  Replaces the first occurrence of a sub-string with the specified string.
+ *  Replaces the first n occurrences of a sub-string with the specified string.
  *
  * \param source
  *      Provides the original string to be modified.
@@ -327,6 +326,10 @@ trim (std::string & str, const std::string & chars)
  *
  * \param replacement
  *      Provides the replacement for the substring.
+ *
+ * \param n
+ *      Indicates how many occurrences to replace.  The default value is -1,
+ *      which means to replace all of them.
  *
  * \return
  *      Returns the modified copy of the string, with the replacement made.
@@ -339,15 +342,24 @@ string_replace
 (
     const std::string & source,
     const std::string & target,
-    const std::string & replacement
+    const std::string & replacement,
+    int n
 )
 {
     std::string result = source;
     auto targetsize = target.size();            // std::string::size_type
     auto targetloc = result.find(target);       // std::string::size_type
-    if (targetloc != std::string::npos)
+    while (targetloc != std::string::npos)
+    {
         (void) result.replace(targetloc, targetsize, replacement);
-
+        targetloc = result.find(target);
+        if (n > 0)
+        {
+            --n;
+            if (n == 0)
+                break;
+        }
+    }
     return result;
 }
 

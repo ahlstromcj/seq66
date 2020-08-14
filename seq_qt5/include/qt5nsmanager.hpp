@@ -67,7 +67,7 @@ public:
     virtual bool close_session (bool ok = true) override;
     virtual bool create_window () override;
     virtual void show_message (const std::string & msg) const override;
-    virtual void show_error (const std::string & msg) const override;
+    virtual void show_error (const std::string & msg = "") const override;
     virtual bool run () override;
 
 signals:        /* signals sent by session client callbacks */

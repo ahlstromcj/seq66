@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2019-11-18
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist:
@@ -121,7 +121,7 @@ playlist::~playlist ()
 
 /**
  *  Helper function for error-handling.  It assembles a message and then
- *  passes it to error_message().
+ *  passes it to append_error_message().
  *
  * \param additional
  *      Additional context information to help in finding the error.
@@ -133,14 +133,14 @@ playlist::~playlist ()
 bool
 playlist::make_error_message (const std::string & additional)
 {
-    std::string msg = "BAD [playlist]";
+    std::string msg = "Bad [playlist]";
     if (! additional.empty())
     {
         msg += ": ";
         msg += additional;
     }
     errprint(msg.c_str());
-    error_message(msg);
+    append_error_message(msg);
     return false;
 }
 

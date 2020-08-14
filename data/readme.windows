@@ -1,6 +1,6 @@
 readme.windows for Seq66 0.90.5
 Chris Ahlstrom
-2018-05-13 to 2020-08-05
+2018-05-13 to 2020-08-12
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable called qpseq66.exe.  It provides some notes on Seq66 and
@@ -18,6 +18,22 @@ we will provide an NSIS-based installer.
 
 Why the name qpseq66.exe instead of seq66.exe?  The "q" stands for the Qt user
 interface, and the "p" stands for the PortMidi-based engine used for Windows.
+
+Once installed, go to C:/Program Files (x86)/Seq66 and create a desktop
+shortcut for qpseq66.exe, with the following command line (for a default
+Windows 10 setup having only the MIDI Mapper and the Microsoft wave-table
+synthesizer installed:
+
+    C:\Program Files (x86)\Seq66\qpseq66.exe
+
+(We would like to add the option "--buss 0" to this command line, but it is
+flagged as an incorrect shortcut!)
+
+Run the shortcut.  If an error appears, click out and run it again, and there
+should be a MIDI Mapper present on buss 0.  Load a song, and select the "0"
+device from the buss dropdown ("None") at the top of the main page.  The file
+should play.  You can save the file to preserve the new buss number; some
+songs are set to play on multiple busses.
 
 Inaccessible Devices:
 

@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-20
+ * \updates       2020-08-14
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -61,7 +61,8 @@ extern std::string string_replace
 (
     const std::string & source,
     const std::string & target,
-    const std::string & replacement
+    const std::string & replacement,
+    int n = -1
 );
 extern bool string_to_bool (const std::string & s, bool defalt = false);
 extern double string_to_double (const std::string & s, double defalt = 0.0);

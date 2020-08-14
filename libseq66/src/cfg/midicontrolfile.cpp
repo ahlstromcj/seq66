@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-13
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -231,10 +231,12 @@ midicontrolfile::parse_stream (std::ifstream & file)
     s = get_variable(file, mctag, "midi-enabled");
 
     bool enabled = string_to_bool(s);
-    m_temp_midi_controls.is_enabled(enabled);
-
     int offset = 0, rows = 0, columns = 0;
     result =  parse_control_sizes(file, mctag, offset, rows, columns);
+    if (! result)
+        enabled = false;
+
+    m_temp_midi_controls.is_enabled(enabled);
     m_temp_midi_controls.offset(offset);
     m_temp_midi_controls.rows(rows);
     m_temp_midi_controls.columns(columns);
@@ -409,7 +411,6 @@ bool
 midicontrolfile::parse_midi_control_out (std::ifstream & file)
 {
     bool result;
-    // bool result = true;
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
     int sequences = string_to_int(s, SEQ66_BASE_SET_SIZE);
@@ -500,9 +501,13 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 "midi-control-out", "not enough control-pairs provided"
             );
         }
-        result = ok && ! is_error();
+        if (result)
+            result = ok && ! is_error();
     }
     else
+        result = false;
+
+    if (! result)
         rc_ref().midi_control_out().is_enabled(false);  /* blank section    */
 
     return result;

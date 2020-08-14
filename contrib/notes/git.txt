@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2018-11-23
+2015-09-09 to 2020-08-14
 
 Creating a GitHub Repository:
 
@@ -362,5 +362,14 @@ Listing issues:
     This dump needs programming to whip it into human-readable form.
 
     http -b https://api.github.com/repos/ahlstromcj/sequencer64/issues?state=all
+
+Permanently delete a file and its history:
+
+    $ git filter-branch --index-filter \
+      "git rm -rf --cached --ignore-unmatch seq66/0.90/seq66_setup_0.90.4.exe" \
+      HEAD
+    $ git push --all
+
+    This can take a long long time if the file has thousands of commits.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

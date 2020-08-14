@@ -98,6 +98,8 @@
 #include "pixmaps/song_rec_on.xpm"      /* #include "pixmaps/song_rec.xpm" */
 #include "pixmaps/stop.xpm"
 
+#define SEQ66_ERROR_BOX_WIDTH       600
+
 /*
  * Don't document the namespace.
  */
@@ -326,7 +328,6 @@ qsmainwnd::qsmainwnd
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
 
-    m_msg_error = new QErrorMessage(this);
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
     m_msg_save_changes->setInformativeText(tr("Do you want to save them?"));
@@ -868,6 +869,9 @@ qsmainwnd::qsmainwnd
 
 qsmainwnd::~qsmainwnd ()
 {
+    if (not_nullptr(m_msg_error))
+        delete m_msg_error;
+
     m_timer->stop();
     cb_perf().unregister(this);
     delete ui;
@@ -961,6 +965,10 @@ qsmainwnd::song_recording (bool record)
 {
     perf().song_recording(record);
 }
+
+/**
+ *
+ */
 
 void
 qsmainwnd::show_song_mode (bool songmode)
@@ -1100,11 +1108,7 @@ qsmainwnd::show_open_list_dialog ()
 #endif
         }
         else
-        {
-            QString msg_text = tr(perf().playlist_error_message().c_str());
-            m_msg_error->showMessage(msg_text);
-            m_msg_error->exec();
-        }
+            show_message_box(perf().playlist_error_message());
     }
 }
 
@@ -1160,11 +1164,7 @@ qsmainwnd::open_file (const std::string & fn)
         m_is_title_dirty = true;
     }
     else
-    {
-        QString msg_text = tr(errmsg.c_str());
-        m_msg_error->showMessage(msg_text);
-        m_msg_error->exec();
-    }
+        show_message_box(errmsg);
 }
 
 /*
@@ -1509,20 +1509,9 @@ qsmainwnd::save_file (const std::string & fname)
         std::string errmsg;
         result = write_midi_file(perf(), filename, errmsg);
         if (result)
-        {
-            /*
-             * Already done by write_midi_file().
-             *
-             * rc().add_recent_file(filename);
-             */
-
-            update_recent_files_menu();
-        }
+            update_recent_files_menu();         /* add the recent file-name */
         else
-        {
-            m_msg_error->showMessage(errmsg.c_str());
-            m_msg_error->exec();
-        }
+            show_message_box(errmsg);
     }
     return result;
 }
@@ -1598,11 +1587,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
             update_recent_files_menu();
         }
         else
-        {
-            std::string errmsg = f.error_message();
-            m_msg_error->showMessage(errmsg.c_str());
-            m_msg_error->exec();
-        }
+            show_message_box(f.error_message());
     }
     return result;
 }
@@ -1652,11 +1637,7 @@ qsmainwnd::export_song (const std::string & fname)
             update_recent_files_menu();
         }
         else
-        {
-            std::string errmsg = f.error_message();
-            m_msg_error->showMessage(errmsg.c_str());
-            m_msg_error->exec();
-        }
+            show_message_box(f.error_message());
     }
     return result;
 }
@@ -1696,11 +1677,9 @@ qsmainwnd::show_import_dialog ()
                 }
                 catch (...)
                 {
-                    QString msg_text =
-                        "Error reading MIDI data from file: " + path;
-
-                    m_msg_error->showMessage(msg_text);
-                    m_msg_error->exec();
+                    std::string p = path.toStdString();
+                    std::string msg = "Error reading MIDI data from file: " + p;
+                    show_message_box(msg);
                 }
             }
         }
@@ -2505,11 +2484,24 @@ qsmainwnd::update_bank_name (const QString &)
 void
 qsmainwnd::show_message_box (const std::string & msg_text)
 {
-    if (not_nullptr(m_msg_error) && ! msg_text.empty())
+    if (! msg_text.empty())
     {
-        QString msg = msg_text.c_str();     /* Qt still needs c_str()!! */
-        m_msg_error->showMessage(msg);
-        m_msg_error->exec();
+        m_msg_error = new (std::nothrow) QErrorMessage(this);
+        if (not_nullptr(m_msg_error))
+        {
+            QString msg = msg_text.c_str();             /* Qt needs c_str() */
+            QSpacerItem * hspace = new QSpacerItem
+            (
+                SEQ66_ERROR_BOX_WIDTH, 0,
+                QSizePolicy::Minimum, QSizePolicy::Expanding
+            );
+            QGridLayout * lay = (QGridLayout *) m_msg_error->layout();
+            lay->addItem(hspace, lay->rowCount(), 0, 1, lay->columnCount());
+            m_msg_error->showMessage(msg);
+            m_msg_error->exec();
+            delete m_msg_error;
+            m_msg_error = nullptr;
+        }
     }
 }
 

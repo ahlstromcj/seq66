@@ -259,7 +259,7 @@ rcfile::parse ()
                 info += fullpath;
                 info += "'";
                 rc_ref().midi_control_filename("");
-                return make_error_message("MIDI control file", info);
+                return make_error_message("MIDI control", info);
             }
         }
         rc_ref().use_midi_control_file(ok);             /* did it work?     */

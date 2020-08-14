@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-07-12
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -35,6 +35,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
+#include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
 
@@ -43,7 +44,7 @@ namespace seq66
 
 /*
  *-------------------------------------------------------------------------
- *  Optional NSM support
+ *  Optional NSM support [TO DO]
  *-------------------------------------------------------------------------
  */
 
@@ -66,6 +67,7 @@ qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
 #endif
     m_window        ()
 {
+    // no code yet
 }
 
 /**
@@ -78,7 +80,7 @@ qt5nsmanager::~qt5nsmanager ()
 }
 
 /**
- *
+ *  Will do more with this later.
  */
 
 bool
@@ -117,6 +119,8 @@ qt5nsmanager::create_window ()
 
             m_window->show();
             (void) smanager::create_window();   /* internal house-keeping   */
+            if (error_active())
+                show_error();
         }
     }
     return result;
@@ -150,17 +154,13 @@ qt5nsmanager::run ()
 void
 qt5nsmanager::show_message (const std::string & msg) const
 {
-    if (m_window)
-    {
-        if (error_active())
-            m_window->show_message_box(error_message());
-        else
-            m_window->show_message_box(msg);
-    }
+    if (m_window && ! msg.empty())
+        m_window->show_message_box(msg);
 }
 
 /**
- *
+ *  Shows the collected messages in the message-box, and recommends the user
+ *  exit and check the configuration.
  */
 
 void
@@ -168,29 +168,25 @@ qt5nsmanager::show_error (const std::string & msg) const
 {
     if (m_window)
     {
-#if defined SEQ66_PORTMIDI_SUPPORT
         if (msg.empty())
         {
+#if defined SEQ66_PORTMIDI_SUPPORT
             if (Pm_error_present())
             {
-                std::string errmsg = std::string(Pm_error_message());
-                m_window->show_message_box(errmsg);
+                std::string pmerrmsg = std::string(Pm_error_message());
+                append_error_message(pmerrmsg);
             }
+#endif
+            std::string html = string_replace(error_message(), "\n", "<br>");
+            html += "<br>Please exit and fix the configuration.";
+            m_window->show_message_box(html);
         }
         else
         {
-            set_error_message(msg);
+            append_error_message(msg);
             m_window->show_message_box(msg);
         }
-#else
-        if (msg.empty())
-        {
-            set_error_message(msg);
-            m_window->show_message_box(msg);
-        }
-#endif
     }
-
 }
 
 }           // namespace seq66

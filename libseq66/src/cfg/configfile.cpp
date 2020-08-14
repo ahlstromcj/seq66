@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-13
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -48,6 +48,14 @@
 namespace seq66
 {
 
+/*
+ *  Static members.  This error-messaging information is static so that the
+ *  errors from all the configuration files can be displayed at once.
+ */
+
+std::string configfile::sm_error_message = "";
+bool configfile::sm_is_error = false;
+
 /**
  *  Provides the string plus rcsettings constructor for a configuration file.
  *
@@ -62,8 +70,6 @@ namespace seq66
 
 configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_rc            (rcs),
-    m_error_message (),
-    m_is_error      (false),
     m_name          (name),
     m_version       ("0"),
     m_line          (),
@@ -142,12 +148,12 @@ configfile::make_error_message
 )
 {
     std::string msg = sectionname;
-    msg += " error: ";
+    msg += ": ";
     if (! additional.empty())
         msg += additional;
 
-    errprint(msg);
-    error_message(msg);
+    errprint(msg);                      /* log to the console       */
+    append_error_message(msg);          /* append to message string */
     return false;
 }
 
@@ -575,6 +581,37 @@ configfile::get_tag_value (const std::string & tag)
         errprintf("[%s] tag has no intger value", tag.c_str());
     }
     return result;
+}
+
+/**
+ *  Sets the error message, which can later be displayed to the user.
+ *  Actually, it now appends the error message, so all can be displayed in the
+ *  user-interface.
+ *
+ * \param msg
+ *      Provides the error message to be set.
+ */
+
+void
+configfile::append_error_message (const std::string & msg)
+{
+    if (msg.empty())
+    {
+        sm_error_message.clear();
+        sm_is_error = false;
+    }
+    else
+    {
+        sm_is_error = true;
+        if (sm_error_message.empty())
+        {
+            // sm_error_message += "? "; /* makes message more visible      */
+        }
+        else
+            sm_error_message += "\n";   /* converted to "<br>" in msg box   */
+
+        sm_error_message += msg;
+    }
 }
 
 }           // namespace seq66

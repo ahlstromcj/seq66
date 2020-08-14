@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-08-13
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -81,7 +81,7 @@ smanager::smanager () :
     m_perf_pointer      (),
     m_midi_filename     (),
     m_is_help           (false),
-    m_extant_errmsg     ("unspecified error"),
+    m_extant_errmsg     (),
     m_extant_msg_active (false)
 {
     /*
@@ -159,6 +159,7 @@ smanager::main_settings (int argc, char * argv [])
         if (! result)
         {
             errprint(errmessage.c_str());
+            append_error_message(errmessage);       /* raises the message   */
         }
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
         if (cmdlineopts::parse_o_options(argc, argv))
@@ -191,9 +192,9 @@ smanager::main_settings (int argc, char * argv [])
                     (void) snprintf
                     (
                         temp, sizeof temp,
-                        "? MIDI file error: '%s'", fname.c_str()
+                        "MIDI file error: '%s'", fname.c_str()
                     );
-                    set_error_message(temp);        /* raises the message   */
+                    append_error_message(temp);     /* raises the message   */
                     m_midi_filename.clear();
                 }
             }
@@ -262,25 +263,24 @@ smanager::open_playlist ()
     bool result = not_nullptr(perf());
     if (result)
     {
-        std::string errmsg = "unspecified error";
         std::string playlistname = rc().playlist_filespec();
         if (rc().playlist_active() && ! playlistname.empty())
         {
             result = perf()->open_playlist(playlistname, rc().verbose());
             if (result)
             {
-                result = perf()->open_current_song();   /* p.playlist_test()    */
+                result = perf()->open_current_song();   /* p.playlist_test() */
             }
             else
             {
-                set_error_message(perf()->playlist_error_message());
-                result = true;                          /* avoid early exit     */
+                append_error_message(perf()->playlist_error_message());
+                result = true;                          /* avoid early exit  */
             }
         }
     }
     else
     {
-        set_error_message("open_playlist(): no performer");
+        append_error_message("Open playlist(): no performer");
     }
     return result;
 }
@@ -398,8 +398,8 @@ smanager::create_window ()
 }
 
 /**
- *  Sets the error flag and the error message, which a both mutable so we can
- *  safely call this function under any circumstances.
+ *  Sets the error flag and appends to the error message, which a both mutable
+ *  so we can safely call this function under any circumstances.
  *
  * \param message
  *      Provides the message to be set. If empty, the message-active flag and
@@ -407,12 +407,25 @@ smanager::create_window ()
  */
 
 void
-smanager::set_error_message (const std::string & message) const
+smanager::append_error_message (const std::string & msg) const
 {
-    m_extant_errmsg = message;
-    m_extant_msg_active = ! message.empty();
-    if (m_extant_msg_active)
-        printf("smanager error %s\n", message.c_str());
+    if (msg.empty())
+    {
+        m_extant_errmsg.clear();
+        m_extant_msg_active = false;
+    }
+    else
+    {
+        m_extant_msg_active = true;
+        if (m_extant_errmsg.empty())
+        {
+            // m_extant_errmsg += "? ";
+        }
+        else
+            m_extant_errmsg += "\n";
+
+        m_extant_errmsg += msg;
+    }
 }
 
 /*
@@ -508,7 +521,7 @@ smanager::internal_error_check (std::string & errmsg) const
 
     if (result)
     {
-        set_error_message(pmerrmsg);
+        append_error_message(pmerrmsg);
         errmsg = pmerrmsg;
     }
     return result;

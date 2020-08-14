@@ -74,22 +74,24 @@ class configfile
 private:
 
     /**
-     *  Hold a reference to the "rc" settings object.
-     */
-
-    rcsettings & m_rc;
-
-    /**
      *  Holds the last error message, if any.  Not a 100% foolproof yet.
      */
 
-    std::string m_error_message;
+    static std::string sm_error_message;
 
     /**
      * Indicates if we are in an error status.
      */
 
-    bool m_is_error;
+    static bool sm_is_error;
+
+private:
+
+    /**
+     *  Hold a reference to the "rc" settings object.
+     */
+
+    rcsettings & m_rc;
 
     /**
      *  Provides the name of the configuration or other file being parsed.
@@ -163,24 +165,25 @@ public:
         return m_version;
     }
 
-    const std::string & error_message () const
-    {
-        return m_error_message;
-    }
-
-    bool is_error () const
-    {
-        return m_is_error;
-    }
-
     bool bad_position (int p) const
     {
         return p < 0;
     }
 
+    static const std::string & error_message ()
+    {
+        return sm_error_message;
+    }
+
+    static bool is_error ()
+    {
+        return sm_is_error;
+    }
+
 protected:
 
-    bool make_error_message
+    static void append_error_message (const std::string & msg);
+    static bool make_error_message
     (
         const std::string & sectionname,
         const std::string & additional = ""
@@ -209,19 +212,6 @@ protected:
     bool at_section_start () const
     {
         return m_line[0] == '[';
-    }
-
-    /**
-     *  Sets the error message, which can later be displayed to the user.
-     *
-     * \param msg
-     *      Provides the error message to be set.
-     */
-
-    void error_message (const std::string & msg)
-    {
-        m_error_message = msg;
-        m_is_error = ! msg.empty();
     }
 
     /**

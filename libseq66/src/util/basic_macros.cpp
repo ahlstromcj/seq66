@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-08-13
+ * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
  *  These functions are used in macros such as func_message().
@@ -161,7 +161,7 @@ bool
 warn_message (const std::string & msg)
 {
     if (is_debug())
-        std::cout << "[Warning: " << msg << "]" << std::endl;
+        std::cout << "! " << msg << std::endl;
 
     return true;
 }
@@ -186,7 +186,7 @@ error_message (const std::string & msg)
         if (errmsg.empty())
             errmsg = "Empty error message; ask the programmer to investigate";
 
-        std::cerr << "[? " << errmsg << "]" << std::endl;
+        std::cerr << "? " << errmsg << std::endl;
     }
     return false;
 }
@@ -210,12 +210,8 @@ bool
 file_error (const std::string & tag, const std::string & filename)
 {
     if (is_debug())
-    {
-        std::cerr
-            << "[! " << tag << " '" << filename << "'" << "]"
-            << std::endl
-            ;
-    }
+        std::cerr << "? " << tag << " '" << filename << "'" << std::endl;
+
     return false;
 }
 
