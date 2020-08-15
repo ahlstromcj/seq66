@@ -330,20 +330,26 @@ midicontrolfile::parse_control_sizes
     bool result = true;
     int defaultrows = usr().mainwnd_rows();
     int defaultcolumns = usr().mainwnd_cols();
+    int defvalue = 0;
     std::string s = get_variable(file, mctag, "button-offset");
     newoffset = string_to_int(s, 0);                /* currently constant   */
     s = get_variable(file, mctag, "button-rows");
+    if (s.empty())                                  /* no button-rows entry */
+        defvalue = defaultrows;
 
-    int rows = string_to_int(s, 0);
+    int rows = string_to_int(s, defvalue);
     if (rows != defaultrows)
     {
         result = make_error_message(mctag, "rows don't match pattern rows");
         rows = defaultrows;
     }
     newrows = rows;
+    defvalue = 0;
     s = get_variable(file, mctag, "button-columns");
+    if (s.empty())                                  /* no button-rows entry */
+        defvalue = defaultcolumns;
 
-    int columns = string_to_int(s, 0);
+    int columns = string_to_int(s, defvalue);
     if (columns != defaultcolumns)
     {
         result = make_error_message(mctag, "columns don't match pattern columns");

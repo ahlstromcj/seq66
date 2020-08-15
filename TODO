@@ -30,10 +30,6 @@ HOT ITEMS:
 
     Windows:
 
-        Figure out why Windows will not play through the default setup, which is
-        device 0 being the Microsoft MIDI Mapper redirecting to device 1, the
-        built-in wave-table synth.
-
         Disable JACK-related elements for Windows, such as the JACK options.
 
     When resizing, also recalculate the x and y scaling appropriately.
@@ -51,8 +47,6 @@ HOT ITEMS:
 
     Backports to Sequencer64:
 
-        -   qseqedit segfault fix
-        -   Resume-note-on fix
         -   qseqedit 800x480 feature if successful
 
     See if direct calls to midifile::write() [and parse()] can be replace by
@@ -114,14 +108,14 @@ ISSUES:
     and last snap division of the note appears.
     STATUS:  Weird, will do.
 
-    #13: Pattern editor: control event bar doesn't update/scroll. If I add or
+    #13: Pattern editor: control event bar does not update/scroll. If I add or
     remove a note, the related representation in the control bar below the
     piano roll does not refresh. Also, if I scroll the view above, the control
     bar stays in the same place.
     STATUS:  In progress.  Related to issue #9.  Cannot duplicate the issue
     with the control bar staying in the same place.  I found so far that the
     event (trigger) bar and data (control) bar were not showing events due to
-    an error I made in setting the status/cc values each were to show.
+    an error I made in setting the status/cc values to show.
 
 PATTERNS:
 

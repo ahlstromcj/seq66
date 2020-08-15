@@ -1,6 +1,6 @@
 Seq66 Licensing 0.90.5
 Chris Ahlstrom
-2015-09-10 to 2020-08-05
+2015-09-10 to 2020-08-15
 
 Applications:
 
@@ -33,7 +33,8 @@ Applications:
 
 Libraries:
 
-   The Seq66 library license is the GNU LGPLv3.
+   The Seq66 library license is the GNU LGPLv3. For each library (libseq66,
+   libsessions, seq_portmidi, seq_qt5, and seq_rtmidi):
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published

@@ -1,49 +1,49 @@
 README for Seq66 0.90.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-08-14
+2015-09-10 to 2020-08-15
 
-There is a ton of work in this new version, but there are still things to do
-and bugs to fix.  For now, if you have a specific request, email me at
-ahlstromcj@gmail.com.
+"Seq66" is a refactoring of the Qt-based version "Sequencer64" for better use of
+C++ and for removing a lot of krufty buildup.  With all the work that has been
+done on it, "Seq66" is now the best-supported version of "Sequencer64". Windows
+users can get a portable or installer package on GitHub at
 
-Seq66 is a refactoring of Sequencer64 for better use of C++ and for removing a
-lot of krufty buildup.  Major changes:
+   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.5.exe
+
+Major changes:
 
     -   User interface:
-        -   Removed the Gtkmm implementations, now using only Qt 5 since its
-            cross-platform support seems more complete.  Removed the "grid of
-            sets" feature in favor of unlimited external grid windows.
+        -   Removed the Gtkmm user-interface; using Qt 5 since its cross-platform
+            support seems more complete.  Removed the "grid of sets" feature in
+            favor of unlimited external grid windows.
         -   Added tabs for management of sets, mute-groups, Song mode, pattern
             editing, event-editing, and play-lists.
         -   Added a live frame using buttons to match Qt theming. The original
             implementation is available as a "user" option.
-        -   Cleanup of unused Gtkmm-to-Qt code.
         -   A color for each sequence can be chosen to make it more
-            distinguishable.  The default NONE (white) that is not stored in
-            the track.  Otherwise, the color is saved in a SeqSpec associated
-            with the track.
+            The color is saved in a SeqSpec associated with the track.
     -   Configuration files:
-        -   Unified keystroke control and MIDI control into a ".ctrl" file.
-            Specifies MIDI In controls for controlling Seq66 remotely, and MIDI
-            Out controls for displaying Seq66 status in grid controllers (e.g.
-            LaunchPad).
         -   Separated MIDI control and mute-group setting into their own files,
             with support for hex notation.
-        -   Supported configuration files: "*.rc", "*.usr", "*.ctrl", "*.mutes",
-            and "*.playlist".
+        -   Supported configuration files: ".rc", ".usr", ".ctrl", ".mutes", and
+            ".playlist".
+        -   Unified keystroke control and MIDI control into a ".ctrl" file. It
+            defines MIDI In controls for controlling Seq66, and MIDI Out controls
+            for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
+            Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini are provided.
     -   Internal:
         -   More consistent use of modern C++, including lambda functions.
         -   Additional performer callbacks to reduce the need for polling in the
-            user-interface.  Still in progress.
-    -   Non Session Manager.  Working on support for this manager, there is a
-        lot of investigation to do.
+            user-interface.
+    -   Non Session Manager.  Working on support for this manager. Refactored
+        startup and exiting to support session management.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
+Here are the executables that can be built:
 
-ALSA/JACK support: Seq66qt5/qseq66
-GUI-less application: Seq66cli/seq66cli
-Qt/Windows/PortMidi: Seq66qt5/qpseq66.exe
-Qt/RtMidi: Seq66qt5/qrseq66
+Linux ALSA/JACK support: Seq66qt5/qseq66
+Linux qmake/rtmidi: Seq66qt5/qrseq66
+Linux daemon: Seq66cli/seq66cli
+Windows qmake/portmidi: Seq66qt5/qpseq66.exe
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "rtmidi"
 (Linux) and "portmidi" (Windows) engines.  MIDI devices are detected,
@@ -86,8 +86,5 @@ Recent changes:
             more.
         -   Added writing of blank [midi-control-out] section.
         -   Fixed flickering when muting/unmuting patterns via keystrokes.
-
-This package is oriented to developers and users who do not mind building from
-source, with a little help.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

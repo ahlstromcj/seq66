@@ -94,6 +94,7 @@ qseq66.mutes
 # feature (Seq66 connects to existing JACK ports on startup.
 
 0   # flag for manual ports
+16   # number of manual/virtual ports
 
 [reveal-ports]
 

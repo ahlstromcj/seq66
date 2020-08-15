@@ -1,11 +1,11 @@
 INSTALL for Seq66 v. 0.90.5 and above
 Chris Ahlstrom
-2015-09-10 to 2020-07-18
+2015-09-10 to 2020-08-15
 
-Getting Seq66 requires building the code or going to the sequencer64-packages
-site on GitHub.  The bootstrap setup is primarily aimed at developers, but is
-easy to use with the instructions below.  Different versions of the program
-can be built:
+Getting Seq66 requires building the code or going to the
+sequencer64-packages/seq66 directory on GitHub.  The bootstrap setup is primarily
+aimed at developers, but is easy to use with the instructions below.  Different
+versions of the program can be built:
 
     -   qseq66.  RtMidi version, with a Qt5 user-interface a la Kepler34.
         Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA; support
@@ -43,7 +43,6 @@ Linux Distro Package (seq64):
     pointer to how one user installs it on a Raspberry Pi 3b+ running Raspian:
 
         Installed it from from KXStudio repo using Muon:
-
         https://kde.org/applications/en/system/org.kde.muon
 
 Quick Install:
@@ -254,8 +253,10 @@ Qmake-based Install:
         $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
         $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
 
+Windows:
+
     To build a Windows NSIS installation package, the DOS batch script
-    nsis/build_release_package.bat can be used.  See the top of that file for
+    "nsis/build_release_package.bat" can be used.  See the top of that file for
     the procedure to follow.
 
 CONFIGURE OPTIONS FOR APPLICATION FEATURES:

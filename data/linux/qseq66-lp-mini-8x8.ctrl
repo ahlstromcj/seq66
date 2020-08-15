@@ -73,7 +73,7 @@ on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 load-key-controls = true
 load-midi-controls = true
-control-buss = 1
+control-buss = 0xff
 midi-enabled = true
 button-offset = 0
 button-rows = 8
@@ -294,7 +294,7 @@ button-columns = 8
 
 set-size = 32
 output-buss = 1
-enabled = true
+enabled = false
 button-offset = 0
 button-rows = 8
 button-columns = 8

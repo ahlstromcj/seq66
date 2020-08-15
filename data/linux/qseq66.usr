@@ -6,12 +6,13 @@
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
 # alias (alternate name) to each MIDI bus, MIDI channel, and MIDI
-# control codes per channel.
+# control codes per channel. It has additional options not present
+# in Sequencer64, and also supports DOS INI variable setting.
 
 [Seq66]
 
 config-type = "usr"
-version = 1
+version = 2
 
 # The [comments] section lets one document this file.  Lines starting
 # with '#' and '[' are ignored.  Blank lines are ignored.  To show a
@@ -240,11 +241,10 @@ version = 1
 
 # Specifies an enlargement of the main window of Seq66.
 # The normal value is 1.0, which is the legacy sizing.  If this
-# value is between 1.0 and 3.0, it will increase the size of all
-# of the main window elements proportionately. Same as the
-# '-o scale=x.y' option.
+# value is between 0.5 and 3.0, it will change the size of the main
+# window proportionately. Same as the '-o scale=m.n[xp.q]' option.
 
-1      # window_scale (scales the main window upwards in size)
+1 1      # window_scale (scales main window width and height)
 
 [user-midi-settings]
 
@@ -366,16 +366,20 @@ version = 1
 # sequence editor.  Defaults to 12 (pixels), but 8 is better.
 # Currently used only in the Qt GUI.
 
-8       # (user_ui_) key_height
+10      # (user_ui_) key_height
 
 # Normally, the Qt version of Seq66 uses the old pattern
 # editor in the 'Edit' tab.  If the following value is set to 1,
 # then the new, larger, more functional pattern editor can be
 # used in the 'Edit' tab.  This setting also has the side-effect
 # of making the whole Seq66 window larger.
-# Currently used only in the Qt GUI.
 
 1       # (user_ui_) use_new_seqedit
+
+# The note-resume option, if active, causes any notes in progress
+# to be resumed when the pattern is toggled back on.
+
+note-resume = false
 
 [new-pattern-editor]
 
