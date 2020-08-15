@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-07-12
+ * \updates     2020-08-15
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -192,7 +192,7 @@ static int pm_exit_on_error = 1;
 static int pm_error_present = FALSE;
 
 /**
- *  Like pm_host_error_text[], but will be exposed to the outside world and
+ *  Like pm_hosterror_text[], but will be exposed to the outside world and
  *  might contain additional information.
  */
 
@@ -262,7 +262,10 @@ Pm_set_hosterror_text (const char * msg)
     {
         int len = strlen(msg);
         if (len > 0)
-            strncpy(&pm_hosterror_text[0], msg, len);
+        {
+            strncpy(&pm_hosterror_text[0], msg, sizeof pm_hosterror_text);
+            pm_hosterror_text[sizeof pm_hosterror_text - 1] = 0;
+        }
         else
             pm_hosterror_text[0] = 0;
     }

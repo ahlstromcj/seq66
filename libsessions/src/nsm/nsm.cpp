@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-04-15
+ * \updates       2020-08-15
  * \license       GNU GPLv2 or above
  *
  *  nsm is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -88,7 +88,7 @@
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
-#include "util/basic_macros.h"          /* not_nullptr() macro              */
+#include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsm.hpp"                  /* seq66::nsm class                 */
 #include "nsm/nsmmessages.hpp"          /* seq66::nsm message functions     */
@@ -708,9 +708,7 @@ nsm::announce_error (const std::string & mesg)
     m_display_name.clear();
     m_client_id.clear();
     // emit active(false);
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("NSM: Failed to register with server: %s.\n", mesg.c_str());
-#endif
+    warnprintf("NSM: Failed to register with server: %s.\n", mesg.c_str());
 }
 
 /*
@@ -738,9 +736,10 @@ nsm::announce_reply
     //      lo_address_get_url(lo_message_get_source(mesg);
     // );
 
-#if defined SEQ66_PLATFORM_DEBUG
-    printf
+    char temp[256];
+    snprintf
     (
+        temp, sizeof temp,
         "NSM: Successfully registered with server:\n"
         "Message: '%s'\n"
         "Manager: '%s'\n"
@@ -748,7 +747,7 @@ nsm::announce_reply
         ,
         mesg.c_str(), manager.c_str(), capabilities.c_str()
     );
-#endif
+    infoprint(temp);
 }
 
 /**
@@ -772,9 +771,7 @@ nsm::nsm_debug (const std::string & tag)
     }
     else
     {
-#if defined SEQ66_PLATFORM_DEBUG
-        printf("nsm: %s\n", tag.c_str());
-#endif
+        infoprintf("nsm: %s\n", tag.c_str());
     }
 }
 
@@ -930,9 +927,7 @@ nsm::broadcast (const std::string & path, lo_message msg)
         );
     }
     // emit broadcast();
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("nsm::broadcast(%s)\n", path.c_str());
-#endif
+    infoprintf("nsm::broadcast(%s)\n", path.c_str());
 }
 
 /*
