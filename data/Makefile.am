@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2018-01-03
+# \updates     2020-08-15
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -32,7 +32,7 @@ MAINTAINERCLEANFILES = Makefile.in Makefile $(AUX_DIST)
 #
 #------------------------------------------------------------------------------
 
-EXTRA_DIST = README readme.* *.rc *.usr *.midi *.playlist *.ctrl *.mutes
+EXTRA_DIST = README readme.* license.txt linux/*.*  midi/*.* samples/*.* win/*.*
 
 #*****************************************************************************
 #	Macros
@@ -103,10 +103,7 @@ builddir = @abs_top_builddir@
 
 install-data-local:
 	mkdir -p $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/README $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/*.rc $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/*.usr $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/*.midi $(DESTDIR)$(seq66datadir)
+	cp -r -p $(top_builddir)/data/* $(DESTDIR)$(seq66datadir)
 
 #******************************************************************************
 # uninstall-hook
