@@ -19,8 +19,8 @@
 /**
  * \file          nsmserver.cpp
  *
- *  This module defines some informative functions that are actually
- *  better off as functions.
+ *  This module could serve as an alternative to nsmd (Non Session Manager
+ *  daemon) someday.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -46,7 +46,7 @@ namespace seq66
  */
 
 nsmserver::nsmserver (const std::string & nsmurl) :
-    nsm (nsmurl)
+    nsmbase (nsmurl)
 {
     //
 }

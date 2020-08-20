@@ -1,7 +1,7 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2020-08-15"
-#define VERSION "0.90.5"
+#define VERSION_DATE_SHORT "2020-08-19"
+#define VERSION "0.91.0"
 
 
 
@@ -22,9 +22,6 @@
 
 /* "The name to display as client/port" */
 #undef CLIENT_NAME
-
-/* Define if LIBLO library is available. */
-#undef CONFIG_LIBLO
 
 /* Configuration file name */
 #undef CONFIG_NAME
@@ -120,11 +117,17 @@
 /* Define to enable LASH */
 #undef LASH_SUPPORT
 
+/* Define if LIBLO library is available. */
+#undef LIBLO_SUPPORT
+
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Define if NSM support is available. */
 #undef NSM_SESSION
+
+/* Define to enable NSM */
+#undef NSM_SUPPORT
 
 /* Name of package */
 #undef PACKAGE

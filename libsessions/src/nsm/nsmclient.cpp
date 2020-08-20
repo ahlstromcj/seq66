@@ -44,7 +44,7 @@
  *          create_nsmclient() should be used; it returns a "unique pointer".
  *          (We may need to provide specific factory functions for Qt, Gtkmm,
  *          and command-line versions of the application.)
- *      -#  If NSM_URL is valid and reachable, call the nsm::announce()
+ *      -#  If NSM_URL is valid and reachable, call the nsmbase::announce()
  *          function.
  *      -#  Connect up callbacks (e.g. signals in Qt) for the following events:
  *          -   Open NSM session. The caller should first see if this nsmclient
@@ -144,7 +144,7 @@ nsmclient::nsmclient
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
-    nsm             (nsmurl, nsmfile, nsmext),
+    nsmbase         (nsmurl, nsmfile, nsmext),
     m_manager       (),
     m_capabilities  (),
     m_path_name     (),
@@ -179,7 +179,7 @@ nsmclient::~nsmclient ()
 bool
 nsmclient::open_session ()
 {
-    bool result = nsm::open_session();
+    bool result = nsmbase::open_session();
     if (result)
     {
         // m_dirty_count = 0;

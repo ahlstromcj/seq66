@@ -17,7 +17,7 @@
  */
 
 /**
- * \file          nsm.cpp
+ * \file          nsmbase.cpp
  *
  *  This module defines some informative functions that are actually
  *  better off as functions.
@@ -25,10 +25,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-08-15
+ * \updates       2020-08-20
  * \license       GNU GPLv2 or above
  *
- *  nsm is an Non Session Manager (NSM) OSC client helper.  The NSM API
+ *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
  *  comprises a simple Open Sound Control (OSC) based protocol.
  *
  *  The Non project contains a daemon, nsmd, which is an implementation of the
@@ -90,7 +90,7 @@
 
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
-#include "nsm/nsm.hpp"                  /* seq66::nsm class                 */
+#include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessages.hpp"          /* seq66::nsm message functions     */
 #include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
 
@@ -141,7 +141,7 @@ osc_nsm_error
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     bool not_sis = strcmp(types, "sis") != 0;
     if (is_nullptr(pnsmc) || not_sis || (! nsm_is_announce(&argv[0]->s)))
         return -1;
@@ -167,7 +167,7 @@ osc_nsm_reply
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc) || (! nsm_is_announce(&argv[0]->s)))
         return -1;
 
@@ -193,7 +193,7 @@ osc_nsm_open
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -212,7 +212,7 @@ osc_nsm_save
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -231,7 +231,7 @@ osc_nsm_session_loaded
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -250,7 +250,7 @@ osc_nsm_label
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -275,7 +275,7 @@ osc_nsm_show
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -304,7 +304,7 @@ osc_nsm_hide
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (pnsmc == NULL)
         return -1;
 
@@ -340,7 +340,7 @@ osc_nsm_broadcast
     void * user_data
 )
 {
-    nsm * pnsmc = static_cast<nsm *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (pnsmc == NULL)
         return -1;
 
@@ -360,7 +360,7 @@ osc_nsm_broadcast
  *  found to be good.
  */
 
-nsm::nsm
+nsmbase::nsmbase
 (
     const std::string & nsmurl,
     const std::string & nsmfile,
@@ -430,7 +430,7 @@ nsm::nsm
  *
  */
 
-nsm::~nsm ()
+nsmbase::~nsmbase ()
 {
     if (m_lo_thread)
     {
@@ -442,7 +442,7 @@ nsm::~nsm ()
 }
 
 bool
-nsm::lo_is_valid () const
+nsmbase::lo_is_valid () const
 {
     if (is_nullptr_2(m_lo_address, m_lo_server))
         m_active = false;
@@ -470,7 +470,7 @@ nsm::lo_is_valid () const
  */
 
 void
-nsm::announce
+nsmbase::announce
 (
     const std::string & appname,
     const std::string & capabilities
@@ -501,7 +501,7 @@ nsm::announce
  */
 
 void
-nsm::dirty (bool isdirty)
+nsmbase::dirty (bool isdirty)
 {
     if (lo_is_valid())
     {
@@ -515,7 +515,7 @@ nsm::dirty (bool isdirty)
 }
 
 void
-nsm::update_dirty_count (bool updatedirt)
+nsmbase::update_dirty_count (bool updatedirt)
 {
     if (updatedirt)
         ++m_dirty_count;
@@ -532,7 +532,7 @@ nsm::update_dirty_count (bool updatedirt)
 }
 
 void
-nsm::visible (bool isvisible)
+nsmbase::visible (bool isvisible)
 {
     if (lo_is_valid())
     {
@@ -552,7 +552,7 @@ nsm::visible (bool isvisible)
  */
 
 void
-nsm::progress (float percent)
+nsmbase::progress (float percent)
 {
     if (lo_is_valid())
     {
@@ -572,7 +572,7 @@ nsm::progress (float percent)
  */
 
 void
-nsm::is_dirty ()
+nsmbase::is_dirty ()
 {
     if (lo_is_valid())
     {
@@ -592,7 +592,7 @@ nsm::is_dirty ()
  */
 
 void
-nsm::is_clean ()
+nsmbase::is_clean ()
 {
     if (lo_is_valid())
     {
@@ -613,7 +613,7 @@ nsm::is_clean ()
 
 
 void
-nsm::message (int priority, const std::string & mesg)
+nsmbase::message (int priority, const std::string & mesg)
 {
     if (lo_is_valid())
     {
@@ -633,19 +633,19 @@ nsm::message (int priority, const std::string & mesg)
  */
 
 void
-nsm::open_reply (reply replycode)
+nsmbase::open_reply (reply replycode)
 {
     nsm_reply(nsm_cli_open(), replycode);
 }
 
 void
-nsm::save_reply (reply replycode)
+nsmbase::save_reply (reply replycode)
 {
     nsm_reply(nsm_cli_save(), replycode);
 }
 
 const char *
-nsm::nsm_reply_message (reply replycode)
+nsmbase::nsm_reply_message (reply replycode)
 {
     const char * result;
     switch (replycode)
@@ -665,7 +665,7 @@ nsm::nsm_reply_message (reply replycode)
 }
 
 void
-nsm::nsm_reply (const std::string & path, reply replycode)
+nsmbase::nsm_reply (const std::string & path, reply replycode)
 {
     const char * reply_mesg = nsm_reply_message(replycode);
     if (lo_is_valid())
@@ -699,7 +699,7 @@ nsm::nsm_reply (const std::string & path, reply replycode)
  */
 
 void
-nsm::announce_error (const std::string & mesg)
+nsmbase::announce_error (const std::string & mesg)
 {
     m_active = false;
     m_manager.clear();
@@ -716,7 +716,7 @@ nsm::announce_error (const std::string & mesg)
  */
 
 void
-nsm::announce_reply
+nsmbase::announce_reply
 (
     const std::string & mesg,
     const std::string & manager,
@@ -755,7 +755,7 @@ nsm::announce_reply
  */
 
 void
-nsm::nsm_debug (const std::string & tag)
+nsmbase::nsm_debug (const std::string & tag)
 {
     if (tag.empty())
     {
@@ -780,7 +780,7 @@ nsm::nsm_debug (const std::string & tag)
  */
 
 void
-nsm::open
+nsmbase::open
 (
     const std::string & pathname,
     const std::string & displayname,
@@ -799,7 +799,7 @@ nsm::open
  */
 
 void
-nsm::save ()
+nsmbase::save ()
 {
     nsm_debug("save");
     //
@@ -829,14 +829,14 @@ nsm::save ()
 // Client loaded callback.
 
 void
-nsm::loaded ()
+nsmbase::loaded ()
 {
     nsm_debug("loaded");
     // emit loaded();
 }
 
 void
-nsm::label (const std::string & label)
+nsmbase::label (const std::string & label)
 {
     std::string tag("label: '");
     tag += label;
@@ -888,7 +888,7 @@ show_gui ()
  */
 
 void
-nsm::show ()
+nsmbase::show ()
 {
     nsm_debug("show");
     // emit show();
@@ -899,7 +899,7 @@ nsm::show ()
  */
 
 void
-nsm::hide ()
+nsmbase::hide ()
 {
     nsm_debug("hide");
     // emit hide();
@@ -916,7 +916,7 @@ nsm::hide ()
  */
 
 void
-nsm::broadcast (const std::string & path, lo_message msg)
+nsmbase::broadcast (const std::string & path, lo_message msg)
 {
     nsm_debug("broadcast");
     if (lo_is_valid())
@@ -943,7 +943,7 @@ nsm::broadcast (const std::string & path, lo_message msg)
  */
 
 bool
-nsm::open_session ()
+nsmbase::open_session ()
 {
     bool result = is_active();
     if (result)
@@ -960,7 +960,7 @@ nsm::open_session ()
  */
 
 bool
-nsm::close_session ()
+nsmbase::close_session ()
 {
     bool result = is_active();
     if (result)
@@ -976,7 +976,7 @@ nsm::close_session ()
  */
 
 bool
-nsm::save_session ()
+nsmbase::save_session ()
 {
     bool result = is_active();
     if (result)
@@ -1012,7 +1012,7 @@ nsm::save_session ()
  */
 
 std::string
-nsm::construct_server_announce
+nsmbase::construct_server_announce
 (
     const std::string & appname,
     const std::string & exename,
@@ -1051,7 +1051,7 @@ get_nsm_url ()
 }           // namespace seq66
 
 /*
- * nsm.cpp
+ * nsmbase.cpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

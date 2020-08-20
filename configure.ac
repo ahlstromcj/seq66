@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-08-15
+dnl \update        2020-08-19
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -20,7 +20,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.90.5], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.91.0], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -101,7 +101,7 @@ build_os="'$(uname -srm)'"
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "Distro where build was done")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 
-VERSION="0.90.5"
+VERSION="0.91.0"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -284,12 +284,13 @@ AC_ARG_ENABLE(lash,
     [lash=no])
 
 if test "$lash" != "no"; then
-    PKG_CHECK_MODULES(LASH, lash-1.0 >= 0.5.0, lash_found="yes", lash_found="no")
+    PKG_CHECK_MODULES([LASH], [lash-1.0 >= 0.5.0], [lash_found="yes"],
+        [lash_found="no"])
     if test "$lash_found" = "yes"; then
         AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH])
         AC_SUBST(LASH_CFLAGS)
         AC_SUBST(LASH_LIBS)
-        AC_MSG_RESULT([LASH and NSM support enabled.]);
+        AC_MSG_RESULT([LASH support enabled.]);
         ac_nsm=yes
     else
         AC_MSG_WARN([LASH not found, session support will not be built.])
@@ -308,16 +309,19 @@ AC_ARG_ENABLE(nsm,
 
 dnl Check for optional LIBLO library, needed for NSM support.
 
-if test "$ac_nsm" = "yes"; then
-   PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
-   if test "x$ac_liblo" = "xyes"; then
-      AC_DEFINE(CONFIG_LIBLO, 1, [Define if LIBLO library is available.])
-      ac_cflags="$ac_cflags $LIBLO_CFLAGS"
-      ac_libs="$ac_libs $LIBLO_LIBS"
-   else
-      AC_MSG_WARN([LIBLO library not found, OSC/NSM support disabled.])
-      ac_nsm="no"
-   fi
+if test "$ac_nsm" != "no"; then
+    PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
+    if test "x$ac_liblo" = "xyes"; then
+        AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available.])
+dnl     ac_cflags="$ac_cflags $LIBLO_CFLAGS"
+dnl     ac_libs="$ac_libs $LIBLO_LIBS"
+        AC_SUBST(LIBLO_CFLAGS)
+        AC_SUBST(LIBLO_LIBS)
+        AC_MSG_RESULT([LIBLO support enabled.]);
+    else
+        AC_MSG_WARN([LIBLO library not found, OSC/NSM support disabled.])
+        ac_nsm="no"
+    fi
 else
    ac_nsm="no"
 fi
@@ -336,7 +340,8 @@ if test "$ac_nsm" != "no"; then
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     NSM_DEPS="../libsessions/src/.libs/libsessions.la"
-    AC_MSG_RESULT([sessions/nsm library build enabled.]);
+    AC_DEFINE(NSM_SUPPORT, 1, [Define to enable NSM])
+    AC_MSG_RESULT([Sessions/NSM support enabled.]);
 else
     build_sessions="no"
 fi
@@ -488,8 +493,8 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-08-15"
-#define VERSION "0.90.5"
+#define VERSION_DATE_SHORT "2020-08-19"
+#define VERSION "0.91.0"
 
 )
 

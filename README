@@ -1,6 +1,6 @@
-README for Seq66 0.90.5 (Sequencer64 refactored for C++/14 and Qt 5)
+README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-08-15
+2015-09-10 to 2020-08-17
 
 "Seq66" is a refactoring of the Qt-based version "Sequencer64" for better use of
 C++ and for removing a lot of krufty buildup.  With all the work that has been
@@ -56,6 +56,8 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.91.0:
+        -   Getting serious about Non Session Manager support.
     -   Version 0.90.5:
         -   More refactoring to improve Windows builds and fix deadlocks and
             playback on a default Windows 10 install.

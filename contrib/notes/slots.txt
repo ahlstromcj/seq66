@@ -1,10 +1,10 @@
-README for Seq66 0.90.5 Slot/pattern Commands and Layouts
+README for Seq66 0.91.0 Slot/pattern Commands and Layouts
 Chris Ahlstrom
-2015-09-10 to 2020-08-12
+2015-09-10 to 2020-08-17
 
 Legacy and Seq66 Commands:
 
-    (Still need to update this list)
+    (STILL NEED TO UPDATE THIS LIST)
 
                                 none = -1,           An out-of-range value, uninitialized.
  bpm_up                      0  bpm_up = 0,          BPM up; for MIDI up and down.

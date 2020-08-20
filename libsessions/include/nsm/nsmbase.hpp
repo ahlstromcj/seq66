@@ -1,16 +1,16 @@
-#if ! defined SEQ66_NSM_HPP
-#define SEQ66_NSM_HPP
+#if ! defined SEQ66_NSMBASE_HPP
+#define SEQ66_NSMBASE_HPP
 
 /**
- * \file          nsm.hpp
+ * \file          nsmbase.hpp
  *
- *    This module provides macros for generating simple messages, MIDI
- *    parameters, and more.
+ *    This module provides a reimplementation of the nsm.h header file as a
+ *    class.
  *
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-03-17
+ * \updates       2020-08-20
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -20,7 +20,9 @@
 #include "seq66_features.hpp"
 #include "util/basic_macros.h"
 
+#if defined SEQ66_LIBLO_SUPPORT
 #include <lo/lo.h>                      /* library for the OSC protocol     */
+#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -30,10 +32,10 @@ namespace seq66
 {
 
 /**
- *  nsm is an NSM OSC server/client base class.
+ *  nsmbase is an NSM OSC server/client base class.
  */
 
-class nsm
+class nsmbase
 {
 
 public:
@@ -100,13 +102,13 @@ protected:          // private:
 
 public:
 
-    nsm
+    nsmbase
     (
         const std::string & nsmurl,
         const std::string & nsmfile = "",
         const std::string & nsmext  = ""
     );
-    virtual ~nsm ();
+    virtual ~nsmbase ();
 
 public:
 
@@ -117,12 +119,12 @@ public:
         return m_active;
     }
 
-    bool is_a_client (const nsm * p)
+    bool is_a_client (const nsmbase * p)
     {
         return not_nullptr(p) && p->is_active();
     }
 
-    bool not_a_client (const nsm * p)
+    bool not_a_client (const nsmbase * p)
     {
         return is_nullptr(p) || ! p->is_active();
     }
@@ -252,7 +254,10 @@ public:
 
     const char * nsm_reply_message (reply replycode);
 
-};          // class nsm
+public:
+
+
+};          // class nsmbase
 
 /*
  *  External helper functions.
@@ -262,10 +267,10 @@ extern std::string get_nsm_url ();
 
 }           // namespace seq66
 
-#endif      // SEQ66_NSM_HPP
+#endif      // SEQ66_NSMBASE_HPP
 
 /*
- * nsm.hpp
+ * nsmbase.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

@@ -70,11 +70,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-08-15"
+#define SEQ66_VERSION_DATE_SHORT "2020-08-17"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.90.5"
+#define SEQ66_VERSION "0.91.0"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -138,8 +138,8 @@
  * this value or install the liblo-dev package.
  */
 
-#ifndef SEQ66_CONFIG_LIBLO
-#define SEQ66_CONFIG_LIBLO 1
+#ifndef SEQ66_LIBLO_SUPPORT
+#define SEQ66_LIBLO_SUPPORT 1
 #endif
 
 /*

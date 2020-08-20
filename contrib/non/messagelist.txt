@@ -1,0 +1,59 @@
+Qta cli srv prox
+ x   x   x   x          /error
+         x              /osc/ping
+ x   x   x   x          /reply
+ x       x   x          /nsm/client/gui_is_hidden
+ x       x   x          /nsm/client/gui_is_shown
+ x       x   x          /nsm/client/hide_optional_gui
+ x   x   x              /nsm/client/is_clean
+ x   x   x              /nsm/client/is_dirty
+         x   n          /nsm/client/label
+ x   x   x              /nsm/client/message
+ x   x   x   x          /nsm/client/open
+ x   x                  /nsm/client/progress
+ x   x       x          /nsm/client/save
+ x   x   x              /nsm/client/session_is_loaded
+ x       x   x          /nsm/client/show_optional_gui
+         x              /nsm/gui/client/dirty
+         x              /nsm/gui/client/has_optional_gui
+         x   x          /nsm/gui/client/label
+         x              /nsm/gui/client/message
+         x              /nsm/gui/client/new
+         x              /nsm/gui/client/progress
+         x              /nsm/gui/client/remove
+         x              /nsm/gui/client/resume
+         x              /nsm/gui/client/save
+         x              /nsm/gui/client/status
+         x              /nsm/gui/client/stop
+         x              /nsm/gui/client/switch
+                        /nsm/gui/client/visible     (BAD?)
+         x              /nsm/gui/client/gui_visible (NEW)
+         x              /nsm/gui/gui_announce
+         x   x          /nsm/gui/server_announce    (NEW)
+         x              /nsm/gui/server/message
+         x              /nsm/gui/session/name
+         x              /nsm/gui/session/root
+         x              /nsm/gui/session/session
+             x          /nsm/proxy/arguments
+             x          /nsm/proxy/client_error
+             x          /nsm/proxy/config_file
+             x          /nsm/proxy/executable
+             x          /nsm/proxy/kill
+             x          /nsm/proxy/label
+             x          /nsm/proxy/save_signal
+             x          /nsm/proxy/start
+             x          /nsm/proxy/stop_signal
+             x          /nsm/proxy/update
+         x              /nsm/server/abort
+         x              /nsm/server/add
+ x   x       x          /nsm/server/announce
+     x   x              /nsm/server/broadcast
+         x              /nsm/server/close
+         x              /nsm/server/duplicate
+         x              /nsm/server/list
+         x              /nsm/server/new
+         x              /nsm/server/open
+         x              /nsm/server/quit
+         x              /nsm/server/save
+                        /nsm/session/list
+                        /nsm/session/name

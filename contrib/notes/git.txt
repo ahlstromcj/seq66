@@ -73,7 +73,7 @@ branch and make another pull request on this other branch.
 To determine what changes were made in a pull request, use the following
 command.  If you just want the files listed, leave off the -p.
 
-    $ git request-pull -p master https://github.com/xxxxx/sequencer64.git
+    $ git request-pull -p master https://github.com/ahlstromcj/sequencer64.git
 
 Create the branch on your local machine and switch to it:
 
@@ -371,5 +371,6 @@ Permanently delete a file and its history:
     $ git push --all
 
     This can take a long long time if the file has thousands of commits.
+    Not yet sure if this really works!
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

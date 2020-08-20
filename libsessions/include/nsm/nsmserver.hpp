@@ -10,14 +10,14 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-11
- * \updates       2020-03-11
+ * \updates       2020-08-20
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
 
-#include "nsm/nsm.hpp"                  /* seq66::nsm base class            */
+#include "nsm/nsmbase.hpp"              /* seq66::nsmbase base class        */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -27,10 +27,10 @@ namespace seq66
 {
 
 /**
- *  nsm is an NSM OSC server/client base class.
+ *  nsmbase is an NSM OSC server/client base class.
  */
 
-class nsmserver : public nsm
+class nsmserver : public nsmbase
 {
 
 public:

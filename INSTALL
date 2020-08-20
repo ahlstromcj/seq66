@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.90.5 and above
+INSTALL for Seq66 v. 0.91.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-08-15
+2015-09-10 to 2020-08-19
 
 Getting Seq66 requires building the code or going to the
 sequencer64-packages/seq66 directory on GitHub.  The bootstrap setup is primarily
@@ -23,7 +23,7 @@ versions of the program can be built:
         console or as a daemon, controlled via MIDI and playlists.
 
     We provide a portable Windows Zip package and a Windows installer in
-    the "sequencer64-packages" project in GitHub, in the seq66 subdirectory.
+    the "sequencer64-packages" project in GitHub, in the "seq66" subdirectory.
     It is also fairly easy to build the Windows version using QtCreator/qmake.
     See nsis/build_release_package.bat; it not only builds it using qmake and
     mingw, but also describes how to create Windows packages.
@@ -53,25 +53,24 @@ Quick Install:
     Seq66, "seq66".
 
     The "configure" script for the build process means one needs to install
-    the various "dev" dependencies.  See the DEPENDENCIES section.  In
-    addition, there may be a need to do the following commands, which require
-    automake and libtool to be installed:
+    the various "dev" dependencies.  See the DEPENDENCIES section.
+    The following commands require automake and libtool to be installed.
+    Grab a Seq66 tarball and untar it.  Go to the "seq66" directory and run
+    these commands:
 
         $ libtoolize
         $ automake --add-missing
-
-    Grab a Seq66 tarball e.g. seq66-master-rtmidi-0.90.0-1.tar.xz.
-    Untar it
-
         $ ./configure --enable-release --enable-rtmidi
         $ make &> make.log
         $ sudo make install
 
-    The configure "--enable-release --enable-rtmidi" options are optional,
-    since they are the defaults.  This build results in the first executable
-    described above, seq66, the same setup created by "./bootstrap -er -rm".
-    If any issues occur, please write me through GitHub, or directly at my
-    Gmail address.
+    The "--enable-release --enable-rtmidi" options are optional. Even faster:
+
+        $ ./bootstrap -er
+        $ make &> make.log
+        $ sudo make install
+
+    This build results in the "qseq66" executable.
 
 Advanced Steps:
 

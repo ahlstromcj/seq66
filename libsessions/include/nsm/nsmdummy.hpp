@@ -32,17 +32,17 @@ namespace seq66
  *  nsm is an NSMDUMMY OSC server/client base class.
  */
 
-class nsm
+class nsmbase
 {
 
 public:
 
-    nsm (const std::string &)
+    nsmbase (const std::string &)
     {
         // no code
     }
 
-    virtual ~nsm ()
+    virtual ~nsmbase ()
     {
         // no code
     }

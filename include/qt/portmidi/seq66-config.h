@@ -63,11 +63,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-08-15"
+#define SEQ66_VERSION_DATE_SHORT "2020-08-17"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.90.5"
+#define SEQ66_VERSION "0.91.0"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -130,7 +130,7 @@
  * The LIBLO library is unavailable on Windows.  Don't know about Mac!
  */
 
-#undef SEQ66_CONFIG_LIBLO
+#undef SEQ66_LIBLO_SUPPORT
 
 /*
  * Names the configuration file for this version of application. The "q"
