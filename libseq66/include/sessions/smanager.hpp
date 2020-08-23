@@ -131,7 +131,7 @@ public:
         return m_midi_filename;
     }
 
-    virtual bool create_session ();
+    virtual bool create_session (int argc = 0, char * argv [] = nullptr);
     virtual bool close_session (bool ok = true);
     virtual bool create_window ();      /* does mostly nothing by default   */
     virtual void show_message (const std::string & msg) const;

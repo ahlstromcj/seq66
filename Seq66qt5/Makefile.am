@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-03-29
+# \update      2020-08-23
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -146,6 +146,7 @@ libmath = -lm
 libraries = \
  $(NSM_LIBS) \
  -L$(libseq_qt5dir) -lseq_qt5 \
+ -L$(libseq66dir) -lsessions \
  -L$(libseq66dir) -lseq66 \
  -L$(libseq_rtmididir) -lseq_rtmidi
 
@@ -162,6 +163,7 @@ dependencies = \
  $(NSM_DEPS) \
  $(libseq_rtmididir)/libseq_rtmidi.la \
  $(libseq_qt5dir)/libseq_qt5.la \
+ $(libsessionsdir)/libsessions.la \
  $(libseq66dir)/libseq66.la
 
 #******************************************************************************

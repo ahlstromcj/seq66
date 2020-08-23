@@ -29,7 +29,7 @@
 #   built-in Seq66 "portmidi" library.  We recommend runnning qmake and make
 #   from a "shadow" directory.  See "contrib/scripts/q-make".
 #
-#   Unsupported (use automake): Seqtool
+#   Unsupported project (use automake): Seqtool
 #
 #------------------------------------------------------------------------------
 

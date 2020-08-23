@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-12
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -934,15 +934,6 @@ public:
     bool error_pending () const
     {
         return m_error_pending;
-    }
-
-    bool session_support () const                   /* PROVISIONAL          */
-    {
-#if defined SEQ66_LASH_SUPPORT
-        return true;
-#else
-        return false;
-#endif
     }
 
     bool modified () const

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-07-24
+ * \updates       2020-08-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -64,8 +64,9 @@ namespace seq66
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    /* version("1");                    // a new version on 2019-12-12      */
-    version("2");                       /* a new version on 2020-06-20      */
+    // version("1");                    // a new version on 2019-12-12
+    // version("2");                    // a new version on 2020-06-20
+    version("3");                       // a new version on 2020-08-22
 }
 
 /**
@@ -557,7 +558,10 @@ usrfile::parse ()
         usr().resume_note_ons(string_to_bool(s));
     }
 
-    std::string s = get_variable(file, "[new-pattern-editor]", "armed");
+    std::string s = get_variable(file, "[user-session]", "session");
+    usr().session_manager(s);
+
+    s = get_variable(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(string_to_bool(s));
 
     s = get_variable(file, "[new-pattern-editor]", "thru");
@@ -615,7 +619,7 @@ usrfile::write ()
      */
 
     file
-        << "# Seq66 0.90.3 (and above) user configuration file\n"
+        << "# Seq66 0.91.0 (and above) user configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -1298,12 +1302,24 @@ usrfile::write ()
         ;
 
     /*
+     * [user-session]
+     */
+
+    file <<
+        "\n[user-session]\n\n"
+        "# This section specifies the session manager to use, if any.  It\n"
+        "# contains only one variable, 'session', which can be set to 'none'\n"
+        "# (the default), 'nsm' (Non or New Session Manager), or 'lash' (the\n"
+        "# LASH session manager.  EXPERIMENTAL.\n\n"
+        << "session = " << usr().session_manager_name() << "\n"
+        ;
+
+    /*
      * [new-pattern-editor]
      */
 
     file <<
-        "\n[new-pattern-editor]\n"
-        "\n"
+        "\n[new-pattern-editor]\n\n"
         "# This section contains the setup values for recording when a new\n"
         "# pattern is opened. For flexibility, a new pattern means only that\n"
         "# the loop has the default name, 'Unititled'. These values save time\n"

@@ -96,6 +96,7 @@
  *    - SEQ66_JACK_SESSION
  *    - SEQ66_JACK_SUPPORT
  *    - SEQ64_LASH_SUPPORT
+ *    - SEQ64_NSM_SUPPORT
  */
 
 /*

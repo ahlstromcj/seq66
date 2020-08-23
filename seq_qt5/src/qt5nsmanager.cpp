@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-14
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -34,6 +34,7 @@
 #include <QApplication>                 /* QApplication etc.                */
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
+#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
@@ -62,12 +63,18 @@ qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
     QObject         (parent),
     smanager        (),
     m_application   (app),
-#if defined SEQ66_NSM_SESSION
+#if defined SEQ66_NSM_SUPPORT
     m_nsm_client    (),
 #endif
     m_window        ()
 {
-    // no code yet
+#if defined SEQ66_NSM_SUPPORT
+    std::string nsmfile = "dummy/file";
+    std::string nsmext = nsm::default_ext();
+    m_nsm_client.reset(create_nsmclient(nsmfile, nsmext));
+#else
+#error We want NSM support enabled for development purposes.
+#endif
 }
 
 /**
@@ -84,9 +91,9 @@ qt5nsmanager::~qt5nsmanager ()
  */
 
 bool
-qt5nsmanager::create_session ()
+qt5nsmanager::create_session (int argc, char * argv [])
 {
-    return smanager::create_session();
+    return smanager::create_session(argc, argv);
 }
 
 /**

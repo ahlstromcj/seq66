@@ -6,7 +6,7 @@
 # \library     qseq66 and qrseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-08-20
+# \update      2020-08-23
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -23,7 +23,7 @@ message($$_PRO_FILE_PWD_)
 
 TEMPLATE = lib
 CONFIG += staticlib config_prl qtc_runnable c++14
-TARGET = seq66
+TARGET = sessions
 
 # These are needed to set up seq66_platform_macros:
 
@@ -46,12 +46,12 @@ contains (CONFIG, rtmidi) {
 HEADERS += include/lash/lash.hpp \
  include/nsm/nsmbase.hpp \
  include/nsm/nsmclient.hpp \
- include/nsm/nsmmessages.hpp
+ include/nsm/nsmmessagesex.hpp
 
 SOURCES += src/lash/lash.cpp \
  src/nsm/nsmbase.cpp \
  src/nsm/nsmclient.cpp \
- src/nsm/nsmmessages.cpp \
+ src/nsm/nsmmessagesex.cpp \
 
 INCLUDEPATH = ../include/qt/rtmidi \
  ../libseq66/include \

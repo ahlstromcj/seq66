@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-08-15
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -63,7 +63,7 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-08-17"
+#define SEQ66_VERSION_DATE_SHORT "2020-08-23"
 #endif
 
 #ifndef SEQ66_VERSION
@@ -289,7 +289,7 @@
 #undef SEQ66_JACK_SESSION
 #undef SEQ66_JACK_SUPPORT
 #undef SEQ66_LASH_SUPPORT
-#undef SEQ66_NSM_SESSION
+#undef SEQ66_NSM_SUPPORT
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #ifndef SEQ66_LT_OBJDIR
@@ -319,7 +319,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.90.4"
+#define SEQ66_PACKAGE_STRING "Seq66 0.91.0"
 #endif
 
 /* Define to the one symbol short name of this package. */

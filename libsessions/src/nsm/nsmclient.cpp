@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-03-08
+ * \updates       2020-08-22
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -36,6 +36,17 @@
  *  GUI. The same server-side API can also be implemented by other session
  *  managers (such as LADISH).  The only dependency for client implementations
  *  is liblo (the OSC library) and the nsm.h header file.
+ *
+ *  Session Manager Startup:
+ *
+ *      To start the Non Session Manager and the GUI:
+ *
+ *      $ non-session-manager -- --session-root path
+ *
+ *      The default path is "$HOME/NSM Sessions".  At startup, NSM_URL is
+ *      added to the environment.  Commands are handled as per the "Commands
+ *      handling by the server" section at the top of the nsmmessageex.cpp
+ *      module.
  *
  *  Process:
  *
@@ -71,6 +82,7 @@
  *
  *          NSM_URL=osc.udp://127.0.0.1:18440/
  *          NSM_URL=osc.udp://mlsleno:15325/        (on developer laptop)
+ *          NSM_URL=osc.udp://mlsasus.mls:12325/    (on another laptop)
  *
  *      Note that, if running an nsm_proxy client, this variable may need to be
  *      passed on the command-line (in typical bash fashion).
@@ -81,6 +93,29 @@
  *  New session:
  *
  *      TODO
+ *
+ *  Detecting NSM session actions:
+ *
+ *      In a Qt-based application, we can provide an extended NSM client that
+ *      will respond to signals propagated by the "emit" operator. In a
+ *      command-line application, we can set flags that are detected in a polling
+ *      loop and cause actions to occur.  In Gtkmm applications, we can set
+ *      callbacks to be executed.  It would be nice to use the same (callback?)
+ *      system for all of them.
+ *
+ * Shutdown:
+ *
+ *      When an NSM client shuts down, NSM detects its PID and detects if the
+ *      client aborted or stopped normally. A normal stopped occurs when the
+ *      client receives a KILL or QUIT command.  If a QUIT command, the server
+ *      sends:
+ *
+ *          "/nsm/gui/client/status" + Client-ID + "removed" status
+ *
+ *      Otherwise, it sends two messages:
+ *
+ *          "/nsm/gui/client/label" + Client-ID + optional error message
+ *          "/nsm/gui/client/status" + Client-ID + "stopped"
  *
  *  Notes for the future:
  *
@@ -105,15 +140,6 @@
  *      session.
  *
  *      INVESTIGATE the NSM replacement, RaySend!!!
- *
- *  Detecting NSM session actions:
- *
- *      In a Qt-based application, we can provide an extended NSM client that
- *      will respond to signals propagated by the "emit" operator. In a
- *      command-line application, we can set flags that are detected in a polling
- *      loop and cause actions to occur.  In Gtkmm applications, we can set
- *      callbacks to be executed.  It would be nice to use the same (callback?)
- *      system for all of them.
  */
 
 #include <stdlib.h>                     /* C geteven() or secure_getenv()   */
@@ -121,7 +147,7 @@
 
 #include "util/basic_macros.h"          /* not_nullptr() macro              */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
-#include "nsm/nsmmessages.hpp"          /* seq66::nsm message functions     */
+#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
 
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
@@ -190,20 +216,23 @@ nsmclient::open_session ()
 }
 
 /**
+ *  Provides a factory function to create an nsmclient.
  *
+ *  Note that this bare pointer should be assigned to a smart pointer, such as
+ *  std::unique_ptr<>.  See seq_qt5/src/qt5nsmanager.cpp for an example.
  */
 
-std::unique_ptr<nsmclient>
+nsmclient *
 create_nsmclient
 (
     const std::string & nsmfile,
     const std::string & nsmext
 )
 {
-    std::unique_ptr<nsmclient> result;
+    nsmclient * result = nullptr;
     std::string url = get_nsm_url();
     if (! url.empty())
-        result.reset(new nsmclient(url, nsmfile, nsmext));
+        result = new (std::nothrow) nsmclient(url, nsmfile, nsmext);
 
     return result;
 }

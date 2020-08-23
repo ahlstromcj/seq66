@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-07-15
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -36,10 +36,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
-
-#if defined SEQ66_LASH_SUPPORT
-#include "lash/lash.hpp"                /* seq66::lash_driver functions     */
-#endif
 
 #if defined SEQ66_PORTMIDI_SUPPORT
 #include "portmidi.h"                   /* Pm_error_present(), ...          */
@@ -101,7 +97,7 @@ main (int argc, char * argv [])
             if (result)
             {
                 sm.error_handling();
-                result = sm.create_session();
+                result = sm.create_session(argc, argv);
                 if (result)
                 {
                     exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;

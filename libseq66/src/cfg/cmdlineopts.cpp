@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-07
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -87,9 +87,11 @@ cmdlineopts::s_long_options [] =
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
     {"home",                required_argument, 0, 'H'},
-#ifdef SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT
     {"lash",                0, 0, 'L'},
-    {"no-lash",             0, 0, 'n'},
+#endif
+#if defined SEQ66_NSM_SUPPORT
+    {"nsm",                 0, 0, 'n'},
 #endif
     {"bus",                 required_argument, 0, 'b'},
     {"buss",                required_argument, 0, 'B'},
@@ -181,9 +183,11 @@ cmdlineopts::s_help_1a =
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
 "                            always relative to $HOME.  The default is\n"
 "                            .config/seq66.\n"
-#ifdef SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT
 "   -L, --lash               Activate built-in LASH support.\n"
-"   -n, --no-lash            Do not activate built-in LASH support.\n"
+#endif
+#if defined SEQ66_NSM_SUPPORT
+"   -n, --nsm                Activate built-in Non Session Manager support.\n"
 #endif
 "   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
 "   -m, --manual-ports       Don't attach system ALSA ports. Use virtual ports.\n"
@@ -891,9 +895,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             usr().inverse_colors(true);
             break;
 
-#ifdef SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT
         case 'L':
             rc().lash_support(true);
+            usr().session_manager("lash");
             printf("[Activating LASH support]\n");
             break;
 #endif
@@ -912,10 +917,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             printf("[Deactivating JACK MIDI]\n");
             break;
 
-#ifdef SEQ66_LASH_SUPPORT
+#if defined SEQ66_NSM_SUPPORT
         case 'n':
             rc().lash_support(false);
-            printf("[Deactivating LASH support]\n");
+            usr().session_manager("nsm");
+            printf("[Activating NSM support]\n");
             break;
 #endif
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-13
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -645,7 +645,12 @@ rcfile::parse ()
 
 #endif  // SEQ66_USE_FRUITY_CODE
 
-#if defined SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT_MOVED
+
+        /*
+         * This option is moved to the "usr" file's [user-session] section.
+         */
+
         if (line_after(file, "[lash-session]"))
         {
             sscanf(scanline(), "%d", &method);
@@ -1019,7 +1024,11 @@ rcfile::write ()
         << rc_ref().with_jack_midi() << "   # with_jack_midi\n"
         ;
 
-#if defined SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT_MOVED
+        /*
+         * This option is moved to the "usr" file's [user-session] section.
+         */
+
         file << "\n"
             "[lash-session]\n\n"
             "# Set this value to 0 to disable LASH session management.\n"

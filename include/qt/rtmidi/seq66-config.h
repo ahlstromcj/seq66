@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2020-08-15
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,7 +70,7 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-08-17"
+#define SEQ66_VERSION_DATE_SHORT "2020-08-23"
 #endif
 
 #ifndef SEQ66_VERSION
@@ -308,6 +308,14 @@
 #endif
 
 /*
+ * Define if NSM support is available.
+ */
+
+#ifndef SEQ66_NSM_SUPPORT
+#define SEQ66_NSM_SUPPORT 1
+#endif
+
+/*
  * Define to enable LASH.  Disabled for the Qt "rtmidi" build.
  */
 
@@ -326,14 +334,6 @@
 
 #undef SEQ66_MULTI_MAINWID
 
-/*
- * Define if NSM support is available.
- */
-
-#ifndef SEQ66_NSM_SESSION
-#define SEQ66_NSM_SESSION 1
-#endif
-
 /* Name of package */
 #ifndef SEQ66_PACKAGE
 #define SEQ66_PACKAGE "seq66"
@@ -351,7 +351,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.90.4"
+#define SEQ66_PACKAGE_STRING "Seq66 0.91.0"
 #endif
 
 /* Define to the one symbol short name of this package. */

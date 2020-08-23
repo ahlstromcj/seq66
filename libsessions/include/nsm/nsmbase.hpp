@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-20
+ * \updates       2020-08-21
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -19,6 +19,7 @@
 
 #include "seq66_features.hpp"
 #include "util/basic_macros.h"
+#include "nsm/nsmmessagesex.hpp"
 
 #if defined SEQ66_LIBLO_SUPPORT
 #include <lo/lo.h>                      /* library for the OSC protocol     */
@@ -254,7 +255,9 @@ public:
 
     const char * nsm_reply_message (reply replycode);
 
-public:
+protected:
+
+    void add_client_method (nsm::tag t, lo_method_handler h);
 
 
 };          // class nsmbase

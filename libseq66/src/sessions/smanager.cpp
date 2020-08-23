@@ -56,7 +56,7 @@
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
 
-#if defined SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
 #include "lash/lash.hpp"                /* seq66::lash_driver functions     */
 #endif
 
@@ -316,11 +316,14 @@ smanager::open_midi_file (const std::string & fname, std::string & errmsg)
  */
 
 bool
-smanager::create_session ()
+smanager::create_session (int /*argc*/, char * /*argv*/ [])
 {
-#if defined SEQ66_LASH_SUPPORT
-    if (rc().lash_support())
-        create_lash_driver(p, argc, argv);
+#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
+    if (usr().is_lash_session())    /* rc().lash_support() */
+    {
+        if (m_perf_pointer)
+            create_lash_driver(*m_perf_pointer, argc, argv);
+    }
     else
 #endif
 
@@ -371,7 +374,7 @@ smanager::close_session (bool ok)
         }
     }
 
-#if defined SEQ66_LASH_SUPPORT
+#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
     if (rc().lash_support())
         delete_lash_driver();
 #endif

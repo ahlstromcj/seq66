@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-11
+ * \updates       2020-08-22
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -118,6 +118,17 @@ class usrsettings final : public basesettings
     friend class usrfile;       /* allow protected access to file parser    */
 
 private:
+
+    /**
+     *  Indicates what, if any, session manager will be used.
+     */
+
+    enum class session
+    {
+        none,
+        nsm,
+        lash
+    };
 
     /**
      *  Provides a setting to control the overall style of grid-drawing for
@@ -881,6 +892,15 @@ private:
     bool m_resume_note_ons;
 
     /**
+     *  [user-session]
+     *
+     *  This value indicates to create and use a Non Session Manager (or New
+     *  Session Manager) client.
+     */
+
+    session m_session_manager;
+
+    /**
      *  [new-pattern-editor]
      *
      *  A new feature, in progress.
@@ -1537,6 +1557,23 @@ public:
         return m_resume_note_ons;
     }
 
+    session session_manager () const
+    {
+        return m_session_manager;
+    }
+
+    std::string session_manager_name () const;
+
+    bool is_nsm_session () const
+    {
+        return m_session_manager == session::nsm;
+    }
+
+    bool is_lash_session () const
+    {
+        return m_session_manager == session::lash;
+    }
+
     bool new_pattern_armed () const
     {
         return m_new_pattern_armed;
@@ -1665,6 +1702,8 @@ public:         // used in main application module and the usrfile class
     {
         m_resume_note_ons = f;
     }
+
+    void session_manager (const std::string & sm);
 
     void new_pattern_armed (bool flag)
     {

@@ -93,7 +93,7 @@ create_lash_driver (performer & p, int argc, char ** argv)
     bool result = is_nullptr(s_global_lash_driver);
     if (result)
     {
-        result = rc().lash_support();
+        result = usr().is_lash_session();   /* rc().lash_support() */
         if (result)
         {
             s_global_lash_driver = new lash(p, argc, argv);
@@ -108,9 +108,9 @@ create_lash_driver (performer & p, int argc, char ** argv)
 #else
 
 bool
-create_lash_driver (performer & p, int, char **)
+create_lash_driver (performer &, int, char **)
 {
-    return p.session_support(); // or just "false"
+    return false;
 }
 
 #endif

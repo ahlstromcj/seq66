@@ -16852,10 +16852,9 @@ NSM_CFLAGS=
 NSM_LIBS=
 NSM_DEPS=
 
-
 if test "$ac_nsm" != "no"; then
 
-$as_echo "#define NSM_SESSION 1" >>confdefs.h
+$as_echo "#define NSM_SUPPORT 1" >>confdefs.h
 
     build_sessions="yes"
     NSM_CFLAGS="-I ../libsessions/include"

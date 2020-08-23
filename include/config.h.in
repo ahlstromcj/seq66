@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2020-08-19"
+#define VERSION_DATE_SHORT "2020-08-23"
 #define VERSION "0.91.0"
 
 
@@ -114,7 +114,7 @@
 /* Define to enable JACK driver */
 #undef JACK_SUPPORT
 
-/* Define to enable LASH */
+/* Define to enable LASH (default=no) */
 #undef LASH_SUPPORT
 
 /* Define if LIBLO library is available. */
@@ -122,9 +122,6 @@
 
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
-
-/* Define if NSM support is available. */
-#undef NSM_SESSION
 
 /* Define to enable NSM */
 #undef NSM_SUPPORT

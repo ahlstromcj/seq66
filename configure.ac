@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-08-19
+dnl \update        2020-08-23
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -287,7 +287,7 @@ if test "$lash" != "no"; then
     PKG_CHECK_MODULES([LASH], [lash-1.0 >= 0.5.0], [lash_found="yes"],
         [lash_found="no"])
     if test "$lash_found" = "yes"; then
-        AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH])
+        AC_DEFINE(LASH_SUPPORT, 1, [Define to enable LASH (default=no)])
         AC_SUBST(LASH_CFLAGS)
         AC_SUBST(LASH_LIBS)
         AC_MSG_RESULT([LASH support enabled.]);
@@ -330,12 +330,8 @@ NSM_CFLAGS=
 NSM_LIBS=
 NSM_DEPS=
 
-dnl Krufty!!!
-dnl NSM_LIBS="-l lo -L ../libsessions/src/.libs/ -lsessions"
-dnl NSM_LIBS="-llo -L$(builddir)/libsessions/src/.libs/ -lsessions"
-
 if test "$ac_nsm" != "no"; then
-    AC_DEFINE(NSM_SESSION, 1, [Define if NSM support is available.])
+    AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available.])
     build_sessions="yes"
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
@@ -493,7 +489,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-08-19"
+#define VERSION_DATE_SHORT "2020-08-23"
 #define VERSION "0.91.0"
 
 )

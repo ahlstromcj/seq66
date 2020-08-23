@@ -19,13 +19,13 @@
 /**
  * \file          seq66_features.cpp
  *
- *  This module adds some functions that reflect the features compiled into
- *  the application.
+ *  This module adds some functions that reveal the features compiled into
+ *  the Seq66 application.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2020-03-19
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -255,12 +255,11 @@ seq_build_details ()
 #if defined SEQ66_LASH_SUPPORT
         << "  LASH support\n"
 #endif
-#if defined SEQ66_NSM_SESSION
-        << "  Non Session Manager (NSM/OSC) support\n"
+#if defined SEQ66_NSM_SUPPORT
+        << "  NSM (Non Session Manager) support\n"
 #endif
-        << "  Seq32 chord generator, LFO window, menu buttons, transpose\n"
-        << "  BPM Tap button, solid piano-roll grid\n"
-        << "  Song performance recording\n"
+        << "  Seq32 chord generator, LFO window, menu buttons, transpose, BPM\n"
+        << "  Tap button, solid piano-roll grid, song performance recording\n"
 #if defined SEQ66_JE_PATTERN_PANEL_SCROLLBARS
         << "  Main window scroll-bars\n"
 #endif

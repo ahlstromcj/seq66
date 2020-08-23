@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-08-20
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -91,7 +91,7 @@
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
-#include "nsm/nsmmessages.hpp"          /* seq66::nsm message functions     */
+#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
 #include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
 
 #if defined SEQ66_PLATFORM_DEBUG
@@ -143,7 +143,7 @@ osc_nsm_error
 {
     nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     bool not_sis = strcmp(types, "sis") != 0;
-    if (is_nullptr(pnsmc) || not_sis || (! nsm_is_announce(&argv[0]->s)))
+    if (is_nullptr(pnsmc) || not_sis || (! nsm::is_announce(&argv[0]->s)))
         return -1;
 
     pnsmc->announce_error(&argv[2]->s);
@@ -168,7 +168,7 @@ osc_nsm_reply
 )
 {
     nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
-    if (is_nullptr(pnsmc) || (! nsm_is_announce(&argv[0]->s)))
+    if (is_nullptr(pnsmc) || (! nsm::is_announce(&argv[0]->s)))
         return -1;
 
     // If needed, how to add to nsm::announce_reply()?
@@ -391,18 +391,16 @@ nsmbase::nsmbase
             m_lo_server = lo_server_thread_get_server(m_lo_thread);
             if (not_nullptr(m_lo_server))
             {
-                ADD_METHOD(nsm_basic_error(), "sis", osc_nsm_error);
-                ADD_METHOD(nsm_basic_reply(), "ssss", osc_nsm_reply);
-                ADD_METHOD(nsm_cli_open(), "sss", osc_nsm_open);
-                ADD_METHOD(nsm_cli_save(), "", osc_nsm_save);
+                ADD_METHOD("/error", "sis", osc_nsm_error);
+                ADD_METHOD("/reply", "ssss", osc_nsm_reply);
+                ADD_METHOD("/nsm/client/open", "sss", osc_nsm_open);
+                ADD_METHOD("/nsm/client/save", "", osc_nsm_save);
                 ADD_METHOD(NULL, NULL, osc_nsm_broadcast);
-                ADD_METHOD(nsm_cli_is_loaded(), "", osc_nsm_session_loaded);
-                ADD_METHOD(nsm_cli_label(), "", osc_nsm_label);
-                ADD_METHOD(nsm_cli_show_opt_gui(), "", osc_nsm_show);
-                ADD_METHOD(nsm_cli_hide_opt_gui(), "", osc_nsm_hide);
+                ADD_METHOD("/nsm/client/session_is_loaded", "", osc_nsm_session_loaded);
+                ADD_METHOD("/nsm/client/label", "", osc_nsm_label);
+                ADD_METHOD("/nsm/client/show_optional_gui", "", osc_nsm_show);
+                ADD_METHOD("/nsm/client/hide_optional_gui", "", osc_nsm_hide);
                 lo_server_thread_start(m_lo_thread);
-                if (m_nsm_ext.empty())
-                    m_nsm_ext = nsm_default_ext();
             }
             else
             {
@@ -478,18 +476,23 @@ nsmbase::announce
 {
     if (lo_is_valid())
     {
-        std::string f = executable_full_path();
-        const char * filename = f.c_str();
+        const char * filename = executable_full_path().c_str();
         const char * app = appname.c_str();
         const char * caps = capabilities.c_str();
         int pid = int(getpid());
-        lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            nsm_srv_announce(), "sssiii",
-            app, caps, filename,
-            NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::server_msg(nsm::tag::announce, message, pattern);
+        if (ok)
+        {
+            lo_send_from                /* "/nsm/server/announce" "sssiii"  */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                message.c_str(), pattern.c_str(),
+                app, caps, filename,
+                NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
+            );
+        }
     }
 #if defined SEQ66_PLATFORM_DEBUG
     printf("announce(%s, %s)\n", appname.c_str(), capabilities.c_str());
@@ -505,7 +508,7 @@ nsmbase::dirty (bool isdirty)
 {
     if (lo_is_valid())
     {
-        const char * path = nsm_dirty_msg(isdirty);
+        const char * path = nsm::dirty_msg(isdirty).c_str();
         lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
         m_dirty = true;
 #if defined SEQ66_PLATFORM_DEBUG
@@ -536,7 +539,7 @@ nsmbase::visible (bool isvisible)
 {
     if (lo_is_valid())
     {
-        const char * path = nsm_visible_msg(isvisible);
+        const char * path = nsm::visible_msg(isvisible).c_str();
         lo_send_from(m_lo_address, m_lo_server, LO_TT_IMMEDIATE, path, "");
 #if defined SEQ66_PLATFORM_DEBUG
         printf("visible(%s): %s\n", bool_to_string(isvisible).c_str(), path);
@@ -556,14 +559,20 @@ nsmbase::progress (float percent)
 {
     if (lo_is_valid())
     {
-        lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            nsm_cli_progress(), "f", percent
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::client_msg(nsm::tag::progress, message, pattern);
+        if (ok)
+        {
+            lo_send_from                    /* "/nsm/client/progress" "f"   */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                message.c_str(), pattern.c_str(), percent
+            );
 #if defined SEQ66_PLATFORM_DEBUG
-        printf("progress(%g)\n", percent);
+            printf("progress(%g)\n", percent);
 #endif
+        }
     }
 }
 
@@ -576,14 +585,20 @@ nsmbase::is_dirty ()
 {
     if (lo_is_valid())
     {
-        lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            nsm_cli_is_dirty(), ""
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::client_msg(nsm::tag::dirty, message, pattern);
+        if (ok)
+        {
+            lo_send_from                    /* "/nsm/client/is_dirty" ""    */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                message.c_str(), pattern.c_str()
+            );
 #if defined SEQ66_PLATFORM_DEBUG
-        printf("is_dirty()\n");
+            printf("is_dirty()\n");
 #endif
+        }
     }
 }
 
@@ -596,11 +611,17 @@ nsmbase::is_clean ()
 {
     if (lo_is_valid())
     {
-        lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            nsm_cli_is_clean(), ""
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::client_msg(nsm::tag::clean, message, pattern);
+        if (ok)
+        {
+            lo_send_from                    /* "/nsm/client/is_clean" ""    */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                message.c_str(), pattern.c_str()
+            );
+        }
 #if defined SEQ66_PLATFORM_DEBUG
         printf("is_clean()\n");
 #endif
@@ -617,14 +638,21 @@ nsmbase::message (int priority, const std::string & mesg)
 {
     if (lo_is_valid())
     {
-        lo_send_from
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            nsm_cli_message(), "is", priority, mesg.c_str()
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::client_msg(nsm::tag::message, message, pattern);
+        if (ok)
+        {
+            lo_send_from                    /* "/nsm/client/message" "is"   */
+            (
+                m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+                message.c_str(), pattern.c_str(),
+                priority, mesg.c_str()
+            );
 #if defined SEQ66_PLATFORM_DEBUG
-        printf("message(%d, %s\n", priority, mesg.c_str());
+            printf("message(%d, %s\n", priority, mesg.c_str());
 #endif
+        }
     }
 }
 
@@ -635,13 +663,13 @@ nsmbase::message (int priority, const std::string & mesg)
 void
 nsmbase::open_reply (reply replycode)
 {
-    nsm_reply(nsm_cli_open(), replycode);
+    nsm_reply("/nsm/client/open", replycode);
 }
 
 void
 nsmbase::save_reply (reply replycode)
 {
-    nsm_reply(nsm_cli_save(), replycode);
+    nsm_reply("/nsm/client/save", replycode);
 }
 
 const char *
@@ -913,6 +941,14 @@ nsmbase::hide ()
 /**
  *  The lo_message type is a typedef of a void pointer, as are most of the
  *  "lo_" types.
+ *
+ *  int lo_send_message_from
+ *  (
+ *      lo_address target,
+ *      lo_server serv,
+ *      const char * path,
+ *      lo_message msg
+ *  )
  */
 
 void
@@ -921,10 +957,18 @@ nsmbase::broadcast (const std::string & path, lo_message msg)
     nsm_debug("broadcast");
     if (lo_is_valid())
     {
-        lo_send_message_from
-        (
-            m_lo_address, m_lo_server, nsm_srv_broadcast(), msg
-        );
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::server_msg(nsm::tag::broadcast, message, pattern);
+        // pattern = msg;
+        if (ok)
+        {
+            lo_send_message_from            /* "/nsm/server/broadcat" msg   */
+            (
+                m_lo_address, m_lo_server,
+                message.c_str(), msg                // pattern.c_str()
+            );
+        }
     }
     // emit broadcast();
     infoprintf("nsm::broadcast(%s)\n", path.c_str());
@@ -991,6 +1035,53 @@ nsmbase::save_session ()
     return result;
 }
 
+/**
+ *  lo_method                           // void * to a new server method
+ *  lo_server_add_method
+ *  (
+ *      lo_server st,                   // void * created by lo_server_new()
+ *      const char * path,
+ *      const char * typespec,
+ *      lo_method_handler h,            // see below
+ *      const void * userdata
+ *  )
+ */
+
+/**
+ *  lo_method                           // void * to a new server method
+ *  lo_server_thread_add_method
+ *  (
+ *      lo_server_thread st,            // void * created by lo_server_thread_new()
+ *      const char * typespec,
+ *      lo_method_handler h,            // see below
+ *      const void * userdata
+ *  )
+ *
+ *  int (* lo_method_handler)
+ *  (
+ *      const char * path,
+ *      const char * types,
+ *      lo_arg ** argv, int argc,       // a union of many types
+ *      lo_message msg,                 // void * created by lo_message_new()
+ *      void * user_data
+ *  )
+ *  )
+ */
+
+void
+nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
+{
+    std::string message;
+    std::string pattern;
+    if (client_msg(t, message, pattern))
+    {
+        (void) lo_server_thread_add_method
+        (
+            m_lo_thread, message.c_str(), pattern.c_str(), h, this
+        );
+    }
+}
+
 #if defined USE_THIS_CODE
 
 /**
@@ -1045,7 +1136,7 @@ nsmbase::construct_server_announce
 std::string
 get_nsm_url ()
 {
-    return get_session_url(nsm_url());
+    return get_session_url(nsm::url());
 }
 
 }           // namespace seq66

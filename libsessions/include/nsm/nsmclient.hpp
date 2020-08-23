@@ -10,14 +10,12 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-20
+ * \updates       2020-08-23
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
-
-#include <memory>                       /* std::unique_ptr<>                */
 
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase base class        */
 
@@ -197,7 +195,7 @@ signals:                            // Session client callbacks.
  *  External helper functions.
  */
 
-extern std::unique_ptr<nsmclient> create_nsmclient
+extern nsmclient * create_nsmclient
 (
     const std::string & nsmfile,
     const std::string & nsmext

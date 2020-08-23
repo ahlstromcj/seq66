@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-07-15
+ * \updates       2020-08-23
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -41,7 +41,7 @@
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 #include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
-#if defined SEQ66_NSM_SESSION
+#if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
 #endif
 
@@ -63,7 +63,11 @@ public:
     qt5nsmanager (QApplication & app, QObject * parent = nullptr);
     virtual ~qt5nsmanager ();
 
-    virtual bool create_session () override;
+    virtual bool create_session
+    (
+        int argc        = 0,
+        char * argv []  = nullptr
+    ) override;
     virtual bool close_session (bool ok = true) override;
     virtual bool create_window () override;
     virtual void show_message (const std::string & msg) const override;
@@ -83,7 +87,7 @@ private:
 
     QApplication & m_application;
 
-#if defined SEQ66_NSM_SESSION
+#if defined SEQ66_NSM_SUPPORT
 
     /**
      *  The optional NSM client.  This item is not in the base class,
