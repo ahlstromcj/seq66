@@ -2,7 +2,7 @@
 #define SEQ66_NSMMESSAGESEX_HPP
 
 /**
- * \file          exnsmmessages.hpp
+ * \file          nsmmessagesex.hpp
  *
  *    This module provides a kind of repository of all the possible OSC/NSM
  *    messages.
@@ -10,11 +10,13 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-20
- * \updates       2020-08-23
+ * \updates       2020-08-25
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
- *  Upcoming support for the Non Session Manager.
+ *  Upcoming support for the Non Session Manager.  This module provides a list
+ *  of OSC paths (messages) for various purposes, as a way to keep track of
+ *  them all and use them propertly.
  */
 
 #include <map>                          /* std::map dictionary class        */
@@ -44,6 +46,7 @@ namespace nsm
 
 enum class tag
 {
+    null,               // client, all items null
     abort,              // server
     add,                // server
     addstrip,           // non
@@ -82,6 +85,7 @@ enum class tag
     removed,            // signal
     renamed,            // signal
     reply,              // used by many, signal has no args
+    replyex,            // another variation
     resume,             // gui/client
     root,               // gui/session
     save,               // client, gui/client, server

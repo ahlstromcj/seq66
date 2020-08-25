@@ -633,7 +633,7 @@ midi_alsa_info::api_get_midi_event (event * inev)
 
             result = true;
             if (rc().verbose())
-            show_event(ev, "Client Start");
+                show_event(ev, "Client Start");
             break;
 
         case SND_SEQ_EVENT_CLIENT_EXIT:

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-08-14
+ * \updates       2020-08-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -54,7 +54,7 @@
 #include "sessions/smanager.hpp"        /* seq66::smanager()                */
 #include "os/daemonize.hpp"             /* seq66::reroute_stdio()           */
 #include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
-#include "util/filefunctions.hpp"       /* seq66::file_accessible()         */
+#include "util/filefunctions.hpp"       /* seq66::file_accessible() etc.    */
 
 #if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
 #include "lash/lash.hpp"                /* seq66::lash_driver functions     */
@@ -117,8 +117,8 @@ smanager::smanager () :
 bool
 smanager::main_settings (int argc, char * argv [])
 {
-    bool result = false;                /* EXIT_FAILURE                 */
-    set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default          */
+    bool result = false;                /* EXIT_FAILURE                     */
+    set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
 
     /*
      * -o log=file.ext early
@@ -229,12 +229,16 @@ smanager::create_performer ()
     {
         bool ok = p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
+
+#if defined SEQ66_PLATFORM_DEBUG
         if (ok && rc().verbose())                   /* for trouble-shoots   */
         {
             rc().key_controls().show();
             rc().midi_control_in().show();
             rc().mute_groups().show();
         }
+#endif
+
         result = perf()->launch(ppqn);              /* usr().midi_ppqn())   */
         if (! result)
         {

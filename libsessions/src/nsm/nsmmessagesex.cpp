@@ -7,7 +7,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-21
- * \updates       2020-08-23
+ * \updates       2020-08-25
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -99,17 +99,19 @@ namespace nsm
 
 static lookup s_client_msgs =
 {
+    {  tag::null,        { "",                                 ""         } },
     {  tag::clean,       { "/nsm/client/is_clean",             ""         } },
     {  tag::dirty,       { "/nsm/client/is_dirty",             ""         } },
     {  tag::error,       { "/error",                           "sis"      } },
     {  tag::hidden,      { "/nsm/client/gui_is_hidden",        ""         } },
-    {  tag::hide,        { "/nsm/client/hide_optional_gui",    "s"        } },
+    {  tag::hide,        { "/nsm/client/hide_optional_gui",    ""         } },
     {  tag::label,       { "/nsm/client/label",                "s"        } },
     {  tag::loaded,      { "/nsm/client/session_is_loaded",    ""         } },
     {  tag::message,     { "/nsm/client/message",              "is"       } },
     {  tag::open,        { "/nsm/client/open",                 "sss"      } },
     {  tag::progress,    { "/nsm/client/progress",             "f"        } },
-    {  tag::reply,       { "/reply",                           "ssss"     } },
+    {  tag::reply,       { "/reply",                           "ss"       } },
+    {  tag::replyex,     { "/reply",                           "ssss"     } },
     {  tag::save,        { "/nsm/client/save",                 ""         } },
     {  tag::show,        { "/nsm/client/show_optional_gui",    ""         } },
     {  tag::shown,       { "/nsm/client/gui_is_shown",         ""         } }

@@ -45,12 +45,12 @@ dnl ---------------------------------------------------------------------------
 
 AC_DEFUN([AC_XPC_DEBUGGING],
 [
-   COVFLAGS=
-   PROFLAGS=
-   PROLDFLAGS=
-   OPTFLAGS=
-   DBGFLAGS=
-   MORFLAGS=
+   COVFLAGS=""
+   PROFLAGS=""
+   PROLDFLAGS=""
+   OPTFLAGS=""
+   DBGFLAGS=""
+   MORFLAGS=""
 
    if test -n "$GCC"; then
 
@@ -119,6 +119,7 @@ AC_DEFUN([AC_XPC_DEBUGGING],
          DBGFLAGS="-g"
          AC_MSG_RESULT(prof)
       else
+         DBGFLAGS=""
          AC_MSG_RESULT(no)
       fi
    fi
@@ -154,23 +155,23 @@ yes=gdb)],
       AM_CONDITIONAL(DODEBUG, test x$debug = xyes)
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          AC_MSG_RESULT(yes)
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          AC_MSG_RESULT(yes)
       else
          if test "x$OPTFLAGS" = "x" ; then
             OPTFLAGS="-O3"
+            DBGFLAGS=""
          fi
          AC_MSG_RESULT(no)
       fi
-      DBGFLAGS="$DBGFLAGS $OPTFLAGS $MORFLAGS"
    fi
    AC_SUBST([DBGFLAGS])
    AC_DEFINE_UNQUOTED([DBGFLAGS], [$DBGFLAGS],

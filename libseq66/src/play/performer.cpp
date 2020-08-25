@@ -4855,8 +4855,10 @@ performer::populate_default_ops ()
         else
             break;
     }
+#if defined SEQ66_PLATFORM_DEBUG
     if (rc().verbose())
         m_operations.show();
+#endif
 
     return result;
 }

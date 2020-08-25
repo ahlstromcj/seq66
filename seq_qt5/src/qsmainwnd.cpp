@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-13
+ * \updates       2020-08-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -49,6 +49,7 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "qliveframeex.hpp"
+#include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 #include "qperfeditex.hpp"
 #include "qperfeditframe64.hpp"
 #include "qplaylistframe.hpp"
@@ -59,6 +60,7 @@
 #include "qseqeditex.hpp"
 #include "qseqeditframe.hpp"            /* Kepler34 version                 */
 #include "qseqeventframe.hpp"           /* a new event editor for Qt        */
+#include "qsessionframe.hpp"            /* shows session information        */
 #include "qsetmaster.hpp"               /* shows a map of all sets          */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qsmaintime.hpp"
@@ -68,7 +70,6 @@
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
 #include "util/calculations.hpp"        /* pulse_to_measurestring(), etc.   */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
-#include "qmutemaster.hpp"              /* shows a map of mute-groups       */
 
 /*
  *  A signal handler is defined in daemonize.cpp, used for quick & dirty
@@ -118,6 +119,7 @@ static const int Tab_Events             =  3;
 static const int Tab_Playlist           =  4;
 static const int Tab_Set_Master         =  5;
 static const int Tab_Mute_Master        =  6;
+static const int Tab_Session            =  7;
 
 /**
  *  Manifest constants for the beat-measure and beat-length combo-boxes.
@@ -218,10 +220,11 @@ qsmainwnd::qsmainwnd
     m_dialog_prefs          (nullptr),
     m_dialog_about          (nullptr),
     m_dialog_build_info     (nullptr),
+    m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
-    m_song_mode             (false),    /* perf().song_mode())          */
-    m_use_nsm               (usensm),
+    m_song_mode             (false),            /* perf().song_mode())      */
+    m_use_nsm               (usensm),           /* use_nsm() accessor       */
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
     m_open_editors          (),
@@ -393,7 +396,7 @@ qsmainwnd::qsmainwnd
     if (use_nsm())
     {
         /*
-         * File /New.  NSM version.
+         * File / New.  NSM version.
          */
 
         ui->actionNew->setText("&New session...");
@@ -442,7 +445,7 @@ qsmainwnd::qsmainwnd
          */
 
         ui->actionSave_As->setText("&Export from Session...");
-        ui->actionSave_As->setToolTip("Save as a Seq66 MIDI file only.");
+        ui->actionSave_As->setToolTip("Export as a Seq66 MIDI file.");
         connect
         (
             ui->actionSave_As, SIGNAL(triggered(bool)),
@@ -450,12 +453,16 @@ qsmainwnd::qsmainwnd
         );
 
         /*
-         * File / Close.  TODO.
+         * File / Close.
          */
 
         ui->actionClose->setText("&Close");
         ui->actionClose->setToolTip("Disconnect from session management.");
-        connect(ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit()));
+        connect
+        (
+            ui->actionClose, SIGNAL(triggered(bool)),
+            this, SLOT(quit_session())
+        );
     }
     else
     {
@@ -850,6 +857,7 @@ qsmainwnd::qsmainwnd
 
     load_set_master();
     load_mute_master();
+    load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);
     show();
@@ -1045,38 +1053,55 @@ qsmainwnd::edit_bpm ()
 }
 
 /**
- *
+ *  For NSM usage, this function replaces the "Open" operation.  It will
+ *  create a copy of the file which is then saved at the session path provided
+ *  by NSM.
  */
 
 void
 qsmainwnd::import_into_session ()
 {
-    // Duty now for the future!
+    if (use_nsm())
+    {
+        // Duty now for the future! TODO!
+    }
+    else
+    {
+        // illegal
+    }
 }
 
 /**
- *
+ *  Shows the "Open" file dialog, if not within an NSM session.  Otherwise,
+ *  import_into_session() is called.
  */
 
 void
 qsmainwnd::show_open_file_dialog ()
 {
-    QString file;
-    if (check())
+    if (use_nsm())
     {
-        file = QFileDialog::getOpenFileName
-        (
-            this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
-            tr
-            (
-                "MIDI files (*.midi *.mid *.MID);;"
-                "WRK files (*.wrk *.WRK);;"
-                "All files (*)"
-            )
-        );
+        import_into_session();
     }
-    if (! file.isEmpty())                   /* if the user did not cancel   */
-        open_file(file.toStdString());
+    else
+    {
+        QString file;
+        if (check())
+        {
+            file = QFileDialog::getOpenFileName
+            (
+                this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
+                tr
+                (
+                    "MIDI files (*.midi *.mid *.MID);;"
+                    "WRK files (*.wrk *.WRK);;"
+                    "All files (*)"
+                )
+            );
+        }
+        if (! file.isEmpty())               /* if the user did not cancel   */
+            open_file(file.toStdString());
+    }
 }
 
 /**
@@ -1244,6 +1269,24 @@ qsmainwnd::toggle_time_format (bool /*on*/)
     m_tick_time_as_bbt = ! m_tick_time_as_bbt;
     QString label = m_tick_time_as_bbt ? "B:B:T" : "H:M:S" ;
     ui->btn_set_HMS->setText(label);
+}
+
+/**
+ *
+ */
+
+void
+qsmainwnd::load_session_frame ()
+{
+    if (is_nullptr(m_session_frame))
+    {
+        qsessionframe * qsf = new qsessionframe(perf(), this, ui->SessionTab);
+        if (not_nullptr(qsf))
+        {
+            ui->SessionTabLayout->addWidget(qsf);
+            m_session_frame = qsf;
+        }
+    }
 }
 
 /**
@@ -1460,22 +1503,45 @@ qsmainwnd::new_file ()
     }
 }
 
+/**
+ *  This option will simply empty or reset the current file, after user
+ *  confirmation.  According to NSM protocol, it cannot allow the user to
+ *  create a new project/file in another location.
+ */
+
 void
 qsmainwnd::new_session ()
 {
-    // Duty now for the future!
+    if (use_nsm())
+    {
+        // Duty now for the future!  TODO!
+    }
+    else
+    {
+        // illegal
+    }
 }
 
 /**
- *
+ *  This option, for NSM usage, saves the current file in the NSM location
+ *  specified by the NSM "open" message.  According to NSM protocol, it cannot
+ *  offer to play the file in another location.  For that purpose, see the
+ *  "Export" menu entry.
  */
 
 bool
 qsmainwnd::save_session ()
 {
-    // Duty now for the future!
+    if (use_nsm())
+    {
+        // Duty now for the future!  TODO!
 
-    return false;
+        return false;
+    }
+    else
+    {
+        return false; // illegal
+    }
 }
 
 /**
@@ -1524,7 +1590,9 @@ bool
 qsmainwnd::save_file_as ()
 {
     bool result = false;
-    std::string prompt = "Save MIDI file as...";
+    std::string prompt = use_nsm() ?
+        "Export MIDI file from NSM session as..." : "Save MIDI file as..." ;
+
     std::string filename = filename_prompt(prompt);
     if (filename.empty())
     {
@@ -1548,7 +1616,8 @@ qsmainwnd::save_file_as ()
  *  update the the current file-name, but does update the recent-file
  *  information at this time.
  *
- *  This function is ESSENTIALLY EQUIVALENT to export_song()!!!
+ *  This function is equivalent to export_song(), except it calls midifile ::
+ *  write() instead of midifile :: write_song().
  *
  * \param fname
  *      The full path-name to the file to be written.  If empty (the default),
@@ -2360,13 +2429,23 @@ qsmainwnd::quit ()
 {
     if (check())
     {
-        if (use_nsm())
-        {
-            // save_session();
-            // close_session();
-        }
         remove_all_editors();
         QCoreApplication::exit();
+    }
+}
+
+/**
+ *  Calls check(), and if it checks out (heh heh), remove all of the editor
+ *  windows and then calls for an exit of the application.
+ */
+
+void
+qsmainwnd::quit_session ()
+{
+    if (use_nsm())
+    {
+        // save_session();
+        // close_session();
     }
 }
 
@@ -2852,6 +2931,34 @@ qsmainwnd::recreate_all_slots ()
         result = m_live_frame->recreate_all_slots();
     }
     return result;
+}
+
+void
+qsmainwnd::session_path (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_path(text);
+}
+
+void
+qsmainwnd::session_URL (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_URL(text);
+}
+
+void
+qsmainwnd::session_log (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_log(text);
+}
+
+void
+qsmainwnd::session_log_append (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_log_append(text);
 }
 
 }               // namespace seq66

@@ -204,12 +204,14 @@ midicontrolin::add_blank_controls (const keycontainer & kc)
         midicontrol blank
         (
             k.key_name(), k.category_code(), k.action_code(),
-            k.slot_number(), k.control_code()   // ok??
+            k.slot_number(), k.control_code()
         );
         (void) add(blank);
     }
+#if defined SEQ66_PLATFORM_DEBUG
     if (rc().verbose())
         show();
+#endif
 }
 
 /**

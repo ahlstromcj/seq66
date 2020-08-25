@@ -19174,12 +19174,12 @@ fi
 
 
 
-   COVFLAGS=
-   PROFLAGS=
-   PROLDFLAGS=
-   OPTFLAGS=
-   DBGFLAGS=
-   MORFLAGS=
+   COVFLAGS=""
+   PROFLAGS=""
+   PROLDFLAGS=""
+   OPTFLAGS=""
+   DBGFLAGS=""
+   MORFLAGS=""
 
    if test -n "$GCC"; then
 
@@ -19278,6 +19278,7 @@ $as_echo "prof" >&6; }
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: prof" >&5
 $as_echo "prof" >&6; }
       else
+         DBGFLAGS=""
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
       fi
@@ -19323,27 +19324,27 @@ fi
 
       if test "x$debug" = "xyes" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       elif test "x$debug" = "xdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       elif test "x$debug" = "xgdb" ; then
          OPTFLAGS="-O0"
-         DBGFLAGS="-g"
+         DBGFLAGS="-g $OPTFLAGS $MORFLAGS"
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
       else
          if test "x$OPTFLAGS" = "x" ; then
             OPTFLAGS="-O3"
+            DBGFLAGS=""
          fi
          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
       fi
-      DBGFLAGS="$DBGFLAGS $OPTFLAGS $MORFLAGS"
    fi
 
 

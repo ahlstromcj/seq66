@@ -807,11 +807,13 @@ qseqeventframe::handle_save ()
             cb_perf().notify_sequence_change(seqno);       // FIXME
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
+#if defined SEQ66_PLATFORM_DEBUG
             if (rc().verbose())
             {
                 std::string dump = m_eventslots->events_to_string();
                 printf("%s", dump.c_str());
             }
+#endif
         }
     }
 }

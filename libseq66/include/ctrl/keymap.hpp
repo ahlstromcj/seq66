@@ -28,13 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-05-27
+ * \updates       2020-08-25
  * \license       GNU GPLv2 or above
  *
- *  These functions are used in macros such as func_message().
  */
 
-#include <string>
+#include <string>                       /* std::string                      */
 
 #include "midi/midibytes.hpp"           /* the ctrlkey type definition      */
 

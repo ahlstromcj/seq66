@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-21
+ * \updates       2020-08-25
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -185,15 +185,15 @@ public:
     void update_dirty_count (bool flag = true);
 
     virtual void visible (bool isvisible);
-    virtual void progress (float percent);
-    virtual void is_dirty ();
-    virtual void is_clean ();
-    virtual void message (int priority, const std::string & mesg);
+    virtual bool progress (float percent);
+    virtual bool is_dirty ();
+    virtual bool is_clean ();
+    virtual bool message (int priority, const std::string & mesg);
 
     // Session client reply methods.
 
-    void open_reply (reply replycode = reply::ok);
-    void save_reply (reply replycode = reply::ok);
+    bool open_reply (reply replycode = reply::ok);
+    bool save_reply (reply replycode = reply::ok);
 
     void open_reply (bool loaded)
     {
@@ -220,8 +220,8 @@ public:
     virtual void save ();
     virtual void label (const std::string & label);
     virtual void loaded ();
-    virtual void show ();
-    virtual void hide ();
+    virtual void show (const std::string & path);
+    virtual void hide (const std::string & path);
     virtual void broadcast (const std::string & path, lo_message msg);
     virtual void nsm_debug (const std::string & tag);
 
@@ -239,7 +239,7 @@ public:
      * Used by the free-function OSC callbacks.
      */
 
-    virtual void announce
+    virtual bool announce
     (
         const std::string & app_name,
         const std::string & capabilities
@@ -251,14 +251,26 @@ public:
         const std::string & manager,
         const std::string & capabilities
     );
-    void nsm_reply (const std::string & path, reply replycode);
+    bool nsm_reply (const std::string & path, reply replycode);
+    std::string nsm_reply_message (reply replycode);
 
-    const char * nsm_reply_message (reply replycode);
+    void send
+    (
+        const std::string & message,
+        const std::string & pattern
+    );
+    void send_from_client (nsm::tag t);
+    void send_from_client
+    (
+        nsm::tag t,
+        const std::string & s1,
+        const std::string & s2,
+        const std::string & s3 = ""
+    );
 
 protected:
 
     void add_client_method (nsm::tag t, lo_method_handler h);
-
 
 };          // class nsmbase
 

@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2020-04-06
+# \update      2020-08-24
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -265,6 +265,7 @@ moc_qt_headers = \
  ../include/qseqkeys.hpp \
  ../include/qseqroll.hpp \
  ../include/qseqtime.hpp \
+ ../include/qsessionframe.hpp \
  ../include/qsetmaster.hpp \
  ../include/qseventslots.hpp \
  ../include/qsliveframe.hpp \
@@ -290,6 +291,7 @@ uic_qt_forms = \
  $(formsdir)/qseqeditframe64.ui \
  $(formsdir)/qseqeditframe.ui \
  $(formsdir)/qseqeventframe.ui \
+ $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
  $(formsdir)/qsliveframe.ui \
  $(formsdir)/qslivegrid.ui \
@@ -335,6 +337,7 @@ libseq_qt5_la_SOURCES = \
  qseqkeys.cpp \
  qseqroll.cpp \
  qseqstyle.cpp \
+ qsessionframe.cpp \
  qseqtime.cpp \
  qsetmaster.cpp \
  qseventslots.cpp \

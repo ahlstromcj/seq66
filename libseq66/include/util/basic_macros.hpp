@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2020-04-07
+ * \updates       2020-08-25
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -68,15 +68,6 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #if defined __cplusplus
 
 /**
- *  A macro to prepend a fully qualified function name to a string.
- *  Currently defined in the rtmidi library due to an weird inability
- *  to resolve circular references involving message_concatenate() and
- *  the mastermidibus() class!
- */
-
-#define func_message(x) seq66::message_concatenate(__func__, x ## .c_str())
-
-/**
  *    Provides reporting macros (which happens to match Chris's XPC message
  *    functions.  For C code, these macros are defined in basic_macros.h
  *    instead, and are not as "powerful".
@@ -112,10 +103,6 @@ extern bool not_nullptr_assert (void * ptr, const std::string & context);
 #define errprintfunc(x) fprintf(stderr, "%s: %s", __func__, x)
 #endif
 
-extern std::string message_concatenate
-(
-    const std::string & m1, const std::string & m2
-);
 extern bool info_message (const std::string & msg);
 extern bool warn_message (const std::string & msg);
 extern bool error_message (const std::string & msg);
@@ -124,7 +111,7 @@ extern void pathprint (const std::string & tag, const std::string & path);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);
-extern std::string formatted (const std::string & fmt, va_list args);
+extern std::string msgsnprintf (std::string fmt, ...);
 extern bool is_debug ();
 
 /**

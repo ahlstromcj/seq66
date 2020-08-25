@@ -130,12 +130,12 @@ void
 opcontainer::show () const
 {
     int index = 0;
-    std::cout << "opcontainer size: " << m_container.size() << std::endl;
+    std::cout << "Op container size: " << m_container.size() << std::endl;
     for (const auto & oc : m_container)
     {
         std::cout
             << "[" << std::setw(2) << std::right << index << "] "
-            << "slot " << opcontrol::slot_name(oc.first) << ": "
+            << opcontrol::slot_name(oc.first) << ": "
             ;
 
         oc.second.show();

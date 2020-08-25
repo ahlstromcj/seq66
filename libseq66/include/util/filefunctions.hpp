@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-09
+ * \updates       2020-08-25
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -80,6 +80,7 @@ extern bool filename_split
     std::string & path,
     std::string & filebase
 );
+extern std::string filename_base (const std::string & fullpath);
 extern bool file_extension_match
 (
     const std::string & path,

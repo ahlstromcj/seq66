@@ -1341,6 +1341,20 @@ filename_split
 }
 
 /**
+ *  Uses filename_split to extract only the base part of the file
+ *  specification.
+ */
+
+std::string
+filename_base (const std::string & fullpath)
+{
+    std::string result;
+    std::string path;
+    (void) filename_split(fullpath, path, result);
+    return result;
+}
+
+/**
  *  Gets a file extension, defined simply as the text after the last period
  *  in the path.
  *

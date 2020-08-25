@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-23
+ * \updates       2020-08-24
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -76,16 +76,20 @@ public:
 
 signals:        /* signals sent by session client callbacks */
 
+#if 0
 	void sig_active (bool isactive);
 	void sig_open ();
 	void sig_save ();
 	void sig_loaded ();
 	void sig_show ();
 	void sig_hide ();
+#endif
 
 private:
 
     QApplication & m_application;
+
+    bool m_nsm_active;
 
 #if defined SEQ66_NSM_SUPPORT
 

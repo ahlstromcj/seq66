@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-28
+ * \updates       2020-08-24
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -72,6 +72,7 @@ namespace seq66
 {
     class keystroke;
     class qliveframeex;
+    class qmutemaster;
     class qperfeditex;
     class qperfeditframe64;
     class qplaylistframe;
@@ -81,22 +82,21 @@ namespace seq66
     class qseqeditex;
     class qseqeditframe;
     class qseqeventframe;
+    class qsessionframe;
     class qsetmaster;
-    class qmutemaster;
     class qslivebase;
     class qslivegrid;
     class qsmaintime;
 
 /**
- * The main window of Kepler34.
+ * The main window of Kepler34... er, I mean Seq66.
  */
 
-class qsmainwnd final :
-    public QMainWindow,
-    protected performer::callbacks
+class qsmainwnd final : public QMainWindow, protected performer::callbacks
 {
     friend class qmutemaster;
     friend class qplaylistframe;
+    friend class qsessionframe;
     friend class qsetmaster;
     friend class qslivebase;
     friend class qsliveframe;
@@ -136,6 +136,11 @@ public:
     {
         return m_use_nsm;
     }
+
+    void session_path (const std::string & text);
+    void session_URL (const std::string & text);
+    void session_log (const std::string & text);
+    void session_log_append (const std::string & text);
 
 protected:
 
@@ -239,6 +244,7 @@ private:
     qseditoptions * m_dialog_prefs;
     qsabout * m_dialog_about;
     qsbuildinfo * m_dialog_build_info;
+    qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
 
@@ -331,6 +337,7 @@ private slots:
     bool export_file_as_midi (const std::string & fname = "");
     bool export_song (const std::string & fname = "");
     void quit ();
+    void quit_session ();
     void show_import_dialog ();             /* import MIDI to current bank  */
     void import_into_session ();            /* for support of NSM           */
     void show_open_file_dialog ();
@@ -344,6 +351,7 @@ private slots:
     void load_qseqedit (int seqid);
     void load_qperfedit (bool on);
     void load_live_frame (int ssnum);
+    void load_session_frame ();
     void load_set_master ();
     void load_mute_master ();
     void toggle_time_format (bool on);

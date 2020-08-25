@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2020-06-01
+# \update         2020-08-24
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -72,6 +72,7 @@ FORMS += forms/qlfoframe.ui \
  forms/qseqeditframe64.ui \
  forms/qseqeditframe.ui \
  forms/qseqeventframe.ui \
+ forms/qsessionframe.ui \
  forms/qsetmaster.ui \
  forms/qsliveframe.ui \
  forms/qslivegrid.ui \
@@ -109,6 +110,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qseqroll.hpp \
  include/qseqstyle.hpp \
  include/qseqtime.hpp \
+ include/qsessionframe.hpp \
  include/qsetmaster.hpp \
  include/qseventslots.hpp \
  include/qskeymaps.hpp \
@@ -155,6 +157,7 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qseqroll.cpp \
  src/qseqstyle.cpp \
  src/qseqtime.cpp \
+ src/qsessionframe.cpp \
  src/qsetmaster.cpp \
  src/qseventslots.cpp \
  src/qskeymaps.cpp \

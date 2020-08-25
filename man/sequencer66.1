@@ -1,7 +1,7 @@
-.TH Sequencer66 "July 2020" "Version 0.90.4" "Seq66 Manual Page"
+.TH Sequencer66 "August 2020" "Version 0.91.0" "Seq66 Manual Page"
 
 .SH NAME
-Sequencer66 - Real-time live MIDI sequencer refactored from Seq64
+Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from Seq64
 
 .SH SYNOPSIS
 .B qseq66
@@ -16,14 +16,16 @@ Sequencer66 - Real-time live MIDI sequencer refactored from Seq64
 \fISequencer66\fP is a real-time MIDI sequencer. It was created to
 provide a simple interface for editing and playing MIDI 'loops'.
 It uses only Qt 5 for the user interface.  It is functionally very
-similar to Sequencer64, but refactored to be simpler, yet more flexible.
+similar to Sequencer64, but refactored to be simpler, more flexible,
+and faster.
 
 .SH OPTIONS
 Sequencer66 accepts the following options, plus an optional name of
 a MIDI file. Note that the legacy options, which use underscores or
-are missing the option hyphen, are still unofficially supported.
+are missing the option hyphen, are no longer supported in Seq66.
 Note that many of the options are "sticky".  That is, they will
-be saved to the "rc" configuration file.
+be saved to the "rc" configuration file.  "User" options can also be saved,
+if desired, via the "--user-save" option.
 
 .TP 8
 .B  \-h, \-\-help
@@ -90,13 +92,14 @@ is present in the currently-loaded MIDI file.
 .B \-L, \-\-lash
 If LASH support is compiled into the program, this option
 enables it.
-If LASH support is not compiled into the program, this option will note
+If LASH support is not compiled into the program, this option will not
 be shown in the output of the --help option.
 
 .TP 8
-.B \-n, \-\-no-lash
-Disable LASH.  This option is useful if LASH is enabled in the configuration
-file, but one wants it disabled.
+.B \-n, \-\-nsm
+Enable NSM support (if included in the build options). This option provides
+support for qseq66 as a client of the Non Session Manager.  NOTE:  this support
+is not yet finished, so be prepared for issues.
 
 .TP 8
 .B \-\-file \fI<filename>\fP

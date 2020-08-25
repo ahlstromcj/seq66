@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-02
+ * \updates       2020-08-25
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -785,7 +785,7 @@ midi_jack::send_message (const midi_message & message)
     bool result = nbytes > 0;
     if (result)
     {
-#ifdef PLATFORM_DEBUG_TMI
+#ifdef SEQ66_PLATFORM_DEBUG_TMI
         message.show();
 #endif
         int count1 = jack_ringbuffer_write
@@ -1430,6 +1430,8 @@ midi_in_jack::api_get_midi_event (event * inev)
              */
 
             midibyte st = mm[0];
+
+#if defined SEQ66_PLATFORM_DEBUG
             if (rc().verbose())
             {
                 static int s_count = 0;
@@ -1457,6 +1459,8 @@ midi_in_jack::api_get_midi_event (event * inev)
                 }
                 fflush(stdout);
             }
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
             if (event::is_sense_or_reset(st))
                 result = false;
             else

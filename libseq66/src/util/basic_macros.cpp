@@ -28,7 +28,6 @@
  * \updates       2020-08-14
  * \license       GNU GPLv2 or above
  *
- *  These functions are used in macros such as func_message().
  */
 
 #include <assert.h>
@@ -100,30 +99,6 @@ not_nullptr_assert (void * ptr, const std::string & context)
 }
 
 #endif  // SEQ66_PLATFORM_DEBUG
-
-/**
- *  This function concatenates two C string pointers and returns them as
- *  a string message.  Note that we don't bother with error-checking the
- *  pointers.  You're on your own, Hoss.
- *
- * \param m1
- *      The first message, often a __func__ macro.
- *
- * \param m2
- *      The second message.
- *
- * \return
- *      Returns "m1: m2" as a standard C++ string.
- */
-
-std::string
-message_concatenate (const std::string & m1, const std::string & m2)
-{
-    std::string result(m1);
-    result += ": ";
-    result += m2;
-    return result;
-}
 
 /**
  *  Common-code for console informationational messages.  Adds markers and a
@@ -216,7 +191,8 @@ file_error (const std::string & tag, const std::string & filename)
 }
 
 /**
- *  Shows a path-name (or other C++ string) as an info message.
+ *  Shows a path-name (or other C++ string) as an info message.  This output
+ *  is not contingent upon debugging or verbosity.
  *
  * \param tag
  *      Provides the text to precede the name of the path.
@@ -229,6 +205,46 @@ void
 pathprint (const std::string & tag, const std::string & path)
 {
     std::cout << "[" << tag << " " << path << "]" << std::endl;
+}
+
+/**
+ *  Takes a format string and a variable-argument list and returns the
+ *  formatted string.
+ *
+ *  Although currently a public function, its usage is meant to be internal
+ *  for the msgprintf() function.  See that function's description.
+ *
+ *  C++11 is required, due to the use of va_copy().
+ *
+ * \param fmt
+ *      Provides the printf() format string.
+ *
+ * \param args
+ *      Provides the variable-argument list.
+ *
+ * \return
+ *      Returns the formatted string.  If an error occurs, the string is
+ *      empty.
+ */
+
+static std::string
+formatted (const std::string & fmt, va_list args)
+{
+    std::string result;
+    va_list args_copy;                                      /* Step 2       */
+    va_copy(args_copy, args);
+
+    const char * const szfmt = fmt.c_str();
+    int ilen = std::vsnprintf(NULL, 0, szfmt, args_copy);
+    va_end(args_copy);
+    if (ilen > 0)
+    {
+        std::vector<char> dest(ilen + 1);                   /* Step 3       */
+        std::vsnprintf(dest.data(), dest.size(), szfmt, args);
+        result = std::string(dest.data(), dest.size());
+    }
+    va_end(args);
+    return result;
 }
 
 /**
@@ -330,42 +346,29 @@ msgprintf (msg_level lev, std::string fmt, ...)
 }
 
 /**
- *  Takes a format string and a variable-argument list and returns the
- *  formatted string.
- *
- *  Although currently a public function, its usage is meant to be internal
- *  for the msgprintf() function.  See that function's description.
- *
- *  C++11 is required, due to the use of va_copy().
+ *  Acts like msgprintf(), but returns the result as a string, and doesn't
+ *  bother with "info level" and whether we're debugging or not.
  *
  * \param fmt
- *      Provides the printf() format string.
+ *      Indicates the desired format for the message.  Use "%s" for strings.
  *
- * \param args
- *      Provides the variable-argument list.
- *
- * \return
- *      Returns the formatted string.  If an error occurs, the string is
- *      empty.
+ * \param ...
+ *      Provides the printf() parameters for the format string.  Please note
+ *      that C++ strings cannot be used directly... std::string::c_str() must
+ *      be used.
  */
 
 std::string
-formatted (const std::string & fmt, va_list args)
+msgsnprintf (std::string fmt, ...)
 {
     std::string result;
-    va_list args_copy;                                      /* Step 2       */
-    va_copy(args_copy, args);
-
-    const char * const szfmt = fmt.c_str();
-    int ilen = std::vsnprintf(NULL, 0, szfmt, args_copy);
-    va_end(args_copy);
-    if (ilen > 0)
+    if (! fmt.empty())
     {
-        std::vector<char> dest(ilen + 1);                   /* Step 3       */
-        std::vsnprintf(dest.data(), dest.size(), szfmt, args);
-        result = std::string(dest.data(), dest.size());
+        va_list args;
+        va_start(args, fmt);
+        result = formatted(fmt, args);
+        va_end(args);
     }
-    va_end(args);
     return result;
 }
 

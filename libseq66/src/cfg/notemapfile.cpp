@@ -110,8 +110,10 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
     {
         mapper().comments_block().set(s);
+#if defined SEQ66_PLATFORM_DEBUG
         if (rc().verbose())
             std::cout << s;
+#endif
     }
 
     s = get_variable(file, "[notemap-flags]", "map-type");
@@ -192,8 +194,10 @@ notemapfile::parse ()
     if (file.is_open())
     {
         result = parse_stream(file);
+#if defined SEQ66_PLATFORM_DEBUG
         if (result && rc().verbose())
             mapper().show();
+#endif
     }
     else
     {

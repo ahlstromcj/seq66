@@ -209,8 +209,7 @@ public:
         const std::string & capabilities
     );
     void nsm_reply (const std::string & path, reply replycode);
-
-    const char * nsm_reply_message (reply replycode);
+    std::string const char * nsm_reply_message (reply replycode);
 
 };          // class nsm
 

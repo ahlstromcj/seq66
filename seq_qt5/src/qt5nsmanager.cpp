@@ -25,29 +25,37 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-23
+ * \updates       2020-08-25
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
+ *
  */
 
 #include <QApplication>                 /* QApplication etc.                */
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
-#include "util/basic_macros.hpp"        /* seq66::msgprintf()               */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
 
+/**
+ *  The potential list of capabilities is
+ *
+ *  -   switch:       Client is capable of responding to multiple `open`
+ *                    messages without restarting.
+ *  -   dirty:        Client knows when it has unsaved changes.
+ *  -   progress:     Client can send progress updates during time-consuming
+ *                    operations.
+ *  -   message:      Client can send textual status updates.
+ *  -   optional-gui: Client has an optional GUI.
+ */
+
+#define SEQ66_NSM_CAPABILITIES      ":switch:dirty:message"
+
 namespace seq66
 {
-
-/*
- *-------------------------------------------------------------------------
- *  Optional NSM support [TO DO]
- *-------------------------------------------------------------------------
- */
 
 /*
  *-------------------------------------------------------------------------
@@ -56,25 +64,22 @@ namespace seq66
  */
 
 /**
- *
+ *  Note that this object is created before there is any chance to get the
+ *  configuration, because the smanager base class is what gets the
+ *  configuration, well after this constructor.
  */
 
 qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
     QObject         (parent),
     smanager        (),
     m_application   (app),
+    m_nsm_active    (false),
 #if defined SEQ66_NSM_SUPPORT
     m_nsm_client    (),
 #endif
     m_window        ()
 {
-#if defined SEQ66_NSM_SUPPORT
-    std::string nsmfile = "dummy/file";
-    std::string nsmext = nsm::default_ext();
-    m_nsm_client.reset(create_nsmclient(nsmfile, nsmext));
-#else
-#error We want NSM support enabled for development purposes.
-#endif
+    // no code
 }
 
 /**
@@ -93,16 +98,46 @@ qt5nsmanager::~qt5nsmanager ()
 bool
 qt5nsmanager::create_session (int argc, char * argv [])
 {
-    return smanager::create_session(argc, argv);
+
+#if defined SEQ66_NSM_SUPPORT
+    bool result = usr().is_nsm_session();       /* user wants NSM usage */
+    if (result)
+    {
+        std::string nsmfile = "dummy/file";
+        std::string nsmext = nsm::default_ext();
+        m_nsm_client.reset(create_nsmclient(nsmfile, nsmext));
+        result = bool(m_nsm_client);
+        if (result)
+        {
+            std::string appname = seq_app_name();       /* + seq_version()  */
+            std::string capabilities = SEQ66_NSM_CAPABILITIES;
+            result = m_nsm_client->announce(appname, capabilities);
+            if (! result)
+                pathprint("create_session():", "failed to announce");
+        }
+        else
+            pathprint("create_session():", "failed to make client");
+
+        m_nsm_active = result;
+        if (result)
+            result = smanager::create_session(argc, argv);
+    }
+
+#else
+    bool result = smanager::create_session(argc, argv);
+#endif
+
+    return result;
 }
 
 /**
  *  Push the qsmainwnd window onto the stack.  Also be sure to pass along the
  *  PPQN value, which might be different than the default (192), and affects
  *  some of the child objects of qsmainwnd.  Also note the future support for
- *  NSM.
+ *  NSM; it will change the menus available in the main Seq66 window.
  *
  *  This function assumes that create_performer() has already been called.
+ *  And this function is called before create session.
  */
 
 bool
@@ -113,21 +148,35 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        bool usensm = false;                    /* TODO                     */
+        bool usensm = m_nsm_active;
         qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
         result = not_nullptr(qm);
         if (result)
         {
             m_window.reset(qm);
-
-            /*
-             * Let NSM handle this eventually....
-             */
-
             m_window->show();
-            (void) smanager::create_window();   /* internal house-keeping   */
+            (void) smanager::create_window();   /* just house-keeping */
             if (error_active())
+            {
                 show_error();
+                result = false;
+            }
+            else
+            {
+                m_window->session_path("None");
+                m_window->session_log("No log entries.");
+#if defined SEQ66_NSM_SUPPORT
+                if (m_nsm_client)
+                {
+                    std::string url = m_nsm_client->nsm_url();
+                    m_window->session_URL(url);
+                }
+                else
+                    m_window->session_URL("None");
+#else
+                m_window->session_URL("None");
+#endif
+            }
         }
     }
     return result;

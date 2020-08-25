@@ -132,7 +132,8 @@ public:
 
 	// Session client methods.
 
-#if defined THESE_METHODS_ARE_NEEDED
+#if defined THESE_OVERRIDES_ARE_NEEDED        // they exist in nsmbase
+
 	virtual void announce
     (
         const std::string & app_name,
