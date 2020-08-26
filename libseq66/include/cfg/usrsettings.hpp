@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-22
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -901,6 +901,13 @@ private:
     session m_session_manager;
 
     /**
+     *  Indicates if a session was able to be activated.  This item is not
+     *  stored in the "usr" file.
+     */
+
+    bool m_in_session;
+
+    /**
      *  [new-pattern-editor]
      *
      *  A new feature, in progress.
@@ -1574,6 +1581,11 @@ public:
         return m_session_manager == session::lash;
     }
 
+    bool in_session () const
+    {
+        return m_in_session;
+    }
+
     bool new_pattern_armed () const
     {
         return m_new_pattern_armed;
@@ -1704,6 +1716,11 @@ public:         // used in main application module and the usrfile class
     }
 
     void session_manager (const std::string & sm);
+
+    void in_session (bool f)
+    {
+        m_in_session = f;
+    }
 
     void new_pattern_armed (bool flag)
     {

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-03-12
- * \updates       2020-08-23
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -46,17 +46,19 @@ namespace seq66
 {
 
 /**
- *  Hard-wired replacements for build macros.  Might be modifiable at run-time
- *  in the future.
+ *  Hard-wired replacements for build macros.  Also modifiable at run-time
+ *  via the "set" functions
  */
 
+static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
+static std::string s_app_engine = SEQ66_APP_ENGINE;
 static std::string s_app_name = SEQ66_APP_NAME;
 static std::string s_app_type = SEQ66_APP_TYPE;
-static std::string s_app_engine = SEQ66_APP_ENGINE;
-static std::string s_app_build_os = SEQ66_APP_BUILD_OS;
-static std::string s_client_name = SEQ66_CLIENT_NAME;
-static std::string s_version = SEQ66_VERSION;
 static std::string s_apptag = SEQ66_APP_NAME " " SEQ66_VERSION;
+static std::string s_arg_0 = "";
+static std::string s_client_name = SEQ66_CLIENT_NAME;
+static std::string s_package_name = SEQ66_PACKAGE_NAME;
+static std::string s_version = SEQ66_VERSION;
 static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_GIT_VERSION
     " " SEQ66_VERSION_DATE_SHORT "\n";
 
@@ -90,33 +92,34 @@ set_app_engine (const std::string & aengine)
     s_app_engine = aengine;
 }
 
-/**
- *
- */
-
 void
 set_app_build_os (const std::string & abuild_os)
 {
     s_app_build_os = abuild_os;
 }
 
-/**
- *  Sets the current base name of the client port.
- */
+void
+set_arg_0 (const std::string & arg)
+{
+    s_arg_0 = arg;
+}
 
 void
 set_client_name (const std::string & cname)
 {
-    s_client_name = cname;
+    s_client_name = cname;  /* the current base name of the client port */
+}
+
+void
+set_package_name (const std::string & pname)
+{
+    s_package_name = pname;
 }
 
 /**
  *  Returns the name of the application.  We could continue to use the macro
  *  SEQ66_APP_NAME, but we might eventually want to make this name
  *  configurable.  Not too likely, but possible.
- *
- * \return
- *      Returns SEQ66_APP_NAME.
  */
 
 const std::string &
@@ -125,19 +128,11 @@ seq_app_name ()
     return s_app_name;
 }
 
-/**
- *
- */
-
 const std::string &
 seq_app_type ()
 {
     return s_app_type;
 }
-
-/**
- *
- */
 
 const std::string &
 seq_app_engine ()
@@ -145,24 +140,24 @@ seq_app_engine ()
     return s_app_engine;
 }
 
-/**
- *
- */
-
 const std::string &
 seq_app_build_os ()
 {
     return s_app_build_os;
 }
 
+const std::string &
+seq_arg_0 ()
+{
+    return s_arg_0;
+}
+
 /**
- *  Returns the name of the client for the application.  We could continue to
+ *  Returns the name of the client for the application.  We continue to
  *  use the macro SEQ66_CLIENT_NAME, but we might eventually want to make this
  *  name configurable.  More likely to be a configuration option in the
- *  future.
- *
- * \return
- *      Returns SEQ66_CLIENT_NAME.
+ *  future.  Currently, this is always "seq66", no matter what executable has
+ *  been generated.
  */
 
 const std::string &
@@ -172,11 +167,18 @@ seq_client_name ()
 }
 
 /**
- *  Returns the version of the application.  We could continue to use the macro
- *  SEQ66_VERSION, but ... let's be consistent.  :-D
- *
- * \return
- *      Returns SEQ66_VERSION.
+ *  Returns the name of the package for the application. This is the name of
+ *  the product ("Seq66") no matter what executable has been generated.
+ */
+
+const std::string &
+seq_package_name ()
+{
+    return s_package_name;
+}
+
+/**
+ *  Returns the version of the application.
  */
 
 const std::string &

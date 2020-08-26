@@ -6,7 +6,7 @@
 # \library     qseq66 and qrseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-08-23
+# \update      2020-08-26
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -43,6 +43,7 @@ contains (CONFIG, rtmidi) {
    DEFINES += "SEQ66_PORTMIDI_SUPPORT=1"
 }
 
+contains (CONFIG, rtmidi) {
 HEADERS += include/lash/lash.hpp \
  include/nsm/nsmbase.hpp \
  include/nsm/nsmclient.hpp \
@@ -52,9 +53,11 @@ SOURCES += src/lash/lash.cpp \
  src/nsm/nsmbase.cpp \
  src/nsm/nsmclient.cpp \
  src/nsm/nsmmessagesex.cpp \
+}
 
 INCLUDEPATH = ../include/qt/rtmidi \
  ../libseq66/include \
+ ../seq_portmidi/include \
  ../seq_rtmidi/include \
  include
 

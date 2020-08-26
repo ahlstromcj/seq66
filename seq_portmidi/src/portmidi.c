@@ -24,7 +24,7 @@
  * \library     seq66 application
  * \author      PortMIDI team; modifications by Chris Ahlstrom
  * \date        2017-08-21
- * \updates     2020-08-15
+ * \updates     2020-08-26
  * \license     GNU GPLv2 or above
  *
  * Notes on host error reporting:
@@ -574,7 +574,11 @@ pm_add_device
     pm_descriptors[pm_descriptor_index].dictionary = dictionary;
     ++pm_descriptor_index;
 
-    snprintf(temp, sizeof temp, "PortMidi: Device %s added", name);
+    snprintf
+    (
+        temp, sizeof temp, "PortMidi: %s %s added",
+        (input ? "Input" : "Output"), name
+    );
     infoprint(temp);
     (void) strcat(temp, "\n");
     pm_log_buffer_append(temp);

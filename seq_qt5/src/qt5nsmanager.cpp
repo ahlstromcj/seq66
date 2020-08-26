@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-25
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -92,7 +92,7 @@ qt5nsmanager::~qt5nsmanager ()
 }
 
 /**
- *  Will do more with this later.
+ *  This function is called after create_window().
  */
 
 bool
@@ -100,8 +100,16 @@ qt5nsmanager::create_session (int argc, char * argv [])
 {
 
 #if defined SEQ66_NSM_SUPPORT
-    bool result = usr().is_nsm_session();       /* user wants NSM usage */
-    if (result)
+    bool result;
+    bool ok = usr().is_nsm_session();               /* user wants NSM usage */
+    if (ok)
+    {
+        std::string url = get_nsm_url();
+        ok = ! url.empty();                         /* NSM running Seq66?   */
+        if (! ok)
+            usr().in_session(false);                /* no it is not         */
+    }
+    if (ok)
     {
         std::string nsmfile = "dummy/file";
         std::string nsmext = nsm::default_ext();
@@ -109,9 +117,14 @@ qt5nsmanager::create_session (int argc, char * argv [])
         result = bool(m_nsm_client);
         if (result)
         {
-            std::string appname = seq_app_name();       /* + seq_version()  */
+            /*
+             * Use the same name as provided when opening the JACK client.
+             */
+
+            std::string appname = seq_client_name();    /* "seq66"  */
+            std::string exename = seq_arg_0();          /* "qseq66" */
             std::string capabilities = SEQ66_NSM_CAPABILITIES;
-            result = m_nsm_client->announce(appname, capabilities);
+            result = m_nsm_client->announce(appname, exename, capabilities);
             if (! result)
                 pathprint("create_session():", "failed to announce");
         }
@@ -119,10 +132,12 @@ qt5nsmanager::create_session (int argc, char * argv [])
             pathprint("create_session():", "failed to make client");
 
         m_nsm_active = result;
+        usr().in_session(result);                       /* global flag      */
         if (result)
             result = smanager::create_session(argc, argv);
     }
-
+    else
+        result = smanager::create_session(argc, argv);
 #else
     bool result = smanager::create_session(argc, argv);
 #endif
@@ -137,7 +152,7 @@ qt5nsmanager::create_session (int argc, char * argv [])
  *  NSM; it will change the menus available in the main Seq66 window.
  *
  *  This function assumes that create_performer() has already been called.
- *  And this function is called before create session.
+ *  And this function is called before create_session().
  */
 
 bool

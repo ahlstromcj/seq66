@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-08-25
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -117,11 +117,12 @@ smanager::smanager () :
 bool
 smanager::main_settings (int argc, char * argv [])
 {
-    bool result = false;                /* EXIT_FAILURE                     */
+    bool result = false;                /* false --> EXIT_FAILURE           */
     set_app_name(SEQ66_APP_NAME);       /* "qseq66" by default              */
+    set_arg_0(argv[0]);                 /* how it got started               */
 
     /*
-     * -o log=file.ext early
+     * If "-o log=file.ext" occurred, handle it early on in startup.
      */
 
     (void) cmdlineopts::parse_log_option(argc, argv);
@@ -204,12 +205,32 @@ smanager::main_settings (int argc, char * argv [])
 }
 
 /**
- *  This function is currently meant to be called by the owner of this smanager.
- *  This call must occur before creating the application main window.
+ *  This function is currently meant to be called by the owner of this
+ *  smanager.  This call must occur before creating the application main
+ *  window.
+ *
  *  Otherwise, seq66 will not register with LASH (if enabled) in a timely
  *  fashion.  Also, we always have to launch, even if an error occurred, to
  *  avoid a segfault and show at least a minimal message.  LASH support is now
- *  back in Seq66.
+ *  back in Seq66, sort of.  Working on NSM support at present.
+ *
+ * NSM:
+ *
+ *  The NSM API requires that applications MUST NOT register their JACK client
+ *  until receiving an NSM "open" message.  So, in the main() function of the
+ *  application, we make the smanager calls in this order:
+ *
+ *      -#  create_session().  Sets up the session and does the "announce"
+ *          handshake protocol. We ignore the return code so that Seq66 can
+ *          run even if NSM is not available.
+ *      -#  create_performer().  This sets up the ports and launches the
+ *          threads.
+ *      -#  create_window().  This creates the main window, and the Sessions
+ *          tab can be hidden if not needed.  Menu entries can also be
+ *          adjusted for session support; see qsmainwnd.
+ *      -#  run().  The program runs until the user or NSM kills it.
+ *      -#  close_session().  Should tell NSM that it is bowing out of the
+ *          session.
  *
  * \return
  *      Returns false if the performer wasn't able to be created and launch3e.
@@ -227,11 +248,11 @@ smanager::create_performer ()
     result = bool(p);
     if (result)
     {
-        bool ok = p->get_settings(rc(), usr());
+        (void) p->get_settings(rc(), usr());
         m_perf_pointer = std::move(p);              /* change the ownership */
 
 #if defined SEQ66_PLATFORM_DEBUG
-        if (ok && rc().verbose())                   /* for trouble-shoots   */
+        if (rc().verbose())                         /* for trouble-shooting */
         {
             rc().key_controls().show();
             rc().midi_control_in().show();

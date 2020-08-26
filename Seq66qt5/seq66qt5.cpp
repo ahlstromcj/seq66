@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-08-23
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -78,6 +78,15 @@ main (int argc, char * argv [])
     bool result = sm.main_settings(argc, argv); // bool ok = true;
     if (result)
     {
+        /*
+         * Refactored so that the basic NSM session can be set up before
+         * launch(), as per NSM rules.
+         *
+         * TODO:  dawdle until the "open" message is received!
+         */
+
+        (void) sm.create_session(argc, argv);
+
         result = sm.create_performer();     /* fails if performer not made  */
         if (result)
             result = sm.open_playlist();
@@ -97,7 +106,12 @@ main (int argc, char * argv [])
             if (result)
             {
                 sm.error_handling();
-                result = sm.create_session(argc, argv);
+
+                /*
+                 * Moved above.  Still testing!
+                 * result = sm.create_session(argc, argv); // MOVED ABOVE
+                 */
+
                 if (result)
                 {
                     exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;

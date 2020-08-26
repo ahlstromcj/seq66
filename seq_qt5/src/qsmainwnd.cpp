@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-24
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -860,12 +860,22 @@ qsmainwnd::qsmainwnd
     load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);
+
+    if (! usr().in_session())
+    {
+        /*
+         * Which to do, remove or disable?
+         * ui->tabWidget->removeTab(Tab_Session);
+
+        ui->tabWidget->setTabEnabled(Tab_Session, false);
+         */
+    }
+
     show();
     show_song_mode(m_song_mode);
-
     cb_perf().enregister(this);
     m_timer = new QTimer(this);
-    m_timer->setInterval(3 * usr().window_redraw_rate());   // was 2
+    m_timer->setInterval(3 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
     m_timer->start();
 }

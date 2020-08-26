@@ -242,6 +242,7 @@ public:
     virtual bool announce
     (
         const std::string & app_name,
+        const std::string & exe_name,
         const std::string & capabilities
     );
     virtual void announce_error (const std::string & mesg);

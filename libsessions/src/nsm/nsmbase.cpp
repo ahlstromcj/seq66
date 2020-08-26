@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-08-25
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -88,15 +88,12 @@
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
+#include "cfg/settings.hpp"             /* seq66::usr() global object       */
 #include "util/basic_macros.hpp"        /* not_nullptr(), warnprint(), etc. */
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
 #include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
-
-// #if defined SEQ66_PLATFORM_DEBUG
-// #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
-// #endif
 
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
@@ -154,7 +151,7 @@ osc_nsm_error
  */
 
 static int
-osc_nsm_reply
+osc_nsm_announce_reply
 (
     const char * /* path */,
     const char * /* types */,
@@ -345,9 +342,9 @@ nsmbase::nsmbase
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
-    m_lo_address    (),
-    m_lo_thread     (),
-    m_lo_server     (),
+    m_lo_address    (nullptr),
+    m_lo_thread     (nullptr),
+    m_lo_server     (nullptr),
     m_active        (false),
     m_dirty         (false),
     m_dirty_count   (0),
@@ -371,7 +368,7 @@ nsmbase::nsmbase
             if (not_nullptr(m_lo_server))
             {
                 add_client_method(nsm::tag::error, osc_nsm_error);
-                add_client_method(nsm::tag::reply, osc_nsm_reply);
+                add_client_method(nsm::tag::replyex, osc_nsm_announce_reply);
                 add_client_method(nsm::tag::open, osc_nsm_open);
                 add_client_method(nsm::tag::save, osc_nsm_save);
                 add_client_method(nsm::tag::loaded, osc_nsm_session_loaded);
@@ -382,13 +379,13 @@ nsmbase::nsmbase
                 lo_server_thread_start(m_lo_thread);
             }
             else
-                pathprint("NSM:", "bad server\n");
+                pathprint("NSM:", "bad server");
         }
         else
-            pathprint("NSM:", "bad server thread\n");
+            pathprint("NSM:", "bad server thread");
     }
     else
-        pathprint("NSM:", "bad server address\n");
+        pathprint("NSM:", "bad server address");
 }
 
 /**
@@ -409,12 +406,11 @@ nsmbase::~nsmbase ()
 bool
 nsmbase::lo_is_valid () const
 {
-    if (is_nullptr_2(m_lo_address, m_lo_server))
-    {
-        m_active = false;
-        pathprint("NSM error:", "Invalid OSC address or server");
-    }
-    return m_active;
+    bool result = not_nullptr_2(m_lo_address, m_lo_server);
+    if (! result)
+        pathprint("NSM error:", "Null OSC address or server");
+
+    return result;
 }
 
 /**
@@ -439,15 +435,16 @@ nsmbase::lo_is_valid () const
 bool
 nsmbase::announce
 (
-    const std::string & appname,
-    const std::string & capabilities
+    const std::string & appname,        /* actually a package name, "Seq66" */
+    const std::string & exename,        /* comes from argv[0]               */
+    const std::string & capabilities    /* e.g. ":switch:dirty:"            */
 )
 {
     bool result = lo_is_valid();
     if (result)
     {
-        const char * filename = executable_full_path().c_str();
-        const char * app = appname.c_str();
+        const char * packagename = appname.c_str();
+        const char * app = exename.c_str();
         const char * caps = capabilities.c_str();
         int pid = int(getpid());
         std::string message;
@@ -458,7 +455,7 @@ nsmbase::announce
             lo_send_from                /* "/nsm/server/announce" "sssiii"  */
             (
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-                message.c_str(), pattern.c_str(), app, caps, filename,
+                message.c_str(), pattern.c_str(), packagename, caps, app,
                 NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
             );
         }
@@ -864,44 +861,6 @@ nsmbase::label (const std::string & label)
     nsm_debug(tag); // no code
 }
 
-#if defined USE_THIS_CODE
-
-/**
- *  This sample is from nsm-proxy
- */
-
-void
-show_gui ()
-{
-    int pid;
-    if (! (pid = fork()))
-    {
-        char executable[] = "nsm-proxy-gui";
-        MESSAGE("Launching %s\n", executable);
-
-        /*
-         * Note that "url" would need to be freed, as per the liblo
-         * documentation.
-         */
-
-        char * url = lo_server_get_url(losrv);
-        char * args[] = { executable, strdup( "--connect-to" ), url, NULL };
-        if (-1 == execvp(executable, args))
-        {
-            WARNING( "Error starting process: %s", strerror( errno ) );
-            exit(1);
-        }
-    }
-    gui_pid = pid;
-
-    // lo_send_from
-    // (
-    //      m_lo_address, losrv, LO_TT_IMMEDIATE, nsm_cli_gui_shown(), ""
-    // );
-}
-
-#endif  // USE_SAMPLE_CODE
-
 /**
  *  Client show optional GUI.  The derived class must provide this
  *  functionality.
@@ -1048,7 +1007,7 @@ nsmbase::save_session ()
     return result;
 }
 
-/**
+/*
  *  lo_method                           // void * to a new server method
  *  lo_server_add_method
  *  (
@@ -1058,9 +1017,7 @@ nsmbase::save_session ()
  *      lo_method_handler h,            // see below
  *      const void * userdata
  *  )
- */
-
-/**
+ *
  *  lo_method                           // void * to a new server method
  *  lo_server_thread_add_method
  *  (
@@ -1079,8 +1036,16 @@ nsmbase::save_session ()
  *      lo_message msg,                 // void * created by lo_message_new()
  *      void * user_data
  *  )
- *  )
  */
+
+/**
+ *  Works similar to NSM's Client::init_thread()'s
+ *  lo_server_thread_add_method() calls.  But init_thread() was never called,
+ *  so we're trying the init()'s method, lo_server_add_method().
+ */
+
+#define ADD_METHOD(x, y) \
+    lo_server_add_method(m_lo_thread, x, y, h, this);
 
 void
 nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
@@ -1092,7 +1057,7 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         if (t == nsm::tag::null)
         {
             const char * nul = NULL;
-            (void) lo_server_thread_add_method(m_lo_thread, nul, nul, h, this);
+            (void) ADD_METHOD(nul, nul);
             pathprint("OSC:", "broadcast method added");
         }
         else
@@ -1102,10 +1067,7 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
                 "method for %s [%s] added", message.c_str(), pattern.c_str()
             );
             pathprint("OSC:", text);
-            (void) lo_server_thread_add_method
-            (
-                m_lo_thread, message.c_str(), pattern.c_str(), h, this
-            );
+            (void) ADD_METHOD(message.c_str(), pattern.c_str());
         }
     }
 }
@@ -1174,13 +1136,31 @@ nsmbase::send_from_client
 }
 
 /**
- *  See if there is NSM "present" on the host computer.
+ *  See if there is NSM "present" on the host computer.  A static value is
+ *  included that, if not empty, will be used, for troubleshooting and
+ *  testing.  To use it, check out the value of NSM_URL, put it here, and
+ *  rebuild.  This feature is meant to make it easier to debug, but will it
+ *  work?
  */
 
 std::string
 get_nsm_url ()
 {
-    return get_session_url(nsm::url());
+    static std::string s_debug_url = "";
+    std::string result;
+    if (s_debug_url.empty())
+        result = get_session_url(nsm::url());
+    else
+        result = s_debug_url;
+
+    bool active = ! result.empty();
+    usr().in_session(active);
+    if (active)
+        pathprint("NSM_URL:", result);
+    else
+        pathprint("NSM_URL:", "not present");
+
+    return result;
 }
 
 }           // namespace seq66

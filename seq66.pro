@@ -40,8 +40,8 @@ contains (CONFIG, rtmidi) {
     Seq66qt5.depends = libseq66 libsessions seq_rtmidi seq_qt5
 } else {
     SEQ66_MIDILIB = portmidi
-    SUBDIRS =  libseq66 seq_portmidi seq_qt5 Seq66qt5
-    Seq66qt5.depends = libseq66 seq_portmidi seq_qt5
+    SUBDIRS =  libseq66 libsessions seq_portmidi seq_qt5 Seq66qt5
+    Seq66qt5.depends = libseq66 libsessions seq_portmidi seq_qt5
 }
 message("SUBDIRS is set to: $${SUBDIRS}")
 

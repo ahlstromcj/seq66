@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-08-23
+ * \updates       2020-08-26
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -43,12 +43,23 @@
  *
  *      $ non-session-manager [ -- --session-root path ] &
  *
- *      The default path is "$HOME/NSM Sessions".  At startup, NSM_URL is
- *      added to the environment.  Commands are handled as per the "Commands
- *      handling by the server" section at the top of the nsmmessageex.cpp
- *      module. A new session (e.g. "MySession") can be added using the "New"
- *      button.  It will be stored in "$HOME / New Sessions / MySession /
- *      session.nsm", which starts out empty.
+ *      The default path is "$HOME/NSM Sessions".  Inside this directory there
+ *      will ultimately exist one directory per session, each with the name of
+ *      the session as given by the user.  Inside this session directory is a
+ *      file called "session.nsm".  Inside this file is a list of session
+ *      clients in the following format:
+ *
+ *          appname:exename:nXXXX       (example:  qseq66:qseq66:nYUSM)
+ *
+ *      where XXXX is a set of four random uppercase ASCII letters.  The
+ *      string "nXXXX" is used to look up clients.
+ *
+ *      At startup, the environment variable NSM_URL is added to the
+ *      environment.  It's format is described below. Commands are handled as
+ *      per the "Commands handling by the server" section at the top of the
+ *      nsmmessageex.cpp module. A new session (e.g. "MySession") can be added
+ *      using the "New" button.  It will be stored in "$HOME / New Sessions /
+ *      MySession / session.nsm", which starts out empty.
  *
  *      Once running, an executable can be added as a client.  However, the
  *      executable must be in the path.  The command "/nsm/server/add" will
@@ -56,8 +67,8 @@
  *      in $PATH".  Once added properly, NSM spawns the executable, and the
  *      executable inherits the environment (i.e. NSM_URL).
  *
- *      After (saving? closing?) the session, the session.nsm file contains
- *      only the line "qseq66:qseq66:nMTRJ".  What does this mean?
+ *      After closing/saving the session, the session.nsm file contains
+ *      only a line such as "qseq66:qseq66:nMTRJ", as noted above.
  *
  *      Once qseq66 is part of the session, clicking on the session name will
  *      launch qseq66.
@@ -193,7 +204,7 @@ nsmclient::nsmclient
     m_nsm_file      (nsmfile),
     m_nsm_ext       (nsmext)
 {
-    //
+    // no code so far
 }
 
 /**
@@ -246,15 +257,9 @@ create_nsmclient
 {
     nsmclient * result = nullptr;
     std::string url = get_nsm_url();
-    if (url.empty())
-    {
-        pathprint("NSM_URL:", "does not exist");
-    }
-    else
-    {
-        pathprint("NSM_URL:", url);
+    if (! url.empty())
         result = new (std::nothrow) nsmclient(url, nsmfile, nsmext);
-    }
+
     return result;
 }
 
