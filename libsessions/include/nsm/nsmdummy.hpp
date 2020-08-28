@@ -213,11 +213,16 @@ public:
 
 };          // class nsm
 
+namespace nsm
+{
+
 /*
  *  External helper functions.
  */
 
-extern std::string get_nsm_url ();
+extern std::string get_url ();
+
+}           // namespace nsm
 
 }           // namespace seq66
 

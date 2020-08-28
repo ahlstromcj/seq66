@@ -162,12 +162,6 @@ protected:
 
 };          // class smanager
 
-/*
- *  External helper functions.
- */
-
-extern std::string get_nsm_url ();
-
 }           // namespace seq66
 
 #endif      // SEQ66_SMANAGER_HPP

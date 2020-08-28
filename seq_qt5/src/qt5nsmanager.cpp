@@ -104,7 +104,7 @@ qt5nsmanager::create_session (int argc, char * argv [])
     bool ok = usr().is_nsm_session();               /* user wants NSM usage */
     if (ok)
     {
-        std::string url = get_nsm_url();
+        std::string url = nsm::get_url();
         ok = ! url.empty();                         /* NSM running Seq66?   */
         if (! ok)
             usr().in_session(false);                /* no it is not         */

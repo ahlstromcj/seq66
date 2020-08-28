@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Seq66
+Comment=Live Play MIDI Sequencer
+Exec=@BIN_PATH@/qseq66
+Terminal=false
+Type=Application
+Icon=seq66
+Categories=MIDI;Audio

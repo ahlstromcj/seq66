@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-08-26
+ * \updates       2020-08-28
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -167,9 +167,6 @@
  *      INVESTIGATE the NSM replacement, RaySend!!!
  */
 
-#include <stdlib.h>                     /* C geteven() or secure_getenv()   */
-#include <string.h>                     /* C strlen()                       */
-
 #include "util/basic_macros.hpp"        /* not_nullptr(), pathprint()       */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
@@ -186,6 +183,187 @@ namespace seq66
 {
 
 /**
+ *  The typical type signature of this callback is "ssss".
+ */
+
+static int
+osc_nsm_announce_reply
+(
+    const char * path,
+    const char * types,
+    lo_arg ** argv,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc) || (! nsm::is_announce(&argv[0]->s)))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_announce_reply", path, types);
+    pnsmc->announce_reply(&argv[1]->s, &argv[2]->s, &argv[3]->s);
+    return 0;
+}
+
+static int
+osc_nsm_open
+(
+    const char * path,
+    const char * types,
+    lo_arg ** argv,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_open", path, types);
+    pnsmc->open(&argv[0]->s, &argv[1]->s, &argv[2]->s);
+    return 0;
+}
+
+static int
+osc_nsm_save
+(
+    const char * path,
+    const char * types,
+    lo_arg ** /* argv */,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_save", path, types);
+    pnsmc->save();                  /* a virtual function   */
+    return 0;
+}
+
+static int
+osc_nsm_session_loaded
+(
+    const char * path,
+    const char * types,
+    lo_arg ** /* argv */,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_session_loaded", path, types);
+    pnsmc->loaded();
+    return 0;
+}
+
+static int
+osc_nsm_label
+(
+    const char * path,
+    const char * types,
+    lo_arg ** argv,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_label", path, types);
+    pnsmc->label(std::string(&argv[0]->s));         /* a virtual function */
+    return 0;
+}
+
+/**
+ *
+ *  This function could also be called osc_show_gui().  See the nsm-proxy code.
+ */
+
+static int
+osc_nsm_show
+(
+    const char * path,
+    const char * types,
+    lo_arg ** /* argv */,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (is_nullptr(pnsmc))
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_show", path, types);
+    pnsmc->show(path);                  /* a virtual function   */
+    return 0;
+}
+
+/**
+ *  This function could also be called osc_hide_gui().  See the nsm-proxy
+ *  code.
+ */
+
+static int
+osc_nsm_hide
+(
+    const char * path,
+    const char * types,
+    lo_arg ** /* argv */,
+    int /* argc */,
+    lo_message /* msg */,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (pnsmc == NULL)
+        return -1;
+
+    nsm::incoming_msg("osc_nsm_hide", path, types);
+    pnsmc->hide(path);
+    return 0;
+}
+
+/**
+ *
+ */
+
+static int
+osc_nsm_broadcast
+(
+    const char * path,
+    const char * types,
+    lo_arg ** argv,
+    int argc,
+    lo_message /*msg*/,
+    void * user_data
+)
+{
+    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    if (pnsmc == NULL)
+        return -1;
+
+    std::vector<std::string> arguments = nsm::convert_lo_args(types, argc, argv);
+    nsm::incoming_msg("osc_nsm_broadcast", path, types);
+    pnsmc->broadcast(path, types, arguments);
+    return 0;
+}
+
+/* ------------------------------------------------------------------------ */
+
+/**
  *
  */
 
@@ -195,14 +373,7 @@ nsmclient::nsmclient
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
-    nsmbase         (nsmurl, nsmfile, nsmext),
-    m_manager       (),
-    m_capabilities  (),
-    m_path_name     (),
-    m_display_name  (),
-    m_client_id     (),
-    m_nsm_file      (nsmfile),
-    m_nsm_ext       (nsmext)
+    nsmbase         (nsmurl, nsmfile, nsmext)
 {
     // no code so far
 }
@@ -214,6 +385,238 @@ nsmclient::nsmclient
 nsmclient::~nsmclient ()
 {
     // no code so far
+}
+
+/**
+ *
+ */
+
+bool
+nsmclient::initialize ()
+{
+    bool result = nsmbase::initialize();
+    if (result)
+    {
+        add_client_method(nsm::tag::replyex, osc_nsm_announce_reply);
+        add_client_method(nsm::tag::open, osc_nsm_open);
+        add_client_method(nsm::tag::save, osc_nsm_save);
+        add_client_method(nsm::tag::loaded, osc_nsm_session_loaded);
+        add_client_method(nsm::tag::label, osc_nsm_label);
+        add_client_method(nsm::tag::show, osc_nsm_show);
+        add_client_method(nsm::tag::hide, osc_nsm_hide);
+        add_client_method(nsm::tag::null, osc_nsm_broadcast);
+        start_thread();
+    }
+    return result;
+}
+
+/*
+ * Server announce reply.
+ */
+
+void
+nsmclient::announce_reply
+(
+    const std::string & mesg,
+    const std::string & mgr,
+    const std::string & caps
+)
+{
+    is_active(true);
+    manager(mgr);
+    capabilities(caps);
+    // emit active(true);
+
+    nsm::incoming_msg("announce_reply", mgr, caps + " " + mesg);
+}
+
+/**
+ *  Client open callback. Compare to the "open" code in nsm-proxy.
+ */
+
+void
+nsmclient::open
+(
+    const std::string & pathname,
+    const std::string & displayname,
+    const std::string & clientid
+)
+{
+    path_name(pathname);
+    display_name(displayname);
+    client_id(clientid);
+    // emit open();
+
+    nsm::incoming_msg("open", pathname, clientid + "" + displayname);
+}
+
+/*
+ * Client save callback.
+ */
+
+void
+nsmclient::save ()
+{
+    nsm_debug("save");
+
+    // Here, zyn gets a character message and an error code, and replies with
+    // either a reply or an error-reply.
+    //
+    // emit save();
+
+    if (save_session())
+    {
+        (void) save_reply(nsm::reply::ok);       // A FAKE ANSWER FOR NOW
+    }
+
+}
+
+void
+nsmclient::loaded ()
+{
+    nsm_debug("loaded");
+    // emit loaded();
+}
+
+void
+nsmclient::label (const std::string & label)
+{
+    std::string tag("label: '");
+    tag += label;
+    tag += "'";
+    nsm_debug(tag); // no code
+}
+
+/**
+ *  Client show optional GUI.  The derived class must provide this
+ *  functionality.
+ */
+
+void
+nsmclient::show (const std::string & path)
+{
+    nsm_debug("show");
+    // emit show();
+    send_from_client(nsm::tag::reply, path, "OK");
+}
+
+/*
+ * Client hide optional GUI.
+ */
+
+void
+nsmclient::hide (const std::string & path)
+{
+    nsm_debug("hide");
+    send_from_client(nsm::tag::hidden, path, "OK");
+    send_from_client(nsm::tag::reply, path, "OK");  // ss
+    // emit hide();
+}
+
+/**
+ *  Receives a broadcast and figures out what to do with it.  It handles:
+ *
+ *      -   /reply
+ *      -   /nsm/server/announce
+ *
+ *  WEIRD.  NO LONGER BEING CALLED.  Instead announce_reply() and open() are
+ *  being called.  WEIRD.
+ *
+ *  This one is for *sending* broadcasts, not yet implemented:
+ *
+ *      nsmbase::broadcast (const std::string & path, lo_message msg)
+ */
+
+void
+nsmclient::broadcast
+(
+    const std::string & message,
+    const std::string & pattern,
+    const std::vector<std::string> & argv
+)
+{
+    if (lo_is_valid())
+    {
+        int argc = int(argv.size());
+        for (int i = 0; i < argc; ++i)
+        {
+            printf("   [%d] '%s'\n", i, argv[i].c_str());
+        }
+
+#if 0
+        std::string message;
+        std::string pattern;
+        bool ok = nsm::server_msg(nsm::tag::broadcast, message, pattern);
+        if (ok)
+        {
+            // nsm::incoming_msg("broadcast", message, tag);
+        }
+#endif
+
+        nsm::tag t = nsm::client_tag(message, pattern);
+        if (t == nsm::tag::reply)                       /* "ss"   */
+        {
+printf("BROADCAST /reply received\n");
+        }
+        else if (t == nsm::tag::replyex)                /* "ssss" */
+        {
+            /*
+             *  Check if argv[0] is "/nsm/server/announce".  If so, then the
+             *  rest of the arguments are "Howdy...", "Non Session Manager", and
+             *  the capabilities string of the server.
+             */
+
+printf("BROADCAST /replyex received\n");
+            nsm::tag t0 = nsm::server_tag(message);
+            if (t0 == nsm::tag::announce)
+            {
+                // TODO: pass the values to Tab_Session in qsmainwnd.
+printf("BROADCAST /nsm/server/announce received\n");
+            }
+
+        }
+        else if (t == nsm::tag::open)
+        {
+            // TODO
+printf("BROADCAST /nsm/client/open received\n");
+        }
+    }
+    // emit broadcast();
+}
+
+/**
+ *  Provides a client-announce function.
+ *
+ *  If NSM_URL is valid and reachable, call this function to send the following
+ *  "sssiii" message to the provided address as soon as ready to respond to the
+ *  /nsm/client/open event.  api_version_major and api_version_minor must be
+ *  the two parts of the version number of the NSM API.  If registering JACK
+ *  clients, application_name must be passed to jack_client_open.  capabilities
+ *  is a string containing a list of the capabilities the client possesses,
+ *  e.g.  :dirty:switch:progress: executable_name must be the executable name
+ *  that launched the program (e.g argv[0]).
+ *
+\verbatim
+    /nsm/server/announce s:application_name s:capabilities s:executable_name
+         i:api_version_major i:api_version_minor i:pid
+\endverbatim
+ *
+ */
+
+bool
+nsmclient::announce
+(
+    const std::string & appname,        /* actually a package name, "Seq66" */
+    const std::string & exename,        /* comes from argv[0]               */
+    const std::string & capabilities    /* e.g. ":switch:dirty:"            */
+)
+{
+    bool result = send_announcement(appname, exename, capabilities);
+    if (result)
+    {
+        msg_check();                    /* wait for the response    */
+    }
+    return result;
 }
 
 /*
@@ -234,18 +637,19 @@ nsmclient::open_session ()
     bool result = nsmbase::open_session();
     if (result)
     {
-        // m_dirty_count = 0;
-        // m_dirty = false;
-        m_nsm_file.clear();
+        // what else?
     }
     return result;
 }
 
 /**
- *  Provides a factory function to create an nsmclient.
+ *  Provides a factory function to create an nsmclient, and then to call its
+ *  virtual initialization function (so that we don't have to call it in the
+ *  constructor).
  *
- *  Note that this bare pointer should be assigned to a smart pointer, such as
- *  std::unique_ptr<>.  See seq_qt5/src/qt5nsmanager.cpp for an example.
+ *  Note that this bare pointer should be assigned immediately to a smart
+ *  pointer, such as std::unique_ptr<>.  See seq_qt5/src/qt5nsmanager.cpp for
+ *  an example.
  */
 
 nsmclient *
@@ -256,10 +660,13 @@ create_nsmclient
 )
 {
     nsmclient * result = nullptr;
-    std::string url = get_nsm_url();
+    std::string url = nsm::get_url();
     if (! url.empty())
+    {
         result = new (std::nothrow) nsmclient(url, nsmfile, nsmext);
-
+        if (not_nullptr(result))
+            (void) result->initialize();
+    }
     return result;
 }
 

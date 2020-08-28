@@ -70,102 +70,48 @@ public:
         optional_gui
     };
 
-
-private:
-
-	std::string m_manager;
-	std::string m_capabilities;
-	std::string m_path_name;
-	std::string m_display_name;
-	std::string m_client_id;
-    std::string m_nsm_file;
-    std::string m_nsm_ext;
-
 public:
 
-	nsmclient
+    nsmclient
     (
         const std::string & nsm_url,
         const std::string & nsm_file    = "",
         const std::string & nsm_ext     = ""
     );
-	~nsmclient ();
+    virtual ~nsmclient ();
 
-	// Session manager accessors.
+    // Session client methods.
 
-	const std::string & manager () const
-    {
-        return m_manager;
-    }
-
-	const std::string & capabilities () const
-    {
-        return m_capabilities;
-    }
-
-	// Session client accessors.
-
-	const std::string & path_name () const
-    {
-        return m_path_name;
-    }
-
-	const std::string & display_name () const
-    {
-        return m_display_name;
-    }
-
-	const std::string & client_id () const
-    {
-        return m_client_id;
-    }
-
-    const std::string & nsm_file () const
-    {
-        return m_nsm_file;
-    }
-
-    const std::string & nsm_ext () const
-    {
-        return m_nsm_ext;
-    }
-
-	// Session client methods.
-
-#if defined THESE_OVERRIDES_ARE_NEEDED        // they exist in nsmbase
-
-	virtual void announce
+    virtual bool initialize () override;
+    virtual void announce_reply
+    (
+        const std::string & mesg,
+        const std::string & manager,
+        const std::string & capabilities
+    ) override;
+    virtual void open
+    (
+        const std::string & path_name,
+        const std::string & display_name,
+        const std::string & client_id
+    ) override;
+    virtual void save () override;
+    virtual void loaded () override;
+    virtual void label (const std::string & label) override;
+    virtual void show (const std::string & path) override;
+    virtual void hide (const std::string & path) override;
+    virtual void broadcast
+    (
+        const std::string & message,
+        const std::string & pattern,
+        const std::vector<std::string> & argv
+    ) override;
+    virtual bool announce
     (
         const std::string & app_name,
+        const std::string & exe_name,
         const std::string & capabilities
-    );
-	virtual void visible (bool is_visible);
-
-	// Server methods response methods.
-
-	virtual void announce_error (const std::string & mesg);
-	virtual void announce_reply
-    (
-		const std::string & mesg,
-		const std::string & manager,
-		const std::string & capabilities
-    );
-	virtual void nsm_open
-    (
-		const std::string & path_name,
-		const std::string & display_name,
-		const std::string & client_id
-    );
-	virtual void nsm_save ();
-	virtual void nsm_loaded ();
-	virtual void nsm_label (const std::string & /*label*/);
-	virtual void nsm_show ();
-	virtual void nsm_hide ();
-	virtual void progress (float percent);
-	virtual void message (int priority, const std::string & mesg);
-    virtual bool save_session ();
-    virtual bool close_session ();
-#endif  // THESE_METHODS_ARE_NEEDED
+    ) override;
 
     /*
      * Prospective caller helpers a la qtractorMainForm.
@@ -175,18 +121,16 @@ public:
 
 protected:
 
-	void nsm_reply (const std::string & path, reply replycode);
-
 /*
  *
 signals:                            // Session client callbacks.
 
-	void active (bool is_active);
-	void open ();
-	void save ();
-	void loaded ();
-	void show ();
-	void hide ();
+    void active (bool is_active);
+    void open ();
+    void save ();
+    void loaded ();
+    void show ();
+    void hide ();
  *
  */
 

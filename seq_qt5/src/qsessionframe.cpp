@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-08-24
+ * \updates       2020-08-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,7 +64,8 @@ qsessionframe::qsessionframe
 ) :
     QFrame                  (parent),
     ui                      (new Ui::qsessionframe),
-    m_main_window           (mainparent)
+    m_main_window           (mainparent),
+    m_performer             (p)
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

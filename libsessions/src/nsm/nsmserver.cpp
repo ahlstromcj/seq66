@@ -59,10 +59,12 @@ std::unique_ptr<nsmserver>
 create_nsmserver ()
 {
     std::unique_ptr<nsmserver> result;
-    std::string url = get_nsm_url();
+    std::string url = nsm::get_url();
     if (! url.empty())
-        result.reset(new nsmserver(url));
-
+    {
+        // TODO:
+        // result.reset(new nsmserver(url));
+    }
     return result;
 }
 

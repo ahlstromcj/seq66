@@ -10,12 +10,14 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-25
+ * \updates       2020-08-28
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
+
+#include <vector>                       /* std::vector                      */
 
 #include "seq66_features.hpp"
 #include "util/basic_macros.h"
@@ -25,12 +27,63 @@
 #include <lo/lo.h>                      /* library for the OSC protocol     */
 #endif
 
+#define NSM_API_VERSION_MAJOR   1
+#define NSM_API_VERSION_MINOR   0
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
 
 namespace seq66
 {
+
+namespace nsm
+{
+
+/**
+ *  Provides reply codes matching those of NSM>
+ */
+
+enum class reply
+{
+    ok               =  0,
+    general          = -1,
+    incompatible_api = -2,
+    blacklisted      = -3,
+    launch_failed    = -4,
+    no_such_file     = -5,
+    no_session_open  = -6,
+    unsaved_changes  = -7,
+    not_now          = -8,
+    bad_project      = -9,
+    create_failed    = -10
+};
+
+/*
+ *  External helper functions in the nsm namespace.
+ */
+
+extern std::string reply_string (reply replycode);
+extern std::string get_url ();
+extern void incoming_msg
+(
+    const std::string & cbname,
+    const std::string & message,
+    const std::string & pattern
+);
+extern void outgoing_msg
+(
+    const std::string & message,
+    const std::string & pattern,
+    const std::string & data = "sent"
+);
+extern std::vector<std::string> convert_lo_args
+(
+    const std::string & pattern,
+    int argc, lo_arg ** argv
+);
+
+}           // namespace nsm
 
 /**
  *  nsmbase is an NSM OSC server/client base class.
@@ -39,28 +92,11 @@ namespace seq66
 class nsmbase
 {
 
-public:
-
-    enum class reply
-    {
-        ok               =  0,
-        general          = -1,
-        incompatible_api = -2,
-        blacklisted      = -3,
-        launch_failed    = -4,
-        no_such_file     = -5,
-        no_session_open  = -6,
-        unsaved_changes  = -7,
-        not_now          = -8,
-        bad_project      = -9,
-        create_failed    = -10
-    };
-
 private:
 
     static std::string sm_nsm_default_ext;
 
-protected:          // private:
+private:
 
     /**
      *  Provides a reference (a void pointer) to an OSC service. See
@@ -112,8 +148,6 @@ public:
     virtual ~nsmbase ();
 
 public:
-
-    bool lo_is_valid () const;
 
     bool is_active() const              // session activation accessor
     {
@@ -179,51 +213,145 @@ public:
         return m_dirty;
     }
 
-    // Session client methods.
+protected:
+
+    void path_name (const std::string & s)
+    {
+        m_path_name = s;
+    }
+
+    void display_name (const std::string & s)
+    {
+        m_display_name = s;
+    }
+
+    void client_id (const std::string & s)
+    {
+        m_client_id = s;
+    }
+
+    void is_active(bool f)
+    {
+        m_active = f;
+    }
+
+    void manager (const std::string & s)
+    {
+        m_manager = s;
+    }
+
+    void capabilities (const std::string & s)
+    {
+        m_capabilities = s;
+    }
+
+protected:
+
+    void msg_check (int timeout = 100);     /* 100 milliseconds */
+    bool lo_is_valid () const;
+    void nsm_debug (const std::string & tag);
+    void add_client_method (nsm::tag t, lo_method_handler h);
+    void add_server_method (nsm::tag t, lo_method_handler h);
+    bool send_announcement
+    (
+        const std::string & appname,
+        const std::string & exename,
+        const std::string & capabilities
+    );
+
+    void start_thread ()
+    {
+        lo_server_thread_start(m_lo_thread);
+    }
 
     void dirty (bool isdirty);
     void update_dirty_count (bool flag = true);
 
-    virtual void visible (bool isvisible);
-    virtual bool progress (float percent);
-    virtual bool is_dirty ();
-    virtual bool is_clean ();
-    virtual bool message (int priority, const std::string & mesg);
+    // Session client reply methods
 
-    // Session client reply methods.
+    bool open_reply (nsm::reply replycode = nsm::reply::ok);
+    bool save_reply (nsm::reply replycode = nsm::reply::ok);
 
-    bool open_reply (reply replycode = reply::ok);
-    bool save_reply (reply replycode = reply::ok);
+    bool send
+    (
+        const std::string & message,
+        const std::string & pattern
+    );
+    bool send_from_client (nsm::tag t);
+    bool send_from_client
+    (
+        nsm::tag t,
+        const std::string & s1,
+        const std::string & s2,
+        const std::string & s3 = ""
+    );
+    bool send_nsm_reply (const std::string & path, nsm::reply replycode);
 
     void open_reply (bool loaded)
     {
-        open_reply(loaded ? reply::ok : reply::general);
+        open_reply(loaded ? nsm::reply::ok : nsm::reply::general);
         if (loaded)
             m_dirty = false;
     }
 
     void save_reply (bool saved)
     {
-        save_reply(saved ? reply::ok : reply::general);
+        save_reply(saved ? nsm::reply::ok : nsm::reply::general);
         if (saved)
             m_dirty = false;
     }
 
-    // Server methods response methods.
+public:             // virtual methods for callbacks in nsmbase
 
+    virtual void nsm_reply                      /* generic replies */
+    (
+        const std::string & message,
+        const std::string & pattern
+    );
+    virtual void error (int errcode, const std::string & mesg);
+
+protected:          // virtual methods
+
+    virtual void visible (bool isvisible);
+    virtual bool progress (float percent);
+    virtual bool is_dirty ();
+    virtual bool is_clean ();
+    virtual bool message (int priority, const std::string & mesg);
+    virtual bool initialize ();
+
+    /*
+     * Used by the free-function OSC callbacks.
+     */
+
+    virtual void announce_reply
+    (
+        const std::string & mesg,
+        const std::string & manager,
+        const std::string & capabilities
+    ) = 0;
     virtual void open
     (
         const std::string & path_name,
         const std::string & display_name,
         const std::string & client_id
-    );
-    virtual void save ();
-    virtual void label (const std::string & label);
-    virtual void loaded ();
-    virtual void show (const std::string & path);
-    virtual void hide (const std::string & path);
-    virtual void broadcast (const std::string & path, lo_message msg);
-    virtual void nsm_debug (const std::string & tag);
+    ) = 0;
+    virtual void save () = 0;
+    virtual void label (const std::string & label) = 0;
+    virtual void loaded () = 0;
+    virtual void show (const std::string & path) = 0;
+    virtual void hide (const std::string & path) = 0;
+    virtual void broadcast
+    (
+        const std::string & message,
+        const std::string & pattern,
+        const std::vector<std::string> & argv
+    ) = 0;
+    virtual bool announce
+    (
+        const std::string & app_name,
+        const std::string & exe_name,
+        const std::string & capabilities
+    ) = 0;
 
     /*
      * Prospective caller helpers a la qtractorMainForm.
@@ -233,53 +361,7 @@ public:
     virtual bool save_session ();
     virtual bool close_session ();
 
-public:
-
-    /*
-     * Used by the free-function OSC callbacks.
-     */
-
-    virtual bool announce
-    (
-        const std::string & app_name,
-        const std::string & exe_name,
-        const std::string & capabilities
-    );
-    virtual void announce_error (const std::string & mesg);
-    virtual void announce_reply
-    (
-        const std::string & mesg,
-        const std::string & manager,
-        const std::string & capabilities
-    );
-    bool nsm_reply (const std::string & path, reply replycode);
-    std::string nsm_reply_message (reply replycode);
-
-    void send
-    (
-        const std::string & message,
-        const std::string & pattern
-    );
-    void send_from_client (nsm::tag t);
-    void send_from_client
-    (
-        nsm::tag t,
-        const std::string & s1,
-        const std::string & s2,
-        const std::string & s3 = ""
-    );
-
-protected:
-
-    void add_client_method (nsm::tag t, lo_method_handler h);
-
 };          // class nsmbase
-
-/*
- *  External helper functions.
- */
-
-extern std::string get_nsm_url ();
 
 }           // namespace seq66
 

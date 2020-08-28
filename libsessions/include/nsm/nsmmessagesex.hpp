@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-20
- * \updates       2020-08-25
+ * \updates       2020-08-28
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -132,7 +132,22 @@ extern bool server_msg (tag t, std::string & message, std::string & pattern);
 extern bool misc_msg (tag t, std::string & message, std::string & pattern);
 
 /*
- *  More free functions. RENAME LATER.
+ *  Free functions for inverse table lookup.
+ */
+
+extern tag client_tag
+(
+    const std::string & message,
+    const std::string & pattern = "X"
+);
+extern tag server_tag
+(
+    const std::string & message,
+    const std::string & pattern = "X"
+);
+
+/*
+ *  More free functions.
  */
 
 extern const std::string & default_ext ();

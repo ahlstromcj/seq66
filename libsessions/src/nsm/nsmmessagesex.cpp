@@ -7,7 +7,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-21
- * \updates       2020-08-25
+ * \updates       2020-08-28
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -295,6 +295,60 @@ misc_msg (tag t, std::string & message, std::string & pattern)
 {
     return nsm_lookup(s_misc_msgs, t, message, pattern);
 }
+
+/**
+ *  Inverse lookup.  Given the message-path name, returns the code.
+ *
+ *  Not sure if we need to check the pattern as well.
+ */
+
+tag
+nsm_lookup_tag
+(
+    const lookup & table,
+    const std::string & message,
+    const std::string & pattern = "X"
+)
+{
+    tag result = tag::null;
+    for (auto lci = table.begin(); lci != table.end(); ++lci)
+    {
+        bool match = lci->second.msg_text == message;
+        if (match)
+        {
+            if (pattern != "X")
+                match = lci->second.msg_pattern == pattern;
+
+            if (match)
+            {
+                result = lci->first;
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+/*
+ * The rest of these free functions provide easy lookup of the various tags
+ * from the given message.
+ */
+
+tag
+client_tag (const std::string & message, const std::string & pattern)
+{
+    return nsm_lookup_tag(s_client_msgs, message, pattern);
+}
+
+tag
+server_tag (const std::string & message, const std::string & pattern)
+{
+    return nsm_lookup_tag(s_server_msgs, message, pattern);
+}
+
+/*
+ * Additional helpful functions.
+ */
 
 const std::string &
 default_ext ()

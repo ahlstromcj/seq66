@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-08-24
+ * \updates       2020-08-27
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -95,6 +95,8 @@ private:
      */
 
     qsmainwnd * m_main_window;
+
+    performer & m_performer;
 
 };
 
