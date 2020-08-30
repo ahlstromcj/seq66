@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-08-13
+ * \updates       2020-08-30
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -111,9 +111,12 @@ public:
     }
 
     bool is_session_mgmt_active () const;
-    bool main_settings (int argc, char * argv []);
-    bool open_playlist ();
-    bool create_performer ();
+    bool create (int argc, char * argv []);
+
+    bool main_settings (int argc, char * argv []);      // make protected !
+    bool open_playlist ();      // make protected !
+    bool create_performer ();       // make protected !
+
     std::string open_midi_file (const std::string & fname, std::string & msg);
 
     bool error_active () const

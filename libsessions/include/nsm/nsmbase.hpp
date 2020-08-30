@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-28
+ * \updates       2020-08-29
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -46,17 +46,20 @@ namespace nsm
 
 enum class reply
 {
-    ok               =  0,
-    general          = -1,
-    incompatible_api = -2,
-    blacklisted      = -3,
-    launch_failed    = -4,
-    no_such_file     = -5,
-    no_session_open  = -6,
-    unsaved_changes  = -7,
-    not_now          = -8,
-    bad_project      = -9,
-    create_failed    = -10
+    ok                  =  0,
+    general             = -1,
+    incompatible_api    = -2,
+    blacklisted         = -3,
+    launch_failed       = -4,
+    no_such_file        = -5,
+    no_session_open     = -6,
+    unsaved_changes     = -7,
+    not_now             = -8,
+    bad_project         = -9,
+    create_failed       = -10,
+    session_locked      = -11,          /* see nsmd.C in the Non project    */
+    operation_pending   = -12,          /* see nsmd.C in the Non project    */
+    save_failed         = -99           /* doesn't exist in the Non project */
 };
 
 /*
@@ -320,8 +323,11 @@ protected:          // virtual methods
     virtual bool initialize ();
 
     /*
-     * Used by the free-function OSC callbacks.
+     * Used by the free-function OSC callbacks, and there are too many to make
+     * as friends.
      */
+
+public:
 
     virtual void announce_reply
     (
@@ -329,6 +335,7 @@ protected:          // virtual methods
         const std::string & manager,
         const std::string & capabilities
     ) = 0;
+
     virtual void open
     (
         const std::string & path_name,
@@ -352,6 +359,8 @@ protected:          // virtual methods
         const std::string & exe_name,
         const std::string & capabilities
     ) = 0;
+
+protected:
 
     /*
      * Prospective caller helpers a la qtractorMainForm.

@@ -92,7 +92,7 @@ qt5nsmanager::~qt5nsmanager ()
 }
 
 /**
- *  This function is called after create_window().
+ *  This function is called before create_window().
  */
 
 bool

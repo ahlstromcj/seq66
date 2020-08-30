@@ -581,6 +581,58 @@ smanager::error_handling ()
     }
 }
 
+/**
+ *  Refactored so that the basic NSM session can be set up before launch(), as
+ *  per NSM rules.
+ *
+ */
+
+bool
+smanager::create (int argc, char * argv [])
+{
+    bool result = main_settings(argc, argv); // bool ok = true;
+    if (result)
+    {
+        (void) create_session(argc, argv);
+        result = create_performer();     /* fails if performer not made  */
+        if (result)
+            result = open_playlist();
+
+        if (result)
+        {
+            std::string fname = midi_filename();
+            if (! fname.empty())
+            {
+                std::string errormessage;
+                fname = open_midi_file(fname, errormessage);
+                if (fname.empty())
+                {
+                    warnprintf("Could not open %s\n", fname.c_str());
+                }
+            }
+            result = create_window();
+            if (result)
+            {
+                error_handling();
+//              exit_status = run() ? EXIT_SUCCESS : EXIT_FAILURE ;
+//              result = close_session();
+            }
+            else
+                result = close_session(false);
+        }
+    }
+    else
+    {
+        (void) create_performer();
+        (void) create_window();
+        error_handling();
+        (void) create_session();
+        (void) run();
+        (void) close_session(false);
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*

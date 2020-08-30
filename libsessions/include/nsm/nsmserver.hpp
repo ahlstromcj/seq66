@@ -61,6 +61,23 @@ public:
         optional_gui
     };
 
+    /**
+     *  These command values can indicate the pending operation.
+     */
+
+    enum class command
+    {
+        none,
+        quit,
+        kill,
+        save,
+        open,
+        start,
+        close,
+        duplicate,
+        cnew
+    };
+
 private:
 
     static std::string sm_nsm_default_ext;

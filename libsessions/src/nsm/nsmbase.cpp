@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-08-28
+ * \updates       2020-08-29
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -83,6 +83,12 @@
  *      details about the session which allow it to give a view of the current
  *      session.
  */
+
+#undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes         */
+
+#if defined SHOW_CLIENT_DATA_TYPE
+#include <iostream>                     /* std::cout                        */
+#endif
 
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
@@ -702,6 +708,10 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
 {
     std::string message;
     std::string pattern;
+#if defined SHOW_CLIENT_DATA_TYPE
+    const std::type_info & ti = typeid(this);
+    std::cout << "Client type = " << ti.name();
+#endif
     if (client_msg(t, message, pattern))
     {
         if (t == nsm::tag::null)
@@ -815,7 +825,31 @@ namespace nsm
 {
 
 /**
- *  A free function to provide a string for a reply code.
+ *  A free function to provide a string for a reply code in the nsm::reply
+ *  enumeration class.
+ *
+\verbatim
+    ok:                 OK.
+    general:            General error.  This is a very common error value.
+    incompatible_api:   Incompatible API version.
+    blacklisted:        The client has been blacklisted.
+    launch_failed:      Launch failed.
+    no_such_file:       No such file.
+    no_session_open:    No session open.
+    unsaved_changes:    Unsaved changes would be lost.
+    not_now:            The operation cannot be completed at this time.
+    bad_project:        An existing project file was found to be corrupt.
+    create_failed:      Create failed. A new project could not be created.
+    session_locked:     Session is locked.
+    operation_pending:  An operation is pending.
+    save_failed:        An non-existent (heh heh) error code.
+\endverbatim
+ *
+ *  The NSM API documentation claims there is an "ERR_SAVE_FAILED" code,
+ *  meaning "The project could not be saved", which needs to be sent as a
+ *  response when appropriate.  However, this code does not exist.  Other
+ *  codes are private to the nsmd.C module, and are exposed in our
+ *  implementation of the API.
  */
 
 std::string
@@ -824,18 +858,80 @@ reply_string (nsm::reply replycode)
     std::string result;
     switch (replycode)
     {
-    case nsm::reply::ok:               result = "OK";                break;
-    case nsm::reply::general:          result = "General error";     break;
-    case nsm::reply::incompatible_api: result = "Incompatible API";  break;
-    case nsm::reply::blacklisted:      result = "Blacklisted";       break;
-    case nsm::reply::launch_failed:    result = "Launch failed";     break;
-    case nsm::reply::no_such_file:     result = "No such file";      break;
-    case nsm::reply::no_session_open:  result = "No session open";   break;
-    case nsm::reply::unsaved_changes:  result = "Unsaved changes";   break;
-    case nsm::reply::not_now:          result = "Not now";           break;
-    case nsm::reply::bad_project:      result = "Bad project";       break;
-    case nsm::reply::create_failed:    result = "Create failed";     break;
-    default:                           result = "Unknown reply";     break;
+    case nsm::reply::ok:
+
+        result = "OK";
+        break;
+
+    case nsm::reply::general:
+
+        result = "General error";
+        break;
+
+    case nsm::reply::incompatible_api:
+
+        result = "Incompatible API";
+        break;
+
+    case nsm::reply::blacklisted:
+
+        result = "Blacklisted";
+        break;
+
+    case nsm::reply::launch_failed:
+
+        result = "Launch failed";
+        break;
+
+    case nsm::reply::no_such_file:
+
+        result = "No such file";
+        break;
+
+    case nsm::reply::no_session_open:
+
+        result = "No session open";
+        break;
+
+    case nsm::reply::unsaved_changes:
+
+        result = "Unsaved changes";
+        break;
+
+    case nsm::reply::not_now:
+
+        result = "Not now";
+        break;
+
+    case nsm::reply::bad_project:
+
+        result = "Bad project";
+        break;
+
+    case nsm::reply::create_failed:
+
+        result = "Create failed";
+        break;
+
+    case nsm::reply::session_locked:
+
+        result = "Session locked";
+        break;
+
+    case nsm::reply::operation_pending:
+
+        result = "Operation Pending";
+        break;
+
+    case nsm::reply::save_failed:
+
+        result = "Save failed.";
+        break;
+
+    default:
+
+        result = "Unknown reply";
+        break;
     }
     return result;
 }

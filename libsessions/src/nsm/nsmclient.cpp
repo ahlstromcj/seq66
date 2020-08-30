@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-08-28
+ * \updates       2020-08-29
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -197,7 +197,7 @@ osc_nsm_announce_reply
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc) || (! nsm::is_announce(&argv[0]->s)))
         return -1;
 
@@ -217,7 +217,7 @@ osc_nsm_open
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -237,7 +237,7 @@ osc_nsm_save
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -257,7 +257,7 @@ osc_nsm_session_loaded
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -277,7 +277,7 @@ osc_nsm_label
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -302,7 +302,7 @@ osc_nsm_show
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (is_nullptr(pnsmc))
         return -1;
 
@@ -327,7 +327,7 @@ osc_nsm_hide
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (pnsmc == NULL)
         return -1;
 
@@ -351,7 +351,7 @@ osc_nsm_broadcast
     void * user_data
 )
 {
-    nsmclient * pnsmc = static_cast<nsmclient *>(user_data);
+    nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
     if (pnsmc == NULL)
         return -1;
 
@@ -411,7 +411,8 @@ nsmclient::initialize ()
 }
 
 /*
- * Server announce reply.
+ * Server announce reply.  Here, we can indicate that the session is connected
+ * and active, and what session manager is in force.
  */
 
 void

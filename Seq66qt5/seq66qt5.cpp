@@ -73,8 +73,8 @@ main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
-    std::string errormessage;               /* just in case                 */
     seq66::qt5nsmanager sm(app);            /* NEW, currently just a helper */
+#if defined USE_OLD_CODE
     bool result = sm.main_settings(argc, argv); // bool ok = true;
     if (result)
     {
@@ -96,6 +96,7 @@ main (int argc, char * argv [])
             std::string fname = sm.midi_filename();
             if (! fname.empty())
             {
+                std::string errormessage;   /* just in case */
                 fname = sm.open_midi_file(fname, errormessage);
                 if (fname.empty())
                 {
@@ -132,13 +133,18 @@ main (int argc, char * argv [])
         (void) sm.close_session(false);
         exit_status = EXIT_FAILURE;
     }
+#else
 
-    /*
-     * Currently just re-shows the logged error message from portmidi.
-     *
-     *  if (! result)
-     *      sm.show_message("Error in session; see erroneous.* files");
-     */
+    bool result = sm.create(argc, argv);
+    if (result)
+    {
+        exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
+        result = sm.close_session();
+    }
+    else
+        exit_status = EXIT_FAILURE;
+
+#endif  // USE_OLD_CODE
 
     return exit_status;
 }
