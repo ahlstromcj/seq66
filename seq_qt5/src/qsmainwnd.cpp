@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-26
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2941,6 +2941,13 @@ qsmainwnd::recreate_all_slots ()
         result = m_live_frame->recreate_all_slots();
     }
     return result;
+}
+
+void
+qsmainwnd::session_manager (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_manager(text);
 }
 
 void

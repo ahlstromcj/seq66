@@ -137,6 +137,7 @@ public:
         return m_use_nsm;
     }
 
+    void session_manager (const std::string & text);
     void session_path (const std::string & text);
     void session_URL (const std::string & text);
     void session_log (const std::string & text);

@@ -26,6 +26,8 @@
 namespace seq66
 {
 
+class smanager;
+
 /**
  *  nsmclient is an NSM OSC client agent.
  */
@@ -70,17 +72,27 @@ public:
         optional_gui
     };
 
+protected:
+
+    /**
+     *  Provides the session manager object helping this client do session
+     *  management.  No Qt code.
+     */
+
+    smanager & m_session_manager;
+
 public:
 
     nsmclient
     (
+        smanager & sessionmanager,
         const std::string & nsm_url,
         const std::string & nsm_file    = "",
         const std::string & nsm_ext     = ""
     );
     virtual ~nsmclient ();
 
-    // Session client methods.
+public:     // session client method overrides
 
     virtual bool initialize () override;
     virtual void announce_reply
@@ -113,11 +125,10 @@ public:
         const std::string & capabilities
     ) override;
 
-    /*
-     * Prospective caller helpers a la qtractorMainForm.
-     */
+public:         // Other virtual functions
 
-    virtual bool open_session ();
+    virtual bool open_session (); // prospective helper a la qtractorMainForm
+    virtual void session_manager_name (const std::string & mgrname);
 
 protected:
 
@@ -142,13 +153,14 @@ signals:                            // Session client callbacks.
 
 extern nsmclient * create_nsmclient
 (
+    smanager & sessionmanager,
     const std::string & nsmfile,
     const std::string & nsmext
 );
 
-#endif      // SEQ66_NSMCLIENT_HPP
-
 }           // namespace seq66
+
+#endif      // SEQ66_NSMCLIENT_HPP
 
 /*
  * nsmclient.hpp

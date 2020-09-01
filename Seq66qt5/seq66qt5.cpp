@@ -74,67 +74,6 @@ main (int argc, char * argv [])
     QApplication app(argc, argv);           /* main application object      */
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
     seq66::qt5nsmanager sm(app);            /* NEW, currently just a helper */
-#if defined USE_OLD_CODE
-    bool result = sm.main_settings(argc, argv); // bool ok = true;
-    if (result)
-    {
-        /*
-         * Refactored so that the basic NSM session can be set up before
-         * launch(), as per NSM rules.
-         *
-         * TODO:  dawdle until the "open" message is received!
-         */
-
-        (void) sm.create_session(argc, argv);
-
-        result = sm.create_performer();     /* fails if performer not made  */
-        if (result)
-            result = sm.open_playlist();
-
-        if (result)
-        {
-            std::string fname = sm.midi_filename();
-            if (! fname.empty())
-            {
-                std::string errormessage;   /* just in case */
-                fname = sm.open_midi_file(fname, errormessage);
-                if (fname.empty())
-                {
-                    warnprintf("Could not open %s\n", fname.c_str());
-                }
-            }
-            result = sm.create_window();
-            if (result)
-            {
-                sm.error_handling();
-
-                /*
-                 * Moved above.  Still testing!
-                 * result = sm.create_session(argc, argv); // MOVED ABOVE
-                 */
-
-                if (result)
-                {
-                    exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
-                    result = sm.close_session();
-                }
-                else
-                    result = sm.close_session(false);
-            }
-        }
-    }
-    else
-    {
-        (void) sm.create_performer();
-        (void) sm.create_window();
-        sm.error_handling();
-        (void) sm.create_session();
-        (void) sm.run();
-        (void) sm.close_session(false);
-        exit_status = EXIT_FAILURE;
-    }
-#else
-
     bool result = sm.create(argc, argv);
     if (result)
     {
@@ -143,8 +82,6 @@ main (int argc, char * argv [])
     }
     else
         exit_status = EXIT_FAILURE;
-
-#endif  // USE_OLD_CODE
 
     return exit_status;
 }

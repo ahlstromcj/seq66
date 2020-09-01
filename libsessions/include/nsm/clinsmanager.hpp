@@ -1,5 +1,5 @@
-#if ! defined SEQ66_QT5NSMANAGER_HPP
-#define SEQ66_QT5NSMANAGER_HPP
+#if ! defined SEQ66_CLINSMANAGER_HPP
+#define SEQ66_CLINSMANAGER_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,38 +20,42 @@
  */
 
 /**
- * \file          qt5nsmanager.hpp
+ * \file          clinsmanager.hpp
  *
  *  This module declares/defines the main module for the JACK/ALSA "qt5"
  *  implementation of this application.
  *
- * \library       qt5nsmanager application
+ * \library       clinsmanager application
  * \author        Chris Ahlstrom
- * \date          2020-03-15
- * \updates       2020-08-24
+ * \date          2020-08-31
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
  *  would style it, "eldritch") gtkmm-2.4 implementation of Seq66.
  */
 
-#include <QObject>                      /* Qt 5 QObject class               */
 #include <memory>                       /* std::unique_ptr<>                */
 
-#include "nsm/clinsmanager.hpp"         /* seq66::clinsmanager              */
-#include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
+#include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
 #endif
 
-#define SEQ66_NSM_QT5_CAPABILITIES      ":switch:dirty:message"
-
-/*
- * Forward reference
+/**
+ *  The potential list of capabilities is
+ *
+ *  -   switch:       Client is capable of responding to multiple `open`
+ *                    messages without restarting.
+ *  -   dirty:        Client knows when it has unsaved changes.
+ *  -   progress:     Client can send progress updates during time-consuming
+ *                    operations.
+ *  -   message:      Client can send textual status updates.
+ *  -   optional-gui: Client has an optional GUI.
  */
 
-class QApplication;
+#define SEQ66_NSM_CLI_CAPABILITIES      ":message:"
 
 namespace seq66
 {
@@ -60,48 +64,10 @@ namespace seq66
  *
  */
 
-class qt5nsmanager : public QObject, public clinsmanager
+class clinsmanager : public smanager
 {
-	Q_OBJECT
-
-public:
-
-    qt5nsmanager
-    (
-        QApplication & app,
-        QObject * parent         = nullptr,
-        const std::string & caps = SEQ66_NSM_QT5_CAPABILITIES
-    );
-    virtual ~qt5nsmanager ();
-
-#if 0
-    virtual bool create_session
-    (
-        int argc        = 0,
-        char * argv []  = nullptr
-    ) override;
-#endif
-    virtual bool close_session (bool ok = true) override;
-    virtual bool create_window () override;
-    virtual void show_message (const std::string & msg) const override;
-    virtual void show_error (const std::string & msg = "") const override;
-    virtual bool run () override;
-    virtual void session_manager_name (const std::string & mgrname) override;
-
-signals:        /* signals sent by session client callbacks */
-
-#if 0
-	void sig_active (bool isactive);
-	void sig_open ();
-	void sig_save ();
-	void sig_loaded ();
-	void sig_show ();
-	void sig_hide ();
-#endif
 
 private:
-
-    QApplication & m_application;
 
     bool m_nsm_active;
 
@@ -117,16 +83,30 @@ private:
 
 #endif
 
-    std::unique_ptr<qsmainwnd> m_window;
+public:
 
-};          // class qt5nsmanager
+    clinsmanager (const std::string & caps = SEQ66_NSM_CLI_CAPABILITIES);
+    virtual ~clinsmanager ();
+
+    virtual bool create_session
+    (
+        int argc        = 0,
+        char * argv []  = nullptr
+    ) override;
+    virtual bool close_session (bool ok = true) override;
+    virtual void show_message (const std::string & msg) const override;
+    virtual void show_error (const std::string & msg = "") const override;
+    virtual bool run () override;
+    virtual void session_manager_name (const std::string & mgrname) override;
+
+};          // class clinsmanager
 
 }           // namespace seq66
 
-#endif      // SEQ66_QT5NSMANAGER_HPP
+#endif      // SEQ66_CLINSMANAGER_HPP
 
 /*
- * qt5nsmanager.hpp
+ * clinsmanager.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

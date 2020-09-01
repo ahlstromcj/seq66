@@ -77,8 +77,9 @@ namespace seq66
  *  available.  See that function for more information.
  */
 
-smanager::smanager () :
+smanager::smanager (const std::string & caps) :
     m_perf_pointer      (),
+    m_capabilities      (caps),
     m_midi_filename     (),
     m_is_help           (false),
     m_extant_errmsg     (),

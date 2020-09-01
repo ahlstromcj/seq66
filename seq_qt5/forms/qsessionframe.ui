@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>480</height>
+    <height>458</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,9 +44,9 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>110</y>
+     <y>120</y>
      <width>132</width>
-     <height>17</height>
+     <height>18</height>
     </rect>
    </property>
    <property name="minimumSize">
@@ -63,8 +63,8 @@
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>100</y>
-     <width>448</width>
+     <y>120</y>
+     <width>420</width>
      <height>32</height>
     </rect>
    </property>
@@ -76,7 +76,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>16777215</width>
+     <width>420</width>
      <height>32</height>
     </size>
    </property>
@@ -87,13 +87,13 @@
      <x>30</x>
      <y>160</y>
      <width>132</width>
-     <height>32</height>
+     <height>18</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>132</width>
-     <height>32</height>
+     <height>18</height>
     </size>
    </property>
    <property name="text">
@@ -126,7 +126,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>220</y>
+     <y>240</y>
      <width>132</width>
      <height>32</height>
     </rect>
@@ -145,23 +145,29 @@
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>220</y>
+     <y>240</y>
      <width>420</width>
-     <height>240</height>
+     <height>200</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>420</width>
-     <height>240</height>
+     <height>200</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>420</width>
+     <height>200</height>
     </size>
    </property>
   </widget>
   <widget class="QPushButton" name="detachPushbotton">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>380</y>
+     <x>40</x>
+     <y>360</y>
      <width>100</width>
      <height>64</height>
     </rect>
@@ -174,6 +180,87 @@
    </property>
    <property name="text">
     <string>Detach</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="sessionManagerNameText">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>80</y>
+     <width>420</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>420</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>420</width>
+     <height>32</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sessionManagerNameLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>80</y>
+     <width>132</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Session Manager</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="displayNameLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>200</y>
+     <width>132</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Display Name</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="clientIdLabel">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>210</y>
+     <width>100</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Client ID</string>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="displayNameText">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>200</y>
+     <width>160</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="clientIdText">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>200</y>
+     <width>160</width>
+     <height>32</height>
+    </rect>
    </property>
   </widget>
  </widget>

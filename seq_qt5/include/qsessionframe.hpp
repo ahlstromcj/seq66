@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-08-27
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -75,6 +75,7 @@ public:
 
 public:
 
+    void session_manager (const std::string & text);
     void session_path (const std::string & text);
     void session_URL (const std::string & text);
     void session_log (const std::string & text);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-08-30
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -75,6 +75,13 @@ private:
     pointer m_perf_pointer;
 
     /**
+     *  Holds the capabilities string (if applicable) for the application
+     *  using this session manager.
+     */
+
+    std::string m_capabilities;
+
+    /**
      *  Hold the name of the currently-loaded MIDI file.
      */
 
@@ -103,7 +110,9 @@ private:
 
 public:
 
-    smanager ();
+    smanager (const std::string & caps = "");
+    smanager (const smanager &) = delete;
+    smanager & operator =(const smanager &) = delete;
 
     virtual ~smanager ()
     {
@@ -134,12 +143,10 @@ public:
         return m_midi_filename;
     }
 
-    virtual bool create_session (int argc = 0, char * argv [] = nullptr);
-    virtual bool close_session (bool ok = true);
-    virtual bool create_window ();      /* does mostly nothing by default   */
-    virtual void show_message (const std::string & msg) const;
-    virtual void show_error (const std::string & msg = "") const;
-    virtual bool run () = 0;            /* app.exec(); run main window loop */
+    const std::string & capabilities () const
+    {
+        return m_capabilities;
+    }
 
     bool internal_error_check (std::string & msg) const;
     void error_handling ();
@@ -148,6 +155,16 @@ public:
     {
         return  bool(m_perf_pointer) ? m_perf_pointer->error_pending() : true ;
     }
+
+public:
+
+    virtual bool create_session (int argc = 0, char * argv [] = nullptr);
+    virtual bool close_session (bool ok = true);
+    virtual bool create_window ();      /* does mostly nothing by default   */
+    virtual bool run () = 0;            /* app.exec(); run main window loop */
+    virtual void show_message (const std::string & msg) const;
+    virtual void show_error (const std::string & msg = "") const;
+    virtual void session_manager_name (const std::string & mgrname) = 0;
 
 protected:
 

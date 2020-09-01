@@ -57,3 +57,84 @@ Qta cli srv prox
          x              /nsm/server/save
                         /nsm/session/list
                         /nsm/session/name
+
+Main features of main messages:
+
+ 1. After connection and when the client can respond to /nsm/client/open,
+    send /nsm/server/annouce to provide client name, capabilities, PID, etc.
+
+ 2. Server responds with /reply "/nsm/server/announce" to provide its name and
+    capabilities.  Or it might /error "/nsm/server/announce" to indicate an
+    error-code and error-message.
+
+    After the client accepts a client-control message, it must reply:
+    /reply "/nsm/xxxxx" message (the command it is responding to with
+    "message") or /error "/nsm/xxxxx" errcode message.
+
+ 3. Quit (SIGTERM).  The client must close unconditionally.  This message comes
+    after the client responds to an /nsm/client/save message.
+
+ 4. Open. The server sends /nsm/client/open followed by the path to the
+    project, a display name, and a client ID.
+
+    If the client can't switch, "open" is sent only once. Otherwise, the client
+    must act on each open message.
+
+    The path is instance-specific.  The client can append to this path (if done
+    consistently).
+
+    If a project exists at the path, the client must open it.
+    If not, the client must create one at the specified path.
+    It will be used later with the "save" method.
+
+    If the client can run multiple times, the provided client ID must be
+    prepended to (e.g.) JACK client names: $CLIENT_ID/track-1
+
+    The client ID is application_name + unique identifier.
+
+    Once the "open" is done, the client must send a response:
+
+        /reply "/nsm/client/open" message
+        /error "/nsm/client/open" errcode message
+
+ 5. Save. The server can send /nsm/client/save, but only after a previous open
+    message.
+
+        /reply "/nsm/client/save" message
+        /error "/nsm/client/save" errcode message
+
+ 6. Session is loaded.  /nsm/client/session_is_loaded doesn't require a
+    response.  However, if a client acts on this message, it must not delay
+    initialization while waiting for it.
+
+ 7. Show and hide GUI.  Clients that have capabilitity "optional-gui" might
+    receive /nsm/client/show_optional_gui and /nsm/client/hide_optional_gui.
+
+    The client must send one of these after the "announce" and after GUI state
+    changes (no response to these from server):
+
+        /nsm/client/gui_is_hidden
+        /nsm/client/gui_is_shown
+
+ 8. Progress.  /nsm/client/progress percent if capable of "progress".
+
+ 9. Clean/dirty.  /nsm/client/is_dirty  /nsm/client/is_clean if capable of
+    "dirty".
+
+10. Status.  /nsm/client/message priority message  where priority is from 0
+    (lowest priority) to 3 (highest) and client is capable of "message".
+
+11. Server API:
+
+- /nsm/server/add exename Adds a client to the current session.
+- /nsm/server/save Saves the current session.
+- /nsm/server/open projname Saves current session and loads a new session.
+- /nsm/server/new projname Saves the current session and creates a new session.
+- /nsm/server/duplicate newproj Saves and closes the current session, makes
+  a copy, and opens it.
+- /nsm/server/close Saves and closes the current session.
+- /nsm/server/abort Closes the current session WITHOUT SAVING
+- /nsm/server/quit Saves and closes the current session and terminates the server.
+- /nsm/server/list Lists available projects. One /reply message will be sent for
+  each existing project.
+

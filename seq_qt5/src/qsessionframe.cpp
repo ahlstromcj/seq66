@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-08-27
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -78,6 +78,12 @@ qsessionframe::qsessionframe
 qsessionframe::~qsessionframe()
 {
     delete ui;
+}
+
+void
+qsessionframe::session_manager (const std::string & text)
+{
+    ui->sessionManagerNameText->setText(text.c_str());
 }
 
 void

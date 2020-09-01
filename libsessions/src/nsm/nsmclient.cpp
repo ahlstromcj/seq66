@@ -170,6 +170,7 @@
 #include "util/basic_macros.hpp"        /* not_nullptr(), pathprint()       */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
+#include "sessions/smanager.hpp"        /* seq66::smanager virtuals         */
 
 #if defined SEQ66_PLATFORM_DEBUG
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
@@ -369,11 +370,13 @@ osc_nsm_broadcast
 
 nsmclient::nsmclient
 (
+    smanager & sessionmanager,
     const std::string & nsmurl,
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
-    nsmbase         (nsmurl, nsmfile, nsmext)
+    nsmbase             (nsmurl, nsmfile, nsmext),
+    m_session_manager   (sessionmanager)
 {
     // no code so far
 }
@@ -411,7 +414,11 @@ nsmclient::initialize ()
 }
 
 /*
- * Server announce reply.  Here, we can indicate that the session is connected
+ * Server announce reply.  This message is sent by the server after the client
+ * sends its announcement [see the nsmclient :: announce() and nsmbase ::
+ * send_announcement() functions].
+ *
+ * Here, we can indicate that the session is connected
  * and active, and what session manager is in force.
  */
 
@@ -426,6 +433,7 @@ nsmclient::announce_reply
     is_active(true);
     manager(mgr);
     capabilities(caps);
+    m_session_manager.session_manager_name(mgr);
     // emit active(true);
 
     nsm::incoming_msg("announce_reply", mgr, caps + " " + mesg);
@@ -515,13 +523,7 @@ nsmclient::hide (const std::string & path)
 }
 
 /**
- *  Receives a broadcast and figures out what to do with it.  It handles:
- *
- *      -   /reply
- *      -   /nsm/server/announce
- *
- *  WEIRD.  NO LONGER BEING CALLED.  Instead announce_reply() and open() are
- *  being called.  WEIRD.
+ *  Receives a broadcast and figures out what to do with it.....
  *
  *  This one is for *sending* broadcasts, not yet implemented:
  *
@@ -531,8 +533,8 @@ nsmclient::hide (const std::string & path)
 void
 nsmclient::broadcast
 (
-    const std::string & message,
-    const std::string & pattern,
+    const std::string & /*message*/,
+    const std::string & /*pattern*/,
     const std::vector<std::string> & argv
 )
 {
@@ -543,44 +545,6 @@ nsmclient::broadcast
         {
             printf("   [%d] '%s'\n", i, argv[i].c_str());
         }
-
-#if 0
-        std::string message;
-        std::string pattern;
-        bool ok = nsm::server_msg(nsm::tag::broadcast, message, pattern);
-        if (ok)
-        {
-            // nsm::incoming_msg("broadcast", message, tag);
-        }
-#endif
-
-        nsm::tag t = nsm::client_tag(message, pattern);
-        if (t == nsm::tag::reply)                       /* "ss"   */
-        {
-printf("BROADCAST /reply received\n");
-        }
-        else if (t == nsm::tag::replyex)                /* "ssss" */
-        {
-            /*
-             *  Check if argv[0] is "/nsm/server/announce".  If so, then the
-             *  rest of the arguments are "Howdy...", "Non Session Manager", and
-             *  the capabilities string of the server.
-             */
-
-printf("BROADCAST /replyex received\n");
-            nsm::tag t0 = nsm::server_tag(message);
-            if (t0 == nsm::tag::announce)
-            {
-                // TODO: pass the values to Tab_Session in qsmainwnd.
-printf("BROADCAST /nsm/server/announce received\n");
-            }
-
-        }
-        else if (t == nsm::tag::open)
-        {
-            // TODO
-printf("BROADCAST /nsm/client/open received\n");
-        }
     }
     // emit broadcast();
 }
@@ -588,14 +552,15 @@ printf("BROADCAST /nsm/client/open received\n");
 /**
  *  Provides a client-announce function.
  *
- *  If NSM_URL is valid and reachable, call this function to send the following
- *  "sssiii" message to the provided address as soon as ready to respond to the
- *  /nsm/client/open event.  api_version_major and api_version_minor must be
- *  the two parts of the version number of the NSM API.  If registering JACK
- *  clients, application_name must be passed to jack_client_open.  capabilities
- *  is a string containing a list of the capabilities the client possesses,
- *  e.g.  :dirty:switch:progress: executable_name must be the executable name
- *  that launched the program (e.g argv[0]).
+ *  If NSM_URL is valid and reachable, call this function to send the
+ *  following "sssiii" message to the provided address as soon as ready to
+ *  respond to the /nsm/client/open event.  api_version_major and
+ *  api_version_minor must be the two parts of the version number of the NSM
+ *  API.  If registering JACK clients, application_name must be passed to
+ *  jack_client_open.  capabilities is a string containing a list of the
+ *  capabilities the client possesses, e.g.  :dirty:switch:progress:
+ *  executable_name must be the executable name that launched the program (e.g
+ *  argv[0]).
  *
 \verbatim
     /nsm/server/announce s:application_name s:capabilities s:executable_name
@@ -643,6 +608,17 @@ nsmclient::open_session ()
     return result;
 }
 
+/*
+ *  Virtual functions to pass status to the smanager-derived class.
+ */
+
+void
+nsmclient::session_manager_name (const std::string & mgrname)
+{
+    // TODO
+    // m_session_manager::session_manager_name(mgrname);
+}
+
 /**
  *  Provides a factory function to create an nsmclient, and then to call its
  *  virtual initialization function (so that we don't have to call it in the
@@ -656,6 +632,7 @@ nsmclient::open_session ()
 nsmclient *
 create_nsmclient
 (
+    smanager & sessionmanager,
     const std::string & nsmfile,
     const std::string & nsmext
 )
@@ -664,7 +641,10 @@ create_nsmclient
     std::string url = nsm::get_url();
     if (! url.empty())
     {
-        result = new (std::nothrow) nsmclient(url, nsmfile, nsmext);
+        result = new (std::nothrow) nsmclient
+        (
+            sessionmanager, url, nsmfile, nsmext
+        );
         if (not_nullptr(result))
             (void) result->initialize();
     }

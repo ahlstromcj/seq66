@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-26
+ * \updates       2020-08-31
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -39,20 +39,6 @@
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
-
-/**
- *  The potential list of capabilities is
- *
- *  -   switch:       Client is capable of responding to multiple `open`
- *                    messages without restarting.
- *  -   dirty:        Client knows when it has unsaved changes.
- *  -   progress:     Client can send progress updates during time-consuming
- *                    operations.
- *  -   message:      Client can send textual status updates.
- *  -   optional-gui: Client has an optional GUI.
- */
-
-#define SEQ66_NSM_CAPABILITIES      ":switch:dirty:message"
 
 namespace seq66
 {
@@ -69,9 +55,14 @@ namespace seq66
  *  configuration, well after this constructor.
  */
 
-qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
+qt5nsmanager::qt5nsmanager
+(
+    QApplication & app,
+    QObject * parent,
+    const std::string & caps
+) :
     QObject         (parent),
-    smanager        (),
+    clinsmanager    (caps),
     m_application   (app),
     m_nsm_active    (false),
 #if defined SEQ66_NSM_SUPPORT
@@ -89,60 +80,6 @@ qt5nsmanager::qt5nsmanager (QApplication & app, QObject * parent) :
 qt5nsmanager::~qt5nsmanager ()
 {
     // no code yet
-}
-
-/**
- *  This function is called before create_window().
- */
-
-bool
-qt5nsmanager::create_session (int argc, char * argv [])
-{
-
-#if defined SEQ66_NSM_SUPPORT
-    bool result;
-    bool ok = usr().is_nsm_session();               /* user wants NSM usage */
-    if (ok)
-    {
-        std::string url = nsm::get_url();
-        ok = ! url.empty();                         /* NSM running Seq66?   */
-        if (! ok)
-            usr().in_session(false);                /* no it is not         */
-    }
-    if (ok)
-    {
-        std::string nsmfile = "dummy/file";
-        std::string nsmext = nsm::default_ext();
-        m_nsm_client.reset(create_nsmclient(nsmfile, nsmext));
-        result = bool(m_nsm_client);
-        if (result)
-        {
-            /*
-             * Use the same name as provided when opening the JACK client.
-             */
-
-            std::string appname = seq_client_name();    /* "seq66"  */
-            std::string exename = seq_arg_0();          /* "qseq66" */
-            std::string capabilities = SEQ66_NSM_CAPABILITIES;
-            result = m_nsm_client->announce(appname, exename, capabilities);
-            if (! result)
-                pathprint("create_session():", "failed to announce");
-        }
-        else
-            pathprint("create_session():", "failed to make client");
-
-        m_nsm_active = result;
-        usr().in_session(result);                       /* global flag      */
-        if (result)
-            result = smanager::create_session(argc, argv);
-    }
-    else
-        result = smanager::create_session(argc, argv);
-#else
-    bool result = smanager::create_session(argc, argv);
-#endif
-
-    return result;
 }
 
 /**
@@ -178,6 +115,7 @@ qt5nsmanager::create_window ()
             }
             else
             {
+                session_manager_name("None");
                 m_window->session_path("None");
                 m_window->session_log("No log entries.");
 #if defined SEQ66_NSM_SUPPORT
@@ -259,6 +197,16 @@ qt5nsmanager::show_error (const std::string & msg) const
         }
     }
 }
+
+void
+qt5nsmanager::session_manager_name (const std::string & mgrname)
+{
+    if (m_window)
+    {
+        m_window->session_manager(mgrname.empty() ? "None" : mgrname);
+    }
+}
+
 
 }           // namespace seq66
 
