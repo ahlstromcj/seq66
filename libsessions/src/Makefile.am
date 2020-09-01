@@ -6,7 +6,7 @@
 # \library    	libsessions library
 # \author     	Chris Ahlstrom
 # \date       	2020-03-08
-# \update      2020-08-31
+# \update      2020-09-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -136,7 +136,6 @@ lib_LTLIBRARIES = libsessions.la
 
 libsessions_la_SOURCES = \
  lash/lash.cpp \
- nsm/clinsmanager.cpp \
  nsm/nsmbase.cpp \
  nsm/nsmclient.cpp \
  nsm/nsmmessagesex.cpp \

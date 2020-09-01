@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-08-31
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -80,6 +80,15 @@ private:
      */
 
     std::string m_capabilities;
+
+    /**
+     *  Holds the session manager's name, or "None".
+     */
+
+    std::string m_session_manager_name;
+    std::string m_session_manager_path;
+    std::string m_session_display_name;
+    std::string m_session_client_id;
 
     /**
      *  Hold the name of the currently-loaded MIDI file.
@@ -164,7 +173,46 @@ public:
     virtual bool run () = 0;            /* app.exec(); run main window loop */
     virtual void show_message (const std::string & msg) const;
     virtual void show_error (const std::string & msg = "") const;
-    virtual void session_manager_name (const std::string & mgrname) = 0;
+
+    virtual void session_manager_name (const std::string & mgrname)
+    {
+        m_session_manager_name = mgrname;
+    }
+
+    const std::string & manager_name () const
+    {
+        return m_session_manager_name;
+    }
+
+    virtual void session_manager_path (const std::string & pathname)
+    {
+        m_session_manager_path = pathname;
+    }
+
+    const std::string & manager_path () const
+    {
+        return m_session_manager_path;
+    }
+
+    virtual void session_display_name (const std::string & dispname)
+    {
+        m_session_display_name = dispname;
+    }
+
+    const std::string & display_name () const
+    {
+        return m_session_display_name;
+    }
+
+    virtual void session_client_id (const std::string & clid)
+    {
+        m_session_client_id = clid;
+    }
+
+    const std::string & client_id () const
+    {
+        return m_session_client_id;
+    }
 
 protected:
 

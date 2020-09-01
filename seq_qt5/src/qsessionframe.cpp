@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-08-31
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  */
@@ -90,6 +90,18 @@ void
 qsessionframe::session_path (const std::string & text)
 {
     ui->sessionNameText->setText(text.c_str());
+}
+
+void
+qsessionframe::session_display_name (const std::string & text)
+{
+    ui->displayNameText->setText(text.c_str());
+}
+
+void
+qsessionframe::session_client_id (const std::string & text)
+{
+    ui->clientIdText->setText(text.c_str());
 }
 
 void

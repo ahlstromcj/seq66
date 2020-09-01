@@ -65,7 +65,6 @@ INCLUDEPATH = \
 win32:CONFIG(release, debug|release) {
  LIBS += \
   -Wl,--start-group \
-  -L$$OUT_PWD/../libsessions/release -lsessions \
   -L$$OUT_PWD/../libseq66/release -lseq66 \
   -L$$OUT_PWD/../seq_$${MIDILIB}/release -lseq_$${MIDILIB} \
   -L$$OUT_PWD/../seq_qt5/release -lseq_qt5 \
@@ -74,33 +73,49 @@ win32:CONFIG(release, debug|release) {
 else:win32:CONFIG(debug, debug|release) {
  LIBS += \
   -Wl,--start-group \
-  -L$$OUT_PWD/../libsessions/debug -lsessions \
   -L$$OUT_PWD/../libseq66/debug -lseq66 \
   -L$$OUT_PWD/../seq_$${MIDILIB}/debug -lseq_$${MIDILIB} \
   -L$$OUT_PWD/../seq_qt5/debug -lseq_qt5 \
   -Wl,--end-group
 }
 else:unix {
+
+contains (CONFIG, rtmidi) {
 LIBS += \
  -Wl,--start-group \
-  -L$$OUT_PWD/../libsessions -lsessions \
+ -L$$OUT_PWD/../libsessions -lsessions \
+ -L$$OUT_PWD/../libseq66 -lseq66 \
+ -L$$OUT_PWD/../seq_$${MIDILIB} -lseq_$${MIDILIB} \
+ -L$$OUT_PWD/../seq_qt5 -lseq_qt5 \
+ -Wl,--end-group
+} else {
+LIBS += \
+ -Wl,--start-group \
  -L$$OUT_PWD/../libseq66 -lseq66 \
  -L$$OUT_PWD/../seq_$${MIDILIB} -lseq_$${MIDILIB} \
  -L$$OUT_PWD/../seq_qt5 -lseq_qt5 \
  -Wl,--end-group
 }
 
+}
+
+contains (CONFIG, rtmidi) {
+DEPENDPATH += $$PWD/../libsessions
+}
+
 DEPENDPATH += \
- $$PWD/../libsessions \
  $$PWD/../libseq66 \
  $$PWD/../seq_$${MIDILIB} \
  $$PWD/../seq_qt5
 
 # Works in Linux with "CONFIG += debug".
 
+contains (CONFIG, rtmidi) {
+PRE_TARGETDEPS += $$OUT_PWD/../libsessions/libsessions.a \ 
+}
+
 unix {
- PRE_TARGETDEPS += \
-  $$OUT_PWD/../libsessions/libsessions.a \ 
+PRE_TARGETDEPS += \
   $$OUT_PWD/../libseq66/libseq66.a \ 
   $$OUT_PWD/../seq_$${MIDILIB}/libseq_$${MIDILIB}.a \ 
   $$OUT_PWD/../seq_qt5/libseq_qt5.a
@@ -109,11 +124,11 @@ unix {
 # Note the inclusion of liblo (OSC library).
 # We may consider adding:  /usr/include/lash-1.0 and -llash
 
-unix:!macx: LIBS += \
- -lasound \
- -ljack \
- -llo \
- -lrt
+contains (CONFIG, rtmidi) {
+LIBS += -lasound -ljack -llo -lrt
+} else {
+unix:!macx: LIBS += -lasound -ljack -lrt
+}
 
 windows: LIBS += -lwinmm
 

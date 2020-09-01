@@ -2958,6 +2958,20 @@ qsmainwnd::session_path (const std::string & text)
 }
 
 void
+qsmainwnd::session_display_name (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_display_name(text);
+}
+
+void
+qsmainwnd::session_client_id (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->session_client_id(text);
+}
+
+void
 qsmainwnd::session_URL (const std::string & text)
 {
     if (not_nullptr(m_session_frame))

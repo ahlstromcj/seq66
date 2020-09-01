@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-08-31
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -35,10 +35,13 @@
 #include <QApplication>                 /* QApplication etc.                */
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
-#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
+
+#if defined SEQ66_NSM_SUPPORT
+#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
+#endif
 
 namespace seq66
 {
@@ -65,9 +68,6 @@ qt5nsmanager::qt5nsmanager
     clinsmanager    (caps),
     m_application   (app),
     m_nsm_active    (false),
-#if defined SEQ66_NSM_SUPPORT
-    m_nsm_client    (),
-#endif
     m_window        ()
 {
     // no code
@@ -115,13 +115,15 @@ qt5nsmanager::create_window ()
             }
             else
             {
-                session_manager_name("None");
-                m_window->session_path("None");
+                m_window->session_manager(manager_name());
+                m_window->session_path(manager_path());
+                m_window->session_display_name(display_name());
+                m_window->session_client_id(client_id());
                 m_window->session_log("No log entries.");
 #if defined SEQ66_NSM_SUPPORT
-                if (m_nsm_client)
+                if (not_nullptr(nsm_client()))
                 {
-                    std::string url = m_nsm_client->nsm_url();
+                    std::string url = nsm_client()->nsm_url();
                     m_window->session_URL(url);
                 }
                 else
@@ -201,12 +203,34 @@ qt5nsmanager::show_error (const std::string & msg) const
 void
 qt5nsmanager::session_manager_name (const std::string & mgrname)
 {
+    clinsmanager::session_manager_name(mgrname);
     if (m_window)
-    {
         m_window->session_manager(mgrname.empty() ? "None" : mgrname);
-    }
 }
 
+void
+qt5nsmanager::session_manager_path (const std::string & pathname)
+{
+    clinsmanager::session_manager_path(pathname);
+    if (m_window)
+        m_window->session_path(pathname.empty() ? "None" : pathname);
+}
+
+void
+qt5nsmanager::session_display_name (const std::string & dispname)
+{
+    clinsmanager::session_display_name(dispname);
+    if (m_window)
+        m_window->session_display_name(dispname.empty() ? "None" : dispname);
+}
+
+void
+qt5nsmanager::session_client_id (const std::string & clid)
+{
+    clinsmanager::session_client_id(clid);
+    if (m_window)
+        m_window->session_client_id(clid.empty() ? "None" : clid);
+}
 
 }           // namespace seq66
 

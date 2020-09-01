@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-08-31
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -33,8 +33,11 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
+#include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
+
+#if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
-#include "nsm/clinsmanager.hpp"         /* seq66::clinsmanager              */
+#endif
 
 namespace seq66
 {
@@ -53,10 +56,10 @@ namespace seq66
 
 clinsmanager::clinsmanager (const std::string & caps) :
     smanager        (caps),
-    m_nsm_active    (false),
 #if defined SEQ66_NSM_SUPPORT
-    m_nsm_client    ()
+    m_nsm_client    (),
 #endif
+    m_nsm_active    (false)
 {
     // no code
 }
@@ -79,7 +82,6 @@ clinsmanager::create_session (int argc, char * argv [])
 {
 
 #if defined SEQ66_NSM_SUPPORT
-    bool result;
     bool ok = usr().is_nsm_session();               /* user wants NSM usage */
     if (ok)
     {
@@ -93,7 +95,7 @@ clinsmanager::create_session (int argc, char * argv [])
         std::string nsmfile = "dummy/file";
         std::string nsmext = nsm::default_ext();
         m_nsm_client.reset(create_nsmclient(*this, nsmfile, nsmext));
-        result = bool(m_nsm_client);
+        bool result = bool(m_nsm_client);
         if (result)
         {
             /*
@@ -113,14 +115,14 @@ clinsmanager::create_session (int argc, char * argv [])
         usr().in_session(result);                       /* global flag      */
         if (result)
             result = smanager::create_session(argc, argv);
+
+        return result;
     }
     else
-        result = smanager::create_session(argc, argv);
+        return smanager::create_session(argc, argv);
 #else
-    bool result = smanager::create_session(argc, argv);
+    return smanager::create_session(argc, argv);
 #endif
-
-    return result;
 }
 
 /**
@@ -158,8 +160,33 @@ clinsmanager::show_message (const std::string & msg) const
 void
 clinsmanager::session_manager_name (const std::string & mgrname)
 {
+    smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
         pathprint("S66:", mgrname);
+}
+
+void
+clinsmanager::session_manager_path (const std::string & pathname)
+{
+    smanager::session_manager_path(pathname);
+    if (! pathname.empty())
+        pathprint("S66:", pathname);
+}
+
+void
+clinsmanager::session_display_name (const std::string & dispname)
+{
+    smanager::session_display_name(dispname);
+    if (! dispname.empty())
+        pathprint("S66:", dispname);
+}
+
+void
+clinsmanager::session_client_id (const std::string & clid)
+{
+    smanager::session_client_id(clid);
+    if (! clid.empty())
+        pathprint("S66:", clid);
 }
 
 /**

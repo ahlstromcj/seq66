@@ -28,19 +28,25 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-08-31
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
  *  would style it, "eldritch") gtkmm-2.4 implementation of Seq66.
  */
 
-#include <memory>                       /* std::unique_ptr<>                */
 
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
 #if defined SEQ66_NSM_SUPPORT
+
+#include <memory>                       /* std::unique_ptr<>                */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
+
+#else
+
+using nsmclient = void;
+
 #endif
 
 /**
@@ -69,8 +75,6 @@ class clinsmanager : public smanager
 
 private:
 
-    bool m_nsm_active;
-
 #if defined SEQ66_NSM_SUPPORT
 
     /**
@@ -83,10 +87,21 @@ private:
 
 #endif
 
+    bool m_nsm_active;
+
 public:
 
     clinsmanager (const std::string & caps = SEQ66_NSM_CLI_CAPABILITIES);
     virtual ~clinsmanager ();
+
+    nsmclient * nsm_client ()
+    {
+#if defined SEQ66_NSM_SUPPORT
+        return m_nsm_client.get();
+#else
+        return nullptr;
+#endif
+    }
 
     virtual bool create_session
     (
@@ -98,6 +113,9 @@ public:
     virtual void show_error (const std::string & msg = "") const override;
     virtual bool run () override;
     virtual void session_manager_name (const std::string & mgrname) override;
+    virtual void session_manager_path (const std::string & pathname) override;
+    virtual void session_display_name (const std::string & dispname) override;
+    virtual void session_client_id (const std::string & clid) override;
 
 };          // class clinsmanager
 

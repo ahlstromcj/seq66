@@ -129,6 +129,9 @@ public:         // Other virtual functions
 
     virtual bool open_session (); // prospective helper a la qtractorMainForm
     virtual void session_manager_name (const std::string & mgrname);
+    virtual void session_manager_path (const std::string & pathname);
+    virtual void session_display_name (const std::string & dispname);
+    virtual void session_client_id (const std::string & clid);
 
 protected:
 

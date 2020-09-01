@@ -6,7 +6,7 @@
 # \library     qseq66 and qrseq66 application
 # \author      Chris Ahlstrom
 # \date        2020-03-24
-# \update      2020-08-26
+# \update      2020-09-01
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #

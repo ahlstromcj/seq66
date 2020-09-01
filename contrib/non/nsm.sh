@@ -4,13 +4,19 @@
 # \file        nsm.sh
 # \library     contrib/non
 # \author      Chris Ahlstrom
-# \date        2020-03-05 to 2020-03-06
+# \date        2020-03-05 to 2020-09-01
 # \version     $Revision$
 # \license     GNU GPLv2 or above, or more generous
 #
 # Invoke as:
 #
 #   nsm.sh projectname
+#
+# To consider:
+#
+#   non-session-manager -- --osc-port 7777
+#   sleep 4
+#   oscsend localhost 7777 /nsm/server/open s "$1"
 #
 #------------------------------------------------------------------------------
 

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-24
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -139,6 +139,8 @@ public:
 
     void session_manager (const std::string & text);
     void session_path (const std::string & text);
+    void session_display_name (const std::string & text);
+    void session_client_id (const std::string & text);
     void session_URL (const std::string & text);
     void session_log (const std::string & text);
     void session_log_append (const std::string & text);

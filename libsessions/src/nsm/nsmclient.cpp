@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-08-29
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -171,10 +171,6 @@
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
 #include "sessions/smanager.hpp"        /* seq66::smanager virtuals         */
-
-#if defined SEQ66_PLATFORM_DEBUG
-#include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -431,9 +427,8 @@ nsmclient::announce_reply
 )
 {
     is_active(true);
-    manager(mgr);
     capabilities(caps);
-    m_session_manager.session_manager_name(mgr);
+    session_manager_name(mgr);
     // emit active(true);
 
     nsm::incoming_msg("announce_reply", mgr, caps + " " + mesg);
@@ -451,9 +446,9 @@ nsmclient::open
     const std::string & clientid
 )
 {
-    path_name(pathname);
-    display_name(displayname);
-    client_id(clientid);
+    session_manager_path(pathname);
+    session_display_name(displayname);
+    session_client_id(clientid);
     // emit open();
 
     nsm::incoming_msg("open", pathname, clientid + "" + displayname);
@@ -615,8 +610,29 @@ nsmclient::open_session ()
 void
 nsmclient::session_manager_name (const std::string & mgrname)
 {
-    // TODO
-    // m_session_manager::session_manager_name(mgrname);
+    manager(mgrname);
+    m_session_manager.session_manager_name(mgrname);
+}
+
+void
+nsmclient::session_manager_path (const std::string & pathname)
+{
+    path_name(pathname);
+    m_session_manager.session_manager_path(pathname);
+}
+
+void
+nsmclient::session_display_name (const std::string & dispname)
+{
+    display_name(dispname);
+    m_session_manager.session_display_name(dispname);
+}
+
+void
+nsmclient::session_client_id (const std::string & clid)
+{
+    client_id(clid);
+    m_session_manager.session_client_id(clid);
 }
 
 /**

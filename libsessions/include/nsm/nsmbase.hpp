@@ -80,6 +80,7 @@ extern void outgoing_msg
     const std::string & pattern,
     const std::string & data = "sent"
 );
+
 extern std::vector<std::string> convert_lo_args
 (
     const std::string & pattern,
@@ -255,6 +256,7 @@ protected:
     void nsm_debug (const std::string & tag);
     void add_client_method (nsm::tag t, lo_method_handler h);
     void add_server_method (nsm::tag t, lo_method_handler h);
+
     bool send_announcement
     (
         const std::string & appname,

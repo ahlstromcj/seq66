@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-08-10
+# \update      2020-09-01
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -112,6 +112,7 @@ AM_CXXFLAGS = \
  -I../include \
  -I$(top_srcdir)/include \
  -I$(top_srcdir)/libseq66/include \
+ -I$(top_srcdir)/libsessions/include \
  -I$(top_srcdir)/seq_portmidi/include \
  -I$(top_srcdir)/seq_rtmidi/include \
  $(ALSA_CFLAGS) \
@@ -185,6 +186,7 @@ libseq66_la_SOURCES = \
  play/setmapper.cpp \
  play/setmaster.cpp \
  play/triggers.cpp \
+ sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
  sessions/smfunctions.cpp \
  os/daemonize.cpp \

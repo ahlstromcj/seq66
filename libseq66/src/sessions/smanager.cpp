@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-08-26
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -78,12 +78,16 @@ namespace seq66
  */
 
 smanager::smanager (const std::string & caps) :
-    m_perf_pointer      (),
-    m_capabilities      (caps),
-    m_midi_filename     (),
-    m_is_help           (false),
-    m_extant_errmsg     (),
-    m_extant_msg_active (false)
+    m_perf_pointer          (),
+    m_capabilities          (caps),
+    m_session_manager_name  ("None"),
+    m_session_manager_path  ("None"),
+    m_session_display_name  ("None"),
+    m_session_client_id     ("None"),
+    m_midi_filename         (),
+    m_is_help               (false),
+    m_extant_errmsg         (),
+    m_extant_msg_active     (false)
 {
     /*
      * This has to wait:

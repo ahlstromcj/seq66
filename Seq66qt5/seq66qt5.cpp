@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-08-26
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -73,7 +73,7 @@ main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
-    seq66::qt5nsmanager sm(app);            /* NEW, currently just a helper */
+    seq66::qt5nsmanager sm(app);
     bool result = sm.create(argc, argv);
     if (result)
     {

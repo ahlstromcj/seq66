@@ -148,6 +148,7 @@ libraries = \
  -L$(libseq_qt5dir) -lseq_qt5 \
  -L$(libseq66dir) -lsessions \
  -L$(libseq66dir) -lseq66 \
+ -L$(libseq66dir) -lsessions \
  -L$(libseq_rtmididir) -lseq_rtmidi
 
 #****************************************************************************

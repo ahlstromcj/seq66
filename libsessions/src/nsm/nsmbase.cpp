@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-08-29
+ * \updates       2020-09-01
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -84,7 +84,7 @@
  *      session.
  */
 
-#undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes         */
+#undef  SHOW_CLIENT_DATA_TYPE           /* for development purposes only    */
 
 #if defined SHOW_CLIENT_DATA_TYPE
 #include <iostream>                     /* std::cout                        */
@@ -226,7 +226,6 @@ nsmbase::initialize ()
             {
                 add_client_method(nsm::tag::error,   osc_nsm_error);
                 add_client_method(nsm::tag::reply,   osc_nsm_reply);
-
 
                 // See nsmclient.
                 // add_client_method(nsm::tag::replyex, osc_nsm_announce_reply);
@@ -392,9 +391,6 @@ nsmbase::is_dirty ()
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                 message.c_str(), pattern.c_str()
             );
-#if defined SEQ66_PLATFORM_DEBUG
-            printf("is_dirty()\n");
-#endif
         }
     }
     return result;
@@ -708,10 +704,12 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
 {
     std::string message;
     std::string pattern;
+
 #if defined SHOW_CLIENT_DATA_TYPE
     const std::type_info & ti = typeid(this);
     std::cout << "Client type = " << ti.name();
 #endif
+
     if (client_msg(t, message, pattern))
     {
         if (t == nsm::tag::null)
@@ -749,12 +747,12 @@ nsmbase::send
     const std::string & pattern
 )
 {
-    int rc = lo_send_from               /* e.g. "/nsm/client/is_clean" ""   */
+    int rcode = lo_send_from            /* e.g. "/nsm/client/is_clean" ""   */
     (
         m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
         message.c_str(), pattern.c_str()
     );
-    bool result = rc != (-1);
+    bool result = rcode != (-1);
     if (result)
         nsm::outgoing_msg(message, pattern, "sent");
     else
@@ -789,10 +787,10 @@ nsmbase::send_from_client
     bool result = nsm::client_msg(t, message, pattern);
     if (result)
     {
-        int rc;
+        int rcode;
         if (s3.empty())
         {
-            rc = lo_send_from           /* e.g. "/nsm/client/is_clean" ""   */
+            rcode = lo_send_from        /* e.g. "/nsm/client/is_clean" ""   */
             (
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                 message.c_str(), pattern.c_str(),
@@ -801,16 +799,19 @@ nsmbase::send_from_client
         }
         else
         {
-            rc = lo_send_from
+            rcode = lo_send_from
             (
                 m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                 message.c_str(), pattern.c_str(),
                 s1.c_str(), s2.c_str(), s3.c_str()
             );
         }
-        result = rc != (-1);
+        result = rcode != (-1);
         if (result)
-            pathprint("OSC message sent:", message);
+        {
+            if (rc().verbose())
+                pathprint("OSC message sent:", message);
+        }
         else
             pathprint("OSC message send FAILURE:", message);
     }
@@ -956,11 +957,13 @@ get_url ()
 
     bool active = ! result.empty();
     usr().in_session(active);
-    if (active)
-        pathprint("NSM:", result);
-    else
-        pathprint("NSM:", "URL not present");
-
+    if (rc().verbose())
+    {
+        if (active)
+            pathprint("NSM:", result);
+        else
+            pathprint("NSM:", "URL not present");
+    }
     return result;
 }
 
@@ -972,11 +975,14 @@ incoming_msg
     const std::string & pattern
 )
 {
-    std::string text = msgsnprintf
-    (
-        "%s()->%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
-    );
-    pathprint("NSM:", text);
+    if (rc().verbose())
+    {
+        std::string text = msgsnprintf
+        (
+            "%s()->%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
+        );
+        pathprint("NSM:", text);
+    }
 }
 
 void
@@ -987,11 +993,14 @@ outgoing_msg
     const std::string & data
 )
 {
-    std::string text = msgsnprintf
-    (
-        "%s [%s] %s", message.c_str(), pattern.c_str(), data.c_str()
-    );
-    pathprint("S66:", text);
+    if (rc().verbose())
+    {
+        std::string text = msgsnprintf
+        (
+            "%s [%s] %s", message.c_str(), pattern.c_str(), data.c_str()
+        );
+        pathprint("S66:", text);
+    }
 }
 
 std::vector<std::string>
