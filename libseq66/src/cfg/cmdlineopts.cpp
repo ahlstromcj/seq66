@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-08-25
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -664,11 +664,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
  */
 
 bool
-cmdlineopts::parse_options_files
-(
-    std::string & errmessage,
-    int /* argc */, char * /* argv */ []
-)
+cmdlineopts::parse_options_files (std::string & errmessage)
 {
     std::string rcn = rc().config_filespec();
     bool result = true;
@@ -874,8 +870,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'H':
-            rc().config_directory(soptarg);
-            pathprint("Set home base to ", rc().config_directory());
+            rc().full_config_directory(soptarg);
+            pathprint("Set home configuration to ", rc().home_config_directory());
+            if (! make_directory_path(soptarg))
+                errprint("ERROR: could not create directory");
             break;
 
         case 'h':
@@ -1053,7 +1051,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
  *      file specified alternate "mutes" and "ctrl" files, those will be
  *      written to their specified names, not "erroneous" names.
  *
- * \param errrcname
+ * \param filename
  *      This value, if not empty, provides an altername base name for the
  *      writing of the "rc" and "user" files.  Normally empty, it can be
  *      specified in order to write alternate files without overwriting the
@@ -1066,17 +1064,17 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
  */
 
 bool
-cmdlineopts::write_options_files (const std::string & errrcname)
+cmdlineopts::write_options_files (const std::string & filename)
 {
     bool result = true;
     std::string rcn;
-    if (errrcname.empty())
+    if (filename.empty())
     {
         rcn = rc().config_filespec();
     }
     else
     {
-        std::string name = errrcname;
+        std::string name = filename;
         name += ".rc";
         rcn = rc().config_filespec(name);
     }
@@ -1090,7 +1088,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
         result = false;
 
     bool cansave = usr().save_user_config();
-    if (errrcname.empty())
+    if (filename.empty())
     {
         rcn = rc().user_filespec();
         if (! cansave)
@@ -1098,7 +1096,7 @@ cmdlineopts::write_options_files (const std::string & errrcname)
     }
     else
     {
-        std::string name = errrcname;
+        std::string name = filename;
         name += ".usr";
         rcn = rc().user_filespec(name);
         cansave = true;

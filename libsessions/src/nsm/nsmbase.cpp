@@ -451,15 +451,15 @@ nsmbase::message (int priority, const std::string & mesg)
  */
 
 bool
-nsmbase::open_reply (nsm::reply replycode)
+nsmbase::open_reply (nsm::reply replycode, const std::string & msg)
 {
-    return send_nsm_reply("/nsm/client/open", replycode);
+    return send_nsm_reply("/nsm/client/open", replycode, msg);
 }
 
 bool
-nsmbase::save_reply (nsm::reply replycode)
+nsmbase::save_reply (nsm::reply replycode, const std::string & msg)
 {
-    return send_nsm_reply("/nsm/client/save", replycode);
+    return send_nsm_reply("/nsm/client/save", replycode, msg);
 }
 
 bool
@@ -503,16 +503,23 @@ nsmbase::send_announcement
 }
 
 bool
-nsmbase::send_nsm_reply (const std::string & path, nsm::reply replycode)
+nsmbase::send_nsm_reply
+(
+    const std::string & path,
+    nsm::reply replycode,
+    const std::string & msg
+)
 {
     bool result = lo_is_valid();
     if (result)
     {
-        std::string reply_mesg = reply_string(replycode);
+        int rc = (-1);
         std::string pattern;
         std::string message;
         std::string replytype;
-        int rc = (-1);
+        std::string replymsg = reply_string(replycode);
+        replymsg += ": ";
+        replymsg += msg;
         if (replycode == nsm::reply::ok)
         {
             if (client_msg(nsm::tag::reply, message, pattern))
@@ -521,7 +528,7 @@ nsmbase::send_nsm_reply (const std::string & path, nsm::reply replycode)
                 (
                     m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                     message.c_str(), pattern.c_str(),
-                    path.c_str(), reply_mesg.c_str()
+                    path.c_str(), replymsg.c_str()
                 );
             }
             replytype = "reply";
@@ -534,14 +541,14 @@ nsmbase::send_nsm_reply (const std::string & path, nsm::reply replycode)
                 (
                     m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                     message.c_str(), pattern.c_str(), path.c_str(),
-                    static_cast<int>(replycode), reply_mesg.c_str()
+                    static_cast<int>(replycode), replymsg.c_str()
                 );
             }
             replytype = "error";
         }
         result = rc != (-1);
 
-        std::string text = path + " " + replytype + " " + reply_mesg;
+        std::string text = path + " " + replytype + " " + replymsg;
         if (! result)
             text += "; FAILED";
 
@@ -649,7 +656,7 @@ nsmbase::save_session ()
         m_dirty = false;
 
         /*
-         * Done by caller m_nsm_file.clear();
+         * Done by caller: m_nsm_file.clear() ???
          */
     }
     return result;

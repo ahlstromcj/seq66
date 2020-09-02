@@ -144,10 +144,11 @@ libmath = -lm
 #----------------------------------------------------------------------------
 
 libraries = \
+ -L$(libseq_qt5dir) -lseq_qt5 \
  -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
- -L$(libseq_rtmididir) -lseq_rtmidi \
- -L$(libseq_qt5dir) -lseq_qt5
+ -L$(libsessionsdir) -lsessions \
+ -L$(libseq_rtmididir) -lseq_rtmidi
 
 #****************************************************************************
 # Project-specific dependency files
@@ -178,7 +179,7 @@ bin_PROGRAMS = qseq66
  
 qseq66_SOURCES = seq66qt5.cpp
 qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
-qseq66_LDADD = $(libraries) $(NSM_LIBS) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 # Testing

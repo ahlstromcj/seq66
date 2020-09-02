@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-29
+ * \updates       2020-09-02
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -274,9 +274,22 @@ protected:
 
     // Session client reply methods
 
-    bool open_reply (nsm::reply replycode = nsm::reply::ok);
-    bool save_reply (nsm::reply replycode = nsm::reply::ok);
-
+    bool open_reply
+    (
+        nsm::reply replycode = nsm::reply::ok,
+        const std::string & msg = "No info"
+    );
+    bool save_reply
+    (
+        nsm::reply replycode = nsm::reply::ok,
+        const std::string & msg = "No info"
+    );
+    bool send_nsm_reply
+    (
+        const std::string & path,
+        nsm::reply replycode,
+        const std::string & msg
+    );
     bool send
     (
         const std::string & message,
@@ -290,7 +303,6 @@ protected:
         const std::string & s2,
         const std::string & s3 = ""
     );
-    bool send_nsm_reply (const std::string & path, nsm::reply replycode);
 
     void open_reply (bool loaded)
     {

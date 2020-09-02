@@ -27,7 +27,7 @@
  *
  * \author  Chris Ahlstrom
  * \date    2015-11-20
- * \updates 2020-07-04
+ * \updates 2020-09-02
  * \version $Revision$
  *
  *    Also see the filefunctions.cpp and strfunctions modules.
@@ -94,10 +94,7 @@ public:
     ~cmdlineopts () = default;
 
     static bool help_check (int argc, char * argv []);
-    static bool parse_options_files
-    (
-        std::string & errmessage, int argc, char * argv []
-    );
+    static bool parse_options_files (std::string & errmessage);
     static bool parse_mute_groups
     (
         rcsettings & rcs,
@@ -106,7 +103,7 @@ public:
     static bool parse_o_options (int argc, char * argv []);
     static bool parse_log_option (int argc, char * argv []);
     static int parse_command_line_options (int argc, char * argv []);
-    static bool write_options_files (const std::string & errrcname = "");
+    static bool write_options_files (const std::string & filename = "");
 
 private:
 

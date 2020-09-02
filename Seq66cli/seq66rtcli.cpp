@@ -24,7 +24,7 @@
  * \library       seq66rtcli application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-02-09
- * \updates       2020-07-06
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  This application is seq66 without a GUI, control must be done via MIDI.
@@ -179,7 +179,7 @@ main (int argc, char * argv [])
          */
 
         std::string errmessage;                     /* just in case!        */
-        ok = seq66::cmdlineopts::parse_options_files(errmessage, argc, argv);
+        ok = seq66::cmdlineopts::parse_options_files(errmessage);
         optionindex = seq66::cmdlineopts::parse_command_line_options(argc, argv);
         p.launch(seq66::usr().midi_ppqn());         /* set up performance   */
         if (ok)

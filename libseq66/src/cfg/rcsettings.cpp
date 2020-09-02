@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-04
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -209,7 +209,7 @@ rcsettings::set_defaults ()
     m_midi_filename.clear();
     m_jack_session_uuid.clear();
     m_config_directory          = SEQ66_CLIENT_NAME;
-#if defined SEQ66_PLATFORM_WINDOWS            /* but see home_config_directory()  */
+#if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
     m_last_used_dir.clear();
 #else
     m_config_directory          = std::string(".config/") + m_config_directory;
@@ -271,7 +271,7 @@ rcsettings::home_config_directory () const
         if (env != NULL)
         {
             std::string home(env);                  /* std::getenv(HOME)    */
-            result = home + path_slash();       /* e.g. /home/username/ */
+            result = home + path_slash();           /* e.g. /home/username/ */
             result += config_directory();           /* seq66 directory      */
 #if defined SEQ66_PLATFORM_UNIX
             result += path_slash();
@@ -825,6 +825,19 @@ rcsettings::config_directory (const std::string & value)
 {
     if (! value.empty())
         m_config_directory = value;
+}
+
+/**
+ * \setter m_full_config_directory
+ *
+ *      Provides an alternate value to be returned by the
+ *      home_config_directory() function.
+ */
+
+void
+rcsettings::full_config_directory (const::std::string & value)
+{
+    m_full_config_directory = normalize_path(value, true, true);
 }
 
 /**

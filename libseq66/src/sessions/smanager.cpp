@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-01
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -78,7 +78,7 @@ namespace seq66
  */
 
 smanager::smanager (const std::string & caps) :
-    m_perf_pointer          (),
+    m_perf_pointer          (),                 /* perf() accessor */
     m_capabilities          (caps),
     m_session_manager_name  ("None"),
     m_session_manager_path  ("None"),
@@ -161,7 +161,7 @@ smanager::main_settings (int argc, char * argv [])
          */
 
         std::string errmessage;                     /* just in case!        */
-        result = cmdlineopts::parse_options_files(errmessage, argc, argv);
+        result = cmdlineopts::parse_options_files(errmessage);
         if (! result)
         {
             errprint(errmessage.c_str());
@@ -225,21 +225,38 @@ smanager::main_settings (int argc, char * argv [])
  *  until receiving an NSM "open" message.  So, in the main() function of the
  *  application, we make the smanager calls in this order:
  *
+ *      -#  main_settings().  Gets the normal Seq66 configuration items from
+ *          the "rc", "usr", "mutes", "ctrl", and "playlist" files.
  *      -#  create_session().  Sets up the session and does the "announce"
  *          handshake protocol. We ignore the return code so that Seq66 can
- *          run even if NSM is not available.
+ *          run even if NSM is not available.  This call also receives the
+ *          "open" response, which provides the NSM path, display name, and
+ *          the client ID.
+ *      -#  create_project().  This function firsts makes sure that the client
+ *          directory [$HOME/NSM Sessions/Session/seq66.nXYZZ] exists.
+ *          It then gets the session configuration.  TODO: Do we want to
+ *          reload a complete set of configuration files from this directory,
+ *          or just a session-specific subset from an "nsm" file ???
+ *          Most of this work is in the non-GUI-specific clinsmanager
+ *          derived class.
  *      -#  create_performer().  This sets up the ports and launches the
  *          threads.
+ *      -#  open_playist().  If applicable.  Probably better as part of the
+ *          session.
+ *      -#  open_midi_file().  If applicable.  Probably better as part of the
+ *          session.
  *      -#  create_window().  This creates the main window, and the Sessions
  *          tab can be hidden if not needed.  Menu entries can also be
  *          adjusted for session support; see qsmainwnd.
- *      -#  run().  The program runs until the user or NSM kills it.
+ *      -#  run().  The program runs until the user or NSM kills it.  This is
+ *          called from the main() function of the application.
  *      -#  close_session().  Should tell NSM that it is bowing out of the
- *          session.
+ *          session.  Done normally in main(), but here if a serious error
+ *          occurs.
  *
  * \return
- *      Returns false if the performer wasn't able to be created and launch3e.
- *      Other failures, such as not getting good setting, are ignored.
+ *      Returns false if the performer wasn't able to be created and launched.
+ *      Other failures, such as not getting good settings, might be ignored.
  */
 
 bool
@@ -384,7 +401,7 @@ smanager::close_session (bool ok)
     }
     if (ok)
     {
-        if (result)
+        if (result && ! usr().is_nsm_session())
         {
             if (rc().auto_option_save())
                 (void) cmdlineopts::write_options_files();
@@ -410,6 +427,24 @@ smanager::close_session (bool ok)
 #endif
 
     session_close();                /* daemonize: mark the app for exit     */
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+smanager::save_session (std::string & msg)
+{
+    bool result = not_nullptr(perf());
+    if (result)
+    {
+        if (rc().auto_option_save())
+            result = cmdlineopts::write_options_files();
+        else
+            msg = "config save option off";
+    }
     return result;
 }
 
@@ -589,7 +624,6 @@ smanager::error_handling ()
 /**
  *  Refactored so that the basic NSM session can be set up before launch(), as
  *  per NSM rules.
- *
  */
 
 bool
@@ -598,8 +632,12 @@ smanager::create (int argc, char * argv [])
     bool result = main_settings(argc, argv); // bool ok = true;
     if (result)
     {
-        (void) create_session(argc, argv);
-        result = create_performer();     /* fails if performer not made  */
+        if (create_session(argc, argv))     /* get path, client ID, etc.    */
+        {
+            if (manager_path() != "None")
+                (void) create_project(manager_path());
+        }
+        result = create_performer();        /* fails if performer not made  */
         if (result)
             result = open_playlist();
 
@@ -619,8 +657,11 @@ smanager::create (int argc, char * argv [])
             if (result)
             {
                 error_handling();
-//              exit_status = run() ? EXIT_SUCCESS : EXIT_FAILURE ;
-//              result = close_session();
+
+                /*
+                 * We run() the window, get the exit status, and close the
+                 * session in the main() function of the application.
+                 */
             }
             else
                 result = close_session(false);

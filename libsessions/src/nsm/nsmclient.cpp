@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-09-01
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -449,29 +449,33 @@ nsmclient::open
     session_manager_path(pathname);
     session_display_name(displayname);
     session_client_id(clientid);
-    // emit open();
-
     nsm::incoming_msg("open", pathname, clientid + "" + displayname);
+
+    /*
+     * This is now done after create_session() in the session manager.
+     *
+     *  if (m_session_manager.create_project(pathname)) ...
+     *
+     *  // emit open();
+     */
 }
 
 /*
- * Client save callback.
+ * Client save callback.  Note that, though documented, code nsm :: reply ::
+ *  save_failed does not exist, so we use nsm :: reply :: general for now.
  */
 
 void
 nsmclient::save ()
 {
-    nsm_debug("save");
-
-    // Here, zyn gets a character message and an error code, and replies with
-    // either a reply or an error-reply.
-    //
-    // emit save();
-
     if (save_session())
     {
-        (void) save_reply(nsm::reply::ok);       // A FAKE ANSWER FOR NOW
+        std::string msg;
+        bool saved = m_session_manager.save_session(msg);
+        nsm::reply r = saved ? nsm::reply::ok : nsm::reply::general ;
+        (void) save_reply(r, msg);
     }
+    // emit save();
 
 }
 

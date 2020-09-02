@@ -25,15 +25,18 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-01
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
  *
  */
 
+#include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
+#include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
+#include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
 
 #if defined SEQ66_NSM_SUPPORT
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm access functions      */
@@ -135,6 +138,31 @@ clinsmanager::close_session (bool ok)
     return smanager::close_session(ok);
 }
 
+bool
+clinsmanager::save_session (std::string & msg)
+{
+    bool result = not_nullptr(perf());
+    msg.clear();
+    if (result)
+    {
+        std::string filename = rc().midi_filename();
+        if (! filename.empty())
+        {
+            bool is_wrk = file_extension_match(filename, "wrk");
+            if (is_wrk)
+                filename = file_extension_set(filename, ".midi");
+
+            result = write_midi_file(*perf(), filename, msg);
+        }
+        result = smanager::save_session(msg);
+    }
+    else
+    {
+        msg = "no performer present to save session";
+    }
+    return result;
+}
+
 /**
  *
  */
@@ -144,6 +172,74 @@ clinsmanager::run ()
 {
     // TODO:  see the while (! seq66::session_close()) loop
     return false;
+}
+
+/**
+ *  Creates a session path specified by the Non Session Manager.  This
+ *  function is meant to be called after receiving the /nsm/client/open
+ *  message.
+ *
+ *  A sample session path:
+ *
+ *      /home/ahlstrom/NSM Sessions/QSeq66 Installed/seq66.nYMVC
+ *
+ *  The NSM daemon creates the directory for this project after dropping the
+ *  client ID (seq66.nYMVC).  We append the client ID and create this
+ *  directory, followng the lead of Non-Mixer and Qtractor.
+ */
+
+bool
+clinsmanager::create_project (const std::string & path)
+{
+    bool result = ! path.empty();
+    if (result)
+    {
+        /*
+         * See if the configuration has already been created, using the "rc"
+         * file as the test case.  The normal base-name (e.g. "qseq66") is
+         * always used in an NSM session.
+         */
+
+        std::string rcfilepath = path + "/config/" + rc().config_filename();
+        bool already_created = file_exists(rcfilepath);
+        if (already_created)
+        {
+            /*
+             * Read the configuration from the NSM path.
+             */
+
+            std::string errmessage;
+            rcfilepath = path + "/config";
+            rc().full_config_directory(rcfilepath);  /* set NSM directory   */
+            result = cmdlineopts::parse_options_files(errmessage);
+            if (! result)
+            {
+                pathprint(errmessage, rc().config_filespec());
+            }
+        }
+        else
+        {
+            std::string fullpath = path;
+            result = make_directory_path(fullpath);
+            if (result)
+            {
+                fullpath = path + "/config";
+                result = make_directory_path(fullpath);
+                if (result)
+                    rc().full_config_directory(fullpath);
+            }
+            if (result)
+            {
+                fullpath = path + "/midi";
+                result = make_directory_path(fullpath);
+            }
+            if (result)
+            {
+                usr().save_user_config(true);
+            }
+        }
+    }
+    return result;
 }
 
 /**

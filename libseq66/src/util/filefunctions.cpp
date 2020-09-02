@@ -923,7 +923,8 @@ name_has_directory (const std::string & filename)
 /**
  *  A function to ensure that the ~/.config/seq66 directory exists.
  *  This function is actually a little more general than that, but it is not
- *  sufficiently general, in general, General.
+ *  sufficiently general, in general, General.  Consider using
+ *  make_directory_path(), defined elsewhere in this module.
  *
  * \param pathname
  *      Provides the name of the path to create.  The parent directory of the

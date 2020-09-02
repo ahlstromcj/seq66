@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-09
+ * \updates       2020-09-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -107,6 +107,7 @@ class rcsettings final : public basesettings
      */
 
     friend class cmdlineopts;
+    friend class clinsmanager;
     friend class converter;
     friend class midicontrolfile;
     friend class mutegroupsfile;
@@ -305,7 +306,11 @@ private:
     std::string m_config_filename;
 
     /**
-     *  The full expanded path to the configuration directory
+     *  The full expanded path to the configuration directory.  This value is
+     *  created, by default, by concatenating $HOME and ".config/seq66".
+     *  However it can be reset completely by the full_config_directory()
+     *  function to what ever the user needs (e.g. for usage with the Non
+     *  Session Manager).
      */
 
     mutable std::string m_full_config_directory;
@@ -1013,6 +1018,7 @@ protected:
     bool interaction_method (interaction value);
     bool mute_group_save (mute_group_handling mgh);
     void jack_session_uuid (const std::string & value);
+    void full_config_directory (const std::string & value);
     void config_directory (const std::string & value);
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);
