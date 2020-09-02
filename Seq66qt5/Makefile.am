@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-08-23
+# \update      2020-09-02
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -144,12 +144,10 @@ libmath = -lm
 #----------------------------------------------------------------------------
 
 libraries = \
- $(NSM_LIBS) \
- -L$(libseq_qt5dir) -lseq_qt5 \
- -L$(libseq66dir) -lsessions \
+ -L$(libsessionsdir) -lsessions \
  -L$(libseq66dir) -lseq66 \
- -L$(libseq66dir) -lsessions \
- -L$(libseq_rtmididir) -lseq_rtmidi
+ -L$(libseq_rtmididir) -lseq_rtmidi \
+ -L$(libseq_qt5dir) -lseq_qt5
 
 #****************************************************************************
 # Project-specific dependency files
@@ -161,7 +159,6 @@ libraries = \
 #----------------------------------------------------------------------------
 
 dependencies = \
- $(NSM_DEPS) \
  $(libseq_rtmididir)/libseq_rtmidi.la \
  $(libseq_qt5dir)/libseq_qt5.la \
  $(libsessionsdir)/libsessions.la \
@@ -176,10 +173,12 @@ bin_PROGRAMS = qseq66
 #******************************************************************************
 # seq66
 #----------------------------------------------------------------------------
-
+# qseq66_LDFLAGS = -Wl,--start-group $(libraries) -Wl,--end-group
+#----------------------------------------------------------------------------
+ 
 qseq66_SOURCES = seq66qt5.cpp
-qseq66_DEPENDENCIES = $(dependencies)
-qseq66_LDADD = $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+qseq66_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+qseq66_LDADD = $(libraries) $(NSM_LIBS) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
 
 #******************************************************************************
 # Testing

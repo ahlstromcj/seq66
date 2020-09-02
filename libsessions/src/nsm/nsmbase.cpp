@@ -949,11 +949,9 @@ std::string
 get_url ()
 {
     static std::string s_debug_url = "";
-    std::string result;
-    if (s_debug_url.empty())
-        result = get_session_url(nsm::url());
-    else
-        result = s_debug_url;
+    std::string url = nsm::url();
+    std::string result = s_debug_url.empty() ?
+        get_session_url(url) : s_debug_url ;
 
     bool active = ! result.empty();
     usr().in_session(active);

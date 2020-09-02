@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-08-23
+dnl \update        2020-09-02
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -43,10 +43,16 @@ dnl
 dnl AC_GCC_VERSION
 dnl AC_LANG([C])
 dnl AC_LANG([C++])
+dnl
+dnl Now debug-build issues have migrated to our other dev laptop!
+dnl
+dnl AC_PROG_CC([gcc-8 gcc-7 gcc])
+dnl AC_PROG_CXX([g++-8 g++-7 g++])
+dnl AC_PROG_CXXCPP([cpp-8 cpp-7 cpp])
 
-AC_PROG_CC([gcc-8 gcc-7 gcc])
-AC_PROG_CXX([g++-8 g++-7 g++])
-AC_PROG_CXXCPP([cpp-8 cpp-7 cpp])
+AC_PROG_CC([gcc])
+AC_PROG_CXX([g++])
+AC_PROG_CXXCPP([cpp])
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
@@ -489,7 +495,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-08-23"
+#define VERSION_DATE_SHORT "2020-09-02"
 #define VERSION "0.91.0"
 
 )
@@ -558,8 +564,7 @@ esac
 
 dnl Note the c++14 option.  Also note that PROLDFLAGS comes from xpc_debug.m4.
 dnl Trying out gnu++14 or gnu++1y (they don't work) instead, to see if we can
-dnl eliminate the problem of debug linkage on our Debian Sid machine, which
-dnl uses g++ version 9.
+dnl eliminate the problem of debug linkage on some of our laptops.
 
 CFLAGS="$CFLAGS $COMMONFLAGS"
 CXXFLAGS="$CFLAGS -std=gnu++1y -Wno-variadic-macros -Wno-deprecated-declarations"

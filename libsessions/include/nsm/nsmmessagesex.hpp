@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom
  * \date          2020-08-20
- * \updates       2020-08-28
+ * \updates       2020-09-01
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
