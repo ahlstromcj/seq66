@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-08-26
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -895,14 +895,30 @@ private:
      *  [user-session]
      *
      *  This value indicates to create and use a Non Session Manager (or New
-     *  Session Manager) client.
+     *  Session Manager) client.  The name of the option in the "usr" file is
+     *  "session", as in "session = nsm".
      */
 
     session m_session_manager;
 
     /**
+     *  This optional value can be used to attach to an existing name session.
+     *  This feature is mostly for trouble-shooting.  This option, "url", if
+     *  set, provides a URL such as this sample for NSM:
+     *  "osc.udp://mlsasus:15344".  To use it, one can change the normally
+     *  pseudo-random port number to a set value:
+     *
+     *      nsmd --osc-port 15344
+     *
+     *  The daemon will emit the full URL to the console, and this value can
+     *  be placed in qseq66.usr via the value "url = osc.udp://mlsasus:15344".
+     */
+
+    std::string m_session_url;
+
+    /**
      *  Indicates if a session was able to be activated.  This item is not
-     *  stored in the "usr" file.
+     *  stored in the "usr" file.  It is treated like a pseudo-global flag.
      */
 
     bool m_in_session;
@@ -1586,6 +1602,11 @@ public:
         return m_in_session;
     }
 
+    const std::string & session_url () const
+    {
+        return m_session_url;
+    }
+
     bool new_pattern_armed () const
     {
         return m_new_pattern_armed;
@@ -1720,6 +1741,11 @@ public:         // used in main application module and the usrfile class
     void in_session (bool f)
     {
         m_in_session = f;
+    }
+
+    void session_url (const std::string & value)
+    {
+        m_session_url = value;
     }
 
     void new_pattern_armed (bool flag)

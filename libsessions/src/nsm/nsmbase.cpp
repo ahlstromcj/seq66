@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-09-01
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -584,7 +584,7 @@ nsmbase::error (int errcode, const std::string & errmesg)
     // emit active(false);
 
     std::string ecm = reply_string(static_cast<nsm::reply>(errcode));
-    nsm::incoming_msg("error", errmesg, ecm);
+    nsm::incoming_msg("error", errmesg, ecm, true);     /* error on console */
 }
 
 /**
@@ -997,10 +997,11 @@ incoming_msg
 (
     const std::string & cbname,
     const std::string & message,
-    const std::string & pattern
+    const std::string & pattern,
+    bool iserror
 )
 {
-    if (rc().verbose())
+    if (rc().verbose() || iserror)
     {
         std::string text = msgsnprintf
         (

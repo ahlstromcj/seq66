@@ -67,7 +67,6 @@ qt5nsmanager::qt5nsmanager
     QObject         (parent),
     clinsmanager    (caps),
     m_application   (app),
-    m_nsm_active    (false),
     m_window        ()
 {
     // no code
@@ -100,14 +99,15 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        bool usensm = m_nsm_active;
+        bool usensm = nsm_active();
         qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
         result = not_nullptr(qm);
         if (result)
         {
             m_window.reset(qm);
             m_window->show();
-            (void) smanager::create_window();   /* just house-keeping */
+            m_window->attach_session(this);     /* ATTACH/DETACH        */
+            (void) smanager::create_window();   /* just house-keeping   */
             if (error_active())
             {
                 show_error();

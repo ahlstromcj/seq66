@@ -77,27 +77,39 @@ clinsmanager::~clinsmanager ()
 }
 
 /**
+ *  This function first determines if the user wants an NSM session.  If so,
+ *  it determines if it can get a valid NSM_URL environment variable.  If not,
+ *  that may simply be due to nsmd running in different console window or as a
+ *  daemon.  In that cause, it checks if there was a non-empty
+ *  "[user-session]" "url" value.  This is useful in trouble-shooting, for
+ *  example.
+ *
+ *  If all is well, a new nsmclient is created, and an announce/open handshake
+ *  starts.
+ *
  *  This function is called before create_window().
  */
 
 bool
 clinsmanager::create_session (int argc, char * argv [])
 {
-
 #if defined SEQ66_NSM_SUPPORT
+    std::string url;
     bool ok = usr().is_nsm_session();               /* user wants NSM usage */
     if (ok)
     {
-        std::string url = nsm::get_url();
-        ok = ! url.empty();                         /* NSM running Seq66?   */
-        if (! ok)
-            usr().in_session(false);                /* no it is not         */
+        url = nsm::get_url();
+        if (url.empty())
+            url = usr().session_url();              /* did user run nsmd?   */
+
+        ok = ! url.empty();                         /* NSM likely running   */
+        usr().in_session(ok);
     }
     if (ok)
     {
         std::string nsmfile = "dummy/file";
         std::string nsmext = nsm::default_ext();
-        m_nsm_client.reset(create_nsmclient(*this, nsmfile, nsmext));
+        m_nsm_client.reset(create_nsmclient(*this, url, nsmfile, nsmext));
         bool result = bool(m_nsm_client);
         if (result)
         {
@@ -114,7 +126,7 @@ clinsmanager::create_session (int argc, char * argv [])
         else
             pathprint("create_session():", "failed to make client");
 
-        m_nsm_active = result;
+        nsm_active(result);
         usr().in_session(result);                       /* global flag      */
         if (result)
             result = smanager::create_session(argc, argv);

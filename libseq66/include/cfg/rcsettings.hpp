@@ -274,9 +274,8 @@ private:
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
      *  full file specification, including the path to the file.  Under session
-     *  management, it is only the base name (e.g. "song.midi") of the file, and
-     *  the new m_midi_filepath variable is prepended to that before read/write
-     *  is done.
+     *  management, it is the base name (e.g. "song.midi") of the file with
+     *  the new m_midi_filepath variable prepended to the base name.
      */
 
     std::string m_midi_filename;
@@ -749,6 +748,8 @@ public:
     {
         m_midi_filename = value;
     }
+
+    void session_midi_filename (const std::string & value);
 
     const std::string & midi_filepath () const
     {

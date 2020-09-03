@@ -128,9 +128,7 @@ public:
         // currently no additional code needed
     }
 
-    bool is_session_mgmt_active () const;
     bool create (int argc, char * argv []);
-
     bool main_settings (int argc, char * argv []);      // make protected !
     bool open_playlist ();      // make protected !
     bool create_performer ();       // make protected !

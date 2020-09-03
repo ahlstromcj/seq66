@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-09-02
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -366,13 +366,13 @@ osc_nsm_broadcast
 
 nsmclient::nsmclient
 (
-    smanager & sessionmanager,
+    smanager & sm,
     const std::string & nsmurl,
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
     nsmbase             (nsmurl, nsmfile, nsmext),
-    m_session_manager   (sessionmanager)
+    m_session_manager   (sm)
 {
     // no code so far
 }
@@ -644,27 +644,47 @@ nsmclient::session_client_id (const std::string & clid)
  *  virtual initialization function (so that we don't have to call it in the
  *  constructor).
  *
+ *  This call is now done in the clinsmanager, who can also get the value from
+ *  the "usr" file.
+ *
+ *      std::string url = nsm::get_url();
+ *
  *  Note that this bare pointer should be assigned immediately to a smart
  *  pointer, such as std::unique_ptr<>.  See seq_qt5/src/qt5nsmanager.cpp for
  *  an example.
+ *
+ * \param sm
+ *      Provides a reference to the existing session manager.
+ *
+ * \param nsmurl
+ *      Provides either the value of NSM_URL or the value that might be
+ *      defined in the "usr" file.
+ *
+ * \param nsmfile
+ *      Need to revisit this and figure out what it is.  The name of the nsm
+ *      file?  Currently created by nsmd, it is always "session.nsm".
+ *
+ * \param nsmext
+ *      The NSM file extension, "nsm".
+ *
+ * \return
+ *      Returns the pointer to the nsmclient.  Assign it to a smart pointer
+ *      immediately!
  */
 
 nsmclient *
 create_nsmclient
 (
-    smanager & sessionmanager,
+    smanager & sm,
+    const std::string & nsmurl,
     const std::string & nsmfile,
     const std::string & nsmext
 )
 {
     nsmclient * result = nullptr;
-    std::string url = nsm::get_url();
-    if (! url.empty())
+    if (! nsmurl.empty())
     {
-        result = new (std::nothrow) nsmclient
-        (
-            sessionmanager, url, nsmfile, nsmext
-        );
+        result = new (std::nothrow) nsmclient(sm, nsmurl, nsmfile, nsmext);
         if (not_nullptr(result))
             (void) result->initialize();
     }

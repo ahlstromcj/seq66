@@ -768,6 +768,34 @@ rcsettings::mute_group_save_label () const
 }
 
 /**
+ *  Prepends the exisiting m_midi_filepath value to the current value and
+ *  stores it as the new m_midi_filename value.  This function is meant to be
+ *  used (currently) only under session management.
+ *
+ * \param value
+ *      Provides the base name for the MIDI file, such as "mytune.midi".  If
+ *      the ".midi" isn't provided (only the "." is searched), it will be
+ *      appended.  If empty, the m_midi_filename value is cleared
+ */
+
+void
+rcsettings::session_midi_filename (const std::string & value)
+{
+    if (value.empty())
+    {
+        m_midi_filename.clear();
+    }
+    else
+    {
+        std::string base = file_extension_set(value, ".midi");
+        std::string path = m_midi_filepath;
+        path += path_slash();
+        path += base;
+        m_midi_filename = path;
+    }
+}
+
+/**
  * \setter m_jack_session_uuid
  *
  * \param value

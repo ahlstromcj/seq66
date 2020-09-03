@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-08-26
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -310,6 +310,7 @@ usrsettings::usrsettings () :
     m_user_ui_seqedit_in_tab    (true),
     m_resume_note_ons           (false),
     m_session_manager           (session::none),
+    m_session_url               (),
     m_in_session                (false),
     m_new_pattern_armed         (false),
     m_new_pattern_thru          (false),
@@ -420,6 +421,7 @@ usrsettings::usrsettings (const usrsettings & rhs) :
     m_user_ui_seqedit_in_tab    (rhs.m_user_ui_seqedit_in_tab),
     m_resume_note_ons           (rhs.m_resume_note_ons),
     m_session_manager           (rhs.m_session_manager),
+    m_session_url               (rhs.m_session_url),
     m_in_session                (rhs.m_in_session),
     m_new_pattern_armed         (rhs.m_new_pattern_armed),
     m_new_pattern_thru          (rhs.m_new_pattern_thru),
@@ -538,6 +540,7 @@ usrsettings::operator = (const usrsettings & rhs)
         m_user_ui_seqedit_in_tab = rhs.m_user_ui_seqedit_in_tab;
         m_resume_note_ons = rhs.m_resume_note_ons;
         m_session_manager = rhs.m_session_manager;
+        m_session_url = rhs.m_session_url;
         m_in_session = rhs.m_in_session;
         m_new_pattern_armed = rhs.m_new_pattern_armed;
         m_new_pattern_thru = rhs.m_new_pattern_thru;
@@ -620,6 +623,7 @@ usrsettings::set_defaults ()
     m_user_ui_seqedit_in_tab = true;
     m_resume_note_ons = false;
     m_session_manager = session::none;
+    m_session_url.clear();
     m_in_session = false;
     m_new_pattern_armed = false;
     m_new_pattern_thru = false;

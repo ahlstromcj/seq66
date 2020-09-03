@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-08-23
+ * \updates       2020-09-03
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -157,6 +157,7 @@ signals:                            // Session client callbacks.
 extern nsmclient * create_nsmclient
 (
     smanager & sessionmanager,
+    const std::string & nsmurl,
     const std::string & nsmfile,
     const std::string & nsmext
 );

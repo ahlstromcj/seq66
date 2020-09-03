@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-22
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -509,7 +509,7 @@ usrfile::parse ()
         {
             sscanf(scanline(), "%s", temp);
             std::string logfile = std::string(temp);
-            if (logfile == "\"\"")
+            if (is_empty_string(logfile))
                 logfile.clear();
             else
             {
@@ -560,6 +560,9 @@ usrfile::parse ()
 
     std::string s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
+
+    s = get_variable(file, "[user-session]", "url");
+    usr().session_url(s);
 
     s = get_variable(file, "[new-pattern-editor]", "armed");
     usr().new_pattern_armed(string_to_bool(s));
@@ -1305,13 +1308,20 @@ usrfile::write ()
      * [user-session]
      */
 
+    v = usr().session_url();
+    if (v.empty())
+        v = double_quotes();
+
     file <<
         "\n[user-session]\n\n"
         "# This section specifies the session manager to use, if any.  It\n"
         "# contains only one variable, 'session', which can be set to 'none'\n"
         "# (the default), 'nsm' (Non or New Session Manager), or 'lash' (the\n"
-        "# LASH session manager.  EXPERIMENTAL.\n\n"
+        "# LASH session manager.  The 'url' variable can be set to the value\n"
+        "# of the NSM_URL environment variable set by nsmd when run outside\n"
+        "# of the Non Session Manager user-interface.\n\n"
         << "session = " << usr().session_manager_name() << "\n"
+        << "url = " << v << "\n"
         ;
 
     /*

@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-09-02
+ * \updates       2020-09-03
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -72,7 +72,8 @@ extern void incoming_msg
 (
     const std::string & cbname,
     const std::string & message,
-    const std::string & pattern
+    const std::string & pattern,
+    bool iserror = false
 );
 extern void outgoing_msg
 (

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-31
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -32,10 +32,39 @@
  *  window consists of two object:  mainwnd, which provides the user-interface
  *  elements that surround the patterns, and mainwid, which implements the
  *  behavior of the pattern slots.
+ *
+ *
+ * Menu Entries for NSM:
+ *
+ *  New MIDI FIle   new_session()           Clear file/playlist, set new name
+ *  Import [Open]   import_into_session()   Imports only a MIDI file
+ *  Save session    save_session()          Save MIDI (and config?) in session
+ *  Save As         HIDDEN                  See Export from Session
+ *  Export from ... save_file_as()          Copy MIDI file outside of session
+ *  Close           quit_session            Detach from session management
+ *
+ * Normal Menu Entries:
+ *
+ *  New             new_file()              Clear file/playlist
+ *  Open            show_open_file_dialog() Read file from anywhere
+ *  Save            save_file()             Save file in original location
+ *  Save As         save_file_as()          Save file anywhere, new name
+ *  Recent files    open_recent_file()      Get a particular recent file
+ *
+ * Common Menu Entries:
+ *
+ *  Export Song     export_song()           Export song merging triggers
+ *  Export as MIDI  export_file_as...()     Save as regular MIDI file
+ *  Import MIDI     show_import_dialog()    Import MIDI (into current set) !!!
+ *  Quit/Exit       quit()                  Normal Qt application closing
+ *  Help            showqsabout()           Show Help About (version info)
+ *                  showqsbuildinfo()       Show features of the build
+ *
  */
 
 #include <QErrorMessage>
-#include <QFileDialog>
+#include <QFileDialog>                  /* prompt for full MIDI file's path */
+#include <QInputDialog>                 /* prompt for NSM MIDI file-name    */
 #include <QGuiApplication>              /* used for QScreen geometry() call */
 #include <QMessageBox>
 #include <QResizeEvent>
@@ -68,6 +97,7 @@
 #include "qsliveframe.hpp"
 #include "qslivegrid.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
+#include "sessions/smanager.hpp"        /* pulse_to_measurestring(), etc.   */
 #include "util/calculations.hpp"        /* pulse_to_measurestring(), etc.   */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
 
@@ -230,7 +260,8 @@ qsmainwnd::qsmainwnd
     m_open_editors          (),
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
-    m_current_main_set      (0)
+    m_current_main_set      (0),
+    m_session_mgr_ptr       (nullptr)
 {
     ui->setupUi(this);
 
@@ -394,132 +425,10 @@ qsmainwnd::qsmainwnd
     );
 
     if (use_nsm())
-    {
-        /*
-         * File / New.  NSM version.
-         */
-
-        ui->actionNew->setText("&New session...");
-        ui->actionNew->setToolTip("Start a new management session.");
-        connect
-        (
-            ui->actionNew, SIGNAL(triggered(bool)),
-            this, SLOT(new_session())
-        );
-
-        /*
-         * File / Import into Session. Do we need an "Open Session"?
-         */
-
-        ui->actionOpen->setText("&Import into Session...");
-        ui->actionOpen->setToolTip
-        (
-            "Import a MIDI or Seq66 MIDI file into the current session."
-        );
-        connect
-        (
-            ui->actionOpen, SIGNAL(triggered(bool)),
-            this, SLOT(import_into_session())
-        );
-
-        /*
-         * File / Save Session.
-         */
-
-        ui->actionNew->setText("&Save session");
-        ui->actionNew->setToolTip("Save the current state of the session.");
-        connect
-        (
-            ui->actionSave, SIGNAL(triggered(bool)),
-            this, SLOT(save_session())
-        );
-
-        /*
-         * File / Save As...
-         */
-
-        ui->actionSave_As->setVisible(false);
-
-        /*
-         * File / Export from Session
-         */
-
-        ui->actionSave_As->setText("&Export from Session...");
-        ui->actionSave_As->setToolTip("Export as a Seq66 MIDI file.");
-        connect
-        (
-            ui->actionSave_As, SIGNAL(triggered(bool)),
-            this, SLOT(save_file_as())
-        );
-
-        /*
-         * File / Close.
-         */
-
-        ui->actionClose->setText("&Close");
-        ui->actionClose->setToolTip("Disconnect from session management.");
-        connect
-        (
-            ui->actionClose, SIGNAL(triggered(bool)),
-            this, SLOT(quit_session())
-        );
-    }
+        connect_nsm_slots();
     else
-    {
-        /*
-         * File / New.  Connect the GUI elements to event handlers.
-         */
+        connect_normal_slots();
 
-        ui->actionNew->setText("&New");
-        ui->actionNew->setToolTip("Create a new Seq66 MIDI file.");
-        connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
-
-        /*
-         * File / Open.
-         */
-
-        ui->actionOpen->setText("&Open...");
-        ui->actionOpen->setToolTip("Open a MIDI or Seq66 MIDI file.");
-        connect
-        (
-            ui->actionOpen, SIGNAL(triggered(bool)),
-            this, SLOT(show_open_file_dialog())
-        );
-
-        /*
-         * File / Save
-         */
-
-        ui->actionSave->setText("&Save");
-        ui->actionSave->setToolTip("Save as a Seq66 MIDI file.");
-        connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
-
-        /*
-         * File / Save As...
-         */
-
-        ui->actionSave_As->setText("Save &As...");
-        ui->actionSave_As->setToolTip("Save as a different Seq66 MIDI file.");
-        connect
-        (
-            ui->actionSave_As, SIGNAL(triggered(bool)),
-            this, SLOT(save_file_as())
-        );
-
-        /*
-         * File / Close.  Hide it.
-         */
-
-        ui->actionClose->setVisible(false);
-
-        /*
-         * File / Recent MIDI files
-         */
-
-        create_action_connections();
-        create_action_menu();
-        update_recent_files_menu();
-    }
     connect
     (
         ui->actionOpenPlaylist, SIGNAL(triggered(bool)),
@@ -1517,7 +1426,19 @@ qsmainwnd::new_file ()
 /**
  *  This option will simply empty or reset the current file, after user
  *  confirmation.  According to NSM protocol, it cannot allow the user to
- *  create a new project/file in another location.
+ *  create a new project/file in another location.  All this function does is
+ *  set the file-name, if supplied, to be used later to save the MIDI file to
+ *  the current NSM session.
+ *
+ *  After setting the file name, the code of the normal new_file() function is
+ *  called, but without prompting to save the current MIDI file.  Any playlist
+ *  loaded is also cleared from memory.
+ *
+ *  From the NSM API:
+ *
+ *      This option may empty/reset the current file or project (possibly
+ *      after user confirmation). UNDER NO CIRCUMSTANCES should it allow the
+ *      user to create a new project/file in another location.
  */
 
 void
@@ -1525,7 +1446,31 @@ qsmainwnd::new_session ()
 {
     if (use_nsm())
     {
-        // Duty now for the future!  TODO!
+        bool ok;
+        QString text = QInputDialog::getText
+        (
+            this, tr("New Session MIDI File"),      /* parent and title     */
+            tr("MIDI FIle Base Name"),              /* input field label    */
+            QLineEdit::Normal, "newtune.midi", &ok
+        );
+        if (ok)
+        {
+            if (text.isEmpty())
+            {
+                rc().session_midi_filename("");         /* clear the name   */
+            }
+            else
+            {
+                std::string filenamebase = text.toStdString();
+                rc().session_midi_filename(filenamebase);
+            }
+            if (perf().clear_all(true))                 /* like new_file()  */
+            {
+                m_is_title_dirty = true;
+                redo_live_frame();
+                remove_all_editors();
+            }
+        }
     }
     else
     {
@@ -1538,21 +1483,32 @@ qsmainwnd::new_session ()
  *  specified by the NSM "open" message.  According to NSM protocol, it cannot
  *  offer to play the file in another location.  For that purpose, see the
  *  "Export" menu entry.
+ *
+ *  The question here is what we want to save.  Here are the candidates:
+ *
+ *      -   The current MIDI file, if any.
+ *      -   The "rc" file, along with any "ctrl", "mutes", and "playlist"
+ *          files it specifies.
+ *      -   The "usr" file.  Normally saved only if --user-save is specified.
+ *
+ *  I think this action should unconditionaly save them all.  No prompting.
  */
 
 bool
 qsmainwnd::save_session ()
 {
+    bool result = false;
     if (use_nsm())
     {
-        // Duty now for the future!  TODO!
-
-        return false;
+        if (not_nullptr(session()))
+        {
+            std::string msg;
+            result = session()->save_session(msg);
+            if (! result)
+                show_message_box(msg);
+        }
     }
-    else
-    {
-        return false; // illegal
-    }
+    return result;
 }
 
 /**
@@ -2446,8 +2402,20 @@ qsmainwnd::quit ()
 }
 
 /**
- *  Calls check(), and if it checks out (heh heh), remove all of the editor
- *  windows and then calls for an exit of the application.
+ *  Calls check(), and if it checks out (heh heh), removes all of the editor
+ *  windows and then calls for an exit of the application.  It "detaches" from
+ *  the session.  To do that, we need to:
+ *
+ *      -   Tell the session manager that we are leaving the session.  Is this
+ *          permanent or just temporary?
+ *      -   Detach from the session:  nullify the pointer and reset the
+ *          session flag.
+ *      -   Recreate the main window menus.
+ *
+ *  From the NSM API:
+ *
+ *      This option MUST be disabled unless its meaning is to disconnect
+ *      the application from session management.
  */
 
 void
@@ -2456,7 +2424,8 @@ qsmainwnd::quit_session ()
     if (use_nsm())
     {
         // save_session();
-        // close_session();
+        // close_session();     // should turn off using NSM for the current
+                                //    session and recreate
     }
 }
 
@@ -2623,6 +2592,193 @@ qsmainwnd::connect_editor_slots ()
         m_live_frame, SIGNAL(signal_call_edit_events(int)),
         this, SLOT(load_event_editor(int))
     );
+}
+
+void
+qsmainwnd::connect_nsm_slots ()
+{
+    /*
+     * File / New.  NSM version.
+     */
+
+    ui->actionNew->setText("&New MIDI file...");
+    ui->actionNew->setToolTip("Clear, and set a new MIDI file in session.");
+    connect
+    (
+        ui->actionNew, SIGNAL(triggered(bool)),
+        this, SLOT(new_session())
+    );
+
+    /*
+     * File / Import into Session. Do we need an "Open Session"?
+     */
+
+    ui->actionOpen->setText("&Import into Session...");
+    ui->actionOpen->setToolTip
+    (
+        "Import a MIDI or Seq66 MIDI file into the current session."
+    );
+    connect
+    (
+        ui->actionOpen, SIGNAL(triggered(bool)),
+        this, SLOT(import_into_session())
+    );
+
+    /*
+     * File / Save Session.
+     */
+
+    ui->actionNew->setText("&Save session");
+    ui->actionNew->setToolTip("Save the current state of the session.");
+    connect
+    (
+        ui->actionSave, SIGNAL(triggered(bool)),
+        this, SLOT(save_session())
+    );
+
+    /*
+     * File / Save As...
+     */
+
+    ui->actionSave_As->setVisible(false);
+
+    /*
+     * File / Export from Session
+     */
+
+    ui->actionSave_As->setText("&Export from Session...");
+    ui->actionSave_As->setToolTip("Export as a Seq66 MIDI file.");
+    connect
+    (
+        ui->actionSave_As, SIGNAL(triggered(bool)),
+        this, SLOT(save_file_as())
+    );
+
+    /*
+     * File / Close.
+     */
+
+    ui->actionClose->setText("&Close");
+    ui->actionClose->setToolTip("Detach from session management.");
+    connect
+    (
+        ui->actionClose, SIGNAL(triggered(bool)),
+        this, SLOT(quit_session())
+    );
+}
+
+void
+qsmainwnd::disconnect_nsm_slots ()
+{
+    disconnect
+    (
+        ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_session())
+    );
+    disconnect
+    (
+        ui->actionOpen, SIGNAL(triggered(bool)),
+        this, SLOT(import_into_session())
+    );
+    disconnect
+    (
+        ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_session())
+    );
+    disconnect
+    (
+        ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
+    );
+    disconnect
+    (
+        ui->actionClose, SIGNAL(triggered(bool)), this, SLOT(quit_session())
+    );
+}
+
+void
+qsmainwnd::connect_normal_slots ()
+{
+    /*
+     * File / New.  Connect the GUI elements to event handlers.
+     */
+
+    ui->actionNew->setText("&New");
+    ui->actionNew->setToolTip("Create a new Seq66 MIDI file.");
+    connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
+
+    /*
+     * File / Open.
+     */
+
+    ui->actionOpen->setText("&Open...");
+    ui->actionOpen->setToolTip("Open a MIDI or Seq66 MIDI file.");
+    connect
+    (
+        ui->actionOpen, SIGNAL(triggered(bool)),
+        this, SLOT(show_open_file_dialog())
+    );
+
+    /*
+     * File / Save
+     */
+
+    ui->actionSave->setText("&Save");
+    ui->actionSave->setToolTip("Save as a Seq66 MIDI file.");
+    connect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
+
+    /*
+     * File / Save As...
+     */
+
+    ui->actionSave_As->setText("Save &As...");
+    ui->actionSave_As->setToolTip("Save as a different Seq66 MIDI file.");
+    connect
+    (
+        ui->actionSave_As, SIGNAL(triggered(bool)),
+        this, SLOT(save_file_as())
+    );
+
+    /*
+     * File / Close.  Hide it.  Used only for NSM; otherwise the stock
+     * Quit enty is used.
+     */
+
+    ui->actionClose->setVisible(false);
+
+    /*
+     * File / Recent MIDI files
+     */
+
+    create_action_connections();
+    create_action_menu();
+    update_recent_files_menu();
+}
+
+void
+qsmainwnd::disconnect_normal_slots ()
+{
+    disconnect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
+    disconnect
+    (
+        ui->actionOpen, SIGNAL(triggered(bool)),
+        this, SLOT(show_open_file_dialog())
+    );
+    disconnect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
+    disconnect
+    (
+        ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
+    );
+
+    // ui->actionClose->setVisible(false);
+
+    /*
+     *  The opposite of create_action_connections().  We hope clear() disconnects
+     *  everything.  Similar for create_action_menu();
+     */
+
+    m_recent_action_list.clear();
+    if (not_nullptr(m_menu_recent) && m_menu_recent->isWidgetType())
+        delete m_menu_recent;
+
+    // update_recent_files_menu();
 }
 
 /**

@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-07-07
+ * \updates       2020-09-03
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -37,7 +37,8 @@ namespace seq66
  *  configuration file).  This function returns true if the string really is
  *  empty, or just contains two double quotes ("").
  *
- *  See the add_quotes() function and the SEQ66_DOUBLE_QUOTES macro.
+ *  See the add_quotes() and double_quotes() functions and the
+ *  SEQ66_DOUBLE_QUOTES macro.
  */
 
 bool
@@ -176,6 +177,16 @@ add_quotes (const std::string & item)
         }
     }
     return result;
+}
+
+/**
+ *  Returns double quotes as a string.
+ */
+
+std::string
+double_quotes ()
+{
+    return std::string(SEQ66_DOUBLE_QUOTES);
 }
 
 /**

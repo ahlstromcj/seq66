@@ -99,8 +99,6 @@ private:
 
     QApplication & m_application;
 
-    bool m_nsm_active;
-
     std::unique_ptr<qsmainwnd> m_window;
 
 };          // class qt5nsmanager

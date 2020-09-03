@@ -103,6 +103,16 @@ public:
 #endif
     }
 
+    bool nsm_active () const
+    {
+        return m_nsm_active;
+    }
+
+    void nsm_active (bool flag)
+    {
+        m_nsm_active = flag;
+    }
+
     virtual bool create_session
     (
         int argc = 0, char * argv [] = nullptr

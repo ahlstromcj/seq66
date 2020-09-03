@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-01
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -87,6 +87,7 @@ namespace seq66
     class qslivebase;
     class qslivegrid;
     class qsmaintime;
+    class smanager;
 
 /**
  * The main window of Kepler34... er, I mean Seq66.
@@ -101,6 +102,7 @@ class qsmainwnd final : public QMainWindow, protected performer::callbacks
     friend class qslivebase;
     friend class qsliveframe;
     friend class qslivegrid;
+    friend class qt5nsmanager;
 
     Q_OBJECT
 
@@ -204,13 +206,17 @@ private:
     void create_action_menu ();
     void remove_all_editors ();
     void remove_all_live_frames ();
-    void connect_editor_slots ();
     void set_tap_button (int beats);
     void redo_live_frame ();
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     void show_song_mode (bool songmode);
     bool make_event_frame (int seqid);
+    void connect_editor_slots ();
+    void connect_nsm_slots ();
+    void disconnect_nsm_slots ();
+    void connect_normal_slots ();
+    void disconnect_normal_slots ();
 
 private:
 
@@ -307,6 +313,15 @@ private:
 
     screenset::number m_current_main_set;
 
+    /**
+     *  Thinking about this one. How can we attach and detach from a session
+     *  from this main window?  We need to pass this back to the session
+     *  manager?  For now, let's use a bare pointer that is not null unless
+     *  we are "detached".
+     */
+
+    smanager * m_session_mgr_ptr;
+
 private slots:
 
     void update_bank (int newBank);
@@ -373,6 +388,26 @@ private slots:
 private:
 
     void remove_set_master ();
+
+    void attach_session (smanager * sp)
+    {
+        if (not_nullptr(sp))
+        {
+            m_session_mgr_ptr = sp;
+            use_nsm(true);
+        }
+    }
+
+    void detach_session ()
+    {
+        m_session_mgr_ptr = nullptr;
+        use_nsm(false);
+    }
+
+    smanager * session ()
+    {
+        return m_session_mgr_ptr;
+    }
 
 };          // class qsmainwnd
 

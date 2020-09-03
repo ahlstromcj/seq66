@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-14
+ * \updates       2020-09-03
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -43,6 +43,7 @@ extern std::string empty_string ();
 extern std::string strip_comments (const std::string & item);
 extern std::string strip_quotes (const std::string & item);
 extern std::string add_quotes (const std::string & item);
+extern std::string double_quotes ();
 extern bool strncompare (const std::string & a, const std::string & b, size_t n);
 extern bool strcasecompare (const std::string & a, const std::string & b);
 extern std::string & ltrim
