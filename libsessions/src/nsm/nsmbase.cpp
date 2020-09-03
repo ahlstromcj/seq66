@@ -90,6 +90,7 @@
 #include <iostream>                     /* std::cout                        */
 #endif
 
+#include <cstring>                          /* strlen()                     */
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
@@ -941,6 +942,25 @@ reply_string (nsm::reply replycode)
         result = "Unknown reply";
         break;
     }
+    return result;
+}
+
+/**
+ *  See if there is session-manager "present" on the host computer.
+ */
+
+static std::string
+get_session_url (const std::string & env_value)
+{
+    std::string result;
+#if defined _GNU_SOURCE
+    char * url = secure_getenv(env_value.c_str());
+#else
+    char * url = getenv(env_value.c_str());
+#endif
+    if (not_nullptr(url) && strlen(url) > 0)
+        result = std::string(url);
+
     return result;
 }
 

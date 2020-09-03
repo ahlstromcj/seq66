@@ -29,10 +29,10 @@
  *
  */
 
-#include <cstring>                          /* strlen()                     */
+#include <cstring>                      /* std::strlen()                    */
 
-#include "util/basic_macros.h"              /* not_nullptr()                */
-#include "sessions/smfunctions.hpp"         /* seq66::smanager()            */
+#include "util/basic_macros.h"          /* not_nullptr()                    */
+#include "sessions/smfunctions.hpp"     /* seq66::smanager()                */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -43,8 +43,9 @@ namespace seq66
 
 /**
  *  See if there is session-manager "present" on the host computer.
- */
-
+ *
+ *  Moved to nsmbase.
+ *
 std::string
 get_session_url (const std::string & env_value)
 {
@@ -54,11 +55,13 @@ get_session_url (const std::string & env_value)
 #else
     char * url = getenv(env_value.c_str());
 #endif
-    if (not_nullptr(url) && strlen(url) > 0)
+    if (not_nullptr(url) && std::strlen(url) > 0)
         result = std::string(url);
 
     return result;
 }
+ *
+ */
 
 }           // namespace seq66
 

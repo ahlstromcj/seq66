@@ -46,7 +46,9 @@ namespace seq66
  *  External helper functions.
  */
 
-extern std::string get_session_url (const std::string & env_value);
+/*
+ * extern std::string get_session_url (const std::string & env_value);
+ */
 
 }           // namespace seq66
 

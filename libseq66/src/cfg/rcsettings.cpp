@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-02
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -118,6 +118,7 @@ rcsettings::rcsettings () :
     m_interaction_method        (interaction::seq24),
     m_mute_group_save           (mute_group_handling::midi),
     m_midi_filename             (),
+    m_midi_filepath             (),
     m_jack_session_uuid         (),
 #if defined SEQ66_PLATFORM_WINDOWS      /* but see home_config_directory()  */
     m_last_used_dir             (),
@@ -207,6 +208,7 @@ rcsettings::set_defaults ()
     m_interaction_method        = interaction::seq24;
     m_mute_group_save           = mute_group_handling::midi;
     m_midi_filename.clear();
+    m_midi_filepath.clear();
     m_jack_session_uuid.clear();
     m_config_directory          = SEQ66_CLIENT_NAME;
 #if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
@@ -763,20 +765,6 @@ rcsettings::mute_group_save_label () const
         result = "both";
 
     return result;
-}
-
-/**
- * \setter m_midi_filename
- *
- * \param value
- *      The value to use to make the setting.
- */
-
-void
-rcsettings::midi_filename (const std::string & value)
-{
-    if (! value.empty())
-        m_midi_filename = value;
 }
 
 /**

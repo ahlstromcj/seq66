@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-02
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -197,22 +197,26 @@ clinsmanager::create_project (const std::string & path)
         /*
          * See if the configuration has already been created, using the "rc"
          * file as the test case.  The normal base-name (e.g. "qseq66") is
-         * always used in an NSM session.
+         * always used in an NSM session.  We will read/write the configuration
+         * from the NSM path.  We assume (for now) that the "midi" directory was
+         * also created.
          */
 
         std::string rcfilepath = path + "/config/" + rc().config_filename();
         bool already_created = file_exists(rcfilepath);
         if (already_created)
         {
-            /*
-             * Read the configuration from the NSM path.
-             */
-
             std::string errmessage;
             rcfilepath = path + "/config";
-            rc().full_config_directory(rcfilepath);  /* set NSM directory   */
+            rc().full_config_directory(rcfilepath); /* set NSM directory    */
+            rcfilepath = path + "/midi";
+            rc().midi_filepath(rcfilepath);         /* set MIDI directory   */
             result = cmdlineopts::parse_options_files(errmessage);
-            if (! result)
+            if (result)
+            {
+                /* reserved in case "rc"/"usr" options affect NSM usage */
+            }
+            else
             {
                 pathprint(errmessage, rc().config_filespec());
             }
@@ -232,6 +236,8 @@ clinsmanager::create_project (const std::string & path)
             {
                 fullpath = path + "/midi";
                 result = make_directory_path(fullpath);
+                if (result)
+                    rc().midi_filepath(fullpath);
             }
             if (result)
             {

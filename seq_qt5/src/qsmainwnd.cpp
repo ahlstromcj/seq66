@@ -1472,7 +1472,8 @@ qsmainwnd::check ()
  *      The prompt to display.
  *
  * \return
- *      Returns the name of the file.  If empty, the user cancelled.
+ *      Returns the name of the file, which will include the path to the file.
+ *      If empty, the user cancelled.
  */
 
 std::string

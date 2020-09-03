@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-02
+ * \updates       2020-09-03
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -272,10 +272,23 @@ private:
     mute_group_handling m_mute_group_save;
 
     /**
-     *  Provides the name of current MIDI file.
+     *  Provides the name of current MIDI file.  Under normal usage, it is the
+     *  full file specification, including the path to the file.  Under session
+     *  management, it is only the base name (e.g. "song.midi") of the file, and
+     *  the new m_midi_filepath variable is prepended to that before read/write
+     *  is done.
      */
 
     std::string m_midi_filename;
+
+    /**
+     *  Provides the base name for MIDI files.  This value is meant to be used
+     *  only under session management, where all files must be read and written
+     *  from the same non-standard (get the pun?) directory.  It will be empty
+     *  under normal operation.
+     */
+
+    std::string m_midi_filepath;
 
     /**
      *  Holds the JACK UUID value that makes this JACK connection unique.
@@ -732,7 +745,20 @@ public:
         return m_midi_filename;
     }
 
-    void midi_filename (const std::string & value);
+    void midi_filename (const std::string & value)
+    {
+        m_midi_filename = value;
+    }
+
+    const std::string & midi_filepath () const
+    {
+        return m_midi_filepath;
+    }
+
+    void midi_filepath (const std::string & value)
+    {
+        m_midi_filepath = value;
+    }
 
     const std::string & jack_session_uuid () const
     {
