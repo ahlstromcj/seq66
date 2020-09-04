@@ -47,6 +47,8 @@ namespace seq66
  */
 
 /*
+ * Moved to another module due to a weird linker error.
+ *
  * extern std::string get_session_url (const std::string & env_value);
  */
 

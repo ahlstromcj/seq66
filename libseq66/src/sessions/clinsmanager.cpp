@@ -134,7 +134,13 @@ clinsmanager::create_session (int argc, char * argv [])
         return result;
     }
     else
+    {
+        if (usr().is_nsm_session())
+        {
+            warnprint("No NSM_URL definition found");
+        }
         return smanager::create_session(argc, argv);
+    }
 #else
     return smanager::create_session(argc, argv);
 #endif
@@ -147,6 +153,10 @@ clinsmanager::create_session (int argc, char * argv [])
 bool
 clinsmanager::close_session (bool ok)
 {
+    if (usr().in_session())
+    {
+        warnprint("Closing NSM session");
+    }
     return smanager::close_session(ok);
 }
 
@@ -268,7 +278,7 @@ void
 clinsmanager::show_message (const std::string & msg) const
 {
     if (! msg.empty())
-        pathprint("S66:", msg);
+        pathprint("CNS:", msg);
 }
 
 void
@@ -276,7 +286,7 @@ clinsmanager::session_manager_name (const std::string & mgrname)
 {
     smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
-        pathprint("S66:", mgrname);
+        pathprint("CNS:", mgrname);
 }
 
 void
@@ -284,7 +294,7 @@ clinsmanager::session_manager_path (const std::string & pathname)
 {
     smanager::session_manager_path(pathname);
     if (! pathname.empty())
-        pathprint("S66:", pathname);
+        pathprint("CNS:", pathname);
 }
 
 void
@@ -292,7 +302,7 @@ clinsmanager::session_display_name (const std::string & dispname)
 {
     smanager::session_display_name(dispname);
     if (! dispname.empty())
-        pathprint("S66:", dispname);
+        pathprint("CNS:", dispname);
 }
 
 void
@@ -300,11 +310,11 @@ clinsmanager::session_client_id (const std::string & clid)
 {
     smanager::session_client_id(clid);
     if (! clid.empty())
-        pathprint("S66:", clid);
+        pathprint("CNS:", clid);
 }
 
 /**
- *  Shows the collected messages in the message-box, and recommends the user
+ *  Shows the collected messages in the console, and recommends the user
  *  exit and check the configuration.
  */
 

@@ -795,16 +795,16 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     int result = 0;
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
-    std::string true_name = filename_base(argv[0]);
+    std::string exename = argv[0];
 #if defined SEQ66_PLATFORM_DEBUG
     pathprint("Running debug version:", argv[0]);
 #else
     pathprint("Running:", argv[0]);
 #endif
-    if (true_name == "qseq66-verbose")      /* symlink to dev's program     */
+    if (contains(exename, "verbose"))       /* symlink to dev's program     */
     {
         rc().verbose(true);                 /* turn on is_debug() output    */
-        pathprint("qseq66-verbose:", "debugging on");
+        pathprint(exename, "Verbose mode enabled");
     }
     optind = 0;
     for (;;)                                /* parse all command parameters */

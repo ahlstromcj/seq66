@@ -195,11 +195,17 @@ osc_nsm_announce_reply
 )
 {
     nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
-    if (is_nullptr(pnsmc) || (! nsm::is_announce(&argv[0]->s)))
+    if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_announce_reply", path, types);
-    pnsmc->announce_reply(&argv[1]->s, &argv[2]->s, &argv[3]->s);
+    if (! nsm::is_announce(&argv[0]->s))
+    {
+        nsm::incoming_msg("Announce Reply", path, types);
+        pnsmc->announce_reply(&argv[1]->s, &argv[2]->s, &argv[3]->s);
+    }
+    else
+        nsm::incoming_msg("Basic Reply", path, types);
+
     return 0;
 }
 
@@ -218,7 +224,7 @@ osc_nsm_open
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_open", path, types);
+    nsm::incoming_msg("Open", path, types);
     pnsmc->open(&argv[0]->s, &argv[1]->s, &argv[2]->s);
     return 0;
 }
@@ -238,7 +244,7 @@ osc_nsm_save
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_save", path, types);
+    nsm::incoming_msg("Save", path, types);
     pnsmc->save();                  /* a virtual function   */
     return 0;
 }
@@ -258,7 +264,7 @@ osc_nsm_session_loaded
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_session_loaded", path, types);
+    nsm::incoming_msg("Session Loaded", path, types);
     pnsmc->loaded();
     return 0;
 }
@@ -278,7 +284,7 @@ osc_nsm_label
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_label", path, types);
+    nsm::incoming_msg("Label", path, types);
     pnsmc->label(std::string(&argv[0]->s));         /* a virtual function */
     return 0;
 }
@@ -303,7 +309,7 @@ osc_nsm_show
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_show", path, types);
+    nsm::incoming_msg("Show", path, types);
     pnsmc->show(path);                  /* a virtual function   */
     return 0;
 }
@@ -328,7 +334,7 @@ osc_nsm_hide
     if (pnsmc == NULL)
         return -1;
 
-    nsm::incoming_msg("osc_nsm_hide", path, types);
+    nsm::incoming_msg("Hide", path, types);
     pnsmc->hide(path);
     return 0;
 }
@@ -353,7 +359,7 @@ osc_nsm_broadcast
         return -1;
 
     std::vector<std::string> arguments = nsm::convert_lo_args(types, argc, argv);
-    nsm::incoming_msg("osc_nsm_broadcast", path, types);
+    nsm::incoming_msg("Broadcast", path, types);
     pnsmc->broadcast(path, types, arguments);
     return 0;
 }
@@ -410,12 +416,17 @@ nsmclient::initialize ()
 }
 
 /*
- * Server announce reply.  This message is sent by the server after the client
- * sends its announcement [see the nsmclient :: announce() and nsmbase ::
- * send_announcement() functions].
+ *  Server announce reply handler for the following message:
  *
- * Here, we can indicate that the session is connected
- * and active, and what session manager is in force.
+ *      /nsm/server/announce s:application_name s:capabilities
+ *          s:executable_name i:api_ver sion_major i:api_version_minor i:pid
+ *
+ *  This message is sent by the server after the client sends its announcement
+ *  [see the nsmclient :: announce() and nsmbase :: send_announcement()
+ *  functions].
+ *
+ *  Here, we can indicate that the session is connected and active, and what
+ *  session manager is in force.
  */
 
 void
@@ -431,11 +442,16 @@ nsmclient::announce_reply
     session_manager_name(mgr);
     // emit active(true);
 
-    nsm::incoming_msg("announce_reply", mgr, caps + " " + mesg);
+    nsm::incoming_msg("Announce Reply Values", mgr, caps + " " + mesg);
 }
 
 /**
- *  Client open callback. Compare to the "open" code in nsm-proxy.
+ *  Client open callback for the following message:
+ *
+ *      /nsm/client/open s:path_to_instance_specific_project
+ *              s:display_name s:client_id
+ *
+ *  Compare to the "open" code in nsm-proxy.
  */
 
 void
@@ -449,7 +465,7 @@ nsmclient::open
     session_manager_path(pathname);
     session_display_name(displayname);
     session_client_id(clientid);
-    nsm::incoming_msg("open", pathname, clientid + "" + displayname);
+    nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
 
     /*
      * This is now done after create_session() in the session manager.
@@ -461,8 +477,13 @@ nsmclient::open
 }
 
 /*
- * Client save callback.  Note that, though documented, code nsm :: reply ::
- *  save_failed does not exist, so we use nsm :: reply :: general for now.
+ *  Client save callback for the following message:
+ *
+ *      /nsm/client/save
+ *
+ *  Note that, though documented, code nsm :: reply :: save_failed does not
+ *  exist, so we use nsm :: reply :: general for now.  See nsmbase ::
+ *  save_reply.
  */
 
 void
@@ -479,25 +500,40 @@ nsmclient::save ()
 
 }
 
+/**
+ *  Handles the following message from the server:
+ *
+ *      /nsm/client/session_is_loaded
+ */
+
 void
 nsmclient::loaded ()
 {
-    nsm_debug("loaded");
+    nsm_debug("Session loaded message from server");
     // emit loaded();
 }
+
+/**
+ *  Handles the following message from the server:
+ *
+ *      /nsm/client/label s:label
+ */
 
 void
 nsmclient::label (const std::string & label)
 {
-    std::string tag("label: '");
+    std::string tag("Label from server: '");
     tag += label;
     tag += "'";
+    // emit label();
     nsm_debug(tag); // no code
 }
 
 /**
  *  Client show optional GUI.  The derived class must provide this
- *  functionality.
+ *  functionality.  The message from the server is:
+ *
+ *      /nsm/client/show_optional_gui
  */
 
 void
@@ -509,7 +545,9 @@ nsmclient::show (const std::string & path)
 }
 
 /*
- * Client hide optional GUI.
+ * Client hide optional GUI.  The message from the server is:
+ *
+ *      /nsm/client/hide_optional_gui
  */
 
 void
@@ -522,9 +560,11 @@ nsmclient::hide (const std::string & path)
 }
 
 /**
- *  Receives a broadcast and figures out what to do with it.....
+ *  Receives a broadcast and figures out what to do with it.  Sort of.  The
+ *  broadcast message seems to have no path and no data types.  Keep an eye on
+ *  this one.
  *
- *  This one is for *sending* broadcasts, not yet implemented:
+ *  The following function is for *sending* broadcasts, not yet implemented:
  *
  *      nsmbase::broadcast (const std::string & path, lo_message msg)
  */

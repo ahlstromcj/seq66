@@ -51,9 +51,22 @@ is_empty_string (const std::string & item)
  *  Returns "" as a string for external callers.
  */
 
-std::string empty_string ()
+std::string
+empty_string ()
 {
     return std::string(SEQ66_DOUBLE_QUOTES);
+}
+
+/**
+ *  Indicates if one string can be found within another.  Doesn't force the
+ *  called to use size_type.
+ */
+
+bool
+contains (const std::string & original, const std::string & target)
+{
+    std::string::size_type pos = original.find(target);
+    return pos != std::string::npos;
 }
 
 /**

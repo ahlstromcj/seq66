@@ -41,27 +41,10 @@
 namespace seq66
 {
 
-/**
- *  See if there is session-manager "present" on the host computer.
- *
- *  Moved to nsmbase.
- *
-std::string
-get_session_url (const std::string & env_value)
-{
-    std::string result;
-#if defined _GNU_SOURCE
-    char * url = secure_getenv(env_value.c_str());
-#else
-    char * url = getenv(env_value.c_str());
-#endif
-    if (not_nullptr(url) && std::strlen(url) > 0)
-        result = std::string(url);
-
-    return result;
-}
- *
- */
+    /*
+     * No code, moved a function to nsmbase due to weird linker issues in
+     * debug mode on one of the dev laptops.
+     */
 
 }           // namespace seq66
 

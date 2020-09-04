@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-09-03
+ * \updates       2020-09-04
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -99,6 +99,7 @@
 #include "util/filefunctions.hpp"       /* seq66::executable_full_path()    */
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
 
 #define NSM_API_VERSION_MAJOR   1
@@ -112,7 +113,7 @@ namespace seq66
 {
 
 /**
- *
+ *  A handler for the /reply message.
  */
 
 static int
@@ -130,8 +131,8 @@ osc_nsm_reply
     if (is_nullptr(pnsmc))
         return -1;
 
-    nsm::incoming_msg("osc_nsm_reply", path, types);
-    pnsmc->nsm_reply(path, types); // &argv[1]->s, &argv[2]->s, &argv[3]->s
+    nsm::incoming_msg("Basic Reply", path, types);
+    pnsmc->nsm_reply(path, types);
     return 0;
 }
 
@@ -140,16 +141,16 @@ osc_nsm_reply
  *  nsmclient to use.
  *
  *  Note that lo_arg (/usr/include/lo/lo_osc_types.h) is a union that covers
- *  various integer types, floats, doubles, chars of various kinds, 4-byte MIDI
- *  packets, lo_timetag, and a "blob" structure (size + data).
+ *  various integer types, floats, doubles, chars of various kinds, 4-byte
+ *  MIDI packets, lo_timetag, and a "blob" structure (size + data).
  *
- *  The lo_message type is a low-level object messages passed via OSC.  It is a
- *  void pointer.
+ *  The lo_message type is a low-level object messages passed via OSC.  It is
+ *  a void pointer.
  *
- *  Finally, note the "sis" check for types. The type characters are defined in
- *  the OSC header lo_osc_types.h, and there are values for float ('f'), string
- *  ('s'), 32-bit integers ('i'), and more.  These character tag messages and
- *  specify the arguments of lo_send().
+ *  Finally, note the "sis" check for types. The type characters are defined
+ *  in the OSC header lo_osc_types.h, and there are values for float ('f'),
+ *  string ('s'), 32-bit integers ('i'), and more.  These character tag
+ *  messages and specify the arguments of lo_send().
  */
 
 static int
@@ -164,19 +165,19 @@ osc_nsm_error
 )
 {
     nsmbase * pnsmc = static_cast<nsmbase *>(user_data);
-    if (is_nullptr(pnsmc) || (! nsm::is_announce(&argv[0]->s)))
+    if (is_nullptr(pnsmc))      /* || (! nsm::is_announce(&argv[0]->s))) */
         return -1;
 
-    nsm::incoming_msg("osc_nsm_error", path, types);
+    nsm::incoming_msg("Error", path, types);
     pnsmc->error(int(argv[1]->i), &argv[2]->s);
     return 0;
 }
 
 /*
-   osc_stop_signal() : nsm_stop_signal() virtual function
-   osc_start() : nsm_start() virtual function
-   osc_kill() : nsm_kill() virtual function
-   osc_update() : nsm_update() virtual function
+ * osc_stop_signal() : stop_signal() virtual function
+ * osc_start() : start() virtual function
+ * osc_kill() : kill() virtual function
+ * osc_update() : update() virtual function
  */
 
 /**
@@ -194,6 +195,7 @@ nsmbase::nsmbase
     m_lo_thread     (nullptr),
     m_lo_server     (nullptr),
     m_active        (false),
+    m_visible       (true),         /* not yet completely worked out    */
     m_dirty         (false),
     m_dirty_count   (0),
     m_manager       (),
@@ -205,8 +207,31 @@ nsmbase::nsmbase
     m_nsm_ext       (nsmext),
     m_nsm_url       (nsmurl)
 {
-    //
+    // No code needed
 }
+
+/**
+ *  Stops and frees the server thread, and frees the OSC address.  Note that
+ *  the server itself does not need to be freed.  (We will see what valgrind
+ *  says about that later, if possible.)
+ */
+
+nsmbase::~nsmbase ()
+{
+    if (m_lo_thread)
+    {
+        lo_server_thread_stop(m_lo_thread);
+        lo_server_thread_free(m_lo_thread);
+    }
+    if (m_lo_address)
+        lo_address_free(m_lo_address);
+}
+
+/**
+ *  Gets the server address from NSM_URL, creates the server and server
+ *  thread, and adds the basic /error and /reply handlers.  (The rest are
+ *  added by the nsmclient class.)
+ */
 
 bool
 nsmbase::initialize ()
@@ -228,20 +253,19 @@ nsmbase::initialize ()
                 add_client_method(nsm::tag::error,   osc_nsm_error);
                 add_client_method(nsm::tag::reply,   osc_nsm_reply);
 
-                // See nsmclient.
-                // add_client_method(nsm::tag::replyex, osc_nsm_announce_reply);
-                // add_client_method(nsm::tag::hide,    osc_nsm_hide);
-                // add_client_method(nsm::tag::label,   osc_nsm_label);
-                // add_client_method(nsm::tag::loaded,  osc_nsm_session_loaded);
-                // add_client_method(nsm::tag::null,    osc_nsm_broadcast);
-                // add_client_method(nsm::tag::open,    osc_nsm_open);
-                // add_client_method(nsm::tag::save,    osc_nsm_save);
-                // add_client_method(nsm::tag::show,    osc_nsm_show);
-
                 /*
-                 * The most-derived class should call this, we think.
+                 * See nsmclient.
+                 * add_client_method(nsm::tag::replyex, osc_nsm_announce_reply);
+                 * add_client_method(nsm::tag::hide,    osc_nsm_hide);
+                 * add_client_method(nsm::tag::label,   osc_nsm_label);
+                 * add_client_method(nsm::tag::loaded,  osc_nsm_session_loaded);
+                 * add_client_method(nsm::tag::null,    osc_nsm_broadcast);
+                 * add_client_method(nsm::tag::open,    osc_nsm_open);
+                 * add_client_method(nsm::tag::save,    osc_nsm_save);
+                 * add_client_method(nsm::tag::show,    osc_nsm_show);
                  *
-                 * lo_server_thread_start(m_lo_thread);
+                 * The most-derived class should call this, we think.
+                 *  lo_server_thread_start(m_lo_thread);
                  */
             }
             else
@@ -257,19 +281,9 @@ nsmbase::initialize ()
 }
 
 /**
- *
+ *  Checks to be sure that the server and the address are usable (i.e. not
+ *  null).
  */
-
-nsmbase::~nsmbase ()
-{
-    if (m_lo_thread)
-    {
-        lo_server_thread_stop(m_lo_thread);
-        lo_server_thread_free(m_lo_thread);
-    }
-    if (m_lo_address)
-        lo_address_free(m_lo_address);
-}
 
 bool
 nsmbase::lo_is_valid () const
@@ -282,7 +296,9 @@ nsmbase::lo_is_valid () const
 }
 
 /**
- *  Wait for a message.  Useful after sending the announce message.
+ *  Wait for the next message.  Useful after sending the /nsm/server/announce
+ *  message.  We added a brief sleep delay because sometimes we seem to miss a
+ *  message at startup.
  */
 
 void
@@ -290,6 +306,10 @@ nsmbase::msg_check (int timeout)
 {
     if (timeout > 0)
     {
+        if (rc().verbose())
+            pathprint("S66:", "Waiting for reply...");
+
+        microsleep(100);
         if (lo_server_wait(m_lo_server, timeout))
         {
             while (lo_server_recv_noblock(m_lo_server, 0))
@@ -304,6 +324,15 @@ nsmbase::msg_check (int timeout)
  * Session client methods.
  */
 
+/**
+ *  Sends one of these messages:
+ *
+ *      -   /nsm/client/is_clean
+ *      -   /nsm/client/is_dirty message
+ *
+ *  It sets the m_dirty flag accordingly.
+ */
+
 void
 nsmbase::dirty (bool isdirty)
 {
@@ -314,6 +343,11 @@ nsmbase::dirty (bool isdirty)
         m_dirty = isdirty;
     }
 }
+
+/**
+ *  Optionally increments, or clears, the dirty-count.  If active, then the
+ *  dirty-count is checked in order to set the dirty-flag.
+ */
 
 void
 nsmbase::update_dirty_count (bool updatedirt)
@@ -332,6 +366,20 @@ nsmbase::update_dirty_count (bool updatedirt)
     }
 }
 
+/**
+ *  Sends the proper message for showing/hiding the user-interface, either:
+ *
+ *      -   /nsm/client/gui_is_hidden
+ *      -   /nsm/client/gui_is_shown.
+ *
+ *  Also sets the m_visible member.
+ *
+ *  Don't confuse the messages above with the messages sent from the server:
+ *
+ *      -   /nsm/client/hide_optional_gui
+ *      -   /nsm/client/show_optional_gui
+ */
+
 void
 nsmbase::visible (bool isvisible)
 {
@@ -339,12 +387,15 @@ nsmbase::visible (bool isvisible)
     {
         const char * path = nsm::visible_msg(isvisible).c_str();
         (void) send(path, "");
-        // m_visible = isvisible;   IN CLIENT OVERRIDE
+        m_visible = isvisible;      /* check the reply? */
     }
 }
 
 /**
  *  Call this function to send a progress indication to the session manager.
+ *  The message looks like this:
+ *
+ *      /nsm/client/progress f:percent
  *
  * \param percent
  *      The indication of progress, ranging from 0.0 to 100.0.
@@ -373,7 +424,9 @@ nsmbase::progress (float percent)
 }
 
 /**
- *  Send out the indication of dirtiness status.
+ *  Send out the indication of dirtiness status:
+ *
+ *      /nsm/client/is_dirty
  */
 
 bool
@@ -398,7 +451,9 @@ nsmbase::is_dirty ()
 }
 
 /**
- *  Send out the indication of cleanliness status.
+ *  Send out the indication of cleanliness status:
+ *
+ *      /nsm/client/is_clean
  */
 
 bool
@@ -417,7 +472,11 @@ nsmbase::is_clean ()
 }
 
 /**
+ *  Sends a message:
  *
+ *      /nsm/client/message i:priority s:message
+ *
+ *  where the priority ranges from 0 (least important) to 3 (most important).
  */
 
 bool
@@ -463,45 +522,20 @@ nsmbase::save_reply (nsm::reply replycode, const std::string & msg)
     return send_nsm_reply("/nsm/client/save", replycode, msg);
 }
 
-bool
-nsmbase::send_announcement
-(
-    const std::string & appname,        /* actually a package name, "seq66" */
-    const std::string & exename,        /* comes from argv[0]               */
-    const std::string & capabilities    /* e.g. ":switch:dirty:"            */
-)
-{
-    std::string message;
-    std::string pattern;
-    bool result = lo_is_valid();
-    if (result)
-        result = nsm::server_msg(nsm::tag::announce, message, pattern);
-
-    if (result)
-    {
-        const char * packagename = appname.c_str();
-        const char * app = exename.c_str();
-        const char * caps = capabilities.c_str();
-        int pid = int(getpid());
-        int rc = lo_send_from           /* "/nsm/server/announce" "sssiii"  */
-        (
-            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
-            message.c_str(), pattern.c_str(), packagename, caps, app,
-            NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
-        );
-        result = rc != (-1);
-
-        std::string text = "sent package '" + appname +
-            "'; app '" + exename +
-            "'; capabilities '" + capabilities + "'";
-
-        if (! result)
-            text += ", but it FAILED";
-
-        nsm::outgoing_msg(message, pattern, text);
-    }
-    return result;
-}
+/**
+ *  Sends a reply or error message, useful for the following message:
+ *
+ *      -   /nsm/client/open
+ *      -   /nsm/client/save
+ *
+ *  The message sent is one of the following where "path" is either of the
+ *  above messages, in double-quotes:
+ *
+ *      -   /reply "path" s:message
+ *      -   /error "path" i:errorcode s:message
+ *
+ *  The "path" sent depends on the reply code provided.
+ */
 
 bool
 nsmbase::send_nsm_reply
@@ -558,6 +592,53 @@ nsmbase::send_nsm_reply
     return result;
 }
 
+/**
+ *  Sends the following message:
+ *
+ *      /nsm/server/announce s:appname s:capabilities s:exename
+ *          i:apimajor i:apiminor i:pid
+ */
+
+bool
+nsmbase::send_announcement
+(
+    const std::string & appname,        /* actually a package name, "seq66" */
+    const std::string & exename,        /* comes from argv[0]               */
+    const std::string & capabilities    /* e.g. ":switch:dirty:"            */
+)
+{
+    std::string message;
+    std::string pattern;
+    bool result = lo_is_valid();
+    if (result)
+        result = nsm::server_msg(nsm::tag::announce, message, pattern);
+
+    if (result)
+    {
+        const char * packagename = appname.c_str();
+        const char * app = exename.c_str();
+        const char * caps = capabilities.c_str();
+        int pid = int(getpid());
+        int rc = lo_send_from           /* "/nsm/server/announce" "sssiii"  */
+        (
+            m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
+            message.c_str(), pattern.c_str(), packagename, caps, app,
+            NSM_API_VERSION_MAJOR, NSM_API_VERSION_MINOR, pid
+        );
+        result = rc != (-1);
+
+        std::string text = "sent package '" + appname +
+            "'; app '" + exename +
+            "'; capabilities '" + capabilities + "'";
+
+        if (! result)
+            text += ", but it FAILED";
+
+        nsm::outgoing_msg(message, pattern, text);
+    }
+    return result;
+}
+
 /*
  * Generic server reply.  Not sure we ever get this one.
  */
@@ -565,11 +646,13 @@ nsmbase::send_nsm_reply
 void
 nsmbase:: nsm_reply (const std::string & message, const std::string & pattern)
 {
-    nsm::outgoing_msg(message, pattern, "Generic reply");
+    nsm::outgoing_msg(message, pattern, "Server Reply");
 }
 
 /*
- * Server announce error.
+ *  Handles the base server error:
+ *
+ *      /error i:errcode s:errormessage
  */
 
 void
@@ -584,7 +667,7 @@ nsmbase::error (int errcode, const std::string & errmesg)
     // emit active(false);
 
     std::string ecm = reply_string(static_cast<nsm::reply>(errcode));
-    nsm::incoming_msg("error", errmesg, ecm, true);     /* error on console */
+    nsm::incoming_msg("Error Values", errmesg, ecm, true);
 }
 
 /**
@@ -725,13 +808,13 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
             const char * nul = NULL;
             (void) ADD_METHOD(nul, nul);
             (void) ADD_THREAD_METHOD(nul, nul);
-            nsm::outgoing_msg("OSC", "", "broadcast method added");
+            nsm::outgoing_msg("OSC", "", "Broadcast method added");
         }
         else
         {
             (void) ADD_METHOD(message.c_str(), pattern.c_str());
             (void) ADD_THREAD_METHOD(message.c_str(), pattern.c_str());
-            nsm::outgoing_msg(message, pattern, "client method added");
+            nsm::outgoing_msg(message, pattern, "Client method added");
         }
     }
 }
@@ -744,7 +827,7 @@ nsmbase::add_server_method (nsm::tag t, lo_method_handler h)
     if (server_msg(t, message, pattern))
     {
         (void) ADD_METHOD(message.c_str(), pattern.c_str());
-        nsm::outgoing_msg(message, pattern, "server method added");
+        nsm::outgoing_msg(message, pattern, "Server method added");
     }
 }
 
@@ -762,9 +845,9 @@ nsmbase::send
     );
     bool result = rcode != (-1);
     if (result)
-        nsm::outgoing_msg(message, pattern, "sent");
+        nsm::outgoing_msg(message, pattern, "Sent");
     else
-        nsm::outgoing_msg(message, pattern, "send FAILURE");
+        nsm::outgoing_msg(message, pattern, "Send FAILURE");
 
     return result;
 }

@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-03
+ * \updates       2020-09-04
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -40,6 +40,7 @@ const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
 
 extern bool is_empty_string (const std::string & item);
 extern std::string empty_string ();
+extern bool contains (const std::string & original, const std::string & target);
 extern std::string strip_comments (const std::string & item);
 extern std::string strip_quotes (const std::string & item);
 extern std::string add_quotes (const std::string & item);

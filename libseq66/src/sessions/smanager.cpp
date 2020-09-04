@@ -181,7 +181,7 @@ smanager::main_settings (int argc, char * argv [])
             if (usr().option_use_logfile() && ! logfile.empty())
                 (void) reroute_stdio(logfile);
         }
-        if (result)
+        if (result && ! usr().is_nsm_session())     /* open MIDI file?      */
         {
             m_midi_filename.clear();
             if (optionindex < argc)                 /* MIDI filename given? */

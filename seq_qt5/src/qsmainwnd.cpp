@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-03
+ * \updates       2020-09-04
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2602,7 +2602,7 @@ qsmainwnd::connect_nsm_slots ()
      */
 
     ui->actionNew->setText("&New MIDI file...");
-    ui->actionNew->setToolTip("Clear, and set a new MIDI file in session.");
+    ui->actionNew->setToolTip("Clear and set a new MIDI file in session.");
     connect
     (
         ui->actionNew, SIGNAL(triggered(bool)),
@@ -2628,8 +2628,8 @@ qsmainwnd::connect_nsm_slots ()
      * File / Save Session.
      */
 
-    ui->actionNew->setText("&Save session");
-    ui->actionNew->setToolTip("Save the current state of the session.");
+    ui->actionSave->setText("&Save session");
+    ui->actionSave->setToolTip("Save the current state of the session.");
     connect
     (
         ui->actionSave, SIGNAL(triggered(bool)),
@@ -2701,7 +2701,7 @@ qsmainwnd::connect_normal_slots ()
      */
 
     ui->actionNew->setText("&New");
-    ui->actionNew->setToolTip("Create a new Seq66 MIDI file.");
+    ui->actionNew->setToolTip("Clear MIDI data to make a new Seq66 tune.");
     connect(ui->actionNew, SIGNAL(triggered(bool)), this, SLOT(new_file()));
 
     /*
@@ -2709,7 +2709,7 @@ qsmainwnd::connect_normal_slots ()
      */
 
     ui->actionOpen->setText("&Open...");
-    ui->actionOpen->setToolTip("Open a MIDI or Seq66 MIDI file.");
+    ui->actionOpen->setToolTip("Open a standard or Seq66 MIDI file.");
     connect
     (
         ui->actionOpen, SIGNAL(triggered(bool)),

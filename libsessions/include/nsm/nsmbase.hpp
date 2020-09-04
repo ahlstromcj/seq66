@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-09-03
+ * \updates       2020-09-04
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -19,12 +19,14 @@
 
 #include <vector>                       /* std::vector                      */
 
-#include "seq66_features.hpp"
-#include "util/basic_macros.h"
-#include "nsm/nsmmessagesex.hpp"
+#include "seq66_features.hpp"           /* feature (SUPPORT) macros         */
+#include "util/basic_macros.h"          /* is_nullptr() & not_nullptr()     */
+#include "nsm/nsmmessagesex.hpp"        /* seq66::nsm::tag                  */
 
 #if defined SEQ66_LIBLO_SUPPORT
 #include <lo/lo.h>                      /* library for the OSC protocol     */
+#else
+#error Support for liblo required for this class
 #endif
 
 #define NSM_API_VERSION_MAJOR   1
@@ -131,6 +133,7 @@ private:
 
     mutable bool m_active;
 
+    bool m_visible;
     bool m_dirty;
     int m_dirty_count;
     std::string m_manager;
