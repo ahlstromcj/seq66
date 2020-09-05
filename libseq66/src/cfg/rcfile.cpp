@@ -251,7 +251,7 @@ rcfile::parse ()
             rc_ref().midi_control_filename(line());     /* set base name    */
 
             std::string fullpath = rc_ref().midi_control_filespec();
-            pathprint("Reading MIDI control file", fullpath);
+            pathprint("Reading MIDI 'ctrl' file", fullpath);
             ok = parse_midi_control_section(fullpath, true);
             if (! ok)
             {
@@ -286,7 +286,7 @@ rcfile::parse ()
             rc_ref().mute_group_filename(line());       /* base name        */
 
             std::string fullpath = rc_ref().mute_group_filespec();
-            pathprint("Reading mute group file", fullpath);
+            pathprint("Reading 'mutes' file", fullpath);
             ok = parse_mute_group_section(fullpath, true);
             if (! ok)
             {
@@ -564,7 +564,7 @@ rcfile::parse ()
                         rc_ref().playlist_filename(fname);
                     }
                     else
-                        file_error("no such playlist", fname);
+                        file_error("No such playlist", fname);
                 }
             }
         }
@@ -597,7 +597,7 @@ rcfile::parse ()
                 rc_ref().notemap_filename(fname);
             }
             else
-                file_error("no such note mapping", fname);
+                file_error("No such note mapping", fname);
         }
         if (! exists)
             rc_ref().notemap_filename("");
@@ -735,11 +735,11 @@ rcfile::write ()
     bool ok = file.is_open();
     if (ok)
     {
-        pathprint("Writing rc configuration", name());
+        pathprint("Writing 'rc' file", name());
     }
     else
     {
-        file_error("Error opening for writing", name());
+        file_error("Write open fail", name());
         return false;
     }
 
@@ -748,7 +748,7 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.90.2 (and above) rc configuration file\n"
+        << "# Seq66 0.90.2 (and above) 'rc' configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"

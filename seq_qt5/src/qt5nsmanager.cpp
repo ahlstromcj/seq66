@@ -110,7 +110,7 @@ qt5nsmanager::create_window ()
             (void) smanager::create_window();   /* just house-keeping   */
             if (error_active())
             {
-                show_error();
+                show_error("TODO", "Show error-active message");
                 result = false;
             }
             else
@@ -163,10 +163,17 @@ qt5nsmanager::run ()
  */
 
 void
-qt5nsmanager::show_message (const std::string & msg) const
+qt5nsmanager::show_message
+(
+    const std::string & tag,
+    const std::string & msg
+) const
 {
     if (m_window && ! msg.empty())
-        m_window->show_message_box(msg);
+    {
+        std::string text = tag + ": " + msg;
+        m_window->show_message_box(text);
+    }
 }
 
 /**
@@ -175,7 +182,11 @@ qt5nsmanager::show_message (const std::string & msg) const
  */
 
 void
-qt5nsmanager::show_error (const std::string & msg) const
+qt5nsmanager::show_error
+(
+    const std::string & tag,
+    const std::string & msg
+) const
 {
     if (m_window)
     {
@@ -188,14 +199,18 @@ qt5nsmanager::show_error (const std::string & msg) const
                 append_error_message(pmerrmsg);
             }
 #endif
-            std::string html = string_replace(error_message(), "\n", "<br>");
+            std::string html = tag + " ";
+            html += string_replace(error_message(), "\n", "<br>");
             html += "<br>Please exit and fix the configuration.";
             m_window->show_message_box(html);
         }
         else
         {
+            std::string text = tag;
             append_error_message(msg);
-            m_window->show_message_box(msg);
+            text += " ";
+            text += msg;
+            m_window->show_message_box(text);
         }
     }
 }

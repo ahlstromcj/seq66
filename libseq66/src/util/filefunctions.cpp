@@ -339,17 +339,9 @@ s_file_error
     bool result = errnum == 0;
     if (! result)
     {
-        /*
-         * \todo
-         *      Replace with the file_error() function in basic_macros.
-         */
-
         std::string temp = string_errno(errnum);
-        printf
-        (
-            "[File error: '%s' for '%s', mode/function '%s']\n",
-            temp.c_str(), filename.c_str(), mode.c_str()
-        );
+        temp += " (mode/function " + mode + ")";
+        file_error(temp, filename);
     }
     return result;
 }
@@ -690,7 +682,7 @@ file_open (const std::string & filename, const std::string & mode)
             errnum = errno;
 #endif
 
-        (void) s_file_error(filename.c_str(), mode.c_str(), errnum);
+        (void) s_file_error(filename, mode, errnum);
     }
     return filehandle;
 }

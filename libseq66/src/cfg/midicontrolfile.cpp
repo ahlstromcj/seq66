@@ -599,7 +599,7 @@ midicontrolfile::write_stream (std::ofstream & file)
             ;
     }
     else
-        file_error("failed to write", name());
+        file_error("Write fail", name());
 
     return result;
 }
@@ -622,14 +622,16 @@ midicontrolfile::write ()
         result = container_to_stanzas(rc_ref().midi_control_in());
         if (result)
         {
-            pathprint("Writing MIDI control configuration", name());
+            pathprint("Writing MIDI 'ctrl' file", name());
             result = write_stream(file);
+            if (! result)
+                file_error("Write fail", name());
         }
         file.close();
     }
     else
     {
-        file_error("Error opening for writing", name());
+        file_error("Write open fail", name());
     }
     return result;
 }

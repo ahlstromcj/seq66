@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-03
+ * \updates       2020-09-05
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -121,10 +121,10 @@ clinsmanager::create_session (int argc, char * argv [])
             std::string exename = seq_arg_0();          /* "qseq66" */
             result = m_nsm_client->announce(appname, exename, capabilities());
             if (! result)
-                pathprint("create_session():", "failed to announce");
+                pathprint("create_session()", "failed to announce");
         }
         else
-            pathprint("create_session():", "failed to make client");
+            pathprint("create_session()", "failed to make client");
 
         nsm_active(result);
         usr().in_session(result);                       /* global flag      */
@@ -168,13 +168,26 @@ clinsmanager::save_session (std::string & msg)
     if (result)
     {
         std::string filename = rc().midi_filename();
-        if (! filename.empty())
+        if (filename.empty())
+        {
+            warnprint("NSM session: MIDI file-name empty, will not save");
+        }
+        else
         {
             bool is_wrk = file_extension_match(filename, "wrk");
             if (is_wrk)
                 filename = file_extension_set(filename, ".midi");
 
             result = write_midi_file(*perf(), filename, msg);
+            if (result)
+            {
+                show_message("Saved", filename);
+            }
+            else
+            {
+                // errorprintf("Could not save '%s'", filename);
+                show_error("Could not save", filename);
+            }
         }
         result = smanager::save_session(msg);
     }
@@ -263,22 +276,20 @@ clinsmanager::create_project (const std::string & path)
             }
             if (result)
             {
+                /*
+                 * Make sure the configuration is created in the session right
+                 * now, in case the session manager tells the app to quit
+                 * (without saving).
+                 */
+
+                warnprint("Saving initial config files to session directory.");
                 usr().save_user_config(true);
+                if (! cmdlineopts::write_options_files())
+                    errprint("Initial config writes failed");
             }
         }
     }
     return result;
-}
-
-/**
- *
- */
-
-void
-clinsmanager::show_message (const std::string & msg) const
-{
-    if (! msg.empty())
-        pathprint("CNS:", msg);
 }
 
 void
@@ -286,7 +297,7 @@ clinsmanager::session_manager_name (const std::string & mgrname)
 {
     smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
-        pathprint("CNS:", mgrname);
+        pathprint("CNS", mgrname);
 }
 
 void
@@ -294,7 +305,7 @@ clinsmanager::session_manager_path (const std::string & pathname)
 {
     smanager::session_manager_path(pathname);
     if (! pathname.empty())
-        pathprint("CNS:", pathname);
+        pathprint("CNS", pathname);
 }
 
 void
@@ -302,7 +313,7 @@ clinsmanager::session_display_name (const std::string & dispname)
 {
     smanager::session_display_name(dispname);
     if (! dispname.empty())
-        pathprint("CNS:", dispname);
+        pathprint("CNS", dispname);
 }
 
 void
@@ -310,7 +321,7 @@ clinsmanager::session_client_id (const std::string & clid)
 {
     smanager::session_client_id(clid);
     if (! clid.empty())
-        pathprint("CNS:", clid);
+        pathprint("CNS", clid);
 }
 
 /**
@@ -319,7 +330,11 @@ clinsmanager::session_client_id (const std::string & clid)
  */
 
 void
-clinsmanager::show_error (const std::string & msg) const
+clinsmanager::show_error
+(
+    const std::string & tag,
+    const std::string & msg
+) const
 {
     if (msg.empty())
     {
@@ -332,12 +347,12 @@ clinsmanager::show_error (const std::string & msg) const
 #endif
         std::string msg = error_message();
         msg += "Please exit and fix the configuration.";
-        show_message(msg);
+        show_message(tag, msg);
     }
     else
     {
         append_error_message(msg);
-        show_message(msg);
+        show_message(tag, msg);
     }
 }
 

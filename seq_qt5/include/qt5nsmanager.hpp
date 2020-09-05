@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-09-01
+ * \updates       2020-09-05
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -76,8 +76,16 @@ public:
 
     virtual bool close_session (bool ok = true) override;
     virtual bool create_window () override;
-    virtual void show_message (const std::string & msg) const override;
-    virtual void show_error (const std::string & msg = "") const override;
+    virtual void show_message
+    (
+        const std::string & tag,
+        const std::string & msg
+    ) const override;
+    virtual void show_error
+    (
+        const std::string & tag,
+        const std::string & msg
+    ) const override;
     virtual bool run () override;
     virtual void session_manager_name (const std::string & mgrname) override;
     virtual void session_manager_path (const std::string & pathname) override;

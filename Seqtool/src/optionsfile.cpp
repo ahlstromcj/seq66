@@ -769,7 +769,7 @@ optionsfile::parse ()
                             rc_ref().playlist_filename(fname);
                         }
                         else
-                            file_error("no such playlist", fname);
+                            file_error("No such playlist", fname);
                     }
                 }
             }

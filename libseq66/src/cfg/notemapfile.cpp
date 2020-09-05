@@ -272,7 +272,7 @@ notemapfile::write_stream (std::ofstream & file)
             ;
     }
     else
-        file_error("failed to write", name());
+        file_error("Write fail", name());
 
     return result;
 }
@@ -292,13 +292,13 @@ notemapfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        pathprint("Writing note-mapper configuration", name());
+        pathprint("Writing 'drums' file", name());
         result = write_stream(file);
         file.close();
     }
     else
     {
-        file_error("Error opening for writing", name());
+        file_error("Write open fail", name());
     }
     return result;
 }

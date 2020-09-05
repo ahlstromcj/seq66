@@ -608,11 +608,11 @@ usrfile::write ()
     std::ofstream file(name().c_str(), std::ios::out | std::ios::trunc);
     if (file.is_open())
     {
-        pathprint("Writing user configuration", name());
+        pathprint("Writing 'usr' file", name());
     }
     else
     {
-        file_error("Error opening for writing", name());
+        file_error("Write open fail", name());
         return false;
     }
     dump_setting_summary();
@@ -622,7 +622,7 @@ usrfile::write ()
      */
 
     file
-        << "# Seq66 0.91.0 (and above) user configuration file\n"
+        << "# Seq66 0.91.0 (and above) 'usr' configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -1286,11 +1286,10 @@ usrfile::write ()
     file << uscratch << "       # (user_ui_) key_height\n";
 
     file << "\n"
-        "# Normally, the Qt version of Seq66 uses the old pattern\n"
-        "# editor in the 'Edit' tab.  If the following value is set to 1,\n"
-        "# then the new, larger, more functional pattern editor can be\n"
-        "# used in the 'Edit' tab.  This setting also has the side-effect\n"
-        "# of making the whole Seq66 window larger.\n"
+        "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
+        "# 'Edit' tab.  If the following value is set to 1, then the new, larger,\n"
+        "# more functional pattern editor can be used in the 'Edit' tab. This\n"
+        "# setting makes the whole Seq66 window larger.\n"
         "\n"
         ;
 

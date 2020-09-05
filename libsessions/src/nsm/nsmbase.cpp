@@ -269,13 +269,13 @@ nsmbase::initialize ()
                  */
             }
             else
-                pathprint("NSM:", "bad server");
+                pathprint("NSM", "bad server");
         }
         else
-            pathprint("NSM:", "bad server thread");
+            pathprint("NSM", "bad server thread");
     }
     else
-        pathprint("NSM:", "bad server address");
+        pathprint("NSM", "bad server address");
 
     return result;
 }
@@ -290,7 +290,7 @@ nsmbase::lo_is_valid () const
 {
     bool result = not_nullptr_2(m_lo_address, m_lo_server);
     if (! result)
-        pathprint("NSM error:", "Null OSC address or server");
+        pathprint("NSM error", "Null OSC address or server");
 
     return result;
 }
@@ -307,7 +307,7 @@ nsmbase::msg_check (int timeout)
     if (timeout > 0)
     {
         if (rc().verbose())
-            pathprint("S66:", "Waiting for reply...");
+            pathprint("S66", "Waiting for reply...");
 
         microsleep(100);
         if (lo_server_wait(m_lo_server, timeout))
@@ -901,10 +901,10 @@ nsmbase::send_from_client
         if (result)
         {
             if (rc().verbose())
-                pathprint("OSC message sent:", message);
+                pathprint("OSC message sent", message);
         }
         else
-            pathprint("OSC message send FAILURE:", message);
+            pathprint("OSC message send FAILURE", message);
     }
     return result;
 }
@@ -1068,9 +1068,9 @@ get_url ()
     if (rc().verbose())
     {
         if (active)
-            pathprint("NSM:", result);
+            pathprint("NSM", result);
         else
-            pathprint("NSM:", "URL not present");
+            pathprint("NSM", "URL not present");
     }
     return result;
 }
@@ -1090,7 +1090,7 @@ incoming_msg
         (
             "%s()->%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
         );
-        pathprint("NSM:", text);
+        pathprint("NSM", text);
     }
 }
 
@@ -1108,7 +1108,7 @@ outgoing_msg
         (
             "%s [%s] %s", message.c_str(), pattern.c_str(), data.c_str()
         );
-        pathprint("S66:", text);
+        pathprint("S66", text);
     }
 }
 

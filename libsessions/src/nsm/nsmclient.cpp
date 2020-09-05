@@ -167,7 +167,7 @@
  *      INVESTIGATE the NSM replacement, RaySend!!!
  */
 
-#include "util/basic_macros.hpp"        /* not_nullptr(), pathprint()       */
+#include "util/basic_macros.hpp"        /* not_nullptr() macro              */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient class           */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm message functions     */
 #include "sessions/smanager.hpp"        /* seq66::smanager virtuals         */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-02
+ * \updates       2020-09-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -164,7 +164,7 @@ smanager::main_settings (int argc, char * argv [])
         result = cmdlineopts::parse_options_files(errmessage);
         if (! result)
         {
-            errprint(errmessage.c_str());
+            errprint(errmessage);
             append_error_message(errmessage);       /* raises the message   */
         }
         optionindex = cmdlineopts::parse_command_line_options(argc, argv);
@@ -401,12 +401,16 @@ smanager::close_session (bool ok)
     }
     if (ok)
     {
-        if (result && ! usr().is_nsm_session())
+        if (result)
         {
             if (rc().auto_option_save())
-                (void) cmdlineopts::write_options_files();
+            {
+                warnprint("Saving config files to session directory.");
+                if (! cmdlineopts::write_options_files())
+                    errprint("Config writes failed");
+            }
             else
-                printf("[auto-option-save off, not saving config files]\n");
+                warnprint("auto-option-save off, not saving config files");
         }
     }
     else
@@ -417,7 +421,7 @@ smanager::close_session (bool ok)
         (void) cmdlineopts::write_options_files("erroneous");
         if (error_active())
         {
-            errprint(error_message().c_str());
+            errprint(error_message());
         }
     }
 
@@ -466,8 +470,8 @@ smanager::create_window ()
 }
 
 /**
- *  Sets the error flag and appends to the error message, which a both mutable
- *  so we can safely call this function under any circumstances.
+ *  Sets the error flag and appends to the error message, which are both mutable
+ *  so that we can safely call this function under any circumstances.
  *
  * \param message
  *      Provides the message to be set. If empty, the message-active flag and
@@ -487,7 +491,7 @@ smanager::append_error_message (const std::string & msg) const
         m_extant_msg_active = true;
         if (m_extant_errmsg.empty())
         {
-            // m_extant_errmsg += "? ";
+            /* m_extant_errmsg += "? "; */
         }
         else
             m_extant_errmsg += "\n";
@@ -513,9 +517,10 @@ smanager::append_error_message (const std::string & msg) const
  */
 
 void
-smanager::show_message (const std::string & msg) const
+smanager::show_message (const std::string & tag, const std::string & msg) const
 {
-    seq66::info_message(msg);
+    std::string fullmsg = tag + ": " + msg;
+    seq66::info_message(fullmsg);       /* checks for "debug" and adds "[]" */
 }
 
 /**
@@ -523,8 +528,9 @@ smanager::show_message (const std::string & msg) const
  */
 
 void
-smanager::show_error (const std::string & msg) const
+smanager::show_error (const std::string & tag, const std::string & msg) const
 {
+    std::string fullmsg = tag + ": " + msg;
     seq66::error_message(msg);
 }
 
@@ -604,7 +610,7 @@ smanager::error_handling ()
 {
     std::string errmsg;
     if (internal_error_check(errmsg))
-        show_message(errmsg);
+        show_message("Error handling", errmsg);
 
 #if defined SEQ66_PORTMIDI_SUPPORT
     const char * pmerrmsg = pm_log_buffer();
@@ -644,14 +650,18 @@ smanager::create (int argc, char * argv [])
         if (result)
         {
             std::string fname = midi_filename();
-            if (! fname.empty())
+            if (fname.empty())
+            {
+                warnprint("MIDI filename empty, nothing to open");
+            }
+            else
             {
                 std::string errormessage;
-                fname = open_midi_file(fname, errormessage);
-                if (fname.empty())
-                {
-                    warnprintf("Could not open %s\n", fname.c_str());
-                }
+                std::string tmp = open_midi_file(fname, errormessage);
+                if (tmp.empty())
+                    show_error(fname, errormessage);
+                else
+                    show_message("Opened", tmp);        /* fname */
             }
             result = create_window();
             if (result)

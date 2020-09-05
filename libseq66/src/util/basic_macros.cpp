@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-09-04
+ * \updates       2020-09-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -84,7 +84,10 @@ not_nullptr_assert (void * ptr, const std::string & context)
     int flag = int(not_nullptr(ptr));
     if (! flag)
     {
-        std::cerr << "? null pointer in context " << context << std::endl;
+        std::cerr
+            << "[?? null pointer in context " << context << " ??]"
+            << std::endl
+            ;
         result = false;
     }
 
@@ -153,14 +156,11 @@ warn_message (const std::string & msg)
 bool
 error_message (const std::string & msg)
 {
-    if (is_debug())
-    {
-        std::string errmsg = msg;
-        if (errmsg.empty())
-            errmsg = "Empty error message; ask the programmer to investigate";
+    std::string errmsg = msg;
+    if (errmsg.empty())
+        errmsg = "Empty error message; ask the programmer to investigate";
 
-        std::cerr << "? " << errmsg << std::endl;
-    }
+    std::cerr << "[?? " << errmsg << " ??]" << std::endl;
     return false;
 }
 
@@ -171,7 +171,7 @@ error_message (const std::string & msg)
  * \param tag
  *      The message to print, sans the newline.
  *
- * \param filename
+ * \param path
  *      The name of the file to be shown.
  *
  * \return
@@ -180,11 +180,9 @@ error_message (const std::string & msg)
  */
 
 bool
-file_error (const std::string & tag, const std::string & filename)
+file_error (const std::string & tag, const std::string & path)
 {
-    if (is_debug())
-        std::cerr << "? " << tag << " '" << filename << "'" << std::endl;
-
+    std::cerr << "[?? " << tag << ": " << path << " ??]" << std::endl;
     return false;
 }
 
@@ -196,13 +194,14 @@ file_error (const std::string & tag, const std::string & filename)
  *      Provides the text to precede the name of the path.
  *
  * \param path
- *      Provides the path-name to print.
+ *      Provides the path-name to print.  This message can be something other
+ *      than a path-name, by the way.
  */
 
 void
 pathprint (const std::string & tag, const std::string & path)
 {
-    std::cout << "[" << tag << " " << path << "]" << std::endl;
+    std::cout << "[" << tag << ": " << path << "]" << std::endl;
 }
 
 /**

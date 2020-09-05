@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-02
+ * \updates       2020-09-05
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -603,6 +603,17 @@ bool
 cmdlineopts::parse_log_option (int argc, char * argv [])
 {
     bool result = false;
+    std::string exename = argv[0];
+    if (contains(exename, "verbose"))       /* symlink to dev's program     */
+    {
+#if defined SEQ66_PLATFORM_DEBUG
+        pathprint("Running debug version", argv[0]);
+#else
+        pathprint("Running", argv[0]);
+#endif
+        rc().verbose(true);                 /* turn on is_debug() output    */
+        pathprint(exename, "Verbose mode enabled");
+    }
     if (parse_o_options(argc, argv))
     {
         std::string logfile = usr().option_logfile();
@@ -671,7 +682,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rc());
-        pathprint("Reading rc configuration", rcn);
+        pathprint("Reading 'rc' file", rcn);
         if (options.parse())
         {
             // Nothing to do?
@@ -684,7 +695,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     }
     else
     {
-        /*
+        /**
          *  If no "rc" file exists, then, of course, we will create them upon
          *  exit.  But we also want to force the new style of output, where the
          *  key/MIDI controls and the mute-groups are in separate files ending
@@ -695,11 +706,23 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         std::string appname = rc().application_name();
         std::string cf = file_extension_set(appname, ".ctrl");
         std::string mf = file_extension_set(appname, ".mutes");
-        std::string af = appname + ".rc / ctrl / midi";
+        std::string uf = file_extension_set(appname, ".usr");
+        std::string nm = file_extension_set(appname, ".drums");
+        std::string af = appname + ".rc / ctrl / midi / mutes";
+
+        /*
+         * TODO:  Create a fake drums (note-mapper) file and a user file.
+         *        Also tighten up user and playlist file handling.
+         *
+         * std::string af = appname + ".rc / ctrl / midi / usr / drums";
+         */
+
         rc().use_midi_control_file(true);
         rc().midi_control_filename(cf);
         rc().use_mute_group_file(true);
         rc().mute_group_filename(mf);
+        rc().user_filename(uf);                     /* ca 2020-09-05    */
+        rc().notemap_filename(nm);                  /* ca 2020-09-05    */
         rc().mute_groups().reset_defaults();
         pathprint("No 'rc' file, will create", af);
     }
@@ -709,7 +732,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         if (file_accessible(rcn))
         {
             usrfile ufile(rcn, rc());
-            pathprint("Reading user configuration", rcn);
+            pathprint("Reading 'usr' file", rcn);
             if (ufile.parse())
             {
                 /*
@@ -757,7 +780,7 @@ cmdlineopts::parse_mute_groups
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rcs);
-        pathprint("Reading mute-group section of", rcn);
+        pathprint("Reading 'mutes' file", rcn);
         if (options.parse_mute_group_section(rcn, true))
         {
             // Nothing to do?
@@ -795,17 +818,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     int result = 0;
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
-    std::string exename = argv[0];
-#if defined SEQ66_PLATFORM_DEBUG
-    pathprint("Running debug version:", argv[0]);
-#else
-    pathprint("Running:", argv[0]);
-#endif
-    if (contains(exename, "verbose"))       /* symlink to dev's program     */
-    {
-        rc().verbose(true);                 /* turn on is_debug() output    */
-        pathprint(exename, "Verbose mode enabled");
-    }
     optind = 0;
     for (;;)                                /* parse all command parameters */
     {
@@ -871,9 +883,9 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'H':
             rc().full_config_directory(soptarg);
-            pathprint("Set home configuration to ", rc().home_config_directory());
+            pathprint("Set home config to", rc().home_config_directory());
             if (! make_directory_path(soptarg))
-                errprint("ERROR: could not create directory");
+                errprint("Could not create that directory");
             break;
 
         case 'h':

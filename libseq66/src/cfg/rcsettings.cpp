@@ -288,13 +288,17 @@ rcsettings::home_config_directory () const
             }
             else
             {
-                file_error("error creating", result);
+                file_error("Create fail", result);
                 result.clear();
             }
         }
         else
-            file_error("error calling std::getenv() on", HOME);
-
+        {
+            std::string temp = "std::getenv(";
+            temp += HOME;
+            temp += ")";
+            result = error_message(temp);
+        }
         return result;
     }
     else
