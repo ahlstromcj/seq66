@@ -238,7 +238,7 @@ protected:
         m_client_id = s;
     }
 
-    void is_active(bool f)
+    void is_active (bool f)
     {
         m_active = f;
     }

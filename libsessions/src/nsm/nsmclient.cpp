@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-09-03
+ * \updates       2020-09-06
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -198,7 +198,7 @@ osc_nsm_announce_reply
     if (is_nullptr(pnsmc))
         return -1;
 
-    if (! nsm::is_announce(&argv[0]->s))
+    if (nsm::is_announce(&argv[0]->s))
     {
         nsm::incoming_msg("Announce Reply", path, types);
         pnsmc->announce_reply(&argv[1]->s, &argv[2]->s, &argv[3]->s);

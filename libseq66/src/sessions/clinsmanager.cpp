@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-05
+ * \updates       2020-09-06
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -246,6 +246,8 @@ clinsmanager::create_project (const std::string & path)
             rc().full_config_directory(rcfilepath); /* set NSM directory    */
             rcfilepath = path + "/midi";
             rc().midi_filepath(rcfilepath);         /* set MIDI directory   */
+            pathprint("NSM MIDI file path", rc().midi_filepath());
+            pathprint("NSM MIDI file name", rc().midi_filename());
             result = cmdlineopts::parse_options_files(errmessage);
             if (result)
             {
@@ -282,7 +284,7 @@ clinsmanager::create_project (const std::string & path)
                  * (without saving).
                  */
 
-                warnprint("Saving initial config files to session directory.");
+                warnprint("Saving initial config files to session directory");
                 usr().save_user_config(true);
                 if (! cmdlineopts::write_options_files())
                     errprint("Initial config writes failed");

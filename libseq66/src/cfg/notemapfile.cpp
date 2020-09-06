@@ -292,7 +292,7 @@ notemapfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        pathprint("Writing 'drums' file", name());
+        pathprint("Writing 'drums'", name());
         result = write_stream(file);
         file.close();
     }

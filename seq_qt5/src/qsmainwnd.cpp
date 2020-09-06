@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-04
+ * \updates       2020-09-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1024,7 +1024,8 @@ qsmainwnd::show_open_file_dialog ()
 }
 
 /**
- *  Opens the dialog to request a playlist.
+ *  Opens the dialog to request a playlist.  This action should be allowed
+ *  in an NSM session.
  */
 
 void
@@ -1347,7 +1348,7 @@ bool
 qsmainwnd::check ()
 {
     bool result = false;
-    if (perf().modified())
+    if (perf().modified() && ! use_nsm())
     {
         int choice = m_msg_save_changes->exec();
         switch (choice)
@@ -1455,20 +1456,21 @@ qsmainwnd::new_session ()
         );
         if (ok)
         {
+            if (perf().clear_all(true))             /* like new_file()      */
+            {
+                m_is_title_dirty = true;
+                redo_live_frame();
+                remove_all_editors();
+            }
             if (text.isEmpty())
             {
-                rc().session_midi_filename("");         /* clear the name   */
+                pathprint("Session MIDI file", "Cleared");
             }
             else
             {
                 std::string filenamebase = text.toStdString();
                 rc().session_midi_filename(filenamebase);
-            }
-            if (perf().clear_all(true))                 /* like new_file()  */
-            {
-                m_is_title_dirty = true;
-                redo_live_frame();
-                remove_all_editors();
+                pathprint("Session MIDI file", rc().midi_filename());
             }
         }
     }

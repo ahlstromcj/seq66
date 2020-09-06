@@ -251,7 +251,7 @@ rcfile::parse ()
             rc_ref().midi_control_filename(line());     /* set base name    */
 
             std::string fullpath = rc_ref().midi_control_filespec();
-            pathprint("Reading MIDI 'ctrl' file", fullpath);
+            pathprint("Reading 'ctrl'", fullpath);
             ok = parse_midi_control_section(fullpath, true);
             if (! ok)
             {
@@ -286,7 +286,7 @@ rcfile::parse ()
             rc_ref().mute_group_filename(line());       /* base name        */
 
             std::string fullpath = rc_ref().mute_group_filespec();
-            pathprint("Reading 'mutes' file", fullpath);
+            pathprint("Reading 'mutes'", fullpath);
             ok = parse_mute_group_section(fullpath, true);
             if (! ok)
             {
@@ -735,7 +735,7 @@ rcfile::write ()
     bool ok = file.is_open();
     if (ok)
     {
-        pathprint("Writing 'rc' file", name());
+        pathprint("Writing 'rc'", name());
     }
     else
     {

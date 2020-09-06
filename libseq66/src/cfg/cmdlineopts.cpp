@@ -682,7 +682,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rc());
-        pathprint("Reading 'rc' file", rcn);
+        pathprint("Reading 'rc'", rcn);
         if (options.parse())
         {
             // Nothing to do?
@@ -732,7 +732,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         if (file_accessible(rcn))
         {
             usrfile ufile(rcn, rc());
-            pathprint("Reading 'usr' file", rcn);
+            pathprint("Reading 'usr'", rcn);
             if (ufile.parse())
             {
                 /*
@@ -780,7 +780,7 @@ cmdlineopts::parse_mute_groups
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rcs);
-        pathprint("Reading 'mutes' file", rcn);
+        pathprint("Reading 'mutes'", rcn);
         if (options.parse_mute_group_section(rcn, true))
         {
             // Nothing to do?

@@ -444,6 +444,7 @@ smanager::save_session (std::string & msg)
     bool result = not_nullptr(perf());
     if (result)
     {
+        pathprint("smanager::save_session()", "Options save");
         if (rc().auto_option_save())
             result = cmdlineopts::write_options_files();
         else

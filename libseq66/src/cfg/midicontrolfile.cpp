@@ -622,7 +622,7 @@ midicontrolfile::write ()
         result = container_to_stanzas(rc_ref().midi_control_in());
         if (result)
         {
-            pathprint("Writing MIDI 'ctrl' file", name());
+            pathprint("Writing 'ctrl'", name());
             result = write_stream(file);
             if (! result)
                 file_error("Write fail", name());
