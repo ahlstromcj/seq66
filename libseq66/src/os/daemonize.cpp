@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2020-07-06
+ * \updates       2020-09-07
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
@@ -440,6 +440,49 @@ session_save ()
 #endif
     sg_needs_save = false;
     return result;
+}
+
+/**
+ *  Looks up an executable in the process list using the pidof program.  This
+ *  function copies the pidof command line, then opens a pipe to that process
+ *  to read from it.  If anything is read, then the process ID is calculated
+ *  and returned.  Otherwise, 0 is returned.
+ *
+ *  Example: "pidof nsmd", which will emit a PID if nsmd is running and return
+ *  1 if the nsmd is not running.
+ */
+
+static pid_t
+get_pid_by_name (const std::string & exename)
+{
+    const int s_pid_size = 200;
+    pid_t result = 0;
+	const char * ps_name = exename.c_str();
+    char * cmd = static_cast<char *>(calloc(sizeof(char), s_pid_size));
+    if (not_nullptr(cmd))
+    {
+        snprintf(cmd, s_pid_size, "pidof %s", ps_name);
+        FILE * fp = popen(cmd, "r");
+        if (not_nullptr(fp))
+        {
+            size_t count = fread(cmd, sizeof(char), s_pid_size, fp);
+            fclose(fp);
+            if (count > 0)
+            {
+                result = atoi(cmd);
+#if defined SEQ66_PROGRAM_DEBUG
+                pathprint(exename, std::to_string(result);
+#endif
+            }
+        }
+    }
+    return result;
+}
+
+bool
+pid_exists (const std::string & exename)
+{
+    return get_pid_by_name(exename) > 0;
 }
 
 #else

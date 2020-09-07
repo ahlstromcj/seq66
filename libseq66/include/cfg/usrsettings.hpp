@@ -976,10 +976,10 @@ public:
 
     void set_bus_instrument (int index, int channel, int instrum);
 
-     int bus_instrument (int buss, int channel)
-     {
-          return bus(buss).instrument(channel);
-     }
+    int bus_instrument (int buss, int channel)
+    {
+        return bus(buss).instrument(channel);
+    }
 
     const std::string & bus_name (int buss)
     {
@@ -1587,12 +1587,12 @@ public:
 
     std::string session_manager_name () const;
 
-    bool is_nsm_session () const
+    bool wants_nsm_session () const
     {
         return m_session_manager == session::nsm;
     }
 
-    bool is_lash_session () const
+    bool wants_lash_session () const
     {
         return m_session_manager == session::lash;
     }

@@ -658,9 +658,9 @@ usrsettings::normalize ()
 std::string
 usrsettings::session_manager_name () const
 {
-    if (is_nsm_session())
+    if (wants_nsm_session())
         return std::string("nsm");
-    else if (is_lash_session())
+    else if (wants_lash_session())
         return std::string("lash");
     else
         return std::string("none");

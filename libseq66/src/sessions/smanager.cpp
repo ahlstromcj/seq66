@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-05
+ * \updates       2020-09-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -181,7 +181,7 @@ smanager::main_settings (int argc, char * argv [])
             if (usr().option_use_logfile() && ! logfile.empty())
                 (void) reroute_stdio(logfile);
         }
-        if (result && ! usr().is_nsm_session())     /* open MIDI file?      */
+        if (result)                                 /* get MIDI file-name?  */
         {
             m_midi_filename.clear();
             if (optionindex < argc)                 /* MIDI filename given? */

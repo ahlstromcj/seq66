@@ -5,7 +5,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2020-07-06
+ * \updates       2020-09-07
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -72,6 +72,8 @@ extern bool reroute_stdio
     const std::string & logfile = "",
     bool closem = false
 );
+
+extern bool pid_exists (const std::string & exename);
 
 /*
  * Basic session handling from use falkTX, circa 2020-02-02.  The following

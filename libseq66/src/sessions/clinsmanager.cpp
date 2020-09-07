@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-06
+ * \updates       2020-09-07
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -35,6 +35,7 @@
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
+#include "os/daemonize.hpp"             /* seq66::pid_exists()              */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
 #include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
 
@@ -82,7 +83,10 @@ clinsmanager::~clinsmanager ()
  *  that may simply be due to nsmd running in different console window or as a
  *  daemon.  In that cause, it checks if there was a non-empty
  *  "[user-session]" "url" value.  This is useful in trouble-shooting, for
- *  example.
+ *  example.  Finally, just in case the user has set up the "usr" file for
+ *  running NSM, but hasn't started non-session-manager or nsmd itself, we use
+ *  the new pid_exists() function to make sure that nsmd is indeed running.
+ *  Ay!
  *
  *  If all is well, a new nsmclient is created, and an announce/open handshake
  *  starts.
@@ -95,7 +99,7 @@ clinsmanager::create_session (int argc, char * argv [])
 {
 #if defined SEQ66_NSM_SUPPORT
     std::string url;
-    bool ok = usr().is_nsm_session();               /* user wants NSM usage */
+    bool ok = usr().wants_nsm_session();            /* user wants NSM usage */
     if (ok)
     {
         url = nsm::get_url();
@@ -103,6 +107,9 @@ clinsmanager::create_session (int argc, char * argv [])
             url = usr().session_url();              /* did user run nsmd?   */
 
         ok = ! url.empty();                         /* NSM likely running   */
+        if (ok)
+            ok = pid_exists("nsmd");                /* one final check      */
+
         usr().in_session(ok);
     }
     if (ok)
@@ -135,7 +142,7 @@ clinsmanager::create_session (int argc, char * argv [])
     }
     else
     {
-        if (usr().is_nsm_session())
+        if (usr().wants_nsm_session())
         {
             warnprint("No NSM_URL definition found");
         }
