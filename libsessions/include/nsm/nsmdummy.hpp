@@ -149,19 +149,19 @@ public:
         // no code
     }
 
-    void open_reply (reply replycode = reply::ok);
-    void save_reply (reply replycode = reply::ok);
+    void open_reply (reply errorcode = error::ok);
+    void save_reply (reply errorcode = error::ok);
 
     void open_reply (bool loaded)
     {
-        open_reply(loaded ? reply::ok : reply::general);
+        open_reply(loaded ? error::ok : error::general);
         if (loaded)
             m_dirty = false;
     }
 
     void save_reply (bool saved)
     {
-        save_reply(saved ? reply::ok : reply::general);
+        save_reply(saved ? error::ok : error::general);
         if (saved)
             m_dirty = false;
     }
@@ -208,8 +208,8 @@ public:
         const std::string & manager,
         const std::string & capabilities
     );
-    void nsm_reply (const std::string & path, reply replycode);
-    std::string const char * nsm_reply_message (reply replycode);
+    void nsm_reply (const std::string & path, reply errorcode);
+    std::string const char * nsm_reply_message (reply errorcode);
 
 };          // class nsm
 

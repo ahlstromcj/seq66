@@ -7,7 +7,7 @@
  * \license       GNU GPLv2 or above
  *
  *  Daemonization module of the POSIX C Wrapper (PSXC) library
- *  Copyright (C) 2005-2018 by Chris Ahlstrom
+ *  Copyright (C) 2005-2020 by Chris Ahlstrom
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -455,25 +455,19 @@ session_save ()
 static pid_t
 get_pid_by_name (const std::string & exename)
 {
-    const int s_pid_size = 200;
+    static const int s_pid_size = 200;      /* really only need about 10!   */
     pid_t result = 0;
-	const char * ps_name = exename.c_str();
-    char * cmd = static_cast<char *>(calloc(sizeof(char), s_pid_size));
-    if (not_nullptr(cmd))
+    char cmd[s_pid_size + 1];
+    snprintf(cmd, s_pid_size, "pidof %s", exename.c_str());
+    FILE * fp = popen(cmd, "r");
+    if (not_nullptr(fp))
     {
-        snprintf(cmd, s_pid_size, "pidof %s", ps_name);
-        FILE * fp = popen(cmd, "r");
-        if (not_nullptr(fp))
+        size_t count = fread(cmd, sizeof(char), s_pid_size, fp);
+        fclose(fp);
+        if (count > 0)
         {
-            size_t count = fread(cmd, sizeof(char), s_pid_size, fp);
-            fclose(fp);
-            if (count > 0)
-            {
-                result = atoi(cmd);
-#if defined SEQ66_PROGRAM_DEBUG
-                pathprint(exename, std::to_string(result);
-#endif
-            }
+            result = atoi(cmd);
+            pathprint(exename, std::to_string(result));
         }
     }
     return result;

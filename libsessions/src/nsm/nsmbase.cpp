@@ -506,20 +506,20 @@ nsmbase::message (int priority, const std::string & mesg)
 }
 
 /*
- * Session client reply methods.  If the reply code is not reply::ok, then the
+ * Session client reply methods.  If the reply code is not error::ok, then the
  * reply will be an error reply.
  */
 
 bool
-nsmbase::open_reply (nsm::reply replycode, const std::string & msg)
+nsmbase::open_reply (nsm::error errorcode, const std::string & msg)
 {
-    return send_nsm_reply("/nsm/client/open", replycode, msg);
+    return send_nsm_reply("/nsm/client/open", errorcode, msg);
 }
 
 bool
-nsmbase::save_reply (nsm::reply replycode, const std::string & msg)
+nsmbase::save_reply (nsm::error errorcode, const std::string & msg)
 {
-    return send_nsm_reply("/nsm/client/save", replycode, msg);
+    return send_nsm_reply("/nsm/client/save", errorcode, msg);
 }
 
 /**
@@ -541,7 +541,7 @@ bool
 nsmbase::send_nsm_reply
 (
     const std::string & path,
-    nsm::reply replycode,
+    nsm::error errorcode,
     const std::string & msg
 )
 {
@@ -552,10 +552,10 @@ nsmbase::send_nsm_reply
         std::string pattern;
         std::string message;
         std::string replytype;
-        std::string replymsg = reply_string(replycode);
+        std::string replymsg = reply_string(errorcode);
         replymsg += ": ";
         replymsg += msg;
-        if (replycode == nsm::reply::ok)
+        if (errorcode == nsm::error::ok)
         {
             if (client_msg(nsm::tag::reply, message, pattern))
             {
@@ -576,7 +576,7 @@ nsmbase::send_nsm_reply
                 (
                     m_lo_address, m_lo_server, LO_TT_IMMEDIATE,
                     message.c_str(), pattern.c_str(), path.c_str(),
-                    static_cast<int>(replycode), replymsg.c_str()
+                    static_cast<int>(errorcode), replymsg.c_str()
                 );
             }
             replytype = "error";
@@ -666,7 +666,7 @@ nsmbase::error (int errcode, const std::string & errmesg)
     m_client_id.clear();
     // emit active(false);
 
-    std::string ecm = reply_string(static_cast<nsm::reply>(errcode));
+    std::string ecm = reply_string(static_cast<nsm::error>(errcode));
     nsm::incoming_msg("Error Values", errmesg, ecm, true);
 }
 
@@ -917,7 +917,7 @@ namespace nsm
 {
 
 /**
- *  A free function to provide a string for a reply code in the nsm::reply
+ *  A free function to provide a string for a reply code in the nsm::error
  *  enumeration class.
  *
 \verbatim
@@ -945,77 +945,77 @@ namespace nsm
  */
 
 std::string
-reply_string (nsm::reply replycode)
+reply_string (nsm::error errorcode)
 {
     std::string result;
-    switch (replycode)
+    switch (errorcode)
     {
-    case nsm::reply::ok:
+    case nsm::error::ok:
 
         result = "OK";
         break;
 
-    case nsm::reply::general:
+    case nsm::error::general:
 
         result = "General error";
         break;
 
-    case nsm::reply::incompatible_api:
+    case nsm::error::incompatible_api:
 
         result = "Incompatible API";
         break;
 
-    case nsm::reply::blacklisted:
+    case nsm::error::blacklisted:
 
         result = "Blacklisted";
         break;
 
-    case nsm::reply::launch_failed:
+    case nsm::error::launch_failed:
 
         result = "Launch failed";
         break;
 
-    case nsm::reply::no_such_file:
+    case nsm::error::no_such_file:
 
         result = "No such file";
         break;
 
-    case nsm::reply::no_session_open:
+    case nsm::error::no_session_open:
 
         result = "No session open";
         break;
 
-    case nsm::reply::unsaved_changes:
+    case nsm::error::unsaved_changes:
 
         result = "Unsaved changes";
         break;
 
-    case nsm::reply::not_now:
+    case nsm::error::not_now:
 
         result = "Not now";
         break;
 
-    case nsm::reply::bad_project:
+    case nsm::error::bad_project:
 
         result = "Bad project";
         break;
 
-    case nsm::reply::create_failed:
+    case nsm::error::create_failed:
 
         result = "Create failed";
         break;
 
-    case nsm::reply::session_locked:
+    case nsm::error::session_locked:
 
         result = "Session locked";
         break;
 
-    case nsm::reply::operation_pending:
+    case nsm::error::operation_pending:
 
         result = "Operation Pending";
         break;
 
-    case nsm::reply::save_failed:
+    case nsm::error::save_failed:
 
         result = "Save failed.";
         break;

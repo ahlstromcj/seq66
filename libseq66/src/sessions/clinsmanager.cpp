@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-07
+ * \updates       2020-09-08
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -104,12 +104,17 @@ clinsmanager::create_session (int argc, char * argv [])
     {
         url = nsm::get_url();
         if (url.empty())
+        {
+            warnprint("No NSM_URL defined, checking 'usr' file");
             url = usr().session_url();              /* did user run nsmd?   */
-
+        }
         ok = ! url.empty();                         /* NSM likely running   */
         if (ok)
+        {
             ok = pid_exists("nsmd");                /* one final check      */
-
+            if (! ok)
+                warnprint("nsmd not running, proceeding with normal run");
+        }
         usr().in_session(ok);
     }
     if (ok)
@@ -142,10 +147,6 @@ clinsmanager::create_session (int argc, char * argv [])
     }
     else
     {
-        if (usr().wants_nsm_session())
-        {
-            warnprint("No NSM_URL definition found");
-        }
         return smanager::create_session(argc, argv);
     }
 #else

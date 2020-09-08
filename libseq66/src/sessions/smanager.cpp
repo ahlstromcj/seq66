@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-07
+ * \updates       2020-09-08
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -405,7 +405,6 @@ smanager::close_session (bool ok)
         {
             if (rc().auto_option_save())
             {
-                warnprint("Saving config files to session directory.");
                 if (! cmdlineopts::write_options_files())
                     errprint("Config writes failed");
             }
@@ -653,7 +652,8 @@ smanager::create (int argc, char * argv [])
             std::string fname = midi_filename();
             if (fname.empty())
             {
-                warnprint("MIDI filename empty, nothing to open");
+                if (is_debug())
+                    warnprint("MIDI filename empty, nothing to open");
             }
             else
             {

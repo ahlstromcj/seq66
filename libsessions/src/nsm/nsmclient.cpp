@@ -493,7 +493,7 @@ nsmclient::save ()
     {
         std::string msg;
         bool saved = m_session_manager.save_session(msg);
-        nsm::reply r = saved ? nsm::reply::ok : nsm::reply::general ;
+        nsm::error r = saved ? nsm::error::ok : nsm::error::general ;
         (void) save_reply(r, msg);
     }
     // emit save();

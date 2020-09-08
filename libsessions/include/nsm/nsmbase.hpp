@@ -46,7 +46,7 @@ namespace nsm
  *  Provides reply codes matching those of NSM>
  */
 
-enum class reply
+enum class error
 {
     ok                  =  0,
     general             = -1,
@@ -68,7 +68,7 @@ enum class reply
  *  External helper functions in the nsm namespace.
  */
 
-extern std::string reply_string (reply replycode);
+extern std::string reply_string (error errorcode);
 extern std::string get_url ();
 extern void incoming_msg
 (
@@ -280,18 +280,18 @@ protected:
 
     bool open_reply
     (
-        nsm::reply replycode = nsm::reply::ok,
+        nsm::error errorcode = nsm::error::ok,
         const std::string & msg = "No info"
     );
     bool save_reply
     (
-        nsm::reply replycode = nsm::reply::ok,
+        nsm::error errorcode = nsm::error::ok,
         const std::string & msg = "No info"
     );
     bool send_nsm_reply
     (
         const std::string & path,
-        nsm::reply replycode,
+        nsm::error errorcode,
         const std::string & msg
     );
     bool send
@@ -310,14 +310,14 @@ protected:
 
     void open_reply (bool loaded)
     {
-        open_reply(loaded ? nsm::reply::ok : nsm::reply::general);
+        open_reply(loaded ? nsm::error::ok : nsm::error::general);
         if (loaded)
             m_dirty = false;
     }
 
     void save_reply (bool saved)
     {
-        save_reply(saved ? nsm::reply::ok : nsm::reply::general);
+        save_reply(saved ? nsm::error::ok : nsm::error::general);
         if (saved)
             m_dirty = false;
     }

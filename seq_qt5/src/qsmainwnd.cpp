@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-06
+ * \updates       2020-09-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -770,14 +770,14 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);
 
-    if (! usr().in_session())
+    if (! usr().wants_nsm_session())
     {
         /*
          * Which to do, remove or disable?
          * ui->tabWidget->removeTab(Tab_Session);
+         */
 
         ui->tabWidget->setTabEnabled(Tab_Session, false);
-         */
     }
 
     show();
