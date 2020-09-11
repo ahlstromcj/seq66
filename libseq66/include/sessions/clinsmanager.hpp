@@ -28,13 +28,15 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-05
+ * \updates       2020-09-10
  * \license       GNU GPLv2 or above
  *
- *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
- *  would style it, "eldritch") gtkmm-2.4 implementation of Seq66.
+ *  Provides a base class that can be used to manage the command-line version
+ *  of Seq66, as well as a helper for the Qt version.  Hence, it is in
+ *  libseq66 rather than libsessions.  If NSM support is not part of the
+ *  build, then nsmclient is type-defined to be void.  (We might refactor the
+ *  concept out completely at some point.)
  */
-
 
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
@@ -42,12 +44,6 @@
 
 #include <memory>                       /* std::unique_ptr<>                */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
-
-#else
-
-using nsmclient = void;
-
-#endif
 
 /**
  *  The potential list of capabilities is
@@ -61,7 +57,15 @@ using nsmclient = void;
  *  -   optional-gui: Client has an optional GUI.
  */
 
-#define SEQ66_NSM_CLI_CAPABILITIES      ":message:"
+#define SEQ66_NSM_CLI_CAPABILITIES      ":message:dirty"
+
+#else
+
+// using nsmclient = void;
+
+#define SEQ66_NSM_CLI_CAPABILITIES      ""
+
+#endif
 
 namespace seq66
 {
@@ -94,14 +98,12 @@ public:
     clinsmanager (const std::string & caps = SEQ66_NSM_CLI_CAPABILITIES);
     virtual ~clinsmanager ();
 
+#if defined SEQ66_NSM_SUPPORT
     nsmclient * nsm_client ()
     {
-#if defined SEQ66_NSM_SUPPORT
         return m_nsm_client.get();
-#else
-        return nullptr;
-#endif
     }
+#endif
 
     bool nsm_active () const
     {

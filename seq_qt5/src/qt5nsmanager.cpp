@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-09-01
+ * \updates       2020-09-09
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -33,6 +33,7 @@
  */
 
 #include <QApplication>                 /* QApplication etc.                */
+#include <QTimer>                       /* QTimer                           */
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
@@ -67,9 +68,19 @@ qt5nsmanager::qt5nsmanager
     QObject         (parent),
     clinsmanager    (caps),
     m_application   (app),
+    m_timer         (nullptr),
     m_window        ()
 {
     // no code
+
+    /*
+     * Should we use this timer or a performer callback?
+     */
+
+    m_timer = new QTimer(this);
+    m_timer->setInterval(4 * usr().window_redraw_rate());       /* no hurry */
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(refresh()));
+    m_timer->start();
 }
 
 /**
@@ -79,6 +90,27 @@ qt5nsmanager::qt5nsmanager
 qt5nsmanager::~qt5nsmanager ()
 {
     // no code yet
+}
+
+/**
+ *  Here we will poll to see if the "dirty" status has changed, and tell the
+ *  nsmclient to report it.
+ */
+
+void
+qt5nsmanager::refresh ()
+{
+    if (not_nullptr(perf()))
+    {
+        if (perf()->modified() != last_dirty_status())
+        {
+#if defined SEQ66_NSM_SUPPORT
+            last_dirty_status(perf()->modified());
+            if (not_nullptr(nsm_client()))
+                nsm_client()->dirty(last_dirty_status());
+#endif
+        }
+    }
 }
 
 /**

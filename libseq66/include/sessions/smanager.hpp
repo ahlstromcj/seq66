@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-09-05
+ * \updates       2020-09-09
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -104,6 +104,12 @@ private:
     bool m_is_help;
 
     /**
+     *
+     */
+
+    bool m_last_dirty_status;
+
+    /**
      *  Holds the current error message.  Mutable because it is not part of
      *  the true state of the session manager.
      */
@@ -153,6 +159,16 @@ public:
     const std::string & capabilities () const
     {
         return m_capabilities;
+    }
+
+    bool last_dirty_status () const
+    {
+        return m_last_dirty_status;
+    }
+
+    bool is_help () const
+    {
+        return m_is_help;
     }
 
     bool internal_error_check (std::string & msg) const;
@@ -233,6 +249,11 @@ protected:
     performer * perf ()
     {
         return m_perf_pointer.get();
+    }
+
+    void last_dirty_status (bool flag)
+    {
+        m_last_dirty_status = flag;
     }
 
     void append_error_message (const std::string & message = "") const;

@@ -1,4 +1,4 @@
-.TH Sequencer66 "August 2020" "Version 0.91.0" "Seq66 Manual Page"
+.TH Sequencer66 "September 2020" "Version 0.91.0" "Seq66 Manual Page"
 
 .SH NAME
 Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from Seq64
@@ -100,6 +100,12 @@ be shown in the output of the --help option.
 Enable NSM support (if included in the build options). This option provides
 support for qseq66 as a client of the Non Session Manager.  NOTE:  this support
 is not yet finished, so be prepared for issues.
+
+.TP 8
+.B \-T, \-\-no-nsm
+Disable NSM support (if included in the build options). This option overrides
+the user-session option 'session', useful to temporarily run in "typical"
+usage.
 
 .TP 8
 .B \-\-file \fI<filename>\fP

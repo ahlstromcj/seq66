@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-08
+ * \updates       2020-09-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -46,7 +46,7 @@
  * Normal Menu Entries:
  *
  *  New             new_file()              Clear file/playlist
- *  Open            show_open_file_dialog() Read file from anywhere
+ *  Open            select_and_load_file()  Read file from anywhere
  *  Save            save_file()             Save file in original location
  *  Save As         save_file_as()          Save file anywhere, new name
  *  Recent files    open_recent_file()      Get a particular recent file
@@ -55,7 +55,7 @@
  *
  *  Export Song     export_song()           Export song merging triggers
  *  Export as MIDI  export_file_as...()     Save as regular MIDI file
- *  Import MIDI     show_import_dialog()    Import MIDI (into current set) !!!
+ *  Import MIDI     import_into_set()       Import MIDI into current set
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
@@ -70,7 +70,7 @@
 #include <QResizeEvent>
 #include <QScreen>                      /* Qscreen                          */
 #include <QStandardItemModel>           /* for disabling combobox entries   */
-#include <QTimer>
+#include <QTimer>                       /* QTimer                           */
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
@@ -138,6 +138,17 @@
 namespace seq66
 {
 
+/*
+ *  For testing only.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
+static bool s_use_test_button = true;
+#else
+static bool s_use_test_button = false;
+#endif
+
+
 /**
  *  Manifest constant to indicate the location of each main-window tab.
  */
@@ -182,7 +193,6 @@ static const int s_ppqn_list [] =
     19200,
     -2          /* terminator   */
 };
-
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -421,7 +431,7 @@ qsmainwnd::qsmainwnd
     connect
     (
         ui->actionImport_MIDI, SIGNAL(triggered(bool)),
-        this, SLOT(show_import_dialog())
+        this, SLOT(import_into_set())
     );
 
     if (use_nsm())
@@ -780,6 +790,23 @@ qsmainwnd::qsmainwnd
         ui->tabWidget->setTabEnabled(Tab_Session, false);
     }
 
+    /*
+     * Test button.  This button supports whatever debugging we need to do at
+     * any particular time.
+     */
+
+#if defined SEQ66_PLATFORM_DEBUG
+    ui->testButton->setToolTip
+    (
+        "Test of importing a MIDI file into the current session."
+    );
+    connect
+    (
+        ui->testButton, SIGNAL(clicked(bool)),
+        this, SLOT(import_into_session())
+    );
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
     show();
     show_song_mode(m_song_mode);
     cb_perf().enregister(this);
@@ -974,20 +1001,60 @@ qsmainwnd::edit_bpm ()
 /**
  *  For NSM usage, this function replaces the "Open" operation.  It will
  *  create a copy of the file which is then saved at the session path provided
- *  by NSM.
+ *  by NSM.  The question is, do we want to import configuration files as well
+ *  as a MIDI file?  Well, no, because, when we first run qseq66 via NSM, we
+ *  immediately create the $NSM_HOME/config directory and immediately copy the
+ *  configuration files from $HOME/.config/seq66 there.
+ *
+ *  So here, we want to ask the user for the MIDI/WRK file, read it in, and
+ *  then immediately save it to the $NSM_HOME/midi directory.
  */
 
 void
 qsmainwnd::import_into_session ()
 {
-    if (use_nsm())
+    if (use_nsm() || s_use_test_button)
     {
-        // Duty now for the future! TODO!
+        std::string selectedfile;
+        if (show_open_file_dialog(selectedfile))
+        {
+            if (open_file(selectedfile))
+            {
+                // now change the filename to reflect the base NSM directory
+                // and immediately save it
+
+                std::string basename = filename_base(selectedfile);
+                rc().session_midi_filename(basename);   /* make NSM name  */
+
+                std::string msg = save_file(rc().midi_filename()) ?
+                    "Saved: " : "Failed to save: ";
+
+                msg += rc().midi_filename();
+                show_message_box(msg);
+            }
+            else
+            {
+                /* open_file() will show the error message. */
+            }
+        }
     }
     else
     {
-        // illegal
+        // illegal for now
     }
+}
+
+/**
+ *  Shows the "Open" file dialog.  If a file is selected, then the file is
+ *  opened.
+ */
+
+void
+qsmainwnd::select_and_load_file ()
+{
+    std::string selectedfile;
+    if (show_open_file_dialog(selectedfile))
+        (void) open_file(selectedfile);
 }
 
 /**
@@ -995,32 +1062,27 @@ qsmainwnd::import_into_session ()
  *  import_into_session() is called.
  */
 
-void
-qsmainwnd::show_open_file_dialog ()
+bool
+qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 {
-    if (use_nsm())
+    bool result = false;
+    if (check())
     {
-        import_into_session();
-    }
-    else
-    {
-        QString file;
-        if (check())
-        {
-            file = QFileDialog::getOpenFileName
+        QString file = QFileDialog::getOpenFileName
+        (
+            this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
+            tr
             (
-                this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
-                tr
-                (
-                    "MIDI files (*.midi *.mid *.MID);;"
-                    "WRK files (*.wrk *.WRK);;"
-                    "All files (*)"
-                )
-            );
-        }
-        if (! file.isEmpty())               /* if the user did not cancel   */
-            open_file(file.toStdString());
+                "MIDI files (*.midi *.mid *.MID);;"
+                "WRK files (*.wrk *.WRK);;"
+                "All files (*)"
+            )
+        );
+        result = ! file.isEmpty();
+        if (result)
+            selectedfile = file.toStdString();
     }
+    return result;
 }
 
 /**
@@ -1034,9 +1096,15 @@ qsmainwnd::show_open_list_dialog ()
     QString file;
     if (check())
     {
+        /*
+         * Was rc().last_used_dir(), but should be the home directory for both
+         * normal and NSM sessions.
+         */
+
+        std::string directory = rc().home_config_directory();
         file = QFileDialog::getOpenFileName
         (
-            this, tr("Open playlist file"), rc().last_used_dir().c_str(),
+            this, tr("Open playlist file"), directory.c_str(),
             tr("Playlist files (*.playlist);;All files (*)")
         );
     }
@@ -1060,15 +1128,17 @@ qsmainwnd::show_open_list_dialog ()
 /**
  *  Also sets the current file-name and the last-used directory to the ones
  *  just loaded.
- *
- *  Compare this function to mainwnd::open_file() [the Gtkmm version]/
  */
 
-void
+bool
 qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
     bool result = perf().read_midi_file(fn, errmsg);
+printf
+(
+    "performer read '%s' with result '%s'\n", fn.c_str(), result ? "good" : "bad"
+);
     if (result)
     {
         redo_live_frame();
@@ -1105,11 +1175,15 @@ qsmainwnd::open_file (const std::string & fn)
         remove_all_editors();
 #endif
 
-        update_recent_files_menu();
+        if (! use_nsm())                        /* does this menu exist?    */
+            update_recent_files_menu();
+
         m_is_title_dirty = true;
     }
     else
         show_message_box(errmsg);
+
+    return result;
 }
 
 /*
@@ -1685,7 +1759,7 @@ qsmainwnd::export_song (const std::string & fname)
  */
 
 void
-qsmainwnd::show_import_dialog ()
+qsmainwnd::import_into_set ()
 {
     m_import_dialog->exec();
 
@@ -2384,7 +2458,7 @@ qsmainwnd::open_recent_file ()
         QString fname = QVariant(action->data()).toString();
         std::string actionfile = fname.toStdString();
         if (! actionfile.empty())
-            open_file(actionfile);
+            (void) open_file(actionfile);
     }
 }
 
@@ -2715,7 +2789,7 @@ qsmainwnd::connect_normal_slots ()
     connect
     (
         ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(show_open_file_dialog())
+        this, SLOT(select_and_load_file())
     );
 
     /*
@@ -2761,7 +2835,7 @@ qsmainwnd::disconnect_normal_slots ()
     disconnect
     (
         ui->actionOpen, SIGNAL(triggered(bool)),
-        this, SLOT(show_open_file_dialog())
+        this, SLOT(select_and_load_file())
     );
     disconnect(ui->actionSave, SIGNAL(triggered(bool)), this, SLOT(save_file()));
     disconnect

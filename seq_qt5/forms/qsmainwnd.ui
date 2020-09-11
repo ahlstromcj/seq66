@@ -54,88 +54,6 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="4" column="16" colspan="2">
-     <layout class="QHBoxLayout" name="lay_bpm">
-      <item>
-       <widget class="QPushButton" name="button_tap_bpm">
-        <property name="minimumSize">
-         <size>
-          <width>36</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>48</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Tap in time to set the beats per minute (BPM) value. After 5 seconds of no taps, the tap-counter will reset to 0. The default keystroke for tap-BPM is F9.</string>
-        </property>
-        <property name="text">
-         <string>0</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="maximumSize">
-         <size>
-          <width>29</width>
-          <height>19</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>BPM</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDoubleSpinBox" name="spinBpm">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>72</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>96</width>
-          <height>64</height>
-         </size>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::ClickFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Allows the setting of the Beats Per Minute.</string>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="minimum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>600.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>120.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="4" column="14">
      <widget class="QLabel" name="label_2">
       <property name="maximumSize">
@@ -149,35 +67,149 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="14">
-     <widget class="QWidget" name="verticalWidget" native="true">
+    <item row="1" column="7">
+     <widget class="QComboBox" name="cmb_ppqn">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="minimumSize">
        <size>
-        <width>256</width>
+        <width>78</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Changes the PPQN value of the current song, currently only for the current set.  Not yet ready at all.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="10">
+     <widget class="QLabel" name="label_ts_slash">
+      <property name="minimumSize">
+       <size>
+        <width>6</width>
         <height>0</height>
        </size>
       </property>
-      <layout class="QVBoxLayout" name="layout_beat_ind">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMaximumSize</enum>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-      </layout>
+      <property name="maximumSize">
+       <size>
+        <width>6</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>/</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
+    </item>
+    <item row="3" column="17">
+     <widget class="QSpinBox" name="spinBank">
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>32</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="8">
+     <widget class="QComboBox" name="cmb_global_bus">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>100</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>100</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Allows setting the output bus for all patterns at once in the current set.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="12" colspan="2">
+     <widget class="QLabel" name="label_HMS">
+      <property name="text">
+       <string>0:0:0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="12">
+     <widget class="QPushButton" name="btnSongPlay">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>40</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>52</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="toolTip">
+       <string>Toggle playback of the Song Editor data</string>
+      </property>
+      <property name="text">
+       <string>Live</string>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="3" column="15">
      <widget class="QLineEdit" name="entry_active_set">
@@ -201,117 +233,25 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,6,6">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetDefaultConstraint</enum>
-      </property>
-      <item>
-       <widget class="QLabel" name="setNameLabel">
-        <property name="minimumSize">
-         <size>
-          <width>72</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Name</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="txtBankName">
-        <property name="minimumSize">
-         <size>
-          <width>350</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>32</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>New Set</string>
-        </property>
-        <property name="maxLength">
-         <number>128</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="9">
-     <widget class="QComboBox" name="cmb_beat_measure">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+    <item row="4" column="15">
+     <widget class="QPushButton" name="btn_set_HMS">
       <property name="minimumSize">
        <size>
-        <width>58</width>
+        <width>48</width>
         <height>32</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>58</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Global Beats Per Measure</string>
-      </property>
-      <property name="currentIndex">
-       <number>-1</number>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="8">
-     <widget class="QComboBox" name="cmb_global_bus">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>100</width>
-        <height>32</height>
+        <width>64</width>
+        <height>64</height>
        </size>
       </property>
       <property name="toolTip">
-       <string>Allows setting the output bus for all patterns at once in the current set.</string>
+       <string>Switch between BBT and HMS timing in the clock at the top.</string>
+      </property>
+      <property name="text">
+       <string>H:M:S</string>
       </property>
      </widget>
     </item>
@@ -566,48 +506,98 @@
       </widget>
      </widget>
     </item>
-    <item row="4" column="15">
-     <widget class="QPushButton" name="btn_set_HMS">
+    <item row="3" column="16">
+     <widget class="QLabel" name="setNumberLabel">
+      <property name="minimumSize">
+       <size>
+        <width>48</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Set No.</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="12" colspan="2">
+     <widget class="QPushButton" name="setMasterButton">
       <property name="minimumSize">
        <size>
         <width>48</width>
         <height>32</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>64</width>
-        <height>64</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Switch between BBT and HMS timing in the clock at the top.</string>
-      </property>
       <property name="text">
-       <string>H:M:S</string>
+       <string>Set Master</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QLabel" name="seq66Label">
-      <property name="minimumSize">
-       <size>
-        <width>72</width>
-        <height>32</height>
-       </size>
+    <item row="3" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="6,6,6">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
-      <property name="font">
-       <font>
-        <family>DejaVu Sans</family>
-        <pointsize>18</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string notr="true">Seq66</string>
-      </property>
-     </widget>
+      <item>
+       <widget class="QLabel" name="setNameLabel">
+        <property name="minimumSize">
+         <size>
+          <width>72</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="txtBankName">
+        <property name="minimumSize">
+         <size>
+          <width>350</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>New Set</string>
+        </property>
+        <property name="maxLength">
+         <number>128</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item row="4" column="0" colspan="9">
      <layout class="QHBoxLayout" name="lay_transport">
@@ -848,19 +838,83 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="17">
-     <widget class="QSpinBox" name="spinBank">
+    <item row="1" column="0" colspan="2">
+     <widget class="QLabel" name="seq66Label">
       <property name="minimumSize">
        <size>
-        <width>40</width>
+        <width>72</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+        <pointsize>18</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string notr="true">Seq66</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="11">
+     <widget class="QComboBox" name="cmb_beat_length">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>58</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>58</width>
+        <height>32</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="toolTip">
+       <string>Global Beat Width (length of beat)</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="13">
+     <widget class="QLineEdit" name="lineEditPpqn">
+      <property name="minimumSize">
+       <size>
+        <width>48</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
-        <height>32</height>
+        <width>48</width>
+        <height>16777215</height>
        </size>
+      </property>
+      <property name="text">
+       <string>192</string>
+      </property>
+      <property name="maxLength">
+       <number>5</number>
+      </property>
+      <property name="frame">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -898,8 +952,8 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="11">
-     <widget class="QComboBox" name="cmb_beat_length">
+    <item row="1" column="9">
+     <widget class="QComboBox" name="cmb_beat_measure">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -922,156 +976,10 @@
        <enum>Qt::NoFocus</enum>
       </property>
       <property name="toolTip">
-       <string>Global Beat Width (length of beat)</string>
+       <string>Global Beats Per Measure</string>
       </property>
-     </widget>
-    </item>
-    <item row="4" column="12">
-     <widget class="QPushButton" name="btnSongPlay">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>40</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>52</width>
-        <height>64</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="toolTip">
-       <string>Toggle playback of the Song Editor data</string>
-      </property>
-      <property name="text">
-       <string>Live</string>
-      </property>
-      <property name="iconSize">
-       <size>
-        <width>24</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="13">
-     <widget class="QLineEdit" name="lineEditPpqn">
-      <property name="minimumSize">
-       <size>
-        <width>48</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>48</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>192</string>
-      </property>
-      <property name="maxLength">
-       <number>5</number>
-      </property>
-      <property name="frame">
-       <bool>false</bool>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="4">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="7">
-     <widget class="QComboBox" name="cmb_ppqn">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>78</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Changes the PPQN value of the current song, currently only for the current set.  Not yet ready at all.</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="10">
-     <widget class="QLabel" name="label_ts_slash">
-      <property name="minimumSize">
-       <size>
-        <width>6</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>6</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <family>DejaVu Sans</family>
-        <pointsize>12</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>/</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="16">
-     <widget class="QLabel" name="setNumberLabel">
-      <property name="minimumSize">
-       <size>
-        <width>48</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Set No.</string>
+      <property name="currentIndex">
+       <number>-1</number>
       </property>
      </widget>
     </item>
@@ -1085,23 +993,134 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="12" colspan="2">
-     <widget class="QPushButton" name="setMasterButton">
+    <item row="1" column="14">
+     <widget class="QWidget" name="verticalWidget" native="true">
       <property name="minimumSize">
        <size>
-        <width>48</width>
+        <width>256</width>
+        <height>0</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="layout_beat_ind">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </item>
+    <item row="4" column="16" colspan="2">
+     <layout class="QHBoxLayout" name="lay_bpm">
+      <item>
+       <widget class="QPushButton" name="button_tap_bpm">
+        <property name="minimumSize">
+         <size>
+          <width>36</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>Tap in time to set the beats per minute (BPM) value. After 5 seconds of no taps, the tap-counter will reset to 0. The default keystroke for tap-BPM is F9.</string>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="maximumSize">
+         <size>
+          <width>29</width>
+          <height>19</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>BPM</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="spinBpm">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>72</width>
+          <height>32</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>96</width>
+          <height>64</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Allows the setting of the Beats Per Minute.</string>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="minimum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>600.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>120.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="4" column="9">
+     <widget class="QPushButton" name="testButton">
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
         <height>32</height>
        </size>
       </property>
-      <property name="text">
-       <string>Set Master</string>
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>64</height>
+       </size>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="12" colspan="2">
-     <widget class="QLabel" name="label_HMS">
       <property name="text">
-       <string>0:0:0</string>
+       <string/>
       </property>
      </widget>
     </item>
@@ -1113,7 +1132,7 @@
      <x>0</x>
      <y>0</y>
      <width>904</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-05
+ * \updates       2020-09-08
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -91,6 +91,7 @@ cmdlineopts::s_long_options [] =
     {"lash",                0, 0, 'L'},
 #endif
 #if defined SEQ66_NSM_SUPPORT
+    {"no-nsm",              0, 0, 'T'},
     {"nsm",                 0, 0, 'n'},
 #endif
     {"bus",                 required_argument, 0, 'b'},
@@ -149,26 +150,24 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxx x  xxx  *xx xxxxx xxxxx  xx  aax
+         xxxxxx x  xx  xx xxxxxx xxxx *xx xxxxxxxxxxx  xx  aax
 \endverbatim
  *
- *  * Also note that 'o' options argument cannot be included here due to
- *  issues involving parse_o_options(), but it is *reserved* here, without the
+ *  * Note that 'o' options arguments cannot be included here due to issues
+ *  involving parse_o_options(), but 'o' is *reserved* here, without the
  *  argument indicator.
  *
  * Manual + User mode '-Z' versus Auto + Native mode '-z':
  *
  *      Creates virtual ports '-m' and hides the native names for the ports '-R'
  *      in favor of the 'user' definition of the names of ports and channels.
- *
  *      The opposite (native) setting uses '-a' and '-r'.
- *
  *      Both modes turn on the --user-save (-u) option.
  */
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:F:f:H:hi:JjKkLM:mNnoPpq:RrtSsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:H:hi:JjKkLM:mNnoPpq:RrTtSsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -188,6 +187,7 @@ cmdlineopts::s_help_1a =
 #endif
 #if defined SEQ66_NSM_SUPPORT
 "   -n, --nsm                Activate built-in Non Session Manager support.\n"
+"   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
 "   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
 "   -m, --manual-ports       Don't attach system ALSA ports. Use virtual ports.\n"
@@ -224,7 +224,7 @@ cmdlineopts::s_help_1b =
 const std::string
 cmdlineopts::s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
-"   -K, --inverse            Inverse (night) color scheme for seq/perf editors.\n"
+"   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
 "   -S, --stats              Show global statistics.\n"
 #if defined SEQ66_JACK_SUPPORT
 "   -j, --jack-transport     Synchronize to JACK transport.\n"
@@ -987,6 +987,14 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 's':
             rc().show_midi(true);
             break;
+
+#if defined SEQ66_NSM_SUPPORT
+        case 'T':
+            rc().lash_support(false);
+            usr().session_manager("none");
+            printf("[Deactivating NSM support]\n");
+            break;
+#endif
 
         case 't':
             rc().with_jack_midi(true);

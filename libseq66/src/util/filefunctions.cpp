@@ -1335,7 +1335,7 @@ filename_split
 
 /**
  *  Uses filename_split to extract only the base part of the file
- *  specification.
+ *  specification ("xxxx.yyy").
  */
 
 std::string

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-08
+ * \updates       2020-09-09
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -86,6 +86,7 @@ smanager::smanager (const std::string & caps) :
     m_session_client_id     ("None"),
     m_midi_filename         (),
     m_is_help               (false),
+    m_last_dirty_status     (false),
     m_extant_errmsg         (),
     m_extant_msg_active     (false)
 {

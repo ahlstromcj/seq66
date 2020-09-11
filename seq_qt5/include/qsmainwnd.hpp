@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-03
+ * \updates       2020-09-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -117,7 +117,7 @@ public:
     );
     virtual ~qsmainwnd ();
 
-    void open_file (const std::string & path);
+    bool open_file (const std::string & path);
     void show_message_box (const std::string & msg_text);
     void remove_editor (int seq);
     void remove_qperfedit ();
@@ -217,6 +217,7 @@ private:
     void disconnect_nsm_slots ();
     void connect_normal_slots ();
     void disconnect_normal_slots ();
+    bool show_open_file_dialog (std::string & selectedfile);
 
 private:
 
@@ -356,9 +357,9 @@ private slots:
     bool export_song (const std::string & fname = "");
     void quit ();
     void quit_session ();
-    void show_import_dialog ();             /* import MIDI to current bank  */
-    void import_into_session ();            /* for support of NSM           */
-    void show_open_file_dialog ();
+    void import_into_set ();                /* normal import into set       */
+    void import_into_session ();            /* import MIDI into session     */
+    void select_and_load_file ();
     void show_open_list_dialog ();
     void showqsabout ();
     void showqsbuildinfo ();

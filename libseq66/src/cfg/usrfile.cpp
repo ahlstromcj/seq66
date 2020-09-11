@@ -1318,7 +1318,8 @@ usrfile::write ()
         "# (the default), 'nsm' (Non or New Session Manager), or 'lash' (the\n"
         "# LASH session manager.  The 'url' variable can be set to the value\n"
         "# of the NSM_URL environment variable set by nsmd when run outside\n"
-        "# of the Non Session Manager user-interface.\n\n"
+        "# of the Non Session Manager user-interface. Set the URL only if\n"
+        "# running nsmd standalone with a matching --osc-port number.\n\n"
         << "session = " << usr().session_manager_name() << "\n"
         << "url = " << v << "\n"
         ;

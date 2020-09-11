@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-09-04
+ * \updates       2020-09-10
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -221,6 +221,8 @@ public:
         return m_dirty;
     }
 
+    void dirty (bool isdirty);          /* session managers call this one   */
+
 protected:
 
     void path_name (const std::string & s)
@@ -273,7 +275,6 @@ protected:
         lo_server_thread_start(m_lo_thread);
     }
 
-    void dirty (bool isdirty);
     void update_dirty_count (bool flag = true);
 
     // Session client reply methods

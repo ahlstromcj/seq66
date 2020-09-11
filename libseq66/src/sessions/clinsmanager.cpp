@@ -102,13 +102,14 @@ clinsmanager::create_session (int argc, char * argv [])
     bool ok = usr().wants_nsm_session();            /* user wants NSM usage */
     if (ok)
     {
-        url = nsm::get_url();
+        infoprint("Checking 'usr' file for NSM URL");
+        url = usr().session_url();                  /* try 'usr' file's URL */
         if (url.empty())
         {
-            warnprint("No NSM_URL defined, checking 'usr' file");
-            url = usr().session_url();              /* did user run nsmd?   */
+            warnprint("Checking for NSM_URL in environment");
+            url = nsm::get_url();
         }
-        ok = ! url.empty();                         /* NSM likely running   */
+        ok = ! url.empty();                         /* we got an NSM URL    */
         if (ok)
         {
             ok = pid_exists("nsmd");                /* one final check      */
@@ -193,8 +194,7 @@ clinsmanager::save_session (std::string & msg)
             }
             else
             {
-                // errorprintf("Could not save '%s'", filename);
-                show_error("Could not save", filename);
+                show_error("No MIDI tracks, cannot save", filename);
             }
         }
         result = smanager::save_session(msg);
@@ -214,6 +214,19 @@ bool
 clinsmanager::run ()
 {
     // TODO:  see the while (! seq66::session_close()) loop
+
+#if defined THIS_CODE_IS_READY
+
+    session_setup();
+    while (! session_close())
+    {
+        if (session_save())
+            save_file(perf());
+
+        microsleep(1000);                       /* 1 ms */
+    }
+#endif
+
     return false;
 }
 

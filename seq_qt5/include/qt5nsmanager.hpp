@@ -28,7 +28,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-09-05
+ * \updates       2020-09-10
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -42,16 +42,17 @@
 #include "qsmainwnd.hpp"                /* Qt 5 qsmainwnd main window       */
 
 #if defined SEQ66_NSM_SUPPORT
-#include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
+#define SEQ66_NSM_QT5_CAPABILITIES      ":dirty:message:" // "switch:"
+#else
+#define SEQ66_NSM_QT5_CAPABILITIES      ""
 #endif
-
-#define SEQ66_NSM_QT5_CAPABILITIES      ":switch:dirty:message"
 
 /*
  * Forward reference
  */
 
 class QApplication;
+class QTimer;
 
 namespace seq66
 {
@@ -103,9 +104,15 @@ signals:        /* signals sent by session client callbacks */
 	void sig_hide ();
 #endif
 
+private slots:
+
+    void refresh ();                    /* timer poll for dirty/clean       */
+
 private:
 
     QApplication & m_application;
+
+    QTimer * m_timer;
 
     std::unique_ptr<qsmainwnd> m_window;
 
