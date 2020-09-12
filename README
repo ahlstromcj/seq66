@@ -1,49 +1,50 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-08-26
+2015-09-10 to 2020-09-12
 
-"Seq66" is a refactoring of the Qt-based version "Sequencer64" for better use of
-C++ and for removing a lot of krufty buildup.  With all the work that has been
-done on it, "Seq66" is now the best-supported version of "Sequencer64". Windows
-users can get a portable or installer package on GitHub at
+"Seq66" is a refactoring of the Qt-based version of "Sequencer64" for better use
+of C++ and for removing a lot of krufty buildup.  With all the work that has
+been done on it, "Seq66" is now the best-supported version of "Sequencer64".
+Linux users can build this application very easily from the source code.  See
+the INSTALL file.  Windows users can get an installer package on GitHub at:
 
    https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.5.exe
 
 Major changes:
 
     -   User interface:
-        -   Removed the Gtkmm user-interface; using Qt 5 since its cross-platform
-            support seems more complete.  Removed the "grid of sets" feature in
+        -   Using Qt 5 for the user-interface, since its cross-platform
+            support is very good.  Removed the "grid of sets" feature in
             favor of unlimited external grid windows.
-        -   Added tabs for management of sets, mute-groups, Song mode, pattern
-            editing, event-editing, and play-lists.
+        -   Added tabs for management of sets, mute-groups, song mode, pattern
+            editing, event-editing, play-lists, and session management.
         -   Added a live frame using buttons to match Qt theming. The original
-            implementation is available as a "user" option.
-        -   A color for each sequence can be chosen to make it more
+            grid implementation is available as a "user" option.
+        -   A color for each sequence can be chosen to make them stand out.
             The color is saved in a SeqSpec associated with the track.
     -   Configuration files:
         -   Separated MIDI control and mute-group setting into their own files,
             with support for hex notation.
-        -   Supported configuration files: ".rc", ".usr", ".ctrl", ".mutes", and
-            ".playlist".
+        -   Supported configuration files: ".rc", ".usr", ".ctrl", ".mutes",
+            ".playlist", and ".drums" (note-mapping).
         -   Unified keystroke control and MIDI control into a ".ctrl" file. It
             defines MIDI In controls for controlling Seq66, and MIDI Out controls
             for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
-            Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini are provided.
+            Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini provided.
     -   Internal:
         -   More consistent use of modern C++, including lambda functions.
         -   Additional performer callbacks to reduce the need for polling in the
             user-interface.
-    -   Non Session Manager.  Working on support for this manager. Refactored
-        startup and exiting to support session management.
+    -   Non Session Manager.  Working on support for this manager, about 75%
+        complete.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 Here are the executables that can be built:
 
 Linux ALSA/JACK support: Seq66qt5/qseq66
-Linux qmake/rtmidi: Seq66qt5/qrseq66
+Linux qmake/rtmidi: shadow/Seq66qt5/release/qrseq66
 Linux daemon: Seq66cli/seq66cli
-Windows qmake/portmidi: Seq66qt5/qpseq66.exe
+Windows qmake/portmidi: shadow/Seq66qt5/release/qpseq66.exe
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "rtmidi"
 (Linux) and "portmidi" (Windows) engines.  MIDI devices are detected,
@@ -58,6 +59,9 @@ Recent changes:
 
     -   Version 0.91.0:
         -   Getting serious about Non Session Manager support.
+        -   Bug fixes and minor improvements.
+        -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
+            linkage errors that cropped up in debug builds.
     -   Version 0.90.5:
         -   More refactoring to improve Windows builds and fix deadlocks and
             playback on a default Windows 10 install.

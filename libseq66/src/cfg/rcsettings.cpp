@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-03
+ * \updates       2020-09-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -929,17 +929,50 @@ rcsettings::config_filename () const
 void
 rcsettings::playlist_filename (const std::string & value)
 {
-    if (is_empty_string(value))     // if (value.empty() || value == "\"\"")
+    if (is_empty_string(value))
     {
         clear_playlist();
     }
     else
     {
-        m_playlist_active = true;
+        /*
+         * Let the caller take care of this: m_playlist_active = true;
+         */
+
         m_playlist_filename = value;
         if (m_playlist_filename.find(".") == std::string::npos)
             m_playlist_filename += ".playlist";
     }
+}
+
+/**
+ *  Same as the playlist_filename() setter, but also checks for file existence
+ *  to help the caller decide if the playlist is active.
+ *
+ * \param value
+ *      The base-name of the playlist.
+ *
+ * \return
+ *      Returns true if the file-name was valid and the file (in the seq66
+ *      configuration directory) exists.  Otherwise returns false, but the
+ *      filename is still set if value.
+ */
+
+bool
+rcsettings::playlist_filename_checked (const std::string & value)
+{
+    bool result = false;
+    if (is_empty_string(value))
+    {
+        playlist_filename(value);       /* will inactivate & clear playlist */
+    }
+    else
+    {
+        std::string fname = make_config_filespec(fname, ".playlist");
+        result = file_exists(fname);
+        playlist_filename(value);       /* set playlist name no matter what */
+    }
+    return result;
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-09-09
+ * \updates       2020-09-12
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -142,8 +142,15 @@ qt5nsmanager::create_window ()
             (void) smanager::create_window();   /* just house-keeping   */
             if (error_active())
             {
-                show_error("TODO", "Show error-active message");
-                result = false;
+                show_error("Error", error_message());
+
+                /*
+                 * Let the application stay active; let the user decide what to
+                 * do about the error here.  For example, if a playlist doesn't
+                 * load, why just exit?
+                 *
+                 * result = false;
+                 */
             }
             else
             {

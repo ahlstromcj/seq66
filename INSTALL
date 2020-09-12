@@ -1,26 +1,24 @@
 INSTALL for Seq66 v. 0.91.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-08-23
+2015-09-10 to 2020-09-12
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
 developers, but is easy to use with the instructions below.  Different
 versions of the program can be built:
 
-    -   qseq66.  RtMidi version, with a Qt5 user-interface a la Kepler34.
-        Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA; support
-        for Meta events (Set Tempo and Time Signature).  The official version of
-        Seq66, Linux only.  Also builds a Windows/PortMidi version of the
-        application.  Built via qmake and suitable for loading in QtCreator
-        installed with mingw32 tools.  Supports both Linux and Windows.  To
-        build it in Windows, specify the Mingw library and tools when installing
-        QtCreator.  There are build issues using qmake on older 32-bit/Qt 5.3
-        systems; C++11 somehow cannot be defined.
+    -   qseq66.  The "rtmidi" engine version, with a Qt5 user-interface a la
+        Kepler34.  Native ALSA, JACK MIDI and JACK transport; fall-back to ALSA;
+        support for Meta events (Set Tempo and Time Signature).  The official
+        version of Seq66, Linux only.
     -   qpseq66. The same as qseq66, except that the internal "portmidi"
-        implementation is used as the MIDI engine.  Requires Qmake to build on
-        Linux and Windows.
+        implementation is used as the MIDI engine.  Linux and Windows.  Built
+        via qmake and suitable for loading in QtCreator installed with mingw32
+        tools. To build it in Windows, specify the Mingw library and tools when
+        installing QtCreator.
     -   seq66cli.  A GUI-less version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
+        Still being worked on.
 
     We provide a portable Windows Zip package and a Windows installer in
     the "sequencer64-packages" project in GitHub, in the "seq66" subdirectory.
@@ -36,9 +34,9 @@ from source code:
     -   Advanced Steps
     -   Qmake-based Install (Linux and Windows)
 
-Linux Distro Package (seq64):
+Linux Distro Package (seq66):
 
-    Your favorite Linux distro may have put seq64/sequencer64 into a distro
+    Your favorite Linux distro may have put seq66/sequencer64 into a distro
     package.  For example, Arch Linux and KXStudio have packages.  Here is a
     pointer to how one user installs it on a Raspberry Pi 3b+ running Raspian:
 
@@ -47,30 +45,22 @@ Linux Distro Package (seq64):
 
 Quick Install:
 
-    The quick install is meant for for those who do not want to install a lot
-    of extra developer packages, and want to use the standard "./configure ;
-    make ; make install" mantra.  These steps build the default version of
-    Seq66, "seq66".
-
-    The "configure" script for the build process means one needs to install
-    the various "dev" dependencies.  See the DEPENDENCIES section.
-    The following commands require automake and libtool to be installed.
-    Grab a Seq66 tarball and untar it.  Go to the "seq66" directory and run
-    these commands:
-
-        $ libtoolize
-        $ automake --add-missing
-        $ ./configure --enable-release --enable-rtmidi
-        $ make &> make.log
-        $ sudo make install
-
-    The "--enable-release --enable-rtmidi" options are optional. Even faster:
+    The quick install is meant for for those who do not want to install a lot of
+    extra developer packages, and want to use the standard "./configure ; make ;
+    make install" mantra.  These steps build the default version of Seq66,
+    "qseq66" with the internal "rtmidi" engine.  The "configure" script for the
+    build process means one needs to install the various "dev" dependencies.
+    See the DEPENDENCIES section.  The build commands require automake and
+    libtool to be installed.  Grab a Seq66 tarball and untar it.  Go to the
+    "seq66" directory and run these commands:
 
         $ ./bootstrap -er
         $ make &> make.log
         $ sudo make install
 
-    This build results in the "qseq66" executable.
+    Study the "bootstrap" script to understand how it uses autoheader, automake,
+    libtool, and other standard Linux build tools.  This build results in the
+    "qseq66" executable.
 
 Advanced Steps:
 
@@ -479,8 +469,8 @@ DEPENDENCIES:
 
    MingW:
 
-      Avoid use of AC_CYGWIN and AC_MINGW32.  Specify the mingw compiler for
-      Qmake/Qt5 builds.
+      Avoid use of AC_CYGWIN and AC_MINGW32.  Specify the mingw compiler when
+      installing qmake/qtcreator for Qmake/Qt5 builds on Windows.
 
    Other:
 

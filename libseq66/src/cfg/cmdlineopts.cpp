@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-08
+ * \updates       2020-09-12
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -1019,7 +1019,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'X':
-            rc().playlist_filename(soptarg); /* some validation done */
+            rc().playlist_active(rc().playlist_filename_checked(soptarg));
             break;
 
         case 'x':

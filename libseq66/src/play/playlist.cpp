@@ -474,7 +474,7 @@ playlist::write ()
      */
 
     file
-        << "# Seq66 0.96.0 (and above) playlist file\n"
+        << "# Seq66 0.91.0 (and above) playlist file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -483,22 +483,21 @@ playlist::write ()
         << "# or more '[playlist]' sections.  Each section has a user-specified\n"
         << "# number.  This number should range from 0 to 127, but it can go\n"
         << "# higher if the user doesn't need to use MIDI control to select\n"
-        << "# a playlist. Ultimately, the playlists are sorted by this number.\n"
+        << "# a playlist. The playlists are sorted by this number.\n"
         << "#\n"
         << "# Next comes a display name for this list, with or without quotes.\n"
         << "#\n"
         << "# Next comes the name of the directory, always using the UNIX-style\n"
         << "# separator, a forward slash (solidus).  It can optionally be\n"
-        << "# terminated with a slash.\n"
+        << "# terminated with a slash.  It should be accessible from wherever\n"
+        << "# Seq66 was run.\n"
         << "#\n"
         << "# The last item is a line containing the MIDI song-control number,\n"
         << "# followed by the name of the MIDI files.  They are sorted by the\n"
         << "# control number, starting from 0.  They can be simple 'base.ext'\n"
         << "# file-names; the playlist directory will be prepended before the\n"
-        << "# song is accessed.\n"
-        << "#\n"
-        << "# If the MIDI file-name already has a directory name, that will be\n"
-        << "# used instead.\n"
+        << "# song is accessed. If the MIDI file-name already has a path, that\n"
+        << "# directory will be used.\n"
         ;
 
     file << "#\n"

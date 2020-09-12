@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-09-11
+# \update      2020-09-12
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -178,10 +178,15 @@ bin_PROGRAMS = qseq66
 #  Added a LDFLAGS line to avoid a "DSO missing" error on some systems when
 #  building in debug mode:
 #
-#     "As a workaround it's possible to switch back to the more permissive
+#     As a workaround it's possible to switch back to the more permissive
 #     view of what symbols are available by using the option
 #
-#        -Wl,--copy-dt-needed-entries.
+#        -Wl,--copy-dt-needed-entries
+#
+#  See this article:
+#
+#  https://flameeyes.blog/2010/11/26/
+#     it-s-not-all-gold-that-shines-why-underlinking-is-a-bad-thing/
 #
 #----------------------------------------------------------------------------
  

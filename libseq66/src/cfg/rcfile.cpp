@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-23
+ * \updates       2020-09-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -543,29 +543,26 @@ rcfile::parse ()
         bool exists = false;
         int flag = 0;
         sscanf(scanline(), "%d", &flag);
-        if (flag != 0)
+        if (next_data_line(file))
         {
-            if (next_data_line(file))
+            std::string fname = trimline();
+            exists = ! fname.empty() && fname != "\"\"";
+            if (exists)
             {
-                std::string fname = trimline();
-                exists = ! fname.empty() && fname != "\"\"";
+                /*
+                 * Prepend the home configuration directory and, if needed,
+                 * the playlist extension.
+                 */
+
+                fname = rc_ref().make_config_filespec(fname, ".playlist");
+                exists = file_exists(fname);
                 if (exists)
                 {
-                    /*
-                     * Prepend the home configuration directory and, if needed,
-                     * the playlist extension.
-                     */
-
-                    fname = rc_ref().make_config_filespec(fname, ".playlist");
-                    exists = file_exists(fname);
-                    if (exists)
-                    {
-                        rc_ref().playlist_active(true);
-                        rc_ref().playlist_filename(fname);
-                    }
-                    else
-                        file_error("No such playlist", fname);
+                    rc_ref().playlist_active(flag != 0);
+                    rc_ref().playlist_filename(fname);
                 }
+                else
+                    file_error("No such playlist", fname);
             }
         }
         if (! exists)
