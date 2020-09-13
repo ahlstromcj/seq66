@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-07-27
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -503,8 +503,9 @@ qplaylistframe::handle_list_remove_click ()
 void
 qplaylistframe::handle_list_save_click ()
 {
-    // if (not_nullptr(m_parent))
-    //    m_parent->TODO();
+    if (not_nullptr(m_parent))
+    {
+    }
 }
 
 /**

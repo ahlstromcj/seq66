@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-08-14
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist:
@@ -131,9 +131,9 @@ playlist::~playlist ()
  */
 
 bool
-playlist::make_error_message (const std::string & additional)
+playlist::set_error_message (const std::string & additional)
 {
-    std::string msg = "Bad [playlist]";
+    std::string msg = "[playlist]";
     if (! additional.empty())
     {
         msg += ": ";
@@ -260,7 +260,7 @@ playlist::parse ()
         bool have_section = line_after(file, "[playlist]");
         if (! have_section)
         {
-            result = make_error_message("empty or missing section");
+            result = set_error_message("empty/missing section");
         }
         while (have_section)
         {
@@ -329,7 +329,7 @@ playlist::parse ()
                             std::string msg = "scanning song file '";
                             msg += fname;
                             msg += "' failed";
-                            result = make_error_message(msg);
+                            result = set_error_message(msg);
                             break;
                         }
                     }
@@ -348,7 +348,7 @@ playlist::parse ()
                     }
                     else
                     {
-                        result = make_error_message("no songs");
+                        result = set_error_message("no songs");
                         break;
                     }
                 }
@@ -357,7 +357,7 @@ playlist::parse ()
                     std::string msg = "no list directory in playlist #" +
                         std::to_string(listnumber);
 
-                    result = make_error_message(msg);
+                    result = set_error_message(msg);
                     break;
                 }
             }
@@ -366,7 +366,7 @@ playlist::parse ()
                 std::string msg = "no data in playlist #" +
                     std::to_string(listnumber);
 
-                result = make_error_message(msg);
+                result = set_error_message(msg);
                 break;
             }
             ++listcount;
@@ -377,7 +377,7 @@ playlist::parse ()
     else
     {
         std::string msg = "error opening file [" + name() + "]";
-        result = make_error_message(msg);
+        result = set_error_message(msg);
     }
     if (result)
         (void) reset_list(false);       /* don't clear, just reset values   */
@@ -416,7 +416,7 @@ playlist::scan_song_file (int & song_number, std::string & song_file)
     {
         song_number = -1;                                   /* side-effect  */
         song_file.clear();                                  /* side-effect  */
-        result = make_error_message("song number missing");
+        result = set_error_message("song number missing");
     }
     else
     {
@@ -445,15 +445,16 @@ playlist::scan_song_file (int & song_number, std::string & song_file)
         {
             song_number = -1;                               /* side-effect  */
             song_file.clear();                              /* side-effect  */
-            result = make_error_message("song file-path missing");
+            result = set_error_message("song file-path missing");
         }
     }
     return result;
 }
 
 /**
- *  This options-writing function is just about as complex as the
- *  options-reading function.
+ *  Writes the play-list to the file whose name is returned by the name()
+ *  function.  If the name is empty, we don't try to open it; that truncates
+ *  the file!
  *
  * \return
  *      Returns true if the write operations all succeeded.
@@ -463,10 +464,15 @@ bool
 playlist::write ()
 {
     std::ofstream file(name(), std::ios::out | std::ios::trunc);
-    if (! file.is_open())
+    bool result = ! name().empty() && file.is_open();
+    if (result)
     {
-        errprintf("error opening [%s] for writing\n", name().c_str());
-        return false;
+        pathprint("Writing 'playlist'", name());
+    }
+    else
+    {
+        file_error("Write open fail", name());
+        return result;
     }
 
     /*
@@ -475,29 +481,29 @@ playlist::write ()
 
     file
         << "# Seq66 0.91.0 (and above) playlist file\n"
-        << "#\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
-        << "# This file holds a playlist for Seq66. It consists of one\n"
-        << "# or more '[playlist]' sections.  Each section has a user-specified\n"
-        << "# number.  This number should range from 0 to 127, but it can go\n"
-        << "# higher if the user doesn't need to use MIDI control to select\n"
-        << "# a playlist. The playlists are sorted by this number.\n"
-        << "#\n"
-        << "# Next comes a display name for this list, with or without quotes.\n"
-        << "#\n"
-        << "# Next comes the name of the directory, always using the UNIX-style\n"
-        << "# separator, a forward slash (solidus).  It can optionally be\n"
-        << "# terminated with a slash.  It should be accessible from wherever\n"
-        << "# Seq66 was run.\n"
-        << "#\n"
-        << "# The last item is a line containing the MIDI song-control number,\n"
-        << "# followed by the name of the MIDI files.  They are sorted by the\n"
-        << "# control number, starting from 0.  They can be simple 'base.ext'\n"
-        << "# file-names; the playlist directory will be prepended before the\n"
-        << "# song is accessed. If the MIDI file-name already has a path, that\n"
-        << "# directory will be used.\n"
+           "#\n"
+           "# " << name() << "\n"
+           "# Written on " << current_date_time() << "\n"
+           "#\n"
+           "# This file holds multiple playlists for Seq66. It consists of one\n"
+           "# or more '[playlist]' sections.  Each section has a user-specified\n"
+           "# number, which serves for sorting and for control numbers ranging\n"
+           "# from 0 to 127, or higher if the user doesn't use MIDI control on\n"
+           "# playlists.\n"
+           "#\n"
+           "# Next comes a display name for this list, with or without quotes.\n"
+           "#\n"
+           "# Next comes the name of the directory, always using the UNIX-style\n"
+           "# separator, a forward slash (solidus).  It can optionally be\n"
+           "# terminated with a slash.  It should be accessible from wherever\n"
+           "# Seq66 was run.\n"
+           "#\n"
+           "# The last item is a line containing the MIDI song-control number,\n"
+           "# followed by the name of the MIDI files.  They are sorted by the\n"
+           "# control number, starting from 0.  They can be simple 'base.ext'\n"
+           "# file-names; the playlist directory will be prepended before the\n"
+           "# song is accessed. If the MIDI file-name already has a path, that\n"
+           "# directory will be used.\n"
         ;
 
     file << "#\n"
@@ -520,7 +526,7 @@ playlist::write ()
         << "\n" << "[playlist-options]\n" << "\n"
         << (unmute_set_now() ? "1" : "0")
         << "     # If set to 1, when a new song is selected, "
-        "immediately unmute it.\n"
+           "immediately unmute it.\n"
         ;
 
     /*
@@ -732,7 +738,7 @@ playlist::verify (bool strong)
                         result = open_song(fname, true);
                         if (! result)
                         {
-                            make_file_error_message("song '%s' missing", fname);
+                            set_file_error_message("song '%s' missing", fname);
                             break;
                         }
                     }
@@ -740,8 +746,8 @@ playlist::verify (bool strong)
                 else
                 {
                     std::string fmt = plpair.second.ls_list_name;
-                    fmt += ": song '%s' is missing.  Check relative directories.";
-                    result = make_file_error_message(fmt, fname);
+                    fmt += ": song '%s' missing; check relative directories.";
+                    result = set_file_error_message(fmt, fname);
                     break;
                 }
             }
@@ -754,7 +760,7 @@ playlist::verify (bool strong)
         std::string msg = "empty list file '";
         msg += name();
         msg += "'";
-        make_error_message(msg);
+        set_error_message(msg);
     }
     return result;
 }
@@ -777,7 +783,7 @@ playlist::open_current_song ()
             std::string fname = song_filepath(m_current_song->second);
             result = open_song(fname);
             if (! result)
-                (void) make_file_error_message("could not open song '%s'", fname);
+                (void) set_file_error_message("could not open song '%s'", fname);
         }
     }
     return result;
@@ -872,7 +878,7 @@ playlist::open_previous_song (bool opensong)
  */
 
 bool
-playlist::make_file_error_message
+playlist::set_file_error_message
 (
     const std::string & fmt,
     const std::string & filename
@@ -880,7 +886,7 @@ playlist::make_file_error_message
 {
     char tmp[256];
     snprintf(tmp, sizeof tmp, fmt.c_str(), filename.c_str());
-    make_error_message(tmp);
+    set_error_message(tmp);
     return false;
 }
 

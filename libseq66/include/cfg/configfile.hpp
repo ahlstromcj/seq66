@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-12-13
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -148,16 +148,14 @@ public:
     std::string parse_comments (std::ifstream & file);
     std::string parse_version (std::ifstream & file);
 
-    /**
-     *  Provides the input file-name, to keep m_name private.
-     *
-     * \return
-     *      Returns a constant reference to m_name.
-     */
-
     const std::string & name () const
     {
         return m_name;
+    }
+
+    void name (const std::string & n)
+    {
+        m_name = n;
     }
 
     const std::string & version () const

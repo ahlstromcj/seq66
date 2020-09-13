@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-11
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -795,15 +795,21 @@ qsmainwnd::qsmainwnd
      * any particular time.
      */
 
-#if defined SEQ66_PLATFORM_DEBUG
-    ui->testButton->setToolTip
-    (
-        "Test of importing a MIDI file into the current session."
-    );
+#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
+    ui->testButton->setToolTip("Test of MIDI file import into session.");
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(import_into_session())
+    );
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
+#if defined SEQ66_PLATFORM_DEBUG
+    ui->testButton->setToolTip("Test of saving the current playlist.");
+    connect
+    (
+        ui->testButton, SIGNAL(clicked(bool)),
+        this, SLOT(test_playlist_save())
     );
 #endif  // defined SEQ66_PLATFORM_DEBUG
 
@@ -997,6 +1003,23 @@ qsmainwnd::edit_bpm ()
     midibpm bpm = ui->spinBpm->value();
     perf().set_beats_per_minute(bpm);
 }
+
+/**
+ *  A test of playlist saving.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
+
+void
+qsmainwnd::test_playlist_save ()
+{
+    if (s_use_test_button)
+    {
+        (void) perf().save_playlist();
+    }
+}
+
+#endif  // defined SEQ66_PLATFORM_DEBUG
 
 /**
  *  For NSM usage, this function replaces the "Open" operation.  It will

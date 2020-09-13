@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-09
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -297,7 +297,8 @@ smanager::create_performer ()
 }
 
 /**
- *  Opens a playlist, if specified.
+ *  Opens a playlist, if specified.  It is opened and read if there is a
+ *  non-empty play-list filename, even if specified to be inactive.
  *
  * \return
  *      Returns true if a playlist was specified and successfully opened, or if
@@ -311,8 +312,12 @@ smanager::open_playlist ()
     bool result = not_nullptr(perf());
     if (result)
     {
+        /*
+         * Open unconditionally: rc().playlist_active()
+         */
+
         std::string playlistname = rc().playlist_filespec();
-        if (rc().playlist_active() && ! playlistname.empty())
+        if (! playlistname.empty())
         {
             result = perf()->open_playlist(playlistname, rc().verbose());
             if (result)
@@ -435,7 +440,17 @@ smanager::close_session (bool ok)
 }
 
 /**
+ *  This function saves the following files (so far):
  *
+ *      -   *.rc
+ *      -   *.ctrl (via the 'rc' file)
+ *      -   *.mutes (via the 'rc' file)
+ *      -   *.usr
+ *      -   *.drums
+ *
+ *  The clinsmanager::save_session() function saves the MIDI file to the
+ *  session, if applicable.  That function also clears the message parameter
+ *  before the saving starts.
  */
 
 bool
@@ -444,11 +459,25 @@ smanager::save_session (std::string & msg)
     bool result = not_nullptr(perf());
     if (result)
     {
-        pathprint("smanager::save_session()", "Options save");
+        pathprint("save_session()", "Options save");
         if (rc().auto_option_save())
+        {
             result = cmdlineopts::write_options_files();
+        }
         else
             msg = "config save option off";
+
+        if (result)
+        {
+            pathprint("save_session()", "Play-list save");
+            result = perf()->save_playlist();
+        }
+
+        if (result)
+        {
+            pathprint("save_session()", "Note-mapper save");
+            result = perf()->save_note_mapper();
+        }
     }
     return result;
 }

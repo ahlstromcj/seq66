@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2019-11-10
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -228,7 +228,7 @@ bool
 notemapfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.90.2 (and above) note-mapper configuration file\n"
+        << "# Seq66 0.91.0 (and above) note-mapper configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -289,7 +289,7 @@ bool
 notemapfile::write ()
 {
     std::ofstream file(name(), std::ios::out | std::ios::trunc);
-    bool result = file.is_open();
+    bool result = ! name().empty() && file.is_open();
     if (result)
     {
         pathprint("Writing 'drums'", name());

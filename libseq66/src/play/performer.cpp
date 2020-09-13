@@ -332,7 +332,7 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 performer::performer (int ppqn, int rows, int columns) :
     m_error_pending         (false),
     m_play_set              (),
-    m_play_list             (new playlist(*this, "<empty>", rc())),
+    m_play_list             (), // new playlist(*this, "<empty>", rc())),
     m_note_mapper           (new notemapper()),
     m_song_start_mode       (sequence::playback::live),
     m_start_from_perfedit   (false),
@@ -5761,6 +5761,28 @@ performer::open_note_mapper (const std::string & notefile)
 }
 
 /**
+ *
+ */
+
+bool
+performer::save_note_mapper (const std::string & notefile)
+{
+    bool result = bool(m_note_mapper);
+    if (result)
+    {
+        std::string nfname = rc().notemap_filename();
+        if (! notefile.empty())
+            nfname = notefile;
+
+        notemapfile nmf(*m_note_mapper, nfname, rc());
+        result = nmf.write();
+        if (! result)
+            (void) error_message(nmf.error_message());
+    }
+    return result;
+}
+
+/**
  *  Creates a playlist object and opens it.  If there is a playlist object
  *  already in existence, it is replaced.
  *
@@ -5794,6 +5816,35 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
     }
     return result;
 }
+
+/**
+ *  Writes the play-list, whether it is active or not, as long as it exists.
+ *
+ * \param pl
+ *      Provides the full path file-specification for the play-list file to be
+ *      saved.  If empty, the file-name with which the play-list was created
+ *      is used.
+ *
+ * \return
+ *      Returns true if the write operation succeeded.
+ */
+
+bool
+performer::save_playlist (const std::string & pl)
+{
+    bool result = bool(m_play_list);
+    if (result)
+    {
+        if (! pl.empty())
+            m_play_list->name(pl);
+
+        result = m_play_list->write();
+        if (! result)
+            (void) error_message(m_play_list->error_message());
+    }
+    return result;
+}
+
 
 /**
  *  Implements playlist control.  If \a inverse is true, nothing is done.  Note

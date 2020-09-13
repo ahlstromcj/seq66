@@ -745,11 +745,11 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.90.2 (and above) 'rc' configuration file\n"
-        << "#\n"
-        << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
+        << "# Seq66 0.90.1 (and above) 'rc' configuration file\n"
+           "#\n"
+           "# " << name() << "\n"
+           "# Written on " << current_date_time() << "\n"
+           "#\n"
         <<
     "# This file holds the main configuration options for Seq66.\n"
     "# It loosely follows the format of the seq24 'rc' configuration\n"

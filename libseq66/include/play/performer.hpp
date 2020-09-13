@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-23
+ * \updates       2020-09-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -319,16 +319,14 @@ private:
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32
-     *  play-list. Important: This object is now owned by perform.  It might
-     *  be much better to have this be a real member.
+     *  play-list. Important: This object is now owned by perform.
      */
 
     std::unique_ptr<playlist> m_play_list;
 
     /**
-     *  Provides an optional play-list, loosely patterned after Stazed's Seq32
-     *  play-list. Important: This object is now owned by perform.  It might
-     *  be much better to have this be a real member.
+     *  Provides an optional note-mapper or drum-mapper, read from a ".drums"
+     *  file.
      */
 
     std::unique_ptr<notemapper> m_note_mapper;
@@ -973,6 +971,7 @@ public:
         std::string & errmsg
     );
     bool open_note_mapper (const std::string & notefile);
+    bool save_note_mapper (const std::string & notefile = "");
 
     /*
      * Start of playlist accessors.  Playlist functionality.
@@ -988,17 +987,13 @@ public:
         return m_play_list->song_count();
     }
 
-    int mutegroup_count () const
-    {
-        return m_mute_groups.count();
-    }
-
     bool playlist_reset ()
     {
         return m_play_list->reset_list();
     }
 
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
+    bool save_playlist (const std::string & pl = "");
 
     bool remove_playlist ()
     {
@@ -2788,6 +2783,9 @@ public:                                 /* access functions for the containers *
         return m_key_controls;
     }
 
+    bool midi_control_keystroke (const keystroke & k);
+    bool midi_control_event (const event & ev, bool recording = false);
+
     /*
      * Looks up the slot-key (hot-key) for the given pattern number.
      */
@@ -2812,6 +2810,15 @@ public:                                 /* access functions for the containers *
         return m_midi_control_in;
     }
 
+    /*
+     * Start of mute-groups accessors.
+     */
+
+    int mutegroup_count () const
+    {
+        return m_mute_groups.count();
+    }
+
     const mutegroups & mutes () const
     {
         return m_mute_groups;
@@ -2826,9 +2833,6 @@ public:                                 /* access functions for the containers *
     {
         return m_mute_groups.clear();
     }
-
-    bool midi_control_keystroke (const keystroke & k);
-    bool midi_control_event (const event & ev, bool recording = false);
 
 private:
 

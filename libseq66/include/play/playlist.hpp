@@ -396,8 +396,8 @@ private:
     void reorder_play_list ();                              // current list
     void reorder_song_list (song_list & sl);                // current song list
     bool scan_song_file (int & song_number, std::string & song_file);
-    bool make_error_message (const std::string & additional);
-    bool make_file_error_message
+    bool set_error_message (const std::string & additional);
+    bool set_file_error_message
     (
         const std::string & fmt,
         const std::string & filename
