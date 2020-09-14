@@ -1015,6 +1015,11 @@ public:
         return m_play_list->name();
     }
 
+    std::string playlist_midi_base () const
+    {
+        return m_play_list->midi_base_directory();
+    }
+
     int playlist_midi_number () const
     {
         return m_play_list->list_midi_number();

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-09-13
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,12 +79,15 @@ qplaylistframe::qplaylistframe
     ui->setupUi(this);
 
     QStringList playcolumns;
-    playcolumns << "MIDI#" << "List Name";
+    playcolumns << "#" << "List Name";
     ui->tablePlaylistSections->setHorizontalHeaderLabels(playcolumns);
-    ui->tablePlaylistSections->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tablePlaylistSections->setSelectionBehavior
+    (
+        QAbstractItemView::SelectRows
+    );
 
     QStringList songcolumns;
-    songcolumns << "MIDI#" << "Song File";
+    songcolumns << "#" << "Song File";
     ui->tablePlaylistSongs->setHorizontalHeaderLabels(songcolumns);
     ui->tablePlaylistSongs->setSelectionBehavior(QAbstractItemView::SelectRows);
     set_row_heights(SEQ66_PLAYLIST_ROW_HEIGHT);
@@ -227,26 +230,31 @@ qplaylistframe::reset_playlist ()
 void
 qplaylistframe::set_current_playlist ()
 {
-    if (perf().playlist_mode())
-    {
-        ui->checkBoxPlaylistActive->setChecked(true);
+    std::string temp;
+    ui->checkBoxPlaylistActive->setChecked(perf().playlist_mode());
+    temp = perf().playlist_filename();
+    if (temp.empty())
+        temp = "None";
 
-        std::string temp = perf().playlist_filename();
-        ui->entry_playlist_file->setText(QString::fromStdString(temp));
+    ui->entry_playlist_file->setText(QString::fromStdString(temp));
+    temp = perf().file_directory();
+    if (temp.empty())
+        temp = "None";
 
-        temp = perf().file_directory();
-        ui->editPlaylistPath->setText(QString::fromStdString(temp));
+    ui->editPlaylistPath->setText(QString::fromStdString(temp));
 
-        int midinumber = perf().playlist_midi_number();
-        temp = std::to_string(midinumber);
-        ui->editPlaylistNumber->setText(QString::fromStdString(temp));
+    int midinumber = perf().playlist_midi_number();
+    temp = std::to_string(midinumber);
+    if (temp.empty())
+        temp = "0";
 
-        temp = perf().playlist_name();
-        ui->editPlaylistName->setText(QString::fromStdString(temp));
-        set_current_song();
-    }
-    else
-        ui->checkBoxPlaylistActive->setChecked(false);
+    ui->editPlaylistNumber->setText(QString::fromStdString(temp));
+    temp = perf().playlist_midi_base();
+    if (temp.empty())
+        temp = "None";
+
+    ui->midiBaseDirText->setText(QString::fromStdString(temp));
+    set_current_song();
 }
 
 /**
@@ -256,21 +264,24 @@ qplaylistframe::set_current_playlist ()
 void
 qplaylistframe::set_current_song ()
 {
-    if (perf().playlist_mode())
-    {
-        std::string temp = std::to_string(perf().song_midi_number());
-        ui->editSongNumber->setText(QString::fromStdString(temp));
+    std::string temp = std::to_string(perf().song_midi_number());
+    ui->editSongNumber->setText(QString::fromStdString(temp));
 
-        temp = perf().song_directory();
-        ui->editSongPath->setText(QString::fromStdString(temp));
+    temp = perf().song_directory();
+    if (temp.empty())
+        temp = "None";
 
-        bool embedded = perf().is_own_song_directory();
-        temp = embedded ? "*" : " " ;
-        ui->labelDirEmbedded->setText(QString::fromStdString(temp));
+    ui->editSongPath->setText(QString::fromStdString(temp));
 
-        temp = perf().song_filename();
-        ui->editSongFilename->setText(QString::fromStdString(temp));
-    }
+    bool embedded = perf().is_own_song_directory();
+    temp = embedded ? "*" : " " ;
+    ui->labelDirEmbedded->setText(QString::fromStdString(temp));
+
+    temp = perf().song_filename();
+    if (temp.empty())
+        temp = "None";
+
+    ui->editSongFilename->setText(QString::fromStdString(temp));
 }
 
 /**

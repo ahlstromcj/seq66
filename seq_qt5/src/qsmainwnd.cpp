@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-13
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -804,12 +804,21 @@ qsmainwnd::qsmainwnd
     );
 #endif  // defined SEQ66_PLATFORM_DEBUG
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     ui->testButton->setToolTip("Test of saving the current playlist.");
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(test_playlist_save())
+    );
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
+#if defined SEQ66_PLATFORM_DEBUG
+    ui->testButton->setToolTip("Test of saving the note-map.");
+    connect
+    (
+        ui->testButton, SIGNAL(clicked(bool)),
+        this, SLOT(test_notemap_save())
     );
 #endif  // defined SEQ66_PLATFORM_DEBUG
 
@@ -1008,7 +1017,7 @@ qsmainwnd::edit_bpm ()
  *  A test of playlist saving.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
 
 void
 qsmainwnd::test_playlist_save ()
@@ -1016,6 +1025,23 @@ qsmainwnd::test_playlist_save ()
     if (s_use_test_button)
     {
         (void) perf().save_playlist();
+    }
+}
+
+#endif  // defined SEQ66_PLATFORM_DEBUG
+
+/**
+ *  A test of note-map saving.
+ */
+
+#if defined SEQ66_PLATFORM_DEBUG
+
+void
+qsmainwnd::test_notemap_save ()
+{
+    if (s_use_test_button)
+    {
+        (void) perf().save_note_mapper();
     }
 }
 

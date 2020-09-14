@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-14
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,17 +79,34 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
 }
 
 /**
- *  Returns a pre-trimmed line from the configuration file.
+ *  Returns a pre-trimmed line from the configuration file.  As part of this
+ *  trimming, double quotes or single quotes at the beginning and end are also
+ *  removed.  The check is not robust at this time.
  *
  * \return
- *      Returns a copy of line(), but trimmed of white space.
+ *      Returns a copy of line(), but trimmed of white space and, if present,
+ *      quotes surrounding the line after the space trimming.
  */
 
 std::string
 configfile::trimline () const
 {
     std::string result = line();
-    return trim(result);
+    result = trim(result);
+
+    std::string::size_type bpos = result.find_first_of("\"'");
+    if (bpos != std::string::npos)
+    {
+        std::string::size_type epos = result.find_last_of("\"'");
+        std::string::size_type len;
+        if (epos != std::string::npos)
+            len = epos - bpos - 1;
+        else
+            len = result.length() - 1 - bpos;
+
+        result = result.substr(bpos + 1, len);
+    }
+    return result;
 }
 
 /**

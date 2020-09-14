@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-13
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -325,8 +325,11 @@ private:
 
 private slots:
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     void test_playlist_save ();
+#endif
+#if defined SEQ66_PLATFORM_DEBUG
+    void test_notemap_save ();
 #endif
 
     void update_bank (int newBank);

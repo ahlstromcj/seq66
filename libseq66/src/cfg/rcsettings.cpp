@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-12
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -134,6 +134,7 @@ rcsettings::rcsettings () :
     m_use_mute_group_file       (false),
     m_mute_group_filename       (),
     m_playlist_filename         (),
+    m_playlist_midi_base        (),
     m_notemap_filename          (),
     m_application_name          (seq_app_name()),
     m_app_client_name           (seq_client_name()),
@@ -214,20 +215,20 @@ rcsettings::set_defaults ()
 #if defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
     m_last_used_dir.clear();
 #else
-    m_config_directory          = std::string(".config/") + m_config_directory;
     m_last_used_dir             = "~/";
+    m_config_directory          = std::string(".config/") + m_config_directory;
 #endif
     m_config_filename           = SEQ66_CONFIG_NAME;
     m_config_filename           += ".rc";
-    m_full_config_directory.clear();                // be careful !
-    m_user_filename             = SEQ66_CONFIG_NAME;
-    m_user_filename             += ".usr";
+    m_full_config_directory.clear();
+    m_user_filename = SEQ66_CONFIG_NAME; m_user_filename += ".usr";
     m_use_midi_control_file     = false;
     m_midi_control_filename     = "";
     m_use_mute_group_file       = false;
     m_mute_group_filename.clear();
-    m_playlist_filename.clear();                    // empty by default
-    m_notemap_filename.clear();                     // empty by default
+    m_playlist_filename.clear();
+    m_playlist_midi_base.clear();
+    m_notemap_filename.clear();
 
     /*
      * const: m_application_name = seq_app_name();

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2019-08-21
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -231,6 +231,14 @@ private:
     bool m_unmute_set_now;
 
     /**
+     *  If non-empty, this provides the base directory for all MIDI files in
+     *  all playlists.  Sometimes we need this, for example when importing
+     *  into a new NSM session.
+     */
+
+    std::string m_midi_base_directory;
+
+    /**
      *  If true, write the lists/songs to standard output.  This is
      *  useful to test the CLI/daemon version of Seq66.
      */
@@ -285,6 +293,16 @@ public:
     void unmute_set_now (bool u)
     {
         m_unmute_set_now = u;
+    }
+
+    void midi_base_directory (const std::string & basedir)
+    {
+        m_midi_base_directory = basedir;
+    }
+
+    const std::string & midi_base_directory () const
+    {
+        return m_midi_base_directory;
     }
 
     int list_midi_number () const

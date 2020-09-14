@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-13
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -39,6 +39,7 @@
  *      -# Call create_performer(), which could delete an existing performer.
  *         It then launches the performer.  Save the unique-pointer.
  *      -# Call open_playlist().  It will open it, if specified and possible.
+ *      -# Call open_note_mapper().  It will open it, if specified and possible.
  *      -# If the MIDI file-name is set, open it via a call to open_midi_file().
  *      -# If a user-interface is needed, create a unique-pointer to it, then
  *         show it.  This will remove any previous pointer.  The function is
@@ -333,7 +334,38 @@ smanager::open_playlist ()
     }
     else
     {
-        append_error_message("Open playlist(): no performer");
+        append_error_message("Open play-list: no performer");
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
+smanager::open_note_mapper ()
+{
+    bool result = not_nullptr(perf());
+    if (result)
+    {
+        std::string notemapname = rc().notemap_filespec();
+        if (! notemapname.empty())
+        {
+            result = perf()->open_note_mapper(notemapname);
+            if (result)
+            {
+            }
+            else
+            {
+                // append_error_message(perf()->error_message());
+                result = true;                          /* avoid early exit  */
+            }
+        }
+    }
+    else
+    {
+        append_error_message("Open note-mapper: no performer");
     }
     return result;
 }
@@ -472,7 +504,6 @@ smanager::save_session (std::string & msg)
             pathprint("save_session()", "Play-list save");
             result = perf()->save_playlist();
         }
-
         if (result)
         {
             pathprint("save_session()", "Note-mapper save");
@@ -676,6 +707,9 @@ smanager::create (int argc, char * argv [])
         result = create_performer();        /* fails if performer not made  */
         if (result)
             result = open_playlist();
+
+        if (result)
+            result = open_note_mapper();
 
         if (result)
         {

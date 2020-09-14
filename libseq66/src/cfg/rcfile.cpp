@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-12
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -542,11 +542,11 @@ rcfile::parse ()
     {
         bool exists = false;
         int flag = 0;
-        sscanf(scanline(), "%d", &flag);
+        sscanf(scanline(), "%d", &flag);        /* playlist-active flag */
         if (next_data_line(file))
         {
             std::string fname = trimline();
-            exists = ! fname.empty() && fname != "\"\"";
+            exists = ! is_empty_string(fname);
             if (exists)
             {
                 /*
@@ -565,7 +565,19 @@ rcfile::parse ()
                     file_error("No such playlist", fname);
             }
         }
-        if (! exists)
+        if (exists)
+        {
+            if (next_data_line(file))
+            {
+                std::string midibase = trimline();
+                if (! is_empty_string(midibase))
+                {
+                    pathprint("Playlist MIDI base directory", midibase);
+                    rc_ref().midi_base_directory(midibase);
+                }
+            }
+        }
+        else
         {
             rc_ref().playlist_active(false);
             rc_ref().playlist_filename("");
@@ -577,9 +589,8 @@ rcfile::parse ()
     }
     if (line_after(file, "[note-mapper]"))
     {
-        bool exists = false;
         std::string fname = trimline();
-        exists = ! fname.empty() && fname != "\"\"";
+        bool exists = ! is_empty_string(fname);
         if (exists)
         {
             /*
@@ -757,7 +768,7 @@ rcfile::write ()
     "\n"
     "[Seq66]\n\n"
     "config-type = \"rc\"\n"
-    "version = 0\n"
+    "version = 1\n"
         ;
 
     /*
@@ -1054,7 +1065,7 @@ rcfile::write ()
 
     std::string lud = rc_ref().last_used_dir();
     if (lud.empty())
-        lud = "\"\"";
+        lud = empty_string();
 
     file << "\n"
         "[last-used-dir]\n\n"
@@ -1096,15 +1107,28 @@ rcfile::write ()
         ;
 
     std::string plname = rc_ref().playlist_filespec();
-    std::string fspec = "\"\"";
+    std::string fspec = empty_string();
     if (! plname.empty())
     {
         fspec = file_extension_set(rc_ref().playlist_filespec(), ".playlist");
         fspec = rc_ref().trim_home_directory(fspec);
     }
-    file << fspec << "\n\n";
-    file
-        << "[note-mapper]\n\n"
+    file << fspec << "\n";
+
+    file << "\n"
+		"# Optional MIDI file base directory for play-lists.\n"
+		"# If present, sets the base directory in which to find all of\n"
+		"# the MIDI files in all playlists.  This is helpful when moving a\n"
+		"# complete set of playlists from one directory to another,\n"
+		"# preserving the sub-directories.\n"
+        "\n"
+		;
+
+	if (! rc_ref().midi_base_directory().empty())
+		file << rc_ref().midi_base_directory() << "\n";
+
+    file << "\n"
+        "[note-mapper]\n\n"
         "# Provides the name of a note-map file. If there is none, use '\"\"'.\n"
         "# Use the extension '.drums'.  This file is used only when the user\n"
         "# invokes the note-conversion operation in the pattern editor.\n"
@@ -1112,7 +1136,7 @@ rcfile::write ()
         ;
 
     std::string nmname = rc_ref().notemap_filespec();
-    fspec = "\"\"";
+    fspec = empty_string();
     if (! nmname.empty())
     {
         fspec = file_extension_set(rc_ref().notemap_filespec(), ".drums");

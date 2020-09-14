@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-13
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist:
@@ -105,6 +105,7 @@ playlist::playlist
     m_current_list              (m_play_lists.end()),
     m_current_song              (sm_dummy.end()),   // song-list iterator
     m_unmute_set_now            (false),
+    m_midi_base_directory       (rcs.midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
 {
     // No code needed
@@ -133,7 +134,7 @@ playlist::~playlist ()
 bool
 playlist::set_error_message (const std::string & additional)
 {
-    std::string msg = "[playlist]";
+    std::string msg = "Play-list";
     if (! additional.empty())
     {
         msg += ": ";
@@ -208,19 +209,16 @@ playlist::open (bool verify_it)
 bool
 playlist::parse ()
 {
-    bool result = false;
     std::ifstream file(name(), std::ios::in | std::ios::ate);
-    if (file.is_open())
+    bool result = ! name().empty() && file.is_open();
+    if (result)
+        pathprint("Reading 'playlist'", name());
+    else
+        file_error("Read open fail", name());
+
+    if (result)
     {
         file.seekg(0, std::ios::beg);                   /* seek to start    */
-
-        /*
-         * Not enough.  Call the member function instead.
-         *
-         * m_play_lists.clear();
-         * m_comments.clear();
-         */
-
         clear();
 
         /*
@@ -783,7 +781,7 @@ playlist::open_current_song ()
             std::string fname = song_filepath(m_current_song->second);
             result = open_song(fname);
             if (! result)
-                (void) set_file_error_message("could not open song '%s'", fname);
+                (void) set_file_error_message("Open failed: song '%s'", fname);
         }
     }
     return result;

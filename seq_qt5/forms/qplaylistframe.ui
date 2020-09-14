@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>829</width>
-    <height>428</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -257,7 +257,7 @@
     <string>The default song directory for the currently-selected play-list section.</string>
    </property>
    <property name="text">
-    <string>editPlaylistPath</string>
+    <string>None</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="editPlaylistNumber">
@@ -289,7 +289,7 @@
     <string>Shows the name of the currently-selected play-list section.</string>
    </property>
    <property name="text">
-    <string>editPlaylistName</string>
+    <string>None</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="editSongPath">
@@ -305,7 +305,7 @@
     <string>Shows the directory in which the currently selected song is stored.</string>
    </property>
    <property name="text">
-    <string>editSongPath</string>
+    <string>None</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="editSongNumber">
@@ -337,7 +337,7 @@
     <string>Shows the base file-name of the currently selected song.</string>
    </property>
    <property name="text">
-    <string>editSongFilename</string>
+    <string>None</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelDirEmbedded">
@@ -396,7 +396,7 @@
        <string>Opens a dialog to select and open a play-list file.</string>
       </property>
       <property name="text">
-       <string>Load List</string>
+       <string>Load Lists</string>
       </property>
      </widget>
     </item>
@@ -484,7 +484,7 @@
        <string>Saves the current play-list file.</string>
       </property>
       <property name="text">
-       <string>Save All</string>
+       <string>Save Lists</string>
       </property>
      </widget>
     </item>
@@ -615,11 +615,43 @@
        <string>If checked, the loaded play-list file is active.</string>
       </property>
       <property name="text">
-       <string>List Active</string>
+       <string>Lists Active</string>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="midiBaseDirLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>430</y>
+     <width>141</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>MIDI Base Directory</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="midiBaseDirText">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>430</y>
+     <width>631</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Shows the base directory holding all files in all playlists.</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources/>

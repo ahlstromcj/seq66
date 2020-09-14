@@ -61,6 +61,16 @@
  *      Also see the file contrib/non/nsmopen.sh for examples, and "oscsend
  *      --help".
  *
+ *  Warning:
+ *
+ *      If the non-session-manager user-interface comes up completely
+ *      disabled, this means that OSC cannot find the host.  If this occurs,
+ *      make sure that the real host name is appended to the "localhost" entry
+ *      in the /etc/hosts file for at least one of the loopback interfaces:
+ *
+ *          -   127.0.0.1 localhost myhostname
+ *          -   127.0.1.1 myhostname.domainname
+ *
  *  Notes for the future:
  *
  *      There's the general NSM osc protocol which allows basic session

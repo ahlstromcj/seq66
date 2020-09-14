@@ -385,6 +385,14 @@ private:
     std::string m_playlist_filename;
 
     /**
+     *  Holds the base directory of all the MIDI files in all the playlists.
+     *  Normally useful when MIDI files are in an NSM session directory or a
+     *  directory separate from where Seq66 is run.  Normally empty.
+     */
+
+    std::string m_playlist_midi_base;
+
+    /**
      *  Provides the name of a note-mapping file to use.  This is a feature
      *  adapted and modified from our "midicvt" project.
      */
@@ -822,6 +830,11 @@ public:
 
     const std::string & playlist_filename () const;
 
+    const std::string & midi_base_directory () const
+    {
+        return m_playlist_midi_base;
+    }
+
     const std::string & notemap_filename () const
     {
         return m_notemap_filename;
@@ -1026,6 +1039,11 @@ protected:
     void playlist_active (bool flag)
     {
         m_playlist_active = flag;
+    }
+
+    void  midi_base_directory (const std::string & mbd)
+    {
+        m_playlist_midi_base = mbd;
     }
 
     bool mute_group_save (const std::string & v);

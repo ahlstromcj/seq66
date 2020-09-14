@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-08-12
+ * \updates       2020-09-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -332,7 +332,7 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 performer::performer (int ppqn, int rows, int columns) :
     m_error_pending         (false),
     m_play_set              (),
-    m_play_list             (), // new playlist(*this, "<empty>", rc())),
+    m_play_list             (),
     m_note_mapper           (new notemapper()),
     m_song_start_mode       (sequence::playback::live),
     m_start_from_perfedit   (false),
@@ -5752,10 +5752,17 @@ performer::open_note_mapper (const std::string & notefile)
     m_note_mapper.reset(new notemapper());
     if (m_note_mapper)
     {
-        notemapfile nmf(*m_note_mapper, notefile, rc());
-        result = nmf.parse();
-        if (! result)
-            (void) error_message(nmf.error_message());
+        if (notefile.empty())
+        {
+            // TODO?
+        }
+        else
+        {
+            notemapfile nmf(*m_note_mapper, notefile, rc());
+            result = nmf.parse();
+            if (! result)
+                (void) error_message(nmf.error_message());
+        }
     }
     return result;
 }
@@ -5774,10 +5781,17 @@ performer::save_note_mapper (const std::string & notefile)
         if (! notefile.empty())
             nfname = notefile;
 
-        notemapfile nmf(*m_note_mapper, nfname, rc());
-        result = nmf.write();
-        if (! result)
-            (void) error_message(nmf.error_message());
+        if (nfname.empty())
+        {
+            // TODO?
+        }
+        else
+        {
+            notemapfile nmf(*m_note_mapper, nfname, rc());
+            result = nmf.write();
+            if (! result)
+                (void) error_message(nmf.error_message());
+        }
     }
     return result;
 }
@@ -5807,7 +5821,10 @@ bool
 performer::open_playlist (const std::string & pl, bool show_on_stdout)
 {
     bool result = false;
-    m_play_list.reset(new playlist(*this, pl, rc(), show_on_stdout));
+    m_play_list.reset
+    (
+        new (std::nothrow) playlist(*this, pl, rc(), show_on_stdout)
+    );
     if (m_play_list)
     {
         result = m_play_list->open();

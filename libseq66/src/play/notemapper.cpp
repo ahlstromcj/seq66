@@ -28,7 +28,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-10
+ * \updates       2020-09-14
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -87,24 +87,33 @@ notemapper::pair::to_string () const
     std::string result;
     int gmnote;
     int devnote;
+    std::string gmname;
+    std::string devname;
     if (m_is_reverse)
     {
         devnote = gm_value();
+        devname = gm_name();
         gmnote = dev_value();
+        gmname = dev_name();
     }
     else
     {
         gmnote = gm_value();
+        gmname = gm_name();
         devnote = dev_value();
+        devname = dev_name();
     }
+    result += "dev-name = \"";
+    result += dev_name();
+    result += "\"\n";
     result += "gm-name = \"";
     result += gm_name();
     result += "\"\n";
-    result += "gm-note = ";
-    result += gmnote;
-    result += "\n";
     result += "dev-note = ";
-    result += devnote;
+    result += std::to_string(devnote);
+    result += "\n";
+    result += "gm-note = ";
+    result += std::to_string(gmnote);
     result += "\n";
     return result;
 }
