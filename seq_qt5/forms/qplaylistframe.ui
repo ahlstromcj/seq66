@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>829</width>
-    <height>492</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -626,7 +626,7 @@
     <rect>
      <x>20</x>
      <y>430</y>
-     <width>141</width>
+     <width>131</width>
      <height>21</height>
     </rect>
    </property>
@@ -645,6 +645,35 @@
    </property>
    <property name="toolTip">
     <string>Shows the base directory holding all files in all playlists.</string>
+   </property>
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>460</y>
+     <width>131</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Current Song Path</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="currentSongPath">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>460</y>
+     <width>631</width>
+     <height>27</height>
+    </rect>
    </property>
    <property name="text">
     <string>None</string>

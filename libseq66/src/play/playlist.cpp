@@ -720,7 +720,7 @@ playlist::verify (bool strong)
             for (const auto & sci : sl)
             {
                 const song_spec_t & s = sci.second;
-                std::string fname = song_filepath(s);       // ABORTING HERE
+                std::string fname = song_filepath(s);
                 if (file_exists(fname))
                 {
                     if (strong)
@@ -1345,7 +1345,9 @@ playlist::song_midi_number () const
 }
 
 /**
- *
+ *  Returns the name of the current song for display purposes.  This name may
+ *  contain a hard-wired relative path, but always contains the base name of the
+ *  song (*.midi).
  */
 
 std::string
@@ -1362,10 +1364,9 @@ playlist::song_filename () const
              * directory.  However, that is too long to display in some cases.
              * We need to think this through some more.
              *
-            if (m_current_song->second.ss_embedded_song_directory)
-                result = song_filepath(m_current_song->second);
-            else
-             *
+             *  if (m_current_song->second.ss_embedded_song_directory)
+             *      result = song_filepath(m_current_song->second);
+             *  else
              */
 
             result = m_current_song->second.ss_filename;
@@ -1378,17 +1379,32 @@ playlist::song_filename () const
  *
  */
 
+void
+playlist::midi_base_directory (const std::string & basedir)
+{
+    m_midi_base_directory = os_normalize_path(basedir);
+}
+
+/**
+ *  Gets the MIDI base directory, if non-empty. Gets the song directory, if
+ *  non-empty.  Gets the base filename of the song, which might include a
+ *  relative path.  Then it concatenates the MIDI base directory,
+ *  song-directory, and the song name, and returns it.
+ */
+
 std::string
 playlist::song_filepath (const song_spec_t & sinfo) const
 {
-    std::string result = clean_path(sinfo.ss_song_directory);
-    result += sinfo.ss_filename;
+    std::string songdir = clean_path(sinfo.ss_song_directory);
+    std::string basedir = midi_base_directory();    /* already normalized   */
+    std::string result = basedir + songdir + sinfo.ss_filename;
     return result;
 }
 
 /**
  *  Gets the current song-specification from the current play-list, and, if
- *  valid concatenates the song's directory and file-name.
+ *  valid concatenates the song's base directory, specificed sub-directory and
+ *  file-name, which might include a relative path.
  *
  * \return
  *      Returns the song's directory and file-name as a full path

@@ -282,6 +282,11 @@ qplaylistframe::set_current_song ()
         temp = "None";
 
     ui->editSongFilename->setText(QString::fromStdString(temp));
+    temp = perf().song_filepath();
+    if (temp.empty())
+        temp = "None";
+
+    ui->currentSongPath->setText(QString::fromStdString(temp));
 }
 
 /**

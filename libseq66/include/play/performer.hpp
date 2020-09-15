@@ -1065,6 +1065,11 @@ public:
         return m_play_list->song_filename();
     }
 
+    std::string song_filepath () const
+    {
+        return m_play_list->song_filepath();
+    }
+
     int song_midi_number () const
     {
         return m_play_list->song_midi_number();

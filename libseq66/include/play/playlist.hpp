@@ -295,10 +295,7 @@ public:
         m_unmute_set_now = u;
     }
 
-    void midi_base_directory (const std::string & basedir)
-    {
-        m_midi_base_directory = basedir;
-    }
+    void midi_base_directory (const std::string & basedir);
 
     const std::string & midi_base_directory () const
     {
