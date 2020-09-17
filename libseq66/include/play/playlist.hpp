@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-14
+ * \updates       2020-09-17
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -417,7 +417,8 @@ private:
         const std::string & fmt,
         const std::string & filename
     );
-    bool verify (bool strong = true);
+    bool verify (bool strong = false);
+    bool copy (const std::string & destination);
 
 };          // class playlist
 

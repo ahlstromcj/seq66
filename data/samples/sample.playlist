@@ -30,11 +30,11 @@
 
 [comments]
 
-This sample play-list file contains two playlists.  One for
-demo ditties, and one for more realistic songs.  These songs
-are found in the contrib/midi directory.  You may need to
-change that directory name for both of the playlists if you
-have a different setup than the developers.
+This sample play-list file contains three playlists.  One for
+demo ditties, one for more realistic songs, one for Cakewalk files.  These
+songs are found in the contrib/midi directory.  You may need to change that
+directory name for both of the playlists if you have a different setup than
+the developers.
 
 [playlist-options]
 
@@ -44,43 +44,72 @@ have a different setup than the developers.
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
 # for use with MIDI playlist control.
-126
+
+125
 
 # Display name of this play list.
+
 "Music for Serious Dogs"
 
 # Storage directory for the song-files in this play list.
+
 contrib/midi/
 
 # Provides the MIDI song-control number, and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
+
 70 allofarow.mid
 71 CountryStrum.midi
-72 data/oxygen4b.wrk
-73 colours-qt.midi
+72 colours-qt.midi
+73 1Bar.midi
+74 2Bars.midi
+75 click_4_4.midi
 
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
 # for use with MIDI playlist control.
-127
+
+126
 
 # Display name of this play list.
-"Demo Ditties"
+
+"Data Ditties"
 
 # Storage directory for the song-files in this play list.
-contrib/midi/
+
+data/midi/
 
 # Provides the MIDI song-control number, and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
-64 1Bar.midi
-65 2Bars.midi
-66 click_4_4.midi
 
-# End of data/sample.playlist
+70 b4uacuse-gm-patchless.midi
+71 colours.midi
+72 Chameleon-HHancock-Ov.midi
+73 If_You_Could_Read_My_Mind.mid
+
+[playlist]
+
+# Playlist number, arbitrary but unique. 0 to 127 recommended
+# for use with MIDI playlist control.
+
+127
+
+# Display name of this play list.
+
+"Cakewalk Files"
+
+# Storage directory for the song-files in this play list.
+
+data/wrk/
+
+70 data/oxygen4b.wrk
+71 data/longhair.wrk
+
+# End of data/samples/sample.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

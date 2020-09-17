@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-08-25
+ * \updates       2020-09-17
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -53,6 +53,7 @@ extern bool file_append_log
     const std::string & data
 );
 extern bool name_has_directory (const std::string & filename);
+extern bool is_root_path (const std::string & path);
 extern bool make_directory (const std::string & pathname);
 extern bool make_directory_path (const std::string & directory_name);
 extern bool delete_directory (const std::string & filename);
@@ -60,7 +61,11 @@ extern bool set_current_directory (const std::string & path);
 extern std::string get_current_directory ();
 extern std::string get_full_path (const std::string & path);
 extern char path_slash ();
-extern std::string os_normalize_path (const std::string & path);
+extern std::string os_normalize_path
+(
+    const std::string & path,
+    bool terminate = false
+);
 extern std::string normalize_path
 (
     const std::string & path,
@@ -69,6 +74,18 @@ extern std::string normalize_path
 );
 extern std::string clean_file (const std::string & path, bool tounix = true);
 extern std::string clean_path (const std::string & path, bool tounix = true);
+extern std::string append_file
+(
+    const std::string & path,
+    const std::string & filename,
+    bool to_unix = true
+);
+extern std::string append_path
+(
+    const std::string & path,
+    const std::string & pathname,
+    bool to_unix = true
+);
 extern std::string filename_concatenate
 (
     const std::string & path,
@@ -79,6 +96,11 @@ extern bool filename_split
     const std::string & fullpath,
     std::string & path,
     std::string & filebase
+);
+extern std::string file_path_set
+(
+    const std::string & fullpath,
+    const std::string & newpath
 );
 extern std::string filename_base (const std::string & fullpath);
 extern bool file_extension_match
@@ -93,6 +115,7 @@ extern std::string file_extension_set
     const std::string & ext
 );
 extern std::string executable_full_path ();
+extern std::string user_home ();
 
 #endif      // SEQ66_FILEFUNCTIONS_HPP
 

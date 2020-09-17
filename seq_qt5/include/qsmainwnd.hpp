@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-14
+ * \updates       2020-09-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -328,7 +328,7 @@ private slots:
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     void test_playlist_save ();
 #endif
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
     void test_notemap_save ();
 #endif
 
@@ -396,15 +396,7 @@ private slots:
 private:
 
     void remove_set_master ();
-
-    void attach_session (smanager * sp)
-    {
-        if (not_nullptr(sp))
-        {
-            m_session_mgr_ptr = sp;
-            use_nsm(true);
-        }
-    }
+    void attach_session (smanager * sp);
 
     void detach_session ()
     {

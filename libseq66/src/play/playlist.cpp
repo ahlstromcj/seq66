@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-14
+ * \updates       2020-09-16
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist:
@@ -696,13 +696,14 @@ playlist::open_select_song_by_midi (int ctrl, bool opensong)
 }
 
 /**
- *  Goes through all of the playlists and makes sure that all of the song files
- *  are accessible.
+ *  Goes through all of the playlists and makes sure that all of the song
+ *  files are accessible.
  *
  * \param strong
  *      If true, also make sure the MIDI files open without error as well.
  *      The code is similar to read_midi_file() in the midifile module, but it
- *      does not make configuration settings.
+ *      does not make configuration settings.  Setting this option to true can
+ *      slow startup way down if there are a lot of big files in the playlist.
  *
  * \return
  *      Returns true if all of the MIDI files are verifiable.
@@ -726,15 +727,18 @@ playlist::verify (bool strong)
                     if (strong)
                     {
                         /*
-                         * The file is parsed.  If the result is false, then the
-                         * play-list mode end up false.  Although we don't
-                         * really need a playlist-mode flag here, it is useful
-                         * to cut down on console output.  Let the caller do
-                         * the reporting on errors only.
+                         * The file is parsed.  If the result is false, then
+                         * the play-list mode ends up false.  Let the caller
+                         * do the reporting on errors.
                          */
 
                         result = open_song(fname, true);
-                        if (! result)
+                        if (result)
+                        {
+                            if (rc_ref().verbose())
+                                pathprint("Verified", fname);
+                        }
+                        else
                         {
                             set_file_error_message("song '%s' missing", fname);
                             break;
@@ -751,6 +755,76 @@ playlist::verify (bool strong)
             }
             if (! result)
                 break;
+        }
+    }
+    else
+    {
+        std::string msg = "empty list file '";
+        msg += name();
+        msg += "'";
+        set_error_message(msg);
+    }
+    return result;
+}
+
+/**
+ *  This function copies all of the MIDI files in all of the play-lists to a
+ *  new root directory.
+ *
+ *  It should also update the MIDI base directory in the "rc" file.
+ *
+ *  The copy will silently fail at the first file that is not found to exist.
+ *
+ * \param destination
+ *      Provides the path to the destination directory for the MIDI files.
+ *      This directory is created if it does not exist, after normalizing this
+ *      path.
+ *
+ * \return
+ *      Returns true if every copy operation was able to be completed.
+ */
+
+bool
+playlist::copy (const std::string & destination)
+{
+    bool result = ! m_play_lists.empty();
+    if (result)
+    {
+        std::string destfile = os_normalize_path(destination);
+        result = make_directory_path(destfile);
+        if (result)
+        {
+            for (const auto & plpair : m_play_lists)
+            {
+                const song_list & sl = plpair.second.ls_song_list;
+                for (const auto & sci : sl)
+                {
+                    const song_spec_t & s = sci.second;
+                    std::string fname = song_filepath(s);
+                    result = file_exists(fname);
+                    if (result)
+                    {
+                        std::string d = append_path
+                        (
+                            destfile, s.ss_song_directory
+                        );
+                        result = make_directory_path(d);
+                        if (result)
+                        {
+                            d = append_file(d, s.ss_filename);
+                            result = file_copy(fname, d);
+                        }
+                    }
+                    else
+                        break;
+                }
+                if (! result)
+                    break;
+            }
+            if (result)
+            {
+                // rc().midi_base_directory(xyz);
+            }
         }
     }
     else

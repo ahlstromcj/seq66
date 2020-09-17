@@ -28,15 +28,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-12
+ * \updates       2020-09-16
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
  *  accessible from the command-line or from the "rc" file.
- *
- * \todo
- *      Consolidate the usr and rc settings classes, or at least have a base
- *      class for common elements like "[comments]".
  */
 
 #include <string>
@@ -376,7 +372,9 @@ private:
     bool m_playlist_active;
 
     /**
-     *  Provides the base name of a play-list file, such as "tunes.playlist".
+     *  Provides the full name of a play-list file, such as "tunes.playlist"
+     *  or "/home/dude/.config/seq66/tunes.playlist".
+     *
      *  It is used only if playlist mode is active.  This file is always
      *  located in the configuration directory (which can be modified from the
      *  command-line).
@@ -816,11 +814,10 @@ public:
         return m_config_directory;
     }
 
-    std::string home_config_directory () const;
     void set_config_files (const std::string & value);
     bool has_home_config_path (const std::string & name);
+    std::string home_config_directory () const;
     std::string trim_home_directory (const std::string & filepath);
-
     const std::string & config_filename () const;
 
     bool playlist_active () const

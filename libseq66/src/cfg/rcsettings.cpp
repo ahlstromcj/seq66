@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-14
+ * \updates       2020-09-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -49,18 +49,6 @@
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
 #include "util/strfunctions.hpp"        /* strncompare()                    */
-
-/**
- *  Select the HOME or LOCALAPPDATA environment variables depending on whether
- *  building for Windows or not. LOCALAPPDATA points to the root of the
- *  Windows user's configuration directory, AppData/Local.
- */
-
-#if defined SEQ66_PLATFORM_WINDOWS
-#define HOME                            "LOCALAPPDATA"
-#else
-#define HOME                            "HOME"
-#endif
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -270,10 +258,9 @@ rcsettings::home_config_directory () const
     if (m_full_config_directory.empty())
     {
         std::string result;
-        char * env = std::getenv(HOME);             /* see banner notes     */
-        if (env != NULL)
+        std::string home = user_home();
+        if (! home.empty())
         {
-            std::string home(env);                  /* std::getenv(HOME)    */
             result = home + path_slash();           /* e.g. /home/username/ */
             result += config_directory();           /* seq66 directory      */
 #if defined SEQ66_PLATFORM_UNIX
@@ -295,9 +282,7 @@ rcsettings::home_config_directory () const
         }
         else
         {
-            std::string temp = "std::getenv(";
-            temp += HOME;
-            temp += ")";
+            std::string temp = "std::getenv(HOME/LOCALAPPDATA) failed";
             result = error_message(temp);
         }
         return result;

@@ -5853,15 +5853,37 @@ performer::save_playlist (const std::string & pl)
     if (result)
     {
         if (! pl.empty())
+        {
             m_play_list->name(pl);
-
+            pathprint("Play-list name", pl);
+        }
         result = m_play_list->write();
         if (! result)
             (void) error_message(m_play_list->error_message());
     }
+    else
+    {
+        errprint("save_playlist(): null playlist pointer");
+    }
     return result;
 }
 
+/**
+ *
+ */
+
+bool
+performer::copy_playlist (const std::string & destination)
+{
+    bool result = bool(m_play_list) && ! destination.empty();
+    if (result)
+    {
+        result = m_play_list->copy(destination);
+//      if (! result)
+//          (void) error_message(m_play_list->error_message());
+    }
+    return result;
+}
 
 /**
  *  Implements playlist control.  If \a inverse is true, nothing is done.  Note

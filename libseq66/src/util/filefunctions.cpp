@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-07-15
+ * \updates       2020-09-17
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -22,9 +22,8 @@
 
 #include <algorithm>                    /* std::replace() function          */
 #include <cctype>                       /* std::toupper() function          */
-#include <stdlib.h>                     /* realpath(3) or _fullpath()       */
+#include <cstdlib>                      /* realpath(3) or _fullpath()       */
 #include <string.h>                     /* strlen(), strerror_r() etc.      */
-#include <sys/types.h>
 #include <sys/stat.h>
 
 #include "util/basic_macros.hpp"        /* support and platform macros      */
@@ -33,14 +32,21 @@
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /**
- *  All file-specifications in Sequencer66 use the UNIX path separator.
- *  No matter what the operating system.
+ *  All file-specifications in Sequencer66 use the UNIX path separator.  No
+ *  matter what the operating system. Also, select the HOME or LOCALAPPDATA
+ *  environment variables depending on whether building for Windows or not.
+ *  LOCALAPPDATA points to the root of the Windows user's configuration
+ *  directory, AppData/Local.
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
-#define SEQ66_PATH_SLASH                '\\'
+#define SEQ66_PATH_SLASH                "\\"
+#define SEQ66_PATH_SLASH_CHAR           '\\'
+#define SEQ66_ENV_HOME                  "LOCALAPPDATA"
 #else
-#define SEQ66_PATH_SLASH                '/'
+#define SEQ66_PATH_SLASH                "/"
+#define SEQ66_PATH_SLASH_CHAR           '/'
+#define SEQ66_ENV_HOME                  "HOME"
 #endif
 
 /*
@@ -553,7 +559,6 @@ file_is_directory (const std::string & filename)
  *              -  "stdout"
  *              -  "stdin"
  *              -  "stderr"
- *              -  "?"
  *
  *  Does not replace any function, but is a helper function that is worthwhile
  *  to expose publicly.
@@ -883,7 +888,8 @@ file_append_log
  *  Check if the file-name has a "/", or, in Windows, "\" or ":".  The latter
  *  case covers names like "C:filename.ext".
  *
- *  Obviously, this function otherwise assumes a well-formed file specification.
+ *  Obviously, this function otherwise assumes a well-formed file
+ *  specification.
  *
  * \param filename
  *      The name of the file, to be tested.
@@ -909,6 +915,32 @@ name_has_directory (const std::string & filename)
         }
     }
 #endif
+    return result;
+}
+
+/**
+ *  Determines if the given directory path is a root path.  This means that
+ *  the path starts with "/" or "X:/".  This function assumes that
+ *  normalization has been done.
+ *
+ * \param path
+ *      Provides the already-normalized path to be analyzed.
+ *
+ * \return
+ *      Returns true if the first character in the actual directory is a
+ *      slash.
+ */
+
+bool
+is_root_path (const std::string & path)
+{
+    std::string::size_type pos = path.find_first_of(":");   /* Windows */
+    bool result = pos != std::string::npos;
+    if (result)
+        result = std::isalpha(path[0]) && pos == 1 && path[2] == '/';
+    else
+        result = path[0] == '/';
+
     return result;
 }
 
@@ -942,39 +974,42 @@ make_directory (const std::string & pathname)
         };
         if (S_STAT(pathname.c_str(), &st) == -1)
         {
-#if defined SEQ66_PLATFORM_MINGW
+#if defined SEQ66_PLATFORM_WINDOWS
             int rcode = S_MKDIR(pathname.c_str());
 #else
-            int rcode = S_MKDIR(pathname.c_str(), 0700);
+            int rcode = S_MKDIR(pathname.c_str(), 0755);    /* rwxr-xr-x    */
 #endif
             result = rcode == 0;
+            if (! result)
+                file_error("mkdir() failed", pathname);
         }
     }
     return result;
 }
 
 /**
- *  Creates a directory based on its directory name.  This function is a turbo
- *  version of the mkdir() and _mkdir() functions.  It makes sure that the whole
- *  sequences of directories in a path-name are created, if they don't exist
- *  already.  In addition, the path-name parameter is massaged in whatever way is
- *  necessary, such as removing any terminating backslash.  For now, since at
- *  least _mkdir() can handle either the '/' or the '\', we don't worry about
- *  converting to the '\' for DOS-like stuff.  In fact, for the Sequencer66
- *  project, all paths are UNIX-style internally..  The input pathname is in the
- *  form of something like
+ *  Creates a directory based on its full directory path.  This function is a
+ *  turbo version of the mkdir() and _mkdir() functions.  It ensures that the
+ *  whole sequences of directories in a path-name are created, if they don't
+ *  exist already.  In addition, the path-name parameter is massaged in
+ *  whatever way is necessary, such as removing any terminating backslash.
+ *  For now, since at least _mkdir() can handle either the '/' or the '\', we
+ *  don't worry about converting to the '\' for DOS-like stuff.  In fact, for
+ *  the Seq66 project, all paths are UNIX-style internally, and calling the
+ *  normalize_path() function guarantees that.  The input pathname is in the
+ *  form of:
  *
 \verbatim
-           C:/dir0/dir1/dir2/.../dirn      or
+           /dir0/dir1/dir2/.../dirn/
            C:/dir0/dir1/dir2/.../dirn/
 \endverbatim
  *
- *  The code works by temporarily converting each '/' character in sequence to a
- *  null, and seeing if the resulting entity (drive or directory) exists.  If
- *  not, the attempt is made to create it.  If it succeeds, the null is converted
- *  back to a '/', and the next subdirectory is worked on, until all are done.
- *
- *  For absolute UNIX paths, we do not remove the first slash.
+ *  The code works by temporarily converting each '/' character in sequence to
+ *  a null, and seeing if the resulting entity (drive or directory) exists.
+ *  If not, the attempt is made to create it.  If it succeeds, the null is
+ *  converted back to a '/', and the next subdirectory is worked on, until all
+ *  are done.  For absolute UNIX or Windows paths, we do not remove the first
+ *  slash.
  *
  * \bug
  *      This uses C calls.
@@ -988,8 +1023,8 @@ make_directory (const std::string & pathname)
  *      Provides the name of the directory to create.
  *
  * \return
- *      Returns true if the create operation succeeded.  It also returns true if
- *      the directory already exists.
+ *      Returns true if the create operation succeeded.  It also returns true
+ *      if the directory already exists.
  */
 
 bool
@@ -999,47 +1034,56 @@ make_directory_path (const std::string & directory_name)
     std::string dirname = normalize_path(directory_name);
     if (result)
     {
-        if (file_exists(dirname))           /* directory already exists?    */
+        if (file_exists(dirname))               /* directory already exists */
             return true;
+    }
+    if (result)
+    {
+        result = dirname.length() < S_MAX_PATH;
+        if (! result)
+            file_error("Path too long", dirname);
     }
     if (result)
     {
         char currdir[S_MAX_PATH];
         bool more = true;
         int slash = '/';
-        char * endptr = &currdir[0];        /* start at the beginning       */
-        char * nextptr;                     /* just what it says!           */
-        char * termination;
+        char * nextptr;                         /* just what it says!       */
         (void) strncpy(currdir, dirname.c_str(), sizeof currdir - 1);
-        termination = strchr(endptr, '\0');
+
+        char * endptr = &currdir[0];            /* start at the beginning   */
+        char * ending = strchr(endptr, '\0');
         do
         {
             nextptr = strchr(endptr, slash);    /* find next slash          */
             if (is_nullptr(nextptr))            /* if still not found ...   */
             {
                 more = false;                   /* ...this is last subdir   */
-                if (endptr < termination)       /* ...if not yet at end     */
-                    nextptr = termination;      /* ...this will be the end  */
+                if (endptr < ending)            /* ...if not yet at end     */
+                    nextptr = ending;           /* ...this will be the end  */
+            }
+            else
+            {
+                if (nextptr == endptr)
+                {
+                    ++endptr;
+                    continue;
+                }
             }
             if (not_nullptr(nextptr))
             {
-                if (nextptr > &currdir[0])
-                    *nextptr = 0;               /* make null terminator     */
-
+                *nextptr = 0;                   /* make null terminator     */
                 if (! file_exists(currdir))     /* subdirectory exists?     */
                 {
-#if defined SEQ66_PLATFORM_WINDOWS
-                    int retcode = S_MKDIR(currdir);
-#else
-                    mode_t pathmode = 0755;     /* rwxr-xr-x                */
-                    int retcode = S_MKDIR(currdir, pathmode);
-#endif
-                    if (retcode == -1)
+                    if (! make_directory(std::string(currdir)))
+                    {
                         more = result = false;
+                        break;
+                    }
                 }
                 if (more)
                 {
-                    *nextptr = char(slash);
+                    *nextptr = char(slash);     /* restore the slash        */
                     endptr = nextptr + 1;       /* point just past slash    */
                 }
             }
@@ -1055,15 +1099,15 @@ make_directory_path (const std::string & directory_name)
  * Replaces:
  *
  *    -  _rmdir() [Microsoft]
- *    -  rmdir() [GNU].  Note, however, that file_delete() can be called and will
- *       work with both files and directories.
+ *    -  rmdir() [GNU].  Note, however, that file_delete() can be called and
+ *      will work with both files and directories.
  *
  * \param filename
  *      Provides the name of the file to be deleted.
  *
  * \return
- *      Returns true if the delete operation succeeded.  It also returns true if
- *      the directory did not exist in the first place.
+ *      Returns true if the delete operation succeeded.  It also returns true
+ *      if the directory did not exist in the first place.
  */
 
 bool
@@ -1167,12 +1211,13 @@ get_full_path (const std::string & path)
 char
 path_slash ()
 {
-    return SEQ66_PATH_SLASH;
+    return SEQ66_PATH_SLASH_CHAR;
 }
 
 /**
  *  Makes sure that the path-name is a UNIX path, separated by forward slashes
- *  (the solidus), or a Windows path, separated by back slashes.
+ *  (the solidus), or a Windows path, separated by back slashes.  It also
+ *  converts "~" to the user's HOME or LOCALAPPDATA directory.
  *
  * \param path
  *      Provides the path, which should be a full path-name.
@@ -1183,9 +1228,11 @@ path_slash ()
  *
  * \param terminate
  *      If true, tack on a final separator, if necessary. Defaults to false.
+ *      Do not set to true if you know the path ends with a file-name.
  *
  * \return
- *      The possibly modified path is returned.
+ *      The possibly modified path is returned.  If path is not valid (e.g.
+ *      the name of a console file handle), then an empty string is returned.
  */
 
 std::string
@@ -1195,6 +1242,12 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
     if (file_name_good(path))
     {
         result = path;
+
+        std::string::size_type circumpos = result.find_first_of("~");
+        if (circumpos != std::string::npos)
+        {
+            result.replace(circumpos, 1, user_home());
+        }
         if (to_unix)
         {
             std::string::size_type pos = path.find_first_of("\\");
@@ -1218,11 +1271,21 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
 }
 
 /**
+ *  Normalize as per the OS for which this module was built.
  *
+ * \param path
+ *      Provides the path, which should be a full path-name.
+ *
+ * \param terminate
+ *      If true, tack on a final separator, if necessary. Defaults to false.
+ *      Do not set to true if you know the path ends with a file-name.
+ *
+ * \return
+ *      The possibly modified path is returned.
  */
 
 std::string
-os_normalize_path (const std::string & path)
+os_normalize_path (const std::string & path, bool terminate)
 {
 #if defined SEQ66_PLATFORM_UNIX
     bool to_unix = true;
@@ -1230,13 +1293,13 @@ os_normalize_path (const std::string & path)
     bool to_unix = false;
 #endif
 
-    return normalize_path(path, to_unix);
+    return normalize_path(path, to_unix, terminate);
 }
 
 /**
  *  Makes sure the path is using the proper separators, and that a separator
  *  appears at the end.  The path is trimmed and normalized, but not
- *  terminated.
+ *  terminated.  Compare to the clean_path() function.
  */
 
 std::string
@@ -1250,7 +1313,7 @@ clean_file (const std::string & path, bool to_unix)
 /**
  *  Makes sure the path is using the proper separators, and that a separator
  *  appears at the end.  The path is trimmed, normalized, and then properly
- *  terminated.
+ *  terminated.  Compare to the clean_file() function.
  */
 
 std::string
@@ -1262,11 +1325,62 @@ clean_path (const std::string & path, bool to_unix)
 }
 
 /**
+ *
+ */
+
+std::string
+append_file
+(
+    const std::string & path,
+    const std::string & filename,
+    bool to_unix
+)
+{
+    std::string result = path;
+    if (! result.empty())
+    {
+        (void) rtrim(result, SEQ66_TRIM_CHARS_PATHS);
+        result += path_slash();
+    }
+    result += filename;
+    return normalize_path(result, to_unix, false);
+}
+
+/**
+ *
+ */
+
+std::string
+append_path
+(
+    const std::string & path,
+    const std::string & pathname,
+    bool to_unix
+)
+{
+    std::string result = path;
+    std::string pn = pathname;
+    if (! result.empty())
+    {
+        (void) rtrim(result, SEQ66_TRIM_CHARS_PATHS);
+        result += path_slash();
+    }
+    if (! pn.empty())
+    {
+        (void) trim(pn, SEQ66_TRIM_CHARS_PATHS);
+        pn += path_slash();
+    }
+    result += pn;
+    return normalize_path(result, to_unix, true);
+}
+
+
+/**
  *  Cleans up the path to make sure it is either valid or empty, and then
  *  appends the base file-name (hopefully in the format "base.extension") to
  *  it.
  *
- *  This function works soley using UNIX conventions, it is for internal use.
+ *  This function works solely using UNIX conventions, it is for internal use.
  *  If desired, it can be converted to Windows conventions using
  *  normalize_path().
  */
@@ -1331,6 +1445,19 @@ filename_split
     );
 #endif
     return result;
+}
+
+/**
+ *
+ */
+
+std::string
+file_path_set (const std::string & fullpath, const std::string & newpath)
+{
+    std::string path;
+    std::string filebase;
+    (void) filename_split(fullpath, path, filebase);
+    return filename_concatenate(newpath, filebase);
 }
 
 /**
@@ -1460,12 +1587,11 @@ set_current_directory (const std::string & path)
 
 
 /**
- *
  *  An alternative on Linux to using either /proc/self/exe or argv[0] is using
- *  the information passed by the ELF interpreter, made available by glibc.  The
- *  getauxval() function is a glibc extension; check so that it doesn't return
- *  NULL (indicating that the ELF interpreter hasn't provided the AT_EXECFN
- *  parameter). This is never actually a problem on Linux.
+ *  the information passed by the ELF interpreter, made available by glibc.
+ *  The getauxval() function is a glibc extension; check so that it doesn't
+ *  return NULL (indicating that the ELF interpreter hasn't provided the
+ *  AT_EXECFN parameter). This is never actually a problem on Linux.
  */
 
 std::string
@@ -1484,6 +1610,32 @@ executable_full_path ()
     return result;
 }
 
+/**
+ *  Gets the user's $HOME (Linux) or $LOCALAPPDAT (Windows) directory from the
+ *  current environment.
+ *
+ * \return
+ *      Returns the value of $HOME, such as "/home/ahlstromcj" or
+ *      "C:\Users\ahlstromcj\AppData\local".  Notice the lack of a terminating
+ *      path-slash.  If getenv() fails, an empty string is returned.
+ */
+
+std::string
+user_home ()
+{
+    std::string result;
+    char * env = std::getenv(SEQ66_ENV_HOME);
+    if (not_nullptr(env))
+    {
+        result = std::string(env);
+    }
+    else
+    {
+        file_error("std::getenv() failed", SEQ66_ENV_HOME);
+    }
+    return result;
+}
+
 }           // namespace seq66
 
 /*
@@ -1491,5 +1643,4 @@ executable_full_path ()
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */
-
 

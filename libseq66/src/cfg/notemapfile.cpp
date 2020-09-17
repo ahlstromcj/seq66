@@ -249,8 +249,7 @@ notemapfile::write_stream (std::ofstream & file)
     file <<
         "[Seq66]\n\n"
         "config-type = \"drums\"\n"
-        "version = 0\n"
-        "\n"
+        "version = " << version() << "\n\n"
         "# The [comments] section can document this file.  Lines starting\n"
         "# with '#' and '[' are ignored.  Blank lines are ignored.  Show a\n"
         "# blank line by adding a space character to the line.\n\n"

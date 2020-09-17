@@ -556,7 +556,7 @@ midicontrolfile::read_ctrl_pair
 bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
-    file << "# Seq66 0.90.5 (and above) MIDI control configuration file\n"
+    file << "# Seq66 0.91.0 (and above) MIDI control configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -571,7 +571,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     "\n"
     "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
-    "version = 2\n"
+    "version = " << version() << "\n"
         ;
 
     /*

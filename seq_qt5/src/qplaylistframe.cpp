@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-09-14
+ * \updates       2020-09-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -119,6 +119,25 @@ qplaylistframe::qplaylistframe
         this, SLOT(handle_list_remove_click())
     );
     */
+    if (not_nullptr(m_parent))
+    {
+        if (m_parent->use_nsm())
+        {
+            ui->buttonPlaylistSave->setText("Save Sess");
+            ui->buttonPlaylistSave->setToolTip
+            (
+                "Save playlists and MIDI to current NSM session."
+            );
+        }
+        else
+        {
+            ui->buttonPlaylistSave->setText("Save Lists");
+            ui->buttonPlaylistSave->setToolTip
+            (
+                "Save playlists (only) to current directory."
+            );
+        }
+    }
     connect
     (
         ui->buttonPlaylistSave, SIGNAL(clicked(bool)),
@@ -204,8 +223,8 @@ qplaylistframe::set_column_widths ()
 }
 
 /**
- *  Resets the play-list.  First, resets to the first (0th) play-list and the first
- *  (0th) song.  Then fills the play-list items and resets again.  Then
+ *  Resets the play-list.  First, resets to the first (0th) play-list and the
+ *  first (0th) song.  Then fills the play-list items and resets again.  Then
  *  fills in the play-list and song items for the current selection.
  */
 
@@ -474,7 +493,8 @@ qplaylistframe::handle_song_click_ex
         if (perf().open_select_song_by_index(row, true))
         {
             set_current_song();
-            m_parent->recreate_all_slots();
+            if (not_nullptr(m_parent))
+                m_parent->recreate_all_slots();
         }
     }
 }
@@ -521,6 +541,18 @@ qplaylistframe::handle_list_save_click ()
 {
     if (not_nullptr(m_parent))
     {
+        if (m_parent->use_nsm())
+        {
+        }
+        else
+        {
+            QString p = ui->entry_playlist_file->text();
+            std::string plistname = p.toStdString();
+            if (! plistname.empty())
+            {
+                (void) perf().save_playlist(plistname);
+            }
+        }
     }
 }
 

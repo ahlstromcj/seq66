@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-04
+ * \updates       2020-09-16
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -33,6 +33,7 @@ namespace seq66
 
 const std::string SEQ66_TRIM_CHARS        = " \t\r\n\v\f";
 const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
+const std::string SEQ66_TRIM_CHARS_PATHS  = "/\\";
 
 /*
  * Global (free) string functions.

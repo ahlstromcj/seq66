@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-14
+ * \updates       2020-09-17
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -216,12 +216,8 @@ rcfile::parse ()
     if (! file.is_open())
     {
         char temp[128];
-        snprintf
-        (
-            temp, sizeof temp,
-            "rcfile::parse(): error opening %s for reading\n", name().c_str()
-        );
-        return make_error_message("parse", temp);
+        snprintf(temp, sizeof temp, "Read open failed: %s\n", name().c_str());
+        return make_error_message("'rc' parse", temp);
     }
     file.seekg(0, std::ios::beg);                       /* seek to start    */
 
@@ -230,7 +226,13 @@ rcfile::parse ()
     {
         int version = string_to_int(s);
         if (version != rc_ref().ordinal_version())
-            (void) make_error_message("parse", "'rc' ordinal version changed!");
+        {
+            /*
+             * Not necessarily an error.  Just flag it to the console.
+             */
+
+            warnprint("'rc' file version changed!");
+        }
     }
 
     /*
@@ -258,8 +260,12 @@ rcfile::parse ()
                 std::string info = "'";
                 info += fullpath;
                 info += "'";
-                rc_ref().midi_control_filename("");
-                return make_error_message("MIDI control", info);
+
+                /*
+                 * rc_ref().midi_control_filename("");
+                 */
+
+                return make_error_message("midi-control-file", info);
             }
         }
         rc_ref().use_midi_control_file(ok);             /* did it work?     */
@@ -293,7 +299,11 @@ rcfile::parse ()
                 std::string info = "cannot parse file '";
                 info += fullpath;
                 info += "'";
-                rc_ref().midi_control_filename("");
+
+                /*
+                 * rc_ref().midi_control_filename("");
+                 */
+
                 return make_error_message("mute-group-file", info);
             }
         }
@@ -355,17 +365,14 @@ rcfile::parse ()
                     {
                         return make_error_message
                         (
-                            "midi-clock", "data line missing"
+                            "midi-clock", "missing data line"
                         );
                     }
                 }
             }
             else
             {
-                return make_error_message
-                (
-                    "midi-clock", "data line needs 2 values"
-                );
+                return make_error_message("midi-clock", "data line error");
             }
         }
     }
@@ -459,10 +466,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message
-        (
-            "midi-clock-mod-ticks", "data lines missing"
-        );
+        return make_error_message("midi-clock-mod-ticks", "data line missing");
     }
     if (line_after(file, "[midi-meta-events]"))
     {
@@ -472,10 +476,7 @@ rcfile::parse ()
     }
     else
     {
-        return make_error_message
-        (
-            "midi-meta_events", "data lines missing"
-        );
+        return make_error_message("midi-meta_events", "data line missing");
     }
     if (line_after(file, "[manual-ports]"))
     {
@@ -536,7 +537,7 @@ rcfile::parse ()
     }
     else
     {
-        (void) make_error_message("recent-files", "data lines missing");
+        (void) make_error_message("recent-files", "data line missing");
     }
     if (line_after(file, "[playlist]"))
     {
@@ -756,19 +757,19 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.90.1 (and above) 'rc' configuration file\n"
+        << "# Seq66 0.91.0 (and above) 'rc' configuration file\n"
            "#\n"
            "# " << name() << "\n"
            "# Written on " << current_date_time() << "\n"
            "#\n"
         <<
-    "# This file holds the main configuration options for Seq66.\n"
-    "# It loosely follows the format of the seq24 'rc' configuration\n"
-    "# file, but adds some new options, and is no longer compatible.\n"
-    "\n"
-    "[Seq66]\n\n"
-    "config-type = \"rc\"\n"
-    "version = 1\n"
+            "# This file holds the main configuration options for Seq66.\n"
+            "# It loosely follows the format of the seq24 'rc' configuration\n"
+            "# file, but adds some new options, and is no longer compatible.\n"
+            "\n"
+            "[Seq66]\n\n"
+            "config-type = \"rc\"\n"
+            "version = " << version() << "\n"
         ;
 
     /*
@@ -1106,11 +1107,11 @@ rcfile::write ()
         "\n"
         ;
 
-    std::string plname = rc_ref().playlist_filespec();
+    std::string plname = rc_ref().playlist_filename();
     std::string fspec = empty_string();
     if (! plname.empty())
     {
-        fspec = file_extension_set(rc_ref().playlist_filespec(), ".playlist");
+        fspec = file_extension_set(rc_ref().playlist_filename(), ".playlist");
         fspec = rc_ref().trim_home_directory(fspec);
     }
     file << fspec << "\n";

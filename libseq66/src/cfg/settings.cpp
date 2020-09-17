@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2020-08-02
+ * \updates       2020-09-15
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -134,14 +134,16 @@ choose_ppqn (int ppqn)
             result = usr().midi_ppqn();
     }
     else if (result == SEQ66_USE_FILE_PPQN)
-    {
         result = usr().file_ppqn();                 /* could be 0           */
-    }
+
     if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
     {
-        if (result != SEQ66_USE_FILE_PPQN)          /* "usr" was 0          */
+        if (rc().verbose())
         {
-            warnprint("Provided PPQN out of range, setting PPQN = 192");
+            if (result != SEQ66_USE_FILE_PPQN)      /* "usr" was 0          */
+            {
+                warnprintf("PPQN %d bad, setting it to 192", result);
+            }
         }
         result = SEQ66_DEFAULT_PPQN;                /* the legacy value 192 */
     }

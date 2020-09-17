@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-14
+ * \updates       2020-09-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -802,25 +802,28 @@ qsmainwnd::qsmainwnd
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(import_into_session())
     );
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
-    ui->testButton->setToolTip("Test of saving the current playlist.");
+    ui->testButton->setToolTip("Test of saving/copying the current playlist.");
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(test_playlist_save())
     );
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif
 
-#if defined SEQ66_PLATFORM_DEBUG
+    ui->testButton->setToolTip("Test button disabled.");
+    ui->testButton->setEnabled(false);
+
+#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
     ui->testButton->setToolTip("Test of saving the note-map.");
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(test_notemap_save())
     );
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif
 
     show();
     show_song_mode(m_song_mode);
@@ -844,6 +847,23 @@ qsmainwnd::~qsmainwnd ()
     m_timer->stop();
     cb_perf().unregister(this);
     delete ui;
+}
+
+void
+qsmainwnd::attach_session (smanager * sp)
+{
+    if (not_nullptr(sp))
+    {
+        m_session_mgr_ptr = sp;
+        use_nsm(true);
+#if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
+        if (s_use_test_button)
+        {
+            std::string path("/home/ahlstrom/NSM Sessions/Test/seq66.nTEST");
+            session()->create_project(path);
+        }
+#endif
+    }
 }
 
 /**
@@ -1025,16 +1045,17 @@ qsmainwnd::test_playlist_save ()
     if (s_use_test_button)
     {
         (void) perf().save_playlist();
+        (void) perf().copy_playlist("~/tmp/playlists");
     }
 }
 
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif
 
 /**
  *  A test of note-map saving.
  */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
 
 void
 qsmainwnd::test_notemap_save ()
@@ -1045,7 +1066,7 @@ qsmainwnd::test_notemap_save ()
     }
 }
 
-#endif  // defined SEQ66_PLATFORM_DEBUG
+#endif
 
 /**
  *  For NSM usage, this function replaces the "Open" operation.  It will

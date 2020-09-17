@@ -211,11 +211,9 @@ bool
 mutegroupsfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.90.1 (and above) mute-groups configuration file\n"
-        << "#\n"
+        << "# Seq66 0.91.0 (and above) mute-groups configuration file\n\n"
         << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n"
-        << "#\n"
+        << "# Written on " << current_date_time() << "\n\n"
         << "# This file replaces the [mute-group] section, making it a little\n"
         << "# easier to manage multiple sets of mute groups.\n"
         << "\n"
@@ -228,8 +226,7 @@ mutegroupsfile::write_stream (std::ofstream & file)
     file <<
         "[Seq66]\n\n"
         "config-type = \"mutes\"\n"
-        "version = 0\n"
-        "\n"
+        "version = " << version() << "\n\n"
         "# The [comments] section can document this file.  Lines starting\n"
         "# with '#' and '[' are ignored.  Blank lines are ignored.  Show a\n"
         "# blank line by adding a space character to the line.\n\n"

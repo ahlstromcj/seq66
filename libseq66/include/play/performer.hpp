@@ -994,6 +994,7 @@ public:
 
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
+    bool copy_playlist (const std::string & destination);
 
     bool remove_playlist ()
     {

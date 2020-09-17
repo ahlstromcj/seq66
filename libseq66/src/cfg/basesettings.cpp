@@ -77,16 +77,16 @@ basesettings::operator = (const basesettings & rhs)
 {
     if (this != &rhs)
     {
-        m_ordinal_version           = rhs.m_ordinal_version;
-        m_comments_block            = rhs.m_comments_block;
+        m_ordinal_version       = rhs.m_ordinal_version;
+        m_comments_block        = rhs.m_comments_block;
     }
     return *this;
 }
 
 /**
- *  Sets the default values.  For the m_midi_buses and
- *  m_instruments members, this function can only iterate over the
- *  current size of the vectors.  But the default size is zero!
+ *  Sets the default values.  For the m_midi_buses and m_instruments members,
+ *  this function can only iterate over the current size of the vectors.  But
+ *  the default size is zero!
  */
 
 void
@@ -102,9 +102,8 @@ basesettings::set_defaults ()
 }
 
 /**
- *  Calculate the derived values from the already-set values.
- *  Should we normalize the BPM increment values here, in case they
- *  are irregular?
+ *  Calculate the derived values from the already-set values.  Should we
+ *  normalize the BPM increment values here, in case they are irregular?
  *
  *  gmute_tracks() is viable with variable set sizes only if we stick with the
  *  32 sets by 32 patterns, at this time. It's semantic meaning is......

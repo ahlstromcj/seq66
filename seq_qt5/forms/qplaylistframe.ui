@@ -481,7 +481,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Saves the current play-list file.</string>
+       <string>Saves the current play-lists file.</string>
       </property>
       <property name="text">
        <string>Save Lists</string>

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-08
+ * \updates       2020-09-17
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -258,15 +258,15 @@ clinsmanager::create_project (const std::string & path)
          * also created.
          */
 
-        std::string rcfilepath = path + "/config/" + rc().config_filename();
-        bool already_created = file_exists(rcfilepath);
+        std::string cfgfilepath = path + "/config/";
+        std::string midifilepath = path + "/midi/";
+        std::string rcfile = cfgfilepath + rc().config_filename();
+        bool already_created = file_exists(rcfile);
         if (already_created)
         {
             std::string errmessage;
-            rcfilepath = path + "/config";
-            rc().full_config_directory(rcfilepath); /* set NSM directory    */
-            rcfilepath = path + "/midi";
-            rc().midi_filepath(rcfilepath);         /* set MIDI directory   */
+            rc().full_config_directory(cfgfilepath);  /* set NSM directory    */
+            rc().midi_filepath(midifilepath);         /* set MIDI directory   */
             pathprint("NSM MIDI file path", rc().midi_filepath());
             pathprint("NSM MIDI file name", rc().midi_filename());
             result = cmdlineopts::parse_options_files(errmessage);
@@ -285,29 +285,62 @@ clinsmanager::create_project (const std::string & path)
             result = make_directory_path(fullpath);
             if (result)
             {
-                fullpath = path + "/config";
-                result = make_directory_path(fullpath);
+                result = make_directory_path(cfgfilepath);
                 if (result)
-                    rc().full_config_directory(fullpath);
+                    rc().full_config_directory(cfgfilepath);
             }
             if (result)
             {
-                fullpath = path + "/midi";
-                result = make_directory_path(fullpath);
+                result = make_directory_path(midifilepath);
                 if (result)
-                    rc().midi_filepath(fullpath);
+                {
+                    /*
+                     * The first is where MIDI files are stored in the
+                     * session, and the second is where they are stored for
+                     * the play-list.  Currently, the same directory.
+                     * Not considered to be an issue at this time.
+                     */
+
+                    rc().midi_filepath(midifilepath);
+                    rc().midi_base_directory(midifilepath);
+                }
             }
             if (result)
             {
                 /*
                  * Make sure the configuration is created in the session right
                  * now, in case the session manager tells the app to quit
-                 * (without saving).
+                 * (without saving).  We need to replace the path part, if
+                 * any, in the playlist and notemapper file-names, and prepend
+                 * the new home directory.
                  */
 
+                std::string file = rc().playlist_filename();
+                file = file_path_set(file, cfgfilepath);
+                rc().playlist_filename(file);
+                file = rc().notemap_filename();
+                file = file_path_set(file, cfgfilepath);
+                rc().notemap_filename(file);
                 warnprint("Saving initial config files to session directory");
                 usr().save_user_config(true);
-                if (! cmdlineopts::write_options_files())
+                result = cmdlineopts::write_options_files();
+                if (result)
+                {
+                    pathprint("create_project()", "Play-list save");
+                    result = perf()->save_playlist();
+                    if (result)
+                    {
+                        std::string destination = rc().midi_filepath();
+                        pathprint("create_project()", "MIDI file copy");
+                        result = perf()->copy_playlist(destination);
+                    }
+                    if (result)
+                    {
+                        pathprint("create_project()", "Note-mapper save");
+                        result = perf()->save_note_mapper();
+                    }
+                }
+                else
                     errprint("Initial config writes failed");
             }
         }
