@@ -75,7 +75,7 @@ match_string (FILE * inf, char * s)
 /**
  *  Parse preference files, find default device, search devices.
  *
- * TODO:  REPLACE THIS WITH Seq66 options.
+ * REPLACE THIS WITH Seq66 options.
  *
  * \param path
  *      The name of the preference we are searching for.

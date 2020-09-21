@@ -206,17 +206,17 @@ processing.
 
 \subsection jack_set_timebase_callback jack_set_timebase_callback ()
 
-   TODO
+   TO DO
 
 \subsection jack_release_timebase jack_release_timebase ()
 
 Used in tearing down the JACK transport infrastructure.
 
-   TODO
+   TO DO
 
 \subsection jack_client_close jack_client_close ()
 
-   TODO
+   TO DO
 
 \subsection jack_transport_start jack_transport_start ()
 

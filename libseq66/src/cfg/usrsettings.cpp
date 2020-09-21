@@ -651,7 +651,7 @@ usrsettings::normalize ()
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
     m_max_sets = c_max_sequence / m_seqs_in_set;            /* 16 to 32...  */
     m_max_sequence = m_seqs_in_set * m_max_sets;
-    m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;         /* TODO!        */
+    m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
     m_total_seqs = m_seqs_in_set * m_max_sets;
 }
 

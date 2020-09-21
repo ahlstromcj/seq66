@@ -898,7 +898,7 @@ protected:
 
     void midi_control_buss (bussbyte b)
     {
-        m_midi_control_buss = b;     // TODO: VALIDATE
+        m_midi_control_buss = b;
     }
 
     void show_ui_sequence_key (bool flag)

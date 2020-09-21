@@ -859,11 +859,13 @@ qsmainwnd::attach_session (smanager * sp)
 #if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
         if (s_use_test_button)
         {
-            std::string path("/home/ahlstrom/NSM Sessions/Test/seq66.nTEST");
+            std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
             session()->create_project(path);
         }
 #endif
     }
+    else
+        use_nsm(false);
 }
 
 /**
@@ -2222,7 +2224,7 @@ qsmainwnd::update_ppqn (int pindex)
     {
         if (p == SEQ66_USE_FILE_PPQN)
         {
-            p = usr().file_ppqn();          // TODO, how?
+            p = usr().file_ppqn();
         }
         else if (p == SEQ66_USE_DEFAULT_PPQN)
         {

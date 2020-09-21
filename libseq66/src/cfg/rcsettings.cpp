@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-16
+ * \updates       2020-09-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -283,7 +283,7 @@ rcsettings::home_config_directory () const
         else
         {
             std::string temp = "std::getenv(HOME/LOCALAPPDATA) failed";
-            result = error_message(temp);
+            result = set_error_message(temp);
         }
         return result;
     }

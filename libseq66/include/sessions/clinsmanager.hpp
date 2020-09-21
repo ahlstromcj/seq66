@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-10
+ * \updates       2020-09-20
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -38,11 +38,12 @@
  *  concept out completely at some point.)
  */
 
+#include <memory>                       /* std::unique_ptr, shared_ptr<>    */
+
 #include "sessions/smanager.hpp"        /* seq66::smanager                  */
 
 #if defined SEQ66_NSM_SUPPORT
 
-#include <memory>                       /* std::unique_ptr<>                */
 #include "nsm/nsmclient.hpp"            /* seq66::nsmclient                 */
 
 /**
@@ -61,8 +62,6 @@
 
 #else
 
-// using nsmclient = void;
-
 #define SEQ66_NSM_CLI_CAPABILITIES      ""
 
 #endif
@@ -71,7 +70,9 @@ namespace seq66
 {
 
 /**
- *
+ *  Provides command-line and user-interface support for session management.  If
+ *  NSM support is not built in, there is still some minor management tasks that
+ *  can be done.
  */
 
 class clinsmanager : public smanager
@@ -132,6 +133,21 @@ public:
     virtual void session_manager_path (const std::string & pathname) override;
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
+
+private:
+
+    bool save_playlist
+    (
+        std::shared_ptr<playlist> plp,
+        const std::string & source,
+        const std::string & destination
+    );
+    bool copy_playlist
+    (
+        std::shared_ptr<playlist> plp,
+        const std::string & source,
+        const std::string & destination
+    );
 
 };          // class clinsmanager
 

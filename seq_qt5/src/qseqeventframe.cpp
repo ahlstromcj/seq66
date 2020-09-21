@@ -249,9 +249,8 @@ qseqeventframe::~qseqeventframe()
 }
 
 /**
- *  TODO:
- *      Check for dirtiness (perhaps), clear the table and settings,
- *      an reload as if starting again.
+ *  Check for dirtiness (perhaps), clear the table and settings, an reload as
+ *  if starting again.
  */
 
 bool

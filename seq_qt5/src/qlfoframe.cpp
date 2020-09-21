@@ -351,7 +351,7 @@ qlfoframe::scale_lfo_change (int /*v*/)
 /**
  *  Undoes the LFO changes if there is undo available.
  *
- *  TODO:  implement undo via selection of "None" for the wave type.
+ *  Implement undo via selection of "None" for the wave type.
  *
  * \return
  *      Always returns true.

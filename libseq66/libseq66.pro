@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2020-09-01
+# \update      2020-09-19
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -54,6 +54,7 @@ HEADERS += include/app_limits.h \
  include/cfg/midicontrolfile.hpp \
  include/cfg/mutegroupsfile.hpp \
  include/cfg/notemapfile.hpp \
+ include/cfg/playlistfile.hpp \
  include/cfg/rcfile.hpp \
  include/cfg/rcsettings.hpp \
  include/cfg/recent.hpp \
@@ -118,6 +119,7 @@ SOURCES += src/seq66_features.cpp \
  src/cfg/midicontrolfile.cpp \
  src/cfg/mutegroupsfile.cpp \
  src/cfg/notemapfile.cpp \
+ src/cfg/playlistfile.cpp \
  src/cfg/rcfile.cpp \
  src/cfg/rcsettings.cpp \
  src/cfg/recent.cpp \

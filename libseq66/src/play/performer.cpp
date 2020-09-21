@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-09-14
+ * \updates       2020-09-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -297,6 +297,7 @@
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
+#include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
@@ -1043,6 +1044,8 @@ performer::new_sequence (seq::number seq)
  *  false.  But there are a few other flags that are not modified; shouldn't
  *  we also falsify them here?
  *
+ *  What about notify_sequence_change()?  Checking in-edit status?
+ *
  * \param seq
  *      The sequence number of the sequence to be deleted.  It is validated.
  *
@@ -1053,23 +1056,16 @@ performer::new_sequence (seq::number seq)
 bool
 performer::remove_sequence (seq::number seqno)
 {
-    /*
-     * What about notify_sequence_change()?  Checking in-edit status?
-     */
-
     bool result = mapper().remove_sequence(seqno);
     if (result)
         modify();
-
-        /////////////////////////////////////////////////////
-        // notify_sequence_change(seqno);          /* also modify()'s          */
 
     midi_control_out().send_seq_event(seqno, midicontrolout::seqaction::remove);
     return result;
 }
 
 /**
- * TODO: Needs cleanup!!!!
+ *
  */
 
 bool
@@ -1087,7 +1083,7 @@ performer::copy_sequence (seq::number seqno)
 }
 
 /**
- * TODO: Needs cleanup!!!!
+ *
  */
 
 bool
@@ -5580,7 +5576,7 @@ performer::automation_quan_record
  *  Implements reset_seq.  It determines if pattern recording merges notes or
  *  overwrites them upon loop-return.
  *
- *  TODO:  What about the "extend sequence" mode?  What about the return codes?
+ *  What about the "extend sequence" mode?  What about the return codes?
  */
 
 bool
@@ -5754,7 +5750,7 @@ performer::open_note_mapper (const std::string & notefile)
     {
         if (notefile.empty())
         {
-            // TODO?
+            // anything to do?
         }
         else
         {
@@ -5823,13 +5819,22 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
     bool result = false;
     m_play_list.reset
     (
-        new (std::nothrow) playlist(*this, pl, rc(), show_on_stdout)
+        new (std::nothrow) playlist(this, pl, show_on_stdout)
     );
     if (m_play_list)
     {
-        result = m_play_list->open();
-        if (! result)
-            (void) error_message(m_play_list->error_message());
+        playlistfile plf(pl, *m_play_list, rc(), show_on_stdout);
+        result = plf.open(true);                /* parse and file verify    */
+        if (result)
+        {
+            clear_all(false);                   /* clear, reset playlist    */
+        }
+        else
+        {
+            std::string msg = "Open failed: ";
+            msg += pl;
+            (void) error_message(msg);          // m_play_list->error_message()
+        }
     }
     return result;
 }
@@ -5854,33 +5859,21 @@ performer::save_playlist (const std::string & pl)
     {
         if (! pl.empty())
         {
-            m_play_list->name(pl);
+            m_play_list->file_name(pl);
             pathprint("Play-list name", pl);
         }
-        result = m_play_list->write();
+        playlistfile plf(pl, *m_play_list, rc(), false);
+        plf.name(pl);
+        result = plf.write();       // m_play_list->write();
         if (! result)
+        {
+            pathprint("Write failed", playlist_filename());
             (void) error_message(m_play_list->error_message());
+        }
     }
     else
     {
-        errprint("save_playlist(): null playlist pointer");
-    }
-    return result;
-}
-
-/**
- *
- */
-
-bool
-performer::copy_playlist (const std::string & destination)
-{
-    bool result = bool(m_play_list) && ! destination.empty();
-    if (result)
-    {
-        result = m_play_list->copy(destination);
-//      if (! result)
-//          (void) error_message(m_play_list->error_message());
+        errprint("null playlist pointer");
     }
     return result;
 }
@@ -6025,7 +6018,7 @@ performer::automation_song_pointer
     print_parameters(name, a, d0, d1, inverse);
 
     /*
-     * TO BE DETERMINED
+     * TO BE DETERMINED TODO
      */
 
     return true;
@@ -6034,7 +6027,7 @@ performer::automation_song_pointer
 /**
  *  I think we don't want to support inverse for this one.  See the support for
  *  the "Q" button.  We might need to make this a toggle for the keystroke
- *  support.  TODO!
+ *  support.  TODO TODO TODO!!!
  */
 
 bool

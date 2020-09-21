@@ -349,10 +349,6 @@ editable_events::verify_and_link (midipulse slength)
                 off = m_events.begin();
                 while (off != on)
                 {
-                    /*
-                     * TODO:  Use link-note
-                     */
-
                     event & eoff = dref(off);
                     endfound = link_notes(eon, eoff);
                     if (endfound)

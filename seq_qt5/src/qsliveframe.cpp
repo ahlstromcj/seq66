@@ -1206,7 +1206,7 @@ qsliveframe::handle_key_press (const keystroke & k)
     else
     {
         /*
-         * TODO: just let the timer callback handle this!!!
+         * We should just let the timer callback handle this!!!
          */
 
         if (perf().seq_edit_pending())
@@ -1328,7 +1328,7 @@ qsliveframe::copy_sequence ()
 
 /**
  * \todo
- *      Dialog warning that the editor is the reason this seq cant be cut.
+ *      Dialog warning that the editor is the reason this seq can't be cut.
  */
 
 void
@@ -1336,7 +1336,7 @@ qsliveframe::cut_sequence ()
 {
     if (qslivebase::cut_seq())
     {
-        // TODO
+        // See above
     }
 }
 
@@ -1350,6 +1350,7 @@ qsliveframe::delete_sequence ()
 {
     if (qslivebase::delete_seq())
     {
+        // See above
     }
 }
 

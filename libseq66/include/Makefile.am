@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-09-01
+# \update      2020-09-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -88,6 +88,7 @@ pkginclude_HEADERS = \
  cfg/midicontrolfile.hpp \
  cfg/mutegroupsfile.hpp \
  cfg/notemapfile.hpp \
+ cfg/playlistfile.hpp \
  cfg/rcfile.hpp \
  cfg/rcsettings.hpp \
  cfg/recent.hpp \

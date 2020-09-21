@@ -1355,7 +1355,7 @@ pm_macosxcm_init (void)
             TRUE,
             (void *) (long) endpoint,
             &pm_macosx_in_dictionary,
-            i, 0                            /* client and port, TODO        */
+            i, 0                            /* client and port              */
         );
     }
 
@@ -1379,7 +1379,7 @@ pm_macosxcm_init (void)
             FALSE,
             (void *)(long) endpoint,
             &pm_macosx_out_dictionary,
-            i, 0                            /* client and port, TODO        */
+            i, 0                            /* client and port              */
         );
     }
     return pmNoError;

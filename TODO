@@ -1,4 +1,4 @@
-TODO for Seq66 0.91.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.91.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
 2019-04-13 to 2020-08-17
 
@@ -130,7 +130,7 @@ PATTERNS:
     -   When loading 2rock pattern 10(1) into the editor, adjust the length
         dropdown to match!
 
-Tons of TODOs in performer!
+Tons of TO DOs in performer!
 
     Do:
 
@@ -186,11 +186,11 @@ Seq66qt5/seq66qt5.cpp *:
 
 Seqtool/src/optionsfile.cpp (a low priority):
 
-    parse():  Investigate and fix all the TODOs.
+    parse():  Investigate and fix all the TO DOs.
 
 Seqtool/src/optionsfile.cpp (a low priority):
 
-    Investigate and fix all the TODOs.
+    Investigate and fix all the TO DOs.
 
 seq_qt5/src/qseqkeys.cpp:
 

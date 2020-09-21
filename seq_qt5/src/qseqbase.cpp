@@ -94,7 +94,7 @@ qseqbase::set_scroll_x (int x)
  *  Sets the vertical scroll value according to the current value of the
  *  vertical scroll-bar.
  *
- *  TODO:  use the height member.... see cppcheck as well.
+ *  Use the height member? See cppcheck as well.
  */
 
 void

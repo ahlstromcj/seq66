@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-09-01
+# \update      2020-09-19
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -139,6 +139,7 @@ libseq66_la_SOURCES = \
  cfg/midicontrolfile.cpp \
  cfg/mutegroupsfile.cpp \
  cfg/notemapfile.cpp \
+ cfg/playlistfile.cpp \
  cfg/rcfile.cpp \
  cfg/rcsettings.cpp \
  cfg/recent.cpp \

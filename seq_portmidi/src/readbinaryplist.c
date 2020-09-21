@@ -31,6 +31,8 @@
  *
  *  Based on ReadBinaryPList.m by Jens Ayton, 2007
  *
+ *  Used only for the Mac OSX implementation.
+ *
  *  Note that this code is intended to read preference files and has an upper
  *  bound on file size (currently 100MB) and assumes in some places that 32 bit
  *  offsets are sufficient.
@@ -537,7 +539,7 @@ bplist_read_file (char * filename)
     free(pldata.data);
 
     /*
-     * TODO:  We probably need to fclose() the file pointer here, as suggested
+     * We probably need to fclose() the file pointer here, as suggested
      * by cppcheck.
      */
 

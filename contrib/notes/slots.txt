@@ -19,7 +19,7 @@ Legacy and Seq66 Commands:
  queue                       9  play_ss,             Sets the playing screen-set (bank).
  snapshot_1                     playback,            Key pause, and MIDI for pause/start/stop.
  snapshot_2                     song_record,         Sets recording of a live song performance.
- keep_queue                     solo,                TODO, intended to solo track.
+ keep_queue                     solo,                Intended to solo track.
  show_seq_key                   thru,                Enables/disables the MIDI THRU control.
  start                          bpm_page_up,         Increments BMP by a configured page value.
  stop                           bpm_page_dn,         Decrements BMP by a configured page value.
@@ -36,9 +36,9 @@ Legacy and Seq66 Commands:
  rewind                         tap_bpm,             Tap key for estimating BPM.
  pointer_position               start,               Pause playback. Compare to playback above.
  tap_bpm                        stop,                Pause playback. Compare to playback above.
- toggle_mutes                   mod_snapshot_2,      The second snapshot key.  TODO.
- song_record                    toggle_mutes,        Song mute, unmute, and toggle?  TODO.
- oneshot_queue                  song_pointer,        Reposition the song pointer.  TODO.
+ toggle_mutes                   mod_snapshot_2,      The second snapshot key.
+ song_record                    toggle_mutes,        Song mute, unmute, and toggle?
+ oneshot_queue                  song_pointer,        Reposition the song pointer.
                                 keep_queue,          Set keep-queue (the "Q" button).
                                 slot_shift,          Used for sets > 32 patterns.
                                 reserved_2,          Reserved for expansion.

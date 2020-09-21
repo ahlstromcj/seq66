@@ -82,10 +82,6 @@ protected:
         return m_nametext_y * i;
     }
 
-private:
-
-    // virtual void update_midi_buttons () override { // TODO }
-
 protected:          // Qt overrides
 
     virtual void paintEvent (QPaintEvent *) override;

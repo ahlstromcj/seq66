@@ -636,7 +636,7 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
             for (i = i - 1; i >= 0; --i)
                 pm_free(m->buffers[i]);
 
-            pm_free(m->buffers);    /* TODO: zero out the pointers          */
+            pm_free(m->buffers);    /* zero out the pointers?               */
             m->max_buffers = 0;
             return pmInsufficientMemory;
         }
@@ -957,7 +957,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     }
     if (not_nullptr(driverInfo))
     {
-        // TODO
+        // Anything worth doing here?
     }
 
     /*
@@ -1064,7 +1064,7 @@ no_memory:
         );
         if (err != MMSYSERR_NOERROR)
         {
-            // TODO: handle the error
+            // Anything worth doing here to handle the error?
         }
         return pmHostError;
     }
@@ -1130,7 +1130,7 @@ winmm_in_close(PmInternal * midi)
         );
         if (err != MMSYSERR_NOERROR)
         {
-            // TODO: handle the error
+            // handle the error
         }
         return pmHostError;
     }
@@ -1237,7 +1237,7 @@ winmm_in_callback
 
             if (rslt != MMSYSERR_NOERROR)
             {
-                // TODO: handle the error
+                // handle the error
             }
         }
         else
@@ -1514,7 +1514,7 @@ no_memory:
         );
         if (err != MMSYSERR_NOERROR)
         {
-            // TODO: log the error
+            // log the error
         }
         return pmHostError;
     }
@@ -1584,7 +1584,7 @@ winmm_out_close (PmInternal * midi)
         );
         if (err != MMSYSERR_NOERROR)
         {
-            // TODO: handle the error
+            // handle the error
         }
         return pmHostError;
     }
@@ -1889,7 +1889,7 @@ winmm_write_byte
         m->hdr = hdr = get_free_output_buffer(midi);
         if (is_nullptr(hdr))
         {
-            // TODO: handle the error
+            // handle the error
         }
         midi->fill_base = (midibyte_t *) m->hdr->lpData;
         midi->fill_offset_ptr = (uint32_t *)(&(hdr->dwBytesRecorded));
@@ -2037,13 +2037,13 @@ winmm_out_callback
         );
         if (ret != MMSYSERR_NOERROR)
         {
-            // TODO: handle the error
+            // handle the error
         }
     }
     err = SetEvent(m->buffer_signal);   /* notify sender, buffer available  */
     if (! err)                          /* false -> error                   */
     {
-        // TODO: handle the error
+        // handle the error
     }
 }
 
@@ -2078,13 +2078,13 @@ winmm_streamout_callback
         MMRESULT r = midiOutUnprepareHeader(m->handle.out, hdr, sizeof(MIDIHDR));
         if (r != MMSYSERR_NOERROR)
         {
-            // TODO: handle the error
+            // handle the error
         }
     }
     err = SetEvent(m->buffer_signal);
     if (! err)                              /* false -> error */
     {
-        // TODO: handle the error
+        // handle the error
     }
 }
 

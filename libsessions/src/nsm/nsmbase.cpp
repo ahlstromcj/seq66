@@ -698,11 +698,9 @@ nsmbase::nsm_debug (const std::string & tag)
  */
 
 /**
- *  After calling this function and checking the return value,
- *  the caller should close out any "open" items and set up a new "session".
- *
- *  After that, call open_reply() with the boolean result of the new session
- *  setup. TODO.
+ *  After calling this function and checking the return value, the caller
+ *  should close out any "open" items and set up a new "session".  After that,
+ *  we call open_reply() with the boolean result of the new session setup.
  */
 
 bool
@@ -719,7 +717,7 @@ nsmbase::open_session ()
 }
 
 /**
- *  TODO? Send close message, quit, abort?
+ *  Send close message, quit, abort?
  */
 
 bool

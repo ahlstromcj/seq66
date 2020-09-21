@@ -348,7 +348,7 @@ wrkfile::read_string (int len)
             s = std::string(data);
         else
         {
-            // TODO: handle Unicode
+            // Handle Unicode:
             // s = m_wrk_data.m_codec->toUnicode(data);
         }
 #else
@@ -386,7 +386,7 @@ wrkfile::read_var_string ()
         result = std::string(data);
     else
     {
-        // TODO
+        // Handle Unicode:
         // result = m_wrk_data.m_codec->toUnicode(data);
     }
 #else

@@ -139,7 +139,7 @@ notemapper::pair::show () const
  */
 
 notemapper::notemapper () :
-    basesettings        (),
+    basesettings        ("Note Mapper"),
     m_map_type          (),
     m_note_minimum      (999),
     m_note_maximum      (0),
@@ -250,13 +250,13 @@ void
 notemapper::show () const
 {
     std::cout
-        << "Note-map Size: " << list().size() << "\n"
+        << "Note-map size: " << list().size() << "\n"
         << "         Type: " << map_type() << "\n"
         << "     Reversed: " << bool_to_string(map_reversed()) << "\n"
-        << " Note Minimum: " << note_minimum() << "\n"
-        << " Note Maximum: " << note_maximum() << "\n"
-        << "  Dev Channel: " << std::dec << device_channel() << "\n"
-        << "   GM Channel: " << std::dec << gm_channel() << "\n"
+        << " Note minimum: " << note_minimum() << "\n"
+        << " Note maximum: " << note_maximum() << "\n"
+        << "  Dev channel: " << std::dec << device_channel() << "\n"
+        << "   GM channel: " << std::dec << gm_channel() << "\n"
         << std::endl
         ;
     for (auto & np : list())

@@ -124,7 +124,8 @@ signals:
 
 private slots:
 
-    //  TODO: implement undo via selection of "None" for the wave type.
+    //  We should implement undo via selection of "None" for the wave type.
+    //
     //  bool on_focus_out_event (GdkEventFocus * p0);
 
     /*

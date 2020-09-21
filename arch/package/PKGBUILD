@@ -44,7 +44,7 @@ package() {
     cd "${srcdir}/${_pkgbasename}"
     make DESTDIR="${pkgdir}" install
 
-    # TODO?
+    # TO DO?
     # install -v -D -m 0644 "debian/${_pkgbasename}.xpm" "${pkgdir}/usr/share/pixmaps/${_pkgbasename}.xpm"
     # install -v -D -m 0644 "debian/${_pkgbasename}.desktop" "${pkgdir}/usr/share/applications/${_pkgbasename}.desktop"
 }

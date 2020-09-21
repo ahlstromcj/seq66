@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-17
+ * \updates       2020-09-21
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -37,7 +37,7 @@
 
 #include <map>
 
-#include "cfg/configfile.hpp"
+#include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -53,17 +53,18 @@ namespace seq66
  *  or used by the performer class.
  */
 
-class playlist : public configfile
+class playlist final : public basesettings
 {
 
     friend class performer;
+    friend class playlistfile;
 
 private:
 
     /**
      *  Holds an entry describing a song, to be used as the "second" in a map.
-     *  Also holds a copy of the key value.  Do we want the user to be
-     *  able to specify a title for the tune?
+     *  Also holds a copy of the key value.  Do we want the user to be able to
+     *  specify a title for the tune?
      */
 
     struct song_spec_t
@@ -180,17 +181,11 @@ private:
     static song_list sm_dummy;
 
     /**
-     *  Holds a reference to the performer for this playlist.
+     *  Holds a pointer to the performer for this playlist.  It is not owned
+     *  by this playlist, and is used only if it is not null.
      */
 
-    performer & m_performer;
-
-    /**
-     *  Holds the [comments] section of the file. It is a list of concatenated
-     *  lines.
-     */
-
-    std::string m_comments;
+    performer * m_performer;
 
     /**
      *  The list of playlists.
@@ -245,21 +240,14 @@ private:
 
     bool m_show_on_stdout;
 
-private:
-
-    /*
-     * Only the friend class performer is able to call this function.
-     */
+public:
 
     playlist
     (
-        performer & p,
-        const std::string & name,
-        rcsettings & rcs,
+        performer * p,
+        const std::string & filename,
         bool show_on_stdout = false
     );
-
-public:
 
     playlist () = delete;
     playlist (const playlist &) = delete;
@@ -267,10 +255,7 @@ public:
     playlist (playlist &&) = default;
     playlist & operator = (playlist &&) = default;
 
-    virtual ~playlist ();               // how to hide this???
-
-    virtual bool parse ();
-    virtual bool write ();
+    virtual ~playlist ();
 
     void show () const;
     void test ();
@@ -326,6 +311,11 @@ public:
         return int(m_play_lists.size());
     }
 
+    bool empty () const
+    {
+        return m_play_lists.empty();
+    }
+
     std::string file_directory () const;
     std::string song_directory () const;
     bool is_own_song_directory () const;
@@ -343,8 +333,8 @@ public:
      *  playlist, two consecutive double quotes are used.
      */
 
-    std::string song_filename () const;     // base-name, optional directory
-    std::string song_filepath () const;     // for current song
+    std::string song_filename () const; /* base-name, optional directory    */
+    std::string song_filepath () const; /* for current song                 */
 
     int song_count () const
     {
@@ -358,7 +348,7 @@ public:
 
     void clear ();
     bool reset_list (bool clearit = false);
-    bool open (bool verify_it = true);
+    bool copy (const std::string & destination);
     bool add_list
     (
         int index, int midinumber,
@@ -395,30 +385,34 @@ public:
 
 private:
 
+    virtual bool set_error_message (const std::string & added) const override;
+
     /*
-     * We want to hide the internal structures from the caller.
+     * We want to hide the internal structures from the caller, except for the
+     * performer and playlistfile.
      */
 
     bool add_list (play_list_t & plist);
     void show_list (const play_list_t & pl) const;
 
     std::string song_filepath (const song_spec_t & s) const;
-    bool add_song (song_spec_t & sspec);                    // add to current list
+    bool add_song (song_spec_t & sspec);
     bool add_song (song_list & slist, song_spec_t & sspec);
     bool add_song (play_list_t & plist, song_spec_t & sspec);
     void show_song (const song_spec_t & pl) const;
-
-    void reorder_play_list ();                              // current list
-    void reorder_song_list (song_list & sl);                // current song list
-    bool scan_song_file (int & song_number, std::string & song_file);
-    bool set_error_message (const std::string & additional);
+    void reorder_play_list ();
+    void reorder_song_list (song_list & sl);
     bool set_file_error_message
     (
         const std::string & fmt,
         const std::string & filename
     );
     bool verify (bool strong = false);
-    bool copy (const std::string & destination);
+
+    play_list & play_list_map ()
+    {
+        return m_play_lists;
+    }
 
 };          // class playlist
 

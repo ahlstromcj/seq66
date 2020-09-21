@@ -20,23 +20,26 @@
  * \file          clinsmanager.cpp
  *
  *  This module declares/defines the main module for the Non Session Manager
- *  control of seq66cli.
+ *  control of seq66cli and qseq66.
  *
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-17
+ * \updates       2020-09-20
  * \license       GNU GPLv2 or above
  *
- *  Duty now for the future!
- *
+ *  This object also works if there is no session manager in the build.  It
+ *  handles non-session startup as well.
  */
+
 
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "os/daemonize.hpp"             /* seq66::pid_exists()              */
-#include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager              */
+#include "play/playlist.hpp"            /* seq66::playlist class            */
+#include "cfg/playlistfile.hpp"         /* seq66::playlistfile class        */
+#include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
 #include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
 
 #if defined SEQ66_NSM_SUPPORT
@@ -213,7 +216,7 @@ clinsmanager::save_session (std::string & msg)
 bool
 clinsmanager::run ()
 {
-    // TODO:  see the while (! seq66::session_close()) loop
+    // see the while (! seq66::session_close()) loop
 
 #if defined THIS_CODE_IS_READY
 
@@ -242,6 +245,10 @@ clinsmanager::run ()
  *  The NSM daemon creates the directory for this project after dropping the
  *  client ID (seq66.nYMVC).  We append the client ID and create this
  *  directory, followng the lead of Non-Mixer and Qtractor.
+ *
+ *  Note:
+ *
+ *      At this point, the performer [perf()] does not yet exist!
  */
 
 bool
@@ -262,11 +269,12 @@ clinsmanager::create_project (const std::string & path)
         std::string midifilepath = path + "/midi/";
         std::string rcfile = cfgfilepath + rc().config_filename();
         bool already_created = file_exists(rcfile);
+        pathprint("File exists", rcfile);               /* comforting       */
         if (already_created)
         {
             std::string errmessage;
-            rc().full_config_directory(cfgfilepath);  /* set NSM directory    */
-            rc().midi_filepath(midifilepath);         /* set MIDI directory   */
+            rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
+            rc().midi_filepath(midifilepath);           /* set MIDI dir     */
             pathprint("NSM MIDI file path", rc().midi_filepath());
             pathprint("NSM MIDI file name", rc().midi_filename());
             result = cmdlineopts::parse_options_files(errmessage);
@@ -312,38 +320,144 @@ clinsmanager::create_project (const std::string & path)
                  * now, in case the session manager tells the app to quit
                  * (without saving).  We need to replace the path part, if
                  * any, in the playlist and notemapper file-names, and prepend
-                 * the new home directory.
+                 * the new home directory.  Note that, at this point, the
+                 * performer has not yet been created.
                  */
 
-                std::string file = rc().playlist_filename();
-                file = file_path_set(file, cfgfilepath);
-                rc().playlist_filename(file);
-                file = rc().notemap_filename();
-                file = file_path_set(file, cfgfilepath);
-                rc().notemap_filename(file);
+                std::string srcplayfile = rc().playlist_filename();
+                std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
+                std::string srcnotefile = rc().notemap_filename();
+                std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
                 warnprint("Saving initial config files to session directory");
                 usr().save_user_config(true);
+                rc().playlist_filename(dstplayfile);
+                rc().notemap_filename(dstnotefile);
                 result = cmdlineopts::write_options_files();
                 if (result)
                 {
-                    pathprint("create_project()", "Play-list save");
-                    result = perf()->save_playlist();
+                    std::string s("Temp");
+                    performer * p(nullptr);
+                    std::shared_ptr<playlist> plp;
+                    plp.reset(new (std::nothrow) playlist(p, s, false));
+                    result = bool(plp);
+                    if (result)
+                        result = save_playlist(plp, srcplayfile, dstplayfile);
+
                     if (result)
                     {
                         std::string destination = rc().midi_filepath();
-                        pathprint("create_project()", "MIDI file copy");
-                        result = perf()->copy_playlist(destination);
-                    }
-                    if (result)
-                    {
-                        pathprint("create_project()", "Note-mapper save");
-                        result = perf()->save_note_mapper();
+                        result = copy_playlist(plp, srcplayfile, dstplayfile);
                     }
                 }
                 else
-                    errprint("Initial config writes failed");
+                {
+                    errprint("Play-list does not exist");
+                }
+#if defined THIS_CODE_IS_READY
+                if (perf()->notemap_exists())
+                {
+                    if (result)
+                    {
+                        std::string destination = rc().notemap_filename();
+                        pathprint("Note-mapper save", destination);
+                        result = perf()->save_note_mapper(destination);
+                    }
+                    else
+                        errprint("Initial config writes failed");
+                }
+                else
+                {
+                    errprint("Note-mapper does not exist");
+                }
+#endif
             }
         }
+    }
+    return result;
+}
+
+/**
+ *  This function reads the original playlist file (without using the
+ *  performer, which is not yet created at this time), and then saves it to
+ *  the new location.
+ *
+ *  \param [out] plp
+ *      Provides a pointer to the playlist, which is created anew with no
+ *      performer attached to it, just for reading the playlist data into this
+ *      object.
+ *
+ *  \param source
+ *      Provides the input file name from which the playlist will be filled.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+clinsmanager::save_playlist
+(
+    std::shared_ptr<playlist> plp,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    std::string msg = source + " --> " + destination;
+    bool result = bool(plp);
+    pathprint("Play-list save", msg);
+    if (result)
+    {
+        playlistfile plf(source, *plp, rc(), false);
+        result = plf.open(false);               /* parse, no file verify    */
+        if (result)
+        {
+            plf.name(destination);
+            result = plf.write();
+            if (! result)
+                pathprint("Write failed", destination);
+        }
+        else
+            file_error("Open failed", source);
+    }
+    return result;
+}
+
+/**
+ *  This function uses the playlist to copy all of the MIDI files noted in the
+ *  source playlist file.
+ *
+ *  \param [in] plp
+ *      Provides a pointer to the playlist, which should have been filled with
+ *      playlist data.
+ *
+ *  \param source
+ *      Simply provides the input file name for information only.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+clinsmanager::copy_playlist
+(
+    std::shared_ptr<playlist> plp,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    std::string msg = source + " --> " + destination;
+    bool result = bool(plp);
+    pathprint("Play-list copy", msg);
+    if (result)
+    {
+        result = plp->copy(destination);
+        if (! result)
+            pathprint("Copy failed", destination);
     }
     return result;
 }

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-14
+ * \updates       2020-09-20
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -236,7 +236,7 @@ smanager::main_settings (int argc, char * argv [])
  *          the client ID.
  *      -#  create_project().  This function firsts makes sure that the client
  *          directory [$HOME/NSM Sessions/Session/seq66.nXYZZ] exists.
- *          It then gets the session configuration.  TODO: Do we want to
+ *          It then gets the session configuration.  Do we want to
  *          reload a complete set of configuration files from this directory,
  *          or just a session-specific subset from an "nsm" file ???
  *          Most of this work is in the non-GUI-specific clinsmanager
@@ -327,7 +327,11 @@ smanager::open_playlist ()
             }
             else
             {
-                append_error_message(perf()->playlist_error_message());
+                // append_error_message(perf()->playlist_error_message());
+                // append_error_message(perf()->error_message());
+                std::string msg = "Open failed: ";
+                msg += playlistname;
+                append_error_message(msg);
                 result = true;                          /* avoid early exit  */
             }
         }
@@ -696,13 +700,20 @@ smanager::error_handling ()
 bool
 smanager::create (int argc, char * argv [])
 {
-    bool result = main_settings(argc, argv); // bool ok = true;
+    bool result = main_settings(argc, argv);
     if (result)
     {
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
+#if defined SEQ66_PLATFORM_DEBUG
+            (void) create_project("/home/ahlstrom/tmp/playlist");
+#else
             if (manager_path() != "None")
+            {
+                pathprint("Manager path", manager_path());
                 (void) create_project(manager_path());
+            }
+#endif
         }
         result = create_performer();        /* fails if performer not made  */
         if (result)

@@ -24,11 +24,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-01-17
- * \updates       2019-01-18
+ * \updates       2019-09-21
  * \license       GNU GPLv2 or above
  *
  */
 
+#include "util/basic_macros.hpp"        /* the C++ errprint() macro         */
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 
 /**
@@ -50,37 +51,14 @@ namespace seq66
  *  Default constructor.
  */
 
-basesettings::basesettings () :
-    m_ordinal_version           (SEQ66_ORDINAL_VERSION),
-    m_comments_block            ()      /* [comments]                       */
+basesettings::basesettings (const std::string & filename) :
+    m_ordinal_version   (SEQ66_ORDINAL_VERSION),
+    m_comments_block    (),                         /* [comments]   */
+    m_file_name         (filename),
+    m_error_message     (),
+    m_is_error          ()
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
-}
-
-/**
- *  Copy constructor.
- */
-
-basesettings::basesettings (const basesettings & rhs) :
-    m_ordinal_version           (rhs.m_ordinal_version),
-    m_comments_block            (rhs.m_comments_block)
-{
-    // Empty body; no need to call normalize() here.
-}
-
-/**
- *  Principal assignment operator.
- */
-
-basesettings &
-basesettings::operator = (const basesettings & rhs)
-{
-    if (this != &rhs)
-    {
-        m_ordinal_version       = rhs.m_ordinal_version;
-        m_comments_block        = rhs.m_comments_block;
-    }
-    return *this;
 }
 
 /**
@@ -92,12 +70,14 @@ basesettings::operator = (const basesettings & rhs)
 void
 basesettings::set_defaults ()
 {
-    m_ordinal_version           = SEQ66_ORDINAL_VERSION;
-
     /*
      * m_comments_block.clear();
      */
 
+    m_ordinal_version = SEQ66_ORDINAL_VERSION;
+    m_file_name.clear();
+    m_error_message.clear();
+    m_is_error = false;
     normalize();                            // recalculate derived values
 }
 
@@ -116,6 +96,31 @@ void
 basesettings::normalize ()
 {
     // \todo
+}
+
+/**
+ * \return
+ *      Returns false if there is an error message in force.
+ */
+
+bool
+basesettings::set_error_message (const std::string & em) const
+{
+    bool result = em.empty();
+    if (result)
+    {
+        m_error_message.clear();
+        m_is_error = false;
+    }
+    else
+    {
+        if (! m_error_message.empty())
+            m_error_message += "; ";
+
+        m_error_message += em;
+        errprint(em);
+    }
+    return result;
 }
 
 }           // namespace seq66

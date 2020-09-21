@@ -1086,7 +1086,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         }
 
         /*
-         * TODO here and in sequencer64!!!!
+         * Here and in sequencer64!!!!
          */
 
         if (event->button() == Qt::RightButton)

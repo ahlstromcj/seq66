@@ -355,7 +355,7 @@ reroute_stdio (const std::string & logfile, bool closem)
 /*
  *  Session-handling is Linux-only.
  *
- * TODO:  Make these values atomic?
+ *  Make these values atomic?
  */
 
 static bool sg_needs_close = false;

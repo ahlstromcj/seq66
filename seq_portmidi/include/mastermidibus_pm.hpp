@@ -77,7 +77,7 @@ protected:
     virtual void api_set_beats_per_minute (midibpm bpm);
 
     /*
-     * TODO
+     * Are these necessary?
      *
     virtual void api_flush ();
     virtual void api_start ();

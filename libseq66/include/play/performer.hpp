@@ -973,9 +973,19 @@ public:
     bool open_note_mapper (const std::string & notefile);
     bool save_note_mapper (const std::string & notefile = "");
 
+    bool notemap_exists () const
+    {
+        return bool(m_note_mapper);
+    }
+
     /*
      * Start of playlist accessors.  Playlist functionality.
      */
+
+    bool playlist_exists () const
+    {
+        return bool(m_play_list);
+    }
 
     int playlist_count () const
     {
@@ -994,7 +1004,7 @@ public:
 
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
-    bool copy_playlist (const std::string & destination);
+//  bool copy_playlist (const std::string & destination);
 
     bool remove_playlist ()
     {
@@ -1013,7 +1023,7 @@ public:
 
     std::string playlist_filename () const
     {
-        return m_play_list->name();
+        return m_play_list->file_name();
     }
 
     std::string playlist_midi_base () const

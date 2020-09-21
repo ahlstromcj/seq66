@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-01-17
- * \updates       2019-02-09
+ * \updates       2019-09-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines some items common to all configuration files that get
@@ -76,11 +76,29 @@ private:
 
     comments m_comments_block;
 
+    /**
+     *  Provides an optional name for the settings object.
+     */
+
+    std::string m_file_name;
+
+    /**
+     *  Holds a buffer of error message(s).
+     */
+
+    mutable std::string m_error_message;
+
+    /**
+     *  Indicates if the error message buffer contains error messages.
+     */
+
+    mutable bool m_is_error;
+
 public:
 
-    basesettings ();
-    basesettings (const basesettings & rhs);
-    basesettings & operator = (const basesettings & rhs);
+    basesettings (const std::string & name = "");
+    basesettings (const basesettings & rhs) = default;
+    basesettings & operator = (const basesettings & rhs) = default;
     virtual ~basesettings ()
     {
         // default, member automatically deleted
@@ -91,47 +109,49 @@ public:
 
 public:
 
-    /**
-     * \getter m_ordinal_version
-     */
-
     int ordinal_version () const
     {
         return m_ordinal_version;
     }
-
-    /**
-     * \getter m_comments_block
-     */
 
     const comments & comments_block () const
     {
         return m_comments_block;
     }
 
-    /**
-     * \getter m_comments_block
-     */
-
     comments & comments_block ()
     {
         return m_comments_block;
     }
 
-protected:
+    const std::string & error_message () const
+    {
+        return m_error_message;
+    }
 
-    /**
-     * \setter m_ordinal_version
-     */
+    virtual bool set_error_message (const std::string & em) const;
+
+    bool is_error () const
+    {
+        return m_is_error;
+    }
+
+    const std::string & file_name () const
+    {
+        return m_file_name;
+    }
+
+    void file_name (const std::string & fn)
+    {
+        m_file_name = fn;
+    }
+
+protected:
 
     void ordinal_version (int value)
     {
         m_ordinal_version = value;
     }
-
-    /**
-     * \setter m_ordinal_version
-     */
 
     void increment_ordinal_version ()
     {

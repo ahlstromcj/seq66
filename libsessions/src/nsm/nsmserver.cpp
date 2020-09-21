@@ -62,7 +62,6 @@ create_nsmserver ()
     std::string url = nsm::get_url();
     if (! url.empty())
     {
-        // TODO:
         // result.reset(new nsmserver(url));
     }
     return result;

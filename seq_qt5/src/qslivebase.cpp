@@ -177,7 +177,7 @@ qslivebase::copy_seq ()
 }
 
 /**
- * TODO: dialog warning that the editor is the reason this seq cant be cut.
+ * Need a dialog warning that the editor is the reason this seq cant be cut.
  */
 
 bool

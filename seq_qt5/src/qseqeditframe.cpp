@@ -526,13 +526,11 @@ qseqeditframe::conditional_update ()
     update_midi_buttons();                      /* mirror current states    */
     if (expandrec)
     {
-        // TODO
         // set_measures(get_measures() + 1);
         // follow_progress(expandrec);             /* keep up with progress    */
     }
     else if (not_nullptr(m_seqroll) && m_seqroll->progress_follow())
     {
-        // TODO
         // follow_progress();
     }
     if (seq_pointer()->check_loop_reset()) // || seq_pointer()->is_dirty_edit())

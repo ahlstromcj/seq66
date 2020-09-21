@@ -382,11 +382,11 @@ qperfeditframe64::set_guides ()
 }
 
 /**
- *  TODO: Would be called by the parent perhaps, using the
+ *  Would be called by the parent perhaps, using the
  *  on_resolution_change() function
  */
 
-#ifdef TODO
+#ifdef USE_HANDLING_OF_BPM_PPQN_CHANGES
 
 bool
 qperfeditframe64::change_ppqn (int ppqn)

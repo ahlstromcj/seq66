@@ -750,13 +750,10 @@ editable_event::set_status_from_string
             else
             {
                 /*
-                 * Parse the string of (potentially) hex digits.
-                 *
-                 * TODO:
-                 *
-                 * However, we still need to determine the length
-                 * value and allocate the midibyte array ahead of time, or add
-                 * a function to set sysex.
+                 * Parse the string of (potentially) hex digits.  However, we
+                 * still need to determine the length value and allocate the
+                 * midibyte array ahead of time, or add a function to set
+                 * SysEx.
                  */
 
                 std::string::size_type pos = sd0.find_first_of("0123456789x");

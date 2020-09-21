@@ -1328,10 +1328,10 @@ jack_assistant::session_event ()
         jack_session_reply(m_jack_client, m_jsession_ev);
 
         /****
-         * TODO TODO TODO
          *
         if (m_jsession_ev->type == JackSessionSaveAndQuit)
             m_jack_parent.gui().quit();
+         *
          */
 
         jack_session_event_free(m_jsession_ev);
@@ -1364,8 +1364,9 @@ jack_session_callback (jack_session_event_t * ev, void * arg)
     jack_assistant * jack = (jack_assistant *)(arg);
     jack->m_jsession_ev = ev;
     /*
-     * TODO TODO
+     *
     jack->parent().gui().jack_idle_connect(*jack);      // see note above
+     *
      */
 }
 

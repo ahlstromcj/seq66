@@ -151,8 +151,6 @@ PPQN Life Cycle:
         After parsing, set usr().file_ppqn() to hold the value, and call
         performer::change_ppqn().
 
-TODO:
-
     midi_alsa_info and whole rtmidi API:
 
         Combine api_set_ppqn() and api_set_beats_per_minute() if feasible.
