@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-07
+ * \updates       2020-09-24
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -221,8 +221,21 @@ void
 sequence::modify ()
 {
     set_dirty();
-    if (not_nullptr(m_parent))
-        m_parent->notify_sequence_change(seq_number()); /* m_parent->modify() */
+
+    /*
+     * Issue #19: Crash when recording note.
+     *
+     * This call eventually causes the "64" version of the edit frame to
+     * crash, and also makes it do a lot of unnecessary rebuilding of the grid
+     * buttons.  So we revert to the original call.  There's a chance this
+     * might cause updates to be missed, but that's a lesser issue than a
+     * segfault.
+     *
+     * if (not_nullptr(m_parent))
+     *     m_parent->notify_sequence_change(seq_number());
+     */
+
+    m_parent->modify();
 }
 
 /**
