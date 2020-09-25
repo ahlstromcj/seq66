@@ -153,7 +153,7 @@ protected:
     (
         const keystroke & k, bool success
     ) override;
-    virtual bool on_sequence_change (seq::number seqno) override;
+    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
     virtual bool on_trigger_change (seq::number seqno) override;
     virtual void keyPressEvent (QKeyEvent * event) override;
 

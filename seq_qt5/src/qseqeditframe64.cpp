@@ -1191,7 +1191,7 @@ qseqeditframe64::keyReleaseEvent (QKeyEvent *)
  */
 
 bool
-qseqeditframe64::on_sequence_change (seq::number seqno)
+qseqeditframe64::on_sequence_change (seq::number seqno, bool /*recreate*/)
 {
     bool result = seqno == seq_pointer()->seq_number();
     if (result)
@@ -1387,7 +1387,7 @@ qseqeditframe64::reset_beats_per_measure ()
     ui->m_combo_bpm->setCurrentIndex(SEQ66_DEFAULT_BEATS_PER_MEASURE - 1);
 
     seq::number seqno = seq_pointer()->seq_number();
-    perf().notify_sequence_change(seqno);       // FIXME
+    perf().notify_sequence_change(seqno, performer::change::recreate);
 }
 
 /**

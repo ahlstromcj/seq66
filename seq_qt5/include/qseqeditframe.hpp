@@ -140,15 +140,7 @@ private:
     }
 
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
-    virtual bool on_sequence_change (seq::number seqno) override
-    {
-        bool result = bool(seq_pointer()) && seqno == seq_pointer()->seq_number();
-        if (result)
-        {
-            // TODO
-        }
-        return result;
-    }
+    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
 
     /*
      * virtual bool on_group_learn (bool state) override;

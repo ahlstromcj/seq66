@@ -514,11 +514,12 @@ performer::notify_mutes_change (mutegroup::number mutesno, change mod)
 void
 performer::notify_sequence_change (seq::number seqno, change mod)
 {
+    bool redo = mod == change::recreate;
     for (auto notify : m_notify)
-        (void) notify->on_sequence_change(seqno);
+        (void) notify->on_sequence_change(seqno, redo);
 
     seq::pointer s = get_sequence(seqno);
-    if (mod == change::yes)
+    if (mod == change::yes || redo)
         modify();
 }
 
@@ -2349,7 +2350,7 @@ performer::set_right_tick (midipulse tick, bool setstart)
 }
 
 /**
- *
+ *  Also modify()'s.
  */
 
 bool
@@ -2360,7 +2361,7 @@ performer::set_sequence_name (seq::pointer s, const std::string & name)
     {
         seq::number seqno = s->seq_number();
         s->set_name(name);
-        notify_sequence_change(seqno);  /* also modify()'s              */
+        notify_sequence_change(seqno, performer::change::recreate);
         set_needs_update();             /* tell GUIs to refresh. FIXME  */
     }
     return result;
@@ -3209,7 +3210,7 @@ performer::poll_cycle ()
                     {
                         if (midi_control_event(ev, true))   /* quick check  */
                         {
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                             std::string estr = to_string(ev);
                             infoprintf("MIDI ctrl event %s", estr);
 #endif
@@ -3218,10 +3219,12 @@ performer::poll_cycle ()
                         {
                             ev.set_timestamp(get_tick());
 #if defined SEQ66_PLATFORM_DEBUG
-                            ev.print_note();
-#endif
+                            if (rc().verbose())
+                                ev.print_note();
+
                             if (rc().show_midi())
                                 ev.print();
+#endif
 
                             if (m_filter_by_channel)
                                 m_master_bus->dump_midi_input(ev);

@@ -229,13 +229,14 @@ sequence::modify ()
      * crash, and also makes it do a lot of unnecessary rebuilding of the grid
      * buttons.  So we revert to the original call.  There's a chance this
      * might cause updates to be missed, but that's a lesser issue than a
-     * segfault.
-     *
-     * if (not_nullptr(m_parent))
-     *     m_parent->notify_sequence_change(seq_number());
+     * segfault.  But now we have added a feature that a complete recreation
+     * requires a performer::change::recreate value; the default is
+     * performer::change::yes.
      */
 
-    m_parent->modify();
+     notify_change();
+
+    //// m_parent->modify();
 }
 
 /**
@@ -4237,6 +4238,10 @@ sequence::set_midi_bus (char mb, bool user_change)
         m_bus = mb;
         if (user_change)
             modify();                   /* no easy way to undo this, though */
+
+        /*
+         * TODO: add a recreate flag
+         */
 
         notify_change();                /* more reliable than set dirty     */
         set_dirty();                    /* this is for display updating     */

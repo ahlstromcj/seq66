@@ -194,7 +194,11 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change (seq::number /* seqno */)
+        virtual bool on_sequence_change
+        (
+            seq::number /* seqno */,
+            bool /* recreate [versus simple update] */
+        )
         {
             return false;
         }
@@ -282,13 +286,16 @@ public:
 
     /**
      *  A visible representation of whether to "modify" the tune.  Some changes
-     *  do not require the tune to be saved before closing.
+     *  do not require the tune to be saved before closing. The "recreate"
+     *  value is a stronger form of "yes", and additionally requests that key
+     *  elements of the notified object need to be recreated.
      */
 
     enum class change
     {
         no,
         yes,
+        recreate,
         undo
     };
 
