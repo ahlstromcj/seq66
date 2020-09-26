@@ -1,6 +1,6 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-09-12
+2015-09-10 to 2020-09-26
 
 "Seq66" is a refactoring of the Qt-based version of "Sequencer64" for better use
 of C++ and for removing a lot of krufty buildup.  With all the work that has
@@ -8,7 +8,7 @@ been done on it, "Seq66" is now the best-supported version of "Sequencer64".
 Linux users can build this application very easily from the source code.  See
 the INSTALL file.  Windows users can get an installer package on GitHub at:
 
-   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.5.exe
+   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe
 
 Major changes:
 
@@ -62,6 +62,8 @@ Recent changes:
         -   Bug fixes and minor improvements.
         -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
             linkage errors that cropped up in debug builds.
+    -   Version 0.90.6:
+        -   Fixed issue #19 where recording notes caused a segfault.
     -   Version 0.90.5:
         -   More refactoring to improve Windows builds and fix deadlocks and
             playback on a default Windows 10 install.
@@ -76,7 +78,5 @@ Recent changes:
             -   The data pane was some pixels off in the tabbed edit-frame.
             -   Fix a lot of issue with using sets and an 8x8 Seq66 grid.
         -   Improved error-handling and reporting.
-    -   Version 0.90.4:
-        -   Some refactoring to improve Windows builds.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

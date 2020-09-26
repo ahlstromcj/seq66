@@ -254,7 +254,7 @@ qseqeventframe::~qseqeventframe()
  */
 
 bool
-qseqeventframe::on_sequence_change (seq::number seqno)
+qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
 {
     bool result = m_seq && seqno == m_seq->seq_number();
     if (result)
@@ -267,7 +267,8 @@ qseqeventframe::on_sequence_change (seq::number seqno)
         }
         else
         {
-            initialize_table();
+            if (recreate)
+                initialize_table();
         }
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf("qseqeventframe::on_sequence_change(%d)\n", seqno);
@@ -803,7 +804,7 @@ qseqeventframe::handle_save ()
         if (ok)
         {
             seq::number seqno = m_seq->seq_number();
-            cb_perf().notify_sequence_change(seqno);       // FIXME
+            cb_perf().notify_sequence_change(seqno);
             ui->button_save->setEnabled(false);
             m_is_dirty = false;
 #if defined SEQ66_PLATFORM_DEBUG

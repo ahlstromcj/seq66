@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+#
 # This script runs libtool in order to execute a debugger.  For our projects,
 # the setup must avoid the --disable-share option.  So do this for our project:
 #
@@ -10,3 +11,9 @@
 
 MYDEBUGGER=cgdb
 libtool --mode=execute $MYDEBUGGER $*
+
+#******************************************************************************
+# debug
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------

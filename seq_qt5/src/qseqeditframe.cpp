@@ -1052,6 +1052,17 @@ qseqeditframe::on_resolution_change (int ppqn, midibpm bpm)
     return result;
 }
 
+bool
+qseqeditframe::on_sequence_change (seq::number seqno, bool redo)
+{
+    bool result = bool(seq_pointer()) && seqno == seq_pointer()->seq_number();
+    if (result && redo)
+    {
+        // TODO
+    }
+    return result;
+}
+
 /**
  *
  */

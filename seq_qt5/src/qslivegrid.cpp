@@ -226,7 +226,7 @@ qslivegrid::conditional_update ()
         {
             for (int row = 0; row < rows(); ++row)
             {
-                qslotbutton * pb = m_loop_buttons[column][row];
+                qslotbutton * pb = button(row, column);
                 if (not_nullptr(pb))
                 {
                     seq::pointer s = pb->loop();
@@ -740,9 +740,22 @@ qslivegrid::update_bank_name ()
  */
 
 void
-qslivegrid::update_sequence (seq::number seqno)
+qslivegrid::update_sequence (seq::number seqno, bool redo)
 {
-    alter_sequence(seqno);
+    if (redo)
+    {
+        alter_sequence(seqno);
+    }
+    else
+    {
+        int row, column;
+        if (perf().seq_to_grid(seqno, row, column))
+        {
+            qslotbutton * pb = button(row, column);
+            if (not_nullptr(pb))
+                pb->reupdate(true);
+        }
+    }
 }
 
 /**

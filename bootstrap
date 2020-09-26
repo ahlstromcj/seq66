@@ -130,9 +130,7 @@ Usage: ./bootstrap [options]                             (0.90.4-2020-07-06)
  --enable-debug (-ed), which adds --disable-shared and sets up the configure
  script for debugging without needing "libtool --mode=execute gdb seq66".
 E_O_F
-
    exit 1
-
 fi
 
 #******************************************************************************

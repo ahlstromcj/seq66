@@ -1,3 +1,32 @@
+2020-09-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README, VERSION, bootstrap, configure, configure.ac,
+	contrib/scripts/debug, contrib/scripts/qbuild, data/README,
+	data/license.txt, data/readme.txt,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, nsis/Seq66Constants.nsh,
+	nsis/Seq66Setup.nsi, nsis/build_release_package.bat: Improvements
+	related to fixing issue #19 segfault.
+
+2020-09-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/include/qseqeditframe.hpp,
+	seq_qt5/include/qseqeditframe64.hpp,
+	seq_qt5/include/qseqeventframe.hpp, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qseqeditframe.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Upgrade
+	related to issue #19, improvement to sequence-change handling to
+	update the UI appropriately.
+
+2020-09-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/play/sequence.cpp: Tentative fix for Crash when
+	recording note #19.
+
 2020-08-15  Chris Ahlstrom <ahlstromcj@gmail.com>
 
 	* libsessions/src/nsm/nsm.cpp, seq_portmidi/src/portmidi.c: Cleanup

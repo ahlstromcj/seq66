@@ -120,7 +120,7 @@ public:
 private:        /* performer::callback overrides    */
 
     virtual bool on_automation_change (automation::slot s) override;
-    virtual bool on_sequence_change (seq::number seqno) override;
+    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
 
 private:        /* qbase and qseqframe overrides    */

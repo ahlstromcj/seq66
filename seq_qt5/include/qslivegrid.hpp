@@ -122,7 +122,7 @@ private:                            // overrides of qslivebase functions
 
     virtual void update_bank (int bank) override;
     virtual void update_bank_name () override;
-    virtual void update_sequence (seq::number seqno) override;
+    virtual void update_sequence (seq::number seqno, bool redo) override;
     virtual void reupdate () override;
     virtual void update_geometry () override;
     virtual void change_event (QEvent *) override;

@@ -91,7 +91,7 @@ public:
 
 protected:
 
-    virtual bool on_sequence_change (seq::number seqno) override;
+    virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
 
     /*
      * virtual bool on_group_learn (bool state) override;

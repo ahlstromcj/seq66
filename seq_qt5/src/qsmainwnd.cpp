@@ -3174,11 +3174,11 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
  */
 
 bool
-qsmainwnd:: on_sequence_change (seq::number seqno)
+qsmainwnd:: on_sequence_change (seq::number seqno, bool redo)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
-        m_live_frame->update_sequence(seqno);
+        m_live_frame->update_sequence(seqno, redo);
 
     return result;
 }

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-09-13
+ * \updates       2020-09-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -194,7 +194,11 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change (seq::number /* seqno */)
+        virtual bool on_sequence_change
+        (
+            seq::number /* seqno */,
+            bool /* recreate [versus simple update] */
+        )
         {
             return false;
         }
@@ -282,13 +286,16 @@ public:
 
     /**
      *  A visible representation of whether to "modify" the tune.  Some changes
-     *  do not require the tune to be saved before closing.
+     *  do not require the tune to be saved before closing. The "recreate"
+     *  value is a stronger form of "yes", and additionally requests that key
+     *  elements of the notified object need to be recreated.
      */
 
     enum class change
     {
         no,
         yes,
+        recreate,
         undo
     };
 
@@ -989,121 +996,126 @@ public:
 
     int playlist_count () const
     {
-        return m_play_list->list_count();
+        return m_play_list ? m_play_list->list_count() : 0 ;
     }
 
     int song_count () const
     {
-        return m_play_list->song_count();
+        return m_play_list ? m_play_list->song_count() : 0 ;
     }
 
     bool playlist_reset ()
     {
-        return m_play_list->reset_list();
+        return m_play_list ? m_play_list->reset_list() : false ;
     }
 
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
-//  bool copy_playlist (const std::string & destination);
 
     bool remove_playlist ()
     {
-        return m_play_list->reset_list(true);
+        return m_play_list ? m_play_list->reset_list(true) : false ;
     }
 
     void playlist_show ()
     {
-        m_play_list->show();
+        if (m_play_list)
+            m_play_list->show();
     }
 
     void playlist_test ()
     {
-        m_play_list->test();
+        if (m_play_list)
+            m_play_list->test();
     }
 
     std::string playlist_filename () const
     {
-        return m_play_list->file_name();
+        return m_play_list ? m_play_list->file_name() : "" ;
     }
 
     std::string playlist_midi_base () const
     {
-        return m_play_list->midi_base_directory();
+        return m_play_list ? m_play_list->midi_base_directory() : "" ;
     }
 
     int playlist_midi_number () const
     {
-        return m_play_list->list_midi_number();
+        return m_play_list ? m_play_list->list_midi_number() : 0 ;
     }
 
     std::string playlist_name () const
     {
-        return m_play_list->list_name();
+        return m_play_list ? m_play_list->list_name() : "" ;
     }
 
     bool playlist_mode () const
     {
-        return m_play_list->mode();
+        return m_play_list ? m_play_list->mode() : false ;
     }
 
     void playlist_mode (bool on)
     {
-        m_play_list->mode(on);
+        if (m_play_list)
+            m_play_list->mode(on);
     }
 
     const std::string & playlist_error_message () const
     {
-        return m_play_list->error_message();
+        static std::string s_dummy;
+        return m_play_list ? m_play_list->error_message() : s_dummy ;
     }
 
     std::string file_directory () const
     {
-        return m_play_list->file_directory();
+        return m_play_list ? m_play_list->file_directory() : "" ;
     }
 
     std::string song_directory () const
     {
-        return m_play_list->song_directory();
+        return m_play_list ? m_play_list->song_directory() : "" ;
     }
 
     bool is_own_song_directory () const
     {
-        return m_play_list->is_own_song_directory();
+        return m_play_list ? m_play_list->is_own_song_directory() : false ;
     }
 
     std::string song_filename () const
     {
-        return m_play_list->song_filename();
+        return m_play_list ? m_play_list->song_filename() : "" ;
     }
 
     std::string song_filepath () const
     {
-        return m_play_list->song_filepath();
+        return m_play_list ? m_play_list->song_filepath() : "" ;
     }
 
     int song_midi_number () const
     {
-        return m_play_list->song_midi_number();
+        return m_play_list ? m_play_list->song_midi_number() : 0 ;
     }
 
     std::string playlist_song () const
     {
-        return m_play_list->current_song();
+        return m_play_list ? m_play_list->current_song() : "";
     }
 
     bool open_current_song ()
     {
-        return m_play_list->open_current_song();
+        return m_play_list ? m_play_list->open_current_song() : false ;
     }
 
     bool open_select_list_by_index (int index, bool opensong = true)
     {
-        return m_play_list->open_select_list_by_index(index, opensong);
+        return m_play_list ?
+            m_play_list->open_select_list_by_index(index, opensong) : false ;
     }
 
     bool open_select_list_by_midi (int ctrl, bool opensong = true)
     {
-        return m_play_list->select_list_by_midi(ctrl, opensong);
+        return m_play_list ?
+            m_play_list->select_list_by_midi(ctrl, opensong) : false ;
     }
 
     bool add_song
@@ -1113,7 +1125,8 @@ public:
         const std::string & directory
     )
     {
-        return m_play_list->add_song(index, midinumber, name, directory);
+        return m_play_list ?
+            m_play_list->add_song(index, midinumber, name, directory) : false ;
     }
 
     bool open_next_list (bool opensong = true)

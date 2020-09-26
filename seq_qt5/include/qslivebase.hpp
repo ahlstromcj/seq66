@@ -145,7 +145,7 @@ protected:
         // no code, see qslivegrid versus qsliveframe
     }
 
-    virtual void update_sequence (seq::number /*seqno*/)
+    virtual void update_sequence (seq::number /*seqno*/, bool /*redo*/)
     {
         // no code (yet), see qslivegrid versus qsliveframe
     }
