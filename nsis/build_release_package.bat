@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-08-14
+:: \update      2020-09-26
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -84,9 +84,10 @@
 ::       8. The installer is seq66/release/seq66_setup_0.90.1.exe, and it is
 ::          in the 'release' directory.  Move it out of this directory to a
 ::          safe place for transport. For example, assuming the current
-::          directory is 'release':
+::          directory is 'release'.  One of these can be run:
 ::
-::          $ mv seq66_setup_0.90.1.exe ../../seq66-packages/latest
+::          $ mv seq66_setup_0.90.1.exe ../../sequencer64-packages/seq66/0.90
+::          $ mv seq66_setup_0.90.1.exe ../../seq66-packages/... TO DO !!!
 ::
 ::       9. Make a portable Zip package:
 ::
@@ -111,7 +112,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.90.5
+set PROJECT_VERSION=0.90.6
 set PROJECT_DRIVE=C:
 
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66

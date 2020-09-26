@@ -56,6 +56,8 @@ and using a conventional source tarball.
 
 Recent changes:
 
+    -   Version 0.90.6:
+        -   Fixed issue #19 where recording notes caused a segfault.
     -   Version 0.90.5:
         -   More refactoring to improve Windows builds and fix deadlocks and
             playback on a default Windows 10 install.
@@ -70,21 +72,5 @@ Recent changes:
             -   The data pane was some pixels off in the tabbed edit-frame.
             -   Fix a lot of issue with using sets and an 8x8 Seq66 grid.
         -   Improved error-handling and reporting.
-    -   Version 0.90.4:
-        -   Some refactoring to improve Windows builds.
-    -   Version 0.90.3:
-        -   Added signal handling (e.g. for nsm-proxy) from user falkTX.
-            Used in the CLI and Qt versions to trigger file save and
-            application exit.
-        -   Added code to define the engine used and the exact "uname a-" of the
-            operating system on which the build was done, for the --version
-            option.
-        -   Fixed issue #5 to save/restore note-on resumes and get them
-            working in Live mode and Song mode.
-        -   Fixed issues with perfoll and grid-button rendering, synch between
-            button and seqedit mute status, growing notes in the seqroll, and
-            more.
-        -   Added writing of blank [midi-control-out] section.
-        -   Fixed flickering when muting/unmuting patterns via keystrokes.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh
