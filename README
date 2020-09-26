@@ -1,13 +1,13 @@
-README for Seq66 0.90.5 (Sequencer64 refactored for C++/14 and Qt 5)
+README for Seq66 0.90.6 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-08-15
+2015-09-10 to 2020-09-26
 
 "Seq66" is a refactoring of the Qt-based version "Sequencer64" for better use of
 C++ and for removing a lot of krufty buildup.  With all the work that has been
 done on it, "Seq66" is now the best-supported version of "Sequencer64". Windows
-users can get a portable or installer package on GitHub at
+users can get an installer package on GitHub at
 
-   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.5.exe
+   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe
 
 Major changes:
 
