@@ -1610,13 +1610,13 @@ qsmainwnd::new_session ()
             }
             if (text.isEmpty())
             {
-                pathprint("Session MIDI file", "Cleared");
+                file_message("Session MIDI file", "Cleared");
             }
             else
             {
                 std::string filenamebase = text.toStdString();
                 rc().session_midi_filename(filenamebase);
-                pathprint("Session MIDI file", rc().midi_filename());
+                file_message("Session MIDI file", rc().midi_filename());
             }
         }
     }

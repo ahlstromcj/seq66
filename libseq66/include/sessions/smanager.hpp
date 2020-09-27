@@ -186,7 +186,10 @@ public:
     virtual bool close_session (bool ok = true);
     virtual bool save_session (std::string & msg);
     virtual bool create_window ();
-    virtual bool create_project (const std::string & path) = 0;
+    virtual bool create_project
+    (
+        int argc, char * argv [], const std::string & path
+    ) = 0;
     virtual bool run () = 0;
 
     virtual void show_message

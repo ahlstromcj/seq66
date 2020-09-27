@@ -203,7 +203,7 @@ file_error (const std::string & tag, const std::string & path)
  */
 
 void
-pathprint (const std::string & tag, const std::string & path)
+file_message (const std::string & tag, const std::string & path)
 {
     std::cout << "[" << tag << ": " << path << "]" << std::endl;
 }

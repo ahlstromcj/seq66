@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-20
+ * \updates       2020-09-27
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -122,7 +122,11 @@ public:
     ) override;
     virtual bool close_session (bool ok = true) override;
     virtual bool save_session (std::string & msg) override;
-    virtual bool create_project (const std::string & path) override;
+    virtual bool create_project
+    (
+        int argc, char * argv [],
+        const std::string & path
+    ) override;
     virtual void show_error
     (
         const std::string & tag,

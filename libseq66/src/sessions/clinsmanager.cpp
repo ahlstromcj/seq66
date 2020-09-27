@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-20
+ * \updates       2020-09-27
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -137,10 +137,10 @@ clinsmanager::create_session (int argc, char * argv [])
             std::string exename = seq_arg_0();          /* "qseq66" */
             result = m_nsm_client->announce(appname, exename, capabilities());
             if (! result)
-                pathprint("create_session()", "failed to announce");
+                file_message("create_session()", "failed to announce");
         }
         else
-            pathprint("create_session()", "failed to make client");
+            file_message("create_session()", "failed to make client");
 
         nsm_active(result);
         usr().in_session(result);                       /* global flag      */
@@ -252,7 +252,11 @@ clinsmanager::run ()
  */
 
 bool
-clinsmanager::create_project (const std::string & path)
+clinsmanager::create_project
+(
+    int argc, char * argv [],
+    const std::string & path
+)
 {
     bool result = ! path.empty();
     if (result)
@@ -269,22 +273,30 @@ clinsmanager::create_project (const std::string & path)
         std::string midifilepath = path + "/midi/";
         std::string rcfile = cfgfilepath + rc().config_filename();
         bool already_created = file_exists(rcfile);
-        pathprint("File exists", rcfile);               /* comforting       */
+        file_message("File exists", rcfile);            /* comforting       */
         if (already_created)
         {
             std::string errmessage;
             rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
             rc().midi_filepath(midifilepath);           /* set MIDI dir     */
-            pathprint("NSM MIDI file path", rc().midi_filepath());
-            pathprint("NSM MIDI file name", rc().midi_filename());
+            file_message("NSM MIDI file path", rc().midi_filepath());
+            file_message("NSM MIDI file name", rc().midi_filename());
             result = cmdlineopts::parse_options_files(errmessage);
             if (result)
             {
-                /* reserved in case "rc"/"usr" options affect NSM usage */
+                /*
+                 * Perhaps at some point, the "rc"/"usr" options might affect
+                 * NSM usage.  In the meantime, we still need command-line
+                 * options, if present, to override the file-specified
+                 * options.  One big example is the --buss override.
+                 */
+
+                if (argc > 1)
+                    (void) cmdlineopts::parse_command_line_options(argc, argv);
             }
             else
             {
-                pathprint(errmessage, rc().config_filespec());
+                file_error(errmessage, rc().config_filespec());
             }
         }
         else
@@ -359,7 +371,7 @@ clinsmanager::create_project (const std::string & path)
                     if (result)
                     {
                         std::string destination = rc().notemap_filename();
-                        pathprint("Note-mapper save", destination);
+                        file_message("Note-mapper save", destination);
                         result = perf()->save_note_mapper(destination);
                     }
                     else
@@ -406,7 +418,7 @@ clinsmanager::save_playlist
 {
     std::string msg = source + " --> " + destination;
     bool result = bool(plp);
-    pathprint("Play-list save", msg);
+    file_message("Play-list save", msg);
     if (result)
     {
         playlistfile plf(source, *plp, rc(), false);
@@ -416,7 +428,7 @@ clinsmanager::save_playlist
             plf.name(destination);
             result = plf.write();
             if (! result)
-                pathprint("Write failed", destination);
+                file_message("Write failed", destination);
         }
         else
             file_error("Open failed", source);
@@ -452,12 +464,12 @@ clinsmanager::copy_playlist
 {
     std::string msg = source + " --> " + destination;
     bool result = bool(plp);
-    pathprint("Play-list copy", msg);
+    file_message("Play-list copy", msg);
     if (result)
     {
         result = plp->copy(destination);
         if (! result)
-            pathprint("Copy failed", destination);
+            file_message("Copy failed", destination);
     }
     return result;
 }
@@ -467,7 +479,7 @@ clinsmanager::session_manager_name (const std::string & mgrname)
 {
     smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
-        pathprint("CNS", mgrname);
+        file_message("CNS", mgrname);
 }
 
 void
@@ -475,7 +487,7 @@ clinsmanager::session_manager_path (const std::string & pathname)
 {
     smanager::session_manager_path(pathname);
     if (! pathname.empty())
-        pathprint("CNS", pathname);
+        file_message("CNS", pathname);
 }
 
 void
@@ -483,7 +495,7 @@ clinsmanager::session_display_name (const std::string & dispname)
 {
     smanager::session_display_name(dispname);
     if (! dispname.empty())
-        pathprint("CNS", dispname);
+        file_message("CNS", dispname);
 }
 
 void
@@ -491,7 +503,7 @@ clinsmanager::session_client_id (const std::string & clid)
 {
     smanager::session_client_id(clid);
     if (! clid.empty())
-        pathprint("CNS", clid);
+        file_message("CNS", clid);
 }
 
 /**

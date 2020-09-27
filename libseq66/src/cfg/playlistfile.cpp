@@ -201,7 +201,7 @@ playlistfile::parse ()
     std::ifstream file(name(), std::ios::in | std::ios::ate);
     bool result = ! name().empty() && file.is_open();
     if (result)
-        pathprint("Reading 'playlist'", name());
+        file_message("Reading 'playlist'", name());
     else
         file_error("Read open fail", name());
 
@@ -447,7 +447,7 @@ playlistfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        pathprint("Writing 'playlist'", name());
+        file_message("Writing 'playlist'", name());
     }
     else
     {

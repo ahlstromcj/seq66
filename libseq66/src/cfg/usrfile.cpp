@@ -608,7 +608,7 @@ usrfile::write ()
     std::ofstream file(name().c_str(), std::ios::out | std::ios::trunc);
     if (file.is_open())
     {
-        pathprint("Writing 'usr'", name());
+        file_message("Writing 'usr'", name());
     }
     else
     {

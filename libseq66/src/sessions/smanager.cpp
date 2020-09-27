@@ -493,7 +493,7 @@ smanager::save_session (std::string & msg)
     bool result = not_nullptr(perf());
     if (result)
     {
-        pathprint("save_session()", "Options save");
+        file_message("save_session()", "Options save");
         if (rc().auto_option_save())
         {
             result = cmdlineopts::write_options_files();
@@ -503,12 +503,12 @@ smanager::save_session (std::string & msg)
 
         if (result)
         {
-            pathprint("save_session()", "Play-list save");
+            file_message("save_session()", "Play-list save");
             result = perf()->save_playlist();
         }
         if (result)
         {
-            pathprint("save_session()", "Note-mapper save");
+            file_message("save_session()", "Note-mapper save");
             result = perf()->save_note_mapper();
         }
     }
@@ -703,13 +703,13 @@ smanager::create (int argc, char * argv [])
     {
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
-#if defined SEQ66_PLATFORM_DEBUG
-            (void) create_project("/home/ahlstrom/tmp/playlist");
+#if defined SEQ66_PLATFORM_DEBUG    // _TEST_NSM
+            (void) create_project(argc, argv, "/home/ahlstrom/tmp/playlist");
 #else
             if (manager_path() != "None")
             {
-                pathprint("Manager path", manager_path());
-                (void) create_project(manager_path());
+                file_message("Manager path", manager_path());
+                (void) create_project(argc, argv, manager_path());
             }
 #endif
         }
@@ -745,7 +745,7 @@ smanager::create (int argc, char * argv [])
                 else
                 {
                     // show_message("Opened", tmp);        /* fname */
-                    pathprint("Opened", tmp);                   /* fname */
+                    file_message("Opened", tmp);           /* fname */
                 }
             }
             result = create_window();

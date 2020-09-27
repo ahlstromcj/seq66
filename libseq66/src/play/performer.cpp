@@ -5872,14 +5872,14 @@ performer::save_playlist (const std::string & pl)
         if (! pl.empty())
         {
             m_play_list->file_name(pl);
-            pathprint("Play-list name", pl);
+            file_message("Play-list name", pl);
         }
         playlistfile plf(pl, *m_play_list, rc(), false);
         plf.name(pl);
         result = plf.write();       // m_play_list->write();
         if (! result)
         {
-            pathprint("Write failed", playlist_filename());
+            file_message("Write failed", playlist_filename());
             (void) error_message(m_play_list->error_message());
         }
     }

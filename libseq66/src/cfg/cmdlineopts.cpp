@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-12
+ * \updates       2020-09-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -339,6 +339,20 @@ cmdlineopts::show_help ()
         ;
 }
 
+#if defined SEQ66_PLATFORM_DEBUG
+
+static void
+show_args (const std::string & tag, int argc, char * argv [])
+{
+    std::cout << "Arguments " << tag << ":" << std::endl;
+    for (int i = 0; i < argc; ++i)
+    {
+        std::cout << i << ": '" << argv[i] << "'" << std::endl;
+    }
+}
+
+#endif
+
 /**
  *  Gets a compound option argument.  An option argument is a value flagged on
  *  the command line by the -o/--option options.  Each option has a value
@@ -607,12 +621,12 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
     if (contains(exename, "verbose"))       /* symlink to dev's program     */
     {
 #if defined SEQ66_PLATFORM_DEBUG
-        pathprint("Running debug version", argv[0]);
+        file_message("Running debug version", argv[0]);
 #else
-        pathprint("Running", argv[0]);
+        file_message("Running", argv[0]);
 #endif
         rc().verbose(true);                 /* turn on is_debug() output    */
-        pathprint(exename, "Verbose mode enabled");
+        file_message(exename, "Verbose mode enabled");
     }
     if (parse_o_options(argc, argv))
     {
@@ -682,7 +696,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rc());
-        pathprint("Reading 'rc'", rcn);
+        file_message("Reading 'rc'", rcn);
         if (options.parse())
         {
             // Nothing to do?
@@ -724,7 +738,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         rc().user_filename(uf);                     /* ca 2020-09-05    */
         rc().notemap_filename(nm);                  /* ca 2020-09-05    */
         rc().mute_groups().reset_defaults();
-        pathprint("No 'rc' file, will create", af);
+        file_message("No 'rc' file, will create", af);
     }
     if (result)
     {
@@ -732,7 +746,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         if (file_accessible(rcn))
         {
             usrfile ufile(rcn, rc());
-            pathprint("Reading 'usr'", rcn);
+            file_message("Reading 'usr'", rcn);
             if (ufile.parse())
             {
                 /*
@@ -751,7 +765,7 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         }
         else
         {
-            pathprint("No 'usr' file, will create", rcn);
+            file_message("No 'usr' file, will create", rcn);
         }
     }
     return result;
@@ -780,7 +794,7 @@ cmdlineopts::parse_mute_groups
     if (file_accessible(rcn))
     {
         rcfile options(rcn, rcs);
-        pathprint("Reading 'mutes'", rcn);
+        file_message("Reading 'mutes'", rcn);
         if (options.parse_mute_group_section(rcn, true))
         {
             // Nothing to do?
@@ -819,6 +833,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
     optind = 1;                             /* make sure this global is set */
+
+#if defined SEQ66_PLATFORM_DEBUG
+    show_args("Before", argc, argv);
+#endif
+
     for (;;)                                /* parse all command parameters */
     {
         int option_index = 0;               /* getopt_long index storage    */
@@ -883,7 +902,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'H':
             rc().full_config_directory(soptarg);
-            pathprint("Set home config to", rc().home_config_directory());
+            file_message("Set home config to", rc().home_config_directory());
             if (! make_directory_path(soptarg))
                 errprint("Could not create that directory");
             break;
@@ -1057,6 +1076,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         appname = appname.substr(appname.size()-applen, applen);
         result = optind;
     }
+
+#if defined SEQ66_PLATFORM_DEBUG
+    show_args("After", argc, argv);
+#endif
+
     return result;
 }
 

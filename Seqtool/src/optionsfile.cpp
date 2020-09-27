@@ -289,7 +289,7 @@ optionsfile::parse ()
                 rc_ref().midi_control_filename(filename);       /* base-name    */
                 fullpath = rc_ref().midi_control_filespec();    /* full path    */
                 fullpath = string_replace(fullpath, "66", "64");
-                pathprint("Legacy MIDI control file", fullpath);
+                file_message("Legacy MIDI control file", fullpath);
                 ok = parse_midi_control_section(fullpath);
                 if (! ok)
                 {

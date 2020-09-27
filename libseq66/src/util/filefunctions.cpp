@@ -578,7 +578,7 @@ file_name_good (const std::string & fname)
     {
         result = fname != "stdout" && fname != "stdin" && fname != "stderr";
         if (! result)
-            pathprint(T_("file-name invalid"), fname);
+            file_message(T_("file-name invalid"), fname);
     }
     return result;
 }
@@ -641,7 +641,7 @@ file_mode_good (const std::string & mode)
             }
         }
         if (! result)
-            pathprint(T_("file-mode invalid"), mode);
+            file_message(T_("file-mode invalid"), mode);
     }
     return result;
 }

@@ -467,7 +467,7 @@ get_pid_by_name (const std::string & exename)
         if (count > 0)
         {
             result = atoi(cmd);
-            pathprint(exename, std::to_string(result));
+            file_message(exename, std::to_string(result));
         }
     }
     return result;

@@ -107,7 +107,7 @@ extern bool info_message (const std::string & msg);
 extern bool warn_message (const std::string & msg);
 extern bool error_message (const std::string & msg);
 extern bool file_error (const std::string & tag, const std::string & filename);
-extern void pathprint (const std::string & tag, const std::string & path);
+extern void file_message (const std::string & tag, const std::string & path);
 extern void boolprint (const std::string & tag, bool flag);
 extern void toggleprint (const std::string & tag, bool flag);
 extern void msgprintf (seq66::msg_level lev, std::string fmt, ...);

@@ -281,7 +281,7 @@ mutegroupsfile::write ()
     bool result = file.is_open();
     if (result)
     {
-        pathprint("Writing 'mutes'", name());
+        file_message("Writing 'mutes'", name());
         result = write_stream(file);
         file.close();
     }

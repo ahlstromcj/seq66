@@ -193,7 +193,7 @@ notemapfile::parse ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        pathprint("Reading 'drums'", name());
+        file_message("Reading 'drums'", name());
         result = parse_stream(file);
 #if defined SEQ66_PLATFORM_DEBUG
         if (result && rc().verbose())
@@ -321,7 +321,7 @@ notemapfile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        pathprint("Writing 'drums'", name());
+        file_message("Writing 'drums'", name());
         result = write_stream(file);
         file.close();
     }

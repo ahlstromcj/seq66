@@ -289,7 +289,7 @@ playlist::verify (bool strong)
                         if (result)
                         {
                             if (rc().verbose())
-                                pathprint("Verified", fname);
+                                file_message("Verified", fname);
                         }
                         else
                         {
