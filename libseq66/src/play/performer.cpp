@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-09-26
+ * \updates       2020-09-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5800,9 +5800,10 @@ performer::save_note_mapper (const std::string & notefile)
 
 /**
  *  Creates a playlist object and opens it.  If there is a playlist object
- *  already in existence, it is replaced.
+ *  already in existence, it is replaced. If there is no playlist file-name,
+ *  then an "empty" playlist object is created.
  *
- *  We've also realized that the perform object needs to own the playlist.
+ *  The perform object needs to own the playlist.
  *
  * \param pl
  *      Provides the full path file-specification for the play-list file to be
@@ -5814,20 +5815,25 @@ performer::save_note_mapper (const std::string & notefile)
  *      making the CLI version of Sequencer64 easier to follow when running.
  *
  * \return
- *      Returns true if the playlist object was able to be opened, and the list
- *      read.  If false is returned, currently the bad playlist still exists,
- *      but is invalid and inactive.
+ *      Returns true if the playlist object was able to be created. If the
+ *      file-name is not empty, this also means that it was opened, and the
+ *      play-list read.  If false is returned, then the previous playlist, if
+ *      any, still exists, but is marked as inactive.
  */
 
 bool
 performer::open_playlist (const std::string & pl, bool show_on_stdout)
 {
-    bool result = false;
+    if (m_play_list)
+        m_play_list->mode(false);                           /* just in case */
+
     m_play_list.reset
     (
         new (std::nothrow) playlist(this, pl, show_on_stdout)
     );
-    if (m_play_list)
+
+    bool result = bool(m_play_list);
+    if (result && ! pl.empty())                 /* if have a playlist name  */
     {
         playlistfile plf(pl, *m_play_list, rc(), show_on_stdout);
         result = plf.open(true);                /* parse and file verify    */

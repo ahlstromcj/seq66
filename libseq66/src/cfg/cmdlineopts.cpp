@@ -818,7 +818,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     int result = 0;
     std::string optionval;                  /* used only with -o options    */
     std::string optionname;                 /* ditto                        */
-    optind = 0;
+    optind = 1;                             /* make sure this global is set */
     for (;;)                                /* parse all command parameters */
     {
         int option_index = 0;               /* getopt_long index storage    */

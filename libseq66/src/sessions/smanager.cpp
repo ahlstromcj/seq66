@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-20
+ * \updates       2020-09-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -318,17 +318,15 @@ smanager::open_playlist ()
          */
 
         std::string playlistname = rc().playlist_filespec();
+        result = perf()->open_playlist(playlistname, rc().verbose());
         if (! playlistname.empty())
         {
-            result = perf()->open_playlist(playlistname, rc().verbose());
             if (result)
             {
                 result = perf()->open_current_song();   /* p.playlist_test() */
             }
             else
             {
-                // append_error_message(perf()->playlist_error_message());
-                // append_error_message(perf()->error_message());
                 std::string msg = "Open failed: ";
                 msg += playlistname;
                 append_error_message(msg);
@@ -734,10 +732,21 @@ smanager::create (int argc, char * argv [])
             {
                 std::string errormessage;
                 std::string tmp = open_midi_file(fname, errormessage);
+                /*
+                 * We don't have a window at this time, and should save the
+                 * message for display later.  For now, we write to the console.
+                 */
+
                 if (tmp.empty())
-                    show_error(fname, errormessage);
+                {
+                    // show_error(fname, errormessage);
+                    file_error(errormessage, fname);
+                }
                 else
-                    show_message("Opened", tmp);        /* fname */
+                {
+                    // show_message("Opened", tmp);        /* fname */
+                    pathprint("Opened", tmp);                   /* fname */
+                }
             }
             result = create_window();
             if (result)

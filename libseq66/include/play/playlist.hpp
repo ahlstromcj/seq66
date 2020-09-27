@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-21
+ * \updates       2020-09-26
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -245,7 +245,7 @@ public:
     playlist
     (
         performer * p,
-        const std::string & filename,
+        const std::string & filename = "",
         bool show_on_stdout = false
     );
 
