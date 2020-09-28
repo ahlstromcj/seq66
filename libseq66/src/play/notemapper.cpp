@@ -28,7 +28,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2020-09-14
+ * \updates       2020-09-28
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -140,6 +140,7 @@ notemapper::pair::show () const
 
 notemapper::notemapper () :
     basesettings        ("Note Mapper"),
+    m_mode              (false),
     m_map_type          (),
     m_note_minimum      (999),
     m_note_maximum      (0),

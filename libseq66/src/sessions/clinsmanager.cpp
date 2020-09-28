@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-27
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -249,6 +249,19 @@ clinsmanager::run ()
  *  Note:
  *
  *      At this point, the performer [perf()] does not yet exist!
+ *
+ * \param argc
+ *      The command-line argument count.
+ *
+ * \param argv
+ *      The command-line argument list.
+ *
+ * \param path
+ *      The base configuration path.  For NSM usage, this will be a directory
+ *      for the project in the NSM session directory created by nsmd.  The
+ *      sub-directories "config" and "midi" will be created for use by NSM.
+ *      For normal usage, this directory will be the standard home directory
+ *      or the one specified by the --home option.
  */
 
 bool
@@ -269,8 +282,19 @@ clinsmanager::create_project
          * also created.
          */
 
-        std::string cfgfilepath = path + "/config/";
-        std::string midifilepath = path + "/midi/";
+        std::string cfgfilepath = path;
+        std::string midifilepath = path;
+        if (nsm_active())
+        {
+            cfgfilepath += "/config/";
+            midifilepath += "/midi/";
+        }
+        else
+        {
+            midifilepath.clear();
+            rc().midi_filename(midifilepath);
+        }
+
         std::string rcfile = cfgfilepath + rc().config_filename();
         bool already_created = file_exists(rcfile);
         file_message("File exists", rcfile);            /* comforting       */
@@ -279,8 +303,11 @@ clinsmanager::create_project
             std::string errmessage;
             rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
             rc().midi_filepath(midifilepath);           /* set MIDI dir     */
-            file_message("NSM MIDI file path", rc().midi_filepath());
-            file_message("NSM MIDI file name", rc().midi_filename());
+            if (! midifilepath.empty())
+            {
+                file_message("NSM MIDI file path", rc().midi_filepath());
+                file_message("NSM MIDI file name", rc().midi_filename());
+            }
             result = cmdlineopts::parse_options_files(errmessage);
             if (result)
             {
@@ -288,11 +315,16 @@ clinsmanager::create_project
                  * Perhaps at some point, the "rc"/"usr" options might affect
                  * NSM usage.  In the meantime, we still need command-line
                  * options, if present, to override the file-specified
-                 * options.  One big example is the --buss override.
+                 * options.  One big example is the --buss override. The
+                 * smanager::main_settings() function is called way before
+                 * create_project();
                  */
 
                 if (argc > 1)
+                {
                     (void) cmdlineopts::parse_command_line_options(argc, argv);
+                    (void) cmdlineopts::parse_o_options(argc, argv);
+                }
             }
             else
             {
@@ -309,7 +341,7 @@ clinsmanager::create_project
                 if (result)
                     rc().full_config_directory(cfgfilepath);
             }
-            if (result)
+            if (result && ! midifilepath.empty())
             {
                 result = make_directory_path(midifilepath);
                 if (result)
@@ -337,8 +369,14 @@ clinsmanager::create_project
                  */
 
                 std::string srcplayfile = rc().playlist_filename();
-                std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string srcnotefile = rc().notemap_filename();
+                if (srcplayfile.empty())
+                    srcplayfile = "empty.playlist";
+
+                if (srcnotefile.empty())
+                    srcnotefile = "empty.drums";
+
+                std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
                 warnprint("Saving initial config files to session directory");
                 usr().save_user_config(true);
@@ -431,7 +469,18 @@ clinsmanager::save_playlist
                 file_message("Write failed", destination);
         }
         else
+        {
+            /*
+             * There is no source playlist file, try to write an empty one.
+             *
+             * plf.name(destination);
+             * result = plf.write();
+             * if (! result)
+             *     file_message("Write failed", destination);
+             */
+
             file_error("Open failed", source);
+        }
     }
     return result;
 }

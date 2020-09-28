@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-21
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -121,8 +121,10 @@ rcsettings::rcsettings () :
     m_midi_control_filename     (),
     m_use_mute_group_file       (false),
     m_mute_group_filename       (),
+    m_playlist_active           (false),
     m_playlist_filename         (),
     m_playlist_midi_base        (),
+    m_notemap_active            (false),
     m_notemap_filename          (),
     m_application_name          (seq_app_name()),
     m_app_client_name           (seq_client_name()),
@@ -210,12 +212,14 @@ rcsettings::set_defaults ()
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
     m_user_filename = SEQ66_CONFIG_NAME; m_user_filename += ".usr";
-    m_use_midi_control_file     = false;
-    m_midi_control_filename     = "";
-    m_use_mute_group_file       = false;
+    m_use_midi_control_file = false;
+    m_midi_control_filename = "";
+    m_use_mute_group_file = false;
     m_mute_group_filename.clear();
+    m_playlist_active = false;
     m_playlist_filename.clear();
     m_playlist_midi_base.clear();
+    m_notemap_active = false;
     m_notemap_filename.clear();
 
     /*

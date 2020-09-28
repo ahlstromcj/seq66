@@ -1,7 +1,7 @@
 .TH Sequencer66 "September 2020" "Version 0.91.0" "Seq66 Manual Page"
 
 .SH NAME
-Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from Seq64
+Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from Sequencer64
 
 .SH SYNOPSIS
 .B qseq66
@@ -16,8 +16,9 @@ Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from Seq64
 \fISequencer66\fP is a real-time MIDI sequencer. It was created to
 provide a simple interface for editing and playing MIDI 'loops'.
 It uses only Qt 5 for the user interface.  It is functionally very
-similar to Sequencer64, but refactored to be simpler, more flexible,
-and faster.
+similar to Sequencer64, but simpler, more flexible, and faster.
+There are two possible executables, qseq66 and a command-line/daemon called
+seq66cli.
 
 .SH OPTIONS
 Sequencer66 accepts the following options, plus an optional name of
@@ -43,7 +44,7 @@ is not saved to the "rc" configuration file.
 .TP 8
 .B  \-H, \-\-home dir
 Set the directory that holds the configuration files.  It is always
-relative to the user's HOME directory.  The default is ./config/sequencer66.
+relative to the user's HOME directory:  The default is $HOME/.config/seq66.
 
 .TP 8
 .B  \-X, \-\-playlist filename

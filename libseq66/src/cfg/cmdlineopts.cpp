@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-27
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -180,8 +180,7 @@ cmdlineopts::s_help_1a =
 "   -V, --version            Show program version/build  information and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
-"                            always relative to $HOME.  The default is\n"
-"                            .config/seq66.\n"
+"                            relative to $HOME.  The default is .config/seq66.\n"
 #if defined SEQ66_LASH_SUPPORT
 "   -L, --lash               Activate built-in LASH support.\n"
 #endif
@@ -339,7 +338,7 @@ cmdlineopts::show_help ()
         ;
 }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
 
 static void
 show_args (const std::string & tag, int argc, char * argv [])
@@ -721,22 +720,17 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         std::string cf = file_extension_set(appname, ".ctrl");
         std::string mf = file_extension_set(appname, ".mutes");
         std::string uf = file_extension_set(appname, ".usr");
+        std::string pl = file_extension_set(appname, ".playlist");
         std::string nm = file_extension_set(appname, ".drums");
-        std::string af = appname + ".rc / ctrl / midi / mutes";
-
-        /*
-         * TODO:  Create a fake drums (note-mapper) file and a user file.
-         *        Also tighten up user and playlist file handling.
-         *
-         * std::string af = appname + ".rc / ctrl / midi / usr / drums";
-         */
+        std::string af = appname + ".rc/ctrl/midi/mutes/drums/playlist";
 
         rc().use_midi_control_file(true);
         rc().midi_control_filename(cf);
         rc().use_mute_group_file(true);
         rc().mute_group_filename(mf);
-        rc().user_filename(uf);                     /* ca 2020-09-05    */
-        rc().notemap_filename(nm);                  /* ca 2020-09-05    */
+        rc().user_filename(uf);
+        rc().playlist_filename(pl);
+        rc().notemap_filename(nm);
         rc().mute_groups().reset_defaults();
         file_message("No 'rc' file, will create", af);
     }
@@ -834,7 +828,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
     std::string optionname;                 /* ditto                        */
     optind = 1;                             /* make sure this global is set */
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     show_args("Before", argc, argv);
 #endif
 
@@ -1077,7 +1071,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         result = optind;
     }
 
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     show_args("After", argc, argv);
 #endif
 

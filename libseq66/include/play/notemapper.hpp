@@ -31,7 +31,7 @@
  * \library       libmidipp
  * \author        Chris Ahlstrom
  * \date          2014-04-24
- * \updates       2019-11-11
+ * \updates       2020-09-28
  * \version       $Revision$
  * \license       GNU GPL
  *
@@ -217,6 +217,13 @@ private:
  private:
 
     /**
+     *  Indicates if we are in drums mode.  Only true if the user specified
+     *  a valid drums (note-mapper) file that was successfully loaded.
+     */
+
+    bool m_mode;
+
+    /**
      *    Indicates what kind of mapping is allegedly provided by the file.
      *    This can be one of the following values:
      *
@@ -312,6 +319,16 @@ private:
     int convert (int incoming) const;
     std::string to_string (int devnote) const;
     void show () const;
+
+    bool mode () const
+    {
+        return m_mode;
+    }
+
+    void mode (bool m)
+    {
+        m_mode = m;
+    }
 
     /**
      *    Determines if the value parameter is usable, or "active".

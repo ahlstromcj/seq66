@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-17
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -555,15 +555,19 @@ rcfile::parse ()
                  * the playlist extension.
                  */
 
+                bool active = flag != 0;
                 fname = rc_ref().make_config_filespec(fname, ".playlist");
                 exists = file_exists(fname);
                 if (exists)
                 {
-                    rc_ref().playlist_active(flag != 0);
+                    rc_ref().playlist_active(active);
                     rc_ref().playlist_filename(fname);
                 }
                 else
-                    file_error("No such playlist", fname);
+                {
+                    if (active)
+                        file_error("No such playlist", fname);
+                }
             }
         }
         if (exists)
@@ -590,8 +594,15 @@ rcfile::parse ()
     }
     if (line_after(file, "[note-mapper]"))
     {
-        std::string fname = trimline();
-        bool exists = ! is_empty_string(fname);
+        std::string fname;
+        bool exists = false;
+        int flag = 0;
+        sscanf(scanline(), "%d", &flag);        /* note-mapper-active flag  */
+        if (next_data_line(file))
+        {
+            fname = trimline();
+            exists = ! is_empty_string(fname);
+        }
         if (exists)
         {
             /*
@@ -599,14 +610,19 @@ rcfile::parse ()
              * the playlist extension.
              */
 
+            bool active = flag != 0;
             fname = rc_ref().make_config_filespec(fname, ".drums");
             exists = file_exists(fname);
             if (exists)
             {
+                rc_ref().notemap_active(active);
                 rc_ref().notemap_filename(fname);
             }
             else
-                file_error("No such note mapping", fname);
+            {
+                if (active)
+                    file_error("No such note mapping", fname);
+            }
         }
         if (! exists)
             rc_ref().notemap_filename("");
@@ -1130,10 +1146,12 @@ rcfile::write ()
 
     file << "\n"
         "[note-mapper]\n\n"
-        "# Provides the name of a note-map file. If there is none, use '\"\"'.\n"
-        "# Use the extension '.drums'.  This file is used only when the user\n"
-        "# invokes the note-conversion operation in the pattern editor.\n"
-        "\n"
+        "# Provides a configured note-map and a flag to activate it.\n"
+        "# notemap_active: 1 = active, 0 = do not use it\n\n"
+        << (rc_ref().notemap_active() ? "1" : "0") << "\n\n"
+        << "# Provides the name of the note-map file. If none, use '\"\"'.\n"
+           "# Use the extension '.drums'.  This file is used only when the user\n"
+           "# invokes the note-conversion operation in the pattern editor.\n\n"
         ;
 
     std::string nmname = rc_ref().notemap_filespec();

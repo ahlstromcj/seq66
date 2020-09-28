@@ -703,14 +703,19 @@ smanager::create (int argc, char * argv [])
     {
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
-#if defined SEQ66_PLATFORM_DEBUG    // _TEST_NSM
+#if defined SEQ66_PLATFORM_DEBUG_TEST_NSM
             (void) create_project(argc, argv, "/home/ahlstrom/tmp/playlist");
 #else
-            if (manager_path() != "None")
+            std::string homedir = manager_path();
+            if (homedir != "None")
             {
                 file_message("Manager path", manager_path());
-                (void) create_project(argc, argv, manager_path());
             }
+            else
+            {
+                homedir = rc().home_config_directory();
+            }
+            (void) create_project(argc, argv, homedir);
 #endif
         }
         result = create_performer();        /* fails if performer not made  */

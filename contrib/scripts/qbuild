@@ -1,6 +1,17 @@
 #!/bin/bash
+#------------------------------------------------------------------------------
+##
+# \file        qbuild
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2020-09-27 to 2019-09-28
+# \version     $Revision$
+# \license     GNU GPLv2 or above
 #
-# This script qmake and make, and should be run from a Qt shadow directory.
+# This script runs qmake and make, and should be run from a Qt shadow
+# directory.
+#
+#------------------------------------------------------------------------------
 
 BUILDTYPE="release"
 ENGINE=""
@@ -66,11 +77,13 @@ fi
 
 if [ "$DOBUILD" == "yes" ] ; then
    rm -f $MAKELOG
-   echo "  $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE\"" $PROJFILE" &> $MAKELOG
-   echo "  $MAKER $MAKEOPTIONS &> $MAKELOG" &> $MAKELOG
-   echo " " &> $MAKELOG
-   $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE"\" $PROJFILE
-   $MAKER $MAKEOPTIONS &> $MAKELOG
+   date > $MAKELOG
+   echo " " &>> $MAKELOG
+   echo "  $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE\"" $PROJFILE" &>> $MAKELOG
+   $QMAKER $QOPTIONS "CONFIG += $BUILDTYPE $ENGINE" $PROJFILE &>> $MAKELOG
+   echo "  $MAKER $MAKEOPTIONS &> $MAKELOG" &>> $MAKELOG
+   echo " " &>> $MAKELOG
+   $MAKER $MAKEOPTIONS &>> $MAKELOG
    echo "Read $MAKELOG for build details."
 else
    echo "Commands to be run:"

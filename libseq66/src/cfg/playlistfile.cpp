@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-09-20
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -496,7 +496,11 @@ playlistfile::write ()
      * [comments]
      */
 
-    file << "\n[comments]\n\n" << play_list().comments_block().text() << "\n";
+    std::string c = play_list().comments_block().text();
+    if (c.empty())
+        c = "Put your comment line(s) here";
+
+    file << "\n[comments]\n\n" << c << "\n";
 
     /*
      * [playlist-options]
@@ -513,25 +517,25 @@ playlistfile::write ()
      * [playlist] sections
      */
 
+    bool is_empty = true;
     for (const auto & plpair : play_list().play_list_map())
     {
         const playlist::play_list_t & pl = plpair.second;
         file
         << "\n"
-        << "[playlist]\n"
-        << "\n"
-        << "# Playlist number, arbitrary but unique. 0 to 127 recommended\n"
-        << "# for use with the MIDI playlist control.\n"
+           "[playlist]\n"
+           "\n"
+           "# Playlist number, arbitrary but unique. 0 to 127 recommended\n"
+           "# for use with the MIDI playlist control.\n\n"
         << pl.ls_midi_number << "\n\n"
         << "# Display name of this play list.\n\n"
         << "\"" << pl.ls_list_name << "\"\n\n"
         << "# Default storage directory for the song-files in this playlist.\n\n"
-        << pl.ls_file_directory << "\n"
-        << "\n"
+        << pl.ls_file_directory << "\n\n"
         << "# Provides the MIDI song-control number (0 to 127), and also the\n"
-        << "# base file-name (tune.midi) of each song in this playlist.\n"
-        << "# The playlist directory is used, unless the file-name contains its\n"
-        << "# own path.\n\n"
+           "# base file-name (tune.midi) of each song in this playlist.\n"
+           "# The playlist directory is used, unless the file-name contains its\n"
+           "# own path.\n\n"
         ;
 
         /*
@@ -545,6 +549,26 @@ playlistfile::write ()
             const playlist::song_spec_t & s = sc.second;
             file << s.ss_midi_number << " " << s.ss_filename << "\n";
         }
+        is_empty = false;
+    }
+    if (is_empty)
+    {
+        file
+        << "\n[playlist]\n\n"
+           "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE.\n\n"
+           "# Playlist number, arbitrary but unique. 0 to 127 recommended\n"
+           "# for use with the MIDI playlist control.\n\n"
+           "0\n\n"
+           "# Display name of this play list.\n\n"
+           "\"Sample\"\n\n"
+           "# Default storage directory for the song-files in this playlist.\n\n"
+           "play/list/files\n\n"
+           "# Provides the MIDI song-control number (0 to 127), and also the\n"
+           "# base file-name (tune.midi) of each song in this playlist.\n"
+           "# The playlist directory is used, unless the file-name contains its\n"
+           "# own path.\n\n"
+           "0 sample.midi\n\n"
+        ;
     }
 
     file

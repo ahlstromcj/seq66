@@ -171,6 +171,7 @@ notemapfile::parse_stream (std::ifstream & file)
             }
         }
     }
+    mapper().mode(result);
     return result;
 }
 
@@ -262,7 +263,7 @@ notemapfile::write_stream (std::ofstream & file)
         "# The main values are:\n"
         "#\n"
         "#   map-type: drum, patch, or multi; indicates the mapping to do.\n"
-        "#   gm-channel: Indicates the channel (1-16) applied to converted notes.\n"
+        "#   gm-channel: Indicates the channel (1-16) applied to convert notes.\n"
         "#   reverse: true or false; map in the opposite direction if true.\n"
         "#\n"
         "[notemap-flags]\n"

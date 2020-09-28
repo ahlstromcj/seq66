@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-16
+ * \updates       2020-09-28
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -389,6 +389,13 @@ private:
      */
 
     std::string m_playlist_midi_base;
+
+    /**
+     *  Indicates if the user wants to use the note-mapper stored in the "rc"
+     *  file.  This value is stored as well.
+     */
+
+    bool m_notemap_active;
 
     /**
      *  Provides the name of a note-mapping file to use.  This is a feature
@@ -825,6 +832,11 @@ public:
         return m_playlist_active;
     }
 
+    bool notemap_active () const
+    {
+        return m_notemap_active;
+    }
+
     const std::string & playlist_filename () const;
 
     const std::string & midi_base_directory () const
@@ -1036,6 +1048,11 @@ protected:
     void playlist_active (bool flag)
     {
         m_playlist_active = flag;
+    }
+
+    void notemap_active (bool flag)
+    {
+        m_notemap_active = flag;
     }
 
     void  midi_base_directory (const std::string & mbd)
