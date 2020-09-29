@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-09-26
+dnl \update        2020-09-29
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -305,32 +305,14 @@ else
     AC_MSG_NOTICE([LASH support disabled.]);
 fi
 
-dnl Enable NSM support.  Not yet ready for prime time.
-dnl HOWEVER, ENABLED BY DEFAULT WHILE WE DEVELOP IT.
+dnl Enable NSM support.  Nearly ready for prime time!
 
 AC_ARG_ENABLE(nsm,
   AS_HELP_STRING([--enable-nsm], [Enable NSM support (default=yes)]),
   [ac_nsm=$enableval],
   [ac_nsm=yes])
 
-dnl Check for optional LIBLO library, needed for NSM support.
-
-if test "$ac_nsm" != "no"; then
-    PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
-    if test "x$ac_liblo" = "xyes"; then
-        AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available.])
-dnl     ac_cflags="$ac_cflags $LIBLO_CFLAGS"
-dnl     ac_libs="$ac_libs $LIBLO_LIBS"
-        AC_SUBST(LIBLO_CFLAGS)
-        AC_SUBST(LIBLO_LIBS)
-        AC_MSG_RESULT([LIBLO support enabled.]);
-    else
-        AC_MSG_WARN([LIBLO library not found, OSC/NSM support disabled.])
-        ac_nsm="no"
-    fi
-else
-   ac_nsm="no"
-fi
+dnl Check for NSM support.
 
 NSM_CFLAGS=
 NSM_LIBS=
@@ -338,24 +320,34 @@ NSM_DEPS=
 
 if test "$ac_nsm" != "no"; then
     AC_DEFINE(NSM_SUPPORT, 1, [Define if NSM support is available.])
-    build_sessions="yes"
     NSM_CFLAGS="-I ../libsessions/include"
     NSM_LIBS="-llo -L../libsessions/src/.libs/ -lsessions"
     NSM_DEPS="../libsessions/src/.libs/libsessions.la"
     AC_DEFINE(NSM_SUPPORT, 1, [Define to enable NSM])
     AC_MSG_RESULT([Sessions/NSM support enabled.]);
-else
-    build_sessions="no"
 fi
 
 AC_SUBST(NSM_CFLAGS)
 AC_SUBST(NSM_LIBS)
 AC_SUBST(NSM_DEPS)
 
+dnl Check for now-required LIBLO library, needed for NSM support.
+
+PKG_CHECK_MODULES([LIBLO], [liblo], [ac_liblo="yes"], [ac_liblo="no"])
+if test "x$ac_liblo" = "xyes"; then
+    AC_DEFINE(LIBLO_SUPPORT, 1, [Define if LIBLO library is available.])
+    AC_SUBST(LIBLO_CFLAGS)
+    AC_SUBST(LIBLO_LIBS)
+    AC_MSG_RESULT([LIBLO support enabled.]);
+else
+    AC_MSG_ERROR([LIBLO library not found, OSC dev package required.])
+    ac_nsm="no"
+fi
+
 dnl "RtMidi" support.  This is now the default build for Seq66.
 
 AC_ARG_ENABLE(rtmidi,
-    [AS_HELP_STRING(--enable-rtmidi, [Enable rtmidi build, the default engine])],
+    [AS_HELP_STRING(--enable-rtmidi, [Enable rtmidi build, default MIDI engine])],
     [rtmidi=$enableval],
     [rtmidi=yes])
 
@@ -495,7 +487,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-09-26"
+#define VERSION_DATE_SHORT "2020-09-29"
 #define VERSION "0.91.0"
 
 )

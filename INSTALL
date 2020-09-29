@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.91.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-09-26
+2015-09-10 to 2020-09-29
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
@@ -20,10 +20,10 @@ versions of the program can be built:
         console or as a daemon, controlled via MIDI and playlists.
         Still being worked on.
 
-    We provide a portable Windows Zip package and a Windows installer in
-    the "sequencer64-packages" project in GitHub, in the "seq66" subdirectory.
-    It is also fairly easy to build the Windows version using QtCreator/qmake.
-    See nsis/build_release_package.bat; it not only builds it using qmake and
+    We provide a Windows installer in the "sequencer64-packages" project in
+    GitHub, in the "seq66" subdirectory.  It is also fairly easy to build the
+    Windows version using QtCreator/qmake.  See the DOS batch script
+    "nsis/build_release_package.bat"; it not only builds it using qmake and
     mingw, but also describes how to create Windows packages.
 
 Below are sections for various ways of installing this project by building
@@ -114,6 +114,10 @@ Advanced Steps:
        macros in the header files.  The configure options can be supplied to
        the ./configure command, while build macros can be defined (in the
        code) to even further tailor the build.
+
+       To learn more, run
+
+       $ ./bootstrap --help
 
    3.  Run the make command:
 
@@ -370,7 +374,7 @@ DEPENDENCIES:
       -  libasound2-dev
       -  libjack-jackd2-dev
       -  liblash-compat-dev (optional, needed for LASH support)
-      -  liblo-dev (optional, needed for NSM/OSC support)
+      -  liblo-dev (needed for NSM/OSC support, but not optional)
       -  libpng-dev (replaces libpng12-dev with libpng16, latest Debian Sid,
          and brings in libpng-tools)
       -  libpthread (normally already included in a Linux distro)

@@ -8,7 +8,7 @@
 # \library    	Seq66
 # \author     	Chris Ahlstrom
 # \date       	2015-09-10
-# \update     	2020-07-06
+# \update     	2020-09-29
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -55,7 +55,7 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
 
-pack 0.7 2020-07-06
+pack 0.8 2020-09-29
 
 Usage:  ./pack [--dry-run] [--clean] [--release package] [--diffs] [tag]
 
@@ -181,7 +181,6 @@ else
 # Others that mostly, but not always, are not needed, and so aren't excluded
 # at this time:
 #
-# Makefile
 # Makefile.in
 # Linux executable files
 # --exclude="aux-files"

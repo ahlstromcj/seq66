@@ -4,7 +4,7 @@
 # \file        qbuild
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-09-27 to 2019-09-28
+# \date        2020-09-27 to 2020-09-29
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -80,7 +80,9 @@ if [ "$DOBUILD" == "yes" ] ; then
    date > $MAKELOG
    echo " " &>> $MAKELOG
    echo "  $QMAKER $QOPTIONS \""CONFIG += $BUILDTYPE $ENGINE\"" $PROJFILE" &>> $MAKELOG
+   echo " " &>> $MAKELOG
    $QMAKER $QOPTIONS "CONFIG += $BUILDTYPE $ENGINE" $PROJFILE &>> $MAKELOG
+   echo " " &>> $MAKELOG
    echo "  $MAKER $MAKEOPTIONS &> $MAKELOG" &>> $MAKELOG
    echo " " &>> $MAKELOG
    $MAKER $MAKEOPTIONS &>> $MAKELOG

@@ -26,7 +26,7 @@
 #if defined SEQ66_LIBLO_SUPPORT
 #include <lo/lo.h>                      /* library for the OSC protocol     */
 #else
-#error Support for liblo required for this class
+#error Support for liblo required for this class, install liblo-dev
 #endif
 
 #define NSM_API_VERSION_MAJOR   1

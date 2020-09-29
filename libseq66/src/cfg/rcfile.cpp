@@ -804,18 +804,39 @@ rcfile::write ()
         /*
          * Before using this [midi-control-file] file-name, change, if
          * necessary, the extension, from ".rc" to ".ctrl".  This will also be
-         * changed in the [midi-control-file] section.
+         * changed in the [midi-control-file] section.  Also note that, if
+         * there are no controls (e.g. there were none to read, as occurs the
+         * first time Seq66 is run), then we create one and populate it with
+         * blanks.
          */
 
         std::string mcfname = rc_ref().midi_control_filespec();
-        midicontrolfile mcf(mcfname, rc_ref());
         const midicontrolin & ctrls = rc_ref().midi_control_in();
-        bool result = mcf.container_to_stanzas(ctrls);
+        bool result = ctrls.count() > 0;
         if (result)
         {
-            mcfname = rc_ref().trim_home_directory(mcfname);
-            file << "[midi-control-file]\n\n" << mcfname << "\n";
-            ok = mcf.write();
+            midicontrolfile mcf(mcfname, rc_ref());
+            result = mcf.container_to_stanzas(ctrls);
+            if (result)
+            {
+                mcfname = rc_ref().trim_home_directory(mcfname);
+                file << "[midi-control-file]\n\n" << mcfname << "\n";
+                ok = mcf.write();
+            }
+        }
+        else
+        {
+            keycontainer keys;              /* call the default constructor */
+            midicontrolin ctrls;            /* ditto to that, Rush! :-D     */
+            midicontrolfile mcf(mcfname, rc_ref());
+            ctrls.add_blank_controls(keys);
+            result = mcf.container_to_stanzas(ctrls);
+            if (result)
+            {
+                mcfname = rc_ref().trim_home_directory(mcfname);
+                file << "[midi-control-file]\n\n" << mcfname << "\n";
+                ok = mcf.write();
+            }
         }
     }
     else
@@ -1141,7 +1162,9 @@ rcfile::write ()
         "\n"
 		;
 
-	if (! rc_ref().midi_base_directory().empty())
+	if (rc_ref().midi_base_directory().empty())
+		file << empty_string() << "\n";
+    else
 		file << rc_ref().midi_base_directory() << "\n";
 
     file << "\n"
