@@ -184,6 +184,7 @@ else
 # Makefile.in
 # Linux executable files
 # --exclude="aux-files"
+# --exclude="Makefile" (currently the ones in the "doc" directory
 #
 # Removed the slash after WORKINGDIR, and moved it to the end, which
 # now allows tar to not include .git in the archive, saving a lot of time
@@ -202,7 +203,6 @@ else
  --exclude="config.h" \
  --exclude="config.status" \
  --exclude="libtool" \
- --exclude="Makefile" \
  --exclude="Debug" \
  --exclude="Release" \
  --exclude="debug" \

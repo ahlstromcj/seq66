@@ -21,7 +21,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2020-03-08
+# \updates     2020-10-02
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -115,6 +115,7 @@ host_triplet = @host@
 @BUILD_QTMIDI_TRUE@am__append_4 = seq_qt5 Seq66qt5
 @BUILD_RTCLI_TRUE@am__append_5 = Seq66cli
 @BUILD_SEQTOOL_TRUE@am__append_6 = Seqtool
+@BUILD_DOCS_TRUE@am__append_7 = doc
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -200,7 +201,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/aux-files/mkinstalldirs \
 	$(top_srcdir)/include/config.h.in ChangeLog INSTALL NEWS \
 	README TODO aux-files/compile aux-files/config.guess \
-	aux-files/config.rpath aux-files/config.sub \
+	aux-files/config.rpath aux-files/config.sub aux-files/depcomp \
 	aux-files/install-sh aux-files/ltmain.sh aux-files/missing \
 	aux-files/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -295,6 +296,7 @@ JACK_CFLAGS = @JACK_CFLAGS@
 JACK_LIBS = @JACK_LIBS@
 LASH_CFLAGS = @LASH_CFLAGS@
 LASH_LIBS = @LASH_LIBS@
+LATEX = @LATEX@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBLO_CFLAGS = @LIBLO_CFLAGS@
@@ -518,11 +520,9 @@ LIBTOOL_DEPS = @LIBTOOL_DEPS@
 #  See INSTALL.
 #
 #-----------------------------------------------------------------------------
-
-# SUBDIRS = resources/pixmaps libseq66
 SUBDIRS = m4 libseq66 resources/pixmaps $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
-	$(am__append_5) $(am__append_6) man data
+	$(am__append_5) $(am__append_6) $(am__append_7) man data
 
 #*****************************************************************************
 # DIST_SUBDIRS

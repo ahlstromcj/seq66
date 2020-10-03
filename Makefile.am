@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-11-11
-# \updates     2020-03-08
+# \updates     2020-10-02
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -143,8 +143,6 @@ libtool: $(LIBTOOL_DEPS)
 #
 #-----------------------------------------------------------------------------
 
-# SUBDIRS = resources/pixmaps libseq66
-
 SUBDIRS = m4 libseq66 resources/pixmaps
 
 if BUILD_RTMIDI
@@ -169,6 +167,10 @@ endif
 
 if BUILD_SEQTOOL
 SUBDIRS += Seqtool
+endif
+
+if BUILD_DOCS
+SUBDIRS += doc
 endif
 
 SUBDIRS += man data

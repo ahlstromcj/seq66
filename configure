@@ -665,6 +665,8 @@ BUILD_QTMIDI_FALSE
 BUILD_QTMIDI_TRUE
 BUILD_PORTMIDI_FALSE
 BUILD_PORTMIDI_TRUE
+BUILD_DOCS_FALSE
+BUILD_DOCS_TRUE
 CONFIG_NAME
 CLIENT_NAME
 APP_BUILD_OS
@@ -702,6 +704,7 @@ JACK_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
+LATEX
 DOXYGEN
 seq66doxygendir
 seq66datadir
@@ -855,6 +858,7 @@ with_aix_soname
 with_gnu_ld
 with_sysroot
 enable_libtool_lock
+enable_docs
 enable_mingw
 enable_jack
 enable_jack_session
@@ -1546,6 +1550,7 @@ Optional Features:
   --enable-fast-install[=PKGS]
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-docs           Enable developer document support
   --enable-mingw          Enable MingW Windows support
   --disable-jack          Disable JACK support
   --disable-jack-session  Disable JACK session support
@@ -4600,6 +4605,7 @@ case $host_os in #(
 esac
 
 
+build_docs="no"
 build_portmidi="no"
 build_qtmidi="yes"
 build_rtcli="no"
@@ -16386,8 +16392,66 @@ fi
 done
 
 if test -z "$DOXYGEN"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Doxygen not found, FYI only, not to worry" >&5
-$as_echo "$as_me: WARNING: Doxygen not found, FYI only, not to worry" >&2;}
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Doxygen not found, no developer docs will be built" >&5
+$as_echo "$as_me: WARNING: Doxygen not found, no developer docs will be built" >&2;}
+else
+    # Check whether --enable-docs was given.
+if test "${enable_docs+set}" = set; then :
+  enableval=$enable_docs; build_docs=$enableval
+else
+  build_docs=no
+fi
+
+fi
+
+if test "x$build_docs" = "xyes" ; then
+    for ac_prog in latex
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_LATEX+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  if test -n "$LATEX"; then
+  ac_cv_prog_LATEX="$LATEX" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_LATEX="$ac_prog"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi
+fi
+LATEX=$ac_cv_prog_LATEX
+if test -n "$LATEX"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $LATEX" >&5
+$as_echo "$LATEX" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  test -n "$LATEX" && break
+done
+
+    if test -z "$LATEX"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: LaTeX not found, no docs will be built" >&5
+$as_echo "$as_me: WARNING: LaTeX not found, no docs will be built" >&2;}
+        build_docs=no
+    fi
 fi
 
 
@@ -19105,6 +19169,14 @@ fi
 
 
 
+ if test "$build_docs" = "yes"; then
+  BUILD_DOCS_TRUE=
+  BUILD_DOCS_FALSE='#'
+else
+  BUILD_DOCS_TRUE='#'
+  BUILD_DOCS_FALSE=
+fi
+
  if test "$build_portmidi" = "yes"; then
   BUILD_PORTMIDI_TRUE=
   BUILD_PORTMIDI_FALSE='#'
@@ -20684,7 +20756,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile libsessions/Makefile libsessions/include/Makefile libsessions/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile"
+ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile libsessions/Makefile libsessions/include/Makefile libsessions/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile doc/Makefile doc/dox/Makefile doc/latex/Makefile doc/latex/tex/Makefile"
 
 
 
@@ -20823,6 +20895,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${BUILD_DOCS_TRUE}" && test -z "${BUILD_DOCS_FALSE}"; then
+  as_fn_error $? "conditional \"BUILD_DOCS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${BUILD_PORTMIDI_TRUE}" && test -z "${BUILD_PORTMIDI_FALSE}"; then
@@ -21874,6 +21950,10 @@ do
     "Seq66cli/Makefile") CONFIG_FILES="$CONFIG_FILES Seq66cli/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
+    "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+    "doc/dox/Makefile") CONFIG_FILES="$CONFIG_FILES doc/dox/Makefile" ;;
+    "doc/latex/Makefile") CONFIG_FILES="$CONFIG_FILES doc/latex/Makefile" ;;
+    "doc/latex/tex/Makefile") CONFIG_FILES="$CONFIG_FILES doc/latex/tex/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -1,0 +1,49 @@
+#!/bin/bash 
+#
+#******************************************************************************
+# seq66-nsm-proxy
+#------------------------------------------------------------------------------
+##
+# \file           seq66-nsm-proxy
+# \library        Seq66
+# \author         Chris Ahlstrom
+# \date           2020-10-03
+# \update         2020-10-03
+# \version        $Revision$
+# \license        $XPC_SUITE_GPL_LICENSE$
+#
+#   IN PROGRESS 
+#
+#------------------------------------------------------------------------------
+
+MIDIDIR="$HOME/.local/share/seq24/blank.midi"
+MIDIBLANK="$NSM_CLIENT_ID.midi"
+
+if [ -z "$NSM_SESSION_NAME" ]; then
+        echo "This script must be run under nsm-proxy."
+    exit 0
+fi
+
+trap 'kill -TERM $PID' TERM INT
+
+if ! [ -a "$MIDIBLANK" ]; then
+    echo "Creating empty midi file..."
+    cp "$MIDIDIR" "$MIDIBLANK"
+fi
+
+# qseq66 "$MIDIBLANK" &
+
+exec qseq66 "$MIDIBLANK"
+PID=$!
+
+wait $PID
+trap - TERM INT
+wait $PID
+
+EXIT_STATUS=$?
+
+#******************************************************************************
+# seq66-nsm-proxy
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=sh
+#------------------------------------------------------------------------------

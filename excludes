@@ -1,0 +1,6 @@
+.git
+.deps
+Makefile
+.a
+.lo
+.o

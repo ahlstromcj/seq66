@@ -27,18 +27,11 @@
 #     instance.
 #
 # \param $1
-#     Provides the directory where the source files of our Doxygen-based
-#     documentation are kept.  These files end with our conventional
-#     extension for Doxygen documents:  *.dox.  Normally, this directory
-#     ends up being project/doc/dox.
+#     Provides the directory where the Doxygen files are stored.
 #
 # \param $2
-#     Provides a string indicating which documentation we want to make.
-#     At present, the two choices are:
 #
-#        -  userman.  Make the user manual; leave out the design
-#           documentation.
-#        -  reference.  Make the reference manual, for developers.
+#     This parameter will be named for one of the libraries provided by Seq66.
 #
 # \usage
 #     The normal usage occurs in the Makefile.am file:
@@ -71,19 +64,31 @@
 DOCOPY="yes"
 NEWDIR="$1"
 TARGET="$2"
+ACTION="$3"
 LASTDIR="`pwd`"
 
-if [ "$1" == "clean" ] ; then
-   rm -f *.log
-   rm -f notes/*.log
-   rm -rf notes/html/
-   rm -rf notes/latex/
+if [ "$1" == "help" ] || [ "$1" == "--help" ]; then
+
+cat << E_O_F
+
+Usage: ./make_dox srcdir dirname [ clean ]
+
+   where TARGET is 'libseq66', 'libsessions', 'seq_portmidi',
+   or 'seq_rtmidi'.
+
+E_O_F
+
    exit 0
+
 fi
 
-if [ "$1" == "help" ] || [ "$1" == "--help" ]; then
-   echo "Usage: ./make_dox [dirname] [clean | TARGET| install | uninstall]"
-   echo "  where TARGET is 'libseq66', 'notes', 'seqportmid', or 'seq_rtmidi'."
+if [ "$ACTION" == "clean" ] ; then
+   pushd "$NEWDIR"
+   pushd "$TARGET"
+   rm -f *.log
+   rm -rf latex/
+   popd
+   popd
    exit 0
 fi
 
@@ -97,39 +102,10 @@ if [ $NEWDIR == "." ] ; then
    DOCOPY="no"
 fi
 
-if [ "$DOXYGEN" == "" ] ; then
-   DOXYGEN="doxygen"
-fi
-
-echo "Pushing to $NEWDIR"
 pushd $NEWDIR
-
-if [ "$TARGET" == "libseq66" ] ; then
-
-elif [ "$TARGET" == "notes" ] ; then
-
-   pushd notes
-   ./make-helper
-   popd
-
-elif [ "$TARGET" == "userman" ] ; then
-
-	echo "Option 'userman' not yet supported in this project."
-
-elif [ "$TARGET" == "install" ] ; then
-
-   echo "'install' target not yet ready."
-#  mkdir -p /usr/local/doc/seq66-0.90
-#  cp ../*.pdf /usr/local/doc/seq66-0.90
-
-elif [ "$TARGET" == "uninstall" ] ; then
-
-   echo "'uninstall' target not yet ready."
-#  rm -rf /usr/local/doc/seq66-0.90
-
-fi
-
-echo "Changing back to $LASTDIR"
+pushd $TARGET
+../make-helper $TARGET
+popd
 popd
 
 #******************************************************************************

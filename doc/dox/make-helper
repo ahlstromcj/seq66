@@ -8,32 +8,52 @@
 # \library    	libseq66 directory
 # \author     	Chris Ahlstrom
 # \date       	2019-05-11
-# \update     	2019-05-11
+# \update     	2020-10-02
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
-#     This file creates the doxygen documentation for the libseq66
+#     This file creates the doxygen documentation for the $TARGET
 #     subdirectory.
 #
 #------------------------------------------------------------------------------
 
-echo "Running Doxygen on the libseq66 target, in the make-helper script."
-echo "$DOXYGEN libseq66.cfg > dox-progress.log 2> dox-errors.log ..."
-doxygen libseq66.cfg > dox-progress.log 2> dox-errors.log
-sed -e 's/letterpaper,/letterpaper,margin=2cm,/' -i latex/refman.tex
+DOXLOGFILE="dox-build-$1.log"
+TARGET="$1"
 
-#  This breaks too easily, so now we descend and run the commands a few
-#  times, similar to what the latex/make-helper does.  Bleh!
+cat << E_O_F > $DOXLOGFILE
+Running Doxygen on the $TARGET target, in the make-helper script.
+$ doxygen $TARGET.cfg &> $DOXLOGFILE
 
-make --directory=latex pdf >> dox-progress.log 2>> dox-errors.log
+E_O_F
+
+doxygen $TARGET.cfg &>> $DOXLOGFILE
+
+# sed -e 's/letterpaper,/letterpaper,margin=2cm,/' -i latex/refman.tex
+
+cat << E_O_F >> $DOXLOGFILE
+
+The PDF build breaks too easily, so now we descend and run the commands a few
+times.
+
+make --directory=latex pdf
+
+E_O_F
+
+make --directory=latex pdf &>> $DOXLOGFILE
 
 # Optimize the PDF to cut down on its size.
 
-../optimize seq66_libseq66 >> dox-progress.log 2>> dox-errors.log
-cp latex/refman.pdf seq66_libseq66.pdf
+cat << E_O_F >> $DOXLOGFILE
+
+../optimize seq66_$TARGET >> dox-progress.log 2>> dox-errors.log
+cp latex/refman.pdf seq66_$TARGET.pdf
+
+E_O_F
+
+mv latex/refman.pdf seq66_lib_$TARGET.pdf
 
 #******************************************************************************
 # make-helper (generic)
 #------------------------------------------------------------------------------
-# vim: ts=3 sw=3 et ft=make
+# vim: ts=3 sw=3 et ft=sh
 #------------------------------------------------------------------------------

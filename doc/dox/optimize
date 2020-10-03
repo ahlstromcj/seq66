@@ -8,7 +8,7 @@
 # \library    	Documentation
 # \author     	Chris Ahlstrom
 # \date       	2019-04-14
-# \update     	2019-05-05
+# \update     	2020-10-02
 # \version    	$Revision$
 # \license    	See license.dox
 #
@@ -24,9 +24,9 @@ if test -f latex/refman.pdf ; then
 else
 	echo "ERROR: "$1" PDF not generated!!!"
 	exit 1
+else
+	echo "ERROR: latex/refman.pdf not generated!!!"
 fi
-
-popd
 
 #------------------------------------------------------------------------------
 # vim: ts=3 sw=3 noet ft=sh

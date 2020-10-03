@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-09-29
+dnl \update        2020-10-02
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -66,6 +66,7 @@ AS_CASE([$host_os], [*mingw*], [windows_host=yes], [windows_host=no])
 dnl Note that the BUILD_XXXX macros "merely" select which subdirectories we
 dnl descend into during the build.
 
+build_docs="no"
 build_portmidi="no"
 build_qtmidi="yes"
 build_rtcli="no"
@@ -220,6 +221,7 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 AC_C_CONST
 
+dnl Doxygen support has been added back!  However, it is disabled by default.
 dnl Check for the presence of Doxygen.  Not an error to be missing, but
 dnl we don't want to try to build documentation if it is not present.
 dnl See http://www.gnu.org/software/autoconf-archive/ax_prog_doxygen.html
@@ -227,7 +229,20 @@ dnl Note the building the documentation also requires graphviz to be installed.
 
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN"; then
-    AC_MSG_WARN([Doxygen not found, FYI only, not to worry])
+    AC_MSG_WARN([Doxygen not found, no developer docs will be built])
+else
+    AC_ARG_ENABLE(docs,
+        [AS_HELP_STRING(--enable-docs, [Enable developer document support])],
+        [build_docs=$enableval],
+        [build_docs=no])
+fi
+
+if test "x$build_docs" = "xyes" ; then
+    AC_CHECK_PROGS([LATEX], [latex])
+    if test -z "$LATEX"; then
+        AC_MSG_WARN([LaTeX not found, no docs will be built])
+        build_docs=no
+    fi
 fi
 
 dnl Windows support in Linux.  Might be unnecessary though, though.
@@ -473,6 +488,7 @@ AC_SUBST(APP_BUILD_OS)
 AC_SUBST(CLIENT_NAME)
 AC_SUBST(CONFIG_NAME)
 
+AM_CONDITIONAL([BUILD_DOCS], [test "$build_docs" = "yes"])
 AM_CONDITIONAL([BUILD_PORTMIDI], [test "$build_portmidi" = "yes"])
 AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
@@ -487,7 +503,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-09-29"
+#define VERSION_DATE_SHORT "2020-10-02"
 #define VERSION "0.91.0"
 
 )
@@ -611,6 +627,10 @@ AC_CONFIG_FILES([
  Seq66cli/Makefile
  man/Makefile
  data/Makefile
+ doc/Makefile
+ doc/dox/Makefile
+ doc/latex/Makefile
+ doc/latex/tex/Makefile
 ])
 
 dnl See AC_CONFIG_COMMANDS
