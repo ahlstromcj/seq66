@@ -827,7 +827,7 @@ rcfile::write ()
         else
         {
             keycontainer keys;              /* call the default constructor */
-            midicontrolin ctrls;            /* ditto to that, Rush! :-D     */
+            midicontrolin & ctrls = rc_ref().midi_control_in();
             midicontrolfile mcf(mcfname, rc_ref());
             ctrls.add_blank_controls(keys);
             result = mcf.container_to_stanzas(ctrls);
