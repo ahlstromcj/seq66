@@ -142,7 +142,7 @@ qt5nsmanager::create_window ()
             (void) smanager::create_window();   /* just house-keeping   */
             if (error_active())
             {
-                show_error("Error", error_message());
+                show_error("", error_message());
 
                 /*
                  * Let the application stay active; let the user decide what to
@@ -246,8 +246,16 @@ qt5nsmanager::show_error
         else
         {
             std::string text = tag;
-            append_error_message(msg);
-            text += " ";
+
+            /*
+             * This ends up duplicating messages.
+             *
+             * append_error_message(msg);
+             */
+
+            if (! tag.empty())
+                text += " ";
+
             text += msg;
             m_window->show_message_box(text);
         }

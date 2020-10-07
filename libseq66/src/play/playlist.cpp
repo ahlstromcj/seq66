@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-09-21
+ * \updates       2020-10-05
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -338,7 +338,7 @@ playlist::verify (bool strong)
  */
 
 bool
-playlist::copy (const std::string & destination)
+playlist::copy_songs (const std::string & destination)
 {
     bool result = ! m_play_lists.empty();
     if (result)

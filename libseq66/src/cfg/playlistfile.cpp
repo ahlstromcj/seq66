@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-09-28
+ * \updates       2020-10-05
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -356,9 +356,9 @@ playlistfile::parse ()
         }
         file.close();                           /* done with playlist file  */
     }
-    else
+    else if (rc().playlist_active())
     {
-        std::string msg = "error opening file [" + name() + "]";
+        std::string msg = "Open failed: " + name();
         result = set_error_message(msg);
     }
     (void) play_list().reset_list(! result);    /* reset, not clear, if ok  */
@@ -579,6 +579,200 @@ playlistfile::write ()
 
     file.close();
     return true;
+}
+
+/*
+ * Free functions for handling play-lists and files.
+ */
+
+/**
+ *  Reads the play-list data into a playlist object.
+ *
+ * \param source
+ *      Provides the full path file-specification for the play-list file to be
+ *      opened.
+ *
+ * \param show_on_stdout
+ *      If true (the default is false), the playlist is opened to show
+ *      song selections on stdout.  This is useful for trouble-shooting or for
+ *      making the CLI version of Sequencer64 easier to follow when running.
+ *
+ * \return
+ *      Returns true if the playlist object was able to be created. If the
+ *      file-name is not empty, this also means that it was opened, and the
+ *      play-list read.  If false is returned, then the previous playlist, if
+ *      any, still exists, but is marked as inactive.
+ */
+
+bool
+open_playlist
+(
+    playlist & pl,
+    const std::string & source,
+    bool show_on_stdout
+)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        playlistfile plf(source, pl, rc(), show_on_stdout);
+        result = plf.open(true);                /* parse and file verify    */
+        if (result)
+        {
+            // Anything worth doing?
+        }
+        else if (rc().playlist_active())
+        {
+            std::string msg = "Open failed: ";
+            msg += source;
+            (void) error_message(msg);
+        }
+    }
+    else
+    {
+        file_error("Play-list filename", "<empty>");
+    }
+    return result;
+}
+
+/**
+ *  Writes the play-list, whether it is active or not, as long as it exists.
+ *  Saves a playlist to file.  Used in clinsmanager and in performer.
+ *
+ * \param pl
+ *      Provides a reference to the playlist.  The caller is responsible for
+ *      making sure this parameter is valid.
+ *
+ * \param destfile
+ *      Provides the full path file-specification for the play-list file to be
+ *      saved.  If empty, the file-name with which the play-list was created
+ *      is used.
+ *
+ * \return
+ *      Returns true if the write operation succeeded.
+ *
+ */
+
+bool
+save_playlist
+(
+    playlist & pl,
+    const std::string & destfile
+)
+{
+    std::string destination = destfile.empty() ? pl.file_name() : destfile;
+    bool result = ! destination.empty();
+    if (result)
+    {
+        playlistfile plf(destination, pl, rc(), false); /* false --> quiet  */
+        file_message("Play-list save", destination);
+        pl.file_name(destination);
+        result = plf.write();
+        if (! result)
+        {
+            file_error("Write failed", destination);
+            // TODO?
+            ///// (void) append_error_message(pl.error_message());
+        }
+    }
+    else
+    {
+        file_error("Play-list filename", "<empty>");
+    }
+    return result;
+}
+
+/**
+ *  This function reads the source playlist file and then saves it to the new
+ *  location.
+ *
+ *  \param [inout] pl
+ *      Provides the playlist object.
+ *
+ *  \param source
+ *      Provides the input file name from which the playlist will be filled.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+save_playlist
+(
+    playlist & pl,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    bool result = ! source.empty() && ! destination.empty();
+    if (result)
+    {
+        std::string msg = source + " --> " + destination;
+        playlistfile plf(source, pl, rc(), false);  /* false --> quiet      */
+        file_message("Play-list save", msg);
+        result = plf.open(false);                   /* parse, no verify     */
+        if (result)
+        {
+            plf.name(destination);
+            result = plf.write();
+            if (! result)
+                file_error("Write failed", destination);
+        }
+        else
+        {
+            file_error("Open failed", source);
+        }
+    }
+    else
+    {
+        file_error("Play-list filenames", "<empty>");
+    }
+    return result;
+}
+
+/**
+ *  This function uses the playlist to copy all of the MIDI files noted in the
+ *  source playlist file.
+ *
+ *  \param [in] plp
+ *      Provides a pointer to the playlist, which should have been filled with
+ *      playlist data.
+ *
+ *  \param source
+ *      Simply provides the input file name for information only.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+copy_playlist_songs
+(
+    playlist & pl,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    bool result = ! source.empty() && ! destination.empty();
+    if (result)
+    {
+        std::string msg = source + " --> " + destination;
+        file_message("Play-list copy", msg);
+        result = pl.copy_songs(destination);
+        if (! result)
+            file_error("Copy failed", destination);
+    }
+    else
+    {
+        file_error("Play-list file directories", "<empty>");
+    }
+    return result;
 }
 
 }           // namespace seq66

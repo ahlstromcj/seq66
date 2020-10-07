@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-09-20
+ * \updates       2020-10-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -107,6 +107,34 @@ private:
     bool scan_song_file (int & song_number, std::string & song_file);
 
 };          // class playlistfile
+
+/*
+ *  Free functions for working with play-list files.
+ */
+
+extern bool open_playlist
+(
+    playlist & pl,
+    const std::string & source,
+    bool show_on_stdout = false
+);
+extern bool save_playlist
+(
+    playlist & pl,
+    const std::string & destfile
+);
+extern bool save_playlist
+(
+    playlist & pl,
+    const std::string & source,
+    const std::string & destination
+);
+extern bool copy_playlist_songs
+(
+    playlist & pl,
+    const std::string & source,
+    const std::string & destination
+);
 
 }           // namespace seq66
 

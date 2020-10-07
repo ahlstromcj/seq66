@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-09-27
+ * \updates       2020-10-06
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -313,23 +313,22 @@ smanager::open_playlist ()
     bool result = not_nullptr(perf());
     if (result)
     {
-        /*
-         * Open unconditionally: rc().playlist_active()
-         */
-
         std::string playlistname = rc().playlist_filespec();
-        result = perf()->open_playlist(playlistname, rc().verbose());
         if (! playlistname.empty())
         {
+            result = perf()->open_playlist(playlistname, rc().verbose());
             if (result)
             {
                 result = perf()->open_current_song();   /* p.playlist_test() */
             }
             else
             {
-                std::string msg = "Open failed: ";
-                msg += playlistname;
-                append_error_message(msg);
+                if (rc().playlist_active())
+                {
+                    std::string msg = "Open failed: ";
+                    msg += playlistname;
+                    append_error_message(msg);
+                }
                 result = true;                          /* avoid early exit  */
             }
         }
@@ -648,7 +647,7 @@ smanager::internal_error_check (std::string & errmsg) const
     if (result)
     {
         pmerrmsg =
-            "Internal Error: go to Edit / Preferences / MIDI Clock and "
+            "Internal error: Check Edit / Preferences / MIDI Clock and "
             "MIDI Input to see which devices are disabled.  Also check "
             "seq66.log in the configuration directory."
             ;
@@ -673,7 +672,7 @@ smanager::error_handling ()
 {
     std::string errmsg;
     if (internal_error_check(errmsg))
-        show_message("Error handling", errmsg);
+        show_error("Session error", errmsg);
 
 #if defined SEQ66_PORTMIDI_SUPPORT
     const char * pmerrmsg = pm_log_buffer();
@@ -704,17 +703,14 @@ smanager::create (int argc, char * argv [])
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
 #if defined SEQ66_PLATFORM_DEBUG_TEST_NSM
-            (void) create_project(argc, argv, "/home/ahlstrom/tmp/playlist");
+            (void) create_project(argc, argv, "~/sessiontest");
 #else
             std::string homedir = manager_path();
             if (homedir != "None")
-            {
                 file_message("Manager path", manager_path());
-            }
             else
-            {
                 homedir = rc().home_config_directory();
-            }
+
             (void) create_project(argc, argv, homedir);
 #endif
         }
@@ -744,12 +740,10 @@ smanager::create (int argc, char * argv [])
 
                 if (tmp.empty())
                 {
-                    // show_error(fname, errormessage);
                     file_error(errormessage, fname);
                 }
                 else
                 {
-                    // show_message("Opened", tmp);        /* fname */
                     file_message("Opened", tmp);           /* fname */
                 }
             }

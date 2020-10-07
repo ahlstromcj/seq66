@@ -137,10 +137,10 @@ clinsmanager::create_session (int argc, char * argv [])
             std::string exename = seq_arg_0();          /* "qseq66" */
             result = m_nsm_client->announce(appname, exename, capabilities());
             if (! result)
-                file_message("create_session()", "failed to announce");
+                file_error("Create session", "failed to announce");
         }
         else
-            file_message("create_session()", "failed to make client");
+            file_error("Create session", "failed to make client");
 
         nsm_active(result);
         usr().in_session(result);                       /* global flag      */
@@ -385,140 +385,56 @@ clinsmanager::create_project
                 result = cmdlineopts::write_options_files();
                 if (result)
                 {
-                    std::string s("Temp");
-                    performer * p(nullptr);
-                    std::shared_ptr<playlist> plp;
-                    plp.reset(new (std::nothrow) playlist(p, s, false));
-                    result = bool(plp);
-                    if (result)
-                        result = save_playlist(plp, srcplayfile, dstplayfile);
-
-                    if (result)
+                    if (rc().playlist_active())
                     {
-                        std::string destination = rc().midi_filepath();
-                        result = copy_playlist(plp, srcplayfile, dstplayfile);
-                    }
-                }
-                else
-                {
-                    errprint("Play-list does not exist");
-                }
-#if defined THIS_CODE_IS_READY
-                if (perf()->notemap_exists())
-                {
-                    if (result)
-                    {
-                        std::string destination = rc().notemap_filename();
-                        file_message("Note-mapper save", destination);
-                        result = perf()->save_note_mapper(destination);
+                        std::string s("Temp");
+                        performer * p(nullptr);
+                        std::shared_ptr<playlist> plp;
+                        plp.reset(new (std::nothrow) playlist(p, s, false));
+                        result = bool(plp);
+                        if (result)
+                        {
+                            result = save_playlist
+                            (
+                                *plp, srcplayfile, dstplayfile
+                            );
+                        }
+                        if (result)
+                        {
+                            std::string destination = rc().midi_filepath();
+                            result = copy_playlist_songs
+                            (
+                                *plp, srcplayfile, dstplayfile
+                            );
+                        }
                     }
                     else
-                        errprint("Initial config writes failed");
+                    {
+                        warnprint("Play-list is not active");
+                    }
+                }
+#if defined THIS_CODE_IS_READY
+                if (rc().notemap_active())
+                {
+                    if (perf()->notemap_exists())
+                    {
+//                      if (result)
+//                      {
+                            std::string destination = rc().notemap_filename();
+                            file_message("Note-mapper save", destination);
+                            result = perf()->save_note_mapper(destination);
+//                      }
+//                      else
+//                          errprint("Initial config writes failed");
+                    }
                 }
                 else
                 {
-                    errprint("Note-mapper does not exist");
+                    warnprint("Note-mapper is not active");
                 }
 #endif
             }
         }
-    }
-    return result;
-}
-
-/**
- *  This function reads the original playlist file (without using the
- *  performer, which is not yet created at this time), and then saves it to
- *  the new location.
- *
- *  \param [out] plp
- *      Provides a pointer to the playlist, which is created anew with no
- *      performer attached to it, just for reading the playlist data into this
- *      object.
- *
- *  \param source
- *      Provides the input file name from which the playlist will be filled.
- *
- *  \param destination
- *      Provides the directory to which the play-list file is to be saved.
- *
- * \return
- *      Returns true if the operation succeeded.
- */
-
-bool
-clinsmanager::save_playlist
-(
-    std::shared_ptr<playlist> plp,
-    const std::string & source,
-    const std::string & destination
-)
-{
-    std::string msg = source + " --> " + destination;
-    bool result = bool(plp);
-    file_message("Play-list save", msg);
-    if (result)
-    {
-        playlistfile plf(source, *plp, rc(), false);
-        result = plf.open(false);               /* parse, no file verify    */
-        if (result)
-        {
-            plf.name(destination);
-            result = plf.write();
-            if (! result)
-                file_message("Write failed", destination);
-        }
-        else
-        {
-            /*
-             * There is no source playlist file, try to write an empty one.
-             *
-             * plf.name(destination);
-             * result = plf.write();
-             * if (! result)
-             *     file_message("Write failed", destination);
-             */
-
-            file_error("Open failed", source);
-        }
-    }
-    return result;
-}
-
-/**
- *  This function uses the playlist to copy all of the MIDI files noted in the
- *  source playlist file.
- *
- *  \param [in] plp
- *      Provides a pointer to the playlist, which should have been filled with
- *      playlist data.
- *
- *  \param source
- *      Simply provides the input file name for information only.
- *
- *  \param destination
- *      Provides the directory to which the play-list file is to be saved.
- *
- * \return
- *      Returns true if the operation succeeded.
- */
-
-bool
-clinsmanager::copy_playlist
-(
-    std::shared_ptr<playlist> plp,
-    const std::string & source,
-    const std::string & destination
-)
-{
-    std::string msg = source + " --> " + destination;
-    bool result = bool(plp);
-    file_message("Play-list copy", msg);
-    if (result)
-    {
-        result = plp->copy(destination);
-        if (! result)
-            file_message("Copy failed", destination);
     }
     return result;
 }

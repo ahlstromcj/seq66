@@ -138,21 +138,6 @@ public:
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
 
-private:
-
-    bool save_playlist
-    (
-        std::shared_ptr<playlist> plp,
-        const std::string & source,
-        const std::string & destination
-    );
-    bool copy_playlist
-    (
-        std::shared_ptr<playlist> plp,
-        const std::string & source,
-        const std::string & destination
-    );
-
 };          // class clinsmanager
 
 }           // namespace seq66

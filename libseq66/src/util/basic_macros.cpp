@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-09-14
+ * \updates       2020-10-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -160,7 +160,7 @@ error_message (const std::string & msg)
     if (errmsg.empty())
         errmsg = "Empty error message; ask the programmer to investigate";
 
-    std::cerr << "[" << errmsg << "!?]" << std::endl;
+    std::cerr << "[" << errmsg << "?]" << std::endl;
     return false;
 }
 
@@ -186,7 +186,7 @@ file_error (const std::string & tag, const std::string & path)
     if (p.empty())
         p = "<empty path>";
 
-    std::cerr << "[? " << tag << ": " << p << "]" << std::endl;
+    std::cerr << "[" << tag << ": " << p << "?]" << std::endl;
     return false;
 }
 

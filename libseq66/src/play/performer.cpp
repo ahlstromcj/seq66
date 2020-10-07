@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-09-27
+ * \updates       2020-10-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5833,20 +5833,23 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
     );
 
     bool result = bool(m_play_list);
-    if (result && ! pl.empty())                 /* if have a playlist name  */
+    if (result)
     {
-        playlistfile plf(pl, *m_play_list, rc(), show_on_stdout);
-        result = plf.open(true);                /* parse and file verify    */
+        result = seq66::open_playlist(*m_play_list, pl, show_on_stdout);
         if (result)
         {
             clear_all(false);                   /* clear, reset playlist    */
         }
         else
         {
-            std::string msg = "Open failed: ";
-            msg += pl;
-            (void) error_message(msg);          // m_play_list->error_message()
+            /*
+             * (void) error_message(m_play_list->error_message());
+             */
         }
+    }
+    else
+    {
+        errprint("null playlist pointer");
     }
     return result;
 }
@@ -5869,19 +5872,13 @@ performer::save_playlist (const std::string & pl)
     bool result = bool(m_play_list);
     if (result)
     {
-        if (! pl.empty())
-        {
-            m_play_list->file_name(pl);
-            file_message("Play-list name", pl);
-        }
-        playlistfile plf(pl, *m_play_list, rc(), false);
-        plf.name(pl);
-        result = plf.write();       // m_play_list->write();
+        result = seq66::save_playlist(*m_play_list, pl);
+        /*
+         * TODO
+         *
         if (! result)
-        {
-            file_message("Write failed", playlist_filename());
             (void) error_message(m_play_list->error_message());
-        }
+         */
     }
     else
     {

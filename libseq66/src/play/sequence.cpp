@@ -235,8 +235,6 @@ sequence::modify ()
      */
 
      notify_change();
-
-    //// m_parent->modify();
 }
 
 /**

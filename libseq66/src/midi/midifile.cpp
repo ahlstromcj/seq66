@@ -553,14 +553,14 @@ midifile::grab_input_stream (const std::string & tag)
             }
             catch (const std::bad_alloc & ex)
             {
-                result = set_error("Memory allocation failed in midifile stream");
+                result = set_error("MIDI file stream memory allocation failed");
             }
             file.close();
         }
     }
     else
     {
-        std::string errmsg = "Error opening ";
+        std::string errmsg = "Open failed: ";
         errmsg += tag;
         errmsg += " file '";
         errmsg += m_name;

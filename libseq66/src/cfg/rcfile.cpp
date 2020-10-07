@@ -216,8 +216,8 @@ rcfile::parse ()
     if (! file.is_open())
     {
         char temp[128];
-        snprintf(temp, sizeof temp, "Read open failed: %s\n", name().c_str());
-        return make_error_message("'rc' parse", temp);
+        snprintf(temp, sizeof temp, "Read open fail: %s\n", name().c_str());
+        return make_error_message("rc", temp);
     }
     file.seekg(0, std::ios::beg);                       /* seek to start    */
 
@@ -539,6 +539,8 @@ rcfile::parse ()
     {
         (void) make_error_message("recent-files", "data line missing");
     }
+
+    rc_ref().playlist_active(false);
     if (line_after(file, "[playlist]"))
     {
         bool exists = false;
@@ -552,16 +554,18 @@ rcfile::parse ()
             {
                 /*
                  * Prepend the home configuration directory and, if needed,
-                 * the playlist extension.
+                 * the playlist extension.  Also, even if we can't find the
+                 * playlist file, leave the name set for when the 'rc' file is
+                 * saved.
                  */
 
                 bool active = flag != 0;
                 fname = rc_ref().make_config_filespec(fname, ".playlist");
                 exists = file_exists(fname);
+                rc_ref().playlist_filename(fname);
                 if (exists)
                 {
                     rc_ref().playlist_active(active);
-                    rc_ref().playlist_filename(fname);
                 }
                 else
                 {
@@ -570,62 +574,54 @@ rcfile::parse ()
                 }
             }
         }
-        if (exists)
+        if (next_data_line(file))
         {
-            if (next_data_line(file))
+            std::string midibase = trimline();
+            if (! is_empty_string(midibase))
             {
-                std::string midibase = trimline();
-                if (! is_empty_string(midibase))
-                {
-                    file_message("Playlist MIDI base directory", midibase);
-                    rc_ref().midi_base_directory(midibase);
-                }
+                file_message("Playlist MIDI base directory", midibase);
+                rc_ref().midi_base_directory(midibase);
             }
-        }
-        else
-        {
-            rc_ref().playlist_active(false);
-            rc_ref().playlist_filename("");
         }
     }
     else
     {
         /* A missing playlist section is not an error. */
     }
+
+    rc_ref().notemap_active(false);
     if (line_after(file, "[note-mapper]"))
     {
-        std::string fname;
         bool exists = false;
         int flag = 0;
         sscanf(scanline(), "%d", &flag);        /* note-mapper-active flag  */
         if (next_data_line(file))
         {
-            fname = trimline();
+            std::string fname = trimline();
             exists = ! is_empty_string(fname);
-        }
-        if (exists)
-        {
-            /*
-             * Prepend the home configuration directory and, if needed,
-             * the playlist extension.
-             */
-
-            bool active = flag != 0;
-            fname = rc_ref().make_config_filespec(fname, ".drums");
-            exists = file_exists(fname);
             if (exists)
             {
-                rc_ref().notemap_active(active);
+                /*
+                 * Prepend the home configuration directory and, if needed,
+                 * the drums extension.  The name, if set, is always set, even
+                 * the the note-map is flagged as not active.
+                 */
+
+                bool active = flag != 0;
+                fname = rc_ref().make_config_filespec(fname, ".drums");
+                exists = file_exists(fname);
                 rc_ref().notemap_filename(fname);
-            }
-            else
-            {
-                if (active)
-                    file_error("No such note mapping", fname);
+                if (exists)
+                {
+                    rc_ref().notemap_active(active);
+                }
+                else
+                {
+                    if (active)
+                        file_error("No such note-mapper", fname);
+                }
             }
         }
-        if (! exists)
-            rc_ref().notemap_filename("");
     }
     else
     {
