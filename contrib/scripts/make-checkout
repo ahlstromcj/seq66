@@ -1,0 +1,53 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+##
+# \file        make-checkout
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2020-10-10 to 2020-10-10
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+#  This script removes the changed or deleted status of the configure and
+#  Makefile.in files that can happen when the project is built on a different
+#  system.  Not a big fan of this Makefile.in crap.
+#
+#------------------------------------------------------------------------------
+
+git checkout Makefile.in
+git checkout Seq66cli/Makefile.in
+git checkout Seq66qt5/Makefile.in
+git checkout Seqtool/Makefile.in
+git checkout Seqtool/forms/Makefile.in
+git checkout Seqtool/include/Makefile.in
+git checkout Seqtool/src/Makefile.in
+git checkout configure
+git checkout data/Makefile.in
+git checkout doc/Makefile.in
+git checkout doc/dox/Makefile.in
+git checkout libseq66/Makefile.in
+git checkout libseq66/include/Makefile.in
+git checkout libseq66/src/Makefile.in
+git checkout libsessions/Makefile.in
+git checkout libsessions/include/Makefile.in
+git checkout libsessions/src/Makefile.in
+git checkout m4/Makefile.in
+git checkout man/Makefile.in
+git checkout resources/pixmaps/Makefile.in
+git checkout seq_portmidi/Makefile.in
+git checkout seq_portmidi/include/Makefile.in
+git checkout seq_portmidi/src/Makefile.in
+git checkout seq_qt5/Makefile.in
+git checkout seq_qt5/forms/Makefile.in
+git checkout seq_qt5/include/Makefile.in
+git checkout seq_qt5/src/Makefile.in
+git checkout seq_rtmidi/Makefile.in
+git checkout seq_rtmidi/include/Makefile.in
+git checkout seq_rtmidi/src/Makefile.in
+
+#******************************************************************************
+# make-checkout (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+
