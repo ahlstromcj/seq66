@@ -706,11 +706,10 @@ smanager::create (int argc, char * argv [])
             (void) create_project(argc, argv, "~/sessiontest");
 #else
             std::string homedir = manager_path();
-            if (homedir != "None")
-                file_message("Manager path", manager_path());
-            else
+            if (homedir == "None")
                 homedir = rc().home_config_directory();
 
+            file_message("Session manager path", homedir);
             (void) create_project(argc, argv, homedir);
 #endif
         }
@@ -763,12 +762,15 @@ smanager::create (int argc, char * argv [])
     }
     else
     {
-        (void) create_performer();
-        (void) create_window();
-        error_handling();
-        (void) create_session();
-        (void) run();
-        (void) close_session(false);
+        if (! is_help())
+        {
+            (void) create_performer();
+            (void) create_window();
+            error_handling();
+            (void) create_session();
+            (void) run();
+            (void) close_session(false);
+        }
     }
     return result;
 }

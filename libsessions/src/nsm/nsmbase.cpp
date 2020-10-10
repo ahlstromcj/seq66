@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-09-04
+ * \updates       2020-10-10
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -792,12 +792,6 @@ nsmbase::save_session ()
  *  OSC server.  Weird.
  */
 
-#define ADD_METHOD(x, y) \
-    lo_server_add_method(m_lo_thread, x, y, h, this);
-
-#define ADD_THREAD_METHOD(x, y) \
-    lo_server_thread_add_method(m_lo_thread, x, y, h, this);
-
 void
 nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
 {
@@ -814,14 +808,16 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         if (t == nsm::tag::null)
         {
             const char * nul = NULL;
-            (void) ADD_METHOD(nul, nul);
-            (void) ADD_THREAD_METHOD(nul, nul);
+//          (void) lo_server_add_method(m_lo_thread, nul, nul, h, this);
+            (void) lo_server_thread_add_method(m_lo_thread, nul, nul, h, this);
             nsm::outgoing_msg("OSC", "", "Broadcast method added");
         }
         else
         {
-            (void) ADD_METHOD(message.c_str(), pattern.c_str());
-            (void) ADD_THREAD_METHOD(message.c_str(), pattern.c_str());
+            const char * m = message.c_str();
+            const char * p = pattern.c_str();
+//          (void) lo_server_add_method(m_lo_thread, m, p, h, this);
+            (void) lo_server_thread_add_method(m_lo_thread, m, p, h, this);
             nsm::outgoing_msg(message, pattern, "Client method added");
         }
     }
@@ -834,7 +830,9 @@ nsmbase::add_server_method (nsm::tag t, lo_method_handler h)
     std::string pattern;
     if (server_msg(t, message, pattern))
     {
-        (void) ADD_METHOD(message.c_str(), pattern.c_str());
+        const char * m = message.c_str();
+        const char * p = pattern.c_str();
+        (void) lo_server_add_method(m_lo_thread, m, p, h, this);
         nsm::outgoing_msg(message, pattern, "Server method added");
     }
 }

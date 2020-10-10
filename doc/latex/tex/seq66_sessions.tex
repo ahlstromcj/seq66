@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2020-10-03
+% \update      2020-10-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -34,13 +34,47 @@
    \index{sessions!nsm}
    MORE TO COME.  NSM support is well underway, but still in progress
 
+\subsubsection{Seq66 Session Management / NSM / First Run Before Using NSM}
+\label{subsec:sessions_nsm_before_using_nsm}
+
+   It is important, after installing \textsl{Seq66}, to run it normally. This
+   action creates the default configuration files in
+   \texttt{/home/user/.config/seq66}.
+
+\begin{verbatim}
+   nsm $ qseq66 
+   [No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes/drums/playlist]
+   [No 'usr' file, will create: /home/user/.config/seq66/qseq66.usr]
+   [File exists: /home/user/.config/seq66/qseq66.rc]
+   [Saving initial config files to session directory!]
+   [Writing 'rc': /home/user/.config/seq66/qseq66.rc]
+   [Writing 'ctrl': /home/user/.config/seq66/qseq66.ctrl]
+   [Writing 'mutes': /home/user/.config/seq66/qseq66.mutes]
+   [Writing 'usr': /home/user/.config/seq66/qseq66.usr]
+\end{verbatim}
+
+   The \texttt{qseq66.usr} file can then be edited to allow \textsl{Seq66} to
+   use NSM.  Look for the following lines in that file:
+
+\begin{verbatim}
+   [user-session]
+   session = none
+\end{verbatim}
+
+   Change the "session" line to
+
+\begin{verbatim}
+   session = nsm
+\end{verbatim}
+
+   Then we are ready to run the Non Session Manager, as described in the next
+   section.
+
 \subsubsection{Seq66 Session Management / NSM / First Run}
 \label{subsec:sessions_nsm}
 
-   Here, we describe a first run of \texttt{qseq66}, as if it were just
-   installed, under NSM, with no configuration directory yet created by
-   \texttt{qseq66}.  What happens?  We run it from the console in order to see
-   the output.
+   Now that we have the initial configuration, we want to run \textsl{Seq66}
+   under NSM and create a configuration in the NSM sessions directory.
 
 \begin{verbatim}
    $ non-session-manager
@@ -56,15 +90,18 @@
    a couple of
    "/nsm/server/new" \textsl{OSC} messages about the creation of the session.
 
+\begin{verbatim}
+   [non-session-manager] Sending new for: Seq66
+   [nsmd] Creating new session "Seq66"
+   [non-session-manager] /nsm/server/new says Created.
+   [non-session-manager] /nsm/server/new says Session created
+\end{verbatim}
+
    Next, we click the \textsl{Add Client to Session}, and, since
    \texttt{qseq66} has been installed, it is in the "PATH" and its executable
-   name can be entered.
+   name can be entered simply: "qseq66".
 
 
-
-
-
-   In the user-interface that
 
 \subsubsection{Seq66 Session Management / User Interface}
 \label{subsubsec:sessions_ui}
