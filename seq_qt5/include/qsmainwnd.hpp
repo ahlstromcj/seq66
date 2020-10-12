@@ -333,7 +333,7 @@ private slots:
 #endif
 
     void update_bank (int newBank);
-    void update_bank_name (const QString &);
+    void update_bank_text (const QString &);
     void start_playing ();
     void pause_playing ();
     void stop_playing ();

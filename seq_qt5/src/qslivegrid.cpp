@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-08-08
+ * \updates       2020-10-12
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -724,9 +724,10 @@ qslivegrid::update_bank (int bankid)
  */
 
 void
-qslivegrid::update_bank_name ()
+qslivegrid::update_bank_name (const std::string & name)
 {
-    std::string name = ui->txtBankName->document()->toPlainText().toStdString();
+//  std::string name = ui->txtBankName->document()->toPlainText().toStdString();
+    ui->txtBankName->setPlainText(name.c_str());
     perf().set_screenset_notepad(m_bank_id, name, m_is_external);
 }
 

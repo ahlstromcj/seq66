@@ -1,6 +1,6 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-09-26
+2015-09-10 to 2020-10-12
 
 "Seq66" is a refactoring of the Qt-based version of "Sequencer64" for better use
 of C++ and for removing a lot of krufty buildup.  With all the work that has
@@ -13,13 +13,13 @@ the INSTALL file.  Windows users can get an installer package on GitHub at:
 Major changes:
 
     -   User interface:
-        -   Using Qt 5 for the user-interface, since its cross-platform
-            support is very good.  Removed the "grid of sets" feature in
-            favor of unlimited external grid windows.
+        -   Using Qt 5 for the user-interface (good cross-platform support).
+            Removed the "grid of sets" in favor of unlimited external live
+            grid windows.
         -   Added tabs for management of sets, mute-groups, song mode, pattern
             editing, event-editing, play-lists, and session management.
-        -   Added a live frame using buttons to match Qt theming. The original
-            grid implementation is available as a "user" option.
+        -   Added a live frame using buttons to match Qt theming. (The original
+            implementation is available as a "user" option.)
         -   A color for each sequence can be chosen to make them stand out.
             The color is saved in a SeqSpec associated with the track.
     -   Configuration files:
@@ -58,7 +58,7 @@ and using a conventional source tarball.
 Recent changes:
 
     -   Version 0.91.0:
-        -   Getting serious about Non Session Manager support.
+        -   Getting really serious about Non Session Manager support.
         -   Bug fixes and minor improvements.
         -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
             linkage errors that cropped up in debug builds.

@@ -140,7 +140,7 @@ protected:
     bool paste_seq ();
     virtual void update_bank (int bank);
 
-    virtual void update_bank_name ()
+    virtual void update_bank_name (const std::string & /*name*/)
     {
         // no code, see qslivegrid versus qsliveframe
     }

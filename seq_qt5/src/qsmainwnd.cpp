@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-09-17
+ * \updates       2020-10-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -742,7 +742,7 @@ qsmainwnd::qsmainwnd
     connect
     (
         ui->txtBankName, SIGNAL(textEdited(QString)),
-        this, SLOT(update_bank_name(QString))
+        this, SLOT(update_bank_text(QString))
     );
 
     /*
@@ -780,6 +780,13 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);
 
+#if defined SEQ66_DISABLE_SESSION_TAB
+
+    /*
+     * We want to keep the session table accessible to show the current
+     * configuration directory, etc.
+     */
+
     if (! usr().wants_nsm_session())
     {
         /*
@@ -789,6 +796,8 @@ qsmainwnd::qsmainwnd
 
         ui->tabWidget->setTabEnabled(Tab_Session, false);
     }
+
+#endif
 
     /*
      * Test button.  This button supports whatever debugging we need to do at
@@ -849,13 +858,20 @@ qsmainwnd::~qsmainwnd ()
     delete ui;
 }
 
+/*
+ *  Note that the "use NSM" flag is set at construction time.  We don't need
+ *  to do it here.
+ *
+ *      use_nsm(true);
+ */
+
 void
 qsmainwnd::attach_session (smanager * sp)
 {
     if (not_nullptr(sp))
     {
         m_session_mgr_ptr = sp;
-        use_nsm(true);
+
 #if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
         if (s_use_test_button)
         {
@@ -2678,10 +2694,15 @@ qsmainwnd::update_bank (int bankid)
  */
 
 void
-qsmainwnd::update_bank_name (const QString &)
+qsmainwnd::update_bank_text (const QString & newname)
 {
     if (not_nullptr(m_live_frame))
-        m_live_frame->update_bank_name();
+    {
+//  QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
+//  ui->txtBankName->setText(bname);
+        std::string name = newname.toStdString();
+        m_live_frame->update_bank_name(name);
+    }
 }
 
 /**
@@ -2749,7 +2770,7 @@ qsmainwnd::connect_nsm_slots ()
      * File / New.  NSM version.
      */
 
-    ui->actionNew->setText("&New MIDI file...");
+    ui->actionNew->setText("&New MIDI File...");
     ui->actionNew->setToolTip("Clear and set a new MIDI file in session.");
     connect
     (
@@ -2776,7 +2797,7 @@ qsmainwnd::connect_nsm_slots ()
      * File / Save Session.
      */
 
-    ui->actionSave->setText("&Save session");
+    ui->actionSave->setText("&Save Session");
     ui->actionSave->setToolTip("Save the current state of the session.");
     connect
     (
@@ -2806,7 +2827,7 @@ qsmainwnd::connect_nsm_slots ()
      * File / Close.
      */
 
-    ui->actionClose->setText("&Close");
+    ui->actionClose->setText("&Close Session");
     ui->actionClose->setToolTip("Detach from session management.");
     connect
     (

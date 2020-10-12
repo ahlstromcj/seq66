@@ -771,14 +771,13 @@ qsliveframe::update_bank (int bankid)
  *  display. Let performer set the modify flag, it knows when to do it.
  *  Otherwise, just scrolling to the next screen-set causes a spurious
  *  modification and an annoying prompt to a user exiting the application.
- *
- *  DEPRECATED.
  */
 
 void
-qsliveframe::update_bank_name ()
+qsliveframe::update_bank_name (const std::string & name)
 {
-    std::string name = ui->txtBankName->document()->toPlainText().toStdString();
+//  std::string name = ui->txtBankName->document()->toPlainText().toStdString();
+    ui->txtBankName->setPlainText(name.c_str());
     perf().set_screenset_notepad(m_bank_id, name, m_is_external);
 }
 

@@ -101,7 +101,7 @@ private:                            // overrides of qslivebase functions
     ) override;
 
     virtual void update_bank (int newbank) override;
-    virtual void update_bank_name () override;
+    virtual void update_bank_name (const std::string & name) override;
     virtual void reupdate () override;
     virtual void update_geometry () override;
     virtual void change_event (QEvent *) override;

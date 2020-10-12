@@ -116,8 +116,13 @@ qt5nsmanager::refresh ()
 /**
  *  Push the qsmainwnd window onto the stack.  Also be sure to pass along the
  *  PPQN value, which might be different than the default (192), and affects
- *  some of the child objects of qsmainwnd.  Also note the future support for
- *  NSM; it will change the menus available in the main Seq66 window.
+ *  some of the child objects of qsmainwnd.
+ *
+ *  Also note the support for NSM; it changes the menus available in the main
+ *  Seq66 window.  Note that we cannot use the nsm_active() call, because all
+ *  that means is that the user wants NSM handling to be active.  But it isn't
+ *  active until "in session", which means that the user wants NSM *and* NSM
+ *  is running.
  *
  *  This function assumes that create_performer() has already been called.
  *  And this function is called before create_session().
@@ -131,7 +136,7 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        bool usensm = nsm_active();
+        bool usensm = usr().in_session();               /* not nsm_active() */
         qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
         result = not_nullptr(qm);
         if (result)
