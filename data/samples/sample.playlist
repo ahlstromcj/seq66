@@ -1,7 +1,7 @@
 # Seq66 0.90.0 (and above) playlist file
 #
 # data/sample.playlist
-# Written on 2019-08-22
+# Written on 2020-10-14
 #
 # This file holds a playlist for Seq66. It consists of one
 # or more '[playlist]' sections.  Each section has a user-specified
@@ -107,8 +107,8 @@ data/midi/
 
 data/wrk/
 
-70 data/oxygen4b.wrk
-71 data/longhair.wrk
+70 oxygen4b.wrk
+71 longhair.wrk
 
 # End of data/samples/sample.playlist
 #

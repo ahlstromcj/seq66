@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-28
+ * \updates       2020-10-14
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -387,6 +387,14 @@ clinsmanager::create_project
                 {
                     if (rc().playlist_active())
                     {
+                        warnprint("Play-list is not active, saving anyway");
+                    }
+                    if (dstplayfile.empty())
+                    {
+                        warnprint("Play-list name empty, not saving it");
+                    }
+                    else
+                    {
                         std::string s("Temp");
                         performer * p(nullptr);
                         std::shared_ptr<playlist> plp;
@@ -407,10 +415,6 @@ clinsmanager::create_project
                                 *plp, srcplayfile, dstplayfile
                             );
                         }
-                    }
-                    else
-                    {
-                        warnprint("Play-list is not active");
                     }
                 }
 #if defined THIS_CODE_IS_READY
