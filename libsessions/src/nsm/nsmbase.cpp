@@ -309,25 +309,42 @@ nsmbase::lo_is_valid () const
  *  Wait for the next message.  Useful after sending the /nsm/server/announce
  *  message.  We added a brief sleep delay because sometimes we seem to miss a
  *  message at startup.
+ *
+ *  Note that lo_server_wait() waits for the given timeout, then returns 1 if
+ *  a message is waiting.
+ *
+ * \param timeoutms
+ *      Indicates how long to wait for a server message, in milliseconds.
+ *      Defaults to 100 ms.
+ *
+ * \return
+ *      Returns true if a message was received within 2 seconds, roughly.
  */
 
-void
-nsmbase::msg_check (int timeout)
+bool
+nsmbase::msg_check (int timeoutms)
 {
-    if (timeout > 0)
+    bool result = false;
+    if (timeoutms > 0)
     {
         if (rc().verbose())
             file_message("S66", "Waiting for reply...");
 
-        microsleep(100);
-        if (lo_server_wait(m_lo_server, timeout))
+        int two_second_count = 2000 / timeoutms;
+        for (int count = 0; count < two_second_count; ++count)
         {
-            while (lo_server_recv_noblock(m_lo_server, 0))
+            if (lo_server_wait(m_lo_server, timeoutms))
             {
-                // do nothing
+                result = true;
+                while (lo_server_recv_noblock(m_lo_server, 0))
+                {
+                    /* do nothing, handle the message(s) */
+                }
+                break;
             }
         }
     }
+    return result;
 }
 
 /*

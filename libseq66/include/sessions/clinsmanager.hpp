@@ -92,6 +92,11 @@ private:
 
 #endif
 
+    /**
+     *  This value indicates that the nsmclient is active. It is roughly
+     *  similar in meaning to the "global" value usr().in_session().
+     */
+
     bool m_nsm_active;
 
 public:

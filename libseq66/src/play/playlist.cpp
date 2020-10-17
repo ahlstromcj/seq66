@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-10-05
+ * \updates       2020-10-15
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -366,10 +366,23 @@ playlist::copy_songs (const std::string & destination)
                         {
                             d = append_file(d, s.ss_filename);
                             result = file_copy(fname, d);
+                            if (! result)
+                            {
+                                set_file_error_message("Failed to copy", d);
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            set_file_error_message("Failed to make", d);
+                            break;
                         }
                     }
                     else
+                    {
+                        set_file_error_message("File does not exist", fname);
                         break;
+                    }
                 }
                 if (! result)
                     break;
@@ -378,6 +391,10 @@ playlist::copy_songs (const std::string & destination)
             {
                 // rc().midi_base_directory(xyz);
             }
+        }
+        else
+        {
+            set_file_error_message("Failed to create", destfile);
         }
     }
     else
@@ -1016,14 +1033,16 @@ playlist::midi_base_directory (const std::string & basedir)
  *  Gets the MIDI base directory, if non-empty. Gets the song directory, if
  *  non-empty.  Gets the base filename of the song, which might include a
  *  relative path.  Then it concatenates the MIDI base directory,
- *  song-directory, and the song name, and returns it.
+ *  song-directory, and the song name, and returns it.  Note the calls to
+ *  clean_path(), which ensure the paths end with a slash character.
  */
 
 std::string
 playlist::song_filepath (const song_spec_t & sinfo) const
 {
     std::string songdir = clean_path(sinfo.ss_song_directory);
-    std::string basedir = midi_base_directory();    /* already normalized   */
+    std::string base = midi_base_directory();
+    std::string basedir = clean_path(base);
     std::string result = basedir + songdir + sinfo.ss_filename;
     return result;
 }

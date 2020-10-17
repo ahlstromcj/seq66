@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-17
+ * \updates       2020-10-17
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -1300,20 +1300,40 @@ os_normalize_path (const std::string & path, bool terminate)
  *  Makes sure the path is using the proper separators, and that a separator
  *  appears at the end.  The path is trimmed and normalized, but not
  *  terminated.  Compare to the clean_path() function.
+ *
+ * \param file
+ *      The file-name to fix.  Assumed to be a file name.
+ *
+ * \param tounix
+ *      Use UNIX conventions for the path separator/terminator.  Defaults to
+ *      true.
+ *
+ * \return
+ *      Returns the possibly-modified file-name.
  */
 
 std::string
-clean_file (const std::string & path, bool to_unix)
+clean_file (const std::string & file, bool to_unix)
 {
-    std::string result = path;
+    std::string result = file;
     (void) trim(result, SEQ66_TRIM_CHARS_QUOTES);
-    return normalize_path(result, to_unix, false);
+    return normalize_path(result, to_unix, false);      /* no added slash   */
 }
 
 /**
  *  Makes sure the path is using the proper separators, and that a separator
  *  appears at the end.  The path is trimmed, normalized, and then properly
  *  terminated.  Compare to the clean_file() function.
+ *
+ * \param path
+ *      The path-name to fix.  Assumed to be a directory name.
+ *
+ * \param tounix
+ *      Use UNIX conventions for the path separator/terminator.  Defaults to
+ *      true.
+ *
+ * \return
+ *      Returns the possibly-modified path.
  */
 
 std::string
@@ -1321,7 +1341,7 @@ clean_path (const std::string & path, bool to_unix)
 {
     std::string result = path;
     (void) trim(result, SEQ66_TRIM_CHARS_QUOTES);
-    return normalize_path(result, to_unix, true);
+    return normalize_path(result, to_unix, true);       /* an added slash   */
 }
 
 /**

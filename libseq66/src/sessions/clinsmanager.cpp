@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-10-14
+ * \updates       2020-10-17
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -102,6 +102,7 @@ clinsmanager::create_session (int argc, char * argv [])
 {
 #if defined SEQ66_NSM_SUPPORT
     std::string url;
+    bool testing = false;
     bool ok = usr().wants_nsm_session();            /* user wants NSM usage */
     if (ok)
     {
@@ -113,13 +114,13 @@ clinsmanager::create_session (int argc, char * argv [])
             url = nsm::get_url();
         }
         ok = ! url.empty();                         /* we got an NSM URL    */
-        if (ok)
+        testing = url == "testing";
+        if (ok && ! testing)                        /* for testing!         */
         {
             ok = pid_exists("nsmd");                /* one final check      */
             if (! ok)
                 warnprint("nsmd not running, proceeding with normal run");
         }
-        usr().in_session(ok);
     }
     if (ok)
     {
@@ -142,7 +143,10 @@ clinsmanager::create_session (int argc, char * argv [])
         else
             file_error("Create session", "failed to make client");
 
-        nsm_active(result);
+        if (testing)
+            result = true;
+
+        nsm_active(result);                             /* class flag       */
         usr().in_session(result);                       /* global flag      */
         if (result)
             result = smanager::create_session(argc, argv);
@@ -297,10 +301,9 @@ clinsmanager::create_project
 
         std::string rcfile = cfgfilepath + rc().config_filename();
         bool already_created = file_exists(rcfile);
-        file_message("File exists", rcfile);            /* comforting       */
         if (already_created)
         {
-            std::string errmessage;
+            file_message("File exists", rcfile);        /* comforting       */
             rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
             rc().midi_filepath(midifilepath);           /* set MIDI dir     */
             if (! midifilepath.empty())
@@ -308,6 +311,8 @@ clinsmanager::create_project
                 file_message("NSM MIDI file path", rc().midi_filepath());
                 file_message("NSM MIDI file name", rc().midi_filename());
             }
+
+            std::string errmessage;
             result = cmdlineopts::parse_options_files(errmessage);
             if (result)
             {
@@ -347,14 +352,13 @@ clinsmanager::create_project
                 if (result)
                 {
                     /*
-                     * The first is where MIDI files are stored in the
-                     * session, and the second is where they are stored for
-                     * the play-list.  Currently, the same directory.
-                     * Not considered to be an issue at this time.
+                     * We don't want to do this yet, since we might need to
+                     * copy MIDI files from the original
+                     * rc().midi_base_directory() directory.
+                     *
+                     * rc().midi_filepath(midifilepath);
+                     * rc().midi_base_directory(midifilepath);
                      */
-
-                    rc().midi_filepath(midifilepath);
-                    rc().midi_base_directory(midifilepath);
                 }
             }
             if (result)
@@ -387,11 +391,11 @@ clinsmanager::create_project
                 {
                     if (rc().playlist_active())
                     {
-                        warnprint("Play-list is not active, saving anyway");
+                        warnprint("Play-list not active, saving anyway");
                     }
                     if (dstplayfile.empty())
                     {
-                        warnprint("Play-list name empty, not saving it");
+                        warnprint("Play-list name empty");
                     }
                     else
                     {
@@ -407,13 +411,25 @@ clinsmanager::create_project
                                 *plp, srcplayfile, dstplayfile
                             );
                         }
-                        if (result)
+                        if (result && ! midifilepath.empty())
                         {
-                            std::string destination = rc().midi_filepath();
                             result = copy_playlist_songs
                             (
-                                *plp, srcplayfile, dstplayfile
+                                *plp, srcplayfile, midifilepath
                             );
+                        }
+                        if (result)
+                        {
+                            /*
+                             * The first is where MIDI files are stored in the
+                             * session, and the second is where they are
+                             * stored for the play-list.  Currently, the same
+                             * directory.  Not considered to be an issue at
+                             * this time.
+                             */
+
+                            rc().midi_filepath(midifilepath);
+                            rc().midi_base_directory(midifilepath);
                         }
                     }
                 }
@@ -422,14 +438,9 @@ clinsmanager::create_project
                 {
                     if (perf()->notemap_exists())
                     {
-//                      if (result)
-//                      {
-                            std::string destination = rc().notemap_filename();
-                            file_message("Note-mapper save", destination);
-                            result = perf()->save_note_mapper(destination);
-//                      }
-//                      else
-//                          errprint("Initial config writes failed");
+                        std::string destination = rc().notemap_filename();
+                        file_message("Note-mapper save", destination);
+                        result = perf()->save_note_mapper(destination);
                     }
                 }
                 else

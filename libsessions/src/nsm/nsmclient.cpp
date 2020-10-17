@@ -618,9 +618,8 @@ nsmclient::announce
 {
     bool result = send_announcement(appname, exename, capabilities);
     if (result)
-    {
-        msg_check();                    /* wait for the response    */
-    }
+        result = msg_check();           /* wait for the response from nsmd  */
+
     return result;
 }
 
