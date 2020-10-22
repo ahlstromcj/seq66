@@ -722,7 +722,10 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         std::string uf = file_extension_set(appname, ".usr");
         std::string pl = file_extension_set(appname, ".playlist");
         std::string nm = file_extension_set(appname, ".drums");
-        std::string af = appname + ".rc/ctrl/midi/mutes/drums/playlist";
+        std::string af = appname + ".rc/ctrl/midi/mutes";
+        /*
+         * af += "/drums/playlist", later maybe?
+         */
 
         rc().use_midi_control_file(true);
         rc().midi_control_filename(cf);

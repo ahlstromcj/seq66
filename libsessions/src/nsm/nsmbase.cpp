@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-10-10
+ * \updates       2020-10-17
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -333,12 +333,12 @@ nsmbase::msg_check (int timeoutms)
         int two_second_count = 2000 / timeoutms;
         for (int count = 0; count < two_second_count; ++count)
         {
+            microsleep(100);
             if (lo_server_wait(m_lo_server, timeoutms))
             {
-                result = true;
                 while (lo_server_recv_noblock(m_lo_server, 0))
                 {
-                    /* do nothing, handle the message(s) */
+                    result = true;  /* do nothing, handle the message(s) */
                 }
                 break;
             }

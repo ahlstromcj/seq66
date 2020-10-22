@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-10-12
+dnl \update        2020-10-21
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -120,7 +120,7 @@ dnl Set up version information for this project.
 SEQ66_API_MAJOR="0"
 AC_SUBST([SEQ66_API_MAJOR])
 
-SEQ66_API_MINOR="90"
+SEQ66_API_MINOR="91"
 AC_SUBST([SEQ66_API_MINOR])
 
 SEQ66_API_PATCH="0"
@@ -503,7 +503,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-10-12"
+#define VERSION_DATE_SHORT "2020-10-21"
 #define VERSION "0.91.0"
 
 )

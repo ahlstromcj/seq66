@@ -381,13 +381,6 @@ qsmainwnd::qsmainwnd
     );
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
-    m_import_dialog = new QFileDialog
-    (
-        this, tr("Import MIDI file to Current Set..."),
-        rc().last_used_dir().c_str(),
-        tr("MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)")
-    );
-
     m_dialog_prefs = new qseditoptions(perf(), this);
     m_beat_ind = new qsmaintime(perf(), this, 4, 4);
     m_dialog_about = new qsabout(this);
@@ -432,6 +425,12 @@ qsmainwnd::qsmainwnd
     (
         ui->actionImport_MIDI, SIGNAL(triggered(bool)),
         this, SLOT(import_into_set())
+    );
+    m_import_dialog = new QFileDialog
+    (
+        this, tr("Import MIDI file to Current Set..."),
+        rc().last_used_dir().c_str(),
+        tr("MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)")
     );
 
     if (use_nsm())
@@ -1114,7 +1113,8 @@ qsmainwnd::import_into_session ()
                 std::string basename = filename_base(selectedfile);
                 rc().session_midi_filename(basename);   /* make NSM name  */
 
-                std::string msg = save_file(rc().midi_filename()) ?
+                std::string mfilename = rc().midi_filename();
+                std::string msg = save_file(mfilename) ?
                     "Saved: " : "Failed to save: ";
 
                 msg += rc().midi_filename();
@@ -1223,10 +1223,6 @@ qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
     bool result = perf().read_midi_file(fn, errmsg);
-printf
-(
-    "performer read '%s' with result '%s'\n", fn.c_str(), result ? "good" : "bad"
-);
     if (result)
     {
         redo_live_frame();
@@ -1765,7 +1761,7 @@ qsmainwnd::export_file_as_midi (const std::string & fname)
     std::string filename;
     if (fname.empty())
     {
-        std::string prompt = "Export file as stock MIDI...";
+        std::string prompt = "Export file as standard MIDI...";
         filename = filename_prompt(prompt);
     }
     else
@@ -2877,6 +2873,18 @@ qsmainwnd::connect_normal_slots ()
      * File / Open.
      */
 
+#if defined SEQ66_PLATFORM_DEBUG    // _TEST_SESSION_IMPORT
+    ui->actionOpen->setText("&Import into Session...");
+    ui->actionOpen->setToolTip
+    (
+        "Import a MIDI or Seq66 MIDI file into the current session."
+    );
+    connect
+    (
+        ui->actionOpen, SIGNAL(triggered(bool)),
+        this, SLOT(import_into_session())
+    );
+#else
     ui->actionOpen->setText("&Open...");
     ui->actionOpen->setToolTip("Open a standard or Seq66 MIDI file.");
     connect
@@ -2884,6 +2892,7 @@ qsmainwnd::connect_normal_slots ()
         ui->actionOpen, SIGNAL(triggered(bool)),
         this, SLOT(select_and_load_file())
     );
+#endif
 
     /*
      * File / Save

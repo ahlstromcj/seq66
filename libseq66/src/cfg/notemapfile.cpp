@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2020-09-14
+ * \updates       2020-10-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -56,7 +56,7 @@ namespace seq66
  *      file-specification to the "mutes" file using this object.
  *
  * \param rcs
- *      The configfile currently requires and rcsetting object, but it is not
+ *      The configfile currently requires an rcsetting object, but it is not
  *      yet used here.
  */
 
@@ -203,7 +203,11 @@ notemapfile::parse ()
     }
     else
     {
-        file_error("Read open fail", name());
+        std::string msg = "Read open fail";
+        file_error(msg, name());
+        msg += ": ";
+        msg += name();
+        append_error_message(msg);
         result = false;
     }
     return result;
@@ -356,6 +360,57 @@ notemapfile::write_map_entries (std::ofstream & file) const
             file << mapentry.second.to_string();
             file << "\n";
         }
+    }
+    return result;
+}
+
+/**
+ *  This function reads the source notemapper file and then saves it to the new
+ *  location.
+ *
+ *  \param [inout] nm
+ *      Provides the notemapper object.
+ *
+ *  \param source
+ *      Provides the input file name from which the notemapper will be filled.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+save_notemapper
+(
+    notemapper & nm,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    bool result = ! source.empty() && ! destination.empty();
+    if (result)
+    {
+        std::string msg = source + " --> " + destination;
+        notemapfile nmf(nm, source, rc());
+        file_message("Note-map save", msg);
+        result = nmf.parse();
+        if (result)
+        {
+            nmf.name(destination);
+            result = nmf.write();
+            if (! result)
+                file_error("Write failed", destination);
+        }
+        else
+        {
+            file_error("Open failed", source);
+        }
+    }
+    else
+    {
+        file_error("Play-list filenames", "<empty>");
     }
     return result;
 }

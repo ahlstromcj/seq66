@@ -143,6 +143,15 @@ public:
     virtual void session_display_name (const std::string & dispname) override;
     virtual void session_client_id (const std::string & clid) override;
 
+private:
+
+    bool read_configuration
+    (
+        int argc, char * argv [],
+        const std::string & cfgfilepath,
+        const std::string & midifilepath
+    );
+
 };          // class clinsmanager
 
 }           // namespace seq66

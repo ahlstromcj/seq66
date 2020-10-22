@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-17
+ * \updates       2020-10-19
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -90,6 +90,11 @@ extern std::string filename_concatenate
 (
     const std::string & path,
     const std::string & filebase
+);
+extern std::string pathname_concatenate
+(
+    const std::string & path0,
+    const std::string & path1
 );
 extern bool filename_split
 (

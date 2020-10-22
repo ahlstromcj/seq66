@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-10-17
+ * \updates       2020-10-19
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -32,11 +32,11 @@
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /**
- *  All file-specifications in Sequencer66 use the UNIX path separator.  No
- *  matter what the operating system. Also, select the HOME or LOCALAPPDATA
- *  environment variables depending on whether building for Windows or not.
- *  LOCALAPPDATA points to the root of the Windows user's configuration
- *  directory, AppData/Local.
+ *  All file-specifications internal to Seq66 and in its configuration files
+ *  use the UNIX path separator ("/"), no matter what the operating system.
+ *  Also, select the HOME or LOCALAPPDATA environment variables depending on
+ *  whether building for Windows or not.  LOCALAPPDATA points to the root of
+ *  the Windows user's configuration directory, AppData/Local.
  */
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -1412,6 +1412,35 @@ filename_concatenate (const std::string & path, const std::string & filebase)
     result += filebase;
     return result;
 }
+
+/**
+ *  This function concatenates two paths robustly, if not efficiently.
+ *
+ * \param path0
+ *      The main path, which can be a root path or a relative path. It is
+ *      modified only to add a terminating slash, if necessary.
+ *
+ * \param path1
+ *      The seconds path, which can only be a relative path.  If it starts
+ *      with a slash, that is removed.
+ *
+ * \return
+ *      Returns the two paths:  path0 + "/" + path1 + "/", where the slashes
+ *      are added only if not already present.
+ */
+
+std::string
+pathname_concatenate (const std::string & path0, const std::string & path1)
+{
+    std::string result = clean_path(path0);
+    std::string cleanpath1 = clean_path(path1);
+    if (cleanpath1[0] == '/')
+        cleanpath1 = cleanpath1.erase(0, 1);
+
+    result += cleanpath1;
+    return result;
+}
+
 
 /**
  *  This function is a kind of inverse of filename_concatenate().  Note that

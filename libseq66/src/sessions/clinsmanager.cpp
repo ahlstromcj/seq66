@@ -25,20 +25,20 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-10-17
+ * \updates       2020-10-21
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
  *  handles non-session startup as well.
  */
 
-
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
+#include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
+#include "cfg/playlistfile.hpp"         /* seq66::playlistfile class        */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "os/daemonize.hpp"             /* seq66::pid_exists()              */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
-#include "cfg/playlistfile.hpp"         /* seq66::playlistfile class        */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
 #include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
 
@@ -48,12 +48,6 @@
 
 namespace seq66
 {
-
-/*
- *-------------------------------------------------------------------------
- * clinsmanager
- *-------------------------------------------------------------------------
- */
 
 /**
  *  Note that this object is created before there is any chance to get the
@@ -290,8 +284,8 @@ clinsmanager::create_project
         std::string midifilepath = path;
         if (nsm_active())
         {
-            cfgfilepath += "/config/";
-            midifilepath += "/midi/";
+            cfgfilepath = pathname_concatenate(cfgfilepath, "config");
+            midifilepath = pathname_concatenate(midifilepath, "midi");
         }
         else
         {
@@ -304,37 +298,7 @@ clinsmanager::create_project
         if (already_created)
         {
             file_message("File exists", rcfile);        /* comforting       */
-            rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
-            rc().midi_filepath(midifilepath);           /* set MIDI dir     */
-            if (! midifilepath.empty())
-            {
-                file_message("NSM MIDI file path", rc().midi_filepath());
-                file_message("NSM MIDI file name", rc().midi_filename());
-            }
-
-            std::string errmessage;
-            result = cmdlineopts::parse_options_files(errmessage);
-            if (result)
-            {
-                /*
-                 * Perhaps at some point, the "rc"/"usr" options might affect
-                 * NSM usage.  In the meantime, we still need command-line
-                 * options, if present, to override the file-specified
-                 * options.  One big example is the --buss override. The
-                 * smanager::main_settings() function is called way before
-                 * create_project();
-                 */
-
-                if (argc > 1)
-                {
-                    (void) cmdlineopts::parse_command_line_options(argc, argv);
-                    (void) cmdlineopts::parse_o_options(argc, argv);
-                }
-            }
-            else
-            {
-                file_error(errmessage, rc().config_filespec());
-            }
+            result = read_configuration(argc, argv, cfgfilepath, midifilepath);
         }
         else
         {
@@ -347,20 +311,8 @@ clinsmanager::create_project
                     rc().full_config_directory(cfgfilepath);
             }
             if (result && ! midifilepath.empty())
-            {
                 result = make_directory_path(midifilepath);
-                if (result)
-                {
-                    /*
-                     * We don't want to do this yet, since we might need to
-                     * copy MIDI files from the original
-                     * rc().midi_base_directory() directory.
-                     *
-                     * rc().midi_filepath(midifilepath);
-                     * rc().midi_base_directory(midifilepath);
-                     */
-                }
-            }
+
             if (result)
             {
                 /*
@@ -389,13 +341,13 @@ clinsmanager::create_project
                 result = cmdlineopts::write_options_files();
                 if (result)
                 {
-                    if (rc().playlist_active())
+                    if (! rc().playlist_active())
                     {
                         warnprint("Play-list not active, saving anyway");
                     }
                     if (dstplayfile.empty())
                     {
-                        warnprint("Play-list name empty");
+                        warnprint("Play-list file name empty");
                     }
                     else
                     {
@@ -433,23 +385,71 @@ clinsmanager::create_project
                         }
                     }
                 }
-#if defined THIS_CODE_IS_READY
-                if (rc().notemap_active())
+                if (result)
                 {
-                    if (perf()->notemap_exists())
+                    if (! rc().notemap_active())
                     {
-                        std::string destination = rc().notemap_filename();
+                        warnprint("Note-map not active, saving anyway");
+                    }
+
+                    std::string destination = rc().notemap_filename();
+                    if (destination.empty())
+                    {
+                        warnprint("Note-map file name empty");
+                    }
+                    else
+                    {
+                        std::shared_ptr<notemapper> nmp;
+                        nmp.reset(new (std::nothrow) notemapper());
+                        result = bool(nmp);
                         file_message("Note-mapper save", destination);
-                        result = perf()->save_note_mapper(destination);
+                        result = save_notemapper(*nmp, srcnotefile, destination);
                     }
                 }
-                else
-                {
-                    warnprint("Note-mapper is not active");
-                }
-#endif
             }
         }
+    }
+    return result;
+}
+
+bool
+clinsmanager::read_configuration
+(
+    int argc, char * argv [],
+    const std::string & cfgfilepath,
+    const std::string & midifilepath
+)
+{
+    rc().full_config_directory(cfgfilepath);    /* set NSM dir      */
+    rc().midi_filepath(midifilepath);           /* set MIDI dir     */
+    if (! midifilepath.empty())
+    {
+        file_message("NSM MIDI file path", rc().midi_filepath());
+        file_message("NSM MIDI file name", rc().midi_filename());
+    }
+
+    std::string errmessage;
+    bool result = cmdlineopts::parse_options_files(errmessage);
+    if (result)
+    {
+        /*
+         * Perhaps at some point, the "rc"/"usr" options might affect
+         * NSM usage.  In the meantime, we still need command-line
+         * options, if present, to override the file-specified
+         * options.  One big example is the --buss override. The
+         * smanager::main_settings() function is called way before
+         * create_project();
+         */
+
+        if (argc > 1)
+        {
+            (void) cmdlineopts::parse_command_line_options(argc, argv);
+            (void) cmdlineopts::parse_o_options(argc, argv);
+        }
+    }
+    else
+    {
+        file_error(errmessage, rc().config_filespec());
     }
     return result;
 }

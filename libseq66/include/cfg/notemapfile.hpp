@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-11-05
- * \updates       2019-11-08
+ * \updates       2020-10-20
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -97,6 +97,17 @@ private:
     }
 
 };              // class notemapfile
+
+/*
+ *  Free functions for working with play-list files.
+ */
+
+extern bool save_notemapper
+(
+    notemapper & pl,
+    const std::string & source,
+    const std::string & destination
+);
 
 }               // namespace seq66
 

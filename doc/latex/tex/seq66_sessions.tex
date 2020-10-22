@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2020-10-12
+% \update      2020-10-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -44,12 +44,12 @@
 \label{subsec:sessions_nsm_before_using_nsm}
 
    It is important, after installing \textsl{Seq66}, to run it normally. This
-   action creates the default configuration files in
+   action creates the default configuration files in the default location,
    \texttt{/home/user/.config/seq66}:
 
 \begin{verbatim}
    nsm $ qseq66 
-   [No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes/drums/playlist]
+   [No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes]
    [No 'usr' file, will create: /home/user/.config/seq66/qseq66.usr]
    [File exists: /home/user/.config/seq66/qseq66.rc]
    [Saving initial config files to session directory!]
@@ -69,16 +69,42 @@
 \begin{verbatim}
    [user-session]
    session = none
+   url = ""
 \end{verbatim}
 
-   It is then important to change the "session" line to
+   It is important to change the "session" line to allow the usage of
+   \textsl{NSM}:
 
 \begin{verbatim}
+   [user-session]
    session = nsm
+   url = ""          # or as shown below
 \end{verbatim}
 
+   The \texttt{url} is not needed, since \textsl{Seq66} will get it
+   from the \textsl{NSM} daemon.  However, one can run the daemon,
+   \texttt{nsmd} outside of the \textsl{NSM} user-interface, and copy the
+   generated URL into the above:
+
+\begin{verbatim}
+   $ nsmd --osc-port 9999
+   [nsmd] Session root is: /home/user/NSM Sessions
+   NSM_URL=osc.udp://mycomputer.mls:9999/
+\end{verbatim}
+
+\begin{verbatim}
+   url = "osc.udp://mycomputer.mls:9999"
+\end{verbatim}
+
+   Optionally, one can also create a "playlist" file and a "drums" file, or
+   copy them from \texttt{/usr/share/seq66-0.91/data/samples} to
+   \texttt{/home/user/.config/seq66} and modify them appropriately.
+   Generally, it is best to make sure that \texttt{qseq66} runs normally before
+   attempt to get it work in a session.
+
    Now we are ready to run the Non Session Manager, as described in the next
-   section.  However, note that \texttt{qseq66} can still be run outside of a
+   section.
+   However, note that \texttt{qseq66} can still be run outside of a
    session manager.  It will detect the absense of the session manager and run
    normally.
 
@@ -94,7 +120,7 @@
    $ non-session-manager
    [non-session-manager] Starting daemon...
    [nsmd] Session root is: /home/user/NSM Sessions
-   NSM_URL=osc.udp://mlsasus.mls:19625/
+   NSM_URL=osc.udp://mycomputer.mls:19625/
    [nsmd] Listing sessions
 \end{verbatim}
 
@@ -102,11 +128,13 @@
    If \textsl{NSM} refuses to start, make sure that the \texttt{liblo} library
    from the OSC project is installed.  If it is installed, then check the
    \texttt{/etc/hosts} file to make sure that the loopback interfaces are
-   defined:
+   defined. In a recent version of \textsl{Ubuntu}, it wasn't defined properly,
+   and the \textsl{NSM} daemon (\texttt{nsmd}) would not start.
+   Here is an example for the default install in \textsl{Debian Sid};
 
 \begin{verbatim}
    127.0.0.1   localhost
-   127.0.1.1   mlsasus.mls mlsasus
+   127.0.1.1   mycomputer.mls mycomputer
 \end{verbatim}
 
    The NSM user-interface (not shown here) that comes up is empty at first.  So
@@ -180,6 +208,13 @@
    used to start up \textsl{Seq66} during the session.  One can also add valid
    play-list and drums files to that directory.
 
+   Note that, if one had set up a playlist file and provided the proper "MIDI
+   base directory" in the 'rc' file, then all the MIDI files will be copied to
+   the \textsl{NSM} session directory.
+   When the \textsl{Non Session Manager} is started the next time, and the
+   "Seq66" session is clicked, this starts \textsl{Seq66}, and the playlist can
+   be seen in the \textsl{Playlist} tab.
+
 \subsubsection{Seq66 Session Management / Sessions Tab}
 \label{subsubsec:sessions_ui}
 
@@ -245,7 +280,6 @@
       \item \textbf{Open Playlist}.
          Works the same as without session
          management, but gets the list from the session directory.
-         TODO: STILL IN PROGRESS.
       \item \textbf{Save Session}.
          This function saves the main configuration
          files (except for the 'usr' file), saves the play-list and note-mapper
@@ -254,21 +288,27 @@
          Allows exporting the current song as a stock MIDI file, using the
          performance information (triggers) to write the MIDI data as it would
          be played in "song" mode.
-         TODO: IS THE DEFAULT DIRECTORY the current session???
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
       \item \textbf{Export MIDI Only}.
          Allows exporting the current song as a stock MIDI file.
          The "proprietary" SeqSpec data is \textsl{not} written.
-         TODO: IS THE DEFAULT DIRECTORY the current session???
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
       \item \textbf{Import MIDI to Current Set}.
          This item allows the user to grab a MIDI file from anywhere and import
          it into the current set.
+         The default directory that comes up in the
+         prompt is the "last-used directory" from the session 'rc' file.
       \item \textbf{Close}.
          Allows \textsl{Seq66} to detach from session management.
          TODO:  should save the session and close the session.
          NEEDS MORE THOUGHT.
       \item \textbf{Quit}.
          Quits \textsl{Seq66}.
-         TODO: NEED TO INFORM NSM WE ARE QUITTING!!!!!!
+         There are no messages to send to \textsl{NSM} in this case.
+         The \texttt{nsmd} daemon detects that the \textsl{Seq66} client has
+         disappeared (and notes that on the console output, if available).
    \end{itemize}
 
 \subsection{Seq66 Session Management / Signals}
