@@ -100,7 +100,7 @@
 #include <iostream>                     /* std::cout                        */
 #endif
 
-#include <cstring>                          /* strlen()                     */
+#include <cstring>                      /* std::strlen()                    */
 #include <sys/types.h>                  /* provides the pid_t typedef       */
 #include <unistd.h>                     /* C getpid()                       */
 
@@ -110,7 +110,6 @@
 #include "nsm/nsmbase.hpp"              /* seq66::nsmbase class             */
 #include "nsm/nsmmessagesex.hpp"        /* seq66::nsm new message functions */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
-#include "sessions/smfunctions.hpp"     /* seq66::get_session_url()         */
 
 #define NSM_API_VERSION_MAJOR   1
 #define NSM_API_VERSION_MINOR   0
@@ -624,6 +623,8 @@ nsmbase::send_nsm_reply
  *
  *      /nsm/server/announce s:appname s:capabilities s:exename
  *          i:apimajor i:apiminor i:pid
+ *
+ *  See nsmclient::announce() for more discussion.
  */
 
 bool
@@ -825,7 +826,6 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         if (t == nsm::tag::null)
         {
             const char * nul = NULL;
-//          (void) lo_server_add_method(m_lo_thread, nul, nul, h, this);
             (void) lo_server_thread_add_method(m_lo_thread, nul, nul, h, this);
             nsm::outgoing_msg("OSC", "", "Broadcast method added");
         }
@@ -833,7 +833,6 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         {
             const char * m = message.c_str();
             const char * p = pattern.c_str();
-//          (void) lo_server_add_method(m_lo_thread, m, p, h, this);
             (void) lo_server_thread_add_method(m_lo_thread, m, p, h, this);
             nsm::outgoing_msg(message, pattern, "Client method added");
         }

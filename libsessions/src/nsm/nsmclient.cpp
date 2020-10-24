@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-09-06
+ * \updates       2020-10-24
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -164,7 +164,7 @@
  *      details about the session which allow it to give a view of the current
  *      session.
  *
- *      INVESTIGATE the NSM replacement, RaySend!!!
+ *      INVESTIGATE the NSM replacement, RaySession.
  */
 
 #include "util/basic_macros.hpp"        /* not_nullptr() macro              */
@@ -451,7 +451,14 @@ nsmclient::announce_reply
  *      /nsm/client/open s:path_to_instance_specific_project
  *              s:display_name s:client_id
  *
- *  Compare to the "open" code in nsm-proxy.
+ *  Format examples:
+ *
+ *      -   Display name: "JackSession" (user's chosen session name in NSM)
+ *      -   Client ID:    "seq66.nUKIE"
+ *      -   Path:         "/home/user/NSM Sessions/JackSession/seq66.nUKIE"
+ *
+ *  Compare to the "open" code in nsm-proxy.  See nsmclient::announce() for
+ *  more discussion.
  */
 
 void
@@ -465,7 +472,7 @@ nsmclient::open
     session_manager_path(pathname);
     session_display_name(displayname);
     session_client_id(clientid);
-    nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
+    set_client_name(clientid);          /* set "seq66.nUKIE" as client ID   */
 
     /*
      * This is now done after create_session() in the session manager.
@@ -474,6 +481,9 @@ nsmclient::open
      *
      *  // emit open();
      */
+
+    nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
+
 }
 
 /*
@@ -606,6 +616,18 @@ nsmclient::broadcast
          i:api_version_major i:api_version_minor i:pid
 \endverbatim
  *
+ * \param appname
+ *      Provides the "nick-name" for the application.  The seq66_features.cpp
+ *      function seq_client_name() is used to get this name, which starts out
+ *      as "seq66".  The seq_client_name() is later modified in the open()
+ *      callback function, and ends up like "seq66.nUKIE".
+ *
+ * \param exename
+ *      Comes from argv[0].  For example, it has the value "qseq66" in the
+ *      graphical application.
+ *
+ * \param capabilities
+ *      Provides the main session features the application supports.
  */
 
 bool

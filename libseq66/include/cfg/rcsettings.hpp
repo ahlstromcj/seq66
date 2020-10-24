@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-28
+ * \updates       2020-10-24
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -411,15 +411,6 @@ private:
      */
 
     const std::string m_application_name;
-
-    /**
-     *  Holds the client name for the application.  This is much like the
-     *  application name, but in the future will be a configuration option.
-     *  For now it is just the value of the SEQ66_CLIENT_NAME macro.  Also see
-     *  the seq_client_name() function.
-     */
-
-    std::string m_app_client_name;
 
     /**
      *  New value to allow the user to violate the MIDI specification and use a
@@ -879,10 +870,7 @@ public:
         return m_application_name;
     }
 
-    const std::string & app_client_name () const
-    {
-        return m_app_client_name;
-    }
+    std::string app_client_name () const;
 
     int tempo_track_number () const
     {

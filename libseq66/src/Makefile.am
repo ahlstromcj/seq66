@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-09-19
+# \update      2020-10-24
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -189,7 +189,6 @@ libseq66_la_SOURCES = \
  play/triggers.cpp \
  sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
- sessions/smfunctions.cpp \
  os/daemonize.cpp \
  os/timing.cpp \
  util/automutex.cpp \

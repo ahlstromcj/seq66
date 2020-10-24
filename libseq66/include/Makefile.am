@@ -144,7 +144,6 @@ pkginclude_HEADERS = \
  qt/qsmacros.hpp \
  sessions/clinsmanager.hpp \
  sessions/smanager.hpp \
- sessions/smfunctions.hpp \
  os/daemonize.hpp \
  os/timing.hpp \
  util/automutex.hpp \

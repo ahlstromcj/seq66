@@ -21,7 +21,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-09-19
+# \update      2020-10-24
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -177,11 +177,10 @@ am_libseq66_la_OBJECTS = seq66_features.lo cfg/basesettings.lo \
 	play/performer.lo play/playlist.lo play/screenset.lo \
 	play/seq.lo play/sequence.lo play/setmapper.lo \
 	play/setmaster.lo play/triggers.lo sessions/clinsmanager.lo \
-	sessions/smanager.lo sessions/smfunctions.lo os/daemonize.lo \
-	os/timing.lo util/automutex.lo util/basic_macros.lo \
-	util/calculations.lo util/condition.lo util/filefunctions.lo \
-	util/palette.lo util/recmutex.lo util/rect.lo \
-	util/strfunctions.lo
+	sessions/smanager.lo os/daemonize.lo os/timing.lo \
+	util/automutex.lo util/basic_macros.lo util/calculations.lo \
+	util/condition.lo util/filefunctions.lo util/palette.lo \
+	util/recmutex.lo util/rect.lo util/strfunctions.lo
 libseq66_la_OBJECTS = $(am_libseq66_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -241,9 +240,8 @@ am__depfiles_remade = ./$(DEPDIR)/seq66_features.Plo \
 	play/$(DEPDIR)/setmapper.Plo play/$(DEPDIR)/setmaster.Plo \
 	play/$(DEPDIR)/triggers.Plo \
 	sessions/$(DEPDIR)/clinsmanager.Plo \
-	sessions/$(DEPDIR)/smanager.Plo \
-	sessions/$(DEPDIR)/smfunctions.Plo \
-	util/$(DEPDIR)/automutex.Plo util/$(DEPDIR)/basic_macros.Plo \
+	sessions/$(DEPDIR)/smanager.Plo util/$(DEPDIR)/automutex.Plo \
+	util/$(DEPDIR)/basic_macros.Plo \
 	util/$(DEPDIR)/calculations.Plo util/$(DEPDIR)/condition.Plo \
 	util/$(DEPDIR)/filefunctions.Plo util/$(DEPDIR)/palette.Plo \
 	util/$(DEPDIR)/recmutex.Plo util/$(DEPDIR)/rect.Plo \
@@ -620,7 +618,6 @@ libseq66_la_SOURCES = \
  play/triggers.cpp \
  sessions/clinsmanager.cpp \
  sessions/smanager.cpp \
- sessions/smfunctions.cpp \
  os/daemonize.cpp \
  os/timing.cpp \
  util/automutex.cpp \
@@ -814,8 +811,6 @@ sessions/clinsmanager.lo: sessions/$(am__dirstamp) \
 	sessions/$(DEPDIR)/$(am__dirstamp)
 sessions/smanager.lo: sessions/$(am__dirstamp) \
 	sessions/$(DEPDIR)/$(am__dirstamp)
-sessions/smfunctions.lo: sessions/$(am__dirstamp) \
-	sessions/$(DEPDIR)/$(am__dirstamp)
 os/$(am__dirstamp):
 	@$(MKDIR_P) os
 	@: > os/$(am__dirstamp)
@@ -927,7 +922,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@play/$(DEPDIR)/triggers.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sessions/$(DEPDIR)/clinsmanager.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sessions/$(DEPDIR)/smanager.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@sessions/$(DEPDIR)/smfunctions.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/automutex.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/basic_macros.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@util/$(DEPDIR)/calculations.Plo@am__quote@ # am--include-marker
@@ -1186,7 +1180,6 @@ distclean: distclean-am
 	-rm -f play/$(DEPDIR)/triggers.Plo
 	-rm -f sessions/$(DEPDIR)/clinsmanager.Plo
 	-rm -f sessions/$(DEPDIR)/smanager.Plo
-	-rm -f sessions/$(DEPDIR)/smfunctions.Plo
 	-rm -f util/$(DEPDIR)/automutex.Plo
 	-rm -f util/$(DEPDIR)/basic_macros.Plo
 	-rm -f util/$(DEPDIR)/calculations.Plo
@@ -1301,7 +1294,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f play/$(DEPDIR)/triggers.Plo
 	-rm -f sessions/$(DEPDIR)/clinsmanager.Plo
 	-rm -f sessions/$(DEPDIR)/smanager.Plo
-	-rm -f sessions/$(DEPDIR)/smfunctions.Plo
 	-rm -f util/$(DEPDIR)/automutex.Plo
 	-rm -f util/$(DEPDIR)/basic_macros.Plo
 	-rm -f util/$(DEPDIR)/calculations.Plo

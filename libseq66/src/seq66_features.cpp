@@ -157,7 +157,9 @@ seq_arg_0 ()
  *  use the macro SEQ66_CLIENT_NAME, but we might eventually want to make this
  *  name configurable.  More likely to be a configuration option in the
  *  future.  Currently, this is always "seq66", no matter what executable has
- *  been generated.
+ *  been generated.  However, when session management is active, the
+ *  session-manager's client ID, or something derived from it, is copied to
+ *  this variable.
  */
 
 const std::string &

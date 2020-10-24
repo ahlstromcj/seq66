@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-28
+ * \updates       2020-10-24
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -44,8 +44,7 @@
 #include <cstdlib>                      /* std::getenv()                    */
 
 #include "seq66_features.hpp"           /* seq66::set_app_name(), etc.      */
-#include "cfg/rcsettings.hpp"           /* seq66::rcsettings class          */
-#include "cfg/settings.hpp"             /* seq66::rc()                      */
+#include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
 #include "util/strfunctions.hpp"        /* strncompare()                    */
@@ -127,7 +126,6 @@ rcsettings::rcsettings () :
     m_notemap_active            (false),
     m_notemap_filename          (),
     m_application_name          (seq_app_name()),
-    m_app_client_name           (seq_client_name()),
     m_tempo_track_number        (0),
     m_recent_files              ()
 {
@@ -226,10 +224,23 @@ rcsettings::set_defaults ()
      * const: m_application_name = seq_app_name();
      */
 
-    m_app_client_name           = seq_client_name();
     m_tempo_track_number        = 0;
     m_recent_files.clear();
     set_config_files(SEQ66_CONFIG_NAME);
+}
+
+/**
+ *  Holds the client name for the application.  This is much like the
+ *  application name, but in the future will be a configuration option.
+ *  For now it is just the value returned by the seq_client_name()
+ *  function.  However, note that, under session management, we replace it
+ *  with the NSM "client_id" value.
+ */
+
+std::string
+rcsettings::app_client_name () const
+{
+    return seq_client_name();
 }
 
 /**

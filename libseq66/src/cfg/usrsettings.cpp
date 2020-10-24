@@ -100,8 +100,7 @@
  */
 
 #include "seq66_features.hpp"           /* SEQ66_USE_ZOOM_POWER_OF_2        */
-#include "cfg/settings.hpp"             /* seq66::rc()                      */
-#include "cfg/usrsettings.hpp"          /* seq66::usr_settings              */
+#include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::limit()              */
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
