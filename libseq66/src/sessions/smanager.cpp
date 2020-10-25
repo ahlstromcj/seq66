@@ -702,7 +702,8 @@ smanager::create (int argc, char * argv [])
     {
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
-#if defined SEQ66_PLATFORM_DEBUG // _TEST_NSM
+#if defined SEQ66_PLATFORM_DEBUG_TEST_NSM   /* enable to trouble-shoot      */
+            warnprint("DEBUGGING, WRITING CONFIGS to ~/sessiontest");
             (void) create_project(argc, argv, "~/sessiontest");
 #else
             std::string homedir = manager_path();

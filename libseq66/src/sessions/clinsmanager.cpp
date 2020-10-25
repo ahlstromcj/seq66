@@ -334,7 +334,11 @@ clinsmanager::create_project
 
                 std::string dstplayfile = file_path_set(srcplayfile, cfgfilepath);
                 std::string dstnotefile = file_path_set(srcnotefile, cfgfilepath);
-                warnprint("Saving initial config files to session directory");
+                file_message
+                (
+                    "Saving initial configuration to session directory",
+                    cfgfilepath
+                );
                 usr().save_user_config(true);
                 rc().playlist_filename(dstplayfile);
                 rc().notemap_filename(dstnotefile);
