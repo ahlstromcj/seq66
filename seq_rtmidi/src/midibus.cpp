@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-21
- * \updates       2020-08-02
+ * \updates       2020-10-26
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of the midibus class.
@@ -123,7 +123,14 @@ midibus::midibus
 
         if (port_name().empty())
         {
-            std::string pname = rc().application_name();
+            /*
+             * ca 2020-10-26 Use the client-name for ports; it may have "salt"
+             * if being run under a session manager.
+             *
+             * std::string pname = rc().application_name();
+             */
+
+            std::string pname = rc().app_client_name();
             pname += " midi ";
             pname += isinput ? "in " : "out ";
             pname += std::to_string(port_id());

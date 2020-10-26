@@ -259,7 +259,7 @@ private:
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     bool m_device_ignore;           /**< From seq66 module, unused!         */
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
-    interaction m_interaction_method;   /**< [interaction-method]           */
+    interaction m_interaction_method; /**< Interaction method: no support.  */
 
     /**
      *  Indicates if empty mute-groups get saved to the MIDI file.
@@ -405,9 +405,11 @@ private:
     std::string m_notemap_filename;
 
     /**
-     *  Holds the application name, e.g. "seq66", "seq66portmidi", or
-     *  "qseq66".  This is a constant, set to SEQ66_APP_NAME.  Also see the
-     *  seq_app_name() function.
+     *  Holds the application name, e.g. "seq66", "qpseq66", "qrseq66",
+     *  "seq66cli", or, most commonly, "qseq66".  This is a constant, set to
+     *  SEQ66_APP_NAME, but obtained via the seq_app_name() function.  Do not
+     *  confuse it with the client name, which defaults to "seq66" no matter
+     *  what the application name.
      */
 
     const std::string m_application_name;
@@ -698,6 +700,10 @@ public:
     {
         return m_device_ignore_num;
     }
+
+    /*
+     * Currently not supported in Seq66.
+     */
 
     interaction interaction_method () const
     {

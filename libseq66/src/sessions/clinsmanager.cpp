@@ -170,6 +170,11 @@ clinsmanager::close_session (bool ok)
     return smanager::close_session(ok);
 }
 
+/**
+ *  Saves the active MIDI file, and then calls the base-class version of
+ *  save_session().
+ */
+
 bool
 clinsmanager::save_session (std::string & msg)
 {

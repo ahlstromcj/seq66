@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2020-04-22
+ * \updates       2020-10-26
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -732,19 +732,16 @@ jack_assistant::init ()
          */
 
 #if defined SEQ66_JACK_SESSION
-        if (jack_set_session_callback)
+        jackcode = jack_set_session_callback
+        (
+            m_jack_client, jack_session_callback, (void *) this
+        );
+        apiprint("jack_set_session_callback", "sync");
+        if (jackcode != 0)
         {
-            jackcode = jack_set_session_callback
-            (
-                m_jack_client, jack_session_callback, (void *) this
-            );
-            apiprint("jack_set_session_callback", "sync");
-            if (jackcode != 0)
-            {
-                m_jack_running = false;
-                m_jack_master = false;
-                return error_message("jack_set_session_callback() failed]");
-            }
+            m_jack_running = false;
+            m_jack_master = false;
+            return error_message("jack_set_session_callback() failed]");
         }
 #endif
 

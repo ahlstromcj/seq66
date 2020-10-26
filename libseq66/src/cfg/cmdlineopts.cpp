@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-09-28
+ * \updates       2020-10-26
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -96,6 +96,7 @@ cmdlineopts::s_long_options [] =
 #endif
     {"bus",                 required_argument, 0, 'b'},
     {"buss",                required_argument, 0, 'B'},
+    {"client-name",         required_argument, 0, 'l'},
     {"ppqn",                required_argument, 0, 'q'},
     {"legacy",              0, 0, 'l'},
     {"show-midi",           0, 0, 's'},
@@ -150,7 +151,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxxxxx xxxx *xx xxxxxxxxxxx  xx  aax
+         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxxxxxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -167,7 +168,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:H:hi:JjKkLM:mNnoPpq:RrTtSsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:H:hi:JjKkLl:M:mNnoPpq:RrTtSsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -207,6 +208,8 @@ cmdlineopts::s_help_1b =
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
+"   -l, --client-name        Replaces the client name 'seq66' with a new label.\n"
+"                            Can be overridden by a session manager.\n"
 "   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"
 "                            file might specify its own PPQN.\n"
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
@@ -233,9 +236,7 @@ cmdlineopts::s_help_2 =
 "                            available: 0 = live mode; 1 = song mode (default).\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI; separate option from JACK Transport.\n"
-" -U, --jack-session-uuid u  Set UUID for JACK session.\n"
-" -x, --interaction-method n Set mouse style: 0 = seq66; 1 = fruity. Note that\n"
-"                            fruity does not support arrow keys and paint key.\n"
+"   -U, --jack-session-uuid u  Set UUID for JACK session.\n"
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the sequences\n"
 "                            that are configured for each channel.\n"
@@ -940,6 +941,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 #endif
 
+        case 'l':
+            set_client_name(soptarg);
+            break;
+
         case 'M':
 
             rc().song_start_mode(string_to_int(soptarg) > 0);
@@ -1037,6 +1042,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'X':
             rc().playlist_active(rc().playlist_filename_checked(soptarg));
             break;
+
+        /*
+         * Undocumented and unsupported in Seq66. Kept around just in case.
+         */
 
         case 'x':
             rc().interaction_method(string_to_int(soptarg));

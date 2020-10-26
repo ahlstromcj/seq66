@@ -329,19 +329,20 @@ nsmbase::msg_check (int timeoutms)
         if (rc().verbose())
             file_message("S66", "Waiting for reply...");
 
-        int two_second_count = 2000 / timeoutms;
-        for (int count = 0; count < two_second_count; ++count)
+        /*
+         * This cause issues when NSM responds quickly: microsleep(100);
+         */
+
+        if (lo_server_wait(m_lo_server, timeoutms))
         {
-            microsleep(100);
-            if (lo_server_wait(m_lo_server, timeoutms))
+            result = true;
+            while (lo_server_recv_noblock(m_lo_server, 0))
             {
-                while (lo_server_recv_noblock(m_lo_server, 0))
-                {
-                    result = true;  /* do nothing, handle the message(s) */
-                }
-                break;
+                /* do nothing, handle the message(s) */
             }
         }
+        if (! result && rc().verbose())
+            file_message("S66", "No reply!");
     }
     return result;
 }

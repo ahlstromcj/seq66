@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.91.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-09-29
+2015-09-10 to 2020-10-26
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
@@ -282,11 +282,13 @@ CONFIGURE OPTIONS FOR APPLICATION FEATURES:
         Seq66, which incorporates a couple of JACK modules, but is useful in
         the Windows/OSX builds.
 
-    --disable-jack-session
+    --enable-jack-session
 
-        Undefines the SEQ66_JACK_SESSION macro, which is defined if JACK
-        support is defined, and the jack/session.h file is found, but is
-        useful in the Windows/OSX builds.
+        Defines the SEQ66_JACK_SESSION macro, which is defined if JACK session
+        support is defined, and the jack/session.h file is found.  Because
+        JACK has deprecated its session management, and now recommends the Non
+        Session Manager (NSM), this option is now disabled by default.  Cannot
+        be enabled in the Windows/OSX builds.
 
     --enable-portmidi
     --enable-rtmidi

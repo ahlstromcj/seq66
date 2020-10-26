@@ -267,12 +267,13 @@ AC_ARG_ENABLE(jack,
     [jack=$enableval],
     [jack=yes])
 
-dnl JACK session support
+dnl JACK session support is now deprecated (circa 2020-10-26), and so now the
+dnl default for this option is 'no'.  JACK recommends using NSM instead!
 
 AC_ARG_ENABLE(jack-session,
     [AS_HELP_STRING(--disable-jack-session, [Disable JACK session support])],
     [jack_session=$enableval],
-    [jack_session=yes])
+    [jack_session=no])
 
 if test "$jack" != "no"; then
     PKG_CHECK_MODULES(JACK, jack >= 0.90.0, jack_found="yes", jack_found="no")

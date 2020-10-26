@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-04-08
+ * \updates       2020-10-25
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Windows-only implementation of the mastermidibus
@@ -137,7 +137,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     m_midi_master.api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
-        int num_buses = SEQ66_OUTPUT_BUSS_MAX;
+        int num_buses = rc().manual_port_count();  /* SEQ66_OUTPUT_BUSS_MAX */
         m_midi_master.clear();                          /* ignore system    */
         for (int i = 0; i < num_buses; ++i)             /* output busses    */
         {

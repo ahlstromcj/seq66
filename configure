@@ -16483,7 +16483,7 @@ fi
 if test "${enable_jack_session+set}" = set; then :
   enableval=$enable_jack_session; jack_session=$enableval
 else
-  jack_session=yes
+  jack_session=no
 fi
 
 
