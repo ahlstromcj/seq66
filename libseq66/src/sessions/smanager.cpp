@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-10-06
+ * \updates       2020-10-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -420,6 +420,13 @@ smanager::create_session (int /*argc*/, char * /*argv*/ [])
 /**
  *  Closes the session, with an option to handle errors in the session.
  *
+ *  Note that we do not save if in a session, as we rely on the session
+ *  manager to tell this application to save before forcing this application
+ *  to end.
+ *
+ * \param [out] msg
+ *      Provides a place to store any error message for the caller to use.
+ *
  * \param ok
  *      Indicates if an error occurred, or not.  The default is true, which
  *      indicates "no problem".
@@ -430,7 +437,7 @@ smanager::create_session (int /*argc*/, char * /*argv*/ [])
  */
 
 bool
-smanager::close_session (bool ok)
+smanager::close_session (std::string & msg, bool ok)
 {
     bool result = not_nullptr(perf());
     if (result)
@@ -438,37 +445,15 @@ smanager::close_session (bool ok)
         result = perf()->finish();             /* tear down performer       */
         perf()->put_settings(rc(), usr());     /* copy latest settings      */
     }
-    if (ok)
-    {
-        if (result)
-        {
-            if (rc().auto_option_save())
-            {
-                if (! cmdlineopts::write_options_files())
-                    errprint("Config writes failed");
-            }
-            else
-                warnprint("auto-option-save off, not saving config files");
-        }
-    }
-    else
-        result = false;
-
-    if (! result && ! m_is_help)
-    {
-        (void) cmdlineopts::write_options_files("erroneous");
-        if (error_active())
-        {
-            errprint(error_message());
-        }
-    }
+    if (! ok)
+        (void) save_session(msg, ok);
 
 #if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
     if (rc().lash_support())
         delete_lash_driver();
 #endif
 
-    session_close();                /* daemonize: mark the app for exit     */
+    session_close();                            /* daemonize signals exit   */
     return result;
 }
 
@@ -484,31 +469,58 @@ smanager::close_session (bool ok)
  *  The clinsmanager::save_session() function saves the MIDI file to the
  *  session, if applicable.  That function also clears the message parameter
  *  before the saving starts.
+ *
+ * \param [out] msg
+ *      Provides a place to store any error message for the caller to use.
+ *
+ * \param ok
+ *      Indicates if an error occurred, or not.  The default is true, which
+ *      indicates "no problem".
  */
 
 bool
-smanager::save_session (std::string & msg)
+smanager::save_session (std::string & msg, bool ok)
 {
     bool result = not_nullptr(perf());
     if (result)
     {
-        file_message("save_session()", "Options save");
-        if (rc().auto_option_save())
+        if (ok)
         {
-            result = cmdlineopts::write_options_files();
+            bool save = rc().auto_option_save() && ! usr().in_session();
+            if (save)
+            {
+                file_message("Save session", "Options");
+                if (! cmdlineopts::write_options_files())
+                {
+                    errprint("Config writes failed");
+                }
+            }
+            else
+                msg = "config auto-save option off";
+
+            if (save)
+            {
+                file_message("Save session", "Play-list");
+                result = perf()->save_playlist();           // add msg return?
+            }
+            if (save)
+            {
+                file_message("Save session", "Note-mapper");
+                result = perf()->save_note_mapper();        // add msg return?
+            }
         }
         else
-            msg = "config save option off";
-
-        if (result)
         {
-            file_message("save_session()", "Play-list save");
-            result = perf()->save_playlist();
-        }
-        if (result)
-        {
-            file_message("save_session()", "Note-mapper save");
-            result = perf()->save_note_mapper();
+            result = false;
+            if (! m_is_help)
+            {
+                (void) cmdlineopts::write_options_files("erroneous");
+                if (error_active())
+                {
+                    errprint(error_message());
+                    msg = error_message();
+                }
+            }
         }
     }
     return result;
@@ -758,19 +770,23 @@ smanager::create (int argc, char * argv [])
                  */
             }
             else
-                result = close_session(false);
+            {
+                std::string msg;
+                result = close_session(msg, false);
+            }
         }
     }
     else
     {
         if (! is_help())
         {
+            std::string msg;
             (void) create_performer();
             (void) create_window();
             error_handling();
             (void) create_session();
             (void) run();
-            (void) close_session(false);
+            (void) close_session(msg, false);
         }
     }
     return result;

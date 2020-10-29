@@ -77,8 +77,10 @@ main (int argc, char * argv [])
     bool result = sm.create(argc, argv);
     if (result)
     {
-        exit_status = sm.run() ? EXIT_SUCCESS : EXIT_FAILURE ;
-        result = sm.close_session();
+        std::string msg;
+        bool result = sm.run();
+        exit_status = result ? EXIT_SUCCESS : EXIT_FAILURE ;
+        (void) sm.close_session(msg, result);
     }
     else
         exit_status = EXIT_FAILURE;

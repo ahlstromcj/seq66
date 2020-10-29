@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>310</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,7 +58,7 @@
    <item>
     <widget class="QLabel" name="descriptionLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;A loop-based MIDI sequencer for Linux/Windows/Mac&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Licensed under GNU General Public License V2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;mailto::oli_kester@zoho.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/ahlstromcj/seq66 &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;mailto::oli_kester@zoho.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ahlstromcj@gmail.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;A loop-based MIDI sequencer for Linux/Windows/Mac&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Licensed under GNU General Public License V2&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/ahlstromcj/seq66 &quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub/ahlstromcj/seq66 &lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;mailto::ahlstromcj@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ahlstromcj@gmail.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -97,7 +97,7 @@
    <item>
     <widget class="QLabel" name="originsLabel">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24 and Kepler34 &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://filter24.org/seq66&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;http://filter24.org/seq66&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/oli-kester/kepler34&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Based on Seq24 and Kepler34 &lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;http://filter24.org/seq24&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Filter24.org/seq24&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;a href=&quot;https://github.com/oli-kester/kepler34&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/oli-kester/kepler34&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

@@ -75,7 +75,7 @@ public:
     );
     virtual ~qt5nsmanager ();
 
-    virtual bool close_session (bool ok = true) override;
+    virtual bool close_session (std::string & msg, bool ok = true) override;
     virtual bool create_window () override;
     virtual void show_message
     (

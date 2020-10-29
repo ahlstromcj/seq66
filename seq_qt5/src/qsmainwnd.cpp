@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-10-11
+ * \updates       2020-10-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1676,6 +1676,27 @@ qsmainwnd::save_session ()
  */
 
 bool
+qsmainwnd::close_session ()
+{
+    bool result = false;
+    if (use_nsm())
+    {
+        if (not_nullptr(session()))
+        {
+            std::string msg;
+            result = session()->close_session(msg);
+            if (! result)
+                show_message_box(msg);
+        }
+    }
+    return result;
+}
+
+/**
+ *
+ */
+
+bool
 qsmainwnd::save_file (const std::string & fname)
 {
     bool result = false;
@@ -2583,9 +2604,11 @@ qsmainwnd::quit_session ()
 {
     if (use_nsm())
     {
-        // save_session();
-        // close_session();     // should turn off using NSM for the current
-                                //    session and recreate
+        if (check())
+        {
+            (void) save_session();
+            (void) close_session();
+        }
     }
 }
 

@@ -183,12 +183,13 @@ public:
 public:
 
     virtual bool create_session (int argc = 0, char * argv [] = nullptr);
-    virtual bool close_session (bool ok = true);
-    virtual bool save_session (std::string & msg);
+    virtual bool close_session (std::string & msg, bool ok = true);
+    virtual bool save_session (std::string & msg, bool ok = true);
     virtual bool create_window ();
     virtual bool create_project
     (
-        int argc, char * argv [], const std::string & path
+        int argc, char * argv [],
+        const std::string & path
     ) = 0;
     virtual bool run () = 0;
 

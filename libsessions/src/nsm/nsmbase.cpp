@@ -1111,7 +1111,7 @@ incoming_msg
     {
         std::string text = msgsnprintf
         (
-            "%s()->%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
+            "%s<--%s [%s]", cbname.c_str(), message.c_str(), pattern.c_str()
         );
         file_message("NSM", text);
     }
@@ -1129,7 +1129,7 @@ outgoing_msg
     {
         std::string text = msgsnprintf
         (
-            "%s [%s] %s", message.c_str(), pattern.c_str(), data.c_str()
+            "%s-->[%s] %s", message.c_str(), pattern.c_str(), data.c_str()
         );
         file_message("S66", text);
     }

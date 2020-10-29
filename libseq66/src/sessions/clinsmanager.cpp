@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-10-21
+ * \updates       2020-10-27
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -161,13 +161,13 @@ clinsmanager::create_session (int argc, char * argv [])
  */
 
 bool
-clinsmanager::close_session (bool ok)
+clinsmanager::close_session (std::string & msg, bool ok)
 {
     if (usr().in_session())
     {
         warnprint("Closing NSM session");
     }
-    return smanager::close_session(ok);
+    return smanager::close_session(msg, ok);
 }
 
 /**
@@ -176,10 +176,12 @@ clinsmanager::close_session (bool ok)
  */
 
 bool
-clinsmanager::save_session (std::string & msg)
+clinsmanager::save_session (std::string & msg, bool ok)
 {
     bool result = not_nullptr(perf());
-    msg.clear();
+    if (ok)
+        msg.clear();
+
     if (result)
     {
         std::string filename = rc().midi_filename();
@@ -196,7 +198,14 @@ clinsmanager::save_session (std::string & msg)
             result = write_midi_file(*perf(), filename, msg);
             if (result)
             {
-                show_message("Saved", filename);
+                /*
+                 * Only show the message if not running under a session manager.
+                 * This is because the message-box will hang the application
+                 * until the user clicks OK.
+                 */
+
+                if (! nsm_active())
+                    show_message("Saved", filename);
             }
             else
             {

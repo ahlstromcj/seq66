@@ -54,7 +54,7 @@ Quick Install:
     libtool to be installed.  Grab a Seq66 tarball and untar it.  Go to the
     "seq66" directory and run these commands:
 
-        $ ./bootstrap -er
+        $ ./bootstrap -er           OR    $ ./configure
         $ make &> make.log
         $ sudo make install
 

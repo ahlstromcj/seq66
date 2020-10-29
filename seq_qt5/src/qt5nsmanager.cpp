@@ -186,9 +186,9 @@ qt5nsmanager::create_window ()
  */
 
 bool
-qt5nsmanager::close_session (bool ok)
+qt5nsmanager::close_session (std::string & msg, bool ok)
 {
-    return smanager::close_session(ok);
+    return smanager::close_session(msg, ok);
 }
 
 /**

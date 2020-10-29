@@ -123,10 +123,11 @@ public:
 
     virtual bool create_session
     (
-        int argc = 0, char * argv [] = nullptr
+        int argc = 0,
+        char * argv [] = nullptr
     ) override;
-    virtual bool close_session (bool ok = true) override;
-    virtual bool save_session (std::string & msg) override;
+    virtual bool close_session (std::string & msg, bool ok = true) override;
+    virtual bool save_session (std::string & msg, bool ok = true) override;
     virtual bool create_project
     (
         int argc, char * argv [],
