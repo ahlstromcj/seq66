@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-10-28
+ * \updates       2020-10-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -865,7 +865,7 @@ qsmainwnd::~qsmainwnd ()
  */
 
 void
-qsmainwnd::attach_session (smanager * sp)
+qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
 {
     if (not_nullptr(sp))
     {
@@ -1676,7 +1676,7 @@ qsmainwnd::save_session ()
  */
 
 bool
-qsmainwnd::close_session ()
+qsmainwnd::detach_session ()
 {
     bool result = false;
     if (use_nsm())
@@ -1684,9 +1684,15 @@ qsmainwnd::close_session ()
         if (not_nullptr(session()))
         {
             std::string msg;
-            result = session()->close_session(msg);
-            if (! result)
+            result = session()->detach_session(msg);
+            if (result)
+            {
+                m_session_mgr_ptr = nullptr;
+                use_nsm(false);
+            }
+            else
                 show_message_box(msg);
+
         }
     }
     return result;
@@ -2606,8 +2612,12 @@ qsmainwnd::quit_session ()
     {
         if (check())
         {
-            (void) save_session();
-            (void) close_session();
+            if (detach_session()) // currently causes an INCOMPLETE Quit later
+            {
+                use_nsm(false);
+                disconnect_nsm_slots();
+                connect_normal_slots();
+            }
         }
     }
 }
@@ -2785,6 +2795,11 @@ qsmainwnd::connect_editor_slots ()
 void
 qsmainwnd::connect_nsm_slots ()
 {
+    if (rc().verbose())
+    {
+        infoprint("Connecting NSM File menu entries");
+    }
+
     /*
      * File / New.  NSM version.
      */
@@ -2846,13 +2861,14 @@ qsmainwnd::connect_nsm_slots ()
      * File / Close.
      */
 
-    ui->actionClose->setText("&Close Session");
+    ui->actionClose->setText("&Detach Session");
     ui->actionClose->setToolTip("Detach from session management.");
     connect
     (
         ui->actionClose, SIGNAL(triggered(bool)),
         this, SLOT(quit_session())
     );
+    ui->actionClose->setEnabled(false);
 }
 
 void
@@ -2884,6 +2900,11 @@ qsmainwnd::disconnect_nsm_slots ()
 void
 qsmainwnd::connect_normal_slots ()
 {
+    if (rc().verbose())
+    {
+        infoprint("Connecting normal File menu entries");
+    }
+
     /*
      * File / New.  Connect the GUI elements to event handlers.
      */
@@ -2896,7 +2917,7 @@ qsmainwnd::connect_normal_slots ()
      * File / Open.
      */
 
-#if defined SEQ66_PLATFORM_DEBUG    // _TEST_SESSION_IMPORT
+#if defined SEQ66_PLATFORM_DEBUG_TEST_SESSION_IMPORT
     ui->actionOpen->setText("&Import into Session...");
     ui->actionOpen->setToolTip
     (

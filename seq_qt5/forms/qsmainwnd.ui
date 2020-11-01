@@ -103,6 +103,7 @@
         <pointsize>12</pointsize>
         <weight>75</weight>
         <bold>true</bold>
+        <stylestrategy>PreferDefault</stylestrategy>
        </font>
       </property>
       <property name="text">
@@ -852,6 +853,7 @@
         <pointsize>18</pointsize>
         <weight>75</weight>
         <bold>true</bold>
+        <stylestrategy>PreferDefault</stylestrategy>
        </font>
       </property>
       <property name="text">
@@ -1184,7 +1186,7 @@
     <string>&amp;New</string>
    </property>
    <property name="toolTip">
-    <string>Create new Seq66 MIDI file.</string>
+    <string>Create a new Seq66 MIDI file, clearing all song information.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -1291,7 +1293,7 @@
   </action>
   <action name="actionExportSong">
    <property name="text">
-    <string>&amp;Export Song As MIDI</string>
+    <string>&amp;Export Song As MIDI...</string>
    </property>
    <property name="toolTip">
     <string>Export song performance as a standard MIDI file.</string>
@@ -1299,7 +1301,7 @@
   </action>
   <action name="actionExportMIDI">
    <property name="text">
-    <string>Export &amp;MIDI Only</string>
+    <string>Export &amp;MIDI Only...</string>
    </property>
    <property name="toolTip">
     <string>Export without Seq66 SeqSpecs.</string>

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-10-27
+ * \updates       2020-10-31
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -157,7 +157,7 @@ clinsmanager::create_session (int argc, char * argv [])
 }
 
 /**
- *  Will do more with this later.
+ *  Somewhat of the inverse of create_session().
  */
 
 bool
@@ -165,9 +165,49 @@ clinsmanager::close_session (std::string & msg, bool ok)
 {
     if (usr().in_session())
     {
+#if defined SEQ66_NSM_SUPPORT   // _TEMP_DISABLE
         warnprint("Closing NSM session");
+        nsm_active(false);                              /* class flag       */
+        usr().in_session(false);                        /* global flag      */
+        m_nsm_client->close_session();
+
+        /*
+         * Freezes in the lo_server_thread_stop() call!!!
+         *
+         *  m_nsm_client.reset();
+         */
+#endif
     }
     return smanager::close_session(msg, ok);
+}
+
+/**
+ *  Somewhat of the inverse of create_session().
+ */
+
+bool
+clinsmanager::detach_session (std::string & msg, bool ok)
+{
+    if (usr().in_session())
+    {
+#if defined SEQ66_NSM_SUPPORT                           // _TEMP_DISABLE
+        warnprint("Detaching (closing) NSM session");
+        nsm_active(false);                              /* class flag       */
+        usr().in_session(false);                        /* global flag      */
+        m_nsm_client->detach_session();
+
+        /*
+         * Freezes in the lo_server_thread_stop() call!!!
+         *
+         *  m_nsm_client.reset();
+         *  m_nsm_client = nullptr;
+         */
+
+        return smanager::detach_session(msg, ok);
+#endif
+    }
+    else
+        return true;                                    /* already done     */
 }
 
 /**

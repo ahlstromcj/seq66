@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-09-10
+ * \updates       2020-10-31
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -98,12 +98,11 @@ extern std::vector<std::string> convert_lo_args
 
 class nsmbase
 {
+    friend class clinsmanager;
 
 private:
 
     static std::string sm_nsm_default_ext;
-
-private:
 
     /**
      *  Provides a reference (a void pointer) to an OSC service. See
@@ -117,7 +116,7 @@ private:
      *  an OSC server. See /usr/include/lo/lo_types.h.
      */
 
-    lo_server_thread m_lo_thread;
+    lo_server_thread m_lo_server_thread;
 
     /**
      *  Provides a reference (a void pointer) to an object representing an
@@ -270,10 +269,8 @@ protected:
         const std::string & capabilities
     );
 
-    void start_thread ()
-    {
-        lo_server_thread_start(m_lo_thread);
-    }
+    void start_thread ();
+    void stop_thread ();
 
     void update_dirty_count (bool flag = true);
 
@@ -388,6 +385,11 @@ protected:
     virtual bool open_session ();
     virtual bool save_session ();
     virtual bool close_session ();
+
+    virtual bool detach_session ()
+    {
+        return close_session();
+    }
 
 };          // class nsmbase
 

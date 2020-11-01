@@ -184,6 +184,7 @@ public:
 
     virtual bool create_session (int argc = 0, char * argv [] = nullptr);
     virtual bool close_session (std::string & msg, bool ok = true);
+    virtual bool detach_session (std::string & msg, bool ok = true);
     virtual bool save_session (std::string & msg, bool ok = true);
     virtual bool create_window ();
     virtual bool create_project

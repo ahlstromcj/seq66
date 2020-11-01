@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-10-28
+ * \updates       2020-10-31
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -359,7 +359,7 @@ private slots:
     void new_session ();
     bool save_file (const std::string & fname = "");
     bool save_session ();
-    bool close_session ();
+    bool detach_session ();
     bool save_file_as ();
     bool export_file_as_midi (const std::string & fname = "");
     bool export_song (const std::string & fname = "");
@@ -397,13 +397,7 @@ private slots:
 private:
 
     void remove_set_master ();
-    void attach_session (smanager * sp);
-
-    void detach_session ()
-    {
-        m_session_mgr_ptr = nullptr;
-        use_nsm(false);
-    }
+    void attach_session (smanager * sp);    // UNNECESSARY?
 
     smanager * session ()
     {

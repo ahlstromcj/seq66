@@ -458,6 +458,34 @@ smanager::close_session (std::string & msg, bool ok)
 }
 
 /**
+ *  Detaches the session, with an option to handle errors in the session.
+ *  It does not stop the performer.
+ *
+ *  Compare to close_session().
+ *
+ * \param [out] msg
+ *      Provides a place to store any error message for the caller to use.
+ *
+ * \param ok
+ *      Indicates if an error occurred, or not.  The default is true, which
+ *      indicates "no problem".
+ *
+ * \return
+ *      Returns the ok parameter if false, otherwise, the result of finishing
+ *      up is returned.
+ */
+
+bool
+smanager::detach_session (std::string & msg, bool ok)
+{
+    bool result = ok;
+    if (result)
+        (void) save_session(msg, result);
+
+    return result;
+}
+
+/**
  *  This function saves the following files (so far):
  *
  *      -   *.rc

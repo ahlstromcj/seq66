@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-07
- * \updates       2020-10-17
+ * \updates       2020-11-01
  * \license       GNU GPLv2 or above
  *
  *  nsmbase is an Non Session Manager (NSM) OSC client helper.  The NSM API
@@ -200,21 +200,21 @@ nsmbase::nsmbase
     const std::string & nsmfile,
     const std::string & nsmext
 ) :
-    m_lo_address    (nullptr),
-    m_lo_thread     (nullptr),
-    m_lo_server     (nullptr),
-    m_active        (false),
-    m_visible       (true),         /* not yet completely worked out    */
-    m_dirty         (false),
-    m_dirty_count   (0),
-    m_manager       (),
-    m_capabilities  (),
-    m_path_name     (),
-    m_display_name  (),
-    m_client_id     (),
-    m_nsm_file      (nsmfile),
-    m_nsm_ext       (nsmext),
-    m_nsm_url       (nsmurl)
+    m_lo_address        (nullptr),
+    m_lo_server_thread  (nullptr),
+    m_lo_server         (nullptr),
+    m_active            (false),
+    m_visible           (true),         /* not yet completely worked out    */
+    m_dirty             (false),
+    m_dirty_count       (0),
+    m_manager           (),
+    m_capabilities      (),
+    m_path_name         (),
+    m_display_name      (),
+    m_client_id         (),
+    m_nsm_file          (nsmfile),
+    m_nsm_ext           (nsmext),
+    m_nsm_url           (nsmurl)
 {
     // No code needed
 }
@@ -227,13 +227,54 @@ nsmbase::nsmbase
 
 nsmbase::~nsmbase ()
 {
-    if (m_lo_thread)
-    {
-        lo_server_thread_stop(m_lo_thread);
-        lo_server_thread_free(m_lo_thread);
-    }
+    stop_thread();
     if (m_lo_address)
         lo_address_free(m_lo_address);
+}
+
+void
+nsmbase::start_thread ()
+{
+    if (not_nullptr(m_lo_server_thread))
+    {
+        int rcode = lo_server_thread_start(m_lo_server_thread);
+        if (rcode == 0)                                     /* successful?  */
+        {
+            if (rc().verbose())
+                file_message("S66", "OSC server thread started");
+        }
+        else
+            file_error("S66", "OSC server thread failed to start");
+    }
+}
+
+void
+nsmbase::stop_thread ()
+{
+    if (not_nullptr(m_lo_server_thread))
+    {
+#if 0
+        int rcode = lo_server_thread_stop(m_lo_server_thread);
+        if (rcode == 0)                                     /* successful?  */
+        {
+            if (rc().verbose())
+                file_message("S66", "OSC server thread stopped");
+        }
+        else
+            file_error("S66", "OSC server thread failed to stop");
+
+#endif
+        lo_server_thread_free(m_lo_server_thread);
+        m_lo_server_thread = nullptr;
+    }
+    else
+    {
+        if (not_nullptr(m_lo_server))
+        {
+            lo_server_free(m_lo_server);
+            m_lo_server = nullptr;
+        }
+    }
 }
 
 /**
@@ -251,11 +292,22 @@ nsmbase::initialize ()
     if (result)
     {
         const int proto = lo_address_get_protocol(m_lo_address);
-        m_lo_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
-        result = not_nullptr(m_lo_thread);
+        if (rc().verbose())
+        {
+            std::string ps = "Unknown";
+            switch (proto)
+            {
+                case LO_UDP:    ps = "UDP";     break;
+                case LO_TCP:    ps = "TCP";     break;
+                case LO_UNIX:   ps = "UNIX";    break;
+            }
+            file_message("OSC protocol", ps);
+        }
+        m_lo_server_thread = lo_server_thread_new_with_proto(NULL, proto, NULL);
+        result = not_nullptr(m_lo_server_thread);
         if (result)
         {
-            m_lo_server = lo_server_thread_get_server(m_lo_thread);
+            m_lo_server = lo_server_thread_get_server(m_lo_server_thread);
             result = not_nullptr(m_lo_server);
             if (result)
             {
@@ -274,7 +326,7 @@ nsmbase::initialize ()
                  * add_client_method(nsm::tag::show,    osc_nsm_show);
                  *
                  * The most-derived class should call this, we think.
-                 *  lo_server_thread_start(m_lo_thread);
+                 *  lo_server_thread_start(m_lo_server_thread);
                  */
             }
             else
@@ -827,14 +879,14 @@ nsmbase::add_client_method (nsm::tag t, lo_method_handler h)
         if (t == nsm::tag::null)
         {
             const char * nul = NULL;
-            (void) lo_server_thread_add_method(m_lo_thread, nul, nul, h, this);
+            (void) lo_server_thread_add_method(m_lo_server_thread, nul, nul, h, this);
             nsm::outgoing_msg("OSC", "", "Broadcast method added");
         }
         else
         {
             const char * m = message.c_str();
             const char * p = pattern.c_str();
-            (void) lo_server_thread_add_method(m_lo_thread, m, p, h, this);
+            (void) lo_server_thread_add_method(m_lo_server_thread, m, p, h, this);
             nsm::outgoing_msg(message, pattern, "Client method added");
         }
     }
@@ -849,7 +901,7 @@ nsmbase::add_server_method (nsm::tag t, lo_method_handler h)
     {
         const char * m = message.c_str();
         const char * p = pattern.c_str();
-        (void) lo_server_add_method(m_lo_thread, m, p, h, this);
+        (void) lo_server_add_method(m_lo_server_thread, m, p, h, this);
         nsm::outgoing_msg(message, pattern, "Server method added");
     }
 }

@@ -127,6 +127,7 @@ public:
         char * argv [] = nullptr
     ) override;
     virtual bool close_session (std::string & msg, bool ok = true) override;
+    virtual bool detach_session (std::string & msg, bool ok = true) override;
     virtual bool save_session (std::string & msg, bool ok = true) override;
     virtual bool create_project
     (

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-09-12
+ * \updates       2020-10-31
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -182,13 +182,23 @@ qt5nsmanager::create_window ()
 }
 
 /**
- *  Will do more with this later.
+ *  Will do more with this later.  Currently we just call the base class.
  */
 
 bool
 qt5nsmanager::close_session (std::string & msg, bool ok)
 {
-    return smanager::close_session(msg, ok);
+    return clinsmanager::close_session(msg, ok);
+}
+
+/**
+ *  Will do more with this later.  Currently we just call the base class.
+ */
+
+bool
+qt5nsmanager::detach_session (std::string & msg, bool ok)
+{
+    return clinsmanager::detach_session(msg, ok);
 }
 
 /**
