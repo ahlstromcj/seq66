@@ -393,7 +393,7 @@ nsmbase::msg_check (int timeoutms)
                 /* do nothing, handle the message(s) */
             }
         }
-        if (! result && rc().verbose())
+        if (! result)
             file_message("S66", "No reply!");
     }
     return result;

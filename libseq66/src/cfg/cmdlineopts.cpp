@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-10-26
+ * \updates       2020-11-02
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -102,7 +102,6 @@ cmdlineopts::s_long_options [] =
     {"show-midi",           0, 0, 's'},
     {"show-keys",           0, 0, 'k'},
     {"inverse",             0, 0, 'K'},
-    {"stats",               0, 0, 'S'},
     {"priority",            0, 0, 'p'},
     {"ignore",              required_argument, 0, 'i'},
     {"interaction-method",  required_argument, 0, 'x'},
@@ -151,7 +150,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxxxxxxxxxx  xx  aax
+         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -168,7 +167,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:H:hi:JjKkLl:M:mNnoPpq:RrTtSsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:H:hi:JjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -178,7 +177,7 @@ const std::string
 cmdlineopts::s_help_1a =
 "Options:\n"
 "   -h, --help               Show this message and exit.\n"
-"   -V, --version            Show program version/build  information and exit.\n"
+"   -V, --version            Show program version/build information and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
 "                            relative to $HOME.  The default is .config/seq66.\n"
@@ -209,7 +208,7 @@ cmdlineopts::s_help_1b =
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
 "   -l, --client-name        Replaces the client name 'seq66' with a new label.\n"
-"                            Can be overridden by a session manager.\n"
+"                            Will be overridden by a session manager.\n"
 "   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"
 "                            file might specify its own PPQN.\n"
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
@@ -227,7 +226,6 @@ const std::string
 cmdlineopts::s_help_2 =
 "   -k, --show-keys          Prints pressed key value.\n"
 "   -K, --inverse            Inverse/night color scheme for seq/perf editors.\n"
-"   -S, --stats              Show global statistics.\n"
 #if defined SEQ66_JACK_SUPPORT
 "   -j, --jack-transport     Synchronize to JACK transport.\n"
 "   -J, --jack-master        Try to be JACK Master. Also sets -j.\n"
@@ -999,10 +997,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'r':
             rc().reveal_ports(true);
             printf("[Showing native system port names]\n");
-            break;
-
-        case 'S':
-            rc().stats(true);
             break;
 
         case 's':

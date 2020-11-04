@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-10-24
+ * \updates       2020-11-02
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -85,7 +85,6 @@ rcsettings::rcsettings () :
     m_allow_click_edit          (true),
     m_show_midi                 (false),
     m_priority                  (false),
-    m_stats                     (false),
     m_pass_sysex                (false),
     m_with_jack_transport       (false),
     m_with_jack_master          (false),
@@ -177,7 +176,6 @@ rcsettings::set_defaults ()
     m_allow_click_edit          = true;
     m_show_midi                 = false;
     m_priority                  = false;
-    m_stats                     = false;
     m_pass_sysex                = false;
     m_with_jack_transport       = false;
     m_with_jack_master          = false;
@@ -1028,7 +1026,7 @@ rcsettings::user_filename (const std::string & value)
  *
  *  Please note:
  *
- *      -   These items are keyed by the m_status values and the m_d0
+ *      -   These items are keyed by the status values and the d0
  *          values, which are at indices 2 and 3 in the array parameters.
  *      -   They are inserted into an std::multimap.
  *      -   The category, action, and slot number are part of the data value,

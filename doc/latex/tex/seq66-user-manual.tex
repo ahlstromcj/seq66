@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2020-10-02
+% \update      2020-11-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -86,17 +86,18 @@
    \textsl{Seq66},
 %  \cite{sequencer66},
    through version 0.91.0.
-   The following project supports \textsl{Seq66}:
+   The following projects support \textsl{Seq66} and documentation:
 
    \begin{itemize}
       \item \url{https://github.com/ahlstromcj/seq66.git}.
       \item \url{https://github.com/ahlstromcj/sequencer64-doc.git}.
    \end{itemize}
 
-   We reference the old \textsl{Sequencer64} documentation project because
+   (We reference the old \textsl{Sequencer64} documentation project because
    the current manual is still very incomplete.  The \textsl{Sequencer64}
    document is probably about 90 percent useful as a guide to \textsl{Seq66}.
-   Just be prepared to note some significant differences in look-and-feel.
+   Just be prepared to note some significant differences in look-and-feel.)
+
    We would like a more lean-and-mean manual for \textsl{Seq66}.
    For now, we are concentrating on the new features in this manual.
 
@@ -104,6 +105,7 @@
    \textsl{C++} and with kruft and redundancy removed.  It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
    and has better handling of sets and configuration files.
+   It includes support for the \textsl{Non Session Manager}.
 
    We have many contributors to acknowledge.
 %  Please see \sectionref{sec:kudos}.
@@ -114,7 +116,7 @@
    \textsl{Seq66} is an ongoing reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer.
    \textsl{Seq66} is not a synthesizer.  It requires a hardware
-   synthesizer, or a software synthesizer.
+   synthesizer or a software synthesizer.
 
 %  such as Timidity \cite{timidity}, FluidSynth \cite{fluidsynth}, etc.
 
@@ -125,7 +127,7 @@
    things learned in responding to user reports.  The second reason is to use
    the new code as an opportunity to add new functionality such as
    \textsl{Non Session Manager} support.  The last reason is to tighten the
-   code by using newer features of C++11 and beyond.
+   code by using newer features of \textsl{C++11} and beyond.
 
 \subsection{Improvements}
 \label{subsec:improvements}
@@ -137,6 +139,7 @@
       \item A mutes editor tab.
       \item A sets editor tab.
       \item A better live frame (main window and external windows).
+      \item Non Session Manager support.
       \item More to come!
    \end{itemize}
 
@@ -178,8 +181,6 @@
    (Linux only).  The following figure is for the Linux
    version.
 
-% UPDATE THE FOLLOWING FIGURE !!!!!!!!!!!!!!!!!!!!!!!!!
-
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.5]{new/seq66-first-screen-0-94.png}
@@ -188,24 +189,22 @@
    \label{fig:seq66_main_screen}
 \end{figure}
 
-   The following figure shows the user-interface used for
-   \textsl{Windows}.  It uses the Qt 5 framework.
+%  The following figure shows the user-interface used for
+%  \textsl{Windows}.  It uses the Qt 5 framework.
 
-% UPDATE THE FOLLOWING FIGURE !!!!!!!!!!!!!!!!!!!!!!!!!
-
-\begin{figure}[H]
-   \centering 
+% \begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.65]{new/seq66-first-screen-0-96-qt.png}
-   \includegraphics[scale=0.5]{roll.png}
-   \caption{Seq66 Main Screen, Windows, With Colors}
-   \label{fig:seq66_main_screen_qt}
-\end{figure}
+%  \includegraphics[scale=0.5]{roll.png}
+%  \caption{Seq66 Main Screen, Windows, With Colors}
+%  \label{fig:seq66_main_screen_qt}
+% \end{figure}
 
    The \textsl{Seq66} main window appears, as shown above.
 %  \figureref{fig:seq66_main_screen}, and
 %  \figureref{fig:seq66_main_screen_qt}.
-   These figures have some differences from the \textsl{Seq24} main window
-   and from each other, but the functionality is about the same.
+   This figures has some differences from the \textsl{Seq24} main window,
+   but the functionality is about the same.
    Most features, including the "look" of the application,
    can be configured via the "rc" and "user"
    configuration files or command-line options.
@@ -242,89 +241,89 @@
 
 % Menu
 
-% \input{seq66_menu}
+\input{menu}
 
 % Patterns Panel
 
-% \input{seq66_patterns_panel}
+% \input{patterns_panel}
 
 % Pattern Editor
 
-% \input{seq66_pattern_editor}
+% \input{pattern_editor}
 
 % Song Editor
 
-% \input{seq66_song_editor}
+% \input{song_editor}
 
 % Event Editor
 
-% \input{seq66_event_editor}
+% \input{event_editor}
 
 % Session Management
 
-\input{seq66_sessions}
+\input{sessions}
 
 % Import/Export
 
-% \input{seq66_midi_export}
+% \input{midi_export}
 
 % Tables of keyboard and mouse actions
 
-% \input{seq66_kbd_mouse}
+% \input{kbd_mouse}
 
 % Meta-event support
 
-% \input{seq66_meta_events}
+% \input{meta_events}
 
 % Configuration file
 
-% \input{seq66_rc_file}
+% \input{rc_file}
 
 % User file
 
-% \input{seq66_usr_file}
+% \input{usr_file}
 
 % Playlists
 
-% \input{seq66_playlist}
+% \input{playlist}
 
 % Qt / PortMidi / Windows version
 
-% \input{seq66_qt_portmidi}
+% \input{qt_portmidi}
 
 % Man page
 
-% \input{seq66_manpage}
+% \input{manpage}
 
 % Headless version
 
-% \input{seq66_headless}
+% \input{headless}
 
 % MIDI implementation chart
 
 % \pagebreak
-% \input{seq66_midi_impl_chart}
+% \input{midi_impl_chart}
 % \pagebreak
 
 % Important Concepts
 
-% \input{seq66_concepts}
+% \input{concepts}
 
 % Building and debugging Seq66
 
-% \input{seq66_build}
+% \input{build}
 
 % Discussion of MIDI formats related to Seq24 and Seq66
 
-% \input{seq66_midi_formats}
+% \input{midi_formats}
 
 % Discussion of JACK support
 
-% \input{seq66_jack}
+% \input{jack}
 
 % Acknowledgments
 
-% \input{seq66_kudos}
+% \input{kudos}
 
 \section{Summary}
 \label{sec:summary}
@@ -336,7 +335,7 @@
 
 % References
 
-% \input{seq66_references}
+% \input{references}
 
 \printindex
 

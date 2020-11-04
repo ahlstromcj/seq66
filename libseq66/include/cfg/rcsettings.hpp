@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-10-24
+ * \updates       2020-11-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -245,7 +245,6 @@ private:
     bool m_allow_click_edit;        /**< Allow double-click edit pattern.   */
     bool m_show_midi;               /**< Show MIDI events to console.       */
     bool m_priority;                /**< Run at high priority (Linux only). */
-    bool m_stats;                   /**< Show some output statistics.       */
     bool m_pass_sysex;              /**< Pass SysEx to outputs, not ready.  */
     bool m_with_jack_transport;     /**< Enable synchrony with JACK.        */
     bool m_with_jack_master;        /**< Serve as a JACK transport Master.  */
@@ -595,11 +594,6 @@ public:
     bool priority () const
     {
         return m_priority;
-    }
-
-    bool stats () const
-    {
-        return m_stats;
     }
 
     bool pass_sysex () const
@@ -969,11 +963,6 @@ protected:
     void priority (bool flag)
     {
         m_priority = flag;
-    }
-
-    void stats (bool flag)
-    {
-        m_stats = flag;
     }
 
     void pass_sysex (bool flag)

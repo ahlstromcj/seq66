@@ -1,0 +1,43 @@
+-------------
+
+Anyway, it's nonsensical to start a client withiut a session open. How can
+NSM tell the client where to put it's files before even it knows? You have
+to use the GUI or OSC control to open/create a session first.
+
+This behavior way one of the awful flaws in jack session etc. They would
+continually create anyonmous sessions named after UUIDs a d because of this
+I would lose work.
+
+-------------
+
+Yes, you could technically do that, but I wouldn't recommend it. NSMD's
+server control OSC commands are intended to be initiated by user actions
+(optionally invoked from within your own app's GUI). The only thing I
+imagine that you could do is the same bad behavior of giving the new
+session a random name.
+
+The intention is that control of the session name/location should always be
+with the user.
+
+The confusion comes from e.g. X11 session managers. They really only ever
+manage one session, the most recent one. In that case, it's fine to be
+ephemeral and anonymous. NSM (that is, the one I invented, not the copies)
+is intended for use in the context of a multiplicity of song-level units.
+These units must not be ephemeral or anonymous. It really matters which
+song you are messing with! And nobody wants to dig through, merge and
+rename 1000 random folders. (If you've used e.g.a  Zoom Handy recorder
+which names things like ZOOM0001, then you know what a nightmare this can
+be).
+
+Please, be kind to your users and give the control to them. Tell them
+there's no NSM session open and they need to open one first, then the
+result they get will be predictable/desirable.
+
+This is one of the main reasons that LASH and JACK Session were unusable in
+practice. I talked about this for years but nobody understood it. It wasn't
+until I released NSM that people could experience something better and know
+that it was better. Alas, even now I think I'm the only one who understands
+*why* the NSM experience is better.
+
+-------------
+

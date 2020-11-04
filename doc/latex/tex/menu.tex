@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2019-08-20
+% \update      2020-11-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -17,24 +17,27 @@
 \section{Menu}
 \label{sec:seq66_menu}
 
-   The \textsl{Sequencer66} menu
-   (\figureref{fig:seq66_main_screen}) is simple, but important.
+   The \textsl{Seq66} menu
+   (\figureref{fig:seq66_main_screen}) structure is a little more complex than
+   that of \textsl{Sequencer64}.  In particular, the \textsl{File} menu has two
+   variants:  a normal file menu, and a file menu when \textsl{Seq66} is
+   running under the \textsl{Non Session Manager}.
 
 \subsection{Menu / File}
 \label{subsec:seq66_menu_file}
 
    The \textbf{File} menu is used to save and load MIDI files
-   (Standard MIDI Format 0 or 1) and \textsl{Sequencer66} MIDI
+   (Standard MIDI Format 0 or 1) and \textsl{Seq66} MIDI
    files.
-   The \textsl{Sequencer66} menu entry contains the sub-items shown below.
+   The \textsl{Seq66} menu entry contains the sub-items shown below.
 %  \figureref{fig:seq66_menu_file_items}.
    The next few sub-sections discuss
    the sub-items in the \textsl{File} sub-menu.
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Sequencer66 File Menu Items}
+   \includegraphics[scale=0.65]{main-menu/file/livegrid-dark-menu-file.png}
+   \caption{Seq66 Menu File Items}
    \label{fig:seq66_menu_file_items}
 \end{figure}
 
@@ -48,9 +51,12 @@
       \item \textbf{Export Song as MIDI}
       \item \textbf{Export MIDI Only}
       \item \textbf{Import MIDI to Current Set}
-%     \item \textbf{Options}
-      \item \textbf{Exit or Quit}
+      \item \textbf{Quit} (\textbf{Exit} in \textsl{Windows})
    \end{enumber}
+
+   For information on the file menu when \textsl{Seq66} is
+   running under the \textsl{Non Session Manager}, see
+   the \sectionref{subsubsec:sessions_file_menu} discussion.
 
 %  The Qt version of this menu is similar, except that the
 %  \textbf{Options...} menu is placed in \textbf{Edit / Preferences}.
@@ -63,6 +69,9 @@
    Prompting for changes is more comprehensive than \textsl{Seq24}.
    However, when in doubt, save!  Keep backups of your tunes!
 
+   For running under the \textsl{Non Session Manager}, see
+   \sectionref{subsubsec:sessions_file_menu}.
+
 \subsubsection{Menu / File / Open}
 \label{subsubsec:seq66_menu_file_open}
 
@@ -72,33 +81,39 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{menu/menu_file_open.png}
-   \includegraphics[scale=0.65]{roll.png}
+   \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open.png}
    \caption{File / Open}
    \label{fig:seq66_menu_file_open}
 \end{figure}
 
-   This dialog lets one type a file-name, highlighting the first file (if any)
+   This dialog lets one type a file-name, highlighting the first file
    that matches the characters typed so far.
-   \textsl{Sequencer66} can open regular MIDI files and
-   Cakewalk WRK files.
-   It will read and store some MIDI Meta events 
-   (e.g. Tempo and Time Signature).
+   \textsl{Seq66} can open regular MIDI files and
+   \textsl{Cakewalk} "WRK" files.
 
 \subsubsection{Menu / File / Open Playlist}
 \label{subsubsec:seq66_menu_file_open}
 
-   The \textbf{Open Playlist...} menu entry opens a \textsl{Sequencer66}
+   The \textbf{Open Playlist...} menu entry opens a \textsl{Seq66}
    play-list file.
-   This file contains a list of "playlist sections",
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open-playlist.png}
+   \caption{File / Open}
+   \label{fig:seq66_menu_file_open_playlist}
+\end{figure}is
+
+   The playlist file contains a list of "playlist sections",
    each listing a number of MIDI songs.
    These playlists and songs can be
-   selected by the arrow keys or by MIDI control.
+   selected by the arrow keys or by MIDI control in the \textsl{Playlist} tab
+   in the main window.
    See \sectionref{sec:playlist}.
 
    Once activated, the current play-list file-name is saved in the
-   \texttt{[playlist]} section of the "rc" configuration file when
-   \textsl{Sequencer66} exits.
+   \texttt{[playlist]} section of the 'rc' configuration file when
+   \textsl{Seq66} exits.
    The file extension is \texttt{.playlist}.
    The Qt user-interface will eventually support editing of the play-list.
    Currently, the user must understand the play-list format, and use a
@@ -109,17 +124,26 @@
 
    This menu entry provides a list of the last few MIDI files created or opened;
    play-list selections are \textsl{not} included.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{main-menu/file/dark-menu-recent-files.png}
+   \caption{Seq66 Menu File Items}
+   \label{fig:seq66_menu_file_items}
+\end{figure}
+
    This list is saved in the \texttt{[recent-files]} section of the
-   "rc" configuration file.
+   'rc' configuration file.
    In the menu, only the last part of the file-name is
-   shown, but in the "rc" configuration file,
+   shown, but in the 'rc' configuration file,
    the full path to the file-name is stored.
    This path is in "UNIX" format, using the forward slash, or solidus,
    as the path separator, even in \textsl{Windows}.
    Only unique entries are included in the recent-files list.
    The limit is 10 recent-file entries.
-   This is a feature from \textsl{Kepler34} (\cite{kepler34}).
-   Here is an example from an "rc" file:
+   This is a feature from \textsl{Kepler34}.
+%  (\cite{kepler34}).
+   Here is an example from an 'rc' file:
 
 \begin{verbatim}
    [recent-files]
@@ -142,15 +166,14 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{menu/menu_file_save_as.png}
-   \includegraphics[scale=0.65]{roll.png}
+   \includegraphics[scale=0.5]{main-menu/file/dark-menu-file-save-as.png}
    \caption{File / Save As}
    \label{fig:seq66_menu_file_save_as}
 \end{figure}
 
    To save a new file, or to save the current existing file to a new name,
    enter the name in the name field, without an extension.
-   \textsl{Sequencer66} will append a \texttt{.midi} extension to the filename.
+   \textsl{Seq66} will append a \texttt{.midi} extension to the filename.
    The file will be saved in a format that the Linux \textsl{file} command
    will tag as something like:
 
@@ -159,34 +182,27 @@
    \end{verbatim}
 
    It looks like a simple MIDI file, and yet, if one re-opens it in
-   \textsl{Sequencer66}, one sees that all of the labeling, pattern
-   information, and song layout has been preserved in this file.
-%  Even the pattern layout (arrangement), as discussed in
-%  \sectionref{subsubsec:seq66_song_editor_arrangement_panel_roll},
-%  have been saved.
-%  (But the L and R marker positions are not saved.)
+   \textsl{Seq66}, one sees that the mute-groups, labeling, pattern
+   information, and song layout have been preserved in this file.
    This information is saved in a way that MIDI-compliant software
-   should be able to use, or ignore without failure.
+   should be able to use or ignore without failure.
 
-   The output MIDI file after \textsl{Sequencer66} saves the original MIDI file
-   is larger.
+%  The output MIDI file after \textsl{Seq66} saves the original MIDI file
+%  is larger.
    After the last track in the file, a number of
    \index{SeqSpec}
-   MIDI-compliant sequencer-specific (SeqSpec) items are saved, to preserve
-   the extra information that \textsl{Sequencer66} adds.
-   In legacy mode, \textsl{Sequencer66} saves this information
-   in the same format as \textsl{Seq24}.
-   Otherwise, it saves it in a more MIDI-compatible format.
+   sequencer-specific (SeqSpec) items are saved, to preserve
+   the extra information that \textsl{Seq66} adds to the song.
 %  Some of this extra information (mute-groups) will be stripped from the MIDI
 %  file.
-   Normally, \textsl{Sequencer66} saves this information by marking
-   each SeqSpec section as vendor-specific information, and marking this
-   section as a regular MIDI track.
-   The legacy and new formats of the final "track" are explained in
-   \sectionref{subsec:legacy_midi_format}.
+%  Normally, \textsl{Seq66} saves this information by marking
+%  each SeqSpec section as vendor-specific information, and marking this
+%  section as a regular MIDI track.
+%  The legacy and new formats of the final "track" are explained in
+%  \sectionref{subsec:legacy_midi_format}.
 
    \index{Meta events}
-   Meta events are now partially handled by \textsl{Sequencer66}.
+   Meta events are now partially handled by \textsl{Seq66}.
    Meta events Set Tempo
 %  (\texttt{FF 51 03 tt tt tt}),
    and Time Signature
@@ -198,8 +214,7 @@
    and Meta MIDI Port
 %  (\texttt{FF 21 01 pp}),
    are now read as events, and are saved back when the file is saved.
-   They cannot be edited in \textsl{Sequencer66}, but they are
-   not lost.
+   They cannot be edited in \textsl{Seq66}, but they are not lost.
    Please note that the channel and port meta events are
    considered \textsl{obsolete} in the MIDI standard.
 
@@ -224,165 +239,82 @@
 \subsubsection{Menu / File / Export MIDI Only}
 \label{subsubsec:seq66_menu_file_export_midi_only}
 
-   Sometimes it might be useful to export only the non-sequencer-specific
-   (non-SeqSpec) data from a \textsl{Sequencer66} song, in order to reduce the
+   Sometimes it might be useful to export only the non-vendor-specific
+   (non-SeqSpec) data from a \textsl{Seq66} song, in order to reduce the
    size of the file or to accomodate non-compliant sequencers.
    This functionality is explained in detail in
    \sectionref{subsec:seq66_midi_export_file_export_midi_only}.
 
-\subsubsection{Menu / File / Options}
-\label{subsubsec:seq66_menu_file_options}
+\subsubsection{Menu / Edit / Preferences}
+\label{subsubsec:seq66_menu_edit_preferences}
 
-   In the \textsl{Portmidi / Windows / Qt 5} version of
-   \textsl{Sequencer66}, the \textbf{Options} dialog has been moved to 
-   \textbf{Edit / Preferences}.
-   See \sectionref{subsubsec:qt_portmidi_qt5_edit_prefs}.
-   There are still a few configuration items yet to be represented in that
-   new user-interface.
-
-   \textbf{Options} provides a number of settings in one
+   \textsl{Seq66}, the \textbf{Options} dialog has been moved to 
+   \textbf{Edit / Preferences} and the keystroke-editing pages have been eliminated.
+   \textbf{Preferences} provides a number of settings in one
    tabbed dialog, shown in the figures that follow.
-   It allows one to set MIDI clocking,
-   what incoming MIDI events control the sequencer, what keys are
-   mapped to functions, how the mouse works, and some JACK parameters.
-   Note that there is a new tab-page for \textbf{Ext Keys}, to support
-   more keystroke controls.
+   It allows one to set MIDI clocking, MIDI Input, Display tweaks, minor playback
+   options, and some JACK parameters.
+   Missing in this new dialog are: incoming MIDI events to control the sequencer;
+   what keys are mapped to functions, and how the mouse works.
+   The MIDI and Key controls have been consolidated into a 'ctrl' file and are
+   fairly easy to edit with a text editor.
+   \textsl{Seq66} does not support the 'fruity' mouse mode at this time.
 
-\begin{figure}[H]
-   \centering 
+% \begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.65]{menu/options-tab-0-9-18.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Edit / Preference}
-   \label{fig:seq66_options_tab_0_9_18}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Edit / Preference}
+%  \label{fig:seq66_options_tab_0_9_18}
+% \end{figure}
 
-\paragraph{Menu / File / Options / MIDI Clock}
-\label{paragraph:seq66_menu_file_options_midi_clock}
+\paragraph{Menu / Edit / Preferences / MIDI Clock}
+\label{paragraph:seq66_menu_edit_preferences_midi_clock}
 
    The \textbf{MIDI Clock} tab provides a way to set MIDI clock for
    the available MIDI output busses.
    It configures to what busses the MIDI clock and data gets dumped.
    It also shows the devices that can play music.
-   The items that appear in this tab depend the setup.
+   The items that appear in this tab depend on:
 
    \begin{itemize}
       \item What MIDI devices are connected to the computer.
          MIDI controllers, USB MIDI cables, applications with virtual
          ports, and other connected devices will add MIDI
          output devices (ports) to the system.
-         In \textsl{Windows}, the available devices are shown as well.
-%     \item What MIDI software applications are running on the computer.
-%        For example, running MIDI software synthesizers such as
-%        \textsl{Timidity} and \textsl{Yoshimi} will add extra output devices
-%        (playback ports) to a system.
+         This list will generally match the \texttt{aplaymidi -l} output or the
+         \texttt{aconnect -lio} output.
       \item The setting of the "manual-ports" option, which tells
-         \textsl{Sequencer66} to set up virtual MIDI ports.
+         \textsl{Seq66} to set up virtual MIDI ports.
          It is enabled by the
          \texttt{--manual-ports} command-line option or the
          \texttt{[manual-ports]} section of the
-         \texttt{sequencer66.rc} configuration file, described in
+         \texttt{qseq66.rc} configuration file, described in
          \sectionref{subsec:seq66_rc_file_manual_ports}.
-      \item The setting of the \textsl{Sequencer66}-specific
+      \item The setting of the \textsl{Seq66}-specific
          "reveal ALSA ports" option,
          \texttt{--reveal-ports} command-line option or the
          \texttt{[reveal-ports]} section of the
-         \texttt{sequencer66.rc} configuration file, described in
+         \texttt{qseq66.rc} configuration file, described in
          \sectionref{subsec:seq66_rc_file_reveal_ports}.
    \end{itemize}
 
-   For the current discussion, a USB MIDI cable was plugged into the system,
-   and the \textsl{Timidity} and \textsl{Yoshimi} (in ALSA mode) software
-   synthesizers were running.  \textsl{Sequencer66} was also running,
-   without virtual ports enabled, and \texttt{--alsa} turned on.
-%  with the option of "manual-ports" (\texttt{-m} or
-%  \texttt{--manual-ports}) and ALSA (\texttt{-A} or
-%  \texttt{--alsa} turned on.
-   Here are the devices shown when running \textsl{aplaymidi}
-   from the command-line:
-
-   \begin{verbatim}
-      $ aplaymidi -l
-       Port    Client name                      Port name
-       14:0    Midi Through                     Midi Through Port-0
-       24:0    E-MU XMidi1X1 Tab                E-MU XMidi1X1 Tab MIDI 1
-      128:0    TiMidity                         TiMidity port 0
-      128:1    TiMidity                         TiMidity port 1
-      128:2    TiMidity                         TiMidity port 2
-      128:3    TiMidity                         TiMidity port 3
-      129:0    seq66                            seq66 in
-   \end{verbatim}
-
-%     129:16   sequencer66                      sequencer66 in
-
-   Note that \textsl{Yoshimi} does not appear.  Perhaps
-   \texttt{aplaymidi} does not subscribe properly to all ALSA notifications.
-   A better command might be this one (a different setup than above):
-
-   \begin{verbatim}
-      $ aconnect -lio
-      client 0: 'System' [type=kernel]
-          0 'Timer           '
-          1 'Announce        '
-         Connecting To: 15:0, 128:0
-      client 14: 'Midi Through' [type=kernel]
-          0 'Midi Through Port-0'
-      client 129: 'yoshimi' [type=user,pid=26335]
-          0 'input           '
-   \end{verbatim}
-
-   \textsl{Sequencer66} will detect \textsl{Yoshimi}.
-   One can also run the following command instead:
-
-   \begin{verbatim}
-      $ aconnect -io
-   \end{verbatim}
-
-   One other note... of late, we're seeing cases where running the
-   \textsl{Timidity} daemon hides \textsl{Yoshimi}.  Just be aware.
-
-%  (For some reason, the \textsl{Yoshimi} input port is not showing up
-%  in the output of \texttt{aplaymidi}, though, as shown in
-%  \figureref{fig:seq66_midi_clock_4_devices_manual_0},
-%  \textsl{Sequencer66} sees it on port 7.  Perhaps that application is not
-%  providing a good ALSA device name.)
-%
-%  Also, currently we do NOT see sequencer66/seq66 in the output shown
-%  above!  What's up with that!?  Need the -m option!
-
-   Turning to \figureref{fig:seq66_midi_clock_4_devices_manual_1},
-   with the option of "manual-ports" (\texttt{-m} or
-   \texttt{--manual-ports}) and ALSA in force,
-   note the 16 devices provided by \textsl{Sequencer66}.
-%  Also note that its first value is 1, not 0, due to
-%  the MIDI Thru port occupying slot 0.
-   This figure shows the result with "manual-ports" turned on.
-   Remember that this option also applies to the native JACK MIDI
-   mode of \textsl{Sequencer66}.
-
-%  Also note that the new \textbf{Port Disabled} radio button is not shown in
-%  here.
-%  See \sectionref{fig:qt5_prefs_clock_windows}, it shows this button.
-%  It was added because Windows can have issues with its built-in MIDI mapper,
-%  causing some ports to be uninitialized, and hence not available.
-%  We need to ignore those ports.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{menu/midi-clock-4-devices-manual-1.png}
-%  \includegraphics[scale=0.75]{new/midi-clock-4-devices-manual-1.png}
-%  \includegraphics[scale=0.65]{jack/jack-nano-yosh-manual-clock-seq66.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{MIDI Clock, Manual Option On}
-   \label{fig:seq66_midi_clock_4_devices_manual_1}
-\end{figure}
-
-   It shows the 16 virtual MIDI output busses that \textsl{Sequencer66} can
-   drive.  One needs to use a JACK or ALSA MIDI
-   connection application to connect a device on each of those outputs.  The
-   fact that the the buss names can
+   If \texttt{--manual-ports} is on, this list shows the virtual
+   MIDI output busses that \textsl{Seq66} can drive.
+   One needs to use a JACK or ALSA MIDI
+   connection application to connect a device on each of those outputs.
+   The fact that the the buss names can
    start with different numbers, depending on the system setup, can complicate
    the playing of MIDI in this manner.  Also, the "user" configuration file can
    change the visible names of the ports, causing further confusion.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{preferences/midi_clock_tab.png}
+   \caption{MIDI Clock, ALSA View}
+   \label{fig:seq66_midi_clock_tab}
+\end{figure}
+
    The following elements are present in this dialog:
 
    \begin{enumber}
@@ -400,11 +332,11 @@
    The format of the left side of the entry listing is like the following:
 
    \begin{verbatim}
-      [4] 4:4 seq66 midi out 4:5
-       ^  ^ ^ ^
-       |  | | |
-       |  | |  -------- Buss name
-       |  |  ---------- Port number
+      [5] 128:4 yoshimi:input
+       ^  ^   ^ ^
+       |  |   | |
+       |  |   |  -------- Buss name
+       |  |    ---------- Port number
        |   ------------ Client number
         --------------- Index number
    \end{verbatim}
@@ -418,7 +350,7 @@
    \index{buss override}
    It can be used with the \texttt{-b --buss --bus} option to redirect all
    output to that one buss, which is useful if only one buss is active, and the
-   \textsl{Sequencer66} MIDI song patterns route to non-existent busses.
+   \textsl{Seq66} MIDI song patterns route to non-existent busses.
 
    \itempar{Client Number}{midi clock!client number}
    \index{client number}
@@ -435,36 +367,28 @@
    \itempar{Buss Name}{midi clock!buss name}
    \index{port name}
    \index{midi clock!port name}
-   These labels indicate the output busses (ports) of \textsl{Sequencer66}.
-%  They range from \textbf{[1] sequencer66 1} to \textbf{[16] sequencer66 16}
-%  in the legacy application, \texttt{sequencer66}.
-   They range from \textbf{[1] seq66 1} to \textbf{[16] seq66 16}.
-   in native JACK, when manual/virtual ports are active.
+   These labels indicate the output busses (ports) available.
+   At present, \textsl{Seq66} does not access devices by name; this is
+   a pending feature request.
 
    \itempar{Port Disabled}{midi clock!port disabled}
-   The \textbf{Port Disabled} clock choice marks a port
-   that one does not want to use or that the operating system
+   The \textbf{Port Disabled} clock choice marks an output port
+   that the user does not want to use or that the operating system
    (\textsl{Windows}, I'm looking at \textsl{you}!)
-   is locking or disabling that output port.
-   Normally, this inaccessible port would cause \textsl{Sequencer66} to exit.
+   is locking or disabling.
+   Normally, this inaccessible port would cause \textsl{Seq66} to exit.
    With the port disabled, the inaccessible port is ignored.
 
-   When the \textsl{Windows} version of \textsl{Sequencer66}
+   When the \textsl{Windows} version of \textsl{Seq66}
    (\texttt{qpseq66} is first started, it may error out.
    It will then write "erroneous.rc" and "erroneous.usr" configuration
    files, which can be examined to find the offending buss.
-%  See \sectionref{fig:qt5_prefs_clock_windows}, it shows this
-%  new feature.
 
    \itempar{Off}{midi clock!off}
    Disables the MIDI \textsl{clock} for the given output buss.
    MIDI output is still sent to those ports, and
    each port that has a device connected to it will play music.
    Some synthesizers may require this setting.
-%  For feeding \textsl{Yoshimi} (running in ALSA mode)
-%  with MIDI data, we found that this
-%  setting is the one that must be made in order for \textsl{Yoshimi} to
-%  produce a sound.
 
    \itempar{On (Pos)}{midi clock!on (pos)}
    MIDI clock will be sent to this buss.
@@ -482,8 +406,8 @@
    Clock Start Modulo (1/16 Notes).
    This value starts at 1 and ranges up to 16384, and defaults to 64.
    It is used by the \textbf{On (Mod)} setting discussed above.
-   It is the \texttt{[midi-clock-mod-ticks]} option in the \textsl{Sequencer66}
-   "rc" file as described in
+   It is the \texttt{[midi-clock-mod-ticks]} option in the \textsl{Seq66}
+   'rc' file as described in
    \sectionref{subsec:seq66_rc_file_midi_cmt}.
 
    \itempar{Meta Events}{midi clock!meta events}
@@ -491,48 +415,24 @@
    This section consists of one item, the Tempo Track number.
    It allows the user to move the tempo track from pattern 0 to
    another pattern.  Changing this option is not recommended, since track 1 (0)
-   is the official track for tempo events, but \textsl{Sequencer66} allows the
-   user to record tempo events to another track.  \textsl{Sequencer66} will
+   is the official track for tempo events, but \textsl{Seq66} allows the
+   user to record tempo events to another track.  \textsl{Seq66} will
    process tempo events in any pattern.
-   \textsl{Not supported yet in the Qt user-interface, but
-   it can be set manually in the "rc" configuration file.}
 
-   In addition, the \textbf{Set as Song Tempo Track} button sets this
-   track as part of the currently-load MIDI song file, and will be saved when
-   exited.  This value will override the global tempo-track value, which is
-   stored in the 'rc' configuration file.  However, if 0, it will be ignored,
-   so that the global value will take hold.
+%  In addition, the \textbf{Set as Song Tempo Track} button sets this
+%  track as part of the currently-load MIDI song file, and will be saved when
+%  exited.  This value will override the global tempo-track value, which is
+%  stored in the 'rc' configuration file.  However, if 0, it will be ignored,
+%  so that the global value will take hold.
+
    See \sectionref{subsec:seq66_rc_file_midi_meta_events}, which discusses this
-   setting in the "rc" configuration file.
+   setting in the 'rc' configuration file.
 
-   One thing to remember about tempo...
-   there is a "global" tempo which is saved as part of the song in a SeqSpec
-   section.  However, that tempo is not saved in the tempo track.
-   In order to do so, one can click the \textbf{Log Tempo} button to write it
-   to the tempo track as a tempo event.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{menu/midi-clock-4-devices-manual-0.png}
-%  Updated for version 0.93.1:
-%  \includegraphics[scale=0.65]{new/midi-clock-4-devices-manual-0.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{MIDI Clock, Manual Option Off (ALSA View, Old Screenshot)}
-   \label{fig:seq66_midi_clock_4_devices_manual_0}
-\end{figure}
-
-   In the figure above, with "manual-ports" turned off, and
-   all of the real (non-virtual) devices that can be driven by MIDI output are
-   shown, including the MIDI Thru port, and
-%  the MIDI port on the \textsl{E-MU XMidi1x1} USB cable,
-   the four ports provided by \textsl{Timidity} on our setup.
-%  , and the unlabelled
-%  port provided by the \textsl{Yoshimi} synthesizer running in ALSA mode.
-%  (However, \texttt{seq66} does show the name "yoshimi" as the client name.)
-%  One could theoretically play music through 6 or 7 devices using
-%  \textsl{Sequencer66} with this setup.
-   (The \textbf{Port Disabled} column is missing from this old screenshot.  We
-   need to fix that someday.)
+%  One thing to remember about tempo...
+%  there is a "global" tempo which is saved as part of the song in a SeqSpec
+%  section.  However, that tempo is not saved in the tempo track.
+%  In order to do so, one can click the \textbf{Log Tempo} button to write it
+%  to the tempo track as a tempo event.
 
    See \sectionref{subsec:seq66_jack_native_midi},
    for a lot more information about native JACK support, and examples of JACK
@@ -540,65 +440,33 @@
 
    \index{todo!manual alsa gui option}
    There is currently no user-interface item corresponding to the "manual-ports"
-   command-line and "rc" configuration file option.
-   We should rename this option to "virtual"
-   eventually, since it can also apply to JACK MIDI.
+   command-line and 'rc' configuration file option.
+   We should rename this option to "virtual" eventually.
 
-\paragraph{Menu / File / Options / MIDI Input}
-\label{paragraph:seq66_menu_file_options_midi_input}
+\paragraph{Menu / Edit / Preferences / MIDI Input}
+\label{paragraph:seq66_menu_edit_preferences_midi_input}
 
-   To allow \textsl{Sequencer66} to record MIDI from MIDI devices such as
+   To allow \textsl{Seq66} to record MIDI from MIDI devices such as
    controllers and keyboards, the output of the ALSA MIDI recording
-   command-line application is relevant:
+   command-line \texttt{arecordmidi -l} is relevant.
 
-   \begin{verbatim}
-      $ arecordmidi -l
-       Port    Client name                      Port name
-       14:0    Midi Through                     Midi Through Port-0
-       24:0    USB2.0-MIDI                      USB2.0-MIDI MIDI 1
-      129:1    seq66                            seq66 midi out 0
-      129:2    seq66                            seq66 midi out 1
-       . . .   . . .                               . . .
-      129:16   seq66                            seq66 midi out 15
-   \end{verbatim}
-
-% Should the above be offset re 0, not 1?  Check it out!!!
-
-   We see that we can record MIDI from the MIDI Thru port, from the USB MIDI
-   cable, and MIDI from any of the 16 output ports provided by the manual
-   port mode of \textsl{Sequencer66}.
-
-   If the "manual-ports" option is turned \textsl{off} (e.g. by using the
-   \texttt{-a} option),
-   then the only item in the \textbf{MIDI Input} tab is the single MIDI input
-   buss provided by \textsl{Sequencer66}:  \textbf{[0] seq66 0}.
-   (The figure shown is currently out-of-date.)
+%  If the "manual-ports" option is turned \textsl{off} (e.g. by using the
+%  \texttt{-a} option),
+%  then the only item in the \textbf{MIDI Input} tab is the single MIDI input
+%  buss provided by \textsl{Seq66}:  \textbf{[0] seq66 0}.
+%  (The figure shown is currently out-of-date.)
 
 % Should the above be offset re 0, not 1?  Check it out!!!
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{menu/midi-input-4-devices-manual-1.png}
-%  \includegraphics[scale=0.65]{new/midi-input-4-devices-manual-1.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{MIDI Input, Manual Ports Off (Condensed View)}
-   \label{fig:seq66_midi_input_4_devices_manual_1}
+   \includegraphics[scale=0.65]{preferences/midi_input_tab.png}
+   \caption{MIDI Input, ALSA View}
+   \label{fig:seq66_midi_input_tab}
 \end{figure}
 
-% WE NEED a composite view of the -m, -A, and -a options for ALSA for
-% both the Clock and the Input tabs!!!!!
-
-% Check the following out!  I am not 100% certain it is correct!!!
-% The above is shown with the -A option.
-
-   Any item checked allows \textsl{Sequencer66} to record MIDI
-   from another source,
-   which must be connected to this port via
-   another application).
-%  , or pass it through to the output busses
-%  that are configured to allow pass-through
-%  (in the Pattern Editor, as discussed in 
-%  \sectionref{subsec:seq66_pattern_editor_bottom}.)
+   Any item checked allows \textsl{Seq66} to record MIDI from another source,
+   which must be connected to this input port.
 
    \textbf{Warning:}
    \index{warnings!usr config}
@@ -613,29 +481,9 @@
    (This feature can be overridden with the
    \texttt{--reveal-ports} (\texttt{-r}) option.)
 
-%  New in \textsl{Sequencer66} is the option to record MIDI input into
-%  more than one pattern based on the MIDI channel, as discussed below.
-
    If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
    \texttt{--auto-ports} option, then
-   the input ports from the system are shown:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{menu/midi-input-4-devices-manual-0.png}
-%  \includegraphics[scale=0.65]{new/midi-input-4-devices-manual-0.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{MIDI Input, \texttt{-a} Option (Condensed View)}
-   \label{fig:seq66_midi_input_4_devices_manual_0}
-\end{figure}
-
-   For example, one could check input \#1 to have \textsl{Sequencer66} record
-   MIDI from an old-fashioned MIDI keyboard that is connected to another
-   USB MIDI cable (the \textsl{E-MU Xmidi}).  If the keyboard didn't have a
-   sound generator, one would also want \textsl{Sequencer66} to pass this MIDI
-   on to a sound generator, such as a software or hardware synthesizer attached
-   to one of the ports shown in
-   \figureref{fig:seq66_midi_clock_4_devices_manual_0}.
+   the input ports from the system are shown.
 
    \textbf{Warning:}
    \index{warnings!usr config}
@@ -659,24 +507,27 @@
    When disabled, the legacy recording behavior dumps all data into the current
    sequence, regardless of channel.
 
+\begin{comment}
+
 %  Needs to be clarified!!!
 
-\paragraph{Menu / File / Options / Keyboard }
-\label{paragraph:seq66_menu_file_options_keyboard}
+\paragraph{Menu / Edit / Preferences / Keyboard }
+\label{paragraph:seq66_menu_edit_preferences_keyboard}
 
    \textsl{Seq24} allows extensive use of
    keyboard shortcuts to make operations go faster than with a mouse,
-   and \textsl{Sequencer66} extends that tradition.
-   The \textbf{Keyboard} tab (currently in Gtkmm only)
-   allows for the configuration of these keyboard shortcuts.
-
-   These settings can also be modified by editing the appropriate "rc"
+   and \textsl{Seq66} extends that tradition.
+   However, \textsl{Seq66} currently does not provide a user-interface to edit the
+   keystrokes.
+   The mappings do follow \textsl{Seq24} fairly well, and are easy to edit in a
+   text editor.
+   These settings can also be modified by editing the appropriate 'ctrl'
    configuration file, stored in one of the following directories, depending on
    the operating system:
    
    \begin{verbatim}
-         /home/username/.config/sequencer66
-         C:/Users/username/AppData/Local/sequencer66
+         /home/username/.config/seq66/qseq66.ctrl
+         C:/Users/username/AppData/Local/seq66/qpseq66.ctrl
    \end{verbatim}
 
    \textbf{Warning:}
@@ -685,26 +536,6 @@
    fields in the \textbf{Keyboard} tab:
 
    \begin{itemize}
-      \item This configuration dialog is not yet present in the
-         \textbf{Qt 5} version of \textsl{Sequencer66}.  For now,
-         one has to edit the "rc" file to configure the keystrokes.
-         It is easiest to just use the sample \texttt{qpseq66.rc}
-         or \texttt{qseq66.rc} from the
-         \texttt{data} directory in the source-code package.
-         Another option is to just run \textsl{Sequencer66} the first time and
-         tweak the "rc" and "usr" files that are created in the directories
-         noted above.
-         Internally, the Qt key-codes are remapped to Gtk key-codes.
-      \item Whenever one of the text fields in this dialog has the focus (and
-         that is usually the case), then
-         \textsl{any} keystroke, including keys like
-         \texttt{Ctrl},
-         \texttt{Alt}, and
-         \texttt{Super} (also known as Mod4 or the Windows key),
-         can alter the value of a
-         field to that of the keystroke.  This change is very easy to do
-         accidentally!  \textsf{Use the mouse} to move this window and to click
-         its \textbf{OK} button!
       \item Some of the keys traditionally used (or used by default) for
          control have been adapted for other uses, and are not configurable.
          One example is \texttt{Ctrl-L}, which brings up the learn mode
@@ -712,72 +543,36 @@
          (group-learn) MIDI control.
          Some other hard-wired keystrokes are the "arrow" keys or "page
          up/down" keys.
-      \item \textsl{Sequencer66} has appropriated the
+      \item \textsl{Seq66} has appropriated the
          \index{keys!shift} Shift key so that it
          modifies a click on a pattern so that all of the other patterns are
          \textsl{toggled}.  Therefore, using characters that require the Shift
          key while clicking, such as \texttt{\{} and \texttt{\}}, when used
          to set the \textbf{Replace} function, becomes surprising.
          Instead, look to the remaining keys: \texttt{F11}, \texttt{F12},
-         and the "keypad" keys if more options are wanted.  Be sure to
-         look at the \textbf{Ext Keys} tab to see what other keys are in use.
+         and the "keypad" keys if more options are wanted.
          \index{auto-shift}
          Also, for the group-learn feature, the \texttt{Shift} key is 
          automatically enabled, using an "auto-shift" feature.
    \end{itemize}
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{new/menu_file_options_keyboard.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{File / Options / Keyboard}
-   \label{fig:seq66_menu_file_options_keyboard}
-\end{figure}
-
    \texttt{[keyboard-control]}.
-   We won't attempt to cover every user-interface item in this busy
-   dialog, just the categories.  Some items might be discussed in other parts
-   of this manual.
+   We won't attempt to cover every key-control item,
+   just the categories.  Some items might be discussed in other parts
+   of this manual. Remember that key and MIDI control have been consolidated.
+   Also remember that the 'ctrl' file contains comments and an orderly layout to
+   make it easier to understand and to edit.
 
-   There are some things to note in the \texttt{[keyboard-control]} section.
-   First, it is laid out like the main patterns panel, in an 8 x 4 grid.
-   The keys in there correspond directly to the patterns panel slot, and the
-   conventional keyboard layout is shown.
-   Second, if one is looking for more keys to map to other functions, the
-   default layout keeps open the following keys:
-   \texttt{9 o l 0 p}.
-%  Third, these key-mappings are stored in the
-%  \texttt{[keyboard-control]} section of the "rc" configuration file.
+   The \texttt{[mute-group]} section has been moved to it's own 'mutes' file.
 
-   The \texttt{[mute-group]} section is laid out in a similar manner, except
-   that the \textbf{upper-case} versions of the keys are used.  Additional keys
-   are available for other functions:
-   \texttt{( O L ) P}.
-   Currently, one must be very carefully about assigning the same key to
-   different functions.  Confusion will ensue!  We've done it!
-%  Note that these key-mappings are stored in the
-%  \texttt{[mute-group]} section of the "rc" configuration file.
-
-%  \index{new!pause}
    \index{pause}
-%  If the application has been built with the "pause" option, an
    An additional key definition is shown for the Pause key.
    By default, the Pause key is the period (".").  An old version of
-   the "rc" file is automatically fixed to include this new option.
-%  (The pause feature can be removed by rebuilding the application
-%  after configuring with the \texttt{--disable-pause} option, but
-%  why would you want to do that?)
-
-% \begin{figure}[H]
-%    \centering 
-%    \includegraphics[scale=0.75]{new/keyboard-options-0_9_10_1.png}
-%    \caption{File / Options / Keyboard, with Pause}
-%    \label{fig:seq66_menu_file_options_keyboard_pause}
-% \end{figure}
+   the 'rc' file is automatically fixed to include this new option.
 
    \index{pattern edit}
    New features try to achieve being able to edit a pattern using only the
-   keyboard.  \textsl{Sequencer66} now supports two modifier keys.
+   keyboard.  \textsl{Seq66} now supports two modifier keys.
    The first modifier key causes the usual pattern-toggle key (hot-key) for a
    given slot to instead bring up the pattern editor.  By default, this key is
    the equals ("=") key.
@@ -785,97 +580,16 @@
    The second modifier key causes the usual
    pattern-toggle key (hot-key) for a given slot to instead bring up the event
    editor.  By default, this key is the minus ("-") key.
-   These keys are configurable in the
-   \textbf{File / Options / Ext Keys} page.
-%  As with the other
-%  keys, these keys can be reconfigured to a different set of keys in the
-%  \textbf{File / Options / Keyboard} page.
-
-   To continue with a listing of the keyboard options:
-
-   \begin{enumber}
-      \item \textbf{Show sequence hot-key labels on sequences}
-      \item \textbf{Show sequence numbers on sequences}
-      \item \textbf{Control keys [keyboard-group]}
-      \item \textbf{Sequence toggle keys [keyboard-control]}
-      \item \textbf{Mute-group slots [mute-group]}
-      \item \textbf{Learn}
-      \item \textbf{Disable}
-      \item \textbf{Enable}
-   \end{enumber}
-
-   These categories are described below.
-
-   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-
-   \itempar{Show key labels on sequence}{keyboard!show labels}
-   This option shows the key labels in the lower-right corner of
-   each loop/pattern slot in the Patterns window (the main window).
-   It is useful for live playback and control of a song.
-   It is configurable in the "rc" configuration file.
-   It also enables the display of the pattern length, in
-   measures, at the top right of the pattern slot.
-
-   \itempar{Show sequence numbers on sequence}{keyboard!sequence numbers}
-   \index{new!sequence numbers}
-   If this option is on, the
-   empty slots in the pattern window show the prospective sequence number.
-   See the following figure for one look of this feature.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-with-numbering.png}
-%  \includegraphics[scale=0.65]{new/pattern-window-with-numbering.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Window with One Kind of Numbering}
-   \label{fig:seq66_build_with_numbering}
-\end{figure}
-
-   The option also changes the visibility of sequence numbers
-   in active sequences and in the Song Editor's names column.
-   If one doesn't like it, turn off the option in the "rc" configuration file,
-   or try other grid options in the "user" configuration file.
-
-   \itempar{Control keys}{keyboard!control keys}
-   \texttt{[keyboard-group]}.
-   This block of fields in the \textbf{Options / Keyboard} tab
-   provides shortcut keys for many operations of
-   \textsl{Sequencer66}.  There is a default mapping built into
-   \textsl{Sequencer66}, but open the keyboard options tab to see
-   the actual values.
-   
-%  Some of the old \textsl{Seq24} defaults were ill-advised.
-
-   \begin{enumber}
-      \item \textbf{Start}.
-      \item \textbf{Stop}.
-      \item \textbf{Pause}.
-      \item \textbf{Slot Shift}.
-      \item \textbf{Snapshot 1}.
-      \item \textbf{Snapshot 2}.
-      \item \textbf{bpm up}.
-      \item \textbf{bpm down}.
-      \item \textbf{Replace}.
-      \item \textbf{Queue}.
-      \item \textbf{Keep queue}.
-      \item \textbf{Screenset down}.
-      \item \textbf{Screenset up}.
-      \item \textbf{Set playing screenset}.
-   \end{enumber}
 
    Some of the keys have positional mnemonic value.  For example,
    for BPM control, the semicolon is at the left (down), and the apostrophe
    is at the right (up).
-   Note that the keys definable in this tab are only a subset of the
-   various keys that can be used, especially keys used with the
-   \texttt{Ctrl} key or other modifier keys.
 
    \index{slot-shift}
    \index{keys!slot-shift}
    The \textbf{slot shift} key is useful when using pattern grids larger
    than 8 x 4 patterns.  Pressing the slot-shift key basically adds 32 to the
    pattern number of the slot-key that is pressed.
-   Not all builds of \textsl{Sequencer66} support this option.
 
    \index{snapshot}
    \index{keys!snapshot}
@@ -943,7 +657,7 @@
    Generally, they are the shifted versions of the
    keyboard keys used as hot-keys for the patterns.
    Note that a mute-group key will be memorized only when
-   \textsl{Sequencer66} is in
+   \textsl{Seq66} is in
    \index{group-learn} \textsl{group-learn} mode.
 
 %  \index{mute-group}
@@ -959,14 +673,14 @@
    configured Learn key (the \texttt{Insert} key by default,
    the \texttt{Ctrl-L} key, or the "L" button in the user-interface.
    Simultaneously (not needed with the "L" button),
-   press one of the mute group keys: \textsl{Sequencer66}
+   press one of the mute group keys: \textsl{Seq66}
    will save the currently-playing pattern slots into the corresponding mute
    group.
    \index{auto-shift}
    The default mute group keys must be the shifted version of the key,
    but one does not need the \texttt{Shift} key while pressing
    \texttt{Insert} to learn the group, only to trigger it.
-   \textsl{Sequencer66} will automatically assign the corresponding key with
+   \textsl{Seq66} will automatically assign the corresponding key with
    \texttt{Shift} activated.  Try pressing the \texttt{Shift} key in Learn mode
    and see what happens!
 
@@ -992,7 +706,7 @@
 %  \index{shift-lock}
 %  \index{group-learn!shift-lock}
 %  This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
-%  It is new to \textsl{Sequencer66}.
+%  It is new to \textsl{Seq66}.
 %
 %  Also, currently necessary because pressing \texttt{Shift} can clear the
 %  arming of the patterns in the current set.
@@ -1011,35 +725,34 @@
    \index{keyboard!group on}
    This key is the \textsl{group on} key.
 
-\paragraph{Menu / File / Options / Ext Keys }
-\label{paragraph:seq66_menu_file_options_ext_keys}
-
    \texttt{[extended-keys]}.
-   A number of additional functions have been added to \textsl{Sequencer66},
-   and keystrokes have been provided for those new functions, in the
-   \textbf{Ext Keys} page.  This page is needed because the original page is
-   completely filled.  The new tab has its own section in the "rc" file.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{menu/menu_file_options_ext_keys_condensed.png}
-%  \includegraphics[scale=0.65]{new/menu_file_options_ext_keys_condensed.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{File / Options / Ext Keys (Condensed View)}
-   \label{fig:seq66_menu_file_options_ext_keys}
-\end{figure}
-
-% Currently there is only one block of fields.  New blocks should also be
-% marked by "itempar".
+   A number of additional functions have been added to \textsl{Seq66},
+   and keystrokes have been provided for those new functions.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Ext Keys}{keyboard!extended keys}
    This block of fields in the \textbf{Options / Ext Keys} tab
-   provides shortcut keys for more operations of \textsl{Sequencer66}, many of
+   provides shortcut keys for more operations of \textsl{Seq66}, many of
    them ported from \textsl{Seq32} or \textsl{Kepler34}.
 
+   TODO: All keys!  Check out to avoid redundancy!!!
+
    \begin{enumber}
+      \item \textbf{Start}.
+      \item \textbf{Stop}.
+      \item \textbf{Pause}.
+      \item \textbf{Slot Shift}.
+      \item \textbf{Snapshot 1}.
+      \item \textbf{Snapshot 2}.
+      \item \textbf{bpm up}.
+      \item \textbf{bpm down}.
+      \item \textbf{Replace}.
+      \item \textbf{Queue}.
+      \item \textbf{Keep queue}.
+      \item \textbf{Screenset down}.
+      \item \textbf{Screenset up}.
+      \item \textbf{Set playing screenset}.
       \item \textbf{Song/Live toggle}.
       \item \textbf{Toggle JACK}.
       \item \textbf{Menu mode}.
@@ -1057,23 +770,8 @@
    Most of these extended keys implement operations performed with button
    presses.  Some of the new keystrokes may not have a corresponding
    button.
-   These values are saved as the \texttt{[extended-keys]} section of the "rc"
+   These values are saved as the \texttt{[extended-keys]} section of the 'rc'
    configuration file.
-%  However, not all builds of \textsl{Sequencer66} will
-%  support the new keys.  Some of the new features can be enabled or disabled
-%  during the build-configure step, and one's favorite Linux distro may decide to
-%  disable some features.
-%  An option might be disabled during the build process.
-%  In this case, although the values will still be
-%  stored in the "rc" file, they will be disabled or missing in this tab:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{menu/menu_file_options_ext_keys_disabled.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{File / Options / Ext Keys (Disabled)}
-   \label{fig:seq66_menu_file_options_ext_keys_disabled}
-\end{figure}
 
    \index{song mode}
    Note the \textbf{Song/Live toggle} key.
@@ -1081,7 +779,7 @@
    from the \textbf{Song Editor}.  Now this mode can be used from any
    window, if enabled by pressing this key.  There is also
    a button in the main window for this function, which shows the current state
-   of this flag.  Note that this flag is also stored in the "rc" configuration
+   of this flag.  Note that this flag is also stored in the 'rc' configuration
    file, as well as this hot-key value, which defaults to \texttt{F1}.
 
    \index{toggle JACK}
@@ -1089,10 +787,7 @@
    The \textsl{JACK mode} is set via the
    \textbf{File / Options / JACK / JACK Connect} or 
    \textbf{JACK Disconnect} buttons.
-%  But, if \textsl{Sequencer66} is built for
-%  using the \textsl{Seq32} JACK support, then
    This keystroke will toggle between JACK connect and JACK disconnect.
-%  Note that, with this kind of build,
    The \textbf{Song Editor} will also have a \textbf{JACK} button.
    The hot-key for this function defaults to \texttt{F2}.
 
@@ -1129,7 +824,7 @@
    \index{follow transport}
    \textsl{Follow transport} is a feature ported from \textsl{Seq32}.
    The default key is \texttt{F4}.
-   It determines if \textsl{Sequencer66} follows JACK transport.
+   It determines if \textsl{Seq66} follows JACK transport.
 
    \index{fast forward}
    \textsl{Fast forward} is a feature ported from \textsl{Seq32}.
@@ -1169,7 +864,7 @@
    \textbf{Song / Toggle All Tracks}
    menu entries.  There is also a button in the main window for this function,
    which shows the current state of this flag.  Note that this
-   hot-key value is stored in the "rc" configuration file, and
+   hot-key value is stored in the 'rc' configuration file, and
    defaults to \texttt{F8}.
 
    \index{tap bpm}
@@ -1185,55 +880,22 @@
 %  Tap BPM causes events to be logged to the tempo track which is the first
 %  track (track 0) by default.
 
-\paragraph{Menu / File / Options / Mouse }
-\label{paragraph:seq66_menu_file_options_mouse}
+\paragraph{Menu / Edit / Preferences / Mouse }
+\label{paragraph:seq66_menu_edit_preferences_mouse}
 
    This item selects the mouse-interaction method.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{menu/menu_file_options_mouse_condensed.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{File / Options / Mouse (Condensed View)}
-   \label{fig:seq66_menu_file_options_mouse}
-\end{figure}
-
-   \index{interaction method}
-   \index{mouse interaction}
-   \textbf{Interaction Method}
-
+   Not supported in \textsl{Seq66}.
    The default mouse interaction method is \textbf{Seq24 (original style)}.
    The alternate mouse interaction method is \textbf{Fruity (similar to a
    certain well known sequencer)}.
-   The "Fruity" interaction method
-   is currently only available in the Gtkmm-2.4 user-interface, and it
-   is not comprehensive.
-   For Qt 5, only the original style is available, at this time.
 
-   \index{mouse!fruity}
-   The alternate method is presumably that of the \textsl{Fruity Loops}
-   (now \textsl{FL Studio}) sequencer.  The fruity mode seems to involve the
-   following rules:
+   The "Fruity" interaction method is not available.
 
-   \begin{itemize}
-      \item \textbf{Left-click left side}.
-         Begin a grow/shrink operation for the left side.
-         However, even in \textsl{Seq24}, this action is \textsl{broken}.
-         It does allow one to move the note, however.
-      \item \textbf{Left-click right side}.
-         Begin a grow/shrink operation for the right side.
-      \item \textbf{Left-click middle}.
-         Move the object.  To clarify, each note image
-         has an invisible "handle" on the left or the right side, with the
-         middle providing a third area of interaction in the "fruity" mode.
-      \item \textbf{Left-click}.
-         Add an event if nothing selected.
-      \item \textbf{Middle-click}.
-         Split the note?
-   \end{itemize}
-
-   There may be a few more rules to add, when time allows.
-
+% This paragraph needs to be moved to the pattern editor.
+% This paragraph needs to be moved to the pattern editor.
+% This paragraph needs to be moved to the pattern editor.
+% This paragraph needs to be moved to the pattern editor.
+% This paragraph needs to be moved to the pattern editor.
 % This paragraph needs to be moved to the pattern editor.
 
    The \textsl{Seq24} note-editing style is as expected for basic
@@ -1262,7 +924,7 @@
    them.
 
 %  \index{sequencer66 options}
-%  The \textbf{Sequencer66 Options} section contains a couple of new options.
+%  The \textbf{Seq66 Options} section contains a couple of new options.
 
    \index{keys!Mod4}
    \index{mouse!Mod4}
@@ -1313,27 +975,27 @@
 %  These convenience options are limited to the
 %  pattern/sequence editor window and the performance editor window, and may
 %  need some heavier testing.
-   Note that some \textsl{Sequencer66} windows
+   Note that some \textsl{Seq66} windows
    can use the ctrl-left-click as a middle click. 
  
 \paragraph{Menu / File / Options / Jack Sync}
-\label{paragraph:seq66_menu_file_options_jack_sync}
+\label{paragraph:seq66_menu_edit_preferences_jack_sync}
 
-   This tab sets up JACK transport, if \textsl{Sequencer66}
+   This tab sets up JACK transport, if \textsl{Seq66}
    was built with JACK support.
 %  It now also supports native JACK MIDI.
    This tab also sets up options for using LASH session management, \textsl{if}
-   \textsl{Sequencer66} was built with LASH support, which is no longer the
+   \textsl{Seq66} was built with LASH support, which is no longer the
    default, even though it is shown in the figure below.
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{menu/menu_file_options_jack_sync.png}
-%  \includegraphics[scale=0.75]{new/menu_file_options_jack_sync.png}
-%  \includegraphics[scale=0.65]{jack/menu_file_options_jack_sync.png}
+%  \includegraphics[scale=0.75]{menu/menu_edit_preferences_jack_sync.png}
+%  \includegraphics[scale=0.75]{new/menu_edit_preferences_jack_sync.png}
+%  \includegraphics[scale=0.65]{jack/menu_edit_preferences_jack_sync.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{File / Options / JACK}
-   \label{fig:seq66_menu_file_options_jack_sync}
+   \label{fig:seq66_menu_edit_preferences_jack_sync}
 \end{figure}
 
    The main sections in this dialog are:
@@ -1348,7 +1010,7 @@
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Transport/MIDI}{jack sync!transport/midi}
-   These settings are stored in the "rc" file settings group
+   These settings are stored in the 'rc' file settings group
    \texttt{[jack-transport]}.
    See \sectionref{subsec:seq66_rc_file_jack_transport},
    which describes this configuration option.
@@ -1360,21 +1022,21 @@
          Enables slave synchronization with JACK Transport.
          The command-line option is \texttt{--jack-transport}.
          The behavior of this mode of operation is perhaps not quite
-         correct.  Even as a slave, \textsl{Sequencer66} can start and
+         correct.  Even as a slave, \textsl{Seq66} can start and
          stop playback.
          Note that this option cannot be disabled via the mouse if the
          \textbf{Transport Master} option is enabled.  Disable that one first.
       \item \textbf{Transport Master}.
          \index{JACK!transport master}
-         \textsl{Sequencer66} will attempt to serve as the JACK Master.
+         \textsl{Seq66} will attempt to serve as the JACK Master.
          The command-line option is \texttt{--jack-master}.
          \textbf{Tip}:
-         \textsl{Sequencer66} generally works better as JACK Master.
+         \textsl{Seq66} generally works better as JACK Master.
          If this option is enabled the \textbf{JACK Transport} option is
          automatically enabled as well.
       \item \textbf{Master Conditional}.
          \index{JACK!master conditional}
-         \textsl{Sequencer66} will fail to serve as the JACK Master if there is
+         \textsl{Seq66} will fail to serve as the JACK Master if there is
          already a Master.
          The command-line option is \texttt{--jack-master-cond}.
          If this option is enabled the \textbf{JACK Transport} option is
@@ -1382,7 +1044,7 @@
       \item \textbf{Native JACK MIDI}.
          \index{JACK!native midi}
          This option is for the \texttt{seq66} version of
-         \textsl{Sequencer66}.
+         \textsl{Seq66}.
          If set, MIDI input and output use native JACK MIDI,
          rather than ALSA.  However, if JACK is not running on the
          system, then \texttt{seq66} will fall back to ALSA mode.
@@ -1390,22 +1052,22 @@
    \end{itemize}
 
 %  Note that there are long-standing issues with the JACK support of
-%  \textsl{Seq24}, and \textsl{Sequencer66} currently inherits some of them,
+%  \textsl{Seq24}, and \textsl{Seq66} currently inherits some of them,
 %  in spite of some bug fixes.  Generally, if one experiences issues in
 %  transport control, try making one of the other sequencer applications the
 %  JACK Master.
-%  If one starts \textsl{Sequencer66} in JACK mode without JACK running,
-%  it will take a little while for \textsl{Sequencer66} to start up, and it
+%  If one starts \textsl{Seq66} in JACK mode without JACK running,
+%  it will take a little while for \textsl{Seq66} to start up, and it
 %  will fall back to ALSA usage.
 
    If one makes a change in the JACK transport settings, it is best to
    then press the \textbf{JACK Transport Disconnect} button, then the
    \textbf{JACK Transport Connect} button.  Another option is to restart
-   \textsl{Sequencer66}... the settings are automatically saved when
-   \textsl{Sequencer66} exits.
+   \textsl{Seq66}... the settings are automatically saved when
+   \textsl{Seq66} exits.
 
    \itempar{JACK Start mode}{jack sync!start mode}
-   This item collects the following settings, also stored in the "rc" file
+   This item collects the following settings, also stored in the 'rc' file
    settings group \texttt{[jack-transport]}.
 
    \begin{itemize}
@@ -1426,7 +1088,7 @@
          The command-line option is \texttt{--jack-start-mode 1}.
    \end{itemize}
 
-   \textsl{Sequencer66} also selects the playback modes
+   \textsl{Seq66} also selects the playback modes
    according to which window started the playback,
    reverting back to legacy \textsl{Seq24} behavior.
    \textsl{The main window}, or pattern
@@ -1439,7 +1101,7 @@
    \itempar{Connect}{jack sync!connect}
    Connect to JACK Sync.
    This button is useful to restart JACK sync when making changes to it,
-   or when \textsl{Sequencer66} was started in ALSA mode.
+   or when \textsl{Seq66} was started in ALSA mode.
 
    \itempar{Disconnect}{jack sync!disconnect}
    Disconnect from JACK Sync.
@@ -1447,9 +1109,9 @@
 
    \itempar{LASH Options}{lash!option}
    Currently contains only one item, which enables the usage of LASH session
-   management.  Currently, \textsl{Sequencer66} needs to be restarted to
+   management.  Currently, \textsl{Seq66} needs to be restarted to
    complete the enabling or disabling of LASH support.  Like the rest of the
-   options, this one is written to the "rc" configuration file.
+   options, this one is written to the 'rc' configuration file.
    However, LASH is no longer supported in the default build.
 
    Finally, there is a new button (labelled \textsl{Master} in the following
@@ -1458,8 +1120,6 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{menu/menu_file_options_jack_sync.png}
-%  \includegraphics[scale=0.65]{new/main_master_button.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK Connection Button}
    \label{fig:seq66_main_master_button}
@@ -1534,8 +1194,8 @@
 
    \itempar{Clear mute groups}{edit!clear mute groups}
    \index{mute groups}
-   A feature of \textsl{Seq24} and \textsl{Sequencer66} is that the mute groups
-   are saved in both the "rc" file
+   A feature of \textsl{Seq24} and \textsl{Seq66} is that the mute groups
+   are saved in both the 'rc' file
    (see \sectionref{subsec:seq66_rc_file_mute_group})
    \textsl{and} in the "MIDI" file
    (see \sectionref{subsec:legacy_midi_format}).
@@ -1545,15 +1205,15 @@
    file, so that it will no longer have any
    mute-group information.  And then, if the
    application exits, the cleared mute-group information is also saved to
-   the "rc" file.
-%  We'd like to be able to handle the "rc" and "MIDI"
+   the 'rc' file.
+%  We'd like to be able to handle the 'rc' and "MIDI"
 %  mute-groups separately in the future.
 
    \itempar{Reload mute groups}{edit!load mute groups}
    \index{rc!mute groups}
-   This menu entry reloads the mute-groups from the "rc" file.
+   This menu entry reloads the mute-groups from the 'rc' file.
    So, if one loads a MIDI file that has its own mute groups that one does not
-   like, this command will restore one's favorite mute-grouping from the "rc"
+   like, this command will restore one's favorite mute-grouping from the 'rc'
    file.
 
    \itempar{Mute all tracks}{edit!mute all tracks}
@@ -1573,46 +1233,6 @@
    mode even if the Song Editor is focussed.
    \textsl{Do not confuse it with the main \textbf{Mute} button, which toggles the
    status only of the tracks that are armed and remembers them.}
-
-\subsection{Menu / View}
-\label{subsec:seq66_menu_view}
-
-   If the "allow two perfedits" option is turned off in the "user"
-   configuration file, this menu item has only one entry, \textbf{Song Editor}, 
-   which is already covered by a button at the bottom of the Patterns
-   window.  Selecting this item bring up the Song Editor window.
-   See \figureref{fig:song_editor_window}.
-   The Song Editor window can also be brought up via the
-   \index{song editor!ctrl-e}
-   \index{keys!ctrl-e}
-   Ctrl-E key.
-
-   If the \textbf{allow two perfedits} option is turned on in the "user"
-   configuration file, this menu item has two entries,
-   as shown in the following figure:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{menu/menu_view-dual-song-editors.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Dual Song Editor Entries in View Menu}
-   \label{fig:seq66_menu_view_song_editors}
-\end{figure}
-
-   Note that only the first Song Editor has a user-interface button and
-   a hot-key.  Also note that there can be issues bringing up the second
-   song-editor with the hot-key.  The menu entry will always work.
-   If two song editors are up, they each track any changes made in the other
-   song editor.  But the main purpose of two song editors is to arrange two
-   different parts of the performance at the same time when not all the
-   patterns will fit in one window.
-
-   In the Qt user-interface, there is a \textbf{Song} tab in the main window.
-   But there is also song-editor button in the main window
-   and a menu entry in \textbf{Edit / Song Editor},
-   which bring up a separate window for the song-editor.
-   Do not try to use both windows for song-editing at the same time; they
-   are not synchronized.
 
 \subsection{Menu / Help / About...}
 \label{subsec:seq66_menu_about}
@@ -1672,6 +1292,8 @@
    \caption{Help / Build Info}
    \label{fig:seq66_menu_help_build_info}
 \end{figure}
+
+\end{comment}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

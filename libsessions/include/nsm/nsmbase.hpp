@@ -256,7 +256,7 @@ protected:
 
 protected:
 
-    bool msg_check (int timeout = 500);                     /* milliseconds */
+    bool msg_check (int timeoutms = 100);                     /* milliseconds */
     bool lo_is_valid () const;
     void nsm_debug (const std::string & tag);
     void add_client_method (nsm::tag t, lo_method_handler h);

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-10-31
+ * \updates       2020-11-04
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -75,6 +75,55 @@ clinsmanager::~clinsmanager ()
 }
 
 /**
+ *  Detects if the 'usr' file defines usage of NSM and a valid URL for the
+ *  nsmd daemon, or, if not, is there an NSM URL in the environment. Also, if
+ *  there is an NSM URL in the environment, it overrides the one specified in
+ *  the 'usr' file.
+ *
+ * \param [out] url
+ *      Holds the URL that was found.  Use it only if this function returns
+ *      true.
+ *
+ * \return
+ *      Returns true if a usable NSM URL was found and nsmd was found to be
+ *      running.
+ */
+
+bool
+clinsmanager::detect_session (std::string & url)
+{
+    bool result = usr().wants_nsm_session();        /* user wants NSM usage */
+    std::string tenturl;                            /* a tentative URL      */
+    if (result)
+    {
+        tenturl = usr().session_url();              /* try 'usr' file's URL */
+        infoprint("Checking 'usr' file for NSM URL");
+        if (tenturl.empty())                        /* no tentative URL     */
+            result = false;
+        else
+            url = tenturl;
+    }
+    warnprint("Checking environment for NSM_URL");
+    tenturl = nsm::get_url();
+    if (! tenturl.empty())                         /* environment NSM URL   */
+    {
+        result = true;
+        url = tenturl;
+    }
+    if (result)
+    {
+        bool testing = url == "testing";
+        if (! testing)                              /* for troubleshooting  */
+        {
+            result = pid_exists("nsmd");            /* one final check      */
+            if (! result)
+                warnprint("nsmd not running, proceeding with normal run");
+        }
+    }
+    return result;
+}
+
+/**
  *  This function first determines if the user wants an NSM session.  If so,
  *  it determines if it can get a valid NSM_URL environment variable.  If not,
  *  that may simply be due to nsmd running in different console window or as a
@@ -96,26 +145,7 @@ clinsmanager::create_session (int argc, char * argv [])
 {
 #if defined SEQ66_NSM_SUPPORT
     std::string url;
-    bool testing = false;
-    bool ok = usr().wants_nsm_session();            /* user wants NSM usage */
-    if (ok)
-    {
-        infoprint("Checking 'usr' file for NSM URL");
-        url = usr().session_url();                  /* try 'usr' file's URL */
-        if (url.empty())
-        {
-            warnprint("Checking for NSM_URL in environment");
-            url = nsm::get_url();
-        }
-        ok = ! url.empty();                         /* we got an NSM URL    */
-        testing = url == "testing";
-        if (ok && ! testing)                        /* for testing!         */
-        {
-            ok = pid_exists("nsmd");                /* one final check      */
-            if (! ok)
-                warnprint("nsmd not running, proceeding with normal run");
-        }
-    }
+    bool ok = detect_session(url);                  /* side-effect          */
     if (ok)
     {
         std::string nsmfile = "dummy/file";
@@ -137,14 +167,12 @@ clinsmanager::create_session (int argc, char * argv [])
         else
             file_error("Create session", "failed to make client");
 
-        if (testing)
+        if (url == "testing")
             result = true;
 
         nsm_active(result);                             /* class flag       */
         usr().in_session(result);                       /* global flag      */
-        if (result)
-            result = smanager::create_session(argc, argv);
-
+        (void) smanager::create_session(argc, argv);
         return result;
     }
     else
@@ -172,9 +200,7 @@ clinsmanager::close_session (std::string & msg, bool ok)
         m_nsm_client->close_session();
 
         /*
-         * Freezes in the lo_server_thread_stop() call!!!
-         *
-         *  m_nsm_client.reset();
+         * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();
          */
 #endif
     }
@@ -193,21 +219,14 @@ clinsmanager::detach_session (std::string & msg, bool ok)
 #if defined SEQ66_NSM_SUPPORT                           // _TEMP_DISABLE
         warnprint("Detaching (closing) NSM session");
         nsm_active(false);                              /* class flag       */
-        usr().in_session(false);                        /* global flag      */
         m_nsm_client->detach_session();
 
         /*
-         * Freezes in the lo_server_thread_stop() call!!!
-         *
-         *  m_nsm_client.reset();
-         *  m_nsm_client = nullptr;
+         * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();
          */
-
-        return smanager::detach_session(msg, ok);
 #endif
     }
-    else
-        return true;                                    /* already done     */
+    return smanager::detach_session(msg, ok);
 }
 
 /**
@@ -222,7 +241,7 @@ clinsmanager::save_session (std::string & msg, bool ok)
     if (ok)
         msg.clear();
 
-    if (result)
+    if (result && perf()->modified())
     {
         std::string filename = rc().midi_filename();
         if (filename.empty())

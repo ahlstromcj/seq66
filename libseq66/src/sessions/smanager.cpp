@@ -437,7 +437,7 @@ smanager::create_session (int /*argc*/, char * /*argv*/ [])
  */
 
 bool
-smanager::close_session (std::string & msg, bool ok)
+smanager::close_session (std::string & /*msg*/, bool ok)
 {
     bool result = not_nullptr(perf());
     if (result)
@@ -445,14 +445,16 @@ smanager::close_session (std::string & msg, bool ok)
         result = perf()->finish();             /* tear down performer       */
         perf()->put_settings(rc(), usr());     /* copy latest settings      */
     }
-    if (! ok)
-        (void) save_session(msg, ok);
-
-#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
-    if (rc().lash_support())
-        delete_lash_driver();
+#if 0
+    if (result)
+        result = smanager::detach_session(msg, ok);
 #endif
 
+#if defined SEQ66_LASH_SUPPORT_NEED_TO_MOVE_THIS
+        if (rc().lash_support())
+            delete_lash_driver();
+#endif
+    result = ok;
     session_close();                            /* daemonize signals exit   */
     return result;
 }
@@ -476,12 +478,18 @@ smanager::close_session (std::string & msg, bool ok)
  */
 
 bool
-smanager::detach_session (std::string & msg, bool ok)
+smanager::detach_session (std::string & /*msg*/, bool ok)
 {
-    bool result = ok;
+    bool result = not_nullptr(perf());
     if (result)
-        (void) save_session(msg, result);
-
+    {
+        result = ok;
+#if 0
+        if (result && perf()->modified())
+            (void) save_session(msg, result);
+#endif
+    }
+    usr().in_session(false);                            /* global flag      */
     return result;
 }
 

@@ -28,7 +28,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-09-27
+ * \updates       2020-11-04
  * \license       GNU GPLv2 or above
  *
  *  Provides a base class that can be used to manage the command-line version
@@ -153,6 +153,7 @@ private:
         const std::string & cfgfilepath,
         const std::string & midifilepath
     );
+    bool detect_session (std::string & url);
 
 };          // class clinsmanager
 

@@ -117,12 +117,11 @@ qlfoframe::qlfoframe
     (
         m_wave_group,
 #if QT_VERSION < QT_VERSION_CHECK(5, 8, 0)
-        static_cast<void(QButtonGroup::*) (int)>
-        (
-            &QButtonGroup::buttonClicked
-        ),
-#else
+        static_cast<void(QButtonGroup::*) (int)>(&QButtonGroup::buttonClicked),
+#elif QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
         QOverload<int>::of(&QButtonGroup::buttonClicked),
+#else
+        QOverload<int>::of(&QButtonGroup::idClicked),
 #endif
         [=](int id)
         {
