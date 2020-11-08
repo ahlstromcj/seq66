@@ -83,6 +83,7 @@ playlist::playlist
     m_performer                 (p),                // the owner of this object
     m_play_lists                (),
     m_mode                      (false),
+    m_deep_verify               (false),
     m_current_list              (m_play_lists.end()),
     m_current_song              (sm_dummy.end()),   // song-list iterator
     m_unmute_set_now            (false),
@@ -160,13 +161,15 @@ playlist::open_song (const std::string & fname, bool verifymode)
         int ppqn = 0;
         if (is_wrk)
         {
-            wrkfile m(fname, SEQ66_USE_DEFAULT_PPQN, verifymode);
+//          wrkfile m(fname, SEQ66_USE_DEFAULT_PPQN, verifymode);
+            wrkfile m(fname, choose_ppqn(), verifymode);
             result = m.parse(*m_performer);
             ppqn = m.ppqn();
         }
         else
         {
-            midifile m(fname, SEQ66_USE_DEFAULT_PPQN, true, verifymode);
+//          midifile m(fname, SEQ66_USE_DEFAULT_PPQN, true, verifymode);
+            midifile m(fname, choose_ppqn(), true, verifymode);
             result = m.parse(*m_performer);
             ppqn = m.ppqn();
         }

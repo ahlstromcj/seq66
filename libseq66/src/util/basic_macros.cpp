@@ -160,7 +160,7 @@ error_message (const std::string & msg)
     if (errmsg.empty())
         errmsg = "Empty error message; ask the programmer to investigate";
 
-    std::cerr << "[" << errmsg << "?]" << std::endl;
+    std::cerr << "[" << errmsg << "!!]" << std::endl;
     return false;
 }
 

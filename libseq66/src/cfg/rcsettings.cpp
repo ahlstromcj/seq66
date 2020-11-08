@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-02
+ * \updates       2020-11-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -279,7 +279,7 @@ rcsettings::home_config_directory () const
 #if defined SEQ66_PLATFORM_UNIX
             result += path_slash();
 #endif
-            bool ok = make_directory(result);
+            bool ok = make_directory_path(result);
             if (ok)
             {
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -850,13 +850,33 @@ rcsettings::config_directory (const std::string & value)
  * \setter m_full_config_directory
  *
  *      Provides an alternate value to be returned by the
- *      home_config_directory() function.
+ *      home_config_directory() function. Please note that all configuration
+ *      locates are relative to home.
+ *
+ * \param value
+ *      Provides the directory name, either an actual full path, or a path
+ *      meant to be relative to the $HOME directory.
+ *
+ * \param addhome
+ *      If true, the user's $HOME is prepended to the path, if not already
+ *      there.
  */
 
 void
-rcsettings::full_config_directory (const::std::string & value)
+rcsettings::full_config_directory (const::std::string & value, bool addhome)
 {
-    m_full_config_directory = normalize_path(value, true, true);
+    std::string tv = value;
+    if (is_root_path(tv))
+        addhome = false;
+
+    if (addhome)
+    {
+        tv = trim(tv, SEQ66_TRIM_CHARS_PATHS);
+        config_directory(tv);
+        m_full_config_directory.clear();
+        tv = home_config_directory();
+    }
+    m_full_config_directory = normalize_path(tv, true, true);
 }
 
 /**

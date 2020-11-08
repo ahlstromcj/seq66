@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-02
+ * \updates       2020-11-05
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -299,7 +299,7 @@ private:
 
     /**
      *  Holds the current "rc" and "user" configuration base directory.  This
-     *  value is "~/.config/sequencer66" by default.  For usage, it is normally
+     *  value is ".config/sequencer66" by default.  For usage, it is normally
      *  expanded.
      */
 
@@ -1060,7 +1060,7 @@ protected:
     bool interaction_method (interaction value);
     bool mute_group_save (mute_group_handling mgh);
     void jack_session_uuid (const std::string & value);
-    void full_config_directory (const std::string & value);
+    void full_config_directory (const std::string & value, bool addhome = false);
     void config_directory (const std::string & value);
     void config_filename (const std::string & value);
     void playlist_filename (const std::string & value);

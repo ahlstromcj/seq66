@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-04
+ * \updates       2020-11-07
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -241,34 +241,37 @@ clinsmanager::save_session (std::string & msg, bool ok)
     if (ok)
         msg.clear();
 
-    if (result && perf()->modified())
+    if (result)
     {
-        std::string filename = rc().midi_filename();
-        if (filename.empty())
+        if (perf()->modified())
         {
-            warnprint("NSM session: MIDI file-name empty, will not save");
-        }
-        else
-        {
-            bool is_wrk = file_extension_match(filename, "wrk");
-            if (is_wrk)
-                filename = file_extension_set(filename, ".midi");
-
-            result = write_midi_file(*perf(), filename, msg);
-            if (result)
+            std::string filename = rc().midi_filename();
+            if (filename.empty())
             {
-                /*
-                 * Only show the message if not running under a session manager.
-                 * This is because the message-box will hang the application
-                 * until the user clicks OK.
-                 */
-
-                if (! nsm_active())
-                    show_message("Saved", filename);
+                warnprint("NSM session: MIDI file-name empty, will not save");
             }
             else
             {
-                show_error("No MIDI tracks, cannot save", filename);
+                bool is_wrk = file_extension_match(filename, "wrk");
+                if (is_wrk)
+                    filename = file_extension_set(filename, ".midi");
+
+                result = write_midi_file(*perf(), filename, msg);
+                if (result)
+                {
+                    /*
+                     * Only show the message if not running under a session
+                     * manager.  This is because the message-box will hang the
+                     * application until the user clicks OK.
+                     */
+
+                    if (! nsm_active())
+                        show_message("Saved", filename);
+                }
+                else
+                {
+                    show_error("No MIDI tracks, cannot save", filename);
+                }
             }
         }
         result = smanager::save_session(msg);

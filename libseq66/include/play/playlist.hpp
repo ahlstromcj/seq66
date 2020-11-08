@@ -201,6 +201,14 @@ private:
     bool m_mode;
 
     /**
+     *  Indicates if we want to deep-verify the playlist, which means that
+     *  each MIDI file in the list is opened.  This can be time-consuming.
+     *  Also called a "strong" verify.
+     */
+
+    bool m_deep_verify;
+
+    /**
      *  Provides an iterator to the current playlist.  If valid, it provides
      *  access to the name of the playlist, its file-directory, and its list
      *  of songs.
@@ -268,6 +276,16 @@ public:
     void mode (bool m)
     {
         m_mode = m;
+    }
+
+    bool deep_verify () const
+    {
+        return m_deep_verify;
+    }
+
+    void deep_verify (bool flag)
+    {
+        m_deep_verify = flag;
     }
 
     bool unmute_set_now () const

@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-10-19
+ * \updates       2020-11-06
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -949,6 +949,7 @@ is_root_path (const std::string & path)
  *  This function is actually a little more general than that, but it is not
  *  sufficiently general, in general, General.  Consider using
  *  make_directory_path(), defined elsewhere in this module.
+ *  This one is now static.
  *
  * \param pathname
  *      Provides the name of the path to create.  The parent directory of the
@@ -962,7 +963,7 @@ is_root_path (const std::string & path)
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 #endif
 
-bool
+static bool
 make_directory (const std::string & pathname)
 {
     bool result = file_name_good(pathname);
@@ -1512,14 +1513,28 @@ file_path_set (const std::string & fullpath, const std::string & newpath)
 /**
  *  Uses filename_split to extract only the base part of the file
  *  specification ("xxxx.yyy").
+ *
+ * \param fullpath
+ *      The path name from which to extract.
+ *
+ * \param noext
+ *      If set to true (the default is false), then the extenstion (".yyy") is
+ *      also stripped.
  */
 
 std::string
-filename_base (const std::string & fullpath)
+filename_base (const std::string & fullpath, bool noext)
 {
     std::string result;
     std::string path;
     (void) filename_split(fullpath, path, result);
+    if (noext)
+    {
+        std::string::size_type dpos = result.find_last_of(".");
+        bool ok = dpos != std::string::npos;
+        if (ok)
+            result = result.substr(0, dpos);
+    }
     return result;
 }
 

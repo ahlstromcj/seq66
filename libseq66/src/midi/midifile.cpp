@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-11
+ * \updates       2020-11-08
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -129,6 +129,9 @@ const std::string midifile::sm_meta_text_labels[8] =
  * \param ppqn
  *      Provides the initial value of the PPQN setting.  It is handled
  *      differently for parsing (reading) versus writing the MIDI file.
+ *      WARNING: It is the responsibility of the caller to make sure the PPQN
+ *      value is valid, usually by passing in the result of the choose_ppqn()
+ *      function.
  *      -   Reading.  The caller of read_midi_file(), as well as the function
  *          itself, determine the value of ppqn used here.  It is either 0 or
  *          the result of seq66::choose_ppqn().
@@ -925,6 +928,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
             }
             sequence & s = *sp;                 /* references are better    */
             runningtime = 0;                    /* reset time               */
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+            int eventcounter = 0;
+#endif
             while (! done)                      /* get each event in track  */
             {
                 event e;
@@ -1364,6 +1370,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     );
                     break;
                 }
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                ++eventcounter;
+#endif
             }                          /* while not done loading Trk chunk */
 
             if (buss_override != c_bussbyte_max)

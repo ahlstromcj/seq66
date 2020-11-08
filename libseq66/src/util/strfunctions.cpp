@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-09-03
+ * \updates       2020-11-05
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -333,10 +333,12 @@ rtrim (std::string & str, const std::string & chars)
  *      Returns a reference to the string that was left-right-trimmed.
  */
 
-std::string &
-trim (std::string & str, const std::string & chars)
+std::string
+trim (const std::string & str, const std::string & chars)
 {
-    return ltrim(rtrim(str, chars), chars);
+    std::string result = str;
+    (void) ltrim(rtrim(result, chars), chars);
+    return result;
 }
 
 /**

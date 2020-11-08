@@ -1888,7 +1888,9 @@ qsmainwnd::import_into_set ()
                     std::string fn = path.toStdString();
                     bool is_wrk = file_extension_match(fn, "wrk");
                     midifile * f = is_wrk ?
-                        new wrkfile(fn) : new midifile(fn, ppqn()) ;
+                        new wrkfile(fn) : new midifile(fn, choose_ppqn()) ;
+
+//                      new wrkfile(fn) : new midifile(fn, /* choose_ */ ppqn()) ;
 
                     if (f->parse(perf(), setno))
                     {

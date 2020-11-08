@@ -324,17 +324,13 @@ lash::handle_event (lash_event_t * ev)
          * change performer::ppqn() to ppqn().
          */
 
-        midifile f
-        (
-            str, m_perform.ppqn(),              // rc().legacy_format(),
-            usr().global_seq_feature()
-        );
+        midifile f(str, m_perform.ppqn(), usr().global_seq_feature());
         f.write(m_perform);
         lash_send_event(m_client, lash_event_new_with_type(LASH_Save_File));
     }
     else if (type == LASH_Restore_File)
     {
-        midifile f(str);                /* flags don't apply to reading */
+        midifile f(str);                    /* flags don't apply to reading */
         f.parse(m_perform, 0);
         lash_send_event(m_client, lash_event_new_with_type(LASH_Restore_File));
     }

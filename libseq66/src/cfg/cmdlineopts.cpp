@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-11-02
+ * \updates       2020-11-06
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -98,7 +98,6 @@ cmdlineopts::s_long_options [] =
     {"buss",                required_argument, 0, 'B'},
     {"client-name",         required_argument, 0, 'l'},
     {"ppqn",                required_argument, 0, 'q'},
-    {"legacy",              0, 0, 'l'},
     {"show-midi",           0, 0, 's'},
     {"show-keys",           0, 0, 'k'},
     {"inverse",             0, 0, 'K'},
@@ -179,8 +178,6 @@ cmdlineopts::s_help_1a =
 "   -h, --help               Show this message and exit.\n"
 "   -V, --version            Show program version/build information and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
-"   -H, --home dir           Set the directory to hold the configuration files,\n"
-"                            relative to $HOME.  The default is .config/seq66.\n"
 #if defined SEQ66_LASH_SUPPORT
 "   -L, --lash               Activate built-in LASH support.\n"
 #endif
@@ -252,15 +249,17 @@ cmdlineopts::s_help_3 =
 "                            they are saved only if the file does not exist, so\n"
 "                            that certain 'user' command-line options, such as\n"
 "                            --bus, do not become permanent.\n"
+"   -H, --home dir           Set the directory to hold the configuration files,\n"
+"                            relative to $HOME.  The default is .config/seq66.\n"
 "   -f, --rc filename        Use a different 'rc' configuration file.  It must\n"
 "                            be a file in the user's $HOME/.config/seq66\n"
-"                            (or --home) directory.  Not supported by --legacy.\n"
+"                            (or --home) directory.\n"
 "                            The '.rc' extension is added if needed.\n"
 "   -F, --usr filename       Use a different 'usr' configuration file.  Same\n"
 "                            rules as for the --rc option. The '.usr'\n"
 "                            extension is added if needed.\n"
-"   -c, --config basename    Change both 'rc' and 'usr' files.  Any extension\n"
-"                            provided is stripped starting at the last period.\n"
+"   -c, --config basename    Change 'rc', 'usr', etc. file base namess. Any\n"
+"                           extension is stripped starting at the last period.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.  The\n"
 "                            options supported are:\n"
 "\n"
@@ -289,14 +288,12 @@ cmdlineopts::s_help_4a =
 
 const std::string
 cmdlineopts::s_help_4b =
-"              scale=x.y     Changes size of the main window. Can range from\n"
-"                            0.5 to 3.0.\n"
+"              scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
+"              mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
 "\n"
 " seq66cli:\n"
 "              daemonize     Makes this application fork to the background.\n"
 "              no-daemonize  Or not.  These options do not apply to Windows.\n"
-"              mutes=value   Sets saving of mute-groups: 'mutes', 'midi', or\n"
-"                            'both'.\n"
 "\n"
 "The 'daemonize' option works only in the CLI build. The 'sets' option works in\n"
 "the CLI build.  Specify the '--user-save' option to make these options\n"
@@ -404,8 +401,7 @@ cmdlineopts::get_compound_option
 /**
  *  Checks to see if the first option is a help or version argument, just so
  *  we can skip the "Reading configuration ..." messages.  Also check for the
- *  --legacy option.  Finally, it also checks for the "?" option that people
- *  sometimes use as a guess to get help.
+ *  "?" option that people sometimes use as a guess to get help.
  *
  * \param argc
  *      The number of command-line arguments.
@@ -652,11 +648,10 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
  *  buss definition strings are read from the 'user' configuration file.
  *
  *  Instead of the legacy Seq24 names, we use the new configuration
- *  file-names, located in the ~/.config/seq66 directory. However, if
- *  they are not found, we no longer fall back to the legacy configuration
- *  file-names.  If the --legacy option is in force, use only the legacy
- *  configuration file-name.  The code also ensures the directory exists.
- *  CURRENTLY LINUX-SPECIFIC.  See the rcsettings class for how this works.
+ *  file-names, located in the ~/.config/seq66 directory. If they are not
+ *  found, we no longer fall back to the Seq24 configuration file-names.  The
+ *  code also ensures the directory exists.  See the rcsettings class for how
+ *  this works.
  *
 \verbatim
         std::string cfg_dir = seq66::rc().home_config_directory();
@@ -712,16 +707,23 @@ cmdlineopts::parse_options_files (std::string & errmessage)
          *  exit.  But we also want to force the new style of output, where the
          *  key/MIDI controls and the mute-groups are in separate files ending
          *  with the extensions "ctrl" and "mutes", respectively.  Also, the
-         *  mute-groups container is populated with zero values.
+         *  mute-groups container is populated with zero values.  Finally, the
+         *  user may have specified an altername configuration-file name on
+         *  the command-line (e.g. "myseq66" versus the default, "qseq66",
+         *  which is the application name.
+         *
+         *      std::string cfgname = rc().application_name();
          */
 
-        std::string appname = rc().application_name();
-        std::string cf = file_extension_set(appname, ".ctrl");
-        std::string mf = file_extension_set(appname, ".mutes");
-        std::string uf = file_extension_set(appname, ".usr");
-        std::string pl = file_extension_set(appname, ".playlist");
-        std::string nm = file_extension_set(appname, ".drums");
-        std::string af = appname + ".rc/ctrl/midi/mutes";
+        std::string cfgname = rc().config_filename();       /* "xyzt.rc"    */
+        cfgname = filename_base(cfgname, true);             /* strip ".rc"  */
+
+        std::string cf = file_extension_set(cfgname, ".ctrl");
+        std::string mf = file_extension_set(cfgname, ".mutes");
+        std::string uf = file_extension_set(cfgname, ".usr");
+        std::string pl = file_extension_set(cfgname, ".playlist");
+        std::string nm = file_extension_set(cfgname, ".drums");
+        std::string af = cfgname + ".rc/ctrl/midi/mutes";
         /*
          * af += "/drums/playlist", later maybe?
          */
@@ -897,9 +899,9 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'H':
-            rc().full_config_directory(soptarg);
+            rc().full_config_directory(soptarg, true);  /* add HOME perhaps */
             file_message("Set home config to", rc().home_config_directory());
-            if (! make_directory_path(soptarg))
+            if (! make_directory_path(rc().home_config_directory()))
                 errprint("Could not create that directory");
             break;
 
@@ -1086,8 +1088,7 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
 /**
  *  Saves all options to the "rc" and "user" configuration files.  This
- *  function gets any legacy global variables, on the theory that they might
- *  have been changed.
+ *  function ignores any global variables.
  *
  * \note
  *      If an error occurs, the files "erroneous.rc" and "erroneousl.usr" will

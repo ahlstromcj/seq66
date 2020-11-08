@@ -1319,7 +1319,7 @@ jack_assistant::session_event ()
         cmd += m_jsession_ev->client_uuid;
         cmd += " \"${SESSION_DIR}file.mid\"";
 
-        midifile f(fname, usr().global_seq_feature());
+        midifile f(fname, m_ppqn, usr().global_seq_feature());
         f.write(m_jack_parent);
         m_jsession_ev->command_line = strdup(cmd.c_str());
         jack_session_reply(m_jack_client, m_jsession_ev);

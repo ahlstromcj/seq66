@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-10-05
+ * \updates       2020-11-06
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -237,6 +237,13 @@ playlistfile::parse ()
             int unmute = 0;
             sscanf(scanline(), "%d", &unmute);
             play_list().unmute_set_now(unmute != 0);
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &unmute);
+                play_list().deep_verify(unmute != 0);
+            }
+            else
+                play_list().deep_verify(false);
         }
 
         /*
@@ -262,7 +269,8 @@ playlistfile::parse ()
             {
                 std::string listline = line();
                 playlist::song_list slist;
-                plist.ls_list_name = strip_quotes(listline);
+                listline = strip_quotes(listline);
+                plist.ls_list_name = listline;
                 if (m_show_on_stdout)
                     printf("Playlist name '%s'\n", listline.c_str());
 
@@ -273,6 +281,7 @@ playlistfile::parse ()
                      */
 
                     listline = line();
+                    listline = strip_quotes(listline);
                     plist.ls_file_directory = clean_path(listline);
                     slist.clear();
                     if (m_show_on_stdout)
@@ -362,7 +371,7 @@ playlistfile::parse ()
         result = set_error_message(msg);
     }
     (void) play_list().reset_list(! result);    /* reset, not clear, if ok  */
-    play_list().mode(result);
+    ///// play_list().mode(result);
     return result;
 }
 
@@ -510,7 +519,9 @@ playlistfile::write ()
         << "\n" << "[playlist-options]\n" << "\n"
         << (play_list().unmute_set_now() ? "1" : "0")
         << "     # If set to 1, when a new song is selected, "
-           "immediately unmute it.\n"
+           "immediately unmute it.\n\n"
+        << (play_list().deep_verify() ? "1" : "0")
+        << "     # If set to 1, every MIDI song is opened to verify it.\n"
         ;
 
     /*

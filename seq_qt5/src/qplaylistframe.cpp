@@ -158,8 +158,7 @@ qplaylistframe::qplaylistframe
         ui->checkBoxPlaylistActive, SIGNAL(clicked(bool)),
         this, SLOT(handle_playlist_active_click())
     );
-    if (perf().playlist_mode())
-        reset_playlist();
+    reset_playlist();               /* if (perf().playlist_mode())  */
 
     m_timer = new QTimer(this);         /* timer for regular redraws    */
     m_timer->setInterval(4 * usr().window_redraw_rate());
@@ -234,7 +233,7 @@ qplaylistframe::reset_playlist ()
     if (perf().playlist_reset())
     {
         fill_playlists();
-        perf().playlist_reset();        /* back to the 0th play-list    */
+        (void) perf().playlist_reset();     /* back to the 0th play-list    */
         fill_songs();
         set_current_playlist();
         ui->tablePlaylistSections->selectRow(0);
@@ -439,13 +438,7 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
         if (playlistmode)
             playlistmode = perf().open_current_song();
     }
-    if (perf().playlist_mode())
-    {
-        reset_playlist();
-    }
-    else
-    {
-    }
+    reset_playlist();                       /* if (perf().playlist_mode())  */
     return false;
 }
 

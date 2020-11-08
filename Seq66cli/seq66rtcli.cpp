@@ -41,7 +41,7 @@
 #include "cfg/cmdlineopts.hpp"          /* command-line functions           */
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "os/daemonize.hpp"             /* seq66::daemonize()               */
-#include "midi/midifile.hpp"            /* seq66::midifile to open the file */
+//// #include "midi/midifile.hpp"        /* seq66::midifile to open the file */
 #include "play/performer.hpp"           /* seq66::perform, the main object  */
 
 #if defined SEQ66_PORTMIDI_SUPPORT

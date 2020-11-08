@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-16
+ * \updates       2020-11-05
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -33,7 +33,7 @@ namespace seq66
 
 const std::string SEQ66_TRIM_CHARS        = " \t\r\n\v\f";
 const std::string SEQ66_TRIM_CHARS_QUOTES = " \t\r\n\v\f\"'";
-const std::string SEQ66_TRIM_CHARS_PATHS  = "/\\";
+const std::string SEQ66_TRIM_CHARS_PATHS  = " /\\";
 
 /*
  * Global (free) string functions.
@@ -56,9 +56,9 @@ extern std::string & rtrim
 (
     std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
 );
-extern std::string & trim
+extern std::string trim
 (
-    std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
+    const std::string & str, const std::string & chars = SEQ66_TRIM_CHARS
 );
 extern std::string string_replace
 (

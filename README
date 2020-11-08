@@ -1,6 +1,6 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-10-12
+2015-09-10 to 2020-11-08
 
 "Seq66" is a refactoring of the Qt-based version of "Sequencer64" for better use
 of C++ and for removing a lot of krufty buildup.  With all the work that has
@@ -58,8 +58,9 @@ and using a conventional source tarball.
 Recent changes:
 
     -   Version 0.91.0:
-        -   Getting really serious about Non Session Manager support.
-        -   Bug fixes and minor improvements.
+        -   Getting really serious about Non Session Manager support.  The
+            refactoring to do this has been massive.
+        -   All too many bug fixes and minor improvements.
         -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
             linkage errors that cropped up in debug builds.
     -   Version 0.90.6:

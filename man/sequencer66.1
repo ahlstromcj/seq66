@@ -1,7 +1,7 @@
-.TH Sequencer66 "October 2020" "Version 0.91.0" "Seq66 Manual Page"
+.TH Sequencer66 "November 2020" "Version 0.91.0" "Seq66 Manual Page"
 
 .SH NAME
-Sequencer66 (qseq66) - Real-time live MIDI sequencer refactored from
+Seq66 (qseq66) - Real-time live MIDI sequencer refactored from
 Sequencer64/Seq24
 
 .SH SYNOPSIS
@@ -23,9 +23,9 @@ seq66cli. The Windows version is qpseq66.
 
 .SH OPTIONS
 Seq66 accepts the following options, plus an optional name of
-a MIDI file. Note that the legacy options, which use underscores or
+a MIDI file. Note that the legacy Seq24 options, which use underscores or
 are missing the option hyphen, are no longer supported in Seq66.
-Note that many of the options are "sticky".  That is, they will
+Also note that many of the options are "sticky".  That is, they will
 be saved to the "rc" configuration file.  "User" options can also be saved,
 if desired, via the "--user-save" option.
 
@@ -171,8 +171,7 @@ each channel.
 
 .TP 8
 .B \-D, \-\-legacy-record
-Record all MIDI into the active sequence.  Also set by the --legacy
-option.
+Record all MIDI into the active sequence.
 
 The following options will not be shown by --help if the application is
 not compiled for JACK support.
@@ -217,14 +216,14 @@ options (such as --bus) permanent.  (Perhaps the same should be true of the
 .B \-f, \-\-rc filename
 Use a different "rc" configuration file.  It must be a file in the user's
 $HOME/.config/seq66 directory or the directory specified by the --home
-option.  Not supported by the --legacy mode.  The '.rc' extension is added if
+option.  The '.rc' extension is added if
 no extension is present in the filename.
 
 .TP 8
 .B \-F, \-\-usr filename
 Use a different "usr" configuration file.  It must be a file in the user's
 $HOME/.config/seq66 directory or the directory specified by the --home
-option.  Not supported by the --legacy mode.  The '.usr' extension is added if
+option.  The '.usr' extension is added if
 no extension is present in the filename.
 .TP 8
 .B \-c, \-\-config basename
@@ -236,8 +235,8 @@ or for "alsa".
 Provides additional options, including the no-GUI version of
 Seq66.  Here are the opvalues supported:
 
-daemonize     Makes this application fork to the background.
-no-daemonize  Makes this application not fork to the background.
+daemonize     Makes the command-line application fork to the background.
+no-daemonize  Makes the command-line application not fork to the background.
 log=filename  Redirect console output to a log file in the
               --home directory [$HOME/.config/seq66].
 wid=3x2,f     Sets up for multiple main windows, to show
@@ -250,6 +249,9 @@ scale=x       Scales the main window size, from 0.5 to 3.0.
               A value of 0.75 is useful when using
               "-o wid=2x2 -o sets=8x8", though the pattern
               labelling is mildly distorted.
+mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.
+              'mutes' saves to a separate file, 'midi' saves the mutes
+              in the MIDI file.
 
 .SH FILES
 \fB$HOME\fP/.config/qseq66.rc stores the main configuration settings for
@@ -262,8 +264,7 @@ that they will be written to the configuration file.
 some of the user-interface settings for Seq66.  If it does not
 exist, it will be generated with a minimal configuration when Seq66
 exits.  If it does exist, it will be rewritten with the current configuration
-of Seq66.  Note that the --legacy option causes the old
-configuration-file names to be used.
+of Seq66.
 
 .SH BUGS
 Seq66 has them.  See 
