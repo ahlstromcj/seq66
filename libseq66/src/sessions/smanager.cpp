@@ -566,7 +566,8 @@ smanager::save_session (std::string & msg, bool ok)
  *  patterns if in verbose mode.
  *
  * \return
- *      Always returns false.
+ *      Always returns true.  No window in the command-line application, no
+ *      problem!
  */
 
 bool
@@ -575,7 +576,7 @@ smanager::create_window ()
     if (rc().verbose())
         perf()->show_patterns();
 
-    return false;
+    return true;
 }
 
 /**

@@ -10,42 +10,45 @@
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI GUI playlist that Sequencer66
+%     Provides a discussion of the MIDI GUI playlist that Seq66
 %     supports.
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 Play-Lists}
+\section{Seq66 Play-Lists}
 \label{sec:playlist}
 
-   \textsl{Sequencer66} supports play-lists.
+   \textsl{Seq66} supports play-lists.
    A play-list is a variation on the "rc" file, conventionally ending with the
    extension \texttt{.playlist}.  It contains a number of "playlist" sections,
    each with a human-readable title, selectable via a MIDI data number,
-   or by moving to the next or previous playlist in the list.
+   or by moving to the next or previous playlist in the list using the arrow
+   keys.
    Each playlist section contains a list of songs, also selectable via a MIDI
-   data number, or by moving to the next or previous song in the list.
+   data number, or by moving to the next or previous song in the list using the
+   arrow keys.
 
    Movement between the playlists and the songs is accomplished via 
    MIDI control; see
    \sectionref{subsec:seq66_rc_file_midi_control},
    it describes the general usage of the [midi-control] section.
    Using MIDI control makes it possible to use the \texttt{seq66cli}
-   headless version of \textsl{Sequencer66} in a live setting.
+   headless version of \textsl{Seq66} in a live setting.
    In the normal user-interface, play-list movement
    can also be done manually via the four arrow keys on the computer
    keyboard.
 
-   The playlist can be specified on the command-line, or in
-   the "rc" file (see \sectionref{subsec:seq66_rc_file_playlist}).
+   The playlist can be specified on the command-line, in
+   the "rc" file (see \sectionref{subsec:seq66_rc_file_playlist}), or be loaded
+   from the \textbf{File / Open Playlist} menu.
    If it is specified on the command line, that playlist setup will
-   be written to the "rc" file.  It can be removed by specifying a blank
-   play-list name.
+   be written to the "rc" file.  It can be removed by specifying a blank (i.e.
+   two double-quotes, "") play-list name.
 
    The play-list format is defined in the following section.
    Later sections describe the various user-interfaces.
 
-\subsection{Sequencer66 Play-Lists / Format}
+\subsection{Seq66 Play-Lists / Format}
 \label{subsec:playlist_setup}
 
    The play-list file, by convention, has a file-name of the form
@@ -53,26 +56,28 @@
    The play-list file starts with a hardwired top banner that the user can edit
    with a text editor.  It can also have an optional comments section, much
    like the "rc" and "usr" files.  It is \textsl{not} overwritten
-   when \textsl{Sequencer66} exits.
+   when \textsl{Seq66} exits.
 
    \begin{verbatim}
    [comments]
+   Comments added to this section are preserved....
 
-   Comments added to this section are preserved.  Lines starting with
-   a '#' or '[', or that are blank, are ignored.  Start lines that must
-   be blank with a space.
    \end{verbatim}
 
-   A blank line (not even a space) ends the comment section.
+   A blank line (without even a space) ends the comment section.
    Following the comments section is a \texttt{[playlist-options]} section.
 
    \begin{verbatim}
    [playlist-options]
    1   # If set to 1, when a new song is selected, unmute all its patterns
+   0   # If set to 1, every MIDI song is opened to verify it.
    \end{verbatim}
 
-   That option allows the load of the next song to enable the patterns in that
-   song.
+   The first option allows the load of the next song to enable the patterns in
+   that song.
+   The second option causes each MIDI file to be opened to verify that it is an
+   error-free play-list.  This process can be time-consuming for large
+   playlists.
 
    Following the options section are one or more \texttt{[playlist]} sections.
    Here is the layout of a sample playlist section.
@@ -122,7 +127,7 @@
    This directory is the default location in which to find the songs.
    It can be an absolute directory or a relative directory.
    However, be wary of using relative directories, since they depend on where
-   \textsl{Sequencer66} is run.
+   \textsl{Seq66} is run.
    Also, if a song's file-name  has its own directory component, that overrides
    the default song-storage directory.
 
@@ -131,7 +136,7 @@
    127, for usage with MIDI control.  And the songs are ordered by this number,
    rather than by their position in the list.
 
-\subsection{Sequencer66 Play-Lists / "rc" File}
+\subsection{Seq66 Play-Lists / "rc" File}
 \label{subsec:playlist_rc_file}
 
    The most consistent way to specify a play-list is to add an entry like the
@@ -148,13 +153,13 @@
 
    This setup allows a play-list file to be specified and activated.
    If the name of the play-list file does \textsl{not} contain a directory,
-   then the play-list file is search for in the user's \textsl{Sequencer66}
+   then the play-list file is search for in the user's \textsl{Seq66}
    configuration directory.
 
    If the play-list file-name is empty (i.e. set to \texttt{""}, then there is
    no play-list active.
 
-\subsection{Sequencer66 Play-Lists / "rc" File / [midi-control]}
+\subsection{Seq66 Play-Lists / "rc" File / [midi-control]}
 \label{subsec:playlist_rc_file_midi_ctrl}
 
    The MIDI control stanzas for play-list and song-selection don't quite follow
@@ -187,7 +192,7 @@
    This control requires a controller device that can be configured to provide
    the exact \textsl{Note On} event, including the exact velocity.
 
-\subsection{Sequencer66 Play-Lists / Command Line Invocation}
+\subsection{Seq66 Play-Lists / Command Line Invocation}
 \label{subsec:playlist_cmd_line}
 
    The command-line options to specify (and activate) the play-list feature
@@ -202,34 +207,34 @@
    or a name that includes the full path to the play-list file
    (e.g. \texttt{data/sample.playlist}).
    If no path is specified, the directory is the currently set
-   \textsl{Sequencer66} configuration-file directory.
+   \textsl{Seq66} configuration-file directory.
 
    Please note that any play-list file specified on the command line
    will be written into the "rc" file's \texttt{[playlist]} section when
-   \textsl{Sequencer66} exits.
+   \textsl{Seq66} exits.
 
-\subsection{Sequencer66 Play-Lists / Verification}
+\subsection{Seq66 Play-Lists / Verification}
 \label{subsec:playlist_verify}
 
-   Currently, when \textsl{Sequencer66} loads a play-list file, every
+   Currently, when \textsl{Seq66} loads a play-list file, every
    song in the file is verified by loading it.  If any load fails, then
    the playlist will fail to load.
 
    We may add an option to avoid that check, though it goes fast on
    modern hardware.
 
-\subsection{Sequencer66 Play-Lists / User Interfaces}
+\subsection{Seq66 Play-Lists / User Interfaces}
 \label{subsec:playlist_uis}
 
    Playlists and songs can be selected or moved-to via keystrokes or
    user-interface actions, in addition to MIDI control
 
-\subsubsection{Sequencer66 Play-Lists / User Interfaces / Gtkmm-2.4}
+\subsubsection{Seq66 Play-Lists / User Interfaces / Gtkmm-2.4}
 \label{subsubsec:playlist_ui_gtk}
 
    The Gtkmm-2.4 user-interface is currently the normal user-interface.
    However, it will ultimately be overtaken by the Qt 5 user-interface.
-   So, for Gtkmm-2.4, \textsl{Sequencer66} merely allows the selection of the
+   So, for Gtkmm-2.4, \textsl{Seq66} merely allows the selection of the
    play-list and its songs via the four arrow keys, and it simply displays the
    current play-list name and the current song in the main window.
 
@@ -238,7 +243,7 @@
    The \texttt{Right} and \texttt{Left} arrows move forward or backward through
    the list of songs for the currently-selected play-list.
 
-\subsubsection{Sequencer66 Play-Lists / User Interfaces / Qt 5}
+\subsubsection{Seq66 Play-Lists / User Interfaces / Qt 5}
 \label{subsubsec:playlist_ui_qt}
 
    The Qt 5 user-interface will eventually become the standard.

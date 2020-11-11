@@ -21,7 +21,7 @@
 # \library    	seq66cli application
 # \author     	Chris Ahlstrom
 # \date       	2017-04-07
-# \update      2017-11-12
+# \update      2020-11-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -135,6 +135,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+seq66cli_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(seq66cli_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -431,9 +434,18 @@ CLEANFILES = *.gc*
 sequencer66includedir = @sequencer66includedir@
 sequencer66libdir = @sequencer66libdir@
 libseq66dir = $(builddir)/libseq66/src/.libs
+libsessionsdir = $(builddir)/libsessions/src/.libs
 libseq_rtmididir = $(builddir)/seq_rtmidi/src/.libs
 libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
-@BUILD_WINDOWS_FALSE@AM_CXXFLAGS = -I$(top_srcdir)/libseq66/include -I$(top_srcdir)/seq_rtmidi/include $(JACK_CFLAGS) $(LASH_CFLAGS)
+@BUILD_WINDOWS_FALSE@AM_CXXFLAGS = \
+@BUILD_WINDOWS_FALSE@ -I$(top_srcdir)/libseq66/include \
+@BUILD_WINDOWS_FALSE@ -I$(top_srcdir)/libsessions/include \
+@BUILD_WINDOWS_FALSE@ -I$(top_srcdir)/seq_rtmidi/include \
+@BUILD_WINDOWS_FALSE@ $(JACK_CFLAGS) \
+@BUILD_WINDOWS_FALSE@ $(LIBLO_CFLAGS) \
+@BUILD_WINDOWS_FALSE@ $(NSM_CFLAGS) \
+@BUILD_WINDOWS_FALSE@ $(LASH_CFLAGS)
+
 
 #******************************************************************************
 # AM_CPPFLAGS [formerly "INCLUDES"]
@@ -445,7 +457,15 @@ libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 #   -I$(top_srcdir)/seq_gtkmm2/include \
 #
 #------------------------------------------------------------------------------
-@BUILD_WINDOWS_TRUE@AM_CXXFLAGS = -I$(top_srcdir)/libseq66/include -I$(top_srcdir)/seq_portmidi/include
+@BUILD_WINDOWS_TRUE@AM_CXXFLAGS = \
+@BUILD_WINDOWS_TRUE@ -I$(top_srcdir)/libseq66/include \
+@BUILD_WINDOWS_TRUE@ -I$(top_srcdir)/libsessions/include \
+@BUILD_WINDOWS_TRUE@ -I$(top_srcdir)/seq_portmidi/include \
+@BUILD_WINDOWS_TRUE@ $(JACK_CFLAGS) \
+@BUILD_WINDOWS_TRUE@ $(LIBLO_CFLAGS) \
+@BUILD_WINDOWS_TRUE@ $(NSM_CFLAGS) \
+@BUILD_WINDOWS_TRUE@ $(LASH_CFLAGS)
+
 
 #******************************************************************************
 # libmath
@@ -459,7 +479,12 @@ libseq_portmididir = $(builddir)/seq_portmidi/src/.libs
 #
 #------------------------------------------------------------------------------
 libmath = -lm
-@BUILD_WINDOWS_FALSE@libraries = -L$(libseq66dir) -lseq66 -L$(libseq_rtmididir) -lseq_rtmidi
+@BUILD_WINDOWS_FALSE@libraries = \
+@BUILD_WINDOWS_FALSE@ -L$(libsessionsdir) -lsessions \
+@BUILD_WINDOWS_FALSE@ -L$(libseq66dir) -lseq66 \
+@BUILD_WINDOWS_FALSE@ -L$(libsessionsdir) -lsessions \
+@BUILD_WINDOWS_FALSE@ -L$(libseq_rtmididir) -lseq_rtmidi
+
 
 #****************************************************************************
 # Project-specific library files
@@ -474,8 +499,18 @@ libmath = -lm
 #  -L$(libseq_gtkmm2dir) -lseq_gtkmm2 \
 #
 #----------------------------------------------------------------------------
-@BUILD_WINDOWS_TRUE@libraries = -L$(libseq66dir) -lseq66 -L$(libseq_portmididir) -lseq_portmidi -lwinmm
-@BUILD_WINDOWS_FALSE@dependencies = $(libseq_rtmididir)/libseq_rtmidi.la $(libseq66dir)/libseq66.la
+@BUILD_WINDOWS_TRUE@libraries = \
+@BUILD_WINDOWS_TRUE@ -L$(libsessionsdir) -lsessions \
+@BUILD_WINDOWS_TRUE@ -L$(libseq66dir) -lseq66 \
+@BUILD_WINDOWS_TRUE@ -L$(libseq_portmididir) -lseq_portmidi \
+@BUILD_WINDOWS_TRUE@ -L$(libsessionsdir) -lsessions \
+@BUILD_WINDOWS_TRUE@ -lwinmm
+
+@BUILD_WINDOWS_FALSE@dependencies = \
+@BUILD_WINDOWS_FALSE@ $(libseq_rtmididir)/libseq_rtmidi.la \
+@BUILD_WINDOWS_FALSE@ $(libsessionsdir)/libsessions.la \
+@BUILD_WINDOWS_FALSE@ $(libseq66dir)/libseq66.la
+
 
 #****************************************************************************
 # Project-specific dependency files
@@ -486,15 +521,20 @@ libmath = -lm
 #
 #  $(libseq_gtkmm2dir)/libseq_gtkmm2.la \
 #----------------------------------------------------------------------------
-@BUILD_WINDOWS_TRUE@dependencies = $(libseq_portmididir)/libseq_portmidi.la $(libseq66dir)/libseq66.la
+@BUILD_WINDOWS_TRUE@dependencies = \
+@BUILD_WINDOWS_TRUE@ $(libseq_portmididir)/libseq_portmidi.la \
+@BUILD_WINDOWS_TRUE@ $(libsessionsdir)/libsessions.la \
+@BUILD_WINDOWS_TRUE@ $(libseq66dir)/libseq66.la
+
 
 #******************************************************************************
 # seq66cli
 #----------------------------------------------------------------------------
 seq66cli_SOURCES = seq66rtcli.cpp
-seq66cli_DEPENDENCIES = $(dependencies)
-@BUILD_WINDOWS_FALSE@seq66cli_LDADD = $(libraries) $(GTKMM_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
-@BUILD_WINDOWS_TRUE@seq66cli_LDADD = $(libraries) $(AM_LDFLAGS) $(PTHREAD_LIBS)
+seq66cli_DEPENDENCIES = $(NSM_DEPS) $(dependencies)
+@BUILD_WINDOWS_FALSE@seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(ALSA_LIBS) $(JACK_LIBS) $(LASH_LIBS) $(AM_LDFLAGS)
+@BUILD_WINDOWS_TRUE@seq66cli_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(AM_LDFLAGS) $(PTHREAD_LIBS)
+@BUILD_WINDOWS_FALSE@seq66cli_LDFLAGS = -Wl,--copy-dt-needed-entries
 all: all-am
 
 .SUFFIXES:
@@ -580,7 +620,7 @@ clean-binPROGRAMS:
 
 seq66cli$(EXEEXT): $(seq66cli_OBJECTS) $(seq66cli_DEPENDENCIES) $(EXTRA_seq66cli_DEPENDENCIES) 
 	@rm -f seq66cli$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(seq66cli_OBJECTS) $(seq66cli_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(seq66cli_LINK) $(seq66cli_OBJECTS) $(seq66cli_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

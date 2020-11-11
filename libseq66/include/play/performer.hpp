@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-09-26
+ * \updates       2020-11-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -1714,7 +1714,7 @@ public:
 
 #endif
 
-    bool clear_all (bool clearplaylist);
+    bool clear_all (bool clearplaylist = false);
     bool clear_song ();
     bool launch (int ppqn);
     bool finish ();

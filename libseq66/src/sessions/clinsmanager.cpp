@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-07
+ * \updates       2020-11-11
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -38,6 +38,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "midi/midifile.hpp"            /* seq66::write_midi_file()         */
 #include "os/daemonize.hpp"             /* seq66::pid_exists()              */
+#include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "play/playlist.hpp"            /* seq66::playlist class            */
 #include "sessions/clinsmanager.hpp"    /* seq66::clinsmanager class        */
 #include "util/filefunctions.hpp"       /* seq66::make_directory_path()     */
@@ -284,27 +285,30 @@ clinsmanager::save_session (std::string & msg, bool ok)
 }
 
 /**
- *
+ *  This function is useful in the command-line version of the application.
+ *  For the Qt version, see the qt5nsmanager class.
  */
 
 bool
 clinsmanager::run ()
 {
-    // see the while (! seq66::session_close()) loop
-
-#if defined THIS_CODE_IS_READY
-
+    bool result = false;
     session_setup();
     while (! session_close())
     {
+        result = true;
         if (session_save())
-            save_file(perf());
-
+        {
+            std::string msg;
+            result = save_session(msg, true);
+            if (! result)
+            {
+                file_error(msg, "CLI");
+            }
+        }
         microsleep(1000);                       /* 1 ms */
     }
-#endif
-
-    return false;
+    return true;
 }
 
 /**

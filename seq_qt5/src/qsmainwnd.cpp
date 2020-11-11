@@ -1566,15 +1566,15 @@ qsmainwnd::filename_prompt (const std::string & prompt)
 }
 
 /**
- *
- * \todo
- *      Ensure proper reset on load.
+ *  We were passing true to performer::clear_all() to clear the playlist as
+ *  well.  However, that doesn't clear the playlist frame, and the user may
+ *  want to build a new tune to add to the playlist.
  */
 
 void
 qsmainwnd::new_file ()
 {
-    if (check() && perf().clear_all(true))      /* also clear the playlist  */
+    if (check() && perf().clear_all())              /* don't clear playlist */
     {
         m_is_title_dirty = true;
         redo_live_frame();
@@ -1614,7 +1614,7 @@ qsmainwnd::new_session ()
         );
         if (ok)
         {
-            if (perf().clear_all(true))             /* like new_file()      */
+            if (perf().clear_all())                 /* like new_file()      */
             {
                 m_is_title_dirty = true;
                 redo_live_frame();

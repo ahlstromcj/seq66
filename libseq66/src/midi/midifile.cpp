@@ -904,37 +904,35 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
     for (midishort track = 0; track < NumTracks; ++track)
     {
-        midipulse delta;                            /* MIDI delta time      */
-        midipulse runningtime;
-        midipulse currenttime = 0;
-        char TrackName[SEQ66_TRACKNAME_MAX];        /* track name from file */
         midilong ID = read_long();                  /* get track marker     */
         midilong TrackLength = read_long();         /* get track length     */
         if (ID == SEQ66_MTRK_TAG)                   /* magic number 'MTrk'  */
         {
+            char TrackName[SEQ66_TRACKNAME_MAX];    /* track name from file */
             bool timesig_set = false;               /* seq66 style wins     */
+            midipulse runningtime = 0;              /* reset time           */
+            midipulse currenttime = 0;              /* adjusted by PPQN     */
             midishort seqnum = c_midishort_max;     /* either read or set   */
             midibyte status = 0;
             midibyte runningstatus = 0;
             midilong seqspec = 0;                   /* sequencer-specific   */
             bool done = false;                      /* done for each track  */
             sequence * sp = create_sequence(p);     /* create new sequence  */
-            midilong len;                           /* important counter!   */
-            midibyte d0, d1;                        /* was data[2];         */
             if (is_nullptr(sp))
             {
                 set_error_dump("MIDI file parse: sequence allocation failed");
                 return false;
             }
-            sequence & s = *sp;                 /* references are better    */
-            runningtime = 0;                    /* reset time               */
+            sequence & s = *sp;                     /* references better    */
 #if defined SEQ66_PLATFORM_DEBUG_TMI
             int eventcounter = 0;
 #endif
-            while (! done)                      /* get each event in track  */
+            while (! done)                          /* get events in track  */
             {
                 event e;
-                delta = read_varinum();                     /* time delta   */
+                midilong len;                       /* important counter!   */
+                midibyte d0, d1;                    /* was data[2];         */
+                midipulse delta = read_varinum();           /* time delta   */
                 status = m_data[m_pos];                     /* current byte */
                 if (event::is_status(status))               /* 0x80 bit?    */
                 {
@@ -3010,9 +3008,9 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  *  A global function to unify the opening of a MIDI or WRK file.  It also
  *  handles PPQN discovery.
  *
- *  We need to clear any existing playlist first.  The new function,
+ *  We do not need to clear any existing playlist.  The new function,
  *  performer::clear_all(), also does a clear-all, including the playlist, if
- *  its boolean parameter is set to true.
+ *  its boolean parameter is set to true.  We leave it false here.
  *
  * \todo
  *      Tighten up wrkfile/midifile handling re PPQN!!!
@@ -3059,7 +3057,7 @@ read_midi_file
 
         midifile * fp = is_wrk ? new wrkfile(fn, ppqn) : new midifile(fn, ppqn) ;
         std::unique_ptr<midifile> f(fp);
-        p.clear_all(true);                      /* see banner notes         */
+        p.clear_all();                          /* see banner notes         */
         result = f->parse(p, 0);
         if (result)
         {

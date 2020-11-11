@@ -1708,6 +1708,11 @@ performer::swap_sets (seq::number set0, seq::number set1)
  *      update.  This affect the needs_update() function when not running
  *      playback.
  *
+ * \param clearplaylist
+ *      Defaults to false. If true, the playlist is cleared completely, which
+ *      also clears the original playlist file. TODO: if true, get the
+ *      playlist tab to clear itself.
+ *
  * \return
  *      Returns true if the clear-all operation could be performed.  If false,
  *      then at least one active sequence was in editing mode.
@@ -5838,7 +5843,7 @@ performer::open_playlist (const std::string & pl, bool show_on_stdout)
         result = seq66::open_playlist(*m_play_list, pl, show_on_stdout);
         if (result)
         {
-            clear_all(false);                   /* clear, reset playlist    */
+            clear_all();                    /* reset, not clear, playlist   */
         }
         else
         {

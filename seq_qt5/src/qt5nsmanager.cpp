@@ -159,8 +159,11 @@ qt5nsmanager::create_window ()
             }
             else
             {
+                std::string path = usensm ?
+                    manager_path() : rc().home_config_directory() ;
+
                 m_window->session_manager(manager_name());
-                m_window->session_path(manager_path());
+                m_window->session_path(path);
                 m_window->session_display_name(display_name());
                 m_window->session_client_id(client_id());
                 m_window->session_log("No log entries.");

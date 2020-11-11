@@ -1,14 +1,14 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-11-08
+2015-09-10 to 2020-11-10
 
-"Seq66" is a refactoring of the Qt-based version of "Sequencer64" for better use
-of C++ and for removing a lot of krufty buildup.  With all the work that has
-been done on it, "Seq66" is now the best-supported version of "Sequencer64".
-Linux users can build this application very easily from the source code.  See
+"Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
+and with a lot of krufty buildup removed.
+"Seq66" is now the best-supported version of "Sequencer64".
+Linux users can build this application easily from the source code.  See
 the INSTALL file.  Windows users can get an installer package on GitHub at:
 
-   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe
+   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe (version 0.91.0 coming soon).
 
 Major changes:
 
@@ -31,12 +31,13 @@ Major changes:
             defines MIDI In controls for controlling Seq66, and MIDI Out controls
             for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
             Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini provided.
+    -   Non Session Manager.  Working on support for this manager, essentially
+        complete. Handles stopping and saving, display of details about the
+        session.
     -   Internal:
         -   More consistent use of modern C++, including lambda functions.
         -   Additional performer callbacks to reduce the need for polling in the
             user-interface.
-    -   Non Session Manager.  Working on support for this manager, about 75%
-        complete.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 Here are the executables that can be built:
@@ -63,6 +64,7 @@ Recent changes:
         -   All too many bug fixes and minor improvements.
         -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
             linkage errors that cropped up in debug builds.
+        -   Got the CLI version building, needs a lot of testing.
     -   Version 0.90.6:
         -   Fixed issue #19 where recording notes caused a segfault.
     -   Version 0.90.5:

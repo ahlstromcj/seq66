@@ -6,7 +6,7 @@
 # \library    	seq66qt5 application
 # \author     	Chris Ahlstrom
 # \date       	2017-09-05
-# \update      2020-09-12
+# \update      2020-11-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -205,11 +205,11 @@ qseq66_LDADD = $(NSM_LIBS) $(libraries) $(LIBLO_LIBS) $(QT_LIBS) $(ALSA_LIBS) $(
 #
 #------------------------------------------------------------------------------
 
-.PHONY: test_script
-
-TESTS = test_script
- 
-test: check
+# .PHONY: test_script
+#
+# TESTS = test_script
+#
+# test: check
 
 #******************************************************************************
 #  distclean

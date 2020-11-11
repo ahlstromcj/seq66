@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-09-01
+ * \updates       2020-11-11
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -34,13 +34,7 @@
 
 #include <QApplication>                 /* QApplication etc.                */
 
-#include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
-
-#if defined SEQ66_PORTMIDI_SUPPORT
-#include "portmidi.h"                   /* Pm_error_present(), ...          */
-#include "util/filefunctions.hpp"       /* seq66::file_append_log()         */
-#endif
 
 /**
  *  The standard C/C++ entry point to this application.  The first thing is to
