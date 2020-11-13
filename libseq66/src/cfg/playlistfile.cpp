@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-11-06
+ * \updates       2020-11-12
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -285,7 +285,7 @@ playlistfile::parse ()
                     plist.ls_file_directory = clean_path(listline);
                     slist.clear();
                     if (m_show_on_stdout)
-                        printf("Playlist directory %s\n", listline.c_str());
+                        printf("Playlist directory '%s'\n", listline.c_str());
 
                     while (next_data_line(file))
                     {
@@ -306,14 +306,14 @@ playlistfile::parse ()
                                 sinfo.ss_embedded_song_directory = true;
                                 sinfo.ss_filename = filebase;
                             }
-                            else
+                            else if (! fname.empty())
                             {
                                 sinfo.ss_song_directory = plist.ls_file_directory;
                                 sinfo.ss_embedded_song_directory = false;
                                 sinfo.ss_filename = fname;
+                                (void) play_list().add_song(slist, sinfo);
+                                ++songcount;
                             }
-                            (void) play_list().add_song(slist, sinfo);
-                            ++songcount;
                         }
                         else
                         {
@@ -571,14 +571,14 @@ playlistfile::write ()
            "# for use with the MIDI playlist control.\n\n"
            "0\n\n"
            "# Display name of this play list.\n\n"
-           "\"Sample\"\n\n"
+           "\"Empty Sample\"\n\n"
            "# Default storage directory for the song-files in this playlist.\n\n"
-           "play/list/files\n\n"
+           "\"\"\n\n"
            "# Provides the MIDI song-control number (0 to 127), and also the\n"
            "# base file-name (tune.midi) of each song in this playlist.\n"
            "# The playlist directory is used, unless the file-name contains its\n"
            "# own path.\n\n"
-           "0 sample.midi\n\n"
+           "0 \"\"\n\n"
         ;
     }
 

@@ -82,6 +82,7 @@ public:
     void session_URL (const std::string & text);
     void session_log (const std::string & text);
     void session_log_append (const std::string & text);
+    void song_path (const std::string & text);
 
 signals:
 

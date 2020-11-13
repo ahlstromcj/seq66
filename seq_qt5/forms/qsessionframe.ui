@@ -147,19 +147,19 @@
      <x>180</x>
      <y>240</y>
      <width>420</width>
-     <height>200</height>
+     <height>112</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
      <width>420</width>
-     <height>200</height>
+     <height>112</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>420</width>
-     <height>200</height>
+     <height>112</height>
     </size>
    </property>
   </widget>
@@ -169,8 +169,8 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>360</y>
+     <x>30</x>
+     <y>270</y>
      <width>100</width>
      <height>64</height>
     </rect>
@@ -264,6 +264,29 @@
      <width>160</width>
      <height>32</height>
     </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="songPathText">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>360</y>
+     <width>521</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="songLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>360</y>
+     <width>41</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Song</string>
    </property>
   </widget>
  </widget>

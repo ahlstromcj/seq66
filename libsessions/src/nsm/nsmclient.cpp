@@ -483,7 +483,6 @@ nsmclient::open
      */
 
     nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
-
 }
 
 /*

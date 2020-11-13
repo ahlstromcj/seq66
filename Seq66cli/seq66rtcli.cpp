@@ -44,10 +44,6 @@
 #include "os/daemonize.hpp"             /* seq66::daemonize()               */
 #include "play/performer.hpp"           /* seq66::perform, the main object  */
 
-// #if defined SEQ66_PORTMIDI_SUPPORT
-// #include "portmidi.h"        /*  Pm_error_present(), Pm_hosterror_message()  */
-// #endif
-
 /**
  *  The standard C/C++ entry point to this application.  This first thing
  *  this function does is scan the argument vector and strip off all

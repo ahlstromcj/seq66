@@ -1403,7 +1403,7 @@ append_path
  *
  *  This function works solely using UNIX conventions, it is for internal use.
  *  If desired, it can be converted to Windows conventions using
- *  normalize_path().
+ *  os_normalize_path().
  */
 
 std::string
@@ -1422,8 +1422,9 @@ filename_concatenate (const std::string & path, const std::string & filebase)
  *      modified only to add a terminating slash, if necessary.
  *
  * \param path1
- *      The seconds path, which can only be a relative path.  If it starts
- *      with a slash, that is removed.
+ *      The seconds path, which can only be a relative path (or a base
+ *      filename such as "x.ext").  If it starts with a slash, that is
+ *      removed.
  *
  * \return
  *      Returns the two paths:  path0 + "/" + path1 + "/", where the slashes

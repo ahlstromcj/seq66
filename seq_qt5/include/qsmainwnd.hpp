@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-10-31
+ * \updates       2020-11-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -146,6 +146,7 @@ public:
     void session_URL (const std::string & text);
     void session_log (const std::string & text);
     void session_log_append (const std::string & text);
+    void song_path (const std::string & text);
 
 protected:
 
@@ -357,7 +358,7 @@ private slots:
     void open_recent_file ();
     void new_file ();
     void new_session ();
-    bool save_file (const std::string & fname = "");
+    bool save_file (const std::string & fname = "", bool updatemenu = true);
     bool save_session ();
     bool detach_session ();
     bool save_file_as ();

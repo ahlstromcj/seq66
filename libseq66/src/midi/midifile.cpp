@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-11-08
+ * \updates       2020-11-13
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2390,16 +2390,18 @@ midifile::write (performer & p, bool doseqspec)
             bool result = write_header(numtracks);
             if (result)
             {
-                if (doseqspec)
-                    printf("[Writing Seq66 MIDI file, %d ppqn]\n", m_ppqn);
-                else
-                    printf("[Writing normal MIDI file, %d ppqn]\n", m_ppqn);
+                std::string temp = "Writing ";
+                temp += doseqspec ? "Seq66" : "normal" ;
+                temp += " MIDI file ";
+                temp += std::to_string(m_ppqn);
+                temp += " PPQN";
+                file_message(temp, m_name);
             }
             else
-                m_error_message = "Error, failed to write header to MIDI file";
+                m_error_message = "Failed to write header to MIDI file";
         }
         else
-            m_error_message = "Error, no patterns/tracks available to write";
+            m_error_message = "No patterns/tracks available to write";
     }
 
     /*
@@ -3120,7 +3122,10 @@ write_midi_file
             file_message("Wrote MIDI file", fname);
         }
         else
+        {
             errmsg = f.error_message();
+            file_error("Write failed", fname);
+        }
     }
     return result;
 }

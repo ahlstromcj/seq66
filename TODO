@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-08-17
+2019-04-13 to 2020-11-11
 
 HOT ITEMS:
 
@@ -68,12 +68,13 @@ ISSUES:
     the DEPENDENCIES/ Qt Builds section of the INSTALL file are installed.
     STATUS: Updated the INSTALL documentation.
 
-    #3: Open loop Pattern Editor window. On mouse wheel scroll event we expect
-    the piano-roll and notes sheet to scroll vertically.
-    STATUS: We had to disable mouse-wheel scrolling for this reason: In
-    qseqkeys, we did not want the scroll wheel to accidentally scroll the piano
-    keys vertically.  Same for qscrollmaster, qseqeditframe64, except that we
-    note wheelEvent() is not called for some reason.
+    #3: Open loop Pattern Editor window.
+    On mouse wheel scroll event we expect the piano-roll and notes sheet to
+    scroll vertically.  STATUS: We had to disable mouse-wheel scrolling for
+    this reason: In qseqkeys, we did not want the scroll wheel to accidentally
+    scroll the piano keys vertically.  Same for qscrollmaster,
+    qseqeditframe64, except that we note wheelEvent() is not called for some
+    reason.
 
     #7: 'make install' doesn't install files.
     STATUS: This is an Arch packaging issue.  Copied and modified the PKGBUILD
@@ -103,19 +104,117 @@ ISSUES:
     button does not stop the scrolling.
     STATUS: Will do.
 
-    #12: Note rendering problem. Having a long note, scrolling it out of
-    vision and back again leads to a problem.  (Only the first snap division
-    and last snap division of the note appears.
-    STATUS:  Weird, will do.
+    #12: Note rendering problem.
+    Having a long note, scrolling it out of vision and back again leads to a
+    problem.  (Only the first snap division and last snap division of the note
+    appears.  STATUS:  Weird, will do.
 
-    #13: Pattern editor: control event bar does not update/scroll. If I add or
-    remove a note, the related representation in the control bar below the
-    piano roll does not refresh. Also, if I scroll the view above, the control
-    bar stays in the same place.
-    STATUS:  In progress.  Related to issue #9.  Cannot duplicate the issue
-    with the control bar staying in the same place.  I found so far that the
-    event (trigger) bar and data (control) bar were not showing events due to
-    an error I made in setting the status/cc values to show.
+    #13: Pattern editor: control event bar does not update/scroll.
+    If I add or remove a note, the related representation in the control bar
+    below the piano roll does not refresh. Also, if I scroll the view above,
+    the control bar stays in the same place.  STATUS:  In progress.  Related
+    to issue #9.  Cannot duplicate the issue with the control bar staying in
+    the same place.  I found so far that the event (trigger) bar and data
+    (control) bar were not showing events due to an error I made in setting
+    the status/cc values to show.
+
+#14 Build issue in Linux
+    Might be considered RESOLVED.
+
+#15 Crash when closing Set Window
+    OS: Manjaro-Linux 5.7.9-1-MANJARO x86_64
+    Version: seq66-git 0.90.3.r181.70e9302-1 (master)
+
+    When opening the "Set" window and not closing it with the close button,
+    but from the window manager's upper right close button, the program
+    crashes.
+
+    Can you post a screenshot of the window you are talking about? I don't see
+    a Close button and am not able to figure out what you are looking at.
+    Thanks!
+
+    I think it's the "Set Master" window. I get the same crash on master
+    compile qseq66. Have title bars disabled here so I'm killing/closing with
+    my window manager.
+
+#16 Ableton Live transport support?
+
+    Go to this issue in Github to see the thread.
+
+#17 Connect midi devices by name
+
+    Currently midi devices are mapped by bus number. This is a problem when
+    devices are added and removed, which happens a lot for me. Why not storing
+    and connecting midi devices by name instead?
+
+    This could even be backwards-compatible: when the configuration file has a
+    bus number, use that, if it is a string, connect by name.
+
+    ----
+
+    I think this is a great idea. The way it is done now is from seq24; not
+    bad, but yeah, could be improved. I will think about this issue. It will
+    be a little while because I am tied up with the "nsm"
+    (non-session-manager) branch.
+
+#18 Mute Group does not toggle
+
+    Not sure if I have missed some configuration but I have the following
+    problem:
+
+    I have configured into the .ctrl file the following in order to toggle the
+    first mute group using a midi controller. It send a Control Change message
+    (176 decimal or 0xb0 hex) with the CC number 27. When I press the pad 27
+    on my midi controller it unmute all the patterns configured in the first
+    mute group but when I press the pad one more time it does not mute the
+    patterns. I have configured the mute group using the mute group tab and
+    include all patterns of the first row.
+
+    Also I have noticed that when I activate a mute group I'm not able to
+    activate patters that don't belong to the activated mute group. It is
+    normal?
+
+    My objetive is to emulate the "scene" function that some sequencers have
+    (like Ableton Live). That function activate / unactivate an entire row
+    just using one single button. So, if there is another way to emulate let
+    me know it please.
+
+#19 Crash when recording note
+
+    Seems to be fixed.
+
+#20 Closed
+
+#21 Wrong links in About dialog
+
+    Fixed in NSM branch.
+
+#22 Arch Linux PKGBUILD file for seq66
+
+    I adapted a script from Christopher Arndt for to build seq66 on Arch Linux
+    as a package. Since I'm not a package maintainer I just provide it here,
+    so that it may be included in the build/install documentation or maybe an
+    already active AUR package maintainer would like to take it and make it it
+    "official". ;-)
+
+#23 Problems with Qt during compilation
+
+    See the github issue.
+
+#24 Release notes in release tag message?
+
+    I'd like to add seq66 to https://libreav.org/updates
+
+    Could I request that the release change notes are used in the release
+    message? Then they could be syndicated via the releases.atom.
+
+    Either using the release description box in the Create Release feature on
+    GitHub (which can accept markdown) or with something like git tag -a v0.4
+    -m "$(cat RELNOTES.md)" (which GH doesn't detect markdown from).
+
+#25 Configure fails
+
+    See the config log at the github issue.
 
 PATTERNS:
 

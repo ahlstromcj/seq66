@@ -167,6 +167,9 @@ qt5nsmanager::create_window ()
                 m_window->session_display_name(display_name());
                 m_window->session_client_id(client_id());
                 m_window->session_log("No log entries.");
+                // m_window->song_path(mfname);
+                m_window->song_path(rc().midi_filename());
+
 #if defined SEQ66_NSM_SUPPORT
                 if (not_nullptr(nsm_client()))
                 {

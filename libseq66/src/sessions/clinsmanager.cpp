@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-11
+ * \updates       2020-11-13
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -368,13 +368,11 @@ clinsmanager::create_project
             midifilepath = pathname_concatenate(midifilepath, "midi");
         }
         else
-        {
             midifilepath.clear();
-            rc().midi_filename(midifilepath);
-        }
 
         std::string rcfile = cfgfilepath + rc().config_filename();
         bool already_created = file_exists(rcfile);
+        rc().midi_filepath(midifilepath);               /* do this first    */
         if (already_created)
         {
             file_message("File exists", rcfile);        /* comforting       */
@@ -543,7 +541,7 @@ clinsmanager::session_manager_name (const std::string & mgrname)
 {
     smanager::session_manager_name(mgrname);
     if (! mgrname.empty())
-        file_message("CNS", mgrname);
+        file_message("CNS manager", mgrname);
 }
 
 void
@@ -551,7 +549,7 @@ clinsmanager::session_manager_path (const std::string & pathname)
 {
     smanager::session_manager_path(pathname);
     if (! pathname.empty())
-        file_message("CNS", pathname);
+        file_message("CNS path", pathname);
 }
 
 void
@@ -559,7 +557,7 @@ clinsmanager::session_display_name (const std::string & dispname)
 {
     smanager::session_display_name(dispname);
     if (! dispname.empty())
-        file_message("CNS", dispname);
+        file_message("CNS name", dispname);
 }
 
 void
@@ -567,7 +565,7 @@ clinsmanager::session_client_id (const std::string & clid)
 {
     smanager::session_client_id(clid);
     if (! clid.empty())
-        file_message("CNS", clid);
+        file_message("CNS client ID", clid);
 }
 
 /**

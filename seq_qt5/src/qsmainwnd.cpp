@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-10-31
+ * \updates       2020-11-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -803,17 +803,23 @@ qsmainwnd::qsmainwnd
      * any particular time.
      */
 
-#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
-    ui->testButton->setToolTip("Test of MIDI file import into session.");
+
+#if defined SEQ66_PLATFORM_DEBUG    // _SESSION_IMPORT
+    ui->testButton->setToolTip("Developer test of MIDI 'Import into Session'.");
+    ui->testButton->setEnabled(true);
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(import_into_session())
     );
+#else
+    ui->testButton->setToolTip("Developer test button, disabled.");
+    ui->testButton->setEnabled(false);
 #endif
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     ui->testButton->setToolTip("Test of saving/copying the current playlist.");
+    ui->testButton->setEnabled(true);
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
@@ -821,11 +827,9 @@ qsmainwnd::qsmainwnd
     );
 #endif
 
-    ui->testButton->setToolTip("Test button disabled.");
-    ui->testButton->setEnabled(false);
-
 #if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
     ui->testButton->setToolTip("Test of saving the note-map.");
+    ui->testButton->setEnabled(true);
     connect
     (
         ui->testButton, SIGNAL(clicked(bool)),
@@ -1114,7 +1118,8 @@ qsmainwnd::import_into_session ()
                 rc().session_midi_filename(basename);   /* make NSM name  */
 
                 std::string mfilename = rc().midi_filename();
-                std::string msg = save_file(mfilename) ?
+                song_path(mfilename);
+                std::string msg = save_file(mfilename, false) ?
                     "Saved: " : "Failed to save: ";
 
                 msg += rc().midi_filename();
@@ -1168,7 +1173,10 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
         );
         result = ! file.isEmpty();
         if (result)
+        {
             selectedfile = file.toStdString();
+            file_message("Selected", selectedfile);
+        }
     }
     return result;
 }
@@ -1703,7 +1711,7 @@ qsmainwnd::detach_session ()
  */
 
 bool
-qsmainwnd::save_file (const std::string & fname)
+qsmainwnd::save_file (const std::string & fname, bool updatemenu)
 {
     bool result = false;
     std::string filename = fname.empty() ? rc().midi_filename() : fname ;
@@ -1729,7 +1737,10 @@ qsmainwnd::save_file (const std::string & fname)
         std::string errmsg;
         result = write_midi_file(perf(), filename, errmsg);
         if (result)
-            update_recent_files_menu();         /* add the recent file-name */
+        {
+            if (updatemenu)
+                update_recent_files_menu();     /* add the recent file-name */
+        }
         else
             show_message_box(errmsg);
     }
@@ -1889,8 +1900,6 @@ qsmainwnd::import_into_set ()
                     bool is_wrk = file_extension_match(fn, "wrk");
                     midifile * f = is_wrk ?
                         new wrkfile(fn) : new midifile(fn, choose_ppqn()) ;
-
-//                      new wrkfile(fn) : new midifile(fn, /* choose_ */ ppqn()) ;
 
                     if (f->parse(perf(), setno))
                     {
@@ -2504,19 +2513,31 @@ qsmainwnd::update_recent_files_menu ()
         if (count > mc_max_recent_files)
             count = mc_max_recent_files;
 
+        bool ok = true;
         for (int f = 0; f < count; ++f)
         {
             std::string shortname = rc().recent_file(f);
-            std::string longname = rc().recent_file(f, false);
-            m_recent_action_list.at(f)->setText(shortname.c_str());
-            m_recent_action_list.at(f)->setData(longname.c_str());
-            m_recent_action_list.at(f)->setVisible(true);
+            if (! shortname.empty())
+            {
+                std::string longname = rc().recent_file(f, false);
+                m_recent_action_list.at(f)->setText(shortname.c_str());
+                m_recent_action_list.at(f)->setData(longname.c_str());
+                m_recent_action_list.at(f)->setVisible(true);
+            }
+            else
+            {
+                ok = false;
+                break;
+            }
+        }
+        if (ok)
+        {
+            for (int fj = count; fj < mc_max_recent_files; ++fj)
+                m_recent_action_list.at(fj)->setVisible(false);
+
+            ui->menuFile->insertMenu(ui->actionSave, m_menu_recent);
         }
     }
-    for (int fj = count; fj < mc_max_recent_files; ++fj)
-        m_recent_action_list.at(fj)->setVisible(false);
-
-    ui->menuFile->insertMenu(ui->actionSave, m_menu_recent);
 }
 
 /**
@@ -2729,8 +2750,6 @@ qsmainwnd::update_bank_text (const QString & newname)
 {
     if (not_nullptr(m_live_frame))
     {
-//  QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
-//  ui->txtBankName->setText(bname);
         std::string name = newname.toStdString();
         m_live_frame->update_bank_name(name);
     }
@@ -3371,6 +3390,13 @@ qsmainwnd::session_log_append (const std::string & text)
 {
     if (not_nullptr(m_session_frame))
         m_session_frame->session_log_append(text);
+}
+
+void
+qsmainwnd::song_path (const std::string & text)
+{
+    if (not_nullptr(m_session_frame))
+        m_session_frame->song_path(text);
 }
 
 }               // namespace seq66

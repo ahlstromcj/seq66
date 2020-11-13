@@ -161,14 +161,12 @@ playlist::open_song (const std::string & fname, bool verifymode)
         int ppqn = 0;
         if (is_wrk)
         {
-//          wrkfile m(fname, SEQ66_USE_DEFAULT_PPQN, verifymode);
             wrkfile m(fname, choose_ppqn(), verifymode);
             result = m.parse(*m_performer);
             ppqn = m.ppqn();
         }
         else
         {
-//          midifile m(fname, SEQ66_USE_DEFAULT_PPQN, true, verifymode);
             midifile m(fname, choose_ppqn(), true, verifymode);
             result = m.parse(*m_performer);
             ppqn = m.ppqn();

@@ -1,0 +1,553 @@
+#******************************************************************************
+# /etc/DIR_COLORS
+#------------------------------------------------------------------------------
+#
+# \file            DIR_COLORS
+# \author          Chris Ahlstrom
+# \date            2008-02-26
+# \updates         2014-12-01
+# \updates         2020-11-13
+# \version         $Revision$
+# \license         $XPC_SUITE_GPL_LICENSE$
+#
+#     Configuration file for dircolors, a utility to help you set the
+#     LS_COLORS environment variable used by GNU ls with the --color option.
+#
+#     Many edits and updates by Chris Ahlstrom, and updates from GNU,
+#     Debian, Gentoo.
+#
+#     The keywords COLOR, OPTIONS, and EIGHTBIT (honored by the slackware
+#     version of dircolors) are recognized but ignored.
+#
+#     Below, there should be one TERM entry for each termtype that is
+#     colorizable
+#
+#------------------------------------------------------------------------------
+
+TERM Eterm
+TERM ansi
+TERM color-xterm
+TERM con132x25
+TERM con132x30
+TERM con132x43
+TERM con132x60
+TERM con80x25
+TERM con80x28
+TERM con80x30
+TERM con80x43
+TERM con80x50
+TERM con80x60
+TERM cons25
+TERM console
+TERM cygwin
+TERM dtterm
+TERM eterm-color
+TERM gnome
+TERM gnome-256color
+TERM jfbterm
+TERM konsole
+TERM kterm
+TERM linux
+TERM linux-c
+TERM mach-color
+TERM mlterm
+TERM putty
+TERM rxvt
+TERM rxvt-256color
+TERM rxvt-cygwin
+TERM rxvt-cygwin-native
+TERM rxvt-unicode
+TERM rxvt-unicode-256color
+TERM rxvt-unicode256
+TERM screen
+TERM screen-256color
+TERM screen-256color-bce
+TERM screen-bce
+TERM screen-w
+TERM screen.Eterm
+TERM screen.rxvt
+TERM screen.linux
+TERM terminator
+TERM vt100
+TERM xterm
+TERM xterm-16color
+TERM xterm-256color
+TERM xterm-88color
+TERM xterm-color
+TERM xterm-debian
+
+#------------------------------------------------------------------------------
+# Below are the color init strings for the basic file types. A color init
+# string consists of one or more of the following numeric codes:
+#
+# Attribute codes:
+#
+# 00=none 01=bold 04=underscore 05=blink 07=reverse 08=concealed
+#
+# Text color codes:
+#
+# 30=black 31=red 32=green 33=yellow 34=blue 35=magenta 36=cyan 37=white
+#
+# Background color codes:
+#
+# 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
+#------------------------------------------------------------------------------
+
+# No color at all:
+
+NORMAL 00         # global default, although everything should be something.
+FILE 00           # normal file
+RESET 0           # reset to "normal" color
+DIR 01;34         # directory
+LINK 01;36        # symbolic link.  (If you set this to 'target' instead of a
+                  # numerical value, the color is as for the file pointed to.)
+MULTIHARDLINK 00  # regular file with more than one link
+FIFO 40;33        # pipe
+SOCK 01;35        # socket
+DOOR 01;35        # door
+BLK 40;33;01      # block device driver
+CHR 40;33;01      # character device driver
+
+# ORPHAN 40;31;01 # symlink to nonexistent file
+
+ORPHAN 01;05;37;41   # orphaned syminks
+MISSING 01;05;37;41  # ... and the files they point to
+SETUID 37;41         # file that is setuid (u+s)
+SETGID 30;43         # file that is setgid (g+s)
+CAPABILITY 30;41     # file with capability
+STICKY_OTHER_WRITABLE 30;42 # dir that is sticky and other-writable (+t,o+w)
+OTHER_WRITABLE 34;42 # dir that is other-writable (o+w) and not sticky
+
+# Samba mounts are hard to read with this coloring.
+#
+# OTHER_WRITABLE 34;42 # dir that is other-writable (o+w) and not sticky
+
+OTHER_WRITABLE 30;42 # dir that is other-writable (o+w) and not sticky
+
+STICKY 37;44     # dir with the sticky bit set (+t) and not other-writable
+
+# This (bold green) is for files with execute permission:
+
+EXEC 01;32
+
+# *.keep files from Rational ClearCase
+
+.keep 05;31
+
+# Internationalization files from GNU (black-on-white)
+
+.gmo 01;30;47
+.mo 01;30;47
+.po 01;30;47
+.pot 01;30;47
+
+# List any file extensions like '.gz' or '.tar' that you would like ls
+# to colorize below. Put the extension, a space, and the color init string.
+# (and any comments you want to add after a '#')
+
+# If you use DOS-style suffixes, you may want to uncomment the following:
+#
+# .cmd 01;32 # executables (bright green)
+# .exe 01;32
+# .com 01;32
+# .btm 01;32
+# .bat 01;32
+
+# DOS executable formats (dark yellow) and other stuff, like codecs, sed
+# scripts, and intl-sed scripts (sin).
+
+.acm 00;33
+.ax 00;33
+.bat 00;33
+.BAT 00;33
+.btm 00;33
+.cmd 00;33
+.com 00;33
+.COM 00;33
+.dll 00;33
+.DLL 00;33
+.exe 00;33
+.EXE 00;33
+.m4 00;33
+.qts 00;33
+.qtx 00;33
+.sed 00;33
+.sig 00;33
+.sin 00;33
+.sh 00;33
+
+# ISO files (bright yellow) and font files, including sound fonts and
+# patches.
+
+.iso 00;33;01
+.pat 00;33;01
+.pfm 00;33;01
+.raw 00;33;01
+.sf2 00;33;01
+.ttf 00;33;01
+
+# kernel modules
+
+.ko 00 ;33
+
+# Open-format documents or libraries (green)
+
+.0 00;32
+.1 00;32
+.2 00;32
+.3 00;32
+.4 00;32
+.5 00;32
+.6 00;32
+.7 00;32
+.8 00;32
+.9 00;32
+.a 00;32
+.css 00;32
+.dat 00;32
+.dia 00;32
+.diff 00;32
+.dot 00;32
+.dox 00;32
+.gnumeric 00;32
+.info 00;32
+.key 00;32
+.la 00;32
+.lib 00;32
+.list 00;32
+.log 00;32
+.lst 00;32
+.lyx 00;32
+.mib 00;32
+.odg 00;32
+.odp 00;32
+.ods 00;32
+.odt 00;32
+.ogt 00;32
+.patch 00;32
+.pdf 00;32
+.ps 00;32
+.so 00;32
+.spec 00;32
+.sty 00;32
+.sxw 00;32
+.tex 00;32
+.texi 00;32
+.tjx 00;32
+.txt 00;32
+.TXT 00;32
+.uml 00;32
+
+# XML
+
+.xhtml 01;30;47
+.xmi 01;30;47
+.html 01;30;47
+.ssml 01;30;47
+.xml 01;30;47
+
+# archives or compressed (bright red)
+
+.7z 01;31
+.ace 01;31
+.apk 01;31
+.ar 01;31
+.arc 01;31
+.arj 01;31
+.bz 01;31
+.bz2 01;31
+.cab 01;31
+.cfs 01;31
+.cpio 01;31
+.dar 01;31
+.deb 01;31
+.dmg 01;31
+.dz 01;31
+.ear 01;31
+.gz 01;31
+.hqx 01;31
+.infl 01;31
+.jar 01;31
+.lha 01;31
+.lz 01;31
+.lzh 01;31
+.lzma 01;31
+.lzo 01;31
+.lzx 01;31
+.mar 01;31
+.pea 01;31
+.rar 01;31
+.rpm 01;31
+.rz 01;31
+.s7z 01;31
+.sar 01;31
+.sea 01;31
+.sfark 01;31
+.sfx 01;31
+.shar 01;31
+.tar 01;31
+.taz 01;31
+.tbz2 01;31
+.tgz 01;31
+.tlz 01;31
+.txz 01;31
+.tz 01;31
+.war 01;31
+.wim 01;31
+.wsz 01;31
+.xar 01;31
+.xz 01;31
+.z 01;31
+.Z 01;31
+.zip 01;31
+.zipx 01;31
+.zoo 01;31
+.zpaq 01;31
+.zz 01;31
+
+# Zip archive renamed for transmission in screw-ball secured networks.
+
+.piz 05;31
+
+# image formats
+
+.bmp 00;35
+.cel 00;35
+.dl 00;35
+.eps 00;35
+.fli 00;35
+.gif 00;35
+.gl 00;35
+.ico 00;35
+.jpeg 00;35
+.jpg 00;35
+.mng 00;35
+.mpg 00;35
+.pat 00;35
+.pbm 00;35
+.pcx 00;35
+.pgm 00;35
+.png 00;35
+.ppm 00;35
+.psd 00;35
+.svg 00;35
+.tga 00;35
+.tif 00;35
+.tiff 00;35
+.xbm 00;35
+.xcf 00;35
+.xpm 00;35
+.xwd 00;35
+
+# Video formats
+
+.avi 01;35
+.flc 01;35  # AutoDesk Animator
+.m2v 01;35  # MPEG-2 Video only
+.mkv 01;35  # Matroska (http://matroska.org/)
+.m4v 01;35  # MPEG-4 Video only
+.mp4 01;35  # 'Offical' container for MPEG-4
+.mpeg 01;35
+.mov 01;35
+.mp4v 01;35 # MPEG-4 Video only
+.nuv 01;35
+.ogm 01;35  # Ogg Media File
+.qt 01;35   # Quicktime (http://developer.apple.com/qa/qtw/qtw99.html)
+.swf 01;35
+.rm 01;35   # Real Media
+.rmvb 01;35 # Real Media Variable Bitrate
+.vob 01;35  # MPEG-2 DVD
+.yuv 01;35
+.webm 01;35
+
+# Source-code formats (cyan)
+#
+# TODO:  what is the extension for a C# file
+
+.awk 00;36
+.h 00;36
+.c 00;36
+.hh 00;36
+.cc 00;36
+.c++ 00;36
+.cpp 00;36
+.ch 00;36
+.cxx 00;36
+.f77 00;36
+.for 00;36
+.hpp 00;36
+.hxx 00;36
+.java 00;36
+.js 00;36
+.asm 00;36
+.m 00;36
+.mc 00;36
+.s 00;36
+.H 00;36
+.C 00;36
+.CPP 00;36
+.pas 00;36
+.pl 00;36
+.pm 00;36
+.py 00;36
+.pyw 01;36
+.sl 00;36
+
+# Project files and configuration files, thin and dark red
+
+.ac 00;31
+.am 00;31
+.bcc 00;31
+.bpr 00;31
+.bpk 00;31
+.bpg 00;31
+.cfg 00;31
+.ctrl 00;31
+.def 00;31
+.dfm 00;31
+.drums 00;31
+.guess 00;31
+.header 00;31
+.ini 00;31
+.mutes 00;31
+.pc 00;31
+.PL 00;31
+.playlist 00;31
+.prj 00;31
+.pro 00;31
+.pws 00;31
+.tjp 00;31
+.tji 00;31
+.in 00;31
+.rc 00;31
+.rh 00;31
+.resp 00;31
+.sub 00;31
+.ui 00;31
+.usr 00;31
+.vim 00;31
+
+# Audio wave formats (white)
+
+.MID 00;37
+.MP3 00;37
+.WAV 00;37
+.WMA 00;37
+.aac 00;37
+.au 00;37
+.flac 00;37
+.h2 00;37
+.h2song 00;37
+.h2pattern 00;37
+.ogg 00;37
+.m3u 00;37
+.mid 00;37
+.midi 00;37
+.mod 00;37
+.mka 00;37
+.mp3 00;37
+.pcm 00;37
+.pls 00;37
+.ra 00;37
+.rm 00;37
+.s3m 00;37
+.sid 00;37
+.sph 00;37
+.wav 00;37
+.wma 00;37
+.xm 00;37
+
+# Test formats (bright white)
+#
+# These extensions are made-up ones to see these colors.  You might not be
+# able to see some of the numbers on your screen <grin>.
+
+.blk 00;30
+.wht 01;37
+.x38 00;38
+.x39 00;39
+
+# Microsoft formats not specified elsewhere in this file.  Changed from
+# 34 (blue) to 30 (black), made bold for easier reading on a black
+# terminal.  Note that .chm is actually a compressed file, using (like
+# .cab) a form of compression that Microsoft copped from the Amiga!!!
+#
+# .asp 01;33;43
+
+.asp 00;33
+.aspx 00;33
+.chm 00;33
+.doc 00;33
+.docx 00;33
+.dsp 00;33
+.filters 00;33
+.htm 00;33
+.img 00;33
+.mak 00;33
+.mk 00;33
+.mdl 00;33
+.mpp 00;33
+.pj 00;33
+.ppt 00;33
+.pptx 00;33
+.reg 00;33
+.rtf 00;33
+.sln 00;33
+.sys 00;33
+.use 00;33
+.vc7 00;33
+.vcproj 00;33
+.vcxproj 00;33
+.vsd 00;33
+.wrk 00;33
+.xls 00;33
+.xlsx 00;33
+
+.DOC 00;33
+.HTM 00;33
+.PPT 00;33
+.XLS 00;33
+.VSD 00;33
+
+# Test formats (bold black)
+
+.bbl 01;30
+
+# Object files and intermediate formats (reduce their visibility)
+
+.aux 00;34
+.dvi 00;34
+.idb 00;34
+.idx 00;34
+.map 00;34
+.mo 00;34
+.moc 00;34
+.ncb 00;34
+.o 00;34
+.obj 00;34
+.out 00;34
+.pdb 00;34
+.pyc 00;34
+.pyo 00;34
+.suo 00;34
+.toc 00;34
+
+# AutoCAD formats
+
+.dwg 00;34  
+.dxf 00;34  
+
+# Hybrid formats (white on blue)
+
+.asf 44;37  # Advanced Systems Format (contains Windows Media Video)
+.wmv 44;37  # Windows Media Video
+
+#******************************************************************************
+# /etc/DIR_COLORS
+#------------------------------------------------------------------------------
+# Local Variables:
+# End:
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 et ft=dircolors
+#------------------------------------------------------------------------------
+

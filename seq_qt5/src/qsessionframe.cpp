@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-09-01
+ * \updates       2020-11-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -121,6 +121,12 @@ qsessionframe::session_log_append (const std::string & text)
 {
     ui->sessionLogText->append("<br>");            // need a newline?
     ui->sessionLogText->append(text.c_str());
+}
+
+void
+qsessionframe::song_path (const std::string & text)
+{
+    ui->songPathText->setText(text.c_str());
 }
 
 }               // namespace seq66

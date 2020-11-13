@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-05
+ * \updates       2020-11-12
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -771,14 +771,15 @@ rcsettings::mute_group_save_label () const
 }
 
 /**
- *  Prepends the exisiting m_midi_filepath value to the current value and
- *  stores it as the new m_midi_filename value.  This function is meant to be
- *  used (currently) only under session management.
+ *  Prepends the exisiting m_midi_filepath value (if not empty) to the current
+ *  value and stores it as the new m_midi_filename value.  This function is
+ *  meant to be used mainly under session management, but remember that the
+ *  session MIDI file-name is the same entity as the regular MIDI file-name.
  *
  * \param value
  *      Provides the base name for the MIDI file, such as "mytune.midi".  If
  *      the ".midi" isn't provided (only the "." is searched), it will be
- *      appended.  If empty, the m_midi_filename value is cleared
+ *      appended.  If empty, the m_midi_filename value is cleared.
  */
 
 void
@@ -791,10 +792,13 @@ rcsettings::session_midi_filename (const std::string & value)
     else
     {
         std::string base = file_extension_set(value, ".midi");
-        std::string path = m_midi_filepath;
-        path += path_slash();
-        path += base;
-        m_midi_filename = path;
+        if (! m_midi_filepath.empty())
+        {
+            std::string path = filename_concatenate(m_midi_filepath, base);
+            m_midi_filename = path;
+        }
+        else
+            m_midi_filename = base;
     }
 }
 

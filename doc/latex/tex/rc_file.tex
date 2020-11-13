@@ -14,29 +14,29 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 "rc" Configuration File}
+\section{Seq66 "rc" Configuration File}
 \label{sec:seq66_rc_file}
 
-   There are two \textsl{Sequencer66} configuration files:
+   There are two \textsl{Seq66} configuration files:
    \texttt{sequencer66.rc} and \texttt{sequencer66.usr}.
    See \sectionref{sec:seq66_usr_file}; it describes the "usr" file,
    is handled a bit differently than the "rc" file.
 
    \index{sequencer66.rc}
-   The \textsl{Sequencer66} configuration file originally was
+   The \textsl{Seq66} configuration file originally was
    named \texttt{.seq24rc},
    and it was stored directly in the user's \texttt{\$HOME} directory,
    following the convention of \textsl{Seq24}.
    To avoid interference with one's existing installation of 
    \textsl{Seq24}, we created a new file
    to take its place, with a fall-back to the original file-name if the new
-   file does not exist, or if \textsl{Sequencer66} is running in
+   file does not exist, or if \textsl{Seq66} is running in
    \index{legacy mode}
    legacy mode.
    In addition, one can change the configuration directory and the base name of
    the "rc" and "usr" files from the command-line.
 
-   After you run \textsl{Sequencer66} for the first time (in non-legacy
+   After you run \textsl{Seq66} for the first time (in non-legacy
    mode), it will generate a \texttt{sequencer66.rc} file in your home
    \textsl{configuration} directory:
 
@@ -47,9 +47,9 @@
    It contains the the data for remote MIDI control, computer keyboard
    control, MIDI clock, JACK transport, and a few other settings.
 
-   \textsl{Sequencer66} will
+   \textsl{Seq66} will
    \textsl{always} overwrite the \texttt{sequencer6.rc} file upon
-   quitting.  One must therefore quit \textsl{Sequencer66} before making
+   quitting.  One must therefore quit \textsl{Seq66} before making
    manual modifications to the \texttt{sequencer66.rc} file.
    Note that many of
    its settings can be modified in the \textbf{Options} dialog
@@ -64,8 +64,8 @@
 \subsection{"rc" File / Comments}
 \label{subsec:seq66_rc_file_midi_comments}
 
-   The very top of the "rc" file that \textsl{Sequencer66} generates is a stock
-   banner showing the version of \textsl{Sequencer66} to which this file
+   The very top of the "rc" file that \textsl{Seq66} generates is a stock
+   banner showing the version of \textsl{Seq66} to which this file
    applies, the name of the configuration file, and when it was written.  The
    user can also add a comments section that explain what the user's setup is
    in brief:
@@ -83,17 +83,17 @@
 \subsection{"rc" File / MIDI Control}
 \label{subsec:seq66_rc_file_midi_control}
 
-   Like \textsl{Seq24}, \textsl{Sequencer66} provides a way to control the
+   Like \textsl{Seq24}, \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
    a MIDI pad device.  The current section describes this feature;
    additional resources and ideas can be found at \url{linuxaudio.org}
    (\cite{midicontrol}).
 
    \index{[midi-control-file]}
-   New with version 0.96 of \textsl{Sequencer66} is the ability
+   New with version 0.96 of \textsl{Seq66} is the ability
    to offload the MIDI control section to a separate file.  Simply move
    the whole \texttt{[midi-control]} section to a separate file in
-   the \textsl{Sequencer66} configuration directory, and add the following
+   the \textsl{Seq66} configuration directory, and add the following
    snippet:
 
    \begin{verbatim}
@@ -116,11 +116,11 @@
 
    The number (74) is the number of lines in the MIDI Control section.  The
    extended automation values bring this number up to 84, and the most recent
-   version of \textsl{Sequencer66} brings this up to 96.  Note that earlier
+   version of \textsl{Seq66} brings this up to 96.  Note that earlier
    version will complain about numbers higher than what they can handle.  If
    so, edit the "rc" file to reduce that number.
 
-   Even in the latest version of \textsl{Sequencer66}, 
+   Even in the latest version of \textsl{Seq66}, 
    not all of these new values are yet usable, and there are also some values
    reserved for future expansion.  Currently, the
    "start", "pause", "stop", and "bpm" page controls, and the "performance
@@ -133,7 +133,7 @@
    \end{verbatim}
 
    The first number is an \textsl{internal} control number ranging from
-   0 to 73, 83, or 95 depending on the version of \textsl{Sequencer66}.
+   0 to 73, 83, or 95 depending on the version of \textsl{Seq66}.
    The three bracketed sections represent MIDI controls to
    \index{[midi-control]!toggle}
    toggle,
@@ -187,7 +187,7 @@
    falls in the range specified.  All values are in decimal.
 
    \textbf{Note}: In legacy versions (\textsl{Seq24} and early versions
-   of \textsl{Sequencer66}), the channel nybble of the MIDI control (and all
+   of \textsl{Seq66}), the channel nybble of the MIDI control (and all
    other incoming MIDI events) were stripped off.
    This is no longer the case, and thus opens up many more events useful for
    MIDI control.   But do note that events that are actually recorded end up
@@ -227,7 +227,7 @@
    control.
 
    As a quick example, let us set up a Note On event on channel 2 and key value
-   48 that will increment \textsl{Sequencer66}'s BPM value each time it is
+   48 that will increment \textsl{Seq66}'s BPM value each time it is
    pressed.  A Note On event is 0x90 hex, or 144 decimal.  Channel 2 is 0x1 hex
    or 1 decimal.   Adding the Note On value to the the channel number yields
    0x91 hex, or 145 decimal.  Then we pick a note value of 48, which is one of
@@ -456,21 +456,21 @@
 
    The automation control keys occupy the entries from 64 to 73.
    These entries control
-   \textsl{Sequencer66} actions like changing the BPM value, screen-set, etc.
-   \textsl{Sequencer66} adds some more entries, from 74 to 83, to control
-   additional \textsl{Sequencer66} functions such as performance
+   \textsl{Seq66} actions like changing the BPM value, screen-set, etc.
+   \textsl{Seq66} adds some more entries, from 74 to 83, to control
+   additional \textsl{Seq66} functions such as performance
    record, solo, etc.
    
    One issue with this group is that the original control functions are a bit
    wasteful.  For example there are two control lines for BPM:  BPM up and BPM
    down.  These could have been combined into one line, with the "on" group
    meaning "up", and the "off" group meaning "down".  
-   \textsl{Sequencer66} at present does not change this setup, to avoid
+   \textsl{Seq66} at present does not change this setup, to avoid
    breaking existing MIDI control sections.
 
    Each item in this group consists of one line.  Each line
    specifies a MIDI event that can cause a given
-   \textsl{Sequencer66} user-interface operation to occur.
+   \textsl{Seq66} user-interface operation to occur.
    Here are the original automation-group settings:
 
    \begin{enumerate}
@@ -613,7 +613,7 @@
 
    This control sets an internal "mode-group" flag on.
 
-   When activated, \textsl{Sequencer66} loops through all of the 32
+   When activated, \textsl{Seq66} loops through all of the 32
    screen-sets, and through the active pattern in each screen-set, and
    sets each pattern as muted or unmuted, depending on the saved mute state.
 
@@ -672,12 +672,12 @@ but we're not completely sure how it works yet.
 \label{paragraph:seq66_rc_file_midi_ctrl_ex_stopps}
 
    \index{rc!start/stop control}
-   Here, we will set up \textsl{Sequencer66} so that the first three MIDI
+   Here, we will set up \textsl{Seq66} so that the first three MIDI
    white keys (notes 0, 2, and 4) will become "Stop", "Pause", and "Start"
    buttons.
 
    The first step, if not already done, is to install the newest version
-   (\textbf{0.96.0} and above) of \textsl{Sequencer66},
+   (\textbf{0.96.0} and above) of \textsl{Seq66},
    run it, and then exit.
    Verify in the regenerated "rc" file
    (\texttt{\textasciitilde/.config/sequencer66/sequencer66.rc}) that the
@@ -751,7 +751,7 @@ but we're not completely sure how it works yet.
    Do not use a zero velocity, as it seems that VMPK will not transmit Note On
    messages with a zero velocity.
 
-   Next, run \textsl{Sequencer66}, using the following command line to make
+   Next, run \textsl{Seq66}, using the following command line to make
    sure that it is using ALSA and using automatic mode to connect the ALSA MID
    ports:
 
@@ -887,7 +887,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
    After the list of sequences and their MIDI events, one can 
-   set \textsl{Sequencer66} to handle MIDI events and change some more settings
+   set \textsl{Seq66} to handle MIDI events and change some more settings
    in \texttt{sequencer66.rc}.
 
    What is the different between the \textbf{mute-in group}
@@ -900,14 +900,14 @@ but we're not completely sure how it works yet.
 
    \index{[midi-clock]}
    The MIDI Clock fields will contain the clocking state from the last 
-   time \textsl{Sequencer66} was run.  Turn off the clock with a 0, or on
+   time \textsl{Seq66} was run.  Turn off the clock with a 0, or on
    with a 1 (which means to send MIDI Song Position, and MIDI Continue if
    starting after tick 0), or on with positioning with a 2, which sends MIDI
    Start and then bbegins clocking after the position reaches a modulo of the
    \textbf{Clock Start Modulo value)}.  Luckily, the user-interface makes it
    easy to select the desire value, and has tool-tips to instruct the user.
    This section has 16 entries, one for each MIDI output buss that
-   \textsl{Sequencer66} supports.
+   \textsl{Seq66} supports.
 
    This configuration item is the same as the 
    \textbf{MIDI Clock} tab described in
@@ -936,7 +936,7 @@ but we're not completely sure how it works yet.
       15 0  # [16] seq24 16
    \end{verbatim}
 
-   That sample would be written one had started up \textsl{Sequencer66} in
+   That sample would be written one had started up \textsl{Seq66} in
    manual-mode.  On our system, where we have Timidity running, and
    erroneously have also specified 3 MIDI busses that we do not have, in the
    \texttt{sequencer66.usr} file:
@@ -961,7 +961,7 @@ but we're not completely sure how it works yet.
 
    \index{[midi-meta-events]}
    The new MIDI Meta events section is the start of additional options
-   supporting meta events as normal events in \textsl{Sequencer66}.
+   supporting meta events as normal events in \textsl{Seq66}.
    \index{tempo-track-number}
 
    \begin{verbatim}
@@ -970,7 +970,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
    Normally, as per the MIDI specification, the first track (track 1 in track
-   numbering, or pattern 0 in \textsl{Sequencer66} numbering) is \textsl{the}
+   numbering, or pattern 0 in \textsl{Seq66} numbering) is \textsl{the}
    official track for certain MIDI meta events, such as Set Tempo and Time
    Signature.  However, to accommodate existing tunes and their set
    arrangement, we allow the user to go into \textbf{File / Options / MIDI
@@ -984,7 +984,7 @@ but we're not completely sure how it works yet.
 \label{subsec:seq66_rc_file_keyboard_control}
         
    \index{[keyboard control]}
-   The keyboard control is a dump of the keys that \textsl{Sequencer66}
+   The keyboard control is a dump of the keys that \textsl{Seq66}
    recognises, and each key's corresponding sequence number.
    Note that the first number corresponds to the number of sequences in
    the active screen set.
@@ -1058,8 +1058,8 @@ but we're not completely sure how it works yet.
    the \texttt{--show-keys}.
 
    Some keys should not be assigned to control sequences in
-   \textsl{Sequencer66} as they are already assigned in the
-   \textsl{Sequencer66} menu (with \texttt{Ctrl}). 
+   \textsl{Seq66} as they are already assigned in the
+   \textsl{Seq66} menu (with \texttt{Ctrl}). 
 
    This configuration item is the same as the 
    \textbf{Keyboard} tab described in
@@ -1151,9 +1151,9 @@ but we're not completely sure how it works yet.
       [jack-transport]
       # jack_transport - Enable slave sync with JACK Transport.
       0
-      # jack_master - Sequencer66 attempts to serve as JACK Master.
+      # jack_master - Seq66 attempts to serve as JACK Master.
       0
-      # jack_master_cond - Sequencer66 is master if no other master exists.
+      # jack_master_cond - Seq66 is master if no other master exists.
       0
       # song_start_mode (applies mainly if JACK is enabled)
       # 0 = Playback in live mode. Allows muting and unmuting of loops.
@@ -1249,7 +1249,7 @@ but we're not completely sure how it works yet.
          Where the "manual" idea comes in is that the user can manually choose
          the connections to be made.
       \item This option is not just for ALSA.  It can also be used when
-         \textsl{Sequencer66} is running in native JACK mode, so support
+         \textsl{Seq66} is running in native JACK mode, so support
          virtual JACK ports that can be connected manually (e.g. in the
          \textsl{QJackCtl} application.)
    \end{enumerate}
@@ -1261,20 +1261,20 @@ but we're not completely sure how it works yet.
       # connect to other clients.  Use 1 to expose all 16 MIDI ports to
       # JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
       # already running on one's computer, or to use the autoconnect
-      # feature (Sequencer66 connects to existing JACK ports on startup.
+      # feature (Seq66 connects to existing JACK ports on startup.
       1
    \end{verbatim}
 
    \index{--auto-ports}
    The opposite of \texttt{--manual-ports}
    is \texttt{--auto-ports}.  The auto-ports option
-   forces \textsl{Sequencer66} to use the system's existing ALSA ports.
+   forces \textsl{Seq66} to use the system's existing ALSA ports.
    This is necessary in order to play tunes through software synthesizers that
    use ALSA MIDI.
 
    \index{jack!manual-ports}
    Turning on the manual-ports option is necessary if one
-   wants to use the legacy \textsl{Sequencer66} (\texttt{sequencer66})
+   wants to use the legacy \textsl{Seq66} (\texttt{sequencer66})
    with JACK.
    It is \textsl{not} necessary if using the native JACK MIDI version,
    \texttt{seq66}.
@@ -1358,7 +1358,7 @@ but we're not completely sure how it works yet.
    at the middle of the pattern.
 
    \begin{verbatim}
-      # Set to 1 to allow Sequencer66 to split performance editor
+      # Set to 1 to allow Seq66 to split performance editor
       # triggers at the closest snap position, instead of splitting the
       # trigger exactly in its middle.  Remember that the split is
       # activated by a middle click.
@@ -1414,7 +1414,7 @@ but we're not completely sure how it works yet.
 
    \index{[auto-option-save]}
    This new item determines if the "rc" configuration file is saved
-   upon exit of \textsl{Sequencer66}.  The legacy behavior is to save it,
+   upon exit of \textsl{Seq66}.  The legacy behavior is to save it,
    which can sometimes be inconvenient when one is just trying out some
    command-line options.
 
@@ -1462,7 +1462,7 @@ but we're not completely sure how it works yet.
 \subsection{"rc" File / Play-List}
 \label{subsec:seq66_rc_file_playlist}
 
-   This is a feature new with version 0.96.0 of \textsl{Sequencer66}.
+   This is a feature new with version 0.96.0 of \textsl{Seq66}.
    It provides a configured set of named play-lists in a play-list file,
    and a flag to activate it.
    
@@ -1477,7 +1477,7 @@ but we're not completely sure how it works yet.
 
    See \sectionref{sec:playlist}.
    It describes the setup, layout, and usage of a
-   \textsl{Sequencer66} playlist.
+   \textsl{Seq66} playlist file containing one or more playlists.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex
