@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-10-31
+ * \updates       2020-11-14
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -143,8 +143,8 @@ qt5nsmanager::create_window ()
         {
             m_window.reset(qm);
             m_window->show();
-            m_window->attach_session(this);     /* ATTACH/DETACH        */
-            (void) smanager::create_window();   /* just house-keeping   */
+            m_window->attach_session(this);         /* ATTACH/DETACH        */
+            (void) smanager::create_window();       /* just house-keeping   */
             if (error_active())
             {
                 show_error("", error_message());
@@ -159,15 +159,24 @@ qt5nsmanager::create_window ()
             }
             else
             {
-                std::string path = usensm ?
-                    manager_path() : rc().home_config_directory() ;
+                std::string path;               /* config or session path   */
+                std::string name;               /* config or session name   */
 
+                if (usensm)
+                {
+                    path = manager_path();
+                    name = display_name();
+                }
+                else
+                {
+                    path = rc().home_config_directory();
+                    name = rc().config_filename();
+                }
                 m_window->session_manager(manager_name());
                 m_window->session_path(path);
-                m_window->session_display_name(display_name());
+                m_window->session_display_name(name);
                 m_window->session_client_id(client_id());
                 m_window->session_log("No log entries.");
-                // m_window->song_path(mfname);
                 m_window->song_path(rc().midi_filename());
 
 #if defined SEQ66_NSM_SUPPORT

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-29
- * \updates       2018-12-05
+ * \updates       2020-11-14
  * \license       GNU GPLv2 or above
  *
  *  The seq66::recent class simply keeps track of recently-used files for the
@@ -104,7 +104,8 @@ recent::~recent ()
  *  This function is meant to be used when loading the recent-files list from
  *  a configuration file.  Unlike the add() function, this one will not pop
  *  off an existing item to allow the current item to be put into the
- *  container.  If the entry is already in the list, it is ignored.
+ *  container.  If the entry is already in the list, it is ignored. It assumes
+ *  the container had been cleared before this series of append() calls.
  *
  * \param item
  *      Provides the file-name to append.  It is converted to the full path to
@@ -228,12 +229,7 @@ recent::get (int index) const
     if (index >= 0 && index < count())
     {
         result = m_recent_list[container::size_type(index)];
-
-#if defined SEQ66_PLATFORM_WINDOWS
-        result = normalize_path(result, false);
-#else
-        result = normalize_path(result, true);
-#endif
+        result = normalize_path(result);    /* UNIX and no slash terminator */
     }
     return result;
 }

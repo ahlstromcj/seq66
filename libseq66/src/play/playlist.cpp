@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-10-15
+ * \updates       2020-11-14
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -135,7 +135,8 @@ playlist::set_error_message (const std::string & additional) const
  *  In that case, this function will fail as well.
  *
  * \param fname
- *      The full path to the file to be opened.
+ *      The full path to the file to be opened.  If this parameter is empty,
+ *      no load is attempted, but playback is stopped and the song is cleared.
  *
  * \param verifymode
  *      If true, open the file in play-list mode.  Currently, this means
@@ -155,6 +156,9 @@ playlist::open_song (const std::string & fname, bool verifymode)
 
         result = m_performer->clear_song();
     }
+    if (result)
+        result = ! fname.empty();
+
     if (result)
     {
         bool is_wrk = file_extension_match(fname, "wrk");
@@ -260,7 +264,8 @@ playlist::open_select_song_by_midi (int ctrl, bool opensong)
  *      slow startup way down if there are a lot of big files in the playlist.
  *
  * \return
- *      Returns true if all of the MIDI files are verifiable.
+ *      Returns true if all of the MIDI files are verifiable.  A blank
+ *      filename (empty playlist) results in a false return value.
  */
 
 bool
@@ -276,6 +281,11 @@ playlist::verify (bool strong)
             {
                 const song_spec_t & s = sci.second;
                 std::string fname = song_filepath(s);
+                if (fname.empty())
+                {
+                    result = false;
+                    break;
+                }
                 if (file_exists(fname))
                 {
                     if (strong)
@@ -424,9 +434,17 @@ playlist::open_current_song ()
         if (m_current_song != m_current_list->second.ls_song_list.end())
         {
             std::string fname = song_filepath(m_current_song->second);
-            result = open_song(fname);
-            if (! result)
-                (void) set_file_error_message("Open failed: song '%s'", fname);
+            if (! fname.empty())
+            {
+                result = open_song(fname);
+                if (! result)
+                {
+                    (void) set_file_error_message
+                    (
+                        "Open failed: song '%s'", fname
+                    );
+                }
+            }
         }
     }
     return result;

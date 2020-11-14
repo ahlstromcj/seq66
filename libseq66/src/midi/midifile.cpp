@@ -503,6 +503,14 @@ midifile::read_gap (size_t sz)
  *  the file.  No file buffering needed on these beefy machines!  :-)
  *  As a side-effect, also sets m_file_size.
  *
+ *  We were using the assignment operator, but this caused an error using old
+ *  32-bit debian stable, g++ 4.9 on one of our old laptops.  The assignment
+ *  operator was deleted by the compiler.  So now we use constructor notation.
+ *  A little bit odd, since we thought the compiler would convert assignment
+ *  operator notation to constructor notation, but hey, compilers are not
+ *  perfect.  Also, no need to use the krufty string pointer for the
+ *  file-name.
+ *
  * \param tag
  *      Basically an informative string to denote what kind of file is being
  *      opened, "MIDI" or "WRK".
@@ -515,15 +523,8 @@ midifile::read_gap (size_t sz)
 bool
 midifile::grab_input_stream (const std::string & tag)
 {
-    /*
-     * We were using the assignment operator, but this caused an error
-     * using old 32-bit debian stable, g++ 4.9 on one of our old laptops.
-     * The assignment operator was deleted by the compiler.  So now we
-     * use constructor notation.  A little bit odd, since we thought the
-     * compiler would convert assignment operator notation to constructor
-     * notation, but hey, compilers are not perfect.  Also, no need to use the
-     * krufty string pointer for the file-name.
-     */
+    if (m_name.empty())
+        return false;
 
     std::ifstream file(m_name, std::ios::in | std::ios::binary | std::ios::ate);
     bool result = file.is_open();

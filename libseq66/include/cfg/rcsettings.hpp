@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-05
+ * \updates       2020-11-14
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -807,6 +807,11 @@ public:
         return m_recent_files.remove(filename);
     }
 
+    void clear_recent_files ()
+    {
+        m_recent_files.clear();
+    }
+
     const std::string & config_directory () const
     {
         return m_config_directory;
@@ -816,7 +821,11 @@ public:
     bool has_home_config_path (const std::string & name);
     std::string home_config_directory () const;
     std::string trim_home_directory (const std::string & filepath);
-    const std::string & config_filename () const;
+
+    const std::string & config_filename () const
+    {
+        return m_config_filename;
+    }
 
     bool playlist_active () const
     {

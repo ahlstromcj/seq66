@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-12
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -928,16 +928,6 @@ rcsettings::config_filename (const std::string & value)
 
     if (m_config_filename.find(".") == std::string::npos)
         m_config_filename += ".rc";
-}
-
-/**
- *
- */
-
-const std::string &
-rcsettings::config_filename () const
-{
-    return m_config_filename;
 }
 
 /**

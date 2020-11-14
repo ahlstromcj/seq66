@@ -521,6 +521,7 @@ rcfile::parse ()
     {
         int count;
         sscanf(scanline(), "%d", &count);
+        rc_ref().clear_recent_files();
         for (int i = 0; i < count; ++i)
         {
             if (next_data_line(file))

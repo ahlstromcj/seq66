@@ -251,9 +251,9 @@ qsmainwnd::qsmainwnd
     m_msg_error             (nullptr),
     m_msg_save_changes      (nullptr),
     m_timer                 (nullptr),
-    m_menu_recent           (nullptr),
-    m_recent_action_list    (),
-    mc_max_recent_files     (10),
+    m_menu_recent           (nullptr),          /* QMenu *                  */
+    m_recent_action_list    (),                 /* QList<QAction *>         */
+    mc_max_recent_files     (10),               /* constant                 */
     m_import_dialog         (nullptr),
     m_main_perf             (p),
     m_beat_ind              (nullptr),
@@ -1111,8 +1111,10 @@ qsmainwnd::import_into_session ()
         {
             if (open_file(selectedfile))
             {
-                // now change the filename to reflect the base NSM directory
-                // and immediately save it
+                /*
+                 * Now change the filename to reflect the base NSM directory
+                 * and immediately save it.
+                 */
 
                 std::string basename = filename_base(selectedfile);
                 rc().session_midi_filename(basename);   /* make NSM name  */
@@ -1166,6 +1168,7 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
             this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
             tr
             (
+                "MIDI/WRK files (*.midi *.mid *.MID *.wrk *.WRK);;"
                 "MIDI files (*.midi *.mid *.MID);;"
                 "WRK files (*.wrk *.WRK);;"
                 "All files (*)"
@@ -1738,7 +1741,7 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
         result = write_midi_file(perf(), filename, errmsg);
         if (result)
         {
-            if (updatemenu)
+            if (updatemenu)                     /* or ! use_nsm()           */
                 update_recent_files_menu();     /* add the recent file-name */
         }
         else
