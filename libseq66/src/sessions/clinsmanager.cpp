@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-13
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -105,12 +105,14 @@ clinsmanager::detect_session (std::string & url)
             url = tenturl;
     }
     warnprint("Checking environment for NSM_URL");
+#if defined SEQ66_NSM_SUPPORT                       /* TODO for portmidi    */
     tenturl = nsm::get_url();
-    if (! tenturl.empty())                         /* environment NSM URL   */
+    if (! tenturl.empty())                          /* environment NSM URL  */
     {
         result = true;
         url = tenturl;
     }
+#endif
     if (result)
     {
         bool testing = url == "testing";

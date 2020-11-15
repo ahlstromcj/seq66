@@ -6,7 +6,7 @@
 # \library    	qpseq66 application
 # \author     	Chris Ahlstrom
 # \date       	2018-04-08
-# \update      2020-06-01
+# \update      2020-11-14
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -73,9 +73,10 @@ windows {
 }
 
 # Common:
+#
+# Removed because not needed: src/finddefault.c
 
 SOURCES += \
- src/finddefault.c \
  src/mastermidibus.cpp \
  src/midibus.cpp \
  src/pmutil.c \

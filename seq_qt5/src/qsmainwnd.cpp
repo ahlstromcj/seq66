@@ -1233,7 +1233,7 @@ bool
 qsmainwnd::open_file (const std::string & fn)
 {
     std::string errmsg;
-    bool result = perf().read_midi_file(fn, errmsg);
+    bool result = perf().read_midi_file(fn, errmsg);    /* updates recents  */
     if (result)
     {
         redo_live_frame();

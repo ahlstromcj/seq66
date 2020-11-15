@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-14
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -431,6 +431,14 @@ private:
 
     recent m_recent_files;
 
+    /**
+     *  If true, this flag indicates to open the most recent MIDI file, which is
+     *  the first in the list.  This flag is set and used only at startup time,
+     *  after the "session" is created.
+     */
+
+    bool m_load_most_recent;
+
 public:
 
     rcsettings ();
@@ -812,6 +820,11 @@ public:
         m_recent_files.clear();
     }
 
+    bool load_most_recent () const
+    {
+        return m_load_most_recent;
+    }
+
     const std::string & config_directory () const
     {
         return m_config_directory;
@@ -1050,6 +1063,11 @@ protected:
     void  midi_base_directory (const std::string & mbd)
     {
         m_playlist_midi_base = mbd;
+    }
+
+    void load_most_recent (bool f)
+    {
+        m_load_most_recent = f;
     }
 
     bool mute_group_save (const std::string & v);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-28
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -519,8 +519,11 @@ rcfile::parse ()
     }
     if (line_after(file, "[recent-files]"))
     {
-        int count;
-        sscanf(scanline(), "%d", &count);
+        int count, loadrecent;
+        int number = sscanf(scanline(), "%d %d", &count, &loadrecent);
+        if (number > 1)
+            rc_ref().load_most_recent(loadrecent != 0);
+
         rc_ref().clear_recent_files();
         for (int i = 0; i < count; ++i)
         {
@@ -1115,8 +1118,11 @@ rcfile::write ()
     int count = rc_ref().recent_file_count();
     file << "\n"
         "[recent-files]\n\n"
-        "# Holds a list of the last few recently-loaded MIDI files.\n\n"
-        << count << "\n\n"
+        "# Holds a list of the last few recently-loaded MIDI files. The first\n"
+        "# number is the number of items in the list.  The second value\n"
+        "# indicates if to load the most recent file (the top of the list)\n"
+        "# at startup (1 == load it).\n\n"
+        << count << " " << (rc_ref().load_most_recent() ? "1" : "0") << "\n\n"
         ;
 
     if (count > 0)

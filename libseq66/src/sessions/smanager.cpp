@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-11-07
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -766,6 +766,29 @@ smanager::create (int argc, char * argv [])
         if (result)
             result = open_playlist();
 
+        if (result && rc().load_most_recent())
+        {
+            /*
+             * Get full path to the most recently-opened or imported file.
+             * What if smanager::open_midi_file() has already been
+             * called via the command-line? Then skip this step.
+             */
+
+            if (midi_filename().empty())
+            {
+                std::string midifname = rc().recent_file(0, false);
+                if (! midifname.empty())
+                {
+                    std::string errmsg;
+                    std::string tmp = open_midi_file(midifname, errmsg);
+                    if (tmp.empty())
+                        file_error(errmsg, midifname);
+                    else
+                        file_message("Opened", tmp);
+                }
+            }
+        }
+
         if (result)
             result = open_note_mapper();
 
@@ -781,19 +804,16 @@ smanager::create (int argc, char * argv [])
             {
                 std::string errormessage;
                 std::string tmp = open_midi_file(fname, errormessage);
+
                 /*
                  * We don't have a window at this time, and should save the
                  * message for display later.  For now, we write to the console.
                  */
 
                 if (tmp.empty())
-                {
                     file_error(errormessage, fname);
-                }
                 else
-                {
-                    file_message("Opened", tmp);           /* fname */
-                }
+                    file_message("Opened", tmp);
             }
             result = create_window();
             if (result)

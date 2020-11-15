@@ -126,7 +126,8 @@ rcsettings::rcsettings () :
     m_notemap_filename          (),
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
-    m_recent_files              ()
+    m_recent_files              (),
+    m_load_most_recent          (true)
 {
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
@@ -222,8 +223,9 @@ rcsettings::set_defaults ()
      * const: m_application_name = seq_app_name();
      */
 
-    m_tempo_track_number        = 0;
+    m_tempo_track_number = 0;
     m_recent_files.clear();
+    m_load_most_recent = true;
     set_config_files(SEQ66_CONFIG_NAME);
 }
 

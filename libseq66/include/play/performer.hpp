@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-11-08
+ * \updates       2020-11-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -989,24 +989,24 @@ public:
      * Start of playlist accessors.  Playlist functionality.
      */
 
-    bool playlist_exists () const
+    bool list_exists () const
     {
         return bool(m_play_list);
     }
 
     int playlist_count () const
     {
-        return m_play_list ? m_play_list->list_count() : 0 ;
+        return list_exists() ? m_play_list->list_count() : 0 ;
     }
 
     int song_count () const
     {
-        return m_play_list ? m_play_list->song_count() : 0 ;
+        return list_exists() ? m_play_list->song_count() : 0 ;
     }
 
     bool playlist_reset ()
     {
-        return m_play_list ? m_play_list->reset_list() : false ;
+        return list_exists() ? m_play_list->reset_list() : false ;
     }
 
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
@@ -1014,107 +1014,107 @@ public:
 
     bool remove_playlist ()
     {
-        return m_play_list ? m_play_list->reset_list(true) : false ;
+        return list_exists() ? m_play_list->reset_list(true) : false ;
     }
 
     void playlist_show ()
     {
-        if (m_play_list)
+        if (list_exists())
             m_play_list->show();
     }
 
     void playlist_test ()
     {
-        if (m_play_list)
+        if (list_exists())
             m_play_list->test();
     }
 
     std::string playlist_filename () const
     {
-        return m_play_list ? m_play_list->file_name() : "" ;
+        return list_exists() ? m_play_list->file_name() : "" ;
     }
 
     std::string playlist_midi_base () const
     {
-        return m_play_list ? m_play_list->midi_base_directory() : "" ;
+        return list_exists() ? m_play_list->midi_base_directory() : "" ;
     }
 
     int playlist_midi_number () const
     {
-        return m_play_list ? m_play_list->list_midi_number() : 0 ;
+        return list_exists() ? m_play_list->list_midi_number() : 0 ;
     }
 
     std::string playlist_name () const
     {
-        return m_play_list ? m_play_list->list_name() : "" ;
+        return list_exists() ? m_play_list->list_name() : "" ;
     }
 
     bool playlist_mode () const
     {
-        return m_play_list ? m_play_list->mode() : false ;
+        return list_exists() ? m_play_list->mode() : false ;
     }
 
     void playlist_mode (bool on)
     {
-        if (m_play_list)
+        if (list_exists())
             m_play_list->mode(on);
     }
 
     const std::string & playlist_error_message () const
     {
         static std::string s_dummy;
-        return m_play_list ? m_play_list->error_message() : s_dummy ;
+        return list_exists() ? m_play_list->error_message() : s_dummy ;
     }
 
     std::string file_directory () const
     {
-        return m_play_list ? m_play_list->file_directory() : "" ;
+        return list_exists() ? m_play_list->file_directory() : "" ;
     }
 
     std::string song_directory () const
     {
-        return m_play_list ? m_play_list->song_directory() : "" ;
+        return list_exists() ? m_play_list->song_directory() : "" ;
     }
 
     bool is_own_song_directory () const
     {
-        return m_play_list ? m_play_list->is_own_song_directory() : false ;
+        return list_exists() ? m_play_list->is_own_song_directory() : false ;
     }
 
     std::string song_filename () const
     {
-        return m_play_list ? m_play_list->song_filename() : "" ;
+        return list_exists() ? m_play_list->song_filename() : "" ;
     }
 
     std::string song_filepath () const
     {
-        return m_play_list ? m_play_list->song_filepath() : "" ;
+        return list_exists() ? m_play_list->song_filepath() : "" ;
     }
 
     int song_midi_number () const
     {
-        return m_play_list ? m_play_list->song_midi_number() : 0 ;
+        return list_exists() ? m_play_list->song_midi_number() : 0 ;
     }
 
     std::string playlist_song () const
     {
-        return m_play_list ? m_play_list->current_song() : "";
+        return list_exists() ? m_play_list->current_song() : "";
     }
 
     bool open_current_song ()
     {
-        return m_play_list ? m_play_list->open_current_song() : false ;
+        return list_exists() ? m_play_list->open_current_song() : false ;
     }
 
     bool open_select_list_by_index (int index, bool opensong = true)
     {
-        return m_play_list ?
+        return list_exists() ?
             m_play_list->open_select_list_by_index(index, opensong) : false ;
     }
 
     bool open_select_list_by_midi (int ctrl, bool opensong = true)
     {
-        return m_play_list ?
+        return list_exists() ?
             m_play_list->select_list_by_midi(ctrl, opensong) : false ;
     }
 
@@ -1125,40 +1125,45 @@ public:
         const std::string & directory
     )
     {
-        return m_play_list ?
+        return list_exists() ?
             m_play_list->add_song(index, midinumber, name, directory) : false ;
+    }
+
+    bool list_ok () const
+    {
+        return bool(m_play_list) && ! m_is_busy;
     }
 
     bool open_next_list (bool opensong = true)
     {
-        return m_is_busy ? false : m_play_list->open_next_list(opensong);
+        return list_ok() ? m_play_list->open_next_list(opensong) : false ;
     }
 
     bool open_previous_list (bool opensong = true)
     {
-        return m_is_busy ? false : m_play_list->open_previous_list(opensong);
+        return list_ok() ? m_play_list->open_previous_list(opensong) : false ;
     }
 
     bool open_select_song_by_index (int index, bool opensong = true)
     {
-        return m_is_busy ?
-            false : m_play_list->open_select_song_by_index(index, opensong);
+        return list_ok() ?
+            m_play_list->open_select_song_by_index(index, opensong) : false ;
     }
 
     bool open_select_song_by_midi (int ctrl, bool opensong = true)
     {
-        return m_is_busy ?
-            false : m_play_list->open_select_song_by_midi(ctrl, opensong);
+        return list_ok() ?
+            m_play_list->open_select_song_by_midi(ctrl, opensong) : false ;
     }
 
     bool open_next_song (bool opensong = true)
     {
-        return m_is_busy ? false : m_play_list->open_next_song(opensong);
+        return list_ok() ? m_play_list->open_next_song(opensong) : false ;
     }
 
     bool open_previous_song (bool opensong = true)
     {
-        return m_is_busy ? false : m_play_list->open_previous_song(opensong);
+        return list_ok() ? m_play_list->open_previous_song(opensong) : false ;
     }
 
     /*
