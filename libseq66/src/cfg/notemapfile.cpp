@@ -410,7 +410,7 @@ save_notemapper
     }
     else
     {
-        file_error("Play-list filenames", "<empty>");
+        file_error("Note-map file", "none");
     }
     return result;
 }

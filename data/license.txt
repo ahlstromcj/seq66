@@ -1,6 +1,6 @@
 Seq66 Licensing 0.91.0
 Chris Ahlstrom
-2015-09-10 to 2020-09-26
+2015-09-10 to 2020-11-15
 
 Applications:
 

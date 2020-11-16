@@ -20756,7 +20756,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile m4/Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile libsessions/Makefile libsessions/include/Makefile libsessions/src/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile man/Makefile data/Makefile doc/Makefile doc/dox/Makefile doc/latex/Makefile doc/latex/tex/Makefile"
+ac_config_files="$ac_config_files Makefile libseq66/Makefile libseq66/include/Makefile libseq66/src/Makefile libsessions/Makefile libsessions/include/Makefile libsessions/src/Makefile m4/Makefile man/Makefile seq_portmidi/Makefile seq_portmidi/include/Makefile seq_portmidi/src/Makefile seq_rtmidi/Makefile seq_rtmidi/include/Makefile seq_rtmidi/src/Makefile seq_qt5/Makefile seq_qt5/include/Makefile seq_qt5/forms/Makefile seq_qt5/src/Makefile resources/pixmaps/Makefile Seq66qt5/Makefile Seq66cli/Makefile data/Makefile doc/Makefile doc/dox/Makefile doc/latex/Makefile doc/latex/tex/Makefile Seqtool/Makefile Seqtool/forms/Makefile Seqtool/include/Makefile Seqtool/src/Makefile"
 
 
 
@@ -21924,17 +21924,14 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "m4/Makefile") CONFIG_FILES="$CONFIG_FILES m4/Makefile" ;;
     "libseq66/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/Makefile" ;;
     "libseq66/include/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/include/Makefile" ;;
     "libseq66/src/Makefile") CONFIG_FILES="$CONFIG_FILES libseq66/src/Makefile" ;;
     "libsessions/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/Makefile" ;;
     "libsessions/include/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/include/Makefile" ;;
     "libsessions/src/Makefile") CONFIG_FILES="$CONFIG_FILES libsessions/src/Makefile" ;;
-    "Seqtool/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/Makefile" ;;
-    "Seqtool/forms/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/forms/Makefile" ;;
-    "Seqtool/include/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/include/Makefile" ;;
-    "Seqtool/src/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/src/Makefile" ;;
+    "m4/Makefile") CONFIG_FILES="$CONFIG_FILES m4/Makefile" ;;
+    "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "seq_portmidi/Makefile") CONFIG_FILES="$CONFIG_FILES seq_portmidi/Makefile" ;;
     "seq_portmidi/include/Makefile") CONFIG_FILES="$CONFIG_FILES seq_portmidi/include/Makefile" ;;
     "seq_portmidi/src/Makefile") CONFIG_FILES="$CONFIG_FILES seq_portmidi/src/Makefile" ;;
@@ -21948,12 +21945,15 @@ do
     "resources/pixmaps/Makefile") CONFIG_FILES="$CONFIG_FILES resources/pixmaps/Makefile" ;;
     "Seq66qt5/Makefile") CONFIG_FILES="$CONFIG_FILES Seq66qt5/Makefile" ;;
     "Seq66cli/Makefile") CONFIG_FILES="$CONFIG_FILES Seq66cli/Makefile" ;;
-    "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
     "doc/dox/Makefile") CONFIG_FILES="$CONFIG_FILES doc/dox/Makefile" ;;
     "doc/latex/Makefile") CONFIG_FILES="$CONFIG_FILES doc/latex/Makefile" ;;
     "doc/latex/tex/Makefile") CONFIG_FILES="$CONFIG_FILES doc/latex/tex/Makefile" ;;
+    "Seqtool/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/Makefile" ;;
+    "Seqtool/forms/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/forms/Makefile" ;;
+    "Seqtool/include/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/include/Makefile" ;;
+    "Seqtool/src/Makefile") CONFIG_FILES="$CONFIG_FILES Seqtool/src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

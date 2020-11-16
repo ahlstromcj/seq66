@@ -640,7 +640,7 @@ open_playlist
     }
     else
     {
-        file_error("Play-list filename", "<empty>");
+        file_error("Play-list file to open", "none");
     }
     return result;
 }
@@ -680,14 +680,13 @@ save_playlist
         result = plf.write();
         if (! result)
         {
-            file_error("Write failed", destination);
-            // TODO?
-            ///// (void) append_error_message(pl.error_message());
+            file_error("Play-list write failed", destination);
+            // TODO?  ///// (void) append_error_message(pl.error_message());
         }
     }
     else
     {
-        file_error("Play-list filename", "<empty>");
+        file_error("Play-list file to save", "none");
     }
     return result;
 }
@@ -720,25 +719,20 @@ save_playlist
     bool result = ! source.empty() && ! destination.empty();
     if (result)
     {
-        std::string msg = source + " --> " + destination;
         playlistfile plf(source, pl, rc(), false);  /* false --> quiet      */
-        file_message("Play-list save", msg);
         result = plf.open(false);                   /* parse, no verify     */
         if (result)
         {
-            plf.name(destination);
-            result = plf.write();
-            if (! result)
-                file_error("Write failed", destination);
+            result = save_playlist(pl, destination);
         }
         else
         {
-            file_error("Open failed", source);
+            file_error("Play-list open failed", source);
         }
     }
     else
     {
-        file_error("Play-list filenames", "<empty>");
+        file_error("Play-list file to save", "none");
     }
     return result;
 }

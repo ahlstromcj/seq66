@@ -1,6 +1,6 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-11-10
+2015-09-10 to 2020-11-15
 
 "Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
 and with a lot of krufty buildup removed.

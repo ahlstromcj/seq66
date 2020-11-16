@@ -182,11 +182,7 @@ error_message (const std::string & msg)
 bool
 file_error (const std::string & tag, const std::string & path)
 {
-    std::string p = path;
-    if (p.empty())
-        p = "<empty path>";
-
-    std::cerr << "[" << tag << ": " << p << "?]" << std::endl;
+    std::cerr << "[" << tag << ": " << "'" << path << "']" << std::endl;
     return false;
 }
 
@@ -205,7 +201,7 @@ file_error (const std::string & tag, const std::string & path)
 void
 file_message (const std::string & tag, const std::string & path)
 {
-    std::cout << "[" << tag << ": " << path << "]" << std::endl;
+    std::cout << "[" << tag << ": " << "'" << path << "']" << std::endl;
 }
 
 /**

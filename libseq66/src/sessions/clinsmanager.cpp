@@ -427,11 +427,11 @@ clinsmanager::create_project
                 {
                     if (! rc().playlist_active())
                     {
-                        warnprint("Play-list not active, saving anyway");
+                        warnprint("Play-list inactive, saving anyway");
                     }
                     if (dstplayfile.empty())
                     {
-                        warnprint("Play-list file name empty");
+                        file_error("Play-list file", "none");
                     }
                     else
                     {

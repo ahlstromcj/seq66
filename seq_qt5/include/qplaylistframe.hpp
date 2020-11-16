@@ -20,15 +20,15 @@
  */
 
 /**
- * \file          qsplaylistframe.hpp
+ * \file          qplaylistframe.hpp
  *
- *  This module declares/defines the base class for a simple playlist editor based
- *  on Qt 5.
+ *  This module declares/defines the base class for a simple playlist editor
+ *  based on Qt 5.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2019-03-09
+ * \updates       2020-11-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -66,6 +66,8 @@ class qplaylistframe final : public QFrame
 {
     friend class qsmainwnd;
 
+    Q_OBJECT
+
 private:
 
     /**
@@ -78,8 +80,6 @@ private:
         CID_MIDI_NUMBER,
         CID_ITEM_NAME
     };
-
-    Q_OBJECT
 
 public:
 
@@ -119,6 +119,11 @@ protected:                          // overrides of event handlers
     virtual void keyPressEvent (QKeyEvent *) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 
+private:
+
+    void list_unmodify ();
+    void song_unmodify ();
+
 signals:
 
 private slots:
@@ -133,6 +138,8 @@ private slots:
     void handle_song_remove_click ();
     void handle_playlist_active_click ();
     void conditional_update ();
+    void list_modify (const QString & text);
+    void song_modify (const QString & text);
 
 private:
 

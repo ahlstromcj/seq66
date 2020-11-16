@@ -1,5 +1,6 @@
 # Maintainer: Daniel Appelt <daniel.appelt@gmail.com>
 # Contributor: Gimmeapill <gimmeapill at gmail dot com>
+
 _pkgbasename=seq66
 pkgname=${_pkgbasename}-git
 pkgver=0.90.4.r186.f4f1619
@@ -48,3 +49,5 @@ package() {
     # install -v -D -m 0644 "debian/${_pkgbasename}.xpm" "${pkgdir}/usr/share/pixmaps/${_pkgbasename}.xpm"
     # install -v -D -m 0644 "debian/${_pkgbasename}.desktop" "${pkgdir}/usr/share/applications/${_pkgbasename}.desktop"
 }
+
+# vim: ft=sh

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-11-15
+ * \updates       2020-11-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -298,13 +298,15 @@ smanager::create_performer ()
 }
 
 /**
- *  Opens a playlist, if specified.  It is opened and read if there is a
- *  non-empty play-list filename, even if specified to be inactive.
+ *  Opens a playlist, if specified.  It is opened and read if there is an
+ *  empty or non-empty play-list filename, even if specified to be inactive.
+ *  An empty filename results in a basically empty, but ultimately populable,
+ *  playlist.  Saves a lot of pointer checks.
  *
  * \return
- *      Returns true if a playlist was specified and successfully opened, or if
- *      there is no playlist called for.  In other words, true is returned if
- *      there is no error.
+ *      Returns true if a playlist was specified and successfully opened, or
+ *      if there is no playlist called for.  In other words, true is returned
+ *      if there is no error.
  */
 
 bool
@@ -314,23 +316,21 @@ smanager::open_playlist ()
     if (result)
     {
         std::string playlistname = rc().playlist_filespec();
-        if (! playlistname.empty())
+        result = perf()->open_playlist(playlistname, rc().verbose());
+        if (result)
         {
-            result = perf()->open_playlist(playlistname, rc().verbose());
-            if (result)
+            result = perf()->open_current_song();
+        }
+        else
+        {
+            if (rc().playlist_active())
             {
-                result = perf()->open_current_song();   /* p.playlist_test() */
+                std::string msg = "Play-list open failed: '";
+                msg += playlistname;
+                msg += "'";
+                append_error_message(msg);
             }
-            else
-            {
-                if (rc().playlist_active())
-                {
-                    std::string msg = "Open failed: ";
-                    msg += playlistname;
-                    append_error_message(msg);
-                }
-                result = true;                          /* avoid early exit  */
-            }
+            result = true;                          /* avoid early exit  */
         }
     }
     else

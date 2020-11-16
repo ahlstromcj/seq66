@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2020-08-14
+2015-09-09 to 2020-11-15
 
 Creating a GitHub Repository:
 
@@ -213,6 +213,12 @@ Tagging:
     $ git tag -a 0.9.9.xx -m "New version 0.9.9.xx tagged" abcd1234
     $ git push origin 0.9.9.xx              - or -
     $ git push origin --tags
+
+    An alternative tag command, thanks to Milkii Brewster, is:
+
+    $ git tag -a 0.9.9.xx -m "$(cat RELNOTES.md)" abcd1234
+
+    He also notes the the GitHub "Create Release" feature can be used.
 
     Note that each tag to be published needs to be pushed as well.
     Also note that, if the commit hash is missing, HEAD is assumed.

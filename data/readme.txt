@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 readme.txt for Seq66 0.91.0
 Chris Ahlstrom
-2015-09-10 to 2020-08-17
-=======
-readme.txt for Seq66 0.90.6
-Chris Ahlstrom
-2015-09-10 to 2020-09-26
->>>>>>> master
+2015-09-10 to 2020-11-15
 
 Seq66 is a refactoring of a reboot of seq24, extending it with new features
 and bug fixes, and incorporation of "Modern C++" (C++11 or C++14).  It is a
@@ -38,8 +32,9 @@ Windows support:
     It is about 99% complete and very useable.
 
     Currently, manual configuration of the "rc" and "usr" files is necessary.
-    Also supported are separate "ctrl" (MIDI control, input and output) and
-    "mutes" files.  See the READMEs for more information.
+    Also supported are separate "ctrl" (MIDI control, input and output),
+    "mutes" (toggles of patterns of sequences), "drums" (note mappings) and
+    "playlist" files.  See the READMEs for more information.
 
     See the file C:\Program Files(x86)\Seq66\data for README.windows,
     which explains some things to watch for with Windows.

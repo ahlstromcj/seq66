@@ -324,6 +324,8 @@ private:
 
     smanager * m_session_mgr_ptr;
 
+signals:
+
 private slots:
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE

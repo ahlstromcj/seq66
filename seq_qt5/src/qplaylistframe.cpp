@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-09-15
+ * \updates       2020-11-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,6 +35,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe child      */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd, a parent       */
 
@@ -79,7 +80,7 @@ qplaylistframe::qplaylistframe
     ui->setupUi(this);
 
     QStringList playcolumns;
-    playcolumns << "#" << "List Name";
+    playcolumns << "#" << "List Names";
     ui->tablePlaylistSections->setHorizontalHeaderLabels(playcolumns);
     ui->tablePlaylistSections->setSelectionBehavior
     (
@@ -87,7 +88,7 @@ qplaylistframe::qplaylistframe
     );
 
     QStringList songcolumns;
-    songcolumns << "#" << "Song File";
+    songcolumns << "#" << "Song Files in List";
     ui->tablePlaylistSongs->setHorizontalHeaderLabels(songcolumns);
     ui->tablePlaylistSongs->setSelectionBehavior(QAbstractItemView::SelectRows);
     set_row_heights(SEQ66_PLAYLIST_ROW_HEIGHT);
@@ -158,16 +159,46 @@ qplaylistframe::qplaylistframe
         ui->checkBoxPlaylistActive, SIGNAL(clicked(bool)),
         this, SLOT(handle_playlist_active_click())
     );
-    reset_playlist();               /* if (perf().playlist_mode())  */
+    connect
+    (
+        ui->editPlaylistNumber, SIGNAL(textEdited(QString)),
+        this, SLOT(list_modify(QString))
+    );
+    connect
+    (
+        ui->editPlaylistPath, SIGNAL(textEdited(QString)),
+        this, SLOT(list_modify(QString))
+    );
+    connect
+    (
+        ui->editPlaylistName, SIGNAL(textEdited(QString)),
+        this, SLOT(list_modify(QString))
+    );
+    connect
+    (
+        ui->editSongNumber, SIGNAL(textEdited(QString)),
+        this, SLOT(song_modify(QString))
+    );
+    connect
+    (
+        ui->editSongPath, SIGNAL(textEdited(QString)),
+        this, SLOT(song_modify(QString))
+    );
+    connect
+    (
+        ui->editSongFilename, SIGNAL(textEdited(QString)),
+        this, SLOT(song_modify(QString))
+    );
+    reset_playlist();                       /* if (perf().playlist_mode())  */
 
-    m_timer = new QTimer(this);         /* timer for regular redraws    */
+    m_timer = new QTimer(this);             /* timer for regular redraws    */
     m_timer->setInterval(4 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
 
 /**
- *
+ *  Stops the timer and deletes the user interface.
  */
 
 qplaylistframe::~qplaylistframe ()
@@ -190,7 +221,7 @@ qplaylistframe::conditional_update ()
 }
 
 /**
- *
+ *  Sets the height of the rows in the list and song tables.
  */
 
 void
@@ -272,6 +303,11 @@ qplaylistframe::set_current_playlist ()
         temp = "None";
 
     ui->midiBaseDirText->setText(QString::fromStdString(temp));
+    temp = perf().playlist_name();
+    if (temp.empty())
+        temp = "None";
+
+    ui->editPlaylistName->setText(QString::fromStdString(temp));
     set_current_song();
 }
 
@@ -493,7 +529,10 @@ qplaylistframe::handle_song_click_ex
 }
 
 /**
- *
+ *  Calls qsmainwnd::open_playlist(), which then calls
+ *  qsmainwnd::show_open_list_dialog(), then perform::open_playlist().  That
+ *  function resets the play-list pointer, then opens the playlist.
+ *  It is reset to the first song and performer calls set_needs_update().
  */
 
 void
@@ -504,14 +543,46 @@ qplaylistframe::handle_list_load_click ()
 }
 
 /**
+ *  This function adds an empty list to the set of playlists in the playlist
+ *  object.  The user is prompted for the characteristics of the list:
  *
+ *      -   The MIDI control number that selects this list. It must not match
+ *          any existing MIDI control number for list selection. This number
+ *          is supplied by editing the left "Current" field,
+ *          ui->editPlaylistNumber.
+ *      -   The human-friendly name of the list. This name is supplied in the
+ *          left unnamed field, ui->editPlaylistName.
+ *      -   The optional directory where the contents (MIDI files) of the list
+ *          are located.  The default is the same directory as the playlist.
+ *          It is supplied in the left "Directory" field,
+ *          ui->editPlaylistPath.  If in an NSM session, it is recommended to
+ *          leave it as the session's "midi" directory.
+ *
+ *  Once this is done, then songs can be added.
  */
 
 void
 qplaylistframe::handle_list_add_click ()
 {
-    // if (not_nullptr(m_parent))
-    //    m_parent->TODO();
+    if (not_nullptr(m_parent))
+    {
+        QString temp = ui->editPlaylistPath->text();
+        std::string listpath = temp.toStdString();
+        std::string listname;
+        int index = perf().playlist_count();        // useful???
+        int midinumber = index;                     // useful???
+        temp = ui->editPlaylistName->text();
+        listname = temp.toStdString();
+        temp = ui->editPlaylistNumber->text();
+        midinumber = string_to_int(temp.toStdString(), index);
+        if (m_parent->use_nsm())
+        {
+        }
+        else
+        {
+            (void) perf().add_list(index, midinumber, listname, listpath);
+        }
+    }
 }
 
 /**
@@ -581,8 +652,10 @@ qplaylistframe::handle_song_add_click ()
 void
 qplaylistframe::handle_song_remove_click ()
 {
-     // if (not_nullptr(m_parent))
-     //     m_parent->TODO();
+    if (not_nullptr(m_parent))
+    {
+        //  m_parent->TODO();
+    }
 }
 
 /**
@@ -592,8 +665,56 @@ qplaylistframe::handle_song_remove_click ()
 void
 qplaylistframe::handle_playlist_active_click ()
 {
-    // if (not_nullptr(m_parent))
-    //    m_parent->TODO();
+    if (not_nullptr(m_parent))
+    {
+        //  m_parent->TODO();
+    }
+}
+
+/**
+ *
+ */
+
+void
+qplaylistframe::list_modify (const QString &)
+{
+    ui->buttonPlaylistAdd->setEnabled(true);
+    ui->buttonPlaylistModify->setEnabled(true);
+    ui->buttonPlaylistSave->setEnabled(true);
+}
+
+/**
+ *
+ */
+
+void
+qplaylistframe::list_unmodify ()
+{
+    ui->buttonPlaylistAdd->setEnabled(false);
+    ui->buttonPlaylistModify->setEnabled(false);
+    ui->buttonPlaylistSave->setEnabled(false);
+}
+
+/**
+ *
+ */
+
+void
+qplaylistframe::song_modify (const QString &)
+{
+    ui->buttonSongAdd->setEnabled(true);
+    ui->buttonSongModify->setEnabled(true);
+}
+
+/**
+ *
+ */
+
+void
+qplaylistframe::song_unmodify ()
+{
+    ui->buttonSongAdd->setEnabled(false);
+    ui->buttonSongModify->setEnabled(false);
 }
 
 /**

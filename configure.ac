@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2020-11-10
+dnl \update        2020-11-15
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -504,7 +504,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2020-11-10"
+#define VERSION_DATE_SHORT "2020-11-15"
 #define VERSION "0.91.0"
 
 )
@@ -602,17 +602,14 @@ dnl Set up the Makefiles.
 
 AC_CONFIG_FILES([
  Makefile
- m4/Makefile
  libseq66/Makefile
  libseq66/include/Makefile
  libseq66/src/Makefile
  libsessions/Makefile
  libsessions/include/Makefile
  libsessions/src/Makefile
- Seqtool/Makefile
- Seqtool/forms/Makefile
- Seqtool/include/Makefile
- Seqtool/src/Makefile
+ m4/Makefile
+ man/Makefile
  seq_portmidi/Makefile
  seq_portmidi/include/Makefile
  seq_portmidi/src/Makefile
@@ -626,12 +623,15 @@ AC_CONFIG_FILES([
  resources/pixmaps/Makefile
  Seq66qt5/Makefile
  Seq66cli/Makefile
- man/Makefile
  data/Makefile
  doc/Makefile
  doc/dox/Makefile
  doc/latex/Makefile
  doc/latex/tex/Makefile
+ Seqtool/Makefile
+ Seqtool/forms/Makefile
+ Seqtool/include/Makefile
+ Seqtool/src/Makefile
 ])
 
 dnl See AC_CONFIG_COMMANDS

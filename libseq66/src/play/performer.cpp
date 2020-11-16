@@ -5812,7 +5812,8 @@ performer::save_note_mapper (const std::string & notefile)
  *
  * \param pl
  *      Provides the full path file-specification for the play-list file to be
- *      opened.
+ *      opened.  If empty, a single playlist with only one play-list and no
+ *      songs is created.
  *
  * \param show_on_stdout
  *      If true (the default is false), the playlist is opened to show

@@ -238,7 +238,7 @@
        <string>Shows the full path to the play-list.</string>
       </property>
       <property name="text">
-       <string/>
+       <string>None</string>
       </property>
      </widget>
     </item>
@@ -396,7 +396,7 @@
        <string>Opens a dialog to select and open a play-list file.</string>
       </property>
       <property name="text">
-       <string>Load Lists</string>
+       <string>Load List</string>
       </property>
      </widget>
     </item>
@@ -418,7 +418,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Adds the play-list defined by the entries above to the current play-list.</string>
+       <string>Adds the play-list defined by the entries above to the current play-list set.</string>
       </property>
       <property name="text">
        <string>Add List</string>
@@ -427,6 +427,9 @@
     </item>
     <item>
      <widget class="QPushButton" name="buttonPlaylistModify">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="minimumSize">
        <size>
         <width>92</width>
@@ -438,6 +441,9 @@
         <width>92</width>
         <height>25</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>To do: Update list with editable fields.</string>
       </property>
       <property name="text">
        <string>Modify List</string>
@@ -457,6 +463,9 @@
         <width>92</width>
         <height>25</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>To do: Removes the selected playlist from this play-list set.</string>
       </property>
       <property name="text">
        <string>Delete List</string>
@@ -481,10 +490,10 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Saves the current play-lists file.</string>
+       <string>Saves the current state of the play-lists file.</string>
       </property>
       <property name="text">
-       <string>Save Lists</string>
+       <string>Save List</string>
       </property>
      </widget>
     </item>
@@ -506,7 +515,7 @@
     <item>
      <widget class="QPushButton" name="buttonSongLoad">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="minimumSize">
        <size>
@@ -531,7 +540,7 @@
     <item>
      <widget class="QPushButton" name="buttonSongAdd">
       <property name="enabled">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
       <property name="minimumSize">
        <size>
@@ -546,7 +555,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Adds the song information specified above to the current play-list section.</string>
+       <string>To do: Adds the song information specified above to the current play-list section.</string>
       </property>
       <property name="text">
        <string>Add Song</string>
@@ -555,25 +564,6 @@
     </item>
     <item>
      <widget class="QPushButton" name="buttonSongModify">
-      <property name="minimumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>92</width>
-        <height>25</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Modify Song</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="buttonSongRemove">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -590,7 +580,32 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Removes the current song from the current play-list section.</string>
+       <string>To do:  Modifies the information about the currently-selected song.</string>
+      </property>
+      <property name="text">
+       <string>Modify Song</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="buttonSongRemove">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>92</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>92</width>
+        <height>25</height>
+       </size>
+      </property>
+      <property name="toolTip">
+       <string>Removes the current song from the current play-list.</string>
       </property>
       <property name="text">
        <string>Delete Song</string>
@@ -657,7 +672,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>460</y>
+     <y>470</y>
      <width>131</width>
      <height>17</height>
     </rect>
@@ -670,7 +685,7 @@
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>460</y>
+     <y>470</y>
      <width>631</width>
      <height>27</height>
     </rect>

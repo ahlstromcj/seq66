@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-14
+ * \updates       2020-11-16
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -90,7 +90,9 @@ playlist::playlist
     m_midi_base_directory       (rc().midi_base_directory()),
     m_show_on_stdout            (show_on_stdout)
 {
-    // No code needed
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    file_message("Playlist created", file_name());
+#endif
 }
 
 /**
@@ -99,7 +101,9 @@ playlist::playlist
 
 playlist::~playlist ()
 {
-    // No code needed
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    file_message("Playlist deleted", file_name());
+#endif
 }
 
 /**
@@ -733,7 +737,7 @@ playlist::select_list_by_midi (int ctrl, bool selectsong)
 bool
 playlist::next_list (bool selectsong)
 {
-    bool result = m_play_lists.size() > 0;
+    bool result = m_play_lists.size() > 0;          /* there's at least one */
     if (m_play_lists.size() > 1)
     {
         ++m_current_list;
@@ -1208,6 +1212,11 @@ playlist::next_song ()
             m_current_song = m_current_list->second.ls_song_list.begin();
 
         result = m_current_song != m_current_list->second.ls_song_list.end();
+        if (result)
+        {
+            const std::string & fname = m_current_song->second.ss_filename;
+            result = ! is_empty_string(fname);
+        }
         if (result && m_show_on_stdout)
             show_song(m_current_song->second);
     }
@@ -1230,6 +1239,11 @@ playlist::previous_song ()
             --m_current_song;
 
         result = m_current_song != m_current_list->second.ls_song_list.end();
+        if (result)
+        {
+            const std::string & fname = m_current_song->second.ss_filename;
+            result = ! is_empty_string(fname);
+        }
         if (result && m_show_on_stdout)
             show_song(m_current_song->second);
     }
