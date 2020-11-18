@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-16
+ * \updates       2020-11-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -71,11 +71,13 @@ qplaylistframe::qplaylistframe
     qsmainwnd * window,
     QWidget * parent
 ) :
-    QFrame      (parent),
-    ui          (new Ui::qplaylistframe),
-    m_timer     (nullptr),
-    m_performer (p),
-    m_parent    (window)
+    QFrame                  (parent),
+    ui                      (new Ui::qplaylistframe),
+    m_timer                 (nullptr),
+    m_performer             (p),
+    m_parent                (window),
+    m_current_list_index    (0),
+    m_current_song_index    (0)
 {
     ui->setupUi(this);
 
@@ -84,13 +86,21 @@ qplaylistframe::qplaylistframe
     ui->tablePlaylistSections->setHorizontalHeaderLabels(playcolumns);
     ui->tablePlaylistSections->setSelectionBehavior
     (
-        QAbstractItemView::SelectRows
+        QAbstractItemView::SelectRows   /* QAbstractItemView::SelectItems   */
+    );
+    ui->tablePlaylistSections->setSelectionMode
+    (
+        QAbstractItemView::SingleSelection
     );
 
     QStringList songcolumns;
     songcolumns << "#" << "Song Files in List";
     ui->tablePlaylistSongs->setHorizontalHeaderLabels(songcolumns);
     ui->tablePlaylistSongs->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tablePlaylistSongs->setSelectionMode
+    (
+        QAbstractItemView::SingleSelection
+    );
     set_row_heights(SEQ66_PLAYLIST_ROW_HEIGHT);
     set_column_widths();
     connect
@@ -113,13 +123,11 @@ qplaylistframe::qplaylistframe
         ui->buttonPlaylistAdd, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_add_click())
     );
-    /*
     connect
     (
         ui->buttonPlaylistRemove, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_remove_click())
     );
-    */
     if (not_nullptr(m_parent))
     {
         if (m_parent->use_nsm())
@@ -158,6 +166,11 @@ qplaylistframe::qplaylistframe
     (
         ui->checkBoxPlaylistActive, SIGNAL(clicked(bool)),
         this, SLOT(handle_playlist_active_click())
+    );
+    connect
+    (
+        ui->entry_playlist_file, SIGNAL(textEdited(QString)),
+        this, SLOT(list_modify(QString))
     );
     connect
     (
@@ -344,7 +357,7 @@ qplaylistframe::set_current_song ()
 }
 
 /**
- *  Retrieve the table cell at the given row and column.
+ *  Retrieves the table cell at the given row and column.
  *
  * \param isplaylist
  *      If true, this call affects the play-list table.  Otherwise, it affects
@@ -494,6 +507,7 @@ qplaylistframe::handle_list_click_ex
     }
     else
     {
+        m_current_list_index = row;
         if (perf().open_select_list_by_index(row, false))
         {
             fill_songs();
@@ -519,6 +533,7 @@ qplaylistframe::handle_song_click_ex
     }
     else
     {
+        m_current_song_index = row;
         if (perf().open_select_song_by_index(row, true))
         {
             set_current_song();
@@ -578,9 +593,15 @@ qplaylistframe::handle_list_add_click ()
         if (m_parent->use_nsm())
         {
         }
+        if (perf().add_list(index, midinumber, listname, listpath))
+        {
+            reset_playlist();
+        }
         else
         {
-            (void) perf().add_list(index, midinumber, listname, listpath);
+            /*
+             * TODO: report error
+             */
         }
     }
 }
@@ -592,8 +613,18 @@ qplaylistframe::handle_list_add_click ()
 void
 qplaylistframe::handle_list_remove_click ()
 {
-    // if (not_nullptr(m_parent))
-    //    m_parent->TODO();
+    if (not_nullptr(m_parent))
+    {
+        int index = m_current_list_index;
+        if (m_parent->use_nsm())
+        {
+        }
+        if (perf().remove_list(index))
+        {
+            m_parent->recreate_all_slots();
+            reset_playlist();
+        }
+    }
 }
 
 /**
@@ -608,13 +639,19 @@ qplaylistframe::handle_list_save_click ()
         if (m_parent->use_nsm())
         {
         }
-        else
+        QString p = ui->entry_playlist_file->text();
+        std::string plistname = p.toStdString();
+        if (! plistname.empty())
         {
-            QString p = ui->entry_playlist_file->text();
-            std::string plistname = p.toStdString();
-            if (! plistname.empty())
+            if (perf().save_playlist(plistname))
             {
-                (void) perf().save_playlist(plistname);
+                list_unmodify();
+            }
+            else
+            {
+                /*
+                 * TODO: report error
+                 */
             }
         }
     }
@@ -635,13 +672,20 @@ qplaylistframe::handle_song_add_click ()
         std::string nstr = ui->editSongNumber->text().toStdString();
         int midinumber = std::stoi(nstr);
         int index = perf().song_count() + 1;
-        if (! perf().add_song(index, midinumber, name, directory))
+        if (m_parent->use_nsm())
+        {
+        }
+        if (perf().add_song(index, midinumber, name, directory))
+        {
+            m_parent->recreate_all_slots();
+            reset_playlist();
+        }
+        else
         {
             /*
              * TODO: report error
              */
         }
-        m_parent->recreate_all_slots();
     }
 }
 
@@ -654,7 +698,21 @@ qplaylistframe::handle_song_remove_click ()
 {
     if (not_nullptr(m_parent))
     {
-        //  m_parent->TODO();
+        int index = m_current_song_index;
+        if (m_parent->use_nsm())
+        {
+        }
+        if (perf().remove_song_by_index(index))
+        {
+            m_parent->recreate_all_slots();
+            reset_playlist();
+        }
+        else
+        {
+            /*
+             * TODO: report error
+             */
+        }
     }
 }
 

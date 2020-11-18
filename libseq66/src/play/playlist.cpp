@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-16
+ * \updates       2020-11-17
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -224,9 +224,9 @@ playlist::open_song (const std::string & fname, bool verifymode)
  */
 
 bool
-playlist::open_select_song_by_index (int index, bool opensong)
+playlist::open_select_song (int index, bool opensong)
 {
-    bool result = select_song_by_index(index);
+    bool result = select_song(index);
     if (result && opensong)
         result = open_current_song();
 
@@ -487,9 +487,9 @@ playlist::open_previous_list (bool opensong)
  */
 
 bool
-playlist::open_select_list_by_index (int index, bool opensong)
+playlist::open_select_list (int index, bool opensong)
 {
-    bool result = select_list_by_index(index, opensong);
+    bool result = select_list(index, opensong);
     if (result && opensong)
         result = open_current_song();
 
@@ -595,7 +595,7 @@ playlist::reset_list (bool clearit)
         if (result)
         {
             m_current_list = m_play_lists.begin();
-            result = select_song_by_index(0);
+            result = select_song(0);
         }
     }
     return result;
@@ -657,7 +657,7 @@ playlist::add_list (play_list_t & plist)
  */
 
 bool
-playlist::select_list_by_index (int index, bool selectsong)
+playlist::select_list (int index, bool selectsong)
 {
     bool result = false;
     int count = 0;
@@ -672,7 +672,7 @@ playlist::select_list_by_index (int index, bool selectsong)
 
             m_current_list = pci;
             if (selectsong)
-                select_song_by_index(0);
+                select_song(0);
 
             result = true;
         }
@@ -712,7 +712,7 @@ playlist::select_list_by_midi (int ctrl, bool selectsong)
 
             m_current_list = pci;
             if (selectsong)
-                select_song_by_index(0);
+                select_song(0);
 
             result = true;
         }
@@ -748,7 +748,7 @@ playlist::next_list (bool selectsong)
             show_list(m_current_list->second);
 
         if (selectsong)
-            select_song_by_index(0);
+            select_song(0);
     }
     return result;
 }
@@ -782,7 +782,7 @@ playlist::previous_list (bool selectsong)
             show_list(m_current_list->second);
 
         if (selectsong)
-            select_song_by_index(0);
+            select_song(0);
     }
     return result;
 }
@@ -870,7 +870,7 @@ playlist::add_list
  *  This function works by iterating to the index'th element in the playlist
  *  and deleting it.
  *
- * \param index
+ * \param midinumber
  *      The ordinal value (not a key) of the desired table row.
  *
  * \return
@@ -1134,7 +1134,7 @@ playlist::current_song () const
  */
 
 bool
-playlist::select_song_by_index (int index)
+playlist::select_song (int index)
 {
     bool result = false;
     if (m_current_list != m_play_lists.end())
@@ -1366,7 +1366,7 @@ playlist::add_song
          * Remove the current entry and add this one.
          */
 
-        if (remove_song_by_index(index))
+        if (remove_song(index))
         {
             result = add_song(sspec);
             reorder_song_list(m_current_list->second.ls_song_list);
@@ -1392,7 +1392,7 @@ playlist::add_song
  */
 
 bool
-playlist::remove_song_by_index (int index)
+playlist::remove_song (int index)
 {
     bool result = false;
     if (m_current_list != m_play_lists.end())

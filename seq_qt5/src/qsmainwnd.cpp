@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-13
+ * \updates       2020-11-17
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1162,25 +1162,8 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 {
     bool result = false;
     if (check())
-    {
-        QString file = QFileDialog::getOpenFileName
-        (
-            this, tr("Open MIDI/WRK file"), rc().last_used_dir().c_str(),
-            tr
-            (
-                "MIDI/WRK files (*.midi *.mid *.MID *.wrk *.WRK);;"
-                "MIDI files (*.midi *.mid *.MID);;"
-                "WRK files (*.wrk *.WRK);;"
-                "All files (*)"
-            )
-        );
-        result = ! file.isEmpty();
-        if (result)
-        {
-            selectedfile = file.toStdString();
-            file_message("Selected", selectedfile);
-        }
-    }
+        result = show_open_midi_file_dialog(this, selectedfile);
+
     return result;
 }
 
@@ -1192,35 +1175,24 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 void
 qsmainwnd::show_open_list_dialog ()
 {
-    QString file;
     if (check())
     {
-        /*
-         * Was rc().last_used_dir(), but should be the home directory for both
-         * normal and NSM sessions.
-         */
-
-        std::string directory = rc().home_config_directory();
-        file = QFileDialog::getOpenFileName
-        (
-            this, tr("Open playlist file"), directory.c_str(),
-            tr("Playlist files (*.playlist);;All files (*)")
-        );
-    }
-    if (! file.isEmpty())                           /* user did not cancel  */
-    {
-        std::string fname = file.toStdString();
-        bool playlistmode = perf().open_playlist(fname, rc().verbose());
-        if (playlistmode)
+        std::string fname;
+        bool ok = show_open_playlist_dialog(this, fname);
+        if (ok)
         {
-            playlistmode = perf().open_current_song();
-            m_playlist_frame->load_playlist();      /* update Playlist tab  */
+            bool playlistmode = perf().open_playlist(fname, rc().verbose());
+            if (playlistmode)
+            {
+                playlistmode = perf().open_current_song();
+                m_playlist_frame->load_playlist();  /* update Playlist tab  */
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-            perf().playlist_show();
+                perf().playlist_show();
 #endif
+            }
+            else
+                show_message_box(perf().playlist_error_message());
         }
-        else
-            show_message_box(perf().playlist_error_message());
     }
 }
 

@@ -37,6 +37,7 @@
 
 class QKeyEvent;
 class QPushButton;
+class QWidget;
 
 /*
  * Don't document the namespace.
@@ -51,6 +52,16 @@ namespace seq66
 
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
 extern keystroke qt_keystroke (QKeyEvent * event, bool press);
+extern bool show_open_midi_file_dialog
+(
+    QWidget * parent,
+    std::string & selectedfile
+);
+extern bool show_open_playlist_dialog
+(
+    QWidget * parent,
+    std::string & selectedfile
+);
 
 }               // namespace seq66
 

@@ -24,14 +24,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2019-03-23
+ * \updates       2020-11-17
  * \license       GNU GPLv2 or above
  *
  */
 
+#include <QFileDialog>                  /* prompt for full MIDI file's path */
 #include <QKeyEvent>
 #include <QPushButton>
 
+#include "cfg/settings.hpp"             /* seq66::last_used_dir()           */
 #include "qt5_helpers.hpp"
 
 /*
@@ -85,6 +87,58 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
     icon.addPixmap(pixmap, QIcon::Normal, QIcon::On);
     button->setText("");
     button->setIcon(icon);
+}
+
+/**
+ *  Shows the "Open" file dialog.
+ */
+
+bool
+show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
+{
+    bool result = false;
+    const char * directory = rc().last_used_dir().c_str();
+    QString file = QFileDialog::getOpenFileName
+    (
+        parent, QObject::tr("Open MIDI/WRK file"), directory,
+        "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
+        "MIDI (*.midi *.mid *.MID);;"
+        "WRK (*.wrk *.WRK);;"
+        "All (*)"
+    );
+    result = ! file.isEmpty();
+    if (result)
+    {
+        selectedfile = file.toStdString();
+        file_message("Selected", selectedfile);
+    }
+    return result;
+}
+
+/**
+ *  Shows the "Open" play-list dialog.
+ *
+ *  Was starting from the rc().last_used_dir(), but should be the home directory
+ *  for both normal and NSM sessions.
+ */
+
+bool
+show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
+{
+    bool result = false;
+    const char * directory = rc().home_config_directory().c_str();
+    QString file = QFileDialog::getOpenFileName
+    (
+        parent, QObject::tr("Open play-list file"), directory,
+        "Playlist files (*.playlist);;All files (*)"
+    );
+    result = ! file.isEmpty();
+    if (result)
+    {
+        selectedfile = file.toStdString();
+        file_message("Selected", selectedfile);
+    }
+    return result;
 }
 
 }               // namespace seq66

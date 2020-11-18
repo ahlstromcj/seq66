@@ -1,28 +1,27 @@
-# Seq66 0.90.0 (and above) playlist file
+# Seq66 0.91.0 (and above) playlist file
 #
-# data/sample.playlist
-# Written on 2020-10-14
+# /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
+# Written on 2020-11-17 15:15:20
 #
-# This file holds a playlist for Seq66. It consists of one
+# This file holds multiple playlists for Seq66. It consists of one
 # or more '[playlist]' sections.  Each section has a user-specified
-# number.  This number should range from 0 to 127, but it can go
-# higher if the user doesn't need to use MIDI control to select
-# a playlist. Ultimately, the playlists are sorted by this number.
+# number, which serves for sorting and for control numbers ranging
+# from 0 to 127, or higher if the user doesn't use MIDI control on
+# playlistfiles.
 #
 # Next comes a display name for this list, with or without quotes.
 #
 # Next comes the name of the directory, always using the UNIX-style
 # separator, a forward slash (solidus).  It can optionally be
-# terminated with a slash.
+# terminated with a slash.  It should be accessible from wherever
+# Seq66 was run.
 #
 # The last item is a line containing the MIDI song-control number,
 # followed by the name of the MIDI files.  They are sorted by the
 # control number, starting from 0.  They can be simple 'base.ext'
 # file-names; the playlist directory will be prepended before the
-# song is accessed.
-#
-# If the MIDI file-name already has a directory name, that will be
-# used instead.
+# song is accessed. If the MIDI file-name already has a path, that
+# directory will be used.
 #
 # The [comments] section can document this file.  Lines starting
 # with '#' are ignored.  Blank lines are ignored.  Show a
@@ -36,14 +35,17 @@ songs are found in the contrib/midi directory.  You may need to change that
 directory name for both of the playlists if you have a different setup than
 the developers.
 
+
 [playlist-options]
 
-1   # If set to 1, when a new song is selected, unmute all its patterns.
+1     # If set to 1, when a new song is selected, immediately unmute it.
+
+0     # If set to 1, every MIDI song is opened to verify it.
 
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with MIDI playlist control.
+# for use with the MIDI playlist control.
 
 125
 
@@ -51,11 +53,11 @@ the developers.
 
 "Music for Serious Dogs"
 
-# Storage directory for the song-files in this play list.
+# Default storage directory for the song-files in this playlist.
 
 contrib/midi/
 
-# Provides the MIDI song-control number, and also the
+# Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
@@ -70,7 +72,7 @@ contrib/midi/
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with MIDI playlist control.
+# for use with the MIDI playlist control.
 
 126
 
@@ -78,11 +80,11 @@ contrib/midi/
 
 "Data Ditties"
 
-# Storage directory for the song-files in this play list.
+# Default storage directory for the song-files in this playlist.
 
 data/midi/
 
-# Provides the MIDI song-control number, and also the
+# Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
@@ -95,7 +97,7 @@ data/midi/
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with MIDI playlist control.
+# for use with the MIDI playlist control.
 
 127
 
@@ -103,13 +105,18 @@ data/midi/
 
 "Cakewalk Files"
 
-# Storage directory for the song-files in this play list.
+# Default storage directory for the song-files in this playlist.
 
 data/wrk/
+
+# Provides the MIDI song-control number (0 to 127), and also the
+# base file-name (tune.midi) of each song in this playlist.
+# The playlist directory is used, unless the file-name contains its
+# own path.
 
 70 oxygen4b.wrk
 71 longhair.wrk
 
-# End of data/samples/sample.playlist
+# End of /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

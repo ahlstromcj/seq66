@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-11-15
+ * \updates       2020-11-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -1101,7 +1101,7 @@ public:
 
     bool open_select_list_by_index (int index, bool opensong = true)
     {
-        return m_play_list->open_select_list_by_index(index, opensong);
+        return m_play_list->open_select_list(index, opensong);
     }
 
     bool open_select_list_by_midi (int ctrl, bool opensong = true)
@@ -1119,6 +1119,11 @@ public:
         return m_play_list->add_list(index, midinumber, name, directory);
     }
 
+    bool remove_list (int index)
+    {
+        return m_play_list->remove_list(index);
+    }
+
     bool add_song
     (
         int index, int midinumber,
@@ -1127,6 +1132,11 @@ public:
     )
     {
         return m_play_list->add_song(index, midinumber, name, directory);
+    }
+
+    bool remove_song_by_index (int index)
+    {
+        return m_play_list->remove_song(index);
     }
 
     bool open_next_list (bool opensong = true)
@@ -1141,7 +1151,7 @@ public:
 
     bool open_select_song_by_index (int index, bool opensong = true)
     {
-        return m_play_list->open_select_song_by_index(index, opensong);
+        return m_play_list->open_select_song(index, opensong);
     }
 
     bool open_select_song_by_midi (int ctrl, bool opensong = true)

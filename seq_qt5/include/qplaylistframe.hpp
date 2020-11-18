@@ -165,6 +165,14 @@ private:
 
     qsmainwnd * m_parent;
 
+    /**
+     *  Provides the currently-selected single rows for the playlist and song
+     *  tables.
+     */
+
+    int m_current_list_index;
+    int m_current_song_index;
+
 };          // class qplaylistframe
 
 }           // namespace seq66

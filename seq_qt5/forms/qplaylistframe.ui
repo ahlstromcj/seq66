@@ -30,7 +30,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Playlist Section</string>
+    <string>Playlist Selection</string>
    </property>
   </widget>
   <widget class="QTableWidget" name="tablePlaylistSections">
@@ -235,7 +235,7 @@
     <item>
      <widget class="QLineEdit" name="entry_playlist_file">
       <property name="toolTip">
-       <string>Shows the full path to the play-list.</string>
+       <string>Shows the full path to the play-list file. Editable.</string>
       </property>
       <property name="text">
        <string>None</string>
