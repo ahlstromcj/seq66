@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-17
+ * \updates       2020-11-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -151,6 +151,11 @@ qplaylistframe::qplaylistframe
     (
         ui->buttonPlaylistSave, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_save_click())
+    );
+    connect
+    (
+        ui->buttonSongLoad, SIGNAL(clicked(bool)),
+        this, SLOT(handle_song_load_click())
     );
     connect
     (
@@ -653,6 +658,32 @@ qplaylistframe::handle_list_save_click ()
                  * TODO: report error
                  */
             }
+        }
+    }
+}
+
+/**
+ *  These values depend on correct information edited into the Song text
+ *  fields.  We should support loading a song from a file-selection dialog.
+ */
+
+void
+qplaylistframe::handle_song_load_click ()
+{
+    if (not_nullptr(m_parent))
+    {
+        if (m_parent->use_nsm())
+        {
+        }
+
+        // TODO: set selectefile to the song directory (if any) to the
+        // currently-selected playlist.
+
+        std::string selectedfile;
+        if (show_open_file_dialog(selectedfile))
+        {
+            // TODO 
+            // Make sure the path is the same as the global path and ????
         }
     }
 }

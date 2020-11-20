@@ -10,13 +10,14 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2020-03-01
- * \updates       2020-10-31
+ * \updates       2020-11-19
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
  *  Upcoming support for the Non Session Manager.
  */
 
+#include <atomic>                       /* std::atomic<bool>                */
 #include <vector>                       /* std::vector                      */
 
 #include "seq66_features.hpp"           /* feature (SUPPORT) macros         */
@@ -127,10 +128,11 @@ private:
 
     /**
      *  This item is mutable because it can be falsified if the server and
-     *  address are found to be null.
+     *  address are found to be null.  It is turn on when we receive the
+     *  information about the session (including path to the session).
      */
 
-    mutable bool m_active;
+    mutable std::atomic<bool> m_active;
 
     bool m_visible;
     bool m_dirty;
@@ -256,7 +258,7 @@ protected:
 
 protected:
 
-    bool msg_check (int timeoutms = 100);                     /* milliseconds */
+    bool msg_check (int timeoutms = 0);                     /* milliseconds */
     bool lo_is_valid () const;
     void nsm_debug (const std::string & tag);
     void add_client_method (nsm::tag t, lo_method_handler h);

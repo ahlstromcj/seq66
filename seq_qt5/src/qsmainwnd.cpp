@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-17
+ * \updates       2020-11-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1462,10 +1462,7 @@ qsmainwnd::refresh ()
             if (not_nullptr(m_live_frame))
             {
                 if (perf().playlist_mode())
-                {
-                    if (m_is_title_dirty)
-                        m_live_frame->set_playlist_name(perf().playlist_song());
-                }
+                    m_live_frame->set_playlist_name(perf().playlist_song());
                 else
                     m_live_frame->set_playlist_name("");
             }
@@ -3313,6 +3310,7 @@ qsmainwnd::recreate_all_slots ()
     if (result)
     {
         m_live_frame->set_playlist_name(perf().playlist_song());
+        update_window_title(perf().playlist_song());
         result = m_live_frame->recreate_all_slots();
     }
     return result;

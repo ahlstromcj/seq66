@@ -424,8 +424,8 @@ cmdlineopts::help_check (int argc, char * argv [])
         if
         (
             (arg == "-h") || (arg == "--help") ||
-            (arg == "-V") || (arg == "--version") || (arg == "--V") ||
-            (arg == "-#")       /*  || (arg == "-v") || (arg == "--v")  */
+            (arg == "-V") || (arg == "--version") ||
+            (arg == "-#")
         )
         {
             result = true;

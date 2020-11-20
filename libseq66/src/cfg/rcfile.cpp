@@ -566,15 +566,20 @@ rcfile::parse ()
                 bool active = flag != 0;
                 fname = rc_ref().make_config_filespec(fname, ".playlist");
                 exists = file_exists(fname);
-                rc_ref().playlist_filename(fname);
                 if (exists)
                 {
+                    rc_ref().playlist_filename(fname);
                     rc_ref().playlist_active(active);
                 }
                 else
                 {
                     if (active)
                         file_error("No such playlist", fname);
+
+                    /*
+                     * Ok?
+                     * rc_ref().clear_playlist();
+                     */
                 }
             }
         }

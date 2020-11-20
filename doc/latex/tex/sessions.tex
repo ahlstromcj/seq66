@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2020-11-04
+% \update      2020-11-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,10 +21,25 @@
    \textsl{Seq66} supports session management in three ways:
 
    \begin{enumber}
-      \item \textbf{Non Session Manager}
+      \item \textbf{Non Session Manager} (NSM)
       \item \textbf{Signals}
       \item \textbf{LASH} (not ready)
    \end{enumber}
+
+\textsl{Non Session Manager} provides a replacement for the
+\textsl{JACK Session API}, which is now disabled by default in a \textsl{Seq66}
+build.  It allows control over the startup of multiple applications, the
+process of saving a session, and
+provides a way to save their patching (connections) in \textsl{JACK}.
+\textsl{NSM} support in \textsl{Seq66} is well underway, and almost finished.
+
+\textsl{Signals} provide for initiating a save operation and the sudden
+termination of an application.  This mode is useful with
+\textsl{nsm-proxy}, a way to script applications that don't have \textsl{NSM}
+support.
+
+\textsl{LASH} is an earlier session protocol, supported in \textsl{Seq64}.
+However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 
 %  See \sectionref{subsec:seq66_rc_file_midi_control},
 
@@ -32,7 +47,6 @@
 \label{subsec:sessions_nsm}
 
    \index{sessions!nsm}
-   NSM support in \textsl{Seq66} is well underway, but still in progress.
    The first thing to do for session management is make sure that the
    application is capable of various levels of session management, from
    \textsl{UNIX} signal to
@@ -43,6 +57,12 @@
 
 \subsubsection{Seq66 Session Management / NSM / First Run Without NSM}
 \label{subsec:sessions_nsm_first_run_without_nsm}
+
+   This section discusses what happen when \textsl{Seq66} is installed, then
+   run outside of any session from the console or an application menu.
+   For a discussion where \textsl{Seq66} is run for the first time under
+   \textsl{NSM},
+   see \sectionref{subsec:sessions_nsm_first_run_in_nsm}.
 
    Generally, after installing \textsl{Seq66}, or when creating a new setup
    (such as a playlist) it is good to run it normally first.  This action
@@ -121,7 +141,22 @@
    the MIDI files it requires.
    If these files do not exist, then new configuration files are created
    in the \textsl{NSM} session directory.
+
+   \textbf{No existing configuration}.
+   Here, we have just installed \textsl{Seq66}, but have not yet run it.
+   We start the \textsl{non-session-manager}, create a new session, and
+   add \texttt{qseq66} to this session.  This starts \texttt{qseq66}, and,
+   after a short delay to get the session information from the daemon, a new
+   configuration is created in the session directory.
+
+   If there is an existing \textsl{Seq66} configuration (in
+   \texttt{/home/user/.config/seq66}, then running \texttt{qseq66} in a new
+   session will cause the configuration to be recreated in the new session
+   directory, including play-lists and MIDI files.
+
    See the next section.
+
+
 
 \subsubsection{Seq66 Session Management / NSM / In-Session Run}
 \label{subsec:sessions_nsm_in_session_run}

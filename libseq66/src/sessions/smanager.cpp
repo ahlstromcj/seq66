@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-11-16
+ * \updates       2020-11-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -521,7 +521,7 @@ smanager::save_session (std::string & msg, bool ok)
     {
         if (ok)
         {
-            bool save = rc().auto_option_save() && ! usr().in_session();
+            bool save = rc().auto_option_save(); // && ! usr().in_session();
             if (save)
             {
                 file_message("Save session", "Options");
@@ -748,6 +748,20 @@ smanager::create (int argc, char * argv [])
     bool result = main_settings(argc, argv);
     if (result)
     {
+        /*
+         * The following call detects a session, creates an nsmclient,
+         * sends an NSM announce message, waits for the response, uses it to
+         * set the session information.
+         *
+         * What we really see:
+         *
+         *  nsmclient::announce()       Send announcement, wait for response
+         *  <below>                     Gets manager path!!!
+         *  nsmclient::open()           Sets manager path
+         *
+         *
+         */
+
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
 #if defined SEQ66_PLATFORM_DEBUG_TEST_NSM   /* enable to trouble-shoot      */

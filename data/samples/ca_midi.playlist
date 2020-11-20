@@ -1,7 +1,7 @@
 # Seq66 0.91.0 (and above) playlist file
 #
-# /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
-# Written on 2020-11-17 15:15:20
+# /home/ahlstrom/.config/seq66/CaMidi/ca_midi.playlist
+# Written on 2020-11-17 11:59:29
 #
 # This file holds multiple playlists for Seq66. It consists of one
 # or more '[playlist]' sections.  Each section has a user-specified
@@ -29,14 +29,8 @@
 
 [comments]
 
-This sample play-list file contains three playlists.  One for demo ditties,
-one for more realistic songs, one for Cakewalk files.  These songs are found
-in the contrib/midi directory.  You may need to change that directory name for
-both of the playlists if you have a different setup than the developers.  What
-we've done (in Linux) is created a soft-link in the HOME directory, ~/seq66,
-that points to the actual seq66 project tree, and used it here.  Copy this
-file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
-"[playlist]" specification.
+This playlist points to files on my Debian laptop.  I created these files
+long, long ago.  Ah, such memories.
 
 [playlist-options]
 
@@ -49,76 +43,67 @@ file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
 # Playlist number, arbitrary but unique. 0 to 127 recommended
 # for use with the MIDI playlist control.
 
-125
+0
 
 # Display name of this play list.
 
-"Music for Serious Dogs"
+"CA's Legacy Midi Files"
 
 # Default storage directory for the song-files in this playlist.
 
-~/seq66/contrib/midi/
+/pub/Audio/MIDI/archives/Ca/mid/FM Synth/
 
 # Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
 
-70 allofarow.mid
-71 CountryStrum.midi
-72 colours-qt.midi
-73 1Bar.midi
-74 2Bars.midi
-75 click_4_4.midi
+0 b4uacufm.mid
+1 brecluse.mid
+2 carptsun.mid
+3 cbflitfm.mid
+4 dasmodel.mid
+5 grntamb.mid
+6 hapwandr.mid
+7 judyblue.mid
+8 k_seq11.mid
+9 longhair.mid
+10 marraksh.mid
+11 oxyg4bfm.mid
+12 pirates.mid
+13 pss680.mid
+14 qufrency.mid
+15 stdemo3.mid
+16 viceuk.mid
+17 wallstsm.mid
 
 [playlist]
 
 # Playlist number, arbitrary but unique. 0 to 127 recommended
 # for use with the MIDI playlist control.
 
-126
+1
 
 # Display name of this play list.
 
-"Data Ditties"
+"CA's PSS-790 Midi Files"
 
 # Default storage directory for the song-files in this playlist.
 
-~/seq66/data/midi/
+/pub/Audio/MIDI/PSS-790/
 
 # Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
 
-70 b4uacuse-gm-patchless.midi
-71 colours.midi
-72 Chameleon-HHancock-Ov.midi
-73 If_You_Could_Read_My_Mind.mid
+0 ancestor.mid
+10 carptsun.mid
+20 cbflite.mid
+30 old_love.mid
+40 pss790_1.mid
+50 pss790_2.mid
 
-[playlist]
-
-# Playlist number, arbitrary but unique. 0 to 127 recommended
-# for use with the MIDI playlist control.
-
-127
-
-# Display name of this play list.
-
-"Cakewalk Files"
-
-# Default storage directory for the song-files in this playlist.
-
-~/seq66/data/wrk/
-
-# Provides the MIDI song-control number (0 to 127), and also the
-# base file-name (tune.midi) of each song in this playlist.
-# The playlist directory is used, unless the file-name contains its
-# own path.
-
-70 oxygen4b.wrk
-71 longhair.wrk
-
-# End of /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
+# End of /home/ahlstrom/.config/seq66/CaMidi/ca_midi.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-15
+ * \updates       2020-11-18
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -379,6 +379,11 @@ clinsmanager::create_project
         {
             file_message("File exists", rcfile);        /* comforting       */
             result = read_configuration(argc, argv, cfgfilepath, midifilepath);
+            if (result)
+            {
+                if (usr().in_session())
+                    rc().auto_option_save(true);
+            }
         }
         else
         {
@@ -422,6 +427,9 @@ clinsmanager::create_project
                 usr().save_user_config(true);
                 rc().playlist_filename(dstplayfile);
                 rc().notemap_filename(dstnotefile);
+                if (usr().in_session())
+                    rc().auto_option_save(true);
+
                 result = cmdlineopts::write_options_files();
                 if (result)
                 {

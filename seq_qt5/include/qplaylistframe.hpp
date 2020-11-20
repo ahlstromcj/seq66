@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-16
+ * \updates       2020-11-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -134,6 +134,7 @@ private slots:
     void handle_list_add_click ();
     void handle_list_remove_click ();
     void handle_list_save_click ();
+    void handle_song_load_click ();
     void handle_song_add_click ();
     void handle_song_remove_click ();
     void handle_playlist_active_click ();

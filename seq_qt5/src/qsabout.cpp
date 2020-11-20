@@ -62,7 +62,7 @@ qsabout::qsabout (QWidget * parent)
     ui      (new Ui::qsabout)
 {
     ui->setupUi(this);
-    std::string apptag = seq_app_name();
+    std::string apptag = seq_app_name() + " " + seq_version();
     std::string vertag = seq_version_text();
     ui->topLabel->setText(apptag.c_str());
     ui->versionLabel->setText(vertag.c_str());

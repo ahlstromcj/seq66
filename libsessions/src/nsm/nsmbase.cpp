@@ -203,7 +203,7 @@ nsmbase::nsmbase
     m_lo_address        (nullptr),
     m_lo_server_thread  (nullptr),
     m_lo_server         (nullptr),
-    m_active            (false),
+    m_active            (false),        /* an atomic boolean value          */
     m_visible           (true),         /* not yet completely worked out    */
     m_dirty             (false),
     m_dirty_count       (0),
@@ -253,17 +253,6 @@ nsmbase::stop_thread ()
 {
     if (not_nullptr(m_lo_server_thread))
     {
-#if 0
-        int rcode = lo_server_thread_stop(m_lo_server_thread);
-        if (rcode == 0)                                     /* successful?  */
-        {
-            if (rc().verbose())
-                file_message("S66", "OSC server thread stopped");
-        }
-        else
-            file_error("S66", "OSC server thread failed to stop");
-
-#endif
         lo_server_thread_free(m_lo_server_thread);
         m_lo_server_thread = nullptr;
     }
@@ -378,9 +367,6 @@ nsmbase::msg_check (int timeoutms)
     bool result = false;
     if (timeoutms > 0)
     {
-        if (rc().verbose())
-            file_message("S66", "Waiting for reply...");
-
         /*
          * This cause issues when NSM responds quickly: microsleep(100);
          */
@@ -388,6 +374,9 @@ nsmbase::msg_check (int timeoutms)
         if (lo_server_wait(m_lo_server, timeoutms))
         {
             result = true;
+            if (rc().verbose())
+                file_message("S66", "Waiting for reply...");
+
             while (lo_server_recv_noblock(m_lo_server, 0))
             {
                 /* do nothing, handle the message(s) */
@@ -739,7 +728,7 @@ nsmbase:: nsm_reply (const std::string & message, const std::string & pattern)
 void
 nsmbase::error (int errcode, const std::string & errmesg)
 {
-    m_active = false;
+    is_active(false);
     m_manager.clear();
     m_capabilities.clear();
     m_path_name.clear();

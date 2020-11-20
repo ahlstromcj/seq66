@@ -946,7 +946,7 @@ rcsettings::playlist_filename (const std::string & value)
 {
     if (is_empty_string(value))
     {
-        clear_playlist();
+        clear_playlist();               /* clears file-name and active flag */
     }
     else
     {

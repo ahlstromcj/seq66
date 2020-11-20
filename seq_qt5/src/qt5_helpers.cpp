@@ -91,6 +91,13 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
 
 /**
  *  Shows the "Open" file dialog.
+ *
+ * \param [inout] selectedfile
+ *      A return value for the chosen file and path.  If not-empty when the call
+ *      is made, show the user that directory instead of the last-used directory.
+ *
+ * \return
+ *      Returns true if the returned path can be used.
  */
 
 bool
@@ -98,6 +105,9 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 {
     bool result = false;
     const char * directory = rc().last_used_dir().c_str();
+    if (! selectedfile)
+        directory = selectedfile.c_str();
+
     QString file = QFileDialog::getOpenFileName
     (
         parent, QObject::tr("Open MIDI/WRK file"), directory,
@@ -120,6 +130,14 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
  *
  *  Was starting from the rc().last_used_dir(), but should be the home directory
  *  for both normal and NSM sessions.
+ *
+ * \param [inout] selectedfile
+ *      A return value for the chosen file and path.  If not-empty when the call
+ *      is made, show the user that directory instead of the home configuration
+ *      directory.
+ *
+ * \return
+ *      Returns true if the returned path can be used.
  */
 
 bool
@@ -127,6 +145,9 @@ show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
 {
     bool result = false;
     const char * directory = rc().home_config_directory().c_str();
+    if (! selectedfile)
+        directory = selectedfile.c_str();
+
     QString file = QFileDialog::getOpenFileName
     (
         parent, QObject::tr("Open play-list file"), directory,

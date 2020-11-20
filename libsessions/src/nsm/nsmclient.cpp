@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-01
- * \updates       2020-10-24
+ * \updates       2020-11-19
  * \license       GNU GPLv2 or above
  *
  *  nsmclient is an Non Session Manager (NSM) OSC client agent.  The NSM API
@@ -426,7 +426,8 @@ nsmclient::initialize ()
  *  functions].
  *
  *  Here, we can indicate that the session is connected and active, and what
- *  session manager is in force.
+ *  session manager is in force.  However, we do not want to activate this
+ *  client until the session settings are made in the open() function below.
  */
 
 void
@@ -437,12 +438,14 @@ nsmclient::announce_reply
     const std::string & caps
 )
 {
-    is_active(true);
     capabilities(caps);
     session_manager_name(mgr);
-    // emit active(true);
-
     nsm::incoming_msg("Announce Reply Values", mgr, caps + " " + mesg);
+
+    /*
+     * emit active(true);
+     * is_active(true);
+     */
 }
 
 /**
@@ -458,7 +461,8 @@ nsmclient::announce_reply
  *      -   Path:         "/home/user/NSM Sessions/JackSession/seq66.nUKIE"
  *
  *  Compare to the "open" code in nsm-proxy.  See nsmclient::announce() for
- *  more discussion.
+ *  more discussion. Note that this function is where we can be active and
+ *  possible copy the application configuration to the session path.
  */
 
 void
@@ -473,16 +477,9 @@ nsmclient::open
     session_display_name(displayname);
     session_client_id(clientid);
     set_client_name(clientid);          /* set "seq66.nUKIE" as client ID   */
-
-    /*
-     * This is now done after create_session() in the session manager.
-     *
-     *  if (m_session_manager.create_project(pathname)) ...
-     *
-     *  // emit open();
-     */
-
     nsm::incoming_msg("Open Values", pathname, clientid + "" + displayname);
+    is_active(true);
+    // emit open();
 }
 
 /*
@@ -506,7 +503,6 @@ nsmclient::save ()
         (void) save_reply(r, msg);
     }
     // emit save();
-
 }
 
 /**
@@ -534,8 +530,8 @@ nsmclient::label (const std::string & label)
     std::string tag("Label from server: '");
     tag += label;
     tag += "'";
-    // emit label();
     nsm_debug(tag); // no code
+    // emit label();
 }
 
 /**
@@ -549,8 +545,8 @@ void
 nsmclient::show (const std::string & path)
 {
     nsm_debug("show");
-    // emit show();
     send_from_client(nsm::tag::reply, path, "OK");
+    // emit show();
 }
 
 /*
@@ -606,9 +602,12 @@ nsmclient::broadcast
  *  api_version_minor must be the two parts of the version number of the NSM
  *  API.  If registering JACK clients, application_name must be passed to
  *  jack_client_open.  capabilities is a string containing a list of the
- *  capabilities the client possesses, e.g.  :dirty:switch:progress:
+ *  capabilities the client possesses, e.g.  ":dirty:switch:progress:".
  *  executable_name must be the executable name that launched the program (e.g
  *  argv[0]).
+ *
+ *  We wait on the reply from NSM, which is flagged by an atomic boolean in
+ *  the open() function.
  *
 \verbatim
     /nsm/server/announce s:application_name s:capabilities s:executable_name
@@ -639,8 +638,10 @@ nsmclient::announce
 {
     bool result = send_announcement(appname, exename, capabilities);
     if (result)
-        result = msg_check();           /* wait for the response from nsmd  */
-
+    {
+        while (! is_active())           /* this is an atomic boolean check  */
+            (void) msg_check(1000);
+    }
     return result;
 }
 
