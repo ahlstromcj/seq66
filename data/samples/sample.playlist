@@ -1,6 +1,6 @@
 # Seq66 0.91.0 (and above) playlist file
 #
-# /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
+# /home/user/Home/ca/mls/git/seq66/data/samples/sample.playlist
 # Written on 2020-11-17 15:15:20
 #
 # This file holds multiple playlists for Seq66. It consists of one
@@ -119,6 +119,6 @@ file to your ~/.config/seq66 directory and add it to the qseq66.rc file's
 70 oxygen4b.wrk
 71 longhair.wrk
 
-# End of /home/ahlstrom/Home/ca/mls/git/seq66/data/samples/sample.playlist
+# End of /home/user/Home/ca/mls/git/seq66/data/samples/sample.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

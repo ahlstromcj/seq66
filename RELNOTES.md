@@ -1,9 +1,9 @@
 Release Notes for Seq66 0.91.0
 ==============================
 Chris Ahlstrom
-2020-11-15 to 2020-11-15
+2020-11-15 to 2020-11-21
 
-This file lists the changes for this version from the previous version.
+This file lists the major changes for this version from the previous version.
 Also see the README and INSTALL files.
 
 Non Session Manager Support
@@ -31,7 +31,7 @@ However, the "Playlist" tab is not yet fully function.  Edit the playlist file
 
 Command-Line Support
 --------------------
-Got the CLI version building, but it still needs a lot of testing.
+Got the CLI version building again, but it still needs a lot of testing.
 
 Documentation
 -------------

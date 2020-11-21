@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-19
+ * \updates       2020-11-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,9 +35,11 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc() and seq66::usr()     */
 #include "play/performer.hpp"           /* seq66::performer                 */
+#include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "util/strfunctions.hpp"        /* seq66::string_to_int()           */
 #include "qplaylistframe.hpp"           /* seq66::qplaylistframe child      */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd, a parent       */
+#include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
 
 #if defined SEQ66_QMAKE_RULES
 #include "forms/ui_qplaylistframe.h"
@@ -497,7 +499,9 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
 }
 
 /**
- *
+ *  Weird, this function sometimes receives a row of -1, even when
+ *  ui->tablePlaylistSections->clearContents() is called.  We ignore this
+ *  happenstance without showing a message.
  */
 
 void
@@ -506,11 +510,7 @@ qplaylistframe::handle_list_click_ex
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    if (row < 0)
-    {
-        warnprintf("List row %d\n", row);
-    }
-    else
+    if (row >= 0)
     {
         m_current_list_index = row;
         if (perf().open_select_list_by_index(row, false))
@@ -523,7 +523,9 @@ qplaylistframe::handle_list_click_ex
 }
 
 /**
- *
+ *  Weird, this function sometimes receives a row of -1, even when
+ *  ui->tablePlaylistSongs->clearContents() is called.  We ignore this
+ *  happenstance without showing a message.
  */
 
 void
@@ -532,11 +534,7 @@ qplaylistframe::handle_song_click_ex
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    if (row < 0)
-    {
-        warnprintf("Song row %d!\n", row);
-    }
-    else
+    if (row >= 0)
     {
         m_current_song_index = row;
         if (perf().open_select_song_by_index(row, true))
@@ -590,23 +588,23 @@ qplaylistframe::handle_list_add_click ()
         std::string listpath = temp.toStdString();
         std::string listname;
         int index = perf().playlist_count();        // useful???
-        int midinumber = index;                     // useful???
-        temp = ui->editPlaylistName->text();
-        listname = temp.toStdString();
-        temp = ui->editPlaylistNumber->text();
-        midinumber = string_to_int(temp.toStdString(), index);
-        if (m_parent->use_nsm())
+        if (index < 127)
         {
-        }
-        if (perf().add_list(index, midinumber, listname, listpath))
-        {
-            reset_playlist();
-        }
-        else
-        {
-            /*
-             * TODO: report error
-             */
+            int midinumber = index;                     // useful???
+            temp = ui->editPlaylistName->text();
+            listname = temp.toStdString();
+            temp = ui->editPlaylistNumber->text();
+            midinumber = string_to_int(temp.toStdString(), index);
+            if (perf().add_list(index, midinumber, listname, listpath))
+            {
+                reset_playlist();
+            }
+            else
+            {
+                /*
+                 * TODO: report error
+                 */
+            }
         }
     }
 }
@@ -621,13 +619,10 @@ qplaylistframe::handle_list_remove_click ()
     if (not_nullptr(m_parent))
     {
         int index = m_current_list_index;
-        if (m_parent->use_nsm())
-        {
-        }
         if (perf().remove_list(index))
         {
-            m_parent->recreate_all_slots();
             reset_playlist();
+            m_parent->recreate_all_slots();
         }
     }
 }
@@ -641,9 +636,6 @@ qplaylistframe::handle_list_save_click ()
 {
     if (not_nullptr(m_parent))
     {
-        if (m_parent->use_nsm())
-        {
-        }
         QString p = ui->entry_playlist_file->text();
         std::string plistname = p.toStdString();
         if (! plistname.empty())
@@ -665,6 +657,10 @@ qplaylistframe::handle_list_save_click ()
 /**
  *  These values depend on correct information edited into the Song text
  *  fields.  We should support loading a song from a file-selection dialog.
+ *
+ *  LOAD SONG: Add a song picked from a directory?
+ *
+ *  ADD SONG:  Add the currently loaded song?
  */
 
 void
@@ -672,18 +668,30 @@ qplaylistframe::handle_song_load_click ()
 {
     if (not_nullptr(m_parent))
     {
-        if (m_parent->use_nsm())
+        std::string selectedfile = ui->editSongPath->text().toStdString();
+        if (show_open_midi_file_dialog(this, selectedfile))
         {
-        }
-
-        // TODO: set selectefile to the song directory (if any) to the
-        // currently-selected playlist.
-
-        std::string selectedfile;
-        if (show_open_file_dialog(selectedfile))
-        {
-            // TODO 
-            // Make sure the path is the same as the global path and ????
+            bool ok;
+            std::string name;
+            std::string directory = ui->editSongPath->text().toStdString();
+            std::string nstr;   // = ui->editSongNumber->text().toStdString();
+            int index = perf().song_count() + 1;
+            int midinumber = (-1);  // std::stoi(nstr);
+            (void) filename_split(selectedfile, nstr, name);
+            if (nstr == directory)              /* i.e. the same file path  */
+            {
+                ok = perf().add_song(index, midinumber, name, directory);
+            }
+            else
+            {
+                std::string dir;
+                ok = perf().add_song(index, midinumber, selectedfile, dir);
+            }
+            if (ok)
+            {
+                fill_songs();               /* too much: reset_playlist();  */
+                m_parent->recreate_all_slots();
+            }
         }
     }
 }
@@ -703,13 +711,10 @@ qplaylistframe::handle_song_add_click ()
         std::string nstr = ui->editSongNumber->text().toStdString();
         int midinumber = std::stoi(nstr);
         int index = perf().song_count() + 1;
-        if (m_parent->use_nsm())
-        {
-        }
         if (perf().add_song(index, midinumber, name, directory))
         {
-            m_parent->recreate_all_slots();
             reset_playlist();
+            m_parent->recreate_all_slots();
         }
         else
         {
@@ -730,13 +735,10 @@ qplaylistframe::handle_song_remove_click ()
     if (not_nullptr(m_parent))
     {
         int index = m_current_song_index;
-        if (m_parent->use_nsm())
-        {
-        }
         if (perf().remove_song_by_index(index))
         {
-            m_parent->recreate_all_slots();
             reset_playlist();
+            m_parent->recreate_all_slots();
         }
         else
         {

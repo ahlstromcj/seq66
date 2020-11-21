@@ -1,6 +1,6 @@
 # Seq66 0.90.0 (and above) rc configuration file
 #
-# /home/ahlstrom/.config/sequencer66/qseq66.rc
+# /home/user/.config/sequencer66/qseq66.rc
 # Written on 2019-03-26 09:00:11
 #
 # This file holds the main configuration options for Seq66.
@@ -355,6 +355,6 @@ write-legacy-mutes = false
 
 .playlist
 
-# End of /home/ahlstrom/.config/sequencer66/qseq66.rc
+# End of /home/user/.config/sequencer66/qseq66.rc
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

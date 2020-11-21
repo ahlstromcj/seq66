@@ -1,6 +1,6 @@
 # Seq66 0.90.5 (and above) midi control configuration file
 #
-# /home/ahlstrom/.config/sequencer66/rowclipsmap.ctrl
+# /home/user/.config/sequencer66/rowclipsmap.ctrl
 # Written on 2020-08-06 09:09:19
 #
 # This file holds the MIDI control configuration for Seq66. It follows
@@ -194,6 +194,6 @@ load-midi-control = true
 48 "Null_ff" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 48
 
 
-# End of /home/ahlstrom/.config/sequencer66/rowclipsmap.ctrl
+# End of /home/user/.config/sequencer66/rowclipsmap.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

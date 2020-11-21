@@ -1,6 +1,6 @@
 # Seq66 0.91.0 (and above) playlist file
 #
-# /home/ahlstrom/.config/seq66/CaMidi/ca_midi.playlist
+# /home/user/.config/seq66/CaMidi/ca_midi.playlist
 # Written on 2020-11-17 11:59:29
 #
 # This file holds multiple playlists for Seq66. It consists of one
@@ -104,6 +104,6 @@ long, long ago.  Ah, such memories.
 40 pss790_1.mid
 50 pss790_2.mid
 
-# End of /home/ahlstrom/.config/seq66/CaMidi/ca_midi.playlist
+# End of /home/user/.config/seq66/CaMidi/ca_midi.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

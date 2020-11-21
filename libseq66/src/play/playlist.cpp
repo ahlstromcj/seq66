@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-17
+ * \updates       2020-11-20
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -56,6 +56,7 @@ namespace seq66
  */
 
 playlist::song_list playlist::sm_dummy;
+
 
 /**
  *  Principal constructor.
@@ -435,7 +436,8 @@ playlist::open_current_song ()
     bool result = false;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
         {
             std::string fname = song_filepath(m_current_song->second);
             if (! fname.empty())
@@ -937,7 +939,8 @@ playlist::song_index () const
     int result = (-1);
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
             result = m_current_song->second.ss_index;
     }
     return result;
@@ -953,8 +956,10 @@ playlist::file_directory () const
 {
     std::string result;
     if (m_current_list != m_play_lists.end())
-        return m_current_list->second.ls_file_directory;
-
+    {
+        play_list_t & plist = m_current_list->second;
+        return plist.ls_file_directory;
+    }
     return result;
 }
 
@@ -969,7 +974,8 @@ playlist::song_directory () const
     std::string result;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
             result = m_current_song->second.ss_song_directory;
     }
     return result;
@@ -986,7 +992,8 @@ playlist::is_own_song_directory () const
     bool result = false;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
             result = m_current_song->second.ss_embedded_song_directory;
     }
     return result;
@@ -1005,7 +1012,8 @@ playlist::song_midi_number () const
     int result = (-1);
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
             result = m_current_song->second.ss_midi_number;
     }
     return result;
@@ -1023,7 +1031,8 @@ playlist::song_filename () const
     std::string result;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
         {
             /*
              * This would return the full path for display, for those cases
@@ -1087,7 +1096,8 @@ playlist::song_filepath () const
     std::string result;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song != m_current_list->second.ls_song_list.end())
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song != plist.ls_song_list.end())
             result = song_filepath(m_current_song->second);
     }
     return result;
@@ -1110,9 +1120,10 @@ playlist::current_song () const
     {
         if (m_current_list != m_play_lists.end())
         {
-            if (m_current_song != m_current_list->second.ls_song_list.end())
+            play_list_t & plist = m_current_list->second;
+            if (m_current_song != plist.ls_song_list.end())
             {
-                result = m_current_list->second.ls_list_name;
+                result = plist.ls_list_name;
                 result += ": ";
                 result += m_current_song->second.ss_filename;
             }
@@ -1140,7 +1151,8 @@ playlist::select_song (int index)
     if (m_current_list != m_play_lists.end())
     {
         int count = 0;
-        song_list & slist = m_current_list->second.ls_song_list;
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
         for (auto sci = slist.begin(); sci != slist.end(); ++sci, ++count)
         {
             if (count == index)
@@ -1176,7 +1188,8 @@ playlist::select_song_by_midi (int ctrl)
     if (m_current_list != m_play_lists.end())
     {
         int count = 0;
-        song_list & slist = m_current_list->second.ls_song_list;
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
         for (auto sci = slist.begin(); sci != slist.end(); ++sci, ++count)
         {
             int midinumber = sci->second.ss_midi_number;
@@ -1207,11 +1220,12 @@ playlist::next_song ()
     bool result = false;
     if (m_current_list != m_play_lists.end())
     {
+        play_list_t & plist = m_current_list->second;
         ++m_current_song;
-        if (m_current_song == m_current_list->second.ls_song_list.end())
-            m_current_song = m_current_list->second.ls_song_list.begin();
+        if (m_current_song == plist.ls_song_list.end())
+            m_current_song = plist.ls_song_list.begin();
 
-        result = m_current_song != m_current_list->second.ls_song_list.end();
+        result = m_current_song != plist.ls_song_list.end();
         if (result)
         {
             const std::string & fname = m_current_song->second.ss_filename;
@@ -1233,12 +1247,13 @@ playlist::previous_song ()
     bool result = false;
     if (m_current_list != m_play_lists.end())
     {
-        if (m_current_song == m_current_list->second.ls_song_list.begin())
-            m_current_song = std::prev(m_current_list->second.ls_song_list.end());
+        play_list_t & plist = m_current_list->second;
+        if (m_current_song == plist.ls_song_list.begin())
+            m_current_song = std::prev(plist.ls_song_list.end());
         else
             --m_current_song;
 
-        result = m_current_song != m_current_list->second.ls_song_list.end();
+        result = m_current_song != plist.ls_song_list.end();
         if (result)
         {
             const std::string & fname = m_current_song->second.ss_filename;
@@ -1266,7 +1281,11 @@ playlist::add_song (song_spec_t & sspec)
 {
     bool result = m_current_list != m_play_lists.end();
     if (result)
-        result = add_song(m_current_list->second.ls_song_list, sspec);
+    {
+        play_list_t & plist = m_current_list->second;
+/////   result = add_song(plist.ls_song_list, sspec);
+        result = add_song(plist, sspec);
+    }
 
     return result;
 }
@@ -1321,6 +1340,9 @@ playlist::add_song (play_list_t & plist, song_spec_t & sspec)
 {
     song_list & sl = plist.ls_song_list;
     bool result = add_song(sl, sspec);
+    if (result)
+        ++plist.ls_song_count;
+
     return result;
 }
 
@@ -1343,33 +1365,55 @@ playlist::add_song
     const std::string & directory
 )
 {
-    song_spec_t sspec;                  /* will be copied upon insertion    */
-    sspec.ss_index = index;             /* an ordinal value from song table */
-    sspec.ss_midi_number = midinumber;  /* MIDI control number to use       */
-    sspec.ss_song_directory = directory;
-    sspec.ss_filename = name;
+    bool result = ctrl_is_valid(midinumber);
+    if (result)
+        result = m_current_list != m_play_lists.end();
 
-    /*
-     * Song list is empty at first, created by the playlist default constructor.
-     *
-     *      plist.ls_song_list = sspec;
-     */
-
-    bool result = add_song(sspec);
     if (result)
     {
-        reorder_song_list(m_current_list->second.ls_song_list);
-    }
-    else
-    {
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
+        if (do_ctrl_lookup(midinumber))     /* handle -1 via lookup         */
+        {
+            auto sci = slist.rbegin();
+            if (sci != slist.rend())
+            {
+                const song_spec_t & s = sci->second;
+                midinumber = s.ss_midi_number + 1;
+            }
+            else
+                midinumber = 0;
+        }
+
+        song_spec_t sspec;                  /* copied upon insertion        */
+        sspec.ss_index = index;
+        sspec.ss_midi_number = midinumber;
+        sspec.ss_song_directory = directory;
+        sspec.ss_filename = name;
+
         /*
-         * Remove the current entry and add this one.
+         * Song list is empty at first, created by the playlist default
+         * constructor.  Here, we do want to be sure to increment the song
+         * count for the current playlist, by calling the playlist overload of
+         * add_song().
          */
 
-        if (remove_song(index))
+        result = add_song(plist, sspec);        /* add song to playlist */
+        if (result)
         {
-            result = add_song(sspec);
-            reorder_song_list(m_current_list->second.ls_song_list);
+            reorder_song_list(slist);
+        }
+        else
+        {
+            /*
+             * Remove the current entry and add this one.
+             */
+
+            if (remove_song(index))
+            {
+                result = add_song(sspec);
+                reorder_song_list(slist);
+            }
         }
     }
     return result;
@@ -1398,12 +1442,14 @@ playlist::remove_song (int index)
     if (m_current_list != m_play_lists.end())
     {
         int count = 0;
-        song_list & slist = m_current_list->second.ls_song_list;
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
         for (auto sci = slist.begin(); sci != slist.end(); ++count)
         {
             if (count == index)
             {
                 sci = slist.erase(sci);
+                --plist.ls_song_count;
                 result = true;
                 break;
             }

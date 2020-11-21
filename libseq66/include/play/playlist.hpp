@@ -432,6 +432,16 @@ private:
         return m_play_lists;
     }
 
+    bool do_ctrl_lookup (int ctrl)
+    {
+        return ctrl == (-1);
+    }
+
+    bool ctrl_is_valid (int ctrl)
+    {
+        return (ctrl >= 0 && ctrl < 128) || do_ctrl_lookup(ctrl);
+    }
+
 };          // class playlist
 
 }           // namespace seq66

@@ -1,6 +1,6 @@
 # Seq66 0.90.0 (and above) mute-groups configuration file
 #
-# /home/ahlstrom/.config/sequencer66/test.mutes
+# /home/user/.config/sequencer66/test.mutes
 # Written on 2019-01-19 09:09:19
 #
 #
@@ -79,6 +79,6 @@ write-legacy-mutes = false
 31 [ 0x00 0x00 0x00 0x00 ]
 
 
-# End of /home/ahlstrom/.config/sequencer66/test.mutes
+# End of /home/user/.config/sequencer66/test.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

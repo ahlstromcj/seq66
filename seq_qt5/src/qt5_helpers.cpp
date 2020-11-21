@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2020-11-17
+ * \updates       2020-11-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -105,7 +105,7 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 {
     bool result = false;
     const char * directory = rc().last_used_dir().c_str();
-    if (! selectedfile)
+    if (! selectedfile.empty())
         directory = selectedfile.c_str();
 
     QString file = QFileDialog::getOpenFileName
@@ -145,7 +145,7 @@ show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
 {
     bool result = false;
     const char * directory = rc().home_config_directory().c_str();
-    if (! selectedfile)
+    if (! selectedfile.empty())
         directory = selectedfile.c_str();
 
     QString file = QFileDialog::getOpenFileName
