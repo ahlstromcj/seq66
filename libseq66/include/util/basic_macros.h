@@ -10,7 +10,7 @@
  * \library       seq66
  * \author        Chris Ahlstrom and other authors; see documentation
  * \date          2018-11-10
- * \updates       2020-07-09
+ * \updates       2020-11-21
  * \version       $Revision$
  * \license       GNU GPL v2 or above
  *
@@ -195,7 +195,7 @@
 #define errprintf(fmt, x)       fprintf(stderr, fmt, x)
 #define errprintfunc(x)         fprintf(stderr, "%s: %s\n", __func__, x)
 
-#define warnprint(x)            fprintf(stderr, "%s!\n", x)
+#define warnprint(x)            fprintf(stderr, "%s\n", x)
 #define warnprintf(fmt, x)      fprintf(stderr, fmt, x)
 
 #define infoprint(x)            fprintf(stderr, "%s\n", x)

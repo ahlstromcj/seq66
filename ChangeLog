@@ -1,5 +1,394 @@
+2020-11-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* RELNOTES.md, contrib/vim-syntax/cpp.vim,
+	data/samples/GM_DD-11.drums, data/samples/ca_midi.playlist,
+	data/samples/rowclipsmap.ctrl, data/samples/rowclipsmap.mutes,
+	data/samples/rowclipsmap.rc, data/samples/sample.playlist,
+	libseq66/include/play/playlist.hpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/src/qplaylistframe.cpp, seq_qt5/src/qt5_helpers.cpp: 
+	Playlist editing basically works.
+
+2020-11-20  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/samples/ca_midi.playlist, data/samples/sample.playlist,
+	doc/latex/tex/sessions.tex, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp, libsessions/src/nsm/nsmclient.cpp,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsabout.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5_helpers.cpp: Fixed issue with retrieving NSM
+	messages, more playlist improvements in progress.
+
+2020-11-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/samples/sample.playlist,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp,
+	seq_qt5/include/qt5_helpers.hpp, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5_helpers.cpp: Interim
+	check-in, playlist improvements.
+
+2020-11-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, RELNOTES.md, VERSION, arch/package/PKGBUILD,
+	arch/package/PKGBUILD-alt, configure, configure.ac,
+	contrib/notes/git.txt, data/license.txt, data/readme.txt,
+	data/readme.windows, doc/latex/Makefile.in, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp,
+	seq_qt5/forms/qplaylistframe.ui,
+	seq_qt5/include/qplaylistframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qplaylistframe.cpp: Ongoing improvements to playlist
+	management.
+
+2020-11-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_portmidi/seq_portmidi.pro,
+	seq_qt5/src/qsmainwnd.cpp: Added feature to auto-load the most
+	recent file at startup.
+
+2020-11-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/recent.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Updates to
+	recent-file management.
+
+2020-11-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seq66cli/seq66rtcli.cpp, TODO, contrib/DIR_COLORS,
+	doc/latex/tex/rc_file.tex, libseq66/src/cfg/playlistfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/src/nsm/nsmclient.cpp, seq_qt5/forms/qsessionframe.ui,
+	seq_qt5/include/qsessionframe.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qsessionframe.cpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Provisional fix to issue #26 and
+	configuration improvements.
+
+2020-11-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, Seq66cli/Makefile.am, Seq66cli/Makefile.in,
+	Seq66cli/seq66rtcli.cpp, Seq66qt5/Makefile.am,
+	Seq66qt5/Makefile.in, Seq66qt5/seq66qt5.cpp, VERSION, configure.ac,
+	contrib/non/nsm-proxy-h2.sh, doc/latex/tex/menu.tex,
+	doc/latex/tex/playlist.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: Got CLI building and running, NSM
+	testing needed.
+
+2020-11-08  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, Seq66cli/seq66rtcli.cpp,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libseq66/src/util/strfunctions.cpp, libsessions/src/lash/lash.cpp,
+	man/sequencer66.1, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixing PPQN issues with playlist loading
+	and a lot more.
+
+2020-11-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/non/nsm-emails.txt, doc/latex/tex/{seq66_build.tex =>
+	build.tex}, doc/latex/tex/{seq66_concepts.tex => concepts.tex},
+	doc/latex/tex/docs-structure.tex,
+	doc/latex/tex/{seq66_event_editor.tex => event_editor.tex},
+	doc/latex/tex/{seq66_headless.tex => headless.tex},
+	doc/latex/tex/{seq66_jack.tex => jack.tex},
+	doc/latex/tex/{seq66_kbd_mouse.tex => kbd_mouse.tex},
+	doc/latex/tex/{seq66_kudos.tex => kudos.tex},
+	doc/latex/tex/{seq66_manpage.tex => manpage.tex},
+	doc/latex/tex/{seq66_menu.tex => menu.tex},
+	doc/latex/tex/{seq66_meta_events.tex => meta_events.tex},
+	doc/latex/tex/{seq66_midi_export.tex => midi_export.tex},
+	doc/latex/tex/{seq66_midi_formats.tex => midi_formats.tex},
+	doc/latex/tex/{seq66_midi_impl_chart.tex => midi_impl_chart.tex},
+	doc/latex/tex/{seq66_pattern_editor.tex => pattern_editor.tex},
+	doc/latex/tex/{seq66_patterns_panel.tex => patterns_panel.tex},
+	doc/latex/tex/{seq66_playlist.tex => playlist.tex},
+	doc/latex/tex/{seq66_qt_portmidi.tex => qt_portmidi.tex},
+	doc/latex/tex/{seq66_rc_file.tex => rc_file.tex},
+	doc/latex/tex/{seq66_references.tex => references.tex},
+	doc/latex/tex/seq66-user-manual.tex,
+	doc/latex/tex/{seq66_sessions.tex => sessions.tex},
+	doc/latex/tex/{seq66_song_editor.tex => song_editor.tex},
+	doc/latex/tex/{seq66_usr_file.tex => usr_file.tex},
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcsettings.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp, man/sequencer66.1,
+	seq_qt5/src/qlfoframe.cpp: Added better NSM handling, documentation,
+	more, in progress.
+
+2020-11-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* include/qt/rtmidi/seq66-config.h,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Trying to
+	get Detach Session to work, weird lo_server_thread_stop() hang.
+
+2020-10-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, Seq66qt5/seq66qt5.cpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/forms/qsabout.ui,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/include/qt5nsmanager.hpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qt5nsmanager.cpp: Fixes to
+	saving, issue #21 wrong email link.
+
+2020-10-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, configure, configure.ac, doc/dox/libseq66/libseq66.cfg,
+	doc/dox/seq_portmidi/seq_portmidi.cfg,
+	doc/dox/seq_rtmidi/seq_rtmidi.cfg,
+	doc/latex/tex/seq66_sessions.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/midibus_impl.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/midi/jack_assistant.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp, man/sequencer66.1,
+	seq_portmidi/src/midibus_impl.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midibus.cpp,
+	seq_rtmidi/src/midibus_impl.cpp: Added client-name option, remove
+	unused impl modules.
+
+2020-10-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp: Disabled debug code.
+
+2020-10-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure, include/config.h.in, libseq66/include/Makefile.am,
+	libseq66/include/Makefile.in, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/sessions/smfunctions.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/Makefile.in,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/seq66_features.cpp,
+	libseq66/src/sessions/smfunctions.cpp,
+	libsessions/src/nsm/nsmbase.cpp, libsessions/src/nsm/nsmclient.cpp,
+	seq_qt5/forms/qsessionframe.ui: Interim check-in, untested
+	session-specific client ID.
+
+2020-10-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure.ac, doc/latex/tex/seq66_sessions.tex,
+	libseq66/include/cfg/notemapfile.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/src/qsmainwnd.cpp: Added
+	copying of drums files to session startup.
+
+2020-10-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/include/nsm/nsmbase.hpp,
+	libsessions/src/nsm/nsmbase.cpp, libsessions/src/nsm/nsmclient.cpp: 
+	Interim, fixing full-copy of playlist.
+
+2020-10-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/samples/sample.playlist,
+	libseq66/src/sessions/clinsmanager.cpp: Interim check-in for
+	playlist copy issue.
+
+2020-10-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, VERSION, configure.ac, doc/latex/tex/seq66_sessions.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, seq_qt5/include/qslivebase.hpp,
+	seq_qt5/include/qsliveframe.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_qt5/src/qt5nsmanager.cpp: More documentation, fixed error in
+	set-naming.
+
+2020-10-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/make-checkout: Added a cleanup script for
+	Makefile.in modifications.
+
+2020-10-10  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* .gitignore, doc/latex/tex/seq66_sessions.tex,
+	libseq66/src/sessions/smanager.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/forms/qsessionframe.ui: 
+	Fixed weird lo server add-method segfault.
+
+2020-10-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/playlistfile.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp, libseq66/src/play/sequence.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/src/qt5nsmanager.cpp: 
+	Fixed first-start issues and error-reporting.
+
+2020-10-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/seq66_sessions.tex, libseq66/src/cfg/rcfile.cpp: 
+	Fixed error in writing ctrl file when first running seq66.
+
+2020-10-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/Makefile.am, doc/latex/tex/Makefile.am: Added latex/tex
+	automake Makefiles.
+	* Makefile.am, Makefile.in, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, Seqtool/Makefile.in,
+	Seqtool/forms/Makefile.in, Seqtool/include/Makefile.in,
+	Seqtool/src/Makefile.in, configure, configure.ac,
+	contrib/scripts/seq66-nsm-proxy, data/Makefile.in, doc/Makefile.am,
+	doc/Makefile.in, doc/dox/Makefile.am, doc/dox/Makefile.in,
+	doc/dox/doxy-common.cfg, doc/dox/libseq66/libseq66.cfg,
+	doc/dox/{notes/notes.cfg => libsessions/libsessions.cfg},
+	doc/dox/libsessions/mainpage.dox, doc/dox/{libseq66 =>
+	}/make-helper, doc/dox/make_dox, doc/dox/notes/condvars.dox,
+	doc/dox/notes/coverage_profiling.dox, doc/dox/notes/jack_modes.dox,
+	doc/dox/notes/license.dox, doc/dox/notes/mainpage.dox,
+	doc/dox/notes/make-helper, doc/dox/notes/midi_parsing.dox,
+	doc/dox/notes/user_testing.dox, doc/dox/optimize,
+	doc/dox/seq_portmidi/make-helper,
+	doc/dox/seq_portmidi/seq_portmidi.cfg,
+	doc/dox/seq_rtmidi/make-helper, doc/dox/seq_rtmidi/seq_rtmidi.cfg,
+	doc/latex/Makefile-helper, doc/latex/README,
+	doc/latex/tex/seq66-user-manual.tex, excludes, include/config.h.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, pack,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Beefed up the doxygen and latex/pdf
+	documentation system.
+
+2020-09-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* .gitignore, INSTALL, Makefile.in, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, Seqtool/Makefile.in,
+	Seqtool/forms/Makefile.in, Seqtool/include/Makefile.in,
+	Seqtool/src/Makefile.in, bootstrap, configure, configure.ac,
+	contrib/scripts/qbuild, data/Makefile.in, include/config.h.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libseq66/src/cfg/rcfile.cpp,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/include/nsm/nsmbase.hpp, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, pack,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Fixed rc creation at first start up with
+	NSM support not built in, added Makefile.in files to project.
+
+2020-09-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/qbuild, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/notemapper.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/notemapper.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp, man/sequencer66.1: Fixing
+	first-startup issues re normal support.
+
+2020-09-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seqtool/src/optionsfile.cpp,
+	libseq66/include/sessions/clinsmanager.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/include/util/basic_macros.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/notemapfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/os/daemonize.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	libsessions/src/nsm/nsmbase.cpp, seq_qt5/src/qsmainwnd.cpp: Interim
+	check-in, fixed command-line-parsing, changed a function name to be
+	more sane.
+
+2020-09-27  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/playlist.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/smanager.cpp: Interim check-in, issue with -b
+	parsing remains.
+
 2020-09-26  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* : Merged master 0.90.6 and fixed playlist null pointer checks.
 	* NEWS, README, VERSION, bootstrap, configure, configure.ac,
 	contrib/scripts/debug, contrib/scripts/qbuild, data/README,
 	data/license.txt, data/readme.txt,

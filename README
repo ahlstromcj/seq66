@@ -1,6 +1,6 @@
 README for Seq66 0.91.0 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-11-15
+2015-09-10 to 2020-11-21
 
 "Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
 and with a lot of krufty buildup removed.
@@ -43,8 +43,8 @@ Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 Here are the executables that can be built:
 
 Linux ALSA/JACK support: Seq66qt5/qseq66
-Linux qmake/rtmidi: shadow/Seq66qt5/release/qrseq66
 Linux daemon: Seq66cli/seq66cli
+Linux qmake/rtmidi: shadow/Seq66qt5/release/qrseq66
 Windows qmake/portmidi: shadow/Seq66qt5/release/qpseq66.exe
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "rtmidi"
@@ -59,12 +59,13 @@ and using a conventional source tarball.
 Recent changes:
 
     -   Version 0.91.0:
-        -   Getting really serious about Non Session Manager support.  The
-            refactoring to do this has been massive.
+        -   Non Session Manager support essentially complete.  The
+            refactoring to do this was massive.
         -   All too many bug fixes and minor improvements.
         -   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
             linkage errors that cropped up in debug builds.
         -   Got the CLI version building, needs a lot of testing.
+        -   Playlist editing from the user-interface much improved.
     -   Version 0.90.6:
         -   Fixed issue #19 where recording notes caused a segfault.
     -   Version 0.90.5:

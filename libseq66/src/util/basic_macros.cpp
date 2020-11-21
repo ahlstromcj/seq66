@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-10-06
+ * \updates       2020-11-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -138,7 +138,7 @@ info_message (const std::string & msg)
 bool
 warn_message (const std::string & msg)
 {
-    std::cout << "[" << msg << "!]" << std::endl;      /* end and flush    */
+    std::cout << "[" << msg << "]" << std::endl;       /* end and flush    */
     return true;
 }
 

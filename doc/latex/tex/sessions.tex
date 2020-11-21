@@ -138,7 +138,8 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 
    If these files exist, then they are replicated in the \textsl{NSM} session
    directory.  If a playlist has been configured, it is also copied, and so are
-   the MIDI files it requires.
+   the MIDI files it requires. (Their relative directory structure is
+   preserved.)
    If these files do not exist, then new configuration files are created
    in the \textsl{NSM} session directory.
 
@@ -155,8 +156,6 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    directory, including play-lists and MIDI files.
 
    See the next section.
-
-
 
 \subsubsection{Seq66 Session Management / NSM / In-Session Run}
 \label{subsec:sessions_nsm_in_session_run}
@@ -267,7 +266,7 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    contain any new or imported MIDI files.  The new \texttt{config} directory
    contains versions of the various configuration files that will always be
    used to start up \textsl{Seq66} during the session.  One can also add valid
-   play-list and drums files to that directory.
+   play-list and drums/note-mapping files to that directory.
 
    Note that, if before running \textsl{NSM},
    one had set up a playlist file and provided the proper "MIDI
@@ -326,6 +325,13 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 
    A new user-interface, the \textsl{Session} tab, is provided to orient the
    user to the setup supported by the session.
+   When not running in a session, the normal configuration directory and files
+   are shown.  When running in an \textsl{NSM} section, the configuration
+   information received from \textsl{NSM} is displayed.
+
+   This tab is not yet fully functional and is meant to display information to
+   help the user understand what is happening in the run.  In particular, the
+   \textbf{Detach} and \textbf{Session Log} don't yet work.
 
 \begin{figure}[H]
    \centering 
