@@ -644,10 +644,6 @@ rcsettings::device_ignore_num (int value)
         m_device_ignore_num = value;
 }
 
-/**
- *  \setter m_tempo_track_number
- */
-
 void
 rcsettings::tempo_track_number (int track)
 {
@@ -721,10 +717,6 @@ rcsettings::interaction_method (interaction value)
     return result;
 }
 
-/**
- * \setter m_mute_group_save
- */
-
 bool
 rcsettings::mute_group_save (mute_group_handling mgh)
 {
@@ -736,10 +728,6 @@ rcsettings::mute_group_save (mute_group_handling mgh)
     else
         return false;
 }
-
-/**
- * \setter m_mute_save
- */
 
 bool
 rcsettings::mute_group_save (const std::string & v)

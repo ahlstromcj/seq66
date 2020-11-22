@@ -664,7 +664,8 @@ public:
     {
         return
         (
-            m_with_jack_transport || m_with_jack_master || m_with_jack_master_cond
+            m_with_jack_transport || m_with_jack_master ||
+                m_with_jack_master_cond
         );
     }
 
@@ -721,12 +722,11 @@ public:
 
     /**
      * \getter m_mute_group_save
-     *
      * \return
      *      Returns true if mute-group-handling is set to mutes or both.
      */
 
-    bool mute_group_save_to_rc () const
+    bool mute_group_save_to_mutes () const
     {
         return
         (
@@ -737,7 +737,6 @@ public:
 
     /**
      * \getter m_mute_group_save
-     *
      * \return
      *      Returns true if mute-group-handling is set to midi or both.
      */

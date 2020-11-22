@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-10-03
-% \update      2020-11-19
+% \update      2020-11-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,6 +18,14 @@
 \section{Seq66 Session Management}
 \label{sec:sessions}
 
+   The first thing to do for session management is to make sure that the
+   application is capable of various levels of session management, from
+   \textsl{UNIX} signals to
+   a complete session manager like the \textsl{Non Session Manager}.
+   Basic session management consist of being able to properly start the
+   application and let it run properly during its life-cyle, whether it is a
+   command-line application or a graphical application.
+
    \textsl{Seq66} supports session management in three ways:
 
    \begin{enumber}
@@ -26,20 +34,20 @@
       \item \textbf{LASH} (not ready)
    \end{enumber}
 
-\textsl{Non Session Manager} provides a replacement for the
-\textsl{JACK Session API}, which is now disabled by default in a \textsl{Seq66}
-build.  It allows control over the startup of multiple applications, the
-process of saving a session, and
-provides a way to save their patching (connections) in \textsl{JACK}.
-\textsl{NSM} support in \textsl{Seq66} is well underway, and almost finished.
+   \textbf{Non Session Manager} provides a replacement for the
+   \textsl{JACK Session API} (now disabled by default in a \textsl{Seq66}
+   build).  It allows control over the startup of multiple applications, the
+   process of saving a session, and
+   provides a way to save their patching (connections) in \textsl{JACK}.
+   \textsl{NSM} support in \textsl{Seq66} is essentially finished.
 
-\textsl{Signals} provide for initiating a save operation and the sudden
-termination of an application.  This mode is useful with
-\textsl{nsm-proxy}, a way to script applications that don't have \textsl{NSM}
-support.
+   \textbf{Signals} provide for initiating a save operation and the sudden
+   termination of an application.  This mode is useful with
+   \textsl{nsm-proxy}, a way to script applications that don't have \textsl{NSM}
+   support.
 
-\textsl{LASH} is an earlier session protocol, supported in \textsl{Seq64}.
-However, it is not ready in \textsl{Seq66} and is a low priority at this time.
+   \textbf{LASH} is an earlier session protocol, supported in \textsl{Seq64}.
+   However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 
 %  See \sectionref{subsec:seq66_rc_file_midi_control},
 
@@ -47,13 +55,10 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 \label{subsec:sessions_nsm}
 
    \index{sessions!nsm}
-   The first thing to do for session management is make sure that the
-   application is capable of various levels of session management, from
-   \textsl{UNIX} signal to
-   a complete session manager like the \textsl{Non Session Manager}.
-   Basic session management consist of being able to properly start the
-   application and let it run properly during its life-cyle, whether it is a
-   command-line application or a graphical application.
+   The \textsl{Non Session Manager} is an API implementation for session
+   management for Linux audio/MIDI. NSM clients use a well-defined
+   \index{sessions!OSC}
+   \textsl{OSC} protocol to communicate with the session management daemon.
 
 \subsubsection{Seq66 Session Management / NSM / First Run Without NSM}
 \label{subsec:sessions_nsm_first_run_without_nsm}
@@ -65,12 +70,13 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    see \sectionref{subsec:sessions_nsm_first_run_in_nsm}.
 
    Generally, after installing \textsl{Seq66}, or when creating a new setup
-   (such as a playlist) it is good to run it normally first.  This action
-   creates (or uses) the configuration files in the default location,
+   (such as a playlist) it is good to run it normally first, to simplify
+   trouble-shooting.
+   This action creates the configuration files in the default location,
    \texttt{/home/user/.config/seq66}:
 
 \begin{verbatim}
-   nsm $ qseq66 
+   $ qseq66 
    [No 'rc' file, will create: qseq66.rc/ctrl/midi/mutes]
    [No 'usr' file, will create: /home/user/.config/seq66/qseq66.usr]
    [File exists: /home/user/.config/seq66/qseq66.rc]
@@ -87,8 +93,8 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    one can also create a 'playlist' file and a 'drums' file, or
    copy them from \texttt{/usr/share/seq66-0.91/data/samples} to
    \texttt{/home/user/.config/seq66} and modify them appropriately.
-   Generally, it is best to make sure that \texttt{qseq66} runs normally before
-   attempt to get it work in a session.
+%  Generally, it is best to make sure that \texttt{qseq66} runs normally before
+%  attempt to get it work in a session.
 
    Another first-time modification to consider is setting up \textsl{Seq66} to
    use the \textsl{JACK} audio/MIDI subsystem (on \textsl{Linux}).
@@ -128,49 +134,37 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    It is then important to start \texttt{qseq66} in the normal manner again,
    and verify that everything works as expected.
 
-\subsubsection{Seq66 Session Management / NSM / First Run in NSM}
+\subsubsection{Seq66 Session Management / NSM / Run in NSM}
 \label{subsec:sessions_nsm_first_run_in_nsm}
 
    When \textsl{Seq66} is run in \textsl{NSM} for the first time,
-   what happens to the configuration depends on whether or not 
-   the configuration files exist in the default location,
+   what happens to the new configuration depends on whether or not 
+   the normal configuration files exist in the default location,
    \texttt{/home/user/.config/seq66}.
 
-   If these files exist, then they are replicated in the \textsl{NSM} session
-   directory.  If a playlist has been configured, it is also copied, and so are
-   the MIDI files it requires. (Their relative directory structure is
-   preserved.)
+   If these normal configuration files exist, then they are replicated in the
+   \textsl{NSM} session directory.  If a playlist has been configured, it is also
+   copied, and so are the MIDI files it requires. (Their relative directory
+   structure is preserved.)
    If these files do not exist, then new configuration files are created
    in the \textsl{NSM} session directory.
 
-   \textbf{No existing configuration}.
-   Here, we have just installed \textsl{Seq66}, but have not yet run it.
-   We start the \textsl{non-session-manager}, create a new session, and
-   add \texttt{qseq66} to this session.  This starts \texttt{qseq66}, and,
+   \textbf{No existing normal configuration}.
+   Here, we have just installed \textsl{Seq66}, but have not
+   yet run it.  We start the \textsl{non-session-manager}, create a new session,
+   and add \texttt{qseq66} to this session.  This starts \texttt{qseq66}, and,
    after a short delay to get the session information from the daemon, a new
    configuration is created in the session directory.
 
+   \textbf{Existing normal configuration}.
    If there is an existing \textsl{Seq66} configuration (in
    \texttt{/home/user/.config/seq66}, then running \texttt{qseq66} in a new
    session will cause the configuration to be recreated in the new session
    directory, including play-lists and MIDI files.
 
-   See the next section.
-
-\subsubsection{Seq66 Session Management / NSM / In-Session Run}
-\label{subsec:sessions_nsm_in_session_run}
-
-%  Now that we have the initial configuration outside of session management, we
-%  want to run \textsl{Seq66} under \textsl{NSM} and create a configuration in
-%  the
-
    If \textsl{JACK} has been configured to be
    used by \textsl{Seq66}, be sure \textsl{JACK} is started (e.g. by running
    the \textsl{qjackctl} application.)
-
-   We run \textsl{Seq66} in an \textsl{NSM} session,
-   which creates/copies a configuration in the \texttt{NSM Sessions} directory
-   for that session.
 
    For illustration, we run \textsl{NSM} from a terminal window, which can be
    very helpful when problems occur.
@@ -214,7 +208,7 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    \texttt{qseq66} has been installed, it is in the \texttt{PATH}
    and its executable name can be entered simply: "qseq66".
    A number of console messages from
-   \textsl{Seq66} appear, plus some messages from \textsl{NSM}:
+   \textsl{Seq66} appear, plus some messages from \textsl{NSM}.
 
 \begin{verbatim}
 	[non-session-manager] Sending add for: qseq66
@@ -227,8 +221,11 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
     ready to receive commands.
 \end{verbatim}
 
-	Once \textsl{Seq66} is running under \textsl{NSM}, we can see what has
-   been created to support the session.  The directory that \textsl{NSM}
+	Once \textsl{Seq66} is running under \textsl{NSM},
+   then click the "Save" button at the top of the \textsl{NSM} interface in order
+   to save the session information.  This is an important step.
+   We can see what has been created to support the session.
+   The directory that \textsl{NSM}
    creates by default is \texttt{/home/user/NSM Sessions}.
 
 \begin{verbatim}
@@ -263,10 +260,12 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    The rest of the directories are generated by \textsl{Seq66}, which creates
    new \texttt{config} directory (to be used instead of
    \texttt{/home/user/.config/seq66}) and a \texttt{midi} directory which will
-   contain any new or imported MIDI files.  The new \texttt{config} directory
+   contain any new, imported MIDI files, or MIDI files from the playlist.
+   The new \texttt{config} directory
    contains versions of the various configuration files that will always be
-   used to start up \textsl{Seq66} during the session.  One can also add valid
-   play-list and drums/note-mapping files to that directory.
+   used to start up \textsl{Seq66} during the session.
+   One can also add valid play-list and drums/note-mapping files to that
+   directory later.
 
    Note that, if before running \textsl{NSM},
    one had set up a playlist file and provided the proper "MIDI
@@ -287,7 +286,7 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    As described in the \textsl{NSM} documentation, the \texttt{nsmd} daemon can
    be run stand-alone, and can also be ran on a remote computer.
    The \texttt{qseq66.usr} file can be edited to allow \textsl{Seq66} to
-   use \textsl{NSM} and specify the URL to connect.
+   use a pre-planned \textsl{NSM} and specify the URL to connect.
    Look for the following lines in the 'usr' file:
 
 \begin{verbatim}
@@ -323,7 +322,7 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
 \subsubsection{Seq66 Session Management / Sessions Tab}
 \label{subsubsec:sessions_tab}
 
-   A new user-interface, the \textsl{Session} tab, is provided to orient the
+   The \textsl{Session} tab is provided to orient the
    user to the setup supported by the session.
    When not running in a session, the normal configuration directory and files
    are shown.  When running in an \textsl{NSM} section, the configuration
@@ -348,7 +347,9 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    \begin{itemize}
       \item Name of the session manager.
       \item Session path for the session, the root directory of the session.
-         All data goes into this directory.
+         All data goes into this directory. If not running in a session,
+         the active configuration directory (which can be changed via the
+         command-line arguments) is shown.
       \item The OSC URL of the session, which includes the port number.
          Generally, the port number is selected at run-time, but it is also
          possible to configure \textsl{NSM} to use a specific port number.
@@ -356,8 +357,6 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
       \item The generated client ID for the session.
       \item The log of action of the session manager. Not yet supported.
    \end{itemize}
-
-   The \textsl{Detach} is disabled because this feature is not ready.
 
 \subsubsection{Seq66 Session Management / File Menu}
 \label{subsubsec:sessions_file_menu}
@@ -374,7 +373,7 @@ However, it is not ready in \textsl{Seq66} and is a low priority at this time.
    \caption*{File Menu When Running Under NSM}
 \end{figure}
 
-   The following items describe the menu entries.  Some of these are still in
+   The following items describe the menu entries.  Some of these may be in
    progress or still need to be enforced.
 
    \begin{itemize}
