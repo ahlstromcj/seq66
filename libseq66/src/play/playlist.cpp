@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-20
+ * \updates       2020-11-22
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -81,9 +81,9 @@ playlist::playlist
     bool show_on_stdout
 ) :
     basesettings                (filename),
-    m_performer                 (p),                // the owner of this object
+    m_performer                 (p),                /* owner of this object */
     m_play_lists                (),
-    m_mode                      (false),
+    m_mode                      (false),            /* playlist enabled     */
     m_deep_verify               (false),
     m_current_list              (m_play_lists.end()),
     m_current_song              (sm_dummy.end()),   // song-list iterator
@@ -105,6 +105,17 @@ playlist::~playlist ()
 #if defined SEQ66_PLATFORM_DEBUG_TMI
     file_message("Playlist deleted", file_name());
 #endif
+}
+
+/**
+ *  Returns true if in playlist mode and the playlist is active.  These are two
+ *  separate conditions at present.
+ */
+
+bool
+playlist::active () const
+{
+    return rc().playlist_active() && m_mode;
 }
 
 /**
@@ -433,22 +444,26 @@ playlist::copy_songs (const std::string & destination)
 bool
 playlist::open_current_song ()
 {
-    bool result = false;
-    if (m_current_list != m_play_lists.end())
+    bool result = true;
+    if (active())
     {
-        play_list_t & plist = m_current_list->second;
-        if (m_current_song != plist.ls_song_list.end())
+        result = m_current_list != m_play_lists.end();
+        if (result)
         {
-            std::string fname = song_filepath(m_current_song->second);
-            if (! fname.empty())
+            play_list_t & plist = m_current_list->second;
+            if (m_current_song != plist.ls_song_list.end())
             {
-                result = open_song(fname);
-                if (! result)
+                std::string fname = song_filepath(m_current_song->second);
+                if (! fname.empty())
                 {
-                    (void) set_file_error_message
-                    (
-                        "Open failed: song '%s'", fname
-                    );
+                    result = open_song(fname);
+                    if (! result)
+                    {
+                        (void) set_file_error_message
+                        (
+                            "Open failed: song '%s'", fname
+                        );
+                    }
                 }
             }
         }
@@ -463,10 +478,13 @@ playlist::open_current_song ()
 bool
 playlist::open_next_list (bool opensong)
 {
-    bool result = next_list(true);      /* select the next list, first song */
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = next_list(true);      /* select the next list, first song */
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 
@@ -477,10 +495,13 @@ playlist::open_next_list (bool opensong)
 bool
 playlist::open_previous_list (bool opensong)
 {
-    bool result = previous_list(true);  /* select the prev. list, first song */
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = previous_list(true);  /* select the prev. list, first song */
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 
@@ -491,10 +512,13 @@ playlist::open_previous_list (bool opensong)
 bool
 playlist::open_select_list (int index, bool opensong)
 {
-    bool result = select_list(index, opensong);
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = select_list(index, opensong);
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 
@@ -505,10 +529,13 @@ playlist::open_select_list (int index, bool opensong)
 bool
 playlist::open_select_list_by_midi (int ctrl, bool opensong)
 {
-    bool result = select_list_by_midi(ctrl, opensong);
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = select_list_by_midi(ctrl, opensong);
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 
@@ -519,10 +546,13 @@ playlist::open_select_list_by_midi (int ctrl, bool opensong)
 bool
 playlist::open_next_song (bool opensong)
 {
-    bool result = next_song();
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = next_song();
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 
@@ -533,10 +563,13 @@ playlist::open_next_song (bool opensong)
 bool
 playlist::open_previous_song (bool opensong)
 {
-    bool result = previous_song();
-    if (result && opensong)
-        result = open_current_song();
-
+    bool result = true;
+    if (active())
+    {
+        result = previous_song();
+        if (result && opensong)
+            result = open_current_song();
+    }
     return result;
 }
 

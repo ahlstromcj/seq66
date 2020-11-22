@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-17
+ * \updates       2020-11-22
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -195,7 +195,8 @@ private:
 
     /**
      *  Indicates if we are in playlist mode.  Only true if the user specified
-     *  a valid playlist file that was successfully loaded.
+     *  a valid playlist file that was successfully loaded, and if the playlist
+     *  is active [rc().playlist_active()].
      */
 
     bool m_mode;
@@ -277,6 +278,8 @@ public:
     {
         m_mode = m;
     }
+
+    bool active () const;
 
     bool deep_verify () const
     {

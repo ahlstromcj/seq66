@@ -2622,18 +2622,43 @@ qsmainwnd::quit_session ()
  *  we moved much of the processing to that class.  If the event isn't handled
  *  there, then qsmainwnd::handle_key_press() is called.
  *
- *  If we reimplement this handler, it is very important to call
- * the base class implementation if the key is no acted on.
+ *  If we reimplement this handler, it is very important to call the base class
+ *  implementation if the key is no acted on.
+ *
+ *  ca 2020-11-22 Refactoring keystroke handling between the main window and the
+ *  live grid/frame.
  */
 
 void
 qsmainwnd::keyPressEvent (QKeyEvent * event)
 {
-    QWidget::keyPressEvent(event);
+    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+    bool done = handle_key_press(k);
+    if (done)
+        update();
+    else
+        QWidget::keyPressEvent(event);          /* event->ignore()?     */
 }
 
 /**
- *  Handles some hard-wired keystrokes.
+ *
+ */
+
+void
+qsmainwnd::keyReleaseEvent (QKeyEvent * event)
+{
+    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+    bool done = handle_key_release(k);
+    if (done)
+        update();
+    else
+        QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
+}
+
+/**
+ *  Handles some hard-wired keystrokes.  If they aren't handled, then MIDI
+ *  control-key processing is performed.
+ *
  *  The arrow keys support moving forward and backward through the playlists
  *  and the songs they specify.  These functions are also supported by the MIDI
  *  automation apparatus, but are not yet supported by the keystroke automation
@@ -2651,27 +2676,44 @@ bool
 qsmainwnd::handle_key_press (const keystroke & k)
 {
     bool result = false;
+    bool done = false;
     if (k.is_right())
     {
         result = perf().open_next_song();
+        done = true;
     }
     else if (k.is_left())
     {
         result = perf().open_previous_song();
+        done = true;
     }
     else if (k.is_down())
     {
         result = perf().open_next_list();
+        done = true;
     }
     else if (k.is_up())
     {
         result = perf().open_previous_list();
+        done = true;
     }
-    m_is_title_dirty = result;
     if (result)
         m_live_frame->set_playlist_name(perf().playlist_song());
 
-    return result;
+    if (! done)
+    {
+        done = perf().midi_control_keystroke(k);
+        if (perf().seq_edit_pending())
+        {
+            done = true;
+        }
+        else if (perf().event_edit_pending())
+        {
+            done = true;
+        }
+    }
+    m_is_title_dirty = result;
+    return done;
 }
 
 /**
@@ -2679,9 +2721,9 @@ qsmainwnd::handle_key_press (const keystroke & k)
  */
 
 bool
-qsmainwnd::handle_key_release (const keystroke & /*k*/)
+qsmainwnd::handle_key_release (const keystroke & k)
 {
-    return false;
+    return perf().midi_control_keystroke(k);
 }
 
 /**

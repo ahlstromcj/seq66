@@ -1278,6 +1278,8 @@ screenset::learn_bits (midibooleans & bits)
                 bool armed = sp->playing();
                 bits.push_back(midibool(armed));
             }
+            else
+                bits.push_back(midibool(false));
         }
     }
     return result;

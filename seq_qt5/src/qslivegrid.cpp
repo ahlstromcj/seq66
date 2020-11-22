@@ -1103,6 +1103,7 @@ qslivegrid::sequence_key_check ()
 }
 
 /**
+ *  FUNCTIONALITY moved to qsmainwnd::handle_key_press()
  *  This function needs some fixing.
  *
  *  The handling of seq-edit and event-edit is done via setting flags in
@@ -1112,6 +1113,7 @@ qslivegrid::sequence_key_check ()
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
+#if 0
     bool done = perf().midi_control_keystroke(k);
     if (perf().seq_edit_pending())
     {
@@ -1122,14 +1124,12 @@ qslivegrid::handle_key_press (const keystroke & k)
         done = true;
     }
 
-#if 0   // why was this code active?  If you found out, write it up!
     if (done)
         (void) m_parent->handle_key_press(k);
     else
-#endif
         done = m_parent->handle_key_press(k);
-
-    return done;
+#endif
+    return m_parent->handle_key_press(k);
 }
 
 /**
@@ -1139,12 +1139,15 @@ qslivegrid::handle_key_press (const keystroke & k)
 bool
 qslivegrid::handle_key_release (const keystroke & k)
 {
+#if 0
     bool done = perf().midi_control_keystroke(k);
     if (! done)
     {
         // so far, nothing extra needed upon key release, but...
     }
     return done;
+#endif
+    return m_parent->handle_key_press(k);
 }
 
 /**
@@ -1175,19 +1178,9 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
     keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
     bool done = handle_key_press(k);
     if (done)
-    {
-        // update(); // EXPERIMENTAL COMMENT-OUT
-    }
+        update();
     else
-    {
-        done = m_parent->handle_key_press(k);
-        if (done)
-        {
-            // update(); // EXPERIMENTAL COMMENT-OUT
-        }
-        else
-            QWidget::keyPressEvent(event);          /* event->ignore()?     */
-    }
+        QWidget::keyPressEvent(event);              /* event->ignore()?     */
 }
 
 /**
