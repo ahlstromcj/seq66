@@ -501,6 +501,7 @@ clinsmanager::create_project
             }
         }
     }
+    (void) m_nsm_client->open_reply(result);    /* issue #28        */
     return result;
 }
 

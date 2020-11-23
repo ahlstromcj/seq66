@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-11-13
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1903,38 +1903,41 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 bool
 midifile::parse_mute_groups (performer & p)
 {
-    bool result = true;
     mutegroups & mutes = p.mutes();
-    unsigned high, low;
-    long len = long(read_split_long(high, low));    /* not always 1024      */
-    if (len > 0)
+    bool result = ! mutes.loaded_from_mutes();      /* loaded from config?  */
+    if (result)
     {
-        unsigned groupcount = c_max_groups;         /* 32 groups by fiat    */
-        unsigned setsize = p.seqs_in_set();         /* 32 seqs by default   */
-        p.mutes().clear();                          /* makes it empty       */
-        if (len != 1024)
+        unsigned high, low;
+        long len = long(read_split_long(high, low));
+        if (len > 0)
         {
-            groupcount = high;
-            setsize = low;
-
-            /*
-             * What about rows & columns?  Ultimately, the set-size must match
-             * that specified by the application's user-interface as must the
-             * rows and columns.
-             */
-        }
-        for (unsigned g = 0; g < groupcount; ++g)
-        {
-            midibooleans mutebits;
-            midilong group = read_long();
-            for (unsigned s = 0; s < setsize; ++s)
+            unsigned groupcount = c_max_groups;     /* 32 groups by fiat    */
+            unsigned setsize = p.seqs_in_set();     /* 32 seqs by default   */
+            p.mutes().clear();                      /* makes it empty       */
+            if (len != 1024)
             {
-                midilong gmutestate = read_long();  /* why long for a bit!? */
-                bool status = gmutestate != 0;
-                mutebits.push_back(midibool(status));
+                groupcount = high;
+                setsize = low;
+
+                /*
+                 * What about rows & columns?  Ultimately, the set-size must match
+                 * that specified by the application's user-interface as must the
+                 * rows and columns.
+                 */
             }
-            if (! mutes.load(group, mutebits))
-                break;                              /* usually a duplicate  */
+            for (unsigned g = 0; g < groupcount; ++g)
+            {
+                midibooleans mutebits;
+                midilong group = read_long();
+                for (unsigned s = 0; s < setsize; ++s)
+                {
+                    midilong gmutestate = read_long();  /* why long for a bit!? */
+                    bool status = gmutestate != 0;
+                    mutebits.push_back(midibool(status));
+                }
+                if (! mutes.load(group, mutebits))
+                    break;                              /* usually a duplicate  */
+            }
         }
     }
     return result;
@@ -1950,8 +1953,8 @@ midifile::parse_mute_groups (performer & p)
 bool
 midifile::write_mute_groups (const performer & p)
 {
-    bool result = true;
     const mutegroups & mutes = p.mutes();
+    bool result = mutes.group_save_to_midi();
     for (const auto & stz : mutes.list())
     {
         int groupnumber = stz.first;

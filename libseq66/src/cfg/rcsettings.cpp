@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-15
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -102,7 +102,6 @@ rcsettings::rcsettings () :
     m_device_ignore             (false),
     m_device_ignore_num         (0),
     m_interaction_method        (interaction::seq24),
-    m_mute_group_save           (mute_group_handling::midi),
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
@@ -194,7 +193,6 @@ rcsettings::set_defaults ()
     m_device_ignore             = false;
     m_device_ignore_num         = 0;
     m_interaction_method        = interaction::seq24;
-    m_mute_group_save           = mute_group_handling::midi;
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
@@ -714,49 +712,6 @@ rcsettings::interaction_method (interaction value)
         errprint("illegal interaction-method value");
         break;
     }
-    return result;
-}
-
-bool
-rcsettings::mute_group_save (mute_group_handling mgh)
-{
-    if (mgh >= mute_group_handling::mutes && mgh < mute_group_handling::maximum)
-    {
-        m_mute_group_save = mgh;
-        return true;
-    }
-    else
-        return false;
-}
-
-bool
-rcsettings::mute_group_save (const std::string & v)
-{
-    if (v == "both" || v == "stomp")
-        return mute_group_save(mute_group_handling::both);
-    else if (v == "mutes")
-        return mute_group_save(mute_group_handling::mutes);
-    else if (v == "midi" || v == "preserve")
-        return mute_group_save(mute_group_handling::midi);
-    else
-        return false;
-}
-
-/**
- * \getter m_mute_group_save, string version
- */
-
-std::string
-rcsettings::mute_group_save_label () const
-{
-    std::string result = "bad";
-    if (m_mute_group_save == mute_group_handling::mutes)
-        result = "mutes";
-    else if (m_mute_group_save == mute_group_handling::midi)
-        result = "midi";
-    else if (m_mute_group_save == mute_group_handling::both)
-        result = "both";
-
     return result;
 }
 

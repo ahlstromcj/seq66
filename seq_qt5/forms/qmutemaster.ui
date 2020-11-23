@@ -26,23 +26,6 @@
    <enum>QFrame::Raised</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="3">
-    <layout class="QGridLayout" name="setGridLayout">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetDefaultConstraint</enum>
-     </property>
-    </layout>
-   </item>
-   <item row="8" column="2">
-    <widget class="QPushButton" name="m_button_reset">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Reset</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="3">
     <widget class="QPushButton" name="m_button_show">
      <property name="enabled">
@@ -56,16 +39,51 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="6">
-    <widget class="QPushButton" name="m_button_close">
+   <item row="4" column="1">
+    <widget class="QRadioButton" name="m_radio_binary">
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>Binar&amp;y</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QPushButton" name="m_button_reset">
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="toolTip">
-      <string>Close this window.</string>
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>64</width>
+       <height>32</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>64</width>
+       <height>28</height>
+      </size>
      </property>
      <property name="text">
-      <string>Close</string>
+      <string>Mutes File:</string>
      </property>
     </widget>
    </item>
@@ -85,9 +103,39 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>280</width>
+       <width>200</width>
        <height>28</height>
       </size>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="6">
+    <widget class="QPushButton" name="m_button_close">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>Close this window.</string>
+     </property>
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QPushButton" name="m_button_modify">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Modify Mutes</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Write Format:</string>
      </property>
     </widget>
    </item>
@@ -154,23 +202,22 @@
    </item>
    <item row="5" column="1">
     <widget class="QRadioButton" name="m_radio_hex">
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string>He&amp;x</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="4">
-    <widget class="QPushButton" name="m_button_up">
-     <property name="toolTip">
-      <string>Move the selected set up in the list.</string>
-     </property>
-     <property name="text">
-      <string>Up</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="5">
     <widget class="QPushButton" name="m_button_down">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="toolTip">
       <string>Move to the next mute group.</string>
      </property>
@@ -179,45 +226,16 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>64</width>
-       <height>32</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>64</width>
-       <height>28</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Mutes File:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0">
-    <widget class="QPushButton" name="m_button_modify">
+   <item row="8" column="4">
+    <widget class="QPushButton" name="m_button_up">
      <property name="enabled">
       <bool>false</bool>
      </property>
-     <property name="text">
-      <string>Modify Mutes</string>
+     <property name="toolTip">
+      <string>Move the selected set up in the list.</string>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Write Format:</string>
+      <string>Up</string>
      </property>
     </widget>
    </item>
@@ -228,18 +246,12 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QRadioButton" name="m_radio_binary">
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>16777215</height>
-      </size>
+   <item row="0" column="0" colspan="3">
+    <layout class="QGridLayout" name="setGridLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
      </property>
-     <property name="text">
-      <string>Binar&amp;y</string>
-     </property>
-    </widget>
+    </layout>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_3">
@@ -257,6 +269,20 @@
      </property>
      <property name="text">
       <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QCheckBox" name="m_check_to_mutes">
+     <property name="text">
+      <string>To Mutes</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="m_check_to_midi">
+     <property name="text">
+      <string>To MIDI </string>
      </property>
     </widget>
    </item>

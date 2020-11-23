@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-11-06
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -569,7 +569,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                     arg == "both"
                                 )
                                 {
-                                    rc().mute_group_save(arg);
+                                    rc().mute_groups().group_save(arg);
                                     result = true;
                                 }
                             }

@@ -431,7 +431,8 @@ private:                            /* key, midi, and op container section  */
     midicontrolout m_midi_control_out;
 
     /**
-     *  Provides a default-filled mutegroups container.
+     *  Provides a default-filled mutegroups container.  It is a copy of the
+     *  data read into the global rcsettings object.
      */
 
     mutegroups m_mute_groups;
@@ -2859,6 +2860,11 @@ public:                                 /* access functions for the containers *
     int mutegroup_count () const
     {
         return m_mute_groups.count();
+    }
+
+    const std::string & group_name (mutegroup::number group) const
+    {
+        return m_mute_groups.group_name(group);
     }
 
     const mutegroups & mutes () const

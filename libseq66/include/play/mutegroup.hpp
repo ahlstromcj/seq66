@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-06-02
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -92,6 +92,13 @@ public:
     static const int COLS_DEFAULT = SEQ66_DEFAULT_SET_COLUMNS;
 
 private:
+
+    /**
+     *  Provides a mnemonic name for the group.  By default, it is of the
+     *  format "Group 1", and currently not modifiable.
+     */
+
+    std::string m_name;
 
     /**
      *  The number of loops/patterns in the mute-group.  Saves a calculation
@@ -207,6 +214,16 @@ public:
     midibooleans get () const
     {
         return m_mutegroup_vector;
+    }
+
+    const std::string & name () const
+    {
+        return m_name;
+    }
+
+    void name (const std::string & n)
+    {
+        m_name = n;
     }
 
     number group () const

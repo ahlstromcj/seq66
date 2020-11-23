@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-15
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -125,36 +125,6 @@ public:
         seq24,            /**< Use the normal mouse interactions. */
         fruity,           /**< The "fruity" mouse interactions.   */
         maximum           /**< Keep this last... a size value.    */
-    };
-
-    /**
-     *  Provides mutually-exclusive codes for handling the reading of
-     *  mute-groups from the "rc" file versus the "MIDI" file.  There's no GUI
-     *  way to set this item yet.
-     *
-     *  mute_group_handling::mutes: In this option, the mute groups are
-     *  writtin only to the "mutes" (formerly "rc") file.
-     *
-     *  mute_group_handling::midi: In this option, the mute groups are
-     *  only written to the "rc" file if the MIDI file did not contain
-     *  non-zero mute groups.  This option prevents the contamination of the
-     *  "rc" mute-groups by the MIDI file's mute-groups.  We're going to make
-     *  this the default option.  NEEDS FIXING!
-     *
-     *  mute_group_handling::both: This is the legacy (seq66) option, which
-     *  reads the mute-groups from the MIDI file, and saves them back to the
-     *  "rc" file and to the MIDI file.  However, for Seq66 MIDI files such as
-     *  b4uacuse-stress.midi, seq66 never reads the mute-groups in that MIDI
-     *  file!  In any case, this can be considered a corruption of the "rc"
-     *  file.
-     */
-
-    enum class mute_group_handling
-    {
-        mutes,          /**< Save mute groups to "mutes" files.     */
-        midi,           /**< Write mute groups only to MIDI file.   */
-        both,           /**< Write the mute groups to both files.   */
-        maximum         /**< Keep this last... a size value.        */
     };
 
 private:
@@ -259,12 +229,6 @@ private:
     bool m_device_ignore;           /**< From seq66 module, unused!         */
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
     interaction m_interaction_method; /**< Interaction method: no support.  */
-
-    /**
-     *  Indicates if empty mute-groups get saved to the MIDI file.
-     */
-
-    mute_group_handling m_mute_group_save;
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -713,43 +677,6 @@ public:
         return m_interaction_method;
     }
 
-    mute_group_handling mute_group_save () const
-    {
-        return m_mute_group_save;
-    }
-
-    std::string mute_group_save_label () const;
-
-    /**
-     * \getter m_mute_group_save
-     * \return
-     *      Returns true if mute-group-handling is set to mutes or both.
-     */
-
-    bool mute_group_save_to_mutes () const
-    {
-        return
-        (
-            m_mute_group_save == mute_group_handling::mutes ||
-            m_mute_group_save == mute_group_handling::both
-        );
-    }
-
-    /**
-     * \getter m_mute_group_save
-     * \return
-     *      Returns true if mute-group-handling is set to midi or both.
-     */
-
-    bool mute_group_save_to_midi () const
-    {
-        return
-        (
-            m_mute_group_save == mute_group_handling::midi ||
-            m_mute_group_save == mute_group_handling::both
-        );
-    }
-
     const std::string & midi_filename () const
     {
         return m_midi_filename;
@@ -1069,8 +996,6 @@ protected:
         m_load_most_recent = f;
     }
 
-    bool mute_group_save (const std::string & v);
-
     bool interaction_method (int v)
     {
         return interaction_method(static_cast<interaction>(v));
@@ -1084,7 +1009,6 @@ protected:
     void tempo_track_number (int track);
     void device_ignore_num (int value);
     bool interaction_method (interaction value);
-    bool mute_group_save (mute_group_handling mgh);
     void jack_session_uuid (const std::string & value);
     void full_config_directory (const std::string & value, bool addhome = false);
     void config_directory (const std::string & value);

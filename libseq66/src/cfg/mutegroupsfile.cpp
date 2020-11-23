@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2019-09-24
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -111,9 +111,10 @@ mutegroupsfile::parse_stream (std::ifstream & file)
      */
 
     std::string s = parse_comments(file);
+    mutegroups & mutes = rc_ref().mute_groups();
     if (! s.empty())
     {
-        rc_ref().mute_groups().comments_block().set(s);
+        mutes.comments_block().set(s);
 #if defined SEQ66_PLATFORM_DEBUG
         if (rc().verbose())
             std::cout << s;
@@ -122,25 +123,25 @@ mutegroupsfile::parse_stream (std::ifstream & file)
 
     s = get_variable(file, "[mute-group-flags]", "save-mutes-to");
     if (! s.empty())
-        rc_ref().mute_group_save(s);
+        mutes.group_save(s);
 
     s = get_variable(file, "[mute-group-flags]", "mute-group-rows");
     if (! s.empty())
-        rc_ref().mute_groups().rows(string_to_int(s));
+        mutes.rows(string_to_int(s));
 
     s = get_variable(file, "[mute-group-flags]", "mute-group-columns");
     if (! s.empty())
-        rc_ref().mute_groups().columns(string_to_int(s));
+        mutes.columns(string_to_int(s));
 
     s = get_variable(file, "[mute-group-flags]", "groups-format");
     if (! s.empty())
     {
         bool usehex = (s == "hex");
-        rc_ref().mute_groups().group_format_hex(usehex);
+        mutes.group_format_hex(usehex);
     }
 
     bool good = line_after(file, "[mute-groups]");
-    rc_ref().mute_groups().clear();
+    mutes.clear();
     while (good)                        /* not at end of section?   */
     {
         if (! line().empty())           /* any value in section?    */
@@ -153,9 +154,9 @@ mutegroupsfile::parse_stream (std::ifstream & file)
                 break;
         }
     }
-    if (rc_ref().mute_groups().count() <= 1)    /* a sanity check   */
+    if (mutes.count() <= 1)             /* merely a sanity check    */
     {
-        rc_ref().mute_groups().reset_defaults();
+        mutes.reset_defaults();
     }
     return result;
 }
@@ -175,19 +176,17 @@ mutegroupsfile::parse_stream (std::ifstream & file)
 bool
 mutegroupsfile::parse ()
 {
-    bool result = true;
     std::ifstream file(name(), std::ios::in | std::ios::ate);
-    if (file.is_open())
+    bool result = file.is_open();
+    if (result)
     {
+        mutegroups & mutes = rc_ref().mute_groups();
         result = parse_stream(file);
+        mutes.loaded_from_mutes(result);
     }
     else
     {
-        errprintf
-        (
-            "mutegroups::parse(): error opening %s for reading",
-            name().c_str()
-        );
+        file_error("Mutes open failed", name());
         result = false;
     }
     return result;
@@ -317,11 +316,12 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
     bool result = file.is_open();
     if (result)
     {
-        bool usehex = rc_ref().mute_groups().group_format_hex();
-        std::string save = rc_ref().mute_group_save_label();
+        const mutegroups & mutes = rc_ref().mute_groups();
+        bool usehex = mutes.group_format_hex();
+        std::string save = mutes.group_save_label();
         std::string gf = usehex ? "hex" : "bin" ;
-        int rows = rc_ref().mute_groups().rows();
-        int columns = rc_ref().mute_groups().columns();
+        int rows = mutes.rows();
+        int columns = mutes.columns();
         file << "\n[mute-group-flags]\n\n"
             << "save-mutes-to = " << save << "\n"
             << "mute-group-rows = " << rows << "\n"
@@ -331,14 +331,14 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
 
         file << "\n[mute-groups]\n\n" <<
         "# All mute-group values are saved in this 'mutes' file, even if they\n"
-        "# all are zero; but if all are zero, they will be stripped out from\n"
-        "# the MIDI file by the strip-empty-mutes functionality. If a hex number\n"
-        "# is used, then each number represents a bit mask, rather than a single\n"
+        "# all are zero; but if all are zero, they can be stripped out of the\n"
+        "# MIDI file by the strip-empty-mutes functionality. If a hex number\n"
+        "# is found, each number represents a bit mask, rather than a single\n"
         "# bit.\n"
         "\n"
             ;
 
-        for (const auto & stz : rc_ref().mute_groups().list())
+        for (const auto & stz : mutes.list())
         {
             int gmute = stz.first;
             const mutegroup & m = stz.second;

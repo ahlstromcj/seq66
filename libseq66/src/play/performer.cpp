@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-10-05
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4886,7 +4886,7 @@ performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
         result = mapper().set_mutes(gmute, bits);
         if (result)
         {
-            change c = rc().mute_group_save_to_midi() ?
+            change c = mutes().group_save_to_midi() ?
                 change::yes : change:: no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
@@ -4897,18 +4897,20 @@ performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
 
 /**
  *  Clears the mute groups.  If there any to clear, then the subscribers are
- *  notified.  If the "rc" "save-mutes-to" setting indicates saving it to the
- *  MIDI file, then this becomes a modify action.
+ *  notified.  If the "mutes" "save-mutes-to" setting indicates saving it to
+ *  the MIDI file, then this becomes a modify action.
  */
 
 bool
 performer::clear_mutes ()
 {
-    bool result = m_mute_groups.any();
-    m_mute_groups.reset_defaults();         /* clears and adds all zeros    */
+    bool result = mutes().any();
+    mutes().reset_defaults();               /* clears and adds all zeros    */
     if (result)
     {
-        change c = rc().mute_group_save_to_midi() ? change::yes : change:: no ;
+        change c = mutes().group_save_to_midi() ?
+            change::yes : change:: no ;
+
         notify_mutes_change(mutegroup::unassigned(), c);
     }
     return result;
@@ -4924,7 +4926,9 @@ performer::learn_mutes (mutegroup::number group)
     bool result =  mapper().learn_mutes(true, group);   /* true == learn */
     if (result)
     {
-        change c = rc().mute_group_save_to_midi() ?  change::yes : change:: no ;
+        change c = mutes().group_save_to_midi() ?
+            change::yes : change:: no ;
+
         notify_mutes_change(group, c);
     }
     return result;

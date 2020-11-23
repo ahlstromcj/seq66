@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-02-07
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  This class manages one of the lines in the "[mute-group]" section of the
@@ -92,6 +92,7 @@ namespace seq66
  */
 
 mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :
+    m_name              ("Group"),
     m_group_size        (int(rows * columns)),          /* order important   */
     m_mutegroup_vector  (m_group_size, midibool(false)),
     m_rows              (rows),
@@ -99,7 +100,8 @@ mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :
     m_group             (group >= 0 ? group : 0),
     m_group_offset      (m_group * m_group_size)
 {
-    // No code needed
+    m_name += " ";
+    m_name += std::to_string(int(group));
 }
 
 /**
@@ -242,9 +244,12 @@ mutegroup::armed (int index, bool flag)
 void
 mutegroup::show () const
 {
-    using namespace std;
     std::string stanzabits = write_stanza_bits(get());  /* get midibooleans */
-    cout << "group #" << group() << " " << stanzabits << endl;
+    std::cout
+        << "Group #" << group()
+        << " " << stanzabits
+        << " " << name() << std::endl
+        ;
 }
 
 }               // namespace seq66

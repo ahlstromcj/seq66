@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-09-24
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -38,6 +38,13 @@
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "play/mutegroup.hpp"           /* seq66::mutegroup stanza class    */
+
+/**
+ *  We force a maximum number of mute-groups.  We really only have enough keys
+ *  available for 32 mute-groups.
+ */
+
+#define SEQ66_MUTE_GROUPS_MAX           32
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -53,6 +60,7 @@ namespace seq66
 
 class mutegroups final : public basesettings
 {
+    friend class midifile;
     friend class performer;
     friend class mutegroupsfile;
     friend class setmapper;
@@ -68,6 +76,36 @@ public:
         toggle  = -1,
         off     = 0,
         on      = 1
+    };
+
+    /**
+     *  Provides mutually-exclusive codes for handling the reading of
+     *  mute-groups from the "rc" file versus the "MIDI" file.  There's no GUI
+     *  way to set this item yet.
+     *
+     *  handling::mutes: In this option, the mute groups are
+     *  writtin only to the "mutes" (formerly "rc") file.
+     *
+     *  handling::midi: In this option, the mute groups are
+     *  only written to the "rc" file if the MIDI file did not contain
+     *  non-zero mute groups.  This option prevents the contamination of the
+     *  "rc" mute-groups by the MIDI file's mute-groups.  We're going to make
+     *  this the default option.  NEEDS FIXING!
+     *
+     *  handling::both: This is the legacy (seq66) option, which
+     *  reads the mute-groups from the MIDI file, and saves them back to the
+     *  "rc" file and to the MIDI file.  However, for Seq66 MIDI files such as
+     *  b4uacuse-stress.midi, seq66 never reads the mute-groups in that MIDI
+     *  file!  In any case, this can be considered a corruption of the "rc"
+     *  file.
+     */
+
+    enum class handling
+    {
+        mutes,              /**< Save mute groups to the "mutes" file.      */
+        midi,               /**< Write mute groups only to the MIDI file.   */
+        both,               /**< Write the mute groups to both files.       */
+        maximum             /**< Keep this last... it is only a size value. */
     };
 
 public:
@@ -126,11 +164,10 @@ private:
 
     /**
      *  Indicates if the control values were loaded from an "rc" configuration
-     *  file, as opposed to being empty.  (There are no default values at this
-     *  time.)
+     *  file, as opposed to being empty.  The default value is false.
      */
 
-    bool m_loaded_from_rc;
+    bool m_loaded_from_mutes;
 
     /**
      *  Indicates that a mute-group-related key has just been pressed, or a
@@ -153,7 +190,7 @@ private:
      *  keys are struck.
      */
 
-    bool m_group_mode;                      // performer::m_mode_group
+    bool m_group_mode;
 
     /**
      *  If true, indicates that a group learn is selected, which also
@@ -161,7 +198,7 @@ private:
      *  change.
      */
 
-    bool m_group_learn;                     // performer::m_mode_group_learn
+    bool m_group_learn;
 
     /**
      *  Selects a group to mute.  A "group" is essentially a "set" that is
@@ -180,6 +217,12 @@ private:
      */
 
     bool m_group_present;                   // m_mute_group_present
+
+    /**
+     *  Indicates if empty mute-groups get saved to the MIDI file.
+     */
+
+    handling m_group_save;
 
 public:
 
@@ -254,9 +297,9 @@ public:
 
     mutegroup::number calculate_mute (int row, int column) const;
 
-    bool loaded_from_rc () const
+    bool loaded_from_mutes () const
     {
-        return m_loaded_from_rc;
+        return m_loaded_from_mutes;
     }
 
     void group_format_hex (bool flag)
@@ -264,9 +307,48 @@ public:
         m_group_format_hex = flag;
     }
 
-    void loaded_from_rc (bool flag)
+    void loaded_from_mutes (bool flag)
     {
-        m_loaded_from_rc = flag;
+        m_loaded_from_mutes = flag;
+    }
+
+    handling group_save () const
+    {
+        return m_group_save;
+    }
+
+    bool group_save (const std::string & v);
+    bool group_save (handling mgh);
+    bool group_save (bool midi, bool mutes);
+
+    std::string group_save_label () const;
+
+    /**
+     * \getter m_mute_group_save
+     * \return
+     *      Returns true if mute-group-handling is set to mutes or both.
+     */
+
+    bool group_save_to_mutes () const
+    {
+        return
+        (
+            m_group_save == handling::mutes || m_group_save == handling::both
+        );
+    }
+
+    /**
+     * \getter m_mute_group_save
+     * \return
+     *      Returns true if mute-group-handling is set to midi or both.
+     */
+
+    bool group_save_to_midi () const
+    {
+        return
+        (
+            m_group_save == handling::midi || m_group_save == handling::both
+        );
     }
 
     /*
@@ -287,6 +369,11 @@ public:
     int armed_count (mutegroup::number gmute) const
     {
         return mute_group(gmute).armed_count();
+    }
+
+    const std::string & group_name (mutegroup::number gmute) const
+    {
+        return mute_group(gmute).name();
     }
 
     bool clear ()

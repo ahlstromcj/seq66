@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2019-09-25
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -65,7 +65,7 @@ namespace Ui
 
 namespace seq66
 {
-    class mutegroup;
+    class mutegroups;
     class performer;
     class qsmainwnd;
 
@@ -87,7 +87,8 @@ private:
     {
         group_number,
         group_count,
-        group_keyname
+        group_keyname,
+        group_name
     };
 
 private:
@@ -147,6 +148,7 @@ private:
     {
         return m_current_group;
     }
+
     bool set_current_group (int row);
 
     bool modify () const
@@ -167,7 +169,8 @@ private:
     (
         mutegroup::number row,
         int mutecount,
-        const std::string & keyname
+        const std::string & keyname,
+        const std::string & groupname
     );
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
@@ -190,6 +193,8 @@ private slots:
     void slot_reset ();
     void slot_down ();
     void slot_up ();
+    void slot_write_to_midi ();
+    void slot_write_to_mutes ();
 
 private:
 

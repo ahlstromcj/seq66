@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2019-09-24
+ * \updates       2020-11-23
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -66,13 +66,14 @@ mutegroups::mutegroups (int rows, int columns) :
     m_rows                      (rows),
     m_columns                   (columns),
     m_group_format_hex          (false),
-    m_loaded_from_rc            (false),
+    m_loaded_from_mutes         (false),
     m_group_event               (false),
     m_group_error               (false),
     m_group_mode                (true),         /* see its description  */
     m_group_learn               (false),
     m_group_selected            (SEQ66_NO_MUTE_GROUP_SELECTED),
-    m_group_present             (false)
+    m_group_present             (false),
+    m_group_save                (handling::midi)
 {
     // no code needed
 }
@@ -101,7 +102,7 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_rows                      (rows),
     m_columns                   (columns),
     m_group_format_hex          (false),
-    m_loaded_from_rc            (false),
+    m_loaded_from_mutes         (false),
     m_group_event               (false),
     m_group_error               (false),
     m_group_mode                (true),         /* see its description  */
@@ -228,15 +229,19 @@ mutegroups::mute_group (mutegroup::number gmute) const
 }
 
 /**
- *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups file.
+ *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups
+ *  file.
+ *
+ *  Hmmm, rows x columns isn't the way to count the mute groups -- that is the
+ *  size of one mute group.  Generally, we support only 32 mute-groups.
  */
 
 bool
 mutegroups::reset_defaults ()
 {
     bool result = false;
+    int count = SEQ66_MUTE_GROUPS_MAX;          /* not m_rows * m_columns   */
     clear();
-    int count = m_rows * m_columns;
     for (int gmute = 0; gmute < count; ++gmute)
     {
         mutegroup m;
@@ -276,6 +281,62 @@ mutegroups::calculate_mute (int row, int column) const
         row = m_columns - 1;
 
     return row + m_rows * column;
+}
+
+bool
+mutegroups::group_save (handling mgh)
+{
+    if (mgh >= handling::mutes && mgh < handling::maximum)
+    {
+        m_group_save = mgh;
+        return true;
+    }
+    else
+        return false;
+}
+
+bool
+mutegroups::group_save (const std::string & v)
+{
+    if (v == "both" || v == "stomp")
+        return group_save(handling::both);
+    else if (v == "mutes")
+        return group_save(handling::mutes);
+    else if (v == "midi" || v == "preserve")
+        return group_save(handling::midi);
+    else
+        return false;
+}
+
+bool
+mutegroups::group_save (bool midi, bool mutes)
+{
+    if (midi && mutes)
+        return group_save(handling::both);
+    else if (mutes)
+        return group_save(handling::mutes);
+    else if (midi)
+        return group_save(handling::midi);
+    else
+        return false;
+}
+
+/**
+ * \getter m_mute_group_save, string version
+ */
+
+std::string
+mutegroups::group_save_label () const
+{
+    std::string result = "bad";
+    if (m_group_save == handling::mutes)
+        result = "mutes";
+    else if (m_group_save == handling::midi)
+        result = "midi";
+    else if (m_group_save == handling::both)
+        result = "both";
+
+    return result;
 }
 
 /**
