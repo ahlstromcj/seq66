@@ -113,6 +113,22 @@ clinsmanager::detect_session (std::string & url)
         url = tenturl;
     }
 #endif
+#if defined SEQ66_PLATFORM_DEBUG_USE_TESTING
+    /*
+     * This test is overly strict because there are remote instances of nsmd
+     * and NSM-compliant daemons from raysession and Carla.
+     */
+    if (result)
+    {
+        bool testing = url == "testing";
+        if (! testing)                              /* for troubleshooting  */
+        {
+            result = pid_exists("nsmd");            /* one final check      */
+            if (! result)
+                warnprint("nsmd not running, proceeding with normal run");
+        }
+    }
+#endif
     return result;
 }
 
