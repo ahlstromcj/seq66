@@ -113,16 +113,6 @@ clinsmanager::detect_session (std::string & url)
         url = tenturl;
     }
 #endif
-    if (result)
-    {
-        bool testing = url == "testing";
-        if (! testing)                              /* for troubleshooting  */
-        {
-            result = pid_exists("nsmd");            /* one final check      */
-            if (! result)
-                warnprint("nsmd not running, proceeding with normal run");
-        }
-    }
     return result;
 }
 
