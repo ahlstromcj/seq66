@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-08-11
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -201,12 +201,6 @@
  */
 
 #define SEQ66_NO_QUEUED_SOLO            (-1)
-
-/**
- *  This value indicates that there is no mute-group selected.
- */
-
-#define SEQ66_NO_MUTE_GROUP_SELECTED    (-1)
 
 /**
  *  Guessing that this has to do with the width of the performerance piano roll.

@@ -111,7 +111,7 @@ midibus::midibus
     if (makevirtual)
     {
         if (bus_name().empty())
-            bus_name(rc().app_client_name());   /* ca 2020-11-23    */
+            bus_name(rc().app_client_name());
 
         /*
          * Set the buss ID for virtual ports to 0.  We might consider another
@@ -123,19 +123,6 @@ midibus::midibus
 
         if (port_name().empty())
         {
-            /*
-             * ca 2020-10-26 Use the client-name for ports; it may have "salt"
-             * if being run under a session manager.
-             *
-             * std::string pname = rc().application_name();
-             *
-             * ca 2020-11-23 We don't think we need this name, since it is
-             * part of the JACK client name.
-             *
-             * std::string pname = rc().app_client_name();
-             * pname += " midi ";
-             */
-
             std::string pname = "midi ";
             pname += isinput ? "in " : "out ";
             pname += std::to_string(port_id());

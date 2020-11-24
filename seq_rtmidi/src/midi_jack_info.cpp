@@ -165,8 +165,6 @@ midi_jack_info::connect ()
         /*
          * int jacksize = jack_port_name_size();
          * infoprintf("JACK PORT NAME SIZE = %d\n", jacksize); // = 320
-         *
-         * ca 2020-11-23
          * const char * clientname = rc().app_client_name().c_str();
          */
 
@@ -300,19 +298,7 @@ midi_jack_info::get_all_port_info ()
             warnprint("no JACK input port available, creating virtual port");
             int clientnumber = 0;
             int portnumber = 0;
-
-            /*
-             * ca 2020-11-23
-             * std::string clientname = rc().app_client_name();
-             */
-
             std::string clientname = seq_client_name();
-
-            /*
-             * We don't need to prepend the client name.
-             * std::string portname = clientname + " midi in 0";
-             */
-
             std::string portname = "midi in 0";
             input_ports().add
             (
@@ -365,19 +351,7 @@ midi_jack_info::get_all_port_info ()
 
             warnprint("no JACK output port available, creating virtual port");
             int client = 0;
-
-            /*
-             * ca 2020-11-23
-             * std::string clientname = rc().app_client_name();
-             */
-
             std::string clientname = seq_client_name();
-
-            /*
-             * We don't need to prepend the client name.
-             * std::string portname = clientname + " midi out 0";
-             */
-
             std::string portname = "midi out 0";
             output_ports().add
             (

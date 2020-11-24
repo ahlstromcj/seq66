@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-23
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -99,6 +99,13 @@ private:
      */
 
     std::string m_name;
+
+    /**
+     *  Indicates the current state of the mute-group, either on or off.
+     *  Useful in toggling.
+     */
+
+    mutable bool m_group_state;
 
     /**
      *  The number of loops/patterns in the mute-group.  Saves a calculation
@@ -195,6 +202,16 @@ public:
         return (-1);
     }
 
+    bool group_state () const
+    {
+        return m_group_state;
+    }
+
+    void group_state (bool f)
+    {
+        m_group_state = f;
+    }
+
     int count () const
     {
         return int(m_mutegroup_vector.size());
@@ -211,7 +228,13 @@ public:
 
     bool set (const midibooleans & bits);
 
-    midibooleans get () const
+    const midibooleans & zeroes () const
+    {
+        static midibooleans s_bits(m_group_size, midibool(false));
+        return s_bits;
+    }
+
+    const midibooleans & get () const
     {
         return m_mutegroup_vector;
     }

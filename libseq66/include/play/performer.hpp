@@ -2117,6 +2117,11 @@ public:
         return mapper().apply_mutes(group);
     }
 
+    bool toggle_mutes (mutegroup::number group)
+    {
+        return mapper().toggle_mutes(group);
+    }
+
     midibpm decrement_beats_per_minute ();
     midibpm increment_beats_per_minute ();
     midibpm page_decrement_beats_per_minute ();

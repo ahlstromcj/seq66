@@ -775,10 +775,47 @@ setmapper::set_playing_screenset (screenset::number setno)
 bool
 setmapper::apply_mutes (mutegroup::number group)
 {
-    auto mgiterator = mutes().list().find(clamp_group(group));
-    bool result = mgiterator != mutes().list().end();
+    bool result = true;
+    mutegroup::number oldgroup = group_selected();
+    if (group != oldgroup && oldgroup >= 0)             /* mildly tricky    */
+        result = unapply_mutes(oldgroup);               /* turn 'em off     */
+
     if (result)
-        result = play_screen()->apply_bits(mgiterator->second.get());
+    {
+        midibooleans bits;
+        result = mutes().apply(group, bits);
+        if (result)
+            result = play_screen()->apply_bits(bits);
+    }
+    return result;
+}
+
+/**
+ *  Applies a mute group to the current play-screen.
+ */
+
+bool
+setmapper::unapply_mutes (mutegroup::number group)
+{
+    midibooleans bits;
+    bool result = mutes().unapply(group, bits);
+    if (result)
+        result = play_screen()->apply_bits(bits);
+
+    return result;
+}
+
+/**
+ *  Toggles a mute group to the current play-screen.
+ */
+
+bool
+setmapper::toggle_mutes (mutegroup::number group)
+{
+    midibooleans bits;
+    bool result = mutes().toggle(group, bits);
+    if (result)
+        result = play_screen()->apply_bits(bits);
 
     return result;
 }

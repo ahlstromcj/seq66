@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-23
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  This class manages one of the lines in the "[mute-group]" section of the
@@ -93,6 +93,7 @@ namespace seq66
 
 mutegroup::mutegroup (mutegroup::number group, int rows, int columns) :
     m_name              ("Group"),
+    m_group_state       (false),
     m_group_size        (int(rows * columns)),          /* order important   */
     m_mutegroup_vector  (m_group_size, midibool(false)),
     m_rows              (rows),

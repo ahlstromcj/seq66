@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-11-23
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -5085,7 +5085,7 @@ performer::mute_group_control
 
             if (a == automation::action::toggle)
             {
-                (void) apply_mutes(gn);
+                (void) toggle_mutes(gn);            /* apply_mutes(gn); */
             }
             else if (a == automation::action::on)
             {

@@ -41,17 +41,10 @@ midi_api::midi_api (midibus & parentbus, midi_info & masterinfo)
  :
     midibase
     (
-        rc().app_client_name(),     /* ca 2020-11-23 */
-        parentbus.bus_name(),
-        parentbus.port_name(),
-        parentbus.bus_index(),
-        parentbus.bus_id(),
-        parentbus.port_id(),
-        parentbus.bus_index(),
-        parentbus.ppqn(),
-        parentbus.bpm(),
-        parentbus.is_virtual_port(),
-        parentbus.is_input_port(),
+        rc().app_client_name(), parentbus.bus_name(), parentbus.port_name(),
+        parentbus.bus_index(), parentbus.bus_id(), parentbus.port_id(),
+        parentbus.bus_index(), parentbus.ppqn(), parentbus.bpm(),
+        parentbus.is_virtual_port(), parentbus.is_input_port(),
         parentbus.is_system_port()
     ),
     m_master_info               (masterinfo),

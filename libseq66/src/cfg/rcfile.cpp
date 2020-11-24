@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-11-15
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -234,6 +234,10 @@ rcfile::parse ()
             warnprint("'rc' file version changed!");
         }
     }
+    s = get_variable(file, "[Seq66]", "verbose");
+
+    bool verby = string_to_bool(s, false);
+    rc().verbose(verby);
 
     /*
      * [comments] Header comments (hash-tag lead) is skipped during parsing.
@@ -791,6 +795,7 @@ rcfile::write ()
             "[Seq66]\n\n"
             "config-type = \"rc\"\n"
             "version = " << version() << "\n"
+            "verbose = " << bool_to_string(rc().verbose()) << "\n"
         ;
 
     /*

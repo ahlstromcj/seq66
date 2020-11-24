@@ -637,11 +637,6 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
             std::string clientname = cname;
             set_port_id(portid);
             port_name(portname);
-
-            /*
-             * ca 2020-11-23
-             */
-
             set_name(rc().app_client_name(), clientname, portname);
             parent_bus().set_name(rc().app_client_name(), clientname, portname);
         }
@@ -765,7 +760,7 @@ midi_jack::api_play (event * e24, midibyte channel)
     midi_message message;
     message.push(status);
     message.push(d0);
-    if (e24->is_two_bytes())                    /* \change ca 2017-04-26 */
+    if (e24->is_two_bytes())
         message.push(d1);
 
 #ifdef SEQ66_SHOW_API_CALLS_TMI

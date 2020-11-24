@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-23
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -39,6 +39,12 @@
 #include <iostream>                     /* std::cerr to note errors         */
 
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
+
+/**
+ *  This value indicates that there is no mute-group selected.
+ */
+
+#define SEQ66_NO_MUTE_GROUP_SELECTED    (-1)
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -229,58 +235,80 @@ mutegroups::mute_group (mutegroup::number gmute) const
 }
 
 /**
- *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups
- *  file.
- *
- *  Hmmm, rows x columns isn't the way to count the mute groups -- that is the
- *  size of one mute group.  Generally, we support only 32 mute-groups.
+ *  Applies a mute group.
  */
 
 bool
-mutegroups::reset_defaults ()
+mutegroups::apply (mutegroup::number group, midibooleans & bits)
 {
-    bool result = false;
-    int count = SEQ66_MUTE_GROUPS_MAX;          /* not m_rows * m_columns   */
-    clear();
-    for (int gmute = 0; gmute < count; ++gmute)
+    auto mgiterator = list().find(clamp_group(group));
+    bool result = mgiterator != list().end();
+    if (result)
     {
-        mutegroup m;
-        result = add(gmute, m);
-        if (! result)
-            break;
+        mutegroup::number oldgroup = m_group_selected;
+        if (oldgroup != group)
+        {
+            result = unapply(group, bits);
+        }
+        mutegroup & mg = mgiterator->second;
+        bits = mg.get();
+        mg.group_state(true);
+        m_group_selected = group;
     }
     return result;
 }
 
 /**
- *  Returns the mute number for the given row and column.  Remember that the
- *  layout of mutes doesn't match that of sets and sequences.
- *
- * \param row
- *      Provides the desired row, clamped to a legal value.
- *
- * \param row
- *      Provides the desired row, clamped to a legal value.
- *
- * \return
- *      Returns the calculated set value, which will range from 0 to
- *      (m_rows * m_columns) - 1 = m_set_count.
+ *  Unapplies a mute group.
  */
 
-mutegroup::number
-mutegroups::calculate_mute (int row, int column) const
+bool
+mutegroups::unapply (mutegroup::number group, midibooleans & bits)
 {
-    if (row < 0)
-        row = 0;
-    else if (row >= m_rows)
-        row = m_rows - 1;
+    auto mgiterator = list().find(clamp_group(group));
+    bool result = mgiterator != list().end();
+    if (result)
+    {
+        mutegroup & mg = mgiterator->second;
+        bits = mg.zeroes();
+        mg.group_state(false);
+        m_group_selected = SEQ66_NO_MUTE_GROUP_SELECTED;
+    }
+    return result;
+}
 
-    if (column < 0)
-        column = 0;
-    else if (column >= m_columns)
-        row = m_columns - 1;
+bool
+mutegroups::toggle (mutegroup::number group, midibooleans & bits)
+{
+    auto mgiterator = list().find(clamp_group(group));
+    bool result = mgiterator != list().end();
+    if (result)
+    {
+        mutegroup & mg = mgiterator->second;
+        bool mgstate = ! mg.group_state();
+        bits = mgstate ? mg.get() : mg.zeroes() ;
+        mg.group_state(mgstate);
+        m_group_selected = mgstate ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
+    }
+    return result;
+}
 
-    return row + m_rows * column;
+/**
+ *
+ */
+
+void
+mutegroups::group_learn (bool flag)
+{
+    if (flag)
+    {
+        m_group_mode = m_group_learn = true;
+    }
+    else
+    {
+        m_group_learn = false;
+        m_group_selected = SEQ66_NO_MUTE_GROUP_SELECTED;
+    }
 }
 
 bool
@@ -337,6 +365,61 @@ mutegroups::group_save_label () const
         result = "both";
 
     return result;
+}
+
+/**
+ *  Loads all empty mute-groups.  Useful in writing an "empty" mutegroups
+ *  file.
+ *
+ *  Hmmm, rows x columns isn't the way to count the mute groups -- that is the
+ *  size of one mute group.  Generally, we support only 32 mute-groups.
+ */
+
+bool
+mutegroups::reset_defaults ()
+{
+    bool result = false;
+    int count = SEQ66_MUTE_GROUPS_MAX;          /* not m_rows * m_columns   */
+    clear();
+    for (int gmute = 0; gmute < count; ++gmute)
+    {
+        mutegroup m;
+        result = add(gmute, m);
+        if (! result)
+            break;
+    }
+    return result;
+}
+
+/**
+ *  Returns the mute number for the given row and column.  Remember that the
+ *  layout of mutes doesn't match that of sets and sequences.
+ *
+ * \param row
+ *      Provides the desired row, clamped to a legal value.
+ *
+ * \param row
+ *      Provides the desired row, clamped to a legal value.
+ *
+ * \return
+ *      Returns the calculated set value, which will range from 0 to
+ *      (m_rows * m_columns) - 1 = m_set_count.
+ */
+
+mutegroup::number
+mutegroups::calculate_mute (int row, int column) const
+{
+    if (row < 0)
+        row = 0;
+    else if (row >= m_rows)
+        row = m_rows - 1;
+
+    if (column < 0)
+        column = 0;
+    else if (column >= m_columns)
+        row = m_columns - 1;
+
+    return row + m_rows * column;
 }
 
 /**

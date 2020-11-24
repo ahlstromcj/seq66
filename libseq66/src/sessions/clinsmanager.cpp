@@ -105,7 +105,7 @@ clinsmanager::detect_session (std::string & url)
             url = tenturl;
     }
 
-#if defined SEQ66_NSM_SUPPORT                       /* TODO for portmidi    */
+#if defined SEQ66_NSM_SUPPORT
     warnprint("Checking environment for NSM_URL");
     tenturl = nsm::get_url();
     if (! tenturl.empty())                          /* environment NSM URL  */
@@ -202,9 +202,9 @@ clinsmanager::create_session (int argc, char * argv [])
 bool
 clinsmanager::close_session (std::string & msg, bool ok)
 {
+#if defined SEQ66_NSM_SUPPORT
     if (usr().in_session())
     {
-#if defined SEQ66_NSM_SUPPORT   // _TEMP_DISABLE
         warnprint("Closing NSM session");
         nsm_active(false);                              /* class flag       */
         usr().in_session(false);                        /* global flag      */
@@ -213,8 +213,8 @@ clinsmanager::close_session (std::string & msg, bool ok)
         /*
          * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();
          */
-#endif
     }
+#endif
     return smanager::close_session(msg, ok);
 }
 
@@ -225,9 +225,9 @@ clinsmanager::close_session (std::string & msg, bool ok)
 bool
 clinsmanager::detach_session (std::string & msg, bool ok)
 {
+#if defined SEQ66_NSM_SUPPORT                           // _TEMP_DISABLE
     if (usr().in_session())
     {
-#if defined SEQ66_NSM_SUPPORT                           // _TEMP_DISABLE
         warnprint("Detaching (closing) NSM session");
         nsm_active(false);                              /* class flag       */
         m_nsm_client->detach_session();
@@ -235,8 +235,8 @@ clinsmanager::detach_session (std::string & msg, bool ok)
         /*
          * Freezes in the lo_server_thread_stop() call: m_nsm_client.reset();
          */
-#endif
     }
+#endif
     return smanager::detach_session(msg, ok);
 }
 

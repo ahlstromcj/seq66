@@ -975,6 +975,8 @@ public:
     }
 
     bool apply_mutes (mutegroup::number gmute);
+    bool unapply_mutes (mutegroup::number gmute);
+    bool toggle_mutes (mutegroup::number gmute);
     bool learn_mutes (bool learnmode, mutegroup::number gmute);
     bool clear_mutes ();
     void select_and_mute_group (mutegroup::number group);

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-23
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -216,7 +216,7 @@ private:
      *  getting the result of the any() function.
      */
 
-    bool m_group_present;                   // m_mute_group_present
+    bool m_group_present;
 
     /**
      *  Indicates if empty mute-groups get saved to the MIDI file.
@@ -295,6 +295,9 @@ public:
         return m_rows * m_columns;
     }
 
+    bool apply (mutegroup::number group, midibooleans & bits);
+    bool unapply (mutegroup::number group, midibooleans & bits);
+    bool toggle (mutegroup::number group, midibooleans & bits);
     mutegroup::number calculate_mute (int row, int column) const;
 
     bool loaded_from_mutes () const
@@ -475,18 +478,12 @@ private:
         m_group_mode = flag;
     }
 
-    void toggle_group_mode ()           // was toggle_mode_group_mute ()
+    void toggle_group_mode ()
     {
         m_group_mode = ! m_group_mode;
     }
 
-    void group_learn (bool flag)
-    {
-        if (flag)
-            m_group_mode = m_group_learn = true;
-        else
-            m_group_learn = false;
-    }
+    void group_learn (bool flag);
 
     void group_selected (mutegroup::number mg)
     {
