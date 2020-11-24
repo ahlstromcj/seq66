@@ -25,7 +25,7 @@
  * \library       clinsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-08-31
- * \updates       2020-11-18
+ * \updates       2020-11-24
  * \license       GNU GPLv2 or above
  *
  *  This object also works if there is no session manager in the build.  It
@@ -104,16 +104,16 @@ clinsmanager::detect_session (std::string & url)
         else
             url = tenturl;
     }
-    warnprint("Checking environment for NSM_URL");
+
 #if defined SEQ66_NSM_SUPPORT                       /* TODO for portmidi    */
+    warnprint("Checking environment for NSM_URL");
     tenturl = nsm::get_url();
     if (! tenturl.empty())                          /* environment NSM URL  */
     {
         result = true;
         url = tenturl;
     }
-#endif
-#if defined SEQ66_PLATFORM_DEBUG_USE_TESTING
+#if defined SEQ66_PLATFORM_DEBUG_TESTING
     /*
      * This test is overly strict because there are remote instances of nsmd
      * and NSM-compliant daemons from raysession and Carla.
@@ -128,7 +128,9 @@ clinsmanager::detect_session (std::string & url)
                 warnprint("nsmd not running, proceeding with normal run");
         }
     }
-#endif
+#endif  // SEQ66_PLATFORM_DEBUG_TESTING
+#endif  // SEQ66_NSM_SUPPORT
+
     return result;
 }
 
@@ -456,20 +458,18 @@ clinsmanager::create_project
                         result = bool(plp);
                         if (result)
                         {
-                            result = save_playlist
+                            (void) save_playlist
                             (
                                 *plp, srcplayfile, dstplayfile
                             );
-                        }
-                        if (result && ! midifilepath.empty())
-                        {
-                            result = copy_playlist_songs
-                            (
-                                *plp, srcplayfile, midifilepath
-                            );
-                        }
-                        if (result)
-                        {
+                            if (! midifilepath.empty())
+                            {
+                                (void) copy_playlist_songs
+                                (
+                                    *plp, srcplayfile, midifilepath
+                                );
+                            }
+
                             /*
                              * The first is where MIDI files are stored in the
                              * session, and the second is where they are
@@ -501,13 +501,15 @@ clinsmanager::create_project
                         nmp.reset(new (std::nothrow) notemapper());
                         result = bool(nmp);
                         file_message("Note-mapper save", destination);
-                        result = save_notemapper(*nmp, srcnotefile, destination);
+                        (void) save_notemapper(*nmp, srcnotefile, destination);
                     }
                 }
             }
         }
     }
-    (void) m_nsm_client->open_reply(result);    /* issue #28        */
+    if (m_nsm_client)
+        (void) m_nsm_client->open_reply(result);            /* issue #28 */
+
     return result;
 }
 

@@ -70,7 +70,7 @@ mastermidibus::mastermidibus (int ppqn, midibpm bpm)
     m_midi_master
     (
         rc().with_jack_midi() ? RTMIDI_API_UNIX_JACK : RTMIDI_API_LINUX_ALSA,
-        rc().application_name(), ppqn, bpm
+        rc().app_client_name(), ppqn, bpm   /* ca 2020-11-23 */
     ),
     m_use_jack_polling  (rc().with_jack_midi())
 {

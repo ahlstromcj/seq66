@@ -138,11 +138,14 @@ midi_alsa_info::midi_alsa_info
         /*
          * Save the ALSA "handle".  Set the client's name for ALSA.  Then set
          * up the ALSA client queue.  No LASH support included.
+         *
+         * ca 2020-11-23 We're going to replace rc().application_name() to get
+         * a name that is not based on the executable name.
          */
 
         m_alsa_seq = seq;
         midi_handle(seq);
-        snd_seq_set_client_name(m_alsa_seq, rc().application_name().c_str());
+        snd_seq_set_client_name(m_alsa_seq, rc().app_client_name().c_str());
         global_queue(snd_seq_alloc_queue(m_alsa_seq));
         get_poll_descriptors();
     }

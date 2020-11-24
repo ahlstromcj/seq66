@@ -41,7 +41,7 @@ midi_api::midi_api (midibus & parentbus, midi_info & masterinfo)
  :
     midibase
     (
-        rc().application_name(),
+        rc().app_client_name(),     /* ca 2020-11-23 */
         parentbus.bus_name(),
         parentbus.port_name(),
         parentbus.bus_index(),

@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-25
+ * \updates       2020-11-23
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -637,8 +637,13 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
             std::string clientname = cname;
             set_port_id(portid);
             port_name(portname);
-            set_name(rc().application_name(), clientname, portname);
-            parent_bus().set_name(rc().application_name(), clientname, portname);
+
+            /*
+             * ca 2020-11-23
+             */
+
+            set_name(rc().app_client_name(), clientname, portname);
+            parent_bus().set_name(rc().app_client_name(), clientname, portname);
         }
     }
     return result;
@@ -671,7 +676,12 @@ midi_jack::api_init_out_sub ()
         std::string portname = parent_bus().port_name();
         if (portname.empty())
         {
-            portname = rc().app_client_name() + " midi out ";
+            /*
+             * We don't need to prepend the client name.
+             * portname = rc().app_client_name() + " midi out ";
+             */
+
+            portname = "midi out ";
             portname += std::to_string(portid);
         }
         result = register_port(SEQ66_MIDI_OUTPUT_PORT, portname);
@@ -708,7 +718,12 @@ midi_jack::api_init_in_sub ()
         std::string portname2 = parent_bus().port_name();
         if (portname.empty())
         {
-            portname = rc().app_client_name() + " midi in ";
+            /*
+             * We don't need to prepend the client name.
+             * portname = rc().app_client_name() + " midi in ";
+             */
+
+            portname = "midi in ";
             portname += std::to_string(portid);
         }
         result = register_port(SEQ66_MIDI_INPUT_PORT, portname);

@@ -361,8 +361,13 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
             pname += std::to_string(portid);
             port_name(pname);
             set_bus_id(cid);
-            set_name(rc().application_name(), clientname, pname);
-            parent_bus().set_name(rc().application_name(), clientname, pname);
+
+            /*
+             * ca 2020-11-23
+             */
+
+            set_name(rc().app_client_name(), clientname, pname);
+            parent_bus().set_name(rc().app_client_name(), clientname, pname);
         }
     }
     return result;
