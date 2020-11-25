@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-24
+ * \updates       2020-11-25
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -45,6 +45,14 @@
  */
 
 #define SEQ66_MUTE_GROUPS_MAX           32
+
+/**
+ *  Experimental option for controlling how setmapper::toggle_mutes() works.
+ *  See that function and mutegroups::alt_toggle() for details.  This works,
+ *  but in some ways defeats the purpose of a mute-group.
+ */
+
+#undef  SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -298,6 +306,9 @@ public:
     bool apply (mutegroup::number group, midibooleans & bits);
     bool unapply (mutegroup::number group, midibooleans & bits);
     bool toggle (mutegroup::number group, midibooleans & bits);
+#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
+    bool alt_toggle (mutegroup::number group, midibooleans & armedbits);
+#endif
     mutegroup::number calculate_mute (int row, int column) const;
 
     bool loaded_from_mutes () const

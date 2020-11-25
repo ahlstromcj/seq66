@@ -18,23 +18,18 @@
 # Makefile.am
 #-------------------------------------------------------------------------------
 # \file       	Makefile.am
-# \library    	doc/dox
+# \library    	Documents
 # \author     	Chris Ahlstrom
-# \date       	2015-09-10
-# \update     	2020-11-25
+# \date       	2020-10-02
+# \update     	2020-10-02
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
-# 		Makefile for the doc/dox subdirectory of this package.  We had to do a
-# 		little two-stepping to make sure that the documentation is built
-# 		everytime we touch one of the doxygen files, and NOT when we touch one of
-# 		the source-code files.  Tired of checking in the PDF file all the time!
+# 		Makefile for LaTeX-based documentation.  It now uses latexmk (a
+# 		well-known Perl script) instead of using pdflatex and makeindex
+# 		directly.
 #
 #-------------------------------------------------------------------------------
-
-#*****************************************************************************
-# Packing/cleaning targets
-#-----------------------------------------------------------------------------
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -109,7 +104,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = doc/dox
+subdir = doc/latex/tex
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
 	$(top_srcdir)/m4/ax_have_qt_min.m4 \
@@ -317,10 +312,6 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
-
-#******************************************************************************
-# Install directories
-#------------------------------------------------------------------------------
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -337,28 +328,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
-
-#******************************************************************************
-# Local project directories
-#------------------------------------------------------------------------------
 top_srcdir = @top_srcdir@
-AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
-MAINTAINERCLEANFILES = Makefile.in dox-warnings.log
-CLEANFILES = dox-stamp \
- seq_rtmidi/seq66_lib_seq_rtmidi.pdf \
- libsessions/seq66_lib_libsessions.pdf \
- seq_portmidi/seq66_lib_seq_portmidi.pdf \
- libseq66/seq66_lib_libseq66.pdf
-
-
-#******************************************************************************
-#  EXTRA_DIST
-#------------------------------------------------------------------------------
-#
-# We need to move some of this to a Makefile.am in the directory aboe.
-#
-#------------------------------------------------------------------------------
-EXTRA_DIST = make_dox *.cfg *.dox *.pdf
 all: all-am
 
 .SUFFIXES:
@@ -371,9 +341,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign doc/dox/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign doc/latex/tex/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign doc/dox/Makefile
+	  $(AUTOMAKE) --foreign doc/latex/tex/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -439,7 +409,7 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile all-local
+all-am: Makefile
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -463,7 +433,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -472,10 +441,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
-clean: clean-am
-
-clean-am: clean-generic clean-libtool clean-local mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -493,7 +459,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-data-local
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -538,77 +504,52 @@ ps: ps-am
 ps-am:
 
 uninstall-am:
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
-.MAKE: install-am install-strip uninstall-am
 
-.PHONY: all all-am all-local check check-am clean clean-generic \
-	clean-libtool clean-local cscopelist-am ctags-am distclean \
-	distclean-generic distclean-libtool distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-data-local install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags-am uninstall \
-	uninstall-am uninstall-hook
+.MAKE: install-am install-strip
+
+.PHONY: all all-am check check-am clean clean-generic clean-libtool \
+	cscopelist-am ctags-am distclean distclean-generic \
+	distclean-libtool distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 
-#------------------------------------------------------------------------------
-# The $(srcdir) component points us to the correct place whether the build is
-# in-source or out-of-source.  Can't use pushd/popd because they are bash
-# builtins and are not available, except inside a script.
-#------------------------------------------------------------------------------
+.PHONY: clean
+.PHONY: docs
 
-all-local:
-	$(srcdir)/make_dox $(srcdir) libseq66
-	$(srcdir)/make_dox $(srcdir) libsessions
-	$(srcdir)/make_dox $(srcdir) seq_portmidi
-	$(srcdir)/make_dox $(srcdir) seq_rtmidi
+all: cookbook
 
-clean-local:
-	$(srcdir)/make_dox $(srcdir) libseq66 clean
-	$(srcdir)/make_dox $(srcdir) libsessions clean
-	$(srcdir)/make_dox $(srcdir) seq_portmidi clean
-	$(srcdir)/make_dox $(srcdir) seq_rtmidi clean
+cookbook: tex-stamp
+	latexmk -g -silent -pdf seq66-user-manual
+	mv seq66-user-manual.pdf ../pdf
 
-#******************************************************************************
-# Installing documentation
-#------------------------------------------------------------------------------
-#
-# 	   We need to add an install-data-hook to copy the generated
-# 	   documentation directories to the destination directory.  The normal
-# 	   method doesn't work because /usr/bin/install will only install files,
-# 	   and automake doesn't give it the switch needed to install directories.
-#
-# Don't install the html files:
-#
-# 		cp -r -p $(top_builddir)/doc/dox/html $(xpcdoxygendir)
-#
-#------------------------------------------------------------------------------
+tex-stamp:
+	touch tex-stamp
 
-install-data-local:
-	mkdir -p $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+# Or -C instead?
 
-#*******************************************************************************
-# uninstall-hook
-#-------------------------------------------------------------------------------
-#
-#		Quick and dirty method used.
-#
-#-------------------------------------------------------------------------------
+clean: clean-dvi clean-pdf clean-ps
+	latexmk -c
+	rm -f tex-stamp
 
-uninstall-hook:
-	rm -rf $(DESTDIR)$(seq66docdir)
+clean-dvi:
+	-rm -f *.dvi
+
+clean-pdf:
+	-rm -f *.pdf
+
+clean-ps:
+	-rm -f *.ps
 
 #******************************************************************************
-# Makefile.am (dox)
-#------------------------------------------------------------------------------
 # vim: ts=3 sw=3 noet ft=automake
 #------------------------------------------------------------------------------
 

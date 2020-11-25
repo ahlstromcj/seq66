@@ -165,8 +165,8 @@ mutegroups::set (mutegroup::number gmute, const midibooleans & bits)
  *      Provides the mute-group number to be obtained.
  *
  * \return
- *      Returns the contents of the mute group.  If empty, it is likely that the
- *      mute-group number is bad.
+ *      Returns the contents of the mute group.  If empty, it is likely that
+ *      the mute-group number is bad.
  */
 
 midibooleans
@@ -285,13 +285,63 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
     if (result)
     {
         mutegroup & mg = mgiterator->second;
-        bool mgstate = ! mg.group_state();
-        bits = mgstate ? mg.get() : mg.zeroes() ;
-        mg.group_state(mgstate);
-        m_group_selected = mgstate ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
+        bool mgnewstate = ! mg.group_state();
+        bits = mgnewstate ? mg.get() : mg.zeroes() ;
+        mg.group_state(mgnewstate);
+        m_group_selected = mgnewstate ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
     }
     return result;
 }
+
+#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
+
+/**
+ *  Toggles a mute group to the current play-screen in an alternative way.
+ *  This alternative is to disarm only the patterns that are marked as active
+ *  in the mute group, leaving the other ones set to their current status.
+ */
+
+bool
+mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
+{
+    auto mgiterator = list().find(clamp_group(group));
+    bool result = mgiterator != list().end();
+    if (result)
+    {
+        if (group != m_group_selected && m_group_selected >= 0)
+        {
+            (void) alt_toggle(m_group_selected, armedbits);
+        }
+
+        mutegroup & mg = mgiterator->second;
+        midibooleans mutebits = mg.get();                /* get mutes set    */
+        bool active = mg.group_state();
+        result = mutebits.size() == armedbits.size();
+        if (result)
+        {
+            auto ait = armedbits.begin();
+            auto mit = mutebits.begin();
+            for ( ; mit != mutebits.end(); ++mit, ++ait)
+            {
+                if (active)
+                {
+                    if (*mit)                           /* on in group?     */
+                        *ait = midibool(false);         /* force it off     */
+                }
+                else
+                {
+                    *ait = *mit || *ait;
+                }
+            }
+            active = ! active;
+            mg.group_state(active);
+            m_group_selected = active ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
+        }
+    }
+    return result;
+}
+
+#endif  //SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
 
 /**
  *

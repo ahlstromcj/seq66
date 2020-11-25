@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-08-11
+ * \updates       2020-11-25
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -806,18 +806,37 @@ setmapper::unapply_mutes (mutegroup::number group)
 }
 
 /**
- *  Toggles a mute group to the current play-screen.
+ *  Toggles a mute group to the current play-screen. The mutegroups::toggle()
+ *  function determines if the specified mute-group is active.  If not, then
+ *  the armable patterns in the mute-group are turned on.
+ *
+ *  Otherwise, all the bits are cleared, so that the whole set (which includes
+ *  patterns in the mute group and patterns that the user may have
+ *  subsequently armed individually) is zero.  An alternative is to disarm
+ *  only the patterns in the mute group, leaving the other ones armed.
  */
 
 bool
 setmapper::toggle_mutes (mutegroup::number group)
 {
+#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
+    midibooleans armedbits;
+    bool result = play_screen()->learn_bits(armedbits); /* get armed set    */
+    if (result)
+    {
+        result = mutes().alt_toggle(group, armedbits);  /* toggle mutables  */
+        if (result)
+            result = play_screen()->apply_bits(armedbits);
+    }
+    return result;
+#else
     midibooleans bits;
     bool result = mutes().toggle(group, bits);
     if (result)
         result = play_screen()->apply_bits(bits);
 
     return result;
+#endif
 }
 
 /**

@@ -3,10 +3,10 @@
 #-------------------------------------------------------------------------------
 ##
 # \file       	Makefile.am
-# \library    	generic
+# \library    	doc/dox
 # \author     	Chris Ahlstrom
 # \date       	2015-09-10
-# \update     	2020-10-02
+# \update     	2020-11-25
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -23,7 +23,12 @@
 
 AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
 MAINTAINERCLEANFILES = Makefile.in dox-warnings.log
-CLEANFILES = dox-stamp
+CLEANFILES = dox-stamp \
+ seq_rtmidi/seq66_lib_seq_rtmidi.pdf \
+ libsessions/seq66_lib_libsessions.pdf \
+ seq_portmidi/seq66_lib_seq_portmidi.pdf \
+ libseq66/seq66_lib_libseq66.pdf
+
 
 #******************************************************************************
 #  EXTRA_DIST
