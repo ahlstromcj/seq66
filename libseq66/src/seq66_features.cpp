@@ -59,8 +59,8 @@ static std::string s_arg_0 = "";
 static std::string s_client_name = SEQ66_CLIENT_NAME;
 static std::string s_package_name = SEQ66_PACKAGE_NAME;
 static std::string s_version = SEQ66_VERSION;
-static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " ("
-    SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT ")\n";
+static std::string s_versiontext = SEQ66_APP_NAME " " SEQ66_VERSION " "
+    SEQ66_GIT_VERSION " " SEQ66_VERSION_DATE_SHORT "\n";
 
 /**
  *  Sets the current name of the application.

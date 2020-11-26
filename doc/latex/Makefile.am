@@ -3,16 +3,22 @@
 #-------------------------------------------------------------------------------
 ##
 # \file       	Makefile.am
-# \library    	seq66 documents
+# \library    	doc/latex
 # \author     	Chris Ahlstrom
 # \date       	2020-10-02
-# \update     	2020-10-02
+# \update     	2020-11-25
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		Makefile for the seq66/doc/latex sub-project.
 #
 #-------------------------------------------------------------------------------
+
+#*****************************************************************************
+# Packing/cleaning targets
+#-----------------------------------------------------------------------------
+
+AUTOMAKE_OPTIONS = foreign dist-zip dist-bzip2
 
 SUBDIRS = tex
 
