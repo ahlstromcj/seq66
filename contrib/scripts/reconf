@@ -1,0 +1,29 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+##
+# \file        reconf
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2020-11-25 to 2020-11-25
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+# This script can be run when make fails due to local variations on the versions
+# of the GNU autotools.
+#
+# Not sure why version numbers are used in GNU autotools.
+#
+#------------------------------------------------------------------------------
+
+libtoolize --force
+aclocal
+autoheader
+automake --force-missing --add-missing
+autoconf
+
+#******************************************************************************
+# reconf (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+

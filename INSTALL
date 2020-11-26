@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.91.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-10-26
+2015-09-10 to 2020-11-25
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
@@ -43,7 +43,25 @@ Linux Distro Package (seq66):
         Installed it from from KXStudio repo using Muon:
         https://kde.org/applications/en/system/org.kde.muon
 
-Quick Install:
+Normal (automake) Install:
+
+    The normal install is meant for for those who do not want to install a lot of
+    extra developer packages, and want to use the standard "configure" steps.
+    These steps build the most common version of Seq66, "qseq66" with the
+    internal "rtmidi" engine.  The "configure" script for the build process
+    means one needs to install the various "dev" dependencies.  The conventional
+    way to install applications from source code is to use the source tarball
+    and run the normal mantra:
+
+        $ ./configure
+        $ make
+        $ sudo make install
+
+    If "configure" or "make" emit errors, make sure libtool is installed, and
+    then run the script "reconf", stored in "contrib/scripts/reconf".  Then try
+    the above commands again.
+
+Bootstrap Install:
 
     The quick install is meant for for those who do not want to install a lot of
     extra developer packages, and want to use the standard "./configure ; make ;
@@ -54,7 +72,7 @@ Quick Install:
     libtool to be installed.  Grab a Seq66 tarball and untar it.  Go to the
     "seq66" directory and run these commands:
 
-        $ ./bootstrap -er           OR    $ ./configure
+        $ ./bootstrap -er
         $ make &> make.log
         $ sudo make install
 
