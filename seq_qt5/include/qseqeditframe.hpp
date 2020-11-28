@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-27
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -106,6 +106,7 @@ namespace seq66
 class qseqeditframe final : public qseqframe, protected performer::callbacks
 {
     friend class qsmainwnd;
+    friend class qseqroll;
 
     Q_OBJECT
 
@@ -130,6 +131,7 @@ protected:      /* QWidget overrides                */
 private:
 
     virtual void update_midi_buttons () override;
+    virtual void update_note_entry (bool on) override;
     virtual void set_dirty () override;
     virtual bool change_ppqn (int ppqn) override;
 
@@ -163,6 +165,7 @@ private slots:
     void redo ();
     void showTools ();
     void updateNoteLength (int newindex);
+    void note_entry (bool ischecked);
     void slot_zoom_in ();
     void slot_zoom_out ();
     void updateKey (int newindex);

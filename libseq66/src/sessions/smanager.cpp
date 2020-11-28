@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-11-19
+ * \updates       2020-11-26
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -390,6 +390,7 @@ smanager::open_midi_file (const std::string & fname, std::string & errmsg)
         infomsg += std::to_string(perf()->ppqn());
         (void) seq66::info_message(infomsg);
         midifname = fname;
+        (void) perf()->apply_session_mutes();
     }
     else
         (void) seq66::error_message(errmsg);

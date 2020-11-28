@@ -6,7 +6,7 @@
 # \library     sequencer66 application
 # \author      Chris Ahlstrom
 # \date        2015-09-11
-# \update      2019-09-22
+# \update      2020-11-27
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -24,9 +24,9 @@ EXTRA_DIST = \
  copy.xpm \
  del.xpm \
  down.xpm \
- drum_mode.xpm \
  drum.xpm \
  expand.xpm \
+ finger.xpm \
  follow.xpm \
  fruity.xpm \
  ins.xpm \

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-27
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -111,6 +111,7 @@ QGridLayout     | y |                                                   | a |
  */
 
 #include "pixmaps/drum.xpm"
+#include "pixmaps/finger.xpm"
 #include "pixmaps/play.xpm"
 #include "pixmaps/quantize.xpm"
 #include "pixmaps/rec.xpm"
@@ -383,6 +384,16 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         ui->cmbNoteLen, SIGNAL(currentIndexChanged(int)),
         this, SLOT(updateNoteLength(int))
     );
+
+    connect
+    (
+        ui->m_button_note_entry, SIGNAL(toggled(bool)),
+        this, SLOT(note_entry(bool))
+    );
+    qt_set_icon(finger_xpm, ui->m_button_note_entry);
+    ui->m_button_note_entry->setCheckable(true);
+    ui->m_button_note_entry->setAutoDefault(false);
+
     connect(ui->btnZoomIn, SIGNAL(clicked(bool)), this, SLOT(slot_zoom_in()));
     qt_set_icon(zoom_in_xpm, ui->btnZoomIn);
 
@@ -695,6 +706,23 @@ qseqeditframe::updateNoteLength (int newindex)
     default: len = p * 4; break;
     }
     m_seqroll->set_note_length(len);
+}
+
+/**
+ *
+ */
+
+void
+qseqeditframe::note_entry (bool ischecked)
+{
+    if (not_nullptr(m_seqroll))
+        m_seqroll->set_adding(ischecked);
+}
+
+void
+qseqeditframe::update_note_entry (bool on)
+{
+    ui->m_button_note_entry->setChecked(on);
 }
 
 /**

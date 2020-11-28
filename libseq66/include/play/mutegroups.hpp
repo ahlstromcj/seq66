@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-25
+ * \updates       2020-11-26
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -194,7 +194,7 @@ private:
     /**
      *  If true, indicates that a mode group is selected, and playing statuses
      *  will be "memorized".  This value starts out true.  It is altered by
-     *  the c_midi_control_mod_gmute handler or when the group-off or group-on
+     *  the MIDI control group-mute handler or when the group-off or group-on
      *  keys are struck.
      */
 
@@ -212,7 +212,9 @@ private:
      *  Selects a group to mute.  A "group" is essentially a "set" that is
      *  selected for the saving and restoring of the status of all patterns in
      *  that set.  The value of -1 (SEQ66_NO_MUTE_GROUP_SELECTED) to indicate
-     *  the value should not be used.
+     *  the value should not be used.  The test for a valid value is simple,
+     *  just check for group >= 0 and a limit of SEQ66_MUTE_GROUPS_MAX (32) at
+     *  mute-group setup time.
      */
 
     mutegroup::number m_group_selected;
@@ -429,6 +431,16 @@ public:
         return m_group_selected;
     }
 
+    bool group_valid () const
+    {
+        return group_valid(m_group_selected);
+    }
+
+    bool group_valid (int g) const
+    {
+        return g >= 0 && g < SEQ66_MUTE_GROUPS_MAX;
+    }
+
     bool group_present () const
     {
         return m_group_present;
@@ -498,7 +510,8 @@ private:
 
     void group_selected (mutegroup::number mg)
     {
-        m_group_selected = mg;                  /* need to validate     */
+        if (group_valid(mg) || mg == (-1))
+            m_group_selected = mg;
     }
 
 };              // class mutegroups

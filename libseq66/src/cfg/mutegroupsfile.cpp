@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-11-23
+ * \updates       2020-11-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,6 +132,10 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     s = get_variable(file, "[mute-group-flags]", "mute-group-columns");
     if (! s.empty())
         mutes.columns(string_to_int(s));
+
+    s = get_variable(file, "[mute-group-flags]", "mute-group-selected");
+    if (! s.empty())
+        mutes.group_selected(string_to_int(s));
 
     s = get_variable(file, "[mute-group-flags]", "groups-format");
     if (! s.empty())
@@ -242,13 +246,17 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# save-mutes-to: 'both' writes the mutes value to both the mutes\n"
         "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
         "# and 'mutes' only to the mutesfile.\n"
-        "# \n"
+        "#\n"
         "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
         "# grid.  For now, keep these values at 4 and 8.\n"
-        "# \n"
+        "#\n"
         "# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means\n"
         "# to write them as hexadecimal numbers (e.g. 0xff), which will be\n"
         "# useful with larger set sizes.\n"
+        "#\n"
+        "# group-selected: if 0 to 31, and mutes are available either from\n"
+        "# this file or from the MIDI file, then the mute-group is applied at\n"
+        "# startup.  This is useful in restoring a session.\n"
         ;
 
     bool result = write_mute_groups(file);
@@ -322,10 +330,12 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         std::string gf = usehex ? "hex" : "bin" ;
         int rows = mutes.rows();
         int columns = mutes.columns();
+        int selected = mutes.group_selected();
         file << "\n[mute-group-flags]\n\n"
             << "save-mutes-to = " << save << "\n"
             << "mute-group-rows = " << rows << "\n"
             << "mute-group-columns = " << columns << "\n"
+            << "mute-group-selected = " << selected << "\n"
             << "groups-format = " << gf << "\n"
             ;
 

@@ -776,9 +776,14 @@ bool
 setmapper::apply_mutes (mutegroup::number group)
 {
     bool result = true;
-    mutegroup::number oldgroup = group_selected();
-    if (group != oldgroup && oldgroup >= 0)             /* mildly tricky    */
-        result = unapply_mutes(oldgroup);               /* turn 'em off     */
+
+    /*
+     * Do we even need to do this?  Applying will force the settings.
+     *
+     * mutegroup::number oldgroup = group_selected();
+     * if (group != oldgroup && oldgroup >= 0)          // mildly tricky
+     *     result = unapply_mutes(oldgroup);            // turn 'em off
+     */
 
     if (result)
     {

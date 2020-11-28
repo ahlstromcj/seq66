@@ -1498,6 +1498,7 @@ qsmainwnd::check ()
 
         case QMessageBox::Discard:
 
+            perf().unmodify();          /* avoid saving in save_session()   */
             result = true;
             break;
 

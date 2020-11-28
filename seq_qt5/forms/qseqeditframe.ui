@@ -514,6 +514,22 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="m_button_note_entry">
+         <property name="maximumSize">
+          <size>
+           <width>35</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Note</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="btnZoomOut">
          <property name="maximumSize">
           <size>

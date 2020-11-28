@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-06-29
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -1572,6 +1572,7 @@ qseqroll::set_adding (bool a)
     else
         setCursor(Qt::ArrowCursor);
 
+    m_parent_frame->update_note_entry(a);       /* updates checkable button */
     set_dirty();
 }
 

@@ -1,6 +1,6 @@
 README for Seq66 0.91.1 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-11-22
+2015-09-10 to 2020-11-28
 
 "Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
 and with a lot of krufty buildup removed.
@@ -60,6 +60,9 @@ Recent changes:
 
     -   Version 0.91.1:
         -   Fixes needed for mute-group (mutes) handling.
+        -   Ability to save the last-active mute-group for restoring on
+            startup.
+        -   Added a button to go into note-insert mode in pattern editor.
     -   Version 0.91.0:
         -   Non Session Manager support essentially complete.  The
             refactoring to do this was massive.

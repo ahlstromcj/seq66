@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-24
+ * \updates       2020-11-26
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -245,11 +245,17 @@ mutegroups::apply (mutegroup::number group, midibooleans & bits)
     bool result = mgiterator != list().end();
     if (result)
     {
+        /*
+         * The caller, who knows the screenset, must do the unapply operation.
+         */
+
+#if 0
         mutegroup::number oldgroup = m_group_selected;
         if (oldgroup != group)
         {
             result = unapply(group, bits);
         }
+#endif
         mutegroup & mg = mgiterator->second;
         bits = mg.get();
         mg.group_state(true);
@@ -277,6 +283,17 @@ mutegroups::unapply (mutegroup::number group, midibooleans & bits)
     return result;
 }
 
+/**
+ *  If another group was selected when we enter this function, we first need
+ *  to turn off its group state before setting up the currently desired group.
+ *
+ * An issue to solve:
+ *
+ *      Let's say we start up with group 1 active (a new feature for issue
+ *      #27).  The MIDI file is loaded and group 1 is applied.  Now we select
+ *      group 0.  At this point, we need to ???????????????????????????
+ */
+
 bool
 mutegroups::toggle (mutegroup::number group, midibooleans & bits)
 {
@@ -284,6 +301,17 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
     bool result = mgiterator != list().end();
     if (result)
     {
+        if (group != m_group_selected && m_group_selected >= 0)
+        {
+            auto mgiterator = list().find(clamp_group(m_group_selected));
+            bool result = mgiterator != list().end();
+            if (result)
+            {
+                mutegroup & mg = mgiterator->second;
+                mg.group_state(false);
+            }
+        }
+
         mutegroup & mg = mgiterator->second;
         bool mgnewstate = ! mg.group_state();
         bits = mgnewstate ? mg.get() : mg.zeroes() ;

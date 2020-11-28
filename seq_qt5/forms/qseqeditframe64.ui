@@ -867,8 +867,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>800</width>
-            <height>59</height>
+            <width>803</width>
+            <height>62</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -885,21 +885,24 @@
      <item>
       <layout class="QHBoxLayout" name="eventHorizLayout">
        <item>
-        <widget class="QPushButton" name="btnAuxFunction">
+        <widget class="QPushButton" name="m_button_note_entry">
          <property name="minimumSize">
           <size>
            <width>48</width>
-           <height>21</height>
+           <height>24</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>48</width>
-           <height>21</height>
+           <height>24</height>
           </size>
          </property>
          <property name="text">
-          <string/>
+          <string>Note</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

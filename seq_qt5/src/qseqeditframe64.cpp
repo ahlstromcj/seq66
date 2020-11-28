@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-08-08
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -126,7 +126,7 @@ QWidget container?
 #include "pixmaps/bus.xpm"
 #include "pixmaps/down.xpm"
 #include "pixmaps/drum.xpm"
-#include "pixmaps/drum_mode.xpm"
+#include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/key.xpm"
 #include "pixmaps/length_short.xpm"     /* not length.xpm, it is too long   */
@@ -894,6 +894,20 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     set_background_sequence(m_bgsequence);
 
     /*
+     * Note-entry mode
+     */
+
+    qt_set_icon(finger_xpm, ui->m_button_note_entry);
+    ui->m_button_note_entry->setCheckable(true);
+    ui->m_button_note_entry->setAutoDefault(false);
+    ui->m_button_note_entry->setChecked(false);
+    connect
+    (
+        ui->m_button_note_entry, SIGNAL(toggled(bool)),
+        this, SLOT(note_entry(bool))
+    );
+
+    /*
      * Drum-Mode Button.  Qt::NoFocus is the default focus policy.
      */
 
@@ -904,7 +918,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_toggle_drum, SIGNAL(toggled(bool)),
         this, SLOT(editor_mode(bool))
     );
-    qt_set_icon(drum_mode_xpm, ui->m_toggle_drum);
+    qt_set_icon(drum_xpm, ui->m_toggle_drum);
 
     /*
      * Event Selection Button and Popup Menu for qseqdata.
@@ -1050,11 +1064,19 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     );
     set_recording_volume(usr().velocity_override());
 
+#if defined USE_REMAP_NOTES_BUTTON
+
+    /*
+     * Replaced by note-entry button
+     */
+
     connect
     (
         ui->btnAuxFunction, SIGNAL(clicked(bool)),
         this, SLOT(remap_notes())
     );
+
+#endif
 
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
@@ -2158,6 +2180,23 @@ qseqeditframe64::popup_sequence_menu ()
 #endif
 
 /**
+ *  Passes the transpose status to the sequence object.
+ */
+
+void
+qseqeditframe64::note_entry (bool ischecked)
+{
+    if (not_nullptr(m_seqroll))
+        m_seqroll->set_adding(ischecked);
+}
+
+void
+qseqeditframe64::update_note_entry (bool on)
+{
+    ui->m_button_note_entry->setChecked(on);
+}
+
+/**
  *  Sets the given background sequence for the Pattern editor so that the
  *  musician has something to see that can be played against.  As a new
  *  feature, it is also passed to the sequence, so that it can be saved as
@@ -3226,6 +3265,8 @@ qseqeditframe64::set_recording_volume (int recvol)
 /**
  *  Here, we need to get the filespec, create a notemapper, fill it from the
  *  notemapfile, and iterate through the notes, converting them.
+ *
+ *  Currently not connected to a signal.  TODO.
  */
 
 void

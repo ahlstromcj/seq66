@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2020-07-27
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -76,6 +76,8 @@ namespace seq66
 
 class qseqframe : public QFrame, public qbase
 {
+    friend class qseqroll;
+
     Q_OBJECT
 
 public:
@@ -102,6 +104,8 @@ protected:
     {
         return m_seq;
     }
+
+    virtual void update_note_entry (bool on) = 0;
 
 public:
 

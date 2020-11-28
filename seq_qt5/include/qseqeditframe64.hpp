@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-07-27
+ * \updates       2020-11-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -127,6 +127,7 @@ private:        /* qbase and qseqframe overrides    */
 
     virtual bool change_ppqn (int ppqn) override;
     virtual void update_midi_buttons () override;
+    virtual void update_note_entry (bool on) override;
     virtual void set_dirty () override;
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
@@ -189,6 +190,7 @@ private slots:
     void tighten_notes ();
     void transpose_notes ();
     void remap_notes ();
+    void note_entry (bool ischecked);
 
     /*
      * More slots.

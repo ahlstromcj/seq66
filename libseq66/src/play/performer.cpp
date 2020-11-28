@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-11-24
+ * \updates       2020-11-26
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4913,6 +4913,21 @@ performer::clear_mutes ()
 
         notify_mutes_change(mutegroup::unassigned(), c);
     }
+    return result;
+}
+
+/**
+ *  Provides a solution to "SM: pattern state isn't recalled with session
+ *  (#27).  It actually applies to normal operation as well.
+ */
+
+bool
+performer::apply_session_mutes ()
+{
+    bool result = mutes().any() && mutes().group_valid();
+    if (result)
+        result = apply_mutes(mutes().group_selected());
+
     return result;
 }
 
