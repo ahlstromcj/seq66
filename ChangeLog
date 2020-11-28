@@ -1,5 +1,108 @@
+2020-11-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, resources/pixmaps/finger.xpm,
+	seq_qt5/forms/qperfeditframe64.ui,
+	seq_qt5/include/qperfeditframe64.hpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfroll.cpp: Added
+	insert/entry button to the perfedit.
+	* README, libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/setmapper.cpp,
+	libseq66/src/sessions/smanager.cpp, resources/pixmaps/Makefile.am,
+	resources/pixmaps/Makefile.in, resources/pixmaps/drum_mode.xpm,
+	resources/pixmaps/finger.xpm, seq_qt5/forms/qseqeditframe.ui,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe.hpp,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/src/qseqeditframe.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: Added
+	note-entry mode button to seqedit, save/restore for mute-group.
+
+2020-11-26  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 4c72dcadf30f01ea93b7cdcfb64361f2cfcd3310 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Thu Nov 26 07:45:54 2020
+	-0500
+
+2020-11-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/scripts/ystart, doc/dox/Makefile.am, doc/dox/Makefile.in,
+	doc/latex/Makefile.am, doc/latex/Makefile.in,
+	doc/latex/tex/Makefile.in, libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/seq66_features.cpp, pack, seq_qt5/src/qt5nsmanager.cpp: 
+	Fixes to tarball builds and mutegroups issue #18.
+
+2020-11-24  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/app_limits.h,
+	libseq66/include/play/mutegroup.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/mutegroup.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_info.cpp,
+	seq_rtmidi/src/midibus.cpp: Working on issue #18, handling
+	mute-group toggle.
+	* libseq66/src/sessions/clinsmanager.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_alsa_info.cpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_info.cpp,
+	seq_rtmidi/src/midibus.cpp: Safety check-in, renaming client ports
+	more uniformly.
+
+2020-11-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/src/sessions/clinsmanager.cpp: Merged fix for issue with
+	over-zealous detection of NSM-compatible daemons.
+	* : commit 4b5f951234d74e0ba04787b47b0e8cec43d35216 Merge: d1fa7bf
+	9516dc0 Author: C. Ahlstrom <ahlstromcj@gmail.com> Date:   Mon Nov
+	23 19:21:27 2020 -0500
+	* libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/mutegroup.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/play/mutegroup.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/src/qmutemaster.cpp: Tentative fix to issue #28, mute
+	groups.
+	* libseq66/src/sessions/clinsmanager.cpp: remove nsmd running
+	detection
+
+2020-11-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, VERSION, configure, configure.ac, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/playlist.hpp, libseq66/src/play/playlist.cpp,
+	libseq66/src/play/screenset.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Ongoing
+	playlist/mutes fixes.
+	* contrib/scripts/make-checkout, doc/latex/tex/menu.tex,
+	doc/latex/tex/sessions.tex, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/rcsettings.cpp: Interim check-in, need to fix mutes
+	handling, sigh.
+
 2020-11-21  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, README, VERSION, configure.ac,
+	doc/latex/tex/sessions.tex, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/util/basic_macros.h,
+	libseq66/src/util/basic_macros.cpp: Version 0.91.0 pending.
 	* RELNOTES.md, contrib/vim-syntax/cpp.vim,
 	data/samples/GM_DD-11.drums, data/samples/ca_midi.playlist,
 	data/samples/rowclipsmap.ctrl, data/samples/rowclipsmap.mutes,
