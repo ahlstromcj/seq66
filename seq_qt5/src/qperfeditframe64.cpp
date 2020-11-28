@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2020-07-29
+ * \updates       2020-11-28
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -61,6 +61,7 @@
 #include "pixmaps/collapse.xpm"
 #include "pixmaps/copy.xpm"
 #include "pixmaps/expand.xpm"
+#include "pixmaps/finger.xpm"
 #include "pixmaps/follow.xpm"
 #include "pixmaps/loop.xpm"
 #include "pixmaps/redo.xpm"
@@ -252,15 +253,28 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
 
     connect(ui->btnCollapse, SIGNAL(clicked(bool)), this, SLOT(markerCollapse()));
     qt_set_icon(collapse_xpm, ui->btnCollapse);
+
     connect(ui->btnExpand, SIGNAL(clicked(bool)), this, SLOT(markerExpand()));
     qt_set_icon(expand_xpm, ui->btnExpand);
+
     connect
     (
         ui->btnExpandCopy, SIGNAL(clicked(bool)), this, SLOT(markerExpandCopy())
     );
     qt_set_icon(copy_xpm, ui->btnExpandCopy);
+
     connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(markerLoop(bool)));
     qt_set_icon(loop_xpm, ui->btnLoop);
+
+    connect
+    (
+        ui->btnEntryMode, SIGNAL(toggled(bool)), this,
+        SLOT(entry_mode(bool))
+    );
+    qt_set_icon(finger_xpm, ui->btnEntryMode);
+    ui->btnEntryMode->setCheckable(true);
+    ui->btnEntryMode->setAutoDefault(false);
+    ui->btnEntryMode->setChecked(false);
 
     /*
      * Final settings.
@@ -481,6 +495,27 @@ qperfeditframe64::set_transpose (int transpose)
 {
     perf().all_notes_off();
     perf().set_transpose(transpose);
+}
+
+/**
+ *
+ */
+
+void
+qperfeditframe64::entry_mode (bool ischecked)
+{
+    if (not_nullptr(m_perfroll))
+        m_perfroll->set_adding(ischecked);
+}
+
+/**
+ *
+ */
+
+void
+qperfeditframe64::update_entry_mode (bool on)
+{
+    ui->btnEntryMode->setChecked(on);
 }
 
 /**

@@ -138,6 +138,28 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="btnEntryMode">
+         <property name="minimumSize">
+          <size>
+           <width>35</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>35</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Enter</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>

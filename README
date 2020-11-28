@@ -62,7 +62,8 @@ Recent changes:
         -   Fixes needed for mute-group (mutes) handling.
         -   Ability to save the last-active mute-group for restoring on
             startup.
-        -   Added a button to go into note-insert mode in pattern editor.
+        -   Added a button to toggle insert mode in the pattern and
+            song editors.
     -   Version 0.91.0:
         -   Non Session Manager support essentially complete.  The
             refactoring to do this was massive.

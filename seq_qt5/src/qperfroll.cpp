@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2020-11-28
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -712,9 +712,12 @@ qperfroll::set_adding (bool a)
 {
     adding(a);
     if (a)
-        setCursor(Qt::PointingHandCursor);
+        setCursor(Qt::PointingHandCursor);      /* Qt doesn't have a pencil */
     else
         setCursor(Qt::ArrowCursor);
+
+    m_parent_frame->update_entry_mode(a);       /* updates checkable button */
+    set_dirty();
 }
 
 /**

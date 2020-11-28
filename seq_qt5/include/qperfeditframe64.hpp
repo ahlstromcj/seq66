@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2020-07-29
+ * \updates       2020-11-28
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
@@ -123,6 +123,7 @@ private:
 
     void reset_zoom ();
     void set_transpose (int transpose);
+    void update_entry_mode (bool on);
 
 private slots:
 
@@ -136,6 +137,7 @@ private slots:
     void markerExpandCopy ();
     void markerLoop (bool loop);
     void follow (bool ischecked);
+    void entry_mode (bool ischecked);
 
 private:
 
