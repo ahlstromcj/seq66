@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-11-26
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -82,6 +82,7 @@ class performer
     friend class rcfile;
     friend class playlist;
     friend class qperfeditframe64;
+    friend class qplaylistframe;
     friend class qsliveframe;
     friend class qsmainwnd;
     friend class sequence;
@@ -1045,6 +1046,11 @@ public:
         return m_play_list->list_name();
     }
 
+    bool playlist_active () const
+    {
+        return m_play_list->active();
+    }
+
     bool playlist_mode () const
     {
         return m_play_list->mode();
@@ -1140,9 +1146,9 @@ public:
         return m_play_list->remove_song(index);
     }
 
-    bool open_next_list (bool opensong = true)
+    bool open_next_list (bool opensong = true, bool loading = false)
     {
-        return m_play_list->open_next_list(opensong);
+        return m_play_list->open_next_list(opensong, loading);
     }
 
     bool open_previous_list (bool opensong = true)
@@ -2776,6 +2782,7 @@ public:         /* GUI-support functions */
 
 private:
 
+    void playlist_activate (bool on);
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);
     bool set_overwrite_recording (seq::number seqno, bool active, bool toggle);

@@ -5823,6 +5823,27 @@ performer::save_note_mapper (const std::string & notefile)
 }
 
 /**
+ *
+ */
+
+void
+performer::playlist_activate (bool on)
+{
+    if (on)
+    {
+        if (m_play_list)
+        {
+            if (m_play_list->mode())            /* loaded successfully? */
+                rc().playlist_active(true);
+        }
+    }
+    else
+    {
+        rc().playlist_active(false);
+    }
+}
+
+/**
  *  Creates a playlist object and opens it.  If there is a playlist object
  *  already in existence, it is replaced. If there is no playlist file-name,
  *  then an "empty" playlist object is created.

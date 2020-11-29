@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-22
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -476,10 +476,10 @@ playlist::open_current_song ()
  */
 
 bool
-playlist::open_next_list (bool opensong)
+playlist::open_next_list (bool opensong, bool loading)
 {
-    bool result = true;
-    if (active())
+    bool result = false;                // true;
+    if (active() || loading)
     {
         result = next_list(true);      /* select the next list, first song */
         if (result && opensong)
@@ -495,7 +495,7 @@ playlist::open_next_list (bool opensong)
 bool
 playlist::open_previous_list (bool opensong)
 {
-    bool result = true;
+    bool result = false;                // true;
     if (active())
     {
         result = previous_list(true);  /* select the prev. list, first song */
@@ -546,7 +546,7 @@ playlist::open_select_list_by_midi (int ctrl, bool opensong)
 bool
 playlist::open_next_song (bool opensong)
 {
-    bool result = true;
+    bool result = false;                // true;
     if (active())
     {
         result = next_song();
@@ -563,7 +563,7 @@ playlist::open_next_song (bool opensong)
 bool
 playlist::open_previous_song (bool opensong)
 {
-    bool result = true;
+    bool result = false;                // true;
     if (active())
     {
         result = previous_song();

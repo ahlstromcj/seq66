@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-20
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -300,7 +300,7 @@ void
 qplaylistframe::set_current_playlist ()
 {
     std::string temp;
-    ui->checkBoxPlaylistActive->setChecked(perf().playlist_mode());
+    ui->checkBoxPlaylistActive->setChecked(perf().playlist_active());
     temp = perf().playlist_filename();
     if (temp.empty())
         temp = "None";
@@ -433,7 +433,14 @@ qplaylistframe::fill_playlists ()
                 temp = perf().playlist_name();
                 qtip->setText(QString::fromStdString(temp));
             }
-            if (! perf().open_next_list(false))     /* false = no load song */
+
+            /*
+             * Load the next list.  The false means "don't load the song", and
+             * the true means "we're loading the playlist, so go to the next
+             * playlist even if not active."
+             */
+
+            if (! perf().open_next_list(false, true))
                 break;
         }
     }
@@ -758,7 +765,8 @@ qplaylistframe::handle_playlist_active_click ()
 {
     if (not_nullptr(m_parent))
     {
-        //  m_parent->TODO();
+        bool on = ui->checkBoxPlaylistActive->isChecked();
+        perf().playlist_activate(on);
     }
 }
 

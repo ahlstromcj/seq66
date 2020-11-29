@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-19
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2678,29 +2678,31 @@ qsmainwnd::handle_key_press (const keystroke & k)
 {
     bool result = false;
     bool done = false;
-    if (k.is_right())
+    if (k.is_press())
     {
-        result = perf().open_next_song();
-        done = true;
+        if (k.is_right())
+        {
+            result = perf().open_next_song();
+            done = true;
+        }
+        else if (k.is_left())
+        {
+            result = perf().open_previous_song();
+            done = true;
+        }
+        else if (k.is_down())
+        {
+            result = perf().open_next_list();
+            done = true;
+        }
+        else if (k.is_up())
+        {
+            result = perf().open_previous_list();
+            done = true;
+        }
+        if (result)
+            m_live_frame->set_playlist_name(perf().playlist_song());
     }
-    else if (k.is_left())
-    {
-        result = perf().open_previous_song();
-        done = true;
-    }
-    else if (k.is_down())
-    {
-        result = perf().open_next_list();
-        done = true;
-    }
-    else if (k.is_up())
-    {
-        result = perf().open_previous_list();
-        done = true;
-    }
-    if (result)
-        m_live_frame->set_playlist_name(perf().playlist_song());
-
     if (! done)
     {
         done = perf().midi_control_keystroke(k);
@@ -2724,7 +2726,11 @@ qsmainwnd::handle_key_press (const keystroke & k)
 bool
 qsmainwnd::handle_key_release (const keystroke & k)
 {
-    return perf().midi_control_keystroke(k);
+    bool result = ! k.is_press();
+    if (result)
+        result = perf().midi_control_keystroke(k);
+
+    return result;
 }
 
 /**

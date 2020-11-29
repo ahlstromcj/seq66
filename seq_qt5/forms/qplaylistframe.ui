@@ -38,7 +38,7 @@
     <rect>
      <x>10</x>
      <y>110</y>
-     <width>291</width>
+     <width>271</width>
      <height>301</height>
     </rect>
    </property>
@@ -173,7 +173,7 @@
     <rect>
      <x>420</x>
      <y>110</y>
-     <width>291</width>
+     <width>271</width>
      <height>301</height>
     </rect>
    </property>
@@ -359,9 +359,9 @@
   <widget class="QWidget" name="layoutWidget_1">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>300</x>
      <y>140</y>
-     <width>94</width>
+     <width>101</width>
      <height>175</height>
     </rect>
    </property>
@@ -502,9 +502,9 @@
   <widget class="QWidget" name="layoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>720</x>
+     <x>710</x>
      <y>140</y>
-     <width>94</width>
+     <width>111</width>
      <height>175</height>
     </rect>
    </property>
@@ -616,13 +616,13 @@
      <widget class="QCheckBox" name="checkBoxPlaylistActive">
       <property name="minimumSize">
        <size>
-        <width>92</width>
+        <width>98</width>
         <height>25</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>92</width>
+        <width>98</width>
         <height>25</height>
        </size>
       </property>

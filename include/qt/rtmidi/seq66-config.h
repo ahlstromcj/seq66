@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2020-11-22
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -70,11 +70,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2020-11-22"
+#define SEQ66_VERSION_DATE_SHORT "2020-11-29"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.91.1"
+#define SEQ66_VERSION "0.91.2"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -354,7 +354,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.91.1"
+#define SEQ66_PACKAGE_STRING "Seq66 0.91.2"
 #endif
 
 /* Define to the one symbol short name of this package. */

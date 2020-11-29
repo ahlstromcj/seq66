@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-22
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -397,7 +397,7 @@ public:
     bool open_select_song (int index, bool opensong = true);
     bool open_select_song_by_midi (int ctrl, bool opensong = true);
     bool open_current_song ();
-    bool open_next_list (bool opensong = true);
+    bool open_next_list (bool opensong = true, bool loading = false);
     bool open_previous_list (bool opensong = true);
     bool open_select_list (int index, bool opensong = true);
     bool open_select_list_by_midi (int ctrl, bool opensong = true);
