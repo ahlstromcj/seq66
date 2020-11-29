@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-13
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -116,6 +116,12 @@ protected:
      */
 
     std::string m_line;
+
+    /**
+     *  Provides the current line number, useful in troubleshooting.
+     */
+
+    int m_line_number;
 
     /**
      *  Holds the stream position before a line is obtained.
@@ -222,6 +228,11 @@ protected:
     const std::string & line () const
     {
         return m_line;
+    }
+
+    int line_number () const
+    {
+        return m_line_number;
     }
 
     std::string trimline () const;

@@ -75,21 +75,7 @@ Recent changes:
             linkage errors that cropped up in debug builds.
         -   Got the CLI version building, needs a lot of testing.
         -   Playlist editing from the user-interface much improved.
-    -   Version 0.90.6:
-        -   Fixed issue #19 where recording notes caused a segfault.
-    -   Version 0.90.5:
-        -   More refactoring to improve Windows builds and fix deadlocks and
-            playback on a default Windows 10 install.
-        -   Added code to implement Song/Live and JACK Transport key toggles.
-        -   MIDI control improved for control and for status display by
-            devices like the Launchpad Mini, using new "ctrl" files.
-        -   Fixes:
-            -   Fixed a bug using millitime() instead of microtime().
-            -   Issue #13, data and event/trigger panes not reflecting event
-                changes.  Change handling improved in general with more
-                performer callbacks.
-            -   The data pane was some pixels off in the tabbed edit-frame.
-            -   Fix a lot of issue with using sets and an 8x8 Seq66 grid.
-        -   Improved error-handling and reporting.
+
+    See the "NEWS" file for changes in earlier versions.
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

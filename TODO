@@ -1,6 +1,6 @@
-TO DO for Seq66 0.91.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.91.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-11-11
+2019-04-13 to 2020-11-29
 
 HOT ITEMS:
 
@@ -82,27 +82,19 @@ ISSUES:
 
     #8: NSM Support? Similar to ahlstromcj/sequencer64#1 but now there is an
     NSM fork, https://github.com/linuxaudio/new-session-manager.
-    STATUS: Initial framework to support restarting the performer module with
-    a new configuration is in place.  Will add the appropriate code to the
-    qt5nsmanager.  Will investigate the implications of the "new" session
-    manager.
+    STATUS: Basically done.  Users finding bugs to fix.
 
     #9: Change pattern in the Edit tab while on the Edit tab? I do not think I
     can see anything currently.
-    STATUS:  In progress.  Fixing issues missed in the Edit tab.  Note that
-    the Edit tab will never have all the features of the external pattern
-    editor. There is just not enough room, for one thing.
+    STATUS:  Closed, reopen if necessary.
 
     #10: Right click-hold on pattern editor doesn't show draw pencil.
     STATUS: Qt does not have a pencil icon, so a pointing finger appears
-    instead.  To activate the pointing finger, do a right-hold. To then
-    add a note, while holding the right button, click the left button.
-    Using the "p" key to enable note-entry might be easier on the hands.
-    Use the "x" key to exit note entry.
+    instead.  Closed.
 
     #11: Pattern editor: disabling the 'piano roll scrolls with playback'
     button does not stop the scrolling.
-    STATUS: Will do.
+    STATUS: Closed?
 
     #12: Note rendering problem.
     Having a long note, scrolling it out of vision and back again leads to a
@@ -159,9 +151,6 @@ ISSUES:
 
 #18 Mute Group does not toggle
 
-    Not sure if I have missed some configuration but I have the following
-    problem:
-
     I have configured into the .ctrl file the following in order to toggle the
     first mute group using a midi controller. It send a Control Change message
     (176 decimal or 0xb0 hex) with the CC number 27. When I press the pad 27
@@ -170,24 +159,9 @@ ISSUES:
     patterns. I have configured the mute group using the mute group tab and
     include all patterns of the first row.
 
-    Also I have noticed that when I activate a mute group I'm not able to
-    activate patters that don't belong to the activated mute group. It is
-    normal?
-
-    My objetive is to emulate the "scene" function that some sequencers have
-    (like Ableton Live). That function activate / unactivate an entire row
-    just using one single button. So, if there is another way to emulate let
-    me know it please.
-
-#19 Crash when recording note
-
-    Seems to be fixed.
-
+#19 Closed
 #20 Closed
-
-#21 Wrong links in About dialog
-
-    Fixed in NSM branch.
+#21 Closed
 
 #22 Arch Linux PKGBUILD file for seq66
 
@@ -204,17 +178,16 @@ ISSUES:
 #24 Release notes in release tag message?
 
     I'd like to add seq66 to https://libreav.org/updates
-
     Could I request that the release change notes are used in the release
     message? Then they could be syndicated via the releases.atom.
-
     Either using the release description box in the Create Release feature on
     GitHub (which can accept markdown) or with something like git tag -a v0.4
     -m "$(cat RELNOTES.md)" (which GH doesn't detect markdown from).
+    Not sure this is worth doing. Don't know about "atom".
 
-#25 Configure fails
+#25 Configure fails. Closed; consider having the install make a softlink
+called "seq66".
 
-    See the config log at the github issue.
 
 PATTERNS:
 

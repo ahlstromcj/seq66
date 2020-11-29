@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-14
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  */
@@ -73,6 +73,7 @@ configfile::configfile (const std::string & name, rcsettings & rcs) :
     m_name          (name),
     m_version       ("0"),
     m_line          (),
+    m_line_number   (0),
     m_prev_pos      (0)
 {
     // no code needed
@@ -210,7 +211,11 @@ configfile::get_line (std::ifstream & file, bool strip)
     std::cout << "line: '" << m_line << "'" << std::endl;
 #endif
 
-    return file.good();
+    bool result = file.good();
+    if (result)
+        ++m_line_number;
+
+    return result;
 }
 
 /**
@@ -505,6 +510,8 @@ configfile::line_after
     bool result = false;
     file.clear();                               /* clear the file flags     */
     file.seekg(std::streampos(position), std::ios::beg); /* seek to spot    */
+    m_line_number = 0;                          /* back to beginning        */
+
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {
@@ -552,6 +559,8 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
     int result = (-1);
     file.clear();                               /* clear the file flags     */
     file.seekg(0, std::ios::beg);               /* seek to the beginning    */
+    m_line_number = 0;                          /* back to beginning        */
+
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {

@@ -214,7 +214,7 @@ bool
 mutegroupsfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.91.0 (and above) mute-groups configuration file\n\n"
+        << "# Seq66 0.91.1 (and above) mute-groups configuration file\n\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n\n"
         << "# This file replaces the [mute-group] section, making it a little\n"

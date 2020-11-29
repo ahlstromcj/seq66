@@ -259,7 +259,7 @@ cmdlineopts::s_help_3 =
 "                            rules as for the --rc option. The '.usr'\n"
 "                            extension is added if needed.\n"
 "   -c, --config basename    Change 'rc', 'usr', etc. file base namess. Any\n"
-"                           extension is stripped starting at the last period.\n"
+"                            extension is stripped starting at the last period.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.  The\n"
 "                            options supported are:\n"
 "\n"

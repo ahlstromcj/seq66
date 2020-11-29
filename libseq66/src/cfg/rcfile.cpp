@@ -782,7 +782,7 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.91.0 (and above) 'rc' configuration file\n"
+        << "# Seq66 0.91.1 (and above) 'rc' configuration file\n"
            "#\n"
            "# " << name() << "\n"
            "# Written on " << current_date_time() << "\n"

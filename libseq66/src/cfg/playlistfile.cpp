@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-11-14
+ * \updates       2020-11-29
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -361,7 +361,16 @@ playlistfile::parse ()
                 break;
             }
             ++listcount;
-            have_section = next_section(file, "[playlist]");
+
+            /*
+             * Not a fix:
+             *
+             * have_section = line() == "[playlist]";
+             * if (! have_section)
+             *     have_section = next_section(file, "[playlist]");
+             */
+
+             have_section = next_section(file, "[playlist]");
         }
         file.close();                           /* done with playlist file  */
     }
