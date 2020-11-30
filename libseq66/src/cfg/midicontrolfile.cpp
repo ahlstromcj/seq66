@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-08-14
+ * \updates       2020-11-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -660,11 +660,14 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         std::string m(bool_to_string(rc_ref().load_midi_control_in()));
         file <<
         "\n[midi-control-settings]\n\n"
-        "# Note that setting 'load-midi-control' to 'false' will cause an\n"
-        "# empty MIDI control setup to be written!  Keep backups! The \n"
-        "# control-buss value should range from 0 to the maximum buss available\n"
-        "# on your system.  If set, then only that buss will be allowed to\n"
-        "# provide MIDI control. A value of 255 or 0xff means any buss can.\n"
+        "# This section can be moved into a 'qseq66.ctrl' file and then be\n"
+        "# referred to in a '[midi-control-file] section.\n"
+        "# \n"
+        "# Setting 'load-midi-control' to 'false' will cause an empty MIDI\n"
+        "# control setup to be written!  Keep backups! The control-buss value\n"
+        "# ranges from 0 to the maximum buss provided by the hardware on your\n"
+        "# If set, then only that buss will be allowed to send MIDI control.\n"
+        "# A value of 255 or 0xff means any buss can send MIDI control.\n"
         "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
         "# are always enabled.\n\n"
             << "load-key-controls = " << k << "\n"

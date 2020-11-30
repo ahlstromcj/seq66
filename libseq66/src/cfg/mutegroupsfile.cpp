@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-11-25
+ * \updates       2020-11-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -235,17 +235,17 @@ mutegroupsfile::write_stream (std::ofstream & file)
         "# blank line by adding a space character to the line.\n\n"
         "[comments]\n\n" << rc_ref().comments_block().text() << "\n"
         <<
-        "# This file holds the mute-groups configuration for Seq66.\n"
+        "# The 'mutes' file holds the global mute-groups configuration.\n"
         "# It follows the format of the 'rc' configuration file, but is\n"
         "# stored separately for convenience.  It is always stored in the\n"
-        "# main configuration directory.  To use this file, replace the\n"
-        "# [mute-group] section and its contents with a [mute-group-file]\n"
-        "# tag, and simply add the basename (e.g. nanomutes.mutes) on a\n"
-        "# separate line.\n"
+        "# configuration directory.  To use this 'mutes' file, replace the\n"
+        "# [mute-group] section in the 'rc' file, and its contents, with a\n"
+        "# [mute-group-file] tag, and add the basename (e.g. 'nanomute.mutes')\n"
+        "# on a separate line.\n"
         "#\n"
         "# save-mutes-to: 'both' writes the mutes value to both the mutes\n"
         "# and the MIDI file; 'midi' writes only to the MIDI file; and\n"
-        "# and 'mutes' only to the mutesfile.\n"
+        "# and 'mutes' only to the mutes file.\n"
         "#\n"
         "# mute-group-rows and mute-group-columns: Specifies the size of the\n"
         "# grid.  For now, keep these values at 4 and 8.\n"

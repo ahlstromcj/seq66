@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-29
+ * \updates       2020-11-30
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -609,10 +609,10 @@ playlist::clear ()
  *  Resets to the first play-list and the first-song in that playlist.
  *
  * \param clearit
- *      If true, clear the playlist no matter what.
+ *      If true, clear the playlist no matter what. Then false is returned.
  *
  * \return
- *      Returns true if the play-lists where present and the first song of the
+ *      Returns true if the play-lists were present and the first song of the
  *      first play-list was able to be selected.
  */
 

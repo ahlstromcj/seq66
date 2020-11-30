@@ -26,27 +26,23 @@ synthesizer installed:
 
     C:\Program Files (x86)\Seq66\qpseq66.exe
 
-(We would like to add the option "--buss 0" to this command line, but it is
-flagged as an incorrect shortcut!)
-
 Run the shortcut.  If an error appears, click out and run it again, and there
-should be a MIDI Mapper present on buss 0.  Load a song, and select the "0"
+should be a "MIDI Mapper" present on buss 0.  Load a song, and select the "0"
 device from the buss dropdown ("None") at the top of the main page.  The file
 should play.  You can save the file to preserve the new buss number; some
 songs are set to play on multiple busses.
 
 Inaccessible Devices:
 
-    When first starting qpseq66 on Windows, one might experience some issues.
-    One issue is that the Microsoft MIDI Mapper, rumored to be removed in
-    Windows 8 and beyond, is still detected by the PortMidi library used in
-    qpseq66.  Another issue is that the built-in Microsoft wave-table
-    synthesizer is not accessible, because the MIDI Mapper grabs it.  So
-    Seq66 will detect this situation and disable the wave-table synthesizer,
-    instead using the MIDI Mapper (device 0) to access the synthesizer.
-    To make this change permanent, exit Seq66 and restart it.  Then, for the
-    basic setup on Windows, only output bus 0 is available.  And no input bus
-    is available.
+    When first starting qpseq66 on Windows 10, one might experience some
+    issues.  One issue is that the Microsoft MIDI Mapper, rumored to be
+    removed in Windows 8 and beyond, is still detected by the PortMidi library
+    used in qpseq66.  Another issue is that the built-in Microsoft wave-table
+    synthesizer is not accessible, because the MIDI Mapper grabs it.  So Seq66
+    detects this situation and disables the wave-table synthesizer, instead
+    using the MIDI Mapper (device 0) to access the synthesizer.  To make this
+    change permanent, exit Seq66 and restart it.  Then, for the basic setup on
+    Windows, only output bus 0 is available.  And no input bus is available.
 
     When an error occurs, the files "erroneous.rc" and "erroneous.usr"
     might be created.  If so, they can be inspected, fixed, and renamed to

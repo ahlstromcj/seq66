@@ -251,7 +251,7 @@ rcfile::parse ()
     bool ok = true;                                     /* start hopefully! */
     if (line_after(file, "[midi-control-file]"))
     {
-        ok = ! line().empty();                          /* still there?     */
+        ok = ! is_empty_string(line());                 /* not "" or empty? */
         if (ok)
         {
             rc_ref().midi_control_filename(line());     /* set base name    */
@@ -272,16 +272,17 @@ rcfile::parse ()
                 return make_error_message("midi-control-file", info);
             }
         }
+        else
+            rc_ref().midi_control_filename("");         /* not tricky :-)   */
+
         rc_ref().use_midi_control_file(ok);             /* did it work?     */
     }
     else
     {
         /*
-         * This call causes parsing to skip all of the header material.
-         * Please note that the line_after() function starts from the
-         * beginning of the file every time.  A lot a rescanning!  But it goes
-         * fast these days.  There is a new position argument, but it is not
-         * used here.
+         * This call causes parsing to skip all of the header material.  Note
+         * that line_after() starts from the beginning of the file every time,
+         * a lot a rescanning!  But it goes fast these days.
          */
 
         ok = parse_midi_control_section(name());
@@ -290,7 +291,7 @@ rcfile::parse ()
 
     if (line_after(file, "[mute-group-file]"))
     {
-        ok = ! line().empty();                          /* still there?     */
+        ok = ! is_empty_string(line());                 /* not "" or empty? */
         if (ok)
         {
             rc_ref().mute_group_filename(line());       /* base name        */
@@ -311,14 +312,15 @@ rcfile::parse ()
                 return make_error_message("mute-group-file", info);
             }
         }
+        else
+            rc_ref().mute_group_filename("");
+
         rc_ref().use_mute_group_file(ok);               /* did it work?     */
     }
     else
     {
         /*
-         * [mute-group]
-         *
-         * After we parse the mute group, we need to see if there is another
+         * After we parse the mute-groups, see if there is another
          * value for the mute_group_handling enumeration.  One little issue...
          * the parse_mute_group_section() function actually re-opens the file
          * itself, and once it exits, it's as if the section never existed.
@@ -514,8 +516,8 @@ rcfile::parse ()
     }
     if (line_after(file, "[last-used-dir]"))
     {
-        if (! line().empty())
-            rc_ref().last_used_dir(line()); // FIXME: check for valid path
+        if (! is_empty_string(line()))                 /* not "" or empty? */
+            rc_ref().last_used_dir(line());
     }
     else
     {
@@ -533,7 +535,7 @@ rcfile::parse ()
         {
             if (next_data_line(file))
             {
-                if (! line().empty())
+                if (! is_empty_string(line()))          /* not "" or empty? */
                 {
                     if (! rc_ref().append_recent_file(std::string(line())))
                         break;
@@ -553,11 +555,11 @@ rcfile::parse ()
     {
         bool exists = false;
         int flag = 0;
-        sscanf(scanline(), "%d", &flag);        /* playlist-active flag */
+        sscanf(scanline(), "%d", &flag);            /* playlist-active flag */
         if (next_data_line(file))
         {
             std::string fname = trimline();
-            exists = ! is_empty_string(fname);
+            exists = ! is_empty_string(fname);      /* not "" or empty      */
             if (exists)
             {
                 /*

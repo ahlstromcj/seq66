@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2020-11-04
+% \update      2020-11-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,7 +39,7 @@
 \fancyhead{}
 \fancyfoot{}
 \fancyheadoffset{0.005\textwidth}
-\lhead{Sequencer66 Live MIDI Sequencer}
+\lhead{Seq66 Live MIDI Sequencer}
 \chead{}
 \rhead{User Manual}
 \lfoot{}
@@ -60,10 +60,9 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.40]{Sequencer66-0_94.png}
-%  \includegraphics[scale=0.40]{Sequencer66-0_90.png}
-   \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
-   \caption*{"Qt 5 Button-Grid User Interface"}
+%  \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
+   \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
+   \caption*{Button-Grid User Interface, Qt 5}
 \end{figure}
 
 \clearpage                             % moves Contents to next page
@@ -82,7 +81,7 @@
 \section{Introduction}
 \label{sec:introduction}
 
-   This document describes \textsl{Sequencer66}, better known as
+   This document describes "Sequencer66", better known as
    \textsl{Seq66},
 %  \cite{sequencer66},
    through version 0.91.2.
@@ -95,9 +94,8 @@
 
    (We reference the old \textsl{Sequencer64} documentation project because
    the current manual is still very incomplete.  The \textsl{Sequencer64}
-   document is probably about 90 percent useful as a guide to \textsl{Seq66}.
+   document is probably about 80 percent useful as a guide to \textsl{Seq66}.
    Just be prepared to note some significant differences in look-and-feel.)
-
    We would like a more lean-and-mean manual for \textsl{Seq66}.
    For now, we are concentrating on the new features in this manual.
 
@@ -136,15 +134,17 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
+      \item Qt 5 as the standard user-interface.
       \item A mutes editor tab.
+      \item A playlist editor tab.
       \item A sets editor tab.
       \item A better live frame (main window and external windows).
       \item Non Session Manager support.
-      \item More to come!
+      \item Repartition of the configuration files.
    \end{itemize}
 
-   For developers, \textsl{Seq66} is customizable via C macros,
-   by enabling/disabling options at build-configuration time, and by many
+   For developers, a \textsl{Seq66} build is customizable via C macros,
+   by enabling/disabling options at 'configure' time, and by many
    command-line arguments.  We cannot show all permutations of settings in this
    document, so don't be surprised if some screenshots don't quite match
    one's setup.  Distro maintainers might create their own build
@@ -154,9 +154,8 @@
 \label{subsec:introduction_document_structure}
 
    The structure of this document follows the user-interface of
-   \textsl{Seq66}.  The sections are provided in the order
-   their contents appear in the user-interface of \textsl{Seq66}.  To
-   help the reader jump around this document, it provides
+   \textsl{Seq66}.
+   To help the reader jump around this document, it provides
    multiple links, references, and index entries.
 
 \subsection{Let's Go!}
@@ -167,43 +166,40 @@
    on \textsl{Windows}, just run it (\texttt{qseq66}, or \texttt{qpseq66.exe}
    on \textsl{Windows}).
    The port settings will depend on your system.  Provide a MIDI file.
-   On our system, the synthesizer
-   (\textsl{Yoshimi}) comes up on MIDI buss 5; an option remaps
-   all events to that buss:
+   On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5;
+   on \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
+   built-in wavetable synthesizer.
+   The \texttt{--buss} option remaps all events to the desired buss:
 
 \begin{verbatim}
-   $ qseq66 --jack-midi --buss 5 data/b4uacuse-seq24.midi
-   C:\> qpseq66 --buss 1  data/b4uacuse-seq24.midi
+   $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-seq24.midi
+   C:\> qpseq66 --buss 1  data/midi/b4uacuse-seq24.midi
 \end{verbatim}
+
+   The "data" directory is a installation directory,
+   \texttt{/usr/share/seq66-0.90/} on \textsl{Linux} and
+   \texttt{C:/Program Files (x86)/Seq66} on \textsl{Windows}.
+
+   Not shown are the configration directories,
+   \texttt{/home/user/.config/seq66} on \textsl{Linux} and
+   \texttt{C:/Users/user/AppData/Local/seq66} on \textsl{Windows}.
+   These are created after the first run of \textsl{Seq66}.
 
    If the \texttt{--alsa} option is used instead of
    \texttt{--jack-midi}, then the "JACK" button shows "ALSA" instead
-   (Linux only).  The following figure is for the Linux
-   version.
+   (Linux only).  The following figure is for the \textsl{Linux}
+   version using a dark desktop theme.
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{new/seq66-first-screen-0-94.png}
-   \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
+%  \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
+   \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
    \caption{Seq66 Main Screen}
    \label{fig:seq66_main_screen}
 \end{figure}
 
-%  The following figure shows the user-interface used for
-%  \textsl{Windows}.  It uses the Qt 5 framework.
-
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.65]{new/seq66-first-screen-0-96-qt.png}
-%  \includegraphics[scale=0.5]{roll.png}
-%  \caption{Seq66 Main Screen, Windows, With Colors}
-%  \label{fig:seq66_main_screen_qt}
-% \end{figure}
-
    The \textsl{Seq66} main window appears, as shown above.
-%  \figureref{fig:seq66_main_screen}, and
-%  \figureref{fig:seq66_main_screen_qt}.
-   This figures has some differences from the \textsl{Seq24} main window,
+   This figure has some differences from the \textsl{Seq24} main window,
    but the functionality is about the same.
    Most features, including the "look" of the application,
    can be configured via the "rc" and "user"
@@ -285,7 +281,7 @@
 
 % Playlists
 
-% \input{playlist}
+\input{playlist}
 
 % Qt / PortMidi / Windows version
 

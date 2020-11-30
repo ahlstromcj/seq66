@@ -19,14 +19,14 @@
 \label{sec:playlist}
 
    \textsl{Seq66} supports play-lists.
-   A play-list is a variation on the "rc" file, conventionally ending with the
+   A play-list is a variation on the 'rc' file, conventionally ending with the
    extension \texttt{.playlist}.  It contains a number of "playlist" sections,
    each with a human-readable title, selectable via a MIDI data number,
-   or by moving to the next or previous playlist in the list using the arrow
-   keys.
+   or by moving to the next or previous playlist in the list using the
+   \texttt{Up} and \texttt{Down} arrow keys.
    Each playlist section contains a list of songs, also selectable via a MIDI
    data number, or by moving to the next or previous song in the list using the
-   arrow keys.
+   \texttt{Left} and \texttt{Right} arrow keys.
 
    Movement between the playlists and the songs is accomplished via 
    MIDI control; see
@@ -38,15 +38,20 @@
    can also be done manually via the four arrow keys on the computer
    keyboard.
 
-   The playlist can be specified on the command-line, in
-   the "rc" file (see \sectionref{subsec:seq66_rc_file_playlist}), or be loaded
+   The playlist file can be specified on the command-line, in
+   the 'rc' file (see \sectionref{subsec:seq66_rc_file_playlist}), or be loaded
    from the \textbf{File / Open Playlist} menu.
    If it is specified on the command line, that playlist setup will
-   be written to the "rc" file.  It can be removed by specifying a blank (i.e.
+   be written to the 'rc' file.  It can be removed by specifying a blank (i.e.
    two double-quotes, "") play-list name.
+   The file extension is \texttt{.playlist}.
+
+   The Qt user-interface supports editing of the play-list, though not yet
+   perfected.
+   The user can use a text editor to edit the play-list file, if careful.
 
    The play-list format is defined in the following section.
-   Later sections describe the various user-interfaces.
+   Later sections describe the user-interface.
 
 \subsection{Seq66 Play-Lists / Format}
 \label{subsec:playlist_setup}
@@ -55,13 +60,12 @@
    \texttt{sample.playlist}.
    The play-list file starts with a hardwired top banner that the user can edit
    with a text editor.  It can also have an optional comments section, much
-   like the "rc" and "usr" files.  It is \textsl{not} overwritten
+   like the 'rc' and 'usr' files.  It is \textsl{not} overwritten
    when \textsl{Seq66} exits.
 
    \begin{verbatim}
    [comments]
    Comments added to this section are preserved....
-
    \end{verbatim}
 
    A blank line (without even a space) ends the comment section.
@@ -136,11 +140,11 @@
    127, for usage with MIDI control.  And the songs are ordered by this number,
    rather than by their position in the list.
 
-\subsection{Seq66 Play-Lists / "rc" File}
+\subsection{Seq66 Play-Lists / 'rc' File}
 \label{subsec:playlist_rc_file}
 
    The most consistent way to specify a play-list is to add an entry like the
-   following to the "rc" file:
+   following to the 'rc' file:
 
    \begin{verbatim}
    [playlist]
@@ -159,7 +163,7 @@
    If the play-list file-name is empty (i.e. set to \texttt{""}, then there is
    no play-list active.
 
-\subsection{Seq66 Play-Lists / "rc" File / [midi-control]}
+\subsection{Seq66 Play-Lists / 'rc' File / [midi-control]}
 \label{subsec:playlist_rc_file_midi_ctrl}
 
    The MIDI control stanzas for play-list and song-selection don't quite follow
@@ -210,7 +214,7 @@
    \textsl{Seq66} configuration-file directory.
 
    Please note that any play-list file specified on the command line
-   will be written into the "rc" file's \texttt{[playlist]} section when
+   will be written into the 'rc' file's \texttt{[playlist]} section when
    \textsl{Seq66} exits.
 
 \subsection{Seq66 Play-Lists / Verification}
@@ -228,15 +232,6 @@
 
    Playlists and songs can be selected or moved-to via keystrokes or
    user-interface actions, in addition to MIDI control
-
-\subsubsection{Seq66 Play-Lists / User Interfaces / Gtkmm-2.4}
-\label{subsubsec:playlist_ui_gtk}
-
-   The Gtkmm-2.4 user-interface is currently the normal user-interface.
-   However, it will ultimately be overtaken by the Qt 5 user-interface.
-   So, for Gtkmm-2.4, \textsl{Seq66} merely allows the selection of the
-   play-list and its songs via the four arrow keys, and it simply displays the
-   current play-list name and the current song in the main window.
 
    The \texttt{Up} and \texttt{Down} arrows move forward or backward through
    the list of play-lists, and the

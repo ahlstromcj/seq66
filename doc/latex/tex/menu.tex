@@ -32,7 +32,7 @@
    The \textsl{Seq66} menu entry contains the sub-items shown below.
 %  \figureref{fig:seq66_menu_file_items}.
    The next few sub-sections discuss
-   the sub-items in the \textbf{File} sub-menu.
+   the sub-items in the \textbf{File} menu.
 
 \begin{figure}[H]
    \centering 
@@ -54,42 +54,38 @@
       \item \textbf{Quit} (\textbf{Exit} in \textsl{Windows})
    \end{enumber}
 
-   For information on the file menu when \textsl{Seq66} is
+   For information on the \textbf{File} menu when \textsl{Seq66} is
    running under the \textsl{Non Session Manager}, see
-   the \sectionref{subsubsec:sessions_file_menu} discussion.
-
-%  The Qt version of this menu is similar, except that the
-%  \textbf{Options...} menu is placed in \textbf{Edit / Preferences}.
+   \sectionref{subsubsec:sessions_file_menu}.
 
 \subsection{Menu / File / New}
 \label{subsec:menu_file_new}
 
    The \textbf{New} menu entry clears out the current song.
-   (The playlist is not affected.)
+   (A play-list, if loaded, is not affected.)
    If unsaved changes are pending, the user is prompted to save the changes.
    Prompting for changes is more comprehensive than \textsl{Seq24}.
    However, when in doubt, save!  Keep backups of your tunes!
-
-   For running under the \textsl{Non Session Manager}, see
-   \sectionref{subsubsec:sessions_file_menu}.
 
 \subsubsection{Menu / File / Open}
 \label{subsubsec:seq66_menu_file_open}
 
    The \textbf{Open} menu entry opens a song (MIDI file or \textsl{Cakewalk}
-   WRK file), replacing the current song.
-   It opens up a standard Qt 5 file dialog:
+   WRK file), replacing the current song (after a prompt if the song was
+   modified).
+   It opens up a standard file dialog:
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open.png}
+%  \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open.png}
+   \includegraphics[scale=0.65]{main-menu/file/light-menu-file-open.png}
    \caption{File / Open}
    \label{fig:seq66_menu_file_open}
 \end{figure}
 
    This dialog lets one type a file-name, highlighting the first file
    that matches the characters typed so far.
-   \textsl{Seq66} can open regular MIDI files and
+   \textsl{Seq66} can open \textsl{Seq66} and regular MIDI files, and
    \textsl{Cakewalk} "WRK" files.
 
 \subsubsection{Menu / File / Open Playlist}
@@ -103,7 +99,7 @@
    \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open-playlist.png}
    \caption{File / Open}
    \label{fig:seq66_menu_file_open_playlist}
-\end{figure}is
+\end{figure}
 
    The playlist file contains a list of "playlist sections",
    each listing a number of MIDI songs.
@@ -112,19 +108,11 @@
    in the main window.
    See \sectionref{sec:playlist}.
 
-   Once activated, the current play-list file-name is saved in the
-   \texttt{[playlist]} section of the 'rc' configuration file when
-   \textsl{Seq66} exits.
-   The file extension is \texttt{.playlist}.
-   The Qt user-interface will eventually support editing of the play-list.
-   Currently, the user must understand the play-list format, and use a
-   text editor to edit the play-list file.
-
 \subsubsection{Menu / File / Recent MIDI files}
 \label{subsubsec:seq66_menu_file_recent}
 
    This menu entry provides a list of the last few MIDI files created or opened;
-   play-list selections are \textsl{not} included.
+   play-list selections are \textsl{not} included in this list.
 
 \begin{figure}[H]
    \centering 
@@ -144,12 +132,16 @@
    The limit is 10 recent-file entries.
    This is a feature from \textsl{Kepler34}.
 %  (\cite{kepler34}).
-   Here is an example from an 'rc' file:
+   Here is an example from an 'rc' file.  Note the option to load the
+   most-recent file at \textsl{Seq66} startup:
 
 \begin{verbatim}
    [recent-files]
    # Holds a list of the last few recently-loaded MIDI files.
-   3
+   # The first number is the number of items in the list.  The second value
+   # indicates if to load the most recent file (the top of the list)
+   # at startup (1 == load it).
+   3 0
    /home/chris/git/seq66/data/b4uacuse-gm-patchless.midi
    /home/chris/git/seq66/contrib/midi/colours.midi
    /home/chris/git/seq66/Julian-data/TestBeeps.midi
@@ -188,19 +180,13 @@
    This information is saved in a way that MIDI-compliant software
    should be able to use or ignore without failure.
 
-%  The output MIDI file after \textsl{Seq66} saves the original MIDI file
-%  is larger.
    After the last track in the file, a number of
    \index{SeqSpec}
    sequencer-specific (SeqSpec) items are saved, to preserve
    the extra information that \textsl{Seq66} adds to the song.
-%  Some of this extra information (mute-groups) will be stripped from the MIDI
-%  file.
-%  Normally, \textsl{Seq66} saves this information by marking
-%  each SeqSpec section as vendor-specific information, and marking this
-%  section as a regular MIDI track.
-%  The legacy and new formats of the final "track" are explained in
-%  \sectionref{subsec:legacy_midi_format}.
+
+   Note that there is no way to save as a \textsl{Cakewalk} "WRK" file.
+   We can only read them.
 
    \index{Meta events}
    Meta events are now partially handled by \textsl{Seq66}.
@@ -216,7 +202,7 @@
 %  (\texttt{FF 21 01 pp}),
    are now read as events, and are saved back when the file is saved.
    They cannot be edited in \textsl{Seq66}, but they are not lost.
-   Please note that the channel and port meta events are
+   Please note that channel and port meta events are
    considered \textsl{obsolete} in the MIDI standard.
 
 \subsubsection{Menu / File / Import MIDI}

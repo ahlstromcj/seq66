@@ -151,7 +151,7 @@ show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
     QString file = QFileDialog::getOpenFileName
     (
         parent, QObject::tr("Open play-list file"), directory,
-        "Playlist files (*.playlist);;All files (*)"
+        "Playlist (*.playlist);;All files (*)"
     );
     result = ! file.isEmpty();
     if (result)
