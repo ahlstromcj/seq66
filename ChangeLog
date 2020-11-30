@@ -1,5 +1,39 @@
+2020-11-30  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/readme.windows, doc/latex/tex/menu.tex,
+	doc/latex/tex/playlist.tex, doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/playlist.cpp, seq_qt5/src/qt5_helpers.cpp: Fixing
+	crash with blank ctrl/mute filenames.
+
+2020-11-29  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* NEWS, README, TODO, configure, data/license.txt,
+	desktop/metainfo/seq66.appdata.xml, doc/dox/doxy-common.cfg,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/cfg/configfile.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/configfile.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	man/seq66.1, man/seq66cli.1, nsis/Seq66Constants.nsh,
+	nsis/build_release_package.bat: Update version info for 0.91.2.
+	* INSTALL, README, VERSION, configure.ac, data/license.txt,
+	data/readme.txt, data/readme.windows, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/playlist.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/playlist.cpp,
+	seq_qt5/forms/qplaylistframe.ui, seq_qt5/src/qplaylistframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixing broken playlist functionality,
+	gosh darn it.
+
 2020-11-28  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* contrib/scripts/make-checkout: Updated make-checkout script to add
+	the doc/latex/tex/Makefile.in file.
+	* ChangeLog, README: Version 0.91.1 pending.
 	* README, resources/pixmaps/finger.xpm,
 	seq_qt5/forms/qperfeditframe64.ui,
 	seq_qt5/include/qperfeditframe64.hpp,
