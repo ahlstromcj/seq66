@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-30
+ * \updates       2020-12-03
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -139,6 +139,21 @@ playlist::set_error_message (const std::string & additional) const
         basesettings::set_error_message(msg);       /* add to error message */
     }
     return false;
+}
+
+/**
+ *  This function checks for no songs in a play-list structure.  This is a
+ *  workaround for an issue that occurs when a play-list file gets corrupted.
+ *  We don't want to exit just because there is no playlist loaded. And this
+ *  check does not work:
+ *
+ *      result = ! plist.ls_song_list.empty();
+ */
+
+bool
+playlist::check_song_list (const play_list_t & plist)
+{
+    return plist.ls_song_count > 0;
 }
 
 /**
@@ -288,6 +303,12 @@ bool
 playlist::verify (bool strong)
 {
     bool result = ! m_play_lists.empty();
+    if (result)
+    {
+        result = m_play_lists[0].ls_song_count > 0;
+        if (! result)
+            return true;                /* no songs to verify */
+    }
     if (result)
     {
         for (const auto & plpair : m_play_lists)
@@ -451,7 +472,14 @@ playlist::open_current_song ()
         if (result)
         {
             play_list_t & plist = m_current_list->second;
-            if (m_current_song != plist.ls_song_list.end())
+            result = check_song_list(plist);
+            if (! result)
+                return true;            /* no songs to open */
+
+            if (result)
+                result = m_current_song != plist.ls_song_list.end();
+
+            if (result)
             {
                 std::string fname = song_filepath(m_current_song->second);
                 if (! fname.empty())
@@ -512,10 +540,9 @@ playlist::open_previous_list (bool opensong)
 bool
 playlist::open_select_list (int index, bool opensong)
 {
-    bool result = true;
+    bool result = select_list(index, opensong);
     if (active())
     {
-        result = select_list(index, opensong);
         if (result && opensong)
             result = open_current_song();
     }
@@ -659,7 +686,7 @@ playlist::reset_list (bool clearit)
  */
 
 bool
-playlist::add_list (play_list_t & plist)
+playlist::add_list (const play_list_t & plist)
 {
     bool result = false;
     int count = int(m_play_lists.size());
@@ -1054,8 +1081,8 @@ playlist::song_midi_number () const
 
 /**
  *  Returns the name of the current song for display purposes.  This name may
- *  contain a hard-wired relative path, but always contains the base name of the
- *  song (*.midi).
+ *  contain a hard-wired relative path, but always contains the base name of
+ *  the song (*.midi).
  */
 
 std::string
@@ -1316,7 +1343,6 @@ playlist::add_song (song_spec_t & sspec)
     if (result)
     {
         play_list_t & plist = m_current_list->second;
-/////   result = add_song(plist.ls_song_list, sspec);
         result = add_song(plist, sspec);
     }
 
@@ -1324,7 +1350,7 @@ playlist::add_song (song_spec_t & sspec)
 }
 
 /**
- *      Adds the given song to the given song-list.
+ *  Adds the given song to the given song-list.
  *
  * \param slist
  *      Provides the song-list to hold the new song.
@@ -1406,28 +1432,22 @@ playlist::add_song
     {
         play_list_t & plist = m_current_list->second;
         song_list & slist = plist.ls_song_list;
+        song_spec_t sspec;                  /* copied upon insertion        */
         if (do_ctrl_lookup(midinumber))     /* handle -1 via lookup         */
         {
-            auto sci = slist.rbegin();
-            if (sci != slist.rend())
-            {
-                const song_spec_t & s = sci->second;
-                midinumber = s.ss_midi_number + 1;
-            }
-            else
-                midinumber = 0;
+            int indexmax;
+            last_song_indices(slist, indexmax, midinumber);
+            if (do_ctrl_lookup(index))     /* handle -1 via lookup         */
+                index = indexmax;
         }
-
-        song_spec_t sspec;                  /* copied upon insertion        */
         sspec.ss_index = index;
         sspec.ss_midi_number = midinumber;
         sspec.ss_song_directory = directory;
         sspec.ss_filename = name;
 
         /*
-         * Song list is empty at first, created by the playlist default
-         * constructor.  Here, we do want to be sure to increment the song
-         * count for the current playlist, by calling the playlist overload of
+         * Song list is empty at first.  We need to increment the song count
+         * for the current playlist, by calling the playlist overload of
          * add_song().
          */
 
@@ -1450,6 +1470,56 @@ playlist::add_song
         }
     }
     return result;
+}
+
+bool
+playlist::add_song (const std::string & fullpath)
+{
+    bool result = ! fullpath.empty();
+    if (result)
+    {
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
+        int index = (-1);                  // how to get next available index?
+        int midinumber = (-1);
+        std::string basename;
+        std::string directory;
+        (void) filename_split(fullpath, directory, basename);
+        last_song_indices(slist, index, midinumber);
+        if (directory == plist.ls_file_directory)
+        {
+            result = add_song(index, midinumber, basename, directory);
+        }
+        else
+        {
+            std::string dir;
+            result = add_song(index, midinumber, fullpath, dir);
+        }
+    }
+    return result;
+}
+
+/**
+ *  Looks up the largest index and MIDI control number, and returns one higher
+ *  for each.
+ */
+
+void
+playlist::last_song_indices (song_list & slist, int & index, int & midinumber)
+{
+    int indexmax = (-1);
+    int midimax = (-1);
+    for (auto sci = slist.begin(); sci != slist.end(); ++sci)
+    {
+        const song_spec_t & s = sci->second;
+        if (s.ss_midi_number > midimax)
+            midimax = s.ss_midi_number;
+
+        if (s.ss_index > indexmax)
+            indexmax = s.ss_index;
+    }
+    midinumber = midimax == (-1) ? 0 : midimax + 1 ;
+    index = indexmax == (-1) ? 0 : indexmax + 1 ;
 }
 
 /**

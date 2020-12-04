@@ -220,14 +220,15 @@ public:
     ~seq ();
 
     /**
-     *  The limiting sequence number, in macro form.  This value indicates that
-     *  no background sequence value has been assigned yet.  See the value
-     *  seqedit::m_initial_sequence, which was originally set to -1 directly.
-     *  However, we have issues saving a negative number in MIDI, so we will
-     *  use the "proprietary" track's bogus sequence number, which doubles the
-     *  1024 sequences we can support.  Values between 0 (inclusive) and 2048
-     *  (exclusive) are valid.  But 2048 is a <i> legal</i> value, used only
-     *  for disabling the selection of a background sequence.
+     *  The limiting sequence number, in macro form.  This value indicates
+     *  that no background sequence value has been assigned yet.  See the
+     *  value seqedit::m_initial_sequence, which was originally set to -1
+     *  directly.  However, we have issues saving a negative number in MIDI,
+     *  so we will use the "proprietary" track's bogus sequence number, which
+     *  doubles the 1024 sequences we can support.  Values between 0
+     *  (inclusive) and 2048 (exclusive) are valid.  But 2048 is a <i>
+     *  legal</i> value, used only for disabling the selection of a background
+     *  sequence.
      */
 
     static number limit ()
@@ -237,10 +238,10 @@ public:
 
     /**
      *  Defines the constant number of sequences/patterns.  This value has
-     *  historically been 1024, which is 32 patterns per set times 32 sets.  But
-     *  we don't want to support any more than this value, based on trials with
-     *  the b4uacuse-stress.midi file, which has only about 4 sets (128 patterns)
-     *  and pretty much loads up a CPU.
+     *  historically been 1024, which is 32 patterns per set times 32 sets.
+     *  But we don't want to support any more than this value, based on trials
+     *  with the b4uacuse-stress.midi file, which has only about 4 sets (128
+     *  patterns) and pretty much loads up a CPU.
      */
 
     static int maximum ()

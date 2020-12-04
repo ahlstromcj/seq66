@@ -393,6 +393,24 @@ setmapper::toggle_song_mute (seq::number seqno)
 }
 
 /**
+ *  This plays all sets at once.  Could be a useful feature, but the very
+ *  large b4uacuse-stress MIDI file reveals a lot of crackling in Yoshimi
+ *  playback.  Compare it to the plain play() function.
+ */
+
+void
+setmapper::play_all_sets
+(
+    midipulse tick,
+    sequence::playback mode,
+    bool resumenoteons
+)
+{
+    for (auto & sset : sets())
+        sset.second.play(tick, mode, resumenoteons);
+}
+
+/**
  *  Installs the sequence/track/loop.  The performer class does a lot of the
  *  work first, and also does the modification check, so it is not done here.
  *  However, if the sequence requires a new set to be created, we do it here.

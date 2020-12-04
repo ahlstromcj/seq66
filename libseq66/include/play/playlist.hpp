@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-11-29
+ * \updates       2020-12-03
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -58,6 +58,7 @@ class playlist final : public basesettings
 
     friend class performer;
     friend class playlistfile;
+    friend class qplaylistframe;
 
 private:
 
@@ -381,12 +382,6 @@ public:
     bool select_list_by_midi (int ctrl, bool selectsong = false);
     bool next_list (bool selectsong = false);
     bool previous_list (bool selectsong = false);
-    bool add_song
-    (
-        int index, int midinumber,
-        const std::string & name,
-        const std::string & directory
-    );
     bool remove_song (int index);
     bool select_song (int index);
     bool select_song_by_midi (int ctrl);
@@ -413,13 +408,22 @@ private:
      * performer and playlistfile.
      */
 
-    bool add_list (play_list_t & plist);
+    bool check_song_list (const play_list_t & plist);
+    bool add_list (const play_list_t & plist);
     void show_list (const play_list_t & pl) const;
 
     std::string song_filepath (const song_spec_t & s) const;
     bool add_song (song_spec_t & sspec);
     bool add_song (song_list & slist, song_spec_t & sspec);
     bool add_song (play_list_t & plist, song_spec_t & sspec);
+    bool add_song
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    );
+    bool add_song (const std::string & fullpath);
+    void last_song_indices (song_list & slist, int & index, int & midinumber);
     void show_song (const song_spec_t & pl) const;
     void reorder_play_list ();
     void reorder_song_list (song_list & sl);

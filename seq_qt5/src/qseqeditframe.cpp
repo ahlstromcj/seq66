@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-27
+ * \updates       2020-12-02
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -393,6 +393,10 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     qt_set_icon(finger_xpm, ui->m_button_note_entry);
     ui->m_button_note_entry->setCheckable(true);
     ui->m_button_note_entry->setAutoDefault(false);
+    ui->m_button_note_entry->setToolTip
+    (
+        "Toggle between selection and note-entry modes."
+    );
 
     connect(ui->btnZoomIn, SIGNAL(clicked(bool)), this, SLOT(slot_zoom_in()));
     qt_set_icon(zoom_in_xpm, ui->btnZoomIn);

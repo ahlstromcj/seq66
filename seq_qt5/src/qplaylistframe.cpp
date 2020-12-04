@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-29
+ * \updates       2020-12-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -84,7 +84,7 @@ qplaylistframe::qplaylistframe
     ui->setupUi(this);
 
     QStringList playcolumns;
-    playcolumns << "#" << "List Names";
+    playcolumns << "#" << "Playlist Names";
     ui->tablePlaylistSections->setHorizontalHeaderLabels(playcolumns);
     ui->tablePlaylistSections->setSelectionBehavior
     (
@@ -338,29 +338,33 @@ qplaylistframe::set_current_playlist ()
 void
 qplaylistframe::set_current_song ()
 {
-    std::string temp = std::to_string(perf().song_midi_number());
-    ui->editSongNumber->setText(QString::fromStdString(temp));
+    int rows = perf().song_count();
+    if (rows > 0)
+    {
+        std::string temp = std::to_string(perf().song_midi_number());
+        ui->editSongNumber->setText(QString::fromStdString(temp));
 
-    temp = perf().song_directory();
-    if (temp.empty())
-        temp = "None";
+        temp = perf().song_directory();
+        if (temp.empty())
+            temp = "None";
 
-    ui->editSongPath->setText(QString::fromStdString(temp));
+        ui->editSongPath->setText(QString::fromStdString(temp));
 
-    bool embedded = perf().is_own_song_directory();
-    temp = embedded ? "*" : " " ;
-    ui->labelDirEmbedded->setText(QString::fromStdString(temp));
+        bool embedded = perf().is_own_song_directory();
+        temp = embedded ? "*" : " " ;
+        ui->labelDirEmbedded->setText(QString::fromStdString(temp));
 
-    temp = perf().song_filename();
-    if (temp.empty())
-        temp = "None";
+        temp = perf().song_filename();
+        if (temp.empty())
+            temp = "None";
 
-    ui->editSongFilename->setText(QString::fromStdString(temp));
-    temp = perf().song_filepath();
-    if (temp.empty())
-        temp = "None";
+        ui->editSongFilename->setText(QString::fromStdString(temp));
+        temp = perf().song_filepath();
+        if (temp.empty())
+            temp = "None";
 
-    ui->currentSongPath->setText(QString::fromStdString(temp));
+        ui->currentSongPath->setText(QString::fromStdString(temp));
+    }
 }
 
 /**
@@ -486,6 +490,13 @@ qplaylistframe::fill_songs ()
                 break;
         }
     }
+    else
+    {
+        ui->tablePlaylistSongs->clearContents();
+        ui->editSongPath->setText("None");
+        ui->editSongNumber->setText("0");
+        ui->editSongFilename->setText("None");
+    }
 }
 
 /**
@@ -594,10 +605,10 @@ qplaylistframe::handle_list_add_click ()
         QString temp = ui->editPlaylistPath->text();
         std::string listpath = temp.toStdString();
         std::string listname;
-        int index = perf().playlist_count();        // useful???
+        int index = perf().playlist_count();            /* useful number?   */
         if (index < 127)
         {
-            int midinumber = index;                     // useful???
+            int midinumber = index;                     /* useful number?   */
             temp = ui->editPlaylistName->text();
             listname = temp.toStdString();
             temp = ui->editPlaylistNumber->text();
@@ -605,6 +616,7 @@ qplaylistframe::handle_list_add_click ()
             if (perf().add_list(index, midinumber, listname, listpath))
             {
                 reset_playlist();
+                fill_songs();                           /* just clears list */
             }
             else
             {
@@ -678,22 +690,7 @@ qplaylistframe::handle_song_load_click ()
         std::string selectedfile = ui->editSongPath->text().toStdString();
         if (show_open_midi_file_dialog(this, selectedfile))
         {
-            bool ok;
-            std::string name;
-            std::string directory = ui->editSongPath->text().toStdString();
-            std::string nstr;   // = ui->editSongNumber->text().toStdString();
-            int index = perf().song_count() + 1;
-            int midinumber = (-1);  // std::stoi(nstr);
-            (void) filename_split(selectedfile, nstr, name);
-            if (nstr == directory)              /* i.e. the same file path  */
-            {
-                ok = perf().add_song(index, midinumber, name, directory);
-            }
-            else
-            {
-                std::string dir;
-                ok = perf().add_song(index, midinumber, selectedfile, dir);
-            }
+            bool ok = perf().add_song(selectedfile);
             if (ok)
             {
                 fill_songs();               /* too much: reset_playlist();  */

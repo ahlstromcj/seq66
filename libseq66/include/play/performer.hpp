@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-11-29
+ * \updates       2020-12-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -1141,6 +1141,11 @@ public:
         return m_play_list->add_song(index, midinumber, name, directory);
     }
 
+    bool add_song (const std::string & fullpath)
+    {
+        return m_play_list->add_song(fullpath);
+    }
+
     bool remove_song_by_index (int index)
     {
         return m_play_list->remove_song(index);
@@ -1762,6 +1767,7 @@ public:
     void auto_stop ();
     void auto_pause ();
     void auto_play ();
+    void play_all_sets (midipulse tick);
     void play (midipulse tick);
     void all_notes_off ();
 

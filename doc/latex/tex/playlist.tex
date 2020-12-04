@@ -220,18 +220,16 @@
 \subsection{Seq66 Play-Lists / Verification}
 \label{subsec:playlist_verify}
 
-   Currently, when \textsl{Seq66} loads a play-list file, every
-   song in the file is verified by loading it.  If any load fails, then
-   the playlist will fail to load.
-
-   We may add an option to avoid that check, though it goes fast on
-   modern hardware.
+   When \textsl{Seq66} loads a play-list file, an option allows every
+   song in the play-list file to be verified by loading it.  If any load fails,
+   then the playlist will fail to load.  This check can be slow when there are
+   many large MIDI files specified in the play-list file.
 
 \subsection{Seq66 Play-Lists / User Interfaces}
 \label{subsec:playlist_uis}
 
    Playlists and songs can be selected or moved-to via keystrokes or
-   user-interface actions, in addition to MIDI control
+   user-interface actions, in addition to MIDI control.
 
    The \texttt{Up} and \texttt{Down} arrows move forward or backward through
    the list of play-lists, and the
@@ -241,21 +239,64 @@
 \subsubsection{Seq66 Play-Lists / User Interfaces / Qt 5}
 \label{subsubsec:playlist_ui_qt}
 
-   The Qt 5 user-interface will eventually become the standard.
-   And it will (soon) support the full display, selection, and editing of the
-   play-lists and the song-list for each play-list.
-   The current playlist tab supports viewing the play-lists and songs, but not
-   yet editing them.
+   The Qt 5 user-interface supports the full display, selection, and editing of
+   the play-lists and the song-list for each play-list.
+   There are still some minor issues to work out.  If encountered, close
+   \textsl{Seq66} and edit the \texttt{.playlist} file manually.
+   It is self-documenting.
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{qt/qt5_playlist_tab.png}
-   \includegraphics[scale=0.65]{roll.png}
+   \includegraphics[scale=0.65]{playlist/personal-playlist-light.png}
    \caption*{Qt 5 Playlist Tab}
 \end{figure}
 
-   Actually, the playlist currently has to be loaded from the command line or
-   from the \textbf{File} menu.
+   There is a lot to talk about in this tab.
+
+   \begin{enumber}
+      \item \textbf{Playlist File}.
+         This field displays the path to the loaded
+         play-list file.  It is not editable.  Remember that
+         a play-list file can contain multiple play-lists.
+      \item \textbf{Playlist Selection}.
+         These fields display the main MIDI-file directory,
+         the MIDI control number, and the name of the selected play-list.
+         The \textbf{Directory} is where the MIDI files reside by default.
+         A file-name can include a different path, however.
+         These fields are editable, with the intent to use them to add a new
+         play-list or modify the current one.
+      \item \textbf{Song Selection}.
+         These fields display the MIDI-file directory,
+         the MIDI control number, and the file-name of the selected play-list.
+         Note that the directory is normally the play-list directory, but a
+         path present in the MIDI file-name overrides that directory.
+         These fields are editable, with the intent to use them to add a new
+         song or modify the "meta information" of the current one.
+      \item \textbf{List Names}.
+         This table shows the MIDI-control number and
+         the name of each play-list.
+      \item \textbf{List Buttons}.
+         These buttons are described below.
+         Please note that, in some cases, the exact functionality is still
+         being worked out or perfected.
+      \item \textbf{Song Files in List}.
+         This table shows the MIDI-control number and
+         the name of each song.
+      \item \textbf{Song Files in List Buttons}.
+         These buttons are described below.
+         Please note that, in some cases, the exact functionality is still
+         being worked out or perfected.
+   \end{enumber}
+
+\paragraph{Seq66 Play-Lists / User Interfaces / Playlist Buttons}
+\label{paragraph:playlist_ui_qt_playlist_buttons}
+
+   This section briefly describes the "List" buttons to the right of the
+   play-list table.
+
+   \begin{enumber}
+      \item \textbf{Load List}.
+   \end{enumber}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

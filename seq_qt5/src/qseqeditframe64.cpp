@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-11-27
+ * \updates       2020-12-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -901,6 +901,10 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     ui->m_button_note_entry->setCheckable(true);
     ui->m_button_note_entry->setAutoDefault(false);
     ui->m_button_note_entry->setChecked(false);
+    ui->m_button_note_entry->setToolTip
+    (
+        "Toggle between selection and note-entry modes."
+    );
     connect
     (
         ui->m_button_note_entry, SIGNAL(toggled(bool)),

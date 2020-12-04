@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-11-29
+ * \updates       2020-12-02
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -326,22 +326,15 @@ playlistfile::parse ()
                     }
 
                     /*
-                     * Need to deal with a false result still....
+                     * Need to deal with a false result?  It's not really a
+                     * fatal error to have an empty song list.
                      */
 
-                    if (songcount > 0)
-                    {
-                        plist.ls_index = listcount;         /* ordinal      */
-                        plist.ls_midi_number = listnumber;  /* MIDI mapping */
-                        plist.ls_song_count = songcount;
-                        plist.ls_song_list = slist;         /* copy temp    */
-                        result = play_list().add_list(plist);
-                    }
-                    else
-                    {
-                        result = set_error_message("no songs");
-                        break;
-                    }
+                    plist.ls_index = listcount;         /* ordinal      */
+                    plist.ls_midi_number = listnumber;  /* MIDI mapping */
+                    plist.ls_song_count = songcount;
+                    plist.ls_song_list = slist;         /* copy temp    */
+                    result = play_list().add_list(plist);
                 }
                 else
                 {
@@ -484,9 +477,9 @@ playlistfile::write ()
            "#\n"
            "# This file holds multiple playlists for Seq66. It consists of one\n"
            "# or more '[playlist]' sections.  Each section has a user-specified\n"
-           "# number, which serves for sorting and for control numbers ranging\n"
+           "# number, which serves for sorting and for MIDI control, ranging\n"
            "# from 0 to 127, or higher if the user doesn't use MIDI control on\n"
-           "# playlistfiles.\n"
+           "# playlist files.\n"
            "#\n"
            "# Next comes a display name for this list, with or without quotes.\n"
            "#\n"
@@ -495,8 +488,8 @@ playlistfile::write ()
            "# terminated with a slash.  It should be accessible from wherever\n"
            "# Seq66 was run.\n"
            "#\n"
-           "# The last item is a line containing the MIDI song-control number,\n"
-           "# followed by the name of the MIDI files.  They are sorted by the\n"
+           "# The last items are lines starting with a MIDI control number,\n"
+           "# followed by the name of the MIDI file.  They are sorted by the\n"
            "# control number, starting from 0.  They can be simple 'base.ext'\n"
            "# file-names; the playlist directory will be prepended before the\n"
            "# song is accessed. If the MIDI file-name already has a path, that\n"
@@ -574,19 +567,8 @@ playlistfile::write ()
     {
         file
         << "\n[playlist]\n\n"
-           "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE.\n\n"
-           "# Playlist number, arbitrary but unique. 0 to 127 recommended\n"
-           "# for use with the MIDI playlist control.\n\n"
-           "0\n\n"
-           "# Display name of this play list.\n\n"
-           "\"Empty Sample\"\n\n"
-           "# Default storage directory for the song-files in this playlist.\n\n"
-           "\"\"\n\n"
-           "# Provides the MIDI song-control number (0 to 127), and also the\n"
-           "# base file-name (tune.midi) of each song in this playlist.\n"
-           "# The playlist directory is used, unless the file-name contains its\n"
-           "# own path.\n\n"
-           "0 \"\"\n\n"
+           "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE. See one of the\n"
+           "# sample playlist files shipping with Seq66.\n\n"
         ;
     }
 

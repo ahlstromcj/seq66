@@ -2968,7 +2968,7 @@ performer::output_func ()
                 }
                 else
                 {
-                    play (midipulse(pad.js_current_tick));
+                    play(midipulse(pad.js_current_tick));
                 }
 
                 /*
@@ -3551,6 +3551,16 @@ performer::play (midipulse tick)
     for (auto seqi : m_play_set)
         seqi->play_queue(tick, songmode, resume_note_ons());
 
+    if (not_nullptr(m_master_bus))
+        m_master_bus->flush();                      /* flush MIDI buss  */
+}
+
+void
+performer::play_all_sets (midipulse tick)
+{
+    set_tick(tick);
+    sequence::playback songmode = song_start_mode();
+    mapper().play_all_sets(tick, songmode, resume_note_ons());
     if (not_nullptr(m_master_bus))
         m_master_bus->flush();                      /* flush MIDI buss  */
 }

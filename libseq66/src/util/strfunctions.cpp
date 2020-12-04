@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-11-05
+ * \updates       2020-12-05
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -474,8 +474,8 @@ string_to_double (const std::string & s, double defalt)
  *      Provides the string to convert to a signed long integer.
  *
  * \param defalt
- *      The desired default for an empty string. The default \a defalt value is
- *      0.
+ *      The desired default for an empty string. The default \a defalt value
+ *      is 0.
  *
  * \return
  *      Returns the signed long integer value represented by the string.
@@ -494,6 +494,7 @@ string_to_long (const std::string & s, long defalt)
     else
     {
         bool no_data = false;
+        long multiplier = 0;
         const char * numptr = s.c_str();
         while (! std::isdigit(*numptr))
         {
@@ -502,11 +503,17 @@ string_to_long (const std::string & s, long defalt)
                 no_data = true;
                 break;
             }
-            else
-                ++numptr;
+            else if (*numptr == '-')
+                multiplier = -1;
+
+            ++numptr;
         }
         if (! no_data)
+        {
             result = std::strtol(numptr, nullptr, 0);   /* dec/hex/octal    */
+            if (multiplier != 0)
+                result *= multiplier;
+        }
     }
     return result;
 }

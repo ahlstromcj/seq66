@@ -385,23 +385,10 @@ private:
             sset.second.reset_sequences(pause, mode);
     }
 
-    /**
-     *  Plays only the play-screen screenset.
-     */
-
-    void play (midipulse tick, sequence::playback mode, bool resumenoteons)
-    {
-        /*
-         * This plays all sets at once.  Could be a useful feature, but
-         * the b4uacuse-stress MIDI file reveals a lot of crackling in Yoshimi
-         * playback.
-         *
-         * for (auto & sset : sets())
-         *     sset.second.play(tick, mode, resumenoteons);
-         */
-
-        play_screen()->play(tick, mode, resumenoteons);
-    }
+    void play_all_sets
+    (
+        midipulse tick, sequence::playback mode, bool resumenoteons
+    );
 
     seq::number sequence_high () const
     {
