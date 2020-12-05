@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-23
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -122,9 +122,23 @@ public:
 
     enum class interaction
     {
-        seq24,            /**< Use the normal mouse interactions. */
-        fruity,           /**< The "fruity" mouse interactions.   */
-        maximum           /**< Keep this last... a size value.    */
+        seq24,          /**< Use the normal mouse interactions.         */
+        fruity,         /**< The "fruity" mouse interactions. To do.    */
+        maximum         /**< Keep this last... a size value.            */
+    };
+
+    /**
+     *  Experimental to change how set changes work in regard to muting/arming
+     *  of sequences in a set.
+     */
+
+    enum class sets
+    {
+        normal,         /**< Set change mutes current, loads new set.   */
+        autoarm,        /**< Mute current set, load and unmute new set. */
+        additive,       /**< Keep current set, load and unmute new set. */
+        allsets,        /**< All sets play at once.                     */
+        maximum         /**< Keep this last... a size value.            */
     };
 
 private:
@@ -229,6 +243,7 @@ private:
     bool m_device_ignore;           /**< From seq66 module, unused!         */
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
     interaction m_interaction_method; /**< Interaction method: no support.  */
+    sets m_set_handling;            /**< How to handle set changes          */
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -677,6 +692,11 @@ public:
         return m_interaction_method;
     }
 
+    sets set_handling () const
+    {
+        return m_set_handling;
+    }
+
     const std::string & midi_filename () const
     {
         return m_midi_filename;
@@ -999,6 +1019,11 @@ protected:
     bool interaction_method (int v)
     {
         return interaction_method(static_cast<interaction>(v));
+    }
+
+    void sets_handling (int v)
+    {
+        m_set_handling = static_cast<sets>(v);
     }
 
     /*

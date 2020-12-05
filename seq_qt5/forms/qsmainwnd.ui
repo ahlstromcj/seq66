@@ -148,7 +148,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Allows setting the output bus for all patterns at once in the current set.</string>
+       <string>Sets the output bus for all patterns at once in the current set only.  It modifies the song.</string>
       </property>
      </widget>
     </item>

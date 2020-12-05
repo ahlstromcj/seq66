@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-11-24
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -194,13 +194,6 @@
 
 #define SEQ66_NO_QUEUE                  (-1)
 #define SEQ66_BAD_QUEUE_ID              (unsigned(-1))
-
-/**
- *  This value is used to indicated that the queued-replace (queued-solo)
- *  feature is reset and not in force.
- */
-
-#define SEQ66_NO_QUEUED_SOLO            (-1)
 
 /**
  *  Guessing that this has to do with the width of the performerance piano roll.

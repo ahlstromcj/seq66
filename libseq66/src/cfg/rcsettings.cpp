@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-11-23
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -102,6 +102,7 @@ rcsettings::rcsettings () :
     m_device_ignore             (false),
     m_device_ignore_num         (0),
     m_interaction_method        (interaction::seq24),
+    m_set_handling              (sets::normal),
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
@@ -193,6 +194,7 @@ rcsettings::set_defaults ()
     m_device_ignore             = false;
     m_device_ignore_num         = 0;
     m_interaction_method        = interaction::seq24;
+    m_set_handling              = sets::normal;
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();

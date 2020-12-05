@@ -488,10 +488,6 @@ qslivegrid::setup_button (qslotbutton * pb)
     }
 }
 
-/**
- *
- */
-
 void
 qslivegrid::color_by_number (int i)
 {
@@ -616,10 +612,6 @@ qslivegrid::recreate_all_slots ()
     return result;
 }
 
-/**
- *
- */
-
 void
 qslivegrid::refresh (seq::number seqno)
 {
@@ -689,10 +681,6 @@ qslivegrid::refresh_all_slots ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
 {
@@ -705,14 +693,16 @@ qslivegrid::modify_slot (qslotbutton * newslot, int row, int column)
     return result;
 }
 
-/**
- *
- */
-
 void
 qslivegrid::update_bank (int bankid)
 {
     qslivebase::update_bank(bankid);
+    (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
+}
+
+void
+qslivegrid::update_bank ()
+{
     (void) recreate_all_slots();        /* sets m_redraw_buttons to true    */
 }
 
@@ -858,10 +848,6 @@ qslivegrid::mousePressEvent (QMouseEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qslivegrid::slot_press (int seqno)
 {
@@ -876,7 +862,6 @@ qslivegrid::slot_press (int seqno)
  *  Get the sequence number we clicked on.  If we're on a valid sequence, hit
  *  the left mouse button, and are not dragging a sequence, then toggle
  *  playing.
- *
  */
 
 void
@@ -971,10 +956,6 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 {
@@ -993,10 +974,6 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
         signal_call_editor_ex(m_current_seq);
     }
 }
-
-/**
- *
- */
 
 void
 qslivegrid::new_sequence ()
@@ -1054,10 +1031,6 @@ qslivegrid::edit_sequence_ex ()
     signal_call_editor_ex(m_current_seq);
 }
 
-/**
- *
- */
-
 void
 qslivegrid::edit_events ()
 {
@@ -1103,9 +1076,7 @@ qslivegrid::sequence_key_check ()
 }
 
 /**
- *  FUNCTIONALITY moved to qsmainwnd::handle_key_press()
- *  This function needs some fixing.
- *
+ *  Functionality moved to qsmainwnd::handle_key_press().
  *  The handling of seq-edit and event-edit is done via setting flags in
  *  performer and responding to them in the timer function.
  */
@@ -1113,22 +1084,6 @@ qslivegrid::sequence_key_check ()
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
-#if 0
-    bool done = perf().midi_control_keystroke(k);
-    if (perf().seq_edit_pending())
-    {
-        done = true;
-    }
-    else if (perf().event_edit_pending())
-    {
-        done = true;
-    }
-
-    if (done)
-        (void) m_parent->handle_key_press(k);
-    else
-        done = m_parent->handle_key_press(k);
-#endif
     return m_parent->handle_key_press(k);
 }
 
@@ -1139,37 +1094,28 @@ qslivegrid::handle_key_press (const keystroke & k)
 bool
 qslivegrid::handle_key_release (const keystroke & k)
 {
-#if 0
-    bool done = perf().midi_control_keystroke(k);
-    if (! done)
-    {
-        // so far, nothing extra needed upon key release, but...
-    }
-    return done;
-#endif
     return m_parent->handle_key_press(k);
 }
 
 /**
- *  The Gtkmm 2.4 version calls performer::mainwnd_key_event().  We have broken
- *  that function into pieces (smaller functions) that we can use here.  An
- *  important point is that keys that affect the GUI directly need to be
+ *  The Gtkmm 2.4 version calls performer::mainwnd_key_event().  We have
+ *  broken that function into pieces (smaller functions) that we can use here.
+ *  An important point is that keys that affect the GUI directly need to be
  *  handled here in the GUI.  Another important point is that other events are
- *  offloaded to the performer object, and we need to let that object handle as
- *  much as possible.  The logic here is an admixture of events that we will
- *  have to sort out.
+ *  offloaded to the performer object, and we need to let that object handle
+ *  as much as possible.  The logic here is an admixture of events that we
+ *  will have to sort out.
  *
  *  Note that the QKeyEvent::key() function does not distinguish between
  *  capital and non-capital letters, so we use the text() function (returning
  *  the Unicode text the key generated) for this purpose and provide a the
  *  QS_TEXT_CHAR() macro to make it obvious.
  *
- *  Weird.  After the first keystroke, for, say 'o' (ascii 111) == k, we
- *  get k == 0, presumably a terminator character that we have to ignore.
- *  Also, we can't intercept the Esc key.  Qt grabbing it?
+ *  Weird.  After the first keystroke, for, say 'o' (ascii 111) == k, we get k
+ *  == 0, presumably a terminator character that we have to ignore.  Also, we
+ *  can't intercept the Esc key.  Qt grabbing it?
  *
- * \param event
- *      Provides a pointer to the key event.
+ * \param event Provides a pointer to the key event.
  */
 
 void
@@ -1183,10 +1129,6 @@ qslivegrid::keyPressEvent (QKeyEvent * event)
         QWidget::keyPressEvent(event);              /* event->ignore()?     */
 }
 
-/**
- *
- */
-
 void
 qslivegrid::keyReleaseEvent (QKeyEvent * event)
 {
@@ -1197,10 +1139,6 @@ qslivegrid::keyReleaseEvent (QKeyEvent * event)
     else
         QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
 }
-
-/**
- *
- */
 
 void
 qslivegrid::reupdate ()
@@ -1260,10 +1198,6 @@ qslivegrid::alter_sequence (seq::number seqno)
     }
 }
 
-/**
- *
- */
-
 void
 qslivegrid::copy_sequence ()
 {
@@ -1297,10 +1231,6 @@ qslivegrid::delete_sequence ()
         alter_sequence(m_current_seq);
 }
 
-/**
- *
- */
-
 void
 qslivegrid::paste_sequence ()
 {
@@ -1328,10 +1258,6 @@ qslivegrid::changeEvent (QEvent * event)
             m_has_focus = false;                /* widget is now inactive   */
     }
 }
-
-/**
- *
- */
 
 void
 qslivegrid::popup_menu ()
@@ -1373,7 +1299,11 @@ qslivegrid::popup_menu ()
                 tr("Edit pattern in &tab"), m_popup
             );
             m_popup->addAction(editseq);
-            connect(editseq, SIGNAL(triggered(bool)), this, SLOT(edit_sequence()));
+            connect
+            (
+                editseq, SIGNAL(triggered(bool)),
+                this, SLOT(edit_sequence())
+            );
         }
     }
     if (perf().is_seq_active(m_current_seq))

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-29
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -727,7 +727,6 @@ qsmainwnd::qsmainwnd
      * Set Number.
      */
 
-    // update_bank(0);             // EXPERIMENTAL ca 2020-08-11
     connect
     (
         ui->spinBank, SIGNAL(valueChanged(int)),
@@ -966,19 +965,11 @@ qsmainwnd::start_playing ()
     ui->btnPlay->setChecked(true);
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::song_recording (bool record)
 {
     perf().song_recording(record);
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::show_song_mode (bool songmode)
@@ -1009,43 +1000,17 @@ qsmainwnd::show_song_mode (bool songmode)
 void
 qsmainwnd::set_song_mode (bool songmode)
 {
-#ifdef USE_OLD_WAY
-    if (songmode)
-    {
-        ui->btnRecord->setEnabled(true);
-        if (! usr().use_more_icons())
-            ui->btnSongPlay->setText("Song");
-    }
-    else
-    {
-        song_recording(false);
-        ui->btnRecord->setChecked(false);
-        ui->btnRecord->setEnabled(false);
-        if (! usr().use_more_icons())
-            ui->btnSongPlay->setText("Live");
-    }
-    perf().song_mode(songmode);         /* playback & song_start */
-#else
     songmode = perf().toggle_song_mode();
     show_song_mode(songmode);
     if (! songmode)
         song_recording(false);
-#endif
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::update_bpm (double bpm)
 {
     perf().set_beats_per_minute(midibpm(bpm));
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::edit_bpm ()
@@ -1332,10 +1297,6 @@ qsmainwnd::toggle_time_format (bool /*on*/)
     ui->btn_set_HMS->setText(label);
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::load_session_frame ()
 {
@@ -1373,10 +1334,6 @@ qsmainwnd::show_set_master ()
     else
         remove_set_master();
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::remove_set_master ()
@@ -1653,7 +1610,7 @@ qsmainwnd::save_session ()
 }
 
 /**
- *
+ *  Not yet ready for prime time.
  */
 
 bool
@@ -1678,10 +1635,6 @@ qsmainwnd::detach_session ()
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 qsmainwnd::save_file (const std::string & fname, bool updatemenu)
@@ -1719,10 +1672,6 @@ qsmainwnd::save_file (const std::string & fname, bool updatemenu)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 qsmainwnd::save_file_as ()
@@ -1849,10 +1798,6 @@ qsmainwnd::export_song (const std::string & fname)
     return result;
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::import_into_set ()
 {
@@ -1893,20 +1838,12 @@ qsmainwnd::import_into_set ()
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::showqsabout ()
 {
     if (not_nullptr(m_dialog_about))
         m_dialog_about->show();
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::showqsbuildinfo ()
@@ -1978,10 +1915,6 @@ qsmainwnd::load_event_editor (int seqid)
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::load_set_master ()
 {
@@ -1989,10 +1922,6 @@ qsmainwnd::load_set_master ()
     if (not_nullptr(qsm))
         ui->SetsTabLayout->addWidget(qsm);
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::load_mute_master ()
@@ -2262,8 +2191,9 @@ qsmainwnd::update_ppqn (int pindex)
 }
 
 /**
- *  Sets the MIDI bus to use for output for all sets and sequences. A convenience
- *  when dealing with one MIDI output device.
+ *  Sets the MIDI bus to use for output for the current set and its sequences.
+ *  A convenience when dealing with one MIDI output device.  Must be applied
+ *  individually to each set; this allows each set to drive a different buss.
  *
  * \param index
  *      The index into the list of available MIDI buses.
@@ -2283,7 +2213,7 @@ qsmainwnd::update_midi_bus (int index)
         {
             --index;
             if (index >= 0 && index < mmb->get_num_out_buses())
-                (void) perf().change_all_busses(index);
+                (void) perf().change_set_busses(index);
         }
     }
 }
@@ -2473,10 +2403,6 @@ qsmainwnd::make_event_frame (int seqid)
     return result;
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::update_recent_files_menu ()
 {
@@ -2512,10 +2438,6 @@ qsmainwnd::update_recent_files_menu ()
         }
     }
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::create_action_connections ()
@@ -2776,10 +2698,6 @@ qsmainwnd::update_bank_text (const QString & newname)
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::show_message_box (const std::string & msg_text)
 {
@@ -2803,10 +2721,6 @@ qsmainwnd::show_message_box (const std::string & msg_text)
         }
     }
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::connect_editor_slots ()
@@ -3220,10 +3134,6 @@ qsmainwnd::queue_it ()
     perf().set_keep_queue(is_active);
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::report_message (const std::string & msg, bool good)
 {
@@ -3246,20 +3156,12 @@ qsmainwnd::report_message (const std::string & msg, bool good)
     }
 }
 
-/**
- *
- */
-
 bool
 qsmainwnd::on_group_learn (bool learning)
 {
     qt_set_icon(learning ? learn2_xpm : learn_xpm, ui->button_learn);
     return true;
 }
-
-/**
- *
- */
 
 bool
 qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
@@ -3285,10 +3187,6 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
     return good;
 }
 
-/**
- *
- */
-
 bool
 qsmainwnd:: on_sequence_change (seq::number seqno, bool redo)
 {
@@ -3299,16 +3197,22 @@ qsmainwnd:: on_sequence_change (seq::number seqno, bool redo)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qsmainwnd:: on_trigger_change (seq::number seqno)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
         m_live_frame->refresh(seqno);
+
+    return result;
+}
+
+bool
+qsmainwnd:: on_set_change (screenset::number /*setno*/)
+{
+    bool result = not_nullptr(m_live_frame);
+    if (result)
+        m_live_frame->update_bank();                /* updates current bank */
 
     return result;
 }
@@ -3336,10 +3240,6 @@ qsmainwnd::changeEvent (QEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
@@ -3347,10 +3247,6 @@ qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
     printf("qsmainwnd::resizeEvent()\n");
 #endif
 }
-
-/**
- *
- */
 
 bool
 qsmainwnd::recreate_all_slots ()

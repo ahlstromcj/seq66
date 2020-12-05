@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-03
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -340,10 +340,10 @@ private:
     std::unique_ptr<notemapper> m_note_mapper;
 
     /**
-     *  If true, playback is done in Song mode, not Live mode.
-     *  This option is saved to and restored from the "rc"
-     *  configuration file.  Sometimes called "JACK start mode", it used
-     *  to be a JACK setting, but now applies to any playback.
+     *  If true, playback is done in Song mode, not Live mode.  This option is
+     *  saved to and restored from the "rc" configuration file.  Sometimes
+     *  called "JACK start mode", it used to be a JACK setting, but now
+     *  applies to any playback.
      */
 
     sequence::playback m_song_start_mode;
@@ -464,7 +464,7 @@ private:                            /* key, midi, and op container section  */
      *  A value not equal to -1 (it ranges from 0 to 31) indicates we're now
      *  using the saved screen-set state to control the queue-replace
      *  (queue-solo) status of sequence toggling.  This value is set to -1
-     *  when queue mode is exited.  See the SEQ66_NO_QUEUED_SOLO value.
+     *  when queue mode is exited.  See the sm_no_queued_solo value.
      */
 
     int m_queued_replace_slot;
@@ -912,9 +912,12 @@ private:
 
     static automation_pair sm_auto_func_list [];
 
-    /*
-     *  Potential automation-related variables.
+    /**
+     *  This value is used to indicated that the queued-replace (queued-solo)
+     *  feature is reset and not in force.
      */
+
+    static const int sm_no_queued_solo = (-1);
 
 public:
 
@@ -2130,6 +2133,11 @@ public:
         return mapper().apply_mutes(group);
     }
 
+    bool unapply_mutes (mutegroup::number group)
+    {
+        return mapper().unapply_mutes(group);
+    }
+
     bool toggle_mutes (mutegroup::number group)
     {
         return mapper().toggle_mutes(group);
@@ -2784,7 +2792,7 @@ public:         /* GUI-support functions */
     void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
     bool set_ppqn (int p);
     bool change_ppqn (int p);
-    bool change_all_busses (int b);
+    bool change_set_busses (int b);
 
 private:
 

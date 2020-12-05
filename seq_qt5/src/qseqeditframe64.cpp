@@ -2064,7 +2064,7 @@ qseqeditframe64::sequences ()
 bool
 qseqeditframe64::add_back_set (QMenu ** menusset, screenset & sset, int)
 {
-    bool result = sset.active() && not_nullptr(menusset);;
+    bool result = sset.active() && not_nullptr(menusset);
     if (result)
     {
         seq::number seqno = sset.key(); /* screenset uses "number" as type  */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-26
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -39,12 +39,6 @@
 #include <iostream>                     /* std::cerr to note errors         */
 
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
-
-/**
- *  This value indicates that there is no mute-group selected.
- */
-
-#define SEQ66_NO_MUTE_GROUP_SELECTED    (-1)
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -77,7 +71,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_error               (false),
     m_group_mode                (true),         /* see its description  */
     m_group_learn               (false),
-    m_group_selected            (SEQ66_NO_MUTE_GROUP_SELECTED),
+    m_group_selected            (sm_null_mute_group),
     m_group_present             (false),
     m_group_save                (handling::midi)
 {
@@ -247,15 +241,14 @@ mutegroups::apply (mutegroup::number group, midibooleans & bits)
     {
         /*
          * The caller, who knows the screenset, must do the unapply operation.
+         *
+         *  mutegroup::number oldgroup = m_group_selected;
+         *  if (oldgroup != group)
+         *  {
+         *      result = unapply(group, bits);
+         *  }
          */
 
-#if 0
-        mutegroup::number oldgroup = m_group_selected;
-        if (oldgroup != group)
-        {
-            result = unapply(group, bits);
-        }
-#endif
         mutegroup & mg = mgiterator->second;
         bits = mg.get();
         mg.group_state(true);
@@ -265,20 +258,29 @@ mutegroups::apply (mutegroup::number group, midibooleans & bits)
 }
 
 /**
- *  Unapplies a mute group.
+ *  Unapplies a mute group. If less than zero (see sm_null_mute_group), then
+ *  the unapply is applied (heh heh) to the current group.
  */
 
 bool
 mutegroups::unapply (mutegroup::number group, midibooleans & bits)
 {
-    auto mgiterator = list().find(clamp_group(group));
-    bool result = mgiterator != list().end();
-    if (result)
+    bool result = false;
+    if (group >= 0)
     {
-        mutegroup & mg = mgiterator->second;
-        bits = mg.zeroes();
-        mg.group_state(false);
-        m_group_selected = SEQ66_NO_MUTE_GROUP_SELECTED;
+        auto mgiterator = list().find(clamp_group(group));
+        result = mgiterator != list().end();
+        if (result)
+        {
+            mutegroup & mg = mgiterator->second;
+            bits = mg.zeroes();
+            mg.group_state(false);
+            m_group_selected = sm_null_mute_group;
+        }
+    }
+    else if (m_group_selected >= 0)
+    {
+        result = unapply(m_group_selected, bits);
     }
     return result;
 }
@@ -291,7 +293,7 @@ mutegroups::unapply (mutegroup::number group, midibooleans & bits)
  *
  *      Let's say we start up with group 1 active (a new feature for issue
  *      #27).  The MIDI file is loaded and group 1 is applied.  Now we select
- *      group 0.  At this point, we need to ???????????????????????????
+ *      group 0.  At this point, we need to do what?
  */
 
 bool
@@ -316,7 +318,7 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
         bool mgnewstate = ! mg.group_state();
         bits = mgnewstate ? mg.get() : mg.zeroes() ;
         mg.group_state(mgnewstate);
-        m_group_selected = mgnewstate ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
+        m_group_selected = mgnewstate ? group : sm_null_mute_group ;
     }
     return result;
 }
@@ -363,7 +365,7 @@ mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
             }
             active = ! active;
             mg.group_state(active);
-            m_group_selected = active ? group : SEQ66_NO_MUTE_GROUP_SELECTED ;
+            m_group_selected = active ? group : sm_null_mute_group ;
         }
     }
     return result;
@@ -385,7 +387,7 @@ mutegroups::group_learn (bool flag)
     else
     {
         m_group_learn = false;
-        m_group_selected = SEQ66_NO_MUTE_GROUP_SELECTED;
+        m_group_selected = sm_null_mute_group;
     }
 }
 
@@ -508,7 +510,7 @@ void
 mutegroups::show (mutegroup::number gmute) const
 {
     std::cout << "Mute-group size: " << count() << std::endl;
-    if (gmute == (-1))
+    if (gmute == sm_null_mute_group)
     {
         int index = 0;
         for (const auto & mgpair : m_container)

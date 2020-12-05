@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-22
- * \updates       2020-08-11
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  The qslivebase and its child classes, qsliveframe and qslivegride, are
@@ -139,6 +139,11 @@ protected:
     bool delete_seq ();
     bool paste_seq ();
     virtual void update_bank (int bank);
+
+    virtual void update_bank ()
+    {
+        // no code, override to recreate current bank
+    }
 
     virtual void update_bank_name (const std::string & /*name*/)
     {

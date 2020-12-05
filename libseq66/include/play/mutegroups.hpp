@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-26
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -128,6 +128,12 @@ public:
     using container = std::map<mutegroup::number, mutegroup>;
 
 private:
+
+    /**
+     *  This value indicates that there is no mute-group selected.
+     */
+
+    static const int sm_null_mute_group = (-1);
 
     /**
      *  Holds a set of mutegroup objects keyed by the configured set number.
@@ -259,6 +265,11 @@ public:
     mutegroups & operator = (mutegroups &&) = default;
     ~mutegroups () = default;
 
+    int null_mute_group ()
+    {
+        return sm_null_mute_group;
+    }
+
     const std::string & name () const
     {
         return m_container_name;
@@ -380,7 +391,7 @@ public:
     midibooleans get (mutegroup::number gmute);
     bool any () const;
     const mutegroup & mute_group (mutegroup::number gmute) const;
-    void show (mutegroup::number gmute = (-1)) const;
+    void show (mutegroup::number gmute = sm_null_mute_group) const;
 
     int armed_count (mutegroup::number gmute) const
     {
@@ -510,7 +521,7 @@ private:
 
     void group_selected (mutegroup::number mg)
     {
-        if (group_valid(mg) || mg == (-1))
+        if (group_valid(mg) || mg == sm_null_mute_group)
             m_group_selected = mg;
     }
 

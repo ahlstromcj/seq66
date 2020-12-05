@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-11-26
+ * \updates       2020-12-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1247,20 +1247,23 @@ performer::change_ppqn (int p)
 }
 
 /**
- *  Goes through all sets and sequences, updating the buss to the same
- *  (global) buss number.
+ *  Goes through all the sequences in the current set, updating the buss to
+ *  the same (global) buss number.
  *
  *  Currently operates only on the current screenset.
  */
 
 bool
-performer::change_all_busses (int b)
+performer::change_set_busses (int b)
 {
     bool result = b >= 0 && b <= SEQ66_OUTPUT_BUSS_MAX;
     if (result)
     {
         for (auto seqi : m_play_set)
             seqi->set_midi_bus(b, true);    /* calls notification funcion   */
+
+        screenset::number setno = mapper().playscreen_number();
+        notify_set_change(setno, change::yes);
     }
     return result;
 }
@@ -4312,9 +4315,9 @@ performer::send_play_states (midicontrolout::uiaction a)
 void
 performer::unset_queued_replace (bool clearbits)
 {
-    if (m_queued_replace_slot != SEQ66_NO_QUEUED_SOLO)
+    if (m_queued_replace_slot != sm_no_queued_solo)
     {
-        m_queued_replace_slot = SEQ66_NO_QUEUED_SOLO;
+        m_queued_replace_slot = sm_no_queued_solo;
         clear_snapshot();
         if (clearbits)
             midi_control_in().remove_queued_replace();
@@ -4408,7 +4411,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         }
         else if (is_queue && is_replace)
         {
-            if (m_queued_replace_slot != SEQ66_NO_QUEUED_SOLO)
+            if (m_queued_replace_slot != sm_no_queued_solo)
             {
                 if (seqno != m_queued_replace_slot)
                 {
@@ -4503,6 +4506,9 @@ performer::toggle_song_start_mode ()
     (
         live_mode() ? sequence::playback::song : sequence::playback::live
     );
+    if (song_mode())
+        (void) unapply_mutes(mutes().null_mute_group());
+
     infoprint(live_mode() ? "Live Mode" : "Song Mode");
     return m_song_start_mode;
 }
@@ -4935,6 +4941,9 @@ bool
 performer::apply_session_mutes ()
 {
     bool result = mutes().any() && mutes().group_valid();
+    if (result)
+        result = ! rc().song_start_mode();      /* don't apply in song mode */
+
     if (result)
         result = apply_mutes(mutes().group_selected());
 
