@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-05
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -323,7 +323,7 @@ private:
      *  armed.
      */
 
-    std::vector<seq::pointer> m_play_set;
+    playset m_play_set;
 
     /**
      *  Provides an optional play-list, loosely patterned after Stazed's Seq32

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-11-25
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -264,12 +264,12 @@ private:
 
     int max_slot_shift () const
     {
-        return m_set_size / SEQ66_BASE_SET_SIZE;
+        return m_set_size / setmaster::Size();
     }
 
     int slot_shift_delta () const
     {
-        return SEQ66_BASE_SET_ROWS;
+        return setmaster::Rows();
     }
 
     void clear ()
@@ -983,9 +983,9 @@ public:
 
 private:
 
-    void fill_play_set (screenset::playset & p)
+    void fill_play_set (playset & p, bool clearit = true)
     {
-        play_screen()->fill_play_set(p);
+        play_screen()->fill_play_set(p, clearit);
     }
 
     setmaster::container::iterator add_set (screenset::number setno)

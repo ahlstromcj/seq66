@@ -23,12 +23,13 @@
  * \file          screenset.hpp
  *
  *  This module declares a small manager for a set of sequences, to be used by
- *  the performer.
+ *  the performer; it also provides a collection for active sequences, called
+ *  playset.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-07-31
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -50,6 +51,8 @@
 namespace seq66
 {
 
+class playset;
+
 /**
  *  Holds the various statuses, including the pointer, for a single sequence
  *  (also known as a loop or pattern).  This small class consolidates data once
@@ -58,7 +61,8 @@ namespace seq66
 
 class screenset
 {
-    friend class performer;         /* provisional */
+    friend class performer;
+    friend class playset;
     friend class setmapper;
     friend class setmaster;
 
@@ -91,18 +95,11 @@ public:
 
     using sethandler = std::function<bool (screenset &, screenset::number)>;
 
-    /**
-     *  Provides a type to support condensing the screenset into a smaller array
-     *  for use by the performer, as a bit of optimization.
-     */
-
-    using playset = std::vector<seq::pointer>;
-
 private:
 
     /**
-     *  Provides an alias for a vector of seq objects.  The "key" is an integer
-     *  which is the sequence number, and is basically an array index.
+     *  Provides an alias for a vector of seq objects.  The "key" is an
+     *  integer which is the sequence number, and is basically an array index.
      *  The value is a seq object representing sequence.  This container holds
      *  both inactive and active slots/sequences.  It is a vector because it
      *  is cheaper to hold empty slots than it is in a map.
@@ -381,7 +378,7 @@ private:
 
     seq::number clamp (seq::number seqno) const;
     seq::pointer find_by_number (seq::number seqno);
-    void fill_play_set (playset & p);
+    bool fill_play_set (playset & p, bool clearit = true);
 
     seq::number play_seq (int delta)
     {
@@ -456,6 +453,11 @@ private:
     void set_seq_name (seq::number seqno, const std::string & name);
     bool name (const std::string & nm);
 
+    const container & seq_container () const
+    {
+        return m_container;
+    }
+
     container & seq_container ()
     {
         return m_container;
@@ -483,6 +485,91 @@ private:
     void all_notes_off ();
 
 };              // class screenset
+
+/**
+ *  Provides a class for managing screenset seqences.
+ */
+
+class playset
+{
+    /**
+     *  Encapsulates a raw pointer, not owned by the playset object.
+     */
+
+    using pointer = const screenset *;
+
+    /**
+     *  Holds a list of the sets included in the playset, so that they will be
+     *  included only once when filling the play list.  This object does not
+     *  own the pointers.
+     */
+
+    using sets = std::map<screenset::number, pointer>;
+
+    /**
+     *  Provides a type to support condensing the screenset into a smaller
+     *  array for use by the performer, as a bit of optimization.
+     */
+
+    using array = std::vector<seq::pointer>;
+
+    /**
+     *  Holds the list of screensets in the playset.
+     */
+
+    sets m_screen_sets;
+
+    /**
+     *  Holds the list of active sequences in the playset.
+     */
+
+    array m_sequence_array;
+
+public:
+
+    playset ();
+
+    /*
+     * The move and copy constructors, the move and copy assignment operators,
+     * and the destructors are all compiler generated.
+     */
+
+    playset (const playset &) = default;
+    playset & operator = (const playset &) = default;
+    playset (playset &&) = default;
+    playset & operator = (playset &&) = default;
+    ~playset () = default;
+
+    void clear ()
+    {
+        m_screen_sets.clear();
+        m_sequence_array.clear();
+    }
+
+    const sets & set_container () const
+    {
+        return m_screen_sets;
+    }
+
+    sets & set_container ()
+    {
+        return m_screen_sets;
+    }
+
+    const array & seq_container () const
+    {
+        return m_sequence_array;
+    }
+
+    array & seq_container ()
+    {
+        return m_sequence_array;
+    }
+
+    bool set_found (screenset::number setno) const;
+    bool fill (const screenset & sset, bool clearit = true);
+
+};              // class playset
 
 }               // namespace seq66
 

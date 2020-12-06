@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-05
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -989,14 +989,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
         if (! fileload)
             modify();
 
-        mapper().fill_play_set(m_play_set);
-
-#if defined USE_MIDI_CONTROL_OUT_ACTIVE                // not present
-        midi_control_out().send_seq_event
-        (
-            seqnum, midicontrolout::uiaction::activate   /* flushes  */
-        );
-#endif
+        mapper().fill_play_set(m_play_set);     /* clear it and refill it   */
     }
     return result;
 }
@@ -1259,7 +1252,7 @@ performer::change_set_busses (int b)
     bool result = b >= 0 && b <= SEQ66_OUTPUT_BUSS_MAX;
     if (result)
     {
-        for (auto seqi : m_play_set)
+        for (auto seqi : m_play_set.seq_container())
             seqi->set_midi_bus(b, true);    /* calls notification funcion   */
 
         screenset::number setno = mapper().playscreen_number();
@@ -1647,10 +1640,11 @@ performer::set_playing_screenset (screenset::number setno)
 {
     if (mapper().set_playing_screenset(setno))
     {
+        bool clearitfirst = true;                   /* the default value    */
         announce_exit(false);                       /* blank the device     */
         announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
-        mapper().fill_play_set(m_play_set);
+        mapper().fill_play_set(m_play_set, clearitfirst);
         notify_set_change(setno, change::no);
     }
     return mapper().playscreen_number();
@@ -1790,7 +1784,7 @@ performer::reset_sequences (bool pause)
 {
     void (sequence::* f) (bool) = pause ? &sequence::pause : &sequence::stop ;
     bool songmode = song_mode();
-    for (auto & seqi : m_play_set)
+    for (auto & seqi : m_play_set.seq_container())
         (seqi.get()->*f)(songmode);
 
     if (m_master_bus)
@@ -3396,7 +3390,7 @@ performer::start_playing (bool songmode)
 
         if (resume_note_ons())                          /* for issue #5     */
         {
-            for (auto seqi : m_play_set)
+            for (auto seqi : m_play_set.seq_container())
                 seqi->resume_note_ons(get_tick());
         }
     }
@@ -3551,7 +3545,7 @@ performer::play (midipulse tick)
 {
     set_tick(tick);
     bool songmode = song_mode();
-    for (auto seqi : m_play_set)
+    for (auto seqi : m_play_set.seq_container())
         seqi->play_queue(tick, songmode, resume_note_ons());
 
     if (not_nullptr(m_master_bus))
@@ -5020,9 +5014,9 @@ performer::loop_control
 #if defined USE_OLD_STYLE_SLOT_SHIFT
             sn += slot_shift() * screenset_size();
 #else
-            if (columns() == SEQ66_BASE_SET_COLUMNS)    /* setmaster.hpp    */
+            if (columns() == setmaster::Columns())
             {
-                if (rows() > SEQ66_BASE_SET_ROWS)
+                if (rows() > setmaster::Rows())
                     sn += slot_shift() * rows();        /* move down x rows */
             }
             else

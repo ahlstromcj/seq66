@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-11-30
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,14 +36,9 @@
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
+#include "play/setmaster.hpp"           /* seq66::setmaster::Size() static  */
 #include "util/calculations.hpp"        /* seq66::string_to_bool(), etc.    */
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes()            */
-
-/**
- *  The same definition as in seq.hpp.
- */
-
-#define SEQ66_BASE_SET_SIZE SEQ66_DEFAULT_SET_ROWS * SEQ66_DEFAULT_SET_COLUMNS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -419,7 +414,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     bool result;
     std::string mctag = "[midi-control-out-settings]";
     std::string s = get_variable(file, mctag, "set-size");
-    int sequences = string_to_int(s, SEQ66_BASE_SET_SIZE);
+    int sequences = string_to_int(s, setmaster::Size());
     s = get_variable(file, mctag, "output-buss");
     if (s.empty())
         s = get_variable(file, mctag, "buss");          /* the old tag name */

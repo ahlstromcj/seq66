@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2020-08-11
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -43,27 +43,6 @@
 #include <map>                          /* std::map<>                       */
 
 #include "play/screenset.hpp"           /* seq66::screenset and seq         */
-
-/**
- *  The base (or default) number of rows in a set, useful in handling the
- *  slot-shift feature and the set-master user-interface.
- */
-
-#define SEQ66_BASE_SET_ROWS                SEQ66_DEFAULT_SET_ROWS
-
-/**
- *  The base (or default) number of columns in a set, useful in handling the
- *  slot-shift feature and the set-master user-interface.
- */
-
-#define SEQ66_BASE_SET_COLUMNS             SEQ66_DEFAULT_SET_COLUMNS
-
-/**
- *  The canonical and default set size.  Used in relation to the keystrokes used
- *  to access sequences (and mute-groups).
- */
-
-#define SEQ66_BASE_SET_SIZE SEQ66_DEFAULT_SET_ROWS * SEQ66_DEFAULT_SET_COLUMNS
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -136,30 +115,30 @@ private:
 
     container m_container;
 
-    /**
-     *  Indicates if the m_saved_armed_statuses[] values are the saved state
-     *  of the sequences, and can be restored.
-     */
-
-    bool m_armed_saved;
-
-    /**
-     *  Holds the status of the current play-screen.
-     */
-
-    midibooleans m_tracks_mute_state;
-
 private:
 
-    static const int c_rows     = SEQ66_BASE_SET_ROWS;
-    static const int c_columns  = SEQ66_BASE_SET_COLUMNS;
+    /**
+     *  The base (or default) number of rows in a set, useful in handling the
+     *  slot-shift feature and the set-master user-interface. Returned by the
+     *  static Rows() function.
+     */
+
+    static const int c_rows     = SEQ66_DEFAULT_SET_ROWS;
+
+    /**
+     *  The canonical and default set size.  Used in relation to the
+     *  keystrokes used to access sequences (and mute-groups). Returned by the
+     *  static Columns() function.
+     */
+
+    static const int c_columns  = SEQ66_DEFAULT_SET_COLUMNS;
 
 public:
 
     setmaster
     (
-        int setrows     = SEQ66_BASE_SET_ROWS,
-        int setcolumns  = SEQ66_BASE_SET_COLUMNS
+        int setrows     = SEQ66_DEFAULT_SET_ROWS,
+        int setcolumns  = SEQ66_DEFAULT_SET_COLUMNS
     );
 
     /*
@@ -181,6 +160,11 @@ public:
     static int Columns ()
     {
         return c_columns;
+    }
+
+    static int Size ()
+    {
+        return c_rows * c_columns;
     }
 
 private:

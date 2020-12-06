@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-08-03
+ * \updates       2020-12-06
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -48,6 +48,12 @@
 
 namespace seq66
 {
+
+/*
+ * -------------------------------------------------------------------------
+ * screenset
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Principal constructor with optional parameters.
@@ -99,10 +105,6 @@ screenset::change_set_number (screenset::number setno)
         s.change_seq_number(seqno++);       /* works only if seq is active  */
 }
 
-/**
- *
- */
-
 void
 screenset::clear ()
 {
@@ -111,10 +113,6 @@ screenset::clear ()
     for (int s = 0; s < m_set_size; ++s)
         m_container.push_back(emptyseq);
 }
-
-/**
- *
- */
 
 void
 screenset::initialize (int rows, int columns)
@@ -339,20 +337,12 @@ screenset::seq_to_grid (seq::number seqno, int & row, int & column) const
     return result;
 }
 
-/**
- *
- */
-
 bool
 screenset::is_seq_in_edit (seq::number seqno) const
 {
     seq::pointer track = seqinfo(seqno).loop();
     return track ? track->get_editing() : false ;
 }
-
-/**
- *
- */
 
 bool
 screenset::any_in_edit () const
@@ -379,10 +369,6 @@ screenset::armed () const
     }
     return false;
 }
-
-/**
- *
- */
 
 bool
 screenset::needs_update () const
@@ -625,10 +611,6 @@ screenset::move_triggers
     }
 }
 
-/**
- *
- */
-
 void
 screenset::push_trigger_undo ()
 {
@@ -639,10 +621,6 @@ screenset::push_trigger_undo ()
     }
 }
 
-/**
- *
- */
-
 void
 screenset::pop_trigger_undo ()
 {
@@ -652,10 +630,6 @@ screenset::pop_trigger_undo ()
             s.loop()->pop_trigger_undo();
     }
 }
-
-/**
- *
- */
 
 void
 screenset::pop_trigger_redo ()
@@ -673,10 +647,6 @@ screenset::pop_trigger_redo ()
  * -------------------------------------------------------------------------
  */
 
-/**
- *
- */
-
 bool
 screenset::color (seq::number seqno, int c)
 {
@@ -688,10 +658,6 @@ screenset::color (seq::number seqno, int c)
     return result;
 }
 
-/**
- *
- */
-
 void
 screenset::set_seq_name (seq::number seqno, const std::string & name)
 {
@@ -700,10 +666,6 @@ screenset::set_seq_name (seq::number seqno, const std::string & name)
         track->set_name(name);
 }
 
-/**
- *
- */
-
 bool
 screenset::name (const std::string & nm)
 {
@@ -711,10 +673,6 @@ screenset::name (const std::string & nm)
     m_set_name = nm;
     return result;
 }
-
-/**
- *
- */
 
 void
 screenset::arm (seq::number seqno)
@@ -727,10 +685,6 @@ screenset::arm (seq::number seqno)
     }
 }
 
-/**
- *
- */
-
 void
 screenset::mute (seq::number seqno)
 {
@@ -741,10 +695,6 @@ screenset::mute (seq::number seqno)
         track->set_song_mute(true);
     }
 }
-
-/**
- *
- */
 
 void
 screenset::all_notes_off ()
@@ -783,17 +733,23 @@ screenset::find_by_number (seq::number seqno)
 
 /**
  *  Fills the performer's play-set.
+ *
+ * \param p
+ *      The play-set vector, owned by performer.
+ *
+ * \param
+ *      Indicates to clear the play-set first.  Defaults to true.  Set it to
+ *      false to append more play-set sequences.
+ *
+ * \return
+ *      Returns true if there were any active sequences found in the current
+ *      call of this function.
  */
 
-void
-screenset::fill_play_set (playset & p)
+bool
+screenset::fill_play_set (playset & p, bool clearit)
 {
-    p.clear();
-    for (auto & s : m_container)
-    {
-        if (s.active())
-            p.push_back(s.loop());
-    }
+    return p.fill(*this, clearit);
 }
 
 /**
@@ -926,10 +882,6 @@ screenset::reset_sequences (bool pause, sequence::playback mode)
     }
 }
 
-/**
- *
- */
-
 void
 screenset::arm ()
 {
@@ -944,10 +896,6 @@ screenset::arm ()
     }
 }
 
-/**
- *
- */
-
 void
 screenset::mute ()
 {
@@ -961,10 +909,6 @@ screenset::mute ()
         }
     }
 }
-
-/**
- *
- */
 
 void
 screenset::toggle (seq::number seqno)
@@ -1008,10 +952,6 @@ screenset::play (midipulse tick, sequence::playback mode, bool resumenoteons)
             s.loop()->play_queue(tick, songmode, resumenoteons);
     }
 }
-
-/**
- *
- */
 
 void
 screenset::toggle_song_mute (seq::number seqno)
@@ -1285,10 +1225,6 @@ screenset::learn_bits (midibooleans & bits)
     return result;
 }
 
-/**
- *
- */
-
 std::string
 screenset::to_string (bool showseqs) const
 {
@@ -1303,14 +1239,53 @@ screenset::to_string (bool showseqs) const
     return result.str();
 }
 
-/**
- *
- */
-
 void
 screenset::show (bool showseqs) const
 {
     std::cout << to_string(showseqs);
+}
+
+/*
+ * -------------------------------------------------------------------------
+ * playset
+ * -------------------------------------------------------------------------
+ */
+
+playset::playset () :
+    m_screen_sets       (),
+    m_sequence_array    ()
+{
+    // No code needed at this time
+}
+
+bool
+playset::set_found (screenset::number setno) const
+{
+    const auto seqiterator = m_screen_sets.find(setno);
+    return seqiterator != m_screen_sets.cend();
+}
+
+bool
+playset::fill (const screenset & sset, bool clearit)
+{
+    if (clearit)
+        clear();
+
+    bool result = false;
+    auto p = std::make_pair(sset.set_number(), &sset);
+    auto r = m_screen_sets.insert(p);
+    if (r.second)
+    {
+        for (auto & s : sset.seq_container())
+        {
+            if (s.active())
+            {
+                m_sequence_array.push_back(s.loop());
+                result = true;
+            }
+        }
+    }
+    return result;
 }
 
 }               // namespace seq66
