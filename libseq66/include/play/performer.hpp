@@ -1977,8 +1977,8 @@ public:
      *  user-interface.   HMMMMMM.
      *
      * \param flag
-     *      If true (the default), the song-mute of the sequence is turned on.
-     *      Otherwise, it is turned off.
+     *      If true (the default), the song-mutes of the sequences are turned
+     *      on.  Otherwise, they are turned off.
      */
 
     void mute_all_tracks (bool flag = true)

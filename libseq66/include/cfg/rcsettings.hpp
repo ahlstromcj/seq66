@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-05
+ * \updates       2020-12-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -132,12 +132,12 @@ public:
      *  of sequences in a set.
      */
 
-    enum class sets
+    enum class setsmode
     {
         normal,         /**< Set change mutes current, loads new set.   */
         autoarm,        /**< Mute current set, load and unmute new set. */
-        additive,       /**< Keep current set, load and unmute new set. */
-        allsets,        /**< All sets play at once.                     */
+        additive,       /**< Keep current set armed when changing sets. */
+        allsets,        /**< Arm all sets at once.                      */
         maximum         /**< Keep this last... a size value.            */
     };
 
@@ -243,7 +243,7 @@ private:
     bool m_device_ignore;           /**< From seq66 module, unused!         */
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
     interaction m_interaction_method; /**< Interaction method: no support.  */
-    sets m_set_handling;            /**< How to handle set changes          */
+    setsmode m_sets_mode;           /**< How to handle set changes.         */
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -507,6 +507,7 @@ public:
         return m_midi_control_in;
     }
 
+#if defined SEQ66_DEFINE_RC_ADD_MIDICONTROL_STANZA
     bool add_midicontrol_stanza
     (
         const std::string & kn,
@@ -517,6 +518,7 @@ public:
     (
         const std::string & kn, automation::category cat, int slotnumber
     );
+#endif
 
     const midicontrolout & midi_control_out () const
     {
@@ -692,10 +694,29 @@ public:
         return m_interaction_method;
     }
 
-    sets set_handling () const
+    setsmode sets_mode () const
     {
-        return m_set_handling;
+        return m_sets_mode;
     }
+
+    bool is_setsmode_normal () const
+    {
+        return m_sets_mode == setsmode::normal;
+    }
+
+    bool is_setsmode_autoarm () const
+    {
+        return m_sets_mode == setsmode::autoarm;
+    }
+
+    bool is_setsmode_to_clear () const
+    {
+        return m_sets_mode == setsmode::normal ||
+            m_sets_mode == setsmode::autoarm;
+    }
+
+    std::string sets_mode_string () const;
+    std::string sets_mode_string (setsmode v) const;
 
     const std::string & midi_filename () const
     {
@@ -1021,10 +1042,7 @@ protected:
         return interaction_method(static_cast<interaction>(v));
     }
 
-    void sets_handling (int v)
-    {
-        m_set_handling = static_cast<sets>(v);
-    }
+    void sets_mode (const std::string & v);
 
     /*
      * The setters for non-bool values, defined in the cpp file because

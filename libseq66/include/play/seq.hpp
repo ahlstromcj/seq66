@@ -399,10 +399,12 @@ private:
         m_queued = flag;
     }
 
+/*
     void sloop (sequence * s)       // \deprecated
     {
         m_seq.reset(s); // m_seq_active = not_nullptr(s);
     }
+ */
 
     pointer loop ()
     {

@@ -144,7 +144,7 @@ seq::activate (number seqno, bool active)
             m_seq_active = result = false;
     }
     else
-        m_seq_active = active;
+        m_seq_active = result = false;
 
     return result;
 }

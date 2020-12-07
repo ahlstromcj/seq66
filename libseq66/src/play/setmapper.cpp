@@ -76,6 +76,7 @@
 #include <iostream>                     /* std::cout                        */
 #include <sstream>                      /* std::stringstream                */
 
+#include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "play/mutegroups.hpp"          /* seq66::mutegroups class          */
 #include "play/setmapper.hpp"           /* seq66::setmapper class           */
 
@@ -774,7 +775,7 @@ setmapper::set_playing_screenset (screenset::number setno)
     if (result)
     {
         result = play_screen()->learn_bits(m_tracks_mute_state);
-        if (result)
+        if (result && rc().is_setsmode_normal())
             mute_group_tracks();
     }
     return result;
@@ -967,6 +968,21 @@ setmapper::is_seq_in_edit (seq::number seqno) const
         result = sp->get_editing();
 
     return result;
+}
+
+/**
+ *  Returns true if even one sequence in one screenset is armed.
+ */
+
+bool
+setmapper::armed () const
+{
+    for (auto & sset : sets())         /* screenset reference  */
+    {
+        if (sset.second.armed())
+            return true;
+    }
+    return false;
 }
 
 /**

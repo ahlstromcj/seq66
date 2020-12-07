@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-05
+ * \updates       2020-12-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -102,7 +102,7 @@ rcsettings::rcsettings () :
     m_device_ignore             (false),
     m_device_ignore_num         (0),
     m_interaction_method        (interaction::seq24),
-    m_set_handling              (sets::normal),
+    m_sets_mode                 (setsmode::normal),
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
@@ -194,7 +194,7 @@ rcsettings::set_defaults ()
     m_device_ignore             = false;
     m_device_ignore_num         = 0;
     m_interaction_method        = interaction::seq24;
-    m_set_handling              = sets::normal;
+    m_sets_mode                 = setsmode::normal;
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
@@ -975,6 +975,42 @@ rcsettings::user_filename (const std::string & value)
         m_user_filename += ".usr";
 }
 
+void
+rcsettings::sets_mode (const std::string & v)
+{
+    if (v == "normal")
+        m_sets_mode = setsmode::normal;
+    else if (v == "autoarm")
+        m_sets_mode = setsmode::autoarm;
+    else if (v == "additive")
+        m_sets_mode = setsmode::additive;
+    else if (v == "allsets")
+        m_sets_mode = setsmode::allsets;
+}
+
+std::string
+rcsettings::sets_mode_string () const
+{
+    return sets_mode_string(sets_mode());
+}
+
+std::string
+rcsettings::sets_mode_string (setsmode v) const
+{
+    std::string result;
+    switch (v)
+    {
+        case setsmode::normal:   result = "normal";     break;
+        case setsmode::autoarm:  result = "autoarm";    break;
+        case setsmode::additive: result = "additive";   break;
+        case setsmode::allsets:  result = "allset";     break;
+        default:                 result = "unknown";    break;
+    }
+    return result;
+}
+
+#if defined SEQ66_DEFINE_RC_ADD_MIDICONTROL_STANZA
+
 /**
  *  Adds three midicontrol objects to the midicontrolin, one each for the
  *  toggle, on, and off actions.
@@ -983,7 +1019,8 @@ rcsettings::user_filename (const std::string & value)
  *  optionsfile::parse_midi_control_section() with
  *  midicontrolfile::parse_control_stanza() as called in
  *  midicontrolfile::parse().  Not sure yet if it is worth unifying them; the
- *  midicontrolfile parsing is more flexible.
+ *  midicontrolfile parsing is more flexible.  This function is used only in
+ *  Seqtool.
  *
  *  Please note:
  *
@@ -1115,6 +1152,8 @@ rcsettings::add_blank_stanza
     static int s_v[6] = {0, 0, 0, 0, 0, 0};
     return add_midicontrol_stanza(kn, cat, nslot, s_v, s_v, s_v);
 }
+
+#endif      // defined SEQ66_DEFINE_RC_ADD_MIDICONTROL_STANZA
 
 }           // namespace seq66
 

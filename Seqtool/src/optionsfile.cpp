@@ -59,6 +59,8 @@
 #include <iostream>
 #include <string>
 
+#define SEQ66_DEFINE_RC_ADD_MIDICONTROL_STANZA
+
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile           */
 #include "cfg/settings.hpp"             /* seq66::m_rc config container     */
 #include "ctrl/keymap.hpp"              /* seq66::qdk_key_name() function   */

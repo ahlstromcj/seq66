@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-05
+ * \updates       2020-12-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1367,6 +1367,8 @@ qsmainwnd::refresh ()
 
     int active_screenset = int(perf().playscreen_number());
     std::string b = std::to_string(active_screenset);
+    b += " of ";
+    b += std::to_string(perf().screenset_count());
     ui->entry_active_set->setText(b.c_str());
     if (ui->button_keep_queue->isChecked() != perf().is_keep_queue())
         ui->button_keep_queue->setChecked(perf().is_keep_queue());
@@ -2668,7 +2670,7 @@ qsmainwnd::panic()
 
 /**
  *  The qslivebase::update_bank() function and its overrides do not take care
- *  of chaning the performer's playing screenset.
+ *  of changing the performer's playing screenset; the live-frame does that.
  */
 
 void
@@ -2677,7 +2679,11 @@ qsmainwnd::update_bank (int bankid)
     if (not_nullptr(m_live_frame))
     {
         m_live_frame->update_bank(bankid);
-        (void) perf().set_playing_screenset(m_live_frame->bank());
+
+        /*
+         * Done in the call above:
+         * (void) perf().set_playing_screenset(m_live_frame->bank());
+         */
     }
 }
 

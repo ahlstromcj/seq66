@@ -238,6 +238,8 @@ rcfile::parse ()
 
     bool verby = string_to_bool(s, false);
     rc().verbose(verby);
+    s = get_variable(file, "[Seq66]", "sets-mode");
+    rc().sets_mode(s);
 
     /*
      * [comments] Header comments (hash-tag lead) is skipped during parsing.
@@ -794,10 +796,18 @@ rcfile::write ()
             "# It loosely follows the format of the seq24 'rc' configuration\n"
             "# file, but adds some new options, and is no longer compatible.\n"
             "\n"
-            "[Seq66]\n\n"
+            "[Seq66]\n"
+            "\n"
+            "# Most of the options in these section are self-explanatory.\n"
+            "# The sets-mode determines if sets are muted when going to the\n"
+            "# next play-screen ('normal'), while 'autoarm' will automatically\n"
+            "# unmute the next set.  The 'additive' options keeps the previous\n"
+            "# set unmuted when moving to the next set.\n"
+            "\n"
             "config-type = \"rc\"\n"
             "version = " << version() << "\n"
             "verbose = " << bool_to_string(rc().verbose()) << "\n"
+            "sets-mode = " << rc().sets_mode_string() << "\n"
         ;
 
     /*
@@ -902,8 +912,8 @@ rcfile::write ()
     {
         int bus_on = static_cast<int>(rc_ref().clocks().get(bus));
         file
-            << "# Output buss name: " << rc_ref().clocks().get_name(bus) << "\n"
-            << int(bus) << " " << bus_on << "   # buss number, clock status\n"
+            << int(bus) << " " << bus_on << "    \""
+            << rc_ref().clocks().get_name(bus) << "\"\n"
             ;
     }
 
@@ -938,8 +948,9 @@ rcfile::write ()
     file
         << "\n[midi-input]\n\n"
         << int(buses) << "   # number of input MIDI busses\n\n"
-           "# The first number is the port number, and the second number\n"
-           "# indicates whether it is disabled (0), or enabled (1).\n"
+           "# The first number is the port/buss number, and the second number\n"
+           "# is the input status, disabled (0) or enabled (1). The item in\n"
+           "# quotes is the input-buss name.\n"
            "\n"
         ;
 
@@ -947,8 +958,8 @@ rcfile::write ()
     {
         int bus_on = static_cast<bool>(rc_ref().inputs().get(bus));
         file
-            << "# Input buss name: " << rc_ref().inputs().get_name(bus) << "\n"
-            << int(bus) << " " << bus_on << "  # buss number, input status\n"
+            << int(bus) << " " << bus_on << "    \""
+            << rc_ref().inputs().get_name(bus) << "\"\n"
             ;
     }
 

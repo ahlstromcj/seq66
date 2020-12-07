@@ -721,20 +721,7 @@ private:
         play_screen()->unqueue(hotseq);
     }
 
-    /**
-     *  Returns true if even one sequence in one screenset is armed.
-     */
-
-    bool armed () const
-    {
-        for (auto & sset : sets())         /* screenset reference  */
-        {
-            if (sset.second.armed())
-                return true;
-        }
-        return false;
-    }
-
+    bool armed () const;
 
     bool armed (seq::number seqno) const
     {

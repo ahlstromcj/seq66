@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-11
- * \updates       2019-05-25
+ * \updates       2020-12-07
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing screen-sets and sequences, and be
@@ -43,7 +43,6 @@
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "play/setmapper.hpp"           /* seq66::setmapper class           */
 
 /**
  *  Forward references.

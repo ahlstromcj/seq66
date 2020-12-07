@@ -1640,11 +1640,15 @@ performer::set_playing_screenset (screenset::number setno)
 {
     if (mapper().set_playing_screenset(setno))
     {
-        bool clearitfirst = true;                   /* the default value    */
+        bool clearitfirst = rc().is_setsmode_to_clear();
         announce_exit(false);                       /* blank the device     */
         announce_playscreen();                      /* inform control-out   */
         unset_queued_replace();
         mapper().fill_play_set(m_play_set, clearitfirst);
+        if (rc().is_setsmode_autoarm())
+        {
+            set_song_mute(mutegroups::muting::off);
+        }
         notify_set_change(setno, change::no);
     }
     return mapper().playscreen_number();
@@ -3545,8 +3549,25 @@ performer::play (midipulse tick)
 {
     set_tick(tick);
     bool songmode = song_mode();
+#if defined SEQ66_PLATFORM_DEBUG
+    int count = 0;
+    for (auto seqi : m_play_set.seq_container())
+    {
+        if (not_nullptr(seqi))
+        {
+            seqi->play_queue(tick, songmode, resume_note_ons());
+        }
+        else
+        {
+            printf("Null sequence at play() count = %d\n", count);
+            break;
+        }
+        ++count;
+    }
+#else
     for (auto seqi : m_play_set.seq_container())
         seqi->play_queue(tick, songmode, resume_note_ons());
+#endif
 
     if (not_nullptr(m_master_bus))
         m_master_bus->flush();                      /* flush MIDI buss  */
