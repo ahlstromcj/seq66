@@ -38,8 +38,7 @@
  *          in one of the following seq_rtmidi functions:
  *          -   midi_alsa_info::api_port_start()
  *          -   mastermidibus::api_init()
- *          Both function pass in a mastermidibus object as well.  We need to
- *          EXAMINE this handling in more detail later.
+ *          Both function pass in a mastermidibus object as well.
  *      -#  In busarray::add (), this pointer is passed to the constructor of
  *          businfo.  There, it is managed by an std::shared<> pointer. The
  *          local pointer in step 1 goes out of scope.
@@ -47,9 +46,9 @@
  *          businfo container.
  */
 
-#include "util/basic_macros.hpp"
 #include "midi/businfo.hpp"             /* seq66::businfo class             */
 #include "midi/event.hpp"               /* seq66::event class               */
+#include "util/basic_macros.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -167,7 +166,7 @@ businfo::initialize ()
         {
             if (! bus()->is_input_port())       /* not built in master bus  */
             {
-                result =  bus()->is_virtual_port() ?
+                result = bus()->is_virtual_port() ?
                     bus()->init_out_sub() : bus()->init_out() ;
             }
             if (result)
@@ -310,7 +309,7 @@ busarray::add (midibus * bus, e_clock clock)
 }
 
 /**
- *  Creates and adds a new midibus object to the list.  Then the inputing value
+ *  Adds a new midibus object to the list.  Then the inputing value
  *  is set.  This function is meant for input ports.
  *
  *  We need to belay the initialization until later, when we know the
@@ -520,7 +519,9 @@ busarray::get_midi_bus_name (int bus)
                 result = tmp;
             }
             else
+            {
                 result = bi.bus()->display_name();
+            }
         }
         else
         {

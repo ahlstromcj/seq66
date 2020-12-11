@@ -357,8 +357,16 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
             std::string clientname = cname;
             std::string pname = portname;
             set_port_id(portid);
+
+            /*
+             * ca 2020-12-10 This makes two numbers appear. The port number is
+             * already part of the port name.  The portid argument is obtained
+             * from ALSA and is one higher than the index!
+             */
+
             pname += " ";
             pname += std::to_string(portid);
+
             port_name(pname);
             set_bus_id(cid);
             set_name(rc().app_client_name(), clientname, pname);

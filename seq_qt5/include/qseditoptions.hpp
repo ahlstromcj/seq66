@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2018-09-26
+ * \updates       2020-12-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,6 +101,7 @@ private slots:
     void update_time_master ();
     void update_transport_support ();
     void update_jack_midi ();
+    void update_output_map ();
     void okay ();
     void cancel ();
     void update_note_resume ();

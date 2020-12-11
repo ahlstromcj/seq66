@@ -16,10 +16,16 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="toolTip">
+      <string>Provides a table of MIDI output ports/busses and clock settings, input busses, and more.  There is a bug in the MIDI Clock tab where it won't respond to a click except in a very specific place; the alternative is to do Alt-C once or twice. </string>
+     </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
+      <property name="toolTip">
+       <string>Provides a list of MIDI output ports and clock settings.</string>
+      </property>
       <attribute name="title">
        <string>MIDI &amp;Clock</string>
       </attribute>
@@ -33,7 +39,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Clocks</string>
+        <string>Port and Clocks</string>
        </property>
        <widget class="QWidget" name="layoutWidgetClocks">
         <property name="geometry">
@@ -67,12 +73,12 @@
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>31</width>
-          <height>31</height>
+          <width>32</width>
+          <height>32</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sets the number of the tempo track, and it is saved to the 'rc' file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Sets the number of the tempo track, and it is saved to the 'rc' file.  Not yet functional.</string>
         </property>
         <property name="readOnly">
          <bool>false</bool>
@@ -93,6 +99,9 @@
           <height>21</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>Not yet functional.</string>
+        </property>
         <property name="text">
          <string>Tempo track number (0 to 1023, 0 recommended)</string>
         </property>
@@ -102,12 +111,12 @@
          <rect>
           <x>420</x>
           <y>30</y>
-          <width>161</width>
-          <height>31</height>
+          <width>162</width>
+          <height>32</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>Saves the current tempo track number as a song parameter, saved to the MIDI file, as opposed to a global Seq66 value. However, remember that the given value will be saved to the 'rc' file when exiting.</string>
+         <string>Saves the current tempo track number as a song parameter, saved to the MIDI file, as opposed to a global Seq66 value. However, remember that the given value will be saved to the 'rc' file when exiting.  Not yet functional.</string>
         </property>
         <property name="text">
          <string>Set as Tempo Track</string>
@@ -146,8 +155,27 @@
         </item>
        </layout>
       </widget>
+      <widget class="QPushButton" name="pushButtonStoreMap">
+       <property name="geometry">
+        <rect>
+         <x>430</x>
+         <y>410</y>
+         <width>162</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>When pressed, a permanent map is saved of output port numbers and names.  This map is then used to map sequences to buss numbers, which then use the buss name to look up the actual port number in case the system's MIDI setup has changed.</string>
+       </property>
+       <property name="text">
+        <string>Store Output Map</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
+      <property name="toolTip">
+       <string>Provides a table to select the desired MIDI input port.</string>
+      </property>
       <attribute name="title">
        <string>MIDI &amp;Input</string>
       </attribute>
@@ -203,6 +231,9 @@
       </widget>
      </widget>
      <widget class="QWidget" name="tabDisplay">
+      <property name="toolTip">
+       <string>Provides some minor tweaks of the user-interface.  Edit the 'usr' file for far more control over settings.</string>
+      </property>
       <attribute name="title">
        <string>Display</string>
       </attribute>
@@ -302,6 +333,9 @@
       </widget>
      </widget>
      <widget class="QWidget" name="tabJackSync">
+      <property name="toolTip">
+       <string>Provides settings for JACK transport and JACK MIDI.</string>
+      </property>
       <attribute name="title">
        <string>&amp;JACK</string>
       </attribute>
@@ -409,7 +443,7 @@
          <x>31</x>
          <y>210</y>
          <width>104</width>
-         <height>52</height>
+         <height>54</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="radio_group_layout">
@@ -431,6 +465,9 @@
       </widget>
      </widget>
      <widget class="QWidget" name="tabPlayOptions">
+      <property name="toolTip">
+       <string>Provides play options.  Minimal at present.</string>
+      </property>
       <attribute name="title">
        <string>&amp;Play Options</string>
       </attribute>

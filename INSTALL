@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.91.1 and above
+INSTALL for Seq66 v. 0.91.3 and above
 Chris Ahlstrom
-2015-09-10 to 2020-11-29
+2015-09-10 to 2020-12-10
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
@@ -504,11 +504,12 @@ DEPENDENCIES:
    Testing (optional):
 
       - qjackctl
-      - a2jmidid (exposes Seq24 ALSA MIDI ports to JACK)
       - hydrogen
       - klick (a command-line metronome)
       - qtractor or other MIDI sequencers
       - gmidimonitor or (better) midisnoop
       - sendmidi
+      - python-dbus (for contrib/scripts/startjack usage)
+      - a2jmidid (exposes Seq24 ALSA MIDI ports to JACK)
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

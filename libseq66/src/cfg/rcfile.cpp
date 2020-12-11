@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-11-24
+ * \updates       2020-12-10
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -895,19 +895,23 @@ rcfile::write ()
     bussbyte buses = bussbyte(rc_ref().clocks().count());
     file << "\n"
        "[midi-clock]\n\n"
-       "# The first line indicates the number of MIDI busses defined.\n"
-       "# Each buss line contains the buss (re 0) and the clock status of\n"
-       "# that buss.  0 = MIDI Clock is off; 1 = MIDI Clock on, and Song\n"
-       "# Position and MIDI Continue will be sent, if needed; 2 = MIDI\n"
-       "# Clock Modulo, where MIDI clocking will not begin until the song\n"
+       "# These ports can be used for output from Seq66, for playback/control.\n"
+       "# From JACK's perspective, these are 'capture' devices. Maybe?\n"
+       "#\n"
+       "# The first line shows the count of MIDI 'capture' ports. Each line\n"
+       "# contains the buss/port number (re 0) and clock status of that buss:\n\n"
+       "#   0 = MIDI Clock is off.\n"
+       "#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.\n"
+       "#   2 = MIDI Clock Module.\n"
+       "#  -1 = The output port is disabled.\n\n"
+       "# With Clock Modulo, MIDI clocking will not begin until the song\n"
        "# position reaches the start modulo value [midi-clock-mod-ticks].\n"
-       "# A value of -1 indicates that the output port is totally\n"
-       "# disabled.  One can set this value manually for devices that are\n"
-       "# present, but not available, perhaps because another application\n"
-       "# has exclusive access to the device (e.g. on Windows).\n"
-       "\n"
+       "# One can disable a port manually for devices that are present, but\n"
+       "# not available, perhaps because another application has exclusive\n"
+       "# access to the device (e.g. on Windows).\n\n"
         << int(buses) << "    # number of MIDI clocks (output busses)\n\n"
         ;
+
     for (bussbyte bus = 0; bus < buses; ++bus)
     {
         int bus_on = static_cast<int>(rc_ref().clocks().get(bus));
@@ -945,13 +949,16 @@ rcfile::write ()
         ;
 
     buses = bussbyte(rc_ref().inputs().count());
-    file
-        << "\n[midi-input]\n\n"
-        << int(buses) << "   # number of input MIDI busses\n\n"
+    file <<
+           "\n[midi-input]\n\n"
+           "# These ports can be used for input into Seq66.\n"
+           "# From JACK's perspective, these are 'playback' devices. Maybe?\n"
+           "#\n"
            "# The first number is the port/buss number, and the second number\n"
            "# is the input status, disabled (0) or enabled (1). The item in\n"
            "# quotes is the input-buss name.\n"
            "\n"
+        << int(buses) << "   # number of input MIDI busses\n\n"
         ;
 
     for (bussbyte bus = 0; bus < buses; ++bus)
@@ -984,11 +991,11 @@ rcfile::write ()
 
     file
         << "\n[manual-ports]\n\n"
-           "# Set to 1 to have seq66 create its own ALSA/JACK ports and not\n"
-           "# connect to other clients.  Use 1 to expose all 16 MIDI ports to\n"
-           "# JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports\n"
-           "# already running on one's computer, or to use the autoconnect\n"
-           "# feature (Seq66 connects to existing JACK ports on startup.\n"
+           "# Set to 1 to have Seq66 create its own ALSA/JACK ports and not\n"
+           "# auto-connect to other clients.  It creates up to 16 MIDI ports.\n"
+           "# Use 0 to auto-connect Seq66 to the system's ALSA/JACK MIDI ports\n"
+           "# already running on the computer.\n"
+           "#\n"
            "# A new feature is to change the number of ports; defaults to 16.\n"
            "\n"
         << (rc_ref().manual_ports() ? "1" : "0")
@@ -1002,7 +1009,7 @@ rcfile::write ()
 
     file
         << "\n[reveal-ports]\n\n"
-           "# Set to 1 to have seq66 ignore any system port names\n"
+           "# Set to 1 to have Seq66 ignore any system port names\n"
            "# declared in the 'user' configuration file.  Use this option to\n"
            "# be able to see the port names as detected by ALSA/JACK.\n"
            "\n"

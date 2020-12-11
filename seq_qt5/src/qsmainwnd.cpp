@@ -322,7 +322,7 @@ qsmainwnd::qsmainwnd
     ui->lineEditPpqn->setReadOnly(true);
 
     /*
-     * Global buss items.
+     * Global buss items.  Connected later on in this constructor.
      */
 
     mastermidibus * mmb = perf().master_bus();

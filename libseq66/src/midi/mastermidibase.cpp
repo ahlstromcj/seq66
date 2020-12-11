@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-08-02
+ * \updates       2020-12-09
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -38,7 +38,6 @@
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase            */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
-#include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.

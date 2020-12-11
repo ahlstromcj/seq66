@@ -119,7 +119,7 @@ qclocklayout::setup_ui ()
     m_horizlayout_clockline->setContentsMargins(0, 0, 0, 0);
     m_spacer_clock = new QSpacerItem
     (
-        40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum
+        20, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum
     );
 
     mastermidibus * masterbus = perf().master_bus();
@@ -132,10 +132,10 @@ qclocklayout::setup_ui ()
     else
         return;
 
-    m_rbutton_portdisabled = new QRadioButton("Port disabled");
+    m_rbutton_portdisabled = new QRadioButton("Disabled");
     m_rbutton_clockoff = new QRadioButton("Off");
-    m_rbutton_clockonpos = new QRadioButton("On (Pos)");
-    m_rbutton_clockonmod = new QRadioButton("On (Mod)");
+    m_rbutton_clockonpos = new QRadioButton("On(Pos)");
+    m_rbutton_clockonmod = new QRadioButton("On(Mod)");
 
     m_rbutton_group = new QButtonGroup(this);
     m_rbutton_group->addButton(m_rbutton_portdisabled, int(e_clock::disabled));

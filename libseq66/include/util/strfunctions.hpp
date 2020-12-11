@@ -9,14 +9,15 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-11-05
+ * \updates       2020-12-09
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
  */
 
-#include <string>
-#include <vector>
+#include <memory>                       /* std::unique_ptr<> template class */
+#include <string>                       /* std::string class                */
+#include <vector>                       /* std::vector class                */
 
 #include "midi/midibytes.hpp"           /* seq66::midibool type             */
 
@@ -101,6 +102,36 @@ extern bool parse_stanza_bits
     midibooleans & target,
     const std::string & mutestanza
 );
+
+/*
+ *  This comes, slightly modified to avoid throwing an exception, from:
+ *
+ * https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
+ *
+ *  Extra space for '\0', but it won't be included in the result.
+ *
+ *  It is useful for C++11.  Once C++20 becomes common, the following could be
+ *  used:
+ *
+\verbatim
+ *      #include <format>
+ *      std::string result = std::format("{} {}!", "Hello", "world");
+\endverbatim
+ */
+
+template<typename ... Args>
+std::string string_format (const std::string & format, Args ... args)
+{
+    std::string result;
+    size_t sz = std::snprintf(nullptr, 0, format.c_str(), args ...);
+    if (sz > 0)
+    {
+        std::unique_ptr<char []> buf(new char[sz + 1]);
+        std::snprintf(buf.get(), sz + 1, format.c_str(), args ...);
+        result = std::string(buf.get(), buf.get() + sz);
+    }
+    return result;
+}
 
 }           // namespace seq66
 

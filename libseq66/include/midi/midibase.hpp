@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2020-05-27
+ * \updates       2020-12-08
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations

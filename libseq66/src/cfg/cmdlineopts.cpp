@@ -186,11 +186,9 @@ cmdlineopts::s_help_1a =
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
 "   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
-"   -m, --manual-ports       Don't attach system ALSA ports. Use virtual ports.\n"
+"   -m, --manual-ports       Don't auto-connect MIDI ports. Use virtual ports.\n"
 "                            Not supported in the PortMIDI version.\n"
-"   -a, --auto-ports         Attach ALSA ports (overrides the 'rc' file).\n"
-"                            Use to expose system ALSA ports to JACK (e.g.\n"
-"                            using a2jmidid).\n"
+"   -a, --auto-ports         Connect MIDI ports (overrides the 'rc' file).\n"
     ;
 
 /**

@@ -137,7 +137,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
     m_midi_master.api_set_beats_per_minute(bpm);
     if (rc().manual_ports())                            /* virtual ports    */
     {
-        int num_buses = rc().manual_port_count();  /* SEQ66_OUTPUT_BUSS_MAX */
+        int num_buses = rc().manual_port_count();
         m_midi_master.clear();                          /* ignore system    */
         for (int i = 0; i < num_buses; ++i)             /* output busses    */
         {
@@ -153,7 +153,8 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
                 m_midi_master.add_output(m);            /* must come 2nd    */
             }
         }
-        midibus * m = new (std::nothrow) midibus
+
+        midibus * m = new (std::nothrow) midibus        /* input buss       */
         (
             m_midi_master, 0, SEQ66_MIDI_VIRTUAL_PORT, SEQ66_MIDI_INPUT_PORT
         );
@@ -218,7 +219,7 @@ mastermidibus::api_init (int ppqn, midibpm bpm)
             }
         }
     }
-    set_beats_per_minute(bpm);                          // c_beats_per_minute
+    set_beats_per_minute(bpm);
     set_ppqn(ppqn);
 
     /*

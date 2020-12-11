@@ -103,7 +103,7 @@ protected:
      *  Saves the input settings obtained from the "[midi-input] section of
      *  the "rc" (options) file, so that they can be loaded into the
      *  mastermidibus once it is created.  However, these items will be
-     *  modified if the actual enumerated input ports do not match the port
+     *  modified if the actual enumerated input ports do not match the ports
      *  read from the "rc" file.
      */
 
@@ -283,35 +283,25 @@ public:
 protected:
 
     /**
-     * \setter m_master_clocks, m_master_inputs.
-     *      Used in the performer class to pass the settings read from the "rc"
-     *      file to here.  There is an converse function defined below.
+     *  Used in the performer class to pass the settings read from the "rc"
+     *  file to here.  There is an converse function defined below.
      */
 
-    void set_port_statuses
-    (
-        const clockslist & clocks,
-        const inputslist & inputs
-    )
+    void set_port_statuses (const clockslist & outs, const inputslist & ins)
     {
-        m_master_clocks = clocks;
-        m_master_inputs = inputs;
+        m_master_clocks = outs;
+        m_master_inputs = ins;
     }
 
     /**
-     * \getter m_master_clocks, m_master_inputs.
-     *      Used in the performer class to pass the settings read from the "rc"
-     *      file to here.  There is an converse function defined above.
+     *  Used in the performer class to pass the settings read from the "rc"
+     *  file to here.  There is an converse function defined above.
      */
 
-    void get_port_statuses
-    (
-        clockslist & clocks,
-        inputslist & inputs
-    )
+    void get_port_statuses (clockslist & outs, inputslist & ins)
     {
-        clocks = m_master_clocks;
-        inputs = m_master_inputs;
+        outs = m_master_clocks;
+        ins = m_master_inputs;
     }
 
     e_clock clock (bussbyte bus)

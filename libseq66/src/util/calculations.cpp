@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2019-12-01
+ * \updates       2020-12-09
  * \license       GNU GPLv2 or above
  *
  *  This code was moved from the globals module so that other modules
@@ -79,6 +79,7 @@
 #include "cfg/settings.hpp"
 #include "midi/event.hpp"
 #include "util/calculations.hpp"
+#include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
 #if ! defined PI
 #define PI     3.14159265359
@@ -1200,19 +1201,16 @@ wave_type_name (wave wavetype)
 }
 
 /**
- *  Extracts the two names from the ALSA/JACK client/port name format,
- *  "[0] 128:0 clientname:portname".
+ *  Extracts the two names from the ALSA/JACK client/port name format:
  *
- *  It's a bit krufty to have to rely on that strict format; changes
- *  in the bus/port code could break this function.
+ *      [0] 128:0 clientname:portname
  *
- *  And when a2jmidid is running, indeed this function breaks.  The
- *  name of a port changes to
+ *  When a2jmidid is running:
  *
  *      a2j:Midi Through [14] (playback): Midi Through Port-0
  *
  *  with "a2j" as the client name and the rest, including the second colon, as
- *  the port name.
+ *  the port name.  For that kind of name, use extract_a2j_port_name().
  *
  * \param fullname
  *      The full port specification to be split.
@@ -1307,6 +1305,77 @@ extract_port_name (const std::string & fullname)
     std::size_t colonpos = fullname.find_first_of(":");  /* not last! */
     return (colonpos != std::string::npos) ?
         fullname.substr(colonpos + 1) : fullname ;
+}
+
+/**
+ *  Sets the name to be displayed for showing to the user, and hopefully,
+ *  later, for look-up.
+ *
+ *  For JACK ports created by a2jmidid (a2j_control), we want to shorten the
+ *  name radically, and also set the bus ID, which is contained in square
+ *  brackets.
+ *
+ *  - ALSA: "[0] 14:0 Midi Through Port-0"
+ *  - JACK: "[0] 0:0 seq66:system midi_playback_1"
+ *  - A2J:  "[0] 0:0 seq66:a2j Midi Through [14] (playback): Midi Through Port-0"
+ *
+ *  Skip past the two colons to get to the main part of the name.  Extract it,
+ *  and prepend "a2j".
+ *
+ * \param alias
+ *      The system-supplied or a2jmidid name for the port.  One example:
+ *      "a2j:Midi Through [14] (playback): Midi Through Port-0".  Obviously,
+ *      this function depends on the formatting of a2jmidid name assignments
+ *      not changing.
+ *
+ * \sideeffect
+ *      The bus ID is also modified, if present in the string (see "[14]"
+ *      above).
+ *
+ * \return
+ *      Returns the bare port-name is "a2j" appears in the alias. Otherwise, and
+ *      empty string is returned.
+ */
+
+std::string
+extract_a2j_port_name (const std::string & alias)
+{
+    std::string result;
+    if (contains(alias, "a2j"))
+    {
+        auto lpos = alias.find_first_of(":");
+        if (lpos != std::string::npos)
+        {
+            lpos = alias.find_first_of(":", lpos + 1);
+            if (lpos != std::string::npos)
+            {
+                result = alias.substr(lpos + 2);
+                result = "A2J " + result;
+            }
+        }
+    }
+    return result;
+}
+
+int
+extract_a2j_bus_id (const std::string & alias)
+{
+    int result = (-1);
+    if (contains(alias, "a2j"))
+    {
+        auto lpos = alias.find_first_of("[");
+        auto rpos = alias.find_first_of("]");
+        bool ok = lpos != std::string::npos && rpos != std::string::npos;
+        if (ok)
+            ok = rpos > lpos;
+
+        if (ok)
+        {
+            std::string temp = alias.substr(lpos, rpos - lpos - 1);
+            result = string_to_int(temp);
+        }
+    }
+    return result;
 }
 
 /**

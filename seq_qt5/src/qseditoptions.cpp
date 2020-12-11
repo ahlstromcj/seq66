@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-20
+ * \updates       2020-12-08
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -68,7 +68,7 @@ enum radio_button_t
 };
 
 /**
- *
+ *  The main constructor.
  */
 
 qseditoptions::qseditoptions (performer & p, QWidget * parent)
@@ -223,6 +223,12 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     vboxclocks->addItem(spacer);
     ui->groupBoxClocks->setLayout(vboxclocks);
 
+    connect
+    (
+        ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
+        this, SLOT(update_output_map())
+    );
+
     /*
      * Set up the MIDI Input tab.  It is simpler, just a list of check-boxes
      * in the groupBoxInputs widget.  No need for a separate class.  However,
@@ -260,10 +266,6 @@ qseditoptions::~qseditoptions ()
     delete ui;
 }
 
-/**
- *
- */
-
 void
 qseditoptions::slot_jack_mode (int buttonno)
 {
@@ -277,29 +279,17 @@ qseditoptions::slot_jack_mode (int buttonno)
     }
 }
 
-/**
- *
- */
-
 void
 qseditoptions::update_jack_connect ()
 {
-    perf().set_jack_mode(true);             // perf().init_jack();
+    perf().set_jack_mode(true);
 }
-
-/**
- *
- */
 
 void
 qseditoptions::update_jack_disconnect ()
 {
-    perf().set_jack_mode(false);            // perf().deinit_jack();
+    perf().set_jack_mode(false);
 }
-
-/**
- *
- */
 
 void
 qseditoptions::update_master_cond ()
@@ -308,20 +298,12 @@ qseditoptions::update_master_cond ()
     syncWithInternals();
 }
 
-/**
- *
- */
-
 void
 qseditoptions::update_time_master ()
 {
     rc().with_jack_master(ui->chkJackMaster->isChecked());
     syncWithInternals();
 }
-
-/**
- *
- */
 
 void
 qseditoptions::update_transport_support ()
@@ -330,15 +312,16 @@ qseditoptions::update_transport_support ()
     syncWithInternals();
 }
 
-/**
- *
- */
-
 void
 qseditoptions::update_jack_midi ()
 {
     rc().with_jack_midi(ui->chkJackNative->isChecked());
     syncWithInternals();
+}
+
+void
+qseditoptions::update_output_map ()
+{
 }
 
 /**
@@ -465,10 +448,6 @@ qseditoptions::update_key_height ()
     if (m_is_initialized)
         usr().save_user_config(true);
 }
-
-/**
- *
- */
 
 void
 qseditoptions::update_ui_scaling (const QString & qs)

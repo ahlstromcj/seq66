@@ -1,4 +1,4 @@
-.TH Sequencer66 "November 2020" "Version 0.91.0" "Seq66 Manual Page"
+.TH Sequencer66 "December 2020" "Version 0.91.3" "Seq66 Manual Page"
 
 .SH NAME
 Seq66 (qseq66) - Real-time live MIDI sequencer refactored from
@@ -14,12 +14,12 @@ Sequencer64/Seq24
 
 .SH DESCRIPTION
 .PP
-\fISequencer66\fP (also known as "Seq66") is a real-time MIDI sequencer.
+\fISequencer66\fP ("Seq66") is a real-time MIDI sequencer.
 It provides a nice interface for editing and playing MIDI 'loops'.
 It uses Qt 5 for the user interface.  It is functionally very
 similar to Sequencer64 and Seq24, but more flexible and faster.
 The two executables are qseq66 and a command-line/daemon called
-seq66cli. The Windows version is qpseq66.
+seq66cli. The Windows version uses a variant of PortMidi, and is qpseq66.
 
 .SH OPTIONS
 Seq66 accepts the following options, plus an optional name of
@@ -113,18 +113,20 @@ Instead, specify the file itself as the last command-line argument.
 
 .TP 8
 .B \-m, \-\-manual-ports
-Seq66 won't attach ALSA MIDI ports, it will make "manual" (virtual) ports.
+Seq66 won't attach (auto-connect) ALSA/JACK MIDI ports.
 Instead, it will create is own set of virtual input and output busses/ports.
-Not support in the PortMIDI build.
+The user can then connect them manually (e.g. in qjackctl for JACK usage).
+Not supported in the PortMIDI build.
 
 .TP 8
 .B \-a, \-\-auto-ports
-Seq66 will attach ALSA/JACK ports.  Useful for overriding the
-qseq66.rc configuration file when set up to use manual (virtual) ports.
+Seq66 will attach (auto-connect) to ALSA/JACK MIDI ports.
+Useful for overriding the qseq66.rc configuration file when
+set up to use manual (virtual) ports.
 
 .TP 8
 .B \-r, \-\-reveal-ports
-Do not use the 'user' definition for port names, use the actual
+Do not use the 'user' definition for port names, show the actual
 port names reported by ALSA/JACK.
 
 .TP 8

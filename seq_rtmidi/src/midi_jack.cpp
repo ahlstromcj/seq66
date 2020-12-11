@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-11-23
+ * \updates       2020-12-10
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -1239,9 +1239,9 @@ midi_jack::connect_port
  *      the requirements of the jack_port_register() function.  There is an
  *      issue here when a2jmidid is running.  We may see a client name of
  *      "seq66", but a port name of "a2j Midi Through [1] capture: Midi
- *      Through Port-0", which as a colon in it.  What to do?  Just not
+ *      Through Port-0", which has a colon in it.  What to do?  Just not
  *      extract the port name from the portname parameter.  If we have an
- *      issue here, we'll ahve to fix it in the caller.
+ *      issue here, we'll have to fix it in the caller.
  */
 
 bool
@@ -1250,18 +1250,11 @@ midi_jack::register_port (bool input, const std::string & portname)
     bool result = not_nullptr(port_handle());
     if (! result)
     {
-        /*
-         * See description of the portname parameter above.
-         *
-         * std::string shortname = extract_port_name(portname);
-         */
-
-        std::string shortname = portname;
         unsigned long flag = input ? JackPortIsInput : JackPortIsOutput;
         unsigned long buffsize = 0;
         jack_port_t * p = jack_port_register
         (
-            client_handle(), shortname.c_str(), JACK_DEFAULT_MIDI_TYPE,
+            client_handle(), portname.c_str(), JACK_DEFAULT_MIDI_TYPE,
             flag, buffsize
         );
 #ifdef SEQ66_SHOW_API_CALLS_TMI
@@ -1271,7 +1264,7 @@ midi_jack::register_port (bool input, const std::string & portname)
         printf
         (
             "%lx = jack_port_register(name = '%s', flag(%s) = '%s')\n",
-            (unsigned long)(p), shortname.c_str(), input ? "input" : "output",
+            (unsigned long)(p), portname.c_str(), input ? "input" : "output",
             flagname.c_str()
         );
         printf("  Full port name: '%s'\n", portname.c_str());
@@ -1280,6 +1273,10 @@ midi_jack::register_port (bool input, const std::string & portname)
         {
             port_handle(p);
             result = true;
+            if (rc().verbose())
+            {
+                infoprintf("JACK port registered: '%s'", portname.c_str());
+            }
         }
         else
         {

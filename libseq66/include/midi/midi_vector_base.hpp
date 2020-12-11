@@ -192,8 +192,8 @@ const midilong c_tempo_map   =  0x24240017; /**< Reserve seq32 tempo map.   */
 const midilong c_reserved_1  =  0x24240018; /**< Reserved for expansion.    */
 const midilong c_reserved_2  =  0x24240019; /**< Reserved for expansion.    */
 const midilong c_tempo_track =  0x2424001A; /**< Alternate tempo track no.  */
-const midilong c_seq_color   =  0x2424001B; /**< Future feature Kepler34. * */
-const midilong c_seq_edit_mode = 0x2424001C; /**< Future feature Kepler34.* */
+const midilong c_seq_color   =  0x2424001B; /**< Feature from Kepler34.     */
+const midilong c_seq_edit_mode = 0x2424001C; /**< Feature from Kepler34.    */
 
 /**
  *    This class is the abstract base class for a container of MIDI track

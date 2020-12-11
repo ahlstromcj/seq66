@@ -125,7 +125,14 @@ midibus::midibus
         {
             std::string pname = "midi ";
             pname += isinput ? "in " : "out ";
-            pname += std::to_string(port_id());
+
+            /*
+             * ca 2020-12-10 If this occurs before we get the port number from
+             * the MIDI subsystem, DO NOT DO IT.
+             *
+             * pname += std::to_string(port_id());
+             */
+
             port_name(pname);
         }
     }
@@ -146,11 +153,6 @@ midibus::midibus
             rt.app_name(), rt.get_bus_name(index), rt.get_port_name(index)
         );
     }
-
-#if defined SEQ66_SHOW_API_CALLS
-    printf("midibus '%s' created\n", display_name().c_str());
-#endif
-
 }
 
 /**

@@ -330,12 +330,12 @@ msgprintf (msg_level lev, std::string fmt, ...)
 
         case msg_level::warn:
 
-            std::cout << "[! " << output << "]" << std::endl;
+            std::cout << "[" << output << "]" << std::endl;
             break;
 
         case msg_level::error:
 
-            std::cerr << "[? " << output << "]" << std::endl;
+            std::cerr << "[" << output << "]" << std::endl;
             break;
         }
         va_end(args);                                       /* 2019-04-21   */

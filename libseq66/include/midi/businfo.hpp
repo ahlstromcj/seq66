@@ -349,7 +349,7 @@ public:
     }
 
     e_clock get_clock (bussbyte bus) const;
-    std::string get_midi_bus_name (int bus);    /* full version of name     */
+    std::string get_midi_bus_name (int bus);
     void print () const;
     void port_exit (int client, int port);
     bool set_input (bussbyte bus, bool inputing);

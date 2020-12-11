@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2020-10-24
+# \update      2020-12-10
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -155,6 +155,8 @@ SOURCES += src/seq66_features.cpp \
  src/midi/midi_vector_base.cpp \
  src/midi/midi_vector.cpp \
  src/midi/wrkfile.cpp \
+ src/play/clockslist.cpp \
+ src/play/inputslist.cpp \
  src/play/mutegroup.cpp \
  src/play/mutegroups.cpp \
  src/play/notemapper.cpp \

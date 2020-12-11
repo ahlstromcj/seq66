@@ -28,14 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2020-07-24
+ * \updates       2020-12-09
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
  *  that need them need to include them.  Also included are some minor
- *  "utility" functions dealing with strings.
- *
- *  Many of the functions are defined in this header file, as inline code.
+ *  "utility" functions dealing with MIDI and port-related strings.  Many of
+ *  the functions are defined in this header file, as inline code.
  */
 
 #include <string>
@@ -530,6 +529,8 @@ extern bool extract_port_names
 );
 extern std::string extract_bus_name (const std::string & fullname);
 extern std::string extract_port_name (const std::string & fullname);
+extern std::string extract_a2j_port_name (const std::string & alias);
+extern int extract_a2j_bus_id (const std::string & alias);
 extern std::string current_date_time ();
 
 }           // namespace seq66

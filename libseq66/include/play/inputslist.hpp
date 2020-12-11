@@ -28,13 +28,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-04-14
+ * \updates       2020-12-10
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
  */
 
+#include <string>                       /* std::string                      */
 #include <vector>                       /* std::vector for input values     */
+
+#include "midi/midibytes.hpp"           /* bussbyte and other types         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -71,10 +74,7 @@ class inputslist
 
 public:
 
-    inputslist () : m_master_inputs ()
-    {
-        // no code
-    }
+    inputslist ();
 
     /**
      *  Clears the list of clocks.
@@ -104,73 +104,11 @@ public:
             m_master_inputs.resize(sz);
     }
 
-    /**
-     *  Saves the clock settings read from the "rc" file so that they can be
-     *  passed to the mastermidibus after it is created.
-
-     * \param clocktype
-     *      The clock value read from the "rc" file.
-     */
-
-    void add (bool flag, const std::string & name)
-    {
-        input ipair;
-        ipair.in_enabled = flag;
-        if (! name.empty())
-            ipair.in_name = name;
-
-        m_master_inputs.push_back(ipair);
-    }
-
-    /**
-     * \setter m_master_inputs[bus]
-     *
-     *  Sets a single clock item, if in the currently existing range.
-     *  Mostly meant for use by the Options / MIDI Input tab and configuration
-     *  files.
-     */
-
-    bool set (bussbyte bus, bool inputing)
-    {
-        bool result = bus < count();
-        if (result)
-            m_master_inputs[bus].in_enabled = inputing;
-
-        return result;
-    }
-
-    /**
-     *  Sets the name of the given buss.
-     */
-
-    void set_name (bussbyte bus, const std::string & name)
-    {
-        if (bus < count())
-            m_master_inputs[bus].in_name = name;
-    }
-
-    /**
-     * \getter m_master_inputs[bus]
-     *
-     *  What about m_master_bus->get_input(bus)?
-     */
-
-    bool get (bussbyte bus) const
-    {
-        return bus < count() ?
-            m_master_inputs[bus].in_enabled : false ;
-    }
-
-    /**
-     *  Gets the name of the given buss.
-     */
-
-    const std::string & get_name (bussbyte bus) const
-    {
-        static std::string s_dummy;
-        return bus < int(m_master_inputs.size()) ?
-            m_master_inputs[bus].in_name : s_dummy ;
-    }
+    void add (bool flag, const std::string & name);
+    bool set (bussbyte bus, bool inputing);
+    void set_name (bussbyte bus, const std::string & name);
+    bool get (bussbyte bus) const;
+    std::string get_name (bussbyte bus) const;
 
 };              // class inputslist
 

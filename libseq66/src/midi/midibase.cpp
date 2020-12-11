@@ -162,13 +162,14 @@ midibase::midibase
     bool makesystem
 ) :
     m_bus_index         (index),
-    m_bus_id            (bus_id),
+    m_bus_id            (bus_id == (-1) ? 0 : bus_id),  /* uninited midi_info */
     m_port_id           (port_id),
     m_clock_type        (e_clock::off),
     m_inputing          (false),
     m_ppqn              (choose_ppqn(ppqn)),
     m_bpm               (bpm),
     m_queue             (queue),
+    m_display_name      (),
     m_bus_name          (busname),
     m_port_name         (portname),
     m_lasttick          (0),
