@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-12-10
+# \update      2020-12-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -178,6 +178,7 @@ libseq66_la_SOURCES = \
  midi/wrkfile.cpp \
  play/clockslist.cpp \
  play/inputslist.cpp \
+ play/listsbase.cpp \
  play/mutegroup.cpp \
  play/mutegroups.cpp \
  play/notemapper.cpp \

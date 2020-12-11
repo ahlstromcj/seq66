@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-09-19
+# \update      2020-12-11
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -130,6 +130,7 @@ pkginclude_HEADERS = \
  midi/wrkfile.hpp \
  play/clockslist.hpp \
  play/inputslist.hpp \
+ play/listsbase.hpp \
  play/mutegroups.hpp \
  play/notemapper.hpp \
  play/mutegroup.hpp \

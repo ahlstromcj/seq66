@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-10
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -37,11 +37,7 @@
  *  from the enumeration names, and replacing them with "e_clock::".
  */
 
-#include <string>                       /* std::string                      */
-#include <vector>                       /* std::vector for e_clock values   */
-
-#include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
-#include "midi/midibytes.hpp"           /* bussbyte and other types         */
+#include "play/listsbase.hpp"           /* seq66::listbase base class       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -55,66 +51,26 @@ namespace seq66
  *  performer object.
  */
 
-class clockslist
+class clockslist final : public listsbase
 {
-    /**
-     *  Provides a port name and the associated e_clock value.  The name is
-     *  populated by the sound system at startup time, and starts out empty.
-     *  It is filled from the output bus_array of the mastermidibus object.
-     */
-
-    using clock = struct
-    {
-        e_clock out_clock;          /**<< The clock setting for this buss.  */
-        std::string out_name;       /**<< The name of the output buss.      */
-    };
-
-    /**
-     *  Saves the clock settings obtained from the "rc" (options) file so that
-     *  they can be loaded into the mastermidibus once it is created.
-     */
-
-    std::vector<clock> m_master_clocks;
 
 public:
 
-    clockslist ();
-
-    /**
-     *  Clears the list of clocks.
-     */
-
-    void clear ()
+    clockslist () : listsbase ()
     {
-        m_master_clocks.clear();
+        // Nothing to do
     }
 
-    /**
-     *  Resizes the list.
-     */
-
-    void resize (size_t sz)
+    virtual ~clockslist ()
     {
-        if (sz > 0)
-            m_master_clocks.resize(sz);
-    }
-
-    /**
-     * \getter m_master_clocks.size()
-     */
-
-    int count () const
-    {
-        return int(m_master_clocks.size());
+        // Nothing to do
     }
 
     void add (e_clock clocktype, const std::string & name);
     bool set (bussbyte bus, e_clock clocktype);
-    void set_name (bussbyte bus, const std::string & name);
     e_clock get (bussbyte bus) const;
-    std::string get_name (bussbyte bus) const;
 
-};
+};              // class clockslist
 
 }               // namespace seq66
 

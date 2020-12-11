@@ -84,6 +84,9 @@ enum class e_clock
      *  setting, the MIDI Clock is disabled for the buss using this setting.
      *  Notes will still be sent that buss, of course.  Some software
      *  synthesizers might require this setting in order to make a sound.
+     *
+     *  This value also doubles as "enabled" for inputs, which don't support
+     *  the concept of clocks.
      */
 
     off,

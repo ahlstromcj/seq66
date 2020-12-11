@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-10
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -37,7 +37,7 @@
 #include <string>                       /* std::string                      */
 #include <vector>                       /* std::vector for input values     */
 
-#include "midi/midibytes.hpp"           /* bussbyte and other types         */
+#include "play/listsbase.hpp"           /* seq66::listsbase base class      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -51,64 +51,24 @@ namespace seq66
  *  performer object.
  */
 
-class inputslist
+class inputslist final : public listsbase
 {
-    /**
-     *  Provides a port name and the associated boolean input value.  The name
-     *  is populated by the sound system at startup time, and starts out empty.
-     *  It is filled from the input bus_array of the mastermidibus object.
-     */
-
-    using input = struct
-    {
-        bool in_enabled;            /**<< The input setting for this buss.  */
-        std::string in_name;        /**<< The name of the input buss.       */
-    };
-
-    /**
-     *  Saves the clock settings obtained from the "rc" (options) file so that
-     *  they can be loaded into the mastermidibus once it is created.
-     */
-
-    std::vector<input> m_master_inputs;
 
 public:
 
-    inputslist ();
-
-    /**
-     *  Clears the list of clocks.
-     */
-
-    void clear ()
+    inputslist () : listsbase ()
     {
-        m_master_inputs.clear();
+        // Nothing to do
     }
 
-    /**
-     *  Return the size of the list.
-     */
-
-    int count () const
+    virtual ~inputslist ()
     {
-        return int(m_master_inputs.size());
-    }
-
-    /**
-     *  Resizes the list.
-     */
-
-    void resize (size_t sz)
-    {
-        if (sz > 0)
-            m_master_inputs.resize(sz);
+        // Nothing to do
     }
 
     void add (bool flag, const std::string & name);
     bool set (bussbyte bus, bool inputing);
-    void set_name (bussbyte bus, const std::string & name);
     bool get (bussbyte bus) const;
-    std::string get_name (bussbyte bus) const;
 
 };              // class inputslist
 
