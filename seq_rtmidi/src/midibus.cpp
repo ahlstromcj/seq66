@@ -110,8 +110,7 @@ midibus::midibus
 {
     if (makevirtual)
     {
-        if (bus_name().empty())
-            bus_name(rc().app_client_name());
+        bus_name(rc().app_client_name());
 
         /*
          * Set the buss ID for virtual ports to 0.  We might consider another
@@ -121,37 +120,36 @@ midibus::midibus
         if (bus_id() == SEQ66_NO_BUS)
             set_bus_id(0);
 
-        if (port_name().empty())
+        std::string pname = "midi ";
+        pname += isinput ? "in" : "out";
+        if (index >= 0)
         {
-            std::string pname = "midi ";
-            pname += isinput ? "in " : "out ";
-
-            /*
-             * ca 2020-12-10 If this occurs before we get the port number from
-             * the MIDI subsystem, DO NOT DO IT.
-             *
-             * pname += std::to_string(port_id());
-             */
-
+////        pname += " ";
+////        pname += std::to_string(index);
             port_name(pname);
+            set_port_id(index);
+            set_bus_id(index);
+            set_name(rt.app_name(), bus_name(), port_name());
         }
     }
-
-    int portcount = rt.get_port_count();
-    if (index < portcount)
+    else
     {
-        int id = rt.get_port_id(index);
-        if (id >= 0)
-            set_port_id(id);
+        int portcount = rt.get_port_count();
+        if (index < portcount)
+        {
+            int id = rt.get_port_id(index);
+            if (id >= 0)
+                set_port_id(id);
 
-        id = rt.get_bus_id(index);
-        if (id >= 0)
-            set_bus_id(id);
+            id = rt.get_bus_id(index);
+            if (id >= 0)
+                set_bus_id(id);
 
-        set_name                /* change what was set in base class    */
-        (
-            rt.app_name(), rt.get_bus_name(index), rt.get_port_name(index)
-        );
+            set_name
+            (
+                rt.app_name(), rt.get_bus_name(index), rt.get_port_name(index)
+            );
+        }
     }
 }
 

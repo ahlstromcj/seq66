@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-07
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -237,7 +237,8 @@ private:
     bool m_song_start_mode;         /**< Use song mode versus live mode.    */
     bool m_filter_by_channel;       /**< Record only sequence channel data. */
     bool m_manual_ports;            /**< [manual-ports] setting.            */
-    int m_manual_port_count;        /**< [manual-ports] port count.         */
+    int m_manual_port_count;        /**< [manual-ports] outputjport count.  */
+    int m_manual_in_port_count;     /**< [manual-ports] inputjport count.   */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
     bool m_device_ignore;           /**< From seq66 module, unused!         */
@@ -665,6 +666,11 @@ public:
         return m_manual_port_count;
     }
 
+    int manual_in_port_count () const
+    {
+        return m_manual_in_port_count;
+    }
+
     bool reveal_ports () const
     {
         return m_reveal_ports;
@@ -976,10 +982,18 @@ protected:
 
     void manual_port_count (int count)
     {
-        if (count <= 0)
-            count = SEQ66_OUTPUT_BUSS_MAX;
+        if (count <= 0 || count > SEQ66_OUTPUT_BUSS_MAX)
+            count = SEQ66_OUTPUT_BUSS_DEFAULT;
 
         m_manual_port_count = count;
+    }
+
+    void manual_in_port_count (int count)
+    {
+        if (count <= 0 || count > SEQ66_INPUT_BUSS_MAX)
+            count = SEQ66_INPUT_BUSS_DEFAULT;
+
+        m_manual_in_port_count = count;
     }
 
     void reveal_ports (bool flag)

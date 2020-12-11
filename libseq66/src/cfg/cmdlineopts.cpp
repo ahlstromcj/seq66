@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-11-23
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -159,7 +159,7 @@ cmdlineopts::s_long_options [] =
  * Manual + User mode '-Z' versus Auto + Native mode '-z':
  *
  *      Creates virtual ports '-m' and hides the native names for the ports '-R'
- *      in favor of the 'user' definition of the names of ports and channels.
+ *      in favor of the 'usr' definition of the names of ports and channels.
  *      The opposite (native) setting uses '-a' and '-r'.
  *      Both modes turn on the --user-save (-u) option.
  */
@@ -197,8 +197,8 @@ cmdlineopts::s_help_1a =
 
 const std::string
 cmdlineopts::s_help_1b =
-"   -r, --reveal-ports       Do not use the 'user' definitions for port names.\n"
-"   -R, --hide-ports         Use the 'user' definitions for port names.\n"
+"   -r, --reveal-ports       Do not use the 'usr' definitions for port names.\n"
+"   -R, --hide-ports         Use the 'usr' definitions for port names.\n"
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
@@ -243,9 +243,9 @@ cmdlineopts::s_help_2 =
 
 const std::string
 cmdlineopts::s_help_3 =
-"   -u, --user-save          Save the 'user' configuration settings.  Normally,\n"
+"   -u, --user-save          Save the 'usr' configuration settings.  Normally,\n"
 "                            they are saved only if the file does not exist, so\n"
-"                            that certain 'user' command-line options, such as\n"
+"                            that certain 'usr' command-line options, such as\n"
 "                            --bus, do not become permanent.\n"
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
 "                            relative to $HOME.  The default is .config/seq66.\n"
@@ -288,6 +288,9 @@ const std::string
 cmdlineopts::s_help_4b =
 "              scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "              mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
+"              virtual=o,i   Same as --manual-ports, except that the number of\n"
+"                            output and input ports can be specified. The\n"
+"                            default values are 8 and 4, respectively.\n"
 "\n"
 " seq66cli:\n"
 "              daemonize     Makes this application fork to the background.\n"
@@ -519,7 +522,10 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             }
                             else if (optionname == "wid")
                             {
-                                // not supported, replaced by external frames
+                                /*
+                                 * Not supported in Seq66; replaced by
+                                 * external frames.
+                                 */
                             }
                             else if (optionname == "sets")
                             {
@@ -570,6 +576,29 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                     rc().mute_groups().group_save(arg);
                                     result = true;
                                 }
+                            }
+                            else if (optionname == "virtual")
+                            {
+                                rc().manual_ports(true);
+                                if (arg.empty())
+                                {
+                                    rc().manual_port_count(0);
+                                    rc().manual_in_port_count(0);
+                                }
+                                else
+                                {
+                                    int out = string_to_int(arg);
+                                    int in = 0;
+                                    std::string::size_type p =
+                                        arg.find_first_of(",");
+
+                                    if (p != std::string::npos)
+                                        out = string_to_int(arg.substr(p+1));
+
+                                    rc().manual_port_count(out);
+                                    rc().manual_in_port_count(in);
+                                }
+                                result = true;
                             }
                         }
                         if (! result)
@@ -643,7 +672,7 @@ cmdlineopts::parse_log_option (int argc, char * argv [])
  *  of the command-line options.  The caller can then use the command-line to
  *  make any modifications to the setting that will be used here.  The biggest
  *  example is the -r/--reveal-ports option, which determines if the MIDI
- *  buss definition strings are read from the 'user' configuration file.
+ *  buss definition strings are read from the 'usr' configuration file.
  *
  *  Instead of the legacy Seq24 names, we use the new configuration
  *  file-names, located in the ~/.config/seq66 directory. If they are not

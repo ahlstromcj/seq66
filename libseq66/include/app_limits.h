@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-12-05
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -162,12 +162,22 @@
 #define SEQ66_SEQKEY_HEIGHT               10
 
 /**
- *  The number of ALSA busses supported.  See mastermidibus::init().  Currently,
- *  this is also the default number of "manual" (virtual) output ports created
- *  in the manual-ports mode.
+ *  The number of default virtual ALSA input busses supported in the
+ *  manual-ports mode.  This value used to implicitly be 1, but it would be
+ *  useful to allow a few more.
+ */
+
+#define SEQ66_INPUT_BUSS_MAX              16
+#define SEQ66_INPUT_BUSS_DEFAULT           4
+
+/**
+ *  The number of ALSA I/O busses supported.  See mastermidibus::init().
+ *  Currently, this is also the default number of "manual" (virtual) output
+ *  ports created in the manual-ports mode.
  */
 
 #define SEQ66_OUTPUT_BUSS_MAX             16
+#define SEQ66_OUTPUT_BUSS_DEFAULT          8
 
 /**
  *  Flags an unspecified buss number.  Two spellings are provided, one for

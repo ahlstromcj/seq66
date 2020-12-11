@@ -1,6 +1,6 @@
 README for Seq66 0.91.3 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-12-07
+2015-09-10 to 2020-12-15
 
 "Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
 and with a lot of krufty buildup removed.
@@ -64,6 +64,8 @@ Recent changes:
         -   Added check to not apply last mute-group if in Song mode.
         -   Provisional support for playing multiple sets at once and for
             auto-arming the selected set when loaded.
+        -   Added configurable number of virtual MIDI input ports.
+        -   Refactoring port naming slightly due to the above.
     -   Version 0.91.2:
         -   Fix developer bug causing playlists to not load properly.
         -   Fix crash when 'rc' file specifies empty mutes and ctrl files.

@@ -20,7 +20,7 @@
       <string>Provides a table of MIDI output ports/busses and clock settings, input busses, and more.  There is a bug in the MIDI Clock tab where it won't respond to a click except in a very specific place; the alternative is to do Alt-C once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -207,7 +207,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>350</y>
+         <y>420</y>
          <width>591</width>
          <height>81</height>
         </rect>

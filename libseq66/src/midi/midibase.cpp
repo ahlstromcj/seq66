@@ -178,7 +178,13 @@ midibase::midibase
     m_is_system_port    (makesystem),
     m_mutex             ()
 {
-    if (! makevirtual)
+    if (makevirtual)
+    {
+        /*
+         * Currently done in seq_rtmidi/src/midibus.cpp
+         */
+    }
+    else
     {
         if (! busname.empty() && ! portname.empty())
         {

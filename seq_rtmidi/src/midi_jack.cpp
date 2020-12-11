@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-10
+ * \updates       2020-12-11
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -672,13 +672,14 @@ midi_jack::api_init_out_sub ()
         if (portname.empty())
         {
             /*
-             * We don't need to prepend the client name.
+             * We don't need to prepend the client name to the port name.
              * portname = rc().app_client_name() + " midi out ";
              */
 
-            portname = "midi out ";
-            portname += std::to_string(portid);
+            portname = "midi out";
         }
+        portname += " ";
+        portname += std::to_string(portid);
         result = register_port(SEQ66_MIDI_OUTPUT_PORT, portname);
         if (result)
         {
@@ -707,6 +708,11 @@ midi_jack::api_init_in_sub ()
         portid = bus_index();
         result = portid >= 0;
     }
+
+    /*
+     * No need for a JACK ringbuffer for input?
+     */
+
     if (result)
     {
         std::string portname = master_info().get_port_name(bus_index());
@@ -714,13 +720,14 @@ midi_jack::api_init_in_sub ()
         if (portname.empty())
         {
             /*
-             * We don't need to prepend the client name.
+             * We don't need to prepend the client name to the port name.
              * portname = rc().app_client_name() + " midi in ";
              */
 
-            portname = "midi in ";
-            portname += std::to_string(portid);
+            portname = "midi in";
         }
+        portname += " ";
+        portname += std::to_string(portid);
         result = register_port(SEQ66_MIDI_INPUT_PORT, portname);
         if (result)
         {

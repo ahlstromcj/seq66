@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-07
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -96,7 +96,8 @@ rcsettings::rcsettings () :
 #endif
     m_song_start_mode           (false),
     m_manual_ports              (false),
-    m_manual_port_count         (SEQ66_OUTPUT_BUSS_MAX),
+    m_manual_port_count         (SEQ66_OUTPUT_BUSS_DEFAULT),
+    m_manual_in_port_count      (SEQ66_INPUT_BUSS_DEFAULT),
     m_reveal_ports              (false),
     m_print_keys                (false),
     m_device_ignore             (false),
@@ -188,7 +189,8 @@ rcsettings::set_defaults ()
 #endif
     m_song_start_mode           = false;
     m_manual_ports              = false;
-    m_manual_port_count         = SEQ66_OUTPUT_BUSS_MAX;
+    m_manual_port_count         = SEQ66_OUTPUT_BUSS_DEFAULT;
+    m_manual_in_port_count      = SEQ66_INPUT_BUSS_DEFAULT;
     m_reveal_ports              = false;
     m_print_keys                = false;
     m_device_ignore             = false;

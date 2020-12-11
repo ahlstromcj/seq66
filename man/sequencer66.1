@@ -114,13 +114,15 @@ Instead, specify the file itself as the last command-line argument.
 .TP 8
 .B \-m, \-\-manual-ports
 Seq66 won't attach (auto-connect) ALSA/JACK MIDI ports.
-Instead, it will create is own set of virtual input and output busses/ports.
+Instead, it will create is own set of 4 virtual input and
+8 virtual output busses/ports.
+To change this number, use the "-o virtual" option.
 The user can then connect them manually (e.g. in qjackctl for JACK usage).
 Not supported in the PortMIDI build.
 
 .TP 8
 .B \-a, \-\-auto-ports
-Seq66 will attach (auto-connect) to ALSA/JACK MIDI ports.
+Seq66 will attach (auto-connect) to existing ALSA/JACK MIDI ports.
 Useful for overriding the qseq66.rc configuration file when
 set up to use manual (virtual) ports.
 
@@ -254,6 +256,8 @@ scale=x       Scales the main window size, from 0.5 to 3.0.
 mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.
               'mutes' saves to a separate file, 'midi' saves the mutes
               in the MIDI file.
+virtual=o,i   Set up the --manual-ports option, using 'o' output ports
+              and 'i' input ports.
 
 .SH FILES
 \fB$HOME\fP/.config/qseq66.rc stores the main configuration settings for

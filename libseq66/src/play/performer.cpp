@@ -693,10 +693,11 @@ performer::reload_mute_groups (std::string & errmessage)
 }
 
 /**
- *  Sets the input bus, and handles the special "key labels on sequence" and
- *  "sequence numbers on sequence" functionality.  This function is called by
- *  qinputcheckbox :: input_callback_clicked().  Note that the mastermidibus ::
- *  set_input() function passes the setting along to the input busarray.
+ *  Sets the main input bus, and handles the special "key labels on sequence"
+ *  and "sequence numbers on sequence" functionality.  This function is called
+ *  by qinputcheckbox :: input_callback_clicked().  Note that the
+ *  mastermidibus :: set_input() function passes the setting along to the
+ *  input busarray.
  *
  * \param bus
  *      Provides the buss number, less than c_busscount_max (32).

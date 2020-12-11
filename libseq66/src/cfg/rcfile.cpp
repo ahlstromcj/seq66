@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-10
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -495,6 +495,12 @@ rcfile::parse ()
             int count;
             sscanf(scanline(), "%d", &count);
             rc().manual_port_count(count);
+        }
+        if (next_data_line(file))
+        {
+            int count;
+            sscanf(scanline(), "%d", &count);
+            rc().manual_in_port_count(count);
         }
     }
     else
@@ -991,16 +997,18 @@ rcfile::write ()
 
     file
         << "\n[manual-ports]\n\n"
-           "# Set to 1 to have Seq66 create its own ALSA/JACK ports and not\n"
-           "# auto-connect to other clients.  It creates up to 16 MIDI ports.\n"
-           "# Use 0 to auto-connect Seq66 to the system's ALSA/JACK MIDI ports\n"
-           "# already running on the computer.\n"
-           "#\n"
-           "# A new feature is to change the number of ports; defaults to 16.\n"
+           "# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not\n"
+           "# auto-connect to other clients.  It allows up to 16 output ports.\n"
+           "# and 8 input ports. Set the first value (the flag) to 0 to\n"
+           "# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
+           "# A new feature is to change the number of ports; see below.\n"
            "\n"
         << (rc_ref().manual_ports() ? "1" : "0")
         << "   # flag for manual (virtual) ALSA or JACK ports\n"
-        << rc().manual_port_count() << "   # number of manual/virtual ports\n"
+        << rc().manual_port_count()
+        << "   # number of manual/virtual output ports\n"
+        << rc().manual_in_port_count()
+        << "   # number of manual/virtual input ports\n"
         ;
 
     /*

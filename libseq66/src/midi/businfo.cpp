@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2020-08-02
+ * \updates       2020-12-11
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -164,7 +164,14 @@ businfo::initialize ()
     {
         if (! bus()->port_disabled())           /* is port enabled?         */
         {
-            if (! bus()->is_input_port())       /* not built in master bus  */
+            if (bus()->is_input_port())         /* not built in master bus  */
+            {
+                // result = bus()->is_virtual_port() ?
+                //     bus()->init_in_sub() : bus()->init_in() ;
+                if (bus()->is_virtual_port())
+                    bus()->init_in_sub();
+            }
+            else
             {
                 result = bus()->is_virtual_port() ?
                     bus()->init_out_sub() : bus()->init_out() ;
