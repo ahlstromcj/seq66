@@ -168,8 +168,8 @@ businfo::initialize ()
             {
                 // result = bus()->is_virtual_port() ?
                 //     bus()->init_in_sub() : bus()->init_in() ;
-                if (bus()->is_virtual_port())
-                    bus()->init_in_sub();
+                // if (bus()->is_virtual_port())
+                //     bus()->init_in_sub();
             }
             else
             {
@@ -734,7 +734,7 @@ busarray::get_midi_event (event * inev)
         {
             bussbyte b = bussbyte(bi.bus()->bus_index());
             inev->set_input_bus(b);
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
             printf("event in on buss %d\n", int(b));
 #endif
             return true;

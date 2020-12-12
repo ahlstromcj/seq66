@@ -15,14 +15,30 @@
 #
 #         https://wiki.archlinux.org/index.php/JACK_Audio_Connection_Kit
 #
-#   Requires the python-dbus package to be installed.  The HD2 values available
-#   are found in /proc/asound/cards:  PCH, HDMI, NVidia, CODEC, etc.  The "dps"
-#   rate can be 44100, 48000, and higher.  The "nperiods" value should be 2 for
-#   motherboard, PCI, PCI-X audio, and 3 for USB audio.
+#   Requires the python-dbus package to be installed.  The HWPORT values
+#   available are found in /proc/asound/cards:  PCH, HDMI, NVidia, CODEC, etc.
+#   The "dps" rate can be 44100, 48000, and higher.  The "nperiods" value
+#   should be 2 for motherboard, PCI, PCI-X audio, and 3 for USB audio.
+#
+#   However, we have had weird input issues, including missing input and
+#   extremely slow response  with this setup, but not with qjackctrl running
+#   with the macroed settings below.  Still experimenting.
+#
+#   With the current settings, latency = 21.3 msec.
 #
 #------------------------------------------------------------------------------
 
-HD2=PCH
+HWPORT=PCH
+JDRIVER=alsa
+SAMPLERATE=48000
+NPERIODS=4              # was 2
+PFRAMES=256             # was 64
+SLEEPTIME=10
+
+# Not yet used:
+
+REALTIME=yes
+MDRIVER=raw
 
 if [ "$1" == "kill" ] ; then
 
@@ -34,17 +50,17 @@ if [ "$1" == "kill" ] ; then
 else
 
     jack_control start
-    jack_control ds alsa
-    jack_control dps device hw:$HD2
-    jack_control dps rate 48000
-    jack_control dps nperiods 2
-    jack_control dps period 64
-    echo "Waiting 10 seconds for jack_control to settle..."
-    sleep 10
+    jack_control ds $JDRIVER
+    jack_control dps device hw:$HWPORT
+    jack_control dps rate $SAMPLERATE
+    jack_control dps nperiods $NPERIODS
+    jack_control dps period $PFRAMES
+    echo "Waiting $SLEEPTIME seconds for jack_control to settle..."
+    sleep $SLEEPTIME
     a2j_control --ehw
     a2j_control --start
-    echo "Waiting 10 seconds for a2j_control to settle..."
-    sleep 10
+    echo "Waiting $SLEEPTIME seconds for a2j_control to settle..."
+    sleep $SLEEPTIME
     echo "Starting qjackctl..."
     qjackctl &
 

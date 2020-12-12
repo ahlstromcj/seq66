@@ -355,22 +355,16 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
         if (result)
         {
             std::string clientname = cname;
-            std::string pname = portname;
             set_port_id(portid);
+            port_name(portname);
+            set_bus_id(cid);
+            set_name(rc().app_client_name(), clientname, portname);
 
             /*
-             * ca 2020-12-10 This makes two numbers appear. The port number is
-             * already part of the port name.  The portid argument is obtained
-             * from ALSA and is one higher than the index!
+             * Redundant?
              */
 
-            pname += " ";
-            pname += std::to_string(portid);
-
-            port_name(pname);
-            set_bus_id(cid);
-            set_name(rc().app_client_name(), clientname, pname);
-            parent_bus().set_name(rc().app_client_name(), clientname, pname);
+            parent_bus().set_name(rc().app_client_name(), clientname, portname);
         }
     }
     return result;

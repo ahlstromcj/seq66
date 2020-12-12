@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-11
+ * \updates       2020-12-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -334,71 +334,6 @@ rcfile::parse ()
         rc_ref().use_mute_group_file(false);
     }
 
-    if (ok)
-        ok = line_after(file, "[midi-clock]");
-
-    int buses = 0;
-    if (ok)
-    {
-        sscanf(scanline(), "%d", &buses);
-        ok = next_data_line(file) && buses > 0 && buses <= c_busscount_max;
-    }
-    if (ok)
-    {
-        /**
-         * One thing about MIDI clock values.  If a device (e.g. my Korg
-         * nanoKEY2) is present in a system when Seq66 is exited, it
-         * will be saved in the [midi-clock] list.  When unplugged, it will be
-         * read here at startup, but won't be shown.  The next exit will find
-         * it removed from this list.
-         *
-         * Also, we want to pre-allocate the number of clock entries needed,
-         * and then use the buss number to populate the list of clocks, in the
-         * odd event that the user changed the bus-order of the entries.
-         */
-
-        rc_ref().clocks().resize(size_t(buses));
-        for (int i = 0; i < buses; ++i)
-        {
-            int bus, bus_on;
-            int count = sscanf(scanline(), "%d %d", &bus, &bus_on);
-            ok = count == 2;
-            if (ok)
-            {
-                rc_ref().clocks().set(bus, static_cast<e_clock>(bus_on));
-                ok = next_data_line(file);
-                if (! ok)
-                {
-                    if (i < (buses-1))
-                    {
-                        return make_error_message
-                        (
-                            "midi-clock", "missing data line"
-                        );
-                    }
-                }
-            }
-            else
-            {
-                return make_error_message("midi-clock", "data line error");
-            }
-        }
-    }
-    else
-    {
-        /*
-         *  If this is zero, we need to fake it to have 1 buss with a 0 clock,
-         *  rather than make the poor user figure out how to fix it.
-         *
-         *      return make_error_message("midi-clock");
-         *
-         *  And let's use the new e_clock::disabled code instead of
-         *  e_clock::off.  LATER?
-         */
-
-        rc_ref().clocks().add(e_clock::off, "Bad clock count");
-    }
-
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
      * rc() accessor function.
@@ -437,12 +372,12 @@ rcfile::parse ()
 
     if (line_after(file, "[midi-input]"))
     {
-        int buses = 0;
-        int count = sscanf(scanline(), "%d", &buses);
-        if (count > 0 && buses > 0)
+        int inbuses = 0;
+        int count = sscanf(scanline(), "%d", &inbuses);
+        if (count > 0 && inbuses > 0)
         {
             int b = 0;
-            rc_ref().inputs().resize(size_t(buses));
+            rc_ref().inputs().resize(size_t(inbuses));
             while (next_data_line(file))
             {
                 int bus, bus_on;
@@ -459,12 +394,67 @@ rcfile::parse ()
                     toggleprint("Filter-by-channel", flag);
                 }
             }
-            if (b < buses)
+            if (b < inbuses)
                 return make_error_message("midi-input", "too few buses");
         }
     }
     else
         return make_error_message("midi-input", "data lines missing");
+
+    if (ok)
+        ok = line_after(file, "[midi-clock]");
+
+    int outbuses = 0;
+    if (ok)
+    {
+        sscanf(scanline(), "%d", &outbuses);
+        ok = next_data_line(file) && outbuses > 0 && outbuses <= c_busscount_max;
+    }
+    if (ok)
+    {
+        /**
+         * One thing about MIDI clock values.  If a device (e.g. my Korg
+         * nanoKEY2) is present in a system when Seq66 is exited, it
+         * will be saved in the [midi-clock] list.  When unplugged, it will be
+         * read here at startup, but won't be shown.  The next exit will find
+         * it removed from this list.
+         *
+         * Also, we want to pre-allocate the number of clock entries needed,
+         * and then use the buss number to populate the list of clocks, in the
+         * odd event that the user changed the bus-order of the entries.
+         */
+
+        rc_ref().clocks().resize(size_t(outbuses));
+        for (int i = 0; i < outbuses; ++i)
+        {
+            int bus, bus_on;
+            int count = sscanf(scanline(), "%d %d", &bus, &bus_on);
+            ok = count == 2;
+            if (ok)
+            {
+                rc_ref().clocks().set(bus, static_cast<e_clock>(bus_on));
+                ok = next_data_line(file);
+                if (! ok && i < (outbuses-1))
+                    return make_error_message("midi-clock", "missing data line");
+            }
+            else
+                return make_error_message("midi-clock", "data line error");
+        }
+    }
+    else
+    {
+        /*
+         *  If this is zero, we need to fake it to have 1 buss with a 0 clock,
+         *  rather than make the poor user figure out how to fix it.
+         *
+         *      return make_error_message("midi-clock");
+         *
+         *  And let's use the new e_clock::disabled code instead of
+         *  e_clock::off.  LATER?
+         */
+
+        rc_ref().clocks().add(e_clock::off, "Bad clock count");
+    }
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
     {
@@ -888,6 +878,43 @@ rcfile::write ()
         ok = write_mute_groups(file);
 
     /*
+     * New section for MIDI meta events.
+     */
+
+    file
+        << "\n[midi-meta-events]\n\n"
+           "# This section defines some features of MIDI meta-event handling.\n"
+           "# Normally, tempo events are supposed to occur in the first track\n"
+           "# (pattern 0).  But one can move this track elsewhere to accomodate\n"
+           "# one's existing body of tunes.  If affects where tempo events are\n"
+           "# recorded.  The default value is 0, the maximum is 1023.\n"
+           "# A pattern must exist at this number for it to work.\n"
+           "\n"
+        << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
+        ;
+
+    int inbuses = bussbyte(rc_ref().inputs().count());
+    file <<
+           "\n[midi-input]\n\n"
+           "# These ports can be used for input into Seq66.\n"
+           "# From JACK's perspective, these are 'playback' devices.\n"
+           "# The first number is the port/buss number, and the second number\n"
+           "# is the input status, disabled (0) or enabled (1). The item in\n"
+           "# quotes is the input-buss name.\n"
+           "\n"
+        << int(inbuses) << "   # number of input MIDI busses\n\n"
+        ;
+
+    for (bussbyte bus = 0; bus < inbuses; ++bus)
+    {
+        int bus_on = static_cast<bool>(rc_ref().inputs().get(bus));
+        file
+            << int(bus) << " " << bus_on << "    \""
+            << rc_ref().inputs().get_name(bus) << "\"\n"
+            ;
+    }
+
+    /*
      * Bus mute/unmute data.  At this point, we can use the master_bus()
      * accessor, even if a pointer dereference, because it was created at
      * application start-up, and here we are at application close-down.
@@ -898,27 +925,28 @@ rcfile::write ()
      * function.
      */
 
-    bussbyte buses = bussbyte(rc_ref().clocks().count());
+    bussbyte outbuses = bussbyte(rc_ref().clocks().count());
     file << "\n"
        "[midi-clock]\n\n"
        "# These ports can be used for output from Seq66, for playback/control.\n"
-       "# From JACK's perspective, these are 'capture' devices. Maybe?\n"
-       "#\n"
+       "# From JACK's perspective, these are 'capture' devices.\n"
        "# The first line shows the count of MIDI 'capture' ports. Each line\n"
-       "# contains the buss/port number (re 0) and clock status of that buss:\n\n"
+       "# contains the buss/port number (re 0) and clock status of that buss:\n"
+       "#\n"
        "#   0 = MIDI Clock is off.\n"
        "#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.\n"
        "#   2 = MIDI Clock Module.\n"
-       "#  -1 = The output port is disabled.\n\n"
+       "#  -1 = The output port is disabled.\n"
+       "#\n"
        "# With Clock Modulo, MIDI clocking will not begin until the song\n"
        "# position reaches the start modulo value [midi-clock-mod-ticks].\n"
        "# One can disable a port manually for devices that are present, but\n"
        "# not available, perhaps because another application has exclusive\n"
        "# access to the device (e.g. on Windows).\n\n"
-        << int(buses) << "    # number of MIDI clocks (output busses)\n\n"
+        << int(outbuses) << "    # number of MIDI clocks (output busses)\n\n"
         ;
 
-    for (bussbyte bus = 0; bus < buses; ++bus)
+    for (bussbyte bus = 0; bus < outbuses; ++bus)
     {
         int bus_on = static_cast<int>(rc_ref().clocks().get(bus));
         file
@@ -937,44 +965,6 @@ rcfile::write ()
         "\n"
         << midibus::get_clock_mod() << "\n"
        ;
-
-    /*
-     * New section for MIDI meta events.
-     */
-
-    file
-        << "\n[midi-meta-events]\n\n"
-           "# This section defines some features of MIDI meta-event handling.\n"
-           "# Normally, tempo events are supposed to occur in the first track\n"
-           "# (pattern 0).  But one can move this track elsewhere to accomodate\n"
-           "# one's existing body of tunes.  If affects where tempo events are\n"
-           "# recorded.  The default value is 0, the maximum is 1023.\n"
-           "# A pattern must exist at this number for it to work.\n"
-           "\n"
-        << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
-        ;
-
-    buses = bussbyte(rc_ref().inputs().count());
-    file <<
-           "\n[midi-input]\n\n"
-           "# These ports can be used for input into Seq66.\n"
-           "# From JACK's perspective, these are 'playback' devices. Maybe?\n"
-           "#\n"
-           "# The first number is the port/buss number, and the second number\n"
-           "# is the input status, disabled (0) or enabled (1). The item in\n"
-           "# quotes is the input-buss name.\n"
-           "\n"
-        << int(buses) << "   # number of input MIDI busses\n\n"
-        ;
-
-    for (bussbyte bus = 0; bus < buses; ++bus)
-    {
-        int bus_on = static_cast<bool>(rc_ref().inputs().get(bus));
-        file
-            << int(bus) << " " << bus_on << "    \""
-            << rc_ref().inputs().get_name(bus) << "\"\n"
-            ;
-    }
 
     /*
      * Filter by channel, new option as of 2016-08-20

@@ -124,8 +124,8 @@ midibus::midibus
         pname += isinput ? "in" : "out";
         if (index >= 0)
         {
-////        pname += " ";
-////        pname += std::to_string(index);
+            pname += " ";
+            pname += std::to_string(index);
             port_name(pname);
             set_port_id(index);
             set_bus_id(index);

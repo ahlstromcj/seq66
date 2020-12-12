@@ -638,7 +638,15 @@ midi_jack::set_virtual_name (int portid, const std::string & portname)
             set_port_id(portid);
             port_name(portname);
             set_name(rc().app_client_name(), clientname, portname);
-            parent_bus().set_name(rc().app_client_name(), clientname, portname);
+
+            /*
+             * Already done.
+             *
+             * parent_bus().set_name
+             * (
+             *      rc().app_client_name(), clientname, portname
+             * );
+             */
         }
     }
     return result;
@@ -671,15 +679,10 @@ midi_jack::api_init_out_sub ()
         std::string portname = parent_bus().port_name();
         if (portname.empty())
         {
-            /*
-             * We don't need to prepend the client name to the port name.
-             * portname = rc().app_client_name() + " midi out ";
-             */
-
             portname = "midi out";
+            portname += " ";
+            portname += std::to_string(portid);
         }
-        portname += " ";
-        portname += std::to_string(portid);
         result = register_port(SEQ66_MIDI_OUTPUT_PORT, portname);
         if (result)
         {
@@ -719,15 +722,10 @@ midi_jack::api_init_in_sub ()
         std::string portname2 = parent_bus().port_name();
         if (portname.empty())
         {
-            /*
-             * We don't need to prepend the client name to the port name.
-             * portname = rc().app_client_name() + " midi in ";
-             */
-
             portname = "midi in";
+            portname += " ";
+            portname += std::to_string(portid);
         }
-        portname += " ";
-        portname += std::to_string(portid);
         result = register_port(SEQ66_MIDI_INPUT_PORT, portname);
         if (result)
         {
