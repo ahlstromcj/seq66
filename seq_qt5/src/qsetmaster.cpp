@@ -616,18 +616,7 @@ qsetmaster::changeEvent (QEvent * event)
     QWidget::changeEvent(event);
     if (event->type() == QEvent::ActivationChange)
     {
-        /*
-        if (isActiveWindow())
-        {
-            m_has_focus = true;             // widget is now active
-
-            (void) cb_perf().set_playing_screenset(m_bank_id);
-        }
-        else
-        {
-            m_has_focus = false;            // widget is now inactive
-        }
-         */
+        // no useful code yet
     }
 }
 
