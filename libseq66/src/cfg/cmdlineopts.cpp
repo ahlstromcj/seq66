@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-12-11
+ * \updates       2020-12-13
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -385,7 +385,7 @@ cmdlineopts::get_compound_option
 )
 {
     std::string value;
-    std::size_t eqpos = compound.find_first_of("=");
+    auto eqpos = compound.find_first_of("=");
     if (eqpos == std::string::npos)
     {
         optionname.clear();
@@ -532,9 +532,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                                 if (arg.length() >= 3)
                                 {
                                     int rows = string_to_int(arg);
-                                    std::string::size_type p =
-                                        arg.find_first_of("x");
-
+                                    auto p = arg.find_first_of("x");
                                     if (p != std::string::npos)
                                     {
                                         int cols = string_to_int(arg.substr(p+1));
@@ -579,25 +577,17 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             }
                             else if (optionname == "virtual")
                             {
+                                int out = 0, in = 0;
                                 rc().manual_ports(true);
-                                if (arg.empty())
+                                if (! arg.empty())
                                 {
-                                    rc().manual_port_count(0);
-                                    rc().manual_in_port_count(0);
-                                }
-                                else
-                                {
-                                    int out = string_to_int(arg);
-                                    int in = 0;
-                                    std::string::size_type p =
-                                        arg.find_first_of(",");
-
+                                    out = string_to_int(arg);
+                                    auto p = arg.find_first_of(",");
                                     if (p != std::string::npos)
-                                        out = string_to_int(arg.substr(p+1));
-
-                                    rc().manual_port_count(out);
-                                    rc().manual_in_port_count(in);
+                                        in = string_to_int(arg.substr(p+1));
                                 }
+                                rc().manual_port_count(out);
+                                rc().manual_in_port_count(in);
                                 result = true;
                             }
                         }
@@ -1105,11 +1095,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         appname = appname.substr(appname.size()-applen, applen);
         result = optind;
     }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    show_args("After", argc, argv);
-#endif
-
     return result;
 }
 
@@ -1173,7 +1158,6 @@ cmdlineopts::write_options_files (const std::string & filename)
         rcn = rc().user_filespec(name);
         cansave = true;
     }
-
     if (cansave)
     {
         usrfile userstuff(rcn, rc());

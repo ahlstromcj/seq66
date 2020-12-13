@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-30
- * \updates       2020-09-14
+ * \updates       2020-12-13
  * \license       GNU GPLv2 or above
  *
  *  This class provides a process for starting, running, restarting, and
@@ -136,11 +136,11 @@ public:
 
     bool create (int argc, char * argv []);
     bool main_settings (int argc, char * argv []);
-    bool open_playlist ();                          // make protected ?
-    bool open_note_mapper ();                       // make protected ?
-    bool create_performer ();                       // make protected ?
+    bool open_playlist ();
+    bool open_note_mapper ();
+    bool create_performer ();
 
-    std::string open_midi_file (const std::string & fname, std::string & msg);
+    std::string open_midi_file (const std::string & fname);
 
     bool error_active () const
     {
@@ -255,6 +255,11 @@ protected:
     performer * perf ()
     {
         return m_perf_pointer.get();
+    }
+
+    void midi_filename (const std::string & fname)
+    {
+        m_midi_filename = fname;
     }
 
     void last_dirty_status (bool flag)

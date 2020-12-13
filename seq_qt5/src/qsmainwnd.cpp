@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-07
+ * \updates       2020-12-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1213,8 +1213,10 @@ qsmainwnd::open_file (const std::string & fn)
         m_is_title_dirty = true;
     }
     else
+    {
         show_message_box(errmsg);
-
+        update_recent_files_menu();
+    }
     return result;
 }
 
@@ -2951,18 +2953,14 @@ qsmainwnd::disconnect_normal_slots ()
         ui->actionSave_As, SIGNAL(triggered(bool)), this, SLOT(save_file_as())
     );
 
-    // ui->actionClose->setVisible(false);
-
     /*
-     *  The opposite of create_action_connections().  We hope clear() disconnects
-     *  everything.  Similar for create_action_menu();
+     *  The opposite of create_action_connections().  We hope clear()
+     *  disconnects everything.  Similar for create_action_menu();
      */
 
     m_recent_action_list.clear();
     if (not_nullptr(m_menu_recent) && m_menu_recent->isWidgetType())
         delete m_menu_recent;
-
-    // update_recent_files_menu();
 }
 
 /**

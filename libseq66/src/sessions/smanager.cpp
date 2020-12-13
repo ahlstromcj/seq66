@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-11-26
+ * \updates       2020-12-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -380,9 +380,10 @@ smanager::open_note_mapper ()
  */
 
 std::string
-smanager::open_midi_file (const std::string & fname, std::string & errmsg)
+smanager::open_midi_file (const std::string & fname)
 {
     std::string midifname;                          /* start out blank      */
+    std::string errmsg;
     bool result = perf()->read_midi_file(fname, errmsg);
     if (result)
     {
@@ -393,8 +394,9 @@ smanager::open_midi_file (const std::string & fname, std::string & errmsg)
         (void) perf()->apply_session_mutes();
     }
     else
-        (void) seq66::error_message(errmsg);
-
+    {
+        append_error_message(errmsg); // errmsg = "Open failed: '" + fname + "'";
+    }
     return midifname;
 }
 
@@ -741,6 +743,31 @@ smanager::error_handling ()
 /**
  *  Refactored so that the basic NSM session can be set up before launch(), as
  *  per NSM rules.
+ *
+ *  The following call detects a session, creates an nsmclient, sends an NSM
+ *  announce message, waits for the response, uses it to set the session
+ *  information.  What we really see:
+ *
+ *      nsmclient::announce()       Send announcement, wait for response
+ *      <below>                     Gets manager path!!!
+ *      nsmclient::open()           Sets manager path
+*
+ *  We run() the window, get the exit status, and close the session in the
+ *  main() function of the application.
+ *
+ *  Call sequence summary:
+ *
+ *      -   main_settings()
+ *      -   create_session()
+ *      -   create_project()
+ *      -   create_performer()
+ *      -   open_playlist()
+ *      -   open_note_mapper()
+ *      -   open_midi_file() if specified on command-line; otherwise
+ *      -   open most-recent file if that option is enabled
+ *      -   create_window()
+ *      -   run(), done in main()
+ *      -   close_session(), done in main()
  */
 
 bool
@@ -749,20 +776,6 @@ smanager::create (int argc, char * argv [])
     bool result = main_settings(argc, argv);
     if (result)
     {
-        /*
-         * The following call detects a session, creates an nsmclient,
-         * sends an NSM announce message, waits for the response, uses it to
-         * set the session information.
-         *
-         * What we really see:
-         *
-         *  nsmclient::announce()       Send announcement, wait for response
-         *  <below>                     Gets manager path!!!
-         *  nsmclient::open()           Sets manager path
-         *
-         *
-         */
-
         if (create_session(argc, argv))     /* get path, client ID, etc.    */
         {
 #if defined SEQ66_PLATFORM_DEBUG_TEST_NSM   /* enable to trouble-shoot      */
@@ -781,29 +794,6 @@ smanager::create (int argc, char * argv [])
         if (result)
             result = open_playlist();
 
-        if (result && rc().load_most_recent())
-        {
-            /*
-             * Get full path to the most recently-opened or imported file.
-             * What if smanager::open_midi_file() has already been
-             * called via the command-line? Then skip this step.
-             */
-
-            if (midi_filename().empty())
-            {
-                std::string midifname = rc().recent_file(0, false);
-                if (! midifname.empty())
-                {
-                    std::string errmsg;
-                    std::string tmp = open_midi_file(midifname, errmsg);
-                    if (tmp.empty())
-                        file_error(errmsg, midifname);
-                    else
-                        file_message("Opened", tmp);
-                }
-            }
-        }
-
         if (result)
             result = open_note_mapper();
 
@@ -812,39 +802,60 @@ smanager::create (int argc, char * argv [])
             std::string fname = midi_filename();
             if (fname.empty())
             {
-                if (is_debug())
-                    warnprint("MIDI filename empty, nothing to open");
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+                warnprint("MIDI filename empty, nothing to open");
+#endif
             }
             else
             {
                 std::string errormessage;
-                std::string tmp = open_midi_file(fname, errormessage);
+                std::string tmp = open_midi_file(fname);
 
                 /*
-                 * We don't have a window at this time, and should save the
-                 * message for display later.  For now, we write to the console.
+                 * No window at this time; should save the message for later.
+                 * For now, write to the console.
                  */
 
-                if (tmp.empty())
-                    file_error(errormessage, fname);
-                else
+                if (! tmp.empty())
+                {
                     file_message("Opened", tmp);
+                    midi_filename(fname);
+                }
+            }
+            if (result && rc().load_most_recent() && midi_filename().empty())
+            {
+                /*
+                 * Get full path to the most recently-opened or imported file.
+                 * What if smanager::open_midi_file() has already been
+                 * called via the command-line? Then skip this step.
+                 */
+
+                std::string midifname = rc().recent_file(0, false);
+                if (! midifname.empty())
+                {
+                    std::string errmsg;
+                    std::string tmp = open_midi_file(midifname);
+                    if (! tmp.empty())
+                    {
+                        file_message("Opened", tmp);
+                        midi_filename(midifname);
+                    }
+                }
             }
             result = create_window();
             if (result)
             {
                 error_handling();
-
-                /*
-                 * We run() the window, get the exit status, and close the
-                 * session in the main() function of the application.
-                 */
             }
             else
             {
-                std::string msg;
+                std::string msg;                        /* maybe errmsg? */
                 result = close_session(msg, false);
             }
+
+            /*
+             * TODO:  expose the error message to the user here
+             */
         }
     }
     else

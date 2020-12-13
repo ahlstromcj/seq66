@@ -188,8 +188,9 @@ private:
     std::string m_error_message;
 
     /**
-     *  Indicates if the error should be considered fatal.  The caller can
-     *  query for this value after getting the return value from parse().
+     *  Indicates if the error should be considered fatal to the loading of
+     *  the midifile.  The caller can query for this value after getting the
+     *  return value from parse().
      */
 
     bool m_error_is_fatal;

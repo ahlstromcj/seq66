@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-11-23
+ * \updates       2020-12-13
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -651,43 +651,48 @@ bool
 midifile::parse (performer & p, int screenset, bool importing)
 {
     bool result = grab_input_stream(std::string("MIDI"));
-    if (! result)
-        return false;
-
-    clear_errors();
-    m_smf0_splitter.initialize();                   /* SMF 0 support        */
-
-    midilong ID = read_long();                      /* read hdr chunk info  */
-    midilong hdrlength = read_long();               /* stock MThd length    */
-    if (ID != SEQ66_MTHD_TAG && hdrlength != 6)     /* magic number 'MThd'  */
-        return set_error_dump("Invalid MIDI header chunk detected", ID);
-
-    midishort Format = read_short();                /* 0, 1, or 2           */
-    if (Format == 0)
+    if (result)
     {
-        result = parse_smf_0(p, screenset);
-    }
-    else if (Format == 1)
-    {
-        result = parse_smf_1(p, screenset);
+        clear_errors();
+        m_smf0_splitter.initialize();                   /* SMF 0 support    */
+
+        midilong ID = read_long();                      /* hdr chunk info   */
+        midilong hdrlength = read_long();               /* MThd length      */
+        if (ID != SEQ66_MTHD_TAG && hdrlength != 6)     /* magic 'MThd'     */
+            return set_error_dump("Invalid MIDI header chunk detected", ID);
+
+        midishort Format = read_short();                /* 0, 1, or 2       */
+        if (Format == 0)
+        {
+            result = parse_smf_0(p, screenset);
+        }
+        else if (Format == 1)
+        {
+            result = parse_smf_1(p, screenset);
+        }
+        else
+        {
+            m_error_is_fatal = true;
+            result = set_error_dump
+            (
+                "Unsupported MIDI format number", midilong(Format)
+            );
+        }
+        if (result)
+        {
+            if (m_pos < m_file_size)                    /* any data left?   */
+            {
+                if (! importing)
+                    result = parse_proprietary_track(p, m_file_size);
+            }
+            if (result && screenset != 0)
+                 p.modify();                            /* modify flag      */
+        }
     }
     else
     {
         m_error_is_fatal = true;
-        result = set_error_dump
-        (
-            "Unsupported MIDI format number", midilong(Format)
-        );
-    }
-    if (result)
-    {
-        if (m_pos < m_file_size)                    /* any more data left?  */
-        {
-            if (! importing)
-                result = parse_proprietary_track(p, m_file_size);
-        }
-        if (result && screenset != 0)
-             p.modify();                            /* modification flag    */
+        result = set_error_dump("Cannot open MIDI", 0);
     }
     return result;
 }
@@ -3092,6 +3097,13 @@ read_midi_file
             if (f->error_is_fatal())
                 rc().remove_recent_file(fn);
         }
+    }
+    else
+    {
+        std::string msg = "File not accessible";
+        file_error(msg, fn);
+        errmsg = msg + ": " + fn;
+        rc().remove_recent_file(fn);
     }
     return result;
 }
