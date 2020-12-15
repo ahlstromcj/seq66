@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-11
+ * \updates       2020-12-15
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -242,10 +242,11 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
      * midi_jack_data::m_jack_port here, it should be good, or else.
      */
 
-    void * buff = jack_port_get_buffer(jackdata->m_jack_port, nframes);
-    if (not_nullptr(buff))
+    rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
+    bool enabled = rtindata->is_enabled();
+    if (enabled)
     {
-        rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
+        void * buff = jack_port_get_buffer(jackdata->m_jack_port, nframes);
         jack_midi_event_t jmevent;
         jack_time_t jtime;
         int evcount = jack_midi_get_event_count(buff);
@@ -296,6 +297,13 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                 }
             }
         }
+    }
+    else
+    {
+        /*
+         *  If not enabled, a common case with multiple inputs, we can't do
+         *  anything useful, even in debugging.
+         */
     }
     return 0;
 }
@@ -472,6 +480,14 @@ midi_jack::~midi_jack ()
     apiprint("~midi_jack", "jack");
 }
 
+void
+midi_jack::set_port_suspended (bool flag)
+{
+    midi_api::set_port_suspended(flag);
+    if (not_nullptr(m_jack_data.m_jack_rtmidiin))
+        m_jack_data.m_jack_rtmidiin->is_enabled(! flag);
+}
+
 /**
  *  Initialize the MIDI output port.  This initialization is done when the
  *  "manual ports" option is not in force.  This code is basically what was
@@ -493,31 +509,40 @@ midi_jack::~midi_jack ()
 bool
 midi_jack::api_init_out ()
 {
-    std::string remoteportname = connect_name();    /* "bus:port"   */
-    remote_port_name(remoteportname);
-
-    bool result = create_ringbuffer(JACK_RINGBUFFER_SIZE);
-    if (result)
+    bool result = true;
+    if (is_port_suspended())
     {
-        set_alt_name
-        (
-            rc().application_name(), rc().app_client_name(), remoteportname
-        );
-        parent_bus().set_alt_name
-        (
-            rc().application_name(), rc().app_client_name(), remoteportname
-        );
-        result = register_port(SEQ66_MIDI_OUTPUT_PORT, port_name());
+        set_port_suspended(false);
+    }
+    else
+    {
+        std::string remoteportname = connect_name();    /* "bus:port"   */
+        remote_port_name(remoteportname);
 
-        /*
-         * Note that we cannot connect ports until we are activated, and we
-         * cannot activate until all ports are properly set up.  Otherwise,
-         * we'd call:
-         *
-         *  std::string localname = connect_name();
-         *  result = connect_port(SEQ66_MIDI_OUTPUT, localname, remoteportname);
-         *  if (result) set_port_open();
-         */
+        result = create_ringbuffer(JACK_RINGBUFFER_SIZE);
+        if (result)
+        {
+            set_alt_name
+            (
+                rc().application_name(), rc().app_client_name(), remoteportname
+            );
+            parent_bus().set_alt_name
+            (
+                rc().application_name(), rc().app_client_name(), remoteportname
+            );
+            result = register_port(SEQ66_MIDI_OUTPUT_PORT, port_name());
+
+            /*
+             * Note that we cannot connect ports until we are activated, and
+             * we cannot activate until all ports are properly set up.
+             * Otherwise, we'd call:
+             *
+             *  std::string localname = connect_name();
+             *  result = connect_port(SEQ66_MIDI_OUTPUT, localname,
+             *      remoteportname);
+             *  if (result) set_port_open();
+             */
+        }
     }
     return result;
 }
@@ -555,30 +580,37 @@ midi_jack::api_init_out ()
 bool
 midi_jack::api_init_in ()
 {
-    std::string remoteportname = connect_name();    /* "bus:port"       */
-    remote_port_name(remoteportname);
-    set_alt_name
-    (
-        rc().application_name(), rc().app_client_name(), remoteportname
-    );
-    parent_bus().set_alt_name
-    (
-        rc().application_name(), rc().app_client_name(), remoteportname
-    );
-    bool result = register_port(SEQ66_MIDI_INPUT_PORT, port_name());
+    bool result = true;
+    if (is_port_suspended())
+    {
+        set_port_suspended(false);
+    }
+    else
+    {
+        std::string remoteportname = connect_name();    /* "bus:port"       */
+        remote_port_name(remoteportname);
+        set_alt_name
+        (
+            rc().application_name(), rc().app_client_name(), remoteportname
+        );
+        parent_bus().set_alt_name
+        (
+            rc().application_name(), rc().app_client_name(), remoteportname
+        );
+        result = register_port(SEQ66_MIDI_INPUT_PORT, port_name());
 
-    /*
-     * Note that we cannot connect ports until we are activated, and we
-     * cannot be activated until all ports are properly set up.
-     * Otherwise, we'd call:
-     *
-     *  std::string localname = connect_name();
-     *  result = connect_port(SEQ66_MIDI_INPUT, localname, remoteportname);
-     *  if (result) set_port_open();
-     *
-     * We also need to fill in the m_jack_data member here.
-     */
-
+        /*
+         * Note that we cannot connect ports until we are activated, and we
+         * cannot be activated until all ports are properly set up.
+         * Otherwise, we'd call:
+         *
+         *  std::string localname = connect_name();
+         *  result = connect_port(SEQ66_MIDI_INPUT, localname, remoteportname);
+         *  if (result) set_port_open();
+         *
+         * We also need to fill in the m_jack_data member here.
+         */
+    }
     return result;
 }
 
@@ -737,13 +769,35 @@ midi_jack::api_init_in_sub ()
 }
 
 /**
+ *  EXPERIMENTAL
+ */
+
+bool
+midi_jack::api_deinit_out ()
+{
+    set_port_suspended(true);
+    return true;
+}
+
+/**
  *  We could define these in the opposite order.
+ *
+ *  This function is mis-named at this time; it actually leaves the port open
+ *  now, and simply disables the reading of MIDI data.  We need to improve on
+ *  the life-cycle.
  */
 
 bool
 midi_jack::api_deinit_in ()
 {
-    close_port();
+    /*
+     * Do not close.  We still have callbacks responding, and they bitch about
+     * exercising a closed port.
+     *
+     * close_port();
+     */
+
+    set_port_suspended(true);
     return true;
 }
 
@@ -1374,6 +1428,7 @@ midi_in_jack::midi_in_jack (midibus & parentbus, midi_info & masterinfo)
      */
 
     m_jack_data.m_jack_rtmidiin = input_data();
+    m_jack_data.m_jack_rtmidiin->is_enabled(parentbus.get_input());
 }
 
 /**

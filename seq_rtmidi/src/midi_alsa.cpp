@@ -457,6 +457,16 @@ midi_alsa::api_init_in_sub ()
 }
 
 /**
+ *  EXPERIMENTAL
+ */
+
+bool
+midi_alsa::api_deinit_out ()
+{
+    return true;
+}
+
+/**
  *  Deinitialize the MIDI input.  Set the input and the output ports.
  *  The destination port is actually our local port.
  *

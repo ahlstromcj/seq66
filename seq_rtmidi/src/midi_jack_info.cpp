@@ -439,7 +439,7 @@ midi_jack_info::api_connect ()
     {
         for (auto m : bus_container())              /* midibus pointers */
         {
-            if (! m->is_virtual_port())
+            if (! m->port_disabled() && ! m->is_virtual_port())
             {
                 result = m->api_connect();
                 if (! result)

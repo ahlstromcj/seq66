@@ -128,6 +128,11 @@ public:
         return get_api()->api_init_in_sub();
     }
 
+    virtual bool api_deinit_out () override
+    {
+        return get_api()->api_deinit_out();
+    }
+
     virtual bool api_deinit_in () override
     {
         return get_api()->api_deinit_in();

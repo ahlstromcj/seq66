@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-20
- * \updates       2019-02-09
+ * \updates       2020-12-14
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  The lack of hiding of these types within a class is a little to be
@@ -261,16 +261,33 @@ class rtmidi_in_data
 
 private:
 
+    /**
+     *  Provides a queue of MIDI messages. Used when not using a JACK callback
+     *  for MIDI input.
+     */
+
     midi_queue m_queue;
-    midi_message m_message;
-    midibyte m_ignore_flags;
-    bool m_do_input;
+
+    /**
+     *  A one-time flag that starts out true and is falsified when the first
+     *  MIDI messages comes in to this port.  It simply resets the delta JACK
+     *  time.
+     */
+
     bool m_first_message;
     void * m_api_data;
     bool m_using_callback;
     rtmidi_callback_t m_user_callback;
     void * m_user_data;
     bool m_continue_sysex;
+
+    /**
+     *  This flag is used in order to allow the JACK callbacks to not respond
+     *  to disabled ports.  Ultimately, we want be able to remove ports and
+     *  disassociate them from the JACK callbacks... a future endeavor.
+     */
+
+    bool m_is_enabled;
 
 public:
 
@@ -286,39 +303,14 @@ public:
         return m_queue;
     }
 
-    const midi_message & message () const
+    bool is_enabled () const
     {
-        return m_message;
+        return m_is_enabled;
     }
 
-    midi_message & message ()
+    void is_enabled (bool flag)
     {
-        return m_message;
-    }
-
-    midibyte ignore_flags () const
-    {
-        return m_ignore_flags;
-    }
-
-    bool test_ignore_flags (midibyte testbits)
-    {
-        return bool(m_ignore_flags & testbits);
-    }
-
-    void ignore_flags (midibyte setbits)
-    {
-        m_ignore_flags = setbits;
-    }
-
-    bool do_input () const
-    {
-        return m_do_input;
-    }
-
-    void do_input (bool flag)
-    {
-        m_do_input = flag;
+        m_is_enabled = flag;
     }
 
     bool first_message () const

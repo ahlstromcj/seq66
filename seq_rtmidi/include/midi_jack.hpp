@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-12-11
+ * \updates       2019-12-15
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *    In this refactoring, we've stripped out most of the original RtMidi
@@ -84,6 +84,8 @@ public:
     midi_jack (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_jack ();
 
+    virtual void set_port_suspended (bool flag) override;
+
     /**
      * \getter m_jack_client
      *      This is the platform-specific version of midi_handle().
@@ -145,12 +147,12 @@ protected:
 
 protected:
 
-    //  virtual bool open_client () = 0;    // replaces "connect()"
     virtual bool api_connect () override;
     virtual bool api_init_out () override;
     virtual bool api_init_in () override;
     virtual bool api_init_out_sub () override;
     virtual bool api_init_in_sub () override;
+    virtual bool api_deinit_out () override;
     virtual bool api_deinit_in () override;
 
     /**

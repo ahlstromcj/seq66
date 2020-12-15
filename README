@@ -1,21 +1,19 @@
 README for Seq66 0.91.3 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-12-12
+2015-09-10 to 2020-12-15
 
-"Seq66" is a refactoring of the Qt version of "Sequencer64" with modern C++
-and with a lot of krufty buildup removed.
-"Seq66" is now the best-supported version of "Sequencer64".
-Linux users can build this application easily from the source code.  See
-the INSTALL file.  Windows users can get an installer package on GitHub at:
+"Seq66" is a new Qt version of "Sequencer64" with modern C++ and new features,
+now the "official" version of "Sequencer64".  Linux users can build this
+application easily from the source code.  See the INSTALL file.  Windows users
+can get an installer package on GitHub at:
 
    https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe (version 0.91.0 coming soon).
 
-Major changes:
+Major Changes (also see "Recent Changes" below):
 
     -   User interface:
-        -   Using Qt 5 for the user-interface (good cross-platform support).
-            Removed the "grid of sets" in favor of unlimited external live
-            grid windows.
+        -   Qt 5 (good cross-platform support).  No more "grid of sets", just
+            unlimited external windows.
         -   Added tabs for management of sets, mute-groups, song mode, pattern
             editing, event-editing, play-lists, and session management.
         -   Added a live frame using buttons to match Qt theming. (The original
@@ -31,21 +29,20 @@ Major changes:
             defines MIDI In controls for controlling Seq66, and MIDI Out controls
             for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
             Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini provided.
-    -   Non Session Manager.  Working on support for this manager, essentially
-        complete. Handles stopping and saving, display of details about the
-        session.
+    -   Non Session Manager.  Support for this manager is essentially complete.
+        Handles stopping and saving, display of details about the session.
     -   Internal:
         -   More consistent use of modern C++, including lambda functions.
-        -   Additional performer callbacks to reduce the need for polling in the
-            user-interface.
+        -   Additional performer callbacks to reduce the need for polling in
+            the user-interface.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 Here are the executables that can be built:
 
-Linux ALSA/JACK support: Seq66qt5/qseq66
-Linux daemon: Seq66cli/seq66cli
-Linux qmake/rtmidi: shadow/Seq66qt5/release/qrseq66
-Windows qmake/portmidi: shadow/Seq66qt5/release/qpseq66.exe
+    Linux ALSA/JACK support: Seq66qt5/qseq66
+    Linux daemon: Seq66cli/seq66cli
+    Linux qmake-rtmidi: shadow/Seq66qt5/release/qrseq66
+    Windows qmake-portmidi: shadow/Seq66qt5/release/qpseq66.exe
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 "rtmidi"
 (Linux) and "portmidi" (Windows) engines.  MIDI devices are detected,
@@ -56,7 +53,7 @@ The Qt 5 GUI is the only official GUI of Seq66.
 See the INSTALL file for build-from-source instructions for Linux or Windows,
 and using a conventional source tarball.
 
-Recent changes:
+Recent Changes:
 
     -   Version 0.91.3:
         -   Fixed bug in string-to-int conversion uncovered by automatic
@@ -64,17 +61,17 @@ Recent changes:
         -   Added check to not apply last mute-group if in Song mode.
         -   Provisional support for playing multiple sets at once and for
             auto-arming the selected set when loaded.
-        -   Added configurable number of virtual MIDI input ports.
-        -   Refactoring port naming slightly due to the above.
+        -   Added configurable number of virtual MIDI input/output ports.
+        -   Refactoring port naming and I/O lists.
+        -   Provides an option to for multiple-set playback and auto-arming
+            of a newly-selected set.
     -   Version 0.91.2:
         -   Fix developer bug causing playlists to not load properly.
         -   Fix crash when 'rc' file specifies empty mutes and ctrl files.
     -   Version 0.91.1:
         -   More fixes for mute-group (mutes) handling.
-        -   Ability to save the last-active mute-group for restoring on
-            startup.
-        -   Added a button to toggle insert mode in the pattern and
-            song editors.
+        -   Ability to save the last-active mute-group for restoring on startup.
+        -   Added a button to toggle insert mode in pattern and song editors.
         -   Robustness enhancement to NSM support.
     -   Version 0.91.0:
         -   Non Session Manager support essentially complete.  The

@@ -293,7 +293,8 @@ midibus::api_init_out_sub ()
 }
 
 /**
- *  Initializes the MIDI input port.
+ *  Initializes the MIDI input port.  Note that this port already exists if
+ *  we're coming back from suspending the port.
  *
  * \return
  *      Returns true if the input port was successfully opened.
@@ -305,7 +306,9 @@ midibus::api_init_in ()
     bool result = false;
     try
     {
-        m_rt_midi = new rtmidi_in(*this, m_master_info);
+        if (is_nullptr(m_rt_midi))
+            m_rt_midi = new rtmidi_in(*this, m_master_info);
+
         result = m_rt_midi->api_init_in();
     }
     catch (const rterror & err)
@@ -337,6 +340,17 @@ midibus::api_init_in_sub ()
     }
     return result;
 }
+
+/**
+ *  EXPERIMENTAL
+ */
+
+bool
+midibus::api_deinit_out ()
+{
+    return not_nullptr(m_rt_midi) ? m_rt_midi->api_deinit_out() : false ;
+}
+
 
 /**
  *  Forwards the de-initialization call to the API object that implements

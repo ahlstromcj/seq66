@@ -135,6 +135,7 @@ protected:
     virtual bool api_init_in () override;
     virtual bool api_init_out_sub () override;
     virtual bool api_init_in_sub () override;
+    virtual bool api_deinit_out () override;
     virtual bool api_deinit_in () override;
 
     /**

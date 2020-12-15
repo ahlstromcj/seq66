@@ -166,10 +166,7 @@ businfo::initialize ()
         {
             if (bus()->is_input_port())         /* not built in master bus  */
             {
-                // result = bus()->is_virtual_port() ?
-                //     bus()->init_in_sub() : bus()->init_in() ;
-                // if (bus()->is_virtual_port())
-                //     bus()->init_in_sub();
+                // do nothing here
             }
             else
             {

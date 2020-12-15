@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-12-01
- * \updates       2019-02-10
+ * \updates       2020-12-14
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Provides some basic types for the (heavily-factored) rtmidi library, very
@@ -195,21 +195,20 @@ midi_queue::pop_front ()
 }
 
 /*
- * class rtmidi_in_data
+ *  Class rtmidi_in_data is used to hold the data needed by some of the JACK
+ *  callback functions.
  */
 
 rtmidi_in_data::rtmidi_in_data ()
  :
     m_queue             (),
-    m_message           (),
-    m_ignore_flags      (7),
-    m_do_input          (false),
     m_first_message     (true),
     m_api_data          (nullptr),
     m_using_callback    (false),
     m_user_callback     (nullptr),
     m_user_data         (nullptr),
-    m_continue_sysex    (false)
+    m_continue_sysex    (false),
+    m_is_enabled        (false)
 {
     // no body
 }

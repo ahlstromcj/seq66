@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-02
+ * \updates       2020-12-15
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  In this refactoring, we had to adapt the existing Seq66
@@ -39,18 +39,12 @@ namespace seq66
 
 midi_api::midi_api (midibus & parentbus, midi_info & masterinfo)
  :
-    midibase
-    (
-        rc().app_client_name(), parentbus.bus_name(), parentbus.port_name(),
-        parentbus.bus_index(), parentbus.bus_id(), parentbus.port_id(),
-        parentbus.bus_index(), parentbus.ppqn(), parentbus.bpm(),
-        parentbus.is_virtual_port(), parentbus.is_input_port(),
-        parentbus.is_system_port()
-    ),
+    midibase                    (rc().app_client_name(), parentbus),
     m_master_info               (masterinfo),
-    m_parent_bus                (parentbus),
+    m_parent_bus                (parentbus),    // hmmmmmmmmmmmmmmmm
     m_input_data                (),
     m_connected                 (false),
+    m_suspended                 (false),
     m_error_string              (),
     m_error_callback            (0),
     m_first_error_occurred      (false),

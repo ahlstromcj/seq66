@@ -100,6 +100,7 @@ protected:
      *
      * virtual bool api_init_out_sub ();        // subscribe to output
      * virtual bool api_init_in_sub ();         // subscribe to input
+     * virtual bool api_deinit_out ();          // unsubscribe a port
      * virtual bool api_deinit_in ();           // unsubscribe a port
      *
      * We should be able to implement this in a "sysex_fix" branch:

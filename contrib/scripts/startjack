@@ -8,7 +8,7 @@
 # \library     Home/Audio
 # \author      Chris Ahlstrom
 # \date        2020-12-08
-# \update      2020-12-10
+# \update      2020-12-14
 # \version     $Revision$
 #
 #   This script provides a way to make a fast JACK setup on Linux.  See:
@@ -26,6 +26,9 @@
 #
 #   With the current settings, latency = 21.3 msec.
 #
+#   Also note to be sure to set qjackctl to use the "seq" MIDI driver; the
+#   "raw" driver seems to cause a lot of issues with the a2j bridge.
+#
 #------------------------------------------------------------------------------
 
 HWPORT=PCH
@@ -34,11 +37,15 @@ SAMPLERATE=48000
 NPERIODS=4              # was 2
 PFRAMES=256             # was 64
 SLEEPTIME=10
+START_YOSHIMI="no"
+YOSHIMI_DIR="$HOME/.config/yoshimi"
+YOSHIMI_GM="yoshimi-b4uacuse-gm.state"
+YOSHIMI_STATE="$YOSHIMI_DIR/$YOSHIMI_GM"
 
 # Not yet used:
 
 REALTIME=yes
-MDRIVER=raw
+MDRIVER=seq             # raw can cause real issues with a2jmidid
 
 if [ "$1" == "kill" ] ; then
 
@@ -46,6 +53,20 @@ if [ "$1" == "kill" ] ; then
     a2j_control --stop
     a2j_control --exit
     jack_control exit
+
+elif [ "$1" == "basic" ] ; then
+
+    echo "Starting processes with 5-second wait for each..."
+    echo "Starting QJackCtl/JACK: 'qjackctl --start'..."
+    qjackctl --start &
+    sleep 5
+    echo "Starting ALSA-to-JACK bridge: 'a2jmidid --export-hw'..."
+    a2jmidid --export-hw &
+
+    if [ "$2" == "yoshimi" ] ; then
+        START_YOSHIMI="yes"
+        sleep 5
+    fi
 
 else
 
@@ -64,6 +85,16 @@ else
     echo "Starting qjackctl..."
     qjackctl &
 
+    if [ "$1" == "yoshimi" ] ; then
+        START_YOSHIMI="yes"
+        sleep 5
+    fi
+
+fi
+
+if [ "$START_YOSHIMI" == "yes" ] ; then
+    echo "Starting Yoshimi with JACK support and a GM state..."
+    exec yoshimi -j -J --state=$YOSHIMI_STATE
 fi
 
 #------------------------------------------------------------------------------

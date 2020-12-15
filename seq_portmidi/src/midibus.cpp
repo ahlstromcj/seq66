@@ -38,6 +38,7 @@
  *      -   It does not have the following functions:
  *          -   init_out_sub()
  *          -   init_in_sub()
+ *          -   deinit_out()
  *          -   deinit_in()
  */
 
@@ -147,7 +148,7 @@ midibus::api_init_out ()
             "Pm_OpenOutput(): %s; MIDI clock disabled\n",
             Pm_GetErrorText(err)
         );
-        set_clock(e_clock::disabled);
+        (void) set_clock(e_clock::disabled);
     }
     return result;
 }

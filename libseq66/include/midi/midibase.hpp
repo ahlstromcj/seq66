@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2020-12-08
+ * \updates       2020-12-14
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -233,6 +233,11 @@ public:
         bool isinput                    = false,
         bool makesystem                 = false
     );
+    midibase
+    (
+        const std::string & appname,                /* usually the app name */
+        const midibase & parent
+    );
 
     virtual ~midibase ();
 
@@ -340,18 +345,7 @@ public:
         m_is_system_port = true;
     }
 
-    /**
-     * \setter m_clock_type
-     *      We removed the redundant set_clock_status() function.
-     *
-     * \param clocktype
-     *      The value used to set the clock-type.
-     */
-
-    void set_clock (e_clock clocktype)
-    {
-        m_clock_type = clocktype;
-    }
+    bool set_clock (e_clock clocktype);
 
     e_clock get_clock () const
     {
@@ -442,6 +436,7 @@ public:
     bool get_midi_event (event * inev);
     bool init_out ();
     bool init_in ();
+    bool deinit_out ();
     bool deinit_in ();
     bool init_out_sub ();
     bool init_in_sub ();
@@ -526,9 +521,14 @@ protected:
      *  Not defined in the PortMidi implementation.
      */
 
+    virtual bool api_deinit_out ()
+    {
+        return false;
+    }
+
     virtual bool api_deinit_in ()
     {
-        return false;                   /* no code for portmidi */
+        return false;
     }
 
     virtual void api_play (event * e24, midibyte channel) = 0;

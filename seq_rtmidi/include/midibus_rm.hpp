@@ -105,6 +105,7 @@ protected:
     virtual bool api_init_in_sub () override;
     virtual bool api_init_out () override;
     virtual bool api_init_out_sub () override;
+    virtual bool api_deinit_out () override;
     virtual bool api_deinit_in () override;
     virtual bool api_get_midi_event (event * inev) override;
     virtual int api_poll_for_midi () override;

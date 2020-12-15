@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-02-09
+ * \updates       2019-12-15
  * \license       See the rtexmidi.lic file.
  *
  *  Declares the following classes:
@@ -77,6 +77,16 @@ private:
 
     bool m_connected;
 
+    /**
+     *  Indicates if the user has disabled a port that was previously enabled.
+     *  At this time, we don't want to try to tear down the port.  Instead, we
+     *  just disable the port via the JACK callback data item rtmidi_in_data
+     *  :: is_enabled() in the rtmidi_types module.  Note that, to be
+     *  suspended, the port had to be open in the first place.
+     */
+
+    bool m_suspended;
+
 protected:
 
     /**
@@ -134,6 +144,7 @@ public:
     virtual bool api_init_out_sub () = 0;
     virtual bool api_init_in () = 0;
     virtual bool api_init_in_sub () = 0;
+    virtual bool api_deinit_out () = 0;
     virtual bool api_deinit_in () = 0;
     virtual bool api_get_midi_event (event *) = 0;
     virtual void api_play (event * e24, midibyte channel) = 0;
@@ -168,6 +179,11 @@ public:
     bool is_port_open () const
     {
         return m_connected;
+    }
+
+    bool is_port_suspended () const
+    {
+        return m_suspended;
     }
 
     midi_info & master_info ()
@@ -210,6 +226,11 @@ protected:
     void set_port_open ()
     {
         m_connected = true;
+    }
+
+    virtual void set_port_suspended (bool flag)
+    {
+        m_suspended = flag;
     }
 
     rtmidi_in_data * input_data ()

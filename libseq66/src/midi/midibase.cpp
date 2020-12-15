@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-25
- * \updates       2020-08-02
+ * \updates       2020-12-14
  * \license       GNU GPLv2 or above
  *
  *  This file provides a cross-platform implementation of MIDI support.
@@ -195,6 +195,42 @@ midibase::midibase
             errprint("programmer error in midibase()");
         }
     }
+}
+
+/**
+ *  A kind of pseudo copy constructor to use in the midi_api class.
+ */
+
+midibase::midibase
+(
+    const std::string & appname,
+    const midibase & parent
+) :
+    m_bus_index         (parent.bus_index()),
+    m_bus_id            (parent.bus_id()),
+    m_port_id           (parent.port_id()),
+    m_clock_type        (parent.get_clock()),   // OLD: e_clock::off
+    m_inputing          (parent.get_input()),   // OLD: false
+    m_ppqn              (parent.ppqn()),
+    m_bpm               (parent.bpm()),
+    m_queue             (parent.queue_number()),  // OLD: was wrong
+    m_display_name      (),
+    m_bus_name          (parent.bus_name()),
+    m_port_name         (parent.port_name()),
+    m_lasttick          (0),
+    m_is_virtual_port   (parent.is_virtual_port()),
+    m_is_input_port     (parent.is_input_port()),
+    m_is_system_port    (parent.is_system_port()),
+    m_mutex             ()
+{
+    if (m_is_virtual_port)
+    {
+        /*
+         * Currently done in seq_rtmidi/src/midibus.cpp
+         */
+    }
+    else
+        set_name(appname, parent.bus_name(), parent.port_name());
 }
 
 /**
@@ -542,6 +578,16 @@ midibase::init_in_sub ()
 }
 
 /**
+ *  EXPERIMENTAL
+ */
+
+bool
+midibase::deinit_out ()
+{
+    return api_deinit_out();
+}
+
+/**
  *  Deinitialize the MIDI input.  Set the input and the output ports.
  *  The destination port is actually our local port.
  *
@@ -700,6 +746,46 @@ midibase::start ()
 }
 
 /**
+ *  EXPERIMENTAL.
+ *
+ * \param clocktype
+ *      The value used to set the clock-type.
+ */
+
+#if defined THIS_CODE_WORKS
+
+bool
+midibase::set_clock (e_clock clocktype)
+{
+    bool result = false;
+    if (m_clock_type != clocktype)
+    {
+        m_clock_type = clocktype;
+        if (clocktype != e_clock::disabled)
+        {
+            if (m_is_virtual_port)
+                result = init_out_sub();
+            else
+                result = init_out();
+        }
+        else
+            (void) deinit_out();
+    }
+    return result;
+}
+
+#else
+
+bool
+midibase::set_clock (e_clock clocktype)
+{
+    m_clock_type = clocktype;
+    return true;
+}
+
+#endif
+
+/**
  *  Set status to of "inputting" to the given value.  If the parameter is
  *  true, then init_in() is called; otherwise, deinit_in() is called.
  *
@@ -709,9 +795,9 @@ midibase::start ()
  */
 
 bool
-midibase::set_input (bool inputing)     // not part of portmidi
+midibase::set_input (bool inputing)
 {
-    bool result = true;
+    bool result = false;
     if (m_is_system_port)
     {
         m_inputing = true;
