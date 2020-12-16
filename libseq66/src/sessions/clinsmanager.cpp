@@ -225,7 +225,7 @@ clinsmanager::close_session (std::string & msg, bool ok)
 bool
 clinsmanager::detach_session (std::string & msg, bool ok)
 {
-#if defined SEQ66_NSM_SUPPORT                           // _TEMP_DISABLE
+#if defined SEQ66_NSM_SUPPORT
     if (usr().in_session())
     {
         warnprint("Detaching (closing) NSM session");
@@ -507,8 +507,10 @@ clinsmanager::create_project
             }
         }
     }
+#if defined SEQ66_NSM_SUPPORT
     if (m_nsm_client)
         (void) m_nsm_client->open_reply(result);            /* issue #28 */
+#endif
 
     return result;
 }

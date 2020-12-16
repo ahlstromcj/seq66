@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2017-01-01
- * \updates       2020-11-23
+ * \updates       2020-12-16
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  This class is meant to collect a whole bunch of JACK information
@@ -439,7 +439,7 @@ midi_jack_info::api_connect ()
     {
         for (auto m : bus_container())              /* midibus pointers */
         {
-            if (! m->port_disabled() && ! m->is_virtual_port())
+            if (m->is_port_connectable())
             {
                 result = m->api_connect();
                 if (! result)

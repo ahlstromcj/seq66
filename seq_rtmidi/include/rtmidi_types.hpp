@@ -276,9 +276,20 @@ private:
 
     bool m_first_message;
     void * m_api_data;
+
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+
+    /**
+     *  We currently don't use this feature, and do not plan to.  Keep it
+     *  around, Justin Case.
+     */
+
     bool m_using_callback;
     rtmidi_callback_t m_user_callback;
     void * m_user_data;
+
+#endif
+
     bool m_continue_sysex;
 
     /**
@@ -333,6 +344,8 @@ public:
         m_continue_sysex = flag;
     }
 
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+
     bool using_callback () const
     {
         return m_using_callback;
@@ -342,6 +355,8 @@ public:
     {
         m_using_callback = flag;
     }
+
+#endif
 
     const void * api_data () const
     {
@@ -357,6 +372,8 @@ public:
     {
         m_api_data = dataptr;
     }
+
+#if defined SEQ66_USER_CALLBACK_SUPPORT
 
     const void * user_data () const
     {
@@ -389,6 +406,8 @@ public:
     {
         m_user_callback = cbptr;
     }
+
+#endif
 
 };          // class rtmidi_in_data
 

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-12
+ * \updates       2020-12-16
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -49,6 +49,8 @@
  *  Finally, note that seq66 no longer supports the Seq24 file format;
  *  too much has changed.
  */
+
+#include <iomanip>                      /* std::setw manipulator            */
 
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
@@ -577,13 +579,9 @@ rcfile::parse ()
                 }
                 else
                 {
+                    rc_ref().clear_playlist(true);
                     if (active)
                         file_error("No such playlist", fname);
-
-                    /*
-                     * Ok?
-                     * rc_ref().clear_playlist();
-                     */
                 }
             }
         }
@@ -950,7 +948,7 @@ rcfile::write ()
     {
         int bus_on = static_cast<int>(rc_ref().clocks().get(bus));
         file
-            << int(bus) << " " << bus_on << "    \""
+            << std::setw(2) << int(bus) << " " << bus_on << "    \""
             << rc_ref().clocks().get_name(bus) << "\"\n"
             ;
     }
@@ -1164,14 +1162,14 @@ rcfile::write ()
 
     file
         << "[playlist]\n\n"
-        "# Provides a configured play-list and a flag to activate it.\n"
+        "# Provides a configured play-list file and a flag to activate it.\n"
         "# playlist_active: 1 = active, 0 = do not use it\n\n"
         << (rc_ref().playlist_active() ? "1" : "0")
         << "\n"
         ;
 
     file << "\n"
-        "# Provides the name of a play-list. If there is none, use '\"\"',\n"
+        "# Provides the name of a play-list file. If there is none, use '\"\"',\n"
         "# or set the flag above to 0. Use the extension '.playlist'.\n"
         "\n"
         ;
@@ -1180,13 +1178,16 @@ rcfile::write ()
     std::string fspec = empty_string();
     if (! plname.empty())
     {
-        fspec = file_extension_set(rc_ref().playlist_filename(), ".playlist");
-        fspec = rc_ref().trim_home_directory(fspec);
+        if (! is_questionable_string(plname))
+        {
+            fspec = file_extension_set(rc_ref().playlist_filename(), ".playlist");
+            fspec = rc_ref().trim_home_directory(fspec);
+        }
     }
     file << fspec << "\n";
 
     file << "\n"
-		"# Optional MIDI file base directory for play-lists.\n"
+		"# Optional MIDI file base directory for play-list files.\n"
 		"# If present, sets the base directory in which to find all of\n"
 		"# the MIDI files in all playlists.  This is helpful when moving a\n"
 		"# complete set of playlists from one directory to another,\n"

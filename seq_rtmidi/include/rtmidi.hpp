@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-02-09
+ * \updates       2020-12-16
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  The big difference between this class (seq66::rtmidi) and
@@ -179,9 +179,9 @@ public:
      *      Returns the buss/client value as provided by the selected API.
      */
 
-    virtual int get_bus_id ()
+    virtual int get_bus_id () const
     {
-        return get_api()->bus_id();
+        return parent_bus().bus_id();       /* get_api()->bus_id()      */
     }
 
     /**
@@ -189,9 +189,9 @@ public:
      *      Returns the buss name from the selected API subsystem.
      */
 
-    virtual std::string get_bus_name ()
+    virtual std::string bus_name () const
     {
-        return get_api()->bus_name();
+        return parent_bus().bus_name();     /* get_api()->bus_name()    */
     }
 
     /**
@@ -199,9 +199,9 @@ public:
      *      Returns the port ID number from the selected API subsystem.
      */
 
-    virtual int get_port_id ()
+    virtual int port_id () const
     {
-        return get_api()->port_id();
+        return parent_bus().port_id();      /* get_api()->port_id()     */
     }
 
     /**
@@ -211,7 +211,7 @@ public:
 
     virtual std::string get_port_name ()
     {
-        return get_api()->port_name();
+        return parent_bus().port_name();    /* get_api()->port_name()   */
     }
 
     /**
@@ -244,6 +244,26 @@ public:
         return m_midi_api;
     }
 
+    /*
+     * Pass-alongs to the parent bus for this midi_api-derived object.
+     * More are already defined above, as well.
+     */
+
+    void set_bus_id (int id)
+    {
+        parent_bus().set_bus_id(id);
+    }
+
+    void set_port_id (int id)
+    {
+        parent_bus().set_port_id(id);
+    }
+
+    std::string connect_name () const
+    {
+        return parent_bus().connect_name();
+    }
+
 protected:
 
     void set_api (midi_api * ma)
@@ -260,8 +280,6 @@ protected:
             m_midi_api = nullptr;
         }
     }
-
-protected:
 
 };          // class rtmidi
 
@@ -285,6 +303,8 @@ public:
 
     rtmidi_in (midibus & parentbus, rtmidi_info & info);
     virtual ~rtmidi_in ();
+
+#if defined SEQ66_USER_CALLBACK_SUPPORT
 
     /**
      *  Set a callback function to be invoked for incoming MIDI messages.
@@ -318,6 +338,8 @@ public:
     {
        dynamic_cast<midi_api *>(get_api())->cancel_callback();
     }
+
+#endif
 
 protected:
 

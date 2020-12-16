@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-12-05
+ * \updates       2020-12-16
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -20,10 +20,11 @@
 #include "util/strfunctions.hpp"        /* free functions in seq66 n'space  */
 
 /**
- *  A more readable way to depict the string "".
+ *  A more readable way to depict the strings "" and "?".
  */
 
 #define SEQ66_DOUBLE_QUOTES     "\"\""
+#define SEQ66_QUESTION_MARK     "?"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -56,6 +57,19 @@ empty_string ()
 {
     return std::string(SEQ66_DOUBLE_QUOTES);
 }
+
+std::string
+questionable_string ()
+{
+    return std::string(SEQ66_QUESTION_MARK);
+}
+
+bool
+is_questionable_string (const std::string & item)
+{
+    return item == SEQ66_QUESTION_MARK;
+}
+
 
 /**
  *  Indicates if one string can be found within another.  Doesn't force the

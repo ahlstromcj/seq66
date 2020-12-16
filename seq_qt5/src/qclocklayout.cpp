@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2020-07-26
+ * \updates       2020-12-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -154,6 +154,10 @@ qclocklayout::setup_ui ()
     {
     case e_clock::disabled:
         m_rbutton_portdisabled->setChecked(true);
+        m_rbutton_portdisabled->setEnabled(false);
+        m_rbutton_clockoff->setEnabled(false);
+        m_rbutton_clockonpos->setEnabled(false);
+        m_rbutton_clockonmod->setEnabled(false);
         break;
 
     case e_clock::off:
@@ -186,9 +190,16 @@ void
 qclocklayout::clock_callback_clicked (int id)
 {
     if (id == (-2))
-        id = -1;
+        id = (-1);
 
     perf().set_clock_bus(m_bus, static_cast<e_clock>(id));
+    if (id == (-1))
+    {
+        m_rbutton_portdisabled->setEnabled(false);
+        m_rbutton_clockoff->setEnabled(false);
+        m_rbutton_clockonpos->setEnabled(false);
+        m_rbutton_clockonmod->setEnabled(false);
+    }
 }
 
 }           // namespace seq66

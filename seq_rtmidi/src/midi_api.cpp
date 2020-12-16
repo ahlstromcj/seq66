@@ -37,11 +37,9 @@ namespace seq66
  *  Principle constructor.
  */
 
-midi_api::midi_api (midibus & parentbus, midi_info & masterinfo)
- :
-    midibase                    (rc().app_client_name(), parentbus),
+midi_api::midi_api (midibus & parentbus, midi_info & masterinfo) :
     m_master_info               (masterinfo),
-    m_parent_bus                (parentbus),    // hmmmmmmmmmmmmmmmm
+    m_parent_bus                (parentbus),
     m_input_data                (),
     m_connected                 (false),
     m_suspended                 (false),
@@ -165,6 +163,8 @@ midi_api::master_midi_mode (bool input)
     m_master_info.midi_mode(input);
 }
 
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+
 /**
  *  Wires in a MIDI input callback function.
  *
@@ -220,6 +220,8 @@ midi_api::cancel_callback ()
         error(rterror::WARNING, m_error_string);
     }
 }
+
+#endif      // defined SEQ66_USER_CALLBACK_SUPPORT
 
 }           // namespace seq66
 

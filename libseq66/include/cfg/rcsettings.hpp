@@ -345,7 +345,8 @@ private:
 
     /**
      *  Indicates if the user wants to use the play-list stored in the "rc"
-     *  file.  This value is stored as well.
+     *  file.  This value is stored as well.  It is cleared if there was a
+     *  problem such as the play-list file-name not existing.
      */
 
     bool m_playlist_active;
@@ -439,7 +440,7 @@ public:
     std::string midi_control_filespec () const;
     std::string mute_group_filespec () const;
     std::string playlist_filespec () const;
-    void clear_playlist ();
+    void clear_playlist (bool disable = false);
     std::string notemap_filespec () const;
     virtual void set_defaults () override;
 

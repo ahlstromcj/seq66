@@ -276,13 +276,15 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                 jackdata->m_jack_lasttime = jtime;
                 if (! rtindata->continue_sysex())
                 {
+#if defined SEQ66_USER_CALLBACK_SUPPORT
                     if (rtindata->using_callback())
                     {
                         rtmidi_callback_t callback = rtindata->user_callback();
                         callback(message, rtindata->user_data());
                     }
                     else
-                        (void) rtindata->queue().add(message);
+#endif
+                    (void) rtindata->queue().add(message);
                 }
             }
             else
@@ -1443,16 +1445,13 @@ int
 midi_in_jack::api_poll_for_midi ()
 {
     rtmidi_in_data * rtindata = m_jack_data.m_jack_rtmidiin;
-    if (rtindata->using_callback())
-    {
-        (void) microsleep(100);
-        return 0;
-    }
-    else
-    {
-        (void) microsleep(100);
-        return rtindata->queue().count();
-    }
+    (void) microsleep(100);
+
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+    return rtindata->using_callback() ? 0 : rtindata->queue().count() ;
+#else
+    return rtindata->queue().count();
+#endif
 }
 
 /**

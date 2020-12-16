@@ -198,42 +198,6 @@ midibase::midibase
 }
 
 /**
- *  A kind of pseudo copy constructor to use in the midi_api class.
- */
-
-midibase::midibase
-(
-    const std::string & appname,
-    const midibase & parent
-) :
-    m_bus_index         (parent.bus_index()),
-    m_bus_id            (parent.bus_id()),
-    m_port_id           (parent.port_id()),
-    m_clock_type        (parent.get_clock()),   // OLD: e_clock::off
-    m_inputing          (parent.get_input()),   // OLD: false
-    m_ppqn              (parent.ppqn()),
-    m_bpm               (parent.bpm()),
-    m_queue             (parent.queue_number()),  // OLD: was wrong
-    m_display_name      (),
-    m_bus_name          (parent.bus_name()),
-    m_port_name         (parent.port_name()),
-    m_lasttick          (0),
-    m_is_virtual_port   (parent.is_virtual_port()),
-    m_is_input_port     (parent.is_input_port()),
-    m_is_system_port    (parent.is_system_port()),
-    m_mutex             ()
-{
-    if (m_is_virtual_port)
-    {
-        /*
-         * Currently done in seq_rtmidi/src/midibus.cpp
-         */
-    }
-    else
-        set_name(appname, parent.bus_name(), parent.port_name());
-}
-
-/**
  *  A rote empty destructor.
  */
 

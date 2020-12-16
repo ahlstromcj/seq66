@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.91.3 and above
 Chris Ahlstrom
-2015-09-10 to 2020-12-10
+2015-09-10 to 2020-12-16
 
 Getting Seq66 requires building the code or going to the sequencer64-packages
 / seq66 directory on GitHub.  The bootstrap setup is primarily aimed at
@@ -326,6 +326,12 @@ MANUALLY-DEFINED MACROS IN CODE:
     experiment-happy people will normally want to change the define-state of
     these macros.  We have consolidated them into a single file,
     libseq66/include/seq66_features.h, to make them easier to find and edit.
+
+    SEQ66_USER_CALLBACK_SUPPORT
+
+        This option activates support for "rtmidi"-style user-callbacks.
+        This support is used only in some test code (see the midi_probe)
+        module, and is no long included in normal builds.
 
     SEQ66_SONG_BOX_SELECT:
 

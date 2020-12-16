@@ -616,17 +616,24 @@ open_playlist
     bool result = ! source.empty();
     if (result)
     {
-        playlistfile plf(source, pl, rc(), show_on_stdout);
-        result = plf.open(true);                /* parse and file verify    */
-        if (result)
+        if (is_questionable_string(source))
         {
-            // Anything worth doing?
+            pl.mode(false);
         }
-        else if (rc().playlist_active())
+        else
         {
-            std::string msg = "Open failed: ";
-            msg += source;
-            (void) error_message(msg);
+            playlistfile plf(source, pl, rc(), show_on_stdout);
+            result = plf.open(true);            /* parse and file verify    */
+            if (result)
+            {
+                // Anything worth doing?
+            }
+            else if (rc().playlist_active())
+            {
+                std::string msg = "Open failed: ";
+                msg += source;
+                (void) error_message(msg);
+            }
         }
     }
     else

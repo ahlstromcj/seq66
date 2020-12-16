@@ -9,7 +9,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; modifications by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2019-12-15
+ * \updates       2020-12-16
  * \license       See the rtexmidi.lic file.
  *
  *  Declares the following classes:
@@ -19,7 +19,7 @@
  *      -   seq66::midi_out_api
  */
 
-#include "midi/midibase.hpp"
+#include "midibus_rm.hpp"
 #include "rterror.hpp"
 #include "rtmidi_types.hpp"             /* SEQ66_NO_INDEX               */
 
@@ -31,7 +31,6 @@ namespace seq66
 {
     class event;
     class midi_info;
-    class midibus;
 
 /**
  *  Subclasses of midi_in_api and midi_out_api contain all API- and
@@ -42,7 +41,7 @@ namespace seq66
  *  create instances of a midi_in_api or midi_out_api subclass.
  */
 
-class midi_api : public midibase
+class midi_api
 {
 
 private:
@@ -214,6 +213,8 @@ public:
 
     void error (rterror::Type type, const std::string & errorstring);
 
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+
     /*
      * Moved from the now-removed midi_in_api class.
      */
@@ -221,7 +222,111 @@ public:
     void user_callback (rtmidi_callback_t callback, void * userdata);
     void cancel_callback ();
 
+#endif
+
+    /*
+     * Pass-alongs to the midibus representing this object's generic data.
+     */
+
+    const std::string & bus_name () const
+    {
+        return parent_bus().bus_name();
+    }
+
+    const std::string & port_name () const
+    {
+        return parent_bus().port_name();
+    }
+
+    std::string connect_name () const
+    {
+        return parent_bus().connect_name();
+    }
+
+    int bus_index () const
+    {
+        return parent_bus().bus_index();
+    }
+
+    int bus_id () const
+    {
+        return parent_bus().bus_id();
+    }
+
+    int port_id () const
+    {
+        return parent_bus().port_id();
+    }
+
+    int ppqn () const
+    {
+        return parent_bus().ppqn();
+    }
+
+    midibpm bpm () const
+    {
+        return parent_bus().bpm();
+    }
+
 protected:
+
+    /*
+     * Pass-alongs to the midibus representing this object's generic data.
+     */
+
+    void set_bus_id (int id)
+    {
+        parent_bus().set_bus_id(id);
+    }
+
+    void set_port_id (int id)
+    {
+        parent_bus().set_port_id(id);
+    }
+
+    void bus_name (const std::string & name)
+    {
+        parent_bus().bus_name(name);
+    }
+
+    void port_name (const std::string & name)
+    {
+        parent_bus().port_name(name);
+    }
+
+    void set_name
+    (
+        const std::string & appname,
+        const std::string & busname,
+        const std::string & portname
+    )
+    {
+        parent_bus().set_name(appname, busname, portname);
+    }
+
+    void set_alt_name
+    (
+        const std::string & appname,
+        const std::string & busname,
+        const std::string & portname
+    )
+    {
+        parent_bus().set_alt_name(appname, busname, portname);
+    }
+
+    void set_multi_name
+    (
+        const std::string & appname,
+        const std::string & localbusname,
+        const std::string & remoteportname
+    )
+    {
+        parent_bus().set_name(appname, localbusname, remoteportname);
+    }
+
+    /*
+     * API-related functions.
+     */
 
     void set_port_open ()
     {

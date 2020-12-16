@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2020-12-14
+ * \updates       2020-12-16
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -233,11 +233,6 @@ public:
         bool isinput                    = false,
         bool makesystem                 = false
     );
-    midibase
-    (
-        const std::string & appname,                /* usually the app name */
-        const midibase & parent
-    );
 
     virtual ~midibase ();
 
@@ -335,10 +330,10 @@ public:
         return m_is_system_port;
     }
 
-    /**
-     * \setter m_is_system_port
-     *      Can only set it to true.
-     */
+    bool is_port_connectable () const
+    {
+        return ! port_disabled() && ! is_virtual_port();
+    }
 
     void set_system_port_flag ()
     {
@@ -451,7 +446,7 @@ public:
     void print ();
     bool set_input (bool inputing);
 
-protected:
+public:             // protected: public for seq_rtmidi midi_api
 
     void display_name (const std::string & name)
     {

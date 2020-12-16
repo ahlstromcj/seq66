@@ -1,6 +1,6 @@
-TO DO for Seq66 0.91.2 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.91.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-11-29
+2019-04-13 to 2020-12-16
 
 HOT ITEMS:
 
@@ -26,11 +26,32 @@ HOT ITEMS:
         to these buttons (steps 2 to 6), or preset them for every new pattern
         editor?
 
-    Investigate the test the playlist functionality.
+    Playlist:
+       
+        When there is no playlist, or it cannot be loaded, or when it is
+        inactive, do not try to display that information.  Instead, just show
+        the base-name of the current file, or the song name if present in the
+        MIDI data.
+
+    Polling:
+
+        Investigate the effect of reducing the microsleep(100) calls when
+        polling.  Maybe make it an usr variable.
+
+    RtMidi:
+
+        rtmidi_in_data vs rtmidi_out_data
 
     Windows:
 
         Disable JACK-related elements for Windows, such as the JACK options.
+
+    NSM:
+
+        Write up the difference between the main Save button and app Save
+        button in the NSM GUI.
+
+Others to Consider:
 
     When resizing, also recalculate the x and y scaling appropriately.
 
@@ -39,23 +60,19 @@ HOT ITEMS:
     Make sure grid button text colors are appropriate.
 
     In main frame, try to highlight the start/stop/pause buttons
-    appropriately.  Also consider showing a small status bar.
+    appropriately.  Also consider showing a small status bar:
+    
 
     Figure out a way to condense the external qseqedit frame to 800x480.
-
-    Finish off the NSM functionality.
-
-    Backports to Sequencer64:
-
-        -   qseqedit 800x480 feature if successful
-
-    See if direct calls to midifile::write() [and parse()] can be replace by
-    the free-function versions defined in midifile.
 
     Make sure performer::ppqn() and bpm() always consistent with
     get_ppqn() and get_beats_per_minute().
 
-ISSUES:
+Backports to Sequencer64:
+
+        -   qseqedit 800x480 feature if successful
+
+EXTANT ISSUES:
 
     #1: JACK Metadata MIDINAM support.  LV2 MIDNAM has been around for a
     while. There has been discussion on #lad, and, now JACK 2 has metadata
@@ -63,131 +80,77 @@ ISSUES:
     metadata on the midi-in port for a connecting sequencer to use.
     STATUS: Not yet started.
 
-    #2: Failed to find matching components of a complete QT installation.
-    User: Make sure that dev versions of all the Qt libraries mentioned in
-    the DEPENDENCIES/ Qt Builds section of the INSTALL file are installed.
-    STATUS: Updated the INSTALL documentation.
-
     #3: Open loop Pattern Editor window.
     On mouse wheel scroll event we expect the piano-roll and notes sheet to
-    scroll vertically.  STATUS: We had to disable mouse-wheel scrolling for
-    this reason: In qseqkeys, we did not want the scroll wheel to accidentally
-    scroll the piano keys vertically.  Same for qscrollmaster,
-    qseqeditframe64, except that we note wheelEvent() is not called for some
-    reason.
-
-    #7: 'make install' doesn't install files.
-    STATUS: This is an Arch packaging issue.  Copied and modified the PKGBUILD
-    file from Sequencer64 and tweaked it.  Check it out.
-
-    #8: NSM Support? Similar to ahlstromcj/sequencer64#1 but now there is an
-    NSM fork, https://github.com/linuxaudio/new-session-manager.
-    STATUS: Basically done.  Users finding bugs to fix.
-
-    #9: Change pattern in the Edit tab while on the Edit tab? I do not think I
-    can see anything currently.
-    STATUS:  Closed, reopen if necessary.
-
-    #10: Right click-hold on pattern editor doesn't show draw pencil.
-    STATUS: Qt does not have a pencil icon, so a pointing finger appears
-    instead.  Closed.
+    scroll vertically.
+    STATUS: We had to disable mouse-wheel scrolling for this reason: In
+    qseqkeys, we did not want the scroll wheel to accidentally scroll the
+    piano keys vertically.  Same for qscrollmaster, qseqeditframe64, except
+    that we note wheelEvent() is not called for some reason.
 
     #11: Pattern editor: disabling the 'piano roll scrolls with playback'
     button does not stop the scrolling.
-    STATUS: Closed?
+    STATUS: Closed, but why?
 
     #12: Note rendering problem.
     Having a long note, scrolling it out of vision and back again leads to a
     problem.  (Only the first snap division and last snap division of the note
     appears.  STATUS:  Weird, will do.
 
-    #13: Pattern editor: control event bar does not update/scroll.
-    If I add or remove a note, the related representation in the control bar
-    below the piano roll does not refresh. Also, if I scroll the view above,
-    the control bar stays in the same place.  STATUS:  In progress.  Related
-    to issue #9.  Cannot duplicate the issue with the control bar staying in
-    the same place.  I found so far that the event (trigger) bar and data
-    (control) bar were not showing events due to an error I made in setting
-    the status/cc values to show.
-
-#14 Build issue in Linux
-    Might be considered RESOLVED.
-
 #15 Crash when closing Set Window
     OS: Manjaro-Linux 5.7.9-1-MANJARO x86_64
     Version: seq66-git 0.90.3.r181.70e9302-1 (master)
-
-    When opening the "Set" window and not closing it with the close button,
-    but from the window manager's upper right close button, the program
-    crashes.
-
-    Can you post a screenshot of the window you are talking about? I don't see
-    a Close button and am not able to figure out what you are looking at.
-    Thanks!
-
-    I think it's the "Set Master" window. I get the same crash on master
-    compile qseq66. Have title bars disabled here so I'm killing/closing with
-    my window manager.
+    STATUS: Awaiting feedback as to if this is still an issue.
 
 #16 Ableton Live transport support?
-
     Go to this issue in Github to see the thread.
 
 #17 Connect midi devices by name
-
     Currently midi devices are mapped by bus number. This is a problem when
     devices are added and removed, which happens a lot for me. Why not storing
     and connecting midi devices by name instead?
-
     This could even be backwards-compatible: when the configuration file has a
     bus number, use that, if it is a string, connect by name.
-
-    ----
-
-    I think this is a great idea. The way it is done now is from seq24; not
-    bad, but yeah, could be improved. I will think about this issue. It will
-    be a little while because I am tied up with the "nsm"
-    (non-session-manager) branch.
-
-#18 Mute Group does not toggle
-
-    I have configured into the .ctrl file the following in order to toggle the
-    first mute group using a midi controller. It send a Control Change message
-    (176 decimal or 0xb0 hex) with the CC number 27. When I press the pad 27
-    on my midi controller it unmute all the patterns configured in the first
-    mute group but when I press the pad one more time it does not mute the
-    patterns. I have configured the mute group using the mute group tab and
-    include all patterns of the first row.
-
-#19 Closed
-#20 Closed
-#21 Closed
-
-#22 Arch Linux PKGBUILD file for seq66
-
-    I adapted a script from Christopher Arndt for to build seq66 on Arch Linux
-    as a package. Since I'm not a package maintainer I just provide it here,
-    so that it may be included in the build/install documentation or maybe an
-    already active AUR package maintainer would like to take it and make it it
-    "official". ;-)
+    STATUS:  In progress, stalled a bit trying to relearn and refactor some of
+    the internal "rtmidi" library.
 
 #23 Problems with Qt during compilation
-
     See the github issue.
+    STATUS:  Pending more investigation.
 
 #24 Release notes in release tag message?
-
     I'd like to add seq66 to https://libreav.org/updates
     Could I request that the release change notes are used in the release
     message? Then they could be syndicated via the releases.atom.
     Either using the release description box in the Create Release feature on
     GitHub (which can accept markdown) or with something like git tag -a v0.4
     -m "$(cat RELNOTES.md)" (which GH doesn't detect markdown from).
-    Not sure this is worth doing. Don't know about "atom".
+    STATUS: Not sure this is worth doing. Don't know about "atom".
 
-#25 Configure fails. Closed; consider having the install make a softlink
-called "seq66".
+#29 Play patterns from different sets at the same time
+    STATUS: Provisional support in 0.91.3.  One more feature to add soon.
 
+#30 Managing pattern colors with a pallette
+    See the GitHub issue.  My plan is to add a "qseq66.palette" file that will
+    be saved, can be modified, and then to load a palette pleasing to the
+    user.  The user will have to use a palette app to modify the values
+    manually; not wanting to add this code to the app.  Could add it to the
+    little-used Seqtool app at some point.
+    STATUS: Research pending.
+
+#32 NSM: Save session
+    save session, should be renamed to just 'save' I think. I should just save
+    the application, not the total NSM session. I assume it just saves seq66,
+    but then the naming is somewhat confusing.
+    STATUS: Renamed "Save Session" back to "Save".
+
+#33 NSM not working here
+    STATUS:  Will start retesting soon.  I believe I found some nasty bugs in
+    0.91.2 that I have already fixed, but 0.91.3 is not quite ready yet.
+
+#34 seq66 doesn't follow jack_transport tempo changes (and so also doesn't
+    work with jack_link)
+    STATUS:  This issue sounds familiar, will research it soon.
 
 PATTERNS:
 

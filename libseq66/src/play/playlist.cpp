@@ -115,7 +115,7 @@ playlist::~playlist ()
 bool
 playlist::active () const
 {
-    return rc().playlist_active() && m_mode;
+    return rc().playlist_active() && mode();
 }
 
 /**

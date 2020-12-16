@@ -144,6 +144,8 @@ midi_probe ()
     return 0;
 }
 
+#if defined SEQ66_USER_CALLBACK_SUPPORT
+
 /**
  *  Provides the callback for midi_input_test().
  */
@@ -191,6 +193,8 @@ midi_input_test (rtmidi_info & info, int portindex)
     }
     return result;
 }
+
+#endif      // defined SEQ66_USER_CALLBACK_SUPPORT
 
 }           // namespace seq66
 

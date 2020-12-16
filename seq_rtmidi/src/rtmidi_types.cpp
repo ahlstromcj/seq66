@@ -204,9 +204,11 @@ rtmidi_in_data::rtmidi_in_data ()
     m_queue             (),
     m_first_message     (true),
     m_api_data          (nullptr),
+#if defined SEQ66_USER_CALLBACK_SUPPORT
     m_using_callback    (false),
     m_user_callback     (nullptr),
     m_user_data         (nullptr),
+#endif
     m_continue_sysex    (false),
     m_is_enabled        (false)
 {

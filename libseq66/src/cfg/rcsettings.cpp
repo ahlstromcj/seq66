@@ -948,14 +948,21 @@ rcsettings::playlist_filename () const
 }
 
 /**
+ *  Clears the play-list file-name and flags that the play-list is not active.
  *
+ * \param disable
+ *      If true, the file-name is instead set to a value that indicates there
+ *      was a file-name, but the file does not exist.
  */
 
 void
-rcsettings::clear_playlist ()
+rcsettings::clear_playlist (bool disable)
 {
     playlist_active(false);
-    m_playlist_filename.clear();
+    if (disable)
+        m_playlist_filename = questionable_string();
+    else
+        m_playlist_filename.clear();
 }
 
 /**

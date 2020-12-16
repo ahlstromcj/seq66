@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-13
+ * \updates       2020-12-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1425,7 +1425,7 @@ qsmainwnd::refresh ()
                 if (perf().playlist_mode())
                     m_live_frame->set_playlist_name(perf().playlist_song());
                 else
-                    m_live_frame->set_playlist_name("");
+                    m_live_frame->set_playlist_name(rc().midi_filename());
             }
             m_is_title_dirty = false;
             update_window_title();
@@ -2627,7 +2627,10 @@ qsmainwnd::handle_key_press (const keystroke & k)
             done = true;
         }
         if (result)
-            m_live_frame->set_playlist_name(perf().playlist_song());
+        {
+            if (perf().playlist_mode())
+                m_live_frame->set_playlist_name(perf().playlist_song());
+        }
     }
     if (! done)
     {
@@ -2795,8 +2798,11 @@ qsmainwnd::connect_nsm_slots ()
      * File / Save Session.
      */
 
-    ui->actionSave->setText("&Save Session");
-    ui->actionSave->setToolTip("Save the current state of the session.");
+    ui->actionSave->setText("&Save");
+    ui->actionSave->setToolTip
+    (
+        "Save the current MIDI file and the configuration in the session."
+    );
     connect
     (
         ui->actionSave, SIGNAL(triggered(bool)),
@@ -3258,8 +3264,11 @@ qsmainwnd::recreate_all_slots ()
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
-        m_live_frame->set_playlist_name(perf().playlist_song());
-        update_window_title(perf().playlist_song());
+        if (perf().playlist_mode())
+        {
+            m_live_frame->set_playlist_name(perf().playlist_song());
+            update_window_title(perf().playlist_song());
+        }
         result = m_live_frame->recreate_all_slots();
     }
     return result;
