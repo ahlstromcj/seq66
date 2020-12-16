@@ -1,5 +1,160 @@
+2020-12-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* INSTALL, README, TODO, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/include/util/strfunctions.hpp,
+	libseq66/src/cfg/playlistfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/midibase.cpp,
+	libseq66/src/play/playlist.cpp,
+	libseq66/src/sessions/clinsmanager.cpp,
+	libseq66/src/util/strfunctions.cpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_rtmidi/include/midi_api.hpp,
+	seq_rtmidi/include/rtmidi.hpp, seq_rtmidi/include/rtmidi_types.hpp,
+	seq_rtmidi/src/midi_alsa.cpp, seq_rtmidi/src/midi_api.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midi_jack_info.cpp,
+	seq_rtmidi/src/midi_probe.cpp, seq_rtmidi/src/rtmidi_types.cpp: 
+	Fixes to port-naming and setup, playlist fixes.
+
+2020-12-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, contrib/scripts/startjack,
+	libseq66/include/midi/midibase.hpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/midibase.cpp,
+	seq_portmidi/include/midibus_pm.hpp, seq_portmidi/src/midibus.cpp,
+	seq_rtmidi/include/midi_alsa.hpp, seq_rtmidi/include/midi_api.hpp,
+	seq_rtmidi/include/midi_jack.hpp,
+	seq_rtmidi/include/midibus_rm.hpp, seq_rtmidi/include/rtmidi.hpp,
+	seq_rtmidi/include/rtmidi_types.hpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_api.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midi_jack_info.cpp, seq_rtmidi/src/midibus.cpp,
+	seq_rtmidi/src/rtmidi_types.cpp: Interim check-in, fixing
+	disabled-port issues.
+
+2020-12-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/midi/midifile.hpp,
+	libseq66/include/sessions/smanager.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/midi/midifile.cpp,
+	libseq66/src/sessions/smanager.cpp,
+	libseq66/src/util/basic_macros.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	recent-files issues, still working on JACK input.
+
+2020-12-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	Seqtool/Makefile.in, Seqtool/forms/Makefile.in,
+	Seqtool/include/Makefile.in, Seqtool/src/Makefile.in, configure,
+	data/Makefile.in, doc/Makefile.in, doc/dox/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/src/Makefile.in, libsessions/Makefile.in,
+	libsessions/include/Makefile.in, libsessions/src/Makefile.in,
+	m4/Makefile.in, man/Makefile.in, resources/pixmaps/Makefile.in,
+	seq_portmidi/Makefile.in, seq_portmidi/include/Makefile.in,
+	seq_portmidi/src/Makefile.in, seq_qt5/Makefile.in,
+	seq_qt5/forms/Makefile.in, seq_qt5/include/Makefile.in,
+	seq_qt5/src/Makefile.in, seq_qt5/src/qsetmaster.cpp,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Updating Makefile.ins in Ubuntu 18.04.5
+	LTS.
+
+2020-12-12  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, VERSION, configure.ac, contrib/scripts/startjack,
+	data/linux/qseq66.rc, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/midi/businfo.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midibus.cpp: Still more
+	fixes to port naming.
+
+2020-12-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, libseq66/include/app_limits.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/play/performer.cpp,
+	man/sequencer66.1, seq_qt5/forms/qseditoptions.ui,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_jack.cpp,
+	seq_rtmidi/src/midibus.cpp: Fixed JACK virtual inport port naming
+	issues.
+	* libseq66/include/Makefile.am,
+	libseq66/include/midi/midibus_common.hpp,
+	libseq66/include/play/clockslist.hpp,
+	libseq66/include/play/inputslist.hpp,
+	libseq66/include/play/listsbase.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/play/clockslist.cpp,
+	libseq66/src/play/inputslist.cpp, libseq66/src/play/listsbase.cpp: 
+	Added modules accidentally forgotten, doh.
+	* INSTALL, VERSION, configure.ac, contrib/scripts/startjack,
+	include/config.h.in, libseq66/include/midi/businfo.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/midi/midi_vector_base.hpp,
+	libseq66/include/midi/midibase.hpp,
+	libseq66/include/play/clockslist.hpp,
+	libseq66/include/play/inputslist.hpp,
+	libseq66/include/util/calculations.hpp,
+	libseq66/include/util/strfunctions.hpp, libseq66/libseq66.pro,
+	libseq66/src/Makefile.am, libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/rcfile.cpp, libseq66/src/midi/businfo.cpp,
+	libseq66/src/midi/mastermidibase.cpp,
+	libseq66/src/midi/midibase.cpp, libseq66/src/util/basic_macros.cpp,
+	libseq66/src/util/calculations.cpp, man/sequencer66.1,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qseditoptions.hpp, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qseditoptions.cpp, seq_qt5/src/qsmainwnd.cpp,
+	seq_rtmidi/src/mastermidibus.cpp, seq_rtmidi/src/midi_alsa.cpp,
+	seq_rtmidi/src/midi_jack.cpp, seq_rtmidi/src/midibus.cpp: Interim
+	check-in, much fiddling with port naming.
+
+2020-12-07  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, Seqtool/src/optionsfile.cpp, data/samples/sample.usr,
+	doc/latex/tex/usr_file.tex, libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/performer.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/setmapper.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/seq.cpp, libseq66/src/play/setmapper.cpp,
+	seq_qt5/forms/qsmainwnd.ui, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/src/qsmainwnd.cpp: Got options for set auto-arming and
+	multiple-set playback working.
+
+2020-12-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp, libseq66/include/play/seq.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp: 
+	Refactored playset to prep for multi-set playback.
+
+2020-12-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, VERSION, configure, configure.ac, data/license.txt,
+	data/readme.txt, data/readme.windows, include/config.h.in,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/include/app_limits.h,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/mutegroups.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/forms/qsmainwnd.ui,
+	seq_qt5/include/qslivebase.hpp, seq_qt5/include/qslivegrid.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Interim
+	safety check in for set and mutes handling.
+
+2020-12-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit 77caba631e9085b9c5eff7eaa5a7054dde5d59e8 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Fri Dec 4 16:43:09 2020
+	-0500
+
 2020-11-30  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, README: Version 0.91.2 pending.
 	* data/readme.windows, doc/latex/tex/menu.tex,
 	doc/latex/tex/playlist.tex, doc/latex/tex/seq66-user-manual.tex,
 	libseq66/src/cfg/midicontrolfile.cpp,
