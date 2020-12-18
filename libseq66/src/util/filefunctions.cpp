@@ -901,7 +901,7 @@ file_append_log
 bool
 name_has_directory (const std::string & filename)
 {
-    std::string::size_type pos = filename.find_first_of("/");
+    auto pos = filename.find_first_of("/");
     bool result = pos != std::string::npos;
 #if defined SEQ66_PLATFORM_WINDOWS
     if (! result)
@@ -934,7 +934,7 @@ name_has_directory (const std::string & filename)
 bool
 is_root_path (const std::string & path)
 {
-    std::string::size_type pos = path.find_first_of(":");   /* Windows */
+    auto pos = path.find_first_of(":");   /* Windows */
     bool result = pos != std::string::npos;
     if (result)
         result = std::isalpha(path[0]) && pos == 1 && path[2] == '/';
@@ -1244,14 +1244,14 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
     {
         result = path;
 
-        std::string::size_type circumpos = result.find_first_of("~");
+        auto circumpos = result.find_first_of("~");
         if (circumpos != std::string::npos)
         {
             result.replace(circumpos, 1, user_home());
         }
         if (to_unix)
         {
-            std::string::size_type pos = path.find_first_of("\\");
+            auto pos = path.find_first_of("\\");
             if (pos != std::string::npos)
                 std::replace(result.begin(), result.end(), '\\', '/');
 
@@ -1260,7 +1260,7 @@ normalize_path (const std::string & path, bool to_unix, bool terminate)
         }
         else
         {
-            std::string::size_type pos = path.find_first_of("/");
+            auto pos = path.find_first_of("/");
             if (pos != std::string::npos)
                 std::replace(result.begin(), result.end(), '/', '\\');
 
@@ -1475,11 +1475,11 @@ filename_split
 )
 {
     std::string temp = normalize_path(fullpath);
-    std::string::size_type spos = temp.find_last_of("/");
+    auto spos = temp.find_last_of("/");
     bool result = spos != std::string::npos;
     if (result)
     {
-        std::string::size_type pos = spos + 1;
+        auto pos = spos + 1;
         path = temp.substr(0, pos);                     /* include slash    */
         filebase = temp.substr(pos, temp.length() - pos);
     }
@@ -1531,7 +1531,7 @@ filename_base (const std::string & fullpath, bool noext)
     (void) filename_split(fullpath, path, result);
     if (noext)
     {
-        std::string::size_type dpos = result.find_last_of(".");
+        auto dpos = result.find_last_of(".");
         bool ok = dpos != std::string::npos;
         if (ok)
             result = result.substr(0, dpos);
@@ -1558,10 +1558,10 @@ std::string
 file_extension (const std::string & path)
 {
     std::string result;
-    std::string::size_type ppos = path.find_last_of(".");
+    auto ppos = path.find_last_of(".");
     if (ppos != std::string::npos)
     {
-        std::string::size_type end_index = path.length() - 1;
+        auto end_index = path.length() - 1;
         result = path.substr(ppos + 1, end_index - 1);
     }
     return result;
@@ -1586,7 +1586,7 @@ std::string
 file_extension_set (const std::string & path, const std::string & ext)
 {
     std::string result;
-    std::string::size_type ppos = path.find_last_of(".");
+    auto ppos = path.find_last_of(".");
     if (ppos != std::string::npos)
     {
         result = path.substr(0, ppos);

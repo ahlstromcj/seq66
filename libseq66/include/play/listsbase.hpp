@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2020-12-11
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -54,6 +54,7 @@ namespace seq66
 
 class listsbase
 {
+    friend std::string output_port_map_list ();
 
 protected:
 
@@ -107,10 +108,27 @@ public:
         return int(m_master_io.size());
     }
 
+    bool not_empty () const
+    {
+        return ! m_master_io.empty();
+    }
+
     void set_name (bussbyte bus, const std::string & name);
     void set_nick_name (bussbyte bus, const std::string & name);
     std::string get_name (bussbyte bus) const;
     std::string get_nick_name (bussbyte bus) const;
+    bussbyte bus_from_nick_name (const std::string & nick) const;
+    std::string port_name_from_bus (bussbyte nominalbuss) const;
+    void show (const std::string & tag) const;
+    bool add_list_line (const std::string & line);
+
+protected:
+
+    std::string extract_nickname (const std::string & name) const;
+    std::string e_clock_to_string (e_clock e) const;
+    std::string port_map_list () const;
+    std::string to_string (const std::string & tag) const;
+    bool add (const std::string & name, const std::string & nickname);
 
 };              // class listsbase
 

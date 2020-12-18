@@ -207,12 +207,12 @@ tokenize_string
     static std::string s_delims = ":. ";
     int result = 0;
     tokens.clear();
-    std::string::size_type pos = source.find_first_not_of(s_delims);
+    auto pos = source.find_first_not_of(s_delims);
     if (pos != std::string::npos)
     {
         for (;;)
         {
-            std::string::size_type depos = source.find_first_of(s_delims, pos);
+            auto depos = source.find_first_of(s_delims, pos);
             if (depos != std::string::npos)
             {
                 tokens.push_back(source.substr(pos, depos - pos));

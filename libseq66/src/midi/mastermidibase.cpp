@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-12-09
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -38,6 +38,12 @@
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase            */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
+
+/*
+ * EXPERIMENTAL
+ */
+
+#undef SEQ66_USE_PORT_MAP_TEST
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -320,6 +326,7 @@ void
 mastermidibase::play (bussbyte bus, event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
+    bus = true_output_bus(bus);
     m_outbus_array.play(bus, e24, channel);
 }
 
@@ -343,6 +350,8 @@ bool
 mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 {
     automutex locker(m_mutex);
+    bus = true_output_bus(bus);
+
     bool result = m_outbus_array.set_clock(bus, clocktype);
     if (result)
         result = save_clock(bus, clocktype);    /* save into the vector */
@@ -366,6 +375,7 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 bool
 mastermidibase::save_clock (bussbyte bus, e_clock clock)
 {
+    bus = true_output_bus(bus);
     return m_master_clocks.set(bus, clock);
 }
 
@@ -385,6 +395,7 @@ mastermidibase::save_clock (bussbyte bus, e_clock clock)
 e_clock
 mastermidibase::get_clock (bussbyte bus)
 {
+    bus = true_output_bus(bus);
     return m_outbus_array.get_clock(bus);
 }
 
@@ -412,6 +423,10 @@ mastermidibase::copy_io_busses ()
         std::string name = m_outbus_array.get_midi_bus_name(bus);
         m_master_clocks.add(clk, name);
     }
+
+#if defined SEQ66_USE_PORT_MAP_TEST
+    (void) build_output_port_map(m_master_clocks);
+#endif
 }
 
 /**
@@ -440,6 +455,8 @@ bool
 mastermidibase::set_input (bussbyte bus, bool inputing)
 {
     automutex locker(m_mutex);
+    bus = true_output_bus(bus);
+
     bool result = m_inbus_array.set_input(bus, inputing);
     if (result)
         result = save_input(bus, inputing);     /* save into the vector */
@@ -471,6 +488,8 @@ bool
 mastermidibase::save_input (bussbyte bus, bool inputing)
 {
     int currentcount = m_master_inputs.count();
+    bus = true_output_bus(bus);
+
     bool result = m_master_inputs.set(bus, inputing);
     if (! result)
     {
@@ -501,6 +520,7 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
 bool
 mastermidibase::get_input (bussbyte bus)
 {
+    bus = true_output_bus(bus);
     return m_inbus_array.get_input(bus);
 }
 
@@ -517,6 +537,7 @@ mastermidibase::get_input (bussbyte bus)
 bool
 mastermidibase::is_input_system_port (bussbyte bus)
 {
+    bus = true_output_bus(bus);
     return m_inbus_array.is_system_port(bus);
 }
 
@@ -529,9 +550,9 @@ mastermidibase::is_input_system_port (bussbyte bus)
  *  needed in the portmidi implementation, but seem generally useful to
  *  support in all implementations.
  *
- *  Also, if the client name is already part of the port name, as in
- *  "client:client port 0", then we
- *  remove the "client:" portion to make the listing look cleaner.
+ *  We first try a port-mapper lookup, to get the short-name for the port. If
+ *  we can't get one, then we return the value obtained from the output
+ *  busarray, which has extra information over and above.....
  *
  * \param bus
  *      Provides the output buss number.  Checked before usage.
@@ -546,7 +567,17 @@ mastermidibase::is_input_system_port (bussbyte bus)
 std::string
 mastermidibase::get_midi_out_bus_name (bussbyte bus)
 {
-    return m_outbus_array.get_midi_bus_name(bus);
+    std::string result = output_port_name(bus);
+    if (result.empty())
+        result = m_master_clocks.get_nick_name(bus);
+
+    /*
+     * Which is best, this or the above?
+     *
+     *  result =  m_outbus_array.get_midi_bus_name(bus);
+     */
+
+    return result;
 }
 
 /**
@@ -567,6 +598,10 @@ mastermidibase::get_midi_out_bus_name (bussbyte bus)
 std::string
 mastermidibase::get_midi_in_bus_name (bussbyte bus)
 {
+    /*
+     * Not needed, we want the short name: bus = true_output_bus(bus);
+     */
+
     return m_inbus_array.get_midi_bus_name(bus);
 }
 

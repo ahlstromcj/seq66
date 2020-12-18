@@ -219,9 +219,6 @@ qloopbutton::initialize_text ()
         if (vert_compressed())
             by = int(0.75 * h);                 /* bottom y     */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("qloopbutton size = (%d, %d)\n", w, h);
-#endif
         /*
          * Code from performer::sequence_label().
          */
@@ -237,7 +234,12 @@ qloopbutton::initialize_text ()
         std::string lowerleft, hotkey;
         char tmp[32];
         if (rc().show_ui_sequence_number())
-            snprintf(tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw);
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw
+            );
+        }
         else
             snprintf(tmp, sizeof tmp, "%d-%d %d/%d", bus, chan, bpb, bw);
 

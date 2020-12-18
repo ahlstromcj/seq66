@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-12-16
+ * \updates       2020-12-18
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -79,7 +79,7 @@ is_questionable_string (const std::string & item)
 bool
 contains (const std::string & original, const std::string & target)
 {
-    std::string::size_type pos = original.find(target);
+    auto pos = original.find(target);
     return pos != std::string::npos;
 }
 
@@ -101,14 +101,14 @@ std::string
 strip_comments (const std::string & item)
 {
     std::string result = item;
-    std::string::size_type hashpos = result.find_first_of("#");
-    std::string::size_type qpos = result.find_first_of("\"'");
+    auto hashpos = result.find_first_of("#");
+    auto qpos = result.find_first_of("\"'");
     if (qpos != std::string::npos)
     {
-        std::string::size_type qpos2;
         char quotechar[2] = { 'x', 0 };
         quotechar[0] = result[qpos];
-        qpos2 = result.find_first_of(quotechar, qpos + 1);
+
+        auto qpos2 = result.find_first_of(quotechar, qpos + 1);
         if (qpos2 != std::string::npos)
         {
             if (hashpos > qpos2)
@@ -146,11 +146,11 @@ strip_quotes (const std::string & item)
     if (! item.empty())
     {
         result = item;
-        std::string::size_type fpos = result.find_first_of("\"");
+        auto fpos = result.find_first_of("\"");
         if (fpos == 0)
         {
-            std::string::size_type lpos = result.find_last_of("\"");
-            std::string::size_type end_index = result.length() - 1;
+            auto lpos = result.find_last_of("\"");
+            auto end_index = result.length() - 1;
             if (lpos != std::string::npos && lpos == end_index)
                 result = result.substr(1, end_index - 1);
         }
@@ -159,8 +159,8 @@ strip_quotes (const std::string & item)
             fpos = result.find_first_of("'");
             if (fpos == 0)
             {
-                std::string::size_type lpos = result.find_last_of("'");
-                std::string::size_type end_index = result.length() - 1;
+                auto lpos = result.find_last_of("'");
+                auto end_index = result.length() - 1;
                 if (lpos != std::string::npos && lpos == end_index)
                     result = result.substr(1, end_index - 1);
             }
@@ -193,8 +193,8 @@ add_quotes (const std::string & item)
     else
     {
         result = item;
-        std::string::size_type pos0 = result.find_first_of("\"");
-        std::string::size_type pos1 = result.find_last_of("\"");
+        auto pos0 = result.find_first_of("\"");
+        auto pos1 = result.find_last_of("\"");
         bool change = pos0 != 0 && pos1 < result.length() - 1;
         if (change)
         {
@@ -387,8 +387,8 @@ string_replace
 )
 {
     std::string result = source;
-    auto targetsize = target.size();            // std::string::size_type
-    auto targetloc = result.find(target);       // std::string::size_type
+    auto targetsize = target.size();
+    auto targetloc = result.find(target);
     while (targetloc != std::string::npos)
     {
         (void) result.replace(targetloc, targetsize, replacement);
@@ -715,7 +715,7 @@ strings_match (const std::string & target, const std::string & x)
  *  Easy conversion from boolean to string, "true" or "false".
  */
 
-const std::string &
+std::string
 bool_to_string (bool x)
 {
     static const std::string s_true { "true" };
@@ -785,7 +785,7 @@ tokenize_stanzas
     bleft = source.find_first_of(BL, bleft);
     if (bleft != std::string::npos)
     {
-        std::string::size_type bright = source.find_first_of(BR, bleft + 1);
+        auto bright = source.find_first_of(BR, bleft + 1);
         if (bright != std::string::npos && bright > bleft)
         {
             tokens.push_back(BL);
@@ -797,9 +797,7 @@ tokenize_stanzas
             {
                 for (;;)
                 {
-                    std::string::size_type last =
-                        source.find_first_of(s_delims, bleft);
-
+                    auto last = source.find_first_of(s_delims, bleft);
                     if (last == std::string::npos)
                     {
                         if (bright > bleft)
@@ -984,8 +982,8 @@ parse_stanza_bits
     if (result)
     {
         midibooleans bitbucket;
-        std::string::size_type p = mutestanza.find_first_of("xX");
-        std::string::size_type bleft = mutestanza.find_first_of("[");
+        auto p = mutestanza.find_first_of("xX");
+        auto bleft = mutestanza.find_first_of("[");
         bool newstyle = p != std::string::npos;
         std::vector<std::string> tokens;
         int tokencount = tokenize_stanzas(tokens, mutestanza, bleft);

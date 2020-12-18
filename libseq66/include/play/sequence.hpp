@@ -301,10 +301,18 @@ private:
     bool m_no_channel;
 
     /**
-     *  Contains the proper MIDI bus number for this sequence.
+     *  Contains the nominal output MIDI bus number for this sequence/pattern.
+     *  This number is saved in the sequence/pattern. If port-mapping is in
+     *  place, this number is used only to look up the true output buss.
      */
 
-    midibyte m_bus;
+    bussbyte m_nominal_bus;
+
+    /**
+     *  Contains the actual buss number to be used in output.
+     */
+
+    bussbyte m_true_bus;
 
     /**
      *  Provides a flag for pattern playback song muting.
@@ -1357,12 +1365,12 @@ public:
         return m_trigger_offset;
     }
 
-    midibyte get_midi_bus () const
+    bussbyte get_midi_bus () const
     {
-        return m_bus;
+        return m_nominal_bus;       // or m_true_bus?
     }
 
-    void set_midi_bus (char mb, bool user_change = false);
+    void set_midi_bus (bussbyte mb, bool user_change = false);
     void set_master_midi_bus (const mastermidibus * mmb);
     int select_note_events
     (

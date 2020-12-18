@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-11
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,24 +45,54 @@ namespace seq66
 
 /**
  *  Saves the clock settings read from the "rc" file so that they can be
- *  passed to the mastermidibus after it is created.
+ *  passed to the mastermidibus after it is created.  Also used in the
+ *  creation of a port-map, in which the port nick-name is ultimately used to
+ *  look up an index into the ports actually discovered in the system.
  *
  * \param clocktype
  *      The clock value read from the "rc" file.
+ *
+ * \param name
+ *      The full name of the port, except when a port-map is being formed.
+ *      Then, this is just a string version of the buss number.  If this
+ *      parameter is empty, nothing is added to the list.
+ *
+ * \param nickname
+ *      The short name for the port, normally.  This is generally the text
+ *      after the last colon in the bus/port name discovered by the system.
+ *      By default, it is empty.
+ *
+ * \return
+ *      Returns true if the item was added to the list.
  */
 
-void
-clockslist::add (e_clock clocktype, const std::string & name)
+bool
+clockslist::add
+(
+    e_clock clocktype,
+    const std::string & name,
+    const std::string & nickname
+)
 {
+    bool result = false;
     io ioitem;
     ioitem.io_enabled = clocktype != e_clock::disabled;
     ioitem.out_clock = clocktype;
     if (! name.empty())
     {
         ioitem.io_name = name;
-        ioitem.io_nick_name = name;
+        if (nickname.empty())
+        {
+            std::string nick = extract_nickname(name);
+            ioitem.io_nick_name = nick;
+        }
+        else
+            ioitem.io_nick_name = nickname;
+
+        m_master_io.push_back(ioitem);
+        result = true;
     }
-    m_master_io.push_back(ioitem);
+    return result;
 }
 
 /**
@@ -88,6 +118,113 @@ e_clock
 clockslist::get (bussbyte bus) const
 {
     return bus < count() ? m_master_io[bus].out_clock : e_clock::off ;
+}
+
+/*
+ * Free functions
+ */
+
+clockslist &
+output_port_map ()
+{
+    static clockslist s_clocks_list;
+    return s_clocks_list;
+}
+
+/**
+ *  Gets the nominal port name for the given bus, from the internal port-map
+ *  object for clocks.
+ */
+
+std::string
+output_port_name (bussbyte b)
+{
+    const clockslist & cloutref = output_port_map();
+    return cloutref.get_name(b);
+}
+
+/**
+ *  Gets the port-string (e.g. "1") from the internal port-map object for
+ *  clocks.
+ */
+
+bussbyte
+output_port_number (bussbyte b)
+{
+    bussbyte result = b;
+    const clockslist & cloutref = output_port_map();
+    std::string nickname = cloutref.get_nick_name(b);
+    if (! nickname.empty())
+        result = std::stoi(nickname);
+
+    return result;
+}
+
+/**
+ *  Builds the internal clockslist which holds a simplified list of nominal
+ *  outputs where the io_name field of each element is the nick-ndame of the
+ *  source clockslist's element, and the io_nick_name field is the index
+ *  number (starting from 0) converted to a string.
+ */
+
+bool
+build_output_port_map (const clockslist & cl)
+{
+    bool result = cl.not_empty();
+    if (result)
+    {
+        clockslist & cloutref = output_port_map();
+        cloutref.clear();
+        for (int b = 0; b < cl.count(); ++b)
+        {
+            std::string name = std::to_string(b);
+            bussbyte bb = bussbyte(b);
+            result = cloutref.add(e_clock::off, cl.get_nick_name(bb), name);
+            if (! result)
+            {
+                cloutref.clear();
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+bussbyte
+true_output_bus (const clockslist & cl, bussbyte nominalbuss)
+{
+    bussbyte result = nominalbuss;
+    const clockslist & cloutref = output_port_map();
+    if (cloutref.not_empty())
+    {
+        std::string shortname = cloutref.port_name_from_bus(nominalbuss);
+        if (! shortname.empty())
+            result = cl.bus_from_nick_name(shortname);
+    }
+    return result;
+}
+
+/**
+ *  Returns a string representing the two columns of the internal clocks list.
+ *  It is suitable for writing to a configuration file.  Quotes are included
+ *  for readability and parse-ability.
+ *
+\verbatim
+        0   "MIDI Port 1 Through"
+        1   "Jazzy MIDI Out 1"
+        2   "Jazzy MIDI Out 2"
+\endverbatim
+ *
+ * \return
+ *      Returns a string like the above.  If it is empty, the output port map
+ *      is empty.
+ */
+
+std::string
+output_port_map_list ()
+{
+    const clockslist & cloutref = output_port_map();
+    return cloutref.port_map_list();
 }
 
 }               // namespace seq66

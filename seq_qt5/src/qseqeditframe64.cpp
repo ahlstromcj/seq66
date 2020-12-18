@@ -383,6 +383,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_edit_mode             (perf().edit_mode(seqid)),
     m_timer                 (nullptr)
 {
+    bussbyte buss = seq_pointer()->get_midi_bus();
+    midibyte channel = seq_pointer()->get_midi_channel();
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);                 /* part of issue #4 */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -608,12 +610,12 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
-        for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
+        for (int b = 0; b < mmb->get_num_out_buses(); ++b)
         {
-            bool disabled = clock_is_disabled(mmb->get_clock(buss));
+            bool disabled = clock_is_disabled(mmb->get_clock(b));
             ui->m_combo_bus->addItem
             (
-                QString::fromStdString(mmb->get_midi_out_bus_name(buss))
+                QString::fromStdString(mmb->get_midi_out_bus_name(b))
             );
             if (disabled)
             {
@@ -621,16 +623,13 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
                 (
                     ui->m_combo_bus->model()
                 );
-                QStandardItem * item = model->item(buss);
+                QStandardItem * item = model->item(b);
                 item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
             }
         }
         ui->m_combo_bus->setCurrentText
         (
-            QString::fromStdString
-            (
-                mmb->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
-            )
+            QString::fromStdString(mmb->get_midi_out_bus_name(buss))
         );
     }
     connect
@@ -638,7 +637,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_bus, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_midi_bus(int))
     );
-    set_midi_bus(seq_pointer()->get_midi_bus());
+    set_midi_bus(buss);
 
     /*
      *  MIDI channels.  Not sure if we want to use the button to reset the
@@ -651,7 +650,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_channel, SIGNAL(clicked(bool)),
         this, SLOT(reset_midi_channel())
     );
-    repopulate_midich_combo(seq_pointer()->get_midi_bus());
+    repopulate_midich_combo(buss);
 
     /*
      * Undo and Redo Buttons.
@@ -934,8 +933,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(events())
     );
 
-    int buss = seq_pointer()->get_midi_bus();
-    int channel = seq_pointer()->get_midi_channel();
     repopulate_event_menu(buss, channel);
     set_data_type(EVENT_NOTE_ON);
 
@@ -1696,7 +1693,7 @@ qseqeditframe64::update_midi_bus (int index)
     {
         if (index >= 0 && index < mmb->get_num_out_buses())
         {
-            seq_pointer()->set_midi_bus(index, true);
+            seq_pointer()->set_midi_bus(bussbyte(index), true);
             set_dirty();
         }
     }
@@ -1725,8 +1722,8 @@ qseqeditframe64::reset_midi_bus ()
  *  in the field if we set it from the seqmenu.
  *
  * \param bus
- *      The buss value to set.  If this value changes the selected buss, then
- *      the MIDI channel popup menu is repopulated.
+ *      The nominal buss value to set.  If this value changes the selected
+ *      buss, then the MIDI channel popup menu is repopulated.
  *
  * \param user_change
  *      True if the user made this change, and thus has potentially modified
@@ -1739,12 +1736,13 @@ qseqeditframe64::reset_midi_bus ()
 void
 qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
-    int initialbus = seq_pointer()->get_midi_bus();
-    seq_pointer()->set_midi_bus(bus, user_change);  /* user-modified value? */
-    ui->m_combo_bus->setCurrentIndex(bus);          /* UPDATE_MIDI_BUS(0)   */
-    if (bus != initialbus && user_change)
+    bussbyte initialbus = seq_pointer()->get_midi_bus();
+    bussbyte b = bussbyte(bus);
+    seq_pointer()->set_midi_bus(b, user_change);    /* user-modified value? */
+    ui->m_combo_bus->setCurrentIndex(bus);
+    if (bus != int(initialbus) && user_change)
     {
-        int channel = seq_pointer()->get_midi_channel();
+        int channel = int(seq_pointer()->get_midi_channel());
         repopulate_midich_combo(bus);
         repopulate_event_menu(bus, channel);
     }
@@ -1857,7 +1855,7 @@ qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
     seq_pointer()->set_midi_channel(midichannel, user_change);
     if (midichannel != initialchan && user_change)
     {
-        int initialbus = seq_pointer()->get_midi_bus();
+        int initialbus = int(seq_pointer()->get_midi_bus());
         repopulate_event_menu(initialbus, midichannel);
     }
 }
@@ -2272,8 +2270,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         snprintf(type, sizeof type, "Aftertouch");
     else if (status == EVENT_CONTROL_CHANGE)
     {
-        int bus = seq_pointer()->get_midi_bus();
-        int channel = seq_pointer()->get_midi_channel();
+        int bus = int(seq_pointer()->get_midi_bus());
+        int channel = int(seq_pointer()->get_midi_channel());
         std::string ccname(c_controller_names[control]);
         if (usr().controller_active(bus, channel, control))
             ccname = usr().controller_name(bus, channel, control);

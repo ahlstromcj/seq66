@@ -203,6 +203,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
+        bussbyte b = seq_pointer()->get_midi_bus();
         for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
         {
             bool disabled = clock_is_disabled(mmb->get_clock(buss));
@@ -222,10 +223,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
         }
         ui->cmbMidiBus->setCurrentText
         (
-            QString::fromStdString
-            (
-                mmb->get_midi_out_bus_name(seq_pointer()->get_midi_bus())
-            )
+            QString::fromStdString(mmb->get_midi_out_bus_name(b))
         );
     }
 
@@ -615,29 +613,17 @@ qseqeditframe::updateGridSnap (int snapindex)
     seq_pointer()->snap(snapvalue);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::updatemidibus (int newindex)
 {
-    seq_pointer()->set_midi_bus(newindex);
+    seq_pointer()->set_midi_bus(bussbyte(newindex));
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::updateMidiChannel (int newindex)
 {
-    seq_pointer()->set_midi_channel(newindex);
+    seq_pointer()->set_midi_channel(midibyte(newindex));
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::undo ()
@@ -645,19 +631,11 @@ qseqeditframe::undo ()
     seq_pointer()->pop_undo();
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::redo()
 {
     seq_pointer()->pop_redo();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::showTools()
@@ -712,10 +690,6 @@ qseqeditframe::updateNoteLength (int newindex)
     m_seqroll->set_note_length(len);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::note_entry (bool ischecked)
 {
@@ -756,10 +730,6 @@ qseqeditframe::slot_zoom_out ()
     m_seqdata->zoom_out();
     update_draw_geometry();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::updateKey (int /*newindex*/)
@@ -831,10 +801,6 @@ qseqeditframe::keyPressEvent (QKeyEvent * event)
             start_playing();
     }
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::keyReleaseEvent (QKeyEvent *)
@@ -1007,20 +973,12 @@ qseqeditframe::toggle_qrec (bool ischecked)
         update_midi_buttons();
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::toggle_thru (bool ischecked)
 {
     if (perf().set_thru(seq_pointer(), ischecked, false))
         update_midi_buttons();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::select_all_notes()
@@ -1029,10 +987,6 @@ qseqeditframe::select_all_notes()
     seq_pointer()->select_events(EVENT_NOTE_OFF, 0);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::inverseNoteSelection()
 {
@@ -1040,29 +994,17 @@ qseqeditframe::inverseNoteSelection()
     seq_pointer()->select_events(EVENT_NOTE_OFF, 0, true);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::quantizeNotes()
 {
     seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 1, false);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe::tightenNotes()
 {
     seq_pointer()->push_quantize(EVENT_NOTE_ON, 0, 2, true);
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::transposeNotes()
@@ -1095,18 +1037,10 @@ qseqeditframe::on_sequence_change (seq::number seqno, bool redo)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qseqeditframe::change_ppqn (int ppqn)
 {
     int zoom = usr().zoom();
-#if 0
-    set_snap(sm_initial_snap * ppqn / SEQ66_DEFAULT_PPQN);
-    set_note_length(sm_initial_note_length * ppqn / SEQ66_DEFAULT_PPQN);
-#endif
     if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
         zoom = zoom_power_of_2(ppqn);
 

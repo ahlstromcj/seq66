@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-08-02
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -191,6 +191,16 @@ public:
         m_ppqn = ppqn;
         m_beats_per_minute = bpm;
         api_init(ppqn, bpm);
+    }
+
+    void store_output_map ()
+    {
+        (void) build_output_port_map(m_master_clocks);
+    }
+
+    bussbyte true_output_bus (bussbyte nominalbuss) const
+    {
+        return seq66::true_output_bus(m_master_clocks, nominalbuss);
     }
 
     int get_num_out_buses () const

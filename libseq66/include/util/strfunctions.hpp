@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-16
+ * \updates       2020-12-17
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -79,7 +79,7 @@ extern std::string shorten_file_spec (const std::string & fpath, int leng);
 extern bool string_not_void (const std::string & s);
 extern bool string_is_void (const std::string & s);
 extern bool strings_match (const std::string & target, const std::string & x);
-extern const std::string & bool_to_string (bool x);
+extern std::string bool_to_string (bool x);
 extern char bool_to_char (bool x);
 extern int tokenize_stanzas
 (

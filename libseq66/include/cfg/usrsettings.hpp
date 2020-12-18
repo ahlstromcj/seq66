@@ -631,7 +631,7 @@ private:
      *  --bus.
      */
 
-    midibyte m_midi_buss_override;      /* --bus n option               */
+    bussbyte m_midi_buss_override;      /* --bus n option               */
 
     /**
      *  Sets the default velocity for note adding.  The value
@@ -1503,7 +1503,7 @@ public:
         return m_midi_beat_width;
     }
 
-    midibyte midi_buss_override () const
+    bussbyte midi_buss_override () const
     {
         return m_midi_buss_override;
     }
@@ -1774,7 +1774,7 @@ public:         // used in main application module and the usrfile class
     }
 
     void midi_ppqn (int ppqn);
-    void midi_buss_override (midibyte buss);
+    void midi_buss_override (bussbyte buss);
     void velocity_override (int vel);
     void bpm_precision (int precision);
     void bpm_step_increment (midibpm increment);

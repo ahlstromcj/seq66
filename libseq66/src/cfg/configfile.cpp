@@ -95,15 +95,15 @@ configfile::trimline () const
     std::string result = line();
     result = trim(result);
 
-    std::string::size_type bpos = result.find_first_of("\"'");
+    auto bpos = result.find_first_of("\"'");
     if (bpos != std::string::npos)
     {
-        std::string::size_type epos = result.find_last_of("\"'");
-        std::string::size_type len;
+        auto epos = result.find_last_of("\"'");
+        int len;
         if (epos != std::string::npos)
-            len = epos - bpos - 1;
+            len = int(epos - bpos - 1);
         else
-            len = result.length() - 1 - bpos;
+            len = int(result.length() - 1 - bpos);
 
         result = result.substr(bpos + 1, len);
     }
@@ -341,14 +341,14 @@ configfile::get_variable
     {
         if (! line().empty())                   /* any value in section?    */
         {
-            std::string::size_type epos = line().find_first_of("=");
+            auto epos = line().find_first_of("=");
             if (epos != std::string::npos)
             {
                 /*
                  *  Check-point 1
                  */
 
-                std::string::size_type spos = line().find_first_of(" ");
+                auto spos = line().find_first_of(" ");
                 if (spos > epos)
                     spos = epos;
 
@@ -361,11 +361,11 @@ configfile::get_variable
 
                     bool havequotes = false;
                     char quotechar[2] = { 'x', 0 };
-                    std::string::size_type qpos = line().find_first_of
+                    auto qpos = line().find_first_of
                     (
                          "'\"", epos + 1
                     );
-                    std::string::size_type qpos2 = std::string::npos;
+                    auto qpos2 = std::string::npos;
                     if (qpos != std::string::npos)
                     {
                         quotechar[0] = line()[qpos];

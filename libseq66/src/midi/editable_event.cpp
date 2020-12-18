@@ -709,7 +709,7 @@ editable_event::set_status_from_string
                  * 0x18 and 0x08.
                  */
 
-                std::string::size_type pos = sd0.find_first_of("/");
+                auto pos = sd0.find_first_of("/");
                 if (pos != std::string::npos)
                 {
                     int nn = std::atoi(sd0.c_str());
@@ -756,7 +756,7 @@ editable_event::set_status_from_string
                  * SysEx.
                  */
 
-                std::string::size_type pos = sd0.find_first_of("0123456789x");
+                auto pos = sd0.find_first_of("0123456789x");
                 while (pos != std::string::npos)
                 {
                     // TODO

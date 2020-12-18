@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-11
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -66,11 +66,27 @@ public:
         // Nothing to do
     }
 
-    void add (e_clock clocktype, const std::string & name);
+    bool add
+    (
+        e_clock clocktype,
+        const std::string & name,
+        const std::string & nickname = ""
+    );
     bool set (bussbyte bus, e_clock clocktype);
     e_clock get (bussbyte bus) const;
 
 };              // class clockslist
+
+/*
+ * Free functions
+ */
+
+extern clockslist & output_port_map ();
+extern bool build_output_port_map (const clockslist & lb);
+extern bussbyte true_output_bus (const clockslist & cl, bussbyte nominalbuss);
+extern std::string output_port_name (bussbyte b);
+extern bussbyte output_port_number (bussbyte b);
+extern std::string output_port_map_list ();
 
 }               // namespace seq66
 

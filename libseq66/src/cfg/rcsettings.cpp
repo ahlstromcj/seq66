@@ -361,7 +361,7 @@ rcsettings::make_config_filespec
 ) const
 {
     std::string result;
-    std::string::size_type pos = base.find_last_of(".");
+    auto pos = base.find_last_of(".");
     if (pos != std::string::npos)                       /* base.extension   */
     {
         pos = result.find_first_of("/");
@@ -384,7 +384,7 @@ rcsettings::make_config_filespec
     else
     {
         std::string extension = ext;
-        std::string::size_type pos = ext.find_first_of(".");
+        auto pos = ext.find_first_of(".");
         bool add_ext_dot =
         (
             pos == std::string::npos ||                 /* ext has no dot   */
@@ -681,7 +681,7 @@ rcsettings::recent_file (int index, bool shorten) const
     std::string result = m_recent_files.get(index);
     if (shorten && ! result.empty())
     {
-        std::string::size_type slashpos = result.find_last_of("/\\");
+        auto slashpos = result.find_last_of("/\\");
         if (slashpos != std::string::npos)
             result = result.substr(slashpos + 1, std::string::npos);
     }

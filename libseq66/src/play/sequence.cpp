@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-09-24
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -131,7 +131,8 @@ sequence::sequence (int ppqn)
     m_channel_match             (false),        // stazed
     m_midi_channel              (0),
     m_no_channel                (false),
-    m_bus                       (0),
+    m_nominal_bus               (0),
+    m_true_bus                  (0),
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
@@ -261,7 +262,8 @@ sequence::partial_assign (const sequence & rhs)
         m_triggers                  = rhs.m_triggers;
         m_channel_match             = rhs.m_channel_match;
         m_midi_channel              = rhs.m_midi_channel;
-        m_bus                       = rhs.m_bus;
+        m_nominal_bus               = rhs.m_nominal_bus;
+        m_true_bus                  = rhs.m_true_bus;
         m_transposable              = rhs.m_transposable;
         m_master_bus                = rhs.m_master_bus;     /* a pointer    */
         m_was_playing               = false;
@@ -1038,7 +1040,7 @@ sequence::remove (event::buffer::iterator evi)
         event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
-            master_bus()->play(m_bus, &er, m_midi_channel);
+            master_bus()->play(m_true_bus, &er, m_midi_channel);
             --m_playing_notes[er.get_note()];                   // ugh
         }
         if (m_events.remove(evi))
@@ -2960,7 +2962,7 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, m_midi_channel);
     master_bus()->flush();
 }
 
@@ -2980,7 +2982,7 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, m_midi_channel);
     master_bus()->flush();
 }
 
@@ -4212,6 +4214,8 @@ sequence::get_last_tick () const
 /**
  *  Sets the MIDI buss/port number to dump MIDI data to.
  *
+ *  TODO: add a recreate flag
+ *
  * \threadsafe
  *
  * \param mb
@@ -4227,19 +4231,16 @@ sequence::get_last_tick () const
  */
 
 void
-sequence::set_midi_bus (char mb, bool user_change)
+sequence::set_midi_bus (bussbyte mb, bool user_change)
 {
     automutex locker(m_mutex);
-    if (mb != m_bus)
+    if (mb != m_nominal_bus)
     {
         off_playing_notes();            /* off notes except initial         */
-        m_bus = mb;
+        m_nominal_bus = mb;
+        m_true_bus = master_bus()->true_output_bus(mb);
         if (user_change)
             modify();                   /* no easy way to undo this, though */
-
-        /*
-         * TODO: add a recreate flag
-         */
 
         notify_change();                /* more reliable than set dirty     */
         set_dirty();                    /* this is for display updating     */
@@ -4790,7 +4791,7 @@ sequence::put_event_on_bus (event & ev)
     if (! skip)
     {
         midibyte channel = m_no_channel ? ev.channel() : m_midi_channel ;
-        master_bus()->play(m_bus, &ev, channel);
+        master_bus()->play(m_true_bus, &ev, channel);
         master_bus()->flush();
     }
 }
@@ -4813,7 +4814,7 @@ sequence::off_playing_notes ()
         while (m_playing_notes[x] > 0)
         {
             e.set_data(x, midibyte(0));               /* or is 127 better?  */
-            master_bus()->play(m_bus, &e, m_midi_channel);
+            master_bus()->play(m_true_bus, &e, m_midi_channel);
             if (m_playing_notes[x] > 0)
                 --m_playing_notes[x];
         }

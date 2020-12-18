@@ -80,6 +80,9 @@
      <height>32</height>
     </size>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="sessionServerUrl">
    <property name="geometry">
@@ -121,6 +124,9 @@
      <height>32</height>
     </size>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="sessionLogLabel">
    <property name="geometry">
@@ -161,6 +167,9 @@
      <width>420</width>
      <height>112</height>
     </size>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="detachPushbotton">
@@ -205,6 +214,9 @@
      <width>420</width>
      <height>32</height>
     </size>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="sessionManagerNameLabel">
@@ -255,6 +267,9 @@
      <height>32</height>
     </rect>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QTextEdit" name="clientIdText">
    <property name="geometry">
@@ -265,6 +280,9 @@
      <height>32</height>
     </rect>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLineEdit" name="songPathText">
    <property name="geometry">
@@ -274,6 +292,9 @@
      <width>521</width>
      <height>25</height>
     </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="songLabel">

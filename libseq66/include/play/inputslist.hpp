@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-11
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -66,7 +66,12 @@ public:
         // Nothing to do
     }
 
-    void add (bool flag, const std::string & name);
+    bool add
+    (
+        bool flag,
+        const std::string & name,
+        const std::string & nickname = ""
+    );
     bool set (bussbyte bus, bool inputing);
     bool get (bussbyte bus) const;
 

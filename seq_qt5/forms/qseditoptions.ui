@@ -20,7 +20,7 @@
       <string>Provides a table of MIDI output ports/busses and clock settings, input busses, and more.  There is a bug in the MIDI Clock tab where it won't respond to a click except in a very specific place; the alternative is to do Alt-C once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -168,7 +168,7 @@
         <string>When pressed, a permanent map is saved of output port numbers and names.  This map is then used to map sequences to buss numbers, which then use the buss name to look up the actual port number in case the system's MIDI setup has changed.</string>
        </property>
        <property name="text">
-        <string>Store Output Map</string>
+        <string>Save Clocks Port Map</string>
        </property>
       </widget>
      </widget>

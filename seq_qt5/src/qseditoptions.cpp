@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-08
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -322,6 +322,7 @@ qseditoptions::update_jack_midi ()
 void
 qseditoptions::update_output_map ()
 {
+    perf().store_output_map();
 }
 
 /**

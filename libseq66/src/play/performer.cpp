@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-06
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -607,10 +607,17 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     int inputs = rcs.inputs().count();
     bool result = buses > 0;                        /* at least 1 output    */
     if (result)
+    {
         m_clocks = rcs.clocks();
+        if (inputs > 0)
+            m_inputs = rcs.inputs();
 
-    if (inputs > 0)
-        m_inputs = rcs.inputs();
+        /*
+         * At this point, the names are not yet set in the clocks and inputs.
+         *
+         *      result = build_output_port_map(m_clocks);
+         */
+    }
 
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
@@ -655,6 +662,12 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     m_master_bus->get_port_statuses(m_clocks, m_inputs);
     rcs.clocks() = m_clocks;
     rcs.inputs() = m_inputs;
+
+#if defined SEQ66_PLATFORM_DEBUG
+    m_clocks.show("Clocks");
+    m_inputs.show("Inputs");
+#endif
+
     rcs.key_controls() = m_key_controls;
     rcs.midi_control_in() = m_midi_control_in;
     rcs.midi_control_out() = m_midi_control_out;
@@ -664,6 +677,16 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.tempo_track_number(m_tempo_track_number);
     usrs.resume_note_ons(m_resume_note_ons);
     return true;
+}
+
+bussbyte
+performer::true_output_bus (bussbyte nominalbuss) const
+{
+    bussbyte result = nominalbuss;
+    if (m_master_bus)
+        result = m_master_bus->true_output_bus(nominalbuss);
+
+    return result;
 }
 
 /**
@@ -975,7 +998,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
          */
 
         midipulse barlength = s->get_ppqn() * s->get_beats_per_bar();
-        midibyte buss_override = usr().midi_buss_override();
+        bussbyte buss_override = usr().midi_buss_override();
         s->set_parent(this);
         s->set_master_midi_bus(m_master_bus.get());
         s->sort_events();                   /* sort the events now          */
@@ -1248,11 +1271,12 @@ performer::change_ppqn (int p)
  */
 
 bool
-performer::change_set_busses (int b)
+performer::change_set_busses (int buss)
 {
-    bool result = b >= 0 && b <= SEQ66_OUTPUT_BUSS_MAX;
+    bool result = buss >= 0 && buss < SEQ66_OUTPUT_BUSS_MAX;
     if (result)
     {
+        bussbyte b = bussbyte(buss);
         for (auto seqi : m_play_set.seq_container())
             seqi->set_midi_bus(b, true);    /* calls notification funcion   */
 
@@ -1942,7 +1966,8 @@ performer::launch (int ppqn)
 
         /*
          * Get and store the clocks and inputs created (disabled or not) by
-         * the mastermidibus during api_init().
+         * the mastermidibus during api_init().  After this call, the clocks
+         * and inputs now have name.
          */
 
         m_master_bus->copy_io_busses();

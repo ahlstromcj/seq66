@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-16
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -456,6 +456,28 @@ rcfile::parse ()
          */
 
         rc_ref().clocks().add(e_clock::off, "Bad clock count");
+    }
+
+    /*
+     *  Check for an optional port map section.
+     */
+
+    if (line_after(file, "[midi-clock-map]"))
+    {
+        for (;;)
+        {
+            clockslist & cloutref = output_port_map();
+            if (cloutref.add_list_line(line()))
+            {
+                if (! next_data_line(file))
+                    break;;
+            }
+            else
+            {
+                cloutref.clear();
+                break;
+            }
+        }
     }
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
@@ -953,6 +975,22 @@ rcfile::write ()
             ;
     }
 
+    const clockslist & cloutref = output_port_map();
+    if (cloutref.not_empty())
+    {
+        file
+        << "\n[midi-clock-map]\n\n"
+        << "# This table, if present, allows the pattern to set buss numbers\n"
+        << "# as usual, but the use the table to look up the true buss number\n"
+        << "# by the short form of the port name. Thus, if the ports change\n"
+        << "# their order in the MIDI system, the pattern can still output to\n"
+        << "# the proper port. The short names are the same with ALSA or with\n"
+        << "# JACK with the a2jmidi bridge running.\n\n"
+        << output_port_map_list()
+        << "\n"
+        ;
+    }
+
     /*
      * MIDI clock modulo value
      */
@@ -1148,7 +1186,7 @@ rcfile::write ()
         "# Holds a list of the last few recently-loaded MIDI files. The first\n"
         "# number is the number of items in the list.  The second value\n"
         "# indicates if to load the most recent file (the top of the list)\n"
-        "# at startup (1 == load it).\n\n"
+        "# at startup (1 = load it, 0 = do not load it).\n\n"
         << count << " " << (rc_ref().load_most_recent() ? "1" : "0") << "\n\n"
         ;
 

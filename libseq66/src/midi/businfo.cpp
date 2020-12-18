@@ -458,14 +458,7 @@ busarray::get_clock (bussbyte bus) const
     if (bus < count())
     {
         const businfo & bi = m_container[bus];
-#if defined USE_ACTIVITY_FLAG_CHECK
-        if (bi.active())
-            return bi.bus()->get_clock();
-        else
-            return e_clock::disabled;
-#else
         return bi.bus()->get_clock();
-#endif
     }
     else
         return e_clock::off;
@@ -503,12 +496,13 @@ busarray::get_midi_bus_name (int bus)
     std::string result;
     if (bus < count())
     {
-        e_clock current = get_clock(bus);
         businfo & bi = m_container[bus];
+        midibus * buss = bi.bus();
+        e_clock current = buss->get_clock();
         if (bi.active() || current == e_clock::disabled)
         {
-            std::string busname = bi.bus()->bus_name();
-            std::string portname = bi.bus()->port_name();
+            std::string busname = buss->bus_name();
+            std::string portname = buss->port_name();
             std::size_t len = busname.size();
             int test = busname.compare(0, len, portname, 0, len);
             if (test == 0)
@@ -517,14 +511,14 @@ busarray::get_midi_bus_name (int bus)
                 snprintf
                 (
                     tmp, sizeof tmp, "[%d] %d:%d %s",
-                    bus, bi.bus()->bus_id(),
-                    bi.bus()->port_id(), portname.c_str()
+                    bus, buss->bus_id(),
+                    buss->port_id(), portname.c_str()
                 );
                 result = tmp;
             }
             else
             {
-                result = bi.bus()->display_name();
+                result = buss->display_name();
             }
         }
         else
@@ -534,13 +528,13 @@ busarray::get_midi_bus_name (int bus)
             if (bi.initialized())
                 status = "disconnected";
 
-            if (bi.bus()->port_disabled())
+            if (buss->port_disabled())
                 status = "disabled";
 
             snprintf
             (
                 tmp, sizeof tmp, "%s (%s)",
-                bi.bus()->display_name().c_str(), status.c_str()
+                buss->display_name().c_str(), status.c_str()
             );
             result = tmp;
         }

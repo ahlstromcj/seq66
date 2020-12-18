@@ -2256,6 +2256,13 @@ public:
         m_clocks.add(clocktype, name);
     }
 
+    void store_output_map ()
+    {
+        m_master_bus->store_output_map();
+    }
+
+    bussbyte true_output_bus (bussbyte nominalbuss) const;
+
     /**
      *  Sets a single clock item, if in the currently existing range.
      *  Mostly meant for use by the Options / MIDI Input tab.
@@ -2263,11 +2270,13 @@ public:
 
     void set_clock (bussbyte bus, e_clock clocktype)
     {
+        bus = true_output_bus(bus);
         m_clocks.set(bus, clocktype);
     }
 
     e_clock get_clock (bussbyte bus) const
     {
+        bus = true_output_bus(bus);
         return m_clocks.get(bus);       /* m_master_bus->get_clock(bus)     */
     }
 

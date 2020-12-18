@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-11
+ * \updates       2020-12-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -50,22 +50,48 @@ namespace seq66
  * \param flag
  *      Indicates in the input is enabled.
  *
- * \param clocktype
- *      The clock value read from the "rc" file.
+ * \param name
+ *      The full name of the port, except when a port-map is being formed.
+ *      Then, this is just a string version of the buss number.  If this
+ *      parameter is empty, nothing is added to the list.
+ *
+ * \param nickname
+ *      The short name for the port, normally.  This is generally the text
+ *      after the last colon in the bus/port name discovered by the system.
+ *      By default, it is empty.
+ *
+ * \return
+ *      Returns true if the item was added to the list.
+ *
  */
 
-void
-inputslist::add (bool flag, const std::string & name)
+bool
+inputslist::add
+(
+    bool flag,
+    const std::string & name,
+    const std::string & nickname
+)
 {
+    bool result = false;
     io ioitem;
     ioitem.io_enabled = flag;
     ioitem.out_clock = e_clock::disabled;
     if (! name.empty())
     {
         ioitem.io_name = name;
-        ioitem.io_nick_name = name;
+        if (nickname.empty())
+        {
+            std::string nick = extract_nickname(name);
+            ioitem.io_nick_name = nick;
+        }
+        else
+            ioitem.io_nick_name = nickname;
+
+        m_master_io.push_back(ioitem);
+        result = true;
     }
-    m_master_io.push_back(ioitem);
+    return result;
 }
 
 /**

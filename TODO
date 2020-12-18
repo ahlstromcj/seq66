@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.3 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-16
+2019-04-13 to 2020-12-18
 
 HOT ITEMS:
 
@@ -50,6 +50,19 @@ HOT ITEMS:
 
         Write up the difference between the main Save button and app Save
         button in the NSM GUI.
+
+        I add a new pattern, add a couple notes, then click File / Save to
+        save the tune.  It DOES NOT save the tune, because at that point it
+        does not have a name.  [I consider this to be a BUG, there should be a
+        default file-name already in place, or a prompt for a filename.]
+
+        I edit an in-session config to load the latest file, which is not part
+        of the session.  Seq66 does not get to the UI when first starting the
+        session.  It does do it the next time, loading the file.  The actual
+        operation should be in import, I think.
+
+        Make the Playlist and Session directories read-only when in a
+        session.
 
 Others to Consider:
 
