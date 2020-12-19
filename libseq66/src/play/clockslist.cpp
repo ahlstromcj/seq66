@@ -137,10 +137,10 @@ output_port_map ()
  */
 
 std::string
-output_port_name (bussbyte b)
+output_port_name (bussbyte b, bool addnumber)
 {
     const clockslist & cloutref = output_port_map();
-    return cloutref.get_name(b);
+    return cloutref.get_name(b, addnumber);
 }
 
 /**

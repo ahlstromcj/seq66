@@ -1422,6 +1422,11 @@ public:
         return m_master_bus.get();
     }
 
+    int client_id () const
+    {
+        return m_master_bus->client_id();
+    }
+
     void filter_by_channel (bool flag)
     {
         m_filter_by_channel = flag;
@@ -1906,7 +1911,6 @@ public:
     {
         return m_master_bus ? m_master_bus->get_ppqn() : ppqn() ;
     }
-
 
     midibpm update_tap_bpm ();
     bool tap_bpm_timeout ();

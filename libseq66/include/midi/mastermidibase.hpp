@@ -68,6 +68,12 @@ class mastermidibase
 protected:
 
     /**
+     *  The ALSA/MIDI client ID.
+     */
+
+    int m_client_id;
+
+    /**
      *  The maximum number of busses supported.  Set to c_max_busses
      *  (c_busscount_max = 32) for now.
      */
@@ -193,6 +199,11 @@ public:
         api_init(ppqn, bpm);
     }
 
+    int client_id () const
+    {
+        return m_client_id;
+    }
+
     void store_output_map ()
     {
         (void) build_output_port_map(m_master_clocks);
@@ -292,6 +303,11 @@ public:
 
 protected:
 
+    void set_client_id (int id)
+    {
+        m_client_id = id;
+    }
+
     /**
      *  Used in the performer class to pass the settings read from the "rc"
      *  file to here.  There is an converse function defined below.
@@ -324,20 +340,7 @@ protected:
         return m_master_inputs.get(bus);
     }
 
-    /**
-     *  Initializes and ctivates the busses, in a partly API-dependent manner.
-     *  Currently re-implemented only in the rtmidi JACK API.
-     */
-
-    virtual bool activate ()
-    {
-        bool result = m_inbus_array.initialize();
-        if (result)
-            result = m_outbus_array.initialize();
-
-        return result;
-    }
-
+    virtual bool activate ();
     virtual void api_init (int ppqn, midibpm bpm) = 0;
 
     /**

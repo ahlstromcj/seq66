@@ -24,9 +24,11 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-17
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
+ *  The listbase provides common code for the clockslist and inputslist
+ *  classes.
  */
 
 #include <iostream>                     /* std::cout, etc.                  */
@@ -83,15 +85,15 @@ listsbase::add_list_line (const std::string & line)
 {
     bool result = false;
     std::string temp = line;
-    auto pos = temp.find_first_of("0123456789");
-    if (pos != std::string::npos)
+    auto lpos = temp.find_first_of("0123456789");
+    if (lpos != std::string::npos)
     {
         int portnum = std::stoi(temp);
-        pos = temp.find_first_of("\"");
-        if (pos != std::string::npos)
+        lpos = temp.find_first_of("\"");
+        if (lpos != std::string::npos)
         {
-            auto lpos = temp.find_last_of("\"", pos + 1);
-            std::string portname = temp.substr(pos + 1, lpos - pos - 1);
+            auto rpos = temp.find_last_of("\"");
+            std::string portname = temp.substr(lpos + 1, rpos - lpos - 1);
             if (! portname.empty())
             {
                 std::string pnum = std::to_string(portnum);
@@ -121,17 +123,29 @@ listsbase::set_nick_name (bussbyte bus, const std::string & name)
 }
 
 std::string
-listsbase::get_name (bussbyte bus) const
+listsbase::get_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
-    return bus < count() ? m_master_io[bus].io_name : s_dummy ;
+    std::string result = bus < count() ?
+        m_master_io[bus].io_name : s_dummy ;
+
+    if (addnumber && ! result.empty())
+        result = "[" + std::to_string(int(bus)) + "] " + result;
+
+    return result;
 }
 
 std::string
-listsbase::get_nick_name (bussbyte bus) const
+listsbase::get_nick_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
-    return bus < count() ? m_master_io[bus].io_nick_name : s_dummy ;
+    std::string result =  bus < count() ?
+        m_master_io[bus].io_nick_name : s_dummy ;
+
+    if (addnumber && ! result.empty())
+        result = "[" + std::to_string(int(bus)) + "] " + result;
+
+    return result;
 }
 
 /**

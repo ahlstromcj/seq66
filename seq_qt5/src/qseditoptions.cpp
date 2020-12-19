@@ -254,6 +254,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     vboxinputs->addItem(spacer2);
     ui->groupBoxInputs->setLayout(vboxinputs);
     syncWithInternals();
+
+    std::string clid = std::to_string(perf().client_id());
+    ui->plainTextEditClientId->setPlainText(clid.c_str());
     m_is_initialized = true;
 }
 

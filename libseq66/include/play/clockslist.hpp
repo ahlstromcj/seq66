@@ -84,7 +84,7 @@ public:
 extern clockslist & output_port_map ();
 extern bool build_output_port_map (const clockslist & lb);
 extern bussbyte true_output_bus (const clockslist & cl, bussbyte nominalbuss);
-extern std::string output_port_name (bussbyte b);
+extern std::string output_port_name (bussbyte b, bool addnumber = false);
 extern bussbyte output_port_number (bussbyte b);
 extern std::string output_port_map_list ();
 

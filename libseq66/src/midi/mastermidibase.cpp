@@ -71,6 +71,7 @@ mastermidibase::mastermidibase
     int ppqn,
     midibpm bpm
 ) :
+    m_client_id         (0),
     m_max_busses        (c_busscount_max),
     m_bus_announce      (nullptr),      /* used only for ALSA announce bus  */
     m_inbus_array       (),
@@ -109,6 +110,24 @@ mastermidibase::~mastermidibase ()
         delete m_bus_announce;
         m_bus_announce = nullptr;
     }
+}
+
+/**
+ *  Initializes and ctivates the busses, in a partly API-dependent manner.
+ *  Currently re-implemented only in the rtmidi JACK API.
+ */
+
+bool
+mastermidibase::activate ()
+{
+    bool result = m_inbus_array.initialize();
+    if (result)
+        result = m_outbus_array.initialize();
+
+    if (result)
+        set_client_id(m_outbus_array.client_id(0));
+
+    return result;
 }
 
 /**
@@ -567,16 +586,18 @@ mastermidibase::is_input_system_port (bussbyte bus)
 std::string
 mastermidibase::get_midi_out_bus_name (bussbyte bus)
 {
-    std::string result = output_port_name(bus);
-    if (result.empty())
-        result = m_master_clocks.get_nick_name(bus);
-
-    /*
-     * Which is best, this or the above?
-     *
-     *  result =  m_outbus_array.get_midi_bus_name(bus);
-     */
-
+    std::string result;
+    if (rc().is_port_naming_long())
+    {
+        bussbyte b = true_output_bus(bus);
+        result = m_outbus_array.get_midi_bus_name(b);
+    }
+    else
+    {
+        result = output_port_name(bus, true);
+        if (result.empty())
+            result = m_master_clocks.get_nick_name(bus, true);
+    }
     return result;
 }
 

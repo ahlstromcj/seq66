@@ -35,7 +35,7 @@
          <x>10</x>
          <y>20</y>
          <width>591</width>
-         <height>371</height>
+         <height>301</height>
         </rect>
        </property>
        <property name="title">
@@ -57,9 +57,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>460</y>
+         <y>400</y>
          <width>591</width>
-         <height>80</height>
+         <height>73</height>
         </rect>
        </property>
        <property name="title">
@@ -73,12 +73,18 @@
          <rect>
           <x>10</x>
           <y>30</y>
-          <width>32</width>
-          <height>32</height>
+          <width>42</width>
+          <height>28</height>
          </rect>
         </property>
         <property name="toolTip">
          <string>Sets the number of the tempo track, and it is saved to the 'rc' file.  Not yet functional.</string>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
         <property name="readOnly">
          <bool>false</bool>
@@ -93,9 +99,9 @@
        <widget class="QLabel" name="textLabelTempoTrack">
         <property name="geometry">
          <rect>
-          <x>50</x>
-          <y>34</y>
-          <width>361</width>
+          <x>64</x>
+          <y>32</y>
+          <width>341</width>
           <height>21</height>
          </rect>
         </property>
@@ -127,7 +133,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>410</y>
+         <y>360</y>
          <width>338</width>
          <height>30</height>
         </rect>
@@ -159,7 +165,7 @@
        <property name="geometry">
         <rect>
          <x>430</x>
-         <y>410</y>
+         <y>360</y>
          <width>162</width>
          <height>32</height>
         </rect>
@@ -169,6 +175,41 @@
        </property>
        <property name="text">
         <string>Save Clocks Port Map</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>72</x>
+         <y>496</y>
+         <width>101</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>MIDI Client ID</string>
+       </property>
+      </widget>
+      <widget class="QPlainTextEdit" name="plainTextEditClientId">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>488</y>
+         <width>42</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>0</string>
        </property>
       </widget>
      </widget>

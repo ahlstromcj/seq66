@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-16
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -332,10 +332,8 @@ qsmainwnd::qsmainwnd
         for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
         {
             bool disabled = clock_is_disabled(mmb->get_clock(buss));
-            ui->cmb_global_bus->addItem
-            (
-                QString::fromStdString(mmb->get_midi_out_bus_name(buss))
-            );
+            std::string busname = mmb->get_midi_out_bus_name(buss);
+            ui->cmb_global_bus->addItem(QString::fromStdString(busname));
             if (disabled)
             {
                 int index = buss + 1;
@@ -1422,7 +1420,7 @@ qsmainwnd::refresh ()
         {
             if (not_nullptr(m_live_frame))
             {
-                if (perf().playlist_mode())
+                if (perf().playlist_active())
                     m_live_frame->set_playlist_name(perf().playlist_song());
                 else
                     m_live_frame->set_playlist_name(rc().midi_filename());
@@ -2628,7 +2626,7 @@ qsmainwnd::handle_key_press (const keystroke & k)
         }
         if (result)
         {
-            if (perf().playlist_mode())
+            if (perf().playlist_active())
                 m_live_frame->set_playlist_name(perf().playlist_song());
         }
     }
@@ -3264,7 +3262,7 @@ qsmainwnd::recreate_all_slots ()
     bool result = not_nullptr(m_live_frame);
     if (result)
     {
-        if (perf().playlist_mode())
+        if (perf().playlist_active())
         {
             m_live_frame->set_playlist_name(perf().playlist_song());
             update_window_title(perf().playlist_song());

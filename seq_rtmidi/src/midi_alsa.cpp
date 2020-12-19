@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-18
- * \updates       2020-08-02
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  This file provides a Linux-only implementation of ALSA MIDI support.
@@ -120,9 +120,10 @@ namespace seq66
  *  to use seq_client_name(), but it comes up unresolved by the damned GNU
  *  linker!  The obvious fixes don't work!
  *
- *  ALSA returns "130" as the client ID.  That is our ALSA ID, not the ID of the
- *  client we are representing.  Thus, we should not set the buss ID and name of
- *  the parent-bus; these have already been determined.
+ *  ALSA returns "130" as the client ID.  That is our ALSA ID, not the ID of
+ *  the client we are representing.  Thus, we should not set the buss ID and
+ *  name of the parent-bus; these have already been determined.  ALSA assigns
+ *  client IDs from the sequencer handle, and they range from 128 to 191.
  *
  * \param parentbus
  *      Provides much of the infor about this ALSA buss.
@@ -142,9 +143,12 @@ midi_alsa::midi_alsa (midibus & parentbus, midi_info & masterinfo)
     m_dest_addr_port    (parentbus.port_id()),
     m_local_addr_client (snd_seq_client_id(m_seq)),     /* our client ID    */
     m_local_addr_port   (-1),
-    m_input_port_name   (rc().app_client_name() + " in")
+    m_input_port_name
+    (
+        rc().app_client_name() + (parentbus.is_input_port() ? " in" : " out")
+    )
 {
-    set_bus_id(m_local_addr_client);
+    set_client_id(m_local_addr_client);
     set_name(SEQ66_CLIENT_NAME, bus_name(), port_name());
 }
 

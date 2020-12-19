@@ -1,6 +1,6 @@
-TO DO for Seq66 0.91.3 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.91.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-18
+2019-04-13 to 2020-12-19
 
 HOT ITEMS:
 
@@ -64,7 +64,16 @@ HOT ITEMS:
         Make the Playlist and Session directories read-only when in a
         session.
 
+    Port-Mapping:
+
+        If the port name is something plain like "midi in 0", "midi out
+        0", "input", "in", "output", "out", then prepend the client name
+        to the internal port-map objects.
+
 Others to Consider:
+
+    When filling the file line in the live grid with the MIDI filename (not
+    from playlist), use the realpath() result.
 
     When resizing, also recalculate the x and y scaling appropriately.
 

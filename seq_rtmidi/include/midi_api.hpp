@@ -274,6 +274,11 @@ protected:
      * Pass-alongs to the midibus representing this object's generic data.
      */
 
+    void set_client_id (int id)
+    {
+        parent_bus().set_client_id(id);
+    }
+
     void set_bus_id (int id)
     {
         parent_bus().set_bus_id(id);

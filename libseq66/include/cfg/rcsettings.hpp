@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-11
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -141,6 +141,19 @@ public:
         maximum         /**< Keep this last... a size value.            */
     };
 
+    /**
+     *  Indicates whether to use the short (internal) or the long (normal)
+     *  port names in visible user-interface elements.  If there is no
+     *  internal map, this option is forced to "long".
+     */
+
+    enum class portnaming
+    {
+        shortnames,     /**< Use short names: "[0] MIDI Through Port".  */
+        longnames,      /**< Long names: "[0] 36:0 MIDI Through Port".  */
+        maximum         /**< Keep this last... a size value.            */
+    };
+
 private:
 
     /**
@@ -245,6 +258,7 @@ private:
     int m_device_ignore_num;        /**< From seq66 module, unused!         */
     interaction m_interaction_method; /**< Interaction method: no support.  */
     setsmode m_sets_mode;           /**< How to handle set changes.         */
+    portnaming m_port_naming;       /**< How to display port names.         */
 
     /**
      *  Provides the name of current MIDI file.  Under normal usage, it is the
@@ -725,6 +739,19 @@ public:
     std::string sets_mode_string () const;
     std::string sets_mode_string (setsmode v) const;
 
+    portnaming port_naming () const
+    {
+        return m_port_naming;
+    }
+
+    bool is_port_naming_long () const
+    {
+        return m_port_naming == portnaming::longnames;
+    }
+
+    std::string port_naming_string () const;
+    std::string port_naming_string (portnaming v) const;
+
     const std::string & midi_filename () const
     {
         return m_midi_filename;
@@ -1058,6 +1085,7 @@ protected:
     }
 
     void sets_mode (const std::string & v);
+    void port_naming (const std::string & v);
 
     /*
      * The setters for non-bool values, defined in the cpp file because

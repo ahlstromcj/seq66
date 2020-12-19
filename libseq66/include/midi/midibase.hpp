@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-24
- * \updates       2020-12-16
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  The midibase module is the new base class for the various implementations
@@ -104,6 +104,15 @@ private:
      */
 
     const int m_bus_index;
+
+    /**
+     *  The buss ID of the Seq66 application as determined by the ALSA
+     *  subsystem.  It is set in the midi_alsa constructor.
+     *
+     *  For JACK, this is currently set to the same value as the buss ID.
+     */
+
+    int m_client_id;
 
     /**
      *  The buss ID of the midibase object.  For example, on one system the
@@ -262,6 +271,11 @@ public:
         return m_bus_index;
     }
 
+    int client_id () const
+    {
+        return m_client_id;
+    }
+
     int bus_id () const
     {
         return m_bus_id;
@@ -383,6 +397,11 @@ public:
     void set_bus_id (int id)
     {
         m_bus_id = id;
+    }
+
+    void set_client_id (int id)
+    {
+        m_client_id = id;
     }
 
     void set_name

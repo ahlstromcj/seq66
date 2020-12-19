@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-18
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -242,6 +242,8 @@ rcfile::parse ()
     rc().verbose(verby);
     s = get_variable(file, "[Seq66]", "sets-mode");
     rc().sets_mode(s);
+    s = get_variable(file, "[Seq66]", "port-naming");
+    rc().port_naming(s);
 
     /*
      * [comments] Header comments (hash-tag lead) is skipped during parsing.
@@ -464,9 +466,10 @@ rcfile::parse ()
 
     if (line_after(file, "[midi-clock-map]"))
     {
+        clockslist & cloutref = output_port_map();
+        cloutref.clear();
         for (;;)
         {
-            clockslist & cloutref = output_port_map();
             if (cloutref.add_list_line(line()))
             {
                 if (! next_data_line(file))
@@ -819,11 +822,16 @@ rcfile::write ()
             "# next play-screen ('normal'), while 'autoarm' will automatically\n"
             "# unmute the next set.  The 'additive' options keeps the previous\n"
             "# set unmuted when moving to the next set.\n"
+            "#\n"
+            "# The port-naming values are 'short' or 'long'.  The short style\n"
+            "# just shows the port number and short port name; the long style\n"
+            "# shows all the numbers and the long port name.\n"
             "\n"
             "config-type = \"rc\"\n"
             "version = " << version() << "\n"
             "verbose = " << bool_to_string(rc().verbose()) << "\n"
             "sets-mode = " << rc().sets_mode_string() << "\n"
+            "port-naming = " << rc().port_naming_string() << "\n"
         ;
 
     /*
@@ -987,7 +995,6 @@ rcfile::write ()
         << "# the proper port. The short names are the same with ALSA or with\n"
         << "# JACK with the a2jmidi bridge running.\n\n"
         << output_port_map_list()
-        << "\n"
         ;
     }
 

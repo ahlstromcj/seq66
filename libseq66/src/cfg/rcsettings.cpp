@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-11
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -104,6 +104,7 @@ rcsettings::rcsettings () :
     m_device_ignore_num         (0),
     m_interaction_method        (interaction::seq24),
     m_sets_mode                 (setsmode::normal),
+    m_port_naming               (portnaming::shortnames),
     m_midi_filename             (),
     m_midi_filepath             (),
     m_jack_session_uuid         (),
@@ -197,6 +198,7 @@ rcsettings::set_defaults ()
     m_device_ignore_num         = 0;
     m_interaction_method        = interaction::seq24;
     m_sets_mode                 = setsmode::normal;
+    m_port_naming               = portnaming::shortnames;
     m_midi_filename.clear();
     m_midi_filepath.clear();
     m_jack_session_uuid.clear();
@@ -995,6 +997,8 @@ rcsettings::sets_mode (const std::string & v)
         m_sets_mode = setsmode::additive;
     else if (v == "allsets")
         m_sets_mode = setsmode::allsets;
+    else
+        m_sets_mode = setsmode::normal;
 }
 
 std::string
@@ -1014,6 +1018,36 @@ rcsettings::sets_mode_string (setsmode v) const
         case setsmode::additive: result = "additive";   break;
         case setsmode::allsets:  result = "allset";     break;
         default:                 result = "unknown";    break;
+    }
+    return result;
+}
+
+void
+rcsettings::port_naming (const std::string & v)
+{
+    if (v == "short")
+        m_port_naming = portnaming::shortnames;
+    else if (v == "long")
+        m_port_naming = portnaming::longnames;
+    else
+        m_port_naming = portnaming::shortnames;
+}
+
+std::string
+rcsettings::port_naming_string () const
+{
+    return port_naming_string(port_naming());
+}
+
+std::string
+rcsettings::port_naming_string (portnaming v) const
+{
+    std::string result;
+    switch (v)
+    {
+        case portnaming::shortnames:    result = "short";       break;
+        case portnaming::longnames:     result = "long";        break;
+        default:                        result = "unknown";     break;
     }
     return result;
 }

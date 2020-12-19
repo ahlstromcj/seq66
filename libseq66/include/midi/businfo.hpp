@@ -256,6 +256,11 @@ public:
         return b < bussbyte(count()) ? m_container[b].bus() : nullptr ;
     }
 
+    int client_id (bussbyte b)
+    {
+        return b < bussbyte(count()) ? m_container[b].bus()->client_id() : 0 ;
+    }
+
     /**
      *  Starts all of the busses; used for output busses only, but no check is
      *  made at present.
