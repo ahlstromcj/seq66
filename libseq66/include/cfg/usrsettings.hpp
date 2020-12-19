@@ -174,20 +174,20 @@ private:
     using Busses = std::vector<usermidibus>;
 
     /**
-     *  Provides data about the MIDI busses, readable from the "user"
-     *  configuration file.  Since this object is a vector, its size is
-     *  adjustable.
-     */
-
-    Busses m_midi_buses;
-
-    /**
      *  [user-instrument-definitions]
      *
      *  Internal type for the container of userinstrument objects.
      */
 
     using Instruments = std::vector<userinstrument>;
+
+    /**
+     *  Provides data about the MIDI busses, readable from the "user"
+     *  configuration file.  Since this object is a vector, its size is
+     *  adjustable.
+     */
+
+    Busses m_midi_buses;
 
     /**
      *  Provides data about the MIDI instruments, readable from the "user"
@@ -495,6 +495,8 @@ private:
      *  the main set, which is always shown in the upper-right mainwid slot.
      *  If there is only a single window, this value is set to true, but it
      *  really doesn't matter what behavior is enabled for a single mainwid.
+     *
+     *  Not used except in usrfile.
      */
 
     bool m_mainwid_block_independent;
@@ -938,8 +940,20 @@ private:
 public:
 
     usrsettings ();
+
+    /*
+     * Not using default at present.  Both could be modified by the normalize()
+     * call.  However copying and assignment aren't even used at present.
+     * Comment it out for now.
+     */
+
+#if defined USE_USRSETTINGS_COPYING
     usrsettings (const usrsettings & rhs);
     usrsettings & operator = (const usrsettings & rhs);
+#else
+    usrsettings (const usrsettings & rhs) = delete;
+    usrsettings & operator = (const usrsettings & rhs) = delete;
+#endif
 
     virtual void set_defaults () override;
     virtual void normalize () override;

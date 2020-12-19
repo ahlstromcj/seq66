@@ -214,6 +214,16 @@ public:
         return seq66::true_output_bus(m_master_clocks, nominalbuss);
     }
 
+    void store_input_map ()
+    {
+        (void) build_input_port_map(m_master_inputs);
+    }
+
+    bussbyte true_input_bus (bussbyte nominalbuss) const
+    {
+        return seq66::true_input_bus(m_master_inputs, nominalbuss);
+    }
+
     int get_num_out_buses () const
     {
         return m_outbus_array.count();

@@ -226,7 +226,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     connect
     (
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
-        this, SLOT(update_output_map())
+        this, SLOT(update_io_maps())
     );
 
     /*
@@ -323,9 +323,10 @@ qseditoptions::update_jack_midi ()
 }
 
 void
-qseditoptions::update_output_map ()
+qseditoptions::update_io_maps ()
 {
     perf().store_output_map();
+    perf().store_input_map();
 }
 
 /**

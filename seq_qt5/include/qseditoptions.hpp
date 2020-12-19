@@ -101,7 +101,7 @@ private slots:
     void update_time_master ();
     void update_transport_support ();
     void update_jack_midi ();
-    void update_output_map ();
+    void update_io_maps ();
     void okay ();
     void cancel ();
     void update_note_resume ();

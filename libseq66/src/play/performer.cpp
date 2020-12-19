@@ -689,6 +689,16 @@ performer::true_output_bus (bussbyte nominalbuss) const
     return result;
 }
 
+bussbyte
+performer::true_input_bus (bussbyte nominalbuss) const
+{
+    bussbyte result = nominalbuss;
+    if (m_master_bus)
+        result = m_master_bus->true_input_bus(nominalbuss);
+
+    return result;
+}
+
 /**
  *  Reloads the mute groups from the "rc" file.
  *

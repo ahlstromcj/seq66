@@ -55,6 +55,7 @@ namespace seq66
 class listsbase
 {
     friend std::string output_port_map_list ();
+    friend std::string input_port_map_list ();
 
 protected:
 

@@ -180,10 +180,10 @@ const int c_seqarea_y = c_text_y * c_seqchars_y;
 /**
  * Area of what?  Doesn't look at all like it is based on the size of
  * characters.  These are used only in the mainwid module.
- */
 
 const int c_seqarea_seq_x = c_text_x * 13;
 const int c_seqarea_seq_y = c_text_y * 2;
+ */
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.
@@ -319,6 +319,8 @@ usrsettings::usrsettings () :
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
+
+#if defined USE_USRSETTINGS_COPYING
 
 /**
  *  Copy constructor.
@@ -502,17 +504,18 @@ usrsettings::operator = (const usrsettings & rhs)
          *
          *  m_total_seqs                = rhs.m_total_seqs;
          *  m_seqs_in_set               = rhs.m_seqs_in_set;
-         *  m_gmute_tracks              = rhs.m_gmute_tracks;
          *  m_max_sequence              = rhs.m_max_sequence;
-         *  m_seqarea_x                 = rhs.m_seqarea_x;
-         *  m_seqarea_y                 = rhs.m_seqarea_y;
-         *  m_seqarea_seq_x             = rhs.m_seqarea_seq_x;
-         *  m_seqarea_seq_y             = rhs.m_seqarea_seq_y;
-         *  m_mainwid_x                 = rhs.m_mainwid_x;
-         *  m_mainwid_y                 = rhs.m_mainwid_y;
-         *  m_mainwnd_x                 = rhs.m_mainwnd_x;
-         *  m_mainwnd_y                 = rhs.m_mainwnd_y;
          */
+
+        m_gmute_tracks              = rhs.m_gmute_tracks;   // ! NOT
+        m_seqarea_x                 = rhs.m_seqarea_x;      // ! NOT
+        m_seqarea_y                 = rhs.m_seqarea_y;      // ! NOT
+        m_seqarea_seq_x             = rhs.m_seqarea_seq_x;  // ! NOT
+        m_seqarea_seq_y             = rhs.m_seqarea_seq_y;  // ! NOT
+        m_mainwid_x                 = rhs.m_mainwid_x;      // ! NOT
+        m_mainwid_y                 = rhs.m_mainwid_y;      // ! NOT
+        m_mainwnd_x                 = rhs.m_mainwnd_x;      // ! NOT
+        m_mainwnd_y                 = rhs.m_mainwnd_y;      // ! NOT
 
         m_save_user_config = rhs.m_save_user_config;
         normalize();
@@ -549,6 +552,8 @@ usrsettings::operator = (const usrsettings & rhs)
     }
     return *this;
 }
+
+#endif  // USE_USRSETTINGS_COPYING
 
 /**
  *  Sets the default values.  For the m_midi_buses and

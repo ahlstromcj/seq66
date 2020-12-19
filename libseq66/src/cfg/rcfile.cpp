@@ -405,6 +405,29 @@ rcfile::parse ()
     else
         return make_error_message("midi-input", "data lines missing");
 
+    /*
+     *  Check for an optional input port map section.
+     */
+
+    if (line_after(file, "[midi-input-map]"))
+    {
+        inputslist & inputref = input_port_map();
+        inputref.clear();
+        for (;;)
+        {
+            if (inputref.add_list_line(line()))
+            {
+                if (! next_data_line(file))
+                    break;
+            }
+            else
+            {
+                inputref.clear();
+                break;
+            }
+        }
+    }
+
     if (ok)
         ok = line_after(file, "[midi-clock]");
 
@@ -461,23 +484,23 @@ rcfile::parse ()
     }
 
     /*
-     *  Check for an optional port map section.
+     *  Check for an optional output port map section.
      */
 
     if (line_after(file, "[midi-clock-map]"))
     {
-        clockslist & cloutref = output_port_map();
-        cloutref.clear();
+        clockslist & inpsref = output_port_map();
+        inpsref.clear();
         for (;;)
         {
-            if (cloutref.add_list_line(line()))
+            if (inpsref.add_list_line(line()))
             {
                 if (! next_data_line(file))
-                    break;;
+                    break;
             }
             else
             {
-                cloutref.clear();
+                inpsref.clear();
                 break;
             }
         }
@@ -942,6 +965,16 @@ rcfile::write ()
             ;
     }
 
+    const inputslist & inpsref = input_port_map();
+    if (inpsref.not_empty())
+    {
+        file
+        << "\n[midi-input-map]\n\n"
+        << "# This table is similar to the [midi-clock-map] section.\n\n"
+        << input_port_map_list()
+        ;
+    }
+
     /*
      * Bus mute/unmute data.  At this point, we can use the master_bus()
      * accessor, even if a pointer dereference, because it was created at
@@ -983,8 +1016,8 @@ rcfile::write ()
             ;
     }
 
-    const clockslist & cloutref = output_port_map();
-    if (cloutref.not_empty())
+    const clockslist & outsref = output_port_map();
+    if (outsref.not_empty())
     {
         file
         << "\n[midi-clock-map]\n\n"

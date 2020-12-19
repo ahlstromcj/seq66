@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-18
+ * \updates       2020-12-19
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -76,6 +76,17 @@ public:
     bool get (bussbyte bus) const;
 
 };              // class inputslist
+
+/*
+ * Free functions
+ */
+
+extern inputslist & input_port_map ();
+extern bool build_input_port_map (const inputslist & lb);
+extern bussbyte true_input_bus (const inputslist & cl, bussbyte nominalbuss);
+extern std::string input_port_name (bussbyte b, bool addnumber = false);
+extern bussbyte input_port_number (bussbyte b);
+extern std::string input_port_map_list ();
 
 }               // namespace seq66
 

@@ -445,6 +445,7 @@ mastermidibase::copy_io_busses ()
 
 #if defined SEQ66_USE_PORT_MAP_TEST
     (void) build_output_port_map(m_master_clocks);
+    (void) build_input_port_map(m_master_inputs);
 #endif
 }
 
