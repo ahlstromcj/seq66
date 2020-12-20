@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-24
- * \updates       2020-11-12
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,10 +52,6 @@
 namespace seq66
 {
 
-/**
- *
- */
-
 qsessionframe::qsessionframe
 (
     performer & p,
@@ -69,11 +65,15 @@ qsessionframe::qsessionframe
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->sessionManagerNameText->setEnabled(false);
+    ui->sessionNameText->setEnabled(false);
+    ui->sessionUrlText->setEnabled(false);
+    ui->displayNameText->setEnabled(false);
+    ui->clientIdText->setEnabled(false);
+    ui->sessionLogText->setEnabled(false);
+    ui->sessionLogText->setEnabled(false);
+    ui->songPathText->setEnabled(false);
 }
-
-/**
- *
- */
 
 qsessionframe::~qsessionframe()
 {

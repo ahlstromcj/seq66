@@ -17,10 +17,14 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="toolTip">
-      <string>Provides a table of MIDI output ports/busses and clock settings, input busses, and more.  There is a bug in the MIDI Clock tab where it won't respond to a click except in a very specific place; the alternative is to do Alt-C once or twice. </string>
+      <string>Provides a table of MIDI output ports/busses and clock 
+settings, input busses, and more.  There is a bug in the
+MIDI Clock tab where it won't respond to a click except
+in a very specific place; the alternative is to do Alt-C
+once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -78,7 +82,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>Sets the number of the tempo track, and it is saved to the 'rc' file.  Not yet functional.</string>
+         <string>Sets the number of the tempo track. Button not yet functional.</string>
         </property>
         <property name="verticalScrollBarPolicy">
          <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -122,7 +126,8 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>Saves the current tempo track number as a song parameter, saved to the MIDI file, as opposed to a global Seq66 value. However, remember that the given value will be saved to the 'rc' file when exiting.  Not yet functional.</string>
+         <string>Saves the current tempo track number to the MIDI file. 
+Button not yet functional.</string>
         </property>
         <property name="text">
          <string>Set as Tempo Track</string>
@@ -141,6 +146,9 @@
        <layout class="QHBoxLayout" name="horizLayoutClockStartModulo">
         <item>
          <widget class="QLabel" name="labelClockStartModulo">
+          <property name="toolTip">
+           <string>Sets the position after which MIDI clocking begins.</string>
+          </property>
           <property name="text">
            <string>Clock Start Modulo (1/16/Notes)</string>
           </property>
@@ -171,10 +179,12 @@
         </rect>
        </property>
        <property name="toolTip">
-        <string>When pressed, a permanent map is saved of output port numbers and names.  This map is then used to map sequences to buss numbers, which then use the buss name to look up the actual port number in case the system's MIDI setup has changed.</string>
+        <string>Saves maps of I/O port numbers and names.  Thus, the
+desired port can be found by name-lookup, in case the
+system's MIDI setup has changed.</string>
        </property>
        <property name="text">
-        <string>Save Clocks Port Map</string>
+        <string>Save Clock/Input Maps</string>
        </property>
       </widget>
       <widget class="QLabel" name="label">
@@ -198,6 +208,9 @@
          <width>42</width>
          <height>28</height>
         </rect>
+       </property>
+       <property name="toolTip">
+        <string>Holds the ALSA MIDI client number, if applicable.</string>
        </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -265,6 +278,10 @@
           <height>21</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>If checked, incoming data is routed to the desired pattern
+number using the channel number (0 to 15).</string>
+        </property>
         <property name="text">
          <string>Record input into sequences according to channel</string>
         </property>
@@ -325,6 +342,10 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Sets the height of a note key in pixels.  
+A primitive way to zoom.</string>
+          </property>
           <property name="text">
            <string>Editor Key Height</string>
           </property>
@@ -352,6 +373,10 @@
         </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineEditUiScaling">
+          <property name="toolTip">
+           <string>Scales the main window at startup.  The format is XxY,
+where X and Y are scale factors ranging from 0.5 to 3.0.</string>
+          </property>
           <property name="text">
            <string>1.0</string>
           </property>
@@ -405,6 +430,9 @@
          <height>23</height>
         </rect>
        </property>
+       <property name="toolTip">
+        <string>Connect/reconnect to JACK transport.</string>
+       </property>
        <property name="text">
         <string>JACK Transport Co&amp;nnect</string>
        </property>
@@ -417,6 +445,9 @@
          <width>291</width>
          <height>23</height>
         </rect>
+       </property>
+       <property name="toolTip">
+        <string>Disconnect from JACK transport.</string>
        </property>
        <property name="text">
         <string>JACK Transport &amp;Disconnect</string>
@@ -434,6 +465,9 @@
        <layout class="QVBoxLayout" name="vertLayoutJackTransportMidi">
         <item>
          <widget class="QCheckBox" name="chkJackConditional">
+          <property name="toolTip">
+           <string>Sets Seq66 as the MIDI Master if no master exists.</string>
+          </property>
           <property name="text">
            <string>Master Conditional</string>
           </property>
@@ -441,6 +475,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="chkJackMaster">
+          <property name="toolTip">
+           <string>Sets Seq66 as the MIDI Master.</string>
+          </property>
           <property name="text">
            <string extracomment="Serve as jack transport master">Transport Master</string>
           </property>
@@ -448,6 +485,9 @@
         </item>
         <item>
          <widget class="QCheckBox" name="chkJackTransport">
+          <property name="toolTip">
+           <string>Turns on Seq66 JACK transport as a client.</string>
+          </property>
           <property name="text">
            <string>Enable Jack Transport</string>
           </property>
@@ -455,6 +495,10 @@
         </item>
         <item>
          <widget class="QCheckBox" name="chkJackNative">
+          <property name="toolTip">
+           <string>Requests Seq66 to use the JACK system if it is running.
+Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
+          </property>
           <property name="text">
            <string>Native JACK &amp;MIDI (requires a restart)</string>
           </property>
@@ -490,6 +534,10 @@
        <layout class="QVBoxLayout" name="radio_group_layout">
         <item>
          <widget class="QRadioButton" name="radio_live_mode">
+          <property name="toolTip">
+           <string>Play the MIDI song in Live Mode, where each pattern
+plays in an endless loop.</string>
+          </property>
           <property name="text">
            <string>&amp;Live Mode</string>
           </property>
@@ -497,6 +545,10 @@
         </item>
         <item>
          <widget class="QRadioButton" name="radio_song_mode">
+          <property name="toolTip">
+           <string>Play the MIDI song in Song Mode, where the playback of
+patterns is controlled by the layout drawn in the Song Editor.</string>
+          </property>
           <property name="text">
            <string>&amp;Song Mode</string>
           </property>
@@ -515,6 +567,10 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QCheckBox" name="chkNoteResume">
+         <property name="toolTip">
+          <string>When checked, unfinished notes are turned back on when
+playback resumes.</string>
+         </property>
          <property name="text">
           <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
          </property>

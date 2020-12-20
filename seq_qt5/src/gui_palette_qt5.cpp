@@ -24,12 +24,17 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-10-16
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
  *  change drawing of the lines and pixmaps, opening up the way for night
  *  views and color schemes that match the desktop theme.
+ *
+ *  There are 19 predefined QColor objects: white, black, red, darkRed, green,
+ *  darkGreen, blue, darkBlue, cyan, darkCyan, magenta, darkMagenta, yellow,
+ *  darkYellow, gray, darkGray, lightGray, color0 and color1, accessible as
+ *  members of the Qt namespace (ie. Qt::red).
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() or seq66::usr()      */
@@ -84,10 +89,20 @@ const STATIC_COLOR gui_palette_qt5::m_dk_white     = Color("grey");
 
 const STATIC_COLOR gui_palette_qt5::m_orange       = Color("orange");
 const STATIC_COLOR gui_palette_qt5::m_pink         = Color("pink");
+const STATIC_COLOR gui_palette_qt5::m_color_18     = Color("pale green");
+const STATIC_COLOR gui_palette_qt5::m_color_19     = Color("khaki");
+const STATIC_COLOR gui_palette_qt5::m_color_20     = Color("light blue");
+const STATIC_COLOR gui_palette_qt5::m_color_21     = Color("light magenta");
+const STATIC_COLOR gui_palette_qt5::m_color_22     = Color("turquoise");
 const STATIC_COLOR gui_palette_qt5::m_grey         = Color("grey");
 
 const STATIC_COLOR gui_palette_qt5::m_dk_orange    = Color("dark orange");
 const STATIC_COLOR gui_palette_qt5::m_dk_pink      = Color("dark pink");
+const STATIC_COLOR gui_palette_qt5::m_color_26     = Color("sea green");
+const STATIC_COLOR gui_palette_qt5::m_color_27     = Color("dark khaki");
+const STATIC_COLOR gui_palette_qt5::m_color_28     = Color("dark slate blue");
+const STATIC_COLOR gui_palette_qt5::m_color_29     = Color("dark violet");
+const STATIC_COLOR gui_palette_qt5::m_color_30     = Color("dark turquoise");
 const STATIC_COLOR gui_palette_qt5::m_dk_grey      = Color("dark grey");
 
 /**
@@ -124,11 +139,6 @@ gui_palette_qt5::gui_palette_qt5 ()
     m_bg_color          (),
     m_fg_color          ()
 {
-    /**
-     * \todo
-     *      Use an array of colors instead of this switch.
-     */
-
     if (usr().inverse_colors())
         load_inverse_palette(true);
 
@@ -168,7 +178,7 @@ gui_palette_qt5::gui_palette_qt5 ()
      * Fill in the slot and pen palettes!
      */
 
-    initialize();
+    reset();
 }
 
 /**
@@ -250,15 +260,17 @@ gui_palette_qt5::calculate_inverse (const Color & c)
  *  the palette contain.  The palette is meant to be used to color sequences
  *  differently, though this feature is not yet supported in the Gtkmm-2.4
  *  version of Seq66.
+ *
+ *  Weird, this shows up as black!  Same in Gtkmm!
+ *
+ *      m_palette.add(PaletteColor::DK_YELLOW, m_dk_yellow, "Dk Yellow");
+ *
+ *  Slot background colors.
  */
 
 void
-gui_palette_qt5::initialize ()
+gui_palette_qt5::reset_backgrounds ()
 {
-    /*
-     * Slot background colors
-     */
-
     m_palette.clear();                                      /* just in case */
     m_palette.add(PaletteColor::black,       m_black,    "Black");
     m_palette.add(PaletteColor::red,         m_red,      "Red");
@@ -268,57 +280,82 @@ gui_palette_qt5::initialize ()
     m_palette.add(PaletteColor::magenta,     m_magenta,  "Magenta");
     m_palette.add(PaletteColor::cyan,        m_cyan,     "Cyan");
     m_palette.add(PaletteColor::white,       m_white,    "White");
+
+    m_palette.add(PaletteColor::dk_black,    m_dk_black, "Dark Black");    // hmmmm
+    m_palette.add(PaletteColor::dk_red,      m_dk_red,   "Dark Red");
+    m_palette.add(PaletteColor::dk_green,    m_dk_green, "Dark Green");
+    m_palette.add(PaletteColor::dk_yellow,   m_yellow,   "Dark Yellow");
+    m_palette.add(PaletteColor::dk_blue,     m_dk_blue,  "Dark Blue");
+    m_palette.add(PaletteColor::dk_magenta,  m_dk_magenta, "Dark Magenta");
+    m_palette.add(PaletteColor::dk_cyan,     m_dk_cyan,  "Dark Cyan");
+    m_palette.add(PaletteColor::dk_white,    m_dk_white, "Dark White");    // hmmmm
+
     m_palette.add(PaletteColor::orange,      m_orange,   "Orange");
     m_palette.add(PaletteColor::pink,        m_pink,     "Pink");
-    m_palette.add(PaletteColor::grey,        m_grey,     "Gray");        // hmmmm
+    m_palette.add(PaletteColor::color_18,    m_color_18, "Pale Green");
+    m_palette.add(PaletteColor::color_19,    m_color_19, "Khaki");
+    m_palette.add(PaletteColor::color_20,    m_color_20, "Light Blue");
+    m_palette.add(PaletteColor::color_21,    m_color_21, "Light Magenta");
+    m_palette.add(PaletteColor::color_22,    m_color_22, "Turquoise");
+    m_palette.add(PaletteColor::grey,        m_grey,     "Grey");
 
-    m_palette.add(PaletteColor::dk_black,    m_dk_black, "Dk Black");    // hmmmm
-    m_palette.add(PaletteColor::dk_red,      m_dk_red,   "Dk Red");
-    m_palette.add(PaletteColor::dk_green,    m_dk_green, "Dk Green");
-
-    /*
-     * Weird, this shows up as black!  Same in Gtkmm!
-     * m_palette.add(PaletteColor::DK_YELLOW, m_dk_yellow, "Dk Yellow");
-     */
-
-    m_palette.add(PaletteColor::dk_yellow,   m_yellow,   "Dk Yellow");
-    m_palette.add(PaletteColor::dk_blue,     m_dk_blue,  "Dk Blue");
-    m_palette.add(PaletteColor::dk_magenta,  m_dk_magenta, "Dk Magenta");
-    m_palette.add(PaletteColor::dk_cyan,     m_dk_cyan,  "Dk Cyan");
-    m_palette.add(PaletteColor::dk_white,    m_dk_white, "Dk White");    // hmmmm
     m_palette.add(PaletteColor::dk_orange,   m_dk_orange, "Dk Orange");
-    m_palette.add(PaletteColor::dk_pink,     m_dk_pink,  "Dk Pink");
-    m_palette.add(PaletteColor::dk_grey,     m_dk_grey,  "Dk Grey");     // hmmmm
+    m_palette.add(PaletteColor::dk_pink,     m_dk_pink,   "Dark Pink");
+    m_palette.add(PaletteColor::color_26,    m_color_26,  "Sea Green");
+    m_palette.add(PaletteColor::color_27,    m_color_27,  "Dark Khaki");
+    m_palette.add(PaletteColor::color_28,    m_color_28,  "Dark Slate Blue");
+    m_palette.add(PaletteColor::color_29,    m_color_29,  "Dark Violet");
+    m_palette.add(PaletteColor::color_30,    m_color_30,  "Dark Turquoise");
+    m_palette.add(PaletteColor::dk_grey,     m_dk_grey,   "Dark Grey");
+
     m_palette.add(PaletteColor::none,        m_white,    "None");
+}
 
-    /*
-     * Pen/inverse colors
-     */
+/**
+ *  Sets pen/inverse colors,
+ */
 
+void
+gui_palette_qt5::reset_pens ()
+{
     m_pen_palette.clear();                  /* just in case */
-    m_pen_palette.add(PaletteColor::black,   m_white, "white");
-    m_pen_palette.add(PaletteColor::red,     m_white, "white");
-    m_pen_palette.add(PaletteColor::green,   m_white, "white");
-    m_pen_palette.add(PaletteColor::yellow,  m_black, "black");
-    m_pen_palette.add(PaletteColor::blue,    m_white, "white");
-    m_pen_palette.add(PaletteColor::magenta, m_white, "white");
-    m_pen_palette.add(PaletteColor::cyan,    m_black, "black");
-    m_pen_palette.add(PaletteColor::white,   m_black, "black");
-    m_pen_palette.add(PaletteColor::orange,  m_white, "white");
-    m_pen_palette.add(PaletteColor::pink,    m_black, "black");
-    m_pen_palette.add(PaletteColor::grey,    m_black, "black");
-    m_pen_palette.add(PaletteColor::dk_black, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_red,  m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_green, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_yellow, m_black, "black");
-    m_pen_palette.add(PaletteColor::dk_blue, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_magenta, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_cyan, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_white, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_orange, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_pink, m_white, "white");
-    m_pen_palette.add(PaletteColor::dk_grey, m_white, "white");
-    m_pen_palette.add(PaletteColor::none,    m_black, "black");
+    m_pen_palette.add(PaletteColor::black,      m_white,   "white");
+    m_pen_palette.add(PaletteColor::red,        m_white,   "white");
+    m_pen_palette.add(PaletteColor::green,      m_white,   "white");
+    m_pen_palette.add(PaletteColor::yellow,     m_black,   "black");
+    m_pen_palette.add(PaletteColor::blue,       m_white,   "white");
+    m_pen_palette.add(PaletteColor::magenta,    m_white,   "white");
+    m_pen_palette.add(PaletteColor::cyan,       m_black,   "black");
+    m_pen_palette.add(PaletteColor::white,      m_black,   "black");
+
+    m_pen_palette.add(PaletteColor::dk_black,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_red,     m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_green,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_yellow,  m_black,   "black");
+    m_pen_palette.add(PaletteColor::dk_blue,    m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_magenta, m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_cyan,    m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_white,   m_white,   "white");
+
+    m_pen_palette.add(PaletteColor::orange,     m_white,   "white");
+    m_pen_palette.add(PaletteColor::pink,       m_black,   "black");
+    m_pen_palette.add(PaletteColor::color_18,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::color_19,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::color_20,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::color_21,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_22,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::grey,       m_black,   "black");
+
+    m_pen_palette.add(PaletteColor::dk_orange,  m_black,   "Black");
+    m_pen_palette.add(PaletteColor::dk_pink,    m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_26,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_27,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_28,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_29,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_30,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::dk_grey,    m_black,   "Black");
+
+    m_pen_palette.add(PaletteColor::none,       m_black,   "black");
 }
 
 /**

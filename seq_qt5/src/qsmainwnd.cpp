@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-19
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1070,36 +1070,42 @@ qsmainwnd::import_into_session ()
     if (use_nsm() || s_use_test_button)
     {
         std::string selectedfile;
-        if (show_open_file_dialog(selectedfile))
+        (void) load_into_session(selectedfile);
+    }
+}
+
+bool
+qsmainwnd::load_into_session (const std::string & selectedfile)
+{
+    bool result = false;
+    std::string filename = selectedfile;
+    if (show_open_file_dialog(filename))
+    {
+        if (open_file(filename))
         {
-            if (open_file(selectedfile))
-            {
-                /*
-                 * Now change the filename to reflect the base NSM directory
-                 * and immediately save it.
-                 */
+            /*
+             * Change the filename to reflect the base NSM directory
+             * and immediately save it.
+             */
 
-                std::string basename = filename_base(selectedfile);
-                rc().session_midi_filename(basename);   /* make NSM name  */
+            std::string basename = filename_base(filename);
+            rc().session_midi_filename(basename);   /* make NSM name  */
 
-                std::string mfilename = rc().midi_filename();
-                song_path(mfilename);
-                std::string msg = save_file(mfilename, false) ?
-                    "Saved: " : "Failed to save: ";
+            std::string mfilename = rc().midi_filename();
+            song_path(mfilename);
+            std::string msg = save_file(mfilename, false) ?
+                "Saved: " : "Failed to save: ";
 
-                msg += rc().midi_filename();
-                show_message_box(msg);
-            }
-            else
-            {
-                /* open_file() will show the error message. */
-            }
+            msg += rc().midi_filename();
+            show_message_box(msg);
+            result = true;
+        }
+        else
+        {
+            /* open_file() will show the error message. */
         }
     }
-    else
-    {
-        // illegal for now
-    }
+    return result;
 }
 
 /**
@@ -1366,7 +1372,8 @@ qsmainwnd::refresh ()
     }
 
     int active_screenset = int(perf().playscreen_number());
-    std::string b = std::to_string(active_screenset);
+    std::string b = "#";
+    b += std::to_string(active_screenset);
     b += " of ";
     b += std::to_string(perf().screenset_count());
     ui->entry_active_set->setText(b.c_str());

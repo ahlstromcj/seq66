@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2020-03-27
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -88,9 +88,7 @@ enum class PaletteColor
     magenta,            //  5 PURPLE
     cyan,               //  6 PINK
     white,              //  7 ORANGE
-    orange,             //    N/A
-    pink,               //    N/A
-    grey,               //    N/A
+
     dk_black,           //  8 place-holder
     dk_red,             //  9 N/A
     dk_green,           // 10 N/A
@@ -99,10 +97,26 @@ enum class PaletteColor
     dk_magenta,         // 13 N/A
     dk_cyan,            // 14 N/A
     dk_white,           // 15 N/A
-    dk_orange,          //    N/A
-    dk_pink,            //    N/A
-    dk_grey,            //    N/A
-    max                 // first illegal value, not in color set
+
+    orange,             // color_16
+    pink,               // color_17
+    color_18,
+    color_19,
+    color_20,
+    color_21,
+    color_22,
+    grey,               // color_23
+
+    dk_orange,          // color_24
+    dk_pink,            // color_25
+    color_26,
+    color_27,
+    color_28,
+    color_29,
+    color_30,
+    dk_grey,            // color_31
+
+    maximum             // first illegal value, not in color set
 };
 
 /**
@@ -130,7 +144,7 @@ class palette
 
     using pair = struct
     {
-        const COLOR * ppt_color;
+        COLOR ppt_color;
         std::string ppt_color_name;
     };
 
@@ -149,7 +163,8 @@ public:
 
     void add (PaletteColor index, const COLOR & c, const std::string & name);
     const COLOR & get_color (PaletteColor index) const;
-    const std::string & get_color_name (PaletteColor index) const;
+    std::string get_color_name (PaletteColor index) const;
+    std::string get_color_name_ex (PaletteColor index) const;
 
     /**
      * \param index
@@ -163,12 +178,6 @@ public:
     {
         return index == PaletteColor::none;
     }
-
-    /*
-     * Offload to GUI-specific palette class.
-     *
-     * COLOR get_color_inverse (PaletteColor index) const;
-     */
 
     /**
      *  Clears the color/name container.
@@ -188,8 +197,7 @@ public:
  */
 
 template <typename COLOR>
-palette<COLOR>::palette ()
- :
+palette<COLOR>::palette () :
     m_container   ()
 {
     static COLOR color;
@@ -198,8 +206,9 @@ palette<COLOR>::palette ()
 
 /**
  *  Inserts a color-index/color pair into the palette.  There is no indication
- *  if the item was not added, which will occur only when the item is already in
- *  the container.
+ *  if the item was not added, which will occur only when the item is already
+ *  in the container.  The type of a color pair is
+ *  std::pair<PaletteColor, pair>.
  *
  * \param index
  *      The index into the palette.
@@ -212,16 +221,14 @@ template <typename COLOR>
 void
 palette<COLOR>::add
 (
-    PaletteColor index, const COLOR & color, const std::string & colorname
+    PaletteColor index,
+    const COLOR & color,
+    const std::string & colorname
 )
 {
     pair colorspec;
-    colorspec.ppt_color = &color;
+    colorspec.ppt_color = color;
     colorspec.ppt_color_name = colorname;
-
-    /*
-     * std::pair<PaletteColor, pair>
-     */
 
     auto p = std::make_pair(index, colorspec);
     (void) m_container.insert(p);
@@ -244,25 +251,21 @@ template <typename COLOR>
 const COLOR &
 palette<COLOR>::get_color (PaletteColor index) const
 {
-    if (index >= PaletteColor::black && index < PaletteColor::max)
+    if (index >= PaletteColor::black && index < PaletteColor::maximum)
     {
-        return *m_container.at(index).ppt_color;
+        return m_container.at(index).ppt_color;
     }
     else
     {
-        return *m_container.at(PaletteColor::none).ppt_color;
+        return m_container.at(PaletteColor::none).ppt_color;
     }
 }
 
-/**
- *
- */
-
 template <typename COLOR>
-const std::string &
+std::string
 palette<COLOR>::get_color_name (PaletteColor index) const
 {
-    if (index >= PaletteColor::black && index < PaletteColor::max)
+    if (index >= PaletteColor::black && index < PaletteColor::maximum)
     {
         return m_container.at(index).ppt_color_name;
     }
@@ -270,6 +273,16 @@ palette<COLOR>::get_color_name (PaletteColor index) const
     {
         return m_container.at(PaletteColor::none).ppt_color_name;
     }
+}
+
+template <typename COLOR>
+std::string
+palette<COLOR>::get_color_name_ex (PaletteColor index) const
+{
+    std::string result = std::to_string(static_cast<int>(index));
+    result += " ";
+    result += get_color_name(index);
+    return result;
 }
 
 }           // namespace seq66

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-12-04
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -132,20 +132,35 @@ qplaylistframe::qplaylistframe
     );
     if (not_nullptr(m_parent))
     {
+        ui->buttonPlaylistSave->setText("Save Lists");
         if (m_parent->use_nsm())
         {
-            ui->buttonPlaylistSave->setText("Save Sess");
             ui->buttonPlaylistSave->setToolTip
             (
-                "Save playlists and MIDI to current NSM session."
+                "Save playlists/MIDI files in NSM session."
             );
+            ui->editPlaylistPath->setReadOnly(true);
+            ui->editPlaylistPath->setEnabled(false);
+            ui->editSongPath->setReadOnly(true);
+            ui->editSongPath->setEnabled(false);
+            ui->entry_playlist_file->setReadOnly(true);
+            ui->entry_playlist_file->setEnabled(false);
         }
         else
         {
-            ui->buttonPlaylistSave->setText("Save Lists");
             ui->buttonPlaylistSave->setToolTip
             (
                 "Save playlists (only) to current directory."
+            );
+            connect
+            (
+                ui->editPlaylistPath, SIGNAL(textEdited(QString)),
+                this, SLOT(list_modify(QString))
+            );
+            connect
+            (
+                ui->editSongPath, SIGNAL(textEdited(QString)),
+                this, SLOT(song_modify(QString))
             );
         }
     }
@@ -186,11 +201,6 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
-        ui->editPlaylistPath, SIGNAL(textEdited(QString)),
-        this, SLOT(list_modify(QString))
-    );
-    connect
-    (
         ui->editPlaylistName, SIGNAL(textEdited(QString)),
         this, SLOT(list_modify(QString))
     );
@@ -201,14 +211,13 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
-        ui->editSongPath, SIGNAL(textEdited(QString)),
-        this, SLOT(song_modify(QString))
-    );
-    connect
-    (
         ui->editSongFilename, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+    ui->midiBaseDirText->setReadOnly(true);
+    ui->midiBaseDirText->setEnabled(false);
+    ui->currentSongPath->setReadOnly(true);
+    ui->currentSongPath->setEnabled(false);
     reset_playlist();                       /* if (perf().playlist_mode())  */
 
     m_timer = new QTimer(this);             /* timer for regular redraws    */
@@ -688,13 +697,29 @@ qplaylistframe::handle_song_load_click ()
     if (not_nullptr(m_parent))
     {
         std::string selectedfile = ui->editSongPath->text().toStdString();
-        if (show_open_midi_file_dialog(this, selectedfile))
+        if (m_parent->use_nsm())
         {
-            bool ok = perf().add_song(selectedfile);
+            bool ok = m_parent->load_into_session(selectedfile);
             if (ok)
             {
-                fill_songs();               /* too much: reset_playlist();  */
-                m_parent->recreate_all_slots();
+                ok = perf().add_song(selectedfile);
+                if (ok)
+                {
+                    fill_songs();           /* too much: reset_playlist();  */
+                    m_parent->recreate_all_slots();
+                }
+            }
+        }
+        else
+        {
+            if (show_open_midi_file_dialog(this, selectedfile))
+            {
+                bool ok = perf().add_song(selectedfile);
+                if (ok)
+                {
+                    fill_songs();           /* too much: reset_playlist();  */
+                    m_parent->recreate_all_slots();
+                }
             }
         }
     }

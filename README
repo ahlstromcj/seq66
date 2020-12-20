@@ -1,6 +1,6 @@
 README for Seq66 0.91.4 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-12-19
+2015-09-10 to 2020-12-20
 
 "Seq66" is a new Qt version of "Sequencer64" with modern C++ and new features,
 now the "official" version of "Sequencer64".  Linux users can build this
@@ -59,6 +59,8 @@ Recent Changes:
         -   Added a port-mapper feature for I/O, still in progress.
         -   Improved port naming and provide an option for short or long port
             names.
+        -   Improved safety in NSM sessions.
+        -   Refactoring the color handling.  Colors have changed!!!
     -   Version 0.91.3:
         -   Added check to not apply last mute-group if in Song mode.
         -   Provisional support for playing multiple sets at once and for

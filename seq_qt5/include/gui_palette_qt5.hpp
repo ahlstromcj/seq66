@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-08-19
+ * \updates       2019-12-20
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -154,10 +154,20 @@ private:                            /* use the accessor functions           */
 
     static const Color m_orange;    /**< Provides the orange color.         */
     static const Color m_pink;      /**< Provides the pink color.           */
+    static const Color m_color_18;  /**< Provides an additional color.      */
+    static const Color m_color_19;  /**< Provides an additional color.      */
+    static const Color m_color_20;  /**< Provides an additional color.      */
+    static const Color m_color_21;  /**< Provides an additional color.      */
+    static const Color m_color_22;  /**< Provides an additional color.      */
     static const Color m_grey;      /**< Provides the unvarying grey color. */
 
     static const Color m_dk_orange; /**< Provides a dark orange color.      */
     static const Color m_dk_pink;   /**< Provides a dark pink color.        */
+    static const Color m_color_26;  /**< Provides an additional color.      */
+    static const Color m_color_27;  /**< Provides an additional color.      */
+    static const Color m_color_28;  /**< Provides an additional color.      */
+    static const Color m_color_29;  /**< Provides an additional color.      */
+    static const Color m_color_30;  /**< Provides an additional color.      */
     static const Color m_dk_grey;   /**< The unvarying dark grey color.     */
 
     /*
@@ -189,7 +199,14 @@ public:
     gui_palette_qt5 ();
     ~gui_palette_qt5 ();
 
-    void initialize ();
+    void reset ()
+    {
+        reset_backgrounds();
+        reset_pens();
+    }
+
+    void reset_backgrounds ();
+    void reset_pens ();
 
     /**
      * \param index
@@ -199,9 +216,14 @@ public:
      *      Returns the corresponding color name from the palette.
      */
 
-    const std::string & get_color_name (PaletteColor index) const
+    std::string get_color_name (PaletteColor index) const
     {
         return m_palette.get_color_name(index);
+    }
+
+    std::string get_color_name_ex (PaletteColor index) const
+    {
+        return m_palette.get_color_name_ex(index);
     }
 
     /**

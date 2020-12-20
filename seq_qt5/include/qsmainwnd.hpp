@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-05
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -156,6 +156,7 @@ protected:
     }
 
     bool recreate_all_slots ();
+    bool load_into_session (const std::string & selectedfile);
 
 protected:
 

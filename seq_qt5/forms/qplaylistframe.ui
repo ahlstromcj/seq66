@@ -235,7 +235,8 @@
     <item>
      <widget class="QLineEdit" name="entry_playlist_file">
       <property name="toolTip">
-       <string>Shows the full path to the play-list file. Read-only.</string>
+       <string>Shows the full path to the play-list file. 
+Read-only.</string>
       </property>
       <property name="text">
        <string>None</string>
@@ -257,7 +258,9 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>The default song directory for the currently-selected play-list section. Can be edited to enable Add List and Modify List.</string>
+    <string>The default song directory for the currently-selected play-list
+section. Can be edited to enable Add List and Modify List,
+but not in Non Session Manager mode.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -276,7 +279,9 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the currently-selected play-list section. Can be edited to enable Add List and Modify List.</string>
+    <string>Shows the MIDI control number for the currently-selected 
+play-list section. Can be edited to enable Add List and Modify
+List.</string>
    </property>
    <property name="text">
     <string>000</string>
@@ -292,7 +297,8 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the name of the currently-selected play-list section. Can be edited to enable Add List and Modify List.</string>
+    <string>Shows the name of the currently-selected play-list section.
+Can be edited to enable Add List and Modify List.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -308,7 +314,9 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the directory in which the currently selected song is stored. Can be edited (carefully) to enable the Add Song and Modify Song buttons.</string>
+    <string>Shows the directory in which the currently selected song is
+stored. Can be edited (carefully) to enable the Add Song and Modify Song buttons.  Not enabled in Non Session Manager
+mode.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -324,7 +332,8 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the currently selected song. Can be edited to enable the Add Song and Modify Song buttons.</string>
+    <string>Shows the MIDI control number for the currently selected song.
+Can be edited to enable the Add Song and Modify Song buttons.</string>
    </property>
    <property name="text">
     <string>000</string>
@@ -340,7 +349,9 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the base file-name of the currently selected song. Can be edited to enable the Add Song and Modify Song buttons.</string>
+    <string>Shows the base file-name of the currently selected song. 
+Can be edited to enable the Add Song and Modify Song 
+buttons.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -424,7 +435,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Adds the play-list defined by the 3 text entries above to the current play-list set.</string>
+       <string>Adds the play-list defined by the 3 text entries above to the
+current play-list set.</string>
       </property>
       <property name="text">
        <string>Add List</string>
@@ -496,7 +508,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Saves the current state of the play-lists file, including song information.</string>
+       <string>Saves the current state of the play-lists file, including song
+information.</string>
       </property>
       <property name="text">
        <string>Save List</string>
@@ -536,7 +549,10 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Opens a file dialog to select a MIDI song to add to the current play-list; the Directory and Current values above are updated automatically.</string>
+       <string>Opens a file dialog to select a MIDI song to add to the current
+play-list; the Directory and Current values above are updated
+automatically.  In Non Session Manager mode, the file is
+imported.</string>
       </property>
       <property name="text">
        <string>Load Song</string>
@@ -561,7 +577,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Adds the song information specified above to the current play-list section; it is preferable to use Load Song.</string>
+       <string>Adds the song information specified above to the current
+play-list section; it is easier to use Load Song.</string>
       </property>
       <property name="text">
        <string>Add Song</string>
@@ -586,7 +603,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Modifies the information about the currently-selected song in the 3 entry fields above.</string>
+       <string>Modifies the information about the currently-selected song
+in the 3 entry fields above.</string>
       </property>
       <property name="text">
        <string>Modify Song</string>
@@ -611,7 +629,8 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>Removes the current song from the current play-list; the song is NOT deleted from the hard drive.</string>
+       <string>Removes the current song from the current play-list;
+the song is not deleted from the hard drive.</string>
       </property>
       <property name="text">
        <string>Delete Song</string>
@@ -633,7 +652,9 @@
        </size>
       </property>
       <property name="toolTip">
-       <string>If checked, the loaded play-list file is active.  This means that the lists and songs will be loaded when the arrow keys are pressed or the configure MIDI control comes in.</string>
+       <string>If checked, the loaded play-list file is active.  The lists and 
+songs will be loaded when the arrow keys are pressed or 
+the configured MIDI control comes in.</string>
       </property>
       <property name="text">
        <string>Lists Active</string>
@@ -665,7 +686,8 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the base directory holding all files in all playlists.</string>
+    <string>Shows the base directory holding all files in all playlists.
+Read-only.</string>
    </property>
    <property name="text">
     <string>None</string>
@@ -697,7 +719,8 @@
     </rect>
    </property>
    <property name="toolTip">
-    <string>Shows the full path to the currently-selected song.</string>
+    <string>Shows the full path to the currently-selected song.
+Read-only.</string>
    </property>
    <property name="text">
     <string>None</string>

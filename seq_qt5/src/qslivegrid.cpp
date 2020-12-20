@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-10-12
+ * \updates       2020-12-20
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1335,39 +1335,70 @@ qslivegrid::popup_menu ()
 
         QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
         int firstcolor = color_to_int(none);
-        int lastcolor = color_to_int(grey);
-        for (int c = firstcolor; c <= lastcolor; ++c)
-        {
-            if (c != color_to_int(black))
-            {
-                PaletteColor pc = PaletteColor(c);
-                QString cname = get_color_name(pc).c_str();
-                QAction * a = new QAction(cname, menuColour);
-                connect
-                (
-                    a, &QAction::triggered,
-                    [this, c] { color_by_number(c); }
-                );
-                menuColour->addAction(a);
-            }
-        }
-
-        QMenu * submenuColour = new QMenu(tr("More colors"));
-        firstcolor = color_to_int(dk_red);
-        lastcolor = color_to_int(dk_grey);
+        int lastcolor = color_to_int(white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
             QString cname = get_color_name(pc).c_str();
-            QAction * a = new QAction(cname, submenuColour);
+            QAction * a = new QAction(cname, menuColour);
             connect
             (
                 a, &QAction::triggered,
                 [this, c] { color_by_number(c); }
             );
-            submenuColour->addAction(a);
+            menuColour->addAction(a);
         }
-        menuColour->addMenu(submenuColour);
+
+        QMenu * menu2Colour = new QMenu(tr("Soft colors"));
+        firstcolor = color_to_int(dk_black);
+        lastcolor = color_to_int(dk_white);
+        for (int c = firstcolor; c <= lastcolor; ++c)
+        {
+            PaletteColor pc = PaletteColor(c);
+            QString cname = get_color_name_ex(pc).c_str();
+            QAction * a = new QAction(cname, menu2Colour);
+            connect
+            (
+                a, &QAction::triggered,
+                [this, c]  { color_by_number(c); }
+            );
+            menu2Colour->addAction(a);
+        }
+
+        QMenu * menu3Colour = new QMenu(tr("Other colors"));
+        firstcolor = color_to_int(orange);                  /* color_16 */
+        lastcolor = color_to_int(grey);                     /* color_23 */
+        for (int c = firstcolor; c <= lastcolor; ++c)
+        {
+            PaletteColor pc = PaletteColor(c);
+            QString cname = get_color_name_ex(pc).c_str();
+            QAction * a = new QAction(cname, menu3Colour);
+            connect
+            (
+                a, &QAction::triggered,
+                [this, c]  { color_by_number(c); }
+            );
+            menu3Colour->addAction(a);
+        }
+
+        QMenu * menu4Colour = new QMenu(tr("Other soft colors"));
+        firstcolor = color_to_int(dk_orange);               /* color_24 */
+        lastcolor = color_to_int(dk_grey);                  /* color_31 */
+        for (int c = firstcolor; c <= lastcolor; ++c)
+        {
+            PaletteColor pc = PaletteColor(c);
+            QString cname = get_color_name_ex(pc).c_str();
+            QAction * a = new QAction(cname, menu4Colour);
+            connect
+            (
+                a, &QAction::triggered,
+                [this, c]  { color_by_number(c); }
+            );
+            menu4Colour->addAction(a);
+        }
+        menuColour->addMenu(menu2Colour);
+        menuColour->addMenu(menu3Colour);
+        menuColour->addMenu(menu4Colour);
         m_popup->addMenu(menuColour);
 
         QAction * actionCopy = new QAction(tr("Cop&y pattern"), m_popup);
