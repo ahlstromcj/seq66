@@ -319,32 +319,32 @@ void
 gui_palette_qt5::reset_pens ()
 {
     m_pen_palette.clear();                  /* just in case */
-    m_pen_palette.add(PaletteColor::black,      m_white,   "white");
-    m_pen_palette.add(PaletteColor::red,        m_white,   "white");
-    m_pen_palette.add(PaletteColor::green,      m_white,   "white");
-    m_pen_palette.add(PaletteColor::yellow,     m_black,   "black");
-    m_pen_palette.add(PaletteColor::blue,       m_white,   "white");
-    m_pen_palette.add(PaletteColor::magenta,    m_white,   "white");
-    m_pen_palette.add(PaletteColor::cyan,       m_black,   "black");
-    m_pen_palette.add(PaletteColor::white,      m_black,   "black");
+    m_pen_palette.add(PaletteColor::black,      m_white,   "White");
+    m_pen_palette.add(PaletteColor::red,        m_white,   "White");
+    m_pen_palette.add(PaletteColor::green,      m_white,   "White");
+    m_pen_palette.add(PaletteColor::yellow,     m_black,   "Black");
+    m_pen_palette.add(PaletteColor::blue,       m_white,   "White");
+    m_pen_palette.add(PaletteColor::magenta,    m_white,   "White");
+    m_pen_palette.add(PaletteColor::cyan,       m_black,   "Black");
+    m_pen_palette.add(PaletteColor::white,      m_black,   "Black");
 
-    m_pen_palette.add(PaletteColor::dk_black,   m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_red,     m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_green,   m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_yellow,  m_black,   "black");
-    m_pen_palette.add(PaletteColor::dk_blue,    m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_magenta, m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_cyan,    m_white,   "white");
-    m_pen_palette.add(PaletteColor::dk_white,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::dk_black,   m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_red,     m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_green,   m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_yellow,  m_black,   "Black");
+    m_pen_palette.add(PaletteColor::dk_blue,    m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_magenta, m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_cyan,    m_white,   "White");
+    m_pen_palette.add(PaletteColor::dk_white,   m_white,   "White");
 
-    m_pen_palette.add(PaletteColor::orange,     m_white,   "white");
-    m_pen_palette.add(PaletteColor::pink,       m_black,   "black");
-    m_pen_palette.add(PaletteColor::color_18,   m_white,   "white");
-    m_pen_palette.add(PaletteColor::color_19,   m_white,   "white");
-    m_pen_palette.add(PaletteColor::color_20,   m_white,   "white");
+    m_pen_palette.add(PaletteColor::orange,     m_white,   "White");
+    m_pen_palette.add(PaletteColor::pink,       m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_18,   m_white,   "White");
+    m_pen_palette.add(PaletteColor::color_19,   m_white,   "White");
+    m_pen_palette.add(PaletteColor::color_20,   m_white,   "White");
     m_pen_palette.add(PaletteColor::color_21,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::color_22,   m_black,   "Black");
-    m_pen_palette.add(PaletteColor::grey,       m_black,   "black");
+    m_pen_palette.add(PaletteColor::grey,       m_black,   "Black");
 
     m_pen_palette.add(PaletteColor::dk_orange,  m_black,   "Black");
     m_pen_palette.add(PaletteColor::dk_pink,    m_black,   "Black");
@@ -355,7 +355,7 @@ gui_palette_qt5::reset_pens ()
     m_pen_palette.add(PaletteColor::color_30,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::dk_grey,    m_black,   "Black");
 
-    m_pen_palette.add(PaletteColor::none,       m_black,   "black");
+    m_pen_palette.add(PaletteColor::none,       m_black,   "Black");
 }
 
 /**
@@ -437,9 +437,9 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
 gui_palette_qt5::Color
 gui_palette_qt5::get_color_inverse (PaletteColor index) const
 {
-    gui_palette_qt5::Color c = m_palette.get_color(index);
     if (index != PaletteColor::none)
     {
+        gui_palette_qt5::Color c = m_palette.get_color(index);
         int r, g, b, a;
         c.getRgb(&r, &g, &b, &a);
         r = a - r;
@@ -451,25 +451,33 @@ gui_palette_qt5::get_color_inverse (PaletteColor index) const
         return m_black;
 }
 
-/**
- *  Shows the #RRGGBB string for the given color on stdout.  For debugging.
- *
- * \param c
- *      The color to show.
- */
-
-void
-show_color_rgb (const gui_palette_qt5::Color & c)
+std::string
+gui_palette_qt5::get_color_stanza (PaletteColor index) const
 {
-    QString qs = c.name();
-
-#if defined SEQ66_PLATFORM_WINDOWS
-    std::string text = qs.toLocal8Bit().constData();    /* Windows text */
-#else
-    std::string text = qs.toUtf8().constData();         /* UTF-8 text   */
-#endif
-
-    printf("color: %s\n", text.c_str());
+    std::string result;
+    if (index != PaletteColor::none)
+    {
+        int number = static_cast<int>(index);
+        gui_palette_qt5::Color backc = m_palette.get_color(index);
+        gui_palette_qt5::Color textc = m_pen_palette.get_color(index);
+        std::string bname = get_color_name(index);
+        std::string tname = get_pen_color_name(index);
+        int br, bg, bb, ba;
+        int tr, tg, tb, ta;
+        char temp[128];
+        backc.getRgb(&br, &bg, &bb, &ba);
+        textc.getRgb(&tr, &tg, &tb, &ta);
+        snprintf
+        (
+            temp, sizeof temp,
+            "%2d \"16%s\" [ 0x%2x 0x%2x 0x%2x 0x%2x ]"
+            "\"16%s\" [ 0x%2x 0x%2x 0x%2x 0x%2x ]",
+            number, bname.c_str(), br, bg, bb, ba,
+            tname.c_str(), tr, tb, tg, ta
+        );
+        result = temp;
+    }
+    return result;
 }
 
 }           // namespace seq66

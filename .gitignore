@@ -1,7 +1,7 @@
 # .gitignore for Seq66
 #
 # Chris Ahlstrom
-# Updates: 2015-09-12 to 2020-09-29
+# Updates: 2015-09-12 to 2020-12-21
 
 ~$*
 .*
@@ -69,6 +69,7 @@ doxygen_sqlite3.db
 *.egg-info
 eggs
 *.fdb_latexmk
+*.fls
 *.gcda
 *.gcno
 *.gcov
@@ -172,6 +173,7 @@ tags
 TAGS
 TestResults
 tests/
+tex-stamp
 Thumbs.db
 *.tlb
 *.tlh

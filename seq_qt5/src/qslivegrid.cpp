@@ -1339,7 +1339,7 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = get_color_name(pc).c_str();
+            QString cname = get_color_name_ex(pc).c_str();
             QAction * a = new QAction(cname, menuColour);
             connect
             (

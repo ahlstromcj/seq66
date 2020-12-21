@@ -226,6 +226,11 @@ public:
         return m_palette.get_color_name_ex(index);
     }
 
+    std::string get_pen_color_name (PaletteColor index) const
+    {
+        return m_pen_palette.get_color_name(index);
+    }
+
     /**
      * \param index
      *      Provides the color index into the palette.
@@ -251,6 +256,8 @@ public:
     {
         return m_pen_palette.get_color(index);
     }
+
+    std::string get_color_stanza (PaletteColor index) const;
 
     Color get_color_ex
     (

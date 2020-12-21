@@ -495,9 +495,6 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         Color pencolor = get_pen_color(PaletteColor(c));
         if (m_gtkstyle_border)
         {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            show_color_rgb(backcolor);
-#endif
             brush.setColor(backcolor);
             if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {

@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2020-11-15
+2015-09-09 to 2020-12-19
 
 Creating a GitHub Repository:
 
@@ -79,8 +79,26 @@ Create the branch on your local machine and switch to it:
 
     $ git checkout -b [name_of_your_branch]
 
+If you want to branch from another branch, add it to the command:
+
+    $ git checkout -b [name_of_your_branch] [name of existing branch]
+
+Here is an example of a feature branch from the tutorial
+
+    https://nvie.com/posts/a-successful-git-branching-model/:
+
+    $ git checkout -b myfeature develop # Switched to a new branch "myfeature"
+
+    # Finished features may be merged into the develop branch to definitely
+    # add them to the upcoming release:
+
+    $ git checkout develop              # Switched to branch 'develop'
+    $ git merge --no-ff myfeature       # Updating ea1b82a..05e9557
+    $ git branch -d myfeature           # Deleted branch myfeature (was 05e9557).
+    $ git push origin develop
+
 When the branch is ready, push the branch to your "origin" remote on
-GitHub:
+GitHub as in the example above:
 
     $ git push origin [name_of_your_branch]
 
