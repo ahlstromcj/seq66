@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2020-08-24
+# \update      2020-12-21
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -307,6 +307,7 @@ BUILT_SOURCES = $(uic_sources) $(moc_sources)
 
 libseq_qt5_la_SOURCES = \
  gui_palette_qt5.cpp \
+ palettefile.cpp \
  qbase.cpp \
  qclocklayout.cpp \
  qeditbase.cpp \

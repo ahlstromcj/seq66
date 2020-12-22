@@ -301,10 +301,6 @@ qplaylistframe::reset_playlist ()
     }
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::set_current_playlist ()
 {
@@ -339,10 +335,6 @@ qplaylistframe::set_current_playlist ()
     ui->editPlaylistName->setText(QString::fromStdString(temp));
     set_current_song();
 }
-
-/**
- *
- */
 
 void
 qplaylistframe::set_current_song ()
@@ -637,10 +629,6 @@ qplaylistframe::handle_list_add_click ()
     }
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::handle_list_remove_click ()
 {
@@ -654,10 +642,6 @@ qplaylistframe::handle_list_remove_click ()
         }
     }
 }
-
-/**
- *
- */
 
 void
 qplaylistframe::handle_list_save_click ()
@@ -754,10 +738,6 @@ qplaylistframe::handle_song_add_click ()
     }
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::handle_song_remove_click ()
 {
@@ -778,10 +758,6 @@ qplaylistframe::handle_song_remove_click ()
     }
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::handle_playlist_active_click ()
 {
@@ -792,10 +768,6 @@ qplaylistframe::handle_playlist_active_click ()
     }
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::list_modify (const QString &)
 {
@@ -803,10 +775,6 @@ qplaylistframe::list_modify (const QString &)
     ui->buttonPlaylistModify->setEnabled(true);
     ui->buttonPlaylistSave->setEnabled(true);
 }
-
-/**
- *
- */
 
 void
 qplaylistframe::list_unmodify ()
@@ -827,10 +795,6 @@ qplaylistframe::song_modify (const QString &)
     ui->buttonSongModify->setEnabled(true);
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::song_unmodify ()
 {
@@ -838,19 +802,11 @@ qplaylistframe::song_unmodify ()
     ui->buttonSongModify->setEnabled(false);
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::keyPressEvent (QKeyEvent * event)
 {
     QWidget::keyPressEvent(event);      // event->ignore();
 }
-
-/**
- *
- */
 
 void
 qplaylistframe::keyReleaseEvent (QKeyEvent * event)

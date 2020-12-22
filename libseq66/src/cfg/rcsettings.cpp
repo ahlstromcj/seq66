@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-19
+ * \updates       2020-12-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -126,6 +126,8 @@ rcsettings::rcsettings () :
     m_playlist_midi_base        (),
     m_notemap_active            (false),
     m_notemap_filename          (),
+    m_palette_active            (false),
+    m_palette_filename          (),
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
     m_recent_files              (),
@@ -222,6 +224,8 @@ rcsettings::set_defaults ()
     m_playlist_midi_base.clear();
     m_notemap_active = false;
     m_notemap_filename.clear();
+    m_palette_active = false;
+    m_palette_filename.clear();
 
     /*
      * const: m_application_name = seq_app_name();
@@ -571,6 +575,27 @@ rcsettings::notemap_filespec () const
             result = notemap_name;
         else
             result = home_config_directory() + notemap_name;
+
+        result = os_normalize_path(result);
+    }
+    return result;
+}
+
+/**
+ *  Constructs the palette configuration filespec.
+ */
+
+std::string
+rcsettings::palette_filespec () const
+{
+    std::string result;
+    std::string palettename = palette_filename();
+    if (! palettename.empty())
+    {
+        if (name_has_directory(palettename))
+            result = palettename;
+        else
+            result = home_config_directory() + palettename;
 
         result = os_normalize_path(result);
     }

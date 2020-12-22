@@ -22,9 +22,8 @@
 /**
  * \file          usrfile.hpp
  *
- *  This module declares/defines the base class for
- *  managing the user's <code> ~/.config/seq66.usr </code>
- *  or <code> ~/.seq66usr </code> configuration file.
+ *  This module declares/defines the base class for managing the user's
+ *  qseq66.usr configuration file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
@@ -71,8 +70,13 @@ public:
     usrfile () = delete;
     usrfile (const usrfile &) = delete;
     usrfile & operator = (const usrfile &) = delete;
+
+    /*
+     * WTF?
+     *
     usrfile (usrfile &&) = default;
     usrfile & operator = (usrfile &&) = default;
+     */
 
     virtual ~usrfile ();
 

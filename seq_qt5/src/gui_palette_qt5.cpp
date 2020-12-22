@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2020-12-20
+ * \updates       2020-12-21
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -39,7 +39,9 @@
 
 #include "cfg/settings.hpp"             /* seq66::rc() or seq66::usr()      */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
+#include "util/basic_macros.hpp"        /* seq66::file_error() function     */
 #include "util/palette.hpp"             /* enum class progress_colors       */
+#include "util/strfunctions.hpp"        /* seq66 string functions           */
 
 #define STATIC_COLOR                    gui_palette_qt5::Color
 
@@ -49,6 +51,80 @@
 
 namespace seq66
 {
+
+/**
+ *  Provide access to the internak,  basic color palette.  We use a static
+ *  function to access this item (plus a couple of things we don't need).
+ *  Note that we have to associate a file-name later, if any.  A little clumsy;
+ *  but we don't want to move this into a non-Qt-GUI module.
+ */
+
+gui_palette_qt5 &
+global_palette ()
+{
+    static gui_palette_qt5 s_pallete;
+    return s_pallete;
+}
+
+gui_palette_qt5::Color
+get_color_fix (PaletteColor index)
+{
+    return global_palette().get_color_fix(index);
+}
+
+gui_palette_qt5::Color
+get_pen_color (PaletteColor index)
+{
+    return global_palette().get_pen_color(index);
+}
+
+gui_palette_qt5::Color
+drum_paint ()
+{
+    return global_palette().drum_paint();
+}
+
+gui_palette_qt5::Color
+sel_paint ()
+{
+    return global_palette().sel_paint();
+}
+
+gui_palette_qt5::Color
+tempo_paint ()
+{
+    return global_palette().tempo_paint();
+}
+
+/**
+ *  Background paint uses the invertible color m_wht_paint.
+ */
+
+gui_palette_qt5::Color
+background_paint ()
+{
+    return global_palette().white_paint();
+}
+
+/**
+ *  Foreground paint uses the invertible color m_blk_paint.
+ */
+
+gui_palette_qt5::Color
+foreground_paint ()
+{
+    return global_palette().black_paint();
+}
+
+/**
+ *  Beat paint uses the grey_paint.  Invertible, but the same color?
+ */
+
+gui_palette_qt5::Color
+beat_paint ()
+{
+    return global_palette().grey_paint();
+}
 
 /**
  *  By default, the inverse color palette is not loaded.
@@ -73,7 +149,7 @@ const STATIC_COLOR gui_palette_qt5::m_white        = Color("white");
  * Dark constant colors
  */
 
-const STATIC_COLOR gui_palette_qt5::m_dk_black     = Color("black");
+const STATIC_COLOR gui_palette_qt5::m_dk_black     = Color("dark slate grey");
 const STATIC_COLOR gui_palette_qt5::m_dk_red       = Color("dark red");
 const STATIC_COLOR gui_palette_qt5::m_dk_green     = Color("dark green");
 const STATIC_COLOR gui_palette_qt5::m_dk_yellow    = Color("dark yellow");
@@ -92,12 +168,12 @@ const STATIC_COLOR gui_palette_qt5::m_pink         = Color("pink");
 const STATIC_COLOR gui_palette_qt5::m_color_18     = Color("pale green");
 const STATIC_COLOR gui_palette_qt5::m_color_19     = Color("khaki");
 const STATIC_COLOR gui_palette_qt5::m_color_20     = Color("light blue");
-const STATIC_COLOR gui_palette_qt5::m_color_21     = Color("light magenta");
+const STATIC_COLOR gui_palette_qt5::m_color_21     = Color("violet");
 const STATIC_COLOR gui_palette_qt5::m_color_22     = Color("turquoise");
 const STATIC_COLOR gui_palette_qt5::m_grey         = Color("grey");
 
 const STATIC_COLOR gui_palette_qt5::m_dk_orange    = Color("dark orange");
-const STATIC_COLOR gui_palette_qt5::m_dk_pink      = Color("dark pink");
+const STATIC_COLOR gui_palette_qt5::m_dk_pink      = Color("deep pink");
 const STATIC_COLOR gui_palette_qt5::m_color_26     = Color("sea green");
 const STATIC_COLOR gui_palette_qt5::m_color_27     = Color("dark khaki");
 const STATIC_COLOR gui_palette_qt5::m_color_28     = Color("dark slate blue");
@@ -109,6 +185,7 @@ const STATIC_COLOR gui_palette_qt5::m_dk_grey      = Color("dark grey");
  * Invertible colors.
  */
 
+STATIC_COLOR gui_palette_qt5::m_drum_paint         = Color("red");
 STATIC_COLOR gui_palette_qt5::m_grey_paint         = Color("grey");
 STATIC_COLOR gui_palette_qt5::m_dk_grey_paint      = Color("grey50");
 STATIC_COLOR gui_palette_qt5::m_lt_grey_paint      = Color("light grey");
@@ -130,8 +207,9 @@ STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("orange");
  *  /usr/share/X11/rgb.txt.
  */
 
-gui_palette_qt5::gui_palette_qt5 ()
+gui_palette_qt5::gui_palette_qt5 (const std::string & filename)
  :
+    basesettings        (filename),
     m_palette           (),
     m_pen_palette       (),
     m_line_color        (Color("dark cyan")),           // alternative to black
@@ -206,6 +284,7 @@ gui_palette_qt5::load_inverse_palette (bool inverse)
 {
     if (inverse)
     {
+        m_drum_paint    = Color("green");
         m_grey_paint    = Color("grey");
         m_dk_grey_paint = Color("light grey");
         m_lt_grey_paint = Color("grey50");
@@ -223,6 +302,7 @@ gui_palette_qt5::load_inverse_palette (bool inverse)
     }
     else
     {
+        m_drum_paint    = Color("red");
         m_grey_paint    = Color("grey");
         m_dk_grey_paint = Color("grey50");
         m_lt_grey_paint = Color("light grey");
@@ -253,6 +333,20 @@ gui_palette_qt5::calculate_inverse (const Color & c)
     g = a - g;
     b = a - b;
     return gui_palette_qt5::Color(r, g, b, a);
+}
+
+/**
+ *  Clears the background and foreground color containers, and adds the "None"
+ *  color to make sure it is always present.
+ */
+
+void
+gui_palette_qt5::clear ()
+{
+    m_palette.clear();
+    m_palette.add(PaletteColor::none, m_white, "None");
+    m_pen_palette.clear();
+    m_pen_palette.add(PaletteColor::none, m_black, "Black");
 }
 
 /**
@@ -307,8 +401,6 @@ gui_palette_qt5::reset_backgrounds ()
     m_palette.add(PaletteColor::color_29,    m_color_29,  "Dark Violet");
     m_palette.add(PaletteColor::color_30,    m_color_30,  "Dark Turquoise");
     m_palette.add(PaletteColor::dk_grey,     m_dk_grey,   "Dark Grey");
-
-    m_palette.add(PaletteColor::none,        m_white,    "None");
 }
 
 /**
@@ -339,9 +431,9 @@ gui_palette_qt5::reset_pens ()
 
     m_pen_palette.add(PaletteColor::orange,     m_white,   "White");
     m_pen_palette.add(PaletteColor::pink,       m_black,   "Black");
-    m_pen_palette.add(PaletteColor::color_18,   m_white,   "White");
-    m_pen_palette.add(PaletteColor::color_19,   m_white,   "White");
-    m_pen_palette.add(PaletteColor::color_20,   m_white,   "White");
+    m_pen_palette.add(PaletteColor::color_18,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_19,   m_black,   "Black");
+    m_pen_palette.add(PaletteColor::color_20,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::color_21,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::color_22,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::grey,       m_black,   "Black");
@@ -354,8 +446,6 @@ gui_palette_qt5::reset_pens ()
     m_pen_palette.add(PaletteColor::color_29,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::color_30,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::dk_grey,    m_black,   "Black");
-
-    m_pen_palette.add(PaletteColor::none,       m_black,   "Black");
 }
 
 /**
@@ -384,9 +474,9 @@ gui_palette_qt5::get_color_ex
     double h, double s, double v
 ) const
 {
-    gui_palette_qt5::Color result = m_palette.get_color(index);
-    result.setHsv(result.hue() * h, result.saturation() * s, result.value() *  v);
-    return result;
+    gui_palette_qt5::Color c = m_palette.get_color(index);
+    c.setHsv(c.hue() * h, c.saturation() * s, c.value() *  v);
+    return c;
 }
 
 /**
@@ -412,7 +502,7 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
     {
         gui_palette_qt5::Color c = m_palette.get_color(index);
         if (c.value() != 255)
-            c.setHsv(c.hue(), c.saturation() * 0.65, c.value() * 1.2);
+            c.setHsv(c.hue(), c.saturation() * 0.65, c.value());    // * 1.2);
 
         return c;
     }
@@ -452,7 +542,7 @@ gui_palette_qt5::get_color_inverse (PaletteColor index) const
 }
 
 std::string
-gui_palette_qt5::get_color_stanza (PaletteColor index) const
+gui_palette_qt5::make_color_stanza (PaletteColor index) const
 {
     std::string result;
     if (index != PaletteColor::none)
@@ -460,8 +550,8 @@ gui_palette_qt5::get_color_stanza (PaletteColor index) const
         int number = static_cast<int>(index);
         gui_palette_qt5::Color backc = m_palette.get_color(index);
         gui_palette_qt5::Color textc = m_pen_palette.get_color(index);
-        std::string bname = get_color_name(index);
-        std::string tname = get_pen_color_name(index);
+        std::string bname = "\"" + get_color_name(index) + "\"";
+        std::string tname = "\"" + get_pen_color_name(index) + "\"";
         int br, bg, bb, ba;
         int tr, tg, tb, ta;
         char temp[128];
@@ -470,12 +560,116 @@ gui_palette_qt5::get_color_stanza (PaletteColor index) const
         snprintf
         (
             temp, sizeof temp,
-            "%2d \"16%s\" [ 0x%2x 0x%2x 0x%2x 0x%2x ]"
-            "\"16%s\" [ 0x%2x 0x%2x 0x%2x 0x%2x ]",
-            number, bname.c_str(), br, bg, bb, ba,
-            tname.c_str(), tr, tb, tg, ta
+            "%2d %18s [ 0x%02X%02X%02X%02X ] %18s [ 0x%02X%02X%02X%02X ]",
+            number,
+            bname.c_str(), ba, br, bg, bb,
+            tname.c_str(), ta, tr, tb, tg
         );
         result = temp;
+    }
+    return result;
+}
+
+/**
+ *  This line matches the string generated by gui_palette_qt5 ::
+ *  get_color_stanza().  The first integer is the color number, ranging from 0
+ *  to 31.  The first string is the name of the background color.  The first
+ *  stanza (in square brackets) are the RGB + Alpha values for the background.
+ *  The second string is the foreground color name, and the second stanza is the
+ *  foreground color.  Note that the alpha values are not currently used and are
+ *  set to zero.  Room for expansion.
+ */
+
+#if defined USE_PALLET_SSCANF
+
+static const char * const sg_scanf_fmt =
+    "%d \"%s\" [ %x ] \"%s\" [ %x ]";                       /* 0xAARRGGBB   */
+
+#endif
+
+bool
+gui_palette_qt5::add_color_stanza (const std::string & stanza)
+{
+#if defined USE_PALLET_SSCANF
+    char backgn[32];
+    char textn[32];
+    int number;
+    unsigned backargb;
+    unsigned textargb;
+    int count = std::sscanf
+    (
+        stanza.c_str(), sg_scanf_fmt,
+        &number, backgn, &backargb, textn, &textargb
+    );
+    bool result = count == 5;
+    if (result)
+    {
+        std::string bname = backgn;
+        std::string tname = textn;
+        Color background(backargb);
+        Color foreground(textargb);
+        result = add(number, background, bname, foreground, tname);
+    }
+#else
+    std::string backname;
+    unsigned backargb;
+    std::string textname;
+    unsigned textargb;
+    bool result = ! stanza.empty();
+    if (result)
+    {
+        int number = std::stoi(stanza);     /* gets first column value  */
+        std::string argb;
+        std::string::size_type lpos = 0;
+        backname = next_quoted_string(stanza);
+        result = ! backname.empty();
+        if (result)
+        {
+            lpos = stanza.find_first_of("[");
+            argb = next_bracketed_string(stanza, lpos - 1);
+            result = ! argb.empty();
+            if (result)
+                backargb = string_to_unsigned(argb);
+        }
+        if (result)
+        {
+            textname = next_quoted_string(stanza, lpos);
+            result = ! textname.empty();
+        }
+        if (result)
+        {
+            lpos = stanza.find_first_of("[", lpos + 1);
+            argb = next_bracketed_string(stanza, lpos - 1);
+            result = ! argb.empty();
+            if (result)
+                textargb = string_to_unsigned(argb);
+        }
+        if (result)
+        {
+            Color background(backargb);
+            Color foreground(textargb);
+            result = add(number, background, backname, foreground, textname);
+        }
+    }
+#endif
+    return result;
+}
+
+bool
+gui_palette_qt5::add
+(
+    int number,
+    const Color & bg, const std::string & bgname,
+    const Color & fg, const std::string & fgname
+)
+{
+    bool result = number >= 0 && number < palette_size();
+    if (result)
+    {
+        PaletteColor index = static_cast<PaletteColor>(number);
+        result = m_palette.add(index, bg, bgname);
+        if (result)
+            result = m_pen_palette.add(index, fg, fgname);
     }
     return result;
 }

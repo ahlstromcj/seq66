@@ -81,8 +81,13 @@ public:
     playlistfile () = delete;
     playlistfile (const playlistfile &) = delete;
     playlistfile & operator = (const playlistfile &) = delete;
+
+    /*
+     * WTF?
+     *
     playlistfile (playlistfile &&) = default;
     playlistfile & operator = (playlistfile &&) = default;
+     */
 
     virtual ~playlistfile ();               // how to hide this???
 

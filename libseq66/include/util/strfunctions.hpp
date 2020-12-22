@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-17
+ * \updates       2020-12-22
  * \version       $Revision$
  *
  *    Also see the strfunctions.cpp module.
@@ -47,8 +47,19 @@ extern std::string questionable_string ();
 extern bool contains (const std::string & original, const std::string & target);
 extern std::string strip_comments (const std::string & item);
 extern std::string strip_quotes (const std::string & item);
+extern std::string next_quoted_string
+(
+    const std::string & source,
+    std::string::size_type pos = 0
+);
+extern std::string next_bracketed_string
+(
+    const std::string & source,
+    std::string::size_type pos = 0
+);
 extern std::string add_quotes (const std::string & item);
-extern std::string double_quotes ();
+extern const std::string & double_quotes ();
+extern bool not_npos (std::string::size_type p);
 extern bool strncompare (const std::string & a, const std::string & b, size_t n);
 extern bool strcasecompare (const std::string & a, const std::string & b);
 extern std::string & ltrim
@@ -73,6 +84,14 @@ extern std::string string_replace
 extern bool string_to_bool (const std::string & s, bool defalt = false);
 extern double string_to_double (const std::string & s, double defalt = 0.0);
 extern long string_to_long (const std::string & s, long defalt = 0L);
+extern unsigned long string_to_unsigned_long
+(
+    const std::string & s, unsigned long defalt = 0UL
+);
+extern unsigned string_to_unsigned
+(
+    const std::string & s, unsigned defalt = 0U
+);
 extern int string_to_int (const std::string & s, int defalt = 0);
 extern midibyte string_to_midibyte (const std::string & s, midibyte defalt = 0);
 extern std::string shorten_file_spec (const std::string & fpath, int leng);

@@ -54,19 +54,6 @@ namespace seq66
 {
 
 /**
- *  Provide access to a basic color palette.  We use a static function to
- *  access this item (plus a couple of things we don't need).  We don't want
- *  to make it a base class of qslotbutton.
- */
-
-gui_palette_qt5 &
-qslotbutton::slotpal ()
-{
-    static gui_palette_qt5 s_pallete;
-    return s_pallete;
-}
-
-/**
  *  Note that we make the button transparent to mouse events.  It lets them
  *  through for the parent to handle.
  */

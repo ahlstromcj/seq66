@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2020-09-01
+# \update         2020-12-21
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -79,6 +79,7 @@ FORMS += forms/qlfoframe.ui \
  forms/qsmainwnd.ui
 
 HEADERS += include/gui_palette_qt5.hpp \
+ include/palettefile.hpp \
  include/qbase.hpp \
  include/qclocklayout.hpp \
  include/qeditbase.hpp \
@@ -126,6 +127,7 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qt5nsmanager.hpp
 
 SOURCES += src/gui_palette_qt5.cpp \
+ src/palettefile.cpp \
  src/qbase.cpp \
  src/qclocklayout.cpp \
  src/qeditbase.cpp \

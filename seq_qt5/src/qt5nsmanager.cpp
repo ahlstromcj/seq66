@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-11-25
+ * \updates       2020-12-22
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -37,6 +37,8 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
+#include "palettefile.hpp"              /* seq66::palette_file config file  */
 #include "qt5nsmanager.hpp"             /* seq66::qt5nsmanager              */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd                 */
 
@@ -136,7 +138,14 @@ qt5nsmanager::create_window ()
     {
         performer * p = perf();
         std::string mfname = midi_filename();
-        bool usensm = usr().in_session();               /* not nsm_active() */
+        bool usensm = usr().in_session();           /* not nsm_active()!    */
+        if (rc().palette_active())
+        {
+            std::string palfile = rc().palette_filespec();
+            if (! palfile.empty())
+                (void) open_palette(global_palette(), palfile);
+        }
+
         qsmainwnd * qm = new (std::nothrow) qsmainwnd(*p, mfname, usensm);
         result = not_nullptr(qm);
         if (result)
@@ -206,7 +215,15 @@ qt5nsmanager::create_window ()
 bool
 qt5nsmanager::close_session (std::string & msg, bool ok)
 {
-    return clinsmanager::close_session(msg, ok);
+    bool saved = true;
+    bool savepalette = rc().palette_active();
+    if (savepalette)
+    {
+        std::string palfile = rc().palette_filespec();
+        saved = save_palette(global_palette(), palfile);
+    }
+    bool closed = clinsmanager::close_session(msg, ok);
+    return saved && closed;
 }
 
 /**

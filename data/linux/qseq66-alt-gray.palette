@@ -1,0 +1,67 @@
+# Seq66 0.91.4 (and above) palette configuration file
+#
+# /home/ahlstrom/.config/seq66/qseq66-alt-gray.palette
+# Written on 2020-12-22 12:55:29
+#
+# This file can be used to change the colors used by patterns
+# and in some parts of the user-interface.
+
+[Seq66]
+
+config-type = "palette"
+version = 0
+
+# The [comments] section can document this file.  Lines starting
+# with '#' and '[' are ignored.  Blank lines are ignored.  Show a
+# blank line by adding a space character to the line.
+
+[comments]
+
+Comments added to this section are preserved.  Lines starting with
+a '#' or '[', or that are blank, are ignored.  Start lines that must
+look empty with a space.
+
+# The first integer is the color number, ranging from 0 to 31. The
+# first string is the name of the background color.  The first
+# stanza (in square brackets) are the ARGB values for the background.
+# The second set provides the foreground color name and color.
+# The alpha values are not important here, but should be set to FF.
+
+[palette]
+
+ 0            "Black" [ 0xFF000000 ]            "White" [ 0xFFFFFFFF ]
+ 1          "Grey 16" [ 0xFF808080 ]            "White" [ 0xFFFFFFFF ]
+ 2          "Grey  1" [ 0xFF080808 ]            "White" [ 0xFFFFFFFF ]
+ 3          "Grey 17" [ 0xFF888888 ]            "Black" [ 0xFF000000 ]
+ 4          "Grey  2" [ 0xFF101010 ]            "White" [ 0xFFFFFFFF ]
+ 5          "Grey 18" [ 0xFF909090 ]            "Black" [ 0xFF000000 ]
+ 6          "Grey  3" [ 0xFF181818 ]            "White" [ 0xFFFFFFFF ]
+ 7          "Grey 19" [ 0xFF989898 ]            "Black" [ 0xFF000000 ]
+ 8          "Grey  4" [ 0xFF202020 ]            "White" [ 0xFFFFFFFF ]
+ 9          "Grey 20" [ 0xFFA0A0A0 ]            "Black" [ 0xFF000000 ]
+10          "Grey  5" [ 0xFF282828 ]            "White" [ 0xFFFFFFFF ]
+11          "Grey 21" [ 0xFFA8A8A8 ]            "Black" [ 0xFF000000 ]
+12          "Grey  6" [ 0xFF303030 ]            "White" [ 0xFFFFFFFF ]
+13          "Grey 22" [ 0xFFB0B0B0 ]            "Black" [ 0xFF000000 ]
+14          "Grey  7" [ 0xFF383838 ]            "White" [ 0xFFFFFFFF ]
+15          "Grey 23" [ 0xFFB8B8B8 ]            "Black" [ 0xFF000000 ]
+16          "Grey  8" [ 0xFF404040 ]            "White" [ 0xFFFFFFFF ]
+17          "Grey 24" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
+18          "Grey  9" [ 0xFF484848 ]            "White" [ 0xFFFFFFFF ]
+19          "Grey 25" [ 0xFFC8C8C8 ]            "Black" [ 0xFF000000 ]
+20          "Grey 10" [ 0xFF505050 ]            "White" [ 0xFFFFFFFF ]
+21          "Grey 26" [ 0xFFD0D0D0 ]            "Black" [ 0xFF000000 ]
+22          "Grey 11" [ 0xFF585858 ]            "White" [ 0xFFFFFFFF ]
+23          "Grey 27" [ 0xFFD8D8D8 ]            "Black" [ 0xFF000000 ]
+24          "Grey 12" [ 0xFF606060 ]            "White" [ 0xFFFFFFFF ]
+25          "Grey 28" [ 0xFFE0E0E0 ]            "Black" [ 0xFF000000 ]
+26          "Grey 13" [ 0xFF686868 ]            "White" [ 0xFFFFFFFF ]
+27          "Grey 29" [ 0xFFE8E8E8 ]            "Black" [ 0xFF000000 ]
+28          "Grey 14" [ 0xFF707070 ]            "White" [ 0xFFFFFFFF ]
+29          "Grey 30" [ 0xFFF0F0F0 ]            "Black" [ 0xFF000000 ]
+30          "Grey 15" [ 0xFF787878 ]            "White" [ 0xFFFFFFFF ]
+31            "White" [ 0xFFFFFFFF ]            "Black" [ 0xFF000000 ]
+
+# End of /home/ahlstrom/.config/seq66/qseq66-alt-gray.palette
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

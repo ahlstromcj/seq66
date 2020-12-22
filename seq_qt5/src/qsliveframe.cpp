@@ -958,7 +958,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
-                QString cname = get_color_name_ex(pc).c_str();
+                QString cname = global_palette().get_color_name_ex(pc).c_str();
                 QAction * a = new QAction(cname, menuColour);
                 connect
                 (
@@ -968,13 +968,13 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
                 menuColour->addAction(a);
             }
 
-            QMenu * menu2Colour = new QMenu(tr("Soft colors"));
+            QMenu * menu2Colour = new QMenu(tr("Dark colors"));
             firstcolor = color_to_int(dk_black);
             lastcolor = color_to_int(dk_white);
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
-                QString cname = get_color_name_ex(pc).c_str();
+                QString cname = global_palette().get_color_name_ex(pc).c_str();
                 QAction * a = new QAction(cname, menu2Colour);
                 connect
                 (
@@ -990,7 +990,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
-                QString cname = get_color_name_ex(pc).c_str();
+                QString cname = global_palette().get_color_name_ex(pc).c_str();
                 QAction * a = new QAction(cname, menu3Colour);
                 connect
                 (
@@ -1006,7 +1006,7 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
-                QString cname = get_color_name_ex(pc).c_str();
+                QString cname = global_palette().get_color_name_ex(pc).c_str();
                 QAction * a = new QAction(cname, menu4Colour);
                 connect
                 (

@@ -201,8 +201,6 @@ protected:
 
 protected:
 
-    static gui_palette_qt5 & slotpal ();
-
     void text_color (QColor c)
     {
         m_text_color = c;

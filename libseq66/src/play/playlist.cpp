@@ -19,9 +19,8 @@
 /**
  * \file          playlist.cpp
  *
- *  This module declares/defines the base class for managing the <code>
- *  ~/.seq66rc </code> legacy configuration file or the new <code>
- *  ~/.config/seq66/seq66.rc </code> ("rc") configuration file.
+ *  This module declares/defines the base class for managing the qseq66.playlist
+ *  file family.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom

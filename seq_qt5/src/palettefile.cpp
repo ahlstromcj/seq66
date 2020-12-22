@@ -1,0 +1,374 @@
+/*
+ *  This file is part of seq66.
+ *
+ *  seq66 is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  seq66 is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with seq66; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/**
+ * \file          palettefile.cpp
+ *
+ *  This module declares/defines the base class for managing the reading and
+ *  writing of the 'palette' file.
+ *
+ * \library       seq66 application
+ * \author        Seq24 team; modifications by Chris Ahlstrom
+ * \date          2020-12-21
+ * \updates       2020-12-21
+ * \license       GNU GPLv2 or above
+ *
+ */
+
+#include <iomanip>                      /* std::setw()                      */
+#include <iostream>                     /* std::cout                        */
+
+#include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
+#include "util/calculations.hpp"        /* seq66::current_data_time()       */
+#include "util/strfunctions.hpp"        /* seq66::string_to_bool()          */
+#include "palettefile.hpp"              /* seq66::palettefile class         */
+
+/*
+ *  Do not document a namespace; it breaks Doxygen.
+ */
+
+namespace seq66
+{
+
+/**
+ *  Principal constructor.
+ *
+ * \param mapper
+ *      Provides the palette reference to be acted upon.
+ *
+ * \param filename
+ *      Provides the name of the palette file; this is usually a full path
+ *      file-specification to the "mutes" file using this object.
+ *
+ * \param rcs
+ *      The configfile currently requires an rcsetting object, but it is not
+ *      yet used here.
+ */
+
+palettefile::palettefile
+(
+    gui_palette_qt5 & mapper,
+    const std::string & filename,
+    rcsettings & rcs
+) :
+    configfile      (filename, rcs),
+    m_palettes      (mapper)
+{
+    // Empty body
+}
+
+/**
+ *  A rote destructor.
+ */
+
+palettefile::~palettefile ()
+{
+    // ~configfile() called automatically
+}
+
+/**
+ *  Parse the ~/.config/seq66/qseq66.palette file-stream.
+ *
+ *  [comments] Header commentary is skipped during parsing.  However, we now try
+ *  to read an optional comment block.  This block is part of the palette
+ *  container, not part of the rcsettings object.
+ */
+
+bool
+palettefile::parse_stream (std::ifstream & file)
+{
+    bool result = true;
+    file.seekg(0, std::ios::beg);                   /* seek to start    */
+
+    std::string s = parse_comments(file);
+    if (! s.empty())
+        mapper().comments_block().set(s);
+
+    bool ok = line_after(file, "[palette]");
+    if (ok)
+    {
+        int count = 0;                  /* limited to 32 palette entries    */
+        m_palettes.clear();
+        for (;;)
+        {
+            if (count > gui_palette_qt5::palette_size())
+            {
+                ok = false;
+                break;
+            }
+            else
+            {
+                ok = m_palettes.add_color_stanza(line());
+                if (ok)
+                    ++count;
+                else
+                    break;
+            }
+            if (! next_data_line(file))
+                break;
+        }
+        if (ok)
+            ok = count == gui_palette_qt5::palette_size();
+
+        if (! ok)
+            m_palettes.reset();
+    }
+    return result;
+}
+
+/**
+ *  Get the number of sequence definitions provided in the [mute-group]
+ *  section.  See the rcfile class for full information.
+ *
+ * \param p
+ *      Provides the performance object to which all of these options apply.
+ *
+ * \return
+ *      Returns true if the file was able to be opened for reading.
+ *      Currently, there is no indication if the parsing actually succeeded.
+ */
+
+bool
+palettefile::parse ()
+{
+    std::ifstream file(name(), std::ios::in | std::ios::ate);
+    bool result = ! name().empty() && file.is_open();
+    if (result)
+    {
+        file_message("Reading 'palette'", name());
+        result = parse_stream(file);
+    }
+    else
+    {
+        std::string msg = "Read open fail";
+        file_error(msg, name());
+        msg += ": ";
+        msg += name();
+        append_error_message(msg);
+        result = false;
+    }
+    return result;
+}
+
+/**
+ *  Writes the [palettes] section to the given file stream.
+ *
+ * \param file
+ *      Provides the output file stream to write to.
+ *
+ * \return
+ *      Returns true if the write operations all succeeded.
+ */
+
+bool
+palettefile::write_stream (std::ofstream & file)
+{
+    file
+        << "# Seq66 0.91.4 (and above) palette configuration file\n"
+        << "#\n"
+        << "# " << name() << "\n"
+        << "# Written on " << current_date_time() << "\n"
+        << "#\n"
+        << "# This file can be used to change the colors used by patterns\n"
+        << "# and in some parts of the user-interface.\n"
+        << "\n"
+        ;
+
+    /*
+     * [comments]
+     */
+
+    file <<
+        "[Seq66]\n\n"
+        "config-type = \"palette\"\n"
+        "version = " << version() << "\n\n"
+        "# The [comments] section can document this file.  Lines starting\n"
+        "# with '#' and '[' are ignored.  Blank lines are ignored.  Show a\n"
+        "# blank line by adding a space character to the line.\n\n"
+        "[comments]\n\n" << mapper().comments_block().text() << "\n"
+        <<
+        "# The first integer is the color number, ranging from 0 to 31. The\n"
+        "# first string is the name of the background color.  The first\n"
+        "# stanza (in square brackets) are the ARGB values for the background.\n"
+        "# The second set provides the foreground color name and color.\n"
+        "# The alpha values are not important here, but should be set to FF.\n"
+        "\n"
+        "[palette]\n"
+        "\n"
+        ;
+
+    for (int number = 0; number < gui_palette_qt5::palette_size(); ++number)
+    {
+        PaletteColor index = static_cast<PaletteColor>(number);
+        std::string stanza = m_palettes.make_color_stanza(index);
+        if (stanza.empty())
+            break;
+        else
+            file << stanza << "\n";
+    }
+    file
+        << "\n# End of " << name() << "\n#\n"
+        << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
+        ;
+    return true;
+}
+
+/**
+ *  This options-writing function is just about as complex as the
+ *  options-reading function.
+ *
+ * \return
+ *      Returns true if the write operations all succeeded.
+ */
+
+bool
+palettefile::write ()
+{
+    std::ofstream file(name(), std::ios::out | std::ios::trunc);
+    bool result = ! name().empty() && file.is_open();
+    if (result)
+    {
+        file_message("Writing 'drums'", name());
+        result = write_stream(file);
+        file.close();
+    }
+    else
+    {
+        file_error("Write open fail", name());
+    }
+    return result;
+}
+
+bool
+open_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & source
+)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        palettefile palfile(pal, source, rc());     /* add msg? */
+        file_message("Palette open", source);       /* no msg   */
+        result = palfile.parse();
+        if (result)
+        {
+            // Anything worth doing
+        }
+        else
+        {
+            std::string msg = "Open failed: ";
+            msg += source;
+            (void) error_message(msg);
+        }
+    }
+    else
+    {
+        file_error("Palette file to open", "none");
+    }
+    return result;
+}
+
+/**
+ *  This function save the palette to a file.
+ *
+ *  \param [inout] pal
+ *      Provides the palette object.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+save_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & destination
+)
+{
+    bool result = ! destination.empty();
+    if (result)
+    {
+        palettefile palfile(pal, destination, rc());
+        file_message("Palette save", destination);
+        palfile.name(destination);
+        result = palfile.write();
+        if (! result)
+            file_error("Write failed", destination);
+    }
+    else
+        file_error("Palette file", "none");
+
+    return result;
+}
+
+/**
+ *  This function reads the source palette file and then saves it to the new
+ *  location.
+ *
+ *  \param [inout] pal
+ *      Provides the palette object.
+ *
+ *  \param source
+ *      Provides the input file name from which the palette will be filled.
+ *
+ *  \param destination
+ *      Provides the directory to which the play-list file is to be saved.
+ *
+ * \return
+ *      Returns true if the operation succeeded.
+ */
+
+bool
+save_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & source,
+    const std::string & destination
+)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        std::string msg = source + " --> " + destination;
+        palettefile palfile(pal, source, rc());
+        file_message("Palette save", msg);
+        result = palfile.parse();
+        if (result)
+            result = save_palette(pal, destination);
+        else
+            file_error("Open failed", source);
+    }
+    else
+        file_error("Palette file", "none");
+
+    return result;
+}
+
+}           // namespace seq66
+
+/*
+ * palettefile.cpp
+ *
+ * vim: sw=4 ts=4 wm=4 et ft=cpp
+ */
+

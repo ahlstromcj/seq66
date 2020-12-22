@@ -136,8 +136,13 @@ public:
     configfile () = delete;
     configfile (const configfile &) = delete;
     configfile & operator = (const configfile &) = delete;
+
+    /*
+     * WTF?
+     *
     configfile (configfile &&) = default;
     configfile & operator = (configfile &&) = default;
+     */
 
     /**
      *  A rote destructor needed for a base class.

@@ -22,7 +22,7 @@
 /**
  * \file          rcfile.hpp
  *
- *  This module declares/defines the base class for managind the ~/.seq66rc
+ *  This module declares/defines the base class for managind the qseq66.rc
  *  configuration file.
  *
  * \library       seq66 application
@@ -66,8 +66,13 @@ public:
     rcfile () = delete;
     rcfile (const rcfile &) = delete;
     rcfile & operator = (const rcfile &) = delete;
+
+    /*
+     * WTF?
+     *
     rcfile (rcfile &&) = default;
     rcfile & operator = (rcfile &&) = default;
+     */
 
     virtual ~rcfile ();
 

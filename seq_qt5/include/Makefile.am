@@ -6,7 +6,7 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2020-08-24
+# \update      2020-12-21
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -68,6 +68,7 @@ seq66libdir = @seq66libdir@
 
 pkginclude_HEADERS = \
  gui_palette_qt5.hpp \
+ palettefile.hpp \
  qbase.hpp \
  qclocklayout.hpp \
  qeditbase.hpp \

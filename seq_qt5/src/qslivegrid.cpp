@@ -1349,7 +1349,7 @@ qslivegrid::popup_menu ()
             menuColour->addAction(a);
         }
 
-        QMenu * menu2Colour = new QMenu(tr("Soft colors"));
+        QMenu * menu2Colour = new QMenu(tr("Dark colors"));
         firstcolor = color_to_int(dk_black);
         lastcolor = color_to_int(dk_white);
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1381,7 +1381,7 @@ qslivegrid::popup_menu ()
             menu3Colour->addAction(a);
         }
 
-        QMenu * menu4Colour = new QMenu(tr("Other soft colors"));
+        QMenu * menu4Colour = new QMenu(tr("More colors"));
         firstcolor = color_to_int(dk_orange);               /* color_24 */
         lastcolor = color_to_int(dk_grey);                  /* color_31 */
         for (int c = firstcolor; c <= lastcolor; ++c)

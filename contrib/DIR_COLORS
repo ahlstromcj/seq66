@@ -412,6 +412,7 @@ EXEC 01;32
 .mutes 00;31
 .pc 00;31
 .PL 00;31
+.palette 00;31
 .playlist 00;31
 .prj 00;31
 .pro 00;31

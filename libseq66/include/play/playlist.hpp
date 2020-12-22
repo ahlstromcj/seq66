@@ -264,7 +264,6 @@ public:
     playlist & operator = (const playlist &) = delete;
     playlist (playlist &&) = default;
     playlist & operator = (playlist &&) = default;
-
     virtual ~playlist ();
 
     void show () const;

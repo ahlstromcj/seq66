@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-27
+ * \updates       2020-12-22
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -395,7 +395,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + unit_height());
-        pen.setColor(gui_palette_qt5::sel_paint());
+        pen.setColor(sel_paint());
         painter.setPen(pen);
         painter.drawRect(x, y, w, h);
     }
@@ -480,8 +480,10 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     );
 #endif
 
-    QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
-    QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
+//  QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
+//  QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
+    QColor background = background_paint();
+    QColor foreground = foreground_paint();
     QBrush brush(background);                       /* brush(Qt::NoBrush)   */
     QPen pen(Qt::lightGray);
     painter.drawRect(r);
@@ -565,7 +567,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * to check every tick!!!!
      */
 
-    QColor beatcolor = usr().inverse_colors() ? Qt::white : Qt::darkGray ;
+//  QColor beatcolor = usr().inverse_colors() ? Qt::white : Qt::darkGray ;
+    QColor beatcolor = beat_paint();
     pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
     painter.setPen(pen);
     for (int tick = starttick; tick < endtick; tick += increment)
@@ -636,15 +639,6 @@ qseqroll::draw_notes
 
         if (dt == sequence::draw::tempo)
             continue;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-            static int s_count = 0;
-            if (s_count < 16)
-            {
-                ni.show();
-                ++s_count;
-            }
-#endif
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -800,23 +794,18 @@ qseqroll::draw_drum_notes
 {
     QBrush brush(Qt::NoBrush);
     QPen pen(Qt::lightGray);
+    pen.setColor(drum_paint());     /* draw red boxes from drum loop    */
     pen.setStyle(Qt::SolidLine);
+    pen.setWidth(1);
     painter.setPen(pen);
     painter.setBrush(brush);
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
     midipulse seqlength = seq_pointer()->get_length();
-    int start_tick = m_t0;
-    int end_tick = start_tick + pix_to_tix(r.width());
-    seq::pointer s;
-    if (background)
-        s = perf().get_sequence(m_background_sequence);
-    else
-        s = seq_pointer();
-
-    pen.setColor(Qt::red);              /* draw red boxes from drum loop    */
-    pen.setStyle(Qt::SolidLine);
-    pen.setWidth(1);
+    midipulse start_tick = pix_to_tix(r.x());        // int start_tick = m_t0;
+    midipulse end_tick = start_tick + pix_to_tix(r.width());
+    seq::pointer s = background ?
+        perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
@@ -876,9 +865,9 @@ qseqroll::draw_drum_notes
              */
 
             if (ni.selected())
-                brush.setColor(gui_palette_qt5::sel_paint());
+                brush.setColor(sel_paint());
             else if (m_edit_mode == sequence::editmode::drum)
-                brush.setColor(Qt::red);
+                brush.setColor(drum_paint());
             else
                 brush.setColor(Qt::white);
 

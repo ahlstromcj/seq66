@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-12-18
+ * \updates       2020-12-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -127,6 +127,57 @@ strip_comments (const std::string & item)
 }
 
 /**
+ *  Gets the next quoted string.
+ */
+
+std::string
+next_quoted_string (const std::string & source, std::string::size_type pos)
+{
+    std::string result;
+    auto lpos = source.find_first_of(SEQ66_DOUBLE_QUOTES, pos);
+    if (lpos != std::string::npos)
+    {
+        auto rpos = source.find_first_of(SEQ66_DOUBLE_QUOTES, lpos + 1);
+        if (rpos != std::string::npos)
+        {
+            size_t len = size_t(rpos - lpos - 1);
+            if (len > 0)
+                result = source.substr(lpos + 1, len);
+        }
+    }
+    return result;
+}
+
+/**
+ *  Gets the next bracket string.  It looks for sqaure brackets instead of
+ *  double quotes, and it trims space at each end of the string.
+ */
+
+std::string
+next_bracketed_string
+(
+    const std::string & source,
+    std::string::size_type pos
+)
+{
+    std::string result;
+    auto lpos = source.find_first_of("[", pos);
+    if (lpos != std::string::npos)
+    {
+        auto rpos = source.find_first_of("]", lpos + 1);
+        if (rpos != std::string::npos)
+        {
+            size_t len = size_t(rpos - lpos - 1);
+            if (len > 0)
+            {
+                result = trim(source.substr(lpos + 1, len));
+            }
+        }
+    }
+    return result;
+}
+
+/**
  *  Strips single- or double-quotes from a string.  Meant mainly for removing
  *  quotes around a file-name, so it works only if the first character is a
  *  quote, and the last character is a quote.
@@ -210,10 +261,22 @@ add_quotes (const std::string & item)
  *  Returns double quotes as a string.
  */
 
-std::string
+const std::string &
 double_quotes ()
 {
-    return std::string(SEQ66_DOUBLE_QUOTES);
+    static std::string s_double_quotes = std::string(SEQ66_DOUBLE_QUOTES);
+    return s_double_quotes;
+}
+
+/**
+ *  A simple test for std::string::npos.  Why?  I dunno, less typing for the
+ *  developer.  Not used in this module, however.
+ */
+
+bool
+not_npos (std::string::size_type p)
+{
+    return p != std::string::npos;
 }
 
 /**
@@ -341,7 +404,8 @@ rtrim (std::string & str, const std::string & chars)
  *      must be non-const.
  *
  * \param chars
- *      The set of characters to be trimmed.
+ *      The set of characters to be trimmed.  The default is SEQ66_TRIM_CHARS,
+ *      which is white-space characters.
  *
  * \return
  *      Returns a reference to the string that was left-right-trimmed.
@@ -403,25 +467,48 @@ string_replace
     return result;
 }
 
+static bool
+has_digit (const std::string & s)
+{
+    bool result = false;
+    if (! s.empty())
+    {
+        for (const auto c : s)
+        {
+            if (std::isdigit(c))
+            {
+                result = true;
+                break;
+            }
+        }
+    }
+    return result;
+}
+
 /**
  *  Converts a string value to a boolean.  Note that an empty string returns
  *  the default value, which is false if the caller does not supply a default
  *  parameter.
  *
  * \param s
- *      The string represent the value. "1", "true", and "yes" are true, all
- *      other values are false.
+ *      The string representing the value. "1", "true", "on", and "yes" are
+ *      true, all other values are false.  Capitalized versions checked.
  *
  * \param defalt
- *      The desired default for an empty string.  The default \a defalt value is
- *      false.
+ *      The desired default for an empty string.  The default \a defalt value
+ *      is false.
  */
 
 bool
 string_to_bool (const std::string & s, bool defalt)
 {
-    return s.empty() ? defalt :
-        (s == "1" || s == "true" || s == "TRUE" || s == "yes" || s == "YES") ;
+    return s.empty() ?
+        defalt :
+        (
+            s == "1"   || s == "true" || s == "TRUE" ||
+            s == "yes" || s == "YES" ||
+            s == "on"  || s == "ON"
+        );
 }
 
 /**
@@ -449,29 +536,7 @@ string_to_bool (const std::string & s, bool defalt)
 double
 string_to_double (const std::string & s, double defalt)
 {
-    double result = defalt;
-    if (s.empty())
-    {
-        return defalt;
-    }
-    else
-    {
-        bool no_data = false;
-        const char * numptr = s.c_str();
-        while (! std::isdigit(*numptr))
-        {
-            if (*numptr == 0)
-            {
-                no_data = true;
-                break;
-            }
-            else
-                ++numptr;
-        }
-        if (! no_data)
-            result = std::strtod(numptr, nullptr);      /* dec/hex/octal    */
-    }
-    return result;
+    return has_digit(s) ? std::stod(s, nullptr) : defalt ;
 }
 
 /**
@@ -500,36 +565,27 @@ string_to_double (const std::string & s, double defalt)
 long
 string_to_long (const std::string & s, long defalt)
 {
-    long result = 0;
-    if (s.empty())
-    {
-        return defalt;
-    }
-    else
-    {
-        bool no_data = false;
-        long multiplier = 0;
-        const char * numptr = s.c_str();
-        while (! std::isdigit(*numptr))
-        {
-            if (*numptr == 0)
-            {
-                no_data = true;
-                break;
-            }
-            else if (*numptr == '-')
-                multiplier = -1;
+    return has_digit(s) ? std::stol(s, nullptr, 0) : defalt ;
+}
 
-            ++numptr;
-        }
-        if (! no_data)
-        {
-            result = std::strtol(numptr, nullptr, 0);   /* dec/hex/octal    */
-            if (multiplier != 0)
-                result *= multiplier;
-        }
-    }
-    return result;
+/**
+ *  Converts a string to an unsigned long integer.
+ */
+
+unsigned long
+string_to_unsigned_long (const std::string & s, unsigned long defalt)
+{
+    return has_digit(s) ? std::stoul(s, nullptr, 0) : defalt ;
+}
+
+/**
+ *  Converts a string to an unsigned integer.
+ */
+
+unsigned
+string_to_unsigned (const std::string & s, unsigned defalt)
+{
+    return unsigned(string_to_unsigned_long(s, (unsigned long)(defalt)));
 }
 
 /**
@@ -738,6 +794,9 @@ bool_to_char (bool x)
 /**
  *  Tokenizes a substanza, defined as the text between square brackets,
  *  including the square brackets.
+ *
+ *  Other code uses sscanf() to extract data from within "[ ]".  See
+ *  midicontrolfile::parse_midi_control_out() for an example.
  *
  * \param tokens
  *      Provides a vector into which to push the tokens.  The destination for

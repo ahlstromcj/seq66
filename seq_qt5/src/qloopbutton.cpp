@@ -363,8 +363,7 @@ qloopbutton::setup ()
     }
     else
     {
-        gui_palette_qt5::Color backcolor =
-            slotpal().get_color_fix(PaletteColor(c));
+        gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
 
         /*
          * Rather than having a black progress area, we could make it match
@@ -616,7 +615,11 @@ qloopbutton::draw_progress_box (QPainter & painter)
     }
 #endif
 
-    gui_palette_qt5::Color backcolor = slotpal().get_color_fix(PaletteColor(c));
+    /*
+     * ISN'T THIS SLOW?  Save it in a member?  TODO.
+     */
+
+    gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
     if (qsnap)                                      /* playing, queued, ... */
     {
         backcolor.setAlpha(s_alpha_qsnap);
@@ -680,6 +683,11 @@ qloopbutton::draw_pattern (QPainter & painter)
         pen.setWidth(1);
         if (m_seq->measure_threshold())         // not m_seq->note_count() <= 64
         {
+            if (m_seq->transposable())
+            {
+                pen.setColor(global_palette().drum_paint());
+                painter.setPen(pen);
+            }
             if (m_fingerprint_size > 0)
             {
                 int x = m_progress_box.m_x + 4;
@@ -714,12 +722,15 @@ qloopbutton::draw_pattern (QPainter & painter)
                 height = highest - lowest;
             }
 
-            if (! m_seq->transposable())
+            if (m_seq->transposable())
             {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("sequence #%d is not transposable\n", m_seq->seq_number());
-#endif
-                pen.setColor(Qt::red);
+                pen.setColor(global_palette().drum_paint());
+            }
+            else
+            {
+                int c = m_seq ? m_seq->color() : color_to_int(none) ;
+                gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
+                pen.setColor(pencolor);
             }
             pen.setWidth(1);
             m_seq->reset_draw_marker();                 /* reset iterator   */
@@ -743,7 +754,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 if (dt == sequence::draw::tempo)
                 {
                     pen.setWidth(2);
-                    pen.setColor(Qt::magenta);          /* tempo_paint()    */
+                    pen.setColor(tempo_paint());
                 }
                 else
                 {

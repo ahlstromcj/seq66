@@ -219,10 +219,6 @@ notemapfile::parse ()
  * \param file
  *      Provides the output file stream to write to.
  *
- * \param separatefile
- *      If true, the [mute-group] section is being written to a separate
- *      file.  The default value is false.
- *
  * \return
  *      Returns true if the write operations all succeeded.
  */

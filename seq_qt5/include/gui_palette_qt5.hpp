@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-12-20
+ * \updates       2019-12-22
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -38,6 +38,7 @@
 
 #include <QColor>
 
+#include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "util/palette.hpp"             /* seq66::palette map class         */
 
 /*
@@ -51,7 +52,7 @@ namespace seq66
  *  Implements a stock palette of QColor elements.
  */
 
-class gui_palette_qt5
+class gui_palette_qt5 : public basesettings
 {
 
 public:
@@ -175,6 +176,7 @@ private:                            /* use the accessor functions           */
      * mode).
      */
 
+    static Color m_drum_paint;      /**< Provides non-transposable color.   */
     static Color m_grey_paint;      /**< Provides the grey color.           */
     static Color m_dk_grey_paint;   /**< Provides the dark grey color.      */
     static Color m_lt_grey_paint;   /**< Provides the light grey color.     */
@@ -196,8 +198,15 @@ private:                            /* use the accessor functions           */
 
 public:
 
-    gui_palette_qt5 ();
-    ~gui_palette_qt5 ();
+    gui_palette_qt5 (const std::string & filename = "");
+    gui_palette_qt5 (const gui_palette_qt5 &) = default;
+    gui_palette_qt5 & operator = (const gui_palette_qt5 &) = default;
+    virtual ~gui_palette_qt5 ();
+
+    static int palette_size ()
+    {
+        return 32;
+    }
 
     void reset ()
     {
@@ -257,7 +266,8 @@ public:
         return m_pen_palette.get_color(index);
     }
 
-    std::string get_color_stanza (PaletteColor index) const;
+    std::string make_color_stanza (PaletteColor index) const;
+    bool add_color_stanza (const std::string & stanza);
 
     Color get_color_ex
     (
@@ -360,6 +370,11 @@ public:
         return m_white;
     }
 
+    const Color & drum_paint () const
+    {
+        return m_drum_paint;
+    }
+
     const Color & grey_paint () const
     {
         return m_grey_paint;
@@ -430,7 +445,7 @@ public:
         return m_tempo_paint;
     }
 
-    static const Color & sel_paint ()
+    const Color & sel_paint ()
     {
         return m_sel_paint;
     }
@@ -455,13 +470,32 @@ public:
         m_fg_color = c;
     }
 
+    void clear ();
+
+private:
+
+    bool add
+    (
+        int index,
+        const Color & bg, const std::string & bgname,
+        const Color & fg, const std::string & fgname
+    );
+
 };          // class gui_palette_qt5
 
 /*
  *  Free functions for color.
  */
 
-extern void show_color_rgb (const gui_palette_qt5::Color & c);
+extern gui_palette_qt5 & global_palette ();
+extern gui_palette_qt5::Color get_color_fix (PaletteColor index);
+extern gui_palette_qt5::Color get_pen_color (PaletteColor index);
+extern gui_palette_qt5::Color drum_paint ();
+extern gui_palette_qt5::Color sel_paint ();
+extern gui_palette_qt5::Color tempo_paint ();
+extern gui_palette_qt5::Color background_paint ();
+extern gui_palette_qt5::Color foreground_paint ();
+extern gui_palette_qt5::Color beat_paint ();
 
 }           // namespace seq66
 

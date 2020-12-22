@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -299,7 +299,7 @@ number using the channel number (0 to 15).</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>120</y>
+         <y>128</y>
          <width>361</width>
          <height>80</height>
         </rect>
@@ -307,9 +307,9 @@ number using the channel number (0 to 15).</string>
        <property name="title">
         <string>UI Boolean Options</string>
        </property>
-       <widget class="QCheckBox" name="checkBoxKeplerSeqedit">
+       <widget class="QCheckBox" name="checkBoxPaletteActive">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="geometry">
          <rect>
@@ -319,8 +319,12 @@ number using the channel number (0 to 15).</string>
           <height>21</height>
          </rect>
         </property>
+        <property name="toolTip">
+         <string>If checked, the given palette file will be read at startup.
+This option is saved in the 'rc' file.</string>
+        </property>
         <property name="text">
-         <string>Reserved for expansion</string>
+         <string>Use Palette File</string>
         </property>
        </widget>
       </widget>
@@ -387,15 +391,53 @@ where X and Y are scale factors ranging from 0.5 to 3.0.</string>
       <widget class="QLabel" name="labelRestartNeeded">
        <property name="geometry">
         <rect>
-         <x>330</x>
-         <y>10</y>
-         <width>201</width>
+         <x>416</x>
+         <y>0</y>
+         <width>193</width>
          <height>16</height>
         </rect>
        </property>
        <property name="text">
         <string>* Restart of Seq66 required</string>
        </property>
+      </widget>
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>8</x>
+         <y>88</y>
+         <width>513</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="labelPaletteFile">
+          <property name="text">
+           <string>Palette File Base Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEditPaletteFile">
+          <property name="toolTip">
+           <string>Provides the base name of the palette file.  This file
+always resides in the Seq66 configuration directory
+(~/.config/seq66 or the NSM session directory).</string>
+          </property>
+          <property name="text">
+           <string>qseq66.palette</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonSavePalette">
+          <property name="text">
+           <string>Save Current Palette</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tabJackSync">

@@ -22,7 +22,7 @@
 /**
  * \file          notemapfile.hpp
  *
- *  This module declares/defines the base class for managind the ~/.seq66rc
+ *  This module declares/defines the base class for managind the qseq66.drums
  *  configuration file.
  *
  * \library       seq66 application
@@ -76,8 +76,13 @@ public:
     notemapfile () = delete;
     notemapfile (const notemapfile &) = delete;
     notemapfile & operator = (const notemapfile &) = delete;
+
+    /*
+     * WTF?
+     *
     notemapfile (notemapfile &&) = default;
     notemapfile & operator = (notemapfile &&) = default;
+     */
 
     virtual ~notemapfile ();
 
@@ -99,7 +104,7 @@ private:
 };              // class notemapfile
 
 /*
- *  Free functions for working with play-list files.
+ *  Free functions for working with note-mapfiles.
  */
 
 extern bool save_notemapper

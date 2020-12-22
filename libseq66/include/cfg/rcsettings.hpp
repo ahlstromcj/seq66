@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-19
+ * \updates       2020-12-21
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -98,9 +98,7 @@ const int c_max_set_keys = SEQ66_SET_KEYS_MAX;
 class rcsettings final : public basesettings
 {
     /*
-     * Too many friends need access to the protected setters.  And we should
-     * make cmdlineopts a class, not just a module of standalone functions.
-     */
+     * Too many friends need access to the protected setters.
 
     friend class cmdlineopts;
     friend class clinsmanager;
@@ -111,6 +109,7 @@ class rcsettings final : public basesettings
     friend class performer;
     friend class rcfile;
     friend class rtmidi_info;
+     */
 
 public:
 
@@ -399,6 +398,19 @@ private:
     std::string m_notemap_filename;
 
     /**
+     *  Indicates if the user wants to use the palette file stored in the "rc"
+     *  file value.
+     */
+
+    bool m_palette_active;
+
+    /**
+     *  Provides the name of a palette file to use.
+     */
+
+    std::string m_palette_filename;
+
+    /**
      *  Holds the application name, e.g. "seq66", "qpseq66", "qrseq66",
      *  "seq66cli", or, most commonly, "qseq66".  This is a constant, set to
      *  SEQ66_APP_NAME, but obtained via the seq_app_name() function.  Do not
@@ -456,6 +468,7 @@ public:
     std::string playlist_filespec () const;
     void clear_playlist (bool disable = false);
     std::string notemap_filespec () const;
+    std::string palette_filespec () const;
     virtual void set_defaults () override;
 
     const clockslist & clocks () const
@@ -851,6 +864,11 @@ public:
         return m_notemap_active;
     }
 
+    bool palette_active () const
+    {
+        return m_palette_active;
+    }
+
     const std::string & playlist_filename () const;
 
     const std::string & midi_base_directory () const
@@ -861,6 +879,11 @@ public:
     const std::string & notemap_filename () const
     {
         return m_notemap_filename;
+    }
+
+    const std::string & palette_filename () const
+    {
+        return m_palette_filename;
     }
 
     const std::string & user_filename () const
@@ -907,7 +930,7 @@ public:
         return m_recent_files.count();
     }
 
-protected:
+public:
 
     void load_key_controls (bool flag)
     {
@@ -1069,6 +1092,11 @@ protected:
         m_notemap_active = flag;
     }
 
+    void palette_active (bool flag)
+    {
+        m_palette_active = flag;
+    }
+
     void  midi_base_directory (const std::string & mbd)
     {
         m_playlist_midi_base = mbd;
@@ -1106,6 +1134,11 @@ protected:
     void notemap_filename (const std::string & fn)
     {
         m_notemap_filename = fn;
+    }
+
+    void palette_filename (const std::string & fn)
+    {
+        m_palette_filename = fn;
     }
 
 };          // class rcsettings

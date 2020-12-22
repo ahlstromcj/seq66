@@ -1,5 +1,5 @@
-#if ! defined SEQ66_MUTEGROUPSFILE_HPP
-#define SEQ66_MUTEGROUPSFILE_HPP
+#if ! defined SEQ66_PALETTEFILE_HPP
+#define SEQ66_PALETTEFILE_HPP
 
 /*
  *  This file is part of seq66.
@@ -20,15 +20,15 @@
  */
 
 /**
- * \file          mutegroupsfile.hpp
+ * \file          palettefile.hpp
  *
- *  This module declares/defines the base class for managind the qseq66.mutes
+ *  This module declares/defines the base class for managind the ~/.seq66rc
  *  configuration file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
- * \date          2018-11-30
- * \updates       2019-03-26
+ * \date          2020-12-21
+ * \updates       2020-12-21
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -37,6 +37,7 @@
 #include <fstream>                      /* std::ofstream and ifstream       */
 
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -51,59 +52,39 @@ namespace seq66
  *  or used by the performer class.
  */
 
-class mutegroupsfile final : public configfile
+class palettefile final : public configfile
 {
-    friend class rcfile;
 
 private:
 
     /**
-     *  Indicates to use the old 4 x 8 format for a mute-groups stanza.
+     *  Holds a reference to the palette object to be acted upon by this
+     *  class.
      */
 
-    bool m_legacy_format;
-
-    /**
-     *  Indicates if empty mute-group stanzas are to be read in.  An empty
-     *  stanza is all 0's (all false).  This option is useful in conversion to
-     *  the new format.
-     */
-
-    bool m_allow_inactive;
-
-    /**
-     *  Similar to mutegroup::m_rows_in_group.  The default value is 4.
-     */
-
-    const int m_section_count;
-
-    /**
-     *  Similar to mutegroup::m_columns_in_group.  The default value is 8.
-     */
-
-    const int m_mute_count;
+    gui_palette_qt5 & m_palettes;
 
 public:
 
-    mutegroupsfile
+    palettefile
     (
+        gui_palette_qt5 & palettes,
         const std::string & filename,
-        rcsettings & rcs,
-        bool allowinactive = false
+        rcsettings & rcs
     );
 
-    mutegroupsfile () = delete;
-    mutegroupsfile (const mutegroupsfile &) = delete;
-    mutegroupsfile & operator = (const mutegroupsfile &) = delete;
+    palettefile () = delete;
+    palettefile (const palettefile &) = delete;
+    palettefile & operator = (const palettefile &) = delete;
 
     /*
      * WTF?
      *
-    mutegroupsfile (mutegroupsfile &&) = default;
-    mutegroupsfile & operator = (mutegroupsfile &&) = default;
+    palettefile (palettefile &&) = default;
+    palettefile & operator = (palettefile &&) = default;
      */
 
-    virtual ~mutegroupsfile ();
+    virtual ~palettefile ();
 
     virtual bool parse () override;
     virtual bool write () override;
@@ -111,19 +92,49 @@ public:
     bool parse_stream (std::ifstream & file);
     bool write_stream (std::ofstream & file);
 
+    static int palette_size ()
+    {
+        return 32;
+    }
+
 private:
 
-    bool parse_mutes_stanza ();
-    bool write_mute_groups (std::ofstream & file);
+    bool write_map_entries (std::ofstream & file) const;
 
-};              // class mutegroupsfile
+    gui_palette_qt5 & mapper ()
+    {
+        return m_palettes;
+    }
+
+};              // class palettefile
+
+/*
+ *  Free functions for working with play-list files.
+ */
+
+extern bool open_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & source
+);
+extern bool save_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & destination
+);
+extern bool save_palette
+(
+    gui_palette_qt5 & pal,
+    const std::string & source,
+    const std::string & destination
+);
 
 }               // namespace seq66
 
-#endif          // SEQ66_MUTEGROUPSFILE_HPP
+#endif          // SEQ66_PALETTEFILE_HPP
 
 /*
- * mutegroupsfile.hpp
+ * palettefile.hpp
  *
  * vim: sw=4 ts=4 wm=4 et ft=cpp
  */

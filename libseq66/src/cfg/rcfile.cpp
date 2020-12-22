@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-19
+ * \updates       2020-12-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -260,7 +260,8 @@ rcfile::parse ()
         ok = ! is_empty_string(line());                 /* not "" or empty? */
         if (ok)
         {
-            rc_ref().midi_control_filename(line());     /* set base name    */
+            std::string mcfname = strip_quotes(line());
+            rc_ref().midi_control_filename(mcfname);    /* set base name    */
 
             std::string fullpath = rc_ref().midi_control_filespec();
             file_message("Reading 'ctrl'", fullpath);
@@ -270,11 +271,6 @@ rcfile::parse ()
                 std::string info = "'";
                 info += fullpath;
                 info += "'";
-
-                /*
-                 * rc_ref().midi_control_filename("");
-                 */
-
                 return make_error_message("midi-control-file", info);
             }
         }
@@ -300,7 +296,8 @@ rcfile::parse ()
         ok = ! is_empty_string(line());                 /* not "" or empty? */
         if (ok)
         {
-            rc_ref().mute_group_filename(line());       /* base name        */
+            std::string mgfname = strip_quotes(line());
+            rc_ref().mute_group_filename(mgfname);      /* base name        */
 
             std::string fullpath = rc_ref().mute_group_filespec();
             file_message("Reading 'mutes'", fullpath);
@@ -310,11 +307,6 @@ rcfile::parse ()
                 std::string info = "cannot parse file '";
                 info += fullpath;
                 info += "'";
-
-                /*
-                 * rc_ref().midi_control_filename("");
-                 */
-
                 return make_error_message("mute-group-file", info);
             }
         }
@@ -326,11 +318,11 @@ rcfile::parse ()
     else
     {
         /*
-         * After we parse the mute-groups, see if there is another
-         * value for the mute_group_handling enumeration.  One little issue...
-         * the parse_mute_group_section() function actually re-opens the file
+         * After parsing the mute-groups, see if there is another value for
+         * the mute_group_handling enumeration.  One little issue...  the
+         * parse_mute_group_section() function actually re-opens the file
          * itself, and once it exits, it's as if the section never existed.
-         * So we also have to pase the new mute-group handling feature there
+         * So we also have to parse the new mute-group handling feature there
          * as well.
          */
 
@@ -338,12 +330,31 @@ rcfile::parse ()
         rc_ref().use_mute_group_file(false);
     }
 
+    int flag = 0;
+    if (line_after(file, "[palette-file]"))
+    {
+        sscanf(scanline(), "%d", &flag);
+        rc_ref().palette_active(flag != 0);
+        if (next_data_line(file))
+        {
+            ok = ! is_empty_string(line());             /* not "" or empty? */
+            if (ok)
+            {
+                std::string pfname = strip_quotes(line());
+                rc_ref().palette_filename(pfname);      /* base name        */
+            }
+            else
+                rc_ref().palette_filename("");          /* empty name       */
+        }
+        else
+            rc_ref().palette_filename("");              /* empty name       */
+    }
+
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
      * rc() accessor function.
      */
 
-    int flag = 0;
     if (line_after(file, "[jack-transport]"))
     {
         sscanf(scanline(), "%d", &flag);                /* 1 */
@@ -606,7 +617,8 @@ rcfile::parse ()
         sscanf(scanline(), "%d", &flag);            /* playlist-active flag */
         if (next_data_line(file))
         {
-            std::string fname = trimline();
+            std::string fname = strip_quotes(line());
+            // std::string fname = trimline();
             exists = ! is_empty_string(fname);      /* not "" or empty      */
             if (exists)
             {
@@ -656,7 +668,8 @@ rcfile::parse ()
         sscanf(scanline(), "%d", &flag);        /* note-mapper-active flag  */
         if (next_data_line(file))
         {
-            std::string fname = trimline();
+            std::string fname = strip_quotes(line());
+            // std::string fname = trimline();
             exists = ! is_empty_string(fname);
             if (exists)
             {
@@ -927,6 +940,24 @@ rcfile::write ()
     }
     else
         ok = write_mute_groups(file);
+
+    /*
+     * New section for palette file.
+     */
+
+    std::string palfilename = rc_ref().palette_filename();
+    if (palfilename.empty())
+        palfilename = empty_string();
+
+    file
+        << "\n[palette-file]\n\n"
+           "# This provides a flag to allow modifying the palette from the\n"
+           "# file-name given below.  Use '\"\"' to indicate no palette file.\n"
+           "\n"
+        << (rc_ref().palette_active() ? "1" : "0")
+        << "     # palette_active\n\n"
+        << palfilename << "\n"
+        ;
 
     /*
      * New section for MIDI meta events.

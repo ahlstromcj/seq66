@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-19
+2019-04-13 to 2020-12-22
 
 HOT ITEMS:
 
@@ -25,6 +25,10 @@ HOT ITEMS:
         How easy/difficult would it be to implement keyboard or midi shortcuts
         to these buttons (steps 2 to 6), or preset them for every new pattern
         editor?
+
+    Drum Mode:
+
+        Broken!  When turned on, notes disappear!
 
     Playlist:
        

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-18
+ * \updates       2020-12-22
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -34,6 +34,8 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
+#include "palettefile.hpp"              /* seq66::palettefile class         */
 #include "qclocklayout.hpp"
 #include "qinputcheckbox.hpp"
 #include "qseditoptions.hpp"
@@ -175,11 +177,27 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditUiScaling, SIGNAL(textEdited(const QString &)),
         this, SLOT(update_ui_scaling(const QString &))
     );
-
+#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     connect
     (
         ui->checkBoxKeplerSeqedit, SIGNAL(stateChanged(int)),
         this, SLOT(update_pattern_editor())
+    );
+#endif
+    connect
+    (
+        ui->lineEditPaletteFile, SIGNAL(textEdited(const QString &)),
+        this, SLOT(update_palette_file(const QString &))
+    );
+    connect
+    (
+        ui->pushButtonSavePalette, SIGNAL(clicked(bool)),
+        this, SLOT(handle_palette_save_click())
+    );
+    connect
+    (
+        ui->checkBoxPaletteActive, SIGNAL(clicked(bool)),
+        this, SLOT(handle_palette_active_click())
     );
 
     /*
@@ -462,12 +480,57 @@ qseditoptions::update_ui_scaling (const QString & qs)
         usr().save_user_config(true);
 }
 
+void
+qseditoptions::update_palette_file (const QString & qs)
+{
+    const std::string valuetext = qs.toStdString();
+    rc().palette_filename(valuetext);
+}
+
+void
+qseditoptions::handle_palette_save_click ()
+{
+    std::string palfile = rc().palette_filespec();
+    if (palfile.empty())
+    {
+        QString qs = ui->lineEditPaletteFile->text();
+        palfile = qs.toStdString();
+        rc().palette_filename(palfile);
+        palfile = rc().palette_filespec();
+    }
+    if (! palfile.empty())
+    {
+        if (save_palette(global_palette(), palfile))
+        {
+            /*
+             * TODO: report full file-path saved
+             */
+        }
+        else
+        {
+            /*
+             * TODO: report error
+             */
+        }
+    }
+}
+
+void
+qseditoptions::handle_palette_active_click ()
+{
+    bool on = ui->checkBoxPaletteActive->isChecked();
+    rc().palette_active(on);
+}
+
+#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
+
 /**
  *  Seq66 has a new pattern editor GUI for Qt that is larger and more
  *  functional than the Kepler34 pattern editor.  However, it has the
  *  side-effect, currently, of making the main window larger.
- *
  *  This slot sets the new feature to off if the check-box is checked.
+ *
+ *  Disabled.  Replace by the "Use Palette File" feature.
  */
 
 void
@@ -477,6 +540,8 @@ qseditoptions::update_pattern_editor ()
     usr().use_new_seqedit(! use_kepler_seqedit);
     usr().save_user_config(true);
 }
+
+#endif
 
 /**
  *  Added for Seq66.  Not yet filled with functionality.

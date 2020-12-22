@@ -107,7 +107,12 @@ private slots:
     void update_note_resume ();
     void update_key_height ();
     void update_ui_scaling (const QString &);
+#if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     void update_pattern_editor ();
+#endif
+    void update_palette_file (const QString &);
+    void handle_palette_save_click ();
+    void handle_palette_active_click ();
 
 private:
 

@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2020-12-20
+ * \updates       2020-12-22
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -161,7 +161,7 @@ public:
 
     palette ();                         /* initially empty, filled by add() */
 
-    void add (PaletteColor index, const COLOR & c, const std::string & name);
+    bool add (PaletteColor index, const COLOR & c, const std::string & name);
     const COLOR & get_color (PaletteColor index) const;
     std::string get_color_name (PaletteColor index) const;
     std::string get_color_name_ex (PaletteColor index) const;
@@ -179,13 +179,14 @@ public:
         return index == PaletteColor::none;
     }
 
-    /**
-     *  Clears the color/name container.
-     */
-
     void clear ()
     {
         m_container.clear();
+    }
+
+    int count ()
+    {
+        return int(m_container.size());
     }
 
 };          // class palette
@@ -218,7 +219,7 @@ palette<COLOR>::palette () :
  */
 
 template <typename COLOR>
-void
+bool
 palette<COLOR>::add
 (
     PaletteColor index,
@@ -226,12 +227,14 @@ palette<COLOR>::add
     const std::string & colorname
 )
 {
+    size_t count = m_container.size();
     pair colorspec;
     colorspec.ppt_color = color;
     colorspec.ppt_color_name = colorname;
 
     auto p = std::make_pair(index, colorspec);
     (void) m_container.insert(p);
+    return m_container.size() == (count + 1);
 }
 
 /**
