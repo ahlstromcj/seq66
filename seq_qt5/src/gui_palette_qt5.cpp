@@ -366,6 +366,7 @@ void
 gui_palette_qt5::reset_backgrounds ()
 {
     m_palette.clear();                                      /* just in case */
+    m_palette.add(PaletteColor::none,        m_white,    "None");
     m_palette.add(PaletteColor::black,       m_black,    "Black");
     m_palette.add(PaletteColor::red,         m_red,      "Red");
     m_palette.add(PaletteColor::green,       m_green,    "Green");
@@ -411,6 +412,7 @@ void
 gui_palette_qt5::reset_pens ()
 {
     m_pen_palette.clear();                  /* just in case */
+    m_pen_palette.add(PaletteColor::none,       m_black,   "Black");
     m_pen_palette.add(PaletteColor::black,      m_white,   "White");
     m_pen_palette.add(PaletteColor::red,        m_white,   "White");
     m_pen_palette.add(PaletteColor::green,      m_white,   "White");

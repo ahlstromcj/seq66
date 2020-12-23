@@ -895,7 +895,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         if (seq->transposable())
                             pen.setColor(Qt::black);
                         else
-                            pen.setColor(Qt::red);
+                            pen.setColor(drum_paint());     // (Qt::red);
 
                         int cny = c_names_y - 6;
                         int marker_x = tix_to_pix(t) - x_offset;

@@ -683,7 +683,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         pen.setWidth(1);
         if (m_seq->measure_threshold())         // not m_seq->note_count() <= 64
         {
-            if (m_seq->transposable())
+            if (! m_seq->transposable())
             {
                 pen.setColor(global_palette().drum_paint());
                 painter.setPen(pen);
@@ -724,13 +724,13 @@ qloopbutton::draw_pattern (QPainter & painter)
 
             if (m_seq->transposable())
             {
-                pen.setColor(global_palette().drum_paint());
-            }
-            else
-            {
                 int c = m_seq ? m_seq->color() : color_to_int(none) ;
                 gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
                 pen.setColor(pencolor);
+            }
+            else
+            {
+                pen.setColor(global_palette().drum_paint());
             }
             pen.setWidth(1);
             m_seq->reset_draw_marker();                 /* reset iterator   */

@@ -480,8 +480,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     );
 #endif
 
-//  QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
-//  QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
     QColor background = background_paint();
     QColor foreground = foreground_paint();
     QBrush brush(background);                       /* brush(Qt::NoBrush)   */
@@ -567,7 +565,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * to check every tick!!!!
      */
 
-//  QColor beatcolor = usr().inverse_colors() ? Qt::white : Qt::darkGray ;
     QColor beatcolor = beat_paint();
     pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
     painter.setPen(pen);
@@ -819,8 +816,9 @@ qseqroll::draw_drum_notes
         if (dt == sequence::draw::tempo)
             continue;
 
-        bool start_in = ni.start() >= start_tick && ni.start() < end_tick;
-        bool linkedin = dt == sequence::draw::linked && start_in;
+        bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
+        bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
+        bool linkedin = dt == sequence::draw::linked && end_in;
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
