@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-22
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -482,6 +482,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 
     QColor background = background_paint();
     QColor foreground = foreground_paint();
+    QColor beatcolor = beat_paint();
+    QColor stepcolor = step_paint();
     QBrush brush(background);                       /* brush(Qt::NoBrush)   */
     QPen pen(Qt::lightGray);
     painter.drawRect(r);
@@ -502,9 +504,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          */
 
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(Qt::darkGray);
+            pen.setColor(foreground);               /* Qt::darkGray         */
         else if ((modkey % c_octave_size) == (c_octave_size-1))
-            pen.setColor(Qt::lightGray);
+            pen.setColor(stepcolor);                /* Qt::lightGray        */
 
         pen.setStyle(Qt::SolidLine);
         painter.setPen(pen);
@@ -514,15 +516,15 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          */
 
         int y = key * unit_height();
-        if (m_edit_mode == sequence::editmode::drum)
-            y -= (0.5 * unit_height());
+//      if (m_edit_mode == sequence::editmode::drum)
+//          y -= (0.5 * unit_height());
 
         painter.drawLine(r.x(), y, r.x()+r.width(), y);
         if (m_scale != scales::off)
         {
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
-                pen.setColor(Qt::lightGray);
+                pen.setColor(stepcolor);            /* Qt::lightGray        */
                 brush.setColor(Qt::lightGray);
                 brush.setStyle(Qt::SolidPattern);
                 painter.setBrush(brush);
@@ -565,9 +567,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * to check every tick!!!!
      */
 
-    QColor beatcolor = beat_paint();
-    pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
-    painter.setPen(pen);
+//  pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
+//  painter.setPen(pen);
     for (int tick = starttick; tick < endtick; tick += increment)
     {
         int x_offset = xoffset(tick) - scroll_offset_x();
@@ -585,7 +586,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         }
         else
         {
-            pen.setColor(Qt::lightGray);        /* faint step lines         */
+            pen.setColor(stepcolor);        /* faint step lines         */
             int tick_snap = tick - (tick % grid_snap());
             if (tick != tick_snap)
                 penstyle = Qt::DotLine;
@@ -757,13 +758,13 @@ qseqroll::draw_drum_note (QPainter & painter)
     int h2 = m_note_height / 2;
     int x0 = m_note_x - h2;
     int x1 = m_note_x + h2;
-    int y1 = m_note_y + h2;
+    int y1 = m_note_y + h2 - 2;
     QPointF points[4] =
     {
         QPointF(x0, y1),
-        QPointF(m_note_x, m_note_y),
+        QPointF(m_note_x, m_note_y - 2),
         QPointF(x1, y1),
-        QPointF(m_note_x, m_note_y + m_note_height)
+        QPointF(m_note_x, m_note_y + m_note_height - 2)
     };
     painter.drawPolygon(points, 4);
 

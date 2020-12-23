@@ -38,6 +38,7 @@
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "gui_palette_qt5.hpp"
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qsliveframe.hpp"
 #include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
@@ -343,7 +344,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->playing())              /* playing, no queueing */
             {
-                Color backcolor(Qt::black);
+                gui_palette_qt5::Color backcolor(Qt::black);
                 brush.setColor(backcolor);
                 pen.setColor(Qt::white);
                 painter.setBrush(brush);
@@ -359,7 +360,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else                                /* just not playing     */
             {
-                Color backcolor(Qt::white);
+                gui_palette_qt5::Color backcolor(Qt::white);
                 brush.setColor(backcolor);
                 pen.setColor(Qt::black);
                 painter.setBrush(brush);
@@ -378,7 +379,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             pen.setStyle(Qt::SolidLine);
             if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
-                Color backcolor = get_color_fix(PaletteColor(c));
+                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -390,7 +391,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->playing())              /* playing, no queueing */
             {
-                Color backcolor = get_color_fix(PaletteColor(c));
+                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -400,7 +401,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->get_queued())           /* not playing, queued  */
             {
-                Color backcolor = get_color_fix(PaletteColor(c));
+                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(180);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -412,7 +413,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->one_shot())             /* one-shot queued      */
             {
-                Color backcolor = get_color_fix(PaletteColor(c));
+                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(180);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -424,7 +425,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else                                /* just not playing     */
             {
-                Color backcolor = get_color_fix(PaletteColor(c));
+                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(100);        /* .setAlpha(180)       */
                 brush.setColor(backcolor);
                 pen.setStyle(Qt::NoPen);
@@ -491,8 +492,8 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
          * Draws the inner box of the pattern slot.
          */
 
-        Color backcolor = get_color_fix(PaletteColor(c));
-        Color pencolor = get_pen_color(PaletteColor(c));
+        gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+        gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
         if (m_gtkstyle_border)
         {
             brush.setColor(backcolor);
@@ -557,12 +558,12 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         {
             int height = highest - lowest + 2;
             int length = s->get_length();
-            Color drawcolor = pencolor;         // fg_color();
-            Color eventcolor = pencolor;        // fg_color();
+            gui_palette_qt5::Color drawcolor = pencolor;
+            gui_palette_qt5::Color eventcolor = pencolor;
             if (! s->transposable())
             {
-                eventcolor = red();
-                drawcolor = red();
+                eventcolor = drum_paint();
+                drawcolor = drum_paint();
             }
             preview_h -= 6;                     /* padding for box          */
             preview_w -= 6;
@@ -953,8 +954,8 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
 
 
             QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
-            int firstcolor = color_to_int(none);
-            int lastcolor = color_to_int(white);            // color_to_int(grey)
+            int firstcolor = palette_to_int(none);
+            int lastcolor = palette_to_int(white);
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
@@ -969,8 +970,8 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             }
 
             QMenu * menu2Colour = new QMenu(tr("Dark colors"));
-            firstcolor = color_to_int(dk_black);
-            lastcolor = color_to_int(dk_white);
+            firstcolor = palette_to_int(dk_black);
+            lastcolor = palette_to_int(dk_white);
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
@@ -985,8 +986,8 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             }
 
             QMenu * menu3Colour = new QMenu(tr("Other colors"));
-            firstcolor = color_to_int(orange);                  /* color_16 */
-            lastcolor = color_to_int(grey);                     /* color_23 */
+            firstcolor = palette_to_int(orange);                /* color_16 */
+            lastcolor = palette_to_int(grey);                   /* color_23 */
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);
@@ -1001,8 +1002,8 @@ qsliveframe::mouseReleaseEvent (QMouseEvent *event)
             }
 
             QMenu * menu4Colour = new QMenu(tr("Other soft colors"));
-            firstcolor = color_to_int(dk_orange);               /* color_24 */
-            lastcolor = color_to_int(dk_grey);                  /* color_31 */
+            firstcolor = palette_to_int(dk_orange);               /* color_24 */
+            lastcolor = palette_to_int(dk_grey);                  /* color_31 */
             for (int c = firstcolor; c <= lastcolor; ++c)
             {
                 PaletteColor pc = PaletteColor(c);

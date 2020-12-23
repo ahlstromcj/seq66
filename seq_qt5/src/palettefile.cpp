@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2020-12-21
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,6 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rcsettings & seq66::rc()  */
 #include "util/calculations.hpp"        /* seq66::current_data_time()       */
 #include "util/strfunctions.hpp"        /* seq66::string_to_bool()          */
+#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 
 /*
@@ -125,9 +126,38 @@ palettefile::parse_stream (std::ifstream & file)
         if (ok)
             ok = count == gui_palette_qt5::palette_size();
 
-        if (! ok)
-            m_palettes.reset();
     }
+    if (ok)
+    {
+        if (line_after(file, "[ui-palette]"))
+        {
+            int count = 0;                  /* limited to 32 palette entries    */
+            m_palettes.clear_invertible();
+            for (;;)
+            {
+                if (count > gui_palette_qt5::invertible_size())
+                {
+                    ok = false;
+                    break;
+                }
+                else
+                {
+                    ok = m_palettes.add_color_stanza(line(), true);
+                    if (ok)
+                        ++count;
+                    else
+                        break;
+                }
+                if (! next_data_line(file))
+                    break;
+            }
+            if (ok)
+                ok = count == gui_palette_qt5::invertible_size();
+        }
+    }
+    if (! ok)
+        m_palettes.reset();
+
     return result;
 }
 
@@ -214,13 +244,31 @@ palettefile::write_stream (std::ofstream & file)
 
     for (int number = 0; number < gui_palette_qt5::palette_size(); ++number)
     {
-        PaletteColor index = static_cast<PaletteColor>(number);
-        std::string stanza = m_palettes.make_color_stanza(index);
+        std::string stanza = m_palettes.make_color_stanza(number);
         if (stanza.empty())
             break;
         else
             file << stanza << "\n";
     }
+    file <<
+        "\n"
+        "# Similar to the [palette] section, but applies to UI elements and to\n"
+        "# the --inverse color option.  The first integer is the color number,\n"
+        "# ranging from 0 to 11. The names are feature names, not color names.\n"
+        "\n"
+        "[ui-palette]\n"
+        "\n"
+        ;
+
+    for (int number = 0; number < gui_palette_qt5::invertible_size(); ++number)
+    {
+        std::string stanza = m_palettes.make_color_stanza(number, true);
+        if (stanza.empty())
+            break;
+        else
+            file << stanza << "\n";
+    }
+
     file
         << "\n# End of " << name() << "\n#\n"
         << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
@@ -243,7 +291,7 @@ palettefile::write ()
     bool result = ! name().empty() && file.is_open();
     if (result)
     {
-        file_message("Writing 'drums'", name());
+        file_message("Writing 'palette'", name());
         result = write_stream(file);
         file.close();
     }

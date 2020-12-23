@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2020-12-21
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -40,10 +40,10 @@
 #include "cfg/settings.hpp"             /* seq66::rc() or seq66::usr()      */
 #include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 #include "util/basic_macros.hpp"        /* seq66::file_error() function     */
-#include "util/palette.hpp"             /* enum class progress_colors       */
+#include "util/palette.hpp"             /* enum class ProgressColors        */
 #include "util/strfunctions.hpp"        /* seq66 string functions           */
 
-#define STATIC_COLOR                    gui_palette_qt5::Color
+#define COLOR     gui_palette_qt5::Color
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -78,42 +78,75 @@ get_pen_color (PaletteColor index)
     return global_palette().get_pen_color(index);
 }
 
-gui_palette_qt5::Color
-drum_paint ()
+std::string
+get_color_name_ex (PaletteColor index)
 {
-    return global_palette().drum_paint();
+    return global_palette().get_color_name_ex(index);
 }
 
-gui_palette_qt5::Color
-sel_paint ()
+bool
+no_color (int c)
 {
-    return global_palette().sel_paint();
+    return global_palette().no_color(c);
 }
 
-gui_palette_qt5::Color
-tempo_paint ()
-{
-    return global_palette().tempo_paint();
-}
 
 /**
- *  Background paint uses the invertible color m_wht_paint.
- */
-
-gui_palette_qt5::Color
-background_paint ()
-{
-    return global_palette().white_paint();
-}
-
-/**
- *  Foreground paint uses the invertible color m_blk_paint.
+ *  Foreground paint uses the invertible color for black.
  */
 
 gui_palette_qt5::Color
 foreground_paint ()
 {
-    return global_palette().black_paint();
+    return global_palette().get_color(InvertibleColor::black);
+}
+
+/**
+ *  Background paint uses the invertible color for white.
+ */
+
+gui_palette_qt5::Color
+background_paint ()
+{
+    return global_palette().get_color(InvertibleColor::white);
+}
+
+gui_palette_qt5::Color
+label_paint ()
+{
+    gui_palette_qt5::Color r =
+        global_palette().get_color(InvertibleColor::label);
+    return r;
+}
+
+gui_palette_qt5::Color
+sel_paint ()
+{
+    return global_palette().get_color(InvertibleColor::selection);
+}
+
+gui_palette_qt5::Color
+drum_paint ()
+{
+    return global_palette().get_color(InvertibleColor::drum);
+}
+
+gui_palette_qt5::Color
+tempo_paint ()
+{
+    return global_palette().get_color(InvertibleColor::tempo);
+}
+
+gui_palette_qt5::Color
+black_key_paint ()
+{
+    return global_palette().get_color(InvertibleColor::black_key);
+}
+
+gui_palette_qt5::Color
+white_key_paint ()
+{
+    return global_palette().get_color(InvertibleColor::white_key);
 }
 
 /**
@@ -123,82 +156,62 @@ foreground_paint ()
 gui_palette_qt5::Color
 beat_paint ()
 {
-    return global_palette().grey_paint();
+    return global_palette().get_color(InvertibleColor::dk_grey);
 }
 
-/**
- *  By default, the inverse color palette is not loaded.
- */
-
-bool gui_palette_qt5::m_is_inverse = false;
+gui_palette_qt5::Color
+step_paint ()
+{
+    return global_palette().get_color(InvertibleColor::lt_grey);
+}
 
 /**
  * Bright constant colors
  */
 
-const STATIC_COLOR gui_palette_qt5::m_black        = Color("black");
-const STATIC_COLOR gui_palette_qt5::m_red          = Color("red");
-const STATIC_COLOR gui_palette_qt5::m_green        = Color("green");
-const STATIC_COLOR gui_palette_qt5::m_yellow       = Color("yellow");
-const STATIC_COLOR gui_palette_qt5::m_blue         = Color("blue");
-const STATIC_COLOR gui_palette_qt5::m_magenta      = Color("magenta");
-const STATIC_COLOR gui_palette_qt5::m_cyan         = Color("cyan");
-const STATIC_COLOR gui_palette_qt5::m_white        = Color("white");
+static COLOR m_black;
+static COLOR m_red;
+static COLOR m_green;
+static COLOR m_yellow;
+static COLOR m_blue;
+static COLOR m_magenta;
+static COLOR m_cyan;
+static COLOR m_white;
 
 /**
- * Dark constant colors
+ * Dark staticant colors
  */
 
-const STATIC_COLOR gui_palette_qt5::m_dk_black     = Color("dark slate grey");
-const STATIC_COLOR gui_palette_qt5::m_dk_red       = Color("dark red");
-const STATIC_COLOR gui_palette_qt5::m_dk_green     = Color("dark green");
-const STATIC_COLOR gui_palette_qt5::m_dk_yellow    = Color("dark yellow");
-const STATIC_COLOR gui_palette_qt5::m_dk_blue      = Color("dark blue");
-const STATIC_COLOR gui_palette_qt5::m_dk_magenta   = Color("dark magenta");
-const STATIC_COLOR gui_palette_qt5::m_dk_cyan      = Color("dark cyan");
-const STATIC_COLOR gui_palette_qt5::m_dk_white     = Color("grey");
+static COLOR m_dk_black;
+static COLOR m_dk_red;
+static COLOR m_dk_green;
+static COLOR m_dk_yellow;
+static COLOR m_dk_blue;
+static COLOR m_dk_magenta;
+static COLOR m_dk_cyan;
+static COLOR m_dk_white;
 
 /**
- * Extended colors in the palette.  The greys are defined separately and are
- * invertible.
+ * Extended colors in the palette.
  */
 
-const STATIC_COLOR gui_palette_qt5::m_orange       = Color("orange");
-const STATIC_COLOR gui_palette_qt5::m_pink         = Color("pink");
-const STATIC_COLOR gui_palette_qt5::m_color_18     = Color("pale green");
-const STATIC_COLOR gui_palette_qt5::m_color_19     = Color("khaki");
-const STATIC_COLOR gui_palette_qt5::m_color_20     = Color("light blue");
-const STATIC_COLOR gui_palette_qt5::m_color_21     = Color("violet");
-const STATIC_COLOR gui_palette_qt5::m_color_22     = Color("turquoise");
-const STATIC_COLOR gui_palette_qt5::m_grey         = Color("grey");
+static COLOR m_orange;
+static COLOR m_pink;
+static COLOR m_color_18;
+static COLOR m_color_19;
+static COLOR m_color_20;
+static COLOR m_color_21;
+static COLOR m_color_22;
+static COLOR m_grey;
 
-const STATIC_COLOR gui_palette_qt5::m_dk_orange    = Color("dark orange");
-const STATIC_COLOR gui_palette_qt5::m_dk_pink      = Color("deep pink");
-const STATIC_COLOR gui_palette_qt5::m_color_26     = Color("sea green");
-const STATIC_COLOR gui_palette_qt5::m_color_27     = Color("dark khaki");
-const STATIC_COLOR gui_palette_qt5::m_color_28     = Color("dark slate blue");
-const STATIC_COLOR gui_palette_qt5::m_color_29     = Color("dark violet");
-const STATIC_COLOR gui_palette_qt5::m_color_30     = Color("dark turquoise");
-const STATIC_COLOR gui_palette_qt5::m_dk_grey      = Color("dark grey");
-
-/**
- * Invertible colors.
- */
-
-STATIC_COLOR gui_palette_qt5::m_drum_paint         = Color("red");
-STATIC_COLOR gui_palette_qt5::m_grey_paint         = Color("grey");
-STATIC_COLOR gui_palette_qt5::m_dk_grey_paint      = Color("grey50");
-STATIC_COLOR gui_palette_qt5::m_lt_grey_paint      = Color("light grey");
-STATIC_COLOR gui_palette_qt5::m_blk_paint          = Color("black");
-STATIC_COLOR gui_palette_qt5::m_wht_paint          = Color("white");
-STATIC_COLOR gui_palette_qt5::m_blk_key_paint      = Color("black");
-STATIC_COLOR gui_palette_qt5::m_wht_key_paint      = Color("white");
-STATIC_COLOR gui_palette_qt5::m_tempo_paint        = Color("magenta"); // dark
-#if defined SEQ66_USE_BLACK_SELECTION_BOX
-STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("black");
-#else
-STATIC_COLOR gui_palette_qt5::m_sel_paint          = Color("orange");
-#endif
+static COLOR m_dk_orange;
+static COLOR m_dk_pink;
+static COLOR m_color_26;
+static COLOR m_color_27;
+static COLOR m_color_28;
+static COLOR m_color_29;
+static COLOR m_lt_grey;
+static COLOR m_dk_grey;
 
 /**
  *  Principal constructor.  In the constructor one can only allocate colors;
@@ -212,42 +225,43 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename)
     basesettings        (filename),
     m_palette           (),
     m_pen_palette       (),
+    m_nrm_palette       (),
+    m_inv_palette       (),
+    m_is_inverse        (false),
+    m_is_loaded         (false),
     m_line_color        (Color("dark cyan")),           // alternative to black
     m_progress_color    (Color("black")),
     m_bg_color          (),
     m_fg_color          ()
 {
-    if (usr().inverse_colors())
-        load_inverse_palette(true);
-
     int colorcode = usr().progress_bar_colored();
     switch (colorcode)
     {
-    case static_cast<int>(progress_colors::black):
+    case static_cast<int>(ProgressColors::black):
         m_progress_color = m_black;
         break;
 
-    case static_cast<int>(progress_colors::dark_red):
+    case static_cast<int>(ProgressColors::dark_red):
         m_progress_color = m_dk_red;
         break;
 
-    case static_cast<int>(progress_colors::dark_green):
+    case static_cast<int>(ProgressColors::dark_green):
         m_progress_color = m_dk_green;
         break;
 
-    case static_cast<int>(progress_colors::dark_orange):
+    case static_cast<int>(ProgressColors::dark_orange):
         m_progress_color = m_dk_orange;
         break;
 
-    case static_cast<int>(progress_colors::dark_blue):
+    case static_cast<int>(ProgressColors::dark_blue):
         m_progress_color = m_dk_blue;
         break;
 
-    case static_cast<int>(progress_colors::dark_magenta):
+    case static_cast<int>(ProgressColors::dark_magenta):
         m_progress_color = m_dk_magenta;
         break;
 
-    case static_cast<int>(progress_colors::dark_cyan):
+    case static_cast<int>(ProgressColors::dark_cyan):
         m_progress_color = m_dk_cyan;
         break;
     }
@@ -256,6 +270,7 @@ gui_palette_qt5::gui_palette_qt5 (const std::string & filename)
      * Fill in the slot and pen palettes!
      */
 
+    load_static_colors(usr().inverse_colors());
     reset();
 }
 
@@ -268,55 +283,45 @@ gui_palette_qt5::~gui_palette_qt5 ()
     // Anything to do?
 }
 
-/**
- *  Provides an alternate color palette.  Inverse is not a complete inverse.  It
- *  is more like a "night" mode.  However, there are still some bright colors
- *  even in this mode.  Some colors, such as the selection color (orange) are
- *  the same in either mode.
- *
- * \param inverse
- *      If true, load the alternate palette.  Otherwise, load the default
- *      palette.
- */
-
 void
-gui_palette_qt5::load_inverse_palette (bool inverse)
+gui_palette_qt5::load_static_colors (bool inverse)
 {
-    if (inverse)
+    m_is_inverse = inverse;
+    if (! m_is_loaded)
     {
-        m_drum_paint    = Color("green");
-        m_grey_paint    = Color("grey");
-        m_dk_grey_paint = Color("light grey");
-        m_lt_grey_paint = Color("grey50");
-        m_blk_paint     = Color("white");
-        m_wht_paint     = Color("black");
-        m_blk_key_paint = Color("black");
-        m_wht_key_paint = Color("grey");
-        m_tempo_paint   = Color("magenta");
-#if defined SEQ66_USE_BLACK_SELECTION_BOX
-        m_sel_paint     = Color("white");
-#else
-        m_sel_paint     = Color("orange");
-#endif
-        m_is_inverse    = true;
-    }
-    else
-    {
-        m_drum_paint    = Color("red");
-        m_grey_paint    = Color("grey");
-        m_dk_grey_paint = Color("grey50");
-        m_lt_grey_paint = Color("light grey");
-        m_blk_paint     = Color("black");
-        m_wht_paint     = Color("white");
-        m_blk_key_paint = Color("black");
-        m_wht_key_paint = Color("white");
-        m_tempo_paint   = Color("magenta");     /* or dark magenta          */
-#if defined SEQ66_USE_BLACK_SELECTION_BOX
-        m_sel_paint     = Color("black");
-#else
-        m_sel_paint     = Color("orange");
-#endif
-        m_is_inverse    = false;
+        m_is_loaded = true;
+        m_black        = COLOR("black");
+        m_red          = COLOR("red");
+        m_green        = COLOR("green");
+        m_yellow       = COLOR("yellow");
+        m_blue         = COLOR("blue");
+        m_magenta      = COLOR("magenta");
+        m_cyan         = COLOR("cyan");
+        m_white        = COLOR("white");
+        m_dk_black     = COLOR("dark slate grey");
+        m_dk_red       = COLOR("dark red");
+        m_dk_green     = COLOR("dark green");
+        m_dk_yellow    = COLOR("dark yellow");
+        m_dk_blue      = COLOR("dark blue");
+        m_dk_magenta   = COLOR("dark magenta");
+        m_dk_cyan      = COLOR("dark cyan");
+        m_dk_white     = COLOR("grey");
+        m_orange       = COLOR("orange");
+        m_pink         = COLOR("pink");
+        m_color_18     = COLOR("pale green");
+        m_color_19     = COLOR("khaki");
+        m_color_20     = COLOR("light blue");
+        m_color_21     = COLOR("violet");
+        m_color_22     = COLOR("turquoise");
+        m_grey         = COLOR("grey");
+        m_dk_orange    = COLOR("dark orange");
+        m_dk_pink      = COLOR("deep pink");
+        m_color_26     = COLOR("sea green");
+        m_color_27     = COLOR("dark khaki");
+        m_color_28     = COLOR("dark slate blue");
+        m_color_29     = COLOR("dark violet");
+        m_lt_grey      = COLOR("light slate grey");
+        m_dk_grey      = COLOR("dark slate grey");
     }
 }
 
@@ -349,6 +354,13 @@ gui_palette_qt5::clear ()
     m_pen_palette.add(PaletteColor::none, m_black, "Black");
 }
 
+void
+gui_palette_qt5::clear_invertible ()
+{
+    m_nrm_palette.clear();
+    m_inv_palette.clear();
+}
+
 /**
  *  Adds all of the main palette colors in the PaletteColor enumeration into
  *  the palette contain.  The palette is meant to be used to color sequences
@@ -376,14 +388,14 @@ gui_palette_qt5::reset_backgrounds ()
     m_palette.add(PaletteColor::cyan,        m_cyan,     "Cyan");
     m_palette.add(PaletteColor::white,       m_white,    "White");
 
-    m_palette.add(PaletteColor::dk_black,    m_dk_black, "Dark Black");    // hmmmm
+    m_palette.add(PaletteColor::dk_black,    m_dk_black, "Dark Black");
     m_palette.add(PaletteColor::dk_red,      m_dk_red,   "Dark Red");
     m_palette.add(PaletteColor::dk_green,    m_dk_green, "Dark Green");
     m_palette.add(PaletteColor::dk_yellow,   m_yellow,   "Dark Yellow");
     m_palette.add(PaletteColor::dk_blue,     m_dk_blue,  "Dark Blue");
     m_palette.add(PaletteColor::dk_magenta,  m_dk_magenta, "Dark Magenta");
     m_palette.add(PaletteColor::dk_cyan,     m_dk_cyan,  "Dark Cyan");
-    m_palette.add(PaletteColor::dk_white,    m_dk_white, "Dark White");    // hmmmm
+    m_palette.add(PaletteColor::dk_white,    m_dk_white, "Dark White");
 
     m_palette.add(PaletteColor::orange,      m_orange,   "Orange");
     m_palette.add(PaletteColor::pink,        m_pink,     "Pink");
@@ -400,12 +412,12 @@ gui_palette_qt5::reset_backgrounds ()
     m_palette.add(PaletteColor::color_27,    m_color_27,  "Dark Khaki");
     m_palette.add(PaletteColor::color_28,    m_color_28,  "Dark Slate Blue");
     m_palette.add(PaletteColor::color_29,    m_color_29,  "Dark Violet");
-    m_palette.add(PaletteColor::color_30,    m_color_30,  "Dark Turquoise");
+    m_palette.add(PaletteColor::color_30,    m_lt_grey,   "Light Grey");
     m_palette.add(PaletteColor::dk_grey,     m_dk_grey,   "Dark Grey");
 }
 
 /**
- *  Sets pen/inverse colors,
+ *  Sets pen colors,
  */
 
 void
@@ -448,6 +460,36 @@ gui_palette_qt5::reset_pens ()
     m_pen_palette.add(PaletteColor::color_29,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::color_30,   m_black,   "Black");
     m_pen_palette.add(PaletteColor::dk_grey,    m_black,   "Black");
+}
+
+void
+gui_palette_qt5::reset_invertibles ()
+{
+    m_nrm_palette.clear();
+    m_nrm_palette.add(InvertibleColor::black,       m_black,    "Foreground");
+    m_nrm_palette.add(InvertibleColor::white,       m_white,    "Background");
+    m_nrm_palette.add(InvertibleColor::label,       m_black,    "Label");
+    m_nrm_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
+    m_nrm_palette.add(InvertibleColor::drum,        m_red,      "Drum");
+    m_nrm_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
+    m_nrm_palette.add(InvertibleColor::black_key,   m_black,    "Black Keys");
+    m_nrm_palette.add(InvertibleColor::white_key,   m_white,    "White Keys");
+    m_nrm_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
+    m_nrm_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
+    m_nrm_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
+
+    m_inv_palette.clear();
+    m_inv_palette.add(InvertibleColor::black,       m_white,    "Foreground");
+    m_inv_palette.add(InvertibleColor::white,       m_black,    "Background");
+    m_inv_palette.add(InvertibleColor::label,       m_white,    "Label");
+    m_inv_palette.add(InvertibleColor::selection,   m_yellow,   "Selection");
+    m_inv_palette.add(InvertibleColor::drum,        m_green,    "Drum");
+    m_inv_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
+    m_inv_palette.add(InvertibleColor::black_key,   m_white,    "Black Keys");
+    m_inv_palette.add(InvertibleColor::white_key,   m_black,    "White Keys");
+    m_inv_palette.add(InvertibleColor::grey,        m_lt_grey,  "Medium Line");
+    m_inv_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
+    m_inv_palette.add(InvertibleColor::lt_grey,     m_grey,   "Step Line");
 }
 
 /**
@@ -544,16 +586,34 @@ gui_palette_qt5::get_color_inverse (PaletteColor index) const
 }
 
 std::string
-gui_palette_qt5::make_color_stanza (PaletteColor index) const
+gui_palette_qt5::make_color_stanza (int number, bool inverse) const
 {
     std::string result;
-    if (index != PaletteColor::none)
+    if (number >= 0)
     {
-        int number = static_cast<int>(index);
-        gui_palette_qt5::Color backc = m_palette.get_color(index);
-        gui_palette_qt5::Color textc = m_pen_palette.get_color(index);
-        std::string bname = "\"" + get_color_name(index) + "\"";
-        std::string tname = "\"" + get_pen_color_name(index) + "\"";
+        gui_palette_qt5::Color backc;
+        gui_palette_qt5::Color textc;
+        std::string bname = "\"";
+        std::string tname = "\"";
+        if (inverse)
+        {
+            InvertibleColor index = static_cast<InvertibleColor>(number);
+            backc = m_nrm_palette.get_color(index);
+            textc = m_inv_palette.get_color(index);
+            bname += get_color_name(index);
+            tname += get_inv_color_name(index);
+        }
+        else
+        {
+            PaletteColor index = static_cast<PaletteColor>(number);
+            backc = m_palette.get_color(index);
+            textc = m_pen_palette.get_color(index);
+            bname += get_color_name(index);
+            tname += get_pen_color_name(index);
+        }
+        bname += "\"";
+        tname += "\"";
+
         int br, bg, bb, ba;
         int tr, tg, tb, ta;
         char temp[128];
@@ -582,44 +642,16 @@ gui_palette_qt5::make_color_stanza (PaletteColor index) const
  *  set to zero.  Room for expansion.
  */
 
-#if defined USE_PALLET_SSCANF
-
-static const char * const sg_scanf_fmt =
-    "%d \"%s\" [ %x ] \"%s\" [ %x ]";                       /* 0xAARRGGBB   */
-
-#endif
-
 bool
-gui_palette_qt5::add_color_stanza (const std::string & stanza)
+gui_palette_qt5::add_color_stanza (const std::string & stanza, bool inverse)
 {
-#if defined USE_PALLET_SSCANF
-    char backgn[32];
-    char textn[32];
-    int number;
-    unsigned backargb;
-    unsigned textargb;
-    int count = std::sscanf
-    (
-        stanza.c_str(), sg_scanf_fmt,
-        &number, backgn, &backargb, textn, &textargb
-    );
-    bool result = count == 5;
-    if (result)
-    {
-        std::string bname = backgn;
-        std::string tname = textn;
-        Color background(backargb);
-        Color foreground(textargb);
-        result = add(number, background, bname, foreground, tname);
-    }
-#else
-    std::string backname;
-    unsigned backargb;
-    std::string textname;
-    unsigned textargb;
     bool result = ! stanza.empty();
     if (result)
     {
+        std::string backname;
+        unsigned backargb;
+        std::string textname;
+        unsigned textargb;
         int number = std::stoi(stanza);     /* gets first column value  */
         std::string argb;
         std::string::size_type lpos = 0;
@@ -650,10 +682,22 @@ gui_palette_qt5::add_color_stanza (const std::string & stanza)
         {
             Color background(backargb);
             Color foreground(textargb);
-            result = add(number, background, backname, foreground, textname);
+            if (inverse)
+            {
+                result = add_invertible
+                (
+                    number, background, backname, foreground, textname
+                );
+            }
+            else
+            {
+                result = add
+                (
+                    number, background, backname, foreground, textname
+                );
+            }
         }
     }
-#endif
     return result;
 }
 
@@ -673,6 +717,35 @@ gui_palette_qt5::add
         if (result)
             result = m_pen_palette.add(index, fg, fgname);
     }
+    return result;
+}
+
+bool
+gui_palette_qt5::add_invertible
+(
+    int number,
+    const Color & bg, const std::string & bgname,
+    const Color & fg, const std::string & fgname
+)
+{
+    bool result = number >= 0;
+    if (result)
+    {
+        InvertibleColor index = static_cast<InvertibleColor>(number);
+        result = m_nrm_palette.add(index, bg, bgname);
+        if (result)
+            result = m_inv_palette.add(index, fg, fgname);
+    }
+    return result;
+}
+
+const gui_palette_qt5::Color &
+gui_palette_qt5::get_color (InvertibleColor index) const
+{
+    const Color & result = is_inverse() ?
+        m_inv_palette.get_color(index) :
+        m_nrm_palette.get_color(index) ;
+
     return result;
 }
 

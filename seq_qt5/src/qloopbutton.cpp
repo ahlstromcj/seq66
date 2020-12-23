@@ -355,8 +355,8 @@ void
 qloopbutton::setup ()
 {
     QPalette pal = palette();
-    int c = m_seq ? m_seq->color() : color_to_int(none) ;
-    if (c == color_to_int(black))
+    int c = m_seq ? m_seq->color() : palette_to_int(none) ;
+    if (c == palette_to_int(black))
     {
         pal.setColor(QPalette::Button, QColor(Qt::black));
         pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
@@ -472,10 +472,14 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     m_top_left.m_w, m_top_left.m_h
                 );
                 QString title(m_top_left.m_label.c_str());
-                QPen pen(Qt::black);
-                QBrush brush(Qt::black);
+                painter.setPen(label_paint());
+                painter.setFont(m_text_font);
 
-#if defined SEQ66_USE_BACKGROUND_ROLE_COLOR
+#if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
+
+                QPen pen(label_paint());
+                QBrush brush(Qt::black);
+                painter.setBrush(brush);
 
                 /*
                  * This call gets the background we painted, not the background
@@ -491,6 +495,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     trueback = gui_palette_qt5::calculate_inverse(trueback);
                     pen.setColor(trueback);
                 }
+                painter.setPen(pen);
 #endif
 
                 /*
@@ -499,9 +504,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                  * m_text_font.setPointSize(fontsize);
                  */
 
-                painter.setPen(pen);
-                painter.setBrush(brush);
-                painter.setFont(m_text_font);
                 painter.drawText(box, m_top_left.m_flags, title);
                 title = m_top_right.m_label.c_str();
                 box.setRect
@@ -608,7 +610,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     int c = m_seq->color();
 
 #if defined USE_COLOR_TO_INT_CALL_HERE
-    if (c == color_to_int(black))
+    if (c == palette_to_int(black))
     {
         pal.setColor(QPalette::Button, QColor(Qt::black));
         pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
@@ -685,7 +687,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         {
             if (! m_seq->transposable())
             {
-                pen.setColor(global_palette().drum_paint());
+                pen.setColor(drum_paint());
                 painter.setPen(pen);
             }
             if (m_fingerprint_size > 0)
@@ -724,13 +726,13 @@ qloopbutton::draw_pattern (QPainter & painter)
 
             if (m_seq->transposable())
             {
-                int c = m_seq ? m_seq->color() : color_to_int(none) ;
+                int c = m_seq ? m_seq->color() : palette_to_int(none) ;
                 gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
                 pen.setColor(pencolor);
             }
             else
             {
-                pen.setColor(global_palette().drum_paint());
+                pen.setColor(drum_paint());
             }
             pen.setWidth(1);
             m_seq->reset_draw_marker();                 /* reset iterator   */

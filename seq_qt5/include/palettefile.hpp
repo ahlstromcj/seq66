@@ -37,7 +37,6 @@
 #include <fstream>                      /* std::ofstream and ifstream       */
 
 #include "cfg/configfile.hpp"           /* seq66::configfile class          */
-#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -45,6 +44,8 @@
 
 namespace seq66
 {
+
+class gui_palette_qt5;
 
 /**
  *  Provides a file for reading and writing the application's mute-group

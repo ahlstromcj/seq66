@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-12-15
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -37,7 +37,6 @@
 #include <QPen>
 
 #include "qperfbase.hpp"                /* for constants and base class    */
-#include "gui_palette_qt5.hpp"
 #include "play/sequence.hpp"
 
 /*
@@ -53,7 +52,7 @@ namespace seq66
  * Sequence labels for the side of the song editor
  */
 
-class qperfnames final : public QWidget, gui_palette_qt5, qperfbase
+class qperfnames final : public QWidget, public qperfbase
 {
     friend class qperfeditframe64;
 

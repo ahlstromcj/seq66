@@ -42,7 +42,6 @@
 #include <QPushButton>
 #include <string>
 
-#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5::Color    */
 #include "play/seq.hpp"                 /* seq66::seq sequence-plus class   */
 
 /*

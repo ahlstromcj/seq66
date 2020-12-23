@@ -38,7 +38,6 @@
 
 #include <QFrame>
 
-#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5 base      */
 #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
@@ -60,7 +59,7 @@ namespace seq66
  *  sequences/loops/patterns.
  */
 
-class qslivebase : public QFrame, protected gui_palette_qt5
+class qslivebase : public QFrame
 {
     friend class qsmainwnd;
     friend class qliveframeex;

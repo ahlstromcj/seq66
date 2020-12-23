@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2020-12-22
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -50,7 +50,7 @@ namespace seq66
  *  Progress bar colors as integer codes.
  */
 
-enum class progress_colors
+enum class ProgressColors
 {
     black,
     dark_red,
@@ -88,7 +88,6 @@ enum class PaletteColor
     magenta,            //  5 PURPLE
     cyan,               //  6 PINK
     white,              //  7 ORANGE
-
     dk_black,           //  8 place-holder
     dk_red,             //  9 N/A
     dk_green,           // 10 N/A
@@ -97,7 +96,6 @@ enum class PaletteColor
     dk_magenta,         // 13 N/A
     dk_cyan,            // 14 N/A
     dk_white,           // 15 N/A
-
     orange,             // color_16
     pink,               // color_17
     color_18,
@@ -106,7 +104,6 @@ enum class PaletteColor
     color_21,
     color_22,
     grey,               // color_23
-
     dk_orange,          // color_24
     dk_pink,            // color_25
     color_26,
@@ -115,15 +112,36 @@ enum class PaletteColor
     color_29,
     color_30,
     dk_grey,            // color_31
+    maximum             // first illegal palette value, not in color set
+};
 
-    maximum             // first illegal value, not in color set
+/**
+ *  Provides indices into a list of colors that can be retrieved from a map of
+ *  normal colors or a map of inverse colors.  Supports the --inverse option.
+ */
+
+enum class InvertibleColor
+{
+    black,              /**< Used for foreground items like grid lines.     */
+    white,              /**< Used for background items (eg. drawing canvas. */
+    label,              /**< Used for labeling on pattern buttons/slots.    */
+    selection,          /**< Used to paint selected notes.                  */
+    drum,               /**< Used for non-transposable (drum) notes.        */
+    tempo,              /**< Painting for tempo events.                     */
+    black_key,          /**< Painting for the "black keys" on the piano.    */
+    white_key,          /**< Painting for the "white keys" on the piano.    */
+    grey,               /**< Medium grid lines.                             */
+    dk_grey,            /**< Heavy grid lines.                              */
+    lt_grey,            /**< Light grid lines.                              */
+    maximum             /**< First illegal palette value, not in color set. */
 };
 
 /**
  *  A macro to simplify converting a PaletteColor to a simple integer.
  */
 
-#define color_to_int(x)  static_cast<int>( PaletteColor :: x )
+#define palette_to_int(x)       static_cast<int>(PaletteColor :: x )
+#define inv_palette_to_int(x)   static_cast<int>(InvertibleColor :: x )
 
 /**
  *  A generic collection of whatever types of color classes (QColor,
@@ -153,9 +171,11 @@ private:
     /**
      *  Provides an associative container of pointers to the color-class COLOR.
      *  A vector could be used instead of a map.
+     *
+     *  std::map<PaletteColor, pair> m_container;
      */
 
-    std::map<PaletteColor, pair> m_container;
+    std::map<int, pair> m_container;
 
 public:
 
@@ -165,6 +185,11 @@ public:
     const COLOR & get_color (PaletteColor index) const;
     std::string get_color_name (PaletteColor index) const;
     std::string get_color_name_ex (PaletteColor index) const;
+
+    bool add (InvertibleColor index, const COLOR & c, const std::string & name);
+    const COLOR & get_color (InvertibleColor index) const;
+    std::string get_color_name (InvertibleColor index) const;
+    std::string get_color_name_ex (InvertibleColor index) const;
 
     /**
      * \param index
@@ -227,12 +252,13 @@ palette<COLOR>::add
     const std::string & colorname
 )
 {
+    int key = static_cast<int>(index);
     size_t count = m_container.size();
     pair colorspec;
     colorspec.ppt_color = color;
     colorspec.ppt_color_name = colorname;
 
-    auto p = std::make_pair(index, colorspec);
+    auto p = std::make_pair(key, colorspec);
     (void) m_container.insert(p);
     return m_container.size() == (count + 1);
 }
@@ -256,11 +282,13 @@ palette<COLOR>::get_color (PaletteColor index) const
 {
     if (index >= PaletteColor::black && index < PaletteColor::maximum)
     {
-        return m_container.at(index).ppt_color;
+        int key = static_cast<int>(index);
+        return m_container.at(key).ppt_color;
     }
     else
     {
-        return m_container.at(PaletteColor::none).ppt_color;
+        int key = palette_to_int(none);
+        return m_container.at(key).ppt_color;
     }
 }
 
@@ -270,17 +298,75 @@ palette<COLOR>::get_color_name (PaletteColor index) const
 {
     if (index >= PaletteColor::black && index < PaletteColor::maximum)
     {
-        return m_container.at(index).ppt_color_name;
+        int key = static_cast<int>(index);
+        return m_container.at(key).ppt_color_name;
     }
     else
     {
-        return m_container.at(PaletteColor::none).ppt_color_name;
+        int key = palette_to_int(none);
+        return m_container.at(key).ppt_color_name;
     }
 }
 
 template <typename COLOR>
 std::string
 palette<COLOR>::get_color_name_ex (PaletteColor index) const
+{
+    std::string result = std::to_string(static_cast<int>(index));
+    result += " ";
+    result += get_color_name(index);
+    return result;
+}
+
+template <typename COLOR>
+bool
+palette<COLOR>::add
+(
+    InvertibleColor index,
+    const COLOR & color,
+    const std::string & colorname
+)
+{
+    int key = static_cast<int>(index);
+    size_t count = m_container.size();
+    pair colorspec;
+    colorspec.ppt_color = color;
+    colorspec.ppt_color_name = colorname;
+
+    auto p = std::make_pair(key, colorspec);
+    (void) m_container.insert(p);
+    return m_container.size() == (count + 1);
+}
+
+template <typename COLOR>
+const COLOR &
+palette<COLOR>::get_color (InvertibleColor index) const
+{
+    if (index >= InvertibleColor::black && index < InvertibleColor::maximum)
+    {
+        int key = static_cast<int>(index);
+        return m_container.at(key).ppt_color;
+    }
+    else
+        return m_container.at(0).ppt_color;
+}
+
+template <typename COLOR>
+std::string
+palette<COLOR>::get_color_name (InvertibleColor index) const
+{
+    if (index >= InvertibleColor::black && index < InvertibleColor::maximum)
+    {
+        int key = static_cast<int>(index);
+        return m_container.at(key).ppt_color_name;
+    }
+    else
+        return m_container.at(0).ppt_color_name;
+}
+
+template <typename COLOR>
+std::string
+palette<COLOR>::get_color_name_ex (InvertibleColor index) const
 {
     std::string result = std::to_string(static_cast<int>(index));
     result += " ";

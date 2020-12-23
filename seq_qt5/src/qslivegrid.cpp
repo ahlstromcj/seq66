@@ -74,6 +74,7 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
+#include "gui_palette_qt5.hpp"
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid (qsliveframe)  */
@@ -1334,8 +1335,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
-        int firstcolor = color_to_int(none);
-        int lastcolor = color_to_int(white);
+        int firstcolor = palette_to_int(none);
+        int lastcolor = palette_to_int(white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1350,8 +1351,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu2Colour = new QMenu(tr("Dark colors"));
-        firstcolor = color_to_int(dk_black);
-        lastcolor = color_to_int(dk_white);
+        firstcolor = palette_to_int(dk_black);
+        lastcolor = palette_to_int(dk_white);
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1366,8 +1367,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu3Colour = new QMenu(tr("Other colors"));
-        firstcolor = color_to_int(orange);                  /* color_16 */
-        lastcolor = color_to_int(grey);                     /* color_23 */
+        firstcolor = palette_to_int(orange);                /* color_16 */
+        lastcolor = palette_to_int(grey);                   /* color_23 */
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
@@ -1382,8 +1383,8 @@ qslivegrid::popup_menu ()
         }
 
         QMenu * menu4Colour = new QMenu(tr("More colors"));
-        firstcolor = color_to_int(dk_orange);               /* color_24 */
-        lastcolor = color_to_int(dk_grey);                  /* color_31 */
+        firstcolor = palette_to_int(dk_orange);             /* color_24 */
+        lastcolor = palette_to_int(dk_grey);                /* color_31 */
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);

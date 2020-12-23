@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-26
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -46,6 +46,7 @@
 #include <QMouseEvent>
 
 #include "play/performer.hpp"
+#include "gui_palette_qt5.hpp"
 #include "qperfnames.hpp"
 
 const int s_pointsize = 7;
@@ -65,7 +66,6 @@ namespace seq66
 qperfnames::qperfnames (performer & p, QWidget * parent)
  :
     QWidget             (parent),
-    gui_palette_qt5     (),
     qperfbase           (p),
     m_font              ("Monospace"),
     m_nametext_x        (6 * 2 + 6 * 20),       // not used!
@@ -172,7 +172,9 @@ qperfnames::paintEvent (QPaintEvent *)
                 else
                 {
                     int c = s->color();
-                    Color backcolor = get_color_fix(PaletteColor(c));
+                    gui_palette_qt5::Color backcolor =
+                        get_color_fix(PaletteColor(c));
+
                     brush.setColor(Qt::white);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);

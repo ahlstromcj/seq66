@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-11-28
+ * \updates       2020-12-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -44,9 +44,10 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
+#include "gui_palette_qt5.hpp"
 #include "qperfeditframe64.hpp"
 #include "qperfroll.hpp"
-#include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -76,7 +77,6 @@ qperfroll::qperfroll
     QWidget * parent
 ) :
     QWidget             (parent),
-    gui_palette_qt5     (),
     qperfbase
     (
         p, zoom, snap, c_names_y, c_names_y * p.sequence_max()
@@ -842,7 +842,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                      */
 
                     int c = perf().color(seqid);
-                    Color backcolor = get_color_fix(PaletteColor(c));
+                    gui_palette_qt5::Color backcolor =
+                        get_color_fix(PaletteColor(c));
 
                     /*
                      * Reduce the strength of this color.  Not sure why

@@ -330,15 +330,15 @@ sequence::color (int c)
 }
 
 /**
- * If empty, sets the color to classic Sequencer64 yellow.  Called by
- * performer when installing a sequence.
+ *  If empty, sets the color to classic Sequencer64 yellow.  Called by
+ *  performer when installing a sequence.
  */
 
 void
 sequence::empty_coloring ()
 {
     if (event_count() == 0)
-        (void) color(color_to_int(yellow));
+        (void) color(palette_to_int(yellow));
 }
 
 /**
