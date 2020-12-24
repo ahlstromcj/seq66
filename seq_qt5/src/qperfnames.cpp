@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -172,9 +172,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 else
                 {
                     int c = s->color();
-                    gui_palette_qt5::Color backcolor =
-                        get_color_fix(PaletteColor(c));
-
+                    Color backcolor = get_color_fix(PaletteColor(c));
                     brush.setColor(Qt::white);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);

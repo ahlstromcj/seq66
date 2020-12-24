@@ -1,7 +1,7 @@
 # Seq66 0.91.4 (and above) palette configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.palette
-# Written on 2020-12-22 08:35:36
+# Written on 2020-12-24 07:28:13
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -59,8 +59,28 @@ look empty with a space.
 27       "Dark Khaki" [ 0xFFBDB76B ]            "Black" [ 0xFF000000 ]
 28  "Dark Slate Blue" [ 0xFF483D8B ]            "Black" [ 0xFF000000 ]
 29      "Dark Violet" [ 0xFF9400D3 ]            "Black" [ 0xFF000000 ]
-30   "Dark Turquoise" [ 0xFF00CED1 ]            "Black" [ 0xFF000000 ]
-31        "Dark Grey" [ 0xFFA9A9A9 ]            "Black" [ 0xFF000000 ]
+30       "Light Grey" [ 0xFF778899 ]            "Black" [ 0xFF000000 ]
+31        "Dark Grey" [ 0xFF2F4F4F ]            "Black" [ 0xFF000000 ]
+
+# Similar to the [palette] section, but applies to UI elements and to
+# the --inverse color option.  The first integer is the color number,
+# ranging from 0 to 11. The names are feature names, not color names.
+
+[ui-palette]
+
+ 0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
+ 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
+ 2            "Label" [ 0xFF000000 ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
+ 4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
+ 5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
+ 6       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
+ 7       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
+ 8     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFF000080 ]
+ 9     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
+10      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
+11        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
+12        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66.palette
 #

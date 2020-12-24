@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-12-23
+ * \updates       2019-12-24
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -50,55 +50,19 @@ namespace seq66
 {
 
 /**
+ *  Provides a type for the color object for the GUI framework.
+ */
+
+using Color = QColor;
+
+/**
  *  Implements a stock palette of QColor elements.
  */
 
 class gui_palette_qt5 : public basesettings
 {
 
-public:
-
-    /**
-     *  Provides a type for the color object.  These uses are made of
-     *  each color:
-     *
-     *  -   Black.  The background color of armed patterns.  The color of
-     *      most lines in the user interface, including the main grid
-     *      lines.  The default color of progress lines and text.
-     *  -   White.  The default background color of just about everything
-     *      drawn in the application.
-     *  -   Grey.  The color of minor grid lines and the markers for the
-     *      currently-selected scale.
-     *  -   Dark grey.  The color of some grid lines, and the background
-     *      of a queued pattern slot.
-     *  -   Light grey.  The color of some grid lines.
-     *  -   Red.  The optional color of progress bars.
-     *  -   Orange.  The fill-in color for selected notes and events.
-     *  -   Dark orange.  The color of selected event data lines and the
-     *      color of the selection box for events to be pasted.
-     *  -   Yellow.  The background of the pattern and name slots for empty
-     *      patterns.  The text color for selected empty pattern slots.
-     *  -   Green.  Not yet used.
-     *  -   Blue.   Not yet used.
-     *  -   Dark cyan.  The background color of muted patterns currently in
-     *      edit, or the pattern that contains the original data for an
-     *      imported SMF 0 song.  The text color of an unmuted pattern
-     *      currently in edit.  These colors apply to the pattern editor and
-     *      the song editor.  The color of the selected background pattern
-     *      in the song editor.
-     *  -   Line color. The generic line color, meant for expansion.
-     *      Currently black.
-     *  -   Progress color. The progress line color.  Black by default, but
-     *      can be set to red.
-     *  -   Background color.  The currently-in-use background color.  Can
-     *      vary a lot when a pixmap is being redrawn.
-     *  -   Foreground color.  The currently-in-use foreground color.  Can
-     *      vary a lot when a pixmap is being redrawn.
-     */
-
-    using Color = QColor;
-
-protected:
+private:
 
     /**
      *  Holds the color palette for drawing on slot backgrounds.
@@ -132,24 +96,13 @@ protected:
      *
      */
 
-    bool m_is_loaded;
+    bool m_statics_are_loaded;
 
     /**
      *  Flags the presence of the inverse color palette.
      */
 
     bool m_is_inverse;
-
-private:                            /* use the accessor functions           */
-
-    /*
-     * Non-static member colors.
-     */
-
-    Color m_line_color;             /**< Provides the line color.           */
-    Color m_progress_color;         /**< Provides the progress bar color.   */
-    Color m_bg_color;               /**< The current background color.      */
-    Color m_fg_color;               /**< The current foreground color.      */
 
 public:
 
@@ -290,18 +243,20 @@ private:
  */
 
 extern gui_palette_qt5 & global_palette ();
-extern gui_palette_qt5::Color get_color_fix (PaletteColor index);
-extern gui_palette_qt5::Color get_pen_color (PaletteColor index);
-extern gui_palette_qt5::Color background_paint ();
-extern gui_palette_qt5::Color foreground_paint ();
-extern gui_palette_qt5::Color label_paint ();
-extern gui_palette_qt5::Color sel_paint ();
-extern gui_palette_qt5::Color drum_paint ();
-extern gui_palette_qt5::Color tempo_paint ();
-extern gui_palette_qt5::Color black_key_paint ();
-extern gui_palette_qt5::Color white_key_paint ();
-extern gui_palette_qt5::Color beat_paint ();
-extern gui_palette_qt5::Color step_paint ();
+extern Color get_color_fix (PaletteColor index);
+extern Color get_pen_color (PaletteColor index);
+extern Color background_paint ();
+extern Color foreground_paint ();
+extern Color label_paint ();
+extern Color sel_paint ();
+extern Color drum_paint ();
+extern Color tempo_paint ();
+extern Color black_key_paint ();
+extern Color white_key_paint ();
+extern Color progress_paint ();
+extern Color backseq_paint ();
+extern Color beat_paint ();
+extern Color step_paint ();
 extern std::string get_color_name_ex (PaletteColor index);
 extern bool no_color (int c);
 

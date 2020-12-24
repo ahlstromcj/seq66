@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -842,8 +842,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                      */
 
                     int c = perf().color(seqid);
-                    gui_palette_qt5::Color backcolor =
-                        get_color_fix(PaletteColor(c));
+                    Color backcolor = get_color_fix(PaletteColor(c));
 
                     /*
                      * Reduce the strength of this color.  Not sure why

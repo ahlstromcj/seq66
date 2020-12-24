@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-20
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -344,7 +344,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->playing())              /* playing, no queueing */
             {
-                gui_palette_qt5::Color backcolor(Qt::black);
+                Color backcolor(Qt::black);
                 brush.setColor(backcolor);
                 pen.setColor(Qt::white);
                 painter.setBrush(brush);
@@ -360,7 +360,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else                                /* just not playing     */
             {
-                gui_palette_qt5::Color backcolor(Qt::white);
+                Color backcolor(Qt::white);
                 brush.setColor(backcolor);
                 pen.setColor(Qt::black);
                 painter.setBrush(brush);
@@ -379,7 +379,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             pen.setStyle(Qt::SolidLine);
             if (s->playing() && (s->get_queued() || s->off_from_snap()))
             {
-                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+                Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -391,7 +391,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->playing())              /* playing, no queueing */
             {
-                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+                Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -401,7 +401,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->get_queued())           /* not playing, queued  */
             {
-                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+                Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(180);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -413,7 +413,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else if (s->one_shot())             /* one-shot queued      */
             {
-                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+                Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(180);
                 brush.setColor(backcolor);
                 pen.setWidth(penwidth);
@@ -425,7 +425,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
             else                                /* just not playing     */
             {
-                gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+                Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(100);        /* .setAlpha(180)       */
                 brush.setColor(backcolor);
                 pen.setStyle(Qt::NoPen);
@@ -492,8 +492,8 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
          * Draws the inner box of the pattern slot.
          */
 
-        gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
-        gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
+        Color backcolor = get_color_fix(PaletteColor(c));
+        Color pencolor = get_pen_color(PaletteColor(c));
         if (m_gtkstyle_border)
         {
             brush.setColor(backcolor);
@@ -558,8 +558,8 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         {
             int height = highest - lowest + 2;
             int length = s->get_length();
-            gui_palette_qt5::Color drawcolor = pencolor;
-            gui_palette_qt5::Color eventcolor = pencolor;
+            Color drawcolor = pencolor;
+            Color eventcolor = pencolor;
             if (! s->transposable())
             {
                 eventcolor = drum_paint();

@@ -17,9 +17,7 @@ version = 0
 
 [comments]
 
-Comments added to this section are preserved.  Lines starting with
-a '#' or '[', or that are blank, are ignored.  Start lines that must
-look empty with a space.
+This provides a greyscale palette where alternate patterns are distinguishable.
 
 # The first integer is the color number, ranging from 0 to 31. The
 # first string is the name of the background color.  The first
@@ -61,6 +59,26 @@ look empty with a space.
 29          "Grey 30" [ 0xFFF0F0F0 ]            "Black" [ 0xFF000000 ]
 30          "Grey 15" [ 0xFF787878 ]            "White" [ 0xFFFFFFFF ]
 31            "White" [ 0xFFFFFFFF ]            "Black" [ 0xFF000000 ]
+
+# Similar to the [palette] section, but applies to UI elements and to
+# the --inverse color option.  The first integer is the color number,
+# ranging from 0 to 11. The names are feature names, not color names.
+
+[ui-palette]
+
+ 0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
+ 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
+ 2            "Label" [ 0xFF000000 ]            "Label" [ 0xFFFFFFFF ]
+ 3        "Selection" [ 0xFF2F4F4F ]        "Selection" [ 0xFF808080 ]
+ 4             "Drum" [ 0xFF202020 ]             "Drum" [ 0xFF404040 ]
+ 5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
+ 6       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
+ 7       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
+ 8     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFFFFFFFF ]
+ 9     "Back Pattern" [ 0xFF8B8B8B ]     "Back Pattern" [ 0xFF8B8B8B ]
+10      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
+11        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
+12        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66-alt-gray.palette
 #

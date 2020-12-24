@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -45,7 +45,6 @@
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqframe.hpp"                /* interface class for seqedits     */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
-#include "gui_palette_qt5.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -676,16 +675,20 @@ qseqroll::draw_notes
                 length_add = 1;
             }
             pen.setColor(Qt::black);
-            if (background)                     // draw background note
+            if (background)                         // draw background note
             {
                 length_add = 1;
-                pen.setColor(Qt::darkCyan);     // note border color
+                pen.setColor(Qt::darkCyan);         // note border color
                 brush.setColor(Qt::darkCyan);
+                // pen.setColor(back_color());         // note border color
+                // brush.setColor(back_color());
             }
             else
             {
                 pen.setColor(Qt::black);        // note border color
                 brush.setColor(Qt::black);
+                // pen.setColor(fore_color());        // note border color
+                // brush.setColor(fore_color());
             }
 
             brush.setStyle(Qt::SolidPattern);
@@ -710,7 +713,7 @@ qseqroll::draw_notes
             if (m_note_width > 3)
             {
                 if (ni.selected())
-                    brush.setColor("orange");       /* always orange */
+                    brush.setColor(sel_paint());    /* was just "orange"    */
                 else
                     brush.setColor(Qt::white);
 
@@ -769,12 +772,12 @@ qseqroll::draw_drum_note (QPainter & painter)
     painter.drawPolygon(points, 4);
 
     /*
-     * Draw note highlight.
-
-    if (ni.selected())
-        brush.setColor("orange");       // Qt::red
-    else if (m_edit_mode == sequence::editmode::drum)
-        brush.setColor(Qt::red);
+     * Draw note highlight.  Not really useful, save time by ignoring.
+     *
+     * if (ni.selected())
+     *     brush.setColor("orange");       // Qt::red
+     * else if (m_edit_mode == sequence::editmode::drum)
+     *     brush.setColor(Qt::red);
      */
 }
 

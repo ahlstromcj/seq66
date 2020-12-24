@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-18
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  This module is inspired by MidiPerformance::getSequenceColor() in
@@ -130,6 +130,8 @@ enum class InvertibleColor
     tempo,              /**< Painting for tempo events.                     */
     black_key,          /**< Painting for the "black keys" on the piano.    */
     white_key,          /**< Painting for the "white keys" on the piano.    */
+    progress,           /**< Painting for the progress bar.                 */
+    backseq,            /**< Painting for the background sequencce.         */
     grey,               /**< Medium grid lines.                             */
     dk_grey,            /**< Heavy grid lines.                              */
     lt_grey,            /**< Light grid lines.                              */

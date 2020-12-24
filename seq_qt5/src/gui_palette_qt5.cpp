@@ -24,17 +24,53 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
  *  change drawing of the lines and pixmaps, opening up the way for night
  *  views and color schemes that match the desktop theme.
  *
- *  There are 19 predefined QColor objects: white, black, red, darkRed, green,
+ *  There are some predefined QColor objects: white, black, red, darkRed, green,
  *  darkGreen, blue, darkBlue, cyan, darkCyan, magenta, darkMagenta, yellow,
  *  darkYellow, gray, darkGray, lightGray, color0 and color1, accessible as
- *  members of the Qt namespace (ie. Qt::red).
+ *  members of the Qt namespace (ie. Qt::red).  Many of these colors can now be
+ *  modified from a 'palette' file.
+ *
+ *  These uses are made of each color:
+ *
+ *  -   Black.  The background color of armed patterns.  The color of
+ *      most lines in the user interface, including the main grid
+ *      lines.
+ *  -   White.  The default background color of just about everything
+ *      drawn in the application.
+ *  -   Grey.  The color of minor grid lines and the markers for the
+ *      currently-selected scale.
+ *  -   Dark grey.  The color of some grid lines, and the background
+ *      of a queued pattern slot.
+ *  -   Light grey.  The color of some grid lines.
+ *  -   Red.  The optional color of progress bars.
+ *  -   Orange.  The fill-in color for selected notes and events.
+ *  -   Dark orange.  The color of selected event data lines and the
+ *      color of the selection box for events to be pasted.
+ *  -   Yellow.  The background of the pattern and name slots for empty
+ *      patterns.  The text color for selected empty pattern slots.
+ *  -   Green.  Not yet used.
+ *  -   Blue.   Not yet used.
+ *  -   Dark cyan.  The background color of muted patterns currently in
+ *      edit, or the pattern that contains the original data for an
+ *      imported SMF 0 song.  The text color of an unmuted pattern
+ *      currently in edit.  These colors apply to the pattern editor and
+ *      the song editor.  The color of the selected background pattern
+ *      in the song editor.
+ *  -   Line color. The generic line color, meant for expansion.
+ *      Currently black.
+ *  -   Progress color. The progress line color.  Black by default, but
+ *      can be set to other colors.
+ *  -   Background color.  The currently-in-use background color.  Can
+ *      vary a lot when a pixmap is being redrawn.
+ *  -   Foreground color.  The currently-in-use foreground color.  Can
+ *      vary a lot when a pixmap is being redrawn.
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() or seq66::usr()      */
@@ -42,8 +78,6 @@
 #include "util/basic_macros.hpp"        /* seq66::file_error() function     */
 #include "util/palette.hpp"             /* enum class ProgressColors        */
 #include "util/strfunctions.hpp"        /* seq66 string functions           */
-
-#define COLOR     gui_palette_qt5::Color
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -66,13 +100,13 @@ global_palette ()
     return s_pallete;
 }
 
-gui_palette_qt5::Color
+Color
 get_color_fix (PaletteColor index)
 {
     return global_palette().get_color_fix(index);
 }
 
-gui_palette_qt5::Color
+Color
 get_pen_color (PaletteColor index)
 {
     return global_palette().get_pen_color(index);
@@ -95,7 +129,7 @@ no_color (int c)
  *  Foreground paint uses the invertible color for black.
  */
 
-gui_palette_qt5::Color
+Color
 foreground_paint ()
 {
     return global_palette().get_color(InvertibleColor::black);
@@ -105,61 +139,73 @@ foreground_paint ()
  *  Background paint uses the invertible color for white.
  */
 
-gui_palette_qt5::Color
+Color
 background_paint ()
 {
     return global_palette().get_color(InvertibleColor::white);
 }
 
-gui_palette_qt5::Color
+Color
 label_paint ()
 {
-    gui_palette_qt5::Color r =
+    Color r =
         global_palette().get_color(InvertibleColor::label);
     return r;
 }
 
-gui_palette_qt5::Color
+Color
 sel_paint ()
 {
     return global_palette().get_color(InvertibleColor::selection);
 }
 
-gui_palette_qt5::Color
+Color
 drum_paint ()
 {
     return global_palette().get_color(InvertibleColor::drum);
 }
 
-gui_palette_qt5::Color
+Color
 tempo_paint ()
 {
     return global_palette().get_color(InvertibleColor::tempo);
 }
 
-gui_palette_qt5::Color
+Color
 black_key_paint ()
 {
     return global_palette().get_color(InvertibleColor::black_key);
 }
 
-gui_palette_qt5::Color
+Color
 white_key_paint ()
 {
     return global_palette().get_color(InvertibleColor::white_key);
+}
+
+Color
+progress_paint ()
+{
+    return global_palette().get_color(InvertibleColor::progress);
+}
+
+Color
+backseq_paint ()
+{
+    return global_palette().get_color(InvertibleColor::backseq);
 }
 
 /**
  *  Beat paint uses the grey_paint.  Invertible, but the same color?
  */
 
-gui_palette_qt5::Color
+Color
 beat_paint ()
 {
     return global_palette().get_color(InvertibleColor::dk_grey);
 }
 
-gui_palette_qt5::Color
+Color
 step_paint ()
 {
     return global_palette().get_color(InvertibleColor::lt_grey);
@@ -169,49 +215,49 @@ step_paint ()
  * Bright constant colors
  */
 
-static COLOR m_black;
-static COLOR m_red;
-static COLOR m_green;
-static COLOR m_yellow;
-static COLOR m_blue;
-static COLOR m_magenta;
-static COLOR m_cyan;
-static COLOR m_white;
+static Color m_black;
+static Color m_red;
+static Color m_green;
+static Color m_yellow;
+static Color m_blue;
+static Color m_magenta;
+static Color m_cyan;
+static Color m_white;
 
 /**
  * Dark staticant colors
  */
 
-static COLOR m_dk_black;
-static COLOR m_dk_red;
-static COLOR m_dk_green;
-static COLOR m_dk_yellow;
-static COLOR m_dk_blue;
-static COLOR m_dk_magenta;
-static COLOR m_dk_cyan;
-static COLOR m_dk_white;
+static Color m_dk_black;
+static Color m_dk_red;
+static Color m_dk_green;
+static Color m_dk_yellow;
+static Color m_dk_blue;
+static Color m_dk_magenta;
+static Color m_dk_cyan;
+static Color m_dk_white;
 
 /**
  * Extended colors in the palette.
  */
 
-static COLOR m_orange;
-static COLOR m_pink;
-static COLOR m_color_18;
-static COLOR m_color_19;
-static COLOR m_color_20;
-static COLOR m_color_21;
-static COLOR m_color_22;
-static COLOR m_grey;
+static Color m_orange;
+static Color m_pink;
+static Color m_color_18;
+static Color m_color_19;
+static Color m_color_20;
+static Color m_color_21;
+static Color m_color_22;
+static Color m_grey;
 
-static COLOR m_dk_orange;
-static COLOR m_dk_pink;
-static COLOR m_color_26;
-static COLOR m_color_27;
-static COLOR m_color_28;
-static COLOR m_color_29;
-static COLOR m_lt_grey;
-static COLOR m_dk_grey;
+static Color m_dk_orange;
+static Color m_dk_pink;
+static Color m_color_26;
+static Color m_color_27;
+static Color m_color_28;
+static Color m_color_29;
+static Color m_lt_grey;
+static Color m_dk_grey;
 
 /**
  *  Principal constructor.  In the constructor one can only allocate colors;
@@ -222,55 +268,15 @@ static COLOR m_dk_grey;
 
 gui_palette_qt5::gui_palette_qt5 (const std::string & filename)
  :
-    basesettings        (filename),
-    m_palette           (),
-    m_pen_palette       (),
-    m_nrm_palette       (),
-    m_inv_palette       (),
-    m_is_inverse        (false),
-    m_is_loaded         (false),
-    m_line_color        (Color("dark cyan")),           // alternative to black
-    m_progress_color    (Color("black")),
-    m_bg_color          (),
-    m_fg_color          ()
+    basesettings            (filename),
+    m_palette               (),
+    m_pen_palette           (),
+    m_nrm_palette           (),
+    m_inv_palette           (),
+    m_statics_are_loaded    (false),
+    m_is_inverse            (false)
 {
-    int colorcode = usr().progress_bar_colored();
-    switch (colorcode)
-    {
-    case static_cast<int>(ProgressColors::black):
-        m_progress_color = m_black;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_red):
-        m_progress_color = m_dk_red;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_green):
-        m_progress_color = m_dk_green;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_orange):
-        m_progress_color = m_dk_orange;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_blue):
-        m_progress_color = m_dk_blue;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_magenta):
-        m_progress_color = m_dk_magenta;
-        break;
-
-    case static_cast<int>(ProgressColors::dark_cyan):
-        m_progress_color = m_dk_cyan;
-        break;
-    }
-
-    /*
-     * Fill in the slot and pen palettes!
-     */
-
-    load_static_colors(usr().inverse_colors());
+    load_static_colors(usr().inverse_colors());     /* this must come first */
     reset();
 }
 
@@ -287,41 +293,41 @@ void
 gui_palette_qt5::load_static_colors (bool inverse)
 {
     m_is_inverse = inverse;
-    if (! m_is_loaded)
+    if (! m_statics_are_loaded)
     {
-        m_is_loaded = true;
-        m_black        = COLOR("black");
-        m_red          = COLOR("red");
-        m_green        = COLOR("green");
-        m_yellow       = COLOR("yellow");
-        m_blue         = COLOR("blue");
-        m_magenta      = COLOR("magenta");
-        m_cyan         = COLOR("cyan");
-        m_white        = COLOR("white");
-        m_dk_black     = COLOR("dark slate grey");
-        m_dk_red       = COLOR("dark red");
-        m_dk_green     = COLOR("dark green");
-        m_dk_yellow    = COLOR("dark yellow");
-        m_dk_blue      = COLOR("dark blue");
-        m_dk_magenta   = COLOR("dark magenta");
-        m_dk_cyan      = COLOR("dark cyan");
-        m_dk_white     = COLOR("grey");
-        m_orange       = COLOR("orange");
-        m_pink         = COLOR("pink");
-        m_color_18     = COLOR("pale green");
-        m_color_19     = COLOR("khaki");
-        m_color_20     = COLOR("light blue");
-        m_color_21     = COLOR("violet");
-        m_color_22     = COLOR("turquoise");
-        m_grey         = COLOR("grey");
-        m_dk_orange    = COLOR("dark orange");
-        m_dk_pink      = COLOR("deep pink");
-        m_color_26     = COLOR("sea green");
-        m_color_27     = COLOR("dark khaki");
-        m_color_28     = COLOR("dark slate blue");
-        m_color_29     = COLOR("dark violet");
-        m_lt_grey      = COLOR("light slate grey");
-        m_dk_grey      = COLOR("dark slate grey");
+        m_statics_are_loaded = true;
+        m_black        = Color("black");
+        m_red          = Color("red");
+        m_green        = Color("green");
+        m_yellow       = Color("yellow");
+        m_blue         = Color("blue");
+        m_magenta      = Color("magenta");
+        m_cyan         = Color("cyan");
+        m_white        = Color("white");
+        m_dk_black     = Color("dark slate grey");
+        m_dk_red       = Color("dark red");
+        m_dk_green     = Color("dark green");
+        m_dk_yellow    = Color("dark yellow");
+        m_dk_blue      = Color("dark blue");
+        m_dk_magenta   = Color("dark magenta");
+        m_dk_cyan      = Color("dark cyan");
+        m_dk_white     = Color("grey");
+        m_orange       = Color("orange");
+        m_pink         = Color("pink");
+        m_color_18     = Color("pale green");
+        m_color_19     = Color("khaki");
+        m_color_20     = Color("light blue");
+        m_color_21     = Color("violet");
+        m_color_22     = Color("turquoise");
+        m_grey         = Color("grey");
+        m_dk_orange    = Color("dark orange");
+        m_dk_pink      = Color("deep pink");
+        m_color_26     = Color("sea green");
+        m_color_27     = Color("dark khaki");
+        m_color_28     = Color("dark slate blue");
+        m_color_29     = Color("dark violet");
+        m_lt_grey      = Color("light slate grey");
+        m_dk_grey      = Color("dark slate grey");
     }
 }
 
@@ -329,7 +335,7 @@ gui_palette_qt5::load_static_colors (bool inverse)
  *  Static function to invert a given Color.
  */
 
-gui_palette_qt5::Color
+Color
 gui_palette_qt5::calculate_inverse (const Color & c)
 {
     int r, g, b, a;
@@ -337,7 +343,7 @@ gui_palette_qt5::calculate_inverse (const Color & c)
     r = a - r;
     g = a - g;
     b = a - b;
-    return gui_palette_qt5::Color(r, g, b, a);
+    return Color(r, g, b, a);
 }
 
 /**
@@ -474,6 +480,8 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
     m_nrm_palette.add(InvertibleColor::black_key,   m_black,    "Black Keys");
     m_nrm_palette.add(InvertibleColor::white_key,   m_white,    "White Keys");
+    m_nrm_palette.add(InvertibleColor::progress,    m_black,    "Progress Bar");
+    m_nrm_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
     m_nrm_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
     m_nrm_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
     m_nrm_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
@@ -487,9 +495,11 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
     m_inv_palette.add(InvertibleColor::black_key,   m_white,    "Black Keys");
     m_inv_palette.add(InvertibleColor::white_key,   m_black,    "White Keys");
+    m_inv_palette.add(InvertibleColor::progress,    m_green,    "Progress Bar");
+    m_inv_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
     m_inv_palette.add(InvertibleColor::grey,        m_lt_grey,  "Medium Line");
     m_inv_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
-    m_inv_palette.add(InvertibleColor::lt_grey,     m_grey,   "Step Line");
+    m_inv_palette.add(InvertibleColor::lt_grey,     m_grey,     "Step Line");
 }
 
 /**
@@ -511,14 +521,14 @@ gui_palette_qt5::reset_invertibles ()
  *      Value (a.k.a. brightness), defaults to 1, in the range 0..1.
  */
 
-gui_palette_qt5::Color
+Color
 gui_palette_qt5::get_color_ex
 (
     PaletteColor index,
     double h, double s, double v
 ) const
 {
-    gui_palette_qt5::Color c = m_palette.get_color(index);
+    Color c = m_palette.get_color(index);
     c.setHsv(c.hue() * h, c.saturation() * s, c.value() *  v);
     return c;
 }
@@ -535,7 +545,7 @@ gui_palette_qt5::get_color_ex
  *      "white" is returned.
  */
 
-gui_palette_qt5::Color
+Color
 gui_palette_qt5::get_color_fix (PaletteColor index) const
 {
     if (m_palette.no_color(index))
@@ -544,7 +554,7 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
     }
     else
     {
-        gui_palette_qt5::Color c = m_palette.get_color(index);
+        Color c = m_palette.get_color(index);
         if (c.value() != 255)
             c.setHsv(c.hue(), c.saturation() * 0.65, c.value());    // * 1.2);
 
@@ -568,12 +578,12 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
  *      Returns a copy of the inverted color.
  */
 
-gui_palette_qt5::Color
+Color
 gui_palette_qt5::get_color_inverse (PaletteColor index) const
 {
     if (index != PaletteColor::none)
     {
-        gui_palette_qt5::Color c = m_palette.get_color(index);
+        Color c = m_palette.get_color(index);
         int r, g, b, a;
         c.getRgb(&r, &g, &b, &a);
         r = a - r;
@@ -591,8 +601,8 @@ gui_palette_qt5::make_color_stanza (int number, bool inverse) const
     std::string result;
     if (number >= 0)
     {
-        gui_palette_qt5::Color backc;
-        gui_palette_qt5::Color textc;
+        Color backc;
+        Color textc;
         std::string bname = "\"";
         std::string tname = "\"";
         if (inverse)
@@ -739,7 +749,7 @@ gui_palette_qt5::add_invertible
     return result;
 }
 
-const gui_palette_qt5::Color &
+const Color &
 gui_palette_qt5::get_color (InvertibleColor index) const
 {
     const Color & result = is_inverse() ?

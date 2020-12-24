@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2020-07-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -56,7 +56,7 @@
 #include <cmath>                        /* std::sin(radians)                */
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
-#include "gui_palette_qt5.hpp"          /* seq66::gui_palette_qt5::Color    */
+#include "gui_palette_qt5.hpp"          /* seq66::Color                     */
 #include "qloopbutton.hpp"
 
 /**
@@ -363,7 +363,7 @@ qloopbutton::setup ()
     }
     else
     {
-        gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+        Color backcolor = get_color_fix(PaletteColor(c));
 
         /*
          * Rather than having a black progress area, we could make it match
@@ -621,7 +621,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
      * ISN'T THIS SLOW?  Save it in a member?  TODO.
      */
 
-    gui_palette_qt5::Color backcolor = get_color_fix(PaletteColor(c));
+    Color backcolor = get_color_fix(PaletteColor(c));
     if (qsnap)                                      /* playing, queued, ... */
     {
         backcolor.setAlpha(s_alpha_qsnap);
@@ -727,7 +727,7 @@ qloopbutton::draw_pattern (QPainter & painter)
             if (m_seq->transposable())
             {
                 int c = m_seq ? m_seq->color() : palette_to_int(none) ;
-                gui_palette_qt5::Color pencolor = get_pen_color(PaletteColor(c));
+                Color pencolor = get_pen_color(PaletteColor(c));
                 pen.setColor(pencolor);
             }
             else

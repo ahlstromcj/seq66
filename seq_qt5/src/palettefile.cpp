@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2020-12-23
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -254,7 +254,7 @@ palettefile::write_stream (std::ofstream & file)
         "\n"
         "# Similar to the [palette] section, but applies to UI elements and to\n"
         "# the --inverse color option.  The first integer is the color number,\n"
-        "# ranging from 0 to 11. The names are feature names, not color names.\n"
+        "# ranging from 0 to 12. The names are feature names, not color names.\n"
         "\n"
         "[ui-palette]\n"
         "\n"

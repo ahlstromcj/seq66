@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2020-07-29
+ * \updates       2020-12-24
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -59,6 +59,14 @@ qeditbase::qeditbase
     int total_height
 ) :
     qbase                   (p, initialzoom),
+    m_back_color            (background_paint()),
+    m_fore_color            (foreground_paint()),
+    m_label_color           (label_paint()),
+    m_sel_color             (sel_paint()),
+    m_drum_color            (drum_paint()),
+    m_progress_color        (progress_paint()),
+    m_beat_color            (beat_paint()),
+    m_step_color            (step_paint()),
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
