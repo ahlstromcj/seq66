@@ -293,7 +293,7 @@ number using the channel number (0 to 15).</string>
        <string>Provides some minor tweaks of the user-interface.  Edit the 'usr' file for far more control over settings.</string>
       </property>
       <attribute name="title">
-       <string>Display</string>
+       <string>D&amp;isplay</string>
       </attribute>
       <widget class="QGroupBox" name="groupBoxBooleanOptions">
        <property name="geometry">
@@ -401,12 +401,12 @@ where X and Y are scale factors ranging from 0.5 to 3.0.</string>
         <string>* Restart of Seq66 required</string>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>8</x>
          <y>88</y>
-         <width>513</width>
+         <width>505</width>
          <height>27</height>
         </rect>
        </property>
@@ -433,7 +433,7 @@ always resides in the Seq66 configuration directory
         <item>
          <widget class="QPushButton" name="pushButtonSavePalette">
           <property name="text">
-           <string>Save Current Palette</string>
+           <string>&amp;Save Current Palette</string>
           </property>
          </widget>
         </item>

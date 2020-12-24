@@ -104,7 +104,12 @@ public:
     virtual bool zoom_out () override;
     virtual bool reset_zoom () override;
 
-protected:
+    const Color & backseq_color () const
+    {
+        return m_backseq_color;
+    }
+
+private:
 
     virtual void scroll_offset (int v) override;
     virtual int scroll_offset () const override
@@ -137,7 +142,7 @@ protected:
     void set_scale (int scale);
     void set_background_sequence (bool state, int seq);
 
-protected:      // overrides for painting, mouse/keyboard events, & size hints
+private:        // overrides for painting, mouse/keyboard events, & size hints
 
     virtual void paintEvent (QPaintEvent *) override;
     virtual void resizeEvent (QResizeEvent *) override;
@@ -172,6 +177,12 @@ private:
     void call_draw_notes (QPainter & painter, const QRect & view);
 
 private:
+
+    /**
+     *  The color (from the palette) for the background sequence.
+     */
+
+    const Color m_backseq_color;
 
     /**
      *  Holds a pointer to the scroll-master object in the edit-frame window.

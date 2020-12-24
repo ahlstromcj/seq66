@@ -128,6 +128,8 @@ enum class InvertibleColor
     selection,          /**< Used to paint selected notes.                  */
     drum,               /**< Used for non-transposable (drum) notes.        */
     tempo,              /**< Painting for tempo events.                     */
+    note_in,            /**< Color inside the note, defaults to foreground. */
+    note_out,           /**< Border color of note, defaults to background.  */
     black_key,          /**< Painting for the "black keys" on the piano.    */
     white_key,          /**< Painting for the "white keys" on the piano.    */
     progress,           /**< Painting for the progress bar.                 */
@@ -135,6 +137,7 @@ enum class InvertibleColor
     grey,               /**< Medium grid lines.                             */
     dk_grey,            /**< Heavy grid lines.                              */
     lt_grey,            /**< Light grid lines.                              */
+    extra,              /**< Just an addition color to make it 16 colors.   */
     maximum             /**< First illegal palette value, not in color set. */
 };
 

@@ -131,7 +131,7 @@ qseqtime::paintEvent (QPaintEvent *)
     for (midipulse tick = starttick; tick <= endtick; tick += ticks_per_step)
     {
         char bar[32];
-        int x_offset = xoffset(tick) - scroll_offset_x();
+        int x_offset = xoffset(tick) - scroll_offset_x() + 2;
 
         /*
          * Vertical line at each bar; number each bar.

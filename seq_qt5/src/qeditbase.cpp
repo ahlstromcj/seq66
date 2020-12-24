@@ -67,6 +67,10 @@ qeditbase::qeditbase
     m_progress_color        (progress_paint()),
     m_beat_color            (beat_paint()),
     m_step_color            (step_paint()),
+    m_note_in_color         (note_in_paint()),
+    m_note_out_color        (note_out_paint()),
+    m_tempo_color           (tempo_paint()),
+    m_grey_color            (grey_paint()),
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),

@@ -100,6 +100,10 @@ private:
     const Color m_progress_color;
     const Color m_beat_color;
     const Color m_step_color;
+    const Color m_note_in_color;
+    const Color m_note_out_color;
+    const Color m_tempo_color;
+    const Color m_grey_color;
 
 protected:
 
@@ -352,6 +356,26 @@ public:
     const Color & step_color () const
     {
         return m_step_color;
+    }
+
+    const Color & note_in_color () const
+    {
+        return m_note_in_color;
+    }
+
+    const Color & note_out_color () const
+    {
+        return m_note_out_color;
+    }
+
+    const Color & tempo_color () const
+    {
+        return m_tempo_color;
+    }
+
+    const Color & grey_color () const
+    {
+        return m_grey_color;
     }
 
     const seq66::rect & old_rect () const

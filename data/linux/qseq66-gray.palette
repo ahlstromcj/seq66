@@ -74,13 +74,16 @@ look empty with a space.
  3        "Selection" [ 0xFF2F4F4F ]        "Selection" [ 0xFF808080 ]
  4             "Drum" [ 0xFFFFFF00 ]             "Drum" [ 0xFFFF0080 ]
  5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
- 6       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
- 7       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
- 8     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFFFFFFFF ]
- 9     "Back Pattern" [ 0xFF8B8B8B ]     "Back Pattern" [ 0xFF8B8B8B ]
-10      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
-11        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
-12        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
+ 6        "Note Fill" [ 0xFFA0A0A0 ]        "Note Fill" [ 0xFFA0A0A0 ]
+ 7      "Note Border" [ 0xFF202020 ]      "Note Border" [ 0xFFFFFFFF ]
+ 8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
+ 9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
+10     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFFFFFFFF ]
+11     "Back Pattern" [ 0xFF8B8B8B ]     "Back Pattern" [ 0xFF8B8B8B ]
+12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
+13        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
+14        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
+15            "Extra" [ 0xFF778899 ]            "Extra" [ 0xFFBD6BB7 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66.palette
 #

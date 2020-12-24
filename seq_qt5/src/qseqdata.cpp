@@ -142,7 +142,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
     QPainter painter(this);
-    QBrush brush(Qt::lightGray, Qt::SolidPattern);
+    QBrush brush(grey_color(), Qt::SolidPattern);
     QPen pen(Qt::black);
     painter.setPen(pen);
     painter.setBrush(brush);
@@ -178,9 +178,9 @@ qseqdata::paintEvent (QPaintEvent * qpep)
 
             pen.setWidth(2);                    /* draw vertical grid lines */
             if (selected)
-                pen.setColor("orange");
+                pen.setColor(sel_paint());      /* pen.setColor("orange")   */
             else
-                pen.setColor(Qt::black);
+                pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
 
             painter.setPen(pen);
             painter.drawLine
@@ -193,7 +193,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             snprintf(digits, sizeof digits, "%3d", d1);
 
             QString val = digits;
-            pen.setColor(Qt::black);
+            pen.setColor(fore_color());         /* pen.setColor(Qt::black)  */
             painter.drawText(x_offset, y_offset,      val.at(0));
             painter.drawText(x_offset, y_offset +  8, val.at(1));
             painter.drawText(x_offset, y_offset + 16, val.at(2));

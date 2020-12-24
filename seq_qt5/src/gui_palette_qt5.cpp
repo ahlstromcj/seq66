@@ -172,6 +172,18 @@ tempo_paint ()
 }
 
 Color
+note_in_paint ()
+{
+    return global_palette().get_color(InvertibleColor::note_in);
+}
+
+Color
+note_out_paint ()
+{
+    return global_palette().get_color(InvertibleColor::note_out);
+}
+
+Color
 black_key_paint ()
 {
     return global_palette().get_color(InvertibleColor::black_key);
@@ -195,6 +207,12 @@ backseq_paint ()
     return global_palette().get_color(InvertibleColor::backseq);
 }
 
+Color
+grey_paint ()
+{
+    return global_palette().get_color(InvertibleColor::grey);
+}
+
 /**
  *  Beat paint uses the grey_paint.  Invertible, but the same color?
  */
@@ -209,6 +227,12 @@ Color
 step_paint ()
 {
     return global_palette().get_color(InvertibleColor::lt_grey);
+}
+
+Color
+extra_paint ()
+{
+    return global_palette().get_color(InvertibleColor::extra);
 }
 
 /**
@@ -319,15 +343,15 @@ gui_palette_qt5::load_static_colors (bool inverse)
         m_color_20     = Color("light blue");
         m_color_21     = Color("violet");
         m_color_22     = Color("turquoise");
-        m_grey         = Color("grey");
+        m_grey         = Color(128, 128, 128);      // Color("grey");
         m_dk_orange    = Color("dark orange");
         m_dk_pink      = Color("deep pink");
         m_color_26     = Color("sea green");
         m_color_27     = Color("dark khaki");
         m_color_28     = Color("dark slate blue");
         m_color_29     = Color("dark violet");
-        m_lt_grey      = Color("light slate grey");
-        m_dk_grey      = Color("dark slate grey");
+        m_lt_grey      = Color(192, 192, 192);      // Color("light slate grey");
+        m_dk_grey      = Color( 96,  96,  96);      // Color("dark slate grey");
     }
 }
 
@@ -478,6 +502,8 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
     m_nrm_palette.add(InvertibleColor::drum,        m_red,      "Drum");
     m_nrm_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
+    m_nrm_palette.add(InvertibleColor::note_in,     m_white,    "Note Fill");
+    m_nrm_palette.add(InvertibleColor::note_out,    m_black,    "Note Border");
     m_nrm_palette.add(InvertibleColor::black_key,   m_black,    "Black Keys");
     m_nrm_palette.add(InvertibleColor::white_key,   m_white,    "White Keys");
     m_nrm_palette.add(InvertibleColor::progress,    m_black,    "Progress Bar");
@@ -485,21 +511,25 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
     m_nrm_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
     m_nrm_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
+    m_nrm_palette.add(InvertibleColor::extra,       m_lt_grey,  "Extra");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,       m_white,    "Foreground");
-    m_inv_palette.add(InvertibleColor::white,       m_black,    "Background");
+    m_inv_palette.add(InvertibleColor::white,       m_dk_grey,  "Background");
     m_inv_palette.add(InvertibleColor::label,       m_white,    "Label");
     m_inv_palette.add(InvertibleColor::selection,   m_yellow,   "Selection");
     m_inv_palette.add(InvertibleColor::drum,        m_green,    "Drum");
     m_inv_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");
+    m_inv_palette.add(InvertibleColor::note_in,     m_black,    "Note Fill");
+    m_inv_palette.add(InvertibleColor::note_out,    m_white,    "Note Border");
     m_inv_palette.add(InvertibleColor::black_key,   m_white,    "Black Keys");
     m_inv_palette.add(InvertibleColor::white_key,   m_black,    "White Keys");
     m_inv_palette.add(InvertibleColor::progress,    m_green,    "Progress Bar");
     m_inv_palette.add(InvertibleColor::backseq,     m_dk_cyan,  "Back Pattern");
-    m_inv_palette.add(InvertibleColor::grey,        m_lt_grey,  "Medium Line");
-    m_inv_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
-    m_inv_palette.add(InvertibleColor::lt_grey,     m_grey,     "Step Line");
+    m_inv_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
+    m_inv_palette.add(InvertibleColor::dk_grey,     m_white,    "Beat Line");
+    m_inv_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
+    m_inv_palette.add(InvertibleColor::extra,       m_color_27, "Extra");
 }
 
 /**

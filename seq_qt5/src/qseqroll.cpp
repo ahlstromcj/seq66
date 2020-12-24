@@ -80,6 +80,7 @@ qseqroll::qseqroll
         usr().key_height(),                         /* was m_key_y      */
         usr().key_height() * c_num_keys + 1         /* was m_keyarea_y  */
     ),
+    m_backseq_color         (backseq_paint()),
     m_parent_frame          (frame),
     m_is_new_edit_frame
     (
@@ -298,8 +299,10 @@ qseqroll::paintEvent (QPaintEvent * qpep)
      * Draw the border.  See the banner notes about width and height.
      */
 
+#if defined THIS_CODE_ADDS_VALUE
     painter.setPen(pen);
     painter.setBrush(brush);
+#endif
 
     /*
      * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
@@ -361,7 +364,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 #endif
 
     pen.setWidth(1);
-    pen.setColor(Qt::red);                      // draw the playhead
+    pen.setColor(progress_color());             // draw the playhead
     pen.setStyle(Qt::SolidLine);
 
     /*
@@ -407,7 +410,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         int delta_y = current_y() - drop_y();
         x = selection().x() + delta_x;
         y = selection().y() + delta_y;
-        pen.setColor(Qt::black);
+        pen.setColor(Qt::black);        /* what palette color to use?   */
         painter.setPen(pen);
         if (m_edit_mode == sequence::editmode::drum)
         {
@@ -479,15 +482,14 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     );
 #endif
 
-    QColor background = background_paint();
-    QColor foreground = foreground_paint();
-    QColor beatcolor = beat_paint();
-    QColor stepcolor = step_paint();
+    QColor background = back_color();
+    QColor foreground = fore_color();
+    QColor beatcolor = beat_color();
+    QColor stepcolor = step_color();
     QBrush brush(background);                       /* brush(Qt::NoBrush)   */
-    QPen pen(Qt::lightGray);
+    QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     painter.drawRect(r);
     painter.fillRect(r, brush);                     /* blank the viewport   */
-    pen.setColor(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setBrush(brush);
     painter.setPen(pen);
@@ -507,7 +509,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         else if ((modkey % c_octave_size) == (c_octave_size-1))
             pen.setColor(stepcolor);                /* Qt::lightGray        */
 
+#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
         pen.setStyle(Qt::SolidLine);
+#endif
         painter.setPen(pen);
 
         /*
@@ -515,19 +519,18 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          */
 
         int y = key * unit_height();
-//      if (m_edit_mode == sequence::editmode::drum)
-//          y -= (0.5 * unit_height());
-
         painter.drawLine(r.x(), y, r.x()+r.width(), y);
         if (m_scale != scales::off)
         {
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
+#if defined THIS_CODE_ADDS_VALUE
                 pen.setColor(stepcolor);            /* Qt::lightGray        */
-                brush.setColor(Qt::lightGray);
+                brush.setColor(stepcolor);          /* Qt::lightGray        */
                 brush.setStyle(Qt::SolidPattern);
                 painter.setBrush(brush);
                 painter.setPen(pen);
+#endif
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
             }
         }
@@ -566,8 +569,10 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
      * to check every tick!!!!
      */
 
-//  pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
-//  painter.setPen(pen);
+#if defined THIS_CODE_ADDS_VALUE
+    pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
+    painter.setPen(pen);
+#endif
     for (int tick = starttick; tick < endtick; tick += increment)
     {
         int x_offset = xoffset(tick) - scroll_offset_x();
@@ -674,30 +679,33 @@ qseqroll::draw_notes
                 in_shift = -1;
                 length_add = 1;
             }
+#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
             pen.setColor(Qt::black);
+#endif
             if (background)                         // draw background note
             {
                 length_add = 1;
-                pen.setColor(Qt::darkCyan);         // note border color
-                brush.setColor(Qt::darkCyan);
-                // pen.setColor(back_color());         // note border color
-                // brush.setColor(back_color());
+                pen.setColor(backseq_color());         // note border color
+                brush.setColor(grey_color());
             }
             else
             {
-                pen.setColor(Qt::black);        // note border color
-                brush.setColor(Qt::black);
-                // pen.setColor(fore_color());        // note border color
-                // brush.setColor(fore_color());
+                pen.setColor(fore_color());        // note border color
+                brush.setColor(fore_color());
             }
 
+#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
+            pen.setColor(Qt::black);
+#endif
             brush.setStyle(Qt::SolidPattern);
             painter.setBrush(brush);
             painter.setPen(pen);
             painter.drawRect(m_note_x, m_note_y, m_note_width, m_note_height);
             if (ni.finish() < ni.start())   // shadow notes before zero
             {
+#if defined THIS_CODE_ADDS_VALUE
                 painter.setPen(pen);
+#endif
                 painter.drawRect
                 (
                     m_keypadding_x, m_note_y,
@@ -715,7 +723,7 @@ qseqroll::draw_notes
                 if (ni.selected())
                     brush.setColor(sel_paint());    /* was just "orange"    */
                 else
-                    brush.setColor(Qt::white);
+                    brush.setColor(back_color());   /* Qt::white            */
 
                 painter.setBrush(brush);
                 if (! background)
@@ -803,7 +811,7 @@ qseqroll::draw_drum_notes
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
     midipulse seqlength = seq_pointer()->get_length();
-    midipulse start_tick = pix_to_tix(r.x());        // int start_tick = m_t0;
+    midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;

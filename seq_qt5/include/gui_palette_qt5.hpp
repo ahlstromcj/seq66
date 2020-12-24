@@ -251,12 +251,16 @@ extern Color label_paint ();
 extern Color sel_paint ();
 extern Color drum_paint ();
 extern Color tempo_paint ();
+extern Color note_in_paint ();
+extern Color note_out_paint ();
 extern Color black_key_paint ();
 extern Color white_key_paint ();
 extern Color progress_paint ();
 extern Color backseq_paint ();
+extern Color grey_paint ();
 extern Color beat_paint ();
 extern Color step_paint ();
+extern Color extra_paint ();
 extern std::string get_color_name_ex (PaletteColor index);
 extern bool no_color (int c);
 
