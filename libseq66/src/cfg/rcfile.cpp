@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-22
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -437,8 +437,11 @@ rcfile::parse ()
                 break;
             }
         }
+#if 0
+        if (inputref.not_empty())
+            rc().port_naming("short");
+#endif
     }
-
     if (ok)
         ok = line_after(file, "[midi-clock]");
 
@@ -515,6 +518,10 @@ rcfile::parse ()
                 break;
             }
         }
+#if 0
+        if (inpsref.not_empty())
+            rc().port_naming("short");
+#endif
     }
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
@@ -861,7 +868,9 @@ rcfile::write ()
             "#\n"
             "# The port-naming values are 'short' or 'long'.  The short style\n"
             "# just shows the port number and short port name; the long style\n"
-            "# shows all the numbers and the long port name.\n"
+            "# shows all the numbers and the long port name. If either a\n"
+            "# [midi-clock-map] or [midi-input-map] is provided, this option is\n"
+            "# forced to 'short'.\n"
             "\n"
             "config-type = \"rc\"\n"
             "version = " << version() << "\n"

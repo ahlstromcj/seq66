@@ -418,10 +418,6 @@ mastermidibase::get_clock (bussbyte bus)
     return m_outbus_array.get_clock(bus);
 }
 
-/**
- *
- */
-
 void
 mastermidibase::copy_io_busses ()
 {
@@ -432,7 +428,6 @@ mastermidibase::copy_io_busses ()
         bool inputflag = m_inbus_array.get_input(bus);
         std::string name = m_inbus_array.get_midi_bus_name(bus);
         m_master_inputs.add(inputflag, name);
-
     }
     m_master_clocks.clear();
     buses = m_outbus_array.count();             /* get_num_out_buses()  */
@@ -589,16 +584,10 @@ mastermidibase::get_midi_out_bus_name (bussbyte bus)
 {
     std::string result;
     if (rc().is_port_naming_long())
-    {
-        bussbyte b = true_output_bus(bus);
-        result = m_outbus_array.get_midi_bus_name(b);
-    }
+        result = m_master_clocks.get_name(bus, false);
     else
-    {
-        result = output_port_name(bus, true);
-        if (result.empty())
-            result = m_master_clocks.get_nick_name(bus, true);
-    }
+        result = m_master_clocks.get_nick_name(bus, true);  /* add number   */
+
     return result;
 }
 
@@ -620,11 +609,13 @@ mastermidibase::get_midi_out_bus_name (bussbyte bus)
 std::string
 mastermidibase::get_midi_in_bus_name (bussbyte bus)
 {
-    /*
-     * Not needed, we want the short name: bus = true_output_bus(bus);
-     */
+    std::string result;
+    if (rc().is_port_naming_long())
+        result = m_master_inputs.get_name(bus, false);
+    else
+        result = m_master_inputs.get_nick_name(bus, true);  /* add number   */
 
-    return m_inbus_array.get_midi_bus_name(bus);
+    return result;
 }
 
 /**

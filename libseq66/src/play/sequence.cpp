@@ -4239,6 +4239,9 @@ sequence::set_midi_bus (bussbyte mb, bool user_change)
         off_playing_notes();            /* off notes except initial         */
         m_nominal_bus = mb;
         m_true_bus = master_bus()->true_output_bus(mb);
+        if (is_null_bussbyte(m_true_bus))
+            m_true_bus = mb;            /* named buss no longer exists      */
+
         if (user_change)
             modify();                   /* no easy way to undo this, though */
 

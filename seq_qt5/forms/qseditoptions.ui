@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -192,15 +192,18 @@ system's MIDI setup has changed.</string>
         <rect>
          <x>72</x>
          <y>496</y>
-         <width>101</width>
+         <width>161</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>MIDI Client ID</string>
+        <string>Seq66's MIDI Client ID</string>
        </property>
       </widget>
       <widget class="QPlainTextEdit" name="plainTextEditClientId">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -423,7 +426,8 @@ where X and Y are scale factors ranging from 0.5 to 3.0.</string>
           <property name="toolTip">
            <string>Provides the base name of the palette file.  This file
 always resides in the Seq66 configuration directory
-(~/.config/seq66 or the NSM session directory).</string>
+(~/.config/seq66 or the NSM session directory). Any
+path added to this name is stripped.</string>
           </property>
           <property name="text">
            <string>qseq66.palette</string>

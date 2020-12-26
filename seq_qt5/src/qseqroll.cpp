@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-24
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -44,6 +44,7 @@
 #include "qseqeditframe.hpp"            /* seq66::qseqeditframe legacy      */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
 #include "qseqframe.hpp"                /* interface class for seqedits     */
+#include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 
 /*
@@ -116,6 +117,13 @@ qseqroll::qseqroll
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     set_snap(seqp->snap());
+
+    /*
+     * Done in order to be able to track mouse movement without a click.
+     * See the call to m_seqkeys_wid->set_preview_key(note).
+     */
+
+    setMouseTracking(true);
     show();
     m_timer = new QTimer(this);
     m_timer->setInterval(1 * usr().window_redraw_rate());
@@ -420,27 +428,21 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         else
             painter.drawRect(x + m_keypadding_x, y, selw, selh);
 
-        old_rect().x(x);
-        old_rect().y(y);
-        old_rect().width(selw);
-        old_rect().height(selh);
+        old_rect().set(x, y, selw, selh);
     }
     if (growing())
     {
         int delta_x = current_x() - drop_x();
-        int width = delta_x + selw;
-        if (width < 1)
-            width = 1;
+        selw += delta_x;
+        if (selw < 1)
+            selw = 1;
 
         x = selection().x();
         y = selection().y();
         pen.setColor(Qt::black);
         painter.setPen(pen);
-        painter.drawRect(x + m_keypadding_x, y, width, selh);
-        old_rect().x(x);
-        old_rect().y(y);
-        old_rect().width(width);
-        old_rect().height(selh);
+        painter.drawRect(x + m_keypadding_x, y, selw, selh);
+        old_rect().set(x, y, selw, selh);
     }
 }
 
@@ -1100,9 +1102,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
-    midipulse tick_s, tick_f;           /* start and  end of tick window    */
-    int note_h, note_l;                 /* high and low notes in window     */
-    int x, y, w, h;                     /* window dimensions                */
     current_x(event->x() - m_keypadding_x);
     current_y(event->y());
     snap_current_y();                   /* snaps the m_current_y value      */
@@ -1117,8 +1116,10 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     {
         if (selecting())
         {
-            int numsel;
-            rect::xy_to_rect_get
+            midipulse tick_s, tick_f;   /* start and  end of tick window    */
+            int note_h, note_l;         /* high and low notes in window     */
+            int x, y, w, h;             /* window dimensions                */
+            rect::xy_to_rect_get        /* copy drop dimensions to xywh     */
             (
                 drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
             );
@@ -1128,7 +1129,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             if (m_edit_mode == sequence::editmode::drum)
                 selmode = eventlist::select::onset;
 
-            numsel = seq_pointer()->select_note_events
+            int numsel = seq_pointer()->select_note_events
             (
                 tick_s, note_h, tick_f, note_l, selmode
             );
@@ -1176,7 +1177,6 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             set_dirty();
         }
     }
-
     if (event->button() == Qt::RightButton)
     {
         if (! QApplication::queryKeyboardModifiers().testFlag(Qt::MetaModifier))
@@ -1185,7 +1185,6 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             set_dirty();
         }
     }
-
     clear_action_flags();               /* turn off all the action flags    */
     seq_pointer()->unpaint_all();
     if (is_dirty())                     /* if clicked, something changed    */
@@ -1211,6 +1210,7 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     int note;
     midipulse tick;
     convert_xy(0, current_y(), tick, note);
+    m_seqkeys_wid->set_preview_key(note);
     if (select_action())
     {
         if (drop_action())

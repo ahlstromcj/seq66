@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-22
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -34,6 +34,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
 #include "palettefile.hpp"              /* seq66::palettefile class         */
 #include "qclocklayout.hpp"
@@ -483,7 +484,8 @@ qseditoptions::update_ui_scaling (const QString & qs)
 void
 qseditoptions::update_palette_file (const QString & qs)
 {
-    const std::string valuetext = qs.toStdString();
+    std::string valuetext = qs.toStdString();
+    valuetext = filename_base(valuetext);
     rc().palette_filename(valuetext);
 }
 

@@ -291,8 +291,8 @@ not_npos (std::string::size_type p)
  *      Provides the "comparing" string.
  *
  * \param n
- *      Provides the number of characters that must match.  If equal to 0,
- *      then a regular operator ==() is used.
+ *      Provides the number of characters in the "compared" string that must
+ *      match.  If equal to 0, then a regular operator ==() is used.
  *
  * \return
  *      Returns true if the strings compare identically for the first \a n

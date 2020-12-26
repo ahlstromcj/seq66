@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-18
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  */
@@ -190,6 +190,11 @@ build_output_port_map (const clockslist & cl)
     return result;
 }
 
+/**
+ *  If an output map exists, looks up the actual buss name.  Otherwise, just
+ *  return output buss parameter.
+ */
+
 bussbyte
 true_output_bus (const clockslist & cl, bussbyte nominalbuss)
 {
@@ -198,7 +203,9 @@ true_output_bus (const clockslist & cl, bussbyte nominalbuss)
     if (cloutref.not_empty())
     {
         std::string shortname = cloutref.port_name_from_bus(nominalbuss);
-        if (! shortname.empty())
+        if (shortname.empty())
+            result = c_bussbyte_max;
+        else
             result = cl.bus_from_nick_name(shortname);
     }
     return result;

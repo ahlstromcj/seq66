@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-20
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -148,6 +148,12 @@ static bool s_use_test_button = true;
 static bool s_use_test_button = false;
 #endif
 
+/**
+ *  The default name of the current (if empty) tune.  Also refere to the
+ *  function rc().session_midi_filename().
+ */
+
+const std::string s_default_tune = "newtune.midi";
 
 /**
  *  Manifest constant to indicate the location of each main-window tab.
@@ -834,6 +840,9 @@ qsmainwnd::qsmainwnd
     );
 #endif
 
+    if (use_nsm())
+        rc().session_midi_filename(s_default_tune);
+
     show();
     show_song_mode(m_song_mode);
     cb_perf().enregister(this);
@@ -1098,6 +1107,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             msg += rc().midi_filename();
             show_message_box(msg);
+            m_is_title_dirty = false;           ////////////// NEW
             result = true;
         }
         else
@@ -1553,11 +1563,12 @@ qsmainwnd::new_session ()
     if (use_nsm())
     {
         bool ok;
+        std::string defname = rc().midi_filename();
         QString text = QInputDialog::getText
         (
             this, tr("New Session MIDI File"),      /* parent and title     */
             tr("MIDI FIle Base Name"),              /* input field label    */
-            QLineEdit::Normal, "newtune.midi", &ok
+            QLineEdit::Normal, defname.c_str(), &ok
         );
         if (ok)
         {

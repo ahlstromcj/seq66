@@ -62,7 +62,10 @@ protected:
     /**
      *  Provides a port name and the input or output values.  Note that the
      *  clock setting will be disabled for all input values and for output
-     *  values that are actually disabled by the user.
+     *  values that are actually disabled by the user.  Note that io_alt_name
+     *  is used instead of io_nick_name in cases where the nick-name is too
+     *  minimal.  For example, the nickname of "yoshimi:input" is "input",
+     *  which could conflict with the nicknames of other inputs.
      */
 
     using io = struct
@@ -71,6 +74,7 @@ protected:
         e_clock out_clock;          /**<< The clock setting for this buss.  */
         std::string io_name;        /**<< The name of the I/O buss.         */
         std::string io_nick_name;   /**<< The short name of the I/O buss.   */
+        std::string io_alt_name;    /**<< A name used in certain bases.     */
     };
 
     /**

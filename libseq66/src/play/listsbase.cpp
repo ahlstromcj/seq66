@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-19
+ * \updates       2020-12-26
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -33,6 +33,8 @@
 
 #include <iostream>                     /* std::cout, etc.                  */
 #include "play/listsbase.hpp"           /* seq66::listsbase class           */
+#include "util/calculations.hpp"        /* seq66::extract_port_names()      */
+#include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -41,6 +43,42 @@
 
 namespace seq66
 {
+
+/**
+ *  Short names.
+ */
+
+static const std::string s_short_names [] =
+{
+    "input",
+    "output",
+    "midi in",
+    "midi out",
+    ""                                  /* empty string is a terminator     */
+};
+
+/*
+ *
+ */
+
+static bool
+detect_short_name (const std::string & name)
+{
+    bool result = false;
+    for (int i = 0; /* forever */; ++i)
+    {
+        std::string compared = s_short_names[i];
+        if (compared.empty())
+            break;
+        else
+        {
+            result = strncompare(compared, name, compared.length());
+            if (result)
+                break;
+        }
+    }
+    return result;
+}
 
 /*
  *  The simple constructor and destructor defined in the header file.
@@ -57,7 +95,17 @@ listsbase::add (const std::string & name, const std::string & nickname)
     if (! name.empty())
     {
         ioitem.io_name = name;
-        if (! nickname.empty())
+        if (detect_short_name(nickname))
+        {
+            std::string nick = extract_nickname(name);
+            std::string clientname, portname;
+            bool extracted = extract_port_names(name, clientname, portname);
+            if (extracted)
+                ioitem.io_alt_name = clientname + ":" + portname;
+
+            ioitem.io_nick_name = nick;
+        }
+        else
         {
             ioitem.io_nick_name = nickname;
             result = true;
@@ -112,6 +160,13 @@ listsbase::set_name (bussbyte bus, const std::string & name)
         std::string nick = extract_nickname(name);
         m_master_io[bus].io_name = name;
         m_master_io[bus].io_nick_name = nick;
+        if (detect_short_name(nick))
+        {
+            std::string clientname, portname;
+            bool extracted = extract_port_names(name, clientname, portname);
+            if (extracted)
+                m_master_io[bus].io_alt_name = clientname + ":" + portname;
+        }
     }
 }
 
@@ -197,7 +252,7 @@ listsbase::extract_nickname (const std::string & name) const
 bussbyte
 listsbase::bus_from_nick_name (const std::string & nick) const
 {
-    bussbyte result = c_bussbyte_max;           /* a bad, unusable value    */
+    bussbyte result = c_bussbyte_max;           /* a "null", unusable value */
     for (int b = 0; b < count(); ++b)
     {
         if (nick == m_master_io[b].io_nick_name)

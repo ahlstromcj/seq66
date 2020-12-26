@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-27
+ * \updates       2020-12-25
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -74,6 +74,8 @@ public:
     {
         // no code needed
     }
+
+    void set_preview_key (int key);
 
 protected:      // Qt overrides
 
@@ -129,10 +131,10 @@ private:
 
     bool m_show_octave_letters;
 
-    bool m_is_previewing;
     int m_key;
     int m_key_y;
     int m_key_area_y;
+    bool m_is_previewing;
     int m_preview_key;
 
 };          // class qseqkeys

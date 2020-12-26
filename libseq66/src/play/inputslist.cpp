@@ -188,6 +188,11 @@ build_input_port_map (const inputslist & il)
     return result;
 }
 
+/**
+ *  If an input map exists, looks up the actual buss name.  Otherwise, just return
+ *  input buss paremater.
+ */
+
 bussbyte
 true_input_bus (const inputslist & cl, bussbyte nominalbuss)
 {
@@ -195,9 +200,15 @@ true_input_bus (const inputslist & cl, bussbyte nominalbuss)
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
-        std::string shortname = inpsref.port_name_from_bus(nominalbuss);
-        if (! shortname.empty())
-            result = cl.bus_from_nick_name(shortname);
+        for (int b = 0; b < cl.count(); ++b)
+        {
+            std::string shortname = inpsref.port_name_from_bus(nominalbuss);
+            if (! shortname.empty())
+                result = cl.bus_from_nick_name(shortname);
+
+            if (is_null_bussbyte(result))
+                continue;
+        }
     }
     return result;
 }

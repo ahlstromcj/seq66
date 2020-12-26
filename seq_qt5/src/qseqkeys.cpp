@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-09
+ * \updates       2020-12-25
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -79,10 +79,10 @@ qseqkeys::qseqkeys
     m_seq                   (seqp),
     m_font                  (),
     m_show_octave_letters   (true),
-    m_is_previewing         (false),
     m_key                   (0),
     m_key_y                 (keyheight),
     m_key_area_y            (keyareaheight),
+    m_is_previewing         (false),
     m_preview_key           (-1)
 {
     /*
@@ -223,9 +223,8 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
     {
         int note;
         int y = event->y();
-        m_is_previewing = true;
         convert_y(y, note);
-        m_preview_key = note;
+        set_preview_key(note);
         seq_pointer()->play_note_on(note);
     }
     else if (event->button() == Qt::RightButton)
@@ -245,8 +244,7 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
     if (event->button() == Qt::LeftButton && m_is_previewing)
     {
         seq_pointer()->play_note_off(m_preview_key);
-        m_is_previewing = false;
-        m_preview_key = -1;
+        set_preview_key(-1);
     }
     update();
 }
@@ -311,6 +309,14 @@ void
 qseqkeys::wheelEvent (QWheelEvent * ev)
 {
     ev->accept();
+}
+
+void
+qseqkeys::set_preview_key (int key)
+{
+    m_is_previewing = key >= 0;
+    m_preview_key = key;
+    update();
 }
 
 }           // namespace seq66

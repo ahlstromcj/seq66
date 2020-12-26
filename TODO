@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.4 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-22
+2019-04-13 to 2020-12-26
 
 HOT ITEMS:
 
@@ -26,9 +26,7 @@ HOT ITEMS:
         to these buttons (steps 2 to 6), or preset them for every new pattern
         editor?
 
-    Keyboard:
-
-        The piano keyboard highlighting is somehow disabled!
+        TODO:  See what have done with this one so far....
 
     Playlist:
        
@@ -41,10 +39,6 @@ HOT ITEMS:
 
         Investigate the effect of reducing the microsleep(100) calls when
         polling.  Maybe make it an usr variable.
-
-    RtMidi:
-
-        rtmidi_in_data vs rtmidi_out_data
 
     Windows:
 
@@ -64,9 +58,6 @@ HOT ITEMS:
         of the session.  Seq66 does not get to the UI when first starting the
         session.  It does do it the next time, loading the file.  The actual
         operation should be in import, I think.
-
-        Make the Playlist and Session directories read-only when in a
-        session.
 
     Port-Mapping:
 
