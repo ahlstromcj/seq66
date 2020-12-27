@@ -226,11 +226,24 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     mastermidibus * masterbus = perf().master_bus();
     if (not_nullptr(masterbus))
     {
-        int buses = masterbus->get_num_out_buses();
-        for (int bus = 0; bus < buses; ++bus)
+        const clockslist & opm = output_port_map();
+        if (opm.not_empty())
         {
-            qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
-            vboxclocks->addLayout(tempqc->layout());
+            int buses = opm.count();
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
+                vboxclocks->addLayout(tempqc->layout());
+            }
+        }
+        else
+        {
+            int buses = masterbus->get_num_out_buses();
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
+                vboxclocks->addLayout(tempqc->layout());
+            }
         }
     }
 

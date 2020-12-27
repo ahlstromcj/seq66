@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-19
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs, pulled out of the old perform module.
@@ -56,7 +56,7 @@ class inputslist final : public listsbase
 
 public:
 
-    inputslist () : listsbase ()
+    inputslist (bool pmflag = false) : listsbase (pmflag)
     {
         // Nothing to do
     }

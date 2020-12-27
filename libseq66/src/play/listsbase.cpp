@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-26
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -81,9 +81,16 @@ detect_short_name (const std::string & name)
 }
 
 /*
- *  The simple constructor and destructor defined in the header file.
- *  A few functions included here for better debugging.
+ *  The simple destructor defined in the header file.  A few functions
+ *  included here for better debugging.
  */
+
+listsbase::listsbase (bool pmflag) :
+    m_master_io     (),
+    m_is_port_map   (pmflag)
+{
+    // Nothing to do
+}
 
 bool
 listsbase::add (const std::string & name, const std::string & nickname)
@@ -293,6 +300,46 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
     return result;
 }
 
+/**
+ *  Sets the enabled/disabled status based on the source list.  Used to
+ *  prepare the lists for showing the port-map along with the status of the
+ *  disabled ports.  Each port in the port-map is looked up in the given
+ *  source list.  If not found, it is disabled.
+ *
+ * \param source
+ *      The source for the statuses to be applied, when usesource is true.
+ */
+
+void
+listsbase::match_up (const listsbase & source)
+{
+    for (auto & value : m_master_io)
+    {
+        const io & sourceio = source.get_io_block(value.io_nick_name);
+        value.io_enabled = sourceio.io_enabled;
+        value.out_clock = sourceio.out_clock;
+    }
+}
+
+const listsbase::io &
+listsbase::get_io_block (const std::string & nickname) const
+{
+    static bool s_needs_initing;
+    static io s_dummy_io;
+    if (s_needs_initing)
+    {
+        s_needs_initing = false;
+        s_dummy_io.io_enabled = false;
+        s_dummy_io.out_clock = e_clock::disabled;
+    }
+
+    for (const auto & value : m_master_io)
+    {
+        if (value.io_nick_name == nickname)
+            return value;
+    }
+    return s_dummy_io;
+}
 
 std::string
 listsbase::e_clock_to_string (e_clock e) const

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-18
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -56,7 +56,7 @@ class clockslist final : public listsbase
 
 public:
 
-    clockslist () : listsbase ()
+    clockslist (bool pmflag = false) : listsbase (pmflag)
     {
         // Nothing to do
     }

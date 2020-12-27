@@ -330,8 +330,8 @@ mastermidibase::sysex (event * ev)
  * \threadsafe
  *
  * \param bus
- *      The buss to start play on.  Ooh, we just noticed that value should be
- *      checked before usage!
+ *      The buss to start play on.  The caller is expected to make sure this
+ *      buss is the correct buss.
  *
  * \param e24
  *      The seq66 event to play on the buss.  For speed, we don't bother to
@@ -345,7 +345,7 @@ void
 mastermidibase::play (bussbyte bus, event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
-    bus = true_output_bus(bus);
+    ///////////// bus = true_output_bus(bus);
     m_outbus_array.play(bus, e24, channel);
 }
 
@@ -369,7 +369,7 @@ bool
 mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 {
     automutex locker(m_mutex);
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
 
     bool result = m_outbus_array.set_clock(bus, clocktype);
     if (result)
@@ -394,7 +394,7 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 bool
 mastermidibase::save_clock (bussbyte bus, e_clock clock)
 {
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
     return m_master_clocks.set(bus, clock);
 }
 
@@ -414,7 +414,7 @@ mastermidibase::save_clock (bussbyte bus, e_clock clock)
 e_clock
 mastermidibase::get_clock (bussbyte bus)
 {
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
     return m_outbus_array.get_clock(bus);
 }
 
@@ -445,6 +445,24 @@ mastermidibase::copy_io_busses ()
 }
 
 /**
+ *  Used in the performer class to pass the settings read from the "rc"
+ *  file to here.  There is an converse function defined above.
+ */
+
+void
+mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
+{
+    clockslist & opm = output_port_map();
+    if (opm.not_empty())
+    {
+        opm.match_up(m_master_clocks);
+    }
+
+    outs = m_master_clocks;
+    ins = m_master_inputs;
+}
+
+/**
  *  Set the status of the given input buss, if a legal buss number.
  *  Why is another buss-count constant, and a global one at that, being
  *  used?  And I thought there was only one input buss anyway!  Well,
@@ -470,7 +488,7 @@ bool
 mastermidibase::set_input (bussbyte bus, bool inputing)
 {
     automutex locker(m_mutex);
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
 
     bool result = m_inbus_array.set_input(bus, inputing);
     if (result)
@@ -503,7 +521,7 @@ bool
 mastermidibase::save_input (bussbyte bus, bool inputing)
 {
     int currentcount = m_master_inputs.count();
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
 
     bool result = m_master_inputs.set(bus, inputing);
     if (! result)
@@ -535,7 +553,7 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
 bool
 mastermidibase::get_input (bussbyte bus)
 {
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
     return m_inbus_array.get_input(bus);
 }
 
@@ -552,7 +570,7 @@ mastermidibase::get_input (bussbyte bus)
 bool
 mastermidibase::is_input_system_port (bussbyte bus)
 {
-    bus = true_output_bus(bus);
+    ////////////// bus = true_output_bus(bus);
     return m_inbus_array.is_system_port(bus);
 }
 

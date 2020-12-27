@@ -121,16 +121,25 @@ qclocklayout::setup_ui ()
     (
         20, 20, QSizePolicy::MinimumExpanding, QSizePolicy::Minimum
     );
-
+    const clockslist & opm = output_port_map();
     mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
+    if (opm.not_empty())
     {
-        QString busname = masterbus->get_midi_out_bus_name(m_bus).c_str();
+        std::string busname = opm.get_name(bussbyte(m_bus));
         m_label_outputbusname = new QLabel();
-        m_label_outputbusname->setText(busname);
+        m_label_outputbusname->setText(busname.c_str());
     }
     else
-        return;
+    {
+        if (not_nullptr(masterbus))
+        {
+            QString busname = masterbus->get_midi_out_bus_name(m_bus).c_str();
+            m_label_outputbusname = new QLabel();
+            m_label_outputbusname->setText(busname);
+        }
+        else
+            return;
+    }
 
     m_rbutton_portdisabled = new QRadioButton("Disabled");
     m_rbutton_clockoff = new QRadioButton("Off");
@@ -149,6 +158,9 @@ qclocklayout::setup_ui ()
     m_horizlayout_clockline->addWidget(m_rbutton_clockoff);
     m_horizlayout_clockline->addWidget(m_rbutton_clockonpos);
     m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
+
+    e_clock clocking = opm.not_empty() ?
+        clocking = opm.get(m_bus) : masterbus->get_clock(m_bus) ;
 
     switch (masterbus->get_clock(m_bus))
     {

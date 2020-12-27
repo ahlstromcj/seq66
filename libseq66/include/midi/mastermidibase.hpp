@@ -329,16 +329,7 @@ protected:
         m_master_inputs = ins;
     }
 
-    /**
-     *  Used in the performer class to pass the settings read from the "rc"
-     *  file to here.  There is an converse function defined above.
-     */
-
-    void get_port_statuses (clockslist & outs, inputslist & ins)
-    {
-        outs = m_master_clocks;
-        ins = m_master_inputs;
-    }
+    void get_port_statuses (clockslist & outs, inputslist & ins);
 
     e_clock clock (bussbyte bus)
     {

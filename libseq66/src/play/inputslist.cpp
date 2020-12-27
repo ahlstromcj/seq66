@@ -24,12 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-19
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "play/inputslist.hpp"          /* seq66::inputslist class          */
+#include "util/strfunctions.hpp"        /* seq66::string_format() template  */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -125,7 +126,7 @@ inputslist::get (bussbyte bus) const
 inputslist &
 input_port_map ()
 {
-    static inputslist s_inputs_list;
+    static inputslist s_inputs_list(true);      /* flag this as a port-map  */
     return s_inputs_list;
 }
 
@@ -189,8 +190,27 @@ build_input_port_map (const inputslist & il)
 }
 
 /**
- *  If an input map exists, looks up the actual buss name.  Otherwise, just return
- *  input buss paremater.
+ *  If an input map exists and is not empty [see the input_port_map()
+ *  function], this function looks up the nominal buss number in order to find
+ *  the registered (in the '[midi-clocks-map]' section of the 'rc' file) name
+ *  of this port. That name is then used to look up the actual buss number of
+ *  that port as set up by the system according to existing MIDI equipment.
+ *
+ * \param cl
+ *      Provides the clockslist that holds the actual existing MIDI input
+ *      ports.
+ *
+ * \param nominalbuss
+ *      Provides the buss number to be mapped to the true buss number. The
+ *      nominal buss number is the number stored with each pattern in the
+ *      tune, and should never change just because the set of MIDI equipment
+ *      changes.
+ *
+ * \return
+ *      If the port map exists, the looked-up port/buss number is returned. If
+ *      that port cannot be found by name, then c_bussbyte_max (0xFF) is
+ *      returned.  Otherwise, the nominal buss parameter is returned, which
+ *      preserves the legacy behavior of the pattern buss number.
  */
 
 bussbyte
@@ -200,14 +220,20 @@ true_input_bus (const inputslist & cl, bussbyte nominalbuss)
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
-        for (int b = 0; b < cl.count(); ++b)
-        {
-            std::string shortname = inpsref.port_name_from_bus(nominalbuss);
-            if (! shortname.empty())
-                result = cl.bus_from_nick_name(shortname);
+        std::string shortname = inpsref.port_name_from_bus(nominalbuss);
+        if (shortname.empty())
+            result = c_bussbyte_max;                    /* no such buss */
+        else
+            result = cl.bus_from_nick_name(shortname);
 
-            if (is_null_bussbyte(result))
-                continue;
+        if (is_null_bussbyte(result))
+        {
+            std::string msg = string_format
+            (
+                "true_input_bus(%d) failed for port '%s'",
+                nominalbuss, shortname
+            );
+            errprint(msg);
         }
     }
     return result;

@@ -1,30 +1,35 @@
 README for Seq66 0.91.4 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-12-20
+2015-09-10 to 2020-12-27
 
 "Seq66" is a new Qt version of "Sequencer64" with modern C++ and new features,
 now the "official" version of "Sequencer64".  Linux users can build this
 application easily from the source code.  See the INSTALL file.  Windows users
 can get an installer package on GitHub at:
 
-   https://github.com/ahlstromcj/sequencer64-packages/blob/master/seq66/0.90/seq66_setup_0.90.6.exe (version 0.91.0 coming soon).
+"Seq66" is a MIDI sequencer and live looper with a hardware sampler-like grid
+pattern interface, MIDI automation for live performance, with sets and
+playlists for song management and a scale/chord-aware piano-roll interface and
+song editor for creative composition. Based on the classic Seq24, Seq66 is a
+refactoring of the Qt version of Sequencer64/Kepler34 with modern C++.
+Supports NSM (New Session Manager) on Linux, can also be run headless.
 
-Major Changes (also see "Recent Changes" below):
+Major Features:
 
     -   User interface:
         -   Qt 5 (good cross-platform support).  No more "grid of sets", just
             unlimited external windows.
         -   Added tabs for management of sets, mute-groups, song mode, pattern
-            editing, event-editing, play-lists, and session management.
-        -   Added a live frame using buttons to match Qt theming. (The original
-            implementation is available as a "user" option.)
+            editing, event-editing, play-lists, and session information.
+        -   The live frame uses buttons that match Qt theming.
         -   A color for each sequence can be chosen to make them stand out.
-            The color is saved in a SeqSpec associated with the track.
+            The color is saved in a SeqSpec associated with the track. The
+            color palette can be saved and modified.
     -   Configuration files:
         -   Separated MIDI control and mute-group setting into their own files,
             with support for hex notation.
         -   Supported configuration files: ".rc", ".usr", ".ctrl", ".mutes",
-            ".playlist", and ".drums" (note-mapping).
+            ".playlist", ".drums" (note-mapping), and ".palette".
         -   Unified keystroke control and MIDI control into a ".ctrl" file. It
             defines MIDI In controls for controlling Seq66, and MIDI Out controls
             for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
@@ -32,9 +37,8 @@ Major Changes (also see "Recent Changes" below):
     -   Non Session Manager.  Support for this manager is essentially complete.
         Handles stopping and saving, display of details about the session.
     -   Internal:
-        -   More consistent use of modern C++, including lambda functions.
-        -   Additional performer callbacks to reduce the need for polling in
-            the user-interface.
+        -   More consistent use of modern C++, auto, and lambda functions.
+        -   Additional performer callbacks to reduce the need for polling.
 
 Seq66 has builds for ALSA/JACK, PortMidi, Windows, and a command-line/daemon.
 Here are the executables that can be built:

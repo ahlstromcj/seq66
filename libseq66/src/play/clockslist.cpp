@@ -24,12 +24,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-26
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "play/clockslist.hpp"          /* seq66::clockslist class          */
+#include "util/strfunctions.hpp"        /* seq66::string_format() template  */
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -127,7 +128,7 @@ clockslist::get (bussbyte bus) const
 clockslist &
 output_port_map ()
 {
-    static clockslist s_clocks_list;
+    static clockslist s_clocks_list(true);      /* flag this as a port-map  */
     return s_clocks_list;
 }
 
@@ -191,8 +192,27 @@ build_output_port_map (const clockslist & cl)
 }
 
 /**
- *  If an output map exists, looks up the actual buss name.  Otherwise, just
- *  return output buss parameter.
+ *  If an output map exists and is not empty [see the output_port_map()
+ *  function], this function looks up the nominal buss number in order to find
+ *  the registered (in the '[midi-clocks-map]' section of the 'rc' file) name
+ *  of this port. That name is then used to look up the actual buss number of
+ *  that port as set up by the system according to existing MIDI equipment.
+ *
+ * \param cl
+ *      Provides the clockslist that holds the actual existing MIDI output
+ *      ports.
+ *
+ * \param nominalbuss
+ *      Provides the buss number to be mapped to the true buss number. The
+ *      nominal buss number is the number stored with each pattern in the
+ *      tune, and should never change just because the set of MIDI equipment
+ *      changes.
+ *
+ * \return
+ *      If the port map exists, the looked-up port/buss number is returned. If
+ *      that port cannot be found by name, then c_bussbyte_max (0xFF) is
+ *      returned.  Otherwise, the nominal buss parameter is returned, which
+ *      preserves the legacy behavior of the pattern buss number.
  */
 
 bussbyte
@@ -204,9 +224,19 @@ true_output_bus (const clockslist & cl, bussbyte nominalbuss)
     {
         std::string shortname = cloutref.port_name_from_bus(nominalbuss);
         if (shortname.empty())
-            result = c_bussbyte_max;
+            result = c_bussbyte_max;                    /* no such buss */
         else
             result = cl.bus_from_nick_name(shortname);
+
+        if (is_null_bussbyte(result))
+        {
+            std::string msg = string_format
+            (
+                "true_output_bus(%d) failed for port '%s'",
+                nominalbuss, shortname
+            );
+            errprint(msg);
+        }
     }
     return result;
 }

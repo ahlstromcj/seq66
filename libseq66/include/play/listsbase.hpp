@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2020-12-19
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -85,17 +85,22 @@ protected:
 
     std::vector<io> m_master_io;
 
+    /**
+     *  Indicates if this list is a port-mapper list.  Useful in debugging.
+     */
+
+    bool m_is_port_map;
+
 public:
 
-    listsbase () : m_master_io ()
-    {
-        // Nothing to do
-    }
+    listsbase (bool pmflag = false);
 
     virtual ~listsbase ()
     {
         // Nothing to do
     }
+
+    void match_up (const listsbase & source);
 
     void clear ()
     {
@@ -118,6 +123,11 @@ public:
         return ! m_master_io.empty();
     }
 
+    bool is_port_map () const
+    {
+        return m_is_port_map;
+    }
+
     void set_name (bussbyte bus, const std::string & name);
     void set_nick_name (bussbyte bus, const std::string & name);
     std::string get_name (bussbyte bus, bool addnumber = false) const;
@@ -134,6 +144,7 @@ protected:
     std::string port_map_list () const;
     std::string to_string (const std::string & tag) const;
     bool add (const std::string & name, const std::string & nickname);
+    const io & get_io_block (const std::string & nickname) const;
 
 };              // class listsbase
 

@@ -124,8 +124,9 @@ extern bool parse_stanza_bits
     const std::string & mutestanza
 );
 
-/*
- *  This comes, slightly modified to avoid throwing an exception, from:
+/**
+ *  This function comes, slightly modified to avoid throwing an exception,
+ *  from:
  *
  * https://stackoverflow.com/questions/2342162/stdstring-formatting-like-sprintf
  *
