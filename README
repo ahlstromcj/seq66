@@ -1,11 +1,6 @@
-README for Seq66 0.91.4 (Sequencer64 refactored for C++/14 and Qt 5)
+README for Seq66 0.91.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2020-12-27
-
-"Seq66" is a new Qt version of "Sequencer64" with modern C++ and new features,
-now the "official" version of "Sequencer64".  Linux users can build this
-application easily from the source code.  See the INSTALL file.  Windows users
-can get an installer package on GitHub at:
+2015-09-10 to 2020-12-28
 
 "Seq66" is a MIDI sequencer and live looper with a hardware sampler-like grid
 pattern interface, MIDI automation for live performance, with sets and
@@ -14,10 +9,14 @@ song editor for creative composition. Based on the classic Seq24, Seq66 is a
 refactoring of the Qt version of Sequencer64/Kepler34 with modern C++.
 Supports NSM (New Session Manager) on Linux, can also be run headless.
 
+"Seq66" is a Qt version of "Sequencer64" with modern C++ and new features,
+Linux users can build this application from the source code.  See the INSTALL
+file.  Windows users can get an installer package on GitHub.
+
 Major Features:
 
     -   User interface:
-        -   Qt 5 (good cross-platform support).  No more "grid of sets", just
+        -   Qt 5 (good cross-platform support).  No "grid of sets", but
             unlimited external windows.
         -   Added tabs for management of sets, mute-groups, song mode, pattern
             editing, event-editing, play-lists, and session information.
@@ -59,8 +58,10 @@ and using a conventional source tarball.
 
 Recent Changes:
 
+    -   Version 0.91.5:
+        -   Still improving the port-mapper feature.
+        -   Many minor fixes.
     -   Version 0.91.4:
-        -   Added a port-mapper feature for I/O, still in progress.
         -   Improved port naming and provide an option for short or long port
             names.
         -   Improved safety in NSM sessions.

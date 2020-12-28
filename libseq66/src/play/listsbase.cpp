@@ -306,6 +306,11 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
  *  disabled ports.  Each port in the port-map is looked up in the given
  *  source list.  If not found, it is disabled.
  *
+ *  Currently, it is assumed that the "this" here is the listsbase object
+ *  returned by the input_port_map() or output_port_map() functions. Recall that
+ *  its full-name is the nick-name of an actual port, and its nick-name is a
+ *  string version of the port-number.  Too tricky... unless it works. :-)
+ *
  * \param source
  *      The source for the statuses to be applied, when usesource is true.
  */
@@ -315,7 +320,8 @@ listsbase::match_up (const listsbase & source)
 {
     for (auto & value : m_master_io)
     {
-        const io & sourceio = source.get_io_block(value.io_nick_name);
+        const std::string & portname = value.io_name;   /* not io_nick_name */
+        const io & sourceio = source.get_io_block(portname);
         value.io_enabled = sourceio.io_enabled;
         value.out_clock = sourceio.out_clock;
     }
@@ -324,7 +330,7 @@ listsbase::match_up (const listsbase & source)
 const listsbase::io &
 listsbase::get_io_block (const std::string & nickname) const
 {
-    static bool s_needs_initing;
+    static bool s_needs_initing = true;
     static io s_dummy_io;
     if (s_needs_initing)
     {

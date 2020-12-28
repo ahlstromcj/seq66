@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2020-12-16
+ * \updates       2020-12-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -160,9 +160,9 @@ qclocklayout::setup_ui ()
     m_horizlayout_clockline->addWidget(m_rbutton_clockonmod);
 
     e_clock clocking = opm.not_empty() ?
-        clocking = opm.get(m_bus) : masterbus->get_clock(m_bus) ;
+        opm.get(m_bus) : masterbus->get_clock(m_bus) ;
 
-    switch (masterbus->get_clock(m_bus))
+    switch (clocking)
     {
     case e_clock::disabled:
         m_rbutton_portdisabled->setChecked(true);

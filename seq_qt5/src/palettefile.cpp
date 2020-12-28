@@ -209,7 +209,7 @@ bool
 palettefile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.91.4 (and above) palette configuration file\n"
+        << "# Seq66 0.91.5 (and above) palette configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
