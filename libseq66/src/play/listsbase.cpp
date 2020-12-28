@@ -159,6 +159,20 @@ listsbase::add_list_line (const std::string & line)
     return result;
 }
 
+/**
+ *  New rule:  whether input or output, a clock value of "disabled" marks the
+ *  port as missing or otherwise unusable.
+ */
+
+bool
+listsbase::is_disabled (bussbyte bus) const
+{
+    e_clock clocking = bus < count() ?
+        m_master_io[bus].out_clock : e_clock::disabled ;
+
+    return clocking == e_clock::disabled;
+}
+
 void
 listsbase::set_name (bussbyte bus, const std::string & name)
 {

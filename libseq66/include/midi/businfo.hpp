@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2020-07-14
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  The businfo module defines the businfo and busarray classes so that we can
@@ -354,7 +354,7 @@ public:
     }
 
     e_clock get_clock (bussbyte bus) const;
-    std::string get_midi_bus_name (int bus);
+    std::string get_midi_bus_name (int bus) const;
     void print () const;
     void port_exit (int client, int port);
     bool set_input (bussbyte bus, bool inputing);
@@ -373,7 +373,7 @@ public:
             bi.bus()->set_input(bi.init_input());
     }
 
-    bool get_input (bussbyte bus);
+    bool get_input (bussbyte bus) const;
     bool is_system_port (bussbyte bus);
     int poll_for_midi ();
     bool get_midi_event (event * inev);

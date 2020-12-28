@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-27
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -77,7 +77,7 @@ inputslist::add
     bool result = false;
     io ioitem;
     ioitem.io_enabled = flag;
-    ioitem.out_clock = e_clock::disabled;
+    ioitem.out_clock = e_clock::off;        /* but not e_clock::disabled    */
     if (! name.empty())
     {
         ioitem.io_name = name;
@@ -108,7 +108,7 @@ inputslist::set (bussbyte bus, bool inputing)
     if (result)
     {
         m_master_io[bus].io_enabled = inputing;
-        m_master_io[bus].out_clock = e_clock::disabled;
+        m_master_io[bus].out_clock = e_clock::off;
     }
     return result;
 }

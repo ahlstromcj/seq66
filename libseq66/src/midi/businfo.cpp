@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-12-31
- * \updates       2020-12-11
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -491,13 +491,13 @@ busarray::get_clock (bussbyte bus) const
  */
 
 std::string
-busarray::get_midi_bus_name (int bus)
+busarray::get_midi_bus_name (int bus) const
 {
     std::string result;
     if (bus < count())
     {
-        businfo & bi = m_container[bus];
-        midibus * buss = bi.bus();
+        const businfo & bi = m_container[bus];
+        const midibus * buss = bi.bus();
         e_clock current = buss->get_clock();
         if (bi.active() || current == e_clock::disabled)
         {
@@ -640,12 +640,12 @@ busarray::set_input (bussbyte bus, bool inputing)
  */
 
 bool
-busarray::get_input (bussbyte bus)
+busarray::get_input (bussbyte bus) const
 {
     bool result = false;
     if (bus < count())
     {
-        businfo & bi = m_container[bus];
+        const businfo & bi = m_container[bus];
         if (bi.active())
             result = bi.bus()->is_system_port() ? true : bi.bus()->get_input();
     }

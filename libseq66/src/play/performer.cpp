@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-18
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -679,26 +679,6 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     return true;
 }
 
-bussbyte
-performer::true_output_bus (bussbyte nominalbuss) const
-{
-    bussbyte result = nominalbuss;
-    if (m_master_bus)
-        result = m_master_bus->true_output_bus(nominalbuss);
-
-    return result;
-}
-
-bussbyte
-performer::true_input_bus (bussbyte nominalbuss) const
-{
-    bussbyte result = nominalbuss;
-    if (m_master_bus)
-        result = m_master_bus->true_input_bus(nominalbuss);
-
-    return result;
-}
-
 /**
  *  Reloads the mute groups from the "rc" file.
  *
@@ -725,6 +705,26 @@ performer::reload_mute_groups (std::string & errmessage)
     return result;
 }
 
+bool
+performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
+{
+    const inputslist & ipm = input_port_map();
+    std::string busname;
+    bool disabled = false;
+    if (ipm.not_empty())
+    {
+        n = ipm.get_name(bus);
+        active = ipm.get(bus);
+        disabled = ipm.is_disabled(bus);
+    }
+    else if (not_nullptr(master_bus()))
+    {
+        n = master_bus()->get_midi_in_bus_name(bus);
+        active = master_bus()->get_input(bus);
+    }
+    return ! n.empty() && ! disabled;
+}
+
 /**
  *  Sets the main input bus, and handles the special "key labels on sequence"
  *  and "sequence numbers on sequence" functionality.  This function is called
@@ -740,17 +740,36 @@ performer::reload_mute_groups (std::string & errmessage)
  *      inactive.
  */
 
-void
-performer::set_input_bus (bussbyte bus, bool active)
+bool
+performer::ui_set_input (bussbyte bus, bool active)
 {
-    if (bus < c_busscount_max)                          /* 32 busses max    */
+    bool result = m_master_bus->set_input(bus, active);
+    if (result)
     {
-        if (m_master_bus->set_input(bus, active))
-        {
-            set_input(bus, active);
-            mapper().set_dirty();
-        }
+        inputslist & ipm = input_port_map();
+        result = ipm.set(bus, active);
+        set_input(bus, active);
+        mapper().set_dirty();
     }
+    return result;
+}
+
+bool
+performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
+{
+    const clockslist & opm = output_port_map();
+    std::string busname;
+    if (opm.not_empty())
+    {
+        n = opm.get_name(bus);
+        e = opm.get(bus);
+    }
+    else if (not_nullptr(master_bus()))
+    {
+        n = master_bus()->get_midi_out_bus_name(bus);
+        e = master_bus()->get_clock(bus);
+    }
+    return ! n.empty();
 }
 
 /**
@@ -759,24 +778,27 @@ performer::set_input_bus (bussbyte bus, bool active)
  *  the output busarray.
  *
  * \param bus
- *      The bus index to be set.
+ *      The bus index to be set.  It is converted to the actual bus number, if
+ *      necessary.
  *
  * \param clocktype
  *      Indicates whether the buss or the user-interface feature is
  *      e_clock_off, e_clock_pos, e_clock_mod, or (new) e_clock_disabled.
  */
 
-void
-performer::set_clock_bus (bussbyte bus, e_clock clocktype)
+bool
+performer::ui_set_clock (bussbyte bus, e_clock clocktype)
 {
-    if (bus < c_busscount_max)                          /* 32 busses max    */
+    bussbyte truebus = true_output_bus(bus);
+    bool result = m_master_bus->set_clock(truebus, clocktype);
+    if (result)
     {
-        if (m_master_bus->set_clock(bus, clocktype))    /* checks bus index */
-        {
-            set_clock(bus, clocktype);
-            mapper().set_dirty();
-        }
+        clockslist & opm = output_port_map();
+        result = opm.set(bus, clocktype);
+        set_clock(bus, clocktype);
+        mapper().set_dirty();
     }
+    return result;
 }
 
 /*
@@ -1009,7 +1031,7 @@ performer::install_sequence (sequence * s, seq::number seqno, bool fileload)
 
         midipulse barlength = s->get_ppqn() * s->get_beats_per_bar();
         bussbyte buss_override = usr().midi_buss_override();
-        s->set_parent(this);
+        s->set_parent(this);                /* also sets true buss value    */
         s->set_master_midi_bus(m_master_bus.get());
         s->sort_events();                   /* sort the events now          */
         s->set_length();                    /* final verify_and_link()      */
@@ -1278,15 +1300,17 @@ performer::change_ppqn (int p)
  *  the same (global) buss number.
  *
  *  Currently operates only on the current screenset.
+ *
+ * \param buss
  */
 
 bool
-performer::change_set_busses (int buss)
+performer::ui_change_set_bus (int buss)
 {
-    bool result = buss >= 0 && buss < SEQ66_OUTPUT_BUSS_MAX;
+    bussbyte b = bussbyte(buss);
+    bool result = is_good_bussbyte(b);
     if (result)
     {
-        bussbyte b = bussbyte(buss);
         for (auto seqi : m_play_set.seq_container())
             seqi->set_midi_bus(b, true);    /* calls notification funcion   */
 

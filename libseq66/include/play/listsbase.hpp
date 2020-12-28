@@ -61,11 +61,14 @@ protected:
 
     /**
      *  Provides a port name and the input or output values.  Note that the
-     *  clock setting will be disabled for all input values and for output
-     *  values that are actually disabled by the user.  Note that io_alt_name
-     *  is used instead of io_nick_name in cases where the nick-name is too
-     *  minimal.  For example, the nickname of "yoshimi:input" is "input",
-     *  which could conflict with the nicknames of other inputs.
+     *  clock setting will be off (not disabled) for all input values.  This
+     *  is so that we can disable missing inputs when port-mapping.  The clock
+     *  setting will be disabled for output values that are actually disabled
+     *  by the user or are missing from the actual system ports.  Note that
+     *  io_alt_name is used instead of io_nick_name in cases where the
+     *  nick-name is too minimal.  For example, the nickname of
+     *  "yoshimi:input" is "input", which could conflict with the nicknames of
+     *  other inputs.
      */
 
     using io = struct
@@ -136,6 +139,7 @@ public:
     std::string port_name_from_bus (bussbyte nominalbuss) const;
     void show (const std::string & tag) const;
     bool add_list_line (const std::string & line);
+    bool is_disabled (bussbyte bus) const;
 
 protected:
 

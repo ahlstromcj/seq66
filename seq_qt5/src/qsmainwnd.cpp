@@ -328,29 +328,82 @@ qsmainwnd::qsmainwnd
     ui->lineEditPpqn->setReadOnly(true);
 
     /*
-     * Global buss items.  Connected later on in this constructor.
+     * Global output buss items.  Connected later on in this constructor.
      */
 
+    const clockslist & opm = output_port_map();
     mastermidibus * mmb = perf().master_bus();
+    ui->cmb_global_bus->addItem("None");
     if (not_nullptr(mmb))
     {
-        ui->cmb_global_bus->addItem("None");
-        for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
+        int buses = opm.not_empty() ?
+            opm.count() : mmb->get_num_out_buses() ;
+
+        for (int bus = 0; bus < buses; ++bus)
         {
-            bool disabled = clock_is_disabled(mmb->get_clock(buss));
-            std::string busname = mmb->get_midi_out_bus_name(buss);
-            ui->cmb_global_bus->addItem(QString::fromStdString(busname));
-            if (disabled)
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
-                int index = buss + 1;
-                QStandardItemModel * model = qobject_cast<QStandardItemModel *>
-                (
-                    ui->cmb_global_bus->model()
-                );
-                QStandardItem * item = model->item(index);
-                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                bool disabled = ec == e_clock::disabled;
+                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
+                if (disabled)
+                {
+                    int index = bus + 1;
+                    QStandardItemModel * model =
+                        qobject_cast<QStandardItemModel *>
+                        (
+                            ui->cmb_global_bus->model()
+                        );
+                    QStandardItem * item = model->item(index);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
             }
         }
+
+#if 0
+        if (opm.not_empty())
+        {
+            buses = opm.count();
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                bool disabled = opm.is_disabled(bussbyte(bus));
+                std::string busname = opm.get_name(bussbyte(bus));
+                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
+                if (disabled)
+                {
+                    int index = bus + 1;
+                    QStandardItemModel * model =
+                        qobject_cast<QStandardItemModel *>
+                        (
+                            ui->cmb_global_bus->model()
+                        );
+                    QStandardItem * item = model->item(index);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
+            }
+        }
+        else
+        {
+            buses = mmb->get_num_out_buses();
+            for (int bus = 0; bus < busses; ++bus)
+            {
+                bool disabled = clock_is_disabled(mmb->get_clock(bus));
+                std::string busname = mmb->get_midi_out_bus_name(bus);
+                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
+                if (disabled)
+                {
+                    int index = bus + 1;
+                    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
+                    (
+                        ui->cmb_global_bus->model()
+                    );
+                    QStandardItem * item = model->item(index);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
+            }
+        }
+#endif  // 0
     }
 
     /*
@@ -2232,8 +2285,7 @@ qsmainwnd::update_midi_bus (int index)
         else
         {
             --index;
-            if (index >= 0 && index < mmb->get_num_out_buses())
-                (void) perf().change_set_busses(index);
+            (void) perf().ui_change_set_bus(index);
         }
     }
 }

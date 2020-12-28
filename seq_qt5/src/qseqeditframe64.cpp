@@ -607,30 +607,84 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(reset_midi_bus())
     );
 
+    const clockslist & opm = output_port_map();
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
-        for (int b = 0; b < mmb->get_num_out_buses(); ++b)
+        bussbyte seqbuss = seq_pointer()->get_midi_bus();
+        std::string selectedbuss = opm.not_empty() ?
+            opm.get_name(seqbuss) : mmb->get_midi_out_bus_name(seqbuss) ;
+
+        int buses = opm.not_empty() ?
+            opm.count() : mmb->get_num_out_buses() ;
+
+        for (int bus = 0; bus < buses; ++bus)
         {
-            bool disabled = clock_is_disabled(mmb->get_clock(b));
-            ui->m_combo_bus->addItem
-            (
-                QString::fromStdString(mmb->get_midi_out_bus_name(b))
-            );
-            if (disabled)
+            e_clock ec;
+            std::string busname;
+            if (perf().ui_get_clock(bussbyte(bus), ec, busname))
             {
-                QStandardItemModel * model = qobject_cast<QStandardItemModel *>
-                (
-                    ui->m_combo_bus->model()
-                );
-                QStandardItem * item = model->item(b);
-                item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                bool disabled = ec == e_clock::disabled;
+                ui->m_combo_bus->addItem(QString::fromStdString(busname));
+                if (disabled)
+                {
+                    QStandardItemModel * model =
+                        qobject_cast<QStandardItemModel *>
+                        (
+                            ui->m_combo_bus->model()
+                        );
+                    QStandardItem * item = model->item(bus);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
             }
         }
-        ui->m_combo_bus->setCurrentText
-        (
-            QString::fromStdString(mmb->get_midi_out_bus_name(buss))
-        );
+        ui->m_combo_bus->setCurrentText(QString::fromStdString(selectedbuss));
+
+#if 0
+        if (opm.not_empty())
+        {
+            int buses = opm.count();
+            for (int b = 0; b < buses; ++b)
+            {
+                bool disabled = opm.is_disabled(bussbyte(b));
+                std::string busname = opm.get_name(bussbyte(b));
+                ui->m_combo_bus->addItem(QString::fromStdString(busname));
+                if (disabled)
+                {
+                    QStandardItemModel * model =
+                        qobject_cast<QStandardItemModel *>
+                        (
+                            ui->m_combo_bus->model()
+                        );
+                    QStandardItem * item = model->item(b);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
+            }
+            selectedbuss = opm.get_name(bussbyte(seqbuss));
+        }
+        else
+        {
+            for (int b = 0; b < mmb->get_num_out_buses(); ++b)
+            {
+                bool disabled = clock_is_disabled(mmb->get_clock(b));
+                ui->m_combo_bus->addItem
+                (
+                    QString::fromStdString(mmb->get_midi_out_bus_name(b))
+                );
+                if (disabled)
+                {
+                    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
+                    (
+                        ui->m_combo_bus->model()
+                    );
+                    QStandardItem * item = model->item(b);
+                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+                }
+            }
+            selectedbuss = mmb->get_midi_out_bus_name(seqbuss);
+        }
+        ui->m_combo_bus->setCurrentText(QString::fromStdString(selectedbuss));
+#endif
     }
     connect
     (
@@ -1688,15 +1742,8 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-    mastermidibus * mmb = perf().master_bus();
-    if (not_nullptr(mmb))
-    {
-        if (index >= 0 && index < mmb->get_num_out_buses())
-        {
-            seq_pointer()->set_midi_bus(bussbyte(index), true);
-            set_dirty();
-        }
-    }
+    seq_pointer()->set_midi_bus(bussbyte(index), true);
+    set_dirty();
 }
 
 /**

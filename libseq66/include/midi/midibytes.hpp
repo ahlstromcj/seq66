@@ -505,6 +505,16 @@ is_null_bussbyte (bussbyte b)
 }
 
 /**
+ *  Checks for a usable bussbyte.
+ */
+
+inline bool
+is_good_bussbyte (bussbyte b)
+{
+    return b < c_busscount_max;
+}
+
+/**
  *  Compares a channel value to the maximum value.  Will replace the event static
  *  function of the same name.
  */

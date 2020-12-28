@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-12-18
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  The mastermidibase module is the base-class version of the mastermidibus
@@ -204,26 +204,6 @@ public:
         return m_client_id;
     }
 
-    void store_output_map ()
-    {
-        (void) build_output_port_map(m_master_clocks);
-    }
-
-    bussbyte true_output_bus (bussbyte nominalbuss) const
-    {
-        return seq66::true_output_bus(m_master_clocks, nominalbuss);
-    }
-
-    void store_input_map ()
-    {
-        (void) build_input_port_map(m_master_inputs);
-    }
-
-    bussbyte true_input_bus (bussbyte nominalbuss) const
-    {
-        return seq66::true_input_bus(m_master_inputs, nominalbuss);
-    }
-
     int get_num_out_buses () const
     {
         return m_outbus_array.count();
@@ -283,8 +263,8 @@ public:
     void flush ();
     void panic ();                                          /* kepler34 func  */
     void dump_midi_input (event in);                        /* seq32 function */
-    std::string get_midi_out_bus_name (bussbyte bus);
-    std::string get_midi_in_bus_name (bussbyte bus);
+    std::string get_midi_out_bus_name (bussbyte bus) const;
+    std::string get_midi_in_bus_name (bussbyte bus) const;
     int poll_for_midi ();
     bool set_sequence_input (bool state, sequence * seq);
     bool is_more_input ();
@@ -302,11 +282,11 @@ public:
         return api_get_midi_event(in);
     }
 
+    e_clock get_clock (bussbyte bus) const;
     bool set_clock (bussbyte bus, e_clock clock_type);
+    bool get_input (bussbyte bus) const;
     bool set_input (bussbyte bus, bool inputing);
-    bool get_input (bussbyte bus);
     bool is_input_system_port (bussbyte bus);
-    e_clock get_clock (bussbyte bus);
     void copy_io_busses ();
     void set_ppqn (int ppqn);
     void set_beats_per_minute (midibpm bpm);

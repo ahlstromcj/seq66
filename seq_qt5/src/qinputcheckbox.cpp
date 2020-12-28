@@ -25,9 +25,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-20
- * \updates       2020-07-26
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
+ *  This class is used in the qseditoptions settings-dialog class.
  */
 
 #include <QtWidgets/QCheckBox>
@@ -44,18 +45,26 @@ namespace seq66
 {
 
 /**
- *  Creates a single line in the MIDI Clocks "Clock" group-box.  We will use
- *  the words "clock" or "port" for the MIDI output port represented by this
+ *  Creates a single line in the MIDI Input group-box.  We will use
+ *  the words "input" or "port" for the MIDI input port represented by this
  *  widget.  Here are the jobs we have to do:
  *
  *      -#  Get the label for the port and set it.
- *      -#  Add the tooltips for the clock radio-buttons.
- *      -#  Add the clock radio-buttons to m_horizlayout_clocklive.
- *        -#  Connect to the radio-button slots:
- *            -    clock_callback_disable().
- *            -    clock_callback_off().
- *            -    clock_callback_on().
- *            -    clock_callback_mod().
+ *      -#  Add the tooltips for the input radio-buttons.
+ *      -#  Add the input radio-buttons to m_horizlayout_clocklive.
+ *      -#  Connect to the check-button slot.
+ *
+ * \param parent
+ *      This parameter points to the qseditoption object that owns this
+ *      check-box.
+ *
+ * \param p
+ *      Provides the performer for some lookup activities.
+ *
+ * \parma bus
+ *      Provides the index into the list of inputs provided by the system. If
+ *      there is an input-port-map, then this bus number must be translated to
+ *      the true/actual system bus number before usage.
  */
 
 qinputcheckbox::qinputcheckbox
@@ -91,15 +100,17 @@ qinputcheckbox::qinputcheckbox
 void
 qinputcheckbox::setup_ui ()
 {
-    mastermidibus * masterbus = perf().master_bus();
-    if (not_nullptr(masterbus))
-    {
-        QString busname = masterbus->get_midi_in_bus_name(m_bus).c_str();
-        bool inputing = masterbus->get_input(m_bus);
-        m_chkbox_inputactive = new QCheckBox(busname);
-        m_chkbox_inputactive->setChecked(inputing);
-        m_chkbox_inputactive->setEnabled(! perf().is_input_system_port(m_bus));
-    }
+    std::string busname;
+    bool inputing;
+    bool disabled = perf().is_input_system_port(m_bus);
+    bool gotbussinfo = perf().ui_get_input(m_bus, inputing, busname);
+    if (! gotbussinfo)
+        disabled = true;
+
+    QString qbname = QString::fromStdString(busname);
+    m_chkbox_inputactive = new QCheckBox(qbname);
+    m_chkbox_inputactive->setChecked(inputing);
+    m_chkbox_inputactive->setEnabled(! disabled);
 }
 
 /**
@@ -114,7 +125,7 @@ void
 qinputcheckbox::input_callback_clicked (int state)
 {
     bool inputing = state == Qt::Checked;
-    perf().set_input_bus(m_bus, inputing);
+    perf().ui_set_input(m_bus, inputing);
 }
 
 }           // namespace seq66

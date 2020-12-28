@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -39,7 +39,7 @@ once or twice. </string>
          <x>10</x>
          <y>20</y>
          <width>591</width>
-         <height>301</height>
+         <height>313</height>
         </rect>
        </property>
        <property name="title">
@@ -138,7 +138,7 @@ Button not yet functional.</string>
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>360</y>
+         <y>352</y>
          <width>338</width>
          <height>30</height>
         </rect>
@@ -172,8 +172,8 @@ Button not yet functional.</string>
       <widget class="QPushButton" name="pushButtonStoreMap">
        <property name="geometry">
         <rect>
-         <x>430</x>
-         <y>360</y>
+         <x>432</x>
+         <y>352</y>
          <width>162</width>
          <height>32</height>
         </rect>
@@ -191,7 +191,7 @@ system's MIDI setup has changed.</string>
        <property name="geometry">
         <rect>
          <x>72</x>
-         <y>496</y>
+         <y>488</y>
          <width>161</width>
          <height>17</height>
         </rect>
@@ -207,7 +207,7 @@ system's MIDI setup has changed.</string>
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>488</y>
+         <y>480</y>
          <width>42</width>
          <height>28</height>
         </rect>
@@ -226,6 +226,25 @@ system's MIDI setup has changed.</string>
        </property>
        <property name="placeholderText">
         <string>0</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="outPortsMappedCheck">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>432</x>
+         <y>488</y>
+         <width>177</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>If checked, an output port map was loaded.</string>
+       </property>
+       <property name="text">
+        <string>Output Ports Mapped</string>
        </property>
       </widget>
      </widget>
@@ -289,6 +308,22 @@ number using the channel number (0 to 15).</string>
          <string>Record input into sequences according to channel</string>
         </property>
        </widget>
+      </widget>
+      <widget class="QCheckBox" name="inPortsMappedCheck">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>424</x>
+         <y>328</y>
+         <width>169</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Input Ports Mapped</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabDisplay">

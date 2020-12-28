@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-07-30
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1370,7 +1370,7 @@ public:
         return m_nominal_bus;       // or m_true_bus?
     }
 
-    void set_midi_bus (bussbyte mb, bool user_change = false);
+    bool set_midi_bus (bussbyte mb, bool user_change = false);
     void set_master_midi_bus (const mastermidibus * mmb);
     int select_note_events
     (
@@ -1647,6 +1647,11 @@ private:
     mastermidibus * master_bus ()
     {
         return m_master_bus;
+    }
+
+    performer * perf ()
+    {
+        return m_parent;
     }
 
     bool quantize_events

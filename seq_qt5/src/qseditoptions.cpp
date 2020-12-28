@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-26
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -224,34 +224,24 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     QVBoxLayout * vboxclocks = new QVBoxLayout;
     mastermidibus * masterbus = perf().master_bus();
+    const clockslist & opm = output_port_map();
+    bool outportmap = opm.not_empty();
     if (not_nullptr(masterbus))
     {
         const clockslist & opm = output_port_map();
-        if (opm.not_empty())
+        int buses = outportmap ? opm.count() : masterbus->get_num_out_buses() ;
+        for (int bus = 0; bus < buses; ++bus)
         {
-            int buses = opm.count();
-            for (int bus = 0; bus < buses; ++bus)
-            {
-                qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
-                vboxclocks->addLayout(tempqc->layout());
-            }
-        }
-        else
-        {
-            int buses = masterbus->get_num_out_buses();
-            for (int bus = 0; bus < buses; ++bus)
-            {
-                qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
-                vboxclocks->addLayout(tempqc->layout());
-            }
+            qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
+            vboxclocks->addLayout(tempqc->layout());
         }
     }
+    ui->outPortsMappedCheck->setChecked(outportmap);
 
     QSpacerItem * spacer = new QSpacerItem
     (
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
-
     vboxclocks->addItem(spacer);
     ui->groupBoxClocks->setLayout(vboxclocks);
 
@@ -269,15 +259,18 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      */
 
     QVBoxLayout * vboxinputs = new QVBoxLayout;
+    const inputslist & ipm = input_port_map();
+    bool inportmap = ipm.not_empty();
     if (not_nullptr(masterbus))
     {
-        int buses = masterbus->get_num_in_buses();
+        int buses = inportmap ? ipm.count() : masterbus->get_num_in_buses() ;
         for (int bus = 0; bus < buses; ++bus)
         {
             qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
             vboxinputs->addWidget(tempqi->input_checkbox());
         }
     }
+    ui->inPortsMappedCheck->setChecked(inportmap);
 
     QSpacerItem * spacer2 = new QSpacerItem
     (

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-12-18
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -119,25 +119,25 @@ const std::string sequence::sm_default_name = "Untitled";
 
 sequence::sequence (int ppqn)
  :
-    m_parent                    (nullptr),      // set when sequence installed
+    m_parent                    (nullptr),          // set when seq installed
     m_events                    (),
     m_triggers                  (*this),
-    m_events_undo_hold          (),             // stazed
-    m_have_undo                 (false),        // stazed
-    m_have_redo                 (false),        // stazed
+    m_events_undo_hold          (),
+    m_have_undo                 (false),
+    m_have_redo                 (false),
     m_events_undo               (),
     m_events_redo               (),
     m_iterator_draw             (m_events.begin()),
-    m_channel_match             (false),        // stazed
+    m_channel_match             (false),
     m_midi_channel              (0),
     m_no_channel                (false),
     m_nominal_bus               (0),
-    m_true_bus                  (0),
+    m_true_bus                  (c_bussbyte_max),   // is_null_bussbyte()
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
     m_master_bus                (nullptr),
-    m_playing_notes             (),             // an array
+    m_playing_notes             (),                 // an array
     m_was_playing               (false),
     m_playing                   (false),
     m_recording                 (false),
@@ -742,7 +742,7 @@ sequence::set_rec_vol (int recvol)
 bool
 sequence::toggle_playing ()
 {
-    return toggle_playing(m_parent->get_tick(), m_parent->resume_note_ons());
+    return toggle_playing(perf()->get_tick(), perf()->resume_note_ons());
 }
 
 /**
@@ -789,7 +789,7 @@ sequence::toggle_queued ()
 
     // DO WE NEED to call performer::announce_sequence() here?
     /*
-    midi_control_out * mco = m_parent->get_midi_control_out();
+    midi_control_out * mco = perf()->get_midi_control_out();
     if (not_nullptr(mco))
     {
         if (m_queued)
@@ -896,7 +896,7 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / get_length();
         midipulse offset_base = times_played * get_length();
-        int transpose = transposable() ? m_parent->get_transpose() : 0 ;
+        int transpose = transposable() ? perf()->get_transpose() : 0 ;
         auto e = m_events.begin();
         while (e != m_events.end())
         {
@@ -928,8 +928,8 @@ sequence::play
                 {
                     if (er.is_tempo())
                     {
-                        if (not_nullptr(m_parent))
-                            m_parent->set_beats_per_minute(er.tempo());
+                        if (not_nullptr(perf()))
+                            perf()->set_beats_per_minute(er.tempo());
                     }
                     else if (! er.is_ex_data())
                     {
@@ -2687,9 +2687,9 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (overwriting() && m_parent->is_running() && get_length() > 0)
+    if (overwriting() && perf()->is_running() && get_length() > 0)
     {
-        midipulse tstamp = m_parent->get_tick() % get_length();
+        midipulse tstamp = perf()->get_tick() % get_length();
         if (tstamp < (m_ppqn / 4))
         {
             loop_reset(true);
@@ -2760,7 +2760,7 @@ sequence::stream_event (event & ev)
         ev.mod_timestamp(get_length());         /* adjust tick re length    */
         if (recording())
         {
-            if (m_parent->is_pattern_playing()) /* m_parent->is_running()   */
+            if (perf()->is_pattern_playing())   /* m_parent->is_running()   */
             {
                 if (ev.is_note_on() && m_rec_vol > SEQ66_PRESERVE_VELOCITY)
                     ev.note_velocity(m_rec_vol);        /* modify incoming  */
@@ -2817,7 +2817,7 @@ sequence::stream_event (event & ev)
         if (ev.is_note_off())
             link_new();                                 /* removed locking  */
 
-        if (quantizing() && m_parent->is_pattern_playing())
+        if (quantizing() && perf()->is_pattern_playing())
         {
             if (ev.is_note_off())
             {
@@ -4214,13 +4214,12 @@ sequence::get_last_tick () const
 /**
  *  Sets the MIDI buss/port number to dump MIDI data to.
  *
- *  TODO: add a recreate flag
- *
  * \threadsafe
  *
- * \param mb
+ * \param nominalbus
  *      The MIDI buss to set as the buss number for this sequence.  Also
- *      called the "MIDI port" number.
+ *      called the "MIDI port" number.  This number is not necessarily the
+ *      true system bus number
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -4230,24 +4229,31 @@ sequence::get_last_tick () const
  *      sequence.
  */
 
-void
-sequence::set_midi_bus (bussbyte mb, bool user_change)
+bool
+sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
-    if (mb != m_nominal_bus)
+    bool result = nominalbus != m_nominal_bus && is_good_bussbyte(nominalbus);
+    if (result)
     {
-        off_playing_notes();            /* off notes except initial         */
-        m_nominal_bus = mb;
-        m_true_bus = master_bus()->true_output_bus(mb);
-        if (is_null_bussbyte(m_true_bus))
-            m_true_bus = mb;            /* named buss no longer exists      */
+        off_playing_notes();                /* off notes except initial     */
+        m_nominal_bus = nominalbus;
+        if (not_nullptr(perf()))
+        {
+            m_true_bus = perf()->true_output_bus(nominalbus);
+            if (is_null_bussbyte(m_true_bus))
+                m_true_bus = nominalbus;    /* named buss no longer exists  */
+        }
+        else
+            m_true_bus = c_bussbyte_max;    /* provides an invalid value    */
 
         if (user_change)
-            modify();                   /* no easy way to undo this, though */
+            modify();                       /* no easy way to undo this     */
 
-        notify_change();                /* more reliable than set dirty     */
-        set_dirty();                    /* this is for display updating     */
+        notify_change();                    /* more reliable than set dirty */
+        set_dirty();                        /* this is for display updating */
     }
+    return result;
 }
 
 /**
@@ -4410,8 +4416,8 @@ sequence::extend (midipulse len)
 void
 sequence::notify_change ()
 {
-    if (not_nullptr(m_parent))
-        m_parent->notify_sequence_change(seq_number());
+    if (not_nullptr(perf()))
+        perf()->notify_sequence_change(seq_number());
 }
 
 /**
@@ -4423,8 +4429,8 @@ sequence::notify_change ()
 void
 sequence::notify_trigger ()
 {
-    if (not_nullptr(m_parent))
-        m_parent->notify_trigger_change(seq_number(), performer::change::no);
+    if (not_nullptr(perf()))
+        perf()->notify_trigger_change(seq_number(), performer::change::no);
 }
 
 /**
@@ -4453,7 +4459,7 @@ sequence::set_playing (bool p)
 
 #if defined USE_THIS_CODE
         THIS REALLY BELONGS IN PERFORM
-        midi_control_out * mco = m_parent->get_midi_control_out();
+        midi_control_out * mco = perf()->get_midi_control_out();
         if (not_nullptr(mco))
         {
             mco->send_seq_event
@@ -4987,7 +4993,7 @@ sequence::shift_notes (midipulse ticks)
 void
 sequence::apply_song_transpose ()
 {
-    int transpose = transposable() ? m_parent->get_transpose() : 0 ;
+    int transpose = transposable() ? perf()->get_transpose() : 0 ;
     if (transpose != 0)
     {
         automutex locker(m_mutex);
@@ -5267,7 +5273,15 @@ void
 sequence::set_parent (performer * p)
 {
     if (is_nullptr(m_parent) && not_nullptr(p))
+    {
         m_parent = p;
+        if (is_null_bussbyte(m_true_bus))
+        {
+            m_true_bus = p->true_output_bus(m_nominal_bus);
+            if (is_null_bussbyte(m_true_bus))
+                m_true_bus = m_nominal_bus; /* a named buss does not exist  */
+        }
+    }
 }
 
 /**
@@ -5503,7 +5517,7 @@ sequence::expand_recording () const
     bool result = false;
     if (expanding())
     {
-        midipulse tstamp = m_last_tick;     // m_parent->get_tick() % m_length;
+        midipulse tstamp = m_last_tick;     // perf()->get_tick() % m_length;
         if (tstamp >= expand_threshold())
         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI

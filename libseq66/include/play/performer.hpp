@@ -2239,13 +2239,15 @@ public:
     }
 
     std::string sequence_label (const sequence & seq);
-    std::string sequence_label (seq::number seqno);         /* qperfnames   */
+    std::string sequence_label (seq::number seqno);
     std::string sequence_title (const sequence & seq);
     std::string main_window_title (const std::string & fn = "");
     std::string sequence_window_title (const sequence & seq);
 
-    void set_input_bus (bussbyte bus, bool input_active);   /* see options  */
-    void set_clock_bus (bussbyte bus, e_clock clocktype);   /* ditto        */
+    bool ui_set_input (bussbyte bus, bool active);
+    bool ui_get_input (bussbyte bus, bool & active, std::string & n) const;
+    bool ui_set_clock (bussbyte bus, e_clock clocktype);
+    bool ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const;
 
     /**
      *  Saves the clock settings read from the "rc" file so that they can be
@@ -2262,17 +2264,23 @@ public:
 
     void store_output_map ()
     {
-        m_master_bus->store_output_map();
+        (void) build_output_port_map(m_clocks);
     }
 
-    bussbyte true_output_bus (bussbyte nominalbuss) const;
+    bussbyte true_output_bus (bussbyte nominalbuss) const
+    {
+        return seq66::true_output_bus(m_clocks, nominalbuss);
+    }
 
     void store_input_map ()
     {
-        m_master_bus->store_input_map();
+        (void) build_input_port_map(m_inputs);
     }
 
-    bussbyte true_input_bus (bussbyte nominalbuss) const;
+    bussbyte true_input_bus (bussbyte nominalbuss) const
+    {
+        return seq66::true_input_bus(m_inputs, nominalbuss);
+    }
 
     /**
      *  Sets a single clock item, if in the currently existing range.
@@ -2814,7 +2822,7 @@ public:         /* GUI-support functions */
     void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
     bool set_ppqn (int p);
     bool change_ppqn (int p);
-    bool change_set_busses (int b);
+    bool ui_change_set_bus (int b);
 
 private:
 

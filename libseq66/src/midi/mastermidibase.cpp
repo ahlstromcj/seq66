@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-23
- * \updates       2020-12-18
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  This file provides a base-class implementation for various master MIDI
@@ -38,12 +38,6 @@
 #include "midi/mastermidibase.hpp"      /* seq66::mastermidibase            */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "os/timing.hpp"                /* seq66::microsleep()              */
-
-/*
- * EXPERIMENTAL
- */
-
-#undef SEQ66_USE_PORT_MAP_TEST
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -330,8 +324,8 @@ mastermidibase::sysex (event * ev)
  * \threadsafe
  *
  * \param bus
- *      The buss to start play on.  The caller is expected to make sure this
- *      buss is the correct buss.
+ *      The actual system buss to start play on.  The caller is expected to make
+ *      sure this buss is the correct buss.
  *
  * \param e24
  *      The seq66 event to play on the buss.  For speed, we don't bother to
@@ -345,7 +339,6 @@ void
 mastermidibase::play (bussbyte bus, event * e24, midibyte channel)
 {
     automutex locker(m_mutex);
-    ///////////// bus = true_output_bus(bus);
     m_outbus_array.play(bus, e24, channel);
 }
 
@@ -358,7 +351,7 @@ mastermidibase::play (bussbyte bus, event * e24, midibyte channel)
  * \threadsafe
  *
  * \param bus
- *      The buss to start play on.  Checked before usage.
+ *      The actual system buss to start play on.  Checked before usage.
  *
  * \param clocktype
  *      The type of clock to be set, either "off", "pos", or "mod", as noted
@@ -369,8 +362,6 @@ bool
 mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 {
     automutex locker(m_mutex);
-    ////////////// bus = true_output_bus(bus);
-
     bool result = m_outbus_array.set_clock(bus, clocktype);
     if (result)
         result = save_clock(bus, clocktype);    /* save into the vector */
@@ -382,7 +373,8 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
  *  Saves the given clock value in m_master_clocks[bus].
  *
  * \param bus
- *      Provides the desired buss to be set.
+ *      Provides the desired buss to be set.  This must be an actual system buss,
+ *      not a buss number from the output-port-map.
  *
  * \param clock
  *      Provides the clocking value to set.
@@ -394,7 +386,6 @@ mastermidibase::set_clock (bussbyte bus, e_clock clocktype)
 bool
 mastermidibase::save_clock (bussbyte bus, e_clock clock)
 {
-    ////////////// bus = true_output_bus(bus);
     return m_master_clocks.set(bus, clock);
 }
 
@@ -404,7 +395,7 @@ mastermidibase::save_clock (bussbyte bus, e_clock clock)
  *  There's currently no implementation-specific API function here.
  *
  * \param bus
- *      Provides the buss number to read.  Checked before usage.
+ *      Provides an actual system buss number to read.  Checked before usage.
  *
  * \return
  *      If the buss number is legal, and the buss is active, then its clock
@@ -412,9 +403,8 @@ mastermidibase::save_clock (bussbyte bus, e_clock clock)
  */
 
 e_clock
-mastermidibase::get_clock (bussbyte bus)
+mastermidibase::get_clock (bussbyte bus) const
 {
-    ////////////// bus = true_output_bus(bus);
     return m_outbus_array.get_clock(bus);
 }
 
@@ -437,11 +427,6 @@ mastermidibase::copy_io_busses ()
         std::string name = m_outbus_array.get_midi_bus_name(bus);
         m_master_clocks.add(clk, name);
     }
-
-#if defined SEQ66_USE_PORT_MAP_TEST
-    (void) build_output_port_map(m_master_clocks);
-    (void) build_input_port_map(m_master_inputs);
-#endif
 }
 
 /**
@@ -454,9 +439,11 @@ mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
 {
     clockslist & opm = output_port_map();
     if (opm.not_empty())
-    {
         opm.match_up(m_master_clocks);
-    }
+
+    inputslist & ipm = input_port_map();
+    if (ipm.not_empty())
+        ipm.match_up(m_master_inputs);
 
     outs = m_master_clocks;
     ins = m_master_inputs;
@@ -474,7 +461,7 @@ mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
  * \threadsafe
  *
  * \param bus
- *      Provides the buss number.
+ *      Provides the actual system buss number.
  *
  * \param inputing
  *      True if the input bus will be inputting MIDI data.
@@ -488,8 +475,6 @@ bool
 mastermidibase::set_input (bussbyte bus, bool inputing)
 {
     automutex locker(m_mutex);
-    ////////////// bus = true_output_bus(bus);
-
     bool result = m_inbus_array.set_input(bus, inputing);
     if (result)
         result = save_input(bus, inputing);     /* save into the vector */
@@ -508,7 +493,7 @@ mastermidibase::set_input (bussbyte bus, bool inputing)
  *  the buss?
  *
  * \param bus
- *      Provides the buss number.
+ *      Provides the actual system buss number.
  *
  * \param inputing
  *      True if the input bus will be inputting MIDI data.
@@ -521,8 +506,6 @@ bool
 mastermidibase::save_input (bussbyte bus, bool inputing)
 {
     int currentcount = m_master_inputs.count();
-    ////////////// bus = true_output_bus(bus);
-
     bool result = m_master_inputs.set(bus, inputing);
     if (! result)
     {
@@ -544,16 +527,15 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
  *  There's currently no implementation-specific API function here.
  *
  * \param bus
- *      Provides the buss number.
+ *      Provides the actual system buss number.
  *
  * \return
  *      Returns the value of the busarray::get_input(bus) call.
  */
 
 bool
-mastermidibase::get_input (bussbyte bus)
+mastermidibase::get_input (bussbyte bus) const
 {
-    ////////////// bus = true_output_bus(bus);
     return m_inbus_array.get_input(bus);
 }
 
@@ -561,7 +543,7 @@ mastermidibase::get_input (bussbyte bus)
  *  Get the system-buss status for the given (legal) buss number.
  *
  * \param bus
- *      Provides the buss number.
+ *      Provides the actual system buss number.
  *
  * \return
  *      Returns the value of the busarray::get_input(bus) call.
@@ -570,7 +552,6 @@ mastermidibase::get_input (bussbyte bus)
 bool
 mastermidibase::is_input_system_port (bussbyte bus)
 {
-    ////////////// bus = true_output_bus(bus);
     return m_inbus_array.is_system_port(bus);
 }
 
@@ -588,8 +569,7 @@ mastermidibase::is_input_system_port (bussbyte bus)
  *  busarray, which has extra information over and above.....
  *
  * \param bus
- *      Provides the output buss number.  Checked before usage.
- *      Actually should now be an index number
+ *      Provides the actual system output buss number.  Checked before usage.
  *
  * \return
  *      Returns the buss name as a standard C++ string.  Also contains an
@@ -598,7 +578,7 @@ mastermidibase::is_input_system_port (bussbyte bus)
  */
 
 std::string
-mastermidibase::get_midi_out_bus_name (bussbyte bus)
+mastermidibase::get_midi_out_bus_name (bussbyte bus) const
 {
     std::string result;
     if (rc().is_port_naming_long())
@@ -625,7 +605,7 @@ mastermidibase::get_midi_out_bus_name (bussbyte bus)
  */
 
 std::string
-mastermidibase::get_midi_in_bus_name (bussbyte bus)
+mastermidibase::get_midi_in_bus_name (bussbyte bus) const
 {
     std::string result;
     if (rc().is_port_naming_long())
