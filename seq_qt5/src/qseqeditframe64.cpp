@@ -612,10 +612,10 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     if (not_nullptr(mmb))
     {
         bussbyte seqbuss = seq_pointer()->get_midi_bus();
-        std::string selectedbuss = opm.not_empty() ?
+        std::string selectedbuss = opm.active() ?
             opm.get_name(seqbuss) : mmb->get_midi_out_bus_name(seqbuss) ;
 
-        int buses = opm.not_empty() ?
+        int buses = opm.active() ?
             opm.count() : mmb->get_num_out_buses() ;
 
         for (int bus = 0; bus < buses; ++bus)
@@ -639,52 +639,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
             }
         }
         ui->m_combo_bus->setCurrentText(QString::fromStdString(selectedbuss));
-
-#if 0
-        if (opm.not_empty())
-        {
-            int buses = opm.count();
-            for (int b = 0; b < buses; ++b)
-            {
-                bool disabled = opm.is_disabled(bussbyte(b));
-                std::string busname = opm.get_name(bussbyte(b));
-                ui->m_combo_bus->addItem(QString::fromStdString(busname));
-                if (disabled)
-                {
-                    QStandardItemModel * model =
-                        qobject_cast<QStandardItemModel *>
-                        (
-                            ui->m_combo_bus->model()
-                        );
-                    QStandardItem * item = model->item(b);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-                }
-            }
-            selectedbuss = opm.get_name(bussbyte(seqbuss));
-        }
-        else
-        {
-            for (int b = 0; b < mmb->get_num_out_buses(); ++b)
-            {
-                bool disabled = clock_is_disabled(mmb->get_clock(b));
-                ui->m_combo_bus->addItem
-                (
-                    QString::fromStdString(mmb->get_midi_out_bus_name(b))
-                );
-                if (disabled)
-                {
-                    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
-                    (
-                        ui->m_combo_bus->model()
-                    );
-                    QStandardItem * item = model->item(b);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-                }
-            }
-            selectedbuss = mmb->get_midi_out_bus_name(seqbuss);
-        }
-        ui->m_combo_bus->setCurrentText(QString::fromStdString(selectedbuss));
-#endif
     }
     connect
     (

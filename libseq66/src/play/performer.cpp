@@ -711,7 +711,7 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
     const inputslist & ipm = input_port_map();
     std::string busname;
     bool disabled = false;
-    if (ipm.not_empty())
+    if (ipm.active())
     {
         n = ipm.get_name(bus);
         active = ipm.get(bus);
@@ -759,7 +759,7 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 {
     const clockslist & opm = output_port_map();
     std::string busname;
-    if (opm.not_empty())
+    if (opm.active())
     {
         n = opm.get_name(bus);
         e = opm.get(bus);

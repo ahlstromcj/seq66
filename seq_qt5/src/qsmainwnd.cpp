@@ -336,7 +336,7 @@ qsmainwnd::qsmainwnd
     ui->cmb_global_bus->addItem("None");
     if (not_nullptr(mmb))
     {
-        int buses = opm.not_empty() ?
+        int buses = opm.active() ?
             opm.count() : mmb->get_num_out_buses() ;
 
         for (int bus = 0; bus < buses; ++bus)
@@ -360,50 +360,6 @@ qsmainwnd::qsmainwnd
                 }
             }
         }
-
-#if 0
-        if (opm.not_empty())
-        {
-            buses = opm.count();
-            for (int bus = 0; bus < buses; ++bus)
-            {
-                bool disabled = opm.is_disabled(bussbyte(bus));
-                std::string busname = opm.get_name(bussbyte(bus));
-                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
-                if (disabled)
-                {
-                    int index = bus + 1;
-                    QStandardItemModel * model =
-                        qobject_cast<QStandardItemModel *>
-                        (
-                            ui->cmb_global_bus->model()
-                        );
-                    QStandardItem * item = model->item(index);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-                }
-            }
-        }
-        else
-        {
-            buses = mmb->get_num_out_buses();
-            for (int bus = 0; bus < busses; ++bus)
-            {
-                bool disabled = clock_is_disabled(mmb->get_clock(bus));
-                std::string busname = mmb->get_midi_out_bus_name(bus);
-                ui->cmb_global_bus->addItem(QString::fromStdString(busname));
-                if (disabled)
-                {
-                    int index = bus + 1;
-                    QStandardItemModel * model = qobject_cast<QStandardItemModel *>
-                    (
-                        ui->cmb_global_bus->model()
-                    );
-                    QStandardItem * item = model->item(index);
-                    item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
-                }
-            }
-        }
-#endif  // 0
     }
 
     /*

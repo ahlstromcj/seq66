@@ -225,7 +225,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     QVBoxLayout * vboxclocks = new QVBoxLayout;
     mastermidibus * masterbus = perf().master_bus();
     const clockslist & opm = output_port_map();
-    bool outportmap = opm.not_empty();
+    bool outportmap = opm.active();
     if (not_nullptr(masterbus))
     {
         const clockslist & opm = output_port_map();
@@ -260,7 +260,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 
     QVBoxLayout * vboxinputs = new QVBoxLayout;
     const inputslist & ipm = input_port_map();
-    bool inportmap = ipm.not_empty();
+    bool inportmap = ipm.active();
     if (not_nullptr(masterbus))
     {
         int buses = inportmap ? ipm.count() : masterbus->get_num_in_buses() ;

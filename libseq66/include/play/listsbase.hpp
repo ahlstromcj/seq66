@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2020-12-27
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -89,6 +89,13 @@ protected:
     std::vector<io> m_master_io;
 
     /**
+     *  Indicates if the list is to be used.  It will always be saved and read,
+     *  but not used if this flag is false.
+     */
+
+    bool m_is_active;
+
+    /**
      *  Indicates if this list is a port-mapper list.  Useful in debugging.
      */
 
@@ -126,9 +133,19 @@ public:
         return ! m_master_io.empty();
     }
 
+    bool active () const
+    {
+        return m_is_active && not_empty();
+    }
+
     bool is_port_map () const
     {
         return m_is_port_map;
+    }
+
+    void active (bool flag)
+    {
+        m_is_active = flag;
     }
 
     void set_name (bussbyte bus, const std::string & name);

@@ -420,7 +420,7 @@ mastermidibase::copy_io_busses ()
         m_master_inputs.add(inputflag, name);
     }
     m_master_clocks.clear();
-    buses = m_outbus_array.count();             /* get_num_out_buses()  */
+    buses = m_outbus_array.count();                 /* get_num_out_buses()  */
     for (int bus = 0; bus < buses; ++bus)
     {
         e_clock clk = m_outbus_array.get_clock(bus);

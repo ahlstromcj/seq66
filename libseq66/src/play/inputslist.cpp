@@ -174,6 +174,7 @@ build_input_port_map (const inputslist & il)
     {
         inputslist & inpsref = input_port_map();
         inpsref.clear();
+        inpsref.active(true);
         for (int b = 0; b < il.count(); ++b)
         {
             std::string name = std::to_string(b);
@@ -218,7 +219,7 @@ true_input_bus (const inputslist & cl, bussbyte nominalbuss)
 {
     bussbyte result = nominalbuss;
     const inputslist & inpsref = input_port_map();
-    if (inpsref.not_empty())
+    if (inpsref.active())
     {
         std::string shortname = inpsref.port_name_from_bus(nominalbuss);
         if (shortname.empty())

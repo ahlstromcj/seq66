@@ -176,6 +176,7 @@ build_output_port_map (const clockslist & cl)
     {
         clockslist & cloutref = output_port_map();
         cloutref.clear();
+        cloutref.active(true);
         for (int b = 0; b < cl.count(); ++b)
         {
             std::string name = std::to_string(b);
@@ -220,7 +221,7 @@ true_output_bus (const clockslist & cl, bussbyte nominalbuss)
 {
     bussbyte result = nominalbuss;
     const clockslist & cloutref = output_port_map();
-    if (cloutref.not_empty())
+    if (cloutref.active())
     {
         std::string shortname = cloutref.port_name_from_bus(nominalbuss);
         if (shortname.empty())

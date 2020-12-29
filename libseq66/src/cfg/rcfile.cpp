@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-26
+ * \updates       2020-12-28
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -423,24 +423,19 @@ rcfile::parse ()
     if (line_after(file, "[midi-input-map]"))
     {
         inputslist & inputref = input_port_map();
+        int activeflag;
         inputref.clear();
-        for (;;)
+        (void) sscanf(scanline(), "%d", &activeflag);
+        inputref.active(activeflag != 0);
+        for ( ; next_data_line(file); )
         {
-            if (inputref.add_list_line(line()))
-            {
-                if (! next_data_line(file))
-                    break;
-            }
-            else
+            if (! inputref.add_list_line(line()))
             {
                 inputref.clear();
+                inputref.active(false);
                 break;
             }
         }
-#if 0
-        if (inputref.not_empty())
-            rc().port_naming("short");
-#endif
     }
     if (ok)
         ok = line_after(file, "[midi-clock]");
@@ -503,25 +498,20 @@ rcfile::parse ()
 
     if (line_after(file, "[midi-clock-map]"))
     {
-        clockslist & inpsref = output_port_map();
-        inpsref.clear();
-        for (;;)
+        clockslist & clocsref = output_port_map();
+        int activeflag;
+        clocsref.clear();
+        (void) sscanf(scanline(), "%d", &activeflag);
+        clocsref.active(activeflag != 0);
+        for ( ; next_data_line(file); )
         {
-            if (inpsref.add_list_line(line()))
+            if (! clocsref.add_list_line(line()))
             {
-                if (! next_data_line(file))
-                    break;
-            }
-            else
-            {
-                inpsref.clear();
+                clocsref.clear();
+                clocsref.active(false);
                 break;
             }
         }
-#if 0
-        if (inpsref.not_empty())
-            rc().port_naming("short");
-#endif
     }
 
     if (line_after(file, "[midi-clock-mod-ticks]"))
@@ -676,7 +666,6 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            // std::string fname = trimline();
             exists = ! is_empty_string(fname);
             if (exists)
             {
@@ -868,9 +857,7 @@ rcfile::write ()
             "#\n"
             "# The port-naming values are 'short' or 'long'.  The short style\n"
             "# just shows the port number and short port name; the long style\n"
-            "# shows all the numbers and the long port name. If either a\n"
-            "# [midi-clock-map] or [midi-input-map] is provided, this option is\n"
-            "# forced to 'short'.\n"
+            "# shows all the numbers and the long port name.\n"
             "\n"
             "config-type = \"rc\"\n"
             "version = " << version() << "\n"
@@ -1011,6 +998,7 @@ rcfile::write ()
         file
         << "\n[midi-input-map]\n\n"
         << "# This table is similar to the [midi-clock-map] section.\n\n"
+        << (inpsref.active() ? "1" : "0") << "  # map is/not active\n\n"
         << input_port_map_list()
         ;
     }
@@ -1067,6 +1055,7 @@ rcfile::write ()
         << "# their order in the MIDI system, the pattern can still output to\n"
         << "# the proper port. The short names are the same with ALSA or with\n"
         << "# JACK with the a2jmidi bridge running.\n\n"
+        << (outsref.active() ? "1" : "0") << "     # map is/not active\n\n"
         << output_port_map_list()
         ;
     }
