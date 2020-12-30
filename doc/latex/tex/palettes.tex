@@ -1,0 +1,134 @@
+%-------------------------------------------------------------------------------
+% palettes
+%-------------------------------------------------------------------------------
+%
+% \file        palettes.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2020-12-29
+% \update      2020-12-29
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides a discussion of the MIDI GUI palettes that Seq66
+%     supports.
+%
+%-------------------------------------------------------------------------------
+
+\section{Palettes for Coloring}
+\label{sec:palettes}
+
+   Many user-interface elements in \textsl{Seq66} are drawn independently of
+   the Qt theme in force, and they have their own coloring.  Also, patterns can
+   be colored, and the color is stored (as a color number) in the pattern when
+   the tune is saved.
+
+   There are two palettes:
+
+   \begin{itemize}
+      \item \textbf{Pattern}.  This palette contains 32 color entries, and each
+         can be used to add color to a pattern in the \textsl{Live} grid or in
+         the \textsl{Song} editor.  The color of a pattern, if used, is saved
+         with the pattern in the MIDI file.
+      \item \textbf{Ui}.  This palette contains 16 color entries.  These
+         color entries are used in drawing text, backgrounds, grid lines,
+         background patterns, drum notes, and more.  These colors each have a
+         counterpart that is used with the \texttt{--inverse} option is applied
+         to a run of \textsl{Seq66}.
+      \item \textbf{Inverse Ui}.  This palette contains 16 color entries.
+         These colors are used when the \texttt{--inverse} option is applied
+         to a run of \textsl{Seq66}.
+   \end{itemize}
+
+   Both palettes have default values built into the application.  However, the
+   user can also include 'palette' files to change the colors used.  For
+   example, the normal colored palette can be changed to a gray-scale palette.
+   The name of the palette file is specified in the 'rc' file by lines like the
+   following:
+
+   \begin{verbatim}
+      [palette-file]
+      1     # palette_active
+      qseq66-alt-gray.palette
+   \end{verbatim}
+
+   If this palette file is active, it is loaded, changing all of the palettes,
+   and thus the coloring of \textsl{Seq64}.
+
+\subsection{Palettes Setup}
+\label{subsec:palettes_setup}
+
+   The palette file is a standard \textsl{Seq66} configuration file with a name
+   something like \texttt{qseq66.palette}, plus two sections:
+
+   \begin{verbatim}
+      [palette]
+      [ui-palette]
+   \end{verbatim}
+
+   The first section is the "Pattern" palette, and the second section is the
+   "Ui" palette, which includes the inverse palette as well.
+
+\subsubsection{Palettes Setup / Pattern}
+\label{subsubsec:palettes_setup_pattern}
+
+   The following shows the pattern palette, with some entries elided for
+   brevity:
+
+   \begin{verbatim}
+      [palette]
+       0            "Black" [ 0xFF000000 ]      "White" [ 0xFFFFFFFF ]
+       1              "Red" [ 0xFFFF0000 ]      "White" [ 0xFFFFFFFF ]
+       2            "Green" [ 0xFF008000 ]      "White" [ 0xFFFFFFFF ]
+       3           "Yellow" [ 0xFFFFFF00 ]      "Black" [ 0xFF000000 ]
+       4             "Blue" [ 0xFF0000FF ]      "White" [ 0xFFFFFFFF ]
+       ...            ...       ...             ...       ...
+      29      "Dark Violet" [ 0xFF9400D3 ]      "Black" [ 0xFF000000 ]
+      30       "Light Grey" [ 0xFF778899 ]      "Black" [ 0xFF000000 ]
+      31        "Dark Grey" [ 0xFF2F4F4F ]      "Black" [ 0xFF000000 ]
+   \end{verbatim}
+
+   The names are color names, and these names are what show up in the popup
+   color menus for the pattern buttons in the \textsl{Live} grid.
+   The colors on the left are the background colors, and the colors on the
+   right are the foreground colors, which are chosen for contrast with the
+   background.  The colors are in \texttt{\#AARRGGB} format, with the "\#"
+   replaced by "0x" because "\#" starts a comment in \textsl{Seq66}
+   configuration files.  Note that all the alpha values are "FF" (opqque); we
+   have not yet experimented with changing them.
+   Lastly, only 32 entries are accepted.
+
+\subsubsection{Palettes Setup / Ui}
+\label{subsubsec:palettes_setup_ui}
+
+   The following shows the pattern palette, with some entries elided for
+   brevity:
+
+   \begin{verbatim}
+      [ui-palette]
+       0       "Foreground" [ 0xFF000000 ] "Foreground" [ 0xFFFFFFFF ]
+       1       "Background" [ 0xFFFFFFFF ] "Background" [ 0xFF000000 ]
+       2            "Label" [ 0xFF000000 ]      "Label" [ 0xFFFFFFFF ]
+       3        "Selection" [ 0xFFFFA500 ]  "Selection" [ 0xFFFF00FF ]
+       4             "Drum" [ 0xFFFF0000 ]       "Drum" [ 0xFF000080 ]
+             ...            ...       ...       ...       ...
+      13        "Beat Line" [ 0xFF2F4F4F ]  "Beat Line" [ 0xFF2F4F4F ]
+      14        "Step Line" [ 0xFF778899 ]  "Step Line" [ 0xFF808080 ]
+      15            "Extra" [ 0xFF778899 ]      "Extra" [ 0xFFBD6BB7 ]
+   \end{verbatim}
+
+   Here, the names are feature names, not color names.  The first color is the
+   normal color, and the second color is the inverse color.  Only 16 entries
+   are accepted.
+
+\subsection{Palettes Summary}
+\label{subsec:palettes_summary}
+
+   There are some obvious enhancements to this scheme, including increasing the
+   number of palette items, synchronizing the palette with the current desktop
+   them semi-automatically, and providing a user interface to drag-and-drop
+   colors.  Perhaps someday we'll update \textsl{Seqtool} for this purpose?
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

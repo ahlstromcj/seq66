@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-28
+2019-04-13 to 2020-12-29
 
 HOT ITEMS:
 
@@ -64,6 +64,25 @@ HOT ITEMS:
         If the port name is something plain like "midi in 0", "midi out
         0", "input", "in", "output", "out", then prepend the client name
         to the internal port-map objects.
+
+    Main Window:
+
+        PPQN dropdown needs to be fully implemented.  Also fix the PPQN
+        indicator at the bottom.
+
+        The time indicator needs to adapt to the global time-signature
+        controls.  It adapts to the numerator, but only once playback
+        resumes.
+
+    Automation:
+
+        Add a panic-button control.
+        Add a live/song-button control.
+        Tap BPM key (F9) does not work, though the button works.
+
+    Testing:
+
+        Test the Live Record functionality.
 
 Others to Consider:
 

@@ -222,6 +222,7 @@ private:
     void connect_normal_slots ();
     void disconnect_normal_slots ();
     bool show_open_file_dialog (std::string & selectedfile);
+    void update_tap (midibpm bpm);
 
 private:
 

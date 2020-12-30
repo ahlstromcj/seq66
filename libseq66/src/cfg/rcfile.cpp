@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-28
+ * \updates       2020-12-29
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -997,7 +997,8 @@ rcfile::write ()
     {
         file
         << "\n[midi-input-map]\n\n"
-        << "# This table is similar to the [midi-clock-map] section.\n\n"
+        << "# This table is similar to the [midi-clock-map] section.\n"
+           "# Port-mapping is disabled in manual/virtual port mode.\n\n"
         << (inpsref.active() ? "1" : "0") << "  # map is/not active\n\n"
         << input_port_map_list()
         ;
@@ -1049,12 +1050,13 @@ rcfile::write ()
     {
         file
         << "\n[midi-clock-map]\n\n"
-        << "# This table, if present, allows the pattern to set buss numbers\n"
-        << "# as usual, but the use the table to look up the true buss number\n"
-        << "# by the short form of the port name. Thus, if the ports change\n"
-        << "# their order in the MIDI system, the pattern can still output to\n"
-        << "# the proper port. The short names are the same with ALSA or with\n"
-        << "# JACK with the a2jmidi bridge running.\n\n"
+           "# This table, if present, allows the pattern to set buss numbers\n"
+           "# as usual, but the use the table to look up the true buss number\n"
+           "# by the short form of the port name. Thus, if the ports change\n"
+           "# their order in the MIDI system, the pattern can still output to\n"
+           "# the proper port. The short names are the same with ALSA or with\n"
+           "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
+           "# disabled in manual/virtual port mode.\n\n"
         << (outsref.active() ? "1" : "0") << "     # map is/not active\n\n"
         << output_port_map_list()
         ;

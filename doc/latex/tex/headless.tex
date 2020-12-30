@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_headless
+% seq66 headless
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_headless.tex
+% \file        seq66 headless.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
@@ -10,23 +10,23 @@
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI GUI headless that Sequencer66
+%     Provides a discussion of the MIDI GUI headless that Seq66
 %     supports.
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 Headless Version}
+\section{Seq66 Headless Version}
 \label{sec:headless}
 
-   \textsl{Sequencer66} can be built as a command-line application,
-   as described in \sectionref{sec:seq66_build}.
+   \textsl{Seq66} can be built as a command-line application,
+   as described in \sectionref{sec:build}.
    That is, it can be run from the command-line, but has no user interface.
    It can also be instantiated as a Linux daemon, for totally headless usage.
    Because there is not a lot of visibility into a headless process, the
    setup for \texttt{seq66cli} is a little complex, and the musician must get
    used to blind MIDI control.
 
-\subsection{Sequencer66 Headless Setup}
+\subsection{Seq66 Headless Setup}
 \label{subsec:headless_setup}
 
    The first step in setting up a headless \texttt{seq66cli} session is
@@ -43,7 +43,7 @@
          sequencer controls.  Also note that an alternative is to provide a 
          \texttt{[midi-control-file]} specified in the "rc" file.
       \item Access the desired outputs, in order to play sounds.  This can
-         sometimes be tricky, because \textsl{Sequencer66} can route all
+         sometimes be tricky, because \textsl{Seq66} can route all
          patterns to the same output, or can let the patterns decide the
          outputs for themselves.
       \item Use the desired play-list.  The headless sequencer can only select
@@ -116,7 +116,7 @@
    The \texttt{nanomap.rc} file is included in the "data" directory of the
    source-code package.
 
-   \textbf{Fifth}, test the command-line \textsl{Sequencer66} by running the
+   \textbf{Fifth}, test the command-line \textsl{Seq66} by running the
    following command (your setup might vary) on the command line:
 
    \begin{verbatim}

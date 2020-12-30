@@ -1,0 +1,162 @@
+%-------------------------------------------------------------------------------
+% port_mapping
+%-------------------------------------------------------------------------------
+%
+% \file        port_mapping.tex
+% \library     Documents
+% \author      Chris Ahlstrom
+% \date        2020-12-29
+% \update      2020-12-29
+% \version     $Revision$
+% \license     $XPC_GPL_LICENSE$
+%
+%     Provides a discussion of the MIDI GUI port_mapping that Seq66
+%     supports.
+%
+%-------------------------------------------------------------------------------
+
+\section{Port Mapping}
+\label{sec:port_mapping}
+
+   \textsl{Seq66}, like \textsl{Seq24}, bases its I/O port scheme on buss
+   numbers (also called "port numbers").  This numbering scheme applies whether
+   \textsl{ALSA}, \textsl{JACK}, or \textsl{Windows Multimedia}
+   are used as the MIDI engine, and whether \textsl{Seq66} is running with
+   "automatic" ports or "manual" (virtual, software-created) ports.
+   These buss numbers range from 0 on upward
+   based on the input or output MIDI ports active in the system.
+   In "automatic" mode
+   (REFERENCE) these ports represent the hardware ports and ports created by
+   other applications.  In "manual" mode, these ports represent virtual ports
+   that can be connected through other software under \textsl{ALSA} or
+   \textsl{JACK}.
+
+   A given pattern/loop/sequence can be assigned to output to a given port via
+   a buss number that is saved with the pattern.  Thus, when a tune is loaded,
+   each sequence can automatically output to the desired MIDI device.
+
+   The problem is that the list of MIDI devices can change, with devices being
+   reordered, removed, or added to the set of MIDI devices available on the
+   system.  Port mapping provides a partial solution to this issue.  It allows
+   the buss number stored with a pattern to be remapped to another buss number,
+   based on the name of the port.
+
+   As with the normal port listings, the port-mappings are managed in the
+   \textsl{Seq66} 'rc' file (REFERENCE).
+
+\subsection{Output Port Mapping}
+\label{subsec:output_port_mapping}
+
+   Assume that the system has the following set of ports.  These busses are
+   stored in the 'rc' file when \textsl{Seq66} exits.
+
+   \begin{verbatim}
+      [midi-clock]
+      6      # number of MIDI clocks (output busses)
+      0 0    "[0] 14:0 Midi Through Port-0"
+      1 0    "[1] 28:0 nanoKEY2 MIDI 1"
+      2 0    "[2] 36:0 E-MU XMidi1X1 Tab MIDI 1"
+      3 0    "[3] 40:0 USB Midi MIDI 1"
+      4 0    "[4] 44:0 Launchpad Mini MIDI 1"
+      5 0    "[5] 128:0 yoshimi:input"
+   \end{verbatim}
+
+   If some items are unplugged, then this list will change, so save it.
+   Click the
+   \textbf{Save Clock/Input Maps} button in the
+   \textbf{Edit / Preferences/ MIDI Clock} dialog. 
+   The result is a new section in the 'rc' file:
+
+   \begin{verbatim}
+      [midi-clock-map]
+      1   # map is/not active
+      0   "Midi Through Port-0"
+      1   "nanoKEY2 MIDI 1"
+      2   "E-MU XMidi1X1 Tab MIDI 1"
+      3   "USB Midi MIDI 1"
+      4   "Launchpad Mini MIDI 1"
+      5   "input"
+   \end{verbatim}
+   
+   It is simpler, containing only an index number and shorter versions of the
+   port names, called "nick-names".  These index numbers can be used like buss
+   numbers: they can be stored in a pattern, and used to direct output to a
+   device by name.  Let's say we've unplugged some devices, so that the MIDI
+   clocks list is shorter:
+
+   \begin{verbatim}
+      [midi-clock]
+      4      # number of MIDI clocks (output busses)
+      0 0    "[0] 14:0 Midi Through Port-0"
+      1 0    "[1] 32:0 USB Midi MIDI 1"
+      2 0    "[2] 36:0 Launchpad Mini MIDI 1"
+      3 0    "[3] 128:0 yoshimi:input"
+   \end{verbatim}
+
+   So, if a pattern has stored item 3 "USB Midi MIDI 1" as its output buss,
+   and the output port map is active, the "3" is looked up in the map, the
+   nick-name "USB Midi MIDI 1" grabbed, and looked up in the system list, which
+   returns "1" as the buss number to use for output.
+
+   On the other hand, if a pattern has stored item 2 "E-MU XMidi1X1 MIDI 1" as
+   its output buss, this item will not be found in the system list, so that the
+   pattern will need to be routed to an existing port.
+
+   Note that the mapping can be disabled by setting the first value to 0.  In
+   that case, \textsl{Seq66} uses buss numbers in the normal way.
+   In the user interface dropdowns for output buss, if a map is active, it is
+   put into the dropdown; any missing items are noted and are shown as
+   disabled.
+   If the map is not active, then only the actual system output ports are shown.
+
+\subsection{Input Port Mapping}
+\label{subsec:input_port_mapping}
+
+   The input ports are handling somewhat similarly.  Here's the initial system
+   input setup:
+
+   \begin{verbatim}
+      [midi-input]
+      6      # number of input MIDI busses
+      0 1    "[0] 0:1 system:announce"
+      1 0    "[1] 14:0 Midi Through Port-0"
+      2 0    "[2] 28:0 nanoKEY2 MIDI 1"
+      3 0    "[3] 36:0 E-MU XMidi1X1 Tab MIDI 1"
+      4 0    "[4] 40:0 USB Midi MIDI 1"
+      5 0    "[5] 44:0 Launchpad Mini MIDI 1"
+   \end{verbatim}
+
+   Note that the "system:announce" buss is always disabled, as \textsl{Seq66}
+   does not use it.  Here is the stored input port-map:
+
+   \begin{verbatim}
+      [midi-input-map]
+      0   "announce"
+      1   "Midi Through Port-0"
+      2   "nanoKEY2 MIDI 1"
+      3   "E-MU XMidi1X1 Tab MIDI 1"
+      4   "USB Midi MIDI 1"
+      5   "Launchpad Mini MIDI 1"
+   \end{verbatim}
+
+   And here is the system input map with some devices unplugged.
+
+   \begin{verbatim}
+      [midi-input]
+      1   # map is/not active
+      0   "announce"
+      1   "Midi Through Port-0"
+      2   "USB Midi MIDI 1"
+      3   "Launchpad Mini MIDI 1"
+   \end{verbatim}
+
+   Note that the mapping can be disabled by setting the first value to 0.  In
+   that case, \textsl{Seq66} uses buss numbers in the normal way.
+   In the user interface dropdowns for input buss, if a map is active, it is
+   put into the dropdown; any missing items are noted and are shown as
+   disabled.
+   If the map is not active, then only the actual system input ports are shown.
+
+%-------------------------------------------------------------------------------
+% vim: ts=3 sw=3 et ft=tex
+%-------------------------------------------------------------------------------

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-28
+ * \updates       2020-12-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -618,7 +618,13 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
          *      result = build_output_port_map(m_clocks);
          */
     }
-
+    if (rcs.manual_ports())
+    {
+        inputslist & ipm = input_port_map();
+        clockslist & opm = output_port_map();
+        ipm.active(false);
+        opm.active(false);
+    }
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
@@ -1597,10 +1603,6 @@ performer::page_increment_beats_per_minute ()
     return result;
 }
 
-/**
- *
- */
-
 midibpm
 performer::update_tap_bpm ()
 {
@@ -1622,15 +1624,15 @@ performer::update_tap_bpm ()
         else
             bpm = m_bpm;                        /* where do we set this?    */
 
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("BPM(%d) = %g\n", m_current_beats, bpm);
+#endif
+
         m_last_time_ms = ms;
     }
     ++m_current_beats;
     return bpm;
 }
-
-/**
- *
- */
 
 bool
 performer::tap_bpm_timeout ()
@@ -6070,7 +6072,7 @@ performer::automation_tap_bpm
     {
         midibpm bpm = update_tap_bpm();
         if (bpm != get_beats_per_minute())
-            set_beats_per_minute (bpm);
+            set_beats_per_minute(bpm);
     }
     return true;
 }

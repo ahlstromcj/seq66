@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_event_editor
+% event_editor
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_event_editor.tex
+% \file        event_editor.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
@@ -13,9 +13,9 @@
 %-------------------------------------------------------------------------------
 
 \section{Event Editor}
-\label{sec:seq66_event_editor}
+\label{sec:event_editor}
 
-   The \textsl{Sequencer66 Event Editor} is used to view and edit,
+   The \textsl{Seq66 Event Editor} is used to view and edit,
    in detail, the events present in a sequence/pattern/track.
    This editor is not very sophisticated.
    It is a basic editor for simple edits and viewing.
@@ -86,7 +86,7 @@
    The following sections described these items in detail.
 
 \subsection{Event Editor / Event Frame}
-\label{subsec:seq66_event_editor_frame}
+\label{subsec:event_editor_frame}
 
    The event frame is the event-list shown on the left side of the
    event editor.  It is accompanied by a vertical scroll-bar, for moving one
@@ -96,7 +96,7 @@
    scrollbars.
 
 \subsubsection{Event Frame / Data Items}
-\label{subsec:seq66_event_frame_data}
+\label{subsec:event_frame_data}
 
    The event frame shows a list of numbered events, one per line.
    The currently-selected event is highlighted in cyan text on a black
@@ -180,7 +180,7 @@
    Tempo requires a number (e.g. "120.3") to be typed in.
 
 \subsubsection{Event Frame / Navigation}
-\label{subsec:seq66_event_frame_navigation}
+\label{subsec:event_frame_navigation}
 
    Moving about in the event frame is straightforward, but has some
    wrinkles to note.
@@ -201,7 +201,7 @@
    move through multiple pages.  Home and End also work.
 
 \subsection{Event Editor / Info Panel}
-\label{subsec:seq66_event_editor_info}
+\label{subsec:event_editor_info}
 
    The "info panel" is simply a read-only list of properties on the top right
    of the event editor.  It serves to remind the used of the pattern being
@@ -218,9 +218,9 @@
          It can be set in the pattern editor.
       \item \textbf{PPQN}
          Shows the "parts per quarter note", or resolution of the
-         whole song.  The default PPQN of \textsl{Sequencer66} is 192.
+         whole song.  The default PPQN of \textsl{Seq66} is 192.
       \item \textbf{Sequence Channel}
-         In \textsl{Sequencer66}, the channel number is a property of the
+         In \textsl{Seq66}, the channel number is a property of the
          pattern.  All channel events in the pattern get routed to the same
          channel, even if somehow the event itself specifies a different
          channel.
@@ -230,7 +230,7 @@
    \end{enumber}
 
 \subsection{Event Editor / Edit Fields}
-\label{subsec:seq66_event_editor_fields}
+\label{subsec:event_editor_fields}
 
    The edit fields show the values of the currently-selected event.  They allow
    changing an event, adding a new event, or deleting the currently-selected
@@ -318,11 +318,11 @@
 
    \index{bugs!event delete key}
    \index{bugs!event insert key}
-   \textsl{Sequencer66} would support using the Delete and Insert keys to
+   \textsl{Seq66} would support using the Delete and Insert keys to
    supplement the buttons, but the Delete key is needed for editing the event
    data fields.
    The current structure of the dialog prevents using it for both
-   the frame and the edit fields.  Therefore, \textsl{Sequencer66} allows the
+   the frame and the edit fields.  Therefore, \textsl{Seq66} allows the
    usage of the \textbf{asterisk} keys (regular and keypad) for
    deletion.
 
@@ -342,7 +342,7 @@
    timestamp.
 
 \subsection{Event Editor / Bottom Buttons}
-\label{subsec:seq66_event_editor_buttons}
+\label{subsec:event_editor_buttons}
 
    The buttons at the bottom of the event editor round out the functionality of
    this dialog.
@@ -371,7 +371,7 @@
    some events are deleted in the event editor, and the
    \textbf{Save to Sequence} button is pressed, the pattern editor would
    crash and
-   takes down \textsl{Sequencer66} with it.  Therefore, when either editor is
+   takes down \textsl{Seq66} with it.  Therefore, when either editor is
    open for a given sequence, the right-click menu entries that bring them up
    are hidden.
 

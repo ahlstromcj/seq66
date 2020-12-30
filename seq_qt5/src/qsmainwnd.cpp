@@ -3135,11 +3135,15 @@ void
 qsmainwnd::tap ()
 {
     midibpm bpm = perf().update_tap_bpm();
+    update_tap(bpm);
+}
+
+void
+qsmainwnd::update_tap (midibpm bpm)
+{
     set_tap_button(perf().current_beats());
     if (perf().current_beats() > 1)             /* first one is useless */
-    {
         ui->spinBpm->setValue(bpm);
-    }
 }
 
 /**

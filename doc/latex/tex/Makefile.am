@@ -19,9 +19,9 @@
 .PHONY: clean
 .PHONY: docs
 
-all: cookbook
+all: manual
 
-cookbook: tex-stamp
+manual: tex-stamp
 	latexmk -g -silent -pdf seq66-user-manual
 	mv seq66-user-manual.pdf ../pdf
 

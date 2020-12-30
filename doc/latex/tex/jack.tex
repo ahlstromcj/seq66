@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_jack
+% jack
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_jack.tex
+% \file        jack.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
@@ -14,13 +14,13 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 JACK Support}
-\label{sec:seq66_jack}
+\section{Seq66 JACK Support}
+\label{sec:jack}
 
    This section describes some details concerning the JACK support of
-   \textsl{Sequencer66}.
-   As with \textsl{Seq24}, \textsl{Sequencer66} has JACK transport support.
-   But, if one wants to use the older version of \textsl{Sequencer66} (versions
+   \textsl{Seq66}.
+   As with \textsl{Seq24}, \textsl{Seq66} has JACK transport support.
+   But, if one wants to use the older version of \textsl{Seq66} (versions
    0.9.x) with JACK MIDI, one needs to expose the ALSA ports to JACK using
    \texttt{a2jmidid --export-hw} and connect the resultant MIDI JACK ports
    oneself, using \textsl{QJackCtl}, for example.
@@ -29,18 +29,18 @@
    \texttt{-j}/\texttt{--jack-transport}, \texttt{-J}/\texttt{--jack-master},
    and \texttt{-C}/\texttt{--jack-master-cond} are available.
 
-   With version 0.90, \textsl{Sequencer66} can be built to support the legacy
+   With version 0.90, \textsl{Seq66} can be built to support the legacy
    ALSA interface, the PortMIDI interface, or, best of all, the native JACK
    MIDI interface, loosely based on the RtMIDI project
    (see \cite{rtmidi}).  This mode also supports fallback-to-ALSA if the JACK
    server is not running.
 
    \begin{itemize}
-      \item \textsl{Sequencer66}.
-         \index{Sequencer66}.
+      \item \textsl{Seq66}.
+         \index{Seq66}.
          This application is built when the
          \texttt{--enable-alsamidi} option is specified at "configure" time.
-         It is basically the 0.9.x version of \textsl{Sequencer66} application.
+         It is basically the 0.9.x version of \textsl{Seq66} application.
          However, this build is no longer the default.
       \item \textsl{seq66}.
          \index{seq66}.
@@ -60,15 +60,15 @@
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
 
-\subsection{Sequencer66 JACK Transport}
-\label{subsec:seq66_jack_transport}
+\subsection{Seq66 JACK Transport}
+\label{subsec:jack_transport}
 
    This section is just underway.  Here are some of the topics to be discussed:
 
    \begin{enumerate}
       \item What JACK functions are supported for JACK Transport.
       \item Exposing the ALSA MIDI ports to JACK, when using the legacy
-         ALSA version of \textsl{Sequencer66}.
+         ALSA version of \textsl{Seq66}.
       \item Fixes to JACK Master mode.
       \item Interactions with the Klick and Hydrogen applications.
       \item Patches from the new (!) version of Seq24, 0.9.3, to correct
@@ -84,23 +84,23 @@
    \textsl{QJackCtl}, and the ports created are part of the
    "seq66" client.
 
-   The first thing to note about JACK transport with \textsl{Sequencer66} is
-   that the progress bars will not move unless \textsl{Sequencer66} is
+   The first thing to note about JACK transport with \textsl{Seq66} is
+   that the progress bars will not move unless \textsl{Seq66} is
    connected to a JACK client, such as \textsl{Hydrogen} (in JACK MIDI mode)
-   or \textsl{Yoshimi}.  Currently, \textsl{Sequencer66} will connect to a JACK
+   or \textsl{Yoshimi}.  Currently, \textsl{Seq66} will connect to a JACK
    client automatically only at startup, where it will connect to all JACK
    clients that it finds.  If it can't find a JACK client, then it will
    fail to register a JACK port, and cannot play.
 
-   The second thing is that \textsl{Sequencer66} still has the issue where it
+   The second thing is that \textsl{Seq66} still has the issue where it
    must be JACK Master to follow transport.  More on this issue later.
 
-\subsection{Sequencer66 Native JACK MIDI}
-\label{subsec:seq66_jack_native_midi}
+\subsection{Seq66 Native JACK MIDI}
+\label{subsec:jack_native_midi}
 
    This section discusses the new \textsl{seq66} application, which supports
    native JACK MIDI.  It is now the \textsl{official} version of
-   \textsl{Sequencer66}, and new bugs will be fixed mainly in this version.
+   \textsl{Seq66}, and new bugs will be fixed mainly in this version.
 
    The first thing to note about \textsl{seq66}
    is that it supports both ALSA and JACK
@@ -112,7 +112,7 @@
    \texttt{-t} or \texttt{--jack-midi}
    option.  Why \texttt{-t}?  We are running out of option letters.
    And eventually we will make the \texttt{-t} option the default.
-   If \textsl{Sequencer66} (in its native JACK mode, using the
+   If \textsl{Seq66} (in its native JACK mode, using the
    \texttt{-t} or \texttt{--jack-midi} option)
    is run in JACK mode \textsl{without JACK running} on
    the system, it will take awhile to come up (in ALSA mode).  If run from the
@@ -160,11 +160,11 @@
    That is, they are saved to the "rc" configuration file at exit,
    so one does not have to specify them in subsequent \textsl{seq66} sessions.
 
-\subsubsection{Sequencer66 JACK MIDI Output}
-\label{subsubsec:seq66_jack_midi_output}
+\subsubsection{Seq66 JACK MIDI Output}
+\label{subsubsec:jack_midi_output}
 
    By default (or depending on the "rc" configuration file), the new
-   \texttt{seq66} version of \textsl{Sequencer66} will
+   \texttt{seq66} version of \textsl{Seq66} will
    \index{jack!auto-connect}
    \index{auto-connect}
    automatically connect the ports that it finds to \texttt{seq66},
@@ -175,7 +175,7 @@
 %  \includegraphics[scale=0.75]{jack/jack-nano-yosh-midi-auto-seq66.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK MIDI Ports and Auto-Connect}
-   \label{fig:seq66_jack_nano_yosh_midi_auto}
+   \label{fig:jack_nano_yosh_midi_auto}
 \end{figure}
 
    The \texttt{seq66:system midi\_playback\_1} output port shown
@@ -191,7 +191,7 @@
 %  \includegraphics[scale=0.75]{jack/jack-nano-yosh-alsa-pre-seq66.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{ALSA MIDI Ports}
-   \label{fig:seq66_jack_nano_yosh_alsa_pre}
+   \label{fig:jack_nano_yosh_alsa_pre}
 \end{figure}
 
 	Note that the input connection is not useful unless \texttt{seq66} could
@@ -203,7 +203,7 @@
    More useful is the automatic connection between
    \texttt{seq66:yoshimi midi in} in the left (output) panel and
    \texttt{yoshimi:midi in} in the right (input) panel.  With it it,
-   \textsl{Sequencer66} patterns with the proper output-buss setting can play
+   \textsl{Seq66} patterns with the proper output-buss setting can play
    to the \textsl{Yoshimi} software synthesizer.
 
 	The output ports available are shown in \textsl{seq66}'s
@@ -214,7 +214,7 @@
 %  \includegraphics[scale=0.75]{jack/jack-nano-yosh-midi-clock-seq66.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK MIDI Ports in Seq66}
-   \label{fig:seq66_jack_nano_yosh_midi_clock}
+   \label{fig:jack_nano_yosh_midi_clock}
 \end{figure}
 
    Note that the index, client, and buss numbers are all the same.
@@ -235,12 +235,12 @@
 
    With that option, all patterns send to buss 1.
 
-\subsubsection{Sequencer66 JACK MIDI Input}
-\label{subsubsec:seq66_jack_midi_input}
+\subsubsection{Seq66 JACK MIDI Input}
+\label{subsubsec:jack_midi_input}
 
    One more connection to note is the input connection to \texttt{seq66}.
    Referring back to 
-   \figureref{fig:seq66_jack_nano_yosh_midi_auto}
+   \figureref{fig:jack_nano_yosh_midi_auto}
    we see that
    \texttt{system:midi\_capture\_1} in the left (output) panel is connected to
    \texttt{seq66:system midi\_capture\_1} in the right (input) panel.
@@ -256,14 +256,14 @@
 %  \includegraphics[scale=0.75]{jack/jack-nano-yosh-midi-input-seq66.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK MIDI Input Ports}
-   \label{fig:seq66_jack_nano_yosh_midi_input}
+   \label{fig:jack_nano_yosh_midi_input}
 \end{figure}
 
    When the check-box for that buss is selected, the input can be captured by
    \texttt{seq66}.
 
-\subsubsection{Sequencer66 JACK MIDI Virtual Ports}
-\label{subsubsec:seq66_jack_midi_virtual_ports}
+\subsubsection{Seq66 JACK MIDI Virtual Ports}
+\label{subsubsec:jack_midi_virtual_ports}
 
    \index{ports!manual}
    \index{ports!virtual}
@@ -296,7 +296,7 @@
 %  \includegraphics[scale=0.75]{jack/jack-nano-yosh-midi-manual-seq66.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK MIDI Manual Ports}
-   \label{fig:seq66_jack_nano_yosh_midi_manual}
+   \label{fig:jack_nano_yosh_midi_manual}
 \end{figure}
 
    One sees that \texttt{seq66} creates 16 output ports (busses), and one input
@@ -308,8 +308,8 @@
    manner what is seen in \textsl{QJackCtl}, so we won't bother to show those
    tabs.
 
-\subsubsection{Sequencer66 JACK MIDI and a2jmidid}
-\label{subsubsec:seq66_jack_midi_a2jmidid}
+\subsubsection{Seq66 JACK MIDI and a2jmidid}
+\label{subsubsec:jack_midi_a2jmidid}
 
    One more thing to show is that \texttt{seq66} can deal with the odd naming
    of JACK ports created by the \textsl{a2jmidid} application.
@@ -319,7 +319,7 @@
 %  \includegraphics[scale=0.75]{jack/a2jmidid-jack-midi.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK MIDI a2jmidid Ports}
-   \label{fig:seq66_a2jmidid_jack_midi}
+   \label{fig:a2jmidid_jack_midi}
 \end{figure}
 
    One can see in the right (input) panel that that the \texttt{a2j} client

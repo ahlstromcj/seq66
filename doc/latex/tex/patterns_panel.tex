@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_patterns_panel
+% patterns_panel
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_patterns_panel.tex
+% \file        patterns_panel.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -15,7 +15,7 @@
 %-------------------------------------------------------------------------------
 
 \section{Patterns Panel}
-\label{sec:seq66_patterns_panel}
+\label{sec:patterns_panel}
 
    \textsl{Seq66} works with patterns (loops, tracks, or
    sequences) that are repeated throughout a song.
@@ -26,7 +26,7 @@
    The \textsl{Seq66 Patterns Panel} is the
    \index{main window}
    \textbf{main window} of \textsl{Seq66}.
-   See \figureref{fig:seq66_main_screen}.
+   See \figureref{fig:main_screen}.
    It is called the "main window" or the "patterns window".
    It is here one creates a set of patterns
    (see \sectionref{subsubsec:concepts_terms_screen_set}),
@@ -45,7 +45,7 @@
 
    \index{song mode}
    \index{mode!song}
-   If the song editor (see \sectionref{sec:seq66_song_editor})
+   If the song editor (see \sectionref{sec:song_editor})
    has the input focus, it controls the muting/unmuting of
    each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
    (There are ways to override this behavior.)
@@ -53,17 +53,17 @@
 %  However, if \textsl{Seq66} is using JACK transport, then, instead of
 %  the behavior described above, live versus song mode is controlled by the
 %  JACK start mode option (see the \textbf{JACK Start mode} item in
-%  \sectionref{paragraph:seq66_menu_file_options_jack_sync}).
+%  \sectionref{paragraph:menu_file_options_jack_sync}).
 
    For exposition, we break the Patterns Panel
    into a menu bar, a top panel, a pattern panel, and a bottom panel.
    The \textsl{Seq66} menu bar is discussed in
-   \sectionref{sec:seq66_menu}.
+   \sectionref{sec:menu}.
    The Qt and Gtkmm user-interfaces differ in the arrangement of buttons and
    panels; and the Qt interface uses tabs.
 
 \subsection{Patterns / Top Panel}
-\label{subsec:seq66_patterns_panel_top}
+\label{subsec:patterns_panel_top}
 
    The top panel of the Pattern window is simple, consisting of the
    name of the program and a few controls.  The latest version adds more
@@ -97,7 +97,7 @@
    These items appear in the Gtkmm-2.5 user-interface.
    The Qt user-interface is arranged differently, but has roughly the
    same functionality.
-   See \figureref{fig:seq66_main_screen_qt}.
+   See \figureref{fig:main_screen_qt}.
 
 %  If \textsl{Seq66} was built with
 %  \texttt{SEQ66\_MENU\_BUTTON\_PIXMAPS} defined, then the buttons have icons
@@ -323,7 +323,7 @@
    by assigning MIDI commands to arm or toggle loops, using 
    \index{rc file}
    the 'on' option in the "rc" file.
-   See \sectionref{subsec:seq66_rc_file_midi_control}.
+   See \sectionref{subsec:rc_file_midi_control}.
 
 %  The mute group doesn't toggle... it turns on.
 %  \index{group!toggle}
@@ -395,7 +395,7 @@
    \end{enumber}
 
 \subsection{Patterns / Main Panel}
-\label{subsec:seq66_patterns_panel_main}
+\label{subsec:patterns_panel_main}
 
    The main panel of the Patterns window provides a grid of empty boxes,
    each box delimited by brace-like lines at left and right.
@@ -444,7 +444,7 @@
 \end{figure}
 
    The individual items annoted in this figure are described in
-   \sectionref{subsubsec:seq66_patterns_pattern_filled}, in more detail.
+   \sectionref{subsubsec:patterns_pattern_filled}, in more detail.
    The slot at the bottom left of this figure shows some new features:
 
    \begin{itemize}
@@ -473,7 +473,7 @@
    \end{enumber}
 
 \subsubsection{Pattern Slot}
-\label{subsubsec:seq66_patterns_pattern_slot}
+\label{subsubsec:patterns_pattern_slot}
 
    \index{pattern!slot}
    An empty box is a slot for a pattern.
@@ -657,7 +657,7 @@
    \figureref{fig:pattern_window_right_click_song}.
    
 \subsubsection{Pattern}
-\label{subsubsec:seq66_patterns_pattern_filled}
+\label{subsubsec:patterns_pattern_filled}
 
    A filled pattern slot is referred to as a \textsl{pattern}
    (or \textsl{loop}, or \textsl{sequence}).
@@ -699,7 +699,7 @@
       \item \textbf{Sequence Number}.
          If the option to show the sequencer number is set
          in the \textbf{File / Options / Keyboard} section
-         (see \sectionref{paragraph:seq66_menu_file_options_keyboard},
+         (see \sectionref{paragraph:menu_file_options_keyboard},
          the this number is shown at the bottom left of the pattern slot.
       \item \textbf{Bus-Channel}.
          \index{pattern!bus-channel}
@@ -713,7 +713,7 @@
          and the second is the size of the beat, here, a quarter note.
       \item \textbf{Shortcut Key}.
          If the display of hot-keys is enabled (see
-         \sectionref{paragraph:seq66_menu_file_options_keyboard}),
+         \sectionref{paragraph:menu_file_options_keyboard}),
          then the key noted in the lower-right corner of the pattern can be
          pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
@@ -861,7 +861,7 @@
    MIDI events and making some minor edits or deletes.
    The \textbf{Event Editor} is most useful when trying to find events
    that are screwing up the performance of that pattern.
-   See \sectionref{sec:seq66_event_editor}, for more information.
+   See \sectionref{sec:event_editor}, for more information.
 
    To simplify the application and avoid editing a pattern in
    two different dialogs, if either the 
@@ -902,7 +902,7 @@
    The pattern can then be pasted elsewhere in the Patterns panel.
    One can also drag-and-drop a pattern into another cell (there is no outline
    box during the drag).
-   See \sectionref{subsubsec:seq66_patterns_pattern_slot}.
+   See \sectionref{subsubsec:patterns_pattern_slot}.
    Note that there is no \texttt{Ctrl-C} key for this operation in the
    live (main) window.
 
@@ -1036,14 +1036,14 @@
 % \end{figure}
 
 \subsubsection{Pattern Keys and Click}
-\label{subsubsec:seq66_patterns_pattern_keys_and_clicks}
+\label{subsubsec:patterns_pattern_keys_and_clicks}
 
    This section recapitulates all the clicks and keys that perform actions
    in the Pattern windows.  Some additional clicks and keys are noted here
    as well.
 
 \paragraph{Pattern Keys}
-\label{paragraph:seq66_patterns_pattern_keys}
+\label{paragraph:patterns_pattern_keys}
 
    \index{keys!hot}
    \index{keys!shortcut}
@@ -1153,7 +1153,7 @@
 %  \includegraphics[scale=0.75]{new/seq66-queueing-coloration.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Pattern Coloration when Queued}
-   \label{fig:seq66_queueing_coloration}
+   \label{fig:queueing_coloration}
 \end{figure}
 
    This figure shows the coloring for queuing in the top two patterns with
@@ -1325,7 +1325,7 @@
    pattern again will unmute all of the other patterns.
 
 \paragraph{Pattern Clicks}
-\label{paragraph:seq66_patterns_pattern_Clicks}
+\label{paragraph:patterns_pattern_Clicks}
 
    \index{pattern!left click}
    \index{pattern!mute toggle}
@@ -1351,7 +1351,7 @@
    Middle-click does nothing when the mouse rests inside a pattern box.
 
 \subsection{Patterns / Bottom Panel}
-\label{subsec:seq66_patterns_panel_bottom}
+\label{subsec:patterns_panel_bottom}
 
    The bottom panel of the Patterns window provides way to control the
    overall playback of the song.  It has changed quite a bit over the last few
@@ -1454,7 +1454,7 @@
    The precision of the BPM value can be set to 0, 1, or 2
    decimal places, and the increment values for the step size (small)
    or page size (large) of the BPM spinner can be configured in the "usr" file.
-   See \sectionref{subsec:seq66_usr_file_user_midi_settings}; it describes
+   See \sectionref{subsec:usr_file_user_midi_settings}; it describes
    the precision and increment options more fully.
    The following figure shows the appearance of the BPM field with different
    precision values:
@@ -1539,7 +1539,7 @@
    \textbf{Song Editor}.  The \texttt{Ctrl-E} keystroke can also be used.
 
 \subsection{Patterns / Multiple Panels}
-\label{subsec:seq66_patterns_panel_multiple}
+\label{subsec:patterns_panel_multiple}
 
 %  If \textsl{Seq66} is built with the \texttt{--enable-multiwid}
 %  \textsl{Seq66} has a "multiwid" option, this defines the 
@@ -1577,15 +1577,15 @@
    and, if present, the set notepad text for each "mainwid" set.
 
    See 
-   \sectionref{sec:seq66_man_page}, for how the
+   \sectionref{sec:man_page}, for how the
    \texttt{-o wid=3x2,i} option can be used to set this mode, and
-   \sectionref{subsec:seq66_usr_file_user_interface_settings}, for
+   \sectionref{subsec:usr_file_user_interface_settings}, for
    how these settings can be made permanent in the "usr" file.
    In that file, the options modified are \texttt{block\_rows} and
    \texttt{block\_columns}.
 
 \subsection{Patterns / Variable Set Size}
-\label{subsec:seq66_patterns_panel_variset}
+\label{subsec:patterns_panel_variset}
 
    \index{variset}
    This option, informally known as "variset", allow some changes in
@@ -1600,9 +1600,9 @@
    consider this option to be experimental.
 
    Also see 
-   \sectionref{sec:seq66_man_page}, for how the
+   \sectionref{sec:man_page}, for how the
    \texttt{-o sets=8x8} option can be used to set this mode, and
-   \sectionref{subsec:seq66_usr_file_user_interface_settings}, for
+   \sectionref{subsec:usr_file_user_interface_settings}, for
    how these settings can be made permanent in the "usr" file.
    In that file, the options modified are \texttt{mainwnd\_rows} and
    \texttt{mainwnd\_cols}.

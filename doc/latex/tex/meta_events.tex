@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_meta_events
+% meta_events
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_meta_events.tex
+% \file        meta_events.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2017-07-23
@@ -10,19 +10,19 @@
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI GUI meta_events that Sequencer66
+%     Provides a discussion of the MIDI GUI meta_events that Seq66
 %     supports.
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 Meta Event / SysEx Support}
+\section{Seq66 Meta Event / SysEx Support}
 \label{sec:meta_events}
 
-   \textsl{Sequencer66} attempts better support
+   \textsl{Seq66} attempts better support
    for MIDI Meta and System Exclusive events and a Tempo track.
    It supports the display of Set Tempo and Time Signature events.
    They can also be added and edited, in
-   various ways.  For example, see \sectionref{sec:seq66_event_editor}.
+   various ways.  For example, see \sectionref{sec:event_editor}.
    Only the first Time Signature event is used to modify playback.
    System Exclusive support is also still in progress, but very incomplete.
    This section consolidates the description of the meta-event support.
@@ -37,10 +37,10 @@
    \end{enumerate}
 
    First, we need to note \textsl{how} the tempo track is
-   implemented in \textsl{Sequencer66}.  Rather than make a SeqSpec track for
+   implemented in \textsl{Seq66}.  Rather than make a SeqSpec track for
    the tempo events, we use the MIDI specification mandate that
    Tempo events should occur only in the first track.
-   \textsl{Sequencer66} treats Set Tempo and Time Signature as full-fledged
+   \textsl{Seq66} treats Set Tempo and Time Signature as full-fledged
    MIDI events that can be viewed (and later, edited) in the existing
    user-interface.  Notes and other events can occur in the same
    track.
@@ -50,11 +50,11 @@
 \subsection{"usr" BPM Display Settings}
 \label{subsec:meta_events_usr}
 
-   \textsl{Sequencer66} allows the tempo to range from 1 to 600 BPM
+   \textsl{Seq66} allows the tempo to range from 1 to 600 BPM
    (beats per minute).
    This range is hardwired into the application.
    To display tempo with a little more granularity,
-   \textsl{Sequencer66} provides scaling for the tempo
+   \textsl{Seq66} provides scaling for the tempo
    displays.  These values are found in the "usr" file:
 
    \begin{verbatim}
@@ -62,9 +62,9 @@
 		360       # midi_bpm_maximum
    \end{verbatim}
 
-   See \sectionref{subsec:seq66_usr_file_user_midi_settings}, for more
+   See \sectionref{subsec:usr_file_user_midi_settings}, for more
    information.  This setting can only be made by editing the "usr" file
-   while \textsl{Sequencer66} is not running.
+   while \textsl{Seq66} is not running.
    Note that this setting affects the global BPM setting ("c\_bpmtag").
 
 % DO THESE SETTINGS apply to the global BPM or the tempo-track BPM???

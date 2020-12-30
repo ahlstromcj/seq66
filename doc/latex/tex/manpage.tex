@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_manpage
+% manpage
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_manpage.tex
+% \file        manpage.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -14,10 +14,10 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 Man Page}
-\label{sec:seq66_man_page}
+\section{Seq66 Man Page}
+\label{sec:man_page}
 
-   This section presents the contents of the \textsl{Sequencer66} man page, but
+   This section presents the contents of the \textsl{Seq66} man page, but
    not exactly in \textsl{man} format.  Also, an item or two are shown that
    somehow didn't make it into the man page, and minor corrections and
    formatting tweaks were made.
@@ -26,15 +26,15 @@
    option hyphen, are still unofficially supported.
 
    \texttt{\$HOME/.config/sequencer66/sequencer66.rc} holds the "rc" settings
-   for \textsl{Sequencer66}.
+   for \textsl{Seq66}.
 
    \texttt{\$HOME/.config/sequencer66/sequencer66.usr} holds the "user" settings
-   for \textsl{Sequencer66}.
+   for \textsl{Seq66}.
 
    But the old style names are used for the "legacy" mode.  See the
    \texttt{--legacy} option below. Here is the basic command line:
 
-%  \textsl{Sequencer66} is a real-time MIDI sequencer. It was created to
+%  \textsl{Seq66} is a real-time MIDI sequencer. It was created to
 %  provide a very simple interface for editing and playing MIDI 'loops'.
 
    \begin{verbatim}
@@ -42,10 +42,10 @@
        seq66 [OPTIONS] [FILENAME]
    \end{verbatim}
 
-   \textsl{Sequencer66} accepts the following options, plus an optional name of
+   \textsl{Seq66} accepts the following options, plus an optional name of
    a MIDI file.  Please note that many of the options are 'sticky'.  If they
    are used on the command-line, their settings are saved to the configuration
-   files when \textsl{Sequencer66} exits.
+   files when \textsl{Seq66} exits.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -80,7 +80,7 @@
 
       The user-interface will indicate this mode with a small text
       note.
-      This mode is also used if \textsl{Sequencer66} is invoked as the
+      This mode is also used if \textsl{Seq66} is invoked as the
       \texttt{seq24} command (one can create a soft link to the sequencer66
       executable to make that happen).
 
@@ -102,7 +102,7 @@
    \optionpar{-q}{--ppqn [ppqn]}
       \textbf{New:}
       \index{new!ppqn override}
-      Supports modifying the PPQN value of Sequencer66, which is
+      Supports modifying the PPQN value of Seq66, which is
       defaults to a value of 192.  This setting should allow MIDI files to
       play back at the proper speed, and be written with the new PPQN value.
       This feature is basically done.
@@ -112,7 +112,7 @@
       Format: \texttt{--ppqn ppqnnumber}.
       The \textsl{ppqnnumber} can range from 32 to 19200.
       \index{new!ppqn from MIDI file}
-      It can also be set to 0... in this case, \textsl{Sequencer66}
+      It can also be set to 0... in this case, \textsl{Seq66}
       uses the PPQN from the loaded file as its internal PPQN value.
 
    \optionpar{-L}{--lash}
@@ -139,26 +139,26 @@
       Instead, specify the file itself as the last command-line argument.
 
    \optionpar{-m}{--manual-ports}
-      \textsl{Sequencer66} won't attach the system's existing ALSA ports.
+      \textsl{Seq66} won't attach the system's existing ALSA ports.
       Instead, it will create is own set of input and output busses/ports.
 
    \optionpar{-a}{--auto-ports}
-      \textsl{Sequencer66} will attach the system's existing ALSA ports.
+      \textsl{Seq66} will attach the system's existing ALSA ports.
       This variant is useful for overriding the rc configuration file.
 
    \optionpar{-r}{--reveal-ports}
       \textbf{New:}
       \index{new!reveal ports}
-      \textsl{Sequencer66} will show the names of the ALSA port that the system
+      \textsl{Seq66} will show the names of the ALSA port that the system
       defines, rather than the names defined in the 'user' configuration file.
 
    \optionpar{-R}{--hide-ports}
       \index{new!hide ports}
-      \textsl{Sequencer66} will show the names of the ALSA port that the 'user'
+      \textsl{Seq66} will show the names of the ALSA port that the 'user'
       configuration file define, rather than the names defined by ALSA.
 
    \optionpar{-A}{--alsa}
-      \textsl{Sequencer66} will not run the JACK support, even if specified
+      \textsl{Seq66} will not run the JACK support, even if specified
       in the configuration file.  The configuration options are sticky (they
       are saved), and sometimes they aren't what you want to run.
 
@@ -193,7 +193,7 @@
       entries, each providing a list of one or more songs.  Once loaded, the
       user can use the four arrow keys to move between play-lists and the songs
       in each play-list.  The play-list entries are also controllable via MIDI
-      control values set in the "rc" file.  See the Sequencer66 manual for
+      control values set in the "rc" file.  See the Seq66 manual for
       more information.  Note that, once set, this option is, by default, saved
       in the "rc" file.
 
@@ -207,16 +207,16 @@
       not compiled for JACK support.
 
    \optionpar{-j}{--jack-transport}
-      \textsl{Sequencer66} will sync to JACK transport.
+      \textsl{Seq66} will sync to JACK transport.
 
    \optionpar{-J}{--jack-master}
-      \textsl{Sequencer66} will try to be JACK master.
+      \textsl{Seq66} will try to be JACK master.
 
    \optionpar{-C}{--jack-master-cond}
       JACK master will fail if there is already a master.
 
    \optionpar{-M}{--jack-start-mode [x]}
-      When \textsl{Sequencer66} is synced to JACK, the following play modes
+      When \textsl{Seq66} is synced to JACK, the following play modes
       are available: 0 = live mode; and 1 = song mode, the default.
 
    \optionpar{-S}{--stats}
@@ -228,7 +228,7 @@
       Set the UUID for the JACK session.
 
    \optionpar{-u}{--user-save}
-      Save the "user" configuration file when exiting Sequencer66.
+      Save the "user" configuration file when exiting Seq66.
       Normally, it is saved only if not present in the configuration directory,
       so as not to get stuck with temporary settings such as the --bus option.
       Note that the "rc" configuration option are generally also saved.
@@ -322,17 +322,17 @@
       \end{itemize}
 
    \texttt{\$HOME/.config/sequencer66.rc} holds the main configuration settings
-   for all versions of Sequencer66.  If it does not exist, it will be generated
-   when Sequencer66 exits.  If it does exist, it will be rewritten with the
-   current configuration of Sequencer66.  Many, or most, of the command-line
+   for all versions of Seq66.  If it does not exist, it will be generated
+   when Seq66 exits.  If it does exist, it will be rewritten with the
+   current configuration of Seq66.  Many, or most, of the command-line
    options are "sticky", in that they will be written to the configuration
    file.
 
    \texttt{\$HOME/.config/sequencer66.usr} stores the MIDI-configuration
-   settings and some of the user-interface settings for Sequencer66.  If it
+   settings and some of the user-interface settings for Seq66.  If it
    does not exist, it will be generated with a minimal configuration when
-   Sequencer66 exits.  If it does exist, it will be rewritten with the current
-   configuration of Sequencer66, but \textsl{only} if the
+   Seq66 exits.  If it does exist, it will be rewritten with the current
+   configuration of Seq66, but \textsl{only} if the
    \texttt{--user-save} option was provided on the command-line.
    Note that the
    \texttt{--legacy} option causes the old
@@ -340,7 +340,7 @@
    in the \texttt{\$HOME} directory)
    to be used.
 
-   The current Sequencer66 project homepage is a git repository at
+   The current Seq66 project homepage is a git repository at
 
    \url{https://github.com/ahlstromcj/sequencer66.git}.
 
@@ -352,14 +352,14 @@
    \url{http://www.filter24.org/seq24/} the new
    one is at \url{https://edge.launchpad.net/seq24/}.
    It is released under the GNU GPL license.
-   Sequencer66 is also released under the GNU GPL license.
+   Seq66 is also released under the GNU GPL license.
 
-   \textsl{Sequencer66} was written by Chris Ahlstrom
+   \textsl{Seq66} was written by Chris Ahlstrom
    \href{mailto:ahlstromcj@gmail.com}{ahlstromcj@gmail.com}
    (with a fair amount of help).
    \textsl{Seq24} was written by Rob C. Buse
    \href{mailto:seq24@filter24.org}{seq24@filter24.org}
-   and the \textsl{Sequencer66} team.
+   and the \textsl{Seq66} team.
 
    This manual page was written by Dana Olson
    \url{mailto:seq24@ubuntustudio.com} with additions from Guido Scholz

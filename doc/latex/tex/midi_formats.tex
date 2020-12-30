@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_midi_formats
+% midi_formats
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_midi_formats.tex
+% \file        midi_formats.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
@@ -11,7 +11,7 @@
 % \license     $XPC_GPL_LICENSE$
 %
 %     Provides a discussion of the formats (legacy and new) of the last
-%     track of an Seq24/Sequencer66 MIDI file.
+%     track of an Seq24/Seq66 MIDI file.
 %
 %-------------------------------------------------------------------------------
 
@@ -23,20 +23,20 @@
 
    \index{smf 0}
    \index{channel split}
-   \textsl{Sequencer66} can read and import SMF 0 MIDI files, and performs
+   \textsl{Seq66} can read and import SMF 0 MIDI files, and performs
    channel splitting automatically.
-   When an SMF 0 format is detected, \textsl{Sequencer66}
+   When an SMF 0 format is detected, \textsl{Seq66}
 %  reads the file as if were an SMF 1 file, but
    puts all of the events into the
    same sequence/pattern.  While the file is being processed, a list of the
    channels present in the track is maintained.
 
    Tempo and Time Signature events are read, if present.
-   When saving a \textsl{Sequencer66} MIDI file,
+   When saving a \textsl{Seq66} MIDI file,
 %  in non-legacy mode,
    the Tempo and Time Signature events are saved as MIDI events.
    \index{new!time/tempo saved}
-   This allows other sequencers to read a \textsl{Sequencer66} MIDI file.
+   This allows other sequencers to read a \textsl{Seq66} MIDI file.
    This addition of Tempo can fix imported tracks that don't have a
    measure value.
 %  (e.g. it has 0 instead of at least one measure) associated
@@ -65,7 +65,7 @@
 
    The imported SMF 0 track is preserved, in
    pattern slot \#16.  It is highlighted in a dark cyan color to remind the
-   user that it is a special \textsl{Sequencer66} pattern.
+   user that it is a special \textsl{Seq66} pattern.
 %  It has no channel number.  It is
 %  assigned the non-existent MIDI channel of 0.
    If the original track had no
@@ -82,7 +82,7 @@
 
    \index{tempo events}
    \index{time signature events}
-   \textsl{Sequencer66} supports reading some other
+   \textsl{Seq66} supports reading some other
    information a MIDI SMF 0 track might have, such as the Tempo and the
    Time Signature.  It saves this information in the first track
    of the MIDI file.
@@ -110,7 +110,7 @@
    information, etc) in the file, but marked so that other sequencers can read
    the file and ignore its \textsl{Seq24}-specific information.
 
-   \textsl{Sequencer66} continues that MIDI-compliant behavior, but has
+   \textsl{Seq66} continues that MIDI-compliant behavior, but has
    improved the compliance a bit. 
    We call that last chunk of sequencer-specific information the "proprietary
    track".
@@ -182,7 +182,7 @@
    The \texttt{c\_musickey},
    \texttt{c\_musicscale}, and
    \texttt{c\_backsequence}
-   control tags are new with \textsl{Sequencer66}.
+   control tags are new with \textsl{Seq66}.
    They are saved as additional information in each sequence in which they
    have been specified in the sequence editor.
    For backward compatibility (and because it is probably the more
@@ -224,10 +224,10 @@
 %  most applications accept the shortcut legacy format, but \textsl{midicvt}
 %  does not.
 
-   \textsl{Sequencer66} writes this information properly,
+   \textsl{Seq66} writes this information properly,
    starting with the \texttt{0x242400nn xFF 0x7F} marker.
    We also need to be able to read legacy Seq24 MIDI files, so that ability has
-   been preserved in \textsl{Sequencer66}.
+   been preserved in \textsl{Seq66}.
 
    At this point, we have the \textbf{c\_midictrl} information now.
    Next, we read a long value, seqs.  It is 0.
@@ -306,7 +306,7 @@
 
    The new format (again, ignoring the data) takes up a few more bytes.
    It starts with the normal track marker and size data, followed by a
-   made-up track name ("Sequencer66-S"),
+   made-up track name ("Seq66-S"),
    as shown in \tableref{table:seqspec_items_new_track}.
 
    \begin{table}[htb]
@@ -443,7 +443,7 @@
    \end{table}
 
    \textsl{Timidity} reads the legacy and new formats and plays the tune.
-   \textsl{Sequencer66}  saves the "b4uacuse" tune out, in both formats,
+   \textsl{Seq66}  saves the "b4uacuse" tune out, in both formats,
    with a "MIDI divisions" value of 192, versus its original value of 120.
    The song plays a little bit faster after this conversion.
 
@@ -489,8 +489,8 @@
 \label{subsec:midi_information_more}
 
    This section goes into even more detail about the MIDI format, especially as
-   it applies to the processing done by \textsl{Sequencer66}.
-   The following sub-sections describe how \textsl{Sequencer66}
+   it applies to the processing done by \textsl{Seq66}.
+   The following sub-sections describe how \textsl{Seq66}
    parses a MIDI file.
 
 \subsubsection{MIDI File Header, MThd}
@@ -507,11 +507,11 @@
    \end{verbatim}
 
    The header ID and it's length are always the same values.  The formats that
-   Sequencer66 supports are 0 or 1.  SMF 0 has only one track, while SMF 1 can
+   Seq66 supports are 0 or 1.  SMF 0 has only one track, while SMF 1 can
    support an arbitary number of tracks.  The last value in the header is the
    PPQN value, which specifies the "pulses per quarter note", which is the
    basic time-resolution of events in the MIDI file.  Common values are 96 or
-   192, but higher values are also common.  Sequencer66 and its precursor,
+   192, but higher values are also common.  Seq66 and its precursor,
    Seq24, default to 192.
 
 \subsubsection{MIDI Track, MTrk}
@@ -521,7 +521,7 @@
    In SMF 1 format, each track is assumed to cover a different MIDI channel,
    but always the same MIDI buss.  (The MIDI buss is not a data item in
    standard MIDI files, but it is a special data item in the sequencer-specific
-   section of \textsl{Seq24/Sequencer66} MIDI files.)  Each track is tagged by
+   section of \textsl{Seq24/Seq66} MIDI files.)  Each track is tagged by
    a standard chunk marker, "MTrk".  Other markers are possible, and are to be
    ignored, if nothing else.  Here are the values read at the beginning of a
    track:
@@ -603,7 +603,7 @@
       Prop tag:     0x242400nn      4 bytes
    \end{verbatim}
 
-   These tags provide a way to save and recover Seq24/Sequencer66 properties
+   These tags provide a way to save and recover Seq24/Seq66 properties
    from the MIDI file: MIDI buss, MIDI channel, time signature, sequence
    triggers, and (new), the key, scale, and background sequence to use with the
    track/sequence.  Any leftover data for the tagged event is let go.  Unknown
@@ -664,9 +664,9 @@ These are:
       \item Sequence Number (0x00)
       \item Track Name (0x03)
       \item End-of-Track (0x2F)
-      \item Set Tempo (0x51) (Sequencer66 only)
-      \item Time Signature (0x58) (Sequencer66 only)
-      \item Sequencer-Specific (0x7F) (Handled differently in Sequencer66)
+      \item Set Tempo (0x51) (Seq66 only)
+      \item Time Signature (0x58) (Seq66 only)
+      \item Sequencer-Specific (0x7F) (Handled differently in Seq66)
       \item System Exclusive (0xF0) Sort of handled, functionality incomplete.
    \end{itemize}
 
@@ -793,7 +793,7 @@ These are:
    If a time signature event is not present in a MIDI sequence, a 4/4 signature
    is assumed.
 
-   In \textsl{Sequencer66},
+   In \textsl{Seq66},
    the \texttt{c\_timesig} SeqSpec event is given priority.  The
    conventional time signature is used only if the \texttt{c\_timesig}
    SeqSpec is not present in the file.
@@ -804,10 +804,10 @@ These are:
    If the meta event status value is 0xF0, it is called a "System-exclusive",
    or "SysEx" event.
 
-   \textsl{Sequencer66} has some code in place to store these messages, but the
+   \textsl{Seq66} has some code in place to store these messages, but the
    data is currently not actually stored or used.  Although there is some
    infrastructure to support storing the SysEx event within a sequence, the
-   SysEx information is simply skipped.  \textsl{Sequencer66} warns if the
+   SysEx information is simply skipped.  \textsl{Seq66} warns if the
    terminating 0xF7 SysEx terminator is not found at the expected length.
    Also, some malformed SysEx events have been encountered, and those are
    detected and skipped as well.
@@ -823,7 +823,7 @@ These are:
       FF 7F len data
    \end{verbatim}
 
-   In \textsl{Seq24 and Sequencer66},
+   In \textsl{Seq24 and Seq66},
    the data portion starts with four bytes
    that indicate the kind of data for a particular SeqSpec event:
 
@@ -838,34 +838,34 @@ These are:
       c_triggers_new   ^  0x24240008  Track trigger data
       c_mutegroups     *  0x24240009  Song mute group data
       c_midictrl       *  0x24240010  Song MIDI control
-      c_musickey       +  0x24240011  Track key (Sequencer66 only)
-      c_musicscale     +  0x24240012  Track scale (Sequencer66 only)
-      c_backsequence   +  0x24240013  Track background sequence (Sequencer66 only)
+      c_musickey       +  0x24240011  Track key (Seq66 only)
+      c_musicscale     +  0x24240012  Track scale (Seq66 only)
+      c_backsequence   +  0x24240013  Track background sequence (Seq66 only)
 
       * = global only; ^ = track only; + = both
    \end{verbatim}
 
    In \textsl{Seq24}, these events are placed at the end of the song, but are
    not marked as SeqSpec data.  Most MIDI applications handle this situation
-   fine, but some (e.g. midicvt) do not.  Therefore, \textsl{Sequencer66} makes
+   fine, but some (e.g. midicvt) do not.  Therefore, \textsl{Seq66} makes
    sure to wrap each data item in the 0xFF 0x7F wrapper.
 
    Also, the last three items above (key, scale, and background sequence) can
-   also be stored (by \textsl{Sequencer66}) with a particular sequence/track,
+   also be stored (by \textsl{Seq66}) with a particular sequence/track,
    as well as at the end of the song.  Not sure if this bit of extra
    flexibility is useful, but it is there.
 
 \subsubsection{Non-Specific End of Sequence}
 \label{subsubsec:midi_format_meta_sequence_ends}
 
-   Any other statuses are deemed unsupportable in \textsl{Sequencer66}, and
+   Any other statuses are deemed unsupportable in \textsl{Seq66}, and
    abort parsing with an error.
 
    If the --bus option is in force, it overrides the buss number (if any)
    stored with the sequence.  This option is useful for testing a setup.
    Note that it also applies to new sequences.
 
-   At the end, \textsl{Sequencer66} adds the sequence to the encoded tune.
+   At the end, \textsl{Seq66} adds the sequence to the encoded tune.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

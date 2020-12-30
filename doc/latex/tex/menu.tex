@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_menu
+% menu
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_menu.tex
+% \file        menu.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -15,22 +15,21 @@
 %-------------------------------------------------------------------------------
 
 \section{Menu}
-\label{sec:seq66_menu}
+\label{sec:menu}
 
-   The \textsl{Seq66} menu
-   (\figureref{fig:seq66_main_screen}) structure is a little more complex than
-   that of \textsl{Sequencer64}.  In particular, the \textsl{File} menu has two
+   The \textsl{Seq66} menu structure is more complex than
+   that of \textsl{Seq24}.  In particular, the \textsl{File} menu has two
    variants:  a normal file menu, and a file menu when \textsl{Seq66} is
    running under the \textsl{Non Session Manager}.
 
 \subsection{Menu / File}
-\label{subsec:seq66_menu_file}
+\label{subsec:menu_file}
 
    The \textbf{File} menu is used to save and load MIDI files
-   (Standard MIDI Format 0 or 1) and \textsl{Seq66} MIDI
-   files.
+   (Standard MIDI Format 0 or 1, or \textsl{Cakewalk} "WRK")
+   and \textsl{Seq66} MIDI files.
    The \textsl{Seq66} menu entry contains the sub-items shown below.
-%  \figureref{fig:seq66_menu_file_items}.
+%  \figureref{fig:menu_file_items}.
    The next few sub-sections discuss
    the sub-items in the \textbf{File} menu.
 
@@ -38,7 +37,7 @@
    \centering 
    \includegraphics[scale=0.65]{main-menu/file/livegrid-dark-menu-file.png}
    \caption{Seq66 Menu File Items}
-   \label{fig:seq66_menu_file_items}
+   \label{fig:menu_file_items}
 \end{figure}
 
    \begin{enumber}
@@ -68,7 +67,7 @@
    However, when in doubt, save!  Keep backups of your tunes!
 
 \subsubsection{Menu / File / Open}
-\label{subsubsec:seq66_menu_file_open}
+\label{subsubsec:menu_file_open}
 
    The \textbf{Open} menu entry opens a song (MIDI file or \textsl{Cakewalk}
    WRK file), replacing the current song (after a prompt if the song was
@@ -80,7 +79,7 @@
 %  \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open.png}
    \includegraphics[scale=0.65]{main-menu/file/light-menu-file-open.png}
    \caption{File / Open}
-   \label{fig:seq66_menu_file_open}
+   \label{fig:menu_file_open}
 \end{figure}
 
    This dialog lets one type a file-name, highlighting the first file
@@ -89,7 +88,7 @@
    \textsl{Cakewalk} "WRK" files.
 
 \subsubsection{Menu / File / Open Playlist}
-\label{subsubsec:seq66_menu_file_open_playlist}
+\label{subsubsec:menu_file_open_playlist}
 
    The \textbf{Open Playlist...} menu entry opens a \textsl{Seq66}
    play-list file.
@@ -98,7 +97,7 @@
    \centering 
    \includegraphics[scale=0.65]{main-menu/file/dark-menu-file-open-playlist.png}
    \caption{File / Open}
-   \label{fig:seq66_menu_file_open_playlist}
+   \label{fig:menu_file_open_playlist}
 \end{figure}
 
    The playlist file contains a list of "playlist sections",
@@ -109,7 +108,7 @@
    See \sectionref{sec:playlist}.
 
 \subsubsection{Menu / File / Recent MIDI files}
-\label{subsubsec:seq66_menu_file_recent}
+\label{subsubsec:menu_file_recent}
 
    This menu entry provides a list of the last few MIDI files created or opened;
    play-list selections are \textsl{not} included in this list.
@@ -118,7 +117,7 @@
    \centering 
    \includegraphics[scale=0.65]{main-menu/file/dark-menu-recent-files.png}
    \caption{Seq66 Menu File Recent Files}
-   \label{fig:seq66_menu_file_recent_files}
+   \label{fig:menu_file_recent_files}
 \end{figure}
 
    This list is saved in the \texttt{[recent-files]} section of the
@@ -161,7 +160,7 @@
    \centering 
    \includegraphics[scale=0.5]{main-menu/file/dark-menu-file-save-as.png}
    \caption{File / Save As}
-   \label{fig:seq66_menu_file_save_as}
+   \label{fig:menu_file_save_as}
 \end{figure}
 
    To save a new file, or to save the current existing file to a new name,
@@ -206,34 +205,34 @@
    considered \textsl{obsolete} in the MIDI standard.
 
 \subsubsection{Menu / File / Import MIDI}
-\label{subsubsec:seq66_menu_file_import}
+\label{subsubsec:menu_file_import}
 
    The \textbf{Import} menu entry imports an SMF 0
    or SMF 1 MIDI file as one or more patterns, one pattern per track,
    into the specified screen-set.
    This functionality is explained in detail in
-   \sectionref{subsec:seq66_midi_export_file_import}.
+   \sectionref{subsec:midi_export_file_import}.
 
 \subsubsection{Menu / File / Export Song as MIDI}
-\label{subsubsec:seq66_menu_file_export}
+\label{subsubsec:menu_file_export}
 
    Thanks to the \textsl{Seq32} project, the ability to export songs to MIDI
    format has been added.  In this export, a complete song performance is
    recoded so that other MIDI sequencers can play the performance properly.
    This functionality is explained in detail in
-   \sectionref{subsec:seq66_midi_export_file_export}.
+   \sectionref{subsec:midi_export_file_export}.
 
 \subsubsection{Menu / File / Export MIDI Only}
-\label{subsubsec:seq66_menu_file_export_midi_only}
+\label{subsubsec:menu_file_export_midi_only}
 
    Sometimes it might be useful to export only the non-vendor-specific
    (non-SeqSpec) data from a \textsl{Seq66} song, in order to reduce the
    size of the file or to accomodate non-compliant sequencers.
    This functionality is explained in detail in
-   \sectionref{subsec:seq66_midi_export_file_export_midi_only}.
+   \sectionref{subsec:midi_export_file_export_midi_only}.
 
 \subsubsection{Menu / Edit / Preferences}
-\label{subsubsec:seq66_menu_edit_preferences}
+\label{subsubsec:menu_edit_preferences}
 
    \textsl{Seq66}, the \textbf{Options} dialog has been moved to 
    \textbf{Edit / Preferences} and the keystroke-editing pages have been eliminated.
@@ -252,11 +251,11 @@
 %  \includegraphics[scale=0.65]{menu/options-tab-0-9-18.png}
 %  \includegraphics[scale=0.65]{roll.png}
 %  \caption{Edit / Preference}
-%  \label{fig:seq66_options_tab_0_9_18}
+%  \label{fig:options_tab_0_9_18}
 % \end{figure}
 
 \paragraph{Menu / Edit / Preferences / MIDI Clock}
-\label{paragraph:seq66_menu_edit_preferences_midi_clock}
+\label{paragraph:menu_edit_preferences_midi_clock}
 
    The \textbf{MIDI Clock} tab provides a way to set MIDI clock for
    the available MIDI output busses.
@@ -277,13 +276,13 @@
          \texttt{--manual-ports} command-line option or the
          \texttt{[manual-ports]} section of the
          \texttt{qseq66.rc} configuration file, described in
-         \sectionref{subsec:seq66_rc_file_manual_ports}.
+         \sectionref{subsec:rc_file_manual_ports}.
       \item The setting of the \textsl{Seq66}-specific
          "reveal ALSA ports" option,
          \texttt{--reveal-ports} command-line option or the
          \texttt{[reveal-ports]} section of the
          \texttt{qseq66.rc} configuration file, described in
-         \sectionref{subsec:seq66_rc_file_reveal_ports}.
+         \sectionref{subsec:rc_file_reveal_ports}.
    \end{itemize}
 
    If \texttt{--manual-ports} is on, this list shows the virtual
@@ -299,7 +298,7 @@
    \centering 
    \includegraphics[scale=0.65]{preferences/midi_clock_tab.png}
    \caption{MIDI Clock, ALSA View}
-   \label{fig:seq66_midi_clock_tab}
+   \label{fig:midi_clock_tab}
 \end{figure}
 
    The following elements are present in this dialog:
@@ -395,7 +394,7 @@
    It is used by the \textbf{On (Mod)} setting discussed above.
    It is the \texttt{[midi-clock-mod-ticks]} option in the \textsl{Seq66}
    'rc' file as described in
-   \sectionref{subsec:seq66_rc_file_midi_cmt}.
+   \sectionref{subsec:rc_file_midi_cmt}.
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
@@ -412,7 +411,7 @@
 %  stored in the 'rc' configuration file.  However, if 0, it will be ignored,
 %  so that the global value will take hold.
 
-   See \sectionref{subsec:seq66_rc_file_midi_meta_events}, which discusses this
+   See \sectionref{subsec:rc_file_midi_meta_events}, which discusses this
    setting in the 'rc' configuration file.
 
 %  One thing to remember about tempo...
@@ -421,7 +420,7 @@
 %  In order to do so, one can click the \textbf{Log Tempo} button to write it
 %  to the tempo track as a tempo event.
 
-   See \sectionref{subsec:seq66_jack_native_midi},
+   See \sectionref{subsec:jack_native_midi},
    for a lot more information about native JACK support, and examples of JACK
    MIDI ports and connections.
 
@@ -431,7 +430,7 @@
    We should rename this option to "virtual" eventually.
 
 \paragraph{Menu / Edit / Preferences / MIDI Input}
-\label{paragraph:seq66_menu_edit_preferences_midi_input}
+\label{paragraph:menu_edit_preferences_midi_input}
 
    To allow \textsl{Seq66} to record MIDI from MIDI devices such as
    controllers and keyboards, the output of the ALSA MIDI recording
@@ -449,7 +448,7 @@
    \centering 
    \includegraphics[scale=0.65]{preferences/midi_input_tab.png}
    \caption{MIDI Input, ALSA View}
-   \label{fig:seq66_midi_input_tab}
+   \label{fig:midi_input_tab}
 \end{figure}
 
    Any item checked allows \textsl{Seq66} to record MIDI from another source,
@@ -499,7 +498,7 @@
 %  Needs to be clarified!!!
 
 \paragraph{Menu / Edit / Preferences / Keyboard }
-\label{paragraph:seq66_menu_edit_preferences_keyboard}
+\label{paragraph:menu_edit_preferences_keyboard}
 
    \textsl{Seq24} allows extensive use of
    keyboard shortcuts to make operations go faster than with a mouse,
@@ -621,7 +620,7 @@
    status.
 
    Be sure to note the new option, \textbf{one-shot queue}, in the
-   extended-keys section (\sectionref{subsubsec:seq66_patterns_pattern_slot}).
+   extended-keys section (\sectionref{subsubsec:patterns_pattern_slot}).
 
    \itempar{Sequence toggle keys}{keyboard!sequence toggle keys}
    Each of these keys toggles the playing/muting of one of the 32
@@ -868,7 +867,7 @@
 %  track (track 0) by default.
 
 \paragraph{Menu / Edit / Preferences / Mouse }
-\label{paragraph:seq66_menu_edit_preferences_mouse}
+\label{paragraph:menu_edit_preferences_mouse}
 
    This item selects the mouse-interaction method.
    Not supported in \textsl{Seq66}.
@@ -966,7 +965,7 @@
    can use the ctrl-left-click as a middle click. 
  
 \paragraph{Menu / File / Options / Jack Sync}
-\label{paragraph:seq66_menu_edit_preferences_jack_sync}
+\label{paragraph:menu_edit_preferences_jack_sync}
 
    This tab sets up JACK transport, if \textsl{Seq66}
    was built with JACK support.
@@ -982,7 +981,7 @@
 %  \includegraphics[scale=0.65]{jack/menu_edit_preferences_jack_sync.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{File / Options / JACK}
-   \label{fig:seq66_menu_edit_preferences_jack_sync}
+   \label{fig:menu_edit_preferences_jack_sync}
 \end{figure}
 
    The main sections in this dialog are:
@@ -999,7 +998,7 @@
    \itempar{Transport/MIDI}{jack sync!transport/midi}
    These settings are stored in the 'rc' file settings group
    \texttt{[jack-transport]}.
-   See \sectionref{subsec:seq66_rc_file_jack_transport},
+   See \sectionref{subsec:rc_file_jack_transport},
    which describes this configuration option.
    This items collects the following settings:
 
@@ -1109,7 +1108,7 @@
    \centering 
    \includegraphics[scale=0.65]{roll.png}
    \caption{JACK Connection Button}
-   \label{fig:seq66_main_master_button}
+   \label{fig:main_master_button}
 \end{figure}
 
    This button not only brings up the JACK page, but also shows the current
@@ -1128,7 +1127,7 @@
    buttons don't yet reflect that status.
 
 \subsection{Menu / Edit}
-\label{subsec:seq66_menu_edit}
+\label{subsec:menu_edit}
 
    The \textbf{Edit} menu has undergone some expansion lately.
 
@@ -1137,7 +1136,7 @@
 %  \includegraphics[scale=0.65]{new/menu_edit_0_90.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Edit Menu}
-   \label{fig:seq66_menu_edit_0_90}
+   \label{fig:menu_edit_0_90}
 \end{figure}
 
    \begin{enumber}
@@ -1173,17 +1172,17 @@
    in the pattern.
 %  Once the transpositions are done, the transposition value is set to 0.
    For the setting of song transpose, see
-   \sectionref{sec:seq66_song_editor}, for more information.
+   \sectionref{sec:song_editor}, for more information.
    Also note that transpose can be enabled in the patterns panel for each
-   pattern (see \sectionref{subsubsec:seq66_patterns_pattern_filled}) and
+   pattern (see \sectionref{subsubsec:patterns_pattern_filled}) and
    in the sequence editor
-   (see \sectionref{sec:seq66_pattern_editor}).
+   (see \sectionref{sec:pattern_editor}).
 
    \itempar{Clear mute groups}{edit!clear mute groups}
    \index{mute groups}
    A feature of \textsl{Seq24} and \textsl{Seq66} is that the mute groups
    are saved in both the 'rc' file
-   (see \sectionref{subsec:seq66_rc_file_mute_group})
+   (see \sectionref{subsec:rc_file_mute_group})
    \textsl{and} in the "MIDI" file
    (see \sectionref{subsec:legacy_midi_format}).
 
@@ -1222,7 +1221,7 @@
    status only of the tracks that are armed and remembers them.}
 
 \subsection{Menu / Help / About...}
-\label{subsec:seq66_menu_about}
+\label{subsec:menu_about}
 
    This menu entry shows the "About" dialog.
 
@@ -1232,7 +1231,7 @@
 %  \includegraphics[scale=0.65]{new/menu_help_about.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Help / About}
-   \label{fig:seq66_menu_help_about}
+   \label{fig:menu_help_about}
 \end{figure}
 
    The Qt version is slightly different.
@@ -1245,7 +1244,7 @@
 %  \includegraphics[scale=0.65]{menu/menu_help_credits.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Help Credits}
-   \label{fig:seq66_menu_help_credits}
+   \label{fig:menu_help_credits}
 \end{figure}
 
    Shows who has worked on the program, with the original author at the top
@@ -1256,13 +1255,13 @@
 %  \includegraphics[scale=0.65]{menu/menu_help_doc.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Help Documentation}
-   \label{fig:seq66_menu_help_doc}
+   \label{fig:menu_help_doc}
 \end{figure}
 
    Shows who has documented this project.
 
 \subsection{Menu / Help / Build Info...}
-\label{subsec:seq66_menu_build_info}
+\label{subsec:menu_build_info}
 
    This menu entry shows the "Build Info" dialog.  This list of
    build options enabled in the current application is the same list
@@ -1277,7 +1276,7 @@
 %  \includegraphics[scale=0.50]{new/menu_help_build_info.png}
    \includegraphics[scale=0.65]{roll.png}
    \caption{Help / Build Info}
-   \label{fig:seq66_menu_help_build_info}
+   \label{fig:menu_help_build_info}
 \end{figure}
 
 \end{comment}

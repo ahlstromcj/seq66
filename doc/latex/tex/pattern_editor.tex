@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_pattern_editor
+% pattern_editor
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_pattern_editor.tex
+% \file        pattern_editor.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -13,9 +13,9 @@
 %-------------------------------------------------------------------------------
 
 \section{Pattern Editor}
-\label{sec:seq66_pattern_editor}
+\label{sec:pattern_editor}
 
-   The \textsl{Sequencer66 Pattern Editor} is used to edit and preview a
+   The \textsl{Seq66 Pattern Editor} is used to edit and preview a
    pattern, as well as to configure its buss and channel settings.
    Please note that the \textbf{Qt 5} user-interface (which will eventually
    supercede the Gtkmm-2.4 user-interface) provides an \textbf{Edit Tab}, which
@@ -40,7 +40,7 @@
 %  \begin{itemize}
 %     \item The sequence number show as part of the updated window title, which
 %        now shows the application name (e.g. "seq66" versus the old
-%        "Sequencer66" title.
+%        "Seq66" title.
 %     \item The sequencer number is now shown to the left of the
 %        sequence/track name.
 %     \item The new \textbf{LFO} button in the bottom panel.
@@ -81,13 +81,13 @@
    near the top of the pattern window.  There are tricks to
    modifying the new notes that are described later.
 
-   \textsl{Sequencer66} automatically scrolls
+   \textsl{Seq66} automatically scrolls
    horizontally through the sequence/pattern editor window when
    playback moves the progress bar outside of the current frame of data.  This
    feature makes it easier to follow patterns that are longer than a measure or
    two.
    
-   \textsl{Sequencer66} also provides a way to restart the progress
+   \textsl{Seq66} also provides a way to restart the progress
    bar within the pattern without resetting it to the beginning of the pattern.
    \index{pause}
    This "pause" feature is accessed by the
@@ -100,7 +100,7 @@
 %  it works only in ALSA mode at present.)
 
 \subsection{Pattern Editor / First Panel}
-\label{subsec:seq66_pattern_editor_first}
+\label{subsec:pattern_editor_first}
 
    The top bar (horizontal panel) of the Pattern (sequence) Editor
    lets one change the name of
@@ -115,7 +115,7 @@
    \label{fig:pattern_editor_first_panel_items}
 \end{figure}
 
-   In recent versions of \textsl{Sequencer66}, a "sequence-is-transposable"
+   In recent versions of \textsl{Seq66}, a "sequence-is-transposable"
    feature has been added, as shown above.
 
 % \begin{figure}[H]
@@ -170,7 +170,7 @@
    \itempar{Pattern Length}{pattern editor!length}
    Sets the length of the current pattern, in measures.
    The possible values range from 1 to 64.
-   \textsl{However}, when opening or importing a non-\textsl{Sequencer66}
+   \textsl{However}, when opening or importing a non-\textsl{Seq66}
    MIDI tune, the length of each track will be used, and so other values
    are possible; they just cannot be set via the user-interface.
    The numeric value can be directly edited, to
@@ -180,9 +180,9 @@
    length) in the pattern editor will adjust the pattern to pad it to the
    length of one measure.
    \index{pattern editor!progress bar}
-   \textsl{Sequencer66} will, when it reads such a short pattern
+   \textsl{Seq66} will, when it reads such a short pattern
    from a MIDI file,
-%  (whether foreign or native to \textsl{Sequencer66}),
+%  (whether foreign or native to \textsl{Seq66}),
    pre-pad it to the length of a measure, so that it will always show smooth
    progress.
    For example, a pattern containing just one program
@@ -195,7 +195,7 @@
    and not be repeatable.  We have part of that functionality:
    a feature from user Stazed allows the pattern to expand
    indefinitely while the user inputs MIDI from a controller.
-   See \sectionref{subsec:seq66_pattern_editor_bottom} below.
+   See \sectionref{subsec:pattern_editor_bottom} below.
    (Also nice would be a "one-shot"
    pattern, useful for live intro patterns, for example.)
 
@@ -207,7 +207,7 @@
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies one of the 16 MIDI output busses provided by
-   \textsl{Sequencer66}, or one of the MIDI devices set up in the computer.
+   \textsl{Seq66}, or one of the MIDI devices set up in the computer.
    The settings look a lot like
    \figureref{fig:pattern_window_right_click_midi_bus}.
 
@@ -218,7 +218,7 @@
    to that device and channel, their names will be shown.
 
 \subsection{Pattern Editor / Second Panel}
-\label{subsec:seq66_pattern_editor_second}
+\label{subsec:pattern_editor_second}
 
    The second horizontal panel of the Pattern Editor provides a number
    of additional settings.
@@ -243,7 +243,7 @@
 %    \label{fig:pattern_editor_main_panel_update}
 % \end{figure}
 
-   \textsl{Sequencer66} includes a chord-generation option.
+   \textsl{Seq66} includes a chord-generation option.
 
 %  built in (the default), then the second panel is wider to make room for an
 %  addition user-interface item, shown at the right of the figure above.
@@ -552,19 +552,19 @@
    Please let us know of any mistakes in the new scales.
    Please note that the \textbf{Melodic Minor} scale is supposed to
    descend in the same was as the natural \textbf{Minor} scale, but
-   there is no way to support that trick in \textsl{Sequencer66}.
+   there is no way to support that trick in \textsl{Seq66}.
 
 % \begin{figure}[H]
 %    \centering 
 % %  \includegraphics[scale=0.75]{pattern/scales-menu.png}
 %    \includegraphics[scale=1.0]{new/scales-menu.png}
-%    \caption{Scales Currently Supported in Sequencer66}
+%    \caption{Scales Currently Supported in Seq66}
 %    \label{fig:pattern_editor_available_scales}
 % \end{figure}
 
    One can select which \textbf{Musical Scale} and
    \textbf{Key} the piece is in,
-   and \textsl{Sequencer66} will grey those keys on the piano-roll that
+   and \textsl{Seq66} will grey those keys on the piano-roll that
    are \textsl{not} in the selected scale for the selected key.
    This is purely visual; a user can still add off-key notes.
    This effect is shown for the C Major scale in the following figure:
@@ -653,7 +653,7 @@
    created, with the clicked note value as the base of the chord.
 
 \subsection{Pattern Editor / Piano Roll}
-\label{subsec:seq66_pattern_editor_piano_roll}
+\label{subsec:pattern_editor_piano_roll}
 
    The piano roll is the center of the pattern/loop/track/sequence editor.
    It is accompanied by a
@@ -663,7 +663,7 @@
    and a taller "data bar" or "data area" just below that.  While the pattern
    editor is very similar to note editors in other sequencers, it is a bit
    different in feel.  A good mouse with 3 or more buttons is practically a
-   necessity for editing (though \textsl{Sequencer66} is usable
+   necessity for editing (though \textsl{Seq66} is usable
    with some crummy trackpads common on modern laptops, and
    with keystrokes.) We tend to like the Logitech Marble Mouse, an ambidextrous
    USB trackball.  It has four buttons, and we use the
@@ -707,7 +707,7 @@
    passed to the sound generator or software synthesizer.
 
 \subsubsection{Pattern Editor / Piano Roll Items}
-\label{subsubsec:seq66_pattern_editor_piano_roll_items}
+\label{subsubsec:pattern_editor_piano_roll_items}
 
    The center of the pattern editor consists of a time panel at the top,
    a virtual keyboard at the left, a note grid, a vertical scrollbar, an event
@@ -810,7 +810,7 @@
    Right-click-drag also works the same.
 
 \subsubsection{Pattern Editor / Event Editing}
-\label{subsubsec:seq66_pattern_editor_event_editing}
+\label{subsubsec:pattern_editor_event_editing}
 
    When we say "editing" in the context of the piano roll, in part we mean that
    we will "draw"
@@ -818,10 +818,10 @@
    or "paint"
    \index{paint mode} notes.
    Drawing, modifying, copying, and deleting
-   notes is actually very elegant in \textsl{Sequencer66} and in
+   notes is actually very elegant in \textsl{Seq66} and in
    \textsl{Seq24}.
 
-%  Note editing is a bit different with \textsl{Sequencer66}, since it
+%  Note editing is a bit different with \textsl{Seq66}, since it
 %  requires two mouse buttons in many cases.  There are some new
 %  laptop touchpads that really have only one mouse button, and
 %  use positioning to determine if the click is a left-click or a right-click.
@@ -870,7 +870,7 @@
    yet work in that area of the user-interface, but the \texttt{p} key does.
 
 \paragraph{Editing Note Events}
-\label{paragraph:seq66_pattern_editor_note_events}
+\label{paragraph:pattern_editor_note_events}
 
    The piano roll provides for a quite sophisticated set of note-editing
    actions.  Not only is there a native mouse-interaction mode, but there is a
@@ -879,7 +879,7 @@
    and its Linux look-alike, \textsl{LMMS}.
 
    This option is currently \textsl{not available} in the
-   \textbf{Qt 5} version of \textsl{Sequencer66}.
+   \textbf{Qt 5} version of \textsl{Seq66}.
    We really want to refactor the code to be able to 
    completely reconfigure the mouse interface according to any user's
    preferences, but that is currently a low priority.
@@ -890,10 +890,10 @@
    \index{todo!fruity mode}
    At some point, we will add a section detailing the usage of the "fruity"
    mode of mouse-interaction.
-   For now, \sectionref{paragraph:seq66_menu_file_options_mouse}, such as it
+   For now, \sectionref{paragraph:menu_file_options_mouse}, such as it
    is, will have to do.
    Study the following paragraphs carefully, ideally while
-   trying them out in \textsl{Sequencer66}.
+   trying them out in \textsl{Seq66}.
 
    \itempar{Enter Draw Mode}{pattern editor!draw mode}
    \index{pattern editor!right hold}
@@ -985,7 +985,7 @@
    pattern editor.
 
    The \textbf{Tools} button described in
-   \sectionref{subsec:seq66_pattern_editor_second} can also be used to
+   \sectionref{subsec:pattern_editor_second} can also be used to
    modify selections.
 
    Once one or more notes are selected, they can be modified in time,
@@ -1112,7 +1112,7 @@
 %  \textsl{
 %  (Warning:  We've had temporary issues where the selection box flickers, and
 %  this seems to be due to updates in the graphics library used by
-%  \textsl{Sequencer66}.  This issue might depend on the Linux distro one
+%  \textsl{Seq66}.  This issue might depend on the Linux distro one
 %  uses.)
 %  }
 
@@ -1163,14 +1163,14 @@
    The second selection left out some events, which are thus still
    shown as black bars in the data area.
 
-%  As an aside, note that the event strip is gray.  \textsl{Sequencer66}
+%  As an aside, note that the event strip is gray.  \textsl{Seq66}
 %  now shows this strip as gray when the selected event (the \textbf{Event}
 %  button) is Note On, Note Off, or Aftertouch.  This color is purely a
 %  reminder that moving these events can really screw up the notes, for example
 %  by moving Note Off to before the Note On event.
    
 \paragraph{Event and Data Panels / Editing Other Events}
-\label{paragraph:seq66_pattern_editor_other_events}
+\label{paragraph:pattern_editor_other_events}
 
 %  Left-click or right-click on events in the event strip (directly under
 %  the piano roll grid) will allow one to add/select/move 
@@ -1233,15 +1233,15 @@
    their values modified with the mouse wheel.
 
 \paragraph{Editing Note Events the "Fruity Way"}
-\label{paragraph:seq66_pattern_editor_note_events_fruity}
+\label{paragraph:pattern_editor_note_events_fruity}
 
    This mode is a lot different, and we have yet to do the exhaustive testing
    needed to understand how this mode works.  Input from actual users of this
    mode would be welcome.
-   For now, see \sectionref{paragraph:seq66_menu_file_options_mouse}.
+   For now, see \sectionref{paragraph:menu_file_options_mouse}.
 
 \subsection{Pattern Editor / Bottom Panel}
-\label{subsec:seq66_pattern_editor_bottom}
+\label{subsec:pattern_editor_bottom}
 
    The bottom horizontal panel of the Pattern Editor provides for
    selecting events for viewing and editing, MIDI playback,
@@ -1311,7 +1311,7 @@
       $HOME/.config/sequencer66/sequencer66.usr
    \end{verbatim}
 
-   to make it match one's instrument.  See \sectionref{sec:seq66_usr_file}.
+   to make it match one's instrument.  See \sectionref{sec:usr_file}.
 
    \itempar{Existing Event Selector}{pattern editor!existing events}
    Not shown in the figure above is a small button that will contain either
@@ -1325,7 +1325,7 @@
    and the name of the event shown.
 
    \itempar{LFO}{pattern editor!LFO}
-%  If \textsl{Sequencer66} is built with the \texttt{--enable-lfo} option, then
+%  If \textsl{Seq66} is built with the \texttt{--enable-lfo} option, then
    A low-frequency oscillator allows data events
    can be modulated by some rudimentary wave functions.
 %  This feature is now enabled by default.
@@ -1388,11 +1388,11 @@
 
    \itempar{MIDI Data Pass-Through}{pattern editor!midi data pass-through}
    This button routes incoming MIDI data through
-   \textsl{Sequencer66}, which then writes it to the MIDI output buss.
+   \textsl{Seq66}, which then writes it to the MIDI output buss.
 
    \itempar{Record MIDI Data}{pattern editor!record midi data}
    This button routes incoming MIDI data into
-   \textsl{Sequencer66}, which then saves the data to its buffer, and also
+   \textsl{Seq66}, which then saves the data to its buffer, and also
    displays the new information (notes) in the piano roll view.
 
    \itempar{Quantized Record}{pattern editor!quantized record}
@@ -1403,7 +1403,7 @@
    \itempar{Recording Type}{pattern editor!recording type}
    In \textsl{Seq24}, the pattern recording worked by merging new notes played
    as the pattern to be recorded was looped.  This method allows a loop to be
-   built up bit-by-bit.  \textsl{Sequencer66} adds two more methods from
+   built up bit-by-bit.  \textsl{Seq66} adds two more methods from
    Stazed's \textsl{Seq32} project.  The three methods are:
 
    \begin{enumber}
@@ -1456,12 +1456,12 @@
 %  This is fixed.
 
 \subsection{Pattern Editor / Common Actions}
-\label{subsec:seq66_pattern_editor_common}
+\label{subsec:pattern_editor_common}
 
    This section is a catch-all for actions not described above.
 
 \subsubsection{Pattern Editor / Common Actions / Scrolling}
-\label{subsec:seq66_pattern_editor_scrolling}
+\label{subsec:pattern_editor_scrolling}
 
    Let us describe the actions that can be performed with a
    scroll wheel, or with the scrolling features of multi-touch touchpads.
@@ -1514,16 +1514,16 @@
    that represents the value of the event.
 
 \subsubsection{Pattern Editor / Common Actions / Close}
-\label{subsec:seq66_pattern_editor_close}
+\label{subsec:pattern_editor_close}
 
    There is no \textbf{Close} button in the pattern editor.  One can use
    window-manager actions, such as clicking on the X button of the window
    frame, or pressing the exit key defined in the window manager.
    \index{window!close}
-   \textsl{Sequencer66} also provides the Ctrl-W key to close the pattern
+   \textsl{Seq66} also provides the Ctrl-W key to close the pattern
    editor window.
    However, be aware that this convention does not apply to the other
-   application windows of \textsl{Sequencer66}.
+   application windows of \textsl{Seq66}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

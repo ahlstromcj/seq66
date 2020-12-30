@@ -6,11 +6,11 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2020-11-30
+% \update      2020-12-29
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     This document provides LaTeX documentation for Sequencer66.
+%     This document provides LaTeX documentation for Seq66.
 %
 %-------------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@
 
 \begin{document}
 
-\title{Sequencer66 User Manual 0.91.2}
+\title{Seq66 User Manual 0.91.5}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -81,10 +81,10 @@
 \section{Introduction}
 \label{sec:introduction}
 
-   This document describes "Sequencer66", better known as
+   This document describes "Seq66", better known as
    \textsl{Seq66},
 %  \cite{sequencer66},
-   through version 0.91.2.
+   through version 0.91.5.
    The following projects support \textsl{Seq66} and documentation:
 
    \begin{itemize}
@@ -119,7 +119,7 @@
 %  such as Timidity \cite{timidity}, FluidSynth \cite{fluidsynth}, etc.
 
 \subsection{Seq66: Why?}
-\label{subsec:introduction_seq66_vs_others}
+\label{subsec:introduction_vs_others}
 
    The first reason to refactor \textsl{Sequencer64} is to take advantage of
    things learned in responding to user reports.  The second reason is to use
@@ -159,7 +159,7 @@
    multiple links, references, and index entries.
 
 \subsection{Let's Go!}
-\label{subsec:introduction_lets_get_started}
+\label{subsec:introduction_lets_go}
 
    Make sure no other sound application is running, for the first run.
    Start \textsl{Seq66} to use JACK for MIDI, or
@@ -172,66 +172,299 @@
    The \texttt{--buss} option remaps all events to the desired buss:
 
 \begin{verbatim}
-   $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-seq24.midi
-   C:\> qpseq66 --buss 1  data/midi/b4uacuse-seq24.midi
+   $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-gm-patchless.midi
+   C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
 \end{verbatim}
 
-   The "data" directory is a installation directory,
+   The "data" directory is a installation directory, such as
    \texttt{/usr/share/seq66-0.90/} on \textsl{Linux} and
    \texttt{C:/Program Files (x86)/Seq66} on \textsl{Windows}.
 
-   Not shown are the configration directories,
+   The configration directories are, by default,
    \texttt{/home/user/.config/seq66} on \textsl{Linux} and
    \texttt{C:/Users/user/AppData/Local/seq66} on \textsl{Windows}.
    These are created after the first run of \textsl{Seq66}.
 
    If the \texttt{--alsa} option is used instead of
-   \texttt{--jack-midi}, then the "JACK" button shows "ALSA" instead
-   (Linux only).  The following figure is for the \textsl{Linux}
-   version using a dark desktop theme.
+   \texttt{--jack-midi}, then the \textsl{ALSA} subsystem is used
+   (Linux only).  The following figure shows the main window
+   using a light desktop theme.
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
-   \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
+%  \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
+   \includegraphics[scale=0.65]{main-window/main-window-light-gridstyle-3-markup.png}
    \caption{Seq66 Main Screen}
-   \label{fig:seq66_main_screen}
+   \label{fig:main_screen}
 \end{figure}
 
    The \textsl{Seq66} main window appears, as shown above.
    This figure has some differences from the \textsl{Seq24} main window,
-   but the functionality is about the same.
+   but the functionality is similar.
    Most features, including the "look" of the application,
-   can be configured via the "rc" and "user"
-   configuration files or command-line options.
+   can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
+   and 'palette' configuration files, or via command-line options.
    There are many new front-panel items in \textsl{Seq66}.
+   Many of these buttons have configurable keystrokes and configurable MIDI
+   controls as well.
 
-%  \begin{itemize}
-%     \item Control buttons:
-%     \begin{itemize}
-%        \item Start, Stop, and Pause.
-%        \item Toggle and show the status of "Live" mode versus "Song" mode.
-%        \item Mute/show the mute status of all tracks.
-%        \item Enable/disable the menu bar and show its status.
-%        \item Set JACK Slave/Master transport, and
-%           ALSA/JACK (native) mode.
-%        \item Set the kind of time display, between "bars:beat:ticks"
-%           and "hours:minute:seconds".
-%        \item Panic button, to stop all tracks and turn off all notes.
-%        \item Song-recording snap, the \textbf{S} button.
-%        \item Tap Tempo, the \textbf{0} (zero) button.
-%        \item Keep-queue toggling and status.
-%     \end{itemize}
-%     \item Current time in bars, beats, and ticks.
-%     \item Song recording records all muting changes to the Song Editor.
+   For discussion, we break the discussion into sections for the following
+   groups shown in the figure above:
+
+   \begin{itemize}
+      \item \textbf{Menu}
+      \item \textbf{Main} (Top and Bottom panels)
+      \item \textbf{Tabs} (each in their own section)
+   \end{itemize}
+
+   The \textbf{Live} tab provides a grid of patterns (also called loops or
+   sequences) that display recorded MIDI data, status information, and provide
+   popup-menus to further work on each pattern.  Note here that the buttons can
+   be colored, and that the status of being armed is easy to see from the
+   coloring.
+   The \textbf{Live} tab will be discussed in more detail in its own section.
+
+   In this section we discuss the top and bottom \textbf{Main} controls, as
+   shown in the following figure:
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/main-window-controls.png}
+   \caption{Main Screen Controls}
+   \label{fig:main_screen_controls}
+\end{figure}
+
+\subsubsection{Main Top Controls}
+\label{subsubsec:introduction_main_top_controls}
+
+   The top main control items are, from left to right:
+
+   \begin{itemize}
+      \item \textbf{PPQN Selection}
+      \item \textbf{Set's Buss Override}
+      \item \textbf{Global Beats Per Measure}
+      \item \textbf{Global Beat Width}
+      \item \textbf{BBT or HMS Time Display}
+      \item \textbf{Beat Indicator}
+   \end{itemize}
+
+% Use this?
+%  \setcounter{ItemCount}{0}
+%  \itempar(PPQN Selection}{PPQN!selection}
+
+\paragraph{PPQN Selection}
+\label{paragraph:introduction_ppqn_selection}
+
+   This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
+   loaded tune.
+   As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
+   match the PPQN read from the file, or to other values.
+
+   STILL NEEDS WORK.
+
+   Values:
+      \texttt{File, 32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}
+
+\paragraph{Set's Buss Override}
+\label{paragraph:introduction_sets_buss_override}
+
+   This dropdown allows for overriding the buss (port) number used by all of
+   the patterns in the current set.  This modifies the file and will lead to a
+   prompt to save.
+   The list of
+   output busses is either the existing MIDI ports on the system, or,
+   if port-mapping (see \sectionref{sec:port_mapping}) is active, the list
+   of mapped output ports.
+   This is an easy way to redirect the set to a different output device.
+
+\paragraph{Global Beats Per Measure}
+\label{paragraph:introduction_global_beats_per_measure}
+
+   This dropdown changes the global beats/measure for the song.
+
+   Values: \texttt{1 to 16}
+
+\paragraph{Global Beat Width}
+\label{paragraph:introduction_global_beat_width}
+
+   This dropdown changes the global beat width (time-signature denominator)
+   for the song.
+
+   Values: \texttt{1, 2, 4, 8, 16}
+
+\paragraph{BBT or HMS Time Display}
+\label{paragraph:introduction_time_display}
+
+   This text simply shows the current time during playback. 
+   It can be shown in BBT (bars:beats:ticks) or HMS (hours:minutes:seconds).
+
+\paragraph{Beat Indicator}
+\label{paragraph:introduction_beat_indicator}
+
+   The beat indicator is inspired by the \textsl{Kepler34} implementation.  It
+   shows the first beat in red, and the rest of the beats in white.
+
+   STILL NEEDS WORK. It does not adapt to changes in the time-signature.
+
+\subsubsection{Main Bottom Controls}
+\label{subsubsec:introduction_main_bottom_controls}
+
+   The bottom main control items take up two rows.  The first row contains:
+
+   \begin{itemize}
+      \item \textbf{Set Name}
+      \item \textbf{Set Master Button}
+      \item \textbf{Active Set Indicator}
+      \item \textbf{Set Changer}
+   \end{itemize}
+
+   The second row contains:
+
+   \begin{itemize}
+      \item \textbf{Panic Button}
+      \item \textbf{Stop Button}
+      \item \textbf{Pause Button}
+      \item \textbf{Play Button}
+      \item \textbf{Live Record}
+      \item \textbf{Keep Queue Button}
+      \item \textbf{Mute Group Learn Button}
+      \item \textbf{Developer Test Button}
+      \item \textbf{Song Editor Button}
+      \item \textbf{Song Mode Button}
+      \item \textbf{PPQN Indicator}
+      \item \textbf{BBT/HMS Toggle Button}
+      \item \textbf{Tap BPM Button}
+      \item \textbf{Beats Per Minute Control}
+   \end{itemize}
+
+   Many of these controls have keystrokes and MIDI-control slots that can be
+   set up in the 'ctrl' file.
+
+\paragraph{Panic Button}
+\label{paragraph:introduction_panic_button}
+
+   This button causes playback to stop, all patterns to mute, and flushes the
+   MIDI buss.  It also raises a notification about an automation change.
+   There is currently no keystroke, MIDI control, or MIDI-announcement (output)
+   slot for this automation operation.
+
+\paragraph{Stop Button}
+\label{paragraph:introduction_stop_button}
+
+   This button stops playback and rewinds to the beginning of the song.
+   By default, the \texttt{Esc} key operates this function,
+   and there is both a MIDI-control slot and a MIDI-announcement slot
+   available for it.
+
+\paragraph{Pause Button}
+\label{paragraph:introduction_pause_button}
+
+   This button stops playback, but does not rewind to the beginning of the song.
+   It also resumes playback at the same point as the pause.
+   By default, the \texttt{Period} key operates this function,
+   and there is a MIDI-control slot and a MIDI-announcement slot available for
+   it.
+
+\paragraph{Play Button}
+\label{paragraph:introduction_play_button}
+
+   This button starts playback, either at the beginning or at the pause point.
+   Also called the "start button".
+   By default, the \texttt{Space} key operates this function,
+   and there is both a MIDI-control slot and a MIDI-announcement slot
+   available for it.
+
+\paragraph{Live Record Button}
+\label{paragraph:introduction_live_record_button}
+
+   This button causes a live playing session to be recorded.
+   That is, triggers are added to the song automatically, and they can then be
+   seen in the \textsl{Song} editor.
+   By default, the \texttt{P} key operates this function,
+
+\paragraph{Keep Queue Button}
+\label{paragraph:introduction_keep_queue_button}
+
+   Puts the application into a "sticky" queue mode.
+   In this mode, pressing a pattern key does not do a mute/unmute function, but
+   instead turns on queuing for that pattern.
+   By default, the \texttt{Backslash} key operates this function,
+   and there is a MIDI-control slot available for it.
+
+\paragraph{Mute Group Learn Button}
+\label{paragraph:introduction_mute_group_learn_button}
+
+   Also called the "L" button.
+   Sets up for learn the current set of active patterns ("mute group").
+   After pressing this button, the user can then press another button, which is
+   automatically shifted, and the pattern set is saved, and can be recalled by
+   that button later.  It can be saved in a 'mutes' file, as part of the MIDI
+   tune, or in both places.
+
+   Example:  We have 5 patterns armed in the current set. Press this button,
+   and then press the "s" key.  The pattern set is saved and can be recalled
+   later by the "S" ("s" shifted) key.
+
+   By default, the \texttt{el} (lower-case "l") key operates this function,
+   and there is a MIDI-control slot available for it, as well as a
+   MIDI-announcement slot.
+
+\paragraph{Developer Test Button}
+\label{paragraph:introduction_developer_test_button}
+
+   This button is always disabled.  Function is added temporarily when testing
+   new features.
+
+\paragraph{Song Editor Button}
+\label{paragraph:introduction_song_editor_button}
+
+   This button brings up an external window for editing the Song/Performance
+   information.  If already up, it closes it.  Works the same as the
+   \textbf{Edit / Song Editor} menu.
+
+\paragraph{Live/Song Mode Button}
+\label{paragraph:introduction_livesong_mode_button}
+
+   This button toggles between the \textsl{Live} and \textsl{Song} performance
+   mode.
+   By default, the \texttt{F10} key operates this function,
+   There is currently no automation control for this button.
+
+\paragraph{PPQN Indicator}
+\label{paragraph:introduction_ppqn_indicator}
+
+   Displays the current PPQN for the current tune.
+
+   STILL NEEDS WORK.
+
+\paragraph{BBT/HMS Toggle Button}
+\label{paragraph:introduction_time_format_toggle_button}
+
+   Toggles the format of the current time displayed during playback. 
+   It can be shown in B:B:T (bars:beats:ticks) or H:M:S (hours:minutes:seconds).
+
+\paragraph{Tap BPM Button}
+\label{paragraph:introduction_tap_bpm_button}
+
+   Tap this button with a regular beat to determine the beats-per-minute of the
+   tapping.  With each tap, the counter on the button increments and the BPM is
+   recalculated.  Stop tapping for a few seconds to reset the counter.
+   By default, the \texttt{F9} key operates this function, but it
+   STILL NEEDS WORK.
+   There is also a MIDI-control slot for this function.
+
+\paragraph{Beats Per Minute Control}
+\label{paragraph:introduction_bpm_control}
+
+   This control can be text-edited or spun to change the beats/minute value
+   used in playing back the current song.  This value is also saved to the
+   file.
+
 %     \item Log Tempo, which inserts the current tempo into the tempo track
 %        as an event.
 %     \item Tempo recording, which inserts all tempo changes as tempo events.
-%  \end{itemize}
 
-   Many of these buttons have configurable keystrokes and configurable MIDI
-   controls as well.
-%  See \sectionref{subsec:seq66_patterns_panel_bottom}.
+%  See \sectionref{subsec:patterns_panel_bottom}.
 
 \rhead{\rightmark}         % shows section number and section name
 
@@ -241,19 +474,19 @@
 
 % Patterns Panel
 
-% \input{patterns_panel}
+%%% \input{patterns_panel}
 
 % Pattern Editor
 
-% \input{pattern_editor}
+%%% \input{pattern_editor}
 
 % Song Editor
 
-% \input{song_editor}
+%%% \input{song_editor}
 
 % Event Editor
 
-% \input{event_editor}
+%%% \input{event_editor}
 
 % Session Management
 
@@ -261,77 +494,92 @@
 
 % Import/Export
 
-% \input{midi_export}
+%%% \input{midi_export}
 
 % Tables of keyboard and mouse actions
 
-% \input{kbd_mouse}
+%%% \input{kbd_mouse}
 
 % Meta-event support
 
-% \input{meta_events}
+%%% \input{meta_events}
 
 % Configuration file
 
-% \input{rc_file}
+%%% \input{rc_file}
+
+% Discussion of JACK support
+
+%%% \input{jack}
+
+% Port-Mapping
+
+%%% \input{port_mapping}
 
 % User file
 
-% \input{usr_file}
+%%% \input{usr_file}
 
 % Playlists
 
 \input{playlist}
 
+% Palettes
+
+\input{palettes}
+
 % Qt / PortMidi / Windows version
 
-% \input{qt_portmidi}
+\input{qt_portmidi}
 
 % Man page
 
-% \input{manpage}
+%%% \input{manpage}
 
 % Headless version
 
-% \input{headless}
+\input{headless}
 
+% ---------------------------------------------------------------------
+% The following sections are not so important.  Can read the
+% sequencer64 manual for them.
+% ---------------------------------------------------------------------
+%
 % MIDI implementation chart
-
+%
 % \pagebreak
 % \input{midi_impl_chart}
 % \pagebreak
-
+%
 % Important Concepts
-
+%
 % \input{concepts}
-
+%
 % Building and debugging Seq66
-
+%
 % \input{build}
-
+%
 % Discussion of MIDI formats related to Seq24 and Seq66
-
+%
 % \input{midi_formats}
-
-% Discussion of JACK support
-
-% \input{jack}
-
+%
+% ---------------------------------------------------------------------
+%
 % Acknowledgments
 
-% \input{kudos}
+%%% \input{kudos}
 
 \section{Summary}
 \label{sec:summary}
 
-   Contact: If you have ideas about \textsl{Sequencer66} or a bug report,
+   Contact: If you have ideas about \textsl{Seq66} or a bug report,
    please email us (at \url{mailto:ahlstromcj@gmail.com}).
    If it's a bug report, please add \textbf{[BUG]} to the Subject, or use the
    GitHub bug-reporting interface.
 
 % References
 
-% \input{references}
+%%% \input{references}
 
 \printindex
 

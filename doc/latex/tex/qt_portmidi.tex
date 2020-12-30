@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_qt_portmidi
+% qt_portmidi
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_qt_portmidi.tex
+% \file        qt_portmidi.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-05-28
@@ -11,26 +11,26 @@
 % \license     $XPC_GPL_LICENSE$
 %
 %     Provides a discussion of the Qt 5 GUI and portmidi, along with a Windows
-%     implementation that Sequencer66 supports.
+%     implementation that Seq66 supports.
 %
 %     However, the Qt user-interface can be combine with the more powerful
 %     Rtmidi framework in the Linux version.
 %
 %-------------------------------------------------------------------------------
 
-\section{Sequencer66 Qt 5 and Windows}
+\section{Seq66 Qt 5 and Windows}
 \label{sec:qt_portmidi}
 
    With version 0.95.1 and above,
-   \textsl{Sequencer66} provides builds using
+   \textsl{Seq66} provides builds using
    the \textsl{Qt 5} GUI framework and a modified version of the
    PortMidi framework (it cleans up the code and removes the need for
    \textsl{Java}).
    With this additional work, we now have ...
    \index{Windows}
-   \index{Sequencer66 for Windows}
+   \index{Seq66 for Windows}
    \index{qpseq66.exe}
-   \textsl{Sequencer66 for Windows}.
+   \textsl{Seq66 for Windows}.
 
    In \textsl{Linux}, the Qt 5 user-interface can be used with either the
    modified \textsl{PortMidi} library or the more powerful modified
@@ -38,7 +38,7 @@
 
    The Qt 5 user-interface is similar
    the \textsl{Kepler34} project \cite{kepler34}.
-   But it uses the internal functions of \textsl{Sequencer66} and adds a
+   But it uses the internal functions of \textsl{Seq66} and adds a
    number of features not present in \textsl{Kepler34}.
    The Qt version has a tabbed interface, plus some separate windows,
    and different ways of handling the main
@@ -46,11 +46,11 @@
    editing window (the "Edit" tab).
    It adds an "Events" tab and a "Playlists" tab.
    For portability reasons, the Qt user-interface will eventually be the
-   \textsl{official} version for \textsl{Sequencer66}.
-%  It will eventually be the main version of \textsl{Sequencer66},
+   \textsl{official} version for \textsl{Seq66}.
+%  It will eventually be the main version of \textsl{Seq66},
 %  simply because Qt 5 has fewer portability issues than Gtkmm-3.
 
-   There is still some \textsl{Sequencer66} functionality that
+   There is still some \textsl{Seq66} functionality that
    the Qt 5 version lacks:
 
    \begin{enumerate}
@@ -65,14 +65,14 @@
          each in its own window.  The window in focus is the active set.
    \end{enumerate}
 
-   We are incorporating existing \textsl{Sequencer66} user-interface
+   We are incorporating existing \textsl{Seq66} user-interface
    features into this Qt 5 version as time and bug-fixes allow.
    With version 0.96.0, we have improved the Qt/Windows version by adding the
    following features:
 
    \begin{enumerate}
       \item An external pattern editor has been added that matches
-         the Gtkmm-2.4 \textsl{Sequencer66} pattern editor.  It supports
+         the Gtkmm-2.4 \textsl{Seq66} pattern editor.  It supports
          background sequences, chord entry, event merging and extension,
          scales, snap, etc.  The tabbed pattern editor is still in place, but,
          due to space, it will never support all of the features of the
@@ -88,10 +88,10 @@
          See section \sectionref{sec:playlist}.
    \end{enumerate}
 
-   Some ill-advised features from \textsl{Sequencer66} will not be migrated.
+   Some ill-advised features from \textsl{Seq66} will not be migrated.
    Ultimately, we want to replace the Gtkmm-2.4 user-interface completely.
    But this is awhile down the road.
-   There are a number of alternate versions of \textsl{Sequencer66} using
+   There are a number of alternate versions of \textsl{Seq66} using
    PortMidi:
 
    \begin{enumerate}
@@ -114,20 +114,20 @@
 
    In the following sections, we cover the basic differences between the
    Gtkmm-2.4 and Qt 5 versions of the application, as well as how to set up
-   \textsl{Sequencer66 for Windows}.
+   \textsl{Seq66 for Windows}.
    We will not show all of the user-interface elements, but we will mention
    important differences one will find.
 
 \subsection{The Qt 5 User Interface}
 \label{subsec:qt_portmidi_qt5_user_interface}
 
-   The Qt 5 version of \textsl{Sequencer66} has an executable name of
+   The Qt 5 version of \textsl{Seq66} has an executable name of
    \texttt{qpseq66} (Linux) or \texttt{qpseq66.exe} (Windows).
    It is also possible to build a Qt 5 version with the RtMidi interface
    (\texttt{qseq66}), and
    that will ultimately become the default version for Linux.
    To keep explanations simple, we will refer to the Qt 5 version of
-   \textsl{Sequencer66}, using the \textsl{PortMidi} engine,
+   \textsl{Seq66}, using the \textsl{PortMidi} engine,
    as \textbf{qpseq66}.
    The Gtkmm-2.4/RtMidi version (Linux only) will be referred to as
    \textbf{seq66}.
@@ -317,7 +317,7 @@
 
    This version of the pattern editor is a bit behind
    \textsl{seq66} for features.  There really isn't enough space in the
-   main window for all the features of the \textsl{Sequencer66} pattern editor.
+   main window for all the features of the \textsl{Seq66} pattern editor.
    Note that the event-data editor panel is not visible here.
    One must scroll down to the bottom of the window to see it and use it.
    Note that that the \textbf{LFO} window is not accessible here.
@@ -346,7 +346,7 @@
    \label{fig:qt5_events_window}
 \end{figure}
 
-   This window works a lot like \sectionref{sec:seq66_event_editor}; please see
+   This window works a lot like \sectionref{sec:event_editor}; please see
    that section for user instructions.  Please remember that, at the present
    time, this view is meant only for viewing events and making minor tweaks to
    a pattern, such as eliminating problematic events.  It is not intended to be
@@ -409,16 +409,16 @@
    \textsl{Linux} users can edit the keystrokes and copy the "rc" configuration
    into the Qt 5 "rc" file, \texttt{qpseq66.rc}.
 
-\subsection{Sequencer66 Windows Setup}
+\subsection{Seq66 Windows Setup}
 \label{subsec:qt_portmidi_windows_setup}
 
-   \textsl{Sequencer66 for Windows} (\textsl{qpseq66}) can be installed
+   \textsl{Seq66 for Windows} (\textsl{qpseq66}) can be installed
    as a portable Zip package anywhere the user desires.  The package is
    self-contained, and contains all the the DLLs needed to run the program.
    \textsl{qpseq66} can also be installed via an NSIS-based installer,
    such as \texttt{sequencer66\_setup\_0.96.0-0.exe}.
 
-\subsubsection{Sequencer66 Windows Issues}
+\subsubsection{Seq66 Windows Issues}
 \label{subsubsec:qt_portmidi_windows_setup_issues}
 
     When first starting \textsl{qpseq66} on \textsl{Windows}, one might
@@ -485,7 +485,7 @@
       3 -1    # buss number, clock status
 \end{verbatim}
 
-   These settings tell \textsl{Sequencer66} to ignore output busses 1 and 3,
+   These settings tell \textsl{Seq66} to ignore output busses 1 and 3,
    in order to allow it to start without error.
 
     We still have some minor issues at start up and at exit, but are now able
@@ -497,7 +497,7 @@
     written to the configuration directory, and can be examined for issues with
     ports.
 
-\subsubsection{Sequencer66 Windows Configuration Files}
+\subsubsection{Seq66 Windows Configuration Files}
 \label{subsubsec:qt_portmidi_windows_setup_config}
 
     When you first run \textsl{qpseq66}
@@ -508,7 +508,7 @@
     by a \texttt{-1} value.
 
     On \textsl{Linux},
-    the normal directory location of the \textsl{Sequencer66} configuration
+    the normal directory location of the \textsl{Seq66} configuration
     files is
 
 \begin{verbatim}
@@ -577,7 +577,7 @@
    \textbf{Edit / Preferences / MIDI Clock} and
    \textbf{Edit / Preferences / MIDI Input} to
 	alter the ports accessible, in the \textsl{Windows}
-   version of \textsl{Sequencer66}.
+   version of \textsl{Seq66}.
    The operating system may have some devices locked out, though.
    Generally, the device needs to have a "System Sound" setting that allows an
    application to grab exclusive access to the device.

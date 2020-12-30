@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_rc_file
+% rc_file
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_rc_file.tex
+% \file        rc_file.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -15,11 +15,11 @@
 %-------------------------------------------------------------------------------
 
 \section{Seq66 "rc" Configuration File}
-\label{sec:seq66_rc_file}
+\label{sec:rc_file}
 
    There are two \textsl{Seq66} configuration files:
    \texttt{sequencer66.rc} and \texttt{sequencer66.usr}.
-   See \sectionref{sec:seq66_usr_file}; it describes the "usr" file,
+   See \sectionref{sec:usr_file}; it describes the "usr" file,
    is handled a bit differently than the "rc" file.
 
    \index{sequencer66.rc}
@@ -53,7 +53,7 @@
    manual modifications to the \texttt{sequencer66.rc} file.
    Note that many of
    its settings can be modified in the \textbf{Options} dialog
-   (see \sectionref{subsubsec:seq66_menu_file_options}).
+   (see \sectionref{subsubsec:menu_file_options}).
    There is an old, but complete, example of the \textsl{Seq24}
    "rc" file at \cite{seq24launchpadmapper}.
    It includes a setup for the
@@ -62,7 +62,7 @@
    Now let's covered each section of the "rc" file in order.
 
 \subsection{"rc" File / Comments}
-\label{subsec:seq66_rc_file_midi_comments}
+\label{subsec:rc_file_midi_comments}
 
    The very top of the "rc" file that \textsl{Seq66} generates is a stock
    banner showing the version of \textsl{Seq66} to which this file
@@ -81,7 +81,7 @@
    A blank line (not even a space) ends the comment section.
 
 \subsection{"rc" File / MIDI Control}
-\label{subsec:seq66_rc_file_midi_control}
+\label{subsec:rc_file_midi_control}
 
    Like \textsl{Seq24}, \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
@@ -261,7 +261,7 @@
    \end{enumerate}
 
 \subsubsection{"rc" File / MIDI Control / Pattern Group}
-\label{subsubsec:seq66_rc_file_midi_ctrl_pattern}
+\label{subsubsec:rc_file_midi_ctrl_pattern}
 
    The pattern group consists of 32 lines (0 to 31), one for each
    pattern slot shown in the Pattern window.
@@ -385,7 +385,7 @@
    all are running.
 
 \subsubsection{"rc" File / MIDI Control / Pattern Group Multiples}
-\label{subsubsec:seq66_rc_file_midi_ctrl_pattern_mult}
+\label{subsubsec:rc_file_midi_ctrl_pattern_mult}
 
    This section describes a feature of the pattern-group that needs it own
    section for emphasis.  This section describes using a single MIDI control to
@@ -424,7 +424,7 @@
    patterns 0, 4, 8, and 12 turn on.  When note 0 is released, they turn off.
 
 \subsubsection{"rc" File / MIDI Control / Mute-In Group}
-\label{subsubsec:seq66_rc_file_midi_ctrl_mutein}
+\label{subsubsec:rc_file_midi_ctrl_mutein}
 
    \index{mute-in group}
    \index{[midi-control]!mute-in group}
@@ -444,7 +444,7 @@
    These 32 values represent the same actions as the
    the \textbf{File / Options / Keyboard / Mute-group slot [mute-group]} 
    configuration panel.
-   See \sectionref{paragraph:seq66_menu_file_options_keyboard}.
+   See \sectionref{paragraph:menu_file_options_keyboard}.
 
    What is the different between the \textbf{mute-in group}
    section and the \textbf{mute group} section?  The former defines the MIDI
@@ -452,7 +452,7 @@
    specifies the armed patterns that are part of a group.
 
 \subsubsection{"rc" File / MIDI Control / Automation}
-\label{subsubsec:seq66_rc_file_midi_ctrl_automation}
+\label{subsubsec:rc_file_midi_ctrl_automation}
 
    The automation control keys occupy the entries from 64 to 73.
    These entries control
@@ -487,7 +487,7 @@
    \end{enumerate}
 
 \paragraph{Automation / BPM Up and Down}
-\label{paragraph:seq66_rc_file_midi_ctrl_bpmupdn}
+\label{paragraph:rc_file_midi_ctrl_bpmupdn}
 
    The BPM Up MIDI control increments the beats-per-minute setting, as if
    the up-arrow has been clicked, or the up-arrow key pressed, in
@@ -498,7 +498,7 @@
    "step increment" which defaults to 1, but can be modified by
    changing the "bpm\_step\_increment" value in the "usr"
    configuration file.
-   See \sectionref{subsec:seq66_usr_file_user_midi_settings}.
+   See \sectionref{subsec:usr_file_user_midi_settings}.
 
    Similarly, the BPM Down MIDI control decrements the beats-per-minute
    setting, as if the down-arrow has been clicked/pressed.
@@ -522,7 +522,7 @@
    "BPM Up" and "BPM Down" configuration panel items.
 
 \paragraph{Automation / Screen-Set Up and Down}
-\label{paragraph:seq66_rc_file_midi_ctrl_ssupdn}
+\label{paragraph:rc_file_midi_ctrl_ssupdn}
 
    The Screen-Set Up MIDI control increments to the next screen-set. 
    Once the screen-set has been altered, mute-groups and other
@@ -543,7 +543,7 @@
    "BPM Up" and "BPM Down" configuration panel items.
 
 \paragraph{Automation / Mod Replace}
-\label{paragraph:seq66_rc_file_midi_ctrl_modrep}
+\label{paragraph:rc_file_midi_ctrl_modrep}
 
    The Mod Replace MIDI control sets the "replace" status flag.
    Then, when the user manually clicks a pattern slot,
@@ -556,13 +556,13 @@
    "Replace/Solo" configuration panel item.
 
 \paragraph{Automation / Mod Snaphot}
-\label{paragraph:seq66_rc_file_midi_ctrl_modsnap}
+\label{paragraph:rc_file_midi_ctrl_modsnap}
 
    The Mod Snapshot MIDI control causes the playing statuses of all active
    (i.e. having data) patterns to be saved.  When turned off, the
    original playing status is restored.  Thus, two MIDI events
    need to be allocated to this functionality. Compare
-   to section \sectionref{paragraph:seq66_patterns_pattern_keys}
+   to section \sectionref{paragraph:patterns_pattern_keys}
    for a better idea of how it works.
 
    Note that this control corresponds to the hot-keys assigned in
@@ -570,7 +570,7 @@
    "Snapshot 1" and "Snapshot 2" configuration panel items.
 
 \paragraph{Automation / Mod Queue}
-\label{paragraph:seq66_rc_file_midi_ctrl_modqueue}
+\label{paragraph:rc_file_midi_ctrl_modqueue}
 
    The Mod Queue MIDI control sets up the "queue" status flag.
    Then, when the user manually clicks a pattern slot,
@@ -605,11 +605,11 @@
    Gtkmm-2.4 user-interface.
 
 \paragraph{Automation / Mod Mute Group}
-\label{paragraph:seq66_rc_file_midi_ctrl_modgmute}
+\label{paragraph:rc_file_midi_ctrl_modgmute}
 
    The Mod Group Mute MIDI control sets up a "mute group".
    More to come on this one,
-   see \sectionref{subsec:seq66_patterns_panel_top}.
+   see \sectionref{subsec:patterns_panel_top}.
 
    This control sets an internal "mode-group" flag on.
 
@@ -618,7 +618,7 @@
    sets each pattern as muted or unmuted, depending on the saved mute state.
 
 \paragraph{Automation / Mod Mute Group}
-\label{paragraph:seq66_rc_file_midi_ctrl_modgmute}
+\label{paragraph:rc_file_midi_ctrl_modgmute}
 
    The Mod Group Learn MIDI control sets up a "group learn".
    However, as the group-learn key is a modifier key that needs to
@@ -640,13 +640,13 @@
    It can also be accessed by the hard-wired hot-key, Ctrl-L.
 
 \paragraph{Automation / Screen-Set Play}
-\label{paragraph:seq66_rc_file_midi_ctrl_ssplay}
+\label{paragraph:rc_file_midi_ctrl_ssplay}
 
 This MIDI control sets the playing screen-set, 
 but we're not completely sure how it works yet.
 
 \subsubsection{"rc" File / MIDI Control / Extended Automation}
-\label{subsubsec:seq66_rc_file_midi_ctrl_automationex}
+\label{subsubsec:rc_file_midi_ctrl_automationex}
 
    These additional control items were requested by users, to control
    additional features of the application.
@@ -669,7 +669,7 @@ but we're not completely sure how it works yet.
       \end{enumber}
 
 \paragraph{Ext Automation / Stop/Pause/Start}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_stopps}
+\label{paragraph:rc_file_midi_ctrl_ex_stopps}
 
    \index{rc!start/stop control}
    Here, we will set up \textsl{Seq66} so that the first three MIDI
@@ -782,7 +782,7 @@ but we're not completely sure how it works yet.
       10       # bpm_page_increment
    \end{verbatim}
 
-   See \sectionref{subsec:seq66_usr_file_user_midi_settings}; it has
+   See \sectionref{subsec:usr_file_user_midi_settings}; it has
    information about the usage and enabling of these settings.
 
    Obviously, this setup is not useful for performance, but serves as a good
@@ -794,72 +794,72 @@ but we're not completely sure how it works yet.
    No matter, we will not break the user's existing setup.
 
 \paragraph{Ext Automation / Performance Record}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_precord}
+\label{paragraph:rc_file_midi_ctrl_ex_precord}
 
    To do.
 
 \paragraph{Ext Automation / Solo}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_solo}
+\label{paragraph:rc_file_midi_ctrl_ex_solo}
 
    To do.
 
 \paragraph{Ext Automation / MIDI Thru}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_thru}
+\label{paragraph:rc_file_midi_ctrl_ex_thru}
 
    To do.
 
 \paragraph{Ext Automation / BPM Page Up}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_bpmpageup}
+\label{paragraph:rc_file_midi_ctrl_ex_bpmpageup}
 
    To do.
 
 \paragraph{Ext Automation / BPM Page Down}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_bpmpageup}
+\label{paragraph:rc_file_midi_ctrl_ex_bpmpageup}
 
    To do.
 
 \paragraph{Ext Automation / Screen-Set By Number}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_ssnumber}
+\label{paragraph:rc_file_midi_ctrl_ex_ssnumber}
 
    To do.
 
 \paragraph{Ext Automation / MIDI Record}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_mrecord}
+\label{paragraph:rc_file_midi_ctrl_ex_mrecord}
 
    To do.
 
 \paragraph{Ext Automation / MIDI Quantized Record}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_qrecord}
+\label{paragraph:rc_file_midi_ctrl_ex_qrecord}
 
    To do.
 
 \paragraph{Ext Automation / Fast Forward}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_fforward}
+\label{paragraph:rc_file_midi_ctrl_ex_fforward}
 
    To do.
 
 \paragraph{Ext Automation / Rewind}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_rewind}
+\label{paragraph:rc_file_midi_ctrl_ex_rewind}
 
    To do.
 
 \paragraph{Ext Automation / Top}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_top}
+\label{paragraph:rc_file_midi_ctrl_ex_top}
 
    To do.
 
 \paragraph{Ext Automation / Select Playlist}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_sellist}
+\label{paragraph:rc_file_midi_ctrl_ex_sellist}
 
    To do.
 
 \paragraph{Ext Automation / Select Song}
-\label{paragraph:seq66_rc_file_midi_ctrl_ex_selsong}
+\label{paragraph:rc_file_midi_ctrl_ex_selsong}
 
    To do.
 
 \subsection{"rc" File / Mute-Group Section}
-\label{subsec:seq66_rc_file_mute_group}
+\label{subsec:rc_file_mute_group}
      
    This section is delimited by the \texttt{[mute-group]} construct.
    It controls 32 groups of mutes in the same way as defined for
@@ -896,7 +896,7 @@ but we're not completely sure how it works yet.
    specifies the patterns that are part of a group.
 
 \subsection{"rc" File / MIDI-Clock Section}
-\label{subsec:seq66_rc_file_midi_clock}
+\label{subsec:rc_file_midi_clock}
 
    \index{[midi-clock]}
    The MIDI Clock fields will contain the clocking state from the last 
@@ -911,7 +911,7 @@ but we're not completely sure how it works yet.
 
    This configuration item is the same as the 
    \textbf{MIDI Clock} tab described in
-   \paragraphref{paragraph:seq66_menu_file_options_midi_clock}
+   \paragraphref{paragraph:menu_file_options_midi_clock}
    
    Here is the format:
 
@@ -957,7 +957,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / MIDI-Meta-Events Section}
-\label{subsec:seq66_rc_file_midi_meta_events}
+\label{subsec:rc_file_midi_meta_events}
 
    \index{[midi-meta-events]}
    The new MIDI Meta events section is the start of additional options
@@ -981,7 +981,7 @@ but we're not completely sure how it works yet.
    will always be written to the patten having the tempo-track number.
 
 \subsection{"rc" File / Keyboard Control Section}
-\label{subsec:seq66_rc_file_keyboard_control}
+\label{subsec:rc_file_keyboard_control}
         
    \index{[keyboard control]}
    The keyboard control is a dump of the keys that \textsl{Seq66}
@@ -1028,7 +1028,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / Keyboard Group Section}
-\label{subsec:seq66_rc_file_keyboard_group}
+\label{subsec:rc_file_keyboard_group}
 
    \index{[keyboard-group]}
    This section is the same as
@@ -1063,7 +1063,7 @@ but we're not completely sure how it works yet.
 
    This configuration item is the same as the 
    \textbf{Keyboard} tab described in
-   \sectionref{paragraph:seq66_menu_file_options_keyboard}.
+   \sectionref{paragraph:menu_file_options_keyboard}.
 
    \begin{verbatim}
       [keyboard-group]
@@ -1130,7 +1130,7 @@ but we're not completely sure how it works yet.
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
 
 \subsection{"rc" File / JACK Transport}
-\label{subsec:seq66_rc_file_jack_transport}
+\label{subsec:rc_file_jack_transport}
 
    This section holds the settings for both JACK transport and for native JACK
    MIDI mode.
@@ -1141,7 +1141,7 @@ but we're not completely sure how it works yet.
 
    This configuration item is the same as the 
    \textbf{Jack Sync} tab described in
-   \sectionref{paragraph:seq66_menu_file_options_jack_sync}.
+   \sectionref{paragraph:menu_file_options_jack_sync}.
 
    \index{--jack-transport}
    \index{--jack-master}
@@ -1178,12 +1178,12 @@ but we're not completely sure how it works yet.
    JACK MIDI, and each uses a different JACK client internally.
 
 \subsection{"rc" File / MIDI Clock Mod Ticks}
-\label{subsec:seq66_rc_file_midi_cmt}
+\label{subsec:rc_file_midi_cmt}
 
    \index{[midi-clock-mod-ticks]}
    This configuration item is the same as the
    \textbf{Clock Start Modulo} option described in
-   \paragraphref{paragraph:seq66_menu_file_options_midi_clock}.
+   \paragraphref{paragraph:menu_file_options_midi_clock}.
 
    \begin{verbatim}
       [midi-clock-mod-ticks]
@@ -1191,7 +1191,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / MIDI Meta Events}
-\label{subsec:seq66_rc_file_midi_meta}
+\label{subsec:rc_file_midi_meta}
 
    This section defines some features of MIDI meta-event handling.  Normally,
    tempo events are supposed to occur in the first track (pattern 0).  But one
@@ -1205,12 +1205,12 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / MIDI Input}
-\label{subsec:seq66_rc_file_midi_input}
+\label{subsec:rc_file_midi_input}
 
    \index{[midi-input]}
    This configuration item is the same as the 
    \textbf{MIDI Input} tab described in
-   \paragraphref{paragraph:seq66_menu_file_options_midi_input}.
+   \paragraphref{paragraph:menu_file_options_midi_input}.
    The "1" is a line count, and would equal the number of
    supported input ports.
    This "rc" entry here has two variables; the first is the record number or
@@ -1236,7 +1236,7 @@ but we're not completely sure how it works yet.
    option.
 
 \subsection{"rc" File / Manual ALSA Ports}
-\label{subsec:seq66_rc_file_manual_ports}
+\label{subsec:rc_file_manual_ports}
 
    The name of this setting is a bit of a misnomer in a couple of ways:
 
@@ -1290,7 +1290,7 @@ but we're not completely sure how it works yet.
    The next option gets around that issue.
 
 \subsection{"rc" File / Reveal ALSA Ports}
-\label{subsec:seq66_rc_file_reveal_ports}
+\label{subsec:rc_file_reveal_ports}
 
    Again, this option applies to both ALSA and native JACK.
 
@@ -1312,12 +1312,12 @@ but we're not completely sure how it works yet.
    "user" configuration file are \textsl{not} read from that file.
 
 \subsection{"rc" File / Interaction Method}
-\label{subsec:seq66_rc_file_interaction}
+\label{subsec:rc_file_interaction}
 
    \index{[interaction-method]}
    This configuration item is the same as the 
    \textbf{Mouse} tab described in
-   \paragraphref{paragraph:seq66_menu_file_options_mouse}.
+   \paragraphref{paragraph:menu_file_options_mouse}.
 
    \begin{verbatim}
       [interaction-method]
@@ -1386,12 +1386,12 @@ but we're not completely sure how it works yet.
    Not sure that this support is available in the Qt user-interface.
 
 \subsection{"rc" File / LASH Session}
-\label{subsec:seq66_rc_file_lash_session}
+\label{subsec:rc_file_lash_session}
 
    \index{[lash-session]}
    The following configuration item is the same as the
    \texttt{--lash} or \texttt{--no-lash} options described in
-   \sectionref{sec:seq66_man_page}.
+   \sectionref{sec:man_page}.
    If set to 0, LASH session support is disabled.
    If set to 1, LASH session support is enabled.
    However, if LASH support is not built into the application, neither option
@@ -1410,7 +1410,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / Auto Option Save}
-\label{subsec:seq66_rc_file_auto_rc_save}
+\label{subsec:rc_file_auto_rc_save}
 
    \index{[auto-option-save]}
    This new item determines if the "rc" configuration file is saved
@@ -1432,7 +1432,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / Last Used Directory}
-\label{subsec:seq66_rc_file_last_used_dir}
+\label{subsec:rc_file_last_used_dir}
 
    The following item refers to the last directory in which one opened or
    saved a MIDI file.
@@ -1444,7 +1444,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / Recent Files}
-\label{subsec:seq66_rc_file_recent_files}
+\label{subsec:rc_file_recent_files}
 
    The following item preserves a list of the last few MIDI files loaded.
    It is not filled when a MIDI file is loaded via a play-list.
@@ -1460,7 +1460,7 @@ but we're not completely sure how it works yet.
    \end{verbatim}
 
 \subsection{"rc" File / Play-List}
-\label{subsec:seq66_rc_file_playlist}
+\label{subsec:rc_file_playlist}
 
    This is a feature new with version 0.96.0 of \textsl{Seq66}.
    It provides a configured set of named play-lists in a play-list file,

@@ -1,8 +1,8 @@
 %-------------------------------------------------------------------------------
-% seq66_song_editor
+% song_editor
 %-------------------------------------------------------------------------------
 %
-% \file        seq66_song_editor.tex
+% \file        song_editor.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
@@ -15,14 +15,14 @@
 %-------------------------------------------------------------------------------
 
 \section{Song Editor}
-\label{sec:seq66_song_editor}
+\label{sec:song_editor}
 
-   The \textsl{Sequencer66 Song Editor} combines all patterns
+   The \textsl{Seq66 Song Editor} combines all patterns
    into a complete tune with specified repetitions of each pattern.
    It shows one row per pattern/loop/sequence in numbered columns,
    with the placement of each pattern at various time locations in the song.
    \index{performance}
-   In \textsl{Sequencer66} parlance, the song editor creates a
+   In \textsl{Seq66} parlance, the song editor creates a
    \textsl{performance}, and the performance is implemented by a set of
    triggers (see \sectionref{subsubsec:concepts_terms_trigger}).
 
@@ -38,7 +38,7 @@
    the \textbf{Song} mode of \textsl{Sequencert64},
    as opposed to the \textbf{Live} mode activated by the Patterns panel when it
    is in focus.
-%  , when \textsl{Sequencer66} is running in ALSA mode.
+%  , when \textsl{Seq66} is running in ALSA mode.
 %  (In JACK mode, the live versus song mode is controlled by the JACK
 %  start-mode flag.)
 
@@ -97,7 +97,7 @@
    \end{itemize}
 
    \index{empty pattern}
-   This window (in \textsl{Sequencer66}) shows any empty patterns
+   This window (in \textsl{Seq66}) shows any empty patterns
    highlighted in yellow (Gtkmm only).
    An empty pattern is one that exists, but
    contains only meta information, and contains no MIDI events that
@@ -124,7 +124,7 @@
    octave in either direction.
 
 \subsection{Song Editor / Top Panel}
-\label{subsec:seq66_song_editor_top}
+\label{subsec:song_editor_top}
 
    The top panel provides quick access to song-playback actions and
    configuration.
@@ -245,7 +245,7 @@
    the L and R markers.
 
 \subsection{Song Editor / Arrangement Panel}
-\label{subsec:seq66_song_editor_arrangement_panel}
+\label{subsec:song_editor_arrangement_panel}
 
    The arrangement panel is the middle section shown in
    \figureref{fig:song_editor_window}.  It is also known as the
@@ -275,7 +275,7 @@
    with a few long tracks, rather than a large number of smaller patterns.
    In other words, the patterns used here are very long, and used only once
    in the song.
-%  (We will provide an example that shows off \textsl{Sequencer66}'s
+%  (We will provide an example that shows off \textsl{Seq66}'s
 %  pattern features better, at some point.)
 
    If playback is started with the song editor as the
@@ -297,7 +297,7 @@
 
    \index{transpose}
    One new feature of the song editor is that, if the new Transpose feature is
-   built into \textsl{Sequencer66}, any patterns that are marked as exempt from
+   built into \textsl{Seq66}, any patterns that are marked as exempt from
    transposition (common with drum tracks) have their events shown in red
    instead of black.
 
@@ -325,7 +325,7 @@
    These items are discussed in the following sections.
 
 \subsubsection{Song Editor / Arrangement Panel / Patterns Column}
-\label{subsubsec:seq66_song_editor_arrangement_panel_patterns_column}
+\label{subsubsec:song_editor_arrangement_panel_patterns_column}
 
    Here are the items to note in the patterns column:
 
@@ -389,13 +389,13 @@
    \index{patterns column!right-click}
    Right-clicking on the pattern name or the "M" button brings up the same
    pattern editing menu as discussed in
-   \sectionref{subsubsec:seq66_patterns_pattern_filled}.
+   \sectionref{subsubsec:patterns_pattern_filled}.
    Recall that this context menu has the following entries:
    \textbf{Edit...}, \textbf{Event Edit...}, \textbf{Cut}, \textbf{Copy},
    \textbf{Song}, \textbf{Disable Transpose}, and \textbf{MIDI Bus}.
 
 \subsubsection{Song Editor / Arrangement Panel / Piano Roll}
-\label{subsubsec:seq66_song_editor_arrangement_panel_roll}
+\label{subsubsec:song_editor_arrangement_panel_roll}
 
    The "Piano Roll" section of the arrangement panel is where patterns or
    subsections are inserted, deleted, shrunk, lengthened, or moved.
@@ -477,7 +477,7 @@
    song editor, either in half, or at the nearest snap point to the mouse
    pointer.
    The location of the split is determined by the
-   setting of the \textbf{File / Options / Mouse / Sequencer66 Options /
+   setting of the \textbf{File / Options / Mouse / Seq66 Options /
    Middle-click splits song trigger at nearest snap (instead of halfway point)}
    setting.  To split a pattern, left-click it to highlight it, move
    the mouse (if not splitting in half) to the desired pointer, and
@@ -572,7 +572,7 @@
    or subsection.
 
 \subsubsection{Song Editor / Arrangement Panel / Measures Ruler}
-\label{subsubsec:seq66_song_editor_arrangement_panel_measures_ruler}
+\label{subsubsec:song_editor_arrangement_panel_measures_ruler}
 
    The \textsl{measures ruler} is the ruled and numbered section at the top
    of the arrangement panel.  It provides a place to put the left and right
@@ -619,7 +619,7 @@
    \texttt{x} key while in the performance editor, to "x-scape".
 
 \subsection{Song Editor / Bottom Panel}
-\label{subsec:seq66_song_editor_bottom}
+\label{subsec:song_editor_bottom}
 
    The bottom panel is simple, consisting of a stock horizontal scroll bar
    and a small button, called the \textbf{Grow} button, labelled with a
