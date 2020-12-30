@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-28
+ * \updates       2020-12-30
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -175,8 +175,13 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
     connect
     (
-        ui->lineEditUiScaling, SIGNAL(textEdited(const QString &)),
-        this, SLOT(update_ui_scaling(const QString &))
+        ui->lineEditUiScaling, SIGNAL(editingFinished()),
+        this, SLOT(update_ui_scaling_width())
+    );
+    connect
+    (
+        ui->lineEditUiScalingHeight, SIGNAL(editingFinished()),
+        this, SLOT(update_ui_scaling_height())
     );
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     connect
@@ -431,12 +436,10 @@ qseditoptions::syncWithInternals ()
     ui->spinKeyHeight->setValue(usr().key_height());
 
     char tmp[32];
-    snprintf
-    (
-        tmp, sizeof tmp, "%gx%g",
-        usr().window_scale(), usr().window_scale_y()
-    );
+    snprintf(tmp, sizeof tmp, "%g", usr().window_scale());
     ui->lineEditUiScaling->setText(tmp);
+    snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
+    ui->lineEditUiScalingHeight->setText(tmp);
 }
 
 /**
@@ -480,11 +483,39 @@ qseditoptions::update_key_height ()
 }
 
 void
-qseditoptions::update_ui_scaling (const QString & qs)
+qseditoptions::update_ui_scaling_width ()
 {
+    const QString qs = ui->lineEditUiScaling->text();               /* w */
     const std::string valuetext = qs.toStdString();
-    if (usr().parse_window_scale(valuetext))
-        usr().save_user_config(true);
+    if (! valuetext.empty())
+    {
+        QString qheight = ui->lineEditUiScalingHeight->text();      /* h */
+        std::string hheight = qheight.toStdString();
+        if (! hheight.empty())
+        {
+            std::string tuple = valuetext + "x" + hheight;
+            if (usr().parse_window_scale(tuple))
+                usr().save_user_config(true);
+        }
+    }
+}
+
+void
+qseditoptions::update_ui_scaling_height ()
+{
+    const QString qs = ui->lineEditUiScalingHeight->text();         /* h */
+    const std::string valuetext = qs.toStdString();
+    if (! valuetext.empty())
+    {
+        QString qwidth = ui->lineEditUiScaling->text();             /* w */
+        std::string hwidth = qwidth.toStdString();
+        if (! hwidth.empty())
+        {
+            std::string tuple = hwidth + "x" + valuetext;
+            if (usr().parse_window_scale(tuple))
+                usr().save_user_config(true);
+        }
+    }
 }
 
 void

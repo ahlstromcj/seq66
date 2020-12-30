@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -371,11 +371,25 @@ This option is saved in the 'rc' file.</string>
         <rect>
          <x>10</x>
          <y>10</y>
-         <width>271</width>
+         <width>313</width>
          <height>64</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayoutUiValues">
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelUiScaling">
+          <property name="text">
+           <string>Scaling of User Interface *</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="labelEditorKeyHeight">
           <property name="sizePolicy">
@@ -406,18 +420,26 @@ A primitive way to zoom.</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelUiScaling">
-          <property name="text">
-           <string>Scaling of User Interface *</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="lineEditUiScaling">
           <property name="toolTip">
-           <string>Scales the main window at startup.  The format is XxY,
-where X and Y are scale factors ranging from 0.5 to 3.0.</string>
+           <string>Scales the main window at startup.  This is the width
+scale factor, ranging from 0.5 to 3.0.
+
+Use 0.85 at a minimum.</string>
+          </property>
+          <property name="text">
+           <string>1.0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLineEdit" name="lineEditUiScalingHeight">
+          <property name="toolTip">
+           <string>Scales the main window at startup.  This is the height
+scale factor, ranging from 0.5 to 3.0.
+
+Use 0.60 at a minimum.</string>
           </property>
           <property name="text">
            <string>1.0</string>

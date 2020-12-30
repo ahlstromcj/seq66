@@ -25,10 +25,10 @@
    options.  The legacy Seq24 options, which use underscores or are missing the
    option hyphen, are still unofficially supported.
 
-   \texttt{\$HOME/.config/sequencer66/sequencer66.rc} holds the "rc" settings
+   \texttt{\$HOME/.config/seq66/qseq66.rc} holds the "rc" settings
    for \textsl{Seq66}.
 
-   \texttt{\$HOME/.config/sequencer66/sequencer66.usr} holds the "user" settings
+   \texttt{\$HOME/.config/seq66/qseq66.usr} holds the "user" settings
    for \textsl{Seq66}.
 
    But the old style names are used for the "legacy" mode.  See the
@@ -38,8 +38,7 @@
 %  provide a very simple interface for editing and playing MIDI 'loops'.
 
    \begin{verbatim}
-       sequencer66 [OPTIONS] [FILENAME]
-       seq66 [OPTIONS] [FILENAME]
+       qseq66 [OPTIONS] [FILENAME]
    \end{verbatim}
 
    \textsl{Seq66} accepts the following options, plus an optional name of
@@ -58,31 +57,12 @@
    \optionpar{-H}{--home [directory]}
       \textbf{New:}
       \index{new!home directory}
-      Change the "home" directory from \texttt{.contrib/sequencer66}
+      Change the "home" directory from \texttt{.config/seq66}
       (always relative to \texttt{\$HOME}.
-      This option causes the \texttt{sequencer66.rc}
-      and \texttt{sequencer66.usr} files to be loaded from or
+      This option causes the \texttt{qseq66.rc}
+      and \texttt{qseq66.usr} files to be loaded from or
       saved to a different directory.
       Format: \texttt{--home dirname}.
-
-   \optionpar{-l}{--legacy}
-      \textbf{New:}
-      \index{new!legacy mode}
-      Save the MIDI file in the old Seq24 format, as unspecified
-      binary data, instead of as a legal MIDI track with meta events.
-      Also read the configuration, if provided, from the "legacy"
-      \texttt{\textasciitilde/.seq24rc} and
-      \texttt{\textasciitilde/.seq24usr} files.
-
-%     instead of the new
-%     \texttt{\textasciitilde/.config/sequencer66/sequencer66.rc} and
-%     \texttt{\textasciitilde/.config/sequencer66/sequencer66.usr} files.
-
-      The user-interface will indicate this mode with a small text
-      note.
-      This mode is also used if \textsl{Seq66} is invoked as the
-      \texttt{seq24} command (one can create a soft link to the sequencer66
-      executable to make that happen).
 
    \optionpar{-b}{--bus [buss]}
       \textbf{New:}
@@ -237,13 +217,13 @@
 
    \optionpar{-f}{--rc filename}
       Use a different "rc" configuration file.  It must be a file in the user's
-      \$HOME/.config/sequencer66 directory or the directory specified by the
+      \$HOME/.config/seq66 directory or the directory specified by the
       --home option.  Not supported by the --legacy mode.  The '.rc' extension
       is added if no extension is present in the filename.
 
    \optionpar{-F}{--usr filename}
       Use a different "usr" configuration file.  It must be a file in the
-      user's \$HOME/.config/sequencer66 directory or the directory specified by
+      user's \$HOME/.config/seq66 directory or the directory specified by
       the --home option.  Not supported by the --legacy mode.  The '.usr'
       extension is added if no extension is present in the filename.
 
@@ -321,14 +301,14 @@
             need a larger monitor to use this factor.
       \end{itemize}
 
-   \texttt{\$HOME/.config/sequencer66.rc} holds the main configuration settings
+   \texttt{\$HOME/.config/seq66.rc} holds the main configuration settings
    for all versions of Seq66.  If it does not exist, it will be generated
    when Seq66 exits.  If it does exist, it will be rewritten with the
    current configuration of Seq66.  Many, or most, of the command-line
    options are "sticky", in that they will be written to the configuration
    file.
 
-   \texttt{\$HOME/.config/sequencer66.usr} stores the MIDI-configuration
+   \texttt{\$HOME/.config/seq66.usr} stores the MIDI-configuration
    settings and some of the user-interface settings for Seq66.  If it
    does not exist, it will be generated with a minimal configuration when
    Seq66 exits.  If it does exist, it will be rewritten with the current
@@ -340,13 +320,10 @@
    in the \texttt{\$HOME} directory)
    to be used.
 
-   The current Seq66 project homepage is a git repository at
+   The current Seq66 project homepage and documentation site
+   is a git repository at
 
-   \url{https://github.com/ahlstromcj/sequencer66.git}.
-
-   Up-to-date instructions can be found in the project at
-
-   \url{https://github.com/ahlstromcj/sequencer66-doc.git}.
+   \url{https://github.com/ahlstromcj/seq66.git}.
 
    The old Seq24 project homepage is at
    \url{http://www.filter24.org/seq24/} the new
@@ -365,10 +342,6 @@
    \url{mailto:seq24@ubuntustudio.com} with additions from Guido Scholz
    \url{mailto:guido.scholz@bayernline.de} and Chris Ahlstrom
    \url{mailto:ahlstromcj@gmail.com}.
-
-%   \begin{verbatim}
-% Version 0.94.0                      June 6 2017                  sequencer66(1)
-%   \end{verbatim}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

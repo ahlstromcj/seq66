@@ -74,7 +74,7 @@
    The buss number ("2") may need to be different on your setup to get sound
    routed to the correct synthesizer.  Also, the path to the playlist might
    need to be an absolute path; normally playlists are stored in the
-   \texttt{HOME/.config/sequencer66} directory and accessed from there.
+   \texttt{HOME/.config/seq66} directory and accessed from there.
    Verify that the main window shows the playlist name, and that the arrow keys
    modify the play-list or song selection.  If that works, verify that the MIDI
    keyboard or pad controller works to change the selection.
@@ -82,7 +82,7 @@
    If this setup works (MIDI controls have the proper effect and the tunes play
    through the synthesizer), proceed to the next step.
 
-   \textbf{Fourth}, edit the \texttt{sequencer66.rc} and \texttt{seq66cli.rc}
+   \textbf{Fourth}, edit the \texttt{seq66.rc} and \texttt{seq66cli.rc}
    files as described below so that the former's settings of
    \texttt{[midi-clock]} or \texttt{[midi-clock-file]} are entered into the
    latter "rc" configuration.
@@ -110,7 +110,7 @@
 
    \begin{verbatim}
       [midi-control-file]
-      nanomap.rc    # (/home/ahlstrom/.config/sequencer66/nanomap.rc)
+      nanomap.rc    # (/home/ahlstrom/.config/seq66/nanomap.rc)
    \end{verbatim}
 
    The \texttt{nanomap.rc} file is included in the "data" directory of the

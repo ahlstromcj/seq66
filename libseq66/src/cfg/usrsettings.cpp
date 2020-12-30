@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-09-03
+ * \updates       2020-12-30
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -850,15 +850,8 @@ usrsettings::window_scale (float winscale, float winscaley)
     else
         m_window_scale_y = winscale;
 
-    if (result)
-        normalize();
-
     return result;
 }
-
-/**
- *
- */
 
 bool
 usrsettings::parse_window_scale (const std::string & source)

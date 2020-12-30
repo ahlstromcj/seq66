@@ -884,29 +884,43 @@ tokenize_stanzas
 /**
  *  Tokenizes a string containing a pair of numbers separated by either spaces
  *  or an 'x'.  Useful in grabbing dimensions.  Handles integers or basic
- *  floats.
+ *  floats.  It assumes only a single delimiter between each token:
+ *
+ *      -   "1.0x2.0"
+ *      -   "1.0 2.0"
+ *
+ * \param source
+ *      Provides the string to be parsed into tokens.
+ *
+ * \param delimiter
+ *      The character separating the tokens.  Defaults to a Space character.
  *
  * \return
- *      Returns the number of tokens converted: 0, 1, or 2.
+ *      Returns the number of tokens converted in a string vector of size:
+ *      0, 1, or 2.
  */
 
 std::vector<std::string>
 tokenize
 (
     const std::string & source,
-    const std::string delimiter     // = " "
+    const std::string delimiter
 )
 {
     std::vector<std::string> result;
-    std::size_t previous = 0;
-    std::size_t current = source.find(delimiter);
-    while (current != std::string::npos)
+    if (source.size() >= 3)                             /* a sanity check   */
     {
-        result.push_back(source.substr(previous, current - previous));
-        previous = current + 1;
-        current = source.find(delimiter, previous);
+        std::size_t previous = 0;
+        std::size_t current = source.find(delimiter);
+        while (current != std::string::npos)
+        {
+            result.push_back(source.substr(previous, current - previous));
+            previous = current + 1;
+            current = source.find(delimiter, previous);
+        }
+        if (previous > 0)
+            result.push_back(source.substr(previous, current - previous));
     }
-    result.push_back(source.substr(previous, current - previous));
     return result;
 }
 

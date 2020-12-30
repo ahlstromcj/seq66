@@ -18,11 +18,11 @@
 \label{sec:rc_file}
 
    There are two \textsl{Seq66} configuration files:
-   \texttt{sequencer66.rc} and \texttt{sequencer66.usr}.
+   \texttt{seq66.rc} and \texttt{seq66.usr}.
    See \sectionref{sec:usr_file}; it describes the "usr" file,
    is handled a bit differently than the "rc" file.
 
-   \index{sequencer66.rc}
+   \index{seq66.rc}
    The \textsl{Seq66} configuration file originally was
    named \texttt{.seq24rc},
    and it was stored directly in the user's \texttt{\$HOME} directory,
@@ -37,11 +37,11 @@
    the "rc" and "usr" files from the command-line.
 
    After you run \textsl{Seq66} for the first time (in non-legacy
-   mode), it will generate a \texttt{sequencer66.rc} file in your home
+   mode), it will generate a \texttt{seq66.rc} file in your home
    \textsl{configuration} directory:
 
    \begin{verbatim}
-      /home/ahlstrom/.config/sequencer66/sequencer66.rc
+      /home/ahlstrom/.config/seq66/seq66.rc
    \end{verbatim}
 
    It contains the the data for remote MIDI control, computer keyboard
@@ -50,7 +50,7 @@
    \textsl{Seq66} will
    \textsl{always} overwrite the \texttt{sequencer6.rc} file upon
    quitting.  One must therefore quit \textsl{Seq66} before making
-   manual modifications to the \texttt{sequencer66.rc} file.
+   manual modifications to the \texttt{seq66.rc} file.
    Note that many of
    its settings can be modified in the \textbf{Options} dialog
    (see \sectionref{subsubsec:menu_file_options}).
@@ -233,7 +233,7 @@
    0x91 hex, or 145 decimal.  Then we pick a note value of 48, which is one of
    the C keys.  We don't care about the velocity, so we allow all values (0 to
    127).  We add the following entry to
-   \texttt{\textasciitilde/.config/sequencer66/sequencer66.rc}):
+   \texttt{\textasciitilde/.config/seq66/seq66.rc}):
 
    \begin{verbatim}
       [midi-control]
@@ -680,7 +680,7 @@ but we're not completely sure how it works yet.
    (\textbf{0.96.0} and above) of \textsl{Seq66},
    run it, and then exit.
    Verify in the regenerated "rc" file
-   (\texttt{\textasciitilde/.config/sequencer66/sequencer66.rc}) that the
+   (\texttt{\textasciitilde/.config/seq66/seq66.rc}) that the
    following line exists:
 
    \begin{verbatim}
@@ -888,7 +888,7 @@ but we're not completely sure how it works yet.
 
    After the list of sequences and their MIDI events, one can 
    set \textsl{Seq66} to handle MIDI events and change some more settings
-   in \texttt{sequencer66.rc}.
+   in \texttt{seq66.rc}.
 
    What is the different between the \textbf{mute-in group}
    section and the \textbf{mute group} section?  The former defines the MIDI
@@ -939,7 +939,7 @@ but we're not completely sure how it works yet.
    That sample would be written one had started up \textsl{Seq66} in
    manual-mode.  On our system, where we have Timidity running, and
    erroneously have also specified 3 MIDI busses that we do not have, in the
-   \texttt{sequencer66.usr} file:
+   \texttt{seq66.usr} file:
 
    \begin{verbatim}
       [midi-clock]
@@ -1257,7 +1257,7 @@ but we're not completely sure how it works yet.
    \index{[manual-ports]}
    \begin{verbatim}
       [manual-ports]
-      # Set to 1 to have sequencer66 create its own ALSA ports and not
+      # Set to 1 to have seq66 create its own ALSA ports and not
       # connect to other clients.  Use 1 to expose all 16 MIDI ports to
       # JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
       # already running on one's computer, or to use the autoconnect
@@ -1274,7 +1274,7 @@ but we're not completely sure how it works yet.
 
    \index{jack!manual-ports}
    Turning on the manual-ports option is necessary if one
-   wants to use the legacy \textsl{Seq66} (\texttt{sequencer66})
+   wants to use the legacy \textsl{Seq66} (\texttt{seq66})
    with JACK.
    It is \textsl{not} necessary if using the native JACK MIDI version,
    \texttt{seq66}.
@@ -1297,7 +1297,7 @@ but we're not completely sure how it works yet.
    \index{[reveal-ports]}
    \begin{verbatim}
       [reveal-ports]
-      # Set to 1 to have sequencer66 ignore any system port names
+      # Set to 1 to have seq66 ignore any system port names
       # declared in the 'user' configuration file.  Use this option if
       # you want to be able to see the port names as detected by ALSA.
       1   # flag for reveal ALSA ports
@@ -1396,7 +1396,7 @@ but we're not completely sure how it works yet.
    If set to 1, LASH session support is enabled.
    However, if LASH support is not built into the application, neither option
    has any effect -- there is no LASH support.  
-   To determine if LASH support is built in, run sequencer66 from the command
+   To determine if LASH support is built in, run seq66 from the command
    line with the \texttt{--version} option, and see if LASH is mentioned.
 
    \begin{verbatim}
@@ -1440,7 +1440,7 @@ but we're not completely sure how it works yet.
    \index{[last-used-dir]}
    \begin{verbatim}
       [last-used-dir]
-      /home/ahlstrom/Home/ca/mls/git/sequencer66/contrib/midi/
+      /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/
    \end{verbatim}
 
 \subsection{"rc" File / Recent Files}
@@ -1453,7 +1453,7 @@ but we're not completely sure how it works yet.
    \begin{verbatim}
       [recent-files]
       4
-      /home/ahlstrom/Home/ca/mls/git/sequencer66-alternate/contrib/midi/2Bars.midi
+      /home/ahlstrom/Home/ca/mls/git/seq66-alternate/contrib/midi/2Bars.midi
       contrib/midi/b4uacuse-seq24.midi
       contrib/midi/Bars.midi
       contrib/midi/b4uacuse-GM-format.midi
@@ -1472,7 +1472,7 @@ but we're not completely sure how it works yet.
       0     # playlist_active, 1 = active, 0 = do not use it
       # Provides the name of a play-list.  If there is none, use '""'.
       # Or set the flag above to 0.
-      /home/ahlstrom/.config/sequencer66/sample.playlist
+      /home/ahlstrom/.config/seq66/sample.playlist
    \end{verbatim}
 
    See \sectionref{sec:playlist}.

@@ -25,16 +25,12 @@
 %  In programmer's jargon, this window is represented by the seqroll class (and
 %  the other "seq" classes).
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-edit-window.png}
-%  \includegraphics[scale=0.75]{new/pattern_editor_chords-0_9_14.png}
-%  \includegraphics[scale=0.75]{new/pattern_editor_transpose-0_9_15.png}
-%  \includegraphics[scale=0.65]{gtkmm/pattern_editor/pattern_editor_0_96_1.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Edit Window}
-   \label{fig:pattern_edit_window}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Pattern Edit Window}
+%   \label{fig:pattern_edit_window}
+%\end{figure}
 
 %  Not shown in this figure are:
 %  \begin{itemize}
@@ -107,13 +103,12 @@
    the pattern, the time signature of the piece, how long the loop is, and
    some other configuration items.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.55]{pattern/pattern-edit-first-panel-items.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Editor, First Panel Items}
-   \label{fig:pattern_editor_first_panel_items}
-\end{figure}
+%   \caption{Pattern Editor, First Panel Items}
+%   \label{fig:pattern_editor_first_panel_items}
+%\end{figure}
 
    In recent versions of \textsl{Seq66}, a "sequence-is-transposable"
    feature has been added, as shown above.
@@ -225,9 +220,7 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.55]{pattern/pattern-edit-second-panel-items.png}
-%  \includegraphics[scale=0.55]{new/pattern-edit-second-panel.png}
-   \includegraphics[scale=0.65]{roll.png}
+   \includegraphics[scale=0.55]{pattern-editor/pattern-edit-second-panel-items.png}
    \caption{Pattern Editor, Second Panel Items}
    \label{fig:pattern_editor_main_panel_items}
 \end{figure}
@@ -713,13 +706,13 @@
    a virtual keyboard at the left, a note grid, a vertical scrollbar, an event
    panel, and a data panel at the bottom.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.65]{pattern/pattern-edit-piano-roll-items.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Editor, Piano Roll Items}
-   \label{fig:pattern_editor_piano_roll_items}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Pattern Editor, Piano Roll Items}
+%   \label{fig:pattern_editor_piano_roll_items}
+%\end{figure}
 
    \begin{enumber}
       \item \textbf{Beat}
@@ -762,7 +755,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{pattern/pattern-edit-window-key-numbers.png}
+   \includegraphics[scale=0.75]{pattern-editor/pattern-edit-window-key-numbers.png}
    \caption{Pattern Editor, Virtual Keyboard Number and Note Views}
    \label{fig:pattern_editor_key_numbers}
 \end{figure}
@@ -820,6 +813,86 @@
    Drawing, modifying, copying, and deleting
    notes is actually very elegant in \textsl{Seq66} and in
    \textsl{Seq24}.
+
+   The \textsl{Seq24} note-editing style is as expected for basic
+   actions such as selecting and moving notes using the left mouse button.
+   Drawing a note or event is a bit different, in that one must first
+   \textsl{click and hold} the right mouse button, and then
+   \textsl{click and drag} the right mouse button to insert notes,
+   Notes are inserted to be at the current length and grid-snap values for
+   the sequence editor for as long as the buttons are pressed.
+   Notes are inserted only up to the specified sequence length.
+   Once notes are inserted, moving the mouse with the left button still
+   held down moves the notes to the new note value of the mouse.
+   If one releases the left button, then presses and holds it again,
+   more notes will be added in the same way.
+   This is unconventional, but a powerful way to layer notes in a short
+   sequence.
+   We call it the
+   \index{draw mode}
+   \index{mode!draw}
+   "draw mode" or
+   \index{paint mode}
+   \index{mode!paint}
+   "paint mode".
+   Drawing/painting can also be done while the sequence is playing,
+   and notes will be added to be played the next time the progress bar crosses
+   them.
+
+%  \index{seq66 options}
+%  The \textbf{Seq66 Options} section contains a couple of new options.
+
+   \index{keys!Mod4}
+   \index{mouse!Mod4}
+   \label{new_mod4_mode}
+   \textbf{Mod4 key preserves add (paint) mode in song and pattern editors}.
+   In order to work with trackpads that don't permit simultaneous left
+   and right clicks, the
+   "Seq24" mode of mouse interaction can be modified in the
+   Pattern or Song editors so that the Mod4 key (Super or Windows key)
+   can be pressed when releasing the right mouse button.
+   This keeps the mouse in note-add mode.
+   Another right-click, without pressing Mod4, will exit this mode.
+
+%  The reason for this feature is the crummy FocalTech touchpad on one of
+%  the author's laptops.  This trackpad seems to have only a single button,
+%  which the driver interprets as left or right depending where the finger
+%  is when it is clicked.  There's no way to click the right and left
+%  buttons at the same time.  There's no way to make a middle-click action.
+%  What a crock!
+
+   This option will not interfere with the Mod4 key being set
+   in the \textbf{Keyboard} option tab, since the keys there mainly apply to
+   the Patterns Panel (main window), not the pattern-editor window.
+
+   \index{mouse!split mode}
+   \label{new_split_mode}
+   Middle click splits song triggers at nearest snap (instead of
+   the halfway point).
+% Move this section to the right place and simply create a section-reference to
+% it here.
+
+   \index{paint mode}
+   Another way to turn on the paint mode has been added.
+%  , based on a feature
+%  found in a patch that someone posted about in some mailing list somewhere on
+%  the internet.
+   To turn on the paint mode, press the
+   \index{keys!p}
+   \texttt{p} key while in the sequence editor.
+   This is just like pressing the right mouse button, but the draw/paint mode
+   stays on.
+   To get out of the paint mode, press the
+   \index{keys!x}
+   \texttt{x} key while in the sequence editor.
+   These keys, however, do not work while the sequence is playing.
+
+%  \index{todo:extend mouse support}
+%  These convenience options are limited to the
+%  pattern/sequence editor window and the performance editor window, and may
+%  need some heavier testing.
+   Note that some \textsl{Seq66} windows
+   can use the ctrl-left-click as a middle click. 
 
 %  Note editing is a bit different with \textsl{Seq66}, since it
 %  requires two mouse buttons in many cases.  There are some new
@@ -1125,12 +1198,12 @@
    pasted into \textsl{other} pattern editor dialogs; that is, they can be
    pasted into other sequences.
 
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.65]{pattern/selection-paste-box.png}
-   \caption{Piano Roll, Paste-Box for Cut Notes}
-   \label{fig:pattern_editor_selection_paste_box}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%   \includegraphics[scale=0.65]{pattern/selection-paste-box.png}
+%   \caption{Piano Roll, Paste-Box for Cut Notes}
+%   \label{fig:pattern_editor_selection_paste_box}
+%\end{figure}
    
 %  Note that the selection box is now orange, not black.
    Move this box to where pasting is
@@ -1141,13 +1214,13 @@
    For the appearance of selected events (orange), see
    \figureref{fig:pattern_editor_selected_events}.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/pattern-edit-selected-events-0-9-10.png}
-   \includegraphics[scale=0.65]{new/pattern-edit-selected-events.png}
-   \caption{Piano Roll, Selected Notes and Events}
-   \label{fig:pattern_editor_selected_events}
-\end{figure}
+%   \includegraphics[scale=0.65]{new/pattern-edit-selected-events.png}
+%   \caption{Piano Roll, Selected Notes and Events}
+%   \label{fig:pattern_editor_selected_events}
+%\end{figure}
 
    \index{selected data coloring}
    The selection, shown in
@@ -1247,13 +1320,12 @@
    selecting events for viewing and editing, MIDI playback,
    pass-through, and recording.
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-edit-bottom-panel-items.png}
-   \includegraphics[scale=0.50]{new/pattern-edit-bottom-panel.png}
-   \caption{Pattern Editor, Bottom Panel Items}
-   \label{fig:pattern_editor_bottom_panel_items}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%   \includegraphics[scale=0.50]{new/pattern-edit-bottom-panel.png}
+%   \caption{Pattern Editor, Bottom Panel Items}
+%   \label{fig:pattern_editor_bottom_panel_items}
+%\end{figure}
 
    Missing from this diagram is the "Existing Event Selector" which zeroes
    in only on events already present in the pattern.
@@ -1308,7 +1380,7 @@
    These sub-menus can be modified by editing the file
    
    \begin{verbatim}
-      $HOME/.config/sequencer66/sequencer66.usr
+      $HOME/.config/seq66/seq66.usr
    \end{verbatim}
 
    to make it match one's instrument.  See \sectionref{sec:usr_file}.

@@ -1387,6 +1387,9 @@
    <property name="toolTip">
     <string>Mutes all tracks.</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
   </action>
   <action name="actionUnmuteAllTracks">
    <property name="text">
@@ -1395,6 +1398,9 @@
    <property name="toolTip">
     <string>Turns on all the tracks in the current set.</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionToggleAllTracks">
    <property name="text">
@@ -1402,6 +1408,9 @@
    </property>
    <property name="toolTip">
     <string>Toggles the mute status of all tracks in the current set.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionClose">

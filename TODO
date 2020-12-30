@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-29
+2019-04-13 to 2020-12-30
 
 HOT ITEMS:
 
@@ -74,15 +74,36 @@ HOT ITEMS:
         controls.  It adapts to the numerator, but only once playback
         resumes.
 
+    UI:
+
+        Consider adding vertical zoom to the seqroll and perfroll.
+
     Automation:
 
         Add a panic-button control.
+
         Add a live/song-button control.
+
         Tap BPM key (F9) does not work, though the button works.
+
+        Look into the "nativeVirtualKey" functionality to support
+
+        locale-independent key processing.
+
+    Seq keys:
+
+        Need to add note off to the note preview mechanism.
 
     Testing:
 
         Test the Live Record functionality.
+
+        Make sure we follow JACK transport properly, including tempo changes.
+
+        Can we leverage the Julian-data project for testing?
+
+        Make sure MIDI import does not import the SeqSpec sections of a Seq66
+        MIDI file.
 
 Others to Consider:
 

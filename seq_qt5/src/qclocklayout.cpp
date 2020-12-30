@@ -26,9 +26,10 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2020-12-28
+ * \updates       2020-12-30
  * \license       GNU GPLv2 or above
  *
+ *  This class represents one line in the Edit Preferences MIDI Clocks tab.
  */
 
 #include <QtWidgets/QButtonGroup>
@@ -194,16 +195,16 @@ void
 qclocklayout::clock_callback_clicked (int id)
 {
     if (id == (-2))
-        id = (-1);
+        id = (-1);                      /* e_clock::disabled */
 
-    perf().ui_set_clock(m_bus, static_cast<e_clock>(id));
-    if (id == (-1))
-    {
-        m_rbutton_portdisabled->setEnabled(false);
-        m_rbutton_clockoff->setEnabled(false);
-        m_rbutton_clockonpos->setEnabled(false);
-        m_rbutton_clockonmod->setEnabled(false);
-    }
+    e_clock clocking = static_cast<e_clock>(id);
+    bool enable = clocking != e_clock::disabled;
+    perf().ui_set_clock(m_bus, clocking);
+    m_label_outputbusname->setEnabled(enable);
+    m_rbutton_portdisabled->setEnabled(enable);
+    m_rbutton_clockoff->setEnabled(enable);
+    m_rbutton_clockonpos->setEnabled(enable);
+    m_rbutton_clockonmod->setEnabled(enable);
 }
 
 }           // namespace seq66

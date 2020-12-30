@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-08
+ * \updates       2020-12-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -106,7 +106,8 @@ private slots:
     void cancel ();
     void update_note_resume ();
     void update_key_height ();
-    void update_ui_scaling (const QString &);
+    void update_ui_scaling_width ();
+    void update_ui_scaling_height ();
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     void update_pattern_editor ();
 #endif

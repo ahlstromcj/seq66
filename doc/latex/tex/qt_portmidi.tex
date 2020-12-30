@@ -416,7 +416,7 @@
    as a portable Zip package anywhere the user desires.  The package is
    self-contained, and contains all the the DLLs needed to run the program.
    \textsl{qpseq66} can also be installed via an NSIS-based installer,
-   such as \texttt{sequencer66\_setup\_0.96.0-0.exe}.
+   such as \texttt{seq66\_setup\_0.96.0-0.exe}.
 
 \subsubsection{Seq66 Windows Issues}
 \label{subsubsec:qt_portmidi_windows_setup_issues}
@@ -447,12 +447,12 @@
     \texttt{-o log=virtualmidi.log}, which dumps the log file into
 
    \begin{verbatim}
-       C:/Users/chris/AppData/Local/sequencer66/virtualmidi.log
+       C:/Users/chris/AppData/Local/seq66/virtualmidi.log
    \end{verbatim}
 
 \begin{verbatim}
    qpseq66 
-   C:/Users/chris/AppData/Local/sequencer66/virtualmidi.log 
+   C:/Users/chris/AppData/Local/seq66/virtualmidi.log 
    2018-05-13 09:06:58 
    [MIDIMAPPER] 'mapper in : midiInGetDevCaps() error for device 'MIDIMAPPER':
       'The specified device identifier is out of range'
@@ -462,8 +462,8 @@
    PortMidi MMSystem 2: Microsoft GS Wavetable Synth output opened
    PortMidi MMSystem 3: VirtualMIDISynth #1 output closed
    [Opened MIDI file,
-      'C:/Users/chris/Documents/Home/sequencer66/data/b4uacuse-gm-patchless.midi']
-   [Writing rc configuration C:/Users/chris/AppData/Local/sequencer66/qpseq66.rc]
+      'C:/Users/chris/Documents/Home/seq66/data/b4uacuse-gm-patchless.midi']
+   [Writing rc configuration C:/Users/chris/AppData/Local/seq66/qpseq66.rc]
    PortMidi call failed: [-1] 'Bad pointer'
    PortMidi call failed: [-1] 'Bad pointer'
    Begin closing open devices...
@@ -504,7 +504,7 @@
     on \textsl{Windows}, it will create a new configuration
     file, with inaccessible devices denoted in the
     \texttt{[midi-clock]} section of
-    \texttt{C:/Users/username/AppData/Local/sequencer66/qpseq66.rc}
+    \texttt{C:/Users/username/AppData/Local/seq66/qpseq66.rc}
     by a \texttt{-1} value.
 
     On \textsl{Linux},
@@ -512,15 +512,15 @@
     files is
 
 \begin{verbatim}
-    /home/username/.config/sequencer66
+    /home/username/.config/seq66
 \end{verbatim}
 
    There are various configuration file names, depending on the name of the
    built application:
 
 \begin{verbatim}
-        sequencer66.rc      The RtMidi Native ALSA/JACK version.
-        sequencer66.usr     The same, but for user-interface settings.
+        seq66.rc      The RtMidi Native ALSA/JACK version.
+        seq66.usr     The same, but for user-interface settings.
         seq66portmidi.rc    The PortMidi Gtkmm 2.4 version.
         seq66portmidi.usr   The same, but for user-interface settings.
         qseq66.rc           The RtMidi Qt 5 version for Linux.
@@ -533,7 +533,7 @@
     location is different:
     
 \begin{verbatim}
-    C:/Users/username/AppData/Local/sequencer66
+    C:/Users/username/AppData/Local/seq66
 \end{verbatim}
 
     The files are:
@@ -550,7 +550,7 @@
     "AppData" to the end of it.  Voila! It is now visible in
     \textsl{Windows Explorer}.
     It is a Windows \textsl{thang}.
-    Then click on the \texttt{sequencer66} directory.
+    Then click on the \texttt{seq66} directory.
     Open \texttt{qpseq66.rc} and see what is in it (scroll down a bit):
 
 \begin{verbatim}

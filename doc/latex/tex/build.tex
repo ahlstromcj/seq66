@@ -21,7 +21,7 @@
    is (still) aimed at developers.
 %  But note that we have Debian packages, conventional tarballs,
 %  and \textsl{Windows} installers in the "Seq66
-%  Packages" project (\cite{sequencer66packages}).
+%  Packages" project (\cite{seq66packages}).
 %  If one has packages built for other Linux distributions, let us know, and we
 %  can stick them there for others to use.
 
@@ -179,7 +179,7 @@
 %       "\texttt{./bootstrap -er -am}".
 %       This executable is basically the original version of 
 %       \textsl{Seq66}, with the original executable name of
-%       \texttt{sequencer66}, which we're keeping around as a backup while we
+%       \texttt{seq66}, which we're keeping around as a backup while we
 %       work the remaining nits out of the "rtmidi" version of the application.
 
    \itempar{\texttt{--enable-portmidi}}{build!enable portmidi}
@@ -210,17 +210,17 @@
 %       \textsl{Linux} only.
 %       Even if this option is left defined,
 %       however, \textsl{Seq66} will still not use LASH support unless
-%       one specifies \texttt{--lash} on the \texttt{sequencer66} command-line or
+%       one specifies \texttt{--lash} on the \texttt{seq66} command-line or
 %       turn on the new \texttt{[lash-session]} option in the "rc"
 %       configuration file,
-%       \texttt{\textasciitilde/.config/sequencer66/sequencer66.rc}.
+%       \texttt{\textasciitilde/.config/seq66/seq66.rc}.
 
     \itempar{\texttt{--disable-jack}}{build!disable jack}
         \index{SEQ66\_JACK\_SUPPORT}
         Undefines the \texttt{SEQ66\_JACK\_SUPPORT} macro, which is
         defined by default.  Even if defined,
         \textsl{Seq66} will still not use JACK support unless
-        one specifies the various JACK options on the \texttt{sequencer66}
+        one specifies the various JACK options on the \texttt{seq66}
         command-line or turn them on in the "rc" configuration file,
         \texttt{\textasciitilde/.config/seq66/qseq66.rc}.
         This is an option for \textsl{Linux} only.
@@ -592,7 +592,7 @@
    \begin{verbatim}
         $ mkdir debug-build
         $ cd debug-build
-        $ qmake -makefile -recursive "CONFIG += debug" ../sequencer66/qpseq66.pro
+        $ qmake -makefile -recursive "CONFIG += debug" ../seq66/qpseq66.pro
         $ make
    \end{verbatim}
 

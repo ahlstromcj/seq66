@@ -1,12 +1,12 @@
 %-------------------------------------------------------------------------------
-% sequencer66-user-manual
+% seq66-user-manual
 %-------------------------------------------------------------------------------
 %
-% \file        kudos.txt
+% \file        kudos.tex
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-08-29
-% \update      2018-10-28
+% \update      2020-12-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -23,24 +23,25 @@
 
    \begin{itemize}
       \item \textsl{Tim Deagan (tdeagan)}:
-         fixes to the mute-group support.
+         Fixes to the mute-group support.
       \item \textsl{0rel}:
-         an important fix to add and relink notes after a
+         An important fix to add and relink notes after a
          paste action in the pattern editor.
       \item \textsl{arnaud-jacquemin}:
-         a bug report and fix for a regression in mute-groups support.
+         A bug report and fix for a regression in mute-groups support.
+         Also suggestions for enhancing mute-group support.
       \item \textsl{Stan Preston (stazed)}:
-         ideas for some upcoming improvements based
+         Ideas for many improvements based
          on his \textsl{seq32} project.  A lot of ideas.
          And a lot of code!
       \item \textsl{Animtim}:
-         a number of bug reports and a new logo.
+         A number of bug reports and a new logo for \textsl{Sequencer64}.
       \item \textsl{jean-emmanuel}:
-         scrollable main-window support, other features and reports.
+         Scrollable main-window support, other features and reports.
       \item \textsl{Olivier Humbert (trebmuh)}:
          French translation for the desktop files.
       \item \textsl{Oli Kester}:
-         The creator of \textsl{Kepler34}, from which we are getting
+         The creator of \textsl{Kepler34}, from which we got many
          clues on porting the user-interface to Qt 5 and Windows.
    \end{itemize}
 
@@ -48,35 +49,48 @@
 
    \begin{itemize}
       \item \textsl{F0rth}:
-         a request for scripting support, a possible future feature.
+         A request for scripting support, a possible future feature.
       \item \textsl{gimmeapill}:
-         testing, bug-reports, and, um, "marketing".
+         Testing, bug-reports, and, um, "marketing".
       \item \textsl{georgkrause}:
-         a number of helpful bug reports.
+         A number of helpful bug reports.
       \item \textsl{goguetchapuisb}:
-         found that Seq66 native JACK did not properly handle the copious
-         Active Sensing messages emitted by Yamaha keyboards.
+         Found that \textsl{Sequencer64} native JACK did not properly handle
+         the copious Active Sensing messages emitted by Yamaha keyboards.
       \item \textsl{milkmiruku}:
-         mainwids issues and ideas.
+         Mainwids issues and many ideas, suggestions, feature requests, and bug
+         report.
       \item \textsl{muranyia}:
-         feature request for numbered piano keys and bug-reports.
+         Feature request for numbered piano keys and bug-reports.
       \item \textsl{pixelrust}:
-         reports of issues with "fruity" interaction.
+         Reports of issues with "fruity" interaction.
       \item \textsl{simonvanderveldt}:
-         issues with window sizing and more.
+         Issues with window sizing and more.
       \item \textsl{ssj71}:
-         a request for an LV2 plugin version, a possible future feature.
+         A request for an LV2 plugin version, a possible future feature.
       \item \textsl{triss}:
-         a request for OSC support, a possible future feature.
+         A request for OSC support, a possible future feature.  We added some
+         OSC support in order to play well with the \textsl{Non Session
+         Manager} (\textsl{NSM}).
       \item \textsl{layk}:
-         some bug reports, and, we are pretty sure, some nice videos that
+         Some bug reports, and, we are pretty sure, some nice videos that
          demonstrate \textsl{Seq66} on \textsl{YouTube}.  See
          \cite{layk}.
       \item \textsl{matt-bel}:
-         reported a regression from \textsl{Seq24}, which could use
+         Reported a regression from \textsl{Seq24}, which could use
          a MIDI control event to mute/unmute multiple patterns at once,
          a cool feature!
-         
+      \item \textsl{zigmhount}:
+         A pending request for a control that would automatically set up a
+         pattern for recording and playback with one "click".
+      \item \textsl{grammoboy} and \textsl{J. Liles}:
+         Bug reports and other help with \textsl{NSM} support.
+      \item \textsl{Houston4444}:
+         Similarly, help with \textsl{RaySession}, a work-alike of
+         \textsl{NSM}, written in \textsl{Python}.
+      \item \textsl{unfa}:
+         Bug reports for coloring, and for inspiring the "*.palette" file
+         feature, as well as making coloring more comprehensive.
    \end{itemize}
 
    ... and there are more to add to this list....

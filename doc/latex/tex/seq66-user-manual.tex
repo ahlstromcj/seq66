@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2020-12-29
+% \update      2020-12-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -39,7 +39,7 @@
 \fancyhead{}
 \fancyfoot{}
 \fancyheadoffset{0.005\textwidth}
-\lhead{Seq66 Live MIDI Sequencer}
+\lhead{Seq66 Live-Loop MIDI Sequencer}
 \chead{}
 \rhead{User Manual}
 \lfoot{}
@@ -56,11 +56,8 @@
 \date{\today}
 \maketitle
 
-% UPDATE THE FOLLOWING FIGURE !!!!!!!!!!!!!!!!!!!!!!!!!
-
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{main-window/main-window-dark-gridstyle-3-default.png}
    \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
    \caption*{Button-Grid User Interface, Qt 5}
 \end{figure}
@@ -81,10 +78,8 @@
 \section{Introduction}
 \label{sec:introduction}
 
-   This document describes "Seq66", better known as
-   \textsl{Seq66},
-%  \cite{sequencer66},
-   through version 0.91.5.
+   This document describes "Seq66", a reboot of \textsl{Seq24} and a rewrite of
+   \textsl{Sequencer64}, through version 0.91.5.
    The following projects support \textsl{Seq66} and documentation:
 
    \begin{itemize}
@@ -93,11 +88,9 @@
    \end{itemize}
 
    (We reference the old \textsl{Sequencer64} documentation project because
-   the current manual is still very incomplete.  The \textsl{Sequencer64}
+   the current manual is still incomplete.  The \textsl{Sequencer64}
    document is probably about 80 percent useful as a guide to \textsl{Seq66}.
    Just be prepared to note some significant differences in look-and-feel.)
-   We would like a more lean-and-mean manual for \textsl{Seq66}.
-   For now, we are concentrating on the new features in this manual.
 
    \textsl{Seq66} is \textsl{Sequencer64} refactored for newer versions of
    \textsl{C++} and with kruft and redundancy removed.  It drops the
@@ -106,10 +99,10 @@
    It includes support for the \textsl{Non Session Manager}.
 
    We have many contributors to acknowledge.
-%  Please see \sectionref{sec:kudos}.
+   Please see \sectionref{sec:kudos}.
 
 \subsection{Seq66: What?}
-\label{subsec:what_is_sequencer66}
+\label{subsec:what_is_seq66}
 
    \textsl{Seq66} is an ongoing reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer.
@@ -192,14 +185,13 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.5]{main-window/main-window-light-gridstyle-3-default.png}
    \includegraphics[scale=0.65]{main-window/main-window-light-gridstyle-3-markup.png}
    \caption{Seq66 Main Screen}
    \label{fig:main_screen}
 \end{figure}
 
    The \textsl{Seq66} main window appears, as shown above.
-   This figure has some differences from the \textsl{Seq24} main window,
+   This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
    Most features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
@@ -212,17 +204,21 @@
    groups shown in the figure above:
 
    \begin{itemize}
-      \item \textbf{Menu}
-      \item \textbf{Main} (Top and Bottom panels)
-      \item \textbf{Tabs} (each in their own section)
+      \item \textbf{Center Tabs}
+      \item \textbf{Application Menu}
+      \item \textbf{Main Screen Controls}
    \end{itemize}
 
-   The \textbf{Live} tab provides a grid of patterns (also called loops or
+   The \textbf{Live} center tab is foremost in the application.
+   provides a grid of patterns (also called loops or
    sequences) that display recorded MIDI data, status information, and provide
    popup-menus to further work on each pattern.  Note here that the buttons can
    be colored, and that the status of being armed is easy to see from the
    coloring.
-   The \textbf{Live} tab will be discussed in more detail in its own section.
+   The \textbf{Live} tab, and all the other center tabs
+   will be discussed in more detail, each in its own section.
+
+   The \textbf{Menu} is described later, also in its own section.
 
    In this section we discuss the top and bottom \textbf{Main} controls, as
    shown in the following figure:
@@ -234,7 +230,7 @@
    \label{fig:main_screen_controls}
 \end{figure}
 
-\subsubsection{Main Top Controls}
+\subsubsection{Main Top Controls (Condensed View)}
 \label{subsubsec:introduction_main_top_controls}
 
    The top main control items are, from left to right:
@@ -303,8 +299,8 @@
 
    The beat indicator is inspired by the \textsl{Kepler34} implementation.  It
    shows the first beat in red, and the rest of the beats in white.
-
-   STILL NEEDS WORK. It does not adapt to changes in the time-signature.
+   It does not adapt to changes in the time-signature until
+   playback is stopped.
 
 \subsubsection{Main Bottom Controls}
 \label{subsubsec:introduction_main_bottom_controls}
@@ -318,7 +314,39 @@
       \item \textbf{Set Changer}
    \end{itemize}
 
-   The second row contains:
+\paragraph{Set Name}
+\label{paragraph:introduction_Set_Name}
+
+   This text field shows the name of the current set, and also allows editing
+   the set name.
+
+\paragraph{Set Master Button}
+\label{paragraph:introduction_}
+
+   This button brings up an external window showing the \textbf{Set Master}
+   panel.  This panel is also available in a center tab.  It is a work in
+   progress, and doesn't have a whole lot of functionality in version
+   0.91.5.  It can currently show existing sets in one view.
+
+   REFERENCE.
+
+\paragraph{Active Set Indicator}
+\label{paragraph:introduction_}
+
+   This read-only text field shows the set number of the currently active set.
+   One can open a number of external \textsl{Live Frames} by
+   Shift-left-clicking on pattern slots.  The currently active set is then the
+   set that has the mouse focus.  This allows for working with multiple sets
+   without a lot of mouse/keyboard navigation.
+
+\paragraph{Set Changer}
+\label{paragraph:introduction_}
+
+   This spin-box allows showing a different set in the main windows.
+   This set can be modified by adding new patterns, changing its name, or
+   importing other MIDI files into the current set.
+
+   On to the next section of the main buttons, the second row contains:
 
    \begin{itemize}
       \item \textbf{Panic Button}
@@ -478,11 +506,11 @@
 
 % Pattern Editor
 
-%%% \input{pattern_editor}
+\input{pattern_editor}
 
 % Song Editor
 
-%%% \input{song_editor}
+\input{song_editor}
 
 % Event Editor
 
@@ -494,11 +522,11 @@
 
 % Import/Export
 
-%%% \input{midi_export}
+\input{midi_export}
 
 % Tables of keyboard and mouse actions
 
-%%% \input{kbd_mouse}
+\input{kbd_mouse}
 
 % Meta-event support
 
@@ -514,7 +542,7 @@
 
 % Port-Mapping
 
-%%% \input{port_mapping}
+\input{port_mapping}
 
 % User file
 
@@ -532,8 +560,8 @@
 
 \input{qt_portmidi}
 
-% Man page
-
+% Man page.  Kind of useless, takes up space.  Leave it commented out.
+%
 %%% \input{manpage}
 
 % Headless version
@@ -564,10 +592,10 @@
 % \input{midi_formats}
 %
 % ---------------------------------------------------------------------
-%
+
 % Acknowledgments
 
-%%% \input{kudos}
+\input{kudos}
 
 \section{Summary}
 \label{sec:summary}
@@ -579,7 +607,7 @@
 
 % References
 
-%%% \input{references}
+\input{references}
 
 \printindex
 
