@@ -1355,6 +1355,9 @@
    <property name="toolTip">
     <string>Brings up the Song Editor in an external window.</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionSongTranspose">
    <property name="text">

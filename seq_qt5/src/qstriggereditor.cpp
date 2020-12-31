@@ -150,21 +150,20 @@ qstriggereditor::paintEvent (QPaintEvent *)
         pen.setWidth(1);
         if (tick % ticks_per_bar == 0)          /* solid line on every beat */
         {
-            pen.setColor(Qt::black);
+            pen.setColor(fore_color());         /* Qt::black                */
             pen.setStyle(Qt::SolidLine);
             pen.setWidth(2);                    /* two pixels               */
         }
         else if (tick % ticks_per_beat == 0)
         {
-            pen.setColor(Qt::black);
+            pen.setColor(beat_color());         /* Qt::black                */
             pen.setStyle(Qt::SolidLine);
         }
         else
         {
-            pen.setColor(Qt::lightGray);
+            pen.setColor(step_color());         /* Qt::lightGray            */
             pen.setStyle(Qt::DashLine);
             int tick_snap = tick - (tick % snap());
-
             if (tick == tick_snap)
             {
                 pen.setStyle(Qt::SolidLine);    // pen.setColor(Qt::DashLine)
@@ -184,7 +183,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
      * Draw boxes from sequence.
      */
 
-    pen.setColor(Qt::black);
+    pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
 
     event::buffer::const_iterator cev;
@@ -197,23 +196,16 @@ qstriggereditor::paintEvent (QPaintEvent *)
             bool selected = cev->is_selected();
             int x = xoffset(tick);
             int y = (qc_eventarea_y - qc_eventevent_y) / 2;
-            pen.setColor(Qt::black);                /* outer event border   */
+            pen.setColor(fore_color());             /* Qt::black ev border  */
             brush.setStyle(Qt::SolidPattern);
-            brush.setColor(Qt::black);
+            brush.setColor(fore_color());           /* Qt::black            */
             painter.setBrush(brush);
             painter.setPen(pen);
             painter.drawRect(x, y, qc_eventevent_x, qc_eventevent_y);
-
-            /*
-             * We like orange better:
-             *
-             *      brush.setColor(selected ? Qt::red : Qt::white);
-             */
-
             if (selected)
-                brush.setColor("orange");
+                brush.setColor(sel_color());        /* "orange"             */
             else
-                brush.setColor(Qt::white);
+                brush.setColor(back_color());       /* Qt::white            */
 
             painter.setBrush(brush);                /* draw event highlight */
             painter.drawRect(x, y, qc_eventevent_x - 1, qc_eventevent_y - 1);
@@ -235,7 +227,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
         painter.setPen(pen);
         painter.drawRect(x + c_keyboard_padding_x, y, w, h);
     }
-    if (drop_action())              // (m_moving || m_paste)
+    if (drop_action())
     {
         int delta_x = current_x() - drop_x();
         int x = selection().x() + delta_x;
@@ -247,25 +239,11 @@ qstriggereditor::paintEvent (QPaintEvent *)
     }
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qstriggereditor::resizeEvent(%d)\n", s_count++);
-#endif
-
     qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
-
-/**
- *
- */
 
 void
 qstriggereditor::mousePressEvent (QMouseEvent * event)

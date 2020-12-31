@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2019-06-15
+% \update      2020-12-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,37 +15,22 @@
 \section{Pattern Editor}
 \label{sec:pattern_editor}
 
-   The \textsl{Seq66 Pattern Editor} is used to edit and preview a
-   pattern, as well as to configure its buss and channel settings.
-   Please note that the \textbf{Qt 5} user-interface (which will eventually
-   supercede the Gtkmm-2.4 user-interface) provides an \textbf{Edit Tab}, which
-   has limited functionality, and an external window interface, which is on par
-   with the Gtkmm-2.4 version.
+   The \textsl{Seq66} \textbf{Pattern Editor} is used to edit and preview a
+   pattern, as well as to configure its buss, channel, transpose, musical
+   scale, and other settings.
+   A rudimentary version of the \textbf{Pattern Editor} appears in the
+   \textbf{Edit} tab, and a more powerful version can be brought up in an
+   external window.
 
-%  In programmer's jargon, this window is represented by the seqroll class (and
-%  the other "seq" classes).
-
-%\begin{figure}[H]
-%   \centering 
-%   \includegraphics[scale=0.65]{roll.png}
-%   \caption{Pattern Edit Window}
-%   \label{fig:pattern_edit_window}
-%\end{figure}
-
-%  Not shown in this figure are:
-%  \begin{itemize}
-%     \item The sequence number show as part of the updated window title, which
-%        now shows the application name (e.g. "seq66" versus the old
-%        "Seq66" title.
-%     \item The sequencer number is now shown to the left of the
-%        sequence/track name.
-%     \item The new \textbf{LFO} button in the bottom panel.
-%     \item The new \textbf{Rec Type}button in the bottom panel.
-%  \end{itemize}
-%  Both are described later. See
-%  \figureref{fig:pattern_editor_bottom_panel_items}.
-
-   This dialog is complex.
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{pattern-editor/pattern-edit-window.png}
+   \caption{External Pattern Editor Window}
+   \label{fig:pattern_editor_window}
+\end{figure}
+  
+   The \textbf{Pattern Editor} is complex, and we will discuss the external
+   window only since its features are a superset of the \textbf{Edit} tab.
    For exposition, we break it into some common actions, a first panel, a
    second panel, a bottom panel, and a piano-roll/events section.
 
@@ -82,18 +67,16 @@
    playback moves the progress bar outside of the current frame of data.  This
    feature makes it easier to follow patterns that are longer than a measure or
    two.
-   
-   \textsl{Seq66} also provides a way to restart the progress
-   bar within the pattern without resetting it to the beginning of the pattern.
-   \index{pause}
-   This "pause" feature is accessed by the
-   \index{keys!.}
-   \index{keys!pause}
-   pause key (which defaults to the period character) or by the pause
-   button, which appears when playback is underway.
-%  (This feature
-%  can be disabled if the application is built via source code.  Note that
-%  it works only in ALSA mode at present.)
+
+   One might want to print out the following figure to follow along.  There is
+   a lot of functionality in this window.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.95]{pattern-editor/pattern-edit-window-annotated.png}
+   \caption{Pattern Editor Window (Annotated)}
+   \label{fig:pattern_editor_window_annotated}
+\end{figure}
 
 \subsection{Pattern Editor / First Panel}
 \label{subsec:pattern_editor_first}
@@ -218,12 +201,12 @@
    The second horizontal panel of the Pattern Editor provides a number
    of additional settings.
 
-\begin{figure}[H]
-   \centering 
-   \includegraphics[scale=0.55]{pattern-editor/pattern-edit-second-panel-items.png}
-   \caption{Pattern Editor, Second Panel Items}
-   \label{fig:pattern_editor_main_panel_items}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%   \includegraphics[scale=0.55]{pattern-editor/pattern-edit-second-panel-items.png}
+%   \caption{Pattern Editor, Second Panel Items}
+%   \label{fig:pattern_editor_main_panel_items}
+%\end{figure}
 
    There is a new button to the right
    of the \textbf{Tools} ("hammer" button).  This button toggles the "follow
@@ -287,13 +270,13 @@
    This button brings up a nested menu of tools for modifying selected
    events and notes.
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern/tools-first-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Tools, Context Menu}
-   \label{fig:pattern_editor_tools_first_menu}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%%  \includegraphics[scale=0.75]{pattern/tools-first-menu.png}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Tools, Context Menu}
+%   \label{fig:pattern_editor_tools_first_menu}
+%\end{figure}
 
    \begin{enumber}
       \item \textbf{Select}
@@ -369,13 +352,13 @@
    Selecting the \textbf{Transpose Selected} entry
    brings up the following sub-menu:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/tools-transpose-selected-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Tools, Transpose Selected Values}
-   \label{fig:pattern_editor_tools_transpose_selected_menu}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Tools, Transpose Selected Values}
+%   \label{fig:pattern_editor_tools_transpose_selected_menu}
+%\end{figure}
 
    $\bullet$ If the user has selected a
    \textbf{Musical Scale} setting other than \textbf{Off},
@@ -392,26 +375,26 @@
    \index{keys!up-arrow}
    up-arrow or down-arrow keys.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/tools-transpose-and-harmonic-selected-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Tools, Two "Transpose" Menus}
-   \label{fig:pattern_editor_tools_two_transpose_menus}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Tools, Two "Transpose" Menus}
+%   \label{fig:pattern_editor_tools_two_transpose_menus}
+%\end{figure}
 
    Remember that only the \textbf{Transpose Selected} entry is shown if the
    \textbf{Musical Scale} setting is \textbf{Off}.
    Selecting the \textbf{Harmonic Transpose Selected} entry brings up the
    following sub-menu:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/tools-harmonic-transpose-selected-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Tools, Harmonic Transpose Selected Values}
-   \label{fig:pattern_editor_tools_harmonic_transpose_menu}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Tools, Harmonic Transpose Selected Values}
+%   \label{fig:pattern_editor_tools_harmonic_transpose_menu}
+%\end{figure}
 
    Again, the harmonic-transpose option will not be available unless a scale
    has been selected.
@@ -562,13 +545,13 @@
    This is purely visual; a user can still add off-key notes.
    This effect is shown for the C Major scale in the following figure:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.65]{pattern/major-scale-masking.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{C Major Scale Masking}
-   \label{fig:pattern_editor_major_scale_masking}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{C Major Scale Masking}
+%   \label{fig:pattern_editor_major_scale_masking}
+%\end{figure}
 
    This feature makes it easier to stay in key while playing and
    recording.  Note that the scale will shift when a different
@@ -596,25 +579,25 @@
    Under the \textbf{0}
    entry, a menu like the following appears:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/background-sequence-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Sample Background Sequence Values}
-   \label{fig:pattern_editor_background_sequence_menu}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Sample Background Sequence Values}
+%   \label{fig:pattern_editor_background_sequence_menu}
+%\end{figure}
 
    Once the desired pattern is selected from that list, it appears as dark cyan
    note bars, along with the normal notes that are part of the pattern.  (Also
    note the orange selected notes and events in the following figure.)
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern/background-sequence-notes.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Background Sequence Notes}
-   \label{fig:pattern_editor_background_sequence_notes}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%%  \includegraphics[scale=0.75]{pattern/background-sequence-notes.png}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Background Sequence Notes}
+%   \label{fig:pattern_editor_background_sequence_notes}
+%\end{figure}
 
    The dark cyan notes shown represent the rhythm pattern that was selected as
    the background pattern.
@@ -630,17 +613,19 @@
    \itempar{Chord Generation}{pattern editor!chord generation}
    The ability to insert chords with one click has been added.
    This feature comes from user "stazed"
-   and his \textsl{Seq32} project (\cite{seq32}).
+   and his \textsl{Seq32} project \cite{seq32}.
+   Select the disired chord type first.
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=1.0]{new/chords_menu-0_9_14.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Chord Generation Menu}
-   \label{fig:pattern_editor_chords_menu}
-\end{figure}
+%\begin{figure}[H]
+%   \centering 
+%%  \includegraphics[scale=1.0]{new/chords_menu-0_9_14.png}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Chord Generation Menu}
+%   \label{fig:pattern_editor_chords_menu}
+%\end{figure}
+%
+%  The figure shows the menu broken into two pieces.
 
-   The figure shows the menu broken into two pieces.
    Once a value other than \textbf{Off} is selected, a left-click
    in drawing mode will add multiple notes representing the chord
    created, with the clicked note value as the base of the chord.
@@ -1361,13 +1346,13 @@
    This button brings up the following context menu, so that the user can
    select the category of events to view and edit.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/event-context-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Editor, Event Button Context Menu}
-   \label{fig:pattern_editor_bottom_event_context_menu}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Pattern Editor, Event Button Context Menu}
+%   \label{fig:pattern_editor_bottom_event_context_menu}
+%\end{figure}
 
    Note the squares.  Some of filled (black), others are empty.  The filled
    squares indicate that the sequence does indeed have some events of that
@@ -1404,13 +1389,13 @@
    By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
    the following window appears, shown as the set of 5 vertical sliders:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.65]{new/pattern_editor_with_LFO.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Editor, LFO Support}
-   \label{fig:pattern_editor_bottom_lfo_support}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Pattern Editor, LFO Support}
+%   \label{fig:pattern_editor_bottom_lfo_support}
+%\end{figure}
 
 %  Note the controls in this window:
 
@@ -1509,13 +1494,13 @@
    If the \textbf{Free} item is selected, then the incoming note velocity is
    preserved.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%   \centering 
 %  \includegraphics[scale=0.75]{pattern/vol-context-menu-new.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Pattern Recording Volume Menu}
-   \label{fig:pattern_edit_recording_volume_menu}
-\end{figure}
+%   \includegraphics[scale=0.65]{roll.png}
+%   \caption{Pattern Recording Volume Menu}
+%   \label{fig:pattern_edit_recording_volume_menu}
+%\end{figure}
 
    The velocity values are shown at the right side of each menu entry.
    These values correspond to MIDI volume levels from 127 down to 16, as

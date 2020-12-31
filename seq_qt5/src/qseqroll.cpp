@@ -305,16 +305,13 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 
     /*
      * Draw the border.  See the banner notes about width and height.
+     * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
      */
 
 #if defined THIS_CODE_ADDS_VALUE
     painter.setPen(pen);
     painter.setBrush(brush);
 #endif
-
-    /*
-     * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
-     */
 
     pen.setColor(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
@@ -405,7 +402,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + unit_height());
-        pen.setColor(sel_paint());
+        pen.setColor(sel_color());
         painter.setPen(pen);
         painter.drawRect(x, y, w, h);
     }
@@ -418,7 +415,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         int delta_y = current_y() - drop_y();
         x = selection().x() + delta_x;
         y = selection().y() + delta_y;
-        pen.setColor(Qt::black);        /* what palette color to use?   */
+        pen.setColor(Qt::black);            /* what palette color to use?   */
         painter.setPen(pen);
         if (m_edit_mode == sequence::editmode::drum)
         {
@@ -439,16 +436,12 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 
         x = selection().x();
         y = selection().y();
-        pen.setColor(Qt::black);
+        pen.setColor(sel_color());          /* fore_color() Qt::black       */
         painter.setPen(pen);
         painter.drawRect(x + m_keypadding_x, y, selw, selh);
         old_rect().set(x, y, selw, selh);
     }
 }
-
-/**
- *
- */
 
 void
 qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
@@ -484,11 +477,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     );
 #endif
 
-    QColor background = back_color();
-    QColor foreground = fore_color();
-    QColor beatcolor = beat_color();
-    QColor stepcolor = step_color();
-    QBrush brush(background);                       /* brush(Qt::NoBrush)   */
+    QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     painter.drawRect(r);
     painter.fillRect(r, brush);                     /* blank the viewport   */
@@ -507,9 +496,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          */
 
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(foreground);               /* Qt::darkGray         */
+            pen.setColor(fore_color());             /* Qt::darkGray         */
         else if ((modkey % c_octave_size) == (c_octave_size-1))
-            pen.setColor(stepcolor);                /* Qt::lightGray        */
+            pen.setColor(step_color());             /* Qt::lightGray        */
 
 #if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
         pen.setStyle(Qt::SolidLine);
@@ -527,8 +516,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
 #if defined THIS_CODE_ADDS_VALUE
-                pen.setColor(stepcolor);            /* Qt::lightGray        */
-                brush.setColor(stepcolor);          /* Qt::lightGray        */
+                pen.setColor(step_color());         /* Qt::lightGray        */
+                brush.setColor(step_color());          /* Qt::lightGray        */
                 brush.setStyle(Qt::SolidPattern);
                 painter.setBrush(brush);
                 painter.setPen(pen);
@@ -557,14 +546,6 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     midipulse adjustment = starttick % ticks_per_step;
     starttick -= adjustment;                    /* endtick -= adjustment    */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "ticks/step = %ld; ticks/beat = %ld; ticks/bar = %ld\n",
-        ticks_per_step, ticks_per_beat, ticks_per_bar
-    );
-#endif
-
     /*
      * Draw vertical grid lines.  Incrementing by ticks_per_step only works for
      * PPQN of certain multiples or for certain time offsets.  Therefore, need
@@ -582,17 +563,17 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         enum Qt::PenStyle penstyle = Qt::SolidLine;
         if (tick % ticks_per_bar == 0)          /* solid line on every beat */
         {
-            pen.setColor(foreground);           /* Qt::black                */
+            pen.setColor(fore_color());         /* Qt::black                */
             penwidth = 2;
         }
         else if (tick % ticks_per_beat == 0)
         {
-            pen.setColor(beatcolor);
+            pen.setColor(beat_color());
             penwidth = 1;
         }
         else
         {
-            pen.setColor(stepcolor);        /* faint step lines         */
+            pen.setColor(step_color());        /* faint step lines         */
             int tick_snap = tick - (tick % grid_snap());
             if (tick != tick_snap)
                 penstyle = Qt::DotLine;
@@ -723,7 +704,7 @@ qseqroll::draw_notes
             if (m_note_width > 3)
             {
                 if (ni.selected())
-                    brush.setColor(sel_paint());    /* was just "orange"    */
+                    brush.setColor(sel_color());    /* was just "orange"    */
                 else
                     brush.setColor(back_color());   /* Qt::white            */
 
@@ -877,7 +858,7 @@ qseqroll::draw_drum_notes
              */
 
             if (ni.selected())
-                brush.setColor(sel_paint());
+                brush.setColor(sel_color());
             else if (m_edit_mode == sequence::editmode::drum)
                 brush.setColor(drum_paint());
             else
@@ -1134,7 +1115,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 tick_s, note_h, tick_f, note_l, selmode
             );
             if (numsel > 0)
-                set_dirty();
+                m_parent_frame->set_dirty();
         }
         if (moving())
         {

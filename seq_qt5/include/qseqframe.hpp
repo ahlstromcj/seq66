@@ -106,6 +106,7 @@ protected:
     }
 
     virtual void update_note_entry (bool on) = 0;
+    virtual void update_draw_geometry () = 0;
 
 public:
 

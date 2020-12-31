@@ -1661,7 +1661,6 @@ void
 qseqeditframe64::reset_chord ()
 {
     ui->m_combo_chord->setCurrentIndex(0);
-
     if (not_nullptr(m_seqroll))
         m_seqroll->set_chord(0);
 
@@ -1669,10 +1668,6 @@ qseqeditframe64::reset_chord ()
 }
 
 #endif  // SEQ66_QSEQEDIT_BUTTON_INCREMENT
-
-/**
- *
- */
 
 void
 qseqeditframe64::set_chord (int chord)
@@ -2228,6 +2223,7 @@ qseqeditframe64::set_background_sequence (int seqnum)
         if (not_nullptr(m_seqroll))
             m_seqroll->set_background_sequence(false, seq::limit());
     }
+
     seq::pointer s = perf().get_sequence(seqnum);
     if (not_nullptr(s))
     {
@@ -2413,10 +2409,6 @@ qseqeditframe64::set_snap (midipulse s)
     }
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::reset_grid_snap ()
 {
@@ -2476,10 +2468,6 @@ qseqeditframe64::set_note_length (int notelength)
         m_seqroll->set_note_length(notelength);
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::reset_note_length ()
 {
@@ -2498,10 +2486,6 @@ qseqeditframe64::on_resolution_change (int ppqn, midibpm bpm)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 qseqeditframe64::change_ppqn (int ppqn)
@@ -2531,10 +2515,6 @@ qseqeditframe64::slot_update_zoom (int index)
     (void) set_zoom(z);
     update_draw_geometry();
 }
-
-/**
- *
- */
 
 bool
 qseqeditframe64::zoom_in ()
@@ -2601,10 +2581,6 @@ qseqeditframe64::update_key (int index)
     }
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::set_key (int key)
 {
@@ -2615,10 +2591,6 @@ qseqeditframe64::set_key (int key)
             m_seqroll->set_key(key);
     }
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::reset_key ()
@@ -2656,19 +2628,11 @@ qseqeditframe64::set_scale (int scale)
     }
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::reset_scale ()
 {
     set_scale(0);
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::editor_mode (bool ischecked)
@@ -2679,10 +2643,6 @@ qseqeditframe64::editor_mode (bool ischecked)
     );
     set_dirty();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::set_editor_mode (sequence::editmode mode)
@@ -3277,10 +3237,6 @@ qseqeditframe64::remap_notes ()
 {
     (void) repitch_selected();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::set_dirty ()

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2020-12-30
+% \update      2020-12-31
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -74,6 +74,7 @@
 
 \setlength{\parindent}{2em}
 \setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+\rhead{\rightmark}         % shows section number and section name
 
 \section{Introduction}
 \label{sec:introduction}
@@ -108,8 +109,6 @@
    a live-looping sequencer with an interface similar to a hardware sequencer.
    \textsl{Seq66} is not a synthesizer.  It requires a hardware
    synthesizer or a software synthesizer.
-
-%  such as Timidity \cite{timidity}, FluidSynth \cite{fluidsynth}, etc.
 
 \subsection{Seq66: Why?}
 \label{subsec:introduction_vs_others}
@@ -210,17 +209,20 @@
    \end{itemize}
 
    The \textbf{Live} center tab is foremost in the application.
-   provides a grid of patterns (also called loops or
+   It provides a grid of patterns (also called loops or
    sequences) that display recorded MIDI data, status information, and provide
    popup-menus to further work on each pattern.  Note here that the buttons can
    be colored, and that the status of being armed is easy to see from the
    coloring.
-   The \textbf{Live} tab, and all the other center tabs
+   In addition, the buttons can be toggled by a keystroke, shown in the lower
+   right corner of the button.
+   Another name for the \textbf{Live} tab is the \textbf{Patterns Panel}.
+   The \textbf{Live} tab (REFERENCEi), and all the other center tabs
    will be discussed in more detail, each in its own section.
 
-   The \textbf{Menu} is described later, also in its own section.
+   The \textbf{Menu} is also described later (see \sectionref{sec:menu}).
 
-   In this section we discuss the top and bottom \textbf{Main} controls, as
+   Here, we first discuss the top and bottom \textbf{Main} controls, as
    shown in the following figure:
 
 \begin{figure}[H]
@@ -372,7 +374,7 @@
 \label{paragraph:introduction_panic_button}
 
    This button causes playback to stop, all patterns to mute, and flushes the
-   MIDI buss.  It also raises a notification about an automation change.
+   MIDI buss.
    There is currently no keystroke, MIDI control, or MIDI-announcement (output)
    slot for this automation operation.
 
@@ -406,8 +408,9 @@
 \label{paragraph:introduction_live_record_button}
 
    This button causes a live playing session to be recorded.
-   That is, triggers are added to the song automatically, and they can then be
-   seen in the \textsl{Song} editor.
+   That is, triggers are added to the song automatically as the musician mutes
+   and unmutes patterns, and the triggers can then be
+   seen as layouts in the \textsl{Song} editor.
    By default, the \texttt{P} key operates this function,
 
 \paragraph{Keep Queue Button}
@@ -415,7 +418,7 @@
 
    Puts the application into a "sticky" queue mode.
    In this mode, pressing a pattern key does not do a mute/unmute function, but
-   instead turns on queuing for that pattern.
+   instead turns on queuing for the selected pattern.
    By default, the \texttt{Backslash} key operates this function,
    and there is a MIDI-control slot available for it.
 
@@ -423,7 +426,8 @@
 \label{paragraph:introduction_mute_group_learn_button}
 
    Also called the "L" button.
-   Sets up for learn the current set of active patterns ("mute group").
+   Sets up to learn the current set of active patterns ("mute group") into a
+   mute-group.
    After pressing this button, the user can then press another button, which is
    automatically shifted, and the pattern set is saved, and can be recalled by
    that button later.  It can be saved in a 'mutes' file, as part of the MIDI
@@ -431,9 +435,9 @@
 
    Example:  We have 5 patterns armed in the current set. Press this button,
    and then press the "s" key.  The pattern set is saved and can be recalled
-   later by the "S" ("s" shifted) key.
+   later by the "S" ("s"-shifted) key.
 
-   By default, the \texttt{el} (lower-case "l") key operates this function,
+   By default, the \texttt{el} (lower-case "l") key sets this function,
    and there is a MIDI-control slot available for it, as well as a
    MIDI-announcement slot.
 
@@ -441,20 +445,22 @@
 \label{paragraph:introduction_developer_test_button}
 
    This button is always disabled.  Function is added temporarily when testing
-   new features.
+   new features. Ignore this button.
 
 \paragraph{Song Editor Button}
 \label{paragraph:introduction_song_editor_button}
 
    This button brings up an external window for editing the Song/Performance
    information.  If already up, it closes it.  Works the same as the
-   \textbf{Edit / Song Editor} menu.
+   \textbf{Edit / Song Editor} menu or the hard-wired \texttt{Ctrl-E} key.
 
 \paragraph{Live/Song Mode Button}
 \label{paragraph:introduction_livesong_mode_button}
 
    This button toggles between the \textsl{Live} and \textsl{Song} performance
-   mode.
+   mode. In the Live mode, the musician controls are muting/unmuting of each
+   pattern.  In the Song mode, the triggers layed out in the
+   \textbf{Song Editor} control the playback.
    By default, the \texttt{F10} key operates this function,
    There is currently no automation control for this button.
 
@@ -478,7 +484,7 @@
    tapping.  With each tap, the counter on the button increments and the BPM is
    recalculated.  Stop tapping for a few seconds to reset the counter.
    By default, the \texttt{F9} key operates this function, but it
-   STILL NEEDS WORK.
+   STILL NEEDS WORK to show the results in the BPM control.
    There is also a MIDI-control slot for this function.
 
 \paragraph{Beats Per Minute Control}
@@ -491,10 +497,6 @@
 %     \item Log Tempo, which inserts the current tempo into the tempo track
 %        as an event.
 %     \item Tempo recording, which inserts all tempo changes as tempo events.
-
-%  See \sectionref{subsec:patterns_panel_bottom}.
-
-\rhead{\rightmark}         % shows section number and section name
 
 % Menu
 

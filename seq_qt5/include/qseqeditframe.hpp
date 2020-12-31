@@ -137,9 +137,14 @@ private:
 
     virtual bool change_bpm (midibpm bpm) override
     {
-        // anything to change when BPM changes?
-        return bpm > 0.0;
+        return bpm > 0.0;   /* anything to change when BPM changes? */
     }
+
+    virtual void update_draw_geometry () override;
+
+    /*
+     * performer callbacks
+     */
 
     virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
     virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
@@ -150,7 +155,6 @@ private:
      */
 
     void initialize_panels ();
-    void update_draw_geometry ();
 
 signals:
 

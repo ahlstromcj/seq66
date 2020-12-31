@@ -132,6 +132,7 @@ private:        /* qbase and qseqframe overrides    */
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
     virtual bool set_zoom (int z) override;
+    virtual void update_draw_geometry () override;
 
 protected:      /* QWidget overrides                */
 
@@ -143,7 +144,6 @@ protected:      /* QWidget overrides                */
 
 private:
 
-    void update_draw_geometry ();
     void remove_lfo_frame ();
     void analyze_seq_notes ();
     QIcon * create_menu_image (bool state);
