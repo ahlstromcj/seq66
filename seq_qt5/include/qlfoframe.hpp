@@ -124,10 +124,6 @@ signals:
 
 private slots:
 
-    //  We should implement undo via selection of "None" for the wave type.
-    //
-    //  bool on_focus_out_event (GdkEventFocus * p0);
-
     /*
      *  We use a lambda function for the slot for the QButtonGroup ::
      *  buttonClicked() signal.
@@ -138,6 +134,7 @@ private slots:
     void range_text_change ();
     void speed_text_change ();
     void phase_text_change ();
+    void reset ();
 
 private:
 
@@ -156,7 +153,7 @@ private:
     QButtonGroup * m_wave_group;
 
     /**
-     *
+     *  Access to the performance controller.
      */
 
     performer & m_performer;
@@ -172,6 +169,13 @@ private:
      */
 
     qseqdata & m_seqdata;
+
+    /**
+     *  Holds the original data in order to allow for a complete undo of the
+     *  changes.
+     */
+
+    eventlist m_backup_events;
 
     /**
      *  The seqedit frame that owns (sort of) this LFO window.

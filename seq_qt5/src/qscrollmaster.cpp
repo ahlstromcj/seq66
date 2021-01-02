@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2019-07-27
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  * Other useful QScrollBar functions:
@@ -64,10 +64,6 @@ qscrollmaster::qscrollmaster (QWidget * qf)
     // Done!
 }
 
-/**
- *
- */
-
 qscrollmaster::~qscrollmaster ()
 {
     // no code
@@ -93,22 +89,39 @@ qscrollmaster::scrollContentsBy (int dx, int dy)
     if (! m_v_scrollbars.empty())
     {
         int vvalue = m_self_v_scrollbar->value();
-        for (auto vit : m_v_scrollbars)
-            vit->setValue(vvalue);
+        scroll_to_y(vvalue);
     }
-
     if (! m_h_scrollbars.empty())
     {
         int hvalue = m_self_h_scrollbar->value();
-        for (auto hit : m_h_scrollbars)
-            hit->setValue(hvalue);
+        scroll_to_x(hvalue);
     }
     QScrollArea::scrollContentsBy(dx, dy);
 }
 
-/**
- *
- */
+void
+qscrollmaster::scroll_to_x (int x)
+{
+    if (! m_h_scrollbars.empty())
+    {
+        for (auto hit : m_h_scrollbars)
+            hit->setValue(x);
+
+        m_self_h_scrollbar->setValue(x);
+    }
+}
+
+void
+qscrollmaster::scroll_to_y (int y)
+{
+    if (! m_v_scrollbars.empty())
+    {
+        for (auto vit : m_v_scrollbars)
+            vit->setValue(y);
+
+        m_self_v_scrollbar->setValue(y);
+    }
+}
 
 void
 qscrollmaster::paintEvent (QPaintEvent * qpep)
@@ -122,10 +135,6 @@ qscrollmaster::paintEvent (QPaintEvent * qpep)
     QScrollArea::paintEvent(qpep);
 }
 
-/**
- *
- */
-
 void
 qscrollmaster::resizeEvent (QResizeEvent * qrep)
 {
@@ -137,10 +146,6 @@ qscrollmaster::resizeEvent (QResizeEvent * qrep)
 
     qrep->ignore();                         /* QScrollArea::resizeEvent(qrep) */
 }
-
-/**
- *
- */
 
 void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)

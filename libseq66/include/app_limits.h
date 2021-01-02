@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2020-12-11
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -551,7 +551,7 @@
  *  application will support.
  */
 
-#define SEQ66_MIDI_NOTES_MAX             256
+#define SEQ66_PLAYING_NOTES_MAX          256
 
 /**
  *  Provides a sanity check for transposition values.

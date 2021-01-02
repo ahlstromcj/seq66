@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-12-02
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1112,6 +1112,9 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 qseqeditframe64::~qseqeditframe64 ()
 {
     m_timer->stop();
+    if (not_nullptr(m_lfo_wnd))
+        delete m_lfo_wnd;
+
     cb_perf().unregister(this);
     delete ui;
 }
@@ -2360,7 +2363,32 @@ qseqeditframe64::follow_progress (bool expand)
     }
     else
     {
-        printf("qseqeditframe64::follow_progress(): 0 seqroll width!!!\n");
+        errprint("qseqeditframe64::follow_progress(): 0 seqroll width!");
+    }
+}
+
+void
+qseqeditframe64::scroll_to_tick (midipulse tick)
+{
+    int w = ui->rollScrollArea->width();
+    if (w > 0)              /* w is constant, e.g. around 742 by default    */
+    {
+        int x = tix_to_pix(tick);
+        ui->rollScrollArea->scroll_to_x(x);
+    }
+}
+
+void
+qseqeditframe64::scroll_to_note (int note)
+{
+    int h = ui->rollScrollArea->height();
+    if (h > 0)
+    {
+        if (is_good_midibyte(midibyte(note)))
+        {
+            int y = tix_to_pix(note);
+            ui->rollScrollArea->scroll_to_y(y);
+        }
     }
 }
 
@@ -2524,10 +2552,6 @@ qseqeditframe64::zoom_in ()
     return true;
 }
 
-/**
- *
- */
-
 bool
 qseqeditframe64::zoom_out ()
 {
@@ -2538,10 +2562,6 @@ qseqeditframe64::zoom_out ()
     }
     return true;
 }
-
-/**
- *
- */
 
 bool
 qseqeditframe64::set_zoom (int z)
@@ -3066,10 +3086,6 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     }
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::show_lfo_frame ()
 {
@@ -3169,10 +3185,6 @@ qseqeditframe64::thru_change (bool ischecked)
         update_midi_buttons();
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::update_record_type (int index)
 {
@@ -3180,10 +3192,6 @@ qseqeditframe64::update_record_type (int index)
     if (ok)
         set_dirty();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::update_recording_volume (int index)
@@ -3195,10 +3203,6 @@ qseqeditframe64::update_recording_volume (int index)
         set_dirty();
     }
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::reset_recording_volume ()
@@ -3298,29 +3302,17 @@ qseqeditframe64::remove_lfo_frame ()
     }
 }
 
-/**
- *
- */
-
 QWidget *
 qseqeditframe64::rollview ()
 {
     return ui->rollScrollArea->viewport();
 }
 
-/**
- *
- */
-
 QWidget *
 qseqeditframe64::rollwidget () const
 {
     return ui->rollScrollArea->widget();
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::analyze_seq_notes ()
@@ -3338,7 +3330,7 @@ qseqeditframe64::analyze_seq_notes ()
             k, musical_scale_name(s).c_str(), s
         );
     }
-    // MORE TO DO
+    /* MORE TO DO? */
 }
 
 }           // namespace seq66

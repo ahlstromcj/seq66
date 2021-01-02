@@ -28,6 +28,16 @@ HOT ITEMS:
 
         TODO:  See what have done with this one so far....
 
+    Loops:
+
+        Add, if necessary, a "one-shot" option, where a loop plays only once.
+        This would be useful for intros.  Currently can be achieved only in
+        Song mode.
+
+        HOT!
+        Need to automatically select buss 0 or whatever the pattern uses when
+        the pattern editor is brought up.
+
     Playlist:
        
         When there is no playlist, or it cannot be loaded, or when it is
@@ -90,6 +100,20 @@ HOT ITEMS:
             File / New does not work after using the Recent Files menu
             The Recent Files menu usage does not clear the current song... it
             appends the recent song to the current song.
+
+        Somehow add back Jean Emmanuel feature to be able to specify weird
+        time signatures.  Same for odd pattern lengths!
+
+        Add a Redo key to correspond to the Undo key.
+
+        HOT!
+        The grey bars for the musical scale are not drawn correctly!  Very
+        thin!
+
+        The Home and End keys do not work in the seqroll, contrary to the
+        documentation.  Same for Shift-Page-Up and Shift-Page-Down.
+
+        The Event Pane also does not perform as documented.
 
     Automation:
 

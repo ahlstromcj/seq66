@@ -116,6 +116,8 @@ public:
     void initialize_panels ();
     void set_editor_mode (sequence::editmode mode);
     void follow_progress (bool expand = false);
+    void scroll_to_tick (midipulse tick);
+    void scroll_to_note (int note);
 
 private:        /* performer::callback overrides    */
 

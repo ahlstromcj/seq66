@@ -515,6 +515,16 @@ is_good_bussbyte (bussbyte b)
 }
 
 /**
+ *  Checks for a usable midibyte.
+ */
+
+inline bool
+is_good_midibyte (midibyte b)
+{
+    return b < c_midibyte_data_max;
+}
+
+/**
  *  Compares a channel value to the maximum value.  Will replace the event static
  *  function of the same name.
  */

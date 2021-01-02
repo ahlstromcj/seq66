@@ -37,6 +37,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="m_pattern_label">
+      <property name="text">
+       <string>Pattern #xx</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QLineEdit" name="m_value_text">
@@ -94,14 +101,14 @@
   <widget class="QPushButton" name="m_button_close">
    <property name="geometry">
     <rect>
-     <x>460</x>
+     <x>536</x>
      <y>280</y>
      <width>80</width>
-     <height>23</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
   </widget>
   <widget class="QSlider" name="m_value_slider">
@@ -278,6 +285,19 @@
    </property>
    <property name="text">
     <string>Mod Range</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="m_button_reset">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>280</y>
+     <width>89</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Reset Data</string>
    </property>
   </widget>
  </widget>

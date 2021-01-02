@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-07-23
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -149,7 +149,7 @@ private:
      *  than zero) length.
      */
 
-    const midipulse mc_note_off_margin;
+    midipulse mc_note_off_margin;
 
     /**
      *  A flag to indicate if an event was added or removed.  We may need to
@@ -181,8 +181,8 @@ private:
 public:
 
     eventlist ();
-    eventlist (const eventlist & a_rhs);
-    eventlist & operator = (const eventlist & a_rhs);
+    eventlist (const eventlist & a_rhs) = default;
+    eventlist & operator = (const eventlist & a_rhs) = default;
     virtual ~eventlist ()
     {
         // No code needed

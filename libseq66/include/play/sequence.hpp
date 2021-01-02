@@ -348,7 +348,7 @@ private:
      *  come close to the unsigned short limit of 65535.
      */
 
-    unsigned short m_playing_notes[SEQ66_MIDI_NOTES_MAX];
+    unsigned short m_playing_notes[SEQ66_PLAYING_NOTES_MAX];
 
     /**
      *  Indicates if the sequence was playing.
@@ -855,6 +855,7 @@ public:
      * seqdata and lfownd hold for undo
      */
 
+#if defined USE_SET_HOLD_UNDO
     void lfo_hold_undo ();
     void set_hold_undo (bool hold);
 
@@ -862,6 +863,7 @@ public:
     {
         return m_events_undo_hold.count();
     }
+#endif
 
     void set_have_undo ()
     {
@@ -1102,7 +1104,7 @@ public:
     }
 
     midipulse get_last_tick () const;
-    void set_last_tick (midipulse tick);
+    void set_last_tick (midipulse tick = c_null_midipulse);
 
     /**
      *  Some MIDI file errors and other things can lead to an m_length of 0,

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-10-15
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -96,6 +96,7 @@ qlfoframe::qlfoframe
     m_performer     (p),
     m_seq           (seqp),
     m_seqdata       (sdata),
+    m_backup_events (seqp->events()),   /* copy original events for reset() */
     m_edit_frame    (editparent),
     m_value         (64.0),
     m_range         (64.0),
@@ -104,6 +105,7 @@ qlfoframe::qlfoframe
     m_wave          (wave::sine)
 {
     ui->setupUi(this);
+    connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
     connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
 
     m_wave_group = new QButtonGroup(this);
@@ -126,6 +128,7 @@ qlfoframe::qlfoframe
         [=](int id)
         {
             m_wave = static_cast<wave>(id);
+            reset();
         }
     );
 
@@ -189,9 +192,9 @@ qlfoframe::qlfoframe
     (
         "Speed: the number of periods per pattern (divided by beat width, "
         "normally 4).  For long patterns, this parameter needs to be set "
-        "high in some cases.  Also subject to an 'anti-aliasing' effect in "
+        "high.  Also subject to an 'anti-aliasing' effect in "
         "some parts of the range, especially for short patterns. "
-        "Try it.  For short patterns, try a value of 1."
+        "For short patterns, try a value of 1."
     );
     ui->m_speed_slider->setMinimum(to_slider(m_speed_min));
     ui->m_speed_slider->setMaximum(to_slider(m_speed_max));
@@ -231,6 +234,10 @@ qlfoframe::qlfoframe
         ui->m_phase_text, SIGNAL(editingFinished()),
         this, SLOT(phase_text_change())
     );
+
+    std::string plabel = "Pattern #";
+    plabel += std::to_string(int(seqp->seq_number()));
+    ui->m_pattern_label->setText(QString::fromStdString(plabel));
 }
 
 /**
@@ -345,29 +352,13 @@ qlfoframe::scale_lfo_change (int /*v*/)
     ui->m_phase_text->setText(tmp);
 }
 
-#if 0
-
-/**
- *  Undoes the LFO changes if there is undo available.
- *
- *  Implement undo via selection of "None" for the wave type.
- *
- * \return
- *      Always returns true.
- */
-
-bool
-qlfoframe::on_focus_out_event (GdkEventFocus * /* p0 */)
+void
+qlfoframe::reset ()
 {
-    m_seq->lfo_hold_undo();
-    return true;
+    m_seq->events() = m_backup_events;
+    m_seq->set_dirty();
+    m_seqdata.set_dirty();
 }
-
-#endif  // 0
-
-/**
- *
- */
 
 void
 qlfoframe::closeEvent (QCloseEvent * event)

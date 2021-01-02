@@ -49,7 +49,7 @@
  *  Internal global.  Will hide later.
  */
 
-const int c_midi_notes = SEQ66_MIDI_NOTES_MAX;
+const int c_midi_notes = SEQ66_PLAYING_NOTES_MAX;
 
 /**
  *  This macro is used for detecting SeqSpec data that Seq66 does not

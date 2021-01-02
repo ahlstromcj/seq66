@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2020-07-23
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -49,8 +49,7 @@ namespace seq66
  *  Principal constructor.
  */
 
-eventlist::eventlist ()
- :
+eventlist::eventlist () :
     m_events                (),
     m_length                (0),
     mc_note_off_margin      (2),
@@ -59,46 +58,6 @@ eventlist::eventlist ()
     m_has_time_signature    (false)
 {
     // No code needed
-}
-
-/**
- *  Copy constructor.
- *
- * \param rhs
- *      Provides the event list to be copied.
- */
-
-eventlist::eventlist (const eventlist & rhs)
- :
-    m_events                (rhs.m_events),
-    m_length                (rhs.m_length),
-    mc_note_off_margin      (rhs.mc_note_off_margin),
-    m_is_modified           (rhs.m_is_modified),
-    m_has_tempo             (rhs.m_has_tempo),
-    m_has_time_signature    (rhs.m_has_time_signature)
-{
-    // No code needed
-}
-
-/**
- *  Principal assignment operator.  Follows the stock rules for such an
- *  operator, just assigning member values.
- *
- * \param rhs
- *      Provides the event list to be assigned.
- */
-
-eventlist &
-eventlist::operator = (const eventlist & rhs)
-{
-    if (this != &rhs)
-    {
-        m_events                = rhs.m_events;
-        m_is_modified           = rhs.m_is_modified;
-        m_has_tempo             = rhs.m_has_tempo;
-        m_has_time_signature    = rhs.m_has_time_signature;
-    }
-    return *this;
 }
 
 /**

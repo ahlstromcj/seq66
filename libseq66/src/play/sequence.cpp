@@ -341,6 +341,8 @@ sequence::empty_coloring ()
         (void) color(palette_to_int(yellow));
 }
 
+#if defined USE_SET_HOLD_UNDO
+
 /**
  *  Modifies the undo-hold container.
  *
@@ -374,6 +376,8 @@ sequence::lfo_hold_undo ()
         m_events_undo_hold.clear();
     }
 }
+
+#endif
 
 /**
  *  Returns the number of events stored in m_events.  Note that only playable
@@ -2031,8 +2035,10 @@ sequence::change_event_data_range
     bool have_selection = m_events.any_selected_events(status, cc);
     if (useundo)
     {
+#if defined USE_SET_HOLD_UNDO
         if (! get_hold_undo())                          /* stazed           */
             set_hold_undo(true);
+#endif
     }
     for (auto & er : m_events)
     {
@@ -2162,8 +2168,10 @@ sequence::change_event_data_relative
     bool have_selection = m_events.any_selected_events(status, cc);
     if (useundo)
     {
+#if defined USE_SET_HOLD_UNDO
         if (! get_hold_undo())                          /* stazed           */
             set_hold_undo(true);
+#endif
     }
     for (auto & er : m_events)
     {
@@ -2292,8 +2300,10 @@ sequence::change_event_data_lfo
 
     if (useundo)
     {
+#if defined USE_SET_HOLD_UNDO
         if (! get_hold_undo())                          /* stazed           */
             set_hold_undo(true);
+#endif
     }
     for (auto & e : m_events)
     {
@@ -4190,6 +4200,9 @@ void
 sequence::set_last_tick (midipulse tick)
 {
     automutex locker(m_mutex);
+    if (is_null_midipulse(tick))
+        tick = m_length;
+
     m_last_tick = tick;
 }
 

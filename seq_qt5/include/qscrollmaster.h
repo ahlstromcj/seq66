@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2018-07-27
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  */
@@ -121,6 +121,8 @@ public:
     }
 
     void adjust_for_resize ();
+    void scroll_to_x (int x);
+    void scroll_to_y (int y);
 
 protected:      // QWidget overrides
 

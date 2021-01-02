@@ -52,7 +52,7 @@ namespace seq66
 static const int c_key_y =  8;
 
 /**
- *
+ *  Primary constructor
  */
 
 qseqbase::qseqbase
@@ -142,19 +142,11 @@ qseqbase::set_measures (int len)
     set_dirty();
 }
 
-/**
- *
- */
-
 int
 qseqbase::get_measures ()
 {
     return seq_pointer()->get_measures();
 }
-
-/**
- *
- */
 
 void
 qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
@@ -162,10 +154,6 @@ qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
     tick = pix_to_tix(x);
     note = (m_total_height - y - 2) / m_unit_height;
 }
-
-/**
- *
- */
 
 void
 qseqbase::convert_tn (midipulse ticks, int note, int & x, int & y)
@@ -201,7 +189,7 @@ qseqbase::convert_tn_box_to_rect
 )
 {
     int x1, y1, x2, y2;
-    convert_tn(tick_s, note_h, x1, y1);         /* convert box to X,Y values */
+    convert_tn(tick_s, note_h, x1, y1);     /* convert box to X,Y values    */
     convert_tn(tick_f, note_l, x2, y2);
     rect::xy_to_rect(x1, y1, x2, y2, r);
     r.height_incr(m_unit_height);

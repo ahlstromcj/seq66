@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-26
+ * \updates       2021-01-02
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -317,6 +317,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setPen(pen);
 
+#if defined THIS_WORKS_WELL                         /* fails after 1st page */
     QRect view;
     if (is_initialized())                           /* do a partial redraw  */
     {
@@ -331,6 +332,11 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         draw_grid(painter, view);
         set_initialized();
     }
+#else
+    QRect view(0, 0, width(), height());
+    draw_grid(painter, view);
+    set_initialized();
+#endif
 
     /*
      * Draw the events. This currently draws all of them.  Drawing all them only
@@ -515,13 +521,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
-#if defined THIS_CODE_ADDS_VALUE
-                pen.setColor(step_color());         /* Qt::lightGray        */
-                brush.setColor(step_color());          /* Qt::lightGray        */
+                pen.setColor(back_color());         /* Qt::lightGray        */
+                brush.setColor(step_color());       /* Qt::lightGray        */
                 brush.setStyle(Qt::SolidPattern);
                 painter.setBrush(brush);
                 painter.setPen(pen);
-#endif
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
             }
         }
@@ -668,8 +672,10 @@ qseqroll::draw_notes
             if (background)                         // draw background note
             {
                 length_add = 1;
-                pen.setColor(backseq_color());         // note border color
-                brush.setColor(grey_color());
+//              pen.setColor(backseq_color());         // note border color
+//              brush.setColor(grey_color());
+                pen.setColor(fore_color());         // note border color
+                brush.setColor(backseq_color());
             }
             else
             {
@@ -772,10 +778,6 @@ qseqroll::draw_drum_note (QPainter & painter)
      */
 }
 
-/**
- *
- */
-
 void
 qseqroll::draw_drum_notes
 (
@@ -871,10 +873,6 @@ qseqroll::draw_drum_notes
     }
 }
 
-/**
- *
- */
-
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
@@ -884,10 +882,6 @@ qseqroll::resizeEvent (QResizeEvent * qrep)
 #endif
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
-
-/**
- *
- */
 
 void
 qseqroll::mousePressEvent (QMouseEvent * event)
@@ -1076,10 +1070,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -1217,7 +1207,6 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
 void
 qseqroll::keyPressEvent (QKeyEvent * event)
 {
-    bool dirty = false;
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     seq::pointer s = seq_pointer();
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
@@ -1230,43 +1219,27 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         if (perf().is_pattern_playing())
         {
             /*
-             * The space and period keystrokes are andled at the top of
+             * The space and period keystrokes are handled at the top of
              * qseqeditframe64::keyPressEvent().
              */
         }
         else
         {
+            /*
             if (event->key() == Qt::Key_Home)
             {
                 s->set_last_tick(0);
                 set_dirty();
             }
-            else if (event->key() == Qt::Key_Left)
+             */
+            if (event->key() == Qt::Key_Left)
             {
-#if defined SEQ66_USE_KEPLER_TICK_SETTING
-
-                /*
-                 * Moved to Ctrl section below.
-                 */
-
-                s->set_last_tick(s->get_last_tick() - snap());
-#else
                 move_selected_notes(-1, 0);
-#endif
                 set_dirty();
             }
             else if (event->key() == Qt::Key_Right)
             {
-#if defined SEQ66_USE_KEPLER_TICK_SETTING
-
-                /*
-                 * Moved to Ctrl section below.
-                 */
-
-                s->set_last_tick(s->get_last_tick() + snap());
-#else
                 move_selected_notes(1, 0);
-#endif
                 set_dirty();
             }
             else if (event->key() == Qt::Key_Down)
@@ -1300,127 +1273,159 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
             {
                 if (event->key() == Qt::Key_Z)
+                {
                     (void) zoom_in();
+                    set_dirty();
+                }
             }
             else
             {
                 if (event->key() == Qt::Key_Z)
-                    (void) zoom_out();
-                else if (event->key() == Qt::Key_0)
-                    (void) reset_zoom();
-            }
-        }
-        if (! dirty && isctrl)
-        {
-            switch (event->key())
-            {
-            case Qt::Key_X:
-
-                if (s->cut_selected())
-                    set_dirty();
-                break;
-
-            case Qt::Key_C:
-
-                s->copy_selected();
-                break;
-
-            case Qt::Key_V:
-
-                start_paste();
-                set_dirty();
-                setCursor(Qt::CrossCursor);     // EXPERIMENT
-                break;
-
-            case Qt::Key_Z:
-
-                if (event->modifiers() & Qt::ShiftModifier)
                 {
-                    s->pop_redo();
+                    (void) zoom_out();
                     set_dirty();
                 }
-                else
-                    s->pop_undo();
-
-                set_dirty();
-                break;
-
-            case Qt::Key_A:
-
-                s->select_all();
-                set_dirty();
-                break;
+                else if (event->key() == Qt::Key_0)
+                {
+                    (void) reset_zoom();
+                    set_dirty();
+                }
             }
         }
-        else
+        if (! is_dirty())
         {
-            if
-            (
-                (event->modifiers() & Qt::ShiftModifier) == 0 &&
-                (event->modifiers() & Qt::MetaModifier) == 0
-            )
+            if (isctrl)
             {
                 switch (event->key())
                 {
-                case Qt::Key_C:
+                case Qt::Key_Home:
 
-                    if (m_parent_frame->repitch_selected())
-                        set_dirty();
+                    if (not_nullptr(m_parent_frame))
+                    {
+                        reinterpret_cast<qseqeditframe64 *>(m_parent_frame)->
+                            scroll_to_tick(0);
+                    }
+                    s->set_last_tick(0);        /* sets it to the beginning */
+                    set_dirty();
                     break;
 
-                case Qt::Key_F:
+                case Qt::Key_End:
 
-                    if (s->edge_fix())
-                        set_dirty();
-                    break;
-
-                case Qt::Key_P:
-
-                    set_adding(true);
-                    break;
-
-                case Qt::Key_Q:                 /* quantize selected notes  */
-
-                    if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
-                        set_dirty();
-                    break;
-
-                case Qt::Key_R:                 /* default jitter == 8      */
-
-                    if (s->randomize_selected_notes())
-                        set_dirty();
-                    break;
-
-                case Qt::Key_T:                 /* tighten selected notes   */
-                    if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
-                        set_dirty();
+                    if (not_nullptr(m_parent_frame))
+                    {
+                        reinterpret_cast<qseqeditframe64 *>(m_parent_frame)->
+                            scroll_to_tick(s->get_length());
+                    }
+                    s->set_last_tick();         /* sets it to the length    */
+                    set_dirty();
                     break;
 
                 case Qt::Key_X:
 
-                    set_adding(false);
+                    if (s->cut_selected())
+                        set_dirty();
                     break;
+
+                case Qt::Key_C:
+
+                    s->copy_selected();
+                    break;
+
+                case Qt::Key_V:
+
+                    start_paste();
+                    set_dirty();
+                    setCursor(Qt::CrossCursor);     // EXPERIMENT
+                    break;
+
+                case Qt::Key_Z:
+
+                    if (event->modifiers() & Qt::ShiftModifier)
+                    {
+                        s->pop_redo();
+                        set_dirty();
+                    }
+                    else
+                        s->pop_undo();
+
+                    set_dirty();
+                    break;
+
+                case Qt::Key_A:
+
+                    s->select_all();
+                    set_dirty();
+                    break;
+                }
+            }
+            else
+            {
+                if
+                (
+                    (event->modifiers() & Qt::ShiftModifier) == 0 &&
+                    (event->modifiers() & Qt::MetaModifier) == 0
+                )
+                {
+                    switch (event->key())
+                    {
+                    case Qt::Key_C:
+
+                        if (m_parent_frame->repitch_selected())
+                            set_dirty();
+                        break;
+
+                    case Qt::Key_F:
+
+                        if (s->edge_fix())
+                            set_dirty();
+                        break;
+
+                    case Qt::Key_P:
+
+                        set_adding(true);
+                        break;
+
+                    case Qt::Key_Q:                 /* quantize selected notes  */
+
+                        if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
+                            set_dirty();
+                        break;
+
+                    case Qt::Key_R:                 /* default jitter == 8      */
+
+                        if (s->randomize_selected_notes())
+                            set_dirty();
+                        break;
+
+                    case Qt::Key_T:                 /* tighten selected notes   */
+                        if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
+                            set_dirty();
+                        break;
+
+                    case Qt::Key_X:
+
+                        set_adding(false);
+                        break;
+                    }
                 }
             }
         }
     }
 
     /*
+     * Erroneous conclusion, dude!
+     *
      * If we reach this point, the key isn't relevant to us; ignore it so the
      * event is passed to the parent.
      */
 
-    QWidget::keyPressEvent(event);  // event->ignore();
+    QWidget::keyPressEvent(event);      // event->ignore();
 }
 
-/**
- *
- */
-
 void
-qseqroll::keyReleaseEvent (QKeyEvent *)
+qseqroll::keyReleaseEvent (QKeyEvent * event)
 {
-    // no code
+    QWidget::keyReleaseEvent(event);    // event->ignore();
 }
 
 /**
@@ -1609,10 +1614,6 @@ qseqroll::set_chord (int chord)
     }
 }
 
-/**
- *
- */
-
 void
 qseqroll::set_key (int key)
 {
@@ -1624,10 +1625,6 @@ qseqroll::set_key (int key)
     }
 }
 
-/**
- *
- */
-
 void
 qseqroll::set_scale (int scale)
 {
@@ -1638,7 +1635,6 @@ qseqroll::set_scale (int scale)
             set_dirty();
     }
 }
-
 
 /**
  *  Checks the position of the tick, and, if it is in a different piano-roll
