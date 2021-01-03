@@ -60,6 +60,7 @@ qseqtime::qseqtime
     m_font                  ()
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    m_font.setBold(true);
     m_font.setPointSize(6);
     m_timer = new QTimer(this);                             // redraw timer !!!
     m_timer->setInterval(2 * usr().window_redraw_rate());   // 50

@@ -1262,6 +1262,10 @@ performer::set_ppqn (int p)
         m_jack_asst.set_ppqn(p);
 #endif
 
+        m_one_measure = 0;
+    }
+    if (m_one_measure == 0)
+    {
         m_one_measure = p * 4;                  /* simplistic!  */
         m_right_tick = m_one_measure * 4;       /* ditto        */
     }
@@ -2392,6 +2396,9 @@ performer::set_left_tick (midipulse tick, bool setstart)
 void
 performer::set_right_tick (midipulse tick, bool setstart)
 {
+    if (tick == 0)
+        tick = m_one_measure;
+
     if (tick >= m_one_measure)
     {
         m_right_tick = tick;
@@ -5744,10 +5751,6 @@ performer::automation_oneshot
     return true;
 }
 
-/**
- *
- */
-
 bool
 performer::automation_FF
 (
@@ -5764,10 +5767,6 @@ performer::automation_FF
     return true;
 }
 
-/**
- *
- */
-
 bool
 performer::automation_rewind
 (
@@ -5783,10 +5782,6 @@ performer::automation_rewind
 
     return true;
 }
-
-/**
- *
- */
 
 bool
 performer::automation_top
@@ -5863,10 +5858,6 @@ performer::read_midi_file
     return result;
 }
 
-/**
- *
- */
-
 bool
 performer::open_note_mapper (const std::string & notefile)
 {
@@ -5888,10 +5879,6 @@ performer::open_note_mapper (const std::string & notefile)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 performer::save_note_mapper (const std::string & notefile)
@@ -5917,10 +5904,6 @@ performer::save_note_mapper (const std::string & notefile)
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 performer::playlist_activate (bool on)
@@ -6135,10 +6118,6 @@ performer::automation_snapshot_2
     return true;
 }
 
-/**
- *
- */
-
 bool
 performer::automation_toggle_mutes
 (
@@ -6154,10 +6133,6 @@ performer::automation_toggle_mutes
 
     return true;
 }
-
-/**
- *
- */
 
 bool
 performer::automation_song_pointer

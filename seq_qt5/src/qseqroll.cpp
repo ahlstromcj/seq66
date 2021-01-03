@@ -566,7 +566,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             {
                 pen.setColor(back_color());         /* Qt::lightGray        */
                 brush.setColor(step_color());       /* Qt::lightGray        */
-                brush.setStyle(Qt::SolidPattern);
+                brush.setStyle(Qt::Dense3Pattern);  /* Qt::SolidPattern     */
                 painter.setBrush(brush);
                 painter.setPen(pen);
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
@@ -713,22 +713,23 @@ qseqroll::draw_notes
 #if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
             pen.setColor(Qt::black);
 #endif
-            if (background)                         // draw background note
+            if (background)                         /* draw background note */
             {
                 length_add = 1;
-                pen.setColor(fore_color());         // note border color
+                pen.setColor(fore_color());         /* note border color    */
                 brush.setColor(backseq_color());
+                brush.setStyle(Qt::Dense2Pattern);  /* Qt::SolidPattern     */
             }
             else
             {
                 pen.setColor(fore_color());        // note border color
                 brush.setColor(fore_color());
+                brush.setStyle(Qt::SolidPattern);
             }
 
 #if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
             pen.setColor(Qt::black);
 #endif
-            brush.setStyle(Qt::SolidPattern);
             painter.setBrush(brush);
             painter.setPen(pen);
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);

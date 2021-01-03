@@ -57,6 +57,13 @@ namespace seq66
 {
 
 /**
+ *  Alpha values for various states, not yet members, not yet configurable.
+ */
+
+const int s_alpha_playing       = 255;
+const int s_alpha_muted         = 100;
+
+/**
  *  Initial sizing for the perf-roll.
  */
 
@@ -110,11 +117,7 @@ qperfroll::qperfroll
     m_font.setPointSize(6);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
-    QObject::connect
-    (
-        m_timer, SIGNAL(timeout()),
-        this, SLOT(conditional_update())
-    );
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
 
@@ -767,6 +770,20 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
         {
             seq::pointer seq = perf().get_sequence(seqid);
             midipulse lens = seq->get_length();
+
+            /*
+             * Get the seq's assigned colour and beautify it.  Reduce the
+             * strength of this color.  Not sure why get_color_fix() doesn't
+             * do it here.  We can make this a user setting later.
+             */
+
+            int c = perf().color(seqid);
+            Color backcolor = get_color_fix(PaletteColor(c));
+            if (seq->playing())
+                backcolor.setAlpha(s_alpha_playing);
+            else
+                backcolor.setAlpha(s_alpha_muted);
+
             seq->reset_draw_trigger_marker();
             int lenw = lens / scale_zoom();
             trigger trig;
@@ -781,40 +798,25 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int xmax = x + w;
                     int y = c_names_y * seqid + 1;
                     int h = c_names_y - 2;
-                    x -= x_offset;                  /* adjust  */
+                    x -= x_offset;                  /* adjust the x value   */
                     if (trig.selected())
-                        pen.setColor("orange");     /* Qt::red */
+                        pen.setColor(sel_color());  /* "orange", Qt::red    */
                     else
                         pen.setColor(Qt::black);
 
-                    /*
-                     * Get the seq's assigned colour and beautify it.
-                     */
-
-                    int c = perf().color(seqid);
-                    Color backcolor = get_color_fix(PaletteColor(c));
-
-                    /*
-                     * Reduce the strength of this color.  Not sure why
-                     * get_color_fix() doesn't do it here.  We can make
-                     * this a user setting later.
-                     */
-
-                    backcolor.setAlpha(164);
-
-                    pen.setStyle(Qt::SolidLine);    // main seq icon box
+                    pen.setStyle(Qt::SolidLine);    /* main seq icon box    */
                     brush.setColor(backcolor);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
                     painter.drawRect(x, y, w, h);
 
-                    pen.setColor(Qt::lightGray);    // lines between panels
+                    pen.setColor(Qt::lightGray);    /* lines between panels */
                     painter.setPen(pen);
                     painter.drawLine(x+1, y-1, x+w-2, y-1);
                     painter.drawLine(x+1, y+h+1, x+w-2, y+h+1);
 
-                    brush.setStyle(Qt::NoBrush);  // seq grab handle left
+                    brush.setStyle(Qt::NoBrush);    /* seq grab handle left */
                     painter.setBrush(brush);
                     pen.setColor(Qt::black);
                     painter.setPen(pen);

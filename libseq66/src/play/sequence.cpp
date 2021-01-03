@@ -775,6 +775,34 @@ sequence::toggle_playing (midipulse tick, bool resumenoteons)
 }
 
 /**
+ * \setter m_song_mute
+ *      This function also calls set_dirty_mp() to make sure that the
+ *      perfnames panel is updated to show the new mute status of the
+ *      sequence.
+ *
+ * \param mute
+ *      True if the sequence is to be muted.
+ *
+ *  For Seq66, this function also calls set_playing() to the opposite of the
+ *  mute value.
+ */
+
+void
+sequence::set_song_mute (bool mute)
+{
+    m_song_mute = mute;
+    set_playing(! mute);
+    set_dirty_mp();
+}
+
+void
+sequence::toggle_song_mute ()
+{
+    bool mute = ! m_song_mute;
+    set_song_mute(mute);
+}
+
+/**
  * \setter m_queued and m_queued_tick
  *      Toggles the queued flag and sets the dirty-mp flag.  Also calculates
  *      the queued tick based on m_last_tick.

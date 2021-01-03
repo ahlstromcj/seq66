@@ -970,37 +970,8 @@ public:
     }
 
     void set_rec_vol (int rec_vol);
-
-    /**
-     * \setter m_song_mute
-     *      This function also calls set_dirty_mp() to make sure that the
-     *      perfnames panel is updated to show the new mute status of the
-     *      sequence.
-     *
-     * \param mute
-     *      True if the sequence is to be muted.
-     *
-     *  For Seq66, this function also calls set_playing() to the opposite of the
-     *  mute value.
-     */
-
-    void set_song_mute (bool mute)
-    {
-        m_song_mute = mute;
-        set_playing(! mute);            /* new with Sequencer66             */
-        set_dirty_mp();
-    }
-
-    /**
-     * \setter m_song_mute
-     *      This function toogles the song muting status.
-     */
-
-    void toggle_song_mute ()
-    {
-        m_song_mute = ! m_song_mute;
-        set_dirty_mp();
-    }
+    void set_song_mute (bool mute);
+    void toggle_song_mute ();
 
     bool get_song_mute () const
     {

@@ -59,18 +59,18 @@ qperftime::qperftime
 ) :
     QWidget             (parent),
     qperfbase           (p, zoom, snap, 1, 1 * 1),
-    m_timer             (new QTimer(this)),     // refresh timer for redraws
+    m_timer             (new QTimer(this)),     /* refresh/redraw timer */
     m_font              (),
     m_4bar_offset       (0)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_font.setBold(true);
     m_font.setPointSize(6);
-    QObject::connect
+    connect
     (
         m_timer, SIGNAL(timeout()), this, SLOT(conditional_update())
     );
-    m_timer->setInterval(2 * usr().window_redraw_rate());    // 50
+    m_timer->setInterval(2 * usr().window_redraw_rate());
     m_timer->start();
 }
 
@@ -96,16 +96,11 @@ qperftime::conditional_update ()
         update();
 }
 
-/**
- *
- */
-
 void
 qperftime::paintEvent (QPaintEvent * /*qpep*/)
 {
-    /* QRect r = qpep->rect(); */
-
     int xwidth = width();
+    int yheight = height();
     QPainter painter(this);
     QBrush brush(Qt::lightGray, Qt::SolidPattern);
     QPen pen(Qt::black);
@@ -113,7 +108,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
     painter.setPen(pen);
     painter.setBrush(brush);
     painter.setFont(m_font);
-    painter.drawRect(0, 0, width(), height());
+    painter.drawRect(0, 0, xwidth, yheight);
     if (! is_initialized())
         set_initialized();
 
@@ -122,19 +117,10 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
      */
 
     midipulse tick0 = scroll_offset();
-    midipulse windowticks = pix_to_tix(xwidth);    // ([r.]width());
+    midipulse windowticks = pix_to_tix(xwidth);
     midipulse tick1 = tick0 + windowticks;
     midipulse tickstep = 1;
     int measure = 0;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "ticks %ld to %ld step %ld; measure = %ld, beat = %ld\n",
-        tick0, tick1, tickstep, measure_length(), beat_length()
-    );
-#endif
-
     for (midipulse tick = tick0; tick < tick1; tick += tickstep)
     {
         if (measure_length() == 0)
@@ -148,7 +134,7 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
             pen.setColor(Qt::black);                        /* measure */
             pen.setWidth(2);
             painter.setPen(pen);
-            painter.drawLine(x_pos, 0, x_pos, height());
+            painter.drawLine(x_pos, 0, x_pos, yheight);
 
             /*
              * Draw the measure numbers if they will fit.  Determined
@@ -168,33 +154,29 @@ qperftime::paintEvent (QPaintEvent * /*qpep*/)
 
     int left = position_pixel(perf().get_left_tick());
     int right = position_pixel(perf().get_right_tick());
-    if (left >= scroll_offset_x() && left <= scroll_offset_x() + width())
+    if (left >= scroll_offset_x() && left <= scroll_offset_x() + xwidth)
     {
         pen.setColor(Qt::black);
         brush.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(left, height() - 9, 7, 10);
+        painter.drawRect(left, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(left + 1, 21, "L");
+        painter.drawText(left + 1, 18, "L");
     }
-    if (right >= scroll_offset_x() && right <= scroll_offset_x() + width())
+    if (right >= scroll_offset_x() && right <= scroll_offset_x() + xwidth)
     {
         pen.setColor(Qt::black);
         brush.setColor(Qt::black);
         painter.setBrush(brush);
         painter.setPen(pen);
-        painter.drawRect(right - 7, height() - 9, 7, 10);
+        painter.drawRect(right - 7, yheight - 12, 7, 10);
         pen.setColor(Qt::white);
         painter.setPen(pen);
-        painter.drawText(right - 7 + 1, 21, "R");
+        painter.drawText(right - 7 + 1, 18, "R");
     }
 }
-
-/**
- *
- */
 
 QSize
 qperftime::sizeHint () const
@@ -203,10 +185,6 @@ qperftime::sizeHint () const
     int width = horizSizeHint();
     return QSize(width, height);
 }
-
-/**
- *
- */
 
 void
 qperftime::mousePressEvent (QMouseEvent * event)
@@ -217,19 +195,15 @@ qperftime::mousePressEvent (QMouseEvent * event)
     tick -= (tick % snap());
     if (event->y() > height() * 0.5)
     {
-        if (event->button() == Qt::LeftButton)  // move L/R markers
+        if (event->button() == Qt::LeftButton)      /* move L/R markers     */
             perf().set_left_tick(tick);
 
         if (event->button() == Qt::RightButton)
             perf().set_right_tick(tick + snap());
     }
     else
-        perf().set_tick(tick);              // reposition timecode
+        perf().set_tick(tick);                      /* reposition timecode  */
 }
-
-/**
- *
- */
 
 void
 qperftime::mouseReleaseEvent (QMouseEvent *)
@@ -237,19 +211,11 @@ qperftime::mouseReleaseEvent (QMouseEvent *)
     // no code
 }
 
-/**
- *
- */
-
 void
 qperftime::mouseMoveEvent (QMouseEvent *)
 {
     // no code
 }
-
-/**
- *
- */
 
 void
 qperftime::set_guides (midipulse snap, midipulse measure)

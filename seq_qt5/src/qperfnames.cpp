@@ -73,7 +73,8 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
     m_set_text_y        (m_nametext_y * p.seqs_in_set() / 2)
 {
     /*
-     * This policy is necessary in order to allow the vertical scrollbar to work.
+     * This policy is necessary in order to allow the vertical scrollbar to
+     * work.
      */
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
@@ -163,22 +164,22 @@ qperfnames::paintEvent (QPaintEvent *)
                 QString chinfo(name);
                 if (muted)
                 {
-                    brush.setColor(Qt::black);
+                    brush.setColor(grey_color());       // Qt::black
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);
-                    pen.setColor(Qt::white);
+                    pen.setColor(back_color());         // Qt::white
                 }
                 else
                 {
                     int c = s->color();
                     Color backcolor = get_color_fix(PaletteColor(c));
-                    brush.setColor(Qt::white);
+                    brush.setColor(back_color());       // Qt::white
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);
                     brush.setColor(backcolor);
-                    pen.setColor(Qt::black);
+                    pen.setColor(fore_color());         // Qt::black
                 }
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 10, chinfo);
@@ -198,10 +199,6 @@ qperfnames::paintEvent (QPaintEvent *)
         }
     }
 }
-
-/**
- *
- */
 
 QSize
 qperfnames::sizeHint () const
@@ -233,10 +230,6 @@ qperfnames::convert_y (int y)
     return seq;
 }
 
-/**
- *
- */
-
 void
 qperfnames::mousePressEvent (QMouseEvent * ev)
 {
@@ -250,19 +243,11 @@ qperfnames::mousePressEvent (QMouseEvent * ev)
     }
 }
 
-/**
- *
- */
-
 void
 qperfnames::mouseReleaseEvent (QMouseEvent * /*ev*/)
 {
     // no code; add a call to update() if a change is made
 }
-
-/**
- *
- */
 
 void
 qperfnames::mouseMoveEvent (QMouseEvent * /*event*/)
