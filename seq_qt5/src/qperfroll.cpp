@@ -42,7 +42,7 @@
 #include <QPainter>
 #include <QTimer>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
 #include "gui_palette_qt5.hpp"
@@ -65,7 +65,7 @@ const int c_size_box_w       = 6;                /* 3 is too small */
 const int c_size_box_click_w = c_size_box_w + 1 ;
 
 /**
- *
+ *  Principal constructor.
  */
 
 qperfroll::qperfroll
@@ -245,10 +245,6 @@ qperfroll::sizeHint () const
     return QSize(width, height);
 }
 
-/**
- *
- */
-
 void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
@@ -375,10 +371,6 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     set_dirty();                                    /* force a redraw       */
 }
 
-/**
- *
- */
-
 void
 qperfroll::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -414,10 +406,6 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
     mLastTick = 0;
     set_dirty();                                    /* force a redraw       */
 }
-
-/**
- *
- */
 
 void
 qperfroll::mouseMoveEvent (QMouseEvent * event)
@@ -530,10 +518,6 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     mLastTick = tick;
     set_dirty();                                    /* force a redraw       */
 }
-
-/**
- *
- */
 
 void
 qperfroll::keyPressEvent (QKeyEvent * event)
@@ -649,19 +633,11 @@ qperfroll::keyPressEvent (QKeyEvent * event)
         QWidget::keyPressEvent(event);
 }
 
-/**
- *
- */
-
 void
 qperfroll::keyReleaseEvent (QKeyEvent * /*event*/)
 {
     // no code
 }
-
-/**
- *
- */
 
 void
 qperfroll::add_trigger(int seq, midipulse tick)
@@ -669,19 +645,11 @@ qperfroll::add_trigger(int seq, midipulse tick)
     perf().add_trigger(seq, tick);
 }
 
-/**
- *
- */
-
 void
 qperfroll::half_split_trigger (int seq, midipulse tick)
 {
     perf().split_trigger(seq, tick);
 }
-
-/**
- *
- */
 
 void
 qperfroll::delete_trigger(int seq, midipulse tick)
@@ -703,10 +671,6 @@ qperfroll::set_guides (midipulse snap, midipulse measure, midipulse beat)
         set_dirty();
 }
 
-/**
- *
- */
-
 void
 qperfroll::set_adding (bool a)
 {
@@ -720,19 +684,11 @@ qperfroll::set_adding (bool a)
     set_dirty();
 }
 
-/**
- *
- */
-
 void
 qperfroll::undo ()
 {
     perf().pop_trigger_undo();
 }
-
-/**
- *
- */
 
 void
 qperfroll::redo ()
@@ -740,18 +696,16 @@ qperfroll::redo ()
     perf().pop_trigger_redo();
 }
 
-/**
- *
- */
-
 void
 qperfroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int xwidth = r.width();
     int yheight = r.height();
 
-    QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
-    QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
+//  QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
+//  QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
+    QColor background = back_color();
+    QColor foreground = fore_color();
     QBrush brush(background);                           /* Qt::NoBrush      */
     QPen pen(foreground);                               /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
@@ -792,10 +746,6 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
         painter.drawLine(x_pos, 0, x_pos, yheight);
     }
 }
-
-/**
- *
- */
 
 void
 qperfroll::draw_triggers (QPainter & painter, const QRect & r)

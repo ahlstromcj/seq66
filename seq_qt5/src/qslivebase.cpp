@@ -30,7 +30,7 @@
  *  This class is the Qt counterpart to the mainwid class.
  */
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr().mainwid_spacing()   */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivebase.hpp"
@@ -152,19 +152,11 @@ qslivebase::update_bank (int bank)
     set_bank(bank, true);
 }
 
-/**
- *
- */
-
 void
 qslivebase::color_by_number (int i)
 {
     perf().color(m_current_seq, i);
 }
-
-/**
- *
- */
 
 bool
 qslivebase::copy_seq ()
@@ -201,10 +193,6 @@ qslivebase::delete_seq ()
 {
     return perf().remove_sequence(m_current_seq);
 }
-
-/**
- *
- */
 
 bool
 qslivebase::paste_seq ()

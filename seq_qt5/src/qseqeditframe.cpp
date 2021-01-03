@@ -84,12 +84,12 @@ QGridLayout     | y |                                                   | a |
 #include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <qmath.h>                      /* pow()                            */
 
-#include "cfg/settings.hpp"             /* seq66::usr()                     */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqdata.hpp"
 #include "qseqeditframe.hpp"
-#include "qseqkeys.hpp"
-#include "qseqroll.hpp"
+#include "qseqkeys.hpp"                 /* vertical zoom                    */
+#include "qseqroll.hpp"                 /* horizontal and vertical zoom     */
 #include "qseqtime.hpp"
 #include "qstriggereditor.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon()             */

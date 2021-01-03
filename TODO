@@ -89,12 +89,6 @@ HOT ITEMS:
 
     UI:
 
-        Consider adding vertical zoom to the seqroll and perfroll.
-
-        The legacy edit frame in the Edit tab has a weird issue painting some
-        of the horizontal lines.  Also make it work more like the external
-        frame.
-
         Major issues with New and Opening files:
 
             File / New does not work after using the Recent Files menu
@@ -105,13 +99,6 @@ HOT ITEMS:
         time signatures.  Same for odd pattern lengths!
 
         Add a Redo key to correspond to the Undo key.
-
-        HOT!
-        The grey bars for the musical scale are not drawn correctly!  Very
-        thin!
-
-        The Home and End keys do not work in the seqroll, contrary to the
-        documentation.  Same for Shift-Page-Up and Shift-Page-Down.
 
         The Event Pane also does not perform as documented.
 
@@ -125,7 +112,7 @@ HOT ITEMS:
 
         Look into the "nativeVirtualKey" functionality to support
 
-        locale-independent key processing.
+        Locale-independent key processing.
 
     Seq keys:
 

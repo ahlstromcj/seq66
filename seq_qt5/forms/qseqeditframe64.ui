@@ -573,7 +573,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>&quot;Zoom level. Resets to the default zoom value, 2.&quot;</string>
+        <string>Horizontal zoom level. Resets to the default zoom value, 2.</string>
        </property>
        <property name="text">
         <string>Z</string>
@@ -595,7 +595,9 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Zoom level in 'pixels:ticks', the number of ticks or pulses represented by 1 pixel.  A lower value zooms 'in'.</string>
+        <string>Horizontal zoom level in 'pixels:ticks'.  It is the number
+of ticks or pulses represented by 1 pixel.  A lower value
+zooms 'in'.</string>
        </property>
       </widget>
      </item>
@@ -724,9 +726,12 @@
    <item row="2" column="0">
     <layout class="QVBoxLayout" name="vboxCenterLayout">
      <item>
-      <layout class="QHBoxLayout" name="timeHorizLayout" stretch="0,0">
+      <layout class="QHBoxLayout" name="timeHorizLayout" stretch="0,0,0,0">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <item>
-        <widget class="QPushButton" name="btnTimeDummy">
+        <widget class="QPushButton" name="btnKeyVZoomOut">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -735,18 +740,66 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>48</width>
-           <height>21</height>
+           <width>16</width>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>48</width>
-           <height>21</height>
+           <width>16</width>
+           <height>20</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Vertical zoom out.  Same as the 'v' key in the piano roll.</string>
+         </property>
          <property name="text">
-          <string/>
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnKeyVZoomReset">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Vertical zoom reset (to defined &quot;key height&quot;).  Same as
+the '0' key in the piano roll.</string>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnKeyVZoomIn">
+         <property name="minimumSize">
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Vertical zoom in.  Same as the 'V' key in the piano roll.</string>
+         </property>
+         <property name="text">
+          <string>+</string>
          </property>
         </widget>
        </item>

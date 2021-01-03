@@ -108,8 +108,8 @@ qseqroll::qseqroll
     m_note_x                (0),
     m_note_width            (0),
     m_note_y                (0),
-    m_note_height           (0),
     m_keypadding_x          (c_keyboard_padding_x),
+    m_v_zooming             (false),
     m_last_base_note        (-1)
 {
     setAttribute(Qt::WA_StaticContents);
@@ -171,8 +171,10 @@ qseqroll::zoom_in ()
 {
     bool result = qseqbase::zoom_in();
     if (result)
+    {
         result = m_parent_frame->set_zoom(zoom());
-
+        set_dirty();
+    }
     return result;
 }
 
@@ -187,8 +189,10 @@ qseqroll::zoom_out ()
 {
     bool result = qseqbase::zoom_out();
     if (result)
+    {
         result = m_parent_frame->set_zoom(zoom());
-
+        set_dirty();
+    }
     return result;
 }
 
@@ -199,7 +203,57 @@ qseqroll::zoom_out ()
 bool
 qseqroll::reset_zoom ()
 {
-    return m_parent_frame->reset_zoom();
+    bool result = m_parent_frame->reset_zoom();
+    set_dirty();
+    return result;
+}
+
+bool
+qseqroll::v_zoom_in ()
+{
+    bool result = m_seqkeys_wid->v_zoom_in();
+    if (result)
+    {
+        int h = m_seqkeys_wid->note_height();
+        unit_height(h);
+        total_height(h * c_num_keys);
+        m_v_zooming = true;
+        set_dirty();
+        m_parent_frame->set_dirty();
+    }
+    return result;
+}
+
+bool
+qseqroll::v_zoom_out ()
+{
+    bool result = m_seqkeys_wid->v_zoom_out();
+    if (result)
+    {
+        int h = m_seqkeys_wid->note_height();
+        unit_height(h);
+        total_height(h * c_num_keys);
+        m_v_zooming = true;
+        set_dirty();
+        m_parent_frame->set_dirty();
+    }
+    return result;
+}
+
+bool
+qseqroll::reset_v_zoom ()
+{
+    bool result = m_seqkeys_wid->reset_v_zoom();
+    if (result)
+    {
+        int h = m_seqkeys_wid->note_height();
+        unit_height(h);
+        total_height(h * c_num_keys);
+        set_dirty();
+        m_parent_frame->set_dirty();
+    }
+    m_v_zooming = false;
+    return result;
 }
 
 /**
@@ -425,8 +479,8 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         painter.setPen(pen);
         if (m_edit_mode == sequence::editmode::drum)
         {
-            int drumx = x - m_note_height * 0.5 + m_keypadding_x;
-            painter.drawRect(drumx, y, selw + m_note_height, selh);
+            int drumx = x - unit_height() * 0.5 + m_keypadding_x;
+            painter.drawRect(drumx, y, selw + unit_height(), selh);
         }
         else
             painter.drawRect(x + m_keypadding_x, y, selw, selh);
@@ -473,16 +527,6 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf
-    (
-        "qseqroll::draw_grid(%d) at (x,y,w,h) = (%d, %d, %d, %d)\n",
-        s_count++, r.x(), r.y(), r.width(), r.height()
-    );
-#endif
-
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     painter.drawRect(r);
@@ -505,10 +549,9 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
             pen.setColor(fore_color());             /* Qt::darkGray         */
         else if ((modkey % c_octave_size) == (c_octave_size-1))
             pen.setColor(step_color());             /* Qt::lightGray        */
+        else
+            pen.setColor(step_color());             /* Qt::lightGray        */
 
-#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
-        pen.setStyle(Qt::SolidLine);
-#endif
         painter.setPen(pen);
 
         /*
@@ -516,7 +559,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          */
 
         int y = key * unit_height();
-        painter.drawLine(r.x(), y, r.x()+r.width(), y);
+        painter.drawLine(r.x(), y, r.x() + r.width(), y);
         if (m_scale != scales::off)
         {
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
@@ -560,6 +603,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
     painter.setPen(pen);
 #endif
+
     for (int tick = starttick; tick < endtick; tick += increment)
     {
         int x_offset = xoffset(tick) - scroll_offset_x();
@@ -617,6 +661,8 @@ qseqroll::draw_notes
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
+    int unitheight = unit_height();
+    int noteheight = unitheight - 3;
     event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
@@ -635,10 +681,8 @@ qseqroll::draw_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unit_height()) -
-                unit_height() + 1;
-
-            m_note_height = unit_height() - 3;
+            m_note_y = total_height() - (ni.note() * unitheight) -
+                unitheight + 1;
 
             int in_shift = 0;
             int length_add = 0;
@@ -672,8 +716,6 @@ qseqroll::draw_notes
             if (background)                         // draw background note
             {
                 length_add = 1;
-//              pen.setColor(backseq_color());         // note border color
-//              brush.setColor(grey_color());
                 pen.setColor(fore_color());         // note border color
                 brush.setColor(backseq_color());
             }
@@ -689,7 +731,7 @@ qseqroll::draw_notes
             brush.setStyle(Qt::SolidPattern);
             painter.setBrush(brush);
             painter.setPen(pen);
-            painter.drawRect(m_note_x, m_note_y, m_note_width, m_note_height);
+            painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
             if (ni.finish() < ni.start())   // shadow notes before zero
             {
 #if defined THIS_CODE_ADDS_VALUE
@@ -698,7 +740,7 @@ qseqroll::draw_notes
                 painter.drawRect
                 (
                     m_keypadding_x, m_note_y,
-                    tix_to_pix(ni.finish()), m_note_height
+                    tix_to_pix(ni.finish()), noteheight
                 );
             }
 
@@ -718,13 +760,13 @@ qseqroll::draw_notes
                 if (! background)
                 {
                     int x_shift = m_note_x + in_shift;
-                    int h_minus = m_note_height - 1;
+                    int h_minus = noteheight - 1;
                     if (ni.finish() >= ni.start())  // note highlight
                     {
                         painter.drawRect
                         (
                             x_shift, m_note_y,
-                            m_note_width+length_add-1, h_minus
+                            m_note_width + length_add - 1, h_minus
                         );
                     }
                     else
@@ -753,9 +795,8 @@ qseqroll::draw_notes
 void
 qseqroll::draw_drum_note (QPainter & painter)
 {
-    m_note_height = unit_height();
-
-    int h2 = m_note_height / 2;
+    int noteheight = unit_height();
+    int h2 = noteheight / 2;
     int x0 = m_note_x - h2;
     int x1 = m_note_x + h2;
     int y1 = m_note_y + h2 - 2;
@@ -764,7 +805,7 @@ qseqroll::draw_drum_note (QPainter & painter)
         QPointF(x0, y1),
         QPointF(m_note_x, m_note_y - 2),
         QPointF(x1, y1),
-        QPointF(m_note_x, m_note_y + m_note_height - 2)
+        QPointF(m_note_x, m_note_y + noteheight - 2)
     };
     painter.drawPolygon(points, 4);
 
@@ -801,6 +842,7 @@ qseqroll::draw_drum_notes
     seq::pointer s = background ?
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
+    int noteheight = unit_height();
     event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
@@ -819,10 +861,9 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unit_height()) -
-                unit_height() - 1 + 2;
+            m_note_y = total_height() - (ni.note() * noteheight) -
+                noteheight - 1 + 2;
 
-            m_note_height = unit_height();
             if (dt == sequence::draw::linked)
             {
                 if (ni.finish() >= ni.start())
@@ -912,7 +953,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
             drop_x(norm_x);                         /* select non-snapped x */
             if (m_edit_mode == sequence::editmode::drum)
             {
-                int dropxadj = drop_x() - m_note_height / 2;    /* padding  */
+                int dropxadj = drop_x() - unit_height() / 2;    /* padding  */
                 convert_xy(dropxadj, drop_y(), tick_s, note);
             }
             else
@@ -1225,13 +1266,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         }
         else
         {
-            /*
-            if (event->key() == Qt::Key_Home)
-            {
-                s->set_last_tick(0);
-                set_dirty();
-            }
-             */
             if (event->key() == Qt::Key_Left)
             {
                 move_selected_notes(-1, 0);
@@ -1273,23 +1307,23 @@ qseqroll::keyPressEvent (QKeyEvent * event)
             else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
             {
                 if (event->key() == Qt::Key_Z)
-                {
                     (void) zoom_in();
-                    set_dirty();
-                }
+                else if (event->key() == Qt::Key_V)
+                    (void) v_zoom_in();
             }
             else
             {
                 if (event->key() == Qt::Key_Z)
-                {
                     (void) zoom_out();
-                    set_dirty();
-                }
                 else if (event->key() == Qt::Key_0)
                 {
-                    (void) reset_zoom();
-                    set_dirty();
+                    if (m_v_zooming)
+                        (void) reset_v_zoom();
+                    else
+                        (void) reset_zoom();
                 }
+                else if (event->key() == Qt::Key_V)
+                    (void) v_zoom_out();
             }
         }
         if (! is_dirty())

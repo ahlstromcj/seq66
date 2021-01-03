@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2020-11-27
+ * \updates       2021-01-03
  * \license       GNU GPLv2 or above
  *
  */
@@ -219,6 +219,9 @@ private slots:
     void update_recording_volume (int index);
     void reset_recording_volume ();
     void slot_follow (bool ischecked);
+    void v_zoom_in ();
+    void v_zoom_out ();
+    void reset_v_zoom ();
 
 private:        /* slot helper functions        */
 

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-02
+ * \updates       2021-01-03
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -327,7 +327,7 @@ s_lookup_chord (const std::string & chordname)
 #endif  // USE_S_LOOKUP_CHORD
 
 /**
- *
+ *  Hold the entries in the "Vel" drop-down.
  */
 
 static const int s_rec_vol_items [] =
@@ -768,16 +768,13 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(reset_grid_snap())
     );
 
-    // see change_ppqn()
     set_snap(sm_initial_snap * perf().ppqn() / SEQ66_DEFAULT_PPQN);
-
     qt_set_icon(note_length_xpm, ui->m_button_note);
     connect
     (
         ui->m_button_note, SIGNAL(clicked(bool)),
         this, SLOT(reset_note_length())
     );
-    // see change_ppqn()
     set_note_length(sm_initial_note_length * perf().ppqn() / SEQ66_DEFAULT_PPQN);
 
     /*
@@ -821,7 +818,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(slot_update_zoom(int))
     );
 
-    // see change_ppqn()
     int zoom = usr().zoom();
     if (usr().zoom() == SEQ66_USE_ZOOM_POWER_OF_2)      /* i.e. 0 */
         zoom = zoom_power_of_2(perf().ppqn());
@@ -899,6 +895,26 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         m_bgsequence = seq_pointer()->background_sequence();
 
     set_background_sequence(m_bgsequence);
+
+    /*
+     * Tiny vertical zoom keys
+     */
+
+    connect
+    (
+        ui->btnKeyVZoomIn, SIGNAL(clicked(bool)),
+        this, SLOT(v_zoom_in())
+    );
+    connect
+    (
+        ui->btnKeyVZoomReset, SIGNAL(clicked(bool)),
+        this, SLOT(reset_v_zoom())
+    );
+    connect
+    (
+        ui->btnKeyVZoomOut, SIGNAL(clicked(bool)),
+        this, SLOT(v_zoom_out())
+    );
 
     /*
      * Note-entry mode
@@ -1210,10 +1226,6 @@ qseqeditframe64::keyPressEvent (QKeyEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qseqeditframe64::keyReleaseEvent (QKeyEvent *)
 {
@@ -1234,10 +1246,6 @@ qseqeditframe64::on_sequence_change (seq::number seqno, bool /*recreate*/)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qseqeditframe64::on_automation_change (automation::slot s)
 {
@@ -1247,7 +1255,6 @@ qseqeditframe64::on_automation_change (automation::slot s)
     }
     return true;
 }
-
 
 /**
  *  Instantiates the various editable areas (panels) of the seqedit
@@ -1264,10 +1271,11 @@ qseqeditframe64::on_automation_change (automation::slot s)
 void
 qseqeditframe64::initialize_panels ()
 {
-    int height = usr().key_height() * c_num_keys + 1;
+    int noteheight = usr().key_height();
+    int height = noteheight * c_num_keys + 1;
     m_seqkeys = new qseqkeys
     (
-        perf(), seq_pointer(), ui->keysScrollArea, usr().key_height(), height
+        perf(), seq_pointer(), ui->keysScrollArea, noteheight, height
     );
     ui->keysScrollArea->setWidget(m_seqkeys);
     ui->keysScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1307,7 +1315,7 @@ qseqeditframe64::initialize_panels ()
     m_seqevent = new qstriggereditor
     (
         perf(), seq_pointer(), zoom(), m_snap,
-        usr().key_height(), ui->eventScrollArea
+        noteheight, ui->eventScrollArea
     );
     ui->eventScrollArea->setWidget(m_seqevent);
     ui->eventScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1410,10 +1418,6 @@ qseqeditframe64::increment_beats_per_measure ()
     ui->m_combo_bpm->setCurrentIndex(bpm - 1);
     set_beats_per_measure(bpm);
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::reset_beats_per_measure ()
@@ -1816,10 +1820,6 @@ qseqeditframe64::update_midi_channel (int index)
         set_dirty();
     }
 }
-
-/**
- *
- */
 
 void
 qseqeditframe64::reset_midi_channel ()
@@ -2575,6 +2575,25 @@ qseqeditframe64::set_zoom (int z)
     }
     return result;
 }
+
+void
+qseqeditframe64::v_zoom_in ()
+{
+    m_seqroll->v_zoom_in();
+}
+
+void
+qseqeditframe64::v_zoom_out ()
+{
+    m_seqroll->v_zoom_out();
+}
+
+void
+qseqeditframe64::reset_v_zoom ()
+{
+    m_seqroll->reset_v_zoom();
+}
+
 
 /**
  *  This override just reset the current index of the zoom combo-box.

@@ -70,7 +70,7 @@
 #include <QPaintEvent>
 #include <QTimer>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "os/timing.hpp"                /* seq66::microsleep()              */

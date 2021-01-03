@@ -32,7 +32,7 @@
 
 #include <QResizeEvent>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqtime.hpp"
 
@@ -44,7 +44,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qseqtime::qseqtime
@@ -173,10 +173,6 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.drawText(end_x, 18, tr("END"));
 }
 
-/**
- *
- */
-
 void
 qseqtime::resizeEvent (QResizeEvent * qrep)
 {
@@ -189,19 +185,11 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 
-/**
- *
- */
-
 void
 qseqtime::mousePressEvent (QMouseEvent *)
 {
     // no code
 }
-
-/**
- *
- */
 
 void
 qseqtime::mouseReleaseEvent (QMouseEvent *)
@@ -209,19 +197,11 @@ qseqtime::mouseReleaseEvent (QMouseEvent *)
     // no code
 }
 
-/**
- *
- */
-
 void
 qseqtime::mouseMoveEvent(QMouseEvent *)
 {
     // no code
 }
-
-/**
- *
- */
 
 QSize
 qseqtime::sizeHint() const

@@ -541,7 +541,7 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom out.</string>
+          <string>Horizontal zoom out.</string>
          </property>
          <property name="text">
           <string/>
@@ -560,7 +560,7 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Zoom in.</string>
+          <string>Horizontal zoom in.</string>
          </property>
          <property name="text">
           <string/>

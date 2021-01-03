@@ -34,9 +34,9 @@
  *  The height of the vertical lines is editable via the mouse.
  */
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqdata.hpp"
+#include "qseqdata.hpp"                 /* seq66::qseqdata                  */
 #include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
 
 /*
@@ -47,7 +47,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qseqdata::qseqdata
@@ -102,10 +102,6 @@ qseqdata::conditional_update ()
         update();
 }
 
-/**
- *
- */
-
 bool
 qseqdata::on_ui_change (seq::number seqno)
 {
@@ -114,10 +110,6 @@ qseqdata::on_ui_change (seq::number seqno)
 
     return true;
 }
-
-/**
- *
- */
 
 QSize
 qseqdata::sizeHint () const
@@ -218,19 +210,11 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     }
 }
 
-/**
- *
- */
-
 void
 qseqdata::resizeEvent (QResizeEvent * qrep)
 {
     qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
-
-/**
- *
- */
 
 void
 qseqdata::mousePressEvent (QMouseEvent * event)
@@ -268,10 +252,6 @@ qseqdata::mousePressEvent (QMouseEvent * event)
     m_dragging = true;                          /* may be dragging now      */
 }
 
-/**
- *
- */
-
 void
 qseqdata::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -306,10 +286,6 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
 
     m_dragging = false;
 }
-
-/**
- *
- */
 
 void
 qseqdata::mouseMoveEvent (QMouseEvent * event)
@@ -368,10 +344,6 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
         drop_y(current_y());
     }
 }
-
-/**
- *
- */
 
 void
 qseqdata::set_data_type (midibyte status, midibyte control)

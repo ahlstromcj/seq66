@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-25
+ * \updates       2021-01-03
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -66,8 +66,8 @@ public:
         performer & perf,
         seq::pointer seqp,
         QWidget * parent,
-        int keyHeight       = 12,
-        int keyAreaHeight   = 12 * c_num_keys + 1
+        int keyheight       = 12,
+        int keyareaheight   = 12 * c_num_keys + 1
     );
 
     virtual ~qseqkeys ()
@@ -76,6 +76,19 @@ public:
     }
 
     void set_preview_key (int key);
+
+    int note_height () const
+    {
+        return m_key_y;
+    }
+
+    bool v_zoom_in ();
+    bool v_zoom_out ();
+    bool reset_v_zoom ();
+
+protected:
+
+    bool set_note_height (int h);
 
 protected:      // Qt overrides
 

@@ -35,7 +35,7 @@
 #include <QPainter>
 #include <QTimer>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config fucntions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui_palette_qt5.hpp"
@@ -243,10 +243,6 @@ qsliveframe::calculate_base_sizes (seq::number sn, int & basex, int & basey)
     basex = ui->frame->x() + 1 + (m_slot_w + m_mainwid_spacing) * i;
     basey = ui->frame->y() + 1 + (m_slot_h + m_mainwid_spacing) * j;
 }
-
-/**
- *
- */
 
 void
 qsliveframe::color_by_number (int i)
@@ -727,10 +723,6 @@ qsliveframe::draw_sequences ()
     (void) perf().slot_function(m_slot_function);
 }
 
-/**
- *
- */
-
 void
 qsliveframe::draw_box (QPainter & painter, int x, int y, int w, int h)
 {
@@ -1090,10 +1082,6 @@ qsliveframe::mouseMoveEvent (QMouseEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qsliveframe::mouseDoubleClickEvent (QMouseEvent * event)
 {
@@ -1116,10 +1104,6 @@ qsliveframe::mouseDoubleClickEvent (QMouseEvent * event)
         signal_call_editor_ex(m_current_seq);
     }
 }
-
-/**
- *
- */
 
 void
 qsliveframe::new_seq ()
@@ -1168,10 +1152,6 @@ qsliveframe::edit_seq_ex ()
     signal_call_editor_ex(m_current_seq);
 }
 
-/**
- *
- */
-
 void
 qsliveframe::edit_events ()
 {
@@ -1214,10 +1194,6 @@ qsliveframe::sequence_key_check ()
     }
 }
 
-/**
- *
- */
-
 bool
 qsliveframe::handle_key_press (const keystroke & k)
 {
@@ -1249,10 +1225,6 @@ qsliveframe::handle_key_press (const keystroke & k)
     }
     return done;
 }
-
-/**
- *
- */
 
 bool
 qsliveframe::handle_key_release (const keystroke & k)
@@ -1303,10 +1275,6 @@ qsliveframe::keyPressEvent (QKeyEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qsliveframe::keyReleaseEvent (QKeyEvent * event)
 {
@@ -1335,10 +1303,6 @@ qsliveframe::change_event (QEvent * evp)
 {
     changeEvent(evp);
 }
-
-/**
- *
- */
 
 void
 qsliveframe::copy_sequence ()
@@ -1376,10 +1340,6 @@ qsliveframe::delete_sequence ()
         // See above
     }
 }
-
-/**
- *
- */
 
 void
 qsliveframe::paste_sequence ()

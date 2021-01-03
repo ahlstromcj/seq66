@@ -55,7 +55,7 @@
 #include <QPaintEvent>
 #include <cmath>                        /* std::sin(radians)                */
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
 #include "gui_palette_qt5.hpp"          /* seq66::Color                     */
 #include "qloopbutton.hpp"
 
@@ -194,10 +194,6 @@ qloopbutton::qloopbutton
     QWidget tmp;
     text_color(tmp.palette().color(QPalette::ButtonText));
 }
-
-/**
- *
- */
 
 bool
 qloopbutton::initialize_text ()
@@ -385,20 +381,12 @@ qloopbutton::setup ()
     setAttribute(Qt::WA_Hover, false);              /* avoid nasty repaints */
 }
 
-/**
- *
- */
-
 void
 qloopbutton::set_checked (bool flag)
 {
     m_is_checked = flag;
     setChecked(flag);
 }
-
-/**
- *
- */
 
 bool
 qloopbutton::toggle_checked ()

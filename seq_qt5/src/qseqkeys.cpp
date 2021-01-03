@@ -63,7 +63,7 @@ static const int sc_keyarea_x = sc_key_x + 15;
 static const int sc_keyoffset_x = sc_keyarea_x - sc_key_x;
 
 /**
- *
+ *  Principal constructor.
  */
 
 qseqkeys::qseqkeys
@@ -94,19 +94,9 @@ qseqkeys::qseqkeys
     m_font.setPointSize(6);
 }
 
-/**
- *
- */
-
 void
 qseqkeys::paintEvent (QPaintEvent *)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqkeys::paintEvent(%d)\n", s_count++);
-#endif
-
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush (Qt::SolidPattern);
@@ -196,25 +186,11 @@ qseqkeys::paintEvent (QPaintEvent *)
     }
 }
 
-/**
- *
- */
-
 void
 qseqkeys::resizeEvent (QResizeEvent * qrep)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qseqkeys::resizeEvent(%d)\n", s_count++);
-#endif
-
     qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
-
-/**
- *
- */
 
 void
 qseqkeys::mousePressEvent (QMouseEvent * event)
@@ -234,10 +210,6 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
     update();
 }
 
-/**
- *
- */
-
 void
 qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -248,10 +220,6 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
     }
     update();
 }
-
-/**
- *
- */
 
 void
 qseqkeys::mouseMoveEvent (QMouseEvent * event)
@@ -280,10 +248,6 @@ qseqkeys::sizeHint () const
 {
     return QSize(sc_keyarea_x, m_key_area_y);
 }
-
-/**
- *
- */
 
 void
 qseqkeys::convert_y (int y, int & note)
@@ -317,6 +281,37 @@ qseqkeys::set_preview_key (int key)
     m_is_previewing = key >= 0;
     m_preview_key = key;
     update();
+}
+
+bool
+qseqkeys::set_note_height (int h)
+{
+    bool result = usr().valid_key_height(h) && h != note_height();
+    if (result)
+    {
+        m_key_y = h;
+        m_key_area_y = h * c_num_keys;
+        update();
+    }
+    return result;
+}
+
+bool
+qseqkeys::v_zoom_in ()
+{
+    return set_note_height(note_height() + 1);
+}
+
+bool
+qseqkeys::v_zoom_out ()
+{
+    return set_note_height(note_height() - 1);
+}
+
+bool
+qseqkeys::reset_v_zoom ()
+{
+    return set_note_height(usr().key_height());
 }
 
 }           // namespace seq66

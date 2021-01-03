@@ -74,7 +74,7 @@
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "qliveframeex.hpp"
@@ -1282,10 +1282,6 @@ qsmainwnd::redo_live_frame ()
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::update_window_title (const std::string & fn)
 {
@@ -2193,10 +2189,6 @@ qsmainwnd::remove_all_live_frames ()
     }
 }
 
-/**
- *
- */
-
 void
 qsmainwnd::update_ppqn (int pindex)
 {
@@ -2590,10 +2582,6 @@ qsmainwnd::keyPressEvent (QKeyEvent * event)
     else
         QWidget::keyPressEvent(event);          /* event->ignore()?     */
 }
-
-/**
- *
- */
 
 void
 qsmainwnd::keyReleaseEvent (QKeyEvent * event)

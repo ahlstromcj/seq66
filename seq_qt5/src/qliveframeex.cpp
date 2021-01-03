@@ -35,7 +35,7 @@
 #include <QGridLayout>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/sequence.hpp"            /* seq66::sequence class            */
 #include "qliveframeex.hpp"

@@ -872,8 +872,7 @@ private:
 
     /**
      *  Defines the key height in the Kepler34 sequence editor.  Defaults to
-     *  12 pixels (8 is actually a bit nicer IMHO).  Will eventually affect
-     *  the Gtkmm-2.4 user-interface as well.
+     *  12 pixels (8 is actually a bit nicer IMHO).
      */
 
     int m_user_ui_key_height;
@@ -1584,6 +1583,11 @@ public:
         return m_user_ui_key_height;
     }
 
+    bool valid_key_height (int h) const
+    {
+        return h >= 4 && h <= 24;
+    }
+
     bool use_new_seqedit () const
     {
         return m_user_ui_seqedit_in_tab;
@@ -1736,7 +1740,7 @@ public:         // used in main application module and the usrfile class
 
     void key_height (int h)
     {
-        if (h >= 7 && h <= 24)
+        if (valid_key_height(h))
             m_user_ui_key_height = h;
     }
 

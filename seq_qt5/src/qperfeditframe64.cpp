@@ -34,7 +34,7 @@
 
 #include <QScrollBar>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+////////#include "cfg/settings.hpp"     /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfeditframe64.hpp"
 #include "qperfroll.hpp"

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-24
+ * \updates       2021-01-03
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -99,6 +99,10 @@ public:
     virtual ~qseqroll ();
 
     void follow_progress ();
+
+    bool v_zoom_in ();
+    bool v_zoom_out ();
+    bool reset_v_zoom ();
 
     virtual bool zoom_in () override;
     virtual bool zoom_out () override;
@@ -317,8 +321,8 @@ private:
     int m_note_x;               // note drawing variables
     int m_note_width;
     int m_note_y;
-    int m_note_height;
     int m_keypadding_x;
+    bool m_v_zooming;
 
     /**
      *  Hold the note value first grabbed when starting a move.

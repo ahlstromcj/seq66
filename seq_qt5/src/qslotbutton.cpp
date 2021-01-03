@@ -43,7 +43,7 @@
 
 #include <QPainter>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
+#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "qslotbutton.hpp"
 
 /*
