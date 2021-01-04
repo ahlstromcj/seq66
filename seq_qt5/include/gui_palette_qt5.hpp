@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2019-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  This module defines some QColor objects.  We might consider replacing the
@@ -37,6 +37,7 @@
  *  Note that the color names come from /usr/share/X11/rgb.txt as Qt requires.
  */
 
+#include <QBrush>
 #include <QColor>
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
@@ -56,11 +57,36 @@ namespace seq66
 using Color = QColor;
 
 /**
+ *  Provides a type for the brush object for the GUI framework.
+ */
+
+using Brush = QBrush;
+
+/**
+ *  Provides a map to brush styles.  The first values are NoBrush,
+ *  SolidPattern, and DenseXPattern (X = 1 to 7), and these are the ones we
+ *  are most interested in.  They are defined in the QtCore/qnamespace.h
+ *  header file.  The maximum useful value is ConicalGradientPattern = 17.
+ */
+
+using BrushStyle = Qt::BrushStyle;
+
+/**
  *  Implements a stock palette of QColor elements.
  */
 
 class gui_palette_qt5 : public basesettings
 {
+
+public:
+
+    enum class brush
+    {
+        empty,
+        note,
+        scale,
+        backseq
+    };
 
 private:
 
@@ -93,7 +119,7 @@ private:
     palette<Color> m_inv_palette;
 
     /**
-     *
+     *  Indicates if we have loaded the static colors.
      */
 
     bool m_statics_are_loaded;
@@ -103,6 +129,19 @@ private:
      */
 
     bool m_is_inverse;
+
+    /**
+     *  Stock brushes to increase speed.
+     */
+
+    Brush m_empty_brush;
+    BrushStyle m_empty_brush_style;
+    Brush m_note_brush;
+    BrushStyle m_note_brush_style;
+    Brush m_scale_brush;
+    BrushStyle m_scale_brush_style;
+    Brush m_backseq_brush;
+    BrushStyle m_backseq_brush_style;
 
 public:
 
@@ -221,6 +260,28 @@ public:
     void clear ();
     void clear_invertible ();
 
+    /*
+     * Brush handling.
+     */
+
+    Brush & get_brush (brush index);
+    BrushStyle get_brush_style (const std::string & name) const;
+    std::string get_brush_name (BrushStyle b) const;
+    bool set_brushes
+    (
+        const std::string & emptybrush,
+        const std::string & notebrush,
+        const std::string & scalebrush,
+        const std::string & backseqbrush
+    );
+    bool get_brush_names
+    (
+        std::string & emptybrush,
+        std::string & notebrush,
+        std::string & scalebrush,
+        std::string & backseqbrush
+    );
+
 private:
 
     bool add
@@ -263,6 +324,10 @@ extern Color step_paint ();
 extern Color extra_paint ();
 extern std::string get_color_name_ex (PaletteColor index);
 extern bool no_color (int c);
+extern Brush gui_empty_brush ();
+extern Brush gui_note_brush ();
+extern Brush gui_scale_brush ();
+extern Brush gui_backseq_brush ();
 
 }           // namespace seq66
 

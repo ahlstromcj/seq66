@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2020-12-21
- * \updates       2020-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -155,6 +155,14 @@ palettefile::parse_stream (std::ifstream & file)
                 ok = count == gui_palette_qt5::invertible_size();
         }
     }
+    if (ok)
+    {
+        std::string sempty = get_variable(file, "[brushes]", "empty");
+        std::string snote = get_variable(file, "[brushes]", "note");
+        std::string sscale = get_variable(file, "[brushes]", "scale");
+        std::string sbackseq = get_variable(file, "[brushes]", "backseq");
+        (void) m_palettes.set_brushes(sempty, snote, sscale, sbackseq);
+    }
     if (! ok)
         m_palettes.reset();
 
@@ -269,6 +277,31 @@ palettefile::write_stream (std::ofstream & file)
             file << stanza << "\n";
     }
 
+    std::string sempty;
+    std::string snote;
+    std::string sscale;
+    std::string sbackseq;
+    file <<
+        "\n"
+        "# This section defines brush styles to use.  The names are based on the\n"
+        "# names in the Qt::BrushStyle enumeration. The supported names are:\n"
+        "#\n"
+        "#    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,\n"
+        "#    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,\n"
+        "#    lineargradient, radialgradient, and conicalgradient.\n"
+        "\n"
+        "[brushes]\n"
+        "\n"
+        ;
+    if (m_palettes.get_brush_names(sempty, snote, sscale, sbackseq))
+    {
+        file
+            << "empty = " << sempty << "\n"
+            << "note = " << snote << "\n"
+            << "scale = " << sscale << "\n"
+            << "backseq = " << sbackseq << "\n"
+            ;
+    }
     file
         << "\n# End of " << name() << "\n#\n"
         << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"

@@ -358,9 +358,6 @@
            <height>11</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Up</string>
-         </property>
         </widget>
        </item>
       </layout>

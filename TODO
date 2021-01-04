@@ -34,10 +34,6 @@ HOT ITEMS:
         This would be useful for intros.  Currently can be achieved only in
         Song mode.
 
-        HOT!
-        Need to automatically select buss 0 or whatever the pattern uses when
-        the pattern editor is brought up.
-
     Playlist:
        
         When there is no playlist, or it cannot be loaded, or when it is
@@ -95,6 +91,8 @@ HOT ITEMS:
             The Recent Files menu usage does not clear the current song... it
             appends the recent song to the current song.
 
+            Not sure that this is really an issue, cannot duplicate.
+
         Somehow add back Jean Emmanuel feature to be able to specify weird
         time signatures.  Same for odd pattern lengths!
 
@@ -103,6 +101,8 @@ HOT ITEMS:
         The Event Pane also does not perform as documented.
 
         Use hatching to fill the scale lines in seqroll.
+
+        Should we implement the Grow button in the perfedit?
 
     Automation:
 

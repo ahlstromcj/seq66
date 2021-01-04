@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  Compare to perftime, the Gtkmm-2.4 implementation of this class.
@@ -61,9 +61,11 @@ qperftime::qperftime
     qperfbase           (p, zoom, snap, 1, 1 * 1),
     m_timer             (new QTimer(this)),     /* refresh/redraw timer */
     m_font              (),
-    m_4bar_offset       (0)
+    m_4bar_offset       (0),
+    m_move_left         (false)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setFocusPolicy(Qt::StrongFocus);
     m_font.setBold(true);
     m_font.setPointSize(6);
     connect
@@ -187,6 +189,53 @@ qperftime::sizeHint () const
 }
 
 void
+qperftime::keyPressEvent (QKeyEvent * event)
+{
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    if (isctrl)
+    {
+        /* no code yet */
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Left)
+        {
+            if (m_move_left)
+            {
+                midipulse tick = perf().get_left_tick() - snap();
+                perf().set_left_tick(tick);
+            }
+            else
+            {
+                midipulse tick = perf().get_right_tick() - snap();
+                perf().set_right_tick(tick);
+            }
+            set_dirty();
+            event->accept();
+        }
+        else if (event->key() == Qt::Key_Right)
+        {
+            if (m_move_left)
+            {
+                midipulse tick = perf().get_left_tick() + snap();
+                perf().set_left_tick(tick);
+            }
+            else
+            {
+                midipulse tick = perf().get_right_tick() + snap();
+                perf().set_right_tick(tick);
+            }
+            set_dirty();
+            event->accept();
+        }
+        else if (event->key() == Qt::Key_L)
+            m_move_left = true;
+        else if (event->key() == Qt::Key_R)
+            m_move_left = false;
+    }
+}
+
+void
 qperftime::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick = midipulse(event->x());
@@ -195,14 +244,32 @@ qperftime::mousePressEvent (QMouseEvent * event)
     tick -= (tick % snap());
     if (event->y() > height() * 0.5)
     {
+        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         if (event->button() == Qt::LeftButton)      /* move L/R markers     */
-            perf().set_left_tick(tick);
+        {
+            if (isctrl)
+                perf().set_start_tick(tick);
+            else
+                perf().set_left_tick(tick);
 
-        if (event->button() == Qt::RightButton)
+            set_dirty();
+        }
+        else if (event->button() == Qt::MiddleButton)    /* set start tick       */
+        {
+            perf().set_start_tick(tick);
+            set_dirty();
+        }
+        else if (event->button() == Qt::RightButton)
+        {
             perf().set_right_tick(tick + snap());
+            set_dirty();
+        }
     }
     else
+    {
         perf().set_tick(tick);                      /* reposition timecode  */
+        set_dirty();
+    }
 }
 
 void

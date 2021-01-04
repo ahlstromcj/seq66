@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-02
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -332,7 +332,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
     QPainter painter(this);
-    QBrush brush(Qt::white);                // QBrush brush(Qt::NoBrush);
+    QBrush brush(Qt::white, Qt::NoBrush);
     QPen pen(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
@@ -446,7 +446,8 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     progress_x(xoffset(seq_pointer()->get_last_tick()));
 
     /*
-     * End of draw_progress_on_window()
+     * End of draw_progress_on_window().  The next step is to restore
+     * the "empty" brush style in case the user draws a selection box.
      */
 
     brush.setStyle(Qt::NoBrush);        /* painter reset                */
@@ -564,10 +565,8 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
         {
             if (! c_scales_policy[int(m_scale)][(modkey - 1) % c_octave_size])
             {
-                pen.setColor(back_color());         /* Qt::lightGray        */
-                brush.setColor(step_color());       /* Qt::lightGray        */
-                brush.setStyle(Qt::Dense3Pattern);  /* Qt::SolidPattern     */
-                painter.setBrush(brush);
+                pen.setColor(fore_color());         /* Qt::lightGray        */
+                painter.setBrush(scale_brush());
                 painter.setPen(pen);
                 painter.drawRect(0, y + 1, r.width(), unit_height() - 1);
             }
@@ -711,27 +710,22 @@ qseqroll::draw_notes
                 length_add = 1;
             }
 #if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
-            pen.setColor(Qt::black);
+            pen.setColor(fore_color());
 #endif
             if (background)                         /* draw background note */
             {
                 length_add = 1;
-                pen.setColor(fore_color());         /* note border color    */
-                brush.setColor(backseq_color());
-                brush.setStyle(Qt::Dense2Pattern);  /* Qt::SolidPattern     */
+                painter.setBrush(backseq_brush());
             }
             else
             {
-                pen.setColor(fore_color());        // note border color
-                brush.setColor(fore_color());
-                brush.setStyle(Qt::SolidPattern);
+                painter.setBrush(note_brush());
             }
 
 #if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
             pen.setColor(Qt::black);
-#endif
-            painter.setBrush(brush);
             painter.setPen(pen);
+#endif
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
             if (ni.finish() < ni.start())   // shadow notes before zero
             {
@@ -753,9 +747,11 @@ qseqroll::draw_notes
             if (m_note_width > 3)
             {
                 if (ni.selected())
-                    brush.setColor(sel_color());    /* was just "orange"    */
+                    brush.setColor(sel_color());        /* was "orange"    */
                 else
-                    brush.setColor(back_color());   /* Qt::white            */
+                    brush.setColor(note_in_color());    /* was Qt::white   */
+
+//////////////      brush.setColor(back_color());   /* Qt::white            */
 
                 painter.setBrush(brush);
                 if (! background)

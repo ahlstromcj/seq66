@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2020-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -104,6 +104,16 @@ private:
     const Color m_note_out_color;
     const Color m_tempo_color;
     const Color m_grey_color;
+
+    /**
+     *  Similarly, we provide stock brushes that are configurable.  This saves
+     *  changing brush colors and styles so often.
+     */
+
+    const Brush m_blank_brush;      /* for clearing out rectangles, etc.    */
+    const Brush m_note_brush;       /* also for perfroll trigger boxes?     */
+    const Brush m_scale_brush;      /* background, usually hatched          */
+    const Brush m_backseq_brush;    /* another background, usually hatched  */
 
 protected:
 
@@ -376,6 +386,26 @@ public:
     const Color & grey_color () const
     {
         return m_grey_color;
+    }
+
+    const Brush & blank_brush () const
+    {
+        return m_blank_brush;
+    }
+
+    const Brush & note_brush () const
+    {
+        return m_note_brush;
+    }
+
+    const Brush & scale_brush () const
+    {
+        return m_scale_brush;
+    }
+
+    const Brush & backseq_brush () const
+    {
+        return m_backseq_brush;
     }
 
     const seq66::rect & old_rect () const

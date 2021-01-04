@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -114,6 +114,7 @@ qperfroll::qperfroll
 
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
+    m_font.setBold(true);
     m_font.setPointSize(6);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
@@ -214,13 +215,9 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
     painter.setPen(pen);
     painter.drawRect(0, 0, xwidth, yheight);
 
-    /*
-     * Draw progress.
-     */
-
-    midipulse tick = perf().get_tick();         // draw playhead
+    midipulse tick = perf().get_tick();         /* draw progresss playhead  */
     int progress_x = tick / scale_zoom();
-    pen.setColor(Qt::red);
+    pen.setColor(progress_color());             // Qt::red
     pen.setStyle(Qt::SolidLine);
     if (usr().progress_bar_thick())
         pen.setWidth(2);

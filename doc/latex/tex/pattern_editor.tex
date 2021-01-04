@@ -192,6 +192,9 @@
    \textsl{Seq66}, or one of the MIDI output devices set up by the computer and
    attached MIDI equipment.
    The button resets it to buss 0.
+   Note that, if the pattern's selected buss is not found, this entry will be
+   blank.  The user must select a valid buss from the current system
+   configuration.
 
 %  The settings look a lot like
 %  \figureref{fig:pattern_window_right_click_midi_bus}.
@@ -199,7 +202,7 @@
    \itempar{MIDI Out Channel}{pattern editor!midi out channel}
    This settings select the MIDI output channel.
    The possible values range from 1 to 16.
-   If instruments are defined in the 'usr' configuration file
+   If instruments are assigned in the 'usr' configuration file
    to that device and channel, their names will be shown.
 
 \subsection{Pattern Editor / Second Row}

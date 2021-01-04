@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-23
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -84,6 +84,7 @@ protected:
 protected:          // Qt overrides
 
     virtual void paintEvent (QPaintEvent *) override;
+    virtual void keyPressEvent (QKeyEvent *) override;
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;

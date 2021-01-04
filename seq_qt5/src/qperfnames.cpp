@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -78,10 +78,11 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
      */
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
+    setFocusPolicy(Qt::StrongFocus);
     m_font.setStyleHint(QFont::Monospace);                  // EXPERIMENT
-    m_font.setPointSize(s_pointsize);                       // 6
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
+    m_font.setPointSize(s_pointsize);                       // 6
 }
 
 /**
@@ -228,6 +229,40 @@ qperfnames::convert_y (int y)
         seq = 0;
 
     return seq;
+}
+
+void
+qperfnames::keyPressEvent (QKeyEvent * event)
+{
+    bool ignored = false;
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    if (isctrl)
+    {
+        /* no code yet */
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Left)
+        {
+            ignored = true;
+        }
+        else if (event->key() == Qt::Key_Right)
+        {
+            ignored = true;
+        }
+        else if (event->key() == Qt::Key_Up)
+        {
+            ignored = true;
+        }
+        else if (event->key() == Qt::Key_Down)
+        {
+            ignored = true;
+        }
+    }
+    if (ignored)
+        event->accept();
+    else
+        QWidget::keyPressEvent(event);
 }
 
 void

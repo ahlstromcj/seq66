@@ -62,7 +62,9 @@
 #include "util/strfunctions.hpp"        /* seq66::strip_quotes() function   */
 
 /**
- *  Provides names for the mouse-handling used by the application.
+ *  Provides names for the mouse-handling used by the application.  The fruity
+ *  mode is currently not supported in Seq66, but maybe someone will want it
+ *  back.
  */
 
 static const std::string c_interaction_method_names[3] =
@@ -103,15 +105,6 @@ namespace seq66
 
 rcfile::rcfile (const std::string & name, rcsettings & rcs) :
     configfile  (name, rcs)
-{
-    // Empty body
-}
-
-/**
- *  A rote destructor.
- */
-
-rcfile::~rcfile ()
 {
     // Empty body
 }

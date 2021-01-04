@@ -66,15 +66,7 @@ public:
     rcfile () = delete;
     rcfile (const rcfile &) = delete;
     rcfile & operator = (const rcfile &) = delete;
-
-    /*
-     * WTF?
-     *
-    rcfile (rcfile &&) = default;
-    rcfile & operator = (rcfile &&) = default;
-     */
-
-    virtual ~rcfile ();
+    virtual ~rcfile () = default;
 
     virtual bool parse () override;
     virtual bool write () override;

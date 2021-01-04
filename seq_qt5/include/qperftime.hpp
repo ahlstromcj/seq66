@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-08-09
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -91,14 +91,21 @@ protected:      // override Qt event handlers
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
+    virtual void keyPressEvent (QKeyEvent *) override;
     virtual QSize sizeHint() const override;
 
 private:
 
     QTimer * m_timer;
     QFont m_font;
-    int m_4bar_offset;
-    int m_measure_length;
+
+    /**
+     *  Snap value, starts out very small, equal to m_ppqn.
+     */
+
+    midipulse m_4bar_offset;
+    midipulse m_measure_length;
+    bool m_move_left;
 
 signals:
 

@@ -258,7 +258,8 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
 
     connect
     (
-        ui->btnExpandCopy, SIGNAL(clicked(bool)), this, SLOT(markerExpandCopy())
+        ui->btnExpandCopy, SIGNAL(clicked(bool)),
+        this, SLOT(markerExpandCopy())
     );
     qt_set_icon(copy_xpm, ui->btnExpandCopy);
 

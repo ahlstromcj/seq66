@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2020-12-24
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -71,6 +71,10 @@ qeditbase::qeditbase
     m_note_out_color        (note_out_paint()),
     m_tempo_color           (tempo_paint()),
     m_grey_color            (grey_paint()),
+    m_blank_brush           (gui_empty_brush()),
+    m_note_brush            (gui_note_brush()),
+    m_scale_brush           (gui_scale_brush()),
+    m_backseq_brush         (gui_backseq_brush()),
     m_old                   (),                     /* past selection box   */
     m_selected              (),                     /* current sel box      */
     m_scale                 (scalex > 4 ? scalex / 4 : 1),
