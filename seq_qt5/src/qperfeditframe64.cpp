@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2020-11-28
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -64,6 +64,7 @@
 #include "pixmaps/follow.xpm"
 #include "pixmaps/loop.xpm"
 #include "pixmaps/redo.xpm"
+#include "pixmaps/right.xpm"
 #include "pixmaps/transpose.xpm"
 #include "pixmaps/undo.xpm"
 #include "pixmaps/zoom_in.xpm"
@@ -182,7 +183,6 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
 
     connect(ui->btnUndo, SIGNAL(clicked(bool)), m_perfroll, SLOT(undo()));
     qt_set_icon(undo_xpm, ui->btnUndo);
-
     connect(ui->btnRedo, SIGNAL(clicked(bool)), m_perfroll, SLOT(redo()));
     qt_set_icon(redo_xpm, ui->btnRedo);
 
@@ -247,24 +247,40 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     );
 
     /*
-     * Collapse, Expand, Expand-Copy, and Loop buttons.
+     * Collapse, Expand, Expand-Copy, Grow, and Loop buttons.
      */
 
     connect(ui->btnCollapse, SIGNAL(clicked(bool)), this, SLOT(markerCollapse()));
     qt_set_icon(collapse_xpm, ui->btnCollapse);
-
     connect(ui->btnExpand, SIGNAL(clicked(bool)), this, SLOT(markerExpand()));
     qt_set_icon(expand_xpm, ui->btnExpand);
-
     connect
     (
         ui->btnExpandCopy, SIGNAL(clicked(bool)),
         this, SLOT(markerExpandCopy())
     );
     qt_set_icon(copy_xpm, ui->btnExpandCopy);
-
     connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(markerLoop(bool)));
     qt_set_icon(loop_xpm, ui->btnLoop);
+
+    /*
+     *  The width of the qperfroll is based on its sizeHint(), which is based on
+     *  the maximum trigger in all of the sequences in all sets.  At the moment,
+     *  we're not sure how to deal with this, so the grow button is hidden.
+     */
+
+    connect
+    (
+        ui->btnGrow, SIGNAL(clicked(bool)),
+        this, SLOT(grow())
+    );
+    qt_set_icon(right_xpm, ui->btnGrow);
+    ui->btnGrow->setEnabled(false);
+    ui->btnGrow->hide();
+
+    /*
+     *  Entry mode
+     */
 
     connect
     (
@@ -284,10 +300,6 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     set_beats_per_measure(4);
     set_beat_width(4);
 }
-
-/**
- *
- */
 
 qperfeditframe64::~qperfeditframe64 ()
 {
@@ -353,10 +365,6 @@ qperfeditframe64::updateGridSnap (int snapindex)
     m_snap = snap;
     set_guides();
 }
-
-/**
- *
- */
 
 void
 qperfeditframe64::set_snap (midipulse s)
@@ -497,20 +505,12 @@ qperfeditframe64::set_transpose (int transpose)
     perf().set_transpose(transpose);
 }
 
-/**
- *
- */
-
 void
 qperfeditframe64::entry_mode (bool ischecked)
 {
     if (not_nullptr(m_perfroll))
         m_perfroll->set_adding(ischecked);
 }
-
-/**
- *
- */
 
 void
 qperfeditframe64::update_entry_mode (bool on)
@@ -544,19 +544,11 @@ qperfeditframe64::set_dirty ()
     m_perftime->set_dirty();
 }
 
-/**
- *
- */
-
 void
 qperfeditframe64::markerCollapse ()
 {
     perf().collapse();
 }
-
-/**
- *
- */
 
 void
 qperfeditframe64::markerExpand ()
@@ -564,19 +556,18 @@ qperfeditframe64::markerExpand ()
     perf().expand();
 }
 
-/**
- *
- */
-
 void
 qperfeditframe64::markerExpandCopy ()
 {
     perf().copy();
 }
 
-/**
- *
- */
+void
+qperfeditframe64::grow ()
+{
+    m_perfroll->increment_size();
+    m_perftime->increment_size();
+}
 
 void
 qperfeditframe64::markerLoop (bool loop)

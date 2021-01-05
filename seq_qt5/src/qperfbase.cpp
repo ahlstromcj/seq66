@@ -45,7 +45,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Primary constructor.
  */
 
 qperfbase::qperfbase
@@ -64,20 +64,12 @@ qperfbase::qperfbase
     // no code needed
 }
 
-/**
- *
- */
-
 int
 qperfbase::horizSizeHint () const
 {
     int hint = perf().get_max_trigger() / scale_zoom() + 2000;
     return hint;
 }
-
-/**
- *
- */
 
 void
 qperfbase::convert_x (int x, midipulse & tick)

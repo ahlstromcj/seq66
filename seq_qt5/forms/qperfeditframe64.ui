@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
-    <height>320</height>
+    <width>857</width>
+    <height>382</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -281,9 +281,15 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnCollapse">
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>32</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>39</width>
+           <width>40</width>
            <height>32</height>
           </size>
          </property>
@@ -306,6 +312,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnExpand">
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>32</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>40</width>
@@ -333,8 +345,8 @@
         <widget class="QPushButton" name="btnExpandCopy">
          <property name="minimumSize">
           <size>
-           <width>0</width>
-           <height>0</height>
+           <width>40</width>
+           <height>32</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -357,6 +369,25 @@
            <width>33</width>
            <height>11</height>
           </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnGrow">
+         <property name="minimumSize">
+          <size>
+           <width>40</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>40</width>
+           <height>32</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>--&gt;</string>
          </property>
         </widget>
        </item>
@@ -429,7 +460,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>518</width>
+          <width>661</width>
           <height>16</height>
          </rect>
         </property>
@@ -500,7 +531,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>226</height>
+          <height>288</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -534,8 +565,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>580</width>
-          <height>240</height>
+          <width>679</width>
+          <height>284</height>
          </rect>
         </property>
         <property name="sizePolicy">

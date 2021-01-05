@@ -81,12 +81,16 @@ public:
     virtual ~qperfroll ();
 
     void set_guides (midipulse snap, midipulse measure, midipulse beat);
-    void increment_size ();
 
 private:
 
     void draw_grid (QPainter & painter, const QRect & r);
     void draw_triggers (QPainter & painter, const QRect & r);
+
+    void increment_size ()
+    {
+        // TODO
+    }
 
 private:
 

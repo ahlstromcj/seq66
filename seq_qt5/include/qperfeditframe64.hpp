@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2020-11-28
+ * \updates       2021-01-04
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
@@ -114,7 +114,6 @@ private:
 
     void set_snap (midipulse s);
     void set_guides ();
-    void grow ();
 
     performer & perf ()
     {
@@ -136,6 +135,7 @@ private slots:
     void markerExpand ();
     void markerExpandCopy ();
     void markerLoop (bool loop);
+    void grow ();
     void follow (bool ischecked);
     void entry_mode (bool ischecked);
 

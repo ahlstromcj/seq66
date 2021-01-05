@@ -83,7 +83,10 @@ public:
 
 private:
 
-    // virtual void update_midi_buttons () override { // TODO }
+    void increment_size ()
+    {
+        // TODO
+    }
 
 protected:      // override Qt event handlers
 

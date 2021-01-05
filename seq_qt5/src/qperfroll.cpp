@@ -702,8 +702,6 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     int xwidth = r.width();
     int yheight = r.height();
 
-//  QColor background = usr().inverse_colors() ? Qt::black : Qt::white ;
-//  QColor foreground = usr().inverse_colors() ? Qt::white : Qt::black ;
     QColor background = back_color();
     QColor foreground = fore_color();
     QBrush brush(background);                           /* Qt::NoBrush      */
