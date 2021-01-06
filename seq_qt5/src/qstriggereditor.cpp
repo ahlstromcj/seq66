@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -48,12 +48,17 @@ namespace seq66
 
 class performer;
 
+/*
+ * Tweaks
+ */
+
 static const int qc_eventarea_y     = 16;
 static const int qc_eventevent_y    = 10;
 static const int qc_eventevent_x    =  5;
+static const int s_x_tick_fix       =  2;
 
 /**
- *
+ *  Principal constructor.
  */
 
 qstriggereditor::qstriggereditor
@@ -63,7 +68,8 @@ qstriggereditor::qstriggereditor
     int zoom,
     int snap,
     int keyheight,
-    QWidget * parent
+    QWidget * parent,
+    int xoffset
 ) :
     QWidget             (parent),
     qseqbase
@@ -72,6 +78,7 @@ qstriggereditor::qstriggereditor
         usr().key_height() * c_num_keys + 1
     ),
     m_timer             (nullptr),
+    m_x_offset          (xoffset + s_x_tick_fix),
     m_key_y             (keyheight),
     m_status            (EVENT_NOTE_ON),
     m_cc                (0)                         /* bank select  */
@@ -107,35 +114,21 @@ qstriggereditor::conditional_update ()
         update();
 }
 
-/**
- *
- */
-
 QSize
 qstriggereditor::sizeHint () const
 {
     return QSize(xoffset(seq_pointer()->get_length()) + 100, qc_eventarea_y + 1);
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::paintEvent (QPaintEvent *)
 {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qstriggereditor::paintEvent(%d) at zoom %d\n", s_count++, zoom());
-#endif
-
     QPainter painter(this);
     QPen pen(Qt::black);
     QBrush brush(Qt::darkGray, Qt::SolidPattern);
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.drawRect(c_keyboard_padding_x, 0, width(), height()); /* background */
+    painter.drawRect(0, 0, width(), height()); /* background */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
     int bwidth = seq_pointer()->get_beat_width();
@@ -146,7 +139,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
     midipulse endtick = pix_to_tix(width());
     for (midipulse tick = starttick; tick < endtick; tick += ticks_per_step)
     {
-        int x_offset = xoffset(tick) - scroll_offset_x();
+        int x_offset = xoffset(tick) - scroll_offset_x() + m_x_offset;
         pen.setWidth(1);
         if (tick % ticks_per_bar == 0)          /* solid line on every beat */
         {
@@ -194,7 +187,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
         if ((tick >= starttick && tick <= endtick))
         {
             bool selected = cev->is_selected();
-            int x = xoffset(tick);
+            int x = xoffset(tick) + m_x_offset;
             int y = (qc_eventarea_y - qc_eventevent_y) / 2;
             pen.setColor(fore_color());             /* Qt::black ev border  */
             brush.setStyle(Qt::SolidPattern);
@@ -403,10 +396,6 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
     }
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
 {
@@ -466,10 +455,6 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
     seq_pointer()->unpaint_all();
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::mouseMoveEvent (QMouseEvent * event)
 {
@@ -493,10 +478,6 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
         drop_event(tick);
     }
 }
-
-/**
- *
- */
 
 void
 qstriggereditor::keyPressEvent (QKeyEvent * event)
@@ -542,10 +523,6 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
         QWidget::keyPressEvent(event);
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::keyReleaseEvent (QKeyEvent *)
 {
@@ -571,10 +548,6 @@ qstriggereditor::x_to_w (int x1, int x2, int & x, int & w)
         w = x1 - x2;
     }
 }
-
-/**
- *
- */
 
 void
 qstriggereditor::start_paste ()
@@ -609,29 +582,17 @@ qstriggereditor::start_paste ()
     selection().x(selection().x() + drop_x());
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::convert_x (int x, midipulse & tick)
 {
     tick = pix_to_tix(x);
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::convert_t (midipulse ticks, int & x)
 {
     x = tix_to_pix(ticks);
 }
-
-/**
- *
- */
 
 void
 qstriggereditor::drop_event (midipulse a_tick)
@@ -654,10 +615,6 @@ qstriggereditor::drop_event (midipulse a_tick)
     seq_pointer()->add_event(a_tick, status, d0, d1, true);    /* sorts too */
 }
 
-/**
- *
- */
-
 void
 qstriggereditor::set_adding (bool a)
 {
@@ -667,10 +624,6 @@ qstriggereditor::set_adding (bool a)
     else
         setCursor(Qt::ArrowCursor);
 }
-
-/**
- *
- */
 
 void
 qstriggereditor::set_data_type (midibyte status, midibyte control)

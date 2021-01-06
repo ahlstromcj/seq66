@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-25
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -222,8 +222,14 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 }
 
 void
-qseqkeys::mouseMoveEvent (QMouseEvent * event)
+qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
 {
+#if defined SEQ66_SEQKEY_PREVIEW_ON_MOVEMENT
+
+    /*
+     * There's no easy way to turn this off.
+     */
+
     int note;
     int y = event->y();
     convert_y(y, note);
@@ -237,6 +243,14 @@ qseqkeys::mouseMoveEvent (QMouseEvent * event)
         }
     }
     update();
+#else
+    if (m_is_previewing)
+    {
+        seq_pointer()->play_note_off(m_preview_key);
+        set_preview_key(-1);
+    }
+    update();
+#endif
 }
 
 /**

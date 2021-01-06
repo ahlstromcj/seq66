@@ -50,8 +50,7 @@ namespace seq66
  *  size of the list.
  */
 
-recent::recent ()
- :
+recent::recent () :
     m_recent_list   (),
     m_maximum_size  (SEQ66_RECENT_FILES_MAX)
 {
@@ -89,11 +88,6 @@ recent::operator = (const recent & source)
     }
     return *this;
 }
-
-/**
- * \dtor
- *      Nothing to do in this implementation.
- */
 
 recent::~recent ()
 {

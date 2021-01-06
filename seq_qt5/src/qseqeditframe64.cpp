@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-03
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -446,6 +446,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_beats_per_measure(int))
     );
+    connect
+    (
+        ui->m_combo_bpm, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(text_beats_per_measure(const QString &))
+    );
     set_beats_per_measure(seq_pointer()->get_beats_per_bar());
 
     /*
@@ -489,6 +494,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_beat_width(int))
     );
+    connect
+    (
+        ui->m_combo_bw, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(text_beat_width(const QString &))
+    );
     set_beat_width(seq_pointer()->get_beat_width());
 
     /*
@@ -531,6 +541,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     (
         ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_measures(int))
+    );
+    connect
+    (
+        ui->m_combo_length, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(text_measures(const QString &))
     );
     seq_pointer()->calculate_unit_measure(); /* must precede set_measures() */
     set_measures(get_measures());
@@ -1307,7 +1322,7 @@ qseqeditframe64::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new qseqdata
     (
-        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea, 1
+        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea   // , 1
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1403,6 +1418,27 @@ qseqeditframe64::update_beats_per_measure (int index)
     }
 }
 
+void
+qseqeditframe64::text_beats_per_measure (const QString & text)
+{
+    std::string temp = text.toStdString();
+    int beats = std::stoi(temp);
+    if
+    (
+        beats >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
+        beats <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
+    )
+    {
+        set_beats_per_measure(beats);
+    }
+    else
+    {
+        reset_beats_per_measure();
+    }
+}
+
+#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
+
 /**
  *  When the BPM (beats-per-measure) button is pushed, we go to the next BPM
  *  entry in the combo-box, wrapping around when the end is reached.
@@ -1419,14 +1455,23 @@ qseqeditframe64::increment_beats_per_measure ()
     set_beats_per_measure(bpm);
 }
 
+#else
+
 void
 qseqeditframe64::reset_beats_per_measure ()
 {
+    seq::number seqno = seq_pointer()->seq_number();
     ui->m_combo_bpm->setCurrentIndex(SEQ66_DEFAULT_BEATS_PER_MEASURE - 1);
 
-    seq::number seqno = seq_pointer()->seq_number();
+    /*
+     * TODO:  work this out better.
+     */
+
     perf().notify_sequence_change(seqno, performer::change::recreate);
+    update_draw_geometry();     // set_dirty();
 }
+
+#endif  // defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
 
 /**
  *  Applies the new beats/bar (beats/measure) value to the sequence and the user
@@ -1446,7 +1491,7 @@ qseqeditframe64::set_beats_per_measure (int bpm)
     (
         bpm, perf().ppqn(), seq_pointer()->get_beat_width(), measures
     );
-    set_dirty();
+    update_draw_geometry();     // set_dirty();
 }
 
 /**
@@ -1510,6 +1555,23 @@ qseqeditframe64::update_beat_width (int index)
     }
 }
 
+void
+qseqeditframe64::text_beat_width (const QString & text)
+{
+    std::string temp = text.toStdString();
+    int width = std::stoi(temp);
+    if (width >= SEQ66_MINIMUM_BEAT_WIDTH && width <= SEQ66_MAXIMUM_BEAT_WIDTH)
+    {
+        set_beat_width(width);
+    }
+    else
+    {
+        reset_beat_width();
+    }
+}
+
+#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
+
 /**
  *  When the BW (beat width) button is pushed, we go to the next beat width
  *  entry in the combo-box, wrapping around when the end is reached.
@@ -1528,6 +1590,8 @@ qseqeditframe64::next_beat_width ()
         set_beat_width(bw);
 }
 
+#else
+
 /**
  *  Resets the beat-width combo-box to its default value.
  */
@@ -1538,6 +1602,8 @@ qseqeditframe64::reset_beat_width ()
     ui->m_combo_bw->setCurrentIndex(2);     /* i.e. 4, see s_width_items    */
     update_draw_geometry();
 }
+
+#endif  // defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
 
 /**
  *  Sets the beat-width value and then dirties the user-interface so that it
@@ -1554,7 +1620,7 @@ qseqeditframe64::set_beat_width (int bw)
         seq_pointer()->get_beats_per_bar(), perf().ppqn(), bw, measures
     );
     m_beat_width = bw;
-    set_dirty();
+    update_draw_geometry();     // set_dirty();
 }
 
 /**
@@ -1569,6 +1635,21 @@ qseqeditframe64::update_measures (int index)
     {
         set_measures(m);
         set_dirty();
+    }
+}
+
+void
+qseqeditframe64::text_measures (const QString & text)
+{
+    std::string temp = text.toStdString();
+    int measures = std::stoi(temp);
+    if
+    (
+        measures >= SEQ66_MINIMUM_MEASURES &&
+        measures <= SEQ66_MAXIMUM_MEASURES
+    )
+    {
+        set_measures(measures);
     }
 }
 
@@ -2593,7 +2674,6 @@ qseqeditframe64::reset_v_zoom ()
 {
     m_seqroll->reset_v_zoom();
 }
-
 
 /**
  *  This override just reset the current index of the zoom combo-box.

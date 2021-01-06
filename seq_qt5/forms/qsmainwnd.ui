@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>904</width>
-    <height>729</height>
+    <width>899</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -121,13 +121,13 @@
       <property name="minimumSize">
        <size>
         <width>24</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>32</width>
-        <height>64</height>
+        <height>28</height>
        </size>
       </property>
       <property name="text">
@@ -173,13 +173,13 @@
         <property name="minimumSize">
          <size>
           <width>36</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip">
@@ -192,10 +192,16 @@
       </item>
       <item>
        <widget class="QLabel" name="label">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>28</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>29</width>
-          <height>19</height>
+          <width>30</width>
+          <height>28</height>
          </size>
         </property>
         <property name="text">
@@ -214,13 +220,13 @@
         <property name="minimumSize">
          <size>
           <width>80</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>80</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="font">
@@ -254,10 +260,16 @@
     </item>
     <item row="4" column="14">
      <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>28</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>48</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="text">
@@ -276,13 +288,13 @@
       <property name="minimumSize">
        <size>
         <width>40</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>64</height>
+        <height>28</height>
        </size>
       </property>
       <property name="focusPolicy">
@@ -313,13 +325,13 @@
       <property name="minimumSize">
        <size>
         <width>48</width>
-        <height>0</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>48</width>
-        <height>16777215</height>
+        <height>28</height>
        </size>
       </property>
       <property name="font">
@@ -351,13 +363,13 @@
       <property name="minimumSize">
        <size>
         <width>72</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>72</width>
-        <height>64</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -373,13 +385,13 @@
       <property name="minimumSize">
        <size>
         <width>80</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>80</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="font">
@@ -669,13 +681,13 @@
       <property name="minimumSize">
        <size>
         <width>40</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>52</width>
-        <height>64</height>
+        <height>28</height>
        </size>
       </property>
       <property name="toolTip">
@@ -715,13 +727,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -755,13 +767,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -789,13 +801,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip">
@@ -817,13 +829,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -857,13 +869,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -891,13 +903,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip">
@@ -919,13 +931,13 @@
         <property name="minimumSize">
          <size>
           <width>32</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>48</width>
-          <height>64</height>
+          <height>28</height>
          </size>
         </property>
         <property name="toolTip">
@@ -943,13 +955,13 @@
       <property name="minimumSize">
        <size>
         <width>66</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>66</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="text">
@@ -977,8 +989,14 @@
      <widget class="QPushButton" name="setMasterButton">
       <property name="minimumSize">
        <size>
-        <width>48</width>
-        <height>32</height>
+        <width>84</width>
+        <height>28</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>84</width>
+        <height>28</height>
        </size>
       </property>
       <property name="text">
@@ -996,13 +1014,13 @@
         <property name="minimumSize">
          <size>
           <width>72</width>
-          <height>0</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="text">
@@ -1028,13 +1046,13 @@
         <property name="minimumSize">
          <size>
           <width>350</width>
-          <height>0</height>
+          <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>32</height>
+          <height>28</height>
          </size>
         </property>
         <property name="font">
@@ -1062,13 +1080,13 @@
       <property name="minimumSize">
        <size>
         <width>72</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>72</width>
-        <height>32</height>
+        <height>28</height>
        </size>
       </property>
       <property name="font">
@@ -1174,7 +1192,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>904</width>
+     <width>899</width>
      <height>22</height>
     </rect>
    </property>

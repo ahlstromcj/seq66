@@ -243,16 +243,16 @@ add_quotes (const std::string & item)
     }
     else
     {
+        bool quoted = false;
         result = item;
         auto pos0 = result.find_first_of("\"");
         auto pos1 = result.find_last_of("\"");
-        bool change = pos0 != 0 && pos1 < result.length() - 1;
-        if (change)
+        if (pos0 != std::string::npos && pos1 != std::string::npos)
         {
-            result = "\"";
-            result += item;
-            result += "\"";
+            quoted = pos0 == 0 && pos1 == result.length() - 1;
         }
+        if (! quoted)
+            result = "\"" + item + "\"";
     }
     return result;
 }

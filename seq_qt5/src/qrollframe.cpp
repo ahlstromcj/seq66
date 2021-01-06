@@ -114,19 +114,11 @@ qrollframe::qrollframe (int barwidth) :
     // no code
 }
 
-/**
- *
- */
-
 qrollframe::~qrollframe ()
 {
     if (not_nullptr(m_grid_pixmap))
         delete m_grid_pixmap;
 }
-
-/**
- *
- */
 
 bool
 qrollframe::regenerate (const QRect & r, QWidget * widget)
@@ -156,10 +148,6 @@ qrollframe::regenerate (const QRect & r, QWidget * widget)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qrollframe::resize (int w, int h)
 {
@@ -171,10 +159,6 @@ qrollframe::resize (int w, int h)
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 qrollframe::restore_bar_area (QPainter & painter, int progx, int progy)

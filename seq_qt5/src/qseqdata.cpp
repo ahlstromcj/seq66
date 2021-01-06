@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-29
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -46,6 +46,12 @@
 namespace seq66
 {
 
+/*
+ * Tweaks
+ */
+
+static const int s_x_data_fix =  8;
+
 /**
  *  Principal constructor.
  */
@@ -64,7 +70,7 @@ qseqdata::qseqdata
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  (),
-    m_keyboard_padding_x    (xpadding),
+    m_keyboard_padding_x    (xpadding + s_x_data_fix),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation */
     m_line_adjust           (false),
@@ -180,7 +186,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
                 event_x, height() - event_height, event_x, height()
             );
 
-            int x_offset = event_x + 2;
+            int x_offset = event_x + s_x_data_fix;
             int y_offset = c_dataarea_y - 25;
             snprintf(digits, sizeof digits, "%3d", d1);
 
@@ -191,10 +197,10 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             painter.drawText(x_offset, y_offset + 16, val.at(2));
         }
     }
-    if (m_line_adjust)                            // draw edit line
+    if (m_line_adjust)                          // draw edit line
     {
         int x, y, w, h;
-        pen.setColor(Qt::black);
+        pen.setColor(sel_color());              // Qt::black
         pen.setStyle(Qt::DashLine);
         painter.setPen(pen);
         rect::xy_to_rect_get

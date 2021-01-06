@@ -20,7 +20,7 @@
  * \file          notemapfile.cpp
  *
  *  This module declares/defines the base class for managing the reading and
- *  writing of the note-map sections of the "rc" file.
+ *  writing of the note-map sections of the 'drums' file.
  *
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
@@ -110,10 +110,6 @@ notemapfile::parse_stream (std::ifstream & file)
     if (! s.empty())
     {
         mapper().comments_block().set(s);
-#if defined SEQ66_PLATFORM_DEBUG
-        if (rc().verbose())
-            std::cout << s;
-#endif
     }
 
     s = get_variable(file, "[notemap-flags]", "map-type");
@@ -133,9 +129,6 @@ notemapfile::parse_stream (std::ifstream & file)
     bool good = position > 0;
     if (good)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        printf("drum line %s\n", line().c_str());  // JUST A TEST
-#endif
         note = get_tag_value(line());
     }
     if (note == (-1))
@@ -267,14 +260,14 @@ notemapfile::write_stream (std::ofstream & file)
         "#   reverse: true or false; map in the opposite direction if true.\n"
         "#\n"
         "[notemap-flags]\n"
-        "#\n"
+        "\n"
         ;
 
     file
         << "map-type = " << mapper().map_type() << "\n"
         << "gm-channel = " << mapper().gm_channel() << "\n"
         << "reverse = " << (mapper().map_reversed() ? "true" : "false") << "\n"
-        "#\n"
+        "\n"
         ;
 
     file <<
@@ -290,7 +283,7 @@ notemapfile::write_stream (std::ofstream & file)
    "#                   dev-note value (unless reverse mapping is activated).\n"
    "#                   Note that the actual GM drum sound might not match\n"
    "#                   what the MIDI hardware puts out.\n"
-   "#\n"
+   "\n"
         ;
 
     bool result = write_map_entries(file);

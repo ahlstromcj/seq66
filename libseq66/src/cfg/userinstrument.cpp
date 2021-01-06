@@ -49,8 +49,7 @@ namespace seq66
  *      The name of the instrument, valid only if it is not empty.
  */
 
-userinstrument::userinstrument (const std::string & name)
- :
+userinstrument::userinstrument (const std::string & name) :
     m_is_valid          (false),
     m_controller_count  (0),
     m_instrument_def    ()
@@ -66,8 +65,7 @@ userinstrument::userinstrument (const std::string & name)
  *      The sources of the data for the copy.
  */
 
-userinstrument::userinstrument (const userinstrument & rhs)
- :
+userinstrument::userinstrument (const userinstrument & rhs) :
     m_is_valid          (rhs.m_is_valid),
     m_controller_count  (rhs.m_controller_count),
     m_instrument_def    ()

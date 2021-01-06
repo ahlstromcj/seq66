@@ -520,11 +520,12 @@ qseqeditframe::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new qseqdata
     (
-        perf(), seq_pointer(), zoom(), m_snap, m_container, 7 /* grrrrr */
+        perf(), seq_pointer(), zoom(), m_snap, m_container
     );
     m_seqevent = new qstriggereditor
     (
-        perf(), seq_pointer(), zoom(), m_snap, usr().key_height(), m_container
+        perf(), seq_pointer(), zoom(), m_snap,
+        usr().key_height(), m_container, -2
     );
 }
 

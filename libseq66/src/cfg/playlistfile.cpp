@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2020-12-02
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -292,6 +292,7 @@ playlistfile::parse ()
                         int songnumber = -1;
                         std::string fname;
                         result = scan_song_file(songnumber, fname);
+                        fname = strip_quotes(fname);
                         if (result)
                         {
                             playlist::song_spec_t sinfo;
@@ -354,15 +355,6 @@ playlistfile::parse ()
                 break;
             }
             ++listcount;
-
-            /*
-             * Not a fix:
-             *
-             * have_section = line() == "[playlist]";
-             * if (! have_section)
-             *     have_section = next_section(file, "[playlist]");
-             */
-
              have_section = next_section(file, "[playlist]");
         }
         file.close();                           /* done with playlist file  */
@@ -533,6 +525,10 @@ playlistfile::write ()
     for (const auto & plpair : play_list().play_list_map())
     {
         const playlist::play_list_t & pl = plpair.second;
+        std::string listname = pl.ls_list_name;
+        std::string dirname = pl.ls_file_directory;
+        listname = add_quotes(listname);
+        dirname = add_quotes(dirname);
         file
         << "\n"
            "[playlist]\n"
@@ -541,9 +537,9 @@ playlistfile::write ()
            "# for use with the MIDI playlist control.\n\n"
         << pl.ls_midi_number << "\n\n"
         << "# Display name of this play list.\n\n"
-        << "\"" << pl.ls_list_name << "\"\n\n"
+        << listname << "\n\n"
         << "# Default storage directory for the song-files in this playlist.\n\n"
-        << pl.ls_file_directory << "\n\n"
+        << dirname << "\n\n"
         << "# Provides the MIDI song-control number (0 to 127), and also the\n"
            "# base file-name (tune.midi) of each song in this playlist.\n"
            "# The playlist directory is used, unless the file-name contains its\n"
@@ -559,7 +555,9 @@ playlistfile::write ()
         for (const auto & sc : sl)
         {
             const playlist::song_spec_t & s = sc.second;
-            file << s.ss_midi_number << " " << s.ss_filename << "\n";
+            std::string fname = s.ss_filename;
+            fname = add_quotes(fname);
+            file << s.ss_midi_number << " " << fname << "\n";
         }
         is_empty = false;
     }
@@ -679,7 +677,6 @@ save_playlist
         if (! result)
         {
             file_error("Play-list write failed", destination);
-            // TODO?  ///// (void) append_error_message(pl.error_message());
         }
     }
     else

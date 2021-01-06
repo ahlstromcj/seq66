@@ -1,6 +1,6 @@
 README for Seq66 0.91.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2021-01-04
+2015-09-10 to 2021-01-05
 
 "Seq66" is a MIDI sequencer and live looper with a hardware sampler-like grid
 pattern interface, MIDI automation for live performance, with sets and
@@ -62,9 +62,10 @@ Recent Changes:
         -   Added vertical zoom to the pattern editor (V keys and buttons).
         -   Added more control over the coloring of notes.
         -   Still improving the port-mapper feature.
-        -   Many minor fixes to seqedit, perfedit.  Way too many to mention.
-        -   Really getting serious about rewriting the user manual included in
-            this project.
+        -   Added quotes to file-paths in the 'rc' configuration file.
+        -   Many minor fixes to seqedit, perfedit.  Way too many to mention
+            all.  Changed the 4/4 and length selections to be editable.
+        -   Getting serious about rewriting the user manual in this project.
     -   Version 0.91.4:
         -   Improved port naming and provide an option for short or long port
             names.

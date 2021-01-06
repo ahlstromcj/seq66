@@ -75,7 +75,8 @@ public:
         int zoom                = SEQ66_DEFAULT_ZOOM,
         int snap                = SEQ66_DEFAULT_SNAP,
         int keyHeight           = SEQ66_SEQKEY_HEIGHT,
-        QWidget * parent        = nullptr
+        QWidget * parent        = nullptr,
+        int xoffset             = 0
     );
 
     virtual ~qstriggereditor ();
@@ -118,6 +119,7 @@ private:
 private:
 
     QTimer * m_timer;
+    int m_x_offset;
     int m_key_y;
     midibyte m_status;      /* what is seqdata currently editing? */
     midibyte m_cc;

@@ -338,25 +338,6 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
     m_frame_ticks = pix_to_tix(r.width());
 
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
-    midipulse current_tick = seq_pointer()->get_last_tick();
-    int frame = current_tick / m_frame_ticks;
-    bool redraw = m_roll_frame.change_frame(frame);
-#else
-    bool redraw = true;
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf
-    (
-        "qseqroll::paintEvent(%d) at (x,y,w,h) = "
-        " (%d, %d, %d, %d), redraw = %s zoom = %d\n",
-        s_count++, r.x(), r.y(), r.width(), r.height(),
-        redraw ? "yes" : "no", zoom()
-    );
-#endif
-
     /*
      * Draw the border.  See the banner notes about width and height.
      * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
@@ -371,74 +352,24 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setPen(pen);
 
-#if defined THIS_WORKS_WELL                         /* fails after 1st page */
-    QRect view;
-    if (is_initialized())                           /* do a partial redraw  */
-    {
-        view = r;
-        if (redraw)
-            draw_grid(painter, view);
-    }
-    else                                            /* do a full draw       */
-    {
-        QRect rfull(0, 0, width(), height());
-        view = rfull;
-        draw_grid(painter, view);
-        set_initialized();
-    }
-#else
     QRect view(0, 0, width(), height());
     draw_grid(painter, view);
     set_initialized();
-#endif
 
     /*
      * Draw the events. This currently draws all of them.  Drawing all them only
      * needs to be drawn once.
      */
 
-    if (redraw)
-    {
-        call_draw_notes(painter, view);
-
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
-        if (m_roll_frame.regenerate(r, this))
-        {
-            QPainter p2(m_roll_frame.grid());
-            call_draw_notes(p2, view);          // DEBUG: m_roll_frame.dump();
-        }
-#endif
-    }
-
-    /*
-     * draw_progress_on_window():
-     *
-     *  First, copy back the background, then draw a progress line on the
-     *  window.  This is done by first blanking out the line with the
-     *  background, which contains white space and grey lines.
-     *
-     *  The progress-bar position is based on the sequence::get_last_tick()
-     *  value, the current zoom, and the current scroll-offset x value.
-     */
-
-#if defined SEQ66_SEQROLL_PLAYHEAD_RENDER       // undefined
-    if (m_roll_frame.rendering())
-        return;                         /* early exit; getting grid/notes   */
-
-    m_roll_frame.restore_bar_area(painter, old_progress_x(), view.y());
-#endif
-
+    call_draw_notes(painter, view);
     pen.setWidth(1);
-    pen.setColor(progress_color());             // draw the playhead
-    pen.setStyle(Qt::SolidLine);
 
     /*
-     * If this test is used, then when not running, the overwrite
-     * functionality of recording will not work: if (perf().is_running())
-     *
-     * painter.drawLine(prog_x, r.top(), prog_x, r.bottom());
+     *  Draw the playhead.
      */
 
+    pen.setColor(progress_color());
+    pen.setStyle(Qt::SolidLine);
     pen.setWidth(m_progbar_width);
     painter.setPen(pen);
     painter.drawLine(progress_x(), r.y(), progress_x(), r.y() + r.height());
@@ -530,11 +461,11 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
-    painter.drawRect(r);
-    painter.fillRect(r, brush);                     /* blank the viewport   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
+    painter.fillRect(r, brush);                     /* blank the viewport   */
     painter.setBrush(brush);
     painter.setPen(pen);
+    painter.drawRect(r);
 
     int octkey = c_octave_size - m_key;             /* used three times     */
     for (int key = 1; key <= c_num_keys; ++key)     /* for each note row    */

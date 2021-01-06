@@ -78,7 +78,7 @@ public:
         int zoom            = SEQ66_DEFAULT_ZOOM,
         int snap            = SEQ66_DEFAULT_SNAP,
         QWidget * parent    = nullptr,
-        int xpadding        = 1
+        int xpadding        = 0
     );
 
     virtual ~qseqdata ();

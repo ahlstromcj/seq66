@@ -566,7 +566,10 @@ rcfile::parse ()
     if (line_after(file, "[last-used-dir]"))
     {
         if (! is_empty_string(line()))                 /* not "" or empty? */
+        {
+            std::string ludir = strip_quotes(line());
             rc_ref().last_used_dir(line());
+        }
     }
     else
     {
@@ -586,7 +589,8 @@ rcfile::parse ()
             {
                 if (! is_empty_string(line()))          /* not "" or empty? */
                 {
-                    if (! rc_ref().append_recent_file(std::string(line())))
+                    std::string rfilename = strip_quotes(line());
+                    if (! rc_ref().append_recent_file(rfilename))
                         break;
                 }
             }
@@ -608,7 +612,6 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            // std::string fname = trimline();
             exists = ! is_empty_string(fname);      /* not "" or empty      */
             if (exists)
             {
@@ -830,7 +833,7 @@ rcfile::write ()
      */
 
     file
-        << "# Seq66 0.91.1 (and above) 'rc' configuration file\n"
+        << "# Seq66 0.91.5 (and above) 'rc' configuration file\n"
            "#\n"
            "# " << name() << "\n"
            "# Written on " << current_date_time() << "\n"
@@ -891,6 +894,7 @@ rcfile::write ()
             if (result)
             {
                 mcfname = rc_ref().trim_home_directory(mcfname);
+                mcfname = add_quotes(mcfname);
                 file << "[midi-control-file]\n\n" << mcfname << "\n";
                 ok = mcf.write();
             }
@@ -905,6 +909,7 @@ rcfile::write ()
             if (result)
             {
                 mcfname = rc_ref().trim_home_directory(mcfname);
+                mcfname = add_quotes(mcfname);
                 file << "[midi-control-file]\n\n" << mcfname << "\n";
                 ok = mcf.write();
             }
@@ -924,6 +929,7 @@ rcfile::write ()
         std::string mgfname = rc_ref().mute_group_filespec();
         mutegroupsfile mgf(mgfname, rc_ref());
         mgfname = rc_ref().trim_home_directory(mgfname);
+        mgfname = add_quotes(mgfname);
         file << "\n[mute-group-file]\n\n" << mgfname << "\n";
         ok = mgf.write();
     }
@@ -935,9 +941,7 @@ rcfile::write ()
      */
 
     std::string palfilename = rc_ref().palette_filename();
-    if (palfilename.empty())
-        palfilename = empty_string();
-
+    palfilename = add_quotes(palfilename);
     file
         << "\n[palette-file]\n\n"
            "# This provides a flag to allow modifying the palette from the\n"
@@ -1231,9 +1235,7 @@ rcfile::write ()
         ;
 
     std::string lud = rc_ref().last_used_dir();
-    if (lud.empty())
-        lud = empty_string();
-
+    lud = add_quotes(lud);
     file << "\n"
         "[last-used-dir]\n\n"
         "# Last-used and currently-active directory:\n\n"
@@ -1257,8 +1259,11 @@ rcfile::write ()
     if (count > 0)
     {
         for (int i = 0; i < count; ++i)
-            file << rc_ref().recent_file(i, false) << "\n";
-
+        {
+            std::string rfilespec = rc_ref().recent_file(i, false);
+            rfilespec = add_quotes(rfilespec);
+            file << rfilespec << "\n";
+        }
         file << "\n";
     }
 
@@ -1277,16 +1282,9 @@ rcfile::write ()
         ;
 
     std::string plname = rc_ref().playlist_filename();
-    std::string fspec = empty_string();
-    if (! plname.empty())
-    {
-        if (! is_questionable_string(plname))
-        {
-            fspec = file_extension_set(rc_ref().playlist_filename(), ".playlist");
-            fspec = rc_ref().trim_home_directory(fspec);
-        }
-    }
-    file << fspec << "\n";
+    plname = rc_ref().trim_home_directory(plname);
+    plname = add_quotes(plname);
+    file << plname << "\n";
 
     file << "\n"
 		"# Optional MIDI file base directory for play-list files.\n"
@@ -1297,10 +1295,9 @@ rcfile::write ()
         "\n"
 		;
 
-	if (rc_ref().midi_base_directory().empty())
-		file << empty_string() << "\n";
-    else
-		file << rc_ref().midi_base_directory() << "\n";
+	std::string mbasedir = rc_ref().midi_base_directory();
+    mbasedir = add_quotes(mbasedir);
+    file << mbasedir << "\n";
 
     file << "\n"
         "[note-mapper]\n\n"
@@ -1313,13 +1310,9 @@ rcfile::write ()
         ;
 
     std::string nmname = rc_ref().notemap_filespec();
-    fspec = empty_string();
-    if (! nmname.empty())
-    {
-        fspec = file_extension_set(rc_ref().notemap_filespec(), ".drums");
-        fspec = rc_ref().trim_home_directory(fspec);
-    }
-    file << fspec << "\n\n";
+    nmname = rc_ref().trim_home_directory(nmname);
+    nmname = add_quotes(nmname);
+    file << nmname << "\n\n";
     file
         << "# End of " << name() << "\n#\n"
         << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-03
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -159,12 +159,18 @@ private slots:
     void slot_update_zoom (int index);
     void update_seq_name ();
     void update_beats_per_measure (int index);
-    void increment_beats_per_measure ();
-    void reset_beats_per_measure ();
+    void text_beats_per_measure (const QString & text);
     void update_beat_width (int index);
+    void text_beat_width (const QString & text);
+#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
+    void increment_beats_per_measure ();
     void next_beat_width ();
+#else
+    void reset_beats_per_measure ();
     void reset_beat_width ();
+#endif
     void update_measures (int index);
+    void text_measures (const QString & text);
     void next_measures ();
     void reset_measures ();
     void transpose (bool ischecked);

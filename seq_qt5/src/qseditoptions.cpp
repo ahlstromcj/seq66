@@ -568,8 +568,7 @@ qseditoptions::handle_palette_active_click ()
  *  functional than the Kepler34 pattern editor.  However, it has the
  *  side-effect, currently, of making the main window larger.
  *  This slot sets the new feature to off if the check-box is checked.
- *
- *  Disabled.  Replace by the "Use Palette File" feature.
+ *  Disabled.
  */
 
 void

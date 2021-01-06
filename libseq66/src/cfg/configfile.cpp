@@ -133,10 +133,6 @@ configfile::parse_comments (std::ifstream & file)
     return result;
 }
 
-/**
- *
- */
-
 std::string
 configfile::parse_version (std::ifstream & file)
 {
@@ -206,10 +202,6 @@ configfile::get_line (std::ifstream & file, bool strip)
         m_line = trim(m_line);
         m_line = strip_comments(m_line);
     }
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    std::cout << "line: '" << m_line << "'" << std::endl;
-#endif
 
     bool result = file.good();
     if (result)
@@ -320,7 +312,8 @@ configfile::next_data_line (std::ifstream & file, bool strip)
  * \return
  *      If the "variablename = value" clause is found, then the the value that
  *      is read is returned.  Otherwise, an empty string is returned, which
- *      might be an error.
+ *      might be an error.  If the name is surrounded by single or double
+ *      quotes, these are trimmed.
  */
 
 std::string
@@ -361,10 +354,7 @@ configfile::get_variable
 
                     bool havequotes = false;
                     char quotechar[2] = { 'x', 0 };
-                    auto qpos = line().find_first_of
-                    (
-                         "'\"", epos + 1
-                    );
+                    auto qpos = line().find_first_of("'\"", epos + 1);
                     auto qpos2 = std::string::npos;
                     if (qpos != std::string::npos)
                     {
@@ -404,7 +394,7 @@ configfile::get_variable
  *  Looks for the next named section.  Unlike line_after(), it does not
  *  restart from the beginning of the file.  Like next_data_line(), it starts
  *  at the current line in the file.  This makes it useful in parsing files,
- *  such as a playlist, that has multiple sections with the same name.
+ *  such as a playlist, that have multiple sections with the same name.
  *
  *  Note one other quirk.  If we are on a line matching the tag, then we do
  *  not search, but instead use that line.  The reason is that the
@@ -629,11 +619,7 @@ configfile::append_error_message (const std::string & msg)
     else
     {
         sm_is_error = true;
-        if (sm_error_message.empty())
-        {
-            // sm_error_message += "? "; /* makes message more visible      */
-        }
-        else
+        if (! sm_error_message.empty())
             sm_error_message += "\n";   /* converted to "<br>" in msg box   */
 
         sm_error_message += msg;

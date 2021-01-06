@@ -161,7 +161,6 @@ usrfile::parse ()
             usr().save_user_config(true);
     }
 
-
     /*
      *  Next, if we're using the manual or hide ALSA port options specified in
      *  the "rc" file, do want to override the ports that the queries of the
@@ -1287,7 +1286,7 @@ usrfile::write ()
 
     file << "\n"
         "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
-        "# 'Edit' tab.  If the following value is set to 1, then the new, larger,\n"
+        "# 'Edit' tab.  If this value is set to 1, then the new, larger,\n"
         "# more functional pattern editor can be used in the 'Edit' tab. This\n"
         "# setting makes the whole Seq66 window larger.\n"
         "\n"

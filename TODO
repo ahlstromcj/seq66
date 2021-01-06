@@ -34,16 +34,6 @@ HOT ITEMS:
         This would be useful for intros.  Currently can be achieved only in
         Song mode.
 
-    Playlist:
-       
-        When there is no playlist, or it cannot be loaded, or when it is
-        inactive, do not try to display that information.  Instead, just show
-        the base-name of the current file, or the song name if present in the
-        MIDI data.
-
-        In all the filenames, add quotes, and be sure to strip them.
-        We want to protect path-names with spaces in them.
-
     Polling:
 
         Investigate the effect of reducing the microsleep(100) calls when
@@ -85,24 +75,14 @@ HOT ITEMS:
 
     UI:
 
-        Major issues with New and Opening files:
-
-            File / New does not work after using the Recent Files menu
-            The Recent Files menu usage does not clear the current song... it
-            appends the recent song to the current song.
-
-            Not sure that this is really an issue, cannot duplicate.
-
-        Somehow add back Jean Emmanuel feature to be able to specify weird
-        time signatures.  Same for odd pattern lengths!
+        File / New does not work after using the Recent Files menu
+        The Recent Files menu usage does not clear the current song... it
+        appends the recent song to the current song.
+        CANNOT DUPLICATE.
 
         Add a Redo key to correspond to the Undo key.
 
         The Event Pane also does not perform as documented.
-
-        Use hatching to fill the scale lines in seqroll.
-
-        Should we implement the Grow button in the perfedit?
 
     Automation:
 
@@ -113,12 +93,7 @@ HOT ITEMS:
         Tap BPM key (F9) does not work, though the button works.
 
         Look into the "nativeVirtualKey" functionality to support
-
-        Locale-independent key processing.
-
-    Seq keys:
-
-        Need to add note off to the note preview mechanism.
+        locale-independent key processing.
 
     Testing:
 

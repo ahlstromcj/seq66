@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2019-03-10
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -109,6 +109,8 @@ namespace seq66
             c_backsequence (ditto)
             c_transpose
             c_seq_color (performance colors for a sequence)
+            c_seq_edit_mode
+            c_seq_oneshot
 \endverbatim
  *
  *  Note that c_seq_color in Seq66 is stored per sequence, and only if
@@ -194,6 +196,7 @@ const midilong c_reserved_2  =  0x24240019; /**< Reserved for expansion.    */
 const midilong c_tempo_track =  0x2424001A; /**< Alternate tempo track no.  */
 const midilong c_seq_color   =  0x2424001B; /**< Feature from Kepler34.     */
 const midilong c_seq_edit_mode = 0x2424001C; /**< Feature from Kepler34.    */
+const midilong c_seq_oneshot = 0x2424001D;  /**< Future: one-play pattern.  */
 
 /**
  *    This class is the abstract base class for a container of MIDI track

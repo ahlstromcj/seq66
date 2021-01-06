@@ -90,7 +90,6 @@ qperfroll::qperfroll
     ),
     m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
     m_timer             (nullptr),
-    m_font              (),
     m_measure_length    (0),
     m_beat_length       (0),
     m_drop_sequence     (0),
@@ -105,17 +104,8 @@ qperfroll::qperfroll
     m_grow_direction    (false),
     m_adding_pressed    (false)
 {
-    /*
-     * EXPERIMENTS.  Messes up repaint, would need work as would qseqroll.
-     *
-     * setAttribute(Qt::WA_StaticContents);            // promising!
-     * setAttribute(Qt::WA_OpaquePaintEvent);          // no erase on repaint
-     */
-
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
-    m_font.setBold(true);
-    m_font.setPointSize(6);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -167,53 +157,55 @@ void
 qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 {
     QPainter painter(this);
-    QRect r(0, 0, width(), height());
-    QBrush brush(Qt::white);                // QBrush brush(Qt::NoBrush);
-    QPen pen(Qt::black);
+    QRect r(0, 0, width(), height());           //  QRect r = qpep->rect();
+    QBrush brush(Qt::white, Qt::NoBrush);
+    QPen pen(Qt::lightGray);                    // QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
+
+#if defined THIS_CODE_ADDS_VALUE
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.setFont(m_font);
     painter.drawRect(0, 0, width(), height());
+#endif
 
-    if (is_initialized())
-    {
-        // xwidth = r.width(); r = qpep->rect();
-    }
-    else
+    if (! is_initialized())
         set_initialized();
 
     draw_grid(painter, r);
     draw_triggers(painter, r);
 
     /*
-     * Draw selections.
+     * Draw selections, if applicable.  Currently, only one box can be selected.
+     * Kepler34 has a feature called "box select" that we've had trouble
+     * implementing.
      */
 
-    int xwidth = r.width();
-    int yheight = r.height() - 1;
-    int x, y, w, h;
+    brush.setStyle(Qt::NoBrush);            // painter reset
+    painter.setBrush(brush);
     if (mBoxSelect)
     {
-        brush.setStyle(Qt::NoBrush);            // painter reset
+        int x, y, w, h;
         pen.setStyle(Qt::SolidLine);
-        pen.setColor(Qt::black);
-        painter.setBrush(brush);
         painter.setPen(pen);
+
         rect::xy_to_rect_get
         (
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + c_names_y);
-        pen.setColor(Qt::black);
+        pen.setColor(sel_color());              // Qt::black
         painter.setPen(pen);
         painter.drawRect(x, y, w, h + c_names_y);
     }
 
+#if defined THIS_CODE_ADDS_VALUE
+    int xwidth = r.width();
+    int yheight = r.height() - 1;
     pen.setStyle(Qt::SolidLine);                // draw border
     pen.setColor(Qt::black);
     painter.setPen(pen);
     painter.drawRect(0, 0, xwidth, yheight);
+#endif
 
     midipulse tick = perf().get_tick();         /* draw progresss playhead  */
     int progress_x = tick / scale_zoom();
@@ -701,17 +693,13 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
 {
     int xwidth = r.width();
     int yheight = r.height();
-
-    QColor background = back_color();
-    QColor foreground = fore_color();
-    QBrush brush(background);                           /* Qt::NoBrush      */
-    QPen pen(foreground);                               /* Qt::black        */
+    QBrush brush(back_color());                         /* Qt::NoBrush      */
+    QPen pen(fore_color());                             /* Qt::black        */
     pen.setStyle(Qt::SolidLine);
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.setFont(m_font);
     painter.drawRect(0, 0, width(), height());          /* full width       */
-    pen.setColor(Qt::lightGray);
+    pen.setColor(step_color());                         /* Qt::lightGray    */
     for (int i = 0; i < height(); i += c_names_y)       /* horizontal lines */
         painter.drawLine(0, i, xwidth, i);
 
@@ -729,12 +717,12 @@ qperfroll::draw_grid (QPainter & painter, const QRect & r)
     {
         if (tick % measure_length() == 0)               /* measure          */
         {
-            pen.setColor(foreground);                   /* Qt::black        */
+            pen.setColor(fore_color());                 /* Qt::black        */
             penwidth = 2;
         }
         else if (tick % beat_length() == 0)             /* measure          */
         {
-            pen.setColor(Qt::lightGray);
+            pen.setColor(step_color());                 /* Qt::lightGray    */
             penwidth = 1;
         }
 
@@ -750,8 +738,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 {
     int y_s = 0;
     int y_f = r.height() / c_names_y;
-    midipulse tick_offset = 0;
-    int x_offset = tix_to_pix(tick_offset);             /* always zero!!!   */
     QBrush brush(Qt::NoBrush);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
@@ -793,7 +779,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int xmax = x + w;
                     int y = c_names_y * seqid + 1;
                     int h = c_names_y - 2;
-                    x -= x_offset;                  /* adjust the x value   */
                     if (trig.selected())
                         pen.setColor(sel_color());  /* "orange", Qt::red    */
                     else
@@ -808,8 +793,8 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
                     pen.setColor(Qt::lightGray);    /* lines between panels */
                     painter.setPen(pen);
-                    painter.drawLine(x+1, y-1, x+w-2, y-1);
-                    painter.drawLine(x+1, y+h+1, x+w-2, y+h+1);
+                    painter.drawLine(x + 1, y -1,      x + w - 2, y - 1);
+                    painter.drawLine(x + 1, y + h + 1, x + w - 2, y + h + 1);
 
                     brush.setStyle(Qt::NoBrush);    /* seq grab handle left */
                     painter.setBrush(brush);
@@ -837,15 +822,14 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 
                         int height = note1 - note0;
                         height += 2;
-
                         seq->reset_draw_marker();
                         if (seq->transposable())
-                            pen.setColor(Qt::black);
+                            pen.setColor(fore_color());     // Qt::black
                         else
-                            pen.setColor(drum_paint());     // (Qt::red);
+                            pen.setColor(drum_color());     // Qt::red
 
                         int cny = c_names_y - 6;
-                        int marker_x = tix_to_pix(t) - x_offset;
+                        int marker_x = tix_to_pix(t);
                         painter.setPen(pen);
                         for (;;)
                         {
@@ -853,13 +837,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             sequence::draw dt = seq->get_next_note(ni);
                             if (dt == sequence::draw::finish)
                                 break;
-
-                            /*
-                             * This code breaks drawing the note lines!
-                             *
-                             * if (dt == sequence::draw::tempo)
-                             *     continue;       // TODO: tempo
-                             */
 
                             midipulse tick_s = ni.start();
                             midipulse tick_f = ni.finish();

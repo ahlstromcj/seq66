@@ -70,10 +70,6 @@ basesettings::basesettings (const std::string & filename) :
 void
 basesettings::set_defaults ()
 {
-    /*
-     * m_comments_block.clear();
-     */
-
     m_ordinal_version = SEQ66_ORDINAL_VERSION;
     m_file_name.clear();
     m_error_message.clear();

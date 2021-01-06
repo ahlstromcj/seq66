@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-12-13
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -516,6 +516,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             if (optionname == "log")
                             {
                                 result = true;
+                                arg = strip_quotes(arg);
                                 usr().option_logfile(arg);
                                 if (! arg.empty())
                                     usr().option_use_logfile(true);

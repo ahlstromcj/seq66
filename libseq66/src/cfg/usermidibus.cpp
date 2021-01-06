@@ -48,8 +48,7 @@ namespace seq66
  *      The name of the buss, valid only if it is not empty.
  */
 
-usermidibus::usermidibus (const std::string & name)
- :
+usermidibus::usermidibus (const std::string & name) :
     m_is_valid          (false),
     m_channel_count     (0),
     m_midi_bus_def      ()
@@ -65,8 +64,7 @@ usermidibus::usermidibus (const std::string & name)
  *      The sources of the data for the copy.
  */
 
-usermidibus::usermidibus (const usermidibus & rhs)
- :
+usermidibus::usermidibus (const usermidibus & rhs) :
     m_is_valid          (rhs.m_is_valid),
     m_channel_count     (rhs.m_channel_count),
     m_midi_bus_def      ()                      // a constant-size array

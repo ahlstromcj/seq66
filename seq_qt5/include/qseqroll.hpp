@@ -42,15 +42,6 @@
 #include "cfg/scales.hpp"               /* seq66::scales enum class         */
 #include "play/sequence.hpp"            /* sequence::editmode mode          */
 #include "qseqbase.hpp"                 /* seq66::qseqbase mixin class      */
-
-/**
- *  Trying to erase the progress-bar (playhead) without redrawing the whole
- *  viewport.  Cannot yet figure it out fully!  Also even with drawing only the
- *  scrollbars, the CPU usage doesn't decrease.  So tabling this one for awhile.
- */
-
-#undef  SEQ66_SEQROLL_PLAYHEAD_RENDER
-
 #include "qrollframe.hpp"               /* seq66::qrollframe helper class   */
 
 /*
@@ -123,18 +114,10 @@ private:
 
     void set_redraw ();
 
-    /**
-     * \getter m_note_length
-     */
-
     int get_note_length () const
     {
         return m_note_length;
     }
-
-    /**
-     * \setter m_note_length
-     */
 
     void set_note_length (int len)
     {

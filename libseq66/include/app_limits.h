@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-01-02
+ * \updates       2021-01-05
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -439,7 +439,7 @@
  *  user-interface.
  */
 
-#define SEQ66_MAXIMUM_BEATS_PER_MEASURE   20
+#define SEQ66_MAXIMUM_BEATS_PER_MEASURE   32
 
 /**
  *  Minimum number of measures in the official length of a pattern.
@@ -464,7 +464,7 @@
  *  user-interface.
  */
 
-#define SEQ4_MINIMUM_BEAT_WIDTH             1
+#define SEQ66_MINIMUM_BEAT_WIDTH           1
 
 /**
  *  Default value for "beat-width".  This is the "denominator" in a 4/4 time
@@ -480,7 +480,7 @@
  *  user-interface.
  */
 
-#define SEQ4_MAXIMUM_BEAT_WIDTH            16
+#define SEQ66_MAXIMUM_BEAT_WIDTH           32
 
 /**
  *  Default value for major divisions per bar.  A graphics version of

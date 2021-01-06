@@ -129,7 +129,6 @@ private:
 
     qperfeditframe64 * m_parent_frame;
     QTimer * m_timer;
-    QFont m_font;
     int m_measure_length;
     int m_beat_length;
     int m_drop_sequence;                    // sequence selection

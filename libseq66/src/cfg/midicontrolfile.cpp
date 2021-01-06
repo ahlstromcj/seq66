@@ -49,7 +49,7 @@ namespace seq66
 
 /*
  * -------------------------------------------------------------------------
- *  midicontrolfile nested classes
+ *  key: midicontrolfile nested class
  * -------------------------------------------------------------------------
  */
 
@@ -77,8 +77,14 @@ midicontrolfile::key::operator < (const key & rhs) const
        return m_category < rhs.m_category;
 }
 
+/*
+ * -------------------------------------------------------------------------
+ *  stanza: midicontrolfile nested class
+ * -------------------------------------------------------------------------
+ */
+
 /**
- *
+ *  Extracts a control-stanza from a MIDI control object.
  */
 
 midicontrolfile::stanza::stanza (const midicontrol & mc) :
@@ -93,10 +99,6 @@ midicontrolfile::stanza::stanza (const midicontrol & mc) :
 
     set(mc);
 }
-
-/**
- *
- */
 
 bool
 midicontrolfile::stanza::set (const midicontrol & mc)
@@ -494,7 +496,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap2);
 
         (void) read_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
-
         if (! ok)
         {
              (void) make_error_message
@@ -543,10 +544,6 @@ midicontrolfile::read_ctrl_pair
     mco.set_event(a, enabled, ev_on, ev_off);
     return next_data_line(file);
 }
-
-/**
- *
- */
 
 bool
 midicontrolfile::write_stream (std::ofstream & file)
@@ -1005,12 +1002,6 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
     bool result = mc.count() > 0;
     if (result)
     {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        std::cout
-            << "midicontrolfile::container_to_stanzas(): input size = "
-            << mc.count() << std::endl
-            ;
-#endif
         for (const auto & m : mc.container())
         {
             const midicontrol & mco = m.second;
@@ -1027,14 +1018,6 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
                  * not configured (all zeroes).
                  */
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                std::cout
-                    << "stanza key " << k.category_name()
-                    << " control code " << k.slot_control()
-                    << " already in place"
-                    << std::endl
-                    ;
-#endif
                 stanziter->second.set(mco);
                 ok = true;                      /* points to the found one  */
             }
@@ -1045,23 +1028,6 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
                 auto p = std::make_pair(k, s);
                 (void) m_stanzas.insert(p);
                 ok = m_stanzas.size() == (sz + 1);
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                if (ok)
-                {
-                    std::cout
-                        << "stanza key " << k.category_name()
-                        << " control code " << k.slot_control() << " added"
-                        ;
-                }
-                else
-                {
-                    std::cout
-                        << "stanza key " << k.category_name()
-                        << " control code " << k.slot_control() << " NOT ADDED"
-                        ;
-                }
-                std::cout << std::endl;
-#endif
             }
             if (! ok)
             {
@@ -1071,19 +1037,9 @@ midicontrolfile::container_to_stanzas (const midicontrolin & mc)
                 break;
             }
         }
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-        std::cout
-            << "midicontrolfile::container_to_stanzas(): output size = "
-            << m_stanzas.size() << std::endl
-            ;
-#endif
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 midicontrolfile::show_stanza (const stanza & stan) const
@@ -1112,10 +1068,6 @@ midicontrolfile::show_stanza (const stanza & stan) const
     }
     std::cout << stan.op_name() << std::endl;
 }
-
-/**
- *
- */
 
 void
 midicontrolfile::show_stanzas () const

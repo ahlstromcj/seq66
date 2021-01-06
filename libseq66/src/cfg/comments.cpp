@@ -58,20 +58,12 @@ comments::comments (const std::string & comtext) :
     }
 }
 
-/**
- *
- */
-
 void
 comments::clear ()
 {
     m_comments_block.clear();
     m_comment_is_set = false;
 }
-
-/**
- *
- */
 
 void
 comments::set (const std::string & block)

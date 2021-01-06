@@ -113,13 +113,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     std::string s = parse_comments(file);
     mutegroups & mutes = rc_ref().mute_groups();
     if (! s.empty())
-    {
         mutes.comments_block().set(s);
-#if defined SEQ66_PLATFORM_DEBUG
-        if (rc().verbose())
-            std::cout << s;
-#endif
-    }
 
     s = get_variable(file, "[mute-group-flags]", "save-mutes-to");
     if (! s.empty())

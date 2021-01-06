@@ -43,6 +43,12 @@
 namespace seq66
 {
 
+/*
+ *  Tweaks
+ */
+
+static const int s_x_tick_fix  = 2;
+
 /**
  *  Principal constructor.
  */
@@ -132,7 +138,7 @@ qseqtime::paintEvent (QPaintEvent *)
     for (midipulse tick = starttick; tick <= endtick; tick += ticks_per_step)
     {
         char bar[32];
-        int x_offset = xoffset(tick) - scroll_offset_x() + 2;
+        int x_offset = xoffset(tick) - scroll_offset_x() + s_x_tick_fix;
 
         /*
          * Vertical line at each bar; number each bar.
