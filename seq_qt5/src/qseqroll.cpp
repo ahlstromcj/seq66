@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-01-06
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -409,7 +409,7 @@ qseqroll::paintEvent (QPaintEvent * qpep)
         y = selection().y() + delta_y;
         pen.setColor(Qt::black);            /* what palette color to use?   */
         painter.setPen(pen);
-        if (m_edit_mode == sequence::editmode::drum)
+        if (is_drum_mode())
         {
             int drumx = x - unit_height() * 0.5 + m_keypadding_x;
             painter.drawRect(drumx, y, selw + unit_height(), selh);
@@ -439,13 +439,9 @@ void
 qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 {
     if (m_drawing_background_seq)
-    {
-        if (m_edit_mode == sequence::editmode::drum)
-            draw_drum_notes(painter, view, true);
-        else
-            draw_notes(painter, view, true);
-    }
-    if (m_edit_mode == sequence::editmode::drum)
+        draw_notes(painter, view, true);
+
+    if (is_drum_mode())
         draw_drum_notes(painter, view, false);
     else
         draw_notes(painter, view, false);
@@ -459,6 +455,7 @@ qseqroll::call_draw_notes (QPainter & painter, const QRect & view)
 void
 qseqroll::draw_grid (QPainter & painter, const QRect & r)
 {
+    int octkey = c_octave_size - m_key;             /* used three times     */
     QBrush brush(back_color());                     /* brush(Qt::NoBrush)   */
     QPen pen(grey_color());                         /* pen(Qt::lightGray)   */
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
@@ -466,31 +463,23 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     painter.setBrush(brush);
     painter.setPen(pen);
     painter.drawRect(r);
-
-    int octkey = c_octave_size - m_key;             /* used three times     */
     for (int key = 1; key <= c_num_keys; ++key)     /* for each note row    */
     {
         int remkeys = c_num_keys - key;             /* remaining keys       */
         int modkey = remkeys - scroll_offset_v() + octkey;
 
         /*
+         * Draw horizontal grid lines differently depending on editing mode.
          * Set line colour dependent on the note row we're on.
          */
 
+        int y = key * unit_height();
         if ((modkey % c_octave_size) == 0)
-            pen.setColor(fore_color());             /* Qt::darkGray         */
-        else if ((modkey % c_octave_size) == (c_octave_size-1))
-            pen.setColor(step_color());             /* Qt::lightGray        */
+            pen.setColor(fore_color());
         else
-            pen.setColor(step_color());             /* Qt::lightGray        */
+            pen.setColor(step_color());
 
         painter.setPen(pen);
-
-        /*
-         * Draw horizontal grid lines differently depending on editing mode.
-         */
-
-        int y = key * unit_height();
         painter.drawLine(r.x(), y, r.x() + r.width(), y);
         if (m_scale != scales::off)
         {
@@ -518,21 +507,15 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
     midipulse ticks_per_bar = bpbar * ticks_per_beat;
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     midipulse increment = ticks_per_step;       /* ticks_per_step or 1      */
-    midipulse starttick = pix_to_tix(r.x());
     midipulse endtick = pix_to_tix(r.x() + r.width());
-    midipulse adjustment = starttick % ticks_per_step;
-    starttick -= adjustment;                    /* endtick -= adjustment    */
+    midipulse starttick = pix_to_tix(r.x());
+    starttick -= starttick % ticks_per_step;
 
     /*
      * Draw vertical grid lines.  Incrementing by ticks_per_step only works for
      * PPQN of certain multiples or for certain time offsets.  Therefore, need
-     * to check every tick!!!!
+     * to check every darn tick!!!!
      */
-
-#if defined THIS_CODE_ADDS_VALUE
-    pen.setColor(Qt::darkGray);                 /* can we use Palette?      */
-    painter.setPen(pen);
-#endif
 
     for (int tick = starttick; tick < endtick; tick += increment)
     {
@@ -578,8 +561,8 @@ qseqroll::draw_notes
     bool background
 )
 {
-    QBrush brush(Qt::white);            /* Qt::NoBrush) */
-    QPen pen(Qt::black);
+    QBrush brush(Qt::white);            /* Qt::NoBrush)  breaks selection   */
+    QPen pen(fore_color());
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
     painter.setPen(pen);
@@ -592,6 +575,7 @@ qseqroll::draw_notes
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     int unitheight = unit_height();
+    int unitdecr = unit_height() - 1;
     int noteheight = unitheight - 3;
     event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
@@ -610,12 +594,10 @@ qseqroll::draw_notes
         bool linkedin = dt == sequence::draw::linked && end_in;
         if (start_in || linkedin)
         {
-            m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unitheight) -
-                unitheight + 1;
-
             int in_shift = 0;
             int length_add = 0;
+            m_note_x = xoffset(ni.start());
+            m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
             if (dt == sequence::draw::linked)
             {
                 if (ni.finish() >= ni.start())
@@ -682,8 +664,6 @@ qseqroll::draw_notes
                 else
                     brush.setColor(note_in_color());    /* was Qt::white   */
 
-//////////////      brush.setColor(back_color());   /* Qt::white            */
-
                 painter.setBrush(brush);
                 if (! background)
                 {
@@ -742,7 +722,7 @@ qseqroll::draw_drum_note (QPainter & painter)
      *
      * if (ni.selected())
      *     brush.setColor("orange");       // Qt::red
-     * else if (m_edit_mode == sequence::editmode::drum)
+     * else if (is_drum_mode())
      *     brush.setColor(Qt::red);
      */
 }
@@ -756,10 +736,10 @@ qseqroll::draw_drum_notes
 )
 {
     QBrush brush(Qt::NoBrush);
-    QPen pen(Qt::lightGray);
-    pen.setColor(drum_paint());     /* draw red boxes from drum loop    */
+    QPen pen(drum_color());         /* draw red boxes from drum loop    */
     pen.setStyle(Qt::SolidLine);
     pen.setWidth(1);
+    brush.setStyle(Qt::SolidPattern);
     painter.setPen(pen);
     painter.setBrush(brush);
     m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
@@ -771,6 +751,7 @@ qseqroll::draw_drum_notes
         perf().get_sequence(m_background_sequence) : seq_pointer() ;
 
     int noteheight = unit_height();
+    int noteheight2 = unit_height() + 1;
     event::buffer::const_iterator evi;
     s->reset_ex_iterator(evi);
     for (;;)
@@ -789,9 +770,7 @@ qseqroll::draw_drum_notes
         if (start_in || linkedin)
         {
             m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * noteheight) -
-                noteheight - 1 + 2;
-
+            m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
             if (dt == sequence::draw::linked)
             {
                 if (ni.finish() >= ni.start())
@@ -806,23 +785,6 @@ qseqroll::draw_drum_notes
             else
                 m_note_width = tix_to_pix(16);
 
-            pen.setColor(Qt::black);
-            if (background)                     // draw background note
-            {
-                pen.setColor(Qt::darkCyan);     // note border color
-                brush.setColor(Qt::darkCyan);
-            }
-            else
-            {
-                pen.setColor(Qt::black);        // note border color
-                brush.setColor(Qt::black);
-            }
-
-            brush.setStyle(Qt::SolidPattern);
-            painter.setBrush(brush);
-            painter.setPen(pen);
-            draw_drum_note(painter);
-
             /*
              * Draw note highlight in drum mode.  Orange note if selected, red
              * if drum mode, otherwise plain white.
@@ -830,14 +792,15 @@ qseqroll::draw_drum_notes
 
             if (ni.selected())
                 brush.setColor(sel_color());
-            else if (m_edit_mode == sequence::editmode::drum)
+            else if (is_drum_mode())
                 brush.setColor(drum_paint());
             else
                 brush.setColor(Qt::white);
 
+            pen.setColor(fore_color());
+            painter.setPen(pen);
             painter.setBrush(brush);
-            if (! background)
-                draw_drum_note(painter);    // background
+            draw_drum_note(painter);
         }
     }
 }
@@ -858,7 +821,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     seq::pointer s = seq_pointer();
     midipulse tick_s, tick_f;
     int note, note_l, norm_x, norm_y, snapped_x, snapped_y;
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     snapped_x = norm_x = event->x() - m_keypadding_x;
     snapped_y = norm_y = event->y();
     snap_x(snapped_x);
@@ -875,11 +837,15 @@ qseqroll::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        if (event->button() == Qt::LeftButton)
+        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+        bool lbutton = event->button() == Qt::LeftButton;
+        bool rbutton = event->button() == Qt::RightButton;
+        bool mbutton = event->button() == Qt::MiddleButton || lbutton && isctrl;
+        if (lbutton)
         {
             current_x(norm_x);
             drop_x(norm_x);                         /* select non-snapped x */
-            if (m_edit_mode == sequence::editmode::drum)
+            if (is_drum_mode())
             {
                 int dropxadj = drop_x() - unit_height() / 2;    /* padding  */
                 convert_xy(dropxadj, drop_y(), tick_s, note);
@@ -902,9 +868,10 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  * add, else add a note, length = little less than snap.
                  */
 
+                eventlist::select selmode = eventlist::select::would_select;
                 bool would_select = ! s->select_note_events
                 (
-                    tick_s, note, tick_s, note, eventlist::select::would_select
+                    tick_s, note, tick_s, note, selmode
                 );
                 if (would_select)
                 {
@@ -914,66 +881,37 @@ qseqroll::mousePressEvent (QMouseEvent * event)
             }
             else                                    /* we're selecting anew */
             {
-                bool is_selected;
-                if (m_edit_mode == sequence::editmode::drum)
-                {
-                    is_selected = s->select_note_events
-                    (
-                        tick_s, note, tick_f, note,
-                        eventlist::select::is_onset
-                    );
-                }
-                else
-                {
-                    is_selected = s->select_note_events
-                    (
-                        tick_s, note, tick_f, note,
-                        eventlist::select::selected
-                    );
-                }
+                /*
+                 *  In drum mode, were using "is_onset", but this breaks moving
+                 *  the selected drum events. So we leave it at "selected".
+                 */
+
+                eventlist::select selmode = eventlist::select::selected;
+                bool is_selected = s->select_note_events
+                (
+                    tick_s, note, tick_f, note, selmode
+                );
                 if (! is_selected)
                 {
                     if (! isctrl)
+                    {
                         s->unselect();
+                        m_parent_frame->set_dirty();
+                    }
 
                     int numsel;
-                    if (m_edit_mode == sequence::editmode::drum)
-                    {
-                        numsel = s->select_note_events
-                        (
-                            tick_s, note, tick_f, note,
-                            eventlist::select::onset             // select_one
-                        );
-                    }
-                    else
-                    {
-                        numsel = s->select_note_events
-                        (
-                            tick_s, note, tick_f, note,
-                            eventlist::select::select_one
-                        );
-                    }
+                    selmode = is_drum_mode() ?
+                        eventlist::select::onset :
+                        eventlist::select::select_one ;
+
+                    numsel = s->select_note_events
+                    (
+                        tick_s, note, tick_f, note, selmode
+                    );
                     if (numsel == 0)    /* none selected, start selection box */
-                    {
-                        if (event->button() == Qt::LeftButton)
-                            selecting(true);
-                    }
+                        selecting(true);
                     else
                         set_dirty();
-                }
-                if (m_edit_mode == sequence::editmode::drum)
-                {
-                    is_selected = s->select_note_events
-                    (
-                        tick_s, note, tick_f, note, eventlist::select::is_onset
-                    );
-                }
-                else
-                {
-                    is_selected = s->select_note_events
-                    (
-                        tick_s, note, tick_f, note, eventlist::select::selected
-                    );
                 }
                 if (is_selected)
                 {
@@ -981,11 +919,11 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                      * Moving - left click only.
                      */
 
-                    if (event->button() == Qt::LeftButton && ! isctrl)
+                    if (lbutton && ! isctrl)
                     {
                         moving_init(true);
                         set_dirty();
-                        if (m_edit_mode == sequence::editmode::drum)
+                        if (is_drum_mode())
                             s->onsets_selected_box(tick_s, note, tick_f, note_l);
                         else
                             s->selected_box(tick_s, note, tick_f, note_l);
@@ -999,9 +937,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                          * Save offset that we got from the snap above.
                          */
 
-                        int adjusted_selected_x = selection().x();
-                        snap_x(adjusted_selected_x);
-                        move_snap_offset_x(selection().x() - adjusted_selected_x);
+                        int adj_selected_x = selection().x();
+                        snap_x(adj_selected_x);
+                        move_snap_offset_x(selection().x() - adj_selected_x);
                         current_x(snapped_x);
                         drop_x(snapped_x);
                     }
@@ -1010,13 +948,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                      * Middle mouse button or left-ctrl click.
                      */
 
-                    bool can_grow =
-                    (
-                        event->button() == Qt::MiddleButton ||
-                        (
-                            event->button() == Qt::LeftButton && isctrl
-                        )
-                    ) && m_edit_mode == sequence::editmode::note;
+                    bool can_grow = mbutton && ! is_drum_mode();
                     if (can_grow)
                     {
                         growing(true);
@@ -1029,12 +961,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 }
             }
         }
-
-        /*
-         * Here and in sequencer64!!!!
-         */
-
-        if (event->button() == Qt::RightButton)
+        if (rbutton)
             set_adding(true);
     }
 }
@@ -1052,7 +979,8 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     int delta_y = current_y() - drop_y();
     midipulse delta_tick;
     int delta_note;
-    if (event->button() == Qt::LeftButton)
+    bool lbutton = event->button() == Qt::LeftButton;
+    if (lbutton)
     {
         if (selecting())
         {
@@ -1066,8 +994,13 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             eventlist::select selmode = eventlist::select::selecting;
             convert_xy(x, y, tick_s, note_h);
             convert_xy(x + w, y + h, tick_f, note_l);
-            if (m_edit_mode == sequence::editmode::drum)
-                selmode = eventlist::select::onset;
+
+            /*
+             * This breaks the selection of events in drum mode.
+             *
+             * if (is_drum_mode())
+             *      selmode = eventlist::select::onset;
+             */
 
             int numsel = seq_pointer()->select_note_events
             (
@@ -1104,7 +1037,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             }
         }
     }
-    if (event->button() == Qt::LeftButton || event->button() == Qt::MiddleButton)
+    if (lbutton || event->button() == Qt::MiddleButton)
     {
         if (growing())
         {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-10-04
- * \updates       2019-10-09
+ * \updates       2021-01-06
  * \license       GNU GPLv2 or above
  *
  *  Here is a list of all the scale interval patterns if you are working with
@@ -62,27 +62,62 @@
 namespace seq66
 {
 
-/**
- *
- */
+static const std::string
+c_key_text[c_octave_size] =
+{
+    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
+};
+
+std::string
+musical_note_name (int n)
+{
+    std::string result = "Xb";
+    if (legal_note(n))
+    {
+        char note[8];
+        int key = n % c_octave_size;
+        int octave = (n / c_octave_size) - 1;
+        if (octave >= 0)
+        {
+            snprintf
+            (
+                note, sizeof note, "%2s%1d", c_key_text[key].c_str(), octave
+            );
+        }
+        else
+            snprintf(note, sizeof note, "%2s-", c_key_text[key].c_str());
+
+        result = note;
+    }
+    return result;
+}
 
 std::string
 musical_key_name (int k)
 {
-    std::string result = "Unsupported";
+    std::string result = "Xb";
     if (legal_key(k))
         result = c_key_text[k];
 
     return result;
 }
 
-/**
- *
- */
-
 std::string
 musical_scale_name (int s)
 {
+    static const std::string
+    c_scales_text[c_scales_max] =
+    {
+        "Off (Chromatic)",
+        "Major (Ionian)",
+        "Minor (Aeolan)",
+        "Harmonic Minor",
+        "Melodic Minor",
+        "Whole Tone",
+        "Blues",
+        "Pentatonic Major",
+        "Pentatonic Minor"
+    };
     std::string result = "Unsupported";
     if (legal_scale(s))
         result = c_scales_text[s];
@@ -133,7 +168,6 @@ midi_note_frequency (midibyte note)
     120: C9
     127: G9
 \endverbatim
- *
  *
  * \return
  *      Returns true if the analysis was workable.

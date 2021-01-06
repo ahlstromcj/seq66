@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2020-12-31
+2019-04-13 to 2021-01-06
 
 HOT ITEMS:
 
@@ -32,7 +32,8 @@ HOT ITEMS:
 
         Add, if necessary, a "one-shot" option, where a loop plays only once.
         This would be useful for intros.  Currently can be achieved only in
-        Song mode.
+        Song mode.  Currently added a tag (c_seq_onshot) to support it in
+        preparation.
 
     Polling:
 
@@ -74,6 +75,8 @@ HOT ITEMS:
         resumes.
 
     UI:
+
+        Also make sure the data modifier works correctly.
 
         File / New does not work after using the Recent Files menu
         The Recent Files menu usage does not clear the current song... it

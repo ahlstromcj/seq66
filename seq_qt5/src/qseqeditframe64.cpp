@@ -1422,18 +1422,21 @@ void
 qseqeditframe64::text_beats_per_measure (const QString & text)
 {
     std::string temp = text.toStdString();
-    int beats = std::stoi(temp);
-    if
-    (
-        beats >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
-        beats <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
-    )
+    if (! temp.empty())
     {
-        set_beats_per_measure(beats);
-    }
-    else
-    {
-        reset_beats_per_measure();
+        int beats = std::stoi(temp);
+        if
+        (
+            beats >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
+            beats <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
+        )
+        {
+            set_beats_per_measure(beats);
+        }
+        else
+        {
+            reset_beats_per_measure();
+        }
     }
 }
 
@@ -1559,14 +1562,21 @@ void
 qseqeditframe64::text_beat_width (const QString & text)
 {
     std::string temp = text.toStdString();
-    int width = std::stoi(temp);
-    if (width >= SEQ66_MINIMUM_BEAT_WIDTH && width <= SEQ66_MAXIMUM_BEAT_WIDTH)
+    if (! temp.empty())
     {
-        set_beat_width(width);
-    }
-    else
-    {
-        reset_beat_width();
+        int width = std::stoi(temp);
+        if
+        (
+            width >= SEQ66_MINIMUM_BEAT_WIDTH &&
+            width <= SEQ66_MAXIMUM_BEAT_WIDTH
+        )
+        {
+            set_beat_width(width);
+        }
+        else
+        {
+            reset_beat_width();
+        }
     }
 }
 
@@ -1642,14 +1652,17 @@ void
 qseqeditframe64::text_measures (const QString & text)
 {
     std::string temp = text.toStdString();
-    int measures = std::stoi(temp);
-    if
-    (
-        measures >= SEQ66_MINIMUM_MEASURES &&
-        measures <= SEQ66_MAXIMUM_MEASURES
-    )
+    if (! temp.empty())
     {
-        set_measures(measures);
+        int measures = std::stoi(temp);
+        if
+        (
+            measures >= SEQ66_MINIMUM_MEASURES &&
+            measures <= SEQ66_MAXIMUM_MEASURES
+        )
+        {
+            set_measures(measures);
+        }
     }
 }
 
@@ -3348,7 +3361,7 @@ qseqeditframe64::set_dirty ()
     {
         qseqframe::set_dirty();         // roll, time, date & event panes
         m_seqroll->set_redraw();        // also calls set_dirty();
-        m_seqdata->set_dirty();         // doesn't cause a refresh
+        m_seqdata->set_dirty();         // update(); neither cause a refresh
         m_seqevent->set_dirty();        // how about this?
     }
     update_draw_geometry();

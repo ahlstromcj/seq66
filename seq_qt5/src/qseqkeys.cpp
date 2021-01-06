@@ -50,17 +50,20 @@ namespace seq66
 
 class performer;
 
-static const int sc_key_x = 20;     // 16;
+/**
+ *  The width and thickness of the keys drawn on the GUI.
+ */
+
+static const int sc_key_x = 24;             // 20; // 16;
 static const int sc_key_y =  8;
 
 /**
  *  The dimensions and offset of the virtual keyboard at the left of the
- *  piano roll.  These differ from the same members in the Gtkmm seqkeys
- *  class.
+ *  piano roll.
  */
 
-static const int sc_keyarea_x = sc_key_x + 15;
-static const int sc_keyoffset_x = sc_keyarea_x - sc_key_x;
+static const int sc_keyoffset_x = 20;       // 15; // sc_keyarea_x - sc_key_x;
+static const int sc_keyarea_x = sc_key_x + sc_keyoffset_x;
 
 /**
  *  Principal constructor.
@@ -151,35 +154,23 @@ qseqkeys::paintEvent (QPaintEvent *)
                 sc_key_x - 5, m_key_y - 4
             );
         }
-
-        char note[20];
         if (m_show_octave_letters)
         {
+            pen.setColor(Qt::black);            /* "Cx" octave labels   */
+            pen.setStyle(Qt::SolidLine);
+            painter.setPen(pen);
             if (key == m_key)
             {
-                int octave = (keyvalue / 12) - 1;   /* calculate notes      */
-                if (octave < 0)
-                    octave *= -1;
-
-                snprintf                            /* see scales.hpp       */
-                (
-                    note, sizeof note, "%2s%1d",
-                    musical_key_name(key).c_str(), octave
-                );
-                pen.setColor(Qt::black);            /* "Cx" octave labels   */
-                pen.setStyle(Qt::SolidLine);
-                painter.setPen(pen);
-                painter.drawText(2, m_key_y * i + 11, note);
+                std::string note = musical_note_name(keyvalue);
+                painter.drawText(2, m_key_y * i + 11, note.c_str());
             }
         }
         else
         {
             if ((keyvalue % 2) == 0)
             {
+                char note[8];
                 snprintf(note, sizeof note, "%3d", keyvalue);
-                pen.setColor(Qt::black);
-                pen.setStyle(Qt::SolidLine);
-                painter.setPen(pen);
                 painter.drawText(1, m_key_y * i + 9, note);
             }
         }
@@ -252,10 +243,6 @@ qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
     update();
 #endif
 }
-
-/**
- * 31 x 1025
- */
 
 QSize
 qseqkeys::sizeHint () const

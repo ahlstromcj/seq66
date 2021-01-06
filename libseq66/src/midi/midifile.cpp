@@ -1530,26 +1530,8 @@ midifile::parse_prop_header (int file_size)
 /**
  *  After all of the conventional MIDI tracks are read, we're now at the
  *  "proprietary" Seq24 data section, which describes the various features
- *  that Seq24 supports.  It consists of series of tags:
- *
-\verbatim
-        c_midictrl [was never fully implemented in Seq24, bypassed here]
-        c_midiclocks [was never fully implemented in Seq24, bypassed here]
-        c_notes
-        c_bpmtag (beats per minute)
-        c_mutegroups
-        c_musickey (new, added if usr() global_seq_feature() is true)
-        c_musicscale (ditto)
-        c_backsequence (ditto)
-\endverbatim
- *
- *  (There are more tags defined in the globals module, but they are not
- *  used in this function.  This doesn't quite make sense, as there are
- *  also some "triggers" values, and we're pretty sure the application
- *  uses them.  Oh, it turns out that they are set up by actions performer on
- *  each sequence, and are stored as sequencer-specific ("SeqSpec") data with
- *  each track's data as held in the MIDI container for the track.  See the
- *  midi_vector_base module for more information.)
+ *  that Seq24 supports.  It consists of series of tags, layed out in the
+ *  midi_vector_base.hpp header file (search for c_mutegroups, for example).
  *
  *  The format is (1) tag ID; (2) length of data; (3) the data.
  *

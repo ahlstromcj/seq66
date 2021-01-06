@@ -107,12 +107,18 @@ public:
 private:
 
     virtual void scroll_offset (int v) override;
+
     virtual int scroll_offset () const override
     {
         return qseqbase::scroll_offset();
     }
 
     void set_redraw ();
+
+    bool is_drum_mode () const
+    {
+        return m_edit_mode == sequence::editmode::drum;
+    }
 
     int get_note_length () const
     {

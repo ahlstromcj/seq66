@@ -106,8 +106,6 @@
       \item \textbf{Beats Per Bar Reset} and \textbf{Beats Per Bar}
       \item \textbf{Beat Width Reset} and \textbf{Beat Width}
       \item \textbf{Pattern Length Reset} and \textbf{Pattern Length}
-      \item \textbf{Transposable}
-      \item \textbf{Chord Generation Reset} and \textbf{Chord Generation}
       \item \textbf{Chord Types}
       \item \textbf{Buss Reset} and \textbf{Buss Selection}
       \item \textbf{Channel Reset} and \textbf{Channel Selection}
@@ -130,6 +128,7 @@
    \index{beats per bar}
    Specifies the number of beat units per bar in the time signature.
    The possible values range from 1 to 16, if the drop-down menu is used.
+   Arbitrary values up to 32 can be entered by typing the number.
    The "Reset" button resets the value to 4.
 
 % A REGRESSION!!!
@@ -144,11 +143,13 @@
    16 for sixteenth notes; and 32 for thirty-second notes.
    The whole time signature is display at the bottom center of the
    corresponding pattern slot in the \textbf{Live Grid}.
+   Arbitrary values up to 32 can be entered by typing the number.
    The "Reset" button resets the value to 4.
 
    \itempar{Pattern Length}{pattern editor!length}
    Sets the length of the current pattern, in measures.
    The possible values range from 1 to 64.
+   Arbitrary values up to 1024 can be entered by typing the number.
    \textsl{However}, when opening or importing a non-\textsl{Seq66}
    MIDI tune, the length of each track will be used, and so other values
    are possible; they just cannot be set via the user-interface.
@@ -174,18 +175,11 @@
 %  (Also nice would be a "one-shot"
 %  pattern, useful for live intro patterns, for example.)
 
-   \itempar{Transpose}{pattern editor!transpose toggle}
-   This setting allows the sequence to be transposed by
-   the global transpose selection made in the song editor.  If transpose is
-   enabled for that pattern, the button will be highlighted as per the current
-   desktop theme.  Patterns for drums should, in general, not be transposable.
-
    \itempar{Chord Generation}{pattern editor!chord generation}
    \index{chord generation}
    This setting allows one to select a chord type (e.g. "major" or "minor").
    When active, a note is treated like the base note of the selected chord
    type, and extra notes are generated to create that chord.
-   The button next to this dropdown turns chord generation off.
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies one of the virtual MIDI output busses provided by
@@ -994,6 +988,32 @@
 \subsection{Data View}
 \label{subsec:pattern_editor_data_view}
 
+   First, let's go over the buttons at the left.
+
+   \begin{enumber}
+      \item \textbf{Transpose}
+      \item \textbf{Drum Note Mode}
+      \item \textbf{Chord Generation Reset}
+   \end{enumber}
+
+   \itempar{Transpose}{pattern editor!transpose toggle}
+   This button allows the sequence to be transposed by
+   the global transpose selection made in the song editor.  If transpose is
+   enabled for that pattern, the button will be highlighted as per the current
+   desktop theme.  Patterns for drums should, in general, not be transposable.
+
+   \itempar{Drum Note Mode}{pattern editor!drum mode}
+   This button changes from normal note mode to drum note mode. In the drum
+   mode, the notes are drawn as small red diamonds without any duration.
+   They are also entered the same way.
+   This is a feature adopted from \textsl{Kepler34}.
+
+   \itempar{Chord Generation}{pattern editor!chord generation}
+   \index{chord generation}
+   This button resets the chord-generation feature to \textbf{Off}.
+   It's located by the data pane in order to save space in the first row.
+
+   Now on to the \textbf{Data View} itself.
    Also known as the "data pane"
    \index{data pane}
    or "data panel".

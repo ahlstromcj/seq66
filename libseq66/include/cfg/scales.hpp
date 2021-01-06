@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2019-10-09
+ * \updates       2021-01-06
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -91,13 +91,20 @@ const int c_key_of_C = static_cast<int>(keys::C);
 const int c_key_of_max = static_cast<int>(keys::max);
 
 /**
- *  An inline function to test that an integer in a legal key value.
+ *  An inline function to test that an integer is a legal key-name index
+ *  value.
  */
 
 inline bool
 legal_key (int k)
 {
     return k >= c_key_of_C && k < c_octave_size;
+}
+
+inline bool
+legal_note (int note)
+{
+    return note >= 0 && note < 128;
 }
 
 /**
@@ -380,35 +387,6 @@ c_scales_transpose_dn_neg[c_scales_max][c_octave_size] =
 #endif      // USE_C_SCALES_TRANSPOSE_DN_NEG
 
 /**
- *  The names of the currently-supported scales.
- */
-
-const std::string
-c_scales_text[c_scales_max] =
-{
-    "Off (Chromatic)",
-    "Major (Ionian)",
-    "Minor (Aeolan)",
-    "Harmonic Minor",
-    "Melodic Minor",
-    "Whole Tone",
-    "Blues",
-    "Pentatonic Major",
-    "Pentatonic Minor"
-};
-
-/**
- *  Provides the entries for the Key dropdown menu in the Pattern Editor
- *  window.
- */
-
-const std::string
-c_key_text[c_octave_size] =
-{
-    "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
-};
-
-/**
  *  Provides the entries for the Interval dropdown menu in the Pattern Editor
  *  window.
  */
@@ -524,6 +502,7 @@ c_chord_table[c_chord_number][c_chord_size] =
  */
 
 extern std::string musical_key_name (int k);
+extern std::string musical_note_name (int n);
 extern std::string musical_scale_name (int s);
 extern double midi_note_frequency (midibyte note);
 extern bool analyze_note

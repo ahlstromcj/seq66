@@ -105,7 +105,9 @@ void
 qseqdata::conditional_update ()
 {
     if (check_dirty())
+    {
         update();
+    }
 }
 
 bool
