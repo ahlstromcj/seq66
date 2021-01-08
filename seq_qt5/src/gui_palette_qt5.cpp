@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2021-01-04
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -382,7 +382,7 @@ gui_palette_qt5::load_static_colors (bool inverse)
         m_color_28     = Color("dark slate blue");
         m_color_29     = Color("dark violet");
         m_lt_grey      = Color(192, 192, 192);      // Color("light slate grey");
-        m_dk_grey      = Color( 96,  96,  96);      // Color("dark slate grey");
+        m_dk_grey      = Color( 72,  72,  72);      // Color("dark slate grey");
     }
 }
 
@@ -542,7 +542,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
     m_nrm_palette.add(InvertibleColor::dk_grey,     m_dk_grey,  "Beat Line");
     m_nrm_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
-    m_nrm_palette.add(InvertibleColor::extra,       m_lt_grey,  "Extra");
+    m_nrm_palette.add(InvertibleColor::extra,       m_dk_red,   "Extra");
 
     m_inv_palette.clear();
     m_inv_palette.add(InvertibleColor::black,       m_white,    "Foreground");
@@ -560,7 +560,7 @@ gui_palette_qt5::reset_invertibles ()
     m_inv_palette.add(InvertibleColor::grey,        m_grey,     "Medium Line");
     m_inv_palette.add(InvertibleColor::dk_grey,     m_white,    "Beat Line");
     m_inv_palette.add(InvertibleColor::lt_grey,     m_lt_grey,  "Step Line");
-    m_inv_palette.add(InvertibleColor::extra,       m_color_27, "Extra");
+    m_inv_palette.add(InvertibleColor::extra,       m_dk_green, "Extra");
 
     m_empty_brush.setColor(get_color(InvertibleColor::white));
     m_empty_brush.setStyle(m_empty_brush_style);

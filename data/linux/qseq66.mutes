@@ -1,6 +1,6 @@
 # Seq66 0.90.1 (and above) mute-groups configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.mutes
+# /home/user/.config/seq66/qseq66.mutes
 # Written on 2020-04-22 08:02:33
 #
 # This file replaces the [mute-group] section, making it a little
@@ -88,6 +88,6 @@ groups-format = bin
 30 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
 
-# End of /home/ahlstrom/.config/seq66/qseq66.mutes
+# End of /home/user/.config/seq66/qseq66.mutes
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

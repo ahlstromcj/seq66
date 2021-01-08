@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-03
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -39,6 +39,7 @@
 #include <QWidget>
 
 #include "play/seq.hpp"                 /* seq66::seq::pointer              */
+#include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -125,6 +126,11 @@ private:
         return key == 1 || key == 3 || key == 6 || key == 8 || key == 10;
     }
 
+    const Color & preview_color () const
+    {
+        return m_preview_color;
+    }
+
     seq::pointer seq_pointer ()
     {
         return m_seq;
@@ -147,6 +153,7 @@ private:
     int m_key;
     int m_key_y;
     int m_key_area_y;
+    const Color m_preview_color;
     bool m_is_previewing;
     int m_preview_key;
 

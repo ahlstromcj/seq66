@@ -85,6 +85,7 @@ qseqkeys::qseqkeys
     m_key                   (0),
     m_key_y                 (keyheight),
     m_key_area_y            (keyareaheight),
+    m_preview_color         (extra_paint()),
     m_is_previewing         (false),
     m_preview_key           (-1)
 {
@@ -144,7 +145,7 @@ qseqkeys::paintEvent (QPaintEvent *)
         }
         if (keyvalue == m_preview_key)          /* highlight note preview   */
         {
-            brush.setColor(Qt::red);
+            brush.setColor(preview_color());    /* same as Qt::red current  */
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);

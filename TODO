@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-01-06
+2019-04-13 to 2021-01-07
 
 HOT ITEMS:
 
@@ -32,17 +32,8 @@ HOT ITEMS:
 
         Add, if necessary, a "one-shot" option, where a loop plays only once.
         This would be useful for intros.  Currently can be achieved only in
-        Song mode.  Currently added a tag (c_seq_onshot) to support it in
+        Song mode.  Currently added a tag (c_seq_loopcount) to support it in
         preparation.
-
-    Polling:
-
-        Investigate the effect of reducing the microsleep(100) calls when
-        polling.  Maybe make it an usr variable.
-
-    Windows:
-
-        Disable JACK-related elements for Windows, such as the JACK options.
 
     NSM:
 
@@ -68,7 +59,11 @@ HOT ITEMS:
     Main Window:
 
         PPQN dropdown needs to be fully implemented.  Also fix the PPQN
-        indicator at the bottom.
+        indicator at the bottom. In qsmainwnd, implement and unhide the PPQN
+        combo box, and save the setting.
+
+        In general, support run-time changes in PPQN, a big task.
+        In general, support PPQN calculations other than "times 4", a big task.
 
         The time indicator needs to adapt to the global time-signature
         controls.  It adapts to the numerator, but only once playback
@@ -231,9 +226,6 @@ Tons of TO DOs in performer!
     Do:
 
         -   After importing to a set, reload that set to make changes visible.
-        -   In qseqroll, replace reset_draw_marker().
-        -   In qsmainwnd, implement and unhide the PPQN combo box, and save the
-            setting.
         -   Implement setmapper::select_triggers_in_range().
         -   Implement screenset::select_triggers_in_range().
         -   Investigate sequence::offset_triggers() usage.
@@ -327,10 +319,6 @@ seq_qt5/src/qseqroll.cpp:
 
     keyPressEvent():  Fix the zoom keys.
 
-seq_qt5/src/qsmainwnd.cpp:
-
-    Constructor:  Fix and unhide the PPQN combo-box.
-
 seq_qt5/src/qsliveframe.cpp:
 
     While running, try to avoid drawing the empty slots over and over.
@@ -380,11 +368,6 @@ libseq66/src/cfg/mutegroupsfile.cpp:
 libseq66/src/cfg/usrsettings.cpp:
 
     normalize(): Fix the calculation of the number of mute tracks.
-
-Many modules:
-
-    In general, support run-time changes in PPQN, a big task.
-    In general, support PPQN calculations other than "times 4", a big task.
 
 Lots of testing as well!
 

@@ -541,7 +541,7 @@ int
 midi_in_alsa::api_poll_for_midi ()
 {
     rtmidi_in_data * rtindata = m_alsa_data.m_alsa_rtmidiin;    // BOGUS
-    (void) microsleep(100);
+    (void) microsleep();
 #if defined SEQ66_USER_CALLBACK_SUPPORT
     return rtindata->using_callback() ? 0 : rtindata->queue().count();
 #else

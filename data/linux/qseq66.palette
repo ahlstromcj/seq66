@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) palette configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.palette
-# Written on 2020-12-24 09:33:56
+# /home/user/.config/seq66/qseq66.palette
+# Written on 2021-01-07 10:10:08
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -59,8 +59,8 @@ look empty with a space.
 27       "Dark Khaki" [ 0xFFBDB76B ]            "Black" [ 0xFF000000 ]
 28  "Dark Slate Blue" [ 0xFF483D8B ]            "Black" [ 0xFF000000 ]
 29      "Dark Violet" [ 0xFF9400D3 ]            "Black" [ 0xFF000000 ]
-30       "Light Grey" [ 0xFF778899 ]            "Black" [ 0xFF000000 ]
-31        "Dark Grey" [ 0xFF2F4F4F ]            "Black" [ 0xFF000000 ]
+30       "Light Grey" [ 0xFFC0C0C0 ]            "Black" [ 0xFF000000 ]
+31        "Dark Grey" [ 0xFF606060 ]            "Black" [ 0xFF000000 ]
 
 # Similar to the [palette] section, but applies to UI elements and to
 # the --inverse color option.  The first integer is the color number,
@@ -69,7 +69,7 @@ look empty with a space.
 [ui-palette]
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
- 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF000000 ]
+ 1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF606060 ]
  2            "Label" [ 0xFF000000 ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
@@ -78,13 +78,27 @@ look empty with a space.
  7      "Note Border" [ 0xFF000000 ]      "Note Border" [ 0xFFFFFFFF ]
  8       "Black Keys" [ 0xFF000000 ]       "Black Keys" [ 0xFFFFFFFF ]
  9       "White Keys" [ 0xFFFFFFFF ]       "White Keys" [ 0xFF000000 ]
-10     "Progress Bar" [ 0xFF000000 ]     "Progress Bar" [ 0xFF000080 ]
+10     "Progress Bar" [ 0xFFFF0000 ]     "Progress Bar" [ 0xFF000080 ]
 11     "Back Pattern" [ 0xFF008B8B ]     "Back Pattern" [ 0xFF008B8B ]
-12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF779988 ]
-13        "Beat Line" [ 0xFF2F4F4F ]        "Beat Line" [ 0xFF2F4F4F ]
-14        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
-15            "Extra" [ 0xFF778899 ]            "Extra" [ 0xFFBD6BB7 ]
+12      "Medium Line" [ 0xFF808080 ]      "Medium Line" [ 0xFF808080 ]
+13        "Beat Line" [ 0xFF606060 ]        "Beat Line" [ 0xFFFFFFFF ]
+14        "Step Line" [ 0xFFC0C0C0 ]        "Step Line" [ 0xFFC0C0C0 ]
+15            "Extra" [ 0xFFC0C0C0 ]            "Extra" [ 0xFFBD6BB7 ]
 
-# End of /home/ahlstrom/.config/seq66/qseq66.palette
+# This section defines brush styles to use.  The names are based on the
+# names in the Qt::BrushStyle enumeration. The supported names are:
+#
+#    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
+#    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
+#    lineargradient, radialgradient, and conicalgradient.
+
+[brushes]
+
+empty = nobrush
+note = solid
+scale = dense3
+backseq = dense2
+
+# End of /home/user/.config/seq66/qseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

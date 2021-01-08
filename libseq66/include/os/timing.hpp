@@ -5,7 +5,7 @@
  * \file          daemonize.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2020-07-06
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -41,7 +41,7 @@ namespace seq66
  *  Free functions for Linux and Windows support.
  */
 
-extern bool microsleep (int us);
+extern bool microsleep (int us = (-1));
 extern bool millisleep (int ms);
 extern long microtime ();
 extern long millitime ();

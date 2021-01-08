@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-30
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -59,6 +59,12 @@
 
 namespace seq66
 {
+
+static const int Tab_MIDI_Clock         =  0;
+static const int Tab_MIDI_Input         =  1;
+static const int Tab_MIDI_Display       =  2;
+static const int Tab_MIDI_JACK          =  3;
+static const int Tab_MIDI_Play_Options  =  4;
 
 /**
  *  Button numbering for JACK Start Mode radio-buttons.
@@ -157,7 +163,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
             break;
         }
     }
-
     connect
     (
         bgroup, SIGNAL(buttonClicked(int)),
@@ -183,6 +188,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->lineEditUiScalingHeight, SIGNAL(editingFinished()),
         this, SLOT(update_ui_scaling_height())
     );
+
 #if defined USE_QSEDITOPTIONS_UPDATE_PATTERN_EDITOR
     connect
     (
@@ -190,6 +196,13 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(update_pattern_editor())
     );
 #endif
+
+    std::string palname = rc().palette_filename();
+    if (palname.empty())
+        palname = rc().application_name() + ".palette";
+
+    QString qcn = QString::fromStdString(palname);
+    ui->lineEditPaletteFile->setText(qcn);
     connect
     (
         ui->lineEditPaletteFile, SIGNAL(textEdited(const QString &)),
@@ -249,7 +262,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     );
     vboxclocks->addItem(spacer);
     ui->groupBoxClocks->setLayout(vboxclocks);
-
     connect
     (
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
@@ -288,6 +300,10 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     std::string clid = std::to_string(perf().client_id());
     ui->plainTextEditClientId->setPlainText(clid.c_str());
     m_is_initialized = true;
+
+#if defined SEQ66_PLATFORM_WINDOWS
+    ui->tabWidget->setTabEnabled(Tab_MIDI_JACK, false);
+#endif
 }
 
 /**

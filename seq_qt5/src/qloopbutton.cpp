@@ -723,11 +723,12 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(drum_paint());
             }
             pen.setWidth(1);
-            m_seq->reset_draw_marker();                 /* reset iterator   */
+            event::buffer::const_iterator evi;
+            m_seq->reset_ex_iterator(evi);
             for (;;)
             {
                 sequence::note_info ni;                 /* 2 members used!  */
-                sequence::draw dt = m_seq->get_next_note(ni);
+                sequence::draw dt = m_seq->get_next_note_ex(ni, evi);
                 int tick_s_x = (ni.start() * lxw) / t1;
                 int tick_f_x = (ni.finish() * lxw) / t1;
                 if (dt == sequence::draw::finish)

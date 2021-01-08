@@ -1,6 +1,6 @@
 # Seq66 0.90.5 (and above) MIDI control configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
+# /home/user/.config/seq66/qseq66-lp-mini.ctrl
 # Written on 2020-08-07 09:58:39
 #
 # This file holds the MIDI control configuration for Seq66. It follows
@@ -338,6 +338,6 @@ button-columns = 8
 # MIDI Control Out: learn on/off or store/restore
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
+# End of /home/user/.config/seq66/qseq66-lp-mini.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

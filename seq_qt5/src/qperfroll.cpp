@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -180,19 +180,17 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
      * implementing.
      */
 
-    brush.setStyle(Qt::NoBrush);            // painter reset
+    brush.setStyle(Qt::NoBrush);                // painter reset
     painter.setBrush(brush);
     if (mBoxSelect)
     {
         int x, y, w, h;
-        pen.setStyle(Qt::SolidLine);
-        painter.setPen(pen);
-
         rect::xy_to_rect_get
         (
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + c_names_y);
+        pen.setStyle(Qt::SolidLine);
         pen.setColor(sel_color());              // Qt::black
         painter.setPen(pen);
         painter.drawRect(x, y, w, h + c_names_y);
@@ -221,7 +219,6 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 }
 
 /**
- *
  *  The scale_zoom() function is the zoom value times the scale value.
  */
 
@@ -313,7 +310,6 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     m_grow_direction = true;
                     selected = true;
                     m_drop_tick_offset = m_drop_tick - start_tick;
-                    //  dropseq->selected_trigger_start();
                 }
                 else if     // check for corner drag to grow sequence end
                 (
@@ -325,14 +321,12 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     selected = true;
                     m_grow_direction = false;
                     m_drop_tick_offset = m_drop_tick - end_tick;
-                    //  dropseq->selected_trigger_end();
                 }
                 else if (tick <= end_tick && tick >= start_tick)
                 {
                     moving(true);            // we're moving the seq
                     selected = true;
                     m_drop_tick_offset = m_drop_tick - start_tick;
-                    //  dropseq->selected_trigger_start();
                 }
             }
             if (! selected)                     // let's select with a box
@@ -424,7 +418,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
          */
 
         midipulse seqlength = dropseq->get_length();
-        tick = tick - (tick % seqlength);
+        tick -= tick % seqlength;
         dropseq->grow_trigger(m_drop_tick, tick, seqlength);
     }
     else if (moving() || growing())
@@ -441,7 +435,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
 
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
-        tick = tick - tick % snap();        // always snap
+        tick -= tick % snap();              // always snap
         if (moving())                       // move all selected triggers
         {
 #if defined USE_SONG_BOX_SELECT
@@ -460,10 +454,10 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         }
         if (growing())
         {
-            if (m_grow_direction)
+            midipulse lastoffset = tick - mLastTick;
+            if (m_grow_direction)           // grow start, selected triggers
             {
-                // grow start of all selected triggers
-
+                triggers::grow ts = triggers::grow::start;
                 for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
                 {
                     seq::pointer seq = perf().get_sequence(seqid);
@@ -471,18 +465,15 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     {
                         if (mLastTick != 0)
                         {
-                            seq->offset_triggers
-                            (
-                                -(mLastTick - tick), triggers::grow::start
-                            );
+                            seq->offset_triggers(lastoffset, ts);
+//                          -(mLastTick - tick), ts
                         }
                     }
                 }
             }
-            else
+            else                            // grow end, selected triggers
             {
-                // grow end of all selected triggers
-
+                triggers::grow te = triggers::grow::end;
                 for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
                 {
                     seq::pointer seq = perf().get_sequence(seqid);
@@ -490,10 +481,8 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     {
                         if (mLastTick != 0)
                         {
-                            seq->offset_triggers
-                            (
-                                -(mLastTick - tick) - 1, triggers::grow::end
-                            );
+                            seq->offset_triggers(lastoffset - 1, te);
+//                          -(mLastTick - tick) - 1, te
                         }
                     }
                 }
@@ -765,7 +754,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             else
                 backcolor.setAlpha(s_alpha_muted);
 
-            seq->reset_draw_trigger_marker();
+            seq->reset_draw_trigger_marker();       /* can we fix this?     */
             int lenw = lens / scale_zoom();
             trigger trig;
             while (seq->next_trigger(trig))
@@ -820,9 +809,10 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int note1;
                         (void) seq->minmax_notes(note0, note1);
 
+                        event::buffer::const_iterator evi;
+                        seq->reset_ex_iterator(evi);
                         int height = note1 - note0;
                         height += 2;
-                        seq->reset_draw_marker();
                         if (seq->transposable())
                             pen.setColor(fore_color());     // Qt::black
                         else
@@ -834,7 +824,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         for (;;)
                         {
                             sequence::note_info ni;
-                            sequence::draw dt = seq->get_next_note(ni);
+                            sequence::draw dt = seq->get_next_note_ex(ni, evi);
                             if (dt == sequence::draw::finish)
                                 break;
 

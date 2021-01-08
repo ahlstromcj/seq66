@@ -154,7 +154,7 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-    s->reset_ex_iterator(cev);                  /* reset_draw_marker()      */
+    s->reset_ex_iterator(cev);
     for (;; ++cev)
     {
         if (! s->get_next_event_match(m_status, m_cc, cev))

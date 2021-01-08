@@ -412,7 +412,7 @@ midi_alsa_info::api_poll_for_midi ()
 
 #if defined SEQ64_USE_SLEEPY_POLL
     if (result == 0)
-        (void) microsleep(100);
+        (void) microsleep();
 #endif
 
     return result;

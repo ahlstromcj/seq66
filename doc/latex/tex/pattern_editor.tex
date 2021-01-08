@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2020-12-31
+% \update      2021-01-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,12 +15,12 @@
 \section{Pattern Editor}
 \label{sec:pattern_editor}
 
-   The \textsl{Seq66} \textbf{Pattern Editor} is used to edit and preview a
-   pattern, as well as to configure its buss, channel, transpose, musical
-   scale, and other settings.
+   The \textsl{Seq66} \textbf{Pattern Editor} can edit and preview a
+   pattern, configure its buss, channel, transpose, musical
+   scale, and many other settings.
    A rudimentary version of the \textbf{Pattern Editor} appears in the
-   \textbf{Edit} tab, and a more powerful version can be brought up in an
-   external window.
+   \textbf{Edit} tab in the main window, and a more powerful version can be
+   brought up in an external window.
 
 \begin{figure}[H]
    \centering 
@@ -90,16 +90,6 @@
    the pattern/loop/sequence/track, the time signature of the piece, how long
    the track is, and some other configuration items.
 
-   In recent versions of \textsl{Seq66}, a "sequence-is-transposable"
-   feature has been added, as shown above.
-
-% \begin{figure}[H]
-%    \centering 
-%    \includegraphics[scale=0.75]{new/pattern_editor_top_panel-0_9_15.png}
-%    \caption{Pattern Editor, First Panel Emphasizing Transposable Button}
-%    \label{fig:pattern_editor_first_panel_transposable}
-% \end{figure}
-
    \begin{enumber}
       \item \textbf{Track Number}
       \item \textbf{Track Title}
@@ -131,11 +121,6 @@
    Arbitrary values up to 32 can be entered by typing the number.
    The "Reset" button resets the value to 4.
 
-% A REGRESSION!!!
-%  The numeric value can be directly edited, to achieve
-%  non-standard values, thanks to an update from Jean-Emmanuel.
-%  But be careful!
-
    \itempar{Beat Width}{pattern editor!beat width}
    \index{beat width}
    Specifies the size of the bottom beat unit of the time signature:
@@ -152,11 +137,7 @@
    Arbitrary values up to 1024 can be entered by typing the number.
    \textsl{However}, when opening or importing a non-\textsl{Seq66}
    MIDI tune, the length of each track will be used, and so other values
-   are possible; they just cannot be set via the user-interface.
-
-% A REGRESSION!!!
-%  The numeric value can be directly edited, to
-%  achieve non-standard values, thanks again to Jean-Emmanuel.
+   are possible.
 
    Bringing up a pattern less than one measure or bar in
    length in the pattern editor will adjust the pattern to pad it to the
@@ -168,6 +149,7 @@
    A feature from user \textsl{stazed} allows the pattern to expand
    indefinitely while the user inputs MIDI from a controller, via the
    \textbf{Expand} option of the \textbf{Loop Record Type}.
+
 %  See \sectionref{subsec:pattern_editor_bottom} below.
 
 %  WHAT IS THIS? A feature where a short loop plays only once.
@@ -175,11 +157,16 @@
 %  (Also nice would be a "one-shot"
 %  pattern, useful for live intro patterns, for example.)
 
-   \itempar{Chord Generation}{pattern editor!chord generation}
+   \itempar{Chord Types}{pattern editor!chord types}
    \index{chord generation}
    This setting allows one to select a chord type (e.g. "major" or "minor").
    When active, a note is treated like the base note of the selected chord
    type, and extra notes are generated to create that chord.
+   The \textbf{Chord Generation Reset} button is at the left of the
+   \textbf{Data View}.
+
+   \itempar{Chord Generation}{pattern editor!chord generation}
+   \index{chord generation}
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
    This setting specifies one of the virtual MIDI output busses provided by
@@ -428,7 +415,7 @@
    The ability to insert chords with one click has been added.
    This feature comes from user "stazed"
    and his \textsl{Seq32} project \cite{seq32}.
-   Select the disired chord type first.
+   Select the desired chord type first.
    Once a value other than \textbf{Off} is selected, a left-click
    in drawing mode will add multiple notes representing the chord
    created, with the clicked note value as the base of the chord.
@@ -988,13 +975,15 @@
 \subsection{Data View}
 \label{subsec:pattern_editor_data_view}
 
-   First, let's go over the buttons at the left.
+   First, note the buttons at the left.
 
    \begin{enumber}
       \item \textbf{Transpose}
       \item \textbf{Drum Note Mode}
       \item \textbf{Chord Generation Reset}
    \end{enumber}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Transpose}{pattern editor!transpose toggle}
    This button allows the sequence to be transposed by
@@ -1077,7 +1066,7 @@
 
    \begin{enumber}
       \item \textbf{Event Selector}
-      \item \textbf{Existing Event Selector}
+      \item \textbf{Existing Event Menu}
       \item \textbf{Event Selection}
       \item \textbf{LFO}
 %     \item \textbf{Time Scroll}
@@ -1119,12 +1108,11 @@
 
    to make it match one's instrument.  See \sectionref{sec:usr_file}.
 
-   \itempar{Existing Event Selector}{pattern editor!existing events}
-   Not shown in the figure above is a small button that will contain either
-   an empty square (no editable events) or a black square (at least one
-   editable event).  Unlike the event-selector described above, this one
+   \itempar{Existing Event Menu}{pattern editor!existing events}
+   The existing-event selector is a small button (with a black-square icon)
+   that brings up a menu with only existing events shown.
+   Unlike the event-selector described above, this menu
    shows only the actual events existing in the track, for quicker selection.
-%  The event-selector above is more useful for creating new events.
 
    \itempar{Event Selection}{pattern editor!event selection}
    Shows the selection event, with its number shown in hexadecimal notation,

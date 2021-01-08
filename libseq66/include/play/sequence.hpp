@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2020-12-28
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -271,12 +271,6 @@ private:
     eventstack m_events_redo;
 
     /**
-     *  An iterator for drawing events.
-     */
-
-    mutable event::buffer::const_iterator m_iterator_draw;
-
-    /**
      *  A new feature for recording, based on a "stazed" feature.  If true
      *  (not yet the default), then the seqedit window will record only MIDI
      *  events that match its channel.  The old behavior is preserved if this
@@ -295,7 +289,9 @@ private:
     midibyte m_midi_channel;
 
     /**
-     *
+     *  This value indicates that the global MIDI channel associated with this
+     *  pattern is not used.  Instead, the actual channel of each event is
+     *  used.
      */
 
     bool m_no_channel;
@@ -351,7 +347,9 @@ private:
     unsigned short m_playing_notes[SEQ66_PLAYING_NOTES_MAX];
 
     /**
-     *  Indicates if the sequence was playing.
+     *  Indicates if the sequence was playing.  This value is set at the end
+     *  of the play() function.  It is used to continue playing after changing
+     *  the pattern length.
      */
 
     bool m_was_playing;
@@ -423,6 +421,15 @@ private:
      */
 
     midipulse m_one_shot_tick;
+
+    /**
+     *  EXPERIMENTAL>
+     *  Number of times to play the pattern in Live mode.  A value of 0 means
+     *  to play the pattern endlessly in Live mode.
+     */
+
+    int m_loop_count;
+    int m_loop_count_max;
 
     /**
      *  Indicates if we have turned off from a snap operation.
@@ -547,6 +554,11 @@ private:
 
     midibyte m_status;
     midibyte m_cc;
+
+    /**
+     *  Provides the index pointing to the optional scale to be shown on the
+     *  background of the pattern.
+     */
 
     int m_scale;
 
@@ -1185,6 +1197,16 @@ public:
         return m_one_shot_tick;
     }
 
+    int loop_count () const
+    {
+        return m_loop_count;
+    }
+
+    int loop_count_max () const
+    {
+        return m_loop_count_max;
+    }
+
     bool song_recording () const
     {
         return m_song_recording;
@@ -1468,8 +1490,6 @@ public:
     void off_playing_notes ();
     void stop (bool song_mode = false);     /* playback::live vs song   */
     void pause (bool song_mode = false);    /* playback::live vs song   */
-    void inc_draw_marker ();
-    void reset_draw_marker ();
     void reset_draw_trigger_marker ();
     void reset_ex_iterator (event::buffer::const_iterator & evi) const;
     bool reset_interval
@@ -1481,12 +1501,10 @@ public:
     (
         note_info & niout, event::buffer::const_iterator & evi
     ) const;
-    draw get_next_note (note_info & niout) const;
     draw get_next_note_ex
     (
         note_info & niout, event::buffer::const_iterator & evi
     ) const;
-    bool get_next_event (midibyte & status, midibyte & cc);
     bool get_next_event_match
     (
         midibyte status, midibyte cc,
@@ -1674,6 +1692,11 @@ private:
     void off_from_snap (bool f)
     {
         m_off_from_snap = f;
+    }
+
+    void loop_count_max (int m)
+    {
+        m_loop_count_max = m;
     }
 
     void song_playback_block (bool f)

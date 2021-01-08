@@ -565,11 +565,12 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             preview_w -= 6;
             rectangle_x += 2;
             rectangle_y += 2;
-            s->reset_draw_marker();             /* reset iterator           */
+            event::buffer::const_iterator evi;
+            s->reset_ex_iterator(evi);
             for (;;)
             {
                 sequence::note_info ni;         /* only two members used!   */
-                sequence::draw dt = s->get_next_note(ni);
+                sequence::draw dt = s->get_next_note_ex(ni, evi);
                 int tick_s_x = (ni.start() * preview_w) / length;
                 int tick_f_x = (ni.finish() * preview_w) / length;
                 if (dt == sequence::draw::finish)

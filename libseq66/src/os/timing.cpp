@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2020-07-06
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -109,9 +109,14 @@ millisleep (int ms)
  *  function which has some advantage over sleep(3) and usleep(3), such as not
  *  interacting with signals.  It seems that it supports a non-busy wait.
  *
+ *  The typical stack call is around 10 x 5 us, or 50 us.  We've been using 100
+ *  us for calls to microsleep(), which does division, modulo, and
+ *  multiplication calls.
+ *
  * \param us
  *      Provides the desired number of microseconds to wait.  If set to 0, then
- *      a sched_yield() is called, similar to Sleep(0) in Windows.
+ *      a sched_yield() is called, similar to Sleep(0) in Windows.  If set to
+ *      -1 (the default), then a default value of 10 us is used.
  *
  * \return
  *      Returns true if the full sleep occurred, or if interruped by a signal.
@@ -120,7 +125,7 @@ millisleep (int ms)
 bool
 microsleep (int us)
 {
-    bool result = us >= 0;
+    bool result = us >= -1;
     if (result)
     {
         if (us == 0)
@@ -129,11 +134,27 @@ microsleep (int us)
         }
         else
         {
-            struct timespec ts;
-            ts.tv_sec = us / 1000000;
-            ts.tv_nsec = (us % 1000000) * 1000;     /* 1000 ns granularity  */
-
-            int rc = nanosleep(&ts, NULL);
+            int rc;
+            if (us == (-1))
+            {
+                static bool s_uninitialized = true;
+                static timespec s_ts;
+                if (s_uninitialized)
+                {
+                    static const int s_us = 10;     /* 100 was the original */
+                    s_uninitialized = false;
+                    s_ts.tv_sec = 0;
+                    s_ts.tv_nsec = s_us * 1000;
+                }
+                rc = nanosleep(&s_ts, NULL);
+            }
+            else
+            {
+                struct timespec ts;
+                ts.tv_sec = us / 1000000;
+                ts.tv_nsec = (us % 1000000) * 1000; /* 1000 ns granularity  */
+                rc = nanosleep(&ts, NULL);
+            }
             result = rc == 0 || rc == EINTR;
         }
     }
@@ -196,6 +217,9 @@ microsleep (int us)
         }
         else
         {
+            if (us == (-1))
+                us = 100;
+
             HANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);
             bool result = timer != NULL;
             if (result)

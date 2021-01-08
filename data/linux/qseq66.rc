@@ -1,6 +1,6 @@
 # Seq66 0.91.1 (and above) 'rc' configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.rc
+# /home/user/.config/seq66/qseq66.rc
 # Written on 2020-12-12 13:17:25
 #
 # This file holds the main configuration options for Seq66.
@@ -205,13 +205,13 @@ qrseq66.mutes
 
 7 1
 
-/home/ahlstrom/Home/git/seq66/contrib/midi/mute-song.midi
-/home/ahlstrom/Home/git/seq66/data/b4uacuse-gm-patchless.midi
-/home/ahlstrom/Home/git/seq66/contrib/midi/bad-linking.midi
-/home/ahlstrom/Home/git/seq66/contrib/midi/1Bar.midi
-/home/ahlstrom/Home/git/seq66/data/b.midi
-/home/ahlstrom/Home/git/seq66/data/colours.midi
-/home/ahlstrom/Home/git/seq66/data/colours-qt.midi
+/home/user/Home/git/seq66/contrib/midi/mute-song.midi
+/home/user/Home/git/seq66/data/b4uacuse-gm-patchless.midi
+/home/user/Home/git/seq66/contrib/midi/bad-linking.midi
+/home/user/Home/git/seq66/contrib/midi/1Bar.midi
+/home/user/Home/git/seq66/data/b.midi
+/home/user/Home/git/seq66/data/colours.midi
+/home/user/Home/git/seq66/data/colours-qt.midi
 
 [playlist]
 
@@ -246,6 +246,6 @@ qrseq66.playlist
 
 qrseq66.drums
 
-# End of /home/ahlstrom/.config/seq66/qseq66.rc
+# End of /home/user/.config/seq66/qseq66.rc
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -1445,7 +1445,7 @@ int
 midi_in_jack::api_poll_for_midi ()
 {
     rtmidi_in_data * rtindata = m_jack_data.m_jack_rtmidiin;
-    (void) microsleep(100);
+    (void) microsleep();
 
 #if defined SEQ66_USER_CALLBACK_SUPPORT
     return rtindata->using_callback() ? 0 : rtindata->queue().count() ;

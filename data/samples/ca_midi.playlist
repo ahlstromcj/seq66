@@ -1,13 +1,13 @@
 # Seq66 0.91.0 (and above) playlist file
 #
-# /home/user/.config/seq66/CaMidi/ca_midi.playlist
-# Written on 2020-11-17 11:59:29
+# /home/ahlstrom/.config/seq66/ca_midi.playlist
+# Written on 2021-01-07 10:03:47
 #
 # This file holds multiple playlists for Seq66. It consists of one
 # or more '[playlist]' sections.  Each section has a user-specified
-# number, which serves for sorting and for control numbers ranging
+# number, which serves for sorting and for MIDI control, ranging
 # from 0 to 127, or higher if the user doesn't use MIDI control on
-# playlistfiles.
+# playlist files.
 #
 # Next comes a display name for this list, with or without quotes.
 #
@@ -16,8 +16,8 @@
 # terminated with a slash.  It should be accessible from wherever
 # Seq66 was run.
 #
-# The last item is a line containing the MIDI song-control number,
-# followed by the name of the MIDI files.  They are sorted by the
+# The last items are lines starting with a MIDI control number,
+# followed by the name of the MIDI file.  They are sorted by the
 # control number, starting from 0.  They can be simple 'base.ext'
 # file-names; the playlist directory will be prepended before the
 # song is accessed. If the MIDI file-name already has a path, that
@@ -30,7 +30,9 @@
 [comments]
 
 This playlist points to files on my Debian laptop.  I created these files
-long, long ago.  Ah, such memories.
+long, long ago.
+Ah, such memories.
+
 
 [playlist-options]
 
@@ -51,31 +53,31 @@ long, long ago.  Ah, such memories.
 
 # Default storage directory for the song-files in this playlist.
 
-/pub/Audio/MIDI/archives/Ca/mid/FM Synth/
+"/pub/Audio/MIDI/archives/Ca/mid/FM Synth/"
 
 # Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
 
-0 b4uacufm.mid
-1 brecluse.mid
-2 carptsun.mid
-3 cbflitfm.mid
-4 dasmodel.mid
-5 grntamb.mid
-6 hapwandr.mid
-7 judyblue.mid
-8 k_seq11.mid
-9 longhair.mid
-10 marraksh.mid
-11 oxyg4bfm.mid
-12 pirates.mid
-13 pss680.mid
-14 qufrency.mid
-15 stdemo3.mid
-16 viceuk.mid
-17 wallstsm.mid
+0 "b4uacufm.mid"
+1 "brecluse.mid"
+2 "carptsun.mid"
+3 "cbflitfm.mid"
+4 "dasmodel.mid"
+5 "grntamb.mid"
+6 "hapwandr.mid"
+7 "judyblue.mid"
+8 "k_seq11.mid"
+9 "longhair.mid"
+10 "marraksh.mid"
+11 "oxyg4bfm.mid"
+12 "pirates.mid"
+13 "pss680.mid"
+14 "qufrency.mid"
+15 "stdemo3.mid"
+16 "viceuk.mid"
+17 "wallstsm.mid"
 
 [playlist]
 
@@ -90,20 +92,20 @@ long, long ago.  Ah, such memories.
 
 # Default storage directory for the song-files in this playlist.
 
-/pub/Audio/MIDI/PSS-790/
+"/pub/Audio/MIDI/PSS-790/"
 
 # Provides the MIDI song-control number (0 to 127), and also the
 # base file-name (tune.midi) of each song in this playlist.
 # The playlist directory is used, unless the file-name contains its
 # own path.
 
-0 ancestor.mid
-10 carptsun.mid
-20 cbflite.mid
-30 old_love.mid
-40 pss790_1.mid
-50 pss790_2.mid
+0 "ancestor.mid"
+10 "carptsun.mid"
+20 "cbflite.mid"
+30 "old_love.mid"
+40 "pss790_1.mid"
+50 "pss790_2.mid"
 
-# End of /home/user/.config/seq66/CaMidi/ca_midi.playlist
+# End of /home/ahlstrom/.config/seq66/ca_midi.playlist
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-12-28
+ * \updates       2021-01-07
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -127,7 +127,6 @@ sequence::sequence (int ppqn)
     m_have_redo                 (false),
     m_events_undo               (),
     m_events_redo               (),
-    m_iterator_draw             (m_events.begin()),
     m_channel_match             (false),
     m_midi_channel              (0),
     m_no_channel                (false),
@@ -148,6 +147,8 @@ sequence::sequence (int ppqn)
     m_queued                    (false),
     m_one_shot                  (false),
     m_one_shot_tick             (0),
+    m_loop_count                (0),
+    m_loop_count_max            (0),
     m_off_from_snap             (false),
     m_song_playback_block       (false),
     m_song_recording            (false),
@@ -1161,11 +1162,7 @@ bool
 sequence::mark_selected ()
 {
     automutex locker(m_mutex);
-    bool result = m_events.mark_selected();
-    if (result)
-        reset_draw_marker();                    /* is this necessary?       */
-
-    return result;
+    return m_events.mark_selected();
 }
 
 /**
@@ -1465,14 +1462,7 @@ sequence::select_note_events
 )
 {
     automutex locker(m_mutex);
-    int result = m_events.select_note_events
-    (
-        tick_s, note_h, tick_f, note_l, action
-    );
-    if (result > 0)
-        reset_draw_marker();
-
-    return result;
+    return m_events.select_note_events(tick_s, note_h, tick_f, note_l, action);
 }
 
 /**
@@ -1512,11 +1502,7 @@ sequence::select_events
 )
 {
     automutex locker(m_mutex);
-    int result = m_events.select_events(tick_s, tick_f, status, cc, action);
-    if (result > 0)
-        reset_draw_marker();
-
-    return result;
+    return m_events.select_events(tick_s, tick_f, status, cc, action);
 }
 
 /**
@@ -3729,41 +3715,6 @@ sequence::pause (bool song_mode)
 }
 
 /**
- *  This refreshes the draw marker to the first event. It resets the draw marker
- *  so that calls to get_next_note() will start from the first event.
- *
- * \warning
- *      This iterator is shared by about four GUI object, and they might
- *      interfere with each other!
- *
- * \threadsafe
- */
-
-void
-sequence::reset_draw_marker ()
-{
-    automutex locker(m_mutex);
-    m_iterator_draw = m_events.begin();
-}
-
-/**
- *  This increments the draw marker.
- *
- * \warning
- *      This iterator is shared by about four GUI objects, and they might
- *      interfere with each other!
- *
- * \threadsafe
- */
-
-void
-sequence::inc_draw_marker ()
-{
-    automutex locker(m_mutex);
-    ++m_iterator_draw;
-}
-
-/**
  *  Sets the draw-trigger iterator to the beginning of the trigger list.
  *
  * \threadsafe
@@ -3862,35 +3813,20 @@ sequence::note_count ()
  *  false.
  *
  *  Note that, before the first call to draw a sequence, the
- *  reset_draw_marker() function must be called, to reset m_iterator_draw.
+ *  reset_ex_iterator() function must be called.
  *
  * \param [out] niout
  *      Provides a pointer destination for a structure hold all of the values
  *      for a note.  Saves a lot of stack pushes.  The note_info class is
  *      nested in the sequence class, which is a friend.
  *
+ * \param evi
+ *      A caller-provided iterator.  Thus, it won't interfere with other callers.
+ *
  * \return
  *      Returns a sequence::draw value:  linked, note_on, note_off, or finish.
  *      Note that the new value sequence::draw::tempo could be returned, as
  *      well.
- */
-
-sequence::draw
-sequence::get_next_note (note_info & niout) const
-{
-    niout.ni_tick_finish = 0;
-    while (m_iterator_draw != m_events.cend())          /* not threadsafe   */
-    {
-        draw status = get_note_info(niout, m_iterator_draw);
-        ++m_iterator_draw;
-        if (status != draw::none)
-            return status;
-    }
-    return draw::finish;
-}
-
-/**
- *
  */
 
 sequence::draw
@@ -3972,38 +3908,6 @@ sequence::get_note_info
         return draw::tempo;
     }
     return draw::none;
-}
-
-/**
- *  Get the next event in the event list.  Then set the status and control
- *  character parameters using that event.  This overload is used only in
- *  seqedit::popup_event_menu().
- *
- * \param status
- *      Provides a pointer to the MIDI status byte to be set, as a way to
- *      retrieve the event.
- *
- * \param cc
- *      The return pointer for the control value.
- *
- * \return
- *      Returns true if the data is useable, and false if there are no more
- *      events.
- */
-
-bool
-sequence::get_next_event (midibyte & status, midibyte & cc)
-{
-    while (m_iterator_draw != m_events.end())       /* NOT THREADSAFE!!!    */
-    {
-        midibyte d1;
-        const event & drawevent = eventlist::cdref(m_iterator_draw);
-        status = drawevent.get_status();
-        drawevent.get_data(cc, d1);
-        inc_draw_marker();
-        return true;                /* we have a good one; update and return */
-    }
-    return false;
 }
 
 /**
@@ -4380,10 +4284,8 @@ sequence::set_length (midipulse len, bool adjust_triggers, bool verify)
         m_triggers.adjust_offsets_to_length(len);
 
     if (verify)
-    {
         verify_and_link();
-        reset_draw_marker();
-    }
+
     if (was_playing)                    /* start up and refresh             */
         set_playing(true);
 
@@ -5272,7 +5174,6 @@ sequence::copy_events (const eventlist & newevents)
         m_events.unmodify();
         m_length = 0;
     }
-    m_iterator_draw = m_events.begin();     /* same as in reset_draw_marker */
     if (! m_events.empty())                 /* need at least 1 (2?) events  */
     {
         /*

@@ -1,6 +1,6 @@
 # Seq66 0.91.4 (and above) palette configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.palette
+# /home/user/.config/seq66/qseq66-grey.palette
 # Written on 2020-12-22 08:35:36
 #
 # This file can be used to change the colors used by patterns
@@ -85,6 +85,20 @@ look empty with a space.
 14        "Step Line" [ 0xFF778899 ]        "Step Line" [ 0xFF808080 ]
 15            "Extra" [ 0xFF778899 ]            "Extra" [ 0xFFBD6BB7 ]
 
-# End of /home/ahlstrom/.config/seq66/qseq66.palette
+# This section defines brush styles to use.  The names are based on the
+# names in the Qt::BrushStyle enumeration. The supported names are:
+#
+#    nobrush, solid, dense1, dense2, dense3, dense4, dense5, dense6,
+#    dense7, horizontal, vertical, cross, bdiag, fdiag, diagcross,
+#    lineargradient, radialgradient, and conicalgradient.
+
+[brushes]
+
+empty = nobrush
+note = solid
+scale = dense3
+backseq = dense2
+
+# End of /home/user/.config/seq66/qseq66-grey.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini
