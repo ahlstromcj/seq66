@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2020-12-24
+ * \updates       2021-01-08
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -56,7 +56,6 @@
 #include <cmath>                        /* std::sin(radians)                */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
-#include "gui_palette_qt5.hpp"          /* seq66::Color                     */
 #include "qloopbutton.hpp"
 
 /**
@@ -91,7 +90,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Textbox functions.
  */
 
 qloopbutton::textbox::textbox () :
@@ -104,10 +103,6 @@ qloopbutton::textbox::textbox () :
 {
     // no code
 }
-
-/**
- *
- */
 
 void
 qloopbutton::textbox::set
@@ -122,10 +117,6 @@ qloopbutton::textbox::set
     m_flags = flags;
     m_label = label;
 }
-
-/**
- *
- */
 
 qloopbutton::progbox::progbox () :
     m_x         (0),
@@ -155,7 +146,7 @@ qloopbutton::progbox::set (int w, int h)
 }
 
 /**
- *
+ *  Principal constructor.
  */
 
 qloopbutton::qloopbutton
@@ -181,7 +172,8 @@ qloopbutton::qloopbutton
     m_top_right         (),
     m_bottom_left       (),
     m_bottom_right      (),
-    m_progress_box      ()
+    m_progress_box      (),
+    m_event_box         ()
 {
     int fontsize = usr().scale_size(6);
     m_text_font.setPointSize(fontsize);
@@ -193,6 +185,10 @@ qloopbutton::qloopbutton
 
     QWidget tmp;
     text_color(tmp.palette().color(QPalette::ButtonText));
+
+    int c = m_seq ? m_seq->color() : palette_to_int(none) ;
+    if (c != palette_to_int(black))
+        back_color(get_color_fix(PaletteColor(c)));
 }
 
 bool
@@ -248,6 +244,11 @@ qloopbutton::initialize_text ()
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);
         m_progress_box.set(w, h);
+        m_event_box = m_progress_box;
+        m_event_box.m_x += 3;
+        m_event_box.m_y += 1;
+        m_event_box.m_w -= 6;
+        m_event_box.m_h -= 2;
         m_text_initialized = true;
     }
     else
@@ -267,8 +268,8 @@ qloopbutton::initialize_sine_table ()
     if (m_fingerprint_size == 0)
     {
         int count = int(sizeof(m_fingerprint) / sizeof(int));
-        int y = m_progress_box.y();
-        int h = m_progress_box.h();
+        int y = m_event_box.y();
+        int h = m_event_box.h();
         double rmax = 2.0 * M_PI;
         double dr = rmax / double(count);
         int i;
@@ -293,11 +294,11 @@ qloopbutton::initialize_fingerprint ()
     if (m_fingerprint_size == 0 && have_notes)
     {
         int i1 = int(sizeof(m_fingerprint) / sizeof(int));
-        int x0 = m_progress_box.m_x + 3;
-        int x1 = x0 + m_progress_box.m_w - 6;
+        int x0 = m_event_box.x();
+        int x1 = x0 + m_event_box.w();
         int xw = x1 - x0;
-        int y0 = m_progress_box.m_y + 1;
-        int y1 = y0 + m_progress_box.m_h - 2;
+        int y0 = m_event_box.y();
+        int y1 = y0 + m_event_box.h();
         int yh = y1 - y0;
         midipulse t1 = m_seq->get_length();             /* t0 = 0           */
         int nh = c_max_midi_data_value;
@@ -460,12 +461,12 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     m_top_left.m_w, m_top_left.m_h
                 );
                 QString title(m_top_left.m_label.c_str());
-                painter.setPen(label_paint());
+                painter.setPen(text_color());       /* label_color() */
                 painter.setFont(m_text_font);
 
 #if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
 
-                QPen pen(label_paint());
+                QPen pen(text_color());             /* label_color() */
                 QBrush brush(Qt::black);
                 painter.setBrush(brush);
 
@@ -568,12 +569,12 @@ void
 qloopbutton::draw_progress (QPainter & painter, midipulse tick)
 {
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
-    QPen pen(Qt::black);
+    QPen pen(progress_color());                         /* Qt::black    */
     midipulse t1 = m_seq->get_length();
-    int lx = m_progress_box.m_x + 3;
-    int xw = m_progress_box.m_w - 6;
-    int ly0 = m_progress_box.m_y + 1;
-    int lyh = m_progress_box.m_h - 2;
+    int lx = m_event_box.x();
+    int xw = m_event_box.w();
+    int ly0 = m_event_box.y() + 1;
+    int lyh = m_event_box.h() - 2;
     int ly1 = ly0 + lyh;
     lx += int(xw * tick / t1);
     pen.setWidth(2);
@@ -595,21 +596,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     QPen pen(text_color());
     const int penwidth = 2;
     bool qsnap = m_seq->snap_it();
-    int c = m_seq->color();
-
-#if defined USE_COLOR_TO_INT_CALL_HERE
-    if (c == palette_to_int(black))
-    {
-        pal.setColor(QPalette::Button, QColor(Qt::black));
-        pal.setColor(QPalette::ButtonText, QColor(Qt::yellow));
-    }
-#endif
-
-    /*
-     * ISN'T THIS SLOW?  Save it in a member?  TODO.
-     */
-
-    Color backcolor = get_color_fix(PaletteColor(c));
+    Color backcolor = back_color();
     if (qsnap)                                      /* playing, queued, ... */
     {
         backcolor.setAlpha(s_alpha_qsnap);
@@ -643,8 +630,8 @@ qloopbutton::draw_progress_box (QPainter & painter)
     painter.setBrush(brush);
     painter.drawRect
     (
-        m_progress_box.m_x, m_progress_box.m_y,
-        m_progress_box.m_w, m_progress_box.m_h
+        m_progress_box.x(), m_progress_box.y(),
+        m_progress_box.w(), m_progress_box.h()
     );
 }
 
@@ -665,28 +652,27 @@ qloopbutton::draw_pattern (QPainter & painter)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(text_color());
-        int lx0 = m_progress_box.m_x + 3;
-        int ly0 = m_progress_box.m_y + 1;
-        int lxw = m_progress_box.m_w - 6;
-        int lyh = m_progress_box.m_h - 2;
+        int lx0 = m_event_box.x();
+        int ly0 = m_event_box.y();
+        int lxw = m_event_box.w();
+        int lyh = m_event_box.h();
         midipulse t1 = m_seq->get_length();
-        pen.setWidth(1);
+        pen.setWidth(2);
         if (m_seq->measure_threshold())         // not m_seq->note_count() <= 64
         {
             if (! m_seq->transposable())
-            {
-                pen.setColor(drum_paint());
-                painter.setPen(pen);
-            }
+                pen.setColor(drum_color());
+
+            painter.setPen(pen);
             if (m_fingerprint_size > 0)
             {
-                int x = m_progress_box.m_x + 4;
-                int dx = m_progress_box.m_w / (m_fingerprint_size - 1);
+                int x = m_event_box.x() + 1;
+                int dx = m_progress_box.w() / (m_fingerprint_size - 1);
                 for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
                 {
                     int y = m_fingerprint[i];
                     if (y > 0)
-                        painter.drawRect(x, y, 1, 1);
+                        painter.drawPoint(x, y); // painter.drawRect(x,y,1,1)
                 }
             }
         }
@@ -711,7 +697,6 @@ qloopbutton::draw_pattern (QPainter & painter)
 
                 height = highest - lowest;
             }
-
             if (m_seq->transposable())
             {
                 int c = m_seq ? m_seq->color() : palette_to_int(none) ;
@@ -720,9 +705,9 @@ qloopbutton::draw_pattern (QPainter & painter)
             }
             else
             {
-                pen.setColor(drum_paint());
+                pen.setColor(drum_color());
             }
-            pen.setWidth(1);
+
             event::buffer::const_iterator evi;
             m_seq->reset_ex_iterator(evi);
             for (;;)
@@ -734,24 +719,16 @@ qloopbutton::draw_pattern (QPainter & painter)
                 if (dt == sequence::draw::finish)
                     break;
 
-                if (! sequence::is_draw_note(dt))
-                    tick_f_x = tick_s_x + 1;
-                else if (tick_f_x <= tick_s_x)
+                if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
                     tick_f_x = tick_s_x + 1;
 
                 int y = lyh * (highest - ni.note()) / height;
 
-#if defined DRAW_TEMPO_LINE
+#if defined DRAW_TEMPO_LINE_DISABLED
                 if (dt == sequence::draw::tempo)
-                {
-                    pen.setWidth(2);
-                    pen.setColor(tempo_paint());
-                }
+                    pen.setColor(tempo_color());        /* not defined yet  */
                 else
-                {
-                    pen.setWidth(1);
                     pen.setColor(Qt::black);
-                }
 #endif
 
                 int sx = lx0 + tick_s_x;                /* start x          */
@@ -792,9 +769,6 @@ void
 qloopbutton::resizeEvent (QResizeEvent * qrep)
 {
     QSize s = qrep->size();
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("qloopbutton::resizeEvent(%d, %d)\n", s.width(), s.height());
-#endif
     vert_compressed(s.height() < 90);        // HARDWIRED EXPERIMENTALLY
     QWidget::resizeEvent(qrep);
 }

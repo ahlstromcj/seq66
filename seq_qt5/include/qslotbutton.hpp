@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2020-08-13
+ * \updates       2021-01-08
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
@@ -42,6 +42,7 @@
 #include <QPushButton>
 #include <string>
 
+#include "gui_palette_qt5.hpp"          /* seq66::Color                     */
 #include "play/seq.hpp"                 /* seq66::seq sequence-plus class   */
 
 /*
@@ -93,10 +94,30 @@ protected:
     std::string m_hotkey;
 
     /**
-     *  This color is black, except when the background color is dark.
+     *  Button-text color
      */
 
-    QColor m_text_color;
+    Color m_text_color;
+
+    /**
+     *  More colors, to save precious time, at the cost of luxurious space.
+     */
+
+    const Color m_label_color;
+    const Color m_drum_color;
+
+#if defined DRAW_TEMPO_LINE
+    const Color m_tempo_color;
+#endif
+
+    const Color m_progress_color;
+    const Color m_pen_color;
+
+    /*
+     * Can be modified to match a Qt theme.
+     */
+
+    Color m_back_color;
 
     /**
      *  Indicates we are running with more than the usual number of rows, 4.
@@ -186,9 +207,41 @@ protected:
         return m_is_dirty;
     }
 
-    QColor text_color () const
+    const Color & text_color () const
     {
         return m_text_color;
+    }
+
+    const Color & label_color () const
+    {
+        return m_label_color;
+    }
+
+    const Color & drum_color () const
+    {
+        return m_drum_color;
+    }
+
+#if defined DRAW_TEMPO_LINE
+    const Color & tempo_color () const
+    {
+        return m_tempo_color;
+    }
+#endif
+
+    const Color & progress_color () const
+    {
+        return m_progress_color;
+    }
+
+    const Color & pen_color () const
+    {
+        return m_pen_color;
+    }
+
+    const Color & back_color () const
+    {
+        return m_back_color;
     }
 
     virtual void reupdate (bool all = true);
@@ -200,9 +253,14 @@ protected:
 
 protected:
 
-    void text_color (QColor c)
+    void text_color (Color c)
     {
         m_text_color = c;
+    }
+
+    void back_color (Color c)
+    {
+        m_back_color = c;
     }
 
 };          // class qslotbutton

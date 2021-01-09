@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-03
+ * \updates       2021-01-09
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -134,6 +134,8 @@ private:
     void set_key (int key);
     void set_scale (int scale);
     void set_background_sequence (bool state, int seq);
+    int note_off_length () const;
+    bool add_note (midipulse tick, int note, bool paint = true);
 
 private:        // overrides for painting, mouse/keyboard events, & size hints
 
@@ -249,6 +251,14 @@ private:
      */
 
     int m_note_length;
+
+    /**
+     *  Provides the number of ticks to shave off of the end of painted notes.
+     *  Also used when the user attempts to shrink a note to zero (or less
+     *  than zero) length.
+     */
+
+    const midipulse m_note_off_margin;
 
     /**
      *  Holds the value of the musical background sequence that is shown in

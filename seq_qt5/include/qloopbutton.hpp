@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2020-08-13
+ * \updates       2021-01-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -84,6 +84,8 @@ public:
     public:
 
         progbox ();
+        progbox (const progbox &) = default;
+        progbox & operator = (const progbox &) = default;
         void set (int w, int h);
 
         int x () const
@@ -142,13 +144,13 @@ private:
      *  Provides the background color of the progress bar.
      */
 
-    QColor m_prog_back_color;
+    Color m_prog_back_color;
 
     /**
      *  Provides the foreground color of the progress bar.
      */
 
-    QColor m_prog_fore_color;
+    Color m_prog_fore_color;
 
     /**
      *  The font for drawing text.
@@ -167,6 +169,7 @@ private:
     textbox m_bottom_left;
     textbox m_bottom_right;
     progbox m_progress_box;
+    progbox m_event_box;
 
 public:
 

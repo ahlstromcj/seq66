@@ -60,6 +60,17 @@ class qseqkeys final : public QWidget
 
     friend class qseqroll;
 
+private:
+
+    enum class show
+    {
+        octave_letters,     /**< Show only the octave letters for note C.   */
+        even_letters,       /**< Show every other note name.                */
+        all_letters,        /**< Show every note name (can get cramped!)    */
+        even_numbers,       /**< Show every other MIDI note number.         */
+        all_numbers         /**< Show every other MIDI note number.         */
+    };
+
 public:
 
     qseqkeys
@@ -86,6 +97,7 @@ public:
     bool v_zoom_in ();
     bool v_zoom_out ();
     bool reset_v_zoom ();
+    void set_key (int k);
 
 protected:
 
@@ -144,13 +156,18 @@ private:
 
     /**
      *  The default value is to show the octave letters on the vertical
-     *  virtual keyboard.  If false, then the MIDI key numbers are shown
-     *  instead.  This is a new feature of Seq66.
+     *  virtual keyboard. There are 4 other modes of note name/number display.
      */
 
-    bool m_show_octave_letters;
+    show m_show_key_names;
+
+    /**
+     *  This value indicates the key value as selected in the seqedit.  It
+     *  ranges from 0 to 11, with 0 being C.
+     */
 
     int m_key;
+
     int m_key_y;
     int m_key_area_y;
     const Color m_preview_color;

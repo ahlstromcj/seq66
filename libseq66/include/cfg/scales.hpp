@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-06
+ * \updates       2021-01-09
  * \license       GNU GPLv2 or above
  *
  *  These values were moved from the globals module.  Includes the
@@ -428,14 +428,14 @@ const int c_chord_number = 40;
 const std::string
 c_chord_table_text[c_chord_number] =
 {
-    "Off",    "Major",       "Majb5",      "minor",   "minb5",
-    "sus2",   "sus4",        "aug",        "augsus4", "tri",
-    "6",      "6sus4",       "6add9",      "m6",      "m6add9",
-    "7",      "7sus4",       "7#5",        "7b5",     "7#9",       "7b9",
-    "7#5#9",  "7#5b9",       "7b5b9",      "7add11",  "7add13",    "7#11",
-    "Maj7",   "Maj7b5",      "Maj7#5",     "Maj7#11", "Maj7add13",
-    "m7",     "m7b5",        "m7b9",       "m7add11", "m7add13",
-    "m-Maj7", "m-Maj7add11", "m-Maj7add13"
+    "Chords off",   "Major",       "Majb5",      "minor",   "minb5",
+    "sus2",         "sus4",        "aug",        "augsus4", "tri",
+    "6",            "6sus4",       "6add9",      "m6",      "m6add9",
+    "7",            "7sus4",       "7#5",        "7b5",     "7#9",       "7b9",
+    "7#5#9",        "7#5b9",       "7b5b9",      "7add11",  "7add13",    "7#11",
+    "Maj7",         "Maj7b5",      "Maj7#5",     "Maj7#11", "Maj7add13",
+    "m7",           "m7b5",        "m7b9",       "m7add11", "m7add13",
+    "m-Maj7",       "m-Maj7add11", "m-Maj7add13"
 };
 
 /**

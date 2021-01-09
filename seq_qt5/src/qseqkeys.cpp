@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-05
+ * \updates       2021-01-08
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -81,7 +81,7 @@ qseqkeys::qseqkeys
     m_performer             (p),
     m_seq                   (seqp),
     m_font                  (),
-    m_show_octave_letters   (true),
+    m_show_key_names        (show::octave_letters), /* the legacy display   */
     m_key                   (0),
     m_key_y                 (keyheight),
     m_key_area_y            (keyareaheight),
@@ -108,7 +108,7 @@ qseqkeys::paintEvent (QPaintEvent *)
     brush.setColor(Qt::lightGray);
     painter.setPen(pen);
     painter.setBrush(brush);
-    painter.setFont(m_font);
+//  painter.setFont(m_font);
 
     /*
      * Draw keyboard border.
@@ -155,25 +155,54 @@ qseqkeys::paintEvent (QPaintEvent *)
                 sc_key_x - 5, m_key_y - 4
             );
         }
-        if (m_show_octave_letters)
+
+        std::string note;
+        char notebuf[8];
+        m_font.setBold(key == m_key);
+        painter.setFont(m_font);
+        switch (m_show_key_names)
         {
-            pen.setColor(Qt::black);            /* "Cx" octave labels   */
-            pen.setStyle(Qt::SolidLine);
-            painter.setPen(pen);
+        case show::octave_letters:
+
             if (key == m_key)
             {
-                std::string note = musical_note_name(keyvalue);
+                pen.setColor(Qt::black);            /* "Cx" octave labels   */
+                pen.setStyle(Qt::SolidLine);
+                painter.setPen(pen);
+                note = musical_note_name(keyvalue);
                 painter.drawText(2, m_key_y * i + 11, note.c_str());
             }
-        }
-        else
-        {
+            break;
+
+        case show::even_letters:
+
             if ((keyvalue % 2) == 0)
             {
-                char note[8];
-                snprintf(note, sizeof note, "%3d", keyvalue);
-                painter.drawText(1, m_key_y * i + 9, note);
+                note = musical_note_name(keyvalue);
+                painter.drawText(2, m_key_y * i + 11, note.c_str());
             }
+            break;
+
+        case show::all_letters:
+
+            note = musical_note_name(keyvalue);
+            painter.drawText(2, m_key_y * i + 11, note.c_str());
+            break;
+
+        case show::even_numbers:
+
+            if ((keyvalue % 2) == 0)
+            {
+                snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
+                painter.drawText(1, m_key_y * i + 9, notebuf);
+            }
+            break;
+
+        case show::all_numbers:
+
+            snprintf(notebuf, sizeof notebuf, "%3d", keyvalue);
+            painter.drawText(1, m_key_y * i + 9, notebuf);
+            break;
         }
     }
 }
@@ -197,7 +226,28 @@ qseqkeys::mousePressEvent (QMouseEvent * event)
     }
     else if (event->button() == Qt::RightButton)
     {
-        m_show_octave_letters = ! m_show_octave_letters;
+        switch (m_show_key_names)
+        {
+        case show::octave_letters:
+            m_show_key_names = show::even_letters;
+            break;
+
+        case show::even_letters:
+            m_show_key_names = show::all_letters;
+            break;
+
+        case show::all_letters:
+            m_show_key_names = show::even_numbers;
+            break;
+
+        case show::even_numbers:
+            m_show_key_names = show::all_numbers;
+            break;
+
+        case show::all_numbers:
+            m_show_key_names = show::octave_letters;
+            break;
+        }
     }
     update();
 }
@@ -314,6 +364,16 @@ bool
 qseqkeys::reset_v_zoom ()
 {
     return set_note_height(usr().key_height());
+}
+
+void
+qseqkeys::set_key (int k)
+{
+    if (legal_key(k))
+    {
+        m_key = k;
+        update();
+    }
 }
 
 }           // namespace seq66

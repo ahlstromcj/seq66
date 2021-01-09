@@ -169,13 +169,12 @@
    \index{chord generation}
 
    \itempar{MIDI Out Device (Buss)}{pattern editor!midi out device}
-   This setting specifies one of the virtual MIDI output busses provided by
-   \textsl{Seq66}, or one of the MIDI output devices set up by the computer and
+   This setting specifies a virtual MIDI output buss or a
+   MIDI output device set up by the computer and
    attached MIDI equipment.
    The button resets it to buss 0.
    Note that, if the pattern's selected buss is not found, this entry will be
-   blank.  The user must select a valid buss from the current system
-   configuration.
+   blank.  The user must select a valid buss from this dropdown.
 
 %  The settings look a lot like
 %  \figureref{fig:pattern_window_right_click_midi_bus}.
@@ -184,7 +183,7 @@
    This settings select the MIDI output channel.
    The possible values range from 1 to 16.
    If instruments are assigned in the 'usr' configuration file
-   to that device and channel, their names will be shown.
+   to that device and channel, their names will be shown in the dropdown.
 
 \subsection{Pattern Editor / Second Row}
 \label{subsec:pattern_editor_second_row}
@@ -275,40 +274,43 @@
    subsequent measures that occurs with the "follow progess" feature.
 
    \itempar{Grid Snap}{pattern editor!grid snap}
-   Grid snap selects where the notes will be drawn.
+   Grid snap selects where the notes will snap when drawn.
+   That is, it selects the snap-spacing for the notes
    The following values are supported:
-   1, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64, and 1/128.
+   1, 1/2, 1/4, 1/8, 1/16 (\textsl{the default value}), 1/32, 1/64, and 1/128.
    Additional values are also supported:
    1/3, 1/6, 1/12/, 1/24, 1/48, 1/96, and 1/192.
+   The button to the left of this control resets it to the default value.
 
    \itempar{Note Length}{pattern editor!note length}
-   Note length determines the duration of the inserted notes.
+   Note length determines the duration of inserted notes.
    Like the \textbf{Grid Snap} values,
    the following values are supported:
-   1, 1/2, 1/4, 1/8, 1/16, 1/32, 1/64, and 1/128.
+   1, 1/2, 1/4, 1/8, 1/16 (\textsl{the default value}), 1/32, 1/64, and 1/128.
    Additional values are also supported:
    1/3, 1/6, 1/12/, 1/24, 1/48, 1/96, and 1/192.
+   The button to the left of this control resets it to the default value.
 
    \itempar{Zoom}{pattern editor!zoom}
    Horizontal zoom is the ratio between MIDI pixels and ticks, written as
    "pixels:ticks", where "ticks" is the "pulses" in "PPQN".
    For example, 1:4 = 4 ticks per pixel.
-   Supported values are 1:1, 1:2, 1:4, 1:8, 1:16, and 1:32, along with
+   Supported values are 1:1, 1:2 (\textsl{the default value}),
+   1:4, 1:8, 1:16, and 1:32, along with
    more new values to support higher PPQN tunes: 1:64, 1:128, 1:256, and
    1:512.
    The default zoom is 2 for the standard PPQN value, 192, but it
    increases for higher PPQN values, so that the zoom looks sensible.
    As the right number (ticks) goes higher,
    the effect is to zoom out, and show more of the pattern.
-   In fact, it might be better to list them as ticks (pulses) per pixel.
-   Legacy stuff.
 %  Also see \sectionref{subsubsec:pattern_editor_zoom_keys}.
 
    \itempar{Key of Sequence}{pattern editor!key}
    Selects the desired musical key for the pattern.  The following keys are
    supported:  C, C\#, D, D\#, E, F, F\#, G, G\#, A, A\#, and B.
-   Changing the \textbf{Key} will also shifts the marked note-rows
-   for the \textbf{Musical Scale} setting.
+   Changing the \textbf{Key} shifts the marked note-rows
+   for the \textbf{Musical Scale} setting and indicates the base notes
+   of the key in a \textbf{bold} font.
 
    \index{save musical key}
    The musical key that a sequence/pattern is set to is
@@ -331,21 +333,21 @@
    then only that pattern will use the selected key, scale, or background.
    The key, scale, or background sequence change will be saved in the MIDI file
    only for that pattern, as a SeqSpec meta event.
-   The global-sequence feature setting can be made in the "user" configuration
+   The global-sequence feature setting can be made in the 'usr' configuration
    file.
 
    \itempar{Musical Scale}{pattern editor!scale}
-   Selects the desired scale for the pattern.
+   Selects the desired background scale for the pattern; it provides a way for
+   someone to key in notes that are only in that scale.
    When a scale is selected, the following features are supported:
 
    \begin{itemize}
       \item The notes that are \textsl{not}
-         in the scale are shown as grey in the piano
-         roll, to make it easier to key all notes in-scale.
+         in the scale are shown as grey in the piano roll.
       \item For harmonic transposition, the notes are shifted
          so that they remain in the selected scale.
-      \item The exact notes that are considered "in-scale" depend also on the 
-         exact value of the \textbf{Key of Sequence} setting.
+      \item The exact notes that are considered "in-scale" shift according
+         to the value of the selected \textbf{Key of Sequence}.
    \end{itemize}
 
    \index{musical scales}
@@ -364,31 +366,27 @@
    \end{itemize}
 
    Please let us know of any mistakes in the new scales.
-   Please note that the \textbf{Melodic Minor} scale is supposed to
-   descend in the same was as the natural \textbf{Minor} scale, but
+   Note that the \textbf{Melodic Minor} scale is supposed to
+   descend in the same way as the natural \textbf{Minor} scale, but
    there is no way to support that trick in \textsl{Seq66}.
 
    One can select which \textbf{Musical Scale} and
-   \textbf{Key} the piece is in,
+   \textbf{Key} the piece is in nominally,
    and \textsl{Seq66} will grey those keys on the piano-roll that
    are \textsl{not} in the selected scale for the selected key.
    This is purely visual; a user can still add off-key notes.
-   This effect is shown for the C Major scale in the following figure:
-
-   This feature makes it easier to stay in key while playing and
-   recording.  Note that the scale will shift when a different
-   \textbf{Key} is selected.
+   This feature makes it easier to stay in key while playing and recording.
+   The scale will shift when a different \textbf{Key} is selected.
 
    \index{save musical scale}
    The scale that a pattern is set to is
    saved in the MIDI file along with the rest of the data for the pattern.
-   \textbf{However},
-   a change made to the key, scale, or background pattern in
-   the pattern editor is saved in the editor, so that opening another pattern
-   will apply the same settings to that pattern.  This is a feature, now
-   optional.
-   The user has the option of applying the key/scale/background-sequence
-   either globally (all patterns) or locally, per-pattern, with each pattern
+   A change made to the key, scale, or background pattern in
+   the pattern editor can be saved globally, so that opening another pattern
+   apply the same settings to that pattern.  This is a configurable feature in
+   the 'usr' file; see "global\_seq\_feature".
+   This option allows applying the key/scale/background-sequence
+   either globally (all patterns) or locally (per-pattern), with each pattern
    holding its key, scale, and background-sequence settings in
    SeqSpec meta events.
 
@@ -396,10 +394,10 @@
    One can select another pattern to draw on the background to help with
    writing corresponding parts.
    The button brings up a small menu with values of \textbf{Off} and
-   \textbf{[0]}.  The 0 is a set number. Sets are numbered from 0 to 31.
+   \textbf{Set 0} (at a minimum).
+   The 0 is a set number; sets are numbered from 0 to 31.
    Additional set numbers appear in the menu for each set that has data in it.
-   Under the \textbf{0}
-   entry, a menu appears.
+   Under the \textbf{Set 0} entry, a menu appears.
    Once the desired pattern is selected from that list, it appears as dark cyan
    note bars, along with the normal notes that are part of the pattern.
 
@@ -408,16 +406,16 @@
    along with the rest of the data for the sequence/pattern.
    A change made to the key, scale, or background sequence in
    the pattern editor is saved in the editor, so that opening another sequence
-   will apply the same settings to that sequence.  This is an optional feature,
-   as noted earlier.
+   will apply the same settings to that sequence.
+   This is an optional feature, as noted earlier.
 
    \itempar{Chord Generation}{pattern editor!chord generation}
-   The ability to insert chords with one click has been added.
-   This feature comes from user "stazed"
-   and his \textsl{Seq32} project \cite{seq32}.
+   One can insert chords with one click.
+   (This feature comes from user "stazed"
+   and his \textsl{Seq32} project \cite{seq32}.)
    Select the desired chord type first.
-   Once a value other than \textbf{Off} is selected, a left-click
-   in drawing mode will add multiple notes representing the chord
+   Once a value other than \textbf{Off} is selected,
+   drawing mode will add multiple notes representing the chord
    created, with the clicked note value as the base of the chord.
 
 \subsection{Pattern Editor / Piano Roll}

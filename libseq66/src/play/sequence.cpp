@@ -2501,12 +2501,19 @@ sequence::push_add_note
     bool paint, int velocity
 )
 {
-    /*
-     * automutex locker(m_mutex);                   // necessary?
-     */
-
     m_events_undo.push(m_events);                   /* push_undo(), no lock */
     return add_note(tick, len, note, paint, velocity);
+}
+
+bool
+sequence::push_add_chord
+(
+    int chord, midipulse tick, midipulse len,
+    int note, int velocity
+)
+{
+    m_events_undo.push(m_events);                   /* push_undo(), no lock */
+    return add_chord(chord, tick, len, note, velocity);
 }
 
 /**
@@ -2537,10 +2544,13 @@ sequence::push_add_note
  */
 
 bool
-sequence::add_chord (int chord, midipulse tick, midipulse len, int note)
+sequence::add_chord
+(
+    int chord, midipulse tick, midipulse len,
+    int note, int velocity
+)
 {
     bool result = false;
-    push_undo();
     if (chord > 0 && chord < c_chord_number)
     {
         for (auto cnote : c_chord_table[chord])
@@ -2548,13 +2558,13 @@ sequence::add_chord (int chord, midipulse tick, midipulse len, int note)
             if (cnote == -1)
                 break;
 
-            result = add_note(tick, len, note + cnote, false);
+            result = add_note(tick, len, note + cnote, false, velocity);
             if (! result)
                 break;
         }
     }
     else
-        result = add_note(tick, len, note, true);
+        result = add_note(tick, len, note, true, velocity);
 
     return result;
 }

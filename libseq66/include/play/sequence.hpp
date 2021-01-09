@@ -1274,19 +1274,28 @@ public:
     std::string to_string () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
-    bool add_note
-    (
-        midipulse tick, midipulse len, int note,
-        bool paint = false,
-        int velocity = SEQ66_PRESERVE_VELOCITY
-    );
     bool push_add_note
     (
         midipulse tick, midipulse len, int note,
         bool paint = false,
         int velocity = SEQ66_PRESERVE_VELOCITY
     );
-    bool add_chord (int chord, midipulse tick, midipulse len, int note);
+    bool push_add_chord
+    (
+        int chord, midipulse tick, midipulse len,
+        int note, int velocity = SEQ66_PRESERVE_VELOCITY
+    );
+    bool add_note
+    (
+        midipulse tick, midipulse len, int note,
+        bool paint = false,
+        int velocity = SEQ66_PRESERVE_VELOCITY
+    );
+    bool add_chord
+    (
+        int chord, midipulse tick, midipulse len, int note,
+        int velocity = SEQ66_PRESERVE_VELOCITY
+    );
     bool add_event (const event & er);      /* another one declared below */
     bool add_event
     (

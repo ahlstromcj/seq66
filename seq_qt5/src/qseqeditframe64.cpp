@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-05
+ * \updates       2021-01-08
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2144,88 +2144,6 @@ qseqeditframe64::sequences ()
 #define SET_BG_SEQ(seq) \
     std::bind(&qseqeditframe64::set_background_sequence, this, seq)
 
-#undef USE_SLOT_HANDLER
-#if defined USE_SLOT_HANDLER
-
-/**
- *  For each set that is present, add a menu popup.  Then, for each active
- *  sequence in that set, add a new action to the popup.
- */
-
-bool
-qseqeditframe64::add_back_set (QMenu ** menusset, screenset & sset, int)
-{
-    bool result = sset.active() && not_nullptr(menusset);
-    if (result)
-    {
-        seq::number seqno = sset.key(); /* screenset uses "number" as type  */
-        char number[16];
-        snprintf(number, sizeof number, "[%d]", seqno);
-        *menusset = m_sequences_popup->addMenu(number);
-    }
-    return result;
-}
-
-bool
-qseqeditframe64::add_back_sequence
-(
-    QMenu ** menusset,
-    seq::pointer s,
-    seq::number /* seqno */
-)
-{
-    bool result = bool(s) && not_nullptr(menusset);
-    if (result)
-    {
-        seq::number seqno = s->seq_number();
-        char name[32];
-        snprintf(name, sizeof name, "[%d] %.13s", seqno, s->name().c_str());
-
-        QAction * item = new QAction(tr(name), *menusset);
-        (*menusset)->addAction(item);
-        connect(item, &QAction::triggered, SET_BG_SEQ(seqno));
-    }
-    return result;
-}
-
-/**
- *  Builds the Tools popup menu on the fly.  Analogous to seqedit ::
- *  popup_sequence_menu().
- */
-
-void
-qseqeditframe64::popup_sequence_menu ()
-{
-    QMenu * menusset = nullptr;
-    if (is_nullptr(m_sequences_popup))
-    {
-        m_sequences_popup = new QMenu(this);
-    }
-
-    screenset::sethandler setfunc =
-    (
-        std::bind
-        (
-            &qseqeditframe64::add_back_set, this,
-            &menusset, std::placeholders::_1, std::placeholders::_2
-        )
-    );
-    screenset::slothandler slotfunc =
-    (
-        std::bind
-        (
-            &qseqeditframe64::add_back_sequence, this,
-            &menusset, std::placeholders::_1, std::placeholders::_2
-        )
-    );
-    QAction * off = new QAction(tr("Off"), m_sequences_popup);
-    connect(off, &QAction::triggered, SET_BG_SEQ(seq::limit()));
-    (void) m_sequences_popup->addAction(off);
-    (void) m_sequences_popup->addSeparator();
-    (void) perf().set_function(setfunc, slotfunc);
-}
-
-#else   // USE_SLOT_HANDLER
 
 /**
  *  Builds the Tools popup menu on the fly.  Analogous to seqedit ::
@@ -2252,7 +2170,7 @@ qseqeditframe64::popup_sequence_menu ()
         if (perf().is_screenset_active(sset))
         {
             char number[16];
-            snprintf(number, sizeof number, "[%d]", sset);
+            snprintf(number, sizeof number, "Set %d", sset);
             menusset = m_sequences_popup->addMenu(number);
         }
         for (int seq = 0; seq < seqsinset; ++seq)
@@ -2271,8 +2189,6 @@ qseqeditframe64::popup_sequence_menu ()
         }
     }
 }
-
-#endif
 
 /**
  *  Passes the transpose status to the sequence object.
@@ -2721,6 +2637,9 @@ qseqeditframe64::set_key (int key)
         ui->m_combo_key->setCurrentIndex(key);
         if (not_nullptr(m_seqroll))
             m_seqroll->set_key(key);
+
+        if (not_nullptr(m_seqkeys))
+            m_seqkeys->set_key(key);
     }
 }
 
@@ -2730,6 +2649,9 @@ qseqeditframe64::reset_key ()
     ui->m_combo_key->setCurrentIndex(0);
     if (not_nullptr(m_seqroll))
         m_seqroll->set_key(0);
+
+    if (not_nullptr(m_seqkeys))
+        m_seqkeys->set_key(0);
 }
 
 /**

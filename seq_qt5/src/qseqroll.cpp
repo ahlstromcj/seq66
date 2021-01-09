@@ -96,6 +96,7 @@ qseqroll::qseqroll
     m_chord                 (0),
     m_key                   (0),
     m_note_length           (p.ppqn() * 4 / 16),
+    m_note_off_margin       (2),
     m_background_sequence   (seq::unassigned()),
     m_drawing_background_seq (false),
     m_status                (0),
@@ -805,6 +806,56 @@ qseqroll::draw_drum_notes
     }
 }
 
+int
+qseqroll::note_off_length () const
+{
+    return m_note_length - m_note_off_margin;
+}
+
+/**
+ * Convenience wrapper for sequence::add_note().  The length parameters is
+ * obtained from the note_off_length() function.  This sets the note
+ * length at a little less than the snap value.
+ *
+ * \param tick
+ *      The time destination of the new note, in pulses.
+ *
+ * \param note
+ *      The pitch destination of the new note.
+ *
+ * \param paint
+ *      If true, repaint to be left with just the inserted event.  The
+ *      default is true.  The value of false is useful in inserting a
+ *      number of events and saving the repainting until last.  It is a
+ *      bit tricky, as the default paint value for sequence::add_note() is
+ *      false.
+ */
+
+bool
+qseqroll::add_note (midipulse tick, int note, bool paint)
+{
+    bool result;
+    if (m_chord > 0)
+    {
+        result = seq_pointer()->push_add_chord
+        (
+            m_chord, tick, note_off_length(), note      /* , velocity */
+        );
+    }
+    else
+    {
+        result = seq_pointer()->push_add_note
+        (
+            tick, note_off_length(), note, paint        /* , velocity */
+        );
+    }
+
+    if (result)
+        set_dirty();
+
+    return result;
+}
+
 void
 qseqroll::resizeEvent (QResizeEvent * qrep)
 {
@@ -840,7 +891,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
         bool lbutton = event->button() == Qt::LeftButton;
         bool rbutton = event->button() == Qt::RightButton;
-        bool mbutton = event->button() == Qt::MiddleButton || lbutton && isctrl;
+        bool mbutton = event->button() == Qt::MiddleButton ||
+            (lbutton && isctrl);
+
         if (lbutton)
         {
             current_x(norm_x);
@@ -875,8 +928,10 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 );
                 if (would_select)
                 {
-                    s->push_add_note(tick_s, m_note_length - 2, note, true);
-                    set_dirty();
+//                  s->push_add_note(tick_s, m_note_length - 2, note, true);
+//                  set_dirty();
+
+                    (void) add_note(tick_s, note, true);
                 }
             }
             else                                    /* we're selecting anew */
@@ -1093,7 +1148,9 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     {
         snap_current_x();
         convert_xy(current_x(), current_y(), tick, note);
-        seq_pointer()->add_note(tick, m_note_length - 2, note, true);
+//      seq_pointer()->add_note(tick, m_note_length - 2, note, true);
+
+        (void) add_note(tick, note, true);
     }
     set_dirty();
 }
