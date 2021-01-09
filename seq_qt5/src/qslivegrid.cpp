@@ -100,7 +100,7 @@
 namespace seq66
 {
 
-static const int sc_button_padding = 8;
+static const int sc_button_padding = 0; // 2;     // 8;
 
 /**
  *  The Qt 5 version of mainwid.

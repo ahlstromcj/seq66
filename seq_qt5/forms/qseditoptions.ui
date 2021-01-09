@@ -461,7 +461,7 @@ Use 0.60 at a minimum.</string>
         <string>* Restart of Seq66 required</string>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidgetOp">
        <property name="geometry">
         <rect>
          <x>8</x>
@@ -625,7 +625,7 @@ Otherwise, ALSA is used.  Not available on Windows/Mac.</string>
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidgetJack">
        <property name="geometry">
         <rect>
          <x>31</x>

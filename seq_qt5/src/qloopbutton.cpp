@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-01-08
+ * \updates       2021-01-09
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -94,12 +94,12 @@ namespace seq66
  */
 
 qloopbutton::textbox::textbox () :
-    m_x         (0),
-    m_y         (0),
-    m_w         (0),
-    m_h         (0),
-    m_flags     (0),
-    m_label     ()
+    m_x     (0),
+    m_y     (0),
+    m_w     (0),
+    m_h     (0),
+    m_flags (0),
+    m_label ()
 {
     // no code
 }
@@ -110,25 +110,22 @@ qloopbutton::textbox::set
     int x, int y, int w, int h, int flags, std::string label
 )
 {
-    m_x     = x;
-    m_y     = y;
-    m_w     = w;
-    m_h     = h;
+    m_x = x;  m_y = y;  m_w = w;  m_h = h;
     m_flags = flags;
     m_label = label;
 }
 
 qloopbutton::progbox::progbox () :
-    m_x         (0),
-    m_y         (0),
-    m_w         (0),
-    m_h         (0)
+    m_x (0),
+    m_y (0),
+    m_w (0),
+    m_h (0)
 {
     // no code
 }
 
 #define PROG_W_FRACTION     0.80
-#define PROG_H_FRACTION     0.25                    // 0.40
+#define PROG_H_FRACTION     0.25
 
 /**
  * Let's do it like seq24/seq64, but not so tall, just enough to show
@@ -488,7 +485,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 #endif
 
                 /*
-                 * EXPERIMENTAL.
+                 * EXPERIMENTAL.  Might be needed for large window sizes.
                  * int fontsize = usr().scale_size(6);
                  * m_text_font.setPointSize(fontsize);
                  */
@@ -658,7 +655,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         int lyh = m_event_box.h();
         midipulse t1 = m_seq->get_length();
         pen.setWidth(2);
-        if (m_seq->measure_threshold())         // not m_seq->note_count() <= 64
+        if (m_seq->measure_threshold())
         {
             if (! m_seq->transposable())
                 pen.setColor(drum_color());
@@ -666,13 +663,13 @@ qloopbutton::draw_pattern (QPainter & painter)
             painter.setPen(pen);
             if (m_fingerprint_size > 0)
             {
-                int x = m_event_box.x() + 1;
-                int dx = m_progress_box.w() / (m_fingerprint_size - 1);
+                float x = float(m_event_box.x());
+                float dx = float(m_event_box.w()) / (m_fingerprint_size - 1);
                 for (int i = 0; i < m_fingerprint_size; ++i, x += dx)
                 {
                     int y = m_fingerprint[i];
                     if (y > 0)
-                        painter.drawPoint(x, y); // painter.drawRect(x,y,1,1)
+                        painter.drawPoint(int(x), y);
                 }
             }
         }

@@ -927,12 +927,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     tick_s, note, tick_s, note, selmode
                 );
                 if (would_select)
-                {
-//                  s->push_add_note(tick_s, m_note_length - 2, note, true);
-//                  set_dirty();
-
                     (void) add_note(tick_s, note, true);
-                }
             }
             else                                    /* we're selecting anew */
             {
@@ -1148,8 +1143,6 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     {
         snap_current_x();
         convert_xy(current_x(), current_y(), tick, note);
-//      seq_pointer()->add_note(tick, m_note_length - 2, note, true);
-
         (void) add_note(tick, note, true);
     }
     set_dirty();
