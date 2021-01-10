@@ -1,6 +1,6 @@
 Quick Reference for Git Processes on GitHub
 Chris Ahlstrom
-2015-09-09 to 2020-12-19
+2015-09-09 to 2021-01-10
 
 Creating a GitHub Repository:
 
@@ -261,6 +261,10 @@ Tagging:
     To show just the tag names:
 
     $ git tag
+
+    To add the date of each tag:
+
+    $ git tag -l --format="%(creatordate:short)|%(refname:short)" | sort -r
 
     Related to tags, one can generate a brief description of the current
     commit, based from the latest tag, using the following call (with the
