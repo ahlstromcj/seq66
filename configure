@@ -20737,7 +20737,7 @@ esac
 
 
 CFLAGS="$CFLAGS $COMMONFLAGS"
-CXXFLAGS="$CFLAGS -std=gnu++1y -Wno-variadic-macros -Wno-deprecated-declarations"
+CXXFLAGS="$CFLAGS -std=gnu++1y -pipe -Wno-variadic-macros -Wno-deprecated-declarations"
 LDFLAGS="$LDFLAGS $PROLDFLAGS"
 
  if test x$gnuwin = xyes; then

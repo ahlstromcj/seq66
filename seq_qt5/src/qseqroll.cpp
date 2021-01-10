@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-06
+ * \updates       2021-01-10
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -344,11 +344,6 @@ qseqroll::paintEvent (QPaintEvent * qpep)
      * Doesn't seem to be needed: painter.drawRect(0, 0, ww, wh);
      */
 
-#if defined THIS_CODE_ADDS_VALUE
-    painter.setPen(pen);
-    painter.setBrush(brush);
-#endif
-
     pen.setColor(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setPen(pen);
@@ -623,9 +618,6 @@ qseqroll::draw_notes
                 in_shift = -1;
                 length_add = 1;
             }
-#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
-            pen.setColor(fore_color());
-#endif
             if (background)                         /* draw background note */
             {
                 length_add = 1;
@@ -636,16 +628,9 @@ qseqroll::draw_notes
                 painter.setBrush(note_brush());
             }
 
-#if defined THIS_CODE_ADDS_VALUE                    /* doesn't change it!   */
-            pen.setColor(Qt::black);
-            painter.setPen(pen);
-#endif
             painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
             if (ni.finish() < ni.start())   // shadow notes before zero
             {
-#if defined THIS_CODE_ADDS_VALUE
-                painter.setPen(pen);
-#endif
                 painter.drawRect
                 (
                     m_keypadding_x, m_note_y,
@@ -941,35 +926,13 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 (
                     tick_s, note, tick_f, note, selmode
                 );
-                if (! is_selected)
-                {
-                    if (! isctrl)
-                    {
-                        s->unselect();
-                        m_parent_frame->set_dirty();
-                    }
-
-                    int numsel;
-                    selmode = is_drum_mode() ?
-                        eventlist::select::onset :
-                        eventlist::select::select_one ;
-
-                    numsel = s->select_note_events
-                    (
-                        tick_s, note, tick_f, note, selmode
-                    );
-                    if (numsel == 0)    /* none selected, start selection box */
-                        selecting(true);
-                    else
-                        set_dirty();
-                }
                 if (is_selected)
                 {
                     /*
                      * Moving - left click only.
                      */
 
-                    if (lbutton && ! isctrl)
+                    if (/* lbutton && */ ! isctrl)
                     {
                         moving_init(true);
                         set_dirty();
@@ -1009,6 +972,26 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         );
                     }
                 }
+                else
+                {
+                    if (! isctrl)
+                    {
+                        s->unselect();
+                        m_parent_frame->set_dirty();
+                    }
+                    selmode = is_drum_mode() ?
+                        eventlist::select::onset :
+                        eventlist::select::select_one ;
+
+                    int numsel = s->select_note_events
+                    (
+                        tick_s, note, tick_f, note, selmode
+                    );
+                    if (numsel == 0)    /* none selected, start selection box */
+                        selecting(true);
+                    else
+                        set_dirty();
+                }
             }
         }
         if (rbutton)
@@ -1019,7 +1002,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
 void
 qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
-    current_x(event->x() - m_keypadding_x);
+    current_x(int(event->x()) - m_keypadding_x);
     current_y(event->y());
     snap_current_y();                   /* snaps the m_current_y value      */
     if (moving())
@@ -1030,6 +1013,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
     midipulse delta_tick;
     int delta_note;
     bool lbutton = event->button() == Qt::LeftButton;
+    bool rbutton = event->button() == Qt::RightButton;
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
     if (lbutton)
     {
         if (selecting())
@@ -1037,19 +1023,17 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             midipulse tick_s, tick_f;   /* start and  end of tick window    */
             int note_h, note_l;         /* high and low notes in window     */
             int x, y, w, h;             /* window dimensions                */
+            eventlist::select selmode = eventlist::select::selecting;
             rect::xy_to_rect_get        /* copy drop dimensions to xywh     */
             (
                 drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
             );
-            eventlist::select selmode = eventlist::select::selecting;
             convert_xy(x, y, tick_s, note_h);
             convert_xy(x + w, y + h, tick_f, note_l);
 
             /*
              * This breaks the selection of events in drum mode.
-             *
-             * if (is_drum_mode())
-             *      selmode = eventlist::select::onset;
+             * if (is_drum_mode()) selmode = eventlist::select::onset;
              */
 
             int numsel = seq_pointer()->select_note_events
@@ -1087,7 +1071,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             }
         }
     }
-    if (lbutton || event->button() == Qt::MiddleButton)
+    if (lbutton || mbutton)
     {
         if (growing())
         {
@@ -1100,7 +1084,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
             set_dirty();
         }
     }
-    if (event->button() == Qt::RightButton)
+    if (rbutton)
     {
         if (! QApplication::queryKeyboardModifiers().testFlag(Qt::MetaModifier))
         {

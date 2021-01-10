@@ -25,13 +25,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-05
+ * \updates       2021-01-10
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
  *  performance/song editor.  It is not the best name, since the earlier Seq64
  *  name was seqevent.
  */
+
+#include <QApplication>                 /* QApplication keyboardModifiers() */
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
@@ -255,16 +257,21 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
     {
         snap_current_x();
         convert_x(current_x(), tick_s);
-        paste(false);
         seq_pointer()->paste_selected(tick_s, 0);
+        paste(false);
+        setCursor(Qt::ArrowCursor);
+        set_dirty();        // NEW ca 2021-01-09
     }
     else
     {
-        if (event->button() == Qt::LeftButton)
+        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+        bool lbutton = event->button() == Qt::LeftButton;
+        bool rbutton = event->button() == Qt::RightButton;
+        if (lbutton)
         {
             convert_x(drop_x(), tick_s);        /* turn x,y in to tick/note */
             tick_f = tick_s + zoom();           /* shift back a few ticks   */
-            tick_s -= (tick_w);
+            tick_s -= tick_w;
             if (tick_s < 0)
                 tick_s = 0;
 
@@ -278,10 +285,10 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                  * Add note, length = little less than snap.
                  */
 
+                eventlist::select selmode = eventlist::select::would_select;
                 bool dropit = ! seq_pointer()->select_events
                 (
-                    tick_s, tick_f, m_status, m_cc,
-                    eventlist::select::would_select
+                    tick_s, tick_f, m_status, m_cc, selmode
                 );
                 if (dropit)
                 {
@@ -291,92 +298,47 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
             }
             else                                /* selecting */
             {
-                bool selectit = ! seq_pointer()->select_events
+                eventlist::select selmode = eventlist::select::selected;
+                bool is_selected = seq_pointer()->select_events
                 (
-                    tick_s, tick_f, m_status, m_cc,
-                    eventlist::select::selected
+                    tick_s, tick_f, m_status, m_cc, selmode
                 );
-                if (selectit)
-                {
-                    if (! (event->modifiers() & Qt::ControlModifier))
-                        seq_pointer()->unselect();
-
-#ifdef USE_STAZED_SELECTION_EXTENSIONS
-
-                    /*
-                     * Stazed: if we didn't select anything (user clicked empty
-                     * space), then unselect all notes, and start selecting.
-                     */
-
-                    int numsel = 0;
-                    if (event::is_strict_note_msg(m_status))
-                    {
-                        numsel = seq_pointer()->select_linked
-                        (
-                            tick_s, tick_f, m_status
-                        );
-                        m_seq.set_dirty();
-                    }
-#else
-                    int numsel = seq_pointer()->select_events
-                    (
-                        tick_s, tick_f, m_status, m_cc,
-                        eventlist::select::select_one
-                    );
-#endif
-
-                    /*
-                     * If we didn't select anything (the user clicked empty
-                     * space) unselect all notes, and start the selection box.
-                     */
-
-                    if (numsel == 0)
-                    {
-                        selecting(true);
-                    }
-                    else
-                    {
-                        // Needs update; unselecte?
-                    }
-                }
-                selectit = seq_pointer()->select_events
-                (
-                    tick_s, tick_f, m_status, m_cc,
-                    eventlist::select::selected
-                );
-                if (selectit)
+                if (is_selected)
                 {
                     /*
                      * Get the box that selected elements are in.
                      */
 
-                    int note, x, w;
-                    moving_init(true);
-                    seq_pointer()->selected_box(tick_s, note, tick_f, note);
-                    tick_f += tick_w;
-                    convert_t(tick_s, x);   /* convert box to X,Y values */
-                    convert_t(tick_f, w);
+                    if (! isctrl)
+                    {
+                        int note, x, w;
+                        moving_init(true);
+                        seq_pointer()->selected_box(tick_s, note, tick_f, note);
+                        tick_f += tick_w;
+                        convert_t(tick_s, x);   /* convert box to X,Y values */
+                        convert_t(tick_f, w);
 
-                    /*
-                     * w is actually coordinates now, so we have to change.
-                     * Then set the selection to hold the x, y, w, h of selected
-                     * events.
-                     */
+                        /*
+                         * w is actually coordinates now, so we have to change.
+                         * Then set the selection to hold the x, y, w, h of
+                         * selected events.
+                         */
 
-                    w -= x;
-                    selection().set
-                    (
-                        x, w, (qc_eventarea_y - qc_eventevent_y) / 2,
-                        qc_eventevent_y
-                    );
+                        w -= x;
+                        selection().set
+                        (
+                            x, w, (qc_eventarea_y - qc_eventevent_y) / 2,
+                            qc_eventevent_y
+                        );
 
-                    /*
-                     * Save the offset that we get from the snap above.
-                     */
+                        /*
+                         * Save the offset that we get from the snap above.
+                         */
 
-                    int adjusted_selected_x = selection().x();
-                    snap_x(adjusted_selected_x);
-                    move_snap_offset_x(selection().x() - adjusted_selected_x);
+                        int adjusted_selected_x = selection().x();
+                        snap_x(adjusted_selected_x);
+                        move_snap_offset_x(selection().x() - adjusted_selected_x);
+                    }
 
                     /*
                      * Align selection for drawing. Save X as a variable so we
@@ -389,9 +351,32 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                     snap_current_x();
                     snap_drop_x();
                 }
+                else
+                {
+                    if (! isctrl)
+                    {
+                        seq_pointer()->unselect();
+                        set_dirty();    // m_parent_frame->set_dirty(); needed
+                    }
+                    selmode = eventlist::select::select_one;
+                    int numsel = seq_pointer()->select_events
+                    (
+                        tick_s, tick_f, m_status, m_cc, selmode
+                    );
+
+                    /*
+                     * If we didn't select anything (the user clicked empty
+                     * space) unselect all notes, and start the selection box.
+                     */
+
+                    if (numsel == 0)
+                        selecting(true);
+                    else
+                        set_dirty();
+                }
             }
         }
-        if (event->button() == Qt::RightButton)
+        if (rbutton)
             adding(true);
     }
 }
@@ -404,35 +389,26 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         snap_current_x();
 
     int delta_x = current_x() - drop_x();
-    if (event->button() == Qt::LeftButton)
+    bool lbutton = event->button() == Qt::LeftButton;
+    bool rbutton = event->button() == Qt::RightButton;
+    if (lbutton)
     {
         if (selecting())
         {
             midipulse tick_s, tick_f;
             int x, w;
+            eventlist::select selmode = eventlist::select::selecting;
             x_to_w(drop_x(), current_x(), x, w);
             convert_x(x, tick_s);
             convert_x(x + w, tick_f);
-            (void) seq_pointer()->select_events
+
+            int numsel = seq_pointer()->select_events
             (
-                tick_s, tick_f, m_status, m_cc,
-                eventlist::select::selecting
+                tick_s, tick_f, m_status, m_cc, selmode
             );
-
-#ifdef USE_STAZED_SELECTION_EXTENSIONS
-
-            /*
-             * Stazed: if we didn't select anything (user clicked empty
-             * space), then unselect all notes, and start selecting.
-             */
-
-            if (event::is_strict_note_msg(m_status))
-                (void) m_seq.select_linked(tick_s, tick_f, m_status);
-
-            m_seq.set_dirty();                  /* WHY? */
-#endif
+            if (numsel > 0)
+                set_dirty();        // m_parent_frame->set_dirty(); needed
         }
-
         if (moving())
         {
             /*
@@ -447,12 +423,18 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
         }
         set_adding(adding());
     }
-
-    if (event->button() == Qt::RightButton)
-        set_adding(false);
-
+    if (rbutton)
+    {
+        if (! QApplication::queryKeyboardModifiers().testFlag(Qt::MetaModifier))
+        {
+            set_adding(false);
+            set_dirty();
+        }
+    }
     clear_action_flags();               /* turn off */
     seq_pointer()->unpaint_all();
+    if (is_dirty())                     /* if clicked, something changed    */
+        seq_pointer()->set_dirty();
 }
 
 void
@@ -477,6 +459,7 @@ qstriggereditor::mouseMoveEvent (QMouseEvent * event)
         convert_x(current_x(), tick);
         drop_event(tick);
     }
+    set_dirty();
 }
 
 void
@@ -513,11 +496,25 @@ qstriggereditor::keyPressEvent (QKeyEvent * event)
                 seq_pointer()->pop_redo();
             else
                 seq_pointer()->pop_undo();
+
             ret = true;
             break;
         }
     }
-    if (ret == true)
+    if (! ret)
+    {
+        if (event->key() == Qt::Key_P)
+        {
+            set_adding(true);
+            ret = true;
+        }
+        else if (event->key() == Qt::Key_X)
+        {
+            set_adding(false);
+            ret = true;
+        }
+    }
+    if (ret)
         seq_pointer()->set_dirty();
     else
         QWidget::keyPressEvent(event);

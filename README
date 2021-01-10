@@ -1,6 +1,6 @@
 README for Seq66 0.91.5 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2021-01-05
+2015-09-10 to 2021-01-10
 
 "Seq66" is a MIDI sequencer and live looper with a hardware sampler-like grid
 pattern interface, MIDI automation for live performance, with sets and
@@ -18,9 +18,9 @@ Major Features:
     -   User interface:
         -   Qt 5 (good cross-platform support).  No "grid of sets", but
             unlimited external windows.
-        -   Added tabs for management of sets, mute-groups, song mode, pattern
+        -   Tabs for management of sets, mute-groups, song mode, pattern
             editing, event-editing, play-lists, and session information.
-        -   The live frame uses buttons that match Qt theming.
+        -   The live frame uses buttons matching Qt theming.
         -   A color for each sequence can be chosen to make them stand out.
             The color is saved in a SeqSpec associated with the track. The
             color palette can be saved and modified.
@@ -63,7 +63,7 @@ Recent Changes:
         -   Added more control over the coloring of notes.
         -   Still improving the port-mapper feature.
         -   Added quotes to file-paths in the 'rc' configuration file.
-        -   Many minor fixes to seqedit, perfedit.  Way too many to mention
+        -   Many fixes to seqedit, perfedit.  Way too many to mention them
             all.  Changed the 4/4 and length selections to be editable.
         -   Getting serious about rewriting the user manual in this project.
     -   Version 0.91.4:

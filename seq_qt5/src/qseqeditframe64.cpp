@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-08
+ * \updates       2021-01-09
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -440,7 +440,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         QString combo_text = QString::number(b + 1);
         ui->m_combo_bpm->insertItem(b, combo_text);
     }
+
+    int beatspm = seq_pointer()->get_beats_per_bar();
+    std::string beatstring = std::to_string(beatspm);
     ui->m_combo_bpm->setCurrentIndex(m_beats_per_bar - 1);
+    ui->m_combo_bpm->setEditText(QString::fromStdString(beatstring));
     connect
     (
         ui->m_combo_bpm, SIGNAL(currentIndexChanged(int)),
@@ -488,7 +492,10 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     }
 
     int bw_index = s_lookup_bw(m_beat_width);
+    int bw = seq_pointer()->get_beat_width();
+    std::string bstring = std::to_string(bw);
     ui->m_combo_bw->setCurrentIndex(bw_index);
+    ui->m_combo_bw->setEditText(QString::fromStdString(bstring));
     connect
     (
         ui->m_combo_bw, SIGNAL(currentIndexChanged(int)),
@@ -536,7 +543,10 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     }
 
     int len_index = s_lookup_measures(m_measures);
+    int measures = seq_pointer()->calculate_measures();
+    std::string mstring = std::to_string(measures);
     ui->m_combo_length->setCurrentIndex(len_index);
+    ui->m_combo_length->setEditText(QString::fromStdString(mstring));
     connect
     (
         ui->m_combo_length, SIGNAL(currentIndexChanged(int)),
