@@ -295,6 +295,11 @@ Tagging:
     This will pack up the code and Makefiles as a tar-file that can be
     used to ./configure and build the code.
 
+    To remove a tag:
+
+    $ git tag -d 0.91.5
+    $ git push --delete origin 0.91.5
+
 Cherry-Picking:
 
     If one makes a fix in a branch and wants just that commit to be merged
