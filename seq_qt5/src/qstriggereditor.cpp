@@ -105,6 +105,34 @@ qstriggereditor::~qstriggereditor ()
 }
 
 /**
+ *  A convenience function.
+ *
+ * \return
+ *      Returns non-zero if events can be selected (we no longer allow this
+ *      for note-related events in this editor, to prevent issues) and are
+ *      selected.
+ */
+
+int
+qstriggereditor::select_events
+(
+    eventlist::select selmode,
+    midipulse start,
+    midipulse finish
+)
+{
+    int result = 0;
+    if (! event::is_note_msg(m_status))
+    {
+        result = seq_pointer()->select_events
+        (
+            start, finish, m_status, m_cc, selmode
+        );
+    }
+    return result;
+}
+
+/**
  *  In an effort to reduce CPU usage when simply idling, this function calls
  *  update() only if necessary.  See qseqbase::check_dirty().
  */
@@ -286,10 +314,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                  */
 
                 eventlist::select selmode = eventlist::select::would_select;
-                bool dropit = ! seq_pointer()->select_events
-                (
-                    tick_s, tick_f, m_status, m_cc, selmode
-                );
+                bool dropit = select_events(selmode, tick_s, tick_f) == 0;
                 if (dropit)
                 {
                     seq_pointer()->push_undo();
@@ -299,10 +324,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
             else                                /* selecting */
             {
                 eventlist::select selmode = eventlist::select::selected;
-                bool is_selected = seq_pointer()->select_events
-                (
-                    tick_s, tick_f, m_status, m_cc, selmode
-                );
+                bool is_selected = select_events(selmode, tick_s, tick_f) > 0;
                 if (is_selected)
                 {
                     /*
@@ -359,18 +381,18 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                         set_dirty();    // m_parent_frame->set_dirty(); needed
                     }
                     selmode = eventlist::select::select_one;
-                    int numsel = seq_pointer()->select_events
-                    (
-                        tick_s, tick_f, m_status, m_cc, selmode
-                    );
-
-                    /*
-                     * If we didn't select anything (the user clicked empty
-                     * space) unselect all notes, and start the selection box.
-                     */
-
+                    int numsel = select_events(selmode, tick_s, tick_f);
                     if (numsel == 0)
-                        selecting(true);
+                    {
+                        /*
+                         * If we didn't select anything (the user clicked
+                         * empty space) unselect all notes, and start the
+                         * selection box.
+                         */
+
+                        if (event::is_note_msg(m_status))
+                            selecting(true);
+                    }
                     else
                         set_dirty();
                 }
@@ -402,10 +424,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
             convert_x(x, tick_s);
             convert_x(x + w, tick_f);
 
-            int numsel = seq_pointer()->select_events
-            (
-                tick_s, tick_f, m_status, m_cc, selmode
-            );
+            int numsel = select_events(selmode, tick_s, tick_f);
             if (numsel > 0)
                 set_dirty();        // m_parent_frame->set_dirty(); needed
         }

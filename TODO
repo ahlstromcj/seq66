@@ -1,6 +1,6 @@
 TO DO for Seq66 0.91.5 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-01-09
+2019-04-13 to 2021-01-10
 
 HOT ITEMS:
 
@@ -82,6 +82,9 @@ HOT ITEMS:
 
         The Event Pane also does not perform as documented.  Need to be able
         to edit in it similarly to the piano roll. A big job!!!
+
+        See the mouse wheel scroll event requests for both the song and
+        pattern editors.
 
     Automation:
 

@@ -83,6 +83,16 @@ public:
 
     void set_data_type (midibyte status, midibyte control);
 
+private:
+
+    int select_events
+    (
+        eventlist::select selmode,
+        midipulse start,
+        midipulse finish
+    );
+
+
 protected:
 
     virtual void paintEvent (QPaintEvent *) override;
