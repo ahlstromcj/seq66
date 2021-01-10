@@ -13,7 +13,7 @@ Supports NSM (New Session Manager) on Linux, can also be run headless.
 Linux users can build this application from the source code.  See the INSTALL
 file.  Windows users can get an installer package on GitHub.
 
-Major Features:
+Major Features (also see "Recent Changes" below):
 
     -   User interface:
         -   Qt 5 (good cross-platform support).  No "grid of sets", but
@@ -70,7 +70,7 @@ Recent Changes:
         -   Improved port naming and provide an option for short or long port
             names.
         -   Improved safety in NSM sessions.
-        -   Refactoring the color handling.  Colors have changed!!!
+        -   Major refactoring the color handling.  Colors have changed!!!
     -   Version 0.91.3:
         -   Added check to not apply last mute-group if in Song mode.
         -   Provisional support for playing multiple sets at once and for
