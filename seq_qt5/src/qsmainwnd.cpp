@@ -3244,8 +3244,7 @@ qsmainwnd:: on_set_change (screenset::number /*setno*/)
 }
 
 /**
- *  This is not called when focus changes.  Instead, we have to call this from
- *  qliveframeex::changeEvent().
+ *  This is called when focus changes in the main window.
  */
 
 void

@@ -246,7 +246,7 @@ qstriggereditor::paintEvent (QPaintEvent *)
         x_to_w(drop_x(), current_x(), x, w);
         old_rect().x(x);
         old_rect().width(w);
-        pen.setColor(Qt::black);
+        pen.setColor(sel_color());                  /* Qt::black            */
         painter.setPen(pen);
         painter.drawRect(x + c_keyboard_padding_x, y, w, h);
     }
@@ -303,17 +303,12 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
             if (tick_s < 0)
                 tick_s = 0;
 
-            if (adding())
+            if (adding())                       /* add note length < snap   */
             {
+                eventlist::select selmode = eventlist::select::would_select;
                 painting(true);
                 snap_drop_x();
                 convert_x(drop_x(), tick_s);    /* turn x,y in to tick/note */
-
-                /*
-                 * Add note, length = little less than snap.
-                 */
-
-                eventlist::select selmode = eventlist::select::would_select;
                 bool dropit = select_events(selmode, tick_s, tick_f) == 0;
                 if (dropit)
                 {
@@ -321,16 +316,12 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                     drop_event(tick_s);
                 }
             }
-            else                                /* selecting */
+            else                                /* we're selecting anew     */
             {
                 eventlist::select selmode = eventlist::select::selected;
                 bool is_selected = select_events(selmode, tick_s, tick_f) > 0;
                 if (is_selected)
                 {
-                    /*
-                     * Get the box that selected elements are in.
-                     */
-
                     if (! isctrl)
                     {
                         int note, x, w;
@@ -339,23 +330,12 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                         tick_f += tick_w;
                         convert_t(tick_s, x);   /* convert box to X,Y values */
                         convert_t(tick_f, w);
-
-                        /*
-                         * w is actually coordinates now, so we have to change.
-                         * Then set the selection to hold the x, y, w, h of
-                         * selected events.
-                         */
-
                         w -= x;
                         selection().set
                         (
                             x, w, (qc_eventarea_y - qc_eventevent_y) / 2,
                             qc_eventevent_y
                         );
-
-                        /*
-                         * Save the offset that we get from the snap above.
-                         */
 
                         int adjusted_selected_x = selection().x();
                         snap_x(adjusted_selected_x);
@@ -387,10 +367,10 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
                         /*
                          * If we didn't select anything (the user clicked
                          * empty space) unselect all notes, and start the
-                         * selection box.
+                         * selection box, unless its a note message in force.
                          */
 
-                        if (event::is_note_msg(m_status))
+                        if (! event::is_note_msg(m_status))
                             selecting(true);
                     }
                     else
@@ -399,7 +379,7 @@ qstriggereditor::mousePressEvent (QMouseEvent * event)
             }
         }
         if (rbutton)
-            adding(true);
+            set_adding(true);
     }
 }
 
@@ -438,7 +418,7 @@ qstriggereditor::mouseReleaseEvent (QMouseEvent * event)
             midipulse delta_tick;
             delta_x -= move_snap_offset_x();
             convert_x(delta_x, delta_tick);
-            seq_pointer()->move_selected_notes(delta_tick, 0);
+            seq_pointer()->move_selected_events(delta_tick);
         }
         set_adding(adding());
     }
@@ -631,14 +611,21 @@ qstriggereditor::drop_event (midipulse a_tick)
     seq_pointer()->add_event(a_tick, status, d0, d1, true);    /* sorts too */
 }
 
+/**
+ *  Does not allowj adding for note events: on, off, and aftertouch.
+ */
+
 void
 qstriggereditor::set_adding (bool a)
 {
-    adding(a);
-    if (a)
-        setCursor(Qt::PointingHandCursor);
-    else
-        setCursor(Qt::ArrowCursor);
+    if (! event::is_note_msg(m_status))
+    {
+        adding(a);
+        if (a)
+            setCursor(Qt::PointingHandCursor);
+        else
+            setCursor(Qt::ArrowCursor);
+    }
 }
 
 void

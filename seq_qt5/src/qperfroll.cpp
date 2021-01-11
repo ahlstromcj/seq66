@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-07
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -180,8 +180,6 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
      * implementing.
      */
 
-    brush.setStyle(Qt::NoBrush);                // painter reset
-    painter.setBrush(brush);
     if (mBoxSelect)
     {
         int x, y, w, h;
@@ -190,10 +188,19 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
             drop_x(), drop_y(), current_x(), current_y(), x, y, w, h
         );
         old_rect().set(x, y, w, h + c_names_y);
+        brush.setStyle(Qt::SolidPattern);           // doesn't work
+        brush.setColor(grey_color());               // doesn't work
         pen.setStyle(Qt::SolidLine);
-        pen.setColor(sel_color());              // Qt::black
+        pen.setColor(sel_color());
+        pen.setWidth(2);
+        painter.setBrush(brush);
         painter.setPen(pen);
         painter.drawRect(x, y, w, h + c_names_y);
+    }
+    else
+    {
+        brush.setStyle(Qt::NoBrush);                // painter reset
+        painter.setBrush(brush);
     }
 
 #if defined THIS_CODE_ADDS_VALUE
@@ -234,14 +241,28 @@ qperfroll::sizeHint () const
     return QSize(width, height);
 }
 
+bool
+qperfroll::in_selection_area (midipulse tick)
+{
+    return
+    (
+        m_drop_sequence <= m_seq_h || m_drop_sequence >= m_seq_l ||
+        tick >= m_tick_s || tick <= m_tick_f
+    );
+}
+
 void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    bool lbutton = event->button() == Qt::LeftButton;
+    bool rbutton = event->button() == Qt::RightButton;
+    bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
     seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
     drop_x(event->x());
     drop_y(event->y());
     convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_sequence);
-    if (event->button() == Qt::LeftButton)
+    if (lbutton)
     {
         /*
          * Add a new seq instance if we didn't select anything, and are holding
@@ -280,11 +301,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                  * If the current loop is not in selection range, bin it.
                  */
 
-                if
-                (
-                    m_drop_sequence > m_seq_h || m_drop_sequence < m_seq_l ||
-                    tick < m_tick_s || tick > m_tick_f
-                )
+                if (! in_selection_area(tick))
                 {
                     perf().unselect_all_triggers();
                     m_seq_h = m_seq_l = m_drop_sequence;
@@ -339,13 +356,13 @@ qperfroll::mousePressEvent(QMouseEvent *event)
             }
         }
     }
-    if (event->button() == Qt::RightButton)
+    if (rbutton)
     {
         set_adding(true);
         perf().unselect_all_triggers();
         mBoxSelect = false;
     }
-    if (event->button() == Qt::MiddleButton)        /* split loop at cursor */
+    if (mbutton)                                    /* split loop at cursor */
     {
         if (perf().is_seq_active(m_drop_sequence))
         {
@@ -520,6 +537,8 @@ qperfroll::keyPressEvent (QKeyEvent * event)
     }
     else
     {
+        bool isctrl = event->modifiers() & Qt::ControlModifier;
+        bool isshift = event->modifiers() & Qt::ShiftModifier;
         if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Period)
         {
             handled = true;
@@ -548,7 +567,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 }
             }
         }
-        if (event->modifiers() & Qt::ControlModifier)   // Ctrl + ... events
+        if (isctrl)
         {
             seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
             switch (event->key())
@@ -585,7 +604,7 @@ qperfroll::keyPressEvent (QKeyEvent * event)
                 break;
             }
         }
-        else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
+        else if (isshift)
         {
             if (event->key() == Qt::Key_Z)
             {

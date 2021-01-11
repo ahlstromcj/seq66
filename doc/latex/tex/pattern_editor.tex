@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-01-07
+% \update      2021-01-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -24,7 +24,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{pattern-editor/pattern-edit-window.png}
+   \includegraphics[scale=1.00]{pattern-editor/pattern-edit-window.png}
    \caption{External Pattern Editor Window}
    \label{fig:pattern_editor_window}
 \end{figure}
@@ -78,7 +78,7 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.95]{pattern-editor/pattern-edit-window-annotated.png}
-   \caption{Pattern Editor Window (Annotated)}
+   \caption{Pattern Editor Window, Annotated}
    \label{fig:pattern_editor_window_annotated}
 \end{figure}
 
@@ -443,6 +443,13 @@
    different in feel.  A good mouse with at least 3 buttons is very helpful
    for editing.  Buttons and keystrokes support enhanced editing.
 
+   When the piano roll has keyboard focus, the \texttt{Space} key
+   starts and stops playback, rewinding to the beginning when stopped.
+   The \texttt{.} (period) key starts and pauses playback, without
+   rewinding.
+   This functionality is similar to that of the main window, but
+   these keys are not reconfigurable in the piano roll.
+
    One can page vertically in the piano roll using the
    \index{keys!page-up} \texttt{Page Up} and 
    \index{keys!page-down} \texttt{Page Down} keys.
@@ -523,6 +530,10 @@
    a visual representation of the pitch of a note and the length of a note.
    The current scale and background pattern can also be shown in the piano
    roll.
+
+   \itempar{Time Scroll}{pattern editor!time scroll}
+   Allows one to pan through the whole pattern, if it is too long to fit in
+   the window horizontally.
 
 \subsubsection{Pattern Editor / Note Painting}
 \label{subsubsec:pattern_editor_note_painting}
@@ -777,38 +788,37 @@
    and the \textbf{0} key resets the zoom to the value of the "key height"
    setting in the 'usr' configuration file.
    
-\subsection{Event Editor}
+\subsection{Events Editor}
 \label{subsec:pattern_editor_events}
 
    Also known as the "events pane" or "events panel".
    The narrow (a few pixels high) events strip shows discrete events,
    such as \texttt{Note On} and \texttt{Note Off}.
-   We currently recommend not editing or selecting events
-   in that pane (feel free to disobey), because \textbf{more work is needed}.
-
    \index{event strip}
-   \textsl{Note On}, \textsl{Note Off}, and other events appear
+   These and other events appear
    as small squares in the event strip, along with a black vertical bar
    in the \textbf{Data View} with a
-   height proportional to the velocity of the note event, plus a numeric
+   height proportional to the data-value of the event and a numeric
    representation of that value.
+	The event value (data) editor (directly under the event strip) is used 
+	to change note velocities, channel pressure, control codes,
+	patch select, etc.
+
+   \textsl{We currently recommend being careful of editing or selecting events
+   in that pane (feel free to disobey), because
+   \textbf{more work is needed}}.
    Note events should not be inserted in the event strip; it is too easy to
-   screw up.
+   screw up.  In fact, selection and editing is disabled for
+   \textbf{Note On}, \textbf{Note Off}, and \textbf{Aftertouch}.
 
-%  \index{warning!unterminated notes}
-%  \textsl{They can be inserted there, but they end up as short
-%  events of the lowest possible note, 0 or C1, and they don't have a Note
-%  Off event.  Don't do that!})
-
-\begin{comment}
    \index{events!insert}
    Other event types can be inserted via the event strip.
-   To do that, first
-   select the kind of event to insert using the \textbf{Event} button in the
-   bottom panel.  The place the mouse cursor in the event strip.
-   Right-click to make the drawing pencil appear at the exact spot where the
+   To do that, first select the kind of event to insert using the
+   \textbf{Event} button in the bottom panel.
+   Then place the mouse cursor in the event strip.
+   Right-click to make the drawing cursor appear at the exact spot where the
    event must go.  While holding the right button, click the left button.
-   A small square for the event should appear.
+   A small square for the event will appear.
 
    One can also left-click in that section,
    \index{keys!p}
@@ -817,22 +827,21 @@
    and hit the \texttt{x} key to escape that mode.
 
    Should one want more of the same event, continue to hold both buttons and
-   drag the mouse.  One event should appear at each beat position (e.g. at
-   each 16th note position) that is crossed.
+   drag the mouse.  One event should appear at each beat (16th note) position
+   that is crossed.
 
-   To move the event(s) to a different spot, select it or them via the left
-   button.  Then drag it or them to where one wants them.
+   To move the event(s) to a different spot, select it/them via the left
+   button.  Then drag the selection as desired.
    \index{todo!high precision events}
    it is currently not possible to move them to positions smaller than the
-   beat size.  The work-around is to temporarily reduce the beat size,
-   but this requires caution.
-\end{comment}
+   beat size; temporarily reduce the beat size if desired.
 
 \subsection{Data View}
 \label{subsec:pattern_editor_data_view}
 
-   Once the event positions are set, the next step is to modify the
-   data values of the events.  But first, note the buttons at the left.
+   Once the events are in place, the next step is to modify the
+   data values of the events as needed.
+   But first, note the buttons at the left.
 
    \begin{enumber}
       \item \textbf{Transpose}
@@ -843,10 +852,10 @@
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Transpose}{pattern editor!transpose toggle}
-   This button allows the sequence to be transposed by
-   the global transpose selection made in the song editor.  If transpose is
-   enabled for that pattern, the button will be highlighted as per the current
-   desktop theme.  Patterns for drums should, in general, not be transposable.
+   This button toggles the ability of the sequence to be transposed.
+   If transpose is enabled for that pattern, the button will be highlighted as
+   per the current desktop theme.  Patterns for drums should, in general, not
+   be transposable.
 
    \itempar{Drum Note Mode}{pattern editor!drum mode}
    This button changes from normal note mode to drum note mode. In the drum
@@ -864,6 +873,9 @@
    \index{data pane}
    or "data panel".
    \index{data panel}
+   \textbf{Modify Event Data} offers a way to
+   alter the event data values in 
+   the lower pane of the pattern editor, the "data pane".
 
    The events values for the currently selected category of events are shown
    in this window as vertical lines of a height proportional to the value.
@@ -874,43 +886,18 @@
    it than explain it.
    \index{mouse!right-click-drag}
    Right-click-drag also works the same.
-
-   There are many things that can be done with selected data and events:
-
    \index{modify event-data}
-   $\bullet$ \textbf{Modify Event Data} offers a way to
-   alter the event data values in 
-   the lower pane of the pattern editor, the "data pane".
-   By left-dragging the mouse in the data pane across the value lines that are
-   shown, the values are chopped or set to the height of the mouse pointer at
-   each event.
-   When notes are selected, and the
+   When notes are \textsl{selected}, and the
    mouse is used to change the values (heights) of the lines in the event-data
-   area,
-   \textsl{only the events that are selected} are changed.  The data-values of
-   \textsl{unselected} events are left unchanged.
+   area, \textsl{only the events that are selected} are changed.
+   The data-values of \textsl{unselected} events are left unchanged.
    A cool feature from \textsl{Seq24}.
 
-   Once the event positions are set, the next step is to modify the
-   data values of the events.
-   \index{event data}
-	The event value (data) editor (directly under the event strip) is used 
-	to change note velocities, channel pressure, control codes,
-	patch select, etc.
-   \index{event data editor!draw}
-   \index{event data editor!left click}
-   \index{event data editor!right click}
-   \index{event data editor!middle click}
-   Just left-click+drag the mouse across the window to draw a line.  The
-   values will match that line.  
-   middle-click+drag and right-click+drag also
-   draw the value line.
-
-   \textbf{Bug:}
-   \index{bugs!event editing can fail}
-   Sometimes the editing of event values in the event data section will not work.
-   The workaround is to do a \texttt{Ctrl-A}, and the click in the roll
-   to deselect the selection; that makes the event value editing work again.
+%  \textbf{Bug:}
+%  \index{bugs!event editing can fail}
+%  Sometimes the editing of event values in the event data section will not work.
+%  The workaround is to do a \texttt{Ctrl-A}, and the click in the roll
+%  to deselect the selection; that makes the event value editing work again.
    
    \index{event data editor!mouse wheel}
    Any events that are selected in the piano roll or event strip can have
@@ -918,71 +905,48 @@
 
    Data values can also be modified using the \textbf{LFO} pane.
 
-\subsection{Pattern Editor / Bottom Panel}
+\subsection{Pattern Editor / Bottom Row}
 \label{subsec:pattern_editor_bottom}
 
-   The bottom horizontal panel of the Pattern Editor provides for
+   The bottom row of the pattern editor provides for
    selecting events for viewing and editing, MIDI playback,
    pass-through, and recording.
 
-%\begin{figure}[H]
-%   \centering 
-%   \includegraphics[scale=0.50]{new/pattern-edit-bottom-panel.png}
-%   \caption{Pattern Editor, Bottom Panel Items}
-%   \label{fig:pattern_editor_bottom_panel_items}
-%\end{figure}
-
-   Missing from this diagram is the "Existing Event Selector" which zeroes
-   in only on events already present in the pattern.
-
-%  Until we can get a completely labelled screenshot, here is the
-%  latest bottom panel, with the new \textbf{LFO}
-%  and \textbf{Recording Type} buttons, and the popup menu for the latter.
-%
-%\begin{figure}[H]
-%   \centering 
-%   \includegraphics[scale=0.75]{new/lfo_and_rectype_buttons.png}
-%   \caption{Pattern Editor, Additional Bottom Panel Items}
-%   \label{fig:pattern_editor_added_bottom_panel_items}
-%\end{figure}
-
    \begin{enumber}
-      \item \textbf{Event Selector}
-      \item \textbf{Existing Event Menu}
-      \item \textbf{Event Selection}
-      \item \textbf{LFO}
-%     \item \textbf{Time Scroll}
-      \item \textbf{Data To MIDI Buss}
-      \item \textbf{MIDI Data Pass-Through}
-      \item \textbf{Record MIDI Data}
-      \item \textbf{Quantized Record}
-      \item \textbf{Recording Type} (Merge, Replace, Expand)
-      \item \textbf{Select Recording Volume}
+      \item \textbf{Event Category Selector}
+      \item \textbf{Selector for Existing Data}
+      \item \textbf{Selected Event Name}
+      \item \textbf{LFO Panel}
+      \item \textbf{Armed/Muted Toggle} (Data To MIDI Buss)
+      \item \textbf{MIDI Thru Toggle}
+      \item \textbf{MIDI Record Toggle}
+      \item \textbf{MIDI Record Quantized}
+      \item \textbf{Loop Record Type} (Merge, Replace, Expand)
+      \item \textbf{Record Velocity and Reset}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Event Selector}{pattern editor!event selector}
+   \itempar{Event Category Selector}{pattern editor!event selector}
    This button brings up the following context menu, so that the user can
    select the category of events to view and edit.
 
-%\begin{figure}[H]
-%   \centering 
-%  \includegraphics[scale=0.75]{pattern/event-context-menu.png}
-%   \includegraphics[scale=0.65]{roll.png}
-%   \caption{Pattern Editor, Event Button Context Menu}
-%   \label{fig:pattern_editor_bottom_event_context_menu}
-%\end{figure}
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{pattern-editor/event-context-menu.png}
+   \caption{Pattern Editor Event Button Context Menu}
+   \label{fig:pattern_editor_bottom_event_context_menu}
+\end{figure}
 
-   Note the squares.  Some of filled (black), others are empty.  The filled
-   squares indicate that the sequence does indeed have some events of that
-   type.  Otherwise, there are no such events in the sequence.
+   Note the squares.  Some might be filled (black), most are empty.
+   Filled squares indicate that the sequence has some events of that type.
+   Otherwise, there are no such events in the sequence.
    Useful in deciding if it is worth selecting the event.
 
-   The sub-menus of this context menu show 128 controller messages,
-   so we won't try to show all of them here.  They also use the squares to
+   The sub-menus of this context menu show 128 MIDI controller messages.
+   They also use the squares to
    indicate if there are any events of the type shown in the menu.
-   These sub-menus can be modified by editing the file
+   These sub-menus can be modified by editing the 'usr' file:
    
    \begin{verbatim}
       $HOME/.config/seq66/seq66.usr
@@ -997,84 +961,85 @@
    shows only the actual events existing in the track, for quicker selection.
 
    \itempar{Event Selection}{pattern editor!event selection}
-   Shows the selection event, with its number shown in hexadecimal notation,
-   and the name of the event shown.
+   Shows the selection event, with its event number shown in hexadecimal
+   notation, and the name of the event shown.
 
    \itempar{LFO}{pattern editor!LFO}
    A low-frequency oscillator allows data events
    can be modulated by some rudimentary wave functions.
    By clicking on the \textbf{LFO} button or using the \texttt{Ctrl-L} key,
-   the following window appears, shown as the set of 5 vertical sliders:
+   the following window appears, with a set of 4 vertical sliders:
 
-%\begin{figure}[H]
-%   \centering 
-%  \includegraphics[scale=0.65]{new/pattern_editor_with_LFO.png}
-%   \includegraphics[scale=0.65]{roll.png}
-%   \caption{Pattern Editor, LFO Support}
-%   \label{fig:pattern_editor_bottom_lfo_support}
-%\end{figure}
+\begin{figure}[H]
+   \centering 
+  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
+   \caption{Pattern Editor LFO}
+   \label{fig:pattern_editor_bottom_lfo}
+\end{figure}
 
 %  Note the controls in this window:
 
    \begin{enumber}
-      \item \textbf{Value}:
+      \item \textbf{DC Offset}.
          Provides a kind of DC offset for the data value. Starts at 64, and
          ranges from 1 to 127.
-      \item \textbf{Range}:
+      \item \textbf{Mod Range}.
          Controls the depth of modulation. Starts at 64, and ranges from 1 to
          127.
-      \item \textbf{Speed}:
-         Indicates the number of periods per pattern (divided by beat width,
-         normally 4).  For long patterns, this parameter needs to be set high,
+      \item \textbf{Periods}.
+         Indicates the number of periods per pattern length.
+         For long patterns, this parameter should be set high,
          to even show an effect.  It is also subject to an 'anti-aliasing'
-         effect in some parts of the range, especially for short patterns.
+         effect, especially for short patterns.
          Try it!  For short patterns, try a value of 1 at first.  For a pattern
-         of one measure in length, this will create four periods of the wave.
-      \item \textbf{Phase}:
+         of one measure in length, this will create one period of the wave.
+      \item \textbf{Phase Shift}.
          Provides the phase shift within a period of the LFO wave.
          A value of 1 is a phase shift of 360 degrees (or maybe it is one
          radian?).
-      \item \textbf{Wave Type}:
+      \item \textbf{Use Measures}.
+         If checked, a measure is used to calculate the periodicity of a
+         change, rather than using the whole length of the sequence.
+      \item \textbf{Wave Type}.
          Selects the kind of wave to use for the LFO:
          \begin{enumber}
-            \item \textbf{Sine wave}.
-            \item \textbf{Ramp (up) sawtooth}.
-            \item \textbf{Decay (down) sawtooth}.
-            \item \textbf{Triangle wave}.
+            \item \textbf{None}.
+               This setting is useful if one wants to change only the DC
+               offset.
+            \item \textbf{Sine}.
+            \item \textbf{Sawtooth}.
+            \item \textbf{Reverse Sawtooth}.
+            \item \textbf{Triangle}.
          \end{enumber}
+      \item \textbf{Reset Data}.
+         This button restores the initial event data.  Useful when one applies
+         modulation that one ultimately does not like.
+      \item \textbf{Close}.  Closes the LFO panel.
    \end{enumber}
 
-   We may have more to explain about this dialog at some point.  For now,
-   try it out on the file \texttt{one-measure.midi}, and be sure to hover over
-   each control to see the tooltips.
-   Note that it works best with short patterns.
-
-   \itempar{Time Scroll}{pattern editor!time scroll}
-   Allows one to pan through the whole pattern, if it is too long to fit in
-   the window horizontally.
-
-   \itempar{Data To MIDI Buss}{pattern editor!data to midi buss}
+   \itempar{Armed/Mute Toggle}{pattern editor!data to midi buss}
    This button causes the pattern to be output to the
    selected MIDI output buss,
    which will normally be connected to a software or hardware
    synthesizer, to be heard.
-   Generally, this control should always be activated.
+   This item performs muting/unmuting (disarming/arming) in the same way a
+   pressing the corresponding pattern button in the \textbf{Live} frame.
 
-   \itempar{MIDI Data Pass-Through}{pattern editor!midi data pass-through}
+   \itempar{MIDI Thru Toggle}{pattern editor!midi data pass-through}
    This button routes incoming MIDI data through
    \textsl{Seq66}, which then writes it to the MIDI output buss.
 
-   \itempar{Record MIDI Data}{pattern editor!record midi data}
+   \itempar{MIDI Record Toggle}{pattern editor!record midi data}
    This button routes incoming MIDI data into
    \textsl{Seq66}, which then saves the data to its buffer, and also
    displays the new information (notes) in the piano roll view.
 
-   \itempar{Quantized Record}{pattern editor!quantized record}
+   \itempar{MIDI Record Quantized}{pattern editor!quantized record}
    This button will causes MIDI data to be recorded, but be
    quantized on the fly before recording it.
    The quantization is to the current snap value.
 
-   \itempar{Recording Type}{pattern editor!recording type}
+   \itempar{Loop Record Type}{pattern editor!recording type}
    In \textsl{Seq24}, the pattern recording worked by merging new notes played
    as the pattern to be recorded was looped.  This method allows a loop to be
    built up bit-by-bit.  \textsl{Seq66} adds two more methods from
@@ -1108,26 +1073,11 @@
    \itempar{Vol}{pattern editor!vol}
    This button allows setting the volume of the recording.
    The velocity of the notes will be set to the selected value upon recording.
-   If the \textbf{Free} item is selected, then the incoming note velocity is
-   preserved.
-
-%\begin{figure}[H]
-%   \centering 
-%  \includegraphics[scale=0.75]{pattern/vol-context-menu-new.png}
-%   \includegraphics[scale=0.65]{roll.png}
-%   \caption{Pattern Recording Volume Menu}
-%   \label{fig:pattern_edit_recording_volume_menu}
-%\end{figure}
-
    The velocity values are shown at the right side of each menu entry.
    These values correspond to MIDI volume levels from 127 down to 16, as
    shown in the figure.
-
-%  One thing fixed in the 0.90.x version is the ability to store MIDI note-on
-%  events with the actual velocity provided by the MIDI keyboard used to
-%  generate the notes.  Previously, even in \textsl{seq24},
-%  the \textbf{Free} option in the \textbf{Vol} menu option did not work.
-%  This is fixed.
+   If the \textbf{Free} item is selected, then the incoming note velocity is
+   preserved.
 
 \subsection{Pattern Editor / Common Actions}
 \label{subsec:pattern_editor_common}
@@ -1136,6 +1086,9 @@
 
 \subsubsection{Pattern Editor / Common Actions / Scrolling}
 \label{subsec:pattern_editor_scrolling}
+
+   \textbf{We are still trying to work whether or not to enable this feature
+   in \textsl{Seq66}.}
 
    Let us describe the actions that can be performed with a
    scroll wheel, or with the scrolling features of multi-touch touchpads.
@@ -1190,14 +1143,11 @@
 \subsubsection{Pattern Editor / Common Actions / Close}
 \label{subsec:pattern_editor_close}
 
-   There is no \textbf{Close} button in the pattern editor.  One can use
-   window-manager actions, such as clicking on the X button of the window
-   frame, or pressing the exit key defined in the window manager.
    \index{window!close}
-   \textsl{Seq66} also provides the Ctrl-W key to close the pattern
-   editor window.
-   However, be aware that this convention does not apply to the other
-   application windows of \textsl{Seq66}.
+   There is no \textbf{Close} button in the pattern editor.  One can use
+   window-manager actions, such as clicking on the \textbf{X}
+   button of the window
+   frame, or pressing the exit key defined in the window manager.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

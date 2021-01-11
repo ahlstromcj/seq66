@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-05
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -282,8 +282,7 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
         bool ok = seq_pointer()->change_event_data_range
         (
             tick_s, tick_f, m_status, m_cc,
-            c_dataarea_y - drop_y() - 1, c_dataarea_y - current_y() - 1,
-            true                        /* allow undo setup to happen */
+            c_dataarea_y - drop_y() - 1, c_dataarea_y - current_y() - 1
         );
         m_line_adjust = false;
         if (ok)

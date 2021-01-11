@@ -418,6 +418,7 @@ qloopbutton::reupdate (bool all)
         int h = m_progress_box.m_h;
         update(x, y, w, h);
     }
+    // set_dirty(true);
 }
 
 /**
@@ -550,6 +551,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             setEnabled(false);
             setText(snstring.c_str());
         }
+        // set_dirty(false);
     }
 }
 

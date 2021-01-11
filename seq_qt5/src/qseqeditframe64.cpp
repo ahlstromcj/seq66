@@ -951,7 +951,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     ui->m_button_note_entry->setChecked(false);
     ui->m_button_note_entry->setToolTip
     (
-        "Toggle between selection and note-entry modes."
+        "Toggle between selection and note-entry modes\nin the piano roll."
     );
     connect
     (

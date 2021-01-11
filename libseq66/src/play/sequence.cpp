@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-01-07
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -341,44 +341,6 @@ sequence::empty_coloring ()
     if (event_count() == 0)
         (void) color(palette_to_int(yellow));
 }
-
-#if defined USE_SET_HOLD_UNDO
-
-/**
- *  Modifies the undo-hold container.
- *
- * \param hold
- *      If true, then the events in the m_events container are added to the
- *      m_events_undo_hold container.  Otherwise, that container is cleared.
- */
-
-void
-sequence::set_hold_undo (bool hold)
-{
-    automutex locker(m_mutex);
-    if (hold)
-        m_events_undo_hold = m_events;
-    else
-        m_events_undo_hold.clear();
-}
-
-/**
- *  EXPERIMENTAL.
- *  Combines get_hold_undo(), push_undo(true), and set_hold_undo(false).
- */
-
-void
-sequence::lfo_hold_undo ()
-{
-    automutex locker(m_mutex);
-    if (m_events_undo_hold.count())
-    {
-        m_events_undo.push(m_events_undo_hold);     /* stazed   */
-        m_events_undo_hold.clear();
-    }
-}
-
-#endif
 
 /**
  *  Returns the number of events stored in m_events.  Note that only playable
@@ -1587,6 +1549,18 @@ sequence::move_selected_notes (midipulse delta_tick, int delta_note)
     return result;
 }
 
+bool
+sequence::move_selected_events (midipulse delta_tick)
+{
+    automutex locker(m_mutex);
+    m_events_undo.push(m_events);                  /* push_undo(), no lock */
+    bool result = m_events.move_selected_events(delta_tick);
+    if (result)
+        modify();
+
+    return result;
+}
+
 /**
  *  Performs a stretch operation on the selected events.  Also, we've moved
  *  external calls to push_undo() into this function.  The caller shouldn't have
@@ -1984,7 +1958,9 @@ sequence::paste_selected (midipulse tick, int note)
 }
 
 /**
- *  Changes the event data range.  Changes only selected events, if any.
+ *  Changes the event data range.  Changes only selected events, if there are
+ *  any selected events.  Otherwise, all events intersected are changed.  This
+ *  function is used in qseqdata to implement the line/height functionality.
  *
  * \threadsafe
  *
@@ -2026,12 +2002,6 @@ sequence::paste_selected (midipulse tick, int note)
  * \param data_f
  *      Provides the finishing data value.
  *
- * \param useundo
- *      If true, then log the events for a potential undo operation.
- *      This value defaults to false, because, for long patterns, there is a
- *      significant delay while moving the mouse.  Set this value to true only
- *      for the button-release event.
- *
  * \return
  *      Returns true if the data was changed.
  */
@@ -2041,19 +2011,12 @@ sequence::change_event_data_range
 (
     midipulse tick_s, midipulse tick_f,
     midibyte status, midibyte cc,
-    int data_s, int data_f, bool useundo
+    int data_s, int data_f
 )
 {
     automutex locker(m_mutex);
     bool result = false;
     bool have_selection = m_events.any_selected_events(status, cc);
-    if (useundo)
-    {
-#if defined USE_SET_HOLD_UNDO
-        if (! get_hold_undo())                          /* stazed           */
-            set_hold_undo(true);
-#endif
-    }
     for (auto & er : m_events)
     {
         midibyte d0, d1;
@@ -2093,11 +2056,6 @@ sequence::change_event_data_range
 
         if (good)
         {
-#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
-            if (! get_hold_undo())                      /* stazed           */
-                set_hold_undo(true);
-#endif
-
             if (tick_f == tick_s)
                 tick_f = tick_s + 1;                    /* no divide-by-0   */
 
@@ -2140,7 +2098,9 @@ sequence::change_event_data_range
 }
 
 /**
- *  Changes the event data range.  Changes only selected events, if any.
+ *  Changes the event data range in a relative fashion, as opposed to plain
+ *  (line) fashion.  This function is used if there are events in the given
+ *  tick range.
  *
  * \threadsafe
  *
@@ -2159,12 +2119,6 @@ sequence::change_event_data_range
  * \param newval
  *      Provides the new data value for (additive) "scaling".
  *
- * \param useundo
- *      If true, then log the events for a potential undo operation.
- *      This value defaults to false, because, for long patterns, there is a
- *      significant delay while moving the mouse.  Set this value to true only
- *      for the button-release event.
- *
  * \return
  *      Returns true if the data was changed.
  */
@@ -2174,19 +2128,12 @@ sequence::change_event_data_relative
 (
     midipulse tick_s, midipulse tick_f,
     midibyte status, midibyte cc,
-    int newval, bool useundo
+    int newval
 )
 {
     automutex locker(m_mutex);
     bool result = false;
     bool have_selection = m_events.any_selected_events(status, cc);
-    if (useundo)
-    {
-#if defined USE_SET_HOLD_UNDO
-        if (! get_hold_undo())                          /* stazed           */
-            set_hold_undo(true);
-#endif
-    }
     for (auto & er : m_events)
     {
         midibyte d0, d1;
@@ -2227,11 +2174,6 @@ sequence::change_event_data_relative
         if (good)
         {
             int newdata = d1 + newval;                  /* "scale" data     */
-#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
-            if (! get_hold_undo())                      /* stazed           */
-                set_hold_undo(true);
-#endif
-
             if (newdata < 0)
                 newdata = 0;
             else if (newdata > c_max_midi_data_value)   /* 127              */
@@ -2256,8 +2198,7 @@ sequence::change_event_data_relative
 }
 
 /**
- *  Modifies data events according to the parameters active in the LFO window
- *  (lfownd).
+ *  Modifies data events according to the parameters active in the LFO window.
  *
  * \param value
  *      Provides the base value for the event data value.  Ranges from 0 to
@@ -2287,38 +2228,27 @@ sequence::change_event_data_relative
  *      Provides the control-change value for Control Change events that are
  *      to be modified.
  *
- * \param useundo
- *      If true, then log the events for a potential undo operation.
- *      This value defaults to false, because, for long patterns, there is a
- *      significant delay while moving the mouse.  Set this value to true only
- *      for the button-release event.
+ * \param usemeasure
+ *      If true, then use a measure as the length for wave periodicity, rather
+ *      than the full length of the sequence.
  */
 
 void
 sequence::change_event_data_lfo
 (
     double value, double range, double speed, double phase,
-    wave w, midibyte status, midibyte cc, bool useundo
+    wave w, midibyte status, midibyte cc, bool usemeasure
 )
 {
     automutex locker(m_mutex);
     double dlength = double(get_length());
-    double dbw = double(m_time_beat_width);
-    bool have_selection = m_events.any_selected_events(status, cc);
+    bool no_selection = ! m_events.any_selected_events(status, cc);
     if (get_length() == 0)                  /* should never happen, though  */
         dlength = double(m_ppqn);
 
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("DC %g Mod %g Period %g Phase %g\n", value, range, speed, phase);
-#endif
+    if (usemeasure)
+        dlength = double(get_beats_per_bar() * (m_ppqn * 4) / get_beat_width());
 
-    if (useundo)
-    {
-#if defined USE_SET_HOLD_UNDO
-        if (! get_hold_undo())                          /* stazed           */
-            set_hold_undo(true);
-#endif
-    }
     for (auto & e : m_events)
     {
         bool is_set = false;
@@ -2326,24 +2256,19 @@ sequence::change_event_data_lfo
         e.get_data(d0, d1);
 
         /*
-         * If the event is in the selection, or there is no selection, and if
-         * it has the desired status and not CC, or the desired status and
-         * the correct control-change value, the we will modify (set) the
+         * If the event is in the selection, or there is no selection at all,
+         * and if it has the desired status and not CC, or the desired status
+         * and the correct control-change value, the we will modify (set) the
          * event.
          */
 
-        if (e.is_selected() || ! have_selection)
+        if (e.is_selected() || no_selection)
             is_set = e.non_cc_match(status) || e.cc_match(status, cc);
 
         if (is_set)
         {
-#if defined USE_SET_HOLD_UNDO                           /* issue #130       */
-            if (! get_hold_undo())
-                set_hold_undo(true);
-#endif
-
             double dtick = double(e.timestamp());
-            double angle = speed * dtick * dbw / dlength + phase;
+            double angle = speed * dtick / dlength + phase;
             int newdata = value + wave_func(angle, w) * range;
             if (newdata < 0)
                 newdata = 0;

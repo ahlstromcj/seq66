@@ -332,12 +332,13 @@ void
 qseqroll::paintEvent (QPaintEvent * qpep)
 {
     QRect r = qpep->rect();
+    QRect view(0, 0, width(), height());
     QPainter painter(this);
     QBrush brush(Qt::white, Qt::NoBrush);
     QPen pen(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
-    m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
     m_frame_ticks = pix_to_tix(r.width());
+    m_edit_mode = perf().edit_mode(seq_pointer()->seq_number());
 
     /*
      * Draw the border.  See the banner notes about width and height.
@@ -348,7 +349,6 @@ qseqroll::paintEvent (QPaintEvent * qpep)
     pen.setStyle(Qt::SolidLine);                    /* Qt::DotLine          */
     painter.setPen(pen);
 
-    QRect view(0, 0, width(), height());
     draw_grid(painter, view);
     set_initialized();
 
@@ -896,6 +896,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
             m_last_base_note = note;
             if (adding())                           /* painting new notes   */
             {
+                eventlist::select selmode = eventlist::select::would_select;
                 painting(true);                     /* start paint job      */
                 current_x(snapped_x);
                 drop_x(snapped_x);                  /* adding, snapped x    */
@@ -906,7 +907,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                  * add, else add a note, length = little less than snap.
                  */
 
-                eventlist::select selmode = eventlist::select::would_select;
                 bool would_select = ! s->select_note_events
                 (
                     tick_s, note, tick_s, note, selmode
@@ -928,13 +928,9 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                 );
                 if (is_selected)
                 {
-                    /*
-                     * Moving - left click only.
-                     */
-
-                    if (/* lbutton && */ ! isctrl)
+                    if (! isctrl)
                     {
-                        moving_init(true);
+                        moving_init(true);          /* moving; L-click only */
                         set_dirty();
                         if (is_drum_mode())
                             s->onsets_selected_box(tick_s, note, tick_f, note_l);
@@ -945,10 +941,6 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                         (
                             tick_s, tick_f, note, note_l, selection()
                         );
-
-                        /*
-                         * Save offset that we got from the snap above.
-                         */
 
                         int adj_selected_x = selection().x();
                         snap_x(adj_selected_x);
@@ -1004,9 +996,9 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
 {
     current_x(int(event->x()) - m_keypadding_x);
     current_y(event->y());
-    snap_current_y();                   /* snaps the m_current_y value      */
+    snap_current_y();
     if (moving())
-        snap_current_x();               /* snaps the m_current_x value      */
+        snap_current_x();
 
     int delta_x = current_x() - drop_x();
     int delta_y = current_y() - drop_y();

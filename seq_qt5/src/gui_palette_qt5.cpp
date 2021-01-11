@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2021-01-07
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -110,6 +110,12 @@ Color
 get_pen_color (PaletteColor index)
 {
     return global_palette().get_pen_color(index);
+}
+
+std::string
+get_color_name (PaletteColor index)
+{
+    return global_palette().get_color_name(index);
 }
 
 std::string

@@ -207,6 +207,11 @@ protected:
         return m_is_dirty;
     }
 
+    void set_dirty (bool f)
+    {
+        m_is_dirty = f;
+    }
+
     const Color & text_color () const
     {
         return m_text_color;

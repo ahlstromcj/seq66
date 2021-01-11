@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-01-02
+ * \updates       2021-01-10
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -603,6 +603,23 @@ eventlist::move_selected_notes (midipulse delta_tick, int delta_note)
     if (result)
         verify_and_link();                          /* sort and relink      */
 
+    return result;
+}
+
+bool
+eventlist::move_selected_events (midipulse delta_tick)
+{
+    bool result = false;
+    for (auto & er : m_events)
+    {
+        if (er.is_selected() && ! er.is_note())
+        {
+            midipulse newts = er.timestamp() + delta_tick;
+            newts = adjust_timestamp(newts, false);
+            er.set_timestamp(newts);
+            result = true;
+        }
+    }
     return result;
 }
 

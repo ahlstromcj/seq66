@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-02
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -102,7 +102,8 @@ qlfoframe::qlfoframe
     m_range         (64.0),
     m_speed         (0.0),
     m_phase         (0.0),
-    m_wave          (wave::sine)
+    m_wave          (wave::sine),
+    m_use_measure   (true)
 {
     ui->setupUi(this);
     connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(reset()));
@@ -234,6 +235,12 @@ qlfoframe::qlfoframe
         ui->m_phase_text, SIGNAL(editingFinished()),
         this, SLOT(phase_text_change())
     );
+    ui->m_measures_check_box->setChecked(m_use_measure);
+    connect
+    (
+        ui->m_measures_check_box, SIGNAL(stateChanged(int)),
+        this, SLOT(use_measure_clicked(int))
+    );
 
     std::string plabel = "Pattern #";
     plabel += std::to_string(int(seqp->seq_number()));
@@ -280,10 +287,6 @@ qlfoframe::value_text_change ()
         ui->m_value_slider->setValue(to_slider(v));
 }
 
-/**
- *
- */
-
 void
 qlfoframe::range_text_change ()
 {
@@ -294,10 +297,6 @@ qlfoframe::range_text_change ()
         ui->m_range_slider->setValue(to_slider(v));
 }
 
-/**
- *
- */
-
 void
 qlfoframe::speed_text_change ()
 {
@@ -307,10 +306,6 @@ qlfoframe::speed_text_change ()
     if (ok && (v >= m_speed_min && v <= m_speed_max))
         ui->m_speed_slider->setValue(to_slider(v));
 }
-
-/**
- *
- */
 
 void
 qlfoframe::phase_text_change ()
@@ -337,7 +332,7 @@ qlfoframe::scale_lfo_change (int /*v*/)
     m_seq->change_event_data_lfo
     (
         m_value, m_range, m_speed, m_phase, m_wave,
-        m_seqdata.status(), m_seqdata.cc(), true
+        m_seqdata.status(), m_seqdata.cc(), m_use_measure
     );
     m_seqdata.set_dirty();
 
@@ -350,6 +345,17 @@ qlfoframe::scale_lfo_change (int /*v*/)
     ui->m_speed_text->setText(tmp);
     snprintf(tmp, sizeof tmp, "%g", m_phase);
     ui->m_phase_text->setText(tmp);
+}
+
+void
+qlfoframe::use_measure_clicked (int state)
+{
+    bool usem = state == Qt::Checked;
+    if (usem != m_use_measure)
+    {
+        m_use_measure = usem;
+        scale_lfo_change(0);        /* not reset() */
+    }
 }
 
 void

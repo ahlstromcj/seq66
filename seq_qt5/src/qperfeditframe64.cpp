@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-01-04
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -548,18 +548,21 @@ void
 qperfeditframe64::markerCollapse ()
 {
     perf().collapse();
+    set_dirty();
 }
 
 void
 qperfeditframe64::markerExpand ()
 {
     perf().expand();
+    set_dirty();
 }
 
 void
 qperfeditframe64::markerExpandCopy ()
 {
     perf().copy();
+    set_dirty();
 }
 
 void

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-01-07
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -863,20 +863,6 @@ public:
     int note_count ();
     bool minmax_notes (int & lowest, int & highest);
 
-    /*
-     * seqdata and lfownd hold for undo
-     */
-
-#if defined USE_SET_HOLD_UNDO
-    void lfo_hold_undo ();
-    void set_hold_undo (bool hold);
-
-    int get_hold_undo () const
-    {
-        return m_events_undo_hold.count();
-    }
-#endif
-
     void set_have_undo ()
     {
         m_have_undo = m_events_undo.size() > 0;
@@ -1442,23 +1428,24 @@ public:
     midipulse trim_timestamp (midipulse t);
     midipulse clip_timestamp (midipulse ontime, midipulse offtime);
     bool move_selected_notes (midipulse deltatick, int deltanote);
+    bool move_selected_events (midipulse deltatick);
     bool stream_event (event & ev);
     bool change_event_data_range
     (
         midipulse tick_s, midipulse tick_f,
         midibyte status, midibyte cc,
-        int d_s, int d_f, bool useundo = false
+        int d_s, int d_f
     );
     bool change_event_data_relative
     (
         midipulse tick_s, midipulse tick_f,
         midibyte status, midibyte cc,
-        int newval, bool useundo = false
+        int newval
     );
     void change_event_data_lfo
     (
         double value, double range, double speed, double phase,
-        wave w, midibyte status, midibyte cc, bool useundo = false
+        wave w, midibyte status, midibyte cc, bool usemeasure = false
     );
     void increment_selected (midibyte status, midibyte /*control*/);
     void decrement_selected (midibyte status, midibyte /*control*/);

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2018-10-28
+% \update      2021-01-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -15,14 +15,18 @@
 \section{Event Editor}
 \label{sec:event_editor}
 
-   The \textsl{Seq66 Event Editor} is used to view and edit,
+   The \textsl{Seq66} \textbf{Event Editor} is used to view and edit,
    in detail, the events present in a sequence/pattern/track.
-   This editor is not very sophisticated.
-   It is a basic editor for simple edits and viewing.
+   It is accessed by right-clicking on a pattern in the \textbf{Live} frame,
+   then selecting the \textbf{Edit pattern in tab} menu entry.
+
+   The event editor is not very sophisticated.
+   It is a basic editor for simple edits, viewing, and trouble-shooting.
    Viewing and scrolling generally work;
    editing, deleting, and inserting events work.
-   But there are many possible interactions between event links (Note Off
-   events linked to Note On events), performance triggers, and the pattern,
+   But there are many possible interactions between event links
+   (Note Off events linked to Note On events),
+   performance triggers, and the pattern,
    performance, and event editor dialogs.
    Surely some bugs still lurk.
    If anything bad happens, do \textsl{not} press the
@@ -47,6 +51,7 @@
 %  that kind of functionality, then we can add it.
 %  There may also be issues with interactions between the event editor and
 %  things like the performance editor and triggers.
+
    The event editor is a good way to see the events in a sequence,
    and to delete or modify problematic events.
    Additionally, it can be used to add \textbf{Set Tempo} meta events.
@@ -59,9 +64,7 @@
 
 \begin{figure}[H]
    \centering 
-%  \includegraphics[scale=0.75]{event-editor/preliminary-event-editor.png}
-%  \includegraphics[scale=0.65]{new/event-editor-updated.png}
-   \includegraphics[scale=0.65]{roll.png}
+   \includegraphics[scale=0.85]{event-editor/event-editor-tab.png}
    \caption{Event Editor Window}
    \label{fig:event_editor_window}
 \end{figure}
@@ -123,8 +126,6 @@
    This number is purely for reference, and is not part
    of the event.  Events in the pattern are numbered from 0 to the number of
    events in the pattern.
-%  They serve as a way to better know where one is in
-%  the sequence.
 
    \itempar{Time Stamp}{event editor!time stamp}
    Displays the time stamp of the event,
@@ -184,7 +185,6 @@
 
    Moving about in the event frame is straightforward, but has some
    wrinkles to note.
-%  (It was more difficult to get working than expected!)
    Navigation with the mouse is done by moving to the desired event and
    clicking on it.  The event becomes highlighted, and its data items are shown
    in the "info panel".

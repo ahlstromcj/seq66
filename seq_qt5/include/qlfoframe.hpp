@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-03-10
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -126,7 +126,7 @@ private slots:
 
     /*
      *  We use a lambda function for the slot for the QButtonGroup ::
-     *  buttonClicked() signal.
+     *  buttonClicked() signal that sets the wave-form to use.
      */
 
     void scale_lfo_change (int);
@@ -134,6 +134,7 @@ private slots:
     void range_text_change ();
     void speed_text_change ();
     void phase_text_change ();
+    void use_measure_clicked (int state);
     void reset ();
 
 private:
@@ -229,6 +230,13 @@ private:
      */
 
     wave m_wave;
+
+    /**
+     *  If true, use the measure as the range for periodicity, as opposed to
+     *  the full length of the pattern.
+     */
+
+    bool m_use_measure;
 
 };          // class qlfoframe
 

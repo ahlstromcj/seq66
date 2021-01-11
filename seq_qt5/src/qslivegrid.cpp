@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-12-20
+ * \updates       2021-01-11
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -489,11 +489,17 @@ qslivegrid::setup_button (qslotbutton * pb)
     }
 }
 
+/**
+ *  Tell performer to set the current pattern's color and then call
+ *  recreate_all_slots().  Simply calling a refresh or reupdate doesn't work
+ *  to show the new color.  Luckily, this goes fast.
+ */
+
 void
 qslivegrid::color_by_number (int i)
 {
     qslivebase::color_by_number(i);
-    reupdate();
+    (void) recreate_all_slots();
 }
 
 /**
@@ -902,10 +908,7 @@ qslivegrid::mouseReleaseEvent (QMouseEvent * event)
         else
         {
             if (perf().is_seq_active(m_current_seq))
-            {
                 m_adding_new = false;
-                // update(); EXPERIMENTAL COMMENTING OUT
-            }
             else
                 m_adding_new = true;
         }
@@ -1088,10 +1091,6 @@ qslivegrid::handle_key_press (const keystroke & k)
     return m_parent->handle_key_press(k);
 }
 
-/**
- *
- */
-
 bool
 qslivegrid::handle_key_release (const keystroke & k)
 {
@@ -1241,7 +1240,7 @@ qslivegrid::paste_sequence ()
 
 /**
  *  This is not called when focus changes.  Instead, we have to call this from
- *  qlivegridex::changeEvent().
+ *  qsliveframeex::changeEvent().
  */
 
 void
@@ -1340,7 +1339,9 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = get_color_name_ex(pc).c_str();
+            QString cname = c == firstcolor ?
+                get_color_name(pc).c_str() : get_color_name_ex(pc).c_str() ;
+
             QAction * a = new QAction(cname, menuColour);
             connect
             (
