@@ -260,7 +260,14 @@ sequence::partial_assign (const sequence & rhs)
         automutex locker(m_mutex);
         m_parent                    = rhs.m_parent;         /* a pointer    */
         m_events                    = rhs.m_events;
-        m_triggers                  = rhs.m_triggers;
+
+        /*
+         * The triggers class has a parent that cannot be reassigned.
+         * Is this an issue?
+         *
+         * m_triggers                  = rhs.m_triggers;
+         */
+
         m_channel_match             = rhs.m_channel_match;
         m_midi_channel              = rhs.m_midi_channel;
         m_nominal_bus               = rhs.m_nominal_bus;

@@ -70,10 +70,6 @@
 namespace seq66
 {
 
-/**
- *
- */
-
 void
 trigger::rescale (int oldppqn, int newppqn)
 {
@@ -108,21 +104,8 @@ triggers::triggers (sequence & parent)
 }
 
 /**
- *  A rote destructor.
- */
-
-triggers::~triggers ()
-{
-    // Empty body
-}
-
-/**
  *  Principal assignment operator.  Follows the stock rules for such an
  *  operator, but does a little more then just assign member values.
- *
- *  FIXED, BEWARE:
- *  Currently, it does not assign them all, so we should create a
- *  partial_copy() function to do this work, and use it where it is needed.
  *
  * \param rhs
  *      Provides the "right-hand side" of the assignment operation.
@@ -153,10 +136,6 @@ triggers::operator = (const triggers & rhs)
     return *this;
 }
 
-/**
- *
- */
-
 bool
 triggers::rescale (int oldppqn, int newppqn)
 {
@@ -171,17 +150,10 @@ triggers::rescale (int oldppqn, int newppqn)
     return result;
 }
 
-/**
- *
- */
-
 bool
 triggers::change_ppqn (int p)
 {
     bool result = p > 0;
-
-    // m_undo_stack.push(m_triggers); ???
-
     if (result)
     {
         bool result = rescale(m_ppqn, p);
@@ -425,10 +397,7 @@ triggers::adjust_offset (midipulse offset)
 void
 triggers::add
 (
-    midipulse tick,
-    midipulse len,
-    midipulse offset,
-    bool fixoffset
+    midipulse tick, midipulse len, midipulse offset, bool fixoffset
 )
 {
     trigger t;
@@ -449,11 +418,11 @@ triggers::add
         }
         else if (tickend >= t.tick_end() && tickstart <= t.tick_end())
         {
-            ti->tick_start(t.tick_end() + 1);    /* is event's end inside?   */
+            ti->tick_start(t.tick_end() + 1);    /* is event's end inside?  */
         }
         else if (tickend >= t.tick_start() && tickstart <= t.tick_start())
         {
-            ti->tick_end(t.tick_start() - 1);    /* last start inside new end */
+            ti->tick_end(t.tick_start() - 1);    /* last start in new end   */
         }
     }
     m_triggers.push_front(t);
@@ -497,10 +466,6 @@ triggers::intersect (midipulse position, midipulse & start, midipulse & ender)
     }
     return false;
 }
-
-/**
- *
- */
 
 bool
 triggers::intersect (midipulse position)
@@ -597,9 +562,8 @@ triggers::split (trigger & trig, midipulse splittick)
 {
     midipulse new_tick_end = trig.tick_end();
     midipulse new_tick_start = splittick;
-    trig.tick_end(splittick - 1);
-
     midipulse len = new_tick_end - new_tick_start;
+    trig.tick_end(splittick - 1);
     if (len > 1)
         add(new_tick_start, len + 1, trig.offset());
 }
@@ -1036,10 +1000,6 @@ triggers::move_selected (midipulse tick, bool fixoffset, grow which)
     return result;
 }
 
-/**
- *
- */
-
 void
 triggers::offset_selected (midipulse tick, grow editmode)
 {
@@ -1168,7 +1128,7 @@ triggers::unselect (midipulse tick)
 }
 
 /**
- *      Unselects all triggers for the sequence.
+ *  Unselects all triggers for the sequence.
  *
  * \return
  *      Always returns false.
@@ -1208,7 +1168,7 @@ triggers::remove_selected ()
 }
 
 /**
- *      Copies the first selected trigger that is found.
+ *  Copies the first selected trigger that is found.
  */
 
 void

@@ -106,6 +106,10 @@ public:
         // Empty body
     }
 
+    ~trigger () = default;
+    trigger (const trigger &) = default;
+    trigger & operator = (const trigger &) = default;
+
     /**
      *  This operator compares only the m_tick_start members.
      *
@@ -364,8 +368,8 @@ private:
 public:
 
     triggers (sequence & parent);
-    ~triggers ();
-
+    ~triggers () = default;
+    triggers (const triggers & rhs) = default;
     triggers & operator = (const triggers & rhs);
 
     bool change_ppqn (int p);
