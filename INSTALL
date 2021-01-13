@@ -333,16 +333,6 @@ MANUALLY-DEFINED MACROS IN CODE:
         This support is used only in some test code (see the midi_probe)
         module, and is no long included in normal builds.
 
-    SEQ66_SONG_BOX_SELECT:
-
-        This feature is meant to become a permanent part of Seq66
-        eventually.  If defined, it allows selecting multiple patterns in the
-        Song editor.  Currently, this can be done by selecting a pattern, then
-        holding the Shift key while selecting more patterns.  Eventually,
-        the ability to box-select mutliple patterns, like Kepler34, will be
-        added.  However, this will be a long time coming, as we have churned
-        a lot trying to get it to work.
-
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
 

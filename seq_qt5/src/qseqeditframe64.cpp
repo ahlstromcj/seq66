@@ -1707,7 +1707,8 @@ qseqeditframe64::transpose (bool ischecked)
 }
 
 /**
- *  Changes the image used for the transpose button.
+ *  Changes the image used for the transpose button.  Actually, we have two
+ *  drum icons, so we won't change this one.
  *
  * \param istransposable
  *      If true, set the image to the "Transpose" icon.  Otherwise, set it to
@@ -1720,12 +1721,12 @@ qseqeditframe64::set_transpose_image (bool istransposable)
     if (istransposable)
     {
         ui->m_toggle_transpose->setToolTip("Sequence is transposable.");
-        qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
+//      qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
     }
     else
     {
         ui->m_toggle_transpose->setToolTip("Sequence is not transposable.");
-        qt_set_icon(drum_xpm, ui->m_toggle_transpose);
+//      qt_set_icon(drum_xpm, ui->m_toggle_transpose);
     }
 }
 

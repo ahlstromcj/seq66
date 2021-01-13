@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-03-22
+ * \updates       2021-01-12
  * \license       GNU GPLv2 or above
  *
  *    Some options (the "USE_xxx" options) specify experimental and
@@ -74,13 +74,6 @@
  */
 
 #undef SEQ66_SEQUENCE_EDIT_MODE
-
-/**
- *  Kepler34 allows the user to select (and move) more than one sequence in
- *  the Song Editor.  Currently builds but is incomplete and not tested.
- */
-
-#define SEQ66_SONG_BOX_SELECT           /* A Qt-only option in Seq66        */
 
 /**
  *  Adds more SYSEX processing, plus the ability to read SYSEX information

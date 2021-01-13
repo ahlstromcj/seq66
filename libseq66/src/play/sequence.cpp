@@ -3241,47 +3241,22 @@ sequence::set_trigger_offset (midipulse trigger_offset)
 }
 
 /**
- *  Splits a trigger.  This is the public overload of split_trigger.
+ *  Splits a trigger.
  *
  * \threadsafe
  *
  * \param splittick
  *      The time location of the split.
- */
-
-void
-sequence::split_trigger (midipulse splittick)
-{
-    automutex locker(m_mutex);
-    m_triggers.split(splittick);
-}
-
-/**
- *  Half-splits a trigger.
  *
- * \param splittick
- *      The time location of the split.
+ * \param splittype
+ *      The nature of the split.
  */
 
-void
-sequence::half_split_trigger (midipulse splittick)
+bool
+sequence::split_trigger (midipulse splittick, trigger::splitpoint splittype)
 {
     automutex locker(m_mutex);
-    m_triggers.half_split(splittick);
-}
-
-/**
- *  Exact-splits a trigger.
- *
- * \param splittick
- *      The time location of the split.
- */
-
-void
-sequence::exact_split_trigger (midipulse splittick)
-{
-    automutex locker(m_mutex);
-    m_triggers.exact_split(splittick);
+    return m_triggers.split(splittick, splittype);
 }
 
 /**
@@ -3588,7 +3563,7 @@ void
 sequence::copy_selected_trigger ()
 {
     automutex locker(m_mutex);
-    set_trigger_paste_tick(SEQ66_NO_PASTE_TRIGGER);
+    set_trigger_paste_tick(c_no_paste_trigger);
     m_triggers.copy_selected();
 }
 
@@ -3602,7 +3577,7 @@ sequence::copy_selected_trigger ()
  *
  * \param paste_tick
  *      A new parameter that provides the tick for pasting, or
- *      SEQ66_NO_PASTE_TRIGGER (-1) if there is none.
+ *      c_no_paste_trigger (-1) if there is none.
  */
 
 void

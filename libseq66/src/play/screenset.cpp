@@ -809,7 +809,6 @@ screenset::select_triggers_in_range
     midipulse tick_start, midipulse tick_finish
 )
 {
-#ifdef SEQ66_SONG_BOX_SELECT
     for (seq::number s = seqlow; s <= seqhigh; ++s)
     {
         auto lambdafunc = [s] (const seq & sseq) ->
@@ -828,7 +827,6 @@ screenset::select_triggers_in_range
             }
         }
     }
-#endif      // SEQ66_SONG_BOX_SELECT
 }
 
 /**

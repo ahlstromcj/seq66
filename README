@@ -1,6 +1,6 @@
 README for Seq66 0.91.6 (Sequencer64 refactored for C++/14 and Qt 5)
 Chris Ahlstrom
-2015-09-10 to 2021-01-11
+2015-09-10 to 2021-01-12
 
 "Seq66" is a MIDI sequencer and live looper with a hardware sampler-like grid
 pattern interface, MIDI automation for live performance, with sets and
@@ -60,7 +60,7 @@ Recent Changes:
 
     -   Version 0.91.6:
         -   More documentation.
-        -   More fixes.  Sigh.
+        -   More fixes. Sigh.  Currently going through the song editor.
     -   Version 0.91.5:
         -   Added vertical zoom to the pattern editor (V keys and buttons).
         -   Added more control over the coloring of notes.

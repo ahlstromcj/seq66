@@ -1,7 +1,7 @@
 # Seq66 0.91.1 (and above) 'rc' configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written on 2020-12-12 13:17:25
+# Written on 2021-01-12 14:05:41
 #
 # This file holds the main configuration options for Seq66.
 # It loosely follows the format of the seq24 'rc' configuration
@@ -14,6 +14,10 @@
 # next play-screen ('normal'), while 'autoarm' will automatically
 # unmute the next set.  The 'additive' options keeps the previous
 # set unmuted when moving to the next set.
+#
+# The port-naming values are 'short' or 'long'.  The short style
+# just shows the port number and short port name; the long style
+# shows all the numbers and the long port name.
 
 config-type = "rc"
 version = 0
@@ -37,6 +41,15 @@ qrseq66.ctrl
 [mute-group-file]
 
 qrseq66.mutes
+
+[palette-file]
+
+# This provides a flag to allow modifying the palette from the
+# file-name given below.  Use '""' to indicate no palette file.
+
+0     # palette_active
+
+"qseq66.palette"
 
 [midi-meta-events]
 
@@ -123,6 +136,13 @@ qrseq66.mutes
 
 0   # flag for reveal ports
 
+[interaction-method]
+
+
+# Sets the mouse handling style for drawing and editing a pattern
+# This feature is current NOT supported in the Qt version of
+# Seq66 (qpseq66). However, there are some other interaction
+# settings.
 # Set to 1 to allow Seq66 to stay in note-adding mode when
 # the right-click is released while holding the Mod4 (Super or
 # Windows) key.
@@ -194,7 +214,7 @@ qrseq66.mutes
 
 # Last-used and currently-active directory:
 
-~/
+""
 
 [recent-files]
 

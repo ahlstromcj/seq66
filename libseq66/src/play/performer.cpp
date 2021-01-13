@@ -400,9 +400,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_midiclockpos          (0),
     m_dont_reset_ticks      (false),            /* support for pausing      */
     m_is_modified           (false),
-#if defined SEQ66_SONG_BOX_SELECT
     m_selected_seqs         (),
-#endif
     m_condition_var         (),                 /* private access via cv()  */
 #if defined SEQ66_JACK_SUPPORT
     m_jack_asst             (*this, SEQ66_DEFAULT_BPM, m_ppqn),
@@ -3688,8 +3686,6 @@ performer::panic ()
  * -------------------------------------------------------------------------
  */
 
-#if defined SEQ66_SONG_BOX_SELECT
-
 /**
  *  A prosaic implementation of calling a function on the set of stored
  *  sequences.  Used for redrawing selected sequences in the graphical user
@@ -3836,15 +3832,11 @@ performer::box_offset_triggers (midipulse offset)
     }
 }
 
-#endif  // SEQ66_SONG_BOX_SELECT
-
 /*
  * -------------------------------------------------------------------------
  *  Trigger handling
  * -------------------------------------------------------------------------
  */
-
-#if defined SEQ66_SONG_BOX_SELECT
 
 /**
  *  Selectes a trigger for the given sequence.
@@ -3870,8 +3862,6 @@ performer::select_trigger (seq::number dropseq, midipulse droptick)
 
     return result;
 }
-
-#endif  // defined SEQ66_SONG_BOX_SELECT
 
 /**
  *  Encapsulates getting the trigger limits without putting the burden on the
@@ -3994,22 +3984,32 @@ performer::add_or_delete_trigger (seq::number seqno, midipulse tick)
  *
  * \param tick
  *      The MIDI pulse number at which the trigger should be split.
+ *
+ * \param splittype
+ *      The type of split to perform.
+ *
+ * \return
+ *      Returns true if a split was able to be made.
  */
 
-void
-performer::split_trigger (seq::number seqno, midipulse tick)
+bool
+performer::split_trigger
+(
+    seq::number seqno,
+    midipulse tick,
+    trigger::splitpoint splittype
+)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
         push_trigger_undo(seqno);
-#if defined SEQ66_SONG_BOX_SELECT
-        s->half_split_trigger(tick);
-#else
-        s->split_trigger(tick);
-#endif
-        notify_trigger_change(seqno);
+        result = s->split_trigger(tick, splittype);
+        if (result)
+            notify_trigger_change(seqno);
     }
+    return result;
 }
 
 /**
@@ -4022,16 +4022,19 @@ performer::split_trigger (seq::number seqno, midipulse tick)
  *      The MIDI pulse number at which the trigger should be pasted.
  */
 
-void
+bool
 performer::paste_trigger (seq::number seqno, midipulse tick)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
+        result = true;
         push_trigger_undo(seqno);
         s->paste_trigger(tick);
         notify_trigger_change(seqno);
     }
+    return result;
 }
 
 /**
@@ -4044,21 +4047,28 @@ performer::paste_trigger (seq::number seqno, midipulse tick)
  *      The MIDI pulse number at which the trigger should be handled.
  */
 
-void
+bool
 performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
 {
+    bool result = false;
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
         bool state = s->get_trigger_state(tick);
         push_trigger_undo(seqno);
         if (state)
-            s->split_trigger(tick);
+        {
+            result = s->split_trigger(tick, trigger::splitpoint::exact);
+        }
         else
+        {
+            result = true;
             s->paste_trigger(tick);
-
-        notify_trigger_change(seqno);
+        }
+        if (result)
+            notify_trigger_change(seqno);
     }
+    return result;
 }
 
 /**
@@ -4560,7 +4570,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 }
                 else        /* ...else need to trim block already in place  */
                 {
-                    s->exact_split_trigger(tick);
+                    s->split_trigger(tick, trigger::splitpoint::exact);
                     s->delete_trigger(tick);
                 }
             }

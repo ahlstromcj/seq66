@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-11
+ * \updates       2021-01-12
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -92,7 +92,7 @@ qperfroll::qperfroll
     m_timer             (nullptr),
     m_measure_length    (0),
     m_beat_length       (0),
-    m_drop_sequence     (0),
+    m_drop_sequence     (-1),
     m_tick_s            (0),
     m_tick_f            (0),
     m_seq_h             (-1),
@@ -246,23 +246,55 @@ qperfroll::in_selection_area (midipulse tick)
 {
     return
     (
-        m_drop_sequence <= m_seq_h || m_drop_sequence >= m_seq_l ||
-        tick >= m_tick_s || tick <= m_tick_f
+        m_drop_sequence >= 0 &&
+        m_drop_sequence >= m_seq_l && m_drop_sequence <= m_seq_h &&
+        tick >= m_tick_s && tick <= m_tick_f
     );
 }
 
 void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
+    // bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     bool lbutton = event->button() == Qt::LeftButton;
     bool rbutton = event->button() == Qt::RightButton;
     bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
-    seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
     drop_x(event->x());
     drop_y(event->y());
     convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_sequence);
-    if (lbutton)
+
+    seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+    if (mbutton)                                    /* split loop at cursor */
+    {
+        if (not_nullptr(dropseq))   // perf().is_seq_active(m_drop_sequence)
+        {
+            bool state = dropseq->get_trigger_state(m_drop_tick);
+            if (state)
+            {
+                /*
+                 * Determine how and where the split should occur.
+                 */
+
+                trigger::splitpoint sp = trigger::splitpoint::middle;
+                midipulse tick = m_drop_tick;
+                if (rc().allow_snap_split())
+                {
+                    sp = trigger::splitpoint::snap;
+                    tick -= m_drop_tick_offset;
+                    tick -= tick % snap();              // always snap
+                }
+                (void) perf().split_trigger(m_drop_sequence, tick, sp);
+            }
+        }
+    }
+    else if (rbutton)
+    {
+        set_adding(true);
+        perf().unselect_all_triggers();
+        mBoxSelect = false;
+    }
+    else if (lbutton)
     {
         /*
          * Add a new seq instance if we didn't select anything, and are holding
@@ -341,34 +373,23 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 }
                 else if (tick <= end_tick && tick >= start_tick)
                 {
-                    moving(true);            // we're moving the seq
+                    moving(true);                   // we're moving the seq
                     selected = true;
                     m_drop_tick_offset = m_drop_tick - start_tick;
                 }
             }
-            if (! selected)                     // let's select with a box
+            else
+            {
+                errprint("No perfroll drop sequence");
+            }
+            if (! selected)                         // select with a box
             {
                 perf().unselect_all_triggers();
-                snap_drop_y();               // y is always snapped to rows
+                snap_drop_y();                      // y always snapped to rows
                 current_x(drop_x());
                 current_y(drop_y());
                 mBoxSelect = true;
             }
-        }
-    }
-    if (rbutton)
-    {
-        set_adding(true);
-        perf().unselect_all_triggers();
-        mBoxSelect = false;
-    }
-    if (mbutton)                                    /* split loop at cursor */
-    {
-        if (perf().is_seq_active(m_drop_sequence))
-        {
-            bool state = dropseq->get_trigger_state(m_drop_tick);
-            if (state)
-                half_split_trigger(m_drop_sequence, m_drop_tick);
         }
     }
     set_dirty();                                    /* force a redraw       */
@@ -377,7 +398,14 @@ qperfroll::mousePressEvent(QMouseEvent *event)
 void
 qperfroll::mouseReleaseEvent (QMouseEvent * event)
 {
-    if (event->button() == Qt::LeftButton)
+    bool lbutton = event->button() == Qt::LeftButton;
+    bool rbutton = event->button() == Qt::RightButton;
+    if (rbutton)
+    {
+        m_adding_pressed = false;
+        set_adding(false);
+    }
+    else if (lbutton)
     {
         if (adding())
             m_adding_pressed = false;
@@ -394,15 +422,8 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
             );
             convert_xy(x,     y,     m_tick_s, m_seq_l);
             convert_xy(x + w, y + h, m_tick_f, m_seq_h);
-#if defined SEQ66_SONG_BOX_SELECT
             perf().select_triggers_in_range(m_seq_l, m_seq_h, m_tick_s, m_tick_f);
-#endif
         }
-    }
-    if (event->button() == Qt::RightButton)
-    {
-        m_adding_pressed = false;
-        set_adding(false);
     }
     clear_action_flags();
     mBoxSelect = false;
@@ -415,13 +436,6 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
 {
     midipulse tick = 0;
     int x = event->x();
-
-    /*
-     * Try this.
-     *
-     * Do we want to clear m_selected here?
-     */
-
     seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
     if (is_nullptr(dropseq))
         return;
@@ -574,20 +588,27 @@ qperfroll::keyPressEvent (QKeyEvent * event)
             {
             case Qt::Key_X:
                 handled = true;
-                perf().push_trigger_undo();
-                if (dropseq->cut_selected_trigger())
-                    dirty = true;
+                if (not_nullptr(dropseq))
+                {
+                    perf().push_trigger_undo();
+                    if (dropseq->cut_selected_trigger())
+                        dirty = true;
+                }
                 break;
 
             case Qt::Key_C:
                 handled = true;
-                dropseq->copy_selected_trigger();
+                if (not_nullptr(dropseq))
+                    dropseq->copy_selected_trigger();
                 break;
 
             case Qt::Key_V:
                 handled = dirty = true;
-                perf().push_trigger_undo();
-                dropseq->paste_trigger();
+                if (not_nullptr(dropseq))
+                {
+                    perf().push_trigger_undo();
+                    dropseq->paste_trigger();
+                }
                 break;
 
             case Qt::Key_Z:
@@ -643,12 +664,6 @@ void
 qperfroll::add_trigger(int seq, midipulse tick)
 {
     perf().add_trigger(seq, tick);
-}
-
-void
-qperfroll::half_split_trigger (int seq, midipulse tick)
-{
-    perf().split_trigger(seq, tick);
 }
 
 void
@@ -746,6 +761,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
 {
     int y_s = 0;
     int y_f = r.height() / c_names_y;
+    int cbw = c_size_box_w;                     /* copied for readability   */
     QBrush brush(Qt::NoBrush);
     QPen pen(Qt::black);
     pen.setStyle(Qt::SolidLine);
@@ -773,9 +789,9 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
             else
                 backcolor.setAlpha(s_alpha_muted);
 
-            seq->reset_draw_trigger_marker();       /* can we fix this?     */
             int lenw = lens / scale_zoom();
             trigger trig;
+            seq->reset_draw_trigger_marker();
             while (seq->next_trigger(trig))
             {
                 if (trig.tick_end() > 0)
@@ -784,16 +800,21 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     int x_off = tix_to_pix(trig.tick_end());
                     int w = x_off - x_on + 1;
                     int x = x_on;
-                    int xmax = x + w;
+                    int xmax = x_off + 1;               /* same as x + w    */
                     int y = c_names_y * seqid + 1;
                     int h = c_names_y - 2;
                     if (trig.selected())
-                        pen.setColor(sel_color());  /* "orange", Qt::red    */
+                    {
+                        pen.setColor(sel_color());      /* orange, Qt::red  */
+                        brush.setColor(grey_color());   /* make it obvious  */
+                    }
                     else
+                    {
                         pen.setColor(Qt::black);
+                        brush.setColor(backcolor);
+                    }
 
                     pen.setStyle(Qt::SolidLine);    /* main seq icon box    */
-                    brush.setColor(backcolor);
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.setPen(pen);
@@ -808,15 +829,10 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     painter.setBrush(brush);
                     pen.setColor(Qt::black);
                     painter.setPen(pen);
-                    painter.drawRect
+                    painter.drawRect(x, y, cbw, cbw);
+                    painter.drawRect                /* grab handle right    */
                     (
-                        x, y, c_size_box_w, c_size_box_w
-                    );
-                    painter.drawRect              // seq grab handle right
-                    (
-                        xmax - c_size_box_w,
-                        y + h - c_size_box_w,
-                        c_size_box_w, c_size_box_w
+                        xmax - cbw, y + h - cbw, cbw, cbw
                     );
                     pen.setColor(Qt::black);
                     painter.setPen(pen);
@@ -853,37 +869,22 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                             (
                                 cny - (cny * (ni.note() - note0)) / height
                             ) + 1 + y;
-                            int tick_s_x = tick_s * lenw / lens + marker_x;
-                            int tick_f_x = tick_f * lenw / lens + marker_x;
+                            int sx = tick_s * lenw / lens + marker_x;
+                            int fx = tick_f * lenw / lens + marker_x;
                             if (sequence::is_draw_note_onoff(dt))
-                                tick_f_x = tick_s_x + 1;
+                                fx = sx + 1;
 
-                            if (tick_f_x <= tick_s_x)
-                                tick_f_x = tick_s_x + 1;
+                            if (fx <= sx)
+                                fx = sx + 1;
 
-                            if (tick_s_x < x)
-                                tick_s_x = x;
+                            if (sx < x)
+                                sx = x;
 
-                            if (tick_f_x > xmax)
-                                tick_f_x = xmax;
+                            if (fx > xmax)
+                                fx = xmax;
 
-                            if (tick_f_x >= x && tick_s_x <= xmax)
-                            {
-                                painter.drawLine
-                                (
-                                    tick_s_x, note_y, tick_f_x, note_y
-                                );
-                            }
-                        }
-                        if (t > trig.tick_start())
-                        {
-                            /*
-                             * lines to break up the seq at each tick
-                             */
-
-                            pen.setColor(QColor(190, 190, 190, 220));
-                            painter.setPen(pen);
-                            painter.drawRect(marker_x, y + 4, 1, h - 8);
+                            if (fx >= x && sx <= xmax)
+                                painter.drawLine(sx, note_y, fx, note_y);
                         }
                         t += lens;
                     }

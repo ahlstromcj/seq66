@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-07-23
+ * \updates       2021-01-12
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -41,13 +41,6 @@
 
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias, etc.     */
 
-/**
- *  Indicates that there is no paste-trigger.  This is a new feature from the
- *  stazed/seq32 code.
- */
-
-#define SEQ66_NO_PASTE_TRIGGER          (-1)
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -56,6 +49,13 @@ namespace seq66
 {
     class sequence;
     class triggers;
+
+/**
+ *  Indicates that there is no paste-trigger.  This is a new feature from the
+ *  stazed/seq32 code.
+ */
+
+const int c_no_paste_trigger    = (-1);
 
 /**
  *  This class hold a single trigger for a sequence object.  This class is used
@@ -67,6 +67,19 @@ class trigger
 {
 
     friend class triggers;
+
+public:
+
+    /**
+     *  Indicates how/where a trigger will be split.
+     */
+
+    enum class splitpoint
+    {
+        middle,         /**< Make the split in the middle of the trigger.   */
+        snap,           /**< Make the split at the nearest snap point.      */
+        exact           /**< Make the split at the exact point clicked.     */
+    };
 
 private:
 
@@ -97,14 +110,8 @@ private:
 
 public:
 
-    trigger () :
-        m_tick_start    (0),
-        m_tick_end      (0),
-        m_offset        (0),
-        m_selected      (false)
-    {
-        // Empty body
-    }
+    trigger ();
+    trigger (midipulse tick, midipulse len, midipulse offset);
 
     ~trigger () = default;
     trigger (const trigger &) = default;
@@ -182,6 +189,11 @@ public:
             s == m_tick_start || e == m_tick_start ||
             s == m_tick_end   || e == m_tick_end
         );
+    }
+
+    bool covers (midipulse tick)
+    {
+        return tick >= m_tick_start && tick <= m_tick_end;
     }
 
     midipulse tick_end () const
@@ -419,6 +431,12 @@ public:
         return m_number_selected;
     }
 
+    bool is_end (const List::iterator & it)
+    {
+        return it == m_triggers.end();
+    }
+
+    List::iterator find (midipulse tick);
     void push_undo ();
     void pop_undo ();
     void pop_redo ();
@@ -430,10 +448,7 @@ public:
         midipulse offset = 0, bool adjustoffset = true
     );
     void adjust_offsets_to_length (midipulse newlen);
-    void split (midipulse tick);
-    void half_split (midipulse tick);
-    void exact_split (midipulse tick);
-
+    bool split (midipulse tick, trigger::splitpoint splittype);
     void grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
     void remove (midipulse tick);
     bool get_state (midipulse tick) const;
@@ -445,7 +460,7 @@ public:
 
     bool remove_selected ();
     void copy_selected ();
-    void paste (midipulse paste_tick = SEQ66_NO_PASTE_TRIGGER);
+    void paste (midipulse paste_tick = c_no_paste_trigger);
     bool move_selected
     (
         midipulse tick, bool adjustoffset,
@@ -491,10 +506,10 @@ public:
 
 private:
 
+    bool split (trigger & t, midipulse splittick);
     bool rescale (int oldppqn, int newppqn);
     midipulse adjust_offset (midipulse offset);
     void offset_selected (midipulse tick, grow editmode);
-    void split (trigger & t, midipulse splittick);
     void select (trigger & t, bool count = true);
     void unselect (trigger & t, bool count = true);
 

@@ -47,10 +47,7 @@
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition (variable)      */
 
-#if defined SEQ66_SONG_BOX_SELECT
 #include <set>                          /* std::set, arbitary selection     */
-#endif
-
 #include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
 #include <vector>                       /* std::vector<>                    */
 #include <thread>                       /* std::thread                      */
@@ -238,8 +235,6 @@ public:
 
 public:
 
-#if defined SEQ66_SONG_BOX_SELECT
-
     /**
      *  Provides a type to hold the unique shift-selected sequence numbers.
      *  Although this can be considered a GUI function, it makes sense to
@@ -259,8 +254,6 @@ public:
      */
 
     using SeqOperation = std::function<void(int)>;
-
-#endif  // SEQ66_SONG_BOX_SELECT
 
     /**
      *  Provides settings for tempo recording.  Currently not used, though the
@@ -779,8 +772,6 @@ private:
 
     bool m_is_modified;
 
-#if defined SEQ66_SONG_BOX_SELECT
-
     /**
      *  Provides a set holding all of the sequences numbers that have been
      *  shift-selected.  If we ever enable box-selection, this container will
@@ -788,8 +779,6 @@ private:
      */
 
     selection m_selected_seqs;
-
-#endif
 
     /**
      *  A condition variable to protect playback.  It is signalled if playback
@@ -1720,8 +1709,6 @@ public:
         midipulse & tick0, midipulse & tick1
     );
 
-#if defined SEQ66_SONG_BOX_SELECT
-
     bool selection_operation (SeqOperation func);
     void box_insert (seq::number dropseq, midipulse droptick);
     void box_delete (seq::number dropseq, midipulse droptick);
@@ -1739,8 +1726,6 @@ public:
     {
         m_selected_seqs.clear();
     }
-
-#endif
 
     bool clear_all (bool clearplaylist = false);
     bool clear_song ();
@@ -2387,9 +2372,14 @@ public:
     void add_trigger (seq::number seqno, midipulse tick);
     void delete_trigger (seq::number seqno, midipulse tick);
     void add_or_delete_trigger (seq::number seqno, midipulse tick);
-    void split_trigger (seq::number seqno, midipulse tick);
-    void paste_trigger (seq::number seqno, midipulse tick);
-    void paste_or_split_trigger (seq::number seqno, midipulse tick);
+    bool split_trigger
+    (
+        seq::number seqno,
+        midipulse tick,
+        trigger::splitpoint splittype
+    );
+    bool paste_trigger (seq::number seqno, midipulse tick);
+    bool paste_or_split_trigger (seq::number seqno, midipulse tick);
     bool intersect_triggers (seq::number seqno, midipulse tick);
 
     midipulse get_max_trigger () const
@@ -2529,8 +2519,6 @@ public:
         m_resume_note_ons = f;
     }
 
-#if defined SEQ66_SONG_BOX_SELECT
-
     void select_triggers_in_range
     (
         seq::number seqlow, seq::number seqhigh,
@@ -2542,8 +2530,6 @@ public:
             seqlow, seqhigh, tickstart, tickfinish
         );
     }
-
-#endif
 
     bool select_trigger (seq::number dropseq, midipulse droptick);
 

@@ -122,7 +122,7 @@ private:
     //  paste_trigger()
 
     void add_trigger (int seq, midipulse tick);
-    void half_split_trigger (int seq, midipulse tick);
+    // void half_split_trigger (int seq, midipulse tick);
     void delete_trigger (int seq, midipulse tick);
     void follow_progress ();
 

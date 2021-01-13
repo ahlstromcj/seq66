@@ -268,9 +268,6 @@ seq_build_details ()
         << "  Main window scroll-bars\n"
 #endif
         << "  Pattern coloring\n"
-#if defined SEQ66_SONG_BOX_SELECT
-        << "  Box song selection\n"
-#endif
 #if defined SEQ66_PLATFORM_WINDOWS
         << "  Windows support\n"
 #endif

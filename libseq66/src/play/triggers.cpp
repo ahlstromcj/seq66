@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2020-07-23
+ * \updates       2021-01-12
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -70,6 +70,24 @@
 namespace seq66
 {
 
+trigger::trigger () :
+    m_tick_start    (0),
+    m_tick_end      (0),
+    m_offset        (0),
+    m_selected      (false)
+{
+    // Empty body
+}
+
+trigger::trigger (midipulse tick, midipulse len, midipulse offset) :
+    m_tick_start    (tick),
+    m_tick_end      (tick + len - 1),
+    m_offset        (offset),
+    m_selected      (false)
+{
+    // Empty body
+}
+
 void
 trigger::rescale (int oldppqn, int newppqn)
 {
@@ -96,7 +114,7 @@ triggers::triggers (sequence & parent)
     m_redo_stack                (),
     m_draw_iterator             (),
     m_trigger_copied            (false),
-    m_paste_tick                (SEQ66_NO_PASTE_TRIGGER),   // stazed
+    m_paste_tick                (c_no_paste_trigger),   // stazed
     m_ppqn                      (0),
     m_length                    (0)
 {
@@ -397,33 +415,30 @@ triggers::adjust_offset (midipulse offset)
 void
 triggers::add
 (
-    midipulse tick, midipulse len, midipulse offset, bool fixoffset
+    midipulse tick, midipulse len,
+    midipulse offset, bool fixoffset
 )
 {
-    trigger t;
-    t.offset(fixoffset ? adjust_offset(offset) : offset);
-    unselect(t, false);                 /* do not count this unselection    */
-    t.tick_start(tick);
-    t.tick_end(tick + len - 1);
-    for (auto ti = m_triggers.begin(); ti != m_triggers.end(); ++ti)
+    trigger t(tick, len, fixoffset ? adjust_offset(offset) : offset);
+    for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
     {
         midipulse tickstart = ti->tick_start();
         midipulse tickend = ti->tick_end();
         if (tickstart >= t.tick_start() && tickend <= t.tick_end())
         {
             unselect(*ti);                      /* adjust selection count   */
-            m_triggers.erase(ti);               /* inside new one? erase.   */
-            ti = m_triggers.begin();            /* THERE IS A BETTER WAY    */
-            continue;
+            ti = m_triggers.erase(ti);          /* inside new one? erase.   */
+            continue;                           /* skip the ++ti            */
         }
         else if (tickend >= t.tick_end() && tickstart <= t.tick_end())
         {
-            ti->tick_start(t.tick_end() + 1);    /* is event's end inside?  */
+            ti->tick_start(t.tick_end() + 1);   /* is event's end inside?   */
         }
         else if (tickend >= t.tick_start() && tickstart <= t.tick_start())
         {
-            ti->tick_end(t.tick_start() - 1);    /* last start in new end   */
+            ti->tick_end(t.tick_start() - 1);   /* last start in new end    */
         }
+        ++ti;                                   /* tricky code              */
     }
     m_triggers.push_front(t);
     m_triggers.sort();                          /* hmmm, another sort       */
@@ -542,8 +557,23 @@ triggers::remove (midipulse tick)
     }
 }
 
+triggers::List::iterator
+triggers::find (midipulse tick)
+{
+    triggers::List::iterator result = m_triggers.end();
+    for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
+    {
+        if (i->tick_start() <= tick && tick <= i->tick_end())
+        {
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
 /**
- *  Splits the trigger given by the parameter into two triggers.  The
+ *  Splits a single trigger into two triggers.  The
  *  original trigger ends 1 tick before the splittick parameter,
  *  and the new trigger starts at splittick and ends where the original
  *  trigger ended.
@@ -557,15 +587,18 @@ triggers::remove (midipulse tick)
  *      truncated, and the new trigger begins.
  */
 
-void
+bool
 triggers::split (trigger & trig, midipulse splittick)
 {
     midipulse new_tick_end = trig.tick_end();
     midipulse new_tick_start = splittick;
     midipulse len = new_tick_end - new_tick_start;
+    bool result = len > 1;
     trig.tick_end(splittick - 1);
-    if (len > 1)
+    if (result)
         add(new_tick_start, len + 1, trig.offset());
+
+    return result;
 }
 
 /**
@@ -574,64 +607,31 @@ triggers::split (trigger & trig, midipulse splittick)
  *
  * \param splittick
  *      Provides the tick that must be bracketed for the split to be made.
+ *
+ * \return
+ *      Returns true if a split was able to be made.
  */
 
-void
-triggers::split (midipulse splittick)
+bool
+triggers::split (midipulse splittick, trigger::splitpoint splittype)
 {
+    bool result = false;
     for (auto & t : m_triggers)
     {
         if (t.tick_start() <= splittick && splittick <= t.tick_end())
         {
-            if (rc().allow_snap_split())
+            midipulse tick = splittick;             /* snap or exact    */
+            midipulse offset = 0;
+            if (splittype == trigger::splitpoint::middle)
             {
-                split(t, splittick);               /* stazed feature   */
+                tick = (t.tick_end() - t.tick_start() + 1) / 2;
+                offset = t.tick_start();
             }
-            else
-            {
-                midipulse tick = (t.tick_end() - t.tick_start() + 1) / 2;
-                split(t, t.tick_start() + tick);
-            }
+            result = split(t, tick + offset);
             break;
         }
     }
-}
-
-/**
- *  If the tick is between the start and end of this trigger...
- */
-
-void
-triggers::half_split (midipulse splittick)
-{
-    for (auto & t : m_triggers)
-    {
-        if (t.tick_start() <= splittick && t.tick_end() >= splittick)
-        {
-            long tick = t.tick_end() - t.tick_start();
-            ++tick;
-            tick /= 2;
-            split(t, t.tick_start() + tick);
-            break;
-        }
-    }
-}
-
-/**
- *  If the tick is between the start and end of this trigger...
- */
-
-void
-triggers::exact_split (midipulse splittick)
-{
-    for (auto & t : m_triggers)
-    {
-        if (t.tick_start() <= splittick && t.tick_end() >= splittick)
-        {
-            split(t, splittick);
-            break;
-        }
-    }
+    return result;
 }
 
 /**
@@ -1192,7 +1192,7 @@ triggers::copy_selected ()
  *
  * \param paste_tick
  *      Provides the optional tick at which to paste the trigger.  If not
- *      set to SEQ66_NO_PASTE_TRIGGER, this value is used to adjust the paste
+ *      set to c_no_paste_trigger, this value is used to adjust the paste
  *      offset.
  */
 
@@ -1202,7 +1202,7 @@ triggers::paste (midipulse paste_tick)
     if (m_trigger_copied)
     {
         midipulse len = m_clipboard.tick_end() - m_clipboard.tick_start() + 1;
-        if (paste_tick == SEQ66_NO_PASTE_TRIGGER)
+        if (paste_tick == c_no_paste_trigger)
         {
             add(m_clipboard.tick_end() + 1, len, m_clipboard.offset() + len);
             m_clipboard.tick_start(m_clipboard.tick_end() + 1);
@@ -1223,7 +1223,7 @@ triggers::paste (midipulse paste_tick)
             m_clipboard.tick_end(m_clipboard.tick_start() + len - 1);
             m_clipboard.increment_offset(offset);
             m_clipboard.offset(adjust_offset(m_clipboard.offset()));
-            set_trigger_paste_tick(SEQ66_NO_PASTE_TRIGGER);         /* reset */
+            set_trigger_paste_tick(c_no_paste_trigger);         /* reset */
         }
         m_trigger_copied = false;   // NEW TRIAL EXPERIMENTAL 2019-08-10
     }

@@ -75,13 +75,28 @@
          rewinding.
          This functionality is similar to that of the main window, but
          these keys are not reconfigurable in the song roll.
-      \item Undo/Redo/Cut/Copy/Paste.
+      \item Undo/Redo/Cut/Copy/Paste of a selected section.
          Provided by buttons and by these keystrokes:
          \texttt{Ctrl-Z}. Undo.
          \texttt{Shift-Ctrl-Z}. Redo.
-         \texttt{Ctrl-X}. Cut.
+         \texttt{Ctrl-X}. Cut.  Removes the selection.
+            \index{keys!backspace}
+            \index{keys!delete}
+            \index{keys!ctrl-x}
+            Can also be done with the \texttt{Delete} and
+            \texttt{Backspace} keys.
+            The deletion can be undone.
          \texttt{Ctrl-C}. Copy.
-         \texttt{Ctrl-V}. Paste
+         \index{keys!ctrl-c}
+         \index{keys!copy}
+         Copies the trigger for later usage.
+         \texttt{Ctrl-V}. Paste.
+            \index{keys!ctrl-v}
+            \index{keys!paste}
+            Puts the roll into paste mode.
+            When inserted, each insert goes immediately
+            after the current item or the previous insertion.  The same can be
+            done for whole patterns.
       \item Horizontal (Time) Zoom.
          Provided by buttons and by these keystrokes:
          \texttt{Z}. Zoom in.
@@ -303,13 +318,36 @@
 \label{subsec:song_editor_arrangement_panel}
 
    Also known as the "arrangement panel".
-
    The "Piano Roll" section of the arrangement panel is where patterns or
    subsections are inserted, deleted, shrunk, lengthened, or moved.
    Here are features to note in the annotated piano roll area
    shown in \figureref{fig:song_editor_window_full_items}:
 
    \begin{enumber}
+      \item \textbf{Selection}.
+         Clicking inside a pattern or a pattern subsection selects it.
+         Selection is denoted by an orange rectangle around the trigger
+         section and a dark grey color in the selected trigger.
+         A pattern subsection can be moved by the mouse and deleted by keystrokes
+         shown later.
+      \item \textbf{De-selection}.
+         \index{song editor!section deselection}
+         Left-clicking or right-clicking in an empty area of the song roll
+         will deselect the selection.
+      \item \textbf{Selecttion Movement}.
+         \index{song editor!selection movement}
+         If, instead of grabbing the section length handle, one grabs inside
+         the pattern or pattern subsection, that item can be moved
+         horizontally, as long as there is room.  A left-click
+         inside the item shows it as selected.
+         One can also highlight a pattern section (making it gray),
+         then click the \texttt{p} key to enter "paint" mode, and move the
+         pattern left or right with the arrow keys.
+      \item \textbf{Selection Position}.
+         A selection position is a marker that divides a pattern into two
+         pieces, called \textsl{pattern subsections}.  This makes it easy to
+         select smaller portions of a pattern for editing or deleting.  It
+         is especially useful for making holes in a pattern.
       \item \textbf{Pattern Subsectioning}.
          \index{song editor!middle click}
          \index{pattern subsection}
@@ -318,34 +356,6 @@
          marker in it, breaking the pattern into two equal pieces.
          We call each piece a \textsl{pattern subsection}.
          This division can be done over and over.
-      \item \textbf{De-selection}.
-         \index{song editor!section deselection}
-         Double-clicking or right-clicking in an empty area of the song roll
-         will deselect the selection.
-      \item \textbf{Selection Position}.
-         A selection position is a marker that divides a pattern into two
-         pieces, called \textsl{pattern subsections}.  This makes it easy to
-         select smaller portions of a pattern for editing or deleting.  It
-         is especially useful for making holes in a pattern.
-%        There may be
-%        other uses of a selection position that we have not yet discovered.
-      \item \textbf{Selection}.
-         Double-clicking inside a pattern or a pattern subsection selects it.
-         Selection is denoted by an orange rectangle around the trigger
-         section.
-%        darkens it
-%        (gray) to denote that it is selected.
-         A pattern subsection can be deleted by the
-         \index{keys!delete}
-         Delete key, copied by the
-         \index{keys!ctrl-c}
-         \index{keys!copy}
-         \texttt{Ctrl-C} key, and then inserted (one or more times) by the
-         \index{keys!ctrl-v}
-         \index{keys!paste}
-         \texttt{Ctrl-V} key.  When inserted, each insert goes immediately
-         after the current item or the previous insertion.  The same can be
-         done for whole patterns.
       \item \textbf{Section Length ("handle")}.
          \index{song editor!handle}
          \index{song editor!section length}
@@ -357,18 +367,6 @@
          to either lengthen or shorted the pattern or pattern subsection, if
          there is room to move in the desired direction.
          It doesn't matter if the item is selected or not.
-      \item \textbf{Section Movement}.
-         \index{song editor!section movement}
-         If, instead of grabbing the section length handle, one grabs inside
-         the pattern or pattern subsection, that item can be moved
-         horizontally, as long as there is room.  A left-click
-         inside the item shows it as selected.
-         One can also highlight a pattern section (making it gray),
-         then click the \texttt{p} key to enter "paint" mode, and move the
-         pattern left or right with the arrow keys.
-%        In the near future, movement of selected trigger segments will not
-%        require the paint mode to be active just to move the segments left or
-%        right.
       \item \textbf{Expansion}.
          \index{song editor!section expansion}
          Originally, all the long patterns of this sample song were continuous.
@@ -381,10 +379,11 @@
    A useful feature is to split a pattern section in the
    song editor, either in half, or at the nearest snap point to the mouse
    pointer.
-   The location of the split is determined by the
-   setting of the \textbf{File / Options / Mouse / Seq66 Options /
-   Middle-click splits song trigger at nearest snap (instead of halfway point)}
-   setting.  To split a pattern, left-click it to highlight it, move
+%  The location of the split is determined by the
+%  setting of the \textbf{File / Options / Mouse / Seq66 Options /
+%  Middle-click splits song trigger at nearest snap (instead of halfway point)}
+%  setting.
+%  To split a pattern, left-click it to highlight it, move
    the mouse (if not splitting in half) to the desired pointer, and
    ctrl-left-click with the mouse.
 

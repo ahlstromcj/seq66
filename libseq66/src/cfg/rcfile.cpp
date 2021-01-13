@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-12-29
+ * \updates       2021-01-12
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -692,20 +692,21 @@ rcfile::parse ()
         /* A missing note-mapper section is not an error. */
     }
 
-    int method = 0;
-
-#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
 
     if (line_after(file, "[interaction-method]"))
     {
+        int method = 0;
         sscanf(scanline(), "%d", &method);
 
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
         /*
          * This now returns true if the value was correct, we should check it.
          */
 
         if (! rc_ref().interaction_method(method))
             (void) make_error_message("interaction-method", "illegal value");
+
+#endif  // SEQ66_USE_FRUITY_CODE
 
         if (next_data_line(file))
         {
@@ -728,8 +729,6 @@ rcfile::parse ()
         /* A missing interaction-method section is not an error. */
     }
 
-#endif  // SEQ66_USE_FRUITY_CODE
-
 #if defined SEQ66_LASH_SUPPORT_MOVED
 
         /*
@@ -743,7 +742,7 @@ rcfile::parse ()
         }
 #endif
 
-    method = 1;                 /* preserve seq24 option if not present     */
+    int method = 1;             /* preserve seq24 option if not present     */
     line_after(file, "[auto-option-save]");
     sscanf(scanline(), "%d", &method);
     rc_ref().auto_option_save(bool(method));
@@ -1119,20 +1118,20 @@ rcfile::write ()
         << "   # flag for reveal ports\n"
         ;
 
-#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
-
     /*
      * Interaction-method
      */
 
-    int x = 0;
     file
         << "\n[interaction-method]\n\n"
-        << "# Sets the mouse handling style for drawing and editing a pattern\n"
-        << "# This feature is current NOT supported in the Qt version of\n"
-        << "# Seq66 (qpseq66).\n\n"
+           "# Sets the mouse handling style for drawing and editing a pattern\n"
+           "# This feature is currently NOT supported in Seq66. However, \n"
+           "# there are some other interaction settings available.\n"
         ;
 
+#if defined SEQ66_USE_FRUITY_CODE         /* will not be supported in seq66   */
+
+    int x = 0;
     while (c_interaction_method_names[x] && c_interaction_method_descs[x])
     {
         file
@@ -1161,7 +1160,7 @@ rcfile::write ()
         << "# Set to 1 to allow Seq66 to split performance editor\n"
            "# triggers at the closest snap position, instead of splitting the\n"
            "# trigger exactly in its middle.  Remember that the split is\n"
-           "# activated by a middle click.\n"
+           "# activated by a middle click or Ctrl-left click.\n"
            "\n"
         << (rc_ref().allow_snap_split() ? "1" : "0")
         << "   # allow_snap_split\n\n"
