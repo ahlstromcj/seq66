@@ -83,17 +83,6 @@ private:
     int m_set_size;
 
     /**
-     *  The maximum number of sets supported.  Currently, we allow only 1024
-     *  patterns, which by default allows for 32 sets of 32 patterns.  For an
-     *  8x8 grid, the number of sets is limited to 16, for now.
-     *
-     *  Eventually, we will increase the limit so that 32 sets is possible in
-     *  in 8x8 setup.
-     */
-
-    int m_set_count;
-
-    /**
      *  Storage for the number of rows in the layout of the set-master
      *  (defaults to 4 rows).
      *

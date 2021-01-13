@@ -167,7 +167,11 @@ protected:
     ) override;
     virtual bool on_sequence_change (seq::number seqno, bool recreate) override;
     virtual bool on_trigger_change (seq::number seqno) override;
-    virtual bool on_set_change (screenset::number setno) override;
+    virtual bool on_set_change
+    (
+        screenset::number setno,
+        performer::change ctype
+    ) override;
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 

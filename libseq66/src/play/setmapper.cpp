@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-11-25
+ * \updates       2021-01-13
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -117,12 +117,14 @@ setmapper::setmapper
 ) :
     m_mute_groups           (mgs),
     m_set_size              (rows * columns),
-    m_set_count             (seq::limit() / m_set_size),
     m_rows                  (rows),
     m_columns               (columns),
     m_set_master            (mc),
     m_sequence_count        (0),
-    m_sequence_max          (m_set_size * m_set_count),
+    m_sequence_max
+    (
+        m_set_size * seq::limit() / m_set_size
+    ),
     m_sequence_high         (seq::unassigned()),
     m_edit_sequence         (seq::unassigned()),
     m_playscreen            (seq::unassigned()),
@@ -709,7 +711,8 @@ setmapper::copy_triggers
  *      Provides the desired set number.  This ranges from 0 to 2047, though
  *      generally the number of sets is 32 or lower.  There is a screenset
  *      #2048 that always exists in order to provide an inactive/dummy
- *      screenset.
+ *      screenset.  We decided to go by the setmaster's limit rather than
+ *      screenset::limit() [2048].
  *
  * \return
  *      Returns true if the play-screen was able to be set.
@@ -718,7 +721,7 @@ setmapper::copy_triggers
 bool
 setmapper::set_playscreen (screenset::number setno)
 {
-    bool result = setno >= 0 && setno < screenset::limit();
+    bool result = setno >= 0 && setno < master().screenset_max();
     if (result)
     {
         auto sset = sets().find(setno);

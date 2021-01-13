@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-26
+ * \updates       2021-01-13
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -3214,7 +3214,7 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
 }
 
 bool
-qsmainwnd:: on_sequence_change (seq::number seqno, bool redo)
+qsmainwnd::on_sequence_change (seq::number seqno, bool redo)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
@@ -3224,7 +3224,7 @@ qsmainwnd:: on_sequence_change (seq::number seqno, bool redo)
 }
 
 bool
-qsmainwnd:: on_trigger_change (seq::number seqno)
+qsmainwnd::on_trigger_change (seq::number seqno)
 {
     bool result = not_nullptr(m_live_frame);
     if (result)
@@ -3234,12 +3234,19 @@ qsmainwnd:: on_trigger_change (seq::number seqno)
 }
 
 bool
-qsmainwnd:: on_set_change (screenset::number /*setno*/)
+qsmainwnd::on_set_change (screenset::number setno, performer::change ctype)
 {
     bool result = not_nullptr(m_live_frame);
-    if (result)
-        m_live_frame->update_bank();                /* updates current bank */
-
+    if (result && ctype == performer::change::yes)
+    {
+        if (setno != m_live_frame->bank())
+        {
+            m_live_frame->update_bank(setno);   /* updates current bank */
+            ui->spinBank->setValue(setno);      /* shows it in spinbox  */
+        }
+        else
+            m_live_frame->update_bank();        /* updates current bank */
+    }
     return result;
 }
 
@@ -3256,7 +3263,12 @@ qsmainwnd::changeEvent (QEvent * event)
         if (isActiveWindow())
         {
             if (not_nullptr(m_live_frame))
-                (void) perf().set_playing_screenset(m_live_frame->bank());
+            {
+                screenset::number bank = m_live_frame->bank();
+                screenset::number setno = perf().playscreen_number();
+                if (bank != setno)
+                    (void) perf().set_playing_screenset(bank);
+            }
         }
         else
         {

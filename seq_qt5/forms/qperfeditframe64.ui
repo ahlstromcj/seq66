@@ -38,10 +38,16 @@
       <layout class="QHBoxLayout" name="horizontalLayout_8">
        <item>
         <widget class="QPushButton" name="btnUndo">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>28</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -60,10 +66,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnRedo">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>28</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -79,10 +91,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="m_toggle_follow">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>28</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="toolTip">
@@ -99,10 +117,16 @@
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QPushButton" name="btnZoomOut">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>35</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -121,10 +145,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnZoomIn">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>35</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -143,13 +173,13 @@
          <property name="minimumSize">
           <size>
            <width>35</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>35</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="text">
@@ -166,10 +196,16 @@
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLabel" name="label_7">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>28</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
            <width>60</width>
-           <height>16777215</height>
+           <height>28</height>
           </size>
          </property>
          <property name="toolTip">
@@ -188,13 +224,13 @@
          <property name="minimumSize">
           <size>
            <width>70</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>70</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -212,10 +248,16 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnTranspose">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>28</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>40</width>
-         <height>32</height>
+         <height>28</height>
         </size>
        </property>
        <property name="toolTip">
@@ -238,10 +280,16 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnLoop">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>28</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>40</width>
-         <height>32</height>
+         <height>28</height>
         </size>
        </property>
        <property name="focusPolicy">
@@ -284,13 +332,13 @@
          <property name="minimumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -315,13 +363,13 @@
          <property name="minimumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -346,13 +394,13 @@
          <property name="minimumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -377,13 +425,13 @@
          <property name="minimumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>40</width>
-           <height>32</height>
+           <height>28</height>
           </size>
          </property>
          <property name="text">
@@ -460,7 +508,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>661</width>
+          <width>663</width>
           <height>16</height>
          </rect>
         </property>
@@ -531,7 +579,7 @@
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>288</height>
+          <height>292</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -565,8 +613,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>679</width>
-          <height>284</height>
+          <width>681</width>
+          <height>290</height>
          </rect>
         </property>
         <property name="sizePolicy">

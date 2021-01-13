@@ -17,19 +17,18 @@
 \section{Patterns Panel}
 \label{sec:patterns_panel}
 
-   \textsl{Seq66} works with patterns (loops, tracks, or
-   sequences) that are repeated throughout a song.
+   \textsl{Seq66} works with patterns (also known as "loops", "tracks", or
+   "sequences") that are repeated throughout a song.
    One composes and edits small patterns,
    and combines them to create a full song.  This is a powerful way
    to work, and makes one productive within an hour.
 
-   The \textsl{Seq66 Patterns Panel} is the
+   The \textsl{Seq66 Patterns Panel} is in the center of the
    \index{main window}
    \textbf{main window} of \textsl{Seq66}.
    See \figureref{fig:main_screen}.
-   It is called the "main window" or the "patterns window".
-   It is here one creates a set of patterns
-   (see \sectionref{subsubsec:concepts_terms_screen_set}),
+   It is here one creates a set of patterns,
+%  (see \sectionref{subsubsec:concepts_terms_screen_set}),
    manages the configuration, controls the playback rate, adds tempo events,
    and opens the pattern, song, event, or playlist editors.
 
@@ -62,320 +61,9 @@
    The Qt and Gtkmm user-interfaces differ in the arrangement of buttons and
    panels; and the Qt interface uses tabs.
 
-\subsection{Patterns / Top Panel}
-\label{subsec:patterns_panel_top}
+\subsection{Patterns / Set Handling}
+\label{subsec:patterns_panel_set_handling}
 
-   The top panel of the Pattern window is simple, consisting of the
-   name of the program and a few controls.  The latest version adds more
-   buttons.
-   
-%  The original version looked like
-%  this:
-
-% \begin{figure}[H]
-%    \centering 
-%    \includegraphics[scale=0.75]{pattern-window-top-panel-items.png}
-%    \caption{Patterns Panel, Top Panel, Older Version}
-%    \label{fig:pattern_window_top_panel_items}
-% \end{figure}
-
-%  But, if compiled with \texttt{SEQ66\_STAZED\_MENU\_BUTTONS} defined,
-%  there are some extra buttons available:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{pattern-window-top-panel-items-new.png}
-%  \includegraphics[scale=0.50]{new/pattern-window-top-panel-items-new.png}
-%  \includegraphics[scale=0.50]{new/pattern-window-top-panel.png}
-%  \includegraphics[scale=0.75]{new/pattern-window-top-panel.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, New Top Panel Items}
-   \label{fig:pattern_window_new_top_panel_items}
-\end{figure}
-
-   This figure shows the appearance of the main window top panel.
-   These items appear in the Gtkmm-2.5 user-interface.
-   The Qt user-interface is arranged differently, but has roughly the
-   same functionality.
-   See \figureref{fig:main_screen_qt}.
-
-%  If \textsl{Seq66} was built with
-%  \texttt{SEQ66\_MENU\_BUTTON\_PIXMAPS} defined, then the buttons have icons
-%  on them; otherwise they have text.  The figure shows what they look like,
-%  and how they look with the song/live and toggle-menu functions activated.
- 
-   \begin{enumber}
-      \item \textbf{Song/Live}
-      \item \textbf{Toggle Playing Tracks}
-      \item \textbf{Toggle Menu}
-      \item \textbf{ALSA/JACK Modes}
-      \item \textbf{Song Progress Bar}
-      \item \textbf{Time Display Selection}
-      \item \textbf{Mute Group Learn}
-   \end{enumber}
-
-   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-
-   \itempar{Song/Live}{pattern!song/live}
-   \index{pattern!song/live}
-   This new button allows the Song mode to be in force even if
-   the \textbf{Song Editor} does not have the focus of the application.
-   However, if the \textbf{Song Editor} does have focus, it overrides this
-   button, to preserve expected behavior.
-   There is also a configurable hot-key associated with it,
-   which defaults to \texttt{F1}, and is configurable in the "rc" file and
-   the \textbf{File / Options / Ext Keys} page.
-
-   \itempar{Toggle Tracks}{pattern!toggle tracks}
-   \index{pattern!toggle tracks}
-   This button changes the status of all of the
-   \textsl{playing} tracks, reversing the
-   mute status of each pattern that is playing.
-   The next click will then unmute only those tracks.
-   Because it can be confusing, this button is disabled (not shown
-   in the figure) in Song mode.
-   There is also a configurable hot-key associated with it, called
-   \textbf{Toggle mutes},
-   which defaults to \texttt{F8}, and is configurable in the "rc" file and
-   the \textbf{File / Options / Ext Keys} page.
-
-   \itempar{Toggle Menu}{pattern!toggle menu}
-   \index{pattern!toggle menu}
-   This button enables and disables the main menu.
-   Disabling it allows additional hot-keys to be configured,
-   without calling forth menu entries by accident.
-   There is also a configurable hot-key associated with this toggle, called
-   \textbf{Menu mode},
-   which defaults to \texttt{F3}, and is configurable in the "rc" file and
-   the \textbf{File / Options / Ext Keys} page.
-
-   \itempar{ALSA/JACK Modes}{pattern!ALSA/JACK modes}
-   \index{pattern!ALSA/JACK mode}
-   This button sets the ALSA versus
-   JACK modes, including JACK transport and native JACK MIDI playback and
-   recording.
-   When clicked, it brings up the JACK connection page from the
-   \textbf{File / Options} dialog.  The hot-key for this button
-   is \texttt{Ctrl-P}.
-
-   \itempar{Song Progress Bar}{pattern!progress bar}
-   \index{pattern!progress}
-   \index{pattern!"main time"}
-   The \textbf{Song Progress Bar} is also known as the "main time" bar.
-   Also included is a numeric representation of the "BBT" (bar:beat:ticks).
-   In the Gtkmm-2.4 user-interface,
-   this bar shows a number of small black cursors ("pills") that show the
-   progress of the song through the various patterns.  For short patterns,
-   the progress is fast.  For patterns that last longer, the progress is
-   slow.  The whole field flashes in time with the beat.
-   This field shows that something is going on.  It can also indicate
-   the relative lengths of the various patterns.
-   In the Qt user-interface, this bar is shown as four boxes
-   which blink in time with playback.
- 
-   Note that the individual pattern boxes in the main panel, for
-   patterns that are not empty, have their own
-   moving progress cursor, a vertical line in each box.
-   By default, this progress line is black, but it can be changed to
-   other colors via a "user" configuration file entry in the 
-   \texttt{[user-interface-settings]} section.
-   Set the \texttt{progress\_bar\_colored} item to a value ranging from 0
-   (black) to 6 (dark cyan).
-   There is also a \texttt{progress\_bar\_thick} item to enable a thicker
-   progress bar, for better visibility.
-
-%  Even if not enabled, the currently-selected pattern will show as highlighted
-%  in dark-cyan.
-
-   \itempar{Time Display Selection}{pattern!time display}
-   The \textbf{Time Display Selection} is also known as the "main time" bar.
-   This button toggles between the states of \textbf{BBT} (bar:beats:ticks)
-   and \textbf{HMS} (hours:minutes:seconds).
-
-   \itempar{Mute Group Learn}{pattern!mute group learn}
-   \index{L button}
-   \index{"L" button}
-   This button is also known as the "L" button.
-   Click this button, and then press a mute-group key
-   to store the mute-state (whether armed or unarmed)
-   of all the patterns with in that key.
-   In addition to this button, one can also press
-   the \texttt{Ctrl-L} key.
-%  (analogous to the \texttt{Ctrl-E}
-%  keystroke that brings up the Song Editor).
-   \index{auto-shift}
-   \index{group-learn!auto-shift}
-   \index{shift-lock}
-   \index{group-learn!shift-lock}
-   When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
-   group-learn mode automatically converts the keys to their shifted versions.
-   This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
-
-   See the \textbf{File / Options / Keyboard} menu entry for the
-   dialog showing the available mute-group keys and the corresponding
-   hot-key for the "L" button.
-   This key is usually the \texttt{Insert} key.  Unlike the button or the
-   \texttt{Ctrl-L} key, this key must be held down while pressing the desired
-   mute-group key.
-   This is a clumsy thing on our main keyboard... one must press and hold
-   \texttt{Shift-Fn-Insert} to get the \texttt{Insert} key, and then also
-   press the desired mute-group key.  A real knuckle-buster!
-   We have our own alternate setup (stored in the file
-   \texttt{seq66.rc.example}.
-   And we've also added the "shift-lock" feature for this reason.
-
-   Group-learn is a modifier key to be pressed
-%  \textsl{together} with
-   just before pressing
-   the desired group key, and the group on/off keys are there to enable
-   each group, \textsl{not} to toggle group states.
-
-   To set up the mute groups, press the 'L' button, and then press a key on
-   the keyboard to 'learn' or 'save' the preset. Looking at the list of keys
-   assigned for these mute groups (in \textbf{File / Options / Keyboard}),
-   the first bank of keys are "!", "'", "?", etc., and the second bank are
-   "Q", "W" "E", etc.
-%  Note that these shifted keys do not toggle patterns, but
-%  set them to a saved mute-group of armed and unarmed patterns.
-   If the key is valid, then the following prompt occurs:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{pattern-window-group-learn-confirmation.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Group Learn Confirmation Prompt}
-   \label{fig:pattern_window_group_learn_confirmation}
-\end{figure}
-   
-   When you ask the program to 'learn' the key, one cannot
-   use the Shift key, so one normally could not use the "!" or
-   other symbol keys.
-   In fact, the process stops as soon as the Shift key is pressed:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{pattern-window-group-learn-failure.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Group Learn Failure Prompt (Shift Key)}
-   \label{fig:pattern_window_group_learn_failure}
-\end{figure}
-
-   \index{caps lock in learn mode}
-   \index{auto-shift}
-   \index{group-learn!auto-shift}
-   \index{shift-lock}
-   \index{group-learn!shift-lock}
-   To avoid this issue with the \texttt{Shift} key, \textsl{Seq66} now
-   "shift-locks" the keys while group-learn is in progress, so
-   that none of the keys, whether letters or the punctuation characters above
-   the numbers, need the \texttt{Shift} key to be held, to learn them.
-   Thus, there is now no need to use the \textbf{Caps Lock} is \textsl{On} before
-   starting the "learn" process.  We tend to map the
-   \texttt{Caps Lock} key as the \textsl{true} Control key, so that
-   \texttt{Caps Lock} is no longer available anyway
-   (it is one of the most useless keys \textsl{ever}).
-
-   Remember, though, that once learned, the \texttt{Shift} is then
-   needed to call up the mute-group that was learned.
-
-   There is another way for mute-group learn to fail.
-   With the recent ability of \textsl{Seq66} to increase the set size via
-   the \texttt{--option sets=8x12} (for example), there can be fewer than 32
-   mute-groups available.   This can be seen by viewing
-   \textbf{File / Options / Keyboard} when larger set-sizes are in force:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{group-learn-limited.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Group Learn Keys With Larger Set Size}
-   \label{fig:pattern_window_group_learn_limited}
-\end{figure}
-
-   Note that only 10 mute-groups (0 to 9) are available with an 8x12 set size.
-   Groups 10 and above are not available, and this is indicated by the word
-   "Clear".  Don't worry, though, all of the mute-group key settings still
-   exist, and are still present in the "rc" configuration file in the
-   \texttt{[keyboard-group]} section.
-
-   But when one attempts a group-learn using one of the unavailable keys,
-   an error occurs, as shown in the following prompt.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-group-learn-limit.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Group Learn Limit Prompt}
-   \label{fig:pattern_window_group_learn_limit}
-\end{figure}
-
-   This prompt also appears if one tries to use the shifted version of an
-   unavailable mute-group key to toggle patterns; this makes it obvious what
-   has gone wrong.
-
-   \textsl{
-   At some point in the future, we may allow a much larger number of sets, so
-   that all 32 mute-groups are always available.  We have to think hard about
-   that enhancement, however.
-   }
-
-   One can configure the MIDI settings in similar ways
-   by assigning MIDI commands to arm or toggle loops, using 
-   \index{rc file}
-   the 'on' option in the "rc" file.
-   See \sectionref{subsec:rc_file_midi_control}.
-
-%  The mute group doesn't toggle... it turns on.
-%  \index{group!toggle}
-%  \index{group!arm}
-%  \index{group!unmute}
-%  One can toggle the playing status of up to 32 previously
-%  One can set the playing status of up to 32 previously
-%  defined mute/unmute patterns (groups) in the active screenset, similar to
-%  hardware sequencers.  One can mute-unmute (according to the group
-%  definition) all loops in the playing screenset, which is the only one that
-%  can have sequences playing if a mute group is selected
-%  (like a live sequencer).
-%
-%  This arming is done either by one of the \textsl{group arm} keys
-%  or by a MIDI controller, both assigned in the
-%  \index{rc file}
-%  \texttt{~/.config/seq66/seq66.rc} or \texttt{~/.seq24rc} files,
-%  and easily modified in the \textbf{File / Options / Keyboard} tab.
-%  These characters can be shown in each pattern (and in 0.9.11 and above, no
-%  matter which screenset is active).
-%
-%  A mute/unmute pattern (group) is stored by holding a
-%  \index{group!learn}
-%  \textsl{group learn} key (\texttt{Insert} by default) while pressing the
-%  corresponding \textsl{group arm} key.  The "L" button can also be used to
-%  enter "Learn" mode.
-%  Once a learn-key is pressed, the set of muted/unmuted patterns in the
-%  current set is memorized, and can be recalled later.
-
-%  There are also keys assigned to turn on/off the group functionality.
-
-%  Once learned, the "Shifted" version of the keyboard keys can be
-%  used to select a learned group.
-
-   Remember that groups work with the playing ("in-view") screen-set.
-   One must change the screenset and give it the command to make it the
-   playing one.
-   \index{keys!Home}
-   By default, the \texttt{Home} key is configured for this purpose.
-
-   So, for example, if one sets \texttt{A} to turn on the
-   patterns in slots 1 and 2 in set 0 (the first set), then pressing
-   \texttt{A} in another set will arm the patterns in the same relative
-   location in the current set.
-   This setup is flexible, but takes some thought.
-   One can set up a number of mute-groups, and decide to use them
-   for all sets, or mentally allocate one mute-group per set.
-   Please note that a mute-group key does not \textsl{toggle} the saved
-   armed patterns... it can only turn them on.
-
-%  \index{rc file}
-%  It is all configurable in the "rc" file.
 
    Let's go through an example using the \texttt{Home} key (or whatever key is
    configured as the \textbf{Set Playing Screenset} key.)
@@ -397,14 +85,13 @@
 \subsection{Patterns / Main Panel}
 \label{subsec:patterns_panel_main}
 
-   The main panel of the Patterns window provides a grid of empty boxes,
-   each box delimited by brace-like lines at left and right.
-   Each filled box represents a loop or pattern.
+   The main panel of the Patterns window provides a grid of empty boxes.
+   Each filled box represents a loop, track, sequence, or pattern.
    One sees only 32 loops at a time in the main panel (but many more than
    32 loops can be supported by \textsl{Seq66}).
+
    \index{screen-set}
-   This group of 32 loops is called a "screen-set", as discussed in
-   \sectionref{subsubsec:concepts_terms_screen_set}.
+   This group of 32 loops is called a "screen-set".
    One can switch between sets by using the
    \index{keys![}
    \index{keys!screenset down}

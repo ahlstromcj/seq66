@@ -160,7 +160,7 @@ qliveframeex::changeEvent (QEvent * event)
         std::string t = "Live Window Set #";
         t += std::to_string(m_live_frame->bank());
         setWindowTitle(t.c_str());
-        m_live_frame->changeEvent(event);
+        m_live_frame->change_event(event);  // changeEvent(event)
     }
 }
 

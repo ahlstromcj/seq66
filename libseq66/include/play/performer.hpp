@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-06
+ * \updates       2021-01-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -106,6 +106,44 @@ class performer
 #endif  // SEQ66_JACK_SUPPORT
 
 public:
+
+    /**
+     *  Provides settings for tempo recording.  Currently not used, though the
+     *  functionality of logging and recording tempo is in place.
+     */
+
+    enum class record_tempo
+    {
+        log_event,
+        on,
+        off
+    };
+
+    /**
+     *  Provides a setting for the fast-forward and rewind functionality.
+     */
+
+    enum class ff_rw
+    {
+        rewind  = -1,
+        none    =  0,
+        forward =  1
+    };
+
+    /**
+     *  A visible representation of whether to "modify" the tune.  Some changes
+     *  do not require the tune to be saved before closing. The "recreate"
+     *  value is a stronger form of "yes", and additionally requests that key
+     *  elements of the notified object need to be recreated.
+     */
+
+    enum class change
+    {
+        no,
+        yes,
+        recreate,
+        undo
+    };
 
     /**
      *  A nested class used for notification of group-learn and other changes.
@@ -187,7 +225,7 @@ public:
             return false;
         }
 
-        virtual bool on_set_change (screenset::number /* setno */)
+        virtual bool on_set_change (screenset::number, performer::change)
         {
             return false;
         }
@@ -254,44 +292,6 @@ public:
      */
 
     using SeqOperation = std::function<void(int)>;
-
-    /**
-     *  Provides settings for tempo recording.  Currently not used, though the
-     *  functionality of logging and recording tempo is in place.
-     */
-
-    enum class record_tempo
-    {
-        log_event,
-        on,
-        off
-    };
-
-    /**
-     *  Provides a setting for the fast-forward and rewind functionality.
-     */
-
-    enum class ff_rw
-    {
-        rewind  = -1,
-        none    =  0,
-        forward =  1
-    };
-
-    /**
-     *  A visible representation of whether to "modify" the tune.  Some changes
-     *  do not require the tune to be saved before closing. The "recreate"
-     *  value is a stronger form of "yes", and additionally requests that key
-     *  elements of the notified object need to be recreated.
-     */
-
-    enum class change
-    {
-        no,
-        yes,
-        recreate,
-        undo
-    };
 
 private:
 
@@ -2137,15 +2137,8 @@ public:
     midibpm page_decrement_beats_per_minute ();
     midibpm page_increment_beats_per_minute ();
 
-    screenset::number decrement_screenset (int amount = 1)
-    {
-        return mapper().decrement_screenset(amount);
-    }
-
-    screenset::number increment_screenset (int amount = 1)
-    {
-        return mapper().increment_screenset(amount);
-    }
+    screenset::number decrement_screenset (int amount = 1);
+    screenset::number increment_screenset (int amount = 1);
 
     screenset::number playscreen_number () const
     {

@@ -555,7 +555,7 @@ qsetmaster::slot_delete ()
  */
 
 bool
-qsetmaster::on_set_change (screenset::number setno)
+qsetmaster::on_set_change (screenset::number setno, performer::change /*mod*/)
 {
     int rows = cb_perf().screenset_count();
     bool result = m_current_set != setno || rows != m_current_row_count;

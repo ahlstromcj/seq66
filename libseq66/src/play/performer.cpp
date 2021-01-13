@@ -476,23 +476,15 @@ performer::unregister (callbacks * pfcb)
     }
 }
 
-/**
- *
- */
-
 void
 performer::notify_set_change (screenset::number setno, change mod)
 {
     for (auto notify : m_notify)
-        (void) notify->on_set_change(setno);
+        (void) notify->on_set_change(setno, mod);
 
     if (mod == change::yes)
         modify();
 }
-
-/**
- *
- */
 
 void
 performer::notify_mutes_change (mutegroup::number mutesno, change mod)
@@ -1118,10 +1110,6 @@ performer::remove_sequence (seq::number seqno)
     return result;
 }
 
-/**
- *
- */
-
 bool
 performer::copy_sequence (seq::number seqno)
 {
@@ -1135,10 +1123,6 @@ performer::copy_sequence (seq::number seqno)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 performer::cut_sequence (seq::number seq)
@@ -1156,10 +1140,6 @@ performer::cut_sequence (seq::number seq)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 performer::paste_sequence (seq::number seq)
@@ -1194,10 +1174,6 @@ performer::move_sequence (seq::number seq)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 performer::finish_move (seq::number seq)
@@ -1701,7 +1677,12 @@ performer::log_current_tempo ()
 screenset::number
 performer::set_playing_screenset (screenset::number setno)
 {
-    if (mapper().set_playing_screenset(setno))
+    screenset::number current = mapper().playscreen_number();
+    bool ok = setno != current;
+    if (ok)
+        ok = mapper().set_playing_screenset(setno);
+
+    if (ok)
     {
         bool clearitfirst = rc().is_setsmode_to_clear();
         announce_exit(false);                       /* blank the device     */
@@ -1799,10 +1780,6 @@ performer::clear_all (bool clearplaylist)
     return result;
 }
 
-/**
- *
- */
-
 bool
 performer::clear_song ()
 {
@@ -1823,7 +1800,6 @@ performer::clear_song ()
     }
     return result;
 }
-
 
 /**
  *  For all active patterns/sequences, get its playing state, turn off the
@@ -1857,10 +1833,6 @@ performer::reset_sequences (bool pause)
     if (m_master_bus)
         m_master_bus->flush();                          /* flush MIDI buss  */
 }
-
-/**
- *
- */
 
 bool
 performer::repitch_selected (const std::string & nmapfile, sequence & s)
@@ -5228,6 +5200,20 @@ performer::mute_group_control
     return true;
 }
 
+screenset::number
+performer::decrement_screenset (int amount)
+{
+    screenset::number newnumber = playscreen_number() - amount;
+    return set_playing_screenset(newnumber);
+}
+
+screenset::number
+performer::increment_screenset (int amount)
+{
+    screenset::number newnumber = playscreen_number() + amount;
+    return set_playing_screenset(newnumber);
+}
+
 /**
  *  Implements a no-op function for reserved slots not yet implemented, or it
  *  can can serve as an indication that the caller (e.g. a user-interface)
@@ -5307,7 +5293,9 @@ performer::automation_bpm_dn
 }
 
 /**
- *  Implements screenset Up and Down.
+ *  Implements screenset Up and Down.  The default keystrokes are "]" for up
+ *  and "[" for down.  Note that all keystrokes generate toggles, and the
+ *  release sets "inverse" to true.
  */
 
 bool
@@ -5318,13 +5306,15 @@ performer::automation_ss_up_dn
 {
     std::string name = "Screenset";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)            /* for keystroke */
-        increment_screenset();
-    else if (a == automation::action::on)
-        increment_screenset();
-    else if (a == automation::action::off)
-        decrement_screenset();
-
+    if (! inverse)
+    {
+        if (a == automation::action::toggle)            /* for keystroke */
+            increment_screenset();
+        else if (a == automation::action::on)
+            increment_screenset();
+        else if (a == automation::action::off)
+            decrement_screenset();
+    }
     return true;
 }
 

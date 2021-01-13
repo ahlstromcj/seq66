@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-04-07
-% \update      2018-09-21
+% \update      2021-01-13
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,24 +21,25 @@
    available in \textsl{Seq66}.
    It does not cover mute keys and group keys, which are well
    described in the keyboard options for the main window.
-   See \sectionref{paragraph:menu_file_options_keyboard}).
-   It does not cover the "fruity" mouse actions, though they are touched
-   on in \sectionref{paragraph:menu_file_options_mouse}.
+%  See \sectionref{paragraph:menu_file_options_keyboard}).
+   It does not cover the "fruity" mouse actions, as this mode of mouse-handling
+   is not supported at present in \textsl{Seq66}.
+%  , though they are touched
+%  on in \sectionref{paragraph:menu_file_options_mouse}.
 
 %  Any volunteers to fill in the table?
 
    This section describes the keystrokes that are currently hardwired
    in \textsl{Seq66}.
-   This description only includes
-   items not defined in the \textbf{File / Options}
-   dialog.  That is, hardwired values.
+   This description only includes items not defined in the 'ctrl' file.
+   That is, hardwired values.
    "KP" stands for "keypad".
    \index{keys!focus}
    The effect that keystrokes have depends upon
    which window has the keyboard/mouse focus.
    \index{keys!qt}
-   It must be noted that the Qt 5 user-interface does not (yet) support the
-   full set of keystrokes supported by the legacy Gtkmm-2.4 user-interface.
+   It must be noted that the Qt 5 user-interface still has a few missing pieces
+   in keystroke support.
 
 \subsection{Keyboard Control}
 \label{subsec:kbd_mouse_keyboard_control}
@@ -54,8 +55,11 @@
          C:/Users/username/AppData/Local/seq66/qpseq66.ctrl
    \end{verbatim}
 
-   There are also some extended example present in the \textsl{Seq66}
-   \texttt{data/linux} directory.
+   There are also some extended examples present in the \textsl{Seq66}
+   \texttt{data/linux} and
+   \texttt{data/samples} directory.
+   Also note that keyboard and MIDI control settings have been consolidated
+   into a single table in the 'ctrl' file.
 
    \textbf{Warning:}
    \index{keys!gotchas}
@@ -90,20 +94,21 @@
    The \texttt{[mute-group]} section has been moved to it's own 'mutes' file.
 
    \index{pause}
-   An additional key definition is shown for the Pause key.
-   By default, the Pause key is the period (".").  An old version of
-   the 'rc' file is automatically fixed to include this new option.
+   An additional key definition is shown for the pause key.
+   By default, the pause key is the period
+   ("\texttt{.}."), but that can be changed.
 
    \index{pattern edit}
-   New features try to achieve being able to edit a pattern using only the
+   New features try to achieve being able to edit a pattern using mainly the
    keyboard.  \textsl{Seq66} now supports two modifier keys.
    The first modifier key causes the usual pattern-toggle key (hot-key) for a
    given slot to instead bring up the pattern editor.  By default, this key is
-   the equals ("=") key.
+   the equals ("\texttt{=}") key.
    \index{event edit}
    The second modifier key causes the usual
    pattern-toggle key (hot-key) for a given slot to instead bring up the event
-   editor.  By default, this key is the minus ("-") key.
+   editor.  By default, this key is the minus ("\texttt{-}") key.
+   Both of these keys are configurable.
 
    Some of the keys have positional mnemonic value.  For example,
    for BPM control, the semicolon is at the left (down), and the apostrophe
@@ -114,6 +119,7 @@
    The \textbf{slot shift} key is useful when using pattern grids larger
    than 8 x 4 patterns.  Pressing the slot-shift key basically adds 32 to the
    pattern number of the slot-key that is pressed.
+   The default key is the forward slash ("\texttt{/}") key.
 
    \index{snapshot}
    \index{keys!snapshot}
@@ -121,6 +127,7 @@
    One can press a snapshot key, change the state of the patterns for live
    playback, and then release the snapshot key to revert to the state when
    the snapshot key was first pressed.
+   The default key is the \texttt{Ins} key.
 
 %   Holding 'Alt' will save the state of playing sequences
 %   and restore them when 'Alt' is lifted.
@@ -142,30 +149,37 @@
    \textbf{File / Options / Keyboard / queue}) and pressing a pattern-slot
    hot-key.  Instead of the pattern turning on
    immediately, it turns on at the next repeat of the pattern.
+   The default key is the "\texttt{o}" key.
 
    \index{keep queue}
    \index{keys!keep queue}
    \index{queue!keep}
    \textbf{Keep queue}
    allows the queue to be held without holding
-   down the queue button the whole time.  First, press the keep-queue key
-   (defined in \textbf{File / Options / Keyboard / Keep queue}).  Now, hitting
+   down the queue button the whole time.  First, press the keep-queue key.
+   Next, hitting
    any of the slot hot-keys, no matter how many, sets up the corresponding
    pattern slot to be queued.  Also, in keep-queue mode, clicking on the
    pattern slot will queue the pattern.  The keep-queue mode is disabled by
    hitting the "queue" key again (any currently active queues remain active
-   until finished).  There is also a "Q" button to toggle the keep-queue
+   until finished).
+   The default key is the backslash key, "\texttt{\\}" key.
+   There is also a "Q" button to toggle the keep-queue
    status.
 
-   Be sure to note the new option, \textbf{one-shot queue}, in the
-   extended-keys section (\sectionref{subsubsec:patterns_pattern_slot}).
+   \index{one-shot}
+   \index{keys!one-shot}
+   \textbf{One-Shot}
+   causes a slot to be queued for only a single playback.
+   The default key is the pipe, "\texttt{|}" key.
 
    \itempar{Sequence toggle keys}{keyboard!sequence toggle keys}
    Each of these keys toggles the playing/muting of one of the 32
-   loop/pattern boxes.  These keys are layed out logically on the keyboard,
-   and can also be shown in each loop/pattern box.  No need to list them all
-   here!  Please note that we often call them "shortcut keys" or
-   "hot-keys" where the context
+   loop/pattern boxes.
+   These keys are layed out logically on the keyboard by default,
+   and can also be shown in each loop/pattern box.
+   Please note that we often call them "shortcut keys" or "hot-keys"
+   where the context
    makes it clear that they apply to the armed/unarmed state of a pattern.
 
    \itempar{Mute-group slots}{keyboard!mute-group slots}
@@ -176,13 +190,12 @@
    to the pattern-muting statuses of the selected mute-group.
    Each of these keys operates on the mute-grouping of one of the 32
    stored mute groups.
-   These keys are layed out logically on the keyboard.
-   No need to list them all here!
-   Generally, they are the shifted versions of the
-   keyboard keys used as hot-keys for the patterns.
+   These keys are layed out logically on the keyboard by default, and consist
+   of \texttt{Shift} versions of the sequence-toggle (hot) keys.
    Note that a mute-group key will be memorized only when
    \textsl{Seq66} is in
-   \index{group-learn} \textsl{group-learn} mode.
+   \index{group-learn}
+   \textsl{group-learn} mode.
 
 %  \index{mute-group}
 %  One thing to explain is just what mute-grouping means.
@@ -194,10 +207,11 @@
    \index{group!learn}
 
    To define the group of patterns for one mute group, press and hold the
-   configured Learn key (the \texttt{Insert} key by default,
-   the \texttt{Ctrl-L} key, or the "L" button in the user-interface.
+   configured Learn key (the "el", "\texttt{l}" key by default,
+   the hard-wired \texttt{Ctrl-L} key, or the "\textbf{L}"
+   button in the user-interface.
    Simultaneously (not needed with the "L" button),
-   press one of the mute group keys: \textsl{Seq66}
+   pressing one of the mute group keys: \textsl{Seq66}
    will save the currently-playing pattern slots into the corresponding mute
    group.
    \index{auto-shift}
@@ -208,36 +222,13 @@
    \texttt{Shift} activated.  Try pressing the \texttt{Shift} key in Learn mode
    and see what happens!
 
-%  Now, on some keyboards (like the author's), 
-%  the \texttt{Insert} key is a clumsy two-key button.  So, an alternative
-%  is to click the \index{L button} \textbf{L button} and release it,
-%  then hit the desired mute-group (no need for the \texttt{Shift} key).
-%  One can also press \texttt{Ctrl-L} to enter group-learn.
-
    Group-mute can be globally enabled or disabled (with default keys apostrophe
    \texttt{'} \index{grave} \index{igrave} and igrave or grave \texttt{`}).
    So make sure it is enabled before trying to use it.
 
-%  \itempar{Learn}{keyboard!learn}
-%  \index{group!learn}
-%  Learn (while pressing a mute-group key).
-%  This items sets the key used to initiate a learn mode.
-%  It is the \textbf{Insert} key by default.
-%  \index{auto-shift}
-%  \index{group-learn!auto-shift}
-%  When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
-%  group-learn mode automatically converts the keys to their shifted versions.
-%  \index{shift-lock}
-%  \index{group-learn!shift-lock}
-%  This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
-%  It is new to \textsl{Seq66}.
-%
-%  Also, currently necessary because pressing \texttt{Shift} can clear the
-%  arming of the patterns in the current set.
-
    \itempar{Disable}{keyboard!disable}
    \index{keys!apostrophe}
-   It is the \textbf{apostrophe} key by default.
+   It is the inverse \textbf{apostrophe} key by default.
    \index{group!off}
    \index{keyboard!group off}
    This key is the \textsl{group off} key.
@@ -255,48 +246,6 @@
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Ext Keys}{keyboard!extended keys}
-   This block of fields in the \textbf{Options / Ext Keys} tab
-   provides shortcut keys for more operations of \textsl{Seq66}, many of
-   them ported from \textsl{Seq32} or \textsl{Kepler34}.
-
-   TODO: All keys!  Check out to avoid redundancy!!!
-
-   \begin{enumber}
-      \item \textbf{Start}.
-      \item \textbf{Stop}.
-      \item \textbf{Pause}.
-      \item \textbf{Slot Shift}.
-      \item \textbf{Snapshot 1}.
-      \item \textbf{Snapshot 2}.
-      \item \textbf{bpm up}.
-      \item \textbf{bpm down}.
-      \item \textbf{Replace}.
-      \item \textbf{Queue}.
-      \item \textbf{Keep queue}.
-      \item \textbf{Screenset down}.
-      \item \textbf{Screenset up}.
-      \item \textbf{Set playing screenset}.
-      \item \textbf{Song/Live toggle}.
-      \item \textbf{Toggle JACK}.
-      \item \textbf{Menu mode}.
-      \item \textbf{Follow transport}.
-      \item \textbf{Fast forward}.
-      \item \textbf{Rewind}.
-      \item \textbf{Pointer Position}.
-      \item \textbf{Toggle mutes}.
-      \item \textbf{Tap BPM}.
-      \item \textbf{Song Record}.
-      \item \textbf{One-shot Queue}.
-         This new feature allows one-shot queuing of a pattern.
-   \end{enumber}
-
-   Most of these extended keys implement operations performed with button
-   presses.  Some of the new keystrokes may not have a corresponding
-   button.
-   These values are saved as the \texttt{[extended-keys]} section of the 'rc'
-   configuration file.
-
    \index{song mode}
    Note the \textbf{Song/Live toggle} key.
    The \textsl{song mode} normally is in effect only when playback is started
@@ -304,7 +253,7 @@
    window, if enabled by pressing this key.  There is also
    a button in the main window for this function, which shows the current state
    of this flag.  Note that this flag is also stored in the 'rc' configuration
-   file, as well as this hot-key value, which defaults to \texttt{F1}.
+   file, as well as this hot-key value, which defaults to \texttt{F10}.
 
    \index{toggle JACK}
    \index{JACK toggle}
@@ -345,34 +294,23 @@
 %     don't hit Ctrl-q, Ctrl-n etc. forgetting things are not playing....
 %  \end{quotation}
 
-   \index{follow transport}
-   \textsl{Follow transport} is a feature ported from \textsl{Seq32}.
+   \index{follow jack}
+   \textsl{Follow JACK} is a feature ported from \textsl{Seq32}.
    The default key is \texttt{F4}.
    It determines if \textsl{Seq66} follows JACK transport.
 
    \index{fast forward}
    \textsl{Fast forward} is a feature ported from \textsl{Seq32}.
-   The default key is \texttt{F5}.
+   The default key is \texttt{F6}.
    While this key is held, the song pointer will fast-forward
    through the song.
    This feature does not have a corresponding button.
-   This feature requires that the \textsl{Seq32} transport option be
-   enabled at build time.
 
    \index{rewind}
    \textsl{Rewind} is a feature ported from \textsl{Seq32}.
-   The default key is \texttt{F6}.
+   The default key is \texttt{F5}.
    While this key is held, the song pointer will rewind.
    This feature does not have a corresponding button.
-   This feature requires that the \textsl{Seq32} transport option be
-   enabled at build time (and now that is the default).
-   Be sure not to use the following keys, which are already
-   hardwired for other functions in the Pattern Editor and Song Editor:
-
-   \begin{itemize}
-      \item \texttt{p}.  Paint mode.
-      \item \texttt{x}.  Escape paint mode.
-   \end{itemize}
 
    \index{pointer position}
    \textsl{Pointer position} is a feature ported from \textsl{Seq32}.

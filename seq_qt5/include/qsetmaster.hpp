@@ -108,7 +108,11 @@ public:
 
 private:
 
-    virtual bool on_set_change (screenset::number setno) override;
+    virtual bool on_set_change
+    (
+        screenset::number setno,
+        performer::change ctype
+    ) override;
 
     /*
      * virtual bool on_group_learn (bool state) override;

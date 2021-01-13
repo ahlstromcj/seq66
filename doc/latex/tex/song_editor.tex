@@ -19,7 +19,7 @@
 
    The \textsl{Seq66 Song Editor} combines all patterns
    into a complete tune with specified repetitions of each pattern.
-   It shows one row per pattern/loop/sequence in numbered columns,
+   It shows one row per pattern/loop/sequence,
    with the placement of each pattern at various time locations in the song.
    \index{performance}
    In \textsl{Seq66} parlance, the song editor creates a
@@ -39,19 +39,20 @@
    same time.
    The \textbf{Song} editor activates
    the \textbf{Song} mode of \textsl{Seq66}.
-   When the song editor has the focus of the application, it
-   takes over control from the patterns panel, and controls playback.
-   Once playback is started in the song editor, some actions
-   in the patterns panel no longer have effect, effectively disabling live
-   mode.  The song editor takes over the arming/unarming (unmuting/muting)
+%  When the song editor has the focus of the application, it
+%  takes over control from the patterns panel, and controls playback.
+   Once playback is started in the song editor (using the \texttt{Space} or
+   \texttt{.} keys),
+   some actions in the patterns panel no longer have effect, disabling live mode.
+   The song editor takes over the arming/unarming (unmuting/muting)
    shown in the patterns panel.  The highlighting of armed/unarmed patterns
-   changes according to whether the pattern is playing in the song editor, or
-   not.  If one tries to change the muting using a hot-key (or even a click) in
+   changes according to whether the pattern is triggered in the song editor, or
+   not.  If one tries to change the muting in
    the patterns panel, the song editor immediately returns the pattern to the
    state it has in the song editor.  The only way to manually change the muting
    then is to click the pattern's label in the song editor.
    Both the song editor and the patterns panel both reflect the change in
-   muting in the user-interface, though with \textsl{opposite colors}.
+   muting in the user-interface (though with \textsl{opposite colors}).
 
 \begin{figure}[H]
    \centering 
@@ -60,70 +61,32 @@
    \label{fig:song_editor_window_annotated}
 \end{figure}
 
-   Here are the features for the song editor, as layed out above.
+   Note the major items shown:
+
+   \begin{enumber}
+      \item \textbf{Top Panel}
+      \item \textbf{Measures Ruler}
+      \item \textbf{Patterns (Names) Panel}
+      \item \textbf{Song Roll}
+      \item \textbf{Bottom Panel}
+   \end{enumber}
+
+   Here are some of the features for the song editor:
 
    \begin{itemize}
-      \item Enter "paint" mode.
-         The \texttt{p} key enters paint mode, where additional triggers
-         can be added by click-dragging on a pattern row.
-         The \texttt{x} key leaves this mode.
-      \item Start/Pause button functionality.
-         When the song roll has keyboard focus,
-         the \texttt{Space} key starts and stops playback, rewinding to the
-         beginning when stopped.
-         The \texttt{.} (period) key starts and pauses playback, without
-         rewinding.
-         This functionality is similar to that of the main window, but
-         these keys are not reconfigurable in the song roll.
-      \item Undo/Redo/Cut/Copy/Paste of a selected section.
-         Provided by buttons and by these keystrokes:
-         \texttt{Ctrl-Z}. Undo.
-         \texttt{Shift-Ctrl-Z}. Redo.
-         \texttt{Ctrl-X}. Cut.  Removes the selection.
-            \index{keys!backspace}
-            \index{keys!delete}
-            \index{keys!ctrl-x}
-            Can also be done with the \texttt{Delete} and
-            \texttt{Backspace} keys.
-            The deletion can be undone.
-         \texttt{Ctrl-C}. Copy.
-         \index{keys!ctrl-c}
-         \index{keys!copy}
-         Copies the trigger for later usage.
-         \texttt{Ctrl-V}. Paste.
-            \index{keys!ctrl-v}
-            \index{keys!paste}
-            Puts the roll into paste mode.
-            When inserted, each insert goes immediately
-            after the current item or the previous insertion.  The same can be
-            done for whole patterns.
-      \item Horizontal (Time) Zoom.
-         Provided by buttons and by these keystrokes:
-         \texttt{Z}. Zoom in.
-         \texttt{z}. Zoom out.
-         \texttt{0}. Reset zoom.
-   \end{itemize}
-
-   \begin{itemize}
-      \index{shift left click}
-      \item Toggling of the mute state of multiple patterns by holding the
-         \texttt{Shift} key while left-clicking on the \textbf{M}
-         or name field of a pattern.
-      \index{pause}
-      \index{progress bar}
+      \item Toggling of the mute state of multiple patterns
+         via the name fields of the patterns.
       \item Optional pattern coloring (selected in the Patterns panel)
-         and a configurable progress bar.
-      \index{redo}
+      \item A configurable progress bar.
       \item \textbf{Undo} and \textbf{Redo} buttons.
-      \index{transpose}
       \item A \textbf{Transpose} button and transposition drop-down selector.
-      \index{untransposable color}
       \item Red coloring of events for patterns that are not transposable, such
          as drum tracks.
+      \item Horizontal zoom via buttons and keystrokes
    \end{itemize}
 
    The song editor is not too complex, but for exposition, we break it into
-   the top panel, the bottom panel, and the rest of the window.
+   the sections enumerated above.
 
 \subsection{Song Editor / Top Panel}
 \label{subsec:song_editor_top}
@@ -135,6 +98,7 @@
       \item \textbf{Undo}
       \item \textbf{Redo}
       \item \textbf{Follow Progress}
+      \item \textbf{Zoom Out and Zoom In}
       \item \textbf{Toggle Section Painting}
       \item \textbf{Grid Snap}
       \item \textbf{Transpose}
@@ -143,8 +107,6 @@
       \item \textbf{L/R Expand}
       \item \textbf{L/R Expand and Copy}
    \end{enumber}
-
-   Details are described below.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -168,31 +130,44 @@
    \index{keys!period (pause)}
    The default keystroke for pausing playback is the \texttt{Period} character.
 
+   Note that there are no stop, pause, and play buttons in this frame.
+   They are supplied by the main window, and the \textbf{Song} tab can be
+   activated in the main window.
+
    \itempar{Undo}{song editor!undo}
    The \textbf{Undo} button rolls back the last change in the layout of a
    pattern.  Each time it is clicked, the most recent change is undone.
-   It rolls back one change each time pressed.
-   It is inactive if there is nothing to undo.
+%  It is inactive if there is nothing to undo.
    Also implemented via \texttt{Ctrl-Z}.
 
    \itempar{Redo}{song editor!redo}
    The \textbf{Redo} button reapplies the last change undone by
-   the \textbf{Undo} button.  It is inactive if there is nothing to redo.
+   the \textbf{Undo} button.
+%  It is inactive if there is nothing to redo.
    Also implemented via \texttt{Shift-Ctrl-Z}.
 
-   \itempar{Follow Progress}{song editor!follow}
-      \textbf{Follow Progress} toggles the mode of following progress
-         for longer songs.
+   \itempar{Zoom Out and Zoom In}{song editor!zoom}
+   These buttons change the horizontal zoom.
+   Zoom can also be changed via the keystrokes \texttt{z}, \texttt{0},
+   and \texttt{Z}.
 
-   \itempar{Section Painting}{song editor!paint}
-      \textbf{Toggle Section Painting} toggles the ability
-      to drag the mouse along the pattern's timeline to indicate when the
-      pattern plays.  Short patterns will be duplicated one or more times as
-      the mouse isdragged.
+   \itempar{Follow Progress}{song editor!follow}
+   \textbf{Follow Progress} toggles the mode of following progress
+   for longer songs.  WHen active, the song roll pages right to keep up with
+   the progress bar.
+
+   \itempar{Toggle Section Painting}{song editor!paint}
+   \textbf{Toggle Section Painting} toggles the ability
+   to drag the mouse along the pattern's timeline to create triggers
+   to indicate when the pattern plays.
+   Short patterns will be duplicated one or more times as
+   the mouse is dragged.
+   This mode can alsp be changed via the keystrokes \texttt{p} and
+   \texttt{x}.
 
    \itempar{Grid Snap}{song editor!grid snap}
    Indicates the horizontal grid snap for movement actions and trigger drawing.
-   Grid snap selects where the patterns are drawn.
+   Grid snap determine where the pattern boundaries are drawn.
    Unlike the \textbf{Grid Snap} of the pattern editor, the units
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
@@ -203,6 +178,7 @@
    \textbf{Transpose} consists of two controls: one to apply
    transposition, and a drop-down menu to select the direction and amount
    of transposition.
+   Transposition ranges from minus one octave to plus one octave.
 
    \itempar{L/R Loop}{song editor!play loop}
    \index{loop mode}
@@ -216,7 +192,7 @@
    If this button is deactivated during playback, then playback
    continues past the \textbf{R marker}.
    Note that these markers can be placed using left
-   and right mouse clicks, respectively.
+   and right mouse clicks, respectively, in the measures ruler.
 
    \itempar{L/R Collapse}{song editor!collapse}
    This button collapses the song between the \textbf{L marker} and the
@@ -244,7 +220,56 @@
    \textbf{R marker}, and pastes it into the newly-available space between
    the L and R markers.
 
-\subsection{Song Editor / Patterns Panel}
+\subsection{Song Editor / Measures Ruler}
+\label{subsec:song_editor_measures_ruler}
+
+   \index{measures ruler}
+   The measures ruler ("bar indicator")
+   consists of a \textsl{timeline} at the top and the 
+   \textbf{L marker} and \textbf{R marker} mentioned above.
+   There are some hidden details in the measures panel.
+
+   The \textsl{measures ruler} is the ruled and numbered section at the top
+   of the arrangement panel.  It provides a place to put the left and right
+   markers.  In the \textsl{Seq24} documentation, it is called the "bar
+   indicator".
+
+   \index{measures ruler!left-click}
+   Left-click in the measures ruler to move and drop an
+   \index{L anchor}
+   \index{L marker}
+   \textbf{L marker} (\textbf{L anchor}) on the measures ruler.
+   \index{measures ruler!right-click}
+   Right-click in the measures ruler to drop an
+   \index{R anchor}
+   \index{R marker}
+   \textbf{L marker} (\textbf{R anchor}) on the measures ruler.
+   
+   These markers denote the time intervale from the left of the 
+   \textbf{L} marker to the right of the \textbf{R} marker.
+   Once these markers are in place, one can then use
+	the \textsl{Collapse} and \textsl{Expand} buttons to modify the
+   placement of the pattern events.
+
+   Note that the \textbf{L marker} serves as the start position for playback
+   in the song editor.  One can change the start position only when the
+   performance is not playing.
+
+   \index{marker!mode}
+   \index{marker!movement}
+   Another way to move the "L" and "R" markers has been added.
+   To select which marker will move, first click the upper half of the time
+   strip (otherwise, the "L" will move, prematurely) to give it keyboard focus.
+   Then press the lower-case
+   \index{keys!l}
+   \texttt{l} key or the lower-case
+   \index{keys!r}
+   \texttt{r} key.
+   \textsl{There is no visual feedback that one is in the movement mode.}
+   Then press the \texttt{Left-Arrow} or \texttt{Right-Arrow}
+   key to move the selected marker.
+
+\subsection{Song Editor / Patterns (Names) Panel}
 \label{subsec:song_editor_patterns_panel}
 
    The patterns panel is at the left of the song roll.
@@ -293,7 +318,7 @@
    \index{patterns column!left-click}
    \index{patterns column!ctrl-left-click}
    \index{song editor!muting}
-   Left-clicking on the pattern name or the "M" button toggles the muting
+   Left-clicking on the pattern name or the "M" toggles the muting
    (arming) status of the track.
    It does the same thing if the \texttt{Ctrl} key is held at the same time.
 
@@ -315,58 +340,64 @@
    \textbf{Song}, \textbf{Disable Transpose}, and \textbf{MIDI Bus}.
 
 \subsection{Song Editor / Song Roll}
-\label{subsec:song_editor_arrangement_panel}
+\label{subsec:song_editor_song_roll}
 
    Also known as the "arrangement panel".
    The "Piano Roll" section of the arrangement panel is where patterns or
    subsections are inserted, deleted, shrunk, lengthened, or moved.
+   Actions can be done via the mouse or keyboard.
+
+\subsubsection{Song Editor / Song Roll / Layout}
+\label{subsubsec:song_editor_song_roll_layout}
+
    Here are features to note in the annotated piano roll area
    shown in \figureref{fig:song_editor_window_full_items}:
 
    \begin{enumber}
+      \item \textbf{Trigger Creation}.
+         By click-dragging the mouse in paint mode, a series of triggers can be
+         created; they indicate where the track will be unmuted and playing.
+         See below for more information about triggers.
       \item \textbf{Selection}.
-         Clicking inside a pattern or a pattern subsection selects it.
+         Clicking inside a trigger selects it.
          Selection is denoted by an orange rectangle around the trigger
-         section and a dark grey color in the selected trigger.
-         A pattern subsection can be moved by the mouse and deleted by keystrokes
-         shown later.
+         and a dark grey color in the trigger.
+         A pattern subsection can be moved by the mouse and deleted by keystrokes.
       \item \textbf{De-selection}.
          \index{song editor!section deselection}
          Left-clicking or right-clicking in an empty area of the song roll
          will deselect the selection.
-      \item \textbf{Selecttion Movement}.
+      \item \textbf{Selection Movement}.
          \index{song editor!selection movement}
-         If, instead of grabbing the section length handle, one grabs inside
+         If one grabs (left-click) inside
          the pattern or pattern subsection, that item can be moved
-         horizontally, as long as there is room.  A left-click
-         inside the item shows it as selected.
-         One can also highlight a pattern section (making it gray),
-         then click the \texttt{p} key to enter "paint" mode, and move the
-         pattern left or right with the arrow keys.
-      \item \textbf{Selection Position}.
-         A selection position is a marker that divides a pattern into two
-         pieces, called \textsl{pattern subsections}.  This makes it easy to
-         select smaller portions of a pattern for editing or deleting.  It
-         is especially useful for making holes in a pattern.
+         horizontally, as long as there is room.
+%        One can also highlight a pattern section (making it gray),
+%        then click the \texttt{p} key to enter "paint" mode, and move the
+%        pattern left or right with the arrow keys.
+      \item \textbf{Section Length ("handle")}.
+         \index{song editor!handle}
+         \index{song editor!section length}
+         The small squares in two corners of the patterns are the section
+         "handles".
+         By grabbing a handle with a left-click, the handle can be moved
+         horizontally to either lengthen or shorten the pattern to the nearest
+         snap position, if there is room to move in the desired direction.
+%     \item \textbf{Selection Position}.
+%        A selection position is a marker that divides a pattern into two
+%        pieces, called \textsl{pattern subsections}.  This makes it easy to
+%        select smaller portions of a pattern for editing or deleting.  It
+%        is especially useful for making holes in a pattern.
       \item \textbf{Pattern Subsectioning}.
+         \index{song editor!split pattern}
          \index{song editor!middle click}
          \index{pattern subsection}
-         Middle-clicking (or ctrl-left-click)
+         A middle-click (or ctrl-left-click)
          inside a pattern inserts a selection position
          marker in it, breaking the pattern into two equal pieces.
          We call each piece a \textsl{pattern subsection}.
          This division can be done over and over.
-      \item \textbf{Section Length ("handle")}.
-         \index{song editor!handle}
-         \index{song editor!section length}
-         Looking closely at the diagram where the arrows point, small
-         squares in two corners of the patterns can be seen.
-         Call them "handles".
-         By grabbing
-         a handle with a left-click, the handle can be moved horizontally
-         to either lengthen or shorted the pattern or pattern subsection, if
-         there is room to move in the desired direction.
-         It doesn't matter if the item is selected or not.
+         There are also options for splitting at the nearest snap point.
       \item \textbf{Expansion}.
          \index{song editor!section expansion}
          Originally, all the long patterns of this sample song were continuous.
@@ -374,18 +405,6 @@
          button, we opened up some silent space in the song, just to be able
          to show it off.
    \end{enumber}
-
-   \index{song editor!split pattern}
-   A useful feature is to split a pattern section in the
-   song editor, either in half, or at the nearest snap point to the mouse
-   pointer.
-%  The location of the split is determined by the
-%  setting of the \textbf{File / Options / Mouse / Seq66 Options /
-%  Middle-click splits song trigger at nearest snap (instead of halfway point)}
-%  setting.
-%  To split a pattern, left-click it to highlight it, move
-   the mouse (if not splitting in half) to the desired pointer, and
-   ctrl-left-click with the mouse.
 
    The \textsl{Seq24} help files refer to work in the song editor as the
    "Performance Editor" or "Performance Mode".  Adding a pattern in this
@@ -396,52 +415,23 @@
 
    \index{song editor!right-click-hold}
    \index{song editor!draw}
+   \index{paint mode}
 	Right-click on the arrangement panel (roll) to enter
-   draw mode, and hold the button.
-   \index{new!mod4 mode}
-   \index{keys!mod4}
-   \index{song editor!mod4}
-   Just like the patterns panel, there is a feature to allow the Mod4 (the
-   Super or Windows) key to keep the right-click in force even after it is
-   released.  See \ref{new_mod4_mode}.  Pressing Mod4 before
-   releasing the right-click that allows pattern-adding ("painting"), keeps
-   pattern-adding in force after the right-click is released.  Now pattern
-   can be entered at will with the left mouse button.  Right-click again to
-   leave the pattern-adding mode.
-
-   \index{new!paint mode}
-   Another way to turn on painting:
+   paint mode, and hold the button.
+   Paint mode does not work while the sequence is playing.
+   Another way to turn on painting is to
    make sure that the performance editor piano roll has the
    keyboard focus by left-clicking in it, then press the
-   \index{keys!p}
-   \texttt{p} key.
-%  This is just like pressing the right mouse button, but the draw/paint mode
-%  sticks (as if the Mod4 mode were in force).
-   While in the paint mode, one can add pattern clips with the left mouse
-   button, via click or drag, and one can highlight a pattern clip and move it
-   with the left and right arrow keys.
+   \texttt{p} key to enter the paint mode, and
+   \texttt{x} escape it.
+   See \sectionref{subsubsec:song_editor_song_roll_keystrokes}.
 
-%  In the near future, movement of selected trigger segments will not
-%  require the paint mode to be active just to move the segments left or
-%  right.
-
-   To get out of the paint mode, press the
-   \index{keys!x}
-   \texttt{x} key while in the sequence editor, to "x-scape"
-   from the paint mode.
-   These keys, however, do not work while the sequence is playing.
-
-   \index{zoom keys}
-   \index{keys!0}
-   \index{keys!z}
-   \index{keys!shift-z}
-   The song editor supports zoom in the piano roll.
-   This feature is not accessible via a button or a menu
-   entry -- it is accessible only via keystrokes.
-   After one has left-clicked in the piano roll, the \texttt{z}, \texttt{Z},
-   and \texttt{0} can be used to zoom the piano-roll view.  The \texttt{z} key
-   zooms out, the \texttt{Z} key zooms in, and the \texttt{0} key resets the
-   zoom to the default value.  The zoom feature also modifies the time-line.
+   \index{zoom}
+   \index{song editor!zoom}
+   The song editor supports horizontal zoom in the piano roll.
+   This feature is accessible via the buttons, and also
+   accessible via keystrokes.
+   The zoom feature also modifies the time-line.
 
    \index{song editor!left-click-right-hold}
    \index{song editor!insert}
@@ -455,106 +445,108 @@
    and drag the mouse rightward.
 
    \index{song editor!middle-click}
-   Middle-click on a pattern to drop a new selection position into the
-   pattern,
+   Middle-click i(or ctrl-left-click) on a trigger in a pattern row
+   to splits the trigger into two triggers.
+   \index{pattern!split}
    \index{song editor!pattern subsection}
-   which breaks the pattern into two equal \textsl{pattern subsections}.
+   This splits the pattern into two equal \textsl{pattern subsections}.
    Each middle-click on the pattern adds a new selection position,
    halving the size of the subsections as more pattern subsections are
-   added.
+   added.  The \texttt{allow\_snap\_split} option in the 'rc' file
+   allows the split to be made at the nearest snap point instead of in the middle.
 
    \index{song editor!left-click}
    \index{song editor!selection}
    When a pattern or a pattern subsection is left-clicked in the piano
    roll, it is marked with a dark gray filling.
-   \index{song editor!right left hold drag}
+   It can then be moved horizontally if there is room, or be deleted or copied for
+   later pasting.
+
+   \index{song editor!right left click}
    \index{song editor!deletion}
-   When a right-left-hold-drag action is done in this gray area, the result
+   When a right-left-click action is done in this gray area, the result
    is to \textsl{delete} that pattern section or subsection.
    \index{keys!delete}
-   One can also hit the Delete key to \textsl{delete} that pattern section
-   or subsection.
+   One can also hit the \texttt{Delete} key.
 
-   MORE KEYS:
+\subsubsection{Song Editor / Song Roll / Keystrokes}
+\label{subsubsec:song_editor_song_roll_keystrokes}
 
-   One can page up and down vertically in the arrangement
-   panel using the
-   \index{keys!page-up} Page Up and 
-   \index{keys!page-down} Page Down keys.
-   One can go to the top using the 
-   \index{keys!home} Home key,
-   to the bottom using the
-   \index{keys!end} End key.
-   One can page left and right horizontally in the arrangement
-   panel using the
-   \index{keys!shift-page-up} Shift Page Up and 
-   \index{keys!shift-page-down} Shift Page Down keys.
-   One can go to the leftmost position using the 
-   \index{keys!shift-home} Home key,
-   and to the rightmost position using the
-   \index{keys!shift-end} End key,
+   There are a number of useful keystrokes in the song roll that can be used once
+   is has focus, by clicking in it.
 
-   If playback is started with the song editor as the
-   active window, then the pattern boxes in the patterns panel
-   show as armed/unarmed (unmuted/muted) depending upon whether or not the
-   pattern is shown as playing (or not) at the current playback position in
-   the song editor piano roll.
-   song editor.
-
-\subsection{Song Editor / Measures Ruler}
-\label{subsec:song_editor_measures_ruler}
-
-   \index{measures ruler}
-   The measures ruler ("bar indicator")
-   consists of a \textsl{timeline} at the top, a
-   numbered patterns column at the left with a muting indicator, and the
-   grid or roll section.  There are a lot of hidden details in the
-   arrangement panel, as the figure shows.  Here are the main sections:
-
-   The \textsl{measures ruler} is the ruled and numbered section at the top
-   of the arrangement panel.  It provides a place to put the left and right
-   markers.  In the \textsl{Seq24} documentation, it is called the "bar
-   indicator".
-
-   \index{measures ruler!left-click}
-   Left-click in the measures ruler to move and drop an
-   \index{L anchor}
-   \index{L marker}
-   \textbf{L marker} (\textbf{L anchor}) on the measures ruler.
-   \index{measures ruler!right-click}
-   Right-click in the measures ruler to drop an
-   \index{R anchor}
-   \index{R marker}
-   \textbf{L marker} (\textbf{R anchor}) on the measures ruler.
-
-   Once these anchors are in place, one can then use
-	the \textsl{Collapse} and \textsl{Expand} buttons to modify the
-   placement of the pattern events.
-
-   Note that the \textbf{L marker} serves as the start position for playback
-   in the song editor.  One can change the start position only when the
-   performance is not playing.
-
-   \index{new!marker mode}
-   \index{new!movement mode}
-   Another way to move the "L" and "R" markers has been added.
-   To select which marker will move, first click the upper half of the time
-   strip (otherwise, the "L" will move, prematurely) to give it keyboard focus.
-   Then press the lower-case
-   \index{keys!l}
-   \texttt{l} key or the lower-case
-   \index{keys!r}
-   \texttt{r} key.
-   \textsl{There is no visual feedback that one is in the movement mode.}
-   Then press the left or right arrow key to move the selected ("L" or "R")
-   key marker by one snap value at a time.
-
-\begin{comment}
+   \begin{itemize}
+      \item Enter "paint" mode.
+         The \texttt{p} key enters paint mode, where additional triggers
+         can be added by click-dragging on a pattern row.
+         The \texttt{x} key leaves this mode.
+         The "finger" button and the mouse cursor both indicate the status.
+      \item Start/Pause button functionality.
+         When the song roll has keyboard focus,
+         the \texttt{Space} key starts and stops playback, rewinding to the
+         beginning when stopped.
+         The \texttt{.} (period) key starts and pauses playback, without
+         rewinding.
+         This functionality is similar to that of the main window, but
+         these keys are not reconfigurable in the song roll.
+      \item Undo/Redo/Cut/Copy/Paste of a selected section.
+         Provided by buttons and by these keystrokes:
+         \texttt{Ctrl-Z}. Undo.
+         \texttt{Shift-Ctrl-Z}. Redo.
+         \texttt{Ctrl-X}. Cut.  Removes the selection.
+            \index{keys!backspace}
+            \index{keys!delete}
+            \index{keys!ctrl-x}
+            Can also be done with the \texttt{Delete} and
+            \texttt{Backspace} keys.
+            The deletion can be undone.
+         \texttt{Ctrl-C}. Copy.
+         \index{keys!ctrl-c}
+         \index{keys!copy}
+         Copies the trigger for later usage.
+         \texttt{Ctrl-V}. Paste.
+            \index{keys!ctrl-v}
+            \index{keys!paste}
+            Puts the roll into paste mode.
+            When inserted, each insert goes immediately
+            after the current item or the previous insertion.  The same can be
+            done for whole patterns.
+      \item Horizontal (Time) Zoom.
+         Provided by buttons and by these keystrokes:
+         \texttt{Z}. Zoom in.
+         \texttt{z}. Zoom out.
+         \texttt{0}. Reset zoom.
+      \item Paging.  Paging by keystroke is not yet complete.
+      Here is what can be done.
+      One can page up and down vertically in the arrangement
+      panel using the
+      \index{keys!page-up}
+      \texttt{Page Up} and 
+      \index{keys!page-down}
+      \texttt{Page Down} keys.
+%     One can go to the top using the 
+%     \index{keys!home} Home key,
+%     to the bottom using the
+%     \index{keys!end} End key.
+      One can page left and right horizontally in the arrangement
+      panel using the
+      \index{keys!up-arrow} \texttt{Up-Arrow} and 
+      \index{keys!down-arrow} \texttt{Down-Arrow} keys.
+%     \index{keys!shift-page-up} Shift Page Up and 
+%     \index{keys!shift-page-down} Shift Page Down keys.
+%     One can go to the leftmost position using the 
+%     \index{keys!shift-home} Home key,
+%     and to the rightmost position using the
+%     \index{keys!shift-end} End key,
+   \end{itemize}
 
 \subsection{Song Editor / Bottom Panel}
 \label{subsec:song_editor_bottom}
 
-   The bottom panel is simple, consisting of a stock horizontal scroll bar
+   The bottom panel is simple, consisting of a stock horizontal scroll bar.
+
+\begin{comment}
+
    and a small button, called the \textbf{Grow} button, labelled with a
    "\textbf{$>$}".
 
