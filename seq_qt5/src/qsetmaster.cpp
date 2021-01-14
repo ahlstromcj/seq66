@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-08-01
+ * \updates       2021-01-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -60,7 +60,7 @@
  */
 
 #define SEQ66_TABLE_ROW_HEIGHT          18
-#define SEQ66_TABLE_FIX                  2
+#define SEQ66_TABLE_FIX                 48
 
 /*
  * Don't document the namespace.
@@ -162,32 +162,35 @@ qsetmaster::~qsetmaster()
     delete ui;
 }
 
-/**
- *
- */
-
 void
 qsetmaster::conditional_update ()
 {
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
-        for (int row = 0; row < setmaster::Rows(); ++row)
+        int r = seq::unassigned();
+        int c = seq::unassigned();
+        bool ok = cb_perf().master_calculate_coordinates(m_current_set, r, c);
+        if (! ok)
+            ok = m_current_set == seq::unassigned();
+
+        if (ok)
         {
-            for (int column = 0; column < setmaster::Columns(); ++column)
+            for (int row = 0; row < setmaster::Rows(); ++row)
             {
-                int setno = int(cb_perf().master_calculate_set(row, column));
-                bool enabled = cb_perf().is_screenset_available(setno);
-                m_set_buttons[row][column]->setEnabled(enabled);
+                for (int column = 0; column < setmaster::Columns(); ++column)
+                {
+                    int s = int(cb_perf().master_calculate_set(row, column));
+                    bool enabled = cb_perf().is_screenset_available(s);
+                    bool checked = row == r && column == c;
+                    m_set_buttons[row][column]->setEnabled(enabled);
+                    m_set_buttons[row][column]->setChecked(checked);
+                }
             }
+            update();
+            m_needs_update = false;
         }
-        update();
-        m_needs_update = false;
     }
 }
-
-/**
- *
- */
 
 void
 qsetmaster::setup_table ()
@@ -196,16 +199,16 @@ qsetmaster::setup_table ()
     columns << "Set #" << "Seqs" << "Set Name";
     ui->m_set_table->setHorizontalHeaderLabels(columns);
     ui->m_set_table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    set_column_widths(ui->m_set_table->width() + SEQ66_TABLE_FIX);
+    const int rows = ui->m_set_table->rowCount();
+    for (int r = 0; r < rows; ++r)
+        ui->m_set_table->setRowHeight(r, SEQ66_TABLE_ROW_HEIGHT);
+
     connect
     (
         ui->m_set_table, SIGNAL(currentCellChanged(int, int, int, int)),
         this, SLOT(slot_table_click_ex(int, int, int, int))
     );
-    set_column_widths(ui->m_set_table->width() - SEQ66_TABLE_FIX);
-    const int rows = ui->m_set_table->rowCount();
-    for (int r = 0; r < rows; ++r)
-        ui->m_set_table->setRowHeight(r, SEQ66_TABLE_ROW_HEIGHT);
-
 }
 
 /**
@@ -220,10 +223,6 @@ qsetmaster::set_column_widths (int total_width)
     ui->m_set_table->setColumnWidth(1, int(0.15f * total_width));
     ui->m_set_table->setColumnWidth(2, int(0.70f * total_width));
 }
-
-/**
- *
- */
 
 void
 qsetmaster::current_row (int row)
@@ -320,10 +319,6 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
     return result;
 }
 
-/**
- *
- */
-
 void
 qsetmaster::slot_table_click_ex
 (
@@ -339,10 +334,6 @@ qsetmaster::slot_table_click_ex
         ui->m_button_delete->setEnabled(true);
     }
 }
-
-/**
- *
- */
 
 void
 qsetmaster::closeEvent (QCloseEvent * event)
@@ -390,6 +381,7 @@ qsetmaster::create_set_buttons ()
             temp->setFixedSize(btnsize);
             temp->show();
             temp->setEnabled(enabled);
+            temp->setCheckable(true);       /* ca 2021-01-14 */
             connect
             (
                 temp, &QPushButton::released, [=] { handle_set(row, column); }
@@ -399,20 +391,12 @@ qsetmaster::create_set_buttons ()
     }
 }
 
-/**
- *
- */
-
 void
 qsetmaster::handle_set (int row, int column)
 {
     screenset::number setno = cb_perf().master_calculate_set(row, column);
     handle_set(setno);
 }
-
-/**
- *
- */
 
 void
 qsetmaster::handle_set (int setno)
@@ -438,10 +422,6 @@ qsetmaster::handle_set (int setno)
 #endif
 }
 
-/**
- *
- */
-
 void
 qsetmaster::slot_set_name ()
 {
@@ -452,10 +432,6 @@ qsetmaster::slot_set_name ()
         (void) initialize_table();      /* refill with sets */
     }
 }
-
-/**
- *
- */
 
 void
 qsetmaster::slot_show_sets ()
@@ -480,10 +456,6 @@ qsetmaster::slot_move_down ()
             move_helper(row, row + 1);
     }
 }
-
-/**
- *
- */
 
 void
 qsetmaster::slot_move_up ()
@@ -544,7 +516,12 @@ qsetmaster::slot_delete ()
                 std::string snstr = qtip->text().toStdString();
                 int setno = std::stoi(snstr);
                 if (cb_perf().remove_set(setno))
+                {
+                    if (setno == m_current_set)
+                        m_current_set = seq::unassigned();
+
                     set_needs_update();
+                }
             }
         }
     }
@@ -555,7 +532,7 @@ qsetmaster::slot_delete ()
  */
 
 bool
-qsetmaster::on_set_change (screenset::number setno, performer::change /*mod*/)
+qsetmaster::on_set_change (screenset::number setno, performer::change modtype)
 {
     int rows = cb_perf().screenset_count();
     bool result = m_current_set != setno || rows != m_current_row_count;
@@ -569,16 +546,14 @@ qsetmaster::on_set_change (screenset::number setno, performer::change /*mod*/)
     );
 #endif
         m_current_row_count = rows;
-        m_current_set = setno;
+        if (modtype != performer::change::removed)
+            m_current_set = setno;
+
         (void) initialize_table();      /* redraw the set-list (set-table)  */
         set_needs_update();             /* cause set-buttons to redraw      */
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 qsetmaster::keyPressEvent (QKeyEvent * event)
@@ -590,10 +565,6 @@ qsetmaster::keyPressEvent (QKeyEvent * event)
     else
         QWidget::keyPressEvent(event);              /* event->ignore()      */
 }
-
-/**
- *
- */
 
 void
 qsetmaster::keyReleaseEvent (QKeyEvent * event)
@@ -619,10 +590,6 @@ qsetmaster::changeEvent (QEvent * event)
         // no useful code yet
     }
 }
-
-/**
- *
- */
 
 bool
 qsetmaster::handle_key_press (const keystroke & k)
@@ -651,16 +618,13 @@ qsetmaster::handle_key_press (const keystroke & k)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qsetmaster::handle_key_release (const keystroke & k)
 {
     bool done = cb_perf().midi_control_keystroke(k);
     if (! done)
     {
+        // no useful code yet
     }
     return done;
 }
@@ -673,7 +637,7 @@ qsetmaster::set_control
 {
     bool result = a == automation::action::toggle;
     if (result && ! inverse)
-        handle_set(index);
+        handle_set(index);              /* index == set number */
 
     return result;
 }

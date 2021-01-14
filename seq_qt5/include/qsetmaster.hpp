@@ -232,7 +232,7 @@ private:
     int m_current_row;
 
     /**
-     *
+     *  Current number of rows in the set table.
      */
 
     int m_current_row_count;

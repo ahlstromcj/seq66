@@ -139,10 +139,11 @@ public:
 
     enum class change
     {
-        no,
-        yes,
-        recreate,
-        undo
+        no,             /**< Do not set the modify-flag.                    */
+        yes,            /**< Do set the modify-flag.                        */
+        undo,           /**< Unset the modify-flag????                      */
+        recreate,       /**< Recreate the user-interface(s).                */
+        removed         /**< Change was a removal; more specific than yes.  */
     };
 
     /**
@@ -1265,6 +1266,18 @@ public:
     {
         return master().calculate_set(row, column);
     }
+
+    bool master_calculate_coordinates
+    (
+        screenset::number setno, int & row, int & column
+    )
+    {
+        return master().calculate_coordinates(setno, row, column);
+    }
+
+    /*
+     *  Note that this function differs from master_calculate_set().
+     */
 
     screenset::number calculate_set (int row, int column) const
     {

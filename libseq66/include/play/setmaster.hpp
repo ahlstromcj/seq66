@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2020-12-06
+ * \updates       2021-01-14
  * \license       GNU GPLv2 or above
  *
  *  The setmaster class is meant to encapsulate the sets and their layout,
@@ -170,6 +170,10 @@ public:
 private:
 
     screenset::number calculate_set (int row, int column) const;
+    bool calculate_coordinates
+    (
+        screenset::number setno, int & row, int & column
+    );
 
     bool inside_set (int row, int column) const
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-01-11
+ * \updates       2021-01-14
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -141,13 +141,13 @@ qslivegrid::qslivegrid
     setFocusPolicy(Qt::StrongFocus);
     ui->setupUi(this);
     m_msg_box = new QMessageBox(this);
-    m_msg_box->setText(tr("Sequence already present"));
+    m_msg_box->setText(tr("Sequence already present."));
     m_msg_box->setInformativeText
     (
         tr
         (
-            "There is already a pattern stored in this slot. "
-            "Overwrite it and create a new blank pattern?"
+            "There is already a pattern in this slot. "
+            "Overwrite it with a new blank pattern?"
         )
     );
     m_msg_box->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -985,19 +985,17 @@ qslivegrid::new_sequence ()
     if (perf().is_seq_active(m_current_seq))
     {
         int choice = m_msg_box->exec();
-        if (choice == QMessageBox::No)
+        if (choice == QMessageBox::Yes)
         {
-            return;
+            if (perf().remove_sequence(m_current_seq))
+            {
+                if (perf().new_sequence(m_current_seq))
+                {
+                    perf().get_sequence(m_current_seq)->set_dirty();
+                    alter_sequence(m_current_seq);
+                }
+            }
         }
-        else
-        {
-            // delete the sequence and get ready to redraw the loop?
-        }
-    }
-    if (perf().new_sequence(m_current_seq))
-    {
-        perf().get_sequence(m_current_seq)->set_dirty();
-        alter_sequence(m_current_seq);
     }
 }
 

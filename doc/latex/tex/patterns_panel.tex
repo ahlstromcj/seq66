@@ -125,9 +125,9 @@
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.75]{pattern-window-main-panel-items.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Main Panel Items}
-   \label{fig:pattern_window_main_panel_items}
+   \includegraphics[scale=0.85]{tabs/live/pattern-popup-menu.png}
+   \caption{Patterns Panel Pop-up Menu}
+   \label{fig:patterns_panel_popup_menu}
 \end{figure}
 
    The individual items annoted in this figure are described in
@@ -136,6 +136,7 @@
 
    \begin{itemize}
       \item The sequence number appears at the bottom left of the slot.
+         This number ranges from 0 on up.
       \item The buss number (re 0) and the channel number (re 1) appears
          to the right of the sequence number, in the format "0-1".
       \item To the right of that, the time signature ("4/4") appears, at the
@@ -146,8 +147,9 @@
          slot.
       \item The length of the sequence, in number of measures (bars), appears
          at the upper right of the slot.
-      \item Notice the default alternate font, which has a little more body
-         than the \textsl{Seq24} font.
+      \item The font is a \textsl{Qt} font.
+      \item A right-click over a pattern button brings up a fairly extensive
+         popup menu.
    \end{itemize}
 
    Observe that feature in the first figure of the next section.
@@ -166,101 +168,83 @@
    An empty box is a slot for a pattern.
    If a pattern is present in the slot, the top line will show
    the title of the pattern, and the number of measures in the pattern.
-   The latter is not shown on some of the figures in this manual, a
-   lack we will ave to rectify someday.
-   Also, these colors are not yet supported in the Qt user-interface.
-
    A pattern can show a number of different statuses based on the coloring
-   of elements in the pattern slot. 
+   of elements in the pattern slot.
+   (However, note that some of the special coloring using in
+   \textsl{Sequencer64} is not supported in \textsl{Seq66}.
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{new/slots.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Various Status of Pattern Slots}
-   \label{fig:pattern_slots_statuses}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Various Status of Pattern Slots}
+%  \label{fig:pattern_slots_statuses}
+%\end{figure}
 
-   Not shown in the figure are the gray pattern
-   colors resulting from queuing and one-shot queuing, nor is the
-   number-of-measures number shown.
-   The colors have meaning (in the Gtkmm user-interface only):
+%  Not shown in the figure are the gray pattern
+%  colors resulting from queuing and one-shot queuing, nor is the
+%  number-of-measures number shown.
+%  The colors have meaning (in the Gtkmm user-interface only):
 
    \begin{itemize}
-      \item \textbf{Empty background}.  Whether the classic gray pattern
-         of \textsl{Seq24}, or the many patterns of \textsl{Seq66},
-         including all black with yellow sequence numbers, this
-         slot coloring indicates that the slot is unused.
-      \item \textbf{White background}.  Unarmed (muted) patterns show black
-         text on a white background.
-      \item \textbf{Black background}.  Armed (unmuted) pattern.  If the text
-         is yellow, it is a pattern with no MIDI events, but is armed.  Note
-         that armed/unmuted patterns can be exported if they have a layout in
-         the Song Editor.
-      \item \textbf{Yellow background}.  A pattern with no MIDI events, just
-         textual MIDI information.  If armed (uselessly), it is yellow text on
-         a black background (not shown).
-      \item \textbf{Cyan background, black text}.
-         An unarmed pattern currently being edited in a 
-         \textbf{Pattern Editor} or event
-         editor. Or, if an SMF 0 MIDI file was just opened or imported, this
-         color combination indicates the SMF 0 format track with all of the
-         data in the song, which only occurs in slot 16 (unless the user then
-         dragged it to another slot).
-      \item \textbf{Black background, cyan text}.
-         An armed pattern currently being edited in a 
-         \textbf{Pattern Editor} or event
-         editor.  Or an armed SMF 0 format MIDI sequence.
+      \item \textbf{Empty background}.  When the default button coloring for
+         the current \textsl{Qt} theme is shown, without a pattern box,
+         this state indicates that the slot is unused.
+      \item \textbf{Yellow pattern box}. This color is used when a pattern is
+         first created by double-clicking on the slot.
+         However, this color sticks even when notes are added.
+         But feel free to change it to another color, or no color.
+      \item \textbf{Normal background}.  Unarmed (muted) patterns show the
+         unactivated/unchecked state of the button as per the \textsl{Qt}
+         theme.  If a color is applied, it has a slight bit of alpha in the
+         color so that the color appears muted.
+      \item \textbf{Active background}.  An armed (unmuted) pattern shows the
+         activated/checked state of the button as per the \textsl{Qt}
+         theme.  If a color is applied, it has no transparency, and the 
+         color appears bright.
       \item \textbf{Red events}.
          Indicates a pattern for which the new transpose feature is
-         disabled.  The white, black, and cyan background have the same
-         meanings as in the other items for statuses of unarmed, armed, and
-         currently being edited.
+         disabled.
    \end{itemize}
 
-   As of version 0.95, the user can also apply coloring to each sequence.
+   The user can also apply coloring to each sequence.
    This feature was adopted from \textsl{Kepler34} (\cite{kepler34}).
-   Here is the new pattern menu for sequence color:
    \index{pattern!color menu}
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{new/seq66-sequence-color-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Sequence/Pattern Color Menu}
-   \label{fig:pattern_window_sequence_color_menu}
-\end{figure}
-
-   Here is a sample of the coloration as it appears in the patterns panel and
-   in the song editor:
-   \index{pattern!coloring}
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{new/seq66-sequence-coloration.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Sequence/Pattern Coloration}
-   \label{fig:pattern_window_sequence_coloration}
-\end{figure}
+   The pattern menu for sequence color is shown in the previous figure.
+   We've used colors in most of the examples in this manual.
 
    \index{pattern!right click}
    \index{slot!empty slot right-click}
-   Right-click on an empty box one brings up a menu to create
-   a new loop, as well as some other operations:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-empty-right-click-menu.png}
-%  \includegraphics[scale=0.65]{new/pattern-empty-right-click-menu.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Empty Pattern, Right-Click Menu}
-   \label{fig:pattern_window_empty_right_click}
-\end{figure}
+   Right-clicking on an empty box one brings up a menu to create
+   a new loop, as well as some other operations.
 
    \begin{enumber}
-      \item \textbf{New}
-      \item \textbf{Paste}
-      \item \textbf{Song}
+      \item \textbf{New pattern}
+      \item \textbf{External live frame for set 0}
+   \end{enumber}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{New}{pattern!new}
+   Creates a new loop or pattern.
+   Clicking this menu entry fills in the empty box with an untitled
+   pattern.  Another way to create a new loop is to double-left-click on an
+   empty slot.
+
+   \itempar{External live frame for set 0}{live!external}
+   This option brings up an external \textbf{Live} frame window, which
+   is the same as the patterns panel, but can be used to show a different set
+   in a multi-set project.  Up to 32 external live frames can be shown.
+   More on the external live frames later.
+
+   Once a new loop is created, there are more options for that slot.
+
+   \begin{enumber}
+      \item \textbf{New pattern}
+      \item \textbf{External live frame for set 0}
+      \item \textbf{Edit pattern in tab}
+      \item \textbf{Edit pattern in window}
+      \item \textbf{Edit pattern in tab}
       \begin{itemize}
          \item {Mute All Tracks}
          \item {Unmute All Tracks}
@@ -269,15 +253,29 @@
       \end{itemize}
    \end{enumber}
 
-   This menu entry is quite different for the Qt user-interface.
-   See \sectionref{subsubsec:qt_portmidi_qt5_live_slot_menu}.
+   The first two menu entries are the same as above.  However, since there is
+   already a pattern present in the slot, the user is prompted before erasing
+   the current pattern and creating a new one.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{New}{pattern!new}
-   Creates a new loop or pattern.
-   Clicking this menu entry fills in the empty box with an untitled
-   pattern, and brings up the Pattern Editor
+   \itempar{Edit Pattern In Tab}{pattern!edit in tab}
+   Selecting this item activates the \textbf{Edit} tab and fills it with data
+   from the selected pattern.
+   Note that this editor is somewhat simplistic, useful for common operations.
+   We want to keep it uncluttered so that the use can make the main window
+   peration small if desired.
+
+   CONTINUE HERE!
+
+
+   \itempar{Edit Pattern In Window}{pattern!edit in window}
+   Selecting this item brings up the pattern in an external pattern editor that
+   is more sophisticated than the \textbf{Edit} tab.
+   from the selected pattern.
+   Note that this editor is somewhat simplistic, useful for common operations.
+
+   , and brings up the Pattern Editor
    so that one can fill in the new pattern.
 
    In addition to right-click and select \textbf{New}, the user can
@@ -301,38 +299,22 @@
    The configuration file settings for the the '=' and
    '-' keys can be altering in the \textbf{File / Options / Keyboard} tab.
 
-   \index{current slot highlight}
-   When an unarmed (muted) pattern is first brough up for sequence editing (or
-   event editing), the slot in the main window is now highlighted (Gtkmm only),
-   using black text on a cyan background, as being the "currently-edited" slot.
-   (This is the same background used to indicate the original track in an
-   SMF 0 to SMF 1 conversion.)
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-current-seq-unarmed.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Currently-Edited Pattern, Unarmed}
-   \label{fig:pattern_window_current_seq_unarmed}
-\end{figure}
-
-   If the currently-edited sequence is armed (unmuted), then the highlighting
-   is reversed (cyan text on a black background), and resembles the
-   highlighting for an armed sequence (which is white text on a black
-   background).
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-current-seq-armed.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Currently-Edited Pattern, Armed}
-   \label{fig:pattern_window_current_seq_armed}
-\end{figure}
-
-   If more than one sequence or \textbf{Event Editor}
-   is brought up, only the slot for
-   the last one to have focus is hightlighted.
-   Note that this highlighting also applies to the \textbf{Event Editor}.
+%  \index{current slot highlight}
+%  When an unarmed (muted) pattern is first brough up for sequence editing (or
+%  event editing), the slot in the main window is now highlighted (Gtkmm only),
+%  using black text on a cyan background, as being the "currently-edited" slot.
+%  (This is the same background used to indicate the original track in an
+%  SMF 0 to SMF 1 conversion.)
+%
+%  If the currently-edited sequence is armed (unmuted), then the highlighting
+%  is reversed (cyan text on a black background), and resembles the
+%  highlighting for an armed sequence (which is white text on a black
+%  background).
+%
+%  If more than one sequence or \textbf{Event Editor}
+%  is brought up, only the slot for
+%  the last one to have focus is hightlighted.
+%  Note that this highlighting also applies to the \textbf{Event Editor}.
 
    \itempar{Paste}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
@@ -454,14 +436,14 @@
    to allow one to edit it, or perform a few other actions
    specified in the context menu.  Here is that menu:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu.png}
 %  \includegraphics[scale=0.75]{new/seqmenu_menus-gtk-qt-0_96.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Existing Pattern, Right-Click Menus, Gtkmm and Qt Versions}
-   \label{fig:pattern_window_right_click}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Existing Pattern, Right-Click Menus, Gtkmm and Qt Versions}
+%  \label{fig:pattern_window_right_click}
+%\end{figure}
 
    Here one can choose to edit the pattern, cut and copy the pattern,
    set the MIDI bus/channel, and more.
@@ -558,13 +540,13 @@
    the \textbf{Edit...} and \textbf{Event Edit...} menu entries.
    This trimmed menu looks like this:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu-no-edit.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Existing Pattern, Right-Click Menu Without Edit Entries}
-   \label{fig:pattern_window_right_click_no_edit}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Existing Pattern, Right-Click Menu Without Edit Entries}
+%  \label{fig:pattern_window_right_click_no_edit}
+%\end{figure}
 
    The old functionality was to have the \textbf{Edit...} menu entry simply
    raise the existing 
@@ -596,15 +578,15 @@
    \itempar{Song}{pattern!song}
    Clicking this menu entry brings up a small popup menu:
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{pattern/pattern-menu-song.png}
 %  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_15.png}
 %  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_21.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Existing Pattern, Right-Click Menu, Song}
-   \label{fig:pattern_window_right_click_song}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Existing Pattern, Right-Click Menu, Song}
+%  \label{fig:pattern_window_right_click_song}
+%\end{figure}
 
    \begin{enumber}
       \item \textbf{Clear This Track's Song Data}
@@ -697,13 +679,13 @@
 %  \label{fig:pattern_window_right_click_midi_bus}
 % \end{figure}
 
-\begin{figure}[H]
-   \centering 
+%\begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{pattern/pattern-menu-midi-bus-port.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Existing Pattern Right-Click Menu, MIDI Output Busses/Channels}
-   \label{fig:pattern_window_right_click_midi_bus}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Existing Pattern Right-Click Menu, MIDI Output Busses/Channels}
+%  \label{fig:pattern_window_right_click_midi_bus}
+%\end{figure}
 
    \index{--bus option}
    Another way to specify busses is the

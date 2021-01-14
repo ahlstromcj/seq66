@@ -482,7 +482,7 @@ performer::notify_set_change (screenset::number setno, change mod)
     for (auto notify : m_notify)
         (void) notify->on_set_change(setno, mod);
 
-    if (mod == change::yes)
+    if (mod == change::yes || mod == change::removed)
         modify();
 }
 
@@ -1710,7 +1710,7 @@ performer::remove_set (screenset::number setno)
 {
     bool result = mapper().remove_set(setno);
     if (result)
-        notify_set_change(setno);
+        notify_set_change(setno, change::removed);
 
     return result;
 }

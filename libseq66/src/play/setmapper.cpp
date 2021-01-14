@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-01-13
+ * \updates       2021-01-14
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -174,6 +174,8 @@ setmapper::seq_set (seq::number seqno, int & offset) const
     return result;
 }
 
+#if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
+
 /**
  *  Given the raw sequence number, returns the calculated set number and the
  *  row and column of the sequence in the set.
@@ -197,10 +199,21 @@ setmapper::seq_set (seq::number seqno, int & row, int & column) const
 {
     screenset::number result = clamp(seqno / m_set_size);
     int offset = seqno - result * m_set_size;
-    row = offset / m_columns;
-    column = offset % m_columns;
+
+    /*
+     * WRONG!  And we don't use this function anywhere, that's why we missed
+     * this issue.
+     *
+     * row = offset / m_columns;
+     * column = offset % m_columns;
+     */
+
+    row = offset % m_rows;
+    column = offset / m_rows;
     return result;
 }
+
+#endif
 
 /**
  *  Look up the screen to be used, given the sequence number.  If the screen

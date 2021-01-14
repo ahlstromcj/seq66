@@ -3237,12 +3237,15 @@ bool
 qsmainwnd::on_set_change (screenset::number setno, performer::change ctype)
 {
     bool result = not_nullptr(m_live_frame);
-    if (result && ctype == performer::change::yes)
+    if (result)
     {
         if (setno != m_live_frame->bank())
         {
-            m_live_frame->update_bank(setno);   /* updates current bank */
-            ui->spinBank->setValue(setno);      /* shows it in spinbox  */
+            if (ctype == performer::change::no)
+            {
+                m_live_frame->update_bank(setno);   /* updates current bank */
+                ui->spinBank->setValue(setno);      /* shows it in spinbox  */
+            }
         }
         else
             m_live_frame->update_bank();        /* updates current bank */

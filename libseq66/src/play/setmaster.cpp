@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2020-08-10
+ * \updates       2021-01-14
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.
@@ -120,6 +120,21 @@ setmaster::calculate_set (int row, int column) const
         return 0;
     else
         return m_rows * column + row;
+}
+
+bool
+setmaster::calculate_coordinates
+(
+    screenset::number setno, int & row, int & column
+)
+{
+    bool result = is_screenset_valid(setno);
+    if (result)
+    {
+        row = setno % m_screenset_rows;
+        column = setno / m_screenset_rows;
+    }
+    return result;
 }
 
 /**

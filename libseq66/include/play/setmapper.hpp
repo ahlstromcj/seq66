@@ -224,7 +224,10 @@ private:
     }
 
     screenset::number seq_set (seq::number s, int & offset) const;
+
+#if defined SEQ66_SETMAPPER_SEQ_SET_IS_USED
     screenset::number seq_set (seq::number s, int & row, int & column) const;
+#endif
 
     screenset::number calculate_set (int row, int column) const
     {
