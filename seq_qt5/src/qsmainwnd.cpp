@@ -2353,7 +2353,6 @@ qsmainwnd::tabWidgetClicked (int newindex)
 
                 ignore = true;
             }
-
             if (! ignore)
             {
                 seq::pointer seq = perf().get_sequence(seqid);

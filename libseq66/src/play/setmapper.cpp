@@ -703,6 +703,22 @@ setmapper::copy_triggers
     }
 }
 
+bool
+setmapper::remove_set (screenset::number setno)
+{
+    bool result = false;
+    if (setno > 0)
+    {
+        setmaster::container::size_type count = sets().erase(setno);
+        if (setno == m_playscreen)
+            result = set_playscreen(0); // m_playscreen = 0;
+
+        if (result)
+            result = count > 0;
+    }
+    return result;
+}
+
 /*
  * -------------------------------------------------------------------------
  * Play-screen

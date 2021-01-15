@@ -977,11 +977,7 @@ private:
         return master().find_by_value(setno);
     }
 
-    bool remove_set (screenset::number setno)
-    {
-        setmaster::container::size_type count = sets().erase(setno);
-        return count > 0;
-    }
+    bool remove_set (screenset::number setno);
 
     mutegroup::number clamp_group (mutegroup::number group) const
     {

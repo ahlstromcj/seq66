@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-14
+ * \updates       2021-01-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -319,6 +319,11 @@ qsetmaster::set_line (screenset & sset, screenset::number row)
     return result;
 }
 
+/**
+ *  The Delete button is always disabled for row 0.  The 0th set must always
+ *  exist.
+ */
+
 void
 qsetmaster::slot_table_click_ex
 (
@@ -331,7 +336,7 @@ qsetmaster::slot_table_click_ex
         current_row(row);
         ui->m_button_down->setEnabled(true);
         ui->m_button_up->setEnabled(true);
-        ui->m_button_delete->setEnabled(true);
+        ui->m_button_delete->setEnabled(row > 0);
     }
 }
 
@@ -498,7 +503,8 @@ qsetmaster::move_helper (int oldrow, int newrow)
 }
 
 /**
- *  Handles the "Delete" button.
+ *  Handles the "Delete" button.  We do not allow deleting of set 0.  This
+ *  causes too many issues.
  */
 
 void
@@ -515,12 +521,15 @@ qsetmaster::slot_delete ()
             {
                 std::string snstr = qtip->text().toStdString();
                 int setno = std::stoi(snstr);
-                if (cb_perf().remove_set(setno))
+                if (setno > 0)
                 {
-                    if (setno == m_current_set)
-                        m_current_set = seq::unassigned();
+                    if (cb_perf().remove_set(setno))
+                    {
+                        if (setno == m_current_set)
+                            m_current_set = seq::unassigned();
 
-                    set_needs_update();
+                        set_needs_update();
+                    }
                 }
             }
         }
