@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2020-11-23
+ * \updates       2021-01-15
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -91,6 +91,13 @@ private:
         group_name
     };
 
+    enum class enabling
+    {
+        disable,
+        leave,
+        enable
+    };
+
 private:
 
     Q_OBJECT
@@ -136,8 +143,8 @@ private:
     }
 
     void create_group_buttons ();
-    void update_group_buttons (bool modify = false);
-    void handle_group (int row, int column);
+    void update_group_buttons (enabling tomodify = enabling::leave);
+    void handle_group_button (int row, int column);     /* in lambda slot   */
     void handle_group (int setno);
     bool group_control
     (
@@ -151,14 +158,18 @@ private:
 
     bool set_current_group (int row);
 
-    bool modify () const
+    void create_pattern_buttons ();
+    void update_pattern_buttons (enabling tomodify = enabling::leave);
+    void handle_pattern_button (int row, int column);  /* in lambda slot    */
+
+    bool trigger () const
     {
-        return m_modify_active;
+        return m_trigger_active;
     }
 
-    void modify (bool flag)
+    void trigger (bool flag)
     {
-        m_modify_active = flag;
+        m_trigger_active = flag;
     }
 
     void set_bin_hex (bool bin_checked);
@@ -176,25 +187,28 @@ private:
     bool handle_key_release (const keystroke & k);
     QTableWidgetItem * cell (screenset::number row, column_id col);
 
+    void clear_pattern_mutes ();
+
 signals:
 
 private slots:
 
     void conditional_update ();
-    void mute_table_click_ex
+    void slot_table_click
     (
         int row, int /*column*/,
         int /*prevrow*/, int /*prevcolumn*/
     );
-    void clear_mutes ();
+    void slot_clear_all_mutes ();
     void slot_bin_mode (bool ischecked);
     void slot_hex_mode (bool ischecked);
-    void slot_modify ();
-    void slot_reset ();
+    void slot_trigger ();
+    void slot_set_mutes ();
     void slot_down ();
     void slot_up ();
     void slot_write_to_midi ();
     void slot_write_to_mutes ();
+    void slot_save ();
 
 private:
 
@@ -226,10 +240,17 @@ private:
     qsmainwnd * m_main_window;
 
     /**
-     *  Access to all the screenset buttons.
+     *  Access to all the mute-group buttons.
      */
 
     QPushButton * m_group_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
+
+    /**
+     *  Access to all the pattern buttons.  A 2-D array allocated to the
+     *  proper size in the constructor.
+     */
+
+    QPushButton * m_pattern_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
 
     /**
      *  Indicates the currently-selected group number.
@@ -238,22 +259,37 @@ private:
     int m_current_group;
 
     /**
-     *
+     *  Indicates the number of groups in the grid.  Essentially constant at 4
+     *  x 8 = 32.
      */
 
     int m_group_count;
 
     /**
-     *
+     *  Holds the row and column of the button corresponding to the
+     *  currently-selected mute-group.
      */
 
-    bool m_modify_active;
+    int m_button_row;
+    int m_button_column;
+
+    /**
+     *  If true, button click can activate existing mute groups.
+     */
+
+    bool m_trigger_active;
 
     /**
      *  Indicates that the view should be refreshed.
      */
 
     mutable bool m_needs_update;
+
+    /**
+     *  Holds the current status of all of the pattern buttons.
+     */
+
+    midibooleans m_pattern_mutes;
 
 };
 

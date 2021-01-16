@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-01-13
+ * \updates       2021-01-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -959,12 +959,12 @@ public:
 
     std::string sets_to_string () const
     {
-        return master().sets_to_string();   // mapper()
+        return master().sets_to_string();
     }
 
     void show_patterns () const
     {
-        master().show();                    // mapper()
+        master().show();
     }
 
     bool read_midi_file
@@ -1254,15 +1254,15 @@ public:
 
     int mute_rows () const
     {
-        return mapper().mute_rows();
+        return mutes().rows();
     }
 
     int mute_columns () const
     {
-        return mapper().mute_columns();
+        return mutes().columns();
     }
 
-    int master_calculate_set (int row, int column) const
+    screenset::number master_calculate_set (int row, int column) const
     {
         return master().calculate_set(row, column);
     }
@@ -1275,23 +1275,14 @@ public:
         return master().calculate_coordinates(setno, row, column);
     }
 
-    /*
-     *  Note that this function differs from master_calculate_set().
-     */
-
-    screenset::number calculate_set (int row, int column) const
-    {
-        return mapper().calculate_set(row, column);
-    }
-
     bool master_inside_set (int row, int column) const
     {
         return master().inside_set(row, column);
     }
 
-    seq::number calculate_seq (int row, int column) const
+    seq::number grid_to_seq (int row, int column) const
     {
-        return mapper().calculate_seq(row, column);
+        return mapper().grid_to_seq(row, column);
     }
 
     bool seq_to_grid (seq::number seqno, int & row, int & column) const
@@ -1796,7 +1787,7 @@ public:
      *      active.
      */
 
-    void set_orig_ticks (midipulse tick)
+    void set_last_ticks (midipulse tick)
     {
         mapper().set_last_ticks(tick);
     }
@@ -1843,8 +1834,8 @@ public:
      */
 
     /**
-     *  Checks the pattern/sequence for activity.  Uses the new seqmanager
-     *  object.
+     *  Checks the pattern/sequence for activity.  Uses the setmapper to get the
+     *  actually screenset (internally).
      *
      * \param seq
      *      The pattern number.  It is checked for invalidity.  This can
@@ -1856,9 +1847,9 @@ public:
      *      invalid or null.
      */
 
-    bool is_seq_active (seq::number seq) const
+    bool is_seq_active (seq::number seqno) const
     {
-        return mapper().is_seq_active(seq);
+        return mapper().is_seq_active(seqno);
     }
 
     seq::number first_seq () const
@@ -2021,7 +2012,7 @@ public:
 
     bool any_group_unmutes () const
     {
-        return mapper().any_mutes();
+        return mutes().any();
     }
 
     bool install_sequence
@@ -2110,19 +2101,29 @@ public:
         mapper().select_and_mute_group(mg);
     }
 
-    mutegroup::number calculate_mute (int row, int column) const
+    mutegroup::number grid_to_group (int row, int column) const
     {
-        return mapper().calculate_mute(row, column);
+        return mutes().grid_to_group(row, column);
+    }
+
+    bool group_to_grid (mutegroup::number group, int & row, int & column) const
+    {
+        return mutes().group_to_grid(group, row, column);
     }
 
     int count_mutes (mutegroup::number group)
     {
-        return mapper().count_mutes(group);
+        return mutes().armed_count(group);
     }
 
-    midibooleans get_mutes (mutegroup::number gmute)
+    midibooleans get_mutes (mutegroup::number gmute) const
     {
-        return mapper().get_mutes(gmute);
+        return mutes().get(gmute);
+    }
+
+    midibooleans get_active_groups () const
+    {
+        return mutes().get_active_groups();
     }
 
     bool set_mutes (mutegroup::number gmute, const midibooleans & bits);
@@ -2222,11 +2223,6 @@ public:
     void off_sequences ()
     {
         mapper().off_sequences();
-    }
-
-    void set_last_ticks (midipulse tick)
-    {
-        mapper().set_last_ticks(tick);
     }
 
     std::string sequence_label (const sequence & seq);
@@ -2483,7 +2479,7 @@ public:
 
     bool is_screenset_valid (screenset::number sset) const
     {
-        return mapper().is_screenset_valid(sset);
+        return master().is_screenset_valid(sset);
     }
 
     bool toggle_other_seqs (seq::number seqno, bool isshiftkey);   /* mainwid   */
@@ -2558,7 +2554,7 @@ public:
 
     const std::string & screenset_notepad (screenset::number sset) const
     {
-        return mapper().name(static_cast<screenset::number>(sset));
+        return mapper().name(sset);
     }
 
     /**
@@ -2796,19 +2792,56 @@ public:         /* GUI-support functions */
         m_song_record_snap = f;
     }
 
+    mutegroup::number group_selected () const
+    {
+        return mutes().group_selected();
+    }
+
     bool midi_mute_group_present () const
     {
-        return mapper().group_present();
+        return mutes().group_present();
     }
 
     bool is_group_learn () const
     {
-        return mapper().is_group_learn();
+        return mutes().is_group_learn();
     }
 
     int group_size () const
     {
-        return mapper().group_size();
+        return mutes().group_size();
+    }
+
+    bool group_event () const
+    {
+        return mutes().group_event();
+    }
+
+    bool group_error () const
+    {
+        return mutes().group_error();
+    }
+
+    /**
+     *  group_mode() starts out true, and allows mute_group_tracks() to work.
+     *  It is set and unset via the "gmute" MIDI control and the group-on/off
+     *  keys.  m_mode_group_learn starts out false, and is set and unset via the
+     *  "glearn" MIDI control and the group-learn press and release actions.
+     */
+
+    bool group_mode () const
+    {
+        return mutes().group_mode();
+    }
+
+    void group_mode (bool flag)
+    {
+        mutes().group_mode(flag);
+    }
+
+    void toggle_group_mode ()
+    {
+        mutes().toggle_group_mode();
     }
 
     void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
@@ -2908,12 +2941,12 @@ public:                                 /* access functions for the containers *
 
     int mutegroup_count () const
     {
-        return m_mute_groups.count();
+        return mutes().count();
     }
 
     const std::string & group_name (mutegroup::number group) const
     {
-        return m_mute_groups.group_name(group);
+        return mutes().group_name(group);
     }
 
     const mutegroups & mutes () const
@@ -2928,7 +2961,7 @@ public:                                 /* access functions for the containers *
 
     bool clear_mute_groups ()
     {
-        return m_mute_groups.clear();
+        return mutes().clear();
     }
 
 private:

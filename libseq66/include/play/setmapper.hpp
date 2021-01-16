@@ -65,19 +65,20 @@ class setmapper
 private:
 
     /**
-     *  Provides a reference to an external mute group.  It can be used to mute
-     *  and unmute all of the patterns in a set at once.  It can also be modified
-     *  to change the pattern when the application is in Learn mode.
+     *  Provides a reference to an external mute group container.  It can be
+     *  used to mute and unmute all of the patterns in a set at once.  It can
+     *  also be modified to change the pattern when the application is in
+     *  Learn mode.
      */
 
     mutegroups & m_mute_groups;
 
     /**
-     *  The number of loops/patterns in the set.  Saves a calculation
-     *  of row x column.  It is important to note the the size of the set is
-     *  constant throughout its lifetime (and the lifetime of the
-     *  application).  This is the actual set size, not necessarily the maximum.
-     *  See the corresponding static variable.
+     *  The number of loops/patterns in the set.  Saves a calculation of row x
+     *  column.  It is important to note the the size of the set is constant
+     *  throughout its lifetime (and the lifetime of the application).  This
+     *  is the actual set size, not necessarily the maximum.  See the
+     *  corresponding static variable.
      */
 
     int m_set_size;
@@ -229,11 +230,6 @@ private:
     screenset::number seq_set (seq::number s, int & row, int & column) const;
 #endif
 
-    screenset::number calculate_set (int row, int column) const
-    {
-        return master().calculate_set(row, column);
-    }
-
     /**
      *  Gets the offset of the sequence (re 0) in its screen-set.  It assumes
      *  the pointer is good.
@@ -244,9 +240,9 @@ private:
         return s->seq_number() % m_set_size;
     }
 
-    seq::number calculate_seq (int row, int column) const
+    seq::number grid_to_seq (int row, int column) const
     {
-        return play_screen()->calculate_seq(row, column);
+        return play_screen()->grid_to_seq(row, column);
     }
 
     bool seq_to_grid (seq::number seqno, int & row, int & column) const
@@ -286,21 +282,6 @@ private:
         return m_columns;
     }
 
-    int mute_rows () const
-    {
-        return mutes().rows();
-    }
-
-    int mute_columns () const
-    {
-        return mutes().columns();
-    }
-
-    bool any_mutes () const
-    {
-        return mutes().any();
-    }
-
     bool group_event () const
     {
         return mutes().group_event();
@@ -331,31 +312,6 @@ private:
     void toggle_group_mode ()
     {
         mutes().toggle_group_mode();
-    }
-
-    bool is_group_learn () const
-    {
-        return mutes().is_group_learn();
-    }
-
-    void group_learn (bool flag)
-    {
-        mutes().group_learn(flag);
-    }
-
-    mutegroup::number group_selected () const
-    {
-        return mutes().group_selected();
-    }
-
-    int group_size () const
-    {
-        return mutes().group_size();
-    }
-
-    bool group_present () const
-    {
-        return mutes().group_present();
     }
 
     bool any_in_edit () const
@@ -876,11 +832,6 @@ public:
         return master().is_screenset_available(setno);
     }
 
-    bool is_screenset_valid (screenset::number setno) const
-    {
-        return master().is_screenset_valid(setno);
-    }
-
     /**
      *  A helper function for determining if:
      *
@@ -914,25 +865,6 @@ public:
     bool swap_sets (seq::number set0, seq::number set1)
     {
         return master().swap_sets(set0, set1);
-    }
-
-    mutegroup::number calculate_mute (int row, int column) const
-    {
-        return mutes().calculate_mute(row, column);
-    }
-
-    /*
-     * Intermediates between the playing screen and a mutegroup.
-     */
-
-    int count_mutes (mutegroup::number gmute)
-    {
-        return mutes().armed_count(gmute);
-    }
-
-    midibooleans get_mutes (mutegroup::number gmute)
-    {
-        return mutes().get(gmute);
     }
 
     bool set_mutes (mutegroup::number gmute, const midibooleans & bits)

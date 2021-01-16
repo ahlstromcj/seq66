@@ -2824,7 +2824,7 @@ performer::output_func ()
             m_current_tick = double(m_starting_tick);
             pad.js_current_tick = long(m_starting_tick);
             pad.js_clock_tick = m_starting_tick;
-            set_orig_ticks(m_starting_tick);
+            set_last_ticks(m_starting_tick);
         }
 
         int ppqn = m_master_bus->get_ppqn();
@@ -2921,7 +2921,7 @@ performer::output_func ()
 
             if (change_position)
             {
-                set_orig_ticks(m_starting_tick);
+                set_last_ticks(m_starting_tick);
                 m_starting_tick = m_left_tick;      /* restart at L marker  */
                 m_reposition = false;
             }
@@ -2981,7 +2981,7 @@ performer::output_func ()
                             play(rtick - 1);
 
                         midipulse ltick = get_left_tick();
-                        set_orig_ticks(ltick);
+                        set_last_ticks(ltick);
                         m_current_tick = double(ltick) + leftover_tick;
                         pad.js_current_tick = double(ltick) + leftover_tick;
                     }
@@ -4411,20 +4411,16 @@ performer::unset_queued_replace (bool clearbits)
 void
 performer::group_learn (bool learning)
 {
-    mapper().group_learn(learning);
+    mutes().group_learn(learning);
     midi_control_out().send_learning(learning);
     for (auto notify : m_notify)
         (void) notify->on_group_learn(learning);
 }
 
-/**
- *
- */
-
 void
 performer::group_learn_complete (const keystroke & k, bool good)
 {
-    mapper().group_learn(false);
+    mutes().group_learn(false);
     for (auto notify : m_notify)
     {
         (void) notify->on_group_learn(false);
@@ -4954,7 +4950,7 @@ performer::populate_default_ops ()
 
 /**
  *  Sets the given mute group.  If there is a change,  then the subscribers are
- *  notified.  If the "rc" "save-mutes-to" setting indicates saving it to the
+ *  notified.  If the 'rc' "save-mutes-to" setting indicates saving it to the
  *  MIDI file, then this becomes a modify action.
  */
 
@@ -5015,10 +5011,6 @@ performer::apply_session_mutes ()
 
     return result;
 }
-
-/**
- *
- */
 
 bool
 performer::learn_mutes (mutegroup::number group)

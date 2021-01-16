@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-12-05
+ * \updates       2021-01-15
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -130,13 +130,26 @@ public:
 private:
 
     /**
+     *  The virtual number of rows in a grid of mute-groups.
+     */
+
+    static const int c_rows     = SEQ66_DEFAULT_SET_ROWS;
+
+    /**
+     *  The virtual number of columns in a grid of mute-groups.
+     */
+
+    static const int c_columns  = SEQ66_DEFAULT_SET_COLUMNS;
+
+    /**
      *  This value indicates that there is no mute-group selected.
      */
 
     static const int sm_null_mute_group = (-1);
 
     /**
-     *  Holds a set of mutegroup objects keyed by the configured set number.
+     *  Holds a set of mutegroup objects keyed by the configured mute
+     *  group number.
      */
 
     container m_container;
@@ -265,6 +278,21 @@ public:
     mutegroups & operator = (mutegroups &&) = default;
     ~mutegroups () = default;
 
+    static int Rows ()
+    {
+        return c_rows;
+    }
+
+    static int Columns ()
+    {
+        return c_columns;
+    }
+
+    static int Size ()
+    {
+        return c_rows * c_columns;
+    }
+
     int null_mute_group ()
     {
         return sm_null_mute_group;
@@ -322,7 +350,8 @@ public:
 #if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
     bool alt_toggle (mutegroup::number group, midibooleans & armedbits);
 #endif
-    mutegroup::number calculate_mute (int row, int column) const;
+    mutegroup::number grid_to_group (int row, int column) const;
+    bool group_to_grid (mutegroup::number group, int & row, int & column) const;
 
     bool loaded_from_mutes () const
     {
@@ -388,7 +417,8 @@ public:
     bool reset_defaults ();                         /* used in mutegroupsfile */
     bool load (mutegroup::number gmute, const midibooleans & bits);
     bool set (mutegroup::number gmute, const midibooleans & bits);
-    midibooleans get (mutegroup::number gmute);
+    midibooleans get (mutegroup::number gmute) const;
+    midibooleans get_active_groups () const;
     bool any () const;
     const mutegroup & mute_group (mutegroup::number gmute) const;
     void show (mutegroup::number gmute = sm_null_mute_group) const;

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-30
- * \updates       2019-03-26
+ * \updates       2021-01-16
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -44,6 +44,8 @@
 
 namespace seq66
 {
+
+class mutegroups;                       /* forward reference to class       */
 
 /**
  *  Provides a file for reading and writing the application's mute-group
@@ -117,6 +119,12 @@ private:
     bool write_mute_groups (std::ofstream & file);
 
 };              // class mutegroupsfile
+
+/*
+ * Free functions in the seq66 namespace.
+ */
+
+extern bool save_mutegroups (const std::string & destfile);
 
 }               // namespace seq66
 

@@ -275,7 +275,7 @@ screenset::first_seq () const
  */
 
 seq::number
-screenset::calculate_seq (int row, int column) const
+screenset::grid_to_seq (int row, int column) const
 {
 #ifdef USE_RANGE_CORRECTED_VERSION
     if (row < 0)

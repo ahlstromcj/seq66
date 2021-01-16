@@ -988,7 +988,9 @@ setmapper::sequence_playscreen_change
 }
 
 /**
- *  Also note that screenset::is_seq_in_edit() can be used!!!
+ *  Also note that screenset::is_seq_in_edit() could be used, but setmapper
+ *  currently has no reference the the screenset class.  Yet, see the armed()
+ *  function just below!
  */
 
 bool

@@ -88,7 +88,7 @@ typedef struct
 } pt_callback_parameters;
 
 /**
- *
+ *  Holds an ID to a callback function.
  */
 
 static int pt_callback_proc_id = 0;

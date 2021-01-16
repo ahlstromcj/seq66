@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-12-05
+ * \updates       2021-01-15
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -164,7 +164,7 @@ mutegroups::set (mutegroup::number gmute, const midibooleans & bits)
  */
 
 midibooleans
-mutegroups::get (mutegroup::number gmute)
+mutegroups::get (mutegroup::number gmute) const
 {
     auto mgiterator = m_container.find(gmute);
     if (mgiterator != m_container.end())
@@ -179,8 +179,24 @@ mutegroups::get (mutegroup::number gmute)
 }
 
 /**
- *
+ *  Creates a vector of the size of the set of mutegroups, and sets the "bit"
+ *  for each one that corresponds to an existing mutegroup.
  */
+
+midibooleans
+mutegroups::get_active_groups () const
+{
+    midibooleans result;
+    result.resize(Size());
+    for (const auto & mgpair : m_container)
+    {
+        int g = mgpair.first;   /* const mutegroup & m = mgpair.second */
+        const mutegroup & m = mgpair.second;
+        if (g >= 0 && g < Size())
+            result[g] = midibool(m.any());
+    }
+    return result;
+}
 
 bool
 mutegroups::add (mutegroup::number gmute, const mutegroup & m)
@@ -198,7 +214,8 @@ mutegroups::add (mutegroup::number gmute, const mutegroup & m)
 
 /**
  *  \return
- *      Returns true if any of the mutegroup objects has an armed (true) status.
+ *      Returns true if any of the mutegroup objects has an armed (true)
+ *      status.
  */
 
 bool
@@ -472,34 +489,54 @@ mutegroups::reset_defaults ()
 }
 
 /**
- *  Returns the mute number for the given row and column.  Remember that the
- *  layout of mutes doesn't match that of sets and sequences.
+ *  Returns the mute group number for the given row and column.  Remember that
+ *  the layout of mutes doesn't match that of sets and sequences.  The row and
+ *  column here currently match the 4 x 8 mute-group grid in the qmutemaster
+ *  module.
  *
  * \param row
- *      Provides the desired row, clamped to a legal value.
+ *      Provides the desired row of the virtual mute-group grid, clamped to a
+ *      legal value.
  *
- * \param row
- *      Provides the desired row, clamped to a legal value.
+ * \param column
+ *      Provides the desired column of the virtual mute-group grid, clamped to
+ *      a legal value.
  *
  * \return
- *      Returns the calculated set value, which will range from 0 to
+ *      Returns the calculated mute-group value, which will range from 0 to
  *      (m_rows * m_columns) - 1 = m_set_count.
  */
 
 mutegroup::number
-mutegroups::calculate_mute (int row, int column) const
+mutegroups::grid_to_group (int row, int column) const
 {
     if (row < 0)
         row = 0;
-    else if (row >= m_rows)
-        row = m_rows - 1;
+    else if (row >= Rows())
+        row = Rows() - 1;
 
     if (column < 0)
         column = 0;
-    else if (column >= m_columns)
-        row = m_columns - 1;
+    else if (column >= Columns())
+        row = Columns() - 1;
 
-    return row + m_rows * column;
+    return row + column * Rows();
+}
+
+bool
+mutegroups::group_to_grid
+(
+    mutegroup::number group,
+    int & row, int & column
+) const
+{
+    bool result = group >= 0 && group < Size();
+    if (result)
+    {
+        row = group % Rows();
+        column = group / Rows();
+    }
+    return result;
 }
 
 /**

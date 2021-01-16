@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2020-07-29
+ * \updates       2021-01-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,9 +34,11 @@
 #include <QTimer>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
+#include "cfg/mutegroupsfile.hpp"       /* seq66::save_mutegroups()         */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/mutegroups.hpp"          /* seq66::mutegroup, mutegroups     */
+#include "util/filefunctions.hpp"       /* seq66::name_has_directory()      */
 #include "qmutemaster.hpp"              /* seq66::qmutemaster, this class   */
 #include "qsmainwnd.hpp"                /* seq66::qsmainwnd main window     */
 #include "qt5_helpers.hpp"              /* seq66::qt_keystroke() etc.       */
@@ -58,6 +60,7 @@
 
 #define SEQ66_TABLE_ROW_HEIGHT          18
 #define SEQ66_TABLE_FIX                 16      // 2
+#define SEQ66_BUTTON_SIZE               24
 
 /*
  * Don't document the namespace.
@@ -94,13 +97,18 @@ qmutemaster::qmutemaster
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_group_buttons         (),                             /* 2-D arrary   */
-    m_current_group         (seq::unassigned()),
+    m_pattern_buttons       (),                             /* 2-D arrary   */
+    m_current_group         (seq::unassigned()),            /* important    */
     m_group_count           (cb_perf().mutegroup_count()),
-    m_modify_active         (false),
-    m_needs_update          (true)
+    m_button_row            (seq::unassigned()),
+    m_button_column         (seq::unassigned()),
+    m_trigger_active        (false),
+    m_needs_update          (true),
+    m_pattern_mutes         ()
 {
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    clear_pattern_mutes();              /* empty the pattern bits           */
 
     /*
      * Connect the bin/hex radio buttons and set them as per the configured
@@ -119,19 +127,28 @@ qmutemaster::qmutemaster
     );
     set_bin_hex(! cb_perf().mutes().group_format_hex());
 
-    ui->m_button_modify->setEnabled(true);
-    connect(ui->m_button_modify, SIGNAL(clicked()), this, SLOT(slot_modify()));
+    ui->m_button_trigger->setEnabled(true);
+    connect
+    (
+        ui->m_button_trigger, SIGNAL(clicked()),
+        this, SLOT(slot_trigger())
+    );
 
-    ui->m_button_reset->setEnabled(false);
-    connect(ui->m_button_reset, SIGNAL(clicked()), this, SLOT(slot_reset()));
+    ui->m_button_set_mutes->setEnabled(false);
+    connect
+    (
+        ui->m_button_set_mutes, SIGNAL(clicked()),
+        this, SLOT(slot_set_mutes())
+    );
 
-    ui->m_button_down->setEnabled(false);
-    ui->m_button_down->hide();
+    ui->m_button_down->setEnabled(false);   // ui->m_button_down->hide();
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_down()));
 
-    ui->m_button_up->setEnabled(false);
-    ui->m_button_up->hide();
+    ui->m_button_up->setEnabled(false);     // ui->m_button_up->hide();
     connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
+
+    ui->m_button_save->setEnabled(true);
+    connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
 
     ui->m_check_to_midi->setEnabled(true);
     ui->m_check_to_midi->setChecked(cb_perf().mutes().group_save_to_midi());
@@ -159,18 +176,21 @@ qmutemaster::qmutemaster
 
     ui->m_button_close->hide();         /* should eliminate eventually      */
     create_group_buttons();
+    create_pattern_buttons();
     connect
     (
         ui->m_button_clear_all, SIGNAL(clicked()),
-        this, SLOT(clear_mutes())
+        this, SLOT(slot_clear_all_mutes())
     );
 
-    ui->m_mute_basename->setPlainText(rc().mute_group_filename().c_str());
-    ui->m_mute_basename->setEnabled(false);
+    QString mgfname = "backup-";
+    mgfname += QString::fromStdString(rc().mute_group_filename());
+    ui->m_mute_basename->setPlainText(mgfname);
+    ui->m_mute_basename->setEnabled(true);
 
     setup_table();                      /* row and column sizing            */
-    (void) initialize_table();          /* fill with sets                   */
-    handle_group(0, 0);                 /* guaranteed to be present         */
+    (void) initialize_table();          /* fill with mute-group information */
+    handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group(0);                    /* select the first group           */
     cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
@@ -194,46 +214,33 @@ qmutemaster::~qmutemaster()
     delete ui;
 }
 
-/**
- *
- */
-
 void
 qmutemaster::conditional_update ()
 {
     if (needs_update())                 /*  perf().needs_update() too iffy  */
     {
-        mutegroup::number group = mutegroup::number(current_group());
-        midibooleans mutes = cb_perf().get_mutes(group);
-        if (int(mutes.size()) == cb_perf().group_size())
-        {
-            for (int row = 0; row < cb_perf().mute_rows(); ++row)
-            {
-                for (int col = 0; col < cb_perf().mute_columns(); ++col)
-                {
-                    int group = int(cb_perf().calculate_mute(row, col));
-                    bool enabled = bool(mutes[group]);
-                    m_group_buttons[row][col]->setEnabled(enabled);
-                }
-            }
-            update();
-        }
+        update_group_buttons();
+        update_pattern_buttons();
+        update();
     }
 }
 
-/**
- *
- */
-
 void
-qmutemaster::clear_mutes ()
+qmutemaster::slot_clear_all_mutes ()
 {
     cb_perf().clear_mutes();
+    // group_needs_update();            // update();
 }
 
-/**
- *
- */
+void
+qmutemaster::clear_pattern_mutes ()
+{
+    m_pattern_mutes.clear();
+    m_pattern_mutes.resize(cb_perf().mutegroup_count());    /* always 32    */
+    //
+    //update_pattern_buttons(enabling::disable);
+    //
+}
 
 void
 qmutemaster::setup_table ()
@@ -246,7 +253,7 @@ qmutemaster::setup_table ()
     connect
     (
         ui->m_group_table, SIGNAL(currentCellChanged(int, int, int, int)),
-        this, SLOT(mute_table_click_ex(int, int, int, int))
+        this, SLOT(slot_table_click(int, int, int, int))
     );
     set_column_widths(w - SEQ66_TABLE_FIX);
     const int rows = ui->m_group_table->rowCount();
@@ -257,40 +264,48 @@ qmutemaster::setup_table ()
 
 /**
  *  Scales the columns against the provided window width. The width factors
- *  should add up to 1.
+ *  should add up to 1.  However, we make the name column narrower.
  */
 
 void
 qmutemaster::set_column_widths (int total_width)
 {
-    ui->m_group_table->setColumnWidth(0, int(0.125f * total_width));
-    ui->m_group_table->setColumnWidth(1, int(0.125f * total_width));
-    ui->m_group_table->setColumnWidth(2, int(0.10f * total_width));
-    ui->m_group_table->setColumnWidth(3, int(0.65f * total_width));
+    ui->m_group_table->setColumnWidth(0, int(0.150f * total_width));
+    ui->m_group_table->setColumnWidth(1, int(0.150f * total_width));
+    ui->m_group_table->setColumnWidth(2, int(0.100f * total_width));
+    ui->m_group_table->setColumnWidth(3, int(0.55f * total_width)); // 0.65
 }
-
-/**
- *
- */
 
 bool
 qmutemaster::set_current_group (int row)
 {
-    bool result = row >= 0 && row < cb_perf().mutegroup_count();
+    bool result = row != current_group();
+    if (result)
+        result = row >= 0 && row < cb_perf().mutegroup_count();
+
     if (result)
     {
-        result = row != current_group();
-        if (result)
+        int gridrow, gridcolumn;
+        if (cb_perf().group_to_grid(row, gridrow, gridcolumn))
         {
+            if (m_button_row >= 0)
+            {
+                QPushButton * temp =
+                    m_group_buttons[m_button_row][m_button_column];
+
+                temp->setEnabled(false);
+            }
+            m_button_row = gridrow;
+            m_button_column = gridcolumn;
             m_current_group = row;
+
+            QPushButton * temp = m_group_buttons[m_button_row][m_button_column];
+            temp->setEnabled(true);
+            // ui->m_button_set_mutes->setEnabled(true);
         }
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 qmutemaster::initialize_table ()
@@ -385,31 +400,24 @@ qmutemaster::group_line
  */
 
 void
-qmutemaster::mute_table_click_ex
+qmutemaster::slot_table_click
 (
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    int rows = cb_perf().mutegroup_count();
+    int rows = cb_perf().mutegroup_count();             /* always 32    */
     if (rows > 0 && row >= 0 && row < rows)
     {
         if (set_current_group(row))
         {
-            ui->m_button_modify->setEnabled(true);
-            ui->m_button_reset->setEnabled(false);
+            ui->m_button_trigger->setEnabled(true);
+            ui->m_button_set_mutes->setEnabled(false);
             ui->m_button_down->setEnabled(true);
             ui->m_button_up->setEnabled(true);
-            if (modify())
-                update_group_buttons(true);
-            else
-                group_needs_update();
+            group_needs_update();
         }
     }
 }
-
-/**
- *
- */
 
 void
 qmutemaster::closeEvent (QCloseEvent * event)
@@ -419,34 +427,36 @@ qmutemaster::closeEvent (QCloseEvent * event)
 }
 
 /**
- *  Creates a grid of buttons in the grid layout.  This grid is always
- *  4 x 8, as discussed in the setmapper::calculate_set() function, but if a
- *  smaller set number (count) is used, some buttons will be unlabelled and
- *  disabled.
+ *  Creates a grid of buttons in the group/set grid layout.  This grid is
+ *  always 4 x 8, as discussed in the setmapper::grid_to_group() function, but
+ *  if a smaller set number (count) is used, some buttons will be unlabelled
+ *  and disabled.
  *
  *  Note that the largest number of sets is 4 x 8 = 32.  This limitation is
- *  necessary because there are only so many available keys on the keyboard for
- *  pattern, mute-group, and set control.
+ *  necessary because there are only so many available keys on the keyboard
+ *  for pattern, mute-group, and set control.
  */
 
 void
 qmutemaster::create_group_buttons ()
 {
-    const QSize btnsize = QSize(32, 32);
+    const QSize btnsize = QSize(SEQ66_BUTTON_SIZE, SEQ66_BUTTON_SIZE);
     for (int row = 0; row < cb_perf().mute_rows(); ++row)
     {
         for (int column = 0; column < cb_perf().mute_columns(); ++column)
         {
-            int group = int(cb_perf().calculate_mute(row, column));
-            std::string gstring = std::to_string(group);
+            mutegroup::number m = cb_perf().grid_to_group(row, column);
+            std::string gstring = std::to_string(m);
             QPushButton * temp = new QPushButton(gstring.c_str());
             ui->setGridLayout->addWidget(temp, row, column);
             temp->setFixedSize(btnsize);
             connect
             (
-                temp, &QPushButton::released, [=] { handle_group(row, column); }
+                temp, &QPushButton::released,
+                [=] { handle_group_button(row, column); }
             );
             temp->show();
+            temp->setCheckable(true);
             temp->setEnabled(false);
             m_group_buttons[row][column] = temp;
         }
@@ -454,35 +464,23 @@ qmutemaster::create_group_buttons ()
 }
 
 /**
- *
+ *  Updates the top buttons that indicate the mute-groups present during this
+ *  run of the current MIDI file.
  */
 
 void
-qmutemaster::update_group_buttons (bool tomodify)
+qmutemaster::update_group_buttons (enabling tomodify)
 {
-    midibooleans mutes = cb_perf().get_mutes(current_group());
-    if (! mutes.empty())
+    midibooleans groups = cb_perf().get_active_groups();
+    for (int row = 0; row < mutegroups::Rows(); ++row)
     {
-        for (int row = 0; row < cb_perf().mute_rows(); ++row)
+        for (int column = 0; column < mutegroups::Columns(); ++column)
         {
-            for (int column = 0; column < cb_perf().mute_columns(); ++column)
-            {
-                QPushButton * temp = m_group_buttons[row][column];
-                int mute = int(cb_perf().calculate_mute(row, column));
-                std::string gstring = std::to_string(mute);
-                bool enabled = bool(mutes[mute]);
-                if (tomodify)
-                {
-                    modify(true);
-                    if (enabled)
-                        gstring += "*";
-
-                    enabled = true;         /* all buttons will be enabled  */
-                    temp->setEnabled(true);
-                }
-                temp->setText(gstring.c_str());
-                temp->setEnabled(enabled);
-            }
+            QPushButton * temp = m_group_buttons[row][column];
+            mutegroup::number m = cb_perf().grid_to_group(row, column);
+            temp->setChecked(bool(groups[m]));
+            if (tomodify != enabling::leave)
+                temp->setEnabled(tomodify == enabling::enable);
         }
     }
 }
@@ -502,20 +500,12 @@ qmutemaster::set_bin_hex (bool bin_checked)
     }
 }
 
-/**
- *
- */
-
 void
 qmutemaster::slot_bin_mode (bool ischecked)
 {
     cb_perf().mutes().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
 }
-
-/**
- *
- */
 
 void
 qmutemaster::slot_hex_mode (bool ischecked)
@@ -524,28 +514,56 @@ qmutemaster::slot_hex_mode (bool ischecked)
     set_bin_hex(! ischecked);
 }
 
-/**
- *
- */
-
 void
-qmutemaster::slot_modify ()
+qmutemaster::slot_trigger ()
 {
-    modify(! modify());
-    update_group_buttons(modify());
+    trigger(! trigger());
+    if (trigger())
+    {
+        update_group_buttons(enabling::enable);
+        update_pattern_buttons(enabling::disable);
+    }
+    else
+    {
+        QPushButton * temp = m_group_buttons[m_button_row][m_button_column];
+        update_group_buttons(enabling::disable);
+        update_pattern_buttons(enabling::disable);
+        temp->setEnabled(true);
+    }
 }
 
 /**
- *
+ *  The calls to set mutes:  fill midibooleans bit and call
  */
 
 void
-qmutemaster::slot_reset ()
+qmutemaster::slot_set_mutes ()
 {
+#if defined GET_PATTERN_BUTTON_STATUS
+    midibooleans bits;
+    for (int row = 0; row < cb_perf().mute_rows(); ++row)
+    {
+        for (int column = 0; column < cb_perf().mute_columns(); ++column)
+        {
+            QPushButton * temp = m_pattern_buttons[row][column];
+            midibool b = midibool(temp->isChecked());
+            bits.push_back(b);
+        }
+    }
+#else
+    midibooleans bits = m_pattern_mutes;
+#endif
+
+    bool ok = cb_perf().set_mutes(current_group(), bits);
+    if (! ok)
+    {
+        // TODO show the error
+    }
 }
 
 /**
- *
+ *  A slot for handle_group(), meant to move a table row down.
+ *  Not yet ready for primetime.
  */
 
 void
@@ -556,7 +574,8 @@ qmutemaster::slot_down ()
 }
 
 /**
- *
+ *  A slot for handle_group(), meant to move a table row up.
+ *  Not yet ready for primetime.
  */
 
 void
@@ -564,6 +583,36 @@ qmutemaster::slot_up ()
 {
     if (set_current_group(current_group() - 1))
         handle_group(current_group());
+}
+
+void
+qmutemaster::slot_save ()
+{
+    QString filename = ui->m_mute_basename->toPlainText();
+    std::string mutefile = filename.toStdString();
+    if (! mutefile.empty())
+    {
+        if (name_has_directory(mutefile))
+        {
+            std::string fullpath = mutefile;
+            std::string path;
+            (void) filename_split(fullpath, path, mutefile);
+        }
+        rc().mute_group_filename(mutefile);
+        mutefile = rc().mute_group_filespec();
+        if (save_mutegroups(mutefile))
+        {
+            /*
+             * TODO: report success
+             */
+        }
+        else
+        {
+            /*
+             * TODO: report error
+             */
+        }
+    }
 }
 
 void
@@ -583,38 +632,32 @@ qmutemaster::slot_write_to_mutes()
 }
 
 /**
- *  This function handles one of the mute buttons in the grid of group buttons.
- *
- *  Do we need to "unmodify" here?
+ *  This function handles one of the mute buttons in the grid of group
+ *  buttons.
  */
 
 void
-qmutemaster::handle_group (int row, int column)
+qmutemaster::handle_group_button (int row, int column)
 {
-    if (modify())
+    QPushButton * button = m_group_buttons[row][column];
+    bool checked = button->isChecked();
+    if (checked)
     {
-        midibooleans mutes = cb_perf().get_mutes(current_group());
-        if (! mutes.empty())
-        {
-            int mute = int(cb_perf().calculate_mute(row, column));
-            std::string gstring = std::to_string(mute);
-            bool enabled = ! bool(mutes[mute]);         /* toggle the mute  */
-            if (enabled)
-                gstring += "*";
+        /*
+         * Was inactive, now active, add a new mute-group?
+         */
 
-            mutes[mute] = midibool(enabled);
-            if (cb_perf().set_mutes(current_group(), mutes))
-            {
-                QPushButton * temp = m_group_buttons[row][column];
-                temp->setText(gstring.c_str());
-            }
-        }
+        update_pattern_buttons(enabling::enable);
+    }
+    else
+    {
+        /*
+         * Was active, now inactive, delete the mute-group?
+         */
+
+        update_pattern_buttons(enabling::disable);
     }
 }
-
-/**
- *
- */
 
 void
 qmutemaster::handle_group (int groupno)
@@ -622,7 +665,8 @@ qmutemaster::handle_group (int groupno)
     if (groupno != m_current_group)
     {
         set_current_group(groupno);
-        update_group_buttons(false);            /* non-modification         */
+        update_group_buttons();
+        update_pattern_buttons();
     }
 }
 
@@ -643,10 +687,6 @@ qmutemaster::on_mutes_change (mutegroup::number group)
     return result;
 }
 
-/**
- *
- */
-
 void
 qmutemaster::keyPressEvent (QKeyEvent * event)
 {
@@ -657,10 +697,6 @@ qmutemaster::keyPressEvent (QKeyEvent * event)
     else
         QWidget::keyPressEvent(event);              /* event->ignore()      */
 }
-
-/**
- *
- */
 
 void
 qmutemaster::keyReleaseEvent (QKeyEvent * event)
@@ -686,10 +722,6 @@ qmutemaster::changeEvent (QEvent * event)
     }
 }
 
-/**
- *
- */
-
 bool
 qmutemaster::handle_key_press (const keystroke & k)
 {
@@ -702,10 +734,6 @@ qmutemaster::handle_key_press (const keystroke & k)
     return result;
 }
 
-/**
- *
- */
-
 bool
 qmutemaster::handle_key_release (const keystroke & k)
 {
@@ -715,10 +743,6 @@ qmutemaster::handle_key_release (const keystroke & k)
     }
     return done;
 }
-
-/**
- *
- */
 
 bool
 qmutemaster::group_control
@@ -731,6 +755,94 @@ qmutemaster::group_control
         handle_group(index);
 
     return result;
+}
+
+/*
+ *  Section for controlling the pattern grid.
+ */
+
+/**
+ *  Creates a grid of buttons in the pattern grid layout.  This grid is
+ *  currently 4 x 8, but might eventually approach 12 x 8.  We shall see.
+ *  Activating a button adds that pattern to the currently-selected
+ *  mute-group.
+ */
+
+void
+qmutemaster::create_pattern_buttons ()
+{
+    const QSize btnsize = QSize(SEQ66_BUTTON_SIZE, SEQ66_BUTTON_SIZE);
+    for (int row = 0; row < cb_perf().mute_rows(); ++row)
+    {
+        for (int column = 0; column < cb_perf().mute_columns(); ++column)
+        {
+            mutegroup::number m = cb_perf().grid_to_group(row, column);
+            std::string gstring = std::to_string(m);
+            QPushButton * temp = new QPushButton(gstring.c_str());
+            ui->patternGridLayout->addWidget(temp, row, column);
+            temp->setFixedSize(btnsize);
+            connect
+            (
+                temp, &QPushButton::released,
+                [=] { handle_pattern_button(row, column); }
+            );
+            temp->show();
+            temp->setCheckable(true);
+            temp->setEnabled(false);
+            m_pattern_buttons[row][column] = temp;
+        }
+    }
+}
+
+/**
+ *  Updates the top buttons that indicate the mute-groups present during this
+ *  run of the current MIDI file.
+ *
+ * \todo
+ *      -   Calculate the pattern rows and columns the proper way.
+ *      -   Deal with cases other than 4 x 8 properly.
+ */
+
+void
+qmutemaster::update_pattern_buttons (enabling tomodify)
+{
+    int pattern_rows = cb_perf().mute_rows();
+    int pattern_columns = cb_perf().mute_columns();
+    midibooleans mutes = cb_perf().get_mutes(current_group());
+    if (! mutes.empty())
+    {
+        for (int row = 0; row < pattern_rows; ++row)
+        {
+            for (int column = 0; column < pattern_columns; ++column)
+            {
+                QPushButton * temp = m_pattern_buttons[row][column];
+                seq::number s = cb_perf().grid_to_seq(row, column);
+                temp->setChecked(bool(mutes[s]));
+                if (tomodify != enabling::leave)
+                    temp->setEnabled(tomodify == enabling::enable);
+            }
+        }
+    }
+}
+
+/**
+ *  This function handles one of the pattern buttons in the grid of pattern
+ *  buttons.  All it does is change the status of the appropriate bit in the
+ *  midibooleans pattern vector.
+ */
+
+void
+qmutemaster::handle_pattern_button (int row, int column)
+{
+    QPushButton * temp = m_pattern_buttons[row][column];
+    seq::number s = cb_perf().grid_to_seq(row, column);
+    bool bitisset = bool(m_pattern_mutes[s]);
+    bool enabled = temp->isChecked();
+    if (bitisset != enabled)
+    {
+        m_pattern_mutes[s] = midibool(enabled);
+        ui->m_button_set_mutes->setEnabled(true);
+    }
 }
 
 }               // namespace seq66

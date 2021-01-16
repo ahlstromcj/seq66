@@ -779,7 +779,7 @@ qslivegrid::seq_id_from_xy (int click_x, int click_y)
     int result = seq::unassigned();
     int row, column;
     if (get_slot_coordinate(click_x, click_y, row, column))
-         result = int(perf().calculate_seq(row, column));
+         result = int(perf().grid_to_seq(row, column));
 
     return result;
 }

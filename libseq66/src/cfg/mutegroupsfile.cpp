@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-11-30
+ * \updates       2021-01-16
  * \license       GNU GPLv2 or above
  *
  */
@@ -382,6 +382,34 @@ mutegroupsfile::parse_mutes_stanza ()
         result = parse_stanza_bits(groupmutes, line());
         if (result)
             result = rc_ref().mute_groups().load(group, groupmutes);
+    }
+    return result;
+}
+
+/**
+ *  This is tricky, as mutegroupsfile always references the
+ *  rc().mute_groups() object when reading and writing.
+ *
+ *      const mutegroups & mg = rc().mute_groups();
+ */
+
+bool
+save_mutegroups (const std::string & destination)
+{
+    bool result = ! destination.empty();
+    if (result)
+    {
+        mutegroupsfile mgf(destination, rc());
+        file_message("Mute-groups save", destination);
+        result = mgf.write();               // mg.file_name(destination);
+        if (! result)
+        {
+            file_error("Mute-groups write failed", destination);
+        }
+    }
+    else
+    {
+        file_error("Mute-groups file to save", "none");
     }
     return result;
 }

@@ -356,7 +356,7 @@ public:
         return seqno >= m_set_offset && seqno < m_set_maximum;
     }
 
-    seq::number calculate_seq (int row, int column) const;
+    seq::number grid_to_seq (int row, int column) const;
     bool seq_to_grid (seq::number seqno, int & row, int & column) const;
     bool needs_update () const;
 
