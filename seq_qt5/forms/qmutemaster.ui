@@ -108,13 +108,34 @@
        <number>2</number>
       </property>
       <item>
+       <widget class="QSpinBox" name="m_pattern_offset_spinbox">
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>When the set-size is 64 and 96 instead of 32,
+this control allows paging the Group Patterns
+grid.  A future feature.</string>
+        </property>
+        <property name="wrapping">
+         <bool>true</bool>
+        </property>
+        <property name="maximum">
+         <number>2</number>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="m_button_save">
         <property name="enabled">
          <bool>false</bool>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>64</width>
           <height>16777215</height>
          </size>
         </property>
@@ -123,7 +144,7 @@
 configuration directory.</string>
         </property>
         <property name="text">
-         <string>Save to File</string>
+         <string>Save File</string>
         </property>
        </widget>
       </item>
@@ -172,7 +193,7 @@ configuration directory.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>50</width>
           <height>16777215</height>
          </size>
         </property>

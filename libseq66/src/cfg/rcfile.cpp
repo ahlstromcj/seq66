@@ -320,7 +320,7 @@ rcfile::parse ()
          */
 
         ok = parse_mute_group_section(name());
-        rc_ref().use_mute_group_file(false);
+        rc_ref().use_mute_group_file(true);             /* allow new stuff  */
     }
 
     int flag = 0;
@@ -925,12 +925,16 @@ rcfile::write ()
          * be changed in the [mute-group-file] section.
          */
 
-        std::string mgfname = rc_ref().mute_group_filespec();
-        mutegroupsfile mgf(mgfname, rc_ref());
-        mgfname = rc_ref().trim_home_directory(mgfname);
-        mgfname = add_quotes(mgfname);
-        file << "\n[mute-group-file]\n\n" << mgfname << "\n";
-        ok = mgf.write();
+        const mutegroups & mgroups = rc().mute_groups();
+        if (mgroups.group_save_to_mutes())
+        {
+            std::string mgfname = rc_ref().mute_group_filespec();
+            mutegroupsfile mgf(mgfname, rc_ref());
+            mgfname = rc_ref().trim_home_directory(mgfname);
+            mgfname = add_quotes(mgfname);
+            file << "\n[mute-group-file]\n\n" << mgfname << "\n";
+            ok = mgf.write();
+        }
     }
     else
         ok = write_mute_groups(file);

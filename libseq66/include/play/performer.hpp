@@ -2101,16 +2101,6 @@ public:
         mapper().select_and_mute_group(mg);
     }
 
-    mutegroup::number grid_to_group (int row, int column) const
-    {
-        return mutes().grid_to_group(row, column);
-    }
-
-    bool group_to_grid (mutegroup::number group, int & row, int & column) const
-    {
-        return mutes().group_to_grid(group, row, column);
-    }
-
     int count_mutes (mutegroup::number group)
     {
         return mutes().armed_count(group);

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-01-15
+ * \updates       2021-01-17
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -37,7 +37,7 @@
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/opcontainer.hpp"         /* class seq66::opcontainer         */
-#include "play/mutegroup.hpp"           /* seq66::mutegroup::number type    */
+#include "play/mutegroups.hpp"          /* seq66::mutegroup, mutegroups     */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/setmapper.hpp"           /* seq66::setmapper class           */
 
@@ -194,6 +194,7 @@ signals:
 private slots:
 
     void conditional_update ();
+    void slot_pattern_offset (int index);
     void slot_table_click
     (
         int row, int /*column*/,
@@ -240,14 +241,18 @@ private:
     qsmainwnd * m_main_window;
 
     /**
-     *  Access to all the mute-group buttons.
+     *  Access to all the mute-group buttons.  This is an array forever fixed to
+     *  4 x 8, because that's about all the keystrokes we have available to
+     *  allocate to mute-groups.  We would use mutegroups::Rows() and
+     *  mutegroups::Columns(), but C++ does not allow functions as array sizes.
      */
 
     QPushButton * m_group_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
 
     /**
-     *  Access to all the pattern buttons.  A 2-D array allocated to the
-     *  proper size in the constructor.
+     *  Access to all the pattern buttons.  It is the same size as the group
+     *  grid, but might be page-able in the future.  See the pending
+     *  m_pattern_offset member.
      */
 
     QPushButton * m_pattern_buttons [SEQ66_MUTE_ROWS][SEQ66_MUTE_COLUMNS];
@@ -290,6 +295,20 @@ private:
      */
 
     midibooleans m_pattern_mutes;
+
+    /**
+     *  Indicates that the group buttons are enabled, but will "only" trigger
+     *  the clicked mute-group.
+     */
+
+    bool m_trigger_mode;
+
+    /**
+     *  A future feature to allow for slot shifting to handle set sizes like 64
+     *  and 96.
+     */
+
+    seq::number m_pattern_offset;
 
 };
 

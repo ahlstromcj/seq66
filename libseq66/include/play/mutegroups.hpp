@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-15
+ * \updates       2021-01-17
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -133,13 +133,13 @@ private:
      *  The virtual number of rows in a grid of mute-groups.
      */
 
-    static const int c_rows     = SEQ66_DEFAULT_SET_ROWS;
+    static const int c_rows     = SEQ66_MUTE_ROWS;
 
     /**
      *  The virtual number of columns in a grid of mute-groups.
      */
 
-    static const int c_columns  = SEQ66_DEFAULT_SET_COLUMNS;
+    static const int c_columns  = SEQ66_MUTE_COLUMNS;
 
     /**
      *  This value indicates that there is no mute-group selected.
@@ -293,6 +293,13 @@ public:
         return c_rows * c_columns;
     }
 
+    static mutegroup::number grid_to_group (int row, int column);
+    static bool group_to_grid
+    (
+        mutegroup::number group,
+        int & row, int & column
+    );
+
     int null_mute_group ()
     {
         return sm_null_mute_group;
@@ -347,11 +354,10 @@ public:
     bool apply (mutegroup::number group, midibooleans & bits);
     bool unapply (mutegroup::number group, midibooleans & bits);
     bool toggle (mutegroup::number group, midibooleans & bits);
+
 #if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
     bool alt_toggle (mutegroup::number group, midibooleans & armedbits);
 #endif
-    mutegroup::number grid_to_group (int row, int column) const;
-    bool group_to_grid (mutegroup::number group, int & row, int & column) const;
 
     bool loaded_from_mutes () const
     {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-15
+ * \updates       2021-01-17
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -69,11 +69,11 @@ mutegroups::mutegroups (int rows, int columns) :
     m_loaded_from_mutes         (false),
     m_group_event               (false),
     m_group_error               (false),
-    m_group_mode                (true),         /* see its description  */
+    m_group_mode                (true),             /* see its description  */
     m_group_learn               (false),
     m_group_selected            (sm_null_mute_group),
     m_group_present             (false),
-    m_group_save                (handling::midi)
+    m_group_save                (handling::both)    /* midi and mutes files */
 {
     // no code needed
 }
@@ -107,7 +107,8 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_group_error               (false),
     m_group_mode                (true),         /* see its description  */
     m_group_learn               (false),
-    m_group_present             (false)
+    m_group_present             (false),
+    m_group_save                (handling::both)
 {
     // no code needed
 }
@@ -492,7 +493,7 @@ mutegroups::reset_defaults ()
  *  Returns the mute group number for the given row and column.  Remember that
  *  the layout of mutes doesn't match that of sets and sequences.  The row and
  *  column here currently match the 4 x 8 mute-group grid in the qmutemaster
- *  module.
+ *  module.  This function is static.
  *
  * \param row
  *      Provides the desired row of the virtual mute-group grid, clamped to a
@@ -508,7 +509,7 @@ mutegroups::reset_defaults ()
  */
 
 mutegroup::number
-mutegroups::grid_to_group (int row, int column) const
+mutegroups::grid_to_group (int row, int column)
 {
     if (row < 0)
         row = 0;
@@ -523,12 +524,16 @@ mutegroups::grid_to_group (int row, int column) const
     return row + column * Rows();
 }
 
+/**
+ *  The "inverse" of grid_to_group().  This function is static.
+ */
+
 bool
 mutegroups::group_to_grid
 (
     mutegroup::number group,
     int & row, int & column
-) const
+)
 {
     bool result = group >= 0 && group < Size();
     if (result)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-21
+ * \updates       2021-01-16
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -114,20 +114,20 @@ rcsettings::rcsettings () :
     m_last_used_dir             ("~/"),
 #endif
     m_config_directory          (SEQ66_CLIENT_NAME),
-    m_config_filename           (SEQ66_CONFIG_NAME),
+    m_config_filename           (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_full_config_directory     (),
-    m_user_filename             (SEQ66_CONFIG_NAME),
-    m_use_midi_control_file     (false),
-    m_midi_control_filename     (),
-    m_use_mute_group_file       (false),
-    m_mute_group_filename       (),
+    m_user_filename             (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_use_midi_control_file     (true),
+    m_midi_control_filename     (SEQ66_CONFIG_NAME),    /* updated in body  */
+    m_use_mute_group_file       (true),
+    m_mute_group_filename       (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_playlist_active           (false),
-    m_playlist_filename         (),
+    m_playlist_filename         (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_playlist_midi_base        (),
     m_notemap_active            (false),
-    m_notemap_filename          (),
+    m_notemap_filename          (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_palette_active            (false),
-    m_palette_filename          (),
+    m_palette_filename          (SEQ66_CONFIG_NAME),    /* updated in body  */
     m_application_name          (seq_app_name()),
     m_tempo_track_number        (0),
     m_recent_files              (),
@@ -136,6 +136,11 @@ rcsettings::rcsettings () :
     m_midi_control_in.inactive_allowed(true);
     m_config_filename += ".rc";
     m_user_filename += ".usr";
+    m_midi_control_filename += ".ctrl";
+    m_mute_group_filename += ".mutes";
+    m_playlist_filename += ".playlist";
+    m_notemap_filename += ".drums";
+    m_palette_filename += ".palette";
 
 #if ! defined SEQ66_PLATFORM_WINDOWS    /* but see home_config_directory()  */
     m_config_directory = std::string(".config/") + m_config_directory;
@@ -215,9 +220,9 @@ rcsettings::set_defaults ()
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
     m_user_filename = SEQ66_CONFIG_NAME; m_user_filename += ".usr";
-    m_use_midi_control_file = false;
+    m_use_midi_control_file = true;
     m_midi_control_filename = "";
-    m_use_mute_group_file = false;
+    m_use_mute_group_file = true;
     m_mute_group_filename.clear();
     m_playlist_active = false;
     m_playlist_filename.clear();
