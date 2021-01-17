@@ -17,8 +17,8 @@
 \section{Concepts}
 \label{sec:concepts}
 
-   The \textsl{Seq66} program is a loop-playing machine with a 
-   simple interface.  Before we describe this interface, it is useful
+   The \textsl{Seq66} program is a loop-player machine with a 
+   number of interfaces.  This section is useful
    to present some concepts and definitions of terms as
    they are used in \textsl{Seq66}.  Various terms have been used over
    the years to mean the same thing (e.g. "sequence", "pattern", "loop",
@@ -30,26 +30,54 @@
    This section doesn't provide comprehensive coverage of terms.  It
    covers terms that might be puzzling.
 
+\subsubsection{Concepts / Terms / loop, pattern, track, sequence}
+\label{subsubsec:concepts_terms_loop}
+
+   \index{loop}
+   \index{pattern}
+   \index{sequence}
+   \textsl{Loop} is a synonym for \textsl{pattern}, \textsl{track},
+   or \textsl{sequence}; the terms are used interchangeably.
+   Each loop is represented by a box (pattern slot) in the Pattern (main)
+   Window.
+
+   A loop is a unit of melody or rhythm
+   extending for a small number of measures (in most cases).
+   Each loop is represented by a box in the patterns panel.
+   Each loo is editable.  All patterns can be layed out in
+   a particular arrangement to generate a more complex song.
+
+   \index{slot}
+   A \textsl{slot} is a box in a pattern grid that holds a loop.
+
+   Note that other sequencer applications use the term "sequence"
+   to apply to the complete song, and not just to one track or pattern in the
+   entire song.
+
 \subsubsection{Concepts / Terms / armed, muted}
 \label{subsubsec:concepts_terms_armed}
 
    \index{armed}
-   An armed sequence is a sequence
+   An armed sequence is a MIDI pattern
    (see \sectionref{subsubsec:concepts_terms_sequence})
-   that will be heard.  "Armed" is the opposite
-   of "muted".  Performing an \textsl{arm} operation in \textsl{Seq66}
+   that will be heard.
+   "Armed" is the opposite of "muted".
+   Performing an \textsl{arm} operation in \textsl{Seq66}
    means clicking on an "unarmed" sequence in the patterns panel (the main
-   window of \textsl{Seq66}).  An unarmed sequence will not be heard, and
-   it has a white background.  When the sequence is \textsl{armed}, it will be
-   heard, and it has a darker background.
-   A sequence can be armed or unarmed in three ways:
+   window of \textsl{Seq66}).
+   An unarmed sequence will not be heard, and it has a normal background.
+   When the sequence is \textsl{armed}, it will be heard, and it has a
+   more noticeable  background.
+   A sequence can be armed or unarmed in many ways:
 
    \begin{itemize}
       \item Clicking on a sequence/pattern box.
       \item Pressing the hot-key for that sequence/pattern box.
       \item Opening up the Song Editor and starting playback; the
-            sequences arm/unarm depending on the layout of the
-            sequences and triggers in the piano roll of the Song Editor.
+         sequences arm/unarm depending on the layout of the
+         sequences and triggers in the piano roll of the Song Editor.
+      \item Using a MIDI control, as configured in a 'ctrl' file, to
+         toggle the armed status of a pattern.
    \end{itemize}
 
 \subsubsection{Concepts / Terms / bank, screenset}
@@ -57,15 +85,16 @@
 
    \index{screen set}
    The \textsl{screen set}
-   is a set of patterns that fit within the 8x4 grid of loops/patterns in the
-   Patterns panel.
+   is a set of patterns that fit within the \textbf{4 x 8}
+   grid of loops/patterns in the patterns panel.
    \textsl{Seq66} supports multiple screens sets, up to 32 of them,
    and a name can be given to each for clarity.
-
+   Some other sizes, such as \textbf{8 x 8} and \textbf{12 x 8}, are
+   partly supported.  For the most part, the column number is best left at 8.
    \index{bank}
-   This term is \textsl{Kepler34}'s name for "screen set".
+   The term "bank" is \textsl{Kepler34}'s name for "screen set".
 
-\subsubsection{Concepts / Terms / buss (bus or port)}
+\subsubsection{Concepts / Terms / buss, bus, port}
 \label{subsubsec:concepts_terms_buss}
 
    \index{bus}
@@ -73,9 +102,32 @@
    A \textsl{buss} (also spelled "bus" these days;
    \url{https://en.wikipedia.org/wiki/Busbar}) is an entity onto which
    MIDI events can be placed, in order to be heard or to affect the
-   playback.
+   playback, or into which MIDI events can be received, for recording.
    A \textsl{buss} is just another name for port.
-   See \sectionref{subsubsec:concepts_terms_port}.
+   \textsl{Seq66} can also perform some mapping of I/O ports
+   for a more flexible studio setup.
+
+\subsubsection{Concepts / Terms / performance, song, trigger}
+\label{subsubsec:concepts_terms_performance}
+
+   In the jargon of \textsl{Seq66}, a
+   \index{performance}
+   \index{song}
+   \textsl{performance} or
+   \textsl{song}is an organized collection of patterns that play a tune
+   automatically.
+   This layout of patterns is created using the song editor, sometimes
+   called the "performance editor".
+   This window controls the song playback in "Song Mode"
+   (as opposed to "Live Mode").
+
+   \index{trigger}
+   The playback of each track is controlled by a set of triggers created for
+   that track.
+   A \textsl{trigger} is indicates when a sequence/pattern/loop
+   should be played, and how much of the sequence (including repeats) should be
+   played.  A song performance consists of a number of sequences, each
+   triggered as the musician laid them out.
 
 \subsubsection{Concepts / Terms / export}
 \label{subsubsec:concepts_terms_export}
@@ -89,61 +141,24 @@
    larger trigger for each track, repeating the events as indicated by the
    original performance.
 
-\subsubsection{Concepts / Terms / group}
+\subsubsection{Concepts / Terms / group, mute-group}
 \label{subsubsec:concepts_terms_group}
 
    \index{group}
    A \textsl{group} in \textsl{Seq66} is a
-   previously-defined mute/unmute pattern in the active screen set.
-   A group is a set of patterns, in the current screen-set,
-   that can arm (unmute) their playing state
-   together.  Every group contains all sequences in the active screen
-   set.  This concept is similar to mute/unmute groups in hardware
+   set of patterns, that can arm (unmute) their playing state
+   together.
+   Every group contains all sequences in the active screen set. 
+   This concept is similar to mute/unmute groups in hardware
    sequencers.
    \index{mute-group}
    Also known as a "mute-group".
+   Mute-groups can be stored in the MIDI file or in a 'mutes' file.
+   Each mute-group is associated with a keystroke or a MIDI control.
+   When applied, the mute-group enables one or more patterns in the current
+   screenset.
 
-\subsubsection{Concepts / Terms / loop (pattern, track, sequence)}
-\label{subsubsec:concepts_terms_loop}
-
-   \index{loop}
-   \textsl{Loop}
-   is a synonym for \textsl{pattern} or \textsl{sequence}, when used
-   in existing \textsl{Seq24} documentation.
-   Each loop is represented by a box (pattern slot) in the Pattern (main)
-   Window.
-
-   A \textsl{Seq66} \textsl{pattern}
-   \index{pattern}
-   (also called a "sequence" or "loop")
-   is a short unit of melody or rhythm in \textsl{Seq66},
-   extending for a small number of measures (in most cases).
-   Each pattern is represented by a box in the Patterns window.
-   Each pattern is editable on its own.  All patterns can be layed out in
-   a particular arrangement to generate a more complex song.
-
-   \index{sequence}
-   \textsl{Sequence} is
-   a synonym for \textsl{pattern}.
-
-   Note that other sequencer applications use the term "sequence"
-   to apply to the complete song, and not just to one track or pattern in the
-   entire song.
-
-\subsubsection{Concepts / Terms / performance}
-\label{subsubsec:concepts_terms_performance}
-
-   In the jargon of \textsl{Seq66}, a
-   \index{performance}
-   \textsl{performance} is an organized collection of patterns.
-   This layout of patterns is created using the Song Editor, sometimes
-   called the "performance editor".
-   This window controls the song playback in "Song Mode" (as opposed to "Live
-   Mode").
-   The playback of each track is controlled by a set of triggers created for
-   that track.
-
-\subsubsection{Concepts / Terms / pulses per quarter note}
+\subsubsection{Concepts / Terms / PPQN, pulses ticks, clocks, divisions}
 \label{subsubsec:concepts_terms_pulses}
 
    \index{pulses}
@@ -151,21 +166,19 @@
    MIDI timing.  To make it a bit more confusing, sometimes these pulses are
    referred to as "ticks", "clocks", and "divisions".
    To make it even more confusing, there are separate timing concepts to
-   understand, such as "tempo", "beats per measure", "beats per minute",
-   "MIDI clocks", and more.
+   understand, such as "tempo", "beats per measure", "beats per minute", and
+   "MIDI clocks".
+   A full description of all these terms, and how they are calculated, is
+   beyond the scope of this document.  Check out the source code.
 
-   While a full description of all these terms, and how they are calculated, is
-   beyond the scope of this document, we will try to clarify the discussion
-   when such confusion could be an issue.
-
-\subsubsection{Concepts / Terms / queue}
+\subsubsection{Concepts / Terms / queue, keep queue, snapshot, one-shot}
 \label{subsubsec:concepts_terms_queue_mode}
 
    To "queue" a pattern means to ready it for playback on the next repeat of
    a pattern.  A pattern can be armed immediately, or it can be queued to
    play back the next time the pattern restarts.
-   Pattern toggles occur at the end of
-   the pattern, rather than being set immediately.
+   Pattern toggle occurs at the end of the pattern,
+   rather than being set immediately.
 
    A set of queued patterns can be temporarily stored, so that a different
    set of playbacks can occur, before the original set of playbacks is
@@ -178,33 +191,12 @@
    then the hot-keys for any pattern can be pressed, over and over,
    to queue each pattern.
 
-\subsubsection{Concepts / Terms / snapshot}
-\label{subsubsec:concepts_terms_snapshot}
-
    \index{snapshot}
    A \textsl{Seq66} \textsl{snapshot} is a briefly preserved
    state of the patterns.  One can press a snapshot key, change the state of
    the patterns for live playback, and then release the snapshot key to
    revert to the state when it was first pressed.  (One might call it a
-   "revert" key, instead.)
-
-\subsubsection{Concepts / Terms / song}
-\label{subsubsec:concepts_terms_song}
-
-   \index{song}
-   A \textsl{song} is a collection of patterns (a performance)
-   in a specific temporal layout, as assembled via the Song Editor window.
-   See \ref{subsubsec:concepts_terms_performance}.
-   See \ref{subsubsec:concepts_terms_trigger}.
-
-\subsubsection{Concepts / Terms / trigger}
-\label{subsubsec:concepts_terms_trigger}
-
-   \index{trigger}
-   A \textsl{trigger} is indicates when a sequence/pattern/loop
-   should be played, and how much of the sequence (including repeats) should be
-   played.  A song performance consists of a number of sequences, each
-   triggered in ways that the musician can lay out.
+   "revert" key.)
 
 \subsection{Concepts / Sound Subsystems}
 \label{subsec:concepts_sound_subsystems}
@@ -212,9 +204,11 @@
 \subsubsection{Concepts / Sound Subsystems / ALSA}
 \label{subsubsec:concepts_sound_alsa}
 
-   \textsl{ALSA} is a sound and MIDI system for Linux, with components built
-   into the Linux kernel. It is the main subsystem used by
-   \textsl{Seq66}.  The name of the library used to build
+   \textsl{ALSA} is a audio/MIDI system for \textsl{Linux}, with components built
+   into the \textsl{Linux} kernel. It is the main subsystem used by
+   \textsl{Seq66}.
+   It supports virtual port connections via the \texttt{aconnect} program.
+   The name of the library used to build
    \textsl{ALSA} projects is \texttt{libasound}.
    See reference \cite{alsa}.
 
@@ -222,26 +216,25 @@
 \label{subsubsec:concepts_sound_portmidi}
 
    \textsl{PortMIDI} is a cross-platform API (applications programming
-   interface) for MIDI.  It is used in the "portmidi" C++ modules
-   included with the base source-code repository of \textsl{Seq24} available
-   (for example) from Debian Linux.  See reference \cite{portmidi}
-   for the PortMIDI home page.
-   This is the API used for Windows or Mac OSX.
-
-%  The SubatomicGlue Windows port of \textsl{Seq24} (see reference
-%  \cite{subatomicglue}) bundles a version of the PortMIDI project with the
-%  source code for the port.  It also provides a complete bundle of the
-%  other products (e.g. gtkmm 2.4) needed to build and run the project.
-%  (By the way, the Windows port is built with
-%  MingW, which provides the GNU compilers and tools.  This is a good thing,
-%  as Visual Studio Community, though "free", is not "Free".)
+   interface) for MIDI refactored for \textsl{Seq66}.
+   It is used in the "portmidi" C++ modules, and provides support for
+   \textsl{Seq66} in \textsl{Microsoft Windows} (and potentially
+   \textsl{Mac OSX}).
+   See reference \cite{portmidi} for the PortMIDI home page; our version
+   cuts out code that requires \textsl{Java}.
 
 \subsubsection{Concepts / Sound Subsystems / JACK}
 \label{subsubsec:concepts_sound_jack}
 
-   \textsl{JACK} is a cross-platform (with an emphasis on Linux)
-   API and infrastructure for making it easier to connect and reroute MIDI
+   \textsl{JACK} is a cross-platform
+   API and infrastructure
+   (with an emphasis on \textsl{Linux})
+   to make it easier to connect and reroute MIDI
    and audio event between various applications and hardware ports.
+   It should be preferred over \textsl{ALSA}, and is selected automatically if
+   running.
+   It supports virtual port connections via the \texttt{qjackctl} program or
+   the \textsl{Non Session Manager}.
    See reference \cite{jack}.
 
 %-------------------------------------------------------------------------------

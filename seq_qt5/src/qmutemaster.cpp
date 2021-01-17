@@ -147,11 +147,16 @@ qmutemaster::qmutemaster
     if (large)
         large = (cb_perf().screenset_size() % mutegroups::Size()) == 0;
 
+    if (large)
+    {
+        int max = cb_perf().screenset_size() / mutegroups::Size() - 1;
+        ui->m_pattern_offset_spinbox->setRange(0, max);
+    }
     ui->m_pattern_offset_spinbox->setEnabled(large);
     connect
     (
         ui->m_pattern_offset_spinbox, SIGNAL(valueChanged(int)),
-        this, SLOT(slot_pattern_offset)
+        this, SLOT(slot_pattern_offset(int))
     );
 
     ui->m_button_down->setEnabled(false);   // ui->m_button_down->hide();
@@ -205,6 +210,7 @@ qmutemaster::qmutemaster
     (void) initialize_table();          /* fill with mute-group information */
     handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group(0);                    /* select the first group           */
+
     cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
     m_timer->setInterval(100);          /* doesn't need to be super fast    */
@@ -277,7 +283,6 @@ qmutemaster::setup_table ()
     const int rows = ui->m_group_table->rowCount();
     for (int r = 0; r < rows; ++r)
         ui->m_group_table->setRowHeight(r, SEQ66_TABLE_ROW_HEIGHT);
-
 }
 
 /**
@@ -423,16 +428,22 @@ qmutemaster::slot_table_click
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    int rows = cb_perf().mutegroup_count();             /* always 32    */
-    if (rows > 0 && row >= 0 && row < rows)
+    if (! trigger())
     {
-        if (set_current_group(row))
+        int rows = cb_perf().mutegroup_count();             /* always 32    */
+        if (rows > 0 && row >= 0 && row < rows)
         {
-            ui->m_button_trigger->setEnabled(true);
-            ui->m_button_set_mutes->setEnabled(false);
-            ui->m_button_down->setEnabled(true);
-            ui->m_button_up->setEnabled(true);
-            group_needs_update();
+            if (set_current_group(row))
+            {
+                ui->m_button_trigger->setEnabled(true);
+                ui->m_button_set_mutes->setEnabled(false);
+
+#if defined READY_FOR_PRIME_TIME
+                ui->m_button_down->setEnabled(true);
+                ui->m_button_up->setEnabled(true);
+#endif
+                group_needs_update();
+            }
         }
     }
 }
@@ -649,21 +660,31 @@ qmutemaster::handle_group_button (int row, int column)
 {
     QPushButton * button = m_group_buttons[row][column];
     bool checked = button->isChecked();
-    if (checked)
+    if (trigger())                              /* we are in trigger mode   */
     {
-        /*
-         * Was inactive, now active, add a new mute-group?
-         */
-
-        update_pattern_buttons(enabling::enable);
+        if (checked)                            /* ignore the button        */
+        {
+            button->setChecked(false);          /* keep it unchecked        */
+        }
+        else                                    /* turn on the mute-group   */
+        {
+            mutegroup::number m = mutegroups::grid_to_group(row, column);
+            (void) cb_perf().toggle_mutes(m);
+            button->setChecked(true);           /* keep it checked          */
+            ui->m_group_table->selectRow(m);
+        }
     }
     else
     {
-        /*
-         * Was active, now inactive, delete the mute-group?
-         */
-
-        update_pattern_buttons(enabling::disable);
+        if (checked)                            /* was inactive, now active */
+        {
+            update_pattern_buttons(enabling::enable);
+        }
+        else                                    /* was active, now inactive */
+        {
+            update_pattern_buttons(enabling::disable);
+        }
+        ui->m_button_set_mutes->setEnabled(true);
     }
 }
 
@@ -673,6 +694,7 @@ qmutemaster::handle_group (int groupno)
     if (groupno != m_current_group)
     {
         set_current_group(groupno);
+        ui->m_group_table->selectRow(0);
         update_group_buttons();
         update_pattern_buttons();
     }

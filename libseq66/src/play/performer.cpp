@@ -4557,10 +4557,6 @@ performer::sequence_playing_toggle (seq::number seqno)
     }
 }
 
-/**
- *
- */
-
 sequence::playback
 performer::toggle_song_start_mode ()
 {
@@ -4574,10 +4570,6 @@ performer::toggle_song_start_mode ()
     infoprint(live_mode() ? "Live Mode" : "Song Mode");
     return m_song_start_mode;
 }
-
-/**
- *
- */
 
 void
 performer::song_recording (bool f)
