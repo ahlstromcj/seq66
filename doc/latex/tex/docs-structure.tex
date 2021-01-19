@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-04-20
-% \update      2019-08-15
+% \update      2021-01-18
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -126,12 +126,29 @@
    \index{#2}
 }
 
+% Similar, but with no line break.
+
+\newcommand{\optionline}[2] {
+   \textbf{\texttt{#1}} \textbf{\texttt{#2}}
+   \index{#1}
+   \index{#2}
+}
+
 % Now deprecated in preference to \itempar
 
 \newcommand{\settingdesc}[2] {
    \textbf{#1}
    \index{#1}
    \index{#2}
+}
+
+% Reference to a configuration file setting
+%
+%     \configref{xxx}{xxxxx}{xxxx}.
+
+\newcommand{\configref}[3] {
+   \index{#1!#2}
+   \texttt{qseq66.#1: [#2] #3}.
 }
 
 % Make a full reference to a figure using its number, its name, and its page

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-12-21
+ * \updates       2021-01-18
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -253,8 +253,6 @@ private:
     int m_manual_in_port_count;     /**< [manual-ports] inputjport count.   */
     bool m_reveal_ports;            /**< [reveal-ports] setting.            */
     bool m_print_keys;              /**< Show hot-key in main window slot.  */
-    bool m_device_ignore;           /**< From seq66 module, unused!         */
-    int m_device_ignore_num;        /**< From seq66 module, unused!         */
     interaction m_interaction_method; /**< Interaction method: no support.  */
     setsmode m_sets_mode;           /**< How to handle set changes.         */
     portnaming m_port_naming;       /**< How to display port names.         */
@@ -709,16 +707,6 @@ public:
         return m_print_keys;
     }
 
-    bool device_ignore () const
-    {
-        return m_device_ignore;
-    }
-
-    int device_ignore_num () const
-    {
-        return m_device_ignore_num;
-    }
-
     /*
      * Currently not supported in Seq66.
      */
@@ -1057,30 +1045,25 @@ public:
         m_print_keys = flag;
     }
 
-    void device_ignore (bool flag)
+    void use_midi_control_file (bool flag)
     {
-        m_device_ignore = flag;
+       m_use_midi_control_file = flag;
     }
 
-     void use_midi_control_file (bool flag)
-     {
-        m_use_midi_control_file = flag;
-     }
+    void use_mute_group_file (bool flag)
+    {
+       m_use_mute_group_file = flag;
+    }
 
-     void use_mute_group_file (bool flag)
-     {
-        m_use_mute_group_file = flag;
-     }
+    void midi_control_filename (const std::string & name)
+    {
+       m_midi_control_filename = name;
+    }
 
-     void midi_control_filename (const std::string & name)
-     {
-        m_midi_control_filename = name;
-     }
-
-     void mute_group_filename (const std::string & name)
-     {
-        m_mute_group_filename = name;
-     }
+    void mute_group_filename (const std::string & name)
+    {
+       m_mute_group_filename = name;
+    }
 
     void playlist_active (bool flag)
     {
@@ -1121,7 +1104,6 @@ public:
      */
 
     void tempo_track_number (int track);
-    void device_ignore_num (int value);
     bool interaction_method (interaction value);
     void jack_session_uuid (const std::string & value);
     void full_config_directory (const std::string & value, bool addhome = false);

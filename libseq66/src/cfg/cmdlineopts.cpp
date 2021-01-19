@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-01-05
+ * \updates       2021-01-19
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -102,7 +102,6 @@ cmdlineopts::s_long_options [] =
     {"show-keys",           0, 0, 'k'},
     {"inverse",             0, 0, 'K'},
     {"priority",            0, 0, 'p'},
-    {"ignore",              required_argument, 0, 'i'},
     {"interaction-method",  required_argument, 0, 'x'},
     {"playlist",            required_argument, 0, 'X'},
 #if defined SEQ66_JACK_SUPPORT
@@ -149,7 +148,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
+         xxxxxx x  xx  xx  xxxxxlxxxx *xx xxx xxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -166,7 +165,7 @@ cmdlineopts::s_long_options [] =
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:H:hi:JjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:H:h:JjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -926,11 +925,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'h':
             show_help();
             result = c_null_option_index;
-            break;
-
-        case 'i':                           /* ignore ALSA device           */
-            rc().device_ignore(true);
-            rc().device_ignore_num(string_to_int(soptarg));
             break;
 
         case 'J':

@@ -165,10 +165,6 @@ Passes any incoming SYSEX messages to all outputs.
 Not yet fully implemented.
 
 .TP 8
-.B \-i, \-\-ignore \fI<number>\fP
-Ignore ALSA device <number>.
-
-.TP 8
 .B \-d, \-\-record-by-channel
 Divert MIDI input by cannel into the sequences that are configured for
 each channel.
@@ -239,23 +235,27 @@ or for "alsa".
 Provides additional options, including the no-GUI version of
 Seq66.  Here are the opvalues supported:
 
-daemonize     Makes the command-line application fork to the background.
-no-daemonize  Makes the command-line application not fork to the background.
+daemonize     Fork the command-line application to background.
+
+no-daemonize  Makes the command-line application not fork.
+
 log=filename  Redirect console output to a log file in the
-              --home directory [$HOME/.config/seq66].
-wid=3x2,f     Sets up for multiple main windows, to show
-              multiple sets in a grid of patterns panels.
+              configuration directory.
+
 sets=RxC      Modifies the rows and columns in a set from the
               default of 4x8.  Supported values of R are 4 to 8,
               and C can range from 8 to 12. If not 4x8, seq66 is
               in 'variset' mode. Affects mute groups, too.
+
 scale=x       Scales the main window size, from 0.5 to 3.0.
               A value of 0.75 is useful when using
               "-o wid=2x2 -o sets=8x8", though the pattern
               labelling is mildly distorted.
+
 mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.
               'mutes' saves to a separate file, 'midi' saves the mutes
               in the MIDI file.
+
 virtual=o,i   Set up the --manual-ports option, using 'o' output ports
               and 'i' input ports.
 

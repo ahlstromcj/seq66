@@ -135,7 +135,7 @@ mutegroupsfile::parse_stream (std::ifstream & file)
     if (! s.empty())
     {
         bool usehex = (s == "hex");
-        mutes.group_format_hex(usehex);
+        mutes.group_format_hex(usehex); /* otherwise it is binary   */
     }
 
     bool good = line_after(file, "[mute-groups]");
@@ -321,7 +321,7 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         const mutegroups & mutes = rc_ref().mute_groups();
         bool usehex = mutes.group_format_hex();
         std::string save = mutes.group_save_label();
-        std::string gf = usehex ? "hex" : "bin" ;
+        std::string gf = usehex ? "hex" : "binary" ;
         int rows = mutes.rows();
         int columns = mutes.columns();
         int selected = mutes.group_selected();

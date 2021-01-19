@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-16
+ * \updates       2021-01-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -100,8 +100,6 @@ rcsettings::rcsettings () :
     m_manual_in_port_count      (SEQ66_INPUT_BUSS_DEFAULT),
     m_reveal_ports              (false),
     m_print_keys                (false),
-    m_device_ignore             (false),
-    m_device_ignore_num         (0),
     m_interaction_method        (interaction::seq24),
     m_sets_mode                 (setsmode::normal),
     m_port_naming               (portnaming::shortnames),
@@ -201,8 +199,6 @@ rcsettings::set_defaults ()
     m_manual_in_port_count      = SEQ66_INPUT_BUSS_DEFAULT;
     m_reveal_ports              = false;
     m_print_keys                = false;
-    m_device_ignore             = false;
-    m_device_ignore_num         = 0;
     m_interaction_method        = interaction::seq24;
     m_sets_mode                 = setsmode::normal;
     m_port_naming               = portnaming::shortnames;
@@ -659,23 +655,6 @@ rcsettings::mute_group_filespec () const
         result = os_normalize_path(result);
     }
     return result;
-}
-
-/**
- * \setter m_device_ignore_num
- *      However, please note that this value, while set in the options
- *      processing of the main module, does not appear to be used anywhere
- *      in the code in seq24, Sequencer24, and this application.
- *
- * \param value
- *      The value to use to make the setting.
- */
-
-void
-rcsettings::device_ignore_num (int value)
-{
-    if (value >= 0)
-        m_device_ignore_num = value;
 }
 
 void

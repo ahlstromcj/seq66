@@ -796,14 +796,14 @@ optionsfile::parse ()
         if (next_data_line(file))
         {
             sscanf(scanline(), "%ld", &method);
-            rc_ref().allow_mod4_mode(method != 0);
+            rc_ref().allow_mod4_mode(method != 0);          /* deprecated   */
         }
         if (next_data_line(file))
         {
             sscanf(scanline(), "%ld", &method);
             rc_ref().allow_snap_split(method != 0);
         }
-        if (next_data_line(file))                   /* a new option */
+        if (next_data_line(file))                           /* a new option */
         {
             sscanf(scanline(), "%ld", &method);
             rc_ref().allow_click_edit(method != 0);
@@ -815,7 +815,7 @@ optionsfile::parse ()
          * rc_ref().lash_support(method != 0);
          */
 
-        method = 1;                     /* legacy seq66 option if not present */
+        method = 1;
         line_after(file, "[auto-option-save]");
         sscanf(scanline(), "%ld", &method);
         rc_ref().auto_option_save(method != 0);

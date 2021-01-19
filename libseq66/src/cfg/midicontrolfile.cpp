@@ -172,6 +172,9 @@ midicontrolfile::~midicontrolfile ()
  *      load-midi-controls
  *      control-buss
  *      midi-enabled
+ *      button-offset
+ *      button-rows
+ *      button-columns
  *
  *  [midi-control] and [midi-control-file]
  *
@@ -657,7 +660,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# \n"
         "# Setting 'load-midi-control' to 'false' will cause an empty MIDI\n"
         "# control setup to be written!  Keep backups! The control-buss value\n"
-        "# ranges from 0 to the maximum buss provided by the hardware on your\n"
+        "# ranges from 0 to the maximum system buss provided by the hardware.\n"
         "# If set, then only that buss will be allowed to send MIDI control.\n"
         "# A value of 255 or 0xff means any buss can send MIDI control.\n"
         "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
