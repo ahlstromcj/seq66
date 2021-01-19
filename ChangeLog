@@ -1,5 +1,146 @@
+2021-01-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Seqtool/src/optionsfile.cpp, doc/latex/tex/concepts.tex,
+	doc/latex/tex/configuration.tex, doc/latex/tex/docs-structure.tex,
+	doc/latex/tex/kudos.tex, doc/latex/tex/mutes.tex,
+	doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/setmaster.tex,
+	libseq66/include/cfg/rcsettings.hpp,
+	libseq66/src/cfg/cmdlineopts.cpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, man/sequencer66.1: Code cleanup and
+	continued documentation.
+
+2021-01-17  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README, doc/latex/tex/concepts.tex, doc/latex/tex/mutes.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/src/play/performer.cpp, seq_qt5/src/qmutemaster.cpp: Added
+	mutemaster documentation and fixes.
+	* libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/rcsettings.cpp, libseq66/src/play/mutegroups.cpp,
+	seq_qt5/forms/qmutemaster.ui, seq_qt5/include/qmutemaster.hpp,
+	seq_qt5/src/qmutemaster.cpp: More updates to mutemaster, enhanced
+	config file creation at first startup.
+
+2021-01-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/cfg/mutegroupsfile.hpp,
+	libseq66/include/play/mutegroups.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/cfg/mutegroupsfile.cpp,
+	libseq66/src/play/mutegroups.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/setmapper.cpp,
+	seq_portmidi/src/ptlinux.c, seq_qt5/forms/qmutemaster.ui,
+	seq_qt5/include/qmutemaster.hpp, seq_qt5/src/qmutemaster.cpp,
+	seq_qt5/src/qslivegrid.cpp: Refactoring the mutemaster in progress.
+
+2021-01-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/setmapper.cpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Fixed deleted-set handling in setmaster.
+
+2021-01-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/setmaster.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/play/setmaster.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/setmapper.cpp,
+	libseq66/src/play/setmaster.cpp, seq_qt5/forms/qsetmaster.ui,
+	seq_qt5/include/qsetmaster.hpp, seq_qt5/src/qsetmaster.cpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Fixes to
+	external live grid and setsmaster.
+	* doc/latex/tex/headless.tex, doc/latex/tex/mutes.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/setmaster.tex: 
+	Added some .tex files.
+
+2021-01-13  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/kbd_mouse.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/song_editor.tex,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/setmapper.cpp,
+	seq_qt5/forms/qperfeditframe64.ui, seq_qt5/include/qsetmaster.hpp,
+	seq_qt5/include/qsmainwnd.hpp, seq_qt5/src/qliveframeex.cpp,
+	seq_qt5/src/qsetmaster.cpp, seq_qt5/src/qsmainwnd.cpp: Fixed
+	multi-live-frame and set-up-down issues.
+	* INSTALL, README, data/linux/qseq66.rc,
+	doc/latex/tex/song_editor.tex, libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/include/seq66_features.h, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	libseq66/src/seq66_features.cpp, seq_qt5/include/qperfroll.hpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqeditframe64.cpp: Cleanup
+	and fixes to the perfroll in progress.
+
+2021-01-11  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, Seq66cli/Makefile.in, Seq66qt5/Makefile.in,
+	Seqtool/Makefile.in, Seqtool/forms/Makefile.in,
+	Seqtool/include/Makefile.in, Seqtool/src/Makefile.in, configure,
+	data/Makefile.in, doc/Makefile.in, doc/dox/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	libseq66/Makefile.in, libseq66/include/Makefile.in,
+	libseq66/include/play/triggers.hpp, libseq66/src/Makefile.in,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/include/Makefile.in, seq_qt5/src/Makefile.in,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Restoring Makefile.in files.
+	* INSTALL, Makefile.in, README, Seq66cli/Makefile.in,
+	Seq66qt5/Makefile.in, Seqtool/Makefile.in,
+	Seqtool/forms/Makefile.in, Seqtool/include/Makefile.in,
+	Seqtool/src/Makefile.in, TODO, VERSION, configure.ac,
+	data/Makefile.in, doc/Makefile.in, doc/dox/Makefile.in,
+	doc/latex/Makefile.in, doc/latex/tex/Makefile.in,
+	doc/latex/tex/event_editor.tex, doc/latex/tex/pattern_editor.tex,
+	doc/latex/tex/seq66-user-manual.tex, doc/latex/tex/song_editor.tex,
+	include/config.h.in, include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h, libseq66/Makefile.in,
+	libseq66/include/Makefile.in, libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/Makefile.in,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/sequence.cpp,
+	libsessions/Makefile.in, libsessions/include/Makefile.in,
+	libsessions/src/Makefile.in, m4/Makefile.in, man/Makefile.in,
+	man/seq66.1, man/seq66cli.1, man/sequencer66.1,
+	resources/pixmaps/Makefile.in, seq_portmidi/Makefile.in,
+	seq_portmidi/include/Makefile.in, seq_portmidi/src/Makefile.in,
+	seq_qt5/Makefile.in, seq_qt5/forms/Makefile.in,
+	seq_qt5/forms/qlfoframe.ui, seq_qt5/include/Makefile.in,
+	seq_qt5/include/gui_palette_qt5.hpp, seq_qt5/include/qlfoframe.hpp,
+	seq_qt5/include/qperfroll.hpp, seq_qt5/include/qslotbutton.hpp,
+	seq_qt5/src/Makefile.in, seq_qt5/src/gui_palette_qt5.cpp,
+	seq_qt5/src/qlfoframe.cpp, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfeditframe64.cpp, seq_qt5/src/qperfroll.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qsmainwnd.cpp, seq_qt5/src/qstriggereditor.cpp,
+	seq_rtmidi/Makefile.in, seq_rtmidi/include/Makefile.in,
+	seq_rtmidi/src/Makefile.in: Fixes based on qloopbutton bug and perf
+	bugs, more in progress.
+
 2021-01-10  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* VERSION, configure.ac, contrib/notes/git.txt,
+	include/qt/portmidi/seq66-config.h,
+	include/qt/rtmidi/seq66-config.h: Merged master, minor version
+	updates.
+	* contrib/notes/git.txt: Updated git notes.
+	* ChangeLog, README: Version 0.91.5 pending.
 	* TODO, seq_qt5/include/qstriggereditor.hpp,
 	seq_qt5/src/qstriggereditor.cpp: Disabled qstriggereditor select for
 	note-on/off/aftertouch event.
