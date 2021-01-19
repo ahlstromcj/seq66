@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-13
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -851,6 +851,22 @@ qsmainwnd::qsmainwnd
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+    ui->alsaJackButton->setText("PM");
+    ui->jackTransportButton->hide();
+#else
+    QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
+    QString jtrans = "None";
+    if (cb_perf().is_jack_master())
+        jtrans = "Master";
+    else if (cb_perf().is_jack_slave())
+        jtrans = "Slave";
+
+    ui->alsaJackButton->setText(midiengine);
+    ui->jackTransportButton->setText(jtrans);
+
+#endif
 
     show();
     show_song_mode(m_song_mode);

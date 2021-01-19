@@ -1469,7 +1469,7 @@ performer::needs_update (seq::number seqno) const
  *      needs.
  */
 
-void
+bool
 performer::set_beats_per_minute (midibpm bpm)
 {
     if (bpm < SEQ66_MINIMUM_BPM)
@@ -1479,7 +1479,8 @@ performer::set_beats_per_minute (midibpm bpm)
     else
         bpm = fix_tempo(bpm);
 
-    if (bpm != m_bpm)
+    bool result = bpm != m_bpm;
+    if (result)
     {
 
 #if defined SEQ66_JACK_SUPPORT
@@ -1509,6 +1510,7 @@ performer::set_beats_per_minute (midibpm bpm)
          * incoming MIDI Set Tempo events).
          */
     }
+    return result;
 }
 
 /**
@@ -3421,9 +3423,11 @@ performer::start_playing (bool songmode)
         *   m_jack_asst.position(true, m_left_tick);    // position_jack()
         *
         * The "! m_repostion" doesn't seem to make sense.
+        *
+        *       if (is_jack_master() && ! m_reposition)
         */
 
-       if (is_jack_master() && ! m_reposition)
+       if (is_jack_master() && m_reposition)            // ca 2021-01-20
            position_jack(true, m_left_tick);
     }
     else

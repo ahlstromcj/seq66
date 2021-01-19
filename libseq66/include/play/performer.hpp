@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-01-16
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -1469,9 +1469,8 @@ public:
     }
 
     /**
-     * \getter m_jack_asst.is_master()
-     *      Also now includes is_jack_running(), since one cannot be JACK
-     *      Master if JACK is not running.
+     *  Also now includes is_jack_running(), since one cannot be JACK Master
+     *  if JACK is not running.
      */
 
     bool is_jack_master () const
@@ -1480,6 +1479,24 @@ public:
         return m_jack_asst.is_running() && m_jack_asst.is_master();
 #else
         return false;
+#endif
+    }
+
+    bool is_jack_slave () const
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return m_jack_asst.is_running() && m_jack_asst.is_slave();
+#else
+        return false;
+#endif
+    }
+
+    bool no_jack_transport () const
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return ! m_jack_asst.is_running() || m_jack_asst.no_transport();
+#else
+        return true;
 #endif
     }
 
@@ -2834,7 +2851,7 @@ public:         /* GUI-support functions */
         mutes().toggle_group_mode();
     }
 
-    void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
+    bool set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
     bool set_ppqn (int p);
     bool change_ppqn (int p);
     bool ui_change_set_bus (int b);

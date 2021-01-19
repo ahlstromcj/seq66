@@ -345,7 +345,10 @@ rcfile::parse ()
 
     /*
      * JACK transport settings are currently accessed only via the rcsetting's
-     * rc() accessor function.
+     * rc() accessor function.  Also note that these setting must occur in the
+     * given order in the 'rc' file: (1) Transport; (2) Master; (3)
+     * Master-conditional.  Otherwise the coordination of these settings gets
+     * messed up.
      */
 
     if (line_after(file, "[jack-transport]"))

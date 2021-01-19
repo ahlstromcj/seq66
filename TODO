@@ -1,6 +1,6 @@
-TO DO for Seq66 0.91.6 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.92.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-01-10
+2019-04-13 to 2021-01-20
 
 HOT ITEMS:
 
@@ -146,7 +146,9 @@ EXTANT ISSUES:
     STATUS: We had to disable mouse-wheel scrolling for this reason: In
     qseqkeys, we did not want the scroll wheel to accidentally scroll the
     piano keys vertically.  Same for qscrollmaster, qseqeditframe64, except
-    that we note wheelEvent() is not called for some reason.
+    that we note wheelEvent() is not called for some reason.  One way around
+    this issue might be to some pass child scrolling up to the qscrollmaster
+    class.
 
     #11: Pattern editor: disabling the 'piano roll scrolls with playback'
     button does not stop the scrolling.
@@ -171,21 +173,21 @@ EXTANT ISSUES:
     and connecting midi devices by name instead?
     This could even be backwards-compatible: when the configuration file has a
     bus number, use that, if it is a string, connect by name.
-    STATUS:  In progress, stalled a bit trying to relearn and refactor some of
-    the internal "rtmidi" library.
+    STATUS:  A "port-mapping" configuation in the 'rc' file is now supported.
+    Partially tested.
 
 #23 Problems with Qt during compilation
     See the github issue.
     STATUS:  Pending more investigation.
 
 #24 Release notes in release tag message?
-    I'd like to add seq66 to https://libreav.org/updates
+    I would d like to add seq66 to https://libreav.org/updates
     Could I request that the release change notes are used in the release
     message? Then they could be syndicated via the releases.atom.
     Either using the release description box in the Create Release feature on
     GitHub (which can accept markdown) or with something like git tag -a v0.4
-    -m "$(cat RELNOTES.md)" (which GH doesn't detect markdown from).
-    STATUS: Not sure this is worth doing. Don't know about "atom".
+    -m "$(cat RELNOTES.md)" (which GH does not detect markdown from).
+    STATUS: Not sure this is worth doing. Do not know about "atom".
 
 #29 Play patterns from different sets at the same time
     STATUS: Provisional support in 0.91.3.  One more feature to add soon.
@@ -196,7 +198,8 @@ EXTANT ISSUES:
     user.  The user will have to use a palette app to modify the values
     manually; not wanting to add this code to the app.  Could add it to the
     little-used Seqtool app at some point.
-    STATUS: Research pending.
+    STATUS: Basically complete, works.  May be a few more places to add
+    configuration coloring.
 
 #32 NSM: Save session
     save session, should be renamed to just 'save' I think. I should just save

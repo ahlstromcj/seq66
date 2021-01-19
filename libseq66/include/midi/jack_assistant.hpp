@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2019-01-27
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -90,6 +90,21 @@ public:
 };
 
 #if defined SEQ66_JACK_SUPPORT
+
+/**
+ *  Indicates whether Seq66 or another program is the JACK timebase master.
+ *
+ *  \var Slave
+ *      An external program is timebase master and we disregard all local
+ *      tempo information. Instead, we use onl the BPM provided by JACK.
+ */
+
+enum class timebase
+{
+    none,
+    slave,
+    master
+};
 
 /**
  *  Provides an internal type to make it easier to display a specific and
@@ -247,7 +262,7 @@ private:
      *  application running as JACK Master.
      */
 
-    bool m_jack_master;
+    timebase m_timebase;
 
     /**
      *  Holds the current frame rate.  Just in case.  QJackCtl does not always
@@ -344,7 +359,17 @@ public:
 
     bool is_master () const
     {
-        return m_jack_master;
+        return m_timebase == timebase::master;
+    }
+
+    bool is_slave () const
+    {
+        return m_timebase == timebase::slave;
+    }
+
+    bool no_transport () const
+    {
+        return m_timebase == timebase::none;
     }
 
     int get_ppqn () const

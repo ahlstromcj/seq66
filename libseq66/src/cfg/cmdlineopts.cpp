@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-01-19
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -889,7 +889,6 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             break;
 
         case 'C':
-        case '3':
             rc().with_jack_transport(true);
             rc().with_jack_master(false);
             rc().with_jack_master_cond(true);
@@ -935,6 +934,8 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
 
         case 'j':
             rc().with_jack_transport(true);
+            rc().with_jack_master(false);
+            rc().with_jack_master_cond(false);
             break;
 
         case 'k':

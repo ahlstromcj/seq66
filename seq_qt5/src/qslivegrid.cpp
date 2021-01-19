@@ -100,7 +100,11 @@
 namespace seq66
 {
 
-static const int sc_button_padding = 0; // 2;     // 8;
+/*
+ *  Provides padding between buttons.  Turns out not to be needed.
+ */
+
+static const int sc_button_padding = 0;
 
 /**
  *  The Qt 5 version of mainwid.
@@ -254,6 +258,10 @@ qslivegrid::conditional_update ()
  *
  *  Note that this function is called only in paintEvent(), and only when
  *  m_redraw_buttons is true.
+ *
+ *  Note that m_space_rows and m_space_cols are defined in qslivebase, and are
+ *  based ultimately on the usr().mainwid_spacing() value times the number of
+ *  rows or columns in the grid.
  */
 
 void

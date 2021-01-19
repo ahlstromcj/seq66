@@ -52,6 +52,10 @@
  *  Lastly, one might be curious as to the origin of the name
  *  "jack_assistant".  Well, it is simply so this class can be called
  *  "jack_ass" for short :-D.
+ *
+ *  Note the confusing (but necessary) orientation of the JACK driver backend
+ *  ports: playback ports are "input" to the backend, and capture ports are
+ *  "output" from it.
  */
 
 #include <stdio.h>
@@ -209,23 +213,18 @@ jack_transport_callback (jack_nframes_t nframes, void * arg)
             /*
              * For start or for FF/RW/key-p when not running.  If we're stopped,
              * we need to start, otherwise we need to reposition the transport
-             * marker.  Not sure if the code in the ! j->m_jack_master
-             * clause is necessary, it's not in Seq32.
+             * marker.
              */
 
             jack_position_t pos;
             jack_transport_state_t s = jack_transport_query(j->client(), &pos);
-            if (! j->m_jack_master)
+            if (j->is_slave())
             {
-                if (pos.beats_per_minute > 1.0)     /* a sanity check   */
+                if (j->parent().set_beats_per_minute(pos.beats_per_minute))
                 {
-                    static double s_old_bpm = 0.0;
-                    if (pos.beats_per_minute != s_old_bpm)
-                    {
-                        s_old_bpm = pos.beats_per_minute;
-                        infoprintf("BPM = %f\n", pos.beats_per_minute);
-                        j->parent().set_beats_per_minute(pos.beats_per_minute);
-                    }
+#if defined SEQ66_PLATFORM_DEBUG
+                    printf("BPM = %f\n", pos.beats_per_minute);
+#endif
                 }
             }
             if (s == JackTransportRolling || s == JackTransportStarting)
@@ -517,7 +516,7 @@ jack_assistant::jack_assistant
     m_jsession_ev               (nullptr),
 #endif
     m_jack_running              (false),
-    m_jack_master               (false),
+    m_timebase                  (timebase::none),
     m_jack_frame_rate           (0),
     m_toggle_jack               (false),
     m_jack_stop_tick            (0),
@@ -690,12 +689,12 @@ jack_assistant::init ()
     {
         std::string package = rc().app_client_name() + "_transport";
         m_jack_running = true;              /* determined surely below      */
-        m_jack_master = true;               /* ditto, too tricky, though    */
+        m_timebase = timebase::master;
         m_jack_client = client_open(package);
         if (m_jack_client == NULL)
         {
             m_jack_running = false;
-            m_jack_master = false;
+            m_timebase = timebase::none;
             return error_message("JACK server not running, JACK sync disabled");
         }
         else
@@ -718,7 +717,7 @@ jack_assistant::init ()
         if (jackcode != 0)
         {
             m_jack_running = false;
-            m_jack_master = false;
+            m_timebase = timebase::none;
             return error_message("jack_set_process_callback() failed]");
         }
 
@@ -740,7 +739,7 @@ jack_assistant::init ()
         if (jackcode != 0)
         {
             m_jack_running = false;
-            m_jack_master = false;
+            m_timebase = timebase::none;
             return error_message("jack_set_session_callback() failed]");
         }
 #endif
@@ -762,7 +761,7 @@ jack_assistant::init ()
             if (jackcode == 0)
             {
                 (void) info_message("JACK sync master");
-                m_jack_master = true;
+                m_timebase = timebase::master;
                 master_is_set = true;
             }
             else
@@ -772,13 +771,13 @@ jack_assistant::init ()
                  */
 
                 m_jack_running = false;
-                m_jack_master = false;
+                m_timebase = timebase::slave;
                 return error_message("jack_set_timebase_callback() failed");
             }
         }
         if (! master_is_set)
         {
-            m_jack_master = false;
+            m_timebase = timebase::slave;
             (void) info_message("JACK sync slave");
         }
     }
@@ -810,9 +809,9 @@ jack_assistant::deinit ()
     if (m_jack_running)
     {
         m_jack_running = false;
-        if (m_jack_master)
+        if (m_timebase == timebase::master)
         {
-            m_jack_master = false;
+            m_timebase = timebase::none;
             if (jack_release_timebase(m_jack_client) != 0)
                 (void) error_message("Cannot release JACK timebase");
         }
@@ -854,7 +853,7 @@ jack_assistant::deinit ()
  *      and the jack_active() call succeeds.
  *
  * \sideeffect
- *      The m_jack_running and m_jack_master flags are falsified in
+ *      The m_jack_running and JACK master flags are falsified if
  *      jack_activate() fails.
  */
 
@@ -869,7 +868,8 @@ jack_assistant::activate ()
         apiprint("jack_activate", "sync");
         if (! result)
         {
-            m_jack_running = m_jack_master = false;
+            m_jack_running = false;
+            m_timebase = timebase::none;
             (void) error_message("Can't activate JACK sync client");
         }
         else
@@ -878,7 +878,7 @@ jack_assistant::activate ()
                 (void) info_message("JACK sync enabled");
             else
             {
-                m_jack_master = false;
+                m_timebase = timebase::none;
                 (void) error_message("error, JACK sync not enabled");
             }
         }
@@ -921,13 +921,10 @@ jack_assistant::stop ()
 }
 
 /**
- * \setter m_beats_per_minute
- *      For the future, changing the BPM (beats/minute) internally.  We
- *      should consider adding validation.  However,
- *      performer::set_beats_per_minute() does validate already.
- *      Also, since jack_transport_reposition() can be "called at any time by
- *      any client", we have removed the check for "is master".
- *      We do seem to see more "bad position structure" messages, though.
+ *  performer::set_beats_per_minute() validates the BPM.  Also, since
+ *  jack_transport_reposition() can be "called at any time by any client", we
+ *  have removed the check for "is master".  We do seem to see more "bad position
+ *  structure" messages, though.
  *
  * \param bpminute
  *      Provides the beats/minute value to set.
@@ -966,13 +963,6 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
  *  mainwnd, perfedit, perfroll, and seqroll graphical user-interface support
  *  objects.
  *
- *  The code that was disabled sets the current tick to 0 or, if state was
- *  true, to the leftmost tick (which is probably the position of the L
- *  marker).  The current tick is then converted to a frame number, and then
- *  we locate the transport to that position.  We're going to enable this
- *  code, but make it dependent on a new boolean parameter that defaults to
- *  false, in anticipation of trying it out later.
- *
  * Stazed:
  *
  *      The jack_frame calculation is all that is needed to change JACK
@@ -988,9 +978,10 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
  *      jack_transport_reposition() will be commented out again.
  *      jack_BBT_position() is not necessary to change jack position!
  *
- *  Note that there are potentially a couple of divide-by-zero opportunities
- *  in this function.
- *
+ *  Let's follow the example of Stazed's tick_to_jack_frame() function.  One odd
+ *  effect we want to solve is why Seq66 as JACK slave is messing up the playback
+ *  in Hydrogen (it oscillates around the 0 marker).  Note that there are
+ *  potentially a couple of divide-by-zero opportunities in this function.
  *  Helgrind complains about a possible data race involving
  *  jack_transport_locate() when starting playing.
  *
@@ -1002,7 +993,7 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
  *      If true, the current tick is set to the leftmost tick, instead of the
  *      0th tick.  Now used, but only if relocate is true.  One question is,
  *      do we want to performer this function if rc().with_jack_transport() is
- *      true?  Seems like we should be able to do it only if m_jack_master is
+ *      true?  Seems like we should be able to do it only if JACK master is
  *      true.
  *
  * \param tick
@@ -1014,28 +1005,9 @@ jack_assistant::set_beats_per_minute (midibpm bpminute)
 void
 jack_assistant::position (bool songmode, midipulse tick)
 {
-
 #if defined SEQ66_JACK_SUPPORT
-
-    /*
-     * Let's follow the example of Stazed's tick_to_jack_frame() function.
-     * One odd effect we want to solve is why Seq66 as JACK slave
-     * is messing up the playback in Hydrogen (it oscillates around the
-     * 0 marker).
-     */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    if (tick == 0)
-        printf("jack position() tick = 0\n");
-#endif
-
     if (songmode)                               /* master in song mode  */
-    {
-        if (is_null_midipulse(tick))
-            tick = 0;
-        else
-            tick *= 10;
-    }
+        tick = is_null_midipulse(tick) ? 0 : tick * 10 ;
     else
         tick = 0;
 
@@ -1044,7 +1016,7 @@ jack_assistant::position (bool songmode, midipulse tick)
     uint64_t tick_rate = (uint64_t(m_jack_frame_rate) * tick * 60.0);
     long tpb_bpm = ticks_per_beat * beats_per_minute * 4.0 / m_beat_width;
     uint64_t jack_frame = tick_rate / tpb_bpm;
-    if (m_jack_master)
+    if (m_timebase == timebase::master)
     {
         /*
          * We don't want to do this unless we are JACK Master.  Otherwise,
@@ -1059,9 +1031,7 @@ jack_assistant::position (bool songmode, midipulse tick)
 
     if (parent().is_running())
         parent().set_reposition(false);
-
-#endif  // SEQ66_JACK_SUPPORT
-
+#endif
 }
 
 #if defined USE_JACK_ASSISTANT_SET_POSITION
@@ -1736,9 +1706,7 @@ jack_assistant::client () const
  *  The original version of the function worked properly with Hydrogen, but
  *  not with Klick.  The new code seems to work with both.  More testing and
  *  clarification is needed.  This new code was "discovered" in the
- *  source-code for the "SooperLooper" project:
- *
- *          http://essej.net/sooperlooper/
+ *  "SooperLooper" project: http://essej.net/sooperlooper/
  *
  *  The first difference with the new code is that it handles the case where
  *  the JACK position is moved (new_pos == true).  If this is true, and the
@@ -1890,7 +1858,7 @@ jack_timebase_callback
             }
         }
 
-        if (jack->m_jack_master)
+        if (jack->is_master())
             pos->beats_per_minute = jack->parent().get_beats_per_minute();
     }
 #if defined USE_JACK_BBT_OFFSET
