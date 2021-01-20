@@ -273,6 +273,7 @@ qsmainwnd::qsmainwnd
     m_use_nsm               (usensm),           /* use_nsm() accessor       */
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
+    m_previous_tick         (0),
     m_open_editors          (),
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
@@ -1416,31 +1417,36 @@ qsmainwnd::refresh ()
         m_song_mode = perf().song_mode();
         show_song_mode(m_song_mode);
     }
-    if (perf().is_pattern_playing())
+
+    midipulse tick = perf().get_tick();
+    if (tick != m_previous_tick)
     {
         /*
          * Calculate the current time, and display it.  Update beat indicator.
          */
 
-        midipulse tick = perf().get_tick();
-        midibpm bpm = perf().bpm();
-        int ppqn = perf().ppqn();
-        if (m_tick_time_as_bbt)
-        {
-            midi_timing mt
-            (
-                bpm, perf().get_beats_per_bar(), perf().get_beat_width(), ppqn
-            );
-            std::string t = pulses_to_measurestring(tick, mt);
-            ui->label_HMS->setText(t.c_str());
-        }
-        else
-        {
-            std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
-            ui->label_HMS->setText(t.c_str());
-        }
+        m_previous_tick = tick;
         if (not_nullptr(m_beat_ind))
+        {
+            midibpm bpm = perf().bpm();
+            int ppqn = perf().ppqn();
+            if (m_tick_time_as_bbt)
+            {
+                midi_timing mt
+                (
+                    bpm, perf().get_beats_per_bar(),
+                    perf().get_beat_width(), ppqn
+                );
+                std::string t = pulses_to_measurestring(tick, mt);
+                ui->label_HMS->setText(t.c_str());
+            }
+            else
+            {
+                std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
+                ui->label_HMS->setText(t.c_str());
+            }
             m_beat_ind->update();
+        }
     }
     else
     {
@@ -3266,6 +3272,13 @@ qsmainwnd::on_set_change (screenset::number setno, performer::change ctype)
             m_live_frame->update_bank();        /* updates current bank */
     }
     return result;
+}
+
+bool
+qsmainwnd::on_resolution_change (int /*ppqn*/, midibpm bpm)
+{
+    ui->spinBpm->setValue(bpm);
+    return true;
 }
 
 /**

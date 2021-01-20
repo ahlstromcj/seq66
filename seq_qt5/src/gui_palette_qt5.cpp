@@ -87,7 +87,7 @@ namespace seq66
 {
 
 /**
- *  Provide access to the internak,  basic color palette.  We use a static
+ *  Provide access to the internal, basic color palette.  We use a static
  *  function to access this item (plus a couple of things we don't need).
  *  Note that we have to associate a file-name later, if any.  A little clumsy;
  *  but we don't want to move this into a non-Qt-GUI module.
@@ -278,7 +278,7 @@ static Color m_cyan;
 static Color m_white;
 
 /**
- * Dark staticant colors
+ * Dark static colors
  */
 
 static Color m_dk_black;

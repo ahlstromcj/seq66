@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-20
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -172,6 +172,7 @@ protected:
         screenset::number setno,
         performer::change ctype
     ) override;
+    virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 
@@ -294,6 +295,13 @@ private:
      */
 
     bool m_tick_time_as_bbt;
+
+    /**
+     *  Holds the last performer tick, so that we can avoid refreshing the
+     *  B:B:T display and the beat indicator when not necessary.
+     */
+
+    midipulse m_previous_tick;
 
     /**
      *  Holds a list of the sequences currently under edit.  We do not want to

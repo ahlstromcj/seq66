@@ -94,9 +94,15 @@ public:
 /**
  *  Indicates whether Seq66 or another program is the JACK timebase master.
  *
- *  \var Slave
+ * \var none
+ *      JACK transport is not being used.
+ *
+ * \var slave
  *      An external program is timebase master and we disregard all local
  *      tempo information. Instead, we use onl the BPM provided by JACK.
+ *
+ * \var master
+ *      Whether by force or conditionally, this program is JACK master.
  */
 
 enum class timebase
@@ -153,8 +159,6 @@ class jack_assistant
         int new_pos,
         void * arg
     );
-
-    friend long get_current_jack_position (void * arg);
 
 #if defined SEQ66_JACK_SESSION
     friend void jack_session_callback (jack_session_event_t * ev, void * arg);
@@ -335,7 +339,6 @@ public:
     ~jack_assistant ();
 
     static void show_position (const jack_position_t & pos);
-    static std::string get_state_name (const jack_transport_state_t & state);
 
     /**
      * \getter m_jack_parent
@@ -377,36 +380,20 @@ public:
         return m_ppqn;
     }
 
-    int get_beat_width () const
+    int beat_width () const
     {
         return m_beat_width;
     }
-
-    /**
-     * \setter m_beat_width
-     *
-     * \param bw
-     *      Provides the beat-width (denominator of the time signature)
-     *      value to set.
-     */
 
     void set_beat_width (int bw)
     {
         m_beat_width = bw;
     }
 
-    int get_beats_per_measure () const
+    int beats_per_measure () const
     {
         return m_beats_per_measure;
     }
-
-    /**
-     * \setter m_beats_per_measure
-     *
-     * \param bpm
-     *      Provides the beats/measure (numerator of the time signature)
-     *      value to set.
-     */
 
     void set_beats_per_measure (int bpm)
     {
@@ -577,6 +564,11 @@ private:
     jack_client_t * client_open (const std::string & clientname);
     void get_jack_client_info ();
     int sync (jack_transport_state_t state = (jack_transport_state_t)(-1));
+    long current_jack_position () const;
+
+#if defined ENABLE_PROPOSED_FUNCTIONS
+    void update_timebase_master (jack_transport_state_t s);
+#endif
 
 #if defined USE_JACK_ASSISTANT_SET_POSITION
     void set_position (midipulse currenttick);
@@ -622,8 +614,7 @@ extern jack_client_t * create_jack_client
     const std::string & uuid        = ""
 );
 extern void show_jack_statuses (unsigned bits);
-
-extern long get_current_jack_position (void * arg);
+extern std::string jack_state_name (const jack_transport_state_t & state);
 
 #if defined SEQ66_JACK_SESSION
 extern void jack_session_callback (jack_session_event_t * ev, void * arg);

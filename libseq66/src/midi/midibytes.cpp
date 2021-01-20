@@ -74,12 +74,7 @@ midi_measures::midi_measures () :
  *      Copied into the m_divisions member.
  */
 
-midi_measures::midi_measures
-(
-    int measures,
-    int beats,
-    int divisions
-) :
+midi_measures::midi_measures (int measures, int beats, int divisions) :
     m_measures      (measures),
     m_beats         (beats),
     m_divisions     (divisions)

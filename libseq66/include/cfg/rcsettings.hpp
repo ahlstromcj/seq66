@@ -645,8 +645,13 @@ public:
     void with_jack_transport (bool flag)
     {
         m_with_jack_transport = flag;
-        if (flag)
-            m_with_jack_master = false;
+
+        /*
+         * Let's not do this, too confusing.
+         *
+         * if (flag)
+         *     m_with_jack_master = false;
+         */
     }
 
     void with_jack_master (bool flag)

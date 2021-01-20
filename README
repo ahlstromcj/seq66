@@ -59,6 +59,8 @@ and using a conventional source tarball.
 Recent Changes:
 
     -   Version 0.92.0:
+        -   Work on issue #34: "seq66 does not follow jack_transport
+            tempo changes"
     -   Version 0.91.6:
         -   Massively updated the Mutes tab.
         -   More documentation.

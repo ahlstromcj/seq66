@@ -25,13 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2019-07-08
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qsmaintime.hpp"
+#include "gui_palette_qt5.hpp"
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -41,7 +42,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qsmaintime::qsmaintime
@@ -109,11 +110,15 @@ qsmaintime::paintEvent (QPaintEvent *)
     {
 #if defined USE_METRONOME_FADE
         m_alpha = 230;
+        if (metro == 0)
+            m_color.setRgb(255, 50, 50);        // red on first beat in bar
+        else
+            m_color.setRgb(255, 255, 255);      // white on others
 #endif
         if (metro == 0)
-            m_color.setRgb(255, 50, 50);       // red on first beat in bar
+            m_color = beat_paint();             // drum_paint(), tempo_paint()
         else
-            m_color.setRgb(255, 255, 255);     // white on others
+            m_color = background_paint();
     }
     for (int b = 0; b < beats_per_measure(); ++b)       // draw beat blocks
     {

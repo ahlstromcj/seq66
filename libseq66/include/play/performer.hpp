@@ -2851,7 +2851,8 @@ public:         /* GUI-support functions */
         mutes().toggle_group_mode();
     }
 
-    bool set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
+    bool set_beats_per_minute (midibpm bpm);        /* more than a setter   */
+    bool jack_set_beats_per_minute (midibpm bpm);
     bool set_ppqn (int p);
     bool change_ppqn (int p);
     bool ui_change_set_bus (int b);

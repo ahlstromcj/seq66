@@ -122,7 +122,6 @@ Others to Consider:
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.  Also consider showing a small status bar:
     
-
     Figure out a way to condense the external qseqedit frame to 800x480.
 
     Make sure performer::ppqn() and bpm() always consistent with
@@ -213,7 +212,10 @@ EXTANT ISSUES:
 
 #34 seq66 doesn't follow jack_transport tempo changes (and so also doesn't
     work with jack_link)
-    STATUS:  This issue sounds familiar, will research it soon.
+    STATUS:  Fixed.  First added a performer callback to qsmainwnd to show
+    PPQN and BPM updates.  Then removed the check for performer::is_running()
+    from the transport callback.  Made sure to refresh the beat indicator
+    while a pattern is playing or while JACK is running.
 
 PATTERNS:
 

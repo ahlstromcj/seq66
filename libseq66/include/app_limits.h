@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-01-05
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -353,10 +353,11 @@
 /**
  *  Minimum value for c_beats_per_minute (global beats-per-minute, also known
  *  as "BPM").  Mostly for sanity-checking, with extra low values allowed for
- *  debugging and troubleshooting.
+ *  debugging and troubleshooting.  When we have both Hydrogen and Seq66
+ *  running in Slave mode, BPM alternates between 1.0 and 120.0!
  */
 
-#define SEQ66_MINIMUM_BPM                  1.0       /* 20   */
+#define SEQ66_MINIMUM_BPM                  2.0       /* 1.0, 20.0   */
 
 /**
  *  Maximum value for c_beats_per_minute (global beats-per-minute, also known

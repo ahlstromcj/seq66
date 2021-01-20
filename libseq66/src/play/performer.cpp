@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-29
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1462,6 +1462,12 @@ performer::needs_update (seq::number seqno) const
  *  changed the beats per minute.  This setting does get saved to the MIDI
  *  file, with the c_bpmtag.
  *
+ *  Do we need to adjust the BPM of all of the sequences, including the
+ *  potential tempo track???  It is "merely" the putative main tempo of the
+ *  MIDI tune.  Actually, this value can now be recorded as a Set Tempo event
+ *  by user action in the main window (and, later, by incoming MIDI Set Tempo
+ *  events).
+ *
  * \param bpm
  *      Provides the beats/minute value to be set.  It is clamped, if
  *      necessary, between the values SEQ66_MINIMUM_BPM to SEQ66_MAXIMUM_BPM.
@@ -1479,21 +1485,30 @@ performer::set_beats_per_minute (midibpm bpm)
     else
         bpm = fix_tempo(bpm);
 
-    bool result = bpm != m_bpm;
+    return jack_set_beats_per_minute(bpm);
+}
+
+/**
+ *  This is a faster version, meant for jack_assistant to call.  This logic
+ *  matches the original seq24, but is it really correct?  Well, we fixed it
+ *  so that, whether JACK transport is in force or not, we can modify the BPM
+ *  and have it stick.  No test for JACK Master or for JACK and normal running
+ *  status needed.
+ *
+ *  Note that the JACK server, especially when transport is stopped,
+ *  sends some artifacts (really low BPM), so we avoid dealing with low
+ *  values.
+ */
+
+bool
+performer::jack_set_beats_per_minute (midibpm bpm)
+{
+    bool result = bpm != m_bpm && bpm > SEQ66_MINIMUM_BPM;
     if (result)
     {
 
 #if defined SEQ66_JACK_SUPPORT
-
-        /*
-         * This logic matches the original seq24, but is it really correct?
-         * Well, we fixed it so that, whether JACK transport is in force or
-         * not, we can modify the BPM and have it stick.  No test for JACK
-         * Master or for JACK and normal running status needed.
-         */
-
-        m_jack_asst.set_beats_per_minute(bpm);
-
+        m_jack_asst.set_beats_per_minute(bpm);  /* see banner note */
 #endif
 
         if (m_master_bus)
@@ -1501,14 +1516,7 @@ performer::set_beats_per_minute (midibpm bpm)
 
         m_us_per_quarter_note = tempo_us_from_bpm(bpm);
         m_bpm = bpm;
-
-        /*
-         * Do we need to adjust the BPM of all of the sequences, including the
-         * potential tempo track???  It is "merely" the putative main tempo of
-         * the MIDI tune.  Actually, this value can now be recorded as a Set
-         * Tempo event by user action in the main window (and, later, by
-         * incoming MIDI Set Tempo events).
-         */
+        notify_resolution_change(get_ppqn(), bpm, change::no);
     }
     return result;
 }
@@ -3001,11 +3009,12 @@ performer::output_func ()
 #if defined SEQ66_JACK_SUPPORT
                     if (m_jack_asst.transport_not_starting())
                     {
-#endif
                         midipulse jackrtick = pad.js_current_tick;
                         play(midipulse(jackrtick));
-#if defined SEQ66_JACK_SUPPORT
                     }
+#else
+                    midipulse jackrtick = pad.js_current_tick;
+                    play(midipulse(jackrtick));
 #endif
                 }
                 else
