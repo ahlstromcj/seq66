@@ -25,14 +25,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2018-11-24
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
  *  they can be used by modules that have not yet been cleaned up.
  */
 
-#include "cfg/usermidibus.hpp"           /* seq66::usermidibus structure      */
+#include "cfg/settings.hpp"             /* seq66::usr() accessor            */
+#include "cfg/usermidibus.hpp"          /* seq66::usermidibus structure     */
+#include "cfg/userinstrument.hpp"       /* seq66::userinstrument structure  */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -53,7 +55,7 @@ usermidibus::usermidibus (const std::string & name) :
     m_channel_count     (0),
     m_midi_bus_def      ()
 {
-    set_defaults();
+    clear();
     set_name(name);
 }
 
@@ -100,7 +102,7 @@ usermidibus::operator = (const usermidibus & rhs)
  */
 
 void
-usermidibus::set_defaults ()
+usermidibus::clear ()
 {
     m_is_valid = false;
     m_channel_count = 0;
@@ -130,6 +132,22 @@ usermidibus::instrument (int channel) const
         return SEQ66_GM_INSTRUMENT_FLAG;
 }
 
+std::string
+usermidibus::instrument_name (int channel) const
+{
+    std::string result;
+    if (m_is_valid && channel >= 0 && channel < c_midichannel_max)
+    {
+        int inumber = m_midi_bus_def.instrument[channel];
+        const userinstrument & uin = usr().instrument(inumber);
+        result = uin.name();
+    }
+    else
+        result = "GM";
+
+    return result;
+}
+
 /**
  * \getter m_midi_bus_def.instrument[channel]
  *
@@ -142,15 +160,17 @@ usermidibus::instrument (int channel) const
  *      Provides the instrument number to set that channel to.
  */
 
-void
+bool
 usermidibus::set_instrument (int channel, int instrum)
 {
-    if (m_is_valid && channel >= 0 && channel < c_midichannel_max)
+    bool result = m_is_valid && channel >= 0 && channel < c_midichannel_max;
+    if (result)
     {
         m_midi_bus_def.instrument[channel] = instrum;
         if (instrum != SEQ66_GM_INSTRUMENT_FLAG)
             ++m_channel_count;
     }
+    return result;
 }
 
 /**

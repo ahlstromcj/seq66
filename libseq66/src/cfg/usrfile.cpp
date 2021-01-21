@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-09-03
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -34,7 +34,8 @@
  *  user-interface.  One must use a text editor to modify its settings.
  */
 
-#include <iostream>
+// #include <iostream>
+#include <iomanip>                      /* std::setw manipulator            */
 
 #include "cfg/settings.hpp"             /* seq66::usr() "global" settings   */
 #include "cfg/usrfile.hpp"              /* seq66::usrfile                   */
@@ -95,12 +96,10 @@ usrfile::~usrfile ()
 static std::string
 make_section_name (const std::string & label, int value)
 {
-    char temp[16];
-    snprintf(temp, sizeof temp, "%d", value);
     std::string result = "[";
     result += label;
     result += "-";
-    result += temp;
+    result += std::to_string(value);
     result += "]";
     return result;
 }
@@ -108,8 +107,8 @@ make_section_name (const std::string & label, int value)
 /**
  *  Provides a debug dump of basic information to help debug a surprisingly
  *  intractable problem with all busses having the name and values of the last
- *  buss in the configuration.  Does work only if SEQ66_PLATFORM_DEBUG is defined;
- *  see the user_settings class.
+ *  buss in the configuration.  Does work only if SEQ66_PLATFORM_DEBUG is
+ *  defined; see the user_settings class.
  */
 
 void
@@ -161,14 +160,7 @@ usrfile::parse ()
             usr().save_user_config(true);
     }
 
-    /*
-     *  Next, if we're using the manual or hide ALSA port options specified in
-     *  the "rc" file, do want to override the ports that the queries of the
-     *  ALSA system find.  Otherwise, we might want to reveal the names
-     *  obtained by port detection for ALSA, and do not want to override the
-     *  names of the ports that are found.
-     */
-
+    usr().clear_buses_and_instruments();
     if (! rc_ref().reveal_ports())
     {
         /*
@@ -177,7 +169,7 @@ usrfile::parse ()
 
         int buses = 0;
         if (line_after(file, "[user-midi-bus-definitions]"))
-            sscanf(scanline(), "%d", &buses);               /* atavistic!       */
+            sscanf(scanline(), "%d", &buses);
 
         /*
          * [user-midi-bus-x]
@@ -189,7 +181,8 @@ usrfile::parse ()
             if (! line_after(file, label))
                 break;
 
-            if (usr().add_bus(line()))
+            std::string bussname = strip_quotes(line());
+            if (usr().add_bus(bussname))
             {
                 (void) next_data_line(file);
                 int instruments = 0;
@@ -199,7 +192,8 @@ usrfile::parse ()
                     int channel, instrument;
                     (void) next_data_line(file);
                     sscanf(scanline(), "%d %d", &channel, &instrument);
-                    usr().set_bus_instrument(bus, channel, instrument);
+                    if (! usr().set_bus_instrument(bus, channel, instrument))
+                        break;
                 }
             }
             else
@@ -231,7 +225,8 @@ usrfile::parse ()
         if (! line_after(file, label))
             break;
 
-        if (usr().add_instrument(line()))
+        std::string instname = strip_quotes(line());
+        if (usr().add_instrument(instname))
         {
             char ccname[SEQ66_LINE_MAX];
             int ccs = 0;
@@ -245,31 +240,14 @@ usrfile::parse ()
 
                 ccname[0] = 0;                              // clear the buffer
                 sscanf(scanline(), "%d %[^\n]", &c, ccname);
-                if (c >= 0 && c < c_midi_controller_max)      // 128
                 {
                     std::string name(ccname);
+                    name = strip_quotes(name);
                     if (name.empty())
-                    {
-                        /*
-                         * TMI:
-                         *
-                        fprintf
-                        (
-                            stderr, "? missing controller name for '%s'\n",
-                            label.c_str()
-                        );
-                         */
-                    }
-                    else
-                        usr().set_instrument_controllers(i, c, name, true);
-                }
-                else
-                {
-                    fprintf
-                    (
-                        stderr, "? illegal controller value %d for '%s'\n",
-                        c, label.c_str()
-                    );
+                        name = "---";
+
+                    if (! usr().set_instrument_controllers(i, c, name, true))
+                        break;
                 }
             }
         }
@@ -673,9 +651,7 @@ usrfile::write ()
      */
 
     file
-        << "\n"
-           "[user-midi-bus-definitions]\n"
-           "\n"
+        << "\n[user-midi-bus-definitions]\n\n"
         << usr().bus_count()
         << "     # number of user-defined MIDI busses\n"
         ;
@@ -689,27 +665,30 @@ usrfile::write ()
 
     for (int buss = 0; buss < usr().bus_count(); ++buss)
     {
-        file << "\n[user-midi-bus-" << buss << "]\n\n";
+        file << "\n" << make_section_name("user-midi-bus", buss) << "\n\n";
+
         const usermidibus & umb = usr().bus(buss);
+        std::string bussname = add_quotes(umb.name());
         if (umb.is_valid())
         {
             file
-                << "# Device name\n"
-                << umb.name() << "\n"
+                << "# Device/bus name\n\n"
+                << bussname << "\n"
                 << "\n"
                 << umb.channel_count()
-                << "      # number of instrument settings\n"
+                << "      # number of instrument settings\n\n"
+                << "# Channel, instrument number, and instrument names\n\n"
                 ;
 
             for (int channel = 0; channel < umb.channel_count(); ++channel)
             {
-                if (umb.instrument(channel) != SEQ66_GM_INSTRUMENT_FLAG)
-                {
-                    file
-                        << channel << " " << umb.instrument(channel)
-                        << "    # channel index & instrument number\n"
-                        ;
-                }
+                std::string instname = umb.instrument_name(channel);
+                instname = add_quotes(instname);
+                file
+                    << std::setw(2) << channel << " " << umb.instrument(channel)
+                    << " " << instname << "\n"
+                    ;
+
 #if defined SEQ66_PLATFORM_DEBUG && defined SHOW_IGNORED_ITEMS
                 else
                 {
@@ -752,16 +731,15 @@ usrfile::write ()
 
     for (int inst = 0; inst < usr().instrument_count(); ++inst)
     {
-        file << "\n[user-instrument-" << inst << "]\n"
-            << "\n"
-            ;
+        file << "\n" << make_section_name("user-instrument", inst) << "\n\n";
 
         const userinstrument & uin = usr().instrument(inst);
         if (uin.is_valid())
         {
+            std::string fixedname = add_quotes(uin.name());
             file
-                << "# Name of instrument\n"
-                << uin.name() << "\n"
+                << "# Name of instrument\n\n"
+                << fixedname << "\n"
                 << "\n"
                 << uin.controller_count()
                 << "    # number of MIDI controller number & name pairs\n"
@@ -771,15 +749,16 @@ usrfile::write ()
             {
                 for (int ctlr = 0; ctlr < uin.controller_max(); ++ctlr)
                 {
+                    std::string ctrlname = uin.controller_name(ctlr);
+                    std::string fixedname = strip_quotes(ctrlname);
+                    if (fixedname == "---" || is_empty_string(fixedname))
+                        fixedname = empty_string();
+                    else
+                        fixedname = add_quotes(fixedname);
+
                     if (uin.controller_active(ctlr))
                     {
-                        file << ctlr << " " << uin.controller_name(ctlr) << "\n";
-
-                            /*
-                             * TMI
-                             *
-                             * << "# controller number & name:\n"
-                             */
+                        file << ctlr << " " << fixedname << "\n";
                     }
 #if defined SEQ66_PLATFORM_DEBUG && defined SHOW_IGNORED_ITEMS
                     else

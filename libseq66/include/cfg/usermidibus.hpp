@@ -125,7 +125,7 @@ public:
         return m_is_valid;
     }
 
-    void set_defaults ();
+    void clear ();
 
     /**
      * \getter m_midi_bus_def.alias (name of alias)
@@ -172,7 +172,8 @@ public:
     }
 
     int instrument (int channel) const;                     // getter
-    void set_instrument (int channel, int instrum);         // setter
+    bool set_instrument (int channel, int instrum);         // setter
+    std::string instrument_name (int channel) const;
 
 private:
 

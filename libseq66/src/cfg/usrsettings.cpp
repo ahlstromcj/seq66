@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-12-30
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -786,11 +786,25 @@ usrsettings::private_bus (int index)
  *      function.
  */
 
-void
+bool
 usrsettings::set_bus_instrument (int index, int channel, int instrum)
 {
     usermidibus & mb = private_bus(index);
-    mb.set_instrument(channel, instrum);
+    bool result = mb.is_valid();
+    if (result)
+        result = mb.set_instrument(channel, instrum);
+
+    if (! result)
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp, "set_bus_instrument(%d, %d, %d) failed",
+            index, channel, instrum
+        );
+        errprint(temp);
+    }
+    return result;
 }
 
 /**
@@ -814,7 +828,7 @@ usrsettings::private_instrument (int index)
  * \setter m_midi_instrument_defs[index].controllers, controllers_active
  */
 
-void
+bool
 usrsettings::set_instrument_controllers
 (
     int index,
@@ -824,7 +838,21 @@ usrsettings::set_instrument_controllers
 )
 {
     userinstrument & mi = private_instrument(index);
-    mi.set_controller(cc, ccname, isactive);
+    bool result = mi.is_valid();
+    if (result)
+        result = mi.set_controller(cc, ccname, isactive);
+
+    if (! result)
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp, "set_instrument_controllers(%d, %d, %s) failed",
+            index, cc, ccname.c_str()
+        );
+        errprint(temp);
+    }
+    return result;
 }
 
 /**

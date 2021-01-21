@@ -1884,8 +1884,9 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         std::string s = usr().instrument_name(buss, channel);
         if (! s.empty())
         {
-            name += " ";
+            name += " [";
             name += s;
+            name += "]";
         }
         if (channel == c_midichannel_max)
         {
@@ -1960,6 +1961,7 @@ qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
     if (midichannel != initialchan && user_change)
     {
         int initialbus = int(seq_pointer()->get_midi_bus());
+        repopulate_midich_combo(initialbus);
         repopulate_event_menu(initialbus, midichannel);
     }
 }

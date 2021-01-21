@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2018-12-01
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,12 +36,6 @@
 #include <string>
 
 #include "util/basic_macros.hpp"        /* seq66_platform_macros.h too      */
-
-/**
- *  Default value for c_max_instruments.
- */
-
-const int SEQ66_DEFAULT_INSTRUMENT_MAX = 64;
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -58,7 +52,7 @@ namespace seq66
  *  realistic number of instruments defined by a user.
  */
 
-const int c_max_instruments = SEQ66_DEFAULT_INSTRUMENT_MAX;
+const int c_max_instruments = 64;
 
 /**
  *  Manifest constant for the maximum value limit of a MIDI byte when used
@@ -142,20 +136,12 @@ public:
     userinstrument (const userinstrument & rhs);
     userinstrument & operator = (const userinstrument & rhs);
 
-    /**
-     * \getter m_is_valid
-     */
-
     bool is_valid () const
     {
         return m_is_valid;
     }
 
-    void set_defaults ();
-
-    /**
-     * \getter m_instrument_def.instrument (name of instrument)
-     */
+    void clear ();
 
     const std::string & name () const
     {
@@ -163,8 +149,7 @@ public:
     }
 
     /**
-     * \getter m_controller_count
-     *      This function returns the number of active controllers.
+     *  This function returns the number of active controllers.
      */
 
     int controller_count () const
@@ -173,11 +158,9 @@ public:
     }
 
     /**
-     * \getter MIDI_CONTROLLER_MAX
-     *      This function returns the maximum number of controllers,
-     *      active or inactive.  Remember that the controller numbers for
-     *      each MIDI instrument range from 0 to 127
-     *      (MIDI_CONTROLLER_MAX-1).
+     *  This function returns the maximum number of controllers, active or
+     *  inactive.  Remember that the controller numbers for each MIDI
+     *  instrument range from 0 to 127 (MIDI_CONTROLLER_MAX-1).
      */
 
     int controller_max () const
@@ -187,7 +170,7 @@ public:
 
     const std::string & controller_name (int c) const;  // getter
     bool controller_active (int c) const;               // getter
-    void set_controller                                 // setter
+    bool set_controller                                 // setter
     (
         int c, const std::string & cname, bool isactive
     );

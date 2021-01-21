@@ -323,6 +323,16 @@ rcfile::parse ()
         rc_ref().use_mute_group_file(true);             /* allow new stuff  */
     }
 
+    if (line_after(file, "[usr-file]"))
+    {
+        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        if (ok)
+        {
+            std::string mgfname = strip_quotes(line());
+            rc_ref().user_filename(mgfname);             /* base name        */
+        }
+    }
+
     int flag = 0;
     if (line_after(file, "[palette-file]"))
     {
@@ -941,6 +951,11 @@ rcfile::write ()
     }
     else
         ok = write_mute_groups(file);
+
+    std::string usrname = rc_ref().user_filespec();
+    usrname = rc_ref().trim_home_directory(usrname);
+    usrname = add_quotes(usrname);
+    file << "\n[usr-file]\n\n" << usrname << "\n";
 
     /*
      * New section for palette file.

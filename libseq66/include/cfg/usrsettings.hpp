@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-03
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -959,6 +959,11 @@ public:
 
     bool add_bus (const std::string & alias);
     bool add_instrument (const std::string & instname);
+    void clear_buses_and_instruments ()
+    {
+        m_midi_buses.clear();
+        m_instruments.clear();
+    }
 
     /**
      * \getter
@@ -972,9 +977,8 @@ public:
     }
 
     /**
-     * \getter
-     *      Unlike the non-const version this function is public.
-     *      Cannot append the const specifier.
+     *  Unlike the non-const version this function is public.  Cannot append
+     *  the const specifier.
      */
 
     const userinstrument & instrument (int index) // const
@@ -987,7 +991,7 @@ public:
         return int(m_midi_buses.size());
     }
 
-    void set_bus_instrument (int index, int channel, int instrum);
+    bool set_bus_instrument (int index, int channel, int instrum);
 
     int bus_instrument (int buss, int channel)
     {
@@ -1004,7 +1008,7 @@ public:
         return int(m_instruments.size());
     }
 
-    void set_instrument_controllers
+    bool set_instrument_controllers
     (
         int index, int cc, const std::string & ccname, bool isactive
     );

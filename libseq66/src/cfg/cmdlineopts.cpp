@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-01-20
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -529,34 +529,7 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             }
                             else if (optionname == "sets")
                             {
-                                if (arg.length() >= 3)
-                                {
-                                    int rows = string_to_int(arg);
-                                    auto p = arg.find_first_of("x");
-                                    if (p != std::string::npos)
-                                    {
-                                        int cols = string_to_int(arg.substr(p+1));
-                                        usr().mainwnd_rows(rows);
-                                        usr().mainwnd_cols(cols);
-#if defined SEQ66_USE_AUTO_SCALING
-                                        if (rows > 4)
-                                        {
-                                            /*
-                                             * This works for FHD screens (1920
-                                             * x 1080).
-                                             */
-
-                                            float scale = float(rows) / 4.0f;
-                                            float scaley = 1.0f;
-                                            if (scale > 1.5)
-                                                scale = 1.0;
-
-                                            usr().window_scale(scale, scaley);
-                                        }
-#endif
-                                        result = true;
-                                    }
-                                }
+                                result = parse_o_sets(arg);
                             }
                             else if (optionname == "scale")
                             {
@@ -565,30 +538,11 @@ cmdlineopts::parse_o_options (int argc, char * argv [])
                             }
                             else if (optionname == "mutes")
                             {
-                                if
-                                (
-                                    arg == "mutes" || arg == "midi" ||
-                                    arg == "both"
-                                )
-                                {
-                                    rc().mute_groups().group_save(arg);
-                                    result = true;
-                                }
+                                result = parse_o_mutes(arg);
                             }
                             else if (optionname == "virtual")
                             {
-                                int out = 0, in = 0;
-                                rc().manual_ports(true);
-                                if (! arg.empty())
-                                {
-                                    out = string_to_int(arg);
-                                    auto p = arg.find_first_of(",");
-                                    if (p != std::string::npos)
-                                        in = string_to_int(arg.substr(p+1));
-                                }
-                                rc().manual_port_count(out);
-                                rc().manual_in_port_count(in);
-                                result = true;
+                                result = parse_o_virtual(arg);
                             }
                         }
                         if (! result)
@@ -784,6 +738,69 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         }
     }
     return result;
+}
+
+bool
+cmdlineopts::parse_o_sets (const std::string & arg)
+{
+    bool result = arg.length() >= 3;
+    if (result)
+    {
+        int rows = string_to_int(arg);
+        auto p = arg.find_first_of("x");
+        if (p != std::string::npos)
+        {
+            int cols = string_to_int(arg.substr(p+1));
+            usr().mainwnd_rows(rows);
+            usr().mainwnd_cols(cols);
+#if defined SEQ66_USE_AUTO_SCALING
+            if (rows > 4)
+            {
+                /*
+                 * This works for FHD screens (1920
+                 * x 1080).
+                 */
+
+                float scale = float(rows) / 4.0f;
+                float scaley = 1.0f;
+                if (scale > 1.5)
+                    scale = 1.0;
+
+                usr().window_scale(scale, scaley);
+            }
+#endif
+        }
+        result = false;
+    }
+    return result;
+}
+
+bool
+cmdlineopts::parse_o_mutes (const std::string & arg)
+{
+    bool result = arg == "mutes" || arg == "midi" || arg == "both";
+    if (result)
+    {
+        rc().mute_groups().group_save(arg);
+    }
+    return result;
+}
+
+bool
+cmdlineopts::parse_o_virtual (const std::string & arg)
+{
+    int out = 0, in = 0;
+    rc().manual_ports(true);
+    if (! arg.empty())
+    {
+        out = string_to_int(arg);
+        auto p = arg.find_first_of(",");
+        if (p != std::string::npos)
+            in = string_to_int(arg.substr(p+1));
+    }
+    rc().manual_port_count(out);
+    rc().manual_in_port_count(in);
+    return true;
 }
 
 /**
