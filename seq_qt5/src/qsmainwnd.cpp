@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-20
+ * \updates       2021-01-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -59,7 +59,6 @@
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
- *
  */
 
 #include <QErrorMessage>
@@ -76,6 +75,12 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+#define SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
+#include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
+#endif
+
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "qliveframeex.hpp"
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
@@ -137,16 +142,6 @@
 
 namespace seq66
 {
-
-/*
- *  For testing only.
- */
-
-#if defined SEQ66_PLATFORM_DEBUG
-static bool s_use_test_button = true;
-#else
-static bool s_use_test_button = false;
-#endif
 
 /**
  *  The default name of the current (if empty) tune.  Also refere to the
@@ -817,7 +812,7 @@ qsmainwnd::qsmainwnd
      */
 
 
-#if defined SEQ66_PLATFORM_DEBUG    // _SESSION_IMPORT
+#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
     ui->testButton->setToolTip("Developer test of MIDI 'Import into Session'.");
     ui->testButton->setEnabled(true);
     connect
@@ -828,6 +823,16 @@ qsmainwnd::qsmainwnd
 #else
     ui->testButton->setToolTip("Developer test button, disabled.");
     ui->testButton->setEnabled(false);
+#endif
+
+#if defined SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
+    ui->testButton->setToolTip("Test of saving a summary of the current song.");
+    ui->testButton->setEnabled(true);
+    connect
+    (
+        ui->testButton, SIGNAL(clicked(bool)),
+        this, SLOT(test_summary_save())
+    );
 #endif
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
@@ -908,11 +913,8 @@ qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
         m_session_mgr_ptr = sp;
 
 #if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
-        if (s_use_test_button)
-        {
-            std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
-            session()->create_project(path);
-        }
+        std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
+        session()->create_project(path);
 #endif
     }
     else
@@ -1052,6 +1054,25 @@ qsmainwnd::edit_bpm ()
     perf().set_beats_per_minute(bpm);
 }
 
+#if defined SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
+
+void
+qsmainwnd::test_summary_save ()
+{
+    std::string fname = rc().midi_filename();
+    if (fname.empty())
+    {
+        // nothing to do yet
+    }
+    else
+    {
+        fname = file_extension_set(fname, ".txt");
+        write_song_summary(perf(), fname);
+    }
+}
+
+#endif
+
 /**
  *  A test of playlist saving.
  */
@@ -1061,11 +1082,8 @@ qsmainwnd::edit_bpm ()
 void
 qsmainwnd::test_playlist_save ()
 {
-    if (s_use_test_button)
-    {
-        (void) perf().save_playlist();
-        (void) perf().copy_playlist("~/tmp/playlists");
-    }
+    (void) perf().save_playlist();
+    (void) perf().copy_playlist("~/tmp/playlists");
 }
 
 #endif
@@ -1079,10 +1097,7 @@ qsmainwnd::test_playlist_save ()
 void
 qsmainwnd::test_notemap_save ()
 {
-    if (s_use_test_button)
-    {
-        (void) perf().save_note_mapper();
-    }
+    (void) perf().save_note_mapper();
 }
 
 #endif
@@ -1102,7 +1117,7 @@ qsmainwnd::test_notemap_save ()
 void
 qsmainwnd::import_into_session ()
 {
-    if (use_nsm() || s_use_test_button)
+    if (use_nsm())
     {
         std::string selectedfile;
         (void) load_into_session(selectedfile);

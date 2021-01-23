@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-12-11
+# \update      2021-01-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -175,6 +175,7 @@ libseq66_la_SOURCES = \
  midi/midi_splitter.cpp \
  midi/midi_vector_base.cpp \
  midi/midi_vector.cpp \
+ midi/songsummary.cpp \
  midi/wrkfile.cpp \
  play/clockslist.cpp \
  play/inputslist.cpp \

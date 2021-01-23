@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-20
+ * \updates       2021-01-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -45,7 +45,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 
 /*
- *  Forward declaration.
+ *  Forward declarations.
  */
 
 class QCloseEvent;
@@ -346,6 +346,9 @@ private slots:
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     void test_playlist_save ();
+#endif
+#if defined SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
+    void test_summary_save ();
 #endif
 #if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
     void test_notemap_save ();

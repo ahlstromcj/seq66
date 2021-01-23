@@ -1355,7 +1355,12 @@ public:
 
     bussbyte get_midi_bus () const
     {
-        return m_nominal_bus;       // or m_true_bus?
+        return m_nominal_bus;
+    }
+
+    bussbyte true_bus () const
+    {
+        return m_true_bus;
     }
 
     bool set_midi_bus (bussbyte mb, bool user_change = false);

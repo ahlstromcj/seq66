@@ -509,7 +509,6 @@ performer::notify_sequence_change (seq::number seqno, change mod)
     for (auto notify : m_notify)
         (void) notify->on_sequence_change(seqno, redo);
 
-    seq::pointer s = get_sequence(seqno);
     if (mod == change::yes || redo)
         modify();
 }

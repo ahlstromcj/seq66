@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-21
+ * \updates       2021-01-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -34,7 +34,6 @@
  *  user-interface.  One must use a text editor to modify its settings.
  */
 
-// #include <iostream>
 #include <iomanip>                      /* std::setw manipulator            */
 
 #include "cfg/settings.hpp"             /* seq66::usr() "global" settings   */
@@ -219,34 +218,43 @@ usrfile::parse ()
      * [user-instrument-x]
      */
 
-    for (int i = 0; i < instruments; ++i)
+    for (int inst = 0; inst < instruments; ++inst)
     {
-        std::string label = make_section_name("user-instrument", i);
+        std::string label = make_section_name("user-instrument", inst);
         if (! line_after(file, label))
             break;
 
         std::string instname = strip_quotes(line());
         if (usr().add_instrument(instname))
         {
-            char ccname[SEQ66_LINE_MAX];
-            int ccs = 0;
+            int cccount = 0;
             (void) next_data_line(file);
-            sscanf(scanline(), "%d", &ccs);
-            for (int j = 0; j < ccs; ++j)
+            sscanf(scanline(), "%d", &cccount);
+            for (int cc = 0; cc < cccount; ++cc)
             {
-                int c = 0;
                 if (! next_data_line(file))
                     break;
 
-                ccname[0] = 0;                              // clear the buffer
-                sscanf(scanline(), "%d %[^\n]", &c, ccname);
+                std::vector<std::string> instpair = tokenize(line(), " ");
+                if (instpair.size() >= 1)
                 {
-                    std::string name(ccname);
+                    int c = std::stoi(instpair[0]);
+                    std::string name;
+                    for (int i = 1; i < int(instpair.size()); ++i)
+                    {
+                        if (instpair[i][0] == '#')
+                            break;
+
+                        if (i > 1)
+                            name += " ";
+
+                        name += instpair[i];
+                    }
                     name = strip_quotes(name);
                     if (name.empty())
                         name = "---";
 
-                    if (! usr().set_instrument_controllers(i, c, name, true))
+                    if (! usr().set_instrument_controllers(inst, c, name, true))
                         break;
                 }
             }

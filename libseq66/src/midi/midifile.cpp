@@ -92,7 +92,7 @@
 #include "midi/midifile.hpp"            /* seq66::midifile                  */
 #include "midi/midi_vector.hpp"         /* seq66::midi_vector container     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
-#include "play/performer.hpp"           /* must precede midifile.hpp !      */
+#include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
@@ -1416,10 +1416,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     }                                                   /* for each track   */
     return result;
 }
-
-/**
- *
- */
 
 sequence *
 midifile::create_sequence (performer & p)

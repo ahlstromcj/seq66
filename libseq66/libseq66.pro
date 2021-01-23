@@ -6,7 +6,7 @@
 # \library     qseq66 and qpseq66 application
 # \author      Chris Ahlstrom
 # \date        2018-11-15
-# \update      2020-12-11
+# \update      2021-01-22
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -68,6 +68,7 @@ HEADERS += include/app_limits.h \
  include/ctrl/keycontrol.hpp \
  include/ctrl/keycontainer.hpp \
  include/ctrl/keymap.hpp \
+ include/ctrl/keystroke.hpp \
  include/ctrl/midicontrolin.hpp \
  include/ctrl/midicontrolbase.hpp \
  include/ctrl/midicontrol.hpp \
@@ -75,11 +76,22 @@ HEADERS += include/app_limits.h \
  include/ctrl/midioperation.hpp \
  include/ctrl/opcontainer.hpp \
  include/ctrl/opcontrol.hpp \
+ include/midi/businfo.hpp \
+ include/midi/controllers.hpp \
+ include/midi/editable_event.hpp \
+ include/midi/editable_events.hpp \
  include/midi/event.hpp \
  include/midi/eventlist.hpp \
+ include/midi/jack_assistant.hpp \
+ include/midi/mastermidibase.hpp \
+ include/midi/midibase.hpp \
  include/midi/midibytes.hpp \
+ include/midi/midifile.hpp \
+ include/midi/midi_splitter.hpp \
  include/midi/midi_vector_base.hpp \
  include/midi/midi_vector.hpp \
+ include/midi/songsummary.hpp \
+ include/midi/wrkfile.hpp \
  include/play/clockslist.hpp \
  include/play/inputslist.hpp \
  include/play/listsbase.hpp \
@@ -155,6 +167,7 @@ SOURCES += src/seq66_features.cpp \
  src/midi/midi_splitter.cpp \
  src/midi/midi_vector_base.cpp \
  src/midi/midi_vector.cpp \
+ src/midi/songsummary.cpp \
  src/midi/wrkfile.cpp \
  src/play/clockslist.cpp \
  src/play/inputslist.cpp \
