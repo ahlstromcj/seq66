@@ -75,12 +75,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-#define SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
-#endif
-
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "qliveframeex.hpp"
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
@@ -464,6 +459,11 @@ qsmainwnd::qsmainwnd
         ui->actionBuildInfo, SIGNAL(triggered(bool)),
         this, SLOT(showqsbuildinfo())
     );
+    connect
+    (
+        ui->actionSongSummary, SIGNAL(triggered(bool)),
+        this, SLOT(slot_summary_save())
+    );
 
     /*
      * Edit Menu.  First connect the preferences dialog to the main window's
@@ -825,16 +825,6 @@ qsmainwnd::qsmainwnd
     ui->testButton->setEnabled(false);
 #endif
 
-#if defined SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
-    ui->testButton->setToolTip("Test of saving a summary of the current song.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(test_summary_save())
-    );
-#endif
-
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
     ui->testButton->setToolTip("Test of saving/copying the current playlist.");
     ui->testButton->setEnabled(true);
@@ -1054,24 +1044,22 @@ qsmainwnd::edit_bpm ()
     perf().set_beats_per_minute(bpm);
 }
 
-#if defined SEQ66_PLATFORM_DEBUG_SUMMARY_SAVE
-
 void
-qsmainwnd::test_summary_save ()
+qsmainwnd::slot_summary_save ()
 {
-    std::string fname = rc().midi_filename();
+    std::string fname = rc().midi_filename();       /* a full pathspec  */
     if (fname.empty())
     {
         // nothing to do yet
     }
     else
     {
-        fname = file_extension_set(fname, ".txt");
-        write_song_summary(perf(), fname);
+        fname = file_extension_set(fname, ".text");
+
+        if (show_text_file_dialog(this, fname))
+            write_song_summary(perf(), fname);
     }
 }
-
-#endif
 
 /**
  *  A test of playlist saving.
@@ -1148,7 +1136,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             msg += rc().midi_filename();
             show_message_box(msg);
-            m_is_title_dirty = false;           ////////////// NEW
+            m_is_title_dirty = false;
             result = true;
         }
         else

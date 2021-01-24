@@ -465,13 +465,7 @@ midi_vector_base::fill_proprietary ()
     }
 
     /**
-     *  For the new "transposable" flag (tagged by the value c_transpose)
-     *  we really only care about saving the value of "false", because
-     *  otherwise we can assume the value is true for the given sequence,
-     *  and save space by not saving it... generally only drum patterns
-     *  will not be transposable.
-     *
-     *  However, for now, write it anyway for consistency with Seq32.
+     *  Generally only drum patterns will not be transposable.
      */
 
     bool transpose = m_sequence.transposable();
@@ -767,7 +761,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
             add_long(t.tick_end());
             add_long(t.offset());
         }
-        fill_proprietary ();
+        fill_proprietary();
     }
 
     /*

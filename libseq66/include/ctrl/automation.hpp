@@ -137,10 +137,10 @@ enum class action
  *  map.  Faster lookup than traversing a bunch of if-statements, it is to be
  *  hoped.
  *
- *  The controls are read in from the "rc" configuration files, and are
- *  written to the c_midictrl section of the "proprietary" final track in
- *  a Seq66 MIDI file.  The controls represented by slot values are part
- *  of the automation (user-interface) section of the "rc" file.
+ *  The controls are read in from the 'ctrl' configuration files, but are no
+ *  longer written to the c_midictrl section of the "proprietary" final track in
+ *  a Seq66 MIDI file.  The controls represented by slot values are part of the
+ *  automation (user-interface) section of the 'ctrl' file.
  *
  *  Unlike the original controls, all of the control groups (pattern,
  *  mute-group, and automation) all support a number of controls not

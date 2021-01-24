@@ -178,14 +178,6 @@ const int c_seqarea_x = c_text_x * c_seqchars_x;
 const int c_seqarea_y = c_text_y * c_seqchars_y;
 
 /**
- * Area of what?  Doesn't look at all like it is based on the size of
- * characters.  These are used only in the mainwid module.
-
-const int c_seqarea_seq_x = c_text_x * 13;
-const int c_seqarea_seq_y = c_text_y * 2;
- */
-
-/**
  *  These control sizes.  We'll try changing them and see what happens.
  *  Increasing these value spreads out the pattern grids a little bit and
  *  makes the Patterns panel slightly bigger.  Seems like it would be

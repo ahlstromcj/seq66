@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-01-21
+ * \updates       2021-01-24
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1347,9 +1347,10 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = c == firstcolor ?
-                get_color_name(pc).c_str() : get_color_name_ex(pc).c_str() ;
-
+            QString cname = QString::fromStdString
+            (
+                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc)
+            );
             QAction * a = new QAction(cname, menuColour);
             connect
             (

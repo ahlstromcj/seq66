@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-01-22
+ * \updates       2021-01-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -75,7 +75,7 @@ public:
 protected:
 
     bool write_sequence (std::ofstream & file, seq::pointer s);
-    bool write_header (std::ofstream & file, int numtracks);
+    bool write_header (std::ofstream & file, const performer & p);
     void write_mute_groups (std::ofstream & file, const performer & p);
 #if defined USE_WRITE_START_TEMPO
     void write_start_tempo (std::ofstream & file, midibpm start_tempo);

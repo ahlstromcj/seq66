@@ -1259,7 +1259,7 @@ or no transport mode.</string>
      <x>0</x>
      <y>0</y>
      <width>884</width>
-     <height>22</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1286,6 +1286,7 @@ or no transport mode.</string>
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionBuildInfo"/>
+    <addaction name="actionSongSummary"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -1506,6 +1507,16 @@ or no transport mode.</string>
    </property>
    <property name="toolTip">
     <string>Close Session</string>
+   </property>
+  </action>
+  <action name="actionSongSummary">
+   <property name="text">
+    <string>Song Summary File...</string>
+   </property>
+   <property name="toolTip">
+    <string>Writes a text summary of the current song to a file
+in the same directory as the original, with the extension
+&quot;.text&quot;.</string>
    </property>
   </action>
  </widget>

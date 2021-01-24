@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2020-11-20
+ * \updates       2021-01-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -152,6 +152,29 @@ show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
     (
         parent, QObject::tr("Open play-list file"), directory,
         "Playlist (*.playlist);;All files (*)"
+    );
+    result = ! file.isEmpty();
+    if (result)
+    {
+        selectedfile = file.toStdString();
+        file_message("Selected", selectedfile);
+    }
+    return result;
+}
+
+bool
+show_text_file_dialog (QWidget * parent, std::string & selectedfile)
+{
+    bool result = false;
+    const char * directory = rc().last_used_dir().c_str();
+    if (! selectedfile.empty())
+        directory = selectedfile.c_str();
+
+    QString file = QFileDialog::getSaveFileName
+    (
+        parent, QObject::tr("Text file"), directory,
+        "Text (*.txt *.text);;"
+        "All (*)"
     );
     result = ! file.isEmpty();
     if (result)

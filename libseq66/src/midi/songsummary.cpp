@@ -25,13 +25,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-01-22
+ * \updates       2021-01-23
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <fstream>                      /* std::ifstream and std::ofstream  */
 #include <iomanip>                      /* std::hex etc.                    */
+#include <map>                          /* std::map<> template              */
 
 #include "cfg/settings.hpp"             /* seq66::rc() and choose_ppqn()    */
 #include "midi/midi_vector_base.hpp"    /* seq66::c_notes, other tags       */
@@ -47,47 +48,45 @@
 namespace seq66
 {
 
+std::map<midilong, std::string>
+s_tag_names_container
+{
+    { c_midibus      ,  "Track buss number" },
+    { c_midich       ,  "Track channel number" },
+    { c_midiclocks   ,  "Track clocking" },
+    { c_triggers     ,  "Old triggers" },
+    { c_notes        ,  "Set notes" },
+    { c_timesig      ,  "Track time signature" },
+    { c_bpmtag       ,  "Main beats/minute" },
+    { c_triggers_new ,  "Track trigger data" },
+    { c_mutegroups   ,  "Song mute group data" },
+    { c_gap_A        ,  "Gap A" },
+    { c_gap_B        ,  "Gap B" },
+    { c_gap_C        ,  "Gap C" },
+    { c_gap_D        ,  "Gap D" },
+    { c_gap_E        ,  "Gap E" },
+    { c_gap_F        ,  "Gap F" },
+    { c_midictrl     ,  "MIDI control" },
+    { c_musickey     ,  "Track key" },
+    { c_musicscale   ,  "Track scale" },
+    { c_backsequence ,  "Track background sequence" },
+    { c_transpose    ,  "Track transposability" },
+    { c_perf_bp_mes  ,  "Perfedit beats/measure" },
+    { c_perf_bw      ,  "Perfedit beat-width" },
+    { c_tempo_map    ,  "Reserve seq32 tempo map" },
+    { c_reserved_1   ,  "Reserved 1" },
+    { c_reserved_2   ,  "Reserved 2" },
+    { c_tempo_track  ,  "Alternate tempo track number" },
+    { c_seq_color    ,  "Color" },
+    { c_seq_edit_mode,  "Normal/drum edit mode" },
+    { c_seq_loopcount,  "Future: N-play pattern" }
+};
+
 /**
  *  Principal constructor.
  *
  * \param name
  *      Provides the name of the MIDI file to be read or written.
- *
- * \param ppqn
- *      Provides the initial value of the PPQN setting.  It is handled
- *      differently for parsing (reading) versus writing the MIDI file.
- *      WARNING: It is the responsibility of the caller to make sure the PPQN
- *      value is valid, usually by passing in the result of the choose_ppqn()
- *      function.
- *      -   Reading.  The caller of read_midi_file(), as well as the function
- *          itself, determine the value of ppqn used here.  It is either 0 or
- *          the result of seq66::choose_ppqn().
- *          -   If set to SEQ66_USE_FILE_PPQN (0), then m_ppqn is set to the
- *              value read from the MIDI file.  No PPQN scaling is done.
- *          -   Otherwise, the ppqn value is used as is.  If the file uses a
- *              different PPQN than 192, PPQN rescaling is done to make it
- *              192.  The PPQN value read from the MIDI file is used to scale
- *              the running-time of the sequence relative to
- *              SEQ66_DEFAULT_PPQN.
- *      -   Writing.  This value is written to the MIDI file in the header
- *          chunk of the song.  Note that the caller must query for the
- *          PPQN set during parsing, and pass it to the constructor when
- *          preparing to write the file.  See how it is done in the qsmainwnd
- *          class.
- *
- * \param globalbgs
- *      If true, write any non-default values of the key, scale, and
- *      background sequence to the global "proprietary" section of the MIDI
- *      file, instead of to each sequence.  Note that this option is only used
- *      in writing; reading can handle either format transparently.
- *
- * \param verifymode
- *      If set to true, we are opening files just to verify them before
- *      accepting the usage of a playlist.  In this case, we clear out each
- *      song after it is read in for verification.  It defaults to false.
- *      Actually, the playlist::verify() function clears the song, but this
- *      variable is still useful to cut down on output during verfication.
- *      See grab_input_stream().
  */
 
 songsummary::songsummary (const std::string & name) :
@@ -129,15 +128,7 @@ songsummary::write (performer & p, bool doseqspec)
     bool result = file.is_open();
     if (result)
     {
-        int numtracks = 0;
-        for (int i = 0; i < p.sequence_high(); ++i)
-        {
-            if (p.is_seq_active(i))
-                ++numtracks;             /* count number of active tracks   */
-        }
-        result = numtracks > 0;
-        if (result)
-            result = write_header(file, numtracks);
+        result = write_header(file, p);
     }
     if (result)
     {
@@ -148,7 +139,7 @@ songsummary::write (performer & p, bool doseqspec)
                 seq::pointer s = p.get_sequence(track);
                 if (s)
                 {
-                    result =write_sequence(file, s);
+                    result = write_sequence(file, s);
                     if (! result)
                         break;
                 }
@@ -166,28 +157,33 @@ songsummary::write (performer & p, bool doseqspec)
     return result;
 }
 
-/**
- *
- */
-
 bool
 songsummary::write_sequence (std::ofstream & file, seq::pointer s)
 {
     file
         << "Sequence #" << s->seq_number() << " '" << s->name() << "'\n"
-        << "      Beats/Bar: " << s->get_beats_per_bar() << "\n"
-        << "     Beat Width: " << s->get_beat_width() << "\n"
-        << "   Nominal buss: " << int(s->get_midi_bus()) << "\n"
-        << "      True buss: " << int(s->true_bus()) << "\n"
+        << "        Channel: " << int(s->get_midi_channel()) << "\n"
+        << "          Beats: " << s->get_beats_per_bar() << "/"
+                               << s->get_beat_width() << "\n"
+        << "         Busses: " << int(s->get_midi_bus()) << "-->"
+                               << int(s->true_bus()) << "\n"
         << " Length (ticks): " << long(s->get_length()) << "\n"
-        << "  No. of events: " << s->event_count() << "\n"
-        << "No. of triggers: " << s->trigger_count() << "\n"
-        << "        Channel: " << s->get_midi_channel() << "\n"
+        << "Events;triggers: " << s->event_count() << "; "
+                               << s->trigger_count() << "\n"
         << "   Transposable: " << bool_to_string(s->transposable()) << "\n"
-        << "            Key: " << int(s->musical_key()) << "\n"
-        << "          Scale: " << int(s->musical_scale()) << "\n"
-        << "          Color: " << s->color() << "\n"
+        << "  Key and scale: " << int(s->musical_key()) << "; "
+                               << int(s->musical_scale()) << "\n"
         ;
+    if (s->color() >= 0)
+    {
+#if defined SEQ66_COLORS_NOT_REQUIRING_A_GUI
+        PaletteColor pc = PaletteColor(s->color());
+        std::string colorname = get_color_name(pc);
+        file << "          Color: " << s->color() << " " << colorname << "\n";
+#else
+        file << "          Color: " << s->color() << "\n";
+#endif
+    }
     return true;
 }
 
@@ -220,16 +216,34 @@ songsummary::write_mute_groups
 }
 
 bool
-songsummary::write_header (std::ofstream & file, int numtracks)
+songsummary::write_header (std::ofstream & file, const performer & p)
 {
-    file
-        << "File name:      " << name() << "\n"
-        << "No. of tracks:  " << numtracks << "\n"
-        << "MIDI format:    " << 1 << "\n"
-//      << "PPQN:           " << m_ppqn << "\n"
-        ;
+    int numtracks = 0;
+    for (int i = 0; i < p.sequence_high(); ++i)
+    {
+        if (p.is_seq_active(i))
+            ++numtracks;             /* count number of active tracks   */
+    }
 
-    return numtracks > 0;
+    bool result = numtracks > 0;
+    if (result)
+    {
+        file
+            << "File name:      " << name() << "\n"
+            << "No. of sets:    " << p.screenset_count() << "\n"
+            << "No. of tracks:  " << numtracks << "\n"
+            << "MIDI format:    " << 1 << "\n"
+            << "PPQN:           " << p.ppqn() << "\n"
+            ;
+    }
+    else
+    {
+        file
+            << "File name:      " << name() << "\n"
+            << "No. of tracks:  " << 0 << "! Aborting!\n"
+            ;
+    }
+    return result;
 }
 
 #if defined USE_WRITE_START_TEMPO
@@ -307,7 +321,18 @@ songsummary::write_prop_header
     int value
 )
 {
-    file << "0xFF 0x7F " << std::hex << control_tag << " = " << value << "\n";
+    std::string ctagname = "Unknown";
+    std::map<midilong, std::string>::const_iterator ci =
+        s_tag_names_container.find(control_tag);
+
+    if (ci != s_tag_names_container.end())
+        ctagname = ci->second;
+
+    file
+        << "0xFF 0x7F " << std::hex << control_tag << std::dec
+        << " (" << ctagname << ") = "
+        << value << "\n"
+        ;
 }
 
 void
@@ -317,12 +342,13 @@ songsummary::write_notepads
     const performer & p
 )
 {
+    int setcount = p.screenset_count();
     file << "Screen-set Notes:" << "\n";
-    write_prop_header(file, c_notes, c_max_sets);
-    for (int s = 0; s < c_max_sets; ++s)            /* see "cnotesz" calc       */
+    write_prop_header(file, c_notes, setcount);
+    for (int s = 0; s < setcount; ++s)
     {
         const std::string & note = p.get_screenset_notepad(s);
-        file << "   Set #" << s << ": '" << note << "'\n";
+        file << "   Set #" <<std::dec << s << ": '" << note << "'\n";
     }
 }
 

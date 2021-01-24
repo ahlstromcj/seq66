@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2019-03-23
+ * \updates       2021-01-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -52,16 +52,9 @@ namespace seq66
 
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
 extern keystroke qt_keystroke (QKeyEvent * event, bool press);
-extern bool show_open_midi_file_dialog
-(
-    QWidget * parent,
-    std::string & selectedfile
-);
-extern bool show_open_playlist_dialog
-(
-    QWidget * parent,
-    std::string & selectedfile
-);
+extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
+extern bool show_open_playlist_dialog (QWidget * parent, std::string & file);
+extern bool show_text_file_dialog (QWidget * parent, std::string & file);
 
 }               // namespace seq66
 

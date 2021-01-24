@@ -423,22 +423,22 @@
       \caption{MIDI Meta Event Types}
       \label{table:midi_meta_event_types}
       \begin{tabular}{l l}
-         Type	& Event \\
-         0x00	& Sequence number \\
-         0x01	& Text event \\
-         0x02	& Copyright notice \\
-         0x03	& Sequence or track name \\
-         0x04	& Instrument name \\
-         0x05	& Lyric text \\
-         0x06	& Marker text \\
-         0x07	& Cue point \\
-         0x20	& MIDI channel prefix assignment \\
-         0x2F	& End of track \\
-         0x51	& Tempo setting \\
-         0x54	& SMPTE offset \\
-         0x58	& Time Signature \\
-         0x59	& Key Signature \\
-         0x7F	& Sequencer-Specific event \\
+         Type & Event \\
+         0x00 & Sequence number \\
+         0x01 & Text event \\
+         0x02 & Copyright notice \\
+         0x03 & Sequence or track name \\
+         0x04 & Instrument name \\
+         0x05 & Lyric text \\
+         0x06 & Marker text \\
+         0x07 & Cue point \\
+         0x20 & MIDI channel prefix assignment \\
+         0x2F & End of track \\
+         0x51 & Tempo setting \\
+         0x54 & SMPTE offset \\
+         0x58 & Time Signature \\
+         0x59 & Key Signature \\
+         0x7F & Sequencer-Specific event \\
       \end{tabular}
    \end{table}
 
@@ -830,20 +830,81 @@ These are:
    \begin{verbatim}
       c_midibus        ^  0x24240001  Track buss number
       c_midich         ^  0x24240002  Track channel number
-      c_midiclocks     *  0x24240003  Track clocking
-      c_triggers       ^  0x24240004  See c_triggers_new
-      c_notes          *  0x24240005  Song data, notes
-      c_timesig        ^  0x24240006  Track time signature
-      c_bpmtag         *  0x24240007  Song beats/minute
+      c_midiclocks     *  0x24240003  Track clocking (not fully implemented!)
+      c_triggers       ^  0x24240004  See c_triggers_new; no offset here
+      c_notes          *  0x24240005  Song data, notes (names of sets)
+      c_timesig        ^  0x24240006  Track time signature (not global)
+      c_bpmtag         *  0x24240007  Song beats/minute (global)
       c_triggers_new   ^  0x24240008  Track trigger data
-      c_mutegroups     *  0x24240009  Song mute group data
-      c_midictrl       *  0x24240010  Song MIDI control
-      c_musickey       +  0x24240011  Track key (Seq66 only)
-      c_musicscale     +  0x24240012  Track scale (Seq66 only)
-      c_backsequence   +  0x24240013  Track background sequence (Seq66 only)
+      c_mutegroups     *  0x24240009  Song mute group data (global)
+	   c_gap_A          s  0x2424000A  Gap A
+	   c_gap_B          s  0x2424000B  Gap B
+	   c_gap_C          s  0x2424000C  Gap C
+	   c_gap_D          s  0x2424000D  Gap D
+	   c_gap_E          s  0x2424000E  Gap E
+	   c_gap_F          s  0x2424000F  Gap F
+      c_midictrl       *  0x24240010  Song MIDI control (always empty)
+      c_musickey       +  0x24240011  Track key (Seq66 only) (global too)
+      c_musicscale     +  0x24240012  Track scale (Seq66 only) (global too)
+      c_backsequence   +  0x24240013  Track background sequence (global too)
+	   c_transpose      t  0x24240014  Track transpose value
+	   c_perf_bp_mes    t  0x24240015  Perfedit beats/measure
+	   c_perf_bw        t  0x24240016  Perfedit beat-width
+	   c_tempo_map      t  0x24240017  Reserve seq32 tempo map
+	   c_reserved_1     t  0x24240018  Reserved for expansion
+	   c_reserved_2     t  0x24240019  Reserved for expansion
+	   c_tempo_track    t  0x2424001A  Alternate tempo track no. (unimplemented)
+	   c_seq_color      t  0x2424001B  Track color, from Kepler34
+	   c_seq_edit_mode  t  0x2424001C  Unimplemented feature from Kepler34
+	   c_seq_loopcount  t  0x2424001D  Future: Track N-play pattern
 
-      * = global only; ^ = track only; + = both
+      * = global only; ^ = track only; + = both; s = reserved for seq32; t = TBD
    \end{verbatim}
+
+	\begin{comment}
+		\texttt{midi\_vector\_base::fill\_proprietary} adds the following tag values:
+		\begin{itemize}
+			\item c\_midibus; sequence::get\_midi\_bus().
+			\item c\_midich; sequence::get\_midi\_channel().
+			\item c\_timesig; sequence::get\_beats\_per\_bar() and get\_beat\_width().
+			\item If non-global sequence features:
+			\begin{itemize}
+				\item c\_musical\_key; sequence::musical\_key(); if != key of C.
+				\item c\_musical\_key; sequence::musical\_scale();
+					 if != c\_scales\_off.
+				\item c\_backsequence; sequence::background\_sequence();
+					if valid
+			\end{itemize}
+			\item c\_transpose; sequence::transposable().
+			\item c\_seq\_color; sequence::color(); if not c\_seq\_color\_none.
+		\end{itemize}
+
+		\texttt{midi\_vector\_base::song\_fill\_seq\_trigger} adds the
+			 following tag values:
+		\begin{itemize}
+			\item c\_triggers\_new.
+		\end{itemize}
+
+		Items not dealt with in the code:
+		\begin{itemize}
+			\item c\_midiclocks
+			\item c\_triggers (old)
+			\item c\_notes
+			\item c\_bpmtag
+			\item c\_mutegroups
+			\item c\_gap\_A to F
+			\item c\_midictrl
+	   	\item c\_perf\_bp\_mes
+	   	\item c\_perf\_bw
+	   	\item c\_tempo\_map
+	   	\item c\_reserved\_1
+	   	\item c\_reserved\_2
+	   	\item c\_tempo\_track
+	   	\item c\_seq\_edit\_mode
+	   	\item c\_seq\_loopcount
+		\end{itemize}
+
+	\end{comment}
 
    In \textsl{Seq24}, these events are placed at the end of the song, but are
    not marked as SeqSpec data.  Most MIDI applications handle this situation

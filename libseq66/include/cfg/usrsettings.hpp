@@ -539,6 +539,8 @@ private:
      *  m_seqchars_y constants help define the "seqarea" size.  These look
      *  like the number of characters per line and the number of lines of
      *  characters, in a pattern/sequence box.
+     *
+     *  UNUSED!
      */
 
     int m_seqchars_x;   /* c_seqchars_x = 15    */
