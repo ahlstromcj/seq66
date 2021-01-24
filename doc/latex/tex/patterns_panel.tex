@@ -58,8 +58,6 @@
    into a menu bar, a top panel, a pattern panel, and a bottom panel.
    The \textsl{Seq66} menu bar is discussed in
    \sectionref{sec:menu}.
-   The Qt and Gtkmm user-interfaces differ in the arrangement of buttons and
-   panels; and the Qt interface uses tabs.
 
 \subsection{Patterns / Set Handling}
 \label{subsec:patterns_panel_set_handling}
@@ -172,19 +170,6 @@
    of elements in the pattern slot.
    (However, note that some of the special coloring using in
    \textsl{Sequencer64} is not supported in \textsl{Seq66}.
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{new/slots.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Various Status of Pattern Slots}
-%  \label{fig:pattern_slots_statuses}
-%\end{figure}
-
-%  Not shown in the figure are the gray pattern
-%  colors resulting from queuing and one-shot queuing, nor is the
-%  number-of-measures number shown.
-%  The colors have meaning (in the Gtkmm user-interface only):
 
    \begin{itemize}
       \item \textbf{Empty background}.  When the default button coloring for
@@ -299,23 +284,6 @@
    The configuration file settings for the the '=' and
    '-' keys can be altering in the \textbf{File / Options / Keyboard} tab.
 
-%  \index{current slot highlight}
-%  When an unarmed (muted) pattern is first brough up for sequence editing (or
-%  event editing), the slot in the main window is now highlighted (Gtkmm only),
-%  using black text on a cyan background, as being the "currently-edited" slot.
-%  (This is the same background used to indicate the original track in an
-%  SMF 0 to SMF 1 conversion.)
-%
-%  If the currently-edited sequence is armed (unmuted), then the highlighting
-%  is reversed (cyan text on a black background), and resembles the
-%  highlighting for an armed sequence (which is white text on a black
-%  background).
-%
-%  If more than one sequence or \textbf{Event Editor}
-%  is brought up, only the slot for
-%  the last one to have focus is hightlighted.
-%  Note that this highlighting also applies to the \textbf{Event Editor}.
-
    \itempar{Paste}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
    Also note that there is no \texttt{Ctrl-V} key for this operation in the
@@ -403,13 +371,13 @@
       \item \textbf{Queued}.
          That same pattern also shows that it is queued, which means that it
          will toggle its playing status when the pattern next begins again.
-      \item \textbf{Alternate font}.
-         Later builds of \textsl{Seq66} are now built with a new font.
-         See \figureref{fig:pattern_window_main_panel_items}.  It shows the new
-         font. 
-         The old font can be selected in the "user" configuration file, and is
-         also selected automatically if \textsl{Seq66} is run in the
-         \textsl{legacy} mode.
+%     \item \textbf{Alternate font}.
+%        Later builds of \textsl{Seq66} are now built with a new font.
+%        See \figureref{fig:pattern_window_main_panel_items}.  It shows the new
+%        font. 
+%        The old font can be selected in the "user" configuration file, and is
+%        also selected automatically if \textsl{Seq66} is run in the
+%        \textsl{legacy} mode.
       \item \textbf{Sequence number}.
          Later builds of \textsl{Seq66} are now built with the option to
          also show the sequence number in the pattern box, if the "show
@@ -436,32 +404,10 @@
    to allow one to edit it, or perform a few other actions
    specified in the context menu.  Here is that menu:
 
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_menus-gtk-qt-0_96.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menus, Gtkmm and Qt Versions}
-%  \label{fig:pattern_window_right_click}
-%\end{figure}
-
    Here one can choose to edit the pattern, cut and copy the pattern,
    set the MIDI bus/channel, and more.
    One can also clear all performance (song) data for the pattern.
-   Here are the Gtkmm menu entries:
-   
-   \begin{enumber}
-      \item \textbf{Edit...}
-      \item \textbf{Event Edit...}
-      \item \textbf{Cut}
-      \item \textbf{Copy}
-      \item \textbf{Song}
-      \item \textbf{Color}
-      \item \textbf{Disable/Enable Transpose}
-      \item \textbf{MIDI Bus}
-   \end{enumber}
-
-   The Qt menu entries are different and more extensive:
+   Here are the menu entries:
    
    \begin{enumber}
       \item \textbf{New pattern}
@@ -474,10 +420,6 @@
       \item \textbf{Cut pattern}
       \item \textbf{Delete pattern}
    \end{enumber}
-
-   See \sectionref{subsubsec:qt_portmidi_qt5_live_slot_menu}.
-   It describes these additional items and how the Qt user-interface works.
-   The next sections describe the Gtkmm-accessible functions.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
@@ -1146,30 +1088,27 @@
    in \textbf{File / Options / Ext Keys / Tap BPM}.
    It defaults to the "\texttt{F9}" key.
 
-   \itempar{Log Tempo}{pattern!log tempo}
-   This light-magenta button (Gtkmm only),
-   logs the current tempo at the
-   current playback spot as a Set Tempo meta-event, in the first
-   track (pattern slot \#0) or the alternate tempo track if defined,
-   and only if it is active.  According to the MIDI standard, such events
-   should be present \textsl{only} in the first track,
-   and so \textsl{Seq66} follows this rule, and also makes tempo events
-   officially supported.  They can be edited in the 
-   \textbf{Pattern Editor} or in the
-   \textbf{Event Editor}.
-   The main/global tempo is not written to the tempo track; it is stored in
-   a SeqSpec section.
-   See \sectionref{sec:meta_events}, for more information.
+%  \itempar{Log Tempo}{pattern!log tempo}
+%  This button logs the current tempo at the
+%  current playback spot as a Set Tempo meta-event, in the first
+%  track (pattern slot \#0) or the alternate tempo track if defined,
+%  and only if it is active.  According to the MIDI standard, such events
+%  should be present \textsl{only} in the first track,
+%  and so \textsl{Seq66} follows this rule, and also makes tempo events
+%  officially supported.  They can be edited in the 
+%  \textbf{Pattern Editor} or in the
+%  \textbf{Event Editor}.
+%  The main/global tempo is not written to the tempo track; it is stored in
+%  a SeqSpec section.
 
-   \itempar{Record Tempo}{pattern!record tempo}
-   This dark-magenta button (Gtkmm only)
-   becomes light-magenta when activated, and turns on
-   the recording of any tempo changes made in the BPM spinner.  If the spinner
-   is held down, a ramping stream of tempo events is created.  If
-   the time exceeds the current length of the tempo track, then the length of
-   the track is automatically increased.
-   These tempo events will not affect playback speed
-   unless the tempo track is unmuted.
+%  \itempar{Record Tempo}{pattern!record tempo}
+%  This button turns on
+%  the recording of any tempo changes made in the BPM spinner.  If the spinner
+%  is held down, a ramping stream of tempo events is created.  If
+%  the time exceeds the current length of the tempo track, then the length of
+%  the track is automatically increased.
+%  These tempo events will not affect playback speed
+%  unless the tempo track is unmuted.
 
    \itempar{Keep-Queue Status}{pattern!keep-queue}
    This item is the \textbf{Q} button.
@@ -1209,30 +1148,7 @@
 \subsection{Patterns / Multiple Panels}
 \label{subsec:patterns_panel_multiple}
 
-%  If \textsl{Seq66} is built with the \texttt{--enable-multiwid}
-%  \textsl{Seq66} has a "multiwid" option, this defines the 
-%  \texttt{SEQ66\_MULTI\_MAINWID} macro, and allows for
-   \textsl{Seq66} has a "multiwid" option, which
-   allows for
-   \index{multi-wid}
-   multiple live panels showing more than one set at a time.
-   The default is to show the usual single "mainwid".
-   In the Qt user-interface, multiple live panels in separate windows
-   can be opened.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{multiwid/multiwid-mode-3x2.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, with Multiple Panels}
-   \label{fig:pattern_window_bottom_panel_multiple}
-\end{figure}
-
-   In the Gtkmm user-interface, either one spinner for all, or one spinner for
-   each, is available.  The latter is the "independent" mode.
-   Note that it is possible, in this mode, to show the same set in two
-   different "mainwids", but this is not recommended, as there may be minor
-   unavoidable issues with that.
+   Multiple patterns-panels can be created.
 
    Note that Page Up and Page Down keystrokes, as well as their
    configurable counterparts in

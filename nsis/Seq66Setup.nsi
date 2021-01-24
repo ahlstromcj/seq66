@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2020-09-26
-; Version:      0.91.0
+; Updated:      2021-01-24
+; Version:      0.92.0
 ;
 ;       Installation is silent.
 ;
@@ -289,7 +289,6 @@ Section Uninstall
 
 ;   Delete "$INSTDIR\license.txt"
 ;   Delete "$INSTDIR\readme.txt"
-
 
     Delete "$INSTDIR\uninst.exe"
     RMDir /r "$INSTDIR"

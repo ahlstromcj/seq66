@@ -14,13 +14,13 @@
 %
 %-------------------------------------------------------------------------------
 
-\section{Seq66 "rc" Configuration File}
+\section{Seq66 'rc' Configuration File}
 \label{sec:rc_file}
 
    There are two \textsl{Seq66} configuration files:
    \texttt{seq66.rc} and \texttt{seq66.usr}.
    See \sectionref{sec:usr_file}; it describes the "usr" file,
-   is handled a bit differently than the "rc" file.
+   is handled a bit differently than the 'rc' file.
 
    \index{seq66.rc}
    The \textsl{Seq66} configuration file originally was
@@ -30,14 +30,12 @@
    To avoid interference with one's existing installation of 
    \textsl{Seq24}, we created a new file
    to take its place, with a fall-back to the original file-name if the new
-   file does not exist, or if \textsl{Seq66} is running in
-   \index{legacy mode}
-   legacy mode.
+   file does not exist.
    In addition, one can change the configuration directory and the base name of
-   the "rc" and "usr" files from the command-line.
+   the 'rc' and "usr" files from the command-line.
 
-   After you run \textsl{Seq66} for the first time (in non-legacy
-   mode), it will generate a \texttt{seq66.rc} file in your home
+   After you run \textsl{Seq66} for the first time
+   it will generate a \texttt{seq66.rc} file in your home
    \textsl{configuration} directory:
 
    \begin{verbatim}
@@ -55,16 +53,16 @@
    its settings can be modified in the \textbf{Options} dialog
    (see \sectionref{subsubsec:menu_file_options}).
    There is an old, but complete, example of the \textsl{Seq24}
-   "rc" file at \cite{seq24launchpadmapper}.
+   'rc' file at \cite{seq24launchpadmapper}.
    It includes a setup for the
    Novation Launchpad device.
 
-   Now let's covered each section of the "rc" file in order.
+   Now let's covered each section of the 'rc' file in order.
 
-\subsection{"rc" File / Comments}
+\subsection{'rc' File / Comments}
 \label{subsec:rc_file_midi_comments}
 
-   The very top of the "rc" file that \textsl{Seq66} generates is a stock
+   The very top of the 'rc' file that \textsl{Seq66} generates is a stock
    banner showing the version of \textsl{Seq66} to which this file
    applies, the name of the configuration file, and when it was written.  The
    user can also add a comments section that explain what the user's setup is
@@ -80,7 +78,7 @@
 
    A blank line (not even a space) ends the comment section.
 
-\subsection{"rc" File / MIDI Control}
+\subsection{'rc' File / MIDI Control}
 \label{subsec:rc_file_midi_control}
 
    Like \textsl{Seq24}, \textsl{Seq66} provides a way to control the
@@ -101,9 +99,9 @@
       nanomap.rc        # contains a whole [midi-control] section
    \end{verbatim}
 
-   As with the normal "rc", this file is rewritten upon exit, so
+   As with the normal 'rc', this file is rewritten upon exit, so
    don't bother trying to add comments to it.  The rest of this section
-   applied either to that "rc" or the normal "rc" file.
+   applied either to that 'rc' or the normal 'rc' file.
 
    \index{[midi-control]}
    The MIDI control section begins with the following "INI"-style
@@ -118,7 +116,7 @@
    extended automation values bring this number up to 84, and the most recent
    version of \textsl{Seq66} brings this up to 96.  Note that earlier
    version will complain about numbers higher than what they can handle.  If
-   so, edit the "rc" file to reduce that number.
+   so, edit the 'rc' file to reduce that number.
 
    Even in the latest version of \textsl{Seq66}, 
    not all of these new values are yet usable, and there are also some values
@@ -260,7 +258,7 @@
       \item \textbf{Extended Automation Group} (row 74 to 95).
    \end{enumerate}
 
-\subsubsection{"rc" File / MIDI Control / Pattern Group}
+\subsubsection{'rc' File / MIDI Control / Pattern Group}
 \label{subsubsec:rc_file_midi_ctrl_pattern}
 
    The pattern group consists of 32 lines (0 to 31), one for each
@@ -384,7 +382,7 @@
    turned, so to speak), patterns 0 through 7 come on one at a time until
    all are running.
 
-\subsubsection{"rc" File / MIDI Control / Pattern Group Multiples}
+\subsubsection{'rc' File / MIDI Control / Pattern Group Multiples}
 \label{subsubsec:rc_file_midi_ctrl_pattern_mult}
 
    This section describes a feature of the pattern-group that needs it own
@@ -423,7 +421,7 @@
    patterns -- one whole row in a 4x8 pattern.  When note 0 is pressed,
    patterns 0, 4, 8, and 12 turn on.  When note 0 is released, they turn off.
 
-\subsubsection{"rc" File / MIDI Control / Mute-In Group}
+\subsubsection{'rc' File / MIDI Control / Mute-In Group}
 \label{subsubsec:rc_file_midi_ctrl_mutein}
 
    \index{mute-in group}
@@ -451,7 +449,7 @@
    control values that can affect the muting of a group, while the latter
    specifies the armed patterns that are part of a group.
 
-\subsubsection{"rc" File / MIDI Control / Automation}
+\subsubsection{'rc' File / MIDI Control / Automation}
 \label{subsubsec:rc_file_midi_ctrl_automation}
 
    The automation control keys occupy the entries from 64 to 73.
@@ -631,7 +629,7 @@
    screen-sets.
 
    These statuses ultimately get saved in the \texttt{[mute-group]} section of
-   the "rc" file.
+   the 'rc' file.
 
    \index{L button}
    Note that this control corresponds to the "L" button in the main window
@@ -645,7 +643,7 @@
 This MIDI control sets the playing screen-set, 
 but we're not completely sure how it works yet.
 
-\subsubsection{"rc" File / MIDI Control / Extended Automation}
+\subsubsection{'rc' File / MIDI Control / Extended Automation}
 \label{subsubsec:rc_file_midi_ctrl_automationex}
 
    These additional control items were requested by users, to control
@@ -679,7 +677,7 @@ but we're not completely sure how it works yet.
    The first step, if not already done, is to install the newest version
    (\textbf{0.96.0} and above) of \textsl{Seq66},
    run it, and then exit.
-   Verify in the regenerated "rc" file
+   Verify in the regenerated 'rc' file
    (\texttt{\textasciitilde/.config/seq66/seq66.rc}) that the
    following line exists:
 
@@ -858,7 +856,7 @@ but we're not completely sure how it works yet.
 
    To do.
 
-\subsection{"rc" File / Mute-Group Section}
+\subsection{'rc' File / Mute-Group Section}
 \label{subsec:rc_file_mute_group}
      
    This section is delimited by the \texttt{[mute-group]} construct.
@@ -895,7 +893,7 @@ but we're not completely sure how it works yet.
    control values that can affect the muting of a group, while the latter
    specifies the patterns that are part of a group.
 
-\subsection{"rc" File / MIDI-Clock Section}
+\subsection{'rc' File / MIDI-Clock Section}
 \label{subsec:rc_file_midi_clock}
 
    \index{[midi-clock]}
@@ -956,7 +954,7 @@ but we're not completely sure how it works yet.
       4 0  # buss number, clock status
    \end{verbatim}
 
-\subsection{"rc" File / MIDI-Meta-Events Section}
+\subsection{'rc' File / MIDI-Meta-Events Section}
 \label{subsec:rc_file_midi_meta_events}
 
    \index{[midi-meta-events]}
@@ -980,7 +978,7 @@ but we're not completely sure how it works yet.
    pattern editor or the event editor.  But, when recording tempo events, they
    will always be written to the patten having the tempo-track number.
 
-\subsection{"rc" File / Keyboard Control Section}
+\subsection{'rc' File / Keyboard Control Section}
 \label{subsec:rc_file_keyboard_control}
         
    \index{[keyboard control]}
@@ -1027,7 +1025,7 @@ but we're not completely sure how it works yet.
       122  3        # z
    \end{verbatim}
 
-\subsection{"rc" File / Keyboard Group Section}
+\subsection{'rc' File / Keyboard Group Section}
 \label{subsec:rc_file_keyboard_group}
 
    \index{[keyboard-group]}
@@ -1116,7 +1114,7 @@ but we're not completely sure how it works yet.
    keystrokes that control the individual sequences.  Also note the
    \texttt{Control\_L} and \texttt{Control\_R} notations a few lines above.
    \index{keys!no ctrl/alt please}
-   Please avoid using any Control key combinations in the "rc"/Keyboard
+   Please avoid using any Control key combinations in the 'rc'/Keyboard
    configuration.  Control keys are the province of the user-interface
    (\textsl{Gtk+}) and assigning them can cause surprising behavior!
    It is also wise to avoid the \texttt{Alt} key.
@@ -1129,7 +1127,7 @@ but we're not completely sure how it works yet.
    \index{group-learn!shift-lock}
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
 
-\subsection{"rc" File / JACK Transport}
+\subsection{'rc' File / JACK Transport}
 \label{subsec:rc_file_jack_transport}
 
    This section holds the settings for both JACK transport and for native JACK
@@ -1177,7 +1175,7 @@ but we're not completely sure how it works yet.
    Also note that JACK transport is separately configurable from
    JACK MIDI, and each uses a different JACK client internally.
 
-\subsection{"rc" File / MIDI Clock Mod Ticks}
+\subsection{'rc' File / MIDI Clock Mod Ticks}
 \label{subsec:rc_file_midi_cmt}
 
    \index{[midi-clock-mod-ticks]}
@@ -1190,7 +1188,7 @@ but we're not completely sure how it works yet.
       64
    \end{verbatim}
 
-\subsection{"rc" File / MIDI Meta Events}
+\subsection{'rc' File / MIDI Meta Events}
 \label{subsec:rc_file_midi_meta}
 
    This section defines some features of MIDI meta-event handling.  Normally,
@@ -1204,7 +1202,7 @@ but we're not completely sure how it works yet.
       0    # tempo_track_number
    \end{verbatim}
 
-\subsection{"rc" File / MIDI Input}
+\subsection{'rc' File / MIDI Input}
 \label{subsec:rc_file_midi_input}
 
    \index{[midi-input]}
@@ -1213,7 +1211,7 @@ but we're not completely sure how it works yet.
    \paragraphref{paragraph:menu_file_options_midi_input}.
    The "1" is a line count, and would equal the number of
    supported input ports.
-   This "rc" entry here has two variables; the first is the record number or
+   This 'rc' entry here has two variables; the first is the record number or
    port number, and the second number indicates whether it is disabled (0),
    or enabled (1).
 
@@ -1235,7 +1233,7 @@ but we're not completely sure how it works yet.
    it does correspond to the \texttt{--manual-ports} command-line
    option.
 
-\subsection{"rc" File / Manual ALSA Ports}
+\subsection{'rc' File / Manual ALSA Ports}
 \label{subsec:rc_file_manual_ports}
 
    The name of this setting is a bit of a misnomer in a couple of ways:
@@ -1289,7 +1287,7 @@ but we're not completely sure how it works yet.
    actual ALSA ports that exist on the system.
    The next option gets around that issue.
 
-\subsection{"rc" File / Reveal ALSA Ports}
+\subsection{'rc' File / Reveal ALSA Ports}
 \label{subsec:rc_file_reveal_ports}
 
    Again, this option applies to both ALSA and native JACK.
@@ -1311,7 +1309,7 @@ but we're not completely sure how it works yet.
    If this option is turned on, the definitions in the
    "user" configuration file are \textsl{not} read from that file.
 
-\subsection{"rc" File / Interaction Method}
+\subsection{'rc' File / Interaction Method}
 \label{subsec:rc_file_interaction}
 
    \index{[interaction-method]}
@@ -1385,7 +1383,7 @@ but we're not completely sure how it works yet.
    \index{qt!click-edit}
    Not sure that this support is available in the Qt user-interface.
 
-\subsection{"rc" File / LASH Session}
+\subsection{'rc' File / LASH Session}
 \label{subsec:rc_file_lash_session}
 
    \index{[lash-session]}
@@ -1409,11 +1407,11 @@ but we're not completely sure how it works yet.
       1     # LASH session management support flag
    \end{verbatim}
 
-\subsection{"rc" File / Auto Option Save}
+\subsection{'rc' File / Auto Option Save}
 \label{subsec:rc_file_auto_rc_save}
 
    \index{[auto-option-save]}
-   This new item determines if the "rc" configuration file is saved
+   This new item determines if the 'rc' configuration file is saved
    upon exit of \textsl{Seq66}.  The legacy behavior is to save it,
    which can sometimes be inconvenient when one is just trying out some
    command-line options.
@@ -1431,7 +1429,7 @@ but we're not completely sure how it works yet.
       0     # auto-save-options-on-exit support flag
    \end{verbatim}
 
-\subsection{"rc" File / Last Used Directory}
+\subsection{'rc' File / Last Used Directory}
 \label{subsec:rc_file_last_used_dir}
 
    The following item refers to the last directory in which one opened or
@@ -1443,7 +1441,7 @@ but we're not completely sure how it works yet.
       /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/
    \end{verbatim}
 
-\subsection{"rc" File / Recent Files}
+\subsection{'rc' File / Recent Files}
 \label{subsec:rc_file_recent_files}
 
    The following item preserves a list of the last few MIDI files loaded.
@@ -1459,7 +1457,7 @@ but we're not completely sure how it works yet.
       contrib/midi/b4uacuse-GM-format.midi
    \end{verbatim}
 
-\subsection{"rc" File / Play-List}
+\subsection{'rc' File / Play-List}
 \label{subsec:rc_file_playlist}
 
    This is a feature new with version 0.96.0 of \textsl{Seq66}.

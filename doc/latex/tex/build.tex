@@ -193,27 +193,6 @@
         This version is best used for the \textsl{Windows} and
         \textsl{Mac} ports.
 
-%  \itempar{\texttt{--disable-highlight}}{build!disable highlight}
-%       \index{SEQ66\_HIGHLIGHT\_EMPTY\_SEQS}
-%       Undefines the \texttt{SEQ66\_HIGHLIGHT\_EMPTY\_SEQS}
-%       macro, which is otherwise defined by default.  If defined, the
-%       application highlights empty patterns by coloring them yellow.
-%       If not defined, empty sequences/patterns are shown in the normal
-%       black-on-white coloring.  In either case, empty patterns will not be
-%       played.
-%       Applies only to the Gtkmm user-interface.
-%
-%   \itempar{\texttt{--disable-lash}}{build!disable lash}
-%       \index{SEQ66\_LASH\_SUPPORT}
-%       Undefines the \texttt{SEQ66\_LASH\_SUPPORT} macro, but it
-%       is now undefined by default.
-%       \textsl{Linux} only.
-%       Even if this option is left defined,
-%       however, \textsl{Seq66} will still not use LASH support unless
-%       one specifies \texttt{--lash} on the \texttt{seq66} command-line or
-%       turn on the new \texttt{[lash-session]} option in the "rc"
-%       configuration file,
-%       \texttt{\textasciitilde/.config/seq66/seq66.rc}.
 
     \itempar{\texttt{--disable-jack}}{build!disable jack}
         \index{SEQ66\_JACK\_SUPPORT}
@@ -234,52 +213,12 @@
         command-line options and options in the "rc" configuration file.
         This is an option for \textsl{Linux} only.
 
-%   \itempar{\texttt{--disable-pause}}{build!disable pause support}
-%       \index{SEQ66\_PAUSE\_SUPPORT}
-%       This option undefines the \texttt{SEQ66\_PAUSE\_SUPPORT} macro,
-%       which is defined by default, and provides support for toggling between
-%       a Play button and a Pause button, for actually pausing playback
-%       in Live mode, and for a new Pause key, which defaults to a
-%       period (".").
-%
-%   \itempar{\texttt{--disable-chords}}{build!disable chords support}
-%       \index{SEQ66\_STAZED\_CHORD\_GENERATOR}
-%       This option undefines the \texttt{SEQ66\_STAZED\_CHORD\_GENERATOR}
-%       macro.  If this macro is defined,
-%       then the application is built with support for a Chord button in the
-%       pattern editor, which enables entering whole chords with a single
-%       click.  This feature is grabbed from \textsl{Seq32} (\cite{seq32}).
-%
-%   \itempar{\texttt{--disable-transpose}}{build!disable transpose support}
-%       \index{SEQ66\_STAZED\_TRANSPOSE}
-%       This option undefines the \texttt{SEQ66\_STAZED\_TRANSPOSE}
-%       macro.  If this macro is defined,
-%       then the application is built with support for a Transpose button in the
-%       pattern editor and the song editor.  The Transpose button in the
-%       pattern editor allows a pattern to be exempt from transposition,
-%       while the Transpose button in the song editor allows transposing the
-%       entire song (except for exempt patterns).
-%       This feature is grabbed from \textsl{Seq32} (\cite{seq32}).
-%
-%   \itempar{\texttt{--disable-multiwid}}{build!disable multi-wid support}
-%       \index{SEQ66\_MULTI\_MAINWID}
-%       Undefines the \texttt{SEQ66\_MULTI\_MAINWID} macro.
-%       If this macro is defined (currently the default), then it is
-%       possible to show multiple sets in the main window.
-%       See \sectionref{subsec:patterns_panel_multiple},
-%       which describes this mode.  Gtkmm only.
-
     To summarize, these option macros define/undefine the following build
     macros:
 
       \begin{itemize}
-%       \item \texttt{SEQ66\_HIGHLIGHT\_EMPTY\_SEQS}
-%       \item \texttt{SEQ66\_LASH\_SUPPORT}
         \item \texttt{SEQ66\_JACK\_SUPPORT}
         \item \texttt{SEQ66\_JACK\_SESSION}
-%       \item \texttt{SEQ66\_PAUSE\_SUPPORT}
-%       \item \texttt{SEQ66\_STAZED\_CHORD\_GENERATOR}
-%       \item \texttt{SEQ66\_MULTI\_MAINWID}
       \end{itemize}
 
    A lot of options have become mandatory over the years, and are not discussed
@@ -295,215 +234,8 @@
    We mark those changes with macros.
    And sometimes we tried a change, but left it disabled.
    Look at those macros, modify them, and build
-   the source code to one's preferences.  If one does not see a macro described
-   below, it means we need to catch up with the documentation.
-
-   The following items are not part of the configure script, but can
-   be edited manually in the header file
-   \texttt{libseq66/include/seq66-features.h}
-   to achieve the desired settings:
-
-   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-   
-%   \itempar{\texttt{SEQ66\_EDIT\_SEQUENCE\_HIGHLIGHT}}{build!seq highlight}
-%       Defined in the \texttt{perform} module.
-%       Provides the option to highlight the currently-editing sequence in the
-%       main window view and in the song editor.  If the sequence is muted, it
-%       is highlighted in black text on a cyan background.  If it is unmuted,
-%       it is highlighted in cyan text on a black background.  The highlighting
-%       follows whichever pattern editor or event editor has the focus.
-%       Gtkmm only.
-%
-%   \itempar{\texttt{SEQ66\_USE\_NEW\_FONT}}{build!new font}
-%       Already defined in the \texttt{font} module.
-%       If defined, a new, anti-aliased,
-%       bold font is used in the user-interface.  This new font is implemented
-%       in new XPM files in \texttt{resources/pixmaps} directory:
-%       \texttt{wen*.xpm}.  The font is slightly
-%       larger, but changes the user-interface sizes only to an infinitesmal
-%       degree.
-%       Gtkmm only.
-%
-%       \textbf{Obsolete:}
-%       \index{obsolete:compile-time font}
-%       This option is no longer a compile-time option, but a run-time option.
-%       It is now the default, but the usage of the old versus new font can be
-%       set in the "user" configuration file.
-%       Also, if the legacy mode is specified, the old font becomes the
-%       default.
-%
-%   \itempar{\texttt{SEQ66\_USE\_EVENT\_MAP}}{build!event map}
-%       Already defined in the \texttt{event\_list} module.
-%       It enables the usage of an
-%       \texttt{std::multimap}, instead of an \texttt{std::list},
-%       to store MIDI events.  Because
-%       the code does a lot of sorting of events, using the
-%       \texttt{std::multimap} is actually a lot faster (especially under debug
-%       mode, where it takes
-%       many seconds for a medium-size MIDI file to load using the
-%       \texttt{std::list} implementation.
-%       But the \texttt{std::multimap} can be a limiting factor during playback.
-%       We use the list implementation and sort the container only after
-%       getting all the events loaded.
-%
-%   \itempar{\texttt{SEQ66\_USE\_MIDI\_VECTOR}}{build!midi vector}
-%       Defined in the \texttt{seq66\_features.h} file.
-%       It enables the usage of an
-%       \texttt{std::vector} instead of \texttt{std::list},
-%       to store MIDI data bytes.
-%       It provides the preferred alternative to the list for storing and
-%       counting the bytes of MIDI data.  It stops the reversing of
-%       certain events due to the peculiarities of \texttt{std::list}.
-%       This new implementation uses
-%       \texttt{std::vector} and does not use \texttt{pop\_back()} to retrieve
-%       the bytes for writing to a file.
-%
-%   \itempar{\texttt{SEQ66\_FOLLOW\_PROGRESS\_BAR}}{build!follow progress bar}
-%       Already defined in the \texttt{app\_limits.h} module.
-%       It enables the automatic scrolling (horizontal paging) of the pattern
-%       editor and song editor piano rolls, to keep the progress bar in view at
-%       all times.  This feature is useful for patterns that are longer than
-%       the span of the editor windows.  Such scrolling is a common
-%       feature of software MIDI sequencers.
-%
-%  \textbf{Obsolete}:  Still need to replicate the descriptions that follow
-%     in the proper sections.
-%
-%   \itempar{\texttt{SEQ66\_USE\_GREY\_GRID}}{build!grey/normal grid}
-%       \textbf{This item is no longer defined}.
-%       Instead, the option is now part of the "rc" configuration file.  This
-%       description will be moved to the correct section eventually.
-%
-%       This configuration item causes the pattern slots/boxes to be colored
-%       grey (actually, they will be colored normally as per the current GTK
-%       them).  Otherwise, they are colored black.  By default, this value is
-%       defined (in the \texttt{mainwid} module).
-%
-%   \itempar{\texttt{SEQ66\_USE\_WHITE\_GRID}}{build!white grid}
-%       \textbf{This item is no longer defined}.
-%       Instead, the option is now part of the "user" configuration file.  This
-%       description will be moved to the correct section eventually.
-%
-%       This configuration item causes the pattern slots/boxes to be colored
-%       white.  Also definable(in the \texttt{mainwid} module).
-%
-%   \itempar{\texttt{SEQ66\_USE\_BRACKET\_GRID}}{build!normal grid}
-%       \textbf{This item is no longer defined}.
-%       Instead, the option is now part of the "user" configuration file.  This
-%       description will be moved to the correct section eventually.
-%       This configuration box that outlines the pattern slots/boxes is
-%       painted over to convert the box to look like a pair of brackets.
-%       By default, this value is defined (in the \texttt{mainwid} module).
-%
-%   \itempar{\texttt{SEQ66\_SEQNUMBER\_ON\_GRID}}{build!grid numbers}
-%       \textbf{This item is no longer defined}.
-%       Instead, the option is now part of the "rc" configuration file.  This
-%       description will be moved to the correct section eventually.
-%
-%       If the "show sequence numbers" option is on, then each
-%       of the blank pattern slots in the main window show the would-be
-%       sequence number for that slot.  The background color of the numbers
-%       will not match the background color of the grid (which matches the
-%       chosen GTK theme).  But, no matter what the GTK background color, they
-%       will at least be visible.  There is a little image of this style inside
-%       the screenshot shown on the first page of this manual.
-%
-%       If \texttt{SEQ66\_USE\_WHITE\_GRID}
-%       are defined, so that the grid cells are white, then the sequence
-%       numbering looks a little nicer, as can be seen in the following
-%       figure:
-%
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern-window-white-box-numbering.png}
-%  \caption{Pattern Window Built for White Grid with Numbering}
-%  \label{fig:build_white_box_numbering}
-% \end{figure}
-%
-%       There is a little image of this style inside the screenshot shown on
-%       the first page of this manual, as well.
-%
-%       If neither \texttt{SEQ66\_USE\_GREY\_GRID} nor
-%       \texttt{SEQ66\_USE\_WHITE\_GRID} are defined, so that the grid slots
-%       are black, then the numbering will be yellow on a black background, and
-%       match perfectly.  This style is shown in the following figure:
-%
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern-window-black-box-numbering.png}
-%  \caption{Pattern Window Built for Black Grid with Numbering}
-%  \label{fig:build_black_box_numbering}
-% \end{figure}
-%
-%     There is a little image of this style inside the screenshot shown on
-%     the first page of this manual, as well.
-%
-%     Take your pick, modify the code accordingly before building it.
-%     Perhaps these can eventually be options for the \texttt{configure}
-%     script, or even run-time options!  Let us know!
-%
-%   \itempar{\texttt{SEQ66\_SOLID\_PIANOROLL\_GRID}}{build!solid piano-roll}
-%       Enabling this macro makes the grid lines for the piano rolls
-%       more solid, with about the same perception of lightness.
-%       It also calls in some other tweaks, such as the positioning of
-%       markers.  We currently like this look a little better, and so it is
-%       the default.  See the \texttt{app\_limits.h}
-%       header file for the definition of this variable.
-%
-%       Here is the pattern editor (sequence editor) with this alternate look.
-%
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-editor-alternate-look.png}
-%  \caption{Sequence Pattern Editor Alternate Look}
-%  \label{fig:pattern_editor_alternate_look}
-% \end{figure}
-%
-%       Note the smmoothness of the grid lines, the extra emphasis of the C
-%       notes at each octave, the emphasis of the note-drawing snap lines that
-%       mark the default length of a click-to-add note, the emphasis of the
-%       beat and bars, and, finally, the new location of the
-%       \textbf{END} marker.  Also note the dark-cyan background pattern,
-%       discussed elsewhere in this document.
-%
-%       Here is the grid-styling for an 8/4 time signature in the song editor:
-%
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{song-editor/song-editor-alternate-look.png}
-%  \caption{Song Editor Alternate Look}
-%  \label{fig:song_editor_alternate_look}
-% \end{figure}
-%
-%     Also note the sequence numbers shown in the bottom left of each pattern
-%     name box. This is a new feature, and, as noted elsewhere, is a new
-%     option in the \textsl{File / Options / Keyboard} tab and in
-%     the "rc" configuration file.
-%
-%   \itempar{\texttt{SEQ66\_USE\_VI\_SEQROLL\_MODE}}{build!vi seqroll}
-%       Definable in the seqroll module, this macro allows the vi hjkl keys to
-%       be used as arrow keys for moving notes.  Not yet tested.  We will not
-%       make this a default, because it could drive non-vi users nuts.
-
-   \itempar{\texttt{SEQ66\_USE\_DEBUG\_OUTPUT}}{build!debug output}
-      Enable this macro in the
-      \texttt{globals.h} header file, to see extra console
-      output if the application is compiled for debugging.  This macro can be
-      activated only if \texttt{SEQ66\_PLATFORM\_DEBUG} is defined, which is taken
-      care of by the build process.  If set, this macro turns on extra
-      console output for some modules.
-
-%       \begin{itemize}
-%          \item \texttt{globals}
-%          \item \texttt{jack\_assistant}
-%          \item \texttt{optionsfile}
-%          \item \texttt{user\_settings}
-%       \end{itemize}
-
-      \index{SEQ66\_PLATFORM\_DEBUG}
-      Again, note the macro \texttt{SEQ66\_PLATFORM\_DEBUG},
-      defined in \texttt{platform\_macros.h} if the application is
-      built in debug mode.
+   the source code to one's preferences.
+   These macros are described in the \texttt{INSTALL} file.
 
 \subsection{Seq66 Build Dependencies}
 \label{subsec:build_dependencies}
@@ -562,15 +294,13 @@
    engines.
  
 \begin{verbatim}
-   $ ./bootstrap --enable-release -rm -qt
-   $ ./bootstrap -er -rm -qt
-   $ ./bootstrap --enable-release -pm -qt
-   $ ./bootstrap -er -pm -qt
+   $ ./bootstrap --enable-release -rm
+   $ ./bootstrap -er -rm
 \end{verbatim}
 
    The Qt/RtMIDI combination are the official version
    of \textsl{Seq66} for \textsl{Linux}.
-   Our PortMIDI engine, while modestly improved over legacy PortMIDI, is not
+   Our PortMIDI engine, while modestly improved over normal PortMIDI, is not
    quite as complete as the RtMIDI-derived implementation.
 
 \subsection{Linux Qmake Build}

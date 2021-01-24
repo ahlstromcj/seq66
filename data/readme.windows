@@ -1,6 +1,6 @@
-readme.windows for Seq66 0.91.5
+readme.windows for Seq66 0.92.0
 Chris Ahlstrom
-2018-05-13 to 2020-12-28
+2018-05-13 to 2021-01-24
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -81,12 +81,13 @@ Inaccessible Devices:
     We still have some minor issues at start up and at exit, but are now able
     to play a tune on the wavetable synthesizer using the "-b 2" option.
 
-    When you first run qpseq66 on Windows, it will create four new configuration
+    When you first run qpseq66 on Windows, it will create new configuration
     files:
 
         C:\Users\username\AppData\Local\seq66\qpseq66.rc
         C:\Users\username\AppData\Local\seq66\qpseq66.usr
         C:\Users\username\AppData\Local\seq66\qpseq66.ctrl
+        C:\Users\username\AppData\Local\seq66\qpseq66.drums
         C:\Users\username\AppData\Local\seq66\qpseq66.mutes
     
     Inaccessible devices are noted in the "[midi-clock]" section of

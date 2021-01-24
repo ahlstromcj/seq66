@@ -29,13 +29,8 @@ CLEANFILES = dox-stamp \
  seq_portmidi/seq66_lib_seq_portmidi.pdf \
  libseq66/seq66_lib_libseq66.pdf
 
-
 #******************************************************************************
 #  EXTRA_DIST
-#------------------------------------------------------------------------------
-#
-# We need to move some of this to a Makefile.am in the directory aboe.
-#
 #------------------------------------------------------------------------------
 
 EXTRA_DIST = make_dox *.cfg *.dox *.pdf

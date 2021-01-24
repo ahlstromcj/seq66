@@ -29,10 +29,12 @@
    \texttt{-j}/\texttt{--jack-transport}, \texttt{-J}/\texttt{--jack-master},
    and \texttt{-C}/\texttt{--jack-master-cond} are available.
 
-   With version 0.90, \textsl{Seq66} can be built to support the legacy
+   With version 0.90, \textsl{Seq66} can be built to support the
    ALSA interface, the PortMIDI interface, or, best of all, the native JACK
-   MIDI interface, loosely based on the RtMIDI project
-   (see \cite{rtmidi}).  This mode also supports fallback-to-ALSA if the JACK
+   MIDI interface.
+   This support is loosely based on the RtMIDI project
+   (see \cite{rtmidi}).
+   This mode also supports fallback-to-ALSA if the JACK
    server is not running.
 
    \begin{itemize}
@@ -67,8 +69,7 @@
 
    \begin{enumerate}
       \item What JACK functions are supported for JACK Transport.
-      \item Exposing the ALSA MIDI ports to JACK, when using the legacy
-         ALSA version of \textsl{Seq66}.
+      \item Exposing ALSA MIDI ports (e.g. USB devices) to JACK.
       \item Fixes to JACK Master mode.
       \item Interactions with the Klick and Hydrogen applications.
       \item Patches from the new (!) version of Seq24, 0.9.3, to correct

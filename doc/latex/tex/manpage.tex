@@ -21,21 +21,12 @@
    not exactly in \textsl{man} format.  Also, an item or two are shown that
    somehow didn't make it into the man page, and minor corrections and
    formatting tweaks were made.
-   For example, we replaced the underscore with the hyphen in the names of some
-   options.  The legacy Seq24 options, which use underscores or are missing the
-   option hyphen, are still unofficially supported.
 
    \texttt{\$HOME/.config/seq66/qseq66.rc} holds the "rc" settings
    for \textsl{Seq66}.
 
    \texttt{\$HOME/.config/seq66/qseq66.usr} holds the "user" settings
    for \textsl{Seq66}.
-
-   But the old style names are used for the "legacy" mode.  See the
-   \texttt{--legacy} option below. Here is the basic command line:
-
-%  \textsl{Seq66} is a real-time MIDI sequencer. It was created to
-%  provide a very simple interface for editing and playing MIDI 'loops'.
 
    \begin{verbatim}
        qseq66 [OPTIONS] [FILENAME]
@@ -218,13 +209,13 @@
    \optionpar{-f}{--rc filename}
       Use a different "rc" configuration file.  It must be a file in the user's
       \$HOME/.config/seq66 directory or the directory specified by the
-      --home option.  Not supported by the --legacy mode.  The '.rc' extension
+      --home option.  The '.rc' extension
       is added if no extension is present in the filename.
 
    \optionpar{-F}{--usr filename}
       Use a different "usr" configuration file.  It must be a file in the
       user's \$HOME/.config/seq66 directory or the directory specified by
-      the --home option.  Not supported by the --legacy mode.  The '.usr'
+      the --home option.  The '.usr'
       extension is added if no extension is present in the filename.
 
    \optionpar{-c}{--config basename}
@@ -314,11 +305,6 @@
    Seq66 exits.  If it does exist, it will be rewritten with the current
    configuration of Seq66, but \textsl{only} if the
    \texttt{--user-save} option was provided on the command-line.
-   Note that the
-   \texttt{--legacy} option causes the old
-   configuration-file names (\texttt{.seq66rc} and \texttt{.seq66usr}
-   in the \texttt{\$HOME} directory)
-   to be used.
 
    The current Seq66 project homepage and documentation site
    is a git repository at

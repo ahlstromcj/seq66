@@ -281,12 +281,8 @@
 
    \itempar{Clear Mute Groups}{edit!clear mute groups}
    \index{mute groups}
-   A feature of \textsl{Seq24} and \textsl{Seq66} is that the mute groups
-   are saved in both the 'rc' file
-   (see \sectionref{subsec:rc_file_mute_group})
-   \textsl{and} in the "MIDI" file
-   (see \sectionref{subsec:legacy_midi_format}).
-
+   A feature of \textsl{Seq66} is that the mute groups
+   are saved in both the 'rc' file \textsl{and} in the "MIDI" file.
    This menu entry clears them. If this resulted in any mute-group sequences
    status being set to false, then the user is prompted to save the MIDI
    file, so that it will no longer have any
@@ -364,14 +360,12 @@
          It is enabled by the
          \texttt{--manual-ports} command-line option or the
          \texttt{[manual-ports]} section of the
-         \texttt{qseq66.rc} configuration file, described in
-         \sectionref{subsec:rc_file_manual_ports}.
+         \texttt{qseq66.rc} configuration file.
       \item The setting of the \textsl{Seq66}-specific
          "reveal ALSA ports" option,
          \texttt{--reveal-ports} command-line option or the
          \texttt{[reveal-ports]} section of the
-         \texttt{qseq66.rc} configuration file, described in
-         \sectionref{subsec:rc_file_reveal_ports}.
+         \texttt{qseq66.rc} configuration file.
    \end{itemize}
 
    If \texttt{--manual-ports} is on, this list shows the virtual
@@ -542,25 +536,6 @@
    ports.  This item can only be edited by closing the application, editing the
    'rc' file, and restarting the application.
 
-%  In addition, the \textbf{Set as Song Tempo Track} button sets this
-%  track as part of the currently-load MIDI song file, and will be saved when
-%  exited.  This value will override the global tempo-track value, which is
-%  stored in the 'rc' configuration file.  However, if 0, it will be ignored,
-%  so that the global value will take hold.
-%
-%  See \sectionref{subsec:rc_file_midi_meta_events}, which discusses this
-%  setting in the 'rc' configuration file.
-%
-%  One thing to remember about tempo...
-%  there is a "global" tempo which is saved as part of the song in a SeqSpec
-%  section.  However, that tempo is not saved in the tempo track.
-%  In order to do so, one can click the \textbf{Log Tempo} button to write it
-%  to the tempo track as a tempo event.
-%
-%  See \sectionref{subsec:jack_native_midi},
-%  for a lot more information about native JACK support, and examples of JACK
-%  MIDI ports and connections.
-
    \index{todo!manual alsa gui option}
    There is currently no user-interface item corresponding to the "manual-ports"
    command-line and 'rc' configuration file option.
@@ -635,7 +610,7 @@
    \textbf{Record input into sequence according to channel}
    causes MIDI input with multiple channels to be distributed to
    each sequence according to MIDI channel number.
-   When disabled, the legacy recording behavior dumps all data into the current
+   When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
 
 \paragraph{Menu / Edit / Preferences / Keyboard (Removed)}
@@ -735,8 +710,6 @@
    \itempar{Transport/MIDI}{jack sync!transport/midi}
    These settings are stored in the 'rc' file settings group
    \texttt{[jack-transport]}.
-   See \sectionref{subsec:rc_file_jack_transport},
-   which describes this configuration option.
    This items collects the following settings:
 
    \begin{itemize}
@@ -812,8 +785,7 @@
    \end{itemize}
 
    \textsl{Seq66} also selects the playback modes
-   according to which window started the playback,
-   reverting back to legacy \textsl{Seq24} behavior.
+   according to which window started the playback.
    \textsl{The main window}, or pattern
    window, causes playback to be in live mode.  The user can arm and mute
    patterns in the main window by clicking on sequences, using their hot-keys,

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-01-20
+% \update      2021-01-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -33,6 +33,8 @@
 %
 % So we add the fancyhdr package, clear the default layout, and set it up for
 % our wider pages.
+
+\batchmode
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -319,13 +321,13 @@
    \end{itemize}
 
 \paragraph{Set Name}
-\label{paragraph:introduction_Set_Name}
+\label{paragraph:introduction_set_name}
 
    This text field shows the name of the current set, and also allows editing
    the set name.
 
 \paragraph{Set Master Button}
-\label{paragraph:introduction_}
+\label{paragraph:introduction_set_master_button}
 
    This button brings up an external window showing the \textbf{Set Master}
    panel.  This panel is also available in a center tab.  It is a work in
@@ -333,7 +335,7 @@
    It can currently show existing sets in one view.
 
 \paragraph{Active Set Indicator}
-\label{paragraph:introduction_}
+\label{paragraph:introduction_active_set_indicator}
 
    This read-only text field shows the set number of the currently active set.
    One can open a number of external \textsl{Live Frames} by
@@ -342,7 +344,7 @@
    without a lot of mouse/keyboard navigation.
 
 \paragraph{Set Changer}
-\label{paragraph:introduction_}
+\label{paragraph:introduction_set_changer}
 
    This spin-box allows showing a different set in the main windows.
    This set can be modified by adding new patterns, changing its name, or
@@ -578,15 +580,17 @@
 
 \input{port_mapping}
 
-% Configuration files
+% Configuration files are now consolidated into one file
 
-%%% \input{manpage}
+\input{configuration}
+
 %%% \input{rc_file}
 %%% \input{usr_file}
 %%% \input{ctrl_file}
 %%% \input{mutes_file}
 %%% \input{palette_file}
 %%% \input{drums_file}
+%%% \input{manpage}
 
 % Playlists
 
@@ -604,10 +608,6 @@
 
 \input{palettes}
 
-% Qt / PortMidi / Windows version
-%
-% \input{qt_portmidi}
-
 % Headless version
 
 \input{headless}
@@ -618,24 +618,22 @@
 % ---------------------------------------------------------------------
 %
 % MIDI implementation chart
-%
 % \pagebreak
 % \input{midi_impl_chart}
 % \pagebreak
 %
 % Building and debugging Seq66
-%
 % \input{build}
-%
-% Discussion of MIDI formats related to Seq24 and Seq66
-%
-% \input{midi_formats}
 %
 % ---------------------------------------------------------------------
 
 % Important Concepts
 
 \input{concepts}
+
+% Discussion of MIDI formats related to Seq24 and Seq66
+
+\input{midi_formats}
 
 % Acknowledgments
 

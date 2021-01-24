@@ -1,6 +1,6 @@
-Seq66 Licensing 0.91.5 and above
+Seq66 Licensing 0.92.0 and above
 Chris Ahlstrom
-2015-09-10 to 2020-12-28
+2015-09-10 to 2021-02-14
 
 Applications:
 
@@ -8,7 +8,7 @@ Applications:
    Generally, projects that originate with me use the latter license, while
    projects I have extended may specify the former license.
 
-   Copyright (C) 2015-2020 by Chris Ahlstrom
+   Copyright (C) 2015-2021 by Chris Ahlstrom
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
