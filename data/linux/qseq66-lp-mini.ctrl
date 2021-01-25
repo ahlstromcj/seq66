@@ -1,7 +1,7 @@
-# Seq66 0.90.5 (and above) MIDI control configuration file
+# Seq66 0.91.0 (and above) MIDI control configuration file
 #
-# /home/user/.config/seq66/qseq66-lp-mini.ctrl
-# Written on 2020-08-07 09:58:39
+# /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
+# Written on 2021-01-25 10:22:15
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -13,7 +13,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 2
+version = 0
 
 # [comments] holds the user's documentation for this control file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
@@ -60,17 +60,20 @@ on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 [midi-control-settings]
 
-# Note that setting 'load-midi-control' to 'false' will cause an
-# empty MIDI control setup to be written!  Keep backups! The 
-# control-buss value should range from 0 to the maximum buss available
-# on your system.  If set, then only that buss will be allowed to
-# provide MIDI control. A value of 255 or 0xff means any buss can.
+# This section can be moved into a 'qseq66.ctrl' file and then be
+# referred to in a '[midi-control-file] section.
+# 
+# Setting 'load-midi-control' to 'false' will cause an empty MIDI
+# control setup to be written!  Keep backups! The control-buss value
+# ranges from 0 to the maximum system buss provided by the hardware.
+# If set, then only that buss will be allowed to send MIDI control.
+# A value of 255 or 0xff means any buss can send MIDI control.
 # The 'midi-enabled' flag applies to the MIDI controls; keystrokes
 # are always enabled.
 
 load-key-controls = true
 load-midi-controls = true
-control-buss = 0xff
+control-buss = 2
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -105,11 +108,12 @@ button-columns = 8
 #  ------------------------- Loop, group, or automation-slot number
 # |   ---------------------- Name of the key (see the key map)
 # |  |
-# |  |    ------------------ Inverse
-# |  |   |  ---------------- MIDI status/event byte (e.g. Note On)
-# |  |   | |  -------------- Data 1 (e.g. Note number)
-# |  |   | | |  ------------ Data 2 min
-# |  |   | | | |  ---------- Data 2 max
+# |  |    ------------------ Enabled (active)
+# |  |   |  ---------------- Inverse
+# |  |   | |  -------------- MIDI status/event byte (e.g. Note On)
+# |  |   | | |  ------------ Data 1 (e.g. Note number)
+# |  |   | | | |  ---------- Data 2 min
+# |  |   | | | | |  -------- Data 2 max
 # |  |   | | | | | |
 # v  v   v v v v v v
 # 0 "1" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]
@@ -152,38 +156,38 @@ button-columns = 8
 
 [mute-group-control]
 
- 0 "!"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 0
- 1 "Q"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 1
- 2 "A"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 2
- 3 "Z"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 3
- 4 "@"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 4
- 5 "W"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 5
- 6 "S"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 6
- 7 "X"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 7
- 8 "#"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 8
- 9 "E"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 9
-10 "D"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 10
-11 "C"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 11
-12 "$"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 12
-13 "R"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 13
-14 "F"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 14
-15 "V"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 15
-16 "%"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 16
-17 "T"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 17
-18 "G"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 18
-19 "B"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 19
-20 "^"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 20
-21 "Y"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 21
-22 "H"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 22
-23 "N"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 23
-24 "&"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 24
-25 "U"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 25
-26 "J"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 26
-27 "M"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 27
-28 "*"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 28
-29 "I"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 29
-30 "K"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 30
-31 "<"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 31
+ 0 "!"       [ 1 0 0x90  64   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 0
+ 1 "Q"       [ 1 0 0x90  80   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 1
+ 2 "A"       [ 1 0 0x90  96   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 2
+ 3 "Z"       [ 1 0 0x90  112  1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 3
+ 4 "@"       [ 1 0 0x90  65   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 4
+ 5 "W"       [ 1 0 0x90  81   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 5
+ 6 "S"       [ 1 0 0x90  97   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 6
+ 7 "X"       [ 1 0 0x90 113   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 7
+ 8 "#"       [ 1 0 0x90  66   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 8
+ 9 "E"       [ 1 0 0x90  82   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 9
+10 "D"       [ 1 0 0x90  98   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 10
+11 "C"       [ 1 0 0x90 114   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 11
+12 "$"       [ 1 0 0x90  67   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 12
+13 "R"       [ 1 0 0x90  83   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 13
+14 "F"       [ 1 0 0x90  99   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 14
+15 "V"       [ 1 0 0x90 115   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 15
+16 "%"       [ 1 0 0x90  68   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 16
+17 "T"       [ 1 0 0x90  84   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 17
+18 "G"       [ 1 0 0x90 100   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 18
+19 "B"       [ 1 0 0x90 116   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 19
+20 "^"       [ 1 0 0x90  69   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 20
+21 "Y"       [ 1 0 0x90  85   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 21
+22 "H"       [ 1 0 0x90 101   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 22
+23 "N"       [ 1 0 0x90 117   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 23
+24 "&"       [ 1 0 0x90  70   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 24
+25 "U"       [ 1 0 0x90  86   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 25
+26 "J"       [ 1 0 0x90 102   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 26
+27 "M"       [ 1 0 0x90 118   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 27
+28 "*"       [ 1 0 0x90  71   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 28
+29 "I"       [ 1 0 0x90  87   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 29
+30 "K"       [ 1 0 0x90 103   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 30
+31 "<"       [ 1 0 0x90 119   1 127 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Mute 31
 
 [automation-control]
 
@@ -242,7 +246,7 @@ button-columns = 8
 
 set-size = 32
 output-buss = 1
-midi-enabled = false
+midi-enabled = true
 button-offset = 0
 button-rows = 4
 button-columns = 8
@@ -311,33 +315,33 @@ button-columns = 8
 # v  v v v v
 # 1 [0 0 0 0]
 
-# MIDI Control Out: play on/off or store/restore
+# MIDI Control Out: play on/off
 1 [ 0 0xb0 104 60 ] [ 0 0xb0 104 0 ]
 
-# MIDI Control Out: stop on/off or store/restore
+# MIDI Control Out: stop on/off
 1 [ 0 0xb0 104 15 ] [ 0 0xb0 104 0 ]
 
-# MIDI Control Out: pause on/off or store/restore
+# MIDI Control Out: pause on/off
 1 [ 0 0xb0 104 62 ] [ 0 0xb0 104 0 ]
 
-# MIDI Control Out: queue on/off or store/restore
+# MIDI Control Out: queue on/off
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: oneshot on/off or store/restore
+# MIDI Control Out: oneshot on/off
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: replace on/off or store/restore
+# MIDI Control Out: replace on/off
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: snap1 on/off or store/restore
+# MIDI Control Out: snap1 store/restore
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: snap2 on/off or store/restore
+# MIDI Control Out: snap2 store/restore
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: learn on/off or store/restore
+# MIDI Control Out: learn on/off
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# End of /home/user/.config/seq66/qseq66-lp-mini.ctrl
+# End of /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

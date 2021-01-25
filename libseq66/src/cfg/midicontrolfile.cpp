@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2020-12-06
+ * \updates       2021-01-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -144,7 +144,7 @@ midicontrolfile::midicontrolfile
     m_temp_midi_controls    (),             /* used during reading only */
     m_stanzas               ()              /* fill from rcs in writing */
 {
-    // Empty body
+    version("1");                           /* adds 2 section markers   */
 }
 
 /**
@@ -203,6 +203,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
 {
     bool result = true;
     file.seekg(0, std::ios::beg);                   /* seek to the start    */
+    version(parse_version(file));
 
     std::string s = parse_comments(file);
     if (! s.empty())
@@ -467,16 +468,40 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             mco.set_seq_event(i, midicontrolout::seqaction::mute, b);
             mco.set_seq_event(i, midicontrolout::seqaction::queue, c);
             mco.set_seq_event(i, midicontrolout::seqaction::remove, d);
-            if (! next_data_line(file))
+            if (i < (sequences - 1) && ! next_data_line(file))
             {
                 (void) make_error_message("midi-control-out", "no data");
                 break;
             }
         }
 
-        /* Non-sequence actions */
+        /*
+         *  If enabled, this adds two section markers and one section for
+         *  mutes, similar to the ctrl-pair options that follow this clause.
+         */
 
-        bool ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::play);
+        bool ok = true;
+        bool mute_out_enabled = std::stoi(version()) > 0;
+        if (mute_out_enabled)
+        {
+            if (line_after(file, "[mute-control-out]"))
+            {
+                for (int m = 0; m < mutegroups::Size(); ++m)
+                {
+                    ok = read_mutes_pair(file, mco, m);
+                    if (! ok)
+                        break;
+                }
+            }
+            if (ok)
+                ok = line_after(file, "[automation-control-out]");
+        }
+
+        /* Non-sequence (automation) actions */
+
+        if (ok)
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::play);
+
         if (ok)
             ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
 
@@ -545,6 +570,28 @@ midicontrolfile::read_ctrl_pair
         ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
     mco.set_event(a, enabled, ev_on, ev_off);
+    return next_data_line(file);
+}
+
+bool
+midicontrolfile::read_mutes_pair
+(
+    std::ifstream & file,
+    midicontrolout & mco,
+    int group
+)
+{
+    int enabled, ev_on[4], ev_off[4];
+    int count = std::sscanf
+    (
+        scanline(), sg_scanf_fmt_ctrl_pair,
+        &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
+        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
+    );
+    if (count < 9)
+        ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
+
+    mco.set_mutes_event(group, enabled, ev_on, ev_off);
     return next_data_line(file);
 }
 
@@ -714,11 +761,12 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "#  ------------------------- Loop, group, or automation-slot number\n"
         "# |   ---------------------- Name of the key (see the key map)\n"
         "# |  |\n"
-        "# |  |    ------------------ Inverse\n"
-        "# |  |   |  ---------------- MIDI status/event byte (e.g. Note On)\n"
-        "# |  |   | |  -------------- Data 1 (e.g. Note number)\n"
-        "# |  |   | | |  ------------ Data 2 min\n"
-        "# |  |   | | | |  ---------- Data 2 max\n"
+        "# |  |    ------------------ Enabled (active)\n"
+        "# |  |   |  ---------------- Inverse\n"
+        "# |  |   | |  -------------- MIDI status/event byte (e.g. Note On)\n"
+        "# |  |   | | |  ------------ Data 1 (e.g. Note number)\n"
+        "# |  |   | | | |  ---------- Data 2 min\n"
+        "# |  |   | | | | |  -------- Data 2 max\n"
         "# |  |   | | | | | |\n"
         "# v  v   v v v v v v\n"
         "# 0 \"1\" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]\n"
@@ -797,7 +845,24 @@ midicontrolfile::write_ctrl_pair
         << (active ? 1 : 0) << " "
         << act1str << " " << act2str << "\n\n"
         ;
+    return file.good();
+}
 
+bool
+midicontrolfile::write_mutes_pair
+(
+    std::ofstream & file,
+    const midicontrolout & mco,
+    int group
+)
+{
+    bool active = mco.mutes_event_is_active(group);
+    std::string act1str = mco.get_event_str(group, true);
+    std::string act2str = mco.get_event_str(group, false);
+    file
+        << (active ? 1 : 0) << " "
+        << act1str << " " << act2str << "\n\n"
+        ;
     return file.good();
 }
 
@@ -891,9 +956,12 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             file << "\n";
         }
     }
+
     file <<
         "\n"
-        "# The format of the following controller events is simpler:\n"
+        "[mute-control-out]\n"
+        "\n"
+        "# The format of the mute and automation output events is simpler:\n"
         "#\n"
         "#  --------------------- on/off (indicate if action is enabled)\n"
         "# |   ------------------ MIDI channel (0-15)\n"
@@ -905,6 +973,17 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "# 1 [0 0 0 0]\n"
         "\n"
         ;
+
+    /*
+     * TO DO:  Write out the mute-group output controls.  Not yet ready.
+     */
+
+    file <<
+        "\n"
+        "[automation-control-out]\n"
+        "\n"
+        ;
+
     write_ctrl_pair(file, mco, midicontrolout::uiaction::play);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::pause);

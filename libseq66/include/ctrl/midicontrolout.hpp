@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-13
+ * \updates       2021-01-25
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -162,6 +162,7 @@ private:
     /**
      *  Provides a place to hold MIDI control events in response to a
      *  user-interface change, such as starting or stopping playback.
+     *  Is also adapted to handling the toggling (on/off) of mute groups.
      */
 
     using actiontriplet = struct
@@ -172,7 +173,7 @@ private:
     };
 
     /**
-     *  Holds an array of actionpairs, one for each item in the uiaction
+     *  Holds an array of actiontriplets, one for each item in the uiaction
      *  enumeration.
      */
 
@@ -212,6 +213,14 @@ private:
     uiactions m_ui_events;
 
     /**
+     *  EXPERIMENTAL.
+     *  Provides action events for toggling a mute-group.  Handles the default
+     *  and unchanging value of 32 mutegroups.
+     */
+
+    uiactions m_mutes_events;
+
+    /**
      *  Holds the screenset size, to use rather than calling the container.
      */
 
@@ -244,15 +253,25 @@ public:
     void send_seq_event (int seq, seqaction what, bool flush = true);
     void clear_sequences (bool flush = true);
     event get_seq_event (int seq, seqaction what) const;
-    void set_seq_event (int seq, seqaction what, event & ev);
     void set_seq_event (int seq, seqaction what, int * ev);
     bool seq_event_is_active (int seq, seqaction what) const;
     bool event_is_active (uiaction what) const;
     std::string get_event_str (uiaction what, bool on) const;
-    void set_event (uiaction what, bool enabled, event & on, event & off);
-    void set_event (uiaction what, bool enabled, int * onp, int * offp);
-    void send_event (uiaction what, bool on);
+    std::string get_event_str (int w, bool on) const;
 
+#if defined SEQ66_USE_REFERENCE_PARAMETERS
+    void set_seq_event (int seq, seqaction what, event & ev);
+    void set_event (uiaction what, bool enabled, event & on, event & off);
+#endif
+
+    void set_event (uiaction what, bool enabled, int * onp, int * offp);
+    void set_mutes_event
+    (
+        int group, bool enabled, int * onp, int * offp
+    );
+    bool mutes_event_is_active (int group) const;
+    void send_mutes_event (int group, bool on);
+    void send_event (uiaction what, bool on);
     void send_learning (bool learning)
     {
         send_event(uiaction::learn, learning);
