@@ -1,4 +1,4 @@
-%-------------------------------------------------------------------------------
+
 % launchpad_mini
 %-------------------------------------------------------------------------------
 %
@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-24
-% \update      2021-01-25
+% \update      2021-01-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,18 +19,21 @@
 \label{sec:launchpad_mini}
 
    This section discusses the configuration and usage of the
-   \textsl{Novation Launchpad Mini} for control of patterns
+   \textsl{Novation Launchpad Mini} (we'll call it the "Mini")
+   for control of patterns
    and for showing the status of \textsl{Seq66}.
-   We will describe the 'ctrl' file provided with \textsl{Seq66},
+   We will describe one of the 'ctrl' files provided with \textsl{Seq66},
    the setup of ports and connections 
-   under ALSA and under JACK, and perhaps some related topics.
+   under ALSA and under JACK, and some related topics.
+   A picture of the Mini appears at the end of this section.
 
 \subsection{Launchpad Mini Basics}
 \label{subsec:launchpad_mini_basics}
 
+   Let's start with a guide to Mini programming.
    Some of this information was adopted from the PDF file
    \texttt{launchpad-programmers-reference.pdf}.
-   That document notes that a Launchpad
+   That document notes that a Mini
    message is 3 bytes, and is of type Note Off (80h), Note On (90h), or a
    controller change (B0h).  However, on our Mini, we do not receive Note Offs
    (in ALSA)... we receive Note Ons with velocity 0.
@@ -61,6 +64,8 @@
       \item \textbf{nn}
          is the hex value of the note, as shown by the two-digit hex values
             shown below.  The first "n" is the row number (from "0" to "7").
+            The second "n" is the column (from "0" to "7", and "8" for the
+            circular buttons.
    \end{itemize}
 
    The right columns's circular buttons (labeled "A" through "H"),
@@ -68,7 +73,8 @@
    \texttt{n8}.
 
    There are two layouts available, \textbf{X-Y} and \textbf{Drum}.
-   In \textsl{Seq66}, the drum layout is not used.
+   In \textsl{Seq66}, the drum layout is not used; see the
+   file \texttt{contrib/notes/launchpad.txt}.
 
    X-Y Key Layout (mapping mode 1):
 
@@ -85,21 +91,6 @@
          [70h] [71h] [72h] [73h] [74h] [75h] [76h] [77h] (78h) H
    \end{verbatim}
 
-   Drum Rack Key Layout (mapping mode 2):
-
-   \begin{verbatim}
-           1     2     3     4     5     6     7     8 
-    B0h: (68h) (69h) (6ah) (6bh) (6ch) (6dh) (6eh) (6fh)
-    90h: [40h] [41h] [42h] [43h] [60h] [61h] [62h] [63h] (64h) A
-         [3ch] [3dh] [3eh] [3fh] [5ch] [5dh] [5eh] [5fh] (65h) B
-         [38h] [39h] [3ah] [3bh] [58h] [59h] [5ah] [5bh] (66h) C
-         [34h] [35h] [36h] [37h] [54h] [55h] [56h] [57h] (67h) D
-         [30h] [31h] [32h] [33h] [50h] [51h] [52h] [53h] (68h) E
-         [2ch] [2dh] [2eh] [2fh] [4ch] [4dh] [4eh] [4fh] (69h) F
-         [28h] [29h] [2ah] [2bh] [48h] [49h] [4ah] [4bh] (6ah) G
-         [24h] [25h] [26h] [27h] [44h] [45h] [46h] [47h] (6bh) H
-   \end{verbatim}
-
    The colors of the grid-buttons LED can be set via the command
    \texttt{90h key vel}, where:
 
@@ -113,10 +104,16 @@
          \begin{itemize}
             \item \texttt{GG} for Green brightness.
             \item \texttt{C} to clear the LED setting of the other buffer.
+               There are two buffers; see below for an explanation.
             \item \texttt{K} to copy the data to both buffers.
             \item \texttt{RR} for Red brightness.
          \end{itemize}
    \end{itemize}
+
+   The Mini has two buffers 0 and 1 which contain two separate LED states. For
+   example, in one buffer, all LEDs can be red, and in the other buffer, all LEDs
+   can be green.  By default, buffer 0 is used for displaying and for writing.
+   By alternating the buffers, the display can blink.
 
    The brightness values used for green and red range from 0 (off) to 3 (full
    brightness).  \textsl{Seq66} uses these values to provide red, green, yellow,
@@ -157,6 +154,9 @@
 
    \texttt{*} means not yet supported.
 
+   The Mini also supports power levels, but that feature is not used by
+   \textsl{Seq66}.
+
 \subsection{System Survey, ALSA}
 \label{subsec:launchpad_mini_survey_alsa}
 
@@ -177,14 +177,15 @@
 
    Note the "Timer" device, which \textsl{Seq66} does not show, and the
    "Announce" device, which it does show (as disabled).  The device/port we're
-   interested in is the \texttt{Launchpad Mini MIDI 1}.
+   interested in is the \texttt{Launchpad Mini MIDI 1}, port 2 for input from the
+   Mini, and port 1 for output to the Mini.
 
 \subsection{Control Setup}
 \label{subsec:launchpad_mini_control_setup}
 
    A couple of \textsl{Launchpad} control files are provided in the
    \texttt{/usr/share/seq66-0.92/data/linux} directory.
-   Copy \texttt{qseq66-lp-mini.ctrl} file to
+   Copy the \texttt{qseq66-lp-mini.ctrl} file to
    \texttt{\$HOME/.config/seq66}.
    Make sure to exit \textsl{Seq66} before the next steps.
 
@@ -208,24 +209,30 @@
 \subsubsection{Input Control Setup}
 \label{subsubsec:launchpad_mini_input_control_setup}
 
-   Next we want be able to use the \textsl{Launchpad} as a MIDI controller for
-   the selection of loops, mute-groups, and various automation-function.
+   We first want to use the Mini as a MIDI controller for
+   the selection of loops, mute-groups, and various automation (user-interface)
+   functions.
    In \texttt{qseq66-lp-mini.ctrl},
-   The only change to make for input-control is
+   the only change to make for input-control is
    to change \texttt{0xff} to the proper \textsl{input} port.  On our system,
    as noted above, that would be input port \texttt{[2]}.
 
    \begin{verbatim}
       [midi-control-settings]
-      control-buss = 0xff
+      control-buss = 0xff     # change 0xff to 2
    \end{verbatim}
 
-   Note that \texttt{[midi-control-settings]} refers to controls that are
+   Remember that \texttt{[midi-control-settings]} refers to controls
    \textsl{sent} to \textsl{Seq66} to control that application.
+   There are three sets of controls:  loops, mute-groups, and automation.
 
-   In the \texttt{[loop-control]} section of the \texttt{qseq66-lp-mini.ctrl}
-   file, the keys are assigned, and only the toggle stanza of each MIDI control
-   is enable, although we have provide definitions for the On and Off stanzas
+\paragraph{[loop-control]}
+\label{paragraph:patterns_loop_control}
+
+   In the \texttt{[loop-control]} section of \texttt{qseq66-lp-mini.ctrl},
+   keystrokes are assigned, and only the "Toggle" (first)
+   stanza of each MIDI control line
+   is enabled, although there are definitions for the On and Off stanzas
    should one want to enable them.  Here are the first four lines, truncated:
 
    \begin{verbatim}
@@ -236,9 +243,10 @@
        3 "z"  [ 1 0 0x90 48 1 127 ] [ 0 0 0x90 48 1 127 ] ...
    \end{verbatim}
 
-   Note that the note values (0, 16, 32, 48) are in decimal. Why?  Less to
-   type.  The whole section is 32 lines, so only the top 4 rows of the Mini are
-   assigned to loop-control by this configuration file.
+   The note values (0, 16, 32, 48) are in decimal. Why?  Less to type.
+   The whole section is 32 lines, so only the top 4 rows of the Mini are
+   assigned to loop-control by this configuration file.  The pattern numbers are
+   shown inside each Mini slot:
 
    \begin{verbatim}
         1     2     3     4     5     6     7     8 
@@ -248,8 +256,14 @@
       [ 3 ] [ 7 ] [11 ] [15 ] [19 ] [23 ] [27 ] [31 ] D
    \end{verbatim}
 
+   By pressing the appropriate button on the Mini, a pattern toggles between being
+   armed and being muted.
+
+\paragraph{[mute-group-control]}
+\label{paragraph:patterns_mute_group_control}
+
    The mute-group controls are similar, except we didn't bother filling the On
-   and Off stanzas at this time.
+   and Off stanzas at this time; they are all zeroes.
 
    \begin{verbatim}
       [mute-group-control]
@@ -259,15 +273,36 @@
        3 "Z"  [ 1 0 0x90 112 1 127 ] ...
    \end{verbatim}
 
-   The mapping is the same as for loop-control, but offset by four rows.
+   The mapping is the similar to loop-control, but offset by four rows.
+   By pressing the appropriate button on the Mini, a mute-group toggles between
+   being on (selected patterns armed) and off (all patterns muted).
+
+\paragraph{[automation-control]}
+\label{paragraph:patterns_automation_control}
+
+   A large number of actions available from the user-interface can also be
+   controls by keystrokes or a MIDI device.  Here is a brief sample.  See the
+   'ctrl' file itself for more information.
+
+\begin{verbatim}
+ 0 "'" [ 0 0 0x00 0 0 0 ] [ 1 0 0xb0 104 127 127 ] [ 1 0 0xb0 104 127 127 ]  # BPM Up
+ 1 ";" [ 0 0 0x00 0 0 0 ] [ 1 0 0xb0 105 127 127 ] [ 1 0 0xb0 105 127 127 ]  # BPM Dn
+ 2 "]" [ 0 0 0x00 0 0 0 ] [ 0 0 0xb0   0   0   0 ] [ 0 0 0xb0   0   0   0 ]  # Set Up
+ 3 "[" [ 0 0 0x00 0 0 0 ] [ 0 0 0xb0   0   0   0 ] [ 0 0 0xb0   0   0   0 ]  # Set Dn
+\end{verbatim}
+
+   In \texttt{qseq66-lp-mini.ctrl}, all 64 square buttons are defined, which
+   leaves the 16 circular buttons available for MIDI control. Only a few of those
+   are defined so far.
 
 \subsubsection{Output Control Setup}
 \label{subsubsec:launchpad_mini_output_control_setup}
 
-   Here, we want \textsl{Seq66} to send information to the \textsl{LaunchPad}
-   so that the lights on the \textsl{Launchpad} match the unmuted loops and 
+   Here, we want \textsl{Seq66} to send information to the Mini
+   so that the lights on the Mini match the unmuted loops and 
    some of the \textsl{Seq66} controls.  Here are the changes to make to the
-   output settings.  Change
+   output settings (while \textsl{Seq64} is \textsl{not} running).
+   Change
 
    \begin{verbatim}
       [midi-control-out-settings]
@@ -283,10 +318,110 @@
       midi-enabled = true
    \end{verbatim}
 
+\paragraph{[midi-control-out]}
+\label{paragraph:patterns_midi_control_out}
+
+   The \texttt{[midi-control-out]} section provides a way to see the status of
+   each pattern/loop in the Mini's grid.  Here are a few entries. As per the
+   section above, 60 is green, 15 red, 62 is yellow, and 12 is off.
+
+   \begin{verbatim}
+ 0 [1  0 0x90   0 60] [1  0 0x90   0 15] [1  0 0x90   0 62] [1  0 0x90   0 12]
+ 1 [1  0 0x90  16 60] [1  0 0x90  16 15] [1  0 0x90  16 62] [1  0 0x90  16 12]
+ 2 [1  0 0x90  32 60] [1  0 0x90  32 15] [1  0 0x90  32 62] [1  0 0x90  32 12]
+ 3 [1  0 0x90  48 60] [1  0 0x90  48 15] [1  0 0x90  48 62] [1  0 0x90  48 12]
+   \end{verbatim}
+
+   For the \texttt{qseq66-lp-mini.ctrl} file, only the upper 32 buttons and
+   LEDS are used for this purpose, so there are 32 lines of data in this
+   section.
+
+   The four stanzas (numbers in square brackets) are:
+
+   \begin{itemize}
+      \item \textbf{Armed}.  This stanza is configured to show unmuted pattern
+         slots as green.
+      \item \textbf{Muted}.  This stanza is configured to show muted pattern
+         slots as red.
+      \item \textbf{Armed}.  This stanza is configured to show a queued pattern
+         slots as yellow.
+      \item \textbf{Armed}.  This stanza is configured to show an empty pattern
+         slots as off (dark).
+   \end{itemize}
+
+\paragraph{[mute-control-out]}
+\label{paragraph:patterns_mute_control_out}
+
+   With the \texttt{qseq66-lp-mini.ctrl} file, the lower 32 buttons can be used
+   to see which mute-group is selected (as well as to select a mute-group).
+   The layout is pretty simple; here are the first four of the 32 lines:
+
+   \begin{verbatim}
+      1 [ 0 0x90  64 60 ] [ 0 0x90  64 15 ] [ 0 0x90  64 12 ]
+      2 [ 0 0x90  80 60 ] [ 0 0x90  80 15 ] [ 0 0x90  80 12 ]
+      3 [ 0 0x90  96 60 ] [ 0 0x90  96 15 ] [ 0 0x90  96 12 ]
+      4 [ 0 0x90 112 60 ] [ 0 0x90 112 15 ] [ 0 0x90 112 12 ]
+   \end{verbatim}
+
+   The slots are numbered; all of the entries in the section are always enabled.
+   The first stanza indicates that the button the selected mute-group will be
+   green.  The second stanza indicates that the unselected mute-group buttons will
+   all be red, as long as they have mutes defined in them.
+   The third stanza indicates that the inactive (empty) mute-groups will
+   be dark.
+
+\paragraph{[automation-control-out]}
+\label{paragraph:patterns_automation_control_out}
+
+   This section allows for the following status to be shown in the top row of
+   circular buttons:
+
+   \begin{verbatim}
+      1 [ 0 0xb0 104 60 ] [ 0 0xb0 104 0 ] # play on/off
+      1 [ 0 0xb0 104 15 ] [ 0 0xb0 104 0 ] # stop on/off
+      1 [ 0 0xb0 104 62 ] [ 0 0xb0 104 0 ] # pause on/off
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # queue on/off
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # oneshot on/off
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # replace on/off
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # snap1 store/restore
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # snap2 store/restore
+      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # learn on/off
+   \end{verbatim}
+
+   Note that the play, stop, and pause statuses are all shown on the same button,
+   as green, red, or yellow.
+
+   Some of these might still be in progress as you read this.
+
 \subsection{Test Run, ALSA}
 \label{subsubsec:launchpad_mini_test_run_alsa}
 
    Now that we're set up, start \textsl{Seq66}.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=2.00]{configuration/ctrl/launchpad-mute-group-2.png}
+   \caption{Launchpad Minu Running with Seq66}
+   \label{fig:launchpad_mute_group_perspective}
+\end{figure}
+
+   This picture shows that playback is paused (yellow), that mute-group 7 is
+   active, and that all the patterns in that mute-group are green, except for one
+   that got muted accidentally while taking the pictre.
+
+   If the \textbf{File / New} option is selected, all the patterns are turned off,
+   but the four mute-group buttons at the bottom left remain, as the mute-groups
+   are not erased.  (Bug or feature?)
+
+   What's next?  First, add more controls and statuses to the configuration.
+   Second, start working on a MIDI file to product a light show!
+
+\subsection{System Survey, JACK}
+\label{subsec:launchpad_mini_survey_jack}
+
+   Now let's see what we have to do in \textsl{JACK}.
+   First peruse the separate section concerning JACK, to understand the basics.
+
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

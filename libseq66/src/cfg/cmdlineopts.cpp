@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-01-21
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -663,12 +663,21 @@ cmdlineopts::parse_options_files (std::string & errmessage)
         file_message("Reading 'rc'", rcn);
         if (options.parse())
         {
-            // Nothing to do?
+            /*
+             * Nothing to do?
+             */
         }
         else
         {
+            /*
+             * Let's continue with the defaults if there is no usable 'rc'
+             * file, rather than skipping a lot of other setup, which can
+             * cause mysterious segfaults.
+             *
+             * result = false;
+             */
+
             errmessage = options.error_message();
-            result = false;
         }
     }
     else

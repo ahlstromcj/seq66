@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-12
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -208,28 +208,10 @@ bool
 rcfile::parse ()
 {
     std::ifstream file(name(), std::ios::in | std::ios::ate);
-    if (! file.is_open())
-    {
-        char temp[128];
-        snprintf(temp, sizeof temp, "Read open fail: %s\n", name().c_str());
-        return make_error_message("rc", temp);
-    }
-    file.seekg(0, std::ios::beg);                       /* seek to start    */
+    if (!  set_up_ifstream(file))           /* verifies [Seq66]: version */
+        return false;
 
-    std::string s = get_variable(file, "[Seq66]", "version");
-    if (! s.empty())
-    {
-        int version = string_to_int(s);
-        if (version != rc_ref().ordinal_version())
-        {
-            /*
-             * Not necessarily an error.  Just flag it to the console.
-             */
-
-            warnprint("'rc' file version changed!");
-        }
-    }
-    s = get_variable(file, "[Seq66]", "verbose");
+    std::string s = get_variable(file, "[Seq66]", "verbose");
 
     bool verby = string_to_bool(s, false);
     rc().verbose(verby);
@@ -267,9 +249,6 @@ rcfile::parse ()
                 return make_error_message("midi-control-file", info);
             }
         }
-        else
-            rc_ref().midi_control_filename("");         /* not tricky :-)   */
-
         rc_ref().use_midi_control_file(ok);             /* did it work?     */
     }
     else
@@ -303,9 +282,6 @@ rcfile::parse ()
                 return make_error_message("mute-group-file", info);
             }
         }
-        else
-            rc_ref().mute_group_filename("");
-
         rc_ref().use_mute_group_file(ok);               /* did it work?     */
     }
     else
@@ -346,11 +322,7 @@ rcfile::parse ()
                 std::string pfname = strip_quotes(line());
                 rc_ref().palette_filename(pfname);      /* base name        */
             }
-            else
-                rc_ref().palette_filename("");          /* empty name       */
         }
-        else
-            rc_ref().palette_filename("");              /* empty name       */
     }
 
     /*

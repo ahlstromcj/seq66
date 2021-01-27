@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-17
+ * \updates       2021-01-26
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -71,7 +71,7 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_error               (false),
     m_group_mode                (true),             /* see its description  */
     m_group_learn               (false),
-    m_group_selected            (sm_null_mute_group),
+    m_group_selected            (smc_null_mute_group),
     m_group_present             (false),
     m_group_save                (handling::both)    /* midi and mutes files */
 {
@@ -234,6 +234,12 @@ mutegroups::any () const
     return result;
 }
 
+bool
+mutegroups::any (mutegroup::number gmute) const
+{
+    return mute_group(gmute).any();
+}
+
 /**
  *  An accessor to a specific mute-group.
  */
@@ -247,7 +253,8 @@ mutegroups::mute_group (mutegroup::number gmute) const
 }
 
 /**
- *  Applies a mute group.
+ *  Applies a mute group.  The caller, who knows the screenset, must do the
+ *  unapply operation.
  */
 
 bool
@@ -257,26 +264,20 @@ mutegroups::apply (mutegroup::number group, midibooleans & bits)
     bool result = mgiterator != list().end();
     if (result)
     {
-        /*
-         * The caller, who knows the screenset, must do the unapply operation.
-         *
-         *  mutegroup::number oldgroup = m_group_selected;
-         *  if (oldgroup != group)
-         *  {
-         *      result = unapply(group, bits);
-         *  }
-         */
-
         mutegroup & mg = mgiterator->second;
-        bits = mg.get();
-        mg.group_state(true);
-        m_group_selected = group;
+        result = mg.any();              /* ignore an inactive mute-group    */
+        if (result)
+        {
+            bits = mg.get();
+            mg.group_state(true);
+            m_group_selected = group;
+        }
     }
     return result;
 }
 
 /**
- *  Unapplies a mute group. If less than zero (see sm_null_mute_group), then
+ *  Unapplies a mute group. If less than zero (see smc_null_mute_group), then
  *  the unapply is applied (heh heh) to the current group.
  */
 
@@ -291,9 +292,13 @@ mutegroups::unapply (mutegroup::number group, midibooleans & bits)
         if (result)
         {
             mutegroup & mg = mgiterator->second;
-            bits = mg.zeroes();
-            mg.group_state(false);
-            m_group_selected = sm_null_mute_group;
+            result = mg.any();          /* ignore an inactive mute-group    */
+            if (result)
+            {
+                bits = mg.zeroes();
+                mg.group_state(false);
+                m_group_selected = smc_null_mute_group;
+            }
         }
     }
     else if (m_group_selected >= 0)
@@ -333,10 +338,14 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
         }
 
         mutegroup & mg = mgiterator->second;
-        bool mgnewstate = ! mg.group_state();
-        bits = mgnewstate ? mg.get() : mg.zeroes() ;
-        mg.group_state(mgnewstate);
-        m_group_selected = mgnewstate ? group : sm_null_mute_group ;
+        result = mg.any();              /* ignore an inactive mute-group    */
+        if (result)
+        {
+            bool mgnewstate = ! mg.group_state();
+            bits = mgnewstate ? mg.get() : mg.zeroes() ;
+            mg.group_state(mgnewstate);
+            m_group_selected = mgnewstate ? group : smc_null_mute_group ;
+        }
     }
     return result;
 }
@@ -383,17 +392,13 @@ mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
             }
             active = ! active;
             mg.group_state(active);
-            m_group_selected = active ? group : sm_null_mute_group ;
+            m_group_selected = active ? group : smc_null_mute_group ;
         }
     }
     return result;
 }
 
 #endif  //SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
-
-/**
- *
- */
 
 void
 mutegroups::group_learn (bool flag)
@@ -405,7 +410,7 @@ mutegroups::group_learn (bool flag)
     else
     {
         m_group_learn = false;
-        m_group_selected = sm_null_mute_group;
+        m_group_selected = smc_null_mute_group;
     }
 }
 
@@ -477,7 +482,7 @@ bool
 mutegroups::reset_defaults ()
 {
     bool result = false;
-    int count = SEQ66_MUTE_GROUPS_MAX;          /* not m_rows * m_columns   */
+    int count = smc_mute_groups_max;          /* not m_rows * m_columns   */
     clear();
     for (int gmute = 0; gmute < count; ++gmute)
     {
@@ -552,7 +557,7 @@ void
 mutegroups::show (mutegroup::number gmute) const
 {
     std::cout << "Mute-group size: " << count() << std::endl;
-    if (gmute == sm_null_mute_group)
+    if (gmute == smc_null_mute_group)
     {
         int index = 0;
         for (const auto & mgpair : m_container)

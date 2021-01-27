@@ -49,11 +49,6 @@
    each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
    (There are ways to override this behavior.)
 
-%  However, if \textsl{Seq66} is using JACK transport, then, instead of
-%  the behavior described above, live versus song mode is controlled by the
-%  JACK start mode option (see the \textbf{JACK Start mode} item in
-%  \sectionref{paragraph:menu_file_options_jack_sync}).
-
    For exposition, we break the Patterns Panel
    into a menu bar, a top panel, a pattern panel, and a bottom panel.
    The \textsl{Seq66} menu bar is discussed in
@@ -334,10 +329,7 @@
 %        Currently, it is easy enough to use the Song Editor for this purpose,
 %        but then one cannot play the patterns in live mode.
       \item \textbf{Sequence Number}.
-         If the option to show the sequencer number is set
-         in the \textbf{File / Options / Keyboard} section
-         (see \sectionref{paragraph:menu_file_options_keyboard},
-         the this number is shown at the bottom left of the pattern slot.
+         This number is shown at the bottom left of the pattern slot.
       \item \textbf{Bus-Channel}.
          \index{pattern!bus-channel}
          This pair of numbers shows the the MIDI buss number, a dash, and
@@ -349,17 +341,14 @@
          such as "4/4" or "3/4".  The first number is the beats-per-measure,
          and the second is the size of the beat, here, a quarter note.
       \item \textbf{Shortcut Key}.
-         If the display of hot-keys is enabled (see
-         \sectionref{paragraph:menu_file_options_keyboard}),
-         then the key noted in the lower-right corner of the pattern can be
-         pressed to toggle the mute/unmute status of that pattern.
+         The key noted in the lower-right corner of the pattern is a "hot-key"
+         that can be pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
       \item \textbf{Progress Cursor}.
          At the left of each box is a vertical line, waiting for playback to
          start so that it can move through the pattern, again and again.
       \item \textbf{Armed}.
-         See \figureref{fig:pattern_window_main_panel_items}; it shows a black
-         and white pattern.  The black color indicates that the pattern is armed
+         Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern
          \index{live mode}
          window in live mode.

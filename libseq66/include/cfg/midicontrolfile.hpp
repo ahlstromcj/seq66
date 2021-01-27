@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-01-25
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -213,13 +213,13 @@ private:
         const midicontrolout & mctrl,
         midicontrolout::uiaction a
     );
-    bool read_mutes_pair
+    bool read_mutes_triple
     (
         std::ifstream & file,
         midicontrolout & mctrl,
         int group
     );
-    bool write_mutes_pair
+    bool write_mutes_triple
     (
         std::ofstream & file,
         const midicontrolout & mco,

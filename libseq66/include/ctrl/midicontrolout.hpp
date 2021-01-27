@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-01-25
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -60,6 +60,9 @@ class performer;
 
 class midicontrolout final : public midicontrolbase
 {
+
+    friend class midicontrolfile;
+    friend class performer;
 
 public:
 
@@ -119,7 +122,8 @@ private:
     /**
      *  Manifest constants for midicontrolfile to use as array indices.
      *  These correspond to the MIDI Controls for UI (user-interface) actions;
-     *  see the uiactions enumeration.
+     *  see the uiactions enumeration. This enumeration cannot be a class
+     *  enumeration, because enum classes cannot be used as array indices.
      */
 
     enum outindex
@@ -170,6 +174,19 @@ private:
         bool att_action_status;
         event att_action_event_on;
         event att_action_event_off;
+        event att_action_event_del;
+    };
+
+    /**
+     *  Matches which event in the actiontriplet to use.  (Otherwise, a
+     *  boolean can be used to access only the "on" and "off" fields.
+     */
+
+    enum actionindex
+    {
+        action_on,      /**< The mute-group is active and selected.         */
+        action_off,     /**< The mute-group is active, but not selected.    */
+        action_del      /**< The mute-group is inactive.                    */
     };
 
     /**
@@ -213,7 +230,6 @@ private:
     uiactions m_ui_events;
 
     /**
-     *  EXPERIMENTAL.
      *  Provides action events for toggling a mute-group.  Handles the default
      *  and unchanging value of 32 mutegroups.
      */
@@ -258,6 +274,7 @@ public:
     bool event_is_active (uiaction what) const;
     std::string get_event_str (uiaction what, bool on) const;
     std::string get_event_str (int w, bool on) const;
+    std::string get_mutes_event_str (int group, actionindex which) const;
 
 #if defined SEQ66_USE_REFERENCE_PARAMETERS
     void set_seq_event (int seq, seqaction what, event & ev);
@@ -267,10 +284,11 @@ public:
     void set_event (uiaction what, bool enabled, int * onp, int * offp);
     void set_mutes_event
     (
-        int group, bool enabled, int * onp, int * offp
+        int group, bool enabled,
+        int * onp, int * offp, int * delp = nullptr
     );
     bool mutes_event_is_active (int group) const;
-    void send_mutes_event (int group, bool on);
+    void send_mutes_event (int group, actionindex which);
     void send_event (uiaction what, bool on);
     void send_learning (bool learning)
     {

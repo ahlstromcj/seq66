@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-01-25
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -34,6 +34,7 @@
  * sequences.
  */
 
+#include <iomanip>                      /* std::ostringstream class         */
 #include <sstream>                      /* std::ostringstream class         */
 
 #include "cfg/settings.hpp"             /* seq66::usr() function            */
@@ -113,6 +114,7 @@ midicontrolout::initialize (int count, int bus)
         att.att_action_status = false;
         att.att_action_event_on = dummy_event;
         att.att_action_event_off = dummy_event;
+        att.att_action_event_del = dummy_event;
         for (int a = 0; a < static_cast<int>(uiaction::max); ++a)
             m_ui_events.push_back(att);
 
@@ -398,6 +400,10 @@ midicontrolout::seq_event_is_active (int seq, seqaction what) const
         m_seq_events[seq][w].apt_action_status : false ;
 }
 
+/**
+ *  Note the att_action_event_del is not used with uiaction events.
+ */
+
 void
 midicontrolout::send_event (uiaction what, bool on)
 {
@@ -424,6 +430,10 @@ midicontrolout::get_event_str (uiaction what, bool on) const
         return std::string("[ 0 0 0 0 ]");
 }
 
+/**
+ *  Note the att_action_event_del is not used with uiaction events.
+ */
+
 std::string
 midicontrolout::get_event_str (int w, bool on) const
 {
@@ -438,6 +448,30 @@ midicontrolout::get_event_str (int w, bool on) const
         << int(ev.channel()) << " 0x"
         << std::hex << int(ev.get_status()) << " "
         << std::dec << int(d0) << " " << int(d1)
+        << " ]"
+        ;
+    return str.str();
+}
+
+std::string
+midicontrolout::get_mutes_event_str (int group, actionindex which) const
+{
+    event ev;
+    if (which == action_on)
+        ev = m_mutes_events[group].att_action_event_on;
+    else if (which == action_off)
+        ev = m_mutes_events[group].att_action_event_off;
+    else if (which == action_del)
+        ev = m_mutes_events[group].att_action_event_del;
+
+    midibyte d0, d1;
+    ev.get_data(d0, d1);
+    std::ostringstream str;
+    str
+        << "[ "
+        << int(ev.channel()) << " 0x"
+        << std::hex << int(ev.get_status()) << " "
+        << std::dec << std::setw(3) << int(d0) << " " << std::setw(2) << int(d1)
         << " ]"
         ;
     return str.str();
@@ -502,9 +536,13 @@ midicontrolout::event_is_active (uiaction what) const
 }
 
 void
-midicontrolout::set_mutes_event (int group, bool enabled, int * onp, int * offp)
+midicontrolout::set_mutes_event
+(
+    int group, bool enabled,
+    int * onp, int * offp, int * delp
+)
 {
-    if (group < mutegroups::Size())
+    if (group >= 0 && group < mutegroups::Size())
     {
         event on;
         on.set_channel_status(onp[1], onp[0]);          /* status, channel  */
@@ -515,6 +553,13 @@ midicontrolout::set_mutes_event (int group, bool enabled, int * onp, int * offp)
         off.set_channel_status(offp[1], offp[0]);       /* status, channel  */
         off.set_data(offp[2], offp[3]);                 /* d1 and d2        */
         m_mutes_events[group].att_action_event_off = off;
+        if (not_nullptr(delp))
+        {
+            event del;
+            del.set_channel_status(delp[1], delp[0]);   /* status, channel  */
+            del.set_data(delp[2], delp[3]);             /* d1 and d2        */
+            m_mutes_events[group].att_action_event_del = del;
+        }
         is_blank(false);
         m_mutes_events[group].att_action_status = enabled;
     }
@@ -523,12 +568,12 @@ midicontrolout::set_mutes_event (int group, bool enabled, int * onp, int * offp)
 bool
 midicontrolout::mutes_event_is_active (int group) const
 {
-    return group < mutegroups::Size() ?
+    return group >= 0 && group < mutegroups::Size() ?
         m_mutes_events[group].att_action_status : false ;
 }
 
 void
-midicontrolout::send_mutes_event (int group, bool on)
+midicontrolout::send_mutes_event (int group, actionindex which)
 {
     bool ok =
     (
@@ -537,8 +582,13 @@ midicontrolout::send_mutes_event (int group, bool on)
     );
     if (ok)
     {
-        event ev = on ? m_mutes_events[group].att_action_event_on :
-            m_mutes_events[group].att_action_event_off ;
+        event ev;
+        if (which == action_on)
+            ev = m_mutes_events[group].att_action_event_on;
+        else if (which == action_off)
+            ev = m_mutes_events[group].att_action_event_off;
+        else if (which == action_del)
+            ev = m_mutes_events[group].att_action_event_del;
 
         m_master_bus->play(buss(), &ev, ev.channel());
         m_master_bus->flush();

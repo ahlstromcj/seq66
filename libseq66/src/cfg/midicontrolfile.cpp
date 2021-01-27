@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-01-25
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -410,6 +410,9 @@ static const char * const sg_scanf_fmt_ctrl_out =
 static const char * const sg_scanf_fmt_ctrl_pair =
     "%d [ %i %i %i %i ] [ %i %i %i %i ]";
 
+static const char * const sg_scanf_fmt_ctrl_triple =
+    "%d [ %i %i %i %i ] [ %i %i %i %i ] [ %i %i %i %i ]";
+
 /**
  *  It is not an error for the "[midi-contro-out]" section to be missing.
  */
@@ -486,9 +489,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         {
             if (line_after(file, "[mute-control-out]"))
             {
-                for (int m = 0; m < mutegroups::Size(); ++m)
+                int M = mutegroups::Size();
+                for (int m = 0; m < M; ++m)
                 {
-                    ok = read_mutes_pair(file, mco, m);
+                    ok = read_mutes_triple(file, mco, m) || (m == (M - 1));
                     if (! ok)
                         break;
                 }
@@ -574,31 +578,35 @@ midicontrolfile::read_ctrl_pair
 }
 
 bool
-midicontrolfile::read_mutes_pair
+midicontrolfile::read_mutes_triple
 (
     std::ifstream & file,
     midicontrolout & mco,
     int group
 )
 {
-    int enabled, ev_on[4], ev_off[4];
+    int number, ev_on[4], ev_off[4], ev_del[4];
     int count = std::sscanf
     (
-        scanline(), sg_scanf_fmt_ctrl_pair,
-        &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
-        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
+        scanline(), sg_scanf_fmt_ctrl_triple,
+        &number, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
+        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
+        &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
     );
     if (count < 9)
         ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-    mco.set_mutes_event(group, enabled, ev_on, ev_off);
+    if (count < 13)
+        ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
+
+    mco.set_mutes_event(group, true, ev_on, ev_off, ev_del);
     return next_data_line(file);
 }
 
 bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
-    file << "# Seq66 0.91.0 (and above) MIDI control configuration file\n"
+    file << "# Seq66 0.92.0 (and above) MIDI control configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -610,6 +618,9 @@ midicontrolfile::write_stream (std::ofstream & file)
     "# To use this file, replace the [midi-control] section in the 'rc' file,\n"
     "# and its contents with a [midi-control-file] tag, and simply add the\n"
     "# basename (e.g. nanomap.ctrl) on a separate line.\n"
+    "\n"
+    "# Version 1 adds the [mute-control-out] and [automation-control-out]\n"
+    "# sections.\n"
     "\n"
     "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
@@ -849,19 +860,34 @@ midicontrolfile::write_ctrl_pair
 }
 
 bool
-midicontrolfile::write_mutes_pair
+midicontrolfile::write_mutes_triple
 (
     std::ofstream & file,
     const midicontrolout & mco,
     int group
 )
 {
-    bool active = mco.mutes_event_is_active(group);
-    std::string act1str = mco.get_event_str(group, true);
-    std::string act2str = mco.get_event_str(group, false);
+    /*
+     * Always active; group number written instead.
+     *
+     * bool active = mco.mutes_event_is_active(group);
+     */
+
+    std::string act1str = mco.get_mutes_event_str
+    (
+        group, midicontrolout::action_on
+    );
+    std::string act2str = mco.get_mutes_event_str
+    (
+        group, midicontrolout::action_off
+    );
+    std::string act3str = mco.get_mutes_event_str
+    (
+        group, midicontrolout::action_del
+    );
     file
-        << (active ? 1 : 0) << " "
-        << act1str << " " << act2str << "\n\n"
+        << std::setw(2) << group << " "
+        << act1str << " " << act2str << " " << act3str << "\n"
         ;
     return file.good();
 }
@@ -958,9 +984,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     }
 
     file <<
-        "\n"
-        "[mute-control-out]\n"
-        "\n"
+        "\n[mute-control-out]\n\n"
         "# The format of the mute and automation output events is simpler:\n"
         "#\n"
         "#  --------------------- on/off (indicate if action is enabled)\n"
@@ -972,18 +996,18 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "# v  v v v v\n"
         "# 1 [0 0 0 0]\n"
         "\n"
-        ;
-
-    /*
-     * TO DO:  Write out the mute-group output controls.  Not yet ready.
-     */
-
-    file <<
-        "\n"
-        "[automation-control-out]\n"
+        "# Also, the mute-controls have an additional stanza for non-populated\n"
+        "# mute-groups.\n"
         "\n"
         ;
 
+    for (int m = 0; m < mutegroups::Size(); ++m)
+    {
+        if (! write_mutes_triple(file, mco, m))
+            break;
+    }
+
+    file << "\n[automation-control-out]\n\n";
     write_ctrl_pair(file, mco, midicontrolout::uiaction::play);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::pause);

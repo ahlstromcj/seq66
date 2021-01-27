@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-18
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -215,18 +215,25 @@ rcsettings::set_defaults ()
     m_config_filename           = SEQ66_CONFIG_NAME;
     m_config_filename           += ".rc";
     m_full_config_directory.clear();
-    m_user_filename = SEQ66_CONFIG_NAME; m_user_filename += ".usr";
+    m_user_filename = SEQ66_CONFIG_NAME;
     m_use_midi_control_file = true;
-    m_midi_control_filename = "";
+    m_midi_control_filename = SEQ66_CONFIG_NAME;
     m_use_mute_group_file = true;
-    m_mute_group_filename.clear();
+    m_mute_group_filename = SEQ66_CONFIG_NAME;
     m_playlist_active = false;
-    m_playlist_filename.clear();
+    m_playlist_filename = SEQ66_CONFIG_NAME;
     m_playlist_midi_base.clear();
     m_notemap_active = false;
-    m_notemap_filename.clear();
+    m_notemap_filename = SEQ66_CONFIG_NAME;
     m_palette_active = false;
-    m_palette_filename.clear();
+    m_palette_filename = SEQ66_CONFIG_NAME;
+    m_config_filename += ".rc";
+    m_user_filename += ".usr";
+    m_midi_control_filename += ".ctrl";
+    m_mute_group_filename += ".mutes";
+    m_playlist_filename += ".playlist";
+    m_notemap_filename += ".drums";
+    m_palette_filename += ".palette";
 
     /*
      * const: m_application_name = seq_app_name();

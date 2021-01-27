@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-01-20
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -2137,21 +2137,9 @@ public:
     bool learn_mutes (mutegroup::number group);
     bool clear_mutes ();
     bool apply_session_mutes ();
-
-    bool apply_mutes (mutegroup::number group)
-    {
-        return mapper().apply_mutes(group);
-    }
-
-    bool unapply_mutes (mutegroup::number group)
-    {
-        return mapper().unapply_mutes(group);
-    }
-
-    bool toggle_mutes (mutegroup::number group)
-    {
-        return mapper().toggle_mutes(group);
-    }
+    bool apply_mutes (mutegroup::number group);
+    bool unapply_mutes (mutegroup::number group);
+    bool toggle_mutes (mutegroup::number group);
 
     midibpm decrement_beats_per_minute ();
     midibpm increment_beats_per_minute ();
@@ -2447,9 +2435,13 @@ public:
 
     void send_event (midicontrolout::uiaction a, bool on);
     void send_play_states (midicontrolout::uiaction a);
+    void send_mutes_event (int group, bool on);
+    void send_mutes_events (int groupon, int groupoff);
+    void send_mutes_inactive (int group);
     void announce_playscreen ();
     void announce_exit (bool playstatesoff = true);
     bool announce_sequence (seq::pointer s, seq::number sn);
+    void announce_mutes ();
     void set_midi_control_out ();
 
     const midicontrolout & midi_control_out () const

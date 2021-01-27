@@ -24,14 +24,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-01-20
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
  *  perform.
  *
  *  This class is probably the single most important class in Seq66, as
- *  it supports sequences, playback, JACK, and more.
+ *  it supports sequences, mute-groups, sets, playback, JACK, and more.
  *
  *  Here are the slots supported, and what they are suppose to do for
  *  keystrokes versus MIDI controls.  MIDI can support toggle, on, and off
@@ -435,7 +435,7 @@ performer::~performer ()
 {
     m_io_active = m_is_running = false;
     reset_sequences();                      /* stop all output upon exit    */
-    announce_exit();
+    announce_exit(false);                   /* blank the devide             */
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
@@ -1785,6 +1785,9 @@ performer::clear_all (bool clearplaylist)
         }
         m_is_busy = false;
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
+        announce_exit();
+        announce_playscreen();
+        announce_mutes();
     }
     return result;
 }
@@ -1992,7 +1995,10 @@ performer::launch (int ppqn)
         m_master_bus->copy_io_busses();
         m_master_bus->get_port_statuses(m_clocks, m_inputs);
         if (ok)
+        {
             announce_playscreen();
+            announce_mutes();
+        }
     }
     return result;
 }
@@ -2023,7 +2029,10 @@ performer::announce_playscreen ()
 
 /**
  *  This action is similar to announce_playscreen(), but it unconditionally
- *  turns off (removes) all of the sequences.
+ *  turns off (removes) all of the sequences in the MIDI status device (e.g.
+ *  the Launchpad Mini).
+ *
+ *  It also turns off all of the mute-group buttons as well.
  */
 
 void
@@ -2041,6 +2050,27 @@ performer::announce_exit (bool playstatesoff)
         }
         if (playstatesoff)
             send_play_states(midicontrolout::uiaction::max);
+
+        for (int g = 0; g < mutegroups::Size(); ++g)
+            send_mutes_inactive(g);
+    }
+}
+
+/**
+ *  This function sets the buttons of all mutes_groups that have mute settings
+ *  to red, and the rest to off.
+ */
+
+void
+performer::announce_mutes ()
+{
+    for (int g = 0; g < mutegroups::Size(); ++g)
+    {
+        bool hasany = mutes().any(mutegroup::number(g));
+        if (hasany)
+            send_mutes_event(g, false);                 /* should turn red  */
+        else
+            send_mutes_inactive(g);                     /* should turn off  */
     }
 }
 
@@ -4320,13 +4350,46 @@ performer::set_sequence_control_status
 }
 
 /**
- *  A help function to make the code a tad more readable.
+ *  A helper function to make the code a tad more readable.
  */
 
 void
 performer::send_event (midicontrolout::uiaction a, bool on)
 {
     midi_control_out().send_event(a, on);
+}
+
+/**
+ *  A helper function to make the code a tad more readable.
+ */
+
+void
+performer::send_mutes_event (int group, bool on)
+{
+    midicontrolout::actionindex a = on ?
+        midicontrolout::action_on : midicontrolout::action_off ;
+
+    midi_control_out().send_mutes_event(group, a);
+}
+
+void
+performer::send_mutes_events (int groupon, int groupoff)
+{
+    bool wasactive = mutes().group_valid(groupoff);
+    if (wasactive && (groupoff != groupon))
+    {
+        midi_control_out().send_mutes_event
+        (
+            groupoff, midicontrolout::action_off
+        );
+    }
+    midi_control_out().send_mutes_event(groupon, midicontrolout::action_on);
+}
+
+void
+performer::send_mutes_inactive (int group)
+{
+    midi_control_out().send_mutes_event(group, midicontrolout::action_del);
 }
 
 /**
@@ -4994,6 +5057,40 @@ performer::clear_mutes ()
             change::yes : change:: no ;
 
         notify_mutes_change(mutegroup::unassigned(), c);
+    }
+    return result;
+}
+
+bool
+performer::apply_mutes (mutegroup::number group)
+{
+    mutegroup::number oldgroup = mutes().group_selected();
+    bool result = mapper().apply_mutes(group);
+    if (result)
+        send_mutes_events(group, oldgroup);
+
+    return result;
+}
+
+bool
+performer::unapply_mutes (mutegroup::number group)
+{
+    bool result = mapper().unapply_mutes(group);
+    if (result)
+        midi_control_out().send_mutes_event(group, midicontrolout::action_off);
+
+    return result;
+}
+
+bool
+performer::toggle_mutes (mutegroup::number group)
+{
+    mutegroup::number oldgroup = mutes().group_selected();
+    bool result = mapper().toggle_mutes(group);
+    if (result)
+    {
+        mutegroup::number newgroup = mutes().group_selected();
+        send_mutes_events(newgroup, oldgroup);
     }
     return result;
 }
@@ -6419,7 +6516,8 @@ performer::sm_auto_func_list [] =
     { automation::slot::mutes_clear, &performer::automation_mutes_clear  },
     { automation::slot::reserved_35, &performer::automation_no_op        },
     {
-        automation::slot::pattern_edit, &performer::automation_edit_pending
+        automation::slot::pattern_edit,
+        &performer::automation_edit_pending
     },
     { automation::slot::event_edit, &performer::automation_event_pending },
     { automation::slot::song_mode, &performer::automation_song_mode      },

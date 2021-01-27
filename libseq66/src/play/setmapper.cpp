@@ -826,23 +826,11 @@ setmapper::set_playing_screenset (screenset::number setno)
 bool
 setmapper::apply_mutes (mutegroup::number group)
 {
-    bool result = true;
-
-    /*
-     * Do we even need to do this?  Applying will force the settings.
-     *
-     * mutegroup::number oldgroup = group_selected();
-     * if (group != oldgroup && oldgroup >= 0)          // mildly tricky
-     *     result = unapply_mutes(oldgroup);            // turn 'em off
-     */
-
+    midibooleans bits;
+    bool result = mutes().apply(group, bits);
     if (result)
-    {
-        midibooleans bits;
-        result = mutes().apply(group, bits);
-        if (result)
-            result = play_screen()->apply_bits(bits);
-    }
+        result = play_screen()->apply_bits(bits);
+
     return result;
 }
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-11-29
+ * \updates       2021-01-27
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -190,6 +190,8 @@ public:
     }
 
 protected:
+
+    bool set_up_ifstream (std::ifstream & instream);
 
     static void append_error_message (const std::string & msg);
     static bool make_error_message

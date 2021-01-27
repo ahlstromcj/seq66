@@ -73,8 +73,6 @@ qt5nsmanager::qt5nsmanager
     m_timer         (nullptr),
     m_window        ()
 {
-    // no code
-
     /*
      * Should we use this timer or a performer callback?
      */
