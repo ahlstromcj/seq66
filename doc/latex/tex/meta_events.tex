@@ -29,7 +29,7 @@
    The following topics apply:
 
    \begin{enumerate}
-      \item Tempo display min/max in "usr" settings.
+      \item Tempo display min/max in 'usr' settings.
       \item Tempo display in main window.
       \item Tempo display in pattern editor.
       \item Tempo display in song editor.
@@ -47,7 +47,7 @@
 %  To reiterate, track 1 (pattern 0) is the only track where tempo events
 %  can be placed and edited.
 
-\subsection{"usr" BPM Display Settings}
+\subsection{'usr' BPM Display Settings}
 \label{subsec:meta_events_usr}
 
    \textsl{Seq66} allows the tempo to range from 1 to 600 BPM
@@ -55,15 +55,14 @@
    This range is hardwired into the application.
    To display tempo with a little more granularity,
    \textsl{Seq66} provides scaling for the tempo
-   displays.  These values are found in the "usr" file:
+   displays.  These values are found in the 'usr' file:
 
    \begin{verbatim}
 		0         # midi_bpm_minimum
 		360       # midi_bpm_maximum
    \end{verbatim}
 
-   See \sectionref{subsec:usr_file_user_midi_settings}, for more
-   information.  This setting can only be made by editing the "usr" file
+   This setting can only be made by editing the 'usr' file
    while \textsl{Seq66} is not running.
    Note that this setting affects the global BPM setting ("c\_bpmtag").
 
@@ -112,7 +111,7 @@ other \textbf{Event} type has been selected.
 
 The tempo is shown as a solid magenta-colored line at the relative height
 for the tempo,
-based on the minimum and maximum values configured in the "usr" file as
+based on the minimum and maximum values configured in the 'usr' file as
 discussed above.
 This pattern-slot tempo display is rudimentary.  It doesn't allow for ramping
 of the tempo at present (except by recording while holding the BPM

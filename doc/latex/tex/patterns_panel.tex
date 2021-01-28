@@ -285,8 +285,7 @@
    main window.
 
    \itempar{Song}{pattern!song}
-   The \textbf{Song} items are described later, in reference to
-   \figureref{fig:pattern_window_right_click_song}.
+   The \textbf{Song} items are described later.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}
@@ -295,8 +294,6 @@
    (or \textsl{loop}, or \textsl{sequence}).
    A pattern is shown in the Pattern window as a filled box with the
    following items of information in it.
-   Examine \figureref{fig:pattern_window_main_panel_items}; it shows
-   these items annotated for clarity.
 
    \begin{itemize}
       \item \textbf{Name}.
@@ -360,20 +357,11 @@
       \item \textbf{Queued}.
          That same pattern also shows that it is queued, which means that it
          will toggle its playing status when the pattern next begins again.
-%     \item \textbf{Alternate font}.
-%        Later builds of \textsl{Seq66} are now built with a new font.
-%        See \figureref{fig:pattern_window_main_panel_items}.  It shows the new
-%        font. 
-%        The old font can be selected in the "user" configuration file, and is
-%        also selected automatically if \textsl{Seq66} is run in the
-%        \textsl{legacy} mode.
       \item \textbf{Sequence number}.
          Later builds of \textsl{Seq66} are now built with the option to
          also show the sequence number in the pattern box, if the "show
          sequence numbers" option is on.
-         This option can be set in the "user" configuration file.
-         See \figureref{fig:pattern_window_main_panel_items}.  It shows an
-         example of the sequence number, using the new font.
+         This option can be set in the 'usr' configuration file.
    \end{itemize}
 
    \index{pattern!left click}
@@ -416,9 +404,7 @@
    Edits an existing loop or pattern.
    Clicking this menu entry brings up the \textbf{Pattern Editor}
    so that one can modify the existing pattern by click-dragging new notes in a
-   piano roll user-interface.
-   See \figureref{fig:pattern_edit_window}.
-   Also known as the "sequence editor".
+   piano roll user-interface, known as the "sequence editor".
 
    In addition to right-click and selecting \textbf{Edit...}, the user can
    \index{empty slot double-click}
@@ -441,7 +427,6 @@
    Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
    that shows events as text and numbers, and allows editing them as text and
    numbers.
-   See \figureref{fig:pattern_edit_window}.
 
    \index{event -}
    \index{keys!-}
@@ -469,15 +454,6 @@
    \textbf{Event Editor} is
    active for a given sequence, the right-click sequence-slot menu leaves out
    the \textbf{Edit...} and \textbf{Event Edit...} menu entries.
-   This trimmed menu looks like this:
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu-no-edit.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menu Without Edit Entries}
-%  \label{fig:pattern_window_right_click_no_edit}
-%\end{figure}
 
    The old functionality was to have the \textbf{Edit...} menu entry simply
    raise the existing 
@@ -507,17 +483,8 @@
    live (main) window.
 
    \itempar{Song}{pattern!song}
-   Clicking this menu entry brings up a small popup menu:
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-menu-song.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_15.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_21.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menu, Song}
-%  \label{fig:pattern_window_right_click_song}
-%\end{figure}
+   Clicking this menu entry brings up a small popup menu.
+   It contains the following items:
 
    \begin{enumber}
       \item \textbf{Clear This Track's Song Data}
@@ -603,21 +570,6 @@
    For each of these buss items, another pop-up menu allows one
    to specify the MIDI output channel for that buss.
 
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.65]{pattern/pattern-menu-midi-bus.png}
-%  \caption{Existing Pattern, Right-Click Menu, MIDI Output Busses}
-%  \label{fig:pattern_window_right_click_midi_bus}
-% \end{figure}
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-menu-midi-bus-port.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern Right-Click Menu, MIDI Output Busses/Channels}
-%  \label{fig:pattern_window_right_click_midi_bus}
-%\end{figure}
-
    \index{--bus option}
    Another way to specify busses is the
    \texttt{--buss n} command-line option.
@@ -627,13 +579,6 @@
    for convenience in testing.  Save the file, and it will
    have that buss number as part of each track's data, which makes the song
    file less portable, so be careful.
-
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.65]{pattern/pattern-menu-midi-bus-numbers.png}
-%  \caption{Existing Pattern, Right-Click Menu, MIDI Buss Channels}
-%  \label{fig:pattern_window_right_click_midi_bus_numbers}
-% \end{figure}
 
 \subsubsection{Pattern Keys and Click}
 \label{subsubsec:patterns_pattern_keys_and_clicks}
@@ -1052,19 +997,7 @@
 
    The precision of the BPM value can be set to 0, 1, or 2
    decimal places, and the increment values for the step size (small)
-   or page size (large) of the BPM spinner can be configured in the "usr" file.
-   See \sectionref{subsec:usr_file_user_midi_settings}; it describes
-   the precision and increment options more fully.
-   The following figure shows the appearance of the BPM field with different
-   precision values:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{new/bpm_precision_settings.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, BPM Precisions}
-   \label{fig:pattern_window_bpm_precision_settings.png}
-\end{figure}
+   or page size (large) of the BPM spinner can be configured in the 'usr' file.
 
    \itempar{Tap Tempo}{pattern!tap tempo}
    This control is clicked in time with a tune, to set the
@@ -1074,30 +1007,8 @@
    label reverts to 0, the BPM value keeps its final value, and the user can
    try tapping the tempo again, or accept the current value.
    Tapping can also be done using the keystroke defined
-   in \textbf{File / Options / Ext Keys / Tap BPM}.
+   in the 'ctrl' file.
    It defaults to the "\texttt{F9}" key.
-
-%  \itempar{Log Tempo}{pattern!log tempo}
-%  This button logs the current tempo at the
-%  current playback spot as a Set Tempo meta-event, in the first
-%  track (pattern slot \#0) or the alternate tempo track if defined,
-%  and only if it is active.  According to the MIDI standard, such events
-%  should be present \textsl{only} in the first track,
-%  and so \textsl{Seq66} follows this rule, and also makes tempo events
-%  officially supported.  They can be edited in the 
-%  \textbf{Pattern Editor} or in the
-%  \textbf{Event Editor}.
-%  The main/global tempo is not written to the tempo track; it is stored in
-%  a SeqSpec section.
-
-%  \itempar{Record Tempo}{pattern!record tempo}
-%  This button turns on
-%  the recording of any tempo changes made in the BPM spinner.  If the spinner
-%  is held down, a ramping stream of tempo events is created.  If
-%  the time exceeds the current length of the tempo track, then the length of
-%  the track is automatically increased.
-%  These tempo events will not affect playback speed
-%  unless the tempo track is unmuted.
 
    \itempar{Keep-Queue Status}{pattern!keep-queue}
    This item is the \textbf{Q} button.
@@ -1109,26 +1020,10 @@
    Each of the 32 available screen-sets can be given a name by entering it
    into this field.  This name is saved with the MIDI file.
 
-% This bug is fixed, as of 0.9.18, IIRC
-%
-%  \textbf{Bug:}
-%  \index{bugs!set name has side-effect}
-%  While one is typing in the name of the set in this field, the keystrokes
-%  will affect the panel window, causing playback to start and pattern
-%  boxes to be toggled!
-
    \itempar{Set}{pattern!set number}
    This spin widget selects the current screen-set.  The values in this
    field range from 0 to 31 (less if the set-size is a larger value),
    and default to 0.
-%  Although this field looks editable, it is not.
-
-% This bug is fixed, as of 0.9.18, IIRC
-%
-%  \textbf{Bug:}
-%  \index{bugs!set number has side-effect}
-%  While one is typing in the number of the set in this field, the keystrokes
-%  will affect the panel window as well.
 
    \itempar{Toggle Song Editor}{pattern!toggle song editor}
    Pressing this button toggles the presence on-screen of the
@@ -1149,11 +1044,8 @@
    In multi-wid mode, each "mainwid" frame shows the corresponding set number
    and, if present, the set notepad text for each "mainwid" set.
 
-   See 
-   \sectionref{sec:man_page}, for how the
-   \texttt{-o wid=3x2,i} option can be used to set this mode, and
-   \sectionref{subsec:usr_file_user_interface_settings}, for
-   how these settings can be made permanent in the "usr" file.
+   The \texttt{-o wid=3x2,i} option can be used to set this mode.
+   These settings can be made permanent in the 'usr' file.
    In that file, the options modified are \texttt{block\_rows} and
    \texttt{block\_columns}.
 
@@ -1172,21 +1064,10 @@
    set, and there are still places where that is true.  Thus,
    consider this option to be experimental.
 
-   Also see 
-   \sectionref{sec:man_page}, for how the
-   \texttt{-o sets=8x8} option can be used to set this mode, and
-   \sectionref{subsec:usr_file_user_interface_settings}, for
-   how these settings can be made permanent in the "usr" file.
+   The \texttt{-o sets=8x8} option can be used to set this mode.
+   These settings can be made permanent in the 'usr' file.
    In that file, the options modified are \texttt{mainwnd\_rows} and
    \texttt{mainwnd\_cols}.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{multiwid/variset-mode-8x8.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, 8 x 8 Layout}
-   \label{fig:pattern_window_bottom_panel_variset}
-\end{figure}
 
    Generally, it is recommend to stick with the 4x8 (32 patterns/set),
    8x8 (64 patterns/set), and 8x12 (96 patterns/set).  This works best with the
