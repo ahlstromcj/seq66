@@ -90,11 +90,21 @@
    Then exit \textsl{Seq66} to ensure the configuration files are created.
    Optionally, in this initial setup,
    one can also create a 'playlist' file and a 'drums' file, or
-   copy them from \texttt{/usr/share/seq66-0.91/data/samples} to
-   \texttt{/home/user/.config/seq66} and modify them appropriately.
-%  Generally, it is best to make sure that \texttt{qseq66} runs normally before
-%  attempt to get it work in a session.
+   copy them from:
 
+   \begin{verbatim}
+      /usr/share/seq66-0.91/data/samples        (Linux)
+      C:/Program Files (x86)/Seq66/data/samples (Windows)
+   \end{verbatim}
+
+   to
+
+   \begin{verbatim}
+      /home/user/.config/seq66                  (Linux)
+      C:/Users/user/AppData/Local/seq66         (Windows)
+   \end{verbatim}
+
+   and modify them appropriately.
    Another first-time modification to consider is setting up \textsl{Seq66} to
    use the \textsl{JACK} audio/MIDI subsystem (on \textsl{Linux}).
    In the 'rc' file, look for the following line:
@@ -138,8 +148,8 @@
 
    When \textsl{Seq66} is run in \textsl{NSM} for the first time,
    what happens to the new configuration depends on whether or not 
-   the normal configuration files exist in the default location,
-   \texttt{/home/user/.config/seq66}.
+   the normal configuration files exist in the default configuration
+   location.
 
    If these normal configuration files exist, then they are replicated in the
    \textsl{NSM} session directory.  If a playlist has been configured, it is also
@@ -156,8 +166,8 @@
    configuration is created in the session directory.
 
    \textbf{Existing normal configuration}.
-   If there is an existing \textsl{Seq66} configuration (in
-   \texttt{/home/user/.config/seq66}, then running \texttt{qseq66} in a new
+   If there is an existing \textsl{Seq66} configuration,
+   then running \texttt{qseq66} in a new
    session will cause the configuration to be recreated in the new session
    directory, including play-lists and MIDI files.
 

@@ -21,11 +21,8 @@
    available in \textsl{Seq66}.
    It does not cover mute keys and group keys, which are well
    described in the keyboard options for the main window.
-%  See \sectionref{paragraph:menu_file_options_keyboard}).
    It does not cover the "fruity" mouse actions, as this mode of mouse-handling
-   is not supported at present in \textsl{Seq66}.
-%  , though they are touched
-%  on in \sectionref{paragraph:menu_file_options_mouse}.
+   is not supported in \textsl{Seq66}.
 
 %  Any volunteers to fill in the table?
 
@@ -357,14 +354,11 @@
       \caption{Main Window Support}
       \label{table:main_window_support}
       \begin{tabular}{l l l l l l}
-         \textbf{Action} & \textbf{Normal} & \textbf{Double} &
-            \textbf{Shift} & \textbf{Ctrl} & \textbf{Mod4} \\
-         \textbf{e} & --- & --- & --- & Open song editor & --- \\
-         \textbf{l} (el) & --- & --- & --- & Enter Learn mode & --- \\
-         Left-click slot & Mute/Unmute & New/Edit & Toggle other slots &
-            --- & --- \\
-         Right-click slot & Edit menu & --- & Edit menu & Edit Menu &
-            --- \\
+         \textbf{Action} & \textbf{Normal} & \textbf{Double} & \textbf{Shift} & \textbf{Ctrl} \\
+         \textbf{e} & --- & --- & --- & Open song editor \\
+         \textbf{l} (el) & --- & --- & --- & Enter Learn mode \\
+         Left-click slot & Mute/Unmute & New/Edit & Toggle other slots & --- \\
+         Right-click slot & Edit menu & --- & Edit menu & Edit Menu \\
       \end{tabular}
    \end{table}
 
@@ -436,24 +430,24 @@
       \caption{Performance Window Piano Roll}
       \label{table:perf_window_piano_roll}
       \begin{tabular}{l l l l l l}
-         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift}     & \textbf{Ctrl}   & \textbf{Mod4}      \\
-         Space             & Start playback  & ---                & ---                & ---             & ---                \\
-         Esc               & Stop playback   & ---                & ---                & ---             & ---                \\
-         Period (.)        & Pause playback  & ---                & ---                & ---             & ---                \\
-         Del               & Cut section     & ---                & ---                & ---             & ---                \\
-         c key             & ---             & ---                & ---                & Copy            & ---                \\
-         p key             & Paint mode      & ---                & ---                & ---             & ---                \\
-         v key             & ---             & ---                & ---                & Paste           & ---                \\
-         x key             & Escape paint    & ---                & ---                & Cut             & ---                \\
-         z key             & Zoom out        & ---                & ---                & Undo            & ---                \\
-         0 key             & Reset zoom      & ---                & ---                & ---             & ---                \\
-         Z key             & Zoom in         & ---                & ---                & Undo            & ---                \\
-         Left-arrow        & Move earlier    & ---                & ---                & ---             & ---                \\
-         Right-arrow       & Move later      & ---                & ---                & ---             & ---                \\
-         Left-click        & Select section  & ---                & ---                & ---             & ---                \\
-         Right-click       & Paint mode      & ---                & Paint mode         & Paint mode      & Lock Paint mode    \\
-         Scroll-up         & Scroll up       & ---                & Scroll Left        & Scroll Up       & ---                \\
-         Scroll-down       & Scroll down     & ---                & Scroll Right       & Scroll Down     & ---                \\
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift}     & \textbf{Ctrl}  \\
+         Space             & Start playback  & ---                & ---                & ---            \\
+         Esc               & Stop playback   & ---                & ---                & ---            \\
+         Period (.)        & Pause playback  & ---                & ---                & ---            \\
+         Del               & Cut section     & ---                & ---                & ---            \\
+         c key             & ---             & ---                & ---                & Copy           \\
+         p key             & Paint mode      & ---                & ---                & ---            \\
+         v key             & ---             & ---                & ---                & Paste          \\
+         x key             & Escape paint    & ---                & ---                & Cut            \\
+         z key             & Zoom out        & ---                & ---                & Undo           \\
+         0 key             & Reset zoom      & ---                & ---                & ---            \\
+         Z key             & Zoom in         & ---                & ---                & Undo           \\
+         Left-arrow        & Move earlier    & ---                & ---                & ---            \\
+         Right-arrow       & Move later      & ---                & ---                & ---            \\
+         Left-click        & Select section  & ---                & ---                & ---            \\
+         Right-click       & Paint mode      & ---                & Paint mode         & Paint mode     \\
+         Scroll-up         & Scroll up       & ---                & Scroll Left        & Scroll Up      \\
+         Scroll-down       & Scroll down     & ---                & Scroll Right       & Scroll Down    \\
       \end{tabular}
    \end{table}
 
@@ -488,8 +482,6 @@
          in time) in the performance layout.
       \item \textsl{Right Arrow}:  Moves the selected item to the right (later
          in time) in the performance layout.
-      \item \textsl{Mod4-right-click, release}:  Locks the paint mode,
-         until right-click is pressed.
       \item Once selected (rendered in grey), a pattern section (trigger)
          can be moved by the mouse.
          To move it using the left or right
@@ -518,13 +510,13 @@
       \caption{Performance Editor Time Section}
       \label{table:performance_editor_time_section}
       \begin{tabular}{l l l l l l}
-         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
-         l                 & Move L [1]      & ---                & ---            & ---             & ---                \\
-         r                 & Move R [1]      & ---                & ---            & ---             & ---                \\
-         x                 & Escape Move     & ---                & ---            & ---             & ---                \\
-         Left-Click        & Set L [2]       & ---                & ---            & ---             & ---                \\
-         Middle-Click      & ---             & ---                & ---            & ---             & ---                \\
-         Right-Click       & Set R [2]       & ---                & ---            & ---             & ---                \\
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   \\
+         l                 & Move L [1]      & ---                & ---            & ---             \\
+         r                 & Move R [1]      & ---                & ---            & ---             \\
+         x                 & Escape Move     & ---                & ---            & ---             \\
+         Left-Click        & Set L [2]       & ---                & ---            & ---             \\
+         Middle-Click      & ---             & ---                & ---            & ---             \\
+         Right-Click       & Set R [2]       & ---                & ---            & ---             \\
       \end{tabular}
    \end{table}
 
@@ -553,10 +545,10 @@
       \caption{Performance Editor Names Section}
       \label{table:performance_editor_names}
       \begin{tabular}{l l l l l l}
-         \textbf{Action}   & \textbf{Normal}    & \textbf{Double}    & \textbf{Shift}        & \textbf{Ctrl}   & \textbf{Mod4}      \\
-         Left-Click        & Toggle track       & ---                & Toggle other tracks   & ---             & ---                \\
-         Middle-Click      & ---                & ---                & ---                   & ---             & ---                \\
-         Right-Click       & New/Edit menu      & ---                & ---                   & ---             & ---                \\
+         \textbf{Action}   & \textbf{Normal}    & \textbf{Double}    & \textbf{Shift}        & \textbf{Ctrl}   \\
+         Left-Click        & Toggle track       & ---                & Toggle other tracks   & ---             \\
+         Middle-Click      & ---                & ---                & ---                   & ---             \\
+         Right-Click       & New/Edit menu      & ---                & ---                   & ---             \\
       \end{tabular}
    \end{table}
 
@@ -624,23 +616,23 @@
       \caption{Pattern Editor Piano Roll}
       \label{table:pattern_editor_piano_roll}
       \begin{tabular}{l l l l l l}
-         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
-         Del               & Delete Selected & ---                & ---            & ---             & ---                \\
-         c                 & ---             & ---                & ---            & Copy            & ---                \\
-         p                 & Paint mode      & ---                & ---            & ---             & ---                \\
-         v                 & ---             & ---                & ---            & Paste           & ---                \\
-         x                 & Escape Paint    & ---                & ---            & Cut             & ---                \\
-         z                 & Zoom Out        & ---                & Zoom In        & Undo            & ---                \\
-         0                 & Reset Zoom      & ---                & ---            & ---             & ---                \\
-         Left-Arrow        & Move Earlier [1] & ---               & ---            & ---             & ---                \\
-         Right-Arrow       & Move Later [1]  & ---                & ---            & ---             & ---                \\
-         Up-Arrow          & Increase Pitch  & ---                & ---            & ---             & ---                \\
-         Down-Arrow        & Decrease Pitch  & ---                & ---            & ---             & ---                \\
-         Left-Click        & Deselect        & ---                & ---            & ---             & ---                \\
-         Right-Click       & Paint mode      & ---                & Edit Menu      & Edit/Edit Menu  & Lock Paint mode    \\
-         Left-Middle-Click & Grow Selected   & ---                & Stretch Sel.   & ---             & ---                \\
-         Scroll-Up         & Zoom Time In    & ---                & Scroll Left    & Zoom Time In    & ---                \\
-         Scroll-Down       & Zoom Time Out   & ---                & Scroll Right   & Zoom Time Out   & ---                \\
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}    \\
+         Del               & Delete Selected & ---                & ---            & ---              \\
+         c                 & ---             & ---                & ---            & Copy             \\
+         p                 & Paint mode      & ---                & ---            & ---              \\
+         v                 & ---             & ---                & ---            & Paste            \\
+         x                 & Escape Paint    & ---                & ---            & Cut              \\
+         z                 & Zoom Out        & ---                & Zoom In        & Undo             \\
+         0                 & Reset Zoom      & ---                & ---            & ---              \\
+         Left-Arrow        & Move Earlier [1] & ---               & ---            & ---              \\
+         Right-Arrow       & Move Later [1]  & ---                & ---            & ---              \\
+         Up-Arrow          & Increase Pitch  & ---                & ---            & ---              \\
+         Down-Arrow        & Decrease Pitch  & ---                & ---            & ---              \\
+         Left-Click        & Deselect        & ---                & ---            & ---              \\
+         Right-Click       & Paint mode      & ---                & Edit Menu      & Edit/Edit Menu   \\
+         Left-Middle-Click & Grow Selected   & ---                & Stretch Sel.   & ---              \\
+         Scroll-Up         & Zoom Time In    & ---                & Scroll Left    & Zoom Time In     \\
+         Scroll-Down       & Zoom Time Out   & ---                & Scroll Right   & Zoom Time Out    \\
       \end{tabular}
    \end{table}
 
@@ -668,8 +660,6 @@
       \item \textsl{Right Arrow}:  Moves selected events to the right.
       \item \textsl{Up Arrow}:  Moves selected notes upward in pitch.
       \item \textsl{Down Arrow}:  Moves selected notes downward in pitch.
-      \item \textsl{Mod4-Right-Click}:  Locks the paint mode, until right-click
-         is pressed again.
    \end{itemize}
 
 \subsubsection{Pattern Editor Event Panel}
@@ -700,9 +690,9 @@
       \caption{Pattern Editor Virtual Piano Keyboard}
       \label{table:pattern_editor_virtual_piano_keyboard}
       \begin{tabular}{l l l l l l}
-         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   & \textbf{Mod4}      \\
-         Left-Click        & Play note       & ---                & ---            & ---             & ---                \\
-         Right-Click       & Toggle labels   & ---                & ---            & ---             & ---                \\
+         \textbf{Action}   & \textbf{Normal} & \textbf{Double}    & \textbf{Shift} & \textbf{Ctrl}   \\
+         Left-Click        & Play note       & ---                & ---            & ---             \\
+         Right-Click       & Toggle labels   & ---                & ---            & ---             \\
       \end{tabular}
    \end{table}
 

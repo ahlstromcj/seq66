@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-01-26
+% \update      2021-01-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -14,27 +14,23 @@
 %
 %-------------------------------------------------------------------------------
 
-\documentclass[
- 11pt,
- twoside,
- a4paper,
- headinclude,
- footinclude,
- final                                 % versus draft
-]{article}
-
-\input{docs-structure}                 % specifies document structure and layout
-
 % Replacing normal header/footer with a fancier version.  These two symbols of
 % document class were showing up as "unused" in the log file.
 %
-% headinclude,
-% footinclude,
+%  headinclude,
+%  footinclude,
 %
 % So we add the fancyhdr package, clear the default layout, and set it up for
 % our wider pages.
 
-\batchmode
+\documentclass[
+ 11pt,
+ twoside,
+ a4paper,
+ final                                 % versus draft
+]{article}
+
+\input{docs-structure}                 % specifies document structure and layout
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -47,6 +43,10 @@
 \lfoot{}
 \cfoot{\thepage}
 \rfoot{}
+
+% Removes the many "headheight is too small" warnings.
+
+\setlength{\headheight}{14.0pt}
 
 \makeindex
 
@@ -76,6 +76,7 @@
 
 \setlength{\parindent}{2em}
 \setlength{\parskip}{1ex plus 0.5ex minus 0.2ex}
+
 \rhead{\rightmark}         % shows section number and section name
 
 \section{Introduction}
@@ -83,23 +84,20 @@
 
    This document describes "Seq66", a reboot of \textsl{Seq24} and a rewrite of
    \textsl{Sequencer64}, through version 0.92.0.
-   The following projects support \textsl{Seq66} and documentation:
+   The following project supports \textsl{Seq66} and documentation:
 
    \begin{itemize}
-      \item \url{https://github.com/ahlstromcj/seq66.git}.
-      \item \url{https://github.com/ahlstromcj/sequencer64-doc.git}.
+      \item \url{https://github.com/ahlstromcj/seq66.git}
    \end{itemize}
 
-   (We reference the old \textsl{Sequencer64} documentation project because
-   the current manual is still incomplete.  The \textsl{Sequencer64}
-   document is probably about 80 percent useful as a guide to \textsl{Seq66}.
-   Just be prepared to note some significant differences in look-and-feel.)
-
    \textsl{Seq66} is \textsl{Sequencer64} refactored for newer versions of
-   \textsl{C++} and with kruft and redundancy removed.  It drops the
+   \textsl{C++} with cruft cleanup.  It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
-   and has better handling of sets and configuration files.
-   It includes support for the \textsl{Non Session Manager}.
+   and has better handling of sets, mute-groups, and configuration files.
+   It includes support for the \textsl{Non Session Manager} and the ability to
+   modify the color palette.
+   Be prepared to note some significant differences (as well as similarities)
+   between \textsl{Seq66} and textsl{Sequencer64}.
 
    We have many contributors to acknowledge.
    Please see \sectionref{sec:kudos}.
@@ -129,12 +127,15 @@
 
    \begin{itemize}
       \item Qt 5 as the standard user-interface.
-      \item A mutes editor tab.
-      \item A playlist editor tab.
-      \item A sets editor tab.
-      \item A better live frame (main window and external windows).
+      \item A mutes editor tab, improve mutes handling, control, and status
+         display.
+      \item A playlist editor tab, with improved flexibility and automation.
+      \item A sets editor tab (still in progress).
+      \item A better live frame (main window and external windows) using
+         buttons (and a fallback to the earlier style).
       \item Non Session Manager support.
-      \item Repartition of the configuration files.
+      \item Repartitioning of the configuration files into separate files for
+         flexibility.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
@@ -158,31 +159,40 @@
    Make sure no other sound application is running, for the first run.
    Start \textsl{Seq66} to use JACK for MIDI, or
    on \textsl{Windows}, just run it (\texttt{qseq66}, or \texttt{qpseq66.exe}
-   on \textsl{Windows}).
-   The port settings will depend on your system.  Provide a MIDI file.
+   on \textsl{Windows}); for better trouble-shooting, run it from
+   the command-line at first.
+   The port settings will depend on your system.
+   Provide a MIDI file.
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5;
    on \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
    built-in wavetable synthesizer.
    The \texttt{--buss} option remaps all events to the desired buss:
 
-\begin{verbatim}
-   $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-gm-patchless.midi
-   C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
-\end{verbatim}
+   \begin{verbatim}
+      $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-gm-patchless.midi
+      C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
+   \end{verbatim}
 
-   The "data" directory is a installation directory, such as
-   \texttt{/usr/share/seq66-0.90/} on \textsl{Linux} and
-   \texttt{C:/Program Files (x86)/Seq66} on \textsl{Windows}.
+   The "data" directory is a installation directory:
 
-   The configration directories are, by default,
-   \texttt{/home/user/.config/seq66} on \textsl{Linux} and
-   \texttt{C:/Users/user/AppData/Local/seq66} on \textsl{Windows}.
+   \begin{verbatim}
+      /usr/share/seq66-0.90/              (Linux)
+      C:/Program Files (x86)/Seq66        (Windows)
+   \end{verbatim}
+
+   The configration directory is:
+
+   \begin{verbatim}
+      /home/user/.config/seq66            (Linux)
+      C:/Users/user/AppData/Local/seq66   (Windows)
+   \end{verbatim}
+
    These are created after the first run of \textsl{Seq66}.
 
    If the \texttt{--alsa} option is used instead of
    \texttt{--jack-midi}, then the \textsl{ALSA} subsystem is used
    (Linux only).  The following figure shows the main window
-   using a light desktop theme.
+   using a light desktop theme and green labels.
 
 \begin{figure}[H]
    \centering 
@@ -196,12 +206,13 @@
    but the functionality is similar.
    Most features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
-   and 'palette' configuration files, or via command-line options.
+   and 'palette' configuration files, or via command-line options, and via
+   desktop themes.
    There are many new front-panel items in \textsl{Seq66}.
    Many of these buttons have configurable keystrokes and configurable MIDI
-   controls as well.
+   controls.
 
-   For discussion, we break the discussion into sections for the following
+   We break the discussion into sections for the following
    groups shown in the figure above:
 
    \begin{itemize}
@@ -210,22 +221,22 @@
       \item \textbf{Main Screen Controls}
    \end{itemize}
 
-   The \textbf{Live} center tab is foremost in the application.
-   It provides a grid of patterns (also called loops or
+   The \textbf{Live} tab is foremost in the application.
+   It provides a grid of patterns (also called loops, tracks, or
    sequences) that display recorded MIDI data, status information, and provide
-   popup-menus to further work on each pattern.  Note here that the buttons can
-   be colored, and that the status of being armed is easy to see from the
-   coloring.
+   popup-menus for each pattern.  The buttons can
+   be colored via a palette, and that the status of being armed is easy to see
+   from the theme's coloring of activated buttons.
    In addition, the buttons can be toggled by a keystroke, shown in the lower
    right corner of the button.
-   Another name for the \textbf{Live} tab is the \textbf{Patterns Panel}.
-   The \textbf{Live} tab and all the other center tabs
+   Another name for the \textbf{Live} tab is the \textbf{Patterns Panel};
+   it can be replicated in an external window.
+   This tab and all the other tabs
    will be discussed in more detail, each in its own section.
-
    The \textbf{Menu} is also described later (see \sectionref{sec:menu}).
 
    Here, we first discuss the top and bottom \textbf{Main} controls, as
-   shown in the following figure:
+   shown in the following collapsed figure:
 
 \begin{figure}[H]
    \centering 
@@ -233,6 +244,9 @@
    \caption{Main Screen Controls}
    \label{fig:main_screen_controls}
 \end{figure}
+
+   See the following section and
+   \sectionref{subsubsec:introduction_main_bottom_controls}.
 
 \subsubsection{Main Top Controls (Condensed View)}
 \label{subsubsec:introduction_main_top_controls}
@@ -260,18 +274,14 @@
    This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
-   match the PPQN read from the file, or to other values.
-
-   STILL NEEDS WORK.
-
-   Values:
-      \texttt{File, 32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}
+   match the PPQN read from the file, or to other values:
+   \texttt{File, 32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}
 
 \paragraph{Set's Buss Override}
 \label{paragraph:introduction_sets_buss_override}
 
    This dropdown allows for overriding the buss (port) number used by all of
-   the patterns in the current set.  This modifies the file and will lead to a
+   the patterns in the current set.  This modifies the song and will lead to a
    prompt to save.
    The list of
    output busses is either the existing MIDI ports on the system, or,
@@ -304,11 +314,11 @@
 \label{paragraph:introduction_beat_indicator}
 
    The beat indicator is inspired by the \textsl{Kepler34} implementation.  It
-   shows the first beat in red, and the rest of the beats in white.
+   shows the first beat in color, and the rest of the beats in white.
    It does not adapt to changes in the time-signature until
    playback is stopped.
 
-\subsubsection{Main Bottom Controls}
+\subsubsection{Main Bottom Controls, First Row}
 \label{subsubsec:introduction_main_bottom_controls}
 
    The bottom main control items take up two rows.  The first row contains:
@@ -332,7 +342,8 @@
    This button brings up an external window showing the \textbf{Set Master}
    panel.  This panel is also available in a center tab.  It is a work in
    progress, and doesn't have a whole lot of functionality yet.
-   It can currently show existing sets in one view.
+   It can currently show existing sets in one view, and allow
+   reordering the sets.
 
 \paragraph{Active Set Indicator}
 \label{paragraph:introduction_active_set_indicator}
@@ -350,7 +361,10 @@
    This set can be modified by adding new patterns, changing its name, or
    importing other MIDI files into the current set.
 
-   On to the next section of the main buttons, the second row contains:
+\subsubsection{Main Bottom Controls, Second Row}
+\label{subsubsec:introduction_main_bottom_controls_2}
+
+   On to the next section of the main bottom buttons, the second row contains:
 
    \begin{itemize}
       \item \textbf{Panic Button}
@@ -394,8 +408,9 @@
    This button stops playback, but does not rewind to the beginning of the song.
    It also resumes playback at the same point as the pause.
    By default, the \texttt{Period} key operates this function,
-   and there is a MIDI-control slot and a MIDI-announcement slot available for
-   it.
+   and there is a MIDI-control slot and a MIDI-announcement slot available for it.
+   This key is also hardwired to pause and start playback in the pattern editor and
+   the song editor.
 
 \paragraph{Play Button}
 \label{paragraph:introduction_play_button}
@@ -405,6 +420,8 @@
    By default, the \texttt{Space} key operates this function,
    and there is both a MIDI-control slot and a MIDI-announcement slot
    available for it.
+   This key is also hardwired to toggle playback in the pattern editor and the song
+   editor.
 
 \paragraph{Live Record Button}
 \label{paragraph:introduction_live_record_button}
@@ -433,20 +450,22 @@
    When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
    group-learn mode automatically converts the keys to their shifted versions.
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
-   After pressing this button, the user can then press a keystroke, which is
+   After pressing the "L" button, the user can then press a keystroke, which is
    automatically shifted, and the pattern set is saved, and can be recalled by
    that button (shifted) later.  It can be saved in a 'mutes' file, as part of the
    MIDI tune, or in both places.
 
-   Example:  We have 5 patterns armed in the current set. Press this button,
-   and then press the "s" key.  The pattern set is saved and can be recalled
-   later by the "S" ("s"-shifted) key.
+   \textsl{Example}:
+   We have 5 patterns armed in the current set. Press the "L" button,
+   and then press the "s" key.  These pattern statuses are saved and can be
+   recalled later by the "S" ("s"-shifted) key.
 
-   By default, the \texttt{el} (lower-case "l") key sets this function,
+   By default, the \texttt{el} (lower-case "l") key also sets this function,
    and there is a MIDI-control slot available for it, as well as a
    MIDI-announcement slot.
    In addition to that, one can also press
    the \texttt{Ctrl-L} key.
+   The "el" with it!
 
    Remember that groups work with the playing ("in-view") screen-set.
    One must change the screenset and give it the command to make it the
@@ -458,19 +477,20 @@
    \texttt{mute-group-selected}.  If this value is set to a value from 0 to 31,
    then that mute group will be automatically applied when
    \textsl{Seq66} starts up.
-   This is useful with the loading of the most-recent MIDI file.
-
+   This is useful with the loading of the most-recent MIDI file (which is also a
+   feature of \textsl{Seq66}.
 
 \paragraph{Developer Test Button}
 \label{paragraph:introduction_developer_test_button}
 
-   This button is always disabled.  Function is added temporarily when testing
+   This button is always disabled.  Functionality is added temporarily when testing
    new features. Ignore this button.
 
 \paragraph{Song Editor Button}
 \label{paragraph:introduction_song_editor_button}
 
-   This button brings up an external window for editing the Song/Performance
+   This button (with a "pencil" icon)
+   brings up an external window for editing the Song/Performance
    information.  If already up, it closes it.  Works the same as the
    \textbf{Edit / Song Editor} menu or the hard-wired \texttt{Ctrl-E} key.
 
@@ -504,8 +524,7 @@
 \paragraph{PPQN Indicator}
 \label{paragraph:introduction_ppqn_indicator}
 
-   Displays the current PPQN for the current tune.
-   Still needs work.
+   This read-only field displays the current PPQN for the current tune.
 
    \configref{usr}{user-midi-settings}{midi\_ppqn}
 

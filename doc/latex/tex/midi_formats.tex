@@ -143,31 +143,22 @@
    \textsl{Seq66}.
 
    At this point, we have the \textbf{c\_midictrl} information now.
-   Next, we read a long value, seqs.  It is 0.
+   Next, we read a long value,
+   \texttt{24 24 00 10 00 00 00 00}, to get the seqs.
+   It is 0.
 
-   \begin{verbatim}
-      24 24 00 10 00 00 00 00
-   \end{verbatim}
-
-   Read the next long value, 0x24240003.  This is \textbf{c\_midiclocks}.
+   Read the next long value,
+   \texttt{24 24 00 03 00 00 00 00}.
+   This is \textbf{c\_midiclocks}.
    We get a value of 0 for "TrackLength" (now a local variable called
    "busscount"):
-
-   \begin{verbatim}
-      24 24 00 03 00 00 00 00
-   \end{verbatim}
-
    If the buss-count was greater than 0, then for each value, we would read a
    byte value represent the bus a clock was on, and setting the clock value
    of the master MIDI buss.
    Another check for more data is made.
 
-   \begin{verbatim}
-      24 24 00 05 00 20 00 00
-   \end{verbatim}
-
-   0x24240005 is \textbf{c\_notes}.  The value screen\_sets is read (two
-   bytes) and
+   \texttt{0x24 24 00 05 00 20 00 00} is \textbf{c\_notes}.
+   The value screen\_sets is read (two bytes) and
    here is 0x20 = 32.  For each screen-set:
 
    \begin{verbatim}
@@ -179,19 +170,13 @@
    an empty string.
    Another check for more data is made.
 
-   \begin{verbatim}
-      24 24 00 07 00 00 00 78
-   \end{verbatim}
-
-   0x24240007 is \textbf{c\_bpmtag}.  The long value is read and sets the
+   \texttt{24 24 00 07 00 00 00 78}
+   is \textbf{c\_bpmtag}.  The long value is read and sets the
    perform object's bpm value.  Here, it is 120 bpm.
    Another check for more data is made.
 
-   \begin{verbatim}
-      24 24 00 09 00 00 04 00
-   \end{verbatim}
-
-   0x24240009 is \textbf{c\_mutegroups}.  The long value obtained here is
+   \texttt{24 24 00 09 00 00 04 00}
+   is \textbf{c\_mutegroups}.  The long value obtained here is
    1024.  If this value is not equal to the constant
    \textbf{c\_gmute\_tracks} (1024), a warning is emitted to the console,
    but processing continues anyway, 32 x 32 long values are read to select

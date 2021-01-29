@@ -6,7 +6,7 @@
 # \library    	Documents
 # \author     	Chris Ahlstrom
 # \date       	2020-10-02
-# \update     	2021-01-24
+# \update     	2021-01-28
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -21,6 +21,12 @@
 #  	The new destination is the doc directory.
 #
 #-------------------------------------------------------------------------------
+
+#******************************************************************************
+#  EXTRA_DIST
+#------------------------------------------------------------------------------
+
+EXTRA_DIST = *.tex
 
 .PHONY: clean
 .PHONY: docs

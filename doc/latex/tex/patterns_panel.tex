@@ -624,17 +624,6 @@
    will be toggled.  If preceded by two slash keys, then sequence 64 will be
    toggled.  This features supports using set sizes of 32, 64, and 96 patterns.
 
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{new/patterns_panel_shift_toggle.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Shift-Key Pattern Toggle}
-   \label{fig:pattern_window_shift_key_pattern_toggle}
-\end{figure}
-
-   This figure shows how one presses \texttt{y}, \texttt{/y}, and \texttt{//y}
-   to arm three patterns in this 96-pattern set.
-
    \index{keys![}
    \index{keys!decrement set}
    \index{keys!screenset down}
@@ -692,6 +681,8 @@
    Please note the "keep queue" functionality and
    the "one-shot queue" functionality described below.
 
+\begin{comment}
+
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.75]{pattern/seq24-queueing-coloration.jpg}
@@ -701,11 +692,15 @@
    \label{fig:queueing_coloration}
 \end{figure}
 
-   This figure shows the coloring for queuing in the top two patterns with
+   This figure shows
+
+\end{comment}
+
+   The coloring for queuing provides
    dark grey event backgrounds.  At the end of the pattern, the left top
    pattern will turn off, and the right top pattern will turn on.
-   The bottom two patterns show the light-grey coloring used to show
-   a "one-shot" queue.  The one-shot queue can only turn a pattern on, and it
+   Light-grey coloring is used to show a "one-shot" queue.
+   The one-shot queue can only turn a pattern on, and it
    will force the pattern off after one play.
    Queue also works for mute/unmute pattern sets ("groups"); in this case,
    every sequence will toggle its status after its individual loop ends. 
@@ -719,23 +714,6 @@
    window to disable the menu.
    One can also use normal keys to enable queuing.
    For example, the minus key or the keypad's slash key can be used.
-%  , which makes those keystrokes more
-%  safely available.
-%  The \texttt{Super} key can also be used, if not already used by the desktop
-%  environment.  Also available are some of the function keys, and, if
-%  available, the keypad keys.  These can be configured in
-%  \textbf{File / Options / Keyboard} and
-%  \textbf{File / Options / Ext Keys}.
-%  Of course, if the \texttt{Ctrl} key is used to manage the GUI (e.g.
-%  \texttt{Ctrl-Q} will unceremoniously quit the application), so one will
-%  usually want to change this key to something else in the
-%  \textbf{File / Options / Keyboard / Queue} field.
-%  The \texttt{Super} key (i.e. the \texttt{Mod4} or \texttt{Windows key}) is a
-%  good candidate to substitute for the \texttt{Ctrl} key, unless one has (like
-%  the author)
-%  configured the window manager to use the \texttt{Super} key to manipulate
-%  windows and applications \textsl{(laughter ensues)}.
-%  , with no flickering due to the keyboard repeat rate.
 
    \index{keys!keep queue}
    \index{queue!keep}
@@ -819,13 +797,13 @@
          to solo.
    \end{enumber}
 
-\begin{figure}[H]
-   \centering 
+% \begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{new/queued_replace.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Queued-Replace (Queued-Solo) In Action}
-   \label{fig:queued_replace}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Queued-Replace (Queued-Solo) In Action}
+%  \label{fig:queued_replace}
+% \end{figure}
 
    Before pressing the "keep queue" key, patterns 33 ("\textbf{q}")
    and 34 ("\textbf{a}") are
@@ -902,17 +880,7 @@
    versions of \textsl{Seq66}, and we have not yet caught up with the
    diagrams. And the Qt user-interface adds more changes.
    Refer to the diagram of the whole window, for now.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-bottom-panel-items.png}
-%  \includegraphics[scale=0.50]{new/pattern-window-bottom-panel.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Bottom Panel Items}
-   \label{fig:pattern_window_bottom_panel_items}
-\end{figure}
-
-   This figure shows a number of new items.
+   It has a number of items:
 
    \begin{enumber}
       \item \textbf{Panic!}
@@ -952,18 +920,7 @@
    \index{pause}
    The Play button can be used as a Pause button.
    When the Play button is clicked, the button icon changes to a Pause icon:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=1.0]{new/stop_pause_buttons.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Pause Button}
-   \label{fig:pattern_window_pause_button}
-\end{figure}
-
    A Pause key (by default, the period) is also defined.
-%  (The pause feature can be removed by rebuilding the application
-%  after configuring with the \texttt{--disable-pause} option.)
 
    \itempar{Song Record}{pattern!song record}
    Song-recording in \textsl{Seq66} is adopted from the

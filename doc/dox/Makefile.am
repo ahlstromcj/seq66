@@ -33,7 +33,7 @@ CLEANFILES = dox-stamp \
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
 
-EXTRA_DIST = make_dox *.cfg *.dox *.pdf
+EXTRA_DIST = make_dox make-helper optimize *.cfg *.dox # *.pdf
 
 #******************************************************************************
 # Local project directories

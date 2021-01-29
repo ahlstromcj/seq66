@@ -56,7 +56,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.75]{song-editor/song-editor-annotated.png}
+   \includegraphics[scale=1.0]{song-editor/song-editor-annotated.png}
    \caption{Song Editor Window, Annotated}
    \label{fig:song_editor_window_annotated}
 \end{figure}
@@ -480,28 +480,30 @@
          rewinding.
          This functionality is similar to that of the main window, but
          these keys are not reconfigurable in the song roll.
-      \item Undo/Redo/Cut/Copy/Paste of a selected section.
+      \item Undo / Redo / Cut / Copy / Paste of a selected section.
          Provided by buttons and by these keystrokes:
-         \texttt{Ctrl-Z}. Undo.
-         \texttt{Shift-Ctrl-Z}. Redo.
-         \texttt{Ctrl-X}. Cut.  Removes the selection.
+         \begin{itemize}
+            \item \texttt{Ctrl-Z}. Undo.
+            \item \texttt{Shift-Ctrl-Z}. Redo.
+            \item \texttt{Ctrl-X}. Cut.  Removes the selection.
             \index{keys!backspace}
             \index{keys!delete}
             \index{keys!ctrl-x}
             Can also be done with the \texttt{Delete} and
             \texttt{Backspace} keys.
             The deletion can be undone.
-         \texttt{Ctrl-C}. Copy.
+            \item \texttt{Ctrl-C}. Copy.
          \index{keys!ctrl-c}
          \index{keys!copy}
-         Copies the trigger for later usage.
-         \texttt{Ctrl-V}. Paste.
+            Copies the trigger for later usage.
+            \item \texttt{Ctrl-V}. Paste.
             \index{keys!ctrl-v}
             \index{keys!paste}
             Puts the roll into paste mode.
             When inserted, each insert goes immediately
             after the current item or the previous insertion.  The same can be
             done for whole patterns.
+         \end{itemize}
       \item Horizontal (Time) Zoom.
          Provided by buttons and by these keystrokes:
          \texttt{Z}. Zoom in.

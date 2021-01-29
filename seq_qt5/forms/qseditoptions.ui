@@ -150,7 +150,7 @@ Button not yet functional.</string>
            <string>Sets the position after which MIDI clocking begins.</string>
           </property>
           <property name="text">
-           <string>Clock Start Modulo (1/16/Notes)</string>
+           <string>Clock Start Modulo (1/16 Notes)</string>
           </property>
          </widget>
         </item>

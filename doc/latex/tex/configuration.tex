@@ -406,8 +406,8 @@
 \label{subsubsec:configuration_rc_midi_control}
 
    \index{[midi-control-file]}
-   \textsl{Seq66} offloads the MIDI control sections to a separate file.
-   Simply move or create
+   \textsl{Seq66} offloads MIDI control to a separate file.
+   Move or create
    the \texttt{[midi-control]} section to a separate file in
    the \textsl{Seq66} configuration directory, and add the following
    snippet:
@@ -495,8 +495,7 @@
 
    \index{[midi-clock-mod-ticks]}
    This configuration item is the same as the
-   \textbf{Clock Start Modulo} option described in
-   \paragraphref{paragraph:menu_file_options_midi_clock}.
+   \textbf{Edit / Preferences / MIDI Clock / Clock Start Modulo} option.
 
    \begin{verbatim}
       [midi-clock-mod-ticks]
@@ -630,9 +629,15 @@
    In this mode, system MIDI input/output devices are discovered and
    automatically connected.
 
-   It will create port namess as per the settings in the 'usr' configuration
-   file's \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N}
-   sections.  These definitions can be used by JACK for connection, and these
+   It will create port names as per the settings in the 'usr' configuration
+   file's sections:
+
+   \begin{verbatim}
+      [user-midi-bus-definitions]
+      [user-midi-bus-N]
+   \end{verbatim}
+
+   These definitions can be used by JACK for connection, and these
    definitions can be used to specifically rename the ports that exist in the
    system.
    This option is misleading if one wants to have access to the
@@ -908,9 +913,9 @@
    Let's walk through the structure of this setup, since it is a little bit
    tricky.
 
-   The first section in the 'usr' file (after \texttt{[comments]})
+   The first important section in the 'usr' file
    is \texttt{[user-midi-bus-definitions]}.
-   This section contains an arbitrary number
+   This section contains an number
    of \texttt{[user-midi-bus-N]} sections, where "N" ranges from 0 on upward.
    These correspond to the MIDI \textsl{output}
    busses expected to be in the system (ignoring the ALSA "announce" buss if
@@ -918,8 +923,13 @@
 
    Each of the busses contains 16 (0 to 15) channel entries.
    These channels are referred to as "instrument numbers", and are
-   represented as and linked to "instruments" in the
-   \texttt{[user-instrument-definitions]} section.  Each instrument contains up
+   represented as and linked to "instruments" in this section:
+
+   \begin{verbatim}
+      [user-instrument-definitions]
+   \end{verbatim}
+
+   Each instrument contains up
    to 128 controller values; these controller values are available in the
    \textbf{Event} button in the Pattern Editor, and their names are shown.
 
@@ -930,7 +940,7 @@
 
    The list of devices and channels shown earlier
    can be seen in the \textsl{Seq66} sample file
-   \texttt{data/samples/sample.usr}.
+   \texttt{sample.usr}.
    Deducting 1 from each device number and channel number (so that numbering
    starts from 0), and consulting the device manuals to determine the
    controller values supported, one can assemble a 'usr' configuration file
@@ -977,10 +987,11 @@
 
    These instrument-definition
    sections are read from the 'usr' configuration file only if
-   the \texttt{--reveal-ports} option is \textsl{off} ("0");
+   the "reveal ports" option is \textsl{off} ("0");
    this option can also be specified in the
    \texttt{[reveal-ports]} section of the 'rc' file.
    Otherwise, the actual port names reported by ALSA/JACK are shown.
+
    The \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections
    can be misleading if one wants to have access to the
    actual MIDI port names that exist on the system.
@@ -1415,7 +1426,7 @@
 \label{paragraph:configuration_midi_ctrl_ssupdn}
 
    Also abbreviated "Set Up" and "Set Down".
-   This control increments/decrement to the next/previous screen-set. 
+   This control increments / decrements to the next / previous screen-set. 
    Once the screen-set has been altered, mute-groups and other
    actions apply to that screen set.
 
@@ -1453,12 +1464,12 @@
    the \texttt{mod queue} entry:
 
    \begin{verbatim}
-6 "o" [ 0   0  0x00 0   0  0 ] [ 1   0  0xB0 64 127 127 ] [ 1   0  0xB0 64 0  0 ]  # Queue
-#      OPR INV STA  D1  mn mx   OPR INV STA  D1 mn  mx     OPR INV STA D1  mn mx
-#                                        ^  ^                      ^  ^
-#                                        |  |                      |  |
-#                                        |   ----Sustain--------------
-#                                         -------Control Change--
+6 "o" [ 0   0  0x00 0  0  0 ] [ 1   0  0xB0 64 127 127 ] [ 1   0  0xB0 64 0  0 ]
+#      OPR INV STA  D1 mn mx   OPR INV STA  D1 mn  mx     OPR INV STA D1  mn mx
+#                                       ^  ^                      ^  ^
+#                                       |  |                      |  |
+#                                       |   ----Sustain-----------   |
+#                                        -------Control Change-------
    \end{verbatim}
 
    So when the Sustain button is held down, and one presses one of the pads
@@ -1613,10 +1624,10 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [mute-groups]
-       0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
-       1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+       0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
+       1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
        . . .
-      31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ]
+      31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
    \end{verbatim}
 
    In this group are the definitions of the state of the 32 (or more, once the

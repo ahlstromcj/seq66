@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-04-20
-% \update      2021-01-18
+% \update      2021-01-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -27,14 +27,16 @@
 \definecolor{webgreen}{rgb}{0,.5,0}
 \definecolor{webbrown}{rgb}{.6,0,0}
 
+\usepackage{ragged2e}         % For underfull boxes in the bibliography
 \usepackage{verbatim}         % For the comment macro
 \usepackage{url}              % Required for including URLs
 \usepackage{hyperref}         % Required for including hyperlinks
 \usepackage{amsthm}           % Helps avoid "destination with same
 \usepackage[hypcap]{caption}  % make labels point to figure, not the caption
 \usepackage[pdftex]{graphicx} % Required for including images
-\graphicspath{{../images/}}   % Set the default folder for images
+\graphicspath{{../images}}    % Set the default folder for images
 \usepackage{float}            % For more control of location of Figures
+\usepackage[T1]{fontenc}      % Remove font warnings for textleftbrace, etc.
 \usepackage{geometry}         % Page & text layout
 \geometry{
   letterpaper,
