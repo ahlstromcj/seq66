@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-23
+ * \updates       2021-01-30
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -785,7 +785,7 @@ qsmainwnd::qsmainwnd
     load_mute_master();
     load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
-    ui->tabWidget->setTabEnabled(Tab_Events, false);
+    ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
 
 #if defined SEQ66_DISABLE_SESSION_TAB
 
@@ -1930,8 +1930,18 @@ qsmainwnd::showqsbuildinfo ()
 void
 qsmainwnd::load_editor (int seqid)
 {
-    auto ei = m_open_editors.find(seqid);
-    if (ei == m_open_editors.end())                         /* 1 editor/seq */
+    seq::pointer seq = perf().get_sequence(seqid);
+    bool ok = bool(seq);
+
+#if defined DISALLOW_EDITOR_CONFLICT
+    if (ok)
+    {
+        auto ei = m_open_editors.find(seqid);
+        ok = ei == m_open_editors.end();                    /* 1 editor/seq */
+    }
+#endif
+
+    if (ok)
     {
         ui->EditTabLayout->removeWidget(m_edit_frame);      /* no ptr check */
         if (not_nullptr(m_edit_frame))
@@ -1953,8 +1963,18 @@ qsmainwnd::load_editor (int seqid)
 void
 qsmainwnd::load_event_editor (int seqid)
 {
-    auto ei = m_open_editors.find(seqid);
-    if (ei == m_open_editors.end())                         /* 1 editor/seq */
+    seq::pointer seq = perf().get_sequence(seqid);
+    bool ok = bool(seq);
+
+#if defined DISALLOW_EDITOR_CONFLICT
+    if (ok)
+    {
+        auto ei = m_open_editors.find(seqid);
+        ok = ei == m_open_editors.end();                    /* 1 editor/seq */
+    }
+#endif
+
+    if (ok)
     {
         if (make_event_frame(seqid))
         {
@@ -2425,7 +2445,6 @@ qsmainwnd::tabWidgetClicked (int newindex)
 /**
  *  First, make sure the sequence exists.  Consider creating it if it does not
  *  exist.
- *
  */
 
 bool

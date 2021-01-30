@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-01-11
+ * \updates       2021-01-30
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2390,28 +2390,23 @@ sequence::add_note
         }
         if (! ignore)
         {
-            event e
-            (
-                tick, EVENT_NOTE_ON, note,
-                hardwire ? midibyte(m_note_on_velocity) : velocity
-            );
+            /*
+             * Will be consistent with how Note On velocity is handled;
+             * enable 0 velocity (a standard?) for Note Off when not
+             * playing. Note that the event constructor sets channel to 0xFF,
+             * while event::set_data() currently sets it to 0!!!
+             */
+
+            midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
+            event e(tick, EVENT_NOTE_ON, note, v);
             if (paint)
                 e.paint();
 
             result = add_event(e);
             if (result)
             {
-                /*
-                 * Will be consistent with how m_note_on_velocity is handled
-                 * above; enable 0 velocity (a standard?) for note off when not
-                 * playing.
-                 */
-
-                e.set_data
-                (
-                    tick + len, EVENT_NOTE_OFF, note,
-                    hardwire ? midibyte(m_note_off_velocity) : 0
-                );
+                midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
+                event e(tick + len, EVENT_NOTE_OFF, note, v);
                 result = add_event(e);
             }
         }

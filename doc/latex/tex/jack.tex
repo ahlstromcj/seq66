@@ -29,15 +29,15 @@
 
    If one wants to use \textsl{Seq66} and USB devices
    with JACK MIDI, one needs to expose the USB ports to JACK using
-   \texttt{a2jmidid --export-hw}, and connect the resultant MIDI JACK ports
+   \texttt{a2jmidid -{}-export-hw}, and connect the resultant MIDI JACK ports
    oneself, using \textsl{QJackCtl}, for example.
 
    To enable the JACK transport support at run-time on
    \textsl{Linux}, the options
-   \texttt{-j}/\texttt{--jack-transport},
-   \texttt{-J}/\texttt{--jack-master},
-   \texttt{-C}/\texttt{--jack-master-cond},
-   and \texttt{-t}/\texttt{--jack-midi} are available.
+   \texttt{-j}/\texttt{-{}-jack-transport},
+   \texttt{-J}/\texttt{-{}-jack-master},
+   \texttt{-C}/\texttt{-{}-jack-master-cond},
+   and \texttt{-t}/\texttt{-{}-jack-midi} are available.
 
    The following sections discuss the JACK transport support and the native
    JACK MIDI support.
@@ -76,7 +76,7 @@
    fail to register a JACK port, and cannot play.
 
    The other option is to set up virtual ports using the
-   \texttt{--manual-ports} or \texttt{--options virtual=o,i} options, and then
+   \texttt{-{}-manual-ports} or \texttt{-{}-options virtual=o,i} options, and then
    to manually connected these ports to the desired MIDI devices or
    applications using \textsl{QJackCtl} (for example).
 
@@ -84,7 +84,7 @@
    \textsl{Seq66}, which will detect JACK and use it.
    If it instead opts to run with ALSA, edit the 'rc' file to set up
    \texttt{midi\_jack}, or add the
-   \texttt{-t} or \texttt{--jack-midi}
+   \texttt{-t} or \texttt{-{}-jack-midi}
    option to the command-line.
    If \textsl{Seq66} doesn't find JACK, it will still fall back to ALSA.
 
@@ -159,8 +159,8 @@
    \index{ports!virtual}
    The manual-versus-normal port support for JACK MIDI is essentially the same
    as that for ALSA.
-   The \texttt{--manual-ports} and
-   \texttt{--options virtual=o,i} options provide
+   The \texttt{-{}-manual-ports} and
+   \texttt{-{}-options virtual=o,i} options provide
    "virtual ports".  These are ports that do not represent
    hardware, but are created by applications to allow them to connect to other
    applications or MIDI devices.
@@ -173,8 +173,8 @@
 
    So, if one wants \textsl{seq66} to automatically connect to all existing
    JACK MIDI ports, \textsl{do not} use the
-   \texttt{-m}/\texttt{--manual-ports} option... use the
-   \texttt{-a}/\texttt{--auto-ports} option.  Both options apply to both
+   \texttt{-m}/\texttt{-{}-manual-ports} option... use the
+   \texttt{-a}/\texttt{-{}-auto-ports} option.  Both options apply to both
    ALSA and JACK.
 
    The \textbf{MIDI Clock} and \textbf{MIDI Input} tabs reflect

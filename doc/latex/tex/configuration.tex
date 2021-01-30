@@ -184,21 +184,21 @@
        qseq66 [options list] [MIDI filename]
    \end{verbatim}
 
-   \optionline{-h}{--help}
+   \optionline{-h}{-{}-help}
       Display a list of all command-line options, then exit.
 
-   \optionline{-v}{--version}
+   \optionline{-v}{-{}-version}
       Display the program version, then exit.
 
-   \optionline{-H}{--home [directory]}
+   \optionline{-H}{-{}-home [directory]}
       Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
       The configuration files are loaded from or saved to the specified directory.
 
-   \optionline{-b}{--bus [buss]}
+   \optionline{-b}{-{}-bus [buss]}
       Modifies the output buss number on \textsl{all} tracks when a MIDI file is
       read.  Useful for testing or quick-and-dirty setup.
 
-   \optionline{-q}{--ppqn [ppqn]}
+   \optionline{-q}{-{}-ppqn [ppqn]}
       Supports modifying the PPQN value of Seq66, which is
       defaults to a value of 192.  This setting
       is written into the MIDI file when it is saved.
@@ -207,14 +207,14 @@
 
       \configref{usr}{user-midi-settings}{midi\_ppqn}.
 
-   \optionline{-L}{--lash}
+   \optionline{-L}{-{}-lash}
       If LASH support is compiled into the program, this option
       enables it.  Deprecated.
       See \texttt{usr: [user-session] session}.
 
       \configref{usr}{user-session}{session}
 
-   \optionline{-m}{--manual-ports}
+   \optionline{-m}{-{}-manual-ports}
       \textsl{Seq66} won't attach the system's existing ALSA or JACK MIDI ports.
       Instead, it will create is own set of \textsl{virtual}
       input and output busses/ports.  The default number of port is 1 for input,
@@ -222,17 +222,17 @@
 
       \configref{rc}{manual-ports}{flag for manual/virtual ports}
 
-   \optionline{-a}{--auto-ports}
+   \optionline{-a}{-{}-auto-ports}
       \textsl{Seq66} will automatically attach to the system's existing
       ALSA/JACK ports.
 
       \configref{rc}{manual-ports}{flag for manual/virtual ports}
 
-   \optionline{-r}{--reveal-ports}
+   \optionline{-r}{-{}-reveal-ports}
       \textsl{Seq66} will show the names of the ALSA/JACK ports that the system
       defines, rather than the names defined in the 'usr' configuration file.
 
-   \optionline{-R}{--hide-ports}
+   \optionline{-R}{-{}-hide-ports}
       \textsl{Seq66} will show the names of the ALSA port that the 'user'
       configuration file define, rather than the names defined by ALSA.
 
@@ -240,36 +240,36 @@
 
       \configref{usr}{user-midi-bus-definitions}{number of user-defined busses}
 
-   \optionline{-A}{--alsa}
+   \optionline{-A}{-{}-alsa}
       \textsl{Seq66} will run with ALSA, even if JACK is running.
       This options is "sticky" (they are saved).
 
-   \optionline{-t}{--jack-midi}
+   \optionline{-t}{-{}-jack-midi}
       \textsl{Seq66} will run with JACK, which is the default is JACK is
       running.
 
       \configref{rc}{jack-transport}{with\_jack\_midi}
 
-   \optionline{-s}{--show-midi}
+   \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
 
-   \optionline{-p}{--priority}
+   \optionline{-p}{-{}-priority}
       Runs at higher priority with a FIFO scheduler.
 
-   \optionline{N/A}{--pass-sysex}
+   \optionline{N/A}{-{}-pass-sysex}
       Passes any incoming SYSEX messages to all outputs.
 		Not yet fully implemented.
 
-   \optionline{-k}{--show-keys}
+   \optionline{-k}{-{}-show-keys}
       Prints pressed key value.
 
-   \optionline{-K}{--inverse}
+   \optionline{-K}{-{}-inverse}
       Changes the color palette for the sequence editor and performance editor
       piano rolls.  Also note that the palette is highly configurable.
 
       \configref{palette}{palette}{inverse}
 
-   \optionline{-X}{--playlist [filename]}
+   \optionline{-X}{-{}-playlist [filename]}
       This option loads the given file-name as a play-list file.
       See \sectionref{sec:playlist}.
 
@@ -277,48 +277,48 @@
 
       \configref{playlist}{playlist}{full}
 
-   \optionline{-j}{--jack-transport}
+   \optionline{-j}{-{}-jack-transport}
       \textsl{Seq66} will sync to JACK transport.
 
       \configref{rc}{jack-transport}{with\_jack\_transport}
 
-   \optionline{-J}{--jack-master}
+   \optionline{-J}{-{}-jack-master}
       \textsl{Seq66} will try to be JACK master.
 
       \configref{rc}{jack-transport}{with\_jack\_master}
 
-   \optionline{-C}{--jack-master-cond}
+   \optionline{-C}{-{}-jack-master-cond}
       JACK master will fail if there is already a master.
 
       \configref{rc}{jack-transport}{with\_jack\_cond}
 
-   \optionline{-M}{--jack-start-mode [x]}
+   \optionline{-M}{-{}-jack-start-mode [x]}
       When \textsl{Seq66} is synced to JACK, the following play modes
       are available: 0 = live mode; and 1 = song mode, the default.
 
       \configref{rc}{jack-transport}{song\_start\_mode}
 
-   \optionline{-U}{--jack-session-uuid [uuid]}
+   \optionline{-U}{-{}-jack-session-uuid [uuid]}
       Set the UUID for the JACK session.
 
-   \optionline{-u}{--user-save}
+   \optionline{-u}{-{}-user-save}
       Save the 'usr' configuration file when exiting.
       Normally, it is saved only if not present in the configuration directory,
-      so as not to get stuck with temporary settings such as the --bus option.
+      so as not to get stuck with temporary settings such as the -{}-bus option.
 
       \configref{rc}{auto-option-save}{auto-save-options-on-exit}
 
-   \optionline{-f}{--rc filename}
+   \optionline{-f}{-{}-rc filename}
       Use a different 'rc' configuration file.
       It must be a file in the user's \texttt{\$HOME/.config/seq66}
-      directory or the directory specified by the \texttt{--home} option.
+      directory or the directory specified by the \texttt{-{}-home} option.
       The \texttt{.rc} extension is added if necessary.
 
-   \optionline{-F}{--usr filename}
-      Use a different 'usr' configuration file.  Similar to the \texttt{--rc}
+   \optionline{-F}{-{}-usr filename}
+      Use a different 'usr' configuration file.  Similar to the \texttt{-{}-rc}
       option.
 
-   \optionline{-c}{--config basename}
+   \optionline{-c}{-{}-config basename}
       Use a different configuration file base name for the 'rc' and 'usr'
       files.  For example, one can specify a full configuration for "testing",
       for "jack", or for "alsa", to set up
@@ -326,7 +326,7 @@
       \texttt{jack.rc} and \texttt{jack.usr},
       \texttt{alsa.rc} and \texttt{alsa.usr}.
 
-   \optionline{-o}{--option opvalue}
+   \optionline{-o}{-{}-option opvalue}
       Provides additional options, since the application is running out of
       single-character options.  The \texttt{opvalue} set supported is:
       \begin{itemize}
@@ -350,7 +350,7 @@
             the set size and layout from the default 4x8 = 32 sets layout.
             Consider this option to be experimental. Expect problems.
             To save these options to the 'usr' file, add the
-            \texttt{--user-save} option to the command line.
+            \texttt{-{}-user-save} option to the command line.
             In that file, the options modified are \texttt{mainwnd\_rows} and
             \texttt{mainwnd\_cols}.
          \item \texttt{scale=WxH}.
@@ -389,7 +389,7 @@
       port-namng = short
    \end{verbatim}
 
-   \texttt{verbose} is the same as the \texttt{--verbose} command-line option,
+   \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line option,
    except that, if set to "true", it affects every invocation of \textsl{Seq66}.
 
    The \texttt{sets-mode} option determines if sets are muted when going to the
@@ -624,7 +624,7 @@
    \end{verbatim}
 
    \index{--auto-ports}
-   The opposite of \texttt{--manual-ports} is \texttt{--auto-ports},
+   The opposite of \texttt{-{}-manual-ports} is \texttt{-{}-auto-ports},
    which is the normal mode of running \textsl{Seq66}.
    In this mode, system MIDI input/output devices are discovered and
    automatically connected.
@@ -777,7 +777,7 @@
    \textsl{Seq66} exits.  If the 'usr' files does not exist, one is
    created, but it is normally not overwritten thereafter.  To
    cause it to be overwritten at exit, run \textsl{Seq66} with the
-   \texttt{-u} or \texttt{--user-save} option:
+   \texttt{-u} or \texttt{-{}-user-save} option:
 
    \begin{verbatim}
       $ qseq66 --user-save
@@ -1000,12 +1000,12 @@
    Manual} to see the figures.
 
    \begin{itemize}
-      \item Clocks View, -m (--manual-ports)
-      \item Inputs View, -m (--manual-ports)
-      \item Clocks View, -m (--manual-ports) and -R (--hide-ports)
-      \item Clocks View, -r (--reveal-ports)
-      \item Inputs View, -r (--reveal-ports)
-      \item Clocks View, -R (--hide-ports)
+      \item Clocks View, -m (-{}-manual-ports)
+      \item Inputs View, -m (-{}-manual-ports)
+      \item Clocks View, -m (-{}-manual-ports) and -R (-{}-hide-ports)
+      \item Clocks View, -r (-{}-reveal-ports)
+      \item Inputs View, -r (-{}-reveal-ports)
+      \item Clocks View, -R (-{}-hide-ports)
    \end{itemize}
 
 \subsubsection{'usr' File / MIDI Instrument Definitions}
@@ -1190,7 +1190,7 @@
 
    To obtain these new settings, remember to backup the existing
    \textsl{seq66.usr}, then run \textsl{Seq66} with the
-   \texttt{--user-save} option, and then do a "diff" on the new file and the
+   \texttt{-{}-user-save} option, and then do a "diff" on the new file and the
    original to merge any old values that need to be preserved.  Then make any
    further tweaks to the new values.
 
@@ -1201,7 +1201,7 @@
    This section begins with an
    "INI" group marker \texttt{[user-options]}.
    It provides for additional options keyed by the
-   \texttt{-o}/\texttt{--option} options.
+   \texttt{-o}/\texttt{-{}-option} options.
    This group of options serves to expand the options that are available, since
    \textsl{Seq66} is running out of single-character options.
    This group of options are shown below.
@@ -1225,7 +1225,7 @@
    This log-file is written to the same directory as the 'usr' file,
    the \textsl{Seq66} configuration directory.
    If empty, then a valid file-name must be specified
-   in the "--option log=filename.log" option.
+   in the \texttt{-{}-option log=filename.log} option.
    There's more to the 'usr' configuration file than we've exposed here.
 
 \subsection{'ctrl' File}

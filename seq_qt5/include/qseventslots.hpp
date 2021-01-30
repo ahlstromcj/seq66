@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-11-16
+ * \updates       2021-01-30
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -88,7 +88,7 @@ private:
 
     /**
      *  Holds the current event (i.e. most recently inserted) for usage by the
-     *  caller.
+     *  caller, the event-edit frame.
      */
 
     editable_event m_current_event;
@@ -198,6 +198,11 @@ public:
     virtual ~qseventslots ()
     {
         // I got nothin'
+    }
+
+    void clear ()
+    {
+        m_event_container.clear();
     }
 
     midipulse get_length () const

@@ -166,7 +166,7 @@
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5;
    on \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
    built-in wavetable synthesizer.
-   The \texttt{--buss} option remaps all events to the desired buss:
+   The \texttt{-{}-buss} option remaps all events to the desired buss:
 
    \begin{verbatim}
       $ qseq66 --jack-midi --buss 5 data/midi/b4uacuse-gm-patchless.midi
@@ -189,8 +189,8 @@
 
    These are created after the first run of \textsl{Seq66}.
 
-   If the \texttt{--alsa} option is used instead of
-   \texttt{--jack-midi}, then the \textsl{ALSA} subsystem is used
+   If the \texttt{-{}-alsa} option is used instead of
+   \texttt{-{}-jack-midi}, then the \textsl{ALSA} subsystem is used
    (Linux only).  The following figure shows the main window
    using a light desktop theme and green labels.
 
@@ -626,21 +626,6 @@
 % Setup for Launchpad Mini
 
 \input{launchpad_mini}
-
-% ---------------------------------------------------------------------
-% The following sections are not so important.  Can read the
-% sequencer64 manual for them.
-% ---------------------------------------------------------------------
-%
-% MIDI implementation chart
-% \pagebreak
-% \input{midi_impl_chart}
-% \pagebreak
-%
-% Building and debugging Seq66
-% \input{build}
-%
-% ---------------------------------------------------------------------
 
 % Important Concepts
 

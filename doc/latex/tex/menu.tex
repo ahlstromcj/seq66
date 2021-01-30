@@ -269,15 +269,14 @@
    \itempar{Apply Song Transpose}{edit!song transpose}
    \index{song transpose}
    Selecting this item applies the song transposition value to
-   \textbf{all} sequences/patterns that are marked as transposable.
+   all sequences / patterns marked as transposable.
    (Normally, drum tracks are \textsl{not} transposable).
-   This actively changes the note/pitch value of all note and aftertouch events
-   in the pattern.
-%  Once the transpositions are done, the transposition value is set to 0.
+   This actively changes the note / pitch value of all note and aftertouch
+   events in the pattern.
    For the setting of song transpose, see
-   \sectionref{sec:song_editor}, for more information.
-   Also note that transpose can be enabled in the patterns panel for each
-   pattern (see \sectionref{subsubsec:patterns_pattern_filled}) and
+   \sectionref{sec:song_editor}.
+   Note that transpose can be enabled in the
+%  patterns panel (see \sectionref{subsubsec:patterns_pattern_filled}) and
    in the sequence editor
    (see \sectionref{sec:pattern_editor}).
 
@@ -326,8 +325,6 @@
 \subsubsection{Menu / Edit / Preferences}
 \label{subsubsec:menu_edit_preferences}
 
-   \textsl{Seq66}, the \textbf{Options} dialog has been moved to 
-   \textbf{Edit / Preferences} and the keystroke-editing pages have been eliminated.
    \textbf{Preferences} provides a number of settings in one
    tabbed dialog, shown in the figures that follow.
    It allows one to set MIDI clocking, MIDI Input, display tweaks, minor
@@ -337,17 +334,18 @@
       incoming MIDI events to control the sequencer;
       what keys are mapped to functions;
       how the mouse works.
-   The MIDI and Key controls have been consolidated into a 'ctrl' file and are
-   fairly easy to edit with a text editor.
+   The MIDI and Key controls, far more numerous than in \textsl{Seq24}, have
+   been consolidated into a 'ctrl' file and are fairly easy to edit with a text
+   editor.
    \textsl{Seq66} does not support the 'fruity' mouse mode at this time.
 
 \paragraph{Menu / Edit / Preferences / MIDI Clock}
 \label{paragraph:menu_edit_preferences_midi_clock}
 
-   The \textbf{MIDI Clock} tab provides a way to set MIDI clock for
+   The \textbf{MIDI Clock} tab provides a way to set MIDI clocking for
    the available MIDI output busses.
-   It configures to what busses the MIDI clock and data gets dumped.
-   It also shows the devices that can play music.
+   It configures the output busses for MIDI clock and data.
+   It shows the devices that can play music.
    The items that appear in this tab depend on:
 
    \begin{itemize}
@@ -355,38 +353,39 @@
          MIDI controllers, USB MIDI cables, applications with virtual
          ports, and other connected devices will add MIDI
          output devices (ports) to the system.
-         This list will generally match the \texttt{aplaymidi -l} output or the
-         \texttt{aconnect -lio} output.
+         This list will generally match the output of \texttt{aplaymidi -l}
+         or \texttt{aconnect -lio}.
       \item The setting of the "manual-ports" option, which tells
          \textsl{Seq66} to set up virtual MIDI ports.
          It is enabled by the
-         \texttt{--manual-ports} command-line option or the
+         \texttt{-{}-manual-ports} command-line option or the
          \texttt{[manual-ports]} section of the
          \texttt{qseq66.rc} configuration file.
       \item The setting of the \textsl{Seq66}-specific
          "reveal ALSA ports" option,
-         \texttt{--reveal-ports} command-line option or the
+         \texttt{-{}-reveal-ports} command-line option or the
          \texttt{[reveal-ports]} section of the
          \texttt{qseq66.rc} configuration file.
    \end{itemize}
 
-   If \texttt{--manual-ports} is on, this list shows the virtual
+   If \texttt{-{}-manual-ports} is on, this list shows the virtual
    MIDI output busses that \textsl{Seq66} can drive.
    One needs to use a JACK or ALSA MIDI
    connection application to connect a device on each of those outputs.
    The fact that the the buss names can
    start with different numbers, depending on the system setup, can complicate
-   the playing of MIDI in this manner.  Also, the "user" configuration file can
-   change the visible names of the ports, causing further confusion.
+   the playing of MIDI in this manner.  Also, the 'usr' configuration file can
+   change the visible names of the ports to match specific equipment attached
+   to the ports.
 
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_clock_tab.png}
-   \caption{MIDI Clock, ALSA Devices}
+   \caption{MIDI Clock Tab, ALSA Devices}
    \label{fig:midi_clock_tab}
 \end{figure}
 
-   The following elements are present in this dialog:
+   The following elements are present in this tab:
 
    \begin{enumber}
       \item \textbf{Ports and Clocks Table}
@@ -396,10 +395,9 @@
       \item \textbf{Client ID}
    \end{enumber}
 
-   The \textbf{Ports and Clocks Table} contains the following elements,
+   The \textbf{Ports and Clocks} table contains the following elements,
    although some can be removed by specifying the
    \texttt{port-naming = short} option in the 'rc' file.
-   REFERENCE.
 
    \begin{enumber}
       \item \textbf{Index Number}
@@ -437,11 +435,11 @@
    This is true even if port-mapping is in place.
    \index{port!mapping}
    \index{buss!mapping}
-   REFERENCE.
    \index{port!override}
    \index{buss!override}
-   It can be used with the \texttt{-b --buss --bus} option to redirect all
-   pattern output to that buss, is useful if only one buss is active or the
+   It can be used with the \texttt{-b},
+   \texttt{-{}-buss}, or \texttt{ -{}-bus} options to redirect all
+   pattern output to that buss, useful if only one buss is active or the
    \textsl{Seq66} patterns route to non-existent busses.
 
    \itempar{Client Number}{midi clock!client number}
@@ -463,18 +461,17 @@
    These labels indicate the output busses (ports) available.
    \textsl{Seq66} does not access devices by name, but by port number.
    However, a port-map can be created to make it possible to find the correct
-   buss/port number by name.
+   buss / port number by name lookup.
 
    \itempar{Port Disabled}{midi clock!port disabled}
    The \textbf{Port Disabled} clock choice marks an output port
    that the user does not want to use or that the operating system
-   (\textsl{Windows}, I'm looking at \textsl{you}!)
+   (\textsl{Windows} \smiley)
    is locking or disabling.
    Normally, this inaccessible port would cause \textsl{Seq66} to exit.
    With the port disabled, the inaccessible port is ignored.
    This feature also shows when a port-map cannot find a device in the system's
    device list.
-
    When the \textsl{Windows} version of \textsl{Seq66}
    (\texttt{qpseq66.exe}) is first started, it may error out.
    It will then write \texttt{erroneous.rc}
@@ -517,7 +514,6 @@
    Pressing this button saves the current set of MIDI I/O ports to sections in
    the 'rc' file.  These sections can be enabled in order to support
    port-mapping in subsequent runs of \textsl{Seq66}.
-   REFERENCE.
 
    \itempar{Meta Events}{midi clock!meta events}
    \index{tempo-track-number}
@@ -546,17 +542,10 @@
 \paragraph{Menu / Edit / Preferences / MIDI Input}
 \label{paragraph:menu_edit_preferences_midi_input}
 
-   To allow \textsl{Seq66} to record MIDI from MIDI devices such as
+   To set up \textsl{Seq66} to record MIDI from devices such as
    controllers and keyboards, the output of the ALSA MIDI recording
    command-line \texttt{arecordmidi -l} is relevant.
-
-%  If the "manual-ports" option is turned \textsl{off} (e.g. by using the
-%  \texttt{-a} option),
-%  then the only item in the \textbf{MIDI Input} tab is the single MIDI input
-%  buss provided by \textsl{Seq66}:  \textbf{[0] seq66 0}.
-%  (The figure shown is currently out-of-date.)
-
-% Should the above be offset re 0, not 1?  Check it out!!!
+   Something like that listing appears in the Input tab:
 
 \begin{figure}[H]
    \centering 
@@ -565,47 +554,45 @@
    \label{fig:midi_input_tab}
 \end{figure}
 
-   Any item checked allows \textsl{Seq66} to record MIDI from another source,
+   Any item checked allows \textsl{Seq66} to record MIDI from that source,
    which must be connected to this input port.
 
    \textbf{Warning:}
    \index{warnings!usr config}
    \index{usr config}
    If the 
-   \texttt{[user-midi-bus-definitions]} value in the "user" configuration file
+   \texttt{[user-midi-bus-definitions]} value in the 'usr' configuration file
    is non-zero, and the
    corresponding number of
    \texttt{[user-midi-bus-N]} settings are provided, then
    the list of existing hardware will be ignored, and those values will be
    shown instead.
-   (This feature can be overridden with the
-   \texttt{--reveal-ports} (\texttt{-r}) option.)
-
-   If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
-   \texttt{--auto-ports} option, then
-   the input ports from the system are shown.
-
-   \textbf{Warning:}
-   \index{warnings!usr config}
-   \index{usr config}
-   The "user" configuration file can override what is actually
-   displayed as hardware.  If you define these sections, they should match your
+   This feature can be overridden with the
+   \texttt{-{}-reveal-ports} (\texttt{-r}) option.
+   If you define these sections, they should match your
    hardware exactly, and your hardware should not change from session to
    session.
 
-   Note the two sections of this configuration page:
+   If the "auto ALSA ports" option is turned on, via the \texttt{-a} or
+   \texttt{-{}-auto-ports} option, then
+   the input ports from the system are shown.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
-   \itempar{Input Buses!input buses}
+   \itempar{Input Buses}{input buses}
    \textbf{Input Buses} delineates the MIDI input devices as noted above.
+
+   \itempar{Input Options}{input options}
    \index{input options}
    \textbf{Input Options} adds further refinements to MIDI input.
+   Currenty it has only one setting, for recording input into patterns by the
+   channel in each event.
 
    \itempar{Input Ports Mapped}{mapping}
-   This read-only check-box shows if the port-mapper is active for the input
-   ports.  This item can only be edited by closing the application, editing the
-   'rc' file, and restarting the application.
+   This stand-alone
+   read-only check-box shows if the port-mapper is active for the input
+   ports.  This item can only be modified by closing the application, editing
+   the 'rc' file, and restarting the application.
 
    \itempar{Input Option}{input options}
    \index{input by channel}
@@ -618,18 +605,18 @@
 \paragraph{Menu / Edit / Preferences / Keyboard (Removed)}
 \label{paragraph:menu_edit_preferences_keyboard}
 
-   \textsl{Seq66} currently does not provide a user-interface to edit
-   control keystrokes.  The user can modify both the keystroke and MIDI
-   controls in a 'ctrl' file.
-   The default mappings follow \textsl{Seq24} fairly well, but add a number of
-   additional control.
-   These controls are easy to change by editing the appropriate 'ctrl'
-   configuration file, stored in one of the following directories, depending on
+   The default keyboard mappings follow \textsl{Seq24} fairly well,
+   but add a large number of additional controls.
+   \textsl{Seq66} does not provide a user-interface to edit
+   control keystrokes; around 96 keystroke slots would need to be provided!
+   The keystroke and MIDI controls are consolidated, and are easy to change by
+   editing the appropriate 'ctrl' configuration file, stored in one of the
+   following directories, depending on
    the operating system:
    
    \begin{verbatim}
-         /home/username/.config/seq66/qseq66.ctrl
-         C:/Users/username/AppData/Local/seq66/qpseq66.ctrl
+         /home/username/.config/seq66/qseq66.ctrl           (Linux)
+         C:/Users/username/AppData/Local/seq66/qpseq66.ctrl (Windows)
    \end{verbatim}
 
    There are also some extended example present in the \textsl{Seq66}
@@ -717,7 +704,7 @@
       \item \textbf{Jack Transport}.
          \index{JACK!transport}
          Enables slave synchronization with JACK Transport.
-         The command-line option is \texttt{--jack-transport}.
+         The command-line option is \texttt{-{}-jack-transport}.
          The behavior of this mode of operation is perhaps not quite
          correct.  Even as a slave, \textsl{Seq66} can start and
          stop playback.
@@ -726,7 +713,7 @@
       \item \textbf{Transport Master}.
          \index{JACK!transport master}
          \textsl{Seq66} will attempt to serve as the JACK Master.
-         The command-line option is \texttt{--jack-master}.
+         The command-line option is \texttt{-{}-jack-master}.
          \textbf{Tip}:
          \textsl{Seq66} generally works better as JACK Master.
          If this option is enabled the \textbf{JACK Transport} option is
@@ -735,7 +722,7 @@
          \index{JACK!master conditional}
          \textsl{Seq66} will fail to serve as the JACK Master if there is
          already a Master.
-         The command-line option is \texttt{--jack-master-cond}.
+         The command-line option is \texttt{-{}-jack-master-cond}.
          If this option is enabled the \textbf{JACK Transport} option is
          automatically enabled as well.
       \item \textbf{Native JACK MIDI}.
@@ -745,7 +732,7 @@
          If set, MIDI input and output use native JACK MIDI,
          rather than ALSA.  However, if JACK is not running on the
          system, then \texttt{seq66} will fall back to ALSA mode.
-         The command-line option is \texttt{--jack-midi}.
+         The command-line option is \texttt{-{}-jack-midi}.
    \end{itemize}
 
 %  Note that there are long-standing issues with the JACK support of
@@ -775,14 +762,14 @@
          Playback will be in live mode.  Use this option to allow muting and
          unmuting of patterns.  This option might also be called "non-song
          mode".
-         The command-line option is \texttt{--jack-start-mode 0}.
+         The command-line option is \texttt{-{}-jack-start-mode 0}.
       \item \textbf{Song Mode}.
          \index{JACK!song mode}
          \index{song mode}
          \index{playback mode}
          \index{performance mode}
          Playback will use only the Song Editor's data.
-         The command-line option is \texttt{--jack-start-mode 1}.
+         The command-line option is \texttt{-{}-jack-start-mode 1}.
    \end{itemize}
 
    \textsl{Seq66} also selects the playback modes

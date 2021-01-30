@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2020-07-29
+ * \updates       2021-01-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -54,13 +54,13 @@ namespace seq66
  *  width of the vertical scroll-bar, plus a bit more.
  */
 
-const int c_event_table_fix = 48;
+static const int sc_event_table_fix = 48;
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-const int c_event_row_height = 18;
+static const int sc_event_row_height = 18;
 
 /**
  *
@@ -139,8 +139,8 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     QStringList columns;
     columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
-    set_row_heights(c_event_row_height);
-    set_column_widths(ui->eventTableWidget->width() - c_event_table_fix);
+    set_row_heights(sc_event_row_height);
+    set_column_widths(ui->eventTableWidget->width() - sc_event_table_fix);
 
     /*
      * Doesn't make the table read-only.  We want that for now, until we can
@@ -208,6 +208,17 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     ui->button_save->setEnabled(false);
 
     /*
+     * Clear button.
+     */
+
+    connect
+    (
+        ui->button_clear, SIGNAL(clicked(bool)),
+        this, SLOT(handle_clear())
+    );
+    ui->button_clear->setEnabled(true);
+
+    /*
      * Dump button.
      */
 
@@ -224,11 +235,11 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
 
     initialize_table();
 
-    /**
+    /*
      *  The seqedit class indirectly sets the sequence dirty flags, and this
      *  allows the sequence's pattern slot to be updated, which, for example,
-     *  allows the new optional in-edit-highlight feature to work.  To get
-     *  the qseqeventframe to also show the in-edit highlighting, we can make the
+     *  allows the new optional in-edit-highlight feature to work.  To get the
+     *  qseqeventframe to also show the in-edit highlighting, we can make the
      *  sequence::set_dirty_mp() call.  This call does not cause a prompt for
      *  saving the file when exiting.
      */
@@ -329,13 +340,14 @@ qseqeventframe::initialize_table ()
         {
             ui->eventTableWidget->clearContents();
             ui->eventTableWidget->setRowCount(rows);
-            set_row_heights(c_event_row_height);
+            set_row_heights(sc_event_row_height);
             if (m_eventslots->load_table())
             {
                 m_eventslots->select_event(0);      /* first row */
             }
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
+            ui->button_clear->setEnabled(true);
         }
         else
         {
@@ -701,6 +713,7 @@ qseqeventframe::handle_delete ()
                 );
                 m_eventslots->select_event(cr);
                 current_row(cr);
+                set_dirty();
             }
         }
         set_seq_lengths(get_lengths());
@@ -736,10 +749,11 @@ qseqeventframe::handle_insert ()
             std::string chan = m_eventslots->current_event().channel_string();
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
-            set_row_height(cr, c_event_row_height);
+            set_row_height(cr, sc_event_row_height);
             set_event_line(cr, ts, name, chan, data0, data1, linktime);
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
+            set_dirty();
         }
     }
 }
@@ -775,6 +789,7 @@ qseqeventframe::handle_modify ()
         (void) m_eventslots->modify_current_event(ts, name, data0, data1);
         set_seq_lengths(get_lengths());
         set_event_line(cr, ts, name, chan, data0, data1, linktime);
+        set_dirty();
     }
 }
 
@@ -818,9 +833,16 @@ qseqeventframe::handle_save ()
     }
 }
 
-/**
- *
- */
+void
+qseqeventframe::handle_clear ()
+{
+    if (m_eventslots)
+    {
+        m_eventslots->clear();
+        initialize_table();
+        set_dirty();
+    }
+}
 
 void
 qseqeventframe::handle_dump ()

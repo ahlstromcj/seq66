@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-11-17
+ * \updates       2021-01-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -141,6 +141,7 @@ private slots:
     void handle_insert ();
     void handle_modify ();
     void handle_save ();
+    void handle_clear ();
     void handle_dump ();
     void handle_cancel ();
     void update_seq_name ();

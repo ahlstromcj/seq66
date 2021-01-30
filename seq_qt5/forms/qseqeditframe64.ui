@@ -18,16 +18,34 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
-    <height>480</height>
+    <width>778</width>
+    <height>458</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Frame</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="fullVerticalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="topBar1Layout">
        <property name="spacing">
@@ -836,7 +854,7 @@ zooms 'in'.</string>
      <item>
       <layout class="QHBoxLayout" name="timeHorizLayout" stretch="0,0,0,0">
        <property name="spacing">
-        <number>2</number>
+        <number>1</number>
        </property>
        <item>
         <widget class="QPushButton" name="btnKeyVZoomOut">
@@ -870,13 +888,13 @@ zooms 'in'.</string>
         <widget class="QPushButton" name="btnKeyVZoomReset">
          <property name="minimumSize">
           <size>
-           <width>16</width>
+           <width>15</width>
            <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>16</width>
+           <width>15</width>
            <height>20</height>
           </size>
          </property>
@@ -945,7 +963,7 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>724</width>
+            <width>738</width>
             <height>24</height>
            </rect>
           </property>
@@ -991,7 +1009,7 @@ the '0' key in the piano roll.</string>
             <x>0</x>
             <y>0</y>
             <width>48</width>
-            <height>146</height>
+            <height>188</height>
            </rect>
           </property>
          </widget>
@@ -1028,8 +1046,8 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>708</width>
-            <height>130</height>
+            <width>718</width>
+            <height>172</height>
            </rect>
           </property>
           <property name="sizePolicy">
@@ -1098,7 +1116,7 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>724</width>
+            <width>734</width>
             <height>24</height>
            </rect>
           </property>
@@ -1250,7 +1268,7 @@ the '0' key in the piano roll.</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>722</width>
+            <width>732</width>
             <height>128</height>
            </rect>
           </property>
