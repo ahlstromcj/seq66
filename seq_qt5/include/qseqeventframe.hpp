@@ -135,7 +135,6 @@ private:
 
 private slots:
 
-    void handle_table_click (int row, int column);
     void handle_table_click_ex (int row, int column, int prevrow, int prevcol);
     void handle_delete ();
     void handle_insert ();

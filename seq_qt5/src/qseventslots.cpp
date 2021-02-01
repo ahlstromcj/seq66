@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-11-16
+ * \updates       2021-02-01
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -38,14 +38,6 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqeventframe.hpp"
 #include "qseventslots.hpp"
-
-/**
- *  Provides the printf() format statement for a data value for both the data
- *  columns in the event table and the data field in the right-hand editable
- *  area of the event editor.
- */
-
-#define SEQ66_EVENT_DATA_FMT    "0x%02x:%d"
 
 /*
  * Do not document the namespace; it breaks Doxygen.
@@ -76,7 +68,7 @@ qseventslots::qseventslots
     m_parent                (parent),
     m_seq                   (seqp),
     m_event_container       (*seqp.get(), p.get_beats_per_minute()),
-    m_current_event         (m_event_container),                // NEW
+    m_current_event         (m_event_container),
     m_event_count           (0),
     m_last_max_timestamp    (0),
     m_measures              (0),
@@ -91,10 +83,6 @@ qseventslots::qseventslots
     m_current_iterator      (),
     m_pager_index           (0)
 {
-    /*
-     * Let the caller determined when this will happen?
-     */
-
     load_events();
 }
 
@@ -149,10 +137,6 @@ qseventslots::load_events ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 qseventslots::load_table ()
 {
@@ -169,10 +153,6 @@ qseventslots::load_table ()
     return result;
 }
 
-/**
- *
- */
-
 std::string
 qseventslots::events_to_string () const
 {
@@ -188,6 +168,14 @@ qseventslots::events_to_string () const
     }
     return result;
 }
+
+/**
+ *  Provides the printf() format statement for a data value for both the data
+ *  columns in the event table and the data field in the right-hand editable
+ *  area of the event editor.
+ */
+
+#define SEQ66_EVENT_DATA_FMT    "0x%02x:%d"
 
 /**
  *  Set the current event, which is the event that is highlighted.  Note in
@@ -241,6 +229,7 @@ qseventslots::set_current_event
     );
     m_current_row = m_current_index = index;
     m_current_iterator = ei;
+    m_current_event = ev;
 }
 
 /**
@@ -251,8 +240,8 @@ qseventslots::set_current_event
 void
 qseventslots::set_table_event
 (
-    const editable_event & ev,
-    int index
+    editable_event & ev,
+    int row
 )
 {
     std::string data_0;
@@ -276,22 +265,31 @@ qseventslots::set_table_event
             midipulse lt = ev.link_time();
             linktime = pulses_to_measurestring(lt, m_event_container.timing());
         }
+        else
+            linktime = "None";
     }
     m_parent.set_event_line
     (
-        index, ev.timestamp_string(), ev.status_string(),
+        row, ev.timestamp_string(), ev.status_string(),
         ev.channel_string(), data_0, data_1, linktime
     );
 }
 
-/**
- *
- */
+std::string
+qseventslots::time_string (midipulse lt)
+{
+    std::string result = "None";
+    if (lt < c_null_midipulse)
+        result = pulses_to_measurestring(lt, m_event_container.timing());
+
+    return result;
+}
 
 std::string
 qseventslots::event_to_string
 (
-    const editable_event & ev, int index, bool usehex
+    const editable_event & ev,
+    int index, bool usehex
 ) const
 {
     std::string data_0;
@@ -400,9 +398,9 @@ qseventslots::set_event_text
  */
 
 bool
-qseventslots::insert_event (const editable_event & edev)
+qseventslots::insert_event (editable_event ev)
 {
-    bool result = m_event_container.add(edev);
+    bool result = m_event_container.add(ev);
     if (result)
     {
         m_event_count = m_event_container.count();
@@ -501,6 +499,8 @@ qseventslots::insert_event
 
 /**
  *  Deletes the current event, and makes adjustments due to that deletion.
+ *  Currently upgrading this one to also delete the linked note for note offs
+ *  and ons.
  *
  *  To delete the current event, this function moves the current iterator to
  *  the next event, deletes the previously-current iterator, adjusts the event
@@ -685,6 +685,7 @@ qseventslots::delete_current_event ()
 bool
 qseventslots::modify_current_event
 (
+    int row,
     const std::string & evtimestamp,
     const std::string & evname,
     const std::string & evdata0,
@@ -697,6 +698,7 @@ qseventslots::modify_current_event
 
     if (result)
     {
+#if defined USE_DELETE_INSERT_METHOD
         /*
          * We need to make a copy here, because the iterator will get
          * modified during the deletion-and-insertion process.
@@ -710,6 +712,15 @@ qseventslots::modify_current_event
         result = delete_current_event();
         if (result)
             result = insert_event(ev);                  /* full karaoke add */
+#else
+        editable_event & ev = editable_events::dref(m_current_iterator);
+        if (! ev.is_ex_data())
+            ev.set_channel(m_seq->get_midi_channel());  /* just in case     */
+
+        ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+        if (row >= 0)
+            set_table_event(ev, row);
+#endif
     }
     return result;
 }

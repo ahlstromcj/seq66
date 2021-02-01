@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-01-21
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -110,18 +110,6 @@
 
 namespace seq66
 {
-
-/**
- *  The maximum number of patterns supported is given by the number of
- *  patterns supported in the panel (32) times the maximum number of sets
- *  (32), or 1024 patterns.  However, this value is now independent of the
- *  maximum number of sets and the number of sequences in a set.  Instead,
- *  we limit them to a constant value, which seems to be well above the
- *  number of simultaneous playing sequences the application can support.
- *  See SEQ66_SEQUENCE_MAXIMUM.
- */
-
-const int c_max_sequence = SEQ66_SEQUENCE_MAXIMUM;
 
 /**
  *  Provide limits for the option "--option scale=x.y".
@@ -645,7 +633,7 @@ void
 usrsettings::normalize ()
 {
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
-    m_max_sets = c_max_sequence / m_seqs_in_set;            /* 16 to 32...  */
+    m_max_sets = seq::maximum() / m_seqs_in_set;            /* 16 to 32...  */
     m_max_sequence = m_seqs_in_set * m_max_sets;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
     m_total_seqs = m_seqs_in_set * m_max_sets;

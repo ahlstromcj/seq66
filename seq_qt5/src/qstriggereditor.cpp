@@ -612,7 +612,8 @@ qstriggereditor::drop_event (midipulse a_tick)
 }
 
 /**
- *  Does not allowj adding for note events: on, off, and aftertouch.
+ *  Does not allow adding for note events: on, off, and aftertouch.
+ *  These are too tricky due to the need for linking.
  */
 
 void

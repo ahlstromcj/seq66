@@ -539,7 +539,7 @@ private:
      *  Indicates that the sequence is currently being edited.
      */
 
-    bool m_editing;
+    bool m_seq_in_edit;
 
     /**
      *  Used in seqmenu and seqedit.  It allows a sequence editor window to
@@ -761,7 +761,7 @@ public:
      * Not needed, but kept based on Seq64's seqedit usage.
      */
 
-    void set_editing (midibyte status, midibyte cc, midipulse snap, int scale)
+    void seq_in_edit (midibyte status, midibyte cc, midipulse snap, int scale)
     {
         m_status = status;
         m_cc = cc;
@@ -1010,14 +1010,14 @@ public:
         return sm_default_name;
     }
 
-    void set_editing (bool edit)
+    void seq_in_edit (bool edit)
     {
-        m_editing = edit;
+        m_seq_in_edit = edit;
     }
 
-    bool get_editing () const
+    bool seq_in_edit () const
     {
-        return m_editing;
+        return m_seq_in_edit;
     }
 
     void set_raise (bool edit)

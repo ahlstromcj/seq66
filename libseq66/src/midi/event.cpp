@@ -132,16 +132,10 @@ event::event () :
  *      Provides the second data byte.  There is no default value.
  */
 
-event::event
-(
-    midipulse tstamp,
-    midibyte status,
-    midibyte d0,
-    midibyte d1
-) :
+event::event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1) :
     m_input_buss    (c_bussbyte_max),       /* 0xFF                 */
     m_timestamp     (tstamp),
-    m_status        (status & EVENT_CLEAR_CHAN_MASK),
+    m_status        (mask_status(status)),  /* remove the channel   */
     m_channel       (c_midibyte_max),       /* 0xFF                 */
     m_data          (),                     /* a two-element array  */
     m_sysex         (),                     /* an std::vector       */
@@ -177,8 +171,7 @@ event::event
  *      Provides the event object to be copied.
  */
 
-event::event (const event & rhs)
- :
+event::event (const event & rhs) :
     m_input_buss    (rhs.m_input_buss),
     m_timestamp     (rhs.m_timestamp),
     m_status        (rhs.m_status),
@@ -372,8 +365,8 @@ event::set_status (midibyte status)
     }
     else
     {
-        m_status = status & EVENT_CLEAR_CHAN_MASK;
-        m_channel = status & EVENT_GET_CHAN_MASK;
+        m_status = mask_status(status);
+        m_channel = get_channel(status);
     }
 }
 
@@ -418,7 +411,7 @@ void
 event::set_status_keep_channel (midibyte eventcode)
 {
     m_status = eventcode;
-    m_channel = eventcode & EVENT_GET_CHAN_MASK;
+    m_channel = get_channel(eventcode);
 }
 
 /**
@@ -468,7 +461,7 @@ event::set_midi_event
         set_data(buffer[1], buffer[2]);
         if (is_note_off_recorded())
         {
-            midibyte channel = buffer[0] & EVENT_GET_CHAN_MASK;
+            midibyte channel = get_channel(buffer[0]);
             midibyte status = EVENT_NOTE_OFF | channel;
             set_status_keep_channel(status);
         }
@@ -517,27 +510,6 @@ event::set_meta_status (midibyte metatype)
 {
     m_status = EVENT_MIDI_META;
     m_channel = metatype;
-}
-
-/**
- *  Some keyboards send Note On with velocity 0 for Note Off, so we take care
- *  of that situation here by creating a Note Off event, with the channel
- *  nybble preserved. Note that we call event::set_status_keep_channel()
- *  instead of using stazed's set_status function with the "record" parameter.
- *  Also, we have to mask in the actual channel number.
- *
- *  Encapsulates some common code.  This function assumes we have already set
- *  the status and data bytes.
- */
-
-void
-event::adjust_note_off ()
-{
-    if (is_note_off_recorded())
-    {
-        midibyte status = EVENT_NOTE_OFF | m_channel;
-        set_status_keep_channel(status);
-    }
 }
 
 /**

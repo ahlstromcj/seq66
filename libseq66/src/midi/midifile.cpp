@@ -977,8 +977,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_timestamp(currenttime);
                 }
 
-                midibyte eventcode = status & EVENT_CLEAR_CHAN_MASK;   /* F0 */
-                midibyte channel = status & EVENT_GET_CHAN_MASK;       /* 0F */
+                midibyte eventcode = event::mask_status(status);    /* F0 */
+                midibyte channel = event::get_channel(status);      /* 0F */
                 switch (eventcode)
                 {
                 case EVENT_NOTE_OFF:          /* cases for 2-data-byte events */

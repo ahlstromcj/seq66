@@ -347,40 +347,39 @@ private:
      *  is stored in the "proprietary" track at the end of the file, under the
      *  control tag c_musicscale, and will be applied to any sequence that is
      *  edited.  If m_global_seq_feature_save is false, this variable is
-     *  stored, if used, in the meta-data for the sequence to which it applies,
-     *  and, again, is tagged with the control tag c_musicscale.
+     *  stored, if used, in the meta-data for the sequence to which it
+     *  applies, and, again, is tagged with the control tag c_musicscale.
      */
 
     int m_seqedit_scale;
 
     /**
-     *  Replaces seqedit::m_initial_key as the repository for the key to
-     *  apply when a sequence is loaded into the sequence editor.  Its default
-     *  value is c_key_of_C.  Although this value is now stored in the
-     *  usrsettings class, it always comes from the currently loaded MIDI
-     *  file, if present.  If m_global_seq_feature_save is true, this variable
-     *  is stored in the "proprietary" track at the end of the file, under the
+     *  Replaces seqedit::m_initial_key as the repository for the key to apply
+     *  when a sequence is loaded into the sequence editor.  Its default value
+     *  is c_key_of_C.  Although this value is now stored in the usrsettings
+     *  class, it always comes from the currently loaded MIDI file, if
+     *  present.  If m_global_seq_feature_save is true, this variable is
+     *  stored in the "proprietary" track at the end of the file, under the
      *  control tag c_musickey, and will be applied to any sequence that is
      *  edited.  If m_global_seq_feature_save is false, this variable is
-     *  stored, if used, in the meta-data for the sequence to which it applies,
-     *  and, again, is tagged with the control tag c_musickey.
+     *  stored, if used, in the meta-data for the sequence to which it
+     *  applies, and, again, is tagged with the control tag c_musickey.
      */
 
     int m_seqedit_key;
 
     /**
-     *  Replaces seqedit::m_initial_sequence as the repository for the
-     *  background sequence to apply when a sequence is loaded into the
-     *  sequence editor.  Its default value is seqmanager::sequence_limit().
+     *  The repository for the background sequence to apply when a sequence is
+     *  loaded into the sequence editor.  Its default value is seq::limit().
      *  Although this value is now stored in the usrsettings class, it always
      *  comes from the currently loaded MIDI file, if present.  If
-     *  m_global_seq_feature_save is true, this variable is stored, if it has a
-     *  valid (but not "legal") value, in the "proprietary" track at the end of
-     *  the file, under the control tag c_backsequence, and will be applied to
-     *  any sequence that is edited.  If m_global_seq_feature_save is false,
-     *  this variable is stored, if used, in the meta-data for the sequence to
-     *  which it applies, and, again, is tagged with the control tag
-     *  c_backsequence.
+     *  m_global_seq_feature_save is true, this variable is stored, if it has
+     *  a valid (but not "legal") value, in the "proprietary" track at the end
+     *  of the file, under the control tag c_backsequence, and will be applied
+     *  to any sequence that is edited.  If m_global_seq_feature_save is
+     *  false, this variable is stored, if used, in the meta-data for the
+     *  sequence to which it applies, and, again, is tagged with the control
+     *  tag c_backsequence.
      */
 
     int m_seqedit_bgsequence;
