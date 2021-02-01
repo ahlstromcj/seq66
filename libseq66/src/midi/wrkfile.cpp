@@ -836,15 +836,16 @@ wrkfile::NoteArray (int track, int events)
         dur = 0;
 
         /*
-         * This check leaves out Note Off events.  This seems wrong, but it looks
-         * like Cakewalk encodes note events as a Note On and a duration.
+         * This check leaves out Note Off events.  This seems wrong, but it
+         * looks like Cakewalk encodes note events as a Note On and a
+         * duration.
          */
 
         if (status >= EVENT_NOTE_ON)                            // 0x90
         {
             event e;
-            eventcode = status & 0xf0;
-            channel = status & 0x0f;
+            eventcode = event::mask_status(status);             // 0xF0
+            channel = event::get_channel(status);               // 0x0F
             m_track_channel = channel;
             d0 = read_byte();
             if (event::is_two_byte_msg(eventcode))   // note on/off, ctrl, pitch
@@ -1142,8 +1143,8 @@ wrkfile::Stream_chunk ()
         midipulse time = midipulse(read_24_bit());
         midipulse timemax = time;
         midibyte status = read_byte();
-        midibyte eventcode = status & EVENT_CLEAR_CHAN_MASK;         // 0xF0
-        midibyte channel = status & EVENT_GET_CHAN_MASK;             // 0x0F
+        midibyte eventcode = event::mask_status(status);        // 0xF0
+        midibyte channel = event::get_channel(status);          // 0x0F
         m_track_channel = channel;
 
         midibyte d0 = read_byte();

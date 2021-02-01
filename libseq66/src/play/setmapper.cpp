@@ -987,7 +987,7 @@ setmapper::is_seq_in_edit (seq::number seqno) const
     seq::pointer sp = loop(seqno);
     bool result = bool(sp);
     if (result)
-        result = sp->get_editing();
+        result = sp->seq_in_edit();
 
     return result;
 }

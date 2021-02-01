@@ -166,7 +166,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         else
             put(st | channel);                      /* the sequence channel */
 
-        switch (st & EVENT_CLEAR_CHAN_MASK)                     /* 0xF0 */
+        switch (event::mask_status(st))                         /* 0xF0 */
         {
         case EVENT_NOTE_OFF:                                    /* 0x80 */
         case EVENT_NOTE_ON:                                     /* 0x90 */

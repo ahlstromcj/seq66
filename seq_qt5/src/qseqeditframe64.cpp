@@ -1116,6 +1116,15 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
 
     update_midi_buttons();
+
+    /*
+     *  This code was not present here, but was in the old-style editor and the
+     *  event-editor.  This comment is a reminder.  See qseqeventframe for more
+     *  information.
+     *
+     *      m_seq->seq_in_edit(true);
+     */
+
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
     m_timer = new QTimer(this);                             /* redraw timer */

@@ -60,8 +60,7 @@ namespace seq66
  *      get and provides in this parameter.
  */
 
-editable_events::editable_events (sequence & seq, midibpm bpm)
- :
+editable_events::editable_events (sequence & seq, midibpm bpm) :
     m_events            (),
     m_current_event     (m_events.end()),
     m_sequence          (seq),
@@ -85,8 +84,7 @@ editable_events::editable_events (sequence & seq, midibpm bpm)
  *      Provides the editable_events object to be copied.
  */
 
-editable_events::editable_events (const editable_events & rhs)
- :
+editable_events::editable_events (const editable_events & rhs) :
     m_events            (rhs.m_events),
     m_current_event     (rhs.m_current_event),
     m_sequence          (rhs.m_sequence),
@@ -327,7 +325,7 @@ editable_events::verify_and_link (midipulse slength)
     sort();                                 /* IMPORTANT!                   */
     for (auto on = m_events.begin(); on != m_events.end(); ++on)
     {
-        event & eon = on->second;            /* event part of editable_event */
+        event & eon = on->second;           /* event part of editable_event */
         if (eon.is_note_on())               /* Note On, find its Note Off   */
         {
             bool endfound = false;

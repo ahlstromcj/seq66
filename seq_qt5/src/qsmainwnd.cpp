@@ -173,26 +173,25 @@ static const int s_beat_length_count    =  5;
 
 static const int s_ppqn_list [] =
 {
-    -1,         /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
-    0,          /* "File" (SEQ66_USE_FILE_PPQN)                             */
-    32,
-    48,
-    96,
-    192,
-    384,
-    768,
-    960,
-    1920,
-    3840,
-    7680,
-    9600,
+       -1,      /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
+        0,      /* "File" (SEQ66_USE_FILE_PPQN)                             */
+       32,
+       48,
+       96,
+      192,
+      384,
+      768,
+      960,
+     1920,
+     3840,
+     7680,
+     9600,
     19200,
-    -2          /* terminator   */
+       -2       /* terminator   */
 };
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
- *
  *  If no screen was found, return the primary screen's geometry
  */
 
@@ -2081,6 +2080,18 @@ qsmainwnd::remove_editor (int seqno)
 void
 qsmainwnd::remove_all_editors ()
 {
+    /*
+     * New clause ca 2021-01-31.  Helps with File / New and Event Editor
+     * interactions.
+     */
+
+    if (not_nullptr(m_event_frame))
+    {
+        delete m_event_frame;
+        m_event_frame = nullptr;
+        ui->EventTabLayout->removeWidget(m_event_frame);
+        ui->tabWidget->setTabEnabled(Tab_Events, false);
+    }
     for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
     {
         qseqeditex * qep = ei->second;      /* save the pointer             */
@@ -2450,6 +2461,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
 bool
 qsmainwnd::make_event_frame (int seqid)
 {
+printf("make_event_frame(%d)\n", seqid);
     seq::pointer seq = perf().get_sequence(seqid);
     bool result = bool(seq);
     if (result)

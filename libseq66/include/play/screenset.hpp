@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-12-06
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -206,9 +206,9 @@ public:
     screenset & operator = (screenset &&) = default;
     ~screenset () = default;
 
-    static number limit ()                              /* seq::limit() */
+    static number limit ()
     {
-        return SEQ66_SEQUENCE_LIMIT;                    /* 0x0800       */
+        return 2048;
     }
 
     static number none ()

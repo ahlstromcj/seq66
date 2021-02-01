@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-02
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  *  This version of the qseqedit-frame class is basically the Kepler34
@@ -242,7 +242,15 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
 
     QString seqLenText(QString::number(seq_pointer()->get_measures()));
     ui->cmbSeqLen->setCurrentText(seqLenText);
-    seq_pointer()->set_editing(true);
+
+    /*
+     *  This code was present here and in the old-style editor and the
+     *  event-editor.  This comment is a reminder.  See qseqeventframe for more
+     *  information.
+     *
+     *      m_seq->seq_in_edit(true);
+     *      seq_pointer()->seq_in_edit(true);
+     */
 
     /*
      * Set out our custom elements.

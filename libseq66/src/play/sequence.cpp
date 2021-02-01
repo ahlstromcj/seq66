@@ -160,7 +160,7 @@ sequence::sequence (int ppqn)
     m_dirty_edit                (true),
     m_dirty_perf                (true),
     m_dirty_names               (true),
-    m_editing                   (false),
+    m_seq_in_edit               (false),
     m_raise                     (false),
     m_status                    (0),
     m_cc                        (0),
@@ -1690,10 +1690,6 @@ sequence::randomize_selected_notes (int jitter, int range)
     return result;
 }
 
-/**
- *
- */
-
 void
 sequence::adjust_data_handle (midibyte status, int adata)
 {
@@ -1705,6 +1701,7 @@ sequence::adjust_data_handle (midibyte status, int adata)
     {
         if (e.is_selected() && e.get_status() == status)
         {
+            event::strip_channel(status);
             e.get_data(data[0], data[1]);           /* \tricky code */
             if (event::is_two_byte_msg(status))
                 datidx = 1;
@@ -2817,8 +2814,6 @@ sequence::set_dirty_mp ()
 /**
  *  Call set_dirty_mp() and then sets the dirty flag for editing. Note that it
  *  does not call performer::modify().
- *
- * \threadsafe
  */
 
 void
@@ -4574,7 +4569,7 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
-        m_no_channel = ch >= c_midichannel_max;
+        m_no_channel = ch >= c_midichannel_max;     /* 16 */
         off_playing_notes();
         if (! m_no_channel)
             m_midi_channel = ch;
