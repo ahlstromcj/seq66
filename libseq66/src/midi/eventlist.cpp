@@ -61,6 +61,35 @@ eventlist::eventlist () :
 }
 
 /**
+ *  Gets the index (integer position in the map) of the linked event, if any.
+ */
+
+int
+eventlist::count_to_link (const event & e)
+{
+    int result = 0;
+    bool found = false;
+    if (e.is_linked())
+    {
+        const event::iterator & linked = e.link();
+        for (auto i = m_events.begin(); i != m_events.end(); ++i)
+        {
+            if (i == linked)
+            {
+                found = true;
+                break;
+            }
+            else
+                ++result;
+        }
+    }
+    if (! found)
+        result = (-1);
+
+    return result;
+}
+
+/**
  *  Provides the length of the events in MIDI pulses.  This function gets the
  *  iterator for the last element and returns its length value.
  *

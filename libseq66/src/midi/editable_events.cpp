@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2020-06-23
+ * \updates       2021-02-02
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_events
@@ -90,10 +90,7 @@ editable_events::editable_events (const editable_events & rhs) :
     m_sequence          (rhs.m_sequence),
     m_midi_parameters   (rhs.m_midi_parameters)
 {
-#if defined USE_VERIFY_AND_LINK_USEFUL           /* not yet ready */
-    if (m_events.size() > 1)
-        verify_and_link();
-#endif
+    // no code
 }
 
 /**
@@ -117,10 +114,6 @@ editable_events::operator = (const editable_events & rhs)
         m_current_event     = rhs.m_current_event;
         m_midi_parameters   = rhs.m_midi_parameters;
         m_sequence.partial_assign(rhs.m_sequence);
-#if defined USE_VERIFY_AND_LINK_USEFUL              /* not yet ready    */
-        if (m_events.size() > 1)
-            verify_and_link();
-#endif
     }
     return *this;
 }
@@ -226,17 +219,6 @@ editable_events::load_events ()
             break;
     }
     result = count() == original_count;
-
-#if defined USE_VERIFY_AND_LINK                  /* not yet ready */
-    if (result && count() > 1)
-        verify_and_link(m_sequence.get_length());
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    m_sequence.events().print();
-    print();
-#endif
-
     return result;
 }
 
@@ -269,8 +251,29 @@ editable_events::save_events ()
                 break;
         }
         result = m_sequence.events().count () == count();
+        if (result)
+        {
+            /*
+             * ca 2021-0-02 Reload in case of note changes.
+             */
+
+            m_sequence.events().verify_and_link();
+            clear();
+            result = load_events();
+        }
     }
     return result;
+}
+
+/**
+ *  Gets the index (integer position in the map) of the linked event, if any.
+ */
+
+int
+editable_events::count_to_link (const editable_event & source)
+{
+    const event & e {source};
+    return m_sequence.events().count_to_link(e);
 }
 
 /**
@@ -284,154 +287,6 @@ editable_events::print () const
     for (const auto & i : events())
         i.second.print();
 }
-
-#if defined USE_VERIFY_AND_LINK                  /* not yet ready */
-
-/*
- *  These functions are DUPLICATES of the functions in eventlist.
- *  We would like to be able to re-use this code somehow, perhaps by
- *  making them member template functions, templated on the type of
- *  event container.
- */
-
-/**
- *  Clears all event links and unmarks them all.
- */
-
-void
-editable_events::clear_links ()
-{
-    for (auto & e : m_events)
-    {
-        e.second.unmark();
-        e.second.unlink();              /* used to be e.clear_link()        */
-    }
-}
-
-/**
- *  This function verifies state: all note-ons have an off, and it links
- *  note-offs with their note-ons.
- *
- * \threadsafe
- *
- * \param slength
- *      Provides the length beyond which events will be pruned.
- */
-
-void
-editable_events::verify_and_link (midipulse slength)
-{
-    clear_links();                          /* no sorting, multimap in use  */
-    sort();                                 /* IMPORTANT!                   */
-    for (auto on = m_events.begin(); on != m_events.end(); ++on)
-    {
-        event & eon = on->second;           /* event part of editable_event */
-        if (eon.is_note_on())               /* Note On, find its Note Off   */
-        {
-            bool endfound = false;
-            auto off = on;                  /* get next possible Note Off   */
-            ++off;
-            while (off != m_events.end())
-            {
-                event & eoff = dref(off);   /* Off, == notes, not marked    */
-                endfound = link_notes(eon, eoff);
-                if (endfound)
-                    break;
-
-                ++off;
-            }
-
-#if defined SEQ66_USE_STAZED_LINK_NEW_EXTENSION
-            if (! endfound)
-            {
-                off = m_events.begin();
-                while (off != on)
-                {
-                    event & eoff = dref(off);
-                    endfound = link_notes(eon, eoff);
-                    if (endfound)
-                        break;
-
-                    ++off;
-                }
-            }
-#endif
-        }
-    }
-    unmark_all();
-    mark_out_of_range(slength);                             /* what for???  */
-}
-
-/**
- */
-
-bool
-editable_events::link_notes (event & eon, event & eoff)
-{
-    bool result = eon.off_linkable(eoff);
-    if (result)
-    {
-        eon.link(&eoff);
-        eoff.link(&eon);
-    }
-    return result;
-}
-
-/**
- *  Marks all events.  Not yet used, but might come in handy with the event
- *  editor dialog.
- */
-
-void
-editable_events::mark_all ()
-{
-    for (auto & e : m_events)
-        e.second.mark();
-}
-
-/**
- *  Unmarks all events.
- */
-
-void
-editable_events::unmark_all ()
-{
-    for (auto & e : m_events)
-        e.second.unmark();
-}
-
-/**
- *  Marks all events that have a time-stamp that is out of range.
- *  Used for killing (pruning) those events not in range.  If the current
- *  time-stamp is greater than the length, then the event is marked for
- *  pruning.
- *
- * \note
- *      This code was comparing the timestamp as greater than or equal to the
- *      sequence length.  However, being equal is fine.  This may explain why
- *      the midifile code would add one tick to the length of the last note
- *      when processing the end-of-track.
- *
- * \param slength
- *      Provides the length beyond which events will be pruned.
- */
-
-void
-editable_events::mark_out_of_range (midipulse slength)
-{
-    for (auto & e : m_events)
-    {
-        event & er = e.second;
-        if (er.timestamp() > slength)
-        {
-            er.mark();                          /* we have to prune it  */
-            if (er.is_linked())
-                er.link()->mark();
-        }
-    }
-}
-
-#endif  // USE_VERIFY_AND_LINK
 
 }           // namespace seq66
 

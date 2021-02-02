@@ -655,20 +655,35 @@ qseqeventframe::handle_delete ()
 {
     if (m_eventslots)
     {
-        bool was_removed = m_eventslots->delete_current_event();
-        bool isempty = m_eventslots->empty();
-        if (isempty)
-        {
-            ui->button_del->setEnabled(false);
-            ui->button_modify->setEnabled(false);
-        }
+        editable_event & current = m_eventslots->current_event();
+        int row0 = m_eventslots->current_row();
+        int row1 = m_eventslots->count_to_link(current);
+        bool islinked = row1 >= 0;
+        if (islinked && row0 > row1)
+            std::swap(row0, row1);
         else
-        {
-            if (was_removed)
-            {
-                int cr = m_eventslots->current_row();
-                ui->eventTableWidget->removeRow(cr);
+            row1 = row0;
 
+        if (islinked)
+            m_eventslots->select_event(row1, false);        /* only/last row */
+
+        bool was_removed = m_eventslots->delete_current_event();
+        if (was_removed)
+        {
+            int cr = row1;
+            ui->eventTableWidget->removeRow(row1);
+            if (islinked)
+            {
+                m_eventslots->select_event(row0, false);    /* first row     */
+                was_removed = m_eventslots->delete_current_event();
+                if (was_removed)
+                {
+                    cr = row0;
+                    ui->eventTableWidget->removeRow(row0);
+                }
+            }
+            if (m_eventslots->empty())
+            {
                 QModelIndex next = ui->eventTableWidget->model()->index(cr, 0);
                 ui->eventTableWidget->setCurrentIndex(next);
                 ui->eventTableWidget->selectionModel()->select
@@ -677,8 +692,13 @@ qseqeventframe::handle_delete ()
                 );
                 m_eventslots->select_event(cr);
                 current_row(cr);
-                set_dirty();
             }
+            set_dirty();
+        }
+        if (m_eventslots->empty())
+        {
+            ui->button_del->setEnabled(false);
+            ui->button_modify->setEnabled(false);
         }
         set_seq_lengths(get_lengths());
     }

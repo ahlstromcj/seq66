@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-12-04
- * \updates       2020-06-23
+ * \updates       2021-02-02
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -39,8 +39,6 @@
 #include <map>                          /* std::multimap                */
 
 #include "midi/editable_event.hpp"      /* seq66::editable_event        */
-
-#undef  USE_VERIFY_AND_LINK             /* not yet ready !!!!           */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -57,26 +55,20 @@ class sequence;
 
 class editable_events
 {
-    friend class eventslots;            /* part of ed-event user-interface  */
     friend class qseventslots;          /* the Qt 5 version                 */
 
 private:
 
     /**
-     *  Types to use to with the multimap implementation.  These typenames are
-     *  identical to those used in eventlist, but of course they are in the
-     *  editable_events scope instead.  We should consider transitioning to
-     *  the event::buffer (vector) implementation.
-     *
-     *  Also too much re-do here from eventlist!
+     *  Types to use to with the multimap implementation.  We should consider
+     *  reusing, somehow, the event::buffer (vector) implementation.  Also too
+     *  much re-do here from eventlist!
      */
 
     using Key = event::key;
     using Events = std::multimap<Key, editable_event>;
     using iterator = Events::iterator;
     using const_iterator = Events::const_iterator;
-    using reverse_iterator = Events::reverse_iterator;
-    using const_reverse_iterator = Events::const_reverse_iterator;
 
     /**
      *  Holds the editable_events.  The multimap works well here.
@@ -285,6 +277,7 @@ public:
         return cit != m_events.end();
     }
 
+    int count_to_link (const editable_event & source);
     void print () const;
 
 private:
@@ -300,15 +293,6 @@ private:
     {
         m_current_event = cei;
     }
-
-#if defined USE_VERIFY_AND_LINK                  /* not yet ready */
-    void clear_links ();
-    void verify_and_link (midipulse slength);
-    bool link_notes (event & eon, event & eoff);
-    void mark_all ();
-    void unmark_all ();
-    void mark_out_of_range (midipulse slength);
-#endif
 
 };          // class editable_events
 

@@ -64,7 +64,7 @@ class editable_events;                  /* forward reference to container   */
  *  and strings to represent all of these members.
  */
 
-class editable_event : public event
+class editable_event final : public event
 {
 
 public:
@@ -313,11 +313,7 @@ public:
     editable_event (const editable_event & rhs);
     editable_event & operator = (const editable_event & rhs);
 
-    /**
-     *  This destructor current is a rote virtual function override.
-     */
-
-    virtual ~editable_event ()
+    virtual ~editable_event () override
     {
         // Empty body
     }

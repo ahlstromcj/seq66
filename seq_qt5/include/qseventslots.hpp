@@ -210,7 +210,17 @@ public:
         return m_event_container.get_length();
     }
 
+    int count_to_link (const editable_event & source)
+    {
+        return m_event_container.count_to_link(source);
+    }
+
     const editable_event & current_event () const
+    {
+        return m_current_event;
+    }
+
+    editable_event & current_event ()
     {
         return m_current_event;
     }

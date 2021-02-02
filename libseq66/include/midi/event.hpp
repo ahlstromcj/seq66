@@ -1223,6 +1223,11 @@ public:
         return is_note_msg(m_status);
     }
 
+    bool is_strict_note () const
+    {
+        return is_strict_note_msg(m_status);
+    }
+
     /**
      *  Some keyboards send Note On with velocity 0 for Note Off, so we
      *  provide this function to test that during recording.
