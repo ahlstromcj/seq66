@@ -262,13 +262,17 @@ pm_winmm_general_inputs (void)
     {
         char temp[PM_STRING_MAX];
         int ins = (int) midi_num_inputs;
-        int in;
+#if defined SEQ66_PLATFORM_64_BIT
+        UINT_PTR in;
+#else
+        UINT in;
+#endif
         int index;
         snprintf(temp, sizeof temp, "%d MIDI inputs found\n", ins);
         pm_log_buffer_append(temp);
         for
         (
-            in = 0, index = midi_input_index; in < (int) midi_num_inputs;
+            in = 0, index = midi_input_index; in < (UINT_PTR) midi_num_inputs;
             ++in, ++index
         )
         {
@@ -284,7 +288,7 @@ pm_winmm_general_inputs (void)
                 snprintf
                 (
                     temp, sizeof temp, "[%d] MIDI input dev %d: '%s'\n",
-                    index, in, devname
+                    index, (int) in, devname
                 );
                 (void) pm_add_device                    /* ignore errors    */
                 (
@@ -309,7 +313,7 @@ pm_winmm_general_inputs (void)
                 snprintf
                 (
                     temp, sizeof temp, "[%d] '%s' dev %d: error '%s'\n",
-                    index, name, in, errmsg
+                    index, name, (int) in, errmsg
                 );
                 errprint(temp);                         /* log to console   */
             }
@@ -387,13 +391,17 @@ pm_winmm_general_outputs (void)
     {
         char temp[PM_STRING_MAX];
         int outs = (int) midi_num_outputs;
-        int out;
+#if defined SEQ66_PLATFORM_64_BIT
+        UINT_PTR out;
+#else
+        UINT out;
+#endif
         int index;
         snprintf(temp, sizeof temp, "%d MIDI outputs found\n", outs);
         pm_log_buffer_append(temp);
         for
         (
-            out = 0, index = midi_output_index; out < (int) midi_num_outputs;
+            out = 0, index = midi_output_index; out < (UINT) midi_num_outputs;
             ++out, ++index
         )
         {
@@ -409,7 +417,7 @@ pm_winmm_general_outputs (void)
                 snprintf
                 (
                     temp, sizeof temp, "[%d] MIDI output dev %d: '%s'\n",
-                    index, out, devname
+                    index, (int) out, devname
                 );
                 (void) pm_add_device
                 (
@@ -434,7 +442,7 @@ pm_winmm_general_outputs (void)
                 snprintf
                 (
                     temp, sizeof temp, "[%d] '%s' dev %d: error '%s'\n",
-                    index, name, out, errmsg
+                    index, name, (int) out, errmsg
                 );
                 errprint(temp);                             /* log to console   */
             }
@@ -931,7 +939,7 @@ winmm_in_open (PmInternal * midi, void * driverInfo)
     int i = midi->device_id;
     midiwinmm_type m;
 
-#if defined SEQ64_PLATFORM_64_BIT
+#if defined SEQ66_PLATFORM_64_BIT
     UINT_PTR dev = (UINT_PTR) pm_descriptors[i].descriptor;
     UINT dwDevice = (UINT) (dev & 0xFFFFFFFF);
 #else                                       /* warnings with 64 bit builds: */
@@ -1334,7 +1342,7 @@ winmm_out_open (PmInternal * midi, void * UNUSED(driverinfo))
     int num_buffers;
     int i = midi->device_id;
 
-#if defined SEQ64_PLATFORM_64_BIT
+#if defined SEQ66_PLATFORM_64_BIT
     UINT_PTR dev = (UINT_PTR) pm_descriptors[i].descriptor;
     UINT dwDevice = (UINT) (dev & 0xFFFFFFFF);
 #else                                       /* warnings with 64 bit builds: */

@@ -48,7 +48,10 @@
       /home/user/.config/seq66/qseq66.playlist
    \end{verbatim}
 
-   For \textsl{Microsoft Windows}, the default basename of the files is
+   The palette file is not automatically generated.  It can be saved from the
+   \textbf{Edit / Preferences / Display} tab.
+
+   For \textsl{Microsoft Windows}, the default base name of the files is
    \texttt{qpseq66}, and the default configuration directory is
 
    \begin{verbatim}
@@ -256,9 +259,9 @@
    \optionline{-p}{-{}-priority}
       Runs at higher priority with a FIFO scheduler.
 
-   \optionline{N/A}{-{}-pass-sysex}
-      Passes any incoming SYSEX messages to all outputs.
-		Not yet fully implemented.
+%  \optionline{n/a}{-{}-pass-sysex}
+%     Passes any incoming SYSEX messages to all outputs.
+%	Not yet fully implemented.
 
    \optionline{-k}{-{}-show-keys}
       Prints pressed key value.
@@ -606,9 +609,8 @@
    \begin{enumerate}
       \item It actually refers to the usage of \textsl{virtual} MIDI ports.
          These are ports that are set up by the application so that other
-         devices or applications can connect to the MIDI application.
-         Where the "manual" idea comes in is that the user can manually choose
-         the connections to be made.
+         devices, applications, or session managers can connect
+         \textsl{manually} to the MIDI application.
       \item This option is not just for ALSA.  It can also be used when
          running in native JACK mode, to support
          virtual JACK ports that can be connected manually (e.g. in the
@@ -797,7 +799,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{configuration/usr/default-event-bus-channel-menus.png}
+   \includegraphics[scale=0.75]{configuration/usr/default-event-bus-channel-menus.png}
    \caption{Seq66 Composite View of Native Devices}
    \label{fig:default_event_bus_channel_menus}
 \end{figure}
@@ -1081,30 +1083,17 @@
    first runs.
 
    \index{usr!grid-style}
+   \index{usr!grid-brackets}
+   \index{usr!mainwnd-rows}
+   \index{usr!mainwnd-cols}
+   \index{variset}
+   \index{usr!max-sets}
    \begin{verbatim}
       [user-interface-settings]
       1       # grid_style
-   \end{verbatim}
-
-   \index{usr!grid-brackets}
-   \begin{verbatim}
       2       # grid_brackets
-   \end{verbatim}
-
-   \index{usr!mainwnd-rows}
-   \index{variset}
-   \begin{verbatim}
       4       # mainwnd_rows
-   \end{verbatim}
-
-   \index{usr!mainwnd-cols}
-   \index{variset}
-   \begin{verbatim}
       8       # mainwnd_cols
-   \end{verbatim}
-
-   \index{usr!max-sets}
-   \begin{verbatim}
       32      # max_sets
    \end{verbatim}
 
@@ -1121,33 +1110,18 @@
    global defaults for tempo, beats per measure, and so on.
 
    \index{usr!midi-ppqn}
-   \begin{verbatim}
-      [user-midi-settings]
-      192     # midi_ppqn
-   \end{verbatim}
-
    \index{usr!midi-beats-per-measure}
-   \begin{verbatim}
-      4       # midi_beats_per_measure/bar
-   \end{verbatim}
-
    \index{usr!midi-beats-per-minute}
-   \begin{verbatim}
-      120     # midi_beats_per_minute
-   \end{verbatim}
-
    \index{usr!midi-beat-width}
-   \begin{verbatim}
-      4       # midi_beat_width
-   \end{verbatim}
-
    \index{usr!midi-buss-override}
-   \begin{verbatim}
-      -1     # midi_buss_override
-   \end{verbatim}
-
    \index{usr!velocity-override}
    \begin{verbatim}
+      [user-midi-settings]
+      192    # midi_ppqn
+      4      # midi_beats_per_measure/bar
+      120    # midi_beats_per_minute
+      4      # midi_beat_width
+      -1     # midi_buss_override
       80     # velocity_override (-1 = 'Free')
    \end{verbatim}
 
@@ -1176,8 +1150,8 @@
    \index{usr!midi-bpm-minimum}
    \index{usr!midi-bpm-maximum}
    \begin{verbatim}
-		0       # midi_bpm_minimum
-		360     # midi_bpm_maximum
+      0       # midi_bpm_minimum
+      360     # midi_bpm_maximum
    \end{verbatim}
 
    The \texttt{midi-bpm-minimum} and \texttt{midi-bpm-maximum} settings
@@ -1236,9 +1210,11 @@
    a MIDI pad device.  The current section describes this feature;
    additional resources and ideas can be found at \url{linuxaudio.org}
    (\cite{midicontrol}).
+   Also see the tutorial section \sectionref{sec:launchpad_mini}.
 
    This file provides settings for keyboard control, MIDI control, and for
-   specifying MIDI output to reflect \textsl{automation} commands.
+   specifying MIDI output to reflect \textsl{automation} commands in a device
+   such as the \textsl{LaunchPad}..
    The name of this file is specfied in the 'rc' file as noted earlier.
 
 \subsubsection{'ctrl' File / MIDI Control Settings}

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-01-30
+ * \updates       2021-02-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -5079,9 +5079,15 @@ sequence::copy_events (const eventlist & newevents)
     if (m_events.empty())
     {
         m_events.unmodify();
-        m_length = 0;
+
+        /*
+         * ca 2021-02-03 Not sure we want to change the length at all, let
+         * alone set it to 0.  No pattern ever has a length of 0.
+         *
+         * m_length = 0;
+         */
     }
-    if (! m_events.empty())                 /* need at least 1 (2?) events  */
+    else
     {
         /*
          * Another option, if we have a new sequence length value (in pulses)
@@ -5091,16 +5097,16 @@ sequence::copy_events (const eventlist & newevents)
          */
 
         midipulse len = m_events.get_max_timestamp();
-#ifdef USE_THIS_READY_CODE
-        int qncount = len / int(ppqn());    /* number of quarter notes      */
-        if (len % ppqn() != 0)
+// #ifdef USE_THIS_READY_CODE
+        int qnnum = len / int(get_ppqn());  /* number of quarter notes      */
+        if (len % get_ppqn() != 0)
         {
-            qncount = get_beats_per_bar();  /* set to size of measure       */
-            while (qncount * ppqn() <= len)
-                ++qcount;                   /* shouldn't ever happen        */
+            qnnum = get_beats_per_bar();    /* set to size of measure       */
+            while (qnnum * get_ppqn() <= len)
+                ++qnnum;                    /* shouldn't ever happen        */
         }
-        len = qncount * ppqn();
-#endif
+        len = qnnum * get_ppqn();
+// #endif
         m_length = len;
         verify_and_link();                  /* function uses m_length       */
     }
@@ -5366,7 +5372,7 @@ sequence::expand_recording () const
     bool result = false;
     if (expanding())
     {
-        midipulse tstamp = m_last_tick;     // perf()->get_tick() % m_length;
+        midipulse tstamp = m_last_tick;
         if (tstamp >= expand_threshold())
         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI

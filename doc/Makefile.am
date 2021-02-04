@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2020-10-02
+# \updates     2021-02-04
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -40,6 +40,7 @@ DIST_SUBDIRS = $(SUBDIRS)
 prefix = @prefix@
 datadir = @datadir@
 docdir = @docdir@
+top_srcdir = @top_srcdir@
 datarootdir = @datarootdir@
 seq66docdir = @seq66docdir@
 
@@ -56,7 +57,7 @@ seq66docdir = @seq66docdir@
 
 install-data-local:
 	mkdir -p $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
 
 #*******************************************************************************
 # uninstall-hook

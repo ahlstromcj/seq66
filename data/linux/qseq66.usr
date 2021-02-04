@@ -1,7 +1,7 @@
-# Seq66 0.90.0 (and above) user configuration file
+# Seq66 0.91.0 (and above) 'usr' configuration file
 #
-# /home/user/.config/seq66/qseq66.usr
-# Written on 2019-12-13 05:41:48
+# /home/ahlstrom/.config/seq66/qseq66.usr
+# Written on 2021-01-25 07:05:46
 #
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
@@ -12,7 +12,7 @@
 [Seq66]
 
 config-type = "usr"
-version = 2
+version = 3
 
 # The [comments] section lets one document this file.  Lines starting
 # with '#' and '[' are ignored.  Blank lines are ignored.  To show a
@@ -20,9 +20,9 @@ version = 2
 
 [comments]
 
-(Comments added to this section are preserved.  Lines starting with
- a '#' or '[', or that are blank, are ignored.  Start lines that must
- be blank with a space.)
+Comments added to this section are preserved.  Lines starting with
+a '#' or '[', or that are blank, are ignored.  Start lines that must
+look empty with a space.
 
 # 1. Define your instruments and their control-code names,
 #    if they have them.
@@ -95,9 +95,9 @@ version = 2
 
 8       # mainwnd_cols
 
-# Specifies the maximum number of sets, which defaults to 32.
-# It is currently never necessary to change this value. In fact,
-# it should be a derived value.
+# Specifies the maximum number of sets, which defaults to 32. It is
+# never necessary to change this value. It is based on set-size now.
+# Do not change it. It is just informative.
 
 32      # max_sets
 
@@ -215,14 +215,14 @@ version = 2
 # Specifies the number of set-window ('wid') rows to show.
 # The long-standing default is 1, but 2 or 3 may also be set.
 # Corresponds to R in the '-o wid=RxC,F' option.
-# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.
+# Support for this option is obsolete in Seq66.
 
 1      # block_rows (number of rows of set blocks/wids)
 
 # Specifies the number of set window ('wid') columns to show.
 # The long-standing default is 1, but 2 may also be set.
 # Corresponds to C in the '-o wid=RxC,F' option.
-# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.
+# Support for this option is obsolete in Seq66.
 
 1      # block_columns (number of columns of set blocks/wids)
 
@@ -235,7 +235,7 @@ version = 2
 # Corresponds to the 'f' (true, false, or 'indep') in the
 # '-o wid=RxC,F' option.  Here, 1 is the same as 'indep' or false,
 # and 0 is the same as f = true.  Backwards, so be careful.
-# SUPPORT FOR THIS OPTION NOT COMPILED INTO THIS BUILD.
+# Support for this option is obsolete in Seq66.
 
 0      # block_independent (set spinners for each block/wid)
 
@@ -254,7 +254,7 @@ version = 2
 # Specifies parts-per-quarter note to use, if the MIDI file.
 # does not override it.  Default is 192, but we'd like to go
 # lower and higher than that. Set to 0 to use the PPQN from the
-# MIDI file, rather than scaling its PPQN re this value.
+# MIDI files, rather than scaling its PPQN re midi_ppqn().
 
 192       # midi_ppqn, --ppqn p
 
@@ -366,13 +366,12 @@ version = 2
 # sequence editor.  Defaults to 12 (pixels), but 8 is better.
 # Currently used only in the Qt GUI.
 
-10      # (user_ui_) key_height
+10       # (user_ui_) key_height
 
-# Normally, the Qt version of Seq66 uses the old pattern
-# editor in the 'Edit' tab.  If the following value is set to 1,
-# then the new, larger, more functional pattern editor can be
-# used in the 'Edit' tab.  This setting also has the side-effect
-# of making the whole Seq66 window larger.
+# Normally, the Qt version of Seq66 uses the old pattern editor in the
+# 'Edit' tab.  If this value is set to 1, then the new, larger,
+# more functional pattern editor can be used in the 'Edit' tab. This
+# setting makes the whole Seq66 window larger.
 
 1       # (user_ui_) use_new_seqedit
 
@@ -381,19 +380,33 @@ version = 2
 
 note-resume = false
 
+[user-session]
+
+# This section specifies the session manager to use, if any.  It
+# contains only one variable, 'session', which can be set to 'none'
+# (the default), 'nsm' (Non or New Session Manager), or 'lash' (the
+# LASH session manager.  The 'url' variable can be set to the value
+# of the NSM_URL environment variable set by nsmd when run outside
+# of the Non Session Manager user-interface. Set the URL only if
+# running nsmd standalone with a matching --osc-port number.
+
+session = none
+url = ""
+
 [new-pattern-editor]
 
 # This section contains the setup values for recording when a new
 # pattern is opened. For flexibility, a new pattern means only that
-# the pattern has the default name, 'Unititled'. These values save time
-# during a live recording session.
+# the loop has the default name, 'Unititled'. These values save time
+# during a live recording session. Note that the valid values for
+# record-style are 'merge', 'overwrite', and 'expand'.
 
-armed = true
-thru = true
-record = true
+armed = false
+thru = false
+record = false
 qrecord = false
 record-style = merge
 
-# End of /home/user/.config/seq66/qseq66.usr
+# End of /home/ahlstrom/.config/seq66/qseq66.usr
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

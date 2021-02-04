@@ -35,60 +35,60 @@
    The effect that keystrokes have depends upon
    which window has the keyboard/mouse focus.
    \index{keys!qt}
-   It must be noted that the Qt 5 user-interface still has a few missing pieces
-   in keystroke support.
+%  It must be noted that the Qt 5 user-interface still has a few missing pieces
+%  in keystroke support.
 
 \subsection{Keyboard Control}
 \label{subsec:kbd_mouse_keyboard_control}
 
    \textsl{Seq66} provides a plethora of keyboard controls for user-interface
    actions, note-modification, zooming, and pattern control.
-   These controls are easy to change by editing the appropriate 'ctrl'
+   Most of these controls (not all)
+   are easy to change by editing the appropriate 'ctrl'
    configuration file, stored in one of the following directories, depending on
    the operating system:
    
    \begin{verbatim}
-         /home/username/.config/seq66/qseq66.ctrl
-         C:/Users/username/AppData/Local/seq66/qpseq66.ctrl
+      /home/username/.config/seq66/qseq66.ctrl
+      C:/Users/username/AppData/Local/seq66/qpseq66.ctrl
    \end{verbatim}
 
    There are also some extended examples present in the \textsl{Seq66}
    \texttt{data/linux} and
    \texttt{data/samples} directory.
-   Also note that keyboard and MIDI control settings have been consolidated
+   Note that keyboard and MIDI control settings have been consolidated
    into a single table in the 'ctrl' file.
+   The \texttt{[mute-group]} control
+   section has been moved to it's own 'mutes' file.
 
-   \textbf{Warning:}
    \index{keys!gotchas}
    There are a number of "gotchas" to be aware of when assigning keys to the
    fields in the \textbf{Keyboard} tab:
 
    \begin{itemize}
       \item Some of the keystrokes are hard-wired, such as 
-         "arrow" keys (for controlling play-lists) or "page up/down" keys.
+         "arrow" keys (for controlling play-lists), "page up/down" keys, or
+         the "zoom" keys.
       \item \textsl{Seq66} has appropriated the
          \index{keys!shift} Shift key so that a a Shift-left-click on a pattern
-         slot opens up the corresponding set-number in an external live grid.
-%        modifies a click on a pattern so that all of the other patterns are
-%        \textsl{toggled}.
+         slot opens up the corresponding set (based on pattern number)
+         in an external live grid.
          \index{auto-shift}
-         Also, for the group-learn feature, the \texttt{Shift} key is 
+         For the group-learn feature, the \texttt{Shift} key is 
          automatically enabled, using an "auto-shift" feature.
          Thus, using characters that require the Shift
          key while clicking, such as \texttt{\{} and \texttt{\}},
          becomes surprising.
          Instead, look to the remaining keys: \texttt{F11}, \texttt{F12},
-         and the "keypad" keys if more options are wanted.
+         and the "keypad" keys if more keystrokes are wanted.
    \end{itemize}
 
    \texttt{[keyboard-control]}.
    We won't attempt to cover every key-control item,
    just the categories.  Some items might be discussed in other parts
    of this manual. Remember that key and MIDI control have been consolidated.
-   Also remember that the 'ctrl' file contains comments and an orderly layout to
-   make it easier to understand and to edit.
-
-   The \texttt{[mute-group]} section has been moved to it's own 'mutes' file.
+   Also remember that the 'ctrl' file contains comments and an orderly layout
+   to make it easier to understand and to edit.
 
    \index{pause}
    An additional key definition is shown for the pause key.
@@ -96,8 +96,9 @@
    ("\texttt{.}."), but that can be changed.
 
    \index{pattern edit}
-   New features try to achieve being able to edit a pattern using mainly the
-   keyboard.  \textsl{Seq66} now supports two modifier keys.
+   A goal of \textsl{Seq66} is being able to edit a pattern using mainly the
+   computer keyboard.
+   \textsl{Seq66} supports two modifier keys.
    The first modifier key causes the usual pattern-toggle key (hot-key) for a
    given slot to instead bring up the pattern editor.  By default, this key is
    the equals ("\texttt{=}") key.
@@ -160,7 +161,7 @@
    pattern slot will queue the pattern.  The keep-queue mode is disabled by
    hitting the "queue" key again (any currently active queues remain active
    until finished).
-   The default key is the backslash key, "\texttt{\\}" key.
+   The default key is the backslash key, "\texttt{\textbackslash}" key.
    There is also a "Q" button to toggle the keep-queue
    status.
 
@@ -169,6 +170,7 @@
    \textbf{One-Shot}
    causes a slot to be queued for only a single playback.
    The default key is the pipe, "\texttt{|}" key.
+   Currently buggy.
 
    \itempar{Sequence toggle keys}{keyboard!sequence toggle keys}
    Each of these keys toggles the playing/muting of one of the 32
@@ -237,7 +239,6 @@
    \index{keyboard!group on}
    This key is the \textsl{group on} key.
 
-   \texttt{[extended-keys]}.
    A number of additional functions have been added to \textsl{Seq66},
    and keystrokes have been provided for those new functions.
 
@@ -343,7 +344,7 @@
 \label{subsec:kbd_mouse_main_window}
 
    The main window keystrokes are all defined via the options dialog
-   and "rc" configuration file, or are stock Gtk window-management keystrokes.
+   and "rc" configuration file, or are stock window-management keystrokes.
    The main window has a very complete setup for live control of the MIDI tune
    via keystrokes.  These actions are not included in
    \tableref{table:main_window_support}.

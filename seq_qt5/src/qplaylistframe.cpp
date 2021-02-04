@@ -500,10 +500,6 @@ qplaylistframe::fill_songs ()
     }
 }
 
-/**
- *
- */
-
 bool
 qplaylistframe::load_playlist (const std::string & fullfilespec)
 {
@@ -648,6 +644,7 @@ qplaylistframe::handle_list_save_click ()
 {
     if (not_nullptr(m_parent))
     {
+#if defined USE_OLD_WAY
         QString p = ui->entry_playlist_file->text();
         std::string plistname = p.toStdString();
         if (! plistname.empty())
@@ -663,6 +660,10 @@ qplaylistframe::handle_list_save_click ()
                  */
             }
         }
+#else
+        if (m_parent->save_playlist())
+            list_unmodify();
+#endif
     }
 }
 

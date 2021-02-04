@@ -1185,7 +1185,7 @@ qsmainwnd::show_open_list_dialog ()
     if (check())
     {
         std::string fname;
-        bool ok = show_open_playlist_dialog(this, fname);
+        bool ok = show_playlist_dialog(this, fname, false /* not saving */);
         if (ok)
         {
             bool playlistmode = perf().open_playlist(fname, rc().verbose());
@@ -1198,6 +1198,27 @@ qsmainwnd::show_open_list_dialog ()
 #endif
             }
             else
+                show_message_box(perf().playlist_error_message());
+        }
+    }
+}
+
+/**
+ *  Opens the dialog to save a playlist file.  This action should be allowed
+ *  in an NSM session, but defaults to the configuration directory.
+ */
+
+void
+qsmainwnd::show_save_list_dialog ()
+{
+    if (check())
+    {
+        std::string fname;
+        bool ok = show_playlist_dialog(this, fname, true /* saving */);
+        if (ok)
+        {
+            ok = perf().save_playlist(fname);
+            if (! ok)
                 show_message_box(perf().playlist_error_message());
         }
     }
@@ -2461,7 +2482,6 @@ qsmainwnd::tabWidgetClicked (int newindex)
 bool
 qsmainwnd::make_event_frame (int seqid)
 {
-printf("make_event_frame(%d)\n", seqid);
     seq::pointer seq = perf().get_sequence(seqid);
     bool result = bool(seq);
     if (result)

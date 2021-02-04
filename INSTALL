@@ -1,6 +1,6 @@
 INSTALL for Seq66 v. 0.92.0
 Chris Ahlstrom
-2015-09-10 to 2021-01-20
+2015-09-10 to 2021-02-04
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -465,9 +465,12 @@ DEPENDENCIES:
       "./make_dox notes".  Be aware that the PDF files will always be present
       and installed, even if not necessarily up-to-date with the latest code.
 
-      -  doxygen and doxygen-latex
-      -  graphviz
-      -  texlive
+      - Source-code documentation:
+        - doxygen and doxygen-latex
+        - graphviz
+        - texlive
+      - User manual (additional packages):
+        - latexmk
 
       To build the documentation manually, change to the doc/dox
       directory and run:

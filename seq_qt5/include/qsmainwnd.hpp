@@ -129,9 +129,16 @@ public:
         return perf().ppqn();
     }
 
-    void open_playlist ()
+    bool open_playlist ()
     {
         show_open_list_dialog();
+        return true;
+    }
+
+    bool save_playlist ()
+    {
+        show_save_list_dialog();
+        return true;
     }
 
     bool use_nsm () const
@@ -389,6 +396,7 @@ private slots:
     void import_into_session ();            /* import MIDI into session     */
     void select_and_load_file ();
     void show_open_list_dialog ();
+    void show_save_list_dialog ();          /* NOT YET CONNECTED            */
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);

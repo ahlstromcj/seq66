@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-02-01
+ * \updates       2021-02-03
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -36,6 +36,7 @@
  */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
+#include "util/strfunctions.hpp"        /* seq66::strings_match()           */
 #include "qseqeventframe.hpp"
 #include "qseventslots.hpp"
 
@@ -698,29 +699,33 @@ qseventslots::modify_current_event
 
     if (result)
     {
-#if defined USE_DELETE_INSERT_METHOD
-        /*
-         * We need to make a copy here, because the iterator will get
-         * modified during the deletion-and-insertion process.
-         */
+        bool isnoteevent = strings_match(evname, "Note");
+        if (isnoteevent)
+        {
+            editable_event & ev = editable_events::dref(m_current_iterator);
+            if (! ev.is_ex_data())
+                ev.set_channel(m_seq->get_midi_channel());  /* just in case */
 
-        editable_event ev = editable_events::dref(m_current_iterator);
-        if (! ev.is_ex_data())
-            ev.set_channel(m_seq->get_midi_channel());  /* just in case     */
+            ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+            if (row >= 0)
+                set_table_event(ev, row);
+        }
+        else
+        {
+            /*
+             * We need to make a copy here, because the iterator will get
+             * modified during the deletion-and-insertion process.
+             */
 
-        ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
-        result = delete_current_event();
-        if (result)
-            result = insert_event(ev);                  /* full karaoke add */
-#else
-        editable_event & ev = editable_events::dref(m_current_iterator);
-        if (! ev.is_ex_data())
-            ev.set_channel(m_seq->get_midi_channel());  /* just in case     */
+            editable_event ev = editable_events::dref(m_current_iterator);
+            if (! ev.is_ex_data())
+                ev.set_channel(m_seq->get_midi_channel());
 
-        ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
-        if (row >= 0)
-            set_table_event(ev, row);
-#endif
+            ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+            result = delete_current_event();
+            if (result)
+                result = insert_event(ev);              /* full karaoke add */
+        }
     }
     return result;
 }

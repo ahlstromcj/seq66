@@ -733,7 +733,7 @@ string_is_void (const std::string & s)
  * \param target
  *      The primary string in the comparison.  This is the target string, the
  *      one we hope to match.  It is <i> assumed </i> to be non-empty, and the
- *      result is false if it is empty..
+ *      result is false if it is empty.
  *
  * \param x
  *      The secondary string in the comparison.  It must be no longer than the

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>829</width>
-    <height>509</height>
+    <width>827</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
      <x>10</x>
      <y>110</y>
      <width>271</width>
-     <height>301</height>
+     <height>233</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -57,6 +57,12 @@
    <property name="columnCount">
     <number>2</number>
    </property>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>18</number>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>21</number>
+   </attribute>
    <row/>
    <row/>
    <row/>
@@ -174,7 +180,7 @@
      <x>420</x>
      <y>110</y>
      <width>271</width>
-     <height>301</height>
+     <height>233</height>
     </rect>
    </property>
    <property name="toolTip">
@@ -189,6 +195,12 @@
    <property name="columnCount">
     <number>2</number>
    </property>
+   <attribute name="verticalHeaderMinimumSectionSize">
+    <number>18</number>
+   </attribute>
+   <attribute name="verticalHeaderDefaultSectionSize">
+    <number>21</number>
+   </attribute>
    <row/>
    <row/>
    <row/>
@@ -213,7 +225,7 @@
     <rect>
      <x>10</x>
      <y>0</y>
-     <width>751</width>
+     <width>785</width>
      <height>30</height>
     </rect>
    </property>
@@ -234,6 +246,18 @@
     </item>
     <item>
      <widget class="QLineEdit" name="entry_playlist_file">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>Shows the full path to the play-list file. 
 Read-only.</string>
@@ -254,8 +278,20 @@ Read-only.</string>
      <x>90</x>
      <y>48</y>
      <width>311</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>The default song directory for the currently-selected play-list
@@ -275,8 +311,20 @@ but not in Non Session Manager mode.</string>
      <x>90</x>
      <y>74</y>
      <width>36</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>Shows the MIDI control number for the currently-selected 
@@ -293,8 +341,20 @@ List.</string>
      <x>130</x>
      <y>74</y>
      <width>271</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>Shows the name of the currently-selected play-list section.
@@ -310,8 +370,20 @@ Can be edited to enable Add List and Modify List.</string>
      <x>480</x>
      <y>48</y>
      <width>311</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>Shows the directory in which the currently selected song is
@@ -328,8 +400,20 @@ mode.</string>
      <x>480</x>
      <y>74</y>
      <width>36</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>Shows the MIDI control number for the currently selected song.
@@ -345,8 +429,20 @@ Can be edited to enable the Add Song and Modify Song buttons.</string>
      <x>520</x>
      <y>74</y>
      <width>271</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>24</height>
+    </size>
    </property>
    <property name="toolTip">
     <string>Shows the base file-name of the currently selected song. 
@@ -667,7 +763,7 @@ the configured MIDI control comes in.</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>430</y>
+     <y>352</y>
      <width>131</width>
      <height>21</height>
     </rect>
@@ -677,10 +773,13 @@ the configured MIDI control comes in.</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="midiBaseDirText">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>430</y>
+     <y>352</y>
      <width>631</width>
      <height>25</height>
     </rect>
@@ -700,7 +799,7 @@ Read-only.</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>470</y>
+     <y>392</y>
      <width>131</width>
      <height>17</height>
     </rect>
@@ -710,10 +809,13 @@ Read-only.</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="currentSongPath">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>470</y>
+     <y>392</y>
      <width>631</width>
      <height>27</height>
     </rect>

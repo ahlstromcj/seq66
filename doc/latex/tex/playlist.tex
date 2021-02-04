@@ -151,7 +151,7 @@
    0     # playlist_active, 1 = active, 0 = do not use it
    # Provides the name of a play-list.  If there is none, use '""'.
    # Or set the flag above to 0.
-   /home/ahlstrom/.config/seq66/sample.playlist
+   "/home/ahlstrom/.config/seq66/sample.playlist"
    \end{verbatim}
 
    This setup allows a play-list file to be specified and activated.
@@ -162,7 +162,7 @@
    If the play-list file-name is empty (i.e. set to \texttt{""}, then there is
    no play-list active.
 
-\subsection{Seq66 Play-Lists / 'rc' File / [midi-control]}
+\subsection{Seq66 Play-Lists / 'ctrl' File / [midi-control]}
 \label{subsec:playlist_rc_file_midi_ctrl}
 
    The MIDI control stanzas for play-list and song-selection don't quite follow
@@ -170,10 +170,9 @@
    the layout is the same:
 
    \begin{verbatim}
-      # MIDI Control to select playlist (value, next, previous)
-      88 [1 0 144   2   1 127] [1 0 144   4   1 127] [1 0 144   0   1 127]
-      # MIDI Control to select song in current playlist (value, next, previous)
-      89 [1 0 144   5   1 127] [1 0 144   3   1 127] [1 0 144   1   1 127]
+                Pick-by-number       Next              Previous
+      24 "F2" [1 0 144 2 1 127] [1 0 144 4 1 127] [1 0 144 0 1 127] # Play List
+      25 "F3" [1 0 144 5 1 127] [1 0 144 3 1 127] [1 0 144 1 1 127] # Play Song
    \end{verbatim}
 
    Both lines specify setting the next playlist or song according to a number,
@@ -185,7 +184,7 @@
    So, the following setting,
 
    \begin{verbatim}
-      88 [1 0 144   2   1 127]
+      24 "F2" [1 0 144   2   1 127] . . .
    \end{verbatim}
 
    specifies that a \textsl{Note On} event with channel 0 (144 = 0x90) on note
@@ -224,7 +223,7 @@
    then the playlist will fail to load.  This check can be slow when there are
    many large MIDI files specified in the play-list file.
 
-\subsection{Seq66 Play-Lists / User Interfaces}
+\subsection{Seq66 Play-Lists / User Interface}
 \label{subsec:playlist_uis}
 
    Playlists and songs can be selected or moved-to via keystrokes or
@@ -234,9 +233,6 @@
    the list of play-lists, and the
    The \texttt{Right} and \texttt{Left} arrows move forward or backward through
    the list of songs for the currently-selected play-list.
-
-\subsubsection{Seq66 Play-Lists / User Interfaces / Qt 5}
-\label{subsubsec:playlist_ui_qt}
 
    The Qt 5 user-interface supports the full display, selection, and editing of
    the play-lists and the song-list for each play-list.
@@ -293,9 +289,43 @@
    This section briefly describes the "List" buttons to the right of the
    play-list table.
 
-   \begin{enumber}
+   \begin{itemize}
       \item \textbf{Load List}.
-   \end{enumber}
+      \item \textbf{Add List}.
+      \item \textbf{Modify List}.
+      \item \textbf{Delete List}.
+      \item \textbf{Save Lists}.
+   \end{itemize}
+
+   This section briefly describes the "Song" buttons to the right of the
+   song-list table.
+
+   \begin{itemize}
+      \item \textbf{Load Song}.
+      \item \textbf{Add Song}.
+      \item \textbf{Modify Song}.
+      \item \textbf{Delete Song}.
+      \item \textbf{Lists Active}.
+   \end{itemize}
+
+\paragraph{Seq66 Play-Lists / User Interfaces / Info Fields}
+\label{paragraph:playlist_ui_qt_playlist_buttons}
+
+   The following read-only fields show some information about the file-system
+   for the play-lists.
+
+   \begin{itemize}
+      \item \textbf{MIDI Base Directory}.
+         Provides the top-most directory where all of the files in the
+         play-list are stored.
+         Currently read-only, in order not to interfere with session locations.
+      \item \textbf{Current Song Path}.
+         Shows the exact path the the currently-selected song.
+         Currently read-only, in order not to interfere with session locations.
+   \end{itemize}
+
+   These items can be modified, however, by editing the play-list file
+   directory.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

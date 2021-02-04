@@ -322,6 +322,7 @@ qseqeventframe::set_column_widths (int total_width)
 bool
 qseqeventframe::initialize_table ()
 {
+    static const int s_default_rows = 28;
     bool result = false;
     if (m_eventslots)
     {
@@ -332,19 +333,20 @@ qseqeventframe::initialize_table ()
             ui->eventTableWidget->setRowCount(rows);
             set_row_heights(sc_event_row_height);
             if (m_eventslots->load_table())
-            {
                 m_eventslots->select_event(0);      /* first row */
-            }
-            // ui->button_del->setEnabled(true);
-            // ui->button_modify->setEnabled(true);
+
             ui->button_clear->setEnabled(true);
         }
         else
         {
+            ui->eventTableWidget->clearContents();
+            ui->eventTableWidget->setRowCount(s_default_rows);
+            set_row_heights(sc_event_row_height);
             ui->button_clear->setEnabled(false);
             ui->button_del->setEnabled(false);
             ui->button_modify->setEnabled(false);
         }
+        ui->eventTableWidget->clearSelection();
     }
     return result;
 }
@@ -678,11 +680,11 @@ qseqeventframe::handle_delete ()
                 was_removed = m_eventslots->delete_current_event();
                 if (was_removed)
                 {
-                    cr = row0;
+                    cr = row0 - 1;
                     ui->eventTableWidget->removeRow(row0);
                 }
             }
-            if (m_eventslots->empty())
+            if (! m_eventslots->empty())
             {
                 QModelIndex next = ui->eventTableWidget->model()->index(cr, 0);
                 ui->eventTableWidget->setCurrentIndex(next);
@@ -696,10 +698,8 @@ qseqeventframe::handle_delete ()
             set_dirty();
         }
         if (m_eventslots->empty())
-        {
-            ui->button_del->setEnabled(false);
-            ui->button_modify->setEnabled(false);
-        }
+            (void) initialize_table();
+
         set_seq_lengths(get_lengths());
     }
 }

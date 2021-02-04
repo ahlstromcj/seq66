@@ -955,10 +955,6 @@ rcsettings::playlist_filename_checked (const std::string & value)
     return result;
 }
 
-/**
- *
- */
-
 const std::string &
 rcsettings::playlist_filename () const
 {
