@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-01-17
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,7 +34,6 @@
 #include <QTimer>
 
 #include "seq66-config.h"               /* defines SEQ66_QMAKE_RULES        */
-#include "cfg/mutegroupsfile.hpp"       /* seq66::save_mutegroups()         */
 #include "cfg/settings.hpp"             /* seq66::rc()                      */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "util/filefunctions.hpp"       /* seq66::name_has_directory()      */
@@ -165,6 +164,9 @@ qmutemaster::qmutemaster
     ui->m_button_up->setEnabled(false);     // ui->m_button_up->hide();
     connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
 
+    ui->m_button_load->setEnabled(true);
+    connect(ui->m_button_load, SIGNAL(clicked()), this, SLOT(slot_load()));
+
     ui->m_button_save->setEnabled(true);
     connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
 
@@ -184,15 +186,6 @@ qmutemaster::qmutemaster
         this, SLOT(slot_write_to_mutes())
     );
 
-    /*
-     * This "master" is always embedded in a tab.
-     *
-     *  if (m_is_permanent)
-     *  else
-     *      connect(ui->m_button_close, SIGNAL(clicked()), this, SLOT(close()));
-     */
-
-    ui->m_button_close->hide();         /* should eliminate eventually      */
     create_group_buttons();
     create_pattern_buttons();
     connect
@@ -605,33 +598,49 @@ qmutemaster::slot_up ()
 }
 
 void
+qmutemaster::slot_load ()
+{
+    if (not_nullptr(m_main_window))
+        m_main_window->show_open_mutes_dialog();
+}
+
+void
 qmutemaster::slot_save ()
 {
     QString filename = ui->m_mute_basename->toPlainText();
     std::string mutefile = filename.toStdString();
-    if (! mutefile.empty())
+    bool ok = show_file_dialog
+    (
+        this, mutefile, "Save mute-groups file",
+        "Mute-Groups (*.mutes);;All files (*)", SavingFile, ConfigFile,
+        ".mutes"
+    );
+    if (ok)
     {
-        if (name_has_directory(mutefile))
-        {
-            std::string fullpath = mutefile;
-            std::string path;
-            (void) filename_split(fullpath, path, mutefile);
-        }
-        rc().mute_group_filename(mutefile);
-        mutefile = rc().mute_group_filespec();
-        if (save_mutegroups(mutefile))
-        {
-            /*
-             * TODO: report success
-             */
-        }
+        /*
+         * EXPERIMENT: REPLACE if (save_mutegroups(mutefile))
+         */
+
+        if (cb_perf().save_mutegroups(mutefile))
+            file_message("Wrote mute-groups", mutefile);
         else
-        {
-            /*
-             * TODO: report error
-             */
-        }
+            file_message("Write failed", mutefile);
     }
+}
+
+bool
+qmutemaster::load_mutegroups (const std::string & mutefile)
+{
+    bool result = cb_perf().open_mutegroups(mutefile);
+    if (result)
+    {
+        file_message("Wrote mute-groups", mutefile);
+        group_needs_update();
+    }
+    else
+        file_message("Write failed", mutefile);
+
+    return result;
 }
 
 void

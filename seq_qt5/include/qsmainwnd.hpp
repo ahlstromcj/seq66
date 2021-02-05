@@ -397,6 +397,7 @@ private slots:
     void select_and_load_file ();
     void show_open_list_dialog ();
     void show_save_list_dialog ();          /* NOT YET CONNECTED            */
+    void show_open_mutes_dialog ();         /* NOT YET CONNECTED            */
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-01-27
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -296,11 +296,13 @@
 #include <cstring>                      /* std::memset()                    */
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
+#include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
+#include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
@@ -6013,6 +6015,30 @@ performer::playlist_activate (bool on)
     {
         rc().playlist_active(false);
     }
+}
+
+bool
+performer::open_mutegroups (const std::string & mgf)
+{
+    bool result = seq66::open_mutegroups(mgf);  /* fills rcsettings groups  */
+    if (result)
+    {
+        m_mute_groups = rc().mute_groups();     /* copy to performer's      */
+    }
+    return result;
+}
+
+bool
+performer::save_mutegroups (const std::string & mgf)
+{
+    rc().mute_groups() = m_mute_groups;         /* copy to rcsettings       */
+
+    bool result = seq66::save_mutegroups(mgf);  /* saves rcsettings groups  */
+    if (result)
+    {
+        // nothing to do
+    }
+    return result;
 }
 
 /**

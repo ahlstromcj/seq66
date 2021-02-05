@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-02-04
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -45,6 +45,16 @@ class QWidget;
 
 namespace seq66
 {
+
+/*
+ *  Free constants in the seq66 namespace.  These values are simply visible
+ *  booleans for using file dialogs.
+ */
+
+const bool SavingFile = true;
+const bool OpeningFile = false;
+const bool ConfigFile = true;
+const bool NormalFile = false;
 
 /*
  * Free functions in the seq66 namespace.
@@ -67,7 +77,8 @@ extern bool show_file_dialog
     const std::string & prompt = "",
     const std::string & filterlist = "",
     bool saving = false,
-    bool forceconfig = false
+    bool forceconfig = false,
+    const std::string & extension = ""
 );
 
 }               // namespace seq66

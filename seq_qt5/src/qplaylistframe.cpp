@@ -510,6 +510,7 @@ qplaylistframe::load_playlist (const std::string & fullfilespec)
             playlistmode = perf().open_current_song();
     }
     reset_playlist();                       /* if (perf().playlist_mode())  */
+    update();                               /* refresh the user-interface   */
     return false;
 }
 
@@ -562,17 +563,20 @@ qplaylistframe::handle_song_click_ex
 }
 
 /**
- *  Calls qsmainwnd::open_playlist(), which then calls
- *  qsmainwnd::show_open_list_dialog(), then perform::open_playlist().  That
- *  function resets the play-list pointer, then opens the playlist.
- *  It is reset to the first song and performer calls set_needs_update().
+ *  Calls qsmainwnd::open_playlist(), which then opens the file dialog and
+ *  perform::open_playlist(), which resets the play-list pointer and opens the
+ *  playlist.  It is reset to the first song and performer calls
+ *  set_needs_update().
  */
 
 void
 qplaylistframe::handle_list_load_click ()
 {
     if (not_nullptr(m_parent))
+    {
         m_parent->open_playlist();
+        ui->buttonPlaylistSave->setEnabled(false);
+    }
 }
 
 /**
@@ -614,6 +618,7 @@ qplaylistframe::handle_list_add_click ()
             {
                 reset_playlist();
                 fill_songs();                           /* just clears list */
+                ui->buttonPlaylistSave->setEnabled(true);
             }
             else
             {
@@ -635,6 +640,7 @@ qplaylistframe::handle_list_remove_click ()
         {
             reset_playlist();
             m_parent->recreate_all_slots();
+            ui->buttonPlaylistSave->setEnabled(true);
         }
     }
 }
@@ -644,26 +650,8 @@ qplaylistframe::handle_list_save_click ()
 {
     if (not_nullptr(m_parent))
     {
-#if defined USE_OLD_WAY
-        QString p = ui->entry_playlist_file->text();
-        std::string plistname = p.toStdString();
-        if (! plistname.empty())
-        {
-            if (perf().save_playlist(plistname))
-            {
-                list_unmodify();
-            }
-            else
-            {
-                /*
-                 * TODO: report error
-                 */
-            }
-        }
-#else
         if (m_parent->save_playlist())
             list_unmodify();
-#endif
     }
 }
 
@@ -784,10 +772,6 @@ qplaylistframe::list_unmodify ()
     ui->buttonPlaylistModify->setEnabled(false);
     ui->buttonPlaylistSave->setEnabled(false);
 }
-
-/**
- *
- */
 
 void
 qplaylistframe::song_modify (const QString &)

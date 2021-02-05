@@ -149,6 +149,19 @@ configuration directory.</string>
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="m_button_load">
+        <property name="maximumSize">
+         <size>
+          <width>64</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Load File</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="m_button_up">
         <property name="enabled">
          <bool>false</bool>
@@ -183,25 +196,6 @@ configuration directory.</string>
         </property>
         <property name="text">
          <string>Down</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="m_button_close">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Close this window.</string>
-        </property>
-        <property name="text">
-         <string>Close</string>
         </property>
        </widget>
       </item>

@@ -1001,6 +1001,8 @@ public:
         return m_play_list->reset_list();
     }
 
+    bool open_mutegroups (const std::string & mfg);
+    bool save_mutegroups (const std::string & mfg);
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
 

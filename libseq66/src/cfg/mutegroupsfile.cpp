@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-01-16
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -195,10 +195,6 @@ mutegroupsfile::parse ()
  *
  * \param file
  *      Provides the output file stream to write to.
- *
- * \param separatefile
- *      If true, the [mute-group] section is being written to a separate
- *      file.  The default value is false.
  *
  * \return
  *      Returns true if the write operations all succeeded.
@@ -382,6 +378,18 @@ mutegroupsfile::parse_mutes_stanza ()
         result = parse_stanza_bits(groupmutes, line());
         if (result)
             result = rc_ref().mute_groups().load(group, groupmutes);
+    }
+    return result;
+}
+
+bool
+open_mutegroups (const std::string & source)
+{
+    bool result = ! source.empty();
+    if (result)
+    {
+        mutegroupsfile mgf(source, rc());
+        result = mgf.parse();
     }
     return result;
 }

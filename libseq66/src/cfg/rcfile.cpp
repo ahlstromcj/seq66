@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-27
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -553,7 +553,7 @@ rcfile::parse ()
         if (! is_empty_string(line()))                 /* not "" or empty? */
         {
             std::string ludir = strip_quotes(line());
-            rc_ref().last_used_dir(line());
+            rc_ref().last_used_dir(ludir);
         }
     }
     else

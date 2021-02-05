@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-01-17
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -76,6 +76,7 @@ namespace seq66
 
 class qmutemaster final : public QFrame, protected performer::callbacks
 {
+    friend class qsmainwnd;
 
 private:
 
@@ -186,8 +187,8 @@ private:
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     QTableWidgetItem * cell (screenset::number row, column_id col);
-
     void clear_pattern_mutes ();
+    bool load_mutegroups (const std::string & fullfilespec);
 
 signals:
 
@@ -209,6 +210,7 @@ private slots:
     void slot_up ();
     void slot_write_to_midi ();
     void slot_write_to_mutes ();
+    void slot_load ();
     void slot_save ();
 
 private:
@@ -238,7 +240,7 @@ private:
      *  The main window that owns this window.
      */
 
-    qsmainwnd * m_main_window;
+     qsmainwnd * m_main_window;
 
     /**
      *  Access to all the mute-group buttons.  This is an array forever fixed to

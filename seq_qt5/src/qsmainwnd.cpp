@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-30
+ * \updates       2021-02-05
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -433,7 +433,7 @@ qsmainwnd::qsmainwnd
     (
         this, tr("Import MIDI file to Current Set..."),
         rc().last_used_dir().c_str(),
-        tr("MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)")
+        "MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)"
     );
 
     if (use_nsm())
@@ -727,7 +727,7 @@ qsmainwnd::qsmainwnd
     connect(ui->btnPanic, SIGNAL(clicked(bool)), this, SLOT(panic()));
     qt_set_icon(panic_xpm, ui->btnPanic);
 
-    QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
+    QString bname = perf().bank_name(0).c_str();
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
@@ -1054,7 +1054,6 @@ qsmainwnd::slot_summary_save ()
     else
     {
         fname = file_extension_set(fname, ".text");
-
         if (show_text_file_dialog(this, fname))
             write_song_summary(perf(), fname);
     }
@@ -1185,7 +1184,7 @@ qsmainwnd::show_open_list_dialog ()
     if (check())
     {
         std::string fname;
-        bool ok = show_playlist_dialog(this, fname, false /* not saving */);
+        bool ok = show_playlist_dialog(this, fname, OpeningFile);
         if (ok)
         {
             bool playlistmode = perf().open_playlist(fname, rc().verbose());
@@ -1204,6 +1203,29 @@ qsmainwnd::show_open_list_dialog ()
 }
 
 /**
+ *  Opens the dialog to request a mutegroups file.
+ */
+
+void
+qsmainwnd::show_open_mutes_dialog ()
+{
+    if (check())
+    {
+        std::string fname;
+        bool ok = show_file_dialog
+        (
+            this, fname, "Open mute-groups file",
+            "Mutes-groups (*.mutes);;All (*)", OpeningFile, ConfigFile
+        );
+        if (ok)
+        {
+            if (not_nullptr(m_mute_master))
+                (void) m_mute_master->load_mutegroups(fname);
+        }
+    }
+}
+
+/**
  *  Opens the dialog to save a playlist file.  This action should be allowed
  *  in an NSM session, but defaults to the configuration directory.
  */
@@ -1214,9 +1236,10 @@ qsmainwnd::show_save_list_dialog ()
     if (check())
     {
         std::string fname;
-        bool ok = show_playlist_dialog(this, fname, true /* saving */);
+        bool ok = show_playlist_dialog(this, fname, SavingFile);
         if (ok)
         {
+            fname = file_extension_set(fname, ".playlist");
             ok = perf().save_playlist(fname);
             if (! ok)
                 show_message_box(perf().playlist_error_message());
@@ -1554,20 +1577,18 @@ qsmainwnd::check ()
 std::string
 qsmainwnd::filename_prompt (const std::string & prompt)
 {
-    std::string result;
-    QString file = QFileDialog::getSaveFileName
+    std::string result = rc().last_used_dir();
+    bool ok = show_file_dialog
     (
-        this, tr(prompt.c_str()), rc().last_used_dir().c_str(),
-        tr("MIDI files (*.midi *.mid);;All files (*)")
+        this, result, prompt,
+        "MIDI files (*.midi *.mid);;All files (*)", SavingFile, NormalFile,
+        ".midi"
     );
-    if (! file.isEmpty())
+    if (ok)
     {
-        QFileInfo fileInfo(file);
-        QString suffix = fileInfo.completeSuffix();
-        if ((suffix != "midi") && (suffix != "mid"))
-            file += ".midi";
-
-        result = file.toStdString();
+//      std::string ext = file_extension(result);
+//      if (ext.empty())
+//          result += ".midi";
     }
     return result;
 }

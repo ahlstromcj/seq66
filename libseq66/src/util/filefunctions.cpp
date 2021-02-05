@@ -518,8 +518,8 @@ file_executable (const std::string & filename)
 }
 
 /**
- *    Checks a file to see if it is a directory.  This function is also used in
- *    the function of the same name in fileutilities.cpp.
+ *    Checks a file to see if it is a directory.  This function is also used
+ *    in the function of the same name in fileutilities.cpp.
  *
  * \param filename
  *    Provides the name of the directory to be checked.
