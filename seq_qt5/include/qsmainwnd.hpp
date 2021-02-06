@@ -131,14 +131,12 @@ public:
 
     bool open_playlist ()
     {
-        show_open_list_dialog();
-        return true;
+        return open_list_dialog();
     }
 
     bool save_playlist ()
     {
-        show_save_list_dialog();
-        return true;
+        return save_list_dialog();
     }
 
     bool use_nsm () const
@@ -234,6 +232,10 @@ private:
     void connect_normal_slots ();
     void disconnect_normal_slots ();
     bool show_open_file_dialog (std::string & selectedfile);
+    bool open_list_dialog ();
+    bool save_list_dialog ();
+    bool open_mutes_dialog ();
+    bool save_mutes_dialog ();
     void update_tap (midibpm bpm);
 
 private:
@@ -398,6 +400,7 @@ private slots:
     void show_open_list_dialog ();
     void show_save_list_dialog ();          /* NOT YET CONNECTED            */
     void show_open_mutes_dialog ();         /* NOT YET CONNECTED            */
+    void show_save_mutes_dialog ();         /* NOT YET CONNECTED            */
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);

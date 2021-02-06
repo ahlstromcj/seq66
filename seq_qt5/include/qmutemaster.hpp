@@ -189,6 +189,7 @@ private:
     QTableWidgetItem * cell (screenset::number row, column_id col);
     void clear_pattern_mutes ();
     bool load_mutegroups (const std::string & fullfilespec);
+    bool save_mutegroups (const std::string & fullfilespec);
 
 signals:
 

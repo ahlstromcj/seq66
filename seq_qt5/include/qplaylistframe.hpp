@@ -103,10 +103,6 @@ private:
     void fill_songs ();
     QTableWidgetItem * cell (bool isplaylist, int row, column_id_t col);
 
-    /**
-     * \getter m_performer
-     */
-
     performer & perf ()
     {
         return m_performer;

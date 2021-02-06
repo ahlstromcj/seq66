@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-12-20
+ * \updates       2021-02-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -503,15 +503,17 @@ qplaylistframe::fill_songs ()
 bool
 qplaylistframe::load_playlist (const std::string & fullfilespec)
 {
-    if (! fullfilespec.empty())
+    bool result = ! fullfilespec.empty();
+    if (result)
     {
         bool playlistmode = perf().open_playlist(fullfilespec, rc().verbose());
         if (playlistmode)
             playlistmode = perf().open_current_song();
+
+        reset_playlist();                   /* if (perf().playlist_mode())  */
+        update();                           /* refresh the user-interface   */
     }
-    reset_playlist();                       /* if (perf().playlist_mode())  */
-    update();                               /* refresh the user-interface   */
-    return false;
+    return result;
 }
 
 /**
@@ -680,6 +682,7 @@ qplaylistframe::handle_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     m_parent->recreate_all_slots();
+                    ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
         }
@@ -692,6 +695,7 @@ qplaylistframe::handle_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     m_parent->recreate_all_slots();
+                    ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
         }
@@ -737,6 +741,7 @@ qplaylistframe::handle_song_remove_click ()
         {
             reset_playlist();
             m_parent->recreate_all_slots();
+            ui->buttonPlaylistSave->setEnabled(true);
         }
         else
         {
@@ -753,7 +758,9 @@ qplaylistframe::handle_playlist_active_click ()
     if (not_nullptr(m_parent))
     {
         bool on = ui->checkBoxPlaylistActive->isChecked();
-        perf().playlist_activate(on);
+        perf().playlist_activate(on);       /* sets rc().playlist_active()  */
+        if (on)                             /* leave patterns in if off     */
+            m_parent->recreate_all_slots();
     }
 }
 

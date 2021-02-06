@@ -30,6 +30,9 @@
 # 		everytime we touch one of the doxygen files, and NOT when we touch one of
 # 		the source-code files.  Tired of checking in the PDF file all the time!
 #
+# 		Also, we leave it to the user to decide if the programmer's documentation
+# 		should be built.  The PDFs are not checked into git.
+#
 #-------------------------------------------------------------------------------
 
 #*****************************************************************************

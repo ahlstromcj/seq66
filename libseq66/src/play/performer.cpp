@@ -673,6 +673,14 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.filter_by_channel(m_filter_by_channel);
     rcs.tempo_track_number(m_tempo_track_number);
     usrs.resume_note_ons(m_resume_note_ons);
+
+    /*
+     * We also need to update the playlist file-name in case the user loaded or
+     * removed the playlist.
+     */
+
+    rcs.playlist_filename(playlist_filename());
+    rcs.playlist_active(playlist_active());
     return true;
 }
 

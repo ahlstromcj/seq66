@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-05
+ * \updates       2021-02-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1175,54 +1175,33 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 
 /**
  *  Opens the dialog to request a playlist.  This action should be allowed
- *  in an NSM session.
+ *  in an NSM session.  This is a slot, which calls a member function that
+ *  callers can call directly and get a boolean status, unlike this function.
  */
 
 void
 qsmainwnd::show_open_list_dialog ()
 {
     if (check())
+        (void) open_list_dialog();
+}
+
+bool
+qsmainwnd::open_list_dialog ()
+{
+    std::string fname;
+    bool result = show_playlist_dialog(this, fname, OpeningFile);
+    if (result)
     {
-        std::string fname;
-        bool ok = show_playlist_dialog(this, fname, OpeningFile);
-        if (ok)
+        result = not_nullptr(m_playlist_frame);
+        if (result)
         {
-            bool playlistmode = perf().open_playlist(fname, rc().verbose());
-            if (playlistmode)
-            {
-                playlistmode = perf().open_current_song();
-                m_playlist_frame->load_playlist();  /* update Playlist tab  */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                perf().playlist_show();
-#endif
-            }
-            else
+            result = m_playlist_frame->load_playlist(fname);
+            if (! result)
                 show_message_box(perf().playlist_error_message());
         }
     }
-}
-
-/**
- *  Opens the dialog to request a mutegroups file.
- */
-
-void
-qsmainwnd::show_open_mutes_dialog ()
-{
-    if (check())
-    {
-        std::string fname;
-        bool ok = show_file_dialog
-        (
-            this, fname, "Open mute-groups file",
-            "Mutes-groups (*.mutes);;All (*)", OpeningFile, ConfigFile
-        );
-        if (ok)
-        {
-            if (not_nullptr(m_mute_master))
-                (void) m_mute_master->load_mutegroups(fname);
-        }
-    }
+    return result;
 }
 
 /**
@@ -1234,17 +1213,88 @@ void
 qsmainwnd::show_save_list_dialog ()
 {
     if (check())
+        (void) save_list_dialog();
+}
+
+bool
+qsmainwnd::save_list_dialog ()
+{
+    std::string fname;
+    bool result = show_playlist_dialog(this, fname, SavingFile);
+    if (result)
     {
-        std::string fname;
-        bool ok = show_playlist_dialog(this, fname, SavingFile);
-        if (ok)
+        fname = file_extension_set(fname, ".playlist");
+        result = perf().save_playlist(fname);
+        if (result)
         {
-            fname = file_extension_set(fname, ".playlist");
-            ok = perf().save_playlist(fname);
-            if (! ok)
-                show_message_box(perf().playlist_error_message());
+            // performer will handle this: rc().playlist_filename(fname);
+        }
+        else
+            show_message_box(perf().playlist_error_message());
+    }
+    return result;
+}
+
+/**
+ *  Opens the dialog to request a mutegroups file.
+ */
+
+void
+qsmainwnd::show_open_mutes_dialog ()
+{
+    if (check())
+        (void) open_mutes_dialog();
+}
+
+bool
+qsmainwnd::open_mutes_dialog ()
+{
+    std::string fname;
+    bool result = show_file_dialog
+    (
+        this, fname, "Open mute-groups file",
+        "Mutes-groups (*.mutes);;All (*)", OpeningFile, ConfigFile
+    );
+    if (result)
+    {
+        result = not_nullptr(m_mute_master);
+        if (result)
+        {
+            result = m_mute_master->load_mutegroups(fname);
+            if (! result)
+                show_message_box("Mute-groups loading error");  // TODO
         }
     }
+    return result;
+}
+
+void
+qsmainwnd::show_save_mutes_dialog ()
+{
+    if (check())
+        (void) save_mutes_dialog();
+}
+
+bool
+qsmainwnd::save_mutes_dialog ()
+{
+    std::string fname;
+    bool result = show_file_dialog
+    (
+        this, fname, "Save mute-groups file",
+        "Mutes-groups (*.mutes);;All (*)", SavingFile, ConfigFile, ".mutes"
+    );
+    if (result)
+    {
+        result = not_nullptr(m_mute_master);
+        if (result)
+        {
+            result = m_mute_master->save_mutegroups(fname);
+            if (! result)
+                show_message_box("Mute-groups saving error");  // TODO
+        }
+    }
+    return result;
 }
 
 /**
@@ -1514,6 +1564,8 @@ qsmainwnd::refresh ()
                     m_live_frame->set_playlist_name(perf().playlist_song());
                 else
                     m_live_frame->set_playlist_name(rc().midi_filename());
+
+                    /* ^^^^ ???????????????????????????? */
             }
             m_is_title_dirty = false;
             update_window_title();
@@ -2029,7 +2081,9 @@ qsmainwnd::load_event_editor (int seqid)
 void
 qsmainwnd::load_set_master ()
 {
-    qsetmaster * qsm = new qsetmaster(perf(), true, nullptr, ui->SetMasterTab);
+    qsetmaster * qsm = new (std::nothrow)
+        qsetmaster(perf(), true, this, ui->SetMasterTab);
+
     if (not_nullptr(qsm))
         ui->SetsTabLayout->addWidget(qsm);
 }
@@ -2037,7 +2091,9 @@ qsmainwnd::load_set_master ()
 void
 qsmainwnd::load_mute_master ()
 {
-    qmutemaster * qsm = new qmutemaster(perf(), nullptr, ui->MuteMasterTab);
+    qmutemaster * qsm = new (std::nothrow)
+        qmutemaster(perf(), this, ui->MuteMasterTab);
+
     if (not_nullptr(qsm))
         ui->MutesTabLayout->addWidget(qsm);
 }
@@ -2072,7 +2128,9 @@ qsmainwnd::load_qseqedit (int seqid)
 
             if (perf().is_seq_active(seqid))
             {
-                qseqeditex * ex = new qseqeditex(perf(), seqid, this);
+                qseqeditex * ex = new (std::nothrow)
+                    qseqeditex(perf(), seqid, this);
+
                 if (not_nullptr(ex))
                 {
                     ex->show();
@@ -2153,7 +2211,7 @@ qsmainwnd::load_qperfedit (bool /*on*/)
 {
     if (is_nullptr(m_perfedit))
     {
-        qperfeditex * ex = new qperfeditex(perf(), this);
+        qperfeditex * ex = new (std::nothrow) qperfeditex(perf(), this);
         if (not_nullptr(ex))
         {
             m_perfedit = ex;
@@ -2240,7 +2298,9 @@ qsmainwnd::load_live_frame (int ssnum)
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
         {
-            qliveframeex * ex = new qliveframeex(perf(), ssnum, this);
+            qliveframeex * ex = new (std::nothrow)
+                qliveframeex(perf(), ssnum, this);
+
             if (not_nullptr(ex))
             {
                 ex->show();
@@ -2456,10 +2516,15 @@ qsmainwnd::tabWidgetClicked (int newindex)
                 seq::pointer seq = perf().get_sequence(seqid);
                 if (seq)
                 {
-                    m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
-                    ui->EditTabLayout->addWidget(m_edit_frame);
-                    m_edit_frame->show();
-                    update();
+                    m_edit_frame = new (std::nothrow)
+                        qseqeditframe(perf(), seqid, ui->EditTab);
+
+                    if (not_nullptr(m_edit_frame))
+                    {
+                        ui->EditTabLayout->addWidget(m_edit_frame);
+                        m_edit_frame->show();
+                        update();
+                    }
                 }
             }
         }
@@ -2512,9 +2577,14 @@ qsmainwnd::make_event_frame (int seqid)
             ui->EventTabLayout->removeWidget(m_event_frame);
             delete m_event_frame;
         }
-        m_event_frame = new qseqeventframe(perf(), seqid, ui->EventTab);
-        ui->EventTabLayout->addWidget(m_event_frame);
-        m_event_frame->show();
+        m_event_frame = new (std::nothrow)
+            qseqeventframe(perf(), seqid, ui->EventTab);
+
+        if (not_nullptr(m_event_frame))
+        {
+            ui->EventTabLayout->addWidget(m_event_frame);
+            m_event_frame->show();
+        }
     }
     return result;
 }

@@ -21,19 +21,13 @@
 # \library    	Documents
 # \author     	Chris Ahlstrom
 # \date       	2020-10-02
-# \update     	2021-01-28
+# \update     	2021-02-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		Makefile for LaTeX-based documentation.  It now uses latexmk (a
 # 		well-known Perl script) instead of using pdflatex and makeindex
 # 		directly.
-#
-#  Old destination:
-#
-#     mv seq66-user-manual.pdf ../pdf
-#
-#  	The new destination is the doc directory.
 #
 #-------------------------------------------------------------------------------
 
@@ -299,7 +293,7 @@ build_alias = @build_alias@
 build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
-builddir = @builddir@
+builddir = @abs_top_builddir@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
@@ -322,6 +316,10 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+
+#******************************************************************************
+# Install directories
+#------------------------------------------------------------------------------
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -531,13 +529,12 @@ uninstall-am:
 
 
 .PHONY: clean
-.PHONY: docs
 
 all: manual
 
 manual: tex-stamp
 	latexmk -g -silent -pdf seq66-user-manual
-	mv seq66-user-manual.pdf ../../
+	cp seq66-user-manual.pdf $(top_srcdir)/doc
 
 tex-stamp:
 	touch tex-stamp

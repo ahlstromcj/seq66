@@ -167,7 +167,12 @@ qmutemaster::qmutemaster
     ui->m_button_load->setEnabled(true);
     connect(ui->m_button_load, SIGNAL(clicked()), this, SLOT(slot_load()));
 
-    ui->m_button_save->setEnabled(true);
+    /*
+     * Set to false further down.
+     *
+     * ui->m_button_save->setEnabled(true);
+     */
+
     connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
 
     ui->m_check_to_midi->setEnabled(true);
@@ -203,6 +208,7 @@ qmutemaster::qmutemaster
     (void) initialize_table();          /* fill with mute-group information */
     handle_group_button(0, 0);          /* guaranteed to be present         */
     handle_group(0);                    /* select the first group           */
+    ui->m_button_save->setEnabled(false);
 
     cb_perf().enregister(this);         /* register this for notifications  */
     m_timer = new QTimer(this);         /* timer for regular redraws        */
@@ -247,6 +253,7 @@ void
 qmutemaster::slot_clear_all_mutes ()
 {
     cb_perf().clear_mutes();
+    ui->m_button_save->setEnabled(true);
     group_needs_update();
 }
 
@@ -531,6 +538,7 @@ qmutemaster::slot_bin_mode (bool ischecked)
 {
     cb_perf().mutes().group_format_hex(! ischecked);
     set_bin_hex(ischecked);
+    ui->m_button_save->setEnabled(true);
 }
 
 void
@@ -538,6 +546,7 @@ qmutemaster::slot_hex_mode (bool ischecked)
 {
     cb_perf().mutes().group_format_hex(ischecked);
     set_bin_hex(! ischecked);
+    ui->m_button_save->setEnabled(true);
 }
 
 void
@@ -597,16 +606,42 @@ qmutemaster::slot_up ()
         handle_group(current_group());
 }
 
+/**
+ *  This looks goofy, but we offload the dialog handling to qsmainwnd, which
+ *  has the boolean function qsmainwnd::open_mutes_dialog(), which returns true
+ *  if the user clicked OK and the call to qmutemaster::load_mutegroups()
+ *  succeeded.  Circular!
+ */
+
 void
 qmutemaster::slot_load ()
 {
     if (not_nullptr(m_main_window))
-        m_main_window->show_open_mutes_dialog();
+    {
+        m_main_window->show_open_mutes_dialog();    /* to load_mutegroups() */
+        ui->m_button_save->setEnabled(false);
+    }
+}
+
+bool
+qmutemaster::load_mutegroups (const std::string & mutefile)
+{
+    bool result = cb_perf().open_mutegroups(mutefile);
+    if (result)
+    {
+        file_message("Opened mute-groups", mutefile);
+        group_needs_update();
+    }
+    else
+        file_message("Opened failed", mutefile);
+
+    return result;
 }
 
 void
 qmutemaster::slot_save ()
 {
+#if 0
     QString filename = ui->m_mute_basename->toPlainText();
     std::string mutefile = filename.toStdString();
     bool ok = show_file_dialog
@@ -626,17 +661,19 @@ qmutemaster::slot_save ()
         else
             file_message("Write failed", mutefile);
     }
+#endif
+    if (not_nullptr(m_main_window))
+    {
+        m_main_window->show_save_mutes_dialog();
+    }
 }
 
 bool
-qmutemaster::load_mutegroups (const std::string & mutefile)
+qmutemaster::save_mutegroups (const std::string & mutefile)
 {
-    bool result = cb_perf().open_mutegroups(mutefile);
+    bool result = cb_perf().save_mutegroups(mutefile);
     if (result)
-    {
         file_message("Wrote mute-groups", mutefile);
-        group_needs_update();
-    }
     else
         file_message("Write failed", mutefile);
 
@@ -706,6 +743,7 @@ qmutemaster::handle_group (int groupno)
         ui->m_group_table->selectRow(0);
         update_group_buttons();
         update_pattern_buttons();
+        ui->m_button_save->setEnabled(true);
     }
 }
 
