@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-24
-% \update      2021-01-27
+% \update      2021-02-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -161,7 +161,8 @@
 
    Let's start with ALSA.  The following devices were discovered by running the
    commands \texttt{aconnect -lio} and \texttt{aplaymidi -l} and combining the
-   information with the information shown on the Clock and Input tabs.
+   information with the information shown on the
+   \textbf{MIDI Clock} and \textbf{MIDI Input} tabs.
 
    \begin{verbatim}
    In  Out Port  Client name        Port name
@@ -419,8 +420,66 @@
 \label{subsec:launchpad_mini_survey_jack}
 
    Now let's see what we have to do in \textsl{JACK}.
-   First peruse the separate section concerning JACK, to understand the basics.
+   First peruse \sectionref{sec:jack}, to understand the basics about
+   \textsl{JACK}, including the last section there that describes how to set up
+   \textsl{ALSA}-to-\textsl{JACK} bridging.
 
+   Run the following command, verify the ports in
+   \textbf{Edit / Preferences / MIDI Clock} and \textbf{MIDI Input}, and then
+   exit.
+
+   \begin{verbatim}
+      $ qseq66 --jack-midi
+   \end{verbatim}
+
+   In \texttt{qseq66.rc}, one will find this setting:
+
+   \begin{verbatim}
+      1     # with_jack_midi
+   \end{verbatim}
+
+   The MIDI inputs are shown, decorated with the "a2j" designation:
+
+   \begin{verbatim}
+   [midi-input]
+   5   # number of input MIDI busses
+   0 1 "[0] 0:0 seq66:a2j Midi Through [14] (capture): Midi Through Port-0"
+   1 0 "[1] 0:1 a2j:Launchpad Mini [28] (capture): Launchpad Mini MIDI 1"
+   2 0 "[2] 0:2 a2j:E-MU XMidi1X1 Tab [32] (capture): E-MU XMidi1X1 ..."
+   3 0 "[3] 0:3 a2j:nanoKEY2 [36] (capture): nanoKEY2 MIDI 1"
+   4 0 "[4] 0:4 a2j:USB Midi [40] (capture): USB Midi MIDI 1"
+   \end{verbatim}
+
+   This is very similar to the \textsl{ALSA} setup, except that there is no
+   "announce" port in \textsl{JACK}.  The Mini's input buss has shifted from
+   port 2 to port 1.  And, of course, the port names are a lot
+   longer.  Similarly, for the MIDI outputs:
+
+   \begin{verbatim}
+   [midi-clock]
+   5    # number of MIDI clocks (output busses)
+   0 0  "[0] 0:0 seq66:a2j Midi Through [14] (playback): Midi Through. . ."
+   1 0  "[1] 0:1 seq66:a2j Launchpad Mini [28] (playback): Launchpad. . ."
+   2 0  "[2] 0:2 seq66:a2j E-MU XMidi1X1 Tab [32] (playback): E-MU . . ."
+   3 0  "[3] 0:3 seq66:a2j nanoKEY2 [36] (playback): nanoKEY2 MIDI 1"
+   4 0  "[4] 0:4 seq66:a2j USB Midi [40] (playback): USB Midi MIDI 1"
+   \end{verbatim}
+
+   We make sure that the correct \texttt{control-buss} and
+   \texttt{output-buss} are set, and both have the setting
+   \texttt{midi-enabled = true} in \texttt{qseq66-lp-mini.ctrl}.
+   Then make sure that \texttt{qseq66.rc} has its
+   \texttt{[midi-control-file]} set to:
+
+   \begin{verbatim}
+      "qseq66-lp-mini.ctrl"
+   \end{verbatim}
+
+   Run \texttt{qseq66} again, and make sure that the Mini's input and output
+   ports are enabled. (Unfortunately, if one has to enable them, the
+   application will need to be restarted.)
+   The results should be just like
+   \sectionref{subsubsec:launchpad_mini_test_run_alsa}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

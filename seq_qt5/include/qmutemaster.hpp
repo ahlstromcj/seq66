@@ -203,6 +203,7 @@ private slots:
         int /*prevrow*/, int /*prevcolumn*/
     );
     void slot_clear_all_mutes ();
+    void slot_mutes_file_modify ();
     void slot_bin_mode (bool ischecked);
     void slot_hex_mode (bool ischecked);
     void slot_trigger ();

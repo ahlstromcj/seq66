@@ -436,8 +436,8 @@ performer::performer (int ppqn, int rows, int columns) :
 performer::~performer ()
 {
     m_io_active = m_is_running = false;
-    reset_sequences();                      /* stop all output upon exit    */
-    announce_exit(false);                   /* blank the devide             */
+//  reset_sequences();                      /* stop all output upon exit    */
+//  announce_exit(false);                   /* blank the devide             */
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
@@ -2292,6 +2292,9 @@ performer::launch_input_thread ()
 bool
 performer::finish ()
 {
+    reset_sequences();                      /* stop all output upon exit    */
+    announce_exit(false);                   /* blank the devide             */
+
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
     if (result)

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-02-06
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,7 +64,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qplaylistframe::qplaylistframe
@@ -124,6 +124,11 @@ qplaylistframe::qplaylistframe
     (
         ui->buttonPlaylistAdd, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_add_click())
+    );
+    connect
+    (
+        ui->buttonPlaylistModify, SIGNAL(clicked(bool)),
+        this, SLOT(handle_list_modify_click())
     );
     connect
     (
@@ -285,18 +290,21 @@ qplaylistframe::set_column_widths ()
  *  Resets the play-list.  First, resets to the first (0th) play-list and the
  *  first (0th) song.  Then fills the play-list items and resets again.  Then
  *  fills in the play-list and song items for the current selection.
+ *
+ * \param listindex
+ *      The play-list to reset to, defaulting to the 0th list.  However, when
+ *      deleting a song, we want to reset to the current playlist.
  */
 
 void
-qplaylistframe::reset_playlist ()
+qplaylistframe::reset_playlist (int listindex)
 {
-    if (perf().playlist_reset())
+    if (listindex >= 0 && perf().playlist_reset(listindex))
     {
         fill_playlists();
-        (void) perf().playlist_reset();     /* back to the 0th play-list    */
         fill_songs();
         set_current_playlist();
-        ui->tablePlaylistSections->selectRow(0);
+        ui->tablePlaylistSections->selectRow(listindex);
         ui->tablePlaylistSongs->selectRow(0);
     }
 }
@@ -633,6 +641,35 @@ qplaylistframe::handle_list_add_click ()
 }
 
 void
+qplaylistframe::handle_list_modify_click ()
+{
+    if (not_nullptr(m_parent))
+    {
+        QString temp = ui->editPlaylistPath->text();
+        std::string listpath = temp.toStdString();
+        std::string listname;
+        int index = m_current_list_index;
+        int midinumber;
+        temp = ui->editPlaylistName->text();
+        listname = temp.toStdString();
+        temp = ui->editPlaylistNumber->text();
+        midinumber = string_to_int(temp.toStdString(), index);
+        if (perf().modify_list(index, midinumber, listname, listpath))
+        {
+            reset_playlist(index);
+            fill_songs();
+            ui->buttonPlaylistSave->setEnabled(true);
+        }
+        else
+        {
+            /*
+             * TODO: report error
+             */
+        }
+    }
+}
+
+void
 qplaylistframe::handle_list_remove_click ()
 {
     if (not_nullptr(m_parent))
@@ -736,10 +773,11 @@ qplaylistframe::handle_song_remove_click ()
 {
     if (not_nullptr(m_parent))
     {
-        int index = m_current_song_index;
-        if (perf().remove_song_by_index(index))
+        int listindex = m_current_list_index;
+        int songindex = m_current_song_index;
+        if (perf().remove_song_by_index(songindex))
         {
-            reset_playlist();
+            reset_playlist(listindex);
             m_parent->recreate_all_slots();
             ui->buttonPlaylistSave->setEnabled(true);
         }

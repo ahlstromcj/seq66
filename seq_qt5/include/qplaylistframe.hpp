@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-19
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -96,7 +96,7 @@ private:
 
     void set_row_heights (int height);
     void set_column_widths ();
-    void reset_playlist ();
+    void reset_playlist (int listindex = 0);
     void set_current_playlist ();
     void set_current_song ();
     void fill_playlists ();
@@ -128,6 +128,7 @@ private slots:
     void handle_song_click_ex (int, int, int, int);
     void handle_list_load_click ();
     void handle_list_add_click ();
+    void handle_list_modify_click ();
     void handle_list_remove_click ();
     void handle_list_save_click ();
     void handle_song_load_click ();

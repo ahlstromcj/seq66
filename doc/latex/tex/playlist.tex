@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2018-11-11
+% \update      2021-02-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -46,13 +46,13 @@
    The file extension is \texttt{.playlist}.
 
    The Qt user-interface supports editing of the play-list, though not yet
-   perfected.
+   perfected; bugs still exist.
    The user can use a text editor to edit the play-list file, if careful.
 
    The play-list format is defined in the following section.
    Later sections describe the user-interface.
 
-\subsection{Seq66 Play-Lists / Format}
+\subsection{Seq66 Play-Lists / 'playlist' File Format}
 \label{subsec:playlist_setup}
 
    The play-list file, by convention, has a file-name of the form
@@ -210,8 +210,11 @@
    (e.g. \texttt{data/sample.playlist}).
    If no path is specified, the directory is the currently set
    \textsl{Seq66} configuration-file directory.
+   For session support, one must stick with the configuration directory;
+   do not provide an explicit directory-name.
 
-   Please note that any play-list file specified on the command line
+   Please note that any play-list file specified on the command line, or loaded
+   in the play-list user-interface,
    will be written into the 'rc' file's \texttt{[playlist]} section when
    \textsl{Seq66} exits.
 
@@ -234,7 +237,7 @@
    The \texttt{Right} and \texttt{Left} arrows move forward or backward through
    the list of songs for the currently-selected play-list.
 
-   The Qt 5 user-interface supports the full display, selection, and editing of
+   The Qt 5 user-interface supports the display, selection, and editing of
    the play-lists and the song-list for each play-list.
    There are still some minor issues to work out.  If encountered, close
    \textsl{Seq66} and edit the \texttt{.playlist} file manually.
@@ -297,6 +300,34 @@
       \item \textbf{Save Lists}.
    \end{itemize}
 
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Load List}{playlist editor!load list}
+   This button brings up the "Open play-list file" dialog, using the
+   \textsl{Seq66} configuration directory as the default directory.
+   It is recommended to use only this directory, especially when running in a
+   session manager. If loaded from somewhere else, save the file back to the
+   configuration directory.
+
+   \itempar{Add List}{playlist editor!add list}
+   This button is enabled with the editing of the \textbf{Playlist Selection}
+   fields.  Once these three fields are correct, the list can be added.
+   The new list can then be populated with songs.
+
+   \itempar{Modify List}{playlist editor!add list}
+   This button is enabled with the editing of the \textbf{Playlist Selection}
+   fields.  Once these three fields are correct, the list can be modified.
+   \textbf{Bug: Currently does not work.}
+
+   \itempar{Delete List}{playlist editor!delete list}
+   This button removes the currently-selected play-list from the play-list
+   file.  This action doesn't take effect until the play-list file is saved or
+   \textsl{Seq66} exits and does its normal saving.
+
+   \itempar{Save Lists}{playlist editor!save lists}
+   This button bring up a file dialog to save the current play-lists and songs
+   into a play-list file.
+
    This section briefly describes the "Song" buttons to the right of the
    song-list table.
 
@@ -307,6 +338,32 @@
       \item \textbf{Delete Song}.
       \item \textbf{Lists Active}.
    \end{itemize}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Load Song}{playlist editor!load song}
+   This button bring up a dialog to open a MIDI or WRK file from
+   the current song-directory or from an arbitrary directory.
+   Currently, be careful with this option; adding a file from an arbitrary
+   directory will generally prepend that directory to the MIDI file-name,
+   making the song list difficult to read.
+
+   \itempar{Add Song}{playlist editor!add song}
+   This button is meant to add a song already loaded in the \textbf{Live} frame
+   into the play-list.
+   Currently not implemented; disabled.
+
+   \itempar{Modify Song}{playlist editor!modify song}
+   This button is meant to modify song information.
+   Currently not implemented; disabled.
+
+   \itempar{Delete Song}{playlist editor!delete song}
+   This button deletes the currently-selected song from the song list.
+
+   \itempar{Lists Active}{playlist editor!lists active}
+   If checked, the play-list is enabled, and the arrow keys, automation keys,
+   and MIDI controls (if configured) can be used to move between play-lists and
+   songs.
 
 \paragraph{Seq66 Play-Lists / User Interfaces / Info Fields}
 \label{paragraph:playlist_ui_qt_playlist_buttons}
@@ -325,7 +382,7 @@
    \end{itemize}
 
    These items can be modified, however, by editing the play-list file
-   directory.
+   directly.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

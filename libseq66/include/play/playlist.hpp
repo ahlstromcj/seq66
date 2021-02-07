@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-12-03
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  * \todo
@@ -368,9 +368,15 @@ public:
 public:
 
     void clear ();
-    bool reset_list (bool clearit = false);
+    bool reset_list (int listindex = 0, bool clearit = false);
     bool copy_songs (const std::string & destination);
     bool add_list
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    );
+    bool modify_list
     (
         int index, int midinumber,
         const std::string & name,

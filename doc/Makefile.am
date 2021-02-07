@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2021-02-04
+# \updates     2021-02-07
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -24,8 +24,12 @@ EXTRA_DIST = make_dox *.cfg dox/*.dox *.pdf
 #*****************************************************************************
 # SUBDIRS
 #-----------------------------------------------------------------------------
+#
+# We now make the Doxygen documentation only manually: dox removed.
+#
+#-----------------------------------------------------------------------------
 
-SUBDIRS = dox latex
+SUBDIRS = latex
 
 #*****************************************************************************
 # DIST_SUBDIRS

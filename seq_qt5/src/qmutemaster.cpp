@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-02-05
+ * \updates       2021-02-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -109,6 +109,12 @@ qmutemaster::qmutemaster
     ui->setupUi(this);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     clear_pattern_mutes();              /* empty the pattern bits           */
+
+    connect
+    (
+        ui->m_mute_basename, SIGNAL(textChanged()),
+        this, SLOT(slot_mutes_file_modify())
+    );
 
     /*
      * Connect the bin/hex radio buttons and set them as per the configured
@@ -199,8 +205,7 @@ qmutemaster::qmutemaster
         this, SLOT(slot_clear_all_mutes())
     );
 
-    QString mgfname = "backup-";
-    mgfname += QString::fromStdString(rc().mute_group_filename());
+    QString mgfname = QString::fromStdString(rc().mute_group_filename());
     ui->m_mute_basename->setPlainText(mgfname);
     ui->m_mute_basename->setEnabled(true);
 
@@ -534,6 +539,12 @@ qmutemaster::set_bin_hex (bool bin_checked)
 }
 
 void
+qmutemaster::slot_mutes_file_modify ()
+{
+    ui->m_button_save->setEnabled(true);
+}
+
+void
 qmutemaster::slot_bin_mode (bool ischecked)
 {
     cb_perf().mutes().group_format_hex(! ischecked);
@@ -631,6 +642,7 @@ qmutemaster::load_mutegroups (const std::string & mutefile)
     {
         file_message("Opened mute-groups", mutefile);
         group_needs_update();
+        ui->m_button_save->setEnabled(false);
     }
     else
         file_message("Opened failed", mutefile);
@@ -641,31 +653,8 @@ qmutemaster::load_mutegroups (const std::string & mutefile)
 void
 qmutemaster::slot_save ()
 {
-#if 0
-    QString filename = ui->m_mute_basename->toPlainText();
-    std::string mutefile = filename.toStdString();
-    bool ok = show_file_dialog
-    (
-        this, mutefile, "Save mute-groups file",
-        "Mute-Groups (*.mutes);;All files (*)", SavingFile, ConfigFile,
-        ".mutes"
-    );
-    if (ok)
-    {
-        /*
-         * EXPERIMENT: REPLACE if (save_mutegroups(mutefile))
-         */
-
-        if (cb_perf().save_mutegroups(mutefile))
-            file_message("Wrote mute-groups", mutefile);
-        else
-            file_message("Write failed", mutefile);
-    }
-#endif
     if (not_nullptr(m_main_window))
-    {
         m_main_window->show_save_mutes_dialog();
-    }
 }
 
 bool
@@ -673,7 +662,10 @@ qmutemaster::save_mutegroups (const std::string & mutefile)
 {
     bool result = cb_perf().save_mutegroups(mutefile);
     if (result)
+    {
         file_message("Wrote mute-groups", mutefile);
+        ui->m_button_save->setEnabled(false);
+    }
     else
         file_message("Write failed", mutefile);
 

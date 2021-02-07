@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-02-05
+ * \updates       2021-02-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -133,11 +133,13 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 bool
 show_playlist_dialog (QWidget * parent, std::string & selectedfile, bool saving)
 {
+    std::string filter = "Playlist (*.playlist);;All files (*)";
+    std::string caption = saving ?
+        "Save play-lists file" : "Open play-lists file";
+
     return show_file_dialog
     (
-        parent, selectedfile, "Open play-list file",
-        "Playlist (*.playlist);;All files (*)",
-        saving, ConfigFile, ".playlist"
+        parent, selectedfile, caption, filter, saving, ConfigFile, ".playlist"
     );
 }
 

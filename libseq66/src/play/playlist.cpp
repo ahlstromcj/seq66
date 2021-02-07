@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-12-03
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -634,6 +634,9 @@ playlist::clear ()
 /**
  *  Resets to the first play-list and the first-song in that playlist.
  *
+ * \param listindex
+ *      Set the current list to this value, which defaults to 0.
+ *
  * \param clearit
  *      If true, clear the playlist no matter what. Then false is returned.
  *
@@ -643,7 +646,7 @@ playlist::clear ()
  */
 
 bool
-playlist::reset_list (bool clearit)
+playlist::reset_list (int listindex, bool clearit)
 {
     bool result = false;
     if (clearit)
@@ -655,7 +658,16 @@ playlist::reset_list (bool clearit)
         result = ! m_play_lists.empty();
         if (result)
         {
-            m_current_list = m_play_lists.begin();
+            int index = 0;
+            for (auto p = m_play_lists.begin(); p != m_play_lists.end(); ++p)
+            {
+                if (index == listindex)
+                {
+                    m_current_list = p;
+                    break;
+                }
+                ++index;
+            }
             result = select_song(0);
         }
     }
@@ -919,6 +931,28 @@ playlist::add_list
 
     bool result = add_list(plist);
     reorder_play_list();
+    return result;
+}
+
+bool
+playlist::modify_list
+(
+    int index,
+    int midinumber,
+    const std::string & name,
+    const std::string & directory
+)
+{
+    bool result = m_current_list != m_play_lists.end();
+    if (result)
+    {
+        play_list_t & plist = m_current_list->second;
+        plist.ls_index = index;             /* ordinal value in list table  */
+        plist.ls_midi_number = midinumber;  /* MIDI control number to use   */
+        plist.ls_list_name = name;
+        plist.ls_file_directory = directory;
+        reorder_play_list();                /* is this necessary?           */
+    }
     return result;
 }
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-01-27
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -996,9 +996,9 @@ public:
         return m_play_list->song_count();
     }
 
-    bool playlist_reset ()
+    bool playlist_reset (int listindex = 0)
     {
-        return m_play_list->reset_list();
+        return m_play_list->reset_list(listindex);
     }
 
     bool open_mutegroups (const std::string & mfg);
@@ -1119,6 +1119,16 @@ public:
     )
     {
         return m_play_list->add_list(index, midinumber, name, directory);
+    }
+
+    bool modify_list
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    )
+    {
+        return m_play_list->modify_list(index, midinumber, name, directory);
     }
 
     bool remove_list (int index)

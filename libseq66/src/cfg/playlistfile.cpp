@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-09-19
- * \updates       2021-01-05
+ * \updates       2021-02-07
  * \license       GNU GPLv2 or above
  *
  *  Here is a skeletal representation of a Seq66 playlist file:
@@ -364,7 +364,7 @@ playlistfile::parse ()
         std::string msg = "Open failed: " + name();
         result = set_error_message(msg);
     }
-    (void) play_list().reset_list(! result);    /* reset, not clear, if ok  */
+    (void) play_list().reset_list(0, ! result); /* reset, not clear, if ok  */
     return result;
 }
 

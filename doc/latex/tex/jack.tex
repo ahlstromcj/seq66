@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-28
-% \update      2021-01-27
+% \update      2021-02-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -192,6 +192,34 @@
 
    Again, if these automatic connections get in the way, run \texttt{seq66} in
    manual/virtual mode.
+
+   To set up \textsl{JACK}, one can use the script shipped with
+   \textsl{Seq66}, \texttt{data/linus/startjack}.  It has the following
+   requirements and dependencies:
+
+   \begin{itemize}
+      \item \texttt{qjackctl}.  Provides a way to show the connections. It also
+         can start \textsl{JACK}, but we use \texttt{jack\_control} for that in
+         this script.
+      \item \texttt{jack\_control}.  Provides a way to start \textsl{JACK}
+         and set up a number of \textsl{JACK} parameters.
+         Part of the \textsl{Debian} \texttt{jack2d} package.
+      \item \texttt{a2j\_control}.  Provides a way to configure and start the
+         \textsl{ALSA}-to-\textsl{JACK} bridge to create bridges for all the
+         hardware MIDI ports on the computer.
+         Part of the \textsl{Debian} \texttt{a2jmidid} package.
+      \item \texttt{yoshimi}.  Provides a software synthesizer for MIDI
+         playback.
+      \item \texttt{yoshimi-b4uacuse-gm.state}.  Provides a "General MIDI"
+      setup for \textsl{yoshimi}.  Located in the \texttt{data/linux}
+      directory.
+      \item \textsl{Editing}.  One must edit the script to change the value of
+      \texttt{HWPORT}
+   \end{itemize}
+
+   One can also edit the script to use another software synthesizer.
+   Once ready, 
+   Run \texttt{startjack} and wait patiently for it to set up.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

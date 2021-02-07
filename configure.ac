@@ -625,7 +625,6 @@ AC_CONFIG_FILES([
  Seq66cli/Makefile
  data/Makefile
  doc/Makefile
- doc/dox/Makefile
  doc/latex/Makefile
  doc/latex/tex/Makefile
  Seqtool/Makefile
