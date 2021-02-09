@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-02-05
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -927,7 +927,54 @@ rcfile::write ()
     std::string usrname = rc_ref().user_filespec();
     usrname = rc_ref().trim_home_directory(usrname);
     usrname = add_quotes(usrname);
-    file << "\n[usr-file]\n\n" << usrname << "\n";
+    file << "\n[usr-file]\n\n" << usrname << "\n\n";
+
+    file
+        << "[playlist]\n\n"
+        "# Provides a configured play-list file and a flag to activate it.\n"
+        "# playlist_active: 1 = active, 0 = do not use it\n\n"
+        << (rc_ref().playlist_active() ? "1" : "0")
+        << "\n"
+        ;
+
+    file << "\n"
+        "# Provides the name of a play-list file. If there is none, use '\"\"',\n"
+        "# or set the flag above to 0. Use the extension '.playlist'.\n"
+        "\n"
+        ;
+
+    std::string plname = rc_ref().playlist_filename();
+    plname = rc_ref().trim_home_directory(plname);
+    plname = add_quotes(plname);
+    file << plname << "\n";
+
+    file << "\n"
+		"# Optional MIDI file base directory for play-list files.\n"
+		"# If present, sets the base directory in which to find all of\n"
+		"# the MIDI files in all playlists.  This is helpful when moving a\n"
+		"# complete set of playlists from one directory to another,\n"
+		"# preserving the sub-directories.\n"
+        "\n"
+		;
+
+	std::string mbasedir = rc_ref().midi_base_directory();
+    mbasedir = add_quotes(mbasedir);
+    file << mbasedir << "\n";
+
+    file << "\n"
+        "[note-mapper]\n\n"
+        "# Provides a configured note-map and a flag to activate it.\n"
+        "# notemap_active: 1 = active, 0 = do not use it\n\n"
+        << (rc_ref().notemap_active() ? "1" : "0") << "\n\n"
+        << "# Provides the name of the note-map file. If none, use '\"\"'.\n"
+           "# Use the extension '.drums'.  This file is used only when the user\n"
+           "# invokes the note-conversion operation in the pattern editor.\n\n"
+        ;
+
+    std::string nmname = rc_ref().notemap_filespec();
+    nmname = rc_ref().trim_home_directory(nmname);
+    nmname = add_quotes(nmname);
+    file << nmname << "\n";
 
     /*
      * New section for palette file.
@@ -1260,52 +1307,6 @@ rcfile::write ()
         file << "\n";
     }
 
-    file
-        << "[playlist]\n\n"
-        "# Provides a configured play-list file and a flag to activate it.\n"
-        "# playlist_active: 1 = active, 0 = do not use it\n\n"
-        << (rc_ref().playlist_active() ? "1" : "0")
-        << "\n"
-        ;
-
-    file << "\n"
-        "# Provides the name of a play-list file. If there is none, use '\"\"',\n"
-        "# or set the flag above to 0. Use the extension '.playlist'.\n"
-        "\n"
-        ;
-
-    std::string plname = rc_ref().playlist_filename();
-    plname = rc_ref().trim_home_directory(plname);
-    plname = add_quotes(plname);
-    file << plname << "\n";
-
-    file << "\n"
-		"# Optional MIDI file base directory for play-list files.\n"
-		"# If present, sets the base directory in which to find all of\n"
-		"# the MIDI files in all playlists.  This is helpful when moving a\n"
-		"# complete set of playlists from one directory to another,\n"
-		"# preserving the sub-directories.\n"
-        "\n"
-		;
-
-	std::string mbasedir = rc_ref().midi_base_directory();
-    mbasedir = add_quotes(mbasedir);
-    file << mbasedir << "\n";
-
-    file << "\n"
-        "[note-mapper]\n\n"
-        "# Provides a configured note-map and a flag to activate it.\n"
-        "# notemap_active: 1 = active, 0 = do not use it\n\n"
-        << (rc_ref().notemap_active() ? "1" : "0") << "\n\n"
-        << "# Provides the name of the note-map file. If none, use '\"\"'.\n"
-           "# Use the extension '.drums'.  This file is used only when the user\n"
-           "# invokes the note-conversion operation in the pattern editor.\n\n"
-        ;
-
-    std::string nmname = rc_ref().notemap_filespec();
-    nmname = rc_ref().trim_home_directory(nmname);
-    nmname = add_quotes(nmname);
-    file << nmname << "\n\n";
     file
         << "# End of " << name() << "\n#\n"
         << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-01-18
+% \update      2021-02-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -174,6 +174,9 @@
       3 "z" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 3
       . . .
    \end{verbatim}
+
+   See \sectionref{subsubsec:configuration_ctrl_loop_control}, which describes
+   the details of this layout.
 
 \subsection{Command Line}
 \label{subsec:configuration_command_line}
@@ -1282,15 +1285,16 @@
 
    \begin{verbatim}
       [loop-control]
+      # Control:  Toggle              On                Off
       0 "1" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 0
       . . .
    \end{verbatim}
 
    The first number is an index number, starting at 0.  It indicates what
    loop the control line will affect.
-   The numbers in the leftmost brackets define a \textsl{toggle} filter;
-   the numbers in the middle brackets define an \textsl{on} filter;
-   the numbers in the rightmost brackets define an \textsl{off} filter.
+   The numbers in the leftmost brackets define a \textsl{Toggle} control;
+   the numbers in the middle brackets define an \textsl{On} control;
+   the numbers in the rightmost brackets define an \textsl{Off} control.
    The numbers inside each set of brackets define six values that set up the
    control.  The layout of each filter inside the brackets is as follows:
 
@@ -1305,10 +1309,14 @@
       \item \textbf{D2max} = \textbf{data2 max}
    \end{itemize}
 
-   If \textbf{OPR (on/off)} is set to 1, it will match the incoming MIDI
-   against the \textbf{STAT (MIDI status byte)} pattern.
-   and perform the action (on/off/toggle) if the data
-   falls in the range specified.  All values are in decimal.
+   If \textbf{OPR (on/off)} is set to 1, the control is enabled.
+   \textsl{Seq66} will match the incoming MIDI event
+   against the \textbf{STAT (MIDI status byte)} pattern (e.g. a Note On event),
+   and perform the action (On/Off/Toggle) if the \textbf{D1} (e.g. a Note
+   number), matches the
+   incoming data, and the incoming parameters (e.g. Note velocity)
+   falls in the specified \textbf{D2min} to \textbf{D2max} range.
+   All data values are best specified in decimal.
 
    The \textbf{INV (inverse)} field will make the pattern perform the opposite
    action (\textsl{off} for \textsl{on}, \textsl{on} for \textsl{off}) if the
@@ -1385,6 +1393,31 @@
        . . .
    \end{verbatim}
 
+   The stanzas meaning can change depending on the type of control.  Here are the
+   important styles:
+
+   \begin{verbatim}
+      Normal:        [ Toggle       ] [ On          ] [ Off             ]
+      Playback:      [ Pause Play   ] [ Start Play  ] [ Stop Play       ]
+      Play list:     [ Select by D2 ] [ Select Next ] [ Select Previous ]
+      Play song:     [ Select by D2 ] [ Select Next ] [ Select Previous ]
+   \end{verbatim}
+
+   For selecting play-lists and songs by number, \textbf{D2} is used.
+   Thus, one possible value to use to select would be to use a 
+   Note On event on channel 16 (0x9F) with a note number of 0 (a rarely-used
+   note in any tune), and list/song numbers ranging from 0 to 127.  Using note
+   0 for list selection and note 1 for song selection:
+
+   \begin{verbatim}
+      24 "F2" [ 1 0 0x9F   0   0 127 ] [ . . . ] [ . . .] # Play List
+      25 "F3" [ 1 0 0x9F   1   0 127 ] [ . . . ] [ . . .] # Play Song
+   \end{verbatim}
+
+   Obviously, this requires a MIDI controller for which the velocity can be
+   exactly specified.  One can also reserve \textbf{D2} values of 126 for
+   "previous" and 127 for "next".
+
 \paragraph{Automation / BPM Up and Down}
 \label{paragraph:configuration_midi_ctrl_bpmupdn}
 
@@ -1452,16 +1485,6 @@
    on the \textsl{MPK Mini}, the corresponding sequence gets queued.
 
    Also include in the data directory are sample 'ctrl' files for other devices.
-
-%\paragraph{Automation / Mod Mute Group}
-%\label{paragraph:configuration_midi_ctrl_modgmute}
-%
-%   The Mod Group Mute MIDI control sets up a "mute group".
-%   This control sets an internal "mode-group" flag on.
-%
-%   When activated, \textsl{Seq66} loops through all of the 32
-%   screen-sets, and through the active pattern in each screen-set, and
-%   sets each pattern as muted or unmuted, depending on the saved mute state.
 
 \paragraph{Automation / Mute Group}
 \label{paragraph:configuration_midi_ctrl_modgmute}

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-06
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -848,7 +848,7 @@ qsmainwnd::qsmainwnd
         rc().session_midi_filename(s_default_tune);
 
 #if defined SEQ66_PORTMIDI_SUPPORT
-    ui->alsaJackButton->setText("PM");
+    ui->alsaJackButton->setText("PortMidi");
     ui->jackTransportButton->hide();
 #else
     QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
@@ -860,7 +860,6 @@ qsmainwnd::qsmainwnd
 
     ui->alsaJackButton->setText(midiengine);
     ui->jackTransportButton->setText(jtrans);
-
 #endif
 
     show();
@@ -1264,6 +1263,10 @@ qsmainwnd::open_mutes_dialog ()
             if (! result)
                 show_message_box("Mute-groups loading error");  // TODO
         }
+        else
+        {
+            // what to do?
+        }
     }
     return result;
 }
@@ -1276,9 +1279,9 @@ qsmainwnd::show_save_mutes_dialog ()
 }
 
 bool
-qsmainwnd::save_mutes_dialog ()
+qsmainwnd::save_mutes_dialog (const std::string & basename)
 {
-    std::string fname;
+    std::string fname = basename;
     bool result = show_file_dialog
     (
         this, fname, "Save mute-groups file",
@@ -1292,6 +1295,10 @@ qsmainwnd::save_mutes_dialog ()
             result = m_mute_master->save_mutegroups(fname);
             if (! result)
                 show_message_box("Mute-groups saving error");  // TODO
+        }
+        else
+        {
+            // what to do?
         }
     }
     return result;
@@ -2085,7 +2092,10 @@ qsmainwnd::load_set_master ()
         qsetmaster(perf(), true, this, ui->SetMasterTab);
 
     if (not_nullptr(qsm))
+    {
         ui->SetsTabLayout->addWidget(qsm);
+        m_set_master = qsm;
+    }
 }
 
 void
@@ -2095,7 +2105,10 @@ qsmainwnd::load_mute_master ()
         qmutemaster(perf(), this, ui->MuteMasterTab);
 
     if (not_nullptr(qsm))
+    {
         ui->MutesTabLayout->addWidget(qsm);
+        m_mute_master = qsm;
+    }
 }
 
 /**

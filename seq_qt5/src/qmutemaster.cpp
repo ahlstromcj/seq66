@@ -654,7 +654,28 @@ void
 qmutemaster::slot_save ()
 {
     if (not_nullptr(m_main_window))
-        m_main_window->show_save_mutes_dialog();
+    {
+        std::string fname = ui->m_mute_basename->toPlainText().toStdString();
+        if (fname.empty())
+        {
+            /*
+             * Use default 'mutes' name
+             */
+        }
+        else
+        {
+            if (name_has_directory(fname))
+            {
+                std::string directory;
+                std::string basename;
+                bool ok = filename_split(fname, directory, basename);
+                if (ok)
+                    fname = basename;
+            }
+            rc().mute_group_filename(fname);
+        }
+        m_main_window->save_mutes_dialog(rc().mute_group_filespec());
+    }
 }
 
 bool
@@ -913,6 +934,7 @@ qmutemaster::handle_pattern_button (int row, int column)
     {
         m_pattern_mutes[s] = midibool(enabled);
         ui->m_button_set_mutes->setEnabled(true);
+        ui->m_button_save->setEnabled(true);
     }
 }
 

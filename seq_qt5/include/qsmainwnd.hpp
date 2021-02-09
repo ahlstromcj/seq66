@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-23
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -235,7 +235,7 @@ private:
     bool open_list_dialog ();
     bool save_list_dialog ();
     bool open_mutes_dialog ();
-    bool save_mutes_dialog ();
+    bool save_mutes_dialog (const std::string & basename = "");
     void update_tap (midibpm bpm);
 
 private:

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2021-02-07
+ * \updates       2021-02-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -186,6 +186,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->buttonSongModify, SIGNAL(clicked(bool)),
+        this, SLOT(handle_song_modify_click())
+    );
+    connect
+    (
         ui->buttonSongRemove, SIGNAL(clicked(bool)),
         this, SLOT(handle_song_remove_click())
     );
@@ -214,11 +219,18 @@ qplaylistframe::qplaylistframe
         ui->editSongNumber, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+
+    /*
+     * This field is now read-only, as is the base MIDI file name.
+     * The Load Song button must be used.
+     */
+
     connect
     (
         ui->editSongFilename, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+
     ui->midiBaseDirText->setReadOnly(true);
     ui->midiBaseDirText->setEnabled(false);
     ui->currentSongPath->setReadOnly(true);
@@ -299,10 +311,13 @@ qplaylistframe::set_column_widths ()
 void
 qplaylistframe::reset_playlist (int listindex)
 {
-    if (listindex >= 0 && perf().playlist_reset(listindex))
+    if (listindex >= 0 && perf().playlist_reset())
     {
         fill_playlists();
         fill_songs();
+        if (listindex > 0)
+            (void) perf().playlist_reset(listindex);
+
         set_current_playlist();
         ui->tablePlaylistSections->selectRow(listindex);
         ui->tablePlaylistSongs->selectRow(0);
@@ -352,7 +367,6 @@ qplaylistframe::set_current_song ()
     {
         std::string temp = std::to_string(perf().song_midi_number());
         ui->editSongNumber->setText(QString::fromStdString(temp));
-
         temp = perf().song_directory();
         if (temp.empty())
             temp = "None";
@@ -362,7 +376,6 @@ qplaylistframe::set_current_song ()
         bool embedded = perf().is_own_song_directory();
         temp = embedded ? "*" : " " ;
         ui->labelDirEmbedded->setText(QString::fromStdString(temp));
-
         temp = perf().song_filename();
         if (temp.empty())
             temp = "None";
@@ -741,7 +754,8 @@ qplaylistframe::handle_song_load_click ()
 
 /**
  *  These values depend on correct information edited into the Song text
- *  fields.  We should support loading a song from a file-selection dialog.
+ *  fields.  We support loading a song from a file-selection dialog, so that
+ *  is the preferred method; see handle_song_load_click().
  */
 
 void
@@ -749,14 +763,50 @@ qplaylistframe::handle_song_add_click ()
 {
     if (not_nullptr(m_parent))
     {
+        std::string name = rc().midi_filename();            /* full path */
+        bool loadedfile = ! name.empty();
+        if (loadedfile)
+        {
+            std::string directory;
+            std::string basename;
+            bool ok = filename_split(name, directory, basename);
+            if (ok)
+            {
+                std::string nstr = ui->editSongNumber->text().toStdString();
+                int midinumber = std::stoi(nstr);
+                int index = perf().song_count() + 1;
+                if (perf().add_song(index, midinumber, basename, directory))
+                {
+                    int listindex = m_current_list_index;
+                    reset_playlist(listindex);
+                    m_parent->recreate_all_slots();
+                    song_unmodify();
+                }
+                else
+                {
+                    /*
+                     * TODO: report error
+                     */
+                }
+            }
+        }
+    }
+}
+
+void
+qplaylistframe::handle_song_modify_click ()
+{
+    if (not_nullptr(m_parent))
+    {
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
         std::string nstr = ui->editSongNumber->text().toStdString();
         int midinumber = std::stoi(nstr);
-        int index = perf().song_count() + 1;
-        if (perf().add_song(index, midinumber, name, directory))
+        int songindex = m_current_song_index;
+        if (perf().modify_song(songindex, midinumber, name, directory))
         {
-            reset_playlist();
+            int listindex = m_current_list_index;
+            reset_playlist(listindex);
             m_parent->recreate_all_slots();
         }
         else
@@ -821,7 +871,10 @@ qplaylistframe::list_unmodify ()
 void
 qplaylistframe::song_modify (const QString &)
 {
-    ui->buttonSongAdd->setEnabled(true);
+    bool addable = ! rc().midi_filename().empty();
+    if (addable)
+        ui->buttonSongAdd->setEnabled(true);
+
     ui->buttonSongModify->setEnabled(true);
 }
 

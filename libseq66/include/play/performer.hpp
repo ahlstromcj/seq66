@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-07
+ * \updates       2021-02-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -1149,6 +1149,16 @@ public:
     bool add_song (const std::string & fullpath)
     {
         return m_play_list->add_song(fullpath);
+    }
+
+    bool modify_song
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    )
+    {
+        return m_play_list->modify_song(index, midinumber, name, directory);
     }
 
     bool remove_song_by_index (int index)

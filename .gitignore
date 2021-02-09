@@ -195,3 +195,13 @@ vgcore
 *.vsp
 *.vspscc
 
+# Ignore programmer's reference manuals
+
+doc/dox/libseq66/latex/
+doc/dox/libseq66/seq66_lib_libseq66.pdf
+doc/dox/libsessions/latex/
+doc/dox/libsessions/seq66_lib_libsessions.pdf
+doc/dox/seq_portmidi/latex/
+doc/dox/seq_portmidi/seq66_lib_seq_portmidi.pdf
+doc/dox/seq_rtmidi/latex/
+doc/dox/seq_rtmidi/seq66_lib_seq_rtmidi.pdf

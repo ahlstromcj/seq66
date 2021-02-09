@@ -6,12 +6,11 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-15
-% \update      2021-02-06
+% \update      2021-02-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the MIDI GUI playlist that Seq66
-%     supports.
+%     Provides a discussion of the playlist functions that Seq66 supports.
 %
 %-------------------------------------------------------------------------------
 
@@ -245,7 +244,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.65]{playlist/personal-playlist-light.png}
+   \includegraphics[scale=0.65]{tabs/playlist/personal-playlist-light.png}
    \caption*{Qt 5 Playlist Tab}
 \end{figure}
 
@@ -267,9 +266,11 @@
          These fields display the MIDI-file directory,
          the MIDI control number, and the file-name of the selected play-list.
          Note that the directory is normally the play-list directory, but a
-         path present in the MIDI file-name overrides that directory.
-         These fields are editable, with the intent to use them to add a new
-         song or modify the "meta information" of the current one.
+         path present in the MIDI file-name overrides that directory, and then
+         an asterisk is shown to flag that status.
+         Only the MIDI control number field is editable,
+         with the intent to use it to add a new
+         song.
       \item \textbf{List Names}.
          This table shows the MIDI-control number and
          the name of each play-list.
@@ -287,7 +288,7 @@
    \end{enumber}
 
 \paragraph{Seq66 Play-Lists / User Interfaces / Playlist Buttons}
-\label{paragraph:playlist_ui_qt_playlist_buttons}
+\label{paragraph:playlist_ui_playlist_buttons}
 
    This section briefly describes the "List" buttons to the right of the
    play-list table.
@@ -350,12 +351,13 @@
 
    \itempar{Add Song}{playlist editor!add song}
    This button is meant to add a song already loaded in the \textbf{Live} frame
-   into the play-list.
-   Currently not implemented; disabled.
+   into the play-list.  Just open a new tune, test it, and then add it to the
+   play list.  Note that currently one may load a new tune into the playlist
+   from anywhere a song is allowed to be loaded by the session.
 
    \itempar{Modify Song}{playlist editor!modify song}
-   This button is meant to modify song information.
-   Currently not implemented; disabled.
+   This button is meant to modify song information.  However, the only item
+   that can be altered is the MIDI control number.
 
    \itempar{Delete Song}{playlist editor!delete song}
    This button deletes the currently-selected song from the song list.
@@ -366,7 +368,7 @@
    songs.
 
 \paragraph{Seq66 Play-Lists / User Interfaces / Info Fields}
-\label{paragraph:playlist_ui_qt_playlist_buttons}
+\label{paragraph:playlist_ui_info_fields}
 
    The following read-only fields show some information about the file-system
    for the play-lists.

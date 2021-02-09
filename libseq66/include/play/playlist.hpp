@@ -428,6 +428,12 @@ private:
         const std::string & directory
     );
     bool add_song (const std::string & fullpath);
+    bool modify_song
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    );
     void last_song_indices (song_list & slist, int & index, int & midinumber);
     void show_song (const song_spec_t & pl) const;
     void reorder_play_list ();

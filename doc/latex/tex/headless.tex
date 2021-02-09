@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-09-30
-% \update      2021-01-13
+% \update      2021-02-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -20,9 +20,8 @@
 
    \textsl{Seq66} can be built as a command-line application.
    See the \texttt{INSTALL} file provided with the source code distribution.
-%  as described in \sectionref{sec:build}.
    That is, \textsl{Seq66}
-   can be run from the command-line, with no user interface.
+   can be run from the command-line, with no visible user interface.
    It can also be instantiated as a Linux daemon, for totally headless usage.
    Because there is not a lot of visibility into a headless process, the
    setup for \texttt{seq66cli} is a little complex, and the musician must get
@@ -39,11 +38,13 @@
       \item Access the correct inputs, especially a keyboard or pad controller
          that can be used for controlling the sequencer via MIDI, as well as
          inputing notes.
-      \item The MIDI input must be configured with some \texttt{[midi-control]}
-         values, so that the headless sequencer can do things like stop and
-         start playback, select the next playlist or song, or change other
-         sequencer controls.  Also note that an alternative is to provide a 
-         \texttt{[midi-control-file]} specified in the "rc" file.
+      \item The MIDI input must be configured with some
+         \texttt{[automation-control]}
+         values, so that the headless sequencer can stop and
+         start playback, select the next playlist or song, or activate other
+         sequencer controls.  This is done by providing the name of a 
+         suitable
+         \texttt{[midi-control-file]} ('ctrl') specified in the 'rc' file.
       \item Access the desired outputs, in order to play sounds.  This can
          sometimes be tricky, because \textsl{Seq66} can route all
          patterns to the same output, or can let the patterns decide the
@@ -61,8 +62,9 @@
    pad.  Our example here will use the \textsl{Korg nanoKEY2} keyboard.  
 
    \textbf{Second}, start the desired (software) synthesizer.  We will use the
-   synth \textsl{Yoshimi}, with a stock setup from our "Yoshimi Cookbook"
-   project.  The order of starting the keyboard/pad and the synthesiser
+   synth \textsl{Yoshimi}, with a stock setup from the
+   \textsl{Yoshimi Cookbook} project.
+   The order of starting the keyboard/pad and the synthesiser
    will alter the port numbers of these items.  Best to do things in the same
    order every time... be consistent.
 
@@ -84,14 +86,14 @@
    If this setup works (MIDI controls have the proper effect and the tunes play
    through the synthesizer), proceed to the next step.
 
-   \textbf{Fourth}, edit the \texttt{seq66.rc} and \texttt{seq66cli.rc}
-   files as described below so that the former's settings of
-   \texttt{[midi-clock]} or \texttt{[midi-clock-file]} are entered into the
-   latter "rc" configuration.
-   For our testing, we use a separate MIDI-control file 
-   (\texttt{nanomap.rc}), which is set up
-   in the main "rc" file to be read via a \texttt{[midi-clock-file]}
-   setting.  The \texttt{nanomap.rc} file sets up our \textsl{nanoKEY2} as
+   \textbf{Fourth}, edit the \texttt{seq66cli.rc}
+   file as described below so that the correct settings of
+   \texttt{[midi-clock]}, \texttt{[midi-input]} and
+   \texttt{[midi-control-file]} are entered into the 'rc' configuration.
+   For this discussion, we use a MIDI-control file 
+   (\texttt{nanomap.ctrl}), which we set up
+   in the 'rc' file to be read.
+   The \texttt{nanomap.ctrl} file sets up the \textsl{nanoKEY2} as
    shown in this figure:
 
 \begin{figure}[H]
@@ -106,22 +108,22 @@
    This means that the lowest note on the nanoKEY2 is MIDI note 0, the lowest
    note possible.  With these settings, the playlists and songs can be loaded
    and then played and paused.
-   The \texttt{seq66cli.rc} file is edited so that the rather large
-   \texttt{[midi-control]} section is replaced by the following:
+   The \texttt{seq66cli.rc} file is edited to specify the desired 'ctrl' file:
 
    \begin{verbatim}
       [midi-control-file]
-      nanomap.rc    # (/home/ahlstrom/.config/seq66/nanomap.rc)
+      "nanomap.ctrl"
    \end{verbatim}
 
-   The \texttt{nanomap.rc} file is included in the "data" directory of the
-   source-code package.
+   The \texttt{nanomap.ctrl} file is included in the
+   \texttt{data/samples} directory of the source-code package or the
+   installation directory.
 
    \textbf{Fifth}, test the command-line \textsl{Seq66} by running the
    following command (your setup might vary) on the command line:
 
    \begin{verbatim}
-      $ ./Seq66cli/seq66cli -b 2 -X data/sample.playlist -v
+      $ seq66cli -b 2 -X data/sample.playlist -v
    \end{verbatim}
 
    There is a play-list option to automatically unmute the sets when a new song
@@ -130,10 +132,11 @@
    output and the proper playback), then run \texttt{seq66cli} as a daemon:
 
    \begin{verbatim}
-      $ ./Seq66cli/seq66cli -b 2 -X data/sample.playlist -v -o daemonize
+      $ seq66cli -b 2 -X data/sample.playlist -o daemonize
    \end{verbatim}
 
-   The keyboard controls and sound output should still work.
+   The keyboard controls and sound output should work.
+   For a more sophisticated setup, see \sectionref{sec:launchpad_mini}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

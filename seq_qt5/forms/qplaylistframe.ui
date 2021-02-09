@@ -368,6 +368,9 @@ Can be edited to enable Add List and Modify List.</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="editSongPath">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>480</x>
@@ -389,12 +392,15 @@ Can be edited to enable Add List and Modify List.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the directory in which the currently selected song is
-stored. Can be edited (carefully) to enable the Add Song and Modify Song buttons.  Not enabled in Non Session Manager
-mode.</string>
+    <string>Shows the directory in which the currently selected
+song is stored. Read-only.  Use the Load Song button
+to select an existing song.</string>
    </property>
    <property name="text">
     <string>None</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLineEdit" name="editSongNumber">
@@ -419,14 +425,19 @@ mode.</string>
     </size>
    </property>
    <property name="toolTip">
-    <string>Shows the MIDI control number for the currently selected song.
-Can be edited to enable the Add Song and Modify Song buttons.</string>
+    <string>Shows the MIDI control number for the currently 
+selected song. Can be edited to enable the Add Song
+and Modify Song buttons.  This is the only item that
+can be edited for a song.</string>
    </property>
    <property name="text">
     <string>000</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="editSongFilename">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>520</x>
@@ -449,11 +460,13 @@ Can be edited to enable the Add Song and Modify Song buttons.</string>
    </property>
    <property name="toolTip">
     <string>Shows the base file-name of the currently selected song. 
-Can be edited to enable the Add Song and Modify Song 
-buttons.</string>
+Read-only.  Use the Load Song button to modify this entry.</string>
    </property>
    <property name="text">
     <string>None</string>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="labelDirEmbedded">
@@ -802,7 +815,7 @@ Read-only.</string>
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>392</y>
+     <y>384</y>
      <width>131</width>
      <height>17</height>
     </rect>
@@ -818,7 +831,7 @@ Read-only.</string>
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>392</y>
+     <y>384</y>
      <width>631</width>
      <height>27</height>
     </rect>
