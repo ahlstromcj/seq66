@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-09
+ * \updates       2021-02-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -1241,8 +1241,7 @@ qsmainwnd::save_list_dialog ()
 void
 qsmainwnd::show_open_mutes_dialog ()
 {
-    if (check())
-        (void) open_mutes_dialog();
+    (void) open_mutes_dialog();
 }
 
 bool

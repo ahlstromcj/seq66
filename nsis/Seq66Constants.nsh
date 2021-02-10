@@ -3,8 +3,8 @@
 ; File:         Seq66Constants.nsh
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-01-24
-; Version:      0.91.2
+; Updated:      2021-02-10
+; Version:      0.92.0
 ;
 ;   Provides constants commonly used by the installer for Seq66 for
 ;   Windows.
@@ -33,7 +33,7 @@
 !define VER_VARIANT         "Windows"
 !define PRODUCT_VERSION     "${VER_NUMBER} ${VER_VARIANT} (rev ${VER_REVISION})"
 !define PRODUCT_PUBLISHER   "Chris Ahlstrom"
-!define PRODUCT_WEB_SITE    "https://github.com/ahlstromcj/seq66-packages"
+!define PRODUCT_WEB_SITE    "https://github.com/ahlstromcj/seq66/"
 
 ;============================================================================
 ; Directory to place the installer.

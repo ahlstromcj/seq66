@@ -588,8 +588,8 @@ midicontrolfile::read_mutes_triple
     int number, ev_on[4], ev_off[4], ev_del[4];
     int count = std::sscanf
     (
-        scanline(), sg_scanf_fmt_ctrl_triple,
-        &number, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
+        scanline(), sg_scanf_fmt_ctrl_triple, &number,
+        &ev_on[0],  &ev_on[1],  &ev_on[2],  &ev_on[3],
         &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
         &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
     );
@@ -987,7 +987,7 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "\n[mute-control-out]\n\n"
         "# The format of the mute and automation output events is simpler:\n"
         "#\n"
-        "#  --------------------- on/off (indicate if action is enabled)\n"
+        "#  --------------------- mute-group number\n"
         "# |   ------------------ MIDI channel (0-15)\n"
         "# |  |  ---------------- MIDI status/event byte (e.g. Note On)\n"
         "# |  | |  -------------- data 1 (e.g. note number)\n"

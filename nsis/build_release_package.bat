@@ -8,13 +8,14 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2020-09-26
+:: \update      2021-02-10
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
 ::      Windows and creates a 7-Zip package that can be unpacked in the root
-::      of the project, ready to made into an NSIS installer either in Linux
-::      or in Windows.
+::      of the project, ready to be made into an NSIS installer either in Linux
+::      or in Windows.  It does NOT make the NSIS installer; that is a separate
+::      manual step described below in steps 5 to 8.
 ::
 :: Requirements:
 ::
@@ -61,6 +62,8 @@
 ::          c. Alternatively, create a "shadow" directory at the same level
 ::             as "seq66", change to it, and run
 ::             "..\seq66\nsis\build_release_package.bat".
+::          d. Or cd to the seq66\nsis directory and try
+::             "build_release_package.bat > build.log 2>&1"
 ::       4. The result is a file such as "qpseq66-release-package-0.90.1.7z".
 ::          It is found in seq66/../seq66-release/Seq66qt5.  Also, a
 ::          log file is made in seq66/../seq66-release/make.log,
@@ -72,22 +75,23 @@
 ::          the directory called 'release': seq66/release, which contains the
 ::          qpseq66.exe file, DLL files, data, etc. Then move the 7z file
 ::          out of the way, for example to the directory about the seq66
-::          directory.  Here are the commands:
+::          directory.  Here are the commands (the "$" is the end of the
+::          command-line prompt:
 ::
-::          $ 7z x qpseq66-release-package-0.90.2.7z
-::          $ mv qpseq66-release-package-0.90.2.7z ..
+::          seq66 $ 7z x qpseq66-release-package-0.90.2.7z
+::          seq66 $ mv qpseq66-release-package-0.90.2.7z ..
 ::
 ::       7. Change to the seq66/nsis directory and run:
 ::
-::          $ makensis Seq66Setup.nsi
+::          seq66/nsis $ makensis Seq66Setup.nsi
 ::
 ::       8. The installer is seq66/release/seq66_setup_0.90.1.exe, and it is
 ::          in the 'release' directory.  Move it out of this directory to a
 ::          safe place for transport. For example, assuming the current
 ::          directory is 'release'.  One of these can be run:
 ::
-::          $ mv seq66_setup_0.90.1.exe ../../sequencer64-packages/seq66/0.90
-::          $ mv seq66_setup_0.90.1.exe ../../seq66-packages/... TO DO !!!
+::          seq66/release $ mv seq66_setup_0.90.1.exe ../../sequencer64-packages/seq66/0.90
+::          seq66/release $ mv seq66_setup_0.90.1.exe ../../seq66/packages/... TO DO !!!
 ::
 ::       9. Make a portable Zip package:
 ::
@@ -112,7 +116,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.91.2
+set PROJECT_VERSION=0.92.0
 set PROJECT_DRIVE=C:
 
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66
@@ -131,6 +135,7 @@ set APP_DIR=Seq66qt5
 set OUTPUT_DIR=%APP_DIR%\release
 set CONFIG_SET="CONFIG += release"
 set AUX_DIR=data
+set DOC_DIR=doc
 
 :: C:
 
@@ -161,25 +166,35 @@ echo windeployqt %OUTPUT_DIR%
 windeployqt %OUTPUT_DIR%
 
 :: mkdir Seq66qt5\release\data
-:: copy ..\seq66\data\*.midi Seq66qt5\release\data
+::
+:: xcopy sucks!
+::
+:: xcopy ..\seq66\data\* Seq66qt5\release\data
+::
 :: copy ..\seq66\data\qpseq66.* Seq66qt5\release\data
 :: copy ..\seq66\data\*.pdf Seq66qt5\release\data
 :: copy ..\seq66\data\*.txt Seq66qt5\release\data
 
 echo mkdir %OUTPUT_DIR%\%AUX_DIR%
-echo copy %PROJECT_ROOT%\%AUX_DIR%\qpseq66.* %OUTPUT_DIR%\%AUX_DIR%
-echo copy %PROJECT_ROOT%\%AUX_DIR%\*.midi %OUTPUT_DIR%\%AUX_DIR%
-echo copy %PROJECT_ROOT%\%AUX_DIR%\*.pdf %OUTPUT_DIR%\%AUX_DIR%
-echo copy %PROJECT_ROOT%\%AUX_DIR%\*.txt %OUTPUT_DIR%\%AUX_DIR%
-echo copy %PROJECT_ROOT%\%AUX_DIR%\*.playlist %OUTPUT_DIR%\%AUX_DIR%
+echo xcopy %PROJECT_ROOT%\%AUX_DIR% %OUTPUT_DIR%\%AUX_DIR% /f /s /y /i
+echo mkdir %OUTPUT_DIR%\%DOC_DIR%
+echo copy %PROJECT_ROOT%\%DOC_DIR%\*.pdf %OUTPUT_DIR%\%DOC_DIR%
 
 mkdir %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.rc %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.usr %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.midi %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.pdf %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.txt %OUTPUT_DIR%\%AUX_DIR%
-copy %PROJECT_ROOT%\%AUX_DIR%\*.playlist %OUTPUT_DIR%\%AUX_DIR%
+mkdir %OUTPUT_DIR%\%AUX_DIR%\linux
+mkdir %OUTPUT_DIR%\%AUX_DIR%\midi
+mkdir %OUTPUT_DIR%\%AUX_DIR%\samples
+mkdir %OUTPUT_DIR%\%AUX_DIR%\win
+mkdir %OUTPUT_DIR%\%AUX_DIR%\wrk
+
+copy %PROJECT_ROOT%\%AUX_DIR%\linux\*.* %OUTPUT_DIR%\%AUX_DIR%\linux
+copy %PROJECT_ROOT%\%AUX_DIR%\midi\*.* %OUTPUT_DIR%\%AUX_DIR%\midi
+copy %PROJECT_ROOT%\%AUX_DIR%\samples\*.* %OUTPUT_DIR%\%AUX_DIR%\samples
+copy %PROJECT_ROOT%\%AUX_DIR%\win\*.* %OUTPUT_DIR%\%AUX_DIR%\win
+copy %PROJECT_ROOT%\%AUX_DIR%\wrk\*.* %OUTPUT_DIR%\%AUX_DIR%\wrk
+
+mkdir %OUTPUT_DIR%\%DOC_DIR%
+copy %PROJECT_ROOT%\%DOC_DIR%\*.pdf %OUTPUT_DIR%\%DOC_DIR%
 
 :: This section takes the generated build and data files and packs them
 :: up into a 7-zip archive.  This archive should be copied to the root

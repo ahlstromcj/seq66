@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-01-24
+; Updated:      2021-02-10
 ; Version:      0.92.0
 ;
 ;       Installation is silent.
@@ -60,6 +60,8 @@
 ;   Sections.nsh provides support for sections and section groups.
 ;   Seq66Constants.nsh contains names and version numbers.
 ;---------------------------------------------------------------------------
+
+Unicode True
 
 !include MUI.nsh
 !include MUI2.nsh
@@ -200,6 +202,14 @@ Section "Licensing and Sample Files" SEC_LIC
     SetOutPath "$INSTDIR\data"
     SetOverwrite on
     File /r "..\release\data\*"
+
+SectionEnd
+
+Section "Documentation" SEC_DOC
+
+    SetOutPath "$INSTDIR\doc"
+    SetOverwrite on
+    File /r "..\release\doc\*.pdf"
 
 SectionEnd
 

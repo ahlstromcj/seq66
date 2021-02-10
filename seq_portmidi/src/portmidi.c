@@ -814,7 +814,7 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmInternalError:
-        msg = "Internal PortMidi Error";
+        msg = "Internal PortMidi error";
         break;
 
     case pmBufferOverflow:
@@ -822,7 +822,7 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmBadData:
-        msg = "Invalid MIDI message Data";
+        msg = "Invalid MIDI message data";
         break;
 
     case pmBufferMaxSize:

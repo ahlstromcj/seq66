@@ -629,7 +629,7 @@ qmutemaster::slot_load ()
 {
     if (not_nullptr(m_main_window))
     {
-        m_main_window->show_open_mutes_dialog();    /* to load_mutegroups() */
+        m_main_window->open_mutes_dialog();     /* calls load_mutegroups()  */
         ui->m_button_save->setEnabled(false);
     }
 }

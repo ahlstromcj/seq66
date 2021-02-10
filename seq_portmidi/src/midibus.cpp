@@ -90,8 +90,8 @@ midibus::~midibus ()
 
 /**
  *  Polls for MIDI events.  This is the API implementation for PortMidi.
- *  It tests that the queue number (formerly m_pm) is valid first.  It assumes
- *  that the PortMidiStream pointer m_pms is valid, for speed.
+ *  It tests that the queue number (formerly m_pm) is valid first.  It does
+ *  not assume that the PortMidiStream pointer m_pms is valid.
  *
  *  The original error-checking was too simplistic.  The PmError values of
  *  PmNoError, pmNoData, and pmGotData are actually "no error" codes, if you
