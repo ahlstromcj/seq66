@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-02-09
+% \update      2021-02-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -120,16 +120,17 @@
 \label{subsec:configuration_common_comments_section}
 
    This section is also informational, but the user can edit this section to
-   include information describing the purpose of the file.  For example, a 'ctrl'
-   file for a \textsl{Novation Launchpad} might describe the purpose of this
-   file.  The comments stop at the first blank (not even spaces) line.  To skip a
-   line in the comment, put a single space character on the blank line.
+   include information describing the purpose of the file.  For example, a
+   'ctrl' file for a \textsl{Novation Launchpad} might describe the purpose of
+   this file.  The comments stop at the first blank (not even spaces) line.  To
+   skip a line in the comment, put a single space character on the blank line.
 
 \subsubsection{Numeric Settings}
 \label{subsec:configuration_common_numeric_settings}
 
    Numeric settings consist of a line containing one or more numbers, usually
-   preceded by an explanatory comment, and followed by a standard script comment.
+   preceded by an explanatory comment, and followed by a standard script
+   comment.
 
    \begin{verbatim}
       3    # grid_style
@@ -148,10 +149,10 @@
 \subsubsection{Variables}
 \label{subsec:configuration_common_variables}
 
-   Variable are a new style of value setting, and can encompass not only booleans
-   and numeric values, but string values, which may correspond to enumerated
-   values in the source code.  These values are specified by a section-name plus
-   variable-name pair.
+   Variable are a new style of value setting, and can encompass not only
+   booleans and numeric values, but string values, which may correspond to
+   enumerated values in the source code.  These values are specified by a
+   section-name plus variable-name pair.
 
    \begin{verbatim}
       [mute-group-flags]
@@ -162,16 +163,23 @@
 \subsubsection{Stanzas}
 \label{subsec:configuration_common_stanzas}
 
+   Please note that, as of version 0.92.0 of \textsl{Seq66}, we have
+   streamlined the control-file stanza by eliminating the "enabled" and
+   "channel" columns in a stanza, since they can be encoded in the event/status
+   byte (e.g. 0x90) instead.  Older versions of the 'ctrl' file will be
+   upgraded automatically.
+
    A stanza in a \textsl{Seq66} configuration file consists of some data at the
    beginning, a set of values bracketed by square brackets, and some optional
    data at the end.  The values inside the square brackets are numeric, and can
-   be in decimal format, sometimes hexadecimal format, or in binary "0/1" format.
+   be in decimal format, sometimes hexadecimal format, or in binary "0/1"
+   format.
 
    \begin{verbatim}
-      0 "1" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 0
-      1 "q" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 1
-      2 "a" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 2
-      3 "z" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 3
+      0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
+      1 "q" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 1
+      2 "a" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 2
+      3 "z" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 3
       . . .
    \end{verbatim}
 
@@ -807,7 +815,7 @@
    \label{fig:default_event_bus_channel_menus}
 \end{figure}
 
-   At the top, the buss dropdown menu contains the MIDI busses/ports
+   at the top, the buss dropdown menu contains the MIDI busses/ports
    active on this computer.  At right, the MIDI channel shows
    the channels numbers that can be picked for buss 0.  At bottom left, we see
    the default controller values that \textsl{Seq66} includes.  We have
@@ -816,12 +824,12 @@
    events are in the loaded MIDI file, of course; a solid black square
    indicates that such an event was found in the pattern.
 
-   To change the defaults, we can create a 'usr' file to set them up.
-   The discussion here relies on the reader opening the file
+   to change the defaults, we can create a 'usr' file to set them up.
+   the discussion here relies on the reader opening the file
    \texttt{sample.usr}, which is included in the shared \texttt{data/samples}
    directory provided once \textsl{Seq66} is installed.
 
-   Assume we have 3 MIDI "buss" devices hooked to our system:
+   assume we have 3 MIDI "buss" devices hooked to our system:
    two Model "2x2" MIDI port devices, and an old PCR-30 MIDI controller
    keyboard.  Let's number them:
 
@@ -831,8 +839,8 @@
       \item PCR-30
    \end{enumerate}
 
-   Then assume that we have nine different MIDI instruments in our kit.
-   Let's number them, too:
+   then assume that we have nine different MIDI instruments in our kit.
+   let's number them, too:
 
    \begin{enumerate}
       \item Waldorf Micro Q
@@ -1285,8 +1293,8 @@
 
    \begin{verbatim}
       [loop-control]
-      # Control:  Toggle              On                Off
-      0 "1" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 0
+      # Control:  Toggle          On               Off
+      0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
       . . .
    \end{verbatim}
 
@@ -1298,25 +1306,23 @@
    The numbers inside each set of brackets define six values that set up the
    control.  The layout of each filter inside the brackets is as follows:
 
-      \textbf{[OPR INV STAT D1 D2min D2max]}
+      \textbf{[INV STAT D1 D2min D2max]}
 
    \begin{itemize}
-      \item \textbf{OPR} = \textbf{on/off}
       \item \textbf{INV} = \textbf{inverse}
-      \item \textbf{STAT} = \textbf{MIDI status byte} (channel ignored) 
+      \item \textbf{STAT} = \textbf{MIDI status byte} (channel included) 
       \item \textbf{D1} = \textbf{data1}
       \item \textbf{D2min} = \textbf{data2 min}
       \item \textbf{D2max} = \textbf{data2 max}
    \end{itemize}
 
-   If \textbf{OPR (on/off)} is set to 1, the control is enabled.
-   \textsl{Seq66} will match the incoming MIDI event
-   against the \textbf{STAT (MIDI status byte)} pattern (e.g. a Note On event),
-   and perform the action (On/Off/Toggle) if the \textbf{D1} (e.g. a Note
-   number), matches the
-   incoming data, and the incoming parameters (e.g. Note velocity)
-   falls in the specified \textbf{D2min} to \textbf{D2max} range.
-   All data values are best specified in decimal.
+   If \textbf{STAT} is not 0x00, the control is enabled.  \textsl{Seq66} will
+   match the incoming MIDI event against the \textbf{STAT (MIDI status byte)}
+   pattern (e.g. a Note On event), and perform the action (On/Off/Toggle) if
+   the \textbf{D1} (e.g. a Note number), matches the incoming data, and the
+   incoming parameters (e.g. Note velocity) falls in the specified
+   \textbf{D2min} to \textbf{D2max} range.  All data values are best specified
+   in decimal.
 
    The \textbf{INV (inverse)} field will make the pattern perform the opposite
    action (\textsl{off} for \textsl{on}, \textsl{on} for \textsl{off}) if the
@@ -1325,6 +1331,9 @@
 
    The \textbf{STAT (MIDI status byte)} field is a MIDI status byte number in
    decimal or hexadecimal notation.
+   Remember that it can include a channel.  This channel is not overridden by
+   the pattern's selected channel when a MIDI control matching event is
+   received. 
 %  The channel nybble of this byte is ignored.
    One can look up the possible status values up in the MIDI messages tables;
    the relevant data can be found at \cite{midicontroltable}.
@@ -1365,7 +1374,7 @@
 
    \begin{verbatim}
       [mute-group-control]
-       0 "!" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Mute 0
+       0 "!" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Mute 0
        . . .
    \end{verbatim}
 
@@ -1389,12 +1398,12 @@
 
    \begin{verbatim}
       [automation-control]
-       0 "'" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # BPM Up
+       0 "'" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Up
        . . .
    \end{verbatim}
 
-   The stanzas meaning can change depending on the type of control.  Here are the
-   important styles:
+   The stanzas meaning can change depending on the type of control.  Here are
+   the important styles:
 
    \begin{verbatim}
       Normal:        [ Toggle       ] [ On          ] [ Off             ]
@@ -1410,8 +1419,8 @@
    0 for list selection and note 1 for song selection:
 
    \begin{verbatim}
-      24 "F2" [ 1 0 0x9F   0   0 127 ] [ . . . ] [ . . .] # Play List
-      25 "F3" [ 1 0 0x9F   1   0 127 ] [ . . . ] [ . . .] # Play Song
+      24 "F2" [ 0 0x9F   0   0 127 ] [ . . . ] [ . . .] # Play List
+      25 "F3" [ 0 0x9F   1   0 127 ] [ . . . ] [ . . .] # Play Song
    \end{verbatim}
 
    Obviously, this requires a MIDI controller for which the velocity can be
@@ -1473,12 +1482,12 @@
    the \texttt{mod queue} entry:
 
    \begin{verbatim}
-6 "o" [ 0   0  0x00 0  0  0 ] [ 1   0  0xB0 64 127 127 ] [ 1   0  0xB0 64 0  0 ]
-#      OPR INV STA  D1 mn mx   OPR INV STA  D1 mn  mx     OPR INV STA D1  mn mx
-#                                       ^  ^                      ^  ^
-#                                       |  |                      |  |
-#                                       |   ----Sustain-----------   |
-#                                        -------Control Change-------
+      6 "o" [ 0  0x00 0  0  0 ] [ 0  0xB0 64 127 127 ] [ 0  0xB0 64 0  0 ]
+      #      INV STA  D1 mn mx   INV STA  D1 mn  mx     INV STA D1  mn mx
+      #                                   ^  ^                      ^  ^
+      #                                   |  |                      |  |
+      #                                   |   ----Sustain-----------   |
+      #                                    -------Control Change-------
    \end{verbatim}
 
    So when the Sustain button is held down, and one presses one of the pads
@@ -1572,23 +1581,23 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       # MIDI Control Out: play on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: stop on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: pause on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: queue on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: oneshot on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: replace on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: snap1 store/restore
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: snap2 store/restore
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
       # MIDI Control Out: learn on/off
-      0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
    \end{verbatim}
 
    See the sample files for more detailed descriptions.

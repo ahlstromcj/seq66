@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-01-27
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -104,15 +104,14 @@ bool
 midicontrolfile::stanza::set (const midicontrol & mc)
 {
     automation::action a = mc.action_code();
-    if (a > automation::action::none && a < automation::action::maximum)
+    if (a > automation::action::none && a < automation::action::max)
     {
         unsigned index = static_cast<int>(a) - 1;   /* skips "none"         */
-        m_settings[index][0] = int(mc.active());
-        m_settings[index][1] = int(mc.inverse_active());
-        m_settings[index][2] = int(mc.status());
-        m_settings[index][3] = int(mc.d0());        /* note: d1 not needed  */
-        m_settings[index][4] = int(mc.min_value());
-        m_settings[index][5] = int(mc.max_value());
+        m_settings[index][0] = int(mc.inverse_active());
+        m_settings[index][1] = int(mc.status());
+        m_settings[index][2] = int(mc.d0());        /* note: d1 not needed  */
+        m_settings[index][3] = int(mc.min_value());
+        m_settings[index][4] = int(mc.max_value());
     }
     return true;
 }
@@ -144,7 +143,7 @@ midicontrolfile::midicontrolfile
     m_temp_midi_controls    (),             /* used during reading only */
     m_stanzas               ()              /* fill from rcs in writing */
 {
-    version("1");                           /* adds 2 section markers   */
+    version("2");                           /* adds 2 section markers   */
 }
 
 /**
@@ -404,14 +403,60 @@ midicontrolfile::parse ()
 static const char * const sg_scanf_fmt_ctrl_in =
 "%d %10s [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ] [ %d %d %i %i %i %i ]";
 
+/*
+ *  Removes the "enabled" flag from each control-input stanza: loops,
+ *  mute-groups, and automation.  The "inverse" flag remains.
+ *  The "enabled" status will be determined by the status value not being
+ *  0x00.
+ */
+
+static const char * const sg_scanf_fmt_ctrl_in_2 =
+"%d %10s [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
+
+/*
+ * For version 1 only.
+ */
+
 static const char * const sg_scanf_fmt_ctrl_out =
 "%d [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
+
+/*
+ *  Removes the "enabled" flag, replaced by testing for status not equal to
+ *  0x00.  Also removes the channel value, which becomes part of the status
+ *  value.  Used for [midi-control-out].
+ */
+
+static const char * const sg_scanf_fmt_ctrl_out_2 =
+    "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
+
+/*
+ * For version 1 only.
+ */
 
 static const char * const sg_scanf_fmt_ctrl_pair =
     "%d [ %i %i %i %i ] [ %i %i %i %i ]";
 
+/*
+ *  Removes the channel value.  Used for [automation-control-out].
+ */
+
+static const char * const sg_scanf_fmt_ctrl_pair_2 =
+    "%d [ %i %i %i ] [ %i %i %i ]";
+
+/*
+ * For version 1 only.
+ */
+
 static const char * const sg_scanf_fmt_ctrl_triple =
     "%d [ %i %i %i %i ] [ %i %i %i %i ] [ %i %i %i %i ]";
+
+/*
+ *  Removes the channel value.  It goes into the status value instead.
+ *  Used for [mute-control-out].
+ */
+
+static const char * const sg_scanf_fmt_ctrl_triple_2 =
+    "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
 
 /**
  *  It is not an error for the "[midi-contro-out]" section to be missing.
@@ -455,26 +500,66 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         mco.offset(offset);
         mco.rows(rows);
         mco.columns(columns);
-        for (int i = 0; i < sequences; ++i)         /* Sequence actions     */
+        if (version_number() < 2)
         {
-            int a[5], b[5], c[5], d[5];
-            int sequence = 0;
-            (void) std::sscanf                      /* LATER: count 'em     */
-            (
-                scanline(), sg_scanf_fmt_ctrl_out, &sequence,
-                &a[0], &a[1], &a[2], &a[3], &a[4],
-                &b[0], &b[1], &b[2], &b[3], &b[4],
-                &c[0], &c[1], &c[2], &c[3], &c[4],
-                &d[0], &d[1], &d[2], &d[3], &d[4]
-            );
-            mco.set_seq_event(i, midicontrolout::seqaction::arm, a);
-            mco.set_seq_event(i, midicontrolout::seqaction::mute, b);
-            mco.set_seq_event(i, midicontrolout::seqaction::queue, c);
-            mco.set_seq_event(i, midicontrolout::seqaction::remove, d);
-            if (i < (sequences - 1) && ! next_data_line(file))
+            infoprint("Reading version 1 'ctrl' file, will upgrade at exit");
+            for (int i = 0; i < sequences; ++i)
             {
-                (void) make_error_message("midi-control-out", "no data");
-                break;
+                int a[8], b[8], c[8], d[8];
+                int sequence = 0;
+                (void) std::sscanf
+                (
+                    scanline(), sg_scanf_fmt_ctrl_out, &sequence,
+                    &a[0], &a[1], &a[2], &a[3], &a[4],
+                    &b[0], &b[1], &b[2], &b[3], &b[4],
+                    &c[0], &c[1], &c[2], &c[3], &c[4],
+                    &d[0], &d[1], &d[2], &d[3], &d[4]
+                );
+
+                /*
+                 *  Offset to avoid the deprecated enabled and channel values.
+                 */
+
+                mco.set_seq_event(i, midicontrolout::seqaction::arm, &a[2]);
+                mco.set_seq_event(i, midicontrolout::seqaction::mute, &b[2]);
+                mco.set_seq_event(i, midicontrolout::seqaction::queue, &c[2]);
+                mco.set_seq_event(i, midicontrolout::seqaction::remove, &d[2]);
+                if (i < (sequences - 1) && ! next_data_line(file))
+                {
+                    make_error_message
+                    (
+                        "midi-control-out version 1", "insufficient data"
+                    );
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < sequences; ++i)
+            {
+                int a[4], b[4], c[4], d[4];
+                int sequence = 0;
+                (void) std::sscanf
+                (
+                    scanline(), sg_scanf_fmt_ctrl_out_2, &sequence,
+                    &a[0], &a[1], &a[2], &b[0], &b[1], &b[2],
+                    &c[0], &c[1], &c[2], &d[0], &d[1], &d[2]
+                );
+
+                /*
+                 *  Offset to avoid the deprecated enabled and channel values.
+                 */
+
+                mco.set_seq_event(i, midicontrolout::seqaction::arm, a);
+                mco.set_seq_event(i, midicontrolout::seqaction::mute, b);
+                mco.set_seq_event(i, midicontrolout::seqaction::queue, c);
+                mco.set_seq_event(i, midicontrolout::seqaction::remove, d);
+                if (i < (sequences - 1) && ! next_data_line(file))
+                {
+                    make_error_message("midi-control-out", "insufficient data");
+                    break;
+                }
             }
         }
 
@@ -484,7 +569,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
          */
 
         bool ok = true;
-        bool mute_out_enabled = std::stoi(version()) > 0;
+        bool mute_out_enabled = version_number() > 0;
         if (mute_out_enabled)
         {
             if (line_after(file, "[mute-control-out]"))
@@ -494,7 +579,7 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
                 {
                     ok = read_mutes_triple(file, mco, m) || (m == (M - 1));
                     if (! ok)
-                        break;
+                        break;                  /* currently not an error   */
                 }
             }
             if (ok)
@@ -564,16 +649,32 @@ midicontrolfile::read_ctrl_pair
 )
 {
     int enabled, ev_on[4], ev_off[4];
-    int count = std::sscanf
-    (
-        scanline(), sg_scanf_fmt_ctrl_pair,
-        &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
-        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
-    );
-    if (count < 9)
-        ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
+    if (version_number() < 2)
+    {
+        int count = std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_pair,
+            &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
+            &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
+        );
+        if (count < 9)
+            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-    mco.set_event(a, enabled, ev_on, ev_off);
+        mco.set_event(a, enabled, &ev_on[1], &ev_off[1]);
+    }
+    else
+    {
+        int count = std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_pair_2,
+            &enabled, &ev_on[0], &ev_on[1], &ev_on[2],
+            &ev_off[0], &ev_off[1], &ev_off[2]
+        );
+        if (count < 7)
+            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
+
+        mco.set_event(a, enabled, ev_on, ev_off);
+    }
     return next_data_line(file);
 }
 
@@ -585,21 +686,41 @@ midicontrolfile::read_mutes_triple
     int group
 )
 {
-    int number, ev_on[4], ev_off[4], ev_del[4];
-    int count = std::sscanf
-    (
-        scanline(), sg_scanf_fmt_ctrl_triple, &number,
-        &ev_on[0],  &ev_on[1],  &ev_on[2],  &ev_on[3],
-        &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
-        &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
-    );
-    if (count < 9)
-        ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
+    if (version_number() < 2)
+    {
+        /*
+         * Index 0 is the channel, which has been removed.  We pass in only
+         * the last three values.
+         */
 
-    if (count < 13)
-        ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
+        int number, ev_on[4], ev_off[4], ev_del[4];
+        int count = std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_triple, &number,
+            &ev_on[0],  &ev_on[1],  &ev_on[2],  &ev_on[3],
+            &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
+            &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
+        );
+        if (count < 9)
+            ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-    mco.set_mutes_event(group, true, ev_on, ev_off, ev_del);
+        if (count < 13)
+            ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
+
+        mco.set_mutes_event(group, &ev_on[1], &ev_off[1], &ev_del[1]);
+    }
+    else
+    {
+        int number, ev_on[4], ev_off[4], ev_del[4];
+        (void) std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_triple_2, &number,
+            &ev_on[0],  &ev_on[1],  &ev_on[2],
+            &ev_off[0], &ev_off[1], &ev_off[2],
+            &ev_del[0], &ev_del[1], &ev_del[2]
+        );
+        mco.set_mutes_event(group, ev_on, ev_off, ev_del);
+    }
     return next_data_line(file);
 }
 
@@ -713,9 +834,6 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         std::string m(bool_to_string(rc_ref().load_midi_control_in()));
         file <<
         "\n[midi-control-settings]\n\n"
-        "# This section can be moved into a 'qseq66.ctrl' file and then be\n"
-        "# referred to in a '[midi-control-file] section.\n"
-        "# \n"
         "# Setting 'load-midi-control' to 'false' will cause an empty MIDI\n"
         "# control setup to be written!  Keep backups! The control-buss value\n"
         "# ranges from 0 to the maximum system buss provided by the hardware.\n"
@@ -815,17 +933,16 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             {
                 file
                     << "["
-                    << std::setw(2) << stan.setting(action, 0)  /* active   */
-                    << std::setw(2) << stan.setting(action, 1)  /* inverse  */
+                    << std::setw(2) << stan.setting(action, 0)  /* inverse  */
                     << " 0x" << std::setw(2) << std::setfill('0')
-                    << std::hex << stan.setting(action, 2)      /* status   */
+                    << std::hex << stan.setting(action, 1)      /* status   */
                     << std::setw(4) << std::setfill(' ')
-                    << std::dec << stan.setting(action, 3)      /* d0       */
+                    << std::dec << stan.setting(action, 2)      /* d0       */
                     << std::setw(4)
-                    << std::dec << stan.setting(action, 4)      /* min      */
+                    << std::dec << stan.setting(action, 3)      /* min      */
                     << std::setw(4)
-                    << std::dec << stan.setting(action, 5)      /* max      */
-                    << " ] "
+                    << std::dec << stan.setting(action, 4)      /* max      */
+                    << " ]"
                     ;
             }
             file << " # " << stan.op_name() << std::endl;
@@ -921,25 +1038,21 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "[midi-control-out]\n"
         "\n"
         "#   --------------------- Pattern number (as applicable)\n"
-        "#  |   ------------------ on/off (indicate if action is enabled)\n"
-        "#  |  |  ---------------- MIDI channel (0-15)\n"
-        "#  |  | |  -------------- MIDI status/event byte (e.g. Note On)\n"
-        "#  |  | | |  ------------ data 1 (e.g. note number)\n"
-        "#  |  | | | |  ---------- data 2 (e.g. velocity)\n"
-        "#  |  | | | | |\n"
-        "#  v  v v v v v\n"
-        "# 31 [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n"
-        "#       Arm         Mute       Queue      Delete\n"
+        "#  |    -------------- MIDI status/event byte (e.g. Note On)\n"
+        "#  |   |  ------------ data 1 (e.g. note number)\n"
+        "#  |   | |  ---------- data 2 (e.g. velocity)\n"
+        "#  |   | | |\n"
+        "#  v   v v v\n"
+        "# 31 [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0]\n"
+        "#       Arm      Mute      Queue    Delete\n"
         ;
 
     file <<
         "\n"
-        "# These control events are laid out in this order: \n"
-        "#\n"
-        "#     [ enabled channel status d0 d1 ]\n"
-        "#\n"
-        "# where enabled is 1. Also, the order of the lines that follow must\n"
-        "# must be preserved.\n"
+        "# This is a change from version 1 of this file, made on 2021-02-10.\n"
+        "# The enabled column is replaced by a test of the status/event byte,\n"
+        "# and channel must be incorporated into the status.  Much cleaner!\n"
+        "# The order of the lines that follow must must be preserved.\n"
         "\n"
         ;
 
@@ -947,35 +1060,27 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     {
         for (int seq = 0; seq < setsize; ++seq)
         {
-            file << seq << " [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]\n";
+            file << seq
+                << " [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ]\n";
         }
     }
     else
     {
         for (int seq = 0; seq < setsize; ++seq)
         {
-            int minimum = static_cast<int>(midicontrolout::seqaction::arm);
-            int maximum = static_cast<int>(midicontrolout::seqaction::max);
+            int minimum, maximum;
+            midicontrolout::seqaction_range(minimum, maximum);
             file << std::setw(2) << seq << std::setw(0);
             for (int a = minimum; a < maximum; ++a)
             {
                 event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
-                bool active = mco.seq_event_is_active
-                (
-                    seq, midicontrolout::seqaction(a)
-                );
                 midibyte d0, d1;
                 char temp[48];
-
                 ev.get_data(d0, d1);
                 (void) snprintf             /* much easier format!  */
                 (
-                    temp, sizeof temp, " [%d %2d 0x%02x %3d %2d]",
-                    active ? 1 : 0,
-                    int(ev.channel()),
-                    unsigned(ev.get_status()),
-                    int(d0),
-                    int(d1)
+                    temp, sizeof temp, " [ 0x%02x %3d %3d ]",
+                    unsigned(ev.get_status()), int(d0), int(d1)
                 );
                 file << temp;
             }
@@ -988,16 +1093,15 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         "# The format of the mute and automation output events is simpler:\n"
         "#\n"
         "#  --------------------- mute-group number\n"
-        "# |   ------------------ MIDI channel (0-15)\n"
-        "# |  |  ---------------- MIDI status/event byte (e.g. Note On)\n"
-        "# |  | |  -------------- data 1 (e.g. note number)\n"
-        "# |  | | |  ------------ data 2 (e.g. velocity)\n"
-        "# |  | | | |\n"
+        "# |   ---------------- MIDI status/event byte (e.g. Note On + channel)\n"
+        "# |  |  -------------- data 1 (e.g. note number)\n"
+        "# |  | |  ------------ data 2 (e.g. velocity)\n"
+        "# |  | | |\n"
         "# v  v v v v\n"
-        "# 1 [0 0 0 0]\n"
+        "# 1 [0 0 0]\n"
         "\n"
         "# Also, the mute-controls have an additional stanza for non-populated\n"
-        "# mute-groups.\n"
+        "# (\"deleted\") mute-groups.\n"
         "\n"
         ;
 
@@ -1030,41 +1134,109 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     bool result = true;
     char charname[16];
     int opcode = 0;
-    int a[6], b[6], c[6];
-    int count = std::sscanf
-    (
-        scanline(), sg_scanf_fmt_ctrl_in, &opcode, &charname[0],
-        &a[0], &a[1], &a[2], &a[3], &a[4], &a[5],
-        &b[0], &b[1], &b[2], &b[3], &b[4], &b[5],
-        &c[0], &c[1], &c[2], &c[3], &c[4], &c[5]
-    );
-    if (count == 20)
+    int a[8], b[8], c[8];
+    automation::slot opslot = automation::slot::none;
+    std::string keyname;
+    if (version_number() < 2)
     {
-        automation::slot opslot = automation::slot::none;
-        if (opcat == automation::category::loop)
-            opslot = automation::slot::loop;
-        else if (opcat == automation::category::mute_group)
-            opslot = automation::slot::mute_group;
-        else if (opcat == automation::category::automation)
-            opslot = opcontrol::set_slot(opcode);
+        int count = std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_in, &opcode, &charname[0],
+            &a[0], &a[1], &a[2], &a[3], &a[4], &a[5],
+            &b[0], &b[1], &b[2], &b[3], &b[4], &b[5],
+            &c[0], &c[1], &c[2], &c[3], &c[4], &c[5]
+        );
+        if (count == 20)
+        {
+            opslot = automation::slot::none;
+            if (opcat == automation::category::loop)
+                opslot = automation::slot::loop;
+            else if (opcat == automation::category::mute_group)
+                opslot = automation::slot::mute_group;
+            else if (opcat == automation::category::automation)
+                opslot = opcontrol::set_slot(opcode);
 
-        /*
-         *  Create control objects, whether active or not.  We want to save
-         *  all objects in the file, to avoid altering the user's preferences.
-         */
+            /*
+             *  Create control objects, whether active or not.  We want to save
+             *  all objects in the file, to avoid altering the user's preferences.
+             */
 
-        std::string kn = strip_quotes(std::string(charname));
-        midicontrol mca(kn, opcat, automation::action::toggle, opslot, opcode);
-        mca.set(a);
-        (void) m_temp_midi_controls.add(mca);
+            keyname = strip_quotes(std::string(charname));
+            midicontrol mca
+            (
+                keyname, opcat, automation::action::toggle, opslot, opcode
+            );
+            mca.set(&a[1]);
+            (void) m_temp_midi_controls.add(mca);
 
-        midicontrol mcb(kn, opcat, automation::action::on, opslot, opcode);
-        mcb.set(b);
-        (void) m_temp_midi_controls.add(mcb);
+            midicontrol mcb
+            (
+                keyname, opcat, automation::action::on, opslot, opcode
+            );
+            mcb.set(&b[1]);
+            (void) m_temp_midi_controls.add(mcb);
 
-        midicontrol mcc(kn, opcat, automation::action::off, opslot, opcode);
-        mcc.set(c);
-        (void) m_temp_midi_controls.add(mcc);
+            midicontrol mcc
+            (
+                keyname, opcat, automation::action::off, opslot, opcode
+            );
+            mcc.set(&c[1]);
+            (void) m_temp_midi_controls.add(mcc);
+        }
+        else
+            result = false;
+    }
+    else
+    {
+        int count = std::sscanf
+        (
+            scanline(), sg_scanf_fmt_ctrl_in_2, &opcode, &charname[0],
+            &a[0], &a[1], &a[2], &a[3], &a[4],
+            &b[0], &b[1], &b[2], &b[3], &b[4],
+            &c[0], &c[1], &c[2], &c[3], &c[4]
+        );
+        if (count == 17)
+        {
+            opslot = automation::slot::none;
+            if (opcat == automation::category::loop)
+                opslot = automation::slot::loop;
+            else if (opcat == automation::category::mute_group)
+                opslot = automation::slot::mute_group;
+            else if (opcat == automation::category::automation)
+                opslot = opcontrol::set_slot(opcode);
+
+            /*
+             *  Create control objects, whether active or not.  We want to save
+             *  all objects in the file, to avoid altering the user's preferences.
+             */
+
+            keyname = strip_quotes(std::string(charname));
+            midicontrol mca
+            (
+                keyname, opcat, automation::action::toggle, opslot, opcode
+            );
+            mca.set(a);
+            (void) m_temp_midi_controls.add(mca);
+
+            midicontrol mcb
+            (
+                keyname, opcat, automation::action::on, opslot, opcode
+            );
+            mcb.set(b);
+            (void) m_temp_midi_controls.add(mcb);
+
+            midicontrol mcc
+            (
+                keyname, opcat, automation::action::off, opslot, opcode
+            );
+            mcc.set(c);
+            (void) m_temp_midi_controls.add(mcc);
+        }
+        else
+            result = false;
+    }
+    if (result)
+    {
         if (rc_ref().load_key_controls())
         {
             /*
@@ -1077,7 +1249,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
 
             keycontrol kc
             (
-                "", kn, opcat, automation::action::toggle, opslot, opcode
+                "", keyname, opcat, automation::action::toggle, opslot, opcode
             );
             std::string keyname = strip_quotes(std::string(charname));
             ctrlkey ordinal = qt_keyname_ordinal(keyname);

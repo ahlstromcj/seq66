@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-27
+ * \updates       2021-02-10
  * \license       GNU GPLv2 or above
  *
  *  This is actually an elegant little parser, and works well as long as one
@@ -172,6 +172,11 @@ public:
     const std::string & version () const
     {
         return m_version;
+    }
+
+    int version_number () const
+    {
+        return version().empty() ? 0 : std::stoi(version()) ;
     }
 
     bool bad_position (int p) const

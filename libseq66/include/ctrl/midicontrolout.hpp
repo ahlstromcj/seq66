@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-01-27
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -124,12 +124,20 @@ private:
      *  These correspond to the MIDI Controls for UI (user-interface) actions;
      *  see the uiactions enumeration. This enumeration cannot be a class
      *  enumeration, because enum classes cannot be used as array indices.
+     *
+     *  ca 2021-02-10.
+     *  We dropped the enabled and channel values.  We can test for an output
+     *  control to be enabled by checking for status > 0x00.  And we can make
+     *  the channel part of the status.  We will read the old style in the
+     *  midicontrolfile class and convert it to the new style.  We change the
+     *  name of the enumeration for brevity and to uncover all usages via
+     *  compiler errors. :-D
+     *
+     *  Obsolete: enabled, channel
      */
 
-    enum outindex
+    enum index
     {
-        enabled,
-        channel,
         status,
         data_1,
         data_2,
@@ -256,6 +264,12 @@ public:
 
     void initialize (int count, int buss = SEQ66_MIDI_CONTROL_OUT_BUSS);
 
+    static void seqaction_range (int & minimum, int & maximum)
+    {
+        minimum = static_cast<int>(midicontrolout::seqaction::arm);
+        maximum = static_cast<int>(midicontrolout::seqaction::max);
+    }
+
     void set_master_bus (mastermidibus * mmbus)
     {
         m_master_bus = mmbus;
@@ -275,17 +289,10 @@ public:
     std::string get_event_str (uiaction what, bool on) const;
     std::string get_event_str (int w, bool on) const;
     std::string get_mutes_event_str (int group, actionindex which) const;
-
-#if defined SEQ66_USE_REFERENCE_PARAMETERS
-    void set_seq_event (int seq, seqaction what, event & ev);
-    void set_event (uiaction what, bool enabled, event & on, event & off);
-#endif
-
     void set_event (uiaction what, bool enabled, int * onp, int * offp);
     void set_mutes_event
     (
-        int group, bool enabled,
-        int * onp, int * offp, int * delp = nullptr
+        int group, int * onp, int * offp, int * delp = nullptr
     );
     bool mutes_event_is_active (int group) const;
     void send_mutes_event (int group, actionindex which);

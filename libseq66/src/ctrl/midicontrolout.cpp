@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-01-27
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -316,35 +316,6 @@ midicontrolout::get_seq_event (int seq, seqaction what) const
         m_seq_events[seq][w].apt_action_event : s_dummy_event;
 }
 
-#if defined SEQ66_USE_REFERENCE_PARAMETERS
-
-/**
- * Register a MIDI event for a given sequence action.
- *
- * \param seq
- *      The index of the sequence.
- *
- * \param what
- *      The action to be notified.
- *
- * \param ev
- *      The MIDI event to be sent.
- */
-
-void
-midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
-{
-    if (what < seqaction::max)
-    {
-        int w = static_cast<int>(what);
-        m_seq_events[seq][w].apt_action_event = ev;
-        m_seq_events[seq][w].apt_action_status = true;
-        is_blank(false);
-    }
-}
-
-#endif
-
 /**
  *  Register a MIDI event for a given sequence action.
  *
@@ -361,7 +332,9 @@ midicontrolout::set_seq_event (int seq, seqaction what, event & ev)
  *      The action to be notified.
  *
  * \param ev
- *      Raw int array representing The MIDI event to be sent.
+ *      Raw int array representing The MIDI event to be sent. It has been
+ *      reduced to the three values need to specify a status event with channel
+ *      and two data values.
  */
 
 void
@@ -370,11 +343,12 @@ midicontrolout::set_seq_event (int seq, seqaction what, int * eva)
     if (what < seqaction::max)
     {
         int w = static_cast<int>(what);
+        bool enabled = eva[index::status] > 0x00;
         event ev;
-        ev.set_channel_status(eva[outindex::status], eva[outindex::channel]);
-        ev.set_data(eva[outindex::data_1], eva[outindex::data_2]);
+        ev.set_status_keep_channel(eva[index::status]);
+        ev.set_data(eva[index::data_1], eva[index::data_2]);
         m_seq_events[seq][w].apt_action_event = ev;
-        m_seq_events[seq][w].apt_action_status = bool(eva[outindex::enabled]);
+        m_seq_events[seq][w].apt_action_status = enabled;
         is_blank(false);
     }
 }
@@ -427,7 +401,7 @@ midicontrolout::get_event_str (uiaction what, bool on) const
         return get_event_str(w, on);
     }
     else
-        return std::string("[ 0 0 0 0 ]");
+        return std::string("[ 0x00   0   0 ]");
 }
 
 /**
@@ -440,16 +414,15 @@ midicontrolout::get_event_str (int w, bool on) const
     event ev = on ? m_ui_events[w].att_action_event_on :
         m_ui_events[w].att_action_event_off ;
 
+    int s = int(ev.get_status());
     midibyte d0, d1;
     ev.get_data(d0, d1);
     std::ostringstream str;
     str
-        << "[ "
-        << int(ev.channel()) << " 0x"
-        << std::hex << int(ev.get_status()) << " "
-        << std::dec << int(d0) << " " << int(d1)
-        << " ]"
-        ;
+    << "[ 0x" << std::hex << std::setw(2) << std::setfill('0') << s << " "
+    << std::dec << std::setw(3) << std::setfill(' ') << int(d0) << " "
+    << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
+    ;
     return str.str();
 }
 
@@ -464,37 +437,21 @@ midicontrolout::get_mutes_event_str (int group, actionindex which) const
     else if (which == action_del)
         ev = m_mutes_events[group].att_action_event_del;
 
+    int s = int(ev.get_status());
     midibyte d0, d1;
     ev.get_data(d0, d1);
     std::ostringstream str;
     str
-        << "[ "
-        << int(ev.channel()) << " 0x"
-        << std::hex << int(ev.get_status()) << " "
-        << std::dec << std::setw(3) << int(d0) << " " << std::setw(2) << int(d1)
-        << " ]"
-        ;
+    << "[ 0x" << std::hex << std::setw(2) << std::setfill('0') << s << " "
+    << std::dec << std::setw(3) << std::setfill(' ') << int(d0) << " "
+    << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
+    ;
     return str.str();
 }
 
-#if defined SEQ66_USE_REFERENCE_PARAMETERS
-
-void
-midicontrolout::set_event (uiaction what, bool enabled, event & on, event & off)
-{
-    if (what < uiaction::max)
-    {
-        int w = static_cast<int>(what);
-        m_ui_events[w].att_action_status = enabled;
-        m_ui_events[w].att_action_event_on = on;
-        m_ui_events[w].att_action_event_off = off;
-        is_blank(false);
-    }
-}
-#endif
-
 /**
- *  4 elements in each integer array: channel, status, d1, d2.
+ *  3 elements in each integer array: status, d1, d2.  If either status (on vs
+ *  off) is 0x00, we disable it, to avoid sending junk.
  */
 
 void
@@ -503,18 +460,24 @@ midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
     if (what < uiaction::max)
     {
         int w = static_cast<int>(what);
-
         event on;
-        on.set_channel_status(onp[1], onp[0]);          /* status, channel  */
-        on.set_data(onp[2], onp[3]);                    /* d1 and d2        */
+        on.set_status_keep_channel(onp[index::status]);
+        on.set_data(onp[index::data_1], onp[index::data_2]);
         m_ui_events[w].att_action_event_on = on;
 
         event off;
-        off.set_channel_status(offp[1], offp[0]);       /* status, channel  */
-        off.set_data(offp[2], offp[3]);                 /* d1 and d2        */
+        off.set_status_keep_channel(offp[index::status]);
+        off.set_data(onp[index::data_1], offp[index::data_2]);
         m_ui_events[w].att_action_event_off = off;
-        is_blank(false);
+
+        if (enabled)
+        {
+            if (onp[index::status] == 0x00 || offp[index::status] == 0x00)
+                enabled = false;
+        }
         m_ui_events[w].att_action_status = enabled;
+        if (enabled)
+            is_blank(false);
     }
 }
 
@@ -538,30 +501,36 @@ midicontrolout::event_is_active (uiaction what) const
 void
 midicontrolout::set_mutes_event
 (
-    int group, bool enabled,
-    int * onp, int * offp, int * delp
+    int group, int * onp, int * offp, int * delp
 )
 {
     if (group >= 0 && group < mutegroups::Size())
     {
+        /*
         event on;
-        on.set_channel_status(onp[1], onp[0]);          /* status, channel  */
-        on.set_data(onp[2], onp[3]);                    /* d1 and d2        */
+        on.set_channel_status(onp[1], onp[0]);          // status, channel  //
+        on.set_data(onp[2], onp[3]);                    // d1 and d2        //
+        m_mutes_events[group].att_action_event_on = on;
+        */
+
+        event on;
+        bool enabled = onp[index::status] > 0x00;
+        on.set_status_keep_channel(onp[index::status]);
+        on.set_data(onp[index::data_1], onp[index::data_2]);
         m_mutes_events[group].att_action_event_on = on;
 
         event off;
-        off.set_channel_status(offp[1], offp[0]);       /* status, channel  */
-        off.set_data(offp[2], offp[3]);                 /* d1 and d2        */
+        off.set_status_keep_channel(offp[index::status]);
+        off.set_data(offp[index::data_1], offp[index::data_2]);
         m_mutes_events[group].att_action_event_off = off;
-        if (not_nullptr(delp))
-        {
-            event del;
-            del.set_channel_status(delp[1], delp[0]);   /* status, channel  */
-            del.set_data(delp[2], delp[3]);             /* d1 and d2        */
-            m_mutes_events[group].att_action_event_del = del;
-        }
-        is_blank(false);
+
+        event del;
+        del.set_status_keep_channel(delp[index::status]);
+        del.set_data(delp[index::data_1], delp[index::data_2]);
+        m_mutes_events[group].att_action_event_del = del;
         m_mutes_events[group].att_action_status = enabled;
+        if (enabled)
+            is_blank(false);
     }
 }
 

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-24
-% \update      2021-02-07
+% \update      2021-02-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -233,14 +233,17 @@
    keystrokes are assigned, and only the "Toggle" (first)
    stanza of each MIDI control line
    is enabled, although there are definitions for the On and Off stanzas
-   should one want to enable them.  Here are the first four lines, truncated:
+   should one want to enable them.  Here are the first four lines, truncated.
+   Note that they no longer include the "enabled" and "channel" columns.
+   Instead, the event/status is checked to be non-zero in order to be enabled,
+   and the channel is encoded in the event/status.
 
    \begin{verbatim}
       [loop-control]
-       0 "1"  [ 1 0 0x90  0 1 127 ] [ 0 0 0x90  0 1 127 ] ...
-       1 "q"  [ 1 0 0x90 16 1 127 ] [ 0 0 0x90 16 1 127 ] ...
-       2 "a"  [ 1 0 0x90 32 1 127 ] [ 0 0 0x90 32 1 127 ] ...
-       3 "z"  [ 1 0 0x90 48 1 127 ] [ 0 0 0x90 48 1 127 ] ...
+       0 "1"  [ 0x90  0 1 127 ] [ 0x90  0 1 127 ] ...
+       1 "q"  [ 0x90 16 1 127 ] [ 0x90 16 1 127 ] ...
+       2 "a"  [ 0x90 32 1 127 ] [ 0x90 32 1 127 ] ...
+       3 "z"  [ 0x90 48 1 127 ] [ 0x90 48 1 127 ] ...
    \end{verbatim}
 
    The note values (0, 16, 32, 48) are in decimal. Why?  Less to type.
@@ -267,10 +270,10 @@
 
    \begin{verbatim}
       [mute-group-control]
-       0 "!"  [ 1 0 0x90  64 1 127 ] ...
-       1 "Q"  [ 1 0 0x90  80 1 127 ] ...
-       2 "A"  [ 1 0 0x90  96 1 127 ] ...
-       3 "Z"  [ 1 0 0x90 112 1 127 ] ...
+       0 "!"  [ 0x90  64 1 127 ] ...
+       1 "Q"  [ 0x90  80 1 127 ] ...
+       2 "A"  [ 0x90  96 1 127 ] ...
+       3 "Z"  [ 0x90 112 1 127 ] ...
    \end{verbatim}
 
    The mapping is the similar to loop-control, but offset by four rows.
@@ -281,15 +284,15 @@
 \label{paragraph:patterns_automation_control}
 
    A large number of actions available from the user-interface can also be
-   controls by keystrokes or a MIDI device.  Here is a brief sample.  See the
+   controlled by keystrokes or a MIDI device.  Here is a brief sample.  See the
    'ctrl' file itself for more information.
 
-\begin{verbatim}
-0 "'" [ 0 0 0x00 0 0 0 ] [ 1 0 0xb0 104 127 127 ] [ 1 0 0xb0 104 127 127 ] # BPM Up
-1 ";" [ 0 0 0x00 0 0 0 ] [ 1 0 0xb0 105 127 127 ] [ 1 0 0xb0 105 127 127 ] # BPM Dn
-2 "]" [ 0 0 0x00 0 0 0 ] [ 0 0 0xb0   0   0   0 ] [ 0 0 0xb0   0   0   0 ] # Set Up
-3 "[" [ 0 0 0x00 0 0 0 ] [ 0 0 0xb0   0   0   0 ] [ 0 0 0xb0   0   0   0 ] # Set Dn
-\end{verbatim}
+   \begin{verbatim}
+      0 "'" [ 0x00 0 0 0 ] [ 0xb0 104 127 127 ] [ 0xb0 104 127 127 ] # BPM Up
+      1 ";" [ 0x00 0 0 0 ] [ 0xb0 105 127 127 ] [ 0xb0 105 127 127 ] # BPM Dn
+      2 "]" [ 0x00 0 0 0 ] [ 0xb0   0   0   0 ] [ 0xb0   0   0   0 ] # Set Up
+      3 "[" [ 0x00 0 0 0 ] [ 0xb0   0   0   0 ] [ 0xb0   0   0   0 ] # Set Dn
+   \end{verbatim}
 
    In \texttt{qseq66-lp-mini.ctrl}, all 64 square buttons are defined, which
    leaves the 16 circular buttons available for MIDI control. Only a few of those
@@ -326,10 +329,10 @@
    section above, 60 is green, 15 red, 62 is yellow, and 12 is off.
 
    \begin{verbatim}
- 0 [1  0 0x90   0 60] [1  0 0x90   0 15] [1  0 0x90   0 62] [1  0 0x90   0 12]
- 1 [1  0 0x90  16 60] [1  0 0x90  16 15] [1  0 0x90  16 62] [1  0 0x90  16 12]
- 2 [1  0 0x90  32 60] [1  0 0x90  32 15] [1  0 0x90  32 62] [1  0 0x90  32 12]
- 3 [1  0 0x90  48 60] [1  0 0x90  48 15] [1  0 0x90  48 62] [1  0 0x90  48 12]
+       0 [ 0x90   0 60 ] [ 0x90   0 15] [ 0x90   0 62] [ 0x90   0 12]
+       1 [ 0x90  16 60 ] [ 0x90  16 15] [ 0x90  16 62] [ 0x90  16 12]
+       2 [ 0x90  32 60 ] [ 0x90  32 15] [ 0x90  32 62] [ 0x90  32 12]
+       3 [ 0x90  48 60 ] [ 0x90  48 15] [ 0x90  48 62] [ 0x90  48 12]
    \end{verbatim}
 
    For the \texttt{qseq66-lp-mini.ctrl} file, only the upper 32 buttons and
@@ -357,18 +360,17 @@
    The layout is pretty simple; here are the first four of the 32 lines:
 
    \begin{verbatim}
-      1 [ 0 0x90  64 60 ] [ 0 0x90  64 15 ] [ 0 0x90  64 12 ]
-      2 [ 0 0x90  80 60 ] [ 0 0x90  80 15 ] [ 0 0x90  80 12 ]
-      3 [ 0 0x90  96 60 ] [ 0 0x90  96 15 ] [ 0 0x90  96 12 ]
-      4 [ 0 0x90 112 60 ] [ 0 0x90 112 15 ] [ 0 0x90 112 12 ]
+      1 [ 0x90  64 60 ] [ 0x90  64 15 ] [ 0x90  64 12 ]
+      2 [ 0x90  80 60 ] [ 0x90  80 15 ] [ 0x90  80 12 ]
+      3 [ 0x90  96 60 ] [ 0x90  96 15 ] [ 0x90  96 12 ]
+      4 [ 0x90 112 60 ] [ 0x90 112 15 ] [ 0x90 112 12 ]
    \end{verbatim}
 
-   The slots are numbered; all of the entries in the section are always enabled.
-   The first stanza indicates that the button the selected mute-group will be
-   green.  The second stanza indicates that the unselected mute-group buttons will
-   all be red, as long as they have mutes defined in them.
-   The third stanza indicates that the inactive (empty) mute-groups will
-   be dark.
+   The slots are numbered; all of the entries in the section are always
+   enabled.  The first stanza indicates that the button the selected mute-group
+   will be green.  The second stanza indicates that the unselected mute-group
+   buttons will all be red, as long as they have mutes defined in them.  The
+   third stanza indicates that the inactive (empty) mute-groups will be dark.
 
 \paragraph{[automation-control-out]}
 \label{paragraph:patterns_automation_control_out}
@@ -377,21 +379,20 @@
    circular buttons:
 
    \begin{verbatim}
-      1 [ 0 0xb0 104 60 ] [ 0 0xb0 104 0 ] # play on/off
-      1 [ 0 0xb0 104 15 ] [ 0 0xb0 104 0 ] # stop on/off
-      1 [ 0 0xb0 104 62 ] [ 0 0xb0 104 0 ] # pause on/off
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # queue on/off
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # oneshot on/off
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # replace on/off
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # snap1 store/restore
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # snap2 store/restore
-      0 [ 0 0x0    0  0 ] [ 0 0x0    0 0 ] # learn on/off
+      1 [ 0xb0 104 60 ] [ 0xb0 104 0 ] # play on/off
+      1 [ 0xb0 104 15 ] [ 0xb0 104 0 ] # stop on/off
+      1 [ 0xb0 104 62 ] [ 0xb0 104 0 ] # pause on/off
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # queue on/off
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # oneshot on/off
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # replace on/off
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # snap1 store/restore
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # snap2 store/restore
+      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # learn on/off
    \end{verbatim}
 
-   Note that the play, stop, and pause statuses are all shown on the same button,
-   as green, red, or yellow.
-
-   Some of these might still be in progress as you read this.
+   Note that the play, stop, and pause statuses are all shown on the same
+   button, as green, red, or yellow.  Some of these might still be in progress
+   as you read this.
 
 \subsection{Test Run, ALSA}
 \label{subsubsec:launchpad_mini_test_run_alsa}

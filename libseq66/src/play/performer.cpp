@@ -91,7 +91,7 @@
  *  reserved_46:        Reserved for expansion.
  *  reserved_47:        Reserved for expansion.
  *  reserved_48:        Reserved for expansion.
- *  maximum,            Used only for termination/range-checking.
+ *  max:                Used only for termination/range-checking.
  *  loop:               Key: Toggle-only.  MIDI: Toggle/On/Off.
  *  mute_group:         Key: Toggle-only.  MIDI: Toggle/On/Off.
  *  automation:         See the items above.
@@ -106,7 +106,7 @@
  *      -   select_mute_group(). Almost the same in a stilted way, but also
  *          saves the state of the mute group in a small set array, "tracks
  *          mute".  Used indirectly in mainwnd to "activate" the desired
- *          mute-group. Also called by default in handle_midi_control().
+ *          mute-group.
  *      -   mute_group_tracks(). If in group mode, sets the sequences according
  *          to the state in "tracks mute".
  *      -   set_playing_screenset(). Sets "tracks mute" per the current
@@ -436,8 +436,6 @@ performer::performer (int ppqn, int rows, int columns) :
 performer::~performer ()
 {
     m_io_active = m_is_running = false;
-//  reset_sequences();                      /* stop all output upon exit    */
-//  announce_exit(false);                   /* blank the devide             */
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
@@ -4877,8 +4875,8 @@ performer::midi_control_keystroke (const keystroke & k)
  *      The MIDI event to process.
  *
  * \param recording
- *      This parameter, if true, restricts the handled controls to start, stop, and
- *      record.
+ *      This parameter, if true, restricts the handled controls to start,
+ *      stop, and record.
  *
  * \return
  *      Returns true if the event was valid and usable, and the call to the
@@ -5002,7 +5000,7 @@ performer::populate_default_ops ()
 
     for (int index = 0; /* breaker */ ; ++index)
     {
-        if (sm_auto_func_list[index].ap_slot != automation::slot::maximum)
+        if (sm_auto_func_list[index].ap_slot != automation::slot::max)
         {
             result = add_automation
             (
@@ -6576,7 +6574,7 @@ performer::sm_auto_func_list [] =
      * Terminator
      */
 
-    { automation::slot::maximum, &performer::automation_no_op            }
+    { automation::slot::max, &performer::automation_no_op               }
 };
 
 }           // namespace seq66

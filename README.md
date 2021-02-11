@@ -1,7 +1,7 @@
 # README for Seq66 0.92.0 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-02-09
+2015-09-10 to 2021-02-11
 
 __Seq66__ is a MIDI sequencer and live MIDI looper with a hardware sampler-like
 grid pattern interface, MIDI automation for live performance, with sets and
@@ -69,11 +69,14 @@ Windows, and using a conventional source tarball.
         *   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
         *   Fixed issues with applying 'usr' buss and instrument names to the
             pattern-editor menus.
-        *   Fixing serious issues with the event editor. Now deletes linked
-            notes.
+        *   Fixing serious issues with the event editor. Now deletes both
+            linked notes.
         *   Added mute-group-out to show mutegroups on Launchpad Mini buttons.
         *   Tightened up mute-group handling, configuration file handling,
             play-list handling, and MIDI display device handling.
+        *   Stream-line the format of the 'ctrl' file by removing columns for
+            the values of "enabled" and "channel".  Will detect older formats
+            and fix them.
         *   A PDF user manual is now provided in the doc directory, installed
             to /usr/local/share/doc/seq66-0.92 with "make install".
     *   Version 0.91.6:

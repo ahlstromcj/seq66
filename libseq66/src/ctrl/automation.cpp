@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2020-08-06
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  *  Currently, there is no code in this file.
@@ -133,10 +133,6 @@ namespace seq66
 namespace automation
 {
 
-/**
- *
- */
-
 std::string
 category_to_string (category c)
 {
@@ -159,10 +155,6 @@ category_to_string (category c)
     }
 }
 
-/**
- *
- */
-
 category
 string_to_category (const std::string & s)
 {
@@ -177,10 +169,6 @@ string_to_category (const std::string & s)
     else
         return category::none;
 }
-
-/**
- *
- */
 
 std::string
 action_to_string (action c)
@@ -204,10 +192,6 @@ action_to_string (action c)
     }
 }
 
-/**
- *
- */
-
 action
 string_to_action (const std::string & s)
 {
@@ -222,10 +206,6 @@ string_to_action (const std::string & s)
     else
         return action::none;
 }
-
-/**
- *
- */
 
 using slot_pair = struct
 {
@@ -297,16 +277,12 @@ s_slotnamelist [] =
     { slot::reserved_46,      "reserved_46"     },
     { slot::reserved_47,      "reserved_47"     },
     { slot::reserved_48,      "reserved_48"     },
-    { slot::maximum,          "maximum"         },
+    { slot::max,              "maximum"         },
     { slot::loop,             "loop"            },
     { slot::mute_group,       "mute_group"      },
     { slot::automation,       "automation"      },
     { slot::illegal,          "illegal"         }
 };
-
-/**
- *
- */
 
 std::string
 slot_to_string (slot s)
@@ -319,10 +295,6 @@ slot_to_string (slot s)
     }
     return result;
 }
-
-/**
- *
- */
 
 slot
 string_to_slot (const std::string & s)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-03-20
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -72,7 +72,7 @@ opcontainer::opcontainer (const std::string & name) :
  *
  * \param op
  *      The operation's object, which provides the op-number, the automation
- *      slot number to use.  The "maximum" value will never be encounterd, and
+ *      slot number to use.  The "max" value will never be encounterd, and
  *      the "automation" value is ignored.  The "reserved" numbers should use
  *      a no-op midioperation.
  *
@@ -86,7 +86,7 @@ opcontainer::add (const midioperation & op)
     automation::slot opnumber = op.number();
     if
     (
-        opnumber != automation::slot::maximum ||        // TO INVESTIGATE
+        opnumber != automation::slot::max ||
         opnumber != automation::slot::automation
     )
     {
@@ -110,10 +110,6 @@ opcontainer::add (const midioperation & op)
     return result;
 }
 
-/**
- *
- */
-
 const midioperation &
 opcontainer::operation (automation::slot s) const
 {
@@ -121,10 +117,6 @@ opcontainer::operation (automation::slot s) const
     const auto & coi = m_container.find(s);
     return (coi != m_container.end()) ? coi->second : sm_midioperation_dummy;
 }
-
-/**
- *
- */
 
 void
 opcontainer::show () const
