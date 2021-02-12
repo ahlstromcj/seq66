@@ -740,10 +740,6 @@ nsmbase::error (int errcode, const std::string & errmesg)
     nsm::incoming_msg("Error Values", errmesg, ecm, true);
 }
 
-/**
- *
- */
-
 void
 nsmbase::nsm_debug (const std::string & tag)
 {

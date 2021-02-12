@@ -13,7 +13,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with seq66; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
 /**
@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-02-06
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -91,7 +91,6 @@ qmutemaster::qmutemaster
     QFrame                  (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qmutemaster),
-    m_operations            ("Set Master Operations"),
     m_timer                 (nullptr),
     m_main_window           (mainparent),
     m_group_buttons         (),                             /* 2-D arrary   */
@@ -579,15 +578,22 @@ qmutemaster::slot_trigger ()
 }
 
 /**
- *  The calls to set mutes:  fill midibooleans bit and call
+ *  The calls to set mutes:  Fills midibooleans bit and calls
+ *  performer::set_mutes(), with a parameter of true so that the mutes are
+ *  also copied to rcsettings for when the user of the Mutes tab wants to save
+ *  the file.
  */
 
 void
 qmutemaster::slot_set_mutes ()
 {
     midibooleans bits = m_pattern_mutes;
-    bool ok = cb_perf().set_mutes(current_group(), bits);
-    if (! ok)
+    bool ok = cb_perf().set_mutes(current_group(), bits, true);
+    if (ok)
+    {
+        ui->m_button_save->setEnabled(true);
+    }
+    else
     {
         // TODO show the error
     }
@@ -674,7 +680,18 @@ qmutemaster::slot_save ()
             }
             rc().mute_group_filename(fname);
         }
-        m_main_window->save_mutes_dialog(rc().mute_group_filespec());
+
+        /*
+         *  Set the base-name of the 'mutes' files, then pass the mute-group
+         *  bits to performer to update the group and its rcsettings copy..
+         *
+         * bool ok = cb_perf().set_mutes(current_group(), bits, true);
+         */
+
+        midibooleans bits = m_pattern_mutes;
+        bool ok = cb_perf().put_mutes();
+        if (ok)
+            m_main_window->save_mutes_dialog(rc().mute_group_filespec());
     }
 }
 
@@ -756,7 +773,8 @@ qmutemaster::handle_group (int groupno)
         ui->m_group_table->selectRow(0);
         update_group_buttons();
         update_pattern_buttons();
-        ui->m_button_save->setEnabled(true);
+
+        // ui->m_button_save->setEnabled(true);
     }
 }
 
@@ -934,7 +952,12 @@ qmutemaster::handle_pattern_button (int row, int column)
     {
         m_pattern_mutes[s] = midibool(enabled);
         ui->m_button_set_mutes->setEnabled(true);
-        ui->m_button_save->setEnabled(true);
+
+        /*
+         * Do not enable until the "Update Group" button is pressed.
+         *
+         * ui->m_button_save->setEnabled(true);
+         */
     }
 }
 

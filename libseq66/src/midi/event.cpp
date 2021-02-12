@@ -683,10 +683,6 @@ event::print () const
     printf("%s", buffer.c_str());
 }
 
-/**
- *
- */
-
 void
 event::print_note (bool is_a_link) const
 {
@@ -754,10 +750,6 @@ event::to_string () const
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 event::rescale (int oldppqn, int newppqn)

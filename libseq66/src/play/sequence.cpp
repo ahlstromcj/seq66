@@ -80,7 +80,8 @@ namespace seq66
  *  This increment allows the rest of the threads to notice the change.
  */
 
-static const int c_song_record_increment = 16;
+static const int c_song_record_increment    = 16;
+static const int c_maxbeats                 = 0xFFFF;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -1673,10 +1674,6 @@ sequence::randomize_selected (midibyte status, int plus_minus)
     return result;
 }
 
-/**
- *
- */
-
 bool
 sequence::randomize_selected_notes (int jitter, int range)
 {
@@ -1804,10 +1801,6 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
         }
     }
 }
-
-/**
- *
- */
 
 bool
 sequence::repitch_selected (const notemapper & nmap)
@@ -3017,10 +3010,6 @@ sequence::intersect_triggers
     return m_triggers.intersect(position, start, ender);
 }
 
-/**
- *
- */
-
 bool
 sequence::intersect_triggers (midipulse position)
 {
@@ -3314,10 +3303,6 @@ sequence::move_triggers (midipulse starttick, midipulse distance, bool direction
     automutex locker(m_mutex);
     m_triggers.move(starttick, distance, direction);
 }
-
-/**
- *
- */
 
 bool
 sequence::selected_trigger
@@ -3697,10 +3682,6 @@ sequence::minmax_notes (int & lowest, int & highest) // const
     return result;
 }
 
-/**
- *
- */
-
 int
 sequence::note_count ()
 {
@@ -3833,6 +3814,7 @@ sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
 }
 
 /**
+ *  Checks for non-terminated notes.
  *
  * \return
  *      Returns true if there is at least one non-terminated linked note in the
@@ -4421,6 +4403,7 @@ sequence::set_overwrite_recording (bool ovwr, bool toggle)
 }
 
 /**
+ *  Sets the state of MIDI Thru.
  *
  * \param thru_active
  *      Provides the desired status to set the through state.
@@ -4923,10 +4906,6 @@ sequence::quantize_events
 
     return result;
 }
-
-/**
- *
- */
 
 bool
 sequence::change_ppqn (int p)

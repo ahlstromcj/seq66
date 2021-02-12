@@ -48,10 +48,6 @@
  *
  */
 
-/**
- *
- */
-
 qtcore_task::qtcore_task (QObject * parent) :
 
     QObject         (parent),
@@ -60,18 +56,10 @@ qtcore_task::qtcore_task (QObject * parent) :
     // no code
 }
 
-/**
- *
- */
-
 qtcore_task::~qtcore_task ()
 {
     // QObject::~QObject() automatically called
 }
-
-/**
- *
- */
 
 void
 qtcore_task::run ()

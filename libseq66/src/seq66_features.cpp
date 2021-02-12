@@ -82,10 +82,6 @@ set_app_type (const std::string & atype)
     s_app_type = atype;
 }
 
-/**
- *
- */
-
 void
 set_app_engine (const std::string & aengine)
 {
@@ -197,10 +193,6 @@ seq_version_text ()
 {
     return s_versiontext;
 }
-
-/**
- *
- */
 
 const std::string &
 seq_app_tag ()

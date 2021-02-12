@@ -3089,10 +3089,6 @@ read_midi_file
     return result;
 }
 
-/**
- *
- */
-
 bool
 write_midi_file
 (

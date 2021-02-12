@@ -1499,10 +1499,6 @@ eventlist::event_in_range
     return result;
 }
 
-/**
- *
- */
-
 bool
 eventlist::get_selected_events_interval
 (
@@ -1535,10 +1531,6 @@ eventlist::get_selected_events_interval
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 eventlist::rescale (int oldppqn, int newppqn)
@@ -1678,10 +1670,6 @@ eventlist::grow_selected (midipulse delta, int snap)
     return result;
 }
 
-/**
- *
- */
-
 bool
 eventlist::copy_selected (eventlist & clipbd)
 {
@@ -1711,10 +1699,6 @@ eventlist::copy_selected (eventlist & clipbd)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
@@ -1751,7 +1735,6 @@ eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
     }
     return result;
 }
-
 
 /**
  *  A new function to consolidate the adjustment of timestamps in a pattern.

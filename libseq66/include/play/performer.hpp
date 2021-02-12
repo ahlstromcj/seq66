@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-08
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -2155,7 +2155,13 @@ public:
         return mutes().get_active_groups();
     }
 
-    bool set_mutes (mutegroup::number gmute, const midibooleans & bits);
+    bool set_mutes
+    (
+        mutegroup::number gmute,
+        const midibooleans & bits,
+        bool putmutes = false
+    );
+    bool put_mutes ();
     bool learn_mutes (mutegroup::number group);
     bool clear_mutes ();
     bool apply_session_mutes ();

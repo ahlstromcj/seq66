@@ -60,12 +60,6 @@
 
 const int c_seq_color_none = (-1);
 
-/**
- *
- */
-
-const int c_maxbeats    = 0xFFFF;
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */

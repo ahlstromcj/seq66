@@ -57,6 +57,7 @@ namespace seq66
 {
 
 /**
+ *  Principal constructor.
  *
  * \param p
  *      Provides the performer object to use for interacting with this sequence.
@@ -91,18 +92,10 @@ qseqframe::qseqframe
     // No code needed
 }
 
-/**
- *
- */
-
 qseqframe::~qseqframe ()
 {
     // No code needed
 }
-
-/**
- *
- */
 
 bool
 qseqframe::repitch_selected ()

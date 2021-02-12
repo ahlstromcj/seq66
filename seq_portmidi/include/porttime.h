@@ -55,7 +55,7 @@ extern "C"
 #endif
 
 /**
- *
+ *  Error codes.
  */
 
 typedef enum
@@ -68,16 +68,7 @@ typedef enum
 
 } PtError;
 
-/**
- *
- */
-
 typedef int32_t PtTimestamp;
-
-/**
- *
- */
-
 typedef void (PtCallback) (PtTimestamp timestamp, void * userData);
 
 /*

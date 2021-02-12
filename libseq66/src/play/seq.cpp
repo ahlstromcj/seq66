@@ -90,10 +90,6 @@ seq::~seq ()
 #endif
 }
 
-/**
- *
- */
-
 bool
 seq::activate (sequence * s, number seqno)
 {
@@ -148,10 +144,6 @@ seq::activate (number seqno, bool active)
 
     return result;
 }
-
-/**
- *
- */
 
 bool
 seq::deactivate ()
@@ -350,10 +342,6 @@ seq::sequence_playing_change (bool on, bool qinprogress)
         }
     }
 }
-
-/**
- *
- */
 
 std::string
 seq::to_string (int /*index*/) const

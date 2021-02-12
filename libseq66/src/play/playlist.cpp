@@ -498,10 +498,6 @@ playlist::open_current_song ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_next_list (bool opensong, bool loading)
 {
@@ -514,10 +510,6 @@ playlist::open_next_list (bool opensong, bool loading)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_previous_list (bool opensong)
@@ -532,10 +524,6 @@ playlist::open_previous_list (bool opensong)
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_select_list (int index, bool opensong)
 {
@@ -547,10 +535,6 @@ playlist::open_select_list (int index, bool opensong)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_select_list_by_midi (int ctrl, bool opensong)
@@ -565,10 +549,6 @@ playlist::open_select_list_by_midi (int ctrl, bool opensong)
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_next_song (bool opensong)
 {
@@ -581,10 +561,6 @@ playlist::open_next_song (bool opensong)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_previous_song (bool opensong)
@@ -1039,7 +1015,6 @@ playlist::song_index () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1056,7 +1031,6 @@ playlist::file_directory () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1074,7 +1048,6 @@ playlist::song_directory () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1142,10 +1115,6 @@ playlist::song_filename () const
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 playlist::midi_base_directory (const std::string & basedir)

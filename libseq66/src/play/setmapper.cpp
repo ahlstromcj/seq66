@@ -310,6 +310,7 @@ setmapper::add_sequence (sequence * s, int seqno)
 }
 
 /**
+ *  Dirties up a sequence.
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -333,6 +334,7 @@ setmapper::set_dirty (seq::number seqno)
 }
 
 /**
+ *  Toggles a sequence.
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -364,8 +366,8 @@ setmapper::toggle (seq::number seqno)
  *  If no sequences are armed, then turn them all on, as a convenience to the
  *  user.
  *
- *  Note that this function should operate only in Live mode; it is too confusing to
- *  use in Song mode.
+ *  Note that this function should operate only in Live mode; it is too
+ *  confusing to use in Song mode.
  */
 
 void
@@ -386,6 +388,7 @@ setmapper::toggle_playing_tracks ()
 }
 
 /**
+ *  Toggles the song-mute of a sequence.
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -509,6 +512,7 @@ setmapper::learn_armed_statuses ()
 }
 
 /**
+ *  Applies transpose to a sequence.
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -560,6 +564,7 @@ setmapper::max_trigger () const
 }
 
 /**
+ *  Selected the triggers in the range of the timestamp/sequence box.
  *
  * \param seqlow
  *      Provides the low track to be selected.
@@ -598,6 +603,7 @@ setmapper::select_triggers_in_range
 }
 
 /**
+ *  Deselects the triggers in a sequence.
  *
  * \param seqno
  *      Either a track number or seq::all() (the default value).
@@ -1102,10 +1108,6 @@ setmapper::clear_mutes ()
 
     return result;
 }
-
-/**
- *
- */
 
 void
 setmapper::show (bool showseqs) const

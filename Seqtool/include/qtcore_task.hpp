@@ -54,7 +54,7 @@
 #include "util/basic_macros.hpp"        /* nullptr                          */
 
 /**
- *
+ *  Test class.
  */
 
 class qtcore_task : public QObject

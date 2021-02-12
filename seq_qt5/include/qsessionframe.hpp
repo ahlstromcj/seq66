@@ -56,7 +56,7 @@ namespace seq66
     class qsmainwnd;
 
 /**
- *
+ *  Provides a frame for the Sessions tab.
  */
 
 class qsessionframe : public QFrame

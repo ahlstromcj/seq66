@@ -43,24 +43,12 @@ extern "C"
 {
 #endif
 
-/**
- *
- */
-
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
 
-/**
- *
- */
-
 #define MAX_KEY_SIZE 256
-
-/**
- *
- */
 
 enum
 {
@@ -87,20 +75,12 @@ enum
     kVALUE_FULLDATETAG = 0x33        // Dates are tagged with a whole byte.
 };
 
-/**
- *
- */
-
 typedef struct pldata_struct
 {
     uint8_t * data;
     size_t len;
 
 } pldata_node, * pldata_ptr;
-
-/**
- *
- */
 
 typedef struct array_struct
 {
@@ -140,10 +120,6 @@ typedef struct value_struct
     };
 
 } value_node, * value_ptr;
-
-/*
- *
- */
 
 value_ptr bplist_read_file (char * filename);
 value_ptr bplist_read_user_pref (char * filename);

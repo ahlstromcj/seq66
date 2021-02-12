@@ -83,10 +83,6 @@ qt5nsmanager::qt5nsmanager
     m_timer->start();
 }
 
-/**
- *
- */
-
 qt5nsmanager::~qt5nsmanager ()
 {
     // no code yet
@@ -234,20 +230,12 @@ qt5nsmanager::detach_session (std::string & msg, bool ok)
     return clinsmanager::detach_session(msg, ok);
 }
 
-/**
- *
- */
-
 bool
 qt5nsmanager::run ()
 {
     int exit_status = m_application.exec();     /* run main window loop     */
     return exit_status == EXIT_SUCCESS;
 }
-
-/**
- *
- */
 
 void
 qt5nsmanager::show_message

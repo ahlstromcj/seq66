@@ -1353,10 +1353,6 @@ clean_path (const std::string & path, bool to_unix)
     return normalize_path(result, to_unix, true);       /* an added slash   */
 }
 
-/**
- *
- */
-
 std::string
 append_file
 (
@@ -1374,10 +1370,6 @@ append_file
     result += filename;
     return normalize_path(result, to_unix, false);
 }
-
-/**
- *
- */
 
 std::string
 append_path
@@ -1505,10 +1497,6 @@ filename_split
 #endif
     return result;
 }
-
-/**
- *
- */
 
 std::string
 file_path_set (const std::string & fullpath, const std::string & newpath)

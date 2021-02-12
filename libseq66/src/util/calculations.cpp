@@ -92,11 +92,7 @@
 namespace seq66
 {
 
-/**
- *
- */
-
-int
+static int
 satoi (const std::string & v)
 {
     return std::atoi(v.c_str());

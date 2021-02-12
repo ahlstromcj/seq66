@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-02-05
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -224,13 +224,6 @@ private:
     Ui::qmutemaster * ui;
 
 private:
-
-    /**
-     *  Holds a map of midioperation functors to be used to control patterns,
-     *  mute-groups, and automation functions.
-     */
-
-    opcontainer m_operations;
 
     /**
      *  A timer for refreshing the frame as needed.

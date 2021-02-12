@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-05
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3560,10 +3560,6 @@ performer::stop_playing ()
         (void) notify->on_automation_change(automation::slot::stop);
 }
 
-/**
- *
- */
-
 void
 performer::auto_play ()
 {
@@ -3590,10 +3586,6 @@ performer::auto_play ()
     is_pattern_playing(isplaying);
 }
 
-/**
- *
- */
-
 void
 performer::auto_pause ()
 {
@@ -3610,10 +3602,6 @@ performer::auto_pause ()
     }
     is_pattern_playing(isplaying);
 }
-
-/**
- *
- */
 
 void
 performer::auto_stop ()
@@ -5029,11 +5017,31 @@ performer::populate_default_ops ()
 /**
  *  Sets the given mute group.  If there is a change,  then the subscribers are
  *  notified.  If the 'rc' "save-mutes-to" setting indicates saving it to the
- *  MIDI file, then this becomes a modify action.
+ *  MIDI file, then this becomes a modify action.  Associated with the "Update
+ *  Group" button in the qmutemaster tab.
+ *
+ * \param gmute
+ *      Provides the number of the mute-group to be updated.
+ *
+ * \param bits
+ *      Provides the bits representing the layout of the mute-group's
+ *      armed/unarmed statuses.
+ *
+ * \param putmutes
+ *      If true, then the mute-group in the rc() mute-groups object is
+ *      updated.
+ *
+ * \return
+ *      Returns true if the mutes were able to be set.
  */
 
 bool
-performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
+performer::set_mutes
+(
+    mutegroup::number gmute,
+    const midibooleans & bits,
+    bool putmutes
+)
 {
     midibooleans original = get_mutes(gmute);
     bool result = bits != original;
@@ -5046,9 +5054,19 @@ performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
                 change::yes : change:: no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
+
+            if (putmutes)
+                rc().mute_groups().set(gmute, bits);
         }
     }
     return result;
+}
+
+bool
+performer::put_mutes ()
+{
+    rc().mute_groups() = m_mute_groups;
+    return true;
 }
 
 /**
@@ -6225,10 +6243,6 @@ performer::automation_stop
 
     return true;
 }
-
-/**
- *
- */
 
 bool
 performer::automation_snapshot_2

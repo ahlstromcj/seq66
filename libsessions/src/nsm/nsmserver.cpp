@@ -42,7 +42,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor
  */
 
 nsmserver::nsmserver (const std::string & nsmurl) :
@@ -50,10 +50,6 @@ nsmserver::nsmserver (const std::string & nsmurl) :
 {
     //
 }
-
-/**
- *
- */
 
 std::unique_ptr<nsmserver>
 create_nsmserver ()

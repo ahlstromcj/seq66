@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-26
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -208,7 +208,24 @@ mutegroups::add (mutegroup::number gmute, const mutegroup & m)
 
     bool result = m_container.size() == (sz + 1);
     if (! result)
-        std::cerr << "Duplicate group-mute value " << gmute << std::endl;
+        std::cerr << "[Duplicate group " << gmute  << "]" << std::endl;
+
+    return result;
+}
+
+bool
+mutegroups::update (mutegroup::number gmute, const midibooleans & bits)
+{
+    mutegroup & mdestination = mute_group(gmute);
+    bool result = mdestination.valid();
+    if (result)
+    {
+        result = mdestination.set(bits);
+        if (! result)
+            std::cerr << "[Group " << gmute << " bits not set]" << std::endl;
+    }
+    else
+        std::cerr << "[Group " << gmute << " not found]" << std::endl;
 
     return result;
 }
@@ -247,9 +264,31 @@ mutegroups::any (mutegroup::number gmute) const
 const mutegroup &
 mutegroups::mute_group (mutegroup::number gmute) const
 {
-    static mutegroup sm_mute_group_dummy;
-    const auto & cmi = m_container.find(gmute);
-    return (cmi != m_container.end()) ? cmi->second : sm_mute_group_dummy;
+    static bool s_dummy_uninitialized = true;
+    static mutegroup s_mute_group_dummy;
+    if (s_dummy_uninitialized)
+    {
+        s_dummy_uninitialized = false;
+        s_mute_group_dummy.invalidate();
+    }
+
+    const auto cmi = m_container.find(gmute);
+    return cmi != m_container.end() ? cmi->second : s_mute_group_dummy;
+}
+
+mutegroup &
+mutegroups::mute_group (mutegroup::number gmute)
+{
+    static bool s_dummy_uninitialized = true;
+    static mutegroup s_mute_group_dummy;
+    if (s_dummy_uninitialized)
+    {
+        s_dummy_uninitialized = false;
+        s_mute_group_dummy.invalidate();
+    }
+
+    auto mi = m_container.find(gmute);
+    return mi != m_container.end() ? mi->second : s_mute_group_dummy;
 }
 
 /**

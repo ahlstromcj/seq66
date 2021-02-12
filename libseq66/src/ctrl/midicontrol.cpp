@@ -178,10 +178,6 @@ midicontrol::merge_key_match (automation::category c, int opslot) const
         return false;
 }
 
-/**
- *
- */
-
 void
 midicontrol::show (bool add_newline) const
 {

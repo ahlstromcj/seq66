@@ -724,7 +724,6 @@ wrkfile::Vars_chunk ()
 }
 
 /**
- *
  * Emitted after reading the timebase chunk:
  *
  *      - timebase ticks per quarter note
@@ -1058,7 +1057,6 @@ wrkfile::NoteArray (int track, int events)
 }
 
 /**
- *
  * Emitted after reading a Note message:
  *
  *      - track track number
@@ -1541,10 +1539,6 @@ wrkfile::Sysex_chunk ()
     not_supported("Sysex Chunk");
 }
 
-/**
- *
- */
-
 void
 wrkfile::Sysex2_chunk ()
 {
@@ -1574,10 +1568,6 @@ wrkfile::Sysex2_chunk ()
 
     not_supported("Sysex 2 Chunk");
 }
-
-/**
- *
- */
 
 void
 wrkfile::NewSysex_chunk ()
@@ -2018,10 +2008,6 @@ wrkfile::StringTable()
     not_supported("String Table");
 }
 
-/**
- *
- */
-
 void
 wrkfile::LyricsStream ()
 {
@@ -2100,7 +2086,6 @@ wrkfile::TrackBank ()
 }
 
 /**
- *
  * Emitted after reading a segment prefix chunk:
  *
  *      - track track number
@@ -2136,10 +2121,6 @@ wrkfile::Segment_chunk ()
     int events = read_32_bit();
     NoteArray(track, events);
 }
-
-/**
- *
- */
 
 void
 wrkfile::NewStream()
@@ -2184,10 +2165,6 @@ wrkfile::End_chunk ()
     }
     finalize_track();
 }
-
-/**
- *
- */
 
 int
 wrkfile::read_chunk ()

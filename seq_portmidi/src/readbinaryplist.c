@@ -159,10 +159,6 @@ static char * free_ptr = NULL;
 static char * end_ptr = NULL;
 static jmp_buf abort_parsing;
 
-/**
- *
- */
-
 static void *
 allocate(size_t size)
 {
@@ -189,10 +185,6 @@ allocate(size_t size)
     return result;
 }
 
-/**
- *
- */
-
 void
 bplist_free_data ()
 {
@@ -217,20 +209,12 @@ uint64_t object_count;
 uint64_t top_level_object;
 uint64_t offset_table_offset;
 
-/**
- *
- */
-
 enum
 {
     kHEADER_SIZE        = 8,
     kTRAILER_SIZE       = 32,       /* sizeof(bplist_trailer_node)  */
     kMINIMUM_SANE_SIZE  = kHEADER_SIZE + kTRAILER_SIZE
 };
-
-/**
- *
- */
 
 static const char kHEADER_BYTES[kHEADER_SIZE] = "bplist00";
 
@@ -245,10 +229,6 @@ typedef struct cache_struct
     struct cache_struct * next;
 
 } cache_node, * cache_ptr;
-
-/**
- *
- */
 
 typedef struct bplist_info
 {
@@ -290,10 +270,6 @@ static value_ptr extract_uid (bplist_info_ptr bplist, uint64_t offset);
 static value_ptr extract_array (bplist_info_ptr bplist, uint64_t offset);
 static value_ptr extract_dictionary (bplist_info_ptr bplist, uint64_t offset);
 
-/**
- *
- */
-
 value_ptr
 value_create ()
 {
@@ -301,20 +277,12 @@ value_create ()
     return value;
 }
 
-/**
- *
- */
-
 void
 value_set_integer (value_ptr v, int64_t i)
 {
     v->tag = kTAG_INT;
     v->integer = i;
 }
-
-/**
- *
- */
 
 void
 value_set_real (value_ptr v, double d)
@@ -334,10 +302,6 @@ value_set_date (value_ptr v, double d)
     v->real = d;
 }
 
-/**
- *
- */
-
 void
 value_set_ascii_string (value_ptr v, const uint8_t * s, size_t len)
 {
@@ -347,10 +311,6 @@ value_set_ascii_string (value_ptr v, const uint8_t * s, size_t len)
     v->string[len] = 0;
 }
 
-/**
- *
- */
-
 void
 value_set_unicode_string (value_ptr v, const uint8_t * s, size_t len)
 {
@@ -359,10 +319,6 @@ value_set_unicode_string (value_ptr v, const uint8_t * s, size_t len)
     memcpy(v->string, s, len);
     v->string[len] = 0;
 }
-
-/**
- *
- */
 
 void
 value_set_uid (value_ptr v, uint64_t uid)
@@ -458,10 +414,6 @@ dict_insert (dict_ptr * dict, value_ptr key, value_ptr value)
     *dict = d;
 }
 
-/**
- *
- */
-
 BOOL
 is_binary_plist (pldata_ptr data)
 {
@@ -470,10 +422,6 @@ is_binary_plist (pldata_ptr data)
 
     return memcmp(data->data, kHEADER_BYTES, kHEADER_SIZE) == 0;
 }
-
-/**
- *
- */
 
 value_ptr
 bplist_read_file (char * filename)
@@ -546,10 +494,6 @@ bplist_read_file (char * filename)
     return value;
 }
 
-/**
- *
- */
-
 value_ptr
 bplist_read_pref (char * filename, OSType folder_type)
 {
@@ -572,19 +516,11 @@ bplist_read_pref (char * filename, OSType folder_type)
     return bplist_read_file(cstr);
 }
 
-/**
- *
- */
-
 value_ptr
 bplist_read_system_pref (char * filename)
 {
     return bplist_read_pref(filename, kSystemPreferencesFolderType);
 }
-
-/**
- *
- */
 
 value_ptr
 bplist_read_user_pref (char * filename)
@@ -609,10 +545,6 @@ convert_uint64 (uint8_t * ptr)
     }
     return rslt;
 }
-
-/**
- *
- */
 
 value_ptr
 bplist_read_pldata (pldata_ptr data)
@@ -697,10 +629,6 @@ bplist_read_pldata (pldata_ptr data)
     }
     return result;
 }
-
-/**
- *
- */
 
 static value_ptr
 extract_object (bplist_info_ptr bplist, uint64_t objectRef)
@@ -789,10 +717,6 @@ extract_object (bplist_info_ptr bplist, uint64_t objectRef)
     return result;
 }
 
-/**
- *
- */
-
 static uint64_t
 read_sized_int (bplist_info_ptr bplist, uint64_t offset, uint8_t size)
 {
@@ -812,10 +736,6 @@ read_sized_int (bplist_info_ptr bplist, uint64_t offset, uint8_t size)
     return result;
 }
 
-/**
- *
- */
-
 static uint64_t
 read_offset (bplist_info_ptr bplist, uint64_t index)
 {
@@ -826,10 +746,6 @@ read_offset (bplist_info_ptr bplist, uint64_t index)
         bplist->offset_int_size
     );
 }
-
-/**
- *
- */
 
 static BOOL
 read_self_sized_int
@@ -867,10 +783,6 @@ read_self_sized_int
     return YES;
 }
 
-/**
- *
- */
-
 static value_ptr
 extract_simple (bplist_info_ptr bplist, uint64_t offset)
 {
@@ -898,10 +810,6 @@ extract_simple (bplist_info_ptr bplist, uint64_t offset)
     return NULL;
 }
 
-/**
- *
- */
-
 static value_ptr
 extract_int (bplist_info_ptr bplist, uint64_t offset)
 {
@@ -921,10 +829,6 @@ extract_int (bplist_info_ptr bplist, uint64_t offset)
 
     return value;
 }
-
-/**
- *
- */
 
 static value_ptr
 extract_real (bplist_info_ptr bplist, uint64_t offset)
@@ -974,7 +878,6 @@ extract_real (bplist_info_ptr bplist, uint64_t offset)
 }
 
 /**
- *
  *  Data has size code like int and real, but only 3 (meaning 8 bytes) is
  *  valid.
  */
@@ -1006,10 +909,6 @@ extract_date (bplist_info_ptr bplist, uint64_t offset)
     value_set_date(value, *(double *)&date);
     return value;
 }
-
-/**
- *
- */
 
 uint64_t
 bplist_get_a_size (bplist_info_ptr bplist, uint64_t * offset_ptr, char *msg)
@@ -1055,10 +954,6 @@ bplist_get_a_size (bplist_info_ptr bplist, uint64_t * offset_ptr, char *msg)
     return size;
 }
 
-/**
- *
- */
-
 static value_ptr
 extract_data (bplist_info_ptr bplist, uint64_t offset)
 {
@@ -1075,10 +970,6 @@ extract_data (bplist_info_ptr bplist, uint64_t offset)
     value_set_data(value, bplist->data_bytes + (size_t) offset, (size_t) size);
     return value;
 }
-
-/**
- *
- */
 
 static value_ptr
 extract_ascii_string (bplist_info_ptr bplist, uint64_t offset)
@@ -1104,10 +995,6 @@ extract_ascii_string (bplist_info_ptr bplist, uint64_t offset)
     );
     return value;
 }
-
-/**
- *
- */
 
 static value_ptr
 extract_unicode_string (bplist_info_ptr bplist, uint64_t offset)
@@ -1173,10 +1060,6 @@ extract_uid (bplist_info_ptr bplist, uint64_t offset)
     return value;
 }
 
-/**
- *
- */
-
 static value_ptr
 extract_array (bplist_info_ptr bplist, uint64_t offset)
 {
@@ -1241,10 +1124,6 @@ extract_array (bplist_info_ptr bplist, uint64_t offset)
     }
     return value;
 }
-
-/**
- *
- */
 
 static value_ptr
 extract_dictionary (bplist_info_ptr bplist, uint64_t offset)
@@ -1332,20 +1211,12 @@ extract_dictionary (bplist_info_ptr bplist, uint64_t offset)
  * Functions for accessing values.
  */
 
-/**
- *
- */
-
 char *
 value_get_asciistring (value_ptr v)
 {
     if (v->tag != kTAG_ASCIISTRING) return NULL;
     return v->string;
 }
-
-/**
- *
- */
 
 value_ptr
 value_dict_lookup_using_string (value_ptr v, char * key)
@@ -1364,10 +1235,6 @@ value_dict_lookup_using_string (value_ptr v, char * key)
     }
     return NULL; /* not found */
 }
-
-/**
- *
- */
 
 value_ptr
 value_dict_lookup_using_path (value_ptr v, char * path)
@@ -1401,7 +1268,6 @@ value_dict_lookup_using_path (value_ptr v, char * path)
     }
     return v;
 }
-
 
 /*
  * Functions for debugging.

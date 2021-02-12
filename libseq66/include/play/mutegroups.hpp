@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-17
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -294,11 +294,7 @@ public:
     }
 
     static mutegroup::number grid_to_group (int row, int column);
-    static bool group_to_grid
-    (
-        mutegroup::number group,
-        int & row, int & column
-    );
+    static bool group_to_grid(mutegroup::number g, int & row, int & column);
 
     static int null_mute_group ()
     {
@@ -382,13 +378,11 @@ public:
     bool group_save (const std::string & v);
     bool group_save (handling mgh);
     bool group_save (bool midi, bool mutes);
-
     std::string group_save_label () const;
 
     /**
-     * \getter m_mute_group_save
      * \return
-     *      Returns true if mute-group-handling is set to mutes or both.
+     *      Returns true if mute-group-handling is set to 'mutes' or 'both'.
      */
 
     bool group_save_to_mutes () const
@@ -400,9 +394,7 @@ public:
     }
 
     /**
-     * \getter m_mute_group_save
-     * \return
-     *      Returns true if mute-group-handling is set to midi or both.
+     *  Returns true if mute-group-handling is set to 'midi' or 'both'.
      */
 
     bool group_save_to_midi () const
@@ -428,6 +420,7 @@ public:
     bool any () const;
     bool any (mutegroup::number gmute) const;
     const mutegroup & mute_group (mutegroup::number gmute) const;
+    mutegroup & mute_group (mutegroup::number gmute);
     void show (mutegroup::number gmute = smc_null_mute_group) const;
 
     int armed_count (mutegroup::number gmute) const
@@ -528,6 +521,7 @@ public:
 private:
 
     bool add (mutegroup::number gmute, const mutegroup & m);
+    bool update (mutegroup::number gmute, const midibooleans & bits);
 
     container & list ()
     {

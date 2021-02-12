@@ -45,7 +45,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qeditbase::qeditbase
@@ -119,10 +119,6 @@ qeditbase::horizSizeHint () const
     return perf().get_max_trigger() / scale_zoom() + 2000;
 }
 
-/**
- *
- */
-
 bool
 qeditbase::zoom_in ()
 {
@@ -133,10 +129,6 @@ qeditbase::zoom_in ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 qeditbase::zoom_out ()
 {
@@ -146,10 +138,6 @@ qeditbase::zoom_out ()
 
     return result;
 }
-
-/**
- *
- */
 
 bool
 qeditbase::set_zoom (int z)
@@ -220,19 +208,11 @@ qeditbase::check_dirty () const
     return result;
 }
 
-/**
- *
- */
-
 void
 qeditbase::convert_x (int x, midipulse & tick)
 {
     tick = pix_to_tix(x);                       /* x * m_scale_zoom */
 }
-
-/**
- *
- */
 
 void
 qeditbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
@@ -242,6 +222,7 @@ qeditbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
 }
 
 /**
+ *  Converts a time-stamp/sequence box to a rectangle (rect object).
  *
  * \param tick_s
  *      The starting tick of the rectangle.

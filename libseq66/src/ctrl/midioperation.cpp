@@ -75,10 +75,6 @@ midioperation::midioperation
     // Empty body
 }
 
-/**
- *
- */
-
 void
 midioperation::show () const
 {

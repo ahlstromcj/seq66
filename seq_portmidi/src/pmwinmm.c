@@ -528,7 +528,6 @@ str_copy_len (char * dst, char * src, int len)
 }
 
 /**
- *
  *  Note that input and output use different WinMM API calls.  Make sure there
  *  is an open device (m) to examine. If there is an error, then read and
  *  record the host error.  Note that the error codes returned by the
@@ -657,7 +656,6 @@ allocate_buffers (midiwinmm_type m, long data_size, long count)
 #if defined SEQ66_USE_SYSEX_BUFFERS
 
 /**
- *
  * sysex_buffers is an array of count pointers to MIDIHDR/MIDIEVENT struct
  */
 
@@ -678,10 +676,6 @@ allocate_sysex_buffers (midiwinmm_type m, long data_size)
     }
     return rslt;
 }
-
-/**
- *
- */
 
 /* static */ LPMIDIHDR
 get_free_sysex_buffer (PmInternal * midi)
@@ -1086,10 +1080,6 @@ no_memory:
     return pmInsufficientMemory;
 }
 
-/**
- *
- */
-
 static PmError
 winmm_in_poll (PmInternal * midi)
 {
@@ -1308,10 +1298,6 @@ add_to_buffer
     return hdr->dwBytesRecorded + 3 * sizeof(long) > hdr->dwBufferLength;
 }
 
-/**
- *
- */
-
 static PmTimestamp
 pm_time_get (midiwinmm_type m)
 {
@@ -1325,10 +1311,6 @@ pm_time_get (midiwinmm_type m)
 
 /*
  * End helper routines used by midiOutStream interface
- */
-
-/**
- *
  */
 
 static PmError
@@ -1734,10 +1716,6 @@ winmm_write_sysex_byte (PmInternal * midi, midibyte_t byte)
 
 #endif  // GARBAGE
 
-/**
- *
- */
-
 static PmError
 winmm_write_short (PmInternal * midi, PmEvent * event)
 {
@@ -1791,10 +1769,6 @@ winmm_write_short (PmInternal * midi, PmEvent * event)
 
 #ifndef winmm_begin_sysex
 
-/**
- *
- */
-
 static PmError
 winmm_begin_sysex (PmInternal * midi, PmTimestamp timestamp)
 {
@@ -1817,10 +1791,6 @@ winmm_begin_sysex (PmInternal * midi, PmTimestamp timestamp)
 }
 
 #endif
-
-/**
- *
- */
 
 static PmError
 winmm_end_sysex (PmInternal * midi, PmTimestamp timestamp)
@@ -1975,10 +1945,6 @@ winmm_write_byte
         ;
 #endif
 
-/**
- *
- */
-
 static PmTimestamp
 winmm_synchronize (PmInternal * midi)
 {
@@ -2103,10 +2069,6 @@ winmm_streamout_callback
 
 #define winmm_in_abort pm_fail_fn
 
-/**
- *
- */
-
 pm_fns_node pm_winmm_in_dictionary =
 {
     none_write_short,
@@ -2123,10 +2085,6 @@ pm_fns_node pm_winmm_in_dictionary =
     winmm_has_host_error,
     winmm_get_host_error
 };
-
-/**
- *
- */
 
 pm_fns_node pm_winmm_out_dictionary =
 {

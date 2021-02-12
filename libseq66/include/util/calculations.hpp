@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2020-12-09
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -513,7 +513,6 @@ ticks_to_measures (int bpb, int ppqn, int bw, midipulse ticks = 192)
  *  Free functions in the seq66 namespace.
  */
 
-extern int satoi (const std::string & v);
 extern midipulse pulses_per_substep (midipulse ppqn, int zoom);
 extern midipulse pulses_per_pixel (midipulse ppqn, int zoom);
 extern midipulse pulse_divide

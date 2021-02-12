@@ -63,7 +63,7 @@
 #include "porttime.h"
 
 /**
- *
+ *  The size of the event buffer.
  */
 
 #define PACKET_BUFFER_SIZE      1024
@@ -95,13 +95,13 @@
 #define LIMIT_RATE              1
 
 /**
- *
+ *  The size of the SysEx buffer.
  */
 
 #define SYSEX_BUFFER_SIZE       512         /* is this enough?  */
 
 /**
- *
+ *  More constants.
  */
 
 #define MIDI_SYSEX              0xf0
@@ -189,10 +189,6 @@ MIDITimeStamp timestamp_pm_to_cm (PmTimestamp timestamp);
 PmTimestamp timestamp_cm_to_pm (MIDITimeStamp timestamp);
 char * cm_get_full_endpoint_name (MIDIEndpointRef endpoint);
 
-/**
- *
- */
-
 static int
 midi_length (int32_t msg)
 {
@@ -214,15 +210,14 @@ midi_length (int32_t msg)
     return high != 0xF ? high_lengths[high] : low_lengths[low];
 }
 
-/**
- *
- */
-
 static PmTimestamp
 midi_synchronize (PmInternal * midi)
 {
     midi_macosxcm_type m = (midi_macosxcm_type) midi->descriptor;
-    UInt64 pm_stream_time_2 = AudioConvertHostTimeToNanos(AudioGetCurrentHostTime());
+    UInt64 pm_stream_time_2 = AudioConvertHostTimeToNanos
+    (
+        AudioGetCurrentHostTime()
+    );
     PmTimestamp real_time;
     UInt64 pm_stream_time;
 
@@ -461,10 +456,6 @@ readProc (const MIDIPacketList * newPackets, void * refCon, void * connRefCon)
     }
 }
 
-/**
- *
- */
-
 static PmError
 midi_in_open (PmInternal * midi, void * driverInfo)
 {
@@ -524,10 +515,6 @@ midi_in_open (PmInternal * midi, void * driverInfo)
     return pmNoError;
 }
 
-/**
- *
- */
-
 static PmError
 midi_in_close (PmInternal * midi)
 {
@@ -563,10 +550,6 @@ midi_in_close (PmInternal * midi)
     return err;
 }
 
-/**
- *
- */
-
 static PmError
 midi_out_open (PmInternal * midi, void * driverInfo)
 {
@@ -601,10 +584,6 @@ midi_out_open (PmInternal * midi, void * driverInfo)
     return pmNoError;
 }
 
-/**
- *
- */
-
 static PmError
 midi_out_close (PmInternal * midi)
 {
@@ -616,10 +595,6 @@ midi_out_close (PmInternal * midi)
     pm_free(midi->descriptor);
     return pmNoError;
 }
-
-/**
- *
- */
 
 static PmError
 midi_abort (PmInternal * midi)
@@ -643,12 +618,8 @@ midi_abort (PmInternal * midi)
     return err;
 }
 
-/**
- *
- */
-
 static PmError
-midi_write_flush(PmInternal * midi, PmTimestamp timestamp)
+midi_write_flush (PmInternal * midi, PmTimestamp timestamp)
 {
     OSStatus macHostError;
     midi_macosxcm_type m = (midi_macosxcm_type) midi->descriptor;
@@ -660,8 +631,9 @@ midi_write_flush(PmInternal * midi, PmTimestamp timestamp)
     if (m->packet != NULL)
     {
         /*
-         * We are out of space; send the buffer and start refilling it.  Before we
-         * can send, maybe delay to limit the data rate. OS X allows (only) 15KB/s.
+         * We are out of space; send the buffer and start refilling it.
+         * Before we can send, maybe delay to limit the data rate. OS X allows
+         * (only) 15KB/s.
          */
 
         UInt64 now = AudioGetCurrentHostTime();
@@ -690,10 +662,6 @@ send_packet_error:
     );
     return pmHostError;
 }
-
-/**
- *
- */
 
 static PmError
 send_packet
@@ -738,10 +706,6 @@ send_packet
     }
     return pmNoError;
 }
-
-/**
- *
- */
 
 static PmError
 midi_write_short (PmInternal * midi, PmEvent * event)
@@ -803,10 +767,6 @@ midi_write_short (PmInternal * midi, PmEvent * event)
     return send_packet(midi, message, messageLength, timestamp);
 }
 
-/**
- *
- */
-
 static PmError
 midi_begin_sysex (PmInternal * midi, PmTimestamp when)
 {
@@ -840,10 +800,6 @@ midi_begin_sysex (PmInternal * midi, PmTimestamp when)
     return pmNoError;
 }
 
-/**
- *
- */
-
 static PmError
 midi_end_sysex (PmInternal * midi, PmTimestamp when)
 {
@@ -874,10 +830,6 @@ midi_end_sysex (PmInternal * midi, PmTimestamp when)
     }
     return pmNoError;
 }
-
-/**
- *
- */
 
 static PmError
 midi_write_byte (PmInternal * midi, unsigned char byte, PmTimestamp timestamp)
@@ -911,20 +863,12 @@ midi_write_realtime (PmInternal * midi, PmEvent * event)
     return midi_write_short(midi, event);
 }
 
-/**
- *
- */
-
 static unsigned
 midi_has_host_error (PmInternal * midi)
 {
     midi_macosxcm_type m = (midi_macosxcm_type) midi->descriptor;
     return (m->callback_error[0] != 0) || (m->error[0] != 0);
 }
-
-/**
- *
- */
 
 static void
 midi_get_host_error(PmInternal *midi, char *msg, unsigned len)
@@ -947,10 +891,6 @@ midi_get_host_error(PmInternal *midi, char *msg, unsigned len)
     }
 }
 
-/**
- *
- */
-
 MIDITimeStamp
 timestamp_pm_to_cm (PmTimestamp timestamp)
 {
@@ -965,10 +905,6 @@ timestamp_pm_to_cm (PmTimestamp timestamp)
         return (MIDITimeStamp)AudioConvertNanosToHostTime(nanos);
     }
 }
-
-/**
- *
- */
 
 PmTimestamp timestamp_cm_to_pm(MIDITimeStamp timestamp)
 {
@@ -1172,10 +1108,6 @@ ConnectedEndpointName (MIDIEndpointRef endpoint)
     return EndpointName(endpoint, false);
 }
 
-/**
- *
- */
-
 char * cm_get_full_endpoint_name (MIDIEndpointRef endpoint)
 {
 #if defined OLDCODE
@@ -1189,11 +1121,11 @@ char * cm_get_full_endpoint_name (MIDIEndpointRef endpoint)
     CFStringEncoding defaultEncoding;
     char * newName;
 
-    defaultEncoding = CFStringGetSystemEncoding(); /* get default string encoding */
+    defaultEncoding = CFStringGetSystemEncoding();  /* string encoding      */
     fullName = ConnectedEndpointName(endpoint);
 
 #if defined OLDCODE
-    MIDIEndpointGetEntity(endpoint, &entity); /* get the entity and device info */
+    MIDIEndpointGetEntity(endpoint, &entity);       /* entity & device info */
     MIDIEntityGetDevice(entity, &device);
 
     /* create the nicely formated name */
@@ -1236,10 +1168,6 @@ char * cm_get_full_endpoint_name (MIDIEndpointRef endpoint)
     return newName;
 }
 
-/**
- *
- */
-
 pm_fns_node pm_macosx_in_dictionary =
 {
     none_write_short,
@@ -1257,10 +1185,6 @@ pm_fns_node pm_macosx_in_dictionary =
     midi_get_host_error,
 };
 
-/**
- *
- */
-
 pm_fns_node pm_macosx_out_dictionary =
 {
     midi_write_short,
@@ -1277,10 +1201,6 @@ pm_fns_node pm_macosx_out_dictionary =
     midi_has_host_error,
     midi_get_host_error,
 };
-
-/**
- *
- */
 
 PmError
 pm_macosxcm_init (void)
@@ -1395,10 +1315,6 @@ error_return:
     pm_macosxcm_term();                     /* clear out any opened ports */
     return pmHostError;
 }
-
-/**
- *
- */
 
 void
 pm_macosxcm_term (void)

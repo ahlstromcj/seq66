@@ -238,10 +238,6 @@ midi_booleans::rotate (int count)
     }
 }
 
-/**
- *
- */
-
 midibool &
 midi_booleans::operator [] (std::size_t index)
 {
@@ -249,20 +245,12 @@ midi_booleans::operator [] (std::size_t index)
     return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
 }
 
-/**
- *
- */
-
 midibool
 midi_booleans::operator [] (std::size_t index) const
 {
     static midibool s_default_value = midibool(false);
     return index < m_booleans.size() ? m_booleans[index] : s_default_value ;
 }
-
-/**
- *
- */
 
 bool
 midi_booleans::match (const midi_booleans & rhs, int count) const
@@ -286,10 +274,6 @@ midi_booleans::match (const midi_booleans & rhs, int count) const
         return m_booleans == rhs.m_booleans;
 }
 
-/**
- *
- */
-
 std::string
 midi_booleans::fingerprint () const
 {
@@ -302,10 +286,6 @@ midi_booleans::fingerprint () const
     result += "\n";
     return result;
 }
-
-/**
- *
- */
 
 int
 midi_booleans::true_count () const

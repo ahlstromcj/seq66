@@ -126,9 +126,11 @@ namespace seq66
 {
 
 /**
+ *  Principal constructor.
  *
  * \param p
- *      Provides the performer object to use for interacting with this sequence.
+ *      Provides the performer object to use for interacting with this
+ *      sequence.
  *
  * \param seqid
  *      Provides the sequence number.  The sequence pointer is looked up using
@@ -588,10 +590,6 @@ qseqeditframe::updateSeqName()
 {
     seq_pointer()->set_name(ui->txtSeqName->document()->toPlainText().toStdString());
 }
-
-/**
- *
- */
 
 void
 qseqeditframe::updateGridSnap (int snapindex)

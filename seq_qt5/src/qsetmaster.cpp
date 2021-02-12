@@ -70,6 +70,7 @@ namespace seq66
 {
 
 /**
+ *  Principal constructor.
  *
  * \param p
  *      Provides the performer object to use for interacting with this frame.
@@ -146,14 +147,6 @@ qsetmaster::qsetmaster
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
     m_timer->start();
 }
-
-/**
- *
- * \todo
- *      We can fold the unregister() call into performer::callbacks at sme
- *      point.  However, we would have to deal with the issues of multiple
- *      inheritance and the exact value of the "this" pointer.
- */
 
 qsetmaster::~qsetmaster()
 {
@@ -286,10 +279,6 @@ qsetmaster::cell (screenset::number row, column_id col)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 qsetmaster::set_line (screenset & sset, screenset::number row)

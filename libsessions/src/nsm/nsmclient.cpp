@@ -290,7 +290,6 @@ osc_nsm_label
 }
 
 /**
- *
  *  This function could also be called osc_show_gui().  See the nsm-proxy code.
  */
 
@@ -339,10 +338,6 @@ osc_nsm_hide
     return 0;
 }
 
-/**
- *
- */
-
 static int
 osc_nsm_broadcast
 (
@@ -367,7 +362,7 @@ osc_nsm_broadcast
 /* ------------------------------------------------------------------------ */
 
 /**
- *
+ *  Principal constructor.
  */
 
 nsmclient::nsmclient
@@ -383,18 +378,10 @@ nsmclient::nsmclient
     // no code so far
 }
 
-/**
- *
- */
-
 nsmclient::~nsmclient ()
 {
     // no code so far
 }
-
-/**
- *
- */
 
 bool
 nsmclient::initialize ()

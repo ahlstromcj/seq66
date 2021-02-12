@@ -115,7 +115,7 @@ using messagepair = struct
 };
 
 /**
- *
+ *  A lookup map for tags and message pairs.
  */
 
 using lookup = std::map<tag, messagepair>;

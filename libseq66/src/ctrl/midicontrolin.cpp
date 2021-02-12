@@ -294,10 +294,6 @@ midicontrolin::control (const midicontrol::key & k) const
         return sm_midicontrol_dummy;
 }
 
-/**
- *
- */
-
 void
 midicontrolin::show () const
 {

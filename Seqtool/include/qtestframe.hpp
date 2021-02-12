@@ -65,7 +65,7 @@ namespace Ui
 }
 
 /**
- *
+ *  Test class.
  */
 
 class qtestframe : public QWidget

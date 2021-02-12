@@ -59,7 +59,7 @@ namespace seq66
     class qsmainwnd;
 
 /**
- *
+ *  Provides a frame for the Playlist tab.
  */
 
 class qplaylistframe final : public QFrame

@@ -322,10 +322,6 @@ faker::pattern_control
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::mute_group_control
 (
@@ -397,10 +393,6 @@ faker::handle_keystroke (seq66::ctrlkey ordinal)
 
     return result;
 }
-
-/**
- *
- */
 
 std::string
 faker::action_name (seq66::automation::action a)
@@ -664,10 +656,6 @@ faker::automation_thru
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_bpm_page_up_dn
 (
@@ -695,10 +683,6 @@ faker::automation_bpm_page_dn
     return automation_bpm_up_dn(seq66::automation::action::off, d0, d1, inverse);
 }
 
-/**
- *
- */
-
 bool
 faker::automation_ss_set
 (
@@ -710,10 +694,6 @@ faker::automation_ss_set
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_record
@@ -727,10 +707,6 @@ faker::automation_record
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_quan_record
 (
@@ -742,10 +718,6 @@ faker::automation_quan_record
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_reset_seq
@@ -759,10 +731,6 @@ faker::automation_reset_seq
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_oneshot
 (
@@ -774,10 +742,6 @@ faker::automation_oneshot
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_FF
@@ -791,10 +755,6 @@ faker::automation_FF
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_rewind
 (
@@ -806,10 +766,6 @@ faker::automation_rewind
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_top
@@ -823,10 +779,6 @@ faker::automation_top
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_playlist
 (
@@ -838,10 +790,6 @@ faker::automation_playlist
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_playlist_song
@@ -855,10 +803,6 @@ faker::automation_playlist_song
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_start
 (
@@ -870,10 +814,6 @@ faker::automation_start
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_stop
@@ -887,10 +827,6 @@ faker::automation_stop
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_snapshot_2
 (
@@ -902,10 +838,6 @@ faker::automation_snapshot_2
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 bool
 faker::automation_toggle_mutes
@@ -919,10 +851,6 @@ faker::automation_toggle_mutes
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_song_pointer
 (
@@ -935,10 +863,6 @@ faker::automation_song_pointer
     return true;
 }
 
-/**
- *
- */
-
 bool
 faker::automation_keep_queue
 (
@@ -950,10 +874,6 @@ faker::automation_keep_queue
     print_parameters(name, a, d0, d1, inverse);
     return true;
 }
-
-/**
- *
- */
 
 faker::automation_pair
 faker::sm_auto_func_list [] =
