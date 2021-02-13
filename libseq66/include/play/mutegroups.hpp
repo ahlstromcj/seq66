@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-01-17
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -38,13 +38,6 @@
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "play/mutegroup.hpp"           /* seq66::mutegroup stanza class    */
-
-/**
- *  We force a maximum number of mute-groups.  We really only have enough keys
- *  available for 32 mute-groups.
- */
-
-#define SEQ66_MUTE_GROUPS_MAX           32
 
 /**
  *  Experimental option for controlling how setmapper::toggle_mutes() works.
@@ -133,19 +126,26 @@ private:
      *  The virtual number of rows in a grid of mute-groups.
      */
 
-    static const int c_rows     = SEQ66_MUTE_ROWS;
+    static const int smc_rows     = SEQ66_MUTE_ROWS;
 
     /**
      *  The virtual number of columns in a grid of mute-groups.
      */
 
-    static const int c_columns  = SEQ66_MUTE_COLUMNS;
+    static const int smc_columns  = SEQ66_MUTE_COLUMNS;
 
     /**
      *  This value indicates that there is no mute-group selected.
      */
 
-    static const int sm_null_mute_group = (-1);
+    static const int smc_null_mute_group = (-1);
+
+    /**
+     *  We force a maximum number of mute-groups.  We really only have enough
+     *  keys available for 32 mute-groups.
+     */
+
+    static const int smc_mute_groups_max = 32;
 
     /**
      *  Holds a set of mutegroup objects keyed by the configured mute
@@ -232,7 +232,7 @@ private:
      *  selected for the saving and restoring of the status of all patterns in
      *  that set.  The value of -1 (SEQ66_NO_MUTE_GROUP_SELECTED) to indicate
      *  the value should not be used.  The test for a valid value is simple,
-     *  just check for group >= 0 and a limit of SEQ66_MUTE_GROUPS_MAX (32) at
+     *  just check for group >= 0 and a limit of smc_mute_groups_max (32) at
      *  mute-group setup time.
      */
 
@@ -280,29 +280,25 @@ public:
 
     static int Rows ()
     {
-        return c_rows;
+        return smc_rows;
     }
 
     static int Columns ()
     {
-        return c_columns;
+        return smc_columns;
     }
 
     static int Size ()
     {
-        return c_rows * c_columns;
+        return smc_rows * smc_columns;
     }
 
     static mutegroup::number grid_to_group (int row, int column);
-    static bool group_to_grid
-    (
-        mutegroup::number group,
-        int & row, int & column
-    );
+    static bool group_to_grid(mutegroup::number g, int & row, int & column);
 
-    int null_mute_group ()
+    static int null_mute_group ()
     {
-        return sm_null_mute_group;
+        return smc_null_mute_group;
     }
 
     const std::string & name () const
@@ -382,13 +378,11 @@ public:
     bool group_save (const std::string & v);
     bool group_save (handling mgh);
     bool group_save (bool midi, bool mutes);
-
     std::string group_save_label () const;
 
     /**
-     * \getter m_mute_group_save
      * \return
-     *      Returns true if mute-group-handling is set to mutes or both.
+     *      Returns true if mute-group-handling is set to 'mutes' or 'both'.
      */
 
     bool group_save_to_mutes () const
@@ -400,9 +394,7 @@ public:
     }
 
     /**
-     * \getter m_mute_group_save
-     * \return
-     *      Returns true if mute-group-handling is set to midi or both.
+     *  Returns true if mute-group-handling is set to 'midi' or 'both'.
      */
 
     bool group_save_to_midi () const
@@ -426,8 +418,10 @@ public:
     midibooleans get (mutegroup::number gmute) const;
     midibooleans get_active_groups () const;
     bool any () const;
+    bool any (mutegroup::number gmute) const;
     const mutegroup & mute_group (mutegroup::number gmute) const;
-    void show (mutegroup::number gmute = sm_null_mute_group) const;
+    mutegroup & mute_group (mutegroup::number gmute);
+    void show (mutegroup::number gmute = smc_null_mute_group) const;
 
     int armed_count (mutegroup::number gmute) const
     {
@@ -480,12 +474,12 @@ public:
 
     bool group_valid () const
     {
-        return group_valid(m_group_selected);
+        return group_valid(group_selected());
     }
 
     bool group_valid (int g) const
     {
-        return g >= 0 && g < SEQ66_MUTE_GROUPS_MAX;
+        return g >= 0 && g < smc_mute_groups_max;
     }
 
     bool group_present () const
@@ -527,6 +521,7 @@ public:
 private:
 
     bool add (mutegroup::number gmute, const mutegroup & m);
+    bool update (mutegroup::number gmute, const midibooleans & bits);
 
     container & list ()
     {
@@ -557,7 +552,7 @@ private:
 
     void group_selected (mutegroup::number mg)
     {
-        if (group_valid(mg) || mg == sm_null_mute_group)
+        if (group_valid(mg) || mg == smc_null_mute_group)
             m_group_selected = mg;
     }
 

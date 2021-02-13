@@ -127,10 +127,6 @@ static QtGtkKeyMap sg_key_map =
     { 0xffff, { 0x1000007, KNONE,  "Del"      } }   // "Delete"
 };
 
-/**
- *
- */
-
 std::string
 gdk_key_name (unsigned gdkkeycode)
 {

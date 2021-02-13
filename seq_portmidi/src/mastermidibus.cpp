@@ -231,10 +231,11 @@ mastermidibus::api_get_midi_event (event * in)
                 );
                 if (in->is_note_off_recorded())
                 {
-                    midibyte channel = Pm_MessageStatus(pme.message) &
-                        EVENT_GET_CHAN_MASK;
-
-                    midibyte status = EVENT_NOTE_OFF | channel;
+                    midibyte ch = event::get_channel
+                    (
+                        Pm_MessageStatus(pme.message)
+                    );
+                    midibyte status = EVENT_NOTE_OFF | ch;
                     in->set_status_keep_channel(status);
                 }
                 result = true;

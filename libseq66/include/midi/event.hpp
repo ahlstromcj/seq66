@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-03
+ * \updates       2021-02-01
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -260,7 +260,7 @@ const int EVENTS_UNSELECTED              =  0;
 inline bool
 is_note_off_velocity (midibyte status, midibyte data)
 {
-    return status == EVENT_NOTE_ON && data == 0;
+    return ((status & EVENT_CLEAR_CHAN_MASK) == EVENT_NOTE_ON) && (data == 0);
 }
 
 /**
@@ -268,9 +268,9 @@ is_note_off_velocity (midibyte status, midibyte data)
  *
  *  A MIDI event consists of 3 bytes:
  *
- *      -#  Status byte, 1sssnnn, where the sss bits specify the type of
- *          message, and the nnnn bits denote the channel number.
- *          The status byte always starts with 0.
+ *      -#  Status byte, 1sssnnnn, where the 1sss bits specify the type of
+ *          message, and the nnnn bits denote the channel number, 0 to 15.
+ *          The status byte always starts with 1.
  *      -#  The first data byte, 0xxxxxxx, where the data byte always
  *          start with 0, and the xxxxxxx values range from 0 to 127.
  *      -#  The second data byte, 0xxxxxxx.
@@ -497,6 +497,21 @@ public:
     bool check_channel (int channel) const
     {
         return m_channel == c_midibyte_max || midibyte(channel) == m_channel;
+    }
+
+    static midibyte get_channel (midibyte m)
+    {
+        return m & EVENT_GET_CHAN_MASK;
+    }
+
+    static midibyte mask_status (midibyte m)
+    {
+        return m & EVENT_CLEAR_CHAN_MASK;
+    }
+
+    static void strip_channel (midibyte & m)
+    {
+        m &= EVENT_CLEAR_CHAN_MASK;
     }
 
     /**
@@ -1208,17 +1223,14 @@ public:
         return is_note_msg(m_status);
     }
 
+    bool is_strict_note () const
+    {
+        return is_strict_note_msg(m_status);
+    }
+
     /**
      *  Some keyboards send Note On with velocity 0 for Note Off, so we
      *  provide this function to test that during recording.
-     *  The channel nybble is masked off before the test, but this is
-     *  unnecessary since the velocity byte doesn't contain the channel!
-     *  And it is a nasty bug!
-     *
-     *  "(m_data[1] & EVENT_CLEAR_CHAN_MASK) == 0" is wrong!
-     *
-     *  "m_status == EVENT_NOTE_ON && m_data[1] == 0" replaced by an inline
-     *  function call for robustness.
      *
      * \return
      *      Returns true if the event is a Note On event with velocity of 0.
@@ -1253,8 +1265,6 @@ public:
     {
         return m_status == EVENT_MIDI_SONG_POS;
     }
-
-    void adjust_note_off ();
 
     /**
      *  Indicates if the m_status value is a one-byte message (Program Change

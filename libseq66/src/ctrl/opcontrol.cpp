@@ -79,9 +79,9 @@ opcontrol::opcontrol
 
 /**
  *  Constructs the slot name based on the category and the operation number of
- *  this opcontrol object.  Note that this function is not static.
- *  Also note that it works only for categories other than "none" or
- *  "maximum", which are just range-checkers.
+ *  this opcontrol object.  Note that this function is not static.  Also note
+ *  that it works only for categories other than "none" or "max", which are
+ *  just range-checkers.
  */
 
 std::string
@@ -123,7 +123,7 @@ opcontrol::category_name (category c)
     case category::loop:            result = "Loop";            break;
     case category::mute_group:      result = "Mute";            break;
     case category::automation:      result = "Auto";            break;
-    case category::maximum:         result = "Maximum";         break;
+    case category::max:             result = "Max";             break;
     }
     return result;
 }
@@ -143,7 +143,7 @@ opcontrol::action_name (action a)
     case action::toggle:            result = "Toggle";          break;
     case action::on:                result = "On";              break;
     case action::off:               result = "Off";             break;
-    case action::maximum:           result = "Max";             break;
+    case action::max:               result = "Max";             break;
     }
     return result;
 }
@@ -235,7 +235,7 @@ automation::slot
 opcontrol::set_slot (int op)
 {
     static int s_minimum = static_cast<int>(automation::slot::bpm_up);
-    static int s_maximum = static_cast<int>(automation::slot::maximum);
+    static int s_maximum = static_cast<int>(automation::slot::max);
     return (op >= s_minimum && op < s_maximum) ?
         static_cast<automation::slot>(op) : automation::slot::none ;
 }

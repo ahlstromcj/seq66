@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-01-11
+ * \updates       2021-02-03
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -80,7 +80,8 @@ namespace seq66
  *  This increment allows the rest of the threads to notice the change.
  */
 
-static const int c_song_record_increment = 16;
+static const int c_song_record_increment    = 16;
+static const int c_maxbeats                 = 0xFFFF;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -160,7 +161,7 @@ sequence::sequence (int ppqn)
     m_dirty_edit                (true),
     m_dirty_perf                (true),
     m_dirty_names               (true),
-    m_editing                   (false),
+    m_seq_in_edit               (false),
     m_raise                     (false),
     m_status                    (0),
     m_cc                        (0),
@@ -1673,10 +1674,6 @@ sequence::randomize_selected (midibyte status, int plus_minus)
     return result;
 }
 
-/**
- *
- */
-
 bool
 sequence::randomize_selected_notes (int jitter, int range)
 {
@@ -1690,10 +1687,6 @@ sequence::randomize_selected_notes (int jitter, int range)
     return result;
 }
 
-/**
- *
- */
-
 void
 sequence::adjust_data_handle (midibyte status, int adata)
 {
@@ -1705,6 +1698,7 @@ sequence::adjust_data_handle (midibyte status, int adata)
     {
         if (e.is_selected() && e.get_status() == status)
         {
+            event::strip_channel(status);
             e.get_data(data[0], data[1]);           /* \tricky code */
             if (event::is_two_byte_msg(status))
                 datidx = 1;
@@ -1807,10 +1801,6 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
         }
     }
 }
-
-/**
- *
- */
 
 bool
 sequence::repitch_selected (const notemapper & nmap)
@@ -2390,28 +2380,23 @@ sequence::add_note
         }
         if (! ignore)
         {
-            event e
-            (
-                tick, EVENT_NOTE_ON, note,
-                hardwire ? midibyte(m_note_on_velocity) : velocity
-            );
+            /*
+             * Will be consistent with how Note On velocity is handled;
+             * enable 0 velocity (a standard?) for Note Off when not
+             * playing. Note that the event constructor sets channel to 0xFF,
+             * while event::set_data() currently sets it to 0!!!
+             */
+
+            midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
+            event e(tick, EVENT_NOTE_ON, note, v);
             if (paint)
                 e.paint();
 
             result = add_event(e);
             if (result)
             {
-                /*
-                 * Will be consistent with how m_note_on_velocity is handled
-                 * above; enable 0 velocity (a standard?) for note off when not
-                 * playing.
-                 */
-
-                e.set_data
-                (
-                    tick + len, EVENT_NOTE_OFF, note,
-                    hardwire ? midibyte(m_note_off_velocity) : 0
-                );
+                midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
+                event e(tick + len, EVENT_NOTE_OFF, note, v);
                 result = add_event(e);
             }
         }
@@ -2822,8 +2807,6 @@ sequence::set_dirty_mp ()
 /**
  *  Call set_dirty_mp() and then sets the dirty flag for editing. Note that it
  *  does not call performer::modify().
- *
- * \threadsafe
  */
 
 void
@@ -3026,10 +3009,6 @@ sequence::intersect_triggers
     automutex locker(m_mutex);
     return m_triggers.intersect(position, start, ender);
 }
-
-/**
- *
- */
 
 bool
 sequence::intersect_triggers (midipulse position)
@@ -3324,10 +3303,6 @@ sequence::move_triggers (midipulse starttick, midipulse distance, bool direction
     automutex locker(m_mutex);
     m_triggers.move(starttick, distance, direction);
 }
-
-/**
- *
- */
 
 bool
 sequence::selected_trigger
@@ -3707,10 +3682,6 @@ sequence::minmax_notes (int & lowest, int & highest) // const
     return result;
 }
 
-/**
- *
- */
-
 int
 sequence::note_count ()
 {
@@ -3843,6 +3814,7 @@ sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
 }
 
 /**
+ *  Checks for non-terminated notes.
  *
  * \return
  *      Returns true if there is at least one non-terminated linked note in the
@@ -4431,6 +4403,7 @@ sequence::set_overwrite_recording (bool ovwr, bool toggle)
 }
 
 /**
+ *  Sets the state of MIDI Thru.
  *
  * \param thru_active
  *      Provides the desired status to set the through state.
@@ -4579,7 +4552,7 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
-        m_no_channel = ch >= c_midichannel_max;
+        m_no_channel = ch >= c_midichannel_max;     /* 16 */
         off_playing_notes();
         if (! m_no_channel)
             m_midi_channel = ch;
@@ -4934,10 +4907,6 @@ sequence::quantize_events
     return result;
 }
 
-/**
- *
- */
-
 bool
 sequence::change_ppqn (int p)
 {
@@ -5089,9 +5058,15 @@ sequence::copy_events (const eventlist & newevents)
     if (m_events.empty())
     {
         m_events.unmodify();
-        m_length = 0;
+
+        /*
+         * ca 2021-02-03 Not sure we want to change the length at all, let
+         * alone set it to 0.  No pattern ever has a length of 0.
+         *
+         * m_length = 0;
+         */
     }
-    if (! m_events.empty())                 /* need at least 1 (2?) events  */
+    else
     {
         /*
          * Another option, if we have a new sequence length value (in pulses)
@@ -5101,16 +5076,16 @@ sequence::copy_events (const eventlist & newevents)
          */
 
         midipulse len = m_events.get_max_timestamp();
-#ifdef USE_THIS_READY_CODE
-        int qncount = len / int(ppqn());    /* number of quarter notes      */
-        if (len % ppqn() != 0)
+// #ifdef USE_THIS_READY_CODE
+        int qnnum = len / int(get_ppqn());  /* number of quarter notes      */
+        if (len % get_ppqn() != 0)
         {
-            qncount = get_beats_per_bar();  /* set to size of measure       */
-            while (qncount * ppqn() <= len)
-                ++qcount;                   /* shouldn't ever happen        */
+            qnnum = get_beats_per_bar();    /* set to size of measure       */
+            while (qnnum * get_ppqn() <= len)
+                ++qnnum;                    /* shouldn't ever happen        */
         }
-        len = qncount * ppqn();
-#endif
+        len = qnnum * get_ppqn();
+// #endif
         m_length = len;
         verify_and_link();                  /* function uses m_length       */
     }
@@ -5376,7 +5351,7 @@ sequence::expand_recording () const
     bool result = false;
     if (expanding())
     {
-        midipulse tstamp = m_last_tick;     // perf()->get_tick() % m_length;
+        midipulse tstamp = m_last_tick;
         if (tstamp >= expand_threshold())
         {
 #if defined SEQ66_PLATFORM_DEBUG_TMI

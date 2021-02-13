@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-20
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -45,7 +45,7 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 
 /*
- *  Forward declaration.
+ *  Forward declarations.
  */
 
 class QCloseEvent;
@@ -129,9 +129,14 @@ public:
         return perf().ppqn();
     }
 
-    void open_playlist ()
+    bool open_playlist ()
     {
-        show_open_list_dialog();
+        return open_list_dialog();
+    }
+
+    bool save_playlist ()
+    {
+        return save_list_dialog();
     }
 
     bool use_nsm () const
@@ -172,6 +177,7 @@ protected:
         screenset::number setno,
         performer::change ctype
     ) override;
+    virtual bool on_resolution_change (int ppqn, midibpm bpm) override;
     virtual void keyPressEvent (QKeyEvent * event) override;
     virtual void keyReleaseEvent (QKeyEvent *) override;
 
@@ -226,6 +232,10 @@ private:
     void connect_normal_slots ();
     void disconnect_normal_slots ();
     bool show_open_file_dialog (std::string & selectedfile);
+    bool open_list_dialog ();
+    bool save_list_dialog ();
+    bool open_mutes_dialog ();
+    bool save_mutes_dialog (const std::string & basename = "");
     void update_tap (midibpm bpm);
 
 private:
@@ -296,6 +306,13 @@ private:
     bool m_tick_time_as_bbt;
 
     /**
+     *  Holds the last performer tick, so that we can avoid refreshing the
+     *  B:B:T display and the beat indicator when not necessary.
+     */
+
+    midipulse m_previous_tick;
+
+    /**
      *  Holds a list of the sequences currently under edit.  We do not want to
      *  open the same sequence in two different editors.  Also, we need to be
      *  able to delete any open qseqeditex windows when exiting the
@@ -343,6 +360,7 @@ private slots:
     void test_notemap_save ();
 #endif
 
+    void slot_summary_save ();
     void update_bank (int newBank);
     void update_bank_text (const QString &);
     void start_playing ();
@@ -380,6 +398,9 @@ private slots:
     void import_into_session ();            /* import MIDI into session     */
     void select_and_load_file ();
     void show_open_list_dialog ();
+    void show_save_list_dialog ();          /* NOT YET CONNECTED            */
+    void show_open_mutes_dialog ();         /* NOT YET CONNECTED            */
+    void show_save_mutes_dialog ();         /* NOT YET CONNECTED            */
     void showqsabout ();
     void showqsbuildinfo ();
     void tabWidgetClicked (int newindex);

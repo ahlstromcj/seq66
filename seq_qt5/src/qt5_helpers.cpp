@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2020-11-20
+ * \updates       2021-02-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -34,6 +34,7 @@
 #include <QPushButton>
 
 #include "cfg/settings.hpp"             /* seq66::last_used_dir()           */
+#include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "qt5_helpers.hpp"
 
 /*
@@ -103,26 +104,13 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
 bool
 show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 {
-    bool result = false;
-    const char * directory = rc().last_used_dir().c_str();
-    if (! selectedfile.empty())
-        directory = selectedfile.c_str();
-
-    QString file = QFileDialog::getOpenFileName
+    return show_file_dialog
     (
-        parent, QObject::tr("Open MIDI/WRK file"), directory,
+        parent, selectedfile, "Open MIDI/WRK file",
         "MIDI/WRK (*.midi *.mid *.MID *.wrk *.WRK);;"
-        "MIDI (*.midi *.mid *.MID);;"
-        "WRK (*.wrk *.WRK);;"
-        "All (*)"
+        "MIDI (*.midi *.mid *.MID);;WRK (*.wrk *.WRK);;All (*)",
+        OpeningFile, NormalFile
     );
-    result = ! file.isEmpty();
-    if (result)
-    {
-        selectedfile = file.toStdString();
-        file_message("Selected", selectedfile);
-    }
-    return result;
 }
 
 /**
@@ -132,32 +120,110 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
  *  for both normal and NSM sessions.
  *
  * \param [inout] selectedfile
- *      A return value for the chosen file and path.  If not-empty when the call
- *      is made, show the user that directory instead of the home configuration
- *      directory.
+ *      A return value for the chosen file and path.  If not-empty when the
+ *      call is made, show the user that directory instead of the home
+ *      configuration directory.  Callers should just provide the base-name of
+ *      the file when saving a file under session management!  For opening a
+ *      file, not a big deal.
  *
  * \return
  *      Returns true if the returned path can be used.
  */
 
 bool
-show_open_playlist_dialog (QWidget * parent, std::string & selectedfile)
+show_playlist_dialog (QWidget * parent, std::string & selectedfile, bool saving)
+{
+    std::string filter = "Playlist (*.playlist);;All files (*)";
+    std::string caption = saving ?
+        "Save play-lists file" : "Open play-lists file";
+
+    return show_file_dialog
+    (
+        parent, selectedfile, caption, filter, saving, ConfigFile, ".playlist"
+    );
+}
+
+bool
+show_text_file_dialog (QWidget * parent, std::string & selectedfile)
+{
+    return show_file_dialog
+    (
+        parent, selectedfile, "Save text file",
+        "Text (*.txt *.text);;All (*)", SavingFile, NormalFile, ".text"
+    );
+}
+
+/**
+ *  Meant to handle many more situations.
+ */
+
+bool
+show_file_dialog
+(
+    QWidget * parent,
+    std::string & selectedfile,
+    const std::string & prompt,
+    const std::string & filterlist,
+    bool saving,
+    bool forceconfig,
+    const std::string & extension
+)
 {
     bool result = false;
-    const char * directory = rc().home_config_directory().c_str();
-    if (! selectedfile.empty())
-        directory = selectedfile.c_str();
+    std::string d = forceconfig ? rc().home_config_directory() : selectedfile ;
+    if (selectedfile.empty())
+    {
+        // nothing to do (yet)
+    }
+    else
+    {
+        if (name_has_directory(selectedfile) && forceconfig)
+        {
+            if (file_is_directory(selectedfile))
+            {
+                /*
+                 *  Keep the home configuration directory
+                 */
+            }
+            else
+            {
+                /*
+                 *  Pull out the file-name and prepend the home configuration
+                 *  directory.
+                 */
 
-    QString file = QFileDialog::getOpenFileName
-    (
-        parent, QObject::tr("Open play-list file"), directory,
-        "Playlist (*.playlist);;All files (*)"
-    );
+                std::string fullpath = selectedfile;
+                std::string path;
+                std::string basename;
+                (void) filename_split(fullpath, path, basename);
+                d = filename_concatenate(d, basename);
+            }
+        }
+    }
+
+    std::string p = prompt;
+    if (p.empty())
+        p = saving ? "Save file" : "Open file" ;
+
+    std::string f = filterlist;
+    if (f.empty())
+        f = "All files (*)";
+
+    QString folder = QString::fromStdString(d);
+    QString caption = QString::fromStdString(p);
+    QString filters = QString::fromStdString(f);
+    QString file = saving ?
+        QFileDialog::getSaveFileName(parent, caption, folder, filters) :
+        QFileDialog::getOpenFileName(parent, caption, folder, filters) ;
+
     result = ! file.isEmpty();
     if (result)
     {
         selectedfile = file.toStdString();
-        file_message("Selected", selectedfile);
+        if (saving && ! extension.empty())
+            selectedfile = file_extension_set(selectedfile, extension);
+
+        file_message(saving ? "Saving" : "Opening", selectedfile);
     }
     return result;
 }

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-01-09
+ * \updates       2021-02-02
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -298,6 +298,9 @@ qloopbutton::initialize_fingerprint ()
         int y1 = y0 + m_event_box.h();
         int yh = y1 - y0;
         midipulse t1 = m_seq->get_length();             /* t0 = 0           */
+        if (t1 == 0)
+            return;
+
         int nh = c_max_midi_data_value;
         for (int i = 0; i < i1; ++i)
             m_fingerprint[i] = 0;
@@ -567,20 +570,23 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 void
 qloopbutton::draw_progress (QPainter & painter, midipulse tick)
 {
-    QBrush brush(m_prog_back_color, Qt::SolidPattern);
-    QPen pen(progress_color());                         /* Qt::black    */
     midipulse t1 = m_seq->get_length();
-    int lx = m_event_box.x();
-    int xw = m_event_box.w();
-    int ly0 = m_event_box.y() + 1;
-    int lyh = m_event_box.h() - 2;
-    int ly1 = ly0 + lyh;
-    lx += int(xw * tick / t1);
-    pen.setWidth(2);
-    pen.setStyle(Qt::SolidLine);
-    painter.setBrush(brush);
-    painter.setPen(pen);
-    painter.drawLine(lx, ly1, lx, ly0);
+    if (t1 > 0)
+    {
+        QBrush brush(m_prog_back_color, Qt::SolidPattern);
+        QPen pen(progress_color());                         /* Qt::black */
+        int lx = m_event_box.x();
+        int xw = m_event_box.w();
+        int ly0 = m_event_box.y() + 1;
+        int lyh = m_event_box.h() - 2;
+        int ly1 = ly0 + lyh;
+        lx += int(xw * tick / t1);
+        pen.setWidth(2);
+        pen.setStyle(Qt::SolidLine);
+        painter.setBrush(brush);
+        painter.setPen(pen);
+        painter.drawLine(lx, ly1, lx, ly0);
+    }
 }
 
 /**
@@ -675,7 +681,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 }
             }
         }
-        else
+        else if (t1 > 0)
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);

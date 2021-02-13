@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-01-17
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -76,6 +76,7 @@ namespace seq66
 
 class qmutemaster final : public QFrame, protected performer::callbacks
 {
+    friend class qsmainwnd;
 
 private:
 
@@ -186,8 +187,9 @@ private:
     bool handle_key_press (const keystroke & k);
     bool handle_key_release (const keystroke & k);
     QTableWidgetItem * cell (screenset::number row, column_id col);
-
     void clear_pattern_mutes ();
+    bool load_mutegroups (const std::string & fullfilespec);
+    bool save_mutegroups (const std::string & fullfilespec);
 
 signals:
 
@@ -201,6 +203,7 @@ private slots:
         int /*prevrow*/, int /*prevcolumn*/
     );
     void slot_clear_all_mutes ();
+    void slot_mutes_file_modify ();
     void slot_bin_mode (bool ischecked);
     void slot_hex_mode (bool ischecked);
     void slot_trigger ();
@@ -209,6 +212,7 @@ private slots:
     void slot_up ();
     void slot_write_to_midi ();
     void slot_write_to_mutes ();
+    void slot_load ();
     void slot_save ();
 
 private:
@@ -222,13 +226,6 @@ private:
 private:
 
     /**
-     *  Holds a map of midioperation functors to be used to control patterns,
-     *  mute-groups, and automation functions.
-     */
-
-    opcontainer m_operations;
-
-    /**
      *  A timer for refreshing the frame as needed.
      */
 
@@ -238,7 +235,7 @@ private:
      *  The main window that owns this window.
      */
 
-    qsmainwnd * m_main_window;
+     qsmainwnd * m_main_window;
 
     /**
      *  Access to all the mute-group buttons.  This is an array forever fixed to
@@ -291,7 +288,8 @@ private:
     mutable bool m_needs_update;
 
     /**
-     *  Holds the current status of all of the pattern buttons.
+     *  Holds the current status of all of the pattern buttons in the
+     *  currently active mute-group in the user-interface.
      */
 
     midibooleans m_pattern_mutes;

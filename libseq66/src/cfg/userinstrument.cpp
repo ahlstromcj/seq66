@@ -54,7 +54,7 @@ userinstrument::userinstrument (const std::string & name) :
     m_controller_count  (0),
     m_instrument_def    ()
 {
-    set_defaults();
+    clear();
     set_name(name);
 }
 
@@ -100,7 +100,7 @@ userinstrument::operator = (const userinstrument & rhs)
  */
 
 void
-userinstrument::set_defaults ()
+userinstrument::clear ()
 {
     m_is_valid = false;
     m_controller_count = 0;
@@ -142,7 +142,7 @@ userinstrument::set_name (const std::string & instname)
  *      A flag that indicates if the desired controller is active.
  */
 
-void
+bool
 userinstrument::set_controller
 (
     int c,
@@ -150,7 +150,8 @@ userinstrument::set_controller
     bool isactive
 )
 {
-    if (m_is_valid && c >= 0 && c < c_midi_controller_max)
+    bool result = m_is_valid && c >= 0 && c < c_midi_controller_max;
+    if (result)
     {
         m_instrument_def.controllers[c] = cname;
         m_instrument_def.controllers_active[c] = isactive;
@@ -161,6 +162,7 @@ userinstrument::set_controller
             infoprint("Use this as a breakpoint");
         }
     }
+    return result;
 }
 
 /**

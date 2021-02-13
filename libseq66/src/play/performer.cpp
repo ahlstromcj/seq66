@@ -24,14 +24,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2020-12-29
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
  *  perform.
  *
  *  This class is probably the single most important class in Seq66, as
- *  it supports sequences, playback, JACK, and more.
+ *  it supports sequences, mute-groups, sets, playback, JACK, and more.
  *
  *  Here are the slots supported, and what they are suppose to do for
  *  keystrokes versus MIDI controls.  MIDI can support toggle, on, and off
@@ -91,7 +91,7 @@
  *  reserved_46:        Reserved for expansion.
  *  reserved_47:        Reserved for expansion.
  *  reserved_48:        Reserved for expansion.
- *  maximum,            Used only for termination/range-checking.
+ *  max:                Used only for termination/range-checking.
  *  loop:               Key: Toggle-only.  MIDI: Toggle/On/Off.
  *  mute_group:         Key: Toggle-only.  MIDI: Toggle/On/Off.
  *  automation:         See the items above.
@@ -106,7 +106,7 @@
  *      -   select_mute_group(). Almost the same in a stilted way, but also
  *          saves the state of the mute group in a small set array, "tracks
  *          mute".  Used indirectly in mainwnd to "activate" the desired
- *          mute-group. Also called by default in handle_midi_control().
+ *          mute-group.
  *      -   mute_group_tracks(). If in group mode, sets the sequences according
  *          to the state in "tracks mute".
  *      -   set_playing_screenset(). Sets "tracks mute" per the current
@@ -296,11 +296,13 @@
 #include <cstring>                      /* std::memset()                    */
 
 #include "cfg/cmdlineopts.hpp"          /* cmdlineopts::parse_mute_groups   */
+#include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile            */
 #include "cfg/notemapfile.hpp"          /* seq66::notemapfile               */
 #include "cfg/playlistfile.hpp"         /* seq66::playlistfile              */
 #include "cfg/settings.hpp"             /* seq66::rcsettings rc(), etc.     */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/midifile.hpp"            /* seq66::read_midi_file()          */
+#include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
@@ -434,8 +436,6 @@ performer::performer (int ppqn, int rows, int columns) :
 performer::~performer ()
 {
     m_io_active = m_is_running = false;
-    reset_sequences();                      /* stop all output upon exit    */
-    announce_exit();
     cv().signal();                          /* signal the end of play       */
     if (m_out_thread_launched && m_out_thread.joinable())
         m_out_thread.join();
@@ -509,7 +509,6 @@ performer::notify_sequence_change (seq::number seqno, change mod)
     for (auto notify : m_notify)
         (void) notify->on_sequence_change(seqno, redo);
 
-    seq::pointer s = get_sequence(seqno);
     if (mod == change::yes || redo)
         modify();
 }
@@ -672,6 +671,14 @@ performer::put_settings (rcsettings & rcs, usrsettings & usrs)
     rcs.filter_by_channel(m_filter_by_channel);
     rcs.tempo_track_number(m_tempo_track_number);
     usrs.resume_note_ons(m_resume_note_ons);
+
+    /*
+     * We also need to update the playlist file-name in case the user loaded or
+     * removed the playlist.
+     */
+
+    rcs.playlist_filename(playlist_filename());
+    rcs.playlist_active(playlist_active());
     return true;
 }
 
@@ -1462,6 +1469,12 @@ performer::needs_update (seq::number seqno) const
  *  changed the beats per minute.  This setting does get saved to the MIDI
  *  file, with the c_bpmtag.
  *
+ *  Do we need to adjust the BPM of all of the sequences, including the
+ *  potential tempo track???  It is "merely" the putative main tempo of the
+ *  MIDI tune.  Actually, this value can now be recorded as a Set Tempo event
+ *  by user action in the main window (and, later, by incoming MIDI Set Tempo
+ *  events).
+ *
  * \param bpm
  *      Provides the beats/minute value to be set.  It is clamped, if
  *      necessary, between the values SEQ66_MINIMUM_BPM to SEQ66_MAXIMUM_BPM.
@@ -1469,7 +1482,7 @@ performer::needs_update (seq::number seqno) const
  *      needs.
  */
 
-void
+bool
 performer::set_beats_per_minute (midibpm bpm)
 {
     if (bpm < SEQ66_MINIMUM_BPM)
@@ -1479,20 +1492,30 @@ performer::set_beats_per_minute (midibpm bpm)
     else
         bpm = fix_tempo(bpm);
 
-    if (bpm != m_bpm)
+    return jack_set_beats_per_minute(bpm);
+}
+
+/**
+ *  This is a faster version, meant for jack_assistant to call.  This logic
+ *  matches the original seq24, but is it really correct?  Well, we fixed it
+ *  so that, whether JACK transport is in force or not, we can modify the BPM
+ *  and have it stick.  No test for JACK Master or for JACK and normal running
+ *  status needed.
+ *
+ *  Note that the JACK server, especially when transport is stopped,
+ *  sends some artifacts (really low BPM), so we avoid dealing with low
+ *  values.
+ */
+
+bool
+performer::jack_set_beats_per_minute (midibpm bpm)
+{
+    bool result = bpm != m_bpm && bpm > SEQ66_MINIMUM_BPM;
+    if (result)
     {
 
 #if defined SEQ66_JACK_SUPPORT
-
-        /*
-         * This logic matches the original seq24, but is it really correct?
-         * Well, we fixed it so that, whether JACK transport is in force or
-         * not, we can modify the BPM and have it stick.  No test for JACK
-         * Master or for JACK and normal running status needed.
-         */
-
-        m_jack_asst.set_beats_per_minute(bpm);
-
+        m_jack_asst.set_beats_per_minute(bpm);  /* see banner note */
 #endif
 
         if (m_master_bus)
@@ -1500,15 +1523,9 @@ performer::set_beats_per_minute (midibpm bpm)
 
         m_us_per_quarter_note = tempo_us_from_bpm(bpm);
         m_bpm = bpm;
-
-        /*
-         * Do we need to adjust the BPM of all of the sequences, including the
-         * potential tempo track???  It is "merely" the putative main tempo of
-         * the MIDI tune.  Actually, this value can now be recorded as a Set
-         * Tempo event by user action in the main window (and, later, by
-         * incoming MIDI Set Tempo events).
-         */
+        notify_resolution_change(get_ppqn(), bpm, change::no);
     }
+    return result;
 }
 
 /**
@@ -1776,6 +1793,9 @@ performer::clear_all (bool clearplaylist)
         }
         m_is_busy = false;
         set_needs_update();             /* tell all GUIs to refresh. BUG!   */
+        announce_exit();
+        announce_playscreen();
+        announce_mutes();
     }
     return result;
 }
@@ -1983,7 +2003,10 @@ performer::launch (int ppqn)
         m_master_bus->copy_io_busses();
         m_master_bus->get_port_statuses(m_clocks, m_inputs);
         if (ok)
+        {
             announce_playscreen();
+            announce_mutes();
+        }
     }
     return result;
 }
@@ -2014,7 +2037,10 @@ performer::announce_playscreen ()
 
 /**
  *  This action is similar to announce_playscreen(), but it unconditionally
- *  turns off (removes) all of the sequences.
+ *  turns off (removes) all of the sequences in the MIDI status device (e.g.
+ *  the Launchpad Mini).
+ *
+ *  It also turns off all of the mute-group buttons as well.
  */
 
 void
@@ -2032,6 +2058,27 @@ performer::announce_exit (bool playstatesoff)
         }
         if (playstatesoff)
             send_play_states(midicontrolout::uiaction::max);
+
+        for (int g = 0; g < mutegroups::Size(); ++g)
+            send_mutes_inactive(g);
+    }
+}
+
+/**
+ *  This function sets the buttons of all mutes_groups that have mute settings
+ *  to red, and the rest to off.
+ */
+
+void
+performer::announce_mutes ()
+{
+    for (int g = 0; g < mutegroups::Size(); ++g)
+    {
+        bool hasany = mutes().any(mutegroup::number(g));
+        if (hasany)
+            send_mutes_event(g, false);                 /* should turn red  */
+        else
+            send_mutes_inactive(g);                     /* should turn off  */
     }
 }
 
@@ -2243,6 +2290,9 @@ performer::launch_input_thread ()
 bool
 performer::finish ()
 {
+    reset_sequences();                      /* stop all output upon exit    */
+    announce_exit(false);                   /* blank the devide             */
+
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
     if (result)
@@ -2999,11 +3049,12 @@ performer::output_func ()
 #if defined SEQ66_JACK_SUPPORT
                     if (m_jack_asst.transport_not_starting())
                     {
-#endif
                         midipulse jackrtick = pad.js_current_tick;
                         play(midipulse(jackrtick));
-#if defined SEQ66_JACK_SUPPORT
                     }
+#else
+                    midipulse jackrtick = pad.js_current_tick;
+                    play(midipulse(jackrtick));
 #endif
                 }
                 else
@@ -3421,9 +3472,11 @@ performer::start_playing (bool songmode)
         *   m_jack_asst.position(true, m_left_tick);    // position_jack()
         *
         * The "! m_repostion" doesn't seem to make sense.
+        *
+        *       if (is_jack_master() && ! m_reposition)
         */
 
-       if (is_jack_master() && ! m_reposition)
+       if (is_jack_master() && m_reposition)            // ca 2021-01-20
            position_jack(true, m_left_tick);
     }
     else
@@ -3507,10 +3560,6 @@ performer::stop_playing ()
         (void) notify->on_automation_change(automation::slot::stop);
 }
 
-/**
- *
- */
-
 void
 performer::auto_play ()
 {
@@ -3537,10 +3586,6 @@ performer::auto_play ()
     is_pattern_playing(isplaying);
 }
 
-/**
- *
- */
-
 void
 performer::auto_pause ()
 {
@@ -3557,10 +3602,6 @@ performer::auto_pause ()
     }
     is_pattern_playing(isplaying);
 }
-
-/**
- *
- */
 
 void
 performer::auto_stop ()
@@ -4308,13 +4349,46 @@ performer::set_sequence_control_status
 }
 
 /**
- *  A help function to make the code a tad more readable.
+ *  A helper function to make the code a tad more readable.
  */
 
 void
 performer::send_event (midicontrolout::uiaction a, bool on)
 {
     midi_control_out().send_event(a, on);
+}
+
+/**
+ *  A helper function to make the code a tad more readable.
+ */
+
+void
+performer::send_mutes_event (int group, bool on)
+{
+    midicontrolout::actionindex a = on ?
+        midicontrolout::action_on : midicontrolout::action_off ;
+
+    midi_control_out().send_mutes_event(group, a);
+}
+
+void
+performer::send_mutes_events (int groupon, int groupoff)
+{
+    bool wasactive = mutes().group_valid(groupoff);
+    if (wasactive && (groupoff != groupon))
+    {
+        midi_control_out().send_mutes_event
+        (
+            groupoff, midicontrolout::action_off
+        );
+    }
+    midi_control_out().send_mutes_event(groupon, midicontrolout::action_on);
+}
+
+void
+performer::send_mutes_inactive (int group)
+{
+    midi_control_out().send_mutes_event(group, midicontrolout::action_del);
 }
 
 /**
@@ -4789,8 +4863,8 @@ performer::midi_control_keystroke (const keystroke & k)
  *      The MIDI event to process.
  *
  * \param recording
- *      This parameter, if true, restricts the handled controls to start, stop, and
- *      record.
+ *      This parameter, if true, restricts the handled controls to start,
+ *      stop, and record.
  *
  * \return
  *      Returns true if the event was valid and usable, and the call to the
@@ -4914,7 +4988,7 @@ performer::populate_default_ops ()
 
     for (int index = 0; /* breaker */ ; ++index)
     {
-        if (sm_auto_func_list[index].ap_slot != automation::slot::maximum)
+        if (sm_auto_func_list[index].ap_slot != automation::slot::max)
         {
             result = add_automation
             (
@@ -4943,11 +5017,31 @@ performer::populate_default_ops ()
 /**
  *  Sets the given mute group.  If there is a change,  then the subscribers are
  *  notified.  If the 'rc' "save-mutes-to" setting indicates saving it to the
- *  MIDI file, then this becomes a modify action.
+ *  MIDI file, then this becomes a modify action.  Associated with the "Update
+ *  Group" button in the qmutemaster tab.
+ *
+ * \param gmute
+ *      Provides the number of the mute-group to be updated.
+ *
+ * \param bits
+ *      Provides the bits representing the layout of the mute-group's
+ *      armed/unarmed statuses.
+ *
+ * \param putmutes
+ *      If true, then the mute-group in the rc() mute-groups object is
+ *      updated.
+ *
+ * \return
+ *      Returns true if the mutes were able to be set.
  */
 
 bool
-performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
+performer::set_mutes
+(
+    mutegroup::number gmute,
+    const midibooleans & bits,
+    bool putmutes
+)
 {
     midibooleans original = get_mutes(gmute);
     bool result = bits != original;
@@ -4960,9 +5054,19 @@ performer::set_mutes (mutegroup::number gmute, const midibooleans & bits)
                 change::yes : change:: no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
+
+            if (putmutes)
+                rc().mute_groups().set(gmute, bits);
         }
     }
     return result;
+}
+
+bool
+performer::put_mutes ()
+{
+    rc().mute_groups() = m_mute_groups;
+    return true;
 }
 
 /**
@@ -4982,6 +5086,40 @@ performer::clear_mutes ()
             change::yes : change:: no ;
 
         notify_mutes_change(mutegroup::unassigned(), c);
+    }
+    return result;
+}
+
+bool
+performer::apply_mutes (mutegroup::number group)
+{
+    mutegroup::number oldgroup = mutes().group_selected();
+    bool result = mapper().apply_mutes(group);
+    if (result)
+        send_mutes_events(group, oldgroup);
+
+    return result;
+}
+
+bool
+performer::unapply_mutes (mutegroup::number group)
+{
+    bool result = mapper().unapply_mutes(group);
+    if (result)
+        midi_control_out().send_mutes_event(group, midicontrolout::action_off);
+
+    return result;
+}
+
+bool
+performer::toggle_mutes (mutegroup::number group)
+{
+    mutegroup::number oldgroup = mutes().group_selected();
+    bool result = mapper().toggle_mutes(group);
+    if (result)
+    {
+        mutegroup::number newgroup = mutes().group_selected();
+        send_mutes_events(newgroup, oldgroup);
     }
     return result;
 }
@@ -5906,6 +6044,30 @@ performer::playlist_activate (bool on)
     }
 }
 
+bool
+performer::open_mutegroups (const std::string & mgf)
+{
+    bool result = seq66::open_mutegroups(mgf);  /* fills rcsettings groups  */
+    if (result)
+    {
+        m_mute_groups = rc().mute_groups();     /* copy to performer's      */
+    }
+    return result;
+}
+
+bool
+performer::save_mutegroups (const std::string & mgf)
+{
+    rc().mute_groups() = m_mute_groups;         /* copy to rcsettings       */
+
+    bool result = seq66::save_mutegroups(mgf);  /* saves rcsettings groups  */
+    if (result)
+    {
+        // nothing to do
+    }
+    return result;
+}
+
 /**
  *  Creates a playlist object and opens it.  If there is a playlist object
  *  already in existence, it is replaced. If there is no playlist file-name,
@@ -6081,10 +6243,6 @@ performer::automation_stop
 
     return true;
 }
-
-/**
- *
- */
 
 bool
 performer::automation_snapshot_2
@@ -6407,7 +6565,8 @@ performer::sm_auto_func_list [] =
     { automation::slot::mutes_clear, &performer::automation_mutes_clear  },
     { automation::slot::reserved_35, &performer::automation_no_op        },
     {
-        automation::slot::pattern_edit, &performer::automation_edit_pending
+        automation::slot::pattern_edit,
+        &performer::automation_edit_pending
     },
     { automation::slot::event_edit, &performer::automation_event_pending },
     { automation::slot::song_mode, &performer::automation_song_mode      },
@@ -6429,7 +6588,7 @@ performer::sm_auto_func_list [] =
      * Terminator
      */
 
-    { automation::slot::maximum, &performer::automation_no_op            }
+    { automation::slot::max, &performer::automation_no_op               }
 };
 
 }           // namespace seq66

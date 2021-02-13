@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2020-12-30
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -112,18 +112,6 @@ namespace seq66
 {
 
 /**
- *  The maximum number of patterns supported is given by the number of
- *  patterns supported in the panel (32) times the maximum number of sets
- *  (32), or 1024 patterns.  However, this value is now independent of the
- *  maximum number of sets and the number of sequences in a set.  Instead,
- *  we limit them to a constant value, which seems to be well above the
- *  number of simultaneous playing sequences the application can support.
- *  See SEQ66_SEQUENCE_MAXIMUM.
- */
-
-const int c_max_sequence = SEQ66_SEQUENCE_MAXIMUM;
-
-/**
  *  Provide limits for the option "--option scale=x.y".
  */
 
@@ -176,14 +164,6 @@ const int c_seqchars_y =  5;
 
 const int c_seqarea_x = c_text_x * c_seqchars_x;
 const int c_seqarea_y = c_text_y * c_seqchars_y;
-
-/**
- * Area of what?  Doesn't look at all like it is based on the size of
- * characters.  These are used only in the mainwid module.
-
-const int c_seqarea_seq_x = c_text_x * 13;
-const int c_seqarea_seq_y = c_text_y * 2;
- */
 
 /**
  *  These control sizes.  We'll try changing them and see what happens.
@@ -653,7 +633,7 @@ void
 usrsettings::normalize ()
 {
     m_seqs_in_set = m_mainwnd_rows * m_mainwnd_cols;
-    m_max_sets = c_max_sequence / m_seqs_in_set;            /* 16 to 32...  */
+    m_max_sets = seq::maximum() / m_seqs_in_set;            /* 16 to 32...  */
     m_max_sequence = m_seqs_in_set * m_max_sets;
     m_gmute_tracks = m_seqs_in_set * m_seqs_in_set;
     m_total_seqs = m_seqs_in_set * m_max_sets;
@@ -786,11 +766,25 @@ usrsettings::private_bus (int index)
  *      function.
  */
 
-void
+bool
 usrsettings::set_bus_instrument (int index, int channel, int instrum)
 {
     usermidibus & mb = private_bus(index);
-    mb.set_instrument(channel, instrum);
+    bool result = mb.is_valid();
+    if (result)
+        result = mb.set_instrument(channel, instrum);
+
+    if (! result)
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp, "set_bus_instrument(%d, %d, %d) failed",
+            index, channel, instrum
+        );
+        errprint(temp);
+    }
+    return result;
 }
 
 /**
@@ -814,7 +808,7 @@ usrsettings::private_instrument (int index)
  * \setter m_midi_instrument_defs[index].controllers, controllers_active
  */
 
-void
+bool
 usrsettings::set_instrument_controllers
 (
     int index,
@@ -824,7 +818,21 @@ usrsettings::set_instrument_controllers
 )
 {
     userinstrument & mi = private_instrument(index);
-    mi.set_controller(cc, ccname, isactive);
+    bool result = mi.is_valid();
+    if (result)
+        result = mi.set_controller(cc, ccname, isactive);
+
+    if (! result)
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp, "set_instrument_controllers(%d, %d, %s) failed",
+            index, cc, ccname.c_str()
+        );
+        errprint(temp);
+    }
+    return result;
 }
 
 /**

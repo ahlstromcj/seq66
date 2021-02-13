@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2020-11-24
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -149,7 +149,7 @@ private:
      *  this mutegroup object.
      */
 
-    const number m_group;
+    number m_group;
 
     /**
      *  Indicates the screen-set offset (the number of the first loop/pattern
@@ -194,12 +194,22 @@ public:
     }
 
     /**
-     *  Indicates that a sequence number has not been assigned.
+     *  Indicates that a mute-group number has not been assigned.
      */
 
     static number unassigned ()
     {
         return (-1);
+    }
+
+    void invalidate ()
+    {
+        m_group = unassigned();
+    }
+
+    bool valid () const
+    {
+        return m_group >= 0;    /* should check upper range at some point */
     }
 
     bool group_state () const

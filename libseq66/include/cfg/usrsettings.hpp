@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2020-09-03
+ * \updates       2021-01-21
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -347,40 +347,39 @@ private:
      *  is stored in the "proprietary" track at the end of the file, under the
      *  control tag c_musicscale, and will be applied to any sequence that is
      *  edited.  If m_global_seq_feature_save is false, this variable is
-     *  stored, if used, in the meta-data for the sequence to which it applies,
-     *  and, again, is tagged with the control tag c_musicscale.
+     *  stored, if used, in the meta-data for the sequence to which it
+     *  applies, and, again, is tagged with the control tag c_musicscale.
      */
 
     int m_seqedit_scale;
 
     /**
-     *  Replaces seqedit::m_initial_key as the repository for the key to
-     *  apply when a sequence is loaded into the sequence editor.  Its default
-     *  value is c_key_of_C.  Although this value is now stored in the
-     *  usrsettings class, it always comes from the currently loaded MIDI
-     *  file, if present.  If m_global_seq_feature_save is true, this variable
-     *  is stored in the "proprietary" track at the end of the file, under the
+     *  Replaces seqedit::m_initial_key as the repository for the key to apply
+     *  when a sequence is loaded into the sequence editor.  Its default value
+     *  is c_key_of_C.  Although this value is now stored in the usrsettings
+     *  class, it always comes from the currently loaded MIDI file, if
+     *  present.  If m_global_seq_feature_save is true, this variable is
+     *  stored in the "proprietary" track at the end of the file, under the
      *  control tag c_musickey, and will be applied to any sequence that is
      *  edited.  If m_global_seq_feature_save is false, this variable is
-     *  stored, if used, in the meta-data for the sequence to which it applies,
-     *  and, again, is tagged with the control tag c_musickey.
+     *  stored, if used, in the meta-data for the sequence to which it
+     *  applies, and, again, is tagged with the control tag c_musickey.
      */
 
     int m_seqedit_key;
 
     /**
-     *  Replaces seqedit::m_initial_sequence as the repository for the
-     *  background sequence to apply when a sequence is loaded into the
-     *  sequence editor.  Its default value is seqmanager::sequence_limit().
+     *  The repository for the background sequence to apply when a sequence is
+     *  loaded into the sequence editor.  Its default value is seq::limit().
      *  Although this value is now stored in the usrsettings class, it always
      *  comes from the currently loaded MIDI file, if present.  If
-     *  m_global_seq_feature_save is true, this variable is stored, if it has a
-     *  valid (but not "legal") value, in the "proprietary" track at the end of
-     *  the file, under the control tag c_backsequence, and will be applied to
-     *  any sequence that is edited.  If m_global_seq_feature_save is false,
-     *  this variable is stored, if used, in the meta-data for the sequence to
-     *  which it applies, and, again, is tagged with the control tag
-     *  c_backsequence.
+     *  m_global_seq_feature_save is true, this variable is stored, if it has
+     *  a valid (but not "legal") value, in the "proprietary" track at the end
+     *  of the file, under the control tag c_backsequence, and will be applied
+     *  to any sequence that is edited.  If m_global_seq_feature_save is
+     *  false, this variable is stored, if used, in the meta-data for the
+     *  sequence to which it applies, and, again, is tagged with the control
+     *  tag c_backsequence.
      */
 
     int m_seqedit_bgsequence;
@@ -539,6 +538,8 @@ private:
      *  m_seqchars_y constants help define the "seqarea" size.  These look
      *  like the number of characters per line and the number of lines of
      *  characters, in a pattern/sequence box.
+     *
+     *  UNUSED!
      */
 
     int m_seqchars_x;   /* c_seqchars_x = 15    */
@@ -959,6 +960,11 @@ public:
 
     bool add_bus (const std::string & alias);
     bool add_instrument (const std::string & instname);
+    void clear_buses_and_instruments ()
+    {
+        m_midi_buses.clear();
+        m_instruments.clear();
+    }
 
     /**
      * \getter
@@ -972,9 +978,8 @@ public:
     }
 
     /**
-     * \getter
-     *      Unlike the non-const version this function is public.
-     *      Cannot append the const specifier.
+     *  Unlike the non-const version this function is public.  Cannot append
+     *  the const specifier.
      */
 
     const userinstrument & instrument (int index) // const
@@ -987,7 +992,7 @@ public:
         return int(m_midi_buses.size());
     }
 
-    void set_bus_instrument (int index, int channel, int instrum);
+    bool set_bus_instrument (int index, int channel, int instrum);
 
     int bus_instrument (int buss, int channel)
     {
@@ -1004,7 +1009,7 @@ public:
         return int(m_instruments.size());
     }
 
-    void set_instrument_controllers
+    bool set_instrument_controllers
     (
         int index, int cc, const std::string & ccname, bool isactive
     );

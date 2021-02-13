@@ -41,7 +41,7 @@
  *  for example, multiple patterns.
  */
 
-#include <iomanip>                      /* std::setw manipulator            */
+#include <iomanip>                      /* std::setw() manipulator          */
 #include <iostream>                     /* std::cout  (using namespace std) */
 
 #include "ctrl/midicontrol.hpp"         /* seq66::midicontrol class         */
@@ -131,6 +131,27 @@ midicontrol::midicontrol
 }
 
 /**
+ *  Not so sure if this really saves trouble for the caller.  It fits in
+ *  with the big-ass sscanf() call in midicontrolfile.
+ *
+ * \param values
+ *      Provides the 6 values, in an integer array, to set into the
+ *      members in this order: m_control_code, m_action, m_active,
+ *      m_inverse_active, m_status, m_d0, m_min_value, and m_max_value.
+ */
+
+void
+midicontrol::set (int values [automation::SUBCOUNT])
+{
+    m_inverse_active = bool(values[automation::index::inverse]);
+    m_status = values[automation::index::status];
+    m_d0 = values[automation::index::data_1];
+    m_min_value = values[automation::index::data_2_min];
+    m_max_value = values[automation::index::data_2_max];
+    m_active = m_status > 0x00;
+}
+
+/**
  *  Checks to see if this control matches the given category and slot.
  *  For the pattern category, the slot should be the pattern number. For the
  *  mute_group category, the slot should be the group number.  For both, this
@@ -156,10 +177,6 @@ midicontrol::merge_key_match (automation::category c, int opslot) const
     else
         return false;
 }
-
-/**
- *
- */
 
 void
 midicontrol::show (bool add_newline) const

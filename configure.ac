@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-01-10
+dnl \update        2021-02-09
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -20,7 +20,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PREREQ(2.60)
 AC_REVISION($Revision: 0.96$)
-AC_INIT(Seq66, [0.91.6], [ahlstromcj@gmail.com])
+AC_INIT(Seq66, [0.92.0], [ahlstromcj@gmail.com])
 AC_CONFIG_AUX_DIR([aux-files])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
@@ -108,7 +108,7 @@ build_os="'$(uname -srm)'"
 AC_DEFINE_UNQUOTED(APP_BUILD_OS, ["$build_os"], "Distro where build was done")
 AC_DEFINE(CLIENT_NAME, ["seq66"], "The name to display as client/port")
 
-VERSION="0.91.6"
+VERSION="0.92.0"
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION")
 AC_SUBST(VERSION)
 
@@ -120,7 +120,7 @@ dnl Set up version information for this project.
 SEQ66_API_MAJOR="0"
 AC_SUBST([SEQ66_API_MAJOR])
 
-SEQ66_API_MINOR="91"
+SEQ66_API_MINOR="92"
 AC_SUBST([SEQ66_API_MINOR])
 
 SEQ66_API_PATCH="0"
@@ -504,8 +504,8 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-01-10"
-#define VERSION "0.91.6"
+#define VERSION_DATE_SHORT "2021-02-09"
+#define VERSION "0.92.0"
 
 )
 
@@ -625,7 +625,6 @@ AC_CONFIG_FILES([
  Seq66cli/Makefile
  data/Makefile
  doc/Makefile
- doc/dox/Makefile
  doc/latex/Makefile
  doc/latex/tex/Makefile
  Seqtool/Makefile

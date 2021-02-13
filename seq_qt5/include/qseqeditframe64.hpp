@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-05
+ * \updates       2021-01-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -234,6 +234,7 @@ private:        /* slot helper functions        */
     void do_action (eventlist::edit action, int var);
     void popup_tool_menu ();
     void popup_sequence_menu ();
+    void repopulate_usr_combos (int buss, int channel);
     void repopulate_event_menu (int buss, int channel);
     void repopulate_mini_event_menu (int buss, int channel);
     void repopulate_midich_combo (int buss);
@@ -366,13 +367,25 @@ private:
 #endif
 
     /**
-     *  Indicates what MIDI event/status the data window currently editing.
+     *  Indicates what MIDI channel the data window is currently editing.
+     */
+
+    bussbyte m_editing_bus;
+
+    /**
+     *  Indicates what MIDI channel the data window is currently editing.
+     */
+
+    int m_editing_channel;
+
+    /**
+     *  Indicates what MIDI event/status the data window is currently editing.
      */
 
     midibyte m_editing_status;
 
     /**
-     *  Indicates what MIDI CC value the data window currently editing.
+     *  Indicates what MIDI CC value the data window is currently editing.
      */
 
     midibyte m_editing_cc;

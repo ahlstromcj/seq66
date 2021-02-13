@@ -108,7 +108,6 @@ qseqkeys::paintEvent (QPaintEvent *)
     brush.setColor(Qt::lightGray);
     painter.setPen(pen);
     painter.setBrush(brush);
-//  painter.setFont(m_font);
 
     /*
      * Draw keyboard border.

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-11-19
+ * \updates       2021-02-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -59,7 +59,7 @@ namespace seq66
     class qsmainwnd;
 
 /**
- *
+ *  Provides a frame for the Playlist tab.
  */
 
 class qplaylistframe final : public QFrame
@@ -96,16 +96,12 @@ private:
 
     void set_row_heights (int height);
     void set_column_widths ();
-    void reset_playlist ();
+    void reset_playlist (int listindex = 0);
     void set_current_playlist ();
     void set_current_song ();
     void fill_playlists ();
     void fill_songs ();
     QTableWidgetItem * cell (bool isplaylist, int row, column_id_t col);
-
-    /**
-     * \getter m_performer
-     */
 
     performer & perf ()
     {
@@ -132,10 +128,12 @@ private slots:
     void handle_song_click_ex (int, int, int, int);
     void handle_list_load_click ();
     void handle_list_add_click ();
+    void handle_list_modify_click ();
     void handle_list_remove_click ();
     void handle_list_save_click ();
     void handle_song_load_click ();
     void handle_song_add_click ();
+    void handle_song_modify_click ();
     void handle_song_remove_click ();
     void handle_playlist_active_click ();
     void conditional_update ();

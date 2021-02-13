@@ -60,10 +60,6 @@ typedef struct
 
 } PmQueueRep;
 
-/**
- *
- */
-
 PMEXPORT PmQueue *
 Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
 {
@@ -115,10 +111,6 @@ Pm_QueueCreate (long num_msgs, int32_t bytes_per_msg)
     return queue;
 }
 
-/**
- *
- */
-
 PMEXPORT PmError
 Pm_QueueDestroy (PmQueue * q)
 {
@@ -131,10 +123,6 @@ Pm_QueueDestroy (PmQueue * q)
     pm_free(queue);
     return pmNoError;
 }
-
-/**
- *
- */
 
 PMEXPORT PmError
 Pm_Dequeue(PmQueue * q, void * msg)
@@ -225,10 +213,6 @@ Pm_Dequeue(PmQueue * q, void * msg)
     return pmGotData;                                   /* success */
 }
 
-/**
- *
- */
-
 PMEXPORT PmError
 Pm_SetOverflow (PmQueue * q)
 {
@@ -246,10 +230,6 @@ Pm_SetOverflow (PmQueue * q)
     queue->overflow = tail + 1;
     return pmBufferOverflow;
 }
-
-/**
- *
- */
 
 PMEXPORT PmError
 Pm_Enqueue (PmQueue * q, void * msg)
@@ -318,10 +298,6 @@ Pm_QueueEmpty (PmQueue * q)
     return (! queue) || (queue->buffer[queue->head] == 0 && ! queue->peek_flag);
 }
 
-/**
- *
- */
-
 PMEXPORT int
 Pm_QueueFull (PmQueue * q)
 {
@@ -341,10 +317,6 @@ Pm_QueueFull (PmQueue * q)
     }
     return FALSE;
 }
-
-/**
- *
- */
 
 PMEXPORT void *
 Pm_QueuePeek (PmQueue * q)

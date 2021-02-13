@@ -202,7 +202,7 @@ screenset::remove (seq::number seqno)
 {
     bool result = false;
     seq::pointer sp = seqinfo(seqno).loop();
-    if (sp && ! sp->get_editing())
+    if (sp && ! sp->seq_in_edit())
     {
         seq newseq;                         /* non-functiona object         */
         sp->set_playing(false);             /* turns off all notes as well  */
@@ -341,7 +341,7 @@ bool
 screenset::is_seq_in_edit (seq::number seqno) const
 {
     seq::pointer track = seqinfo(seqno).loop();
-    return track ? track->get_editing() : false ;
+    return track ? track->seq_in_edit() : false ;
 }
 
 bool
@@ -349,7 +349,7 @@ screenset::any_in_edit () const
 {
     for (auto & s : m_container)
     {
-        if (s.active() && s.loop()->get_editing())
+        if (s.active() && s.loop()->seq_in_edit())
             return true;
     }
     return false;

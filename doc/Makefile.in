@@ -21,7 +21,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2020-10-02
+# \updates     2021-02-07
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -30,9 +30,9 @@
 #
 #-----------------------------------------------------------------------------
 
-#*****************************************************************************
-# SUBDIRS
-#-----------------------------------------------------------------------------
+#******************************************************************************
+#  EXTRA_DIST
+#------------------------------------------------------------------------------
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -374,6 +374,10 @@ mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pdfdir = @pdfdir@
+
+#******************************************************************************
+# Install directories
+#------------------------------------------------------------------------------
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
@@ -391,7 +395,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = dox latex
+EXTRA_DIST = make_dox *.cfg dox/*.dox *.pdf
+
+#*****************************************************************************
+# SUBDIRS
+#-----------------------------------------------------------------------------
+#
+# We now make the Doxygen documentation only manually: dox removed.
+#
+#-----------------------------------------------------------------------------
+SUBDIRS = latex
 
 #*****************************************************************************
 # DIST_SUBDIRS
@@ -645,7 +658,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am:
+install-data-am: install-data-local
 
 install-dvi: install-dvi-recursive
 
@@ -690,24 +703,52 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am:
-
-.MAKE: $(am__recursive_targets) install-am install-strip
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: $(am__recursive_targets) install-am install-strip uninstall-am
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
 	check-am clean clean-generic clean-libtool cscopelist-am ctags \
 	ctags-am distclean distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am
+	install install-am install-data install-data-am \
+	install-data-local install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am uninstall-hook
 
 .PRECIOUS: Makefile
 
+
+#******************************************************************************
+# Installing documentation
+#------------------------------------------------------------------------------
+#
+# 	   We need to add an install-data-hook to copy the generated
+# 	   documentation directories to the destination directory.  The normal
+# 	   method doesn't work because /usr/bin/install will only install files,
+# 	   and automake doesn't give it the switch needed to install directories.
+#
+#------------------------------------------------------------------------------
+
+install-data-local:
+	mkdir -p $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+
+#*******************************************************************************
+# uninstall-hook
+#-------------------------------------------------------------------------------
+#
+#		Quick and dirty method used.
+#
+#-------------------------------------------------------------------------------
+
+uninstall-hook:
+	rm -rf $(DESTDIR)$(seq66docdir)
 
 #****************************************************************************
 # Makefile.am (seq66 top-level)

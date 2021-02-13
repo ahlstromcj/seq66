@@ -340,10 +340,6 @@ smanager::open_playlist ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 smanager::open_note_mapper ()
 {
@@ -399,10 +395,6 @@ smanager::open_midi_file (const std::string & fname)
     }
     return midifname;
 }
-
-/**
- *
- */
 
 bool
 smanager::create_session (int /*argc*/, char * /*argv*/ [])
@@ -625,20 +617,12 @@ smanager::append_error_message (const std::string & msg) const
  * C:/Users/me/AppData/Local/seq66 or ~/.config/seq66.
  */
 
-/**
- *
- */
-
 void
 smanager::show_message (const std::string & tag, const std::string & msg) const
 {
     std::string fullmsg = tag + ": " + msg;
     seq66::info_message(fullmsg);       /* checks for "debug" and adds "[]" */
 }
-
-/**
- *
- */
 
 void
 smanager::show_error (const std::string & tag, const std::string & msg) const
@@ -713,10 +697,6 @@ smanager::internal_error_check (std::string & errmsg) const
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 smanager::error_handling ()

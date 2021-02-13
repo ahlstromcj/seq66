@@ -3,8 +3,8 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2020-09-26
-; Version:      0.91.0
+; Updated:      2021-02-10
+; Version:      0.92.0
 ;
 ;       Installation is silent.
 ;
@@ -60,6 +60,8 @@
 ;   Sections.nsh provides support for sections and section groups.
 ;   Seq66Constants.nsh contains names and version numbers.
 ;---------------------------------------------------------------------------
+
+Unicode True
 
 !include MUI.nsh
 !include MUI2.nsh
@@ -203,6 +205,14 @@ Section "Licensing and Sample Files" SEC_LIC
 
 SectionEnd
 
+Section "Documentation" SEC_DOC
+
+    SetOutPath "$INSTDIR\doc"
+    SetOverwrite on
+    File /r "..\release\doc\*.pdf"
+
+SectionEnd
+
 ;--------------------------------------------------------------------------
 ; Section "Registry Entries"
 ;
@@ -289,7 +299,6 @@ Section Uninstall
 
 ;   Delete "$INSTDIR\license.txt"
 ;   Delete "$INSTDIR\readme.txt"
-
 
     Delete "$INSTDIR\uninst.exe"
     RMDir /r "$INSTDIR"

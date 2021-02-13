@@ -61,7 +61,7 @@ namespace seq66
 const int c_randomize_range = 4;        /* randomize range in ticks         */
 
 /**
- *
+ *  Principal constructor.
  */
 
 qseqroll::qseqroll
@@ -69,8 +69,7 @@ qseqroll::qseqroll
     performer & p,
     seq::pointer seqp,
     qseqkeys * seqkeys_wid,
-    int zoom,
-    int snap,
+    int zoom, int snap,
     sequence::editmode mode,
     qseqframe * frame
 ) :

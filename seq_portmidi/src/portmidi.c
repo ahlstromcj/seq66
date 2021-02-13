@@ -156,7 +156,6 @@ static int pm_hosterror = FALSE;
 static char pm_hosterror_text[PM_HOST_ERROR_MSG_LEN];
 
 /**
- *
  *  System implementation of portmidi interface.  We should wrap this in a
  *  function as well.
  */
@@ -685,10 +684,6 @@ pm_fail_timestamp_fn (PmInternal * UNUSED(midi), PmTimestamp UNUSED(timestamp))
     return pmBadPtr;
 }
 
-/**
- *
- */
-
 PmError
 none_write_byte
 (
@@ -709,19 +704,11 @@ pm_fail_fn (PmInternal * UNUSED(midi))
     return pmBadPtr;
 }
 
-/**
- *
- */
-
 static PmError
 none_open (PmInternal * UNUSED(midi), void * UNUSED(driverinfo))
 {
     return pmBadPtr;
 }
-
-/**
- *
- */
 
 static void
 none_get_host_error (PmInternal * UNUSED(midi), char * msg, unsigned UNUSED(len))
@@ -729,19 +716,11 @@ none_get_host_error (PmInternal * UNUSED(midi), char * msg, unsigned UNUSED(len)
     *msg = 0;       // empty string
 }
 
-/**
- *
- */
-
 static unsigned
 none_has_host_error (PmInternal * UNUSED(midi))
 {
     return FALSE;
 }
-
-/**
- *
- */
 
 PmTimestamp
 none_synchronize (PmInternal * UNUSED(midi))
@@ -814,7 +793,7 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmInternalError:
-        msg = "Internal PortMidi Error";
+        msg = "Internal PortMidi error";
         break;
 
     case pmBufferOverflow:
@@ -822,7 +801,7 @@ Pm_GetErrorText (PmError errnum)
         break;
 
     case pmBadData:
-        msg = "Invalid MIDI message Data";
+        msg = "Invalid MIDI message data";
         break;
 
     case pmBufferMaxSize:
@@ -1372,10 +1351,6 @@ Pm_WriteShort (PortMidiStream * stream, PmTimestamp when, PmMessage msg)
     event.message = msg;
     return Pm_Write(stream, &event, 1);
 }
-
-/**
- *
- */
 
 #define BUFLEN ((int) (PM_DEFAULT_SYSEX_BUFFER_SIZE / sizeof(PmMessage)))
 
@@ -2018,10 +1993,6 @@ Pm_Abort (PortMidiStream * stream)
  *     ||  ((status == MIDI_PITCHBEND) && (filters & PM_FILT_PITCHBEND));
  */
 
-/**
- *
- */
-
 static void
 pm_flush_sysex (PmInternal * midi, PmTimestamp timestamp)
 {
@@ -2278,10 +2249,6 @@ Pm_device_count (void)
 {
     return pm_descriptor_index;
 }
-
-/**
- *
- */
 
 void
 Pm_print_devices (void)

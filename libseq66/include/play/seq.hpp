@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-12-06
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -43,15 +43,15 @@
  *  -   limit().  Returns 2048 (0x0800), which indicates a legal value that
  *      represents "no background" sequence when present in a Sequencer66 MIDI
  *      file.
- *  -   legal(seqno). Returns true if the sequence number is between 0 and
- *      2048.
- *  -   valid(seqno). Returns true if the sequence number is between 0 and 2047.
+ *  -   legal(seqno). Returns true if the number is between 0 and 2048.
+ *  -   valid(seqno). Returns true if the number is between 0 and 2047.
  *  -   none(seqno). Returns true if the sequence number is -1.
  *  -   disabled(seqno). Return true if the sequence number is limit().
  *  -   null(seqno).
- *  -   all(seqno). Returns true if the sequence number is -1.  To be used only
- *      in the context of functions and can work on one sequence or all of them.
- *      The caller should pass sequence::unassigned() as the sequence number.
+ *  -   all(seqno). Returns true if the sequence number is -1.  To be used
+ *      only in the context of functions and can work on one sequence or all
+ *      of them.  The caller should pass sequence::unassigned() as the
+ *      sequence number.
  *  -   unassigned().  Returns the value of -1 for sequence number.
  */
 
@@ -59,25 +59,6 @@
 #include <map>                          /* std::map<>                       */
 
 #include "play/sequence.hpp"            /* seq66::sequence                  */
-
-/**
- *  The maximum number of patterns supported is given by the number of
- *  patterns supported in the panel (32) times the maximum number of sets
- *  (32), or 1024 patterns.  However, this value is now independent of the
- *  maximum number of sets and the number of sequences in a set.  Instead,
- *  we limit them to a constant value, which seems to be well above the
- *  number of simultaneous playing sequences the application can support.
- *  Based on seq::limit(), we can have patterns ranging from 0 to 2047.
- *  For testing right now, we leave the old limit in place.
- */
-
-#define SEQ66_SEQUENCE_MAXIMUM          1024
-
-/**
- *  See seq::limit().
- */
-
-#define SEQ66_SEQUENCE_LIMIT            2048
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -222,32 +203,35 @@ public:
 
     /**
      *  The limiting sequence number, in macro form.  This value indicates
-     *  that no background sequence value has been assigned yet.  See the
-     *  value seqedit::m_initial_sequence, which was originally set to -1
-     *  directly.  However, we have issues saving a negative number in MIDI,
-     *  so we will use the "proprietary" track's bogus sequence number, which
-     *  doubles the 1024 sequences we can support.  Values between 0
-     *  (inclusive) and 2048 (exclusive) are valid.  But 2048 is a <i>
-     *  legal</i> value, used only for disabling the selection of a background
-     *  sequence.
+     *  that no background sequence value has been assigned yet.  However, we
+     *  have issues saving a negative number in MIDI, so we will use the
+     *  "proprietary" track's bogus sequence number, which doubles the 1024
+     *  sequences we can support.  Values between 0 (inclusive) and 2048
+     *  (exclusive) are valid.  But 2048 is a <i> legal</i> value, used only
+     *  for disabling the selection of a background sequence.
      */
 
     static number limit ()
     {
-        return SEQ66_SEQUENCE_LIMIT;                    /* 0x0800   */
+        return 2048;    /* 0x0800 */
     }
 
     /**
-     *  Defines the constant number of sequences/patterns.  This value has
-     *  historically been 1024, which is 32 patterns per set times 32 sets.
-     *  But we don't want to support any more than this value, based on trials
-     *  with the b4uacuse-stress.midi file, which has only about 4 sets (128
-     *  patterns) and pretty much loads up a CPU.
+     *  The maximum number of patterns supported is given by the number of
+     *  patterns supported in the panel (32) times the maximum number of sets
+     *  (32), or 1024 patterns.  However, this value is now independent of the
+     *  maximum number of sets and the number of sequences in a set.  Instead,
+     *  we limit them to a constant value, which seems to be well above the
+     *  number of simultaneous playing sequences the application can support.
+     *  Based on trials, the b4uacuse-stress.midi file, which has only about 4
+     *  sets (128 patterns) pretty much loads up a CPU.  Based on
+     *  seq::limit(), we can have patterns ranging from 0 to 2047.  For
+     *  testing right now, we leave the old limit in place.
      */
 
     static int maximum ()
     {
-        return SEQ66_SEQUENCE_MAXIMUM;
+        return 1024;
     }
 
     /**
@@ -398,13 +382,6 @@ private:
     {
         m_queued = flag;
     }
-
-/*
-    void sloop (sequence * s)       // \deprecated
-    {
-        m_seq.reset(s); // m_seq_active = not_nullptr(s);
-    }
- */
 
     pointer loop ()
     {

@@ -53,7 +53,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qsabout::qsabout (QWidget * parent)
@@ -67,10 +67,6 @@ qsabout::qsabout (QWidget * parent)
     ui->topLabel->setText(apptag.c_str());
     ui->versionLabel->setText(vertag.c_str());
 }
-
-/**
- *
- */
 
 qsabout::~qsabout()
 {

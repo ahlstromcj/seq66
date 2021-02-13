@@ -64,7 +64,7 @@ namespace seq66
     class qslotbutton;
 
 /**
- *
+ *  Provides a grid of Qt buttons to implement the Live frame.
  */
 
 class qslivegrid final : public qslivebase

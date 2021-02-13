@@ -15,6 +15,9 @@
 # 		everytime we touch one of the doxygen files, and NOT when we touch one of
 # 		the source-code files.  Tired of checking in the PDF file all the time!
 #
+# 		Also, we leave it to the user to decide if the programmer's documentation
+# 		should be built.  The PDFs are not checked into git.
+#
 #-------------------------------------------------------------------------------
 
 #*****************************************************************************
@@ -29,16 +32,11 @@ CLEANFILES = dox-stamp \
  seq_portmidi/seq66_lib_seq_portmidi.pdf \
  libseq66/seq66_lib_libseq66.pdf
 
-
 #******************************************************************************
 #  EXTRA_DIST
 #------------------------------------------------------------------------------
-#
-# We need to move some of this to a Makefile.am in the directory aboe.
-#
-#------------------------------------------------------------------------------
 
-EXTRA_DIST = make_dox *.cfg *.dox *.pdf
+EXTRA_DIST = make_dox make-helper optimize *.cfg *.dox # *.pdf
 
 #******************************************************************************
 # Local project directories

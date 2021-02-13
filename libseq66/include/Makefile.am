@@ -6,7 +6,7 @@
 # \library    	libseq66 library
 # \author     	Chris Ahlstrom
 # \date       	2018-11-11
-# \update      2020-12-11
+# \update      2021-01-22
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -127,6 +127,7 @@ pkginclude_HEADERS = \
  midi/midi_splitter.hpp \
  midi/midi_vector_base.hpp \
  midi/midi_vector.hpp \
+ midi/songsummary.hpp \
  midi/wrkfile.hpp \
  play/clockslist.hpp \
  play/inputslist.hpp \

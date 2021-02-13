@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-12-07
+ * \updates       2021-02-01
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -37,6 +37,13 @@
 #include "midi/editable_events.hpp"     /* seq66::editable_events multimap  */
 #include "util/strfunctions.hpp"        /* seq66::strings_match(), etc.     */
 
+/**
+ *  Provides an integer value that is larger than any midibyte value, to be
+ *  used to terminate a array of items keyed by a midibyte value.
+ */
+
+#define SEQ66_END_OF_MIDIBYTES_TABLE     0x100       /* one more than 0xFF   */
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -45,20 +52,39 @@ namespace seq66
 {
 
 /**
+ *  We moved all of these static arrays out of editable_events because
+ *  they are shown by the GDB print command, and they make the GDB wrapper we
+ *  use, cgdb, crash trying to output them all.
+ *
  *  Initializes the array of event/name pairs for the MIDI events categories.
  *  Terminated by an empty string, the latter being the preferred test, for
  *  consistency with the other arrays and because 0 is often a legitimate code
  *  value.
  */
 
-const editable_event::name_value_t
-editable_event::sm_category_names [] =
+static const editable_event::name_value_t
+sm_category_names [] =
 {
-    { (unsigned short)(subgroup::channel_message),   "Channel Message"   },
-    { (unsigned short)(subgroup::system_message),    "System Message"    },
-    { (unsigned short)(subgroup::meta_event),        "Meta Event"        },
-    { (unsigned short)(subgroup::prop_event),        "Proprietary Event" },
-    { SEQ66_END_OF_MIDIBYTES_TABLE,                  ""                  }
+    {
+        (unsigned short)(editable_event::subgroup::channel_message),
+        "Channel Message"
+    },
+    {
+        (unsigned short)(editable_event::subgroup::system_message),
+        "System Message"
+    },
+    {
+        (unsigned short)(editable_event::subgroup::meta_event),
+        "Meta Event"
+    },
+    {
+        (unsigned short)(editable_event::subgroup::prop_event),
+        "Proprietary Event"
+    },
+    {
+        SEQ66_END_OF_MIDIBYTES_TABLE,
+        ""
+    }
 };
 
 /**
@@ -66,8 +92,8 @@ editable_event::sm_category_names [] =
  *  Terminated by an empty string.
  */
 
-const editable_event::name_value_t
-editable_event::sm_channel_event_names [] =
+static const editable_event::name_value_t
+sm_channel_event_names [] =
 {
     { (unsigned short)(EVENT_NOTE_OFF),         "Note Off"          },  // 0x80
     { (unsigned short)(EVENT_NOTE_ON),          "Note On"           },  // 0x90
@@ -84,8 +110,8 @@ editable_event::sm_channel_event_names [] =
  *  Terminated by an empty string.
  */
 
-const editable_event::name_value_t
-editable_event::sm_system_event_names [] =
+static const editable_event::name_value_t
+sm_system_event_names [] =
 {
     { (unsigned short)(EVENT_MIDI_SYSEX),         "SysEx Start"     },  // 0xF0
     { (unsigned short)(EVENT_MIDI_QUARTER_FRAME), "Quarter Frame"   },  //   .
@@ -111,8 +137,8 @@ editable_event::sm_system_event_names [] =
  *  Terminated only by the empty string.
  */
 
-const editable_event::name_value_t
-editable_event::sm_meta_event_names [] =
+static const editable_event::name_value_t
+sm_meta_event_names [] =
 {
     { 0x00, "Seq Number"                },      // FF 00 02 ss ss (16-bit)
     { 0x01, "Text Event"                },      // FF 01 len text
@@ -154,8 +180,8 @@ editable_event::sm_meta_event_names [] =
  *  Terminated only by the empty string.
  */
 
-const editable_event::meta_length_t
-editable_event::sm_meta_lengths [] =
+static const editable_event::meta_length_t
+sm_meta_lengths [] =
 {
     { 0x00, 2   },                              // "Seq Number"
 
@@ -205,8 +231,8 @@ editable_event::sm_meta_lengths [] =
  *  0x242400FF.
  */
 
-const editable_event::name_value_t
-editable_event::sm_prop_event_names [] =
+static const editable_event::name_value_t
+sm_prop_event_names [] =
 {
     { 0x01, "Buss number"               },
     { 0x02, "Channel number"            },
@@ -230,14 +256,14 @@ editable_event::sm_prop_event_names [] =
  *  rococo.
  */
 
-const editable_event::name_value_t * const
-editable_event::sm_category_arrays [] =
+static const editable_event::name_value_t * const
+sm_category_arrays [] =
 {
-    editable_event::sm_category_names,
-    editable_event::sm_channel_event_names,
-    editable_event::sm_system_event_names,
-    editable_event::sm_meta_event_names,
-    editable_event::sm_prop_event_names
+    sm_category_names,
+    sm_channel_event_names,
+    sm_system_event_names,
+    sm_meta_event_names,
+    sm_prop_event_names
 };
 
 /**
@@ -266,7 +292,7 @@ editable_event::value_to_name
     std::string result;
     const name_value_t * const table = sm_category_arrays[int(cat)];
     if (cat == subgroup::channel_message)
-        value &= EVENT_CLEAR_CHAN_MASK;
+        event::strip_channel(value);
 
     midibyte counter = 0;
     while (table[counter].event_value != SEQ66_END_OF_MIDIBYTES_TABLE)
@@ -370,7 +396,7 @@ editable_event::editable_event (const editable_events & parent)
  :
     event               (),
     m_parent            (parent),
-    m_link_time         (0),
+    m_link_time         (c_null_midipulse),           // (0),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -397,7 +423,7 @@ editable_event::editable_event
 ) :
     event               (ev),
     m_parent            (parent),
-    m_link_time         (0),
+    m_link_time         (c_null_midipulse),           // (0),
     m_category          (subgroup::name),
     m_name_category     (),
     m_format_timestamp  (timestamp_measures),
@@ -420,8 +446,8 @@ editable_event::editable_event
  *
  * \warning
  *      This function does not yet copy the SysEx data.  The inclusion
- *      of SysEx editable_events was not complete in Seq24, and it is still not
- *      complete in Seq66.  Nor does it currently bother with the
+ *      of SysEx editable_events was not complete in Seq24, and it is still
+ *      not complete in Seq66.  Nor does it currently bother with the
  *      links.
  *
  * \param rhs
@@ -719,7 +745,7 @@ editable_event::set_status_from_string
                     ++pos;
 
                     std::string sd0_partial = sd0.substr(pos);  // drop "nn/"
-                    dd = std::atoi(sd0_partial.c_str());             // get dd
+                    dd = std::atoi(sd0_partial.c_str());        // get dd
                     if (dd > 0)
                     {
                         pos = sd0.find_first_of(" ", pos);      // bypass dd
@@ -866,15 +892,15 @@ void
 editable_event::analyze ()
 {
     midibyte status = get_status();
-    char tmp[32];
     (void) format_timestamp();
     if (status >= EVENT_NOTE_OFF && status <= EVENT_PITCH_WHEEL)
     {
+        char tmp[32];
         midibyte ch = channel() + 1;
         midibyte d0, d1;
         get_data(d0, d1);
         category(subgroup::channel_message);
-        status = get_status() & EVENT_CLEAR_CHAN_MASK;
+        event::strip_channel(status);
 
         /*
          * Get channel message name (e.g. "Program change");
@@ -884,7 +910,9 @@ editable_event::analyze ()
         snprintf(tmp, sizeof tmp, "Ch %d", int(ch));
         m_name_channel = std::string(tmp);
         if (is_one_byte_msg(status))
+        {
             snprintf(tmp, sizeof tmp, "Data %d", int(d0));
+        }
         else
         {
             if (is_note_msg(status))

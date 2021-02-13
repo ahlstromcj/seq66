@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-01-18
+% \update      2021-02-11
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -48,7 +48,10 @@
       /home/user/.config/seq66/qseq66.playlist
    \end{verbatim}
 
-   For \textsl{Microsoft Windows}, the default basename of the files is
+   The palette file is not automatically generated.  It can be saved from the
+   \textbf{Edit / Preferences / Display} tab.
+
+   For \textsl{Microsoft Windows}, the default base name of the files is
    \texttt{qpseq66}, and the default configuration directory is
 
    \begin{verbatim}
@@ -117,16 +120,17 @@
 \label{subsec:configuration_common_comments_section}
 
    This section is also informational, but the user can edit this section to
-   include information describing the purpose of the file.  For example, a 'ctrl'
-   file for a \textsl{Novation Launchpad} might describe the purpose of this
-   file.  The comments stop at the first blank (not even spaces) line.  To skip a
-   line in the comment, put a single space character on the blank line.
+   include information describing the purpose of the file.  For example, a
+   'ctrl' file for a \textsl{Novation Launchpad} might describe the purpose of
+   this file.  The comments stop at the first blank (not even spaces) line.  To
+   skip a line in the comment, put a single space character on the blank line.
 
 \subsubsection{Numeric Settings}
 \label{subsec:configuration_common_numeric_settings}
 
    Numeric settings consist of a line containing one or more numbers, usually
-   preceded by an explanatory comment, and followed by a standard script comment.
+   preceded by an explanatory comment, and followed by a standard script
+   comment.
 
    \begin{verbatim}
       3    # grid_style
@@ -145,34 +149,42 @@
 \subsubsection{Variables}
 \label{subsec:configuration_common_variables}
 
-   Variable are a new style of value setting, and can encompass not only booleans
-   and numeric values, but string values, which may correspond to enumerated
-   values in the source code.  These values are specified by a section-name plus
-   variable-name pair.
+   Variable are a new style of value setting, and can encompass not only
+   booleans and numeric values, but string values, which may correspond to
+   enumerated values in the source code.  These values are specified by a
+   section-name plus variable-name pair.
 
    \begin{verbatim}
       [mute-group-flags]
       save-mutes-to = both
-      mute-group-rows = 4
-      mute-group-columns = 8
-      mute-group-selected = -1
-      groups-format = bin
+      . . .
    \end{verbatim}
 
 \subsubsection{Stanzas}
 \label{subsec:configuration_common_stanzas}
 
+   Please note that, as of version 0.92.0 of \textsl{Seq66}, we have
+   streamlined the control-file stanza by eliminating the "enabled" and
+   "channel" columns in a stanza, since they can be encoded in the event/status
+   byte (e.g. 0x90) instead.  Older versions of the 'ctrl' file will be
+   upgraded automatically.
+
    A stanza in a \textsl{Seq66} configuration file consists of some data at the
    beginning, a set of values bracketed by square brackets, and some optional
    data at the end.  The values inside the square brackets are numeric, and can
-   be in decimal format, sometimes hexadecimal format, or in binary "0/1" format.
+   be in decimal format, sometimes hexadecimal format, or in binary "0/1"
+   format.
 
    \begin{verbatim}
-      0 "1" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 0
-      1 "q" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 1
-      2 "a" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 2
-      3 "z" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 3
+      0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
+      1 "q" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 1
+      2 "a" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 2
+      3 "z" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 3
+      . . .
    \end{verbatim}
+
+   See \sectionref{subsubsec:configuration_ctrl_loop_control}, which describes
+   the details of this layout.
 
 \subsection{Command Line}
 \label{subsec:configuration_command_line}
@@ -186,21 +198,21 @@
        qseq66 [options list] [MIDI filename]
    \end{verbatim}
 
-   \optionline{-h}{--help}
+   \optionline{-h}{-{}-help}
       Display a list of all command-line options, then exit.
 
-   \optionline{-v}{--version}
+   \optionline{-v}{-{}-version}
       Display the program version, then exit.
 
-   \optionline{-H}{--home [directory]}
+   \optionline{-H}{-{}-home [directory]}
       Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
       The configuration files are loaded from or saved to the specified directory.
 
-   \optionline{-b}{--bus [buss]}
+   \optionline{-b}{-{}-bus [buss]}
       Modifies the output buss number on \textsl{all} tracks when a MIDI file is
       read.  Useful for testing or quick-and-dirty setup.
 
-   \optionline{-q}{--ppqn [ppqn]}
+   \optionline{-q}{-{}-ppqn [ppqn]}
       Supports modifying the PPQN value of Seq66, which is
       defaults to a value of 192.  This setting
       is written into the MIDI file when it is saved.
@@ -209,14 +221,14 @@
 
       \configref{usr}{user-midi-settings}{midi\_ppqn}.
 
-   \optionline{-L}{--lash}
+   \optionline{-L}{-{}-lash}
       If LASH support is compiled into the program, this option
       enables it.  Deprecated.
       See \texttt{usr: [user-session] session}.
 
       \configref{usr}{user-session}{session}
 
-   \optionline{-m}{--manual-ports}
+   \optionline{-m}{-{}-manual-ports}
       \textsl{Seq66} won't attach the system's existing ALSA or JACK MIDI ports.
       Instead, it will create is own set of \textsl{virtual}
       input and output busses/ports.  The default number of port is 1 for input,
@@ -224,17 +236,17 @@
 
       \configref{rc}{manual-ports}{flag for manual/virtual ports}
 
-   \optionline{-a}{--auto-ports}
+   \optionline{-a}{-{}-auto-ports}
       \textsl{Seq66} will automatically attach to the system's existing
       ALSA/JACK ports.
 
       \configref{rc}{manual-ports}{flag for manual/virtual ports}
 
-   \optionline{-r}{--reveal-ports}
+   \optionline{-r}{-{}-reveal-ports}
       \textsl{Seq66} will show the names of the ALSA/JACK ports that the system
       defines, rather than the names defined in the 'usr' configuration file.
 
-   \optionline{-R}{--hide-ports}
+   \optionline{-R}{-{}-hide-ports}
       \textsl{Seq66} will show the names of the ALSA port that the 'user'
       configuration file define, rather than the names defined by ALSA.
 
@@ -242,36 +254,36 @@
 
       \configref{usr}{user-midi-bus-definitions}{number of user-defined busses}
 
-   \optionline{-A}{--alsa}
+   \optionline{-A}{-{}-alsa}
       \textsl{Seq66} will run with ALSA, even if JACK is running.
       This options is "sticky" (they are saved).
 
-   \optionline{-t}{--jack-midi}
+   \optionline{-t}{-{}-jack-midi}
       \textsl{Seq66} will run with JACK, which is the default is JACK is
       running.
 
       \configref{rc}{jack-transport}{with\_jack\_midi}
 
-   \optionline{-s}{--show-midi}
+   \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
 
-   \optionline{-p}{--priority}
+   \optionline{-p}{-{}-priority}
       Runs at higher priority with a FIFO scheduler.
 
-   \optionline{N/A}{--pass-sysex}
-      Passes any incoming SYSEX messages to all outputs.
-		Not yet fully implemented.
+%  \optionline{n/a}{-{}-pass-sysex}
+%     Passes any incoming SYSEX messages to all outputs.
+%	Not yet fully implemented.
 
-   \optionline{-k}{--show-keys}
+   \optionline{-k}{-{}-show-keys}
       Prints pressed key value.
 
-   \optionline{-K}{--inverse}
+   \optionline{-K}{-{}-inverse}
       Changes the color palette for the sequence editor and performance editor
       piano rolls.  Also note that the palette is highly configurable.
 
       \configref{palette}{palette}{inverse}
 
-   \optionline{-X}{--playlist [filename]}
+   \optionline{-X}{-{}-playlist [filename]}
       This option loads the given file-name as a play-list file.
       See \sectionref{sec:playlist}.
 
@@ -279,48 +291,48 @@
 
       \configref{playlist}{playlist}{full}
 
-   \optionline{-j}{--jack-transport}
+   \optionline{-j}{-{}-jack-transport}
       \textsl{Seq66} will sync to JACK transport.
 
       \configref{rc}{jack-transport}{with\_jack\_transport}
 
-   \optionline{-J}{--jack-master}
+   \optionline{-J}{-{}-jack-master}
       \textsl{Seq66} will try to be JACK master.
 
       \configref{rc}{jack-transport}{with\_jack\_master}
 
-   \optionline{-C}{--jack-master-cond}
+   \optionline{-C}{-{}-jack-master-cond}
       JACK master will fail if there is already a master.
 
       \configref{rc}{jack-transport}{with\_jack\_cond}
 
-   \optionline{-M}{--jack-start-mode [x]}
+   \optionline{-M}{-{}-jack-start-mode [x]}
       When \textsl{Seq66} is synced to JACK, the following play modes
       are available: 0 = live mode; and 1 = song mode, the default.
 
       \configref{rc}{jack-transport}{song\_start\_mode}
 
-   \optionline{-U}{--jack-session-uuid [uuid]}
+   \optionline{-U}{-{}-jack-session-uuid [uuid]}
       Set the UUID for the JACK session.
 
-   \optionline{-u}{--user-save}
+   \optionline{-u}{-{}-user-save}
       Save the 'usr' configuration file when exiting.
       Normally, it is saved only if not present in the configuration directory,
-      so as not to get stuck with temporary settings such as the --bus option.
+      so as not to get stuck with temporary settings such as the -{}-bus option.
 
       \configref{rc}{auto-option-save}{auto-save-options-on-exit}
 
-   \optionline{-f}{--rc filename}
+   \optionline{-f}{-{}-rc filename}
       Use a different 'rc' configuration file.
       It must be a file in the user's \texttt{\$HOME/.config/seq66}
-      directory or the directory specified by the \texttt{--home} option.
+      directory or the directory specified by the \texttt{-{}-home} option.
       The \texttt{.rc} extension is added if necessary.
 
-   \optionline{-F}{--usr filename}
-      Use a different 'usr' configuration file.  Similar to the \texttt{--rc}
+   \optionline{-F}{-{}-usr filename}
+      Use a different 'usr' configuration file.  Similar to the \texttt{-{}-rc}
       option.
 
-   \optionline{-c}{--config basename}
+   \optionline{-c}{-{}-config basename}
       Use a different configuration file base name for the 'rc' and 'usr'
       files.  For example, one can specify a full configuration for "testing",
       for "jack", or for "alsa", to set up
@@ -328,7 +340,7 @@
       \texttt{jack.rc} and \texttt{jack.usr},
       \texttt{alsa.rc} and \texttt{alsa.usr}.
 
-   \optionline{-o}{--option opvalue}
+   \optionline{-o}{-{}-option opvalue}
       Provides additional options, since the application is running out of
       single-character options.  The \texttt{opvalue} set supported is:
       \begin{itemize}
@@ -352,7 +364,7 @@
             the set size and layout from the default 4x8 = 32 sets layout.
             Consider this option to be experimental. Expect problems.
             To save these options to the 'usr' file, add the
-            \texttt{--user-save} option to the command line.
+            \texttt{-{}-user-save} option to the command line.
             In that file, the options modified are \texttt{mainwnd\_rows} and
             \texttt{mainwnd\_cols}.
          \item \texttt{scale=WxH}.
@@ -377,175 +389,148 @@
 
    The 'rc' configuration file has undergone a lot of changes, including
    off-loading the keyboard control, MIDI control, and mutes control sections
-   into their own files.
+   into their own files, and adding a few "variable" settings.
+   Rather than repeating information already present in the self-documenting
+   'rc' file, we will summarize the settings and refer the reader to the sample
+   files for more information.
 
-\subsection{'rc' File / MIDI Control}
-\label{subsec:configuration_rc_midi_control}
+   The 'rc' file adds these \texttt{[Seq66]} options to the common
+   data for all configuration files:
+
+   \begin{verbatim}
+      verbose = false
+      sets-mode = normal
+      port-namng = short
+   \end{verbatim}
+
+   \texttt{verbose} is the same as the \texttt{-{}-verbose} command-line option,
+   except that, if set to "true", it affects every invocation of \textsl{Seq66}.
+
+   The \texttt{sets-mode} option determines if sets are muted when going to the
+   next play-screen ('normal'), while 'autoarm' will automatically
+   unmute the next set.  The 'additive' options keeps the previous
+   set unmuted when moving to the next set.  These are options requested by
+   users.
+
+  The port-naming values are 'short' or 'long'.  The short style
+  just shows the port number and short port name; the long style
+  shows all the numbers and the long port name.
+
+\subsubsection{'rc' File / MIDI Control}
+\label{subsubsec:configuration_rc_midi_control}
 
    \index{[midi-control-file]}
-   \textsl{Seq66} offloads the MIDI control sections to a separate file.
-   Simply move or create
+   \textsl{Seq66} offloads MIDI control to a separate file.
+   Move or create
    the \texttt{[midi-control]} section to a separate file in
    the \textsl{Seq66} configuration directory, and add the following
    snippet:
 
    \begin{verbatim}
-   [midi-control-file]
-   qseq66.ctrl          # contains a whole [midi-control] section
+      [midi-control-file]
+      "qseq66.ctrl"          # contains a whole [midi-control] section
    \end{verbatim}
 
    As with the 'rc' file, the 'ctrl' file is rewritten upon exit.
    For the details of the 'ctrl' file, see
    \sectionref{subsec:configuration_ctrl}.
 
-
-
-
-
-
-\subsubsection{'rc' File / MIDI Control / Pattern Group Multiples}
-\label{subsubsec:configuration_midi_ctrl_pattern_mult}
-
-   This section describes a feature of the pattern-group that needs it own
-   section for emphasis.  This section describes using a single MIDI control to
-   control a number of operations at one time.  Essentially, if a particular
-   MIDI control row is repeated, each repetition has its own effect on the
-   patterns, which permits one MIDI control event to control multiple patterns
-   at once.
-
-   This control can be used, for example, to emulate the \textsl{Ableton Live
-   row control} functionality.  Here is a sample that uses the lowest range of
-   MIDI notes to control the muting and unmuting of patterns:
+\subsubsection{'rc' File / Mute Groups}
+\label{subsubsec:configuration_rc_mute_groups}
 
    \begin{verbatim}
-      # Pattern-group section:
-      0 [0 0 0 0 0 0]   [1 0 144  0   0 127]  [1 0 128    0   0 127]
-      1 [0 0 0 0 0 0]   [1 0 144  1   0 127]  [1 0 128    1   0 127]
-      2 [0 0 0 0 0 0]   [1 0 144  2   0 127]  [1 0 128    2   0 127]
-      3 [0 0 0 0 0 0]   [1 0 144  3   0 127]  [1 0 128    3   0 127]
-      4 [0 0 0 0 0 0]   [1 0 144  0   0 127]  [1 0 128    0   0 127]
-      5 [0 0 0 0 0 0]   [1 0 144  1   0 127]  [1 0 128    1   0 127]
-      6 [0 0 0 0 0 0]   [1 0 144  2   0 127]  [1 0 128    2   0 127]
-      7 [0 0 0 0 0 0]   [1 0 144  3   0 127]  [1 0 128    3   0 127]
-      8 [0 0 0 0 0 0]   [1 0 144  0   0 127]  [1 0 128    0   0 127]
-      9 [0 0 0 0 0 0]   [1 0 144  1   0 127]  [1 0 128    1   0 127]
-      10 [0 0 0 0 0 0]  [1 0 144  2   0 127]  [1 0 128    2   0 127]
-      11 [0 0 0 0 0 0]  [1 0 144  3   0 127]  [1 0 128    3   0 127]
-      12 [0 0 0 0 0 0]  [1 0 144  0   0 127]  [1 0 128    0   0 127]
-      13 [0 0 0 0 0 0]  [1 0 144  1   0 127]  [1 0 128    1   0 127]
-      14 [0 0 0 0 0 0]  [1 0 144  2   0 127]  [1 0 128    2   0 127]
-      15 [0 0 0 0 0 0]  [1 0 144  3   0 127]  [1 0 128    3   0 127]
+      [midi-group-file]
+      "qseq66.mutes"         # contains a whole [mute-groups] section
    \end{verbatim}
 
-   Observer that MIDI On (144) and Off (128) events appear four times for
-   each note value of 0, 1, 2, and 3.  Each note value thus controls four
-   patterns -- one whole row in a 4x8 pattern.  When note 0 is pressed,
-   patterns 0, 4, 8, and 12 turn on.  When note 0 is released, they turn off.
+   The mutes-groups sections is written on exit dependent on the
+   \texttt{save-mutes-to} option in the mute-groups file.
 
-\subsection{'rc' File / Mute-Group Section}
-\label{subsec:configuration_mute_group}
-     
-   This section is delimited by the \texttt{[mute-group]} construct.
-   It controls 32 groups of mutes in the same way as defined for
-   \texttt{[midi-control]}. A group is set of sequences that can toggle their
-   playing state together.  Every group contains all 32 sequences in the
-   active screen set.
+\subsubsection{'rc' File / Color Palette}
+\label{subsubsec:configuration_rc_color_palette}
 
    \begin{verbatim}
-      [mute-group]
-      1024    # group mute value count
-      0 [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0]
-      1 [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0]
-      2 [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0]
-      ...      ...               ...               ...               ...
-      31 [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0] [0 0 0 0 0 0 0 0]
+      [palette-file]
+      1       # palette_active
+      "qseq66.palette"
    \end{verbatim}
 
-   The initial number, 1024 is probably the total count of 32 x 32 sequences.
-   In this group are the definitions of the state of the 32 sequences
-   in the playing screen set when a group is selected.
-   Each set of brackets defines a group:
-   
+   The only need for a palette file is when the user is not satisfied with the
+   default palette for the patterns, inverse colors, or hatching for some pattern
+   piano roll items.  There is a button to save the current/default palette for
+   later modification in the \textbf{Edit / Preferences / Display} tab.
+
+\subsubsection{'rc' File / Note Mapper}
+\label{subsubsec:configuration_rc_note_mapper}
+
    \begin{verbatim}
-      [state of the first 8 sequences] [second 8] [third 8] [fourth 8]
+      [note-mapper]
+      1
+      "qseq66.drums"
    \end{verbatim}
 
-   After the list of sequences and their MIDI events, one can 
-   set \textsl{Seq66} to handle MIDI events and change some more settings
-   in \texttt{seq66.rc}.
+   This file can be used transform the existing drum (non-transposable) tracks
+   into another set of drum tracks.  A lot of work has been done in the past
+   with non-General-MIDI instruments (particularly consumer instruments like the
+   \textsl{Yamaha PSS-780}.
+   This option is useful for transformation older MIDI files into GM format.
 
-   What is the different between the \textbf{mute-in group}
-   section and the \textbf{mute group} section?  The former defines the MIDI
-   control values that can affect the muting of a group, while the latter
-   specifies the patterns that are part of a group.
-
-\subsection{'rc' File / MIDI-Clock Section}
-\label{subsec:configuration_midi_clock}
+\subsubsection{'rc' File / MIDI-Clock Section}
+\label{subsec:configuration_rc_midi_clock}
 
    \index{[midi-clock]}
-   The MIDI Clock fields will contain the clocking state from the last 
-   time \textsl{Seq66} was run.  Turn off the clock with a 0, or on
-   with a 1 (which means to send MIDI Song Position, and MIDI Continue if
-   starting after tick 0), or on with positioning with a 2, which sends MIDI
-   Start and then begins clocking after the position reaches a modulo of the
+   The MIDI Clock fields contain the clocking state from the last 
+   time \textsl{Seq66} was run, and their status, and their names.
+   Turn off the clock with a 0, or on
+   with a 1 (which means to send
+   \textbf{MIDI Song Position}, and
+   \textbf{MIDI Continue} if
+   starting after tick 0), or on with positioning with a 2, which sends
+   \textbf{MIDI Start}
+   and then begins clocking after the position reaches a modulo of the
    \textbf{Clock Start Modulo value)}.  Luckily, the user-interface makes it
    easy to select the desire value, and has tool-tips to instruct the user.
-   This section has 16 entries, one for each MIDI output buss that
-   \textsl{Seq66} supports.
+   This section has entries for each MIDI output buss.
 
-   This configuration item is the same as the 
-   \textbf{MIDI Clock} tab described in
-   \paragraphref{paragraph:menu_file_options_midi_clock}
-   
-   Here is the format:
+   This configuration item is represented in the
+   \textbf{Edit / Preferences / MIDI Clock} tab.
 
    \begin{verbatim}
       [midi-clock]
-      16
-       0 0  #  [1] seq24 1
-       1 0  #  [2] seq24 2
-       2 0  #  [3] seq24 3
-       3 0  #  [4] seq24 4
-       4 0  #  [5] seq24 5
-       5 0  #  [6] seq24 6
-       6 0  #  [7] seq24 7
-       7 0  #  [8] seq24 8
-       8 0  #  [9] seq24 9
-       9 0  # [10] seq24 10
-      10 0  # [11] seq24 11
-      11 0  # [12] seq24 12
-      12 0  # [13] seq24 13
-      13 0  # [14] seq24 14
-      14 0  # [15] seq24 15
-      15 0  # [16] seq24 16
+      5    # number of MIDI clocks (output busses)
+      0 0    "[0] 14:0 Midi Through Port-0"
+      1 0    "[1] 128:0 TiMidity port 0"
+      2 0    "[2] 128:1 TiMidity port 1"
+      . . .
    \end{verbatim}
 
-   That sample would be written one had started up \textsl{Seq66} in
-   manual-mode.  On our system, where we have Timidity running, and
-   erroneously have also specified 3 MIDI busses that we do not have, in the
-   \texttt{seq66.usr} file:
+\subsubsection{'rc' File / MIDI Clock Mod Ticks}
+\label{subsubsec:configuration_rc_midi_cmt}
+
+   \index{[midi-clock-mod-ticks]}
+   This configuration item is the same as the
+   \textbf{Edit / Preferences / MIDI Clock / Clock Start Modulo} option.
 
    \begin{verbatim}
-      [midi-clock]
-      5    # number of MIDI clocks/busses
-      # Output buss name: [0] 14:0 2x2 A (SuperNova,Q,TX81Z,DrumStation)
-      0 0  # buss number, clock status
-      # Output buss name: [1] 128:0 2x2 B (WaveStation,ESI-2000,MV4,ES-1,ER-1)
-      1 0  # buss number, clock status
-      # Output buss name: [2] 128:1 PCR-30 (303)
-      2 0  # buss number, clock status
-      # Output buss name: [3] 128:2 TiMidity port 2
-      3 0  # buss number, clock status
-      # Output buss name: [4] 128:3 TiMidity port 3
-      4 0  # buss number, clock status
+      [midi-clock-mod-ticks]
+      64
+      0   # flag to record incoming data by channel
    \end{verbatim}
 
-\subsection{'rc' File / MIDI-Meta-Events Section}
-\label{subsec:configuration_midi_meta_events}
+   The record-flag is kind of an outcast.  Not sure why it is here,
+   something to rectify later.
+
+\subsubsection{'rc' File / MIDI-Meta-Events Section}
+\label{subsubsec:configuration_rc_midi_meta_events}
 
    \index{[midi-meta-events]}
    The new MIDI Meta events section is the start of additional options
    supporting meta events as normal events in \textsl{Seq66}.
+   This section defines just one feature of MIDI meta-event handling at present.
+   Normally, tempo events are supposed to occur in the first track (pattern 0).
+   But one can move this track elsewhere to accomodate one's existing body of
+   tunes.  If affects where tempo events are recorded.  The default value is 0,
+   the maximum is 1023.  A pattern must exist at this number for it to work.
    \index{tempo-track-number}
 
    \begin{verbatim}
@@ -553,274 +538,80 @@
       10      # tempo_track_number
    \end{verbatim}
 
-   Normally, as per the MIDI specification, the first track (track 1 in track
+   As per the MIDI specification, the first track (track 1 in track
    numbering, or pattern 0 in \textsl{Seq66} numbering) is \textsl{the}
-   official track for certain MIDI meta events, such as Set Tempo and Time
-   Signature.  However, to accommodate existing tunes and their set
-   arrangement, we allow the user to go into \textbf{File / Options / MIDI
-   Clock} and change the tempo track to another pattern.
+   official track for certain MIDI meta events, such as
+   \textbf{Set Tempo} and
+   \textbf{Time Signature}.
+   However, to accommodate existing tunes and their set
+   arrangement, we allow the user to
+   and change the tempo track to another pattern.
 
-   Please note that the user can insert Set Tempo events into any track via the
-   pattern editor or the event editor.  But, when recording tempo events, they
-   will always be written to the patten having the tempo-track number.
+\subsubsection{'rc' File / Keyboard Control Section}
+\label{subsubsec:configuration_rc_keyboard_control}
 
-\subsection{'rc' File / Keyboard Control Section}
-\label{subsec:configuration_keyboard_control}
+   The keyboard control has been merged into the MIDI control and been moveed
+   into the 'ctrl' file.
+   There is no longer any user-interface to change the
+   keyboard control, for two reasons:
+   (1) It is pretty easy to read, understand, and edit the 'ctrl' file, and
+   (2) There are many more controls in \textsl{seq66}, and creating a
+   user-interface to edit them would not be worth the effort.
+   We suspect most users will be happy enough with the default settings,
+   and users of internationaly keyboards will find the 'ctrl' file easy enough
+   to edit with a programmer's editor.
         
-   \index{[keyboard control]}
-   The keyboard control is a dump of the keys that \textsl{Seq66}
-   recognises, and each key's corresponding sequence number.
-   Note that the first number corresponds to the number of sequences in
-   the active screen set.
-
-   \begin{verbatim}
-      [keyboard-control]
-      32     # number of keys
-      # Key #  Sequence #   Key name
-      44  31        # comma
-      49  0         # 1
-      50  4         # 2
-      51  8         # 3
-      52  12        # 4
-      53  16        # 5
-      54  20        # 6
-      55  24        # 7
-      56  28        # 8
-      97  2         # a
-      98  19        # b
-      99  11        # c
-      100  10       # d
-      101  9        # e
-      102  14       # f
-      103  18       # g
-      104  22       # h
-      105  29       # i
-      106  26       # j
-      107  30       # k
-      109  27       # m
-      110  23       # n
-      113  1        # q
-      114  13       # r
-      115  6        # s
-      116  17       # t
-      117  25       # u
-      118  15       # v
-      119  5        # w
-      120  7        # x
-      121  21       # y
-      122  3        # z
-   \end{verbatim}
-
-\subsection{'rc' File / Keyboard Group Section}
-\label{subsec:configuration_keyboard_group}
-
-   \index{[keyboard-group]}
-   This section is the same as
-   \textbf{[keyboard-control]}, but to control groups of patterns, rather than
-   individual patterns, using keystrokes.
-   The keyboard group specifies more automation for the application.  The
-   first number specifies the key number, and the second number specifies
-   the Group number.
-
-   Additional control items:
-
-   \begin{enumber}
-      \item \textbf{\# bpm up and down}.
-         Keys to control BPM (beats per minute).
-      \item \textbf{\# screen set up and down}.
-         Keys for changing the active screenset.
-      \item \textbf{\# group functionality on, off, learn}.
-         \index{group learn}
-         Note that the group learn key is a modifier key to be held while 
-         \index{group toggle}
-         pressing a group toggle key.
-      \item \textbf{\#replace, queue, snapshot\_1, snapshot\_2, keep queue}.
-         These are the other modifier keys explained in section 3a.
-   \end{enumber}
-
-   To see the required key codes when pressed, run \texttt{seq24} with
-   the \texttt{--show-keys}.
-
-   Some keys should not be assigned to control sequences in
-   \textsl{Seq66} as they are already assigned in the
-   \textsl{Seq66} menu (with \texttt{Ctrl}). 
-
-   This configuration item is the same as the 
-   \textbf{Keyboard} tab described in
-   \sectionref{paragraph:menu_file_options_keyboard}.
-
-   \begin{verbatim}
-      [keyboard-group]
-      # Key #, group # 
-      32
-      33  0         # exclam
-      34  1         # quotedbl
-      35  2         # numbersign
-      36  3         # dollar
-      37  4         # percent
-      38  5         # ampersand
-      40  7         # parenleft
-      47  6         # slash
-      59  31        # semicolon
-      65  16        # A
-      66  28        # B
-      67  26        # C
-      68  18        # D
-      69  10        # E
-      70  19        # F
-      71  20        # G
-      72  21        # H
-      73  15        # I
-      74  22        # J
-      75  23        # K
-      77  30        # M
-      78  29        # N
-      81  8         # Q
-      82  11        # R
-      83  17        # S
-      84  12        # T
-      85  14        # U
-      86  27        # V
-      87  9         # W
-      88  25        # X
-      89  13        # Y
-      90  24        # Z
-      39 59         # bpm up, down: apostrophe semicolon
-      93 91 65360   # screen set up, down, play: bracketright bracketleft Home
-      236 39 65379  # group on, off, learn: igrave apostrophe Insert
-      # replace, queue, snapshot_1, snapshot 2, keep queue:
-      65507 65508 65513 65514 92  # Control_L Control_R Alt_L Alt_R backslash
-      1             # show_ui_sequence_key and pattern measures (1=true/0=false)
-      32            # space start sequencer
-      65307         # Escape stop sequencer
-      0 #  show sequence numbers (1 = true / 0 = false);  ignored in legacy mode
-   \end{verbatim}
-
-   Note that most of these group-control keys are shifted versions of the
-   keystrokes that control the individual sequences.  Also note the
-   \texttt{Control\_L} and \texttt{Control\_R} notations a few lines above.
-   \index{keys!no ctrl/alt please}
-   Please avoid using any Control key combinations in the 'rc'/Keyboard
-   configuration.  Control keys are the province of the user-interface
-   (\textsl{Gtk+}) and assigning them can cause surprising behavior!
-   It is also wise to avoid the \texttt{Alt} key.
-
-   \index{auto-shift}
-   \index{group-learn!auto-shift}
-   When in group-learn mode, the \texttt{Shift} key cannot be hit, so the
-   group-learn mode automatically converts the keys to their shifted versions.
-   \index{shift-lock}
-   \index{group-learn!shift-lock}
-   This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
-
-\subsection{'rc' File / JACK Transport}
-\label{subsec:configuration_jack_transport}
+\subsubsection{'rc' File / JACK Transport}
+\label{subsubsec:configuration_rc_jack_transport}
 
    This section holds the settings for both JACK transport and for native JACK
    MIDI mode.
 
    \index{[jack-transport]}
-   The JACK Transport options are also command-line options, as indicated in
-   the comments below.
+   The JACK Transport options are also command-line options.
+   See \sectionref{subsec:configuration_command_line}.
 
-   This configuration item is the same as the 
-   \textbf{Jack Sync} tab described in
-   \sectionref{paragraph:menu_file_options_jack_sync}.
-
-   \index{--jack-transport}
-   \index{--jack-master}
-   \index{--jack-master-cond}
-   \index{--jack-start-mode}
    \begin{verbatim}
       [jack-transport]
-      # jack_transport - Enable slave sync with JACK Transport.
-      0
-      # jack_master - Seq66 attempts to serve as JACK Master.
-      0
-      # jack_master_cond - Seq66 is master if no other master exists.
-      0
-      # song_start_mode (applies mainly if JACK is enabled)
-      # 0 = Playback in live mode. Allows muting and unmuting of loops.
-      # 1 = Playback uses the song editor's data.
-      1
+      0   # with_jack_transport
+      0   # with_jack_master
+      0   # with_jack_master_cond
+      0   # song_start_mode
+      0   # with_jack_midi
    \end{verbatim}
 
-   An additional item, new, specifies if native JACK MIDI input/output is to be
-   used.
+   These options are described well in the 'rc' file.
 
-   \index{--jack-midi}
-   \begin{verbatim}
-      # jack_midi - Enable JACK MIDI, which is a separate option from
-      # JACK Transport.
-      1
-   \end{verbatim}
-
-   Please note that only \textsl{one} of
-   jack\_transport, jack\_master, and jack\_master\_cond should be selected
-   (set to 1) at a time.
+   Please note that the JACK transport options are set to make sense, no
+   matter what the user specifies.
    Also note that JACK transport is separately configurable from
    JACK MIDI, and each uses a different JACK client internally.
+   We might combine them at some point, if necessary.
 
-\subsection{'rc' File / MIDI Clock Mod Ticks}
-\label{subsec:configuration_midi_cmt}
-
-   \index{[midi-clock-mod-ticks]}
-   This configuration item is the same as the
-   \textbf{Clock Start Modulo} option described in
-   \paragraphref{paragraph:menu_file_options_midi_clock}.
-
-   \begin{verbatim}
-      [midi-clock-mod-ticks]
-      64
-   \end{verbatim}
-
-\subsection{'rc' File / MIDI Meta Events}
-\label{subsec:configuration_midi_meta}
-
-   This section defines some features of MIDI meta-event handling.  Normally,
-   tempo events are supposed to occur in the first track (pattern 0).  But one
-   can move this track elsewhere to accomodate one's existing body of tunes.
-   If affects where tempo events are recorded.  The default value is 0, the
-   maximum is 1023.  A pattern must exist at this number for it to work.
-
-   \begin{verbatim}
-      [midi-meta-events]
-      0    # tempo_track_number
-   \end{verbatim}
-
-\subsection{'rc' File / MIDI Input}
-\label{subsec:configuration_midi_input}
+\subsubsection{'rc' File / MIDI Input}
+\label{subsubsec:configuration_rc_midi_input}
 
    \index{[midi-input]}
-   This configuration item is the same as the 
-   \textbf{MIDI Input} tab described in
-   \paragraphref{paragraph:menu_file_options_midi_input}.
-   The "1" is a line count, and would equal the number of
+   This configuration item is represented in the
+   \textbf{MIDI Input} tab in the \textbf{Edit / Preferences}.
+   The first number is a line count, and would equal the number of
    supported input ports.
-   This 'rc' entry here has two variables; the first is the record number or
-   port number, and the second number indicates whether it is disabled (0),
-   or enabled (1).
+   After that, this 'rc' entry here has two variables;
+   the first is the port number,
+   and the second number indicates whether it is disabled (0), or enabled (1).
+   The next lines show the input busses present on the system (normally).
 
    \begin{verbatim}
       [midi-input]
-      1   # number of MIDI busses
-      # The first number is the port number, and the second number
-      # indicates whether it is disabled (0), or enabled (1).
-      # [0] 0:0 seq66 midi in
-      0 0
-      # If set to 1, this option allows the master MIDI bus to record
-      # (filter) incoming MIDI data by channel, allocating each incoming
-      # MIDI event to the sequence that is set to that channel.
-      # This is an option adopted from the Seq32 project at GitHub.
-      0   # flag to record incoming data by channel
+      2   # number of MIDI busses
+      0 1    "[0] 0:1 system:announce"
+      1 0    "[1] 14:0 Midi Through Port-0"
    \end{verbatim}
 
-   There is no user-interface item for the following value, but
-   it does correspond to the \texttt{--manual-ports} command-line
-   option.
+   Again, see the 'rc' file itself for more information.
 
-\subsection{'rc' File / Manual ALSA Ports}
-\label{subsec:configuration_manual_ports}
+\subsubsection{'rc' File / Manual ALSA Ports}
+\label{subsubsec:configuration_rc_manual_ports}
 
    The name of this setting is a bit of a misnomer in a couple of ways:
 
@@ -829,11 +620,10 @@
    \begin{enumerate}
       \item It actually refers to the usage of \textsl{virtual} MIDI ports.
          These are ports that are set up by the application so that other
-         devices or applications can connect to the MIDI application.
-         Where the "manual" idea comes in is that the user can manually choose
-         the connections to be made.
+         devices, applications, or session managers can connect
+         \textsl{manually} to the MIDI application.
       \item This option is not just for ALSA.  It can also be used when
-         \textsl{Seq66} is running in native JACK mode, so support
+         running in native JACK mode, to support
          virtual JACK ports that can be connected manually (e.g. in the
          \textsl{QJackCtl} application.)
    \end{enumerate}
@@ -841,62 +631,64 @@
    \index{[manual-ports]}
    \begin{verbatim}
       [manual-ports]
-      # Set to 1 to have seq66 create its own ALSA ports and not
-      # connect to other clients.  Use 1 to expose all 16 MIDI ports to
-      # JACK (e.g. via a2jmidid).  Use 0 to access the ALSA MIDI ports
-      # already running on one's computer, or to use the autoconnect
-      # feature (Seq66 connects to existing JACK ports on startup.
-      1
+      0   # flag for manual (virtual) ALSA or JACK ports
+      8   # number of manual/virtual output ports
+      4   # number of manual/virtual input ports
    \end{verbatim}
 
    \index{--auto-ports}
-   The opposite of \texttt{--manual-ports}
-   is \texttt{--auto-ports}.  The auto-ports option
-   forces \textsl{Seq66} to use the system's existing ALSA ports.
-   This is necessary in order to play tunes through software synthesizers that
-   use ALSA MIDI.
+   The opposite of \texttt{-{}-manual-ports} is \texttt{-{}-auto-ports},
+   which is the normal mode of running \textsl{Seq66}.
+   In this mode, system MIDI input/output devices are discovered and
+   automatically connected.
 
-   \index{jack!manual-ports}
-   Turning on the manual-ports option is necessary if one
-   wants to use the legacy \textsl{Seq66} (\texttt{seq66})
-   with JACK.
-   It is \textsl{not} necessary if using the native JACK MIDI version,
-   \texttt{seq66}.
-   However, if one needs to avoid the auto-connect feature of \texttt{seq66},
-   then the manual option is necessary.
+   It will create port names as per the settings in the 'usr' configuration
+   file's sections:
 
-   It will create ports as per the settings in the 'usr' configuration file's
-   \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections.
-   These definitions can be used by JACK for connection, and these definitions
-   can be used to specifically rename the ports that exist in the system.
-   However, this option is misleading if one wants to have access to the
-   actual ALSA ports that exist on the system.
+   \begin{verbatim}
+      [user-midi-bus-definitions]
+      [user-midi-bus-N]
+   \end{verbatim}
+
+   These definitions can be used by JACK for connection, and these
+   definitions can be used to specifically rename the ports that exist in the
+   system.
+   This option is misleading if one wants to have access to the
+   actual ALSA/JACK ports that exist on the system.
    The next option gets around that issue.
 
-\subsection{'rc' File / Reveal ALSA Ports}
-\label{subsec:configuration_reveal_ports}
+\subsubsection{'rc' File / Reveal ALSA Ports}
+\label{subsubsec:configuration_rc_reveal_ports}
 
-   Again, this option applies to both ALSA and native JACK.
+   This option applies to both ALSA and JACK.
 
    \index{[reveal-ports]}
    \begin{verbatim}
       [reveal-ports]
-      # Set to 1 to have seq66 ignore any system port names
-      # declared in the 'user' configuration file.  Use this option if
-      # you want to be able to see the port names as detected by ALSA.
       1   # flag for reveal ALSA ports
    \end{verbatim}
 
    \index{jack!reveal-ports}
    Turning on the reveal-ports option is necessary if one
-   wants to see the actual ALSA port names defined by the system.
-   It will ignore the settings in the 'usr' configuration file's
+   wants to see the actual port names defined by the system.
+   It ignores the settings in the 'usr' configuration file's
    \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections.
    If this option is turned on, the definitions in the
    'usr' configuration file are \textsl{not} read from that file.
 
-\subsection{'rc' File / Interaction Method}
-\label{subsec:configuration_interaction}
+\subsubsection{'rc' File / Interaction Method}
+\label{subsubsec:configuration_rc_interaction}
+
+   \begin{verbatim}
+      1   # allow_mod4_mode
+      1   # allow_snap_split
+      1   # allow_click_edit
+   \end{verbatim}
+
+   The \texttt{Mod4} ("Windows" key) option is still available, but no longer
+   necessary.  Also removed is the option for the "fruity" option
+   of \textsl{Seq24}.
+   It will be added if there is a clamor for it.
 
    \index{[allow-snap-split]}
    \index{new!snap-split}
@@ -904,82 +696,30 @@
    pattern-splitting in the Song editor at snap points, rather than just
    at the middle of the pattern.
 
-   \begin{verbatim}
-      # Set to 1 to allow Seq66 to split performance editor
-      # triggers at the closest snap position, instead of splitting the
-      # trigger exactly in its middle.  Remember that the split is
-      # activated by a middle click.
-      0   # allow_snap_split
-   \end{verbatim}
-
-   \index{qt!snap-split}
-   Not sure that this support is available in the Qt user-interface.
-
    \index{[allow-click-edit]}
    \index{new!click-edit}
    This option allows one to enable/disable the ability to double-click
-   in a pattern slot in the main window to bring it up for editing.  This
-   can interfere with a live performance where muting/unmuting come fast enough
-   to be seen as a double-click.
+   in a pattern slot in the main window to bring it up for editing.
+   This can interfere with a live performance where muting/unmuting come fast
+   enough to be seen as a double-click.
 
-   \begin{verbatim}
-      # Set to 1 to allow a double-click on a slot to bring it up in
-      # the pattern editor.  This is the default.  Set it to 0 if
-      # it interferes with muting/unmuting a pattern.
-      1   # allow_click_edit
-   \end{verbatim}
-
-   \index{qt!click-edit}
-   Not sure that this support is available in the Qt user-interface.
-
-\subsection{'rc' File / LASH Session}
-\label{subsec:configuration_lash_session}
-
-   \index{[lash-session]}
-   The following configuration item is the same as the
-   \texttt{--lash} or \texttt{--no-lash} options described in
-   \sectionref{sec:man_page}.
-   If set to 0, LASH session support is disabled.
-   If set to 1, LASH session support is enabled.
-   However, if LASH support is not built into the application, neither option
-   has any effect -- there is no LASH support.  
-   To determine if LASH support is built in, run seq66 from the command
-   line with the \texttt{--version} option, and see if LASH is mentioned.
-
-   \begin{verbatim}
-      [lash-session]
-      # Set the following value to 0 to disable LASH session management.
-      # Set the following value to 1 to enable LASH session management.
-      # This value will have no effect is LASH support is not built into
-      # the application.  Use the --help option to see if LASH is part of
-      # the options list.
-      1     # LASH session management support flag
-   \end{verbatim}
-
-\subsection{'rc' File / Auto Option Save}
-\label{subsec:configuration_auto_rc_save}
+\subsubsection{'rc' File / Auto Option Save}
+\label{subsubsec:configuration_rc_auto_option_save}
 
    \index{[auto-option-save]}
-   This new item determines if the 'rc' configuration file is saved
-   upon exit of \textsl{Seq66}.  The legacy behavior is to save it,
+   This item determines if the 'rc' configuration file (and other files)
+   is saved upon exit of \textsl{Seq66}.
+   The normal behavior is to save it,
    which can sometimes be inconvenient when one is just trying out some
    command-line options.
 
    \begin{verbatim}
       [auto-option-save]
-      # Set the following value to 0 to disable the automatic saving of the
-      # current configuration to the 'rc' file.  Set it to 1 to
-      # follow legacy seq24 behavior of saving the configuration at exit.
-      # Note that, if auto-save is set, many of the command-line settings,
-      # such as the JACK/ALSA settings, are then saved to the configuration,
-      # which can confuse one at first.  Also note that one currently needs
-      # this option set to 1 to save the configuration, as there is not a
-      # user-interface control for it at present.
       0     # auto-save-options-on-exit support flag
    \end{verbatim}
 
-\subsection{'rc' File / Last Used Directory}
-\label{subsec:configuration_last_used_dir}
+\subsubsection{'rc' File / Last Used Directory}
+\label{subsubsec:configuration_rc_last_used_dir}
 
    The following item refers to the last directory in which one opened or
    saved a MIDI file.
@@ -990,45 +730,488 @@
       /home/ahlstrom/Home/ca/mls/git/seq66/contrib/midi/
    \end{verbatim}
 
-\subsection{'rc' File / Recent Files}
-\label{subsec:configuration_recent_files}
+\subsubsection{'rc' File / Recent Files}
+\label{subsubsec:configuration_rc_recent_files}
 
    The following item preserves a list of the last few MIDI files loaded.
    It is not filled when a MIDI file is loaded via a play-list.
+   The first number is the count of recent-files.
+   The second number is a boolean, set to "1" if the most-recent file
+   should be loaded when \textsl{Seq66} starts.
+   This option is useful as part of restoring a session.
 
    \index{[recent-files]}
    \begin{verbatim}
       [recent-files]
-      4
-      /home/ahlstrom/Home/ca/mls/git/seq66-alternate/contrib/midi/2Bars.midi
-      contrib/midi/b4uacuse-seq24.midi
-      contrib/midi/Bars.midi
-      contrib/midi/b4uacuse-GM-format.midi
+      2 1
+      "/home/user/Home/ca/mls/git/seq66-alternate/contrib/midi/2Bars.midi"
+      "contrib/midi/b4uacuse-seq24.midi"
    \end{verbatim}
 
-\subsection{'rc' File / Play-List}
-\label{subsec:configuration_playlist}
+\subsubsection{'rc' File / Play-List}
+\label{subsubsec:configuration_rc_playlist}
 
-   This is a feature new with version 0.96.0 of \textsl{Seq66}.
-   It provides a configured set of named play-lists in a play-list file,
+   This item provides a configured set of named play-lists in a play-list file,
    and a flag to activate it.
+   Having a playlist makes it easy to load song after song from pre-determined
+   lists.
    
    \index{[playlist]}
    \begin{verbatim}
       [playlist]
       0     # playlist_active, 1 = active, 0 = do not use it
-      # Provides the name of a play-list.  If there is none, use '""'.
-      # Or set the flag above to 0.
-      /home/ahlstrom/.config/seq66/sample.playlist
+      "/home/ahlstrom/.config/seq66/sample.playlist"
    \end{verbatim}
 
    See \sectionref{sec:playlist}.
    It describes the setup, layout, and usage of a
    \textsl{Seq66} playlist file containing one or more playlists.
 
+\subsection{'usr' File}
+\label{subsec:configuration_usr}
+
+   This section describes the \textsl{Seq66} 'usr' (or "user") file.
+   The \textsl{Seq66} 'usr'
+   configuration file provides a way to give more
+   informative names to the MIDI busses, MIDI channels, and MIDI controllers of
+   a given system setup.  This configuration overrides the default values
+   of the \textbf{Event} drop-down list and menu items in the Pattern editor,
+   and make them reflect the names of the MIDI Control (CC) values of one's
+   devices.
+
+   In \textsl{Seq66} it, also includes some items that affect the
+   user-interface's look, and many other new configuration items.
+%  At some point we will likely split this file into another configuration file
+%  ("qseq66.ui"?)
+
+   \index{usr!-u}
+   \index{usr!--user-save}
+   Unlike the 'rc' file, the 'usr' file is \textsl{not} written every time
+   \textsl{Seq66} exits.  If the 'usr' files does not exist, one is
+   created, but it is normally not overwritten thereafter.  To
+   cause it to be overwritten at exit, run \textsl{Seq66} with the
+   \texttt{-u} or \texttt{-{}-user-save} option:
+
+   \begin{verbatim}
+      $ qseq66 --user-save
+   \end{verbatim}
+
+   This option is recommended when one installs a new version of
+   \textsl{Seq66}, which might add new options to the 'usr' file.
+   One usually must edit the 'usr' file manually.
+   There are a few items that can be tweaked in the \textsl{Seq66} application,
+   and if they are modified, the user-save flag is turned on.
+
+   By default, the list of MIDI devices that \textsl{Seq66} shows depends
+   on one's system setup and whether the manual-port option is specified
+   or not.  Here's our system, with the
+   the \texttt{[manual-port]} option turned off, shown in a
+   composite view with all menus one can look at for MIDI settings:
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{configuration/usr/default-event-bus-channel-menus.png}
+   \caption{Seq66 Composite View of Native Devices}
+   \label{fig:default_event_bus_channel_menus}
+\end{figure}
+
+   at the top, the buss dropdown menu contains the MIDI busses/ports
+   active on this computer.  At right, the MIDI channel shows
+   the channels numbers that can be picked for buss 0.  At bottom left, we see
+   the default controller values that \textsl{Seq66} includes.  We have
+   no idea if these correspond to any controllers that the selected MIDI buss
+   supports.  We \textsl{can} use this dropdown to see if any such controller
+   events are in the loaded MIDI file, of course; a solid black square
+   indicates that such an event was found in the pattern.
+
+   to change the defaults, we can create a 'usr' file to set them up.
+   the discussion here relies on the reader opening the file
+   \texttt{sample.usr}, which is included in the shared \texttt{data/samples}
+   directory provided once \textsl{Seq66} is installed.
+
+   assume we have 3 MIDI "buss" devices hooked to our system:
+   two Model "2x2" MIDI port devices, and an old PCR-30 MIDI controller
+   keyboard.  Let's number them:
+
+   \begin{enumerate}
+      \item Model 2x2 A
+      \item Model 2x2 B
+      \item PCR-30
+   \end{enumerate}
+
+   then assume that we have nine different MIDI instruments in our kit.
+   let's number them, too:
+
+   \begin{enumerate}
+      \item Waldorf Micro Q
+      \item SuperNova
+      \item DrumStation
+      \item TX81Z
+      \item WaveStation
+      \item ESI-2000
+      \item ES-1
+      \item ER-1
+      \item TB-303
+   \end{enumerate}
+
+   The \textsl{Waldorf Micro Q},
+   the \textsl{SuperNova},
+   and the \textsl{DrumStation} all have a large
+   number of special MIDI controller values for modifying the sound they
+   produce.
+   The \textsl{DrumStation} accepts MIDI controllers that change various
+   features of the sound of each type of drum it supports.
+
+   The buss devices can be configured to route certain
+   MIDI channels to certain MIDI devices.  Assume we have them
+   set up this way:
+
+   \begin{enumerate}
+      \item Bus 0: Model 2x2 A
+      \begin{itemize}
+         \item SuperNova: channels 1 to 8
+         \item TX81Z: channels 9 to 11
+         \item Waldorf Micro Q: channels 12 to 15
+         \item DrumStation: channel 16
+      \end{itemize}
+      \item Bus 1: Model 2x2 B
+      \begin{itemize}
+         \item WaveStation: channels 1 to 4
+         \item ESI-2000: channels 5 to 14
+         \item ES-1: channel 15
+         \item ER-1: channel 16
+      \end{itemize}
+      \item Bus 2: PCR-30
+      \begin{itemize}
+         \item TB-303: channel 1
+      \end{itemize}
+   \end{enumerate}
+
+   We use the \textbf{'usr' configuration file}.
+   to show these items with the proper
+   names associated with each device, channel, and controller value
+
+   \index{seq66.usr}
+   The \textsl{Seq24} configuration file was called
+   \texttt{.seq24usr}, and it was stored in the user's \texttt{\$HOME}
+   directory.
+   \textsl{Seq66} uses a new file-name
+   to take its place.
+   After one runs \textsl{Seq66} for the first time (or after deleting
+   the configuration files), it will generate a
+   \texttt{seq66.usr} file in one's HOME directory:
+
+   \begin{verbatim}
+      /home/user/.config/seq66/seq66.usr
+   \end{verbatim}
+
+   It allows you to give an alias to 
+   each MIDI bus, MIDI channel, and MIDI control 
+   codes, per channel.
+   The process for setting up the 'usr' file is to:
+
+   \begin{enumber}
+      \item Define one or more MIDI busses, the name of each, and what
+         instruments are on which channels.  Each buss is configured in a
+         section of the form "\texttt{[user-midi-bus-X]}", where "X" ranges
+         from 0 on up.  Each buss then defines up to 16 channel entries.
+         Each entry includes the channel number and the number of a
+         section in the user-instrument section described next.
+      \item Define all of the instruments and their controller
+         names, if they have them.  Each instrument is configured in a
+         section of the form "\texttt{[user-instrument-X]}", where "X"
+         ranges from 0 on up.  Up to 128 controllers can be defined.
+   \end{enumber}
+
+   Let's walk through the structure of this setup, since it is a little bit
+   tricky.
+
+   The first important section in the 'usr' file
+   is \texttt{[user-midi-bus-definitions]}.
+   This section contains an number
+   of \texttt{[user-midi-bus-N]} sections, where "N" ranges from 0 on upward.
+   These correspond to the MIDI \textsl{output}
+   busses expected to be in the system (ignoring the ALSA "announce" buss if
+   ALSA is the MIDI engine being used).
+
+   Each of the busses contains 16 (0 to 15) channel entries.
+   These channels are referred to as "instrument numbers", and are
+   represented as and linked to "instruments" in this section:
+
+   \begin{verbatim}
+      [user-instrument-definitions]
+   \end{verbatim}
+
+   Each instrument contains up
+   to 128 controller values; these controller values are available in the
+   \textbf{Event} button in the Pattern Editor, and their names are shown.
+
+   So, each instrument is setup as a "channel" in a particular "buss".
+   In the Pattern Editor, when a particular buss and channel is selected,
+   the \textbf{Event} menu entries should match the controller entries set up
+   in the 'usr' file.
+
+   The list of devices and channels shown earlier
+   can be seen in the \textsl{Seq66} sample file
+   \texttt{sample.usr}.
+   Deducting 1 from each device number and channel number (so that numbering
+   starts from 0), and consulting the device manuals to determine the
+   controller values supported, one can assemble a 'usr' configuration file
+   that makes the setup visible in \textsl{Seq66}.
+
+   Peruse the next couple of sections to understand a bit about the format of
+   this file, following along in the sample 'usr' file.
+
+\subsubsection{'usr' File / MIDI Bus Definitions}
+\label{subsubsec:usr_file_midi_bus_definitions}
+
+   \index{usr!user-midi-bus-definitions}
+   \index{[user-midi-bus-definitions]}
+   This section begins with an
+   "INI" group marker \texttt{[user-midi-bus-definitions]}.
+   It defines the number of user busses that will be configured in this file.
+
+   \begin{verbatim}
+      [user-midi-bus-definitions]
+      3     # number of user-defined MIDI busses
+   \end{verbatim}
+
+   \index{usr!user-midi-bus-n}
+   \index{[user-midi-bus-n]}
+   This means that the 'usr' file will have three MIDI buss
+   sections: [user-midi-bus-0], [user-midi-bus-1], and [user-midi-bus-2].
+   Here's is an example of one such section:
+
+   \begin{verbatim}
+      [user-midi-bus-0]
+      2x2 A (SuperNova,Q,TX81Z,DrumStation)
+      16
+      0 1
+      1 1      # Instrument #1 of the [user-instrument-definitions] section
+      . . .
+      8 3      # Instrument #3 of the [user-instrument-definitions] section
+      9 3
+      . . .
+      11 0     # Instrument #0 of the [user-instrument-definitions] section
+      12 0     # This is the Waldorf Micro Q device
+      . . .
+      15 2     # Instrument #2 of the [user-instrument-definitions] section
+   \end{verbatim}
+
+   These instrument-definition
+   sections are read from the 'usr' configuration file only if
+   the "reveal ports" option is \textsl{off} ("0");
+   this option can also be specified in the
+   \texttt{[reveal-ports]} section of the 'rc' file.
+   Otherwise, the actual port names reported by ALSA/JACK are shown.
+
+   The \texttt{user-midi-bus-definitions} and \texttt{user-midi-bus-N} sections
+   can be misleading if one wants to have access to the
+   actual MIDI port names that exist on the system.
+   It is left as an exercise for the reader to try these different combinations
+   of show-port options.  Or one can consult the \textsl{Sequencer64 User
+   Manual} to see the figures.
+
+   \begin{itemize}
+      \item Clocks View, -m (-{}-manual-ports)
+      \item Inputs View, -m (-{}-manual-ports)
+      \item Clocks View, -m (-{}-manual-ports) and -R (-{}-hide-ports)
+      \item Clocks View, -r (-{}-reveal-ports)
+      \item Inputs View, -r (-{}-reveal-ports)
+      \item Clocks View, -R (-{}-hide-ports)
+   \end{itemize}
+
+\subsubsection{'usr' File / MIDI Instrument Definitions}
+\label{subsubsec:usr_file_midi_instrument_definitions}
+
+   \index{usr!user-instrument-definitions}
+   \index{[user-instrument-definitions]}
+   This section begins with an
+   "INI" group marker \texttt{[user-instrument-definitions]}.
+   It defines the number of user instruments that will be configured in this
+   file.  This section defines characteristics, such as
+   the meanings of MIDI controller values, of the instruments themselves,
+   not the MIDI busses to which they attached.
+
+   \begin{verbatim}
+      [user-instrument-definitions]
+      9     # number of user instrument
+   \end{verbatim}
+
+   \index{usr!user-instrument-n}
+   \index{[user-instrument-n]}
+   So this 'usr' file will define 9 instruments.  We provide only one section
+   as an example.  Note that items without text default to the values
+   prescribed by the General MIDI (GM) specification.
+
+   \begin{verbatim}
+      [user-instrument-0]
+      Waldorf Micro Q                     # name of instrument
+      128                                 # number of MIDI controllers
+      0                                   # first controller value, unnamed
+      1 Modulation Wheel
+      2 Breath Control
+      3 
+      4 Foot Control
+         . . .
+      123 All Notes Off (0)
+      124                                 # defaults to GM
+      125 Unsupported
+      126 Unsupported
+      127                                 # defaults to GM
+   \end{verbatim}
+
+   Note the unnamed control numbers above.
+   An unnamed control number might be an unsupported control number.
+   It is termed to be "inactive".  In this case, the \textbf{Event} menu of
+   the Pattern editor will show the default name of this controller.
+   Again, though, the function denoted by this name might not be supported by
+   the device.  In that case, it might be better to call it "Unsupported".
+   See the examples above.  See the figure below for one example as set up using
+   the \texttt{sample.usr} file:
 
 
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{configuration/usr/sample-usr-event-bus-channel-menus.png}
+   \caption{Seq66 Composite View of Devices As Set in "sample.usr"}
+   \label{fig:sample_usr_event_bus_channel_menus}
+\end{figure}
 
+\subsubsection{'usr' File / User Interface Settings}
+\label{subsubsec:usr_file_user_interface_settings}
+
+   \index{usr!user-interface-settings}
+   \index{[user-interface-settings]}
+   This section, new to \textsl{Seq66}, begins with an
+   "INI" group marker \texttt{[user-interface-settings]}.
+
+   It provides for a feature we will hopefully be able to complete some day:
+   the complete specificition of the appearance of the user-interface.
+   There is plenty of room to change the appearance of
+   \textsl{Seq66} already!  Please try the settings and see what looks good.
+   Refer to either the sample file or the file generated when \textsl{Seq66}
+   first runs.
+
+   \index{usr!grid-style}
+   \index{usr!grid-brackets}
+   \index{usr!mainwnd-rows}
+   \index{usr!mainwnd-cols}
+   \index{variset}
+   \index{usr!max-sets}
+   \begin{verbatim}
+      [user-interface-settings]
+      1       # grid_style
+      2       # grid_brackets
+      4       # mainwnd_rows
+      8       # mainwnd_cols
+      32      # max_sets
+   \end{verbatim}
+
+   There are a number of additional user-interface options.  See the generated
+   or sample 'usr' file for descriptions.  Also see the chapter on palettes.
+
+\subsubsection{'usr' File / User MIDI Settings}
+\label{subsubsec:usr_file_user_midi_settings}
+
+   \index{[user-midi-settings]}
+   This section begins with an
+   "INI" group marker \texttt{[user-midi-settings]}.
+   It supports files with different PPQN, and and allows one to specify the
+   global defaults for tempo, beats per measure, and so on.
+
+   \index{usr!midi-ppqn}
+   \index{usr!midi-beats-per-measure}
+   \index{usr!midi-beats-per-minute}
+   \index{usr!midi-beat-width}
+   \index{usr!midi-buss-override}
+   \index{usr!velocity-override}
+   \begin{verbatim}
+      [user-midi-settings]
+      192    # midi_ppqn
+      4      # midi_beats_per_measure/bar
+      120    # midi_beats_per_minute
+      4      # midi_beat_width
+      -1     # midi_buss_override
+      80     # velocity_override (-1 = 'Free')
+   \end{verbatim}
+
+   The \texttt{velocity-override} option fixes a long standing (from
+   \textsl{Seq24}) bug where the actual incoming note velocity was always
+   replaced by a hard-wired value.
+
+   \index{usr!bpm-precision}
+   \index{usr!bpm-step-increment}
+   \index{usr!bpm-page-increment}
+   \begin{verbatim}
+      1      # bpm_precision
+      0.1    # bpm_step_increment
+      5.0    # bpm_page_increment
+   \end{verbatim}
+
+   The \texttt{bpm-precision}, \texttt{bpm-step-increment}, and
+   \texttt{bpm-page-increment} values allow more precise control over tempo,
+   which makes it easier to match the tempo of external music sources.  Note
+   that the step-increment is used by the up/down arrow buttons, the up/down
+   arrow keys, and the MIDI BPM control values.  The page-increment is used
+   if the BPM field has focus and the Page-Up/Page-Down keys are pressed,
+   and new MIDI control values have been added to support coarse MIDI
+   control of tempo.
+
+   \index{usr!midi-bpm-minimum}
+   \index{usr!midi-bpm-maximum}
+   \begin{verbatim}
+      0       # midi_bpm_minimum
+      360     # midi_bpm_maximum
+   \end{verbatim}
+
+   The \texttt{midi-bpm-minimum} and \texttt{midi-bpm-maximum} settings
+   are used in scaling the display of Tempo events.
+   By adjusting these values, one can more easily see the variations in
+   tempo.  In a main window pattern slot, or in the song editor tempo track,
+   this range is scaled to the full range of note values, 0 to 127.
+   Generally, one wants to select a range that keeps the main tempo line at
+   the middle height of the pattern display.
+
+   To obtain these new settings, remember to backup the existing
+   \textsl{seq66.usr}, then run \textsl{Seq66} with the
+   \texttt{-{}-user-save} option, and then do a "diff" on the new file and the
+   original to merge any old values that need to be preserved.  Then make any
+   further tweaks to the new values.
+
+\subsubsection{'usr' File / User Options}
+\label{subsubsec:usr_file_user_options}
+
+   \index{[user-options]}
+   This section begins with an
+   "INI" group marker \texttt{[user-options]}.
+   It provides for additional options keyed by the
+   \texttt{-o}/\texttt{-{}-option} options.
+   This group of options serves to expand the options that are available, since
+   \textsl{Seq66} is running out of single-character options.
+   This group of options are shown below.
+
+   \index{usr!option-daemonize}
+   \begin{verbatim}
+		0       # option_daemonize
+   \end{verbatim}
+
+   If this option is not used when running \texttt{seq66cli}, then the
+   application stays in the console window and dumps informational output to
+   it.  If this option is in force, then the only way to affect
+   \texttt{seq66cli} is to send a signal (e.g. SIGKILL) to it, or use
+   MIDI control.
+
+   \index{usr!option-logfile}
+   \begin{verbatim}
+      "seq66.log"
+   \end{verbatim}
+
+   This log-file is written to the same directory as the 'usr' file,
+   the \textsl{Seq66} configuration directory.
+   If empty, then a valid file-name must be specified
+   in the \texttt{-{}-option log=filename.log} option.
+   There's more to the 'usr' configuration file than we've exposed here.
 
 \subsection{'ctrl' File}
 \label{subsec:configuration_ctrl}
@@ -1038,9 +1221,11 @@
    a MIDI pad device.  The current section describes this feature;
    additional resources and ideas can be found at \url{linuxaudio.org}
    (\cite{midicontrol}).
+   Also see the tutorial section \sectionref{sec:launchpad_mini}.
 
    This file provides settings for keyboard control, MIDI control, and for
-   specifying MIDI output to reflect \textsl{automation} commands.
+   specifying MIDI output to reflect \textsl{automation} commands in a device
+   such as the \textsl{LaunchPad}..
    The name of this file is specfied in the 'rc' file as noted earlier.
 
 \subsubsection{'ctrl' File / MIDI Control Settings}
@@ -1108,32 +1293,36 @@
 
    \begin{verbatim}
       [loop-control]
-      0 "1" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Loop 0
+      # Control:  Toggle          On               Off
+      0 "1" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Loop 0
+      . . .
    \end{verbatim}
 
    The first number is an index number, starting at 0.  It indicates what
    loop the control line will affect.
-   The numbers in the leftmost brackets define a \textsl{toggle} filter;
-   the numbers in the middle brackets define an \textsl{on} filter;
-   the numbers in the rightmost brackets define an \textsl{off} filter.
+   The numbers in the leftmost brackets define a \textsl{Toggle} control;
+   the numbers in the middle brackets define an \textsl{On} control;
+   the numbers in the rightmost brackets define an \textsl{Off} control.
    The numbers inside each set of brackets define six values that set up the
    control.  The layout of each filter inside the brackets is as follows:
 
-      \textbf{[OPR INV STAT D1 D2min D2max]}
+      \textbf{[INV STAT D1 D2min D2max]}
 
    \begin{itemize}
-      \item \textbf{OPR} = \textbf{on/off}
       \item \textbf{INV} = \textbf{inverse}
-      \item \textbf{STAT} = \textbf{MIDI status byte} (channel ignored) 
+      \item \textbf{STAT} = \textbf{MIDI status byte} (channel included) 
       \item \textbf{D1} = \textbf{data1}
       \item \textbf{D2min} = \textbf{data2 min}
       \item \textbf{D2max} = \textbf{data2 max}
    \end{itemize}
 
-   If \textbf{OPR (on/off)} is set to 1, it will match the incoming MIDI
-   against the \textbf{STAT (MIDI status byte)} pattern.
-   and perform the action (on/off/toggle) if the data
-   falls in the range specified.  All values are in decimal.
+   If \textbf{STAT} is not 0x00, the control is enabled.  \textsl{Seq66} will
+   match the incoming MIDI event against the \textbf{STAT (MIDI status byte)}
+   pattern (e.g. a Note On event), and perform the action (On/Off/Toggle) if
+   the \textbf{D1} (e.g. a Note number), matches the incoming data, and the
+   incoming parameters (e.g. Note velocity) falls in the specified
+   \textbf{D2min} to \textbf{D2max} range.  All data values are best specified
+   in decimal.
 
    The \textbf{INV (inverse)} field will make the pattern perform the opposite
    action (\textsl{off} for \textsl{on}, \textsl{on} for \textsl{off}) if the
@@ -1142,6 +1331,9 @@
 
    The \textbf{STAT (MIDI status byte)} field is a MIDI status byte number in
    decimal or hexadecimal notation.
+   Remember that it can include a channel.  This channel is not overridden by
+   the pattern's selected channel when a MIDI control matching event is
+   received. 
 %  The channel nybble of this byte is ignored.
    One can look up the possible status values up in the MIDI messages tables;
    the relevant data can be found at \cite{midicontroltable}.
@@ -1182,7 +1374,8 @@
 
    \begin{verbatim}
       [mute-group-control]
-       0 "!" [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ] [ 0 0 0x00 0 0 0 ]  # Mute 0
+       0 "!" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # Mute 0
+       . . .
    \end{verbatim}
 
    All this section does is set up the controls to be used; the actual
@@ -1203,12 +1396,43 @@
    These items are easy to view in the 'ctrl' configuration file,
    in the \texttt{[automation-control]} section.
 
+   \begin{verbatim}
+      [automation-control]
+       0 "'" [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ] [ 0 0x00 0 0 0 ]  # BPM Up
+       . . .
+   \end{verbatim}
+
+   The stanzas meaning can change depending on the type of control.  Here are
+   the important styles:
+
+   \begin{verbatim}
+      Normal:        [ Toggle       ] [ On          ] [ Off             ]
+      Playback:      [ Pause Play   ] [ Start Play  ] [ Stop Play       ]
+      Play list:     [ Select by D2 ] [ Select Next ] [ Select Previous ]
+      Play song:     [ Select by D2 ] [ Select Next ] [ Select Previous ]
+   \end{verbatim}
+
+   For selecting play-lists and songs by number, \textbf{D2} is used.
+   Thus, one possible value to use to select would be to use a 
+   Note On event on channel 16 (0x9F) with a note number of 0 (a rarely-used
+   note in any tune), and list/song numbers ranging from 0 to 127.  Using note
+   0 for list selection and note 1 for song selection:
+
+   \begin{verbatim}
+      24 "F2" [ 0 0x9F   0   0 127 ] [ . . . ] [ . . .] # Play List
+      25 "F3" [ 0 0x9F   1   0 127 ] [ . . . ] [ . . .] # Play Song
+   \end{verbatim}
+
+   Obviously, this requires a MIDI controller for which the velocity can be
+   exactly specified.  One can also reserve \textbf{D2} values of 126 for
+   "previous" and 127 for "next".
+
 \paragraph{Automation / BPM Up and Down}
 \label{paragraph:configuration_midi_ctrl_bpmupdn}
 
    These controls increment or decrement the beats-per-minute setting, as if
-   the up- or down-arrow has been clicked, or the up- or down-arrow key pressed,
-   in the BPM user-interface control.
+   the up- or down-arrow has been clicked in the BPM combox-box, or the up- or
+   down-arrow key pressed, in that combo-box.
    This increment is the
    \index{bpm!step increment}
    \index{usr!step increment}
@@ -1216,22 +1440,18 @@
    changing the "bpm\_step\_increment" value in the 'usr'
    configuration file.
 
-%  See \sectionref{subsec:usr_file_user_midi_settings}.
-
 \paragraph{Automation / Screen-Set Up and Down}
 \label{paragraph:configuration_midi_ctrl_ssupdn}
 
-   The Screen-Set Up MIDI control increments to the next screen-set. 
+   Also abbreviated "Set Up" and "Set Down".
+   This control increments / decrements to the next / previous screen-set. 
    Once the screen-set has been altered, mute-groups and other
    actions apply to that screen set.
-
-   Similarly, the Screen-Set Up MIDI control decrements to the previous
-   screen-set.
 
 \paragraph{Automation / Mod Replace}
 \label{paragraph:configuration_midi_ctrl_modrep}
 
-   The Mod Replace MIDI control sets the "replace" status flag.
+   This control the "replace" flag.
    Then, when the user manually clicks a pattern slot,
    that pattern is unmuted, and all the rest are muted.
    Thus, this MIDI control is kind a of "Solo" function.
@@ -1240,7 +1460,7 @@
 \paragraph{Automation / Mod Snaphot}
 \label{paragraph:configuration_midi_ctrl_modsnap}
 
-   The Mod Snapshot MIDI control causes the playing statuses of all active
+   This control causes the playing statuses of all active
    (i.e. having data) patterns to be saved.  When turned off, the
    original playing status is restored.  Thus, two MIDI events
    need to be allocated to this functionality.
@@ -1248,7 +1468,7 @@
 \paragraph{Automation / Mod Queue}
 \label{paragraph:configuration_midi_ctrl_modqueue}
 
-   The Mod Queue MIDI control sets up the "queue" status flag.
+   This control sets up the "queue" status flag.
    Then, when the user manually clicks a pattern slot,
    that pattern is queued, and will play at the next cycle of the
    pattern.
@@ -1262,39 +1482,23 @@
    the \texttt{mod queue} entry:
 
    \begin{verbatim}
-   # mod queue
-   #    Toggle                 On                      Off
-   70 [0   0   0   0   0   0  ] [1   0   176 64 127 127] [1   0  176 64  0  0]
-   #   OPR INV STA D1  mn mx     OPR INV STA D1 mn  mx   OPR INV STA D1  mn mx
-   #                                      ^  ^                    ^  ^
-   #                                      |  |                    |  |
-   #                                      |   ----Sustain------------
-   #                                       -------Control Change--
+      6 "o" [ 0  0x00 0  0  0 ] [ 0  0xB0 64 127 127 ] [ 0  0xB0 64 0  0 ]
+      #      INV STA  D1 mn mx   INV STA  D1 mn  mx     INV STA D1  mn mx
+      #                                   ^  ^                      ^  ^
+      #                                   |  |                      |  |
+      #                                   |   ----Sustain-----------   |
+      #                                    -------Control Change-------
    \end{verbatim}
 
    So when the Sustain button is held down, and one presses one of the pads
    on the \textsl{MPK Mini}, the corresponding sequence gets queued.
 
-\paragraph{Automation / Mod Mute Group}
+   Also include in the data directory are sample 'ctrl' files for other devices.
+
+\paragraph{Automation / Mute Group}
 \label{paragraph:configuration_midi_ctrl_modgmute}
 
-   The Mod Group Mute MIDI control sets up a "mute group".
-   More to come on this one,
-   see \sectionref{subsec:patterns_panel_top}.
-
-   This control sets an internal "mode-group" flag on.
-
-   When activated, \textsl{Seq66} loops through all of the 32
-   screen-sets, and through the active pattern in each screen-set, and
-   sets each pattern as muted or unmuted, depending on the saved mute state.
-
-\paragraph{Automation / Mod Mute Group}
-\label{paragraph:configuration_midi_ctrl_modgmute}
-
-   The Mod Group Learn MIDI control sets up a "group learn".
-   However, as the group-learn key is a modifier key that needs to
-   be held, we're not quite sure how this works with MIDI control.
-
+   This MIDI control sets up a "group learn".
    This control sets two internal flags on : "mode-group" and "group-learn".
    The first flag indicates that we will be handling mute-groups.
    The second flag indicates that we are learning these mute-groups,
@@ -1306,39 +1510,46 @@
    user-interface.
    \index{keys!Ctrl-L}
    \index{keys!l}
-   It can also be accessed by the hard-wired hot-keys, \texttt{l} and
-   \texttt{Ctrl-L}.
+   It can also be accessed by the hard-wired hot-key,
+   \texttt{Ctrl-L}. and the default hot-key, \texttt{l}.
 
 \paragraph{Automation / Screen-Set Play}
 \label{paragraph:configuration_midi_ctrl_ssplay}
 
 This MIDI control sets the playing screen-set.
 
-\subsubsection{Automation / More}
+\subsubsection{Automation / More MIDI Control}
 \label{subsubsec:configuration_midi_ctrl_automationex}
 
    Many additional control items were requested by users, to control
-   additional features of the application.
-   See the 'ctrl' file sample for more information.
+   additional features of the application.  Too many to list here.
+   See the 'ctrl' file samples for more information.
 
 \subsubsection{'ctrl' File / MIDI Control Output}
 \label{subsubsec:configuration_ctrl_midi_control_out}
 
-   This section provides a way to have a MIDI device show the status
-   of the patterns that are active.
-
+   This section provides a way to have a MIDI device, such as the
+   \textsl{Novation Launchpad Mini}, show the status
+   of the patterns that are active, as well as other information.
 
    \begin{verbatim}
       [midi-control-out-settings]
+      set-size = 32
+      output-buss = 1
+      enabled = false
+      button-offset = 0
+      button-rows = 8
+      button-columns = 8
    \end{verbatim}
 
    The first section sets up some general settings.
 
    \begin{itemize}
       \item \texttt{set-size}.
-         Provides the set size.  More information to dig for.
+         Provides the set size.  The default is 32, in a 4 x 8 grid.
       \item \texttt{output-buss}.
-         Indicates where automation-display controls are to be send.
+         Indicates where automation-display controls are to be sent.
+         Specify the output buss to which the display device is attached.
       \item \texttt{midi-enabled}.
          If set to "true", then the MIDI control outputs will be used.
          It can be set to "false", while keeping the configuration in place
@@ -1357,22 +1568,128 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [midi-control-out]
-      0 [0 0 0x00 0 0] [0 0 0x00 0 0] [0 0 0x00 0 0] [0 0 0x00 00]
+      0 [1  0 0x90   0 60] [1  0 0x90   0 15] [1  0 0x90   0 62] [1  0 0x90   0 12]
+      . . .
    \end{verbatim}
 
    The first number is the pattern number of the pattern whose armed/muted
    status is to be shown.
+   There are samples in the \texttt{data/linux} directory for some devices that
+   one can adapt to other equipment.
+
+   There are additional automation controls whose status can be displayed:
+
+   \begin{verbatim}
+      # MIDI Control Out: play on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: stop on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: pause on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: queue on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: oneshot on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: replace on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: snap1 store/restore
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: snap2 store/restore
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+      # MIDI Control Out: learn on/off
+      0 [ 0x0 0 0 ] [ 0x0 0 0 ]
+   \end{verbatim}
+
+   See the sample files for more detailed descriptions.
 
 \subsection{'mutes' File}
-\label{subsubsec:configuration_ctrl_mute_group_control}
+\label{subsubsec:configuration_mute_group_control}
 
-   The mute-in group onsists of 32 lines (32 to 63), one for each
-   pattern box shown in the Pattern window.
+   This file starts with:
+
+   \begin{verbatim}
+      [mute-group-flags]
+      save-mutes-to = both
+      mute-group-rows = 4
+      mute-group-columns = 8
+      mute-group-selected = -1
+      groups-format = bin
+   \end{verbatim}
+
+   These variables are described in the sample 'mutes' file.
+   The mute-in group consists of 32 lines (32 to 63), one for each
+   pattern box.
    It provides a way to control the mute groups.
    A group is a set of sequences that can arm their playing state
    together; every group contains all 32 sequences in the
    \textsl{active} screen-set.
 
+   This section is delimited by the \texttt{[mute-group]} construct.
+   It controls 32 groups of mutes in the same way as defined for
+   \texttt{[midi-control]}. A group is set of sequences that can toggle their
+   playing state together.  Every group contains all 32 sequences in the
+   active screen set.
+
+   \begin{verbatim}
+      [mute-groups]
+       0 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
+       1 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
+       . . .
+      31 [ 0 0 0 0 0 0 0 0 ] [ 0 0 0 0 0 0 0 0 ] [ . . .] [ 0 0 0 0 0 0 0 0 ]
+   \end{verbatim}
+
+   In this group are the definitions of the state of the 32 (or more, once the
+   support for larger sets is completely worked out) sequences
+   in the playing screen set when a group is selected.
+   Each set of brackets defines a group.
+%  After the list of sequences and their MIDI events, one can 
+%  set \textsl{Seq66} to handle MIDI events and change some more settings
+%  in \texttt{seq66.rc}.
+%
+%  What is the different between the \textbf{mute-in group}
+%  section and the \textbf{mute group} section?  The former defines the MIDI
+%  control values that can affect the muting of a group, while the latter
+%  specifies the patterns that are part of a group.
+
+\subsection{'drums' File}
+\label{subsec:configuration_drums}
+
+   The 'drums' file is based on a similar file created using the \texttt{midicvt}
+   application (also available on \textsl{GitHub}.
+   This file is also referred to as the 'note-mapper' file.
+
+   \begin{verbatim}
+      [notemap-flags]
+      map-type = drums
+      gm-channel = 10
+      reverse = false
+   \end{verbatim}
+
+   These settings are explained in the sample 'drums' files.  In addition, the file
+   includes a number of sections that define the number and name of the
+   original "drum", and the \textsl{General MIDI} device to which it corresponds.
+
+   \begin{verbatim}
+      [Drum 36]
+      dev-name = "Bass Drum Gated Reverb"
+      gm-name = "Bass Drum 1"
+      dev-note = 36
+      gm-note = 36
+   \end{verbatim}
+
+   This file is useful mainly when obtaining drum tracks recorded with devices in
+   the early days of MIDI, where each vendor provided their own peculiar layout of
+   percussion sounds.
+
+\subsection{'palette' File}
+\label{subsec:configuration_palette}
+
+   This file is described in the chapter on palettes, \sectionref{sec:palettes}.
+
+\subsection{'playlist' File}
+\label{subsec:configuration_playlist}
+
+   This file is described in the chapter on playlists, \sectionref{sec:playlist}.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

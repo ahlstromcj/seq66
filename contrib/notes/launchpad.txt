@@ -62,7 +62,7 @@ Set Grid LED:      90h key vel (vel = 00GGCKRR)
     Brightness values range from 0 (Off) to 3 (Full).
 
     Hex MSB  LSB  Color   Brightness
-        00GG CKRR
+        00GG CKRR                   Decimal Vel
     0Ch 0000 1100 Off     Off           12
     0Dh 0000 1101 Red     Low           13
     0Eh 0000 1110 Red     Medium        14

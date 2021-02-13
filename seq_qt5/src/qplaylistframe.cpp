@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-09-04
- * \updates       2020-12-20
+ * \updates       2021-02-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -64,7 +64,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qplaylistframe::qplaylistframe
@@ -127,6 +127,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->buttonPlaylistModify, SIGNAL(clicked(bool)),
+        this, SLOT(handle_list_modify_click())
+    );
+    connect
+    (
         ui->buttonPlaylistRemove, SIGNAL(clicked(bool)),
         this, SLOT(handle_list_remove_click())
     );
@@ -181,6 +186,11 @@ qplaylistframe::qplaylistframe
     );
     connect
     (
+        ui->buttonSongModify, SIGNAL(clicked(bool)),
+        this, SLOT(handle_song_modify_click())
+    );
+    connect
+    (
         ui->buttonSongRemove, SIGNAL(clicked(bool)),
         this, SLOT(handle_song_remove_click())
     );
@@ -209,11 +219,18 @@ qplaylistframe::qplaylistframe
         ui->editSongNumber, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+
+    /*
+     * This field is now read-only, as is the base MIDI file name.
+     * The Load Song button must be used.
+     */
+
     connect
     (
         ui->editSongFilename, SIGNAL(textEdited(QString)),
         this, SLOT(song_modify(QString))
     );
+
     ui->midiBaseDirText->setReadOnly(true);
     ui->midiBaseDirText->setEnabled(false);
     ui->currentSongPath->setReadOnly(true);
@@ -285,18 +302,24 @@ qplaylistframe::set_column_widths ()
  *  Resets the play-list.  First, resets to the first (0th) play-list and the
  *  first (0th) song.  Then fills the play-list items and resets again.  Then
  *  fills in the play-list and song items for the current selection.
+ *
+ * \param listindex
+ *      The play-list to reset to, defaulting to the 0th list.  However, when
+ *      deleting a song, we want to reset to the current playlist.
  */
 
 void
-qplaylistframe::reset_playlist ()
+qplaylistframe::reset_playlist (int listindex)
 {
-    if (perf().playlist_reset())
+    if (listindex >= 0 && perf().playlist_reset())
     {
         fill_playlists();
-        (void) perf().playlist_reset();     /* back to the 0th play-list    */
         fill_songs();
+        if (listindex > 0)
+            (void) perf().playlist_reset(listindex);
+
         set_current_playlist();
-        ui->tablePlaylistSections->selectRow(0);
+        ui->tablePlaylistSections->selectRow(listindex);
         ui->tablePlaylistSongs->selectRow(0);
     }
 }
@@ -344,7 +367,6 @@ qplaylistframe::set_current_song ()
     {
         std::string temp = std::to_string(perf().song_midi_number());
         ui->editSongNumber->setText(QString::fromStdString(temp));
-
         temp = perf().song_directory();
         if (temp.empty())
             temp = "None";
@@ -354,7 +376,6 @@ qplaylistframe::set_current_song ()
         bool embedded = perf().is_own_song_directory();
         temp = embedded ? "*" : " " ;
         ui->labelDirEmbedded->setText(QString::fromStdString(temp));
-
         temp = perf().song_filename();
         if (temp.empty())
             temp = "None";
@@ -500,21 +521,20 @@ qplaylistframe::fill_songs ()
     }
 }
 
-/**
- *
- */
-
 bool
 qplaylistframe::load_playlist (const std::string & fullfilespec)
 {
-    if (! fullfilespec.empty())
+    bool result = ! fullfilespec.empty();
+    if (result)
     {
         bool playlistmode = perf().open_playlist(fullfilespec, rc().verbose());
         if (playlistmode)
             playlistmode = perf().open_current_song();
+
+        reset_playlist();                   /* if (perf().playlist_mode())  */
+        update();                           /* refresh the user-interface   */
     }
-    reset_playlist();                       /* if (perf().playlist_mode())  */
-    return false;
+    return result;
 }
 
 /**
@@ -566,17 +586,20 @@ qplaylistframe::handle_song_click_ex
 }
 
 /**
- *  Calls qsmainwnd::open_playlist(), which then calls
- *  qsmainwnd::show_open_list_dialog(), then perform::open_playlist().  That
- *  function resets the play-list pointer, then opens the playlist.
- *  It is reset to the first song and performer calls set_needs_update().
+ *  Calls qsmainwnd::open_playlist(), which then opens the file dialog and
+ *  perform::open_playlist(), which resets the play-list pointer and opens the
+ *  playlist.  It is reset to the first song and performer calls
+ *  set_needs_update().
  */
 
 void
 qplaylistframe::handle_list_load_click ()
 {
     if (not_nullptr(m_parent))
+    {
         m_parent->open_playlist();
+        ui->buttonPlaylistSave->setEnabled(false);
+    }
 }
 
 /**
@@ -618,6 +641,7 @@ qplaylistframe::handle_list_add_click ()
             {
                 reset_playlist();
                 fill_songs();                           /* just clears list */
+                ui->buttonPlaylistSave->setEnabled(true);
             }
             else
             {
@@ -625,6 +649,35 @@ qplaylistframe::handle_list_add_click ()
                  * TODO: report error
                  */
             }
+        }
+    }
+}
+
+void
+qplaylistframe::handle_list_modify_click ()
+{
+    if (not_nullptr(m_parent))
+    {
+        QString temp = ui->editPlaylistPath->text();
+        std::string listpath = temp.toStdString();
+        std::string listname;
+        int index = m_current_list_index;
+        int midinumber;
+        temp = ui->editPlaylistName->text();
+        listname = temp.toStdString();
+        temp = ui->editPlaylistNumber->text();
+        midinumber = string_to_int(temp.toStdString(), index);
+        if (perf().modify_list(index, midinumber, listname, listpath))
+        {
+            reset_playlist(index);
+            fill_songs();
+            ui->buttonPlaylistSave->setEnabled(true);
+        }
+        else
+        {
+            /*
+             * TODO: report error
+             */
         }
     }
 }
@@ -639,6 +692,7 @@ qplaylistframe::handle_list_remove_click ()
         {
             reset_playlist();
             m_parent->recreate_all_slots();
+            ui->buttonPlaylistSave->setEnabled(true);
         }
     }
 }
@@ -648,21 +702,8 @@ qplaylistframe::handle_list_save_click ()
 {
     if (not_nullptr(m_parent))
     {
-        QString p = ui->entry_playlist_file->text();
-        std::string plistname = p.toStdString();
-        if (! plistname.empty())
-        {
-            if (perf().save_playlist(plistname))
-            {
-                list_unmodify();
-            }
-            else
-            {
-                /*
-                 * TODO: report error
-                 */
-            }
-        }
+        if (m_parent->save_playlist())
+            list_unmodify();
     }
 }
 
@@ -691,6 +732,7 @@ qplaylistframe::handle_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     m_parent->recreate_all_slots();
+                    ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
         }
@@ -703,6 +745,7 @@ qplaylistframe::handle_song_load_click ()
                 {
                     fill_songs();           /* too much: reset_playlist();  */
                     m_parent->recreate_all_slots();
+                    ui->buttonPlaylistSave->setEnabled(true);
                 }
             }
         }
@@ -711,7 +754,8 @@ qplaylistframe::handle_song_load_click ()
 
 /**
  *  These values depend on correct information edited into the Song text
- *  fields.  We should support loading a song from a file-selection dialog.
+ *  fields.  We support loading a song from a file-selection dialog, so that
+ *  is the preferred method; see handle_song_load_click().
  */
 
 void
@@ -719,14 +763,50 @@ qplaylistframe::handle_song_add_click ()
 {
     if (not_nullptr(m_parent))
     {
+        std::string name = rc().midi_filename();            /* full path */
+        bool loadedfile = ! name.empty();
+        if (loadedfile)
+        {
+            std::string directory;
+            std::string basename;
+            bool ok = filename_split(name, directory, basename);
+            if (ok)
+            {
+                std::string nstr = ui->editSongNumber->text().toStdString();
+                int midinumber = std::stoi(nstr);
+                int index = perf().song_count() + 1;
+                if (perf().add_song(index, midinumber, basename, directory))
+                {
+                    int listindex = m_current_list_index;
+                    reset_playlist(listindex);
+                    m_parent->recreate_all_slots();
+                    song_unmodify();
+                }
+                else
+                {
+                    /*
+                     * TODO: report error
+                     */
+                }
+            }
+        }
+    }
+}
+
+void
+qplaylistframe::handle_song_modify_click ()
+{
+    if (not_nullptr(m_parent))
+    {
         std::string name = ui->editSongFilename->text().toStdString();
         std::string directory = ui->editSongPath->text().toStdString();
         std::string nstr = ui->editSongNumber->text().toStdString();
         int midinumber = std::stoi(nstr);
-        int index = perf().song_count() + 1;
-        if (perf().add_song(index, midinumber, name, directory))
+        int songindex = m_current_song_index;
+        if (perf().modify_song(songindex, midinumber, name, directory))
         {
-            reset_playlist();
+            int listindex = m_current_list_index;
+            reset_playlist(listindex);
             m_parent->recreate_all_slots();
         }
         else
@@ -743,11 +823,13 @@ qplaylistframe::handle_song_remove_click ()
 {
     if (not_nullptr(m_parent))
     {
-        int index = m_current_song_index;
-        if (perf().remove_song_by_index(index))
+        int listindex = m_current_list_index;
+        int songindex = m_current_song_index;
+        if (perf().remove_song_by_index(songindex))
         {
-            reset_playlist();
+            reset_playlist(listindex);
             m_parent->recreate_all_slots();
+            ui->buttonPlaylistSave->setEnabled(true);
         }
         else
         {
@@ -764,7 +846,9 @@ qplaylistframe::handle_playlist_active_click ()
     if (not_nullptr(m_parent))
     {
         bool on = ui->checkBoxPlaylistActive->isChecked();
-        perf().playlist_activate(on);
+        perf().playlist_activate(on);       /* sets rc().playlist_active()  */
+        if (on)                             /* leave patterns in if off     */
+            m_parent->recreate_all_slots();
     }
 }
 
@@ -784,14 +868,13 @@ qplaylistframe::list_unmodify ()
     ui->buttonPlaylistSave->setEnabled(false);
 }
 
-/**
- *
- */
-
 void
 qplaylistframe::song_modify (const QString &)
 {
-    ui->buttonSongAdd->setEnabled(true);
+    bool addable = ! rc().midi_filename().empty();
+    if (addable)
+        ui->buttonSongAdd->setEnabled(true);
+
     ui->buttonSongModify->setEnabled(true);
 }
 

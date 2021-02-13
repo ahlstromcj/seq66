@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2020-07-29
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -54,13 +54,13 @@ namespace seq66
  *  width of the vertical scroll-bar, plus a bit more.
  */
 
-const int c_event_table_fix = 48;
+static const int sc_event_table_fix = 48;
 
 /**
  *  Specifies the current hardwired value for set_row_heights().
  */
 
-const int c_event_row_height = 18;
+static const int sc_event_row_height = 18;
 
 /**
  *
@@ -139,8 +139,16 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     QStringList columns;
     columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
-    set_row_heights(c_event_row_height);
-    set_column_widths(ui->eventTableWidget->width() - c_event_table_fix);
+    ui->eventTableWidget->setSelectionBehavior
+    (
+        QAbstractItemView::SelectRows           /* SelectItems          */
+    );
+    ui->eventTableWidget->setSelectionMode
+    (
+        QAbstractItemView::SingleSelection      /* MultiSelection       */
+    );
+    set_row_heights(sc_event_row_height);
+    set_column_widths(ui->eventTableWidget->width() - sc_event_table_fix);
 
     /*
      * Doesn't make the table read-only.  We want that for now, until we can
@@ -149,19 +157,11 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
      * ui->eventTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
      */
 
-#if defined USE_SIMPLE_CELL_CLICK
-    connect
-    (
-        ui->eventTableWidget, SIGNAL(cellClicked(int, int)),
-        this, SLOT(handle_table_click(int, int))
-    );
-#else
     connect
     (
         ui->eventTableWidget, SIGNAL(currentCellChanged(int, int, int, int)),
         this, SLOT(handle_table_click_ex(int, int, int, int))
     );
-#endif
 
     /*
      * Delete button.  Will set to enabled/disabled once fully initialized.
@@ -172,7 +172,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
         ui->button_del, SIGNAL(clicked(bool)),
         this, SLOT(handle_delete())
     );
-    ui->button_del->setEnabled(true);
+    ui->button_del->setEnabled(false);
 
     /*
      * Insert button.
@@ -194,7 +194,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
         ui->button_modify, SIGNAL(clicked(bool)),
         this, SLOT(handle_modify())
     );
-    ui->button_modify->setEnabled(true);
+    ui->button_modify->setEnabled(false);
 
     /*
      * Save button.
@@ -206,6 +206,17 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
         this, SLOT(handle_save())
     );
     ui->button_save->setEnabled(false);
+
+    /*
+     * Clear button.
+     */
+
+    connect
+    (
+        ui->button_clear, SIGNAL(clicked(bool)),
+        this, SLOT(handle_clear())
+    );
+    ui->button_clear->setEnabled(true);
 
     /*
      * Dump button.
@@ -224,23 +235,17 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
 
     initialize_table();
 
-    /**
-     *  The seqedit class indirectly sets the sequence dirty flags, and this
-     *  allows the sequence's pattern slot to be updated, which, for example,
-     *  allows the new optional in-edit-highlight feature to work.  To get
-     *  the qseqeventframe to also show the in-edit highlighting, we can make the
-     *  sequence::set_dirty_mp() call.  This call does not cause a prompt for
-     *  saving the file when exiting.
+    /*
+     *  The event editor is now in a tab, and it is not quite as critical as the
+     *  pattern editor.  The following setting causes the "File / New" operation
+     *  to seem to mysteriously fail.
+     *
+     *      m_seq->seq_in_edit(true);
      */
 
-    cb_perf().enregister(this);
-    m_seq->set_editing(true);
     m_seq->set_dirty_mp();
+    cb_perf().enregister(this);
 }
-
-/**
- *
- */
 
 qseqeventframe::~qseqeventframe()
 {
@@ -276,10 +281,6 @@ qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 qseqeventframe::set_row_heights (int height)
@@ -321,6 +322,7 @@ qseqeventframe::set_column_widths (int total_width)
 bool
 qseqeventframe::initialize_table ()
 {
+    static const int s_default_rows = 28;
     bool result = false;
     if (m_eventslots)
     {
@@ -329,26 +331,25 @@ qseqeventframe::initialize_table ()
         {
             ui->eventTableWidget->clearContents();
             ui->eventTableWidget->setRowCount(rows);
-            set_row_heights(c_event_row_height);
+            set_row_heights(sc_event_row_height);
             if (m_eventslots->load_table())
-            {
                 m_eventslots->select_event(0);      /* first row */
-            }
-            ui->button_del->setEnabled(true);
-            ui->button_modify->setEnabled(true);
+
+            ui->button_clear->setEnabled(true);
         }
         else
         {
+            ui->eventTableWidget->clearContents();
+            ui->eventTableWidget->setRowCount(s_default_rows);
+            set_row_heights(sc_event_row_height);
+            ui->button_clear->setEnabled(false);
             ui->button_del->setEnabled(false);
             ui->button_modify->setEnabled(false);
         }
+        ui->eventTableWidget->clearSelection();
     }
     return result;
 }
-
-/**
- *
- */
 
 std::string
 qseqeventframe::make_seq_title ()
@@ -389,7 +390,6 @@ qseqeventframe::update_seq_name ()
         set_dirty();
 }
 
-
 /**
  *  Sets ui->label_time_sig to the time-signature string.
  *  Also adds the parts-per-quarter-note string.
@@ -406,10 +406,6 @@ qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 {
     ui->label_time_sig->setText(sig.c_str());
 }
-
-/**
- *
- */
 
 void
 qseqeventframe::set_seq_channel (const std::string & ch)
@@ -527,10 +523,6 @@ qseqeventframe::cell (int row, column_id col)
     return result;
 }
 
-/**
- *
- */
-
 void
 qseqeventframe::set_event_line
 (
@@ -621,34 +613,20 @@ qseqeventframe::current_row (int row)
     m_eventslots->current_row(row);
 }
 
-/**
- *  Currently disabled by #if defined USE_SIMPLE_CELL_CLICK.
- */
-
-void
-qseqeventframe::handle_table_click (int row, int /*column*/)
-{
-    m_eventslots->select_event(row);
-    current_row(row);
-}
-
-/**
- *
- */
-
 void
 qseqeventframe::handle_table_click_ex
 (
     int row, int /*column*/, int /*prevrow*/, int /*prevcolumn*/
 )
 {
-    m_eventslots->select_event(row);
-    current_row(row);
+    if (row >= 0)
+    {
+        m_eventslots->select_event(row);
+        current_row(row);
+        ui->button_del->setEnabled(true);
+        ui->button_modify->setEnabled(true);
+    }
 }
-
-/**
- *
- */
 
 std::string
 qseqeventframe::get_lengths ()
@@ -679,20 +657,35 @@ qseqeventframe::handle_delete ()
 {
     if (m_eventslots)
     {
-        bool was_removed = m_eventslots->delete_current_event();
-        bool isempty = m_eventslots->empty();
-        if (isempty)
-        {
-            ui->button_del->setEnabled(false);
-            ui->button_modify->setEnabled(false);
-        }
+        editable_event & current = m_eventslots->current_event();
+        int row0 = m_eventslots->current_row();
+        int row1 = m_eventslots->count_to_link(current);
+        bool islinked = row1 >= 0;
+        if (islinked && row0 > row1)
+            std::swap(row0, row1);
         else
-        {
-            if (was_removed)
-            {
-                int cr = m_eventslots->current_row();
-                ui->eventTableWidget->removeRow(cr);
+            row1 = row0;
 
+        if (islinked)
+            m_eventslots->select_event(row1, false);        /* only/last row */
+
+        bool was_removed = m_eventslots->delete_current_event();
+        if (was_removed)
+        {
+            int cr = row1;
+            ui->eventTableWidget->removeRow(row1);
+            if (islinked)
+            {
+                m_eventslots->select_event(row0, false);    /* first row     */
+                was_removed = m_eventslots->delete_current_event();
+                if (was_removed)
+                {
+                    cr = row0 - 1;
+                    ui->eventTableWidget->removeRow(row0);
+                }
+            }
+            if (! m_eventslots->empty())
+            {
                 QModelIndex next = ui->eventTableWidget->model()->index(cr, 0);
                 ui->eventTableWidget->setCurrentIndex(next);
                 ui->eventTableWidget->selectionModel()->select
@@ -702,7 +695,11 @@ qseqeventframe::handle_delete ()
                 m_eventslots->select_event(cr);
                 current_row(cr);
             }
+            set_dirty();
         }
+        if (m_eventslots->empty())
+            (void) initialize_table();
+
         set_seq_lengths(get_lengths());
     }
 }
@@ -736,10 +733,11 @@ qseqeventframe::handle_insert ()
             std::string chan = m_eventslots->current_event().channel_string();
             int cr = m_eventslots->current_row();
             ui->eventTableWidget->insertRow(cr);
-            set_row_height(cr, c_event_row_height);
+            set_row_height(cr, sc_event_row_height);
             set_event_line(cr, ts, name, chan, data0, data1, linktime);
             ui->button_del->setEnabled(true);
             ui->button_modify->setEnabled(true);
+            set_dirty();
         }
     }
 }
@@ -758,6 +756,7 @@ qseqeventframe::handle_modify ()
     if (m_eventslots)
     {
         int cr = current_row();
+        const editable_event & ev = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
         std::string name = ui->entry_ev_name->text().toStdString();
 
@@ -768,13 +767,18 @@ qseqeventframe::handle_modify ()
          * std::string chan = std::to_string(int(m_seq->get_midi_channel()));
          */
 
-        std::string chan = m_eventslots->current_event().channel_string();
+        std::string chan = ev.channel_string();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
-        std::string linktime;                   /* empty, no link time yet  */
-        (void) m_eventslots->modify_current_event(ts, name, data0, data1);
+        midipulse lt = c_null_midipulse;
+        if (ev.is_linked())
+            lt = ev.link_time();
+
+        std::string linktime = m_eventslots->time_string(lt);
+        (void) m_eventslots->modify_current_event(cr, ts, name, data0, data1);
         set_seq_lengths(get_lengths());
         set_event_line(cr, ts, name, chan, data0, data1, linktime);
+        set_dirty();
     }
 }
 
@@ -818,9 +822,16 @@ qseqeventframe::handle_save ()
     }
 }
 
-/**
- *
- */
+void
+qseqeventframe::handle_clear ()
+{
+    if (m_eventslots)
+    {
+        m_eventslots->clear();
+        initialize_table();
+        set_dirty();
+    }
+}
 
 void
 qseqeventframe::handle_dump ()

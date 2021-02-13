@@ -118,10 +118,6 @@ notemapper::pair::to_string () const
     return result;
 }
 
-/**
- *
- */
-
 void
 notemapper::pair::show () const
 {
@@ -152,10 +148,6 @@ notemapper::notemapper () :
 {
     //
 }
-
-/**
- *
- */
 
 bool
 notemapper::add
@@ -242,10 +234,6 @@ notemapper::to_string (int devnote) const
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 notemapper::show () const

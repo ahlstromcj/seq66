@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2019-09-16
+ * \updates       2021-02-01
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -37,13 +37,6 @@
 
 #include "util/calculations.hpp"        /* string functions                 */
 #include "midi/event.hpp"               /* seq66::event                     */
-
-/**
- *  Provides an integer value that is larger than any midibyte value, to be
- *  used to terminate a array of items keyed by a midibyte value.
- */
-
-#define SEQ66_END_OF_MIDIBYTES_TABLE     0x100       /* one more than 0xFF   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -71,10 +64,10 @@ class editable_events;                  /* forward reference to container   */
  *  and strings to represent all of these members.
  */
 
-class editable_event : public event
+class editable_event final : public event
 {
 
-private:
+public:
 
     /**
      *  These values determine the major kind of event, which determines what
@@ -214,64 +207,14 @@ private:
         unsigned short event_length;
     };
 
-    /**
-     *  An array of event categories and their names.
-     */
-
-    static const name_value_t sm_category_names [];
-
-    /**
-     *  An array of MIDI channel events and their names.  We split channel and
-     *  system messages into two arrays, for semantic reasons and for faster
-     *  linear lookups.
-     */
-
-    static const name_value_t sm_channel_event_names [];
-
-    /**
-     *  An array of MIDI system events and their names.  We split channel and
-     *  system messages into two arrays, for semantic reasons and for faster
-     *  linear lookups.
-     */
-
-    static const name_value_t sm_system_event_names [];
-
-    /**
-     *  An array of Meta events and their names.
-     */
-
-    static const name_value_t sm_meta_event_names [];
-
-    /**
-     *  An array of Seq66-specific events and their names.
-     */
-
-    static const name_value_t sm_prop_event_names [];
-
-    /**
-     *  Provides for fast access (no ifs) to the correct name array for the
-     *  given category.  Too bad that an array of references is not possible.
-     */
-
-    static const name_value_t * const sm_category_arrays [];
-
-    /**
-     *  Provides a list of meta-event numbers and their expected lengths (if
-     *  any).
-     */
-
-    static const meta_length_t sm_meta_lengths [];
+private:
 
     /*
      *  Static lookup functions, described in the cpp module.
      */
 
     static std::string value_to_name (midibyte value, subgroup cat);
-    static unsigned short name_to_value
-    (
-        const std::string & name,
-        subgroup cat
-    );
+    static unsigned short name_to_value (const std::string & name, subgroup cat);
     static unsigned short meta_event_length (midibyte value);
 
 private:
@@ -370,11 +313,7 @@ public:
     editable_event (const editable_event & rhs);
     editable_event & operator = (const editable_event & rhs);
 
-    /**
-     *  This destructor current is a rote virtual function override.
-     */
-
-    virtual ~editable_event ()
+    virtual ~editable_event () override
     {
         // Empty body
     }
@@ -386,18 +325,10 @@ public:
 
 public:
 
-    /**
-     * \getter m_parent
-     */
-
     const editable_events & parent () const
     {
         return m_parent;
     }
-
-    /**
-     * \getter m_category
-     */
 
     subgroup category () const
     {
@@ -406,20 +337,12 @@ public:
 
     void category (subgroup c);
 
-    /**
-     * \getter m_category
-     */
-
     const std::string & category_string () const
     {
         return m_name_category;
     }
 
     void category (const std::string & cs);
-
-    /**
-     * \getter m_name_timestamp
-     */
 
     const std::string & timestamp_string () const
     {
@@ -463,47 +386,27 @@ public:
     std::string stock_event_string ();
     std::string ex_data_string () const;
 
-    /**
-     * \getter m_name_status
-     */
-
     std::string status_string () const
     {
         return m_name_status;
     }
-
-    /**
-     * \getter m_name_meta
-     */
 
     std::string meta_string () const
     {
         return m_name_meta;
     }
 
-    /**
-     * \getter m_name_seqspec
-     */
-
     std::string seqspec_string () const
     {
         return m_name_seqspec;
     }
-
-    /**
-     * \getter m_name_channel
-     */
 
     std::string channel_string () const
     {
         return m_name_channel;
     }
 
-    virtual void set_channel (midibyte channel);
-
-    /**
-     * \getter m_name_data
-     */
+    virtual void set_channel (midibyte channel) override;
 
     std::string data_string () const
     {

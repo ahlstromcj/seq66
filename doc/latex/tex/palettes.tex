@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-12-29
-% \update      2020-12-29
+% \update      2021-01-24
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -23,7 +23,7 @@
    be colored, and the color is stored (as a color number) in the pattern when
    the tune is saved.
 
-   There are two palettes:
+   There are four palettes:
 
    \begin{itemize}
       \item \textbf{Pattern}.  This palette contains 32 color entries, and each
@@ -33,14 +33,18 @@
       \item \textbf{Ui}.  This palette contains 16 color entries.  These
          color entries are used in drawing text, backgrounds, grid lines,
          background patterns, drum notes, and more.  These colors each have a
-         counterpart that is used with the \texttt{--inverse} option is applied
+         counterpart that is used with the \texttt{-{}-inverse} option is applied
          to a run of \textsl{Seq66}.
       \item \textbf{Inverse Ui}.  This palette contains 16 color entries.
-         These colors are used when the \texttt{--inverse} option is applied
+         These colors are used when the \texttt{-{}-inverse} option is applied
          to a run of \textsl{Seq66}.
+      \item \textbf{Brushes}.  This "palette" provides a way to specify the
+         fill type for the drawing of notes, the scale (if shown) in the
+         pattern editor, and the background sequence (if shown).  It allows the
+         user to select solid file, hatching, and some other fill patterns.
    \end{itemize}
 
-   Both palettes have default values built into the application.  However, the
+   All palettes have default values built into the application.  However, the
    user can also include 'palette' files to change the colors used.  For
    example, the normal colored palette can be changed to a gray-scale palette.
    The name of the palette file is specified in the 'rc' file by lines like the
@@ -86,6 +90,7 @@
       29      "Dark Violet" [ 0xFF9400D3 ]      "Black" [ 0xFF000000 ]
       30       "Light Grey" [ 0xFF778899 ]      "Black" [ 0xFF000000 ]
       31        "Dark Grey" [ 0xFF2F4F4F ]      "Black" [ 0xFF000000 ]
+project.
    \end{verbatim}
 
    The names are color names, and these names are what show up in the popup
@@ -98,7 +103,7 @@
    have not yet experimented with changing them.
    Lastly, only 32 entries are accepted.
 
-\subsubsection{Palettes Setup / Ui}
+\subsubsection{Palettes Setup / Ui and Inverse Ui}
 \label{subsubsec:palettes_setup_ui}
 
    The following shows the pattern palette, with some entries elided for
@@ -120,6 +125,33 @@
    Here, the names are feature names, not color names.  The first color is the
    normal color, and the second color is the inverse color.  Only 16 entries
    are accepted.
+
+\subsubsection{Palettes Setup / Brushes}
+\label{subsubsec:palettes_setup_brushes}
+
+   The last palette is small, allowing the fill-pattern of a few pattern-editor
+   items to be changed.
+
+   \begin{verbatim}
+      [brushes]
+      empty = nobrush
+      note = solid
+      scale = dense3
+      backseq = dense2
+   \end{verbatim}
+
+   On the left of the equals sign is the item than can be filled, and on the
+   right side is the \textsl{Qt} brush to be used.  The defaults for most are
+   solid fill.
+
+   The entry \texttt{empty} isn't used yet.
+   The entry \texttt{note} affects the fill of normal/selected notes.
+   The entry \texttt{note} affects the fill for the piano roll scale.  The
+   hatching used here makes it easier to recognize that the scale is just there
+   for orientation.
+   The entry \texttt{note} affects the fill of the background sequence.  The
+   hatching used here helps further distinguish the real notes from the
+   background notes.
 
 \subsection{Palettes Summary}
 \label{subsec:palettes_summary}

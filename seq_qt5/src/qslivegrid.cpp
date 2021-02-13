@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-01-14
+ * \updates       2021-01-24
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -100,7 +100,11 @@
 namespace seq66
 {
 
-static const int sc_button_padding = 0; // 2;     // 8;
+/*
+ *  Provides padding between buttons.  Turns out not to be needed.
+ */
+
+static const int sc_button_padding = 0;
 
 /**
  *  The Qt 5 version of mainwid.
@@ -254,6 +258,10 @@ qslivegrid::conditional_update ()
  *
  *  Note that this function is called only in paintEvent(), and only when
  *  m_redraw_buttons is true.
+ *
+ *  Note that m_space_rows and m_space_cols are defined in qslivebase, and are
+ *  based ultimately on the usr().mainwid_spacing() value times the number of
+ *  rows or columns in the grid.
  */
 
 void
@@ -982,19 +990,21 @@ qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 void
 qslivegrid::new_sequence ()
 {
+    bool createseq = true;
     if (perf().is_seq_active(m_current_seq))
     {
         int choice = m_msg_box->exec();
         if (choice == QMessageBox::Yes)
+            createseq = perf().remove_sequence(m_current_seq);
+        else
+            createseq = false;
+    }
+    if (createseq)
+    {
+        if (perf().new_sequence(m_current_seq))
         {
-            if (perf().remove_sequence(m_current_seq))
-            {
-                if (perf().new_sequence(m_current_seq))
-                {
-                    perf().get_sequence(m_current_seq)->set_dirty();
-                    alter_sequence(m_current_seq);
-                }
-            }
+            perf().get_sequence(m_current_seq)->set_dirty();
+            alter_sequence(m_current_seq);
         }
     }
 }
@@ -1337,9 +1347,10 @@ qslivegrid::popup_menu ()
         for (int c = firstcolor; c <= lastcolor; ++c)
         {
             PaletteColor pc = PaletteColor(c);
-            QString cname = c == firstcolor ?
-                get_color_name(pc).c_str() : get_color_name_ex(pc).c_str() ;
-
+            QString cname = QString::fromStdString
+            (
+                c == firstcolor ? get_color_name(pc) : get_color_name_ex(pc)
+            );
             QAction * a = new QAction(cname, menuColour);
             connect
             (

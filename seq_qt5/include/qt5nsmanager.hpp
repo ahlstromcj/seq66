@@ -58,7 +58,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Provides the user-interface implmentation for the session manager.
  */
 
 class qt5nsmanager : public QObject, public clinsmanager

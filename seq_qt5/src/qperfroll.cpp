@@ -495,10 +495,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     if (not_nullptr(seq))
                     {
                         if (mLastTick != 0)
-                        {
                             seq->offset_triggers(lastoffset, ts);
-//                          -(mLastTick - tick), ts
-                        }
                     }
                 }
             }
@@ -511,10 +508,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     if (not_nullptr(seq))
                     {
                         if (mLastTick != 0)
-                        {
                             seq->offset_triggers(lastoffset - 1, te);
-//                          -(mLastTick - tick) - 1, te
-                        }
                     }
                 }
             }

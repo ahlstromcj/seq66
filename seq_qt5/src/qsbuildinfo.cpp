@@ -49,7 +49,7 @@ namespace seq66
 {
 
 /**
- *
+ *  Principal constructor.
  */
 
 qsbuildinfo::qsbuildinfo (QWidget * parent)
@@ -68,10 +68,6 @@ qsbuildinfo::qsbuildinfo (QWidget * parent)
     ui->buildVersionLabel->setText(version);
     ui->buildInfoTextEdit->setPlainText(comment);
 }
-
-/**
- *
- */
 
 qsbuildinfo::~qsbuildinfo ()
 {

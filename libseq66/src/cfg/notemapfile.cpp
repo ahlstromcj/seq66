@@ -108,9 +108,7 @@ notemapfile::parse_stream (std::ifstream & file)
 
     std::string s = parse_comments(file);
     if (! s.empty())
-    {
         mapper().comments_block().set(s);
-    }
 
     s = get_variable(file, "[notemap-flags]", "map-type");
     if (! s.empty())

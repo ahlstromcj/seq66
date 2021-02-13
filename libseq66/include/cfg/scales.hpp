@@ -49,7 +49,7 @@ namespace seq66
 class eventlist;                       /* forward reference                */
 
 /**
- *
+ *  Provides the list of musical key signatures, using sharps.
  */
 
 enum class keys

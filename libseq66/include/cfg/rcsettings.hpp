@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-18
+ * \updates       2021-01-20
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -99,16 +99,16 @@ class rcsettings final : public basesettings
 {
     /*
      * Too many friends need access to the protected setters.
-
-    friend class cmdlineopts;
-    friend class clinsmanager;
-    friend class converter;
-    friend class midicontrolfile;
-    friend class mutegroupsfile;
-    friend class optionsfile;
-    friend class performer;
-    friend class rcfile;
-    friend class rtmidi_info;
+     *
+     *      friend class cmdlineopts;
+     *      friend class clinsmanager;
+     *      friend class converter;
+     *      friend class midicontrolfile;
+     *      friend class mutegroupsfile;
+     *      friend class optionsfile;
+     *      friend class performer;
+     *      friend class rcfile;
+     *      friend class rtmidi_info;
      */
 
 public:
@@ -645,16 +645,27 @@ public:
     void with_jack_transport (bool flag)
     {
         m_with_jack_transport = flag;
+
+        /*
+         * Let's not do this, too confusing.
+         *
+         * if (flag)
+         *     m_with_jack_master = false;
+         */
     }
 
     void with_jack_master (bool flag)
     {
         m_with_jack_master = flag;
+        if (flag)
+            m_with_jack_transport = true;
     }
 
     void with_jack_master_cond (bool flag)
     {
         m_with_jack_master_cond = flag;
+        if (flag)
+            m_with_jack_transport = true;
     }
 
     void with_jack_midi (bool flag)

@@ -92,11 +92,7 @@
 namespace seq66
 {
 
-/**
- *
- */
-
-int
+static int
 satoi (const std::string & v)
 {
     return std::atoi(v.c_str());
@@ -333,27 +329,14 @@ pulses_to_midi_measures
     bool result = (W > 0) && (P > 0) && (B > 0);
     if (result)
     {
-#if defined USE_OLD_PULSES_TO_MIDI_MEASURES
-        static const double s_epsilon = 0.0001; /* Hmmmmmmmmmmmmmmmmmmmmmmm */
-        double m = p * W / (4.0 * P * B);       /* measures, whole.frac     */
-        double m_whole = std::floor(m);         /* holds integral measures  */
-        m -= m_whole;                           /* get fractional measure   */
-        double b = m * B;                       /* beats, whole.frac        */
-        double b_whole = std::floor(b);         /* get integral beats       */
-        b -= b_whole;                           /* get fractional beat      */
-        double Lp = 4 * P / W;                  /* pulses/qn * qn/beat      */
-        measures.measures(int(m_whole + s_epsilon) + 1);
-        measures.beats(int(b_whole + s_epsilon) + 1);
-        measures.divisions(int(b * Lp + s_epsilon));
-#else
-        double tbc = p * W / (4.0 * P);         /* total beat-count for p   */
-        midipulse Lp = 4 * P / W;               /* beat length in pulses    */
+        double pf = 4.0 * P;
+        double tbc = p * W / pf;                /* total beat-count for p   */
+        midipulse Lp = midipulse(pf) / W;       /* beat length in pulses    */
         int beatticks = int(tbc) * Lp;          /* pulses in total beats    */
         int b = int(tbc) % B;                   /* beat within measure re 0 */
         measures.measures(int(tbc / B) + 1);    /* number of measures       */
         measures.beats(b + 1);                  /* beats within the measure */
         measures.divisions(int(p - beatticks)); /* leftover pulses / ticks  */
-#endif
     }
     return result;
 }

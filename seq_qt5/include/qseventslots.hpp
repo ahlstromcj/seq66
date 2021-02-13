@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2019-11-16
+ * \updates       2021-02-01
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -88,7 +88,7 @@ private:
 
     /**
      *  Holds the current event (i.e. most recently inserted) for usage by the
-     *  caller.
+     *  caller, the event-edit frame.
      */
 
     editable_event m_current_event;
@@ -200,9 +200,19 @@ public:
         // I got nothin'
     }
 
+    void clear ()
+    {
+        m_event_container.clear();
+    }
+
     midipulse get_length () const
     {
         return m_event_container.get_length();
+    }
+
+    int count_to_link (const editable_event & source)
+    {
+        return m_event_container.count_to_link(source);
     }
 
     const editable_event & current_event () const
@@ -210,20 +220,15 @@ public:
         return m_current_event;
     }
 
-    /**
-     * \getter m_event_count
-     *      Returns the number of total events in the sequence represented by
-     *      the qseventslots object.
-     */
+    editable_event & current_event ()
+    {
+        return m_current_event;
+    }
 
     int event_count () const
     {
         return m_event_count;
     }
-
-    /**
-     *
-     */
 
     bool empty () const
     {
@@ -236,9 +241,8 @@ public:
     }
 
     /**
-     * \getter m_line_count
-     *      Returns the current number of rows (events) in the qseventslots's
-     *      display.
+     *  Returns the current number of rows (events) in the qseventslots's
+     *  display.
      */
 
     int line_count () const
@@ -288,6 +292,8 @@ public:
         return m_pager_index;
     }
 
+    std::string time_string (midipulse lt);
+
 private:
 
     const seq::pointer seq_pointer () const
@@ -304,14 +310,14 @@ private:
         int index,
         bool full_redraw = true
     );
-    void set_table_event (const editable_event & ev, int index);
+    void set_table_event (editable_event & ev, int row);
     std::string event_to_string
     (
         const editable_event & ev,
         int index,
         bool usehex = false
     ) const;
-    bool insert_event (const editable_event & edev);
+    bool insert_event (editable_event ev);
     bool insert_event
     (
         const std::string & evtimestamp,
@@ -322,6 +328,7 @@ private:
     bool delete_current_event ();
     bool modify_current_event
     (
+        int row,
         const std::string & evtimestamp,
         const std::string & evname,
         const std::string & evdata0,

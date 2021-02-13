@@ -35,13 +35,13 @@ It has been manually edited to fit Seq66 conventions.
 #   map-type: drum, patch, or multi; indicates the mapping to do.
 #   gm-channel: Indicates the channel (1-16) applied to converted notes.
 #   reverse: true or false; map in the opposite direction if true.
-#
+
 [notemap-flags]
-#
+
 map-type = drums
 gm-channel = 10
 reverse = false
-#
+
 # The drum section:
 #
 #  [Drum 35].  Marks a GM drum-change section, one per instrument.

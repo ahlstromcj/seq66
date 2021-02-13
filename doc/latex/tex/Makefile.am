@@ -6,7 +6,7 @@
 # \library    	Documents
 # \author     	Chris Ahlstrom
 # \date       	2020-10-02
-# \update     	2020-10-02
+# \update     	2021-02-04
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -16,14 +16,31 @@
 #
 #-------------------------------------------------------------------------------
 
+#******************************************************************************
+#  EXTRA_DIST
+#------------------------------------------------------------------------------
+
+EXTRA_DIST = *.tex
+
+#******************************************************************************
+# Install directories
+#------------------------------------------------------------------------------
+
+prefix = @prefix@
+datadir = @datadir@
+docdir = @docdir@
+datarootdir = @datarootdir@
+seq66docdir = @seq66docdir@
+top_srcdir = @top_srcdir@
+builddir = @abs_top_builddir@
+
 .PHONY: clean
-.PHONY: docs
 
 all: manual
 
 manual: tex-stamp
 	latexmk -g -silent -pdf seq66-user-manual
-	mv seq66-user-manual.pdf ../pdf
+	cp seq66-user-manual.pdf $(top_srcdir)/doc
 
 tex-stamp:
 	touch tex-stamp

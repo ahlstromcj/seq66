@@ -53,7 +53,7 @@ namespace seq66
     class performer;
 
 /**
- *
+ *  Provides a dialog class for Edit / Preferences.
  */
 
 class qseditoptions final : public QDialog

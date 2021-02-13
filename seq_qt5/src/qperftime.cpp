@@ -47,14 +47,12 @@ namespace seq66
     class performer;
 
 /**
- *
+ *  Principal constructor.
  */
 
 qperftime::qperftime
 (
-    performer & p,
-    int zoom,
-    int snap,
+    performer & p, int zoom, int snap,
     QWidget * parent
 ) :
     QWidget             (parent),

@@ -732,12 +732,6 @@ midi_alsa_info::api_get_midi_event (event * inev)
     long bytes = snd_midi_event_decode(midi_ev, buffer, sizeof buffer, ev);
     if (bytes > 0)
     {
-#if defined SHOW_EVENT
-        for (int i = 0; i < int(bytes); ++i)
-        {
-            fprintf(stderr, "byte[%d] = 0x%x\n", i, unsigned(buffer[i]));
-        }
-#endif
         result = inev->set_midi_event(ev->time.tick, buffer, bytes);
         if (result)
         {

@@ -1058,6 +1058,8 @@ midi_jack::api_get_port_name ()
     return result;
 }
 
+#if defined SEQ64_USE_OPEN_CLIENT_IMPL
+
 /**
  *  Opens input or output JACK clients, sets up the input or output callback,
  *  and actives the JACK client.  This code is combined from the former
@@ -1158,6 +1160,8 @@ midi_jack::open_client_impl (bool input)
     apiprint("open_client_impl", "jack");
     return result;
 }
+
+#endif  // defined SEQ64_USE_OPEN_CLIENT_IMPL
 
 /**
  *  Closes the JACK client handle.

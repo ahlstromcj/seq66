@@ -61,6 +61,35 @@ eventlist::eventlist () :
 }
 
 /**
+ *  Gets the index (integer position in the map) of the linked event, if any.
+ */
+
+int
+eventlist::count_to_link (const event & e)
+{
+    int result = 0;
+    bool found = false;
+    if (e.is_linked())
+    {
+        const event::iterator & linked = e.link();
+        for (auto i = m_events.begin(); i != m_events.end(); ++i)
+        {
+            if (i == linked)
+            {
+                found = true;
+                break;
+            }
+            else
+                ++result;
+        }
+    }
+    if (! found)
+        result = (-1);
+
+    return result;
+}
+
+/**
  *  Provides the length of the events in MIDI pulses.  This function gets the
  *  iterator for the last element and returns its length value.
  *
@@ -1470,10 +1499,6 @@ eventlist::event_in_range
     return result;
 }
 
-/**
- *
- */
-
 bool
 eventlist::get_selected_events_interval
 (
@@ -1506,10 +1531,6 @@ eventlist::get_selected_events_interval
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 eventlist::rescale (int oldppqn, int newppqn)
@@ -1649,10 +1670,6 @@ eventlist::grow_selected (midipulse delta, int snap)
     return result;
 }
 
-/**
- *
- */
-
 bool
 eventlist::copy_selected (eventlist & clipbd)
 {
@@ -1682,10 +1699,6 @@ eventlist::copy_selected (eventlist & clipbd)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
@@ -1722,7 +1735,6 @@ eventlist::paste_selected (eventlist & clipbd, midipulse tick, int note)
     }
     return result;
 }
-
 
 /**
  *  A new function to consolidate the adjustment of timestamps in a pattern.

@@ -77,7 +77,7 @@
 
 \begin{figure}[H]
    \centering 
-   \includegraphics[scale=0.95]{pattern-editor/pattern-edit-window-annotated.png}
+   \includegraphics[scale=0.90]{pattern-editor/pattern-edit-window-annotated.png}
    \caption{Pattern Editor Window, Annotated}
    \label{fig:pattern_editor_window_annotated}
 \end{figure}
@@ -175,9 +175,6 @@
    The button resets it to buss 0.
    Note that, if the pattern's selected buss is not found, this entry will be
    blank.  The user must select a valid buss from this dropdown.
-
-%  The settings look a lot like
-%  \figureref{fig:pattern_window_right_click_midi_bus}.
 
    \itempar{MIDI Out Channel}{pattern editor!midi out channel}
    This settings select the MIDI output channel.
@@ -938,7 +935,7 @@
       $HOME/.config/seq66/seq66.usr
    \end{verbatim}
 
-   to make it match one's instrument.  See \sectionref{sec:usr_file}.
+   to make it match one's instrument.
 
    \itempar{Existing Event Menu}{pattern editor!existing events}
    The existing-event selector is a small button (with a black-square icon)
@@ -1034,7 +1031,7 @@
    \begin{enumber}
       \item \textbf{Merge}. \index{merge}
          \index{recording type!merge}
-         This is the "legacy" style of recording loops, where notes can
+         This is the normal style of recording loops, where notes can
          accumulate.
       \item \textbf{Replace.}
       \index{replace}
@@ -1051,8 +1048,9 @@
          \index{expand}
          \index{recording type!expand}
          Once the end of the loop is near, whether or
-         not any notes are being input, another measure is added to the length of
-         the loop.  This continues indefinitely, whether or not any notes are
+         not any notes are being input, another measure is added to the length
+         of the loop.
+         This continues indefinitely, whether or not any notes are
          being played/recorded.
    \end{enumber}
 

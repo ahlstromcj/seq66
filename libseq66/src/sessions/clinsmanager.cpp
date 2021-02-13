@@ -66,10 +66,6 @@ clinsmanager::clinsmanager (const std::string & caps) :
     // no code
 }
 
-/**
- *
- */
-
 clinsmanager::~clinsmanager ()
 {
     // no code yet

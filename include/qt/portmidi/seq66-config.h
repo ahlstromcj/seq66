@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-01-10
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -63,11 +63,11 @@
 #endif
 
 #ifndef SEQ66_VERSION_DATE_SHORT
-#define SEQ66_VERSION_DATE_SHORT "2021-01-10"
+#define SEQ66_VERSION_DATE_SHORT "2021-02-09"
 #endif
 
 #ifndef SEQ66_VERSION
-#define SEQ66_VERSION "0.91.6"
+#define SEQ66_VERSION "0.92.0"
 #endif
 
 #ifndef SEQ66_GIT_VERSION
@@ -319,7 +319,7 @@
 
 /* Define to the full name and version of this package. */
 #ifndef SEQ66_PACKAGE_STRING
-#define SEQ66_PACKAGE_STRING "Seq66 0.91.6"
+#define SEQ66_PACKAGE_STRING "Seq66 0.92.0"
 #endif
 
 /* Define to the one symbol short name of this package. */

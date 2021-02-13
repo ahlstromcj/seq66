@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-01-16
+ * \updates       2021-02-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -996,11 +996,13 @@ public:
         return m_play_list->song_count();
     }
 
-    bool playlist_reset ()
+    bool playlist_reset (int listindex = 0)
     {
-        return m_play_list->reset_list();
+        return m_play_list->reset_list(listindex);
     }
 
+    bool open_mutegroups (const std::string & mfg);
+    bool save_mutegroups (const std::string & mfg);
     bool open_playlist (const std::string & pl, bool show_on_stdout = false);
     bool save_playlist (const std::string & pl = "");
 
@@ -1119,6 +1121,16 @@ public:
         return m_play_list->add_list(index, midinumber, name, directory);
     }
 
+    bool modify_list
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    )
+    {
+        return m_play_list->modify_list(index, midinumber, name, directory);
+    }
+
     bool remove_list (int index)
     {
         return m_play_list->remove_list(index);
@@ -1137,6 +1149,16 @@ public:
     bool add_song (const std::string & fullpath)
     {
         return m_play_list->add_song(fullpath);
+    }
+
+    bool modify_song
+    (
+        int index, int midinumber,
+        const std::string & name,
+        const std::string & directory
+    )
+    {
+        return m_play_list->modify_song(index, midinumber, name, directory);
     }
 
     bool remove_song_by_index (int index)
@@ -1469,9 +1491,8 @@ public:
     }
 
     /**
-     * \getter m_jack_asst.is_master()
-     *      Also now includes is_jack_running(), since one cannot be JACK
-     *      Master if JACK is not running.
+     *  Also now includes is_jack_running(), since one cannot be JACK Master
+     *  if JACK is not running.
      */
 
     bool is_jack_master () const
@@ -1480,6 +1501,24 @@ public:
         return m_jack_asst.is_running() && m_jack_asst.is_master();
 #else
         return false;
+#endif
+    }
+
+    bool is_jack_slave () const
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return m_jack_asst.is_running() && m_jack_asst.is_slave();
+#else
+        return false;
+#endif
+    }
+
+    bool no_jack_transport () const
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return ! m_jack_asst.is_running() || m_jack_asst.no_transport();
+#else
+        return true;
 #endif
     }
 
@@ -2116,25 +2155,19 @@ public:
         return mutes().get_active_groups();
     }
 
-    bool set_mutes (mutegroup::number gmute, const midibooleans & bits);
+    bool set_mutes
+    (
+        mutegroup::number gmute,
+        const midibooleans & bits,
+        bool putmutes = false
+    );
+    bool put_mutes ();
     bool learn_mutes (mutegroup::number group);
     bool clear_mutes ();
     bool apply_session_mutes ();
-
-    bool apply_mutes (mutegroup::number group)
-    {
-        return mapper().apply_mutes(group);
-    }
-
-    bool unapply_mutes (mutegroup::number group)
-    {
-        return mapper().unapply_mutes(group);
-    }
-
-    bool toggle_mutes (mutegroup::number group)
-    {
-        return mapper().toggle_mutes(group);
-    }
+    bool apply_mutes (mutegroup::number group);
+    bool unapply_mutes (mutegroup::number group);
+    bool toggle_mutes (mutegroup::number group);
 
     midibpm decrement_beats_per_minute ();
     midibpm increment_beats_per_minute ();
@@ -2430,9 +2463,13 @@ public:
 
     void send_event (midicontrolout::uiaction a, bool on);
     void send_play_states (midicontrolout::uiaction a);
+    void send_mutes_event (int group, bool on);
+    void send_mutes_events (int groupon, int groupoff);
+    void send_mutes_inactive (int group);
     void announce_playscreen ();
     void announce_exit (bool playstatesoff = true);
     bool announce_sequence (seq::pointer s, seq::number sn);
+    void announce_mutes ();
     void set_midi_control_out ();
 
     const midicontrolout & midi_control_out () const
@@ -2834,7 +2871,8 @@ public:         /* GUI-support functions */
         mutes().toggle_group_mode();
     }
 
-    void set_beats_per_minute (midibpm bpm);    /* more than just a setter  */
+    bool set_beats_per_minute (midibpm bpm);        /* more than a setter   */
+    bool jack_set_beats_per_minute (midibpm bpm);
     bool set_ppqn (int p);
     bool change_ppqn (int p);
     bool ui_change_set_bus (int b);

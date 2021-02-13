@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-01-09
+ * \updates       2021-01-22
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -244,8 +244,8 @@ s_lookup_measures (int m)
 }
 
 /**
- *  These static items are used to fill in and select the proper snap values for
- *  the grids.  Note that they are not members, though they could be.
+ *  These static items are used to fill in and select the proper snap values
+ *  for the grids.  Note that they are not members, though they could be.
  *  These values are also used for note length.  See update_grid_snap() and
  *  update_note_length().
  */
@@ -375,6 +375,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
+    m_editing_bus           (seq_pointer()->get_midi_bus()),
+    m_editing_channel       (seq_pointer()->get_midi_channel()),
     m_editing_status        (0),
     m_editing_cc            (0),
     m_first_event           (0),
@@ -383,8 +385,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_edit_mode             (perf().edit_mode(seqid)),
     m_timer                 (nullptr)
 {
-    bussbyte buss = seq_pointer()->get_midi_bus();
-    midibyte channel = seq_pointer()->get_midi_channel();
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);                 /* part of issue #4 */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -394,10 +394,9 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
      *  Sequence Number Label
      */
 
-    QString labeltext;
-    char tmp[32];
-    snprintf(tmp, sizeof tmp, "#%d", seqid);
-    labeltext = tmp;
+    std::string seqtext("#");
+    seqtext += std::to_string(seqid);
+    QString labeltext = QString::fromStdString(seqtext);
     ui->m_label_seqnumber->setText(labeltext);
 
     /*
@@ -484,10 +483,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     for (int w = 0; w < s_width_count; ++w)
     {
-        int item = s_width_items[w];
-        char fmt[8];
-        snprintf(fmt, sizeof fmt, "%d", item);
-        QString combo_text = fmt;
+        std::string itext = std::to_string(s_width_items[w]);
+        QString combo_text = QString::fromStdString(itext);
         ui->m_combo_bw->insertItem(w, combo_text);
     }
 
@@ -535,10 +532,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     for (int m = 0; m < s_measures_count; ++m)
     {
-        int item = s_measures_items[m];
-        char fmt[8];
-        snprintf(fmt, sizeof fmt, "%d", item);
-        QString combo_text = fmt;
+        std::string itext = std::to_string(s_measures_items[m]);
+        QString combo_text = QString::fromStdString(itext);
         ui->m_combo_length->insertItem(m, combo_text);
     }
 
@@ -670,7 +665,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_combo_bus, SIGNAL(currentIndexChanged(int)),
         this, SLOT(update_midi_bus(int))
     );
-    set_midi_bus(buss);
 
     /*
      *  MIDI channels.  Not sure if we want to use the button to reset the
@@ -683,7 +677,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_channel, SIGNAL(clicked(bool)),
         this, SLOT(reset_midi_channel())
     );
-    repopulate_midich_combo(buss);
 
     /*
      * Undo and Redo Buttons.
@@ -754,13 +747,10 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     for (int si = 0; si < s_snap_count; ++si)
     {
         int item = s_snap_items[si];
-        char fmt[16];
-        if (item > 1)
-            snprintf(fmt, sizeof fmt, "1/%d", item);
-        else
-            snprintf(fmt, sizeof fmt, "%d", item);
+        std::string itext = item > 1 ?
+            "1/" + std::to_string(item) : std::to_string(item);
 
-        QString combo_text = fmt;
+        QString combo_text = QString::fromStdString(itext);
         if (item == 0)
         {
             ui->m_combo_snap->insertSeparator(8);   // why 8?
@@ -827,14 +817,9 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     for (int zi = 0; zi < s_zoom_count; ++zi)
     {
         int zoom = s_zoom_items[zi];
-        if (zoom >= usr().min_zoom() && zoom <= usr().max_zoom())
-        {
-            char fmt[16];
-            snprintf(fmt, sizeof fmt, "1:%d", zoom);
-
-            QString combo_text = fmt;
-            ui->m_combo_zoom->insertItem(zi, combo_text);
-        }
+        std::string itext = "1:" + std::to_string(zoom);
+        QString combo_text = QString::fromStdString(itext);
+        ui->m_combo_zoom->insertItem(zi, combo_text);
     }
     ui->m_combo_zoom->setCurrentIndex(1);
     connect
@@ -982,7 +967,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(events())
     );
 
-    repopulate_event_menu(buss, channel);
     set_data_type(EVENT_NOTE_ON);
 
     /*
@@ -994,7 +978,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         ui->m_button_data, SIGNAL(clicked(bool)),
         this, SLOT(data())
     );
-    repopulate_mini_event_menu(buss, channel);
 
     /*
      * LFO Button.
@@ -1098,13 +1081,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     for (int v = 0; v < s_rec_vol_count; ++v)
     {
         int item = s_rec_vol_items[v];
-        char fmt[8];
-        if (v == 0)
-            snprintf(fmt, sizeof fmt, "%s", "Free");
-        else
-            snprintf(fmt, sizeof fmt, "%d", item);
-
-        QString combo_text = fmt;
+        std::string text = v == 0 ? "Free" : std::to_string(item) ;
+        QString combo_text = QString::fromStdString(text);
         ui->m_combo_rec_vol->insertItem(v, combo_text);
     }
     connect
@@ -1128,12 +1106,25 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
 #endif
 
+    repopulate_usr_combos(m_editing_bus, m_editing_channel);
+    set_midi_bus(m_editing_bus);
+    set_midi_channel(m_editing_channel);
+
     int seqwidth = m_seqroll->width();
     int scrollwidth = ui->rollScrollArea->width();
     m_seqroll->progress_follow(seqwidth > scrollwidth);
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
 
     update_midi_buttons();
+
+    /*
+     *  This code was not present here, but was in the old-style editor and the
+     *  event-editor.  This comment is a reminder.  See qseqeventframe for more
+     *  information.
+     *
+     *      m_seq->seq_in_edit(true);
+     */
+
     set_initialized();
     cb_perf().enregister(this);                             /* notification */
     m_timer = new QTimer(this);                             /* redraw timer */
@@ -1708,26 +1699,22 @@ qseqeditframe64::transpose (bool ischecked)
 
 /**
  *  Changes the image used for the transpose button.  Actually, we have two
- *  drum icons, so we won't change this one.
+ *  drum icons next to each other now, so we won't change this one to a drum.
+ *
+ *      qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
+ *      qt_set_icon(drum_xpm, ui->m_toggle_transpose);
  *
  * \param istransposable
- *      If true, set the image to the "Transpose" icon.  Otherwise, set it to
- *      the "Drum" (not transposable) icon.
+ *      Indicates what state we're in.
  */
 
 void
 qseqeditframe64::set_transpose_image (bool istransposable)
 {
-    if (istransposable)
-    {
-        ui->m_toggle_transpose->setToolTip("Sequence is transposable.");
-//      qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
-    }
-    else
-    {
-        ui->m_toggle_transpose->setToolTip("Sequence is not transposable.");
-//      qt_set_icon(drum_xpm, ui->m_toggle_transpose);
-    }
+    QString text = istransposable ?
+        "Pattern is transposable" : "Pattern is not transposable" ;
+
+    ui->m_toggle_transpose->setToolTip(text);
 }
 
 /**
@@ -1803,8 +1790,7 @@ qseqeditframe64::set_chord (int chord)
 void
 qseqeditframe64::update_midi_bus (int index)
 {
-    seq_pointer()->set_midi_bus(bussbyte(index), true);
-    set_dirty();
+    set_midi_bus(index, true);
 }
 
 /**
@@ -1814,8 +1800,7 @@ qseqeditframe64::update_midi_bus (int index)
 void
 qseqeditframe64::reset_midi_bus ()
 {
-    ui->m_combo_bus->setCurrentIndex(0);        // update_midi_bus(0)
-    update_draw_geometry();
+    set_midi_bus(0, true);                      // NEW
 }
 
 /**
@@ -1836,9 +1821,9 @@ qseqeditframe64::reset_midi_bus ()
  * \param user_change
  *      True if the user made this change, and thus has potentially modified
  *      the song.  If true, and the bus number has changed, then the MIDI
- *      channel and event menus (but not the mini-event menu!?) are
- *      repopulated to reflect the new bus.  This parameter is false in the
- *      constructor because those items have not been set up at that time.
+ *      channel and event menus are repopulated to reflect the new bus.  This
+ *      parameter is false in the constructor because those items have not
+ *      been set up at that time.
  */
 
 void
@@ -1846,13 +1831,17 @@ qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
     bussbyte initialbus = seq_pointer()->get_midi_bus();
     bussbyte b = bussbyte(bus);
-    seq_pointer()->set_midi_bus(b, user_change);    /* user-modified value? */
-    ui->m_combo_bus->setCurrentIndex(bus);
-    if (bus != int(initialbus) && user_change)
+    if (b != initialbus)
     {
-        int channel = int(seq_pointer()->get_midi_channel());
-        repopulate_midich_combo(bus);
-        repopulate_event_menu(bus, channel);
+        seq_pointer()->set_midi_bus(b, user_change);
+        m_editing_bus = bus;
+        if (user_change)
+        {
+            repopulate_usr_combos(m_editing_bus, m_editing_channel);
+            set_dirty();
+        }
+        else
+            ui->m_combo_bus->setCurrentIndex(bus);
     }
 }
 
@@ -1884,8 +1873,9 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         std::string s = usr().instrument_name(buss, channel);
         if (! s.empty())
         {
-            name += " ";
+            name += " [";
             name += s;
+            name += "]";
         }
         if (channel == c_midichannel_max)
         {
@@ -1898,17 +1888,6 @@ qseqeditframe64::repopulate_midich_combo (int buss)
             ui->m_combo_channel->insertItem(channel, combo_text);
         }
     }
-    midibyte chindex = seq_pointer()->get_midi_channel();
-    if (is_null_channel(chindex))
-        chindex = c_midichannel_max;
-
-    connect
-    (
-        ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_midi_channel(int))
-    );
-    ui->m_combo_channel->setCurrentIndex(chindex);
-    set_midi_channel(seq_pointer()->get_midi_channel());
 }
 
 /**
@@ -1919,18 +1898,13 @@ qseqeditframe64::repopulate_midich_combo (int buss)
 void
 qseqeditframe64::update_midi_channel (int index)
 {
-    if (index >= 0 && index <= c_midichannel_max)
-    {
-        seq_pointer()->set_midi_channel(index);     /* also handles "Any"   */
-        set_dirty();
-    }
+    set_midi_channel(index, true);
 }
 
 void
 qseqeditframe64::reset_midi_channel ()
 {
-    ui->m_combo_channel->setCurrentIndex(0);    // update_midi_channel(0)
-    update_draw_geometry();
+    set_midi_channel(0, true);
 }
 
 /**
@@ -1952,15 +1926,25 @@ void
 qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
 {
     int initialchan = seq_pointer()->get_midi_channel();
-    int chindex = is_null_channel(midichannel) ?
-        c_midichannel_max : midichannel ;
-
-    ui->m_combo_channel->setCurrentIndex(chindex);
-    seq_pointer()->set_midi_channel(midichannel, user_change);
-    if (midichannel != initialchan && user_change)
+    if (midichannel != initialchan)
     {
-        int initialbus = int(seq_pointer()->get_midi_bus());
-        repopulate_event_menu(initialbus, midichannel);
+        int chindex = is_null_channel(midichannel) ?
+            c_midichannel_max : midichannel ;
+
+        seq_pointer()->set_midi_channel(midichannel, user_change);
+        m_editing_channel = midichannel;
+        repopulate_usr_combos(m_editing_bus, m_editing_channel);
+        if (user_change)
+        {
+            /*
+             * Too much: repopulate_usr_combos(m_editing_bus, m_editing_channel);
+             */
+
+            repopulate_event_menu(m_editing_bus, m_editing_channel);
+            repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
+            set_dirty();
+        }
+        ui->m_combo_channel->setCurrentIndex(chindex);
     }
 }
 
@@ -2842,6 +2826,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
+
     event::buffer::const_iterator cev;
     seq_pointer()->reset_ex_iterator(cev);
     while (seq_pointer()->get_next_event_ex(status, cc, cev))
@@ -2929,18 +2914,18 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
              * be re 0.
              */
 
-            std::string controller_name(c_controller_names[offset + item]);
+            std::string cname(c_controller_names[offset + item]);
             const usermidibus & umb = usr().bus(buss);
             int inst = umb.instrument(channel);
             const userinstrument & uin = usr().instrument(inst);
             if (uin.is_valid())                             // redundant check
             {
                 if (uin.controller_active(offset + item))
-                    controller_name = uin.controller_name(offset + item);
+                    cname = uin.controller_name(offset + item);
             }
             set_event_entry
             (
-                menucc, controller_name, ccs[offset+item],
+                menucc, cname, ccs[offset+item],
                 EVENT_CONTROL_CHANGE, offset + item
             );
         }
@@ -2963,12 +2948,29 @@ qseqeditframe64::data ()
             (
                 QPoint
                 (
-                    ui->m_button_data->width()-2,
-                    ui->m_button_data->height()-2
+                    ui->m_button_data->width()-2, ui->m_button_data->height()-2
                 )
             )
         );
     }
+}
+
+void
+qseqeditframe64::repopulate_usr_combos (int buss, int channel)
+{
+    disconnect
+    (
+        ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_midi_channel(int))
+    );
+    repopulate_midich_combo(buss);
+    repopulate_event_menu(buss, channel);
+    repopulate_mini_event_menu(buss, channel);
+    connect
+    (
+        ui->m_combo_channel, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_midi_channel(int))
+    );
 }
 
 /**
@@ -3096,21 +3098,21 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     const int itemcount = c_midibyte_data_max;              /* 128          */
     for (int item = 0; item < itemcount; ++item)
     {
-        std::string controller_name(c_controller_names[item]);
+        std::string cname(c_controller_names[item]);
         const usermidibus & umb = usr().bus(buss);
         int inst = umb.instrument(channel);
         const userinstrument & uin = usr().instrument(inst);
         if (uin.is_valid())                                 /* redundant    */
         {
             if (uin.controller_active(item))
-                controller_name = uin.controller_name(item);
+                cname = uin.controller_name(item);
         }
         if (ccs[item])
         {
             any_events = true;
             set_event_entry
             (
-                m_minidata_popup, controller_name, true,
+                m_minidata_popup, cname, true,
                 EVENT_CONTROL_CHANGE, item
             );
         }

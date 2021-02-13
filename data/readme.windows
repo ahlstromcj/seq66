@@ -1,6 +1,6 @@
-readme.windows for Seq66 0.91.5
+readme.windows for Seq66 0.92.0
 Chris Ahlstrom
-2018-05-13 to 2020-12-28
+2018-05-13 to 2021-02-13
 
 This README file tells you how to run the native Windows implmentation of
 seq66, an executable named qpseq66.exe.  It provides some notes on Seq66 and
@@ -26,9 +26,14 @@ synthesizer installed:
 
     C:\Program Files (x86)\Seq66\qpseq66.exe
 
-Run the shortcut.  If an error appears, click out and run it again, and there
-should be a "MIDI Mapper" present on buss 0.  Load a song, and select the "0"
-device from the buss dropdown ("None") at the top of the main page.  The file
+(Other files are available in the 'data' directory.  For example, the
+user manual is a PDF file stored in:
+
+    C:\Program Files (x86)\Seq66\data\doc\seq66-user-manual.pdf
+
+Run the 'exe' shortcut.  If an error appears, click out and run it again, and
+there should be a "MIDI Mapper" present on buss 0.  Load a song, and select the
+"0" device from the buss dropdown ("None") at the top of the main page.  The file
 should play.  You can save the file to preserve the new buss number; some
 songs are set to play on multiple busses.
 
@@ -43,12 +48,6 @@ Inaccessible Devices:
     using the MIDI Mapper (device 0) to access the synthesizer.  To make this
     change permanent, exit Seq66 and restart it.  Then, for the basic setup on
     Windows, only output bus 0 is available.  And no input bus is available.
-
-    When an error occurs, the files "erroneous.rc" and "erroneous.usr"
-    might be created.  If so, they can be inspected, fixed, and renamed to
-    "qpseq66.rc" and "qpseq66.usr", and with luck the startup will work.
-    There is a "seq6.log" file generated in the configuration directory,
-    C:/Users/myname/AppData/Local/seq66/, that can be informative, as well.
 
     We installed the CoolSoft MIDIMapper and VirtualMIDISYnth to try to get
     around these issues, and tried to turn off the system setup of "Allow
@@ -81,12 +80,13 @@ Inaccessible Devices:
     We still have some minor issues at start up and at exit, but are now able
     to play a tune on the wavetable synthesizer using the "-b 2" option.
 
-    When you first run qpseq66 on Windows, it will create four new configuration
+    When you first run qpseq66 on Windows, it will create new configuration
     files:
 
         C:\Users\username\AppData\Local\seq66\qpseq66.rc
         C:\Users\username\AppData\Local\seq66\qpseq66.usr
         C:\Users\username\AppData\Local\seq66\qpseq66.ctrl
+        C:\Users\username\AppData\Local\seq66\qpseq66.drums
         C:\Users\username\AppData\Local\seq66\qpseq66.mutes
     
     Inaccessible devices are noted in the "[midi-clock]" section of

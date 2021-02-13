@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2020-08-06
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -58,12 +58,30 @@ namespace automation
 static const int ACTCOUNT = 3;
 
 /**
- *  Provides the number of values in a midicontrol sub-stanza.  Recall
- *  that one sub-stanza is represented by a <code> [ 0 0 0 0 0 0 ] </code>
- *  item in the "rc"/"ctrl" file.
+ *  Manifest constants for midicontrolfile to use as array indices.
+ *  These correspond to the MIDI Controls for UI (user-interface) actions;
+ *  see the uiactions enumeration. This enumeration cannot be a class
+ *  enumeration, because enum classes cannot be used as array indices.
  */
 
-static const int SUBCOUNT = 6;
+enum index
+{
+    inverse,
+    status,
+    data_1,
+    data_2_min,
+    data_2_max,
+    max
+};
+
+/**
+ *  Provides the number of values in a midicontrol sub-stanza.  Recall
+ *  that one sub-stanza is represented by a <code> [ 0 0 0 0 0 ] </code>
+ *  item in the 'ctrl' file.  We have removed the "enabled" value as
+ *  redundant, and reduced the count to 5.
+ */
+
+static const int SUBCOUNT = int(index::max);
 
 /**
  *  Provides enumerations for the main control sections.  The pattern,
@@ -86,7 +104,7 @@ enum class category
     loop,           /**< [loop-control], mutes/unmutes "Loops".             */
     mute_group,     /**< [mute-group-control], specifies multiple mutings.  */
     automation,     /**< [automation-control], GUI control automation.      */
-    maximum         /**< Not used, except to check for illegal settings.    */
+    max             /**< Not used, except to check for illegal settings.    */
 };
 
 /**
@@ -114,7 +132,7 @@ enum class category
  *      -   For the "playlist" and "playlist-song" status, indicates the
  *          "select-previous" functionality.
  *
- * \var maximum
+ * \var max
  *      -   Simply a limit number.
  */
 
@@ -124,7 +142,7 @@ enum class action
     toggle,
     on,
     off,
-    maximum
+    max
 };
 
 /**
@@ -137,10 +155,10 @@ enum class action
  *  map.  Faster lookup than traversing a bunch of if-statements, it is to be
  *  hoped.
  *
- *  The controls are read in from the "rc" configuration files, and are
- *  written to the c_midictrl section of the "proprietary" final track in
- *  a Seq66 MIDI file.  The controls represented by slot values are part
- *  of the automation (user-interface) section of the "rc" file.
+ *  The controls are read in from the 'ctrl' configuration files, but are no
+ *  longer written to the c_midictrl section of the "proprietary" final track in
+ *  a Seq66 MIDI file.  The controls represented by slot values are part of the
+ *  automation (user-interface) section of the 'ctrl' file.
  *
  *  Unlike the original controls, all of the control groups (pattern,
  *  mute-group, and automation) all support a number of controls not
@@ -217,8 +235,7 @@ enum class slot
     reserved_46,        /**< 46: Reserved for expansion.                    */
     reserved_47,        /**< 47: Reserved for expansion.                    */
     reserved_48,        /**< 48: Reserved for expansion.                    */
-
-    maximum,            /**< Used only for termination/range-checking.      */
+    max,                /**< Used only for termination/range-checking.      */
 
     /*
      * The following are used for selection the correct op function.  Pattern

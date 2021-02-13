@@ -289,10 +289,6 @@ setmaster::swap_sets (seq::number set0, seq::number set1)
     return result;
 }
 
-/**
- *
- */
-
 std::string
 setmaster::sets_to_string (bool showseqs) const
 {
@@ -312,10 +308,6 @@ setmaster::sets_to_string (bool showseqs) const
     }
     return result.str();
 }
-
-/**
- *
- */
 
 void
 setmaster::show (bool showseqs) const

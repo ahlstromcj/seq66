@@ -47,9 +47,8 @@
    support.
 
    \textbf{LASH} is an earlier session protocol, supported in \textsl{Seq64}.
-   However, it is not ready in \textsl{Seq66} and is a low priority at this time.
-
-%  See \sectionref{subsec:rc_file_midi_control},
+   However, it is not ready in \textsl{Seq66} and is a low priority at this
+   time.
 
 \subsection{Seq66 Session Management / NSM}
 \label{subsec:sessions_nsm}
@@ -70,7 +69,7 @@
    see \sectionref{subsec:sessions_nsm_first_run_in_nsm}.
 
    Generally, after installing \textsl{Seq66}, or when creating a new setup
-   (such as a playlist) it is good to run it normally first, to simplify
+   (such as a play-list) it is good to run it normally first, to simplify
    trouble-shooting.
    This action creates the configuration files in the default location,
    \texttt{/home/user/.config/seq66}:
@@ -91,11 +90,21 @@
    Then exit \textsl{Seq66} to ensure the configuration files are created.
    Optionally, in this initial setup,
    one can also create a 'playlist' file and a 'drums' file, or
-   copy them from \texttt{/usr/share/seq66-0.91/data/samples} to
-   \texttt{/home/user/.config/seq66} and modify them appropriately.
-%  Generally, it is best to make sure that \texttt{qseq66} runs normally before
-%  attempt to get it work in a session.
+   copy them from:
 
+   \begin{verbatim}
+      /usr/share/seq66-0.91/data/samples        (Linux)
+      C:/Program Files (x86)/Seq66/data/samples (Windows)
+   \end{verbatim}
+
+   to
+
+   \begin{verbatim}
+      /home/user/.config/seq66                  (Linux)
+      C:/Users/user/AppData/Local/seq66         (Windows)
+   \end{verbatim}
+
+   and modify them appropriately.
    Another first-time modification to consider is setting up \textsl{Seq66} to
    use the \textsl{JACK} audio/MIDI subsystem (on \textsl{Linux}).
    In the 'rc' file, look for the following line:
@@ -139,15 +148,13 @@
 
    When \textsl{Seq66} is run in \textsl{NSM} for the first time,
    what happens to the new configuration depends on whether or not 
-   the normal configuration files exist in the default location,
-   \texttt{/home/user/.config/seq66}.
+   the normal configuration files exist in the default configuration
+   location.
 
-   If these normal configuration files exist, then they are replicated in the
-   \textsl{NSM} session directory.  If a playlist has been configured, it is also
-   copied, and so are the MIDI files it requires. (Their relative directory
-   structure is preserved.)
-   If these files do not exist, then new configuration files are created
+   If no configuration files exist, then new configuration files are created
    in the \textsl{NSM} session directory.
+   If these configuration files exist, then they are replicated in the
+   \textsl{NSM} session directory.
 
    \textbf{No existing normal configuration}.
    Here, we have just installed \textsl{Seq66}, but have not
@@ -157,10 +164,13 @@
    configuration is created in the session directory.
 
    \textbf{Existing normal configuration}.
-   If there is an existing \textsl{Seq66} configuration (in
-   \texttt{/home/user/.config/seq66}, then running \texttt{qseq66} in a new
+   If there is an existing \textsl{Seq66} configuration,
+   then running \texttt{qseq66} in a new
    session will cause the configuration to be recreated in the new session
    directory, including play-lists and MIDI files.
+   If a play-list has been configured, it is also
+   copied, and so are the MIDI files it requires. (Their relative directory
+   structure is preserved.)
 
    If \textsl{JACK} has been configured to be
    used by \textsl{Seq66}, be sure \textsl{JACK} is started (e.g. by running
@@ -190,12 +200,13 @@
    127.0.1.1   mycomputer.mls mycomputer
 \end{verbatim}
 
-   The NSM user-interface (not shown here) that comes up is empty at first.  So
-   we create a session by clicking the \textsl{NSM}
-   \textsl{New} button, and entering a session name (e.g. "Seq66") in the
-   prompt that comes up.  We see, in the console window, a couple of 
+   The NSM user-interface (not shown here) that comes up is empty at first.
+   So create a session by clicking the \textsl{NSM}
+   \textsl{New} button, and entering a session name
+   (here, "\textbf{Seq66}") in the
+   prompt that comes up.  In the console window, a couple of 
    \texttt{/nsm/server/new} \textsl{OSC} messages
-   about the creation of the session.
+   about the creation of the session appear.
 
 \begin{verbatim}
    [non-session-manager] Sending new for: Seq66
@@ -204,9 +215,9 @@
    [non-session-manager] /nsm/server/new says Session created
 \end{verbatim}
 
-   Next, we click the \textsl{Add Client to Session}, and, since
-   \texttt{qseq66} has been installed, it is in the \texttt{PATH}
-   and its executable name can be entered simply: "qseq66".
+   Next, click the \textsl{Add Client to Session}, and, since
+   \texttt{qseq66} has been installed system-wide, it is in the \texttt{PATH}
+   and its executable name can be entered simply: "\texttt{qseq66}".
    A number of console messages from
    \textsl{Seq66} appear, plus some messages from \textsl{NSM}.
 
@@ -222,10 +233,11 @@
 \end{verbatim}
 
 	Once \textsl{Seq66} is running under \textsl{NSM},
-   then click the "Save" button at the top of the \textsl{NSM} interface in order
+   then click the \textbf{Save}
+   button at the top of the \textsl{NSM} interface in order
    to save the session information.  This is an important step.
-   We can see what has been created to support the session.
-   The directory that \textsl{NSM}
+   One can see what has been created to support the session;
+   the directory that \textsl{NSM}
    creates by default is \texttt{/home/user/NSM Sessions}.
 
 \begin{verbatim}
@@ -245,34 +257,40 @@
 
 	So \textsl{NSM} has created a directory with the session name we gave it:
    \texttt{Seq66}.  Under that directory is a file, \texttt{session.nsm}, which
-   contains information like the following when we click the \textsl{Save}
-   button at the top of the \textsl{NSM} user-interface:
+   contains information like the following:
+%  when we click the \textsl{Save}
+%  button at the top of the \textsl{NSM} user-interface:
 
 \begin{verbatim}
    seq66:qseq66:nIRJI
 \end{verbatim}
 
-   The format of this text is \texttt{appname:exename:nXXXX}.
+   The format of this text is \texttt{appname:exename:nXXXX}, where
+   \texttt{XXXX} is a 4-letter randomly-generated token.
    Also created is a directory, \texttt{seq66.nIRJI}, which is the root of the
    \texttt{Seq66} session.  The "IRJI" portion is randomly generated by
    \textsl{NSM}.
 
-   The rest of the directories are generated by \textsl{Seq66}, which creates
-   new \texttt{config} directory (to be used instead of
-   \texttt{/home/user/.config/seq66}) and a \texttt{midi} directory which will
-   contain any new, imported MIDI files, or MIDI files from the playlist.
+   The rest of the directories,
+   \texttt{config} and \texttt{midi},
+   are generated by \textsl{Seq66}
+   The \texttt{config} directory is used instead of
+   \texttt{/home/user/.config/seq66}) and \texttt{midi} directory
+   contains new MIDI files, imported MIDI files,
+   or MIDI files from a play-list.
    The new \texttt{config} directory
    contains versions of the various configuration files that will always be
    used to start up \textsl{Seq66} during the session.
-   One can also add valid play-list and drums/note-mapping files to that
-   directory later.
+   One can also add valid play-list, palette, and drums/note-mapping files to
+   that directory later.
 
-   Note that, if before running \textsl{NSM},
-   one had set up a playlist file and provided the proper "MIDI
-   base directory" in the 'rc' file, then all the MIDI files will be copied to
-   the \textsl{NSM} session directory.
+   If before running \textsl{NSM},
+   one had set up a play-list file and provided the proper "MIDI
+   base directory" in the 'rc' file, then all the MIDI files are copied to
+   the \textsl{NSM} session \texttt{midi} directory,
+   preserving all relative directories.
    When the \textsl{Non Session Manager} is started the next time, and the
-   "Seq66" session is clicked, this starts \textsl{Seq66}, and the playlist can
+   "Seq66" session is clicked, this starts \textsl{Seq66}, and the play-list can
    be seen in the \textsl{Playlist} tab.
 
    One last thing to note is that, when viewing the MIDI ports created by
@@ -289,19 +307,19 @@
    use a pre-planned \textsl{NSM} and specify the URL to connect.
    Look for the following lines in the 'usr' file:
 
-\begin{verbatim}
-   [user-session]
-   session = none
-   url = ""
-\end{verbatim}
+   \begin{verbatim}
+      [user-session]
+      session = none
+      url = ""
+   \end{verbatim}
 
    Now assume we've run the daemon as follows:
 
-\begin{verbatim}
-   $ nsmd --osc-port 9999
-   [nsmd] Session root is: /home/user/NSM Sessions
-   NSM_URL=osc.udp://mycomputer.mls:9999/
-\end{verbatim}
+   \begin{verbatim}
+      $ nsmd --osc-port 9999
+      [nsmd] Session root is: /home/user/NSM Sessions
+      NSM_URL=osc.udp://mycomputer.mls:9999/
+   \end{verbatim}
 
    Change the \texttt{session} lines to allow the usage of
    \textsl{NSM} at that URL:
@@ -322,14 +340,14 @@
 \subsubsection{Seq66 Session Management / Sessions Tab}
 \label{subsubsec:sessions_tab}
 
-   The \textsl{Session} tab is provided to orient the
-   user to the setup supported by the session.
+   The \textsl{Session} tab is a \textsl{read-only} tab
+   provided to orient the user to the setup supported by the session.
    When not running in a session, the normal configuration directory and files
    are shown.  When running in an \textsl{NSM} section, the configuration
    information received from \textsl{NSM} is displayed.
 
    This tab is not yet fully functional and is meant to display information to
-   help the user understand what is happening in the run.  In particular, the
+   help the user understand what is happening in the run.  In particular,
    \textbf{Detach} and \textbf{Session Log} don't yet work.
 
 \begin{figure}[H]
@@ -348,7 +366,7 @@
       \item Name of the session manager.
       \item Session path for the session, the root directory of the session.
          All data goes into this directory. If not running in a session,
-         the active configuration directory (which can be changed via the
+         the active configuration directory (which can be modified via
          command-line arguments) is shown.
       \item The OSC URL of the session, which includes the port number.
          Generally, the port number is selected at run-time, but it is also
@@ -424,6 +442,9 @@
          disappeared (and notes that on the console output, if available).
    \end{itemize}
 
+   At some point we would like to present a small tutorial showing a session
+   under \textsl{JACK}.
+
 \subsection{Seq66 Session Management / Signals}
 \label{subsec:sessions_signals}
 
@@ -460,14 +481,14 @@
    and 1, and programs which accept their configuration via command-line
    arguments.  There is a command-line version and a graphical version.
 
-   MORE TO COME on how to use nsm-proxy.
+   More to come on how to use \texttt{nsm-proxy}.
 
 \subsection{Seq66 Session Management / LASH}
 \label{subsec:sessions_lash}
 
    \index{sessions!lash}
-   MORE TO COME.
    LASH support has not yet been fully reimplemented and retested.
+   It is a low priority.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2020-08-13
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -60,6 +60,9 @@ class performer;
 
 class midicontrolout final : public midicontrolbase
 {
+
+    friend class midicontrolfile;
+    friend class performer;
 
 public:
 
@@ -119,13 +122,22 @@ private:
     /**
      *  Manifest constants for midicontrolfile to use as array indices.
      *  These correspond to the MIDI Controls for UI (user-interface) actions;
-     *  see the uiactions enumeration.
+     *  see the uiactions enumeration. This enumeration cannot be a class
+     *  enumeration, because enum classes cannot be used as array indices.
+     *
+     *  ca 2021-02-10.
+     *  We dropped the enabled and channel values.  We can test for an output
+     *  control to be enabled by checking for status > 0x00.  And we can make
+     *  the channel part of the status.  We will read the old style in the
+     *  midicontrolfile class and convert it to the new style.  We change the
+     *  name of the enumeration for brevity and to uncover all usages via
+     *  compiler errors. :-D
+     *
+     *  Obsolete: enabled, channel
      */
 
-    enum outindex
+    enum index
     {
-        enabled,
-        channel,
         status,
         data_1,
         data_2,
@@ -162,6 +174,7 @@ private:
     /**
      *  Provides a place to hold MIDI control events in response to a
      *  user-interface change, such as starting or stopping playback.
+     *  Is also adapted to handling the toggling (on/off) of mute groups.
      */
 
     using actiontriplet = struct
@@ -169,10 +182,23 @@ private:
         bool att_action_status;
         event att_action_event_on;
         event att_action_event_off;
+        event att_action_event_del;
     };
 
     /**
-     *  Holds an array of actionpairs, one for each item in the uiaction
+     *  Matches which event in the actiontriplet to use.  (Otherwise, a
+     *  boolean can be used to access only the "on" and "off" fields.
+     */
+
+    enum actionindex
+    {
+        action_on,      /**< The mute-group is active and selected.         */
+        action_off,     /**< The mute-group is active, but not selected.    */
+        action_del      /**< The mute-group is inactive.                    */
+    };
+
+    /**
+     *  Holds an array of actiontriplets, one for each item in the uiaction
      *  enumeration.
      */
 
@@ -212,6 +238,13 @@ private:
     uiactions m_ui_events;
 
     /**
+     *  Provides action events for toggling a mute-group.  Handles the default
+     *  and unchanging value of 32 mutegroups.
+     */
+
+    uiactions m_mutes_events;
+
+    /**
      *  Holds the screenset size, to use rather than calling the container.
      */
 
@@ -231,6 +264,12 @@ public:
 
     void initialize (int count, int buss = SEQ66_MIDI_CONTROL_OUT_BUSS);
 
+    static void seqaction_range (int & minimum, int & maximum)
+    {
+        minimum = static_cast<int>(midicontrolout::seqaction::arm);
+        maximum = static_cast<int>(midicontrolout::seqaction::max);
+    }
+
     void set_master_bus (mastermidibus * mmbus)
     {
         m_master_bus = mmbus;
@@ -244,15 +283,20 @@ public:
     void send_seq_event (int seq, seqaction what, bool flush = true);
     void clear_sequences (bool flush = true);
     event get_seq_event (int seq, seqaction what) const;
-    void set_seq_event (int seq, seqaction what, event & ev);
     void set_seq_event (int seq, seqaction what, int * ev);
     bool seq_event_is_active (int seq, seqaction what) const;
     bool event_is_active (uiaction what) const;
     std::string get_event_str (uiaction what, bool on) const;
-    void set_event (uiaction what, bool enabled, event & on, event & off);
+    std::string get_event_str (int w, bool on) const;
+    std::string get_mutes_event_str (int group, actionindex which) const;
     void set_event (uiaction what, bool enabled, int * onp, int * offp);
+    void set_mutes_event
+    (
+        int group, int * onp, int * offp, int * delp = nullptr
+    );
+    bool mutes_event_is_active (int group) const;
+    void send_mutes_event (int group, actionindex which);
     void send_event (uiaction what, bool on);
-
     void send_learning (bool learning)
     {
         send_event(uiaction::learn, learning);

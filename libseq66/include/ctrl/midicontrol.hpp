@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-03-24
+ * \updates       2021-02-11
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -258,25 +258,7 @@ public:
         );
     }
 
-    /**
-     *  Not so sure if this really saves trouble for the caller.  It fits in
-     *  with the big-ass sscanf() call in midicontrolfile.
-     *
-     * \param values
-     *      Provides the 6 values, in an integer array, to set into the
-     *      members in this order: m_control_code, m_action, m_active,
-     *      m_inverse_active, m_status, m_d0, m_min_value, and m_max_value.
-     */
-
-    void set (int values [automation::SUBCOUNT])
-    {
-        m_active = bool(values[0]);
-        m_inverse_active = bool(values[1]);
-        m_status = values[2];
-        m_d0 = values[3];
-        m_min_value = values[4];
-        m_max_value = values[5];
-    }
+    void set (int values [automation::SUBCOUNT]);
 
     /**
      *  Handles a common check in the perform module.

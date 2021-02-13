@@ -92,7 +92,7 @@
 #include "midi/midifile.hpp"            /* seq66::midifile                  */
 #include "midi/midi_vector.hpp"         /* seq66::midi_vector container     */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
-#include "play/performer.hpp"           /* must precede midifile.hpp !      */
+#include "play/performer.hpp"           /* seq66::performer                 */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "util/calculations.hpp"        /* seq66::bpm_from_tempo_us() etc.  */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
@@ -977,8 +977,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     e.set_timestamp(currenttime);
                 }
 
-                midibyte eventcode = status & EVENT_CLEAR_CHAN_MASK;   /* F0 */
-                midibyte channel = status & EVENT_GET_CHAN_MASK;       /* 0F */
+                midibyte eventcode = event::mask_status(status);    /* F0 */
+                midibyte channel = event::get_channel(status);      /* 0F */
                 switch (eventcode)
                 {
                 case EVENT_NOTE_OFF:          /* cases for 2-data-byte events */
@@ -1198,7 +1198,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_triggers)
                             {
-                                printf("Old-style triggers event encountered\n");
+                                set_error("Old-style triggers encountered");
+                                break;
+#if 0
                                 int num_triggers = len / 4;
                                 for (int i = 0; i < num_triggers; i += 2)
                                 {
@@ -1207,6 +1209,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     len -= 8;
                                     s.add_trigger(on, length, 0, false);
                                 }
+#endif
                             }
                             else if (seqspec == c_triggers_new)
                             {
@@ -1416,10 +1419,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     }                                                   /* for each track   */
     return result;
 }
-
-/**
- *
- */
 
 sequence *
 midifile::create_sequence (performer & p)
@@ -3089,10 +3088,6 @@ read_midi_file
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 write_midi_file

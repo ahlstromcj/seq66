@@ -550,10 +550,10 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
         int lowest, highest;
         bool have_notes = s->minmax_notes(lowest, highest);
-        if (have_notes)
+        int t1 = s->get_length();
+        if (have_notes && t1 > 0)
         {
             int height = highest - lowest + 2;
-            int length = s->get_length();
             Color drawcolor = pencolor;
             Color eventcolor = pencolor;
             if (! s->transposable())
@@ -571,8 +571,8 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             {
                 sequence::note_info ni;         /* only two members used!   */
                 sequence::draw dt = s->get_next_note_ex(ni, evi);
-                int tick_s_x = (ni.start() * preview_w) / length;
-                int tick_f_x = (ni.finish() * preview_w) / length;
+                int tick_s_x = (ni.start() * preview_w) / t1;
+                int tick_f_x = (ni.finish() * preview_w) / t1;
                 if (dt == sequence::draw::finish)
                     break;
 
@@ -616,10 +616,10 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             }
 
             int a_tick = perf().get_tick();             /* for playhead */
-            a_tick += (length - s->get_trigger_offset());
-            a_tick %= length;
+            a_tick += (t1 - s->get_trigger_offset());
+            a_tick %= t1;
 
-            midipulse tick_x = a_tick * preview_w / length;
+            midipulse tick_x = a_tick * preview_w / t1;
             if (s->playing())
                 pen.setColor(Qt::red);
             else

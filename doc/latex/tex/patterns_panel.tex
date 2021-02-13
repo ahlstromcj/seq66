@@ -49,17 +49,10 @@
    each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
    (There are ways to override this behavior.)
 
-%  However, if \textsl{Seq66} is using JACK transport, then, instead of
-%  the behavior described above, live versus song mode is controlled by the
-%  JACK start mode option (see the \textbf{JACK Start mode} item in
-%  \sectionref{paragraph:menu_file_options_jack_sync}).
-
    For exposition, we break the Patterns Panel
    into a menu bar, a top panel, a pattern panel, and a bottom panel.
    The \textsl{Seq66} menu bar is discussed in
    \sectionref{sec:menu}.
-   The Qt and Gtkmm user-interfaces differ in the arrangement of buttons and
-   panels; and the Qt interface uses tabs.
 
 \subsection{Patterns / Set Handling}
 \label{subsec:patterns_panel_set_handling}
@@ -172,19 +165,6 @@
    of elements in the pattern slot.
    (However, note that some of the special coloring using in
    \textsl{Sequencer64} is not supported in \textsl{Seq66}.
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{new/slots.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Various Status of Pattern Slots}
-%  \label{fig:pattern_slots_statuses}
-%\end{figure}
-
-%  Not shown in the figure are the gray pattern
-%  colors resulting from queuing and one-shot queuing, nor is the
-%  number-of-measures number shown.
-%  The colors have meaning (in the Gtkmm user-interface only):
 
    \begin{itemize}
       \item \textbf{Empty background}.  When the default button coloring for
@@ -299,31 +279,13 @@
    The configuration file settings for the the '=' and
    '-' keys can be altering in the \textbf{File / Options / Keyboard} tab.
 
-%  \index{current slot highlight}
-%  When an unarmed (muted) pattern is first brough up for sequence editing (or
-%  event editing), the slot in the main window is now highlighted (Gtkmm only),
-%  using black text on a cyan background, as being the "currently-edited" slot.
-%  (This is the same background used to indicate the original track in an
-%  SMF 0 to SMF 1 conversion.)
-%
-%  If the currently-edited sequence is armed (unmuted), then the highlighting
-%  is reversed (cyan text on a black background), and resembles the
-%  highlighting for an armed sequence (which is white text on a black
-%  background).
-%
-%  If more than one sequence or \textbf{Event Editor}
-%  is brought up, only the slot for
-%  the last one to have focus is hightlighted.
-%  Note that this highlighting also applies to the \textbf{Event Editor}.
-
    \itempar{Paste}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
    Also note that there is no \texttt{Ctrl-V} key for this operation in the
    main window.
 
    \itempar{Song}{pattern!song}
-   The \textbf{Song} items are described later, in reference to
-   \figureref{fig:pattern_window_right_click_song}.
+   The \textbf{Song} items are described later.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}
@@ -332,8 +294,6 @@
    (or \textsl{loop}, or \textsl{sequence}).
    A pattern is shown in the Pattern window as a filled box with the
    following items of information in it.
-   Examine \figureref{fig:pattern_window_main_panel_items}; it shows
-   these items annotated for clarity.
 
    \begin{itemize}
       \item \textbf{Name}.
@@ -366,10 +326,7 @@
 %        Currently, it is easy enough to use the Song Editor for this purpose,
 %        but then one cannot play the patterns in live mode.
       \item \textbf{Sequence Number}.
-         If the option to show the sequencer number is set
-         in the \textbf{File / Options / Keyboard} section
-         (see \sectionref{paragraph:menu_file_options_keyboard},
-         the this number is shown at the bottom left of the pattern slot.
+         This number is shown at the bottom left of the pattern slot.
       \item \textbf{Bus-Channel}.
          \index{pattern!bus-channel}
          This pair of numbers shows the the MIDI buss number, a dash, and
@@ -381,17 +338,14 @@
          such as "4/4" or "3/4".  The first number is the beats-per-measure,
          and the second is the size of the beat, here, a quarter note.
       \item \textbf{Shortcut Key}.
-         If the display of hot-keys is enabled (see
-         \sectionref{paragraph:menu_file_options_keyboard}),
-         then the key noted in the lower-right corner of the pattern can be
-         pressed to toggle the mute/unmute status of that pattern.
+         The key noted in the lower-right corner of the pattern is a "hot-key"
+         that can be pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
       \item \textbf{Progress Cursor}.
          At the left of each box is a vertical line, waiting for playback to
          start so that it can move through the pattern, again and again.
       \item \textbf{Armed}.
-         See \figureref{fig:pattern_window_main_panel_items}; it shows a black
-         and white pattern.  The black color indicates that the pattern is armed
+         Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern
          \index{live mode}
          window in live mode.
@@ -403,20 +357,11 @@
       \item \textbf{Queued}.
          That same pattern also shows that it is queued, which means that it
          will toggle its playing status when the pattern next begins again.
-      \item \textbf{Alternate font}.
-         Later builds of \textsl{Seq66} are now built with a new font.
-         See \figureref{fig:pattern_window_main_panel_items}.  It shows the new
-         font. 
-         The old font can be selected in the "user" configuration file, and is
-         also selected automatically if \textsl{Seq66} is run in the
-         \textsl{legacy} mode.
       \item \textbf{Sequence number}.
          Later builds of \textsl{Seq66} are now built with the option to
          also show the sequence number in the pattern box, if the "show
          sequence numbers" option is on.
-         This option can be set in the "user" configuration file.
-         See \figureref{fig:pattern_window_main_panel_items}.  It shows an
-         example of the sequence number, using the new font.
+         This option can be set in the 'usr' configuration file.
    \end{itemize}
 
    \index{pattern!left click}
@@ -436,32 +381,10 @@
    to allow one to edit it, or perform a few other actions
    specified in the context menu.  Here is that menu:
 
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_menus-gtk-qt-0_96.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menus, Gtkmm and Qt Versions}
-%  \label{fig:pattern_window_right_click}
-%\end{figure}
-
    Here one can choose to edit the pattern, cut and copy the pattern,
    set the MIDI bus/channel, and more.
    One can also clear all performance (song) data for the pattern.
-   Here are the Gtkmm menu entries:
-   
-   \begin{enumber}
-      \item \textbf{Edit...}
-      \item \textbf{Event Edit...}
-      \item \textbf{Cut}
-      \item \textbf{Copy}
-      \item \textbf{Song}
-      \item \textbf{Color}
-      \item \textbf{Disable/Enable Transpose}
-      \item \textbf{MIDI Bus}
-   \end{enumber}
-
-   The Qt menu entries are different and more extensive:
+   Here are the menu entries:
    
    \begin{enumber}
       \item \textbf{New pattern}
@@ -475,19 +398,13 @@
       \item \textbf{Delete pattern}
    \end{enumber}
 
-   See \sectionref{subsubsec:qt_portmidi_qt5_live_slot_menu}.
-   It describes these additional items and how the Qt user-interface works.
-   The next sections describe the Gtkmm-accessible functions.
-
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Edit...}{pattern!edit}
    Edits an existing loop or pattern.
    Clicking this menu entry brings up the \textbf{Pattern Editor}
    so that one can modify the existing pattern by click-dragging new notes in a
-   piano roll user-interface.
-   See \figureref{fig:pattern_edit_window}.
-   Also known as the "sequence editor".
+   piano roll user-interface, known as the "sequence editor".
 
    In addition to right-click and selecting \textbf{Edit...}, the user can
    \index{empty slot double-click}
@@ -510,7 +427,6 @@
    Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
    that shows events as text and numbers, and allows editing them as text and
    numbers.
-   See \figureref{fig:pattern_edit_window}.
 
    \index{event -}
    \index{keys!-}
@@ -538,15 +454,6 @@
    \textbf{Event Editor} is
    active for a given sequence, the right-click sequence-slot menu leaves out
    the \textbf{Edit...} and \textbf{Event Edit...} menu entries.
-   This trimmed menu looks like this:
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-right-click-menu-no-edit.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menu Without Edit Entries}
-%  \label{fig:pattern_window_right_click_no_edit}
-%\end{figure}
 
    The old functionality was to have the \textbf{Edit...} menu entry simply
    raise the existing 
@@ -576,17 +483,8 @@
    live (main) window.
 
    \itempar{Song}{pattern!song}
-   Clicking this menu entry brings up a small popup menu:
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-menu-song.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_15.png}
-%  \includegraphics[scale=0.75]{new/seqmenu_song_menu-0_9_21.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern, Right-Click Menu, Song}
-%  \label{fig:pattern_window_right_click_song}
-%\end{figure}
+   Clicking this menu entry brings up a small popup menu.
+   It contains the following items:
 
    \begin{enumber}
       \item \textbf{Clear This Track's Song Data}
@@ -672,37 +570,15 @@
    For each of these buss items, another pop-up menu allows one
    to specify the MIDI output channel for that buss.
 
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.65]{pattern/pattern-menu-midi-bus.png}
-%  \caption{Existing Pattern, Right-Click Menu, MIDI Output Busses}
-%  \label{fig:pattern_window_right_click_midi_bus}
-% \end{figure}
-
-%\begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.75]{pattern/pattern-menu-midi-bus-port.png}
-%  \includegraphics[scale=0.65]{roll.png}
-%  \caption{Existing Pattern Right-Click Menu, MIDI Output Busses/Channels}
-%  \label{fig:pattern_window_right_click_midi_bus}
-%\end{figure}
-
    \index{--bus option}
    Another way to specify busses is the
-   \texttt{--buss n} command-line option.
+   \texttt{-{}-buss n} command-line option.
    It causes \textsl{every} pattern in the MIDI
    file to be directed to that buss number, and when a new
    sequence/pattern is created.  This option is only
    for convenience in testing.  Save the file, and it will
    have that buss number as part of each track's data, which makes the song
    file less portable, so be careful.
-
-% \begin{figure}[H]
-%  \centering 
-%  \includegraphics[scale=0.65]{pattern/pattern-menu-midi-bus-numbers.png}
-%  \caption{Existing Pattern, Right-Click Menu, MIDI Buss Channels}
-%  \label{fig:pattern_window_right_click_midi_bus_numbers}
-% \end{figure}
 
 \subsubsection{Pattern Keys and Click}
 \label{subsubsec:patterns_pattern_keys_and_clicks}
@@ -747,17 +623,6 @@
    sequence 0.  If preceded by one slash key (\texttt{/}), then sequence 32
    will be toggled.  If preceded by two slash keys, then sequence 64 will be
    toggled.  This features supports using set sizes of 32, 64, and 96 patterns.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{new/patterns_panel_shift_toggle.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Shift-Key Pattern Toggle}
-   \label{fig:pattern_window_shift_key_pattern_toggle}
-\end{figure}
-
-   This figure shows how one presses \texttt{y}, \texttt{/y}, and \texttt{//y}
-   to arm three patterns in this 96-pattern set.
 
    \index{keys![}
    \index{keys!decrement set}
@@ -816,6 +681,8 @@
    Please note the "keep queue" functionality and
    the "one-shot queue" functionality described below.
 
+\begin{comment}
+
 \begin{figure}[H]
    \centering 
 %  \includegraphics[scale=0.75]{pattern/seq24-queueing-coloration.jpg}
@@ -825,11 +692,15 @@
    \label{fig:queueing_coloration}
 \end{figure}
 
-   This figure shows the coloring for queuing in the top two patterns with
+   This figure shows
+
+\end{comment}
+
+   The coloring for queuing provides
    dark grey event backgrounds.  At the end of the pattern, the left top
    pattern will turn off, and the right top pattern will turn on.
-   The bottom two patterns show the light-grey coloring used to show
-   a "one-shot" queue.  The one-shot queue can only turn a pattern on, and it
+   Light-grey coloring is used to show a "one-shot" queue.
+   The one-shot queue can only turn a pattern on, and it
    will force the pattern off after one play.
    Queue also works for mute/unmute pattern sets ("groups"); in this case,
    every sequence will toggle its status after its individual loop ends. 
@@ -843,23 +714,6 @@
    window to disable the menu.
    One can also use normal keys to enable queuing.
    For example, the minus key or the keypad's slash key can be used.
-%  , which makes those keystrokes more
-%  safely available.
-%  The \texttt{Super} key can also be used, if not already used by the desktop
-%  environment.  Also available are some of the function keys, and, if
-%  available, the keypad keys.  These can be configured in
-%  \textbf{File / Options / Keyboard} and
-%  \textbf{File / Options / Ext Keys}.
-%  Of course, if the \texttt{Ctrl} key is used to manage the GUI (e.g.
-%  \texttt{Ctrl-Q} will unceremoniously quit the application), so one will
-%  usually want to change this key to something else in the
-%  \textbf{File / Options / Keyboard / Queue} field.
-%  The \texttt{Super} key (i.e. the \texttt{Mod4} or \texttt{Windows key}) is a
-%  good candidate to substitute for the \texttt{Ctrl} key, unless one has (like
-%  the author)
-%  configured the window manager to use the \texttt{Super} key to manipulate
-%  windows and applications \textsl{(laughter ensues)}.
-%  , with no flickering due to the keyboard repeat rate.
 
    \index{keys!keep queue}
    \index{queue!keep}
@@ -943,13 +797,13 @@
          to solo.
    \end{enumber}
 
-\begin{figure}[H]
-   \centering 
+% \begin{figure}[H]
+%  \centering 
 %  \includegraphics[scale=0.75]{new/queued_replace.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Queued-Replace (Queued-Solo) In Action}
-   \label{fig:queued_replace}
-\end{figure}
+%  \includegraphics[scale=0.65]{roll.png}
+%  \caption{Queued-Replace (Queued-Solo) In Action}
+%  \label{fig:queued_replace}
+% \end{figure}
 
    Before pressing the "keep queue" key, patterns 33 ("\textbf{q}")
    and 34 ("\textbf{a}") are
@@ -1026,17 +880,7 @@
    versions of \textsl{Seq66}, and we have not yet caught up with the
    diagrams. And the Qt user-interface adds more changes.
    Refer to the diagram of the whole window, for now.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.75]{pattern-window-bottom-panel-items.png}
-%  \includegraphics[scale=0.50]{new/pattern-window-bottom-panel.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Bottom Panel Items}
-   \label{fig:pattern_window_bottom_panel_items}
-\end{figure}
-
-   This figure shows a number of new items.
+   It has a number of items:
 
    \begin{enumber}
       \item \textbf{Panic!}
@@ -1076,18 +920,7 @@
    \index{pause}
    The Play button can be used as a Pause button.
    When the Play button is clicked, the button icon changes to a Pause icon:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=1.0]{new/stop_pause_buttons.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, Pause Button}
-   \label{fig:pattern_window_pause_button}
-\end{figure}
-
    A Pause key (by default, the period) is also defined.
-%  (The pause feature can be removed by rebuilding the application
-%  after configuring with the \texttt{--disable-pause} option.)
 
    \itempar{Song Record}{pattern!song record}
    Song-recording in \textsl{Seq66} is adopted from the
@@ -1121,19 +954,7 @@
 
    The precision of the BPM value can be set to 0, 1, or 2
    decimal places, and the increment values for the step size (small)
-   or page size (large) of the BPM spinner can be configured in the "usr" file.
-   See \sectionref{subsec:usr_file_user_midi_settings}; it describes
-   the precision and increment options more fully.
-   The following figure shows the appearance of the BPM field with different
-   precision values:
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.65]{new/bpm_precision_settings.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, BPM Precisions}
-   \label{fig:pattern_window_bpm_precision_settings.png}
-\end{figure}
+   or page size (large) of the BPM spinner can be configured in the 'usr' file.
 
    \itempar{Tap Tempo}{pattern!tap tempo}
    This control is clicked in time with a tune, to set the
@@ -1143,33 +964,8 @@
    label reverts to 0, the BPM value keeps its final value, and the user can
    try tapping the tempo again, or accept the current value.
    Tapping can also be done using the keystroke defined
-   in \textbf{File / Options / Ext Keys / Tap BPM}.
+   in the 'ctrl' file.
    It defaults to the "\texttt{F9}" key.
-
-   \itempar{Log Tempo}{pattern!log tempo}
-   This light-magenta button (Gtkmm only),
-   logs the current tempo at the
-   current playback spot as a Set Tempo meta-event, in the first
-   track (pattern slot \#0) or the alternate tempo track if defined,
-   and only if it is active.  According to the MIDI standard, such events
-   should be present \textsl{only} in the first track,
-   and so \textsl{Seq66} follows this rule, and also makes tempo events
-   officially supported.  They can be edited in the 
-   \textbf{Pattern Editor} or in the
-   \textbf{Event Editor}.
-   The main/global tempo is not written to the tempo track; it is stored in
-   a SeqSpec section.
-   See \sectionref{sec:meta_events}, for more information.
-
-   \itempar{Record Tempo}{pattern!record tempo}
-   This dark-magenta button (Gtkmm only)
-   becomes light-magenta when activated, and turns on
-   the recording of any tempo changes made in the BPM spinner.  If the spinner
-   is held down, a ramping stream of tempo events is created.  If
-   the time exceeds the current length of the tempo track, then the length of
-   the track is automatically increased.
-   These tempo events will not affect playback speed
-   unless the tempo track is unmuted.
 
    \itempar{Keep-Queue Status}{pattern!keep-queue}
    This item is the \textbf{Q} button.
@@ -1181,26 +977,10 @@
    Each of the 32 available screen-sets can be given a name by entering it
    into this field.  This name is saved with the MIDI file.
 
-% This bug is fixed, as of 0.9.18, IIRC
-%
-%  \textbf{Bug:}
-%  \index{bugs!set name has side-effect}
-%  While one is typing in the name of the set in this field, the keystrokes
-%  will affect the panel window, causing playback to start and pattern
-%  boxes to be toggled!
-
    \itempar{Set}{pattern!set number}
    This spin widget selects the current screen-set.  The values in this
    field range from 0 to 31 (less if the set-size is a larger value),
    and default to 0.
-%  Although this field looks editable, it is not.
-
-% This bug is fixed, as of 0.9.18, IIRC
-%
-%  \textbf{Bug:}
-%  \index{bugs!set number has side-effect}
-%  While one is typing in the number of the set in this field, the keystrokes
-%  will affect the panel window as well.
 
    \itempar{Toggle Song Editor}{pattern!toggle song editor}
    Pressing this button toggles the presence on-screen of the
@@ -1209,30 +989,7 @@
 \subsection{Patterns / Multiple Panels}
 \label{subsec:patterns_panel_multiple}
 
-%  If \textsl{Seq66} is built with the \texttt{--enable-multiwid}
-%  \textsl{Seq66} has a "multiwid" option, this defines the 
-%  \texttt{SEQ66\_MULTI\_MAINWID} macro, and allows for
-   \textsl{Seq66} has a "multiwid" option, which
-   allows for
-   \index{multi-wid}
-   multiple live panels showing more than one set at a time.
-   The default is to show the usual single "mainwid".
-   In the Qt user-interface, multiple live panels in separate windows
-   can be opened.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{multiwid/multiwid-mode-3x2.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, with Multiple Panels}
-   \label{fig:pattern_window_bottom_panel_multiple}
-\end{figure}
-
-   In the Gtkmm user-interface, either one spinner for all, or one spinner for
-   each, is available.  The latter is the "independent" mode.
-   Note that it is possible, in this mode, to show the same set in two
-   different "mainwids", but this is not recommended, as there may be minor
-   unavoidable issues with that.
+   Multiple patterns-panels can be created.
 
    Note that Page Up and Page Down keystrokes, as well as their
    configurable counterparts in
@@ -1244,11 +1001,8 @@
    In multi-wid mode, each "mainwid" frame shows the corresponding set number
    and, if present, the set notepad text for each "mainwid" set.
 
-   See 
-   \sectionref{sec:man_page}, for how the
-   \texttt{-o wid=3x2,i} option can be used to set this mode, and
-   \sectionref{subsec:usr_file_user_interface_settings}, for
-   how these settings can be made permanent in the "usr" file.
+   The \texttt{-o wid=3x2,i} option can be used to set this mode.
+   These settings can be made permanent in the 'usr' file.
    In that file, the options modified are \texttt{block\_rows} and
    \texttt{block\_columns}.
 
@@ -1267,21 +1021,10 @@
    set, and there are still places where that is true.  Thus,
    consider this option to be experimental.
 
-   Also see 
-   \sectionref{sec:man_page}, for how the
-   \texttt{-o sets=8x8} option can be used to set this mode, and
-   \sectionref{subsec:usr_file_user_interface_settings}, for
-   how these settings can be made permanent in the "usr" file.
+   The \texttt{-o sets=8x8} option can be used to set this mode.
+   These settings can be made permanent in the 'usr' file.
    In that file, the options modified are \texttt{mainwnd\_rows} and
    \texttt{mainwnd\_cols}.
-
-\begin{figure}[H]
-   \centering 
-%  \includegraphics[scale=0.50]{multiwid/variset-mode-8x8.png}
-   \includegraphics[scale=0.65]{roll.png}
-   \caption{Patterns Panel, 8 x 8 Layout}
-   \label{fig:pattern_window_bottom_panel_variset}
-\end{figure}
 
    Generally, it is recommend to stick with the 4x8 (32 patterns/set),
    8x8 (64 patterns/set), and 8x12 (96 patterns/set).  This works best with the

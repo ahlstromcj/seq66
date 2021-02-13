@@ -227,10 +227,6 @@ mutegroup::armed (int index) const
     return result;
 }
 
-/**
- *
- */
-
 void
 mutegroup::armed (int index, bool flag)
 {

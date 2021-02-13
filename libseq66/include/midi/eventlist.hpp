@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-01-10
+ * \updates       2021-02-02
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -77,6 +77,7 @@ const int c_num_keys = 128;
 
 class eventlist
 {
+    friend class editable_events;       // access to verify_and_link()
     friend class midifile;              // access to print()
     friend class sequence;              // any_selected_notes()
 
@@ -218,6 +219,8 @@ public:
     {
         return int(m_events.size());
     }
+
+    int count_to_link (const event & source);
 
     midipulse get_max_timestamp () const;
 

@@ -1,25 +1,26 @@
-readme.txt for Seq66 0.91.5
+readme.txt for Seq66 0.92.0
 Chris Ahlstrom
-2015-09-10 to 2020-12-28
+2015-09-10 to 2021-02-13
 
 Seq66 is a refactoring of a reboot of seq24, extending it with new features
 and bug fixes, and incorporation of "Modern C++" (C++11 or C++14).  It is a
 "live performance" sequencer, with the musician creating and controlling a
 number of pattern loops.
 
-An extensive manual for the original is found at:
+An extensive manual for this application is found in the "data" subdirectory
+of the project directory, which can be download via Git.:
 
-    https://github.com/ahlstromcj/sequencer64-doc.git
+    https://github.com/ahlstromcj/seq66.git
 
-It covers most of what seq66 can do, and will have to suffice for now.  We
-will be working on the new manual, which will be included in the source-code
-project.
+It covers most of what seq66 can do, and will have to suffice for now.
     
 Prebuilt Debian packages, Windows installers, and source tarballs will
 (eventually) be available here, in the project directory for Sequencer64
 packages:
 
     https://github.com/ahlstromcj/sequencer64-packages.git
+
+See the seq66/0.92.0 directory for the Windows installer.
 
 Windows support:
 

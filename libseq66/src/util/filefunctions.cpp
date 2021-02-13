@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-11-06
+ * \updates       2021-02-04
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -518,8 +518,8 @@ file_executable (const std::string & filename)
 }
 
 /**
- *    Checks a file to see if it is a directory.  This function is also used in
- *    the function of the same name in fileutilities.cpp.
+ *    Checks a file to see if it is a directory.  This function is also used
+ *    in the function of the same name in fileutilities.cpp.
  *
  * \param filename
  *    Provides the name of the directory to be checked.
@@ -1178,11 +1178,19 @@ get_full_path (const std::string & path)
     std::string result;
     if (file_name_good(path))
     {
-#if defined SEQ66_PLATFORM_WINDOWS      /* _MSVC not defined in Qt          */
-        char temp[256];
-        char * resolved_path = _fullpath(temp, path.c_str(), 256);
+        char * resolved_path = NULL;            /* what a relic!            */
+
+#if defined SEQ66_PLATFORM_WINDOWS              /* _MSVC not defined in Qt  */
+        bool pathneeded = path[1] != ':';       /* not a robust check!      */
+        if (pathneeded)
+        {
+            char temp[256];
+            resolved_path = _fullpath(temp, path.c_str(), 256);
+        }
 #else
-        char * resolved_path = realpath(path.c_str(), NULL);
+        bool pathneeded = path[0] != '/';       /* not a robust check!      */
+        if (pathneeded)
+            resolved_path = realpath(path.c_str(), NULL);
 #endif
         if (not_NULL(resolved_path))
         {
@@ -1345,10 +1353,6 @@ clean_path (const std::string & path, bool to_unix)
     return normalize_path(result, to_unix, true);       /* an added slash   */
 }
 
-/**
- *
- */
-
 std::string
 append_file
 (
@@ -1366,10 +1370,6 @@ append_file
     result += filename;
     return normalize_path(result, to_unix, false);
 }
-
-/**
- *
- */
 
 std::string
 append_path
@@ -1497,10 +1497,6 @@ filename_split
 #endif
     return result;
 }
-
-/**
- *
- */
 
 std::string
 file_path_set (const std::string & fullpath, const std::string & newpath)

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-13
+ * \updates       2021-02-10
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -59,7 +59,6 @@
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
- *
  */
 
 #include <QErrorMessage>
@@ -76,6 +75,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
+#include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
 #include "qliveframeex.hpp"
 #include "qmutemaster.hpp"              /* shows a map of mute-groups       */
@@ -138,16 +138,6 @@
 namespace seq66
 {
 
-/*
- *  For testing only.
- */
-
-#if defined SEQ66_PLATFORM_DEBUG
-static bool s_use_test_button = true;
-#else
-static bool s_use_test_button = false;
-#endif
-
 /**
  *  The default name of the current (if empty) tune.  Also refere to the
  *  function rc().session_midi_filename().
@@ -183,26 +173,25 @@ static const int s_beat_length_count    =  5;
 
 static const int s_ppqn_list [] =
 {
-    -1,         /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
-    0,          /* "File" (SEQ66_USE_FILE_PPQN)                             */
-    32,
-    48,
-    96,
-    192,
-    384,
-    768,
-    960,
-    1920,
-    3840,
-    7680,
-    9600,
+       -1,      /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
+        0,      /* "File" (SEQ66_USE_FILE_PPQN)                             */
+       32,
+       48,
+       96,
+      192,
+      384,
+      768,
+      960,
+     1920,
+     3840,
+     7680,
+     9600,
     19200,
-    -2          /* terminator   */
+       -2       /* terminator   */
 };
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
- *
  *  If no screen was found, return the primary screen's geometry
  */
 
@@ -273,6 +262,7 @@ qsmainwnd::qsmainwnd
     m_use_nsm               (usensm),           /* use_nsm() accessor       */
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
+    m_previous_tick         (0),
     m_open_editors          (),
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
@@ -443,7 +433,7 @@ qsmainwnd::qsmainwnd
     (
         this, tr("Import MIDI file to Current Set..."),
         rc().last_used_dir().c_str(),
-        tr("MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)")
+        "MIDI files (*.midi *.mid);;WRK files (*.wrk);;All files (*)"
     );
 
     if (use_nsm())
@@ -467,6 +457,11 @@ qsmainwnd::qsmainwnd
     (
         ui->actionBuildInfo, SIGNAL(triggered(bool)),
         this, SLOT(showqsbuildinfo())
+    );
+    connect
+    (
+        ui->actionSongSummary, SIGNAL(triggered(bool)),
+        this, SLOT(slot_summary_save())
     );
 
     /*
@@ -732,7 +727,7 @@ qsmainwnd::qsmainwnd
     connect(ui->btnPanic, SIGNAL(clicked(bool)), this, SLOT(panic()));
     qt_set_icon(panic_xpm, ui->btnPanic);
 
-    QString bname = perf().bank_name(0 /*m_bank_id*/).c_str();
+    QString bname = perf().bank_name(0).c_str();
     ui->txtBankName->setText(bname);
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
@@ -789,7 +784,7 @@ qsmainwnd::qsmainwnd
     load_mute_master();
     load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
-    ui->tabWidget->setTabEnabled(Tab_Events, false);
+    ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
 
 #if defined SEQ66_DISABLE_SESSION_TAB
 
@@ -816,7 +811,7 @@ qsmainwnd::qsmainwnd
      */
 
 
-#if defined SEQ66_PLATFORM_DEBUG    // _SESSION_IMPORT
+#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
     ui->testButton->setToolTip("Developer test of MIDI 'Import into Session'.");
     ui->testButton->setEnabled(true);
     connect
@@ -851,6 +846,21 @@ qsmainwnd::qsmainwnd
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
+
+#if defined SEQ66_PORTMIDI_SUPPORT
+    ui->alsaJackButton->setText("PortMidi");
+    ui->jackTransportButton->hide();
+#else
+    QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
+    QString jtrans = "None";
+    if (cb_perf().is_jack_master())
+        jtrans = "Master";
+    else if (cb_perf().is_jack_slave())
+        jtrans = "Slave";
+
+    ui->alsaJackButton->setText(midiengine);
+    ui->jackTransportButton->setText(jtrans);
+#endif
 
     show();
     show_song_mode(m_song_mode);
@@ -891,11 +901,8 @@ qsmainwnd::attach_session (smanager * sp)   // UNNECESSARY?
         m_session_mgr_ptr = sp;
 
 #if defined SEQ66_PLATFORM_DEBUG_CREATE_PROJECT_TEST
-        if (s_use_test_button)
-        {
-            std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
-            session()->create_project(path);
-        }
+        std::string path("/home/ahlstrom/NSM Sessions/verbose/seq66.nSYPL");
+        session()->create_project(path);
 #endif
     }
     else
@@ -1035,6 +1042,22 @@ qsmainwnd::edit_bpm ()
     perf().set_beats_per_minute(bpm);
 }
 
+void
+qsmainwnd::slot_summary_save ()
+{
+    std::string fname = rc().midi_filename();       /* a full pathspec  */
+    if (fname.empty())
+    {
+        // nothing to do yet
+    }
+    else
+    {
+        fname = file_extension_set(fname, ".text");
+        if (show_text_file_dialog(this, fname))
+            write_song_summary(perf(), fname);
+    }
+}
+
 /**
  *  A test of playlist saving.
  */
@@ -1044,11 +1067,8 @@ qsmainwnd::edit_bpm ()
 void
 qsmainwnd::test_playlist_save ()
 {
-    if (s_use_test_button)
-    {
-        (void) perf().save_playlist();
-        (void) perf().copy_playlist("~/tmp/playlists");
-    }
+    (void) perf().save_playlist();
+    (void) perf().copy_playlist("~/tmp/playlists");
 }
 
 #endif
@@ -1062,10 +1082,7 @@ qsmainwnd::test_playlist_save ()
 void
 qsmainwnd::test_notemap_save ()
 {
-    if (s_use_test_button)
-    {
-        (void) perf().save_note_mapper();
-    }
+    (void) perf().save_note_mapper();
 }
 
 #endif
@@ -1085,7 +1102,7 @@ qsmainwnd::test_notemap_save ()
 void
 qsmainwnd::import_into_session ()
 {
-    if (use_nsm() || s_use_test_button)
+    if (use_nsm())
     {
         std::string selectedfile;
         (void) load_into_session(selectedfile);
@@ -1116,7 +1133,7 @@ qsmainwnd::load_into_session (const std::string & selectedfile)
 
             msg += rc().midi_filename();
             show_message_box(msg);
-            m_is_title_dirty = false;           ////////////// NEW
+            m_is_title_dirty = false;
             result = true;
         }
         else
@@ -1157,31 +1174,133 @@ qsmainwnd::show_open_file_dialog (std::string & selectedfile)
 
 /**
  *  Opens the dialog to request a playlist.  This action should be allowed
- *  in an NSM session.
+ *  in an NSM session.  This is a slot, which calls a member function that
+ *  callers can call directly and get a boolean status, unlike this function.
  */
 
 void
 qsmainwnd::show_open_list_dialog ()
 {
     if (check())
+        (void) open_list_dialog();
+}
+
+bool
+qsmainwnd::open_list_dialog ()
+{
+    std::string fname;
+    bool result = show_playlist_dialog(this, fname, OpeningFile);
+    if (result)
     {
-        std::string fname;
-        bool ok = show_open_playlist_dialog(this, fname);
-        if (ok)
+        result = not_nullptr(m_playlist_frame);
+        if (result)
         {
-            bool playlistmode = perf().open_playlist(fname, rc().verbose());
-            if (playlistmode)
-            {
-                playlistmode = perf().open_current_song();
-                m_playlist_frame->load_playlist();  /* update Playlist tab  */
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                perf().playlist_show();
-#endif
-            }
-            else
+            result = m_playlist_frame->load_playlist(fname);
+            if (! result)
                 show_message_box(perf().playlist_error_message());
         }
     }
+    return result;
+}
+
+/**
+ *  Opens the dialog to save a playlist file.  This action should be allowed
+ *  in an NSM session, but defaults to the configuration directory.
+ */
+
+void
+qsmainwnd::show_save_list_dialog ()
+{
+    if (check())
+        (void) save_list_dialog();
+}
+
+bool
+qsmainwnd::save_list_dialog ()
+{
+    std::string fname;
+    bool result = show_playlist_dialog(this, fname, SavingFile);
+    if (result)
+    {
+        fname = file_extension_set(fname, ".playlist");
+        result = perf().save_playlist(fname);
+        if (result)
+        {
+            // performer will handle this: rc().playlist_filename(fname);
+        }
+        else
+            show_message_box(perf().playlist_error_message());
+    }
+    return result;
+}
+
+/**
+ *  Opens the dialog to request a mutegroups file.
+ */
+
+void
+qsmainwnd::show_open_mutes_dialog ()
+{
+    (void) open_mutes_dialog();
+}
+
+bool
+qsmainwnd::open_mutes_dialog ()
+{
+    std::string fname;
+    bool result = show_file_dialog
+    (
+        this, fname, "Open mute-groups file",
+        "Mutes-groups (*.mutes);;All (*)", OpeningFile, ConfigFile
+    );
+    if (result)
+    {
+        result = not_nullptr(m_mute_master);
+        if (result)
+        {
+            result = m_mute_master->load_mutegroups(fname);
+            if (! result)
+                show_message_box("Mute-groups loading error");  // TODO
+        }
+        else
+        {
+            // what to do?
+        }
+    }
+    return result;
+}
+
+void
+qsmainwnd::show_save_mutes_dialog ()
+{
+    if (check())
+        (void) save_mutes_dialog();
+}
+
+bool
+qsmainwnd::save_mutes_dialog (const std::string & basename)
+{
+    std::string fname = basename;
+    bool result = show_file_dialog
+    (
+        this, fname, "Save mute-groups file",
+        "Mutes-groups (*.mutes);;All (*)", SavingFile, ConfigFile, ".mutes"
+    );
+    if (result)
+    {
+        result = not_nullptr(m_mute_master);
+        if (result)
+        {
+            result = m_mute_master->save_mutegroups(fname);
+            if (! result)
+                show_message_box("Mute-groups saving error");  // TODO
+        }
+        else
+        {
+            // what to do?
+        }
+    }
+    return result;
 }
 
 /**
@@ -1400,31 +1519,36 @@ qsmainwnd::refresh ()
         m_song_mode = perf().song_mode();
         show_song_mode(m_song_mode);
     }
-    if (perf().is_pattern_playing())
+
+    midipulse tick = perf().get_tick();
+    if (tick != m_previous_tick)
     {
         /*
          * Calculate the current time, and display it.  Update beat indicator.
          */
 
-        midipulse tick = perf().get_tick();
-        midibpm bpm = perf().bpm();
-        int ppqn = perf().ppqn();
-        if (m_tick_time_as_bbt)
-        {
-            midi_timing mt
-            (
-                bpm, perf().get_beats_per_bar(), perf().get_beat_width(), ppqn
-            );
-            std::string t = pulses_to_measurestring(tick, mt);
-            ui->label_HMS->setText(t.c_str());
-        }
-        else
-        {
-            std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
-            ui->label_HMS->setText(t.c_str());
-        }
+        m_previous_tick = tick;
         if (not_nullptr(m_beat_ind))
+        {
+            midibpm bpm = perf().bpm();
+            int ppqn = perf().ppqn();
+            if (m_tick_time_as_bbt)
+            {
+                midi_timing mt
+                (
+                    bpm, perf().get_beats_per_bar(),
+                    perf().get_beat_width(), ppqn
+                );
+                std::string t = pulses_to_measurestring(tick, mt);
+                ui->label_HMS->setText(t.c_str());
+            }
+            else
+            {
+                std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
+                ui->label_HMS->setText(t.c_str());
+            }
             m_beat_ind->update();
+        }
     }
     else
     {
@@ -1446,6 +1570,8 @@ qsmainwnd::refresh ()
                     m_live_frame->set_playlist_name(perf().playlist_song());
                 else
                     m_live_frame->set_playlist_name(rc().midi_filename());
+
+                    /* ^^^^ ???????????????????????????? */
             }
             m_is_title_dirty = false;
             update_window_title();
@@ -1509,20 +1635,18 @@ qsmainwnd::check ()
 std::string
 qsmainwnd::filename_prompt (const std::string & prompt)
 {
-    std::string result;
-    QString file = QFileDialog::getSaveFileName
+    std::string result = rc().last_used_dir();
+    bool ok = show_file_dialog
     (
-        this, tr(prompt.c_str()), rc().last_used_dir().c_str(),
-        tr("MIDI files (*.midi *.mid);;All files (*)")
+        this, result, prompt,
+        "MIDI files (*.midi *.mid);;All files (*)", SavingFile, NormalFile,
+        ".midi"
     );
-    if (! file.isEmpty())
+    if (ok)
     {
-        QFileInfo fileInfo(file);
-        QString suffix = fileInfo.completeSuffix();
-        if ((suffix != "midi") && (suffix != "mid"))
-            file += ".midi";
-
-        result = file.toStdString();
+//      std::string ext = file_extension(result);
+//      if (ext.empty())
+//          result += ".midi";
     }
     return result;
 }
@@ -1905,8 +2029,18 @@ qsmainwnd::showqsbuildinfo ()
 void
 qsmainwnd::load_editor (int seqid)
 {
-    auto ei = m_open_editors.find(seqid);
-    if (ei == m_open_editors.end())                         /* 1 editor/seq */
+    seq::pointer seq = perf().get_sequence(seqid);
+    bool ok = bool(seq);
+
+#if defined DISALLOW_EDITOR_CONFLICT
+    if (ok)
+    {
+        auto ei = m_open_editors.find(seqid);
+        ok = ei == m_open_editors.end();                    /* 1 editor/seq */
+    }
+#endif
+
+    if (ok)
     {
         ui->EditTabLayout->removeWidget(m_edit_frame);      /* no ptr check */
         if (not_nullptr(m_edit_frame))
@@ -1928,8 +2062,18 @@ qsmainwnd::load_editor (int seqid)
 void
 qsmainwnd::load_event_editor (int seqid)
 {
-    auto ei = m_open_editors.find(seqid);
-    if (ei == m_open_editors.end())                         /* 1 editor/seq */
+    seq::pointer seq = perf().get_sequence(seqid);
+    bool ok = bool(seq);
+
+#if defined DISALLOW_EDITOR_CONFLICT
+    if (ok)
+    {
+        auto ei = m_open_editors.find(seqid);
+        ok = ei == m_open_editors.end();                    /* 1 editor/seq */
+    }
+#endif
+
+    if (ok)
     {
         if (make_event_frame(seqid))
         {
@@ -1943,17 +2087,27 @@ qsmainwnd::load_event_editor (int seqid)
 void
 qsmainwnd::load_set_master ()
 {
-    qsetmaster * qsm = new qsetmaster(perf(), true, nullptr, ui->SetMasterTab);
+    qsetmaster * qsm = new (std::nothrow)
+        qsetmaster(perf(), true, this, ui->SetMasterTab);
+
     if (not_nullptr(qsm))
+    {
         ui->SetsTabLayout->addWidget(qsm);
+        m_set_master = qsm;
+    }
 }
 
 void
 qsmainwnd::load_mute_master ()
 {
-    qmutemaster * qsm = new qmutemaster(perf(), nullptr, ui->MuteMasterTab);
+    qmutemaster * qsm = new (std::nothrow)
+        qmutemaster(perf(), this, ui->MuteMasterTab);
+
     if (not_nullptr(qsm))
+    {
         ui->MutesTabLayout->addWidget(qsm);
+        m_mute_master = qsm;
+    }
 }
 
 /**
@@ -1986,7 +2140,9 @@ qsmainwnd::load_qseqedit (int seqid)
 
             if (perf().is_seq_active(seqid))
             {
-                qseqeditex * ex = new qseqeditex(perf(), seqid, this);
+                qseqeditex * ex = new (std::nothrow)
+                    qseqeditex(perf(), seqid, this);
+
                 if (not_nullptr(ex))
                 {
                     ex->show();
@@ -2036,6 +2192,18 @@ qsmainwnd::remove_editor (int seqno)
 void
 qsmainwnd::remove_all_editors ()
 {
+    /*
+     * New clause ca 2021-01-31.  Helps with File / New and Event Editor
+     * interactions.
+     */
+
+    if (not_nullptr(m_event_frame))
+    {
+        delete m_event_frame;
+        m_event_frame = nullptr;
+        ui->EventTabLayout->removeWidget(m_event_frame);
+        ui->tabWidget->setTabEnabled(Tab_Events, false);
+    }
     for (auto ei = m_open_editors.begin(); ei != m_open_editors.end(); /*++ei*/)
     {
         qseqeditex * qep = ei->second;      /* save the pointer             */
@@ -2055,7 +2223,7 @@ qsmainwnd::load_qperfedit (bool /*on*/)
 {
     if (is_nullptr(m_perfedit))
     {
-        qperfeditex * ex = new qperfeditex(perf(), this);
+        qperfeditex * ex = new (std::nothrow) qperfeditex(perf(), this);
         if (not_nullptr(ex))
         {
             m_perfedit = ex;
@@ -2142,7 +2310,9 @@ qsmainwnd::load_live_frame (int ssnum)
         auto ei = m_open_live_frames.find(ssnum);
         if (ei == m_open_live_frames.end())
         {
-            qliveframeex * ex = new qliveframeex(perf(), ssnum, this);
+            qliveframeex * ex = new (std::nothrow)
+                qliveframeex(perf(), ssnum, this);
+
             if (not_nullptr(ex))
             {
                 ex->show();
@@ -2358,10 +2528,15 @@ qsmainwnd::tabWidgetClicked (int newindex)
                 seq::pointer seq = perf().get_sequence(seqid);
                 if (seq)
                 {
-                    m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
-                    ui->EditTabLayout->addWidget(m_edit_frame);
-                    m_edit_frame->show();
-                    update();
+                    m_edit_frame = new (std::nothrow)
+                        qseqeditframe(perf(), seqid, ui->EditTab);
+
+                    if (not_nullptr(m_edit_frame))
+                    {
+                        ui->EditTabLayout->addWidget(m_edit_frame);
+                        m_edit_frame->show();
+                        update();
+                    }
                 }
             }
         }
@@ -2400,7 +2575,6 @@ qsmainwnd::tabWidgetClicked (int newindex)
 /**
  *  First, make sure the sequence exists.  Consider creating it if it does not
  *  exist.
- *
  */
 
 bool
@@ -2415,9 +2589,14 @@ qsmainwnd::make_event_frame (int seqid)
             ui->EventTabLayout->removeWidget(m_event_frame);
             delete m_event_frame;
         }
-        m_event_frame = new qseqeventframe(perf(), seqid, ui->EventTab);
-        ui->EventTabLayout->addWidget(m_event_frame);
-        m_event_frame->show();
+        m_event_frame = new (std::nothrow)
+            qseqeventframe(perf(), seqid, ui->EventTab);
+
+        if (not_nullptr(m_event_frame))
+        {
+            ui->EventTabLayout->addWidget(m_event_frame);
+            m_event_frame->show();
+        }
     }
     return result;
 }
@@ -3250,6 +3429,13 @@ qsmainwnd::on_set_change (screenset::number setno, performer::change ctype)
             m_live_frame->update_bank();        /* updates current bank */
     }
     return result;
+}
+
+bool
+qsmainwnd::on_resolution_change (int /*ppqn*/, midibpm bpm)
+{
+    ui->spinBpm->setValue(bpm);
+    return true;
 }
 
 /**

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-26
- * \updates       2020-12-03
+ * \updates       2021-02-09
  * \license       GNU GPLv2 or above
  *
  *  See the playlistfile class for information on the file format.
@@ -498,10 +498,6 @@ playlist::open_current_song ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_next_list (bool opensong, bool loading)
 {
@@ -514,10 +510,6 @@ playlist::open_next_list (bool opensong, bool loading)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_previous_list (bool opensong)
@@ -532,10 +524,6 @@ playlist::open_previous_list (bool opensong)
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_select_list (int index, bool opensong)
 {
@@ -547,10 +535,6 @@ playlist::open_select_list (int index, bool opensong)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_select_list_by_midi (int ctrl, bool opensong)
@@ -565,10 +549,6 @@ playlist::open_select_list_by_midi (int ctrl, bool opensong)
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::open_next_song (bool opensong)
 {
@@ -581,10 +561,6 @@ playlist::open_next_song (bool opensong)
     }
     return result;
 }
-
-/**
- *
- */
 
 bool
 playlist::open_previous_song (bool opensong)
@@ -634,6 +610,9 @@ playlist::clear ()
 /**
  *  Resets to the first play-list and the first-song in that playlist.
  *
+ * \param listindex
+ *      Set the current list to this value, which defaults to 0.
+ *
  * \param clearit
  *      If true, clear the playlist no matter what. Then false is returned.
  *
@@ -643,7 +622,7 @@ playlist::clear ()
  */
 
 bool
-playlist::reset_list (bool clearit)
+playlist::reset_list (int listindex, bool clearit)
 {
     bool result = false;
     if (clearit)
@@ -655,7 +634,16 @@ playlist::reset_list (bool clearit)
         result = ! m_play_lists.empty();
         if (result)
         {
-            m_current_list = m_play_lists.begin();
+            int index = 0;
+            for (auto p = m_play_lists.begin(); p != m_play_lists.end(); ++p)
+            {
+                if (index == listindex)
+                {
+                    m_current_list = p;
+                    break;
+                }
+                ++index;
+            }
             result = select_song(0);
         }
     }
@@ -922,6 +910,27 @@ playlist::add_list
     return result;
 }
 
+bool
+playlist::modify_list
+(
+    int index,
+    int midinumber,
+    const std::string & name,
+    const std::string & directory
+)
+{
+    bool result = m_current_list != m_play_lists.end();
+    if (result)
+    {
+        play_list_t & plist = m_current_list->second;
+        plist.ls_index = index;             /* ordinal value in list table  */
+        plist.ls_midi_number = midinumber;  /* MIDI control number to use   */
+        plist.ls_list_name = name;
+        plist.ls_file_directory = directory;
+    }
+    return result;
+}
+
 /**
  *  This function removes a playlist at the given index.  The index is an
  *  ordinal, not a key, therefore we have to iterate through the whole list
@@ -970,9 +979,9 @@ playlist::remove_list (int index)
 void
 playlist::reorder_play_list ()
 {
-    int index = 0;
     auto minimum = m_play_lists.begin();
     auto maximum = m_play_lists.end();
+    int index = 0;
     for (auto pci = minimum; pci != maximum; ++pci, ++index)
     {
         play_list_t & p = pci->second;
@@ -1006,7 +1015,6 @@ playlist::song_index () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1023,7 +1031,6 @@ playlist::file_directory () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1041,7 +1048,6 @@ playlist::song_directory () const
 }
 
 /**
- *
  *  Used to return m_current_list->second.ls_file_directory.
  */
 
@@ -1109,10 +1115,6 @@ playlist::song_filename () const
     }
     return result;
 }
-
-/**
- *
- */
 
 void
 playlist::midi_base_directory (const std::string & basedir)
@@ -1296,10 +1298,6 @@ playlist::next_song ()
     return result;
 }
 
-/**
- *
- */
-
 bool
 playlist::previous_song ()
 {
@@ -1342,9 +1340,8 @@ playlist::add_song (song_spec_t & sspec)
     if (result)
     {
         play_list_t & plist = m_current_list->second;
-        result = add_song(plist, sspec);
+        result = add_song(plist, sspec);    /* ultimately reorders the list */
     }
-
     return result;
 }
 
@@ -1368,14 +1365,12 @@ playlist::add_song (song_list & slist, song_spec_t & sspec)
     bool result = false;
     int count = int(slist.size());
     int songnumber = sspec.ss_midi_number;
-
-    /*
-     * std::pair<int, song_spec_t>
-     */
-
-    auto s = std::make_pair(songnumber, sspec);
+    auto s = std::make_pair(songnumber, sspec); /* std::pair<int, song_spec_t> */
     slist.insert(s);
     result = int(slist.size()) == count + 1;
+    if (result)
+        reorder_song_list(slist);
+
     return result;
 }
 
@@ -1396,8 +1391,18 @@ playlist::add_song (song_list & slist, song_spec_t & sspec)
 bool
 playlist::add_song (play_list_t & plist, song_spec_t & sspec)
 {
+    std::string listdir = plist.ls_file_directory;
+    if (! listdir.empty())
+    {
+        std::string songdir = sspec.ss_song_directory;
+        if (songdir.empty())
+            sspec.ss_embedded_song_directory = false;
+        else
+            sspec.ss_embedded_song_directory = songdir != listdir;
+    }
+
     song_list & sl = plist.ls_song_list;
-    bool result = add_song(sl, sspec);
+    bool result = add_song(sl, sspec);      /* calls reorder_song_list()    */
     if (result)
         ++plist.ls_song_count;
 
@@ -1417,8 +1422,7 @@ playlist::add_song (play_list_t & plist, song_spec_t & sspec)
 bool
 playlist::add_song
 (
-    int index,
-    int midinumber,
+    int index, int midinumber,
     const std::string & name,
     const std::string & directory
 )
@@ -1436,12 +1440,13 @@ playlist::add_song
         {
             int indexmax;
             last_song_indices(slist, indexmax, midinumber);
-            if (do_ctrl_lookup(index))     /* handle -1 via lookup         */
+            if (do_ctrl_lookup(index))                  /* do -1 via lookup */
                 index = indexmax;
         }
         sspec.ss_index = index;
         sspec.ss_midi_number = midinumber;
         sspec.ss_song_directory = directory;
+        sspec.ss_embedded_song_directory = false;       /* adjusted later   */
         sspec.ss_filename = name;
 
         /*
@@ -1450,22 +1455,11 @@ playlist::add_song
          * add_song().
          */
 
-        result = add_song(plist, sspec);        /* add song to playlist */
-        if (result)
+        result = add_song(plist, sspec);        /* add song, reorder list   */
+        if (! result)
         {
-            reorder_song_list(slist);
-        }
-        else
-        {
-            /*
-             * Remove the current entry and add this one.
-             */
-
             if (remove_song(index))
-            {
-                result = add_song(sspec);
-                reorder_song_list(slist);
-            }
+                result = add_song(sspec);       /* add song, reorder list   */
         }
     }
     return result;
@@ -1493,6 +1487,40 @@ playlist::add_song (const std::string & fullpath)
         {
             std::string dir;
             result = add_song(index, midinumber, fullpath, dir);
+        }
+    }
+    return result;
+}
+
+bool
+playlist::modify_song
+(
+    int index, int midinumber,
+    const std::string & name,
+    const std::string & directory
+)
+{
+    bool result = ctrl_is_valid(midinumber);
+    if (result)
+        result = m_current_list != m_play_lists.end();
+
+    if (result)
+    {
+        play_list_t & plist = m_current_list->second;
+        song_list & slist = plist.ls_song_list;
+        if (m_current_song != slist.end())
+        {
+            /*
+             * We must make a copy of the original, which gets deleted.
+             */
+
+            song_spec_t sspec = m_current_song->second;
+            sspec.ss_index = index;
+            sspec.ss_midi_number = midinumber;
+            sspec.ss_song_directory = directory;
+            sspec.ss_filename = name;
+            if (remove_song(index))
+                result = add_song(sspec);       /* add song, reorder list   */
         }
     }
     return result;
@@ -1546,17 +1574,15 @@ playlist::remove_song (int index)
         int count = 0;
         play_list_t & plist = m_current_list->second;
         song_list & slist = plist.ls_song_list;
-        for (auto sci = slist.begin(); sci != slist.end(); ++count)
+        for (auto sci = slist.begin(); sci != slist.end(); ++sci, ++count)
         {
             if (count == index)
             {
-                sci = slist.erase(sci);
+                (void) slist.erase(sci);
                 --plist.ls_song_count;
                 result = true;
                 break;
             }
-            else
-                ++sci;
         }
         if (result)
             reorder_song_list(slist);

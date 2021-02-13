@@ -29,13 +29,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-12-06
+ * \updates       2021-01-31
  * \license       GNU GPLv2 or above
  *
- *  This module also creates a small structure for managing sequence variables,
- *  to save on a bunch of arrays.  It manages screen-sets and mute-groups.  This
- *  module also supports the saved 'armed' statuses and the current states of
- *  the tracks or sets.
+ *  This module also creates a small structure for managing sequence
+ *  variables, to save on a bunch of arrays.  It manages screen-sets and
+ *  mute-groups.  This module also supports the saved 'armed' statuses and the
+ *  current states of the tracks or sets.
  */
 
 #include <functional>                   /* std::function, function objects  */
@@ -55,8 +55,8 @@ class playset;
 
 /**
  *  Holds the various statuses, including the pointer, for a single sequence
- *  (also known as a loop or pattern).  This small class consolidates data once
- *  held in separate arrays.
+ *  (also known as a loop or pattern).  This small class consolidates data
+ *  once held in separate arrays.
  */
 
 class screenset
@@ -110,8 +110,8 @@ private:
 private:
 
     /**
-     *  Indicates that no set number has been assigned.  All valid set numbers are
-     *  greater than 0.
+     *  Indicates that no set number has been assigned.  All valid set numbers
+     *  are greater than 0.
      */
 
     static const int sm_number_none = (-1);
@@ -206,9 +206,9 @@ public:
     screenset & operator = (screenset &&) = default;
     ~screenset () = default;
 
-    static number limit ()                              /* seq::limit() */
+    static number limit ()
     {
-        return SEQ66_SEQUENCE_LIMIT;                    /* 0x0800       */
+        return 2048;
     }
 
     static number none ()
