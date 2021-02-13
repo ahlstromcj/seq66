@@ -1,6 +1,6 @@
 readme.txt for Seq66 0.92.0
 Chris Ahlstrom
-2015-09-10 to 2021-02-10
+2015-09-10 to 2021-02-13
 
 Seq66 is a refactoring of a reboot of seq24, extending it with new features
 and bug fixes, and incorporation of "Modern C++" (C++11 or C++14).  It is a
@@ -19,6 +19,8 @@ Prebuilt Debian packages, Windows installers, and source tarballs will
 packages:
 
     https://github.com/ahlstromcj/sequencer64-packages.git
+
+See the seq66/0.92.0 directory for the Windows installer.
 
 Windows support:
 

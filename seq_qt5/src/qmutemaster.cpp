@@ -905,8 +905,8 @@ qmutemaster::create_pattern_buttons ()
 }
 
 /**
- *  Updates the top buttons that indicate the mute-groups present during this
- *  run of the current MIDI file.
+ *  Updates the bottom buttons that indicate the mute-groups present during
+ *  this run of the current MIDI file.
  *
  * \todo
  *      -   Calculate the pattern rows and columns the proper way.
@@ -921,6 +921,7 @@ qmutemaster::update_pattern_buttons (enabling tomodify)
     midibooleans mutes = cb_perf().get_mutes(current_group());
     if (! mutes.empty())
     {
+        m_pattern_mutes = mutes;
         for (int row = 0; row < pattern_rows; ++row)
         {
             for (int column = 0; column < pattern_columns; ++column)

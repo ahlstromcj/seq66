@@ -288,7 +288,8 @@ private:
     mutable bool m_needs_update;
 
     /**
-     *  Holds the current status of all of the pattern buttons.
+     *  Holds the current status of all of the pattern buttons in the
+     *  currently active mute-group in the user-interface.
      */
 
     midibooleans m_pattern_mutes;

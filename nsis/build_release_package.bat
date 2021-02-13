@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2021-02-10
+:: \update      2021-02-13
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -68,15 +68,15 @@
 ::          It is found in seq66/../seq66-release/Seq66qt5.  Also, a
 ::          log file is made in seq66/../seq66-release/make.log,
 ::          which can be checked for build warnings and errors. If you cannot
-::          find these files, search for "seq66-release".
+::          find these files, search for 'seq66-release'.
 ::       5. In Linux (have not tried NSIS in Windows yet), copy this 7z file
-::          to the root seq66 directory.
+::          to the root 'seq66' directory.  If the directory 'seq66/release'
+::          exists, remove the ;release
 ::       6. Use 7zip to extract this file; it will unpack the contents into
-::          the directory called 'release': seq66/release, which contains the
-::          qpseq66.exe file, DLL files, data, etc. Then move the 7z file
-::          out of the way, for example to the directory about the seq66
-::          directory.  Here are the commands (the "$" is the end of the
-::          command-line prompt:
+::          the directory called 'release' ('seq66/release'), which contains
+::          qpseq66.exe, DLL files, data, etc. Then move the 7z file out of
+::          the way, for example to the directory about the seq66 directory.
+::          Here are the commands ("$" is the command-line prompt character):
 ::
 ::          seq66 $ 7z x qpseq66-release-package-0.90.2.7z
 ::          seq66 $ mv qpseq66-release-package-0.90.2.7z ..
@@ -90,8 +90,10 @@
 ::          safe place for transport. For example, assuming the current
 ::          directory is 'release'.  One of these can be run:
 ::
-::          seq66/release $ mv seq66_setup_0.90.1.exe ../../sequencer64-packages/seq66/0.90
-::          seq66/release $ mv seq66_setup_0.90.1.exe ../../seq66/packages/... TO DO !!!
+::          seq66/release $ mv seq66_setup_0.90.1.exe \
+::              ../../sequencer64-packages/seq66/0.90
+::          seq66/release $ mv seq66_setup_0.90.1.exe\
+::              ../../seq66/packages/... TO DO !!!
 ::
 ::       9. Make a portable Zip package:
 ::
@@ -99,8 +101,9 @@
 ::          $ zip -u -r qpseq66-portable-0.90.1-0.zip qpseq66/
 ::          $ mv qpseq66-portable-0.90.1-0.zip ../seq66-packages/latest
 ::
-::      10. Make a standard Linux source/configure tarball for a version
-::          built using bootstrap (to generate the "configure" script):
+::      10. Change to the 'seq66' directory to make a standard Linux
+::          source/configure tarball for a version built using bootstrap
+::          (to generate the "configure" script):
 ::
 ::          $ ./pack --release rtmidi 0.90.1
 ::          $ mv ../seq66-master-rtmidi-0.90.1.tar.xz \

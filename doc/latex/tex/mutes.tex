@@ -28,40 +28,45 @@
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.85]{tabs/mutes/mute-master-tab.png}
-   \caption{Mtes Tab}
+   \caption{Mutes Tab}
    \label{fig:mutes_master_tab}
 \end{figure}
 
    This diagram show the \textbf{Mutes} tab after some mute-groups have been
-   created.  Mute-groups can be created in the main window's patterns panel, but
-   it is difficult to know what each group consists of.  This tab make it easy to
-   see the layout of the mute-groups, and also allows for some editing of the
-   mute-groups.
+   created.  Mute-groups can be created in the main window's patterns panel,
+   but it is difficult to know what each group consists of.  This tab make it
+   easy to see the layout of the mute-groups, and also allows for some editing
+   of the mute-groups.
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
    \itempar{Group Table}{mutes!table}
-   At the right is a table that holds all of the assigned mute-group key and some
-   information about them:
+   At the right is a table that holds all of the assigned mute-group key and
+   some information about them:
 
       \begin{itemize}
          \item \textbf{Group}.
-            This column holds the group numbers for each group, ranging from 0 to
-            31.  Each row corresponds to a buton in the \textbf{Mute-Groups} grid.
+            This column holds the group numbers for each group, ranging from 0
+            to 31.  Each row corresponds to a buton in the \textbf{Mute-Groups}
+            grid.
          \item \textbf{Active}.
-            This column shows the number of activated patterns in the mute-group.
-            A zero means the mute-group is inactive.
+            This column shows the number of activated patterns in the
+            mute-group.  A zero means the mute-group is inactive.
          \item \textbf{Key}.
             Indicates the keystroke that can be used to put that mute-group in
             place on the patterns in the current screenset.
+            By default, these are shifted version of the corresponding
+            mute/unmute pattern-slot hotkey.
          \item \textbf{Group Name}.
             Provides a mnemonic name for the mute group.  A feature for the
             future.
       \end{itemize}
 
-   Currently, none of the items in this table are editable.
+   Currently, none of the items in this table are editable directly.
    The user must modify \texttt{qseq66.mutes} with a text editor.
-   Also note that this table is the only way to select a mute-group for editing.
+   This table is the only way to select a mute-group for editing.
+   Click on the desired group, and then click on the group button, perhaps
+   twice, to be able to add pattern mute states via the pattern buttons.
 
    \itempar{Mute-Groups}{mutes!groups}
    This grid is always of size \textbf{4 x 8}.  It represents the maximum of 32
@@ -103,12 +108,14 @@
 %  Was "Save File"
 %
    This button saves all of the mute-groups.
-   It is enabled when a change has been made to a mute-group.
-   If the user has provided a path in the \textbf{Mutes File} field, the path is
-   stripped.  We do not want to write configuration information outside of the
-   session configuration directory.
-   The file is saved, but is not made official (at this time) in the
+   It is enabled when a change has been made to a mute-group and
+   has been registered by pressing the \textbf{Update Group} button.
+   If the user has provided a path in the \textbf{Mutes File} field, the path
+   is stripped.  We do not want to write configuration information outside of
+   the session configuration directory.
+   The file is saved, but is not made official in the
    'rc' file; one must edit the 'rc' file to use the new 'mutes' file.
+   We might provide a button for that function at some point.
 
    \itempar{Write Format}{mutes!write format}
    This section provides the following features, which still need some work:
