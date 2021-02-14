@@ -591,14 +591,14 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
                     pen.setWidth(2);
                     drawcolor = tempo_paint();
-                    note_y = m_slot_h -         // NOT w!!!
+                    note_y = m_slot_h -
                          m_slot_h * (ni.note() + 1) / c_max_midi_data_value;
                 }
                 else
                 {
                     pen.setWidth(1);                    /* 2 too thick  */
                     note_y = preview_h -
-                         (preview_h * (ni.note()+1 - lowest)) / height;
+                         (preview_h * (ni.note() + 1 - lowest)) / height;
                 }
 
                 int sx = rectangle_x + tick_s_x;        /* start x      */

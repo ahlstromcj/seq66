@@ -222,7 +222,7 @@ qperfnames::sizeHint () const
 int
 qperfnames::convert_y (int y)
 {
-    int seq = y / m_nametext_y;            // + m_sequence_offset;
+    int seq = y / m_nametext_y;
     if (seq >= perf().sequence_max())
         seq = perf().sequence_max() - 1;
     else if (seq < 0)

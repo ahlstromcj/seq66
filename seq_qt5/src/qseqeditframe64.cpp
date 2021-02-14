@@ -2408,10 +2408,13 @@ qseqeditframe64::scroll_to_note (int note)
 void
 qseqeditframe64::update_grid_snap (int index)
 {
-    int qnfactor = perf().ppqn() * 4;
-    int item = s_snap_items[index];
-    int v = qnfactor / item;
-    set_snap(v);
+    if (index >= 0 && index < s_snap_count)
+    {
+        int qnfactor = perf().ppqn() * 4;
+        int item = s_snap_items[index];
+        int v = qnfactor / item;
+        set_snap(v);
+    }
 }
 
 /**
@@ -2419,9 +2422,8 @@ qseqeditframe64::update_grid_snap (int index)
  *  interval.  It is passed to the seqroll, seqevent, and sequence objects, as
  *  well.
  *
- *  The default initial snap is the default PPQN divided by 4, or the
- *  equivalent of a 16th note (48 ticks).  The snap divisor is 192 * 4 / 48 or
- *  16.
+ *  The default initial snap is the default PPQN divided by 4, or the equivalent
+ *  of a 16th note (48 ticks).  The snap divisor is 192 * 4 / 48 or 16.
  *
  * \param s
  *      The prospective snap value to set.  It is checked only to make sure it
@@ -2460,10 +2462,13 @@ qseqeditframe64::reset_grid_snap ()
 void
 qseqeditframe64::update_note_length (int index)
 {
-    int qnfactor = perf().ppqn() * 4;
-    int item = s_snap_items[index];
-    int v = qnfactor / item;
-    set_note_length(v);
+    if (index >= 0 && index < s_snap_count)
+    {
+        int qnfactor = perf().ppqn() * 4;
+        int item = s_snap_items[index];
+        int v = qnfactor / item;
+        set_note_length(v);
+    }
 }
 
 /**
@@ -2489,7 +2494,7 @@ qseqeditframe64::set_note_length (int notelength)
 #if defined CAN_MODIFY_GLOBAL_PPQN
     if (perf().ppqn() != m_original_ppqn)
     {
-        double factor = double(perf().ppqn()) / double(m_original);
+        double factor = double(perf().ppqn()) / double(m_original_ppqn);
         notelength = int(notelength * factor + 0.5);
         m_original_ppqn = perf().ppqn();
     }
