@@ -1200,16 +1200,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 set_error("Old-style triggers encountered");
                                 break;
-#if 0
-                                int num_triggers = len / 4;
-                                for (int i = 0; i < num_triggers; i += 2)
-                                {
-                                    midilong on = read_long();
-                                    midilong length = read_long() - on;
-                                    len -= 8;
-                                    s.add_trigger(on, length, 0, false);
-                                }
-#endif
                             }
                             else if (seqspec == c_triggers_new)
                             {

@@ -266,16 +266,18 @@ qloopbutton::initialize_sine_table ()
     if (m_fingerprint_size == 0)
     {
         int count = int(sizeof(m_fingerprint) / sizeof(int));
-        int y = m_event_box.y();
-        int h = m_event_box.h();
-        double rmax = 2.0 * M_PI;
-        double dr = rmax / double(count);
-        int i;
-        double r;
-        for (i = 0, r = 0.0; i < count; ++i, r += dr)
-            m_fingerprint[i] = y + int((1.0 + sin(r)) * h) / 2;
+        if (count > 0)
+        {
+            int y = m_event_box.y();
+            int h = m_event_box.h();
+            double rmax = 2.0 * M_PI;
+            double dr = rmax / double(count);
+//          double r;
+            for (int i = 0, double r = 0.0; i < count; ++i, r += dr)
+                m_fingerprint[i] = y + int((1.0 + sin(r)) * h) / 2;
 
-        m_fingerprint_size = count;
+            m_fingerprint_size = count;
+        }
     }
 }
 

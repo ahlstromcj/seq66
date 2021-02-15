@@ -596,7 +596,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
                 {
                     pen.setWidth(1);                    /* 2 too thick  */
                     note_y = preview_h -
-                         (preview_h * (ni.note()+1 - lowest)) / height;
+                         (preview_h * (ni.note() + 1 - lowest)) / height;
                 }
 
                 int sx = rectangle_x + tick_s_x;        /* start x      */
