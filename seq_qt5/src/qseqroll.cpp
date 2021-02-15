@@ -572,112 +572,133 @@ qseqroll::draw_notes
     int unitheight = unit_height();
     int unitdecr = unit_height() - 1;
     int noteheight = unitheight - 3;
-    event::buffer::const_iterator evi;
-    s->reset_ex_iterator(evi);
-    for (;;)
+
+#if defined SEQ66_USE_TRY_CATCH
+
+    /*
+     * The try-catch seems to improve the robustness of the app when
+     * recording a DD-11 drum pattern over and over while also drawing a
+     * ton of notes.
+     */
+
+    try     /* EXPERIMENTAL: 2021-02-15 */
     {
-        sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, evi);   /* side-effect  */
-        if (dt == sequence::draw::finish)
-            break;
-
-        if (dt == sequence::draw::tempo)
-            continue;
-
-        bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
-        bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
-        bool linkedin = dt == sequence::draw::linked && end_in;
-        if (start_in || linkedin)
+#endif
+        for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
         {
-            int in_shift = 0;
-            int length_add = 0;
-            m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
-            if (dt == sequence::draw::linked)
+            sequence::note_info ni;
+            sequence::draw dt = s->get_next_note_ex(ni, cev);   /* side-effect  */
+            if (dt == sequence::draw::finish)
+                break;
+
+            if (dt == sequence::draw::tempo)
+                continue;
+
+            bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
+            bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
+            bool linkedin = dt == sequence::draw::linked && end_in;
+            if (start_in || linkedin)
             {
-                if (ni.finish() >= ni.start())
+                int in_shift = 0;
+                int length_add = 0;
+                m_note_x = xoffset(ni.start());
+                m_note_y = total_height() - (ni.note() * unitheight) - unitdecr;
+                if (dt == sequence::draw::linked)
                 {
-                    m_note_width = tix_to_pix(ni.finish() - ni.start());
-                    if (m_note_width < 1)
-                        m_note_width = 1;
-                }
-                else
-                    m_note_width = tix_to_pix(seqlength - ni.start());
-            }
-            else
-                m_note_width = tix_to_pix(16);
-
-            if (dt == sequence::draw::note_on)
-            {
-                in_shift = 0;
-                length_add = 2;
-            }
-            if (dt == sequence::draw::note_off)
-            {
-                in_shift = -1;
-                length_add = 1;
-            }
-            if (background)                         /* draw background note */
-            {
-                length_add = 1;
-                painter.setBrush(backseq_brush());
-            }
-            else
-            {
-                painter.setBrush(note_brush());
-            }
-
-            painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
-            if (ni.finish() < ni.start())   // shadow notes before zero
-            {
-                painter.drawRect
-                (
-                    m_keypadding_x, m_note_y,
-                    tix_to_pix(ni.finish()), noteheight
-                );
-            }
-
-            /*
-             * Draw note highlight if there's room.  Orange note if selected,
-             * red if drum mode, otherwise plain white.
-             */
-
-            if (m_note_width > 3)
-            {
-                if (ni.selected())
-                    brush.setColor(sel_color());        /* was "orange"    */
-                else
-                    brush.setColor(note_in_color());    /* was Qt::white   */
-
-                painter.setBrush(brush);
-                if (! background)
-                {
-                    int x_shift = m_note_x + in_shift;
-                    int h_minus = noteheight - 1;
-                    if (ni.finish() >= ni.start())  // note highlight
+                    if (ni.finish() >= ni.start())
                     {
-                        painter.drawRect
-                        (
-                            x_shift, m_note_y,
-                            m_note_width + length_add - 1, h_minus
-                        );
+                        m_note_width = tix_to_pix(ni.finish() - ni.start());
+                        if (m_note_width < 1)
+                            m_note_width = 1;
                     }
                     else
+                        m_note_width = tix_to_pix(seqlength - ni.start());
+                }
+                else
+                    m_note_width = tix_to_pix(16);
+
+                if (dt == sequence::draw::note_on)
+                {
+                    in_shift = 0;
+                    length_add = 2;
+                }
+                if (dt == sequence::draw::note_off)
+                {
+                    in_shift = -1;
+                    length_add = 1;
+                }
+                if (background)                         /* draw background note */
+                {
+                    length_add = 1;
+                    painter.setBrush(backseq_brush());
+                }
+                else
+                {
+                    painter.setBrush(note_brush());
+                }
+
+                painter.drawRect(m_note_x, m_note_y, m_note_width, noteheight);
+                if (ni.finish() < ni.start())   // shadow notes before zero
+                {
+                    painter.drawRect
+                    (
+                        m_keypadding_x, m_note_y,
+                        tix_to_pix(ni.finish()), noteheight
+                    );
+                }
+
+                /*
+                 * Draw note highlight if there's room.  Orange note if selected,
+                 * red if drum mode, otherwise plain white.
+                 */
+
+                if (m_note_width > 3)
+                {
+                    if (ni.selected())
+                        brush.setColor(sel_color());        /* was "orange"    */
+                    else
+                        brush.setColor(note_in_color());    /* was Qt::white   */
+
+                    painter.setBrush(brush);
+                    if (! background)
                     {
-                        int w = tix_to_pix(ni.finish()) + length_add - 3;
-                        painter.drawRect
-                        (
-                            x_shift, m_note_y, m_note_width, h_minus
-                        );
-                        painter.drawRect
-                        (
-                            m_keypadding_x, m_note_y, w, h_minus
-                        );
+                        int x_shift = m_note_x + in_shift;
+                        int h_minus = noteheight - 1;
+                        if (ni.finish() >= ni.start())  // note highlight
+                        {
+                            painter.drawRect
+                            (
+                                x_shift, m_note_y,
+                                m_note_width + length_add - 1, h_minus
+                            );
+                        }
+                        else
+                        {
+                            int w = tix_to_pix(ni.finish()) + length_add - 3;
+                            painter.drawRect
+                            (
+                                x_shift, m_note_y, m_note_width, h_minus
+                            );
+                            painter.drawRect
+                            (
+                                m_keypadding_x, m_note_y, w, h_minus
+                            );
+                        }
                     }
                 }
             }
         }
+#if defined SEQ66_USE_TRY_CATCH
     }
+    catch (std::exception & e)          /* EXPERIMENTAL: 2021-02-15 */
+    {
+        errprintf("qseqroll: %s\n", e.what());
+    }
+    catch (...)
+    {
+        errprint("qseqroll exception\n");
+    }
+#endif
 }
 
 /*
@@ -737,57 +758,78 @@ qseqroll::draw_drum_notes
 
     int noteheight = unit_height();
     int noteheight2 = unit_height() + 1;
-    event::buffer::const_iterator evi;
-    s->reset_ex_iterator(evi);
-    for (;;)
+
+#if defined SEQ66_USE_TRY_CATCH
+
+    /*
+     * The try-catch seems to improve the robustness of the app when
+     * recording a DD-11 drum pattern over and over while also drawing a
+     * ton of notes.
+     */
+
+    try     /* EXPERIMENTAL: 2021-02-15 */
     {
-        sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, evi);
-        if (dt == sequence::draw::finish)
-            break;
-
-        if (dt == sequence::draw::tempo)
-            continue;
-
-        bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
-        bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
-        bool linkedin = dt == sequence::draw::linked && end_in;
-        if (start_in || linkedin)
+#endif
+        for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
         {
-            m_note_x = xoffset(ni.start());
-            m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
-            if (dt == sequence::draw::linked)
+            sequence::note_info ni;
+            sequence::draw dt = s->get_next_note_ex(ni, cev);
+            if (dt == sequence::draw::finish)
+                break;
+
+            if (dt == sequence::draw::tempo)
+                continue;
+
+            bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
+            bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
+            bool linkedin = dt == sequence::draw::linked && end_in;
+            if (start_in || linkedin)
             {
-                if (ni.finish() >= ni.start())
+                m_note_x = xoffset(ni.start());
+                m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
+                if (dt == sequence::draw::linked)
                 {
-                    m_note_width = tix_to_pix(ni.finish() - ni.start());
-                    if (m_note_width < 1)
-                        m_note_width = 1;
+                    if (ni.finish() >= ni.start())
+                    {
+                        m_note_width = tix_to_pix(ni.finish() - ni.start());
+                        if (m_note_width < 1)
+                            m_note_width = 1;
+                    }
+                    else
+                        m_note_width = tix_to_pix(seqlength - ni.start());
                 }
                 else
-                    m_note_width = tix_to_pix(seqlength - ni.start());
+                    m_note_width = tix_to_pix(16);
+
+                /*
+                 * Draw note highlight in drum mode.  Orange note if selected, red
+                 * if drum mode, otherwise plain white.
+                 */
+
+                if (ni.selected())
+                    brush.setColor(sel_color());
+                else if (is_drum_mode())
+                    brush.setColor(drum_paint());
+                else
+                    brush.setColor(Qt::white);
+
+                pen.setColor(fore_color());
+                painter.setPen(pen);
+                painter.setBrush(brush);
+                draw_drum_note(painter);
             }
-            else
-                m_note_width = tix_to_pix(16);
-
-            /*
-             * Draw note highlight in drum mode.  Orange note if selected, red
-             * if drum mode, otherwise plain white.
-             */
-
-            if (ni.selected())
-                brush.setColor(sel_color());
-            else if (is_drum_mode())
-                brush.setColor(drum_paint());
-            else
-                brush.setColor(Qt::white);
-
-            pen.setColor(fore_color());
-            painter.setPen(pen);
-            painter.setBrush(brush);
-            draw_drum_note(painter);
         }
+#if defined SEQ66_USE_TRY_CATCH
     }
+    catch (std::exception & e)          /* EXPERIMENTAL: 2021-02-15 */
+    {
+        errprintf("qseqroll drum notes: %s\n", e.what());
+    }
+    catch (...)
+    {
+        errprint("qseqroll drum notes exception\n");
+    }
+#endif
 }
 
 int

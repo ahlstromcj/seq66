@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-10
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -208,11 +208,15 @@ qstriggereditor::paintEvent (QPaintEvent *)
 
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
-
-    event::buffer::const_iterator cev;
-    seq_pointer()->reset_ex_iterator(cev);
-    while (seq_pointer()->get_next_event_match(m_status, m_cc, cev))
+    for
+    (
+        auto cev = seq_pointer()->ex_iterator();
+        seq_pointer()->ex_iterator_valid(cev); ++cev
+    )
     {
+        if (! seq_pointer()->get_next_event_match(m_status, m_cc, cev))
+            break;
+
         midipulse tick = cev->timestamp();
         if ((tick >= starttick && tick <= endtick))
         {

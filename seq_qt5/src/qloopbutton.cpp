@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-02-02
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -54,6 +54,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <cmath>                        /* std::sin(radians)                */
+#include <exception>                    /* EXPERIMENTAL: 2021-02-15         */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
 #include "qloopbutton.hpp"
@@ -318,12 +319,14 @@ qloopbutton::initialize_fingerprint ()
             n0 = 0;
 
         nh = n1 - n0;
-        event::buffer::const_iterator evi;
-        m_seq->reset_ex_iterator(evi);
-        for (;;)
+        for
+        (
+            auto cev = m_seq->ex_iterator();
+            m_seq->ex_iterator_valid(cev); ++cev
+        )
         {
             sequence::note_info ni;                     /* two members used */
-            sequence::draw dt = m_seq->get_next_note_ex(ni, evi);
+            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);   /* side */
             if (dt != sequence::draw::finish)
             {
                 int x = (ni.start() * xw) / t1 + x0;    /* ni.finish()      */
@@ -653,7 +656,8 @@ qloopbutton::draw_progress_box (QPainter & painter)
 void
 qloopbutton::draw_pattern (QPainter & painter)
 {
-    if (m_seq->event_count() > 0)
+    midipulse t1 = m_seq->get_length();
+    if (m_seq->event_count() > 0 && t1 > 0)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(text_color());
@@ -661,7 +665,6 @@ qloopbutton::draw_pattern (QPainter & painter)
         int ly0 = m_event_box.y();
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
-        midipulse t1 = m_seq->get_length();
         pen.setWidth(2);
         if (m_seq->measure_threshold())
         {
@@ -681,7 +684,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 }
             }
         }
-        else if (t1 > 0)
+        else
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);
@@ -709,39 +712,61 @@ qloopbutton::draw_pattern (QPainter & painter)
                 pen.setColor(pencolor);
             }
             else
-            {
                 pen.setColor(drum_color());
-            }
 
-            event::buffer::const_iterator evi;
-            m_seq->reset_ex_iterator(evi);
-            for (;;)
+#if defined SEQ66_USE_TRY_CATCH
+
+            /*
+             * The try-catch seems to improve the robustness of the app when
+             * recording a DD-11 drum pattern over and over while also drawing a
+             * ton of notes.
+             */
+
+            try     /* EXPERIMENTAL: 2021-02-15 */
             {
-                sequence::note_info ni;                 /* 2 members used!  */
-                sequence::draw dt = m_seq->get_next_note_ex(ni, evi);
-                int tick_s_x = (ni.start() * lxw) / t1;
-                int tick_f_x = (ni.finish() * lxw) / t1;
-                if (dt == sequence::draw::finish)
-                    break;
+#endif
+                for
+                (
+                    auto cev = m_seq->ex_iterator();
+                    m_seq->ex_iterator_valid(cev); ++cev
+                )
+                {
+                    sequence::note_info ni;             /* 2 members used!  */
+                    sequence::draw dt = m_seq->get_next_note_ex(ni, cev);
+                    if (dt == sequence::draw::finish)
+                        break;
 
-                if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
-                    tick_f_x = tick_s_x + 1;
+                    int tick_s_x = (ni.start() * lxw) / t1;
+                    int tick_f_x = (ni.finish() * lxw) / t1;
+                    if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
+                        tick_f_x = tick_s_x + 1;
 
-                int y = lyh * (highest - ni.note()) / height;
+                    int y = lyh * (highest - ni.note()) / height;
 
 #if defined DRAW_TEMPO_LINE_DISABLED
-                if (dt == sequence::draw::tempo)
-                    pen.setColor(tempo_color());        /* not defined yet  */
-                else
-                    pen.setColor(Qt::black);
+                    if (dt == sequence::draw::tempo)
+                        pen.setColor(tempo_color());    /* not defined yet  */
+                    else
+                        pen.setColor(Qt::black);
 #endif
 
-                int sx = lx0 + tick_s_x;                /* start x          */
-                int fx = lx0 + tick_f_x;                /* finish x         */
-                y += ly0;                               /* start & finish y */
-                painter.setPen(pen);
-                painter.drawLine(sx, y, fx, y);
+                    int sx = lx0 + tick_s_x;            /* start x          */
+                    int fx = lx0 + tick_f_x;            /* finish x         */
+                    y += ly0;                           /* start & finish y */
+                    painter.setPen(pen);
+                    painter.drawLine(sx, y, fx, y);
+                }
+#if defined SEQ66_USE_TRY_CATCH
             }
+            catch (std::exception & e)          /* EXPERIMENTAL: 2021-02-15 */
+            {
+                errprintf("qloopbutton: %s\n", e.what());
+            }
+            catch (...)
+            {
+                errprint("qloopbutton exception\n");
+            }
+#endif
         }
     }
 }

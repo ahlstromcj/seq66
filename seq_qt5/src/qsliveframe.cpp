@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-24
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.
@@ -565,12 +565,10 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             preview_w -= 6;
             rectangle_x += 2;
             rectangle_y += 2;
-            event::buffer::const_iterator evi;
-            s->reset_ex_iterator(evi);
-            for (;;)
+            for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
             {
                 sequence::note_info ni;         /* only two members used!   */
-                sequence::draw dt = s->get_next_note_ex(ni, evi);
+                sequence::draw dt = s->get_next_note_ex(ni, cev);
                 int tick_s_x = (ni.start() * preview_w) / t1;
                 int tick_f_x = (ni.finish() * preview_w) / t1;
                 if (dt == sequence::draw::finish)
@@ -591,7 +589,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
                     pen.setWidth(2);
                     drawcolor = tempo_paint();
-                    note_y = m_slot_h -         // NOT w!!!
+                    note_y = m_slot_h -
                          m_slot_h * (ni.note() + 1) / c_max_midi_data_value;
                 }
                 else

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-03
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1038,6 +1038,7 @@ sequence::link_new ()
 void
 sequence::remove (event::buffer::iterator evi)
 {
+    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     if (evi != m_events.end())
     {
         event & er = eventlist::dref(evi);
@@ -3701,7 +3702,7 @@ sequence::note_count ()
  *  false.
  *
  *  Note that, before the first call to draw a sequence, the
- *  reset_ex_iterator() function must be called.
+ *  reset_ex_iterator() or ex_iterator() function must be called.
  *
  * \param [out] niout
  *      Provides a pointer destination for a structure hold all of the values
@@ -3714,7 +3715,8 @@ sequence::note_count ()
  * \return
  *      Returns a sequence::draw value:  linked, note_on, note_off, or finish.
  *      Note that the new value sequence::draw::tempo could be returned, as
- *      well.
+ *      well. Note that a return of draw::finish indicates to exit a drawing
+ *      loop.
  */
 
 sequence::draw
@@ -3724,6 +3726,7 @@ sequence::get_next_note_ex
     event::buffer::const_iterator & evi
 ) const
 {
+    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     while (evi != m_events.cend())
     {
         draw status = get_note_info(niout, evi);
@@ -3799,21 +3802,6 @@ sequence::get_note_info
 }
 
 /**
- *  Reset the caller's iterator.  This is used with get_next_event_match()
- *  and get_next_event_ex().
- *
- * \param evi
- *      The caller's "copy" of the m_events iterator to be reset to
- *      m_events.begin().
- */
-
-void
-sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
-{
-    evi = m_events.cbegin();
-}
-
-/**
  *  Checks for non-terminated notes.
  *
  * \return
@@ -3829,6 +3817,7 @@ sequence::reset_interval
     event::buffer::const_iterator & it1
 ) const
 {
+    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     bool result = false;
     bool got_beginning = false;
     auto iter = m_events.cbegin();
@@ -3866,7 +3855,8 @@ sequence::reset_interval
 /**
  *  Get the next event in the event list.  Then set the status and control
  *  character parameters using that event.  This function requires that
- *  reset_ex_iterator() be called to reset to the beginnign of the events list.
+ *  reset_ex_iterator() or ex_iterator() be called to reset to the beginning
+ *  of the events list.
  *
  * \param status
  *      Provides a pointer to the MIDI status byte to be set, as a way to
@@ -3889,35 +3879,33 @@ sequence::reset_interval
 bool
 sequence::get_next_event_ex
 (
-    midibyte & status,
-    midibyte & cc,
+    midibyte & status, midibyte & cc,
     event::buffer::const_iterator & evi
 )
 {
-    if (evi != m_events.end())
+    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
+    bool result = evi != m_events.end();
+    if (result)
     {
         midibyte d1;                            /* will be ignored          */
         const event & ev = eventlist::cdref(evi);
         status = ev.get_status();
         ev.get_data(cc, d1);
-        return true;                /* we have a good one; update and return */
     }
-    else
-        return false;
+    return result;
 }
 
 /**
- *  New version in progress.  This version makes the caller responsible for
- *  providing and maintaining the iterator, so that there are no conflicting
- *  operations on m_draw_iterator from seqdata, seqevent, seqroll, and
- *  perfroll.
+ *  This function makes the caller responsible for providing and maintaining
+ *  the iterator, so that there are no conflicting operations on
+ *  m_draw_iterator from seqdata, seqevent, seqroll, and perfroll.
  *
- *  This rational version of get_next_event() returns the whole event, rather
- *  than filling in a bunch of parameters.  In addition, it always allows
- *  Tempo events to be found.  Gets the next event in the event list that
- *  matches the given status and control character.  Then set the rest of the
- *  parameters parameters using that event.  If the status is the new value
- *  EVENT_ANY, then any event will be obtained.
+ *  This function returns the whole event, rather than filling in a bunch of
+ *  parameters.  In addition, it always allows Tempo events to be found.  Gets
+ *  the next event in the event list that matches the given status and control
+ *  character.  Then set the rest of the parameters parameters using that
+ *  event.  If the status is the new value EVENT_ANY, then any event will be
+ *  obtained.
  *
  *  Note the usage of event::is_desired_cc_or_not_cc(status, cc, *d0); Either
  *  we have a control change with the right CC or it's a different type of
@@ -3954,6 +3942,7 @@ sequence::get_next_event_match
     int /* evtype [see macro below] */
 )
 {
+    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     while (evi != m_events.end())
     {
         const event & drawevent = eventlist::cdref(evi);
@@ -3968,15 +3957,15 @@ sequence::get_next_event_match
             if (evtype == EVENTS_UNSELECTED && drawevent.is_selected())
             {
                 ++evi;
-                continue;           /* keep trying to find one              */
+                continue;                       /* keep trying to find one  */
             }
             if (evtype > EVENTS_UNSELECTED && ! drawevent.is_selected())
             {
                 ++evi;
-                continue;           /* keep trying to find one              */
+                continue;                       /* keep trying to find one  */
             }
         }
-#endif  // USE_STAZED_SELECTION_EXTENSIONS
+#endif
 
         if (ok)
         {
@@ -3992,7 +3981,7 @@ sequence::get_next_event_match
                 return true;
             }
         }
-        ++evi;                              /* keep going                   */
+        ++evi;                                  /* keep going               */
     }
     return false;
 }
@@ -4439,24 +4428,12 @@ sequence::set_thru (bool thruon, bool toggle)
     return result;
 }
 
-/**
- * \setter m_snap_tick
- *
- * \threadsafe
- */
-
 void
 sequence::snap (int st)
 {
     automutex locker(m_mutex);
     m_snap_tick = st;
 }
-
-/**
- * \setter m_loop_reset
- *
- * \threadsafe
- */
 
 void
 sequence::loop_reset (bool reset)

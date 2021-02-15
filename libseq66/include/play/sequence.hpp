@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-01-12
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1484,7 +1484,22 @@ public:
     void stop (bool song_mode = false);     /* playback::live vs song   */
     void pause (bool song_mode = false);    /* playback::live vs song   */
     void reset_draw_trigger_marker ();
-    void reset_ex_iterator (event::buffer::const_iterator & evi) const;
+
+    /**
+     *  Reset the caller's iterator.  This is used with get_next_event_match()
+     *  and get_next_event_ex().
+     */
+
+    event::buffer::const_iterator ex_iterator () const
+    {
+        return m_events.cbegin();
+    }
+
+    bool ex_iterator_valid (event::buffer::const_iterator & evi) const
+    {
+        return evi != m_events.cend();
+    }
+
     bool reset_interval
     (
         midipulse t0, midipulse t1,

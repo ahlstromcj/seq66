@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-12
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -838,8 +838,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int note1;
                         (void) seq->minmax_notes(note0, note1);
 
-                        event::buffer::const_iterator evi;
-                        seq->reset_ex_iterator(evi);
                         int height = note1 - note0;
                         height += 2;
                         if (seq->transposable())
@@ -850,10 +848,14 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int cny = c_names_y - 6;
                         int marker_x = tix_to_pix(t);
                         painter.setPen(pen);
-                        for (;;)
+                        for
+                        (
+                            auto cev = seq->ex_iterator();
+                            seq->ex_iterator_valid(cev); ++cev
+                        )
                         {
                             sequence::note_info ni;
-                            sequence::draw dt = seq->get_next_note_ex(ni, evi);
+                            sequence::draw dt = seq->get_next_note_ex(ni, cev);
                             if (dt == sequence::draw::finish)
                                 break;
 

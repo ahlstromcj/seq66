@@ -1,7 +1,7 @@
 # README for Seq66 0.92.0 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-02-13
+2015-09-10 to 2021-02-15
 
 __Seq66__ is a MIDI sequencer and live MIDI looper with a hardware sampler-like
 grid pattern interface, MIDI automation for live performance, with sets and
@@ -79,52 +79,9 @@ Windows, and using a conventional source tarball.
             and fix them.
         *   A PDF user manual is now provided in the doc directory, installed
             to /usr/local/share/doc/seq66-0.92 with "make install".
-    *   Version 0.91.6:
-        *   Massively updated the Mutes tab.
-        *   More documentation.
-        *   More fixes to the song editor.
-        *   Added more files to the creation setup at the first run of Seq66.
-    *   Version 0.91.5:
-        *   Added vertical zoom to the pattern editor (V keys and buttons).
-        *   Added more control over the coloring of notes.
-        *   Still improving the port-mapper feature.
-        *   Added quotes to file-paths in the 'rc' configuration file.
-        *   Many fixes to seqedit, perfedit.  Way too many to mention them
-            all.  Changed the 4/4 and length selections to be editable.
-        *   Getting serious about rewriting the user manual in this project.
-    *   Version 0.91.4:
-        *   Improved port naming and provide an option for short or long port
-            names.
-        *   Improved safety in NSM sessions.
-        *   Major refactoring the color handling.  Colors have changed!!!
-    *   Version 0.91.3:
-        *   Added check to not apply last mute-group if in Song mode.
-        *   Provisional support for playing multiple sets at once and for
-            auto-arming the selected set when loaded.
-        *   Added a configurable number for virtual MIDI input/output ports.
-        *   Provides an option to for multiple-set playback and auto-arming
-            of a newly-selected set.
-        *   Fixed bug in string-to-int conversion uncovered by automatic
-            mute-group restore.
-        *   Refactoring port naming and I/O lists.
-        *   Minor play-list fixes.
-    *   Version 0.91.2:
-        *   Fix developer bug causing playlists to not load properly.
-        *   Fix crash when 'rc' file specifies empty mutes and ctrl files.
-    *   Version 0.91.1:
-        *   More fixes for mute-group (mutes) handling.
-        *   Ability to save the last-active mute-group for restoring on startup.
-        *   Added a button to toggle insert mode in pattern and song editors.
-        *   Robustness enhancement to NSM support.
-    *   Version 0.91.0:
-        *   Non Session Manager support essentially complete.  The
-            refactoring to do this was massive.
-        *   All too many bug fixes and minor improvements.
-        *   Added --copy-dt-needed-entries to qseq66 Makefile.am to fix
-            linkage errors that cropped up in debug builds.
-        *   Got the CLI version building, needs a lot of testing.
-        *   Playlist editing from the user-interface much improved.
 
     See the "NEWS" file for changes in earlier versions.
 
-# vim: sw=4 ts=4 wm=4 et ft=markdown
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=markdown
+ */
