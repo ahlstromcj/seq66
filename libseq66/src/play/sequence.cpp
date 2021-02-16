@@ -684,7 +684,7 @@ sequence::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
  *
  * \param recvol
  *      The new setting of the recording volume setting.  It is used only if
- *      it ranges from 0 to SEQ66_MAX_NOTE_ON_VELOCITY, or is set to
+ *      it ranges from 1 to SEQ66_MAX_NOTE_ON_VELOCITY, or is set to
  *      SEQ66_PRESERVE_VELOCITY.
  */
 
@@ -692,7 +692,7 @@ void
 sequence::set_rec_vol (int recvol)
 {
     automutex locker(m_mutex);
-    bool valid = recvol >= 0;
+    bool valid = recvol > 0;
     if (valid)
         valid = recvol <= SEQ66_MAX_NOTE_ON_VELOCITY;
 
@@ -2287,6 +2287,21 @@ sequence::change_event_data_lfo
  *  Adds a note of a given length and  note value, at a given tick
  *  location.  It adds a single Note-On/Note-Off pair.
  *
+ *  Supports the step-edit (auto-step) feature, where we are entering notes
+ *  without playback occurring, so we set the generic default note length and
+ *  volume to the snap.  There are two ways to enter notes:
+ *
+ *      -   Mouse movement in the seqroll.  Here, velocity defaults to
+ *          SEQ66_PRESERVE_VELOCITY
+ *      -   Input from a MIDI keyboard.  Velocity ranges from 0 to 127.
+ *
+ *  If the recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to set
+ *  a default value, 100.
+ *
+ *  Will be consistent with how Note On velocity is handled; enable 0 velocity (a
+ *  standard?) for Note Off when not playing. Note that the event constructor sets
+ *  channel to 0xFF, while event::set_data() currently sets it to 0!!!
+ *
  *  The paint parameter indicates if we care about the painted event, so then
  *  the function runs though the events and deletes the painted ones that
  *  overlap the ones we want to add.  An event is painted if manually
@@ -2312,9 +2327,9 @@ sequence::change_event_data_lfo
  *      generate Note Off messages, but don't implement velocity features,
  *      will transmit Note Off messages with a preset velocity of 64.
  *
- *  Also, we see that seq24 never used the recording-velocity member
- *  (m_rec_vol).  We use it to modify the new m_note_on_velocity member if
- *  the user changes it in the seqedit window.
+ *  Seq24 never used the recording-velocity member (m_rec_vol).  We use it to
+ *  modify the new m_note_on_velocity member if the user changes it in the
+ *  seqroll.
  *
  * \threadsafe
  *
@@ -2325,11 +2340,15 @@ sequence::change_event_data_lfo
  *      The duration of the new note, in pulses.
  *
  * \param note
- *      The pitch destination of the new note.
+ *      The pitch destination of the new note.  We no longer check it. Either
+ *      it is a good value from a MIDI device, or the caller (qseqroll) ensures
+ *      it.
  *
- * \param paint
+ * \param repaint
  *      If true, repaint the whole set of events, in order to be left with
- *      a clean view of the inserted event.  The default is false.
+ *      a clean view of the inserted event.  We run through the events, deleting
+ *      the painted ones that overlap the one we want to add. The default is
+ *      false.
  *
  * \param velocity
  *      If not set to SEQ66_PRESERVE_VELOCITY, the velocity of the note is
@@ -2345,69 +2364,68 @@ bool
 sequence::add_note
 (
     midipulse tick, midipulse len, int note,
-    bool paint, int velocity
+    bool repaint, int velocity
 )
 {
     bool result = false;
-    if (note >= 0 && note < c_num_keys)
+    bool ignore = false;
+    if (repaint)                                  /* see the banner above */
+    {
+        automutex locker(m_mutex);
+        for (auto & er : m_events)
+        {
+            if (er.is_painted() && er.is_note_on() && er.timestamp() == tick)
+            {
+                if (er.get_note() == note)
+                {
+                    ignore = true;
+                    break;
+                }
+                er.mark();                      /* mark for removal     */
+                if (er.is_linked())
+                    er.link()->mark();          /* mark for removal     */
+
+                set_dirty();
+            }
+        }
+        (void) remove_marked();
+        result = true;
+    }
+    if (! ignore)
     {
         /*
-         * Question:  do we really need this, since we poll for input?
+         *  See banner notes.
          */
 
-        automutex locker(m_mutex);
         bool hardwire = velocity == SEQ66_PRESERVE_VELOCITY;
-        bool ignore = false;
-        if (paint)                                  /* see the banner above */
-        {
-            for (auto & er : m_events)
-            {
-                if (er.is_painted() && er.is_note_on() && er.timestamp() == tick)
-                {
-                    if (er.get_note() == note)
-                    {
-                        ignore = true;
-                        break;
-                    }
-                    er.mark();                      /* mark for removal     */
-                    if (er.is_linked())
-                        er.link()->mark();          /* mark for removal     */
+        midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
+        event e(tick, EVENT_NOTE_ON, note, v);
+        if (repaint)
+            e.paint();
 
-                    set_dirty();
-                }
-            }
-            (void) remove_marked();
-            result = true;
-        }
-        if (! ignore)
-        {
-            /*
-             * Will be consistent with how Note On velocity is handled;
-             * enable 0 velocity (a standard?) for Note Off when not
-             * playing. Note that the event constructor sets channel to 0xFF,
-             * while event::set_data() currently sets it to 0!!!
-             */
-
-            midibyte v = hardwire ? midibyte(m_note_on_velocity) : velocity ;
-            event e(tick, EVENT_NOTE_ON, note, v);
-            if (paint)
-                e.paint();
-
-            result = add_event(e);
-            if (result)
-            {
-                midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
-                event e(tick + len, EVENT_NOTE_OFF, note, v);
-                result = add_event(e);
-            }
-        }
+        result = add_event(e);
         if (result)
-            verify_and_link();
+        {
+            midibyte v = hardwire ? midibyte(m_note_off_velocity) : 0 ;
+            event e(tick + len, EVENT_NOTE_OFF, note, v);
+            result = add_event(e);
+        }
     }
+    if (result)
+        verify_and_link();
+
     return result;
 }
 
 /**
+ *  An overload to ignore painting values and increase efficiency during input
+ *  recording.
+ *
+ *  Will be consistent with how Note On velocity is handled; enable 0 velocity (a
+ *  standard?) for Note Off when not playing. Note that the event constructor sets
+ *  channel to 0xFF, while event::set_data() currently sets it to 0!!!
+ *
+ *
  *  Add note, preceded by a push-undo.  This is meant to be used only by the
  *  user-interface, when manually entering notes.
  */
@@ -2416,11 +2434,11 @@ bool
 sequence::push_add_note
 (
     midipulse tick, midipulse len, int note,
-    bool paint, int velocity
+    bool repaint, int velocity
 )
 {
     m_events_undo.push(m_events);                   /* push_undo(), no lock */
-    return add_note(tick, len, note, paint, velocity);
+    return add_note(tick, len, note, repaint, velocity);
 }
 
 bool
@@ -2562,6 +2580,18 @@ sequence::append_event (const event & er)
     return m_events.append(er);     /* does *not* sort, too time-consuming */
 }
 
+void
+sequence::sort_events ()
+{
+    /*
+     * Might make things worse.
+     *
+     * automutex locker(m_mutex);
+     */
+
+    m_events.sort();
+}
+
 /**
  *  Adds a event of a given status value and data values, at a given tick
  *  location.
@@ -2584,7 +2614,7 @@ sequence::append_event (const event & er)
  * \param d1
  *      The second data byte for the event (if needed).
  *
- * \param paint
+ * \param repaint
  *      If true, the inserted event is marked for painting.  The default value
  *      is false.
  */
@@ -2593,14 +2623,14 @@ bool
 sequence::add_event
 (
     midipulse tick, midibyte status,
-    midibyte d0, midibyte d1, bool paint
+    midibyte d0, midibyte d1, bool repaint
 )
 {
     automutex locker(m_mutex);
     bool result = false;
     if (tick >= 0)
     {
-        if (paint)
+        if (repaint)
         {
             for (auto & er : m_events)
             {
@@ -2616,7 +2646,7 @@ sequence::add_event
             (void) remove_marked();
         }
         event e(tick, status, d0, d1);
-        if (paint)
+        if (repaint)
             e.paint();
 
         result = add_event(e);
@@ -2679,6 +2709,12 @@ sequence::check_loop_reset ()
  *  The m_rec_vol member includes the "Free" menu entry in seqedit, which sets
  *  the velocity to SEQ66_PRESERVE_VELOCITY (-1).
  *
+ *  If the pattern is not playing, this function supports the step-edit
+ *  (auto-step) feature, where we are entering notes without playback occurring,
+ *  so we set the generic default note length and volume to the snap.  If the
+ *  recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we have to set a
+ *  default value, 100.
+ *
  * \todo
  *      When we feel like debugging, we will replace the global is-playing
  *      call with the parent performer's is-running call.
@@ -2722,31 +2758,29 @@ sequence::stream_event (event & ev)
             else
             {
                 /*
-                 * Supports the step-edit feature, where we are entering notes
-                 * without playback occurring, so we set the generic default
-                 * note length and volume to the snap.  If the
-                 * recording-volume is SEQ66_DEFAULT_NOTE_ON_VELOCITY, then we
-                 * have to set a default value, 100.
+                 * Supports the step-edit (auto-step) feature; see banner.
                  */
 
                 if (ev.is_note_on())
                 {
-                    bool keepvelocity =
-                        m_rec_vol == SEQ66_PRESERVE_VELOCITY || m_rec_vol == 0;
-
                     int velocity = int(ev.note_velocity());
-                    if (velocity == 0)
-                        velocity = SEQ66_DEFAULT_NOTE_ON_VELOCITY;
-
-                    if (! keepvelocity)
+                    bool keepvelocity = m_rec_vol == SEQ66_PRESERVE_VELOCITY;
+                    if (keepvelocity)
+                    {
+                        if (velocity == 0)
+                            velocity = SEQ66_DEFAULT_NOTE_ON_VELOCITY;
+                    }
+                    else
                         velocity = m_rec_vol;
 
                     m_events_undo.push(m_events);       /* push_undo()      */
-                    add_note                            /* more locking     */
+
+                    bool ok = add_note                  /* more locking     */
                     (
                         mod_last_tick(), snap() - m_events.note_off_margin(),
                         ev.get_note(), false, velocity
                     );
+                    if (ok)
                     ++m_notes_on;
                 }
                 else if (ev.is_note_off())
@@ -3710,7 +3744,8 @@ sequence::note_count ()
  *      nested in the sequence class, which is a friend.
  *
  * \param evi
- *      A caller-provided iterator.  Thus, it won't interfere with other callers.
+ *      A caller-provided iterator.  Thus, it won't interfere with other
+ *      callers.
  *
  * \return
  *      Returns a sequence::draw value:  linked, note_on, note_off, or finish.
@@ -3729,6 +3764,9 @@ sequence::get_next_note_ex
     automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     while (evi != m_events.cend())
     {
+        if (m_events.sort_in_progress())        /* atomic boolean check     */
+            return draw::finish;                /* bug out immediately      */
+
         draw status = get_note_info(niout, evi);
         ++evi;
         if (status != draw::none)
@@ -3945,6 +3983,9 @@ sequence::get_next_event_match
     automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     while (evi != m_events.end())
     {
+        if (m_events.sort_in_progress())        /* atomic boolean check     */
+            return false;                       /* bug out immediately      */
+
         const event & drawevent = eventlist::cdref(evi);
         bool istempo = drawevent.is_tempo();
         bool ok = drawevent.get_status() == status || istempo;
@@ -5053,7 +5094,7 @@ sequence::copy_events (const eventlist & newevents)
          */
 
         midipulse len = m_events.get_max_timestamp();
-// #ifdef USE_THIS_READY_CODE
+#ifdef USE_THIS_READY_CODE
         int qnnum = len / int(get_ppqn());  /* number of quarter notes      */
         if (len % get_ppqn() != 0)
         {
@@ -5062,7 +5103,7 @@ sequence::copy_events (const eventlist & newevents)
                 ++qnnum;                    /* shouldn't ever happen        */
         }
         len = qnnum * get_ppqn();
-// #endif
+#endif
         m_length = len;
         verify_and_link();                  /* function uses m_length       */
     }

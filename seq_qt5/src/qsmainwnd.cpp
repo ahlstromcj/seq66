@@ -1644,9 +1644,7 @@ qsmainwnd::filename_prompt (const std::string & prompt)
     );
     if (ok)
     {
-//      std::string ext = file_extension(result);
-//      if (ext.empty())
-//          result += ".midi";
+        // nothing yet
     }
     return result;
 }

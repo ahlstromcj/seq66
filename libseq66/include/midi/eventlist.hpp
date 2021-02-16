@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-02-02
+ * \updates       2021-02-16
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -53,6 +53,7 @@
  */
 
 #include <algorithm>                    /* std::sort(), std::merge()    */
+#include <atomic>                       /* std::atomic<bool> usage      */
 #include <string>                       /* std::string                  */
 #include <vector>                       /* std::vector                  */
 
@@ -138,6 +139,13 @@ private:
     event::buffer m_events;
 
     /**
+     *  Provides an atomic flag to raise while sorting(), which can invalidate
+     *  iterators while a user-interface is accessing the event list.
+     */
+
+    std::atomic<bool> m_sort_in_progress;
+
+    /**
      *  Holds the length of the sequence holding this event-list,
      *  in pulses (ticks).  See sequence::m_length.
      */
@@ -150,7 +158,7 @@ private:
      *  than zero) length.
      */
 
-    midipulse mc_note_off_margin;
+    midipulse m_note_off_margin;
 
     /**
      *  A flag to indicate if an event was added or removed.  We may need to
@@ -182,8 +190,8 @@ private:
 public:
 
     eventlist ();
-    eventlist (const eventlist & a_rhs) = default;
-    eventlist & operator = (const eventlist & a_rhs) = default;
+    eventlist (const eventlist & rhs);                      /* = default;   */
+    eventlist & operator = (const eventlist & rhs);         /* = default;   */
     virtual ~eventlist ()
     {
         // No code needed
@@ -260,7 +268,7 @@ public:
 
     midipulse note_off_margin () const
     {
-        return mc_note_off_margin;
+        return m_note_off_margin;
     }
 
     bool is_modified () const
@@ -332,7 +340,14 @@ public:
 
     void sort ()
     {
+        m_sort_in_progress = true;
         std::sort(m_events.begin(), m_events.end());
+        m_sort_in_progress = false;
+    }
+
+    bool sort_in_progress () const
+    {
+        return m_sort_in_progress;
     }
 
     /**

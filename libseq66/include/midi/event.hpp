@@ -28,14 +28,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-01
+ * \updates       2021-02-15
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
  *  values, or data values for MIDI events.  This class is also a base class,
  *  so that we can manage "editable events".
- *
- *  Note the new inline free function is_note_off_velocity().
  *
  *  One thing we need to add to this event class is a way to encapsulate
  *  Meta events.  First, we use the existing event::sysex to hold
@@ -1174,8 +1172,7 @@ public:
 
     void note_velocity (int vel)
     {
-        if (is_note())
-            m_data[1] = midibyte(vel) & 0x7F;
+        m_data[1] = midibyte(vel) & 0x7F;
     }
 
     midibyte note_velocity () const

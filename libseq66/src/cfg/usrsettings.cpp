@@ -1188,16 +1188,12 @@ usrsettings::midi_buss_override (bussbyte buss)
         m_midi_buss_override = buss;
 }
 
-/**
- * \setter m_velocity_override
- */
-
 void
 usrsettings::velocity_override (int vel)
 {
     if (vel > SEQ66_MAX_NOTE_ON_VELOCITY)
         vel = SEQ66_MAX_NOTE_ON_VELOCITY;
-    else if (vel < 0)
+    else if (vel <= 0)
         vel = SEQ66_PRESERVE_VELOCITY;
 
     m_velocity_override = vel;

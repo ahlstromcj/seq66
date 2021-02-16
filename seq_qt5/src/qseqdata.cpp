@@ -153,73 +153,50 @@ qseqdata::paintEvent (QPaintEvent * qpep)
     seq::pointer s = seq_pointer();
     midipulse start_tick = pix_to_tix(r.x());
     midipulse end_tick = start_tick + pix_to_tix(r.width());
-
-#if defined SEQ66_USE_TRY_CATCH
-
-    /*
-     * The try-catch seems to improve the robustness of the app when
-     * recording a DD-11 drum pattern over and over while also drawing a
-     * ton of notes.
-     */
-
-    try     /* EXPERIMENTAL: 2021-02-15 */
+    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
     {
-#endif
-        for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
+        if (! s->get_next_event_match(m_status, m_cc, cev)) /* side-effect */
+            break;
+
+        midipulse tick = cev->timestamp();
+        if (tick >= start_tick && tick <= end_tick)
         {
-            if (! s->get_next_event_match(m_status, m_cc, cev)) /* side-effect */
-                break;
+            /*
+             *  Convert to screen coordinates.
+             */
 
-            midipulse tick = cev->timestamp();
-            if (tick >= start_tick && tick <= end_tick)
-            {
-                /*
-                 *  Convert to screen coordinates.
-                 */
+            int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
+            bool selected = cev->is_selected();
+            midibyte d0, d1;
+            cev->get_data(d0, d1);
 
-                int event_x = tix_to_pix(tick) + m_keyboard_padding_x;
-                bool selected = cev->is_selected();
-                midibyte d0, d1;
-                cev->get_data(d0, d1);
+            int event_height = d1;          /* generate the value       */
+            if (event::is_one_byte_msg(m_status))
+                event_height = d0;
 
-                int event_height = d1;          /* generate the value       */
-                if (event::is_one_byte_msg(m_status))
-                    event_height = d0;
+            pen.setWidth(2);                /* draw vertical grid lines */
+            if (selected)
+                pen.setColor(sel_paint());  /* pen.setColor("orange")   */
+            else
+                pen.setColor(fore_color()); /* pen.setColor(Qt::black)  */
 
-                pen.setWidth(2);                /* draw vertical grid lines */
-                if (selected)
-                    pen.setColor(sel_paint());  /* pen.setColor("orange")   */
-                else
-                    pen.setColor(fore_color()); /* pen.setColor(Qt::black)  */
+            painter.setPen(pen);
+            painter.drawLine
+            (
+                event_x, height() - event_height, event_x, height()
+            );
 
-                painter.setPen(pen);
-                painter.drawLine
-                (
-                    event_x, height() - event_height, event_x, height()
-                );
+            int x_offset = event_x + s_x_data_fix;
+            int y_offset = c_dataarea_y - 25;
+            snprintf(digits, sizeof digits, "%3d", d1);
 
-                int x_offset = event_x + s_x_data_fix;
-                int y_offset = c_dataarea_y - 25;
-                snprintf(digits, sizeof digits, "%3d", d1);
-
-                QString val = digits;
-                pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
-                painter.drawText(x_offset, y_offset,      val.at(0));
-                painter.drawText(x_offset, y_offset +  8, val.at(1));
-                painter.drawText(x_offset, y_offset + 16, val.at(2));
-            }
+            QString val = digits;
+            pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
+            painter.drawText(x_offset, y_offset,      val.at(0));
+            painter.drawText(x_offset, y_offset +  8, val.at(1));
+            painter.drawText(x_offset, y_offset + 16, val.at(2));
         }
-#if defined SEQ66_USE_TRY_CATCH
     }
-    catch (std::exception & e)          /* EXPERIMENTAL: 2021-02-15 */
-    {
-        errprintf("qseqdata: %s\n", e.what());
-    }
-    catch (...)
-    {
-        errprint("qseqdata exception\n");
-    }
-#endif
     if (m_line_adjust)                          /* draw edit line           */
     {
         int x, y, w, h;

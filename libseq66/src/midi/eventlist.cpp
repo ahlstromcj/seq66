@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-01-10
+ * \updates       2021-02-16
  * \license       GNU GPLv2 or above
  *
  *  This container now can indicate if certain Meta events (time-signaure or
@@ -51,13 +51,48 @@ namespace seq66
 
 eventlist::eventlist () :
     m_events                (),
+    m_sort_in_progress      (false),        /* an atomic boolean */
     m_length                (0),
-    mc_note_off_margin      (2),
+    m_note_off_margin       (2),
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false)
 {
     // No code needed
+}
+
+/**
+ *  We have to now define this copy constructor because the atomic copy
+ *  constructor is deleted, making the compiler-generated copy constructor
+ *  ill-formed.
+ */
+
+eventlist::eventlist (const eventlist & rhs) :
+    m_events                (rhs.m_events),
+    m_sort_in_progress      (false),                    /* atomic boolean   */
+    m_length                (rhs.m_length),
+    m_note_off_margin       (rhs.m_note_off_margin),
+    m_is_modified           (rhs.m_is_modified),
+    m_has_tempo             (rhs.m_has_tempo),
+    m_has_time_signature    (rhs.m_has_time_signature)
+{
+    // no code
+}
+
+eventlist &
+eventlist::operator = (const eventlist & rhs)
+{
+    if (this != &rhs)
+    {
+        m_events                = rhs.m_events;
+        m_sort_in_progress      = false;                /* atomic boolean   */
+        m_length                = rhs.m_length;
+        m_note_off_margin       = rhs.m_note_off_margin;
+        m_is_modified           = rhs.m_is_modified;
+        m_has_tempo             = rhs.m_has_tempo;
+        m_has_time_signature    = rhs.m_has_time_signature;
+    }
+    return *this;
 }
 
 /**

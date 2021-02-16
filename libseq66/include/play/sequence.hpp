@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-02-15
+ * \updates       2021-02-16
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -66,10 +66,6 @@ const int c_seq_color_none = (-1);
 
 namespace seq66
 {
-    /*
-     * Forward references.
-     */
-
     class mastermidibus;
     class notemapper;
     class performer;
@@ -1283,12 +1279,7 @@ public:
         midibyte d0, midibyte d1, bool paint = false
     );
     bool append_event (const event & er);
-
-    void sort_events ()
-    {
-        m_events.sort();
-    }
-
+    void sort_events ();
     void notify_change ();
     void notify_trigger ();
     void print_triggers () const;
@@ -1486,8 +1477,9 @@ public:
     void reset_draw_trigger_marker ();
 
     /**
-     *  Reset the caller's iterator.  This is used with get_next_event_match()
-     *  and get_next_event_ex().
+     *  Reset the caller's iterator.  This is used with
+     *  get_next_event_match(), get_next_event_ex(), and other functions used
+     *  in painting events..
      */
 
     event::buffer::const_iterator ex_iterator () const
@@ -1507,7 +1499,8 @@ public:
     ) const;
     draw get_note_info
     (
-        note_info & niout, event::buffer::const_iterator & evi
+        note_info & niout,
+        event::buffer::const_iterator & evi
     ) const;
     draw get_next_note_ex
     (
