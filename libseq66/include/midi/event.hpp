@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-15
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  This module also declares/defines the various constants, status-byte
@@ -313,8 +313,8 @@ public:
 
     private:
 
-        midipulse m_timestamp;  /**< The primary key-value for the key. */
-        int m_rank;             /**< The sub-key-value for the key.     */
+        midipulse m_timestamp;      /**< The primary key-value for the key. */
+        int m_rank;                 /**< The sub-key-value for the key.     */
 
     public:
 
@@ -328,10 +328,8 @@ public:
 private:
 
     /**
-     *  EXPERIMENTAL.
-     *
-     *  Indicates the input buss on which this event came in.  The default value
-     *  is unusable: c_bussbyte_max from the midibytes.hpp module.
+     *  Indicates the input buss on which this event came in.  The default
+     *  value is unusable: c_bussbyte_max from the midibytes.hpp module.
      */
 
     bussbyte m_input_buss;
@@ -412,8 +410,9 @@ private:
     bool m_selected;
 
     /**
-     *  Answers the question "is this event marked in processing."  This marking
-     *  is more of an internal function for purposes of reorganizing events.
+     *  Answers the question "is this event marked in processing."  This
+     *  marking is more of an internal function for purposes of reorganizing
+     *  events.
      */
 
     bool m_marked;
@@ -429,13 +428,7 @@ private:
 public:
 
     event ();
-    event
-    (
-        midipulse tstamp,
-        midibyte status,
-        midibyte d0,
-        midibyte d1
-    );
+    event (midipulse tstamp, midibyte status, midibyte d0, midibyte d1);
     event (const event & rhs);
     event & operator = (const event & rhs);
     virtual ~event ();
@@ -525,19 +518,6 @@ public:
     }
 
     /**
-     *  Static test for detecting a Voice Category status.  The allowed range is
-     *  0x80 to 0xEF.
-     *
-     * \return
-     *      Returns true if the value is in the range noted above.
-     */
-
-    static bool is_voice (midibyte m)
-    {
-        return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
-    }
-
-    /**
      *  Checks for a System Category status, which is supposed to clear any
      *  running status.  We do not also allow 0xff to clear running status to
      *  prevent errors in reading a file.  An ISSUE!
@@ -561,6 +541,8 @@ public:
     /**
      *  Static test for the status bit.
      *
+     *  CURRENTLY NOT USED ANYWHERE.
+     *
      * \return
      *      Returns true if the status bit is not set.
      */
@@ -573,8 +555,11 @@ public:
     /**
      *  Static test for the channel message/statuse values: Note On, Note Off,
      *  Aftertouch, Control Change, Program Change, Channel Pressure, and
-     *  Pitch Wheel.  This function requires that the channel data have
-     *  already been masked off.
+     *  Pitch Wheel.  This function no longer requires that the channel data
+     *  be masked off; it is also a test for a Voice Category status.  The
+     *  allowed range is 0x80 to 0xEF.
+     *
+     *  CURRENTLY NOT USED ANYWHERE.
      *
      * \param m
      *      The channel status or message byte to be tested, with the channel
@@ -589,6 +574,7 @@ public:
 
     static bool is_channel_msg (midibyte m)
     {
+#if defined USE_BRUTE_FORCE
         return
         (
             m == EVENT_NOTE_ON        || m == EVENT_NOTE_OFF ||
@@ -596,6 +582,21 @@ public:
             m == EVENT_PROGRAM_CHANGE || m == EVENT_CHANNEL_PRESSURE ||
             m == EVENT_PITCH_WHEEL
         );
+#else
+        return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
+#endif
+    }
+
+    /**
+     *  CURRENTLY NOT USED ANYWHERE.
+     *
+     * \return
+     *      Returns true if the value is in the range noted above.
+     */
+
+    static bool is_voice (midibyte m)
+    {
+        return m >= EVENT_NOTE_OFF && m < EVENT_MIDI_REALTIME;
     }
 
     /**
@@ -642,12 +643,20 @@ public:
 
     static bool is_two_byte_msg (midibyte m)
     {
+#if defined USE_BRUTE_FORCE
         return
         (
             m == EVENT_NOTE_ON        || m == EVENT_NOTE_OFF   ||
             m == EVENT_CONTROL_CHANGE || m == EVENT_AFTERTOUCH ||
             m == EVENT_PITCH_WHEEL
         );
+#else
+        return
+        (
+            (m >= EVENT_NOTE_OFF && m < EVENT_PROGRAM_CHANGE) ||
+            m == EVENT_PITCH_WHEEL
+        );
+#endif
     }
 
     /**
@@ -689,7 +698,11 @@ public:
 
     static bool is_note_msg (midibyte m)
     {
-        return m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF || m == EVENT_AFTERTOUCH;
+        return
+        (
+            m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF ||
+            m == EVENT_AFTERTOUCH
+        );
     }
 
     /**
@@ -1366,7 +1379,7 @@ public:
     }
 
     void print () const;
-    void print_note (bool is_a_link = false) const;
+    void print_note (bool showlink = true) const;
     std::string to_string () const;
     int get_rank () const;
     void rescale (int oldppqn, int newppqn);
@@ -1377,7 +1390,6 @@ public:
  * Global functions in the seq66 namespace.
  */
 
-extern std::string to_string (const event & ev);
 extern event create_tempo_event (midipulse tick, midibpm tempo);
 
 }           // namespace seq66

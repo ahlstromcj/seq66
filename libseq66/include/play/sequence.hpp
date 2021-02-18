@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-02-16
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -51,6 +51,8 @@
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
+
+#define SEQ66_USE_SEQUENCE_EX_ITERATOR
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -358,6 +360,15 @@ private:
     bool m_recording;
 
     /**
+     *  EXPERIMENTAL
+     *  If true, the first incoming event in the step-edit (auto-step) part of
+     *  stream_event() will reset the starting tick to 0.  Useful when
+     *  recording a stock pattern from a drum machine.
+     */
+
+    bool m_auto_step_reset;
+
+    /**
      *  Provides an option for expanding the number of measures while
      *  recording.  In essence, the "infinite" track we've wanted, thanks
      *  to Stazed and his Seq32 project.  Defaults to false.
@@ -373,6 +384,13 @@ private:
      */
 
     bool m_overwrite_recording;
+
+    /**
+     *  If true, when recording reaches the end of the length, stop recording.
+     *  Useful with the m_auto_step_reset value, too.
+     */
+
+    bool m_oneshot_recording;
 
     /**
      *  True if recording in quantized mode.
@@ -848,7 +866,7 @@ public:
         m_seq_edit_mode = mode;
     }
 
-    void modify ();
+    void modify (bool notifychange = true);
     int event_count () const;
     int note_count ();
     bool minmax_notes (int & lowest, int & highest);
@@ -1141,6 +1159,27 @@ public:
         return m_recording && m_expanded_recording;
     }
 
+    bool auto_step_reset () const
+    {
+        return m_auto_step_reset;
+    }
+
+    bool oneshot_recording () const
+    {
+        return m_oneshot_recording;
+    }
+
+    void auto_step_reset (bool flag)
+    {
+        m_auto_step_reset = flag;
+        m_loop_count = 0;
+    }
+
+    void oneshot_recording (bool flag)
+    {
+        m_oneshot_recording = flag;
+    }
+
     void expanded_recording (bool expand)
     {
         m_expanded_recording = expand;
@@ -1296,6 +1335,8 @@ public:
     triggers::List get_triggers () const;
     bool unselect_trigger (midipulse tick);
     bool unselect_triggers ();
+
+#if defined USE_INTERSECT_FUNCTIONS
     bool intersect_triggers (midipulse pos, midipulse & start, midipulse & end);
     bool intersect_triggers (midipulse pos);
     bool intersect_notes
@@ -1308,6 +1349,8 @@ public:
         midipulse posstart, midipulse posend,
         midibyte status, midipulse & start
     );
+#endif
+
     bool delete_selected_triggers ();
     bool cut_selected_trigger ();
     void copy_selected_trigger ();
@@ -1476,6 +1519,8 @@ public:
     void pause (bool song_mode = false);    /* playback::live vs song   */
     void reset_draw_trigger_marker ();
 
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+
     /**
      *  Reset the caller's iterator.  This is used with
      *  get_next_event_match(), get_next_event_ex(), and other functions used
@@ -1491,6 +1536,12 @@ public:
     {
         return evi != m_events.cend();
     }
+
+#else
+
+    void reset_ex_iterator (event::buffer::const_iterator & evi) const;
+
+#endif  // defined SEQ66_USE_SEQUENCE_EX_ITERATOR
 
     bool reset_interval
     (
@@ -1661,8 +1712,9 @@ private:
 #if defined USE_SEQUENCE_REMOVE_EVENTS
     void remove (event::buffer::iterator i);
     void remove (event & e);
-    void remove_all ();
 #endif
+
+    void remove_all ();
 
     /**
      *  Checks to see if the event's channel matches the sequence's nominal

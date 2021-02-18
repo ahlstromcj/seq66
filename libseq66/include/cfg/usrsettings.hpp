@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-21
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -100,7 +100,9 @@ enum class recordstyle
 {
     merge,          /**< Incoming events are merged into the loop.  */
     overwrite,      /**< Incoming events overwrite the loop.        */
-    expand          /**< Incoming events increase size of loop.     */
+    expand,         /**< Incoming events increase size of loop.     */
+    oneshot,        /**< Stop when length of loop is reached.       */
+    max             /**< Provides an illegal/length value.          */
 };
 
 /**
@@ -127,7 +129,8 @@ private:
     {
         none,
         nsm,
-        lash
+        lash,
+        max
     };
 
     /**
@@ -1793,7 +1796,8 @@ public:         // used in main application module and the usrfile class
 
     void new_pattern_recordstyle (recordstyle style)
     {
-        m_new_pattern_recordstyle = style;
+        if (style < recordstyle::max)
+            m_new_pattern_recordstyle = style;
     }
 
     void midi_ppqn (int ppqn);

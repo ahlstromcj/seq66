@@ -223,7 +223,7 @@ mastermidibus::api_get_midi_event (event * in)
                  * in->set_timestamp(ts);
                  */
 
-                in->set_input_bus(bussbyte(b));         // EXPERIMENTAL
+                in->set_input_bus(bussbyte(b));
                 in->set_status_keep_channel(Pm_MessageStatus(pme.message));
                 in->set_data
                 (

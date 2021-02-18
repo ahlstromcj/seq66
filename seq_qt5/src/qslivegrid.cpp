@@ -971,11 +971,13 @@ qslivegrid::mouseMoveEvent (QMouseEvent * event)
 void
 qslivegrid::mouseDoubleClickEvent (QMouseEvent * event)
 {
+    bool showframe = true;
     if (m_adding_new)
     {
         new_sequence();
+        // showframe = false;
     }
-    else
+    if (showframe)
     {
         m_current_seq = seq_id_from_xy(event->x(), event->y());
         if (! perf().is_seq_active(m_current_seq))

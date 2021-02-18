@@ -553,34 +553,65 @@
       \end{tabular}
    \end{table}
 
-\subsection{Pattern Editor}
-\label{subsec:kbd_mouse_pattern_editor}
+\subsection{Pattern Editor Piano Roll Keystrokes}
+\label{subsec:kbd_mouse_pattern_editor_piano_roll_keystrokes}
 
    The pattern/sequencer editor piano roll is a complex and powerful event
    editor;
    \tableref{table:pattern_editor_piano_roll},
    doesn't begin to cover its functionality.
-   Here are some keystrokes handled by the main frame of the piano roll:
+   Here are the keystrokes handled by the main frame of the piano roll:
 
    \begin{itemize}
-      \item \texttt{Ctrl-L}.  Bring up the LFO event modulation editor.
-      \item \texttt{Ctrl-W}.  Exit the sequence (pattern) editor.
-      \item \texttt{Ctrl-Page Up}.  Zoom in.
-      \item \texttt{Ctrl-Page Down}.  Zoom out.
-      \item \texttt{Shift-Page Up}.  Scroll leftward.
-      \item \texttt{Shift-Page Down}.  Scroll rightward.
-      \item \texttt{Shift-Home}.  Scroll leftward to the beginning.
-      \item \texttt{Shift-End}.  Scroll rightward to the end.
+      \item \texttt{Delete}.  Deletes (not cuts) the currently-selected notes.
+      \item \texttt{Backspace}.  Same as \texttt{Delete}.
+      \item \texttt{Left Arrow}, \texttt{Right Arrow},
+         \texttt{Up Arrow},and \texttt{Down Arrow}.
+         Moves the selected notes by one semi-tone in pitch vertically, or
+         one snap step horizontally.
+      \item \texttt{Ctrl-Left Arrow} and \texttt{Ctrl-Right Arrow}.
+         Absolute left/right movement by a snap step. To be explored.
+      \item \texttt{z} and \texttt{Z}.  Zoom out (smaller) and zoom in
+         horizontally.
+      \item \texttt{v} and \texttt{V}.  Zoom out (smaller) and zoom in
+         vertically.
+      \item \texttt{0}. Reset horizontal or vertical zoom.
+      \item \texttt{Ctrl-Home}.  Scroll leftward to the beginning of the
+         piano roll (time 0).
+      \item \texttt{Ctrl-End}.  Scroll rightward to the end of the
+         piano roll (the full length of the pattern).
+      \item \texttt{Ctrl-a}.  Select all notes.  The selected notes, events,
+         and data values are drawn in orange (by default).
+      \item \texttt{Ctrl-c}, \texttt{Ctrl-x}, \texttt{Ctrl-v}, and
+         \texttt{Ctrl-z}.  Copy, cut, paste, and undo. There is no redo key,
+         but there are user-interface buttons for undo and redo.
+%     \item \texttt{Ctrl-r}. Redo.
+      \item \texttt{Page Down}.  Scroll downward.
+      \item \texttt{Page Up}.  Scroll upward.
+      \item \texttt{c}.  Repitch the selected note according to the loaded
+         note-mapper, if any.
+      \item \texttt{f}.  Edge-fix.  To be determined.
+      \item \texttt{q}.  Quantize selected notes.
+         Currently \textbf{broken}.
+      \item \texttt{t}.  Tightened (partial quantize) selected notes.
+         Currently \textbf{broken}.
+      \item \texttt{r}.  Randomize selected notes.
+         Currently \textbf{broken}.
+      \item \texttt{p}.  Enter paint/drawing mode for notes.
+      \item \texttt{x}.  Exit paint/drawing mode.
+   \end{itemize}
+
+%     \item \texttt{Ctrl-L}.  Bring up the LFO event modulation editor.
+%     \item \texttt{Ctrl-W}.  Exit the sequence (pattern) editor.
+%     \item \texttt{Ctrl-Page Up}.  Zoom in.
+%     \item \texttt{Ctrl-Page Down}.  Zoom out.
+%     \item \texttt{Shift-Page Up}.  Scroll leftward.
+%     \item \texttt{Shift-Page Down}.  Scroll rightward.
 %     \item \texttt{Shift-z (Z)}.  Zoom in.
 %     \item \texttt{0}.  Set default zoom.
 %     \item \texttt{z}.  Zoom out.
-      \item \texttt{Page Down}.  Scroll downward.
-      \item \texttt{Page Up}.  Scroll upward.
-      \item \texttt{Home}.  Scroll upward to the beginning.
-      \item \texttt{End}.  Scroll downward to the end.
-      \item \texttt{Delete}.  Deletes (not cuts) the currently-selected notes
-         in the piano roll; can be undone with the \textbf{Undo} button.
-   \end{itemize}
+%     \item \texttt{Home}.  Scroll upward to the beginning.
+%     \item \texttt{End}.  Scroll downward to the end.
 
 \subsubsection{Pattern Editor Piano Roll}
 \label{subsubsec:kbd_mouse_pattern_editor_piano_roll}
@@ -590,12 +621,6 @@
    in it with the mouse.
 
    \begin{itemize}
-%     \item \texttt{Ctrl-x}. Cut.
-%     \item \texttt{Ctrl-c}. Copy.
-%     \item \texttt{Ctrl-v}. Paste.
-%     \item \texttt{Ctrl-z}. Undo.
-      \item \texttt{Ctrl-r}. Redo.
-      \item \texttt{Ctrl-a}. Select all.
       \item \texttt{Ctrl-Left}.  Shrink selected notes.
       \item \texttt{Ctrl-Right}.  Grow selected notes.
       \item \texttt{Delete}.  Remove selected notes.

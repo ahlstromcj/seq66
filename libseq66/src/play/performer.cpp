@@ -4084,6 +4084,8 @@ performer::paste_or_split_trigger (seq::number seqno, midipulse tick)
     return result;
 }
 
+#if defined USE_INTERSECT_FUNCTIONS
+
 /**
  *  Finds the trigger intersection.
  *
@@ -4108,6 +4110,8 @@ performer::intersect_triggers (seq::number seqno, midipulse tick)
 
     return result;
 }
+
+#endif  // defined USE_INTERSECT_FUNCTIONS
 
 /**
  *  For every active sequence, call that sequence's push_trigger_undo()

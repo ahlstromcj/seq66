@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-15
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -141,8 +141,10 @@ sequence::sequence (int ppqn)
     m_was_playing               (false),
     m_playing                   (false),
     m_recording                 (false),
+    m_auto_step_reset           (false),
     m_expanded_recording        (false),
     m_overwrite_recording       (false),
+    m_oneshot_recording         (false),
     m_quantized_recording       (false),
     m_thru                      (false),
     m_queued                    (false),
@@ -209,8 +211,8 @@ sequence::~sequence ()
 /**
  *  A convenience function that we have to put here so that the m_parent
  *  pointer can be used without an additional include-file in the sequence.hpp
- *  module.  One minor issue is how can we unmodify the performance?  We'd need
- *  to keep a count/stack of modifications over all sequences in the
+ *  module.  One minor issue is how can we unmodify the performance?  We'd
+ *  need to keep a count/stack of modifications over all sequences in the
  *  performance.  Probably not practical, in general.  We will probably keep
  *  track of the modification of the buss (port) and channel numbers, as per
  *  GitHub Issue #47.
@@ -218,10 +220,14 @@ sequence::~sequence ()
  *  Note that now we don't call performer::modify(), now we call its
  *  notification function for sequence-changes, which notifies all subscribers
  *  and also calls modify().
+ *
+ * \param notifychange
+ *      If true (the default), then notification is done (via a
+ *      performer::callbacks function).
  */
 
 void
-sequence::modify ()
+sequence::modify (bool notifychange)
 {
     set_dirty();
 
@@ -237,7 +243,8 @@ sequence::modify ()
      * performer::change::yes.
      */
 
-     notify_change();
+     if (notifychange)
+         notify_change();
 }
 
 /**
@@ -278,8 +285,10 @@ sequence::partial_assign (const sequence & rhs)
         m_was_playing               = false;
         m_playing                   = false;
         m_recording                 = false;
+        m_auto_step_reset           = false;
         m_expanded_recording        = false;
         m_overwrite_recording       = false;
+        m_oneshot_recording         = false;
         m_quantized_recording       = false;
         m_song_recording            = false;
         m_song_recording_snap       = false;
@@ -1038,7 +1047,6 @@ sequence::link_new ()
 void
 sequence::remove (event::buffer::iterator evi)
 {
-    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     if (evi != m_events.end())
     {
         event & er = eventlist::dref(evi);
@@ -1077,6 +1085,8 @@ sequence::remove (event & e)
         modify();
 }
 
+#endif  // defined USE_SEQUENCE_REMOVE_EVENTS
+
 /**
  *  Clears all events from the event container.  Unsets the modified flag.
  *  (Why?) Also see the new copy_events() function.
@@ -1087,10 +1097,11 @@ sequence::remove_all ()
 {
     automutex locker(m_mutex);
     m_events.clear();
-    m_events.unmodify();
-}
 
-#endif  // defined USE_SEQUENCE_REMOVE_EVENTS
+    /*
+     * This is a mistake: m_events.unmodify();
+     */
+}
 
 /**
  *  Removes marked events.  Before removing the events, any Note Ons are turned
@@ -2548,7 +2559,7 @@ sequence::add_event (const event & er)
     bool result = m_events.add(er);     /* post/auto-sorts by time & rank   */
     if (result)
     {
-        modify();
+        modify(true);                   /* call notify_change()             */
     }
     else
     {
@@ -2584,11 +2595,10 @@ void
 sequence::sort_events ()
 {
     /*
-     * Might make things worse.
-     *
-     * automutex locker(m_mutex);
+     * Might make things worse?
      */
 
+    automutex locker(m_mutex);
     m_events.sort();
 }
 
@@ -2645,6 +2655,7 @@ sequence::add_event
             }
             (void) remove_marked();
         }
+
         event e(tick, status, d0, d1);
         if (repaint)
             e.paint();
@@ -2669,13 +2680,16 @@ bool
 sequence::check_loop_reset ()
 {
     bool result = false;
-    if (overwriting() && perf()->is_running() && get_length() > 0)
+    if (get_length() > 0)
     {
         midipulse tstamp = perf()->get_tick() % get_length();
-        if (tstamp < (m_ppqn / 4))
+        if (overwriting() && perf()->is_running())
         {
-            loop_reset(true);
-            result = true;
+            if (tstamp < (m_ppqn / 4))
+            {
+                loop_reset(true);
+                result = true;
+            }
         }
     }
     return result;
@@ -2738,11 +2752,20 @@ sequence::stream_event (event & ev)
     bool result = channels_match(ev);           /* set if channel matches   */
     if (result)
     {
-        if (overwriting() && loop_reset())
+        if (loop_reset())
         {
-            loop_reset(false);
-            m_events.clear();                   /* vice remove_all()        */
-            set_dirty();
+            if (overwriting())
+            {
+                loop_reset(false);
+                remove_all();                   /* vice m_events.clear()    */
+                set_dirty();
+            }
+            else if (oneshot_recording())
+            {
+                loop_reset(false);
+                set_recording(false);
+                set_dirty();
+            }
         }
         ev.set_status(ev.get_status());         /* clear the channel nybble */
         ev.mod_timestamp(get_length());         /* adjust tick re length    */
@@ -2761,7 +2784,27 @@ sequence::stream_event (event & ev)
                  * Supports the step-edit (auto-step) feature; see banner.
                  */
 
-                if (ev.is_note_on())
+                if (ev.is_note_off())
+                {
+                    if (m_notes_on > 0)
+                        --m_notes_on;
+
+                    if (oneshot_recording() && m_notes_on == 0)
+                    {
+                        if (mod_last_tick() < snap() / 2)
+                        {
+                            if (m_loop_count > 0)
+                            {
+                                loop_reset(true);
+                                m_loop_count = 0;
+                                return false;
+                            }
+                            ++m_loop_count;
+                        }
+                        m_last_tick += snap();
+                    }
+                }
+                else if (ev.is_note_on())
                 {
                     int velocity = int(ev.note_velocity());
                     bool keepvelocity = m_rec_vol == SEQ66_PRESERVE_VELOCITY;
@@ -2774,6 +2817,8 @@ sequence::stream_event (event & ev)
                         velocity = m_rec_vol;
 
                     m_events_undo.push(m_events);       /* push_undo()      */
+                    if (auto_step_reset() && m_loop_count == 0)
+                        m_last_tick = 0;                /* set_last_tick()  */
 
                     bool ok = add_note                  /* more locking     */
                     (
@@ -2781,15 +2826,11 @@ sequence::stream_event (event & ev)
                         ev.get_note(), false, velocity
                     );
                     if (ok)
-                    ++m_notes_on;
+                        ++m_notes_on;
                 }
-                else if (ev.is_note_off())
+                else
                 {
-                    if (m_notes_on > 0)
-                    --m_notes_on;
-
-                    if (m_notes_on == 0)
-                        m_last_tick += snap();
+                    ev.print();
                 }
             }
         }
@@ -3012,6 +3053,8 @@ sequence::add_trigger
     m_triggers.add(tick, len, offset, fixoffset);
 }
 
+#if defined USE_INTERSECT_FUNCTIONS
+
 /**
  *  This function examines each trigger in the trigger list.  If the given
  *  position is between the current trigger's tick-start and tick-end
@@ -3186,6 +3229,8 @@ sequence::intersect_events
     return false;
 }
 
+#endif  // defined USE_INTERSECT_FUNCTIONS
+
 /**
  *  Grows a trigger.  See triggers::grow_trigger() for more information.
  *  We need to keep the automutex here because qperfroll calls this function
@@ -3248,10 +3293,7 @@ sequence::set_trigger_offset (midipulse trigger_offset)
         m_trigger_offset %= get_length();
     }
     else
-    {
-        errprint("set_trigger_offset(): seq length = 0");
         m_trigger_offset = trigger_offset;
-    }
 }
 
 /**
@@ -3761,7 +3803,7 @@ sequence::get_next_note_ex
     event::buffer::const_iterator & evi
 ) const
 {
-    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
+    automutex locker(m_mutex);
     while (evi != m_events.cend())
     {
         if (m_events.sort_in_progress())        /* atomic boolean check     */
@@ -3839,6 +3881,25 @@ sequence::get_note_info
     return draw::none;
 }
 
+#if ! defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+
+/**
+ *  Reset the caller's iterator.  This is used with get_next_event_match()
+ *  and get_next_event_ex().
+ *
+ * \param evi
+ *      The caller's "copy" of the m_events iterator to be reset to
+ *      m_events.begin().
+ */
+
+void
+sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
+{
+    evi = m_events.cbegin();
+}
+
+#endif  // ! defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+
 /**
  *  Checks for non-terminated notes.
  *
@@ -3855,7 +3916,6 @@ sequence::reset_interval
     event::buffer::const_iterator & it1
 ) const
 {
-    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
     bool result = false;
     bool got_beginning = false;
     auto iter = m_events.cbegin();
@@ -3921,10 +3981,13 @@ sequence::get_next_event_ex
     event::buffer::const_iterator & evi
 )
 {
-    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
+    automutex locker(m_mutex);
     bool result = evi != m_events.end();
     if (result)
     {
+        if (m_events.sort_in_progress())        /* atomic boolean check     */
+            return false;
+
         midibyte d1;                            /* will be ignored          */
         const event & ev = eventlist::cdref(evi);
         status = ev.get_status();
@@ -3980,7 +4043,7 @@ sequence::get_next_event_match
     int /* evtype [see macro below] */
 )
 {
-    automutex locker(m_mutex);          /* added 2021-02-15 for safety      */
+    automutex locker(m_mutex);
     while (evi != m_events.end())
     {
         if (m_events.sort_in_progress())        /* atomic boolean check     */
@@ -4812,25 +4875,28 @@ void
 sequence::shift_notes (midipulse ticks)
 {
     automutex locker(m_mutex);
-    m_events_undo.push(m_events);               /* push_undo(), no lock */
-    for (auto & er : m_events)
+    if (get_length() > 0)
     {
-        if (er.is_selected() && er.is_note())   /* shiftable event?     */
+        m_events_undo.push(m_events);               /* push_undo(), no lock */
+        for (auto & er : m_events)
         {
-            midipulse timestamp = er.timestamp() + ticks;
-            if (timestamp < 0L)                 /* wraparound           */
-                timestamp = get_length() - ((-timestamp) % get_length());
-            else
-                timestamp %= get_length();
+            if (er.is_selected() && er.is_note())   /* shiftable event?     */
+            {
+                midipulse timestamp = er.timestamp() + ticks;
+                if (timestamp < 0L)                 /* wraparound           */
+                    timestamp = get_length() - ((-timestamp) % get_length());
+                else
+                    timestamp %= get_length();
 
-            er.set_timestamp(timestamp);
-            result = true;
+                er.set_timestamp(timestamp);
+                result = true;
+            }
         }
-    }
-    if (result)
-    {
-        m_events.sort();
-        set_dirty();                            /* seqedit to update    */
+        if (result)
+        {
+            m_events.sort();
+            set_dirty();                            /* seqedit to update    */
+        }
     }
 }
 
@@ -5277,7 +5343,7 @@ void
 sequence::song_recording_stop (midipulse tick)
 {
     m_song_playback_block = m_song_recording = false;
-    if (m_song_recording_snap)
+    if (m_song_recording_snap && get_length() > 0)
     {
         midipulse len = get_length() - (tick % get_length());
         m_triggers.grow_trigger(m_song_record_tick, tick, len);
@@ -5340,15 +5406,18 @@ void
 sequence::resume_note_ons (midipulse tick)
 {
     automutex locker(m_mutex);                          /* better here?     */
-    for (auto & ei : m_events)
+    if (get_length() > 0)
     {
-        if (ei.is_note_on() && ei.is_linked())
+        for (auto & ei : m_events)
         {
-            midipulse on = ei.timestamp();              /* see banner notes */
-            midipulse off = ei.link()->timestamp();
-            midipulse T = tick % get_length();
-            if (on < T && (off > T || on > off))
-                put_event_on_bus(ei);
+            if (ei.is_note_on() && ei.is_linked())
+            {
+                midipulse on = ei.timestamp();          /* see banner notes */
+                midipulse off = ei.link()->timestamp();
+                midipulse T = tick % get_length();
+                if (on < T && (off > T || on > off))
+                    put_event_on_bus(ei);
+            }
         }
     }
 }
@@ -5394,7 +5463,7 @@ sequence::update_recording (int index)
 {
     recordstyle rectype = static_cast<recordstyle>(index);
     bool result = rectype >= recordstyle::merge &&
-        rectype <= recordstyle::expand;
+        rectype < recordstyle::max ;
 
     if (result)
     {
@@ -5404,18 +5473,31 @@ sequence::update_recording (int index)
 
             set_overwrite_recording(false, false);
             expanded_recording(false);
+            auto_step_reset(false);
+            oneshot_recording(false);
             break;
 
         case recordstyle::overwrite:
 
             set_overwrite_recording(true, false);
             expanded_recording(false);
+            auto_step_reset(false);
+            oneshot_recording(false);
             break;
 
         case recordstyle::expand:
 
             set_overwrite_recording(false, false);
             expanded_recording(true);
+            auto_step_reset(false);
+            oneshot_recording(false);
+            break;
+
+        case recordstyle::oneshot:
+
+            set_overwrite_recording(false, false);
+            auto_step_reset(true);
+            oneshot_recording(true);
             break;
 
         default:

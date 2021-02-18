@@ -2405,7 +2405,10 @@ public:
     );
     bool paste_trigger (seq::number seqno, midipulse tick);
     bool paste_or_split_trigger (seq::number seqno, midipulse tick);
+
+#if defined USE_INTERSECT_FUNCTIONS
     bool intersect_triggers (seq::number seqno, midipulse tick);
+#endif
 
     midipulse get_max_trigger () const
     {

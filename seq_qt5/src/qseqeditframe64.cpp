@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-02-15
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1056,9 +1056,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     int lrmerge = sequence::loop_record(recordstyle::merge);
     int lrreplace = sequence::loop_record(recordstyle::overwrite);
     int lrexpand = sequence::loop_record(recordstyle::expand);
+    int lroneshot = sequence::loop_record(recordstyle::oneshot);
     ui->m_combo_rec_type->insertItem(lrmerge, "Merge");
     ui->m_combo_rec_type->insertItem(lrreplace, "Overwrite");
     ui->m_combo_rec_type->insertItem(lrexpand, "Expand");
+    ui->m_combo_rec_type->insertItem(lroneshot, "Oneshot");
     connect
     (
         ui->m_combo_rec_type, SIGNAL(currentIndexChanged(int)),
@@ -1370,6 +1372,12 @@ qseqeditframe64::conditional_update ()
         ui->m_combo_rec_type->setEnabled(true);
 
      */
+
+    QString countstr = QString::fromStdString
+    (
+        std::to_string(seq_pointer()->event_count())
+    );
+    ui->m_button_reserved->setText(countstr);
 
     update_midi_buttons();                      /* mirror current states    */
     if (expandrec)

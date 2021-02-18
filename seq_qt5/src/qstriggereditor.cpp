@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-15
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -208,15 +208,21 @@ qstriggereditor::paintEvent (QPaintEvent *)
 
     pen.setColor(fore_color());                     /* Qt::black            */
     pen.setStyle(Qt::SolidLine);
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
     for
     (
         auto cev = seq_pointer()->ex_iterator();
-        seq_pointer()->ex_iterator_valid(cev); ++cev
+        seq_pointer()->ex_iterator_valid(cev); ++cev    /* increment needed */
     )
     {
         if (! seq_pointer()->get_next_event_match(m_status, m_cc, cev))
             break;
-
+#else
+    event::buffer::const_iterator cev;
+    seq_pointer()->reset_ex_iterator(cev);
+    while (seq_pointer()->get_next_event_match(m_status, m_cc, cev))
+    {
+#endif
         midipulse tick = cev->timestamp();
         if ((tick >= starttick && tick <= endtick))
         {
@@ -237,11 +243,13 @@ qstriggereditor::paintEvent (QPaintEvent *)
             painter.setBrush(brush);                /* draw event highlight */
             painter.drawRect(x, y, qc_eventevent_x - 1, qc_eventevent_y - 1);
         }
+#if ! defined SEQ66_USE_SEQUENCE_EX_ITERATOR
         ++cev;
+#endif
     }
 
-    int y = (qc_eventarea_y - qc_eventevent_y) / 2; /* draw selection       */
-    int h =  qc_eventevent_y;
+    int h = qc_eventevent_y;
+    int y = (qc_eventarea_y - h) / 2;               /* draw selection       */
     brush.setStyle(Qt::NoBrush);                    /* painter reset        */
     painter.setBrush(brush);
     if (selecting())

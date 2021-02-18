@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-02-15
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -54,7 +54,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <cmath>                        /* std::sin(radians)                */
-#include <exception>                    /* EXPERIMENTAL: 2021-02-15         */
 
 #include "cfg/settings.hpp"             /* seq66::usr().scale_size(), etc.  */
 #include "qloopbutton.hpp"
@@ -320,11 +319,17 @@ qloopbutton::initialize_fingerprint ()
             n0 = 0;
 
         nh = n1 - n0;
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
         for
         (
             auto cev = m_seq->ex_iterator();
-            m_seq->ex_iterator_valid(cev); ++cev
+            m_seq->ex_iterator_valid(cev); /*++cev*/
         )
+#else
+        event::buffer::const_iterator cev;
+        m_seq->reset_ex_iterator(cev);
+        for (;;)
+#endif
         {
             sequence::note_info ni;                     /* two members used */
             sequence::draw dt = m_seq->get_next_note_ex(ni, cev);   /* side */
@@ -715,37 +720,43 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
-            for
-            (
-                auto cev = m_seq->ex_iterator();
-                m_seq->ex_iterator_valid(cev); ++cev
-            )
-            {
-                sequence::note_info ni;             /* 2 members used!  */
-                sequence::draw dt = m_seq->get_next_note_ex(ni, cev);
-                if (dt == sequence::draw::finish)
-                    break;
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+        for
+        (
+            auto cev = m_seq->ex_iterator();
+            m_seq->ex_iterator_valid(cev); /*++cev*/
+        )
+#else
+        event::buffer::const_iterator cev;
+        m_seq->reset_ex_iterator(cev);
+        for (;;)
+#endif
+        {
+            sequence::note_info ni;             /* 2 members used!  */
+            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);
+            if (dt == sequence::draw::finish)
+                break;
 
-                int tick_s_x = (ni.start() * lxw) / t1;
-                int tick_f_x = (ni.finish() * lxw) / t1;
-                if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
-                    tick_f_x = tick_s_x + 1;
+            int tick_s_x = (ni.start() * lxw) / t1;
+            int tick_f_x = (ni.finish() * lxw) / t1;
+            if (! sequence::is_draw_note(dt) || tick_f_x <= tick_s_x)
+                tick_f_x = tick_s_x + 1;
 
-                int y = lyh * (highest - ni.note()) / height;
+            int y = lyh * (highest - ni.note()) / height;
 
 #if defined DRAW_TEMPO_LINE_DISABLED
-                if (dt == sequence::draw::tempo)
-                    pen.setColor(tempo_color());    /* not defined yet  */
-                else
-                    pen.setColor(Qt::black);
+            if (dt == sequence::draw::tempo)
+                pen.setColor(tempo_color());    /* not defined yet  */
+            else
+                pen.setColor(Qt::black);
 #endif
 
-                int sx = lx0 + tick_s_x;            /* start x          */
-                int fx = lx0 + tick_f_x;            /* finish x         */
-                y += ly0;                           /* start & finish y */
-                painter.setPen(pen);
-                painter.drawLine(sx, y, fx, y);
-            }
+            int sx = lx0 + tick_s_x;            /* start x          */
+            int fx = lx0 + tick_f_x;            /* finish x         */
+            y += ly0;                           /* start & finish y */
+            painter.setPen(pen);
+            painter.drawLine(sx, y, fx, y);
+        }
         }
     }
 }

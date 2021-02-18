@@ -1498,13 +1498,13 @@ the '0' key in the piano roll.</string>
         <widget class="QComboBox" name="m_combo_rec_type">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>100</width>
            <height>28</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>84</width>
+           <width>100</width>
            <height>28</height>
           </size>
          </property>

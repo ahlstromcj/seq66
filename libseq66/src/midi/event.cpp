@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-08-04
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  A MIDI event (i.e. "track event") is encapsulated by the seq66::event
@@ -684,23 +684,39 @@ event::print () const
 }
 
 void
-event::print_note (bool is_a_link) const
+event::print_note (bool showlink) const
 {
     if (is_note())
     {
-        std::string type = is_note_on() ? "On" : "Off" ;
-        printf
-        (
-            "[%06ld] Note %s #%02X Vel %02X Ch %02X ",
-            m_timestamp, type.c_str(), m_data[0], m_data[1], m_channel
-        );
-        if (is_linked() && ! is_a_link)
+        bool shownote = is_note_on() || (is_note_off() && ! showlink);
+        if (shownote)
         {
-            const_iterator mylink = link();
-            printf(": Link ");
-            mylink->print_note(true);
+            std::string type = is_note_on() ? "On " : "Off" ;
+            char channel[8];
+            if (m_channel == c_midibyte_max)
+            {
+                channel[0] = '-';
+                channel[1] = 0;
+            }
+            else
+            {
+                snprintf(channel, sizeof channel, "%1x", int(m_channel));
+            }
+            printf
+            (
+                "%06ld Note %s:%s %3d Vel %02X",
+                m_timestamp, type.c_str(), channel,
+                int(m_data[0]), int(m_data[1])
+            );
+            if (is_linked() && showlink)
+            {
+                const_iterator mylink = link();
+                printf(" --> ");
+                mylink->print_note(false);
+            }
+            else
+                printf("\n");
         }
-        printf("\n");
     }
 }
 
@@ -776,10 +792,10 @@ event::get_rank () const
     switch (m_status)
     {
     case EVENT_NOTE_OFF:
-        return 0x100;
+        return 0x200 + get_note();
 
     case EVENT_NOTE_ON:
-        return 0x090;
+        return 0x100 + get_note();
 
     case EVENT_AFTERTOUCH:
     case EVENT_CHANNEL_PRESSURE:
@@ -852,7 +868,7 @@ event::set_tempo (midibpm tempo)
  *      important key item.
  *
  * \param rank
- *      Rank is an arbitrary number used to prioritize events that have the
+ *      Rank is an arbitrary number used to order events that have the
  *      same time-stamp.  See the event::get_rank() function for more
  *      information.
  */
@@ -907,35 +923,6 @@ event::key::operator < (const key & rhs) const
  *  Free functions
  * --------------------------------------------------------------
  */
-
-/**
- *  A free function to convert an event into an informative string, just
- *  enough to save some debugging time.  Nothing fancy.  If you want that, use
- *  the midicvt project.  Compare this to the event::print() function.
- *
- * \param ev
- *      The event to put on show.
- *
- * \return
- *      Returns the string representation of the event parameter.
- */
-
-std::string
-to_string (const event & ev)
-{
-    std::string result("event: ");
-    midibyte d0, d1;
-    ev.get_data(d0, d1);
-    char temp[128];
-    snprintf
-    (
-        temp, sizeof temp,
-        "[%04lu] status 0x%02X; ch. 0x%02X; data [0x%02X, 0x%02X]\n",
-        ev.timestamp(), ev.get_status(), ev.channel(), d0, d1
-    );
-    result += std::string(temp);
-    return result;
-}
 
 /**
  *  Creates and returns a tempo event.

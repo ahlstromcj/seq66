@@ -53,7 +53,7 @@ eventlist::eventlist () :
     m_events                (),
     m_sort_in_progress      (false),        /* an atomic boolean */
     m_length                (0),
-    m_note_off_margin       (2),
+    m_note_off_margin       (3),
     m_is_modified           (false),
     m_has_tempo             (false),
     m_has_time_signature    (false)
@@ -384,16 +384,10 @@ eventlist::link_notes
 void
 eventlist::verify_and_link (midipulse slength)
 {
-    clear_links();
+    clear_links();                          /* unlink and unmark all events */
     link_new();
     if (slength > 0)
     {
-        /*
-         *  Already done by clear_links():
-         *
-         *      unmark_all();
-         */
-
         mark_out_of_range(slength);
         (void) remove_marked();             /* prune out-of-range events    */
     }
@@ -1879,7 +1873,7 @@ eventlist::select_linked (midipulse tick_s, midipulse tick_f, midibyte status)
 void
 eventlist::print () const
 {
-    std::printf("events[%d]:\n", count());
+    std::printf("%d MIDI events:\n", count());
     for (auto & e : m_events)
         e.print();
 }

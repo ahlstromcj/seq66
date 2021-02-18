@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-16
+ * \updates       2021-02-18
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -572,14 +572,21 @@ qseqroll::draw_notes
     int unitheight = unit_height();
     int unitdecr = unit_height() - 1;
     int noteheight = unitheight - 3;
-    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
+
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); /*++cev*/)
+#else
+    event::buffer::const_iterator cev;
+    s->reset_ex_iterator(cev);
+    for (;;)
+#endif
     {
         sequence::note_info ni;
         sequence::draw dt = s->get_next_note_ex(ni, cev);   /* side-effect  */
         if (dt == sequence::draw::finish)
             break;
 
-        if (dt == sequence::draw::tempo)
+        if (dt == sequence::draw::tempo)                    /* not ready!   */
             continue;
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
@@ -736,77 +743,61 @@ qseqroll::draw_drum_notes
     int noteheight = unit_height();
     int noteheight2 = unit_height() + 1;
 
-#if defined SEQ66_USE_TRY_CATCH
-
-    /*
-     * The try-catch seems to improve the robustness of the app when
-     * recording a DD-11 drum pattern over and over while also drawing a
-     * ton of notes.
-     */
-
-    try     /* EXPERIMENTAL: 2021-02-15 */
-    {
+#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
+    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); /*++cev*/)
+#else
+    event::buffer::const_iterator cev;
+    s->reset_ex_iterator(cev);
+    for (;;)
 #endif
-        for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
+    {
+        sequence::note_info ni;
+        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* side-effect  */
+        if (dt == sequence::draw::finish)
+            break;
+
+        if (dt == sequence::draw::tempo)
+            continue;
+
+        bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
+        bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
+        bool linkedin = dt == sequence::draw::linked && end_in;
+        if (start_in || linkedin)
         {
-            sequence::note_info ni;
-            sequence::draw dt = s->get_next_note_ex(ni, cev);
-            if (dt == sequence::draw::finish)
-                break;
-
-            if (dt == sequence::draw::tempo)
-                continue;
-
-            bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
-            bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
-            bool linkedin = dt == sequence::draw::linked && end_in;
-            if (start_in || linkedin)
+            m_note_x = xoffset(ni.start());
+            m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
+            if (dt == sequence::draw::linked)
             {
-                m_note_x = xoffset(ni.start());
-                m_note_y = total_height() - (ni.note() * noteheight) - noteheight2;
-                if (dt == sequence::draw::linked)
+                if (ni.finish() >= ni.start())
                 {
-                    if (ni.finish() >= ni.start())
-                    {
-                        m_note_width = tix_to_pix(ni.finish() - ni.start());
-                        if (m_note_width < 1)
-                            m_note_width = 1;
-                    }
-                    else
-                        m_note_width = tix_to_pix(seqlength - ni.start());
+                    m_note_width = tix_to_pix(ni.finish() - ni.start());
+                    if (m_note_width < 1)
+                        m_note_width = 1;
                 }
                 else
-                    m_note_width = tix_to_pix(16);
-
-                /*
-                 * Draw note highlight in drum mode.  Orange note if selected, red
-                 * if drum mode, otherwise plain white.
-                 */
-
-                if (ni.selected())
-                    brush.setColor(sel_color());
-                else if (is_drum_mode())
-                    brush.setColor(drum_paint());
-                else
-                    brush.setColor(Qt::white);
-
-                pen.setColor(fore_color());
-                painter.setPen(pen);
-                painter.setBrush(brush);
-                draw_drum_note(painter);
+                    m_note_width = tix_to_pix(seqlength - ni.start());
             }
+            else
+                m_note_width = tix_to_pix(16);
+
+            /*
+             * Draw note highlight in drum mode.  Orange note if selected, red
+             * if drum mode, otherwise plain white.
+             */
+
+            if (ni.selected())
+                brush.setColor(sel_color());
+            else if (is_drum_mode())
+                brush.setColor(drum_paint());
+            else
+                brush.setColor(Qt::white);
+
+            pen.setColor(fore_color());
+            painter.setPen(pen);
+            painter.setBrush(brush);
+            draw_drum_note(painter);
         }
-#if defined SEQ66_USE_TRY_CATCH
     }
-    catch (std::exception & e)          /* EXPERIMENTAL: 2021-02-15 */
-    {
-        errprintf("qseqroll drum notes: %s\n", e.what());
-    }
-    catch (...)
-    {
-        errprint("qseqroll drum notes exception\n");
-    }
-#endif
 }
 
 int
@@ -1273,15 +1264,18 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     start_paste();
                     set_dirty();
-                    setCursor(Qt::CrossCursor);     // EXPERIMENT
+                    setCursor(Qt::CrossCursor);
                     break;
 
                 case Qt::Key_Z:
 
                     if (event->modifiers() & Qt::ShiftModifier)
                     {
+                        /*
+                         * Doesn't seem to do anything!
+                         */
+
                         s->pop_redo();
-                        set_dirty();
                     }
                     else
                         s->pop_undo();
