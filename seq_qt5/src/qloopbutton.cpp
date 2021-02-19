@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-02-18
+ * \updates       2021-02-19
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -319,20 +319,10 @@ qloopbutton::initialize_fingerprint ()
             n0 = 0;
 
         nh = n1 - n0;
-#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-        for
-        (
-            auto cev = m_seq->ex_iterator();
-            m_seq->ex_iterator_valid(cev); /*++cev*/
-        )
-#else
-        event::buffer::const_iterator cev;
-        m_seq->reset_ex_iterator(cev);
-        for (;;)
-#endif
+        for (auto cev = m_seq->cbegin(); ! m_seq->cend(cev); /*++cev*/)
         {
             sequence::note_info ni;                     /* two members used */
-            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);   /* side */
+            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);  /* ++cev */
             if (dt != sequence::draw::finish)
             {
                 int x = (ni.start() * xw) / t1 + x0;    /* ni.finish()      */
@@ -720,20 +710,10 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
-#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-        for
-        (
-            auto cev = m_seq->ex_iterator();
-            m_seq->ex_iterator_valid(cev); /*++cev*/
-        )
-#else
-        event::buffer::const_iterator cev;
-        m_seq->reset_ex_iterator(cev);
-        for (;;)
-#endif
+        for (auto cev = m_seq->cbegin(); ! m_seq->cend(cev); /*++cev*/)
         {
-            sequence::note_info ni;             /* 2 members used!  */
-            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);
+            sequence::note_info ni;                     /* 2 members used!  */
+            sequence::draw dt = m_seq->get_next_note_ex(ni, cev);  /* ++cev */
             if (dt == sequence::draw::finish)
                 break;
 

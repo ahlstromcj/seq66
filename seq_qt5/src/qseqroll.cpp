@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-18
+ * \updates       2021-02-19
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -573,16 +573,10 @@ qseqroll::draw_notes
     int unitdecr = unit_height() - 1;
     int noteheight = unitheight - 3;
 
-#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); /*++cev*/)
-#else
-    event::buffer::const_iterator cev;
-    s->reset_ex_iterator(cev);
-    for (;;)
-#endif
+    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* side-effect  */
+        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* ++cev here   */
         if (dt == sequence::draw::finish)
             break;
 
@@ -742,17 +736,10 @@ qseqroll::draw_drum_notes
 
     int noteheight = unit_height();
     int noteheight2 = unit_height() + 1;
-
-#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-    for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); /*++cev*/)
-#else
-    event::buffer::const_iterator cev;
-    s->reset_ex_iterator(cev);
-    for (;;)
-#endif
+    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* side-effect  */
+        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* ++cev here   */
         if (dt == sequence::draw::finish)
             break;
 

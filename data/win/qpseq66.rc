@@ -21,7 +21,7 @@
 
 config-type = "rc"
 version = 0
-verbose = true
+verbose = false
 sets-mode = normal
 port-naming = long
 

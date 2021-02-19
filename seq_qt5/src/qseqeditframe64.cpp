@@ -2845,14 +2845,11 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
+    seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for
-    (
-        auto cev = seq_pointer()->ex_iterator();
-        seq_pointer()->ex_iterator_valid(cev); ++cev
-    )
+    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
     {
-        if (! seq_pointer()->get_next_event_ex(status, cc, cev))
+        if (! s->get_next_event_ex(status, cc, cev))
             break;
 
         switch (status)
@@ -3021,14 +3018,11 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool channel_pressure = false;
     bool pitch_wheel = false;
     midibyte status = 0, cc = 0;
+    seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for
-    (
-        auto cev = seq_pointer()->ex_iterator();
-        seq_pointer()->ex_iterator_valid(cev); ++cev
-    )
+    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
     {
-        if (! seq_pointer()->get_next_event_ex(status, cc, cev))
+        if (! s->get_next_event_ex(status, cc, cev))
             break;
 
         switch (status)

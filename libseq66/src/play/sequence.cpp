@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-18
+ * \updates       2021-02-19
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2830,7 +2830,8 @@ sequence::stream_event (event & ev)
                 }
                 else
                 {
-                    ev.print();
+                    if (rc().verbose())
+                        ev.print();
                 }
             }
         }
@@ -3777,8 +3778,8 @@ sequence::note_count ()
  *  elements, and returns true.  When it has no more events, returns a
  *  false.
  *
- *  Note that, before the first call to draw a sequence, the
- *  reset_ex_iterator() or ex_iterator() function must be called.
+ *  Note that, before the first call to draw a sequence, the sequence::begin()
+ *  function must be called.
  *
  * \param [out] niout
  *      Provides a pointer destination for a structure hold all of the values
@@ -3881,31 +3882,12 @@ sequence::get_note_info
     return draw::none;
 }
 
-#if ! defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-
-/**
- *  Reset the caller's iterator.  This is used with get_next_event_match()
- *  and get_next_event_ex().
- *
- * \param evi
- *      The caller's "copy" of the m_events iterator to be reset to
- *      m_events.begin().
- */
-
-void
-sequence::reset_ex_iterator (event::buffer::const_iterator & evi) const
-{
-    evi = m_events.cbegin();
-}
-
-#endif  // ! defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-
 /**
  *  Checks for non-terminated notes.
  *
  * \return
- *      Returns true if there is at least one non-terminated linked note in the
- *      interval.
+ *      Returns true if there is at least one non-terminated linked note in
+ *      the interval.
  */
 
 bool
@@ -3918,10 +3900,9 @@ sequence::reset_interval
 {
     bool result = false;
     bool got_beginning = false;
-    auto iter = m_events.cbegin();
-    it0 = iter;
+    it0 = m_events.cbegin();                 // iter;
     it1 = m_events.cend();
-    for (auto iter = m_events.cbegin(); iter != m_events.cend(); ++iter)
+    for (auto iter = cbegin(); ! cend(iter); ++iter)
     {
         midipulse t = iter->timestamp();
         if (t >= t0)
@@ -3953,8 +3934,7 @@ sequence::reset_interval
 /**
  *  Get the next event in the event list.  Then set the status and control
  *  character parameters using that event.  This function requires that
- *  reset_ex_iterator() or ex_iterator() be called to reset to the beginning
- *  of the events list.
+ *  sequence::begin() be called to reset to the beginning of the events list.
  *
  * \param status
  *      Provides a pointer to the MIDI status byte to be set, as a way to
@@ -5102,10 +5082,9 @@ sequence::show_events () const
         "sequence #%d '%s': channel %d, events %d\n",
         seq_number(), name().c_str(), get_midi_channel(), event_count()
     );
-    const eventlist & evl = events();
-    for (auto i = evl.cbegin(); i != evl.cend(); ++i)
+    for (auto iter = cbegin(); ! cend(iter); ++iter)
     {
-        const event & er = eventlist::cdref(i);
+        const event & er = eventlist::cdref(iter);
         std::string evdump = er.to_string();
         printf("%s", evdump.c_str());
     }

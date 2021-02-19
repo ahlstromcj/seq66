@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2018-10-27
+% \update      2021-02-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -19,67 +19,53 @@
 
    \textsl{Seq66} works with patterns (also known as "loops", "tracks", or
    "sequences") that are repeated throughout a song.
-   One composes and edits small patterns,
-   and combines them to create a full song.  This is a powerful way
-   to work, and makes one productive within an hour.
+   One composes and edits small patterns in a grid,
+   and combines them to create a full song.
+   This is a powerful way to work, and makes one productive quickly.
 
-   The \textsl{Seq66 Patterns Panel} is in the center of the
+   The \textbf{Patterns Panel} (or \textbf{Live Frame}
+   is in the center of the
    \index{main window}
    \textbf{main window} of \textsl{Seq66}.
    See \figureref{fig:main_screen}.
-   It is here one creates a set of patterns,
+   It is here one creates a set of patterns ("screenset"),
 %  (see \sectionref{subsubsec:concepts_terms_screen_set}),
    manages the configuration, controls the playback rate, adds tempo events,
-   and opens the pattern, song, event, or playlist editors.
+   and opens the pattern, song, event, mute-groups, or playlist editors.
 
    \index{live mode}
    \index{mode!live}
    \index{mode!song}
-   When the Patterns Panel has the application focus,
+   When the patterns panel has the focus,
    and \textsl{Seq66} is \textsl{not} running in \textbf{Song} mode,
    it puts \textsl{Seq66} in \textbf{Live} mode.
    The musician can
    control the playback and muting/unmuting of each pattern in
    the song, while it is playing, from within this window.
+   One can also switch to other screensets, to work with a different
+   part of the song.
 
    \index{song mode}
    \index{mode!song}
    If the song editor (see \sectionref{sec:song_editor})
-   has the input focus, it controls the muting/unmuting of
+   has the input focus, it automatically controls the muting/unmuting of
    each pattern, and \textsl{Seq66} runs in \textbf{Song} mode.
-   (There are ways to override this behavior.)
+   (There are ways to override this behavior, such as the
+   \textbf{Song/Live} button.)
 
-   For exposition, we break the Patterns Panel
-   into a menu bar, a top panel, a pattern panel, and a bottom panel.
-   The \textsl{Seq66} menu bar is discussed in
-   \sectionref{sec:menu}.
-
-\subsection{Patterns / Set Handling}
-\label{subsec:patterns_panel_set_handling}
-
-
-   Let's go through an example using the \texttt{Home} key (or whatever key is
-   configured as the \textbf{Set Playing Screenset} key.)
-
-   \begin{enumber}
-      \item Load a song with more than one screen-set.
-      \item Unmute the pattern(s) in the first set and start playback.
-      \item Use the "\texttt{]}" (\textbf{Screenset Up}) key to move to the next
-         set.  Note that the first set is still playing.  Also note that the
-         now-current set is \textsl{not} playing.
-      \item Press the \texttt{Home} key.
-         Note that the first set turns off, and the current set turns on.
-         These steps can be repeated at will.
-      \item Finally, hit the \texttt{F8} (\textbf{Toggle Mutes}) key.
-         Note that all tracks on all sets toggle muting each time this key is
-         pressed.
-   \end{enumber}
+   For exposition, we divide the patterns panel
+   into a menu bar, a top panel, a pattern panel (live frame/grid),
+   and a bottom panel.
+   The \textsl{Seq66} menu bar is discussed in \sectionref{sec:menu}.
 
 \subsection{Patterns / Main Panel}
 \label{subsec:patterns_panel_main}
 
-   The main panel of the Patterns window provides a grid of empty boxes.
-   Each filled box represents a loop, track, sequence, or pattern.
+   The main panel of the application provides a grid of empty boxes,
+   as shown in
+   \figureref{fig:patterns_panel_popup_menu}.
+   Each filled box represents a loop, track, sequence, or pattern
+   (interchangeable terms).
    One sees only 32 loops at a time in the main panel (but many more than
    32 loops can be supported by \textsl{Seq66}).
 
@@ -101,18 +87,14 @@
    There are a total of 32 sets, for a total of 1024 loops/patterns. 
    Only one screen-set can be controlled at a time, in general.
 %  have found; have not yet tried to verify this assertion.
-   But any number of screensets can be playing at the same time.
+   Multiple screensets can be playing at the same time, depending on
+   configuration.
 
-   Note that the \texttt{Page Up} and \texttt{Page Down} keystrokes, and their
-   counterparts in
-   \textbf{File / Options / Keyboard / Control Keys / Screenset Up}
-   and \textbf{Screenset Down}, can be used in lieu of the
-   \textbf{Set} spin-button.
+   The \texttt{Page Up} and \texttt{Page Down}, and \texttt{Up/Down Arrow}
+   keystrokes can be used inside of the \textbf{Set} spin-button.
 
-   It is important to note that keystroke control of the screen-set will
-   wrap-around in screen-set values (i.e. screen-set down at 0 results in
-   screen-set 31, and screen-set up at 31 results in screen-set 0).
-   However, the spinbuttons will stop up at 31 and stop down at 0.
+   It is important to note that, currently, incrementing or decrementing
+   the screen-set will \textsl{not} wrap-around.
    We consider this a feature rather than a bug, at this time.
 
 \begin{figure}[H]
@@ -125,25 +107,6 @@
 
    The individual items annoted in this figure are described in
    \sectionref{subsubsec:patterns_pattern_filled}, in more detail.
-   The slot at the bottom left of this figure shows some new features:
-
-   \begin{itemize}
-      \item The sequence number appears at the bottom left of the slot.
-         This number ranges from 0 on up.
-      \item The buss number (re 0) and the channel number (re 1) appears
-         to the right of the sequence number, in the format "0-1".
-      \item To the right of that, the time signature ("4/4") appears, at the
-         bottom.
-      \item The hot-key for muting/unmuting the pattern appears next,
-         at the bottom right of the slot.
-      \item The title of the sequence appears at the top left of the pattern
-         slot.
-      \item The length of the sequence, in number of measures (bars), appears
-         at the upper right of the slot.
-      \item The font is a \textsl{Qt} font.
-      \item A right-click over a pattern button brings up a fairly extensive
-         popup menu.
-   \end{itemize}
 
    Observe that feature in the first figure of the next section.
    The two main items are the empty \textsl{pattern slot}, and the slot filled
@@ -161,6 +124,27 @@
    An empty box is a slot for a pattern.
    If a pattern is present in the slot, the top line will show
    the title of the pattern, and the number of measures in the pattern.
+   A right-click over a pattern button brings up a fairly extensive
+   popup menu.
+
+%  The slot at the bottom left of this figure shows the features:
+%
+%  \begin{itemize}
+%     \item The sequence number (from 0 on up) appears at the bottom left of
+%        the slot.
+%     \item The buss number (re 0) and the channel number (re 1) appears
+%        to the right of the sequence number, in the format "0-1".
+%     \item To the right of that, the time signature ("4/4") appears, at the
+%        bottom.
+%     \item The hot-key for muting/unmuting the pattern appears next,
+%        at the bottom right of the slot.
+%     \item The title of the sequence appears at the top left of the pattern
+%        slot.
+%     \item The length of the sequence, in number of measures (bars), appears
+%        at the upper right of the slot.
+%     \item The font is a \textsl{Qt} font.
+%  \end{itemize}
+
    A pattern can show a number of different statuses based on the coloring
    of elements in the pattern slot.
    (However, note that some of the special coloring using in
@@ -184,11 +168,12 @@
          color appears bright.
       \item \textbf{Red events}.
          Indicates a pattern for which the new transpose feature is
-         disabled.
+         disabled.  Most useful with drum patterns.
    \end{itemize}
 
    The user can also apply coloring to each sequence.
    This feature was adopted from \textsl{Kepler34} (\cite{kepler34}).
+   The color is more saturated when the pattern is unmuted.
    \index{pattern!color menu}
    The pattern menu for sequence color is shown in the previous figure.
    We've used colors in most of the examples in this manual.
@@ -209,7 +194,8 @@
    Creates a new loop or pattern.
    Clicking this menu entry fills in the empty box with an untitled
    pattern.  Another way to create a new loop is to double-left-click on an
-   empty slot.
+   empty slot; this also brings up an external pattern editor (discussed
+   later).
 
    \itempar{External live frame for set 0}{live!external}
    This option brings up an external \textbf{Live} frame window, which
@@ -218,19 +204,21 @@
    More on the external live frames later.
 
    Once a new loop is created, there are more options for that slot.
+   \index{pattern!right click}
+   A right-click on an already-filled box brings up a menu
+   to allow one to edit it, or perform a few other actions
+   specified in the context menu.  Here is that menu:
 
    \begin{enumber}
       \item \textbf{New pattern}
-      \item \textbf{External live frame for set 0}
+      \item \textbf{External live frame for set ...}
       \item \textbf{Edit pattern in tab}
       \item \textbf{Edit pattern in window}
-      \item \textbf{Edit pattern in tab}
-      \begin{itemize}
-         \item {Mute All Tracks}
-         \item {Unmute All Tracks}
-         \item {Toggle All Tracks}
-         \item {Toggle Live Tracks}
-      \end{itemize}
+      \item \textbf{Edit events in tab}
+      \item \textbf{Set pattern color}
+      \item \textbf{Copy pattern}
+      \item \textbf{Cut pattern}
+      \item \textbf{Delete pattern}
    \end{enumber}
 
    The first two menu entries are the same as above.  However, since there is
@@ -239,84 +227,122 @@
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
 
+   \itempar{New Pattern}{pattern!new}
+   Creates a new pattern in the empty slot.
+   \index{slot!double-click}
+   Can also be done by double-clicking on an empty slot.
+
+   \itempar{External Live Frame for Set}{pattern!external live frame}
+   This selection uses the pattern number to open the corresponding screenset
+   number in an external \textbf{Live} frame.
+
    \itempar{Edit Pattern In Tab}{pattern!edit in tab}
    Selecting this item activates the \textbf{Edit} tab and fills it with data
    from the selected pattern.
-   Note that this editor is somewhat simplistic, useful for common operations.
-   We want to keep it uncluttered so that the use can make the main window
-   peration small if desired.
-
-   CONTINUE HERE!
-
+   Note that this editor is somewhat simplistic, useful for trouble-shooting a
+   pattern.
 
    \itempar{Edit Pattern In Window}{pattern!edit in window}
    Selecting this item brings up the pattern in an external pattern editor that
    is more sophisticated than the \textbf{Edit} tab.
-   from the selected pattern.
-   Note that this editor is somewhat simplistic, useful for common operations.
-
-   , and brings up the Pattern Editor
-   so that one can fill in the new pattern.
 
    In addition to right-click and select \textbf{New}, the user can
    \index{empty slot double-click}
    double-click on the empty slot, to bring up a new instance of the sequence
-   editor.  For the double-click, the effect can be a bit confusing at first,
-   because it also toggles the arming/mute status of the slot
-   quickly twice (leaving it as it was).  It takes some getting
-   used to, but we miss it when using \textsl{Seq24}.
+   editor.  For double-click on an existing pattern,
+   the effect can be a bit confusing at first,
+   because it also toggles the armed/muted status of the slot
+   quickly twice (leaving it as it was).
+%  It takes some getting
+%  used to, but we miss it when using \textsl{Seq24}.
 
    \index{editing shortcut}
    \index{keys!=}
    \index{keys!pattern edit}
-   \index{keys!-}
-   \index{keys!event edit}
+
    A nice feature is hitting the equals ("=") key, then hitting
    a pattern shortcut key (hot-key), to bring up a new sequence or edit an
-   existing one in a 
-   \textbf{Pattern Editor} .  Another feature is hitting the minus
-   ("-") key, then the hot-key, to bring up the \textbf{Event Editor}.
+   existing one in a \textbf{Pattern Editor} .
+
+   \itempar{Edit Events In Tab}{pattern!events in tab}
+   Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
+   tab that shows events as text and numbers, and allows editing them as text and
+   numbers.
+   This editor is basic, meant for viewing
+   MIDI events and making some minor edits or deletes.
+   The \textbf{Event Editor} is most useful when trying to find events
+   that are screwing up the performance of that pattern.
+   See \sectionref{sec:event_editor}, for more information.
+
+   \index{keys!-}
+   \index{keys!event edit}
+   Another feature is hitting the minus
+   ("-") key, then the hot-key, to bring up the \textbf{Event Editor} tab.
    The configuration file settings for the the '=' and
-   '-' keys can be altering in the \textbf{File / Options / Keyboard} tab.
+   '-' keys can be altered in the 'ctrl' file.
 
-   \itempar{Paste}{pattern!paste}
+   \itempar{Set Pattern Color}{pattern!color}
+   Opens a menu to select a color for the pattern.  This selects a color
+   palette value (index) into the currently loaded color palette.
+   See \sectionref{sec:palettes}.
+
+   \itempar{Copy Pattern}{pattern!copy}
+   Copies the pattern underneath the mouse cursor.
+   The pattern can then be pasted elsewhere in the Patterns panel.
+   One can also drag-and-drop a pattern into another cell (there is no outline
+   box during the drag).
+   See \sectionref{subsubsec:patterns_pattern_slot}.
+   Note that there is no \texttt{Ctrl-C} key for this operation in the
+   live (main) window.
+
+   \itempar{Cut Pattern}{pattern!cut}
+   Cuts the pattern while copying it for later pasting.
+   There is no \texttt{Ctrl-X} key for this operation.
+   One can also drag-and-drop a pattern into another cell (there is no outline
+   box during the drag, sadly).
+
+   \itempar{Delete Pattern}{pattern!delete}
+   Deletes the pattern.  Currently the same as Cut!
+
+   \itempar{Paste Pattern}{pattern!paste}
    Pastes a loop or pattern that was previously copied.
-   Also note that there is no \texttt{Ctrl-V} key for this operation in the
+   Note that there is no \texttt{Ctrl-V} key for this operation in the
    main window.
-
-   \itempar{Song}{pattern!song}
-   The \textbf{Song} items are described later.
    
 \subsubsection{Pattern}
 \label{subsubsec:patterns_pattern_filled}
 
    A filled pattern slot is referred to as a \textsl{pattern}
-   (or \textsl{loop}, or \textsl{sequence}).
-   A pattern is shown in the Pattern window as a filled box with the
+   (or \textsl{track}, \textsl{loop}, or \textsl{sequence}).
+   A pattern is shown in the pattern grid as a filled box with the
    following items of information in it.
 
    \begin{itemize}
       \item \textbf{Name}.
          \index{pattern!name}
-         This line contains the name or title of the pattern, to help
-         reference it when juggling a number of patters.
+         This line, in the upper left of the pattern slot, contains the name or
+         title of the pattern, for reference when juggling a number of
+         patterns.
+      \item \textbf{Status}.
+         \index{pattern!status}
+         Underneath the name is the status of the pattern, such as "Armed",
+         "Muted", or "Queued".
+         This status is useful when the Qt theme coloring makes the exact
+         status difficult to determine.
       \item \textbf{Pattern Length}.
          \index{pattern!length}
-         If the option to show pattern hot-key is enabled, the length of the
-         pattern, in measures, is shown in the upper right corner of the
-         pattern slot.  This feature is useful when recording tempo events that
-         will increase the length of the tempo track.
+         The length of the pattern, in measures, is shown in the upper
+         right corner of the pattern slot.
       \item \textbf{Contents}.
          \index{pattern!contents}
-         The contents of the pattern provide a fairly detailed and
-         distinguishable representation of the notes or events in the
-         pattern.  Also, when the song is playing, a vertical bar cursor
+         The contents of the pattern, in the central box,
+         provide a distinguishable representation of the notes or events in the
+         pattern.  When the song is playing, a vertical bar cursor
          tracks the position of the playback of the pattern or loop; it
-         returns to the beginning of the box every time that pattern starts
-         over again.
+         returns to the beginning of the box every time the pattern starts
+         over.
          \index{empty pattern}
-         With \textsl{Seq66}, an imported empty pattern will no longer
-         needlessly scroll.
+         An pattern with no playable events will not needlessly scroll.
          However, if a pattern has even a single event (say, a program change),
          it will scroll.
 %        \index{todo:one-shot pattern}
@@ -327,12 +353,13 @@
 %        but then one cannot play the patterns in live mode.
       \item \textbf{Sequence Number}.
          This number is shown at the bottom left of the pattern slot.
+         Note how it varies fastest by row (top to bottom).
       \item \textbf{Bus-Channel}.
          \index{pattern!bus-channel}
          This pair of numbers shows the the MIDI buss number, a dash, and
          the MIDI channel number.
          For example, "0-2" means MIDI buss 0, channel 2.
-      \item \textbf{Beat}.
+      \item \textbf{Beat/Beat Width}.
          \index{pattern!beat}
          This pair of numbers is the standard time-signature of the pattern,
          such as "4/4" or "3/4".  The first number is the beats-per-measure,
@@ -342,8 +369,9 @@
          that can be pressed to toggle the mute/unmute status of that pattern.
          This action is an alternative to left-click on the pattern.
       \item \textbf{Progress Cursor}.
-         At the left of each box is a vertical line, waiting for playback to
-         start so that it can move through the pattern, again and again.
+         At the left of each center box is a vertical line, waiting for
+         playback to start so that it can move through the pattern, again and
+         again.
       \item \textbf{Armed}.
          Button highlighting indicates that the pattern is armed
          (unmuted), and will play if playback is initiated in the pattern
@@ -351,17 +379,10 @@
          window in live mode.
          An item is armed/disarmed by a left-click on it.
          \index{shift left click}
-         If the Shift key is held during a left-click on a pattern, then
-         the armed/unarmed state of every other active pattern is toggled.
-         This feature is useful for isolating a single track or pattern.
-      \item \textbf{Queued}.
-         That same pattern also shows that it is queued, which means that it
-         will toggle its playing status when the pattern next begins again.
-      \item \textbf{Sequence number}.
-         Later builds of \textsl{Seq66} are now built with the option to
-         also show the sequence number in the pattern box, if the "show
-         sequence numbers" option is on.
-         This option can be set in the 'usr' configuration file.
+         If the \texttt{Shift} key is held during a left-click on a pattern,
+         the corresponding set's \textbf{Live} frame is brought up.
+%        then the armed/unarmed state of every other active pattern is toggled.
+%        This feature is useful for isolating a single track or pattern.
    \end{itemize}
 
    \index{pattern!left click}
@@ -371,214 +392,16 @@
    the pattern stop playing or start playing.  The armed status
    can also be toggled using hot-keys.
 
-   If the \textbf{Song Editor} is the active window and was used to
-   start the playback, the pattern boxes will toggle between the muted/unmuted
-   states as the music plays, and the pattern is active or inactive at the
-   point of playback.  (The \textbf{Song Editor} acts as a list of triggers).
-
-   \index{pattern!right click}
-   A right-click on an already-filled box brings up a menu
-   to allow one to edit it, or perform a few other actions
-   specified in the context menu.  Here is that menu:
-
-   Here one can choose to edit the pattern, cut and copy the pattern,
-   set the MIDI bus/channel, and more.
-   One can also clear all performance (song) data for the pattern.
-   Here are the menu entries:
-   
-   \begin{enumber}
-      \item \textbf{New pattern}
-      \item \textbf{Extern live frame}
-      \item \textbf{Edit pattern in tab}
-      \item \textbf{Edit pattern in window}
-      \item \textbf{Edit events in tab}
-      \item \textbf{Set pattern color}
-      \item \textbf{Copy pattern}
-      \item \textbf{Cut pattern}
-      \item \textbf{Delete pattern}
-   \end{enumber}
-
-   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-
-   \itempar{Edit...}{pattern!edit}
-   Edits an existing loop or pattern.
-   Clicking this menu entry brings up the \textbf{Pattern Editor}
-   so that one can modify the existing pattern by click-dragging new notes in a
-   piano roll user-interface, known as the "sequence editor".
-
-   In addition to right-click and selecting \textbf{Edit...}, the user can
-   \index{empty slot double-click}
-   double-click on the slot, to bring up the \textbf{Pattern Editor}.
-
-   \index{pattern edit}
-   \index{keys!=}
-   \index{keys!pattern edit}
-   Another way to bring up a pattern in the 
-   \textbf{Pattern Editor} is to
-   click the \textbf{equal} key and then the pattern's hot-key.
-   For example, "\textbf{=q}" will open up the editor for the pattern with the
-   hot-key \textbf{q}.
-   The Equals key (\texttt{=}) is the default key that does this action.
-   This key can be changed by modifying the
-   \textbf{File / Options / Keyboard / Control keys / Pattern Edit} item.
-
-   \itempar{Event Edit...}{pattern!event edit}
-   \index{pattern event edit}
-   Edits an existing loop or pattern, but using a detailed \textbf{Event Editor}
-   that shows events as text and numbers, and allows editing them as text and
-   numbers.
-
-   \index{event -}
-   \index{keys!-}
-   \index{keys!event edit}
-   Another way to bring up the \textbf{Event Editor} is to
-   click the \textbf{minus} key and then the pattern's hot-key.
-   For example, "\textbf{-q}" will open up the \textbf{Event Editor}
-   for that pattern.
-   The Minus key (\texttt{-}) is the default key that does this action.
-   This key can be changed by modifying the
-   \textbf{File / Options / Keyboard / Control keys / Event Edit} item.
-
-   The \textbf{Event Editor}
-   is not the same as the \textbf{event} pane in the pattern
-   editor; the \textbf{Event Editor} shows all events at once, and shows them
-   only in text/list format.  This editor is basic, meant for viewing
-   MIDI events and making some minor edits or deletes.
-   The \textbf{Event Editor} is most useful when trying to find events
-   that are screwing up the performance of that pattern.
-   See \sectionref{sec:event_editor}, for more information.
-
-   To simplify the application and avoid editing a pattern in
-   two different dialogs, if either the 
-   \textbf{Pattern Editor} or the
-   \textbf{Event Editor} is
-   active for a given sequence, the right-click sequence-slot menu leaves out
-   the \textbf{Edit...} and \textbf{Event Edit...} menu entries.
-
-   The old functionality was to have the \textbf{Edit...} menu entry simply
-   raise the existing 
-   \textbf{Pattern Editor} to the top of the windows.
-
    \itempar{Cut}{pattern!cut}
    Deletes and copies an existing loop or pattern.
-   One can also drag-and-drop a pattern into another cell (there is no outline
-   box during the drag, sadly).
-   Note that there is no \texttt{Ctrl-X} key for this operation in the
-   main window.
 
-% This bug was fixed:
-%
-%  \textbf{Bug:}
-%  \index{bugs!pattern cut not dirty}
-%  Although this operation works, it does not cause the user to be prompted if
-%  the application is exited.
+% =========================================================================
 
-   \itempar{Copy}{pattern!copy}
-   Copies an existing loop or pattern.
-   The pattern can then be pasted elsewhere in the Patterns panel.
-   One can also drag-and-drop a pattern into another cell (there is no outline
-   box during the drag).
-   See \sectionref{subsubsec:patterns_pattern_slot}.
-   Note that there is no \texttt{Ctrl-C} key for this operation in the
-   live (main) window.
-
-   \itempar{Song}{pattern!song}
-   Clicking this menu entry brings up a small popup menu.
-   It contains the following items:
-
-   \begin{enumber}
-      \item \textbf{Clear This Track's Song Data}
-      \item \textbf{Mute All Tracks}
-      \item \textbf{Unmute All Tracks}
-      \item \textbf{Toggle All Tracks}
-      \item \textbf{Toggle Live Tracks}
-   \end{enumber}
-
-%  \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
-
-   \index{Clear This Track's Song Data}
-   \index{pattern!clear song data}
-   \textbf{Clear This Track's Song Data}
-   This item is not available if the pattern is empty.
-   Selecting this filled-box right-click menu item causes that box's
-   loop/pattern to be removed from the song editor.
-   The triggers disappear from the Song Editor window, and so will not
-   be played when the song plays in Song mode.
-
-   \index{Mute All Tracks}
-   \index{pattern!mute all tracks}
-   \textbf{Song / Mute All Tracks}
-   Selecting this filled-box right-click menu item causes
-   the tracks in the Song Editor to be muted.  Sometime it takes a few seconds
-   for the user-interfaces to show this big change.
-   This item mutes all tracks (or loops/patterns).
-   It works when one has opened the Song Editor window
-   and started playing in playback
-   mode by starting play using that window.
-
-   So, let us assume the song is running in live (playback) mode.
-   The patterns that are active (unmuted) in the live window are shown with a
-   black background in the main patterns window.  If one right clicks on a
-   pattern cell and selects \textbf{Song / Mute All Tracks}, all those patterns
-   will become white and be silenced.  Eventually, the Song Editor window
-   catches up and shows the "M" activated for all tracks.
-
-   \index{Unmute All Tracks}
-   \index{pattern!unmute all tracks}
-   \textbf{Unmute All Tracks}
-   Provides the opposite functionality, making all tracks armed and audible.
-   Selecting this filled-box right-click menu item causes
-   the tracks in the song to be unmuted.
-
-   \index{Toggle All Tracks}
-   \index{pattern!toggle all tracks}
-   \textbf{Toggle All Tracks}
-   Toggles the armed/mute status of all tracks.
-   It doesn't matter if Live or Song Mode is in force.
-   \index{keys!F8}
-   By default, the \texttt{F8} key will also toggle all tracks.
-
-   Note that there is also a feature where a
-   \texttt{Shift-Left-Click} on a pattern slot toggles the mute
-   status of the \textsl{other tracks}.
-
-   \index{Toggle Live Tracks}
-   \index{pattern!toggle live tracks}
-   \textbf{Toggle Live Tracks}
-   Toggles the mute status of only the armed/unmuted tracks when in Live mode.
-   Works only in Live mode.  This operation unmutes all tracks that are
-   currently unmuted.  The statuses of these armed tracks are saved; when
-   this operation is performed again, those tracks are unmuted, turned back on.
-   This menu entry provides the same function as the \textbf{Mute}
-   button in the main window.
-
-   \itempar{Color}{pattern!color}
-   This menu item allows for specifying colors for the patterns.
-   Colors can make it easier to find a pattern while running live.
-   Note that there are some minor issues with colors, and that this feature is
-   still in flux.
-
-   \itempar{Enable/Disable Transpose}{pattern!transpose}
-   This menu entry changes depending upon whether the new transpose feature is
-   enabled or disabled for the sequence/pattern.  Note that, if the events
-   shown in the slot are red, this denotes that transpose is currently
-   \textsl{disabled} for that pattern, which might be a drum pattern.
-
-   \itempar{MIDI Bus}{pattern!midi bus}
-   Selecting this filled-box right-click menu item brings up a list
-   of the up to 16 MIDI output busses that \textsl{Seq66} supports.
-   For each of these buss items, another pop-up menu allows one
-   to specify the MIDI output channel for that buss.
-
-   \index{--bus option}
-   Another way to specify busses is the
-   \texttt{-{}-buss n} command-line option.
-   It causes \textsl{every} pattern in the MIDI
-   file to be directed to that buss number, and when a new
-   sequence/pattern is created.  This option is only
-   for convenience in testing.  Save the file, and it will
-   have that buss number as part of each track's data, which makes the song
-   file less portable, so be careful.
+%  \itempar{MIDI Bus}{pattern!midi bus}
+%  Selecting this filled-box right-click menu item brings up a list
+%  of the up to 16 MIDI output busses that \textsl{Seq66} supports.
+%  For each of these buss items, another pop-up menu allows one
+%  to specify the MIDI output channel for that buss.
 
 \subsubsection{Pattern Keys and Click}
 \label{subsubsec:patterns_pattern_keys_and_clicks}
@@ -1031,8 +854,28 @@
    existing set of 32 hot-keys.
 
    Also note that the Qt 5 user-interface also supports "variset", whether in
-   the main window or in the external live-frame.  In addition, both Qt windows
-   can be resized and still show good renditions of the pattern-slots.
+   the main window or in the external live-frame.  In addition, the Qt windows
+   can be resized and still show reasonable renditions of the pattern-slots.
+
+\subsection{Patterns / Set Handling}
+\label{subsec:patterns_panel_set_handling}
+
+   Let's go through an example using the \texttt{Home} key (or whatever key is
+   configured as the \textbf{Set Playing Screenset} key.)
+
+   \begin{enumber}
+      \item Load a song with more than one screen-set.
+      \item Unmute the pattern(s) in the first set and start playback.
+      \item Use the "\texttt{]}" (\textbf{Screenset Up}) key to move to the next
+         set.  Note that the first set is still playing.  Also note that the
+         now-current set is \textsl{not} playing.
+      \item Press the \texttt{Home} key.
+         Note that the first set turns off, and the current set turns on.
+         These steps can be repeated at will.
+      \item Finally, hit the \texttt{F8} (\textbf{Toggle Mutes}) key.
+         Note that all tracks on all sets toggle muting each time this key is
+         pressed.
+   \end{enumber}
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

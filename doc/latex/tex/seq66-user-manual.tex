@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-02-1 sqp
+% \update      2021-02-19
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-\title{Seq66 User Manual 0.92.0}
+\title{Seq66 User Manual 0.92.1}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -83,7 +83,7 @@
 \label{sec:introduction}
 
    This document describes "Seq66", a reboot of \textsl{Seq24} and a rewrite of
-   \textsl{Sequencer64}, through version 0.92.0.
+   \textsl{Sequencer64}, through version 0.92.1.
    The following project supports \textsl{Seq66} and documentation:
 
    \begin{itemize}
@@ -288,6 +288,16 @@
    if port-mapping (see \sectionref{sec:port_mapping}) is active, the list
    of mapped output ports.
    This is an easy way to redirect the set to a different output device.
+
+   \index{--bus option}
+   Another way to specify busses is the
+   \texttt{-{}-buss n} command-line option.
+   It causes \textsl{every} pattern in \textsl{every} set in the MIDI
+   file to be directed to that buss number, and when a new
+   sequence/pattern is created.  This option is only
+   for convenience in testing.  Save the file, and it will
+   have that buss number as part of each track's data, which makes the song
+   file less portable, so be careful.
 
 \paragraph{Global Beats Per Measure}
 \label{paragraph:introduction_global_beats_per_measure}

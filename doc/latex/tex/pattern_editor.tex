@@ -904,7 +904,7 @@
       \item \textbf{MIDI Thru Toggle}
       \item \textbf{MIDI Record Toggle}
       \item \textbf{MIDI Record Quantized}
-      \item \textbf{Loop Record Type} (Merge, Replace, Expand)
+      \item \textbf{Loop Record Type} (Merge, Replace, Expand, Oneshot)
       \item \textbf{Record Velocity and Reset}
    \end{enumber}
 
@@ -955,7 +955,7 @@
 
 \begin{figure}[H]
    \centering 
-  \includegraphics[scale=0.65]{pattern-editor/lfo.png}
+  \includegraphics[scale=0.75]{pattern-editor/lfo.png}
    \caption{Pattern Editor LFO}
    \label{fig:pattern_editor_bottom_lfo}
 \end{figure}
@@ -1029,7 +1029,8 @@
    Stazed's \textsl{Seq32} project.  The three methods are:
 
    \begin{enumber}
-      \item \textbf{Merge}. \index{merge}
+      \item \textbf{Merge}.
+         \index{merge}
          \index{recording type!merge}
          This is the normal style of recording loops, where notes can
          accumulate.
@@ -1052,7 +1053,24 @@
          of the loop.
          This continues indefinitely, whether or not any notes are
          being played/recorded.
+      \item \textbf{Oneshot}.
+         \index{oneshot}
+         \index{recording type!oneshot}
+         When this option is set, the record button is on, and no pattern is
+         playing, recording won't start until a note comes in, and when the first
+         note comes in, the progress bar starts at the left.
+         At the end of the pattern, recording stops automatically.
+         See the figure below for a recording from a \textsl{Yamaha DD-11}.
+         Note that this feature is still experimental, and bugs are being worked
+         out.
    \end{enumber}
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.65]{pattern-editor/oneshot-recording.png}
+   \caption{One-Shot Pattern Recording}
+   \label{fig:pattern_editor_oneshot_recording}
+\end{figure}
 
    \itempar{Vol}{pattern editor!vol}
    This button allows setting the volume of the recording.

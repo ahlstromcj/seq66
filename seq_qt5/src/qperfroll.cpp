@@ -848,11 +848,7 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         int cny = c_names_y - 6;
                         int marker_x = tix_to_pix(t);
                         painter.setPen(pen);
-                        for
-                        (
-                            auto cev = seq->ex_iterator();
-                            seq->ex_iterator_valid(cev); ++cev
-                        )
+                        for (auto cev = seq->cbegin(); ! seq->cend(cev); ++cev)
                         {
                             sequence::note_info ni;
                             sequence::draw dt = seq->get_next_note_ex(ni, cev);

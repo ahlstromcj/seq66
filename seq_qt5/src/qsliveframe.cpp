@@ -565,9 +565,9 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             preview_w -= 6;
             rectangle_x += 2;
             rectangle_y += 2;
-            for (auto cev = s->ex_iterator(); s->ex_iterator_valid(cev); ++cev)
+            for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
             {
-                sequence::note_info ni;         /* only two members used!   */
+                sequence::note_info ni;             /* two members used!   */
                 sequence::draw dt = s->get_next_note_ex(ni, cev);
                 int tick_s_x = (ni.start() * preview_w) / t1;
                 int tick_f_x = (ni.finish() * preview_w) / t1;

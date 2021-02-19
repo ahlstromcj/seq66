@@ -1509,7 +1509,11 @@ the '0' key in the piano roll.</string>
           </size>
          </property>
          <property name="toolTip">
-          <string>Select recording type for loop patterns: merge events (legacy); overwrite events; or expand the pattern length while recording.</string>
+          <string>Select recording type for loop patterns: 
+Merge events (legacy)'
+Overwrite events;
+Expand the pattern length while recording;
+Oneshot recording of a pattern.</string>
          </property>
          <property name="currentText">
           <string/>

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-02-18
+ * \updates       2021-02-19
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -51,8 +51,6 @@
 #include "util/automutex.hpp"           /* seq66::recmutex, automutex       */
 #include "util/calculations.hpp"        /* measures_to_ticks()              */
 #include "util/palette.hpp"             /* enum class ThumbColor            */
-
-#define SEQ66_USE_SEQUENCE_EX_ITERATOR
 
 /**
  *  Provides an integer value for color that matches PaletteColor::NONE.  That
@@ -1519,34 +1517,21 @@ public:
     void pause (bool song_mode = false);    /* playback::live vs song   */
     void reset_draw_trigger_marker ();
 
-#if defined SEQ66_USE_SEQUENCE_EX_ITERATOR
-
-    /**
-     *  Reset the caller's iterator.  This is used with
-     *  get_next_event_match(), get_next_event_ex(), and other functions used
-     *  in painting events..
-     */
-
-    event::buffer::const_iterator ex_iterator () const
+    event::buffer::const_iterator cbegin () const
     {
         return m_events.cbegin();
     }
 
-    bool ex_iterator_valid (event::buffer::const_iterator & evi) const
+    bool cend (event::buffer::const_iterator & evi) const
     {
-        return evi != m_events.cend();
+        return evi == m_events.cend();
     }
-
-#else
-
-    void reset_ex_iterator (event::buffer::const_iterator & evi) const;
-
-#endif  // defined SEQ66_USE_SEQUENCE_EX_ITERATOR
 
     bool reset_interval
     (
         midipulse t0, midipulse t1,
-        event::buffer::const_iterator & it0, event::buffer::const_iterator & it1
+        event::buffer::const_iterator & it0,
+        event::buffer::const_iterator & it1
     ) const;
     draw get_note_info
     (
@@ -1555,7 +1540,8 @@ public:
     ) const;
     draw get_next_note_ex
     (
-        note_info & niout, event::buffer::const_iterator & evi
+        note_info & niout,
+        event::buffer::const_iterator & evi
     ) const;
     bool get_next_event_match
     (
@@ -1564,12 +1550,14 @@ public:
     );
     bool get_next_event_ex
     (
-        midibyte & status, midibyte & cc, event::buffer::const_iterator & evi
+        midibyte & status, midibyte & cc,
+        event::buffer::const_iterator & evi
     );
     bool next_trigger (trigger & trig);
     bool push_quantize
     (
-        midibyte status, midibyte cc, int divide, bool linked = false
+        midibyte status, midibyte cc,
+        int divide, bool linked = false
     );
     bool transpose_notes (int steps, int scale);
 

@@ -14,6 +14,9 @@
 
 config-type = "rc"
 version = 0
+verbose = false
+sets-mode = normal
+port-naming = long
 
 # The [comments] section holds the user's documentation for this file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
