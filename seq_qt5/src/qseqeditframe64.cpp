@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-02-18
+ * \updates       2021-02-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1286,10 +1286,11 @@ void
 qseqeditframe64::initialize_panels ()
 {
     int noteheight = usr().key_height();
-    int height = noteheight * c_num_keys + 1;
+    int height = noteheight * c_num_keys + 1;   /* useful qseqkeys height   */
     m_seqkeys = new qseqkeys
     (
-        perf(), seq_pointer(), ui->keysScrollArea, noteheight, height
+        perf(), seq_pointer(), ui->keysScrollArea,
+        noteheight, height
     );
     ui->keysScrollArea->setWidget(m_seqkeys);
     ui->keysScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

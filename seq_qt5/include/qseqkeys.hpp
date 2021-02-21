@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-07
+ * \updates       2021-02-20
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -92,6 +92,11 @@ public:
     int note_height () const
     {
         return m_key_y;
+    }
+
+    int total_height () const
+    {
+        return m_key_area_y;
     }
 
     bool v_zoom_in ();

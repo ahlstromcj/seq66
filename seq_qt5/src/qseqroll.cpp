@@ -216,7 +216,7 @@ qseqroll::v_zoom_in ()
     {
         int h = m_seqkeys_wid->note_height();
         unit_height(h);
-        total_height(h * c_num_keys);
+        total_height(m_seqkeys_wid->total_height());
         m_v_zooming = true;
         set_dirty();
         m_parent_frame->set_dirty();
@@ -232,7 +232,7 @@ qseqroll::v_zoom_out ()
     {
         int h = m_seqkeys_wid->note_height();
         unit_height(h);
-        total_height(h * c_num_keys);
+        total_height(m_seqkeys_wid->total_height());
         m_v_zooming = true;
         set_dirty();
         m_parent_frame->set_dirty();
@@ -248,7 +248,7 @@ qseqroll::reset_v_zoom ()
     {
         int h = m_seqkeys_wid->note_height();
         unit_height(h);
-        total_height(h * c_num_keys);
+        total_height(m_seqkeys_wid->total_height());
         set_dirty();
         m_parent_frame->set_dirty();
     }
@@ -468,7 +468,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          * Set line colour dependent on the note row we're on.
          */
 
-        int y = key * unit_height();
+        int y = key * unit_height();                // ADJUST!!
         if ((modkey % c_octave_size) == 0)
             pen.setColor(fore_color());
         else
@@ -1436,7 +1436,7 @@ qseqroll::grow_selected_notes (int dx)
 QSize
 qseqroll::sizeHint () const
 {
-    int h = total_height() + 1;
+    int h = total_height();                         /* + 1;             */
     int w = m_parent_frame->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
