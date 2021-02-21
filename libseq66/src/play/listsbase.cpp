@@ -230,6 +230,14 @@ listsbase::get_nick_name (bussbyte bus, bool addnumber) const
  *  same text whether the port name comes from ALSA or from a2jmidid when
  *  running JACK.  We don't have any MIDI hardware that JACK detects without
  *  a2jmidid.
+ *
+ *  ca 2021-02-21
+ *  QSynth has a name like the following, which breaks the algorithm and makes
+ *  the space position far outside the bounds of the string.  In that case, we
+ *  punt and get the whole string.
+ *
+ *      6] 130:0 FLUID Synth (125507):Synth input port (125507:0)
+ *
  */
 
 std::string
@@ -248,6 +256,9 @@ listsbase::extract_nickname (const std::string & name) const
         }
         else if (std::isspace(name[cpos]))
             ++cpos;
+
+        if (cpos == std::string::npos)      // if (cpos >= name.length())
+            cpos = 0;
 
         result = name.substr(cpos);
     }

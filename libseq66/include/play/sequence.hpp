@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-02-19
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1438,7 +1438,7 @@ public:
     int get_num_selected_notes () const;
     int get_num_selected_events (midibyte status, midibyte cc) const;
     void select_all ();
-    bool repitch_selected (const notemapper & nmap);
+    bool repitch (const notemapper & nmap, bool all = false);
     bool copy_selected ();
     bool cut_selected (bool copyevents = true);
     bool paste_selected (midipulse tick, int note);

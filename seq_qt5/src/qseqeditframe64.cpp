@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-02-20
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -556,18 +556,13 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     set_measures(get_measures());
 
     /*
-     *  Transpose button.
+     *  Transpose button.  Qt::NoFocus is the default focus policy.
      */
 
     bool cantranspose = seq_pointer()->transposable();
     qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
     ui->m_toggle_transpose->setCheckable(true);
     ui->m_toggle_transpose->setChecked(cantranspose);
-
-    /*
-     * Qt::NoFocus is the default focus policy.
-     */
-
     ui->m_toggle_transpose->setAutoDefault(false);
     connect
     (
@@ -576,6 +571,13 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     );
     if (! usr().work_around_transpose_image())
         set_transpose_image(cantranspose);
+
+    connect
+    (
+        ui->m_map_notes, SIGNAL(clicked(bool)),
+        this, SLOT(remap_notes())
+    );
+    ui->m_map_notes->setEnabled(cantranspose);
 
     /*
      * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
@@ -1093,20 +1095,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
         this, SLOT(update_recording_volume(int))
     );
     set_recording_volume(usr().velocity_override());
-
-#if defined USE_REMAP_NOTES_BUTTON
-
-    /*
-     * Replaced by note-entry button
-     */
-
-    connect
-    (
-        ui->btnAuxFunction, SIGNAL(clicked(bool)),
-        this, SLOT(remap_notes())
-    );
-
-#endif
 
     repopulate_usr_combos(m_editing_bus, m_editing_channel);
     set_midi_bus(m_editing_bus);
@@ -1711,6 +1699,8 @@ qseqeditframe64::transpose (bool ischecked)
     seq_pointer()->set_transposable(ischecked);
     if (! usr().work_around_transpose_image())
         set_transpose_image(ischecked);
+
+    ui->m_map_notes->setEnabled(ischecked);
 }
 
 /**
@@ -2123,6 +2113,18 @@ qseqeditframe64::transpose_notes ()
     QAction * senderAction = (QAction *) sender();
     int transposeval = senderAction->data().toInt();
     seq_pointer()->transpose_notes(transposeval, 0);
+}
+
+/**
+ *  Here, we need to get the filespec, create a notemapper, fill it from the
+ *  notemapfile, and iterate through the notes, converting them.
+ */
+
+void
+qseqeditframe64::remap_notes ()
+{
+    if (repitch_all())
+        ui->m_map_notes->setEnabled(false);
 }
 
 /**
@@ -3298,19 +3300,6 @@ qseqeditframe64::set_recording_volume (int recvol)
 {
     seq_pointer()->set_rec_vol(recvol); /* save to the sequence settings    */
     usr().velocity_override(recvol);    /* save to the "usr" config file    */
-}
-
-/**
- *  Here, we need to get the filespec, create a notemapper, fill it from the
- *  notemapfile, and iterate through the notes, converting them.
- *
- *  Currently not connected to a signal.  TODO.
- */
-
-void
-qseqeditframe64::remap_notes ()
-{
-    (void) repitch_selected();
 }
 
 void

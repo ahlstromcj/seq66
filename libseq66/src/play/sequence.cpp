@@ -1815,14 +1815,14 @@ sequence::decrement_selected (midibyte astat, midibyte /*acontrol*/)
 }
 
 bool
-sequence::repitch_selected (const notemapper & nmap)
+sequence::repitch (const notemapper & nmap, bool all)
 {
     automutex locker(m_mutex);
     bool result = false;
     push_undo();
     for (auto & e : m_events)
     {
-        if (e.is_note() && e.is_selected())
+        if (e.is_note() && (all || e.is_selected()))
         {
             midibyte pitch, velocity;                       /* d0 & d1  */
             e.get_data(pitch, velocity);
@@ -1831,7 +1831,7 @@ sequence::repitch_selected (const notemapper & nmap)
             result = true;
         }
     }
-    if (result)
+    if (result && ! all)
         verify_and_link();
 
     return result;

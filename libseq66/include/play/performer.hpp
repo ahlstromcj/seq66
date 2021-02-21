@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-12
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -1202,6 +1202,7 @@ public:
 
 public:
 
+    bool repitch_all (const std::string & nmapfile, sequence & s);
     bool repitch_selected (const std::string & nmapfile, sequence & s);
 
     setmapper & mapper ()

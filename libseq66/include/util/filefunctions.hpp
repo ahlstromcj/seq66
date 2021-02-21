@@ -9,7 +9,7 @@
  *
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2020-11-06
+ * \updates       2021-02-21
  * \version       $Revision$
  *
  *    Also see the filefunctions.cpp module.  The functions here use
@@ -41,7 +41,16 @@ extern bool file_mode_good (const std::string & mode);
 extern FILE * file_open (const std::string & filename, const std::string & mode);
 extern FILE * file_open_for_read (const std::string & filename);
 extern FILE * file_create_for_write (const std::string & filename);
-extern bool file_close (FILE * filehandle, const std::string & filename);
+extern bool file_write_string
+(
+    const std::string & filename,
+    const std::string & text
+);
+extern bool file_close
+(
+    FILE * filehandle,
+    const std::string & filename = ""
+);
 extern bool file_copy
 (
     const std::string & file,
@@ -120,7 +129,7 @@ extern std::string file_extension (const std::string & path);
 extern std::string file_extension_set
 (
     const std::string & path,
-    const std::string & ext
+    const std::string & ext = ""
 );
 extern std::string executable_full_path ();
 extern std::string user_home ();

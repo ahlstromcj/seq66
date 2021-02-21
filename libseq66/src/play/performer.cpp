@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-12
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1855,11 +1855,24 @@ performer::reset_sequences (bool pause)
 }
 
 bool
+performer::repitch_all (const std::string & nmapfile, sequence & s)
+{
+    bool result = open_note_mapper(nmapfile);
+    if (result)
+        result = s.repitch(*m_note_mapper, true);
+
+    if (result)
+        modify();
+
+    return result;
+}
+
+bool
 performer::repitch_selected (const std::string & nmapfile, sequence & s)
 {
     bool result = open_note_mapper(nmapfile);
     if (result)
-        result = s.repitch_selected(*m_note_mapper);
+        result = s.repitch(*m_note_mapper);
 
     if (result)
         modify();

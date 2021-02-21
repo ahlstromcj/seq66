@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2020-11-27
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  *  Provides an abstract base class so that both the old and the new Qt
@@ -91,6 +91,7 @@ public:
 
     virtual ~qseqframe ();
 
+    bool repitch_all ();
     bool repitch_selected ();
 
 protected:

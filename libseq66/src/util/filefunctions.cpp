@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-02-04
+ * \updates       2021-02-21
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -740,6 +740,25 @@ file_create_for_write (const std::string & filename)
     return file_open(filename, "wb");
 }
 
+bool
+file_write_string (const std::string & filename, const std::string & text)
+{
+    FILE * fptr = file_open(filename, "w");
+    bool result = not_nullptr(fptr);
+    if (result)
+    {
+        size_t len = text.length();
+        size_t rc = fwrite(text.c_str(), sizeof(char), len, fptr);
+        if (rc < len)
+        {
+            errprintf("could not write to '%s'", filename.c_str());
+            result = false;
+        }
+        (void) file_close(fptr, filename);
+    }
+    return result;
+}
+
 /**
  *  Closes a file opened by the file_open() functions. Replaces fclose().
  *
@@ -748,7 +767,8 @@ file_create_for_write (const std::string & filename)
  *
  * \param filename
  *      Provides the name of the file to be closed.  Used only for error
- *      reporting.  If you don't care about it, pass in an empty string.
+ *      reporting.  If you don't care about it, pass in an empty string,
+ *      which is the default value.
  *
  * \return
  *      Returns 'true' if the close operation succeeded.
@@ -879,7 +899,7 @@ file_append_log
             errprintf("could not write to '%s'", filename.c_str());
             result = false;
         }
-        (void) fclose(fp);
+        (void) file_close(fp, filename);
     }
     return result;
 }
@@ -1568,14 +1588,16 @@ file_extension (const std::string & path)
  *  to the given extension parameter.
  *
  * \param path
- *      Provides the path-name, which can have an extension, or not.
+ *      Provides the path-name, which can have an extension, or not. It can
+ *      also be a simple base filename, with no path.
  *
  * \param ext
  *      Provides the desired extension.  It must include the period, as in
- *      ".ctrl".
+ *      ".ctrl". If this parameter is empty, and an extension exists, it is
+ *      stripped off.  This is the default value.
  *
  * \return
- *      Returns a copy of the augmented string.
+ *      Returns a copy of the augmented (or extension-stripped) string.
  */
 
 std::string
@@ -1586,7 +1608,8 @@ file_extension_set (const std::string & path, const std::string & ext)
     if (ppos != std::string::npos)
     {
         result = path.substr(0, ppos);
-        result += ext;
+        if (! ext.empty())
+            result += ext;
     }
     else
     {

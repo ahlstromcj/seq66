@@ -26,13 +26,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-01-31
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "cfg/settings.hpp"             /* SEQ66_QMAKE_RULES indirectly     */
 #include "play/sequence.hpp"            /* seq66::sequence                  */
+#include "util/filefunctions.hpp"       /* seq66::filename_split()          */
 #include "qseqeventframe.hpp"           /* seq66::qseqeventframe            */
 #include "qseventslots.hpp"             /* seq66::qseventslots              */
 
@@ -839,7 +840,25 @@ qseqeventframe::handle_dump ()
     if (m_eventslots)
     {
         std::string dump = m_eventslots->events_to_string();
-        printf("%s", dump.c_str());
+        if (! dump.empty())
+        {
+            std::string fspec = rc().midi_filename();
+            std::string directory;
+            std::string basename;
+            bool ok = filename_split(fspec, directory, basename);
+            if (ok)
+            {
+                basename = file_extension_set(basename);    /* strip .ext   */
+                basename += "-pattern-";
+                basename += std::to_string(m_seq->seq_number());
+                basename = file_extension_set(basename, ".text");
+                fspec = filename_concatenate(directory, basename);
+                if (! file_write_string(fspec, dump))
+                    printf("%s", dump.c_str());
+            }
+            else
+                printf("%s", dump.c_str());
+        }
     }
 }
 

@@ -1,0 +1,54 @@
+The DD-11 first puts out the following Program Changes:
+
+Status C0 chan/type 09 d0=0 d1=0
+Status C0 chan/type 0A d0=0 d1=0
+Status C0 chan/type 0B d0=0 d1=0
+Status C0 chan/type 0C d0=5 d1=0
+Status C0 chan/type 0D d0=3 d1=0
+Status C0 chan/type 0E d0=79 d1=0
+
+     Incoming      
+   0 Note 44 vel 85   000000 Note On :-  44 Vel 55 --> 000046 Note Off:-  44 Vel 00
+   0 Note 56 vel 35   000000 Note On :-  56 Vel 23 --> 000046 Note Off:-  56 Vel 00
+   0 Note 57 vel 75   000000 Note On :-  57 Vel 4B --> 000046 Note Off:-  57 Vel 00
+  48 Note 56 vel 1    000048 Note On :-  56 Vel 01 --> 000094 Note Off:-  56 Vel 00
+  48 Note 57 vel 25   000048 Note On :-  57 Vel 19 --> 000094 Note Off:-  57 Vel 00
+  96 Note 38 vel 90   000096 Note On :-  38 Vel 5A --> 000142 Note Off:-  38 Vel 00
+  96 Note 56 vel 35   000096 Note On :-  56 Vel 23 --> 000142 Note Off:-  56 Vel 00
+  96 Note 57 vel 75   000096 Note On :-  57 Vel 4B --> 000142 Note Off:-  57 Vel 00
+ 144 Note 44 vel 85   000144 Note On :-  44 Vel 55 --> 000190 Note Off:-  44 Vel 00
+ 144 Note 56 vel 1    000144 Note On :-  56 Vel 01 --> 000190 Note Off:-  56 Vel 00
+ 144 Note 57 vel 25   000144 Note On :-  57 Vel 19 --> 000190 Note Off:-  57 Vel 00
+ 192 Note 56 vel 35   000192 Note On :-  56 Vel 23 --> 000238 Note Off:-  56 Vel 00
+ 192 Note 57 vel 75   000192 Note On :-  57 Vel 4B --> 000238 Note Off:-  57 Vel 00
+ 240 Note 56 vel 1    000240 Note On :-  56 Vel 01 --> 000286 Note Off:-  56 Vel 00
+ 240 Note 57 vel 25   000240 Note On :-  57 Vel 19 --> 000286 Note Off:-  57 Vel 00
+ 288 Note 54 vel 70   000288 Note On :-  38 Vel 5A --> 000334 Note Off:-  38 Vel 00
+ 288 Note 38 vel 90   000288 Note On :-  54 Vel 46 --> 000334 Note Off:-  54 Vel 00
+ 288 Note 56 vel 35   000288 Note On :-  56 Vel 23 --> 000334 Note Off:-  56 Vel 00
+ 288 Note 57 vel 75   000288 Note On :-  57 Vel 4B --> 000334 Note Off:-  57 Vel 00
+ 336 Note 44 vel 20   000336 Note On :-  44 Vel 14 --> 000382 Note Off:-  44 Vel 00
+ 336 Note 56 vel 1    000336 Note On :-  56 Vel 01 --> 000382 Note Off:-  56 Vel 00
+ 336 Note 57 vel 25   000336 Note On :-  57 Vel 19 --> 000382 Note Off:-  57 Vel 00
+ 384 Note 44 vel 85   000384 Note On :-  44 Vel 55 --> 000430 Note Off:-  44 Vel 00
+ 384 Note 56 vel 35   000384 Note On :-  56 Vel 23 --> 000430 Note Off:-  56 Vel 00
+ 384 Note 57 vel 75   000384 Note On :-  57 Vel 4B --> 000430 Note Off:-  57 Vel 00
+ 432 Note 56 vel 1    000432 Note On :-  56 Vel 01 --> 000478 Note Off:-  56 Vel 00
+ 432 Note 57 vel 25   000432 Note On :-  57 Vel 19 --> 000478 Note Off:-  57 Vel 00
+ 480 Note 38 vel 90   000480 Note On :-  38 Vel 5A --> 000526 Note Off:-  38 Vel 00
+ 480 Note 56 vel 35   000480 Note On :-  56 Vel 23 --> 000526 Note Off:-  56 Vel 00
+ 480 Note 57 vel 75   000480 Note On :-  57 Vel 4B --> 000526 Note Off:-  57 Vel 00
+ 528 Note 56 vel 1    000528 Note On :-  56 Vel 01 --> 000574 Note Off:-  56 Vel 00
+ 528 Note 57 vel 25   000528 Note On :-  57 Vel 19 --> 000574 Note Off:-  57 Vel 00
+ 576 Note 44 vel 85   000576 Note On :-  44 Vel 55 --> 000622 Note Off:-  44 Vel 00
+ 576 Note 56 vel 35   000576 Note On :-  56 Vel 23 --> 000622 Note Off:-  56 Vel 00
+ 576 Note 57 vel 75   000576 Note On :-  57 Vel 4B --> 000622 Note Off:-  57 Vel 00
+ 624 Note 44 vel 85   000624 Note On :-  44 Vel 55 --> 000670 Note Off:-  44 Vel 00
+ 624 Note 56 vel 1    000624 Note On :-  56 Vel 01 --> 000670 Note Off:-  56 Vel 00
+ 624 Note 57 vel 25   000624 Note On :-  57 Vel 19 --> 000670 Note Off:-  57 Vel 00
+ 672 Note 54 vel 70   000672 Note On :-  38 Vel 5A --> 000718 Note Off:-  38 Vel 00
+ 672 Note 38 vel 90   000672 Note On :-  54 Vel 46 --> 000718 Note Off:-  54 Vel 00
+ 672 Note 56 vel 35   000672 Note On :-  56 Vel 23 --> 000718 Note Off:-  56 Vel 00
+ 672 Note 57 vel 75   000672 Note On :-  57 Vel 4B --> 000718 Note Off:-  57 Vel 00
+ 720 Note 56 vel 1    000720 Note On :-  56 Vel 01 --> 000766 Note Off:-  56 Vel 00
+

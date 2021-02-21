@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Oli Kester; modifications by Chris Ahlstrom
  * \date          2018-07-27
- * \updates       2020-07-29
+ * \updates       2021-02-21
  * \license       GNU GPLv2 or above
  *
  *  Seq66 (Qt version) has two different pattern editor frames to
@@ -95,6 +95,23 @@ qseqframe::qseqframe
 qseqframe::~qseqframe ()
 {
     // No code needed
+}
+
+bool
+qseqframe::repitch_all ()
+{
+    std::string filename = rc().notemap_filespec();
+    sequence & s = *seq_pointer();
+    bool result = perf().repitch_all(filename, s);
+    if (result)
+    {
+        set_dirty();
+    }
+    else
+    {
+        // need to display error message somehow
+    }
+    return result;
 }
 
 bool
