@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-21
+ * \updates       2021-02-22
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -3642,7 +3642,7 @@ performer::play (midipulse tick)
 {
     set_tick(tick);
     bool songmode = song_mode();
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
     int count = 0;
     for (auto seqi : m_play_set.seq_container())
     {
@@ -4758,34 +4758,18 @@ performer::clear_seq_edits ()
  *  module.
  *
  *  Next, we look up the keycontrol based on the ordinal value.  If this
- *  keycontrol is usable (it is not a default-constructed keycontrol),
- *  then we can use its slot value to look up the midioperation associated with
- *  this slot.
+ *  keycontrol is usable (it is not a default-constructed keycontrol), then we
+ *  can use its slot value to look up the midioperation associated with this
+ *  slot.
  *
  *  Also part of keystroke is whether the key was pressed or released.
- *  For some keystrokes, this difference matters.
- *  If the keycontrol::is_toggle() function returns false, then press will
- *  be handled differently from release.  Furthermore, if the keystroke is
- *  release, the "inverse" flag of the event will be set to true.
+ *  A press sets inverse = false, while a release sets inverse = true.
+ *  For some keystrokes, this difference matters.  For most, we want to
+ *  ignore the release.
  *
- *  Note that the default action for most keys is automation::action::on,
+ *  Note that the default action for most keys is automation::action::toggle,
  *  but some keys are configured to do automation::action::on during a
- *  key-press, and automation::action::off during a key-release, while a few
- *  keys do automation::action::toggle.
- *
-\verbatim
- *      Action:             On            Toggle          Off
- *     -----------------|--------------|--------------|--------------
- *    | Toggle:         |              |              |              |
- *    | Press = true    |              |              |              |
- *    | Press = false   |              |              |              |
- *    |-----------------|--------------|--------------|--------------
- *    | Non-Toggle:     |              |              |              |
- *    | Press = true    |              |              |              |
- *    | Press = false   |              |              |              |
- *     -----------------|--------------|--------------|--------------
-\endverbatim
- *
+ *  key-press, and automation::action::off during a key-release.
  *  To summarize:
  *
  *      -   Pattern keys. The action is always automation::action::toggle
@@ -4823,7 +4807,8 @@ performer::clear_seq_edits ()
  *
  * \return
  *      Returns true if the action was handled.  Returns false if the action
- *      failed or was not handled.  The caller has to know what the context is.
+ *      failed or was not handled.  The caller has to know what the context
+ *      is.
  */
 
 bool
@@ -4848,7 +4833,7 @@ performer::midi_control_keystroke (const keystroke & k)
 
             automation::action a = kc.action_code();
             bool invert = ! kkey.is_press();
-            int d0 = 0;
+            int d0 = (-1);                                  /* not 0    */
             int index = kc.control_code();
             bool learning = is_group_learn();               /* before   */
             result = mop.call(a, d0, index, invert);
@@ -5371,9 +5356,13 @@ performer::automation_no_op (automation::action a, int d0, int d1, bool inverse)
 }
 
 /**
- *  Implements BPM Up and BPM Down for MIDI control.  There is really no need
- *  for two BPM configuration lines for MIDI control, since the configured MIDI
- *  event can specify which is needed.
+ *  Implements BPM Up and BPM Down for MIDI control.  There would be no need
+ *  for two BPM configuration lines for MIDI control, except that we need two
+ *  different keystrokes, one for up, and one for down.
+ *
+ *  All keystrokes are handled such that the key-press sets inverse to
+ *  "false", and the key-release sets inverse to "true".  For most keystrokes,
+ *  then, we have to ignore inverse == true. 
  *
  *  For the configured BPM Up keystroke, this function is called with an action
  *  of "on", to implement BPM Up.  But a second function, automation_bpm_dn(),
@@ -5406,20 +5395,33 @@ performer::automation_bpm_up_dn
 {
     std::string name = "BPM";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)            /* for keystroke */
-        increment_beats_per_minute();
-    else if (a == automation::action::on)
-        increment_beats_per_minute();
-    else if (a == automation::action::off)
-        decrement_beats_per_minute();
-
+    if (inverse)
+    {
+        if (d0 >= 0)                                    /* not a keystroke  */
+        {
+            if (a == automation::action::on)
+                decrement_beats_per_minute();
+            else if (a == automation::action::off)
+                increment_beats_per_minute();
+        }
+    }
+    else
+    {
+        if (a == automation::action::toggle)
+            increment_beats_per_minute();
+        else if (a == automation::action::on)
+            increment_beats_per_minute();
+        else if (a == automation::action::off)
+            decrement_beats_per_minute();
+    }
     return true;
 }
 
 /**
  *  No matter how BPM Down is configured for MIDI control, if present and the
  *  MIDI event matches, it will act like a BPM Down.  This matches the behavior
- *  of Seq24/Sequencer64.
+ *  of Seq24/Sequencer64. Remember that d0 < 0 flags a keystroke, and when
+ *  true, we ignore inverse == true (a key-release).  Too tricky.
  */
 
 bool
@@ -5428,7 +5430,10 @@ performer::automation_bpm_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    return automation_bpm_up_dn(automation::action::off, d0, d1, inverse);
+    if (d0 < 0 && ! inverse)
+        return automation_bpm_up_dn(automation::action::off, d0, d1, false);
+    else
+        return automation_bpm_up_dn(automation::action::off, d0, d1, inverse);
 }
 
 /**
@@ -5445,7 +5450,17 @@ performer::automation_ss_up_dn
 {
     std::string name = "Screenset";
     print_parameters(name, a, d0, d1, inverse);
-    if (! inverse)
+    if (inverse)
+    {
+        if (d0 >= 0)                                    /* not a keystroke  */
+        {
+            if (a == automation::action::on)
+                decrement_screenset();
+            else if (a == automation::action::off)
+                increment_screenset();
+        }
+    }
+    else
     {
         if (a == automation::action::toggle)            /* for keystroke */
             increment_screenset();
@@ -5469,7 +5484,10 @@ performer::automation_ss_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    return automation_ss_up_dn(automation::action::off, d0, d1, inverse);
+    if (d0 < 0 && ! inverse)
+        return automation_ss_up_dn(automation::action::off, d0, d1, false);
+    else
+        return automation_ss_up_dn(automation::action::off, d0, d1, inverse);
 }
 
 /**
@@ -5746,7 +5764,17 @@ performer::automation_bpm_page_up_dn
 {
     std::string name = "BPM Page";
     print_parameters(name, a, d0, d1, inverse);
-    if (! inverse)
+    if (inverse)
+    {
+        if (d0 >= 0)                                    /* not a keystroke  */
+        {
+            if (a == automation::action::on)
+                page_decrement_beats_per_minute();
+            else if (a == automation::action::off)
+                page_increment_beats_per_minute();
+        }
+    }
+    else
     {
         if (a == automation::action::toggle)            /* for keystroke */
             page_increment_beats_per_minute();
@@ -5771,7 +5799,20 @@ performer::automation_bpm_page_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    return automation_bpm_page_up_dn(automation::action::off, d0, d1, inverse);
+    if (d0 < 0 && ! inverse)
+    {
+        return automation_bpm_page_up_dn
+        (
+            automation::action::off, d0, d1, false
+        );
+    }
+    else
+    {
+        return automation_bpm_page_up_dn
+        (
+            automation::action::off, d0, d1, inverse
+        );
+    }
 }
 
 /**
@@ -5849,6 +5890,7 @@ performer::automation_quan_record
  *  overwrites them upon loop-return.
  *
  *  What about the "extend sequence" mode?  What about the return codes?
+ *  What about the (new) "oneshot" pattern recording mode?
  */
 
 bool
@@ -5922,6 +5964,11 @@ performer::automation_rewind
     return true;
 }
 
+/**
+ *  Sets the time to the song beginning or the L marker.
+ *  Needs work.
+ */
+
 bool
 performer::automation_top
 (
@@ -5962,7 +6009,6 @@ performer::automation_playlist
         else if (a == automation::action::off)          /* select-previous  */
             result = open_previous_list();
     }
-
     return result;
 }
 

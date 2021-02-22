@@ -81,10 +81,6 @@
 #include "util/calculations.hpp"
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
-#if ! defined PI
-#define PI     3.14159265359
-#endif
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -1108,7 +1104,7 @@ wave_func (double angle, wave wavetype)
     {
     case wave::sine:
 
-        result = sin(angle * PI * 2.0);
+        result = sin(angle * M_PI * 2.0);
         break;
 
     case wave::sawtooth:
@@ -1294,6 +1290,8 @@ extract_port_name (const std::string & fullname)
  *  Sets the name to be displayed for showing to the user, and hopefully,
  *  later, for look-up.
  *
+ *  NOT YET USED.
+ *
  *  For JACK ports created by a2jmidid (a2j_control), we want to shorten the
  *  name radically, and also set the bus ID, which is contained in square
  *  brackets.
@@ -1339,6 +1337,10 @@ extract_a2j_port_name (const std::string & alias)
     }
     return result;
 }
+
+/**
+ *  NOT YET USED.
+ */
 
 int
 extract_a2j_bus_id (const std::string & alias)

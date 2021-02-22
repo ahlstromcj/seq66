@@ -189,10 +189,29 @@ button-columns = 8
 30 "K"       [ 0 0x90 103   1 127 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Mute 30
 31 "<"       [ 0 0x90 119   1 127 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Mute 31
 
+# Implemented:
+#
+# BPM Up/Down
+# Group Mute ??? Might need rwork
+#
+# Need to implement:
+#
+# Screenset Up/Down
+# Playback Stop/Start/Pause (and automation display out)
+# Page BPM Up/Down
+# Home ?
+# Play Screenset
+# Follow Transport
+# Panic
+# Slot Shift
+# Record/Quan Record
+# Tap BPM
+# Playlist and Song
+
 [automation-control]
 
- 0 "'"       [ 0 0x00   0   0   0 ][ 0 0xb0 104 127 127 ][ 0 0xb0 104 127 127 ] # BPM Up
- 1 ";"       [ 0 0x00   0   0   0 ][ 0 0xb0 105 127 127 ][ 0 0xb0 105 127 127 ] # BPM Dn
+ 0 "'"       [ 0 0x00   0   0   0 ][ 0 0xb0 104 127 127 ][ 0 0xb0 104   0   0 ] # BPM Up
+ 1 ";"       [ 0 0x00   0   0   0 ][ 0 0xb0 105 127 127 ][ 0 0xb0 105   0   0 ] # BPM Dn
  2 "]"       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Set Up
  3 "["       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Set Dn
  4 "KP_Home" [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Replace
@@ -233,7 +252,7 @@ button-columns = 8
 39 "F11"     [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Toggle JACK
 40 "F12"     [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Menu Mode
 41 "F4"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Follow JACK
-42 "~"       [ 0 0x00   0   0   0 ][ 0 0xb0 104   1 127 ][ 0 0x00   0   0   0 ] # Reserved 42
+42 "~"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 42
 43 "Null_f9" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 43
 44 "Null_fa" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 44
 45 "Null_fb" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 45

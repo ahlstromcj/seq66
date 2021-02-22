@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-01-11
+% \update      2021-02-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1033,7 +1033,7 @@
          \index{merge}
          \index{recording type!merge}
          This is the normal style of recording loops, where notes can
-         accumulate.
+         accumulate as the loop repeats.
       \item \textbf{Replace.}
       \index{replace}
       \index{recording type!replace}
@@ -1056,13 +1056,12 @@
       \item \textbf{Oneshot}.
          \index{oneshot}
          \index{recording type!oneshot}
-         When this option is set, the record button is on, and no pattern is
-         playing, recording won't start until a note comes in, and when the first
-         note comes in, the progress bar starts at the left.
-         At the end of the pattern, recording stops automatically.
-         See the figure below for a recording from a \textsl{Yamaha DD-11}.
-         Note that this feature is still experimental, and bugs are being worked
-         out.
+         When this option is set, with the record button on, and no pattern
+         playing, recording won't start until a note comes in, and when the
+         first note comes in, the progress bar starts at the left (time 0).  At
+         the end of the pattern, recording stops automatically.  See the figure
+         below for a recording from a \textsl{Yamaha DD-11}.
+         This feature is still experimental, and bugs are being worked out.
    \end{enumber}
 
 \begin{figure}[H]
@@ -1072,12 +1071,54 @@
    \label{fig:pattern_editor_oneshot_recording}
 \end{figure}
 
+   In the figure above, we set up to record input from the port attached to a
+   \textsl{Yamaha DD-11} drum machine.  After some trial and error,
+   we set the \textbf{Length} to 2 measures (see the red text); the
+   \textbf{Snap} to 1/8th; the \textbf{Recording Type} to "Oneshot"; and
+   \textbf{Recording} on; also, the \textbf{BPM} was set to 124 in the main
+   window, to match the "39" tempo in the DD-11, which maps to 124 bpm.
+   Finally, we picked the \textsl{Pop Rock 1} style.  
+   Once this setup was in place, clicking the DD-11 Start/Stop button started
+   recording automatically at time 0, and it stopped automatically at the
+   length/end of the pattern.
+
+   Why is the snap used instead of the note-length?  Because we're using the
+   \index{auto-step}
+   \index{step-edit}
+   auto-step (step-edit) feature... the snap determines where the next note
+   begins, and the length determines the length of the note to create.
+   However, the note-length is a property of the piano roll, not the pattern
+   itself.  The pattern uses the snap-length during auto-step.
+
+   Now, the DD-11 is an old instrument from the pre-General-MIDI days.
+   So, in order to play back this pattern on something like
+   \textsl{QSynth} or \textsl{Hydrogen}, we need to re-map the notes to GM drum
+   notes.  In the 'rc' file, the proper note-mapper file is specified:
+
+   \begin{verbatim}
+      [note-mapper]
+      "GM_DD-11.drums"
+   \end{verbatim}
+
+   We copy the recorded pattern and paste it into another slot for safety.
+   We click the \textbf{Transposable} button for that pattern to enable the
+   \textbf{Map} button.  Then we click the \textbf{Map} button, and the notes
+   shift (not shown).  
+   We click the \textbf{Transposable} button again to disable transposing,
+   and save the file.
+   Playing it into channel 10 of \textsl{QSynth} shows that it sounds a lot
+   like the original DD-11 drums.
+
    \itempar{Vol}{pattern editor!vol}
-   This button allows setting the volume of the recording.
-   The velocity of the notes will be set to the selected value upon recording.
+   This button resets the volume (velocity)
+   of note recording to the \textbf{Free} setting.
+   See the next item.
+
+   \itempar{Velocity}{pattern editor!velocity}
+   This dropdown allows setting the volume of the recording to either the
+   incoming velocity or to the specified velocity.
    The velocity values are shown at the right side of each menu entry.
-   These values correspond to MIDI volume levels from 127 down to 16, as
-   shown in the figure.
+   These values correspond to MIDI volume levels from 127 down to 16.
    If the \textbf{Free} item is selected, then the incoming note velocity is
    preserved.
 

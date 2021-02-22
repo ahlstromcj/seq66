@@ -877,8 +877,7 @@ sequence::play
     else
     {
         /*
-         *  We make the song_recording() clause active for both Live and Song
-         *  mode now.
+         *  Make song_recording() clause active for both Live and Song mode.
          */
 
         if (song_recording())
@@ -892,16 +891,9 @@ sequence::play
             (
                 start_tick, end_tick, resumenoteons
             );
-
-            /*
-             * Causes a segfault on song playback.  Probably a recursive call,
-             * it causes Qt to complain a few times, then crash.
-             *
-             * notify_change();     // parent, subscriber, announce
-             */
         }
     }
-    if (playing())                          /* play notes in frame          */
+    if (playing())                          /* play notes in the frame      */
     {
         midipulse offset = get_length() - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
@@ -916,21 +908,6 @@ sequence::play
             midipulse stamp = er.timestamp() + offset_base;
             if (stamp >= start_tick_offset && stamp <= end_tick_offset)
             {
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                /*
-                 * When we've reach the play state, we always find that start =
-                 * stamp = end, and offset is a constant equal to the first
-                 * stamp found (at least for awhile).
-                 */
-
-                printf
-                (
-                    "start = %ld <= %ld <= end = %ld; offset = %ld, base = %ld\n",
-                    start_tick_offset, stamp, end_tick_offset, offset,
-                    offset_base
-                );
-#endif
                 if (transpose != 0 && er.is_note()) /* includes Aftertouch  */
                 {
                     er.transpose_note(transpose);
@@ -963,12 +940,7 @@ sequence::play
                  * but it does prevent one CPU from being hammered at 100%.
                  * However, it also makes the live-grid progress bar jittery
                  * when unmuted, for shorter patterns, which play()
-                 * relentlessly here.
-                 *
-                 *      millisleep(1);
-                 *
-                 * Another possible criteria is note_count(), but currently
-                 * that is a looping (time-eating) function.
+                 * relentlessly here: millisleep(1);
                  */
 
                 if (measure_threshold())
@@ -2432,10 +2404,10 @@ sequence::add_note
  *  An overload to ignore painting values and increase efficiency during input
  *  recording.
  *
- *  Will be consistent with how Note On velocity is handled; enable 0 velocity (a
- *  standard?) for Note Off when not playing. Note that the event constructor sets
- *  channel to 0xFF, while event::set_data() currently sets it to 0!!!
- *
+ *  Will be consistent with how Note On velocity is handled; enable 0 velocity
+ *  (a standard?) for Note Off when not playing. Note that the event
+ *  constructor sets channel to 0xFF, while event::set_data() currently sets
+ *  it to 0!!!
  *
  *  Add note, preceded by a push-undo.  This is meant to be used only by the
  *  user-interface, when manually entering notes.
@@ -5204,7 +5176,7 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
     }
-    if (one_shot() && one_shot_tick() <= tick)
+    if (check_one_shot_tick(tick))
     {
         play(one_shot_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);

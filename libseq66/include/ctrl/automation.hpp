@@ -247,7 +247,7 @@ enum class slot
     loop,               /**< Useful to set and retrieve op function.        */
     mute_group,         /**< Useful to set and retrieve op function.        */
     automation,         /**< Useful to set and retrieve the name.           */
-    illegal             /**< A value to falg illegality.                    */
+    illegal             /**< A value to flag illegality.                    */
 };
 
 /**

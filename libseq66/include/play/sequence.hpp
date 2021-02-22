@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-30
- * \updates       2021-02-21
+ * \updates       2021-02-22
  * \license       GNU GPLv2 or above
  *
  *  The functions add_list_var() and add_long_list() have been replaced by
@@ -1118,10 +1118,6 @@ public:
         return m_queued_tick;
     }
 
-    /**
-     *  Helper functions for performer.
-     */
-
     bool check_queued_tick (midipulse tick) const
     {
         return get_queued() && (get_queued_tick() <= tick);
@@ -1205,9 +1201,19 @@ public:
     void song_recording_start (midipulse tick, bool snap = false);
     void song_recording_stop (midipulse tick);
 
+    bool one_shot () const
+    {
+        return m_one_shot;
+    }
+
     midipulse one_shot_tick () const
     {
         return m_one_shot_tick;
+    }
+
+    bool check_one_shot_tick (midipulse tick) const
+    {
+        return one_shot() && (one_shot_tick() <= tick);
     }
 
     int loop_count () const
@@ -1223,11 +1229,6 @@ public:
     bool song_recording () const
     {
         return m_song_recording;
-    }
-
-    bool one_shot () const
-    {
-        return m_one_shot;
     }
 
     bool off_from_snap () const

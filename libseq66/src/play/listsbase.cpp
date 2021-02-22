@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-27
+ * \updates       2021-02-22
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -224,6 +224,21 @@ listsbase::get_nick_name (bussbyte bus, bool addnumber) const
     return result;
 }
 
+static int
+count_colons (const std::string & name)
+{
+    int result = 0;
+    for (std::string::size_type cpos = 0; ; ++cpos)
+    {
+        cpos = name.find_first_of(":", cpos + 1);
+        if (cpos != std::string::npos)
+            ++result;
+        else
+            break;
+    }
+    return result;
+}
+
 /**
  *  The nick-name of a port is roughly all the text following the last colon
  *  in the display-name [see midibase::display_name()].  It seems to be the
@@ -231,12 +246,21 @@ listsbase::get_nick_name (bussbyte bus, bool addnumber) const
  *  running JACK.  We don't have any MIDI hardware that JACK detects without
  *  a2jmidid.
  *
- *  ca 2021-02-21
  *  QSynth has a name like the following, which breaks the algorithm and makes
  *  the space position far outside the bounds of the string.  In that case, we
- *  punt and get the whole string.
+ *  punt and get the whole string.  Also see extract_port_names() in the
+ *  calculations module.
  *
- *      6] 130:0 FLUID Synth (125507):Synth input port (125507:0)
+\verbatim
+        [6] 130:0 FLUID Synth (125507):Synth input port (125507:0)
+\endverbatim
+ *
+ *  Other cases to handle:
+ *
+\verbatim
+        "[3] 36:0 Launchpad Mini MIDI 1"
+        a2j:Midi Through [14] (playback): Midi Through Port-0
+\endverbatim
  *
  */
 
@@ -244,25 +268,39 @@ std::string
 listsbase::extract_nickname (const std::string & name) const
 {
     std::string result;
-    auto cpos = name.find_last_of(":");
-    if (cpos != std::string::npos)
+    if (count_colons(name) > 2)
     {
-        ++cpos;
-        if (std::isdigit(name[cpos]))
+        auto cpos = name.find_first_of(":");
+        auto spos = name.find_first_of(" ", cpos);
+        if (spos != std::string::npos)
         {
-            cpos = name.find_first_of(" ", cpos);
-            if (cpos != std::string::npos)
-                ++cpos;
+            ++spos;
+            cpos = name.find_first_of(":", cpos + 1);
+            result = name.substr(spos, cpos - spos);
         }
-        else if (std::isspace(name[cpos]))
-            ++cpos;
-
-        if (cpos == std::string::npos)      // if (cpos >= name.length())
-            cpos = 0;
-
-        result = name.substr(cpos);
     }
     else
+    {
+        auto cpos = name.find_last_of(":");
+        if (cpos != std::string::npos)
+        {
+            ++cpos;
+            if (std::isdigit(name[cpos]))
+            {
+                cpos = name.find_first_of(" ", cpos);
+                if (cpos != std::string::npos)
+                    ++cpos;
+            }
+            else if (std::isspace(name[cpos]))
+                ++cpos;
+
+            if (cpos == std::string::npos)
+                cpos = 0;
+
+            result = name.substr(cpos);
+        }
+    }
+    if (result.empty())
         result = name;
 
     return result;

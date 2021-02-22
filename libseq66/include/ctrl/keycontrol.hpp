@@ -33,11 +33,7 @@
  *
  *  This class is similar in intent to the midicontrol class, but is simpler
  *  because keystrokes don't have data parameters the way a MIDI event does.
- *
  *  It requires C++11 and above.
- *
- * Concept:
- *
  */
 
 #include "ctrl/opcontrol.hpp"           /* seq66::opcontrol class           */
