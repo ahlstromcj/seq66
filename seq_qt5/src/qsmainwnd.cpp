@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-10
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -749,6 +749,12 @@ qsmainwnd::qsmainwnd
     (
         ui->txtBankName, SIGNAL(textEdited(QString)),
         this, SLOT(update_bank_text(QString))
+    );
+
+    connect
+    (
+        this, SIGNAL(signal_set_change(int)),
+        this, SLOT(update_set_change(int))
     );
 
     /*
@@ -3410,23 +3416,26 @@ qsmainwnd::on_trigger_change (seq::number seqno)
 }
 
 bool
-qsmainwnd::on_set_change (screenset::number setno, performer::change ctype)
+qsmainwnd::on_set_change (screenset::number setno, performer::change /*ctype*/)
 {
-    bool result = not_nullptr(m_live_frame);
-    if (result)
+    signal_set_change(int(setno));
+    return true;
+}
+
+void
+qsmainwnd::update_set_change (int setno)
+{
+    bool ok = not_nullptr(m_live_frame);
+    if (ok)
     {
         if (setno != m_live_frame->bank())
         {
-            if (ctype == performer::change::no)
-            {
-                m_live_frame->update_bank(setno);   /* updates current bank */
-                ui->spinBank->setValue(setno);      /* shows it in spinbox  */
-            }
+            m_live_frame->update_bank(setno);       /* updates current bank */
+            ui->spinBank->setValue(setno);          /* shows it in spinbox  */
         }
         else
-            m_live_frame->update_bank();        /* updates current bank */
+            m_live_frame->update_bank();            /* updates current bank */
     }
-    return result;
 }
 
 bool

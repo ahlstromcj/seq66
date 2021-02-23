@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-09
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -43,6 +43,17 @@
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
+
+/*
+ * Q_DECLARE_METATYPE(seq66::screenset::number) doesn't work, had to switch to
+ * using int.
+ *
+ * Also, we get this warning, even with "#include <QItemSelection>" or
+ * <QItemSelectionModel>:
+ *
+ *      QObject::connect: Cannot queue arguments of type 'QItemSelection'
+ *      (Make sure 'QItemSelection' is registered using qRegisterMetaType().)
+ */
 
 /*
  *  Forward declarations.
@@ -351,6 +362,8 @@ private:
 
 signals:
 
+    void signal_set_change (int setno);
+
 private slots:
 
 #if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
@@ -379,6 +392,7 @@ private slots:
     void panic ();
     void update_bpm (double bpm);
     void edit_bpm ();
+    void update_set_change (int setno);
     void update_ppqn (int pindex);
     void update_midi_bus (int bindex);
     void update_beats_per_measure (int bmindex);

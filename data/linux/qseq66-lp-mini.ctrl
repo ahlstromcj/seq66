@@ -1,7 +1,7 @@
 # Seq66 0.92.0 (and above) MIDI control configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
-# Written on 2021-02-11 11:18:48
+# Written on 2021-02-23 12:24:12
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -40,7 +40,10 @@ o Muting 32 to 64 (mute groups 0 to 31).
 o Automation control 64 to 73.  This covers only part of the actions
   that can be controlled via MIDI in Seq66; we still need to upgrade
   the rest once we get familiar with our new LaunchPad Mini.
-  
+ 
+See contrib/notes/launchpad-mini.ods for the mappings implemented
+by this 'ctr' file.
+ 
 The default setup for the LaunchPad Mini is shown in the "Launchpad
 programmer's reference" file (launchpad-programmers-reference.pdf).
 Since, by default, the Mini uses Note Ons of velocity 0 instead of
@@ -48,7 +51,7 @@ Note Offs, we set the data range from 1 to 127 instead of 0 to 127.
  
 For MIDI output to the Launchpad Mini, we make the following color
 mappings:
-   
+ 
      Arm         Mute       Queue      Deleted/Empty
      Green       Red        Yellow     Off
      60          15         62         12
@@ -58,8 +61,6 @@ row and set the pattern number at the left:
  
  2 [1 0 0x90 key 60] [1 0 0x90 key 15] [1 0 0x90 key 62] [1 0 0x90 key 12]
  
-The Play, Pause, and Stop controls are all mapped to the top left button (#1)
-on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 [midi-control-settings]
 
@@ -73,7 +74,7 @@ on the Mini, with states of off, green (play), red (stop), and yellow (pause).
 
 load-key-controls = true
 load-midi-controls = true
-control-buss = 5
+control-buss = 4
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -189,38 +190,19 @@ button-columns = 8
 30 "K"       [ 0 0x90 103   1 127 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Mute 30
 31 "<"       [ 0 0x90 119   1 127 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Mute 31
 
-# Implemented:
-#
-# BPM Up/Down
-# Group Mute ??? Might need rwork
-#
-# Need to implement:
-#
-# Screenset Up/Down
-# Playback Stop/Start/Pause (and automation display out)
-# Page BPM Up/Down
-# Home ?
-# Play Screenset
-# Follow Transport
-# Panic
-# Slot Shift
-# Record/Quan Record
-# Tap BPM
-# Playlist and Song
-
 [automation-control]
 
- 0 "'"       [ 0 0x00   0   0   0 ][ 0 0xb0 104 127 127 ][ 0 0xb0 104   0   0 ] # BPM Up
- 1 ";"       [ 0 0x00   0   0   0 ][ 0 0xb0 105 127 127 ][ 0 0xb0 105   0   0 ] # BPM Dn
- 2 "]"       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Set Up
- 3 "["       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Set Dn
- 4 "KP_Home" [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Replace
- 5 "Ins"     [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Snapshot
- 6 "o"       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Queue
- 7 "`"       [ 0 0x00   0   0   0 ][ 0 0x90   8   1 127 ][ 0 0x80   8   1 127 ] # Group Mute
- 8 "l"       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Group Learn
- 9 "Home"    [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Playing Set
-10 "."       [ 0 0x00   0   0   0 ][ 0 0xb0   0   0   0 ][ 0 0xb0   0   0   0 ] # Playback
+ 0 "'"       [ 0 0x00   0   0   0 ][ 0 0x90 104 127 127 ][ 0 0x00   0   0   0 ] # BPM Up
+ 1 ";"       [ 0 0x00   0   0   0 ][ 0 0x90 120 127 127 ][ 0 0x00   0   0   0 ] # BPM Dn
+ 2 "]"       [ 0 0x00   0   0   0 ][ 0 0xb0 111 127 127 ][ 0 0x00   0   0   0 ] # Set Up
+ 3 "["       [ 0 0x00   0   0   0 ][ 0 0xb0 110 127 127 ][ 0 0x00   0   0   0 ] # Set Dn
+ 4 "KP_Home" [ 0 0x00   0   0   0 ][ 0 0x90  40 127 127 ][ 0 0x00   0   0   0 ] # Replace
+ 5 "Ins"     [ 0 0x00   0   0   0 ][ 0 0x90  56 127 127 ][ 0 0x00   0   0   0 ] # Snapshot
+ 6 "o"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Queue
+ 7 "`"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Group Mute
+ 8 "l"       [ 0 0x00   0   0   0 ][ 0 0x90  88 127 127 ][ 0 0x00   0   0   0 ] # Group Learn
+ 9 "Home"    [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Playing Set
+10 "."       [ 0 0xb0 106 127 127 ][ 0 0xb0 107 127 127 ][ 0 0xb0 105 127 127 ] # Playback
 11 "P"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Song Record
 12 "BS"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Solo
 13 "KP_/"    [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Thru
@@ -230,7 +212,7 @@ button-columns = 8
 17 "KP_*"    [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Record
 18 "KP_-"    [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Quan Record
 19 "KP_+"    [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reset Seq
-20 "|"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # One-shot
+20 "|"       [ 0 0x00   0   0   0 ][ 0 0x90  24 127 127 ][ 0 0x00   0   0   0 ] # One-shot
 21 "F6"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # FF
 22 "F5"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Rewind
 23 "F1"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Top
@@ -239,10 +221,10 @@ button-columns = 8
 26 "F9"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Tap BPM
 27 "Space"   [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Start
 28 "Esc"     [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Stop
-29 "KP_Ins"  [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Snapshot_2
+29 "KP_Ins"  [ 0 0x00   0   0   0 ][ 0 0x90  72 127 127 ][ 0 0x00   0   0   0 ] # Snapshot_2
 30 "F8"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Toggle Mute
 31 "F7"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Song Pos
-32 "\"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Keep Queue
+32 "\"       [ 0 0x90   8 127 127 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Keep Queue
 33 "/"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Slot Shift
 34 "0"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Mutes Clear
 35 "Null_f1" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 35
@@ -252,7 +234,7 @@ button-columns = 8
 39 "F11"     [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Toggle JACK
 40 "F12"     [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Menu Mode
 41 "F4"      [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Follow JACK
-42 "~"       [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 42
+42 "~"       [ 0 0x00   0   0   0 ][ 0 0xb0 104 127 127 ][ 0 0x00   0   0   0 ] # Panic
 43 "Null_f9" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 43
 44 "Null_fa" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 44
 45 "Null_fb" [ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ][ 0 0x00   0   0   0 ] # Reserved 45
@@ -263,7 +245,7 @@ button-columns = 8
 [midi-control-out-settings]
 
 set-size = 32
-output-buss = 4
+output-buss = 3
 midi-enabled = true
 button-offset = 0
 button-rows = 4
@@ -369,31 +351,31 @@ button-columns = 8
 [automation-control-out]
 
 # MIDI Control Out: play on/off
-1 [ 0xb0 104  60 ] [ 0xb0 104   0 ]
+1 [ 0xb0 107  60 ] [ 0xb0 107   0 ]
 
 # MIDI Control Out: stop on/off
-1 [ 0xb0 104  15 ] [ 0xb0 104   0 ]
+1 [ 0xb0 105  15 ] [ 0xb0 105   0 ]
 
 # MIDI Control Out: pause on/off
-1 [ 0xb0 104  62 ] [ 0xb0 104   0 ]
+1 [ 0xb0 106  62 ] [ 0xb0 106   0 ]
 
 # MIDI Control Out: queue on/off
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90   8  60 ] [ 0x90   8   0 ]
 
 # MIDI Control Out: oneshot on/off
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90  24  60 ] [ 0x90  24   0 ]
 
 # MIDI Control Out: replace on/off
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90  40  60 ] [ 0x90  40   0 ]
 
 # MIDI Control Out: snap1 store/restore
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90  56  60 ] [ 0x90  56   0 ]
 
 # MIDI Control Out: snap2 store/restore
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90  72  60 ] [ 0x90  72   0 ]
 
 # MIDI Control Out: learn on/off
-0 [ 0x00   0   0 ] [ 0x00   0   0 ]
+1 [ 0x90  88  60 ] [ 0x90  88   0 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini.ctrl
 #

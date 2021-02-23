@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-13
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -111,20 +111,18 @@ private:
     bool m_loaded_from_rc;
 
     /**
-     *  Holds the current control status for use by the performer.  It replaces
-     *  Sequencer64's 0, c_status_replace, c_status_snapshot, c_status_queue, and
-     *  c_status_oneshot.  Functions are provided to query and modify these
-     *  values.
-     *
-     *      WHY HERE in the container?
+     *  Holds the current control statuses for use by the performer.  It
+     *  replaces Sequencer64's 0, c_status_replace, c_status_snapshot,
+     *  c_status_queue, and c_status_oneshot.  Functions are provided to query
+     *  and modify these values.
      */
 
     automation::ctrlstatus m_control_status;
 
     /**
      *  If true, there is at least one non-zero (i.e. functional) MIDI control
-     *  in the container.  If this value if false, even if the container is full
-     *  of zeroed stanzas, the container is considered empty.
+     *  in the container.  If this value if false, even if the container is
+     *  full of zeroed stanzas, the container is considered empty.
      */
 
     bool m_have_controls;
@@ -212,6 +210,11 @@ public:
     bool is_status () const
     {
         return m_control_status != automation::ctrlstatus::none;
+    }
+
+    bool is_set (automation::ctrlstatus status) const
+    {
+        return bit_test_and(status, m_control_status);
     }
 
     /*

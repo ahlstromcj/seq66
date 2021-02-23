@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-21
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -116,7 +116,8 @@ public:
     {
         log_event,
         on,
-        off
+        off,
+        max
     };
 
     /**
@@ -127,7 +128,8 @@ public:
     {
         rewind  = -1,
         none    =  0,
-        forward =  1
+        forward =  1,
+        max
     };
 
     /**
@@ -143,7 +145,9 @@ public:
         yes,            /**< Do set the modify-flag.                        */
         undo,           /**< Unset the modify-flag????                      */
         recreate,       /**< Recreate the user-interface(s).                */
-        removed         /**< Change was a removal; more specific than yes.  */
+        removed,        /**< Change was a removal; more specific than yes.  */
+        signal,         /**< Could alter the UI from a different thread.    */
+        max
     };
 
     /**
@@ -1961,6 +1965,8 @@ public:
         automation::ctrlstatus status,
         bool inverse = false
     );
+    void toggle_sequence_control_status (automation::ctrlstatus s);
+    void display_sequence_control_status (automation::ctrlstatus s, bool on);
     void unset_queued_replace (bool clearbits = true);
     void sequence_playing_toggle (seq::number seqno);
     void sequence_playing_change (seq::number seqno, bool on);
@@ -2174,7 +2180,6 @@ public:
     midibpm increment_beats_per_minute ();
     midibpm page_decrement_beats_per_minute ();
     midibpm page_increment_beats_per_minute ();
-
     screenset::number decrement_screenset (int amount = 1);
     screenset::number increment_screenset (int amount = 1);
 

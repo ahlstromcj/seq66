@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-22
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1710,7 +1710,7 @@ performer::set_playing_screenset (screenset::number setno)
         {
             set_song_mute(mutegroups::muting::off);
         }
-        notify_set_change(setno, change::no);
+        notify_set_change(setno, change::signal);   /* change::no           */
     }
     return mapper().playscreen_number();
 }
@@ -2304,7 +2304,7 @@ bool
 performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
-    announce_exit(false);                   /* blank the devide             */
+    announce_exit(true);                   /* blank device completely       */
 
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
@@ -4330,11 +4330,11 @@ performer::set_sequence_control_status
     bool inverse
 )
 {
-    bool set_it = a == automation::action::toggle || a == automation::action::on;
+    bool on = a == automation::action::on;
     if (inverse)
-        set_it = ! set_it;
+        on = ! on;
 
-    if (set_it)
+    if (on)
     {
         if (midi_control_in().is_snapshot(status))
             save_snapshot();
@@ -4351,18 +4351,40 @@ performer::set_sequence_control_status
 
         midi_control_in().remove_status(status);
     }
+    display_sequence_control_status(status, on);
+}
 
-    if (midi_control_in().is_queue(status))
-        send_event(midicontrolout::uiaction::queue, set_it);
+void
+performer::toggle_sequence_control_status (automation::ctrlstatus status)
+{
+    bool on = ! midi_control_in().is_set(status);
+    if (on)
+    {
+        midi_control_in().add_status(status);
+    }
+    else
+    {
+        midi_control_in().remove_status(status);
+        if (midi_control_in().is_queue(status))
+            unset_queued_replace();
+    }
+    display_sequence_control_status(status, on);
+}
 
-    if (midi_control_in().is_oneshot(status))
-        send_event(midicontrolout::uiaction::oneshot, set_it);
+void
+performer::display_sequence_control_status (automation::ctrlstatus s, bool on)
+{
+    if (midi_control_in().is_queue(s))
+        send_event(midicontrolout::uiaction::queue, on);
 
-    if (midi_control_in().is_replace(status))
-        send_event(midicontrolout::uiaction::replace, set_it);
+    if (midi_control_in().is_oneshot(s))
+        send_event(midicontrolout::uiaction::oneshot, on);
 
-    if (midi_control_in().is_snapshot(status))
-        send_event(midicontrolout::uiaction::snap1, set_it);
+    if (midi_control_in().is_replace(s))
+        send_event(midicontrolout::uiaction::replace, on);
+
+    if (midi_control_in().is_snapshot(s))
+        send_event(midicontrolout::uiaction::snap1, on);
 }
 
 /**
@@ -4423,40 +4445,22 @@ performer::send_mutes_inactive (int group)
 void
 performer::send_play_states (midicontrolout::uiaction a)
 {
-    bool play_on = false;
-    bool stop_on = false;
-    bool pause_on = false;
-    switch (a)
+    if (a < midicontrolout::uiaction::max)
     {
-        case midicontrolout::uiaction::play:
-
-            play_on = true;
-            break;
-
-        case midicontrolout::uiaction::stop:
-
-            stop_on = true;
-            break;
-
-        case midicontrolout::uiaction::pause:
-
-            pause_on = true;
-            break;
-
-        default:
-
-            /* leave them all off */
-            break;
+        send_event(a, true);
     }
-    send_event(midicontrolout::uiaction::play, false);
-    send_event(midicontrolout::uiaction::stop, false);
-    send_event(midicontrolout::uiaction::pause, false);
-    if (play_on)
-        send_event(midicontrolout::uiaction::play, true);
-    else if (stop_on)
-        send_event(midicontrolout::uiaction::stop, true);
-    else if (pause_on)
-        send_event(midicontrolout::uiaction::pause, true);
+    else
+    {
+        send_event(midicontrolout::uiaction::play, false);
+        send_event(midicontrolout::uiaction::stop, false);
+        send_event(midicontrolout::uiaction::pause, false);
+        send_event(midicontrolout::uiaction::queue, false);
+        send_event(midicontrolout::uiaction::oneshot, false);
+        send_event(midicontrolout::uiaction::replace, false);
+        send_event(midicontrolout::uiaction::snap1, false);
+        send_event(midicontrolout::uiaction::snap2, false);
+        send_event(midicontrolout::uiaction::learn, false);
+    }
 }
 
 /**
@@ -5629,7 +5633,7 @@ performer::automation_play_ss
 /**
  *  Implements playback.  That is, start, pause, and stop.  These are MIDI
  *  controls. However, note that we also support separate actions for the
- *  keyboard:
+ *  sake of keyboard control:
  *
  *      -   automation_start()
  *      -   automation_stop()
@@ -6370,8 +6374,12 @@ performer::automation_keep_queue
     std::string name = "Keep queue";
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
-        set_sequence_control_status(a, automation::ctrlstatus::queue, inverse);
-
+    {
+        if (a == automation::action::toggle)
+            toggle_sequence_control_status(automation::ctrlstatus::queue);
+        else
+            set_sequence_control_status(a, automation::ctrlstatus::queue);
+    }
     return true;
 }
 

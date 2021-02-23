@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-01-24
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -159,8 +159,11 @@ qslivegrid::qslivegrid
 
     ui->setNameLabel->hide();
     ui->setNumberLabel->hide();
+
+#if defined USE_TEXTBANKNAME_AND_SPINBANK
     ui->txtBankName->hide();
     ui->spinBank->hide();
+#endif
     ui->labelPlaylistSong->setText("");
 
     /*
@@ -516,11 +519,13 @@ qslivegrid::color_by_number (int i)
  */
 
 void
-qslivegrid::set_bank_values (const std::string & bankname, int bankid)
+qslivegrid::set_bank_values (const std::string & /*bankname*/, int /*bankid*/)
 {
+#if defined USE_TEXTBANKNAME_AND_SPINBANK
     QString bname = bankname.c_str();
     ui->txtBankName->setPlainText(bname);       // now hidden
     ui->spinBank->setValue(bankid);             // now hidden
+#endif
 }
 
 /**
@@ -731,7 +736,9 @@ qslivegrid::update_bank ()
 void
 qslivegrid::update_bank_name (const std::string & name)
 {
+#if defined USE_TEXTBANKNAME_AND_SPINBANK
     ui->txtBankName->setPlainText(name.c_str());
+#endif
     perf().set_screenset_notepad(m_bank_id, name, m_is_external);
 }
 

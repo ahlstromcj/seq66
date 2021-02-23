@@ -176,7 +176,7 @@ signals:
     void signal_call_editor (int seqid);        /* editor tab for pattern      */
     void signal_call_editor_ex (int seqid);     /* editor window for pattern   */
     void signal_call_edit_events (int seqid);   /* event tab for pattern       */
-    void signal_live_frame (int ssnum);     /* call live frame for seq/screen # */
+    void signal_live_frame (int ssnum);         /* call live frame for screen# */
 
 private slots:
 

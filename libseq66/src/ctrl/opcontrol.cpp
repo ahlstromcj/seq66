@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2018-06-08
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -206,7 +206,7 @@ opcontrol::slot_name (slot s)
         "Toggle JACK",          // 39 toggle_jack
         "Menu Mode",            // 40 menu_mode
         "Follow JACK",          // 41 follow_transport
-        "Reserved 42",          // 42 reserved_42
+        "Panic",                // 42 panic
         "Reserved 43",          // 43 reserved_43
         "Reserved 44",          // 44 reserved_44
         "Reserved 45",          // 45 reserved_45
