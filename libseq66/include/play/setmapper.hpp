@@ -643,20 +643,15 @@ private:
     }
 
     /**
-     *  Converts an offset into the play-screen (ranging from 0 to m_set_size-1)
-     *  into a sequence number in the range of the play-screen.  This number can
-     *  then be used for lookup via the loop() function.  A bad value (-1) is
-     *  returned if the play-screen does not exist.
+     *  Converts an offset into the play-screen (ranging from 0 to
+     *  m_set_size-1) into a sequence number in the range of the play-screen.
+     *  This number can then be used for lookup via the loop() function.  A
+     *  bad value (-1) is returned if the play-screen does not exist.
      */
 
     seq::number play_seq (int delta)
     {
         return play_screen()->play_seq(delta);
-    }
-
-    void clear_queued ()
-    {
-        play_screen()->clear_queued();
     }
 
     void save_queued (int hotseq)

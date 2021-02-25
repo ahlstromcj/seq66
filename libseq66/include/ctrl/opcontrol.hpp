@@ -28,14 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2019-02-11
+ * \updates       2021-02-24
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
- *  unmuting, group control, and a number of additional controls to make
- *  Seq66 controllable without a graphical user interface.
- *
- *  It requires C++11 and above.
+ *  unmuting, group control, and a number of additional controls to make Seq66
+ *  controllable without a graphical user interface.  Requires C++11 and
+ *  above.
  */
 
 #include <string>                       /* std::string                      */
@@ -141,6 +140,16 @@ public:
             m_action != automation::action::none &&
             m_slot_number != automation::slot::none
         );
+    }
+
+    /**
+     *  An operation is allowed if it is either not a keystroke (d0 == -1) or
+     *  is not inverse (true for keystroke release).
+     */
+
+    static bool allowed (int d0, bool inverse)
+    {
+        return d0 >= 0 || ! inverse;
     }
 
     /**

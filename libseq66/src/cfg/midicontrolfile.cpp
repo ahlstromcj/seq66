@@ -607,10 +607,10 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::replace);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap1);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap2);
+            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::reserved);
 
         (void) read_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
         if (! ok)
@@ -858,16 +858,18 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             ;
         file <<
         "\n"
-        "# This style of control stanza incorporates key control as well.\n"
+        "# This style of control stanza incorporates key control as well,\n"
+        "# but keys support only 'toggle', and key-release is an 'invert'.\n"
         "# The leftmost number on each line here is the pattern number (e.g.\n"
         "# 0 to 31); the group number, same range, for up to 32 groups; or it\n"
         "# it is an automation control number, again a similar range.\n"
         "# This internal MIDI control number is followed by three groups of\n"
         "# bracketed numbers, each providing three different type of control:\n"
         "#\n"
-        "#    Normal:           [toggle]    [on]      [off]\n"
-        "#    Playback:         [pause]     [start]   [stop]\n"
-        "#    Playlist:         [by-value]  [next]    [previous] (if active)\n"
+        "#    Normal:           [toggle]    [on]        [off]\n"
+        "#    Increment/Decr:   [increment] [increment] [decrement]\n"
+        "#    Playback:         [pause]     [start]     [stop]\n"
+        "#    Playlist/Song:    [by-value]  [next]      [previous]\n"
         "#\n"
         "# In each group, there are six numbers:\n"
         "#\n"
@@ -876,31 +878,29 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 
         file <<
         "#\n"
-        "# 'on/off' enables/disables (1/0) the MIDI control for the pattern.\n"
-        "# 'invert' (1/0) causes the opposite if data is outside the range.\n"
-        "# 'status' is by MIDI event to match (channel is NOT ignored).\n"
-        "# 'd0' is the first data value.  Example: if status is 144 (Note On),\n"
-        "# then d0 represents Note 0.\n"
-        "#\n"
-        "# 'd1min'/'d1max' are the range of second values that should match.\n"
-        "# Example:  For a Note On for note 0, 0 and 127 indicate that any\n"
-        "# Note On velocity will cause the MIDI control to take effect.\n"
+        "# 'on/off' enables/disables (1/0) the control for the pattern;\n"
+        "# 'invert' (1/0) causes the opposite, but not all support this, and\n"
+        "# all keystroke-releases set invert to true; 'status' is the MIDI\n"
+        "# event to match (channel is NOT ignored), and if set to 0x00, the\n"
+        "# control is disabled; 'd0' is the first data value, e.g. if status\n"
+        "# is 0x90 (Note On), d0 represents the note number; d1min to d1max\n"
+        "# is the range of data values detected, e.g. for a Note On, 1 to 127\n"
+        "# indicate that any non-zero velocity will invoke the control.\n"
         "# Hex values can be used; precede with '0x'.\n"
         "#\n"
         "#  ------------------------- Loop, group, or automation-slot number\n"
-        "# |   ---------------------- Name of the key (see the key map)\n"
-        "# |  |\n"
-        "# |  |    ------------------ Enabled (active)\n"
-        "# |  |   |  ---------------- Inverse\n"
-        "# |  |   | |  -------------- MIDI status/event byte (e.g. Note On)\n"
-        "# |  |   | | |  ------------ Data 1 (e.g. Note number)\n"
-        "# |  |   | | | |  ---------- Data 2 min\n"
-        "# |  |   | | | | |  -------- Data 2 max\n"
-        "# |  |   | | | | | |\n"
-        "# v  v   v v v v v v\n"
-        "# 0 \"1\" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]\n"
+        "# |    ---------------------- Name of the key (see the key map)\n"
+        "# |   |\n"
+        "# |   |      ---------------- Inverse\n"
+        "# |   |     |  -------------- MIDI status/event byte (e.g. Note On)\n"
+        "# |   |     | |  ------------ d0: Data 1 (e.g. Note number)\n"
+        "# |   |     | | |  ---------- d1max: Data 2 min (e.g. Note velocity)\n"
+        "# |   |     | | | |  -------- d1min: Data 2 max\n"
+        "# |   |     | | | | |\n"
+        "# v   v     v v v v v\n"
+        "# 0 \"F1\" [0 0 0 0 0 0]   [0 0 0 0 0 0]   [0 0 0 0 0 0]\n"
         "#           Toggle          On              Off\n"
-            ;
+        ;
 
         /*
          *  Write out all of the 3-part stanzas, each in their own category
@@ -942,10 +942,10 @@ midicontrolfile::write_midi_control (std::ofstream & file)
                     << std::dec << stan.setting(action, 3)      /* min      */
                     << std::setw(4)
                     << std::dec << stan.setting(action, 4)      /* max      */
-                    << " ]"
+                    << " ] "
                     ;
             }
-            file << " # " << stan.op_name() << std::endl;
+            file << "# " << stan.op_name() << std::endl;
         }
     }
     return result;
@@ -1118,8 +1118,8 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     write_ctrl_pair(file, mco, midicontrolout::uiaction::queue);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::oneshot);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::replace);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::snap1);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::snap2);
+    write_ctrl_pair(file, mco, midicontrolout::uiaction::snap);
+    write_ctrl_pair(file, mco, midicontrolout::uiaction::reserved);
     write_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
     return result;
 }

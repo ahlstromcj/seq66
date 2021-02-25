@@ -193,7 +193,7 @@ opcontrol::slot_name (slot s)
         "Tap BPM",              // 26 tap_bpm
         "Start",                // 27 start
         "Stop",                 // 28 stop
-        "Snapshot_2",           // 29 mod_snapshot_2
+        "Reserved 29",          // 29 reserved_29
         "Toggle Mute",          // 30 toggle_mutes
         "Song Pos",             // 31 song_pointer
         "Keep Queue",           // 32 keep_queue

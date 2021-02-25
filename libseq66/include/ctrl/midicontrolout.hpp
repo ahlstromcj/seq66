@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-02-11
+ * \updates       2021-02-24
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -111,8 +111,8 @@ public:
         queue,          /* button?  */
         oneshot,
         replace,
-        snap1,
-        snap2,
+        snap,
+        reserved,
         learn,          /* button?  */
         max
     };

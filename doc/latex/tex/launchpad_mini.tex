@@ -383,15 +383,10 @@
    circular buttons:
 
    \begin{verbatim}
+      1 [ 0xb0 104 60 ] [ 0xb0 104 0 ] # panic
       1 [ 0xb0 104 60 ] [ 0xb0 104 0 ] # play on/off
       1 [ 0xb0 104 15 ] [ 0xb0 104 0 ] # stop on/off
       1 [ 0xb0 104 62 ] [ 0xb0 104 0 ] # pause on/off
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # queue on/off
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # oneshot on/off
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # replace on/off
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # snap1 store/restore
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # snap2 store/restore
-      0 [ 0x0    0  0 ] [ 0x0    0 0 ] # learn on/off
    \end{verbatim}
 
    Note that the play, stop, and pause statuses are all shown on the same

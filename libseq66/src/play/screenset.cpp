@@ -401,17 +401,6 @@ screenset::clamp (seq::number seqno) const
     return seqno;
 }
 
-/**
- *  Clears the screenset states.  Needed when disabling the queue mode.
- */
-
-void
-screenset::clear_queued ()
-{
-    for (auto & s : m_container)
-        s.queued(false);
-}
-
 void
 screenset::off_sequences ()
 {
@@ -1101,7 +1090,6 @@ screenset::sequence_playing_change
 void
 screenset::save_queued (seq::number repseq)
 {
-    clear_queued();
     for (auto & s : m_container)
     {
         if (s.active())

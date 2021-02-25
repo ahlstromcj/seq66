@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2020-04-09
+ * \updates       2021-02-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -294,9 +294,9 @@ keycontainer::add_defaults ()
         { ";",         automation::action::on      },  //  1 bpm_dn
         { "]",         automation::action::on      },  //  2 ss_up
         { "[",         automation::action::on      },  //  3 ss_dn
-        { "KP_Home",   automation::action::on      },  //  4 mod_replace
-        { "Ins",       automation::action::on      },  //  5 mod_snapshot
-        { "o",         automation::action::on      },  //  6 mod_queue
+        { "KP_Home",   automation::action::toggle  },  //  4 mod_replace
+        { "Ins",       automation::action::toggle  },  //  5 mod_snapshot
+        { "o",         automation::action::toggle  },  //  6 mod_queue
         { "`",         automation::action::on      },  //  7 mod_gmute
         { "l", /*el*/  automation::action::on      },  //  8 mod_glearn
         { "Home",      automation::action::on      },  //  9 play_ss
@@ -319,10 +319,10 @@ keycontainer::add_defaults ()
         { "F9",        automation::action::on      },  // 26 tap_bpm
         { "Space",     automation::action::on      },  // 27 start [not " "!]
         { "Esc",       automation::action::on      },  // 28 stop
-        { "KP_Ins",    automation::action::on      },  // 29 mod_snapshot_2
+        { "KP_Ins",    automation::action::on      },  // 29 reserved_29
         { "F8",        automation::action::on      },  // 30 toggle_mutes
         { "F7",        automation::action::on      },  // 31 song_pointer
-        { "\\",        automation::action::on      },  // 32 keep_queue
+        { "\\",        automation::action::toggle  },  // 32 keep_queue
         { "/",         automation::action::off     },  // 33 slot_shift
         { "0",         automation::action::on      },  // 34 mutes_clear
         { "Null_f1",   automation::action::off     },  // 35 reserved_35

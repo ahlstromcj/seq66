@@ -186,7 +186,7 @@ button-columns = 8
 26 "F9"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Tap BPM
 27 "Space"   [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Start
 28 "Esc"     [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Stop
-29 "KP_Ins"  [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Snapshot_2
+29 "KP_Ins"  [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 29
 30 "F8"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Toggle Mute
 31 "F7"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Song Pos
 32 "\"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Keep Queue
@@ -199,7 +199,7 @@ button-columns = 8
 39 "F11"     [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Toggle JACK
 40 "F12"     [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Menu Mode
 41 "F4"      [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Follow JACK
-42 "~"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 42
+42 "~"       [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Panic
 43 "Null_f9" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 43
 44 "Null_fa" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 44
 45 "Null_fb" [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ] [ 0 0 0x00   0   0   0 ]  # Reserved 45
@@ -298,10 +298,10 @@ button-columns = 8
 # MIDI Control Out: replace on/off
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: snap1 store/restore
+# MIDI Control Out: snap store/restore
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
-# MIDI Control Out: snap2 store/restore
+# MIDI Control Out: reserved
 0 [ 0 0x0 0 0 ] [ 0 0x0 0 0 ]
 
 # MIDI Control Out: learn on/off

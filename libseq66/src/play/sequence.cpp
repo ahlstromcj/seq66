@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-19
+ * \updates       2021-02-25
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -783,9 +783,8 @@ sequence::toggle_song_mute ()
 }
 
 /**
- * \setter m_queued and m_queued_tick
- *      Toggles the queued flag and sets the dirty-mp flag.  Also calculates
- *      the queued tick based on m_last_tick.
+ *  Toggles the queued flag and sets the dirty-mp flag.  Also calculates the
+ *  queued tick based on m_last_tick.
  *
  * \threadsafe
  */
@@ -798,21 +797,6 @@ sequence::toggle_queued ()
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
     set_dirty_mp();
-
-    // DO WE NEED to call performer::announce_sequence() here?
-    /*
-    midi_control_out * mco = perf()->get_midi_control_out();
-    if (not_nullptr(mco))
-    {
-        if (m_queued)
-            mco->send_seq_event(number(), midi_control_out::seq_action_queue);
-        else if (playing())
-            mco->send_seq_event(number(), midi_control_out::seq_action_arm);
-        else
-            mco->send_seq_event(number(), midi_control_out::seq_action_mute);
-    }
-    */
-
     return true;
 }
 
@@ -5175,12 +5159,20 @@ sequence::play_queue (midipulse tick, bool playbackmode, bool resumenoteons)
     {
         play(get_queued_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
+        (void) perf()->set_ctrl_status
+        (
+            automation::action::off, automation::ctrlstatus::queue
+        );
     }
     if (check_one_shot_tick(tick))
     {
         play(one_shot_tick() - 1, playbackmode, resumenoteons);
         (void) toggle_playing(tick, resumenoteons);
         (void) toggle_queued(); /* queue it to mute it again after one play */
+        (void) perf()->set_ctrl_status
+        (
+            automation::action::off, automation::ctrlstatus::oneshot
+        );
     }
     play(tick, playbackmode, resumenoteons);
 }

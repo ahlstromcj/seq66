@@ -254,7 +254,15 @@ public:
 
     bool is_keep_queue () const
     {
-        return is_queue();
+        return bit_test_and
+        (
+            m_control_status, automation::ctrlstatus::keep_queue
+        );
+    }
+
+    bool is_keep_queue (automation::ctrlstatus status) const
+    {
+        return bit_test_and(status, automation::ctrlstatus::keep_queue);
     }
 
     bool is_oneshot () const

@@ -182,11 +182,11 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::replace:
         return "replace";
 
-    case midicontrolout::uiaction::snap1:
-        return "snap1";
+    case midicontrolout::uiaction::snap:
+        return "snap";
 
-    case midicontrolout::uiaction::snap2:
-        return "snap2";
+    case midicontrolout::uiaction::reserved:
+        return "reserved";
 
     case midicontrolout::uiaction::learn:
         return "learn";
@@ -206,8 +206,7 @@ action_to_type_string (midicontrolout::uiaction a)
     std::string result = "unknown";
     switch (a)
     {
-    case midicontrolout::uiaction::snap1:
-    case midicontrolout::uiaction::snap2:
+    case midicontrolout::uiaction::snap:
 
         result = "store/restore";
         break;

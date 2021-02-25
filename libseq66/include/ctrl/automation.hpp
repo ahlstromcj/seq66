@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-02-11
+ * \updates       2021-02-23
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -210,7 +210,7 @@ enum class slot
     tap_bpm,            /**< 26: Tap key for estimating BPM.                */
     start,              /**< 27: Start playback. Compare to playback above. */
     stop,               /**< 28: Stop playback. Compare to playback above.  */
-    mod_snapshot_2,     /**< 29: The second snapshot key.  TODO.            */
+    reserved_29,        /**< 29: Was the second snapshot key.               */
     toggle_mutes,       /**< 30: Song mute, unmute, and toggle?  TODO.      */
     song_pointer,       /**< 31: Reposition the song pointer.  TODO.        */
 
@@ -349,12 +349,18 @@ enum class ctrlstatus
     queue       = 0x04,
 
     /**
+     *  Performs keep-queue.  Currently queue and keep-queue are both keep functions.
+     */
+
+    keep_queue  = 0x08,
+
+    /**
      *  This value signals the Kepler34 "one-shot" functionality.  If this bit
      *  is set, then perform::sequence_playing_toggle() calls
      *  sequence::toggle_oneshot() on the given sequence number.
      */
 
-    oneshot     = 0x08
+    oneshot     = 0x10
 };
 
 /**

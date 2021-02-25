@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-23
+ * \updates       2021-02-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -1959,14 +1959,13 @@ public:
     }
 
     bool reload_mute_groups (std::string & errmessage);
-    void set_sequence_control_status
+    bool set_ctrl_status
     (
         automation::action a,
-        automation::ctrlstatus status,
-        bool inverse = false
+        automation::ctrlstatus status
     );
-    void toggle_sequence_control_status (automation::ctrlstatus s);
-    void display_sequence_control_status (automation::ctrlstatus s, bool on);
+    bool toggle_ctrl_status (automation::ctrlstatus s);
+    void display_ctrl_status (automation::ctrlstatus s, bool on);
     void unset_queued_replace (bool clearbits = true);
     void sequence_playing_toggle (seq::number seqno);
     void sequence_playing_change (seq::number seqno, bool on);
@@ -2108,11 +2107,6 @@ public:
     void save_queued (int repseq)
     {
         mapper().save_queued(repseq);
-    }
-
-    void clear_queued ()
-    {
-        mapper().clear_queued();
     }
 
 public:
@@ -3256,7 +3250,7 @@ public:
     (
         automation::action a, int d0, int d1, bool inverse
     );
-    bool automation_snapshot_2
+    bool automation_reserved_29
     (
         automation::action a, int d0, int d1, bool inverse
     );

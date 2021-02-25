@@ -36,7 +36,7 @@ Legacy and Seq66 Commands:
  rewind                         tap_bpm,             Tap key for estimating BPM.
  pointer_position               start,               Pause playback. Compare to playback above.
  tap_bpm                        stop,                Pause playback. Compare to playback above.
- toggle_mutes                   mod_snapshot_2,      The second snapshot key.
+ toggle_mutes                   reserved_0,          Was the second snapshot key.
  song_record                    toggle_mutes,        Song mute, unmute, and toggle?
  oneshot_queue                  song_pointer,        Reposition the song pointer.
                                 keep_queue,          Set keep-queue (the "Q" button).

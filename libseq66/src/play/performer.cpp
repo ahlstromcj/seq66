@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-23
+ * \updates       2021-02-24
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -41,26 +41,26 @@
  *  on, and the release event can be used for an off.  These two modes of
  *  operation depend on the slot(s) involved.
  *
- *  bpm_up:             Key: Toggle = Up.  MIDI: Toggle/On/Off = Up/Up/Down.
+ *  bpm_up:             Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
  *  bpm_dn:             Passes Off to bpm_up to decrement it.
- *  ss_up:              Key: Toggle = Up.  MIDI: Toggle/On/Off = Up/Up/Down.
+ *  ss_up:              Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
  *  ss_dn:              Passes Off to ss_up to decrement it.
- *  mod_replace:        Key: Press-On/Release-Off. MIDI: Toggle = On.
- *  mod_snapshot:       Key: Press-On/Release-Off. MIDI: Toggle = On.
- *  mod_queue:          Key: Press-On/Release-Off. MIDI: Toggle = On.
- *  mod_gmute:          Key: Toggle.  MIDI: Toggle/On/Off.  Group On/Off.
+ *  mod_replace:        Key: Toggle. MIDI: Toggle = On.
+ *  mod_snapshot:       Key: Toggle. MIDI: Toggle = On.
+ *  mod_queue:          Key: Toggle. MIDI: Toggle = On.
+ *  mod_gmute:          Key: Toggle. MIDI: Toggle/On/Off. Group On/Off.
  *  mod_glearn:         Key: Press-On/Release-Off.
  *  play_ss:            Key, MIDI:  All events set the screenset.
  *  playback:    T      Key pause, and MIDI for pause/start/stop.
  *  song_record:        Key, MIDI: Toggle/On/Off song_recording() status.
  *  solo:               TODO, intended to solo track.
- *  thru:               Key: Toggle.  MIDI: Toggle/On/Off.
- *  bpm_page_up:        Key: Toggle = Up.  MIDI: Toggle/On/Off = Up/Up/Down.
+ *  thru:               Key: Toggle. MIDI: Toggle/On/Off.
+ *  bpm_page_up:        Key: Toggle = Up. MIDI: Toggle/On/Off = Up/Up/Down.
  *  bpm_page_dn:        Passes Off to bpm_page_up to decrement it.
  *  ss_set:             Key, MIDI: Set current set as playing screen-set.
- *  record:             Key: Toggle.  MIDI: Toggle/On/Off.
- *  quan_record:        Key: Toggle.  MIDI: Toggle/On/Off.
- *  reset_seq:          Key: Toggle.  MIDI: Toggle/On/Off.
+ *  record:             Key: Toggle. MIDI: Toggle/On/Off.
+ *  quan_record:        Key: Toggle. MIDI: Toggle/On/Off.
+ *  reset_seq:          Key: Toggle. MIDI: Toggle/On/Off.
  *  mod_oneshot:        Key: Press-On/Release-Off. MIDI: Toggle = On.
  *  FF:                 TODO.
  *  rewind:             TODO.
@@ -70,7 +70,7 @@
  *  tap_bpm,            Tap key for estimating BPM.
  *  start:              TODO.
  *  stop:               TODO.
- *  mod_snapshot_2      TODO.
+ *  reserved_29         No longer use snapshot 2.
  *  toggle_mutes        TODO.
  *  song_pointer        TODO.
  *  keep_queue:         Key: Toggle (compare to "queue").
@@ -92,8 +92,8 @@
  *  reserved_47:        Reserved for expansion.
  *  reserved_48:        Reserved for expansion.
  *  max:                Used only for termination/range-checking.
- *  loop:               Key: Toggle-only.  MIDI: Toggle/On/Off.
- *  mute_group:         Key: Toggle-only.  MIDI: Toggle/On/Off.
+ *  loop:               Key: Toggle-only. MIDI: Toggle/On/Off.
+ *  mute_group:         Key: Toggle-only. MIDI: Toggle/On/Off.
  *  automation:         See the items above.
  *
  *  Playscreen vs screenset in Seq24:
@@ -4295,44 +4295,40 @@ performer::set_keep_queue (bool activate)
         automation::action::off : automation::action::on;
 
     if (activate)
-        set_sequence_control_status(a, automation::ctrlstatus::queue);
+        (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
 }
 
 /**
- *  If the given status is present in the automation::ctrlstatus::snapshot, the
- *  playing state is saved.  Then the given status is OR'd into the
+ *  If the given status is present in the automation::ctrlstatus::snapshot,
+ *  the playing state is saved.  Then the given status is OR'd into the
  *  control-status.
  *
- *  If the given status is present in the automation::ctrlstatus::snapshot, the
- *  playing state is restored.  Then the given status is reversed in
+ *  If the given status is present in the automation::ctrlstatus::snapshot,
+ *  the playing state is restored.  Then the given status is reversed in
  *  control-status.
  *
- *  If the given status includes automation::ctrlstatus::queue, this is a signal
- *  to stop queuing (which is already in place elsewhere).  It also unsets the
- *  new queue-replace feature.
+ *  If the given status includes automation::ctrlstatus::queue, this is a
+ *  signal to stop queuing (which is already in place elsewhere).  It also
+ *  unsets the new queue-replace feature.
  *
  * \param a
- *      The action to be applied.  Toggle and On set the status, and Off unsets
+ *      The action to be applied.  On sets the status, and Off unsets
  *      the status.
  *
  * \param status
  *      The status item to be applied.
- *
- * \param inverse
- *      If true (the default is false), the status to be applied is inverted.
  */
 
-void
-performer::set_sequence_control_status
+bool
+performer::set_ctrl_status
 (
     automation::action a,
-    automation::ctrlstatus status,
-    bool inverse
+    automation::ctrlstatus status
 )
 {
-    bool on = a == automation::action::on;
-    if (inverse)
-        on = ! on;
+    bool on = a == automation::action::on || a == automation::action::toggle;
+    if (on && midi_control_in().is_set(status))
+        on = false;
 
     if (on)
     {
@@ -4346,35 +4342,32 @@ performer::set_sequence_control_status
         if (midi_control_in().is_snapshot(status))
             restore_snapshot();
 
+        if (midi_control_in().is_keep_queue(status))
+            unset_queued_replace();
+
         if (midi_control_in().is_queue(status))
             unset_queued_replace();
 
         midi_control_in().remove_status(status);
     }
-    display_sequence_control_status(status, on);
+    display_ctrl_status(status, on);
+    return true;
 }
 
-void
-performer::toggle_sequence_control_status (automation::ctrlstatus status)
+bool
+performer::toggle_ctrl_status (automation::ctrlstatus status)
 {
     bool on = ! midi_control_in().is_set(status);
-    if (on)
-    {
-        midi_control_in().add_status(status);
-    }
-    else
-    {
-        midi_control_in().remove_status(status);
-        if (midi_control_in().is_queue(status))
-            unset_queued_replace();
-    }
-    display_sequence_control_status(status, on);
+    automation::action a = on ?
+        automation::action::on : automation::action::off ;
+
+    return set_ctrl_status(a, status);
 }
 
 void
-performer::display_sequence_control_status (automation::ctrlstatus s, bool on)
+performer::display_ctrl_status (automation::ctrlstatus s, bool on)
 {
-    if (midi_control_in().is_queue(s))
+    if (midi_control_in().is_keep_queue(s))
         send_event(midicontrolout::uiaction::queue, on);
 
     if (midi_control_in().is_oneshot(s))
@@ -4384,7 +4377,7 @@ performer::display_sequence_control_status (automation::ctrlstatus s, bool on)
         send_event(midicontrolout::uiaction::replace, on);
 
     if (midi_control_in().is_snapshot(s))
-        send_event(midicontrolout::uiaction::snap1, on);
+        send_event(midicontrolout::uiaction::snap, on);
 }
 
 /**
@@ -4457,8 +4450,8 @@ performer::send_play_states (midicontrolout::uiaction a)
         send_event(midicontrolout::uiaction::queue, false);
         send_event(midicontrolout::uiaction::oneshot, false);
         send_event(midicontrolout::uiaction::replace, false);
-        send_event(midicontrolout::uiaction::snap1, false);
-        send_event(midicontrolout::uiaction::snap2, false);
+        send_event(midicontrolout::uiaction::snap, false);
+        send_event(midicontrolout::uiaction::reserved, false);
         send_event(midicontrolout::uiaction::learn, false);
     }
 }
@@ -4524,10 +4517,10 @@ performer::group_learn_complete (const keystroke & k, bool good)
 }
 
 /**
- *  If the given sequence is active, then it is toggled as per the current value
- *  of control-status.  If control-status is automation::ctrlstatus::queue, then
- *  the sequence's toggle_queued() function is called.  This is the "mod queue"
- *  implementation.
+ *  If the given sequence is active, then it is toggled as per the current
+ *  value of control-status.  If control-status is
+ *  automation::ctrlstatus::queue, then the sequence's toggle_queued()
+ *  function is called.  This is the "mod queue" implementation.
  *
  *  Otherwise, if it is automation::ctrlstatus::replace, then the status is
  *  unset, and all sequences are turned off.  Then the sequence's
@@ -4560,38 +4553,41 @@ performer::sequence_playing_toggle (seq::number seqno)
     if (s)
     {
         bool is_queue = midi_control_in().is_queue();
+        bool is_keep_q = midi_control_in().is_keep_queue();
         bool is_replace = midi_control_in().is_replace();
         bool is_oneshot = midi_control_in().is_oneshot();
         if (is_oneshot && ! s->playing())
         {
             s->toggle_one_shot();                   /* why not just turn on */
         }
-        else if (is_queue && is_replace)
+        else if (is_queue || is_keep_q)
         {
-            if (m_queued_replace_slot != sm_no_queued_solo)
+            if (is_replace)                         /* not in Seq32         */
             {
-                if (seqno != m_queued_replace_slot)
+                if (m_queued_replace_slot != sm_no_queued_solo)
                 {
-                    unset_queued_replace(false);    /* do not clear bits    */
-                    save_queued(seqno);
+                    if (seqno != m_queued_replace_slot)
+                    {
+                        unset_queued_replace(false);    /* don't clear bits */
+                        save_queued(seqno);
+                    }
                 }
+                else
+                    save_queued(seqno);
+
+                unqueue_sequences(seqno);
+                m_queued_replace_slot = seqno;
             }
             else
-                save_queued(seqno);
+                s->toggle_queued();
 
-            unqueue_sequences(seqno);
-            m_queued_replace_slot = seqno;
-        }
-        else if (is_queue)
-        {
-            s->toggle_queued();
-            announce_sequence(s, mapper().seq_to_offset(s));
+            // announce_sequence(s, mapper().seq_to_offset(s));
         }
         else
         {
             if (is_replace)
             {
-                set_sequence_control_status
+                (void) set_ctrl_status
                 (
                     automation::action::off,
                     automation::ctrlstatus::replace
@@ -4599,8 +4595,9 @@ performer::sequence_playing_toggle (seq::number seqno)
                 off_sequences();
             }
             s->toggle_playing();
-            announce_sequence(s, mapper().seq_to_offset(s));
+            // announce_sequence(s, mapper().seq_to_offset(s));
         }
+        announce_sequence(s, mapper().seq_to_offset(s));
 
         /*
          * If we're in song playback, temporarily block the events until the
@@ -4755,7 +4752,7 @@ performer::clear_seq_edits ()
         ctrlkey kkey = event->key();
         unsigned kmods = static_cast<unsigned>(event->modifiers());
         ctrlkey ordinal = qt_modkey_ordinal(kkey, kmods);
-        keystroke ks =keystroke(ordinal, press);
+        keystroke ks = keystroke(ordinal, press);
 \endverbatim
  *
  *  We made a Qt function for this, qt_keystroke(), in the qt5_helpers.cpp/hpp
@@ -4833,12 +4830,15 @@ performer::midi_control_keystroke (const keystroke & k)
             /*
              * Note that the "inverse" parameter is based on key press versus
              * release.  Not all automation functions care about this setting.
+             * The opcontrol::allowed(int, bool) function checks for the
+             * non-keystroke-release status. Too tricky. Also, the index is
+             * meant only for pattern and mute-group control.
              */
 
             automation::action a = kc.action_code();
             bool invert = ! kkey.is_press();
-            int d0 = (-1);                                  /* not 0    */
-            int index = kc.control_code();
+            int d0 = (-1);                                  /* key flag */
+            int index = kc.control_code();                  /* i.e. d1  */
             bool learning = is_group_learn();               /* before   */
             result = mop.call(a, d0, index, invert);
             if (result)
@@ -5401,7 +5401,7 @@ performer::automation_bpm_up_dn
     print_parameters(name, a, d0, d1, inverse);
     if (inverse)
     {
-        if (d0 >= 0)                                    /* not a keystroke  */
+        if (opcontrol::allowed(d0, inverse))        /* not a key-release    */
         {
             if (a == automation::action::on)
                 decrement_beats_per_minute();
@@ -5411,7 +5411,7 @@ performer::automation_bpm_up_dn
     }
     else
     {
-        if (a == automation::action::toggle)
+        if (a == automation::action::toggle)        /* for key-presses      */
             increment_beats_per_minute();
         else if (a == automation::action::on)
             increment_beats_per_minute();
@@ -5425,7 +5425,8 @@ performer::automation_bpm_up_dn
  *  No matter how BPM Down is configured for MIDI control, if present and the
  *  MIDI event matches, it will act like a BPM Down.  This matches the behavior
  *  of Seq24/Sequencer64. Remember that d0 < 0 flags a keystroke, and when
- *  true, we ignore inverse == true (a key-release).  Too tricky.
+ *  true, we ignore inverse == true (a key-release) via a call to
+ *  opcontrol::allowed(d0, inverse).
  */
 
 bool
@@ -5434,10 +5435,10 @@ performer::automation_bpm_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    if (d0 < 0 && ! inverse)
-        return automation_bpm_up_dn(automation::action::off, d0, d1, false);
-    else
+    if (opcontrol::allowed(d0, inverse))
         return automation_bpm_up_dn(automation::action::off, d0, d1, inverse);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
@@ -5456,7 +5457,7 @@ performer::automation_ss_up_dn
     print_parameters(name, a, d0, d1, inverse);
     if (inverse)
     {
-        if (d0 >= 0)                                    /* not a keystroke  */
+        if (opcontrol::allowed(d0, inverse))        /* not a key-release    */
         {
             if (a == automation::action::on)
                 decrement_screenset();
@@ -5466,7 +5467,7 @@ performer::automation_ss_up_dn
     }
     else
     {
-        if (a == automation::action::toggle)            /* for keystroke */
+        if (a == automation::action::toggle)        /* for key-presses      */
             increment_screenset();
         else if (a == automation::action::on)
             increment_screenset();
@@ -5488,17 +5489,15 @@ performer::automation_ss_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    if (d0 < 0 && ! inverse)
-        return automation_ss_up_dn(automation::action::off, d0, d1, false);
-    else
+    if (opcontrol::allowed(d0, inverse))
         return automation_ss_up_dn(automation::action::off, d0, d1, inverse);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
- *  Implements mod_replace.
- *
- *  For MIDI control, there should be no support for toggle, but we're not sure
- *  how to implement this feature.
+ *  Implements mod_replace.  For MIDI control, there should be no support for
+ *  toggle, but we're not sure how to implement this feature.
  *
  *  For keystrokes, the user-interface's key-press callback should set the
  *  inverse flag to false, and the key-release callback should set it to true.
@@ -5513,8 +5512,10 @@ performer::automation_replace
 {
     std::string name = "Mod Replace";
     print_parameters(name, a, d0, d1, inverse);
-    set_sequence_control_status(a, automation::ctrlstatus::replace, inverse);
-    return true;
+    if (opcontrol::allowed(d0, inverse))
+        return set_ctrl_status(a, automation::ctrlstatus::replace);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
@@ -5529,8 +5530,10 @@ performer::automation_snapshot
 {
     std::string name = "Mod Snapshot";
     print_parameters(name, a, d0, d1, inverse);
-    set_sequence_control_status(a, automation::ctrlstatus::snapshot, inverse);
-    return true;
+    if (opcontrol::allowed(d0, inverse))
+        return set_ctrl_status(a, automation::ctrlstatus::snapshot);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
@@ -5545,8 +5548,10 @@ performer::automation_queue
 {
     std::string name = "Mod Queue";
     print_parameters(name, a, d0, d1, inverse);
-    set_sequence_control_status(a, automation::ctrlstatus::queue, inverse);
-    return true;
+    if (opcontrol::allowed(d0, inverse))
+        return set_ctrl_status(a, automation::ctrlstatus::queue);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
@@ -5564,19 +5569,18 @@ performer::automation_gmute
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    bool result = true;
     std::string name = "Mod Group Mute";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)
-        mapper().toggle_group_mode();
-    else if (a == automation::action::on)
-        mapper().group_mode(true);
-    else if (a == automation::action::off)
-        mapper().group_mode(false);
-    else
-        result = false;
-
-    return result;
+    if (opcontrol::allowed(d0, inverse))
+    {
+        if (a == automation::action::toggle)
+            mapper().toggle_group_mode();
+        else if (a == automation::action::on)
+            mapper().group_mode(true);
+        else if (a == automation::action::off)
+            mapper().group_mode(false);
+    }
+    return true;
 }
 
 /**
@@ -5595,19 +5599,18 @@ performer::automation_glearn
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    bool result = true;
     std::string name = "Mod Group Learn";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)
-        learn_toggle();                         /* also notifies clients    */
-    else if (a == automation::action::on)
-        group_learn(true);                      /* also notifies clients    */
-    else if (a == automation::action::off)
-        group_learn(false);                     /* also notifies clients    */
-    else
-        result = false;
-
-    return result;
+    if (opcontrol::allowed(d0, inverse))
+    {
+        if (a == automation::action::toggle)
+            learn_toggle();                     /* also notifies clients    */
+        else if (a == automation::action::on)
+            group_learn(true);                  /* also notifies clients    */
+        else if (a == automation::action::off)
+            group_learn(false);                 /* also notifies clients    */
+    }
+    return true;
 }
 
 /**
@@ -5626,7 +5629,9 @@ performer::automation_play_ss
 {
     std::string name = "Play Screen-Set";
     print_parameters(name, a, d0, d1, inverse);
-    set_playing_screenset(screenset::number(d1));
+    if (! inverse)
+        set_playing_screenset(screenset::number(d1));
+
     return true;
 }
 
@@ -5639,10 +5644,10 @@ performer::automation_play_ss
  *      -   automation_stop()
  *
  *  If the action is a toggle (as happens with the "pause" key), then the
- *  toggling is ignored if \a inverse is true.  NEEDS FURTHER INVESTIGATION.
+ *  toggling is ignored if \a inverse is true.
  *
  * \param a
- *      Provides the action to perform.  Toggle = pause; On = start; and off =
+ *      Provides the action to perform.  Toggle = pause; On = start; and Off =
  *      stop.
  *
  * \return
@@ -5655,32 +5660,33 @@ performer::automation_playback
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    bool result = false;
     std::string name = "Playback";
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)
+    if (a == automation::action::toggle)            /* key "." press  */
     {
         if (! inverse)
             auto_pause();
-
-        result = true;
     }
     else if (a == automation::action::on)
     {
-        auto_play();
-        result = true;
+        if (inverse)
+            auto_stop();
+        else
+            auto_play();
     }
     else if (a == automation::action::off)
     {
-        auto_stop();
-        result = true;
+        if (inverse)
+            auto_play();
+        else
+            auto_stop();
     }
-    return result;
+    return true;
 }
 
 /**
- *  Implements song_record, which sets the status to recording live events into
- *  song triggers.  If \a inverse is true, nothing is done.
+ *  Implements song_record, which sets the status to recording live events
+ *  into song triggers.  If \a inverse is true, nothing is done.
  */
 
 bool
@@ -5704,7 +5710,9 @@ performer::automation_song_record
 }
 
 /**
- *  Implements solo.  This isn't clear even in Sequencer64.
+ *  Implements solo.  This isn't clear even in Sequencer64.  We have
+ *  queued-replace and queued-solo which seem to be the same thing.
+ *  See screenset::save_queued(), unqueue(), 
  */
 
 bool
@@ -5803,20 +5811,15 @@ performer::automation_bpm_page_dn
     automation::action /*a*/, int d0, int d1, bool inverse
 )
 {
-    if (d0 < 0 && ! inverse)
-    {
-        return automation_bpm_page_up_dn
-        (
-            automation::action::off, d0, d1, false
-        );
-    }
-    else
+    if (opcontrol::allowed(d0, inverse))
     {
         return automation_bpm_page_up_dn
         (
             automation::action::off, d0, d1, inverse
         );
     }
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 /**
@@ -5932,8 +5935,10 @@ performer::automation_oneshot
 {
     std::string name = "One-shot Queue";
     print_parameters(name, a, d0, d1, inverse);
-    set_sequence_control_status(a, automation::ctrlstatus::oneshot, inverse);
-    return true;
+    if (opcontrol::allowed(d0, inverse))
+        return set_ctrl_status(a, automation::ctrlstatus::oneshot);
+    else
+        return true;                    /* pretend the key release worked   */
 }
 
 bool
@@ -6312,19 +6317,14 @@ performer::automation_stop
 }
 
 bool
-performer::automation_snapshot_2
+performer::automation_reserved_29
 (
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    std::string name = "Snapshot 2";
+    std::string name = "Reserved 29";
     print_parameters(name, a, d0, d1, inverse);
-
-    /*
-     * TO BE DETERMINED
-     */
-
-    return true;
+    return false;
 }
 
 bool
@@ -6373,14 +6373,15 @@ performer::automation_keep_queue
 {
     std::string name = "Keep queue";
     print_parameters(name, a, d0, d1, inverse);
-    if (! inverse)
+    if (opcontrol::allowed(d0, inverse))
     {
         if (a == automation::action::toggle)
-            toggle_sequence_control_status(automation::ctrlstatus::queue);
+            return toggle_ctrl_status(automation::ctrlstatus::keep_queue);
         else
-            set_sequence_control_status(a, automation::ctrlstatus::queue);
+            return set_ctrl_status(a, automation::ctrlstatus::keep_queue);
     }
-    return true;
+    else
+        return true;
 }
 
 /**
@@ -6620,8 +6621,8 @@ performer::sm_auto_func_list [] =
     { automation::slot::start, &performer::automation_start              },
     { automation::slot::stop, &performer::automation_stop                },
     {
-        automation::slot::mod_snapshot_2,
-        &performer::automation_snapshot_2
+        automation::slot::reserved_29,
+        &performer::automation_reserved_29
     },
     {
         automation::slot::toggle_mutes,

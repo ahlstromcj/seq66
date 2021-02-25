@@ -386,7 +386,6 @@ private:
             offset() + delta : seq::unassigned() ;
     }
 
-    void clear_queued ();
     void off_sequences ();
     void song_recording_stop (midipulse current_tick);
     void clear_snapshot ();

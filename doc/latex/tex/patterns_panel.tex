@@ -418,16 +418,12 @@
    Each pattern in the patterns panel can have a hot-key or shortcut-key
    associated with it.
 
-   \index{keys!pattern toggles}
-   For each pattern, hitting its assigned hot-key will
+   \index{keys!pattern toggle}
+   \textbf{Pattern Toggle}.
+   Like a left-click, for each pattern, its assigned hot-key will
    also toggle its status between muted/unmuted (armed/unarmed).
    Below is the default grid that is
    mapped to the loops/patterns on the screen-set.
-   This grid can be changed in the
-   \textbf{File / Options / Keyboard} tab, and is
-   saved in the \textsl{keyboard-control} section of the
-   \index{rc file}
-   "rc" file.
 
    \begin{verbatim}
       [ 1 ][ 2 ][ 3 ][ 4 ][ 5 ][ 6 ][ 7 ][ 8 ]
@@ -438,9 +434,16 @@
 
    These characters are shown in the lower right corner of each
    pattern, as an aid to memory.
+   This grid can be changed in the 'ctrl' file in the
+   \texttt{[loop-control]} section.
+   However, it is best to leave this setup as is, except for the key-swapping
+   needed for alternative keyboard layouts like "QWERTZ".
 
+   \index{keys!pattern shift}
+   \textbf{Pattern Shift}.
    A "shift" functionality is available for the
    mute/unmute hot-keys when a set is larger than 32 patterns.
+   \index{keys!slash}
    \index{variset!slash key}
    Normally, pressing the \texttt{1} key will toggle
    sequence 0.  If preceded by one slash key (\texttt{/}), then sequence 32
@@ -450,6 +453,7 @@
    \index{keys![}
    \index{keys!decrement set}
    \index{keys!screenset down}
+   \textbf{Screenset Increment and Decrement}.
    The "\texttt{[}" and
    \index{keys!]}
    \index{keys!increment set}
@@ -458,49 +462,35 @@
 
    \index{keys!alt}
    \index{keys!snapshot}
-   The left and right \texttt{Alt} keys are, by default, set up in the
-   \textbf{File / Options / Keyboard / Snapshot 1} and
-   \textbf{Snapshot 2} fields to be used as "snapshot" keys.
+   \textbf{Snapshot}.
+   When a snapshot key is pressed, the state of the patterns
+   (armed versus unarmed) is saved.  While the
+   snapshot is in force, one can then change the state of the patterns
+   (using the keyboard or MIDI controls, \textsl{not} the mouse)
+   to change how the song plays.  When the snapshot mode is exited, the
+   original saved state of the patterns is restored.
+
+   Unlike in \textsl{Seq24}, the \texttt{Alt} keys are not used.
+   In addition, the snapshot key acts like a toggle... no need to hold it down.
+   Lastly, there is only one snapshot key slot.
    Our preference is to use something that does not trigger desktop
    commands, perhaps "\texttt{F11}" or "\texttt{F12}", or one of the keys in
    the keypad.
-
-   When a snapshot key is pressed, the state of the patterns
-   (armed versus unarmed) is saved.  While the
-   snapshot key is held, one can then change the state of the patterns
-   (using the keyboard, \textsl{not} the mouse)
-   to change how the song plays.  When the snapshot key is released, the
-   original saved state of the patterns is restored.
-
-%  \index{keys!alt}
-%  \index{keys!snapshot}
-%  Holding \texttt{Alt} will save the state of playing patterns and restore
-%  them when \texttt{Alt} is lifted.
-%  The handling of \texttt{Alt} is often taken over by the application,
-%  so there could be a need to change these items to some other
-%  keys.  For example, we have the \textsl{Fluxbox} window manager
-%  set up so that the \texttt{Alt} keys can
-%  be used for moving or resizing a window.  Therefore, we use
-%  keypad keys for this purpose.
-
-%  \index{keys!left ctrl alt}
-%  Holding \texttt{Left Ctrl} and \texttt{Alt} at the same time will enable
-%  one to flip over to new patterns briefly and then flip right back upon
-%  lifting \texttt{Alt}.  Not yet sure exactly what this means.
+   Configured in the 'ctrl' file
+   \texttt{[automation-control]} section.
 
    \index{keys!right ctrl}
    \index{keys!queue}
    \index{queue!temporary}
-   Holding the "queue" key and then hitting a pattern hot-key
+   Pressing the "queue" key and then hitting a pattern hot-key
    will queue an on/off toggle for a pattern when the end of the loop is
    reached.
    This is the "queue" functionality.
    This means that the change in state of the pattern will not take hold
    immediately, but will kick in when the pattern restarts.
    This pending state is indicated by coloring the central box of the
-   pattern grey, as shown in the figure below.
-%  Note that queuing can also be used to turn a pattern \textsl{off}
-%  at the end of a pattern.
+   pattern grey.
+%  Once queing finishes, the queue mode is automatically exited.
    Please note the "keep queue" functionality and
    the "one-shot queue" functionality described below.
 
@@ -519,10 +509,7 @@
 
 \end{comment}
 
-   The coloring for queuing provides
-   dark grey event backgrounds.  At the end of the pattern, the left top
-   pattern will turn off, and the right top pattern will turn on.
-   Light-grey coloring is used to show a "one-shot" queue.
+   A light-grey boundary is used to show a "one-shot" queue.
    The one-shot queue can only turn a pattern on, and it
    will force the pattern off after one play.
    Queue also works for mute/unmute pattern sets ("groups"); in this case,
@@ -542,7 +529,7 @@
    \index{queue!keep}
    Pressing the "keep queue" hot-key
    \index{rc file}
-   assigned in the "rc" file activates a "sticky" queue mode.
+   assigned in the 'rc' file activates a "sticky" queue mode.
    In this mode, pressing a pattern key immediately turns on queuing, instead
    of mute/unmute.  And multiple patterns can be handled in this way at the
    same time.
@@ -572,14 +559,14 @@
    \textbf{File / Options / Ext Keys / One-shot queue} field.
 
    \index{keys!replace}
-   The "replace" hot-key (the left \texttt{Ctrl} key by default, which 
-   should be changed to something better), 
-   sets a form of muting/unmuting.  When the "replace" hot-key is
-   pressed and held while clicking a pattern or pressing that pattern's
-   hot-key, that sequence is unmuted, and all of the other sequences are muted.
+   The "replace" hot-key sets a form of muting/unmuting.
+   When the "replace" hot-key is
+   pressed, then pressing a pattern's hot-key,
+   that sequence is unmuted, and all of the other sequences are muted.
+
 %  Again, \texttt{Ctrl}
 %  is a very inconvenient default, so an alternative key mapping
-%  should be set up in the "rc" file via the \textbf{File / Options / Keyboard}
+%  should be set up in the 'rc' file via the \textbf{File / Options / Keyboard}
 %  tab.
    "Replace" is a form of "solo".
    "Replace" is also implemented via MIDI control,
