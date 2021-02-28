@@ -130,6 +130,26 @@ midicontrolout::initialize (int count, int bus)
 }
 
 /**
+ *  This implementation of the prefix "++" operator is needed to use
+ *  midicontrolout::uiaction in a for-loop.
+ */
+
+midicontrolout::uiaction &
+operator ++ (midicontrolout::uiaction & e)
+{
+    if (e == midicontrolout::uiaction::max)
+    {
+        throw std::out_of_range("operator++(midicontrolout::uiaction)");
+    }
+    e = midicontrolout::uiaction
+    (
+        static_cast<std::underlying_type<midicontrolout::uiaction>::type>(e) + 1
+    );
+    return e;
+}
+
+
+/**
  *  A "to_string" function for the seqaction enumeration.
  */
 
@@ -164,33 +184,30 @@ action_to_string (midicontrolout::uiaction a)
 {
     switch (a)
     {
-    case midicontrolout::uiaction::play:
-        return "play";
-
-    case midicontrolout::uiaction::stop:
-        return "stop";
-
-    case midicontrolout::uiaction::pause:
-        return "pause";
-
-    case midicontrolout::uiaction::queue:
-        return "queue";
-
-    case midicontrolout::uiaction::oneshot:
-        return "oneshot";
-
-    case midicontrolout::uiaction::replace:
-        return "replace";
-
-    case midicontrolout::uiaction::snap:
-        return "snap";
-
-    case midicontrolout::uiaction::song:
-        return "song";
-
-    case midicontrolout::uiaction::learn:
-        return "learn";
-
+    case midicontrolout::uiaction::panic:           return "panic";
+    case midicontrolout::uiaction::stop:            return "stop";
+    case midicontrolout::uiaction::pause:           return "pause";
+    case midicontrolout::uiaction::play:            return "play";
+    case midicontrolout::uiaction::toggle_mutes:    return "toggle_mutes";
+    case midicontrolout::uiaction::song_record:     return "song_record";
+    case midicontrolout::uiaction::slot_shift:      return "slot_shift";
+    case midicontrolout::uiaction::free:            return "free";
+    case midicontrolout::uiaction::queue:           return "queue";
+    case midicontrolout::uiaction::oneshot:         return "oneshot";
+    case midicontrolout::uiaction::replace:         return "replace";
+    case midicontrolout::uiaction::snap:            return "snap";
+    case midicontrolout::uiaction::song:            return "song";
+    case midicontrolout::uiaction::learn:           return "learn";
+    case midicontrolout::uiaction::bpm_up:          return "bpm_up";
+    case midicontrolout::uiaction::bpm_dn:          return "bpm_dn";
+    case midicontrolout::uiaction::list_up:         return "list_up";
+    case midicontrolout::uiaction::list_dn:         return "list_dn";
+    case midicontrolout::uiaction::song_up:         return "song_up";
+    case midicontrolout::uiaction::song_dn:         return "song_dn";
+    case midicontrolout::uiaction::set_up:          return "set_up";
+    case midicontrolout::uiaction::set_dn:          return "set_dn";
+    case midicontrolout::uiaction::tap_bpm:         return "tap_bpm";
+    case midicontrolout::uiaction::free_2:          return "free_2";
     default:
         return "unknown";
     }

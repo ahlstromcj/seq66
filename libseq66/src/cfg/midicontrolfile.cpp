@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-02-11
+ * \updates       2021-02-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -143,11 +143,7 @@ midicontrolfile::midicontrolfile
     m_temp_midi_controls    (),             /* used during reading only */
     m_stanzas               ()              /* fill from rcs in writing */
 {
-#if defined USE_EXTENDED_AUTOMATION_OUT
     version("3");                           /* adds more automation out */
-#else
-    version("2");                           /* adds 2 section markers   */
-#endif
 }
 
 /**
@@ -600,8 +596,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
         /* Non-sequence (automation) actions */
 
-
-#if defined USE_EXTENDED_AUTOMATION_OUT
         if (version_number() >= 3)
         {
             if (ok)
@@ -616,17 +610,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             if (ok)
                 ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
         }
-#else
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-
-        if (ok)
-            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-#endif
-#if defined USE_EXTENDED_AUTOMATION_OUT
         if (version_number() >= 3)
         {
             if (ok)
@@ -653,8 +636,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
             if (ok)
                 ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::free);
         }
-#endif
-
         if (ok)
             ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
 
@@ -673,7 +654,6 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
         if (ok)
             read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
 
-#if defined USE_EXTENDED_AUTOMATION_OUT
         if (version_number() >= 3)
         {
             if (ok)
@@ -681,9 +661,31 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
             if (ok)
                 read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-        }
-#endif
 
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
+        }
         if (! ok)
         {
              (void) make_error_message
@@ -1199,32 +1201,30 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     }
 
     file << "\n[automation-control-out]\n\n";
-#if defined USE_EXTENDED_AUTOMATION_OUT
     write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-#else
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-#endif
-#if defined USE_EXTENDED_AUTOMATION_OUT
     write_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::free);
-#endif
     write_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::song);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
-#if defined USE_EXTENDED_AUTOMATION_OUT
     write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
     write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-#endif
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
     return result;
 }
 

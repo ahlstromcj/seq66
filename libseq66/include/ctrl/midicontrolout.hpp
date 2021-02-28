@@ -100,37 +100,43 @@ public:
     /**
      *  Provides codes for various other actions.  This enumeration will
      *  replace the action enumeration.  All items with have an On control and
-     *  an Off control.
+     *  an Off control, as well an an Inactive (dark) mode.  This list
+     *  currently numbers 24 entries.  We could double that by mapping all of
+     *  the 48 values of the automation::slot enumeration.  However, some
+     *  (such as the Thru and Record actions) apply to specific sequences as
+     *  opposed to a single function, and would require two consecutive
+     *  controls to be clicked.  Maybe later.  Some are either reserved at
+     *  this time, are actions we don't yet care much about, or are less
+     *  common actions that can be done by leaning over to the computer
+     *  keyboard.
      */
 
     enum class uiaction
     {
-#if defined USE_EXTENDED_AUTOMATION_OUT
         panic,                              /* button 0 */
         stop,                               /* button 1 */
         pause,                              /* button 2 */
         play,                               /* button 3 */
-#else
-        play,                               /* button 1 */
-        stop,                               /* button 2 */
-        pause,                              /* button 3 */
-#endif
-#if defined USE_EXTENDED_AUTOMATION_OUT
         toggle_mutes,                       /* button 4 */
         song_record,                        /* button 5 */
         slot_shift,                         /* button 6 */
         free,                               /* button 7 */
-#endif
         queue,                              /* button A */
         oneshot,                            /* button B */
         replace,                            /* button C */
         snap,                               /* button D */
         song,                               /* button E */
         learn,                              /* button F */
-#if defined USE_EXTENDED_AUTOMATION_OUT
         bpm_up,                             /* button G */
-        bpm_dn                              /* button H */
-#endif
+        bpm_dn,                             /* button H */
+        list_up,                            /* extra 0  */
+        list_dn,                            /* extra 1  */
+        song_up,                            /* extra 2  */
+        song_dn,                            /* extra 3  */
+        set_up,                             /* extra 4  */
+        set_dn,                             /* extra 5  */
+        tap_bpm,                            /* extra 6  */
+        free_2,                             /* extra 7  */
         max
     };
 
@@ -331,6 +337,7 @@ public:
  *  Free functions related to midicontrolout.
  */
 
+extern midicontrolout::uiaction & operator ++ (midicontrolout::uiaction & e);
 extern std::string seqaction_to_string (midicontrolout::seqaction a);
 extern std::string action_to_string (midicontrolout::uiaction a);
 extern std::string action_to_type_string (midicontrolout::uiaction a);

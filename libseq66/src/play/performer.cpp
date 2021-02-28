@@ -1354,7 +1354,8 @@ performer::inner_start (bool songmode)
         automutex lk(cv().locker());    /* use the condition's recmutex */
 #endif
         cv().signal();
-        send_onoff_play_states(midicontrolout::uiaction::play);
+        send_onoff_event(midicontrolout::uiaction::play, true);
+        send_onoff_event(midicontrolout::uiaction::panic, false);
     }
 }
 
@@ -1381,7 +1382,8 @@ performer::inner_stop (bool midiclock)
     m_is_running = false;
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
-    send_onoff_play_states(midicontrolout::uiaction::stop);
+    send_onoff_event(midicontrolout::uiaction::stop, true);
+    send_onoff_event(midicontrolout::uiaction::panic, true);
 }
 
 /**
@@ -2080,7 +2082,7 @@ performer::announce_exit (bool playstatesoff)
         }
         if (playstatesoff)
         {
-            announce_automation(false); // send_play_states(...::uiaction::max);
+            announce_automation(false);
             for (int g = 0; g < mutegroups::Size(); ++g)
                 send_mutes_inactive(g);
         }
@@ -2103,32 +2105,14 @@ performer::announce_automation (bool activate)
     midicontrolout::actionindex ai = activate ?
         midicontrolout::action_off : midicontrolout::action_del ;
 
-#if defined USE_EXTENDED_AUTOMATION_OUT
-    midi_control_out().send_event(midicontrolout::uiaction::panic, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::stop, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::pause, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::play, ai);
-#else
-    midi_control_out().send_event(midicontrolout::uiaction::play, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::stop, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::pause, ai);
-#endif
-#if defined USE_EXTENDED_AUTOMATION_OUT
-    midi_control_out().send_event(midicontrolout::uiaction::toggle_mutes, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::song_record, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::slot_shift, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::free, ai);
-#endif
-    midi_control_out().send_event(midicontrolout::uiaction::queue, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::oneshot, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::replace, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::snap, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::song, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::learn, ai);
-#if defined USE_EXTENDED_AUTOMATION_OUT
-    midi_control_out().send_event(midicontrolout::uiaction::bpm_up, ai);
-    midi_control_out().send_event(midicontrolout::uiaction::bpm_dn, ai);
-#endif
+    for
+    (
+        midicontrolout::uiaction uia = midicontrolout::uiaction::panic;
+        uia < midicontrolout::uiaction::max; ++uia
+    )
+    {
+        midi_control_out().send_event(uia, ai);
+    }
 }
 
 /**
@@ -3661,11 +3645,15 @@ performer::auto_pause ()
     if (is_running())
     {
         pause_playing(songmode);
+        send_onoff_event(midicontrolout::uiaction::play, false);
+        send_onoff_event(midicontrolout::uiaction::panic, true);
     }
     else
     {
         start_playing(songmode);
         isplaying = true;
+        send_onoff_event(midicontrolout::uiaction::play, true);
+        send_onoff_event(midicontrolout::uiaction::panic, false);
     }
     is_pattern_playing(isplaying);
 }
@@ -4504,59 +4492,7 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
     }
     else
     {
-        send_onoff_event(midicontrolout::uiaction::play, false);
-        send_onoff_event(midicontrolout::uiaction::stop, false);
-        send_onoff_event(midicontrolout::uiaction::pause, false);
-        send_onoff_event(midicontrolout::uiaction::queue, false);
-        send_onoff_event(midicontrolout::uiaction::oneshot, false);
-        send_onoff_event(midicontrolout::uiaction::replace, false);
-        send_onoff_event(midicontrolout::uiaction::snap, false);
-        send_onoff_event(midicontrolout::uiaction::song, false);
-        send_onoff_event(midicontrolout::uiaction::learn, false);
-#if defined USE_EXTENDED_AUTOMATION_OUT
-        send_onoff_event(midicontrolout::uiaction::panic, false);
-        send_onoff_event(midicontrolout::uiaction::toggle_mutes, false);
-        send_onoff_event(midicontrolout::uiaction::song_record, false);
-        send_onoff_event(midicontrolout::uiaction::slot_shift, false);
-        send_onoff_event(midicontrolout::uiaction::free, false);
-        send_onoff_event(midicontrolout::uiaction::bpm_up, false);
-        send_onoff_event(midicontrolout::uiaction::bpm_dn, false);
-#endif
-    }
-}
-
-void
-performer::send_play_states
-(
-    midicontrolout::uiaction a,
-    midicontrolout::actionindex ai
-)
-{
-    if (a < midicontrolout::uiaction::max)
-    {
-        midi_control_out().send_event(a, ai);
-    }
-    else
-    {
-        midicontrolout::actionindex ai = midicontrolout::action_del;
-        send_onoff_event(midicontrolout::uiaction::play, ai);
-        send_onoff_event(midicontrolout::uiaction::stop, ai);
-        send_onoff_event(midicontrolout::uiaction::pause, ai);
-        send_onoff_event(midicontrolout::uiaction::queue, ai);
-        send_onoff_event(midicontrolout::uiaction::oneshot, ai);
-        send_onoff_event(midicontrolout::uiaction::replace, ai);
-        send_onoff_event(midicontrolout::uiaction::snap, ai);
-        send_onoff_event(midicontrolout::uiaction::song, ai);
-        send_onoff_event(midicontrolout::uiaction::learn, ai);
-#if defined USE_EXTENDED_AUTOMATION_OUT
-        send_onoff_event(midicontrolout::uiaction::panic, ai);
-        send_onoff_event(midicontrolout::uiaction::toggle_mutes, ai);
-        send_onoff_event(midicontrolout::uiaction::song_record, ai);
-        send_onoff_event(midicontrolout::uiaction::slot_shift, ai);
-        send_onoff_event(midicontrolout::uiaction::free, ai);
-        send_onoff_event(midicontrolout::uiaction::bpm_up, ai);
-        send_onoff_event(midicontrolout::uiaction::bpm_dn, ai);
-#endif
+        announce_automation();
     }
 }
 
@@ -5470,7 +5406,7 @@ performer::automation_no_op (automation::action a, int d0, int d1, bool inverse)
  *
  *  All keystrokes are handled such that the key-press sets inverse to
  *  "false", and the key-release sets inverse to "true".  For most keystrokes,
- *  then, we have to ignore inverse == true. 
+ *  then, we have to ignore inverse == true.
  *
  *  For the configured BPM Up keystroke, this function is called with an action
  *  of "on", to implement BPM Up.  But a second function, automation_bpm_dn(),

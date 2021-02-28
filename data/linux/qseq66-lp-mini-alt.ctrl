@@ -16,7 +16,7 @@
 [Seq66]
 
 config-type = "ctrl"
-version = 2
+version = 3
 
 # [comments] holds the user's documentation for this control file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
@@ -319,8 +319,8 @@ button-columns = 8
 
 [automation-control-out]
 
-# MIDI Control Out: play on/off/inactive
-1 [ 0xb0 107  60 ] [ 0xb0 107  28 ] [ 0xb0 107  12 ]
+# MIDI Control Out: panic on/off/inactive
+1 [ 0xb0 104  15 ] [ 0xb0 104  60 ] [ 0xb0 107  12 ]
 
 # MIDI Control Out: stop on/off/inactive
 1 [ 0xb0 105  15 ] [ 0xb0 105  13 ] [ 0xb0 105  12 ]
@@ -328,23 +328,68 @@ button-columns = 8
 # MIDI Control Out: pause on/off/inactive
 1 [ 0xb0 106  62 ] [ 0xb0 106  29 ] [ 0xb0 106  12 ]
 
+# MIDI Control Out: play on/off/inactive
+1 [ 0xb0 107  60 ] [ 0xb0 107  28 ] [ 0xb0 107  12 ]
+
+# MIDI Control Out: toggle_mutes on/off/inactive
+1 [ 0xb0 108  60 ] [ 0xb0 108  29 ] [ 0xb0 108  12 ]
+
+# MIDI Control Out: song_record on/off/inactive
+1 [ 0xb0 109  60 ] [ 0xb0 109  29 ] [ 0xb0 109  12 ]
+
+# MIDI Control Out: slot_shift on/off/inactive
+1 [ 0xb0 110  60 ] [ 0xb0 110  29 ] [ 0xb0 110  12 ]
+
+# MIDI Control Out: free on/off/inactive
+0 [ 0xb0 111  12 ] [ 0xb0 111  12 ] [ 0xb0 108  12 ]
+
 # MIDI Control Out: queue on/off/inactive
-1 [ 0x90   8  60 ] [ 0x90   8  28 ] [ 0x90   8  12 ]
+1 [ 0x90   8  60 ] [ 0x90   8  29 ] [ 0x90   8  12 ]
 
 # MIDI Control Out: oneshot on/off/inactive
-1 [ 0x90  24  60 ] [ 0x90  24  28 ] [ 0x90  24  12 ]
+1 [ 0x90  24  60 ] [ 0x90  24  29 ] [ 0x90  24  12 ]
 
 # MIDI Control Out: replace on/off/inactive
-1 [ 0x90  40  60 ] [ 0x90  40  28 ] [ 0x90  40  12 ]
+1 [ 0x90  40  60 ] [ 0x90  40  29 ] [ 0x90  40  12 ]
 
 # MIDI Control Out: snap store/restore/inactive
-1 [ 0x90  56  60 ] [ 0x90  56  28 ] [ 0x90  56  12 ]
+1 [ 0x90  56  60 ] [ 0x90  56  29 ] [ 0x90  56  12 ]
 
 # MIDI Control Out: ready on/off/inactive
-1 [ 0x90  72  60 ] [ 0x90  72  28 ] [ 0x90  72  12 ]
+1 [ 0x90  72  60 ] [ 0x90  72  29 ] [ 0x90  72  12 ]
 
 # MIDI Control Out: learn on/off/inactive
-1 [ 0x90  88  60 ] [ 0x90  88  28 ] [ 0x90  88  12 ]
+1 [ 0x90  88  60 ] [ 0x90  88  29 ] [ 0x90  88  12 ]
+
+# MIDI Control Out: bpm_up on/off/inactive
+1 [ 0x90 104  60 ] [ 0x90 104  29 ] [ 0x90 104  12 ]
+
+# MIDI Control Out: bpm_dn on/off/inactive
+1 [ 0x90 120  60 ] [ 0x90 120  29 ] [ 0x90 120  12 ]
+
+# MIDI Control Out: list_up on/off/inactive
+1 [ 0x90  70  60 ] [ 0x90  70  29 ] [ 0x90  70  12 ]
+
+# MIDI Control Out: list_dn on/off/inactive
+1 [ 0x90  86  60 ] [ 0x90  86  29 ] [ 0x90  86  12 ]
+
+# MIDI Control Out: song_up on/off/inactive
+1 [ 0x90 102  60 ] [ 0x90 102  29 ] [ 0x90 102  12 ]
+
+# MIDI Control Out: song_dn on/off/inactive
+1 [ 0x90 118  60 ] [ 0x90 118  29 ] [ 0x90 118  12 ]
+
+# MIDI Control Out: set_up on/off/inactive
+1 [ 0x90  71  60 ] [ 0x90  71  29 ] [ 0x90  71  12 ]
+
+# MIDI Control Out: set_dn on/off/inactive
+1 [ 0x90  87  60 ] [ 0x90  87  29 ] [ 0x90  87  12 ]
+
+# MIDI Control Out: tap_bpm on/off/inactive
+1 [ 0x90 103  60 ] [ 0x90 103  29 ] [ 0x90 103  12 ]
+
+# MIDI Control Out: free_2 on/off/inactive
+0 [ 0x90 119  60 ] [ 0x90 119  29 ] [ 0x90 119  12 ]
 
 # End of /home/ahlstrom/.config/seq66/qseq66-lp-mini-alt.ctrl
 #
