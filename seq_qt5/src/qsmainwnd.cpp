@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-23
+ * \updates       2021-02-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -263,6 +263,7 @@ qsmainwnd::qsmainwnd
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
     m_previous_tick         (0),
+    m_is_playing_now        (false),
     m_open_editors          (),
     m_open_live_frames      (),
     m_perf_frame_visible    (false),
@@ -969,6 +970,7 @@ void
 qsmainwnd::stop_playing ()
 {
     perf().auto_stop();
+    ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(false);
 }
 
@@ -991,6 +993,7 @@ void
 qsmainwnd::start_playing ()
 {
     perf().auto_play();
+    ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(true);
 }
 
@@ -1005,14 +1008,14 @@ qsmainwnd::show_song_mode (bool songmode)
 {
     if (songmode)
     {
-        ui->btnRecord->setEnabled(true);
+        ui->btnRecord->setEnabled(false);
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Song");
     }
     else
     {
         ui->btnRecord->setChecked(false);
-        ui->btnRecord->setEnabled(false);
+        ui->btnRecord->setEnabled(true);
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Live");
     }
@@ -1576,12 +1579,17 @@ qsmainwnd::refresh ()
                     m_live_frame->set_playlist_name(perf().playlist_song());
                 else
                     m_live_frame->set_playlist_name(rc().midi_filename());
-
-                    /* ^^^^ ???????????????????????????? */
             }
             m_is_title_dirty = false;
             update_window_title();
         }
+    }
+    if (m_is_playing_now != perf().is_running())
+    {
+        m_is_playing_now = perf().is_running();
+        ui->btnStop->setChecked(false);
+        ui->btnPause->setChecked(false);
+        ui->btnPlay->setChecked(m_is_playing_now);
     }
     if (perf().tap_bpm_timeout())
         set_tap_button(0);
@@ -2863,8 +2871,12 @@ qsmainwnd::handle_key_release (const keystroke & k)
 void
 qsmainwnd::panic()
 {
-    perf().panic();
-    ui->btnPlay->setChecked(perf().is_running());
+    if (perf().panic())
+    {
+        ui->btnStop->setChecked(false);
+        ui->btnPause->setChecked(false);
+        ui->btnPlay->setChecked(false);
+    }
 }
 
 /**

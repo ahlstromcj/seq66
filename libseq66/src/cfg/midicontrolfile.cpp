@@ -143,7 +143,11 @@ midicontrolfile::midicontrolfile
     m_temp_midi_controls    (),             /* used during reading only */
     m_stanzas               ()              /* fill from rcs in writing */
 {
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    version("3");                           /* adds more automation out */
+#else
     version("2");                           /* adds 2 section markers   */
+#endif
 }
 
 /**
@@ -397,7 +401,7 @@ midicontrolfile::parse ()
  *  double-quotes are stripped off after reading the key's name.
  *
  *  These format string are used in parse_control_stanza(),
- *  parse_midi_control_out(), and read_ctrl_pair().
+ *  parse_midi_control_out(), and read_ctrl_triple().
  */
 
 static const char * const sg_scanf_fmt_ctrl_in =
@@ -444,10 +448,18 @@ static const char * const sg_scanf_fmt_ctrl_pair_2 =
     "%d [ %i %i %i ] [ %i %i %i ]";
 
 /*
- * For version 1 only.
+ *  Adds a third stanze, "del" (unconfigured) value.  Used for
+ *  [automation-control-out].
  */
 
 static const char * const sg_scanf_fmt_ctrl_triple =
+    "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
+
+/*
+ * For version 1 only.
+ */
+
+static const char * const sg_scanf_fmt_mutes_triple_1 =
     "%d [ %i %i %i %i ] [ %i %i %i %i ] [ %i %i %i %i ]";
 
 /*
@@ -455,7 +467,7 @@ static const char * const sg_scanf_fmt_ctrl_triple =
  *  Used for [mute-control-out].
  */
 
-static const char * const sg_scanf_fmt_ctrl_triple_2 =
+static const char * const sg_scanf_fmt_mutes_triple =
     "%d [ %i %i %i ] [ %i %i %i ] [ %i %i %i ]";
 
 /**
@@ -588,31 +600,90 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
 
         /* Non-sequence (automation) actions */
 
+
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        if (version_number() >= 3)
+        {
+            if (ok)
+                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
+
+            if (ok)
+                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
+
+            if (ok)
+                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+
+            if (ok)
+                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
+        }
+#else
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::play);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::play);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::pause);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+#endif
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        if (version_number() >= 3)
+        {
+            if (ok)
+            {
+                ok = read_ctrl_triple
+                (
+                    file, mco, midicontrolout::uiaction::toggle_mutes
+                );
+            }
+            if (ok)
+            {
+                ok = read_ctrl_triple
+                (
+                    file, mco, midicontrolout::uiaction::song_record
+                );
+            }
+            if (ok)
+            {
+                ok = read_ctrl_triple
+                (
+                    file, mco, midicontrolout::uiaction::slot_shift
+                );
+            }
+            if (ok)
+                ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::free);
+        }
+#endif
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::queue);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::oneshot);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::replace);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::snap);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
 
         if (ok)
-            ok = read_ctrl_pair(file, mco, midicontrolout::uiaction::reserved);
+            ok = read_ctrl_triple(file, mco, midicontrolout::uiaction::song);
 
-        (void) read_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
+        if (ok)
+            read_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
+
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        if (version_number() >= 3)
+        {
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
+
+            if (ok)
+                read_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
+        }
+#endif
+
         if (! ok)
         {
              (void) make_error_message
@@ -641,14 +712,14 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
  */
 
 bool
-midicontrolfile::read_ctrl_pair
+midicontrolfile::read_ctrl_triple
 (
     std::ifstream & file,
     midicontrolout & mco,
     midicontrolout::uiaction a
 )
 {
-    int enabled, ev_on[4], ev_off[4];
+    int enabled, ev_on[4], ev_off[4], ev_del[4];
     if (version_number() < 2)
     {
         int count = std::sscanf
@@ -657,23 +728,28 @@ midicontrolfile::read_ctrl_pair
             &enabled, &ev_on[0], &ev_on[1], &ev_on[2], &ev_on[3],
             &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3]
         );
+        ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
         if (count < 9)
             ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-        mco.set_event(a, enabled, &ev_on[1], &ev_off[1]);
+        mco.set_event(a, enabled, &ev_on[1], &ev_off[1], &ev_del[1]);
     }
     else
     {
         int count = std::sscanf
         (
-            scanline(), sg_scanf_fmt_ctrl_pair_2,
-            &enabled, &ev_on[0], &ev_on[1], &ev_on[2],
-            &ev_off[0], &ev_off[1], &ev_off[2]
+            scanline(), sg_scanf_fmt_ctrl_triple, &enabled,
+            &ev_on[0], &ev_on[1], &ev_on[2],
+            &ev_off[0], &ev_off[1], &ev_off[2],
+            &ev_del[0], &ev_del[1], &ev_del[2]
         );
+        if (count < 10)
+            ev_del[0] = ev_del[1] = ev_del[2] = ev_del[3] = 0;
+
         if (count < 7)
             ev_off[0] = ev_off[1] = ev_off[2] = ev_off[3] = 0;
 
-        mco.set_event(a, enabled, ev_on, ev_off);
+        mco.set_event(a, enabled, ev_on, ev_off, ev_del);
     }
     return next_data_line(file);
 }
@@ -696,7 +772,7 @@ midicontrolfile::read_mutes_triple
         int number, ev_on[4], ev_off[4], ev_del[4];
         int count = std::sscanf
         (
-            scanline(), sg_scanf_fmt_ctrl_triple, &number,
+            scanline(), sg_scanf_fmt_mutes_triple_1, &number,
             &ev_on[0],  &ev_on[1],  &ev_on[2],  &ev_on[3],
             &ev_off[0], &ev_off[1], &ev_off[2], &ev_off[3],
             &ev_del[0], &ev_del[1], &ev_del[2], &ev_del[3]
@@ -714,7 +790,7 @@ midicontrolfile::read_mutes_triple
         int number, ev_on[4], ev_off[4], ev_del[4];
         (void) std::sscanf
         (
-            scanline(), sg_scanf_fmt_ctrl_triple_2, &number,
+            scanline(), sg_scanf_fmt_mutes_triple, &number,
             &ev_on[0],  &ev_on[1],  &ev_on[2],
             &ev_off[0], &ev_off[1], &ev_off[2],
             &ev_del[0], &ev_del[1], &ev_del[2]
@@ -953,11 +1029,12 @@ midicontrolfile::write_midi_control (std::ofstream & file)
 
 /**
  *  Writes a MIDI user-interface-related data stanza of the form
- *  "1 [ 0 0 0x00 0 ] [ 0 0 0x00 0 ]".
+ *  "1 [ 0 0x00 0 ] [ 0 0x00 0 ] [ 0 0x00 0 ]".  Here, action_del is
+ *  used for the "unconfigured" (del) status.
  */
 
 bool
-midicontrolfile::write_ctrl_pair
+midicontrolfile::write_ctrl_triple
 (
     std::ofstream & file,
     const midicontrolout & mco,
@@ -965,13 +1042,23 @@ midicontrolfile::write_ctrl_pair
 )
 {
     bool active = mco.event_is_active(a);
-    std::string act1str = mco.get_event_str(a, true);
-    std::string act2str = mco.get_event_str(a, false);
+    std::string act1str = mco.get_ctrl_event_str
+    (
+        a, midicontrolout::action_on
+    );
+    std::string act2str = mco.get_ctrl_event_str
+    (
+        a, midicontrolout::action_off
+    );
+    std::string act3str = mco.get_ctrl_event_str
+    (
+        a, midicontrolout::action_del
+    );
     file
         << "# MIDI Control Out: " << action_to_string(a)
         << " " << action_to_type_string(a) << "\n"
         << (active ? 1 : 0) << " "
-        << act1str << " " << act2str << "\n\n"
+        << act1str << " " << act2str << " " << act3str << "\n\n"
         ;
     return file.good();
 }
@@ -1112,15 +1199,32 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
     }
 
     file << "\n[automation-control-out]\n\n";
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::play);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::stop);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::pause);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::queue);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::oneshot);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::replace);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::snap);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::reserved);
-    write_ctrl_pair(file, mco, midicontrolout::uiaction::learn);
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
+#else
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+#endif
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::free);
+#endif
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::song);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
+    write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
+#endif
     return result;
 }
 

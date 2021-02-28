@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-24
+ * \updates       2021-02-28
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -536,7 +536,9 @@ performer::notify_trigger_change (seq::number seqno, change mod)
         (void) notify->on_trigger_change(seqno);
 
     if (mod == change::yes)
+    {
         modify();
+    }
     else if (mod == change::no)
     {
         const seq::pointer s = get_sequence(seqno);
@@ -1352,7 +1354,7 @@ performer::inner_start (bool songmode)
         automutex lk(cv().locker());    /* use the condition's recmutex */
 #endif
         cv().signal();
-        send_play_states(midicontrolout::uiaction::play);
+        send_onoff_play_states(midicontrolout::uiaction::play);
     }
 }
 
@@ -1379,7 +1381,7 @@ performer::inner_stop (bool midiclock)
     m_is_running = false;
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
-    send_play_states(midicontrolout::uiaction::stop);
+    send_onoff_play_states(midicontrolout::uiaction::stop);
 }
 
 /**
@@ -1796,6 +1798,7 @@ performer::clear_all (bool clearplaylist)
         announce_exit();
         announce_playscreen();
         announce_mutes();
+        announce_automation();
     }
     return result;
 }
@@ -2019,6 +2022,7 @@ performer::launch (int ppqn)
         {
             announce_playscreen();
             announce_mutes();
+            announce_automation();
         }
     }
     return result;
@@ -2053,7 +2057,12 @@ performer::announce_playscreen ()
  *  turns off (removes) all of the sequences in the MIDI status device (e.g.
  *  the Launchpad Mini).
  *
- *  It also turns off all of the mute-group buttons as well.
+ *  It also optionally turns off all of the automation buttons and
+ *  mute-group buttons as well.
+ *
+ * \param playstatesoff
+ *      If true, also blank the automation and mute-group buttons.
+ *      Defaults to true.
  */
 
 void
@@ -2070,11 +2079,56 @@ performer::announce_exit (bool playstatesoff)
             );
         }
         if (playstatesoff)
-            send_play_states(midicontrolout::uiaction::max);
-
-        for (int g = 0; g < mutegroups::Size(); ++g)
-            send_mutes_inactive(g);
+        {
+            announce_automation(false); // send_play_states(...::uiaction::max);
+            for (int g = 0; g < mutegroups::Size(); ++g)
+                send_mutes_inactive(g);
+        }
     }
+}
+
+/**
+ *  Announces the initial and ending statues of the automation output display.
+ *
+ * \param activate
+ *      If true, then we try to set the status of each control to "off", which
+ *      means active, but not yet used.  If false, all are set to the "del"
+ *      state, which normal display as an unilluminated button. Defaults to
+ *      true, to be used at start-up.
+ */
+
+void
+performer::announce_automation (bool activate)
+{
+    midicontrolout::actionindex ai = activate ?
+        midicontrolout::action_off : midicontrolout::action_del ;
+
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    midi_control_out().send_event(midicontrolout::uiaction::panic, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::stop, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::pause, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::play, ai);
+#else
+    midi_control_out().send_event(midicontrolout::uiaction::play, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::stop, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::pause, ai);
+#endif
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    midi_control_out().send_event(midicontrolout::uiaction::toggle_mutes, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::song_record, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::slot_shift, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::free, ai);
+#endif
+    midi_control_out().send_event(midicontrolout::uiaction::queue, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::oneshot, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::replace, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::snap, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::song, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::learn, ai);
+#if defined USE_EXTENDED_AUTOMATION_OUT
+    midi_control_out().send_event(midicontrolout::uiaction::bpm_up, ai);
+    midi_control_out().send_event(midicontrolout::uiaction::bpm_dn, ai);
+#endif
 }
 
 /**
@@ -2304,7 +2358,7 @@ bool
 performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
-    announce_exit(true);                   /* blank device completely       */
+    announce_exit(true);                    /* blank device completely      */
 
     bool ok = deinit_jack_transport();
     bool result = bool(m_master_bus);
@@ -3553,7 +3607,7 @@ performer::pause_playing (bool songmode)
         m_usemidiclock = false;
         m_start_from_perfedit = false;      /* act like stop_playing()      */
     }
-    send_play_states(midicontrolout::uiaction::pause);
+    send_onoff_play_states(midicontrolout::uiaction::pause);
 }
 
 /**
@@ -3694,16 +3748,19 @@ performer::all_notes_off ()
  *  active busses.  Adapted from Oli Kester's Kepler34 project.
  */
 
-void
+bool
 performer::panic ()
 {
-    stop_playing();
-    inner_stop();                                   /* force inner stop     */
-    mapper().panic();
-    if (m_master_bus)
+    bool result = bool(m_master_bus);
+    if (result)
+    {
+        stop_playing();
+        inner_stop();                               /* force inner stop     */
+        mapper().panic();
         m_master_bus->panic();                      /* flush the MIDI buss  */
-
-    set_tick(0);
+        set_tick(0);
+    }
+    return result;
 }
 
 /*
@@ -4368,16 +4425,16 @@ void
 performer::display_ctrl_status (automation::ctrlstatus s, bool on)
 {
     if (midi_control_in().is_keep_queue(s))
-        send_event(midicontrolout::uiaction::queue, on);
+        send_onoff_event(midicontrolout::uiaction::queue, on);
 
     if (midi_control_in().is_oneshot(s))
-        send_event(midicontrolout::uiaction::oneshot, on);
+        send_onoff_event(midicontrolout::uiaction::oneshot, on);
 
     if (midi_control_in().is_replace(s))
-        send_event(midicontrolout::uiaction::replace, on);
+        send_onoff_event(midicontrolout::uiaction::replace, on);
 
     if (midi_control_in().is_snapshot(s))
-        send_event(midicontrolout::uiaction::snap, on);
+        send_onoff_event(midicontrolout::uiaction::snap, on);
 }
 
 /**
@@ -4385,9 +4442,12 @@ performer::display_ctrl_status (automation::ctrlstatus s, bool on)
  */
 
 void
-performer::send_event (midicontrolout::uiaction a, bool on)
+performer::send_onoff_event (midicontrolout::uiaction a, bool on)
 {
-    midi_control_out().send_event(a, on);
+    midicontrolout::actionindex ai = on ?
+        midicontrolout::action_on : midicontrolout::action_off ;
+
+    midi_control_out().send_event(a, ai);
 }
 
 /**
@@ -4436,23 +4496,67 @@ performer::send_mutes_inactive (int group)
  */
 
 void
-performer::send_play_states (midicontrolout::uiaction a)
+performer::send_onoff_play_states (midicontrolout::uiaction a)
 {
     if (a < midicontrolout::uiaction::max)
     {
-        send_event(a, true);
+        send_onoff_event(a, true);
     }
     else
     {
-        send_event(midicontrolout::uiaction::play, false);
-        send_event(midicontrolout::uiaction::stop, false);
-        send_event(midicontrolout::uiaction::pause, false);
-        send_event(midicontrolout::uiaction::queue, false);
-        send_event(midicontrolout::uiaction::oneshot, false);
-        send_event(midicontrolout::uiaction::replace, false);
-        send_event(midicontrolout::uiaction::snap, false);
-        send_event(midicontrolout::uiaction::reserved, false);
-        send_event(midicontrolout::uiaction::learn, false);
+        send_onoff_event(midicontrolout::uiaction::play, false);
+        send_onoff_event(midicontrolout::uiaction::stop, false);
+        send_onoff_event(midicontrolout::uiaction::pause, false);
+        send_onoff_event(midicontrolout::uiaction::queue, false);
+        send_onoff_event(midicontrolout::uiaction::oneshot, false);
+        send_onoff_event(midicontrolout::uiaction::replace, false);
+        send_onoff_event(midicontrolout::uiaction::snap, false);
+        send_onoff_event(midicontrolout::uiaction::song, false);
+        send_onoff_event(midicontrolout::uiaction::learn, false);
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        send_onoff_event(midicontrolout::uiaction::panic, false);
+        send_onoff_event(midicontrolout::uiaction::toggle_mutes, false);
+        send_onoff_event(midicontrolout::uiaction::song_record, false);
+        send_onoff_event(midicontrolout::uiaction::slot_shift, false);
+        send_onoff_event(midicontrolout::uiaction::free, false);
+        send_onoff_event(midicontrolout::uiaction::bpm_up, false);
+        send_onoff_event(midicontrolout::uiaction::bpm_dn, false);
+#endif
+    }
+}
+
+void
+performer::send_play_states
+(
+    midicontrolout::uiaction a,
+    midicontrolout::actionindex ai
+)
+{
+    if (a < midicontrolout::uiaction::max)
+    {
+        midi_control_out().send_event(a, ai);
+    }
+    else
+    {
+        midicontrolout::actionindex ai = midicontrolout::action_del;
+        send_onoff_event(midicontrolout::uiaction::play, ai);
+        send_onoff_event(midicontrolout::uiaction::stop, ai);
+        send_onoff_event(midicontrolout::uiaction::pause, ai);
+        send_onoff_event(midicontrolout::uiaction::queue, ai);
+        send_onoff_event(midicontrolout::uiaction::oneshot, ai);
+        send_onoff_event(midicontrolout::uiaction::replace, ai);
+        send_onoff_event(midicontrolout::uiaction::snap, ai);
+        send_onoff_event(midicontrolout::uiaction::song, ai);
+        send_onoff_event(midicontrolout::uiaction::learn, ai);
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        send_onoff_event(midicontrolout::uiaction::panic, ai);
+        send_onoff_event(midicontrolout::uiaction::toggle_mutes, ai);
+        send_onoff_event(midicontrolout::uiaction::song_record, ai);
+        send_onoff_event(midicontrolout::uiaction::slot_shift, ai);
+        send_onoff_event(midicontrolout::uiaction::free, ai);
+        send_onoff_event(midicontrolout::uiaction::bpm_up, ai);
+        send_onoff_event(midicontrolout::uiaction::bpm_dn, ai);
+#endif
     }
 }
 
@@ -6335,11 +6439,25 @@ performer::automation_toggle_mutes
 {
     std::string name = "Toggle Mutes";
     print_parameters(name, a, d0, d1, inverse);
-
-    /*
-     * TO BE DETERMINED
-     */
-
+    if (a == automation::action::toggle)
+    {
+        if (! inverse)
+            set_song_mute(mutegroups::muting::toggle);
+    }
+    else if (a == automation::action::on)
+    {
+        if (inverse)
+            set_song_mute(mutegroups::muting::off);
+        else
+            set_song_mute(mutegroups::muting::on);
+    }
+    else if (a == automation::action::off)
+    {
+        if (inverse)
+            set_song_mute(mutegroups::muting::on);
+        else
+            set_song_mute(mutegroups::muting::off);
+    }
     return true;
 }
 
@@ -6557,10 +6675,6 @@ performer::automation_follow_transport
     return result;
 }
 
-/**
- *  TODO TODO TODO
- */
-
 bool
 performer::automation_panic
 (
@@ -6568,12 +6682,11 @@ performer::automation_panic
 )
 {
     std::string name = "Panic!";
-    bool result = false;
+    bool result = true;
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
-    {
-        panic();
-    }
+        result = panic();
+
     return result;
 }
 

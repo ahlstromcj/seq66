@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-23
+ * \updates       2021-02-27
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -322,6 +322,13 @@ private:
      */
 
     midipulse m_previous_tick;
+
+    /**
+     *  Holds the current playing state. Used when needed to update the
+     *  stop/pause/play buttons.
+     */
+
+    bool m_is_playing_now;
 
     /**
      *  Holds a list of the sequences currently under edit.  We do not want to

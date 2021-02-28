@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-02-24
+ * \updates       2021-02-28
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -105,17 +105,39 @@ public:
 
     enum class uiaction
     {
-        play,           /* button   */
-        stop,           /* button   */
-        pause,          /* button   */
-        queue,          /* button?  */
-        oneshot,
-        replace,
-        snap,
-        reserved,
-        learn,          /* button?  */
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        panic,                              /* button 0 */
+        stop,                               /* button 1 */
+        pause,                              /* button 2 */
+        play,                               /* button 3 */
+#else
+        play,                               /* button 1 */
+        stop,                               /* button 2 */
+        pause,                              /* button 3 */
+#endif
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        toggle_mutes,                       /* button 4 */
+        song_record,                        /* button 5 */
+        slot_shift,                         /* button 6 */
+        free,                               /* button 7 */
+#endif
+        queue,                              /* button A */
+        oneshot,                            /* button B */
+        replace,                            /* button C */
+        snap,                               /* button D */
+        song,                               /* button E */
+        learn,                              /* button F */
+#if defined USE_EXTENDED_AUTOMATION_OUT
+        bpm_up,                             /* button G */
+        bpm_dn                              /* button H */
+#endif
         max
     };
+
+    /*
+     * Also consider 8 more buttons: playlist up/dn, set up/dn, song up/dn,
+     * BPM tap, and free_2.
+     */
 
 private:
 
@@ -182,7 +204,7 @@ private:
         bool att_action_status;
         event att_action_event_on;
         event att_action_event_off;
-        event att_action_event_del;
+        event att_action_event_del;             /* inactive, show as dark   */
     };
 
     /**
@@ -194,7 +216,7 @@ private:
     {
         action_on,      /**< The mute-group is active and selected.         */
         action_off,     /**< The mute-group is active, but not selected.    */
-        action_del      /**< The mute-group is inactive.                    */
+        action_del      /**< Mute-group or automation inactive.             */
     };
 
     /**
@@ -286,21 +308,22 @@ public:
     void set_seq_event (int seq, seqaction what, int * ev);
     bool seq_event_is_active (int seq, seqaction what) const;
     bool event_is_active (uiaction what) const;
-    std::string get_event_str (uiaction what, bool on) const;
-    std::string get_event_str (int w, bool on) const;
+    std::string get_event_str (const event & ev) const;
+    std::string get_ctrl_event_str (uiaction what, actionindex which) const;
     std::string get_mutes_event_str (int group, actionindex which) const;
-    void set_event (uiaction what, bool enabled, int * onp, int * offp);
+    void set_event
+    (
+        uiaction what, bool enabled,
+        int * onp, int * offp, int * readyp
+    );
     void set_mutes_event
     (
         int group, int * onp, int * offp, int * delp = nullptr
     );
     bool mutes_event_is_active (int group) const;
     void send_mutes_event (int group, actionindex which);
-    void send_event (uiaction what, bool on);
-    void send_learning (bool learning)
-    {
-        send_event(uiaction::learn, learning);
-    }
+    void send_event (uiaction what, actionindex which);
+    void send_learning (bool learning);
 
 };          // class midicontrolout
 

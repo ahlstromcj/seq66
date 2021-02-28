@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-02-11
+ * \updates       2021-02-28
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -185,8 +185,8 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::snap:
         return "snap";
 
-    case midicontrolout::uiaction::reserved:
-        return "reserved";
+    case midicontrolout::uiaction::song:
+        return "song";
 
     case midicontrolout::uiaction::learn:
         return "learn";
@@ -208,12 +208,12 @@ action_to_type_string (midicontrolout::uiaction a)
     {
     case midicontrolout::uiaction::snap:
 
-        result = "store/restore";
+        result = "store/restore/inactive";
         break;
 
     default:
 
-        result = "on/off";                          /* the most common case */
+        result = "on/off/inactive";                 /* the most common case */
         break;
     }
     return result;
@@ -374,45 +374,43 @@ midicontrolout::seq_event_is_active (int seq, seqaction what) const
 }
 
 /**
- *  Note the att_action_event_del is not used with uiaction events.
+ *  Note the att_action_event_del is now used with uiaction events.
  */
 
 void
-midicontrolout::send_event (uiaction what, bool on)
+midicontrolout::send_event (uiaction what, actionindex which)
 {
-    if (is_enabled() && event_is_active(what) && not_nullptr(m_master_bus))
+    if (is_enabled() && not_nullptr(m_master_bus))
     {
+        event ev;
         int w = static_cast<int>(what);
-        event ev = on ? m_ui_events[w].att_action_event_on :
-            m_ui_events[w].att_action_event_off ;
+        if (event_is_active(what))
+        {
+            if (which == action_on)
+                ev = m_ui_events[w].att_action_event_on;
+            else if (which == action_off)
+                ev = m_ui_events[w].att_action_event_off;
+            else if (which == action_del)
+                ev = m_ui_events[w].att_action_event_del;
+        }
+        else
+            ev = m_ui_events[w].att_action_event_del;
 
         m_master_bus->play(buss(), &ev, ev.channel());
         m_master_bus->flush();
     }
 }
 
-std::string
-midicontrolout::get_event_str (uiaction what, bool on) const
+void
+midicontrolout::send_learning (bool learning)
 {
-    if (what < uiaction::max)
-    {
-        int w = static_cast<int>(what);
-        return get_event_str(w, on);
-    }
-    else
-        return std::string("[ 0x00   0   0 ]");
+    actionindex which = learning ? action_on : action_off ;
+    send_event(uiaction::learn, which);
 }
 
-/**
- *  Note the att_action_event_del is not used with uiaction events.
- */
-
 std::string
-midicontrolout::get_event_str (int w, bool on) const
+midicontrolout::get_event_str (const event & ev) const
 {
-    event ev = on ? m_ui_events[w].att_action_event_on :
-        m_ui_events[w].att_action_event_off ;
-
     int s = int(ev.get_status());
     midibyte d0, d1;
     ev.get_data(d0, d1);
@@ -423,6 +421,21 @@ midicontrolout::get_event_str (int w, bool on) const
     << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
     ;
     return str.str();
+}
+
+std::string
+midicontrolout::get_ctrl_event_str (uiaction what, actionindex which) const
+{
+    int w = static_cast<int>(what);
+    event ev;
+    if (which == action_on)
+        ev = m_ui_events[w].att_action_event_on;
+    else if (which == action_off)
+        ev = m_ui_events[w].att_action_event_off;
+    else if (which == action_del)
+        ev = m_ui_events[w].att_action_event_del;
+
+    return get_event_str(ev);
 }
 
 std::string
@@ -436,16 +449,7 @@ midicontrolout::get_mutes_event_str (int group, actionindex which) const
     else if (which == action_del)
         ev = m_mutes_events[group].att_action_event_del;
 
-    int s = int(ev.get_status());
-    midibyte d0, d1;
-    ev.get_data(d0, d1);
-    std::ostringstream str;
-    str
-    << "[ 0x" << std::hex << std::setw(2) << std::setfill('0') << s << " "
-    << std::dec << std::setw(3) << std::setfill(' ') << int(d0) << " "
-    << std::dec << std::setw(3) << std::setfill(' ') << int(d1) << " ]"
-    ;
-    return str.str();
+    return get_event_str(ev);
 }
 
 /**
@@ -454,7 +458,11 @@ midicontrolout::get_mutes_event_str (int group, actionindex which) const
  */
 
 void
-midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
+midicontrolout::set_event
+(
+    uiaction what, bool enabled,
+    int * onp, int * offp, int * delp
+)
 {
     if (what < uiaction::max)
     {
@@ -469,8 +477,17 @@ midicontrolout::set_event (uiaction what, bool enabled, int * onp, int * offp)
         off.set_data(onp[index::data_1], offp[index::data_2]);
         m_ui_events[w].att_action_event_off = off;
 
+        event del;
+        del.set_status_keep_channel(delp[index::status]);
+        del.set_data(onp[index::data_1], delp[index::data_2]);
+        m_ui_events[w].att_action_event_del = del;    /* tricky */
+
         if (enabled)
         {
+            /*
+             * Currently the new and third section, "inactive", is optional.
+             */
+
             if (onp[index::status] == 0x00 || offp[index::status] == 0x00)
                 enabled = false;
         }

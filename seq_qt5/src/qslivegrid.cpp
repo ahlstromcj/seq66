@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-02-23
+ * \updates       2021-02-27
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -160,7 +160,7 @@ qslivegrid::qslivegrid
     ui->setNameLabel->hide();
     ui->setNumberLabel->hide();
 
-#if defined USE_TEXTBANKNAME_AND_SPINBANK
+#if ! defined USE_TEXTBANKNAME_AND_SPINBANK
     ui->txtBankName->hide();
     ui->spinBank->hide();
 #endif

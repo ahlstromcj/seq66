@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-24
+ * \updates       2021-02-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -1817,7 +1817,7 @@ public:
         mapper().unqueue(hotseq);
     }
 
-    void panic ();                                  /* from kepler43    */
+    bool panic ();                                  /* from kepler43    */
     void set_tick (midipulse tick);
     void set_left_tick (midipulse tick, bool setstart = true);
 
@@ -2038,7 +2038,6 @@ public:
     }
 
     void set_song_mute (mutegroups::muting op);
-
     void mute_screenset (int ss, bool flag = true);
 
     /**
@@ -2464,12 +2463,18 @@ public:
         return mapper().is_dirty_names(seqno);
     }
 
-    void send_event (midicontrolout::uiaction a, bool on);
-    void send_play_states (midicontrolout::uiaction a);
+    void send_onoff_event (midicontrolout::uiaction a, bool on);
+    void send_play_states
+    (
+        midicontrolout::uiaction a,
+        midicontrolout::actionindex ai = midicontrolout::action_del
+    );
+    void send_onoff_play_states (midicontrolout::uiaction a);
     void send_mutes_event (int group, bool on);
     void send_mutes_events (int groupon, int groupoff);
     void send_mutes_inactive (int group);
     void announce_playscreen ();
+    void announce_automation (bool activate = true);
     void announce_exit (bool playstatesoff = true);
     bool announce_sequence (seq::pointer s, seq::number sn);
     void announce_mutes ();

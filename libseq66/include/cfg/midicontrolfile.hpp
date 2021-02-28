@@ -201,13 +201,13 @@ private:
 
     bool write_midi_control (std::ofstream & file);
     bool write_midi_control_out (std::ofstream & file);
-    bool read_ctrl_pair
+    bool read_ctrl_triple
     (
         std::ifstream & file,
         midicontrolout & mctrl,
         midicontrolout::uiaction a
     );
-    bool write_ctrl_pair
+    bool write_ctrl_triple
     (
         std::ofstream & file,
         const midicontrolout & mctrl,
