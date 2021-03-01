@@ -76,7 +76,7 @@ namespace seq66
 
 /**
  *  This value is used as the minimal increment for growing a trigger during
- *  song-recording.  This value was originally 10, but lets us a power of 2.
+ *  song-recording.  This value was originally 10, but let's use a power of 2.
  *  This increment allows the rest of the threads to notice the change.
  */
 
@@ -860,17 +860,16 @@ sequence::play
     }
     else
     {
-        /*
-         *  Make song_recording() clause active for both Live and Song mode.
-         */
-
-        if (song_recording())
-        {
-            grow_trigger(song_record_tick(), end_tick, c_song_record_increment);
-            set_dirty_mp();                 /* force redraw                 */
-        }
         if (playback_mode)                  /* song mode: on/off triggers   */
         {
+            if (song_recording())
+            {
+                grow_trigger
+                (
+                    song_record_tick(), end_tick, c_song_record_increment
+                );
+                set_dirty_mp();             /* force redraw                 */
+            }
             trigger_turning_off = m_triggers.play
             (
                 start_tick, end_tick, resumenoteons

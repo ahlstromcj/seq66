@@ -357,8 +357,7 @@ triggers::play
     if (offplay)                                    /* stop playing     */
     {
         /*
-         * Not yet sure we should do a trigger notification here, as opposed
-         * to the original call: m_parent.set_playing(false);
+         * Not yet sure if we should do a trigger notification here.
          */
 
         m_parent.set_playing(false);

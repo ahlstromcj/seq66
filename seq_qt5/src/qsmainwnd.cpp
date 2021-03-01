@@ -1014,7 +1014,7 @@ qsmainwnd::show_song_mode (bool songmode)
     }
     else
     {
-        ui->btnRecord->setChecked(false);
+        // ui->btnRecord->setChecked(false);
         ui->btnRecord->setEnabled(true);
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Live");
@@ -1034,8 +1034,7 @@ qsmainwnd::set_song_mode (bool songmode)
 {
     songmode = perf().toggle_song_mode();
     show_song_mode(songmode);
-    if (! songmode)
-        song_recording(false);
+    song_recording(false);              /* unconditionally: if (!songmode) */
 }
 
 void

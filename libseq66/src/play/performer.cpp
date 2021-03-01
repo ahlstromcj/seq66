@@ -4706,9 +4706,12 @@ performer::toggle_song_start_mode ()
 void
 performer::song_recording (bool f)
 {
-    m_song_recording = f;
-    if (! f)
-        song_recording_stop();
+    if (f != m_song_recording)
+    {
+        m_song_recording = f;
+        if (! f)
+            song_recording_stop();
+    }
 }
 
 /**
