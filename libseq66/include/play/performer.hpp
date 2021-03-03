@@ -556,7 +556,7 @@ private:
      *  Snap recorded playback changes to the sequence length.
      */
 
-    bool m_song_record_snap;
+    const bool m_song_record_snap;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -1967,8 +1967,8 @@ public:
     bool toggle_ctrl_status (automation::ctrlstatus s);
     void display_ctrl_status (automation::ctrlstatus s, bool on);
     void unset_queued_replace (bool clearbits = true);
-    void sequence_playing_toggle (seq::number seqno);
-    void sequence_playing_change (seq::number seqno, bool on);
+    bool sequence_playing_toggle (seq::number seqno);
+    bool sequence_playing_change (seq::number seqno, bool on);
     void set_keep_queue (bool activate);
 
     bool is_keep_queue () const
@@ -2045,7 +2045,9 @@ public:
      *  the current set of active patterns/sequences on all screen-sets.
      *
      *  Note that this function operates only in Live mode; it is too confusing
-     *  to use in Song mode.
+     *  to use in Song mode.  Do we need to call performer ::
+     *  sequence_playing_toggle() for all tracks instead, to enable recording
+     *  of those kinds of song performance changes?
      */
 
     void toggle_playing_tracks ()
@@ -2810,6 +2812,11 @@ public:         /* GUI-support functions */
         mapper().name(note);
     }
 
+    void song_recording_start ()
+    {
+        mapper().song_recording_start(m_current_tick);
+    }
+
     void song_recording_stop ()
     {
         mapper().song_recording_stop(m_current_tick);
@@ -2822,10 +2829,15 @@ public:         /* GUI-support functions */
 
     void song_recording (bool f);
 
-    void song_record_snap (bool f)
-    {
-        m_song_record_snap = f;
-    }
+    /*
+     * Now a constant.
+     *
+     *
+     *  void song_record_snap (bool f)
+     *  {
+     *      m_song_record_snap = f;
+     *  }
+     */
 
     mutegroup::number group_selected () const
     {

@@ -80,8 +80,8 @@ namespace seq66
  *  This increment allows the rest of the threads to notice the change.
  */
 
-static const int c_song_record_increment    = 16;
-static const int c_maxbeats                 = 0xFFFF;
+static const int c_song_record_incr = 16;
+static const int c_maxbeats         = 0xFFFF;
 
 /**
  *  Shows the note_info values. Purely for dev trouble-shooting.
@@ -155,7 +155,7 @@ sequence::sequence (int ppqn)
     m_off_from_snap             (false),
     m_song_playback_block       (false),
     m_song_recording            (false),
-    m_song_recording_snap       (false),
+    m_song_recording_snap       (true),             /* effectively constant */
     m_song_record_tick          (0),
     m_loop_reset                (false),
     m_unit_measure              (0),
@@ -291,7 +291,7 @@ sequence::partial_assign (const sequence & rhs)
         m_oneshot_recording         = false;
         m_quantized_recording       = false;
         m_song_recording            = false;
-        m_song_recording_snap       = false;
+        m_song_recording_snap       = true;         /* effectively constant */
         m_song_record_tick          = 0;
         m_scale                     = rhs.m_scale;
         m_name                      = rhs.m_name;
@@ -717,6 +717,19 @@ sequence::set_rec_vol (int recvol)
 }
 
 /**
+ *  Replaces toggle_playing(), and allows play to be toggled in the same way
+ *  as done by the automation function performer::loop_control().
+ *  Enhances the consistency of control of the patterns.  It's a little
+ *  round-about, though.
+ */
+
+bool
+sequence::sequence_playing_toggle ()
+{
+    return perf()->sequence_playing_toggle(seq_number());
+}
+
+/**
  *  A simple version of toggle_playing().
  *
  * \return
@@ -860,19 +873,16 @@ sequence::play
     }
     else
     {
-        if (playback_mode)                  /* song mode: on/off triggers   */
+        if (playback_mode)                  /* song mode: use triggers      */
         {
-            if (song_recording())
+            if (song_recording())           /* song record of triggers      */
             {
-                grow_trigger
-                (
-                    song_record_tick(), end_tick, c_song_record_increment
-                );
+                grow_trigger(song_record_tick(), end_tick, c_song_record_incr);
                 set_dirty_mp();             /* force redraw                 */
             }
             trigger_turning_off = m_triggers.play
             (
-                start_tick, end_tick, resumenoteons
+                start_tick, end_tick, resumenoteons /* tick side-effects!   */
             );
         }
     }
@@ -893,8 +903,9 @@ sequence::play
             {
                 if (transpose != 0 && er.is_note()) /* includes Aftertouch  */
                 {
-                    er.transpose_note(transpose);
-                    put_event_on_bus(er);
+                    event trans_event = er;         /* assign ALL members   */
+                    trans_event.transpose_note(transpose);
+                    put_event_on_bus(trans_event);
                 }
                 else
                 {
@@ -904,9 +915,7 @@ sequence::play
                             perf()->set_beats_per_minute(er.tempo());
                     }
                     else if (! er.is_ex_data())
-                    {
                         put_event_on_bus(er);       /* frame still going    */
-                    }
                 }
             }
             else if (stamp > end_tick_offset)
@@ -921,9 +930,8 @@ sequence::play
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,
                  * but it does prevent one CPU from being hammered at 100%.
-                 * However, it also makes the live-grid progress bar jittery
-                 * when unmuted, for shorter patterns, which play()
-                 * relentlessly here: millisleep(1);
+                 * millisleep(1) made the live-grid progress bar jittery when
+                 * unmuting shorter patterns, which play() relentlessly.
                  */
 
                 if (measure_threshold())
@@ -932,9 +940,8 @@ sequence::play
         }
     }
     if (trigger_turning_off)                        /* triggers: "turn off" */
-    {
         set_playing(false);
-    }
+
     m_last_tick = end_tick + 1;                     /* for next frame       */
     m_was_playing = m_playing;
 }
@@ -5240,7 +5247,7 @@ sequence::off_one_shot ()
 
 /**
  *  Starts the growing of the sequence for Song recording.  This process
- *  starts by adding a chunk of c_song_record_increment ticks to the
+ *  starts by adding a chunk of c_song_record_incr ticks to the
  *  trigger, which allows the rest of the threads to notice the change.
  *
  * \question
@@ -5249,23 +5256,19 @@ sequence::off_one_shot ()
  * \param tick
  *      Provides the current tick, which helps set the recorded block's
  *      boundaries, and is copied into m_song_record_tick.
+ *
+ * \param snap
+ *      If true, trigger recording will snap.  Defaults to the preferred
+ *      state, true.
  */
 
 void
 sequence::song_recording_start (midipulse tick, bool snap)
 {
-    add_trigger(tick, c_song_record_increment);
+    add_trigger(tick, c_song_record_incr);
     m_song_recording_snap = snap;
     m_song_record_tick = tick;
     m_song_recording = true;
-
-    /*
-     * Do we need to add this setting?
-     *
-     * m_song_recording_block = false;
-     *
-     * ALSO, see the ORIGINAL sequence module!
-     */
 }
 
 /**
@@ -5284,13 +5287,16 @@ sequence::song_recording_start (midipulse tick, bool snap)
 void
 sequence::song_recording_stop (midipulse tick)
 {
+    midipulse len = get_length();
     m_song_playback_block = m_song_recording = false;
-    if (m_song_recording_snap && get_length() > 0)
+    if (len > 0)
     {
-        midipulse len = get_length() - (tick % get_length());
+        if (m_song_recording_snap)
+            len -= tick % len;
+
         m_triggers.grow_trigger(m_song_record_tick, tick, len);
-        m_off_from_snap = true;
     }
+    m_off_from_snap = true;
 }
 
 /**
@@ -5352,12 +5358,12 @@ sequence::resume_note_ons (midipulse tick)
     {
         for (auto & ei : m_events)
         {
-            if (ei.is_note_on() && ei.is_linked())
+            if (ei.is_on_linked())                      /* note on linked   */
             {
                 midipulse on = ei.timestamp();          /* see banner notes */
                 midipulse off = ei.link()->timestamp();
-                midipulse T = tick % get_length();
-                if (on < T && (off > T || on > off))
+                midipulse rem = tick % get_length();
+                if (on < rem && (off > rem || on > off))
                     put_event_on_bus(ei);
             }
         }

@@ -334,7 +334,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             painter.setPen(pen);
             painter.setBrush(brush);
             painter.setFont(m_font);
-            if (s->playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->snap_it())
             {
                 // no code
             }
@@ -373,7 +373,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             const int penwidth = 3;             /* 2                    */
             pen.setColor(Qt::black);
             pen.setStyle(Qt::SolidLine);
-            if (s->playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->snap_it())
             {
                 Color backcolor = get_color_fix(PaletteColor(c));
                 backcolor.setAlpha(210);
@@ -440,7 +440,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
 
         if (m_gtkstyle_border)
         {
-            if (s->playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->snap_it())
             {
                 pen.setColor(Qt::white);
             }
@@ -493,7 +493,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
         if (m_gtkstyle_border)
         {
             brush.setColor(backcolor);
-            if (s->playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->snap_it())
             {
                 backcolor = Qt::gray;
             }
@@ -623,7 +623,7 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
             else
                 pen.setColor(Qt::black);
 
-            if (s->playing() && (s->get_queued() || s->off_from_snap()))
+            if (s->snap_it())
                 pen.setColor(Qt::green);
             else if (s->one_shot())
                 pen.setColor(Qt::blue);

@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-01-31
+ * \updates       2021-03-03
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence
@@ -387,6 +387,7 @@ private:
     }
 
     void off_sequences ();
+    void song_recording_start (midipulse current_tick);
     void song_recording_stop (midipulse current_tick);
     void clear_snapshot ();
     void save_snapshot ();

@@ -391,7 +391,11 @@ qloopbutton::set_checked (bool flag)
 bool
 qloopbutton::toggle_checked ()
 {
+#if defined USE_OLD_TOGGLE_CHECKED
     bool result = m_seq->toggle_playing();
+#else
+    bool result = m_seq->sequence_playing_toggle();
+#endif
     set_checked(result);
     reupdate();
     return result;

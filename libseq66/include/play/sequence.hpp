@@ -1104,6 +1104,7 @@ public:
         return m_playing;
     }
 
+    bool sequence_playing_toggle ();
     bool toggle_playing ();
     bool toggle_playing (midipulse tick, bool resumenoteons);
     bool toggle_queued ();
@@ -1198,7 +1199,7 @@ public:
 
     void snap (int st);
     void off_one_shot ();
-    void song_recording_start (midipulse tick, bool snap = false);
+    void song_recording_start (midipulse tick, bool snap = true);
     void song_recording_stop (midipulse tick);
 
     bool one_shot () const

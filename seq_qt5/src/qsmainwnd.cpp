@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-27
+ * \updates       2021-03-03
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -479,7 +479,6 @@ qsmainwnd::qsmainwnd
             m_dialog_prefs, SLOT(show())
         );
     }
-
     connect
     (
         ui->actionSongEditor, SIGNAL(triggered(bool)),
@@ -1008,14 +1007,14 @@ qsmainwnd::show_song_mode (bool songmode)
 {
     if (songmode)
     {
-        ui->btnRecord->setEnabled(false);
+        ui->btnRecord->setEnabled(true);
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Song");
     }
     else
     {
-        // ui->btnRecord->setChecked(false);
-        ui->btnRecord->setEnabled(true);
+        ui->btnRecord->setChecked(false);
+        ui->btnRecord->setEnabled(false);
         if (! usr().use_more_icons())
             ui->btnSongPlay->setText("Live");
     }
@@ -1024,17 +1023,19 @@ qsmainwnd::show_song_mode (bool songmode)
 
 /**
  *  Sets the song mode, which is actually the JACK start mode.  If true, we
- *  are in playback/song mode.  If false, we are in live mode.  This
- *  function must be in the cpp module, where the button header file is
- *  included.
+ *  are in playback/song mode.  If false, we are in live mode.
+ *
+ *  Removed: song_recording(false)
  */
 
 void
-qsmainwnd::set_song_mode (bool songmode)
+qsmainwnd::set_song_mode (bool /*songmode*/)
 {
-    songmode = perf().toggle_song_mode();
-    show_song_mode(songmode);
-    song_recording(false);              /* unconditionally: if (!songmode) */
+    bool playmode = perf().toggle_song_mode();
+    if (! playmode)
+        song_recording(false);
+
+    show_song_mode(playmode);
 }
 
 void

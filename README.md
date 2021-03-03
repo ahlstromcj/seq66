@@ -1,7 +1,7 @@
 # README for Seq66 0.92.0 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-03-01
+2015-09-10 to 2021-03-03
 
 __Seq66__ is a MIDI sequencer and live MIDI looper with a hardware sampler-like
 grid pattern interface, MIDI automation for live performance, with sets and
@@ -68,6 +68,7 @@ Windows, and using a conventional source tarball.
     *   Version 0.92.1:
         *   Fixed issues with iterating through MIDI events in the
             user-interfaces.
+        *   Big fixes to Song recording, still in progress.
         *   Added an experimental one-shot auto-step step-edit feature for
             recording (for example) drumbeats from MIDI devices.
         *   Fixed bug in parsing Fluidsynth port names.

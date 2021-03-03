@@ -463,15 +463,23 @@ private:
     }
 
     /**
-     *  Calls sequence::song_recording_stop(m_current_tick) for all sequences.
+     *  Calls sequence::song_recording_start(m_current_tick) for all sequences.
      *  Should be called only when not recording the performance data.  This is
-     *  a Kepler34 feature.
+     *  a Kepler34 feature.  However, rather than operating on all sets, it will
+     *  operate on the play-screen only.
+     *
+     *  for (auto & sset : sets())
+     *      sset.second.song_recording_stop(current_tick);
      */
 
-    void song_recording_stop (midipulse current_tick)
+    void song_recording_start (midipulse tick)
     {
-        for (auto & sset : sets())
-            sset.second.song_recording_stop(current_tick);
+        play_screen()->song_recording_start(tick);
+    }
+
+    void song_recording_stop (midipulse tick)
+    {
+        play_screen()->song_recording_stop(tick);
     }
 
     /**

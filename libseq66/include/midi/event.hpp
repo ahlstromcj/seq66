@@ -1086,6 +1086,11 @@ public:
         return m_has_link;
     }
 
+    bool is_on_linked () const
+    {
+        return is_note_on() && is_linked();
+    }
+
     void unlink ()
     {
         m_has_link = false;

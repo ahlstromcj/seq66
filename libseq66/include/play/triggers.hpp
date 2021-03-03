@@ -436,7 +436,10 @@ public:
         return it == m_triggers.end();
     }
 
+#if defined USE_TRIGGERS_FIND
     List::iterator find (midipulse tick);
+#endif
+
     void push_undo ();
     void pop_undo ();
     void pop_redo ();

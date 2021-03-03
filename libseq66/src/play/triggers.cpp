@@ -233,7 +233,7 @@ triggers::pop_redo ()
  *  and on/off triggers, this function handles that kind of playback.
  *  This is a new function for sequence::play() to call.
  *
- *  The for-loop goes through all the triggers, determining if there is are
+ *  The for-loop goes through all the triggers, determining if there are
  *  trigger start/end values before the \a end_tick.  If so, then the trigger
  *  state is set to true (start only within the tick range) or false (end is
  *  within the tick range), and the trigger tick is set to start or end.
@@ -254,6 +254,11 @@ triggers::pop_redo ()
  *  If the trigger state has changed, then the start/end ticks are passed back
  *  to the sequence, and the trigger offset is adjusted.
  *
+ *  If we have reached a new chunk of drawn patterns in the song data,
+ *  and we are not recording, then trigger unsets the playback block
+ *  on this pattern's events.  The song_playback_block() function
+ *  deals with live-play recording of triggers.
+ *
  * \param start_tick
  *      Provides the starting tick value, and returns the modified value as a
  *      side-effect.
@@ -268,6 +273,13 @@ triggers::pop_redo ()
  * \return
  *      Returns true if we're through playing the frame (trigger turning off),
  *      and the caller should stop the playback.
+ *
+ * \sideeffect
+ *      -   start_tick and end_tick as noted above
+ *      -   sequence::song_playback_block()
+ *      -   sequence::set_playing()
+ *      -   sequence::resume_note_ons()
+ *      -   sequence::set_trigger_offset();
  */
 
 bool
@@ -286,10 +298,7 @@ triggers::play
     for (auto & t : m_triggers)
     {
         /*
-         *  If we have reached a new chunk of drawn patterns in the song data,
-         *  and we are not recording, then trigger unsets the playback block
-         *  on this pattern's events.  The song_playback_block() function
-         *  deals with live-play recording of triggers.
+         *  See the song_playback_block() function note in the banner.
          */
 
         if (t.at_trigger_transition(start_tick, end_tick))
@@ -556,6 +565,8 @@ triggers::remove (midipulse tick)
     }
 }
 
+#if defined USE_TRIGGERS_FIND
+
 triggers::List::iterator
 triggers::find (midipulse tick)
 {
@@ -570,6 +581,8 @@ triggers::find (midipulse tick)
     }
     return result;
 }
+
+#endif  // USE_TRIGGERS_FIND
 
 /**
  *  Splits a single trigger into two triggers.  The

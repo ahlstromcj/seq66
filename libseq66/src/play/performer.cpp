@@ -372,7 +372,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_is_busy               (false),            /* try this flag for now    */
     m_looping               (false),
     m_song_recording        (false),
-    m_song_record_snap      (false),
+    m_song_record_snap      (true),
     m_resume_note_ons       (usr().resume_note_ons()),
     m_current_tick          (0.0),
     m_ppqn                  (choose_ppqn(ppqn)),
@@ -4586,11 +4586,12 @@ performer::group_learn_complete (const keystroke & k, bool good)
  *      currently stored set of patterns and set new stored patterns.
  */
 
-void
+bool
 performer::sequence_playing_toggle (seq::number seqno)
 {
     seq::pointer s = get_sequence(seqno);
-    if (s)
+    bool result = bool(s);
+    if (result)
     {
         bool is_queue = midi_control_in().is_queue();
         bool is_keep_q = midi_control_in().is_keep_queue();
@@ -4620,8 +4621,6 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
             else
                 s->toggle_queued();
-
-            // announce_sequence(s, mapper().seq_to_offset(s));
         }
         else
         {
@@ -4634,8 +4633,7 @@ performer::sequence_playing_toggle (seq::number seqno)
                 );
                 off_sequences();
             }
-            s->toggle_playing();
-            // announce_sequence(s, mapper().seq_to_offset(s));
+            s->toggle_playing(get_tick(), resume_note_ons());   /* kepler34 */
         }
         announce_sequence(s, mapper().seq_to_offset(s));
 
@@ -4676,17 +4674,15 @@ performer::sequence_playing_toggle (seq::number seqno)
             }
             else            /* if not playing, start recording a new strip  */
             {
-                /*
-                 * ca 2019-02-06 Issue #171, fixed by removing the check.
-                 * Always snap.  Make the snap smaller if desired.
-                 */
+                if (song_record_snap())         /* see Seq64 issue #171 !   */
+                    tick -= tick % seq_length;
 
-                tick -= tick % seq_length;
                 push_trigger_undo();
-                s->song_recording_start(tick, false);   /* no snap */
+                s->song_recording_start(tick, song_record_snap());
             }
         }
     }
+    return result;
 }
 
 sequence::playback
@@ -4710,7 +4706,7 @@ performer::song_recording (bool f)
     {
         m_song_recording = f;
         if (! f)
-            song_recording_stop();
+            song_recording_stop();      /* stops recording on all sequences */
     }
 }
 
@@ -4757,12 +4753,13 @@ performer::toggle_other_names (seq::number seqno, bool isshiftkey)
  *      The state (true = armed) to which to set the sequence.
  */
 
-void
+bool
 performer::sequence_playing_change (seq::number seqno, bool on)
 {
     bool qinprogress = midi_control_in().is_queue();
     mapper().sequence_playscreen_change(seqno, on, qinprogress);
     notify_trigger_change(seqno, change::no);
+    return true;
 }
 
 /*
@@ -5280,11 +5277,11 @@ performer::loop_control
         else
         {
             if (a == automation::action::toggle)
-                sequence_playing_toggle(sn);
+                (void) sequence_playing_toggle(sn);
             else if (a == automation::action::on)
-                sequence_playing_change(sn, true);
+                (void) sequence_playing_change(sn, true);
             else if (a == automation::action::off)
-                sequence_playing_change(sn, false);
+                (void) sequence_playing_change(sn, false);
         }
     }
     return result;
