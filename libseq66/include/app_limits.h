@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-01-20
+ * \updates       2021-03-04
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -61,14 +61,16 @@
  *  Default MIDI control input buss.  This value preserves the old behavior,
  *  where the incoming MIDI events of a device on any buss would be acted on
  *  (if specified in the MIDI control stanzas).  This value is the same as
- *  c_bussbyte_max in the midibytes.hpp module.
+ *  c_bussbyte_max in the midibytes.hpp module.  It can be changed in the
+ *  'ctrl' file.
  */
 
 #define SEQ66_MIDI_CONTROL_IN_BUSS        0xFF
 
 /**
  *  Default MIDI control output buss.  It is used with igorangst's
- *  MIDI-control-out feature at present.
+ *  MIDI-control-out feature at present.  It can be changed in the 'ctrl'
+ *  file.
  */
 
 #define SEQ66_MIDI_CONTROL_OUT_BUSS       15
@@ -164,19 +166,21 @@
 /**
  *  The number of default virtual ALSA input busses supported in the
  *  manual-ports mode.  This value used to implicitly be 1, but it would be
- *  useful to allow a few more.
+ *  useful to allow a few more.  Now expanded per user request.  Let the user
+ *  beware!  See issue #42.
  */
 
-#define SEQ66_INPUT_BUSS_MAX              16
+#define SEQ66_INPUT_BUSS_MAX              48
 #define SEQ66_INPUT_BUSS_DEFAULT           4
 
 /**
  *  The number of ALSA I/O busses supported.  See mastermidibus::init().
  *  Currently, this is also the default number of "manual" (virtual) output
- *  ports created in the manual-ports mode.
+ *  ports created in the manual-ports mode.  Now expanded per user request.
+ *  Let the user beware!  See issue #42.
  */
 
-#define SEQ66_OUTPUT_BUSS_MAX             16
+#define SEQ66_OUTPUT_BUSS_MAX             48
 #define SEQ66_OUTPUT_BUSS_DEFAULT          8
 
 /**

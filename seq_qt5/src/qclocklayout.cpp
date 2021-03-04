@@ -159,7 +159,13 @@ qclocklayout::setup_ui ()
         case e_clock::disabled:
             m_rbutton_portdisabled->setChecked(true);
             m_rbutton_portdisabled->setEnabled(false);
-            m_rbutton_clockoff->setEnabled(false);
+
+            /*
+             * We need to be able to undo the Disabled status.
+             *
+             *      m_rbutton_clockoff->setEnabled(false);
+             */
+
             m_rbutton_clockonpos->setEnabled(false);
             m_rbutton_clockonmod->setEnabled(false);
             break;
@@ -202,7 +208,7 @@ qclocklayout::clock_callback_clicked (int id)
     perf().ui_set_clock(m_bus, clocking);
     m_label_outputbusname->setEnabled(enable);
     m_rbutton_portdisabled->setEnabled(enable);
-    m_rbutton_clockoff->setEnabled(enable);
+    m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(enable);
     m_rbutton_clockonmod->setEnabled(enable);
 }

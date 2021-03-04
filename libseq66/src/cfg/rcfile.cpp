@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-02-09
+ * \updates       2021-03-04
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -353,6 +353,30 @@ rcfile::parse ()
         }
     }
 
+    bool use_manual_ports = false;
+    if (line_after(file, "[manual-ports]"))
+    {
+        sscanf(scanline(), "%d", &flag);
+        use_manual_ports = bool(flag);
+        rc_ref().manual_ports(use_manual_ports);
+        if (next_data_line(file))
+        {
+            int count;
+            sscanf(scanline(), "%d", &count);
+            rc().manual_port_count(count);
+        }
+        if (next_data_line(file))
+        {
+            int count;
+            sscanf(scanline(), "%d", &count);
+            rc().manual_in_port_count(count);
+        }
+    }
+    else
+    {
+        (void) make_error_message("manual-ports", "data line missing");
+    }
+
     /*
      *  We are taking a slightly different approach to this section.  When
      *  Seq66 exits, it saves all of the inputs it has.  If an input is
@@ -363,7 +387,7 @@ rcfile::parse ()
      *  an error occurs, we abort... the user must fix the "rc" file.
      */
 
-    if (line_after(file, "[midi-input]"))
+    if (! use_manual_ports && line_after(file, "[midi-input]"))
     {
         int inbuses = 0;
         int count = sscanf(scanline(), "%d", &inbuses);
@@ -416,7 +440,7 @@ rcfile::parse ()
         }
     }
     if (ok)
-        ok = line_after(file, "[midi-clock]");
+        ok = ! use_manual_ports && line_after(file, "[midi-clock]");
 
     int outbuses = 0;
     if (ok)
@@ -511,27 +535,6 @@ rcfile::parse ()
     else
     {
         return make_error_message("midi-meta_events", "data line missing");
-    }
-    if (line_after(file, "[manual-ports]"))
-    {
-        sscanf(scanline(), "%d", &flag);
-        rc_ref().manual_ports(bool(flag));
-        if (next_data_line(file))
-        {
-            int count;
-            sscanf(scanline(), "%d", &count);
-            rc().manual_port_count(count);
-        }
-        if (next_data_line(file))
-        {
-            int count;
-            sscanf(scanline(), "%d", &count);
-            rc().manual_in_port_count(count);
-        }
-    }
-    else
-    {
-        (void) make_error_message("manual-ports", "data line missing");
     }
     if (line_after(file, "[reveal-ports]"))
     {
@@ -1008,6 +1011,26 @@ rcfile::write ()
         << rc_ref().tempo_track_number() << "    # tempo_track_number\n"
         ;
 
+    /*
+     * Manual ports
+     */
+
+    file
+        << "\n[manual-ports]\n\n"
+           "# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not\n"
+           "# auto-connect to other clients.  It allows up to 16 output ports.\n"
+           "# and 8 input ports. Set the first value (the flag) to 0 to\n"
+           "# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
+           "# A new feature is to change the number of ports; see below.\n"
+           "\n"
+        << (rc_ref().manual_ports() ? "1" : "0")
+        << "   # flag for manual (virtual) ALSA or JACK ports\n"
+        << rc().manual_port_count()
+        << "   # number of manual/virtual output ports\n"
+        << rc().manual_in_port_count()
+        << "   # number of manual/virtual input ports\n"
+        ;
+
     int inbuses = bussbyte(rc_ref().inputs().count());
     file <<
            "\n[midi-input]\n\n"
@@ -1123,26 +1146,6 @@ rcfile::write ()
            "\n"
         << (rc_ref().filter_by_channel() ? "1" : "0")
         << "   # flag to record incoming data by channel\n"
-        ;
-
-    /*
-     * Manual ports
-     */
-
-    file
-        << "\n[manual-ports]\n\n"
-           "# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not\n"
-           "# auto-connect to other clients.  It allows up to 16 output ports.\n"
-           "# and 8 input ports. Set the first value (the flag) to 0 to\n"
-           "# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.\n"
-           "# A new feature is to change the number of ports; see below.\n"
-           "\n"
-        << (rc_ref().manual_ports() ? "1" : "0")
-        << "   # flag for manual (virtual) ALSA or JACK ports\n"
-        << rc().manual_port_count()
-        << "   # number of manual/virtual output ports\n"
-        << rc().manual_in_port_count()
-        << "   # number of manual/virtual input ports\n"
         ;
 
     /*
