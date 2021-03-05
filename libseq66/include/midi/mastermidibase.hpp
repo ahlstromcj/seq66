@@ -74,8 +74,8 @@ protected:
     int m_client_id;
 
     /**
-     *  The maximum number of busses supported.  Set to c_max_busses
-     *  (c_busscount_max = 32) for now.
+     *  The maximum number of busses supported.  Set to c_busscount_max for
+     *  now.
      */
 
     int m_max_busses;

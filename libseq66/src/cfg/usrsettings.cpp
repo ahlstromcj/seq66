@@ -1172,19 +1172,19 @@ usrsettings::midi_beat_width (int bw)
 }
 
 /**
- * \setter m_midi_buss_override
- *      This value can be set from 0 to 31.  The default value is -1, which
- *      means that there is no buss override.  It provides a way to override
- *      the buss number for smallish MIDI files.  It replaces the buss-number
- *      read from the file.  This option is turned on by the --bus option, and
- *      is merely a convenience feature for the quick previewing of a tune.
- *      (It's called "developer laziness".)
+ *  This value can be set from 0 to c_busscount_max.  The default value is -1
+ *  (0xFF), which means that there is no buss override, as defined by the
+ *  inline function is_null_bussbyte() in midibytes.hpp.  It provides a way to
+ *  override the buss number for smallish MIDI files.  It replaces the
+ *  buss-number read from the file.  This option is turned on by the --bus
+ *  option, and is merely a convenience feature for the quick previewing of a
+ *  tune.  (It's called "developer laziness".)
  */
 
 void
 usrsettings::midi_buss_override (bussbyte buss)
 {
-    if (buss < c_busscount_max || SEQ66_NO_BUSS_OVERRIDE(buss))
+    if (is_good_bussbyte(buss) || is_null_bussbyte(buss))
         m_midi_buss_override = buss;
 }
 

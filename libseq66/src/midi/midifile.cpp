@@ -1675,8 +1675,8 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         }
 
         /*
-         * As with c_midictrl, this feature was never fully implemented in Seq24.
-         * We barely handle this data.
+         * As with c_midictrl, this feature was never fully implemented in
+         * Seq24.  We barely handle this data.
          */
 
         seqspec = parse_prop_header(file_size);

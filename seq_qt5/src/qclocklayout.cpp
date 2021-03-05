@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-05-19
- * \updates       2020-12-30
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *  This class represents one line in the Edit Preferences MIDI Clocks tab.
@@ -121,6 +121,10 @@ qclocklayout::setup_ui ()
     bool gotbussinfo = perf().ui_get_clock(m_bus, clocking, busname);
     if (gotbussinfo)
     {
+        const size_t maxnamelength = 32;
+        if (busname.length() > maxnamelength)
+            busname = busname.substr(0, maxnamelength);
+
         m_horizlayout_clockline = new QHBoxLayout();
         m_horizlayout_clockline->setContentsMargins(0, 0, 0, 0);
         m_spacer_clock = new QSpacerItem

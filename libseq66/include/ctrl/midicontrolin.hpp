@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-02-23
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -273,6 +273,16 @@ public:
     bool is_oneshot (automation::ctrlstatus status) const
     {
         return bit_test_and(status, automation::ctrlstatus::oneshot);
+    }
+
+    bool is_solo () const
+    {
+        return is_replace() && is_queue();
+    }
+
+    bool is_solo (automation::ctrlstatus status) const
+    {
+        return is_replace(status) && is_queue(status);
     }
 
     void add_status (automation::ctrlstatus status)

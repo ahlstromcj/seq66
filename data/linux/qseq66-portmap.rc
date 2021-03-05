@@ -1,0 +1,308 @@
+# Seq66 0.91.5 (and above) 'rc' configuration file
+#
+# /home/ahlstrom/.config/seq66/qseq66.rc
+# Written on 2021-03-05 08:52:30
+#
+# This file holds the main configuration options for Seq66.
+# It loosely follows the format of the seq24 'rc' configuration
+# file, but adds some new options, and is no longer compatible.
+
+[Seq66]
+
+# Most of the options in these section are self-explanatory.
+# The sets-mode determines if sets are muted when going to the
+# next play-screen ('normal'), while 'autoarm' will automatically
+# unmute the next set.  The 'additive' options keeps the previous
+# set unmuted when moving to the next set.
+#
+# The port-naming values are 'short' or 'long'.  The short style
+# just shows the port number and short port name; the long style
+# shows all the numbers and the long port name.
+
+config-type = "rc"
+version = 0
+verbose = false
+sets-mode = normal
+port-naming = short
+
+# The [comments] section holds the user's documentation for this file.
+# Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
+# add a blank line by adding a space character to the line.
+
+[comments]
+
+Comments added to this section are preserved.  Lines starting with
+a '#' or '[', or that are blank, are ignored.  Start lines that must
+look empty with a space.
+
+[midi-control-file]
+
+"qseq66-lp-mini-alt.ctrl"       # was "nanomap.ctrl"
+
+[mute-group-file]
+
+"qseq66.mutes"
+
+[usr-file]
+
+"qseq66.usr"
+
+[playlist]
+
+# Provides a configured play-list file and a flag to activate it.
+# playlist_active: 1 = active, 0 = do not use it
+
+0
+
+# Provides the name of a play-list file. If there is none, use '""',
+# or set the flag above to 0. Use the extension '.playlist'.
+
+"ca_midi.playlist"      # was "qseq66.playlist"
+
+# Optional MIDI file base directory for play-list files.
+# If present, sets the base directory in which to find all of
+# the MIDI files in all playlists.  This is helpful when moving a
+# complete set of playlists from one directory to another,
+# preserving the sub-directories.
+
+""
+
+[note-mapper]
+
+# Provides a configured note-map and a flag to activate it.
+# notemap_active: 1 = active, 0 = do not use it
+
+0
+
+# Provides the name of the note-map file. If none, use '""'.
+# Use the extension '.drums'.  This file is used only when the user
+# invokes the note-conversion operation in the pattern editor.
+
+"qseq66.drums"
+
+[palette-file]
+
+# This provides a flag to allow modifying the palette from the
+# file-name given below.  Use '""' to indicate no palette file.
+
+0     # palette_active
+
+"qseq66.palette"
+
+[midi-meta-events]
+
+# This section defines some features of MIDI meta-event handling.
+# Normally, tempo events are supposed to occur in the first track
+# (pattern 0).  But one can move this track elsewhere to accomodate
+# one's existing body of tunes.  If affects where tempo events are
+# recorded.  The default value is 0, the maximum is 1023.
+# A pattern must exist at this number for it to work.
+
+0    # tempo_track_number
+
+[manual-ports]
+
+# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not
+# auto-connect to other clients.  It allows up to 16 output ports.
+# and 8 input ports. Set the first value (the flag) to 0 to
+# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.
+# A new feature is to change the number of ports; see below.
+
+0   # flag for manual (virtual) ALSA or JACK ports
+8   # number of manual/virtual output ports
+4   # number of manual/virtual input ports
+
+[midi-input]
+
+# These ports can be used for input into Seq66.
+# From JACK's perspective, these are 'playback' devices.
+# The first number is the port/buss number, and the second number
+# is the input status, disabled (0) or enabled (1). The item in
+# quotes is the input-buss name.
+
+7   # number of input MIDI busses
+
+0 1    "[0] 0:1 system:announce"
+1 0    "[1] 14:0 Midi Through Port-0"
+2 0    "[2] 28:0 USB Midi MIDI 1"
+3 0    "[3] 32:0 Q25 MIDI 1"
+4 0    "[4] 36:0 E-MU XMidi1X1 Tab MIDI 1"
+5 0    "[5] 40:0 nanoKEY2 MIDI 1"
+6 0    "[6] 44:0 Launchpad Mini MIDI 1"
+
+[midi-input-map]
+
+# This table is similar to the [midi-clock-map] section.
+# Port-mapping is disabled in manual/virtual port mode.
+
+0  # map is/not active
+
+0   "announce"
+1   "Midi Through Port-0"
+2   "USB Midi MIDI 1"
+3   "Q25 MIDI 1"
+4   "E-MU XMidi1X1 Tab MIDI 1"
+5   "nanoKEY2 MIDI 1"
+6   "Launchpad Mini MIDI 1"
+
+[midi-clock]
+
+# These ports can be used for output from Seq66, for playback/control.
+# From JACK's perspective, these are 'capture' devices.
+# The first line shows the count of MIDI 'capture' ports. Each line
+# contains the buss/port number (re 0) and clock status of that buss:
+#
+#   0 = MIDI Clock is off.
+#   1 = MIDI Clock on; Song Position and MIDI Continue will be sent.
+#   2 = MIDI Clock Module.
+#  -1 = The output port is disabled.
+#
+# With Clock Modulo, MIDI clocking will not begin until the song
+# position reaches the start modulo value [midi-clock-mod-ticks].
+# One can disable a port manually for devices that are present, but
+# not available, perhaps because another application has exclusive
+# access to the device (e.g. on Windows).
+
+7    # number of MIDI clocks (output busses)
+
+ 0 0    "[0] 14:0 Midi Through Port-0"
+ 1 0    "[1] 28:0 USB Midi MIDI 1"
+ 2 0    "[2] 32:0 Q25 MIDI 1"
+ 3 0    "[3] 36:0 E-MU XMidi1X1 Tab MIDI 1"
+ 4 0    "[4] 40:0 nanoKEY2 MIDI 1"
+ 5 0    "[5] 44:0 Launchpad Mini MIDI 1"
+ 6 0    "[6] 129:0 FLUID Synth (2675):Synth input port (2675:0)"
+
+[midi-clock-map]
+
+# This table, if present, allows the pattern to set buss numbers
+# as usual, but the use the table to look up the true buss number
+# by the short form of the port name. Thus, if the ports change
+# their order in the MIDI system, the pattern can still output to
+# the proper port. The short names are the same with ALSA or with
+# JACK with the a2jmidi bridge running. Note that port-mapping is
+# disabled in manual/virtual port mode.
+
+0     # map is/not active
+
+0   "Midi Through Port-0"
+1   "USB Midi MIDI 1"
+2   "Q25 MIDI 1"
+3   "E-MU XMidi1X1 Tab MIDI 1"
+4   "nanoKEY2 MIDI 1"
+5   "Launchpad Mini MIDI 1"
+6   "FLUID Synth (2675)"
+
+[midi-clock-mod-ticks]
+
+# The Song Position (in 16th notes) at which clocking will begin
+# if the buss is set to MIDI Clock mod setting.
+
+64
+
+# If set to 1, this option allows the master MIDI bus to record
+# (filter) incoming MIDI data by channel, allocating each incoming
+# MIDI event to the sequence that is set to that channel.
+# This is an option adopted from the Seq32 project at GitHub.
+
+0   # flag to record incoming data by channel
+
+[reveal-ports]
+
+# Set to 1 to have Seq66 ignore any system port names
+# declared in the 'user' configuration file.  Use this option to
+# be able to see the port names as detected by ALSA/JACK.
+
+0   # flag for reveal ports
+
+[interaction-method]
+
+# Sets the mouse handling style for drawing and editing a pattern
+# This feature is currently NOT supported in Seq66. However, 
+# there are some other interaction settings available.
+
+# Set to 1 to allow Seq66 to stay in note-adding mode when
+# the right-click is released while holding the Mod4 (Super or
+# Windows) key.
+
+1   # allow_mod4_mode
+
+# Set to 1 to allow Seq66 to split performance editor
+# triggers at the closest snap position, instead of splitting the
+# trigger exactly in its middle.  Remember that the split is
+# activated by a middle click or Ctrl-left click.
+
+1   # allow_snap_split
+
+# Set to 1 to allow a double-click on a slot to bring it up in
+# the pattern editor.  This is the default.  Set it to 0 if
+# it interferes with muting/unmuting a pattern.
+
+1   # allow_click_edit
+
+[jack-transport]
+
+# jack_transport - Enable slave synchronization with JACK Transport.
+# Also contains the new flag to use JACK MIDI.
+
+0   # with_jack_transport
+
+# jack_master - Seq66 attempts to serve as JACK Master.
+# Also must enable jack_transport (the user interface forces this,
+# and also disables jack_master_cond).
+
+0   # with_jack_master
+
+# jack_master_cond - Seq66 is JACK master if no other JACK
+# master exists. Also must enable jack_transport (the user interface
+# forces this, and disables jack_master).
+
+0   # with_jack_master_cond
+
+# song_start_mode applies to JACK/ALSA/PortMidi.
+#
+# 0 = Playback in Live mode. Allows muting and unmuting of loops.
+#     from the main (patterns) window.  Disables both manual and
+#     automatic muting and unmuting from the performance window.
+# 1 = Playback uses the Song (performance) editor's data and mute
+#     controls, regardless of which window was used to start the
+#     playback.
+
+0   # song_start_mode
+
+# jack_midi - Enable JACK MIDI, which is a separate option from
+# JACK Transport.
+
+0   # with_jack_midi
+
+[auto-option-save]
+
+# Set the following value to 0 to disable the automatic saving of the
+# current configuration to the 'rc' and 'user' files.  Set it to 1 to
+# follow seq24 behavior of saving the configuration at exit.
+# Note that, if auto-save is set, many of the command-line settings,
+# such as the JACK/ALSA settings, are then saved to the configuration,
+# which can confuse one at first.  Also note that one currently needs
+# this option set to 1 to save the configuration, as there is not a
+# user-interface control for it at present.
+
+1     # auto-save-options-on-exit support flag
+
+[last-used-dir]
+
+# Last-used and currently-active directory:
+
+"/home/user/Home/ca/mls/git/seq66/data/midi/"
+
+[recent-files]
+
+# Holds a list of the last few recently-loaded MIDI files. The first
+# number is the number of items in the list.  The second value
+# indicates if to load the most recent file (the top of the list)
+# at startup (1 = load it, 0 = do not load it).
+
+0 0
+
+# End of /home/ahlstrom/.config/seq66/qseq66.rc
+#
+# vim: sw=4 ts=4 wm=4 et ft=dosini

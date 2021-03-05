@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-02-28
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -462,10 +462,17 @@ private:                            /* key, midi, and op container section  */
      *  A value not equal to -1 (it ranges from 0 to 31) indicates we're now
      *  using the saved screen-set state to control the queue-replace
      *  (queue-solo) status of sequence toggling.  This value is set to -1
-     *  when queue mode is exited.  See the sm_no_queued_solo value.
+     *  when queue mode is exited.  See the m_no_queued_solo value.
      */
 
     int m_queued_replace_slot;
+
+    /**
+     *  This value is used to indicated that the queued-replace (queued-solo)
+     *  feature is reset and not in force.
+     */
+
+    int m_no_queued_solo;
 
     /**
      *  Holds the global MIDI transposition value.
@@ -905,13 +912,6 @@ private:
     };
 
     static automation_pair sm_auto_func_list [];
-
-    /**
-     *  This value is used to indicated that the queued-replace (queued-solo)
-     *  feature is reset and not in force.
-     */
-
-    static const int sm_no_queued_solo = (-1);
 
 public:
 

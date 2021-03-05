@@ -222,10 +222,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     s = get_variable(file, mctag, "control-buss");
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
-    if (buss >= 0 && buss < c_busscount_max)
+    if (is_good_bussbyte(bussbyte(buss)))
     {
-        bussbyte b = c_bussbyte_max;
-        b = bussbyte(buss);
+        bussbyte b = bussbyte(buss);                /* c_bussbyte_max       */
         m_temp_midi_controls.buss(b);
     }
     s = get_variable(file, mctag, "midi-enabled");
@@ -916,15 +915,15 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# control setup to be written!  Keep backups! The control-buss value\n"
         "# ranges from 0 to the maximum system buss provided by the hardware.\n"
         "# If set, then only that buss will be allowed to send MIDI control.\n"
-        "# A value of 255 or 0xff means any buss can send MIDI control.\n"
+        "# A value of 255 (0xFF) means any buss can send MIDI control.\n"
         "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
         "# are always enabled.\n\n"
             << "load-key-controls = " << k << "\n"
             << "load-midi-controls = " << m << "\n"
             ;
 
-        if (bb > bussbyte(c_busscount_max))
-            file << "control-buss = 0x" << std::hex << bb << std::dec << "\n";
+        if (bb >= c_busscount_max)
+            file << "control-buss = 0xFF\n";
         else
             file << "control-buss = " << bb << "\n";
 

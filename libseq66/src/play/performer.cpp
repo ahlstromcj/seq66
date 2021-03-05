@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-02-28
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -360,6 +360,7 @@ performer::performer (int ppqn, int rows, int columns) :
         m_set_master, m_mute_groups, rows, columns
     ),
     m_queued_replace_slot   (-1),               /* REFACTOR                 */
+    m_no_queued_solo        (-1),               /* constant                 */
     m_transpose             (0),
     m_out_thread            (),
     m_in_thread             (),
@@ -738,7 +739,7 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
  *  input busarray.
  *
  * \param bus
- *      Provides the buss number, less than c_busscount_max (32).
+ *      Provides the buss number, less than c_busscount_max, not checked.
  *
  * \param active
  *      Indicates whether the buss or the user-interface feature is active or
@@ -4329,8 +4330,8 @@ performer::set_midi_control_out ()
 }
 
 /**
- *  Sets or unsets the keep-queue functionality, to be used by the new "Q"
- *  button in the main window.
+ *  Sets or unsets the keep-queue functionality, used by the "Q"
+ *  button in the main window to set keep-queue.
  */
 
 void
@@ -4509,9 +4510,9 @@ performer::send_onoff_play_states (midicontrolout::uiaction a)
 void
 performer::unset_queued_replace (bool clearbits)
 {
-    if (m_queued_replace_slot != sm_no_queued_solo)
+    if (m_queued_replace_slot != m_no_queued_solo)
     {
-        m_queued_replace_slot = sm_no_queued_solo;
+        m_queued_replace_slot = m_no_queued_solo;
         clear_snapshot();
         if (clearbits)
             midi_control_in().remove_queued_replace();
@@ -4605,7 +4606,7 @@ performer::sequence_playing_toggle (seq::number seqno)
         {
             if (is_replace)                         /* not in Seq32         */
             {
-                if (m_queued_replace_slot != sm_no_queued_solo)
+                if (m_queued_replace_slot != m_no_queued_solo)
                 {
                     if (seqno != m_queued_replace_slot)
                     {
@@ -5752,7 +5753,7 @@ performer::automation_song_record
 /**
  *  Implements solo.  This isn't clear even in Sequencer64.  We have
  *  queued-replace and queued-solo which seem to be the same thing.
- *  See screenset::save_queued(), unqueue(), 
+ *  Replace, though, is not queued, while solo is queued.
  */
 
 bool
@@ -5762,20 +5763,19 @@ performer::automation_solo
 )
 {
     std::string name = "Solo";
+    bool result = true;
     print_parameters(name, a, d0, d1, inverse);
-    if (a == automation::action::toggle)
+    if (opcontrol::allowed(d0, inverse))
     {
-        // TODO
+        automation::ctrlstatus c =
+            automation::ctrlstatus::queue | automation::ctrlstatus::replace;
+
+        if (a == automation::action::toggle)
+            result = toggle_ctrl_status(c);
+        else
+            result = set_ctrl_status(a, c);
     }
-    else if (a == automation::action::on)
-    {
-        // TODO
-    }
-    else if (a == automation::action::off)
-    {
-        // TODO
-    }
-    return true;
+    return result;
 }
 
 /**

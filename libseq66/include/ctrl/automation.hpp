@@ -338,18 +338,19 @@ enum class ctrlstatus
     snapshot    = 0x02,
 
     /**
-     *  This value signals the "queue" functionality.  If this bit is set, then
-     *  perform::sequence_playing_toggle() calls sequence::toggle_queued() on the
-     *  given sequence number.  The regular queue key (configurable in File /
-     *  Options / Keyboard) sets this bit when pressed, and unsets it when
-     *  released.  The keep-queue key sets it, but it is not unset until the
-     *  regular queue key is pressed and released.
+     *  This value signals the "queue" functionality.  If this bit is set,
+     *  then perform::sequence_playing_toggle() calls sequence ::
+     *  toggle_queued() on the given sequence number.  The regular queue key
+     *  (configurable in File / Options / Keyboard) sets this bit when
+     *  pressed, and unsets it when released.  The keep-queue key sets it, but
+     *  it is not unset until the regular queue key is pressed and released.
      */
 
     queue       = 0x04,
 
     /**
-     *  Performs keep-queue.  Currently queue and keep-queue are both keep functions.
+     *  Performs keep-queue.  Currently queue and keep-queue are both keep
+     *  functions.
      */
 
     keep_queue  = 0x08,
@@ -412,11 +413,23 @@ operator ~ (ctrlstatus rhs)
     return static_cast<ctrlstatus>(~ static_cast<int>(rhs));
 }
 
+/**
+ *  For complex statuses (more than one bit set), this function returns true
+ *  if there is any "on" bit in either of the two statuses.  More useful if
+ *  there is only one bit, so stick to that use-case.
+ */
+
 inline bool
 bit_test_or (ctrlstatus lhs, ctrlstatus rhs)
 {
     return (static_cast<int>(lhs) | static_cast<int>(rhs)) != 0;
 }
+
+/**
+ *  For complex statuses (more than one bit set), this function returns true
+ *  if there is any overlay in "on" bits in the two statuses.  More useful if
+ *  there is only one bit, so stick to that use-case.
+ */
 
 inline bool
 bit_test_and (ctrlstatus lhs, ctrlstatus rhs)

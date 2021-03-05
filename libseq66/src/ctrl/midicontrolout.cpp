@@ -96,12 +96,13 @@ midicontrolout::initialize (int count, int bus)
     is_enabled(false);
     if (count > 0)
     {
+        bussbyte b = bussbyte(bus);
         actionpair apt;
         apt.apt_action_status = false;
         apt.apt_action_event = dummy_event;
         is_enabled(true);
-        if (bus >= 0 && bus < c_busscount_max)  /* also note c_bussbyte_max */
-            buss(bussbyte(bus));
+        if (is_good_bussbyte(b))                /* see midibytes.hpp        */
+            buss(b);
 
         m_screenset_size = count;
         for (int a = 0; a < static_cast<int>(seqaction::max); ++a)

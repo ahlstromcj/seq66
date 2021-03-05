@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -33,30 +33,6 @@ once or twice. </string>
       <attribute name="title">
        <string>MIDI &amp;Clock</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBoxClocks">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>591</width>
-         <height>313</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Port and Clocks</string>
-       </property>
-       <widget class="QWidget" name="layoutWidgetClocks">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>571</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <layout class="QHBoxLayout" name="horizLayoutClockLine"/>
-       </widget>
-      </widget>
       <widget class="QGroupBox" name="groupBoxMetaEvents">
        <property name="geometry">
         <rect>
@@ -179,9 +155,10 @@ Button not yet functional.</string>
         </rect>
        </property>
        <property name="toolTip">
-        <string>Saves maps of I/O port numbers and names.  Thus, the
-desired port can be found by name-lookup, in case the
-system's MIDI setup has changed.</string>
+        <string>Saves maps of I/O port numbers and names.  At exit,
+these maps are saved to the 'rc' file. Then, each port
+number can be found by name-lookup, in cases where
+the system's MIDI setup has changed.</string>
        </property>
        <property name="text">
         <string>Save Clock/Input Maps</string>
@@ -191,7 +168,7 @@ system's MIDI setup has changed.</string>
        <property name="geometry">
         <rect>
          <x>72</x>
-         <y>488</y>
+         <y>490</y>
          <width>161</width>
          <height>17</height>
         </rect>
@@ -247,6 +224,58 @@ system's MIDI setup has changed.</string>
         <string>Output Ports Mapped</string>
        </property>
       </widget>
+      <widget class="QLabel" name="portsClocksLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>131</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Ports and Clocks</string>
+       </property>
+      </widget>
+      <widget class="QScrollArea" name="clocksScrollArea">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>591</width>
+         <height>301</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>591</width>
+          <height>301</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
      <widget class="QWidget" name="tabMidiInput">
       <property name="toolTip">
@@ -255,30 +284,6 @@ system's MIDI setup has changed.</string>
       <attribute name="title">
        <string>MIDI &amp;Input</string>
       </attribute>
-      <widget class="QGroupBox" name="groupBoxInputs">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>591</width>
-         <height>301</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Input Buses</string>
-       </property>
-       <widget class="QWidget" name="gridLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>29</y>
-          <width>571</width>
-          <height>261</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayoutMidiInput"/>
-       </widget>
-      </widget>
       <widget class="QGroupBox" name="groupBoxInputOptions">
        <property name="geometry">
         <rect>
@@ -324,6 +329,58 @@ number using the channel number (0 to 15).</string>
        <property name="text">
         <string>Input Ports Mapped</string>
        </property>
+      </widget>
+      <widget class="QLabel" name="inputBussesLabel">
+       <property name="geometry">
+        <rect>
+         <x>16</x>
+         <y>8</y>
+         <width>97</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>DejaVu Sans</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Input Buses</string>
+       </property>
+      </widget>
+      <widget class="QScrollArea" name="inputsScrollArea">
+       <property name="geometry">
+        <rect>
+         <x>16</x>
+         <y>32</y>
+         <width>585</width>
+         <height>281</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="widgetResizable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="scrollAreaWidgetContents_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>585</width>
+          <height>281</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="tabDisplay">
@@ -467,7 +524,7 @@ Use 0.60 at a minimum.</string>
          <x>8</x>
          <y>88</y>
          <width>505</width>
-         <height>27</height>
+         <height>29</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">

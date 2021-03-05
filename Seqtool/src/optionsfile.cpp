@@ -333,11 +333,11 @@ optionsfile::parse ()
         if (ok)
             ok = line_after(file, "[midi-clock]");
 
-        long buses = 0;
+        int buses = 0;
         if (ok)
         {
-            sscanf(scanline(), "%ld", &buses);
-            ok = next_data_line(file) && buses > 0 && buses <= c_busscount_max;
+            sscanf(scanline(), "%d", &buses);
+            ok = next_data_line(file) && is_good_busscount(buses);
         }
         if (ok)
         {
@@ -351,7 +351,7 @@ optionsfile::parse ()
                 if (! ok)
                 {
                     if (i < (buses - 1))
-                        return make_error_message("midi-clock data line missing");
+                        return make_error_message("midi-clock data missing");
                 }
             }
         }

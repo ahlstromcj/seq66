@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-04
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -446,16 +446,16 @@ rcfile::parse ()
     if (ok)
     {
         sscanf(scanline(), "%d", &outbuses);
-        ok = next_data_line(file) && outbuses > 0 && outbuses <= c_busscount_max;
+        ok = next_data_line(file) && is_good_busscount(outbuses);
     }
     if (ok)
     {
         /**
-         * One thing about MIDI clock values.  If a device (e.g. my Korg
-         * nanoKEY2) is present in a system when Seq66 is exited, it
-         * will be saved in the [midi-clock] list.  When unplugged, it will be
-         * read here at startup, but won't be shown.  The next exit will find
-         * it removed from this list.
+         * One thing about MIDI clock values.  If a device (e.g. Korg
+         * nanoKEY2) is present in a system when Seq66 is exited, it will be
+         * saved in the [midi-clock] list.  When unplugged, it will be read
+         * here at startup, but won't be shown.  The next exit will find it
+         * removed from this list.
          *
          * Also, we want to pre-allocate the number of clock entries needed,
          * and then use the buss number to populate the list of clocks, in the
@@ -1059,7 +1059,7 @@ rcfile::write ()
         << "\n[midi-input-map]\n\n"
         << "# This table is similar to the [midi-clock-map] section.\n"
            "# Port-mapping is disabled in manual/virtual port mode.\n\n"
-        << (inpsref.active() ? "1" : "0") << "  # map is/not active\n\n"
+        << (inpsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
         << input_port_map_list()
         ;
     }
@@ -1117,7 +1117,7 @@ rcfile::write ()
            "# the proper port. The short names are the same with ALSA or with\n"
            "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
            "# disabled in manual/virtual port mode.\n\n"
-        << (outsref.active() ? "1" : "0") << "     # map is/not active\n\n"
+        << (outsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
         << output_port_map_list()
         ;
     }

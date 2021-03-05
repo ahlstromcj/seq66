@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-07
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -240,14 +240,16 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * clock radio-buttons.
      */
 
-    QVBoxLayout * vboxclocks = new QVBoxLayout;
+    QWidget * central = new QWidget;
+    QVBoxLayout * vboxclocks = new QVBoxLayout(central);
     mastermidibus * masterbus = perf().master_bus();
     const clockslist & opm = output_port_map();
     bool outportmap = opm.active();
     if (not_nullptr(masterbus))
     {
-        const clockslist & opm = output_port_map();
         int buses = outportmap ? opm.count() : masterbus->get_num_out_buses() ;
+        ui->clocksScrollArea->setWidget(central);
+        ui->clocksScrollArea->setWidgetResizable(true);
         for (int bus = 0; bus < buses; ++bus)
         {
             qclocklayout * tempqc = new qclocklayout(this, perf(), bus);
@@ -261,7 +263,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxclocks->addItem(spacer);
-    ui->groupBoxClocks->setLayout(vboxclocks);
+
     connect
     (
         ui->pushButtonStoreMap, SIGNAL(clicked(bool)),
@@ -275,12 +277,15 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * of each input port, based on its buss status.
      */
 
-    QVBoxLayout * vboxinputs = new QVBoxLayout;
+    QWidget * central2 = new QWidget;
+    QVBoxLayout * vboxinputs = new QVBoxLayout(central2);
     const inputslist & ipm = input_port_map();
     bool inportmap = ipm.active();
     if (not_nullptr(masterbus))
     {
         int buses = inportmap ? ipm.count() : masterbus->get_num_in_buses() ;
+        ui->inputsScrollArea->setWidget(central2);
+        ui->inputsScrollArea->setWidgetResizable(true);
         for (int bus = 0; bus < buses; ++bus)
         {
             qinputcheckbox * tempqi = new qinputcheckbox(this, perf(), bus);
@@ -294,7 +299,6 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding
     );
     vboxinputs->addItem(spacer2);
-    ui->groupBoxInputs->setLayout(vboxinputs);
     syncWithInternals();
 
     std::string clid = std::to_string(perf().client_id());

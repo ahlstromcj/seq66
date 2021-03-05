@@ -1,7 +1,7 @@
 # README for Seq66 0.92.0 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-03-03
+2015-09-10 to 2021-03-05
 
 __Seq66__ is a MIDI sequencer and live MIDI looper with a hardware sampler-like
 grid pattern interface, MIDI automation for live performance, with sets and
@@ -66,6 +66,9 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.92.1:
+        *   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
+            when there are many ports on the system; also increased port
+            limits to 48 ports.
         *   Fixed issues with iterating through MIDI events in the
             user-interfaces.
         *   Big fixes to Song recording, still in progress.

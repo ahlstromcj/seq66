@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-12-11
+ * \updates       2021-03-05
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -193,10 +193,12 @@ const midishort c_midishort_max     = midishort(0xFFFF);
 const midilong c_midilong_max       = midilong(0xFFFFFFFF);
 
 /**
- *  Default value for c_max_busses.
+ *  Default value for c_max_busses.  Some people use a lot of ports, so we
+ *  have increased this value from 32 to 48, to match SEQ66_OUTPUT_BUSS_MAX
+ *  and SEQ66_INPUT_BUSS_MAX in app_limits.h.
  */
 
-const int c_busscount_max           = 32;
+const int c_busscount_max           = 48;
 
 /**
  *  Indicates the maximum number of MIDI channels, counted internally from 0
@@ -494,8 +496,8 @@ is_null_midipulse (midipulse p)
 
 /**
  *  Compares a bussbyte value to the maximum value.  The maximum value is well
- *  over the c_busscount_max = 32 value, being 0xff = 255, and thus is a useful
- *  flag value to indicate an unusable bussbyte.
+ *  over the c_busscount_max = 48 value, being 0xFF = 255, and thus is a
+ *  useful flag value to indicate an unusable bussbyte.
  */
 
 inline bool
@@ -504,19 +506,17 @@ is_null_bussbyte (bussbyte b)
     return b == c_bussbyte_max;
 }
 
-/**
- *  Checks for a usable bussbyte.
- */
-
 inline bool
 is_good_bussbyte (bussbyte b)
 {
-    return b < c_busscount_max;
+    return b < bussbyte(c_busscount_max);
 }
 
-/**
- *  Checks for a usable midibyte.
- */
+inline bool
+is_good_busscount (int b)
+{
+    return b > 0 && b <= c_busscount_max;
+}
 
 inline bool
 is_good_midibyte (midibyte b)
@@ -525,8 +525,7 @@ is_good_midibyte (midibyte b)
 }
 
 /**
- *  Compares a channel value to the maximum value.  Will replace the event static
- *  function of the same name.
+ *  Compares a channel value to the maximum value.
  */
 
 inline bool

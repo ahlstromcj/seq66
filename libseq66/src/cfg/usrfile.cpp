@@ -1124,7 +1124,7 @@ usrfile::write ()
         ;
 
     int bo = int(usr().midi_buss_override());   /* writing char no good */
-    if (SEQ66_NO_BUSS_OVERRIDE(bo))
+    if (is_null_bussbyte(bussbyte(bo)))
         file << "-1" << "       # midi_buss_override (disabled)\n";
     else
         file << bo   << "       # midi_buss_override (enabled, careful!)\n";
