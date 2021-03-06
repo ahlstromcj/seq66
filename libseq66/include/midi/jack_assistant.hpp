@@ -65,8 +65,9 @@ namespace seq66
  *  Provide a temporary structure for passing data and results between a
  *  performer and jack_assistant object.  The jack_assistant class already
  *  has access to the members of performer, but it needs access to and
- *  modification of "local" variables in performer::output_func().
- *  This scratchpad is useful even if JACK support is not enabled.
+ *  modification of "local" variables in performer::output_func().  This
+ *  scratchpad is useful even if JACK support is not enabled. This struct is
+ *  also used if JACK is not support.
  */
 
 class jack_scratchpad

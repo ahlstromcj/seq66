@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-05
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -235,11 +235,7 @@ public:
             return false;
         }
 
-        virtual bool on_sequence_change
-        (
-            seq::number /* seqno */,
-            bool /* recreate [versus simple update] */
-        )
+        virtual bool on_sequence_change (seq::number, bool /* recreate */)
         {
             return false;
         }
@@ -472,7 +468,7 @@ private:                            /* key, midi, and op container section  */
      *  feature is reset and not in force.
      */
 
-    int m_no_queued_solo;
+    const int m_no_queued_solo;
 
     /**
      *  Holds the global MIDI transposition value.
@@ -922,6 +918,8 @@ public:
         int columns     = SEQ66_DEFAULT_SET_COLUMNS
     );
     ~performer ();
+    performer (const performer &) = delete;
+    performer & operator = (const performer &) = delete;
 
     void enregister (callbacks * pfcb);             /* for notifications    */
     void unregister (callbacks * pfcb);
@@ -1527,6 +1525,15 @@ public:
 #endif
     }
 
+    bool jack_transport_not_starting () const
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return ! is_jack_running() || m_jack_asst.transport_not_starting();
+#else
+        return true;
+#endif
+    }
+
     /**
      *  If JACK is supported, starts the JACK transport.
      */
@@ -1545,9 +1552,63 @@ public:
 #endif
     }
 
-    bool init_jack_transport ();
-    bool deinit_jack_transport ();
-    void position_jack (bool state, midipulse tick = 0);
+    /**
+     *  Initializes JACK support, if defined.  The launch() function and
+     *  options module (when Connect is pressed) call this.
+     *
+     * \return
+     *      running, false if not or if JACK support is note defined.
+     */
+
+    bool init_jack_transport ()
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return m_jack_asst.init();
+#else
+        return false;
+#endif
+    }
+
+    /**
+     *  Tears down the JACK infrastructure.  Called by launch() and the
+     *  options module (when Disconnect is pressed).  This function operates
+     *  only while we are not outputing, otherwise we have a race condition
+     *  that can lead to a crash.
+     *
+     * \return
+     *      Returns the result of the init() call; true if JACK sync is now
+     *      no longer running or JACK is not supported.
+     */
+
+    bool deinit_jack_transport ()
+    {
+#if defined SEQ66_JACK_SUPPORT
+        return m_jack_asst.deinit();
+#else
+        return true;
+#endif
+    }
+
+
+    /**
+     *  If JACK is supported and running, sets the position of the transport.
+     *
+     * \param songmode
+     *      If true, playback is in Song mode; otherwise, Live mode.
+     *
+     * \param tick
+     *      Provides the pulse position to be set.  The default value is 0.
+     */
+
+#if defined SEQ66_JACK_SUPPORT
+    void position_jack (bool songmode, midipulse tick)
+    {
+        m_jack_asst.position(songmode, tick);
+    }
+#else
+    void position_jack (bool, midipulse) { /* no code */ }
+#endif
+
     bool set_jack_mode (bool mode);
 
     void toggle_jack_mode ()
@@ -2830,8 +2891,7 @@ public:         /* GUI-support functions */
     void song_recording (bool f);
 
     /*
-     * Now a constant.
-     *
+     * Now effectively a constant.
      *
      *  void song_record_snap (bool f)
      *  {

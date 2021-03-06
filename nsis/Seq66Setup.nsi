@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-02-15
+; Updated:      2021-03-05
 ; Version:      0.92.1
 ;
 ;       Installation is silent.
@@ -210,6 +210,7 @@ Section "Documentation" SEC_DOC
     SetOutPath "$INSTDIR\doc"
     SetOverwrite on
     File /r "..\release\doc\*.pdf"
+    File /r "..\release\doc\*.ods"
 
 SectionEnd
 

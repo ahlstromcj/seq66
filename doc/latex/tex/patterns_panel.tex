@@ -714,20 +714,20 @@
    \itempar{Stop}{pattern!stop}
    The red square button stops the playback of the song and all its patterns.
    \index{keys!esc (stop)}
-   The keystroke for stopping playback is the \texttt{Escape} character.
-   It can be changed to \texttt{Space}, so that the space-bar then becomes
-   effectively a playback toggle key.
+   The keystroke for stopping playback is the \texttt{Escape} character; it
+   stops playback and rewinds to the beginning of the song.
+   The \texttt{Space} keystroke will do the same thing if playback is in
+   progress; it is effectively a playback toggle key.
 
    \itempar{Play and Pause}{pattern!Play}
    \index{pattern!Pause}
    The green triangular button starts the playback of the whole song.
    \index{keys!space (play)}
    The keystroke for starting playback is the \texttt{Space} character by
-   default.
+   default.  It also stops playback, also rewinding the song to the beginning.
 
    \index{pause}
-   The Play button can be used as a Pause button.
-   When the Play button is clicked, the button icon changes to a Pause icon:
+   The Pause button toggles playback without rewinding the song.
    A Pause key (by default, the period) is also defined.
 
    \itempar{Song Record}{pattern!song record}
@@ -743,6 +743,7 @@
    \itempar{Song Record Snap}{pattern!song record snap}
    This button toggles snapping the beginning and end of a recorded trigger to
    the nearest beat.  There is no hot-key for this button at this time.
+   And, in fact, at present, song-record snap is alway in force.
 
    \itempar{BPM}{pattern!BPM}
    The spin widget adjusts the "beats per minute" (BPM) value.  The

@@ -1380,7 +1380,7 @@ void
 performer::inner_stop (bool midiclock)
 {
     start_from_perfedit(false);
-    m_is_running = false;
+    is_running(false);
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
     send_onoff_event(midicontrolout::uiaction::stop, true);
@@ -2755,76 +2755,6 @@ performer::set_jack_mode (bool jack_button_active)
 }
 
 /**
- *  Initializes JACK support, if SEQ66_JACK_SUPPORT is defined.  Who calls
- *  this routine?  The main() routine of the application [via launch()],
- *  and the options module, when the Connect button is pressed.
- *
- * \return
- *      Returns the result of the init() call; true if JACK sync is now
- *      running.  If JACK support is not built into the application, then
- *      this function returns false, to indicate that JACK is (definitely)
- *      not running.
- */
-
-bool
-performer::init_jack_transport ()
-{
-#if defined SEQ66_JACK_SUPPORT
-    return m_jack_asst.init();
-#else
-    return false;
-#endif
-}
-
-/**
- *  Tears down the JACK infrastructure.  Called by launch() and in the
- *  options module, when the Disconnect button is pressed.  This function
- *  operates only while Sequencer64 is not outputing, otherwise we have a
- *  race condition that can lead to a crash.
- *
- * \return
- *      Returns the result of the init() call; false if JACK sync is now
- *      no longer running.  If JACK support is not built into the
- *      application, then this function returns true, to indicate that
- *      JACK is (definitely) not running.
- */
-
-bool
-performer::deinit_jack_transport ()
-{
-#if defined SEQ66_JACK_SUPPORT
-    return m_jack_asst.deinit();
-#else
-    return true;
-#endif
-}
-
-/**
- *  If JACK is supported and running, sets the position of the transport.
- *
- * \param songmode
- *      If true, playback is to be in Song mode.  Otherwise, it is to be in
- *      Live mode.
- *
- * \param tick
- *      Provides the pulse position to be set.  The default value is 0.
- */
-
-#if defined SEQ66_JACK_SUPPORT
-void
-performer::position_jack (bool songmode, midipulse tick)
-{
-    m_jack_asst.position(songmode, tick);
-}
-#else
-void
-performer::position_jack (bool /*songmode*/, midipulse /*tick*/)
-{
-    // No code
-}
-#endif
-
-/**
  *  Set up the performance and start the thread.  We rely on C++11's thread
  *  handling to set up the thread properly on Linux and Windows.
  *  Here's how it works:
@@ -3065,21 +2995,9 @@ performer::output_func ()
                             position_jack(true, m_left_tick);
                             jack_position_once = true;
                         }
+
                         double leftover_tick = pad.js_current_tick - rtick;
-
-                        /*
-                         * Do not play during starting to avoid xruns on
-                         * fast-forward or rewind.
-                         */
-
-                        if (is_jack_running())
-                        {
-#if defined SEQ66_JACK_SUPPORT
-                            if (m_jack_asst.transport_not_starting())
-                                play(rtick - 1);
-#endif
-                        }
-                        else
+                        if (jack_transport_not_starting())  /* no FF/RW xrun */
                             play(rtick - 1);
 
                         midipulse ltick = get_left_tick();
@@ -3096,23 +3014,8 @@ performer::output_func ()
                  * FF or RW.
                  */
 
-                if (is_jack_running())
-                {
-#if defined SEQ66_JACK_SUPPORT
-                    if (m_jack_asst.transport_not_starting())
-                    {
-                        midipulse jackrtick = pad.js_current_tick;
-                        play(midipulse(jackrtick));
-                    }
-#else
-                    midipulse jackrtick = pad.js_current_tick;
-                    play(midipulse(jackrtick));
-#endif
-                }
-                else
-                {
+                if (jack_transport_not_starting())
                     play(midipulse(pad.js_current_tick));
-                }
 
                 /*
                  * The next line enables proper pausing in both old and seq32
@@ -3139,11 +3042,10 @@ performer::output_func ()
             delta_us = c_thread_trigger_width_us - delta;
 
             /**
-             * Check MIDI clock adjustment.  We replaced "60000000.0f / m_ppqn
-             * / bpm" with a function.
+             * Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm
              */
 
-            double dct = double_ticks_from_ppqn(m_ppqn);
+            double dct = double_ticks_from_ppqn(m_ppqn);    /* see above    */
             double next_total_tick = pad.js_total_tick + dct;
             double next_clock_delta = next_total_tick - pad.js_total_tick - 1;
             double next_clock_delta_us =
@@ -3153,7 +3055,7 @@ performer::output_func ()
                 delta_us = long(next_clock_delta_us);
 
             if (delta_us > 0)
-                (void) microsleep(delta_us);            /* timing.hpp       */
+                (void) microsleep(delta_us);                /* timing.hpp   */
 
             if (pad.js_jack_stopped)
                 inner_stop();
@@ -3534,7 +3436,7 @@ performer::start_playing (bool songmode)
     else
     {
         if (is_jack_master())
-            position_jack(false);
+            position_jack(false, 0);
 
         if (resume_note_ons())                          /* for issue #5     */
         {
@@ -4381,17 +4283,21 @@ performer::set_ctrl_status
         if (midi_control_in().is_snapshot(status))
             save_snapshot();
 
+        /*
+         * Anything to do for solo (queue + replace)?
+         */
+
         midi_control_in().add_status(status);
     }
     else
     {
+        bool q = midi_control_in().is_keep_queue(status) ||
+            midi_control_in().is_queue(status);
+
         if (midi_control_in().is_snapshot(status))
             restore_snapshot();
 
-        if (midi_control_in().is_keep_queue(status))
-            unset_queued_replace();
-
-        if (midi_control_in().is_queue(status))
+        if (q)
             unset_queued_replace();
 
         midi_control_in().remove_status(status);
@@ -6319,8 +6225,14 @@ performer::automation_tap_bpm
 }
 
 /**
- *  Starts playback.  The \a inverse parameter, if true, does nothing.  We don't
- *  want a double-clutch on start when a keystroke is released.
+ *  Starts playback if not playing, or stops playback, with auto-rewind, if
+ *  already playing.  This "one-key" feature is now hard-wired, so that one
+ *  does not need to keep remembering to reach for the Esc key.  Also, this is
+ *  consistent with the hard-wired role of the Space key in the seqroll and
+ *  the perfroll.
+ *
+ *  The \a inverse parameter, if true, does nothing.  We don't want a
+ *  double-clutch on start when a keystroke is released.
  */
 
 bool
@@ -6332,8 +6244,12 @@ performer::automation_start
     std::string name = "Start";
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
-        auto_play();
-
+    {
+        if (is_pattern_playing())
+            auto_stop();
+        else
+            auto_play();
+    }
     return true;
 }
 
