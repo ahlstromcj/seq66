@@ -1,5 +1,5 @@
 /* XPM */
-static char * SEQ66_24x24_xpm[] = {
+static const char * SEQ66_24x24_xpm[] = {
 "24 24 503 2",
 "  	c None",
 ". 	c #B2B7B5",

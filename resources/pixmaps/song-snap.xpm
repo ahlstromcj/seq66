@@ -1,5 +1,5 @@
 /* XPM */
-static char * song_snap_xpm[] = {
+static const char * song_snap_xpm[] = {
 "20 20 3 1",
 " 	c None",
 ".	c #000000",

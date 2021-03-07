@@ -2,7 +2,7 @@
  needs="X11"\
  section="Applications/Sound"\
  title="Seq66"\
- command="/usr/bin/seq64"\
+ command="/usr/bin/qseq66"\
  hints="MIDI,Music Editor"\
- description="Seq66 (qseq66) is a live/editing MIDI sequencer based on Seq24 with native JACK MIDI and a Qt user-interfac."\
+ description="Seq66 (qseq66) is a live/editing MIDI sequencer based on Seq24 with native JACK MIDI and a Qt user-interface."\
  icon="/usr/share/pixmaps/seq66.xpm"

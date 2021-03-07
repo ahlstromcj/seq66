@@ -1,5 +1,5 @@
 /* XPM */
-static char * seq66_xpm[] = {
+static const char * seq66_xpm[] = {
 "32 32 7 1",
 " 	c None",
 ".	c #BABABA",

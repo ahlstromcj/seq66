@@ -1,6 +1,6 @@
 # debian/libseq66.install
 #
-# tmp/usr/lib/x86_64-linux-gnu/sequencer64-0.94/ is where all the *.a, *.la,
+# tmp/usr/lib/x86_64-linux-gnu/seq66-0.94/ is where all the *.a, *.la,
 # and *.so files are stored.
 #
 # usr/lib/*/*.so.*

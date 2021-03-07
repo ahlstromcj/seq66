@@ -1,5 +1,5 @@
 /* XPM */
-static char * route66rwb_66x66_xpm[] = {
+static const char * route66rwb_66x66_xpm[] = {
 "64 64 1035 2",
 "  	c None",
 ". 	c #5B5C5C",

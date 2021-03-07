@@ -10,7 +10,13 @@ Build-Depends: debhelper (>= 9),
     autotools-dev,
     libasound2-dev,
     libjack-jackd2-dev | libjack-dev,
-    libtool
+    libtool,
+    qtbase5-dev,
+    qtbase5-dev-tools,
+    qtdeclarative5-dev-tools,
+    qtchooser,
+    qt5-qmake
+
 Standards-Version: 3.9.8
 Homepage: https://github.com/ahlstromcj/seq66.git
 Vcs-Git: git://github.com/ahlstromcj/seq66.git
@@ -26,10 +32,11 @@ Depends: libasound2 (>= 1.0.16),
     libjack-jackd2-0 (>= 1.9.5~dfsg-14) | libjack-0.116
 Recommends: jackd
 Description: Native JACK/ALSA MIDI live sequencer refactored from seq24 and sequencer64.
- Seq66 application provides major upgrades to seq24: C++11 support, support for
+ Seq66 provides major upgrades to seq24: C++14 support, support for
  native JACK MIDI, SMF 0 files, a range of PPQN values, more MIDI controls,
  more scales, chord-generation, expanded configuration options, pause,
  event-editing window, tap-tempo, more keystroke control, and many other
- enhancements and fixes.  A Qt-5-based application.
+ enhancements and fixes.  A Qt-5-based application, it also builds on that
+ other operating system.
 
 # vim: ft=debcontrol

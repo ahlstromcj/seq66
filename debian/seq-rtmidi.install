@@ -1,6 +1,6 @@
 # debian/seq-rtmidi.install
 #
-# tmp/usr/lib/x86_64-linux-gnu/seq66-0.90/ is where all the *.a, *.la,
+# tmp/usr/lib/x86_64-linux-gnu/seq66-0.92/ is where all the *.a, *.la,
 # and *.so files are stored.
 #
 # usr/lib/*/*.so.*
