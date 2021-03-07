@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-02-19
+% \update      2021-03-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -105,10 +105,17 @@
 \subsection{Seq66: What?}
 \label{subsec:what_is_seq66}
 
-   \textsl{Seq66} is an ongoing reboot of \textsl{Seq24},
+   \textsl{Seq66} is a reboot of \textsl{Sequencer64}, which
+   is itself a reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer.
    \textsl{Seq66} is not a synthesizer.  It requires a hardware
-   synthesizer or a software synthesizer.
+   synthesizer or a software synthesizer.  It does not handle audio data.
+
+   \textsl{Seq66} works with
+   \textsl{ALSA},
+   \textsl{JACK},
+   \textsl{PortMidi}, and
+   \textsl{Windows}.
 
 \subsection{Seq66: Why?}
 \label{subsec:introduction_vs_others}
@@ -116,7 +123,7 @@
    The first reason to refactor \textsl{Sequencer64} is to take advantage of
    things learned in responding to user reports.  The second reason is to use
    the new code as an opportunity to add new functionality such as
-   \textsl{Non Session Manager} support.  The last reason is to tighten the
+   \textsl{Non Session Manager} support.  The third reason is to tighten the
    code by using newer features of \textsl{C++11} and beyond.
 
 \subsection{Improvements}
@@ -462,8 +469,8 @@
    This feature known as \textsl{shift-lock} or \textsl{auto-shift}.
    After pressing the "L" button, the user can then press a keystroke, which is
    automatically shifted, and the pattern set is saved, and can be recalled by
-   that button (shifted) later.  It can be saved in a 'mutes' file, as part of the
-   MIDI tune, or in both places.
+   that button (shifted) later.  It can be saved in a 'mutes' file, as part of
+   the MIDI tune, or in both places.
 
    \textsl{Example}:
    We have 5 patterns armed in the current set. Press the "L" button,
@@ -487,14 +494,16 @@
    \texttt{mute-group-selected}.  If this value is set to a value from 0 to 31,
    then that mute group will be automatically applied when
    \textsl{Seq66} starts up.
-   This is useful with the loading of the most-recent MIDI file (which is also a
-   feature of \textsl{Seq66}.
+   This is useful with the loading of the most-recent MIDI file (which is also
+   a feature of \textsl{Seq66}.
+
+   Also see \sectionref{sec:mutes_master}.
 
 \paragraph{Developer Test Button}
 \label{paragraph:introduction_developer_test_button}
 
-   This button is always disabled.  Functionality is added temporarily when testing
-   new features. Ignore this button.
+   This button is always disabled.  Functionality is added temporarily when
+   testing new features. Ignore this button.
 
 \paragraph{Song Editor Button}
 \label{paragraph:introduction_song_editor_button}

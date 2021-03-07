@@ -3,7 +3,7 @@
 ; File:         Seq66Setup.nsi
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
-; Updated:      2021-03-05
+; Updated:      2021-03-06
 ; Version:      0.92.1
 ;
 ;       Installation is silent.

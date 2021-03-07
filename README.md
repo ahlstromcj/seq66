@@ -1,7 +1,7 @@
 # README for Seq66 0.92.0 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-03-05
+2015-09-10 to 2021-03-07
 
 __Seq66__ is a MIDI sequencer and live MIDI looper with a hardware sampler-like
 grid pattern interface, MIDI automation for live performance, with sets and
@@ -71,13 +71,14 @@ Windows, and using a conventional source tarball.
             limits to 48 ports.
         *   Fixed issues with iterating through MIDI events in the
             user-interfaces.
-        *   Big fixes to Song recording, still in progress.
+        *   Big fixes to Song recording. More to do?
         *   Added an experimental one-shot auto-step step-edit feature for
             recording (for example) drumbeats from MIDI devices.
         *   Fixed bug in parsing Fluidsynth port names.
         *   Improved handling of MIDI I/O control of Seq66.  Added more
             automation-display events, more testing.
-        *   Updated documentation.
+        *   Updated documentation, including a ODF spreadsheet for the MIDI
+            control configuration of the *Launchpad Mini*.
     *   Version 0.92.0:
         *   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
         *   Fixed issues with applying 'usr' buss and instrument names to the

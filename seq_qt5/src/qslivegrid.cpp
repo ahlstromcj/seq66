@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-02-27
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -164,7 +164,9 @@ qslivegrid::qslivegrid
     ui->txtBankName->hide();
     ui->spinBank->hide();
 #endif
+
     ui->labelPlaylistSong->setText("");
+    set_mode_text();
 
     /*
      * When done here, the buttons don't resize to the actual frame size.
@@ -196,6 +198,13 @@ qslivegrid::~qslivegrid()
         delete m_msg_box;
 
     delete ui;
+}
+
+void
+qslivegrid::set_mode_text (const std::string & mode)
+{
+    QString mtext = QString::fromStdString(mode);
+    ui->labelMode->setText(mtext);
 }
 
 /**

@@ -183,8 +183,8 @@ public:
         using clients = std::vector<callbacks *>;
 
         /**
-         *  Provides a way to indicate via a value what callback function is in
-         *  force.
+         *  Provides a way to indicate via a value what callback function is
+         *  in force.
          */
 
         enum class index
@@ -3041,6 +3041,16 @@ public:                                 /* access functions for the containers *
     midicontrolin & midi_control_in ()
     {
         return m_midi_control_in;
+    }
+
+    automation::ctrlstatus ctrl_status () const
+    {
+        return midi_control_in().status();
+    }
+
+    std::string ctrl_status_string () const
+    {
+        return midi_control_in().status_string();
     }
 
     /*

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-27
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -287,6 +287,13 @@ private:
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
+
+    /**
+     *  Holds the last value of the MIDI-control-in status, used in displaying
+     *  the current status when it changed.
+     */
+
+    automation::ctrlstatus m_control_status;
 
     /**
      *  Holds the current setting of the song mode, since

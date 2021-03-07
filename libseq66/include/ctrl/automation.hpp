@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-02-23
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -361,7 +361,15 @@ enum class ctrlstatus
      *  sequence::toggle_oneshot() on the given sequence number.
      */
 
-    oneshot     = 0x10
+    oneshot     = 0x10,
+
+    /**
+     *  Signals that we are in mute-group learn mode.  This will eventually
+     *  supplement the mutegroups "learn" flag, as we want to centralize all
+     *  mode statuses.
+     */
+
+    learn       = 0x20
 };
 
 /**

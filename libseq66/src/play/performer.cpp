@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-05
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4446,6 +4446,10 @@ performer::unset_queued_replace (bool clearbits)
 void
 performer::group_learn (bool learning)
 {
+    automation::action a = learning ?
+        automation::action::on : automation::action::off;
+
+    (void) set_ctrl_status(a, automation::ctrlstatus::learn);
     mutes().group_learn(learning);
     midi_control_out().send_learning(learning);
     for (auto notify : m_notify)
@@ -4455,12 +4459,9 @@ performer::group_learn (bool learning)
 void
 performer::group_learn_complete (const keystroke & k, bool good)
 {
-    mutes().group_learn(false);
+    group_learn(false);
     for (auto notify : m_notify)
-    {
-        (void) notify->on_group_learn(false);
         (void) notify->on_group_learn_complete(k, good);
-    }
 }
 
 /**
@@ -4762,49 +4763,58 @@ performer::clear_seq_edits ()
 bool
 performer::midi_control_keystroke (const keystroke & k)
 {
+    bool result = true;
     keystroke kkey = k;
     if (is_group_learn())
-        kkey.shift_lock();
+    {
+        if (kkey.is_press())
+            kkey.shift_lock();
+        else
+            result = false;             /* ignore the control-key release   */
+    }
 
-    const keycontrol & kc = m_key_controls.control(kkey.key());
-    bool result = kc.is_usable();
     if (result)
     {
-        automation::slot s = kc.slot_number();
-        const midioperation & mop = m_operations.operation(s);
-        if (mop.is_usable())
+        const keycontrol & kc = m_key_controls.control(kkey.key());
+        result = kc.is_usable();
+        if (result)
         {
-            /*
-             * Note that the "inverse" parameter is based on key press versus
-             * release.  Not all automation functions care about this setting.
-             * The opcontrol::allowed(int, bool) function checks for the
-             * non-keystroke-release status. Too tricky. Also, the index is
-             * meant only for pattern and mute-group control.
-             */
-
-            automation::action a = kc.action_code();
-            bool invert = ! kkey.is_press();
-            int d0 = (-1);                                  /* key flag */
-            int index = kc.control_code();                  /* i.e. d1  */
-            bool learning = is_group_learn();               /* before   */
-            result = mop.call(a, d0, index, invert);
-            if (result)
-            {
-                if (learning)
-                    group_learn_complete(kkey, ! is_group_learn());
-            }
-            else
+            automation::slot s = kc.slot_number();
+            const midioperation & mop = m_operations.operation(s);
+            if (mop.is_usable())
             {
                 /*
-                 * Using the "=" or "-" keys deliberately returns false.
+                 * Note that the "inverse" parameter is based on key press versus
+                 * release.  Not all automation functions care about this setting.
+                 * The opcontrol::allowed(int, bool) function checks for the
+                 * non-keystroke-release status. Too tricky. Also, the index is
+                 * meant only for pattern and mute-group control.
                  */
 
-                if (! m_seq_edit_pending && ! m_event_edit_pending)
-                    show_ordinal_error(kkey.key(), "call returned false");
+                automation::action a = kc.action_code();
+                bool invert = ! kkey.is_press();
+                int d0 = (-1);                                  /* key flag */
+                int index = kc.control_code();                  /* i.e. d1  */
+                bool learning = is_group_learn();               /* before   */
+                result = mop.call(a, d0, index, invert);
+                if (result)
+                {
+                    if (learning)
+                        group_learn_complete(kkey, ! is_group_learn());
+                }
+                else
+                {
+                    /*
+                     * Using the "=" or "-" keys deliberately returns false.
+                     */
+
+                    if (! m_seq_edit_pending && ! m_event_edit_pending)
+                        show_ordinal_error(kkey.key(), "call returned false");
+                }
             }
+            else
+                show_ordinal_error(kkey.key(), "call unusable");
         }
-        else
-            show_ordinal_error(kkey.key(), "call unusable");
     }
     return result;
 }
@@ -5007,7 +5017,6 @@ performer::set_mutes
                 change::yes : change:: no ;
 
             notify_mutes_change(mutegroup::unassigned(), c);
-
             if (putmutes)
                 rc().mute_groups().set(gmute, bits);
         }

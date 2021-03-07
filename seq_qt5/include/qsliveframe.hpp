@@ -93,6 +93,7 @@ private:                            // overrides of qslivebase functions
         seq::number seq, int & basex, int & basey
     ) override;
     virtual void color_by_number (int i) override;
+    virtual void set_mode_text (const std::string & mode = "") override;
     virtual void set_playlist_name (const std::string & plname = "") override;
     virtual void set_bank_values
     (

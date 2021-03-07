@@ -173,6 +173,13 @@ qsliveframe::~qsliveframe()
         delete m_msg_box;
 }
 
+
+void
+qsliveframe::set_mode_text (const std::string & /* mode */)
+{
+    // No code in place yet
+}
+
 /**
  *  Sets the name of the play-list.
  */

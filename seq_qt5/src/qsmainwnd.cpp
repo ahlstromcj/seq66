@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-03
+ * \updates       2021-03-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -258,8 +258,9 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
-    m_song_mode             (false),            /* perf().song_mode())      */
-    m_use_nsm               (usensm),           /* use_nsm() accessor       */
+    m_control_status        (automation::ctrlstatus::none),
+    m_song_mode             (false),
+    m_use_nsm               (usensm),
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
     m_previous_tick         (0),
@@ -1527,6 +1528,12 @@ qsmainwnd::refresh ()
     {
         m_song_mode = perf().song_mode();
         show_song_mode(m_song_mode);
+    }
+    if (m_control_status != perf().ctrl_status())
+    {
+        m_control_status = perf().ctrl_status();
+        if (not_nullptr(m_live_frame))
+            m_live_frame->set_mode_text(perf().ctrl_status_string());
     }
 
     midipulse tick = perf().get_tick();
@@ -3396,7 +3403,6 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
     }
     else
     {
-        std::ostringstream os;
         os
             << "Key '" << k.name() << "' (code = " << int(k.key())
             << ") is not a configured mute-group key. "

@@ -553,13 +553,13 @@
 \subsubsection{'rc' File / Keyboard Control Section}
 \label{subsubsec:configuration_rc_keyboard_control}
 
-   The keyboard control has been merged into the MIDI control and been moveed
-   into the 'ctrl' file.
+   The keyboard control section has been merged into the MIDI control section
+   and been moved into the 'ctrl' file.
    There is no longer any user-interface to change the
    keyboard control, for two reasons:
    (1) It is pretty easy to read, understand, and edit the 'ctrl' file, and
    (2) There are many more controls in \textsl{seq66}, and creating a
-   user-interface to edit them would not be worth the effort.
+   user-interface to edit them might not be worth the effort.
    We suspect most users will be happy enough with the default settings,
    and users of internationaly keyboards will find the 'ctrl' file easy enough
    to edit with a programmer's editor.
@@ -777,7 +777,8 @@
    The \textsl{Seq66} 'usr'
    configuration file provides a way to give more
    informative names to the MIDI busses, MIDI channels, and MIDI controllers of
-   a given system setup.  This configuration overrides the default values
+   a given system setup, and allows for some tweaking of the application.
+   This configuration overrides the default values
    of the \textbf{Event} drop-down list and menu items in the Pattern editor,
    and make them reflect the names of the MIDI Control (CC) values of one's
    devices.
@@ -1216,6 +1217,76 @@
    in the \texttt{-{}-option log=filename.log} option.
    There's more to the 'usr' configuration file than we've exposed here.
 
+\subsubsection{'usr' File / Additional Options}
+\label{subsubsec:usr_file_added_options}
+
+   \textbf{\texttt{[user-work-arounds]}} is a section that is a relic from
+   older versions of this application.  It can be ignored.  More useful options
+   are described below.
+
+\paragraph{'usr' File / Additional Options / [user-ui-tweaks]}
+\label{paragraph:user_file_added_options_tweaks}
+
+   \texttt{[user-ui-tweaks]} provides a small number of tweaks to the
+   user-interface.
+
+   \begin{verbatim}
+   [user-ui-tweaks]
+   10    # key_height
+   1     # use_new_seqedit
+   note-resume = false
+   \end{verbatim}
+
+   The key-height affects the default "width" of the piano keys in the pattern
+   sequence editor.  Defaults to 12 (pixels).
+   This option is also editable in the \textbf{Preferences} dialog.
+   There are vertical zoom buttons, and the \texttt{v/0/V} keystrokes to change
+   this on the fly, but those changes are not saved.
+
+   Normally, \textsl{Seq66} uses the old pattern editor in the 'Edit' tab.
+   If this value is set to 1, then the new, larger, more functional
+   pattern editor will be used in the 'Edit' tab; this
+   makes the main window larger.
+
+   The note-resume option, if active, causes any notes in progress
+   to be resumed when the pattern is toggled back on.
+   Observe that this setting uses the new "feature = value" format, which
+   should eventually be used for all settings.
+
+\paragraph{'usr' File / Additional Options / [user-session]}
+\label{paragraph:user_file_added_options_session}
+
+   \texttt{[user-session]} provides a way to cooperate with the
+   \textsl{Non Session Manager}.
+
+   \begin{verbatim}
+   [user-session]
+   session = none
+   url = ""
+   \end{verbatim}
+
+   See \sectionref{subsec:sessions_nsm_before_using_nsm}; it goes into great
+   detail.
+
+\paragraph{'usr' File / Additional Options / [new-pattern-editor]}
+\label{paragraph:user_file_added_options_pattern_editor}
+
+   \texttt{[new-pattern-editor]} contains settings values for recording
+	 when a new pattern editor is opened. A new pattern is indicated when
+	the loop has the default name, \textsl{Unititled}.
+ 	These values save time during a live recording session.
+   The valid values for record-style are \texttt{merge},
+ 	\texttt{overwrite}, and \texttt{expand}.
+
+   \begin{verbatim}
+   [new-pattern-editor]
+	armed = false
+	thru = false
+	record = false
+	qrecord = false
+	record-style = merge
+   \end{verbatim}
+
 \subsection{'ctrl' File}
 \label{subsec:configuration_ctrl}
 
@@ -1225,8 +1296,11 @@
    additional resources and ideas can be found at \url{linuxaudio.org}
    (\cite{midicontrol}).
    Also see the tutorial section \sectionref{sec:launchpad_mini}.
+   An \textsl{Open Document Format} spreadsheet shows layouts for the default
+   keystroke configuration (including pattern, mutes, and automation controls)
+   and for a couple of \textsl{Launchpad Mini} configurations.
 
-   This file provides settings for keyboard control, MIDI control, and for
+   The 'ctrl; file provides settings for keyboard control, MIDI control, and for
    specifying MIDI output to reflect \textsl{automation} commands in a device
    such as the \textsl{LaunchPad}..
    The name of this file is specfied in the 'rc' file as noted earlier.
@@ -1511,10 +1585,12 @@
    \index{L button}
    Note that this control corresponds to the "L" button in the main window
    user-interface.
-   \index{keys!Ctrl-L}
    \index{keys!l}
-   It can also be accessed by the hard-wired hot-key,
-   \texttt{Ctrl-L}. and the default hot-key, \texttt{l}.
+   It can also be accessed by the default hot-key, \texttt{l}.
+
+   Note that, once in learn-mode, there is no way to cancel learn-mode
+   except by selecting an illegal mute-group keystroke.
+   Also see \sectionref{sec:mutes_master}.
 
 \paragraph{Automation / Screen-Set Play}
 \label{paragraph:configuration_midi_ctrl_ssplay}

@@ -1264,12 +1264,11 @@ usrfile::write ()
         "\n"
         "# This first value specifies the height of the keys in the\n"
         "# sequence editor.  Defaults to 12 (pixels), but 8 is better.\n"
-        "# Currently used only in the Qt GUI.\n"
         "\n"
         ;
 
     uscratch = usr().key_height();
-    file << uscratch << "       # (user_ui_) key_height\n";
+    file << uscratch << "       # key_height\n";
 
     file << "\n"
         "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
@@ -1280,7 +1279,7 @@ usrfile::write ()
         ;
 
     uscratch = usr().use_new_seqedit();
-    file << uscratch << "       # (user_ui_) use_new_seqedit\n";
+    file << uscratch << "       # use_new_seqedit\n";
 
     std::string v = bool_to_string(usr().resume_note_ons());
     file << "\n"

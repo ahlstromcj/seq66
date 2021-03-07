@@ -294,6 +294,37 @@ midicontrolin::control (const midicontrol::key & k) const
         return sm_midicontrol_dummy;
 }
 
+/**
+ *  The possible status are contained in automation::ctrlstatus, and consist
+ *  of none, replace, snapshot, queue, keep_queue, oneshot, and learn. There
+ *  is a combo-status solo == queue + replace.
+ *
+ */
+
+std::string
+midicontrolin::status_string () const
+{
+    // m_control_status    (automation::ctrlstatus::none),
+
+    std::string result;
+    if (is_solo())
+        result = "Solo";
+    else if (is_keep_queue())
+        result = "Keep Q";
+    else if (is_queue())
+        result = "Queued";
+    else if (is_replace())
+        result = "Replace";
+    else if (is_snapshot())
+        result = "Snapshot";
+    else if (is_oneshot())
+        result = "Oneshot";
+    else if (is_learn())
+        result = "Learn";
+
+    return result;
+}
+
 void
 midicontrolin::show () const
 {

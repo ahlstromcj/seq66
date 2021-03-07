@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2020-12-05
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *
@@ -113,11 +113,11 @@ private:                            // overrides of qslivebase functions
     virtual void refresh (seq::number seqno);
 
     virtual void color_by_number (int i) override;
+    virtual void set_mode_text (const std::string & mode = "") override;
     virtual void set_playlist_name (const std::string & plname = "") override;
     virtual void set_bank_values
     (
-        const std::string & bankname = "",
-        int bankid = 0
+        const std::string & bankname = "", int bankid = 0
     ) override;
 
     virtual void update_bank (int bank) override;

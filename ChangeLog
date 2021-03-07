@@ -1,5 +1,196 @@
+2021-03-06  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/patterns_panel.tex,
+	libseq66/include/midi/jack_assistant.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/play/performer.cpp, nsis/Seq66Setup.nsi: Added
+	launchpad-mini.ods to doc, tightened performer a bit.
+
+2021-03-05  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, Seqtool/src/optionsfile.cpp,
+	data/linux/qseq66-portmap.rc, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/midi/mastermidibase.hpp,
+	libseq66/include/midi/midibytes.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp, libseq66/src/cfg/rcfile.cpp,
+	libseq66/src/cfg/usrfile.cpp, libseq66/src/cfg/usrsettings.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/midi/midifile.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/forms/qseditoptions.ui, seq_qt5/src/qclocklayout.cpp,
+	seq_qt5/src/qseditoptions.cpp: Fixed issue #42, scrollable I/O
+	ports, more ports.
+
+2021-03-04  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* libseq66/include/app_limits.h, libseq66/src/cfg/rcfile.cpp,
+	seq_qt5/src/qclocklayout.cpp: Increased number of potential ports by
+	a lot.
+
+2021-03-03  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/include/play/triggers.hpp,
+	libseq66/src/play/performer.cpp, libseq66/src/play/screenset.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qsliveframe.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Updating triggers, fixing song recording.
+
+2021-03-01  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/play/triggers.cpp,
+	seq_qt5/src/qsmainwnd.cpp: Quick check-in.
+
+2021-02-28  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* data/linux/qseq66-lp-mini-alt.ctrl,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/play/performer.cpp: More refining of button status
+	display.
+	* data/linux/qseq66-lp-mini-alt.ctrl,
+	data/linux/qseq66-lp-mini.ctrl, data/linux/qseq66.rc,
+	doc/latex/tex/launchpad_mini.tex,
+	libseq66/include/cfg/midicontrolfile.hpp,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/play/performer.cpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Enhanced and
+	fixed automation controls and display.
+
+2021-02-25  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/notes/slots.txt, data/linux/qseq66-lp-mini-8x8.ctrl,
+	data/linux/qseq66-lp-mini.ctrl, data/linux/qseq66.ctrl,
+	data/samples/nanomap.ctrl, data/samples/rowclipsmap.ctrl,
+	data/win/qpseq66.ctrl, doc/latex/tex/configuration.tex,
+	doc/latex/tex/launchpad_mini.tex, doc/latex/tex/patterns_panel.tex,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/ctrl/midicontrolout.hpp,
+	libseq66/include/ctrl/opcontrol.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/screenset.hpp,
+	libseq66/include/play/setmapper.hpp,
+	libseq66/src/cfg/midicontrolfile.cpp,
+	libseq66/src/ctrl/automation.cpp,
+	libseq66/src/ctrl/keycontainer.cpp,
+	libseq66/src/ctrl/midicontrolout.cpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/screenset.cpp, libseq66/src/play/sequence.cpp: 
+	Fixed queue and keep-queue, some clean-up.
+
+2021-02-23  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66-lp-mini.ctrl,
+	doc/latex/tex/launchpad_mini.tex,
+	libseq66/include/ctrl/midicontrolin.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/src/ctrl/opcontrol.cpp, libseq66/src/play/performer.cpp,
+	seq_qt5/include/qslivegrid.hpp, seq_qt5/include/qsmainwnd.hpp,
+	seq_qt5/src/qslivegrid.cpp, seq_qt5/src/qsmainwnd.cpp: Enhancements
+	to MIDI I/O control.
+
+2021-02-22  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66-lp-mini.ctrl,
+	doc/latex/tex/concepts.tex, doc/latex/tex/configuration.tex,
+	doc/latex/tex/pattern_editor.tex,
+	libseq66/include/ctrl/automation.hpp,
+	libseq66/include/ctrl/keycontrol.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/play/listsbase.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, libseq66/src/util/calculations.cpp: 
+	Made extracting port nick-names more robust, fixed bpm up and down,
+	more automation.
+
+2021-02-21  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* contrib/dd-11/dd-11-notes.log, data/samples/GM_DD-11.drums,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/include/util/filefunctions.hpp,
+	libseq66/src/play/listsbase.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp,
+	libseq66/src/util/filefunctions.cpp,
+	seq_qt5/forms/qseqeditframe64.ui,
+	seq_qt5/include/qseqeditframe64.hpp, seq_qt5/include/qseqframe.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqeventframe.cpp,
+	seq_qt5/src/qseqframe.cpp: Fixed bug parsing Qsynth ALSA port name
+	and tested note-mapping with DD-11.
+	* libseq66/src/midi/eventlist.cpp, seq_qt5/include/qseqkeys.hpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqkeys.cpp,
+	seq_qt5/src/qseqroll.cpp: Fixed vertical coordination of qseqkeys
+	and qseqroll.
+
+2021-02-19  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* README.md, data/linux/qseq66.rc, data/samples/rowclipsmap.rc,
+	data/win/qpseq66.rc, doc/latex/tex/palettes.tex,
+	doc/latex/tex/pattern_editor.tex, doc/latex/tex/patterns_panel.tex,
+	doc/latex/tex/seq66-user-manual.tex,
+	libseq66/include/play/sequence.hpp, libseq66/src/play/sequence.cpp,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qperfroll.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qseqroll.cpp,
+	seq_qt5/src/qsliveframe.cpp, seq_qt5/src/qstriggereditor.cpp: More
+	iterator cleanup for sequence cbegin/end.
+
+2021-02-18  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* doc/latex/tex/kbd_mouse.tex,
+	libseq66/include/cfg/usrsettings.hpp,
+	libseq66/include/midi/event.hpp,
+	libseq66/include/play/performer.hpp,
+	libseq66/include/play/sequence.hpp, libseq66/src/midi/event.cpp,
+	libseq66/src/midi/eventlist.cpp, libseq66/src/play/performer.cpp,
+	libseq66/src/play/sequence.cpp, seq_portmidi/src/mastermidibus.cpp,
+	seq_qt5/forms/qseqeditframe64.ui, seq_qt5/src/qloopbutton.cpp,
+	seq_qt5/src/qseqdata.cpp, seq_qt5/src/qseqeditframe64.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qslivegrid.cpp,
+	seq_qt5/src/qstriggereditor.cpp: Working out event-iterator crashes
+	and tentative auto-step oneshot recording.
+
+2021-02-16  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* configure: Updated configure script.
+	* libseq66/include/midi/event.hpp,
+	libseq66/include/midi/eventlist.hpp,
+	libseq66/include/play/sequence.hpp,
+	libseq66/src/cfg/usrsettings.cpp, libseq66/src/midi/eventlist.cpp,
+	libseq66/src/play/sequence.cpp, seq_qt5/include/qseqroll.hpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qseqdata.cpp,
+	seq_qt5/src/qseqroll.cpp, seq_qt5/src/qsmainwnd.cpp: Mitigated
+	seqfault occuring when large numbers of events accumulated in
+	auto-step/step-edit recording.
+
+2021-02-15  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* : commit acefb6811d3a55c42a71ea0c438f645abba6d3c8 Author: Chris
+	Ahlstrom <ahlstromcj@gmail.com> Date:   Mon Feb 15 15:06:53 2021
+	-0500
+
+2021-02-14  Chris Ahlstrom <ahlstromcj@gmail.com>
+
+	* Makefile.in, libseq66/src/midi/midifile.cpp,
+	seq_qt5/src/qloopbutton.cpp, seq_qt5/src/qperfnames.cpp,
+	seq_qt5/src/qseqeditframe64.cpp, seq_qt5/src/qsliveframe.cpp: Tweaks
+	to eliminate divide-by-zero.
+
 2021-02-13  Chris Ahlstrom <ahlstromcj@gmail.com>
 
+	* ChangeLog, README.md: Updated master ChangeLog.
 	* : Version 0.92.0 pending.
 
 2021-02-12  Chris Ahlstrom <ahlstromcj@gmail.com>

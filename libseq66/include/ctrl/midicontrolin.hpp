@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-05
+ * \updates       2021-03-06
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -186,6 +186,7 @@ public:
         int opslot
     );
     const midicontrol & control (const midicontrol::key & k) const;
+    std::string status_string () const;
 
     bool inactive_allowed () const
     {
@@ -205,6 +206,11 @@ public:
     void loaded_from_rc (bool flag)
     {
         m_loaded_from_rc = flag;
+    }
+
+    automation::ctrlstatus status () const
+    {
+        return m_control_status;
     }
 
     bool is_status () const
@@ -273,6 +279,16 @@ public:
     bool is_oneshot (automation::ctrlstatus status) const
     {
         return bit_test_and(status, automation::ctrlstatus::oneshot);
+    }
+
+    bool is_learn () const
+    {
+        return bit_test_and(m_control_status, automation::ctrlstatus::learn);
+    }
+
+    bool is_learn (automation::ctrlstatus status) const
+    {
+        return bit_test_and(status, automation::ctrlstatus::learn);
     }
 
     bool is_solo () const
