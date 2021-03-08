@@ -21,7 +21,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2021-02-07
+# \updates     2021-03-06
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -395,7 +395,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = make_dox *.cfg dox/*.dox *.pdf
+EXTRA_DIST = make_dox *.cfg dox/*.dox *.pdf *.ods
 
 #*****************************************************************************
 # SUBDIRS
@@ -738,6 +738,7 @@ uninstall-am:
 install-data-local:
 	mkdir -p $(DESTDIR)$(seq66docdir)
 	cp -r -p $(top_srcdir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
 
 #*******************************************************************************
 # uninstall-hook
