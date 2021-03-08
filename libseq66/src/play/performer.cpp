@@ -855,8 +855,8 @@ performer::sequence_label (const sequence & seq)
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        bussbyte bus = seq.get_midi_bus();
-        int chan = seq.is_smf_0() ? 0 : seq.get_midi_channel() + 1;
+        bussbyte bus = seq.seq_midi_bus();
+        int chan = seq.is_smf_0() ? 0 : int(seq.seq_midi_channel()) + 1;
         int bpb = int(seq.get_beats_per_bar());
         int bw = int(seq.get_beat_width());
         char tmp[32];

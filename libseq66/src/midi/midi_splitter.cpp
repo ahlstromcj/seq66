@@ -274,7 +274,7 @@ midi_splitter::split_channel
     s->set_master_midi_bus(p.master_bus());
     s->set_name(std::string(tmp));
     s->set_midi_channel(channel);
-    s->set_midi_bus(main_seq.get_midi_bus());
+    s->set_midi_bus(main_seq.seq_midi_bus());
     s->zero_markers();
 
     midipulse length_in_ticks = 0;      /* an accumulator of delta times    */

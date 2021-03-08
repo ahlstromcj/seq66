@@ -1014,7 +1014,7 @@ sequence::remove (event::buffer::iterator evi)
         event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
-            master_bus()->play(m_true_bus, &er, m_midi_channel);
+            master_bus()->play(m_true_bus, &er, midi_channel(er));
             --m_playing_notes[er.get_note()];                   // ugh
         }
         if (m_events.remove(evi))
@@ -2950,7 +2950,7 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, midi_channel(e));
     master_bus()->flush();
 }
 
@@ -2970,7 +2970,7 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, midi_channel(e));
     master_bus()->flush();
 }
 
@@ -4559,7 +4559,8 @@ sequence::title () const
  * \param ch
  *      The MIDI channel to set as the output channel number for this
  *      sequence.  This value can range from 0 to 15, but greater values are
- *      converted to c_midibyte_max = 0xFF.
+ *      converted to c_midichannel_null = 0x80 (not c_midibyte_max = 0xFF
+ *      anymore).
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -4575,9 +4576,11 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
-        m_no_channel = ch >= c_midichannel_max;     /* 16 */
+        m_no_channel = ch >= c_midichannel_max;     /* 16   */
         off_playing_notes();
-        if (! m_no_channel)
+        if (m_no_channel)
+            m_midi_channel = c_midichannel_null;    /* 0x80 */
+        else
             m_midi_channel = ch;
 
         if (user_change)
@@ -4597,15 +4600,19 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
 std::string
 sequence::to_string () const
 {
+    midibyte channel = seq_midi_channel();
+    std::string chanstring = is_null_channel(channel) ?
+        "null" : std::to_string(int(channel) + 1) ;
+
     std::string result = "Pattern ";
     result += std::to_string(seq_number());
     result +=  " '";
     result += name();
     result += "'\n";
     result += "Channel ";
-    result += std::to_string(get_midi_channel() + 1);
+    result += chanstring;
     result += ", Bus ";
-    result += std::to_string(get_midi_bus());
+    result += std::to_string(seq_midi_bus());
     result += "\n Transposeable: ";
     result += bool_to_string(transposable());
     result += "\n Length (ticks): ";
@@ -4679,7 +4686,7 @@ sequence::off_playing_notes ()
         while (m_playing_notes[x] > 0)
         {
             e.set_data(x, midibyte(0));               /* or is 127 better?  */
-            master_bus()->play(m_true_bus, &e, m_midi_channel);
+            master_bus()->play(m_true_bus, &e, midi_channel(e));
             if (m_playing_notes[x] > 0)
                 --m_playing_notes[x];
         }
@@ -5042,7 +5049,7 @@ sequence::show_events () const
     printf
     (
         "sequence #%d '%s': channel %d, events %d\n",
-        seq_number(), name().c_str(), get_midi_channel(), event_count()
+        seq_number(), name().c_str(), seq_midi_channel(), event_count()
     );
     for (auto iter = cbegin(); ! cend(iter); ++iter)
     {

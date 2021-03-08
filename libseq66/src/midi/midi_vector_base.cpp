@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2019-09-18
+ * \updates       2021-03-08
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -158,7 +158,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
     {
         midibyte d0 = e.data(0);                    /* encode status & data */
         midibyte d1 = e.data(1);
-        midibyte channel = m_sequence.get_midi_channel();
+        midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
         add_variable(deltatime);                    /* encode delta_time    */
         if (is_null_channel(channel))
@@ -408,7 +408,7 @@ midi_vector_base::fill_proprietary ()
     put(0x7F);                                      /* SeqSpec marker   */
     put(0x05);                                      /* event length     */
     add_long(c_midibus);                            /* Seq24 SeqSpec ID */
-    put(m_sequence.get_midi_bus());                 /* MIDI buss number */
+    put(m_sequence.seq_midi_bus());                 /* MIDI buss number */
 
     add_variable(0);                                /* timesig delta t  */
     put(0xFF);
@@ -423,13 +423,13 @@ midi_vector_base::fill_proprietary ()
     put(0x7F);
     put(0x05);
     add_long(c_midich);                             /* channel override */
-    put(m_sequence.get_midi_channel());
+    put(m_sequence.seq_midi_channel());
     if (! usr().global_seq_feature())
     {
         /**
          * New feature: save more sequence-specific values, if not saved
-         * globally.  We use a single byte for the key and scale, and a long for
-         * the background sequence.  We save these values only if they are
+         * globally.  We use a single byte for the key and scale, and a long
+         * for the background sequence.  We save these values only if they are
          * different from the defaults; in most cases they will have been left
          * alone by the user.  We save per-sequence values here only if the
          * global-background-sequence feature is not in force.

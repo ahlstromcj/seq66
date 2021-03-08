@@ -271,9 +271,8 @@ private:
 
     /**
      *  Contains the proper MIDI channel for this sequence.  However, if this
-     *  value is c_midibyte_max (0xFF), then this sequence is an SMF 0
-     *  track, and has no single channel.  Please note that this is the output
-     *  channel.
+     *  value is c_midichannel_null, then this sequence is an SMF 0 track, and
+     *  has no single channel.  Please note that this is the output channel.
      */
 
     midibyte m_midi_channel;
@@ -1267,9 +1266,14 @@ public:
     void set_dirty_mp ();
     void set_dirty ();
 
-    midibyte get_midi_channel () const
+    midibyte seq_midi_channel () const
     {
-        return m_no_channel ? c_midibyte_max : m_midi_channel;
+        return m_no_channel ? c_midichannel_null : m_midi_channel;
+    }
+
+    midibyte midi_channel (const event & ev) const
+    {
+        return m_no_channel ? ev.channel() : m_midi_channel ;
     }
 
     /**
@@ -1283,7 +1287,7 @@ public:
 
     void set_midi_channel
     (
-        midibyte ch = c_midibyte_max,
+        midibyte ch = c_midichannel_null,
         bool user_change = false
     );
     std::string to_string () const;
@@ -1381,7 +1385,7 @@ public:
         return m_trigger_offset;
     }
 
-    bussbyte get_midi_bus () const
+    bussbyte seq_midi_bus () const
     {
         return m_nominal_bus;
     }

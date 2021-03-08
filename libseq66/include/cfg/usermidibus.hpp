@@ -163,7 +163,7 @@ public:
      * \return
      *      Returns the maximum number of MIDI channels.
      *      Remember that the instrument channels for each MIDI buss
-     *      range from 0 to 15 (c_midichannel_max).
+     *      range from 0 to 15 (c_midichannel_max - 1).
      */
 
     int channel_max () const

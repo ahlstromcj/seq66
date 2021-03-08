@@ -236,9 +236,9 @@ triggers::pop_redo ()
  *  The for-loop goes through all the triggers, determining if there are
  *  trigger start/end values before the \a end_tick.  If so, then the trigger
  *  state is set to true (start only within the tick range) or false (end is
- *  within the tick range), and the trigger tick is set to start or end.
- *  The first start or end trigger that is past the end tick cause the search
- *  to end.
+ *  within the tick range), and the trigger tick is set to start or end.  The
+ *  first start or end trigger that is past the end tick cause the search to
+ *  end.
  *
  *                  -------------------------------------
  *      tick_start |                                     | tick_end
@@ -254,10 +254,10 @@ triggers::pop_redo ()
  *  If the trigger state has changed, then the start/end ticks are passed back
  *  to the sequence, and the trigger offset is adjusted.
  *
- *  If we have reached a new chunk of drawn patterns in the song data,
- *  and we are not recording, then trigger unsets the playback block
- *  on this pattern's events.  The song_playback_block() function
- *  deals with live-play recording of triggers.
+ *  If we have reached a new chunk of drawn patterns in the song data, and we
+ *  are not recording, then trigger unsets the playback block on this
+ *  pattern's events.  The song_playback_block() function deals with live-play
+ *  recording of triggers.
  *
  * \param start_tick
  *      Provides the starting tick value, and returns the modified value as a
@@ -675,67 +675,6 @@ triggers::adjust_offsets_to_length (midipulse newlength)
         t.offset(newlength - t.offset());
     }
 }
-
-/**
- *  Not sure what these diagrams are for yet.
- *
-\verbatim
-... a
-[      ][      ]
-...
-... a
-...
-
-5   7    play
-3        offset
-8   10   play
-
-X...X...X...X...X...X...X...X...X...X...
-L       R
-[        ] [     ]  []  orig
-[                    ]
-
-        <<
-        [     ]    [  ][ ]  [] split on the R marker, shift first
-        [     ]        [     ]
-        delete middle
-        [     ][ ]  []         move ticks
-        [     ][     ]
-
-        L       R
-        [     ][ ] [     ]  [] split on L
-        [     ][             ]
-
-        [     ]        [ ] [     ]  [] increase all after L
-        [     ]        [             ]
-\endverbatim
- *
-\verbatim
-|...|...|...|...|...|...|...
-
-0123456789abcdef0123456789abcdef
-[      ][      ][      ][      ][      ][
-
-[  ][      ][  ][][][][][      ]  [  ][  ]
-0   4       4   0 7 4 2 0         6   2
-0   4       4   0 1 4 6 0         2   6 inverse offset
-
-[              ][              ][              ]
-[  ][      ][  ][][][][][      ]  [  ][  ]
-0   c       4   0 f c a 8         e   a
-0   4       c   0 1 4 6 8         2   6  inverse offset
-
-[                              ][
-[  ][      ][  ][][][][][      ]  [  ][  ]
-k   g f c a 8
-0   4       c   g h k m n       inverse offset
-
-0123456789abcdefghijklmonpq
-ponmlkjihgfedcba9876543210
-0fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210
-\endverbatim
- *
- */
 
 /**
  *  Copies triggers to a point distant from a given tick.

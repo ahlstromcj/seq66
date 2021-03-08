@@ -202,10 +202,13 @@ const int c_busscount_max           = 48;
 
 /**
  *  Indicates the maximum number of MIDI channels, counted internally from 0
- *  to 15, and by humans (sequencer user-interfaces) from 1 to 16.
+ *  to 15, and by humans (sequencer user-interfaces) from 1 to 16. This value
+ *  is also used as a code to indicate that a sequence will use the events
+ *  present in the channel.
  */
 
 const int c_midichannel_max         = 16;
+const int c_midichannel_null        = 0x80;
 
 /*
  * -------------------------------------------------------------------------
@@ -525,13 +528,13 @@ is_good_midibyte (midibyte b)
 }
 
 /**
- *  Compares a channel value to the maximum value.
+ *  Compares a channel value to the maximum (and illegal) value.
  */
 
 inline bool
 is_null_channel (midibyte c)
 {
-    return c == c_midibyte_max;
+    return c >= c_midichannel_null;     /* c_midibyte_max */
 }
 
 }               // namespace seq66

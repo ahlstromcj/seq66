@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-01-23
+ * \updates       2021-03-08
  * \license       GNU GPLv2 or above
  *
  */
@@ -162,10 +162,10 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
 {
     file
         << "Sequence #" << s->seq_number() << " '" << s->name() << "'\n"
-        << "        Channel: " << int(s->get_midi_channel()) << "\n"
+        << "        Channel: " << int(s->seq_midi_channel()) << "\n"
         << "          Beats: " << s->get_beats_per_bar() << "/"
                                << s->get_beat_width() << "\n"
-        << "         Busses: " << int(s->get_midi_bus()) << "-->"
+        << "         Busses: " << int(s->seq_midi_bus()) << "-->"
                                << int(s->true_bus()) << "\n"
         << " Length (ticks): " << long(s->get_length()) << "\n"
         << "Events;triggers: " << s->event_count() << "; "

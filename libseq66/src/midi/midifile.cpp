@@ -283,24 +283,25 @@ midifile::read_long ()
 
 /**
  *  We want to be able to support a special case, the c_mutegroups count.  In
- *  Seq24, the count was always 1024 (0x400), which would be represented in the
- *  MIDI file as 0x00 0x04 0x00 0x00.  Other numbers use the same encoding, which
- *  does not use the MIDI VLV encoding at all.  The bytes are stored
- *  conventionally.
+ *  Seq24, the count was always 1024 (0x400), which would be represented in
+ *  the MIDI file as 0x00 0x04 0x00 0x00.  Other numbers use the same
+ *  encoding, which does not use the MIDI VLV encoding at all.  The bytes are
+ *  stored conventionally.
  *
  *  We also want to be able to support counts other than 1024 (32 groups x 32
- *  sequences), such as 1024 = 16 groups x 64 sequences and 1536 = 16 groups x 96
- *  sequences.  We can adopt a special encoding if the value is not 0 or 1024:
+ *  sequences), such as 1024 = 16 groups x 64 sequences and 1536 = 16 groups x
+ *  96 sequences.  We can adopt a special encoding if the value is not 0 or
+ *  1024:
  *
  *      -   2-bytes group countvalue
  *      -   2-bytes sequence count value
  *
  *  So, 16 groups x 64 sequences would be represented by 0x1040 = 4160 dec.
- *  16 groups x 96 sequences would be represented by 0x1060 = 4192 dec.
- *  And 1024 dec = 0x0400 would represent 4 groups and 0 sequences, obviously
+ *  16 groups x 96 sequences would be represented by 0x1060 = 4192 dec.  And
+ *  1024 dec = 0x0400 would represent 4 groups and 0 sequences, obviously
  *  bogus.
  *
- *  Recall that midilong (see midi/midibytes.hpp) is unsigned.
+ *  Recall that midilong (see midi/midibytes.hpp) is still signed.
  *
  * \param [out] highbytes
  *      Provides the value of the most significant 2 bytes of the four-byte
@@ -1618,19 +1619,20 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         midilong seqspec = parse_prop_header(file_size);
 
         /*
-         * Seq24 would store the MIDI control setting in the MIDI file.
-         * While this could be a useful feature, it seems a bit confusing, since
-         * the user/musician will more likely define those controls for his set of
+         * Seq24 would store the MIDI control setting in the MIDI file.  While
+         * this could be a useful feature, it seems a bit confusing, since the
+         * user/musician will more likely define those controls for his set of
          * equipment to apply to all songs.
          *
          * Furthermore, we would need to load these control settings into a
          * midicontrolin (see ctrl/midicontrolin modules).
          *
-         * And, lastly, Seq24 never wrote these controls to the file.  It merely
-         * wrote the c_midictrl code, followed by a long 0.
+         * And, lastly, Seq24 never wrote these controls to the file.  It
+         * merely wrote the c_midictrl code, followed by a long 0.
          *
-         * For now, we are going to evade this functionality.  We will continue to
-         * write this section, and try to read it, but expect it to be empty.
+         * For now, we are going to evade this functionality.  We will
+         * continue to write this section, and try to read it, but expect it
+         * to be empty.
          */
 
         if (seqspec == c_midictrl)
@@ -1658,7 +1660,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             {
                 read_byte_array(a, 6);
 
-#if defined USE_MIDI_CONTROL_IN_SONGS           // WHY DID I DO THIS?  INVESTIGATE
+#if defined USE_MIDI_CONTROL_IN_SONGS                   /* deprecated */
                 p.midi_control_toggle(i).set(a);
 #endif
                 read_byte_array(a, 6);
@@ -1673,12 +1675,6 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 #endif
             }
         }
-
-        /*
-         * As with c_midictrl, this feature was never fully implemented in
-         * Seq24.  We barely handle this data.
-         */
-
         seqspec = parse_prop_header(file_size);
         if (seqspec == c_midiclocks)
         {
@@ -1755,9 +1751,9 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             (void) parse_mute_groups(p);
 
         /*
-         * We let Seq66 read this new stuff even if legacy mode or the
-         * global-background sequence is in force.  Those two flags affect
-         * only the writing of the MIDI file, not the reading.
+         * We let Seq66 read this new stuff even the global-background
+         * sequence is in force.  That flag affects only the writing of the
+         * MIDI file, not the reading.
          */
 
         seqspec = parse_prop_header(file_size);
@@ -1896,9 +1892,9 @@ midifile::parse_mute_groups (performer & p)
                 setsize = low;
 
                 /*
-                 * What about rows & columns?  Ultimately, the set-size must match
-                 * that specified by the application's user-interface as must the
-                 * rows and columns.
+                 * What about rows & columns?  Ultimately, the set-size must
+                 * match that specified by the application's user-interface as
+                 * must the rows and columns.
                  */
             }
             for (unsigned g = 0; g < groupcount; ++g)
@@ -1907,12 +1903,12 @@ midifile::parse_mute_groups (performer & p)
                 midilong group = read_long();
                 for (unsigned s = 0; s < setsize; ++s)
                 {
-                    midilong gmutestate = read_long();  /* why long for a bit!? */
+                    midilong gmutestate = read_long();  /* long for a bit!? */
                     bool status = gmutestate != 0;
                     mutebits.push_back(midibool(status));
                 }
                 if (! mutes.load(group, mutebits))
-                    break;                              /* usually a duplicate  */
+                    break;                              /* often duplicate  */
             }
         }
     }

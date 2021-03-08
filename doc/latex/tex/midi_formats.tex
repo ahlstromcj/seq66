@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2018-10-31
+% \update      2021-03-08
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,25 +18,33 @@
 \section{MIDI Format and Other MIDI Notes}
 \label{sec:midi_format_and_midi_notes}
 
+   \textsl{Seq66} tries to handle the most common MIDI files, and to provide
+   song information in a format that does not break other MIDI-compliant
+   sequencers.
+
+   MIDI SMF 0 files have all information on one track, which mixes together
+   data on all channels of events included in the songe.
+   MIDI SMF 1 files have channel data on separate tracks.
+   \textsl{Seq66} can use this channel information, but its main mode is to
+   ignore the channel information and replace it with the channel requested by
+   the user.
+   \textsl{Seq66} also embeds extra information into a song via the
+   "Sequencer-Specific Meta-Event" mechanism described on page 139 of the
+   following document:
+
+   \url{http://www.shclemen.com/download/The Complete MIDI1.0 Detailed Spec.pdf}
+
 \subsection{Standard MIDI Format 0}
 \label{subsec:midi_format_smf_0}
 
    \index{smf 0}
    \index{channel split}
-   \textsl{Seq66} can read and import SMF 0 MIDI files, and performs
-   channel splitting automatically.
-   When an SMF 0 format is detected, \textsl{Seq66} first
-   puts all of the events into the same sequence/pattern.
+   \textsl{Seq66} can read and import SMF 0 MIDI files, and splits tracks by
+   channel.
+   When SMF 0 format is detected, \textsl{Seq66} puts all of
+   the events into the same sequence/pattern, pattern 16.
    As the file is processed, a list of the channels present in the
    track is maintained.
-
-   Tempo and Time Signature events are read, if present.
-   When saving a \textsl{Seq66} MIDI file,
-   the Tempo and Time Signature events are saved as MIDI events.
-   \index{new!time/tempo saved}
-   This allows other sequencers to read a \textsl{Seq66} MIDI file.
-   This addition of Tempo can fix imported tracks that don't have a
-   measure value.
 
    Once the end-of-track is encountered in the SMF 0 file, a new empty
    slot is created for each channel found.
@@ -53,159 +61,477 @@
    One can delete this track before saving the file, or keep it muted.
 
    The sequence number of each new track is the internal channel number
-   (always the actual MIDI channel number minus one).
-   The time-signature of each track is set to defaults, unless a
+   (always the MIDI channel number, minus one).
+   The time-signature of each track is set to the default, unless a
    time-signature event is encountered in the imported file.
 
    \index{tempo events}
    \index{time signature events}
-   \textsl{Seq66} supports reading some other
-   information a MIDI SMF 0 track might have, such as the Tempo and the
-   Time Signature.  It saves this information in the first track
-   of the MIDI file.
+   Tempo and Time Signature events are read, if present.
+   When saving a \textsl{Seq66} MIDI file,
+   the Tempo and Time Signature events are saved as MIDI events in
+   the first track.
+   This allows other sequencers to read a \textsl{Seq66} MIDI file.
+%  This addition of Tempo can fix imported tracks that don't have a
+%  measure value.
 
-\subsection{Proprietary Track Format}
+\subsection{Sequencer-Specific Meta-Events Format}
 \label{subsec:proprietary_track_format}
+
+   This data, also known as SeqSpec data, provides a way to encode information
+   that a specific sequencer application needs, while marking it so that other
+   sequences can safely ignore the information or implement it.
 
    The authors of \textsl{Seq24} took trouble to ensure that the format
    of the MIDI files it writes are compatible with other MIDI applications.
-   \textsl{Seq24} also stores its own information (triggers, MIDI control
-   information, etc) in the file, but marked so that other sequencers can read
+   \textsl{Seq24} also stores its "proprietary"
+   information (triggers, mute-groups, MIDI control
+   information, etc) in the file, but marked as per the MIDI specification
+   so that other sequencers can read
    the file and ignore its \textsl{Seq24}-specific information.
-   \textsl{Seq66} continues that MIDI-compliant behavior, and improved it.
-
+   \textsl{Seq66} continues that MIDI-compliant behavior, and improves it.
    Each sequence/pattern/loop can contain proprietary information, such as the
    palette color assigned to that track.
-   \index{proprietary track}
-   The last chunk of sequencer-specific information, that covers the whole
-   tune, is the "proprietary track".
+   \index{SeqSpecs}
+   The format of sequencer-specific meta-events (\textsl{SeqSpecs} for short)
+   is:
 
-   All of the SeqSpecs are shown in the next table.
-   The \texttt{c\_triggers} tag is obsolete, but still present.
+   \begin{verbatim}
+      FF 7F len data
+   \end{verbatim}
+
+   The first byte of the data is the "manufacturer ID", which \textsl{Seq24}
+   set to "24". Another "24" is added to make the number \texttt{0x2424}
+   easy to search in a binary hex editor, such as \textsl{hexer}.
+
+   All of the SeqSpecs are shown in the next table. It shows the name, length,
+   and data for each one. A length of 0 means the SeqSpec is not implemented.
+   The \texttt{c\_triggers} tag is obsolete, but still present, for
+   backward compatibility.
+   A named value (e.g. "buss") indicates a byte that specifies the value set by
+   the SeqSpec.
+   Please note that some of these values (for example, \texttt{c\_timesig}
+   could be better implemented by standard MIDI meta-events. Legacy code!
+   Some values only appear if they are non-default, such as patterns
+   having no color.
+   Flags are always one byte; the minimum "length" value is 5.
+   Values with more than one byte are indicated by "S" (short, or two bytes),
+   "L" (long, or four bytes).
+
+   An asterisk indicates a per-track setting, as
+   opposed to a whole-song setting. A question-mark indicates that the tag is
+   either deprecated or not yet implemented.
+   For example, \texttt{c\_midictrl} is completely replaced by the
+   'ctrl' file, though \textsl{Seq66} will still read (and ignore)
+   this SeqSpec if present.
+   SeqSpecs named "gap" or "reserved" are not used.
 
    \begin{table}[htb]
       \centering
       \caption{All SeqSpec Items}
       \label{table:seqspec_items_all}
-      \begin{tabular}{l l}
-         \texttt{c\_midibus}        & \texttt{0x24240001 00 00 00 00} \\
-         \texttt{c\_midich}         & \texttt{0x24240002 00 00 00 00} \\
-         \texttt{c\_midiclocks}     & \texttt{0x24240003 00 00 00 00} \\
-         \texttt{c\_triggers}       & \texttt{0x24240004 00 00 00 00} \\
-         \texttt{c\_notes}          & \texttt{0x24240005 00 00 00 00} \\
-         \texttt{c\_timesig}        & \texttt{0x24240006 00 00 00 00} \\
-         \texttt{c\_bpmtag}         & \texttt{0x24240007 00 00 00 00} \\
-         \texttt{c\_triggers\_new}  & \texttt{0x24240008 00 00 00 00} \\
-         \texttt{c\_mutegroups}     & \texttt{0x24240009 00 00 00 00} \\
-         \texttt{c\_gap\_A}         & \texttt{0x2424000A 00 00 00 00} \\
-         \texttt{c\_gap\_B}         & \texttt{0x2424000B 00 00 00 00} \\
-         \texttt{c\_gap\_C}         & \texttt{0x2424000C 00 00 00 00} \\
-         \texttt{c\_gap\_D}         & \texttt{0x2424000D 00 00 00 00} \\
-         \texttt{c\_gap\_E}         & \texttt{0x2424000E 00 00 00 00} \\
-         \texttt{c\_gap\_F}         & \texttt{0x2424000F 00 00 00 00} \\
-         \texttt{c\_midictrl}       & \texttt{0x24240010 00} \\
-         \texttt{c\_musickey}       & \texttt{0x24240011 00} \\
-         \texttt{c\_musicscale}     & \texttt{0x24240012 00} \\
-         \texttt{c\_backsequence}   & \texttt{0x24240013 00 00 00 00} \\
-         \texttt{c\_transpose}      & \texttt{0x24240014 00 00 00 00} \\
-         \texttt{c\_perf\_bp\_mess} & \texttt{0x24240015 00 00 00 00} \\
-         \texttt{c\_perf\_bw}       & \texttt{0x24240016 00 00 00 00} \\
-         \texttt{c\_tempo\_map}     & \texttt{0x24240017 00 00 00 00} \\
-         \texttt{c\_reserver\_1}    & \texttt{0x24240018 00 00 00 00} \\
-         \texttt{c\_reserver\_2}    & \texttt{0x24240019 00 00 00 00} \\
-         \texttt{c\_tempo\_track}   & \texttt{0x2424001A 00 00 00 00} \\
-         \texttt{c\_seq\_color}     & \texttt{0x2424001B 00 00 00 00} \\
-         \texttt{c\_seq\_edit\_mode} & \texttt{0x2424001C 00 00 00 00} \\
-         \texttt{c\_seq\_loopcount} & \texttt{0x2424001D 00 00 00 00} \\
+      \begin{tabular}{l l l l}
+         \textbf{SeqSpec tag}        & \textbf{Type} & \textbf{Length}   & \textbf{Data} \\
+         \texttt{c\_midibus}         & Track         & 5                 & \texttt{0x24240001 buss} \\
+         \texttt{c\_midich}          & Track         & 5                 & \texttt{0x24240002 channel} \\
+         \texttt{c\_midiclocks}      & Unused        & 4+count           & \texttt{0x24240003 count:L bussclocks} \\
+         \texttt{c\_triggers}        & TBD           & 0                 & \texttt{0x24240004 (see c\_triggers\_new)} \\
+         \texttt{c\_notes}           & TBD           & 2+variable        & \texttt{0x24240005 setcount strings...} \\
+         \texttt{c\_timesig}         & Track         & 6                 & \texttt{0x24240006 bpb bw} \\
+         \texttt{c\_bpmtag}          & TBD           & 8                 & \texttt{0x24240007 bpm:L } \\
+         \texttt{c\_triggers\_new}   & Track         & 4+triggercount*12 & \texttt{0x24240008 triggers...} \\
+         \texttt{c\_mutegroups}      & Global        & 4+4*groups+4*seqs & \texttt{0x24240009 groups:S seqs:S data...} \\
+         \texttt{c\_gap\_A}          & Unused        & 4                 & \texttt{0x2424000A} \\
+         \texttt{c\_gap\_B}          & Unused        & 4                 & \texttt{0x2424000B} \\
+         \texttt{c\_gap\_C}          & Unused        & 4                 & \texttt{0x2424000C} \\
+         \texttt{c\_gap\_D}          & Unused        & 4                 & \texttt{0x2424000D} \\
+         \texttt{c\_gap\_E}          & Unused        & 4                 & \texttt{0x2424000E} \\
+         \texttt{c\_gap\_F}          & Unused        & 4                 & \texttt{0x2424000F} \\
+         \texttt{c\_midictrl}        & TBD           & 4+8*ctrls         & \texttt{0x24240010 ctrls data...} \\
+         \texttt{c\_musickey}        & Both          & 5                 & \texttt{0x24240011 key} \\
+         \texttt{c\_musicscale}      & Both          & 5                 & \texttt{0x24240012 scale} \\
+         \texttt{c\_backsequence}    & Both          & 8                 & \texttt{0x24240013 seqnumber:L} \\
+         \texttt{c\_transpose}       & Track         & 5                 & \texttt{0x24240014 transpose} \\
+         \texttt{c\_perf\_bp\_mes}   & Global        & 8                 & \texttt{0x24240015 bpb:L} \\
+         \texttt{c\_perf\_bw}        & Global        & 0                 & \texttt{0x24240016 bw:L} \\
+         \texttt{c\_tempo\_map}      & Seq32         & 0                 & \texttt{0x24240017} \\
+         \texttt{c\_reserved\_1}     & TBD           & 0                 & \texttt{0x24240018} \\
+         \texttt{c\_reserved\_2}     & TBD           & 0                 & \texttt{0x24240019} \\
+         \texttt{c\_tempo\_track}    & TBD           & 8                 & \texttt{0x2424001A track:L} \\
+         \texttt{c\_seq\_color}      & Track         & 5                 & \texttt{0x2424001B color} \\
+         \texttt{c\_seq\_edit\_mode} & Kepler34      & 0                 & \texttt{0x2424001C} \\
+         \texttt{c\_seq\_loopcount}  & TBD           & 6                 & \texttt{0x2424001D 00 00} \\
       \end{tabular}
    \end{table}
 
-   \index{saved control tags}
-   The \texttt{c\_musickey},
-   \texttt{c\_musicscale},
-   \texttt{c\_backsequence}, and a few other
-   control tags are new with \textsl{Seq66}.
-   They are saved as additional information in each sequence in which they
-   have been specified in the sequence editor, in the proprietary track.
-   These tags are preceded by the standard MIDI "FF 7F length" meta-event
-   sequence, not shown in the table.
-   Next, MIDI wants to see this triad of bytes:
+   Note that the base length is 4 bytes, the size of a \texttt{0x242400nn}
+   value.  Also note that some of multi-byte (2 or 4 bytes) values that indicate counts
+   are stored in big-endian (network order) format.  The most-signifant byte is grabbed first, then
+   left-shifted to get read for the next significant bit.
+   See the functions
+   \texttt{midifile::read\_short()} and
+   \texttt{midifile::read\_long()}, and contrast them with
+   \texttt{midifile::read\_varinum()}.
 
-   \begin{verbatim}
-      status = FF, type= 7F (proprietary), length = whatever
-   \end{verbatim}
+\subsubsection{SeqSpec c\_midibus}
+\label{subsubsec:proprietary_track_seqspec_midibus}
 
-   to precede proprietary data.
+   \begin{description}
+      \item \texttt{c\_midibus}: specifies the desired output buss/port number for a track.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240001 buss}
+   \end{description}
 
-   \textsl{Seq66} writes this information properly,
-   starting with the \texttt{0xFF 7F 242 400 nn} marker.
-   The ability to read \textsl{Seq24} MIDI files been preserved in
-   \textsl{Seq66}.
+   The buss value ranges from 0 to 47, though the practical range is under a dozen ports.
+   Currently in \textsl{Seq66}, buss information is stored by number only.
+   However, there is a port-mapping mechanism in the 'rc' file that let's one assign
+   permanent port numbers by name, and translate those to actual port numbers.
+   See \sectionref{sec:port_mapping}.
 
-   At this point, we have the \textbf{c\_midictrl} information now.
-   Next, we read a long value,
-   \texttt{24 24 00 10 00 00 00 00}, to get the seqs.
-   It is 0.
+\subsubsection{SeqSpec c\_midich}
+\label{subsubsec:proprietary_track_seqspec_midich}
 
-   Read the next long value,
-   \texttt{24 24 00 03 00 00 00 00}.
-   This is \textbf{c\_midiclocks}.
-   We get a value of 0 for "TrackLength" (now a local variable called
-   "busscount"):
-   If the buss-count was greater than 0, then for each value, we would read a
-   byte value represent the bus a clock was on, and setting the clock value
-   of the master MIDI buss.
-   Another check for more data is made.
+   \begin{description}
+      \item \texttt{c\_midich}: specifies the desired output channel number for a track.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240002 channel}
+   \end{description}
 
-   \texttt{0x24 24 00 05 00 20 00 00} is \textbf{c\_notes}.
-   The value screen\_sets is read (two bytes) and
-   here is 0x20 = 32.  For each screen-set:
+   This channel value ranges from 0 to 15, and has an "null" value of 0x80.  If the channel
+   ranges from 0 to 15, that channel is applied to every channel event that goes
+   out from that sequence.  Otherwise, the channel held by an event is used for output.
+   Note that SMF 0 MIDI files have a single track and can have a mixture of different
+   channels in its channel event. Also note that support for 0x80 is new and still being
+   worked out.
 
-   \begin{verbatim}
-      len = read\_short()
-   \end{verbatim}
+\subsubsection{SeqSpec c\_midiclocks}
+\label{subsubsec:proprietary_track_seqspec_midiclocks}
 
-   If non-zero, each of the \texttt{len} bytes is appended as a string.
-   Here, len is 0 for all 32 screensets, so the screen-set notepad is set to
-   an empty string.
-   Another check for more data is made.
+   \begin{description}
+      \item \texttt{c\_midiclocks}: specifies the clocking for the busses, but is inactive.
+      \item \textsl{Length}: 8
+      \item \textsl{Format}: \texttt{0x24240003 count:L bussclocks}
+   \end{description}
 
-   \texttt{24 24 00 07 00 00 00 78}
-   is \textbf{c\_bpmtag}.  The long value is read and sets the
-   perform object's bpm value.  Here, it is 120 bpm.
-   Another check for more data is made.
+   This item is a hold-over from \texttt{Seq24}.  It was meant, presumably, to
+   hold the clocking statuses of the output busses.  However, it seems to have
+   fallen by the wayside, and the only item read/written is 4 bytes of zeroes.
+   Clocking is specified in the 'rc' file.
+   See \sectionref{subsec:configuration_rc_midi_clock}.
 
-   \texttt{24 24 00 09 00 00 04 00}
-   is \textbf{c\_mutegroups}.  The long value obtained here is
-   1024.  If this value is not equal to the constant
-   \textbf{c\_gmute\_tracks} (1024), a warning is emitted to the console,
-   but processing continues anyway, 32 x 32 long values are read to select
-   the given group-mute, and then set each of its 32 group-mute-states.
+\subsubsection{SeqSpec c\_triggers}
+\label{subsubsec:proprietary_track_seqspec_triggers}
 
-   Note that control information is now read only from the 'ctrl' file,
-   and mutes information can also be read from a separate file.
+   \begin{description}
+      \item \texttt{c\_triggers}: specifies the old format for triggers.
+      \item \textsl{Length}: Indeterminate
+      \item \textsl{Format}: \texttt{0x24240004 buss}
+   \end{description}
 
-   For the new format, the components of the final proprietary track size are
-   as shown here:
+   This SeqSpec is no longer used, and is flagged as an error if encountered.
+   Instead, \texttt{c\_triggers\_new} is used.
 
-   \begin{enumber}
-      \item \textbf{Delta time}.  1 byte, always 0x00.
-      \item \textbf{Sequence number}.  5 bytes.  OPTIONAL.
-      \item \textbf{Track name}. 3 + 10 or 3 + 15
-      \item \textbf{Series of proprietary specs}:
-      \begin{itemize}
-         \item \textbf{Prop header}:
-         \begin{itemize}
-            \item If legacy format, 4 bytes.
-            \item Otherwise, 2 bytes + varinum\_size(length) + 4 bytes.
-            \item Length of the prop data.
-         \end{itemize}
-      \end{itemize}
-      \item \textbf{Track End}. 3 bytes.
-   \end{enumber}
+\subsubsection{SeqSpec c\_notes}
+\label{subsubsec:proprietary_track_seqspec_notes}
 
-   Note that we still need to dig into all the new values that have accumulated
-   over the last five years!
+   \begin{description}
+      \item \texttt{c\_notes}: specifies the names of the sets in the tune.
+      \item \textsl{Length}: 2 + variable
+      \item \textsl{Format}: \texttt{0x24240005 setcount strings...}
+   \end{description}
+
+   Each set in a tune can have a name.  The first value is a 2-byte value
+   indicating the number of sets in the tune.  This value can range from
+   0 to 31, for a total of 32 sets.
+   \textsl{Seq66} limits the number of sets to 32 for practical reasons.
+   See \sectionref{sec:setmaster}.
+
+   After the set count comes the list of set-name segments.  Each segment
+   starts with a 2-byte value indicating the size of the string, followed
+   by that number of bytes for the text of the string.  Presumably, the
+   text must be in either ASCII encoding or UTF-8 encoding.
+
+\subsubsection{SeqSpec c\_timesig}
+\label{subsubsec:proprietary_track_seqspec_timesig}
+
+   \begin{description}
+      \item \texttt{c\_timesig}: specifies the time signature for a track.
+      \item \textsl{Length}: 6
+      \item \textsl{Format}: \texttt{0x24240006 bpb bw}
+   \end{description}
+
+   This SeqSpec specifies the time-signature for the track in a 2-byte format,
+   the beats-per-bar followed by the beat-width.
+   This time-signature is meant for setting up the pattern editor to the
+   user's preferences, and is not the time-signature for the song.
+
+   The normal time-signature meta-event is obtained from values stored in
+   the performer class, and has the format
+   \texttt{0xFF 58 4 bpb bw cpm tpq}, where cpm is the clocks-per-metronome
+   and tpq is the 32nds-per-quarter.
+
+\subsubsection{SeqSpec c\_bpmtag}
+\label{subsubsec:proprietary_track_seqspec_bpmtag}
+
+   \begin{description}
+      \item \texttt{c\_bpmtag}: specifies the the BPM in a format allowing double
+         precision.
+      \item \textsl{Length}: 8
+      \item \textsl{Format}: \texttt{0x24240007 bpm:L}
+   \end{description}
+
+   Due to requests for higher precision in the beats-per-minute of a song, this
+   value is the value of the BPM multiplied by 1000.0 (see the
+   macro SEQ66\_BPM\_SCALE\_FACTOR).  When read, it is divided by 1000 to get the
+   desired floating-point precision.
+
+   The normal tempo meta-event format is
+   \texttt{0xFF 51 03 tttttt}, where "tttttt" is 3 bytes representing the number
+   of microseconds per quarter note.
+   The function \texttt{tempo\_us\_from\_bytes()} calculates the microseconds from
+   these three bytes; the "inverse" function is
+   \texttt{tempo\_us\_to\_bytes()}.
+
+   Generally, the MIDI tempo comes first in the file, and the SeqSpec tempo comes
+   later.  The last value obtain is the BPM that the performer module contains.
+   The conversion between the SeqSpec format and the MIDI Tempo format is
+   effected by the functions
+   \texttt{bpm\_from\_tempo\_us()} and \texttt{tempo\_us\_from\_bpm()}.
+
+\subsubsection{SeqSpec c\_triggers\_new}
+\label{subsubsec:proprietary_track_seqspec_triggers_new}
+
+   \begin{description}
+      \item \texttt{c\_triggers\_new}: specifies the triggers for a given track.
+      \item \textsl{Length}: 4 + triggercount * 12
+      \item \textsl{Format}: \texttt{0x24240008 buss}
+   \end{description}
+
+   The triggers in each pattern in a song determines the layout of the song in 
+   the \textbf{Song Editor}.
+   The extent of each trigger is partly determined by the PPQN of the song and
+   whether or not PPQN rescaling is needed (when PPQN != 192).
+   The format of each trigger is three 4-byte values: \texttt{on off offset}.
+   Each trigger is represented by an \texttt{seq66::trigger} object.
+   Each trigger has a start and an end tick value based on the
+   recorded pattern loop, and an offset value that indicates how much
+   the trigger is delayed as laid out in the song editor.
+
+\subsubsection{SeqSpec c\_mutegrops}
+\label{subsubsec:proprietary_track_seqspec_mutegrops}
+
+   \begin{description}
+      \item \texttt{c\_mutegrops}: specifies the mute-groups in play in a song.
+      \item \textsl{Length}: 4 + 4 * groupcount + 4 * seqcount
+      \item \textsl{Format}: \texttt{0x24240009 groupcount:S seqcount:S groupdata...}
+   \end{description}
+
+   Mute-groups are a feature that enable the toggling of arming/muting for
+   multiple patterns at once.  \textsl{Seq66} supports up to 32 mute-groups of
+   size 32 patterns.  More flexibility is planned and partially support now.
+
+   Mute-groups can also be stored in a 'mutes' files, which is probably a better
+   place to store them.
+   (See \sectionref{subsubsec:configuration_mute_group_control}, and
+   \sectionref{fig:mutes_master_tab}).
+   Here, we describe how they are encoded in the song.
+
+   The first two values provide the group-count and the sequence-count.
+   Then, the groups are looped through. Each group has the format
+   \texttt{groupnumber bits} where "bits" is a string of up to thirty-two
+   4-byte (!) values indicating if the corresponding pattern is part of
+   the group.
+
+   This setup is a real space waster, and it is recommended to use only
+   the 'mutes' file, unless the song absolutely needs its own set of
+   mute-groups.
+
+\subsubsection{SeqSpec c\_gap\_ABCDEF}
+\label{subsubsec:proprietary_track_seqspec_gap_abcdef}
+
+   This set of six SeqSpecs is a gap created by skipping from
+   \texttt{0x24240009} to \texttt{0x24240010}, a long-standing
+   oversight from \textsl{Seq24}.
+   We guarantee that \textsl{Seq66} will never use these values.
+
+\subsubsection{SeqSpec c\_midictrl}
+\label{subsubsec:proprietary_track_seqspec_midictrl}
+
+   \begin{description}
+      \item \texttt{c\_midictrl}: specifies the MIDI controls to be used.
+      \item \textsl{Length}: 4 + 8 * ctrls
+      \item \textsl{Format}: \texttt{0x24240010 ctrls data...}
+   \end{description}
+   
+   This section apparently provided a way to save MIDI controls for loops
+   (toggle, on, and off) inside the song.  However, it makes more sense to
+   save them in the 'ctrl' file.  This SeqSpec is parsed if present, but
+   the data is thrown away, and this SeqSpec is never written.
+   Oddly enough, \textsl{Seq24} would read this section, but would write only
+   four bytes of zeroes.
+
+\subsubsection{SeqSpec c\_musickey}
+\label{subsubsec:proprietary_track_seqspec_musickey}
+
+   \begin{description}
+      \item \texttt{c\_musickey}: specifies the musical key for the song.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240011 key}
+   \end{description}
+
+   This item specifies the musical key for a song (globally), but it
+   can also be specified inside each pattern, as well, so that patterns
+   can have different keys.
+   When provided globally, this option is stored in the
+   \texttt{seq66::usrsettings} class.
+
+\subsubsection{SeqSpec c\_musicscale}
+\label{subsubsec:proprietary_track_seqspec_musicscale}
+
+   \begin{description}
+      \item \texttt{c\_musicscale}: specifies the musical scale for the song.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240012 scale}
+   \end{description}
+
+   This item specifies the musical scale for a song (globally), but it
+   can also be specified inside each pattern, as well, so that patterns
+   can have different scales.
+   When provided globally, this option is stored in the
+   \texttt{seq66::usrsettings} class.
+
+\subsubsection{SeqSpec c\_backsequence}
+\label{subsubsec:proprietary_track_seqspec_backsequence}
+
+   \begin{description}
+      \item \texttt{c\_backsequence}: specifies the background sequence to be shown.
+      \item \textsl{Length}: 8
+      \item \textsl{Format}: \texttt{0x24240013 backsequence:L}
+   \end{description}
+
+   This item specifies the background sequence to display in the pattern
+   editor for a song (globally), but it
+   can also be specified inside each pattern, as well, so that patterns
+   can show different background sequences.
+   When provided globally, this option is stored in the
+   \texttt{seq66::usrsettings} class.
+
+\subsubsection{SeqSpec c\_transpose}
+\label{subsubsec:proprietary_track_seqspec_transpose}
+
+   \begin{description}
+      \item \texttt{c\_transpose}: specifies if a pattern can be transposed.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240014 buss}
+   \end{description}
+
+   This SeqSpec applies to patterns only.
+   It is set to a non-zero value to indicate
+   that a pattern can be transposed, either on the fly or via the
+   note-mapping features (see \sectionref{subsec:configuration_drums}).
+   It is useful to mark a drum pattern.
+
+\subsubsection{SeqSpec c\_perf\_bp\_mes}
+\label{subsubsec:proprietary_track_seqspec_perf_bp_mes}
+
+    \begin{description}
+       \item \texttt{c\_perf\_bp\_mes}:
+         specifies the beats-per-bar for the performance.
+       \item \textsl{Length}: 5
+       \item \textsl{Format}: \texttt{0x24240015 bpb:L}
+    \end{description}
+
+   Provides an override for the beats-per-bar from the Time Signature in track 0.
+
+\subsubsection{SeqSpec c\_perf\_bw}
+\label{subsubsec:proprietary_track_seqspec_perf_bw}
+
+   \begin{description}
+      \item \texttt{c\_perf\_bw}:
+         specifies the beat-width for the performance.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240016 bpb:L}
+   \end{description}
+
+   Provides an override for the beat-width from the Time Signature in track 0.
+
+\subsubsection{SeqSpec c\_tempo\_map}
+\label{subsubsec:proprietary_track_seqspec_tempo_map}
+
+   \begin{description}
+      \item \texttt{c\_tempo\_map}: Not implemented.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x24240017}
+   \end{description}
+
+   This section is an unimplemented \textsl{Seq32} feature.
+
+\subsubsection{SeqSpec c\_reserved\_1\_2}
+\label{subsubsec:proprietary_track_seqspec_reserved_1_2}
+
+   \begin{description}
+      \item \texttt{c\_reserved\_1\_2}: Reserved for expansion.
+      \item \textsl{Length}: Indeterminate
+      \item \textsl{Format}: \texttt{0x24240018, 19}
+   \end{description}
+
+\subsubsection{SeqSpec c\_tempo\_track}
+\label{subsubsec:proprietary_track_seqspec_tempo_track}
+
+   \begin{description}
+      \item \texttt{c\_tempo\_track}:
+         specifies the alternate tempo track for a song.
+      \item \textsl{Length}: 8
+      \item \textsl{Format}: \texttt{0x2424001A track:L}
+   \end{description}
+
+   Normally, the song tempo should be stored in the first track.
+   This value can be set to move it to another pattern.
+
+\subsubsection{SeqSpec c\_seq\_color}
+\label{subsubsec:proprietary_track_seqspec_seq_color}
+
+   \begin{description}
+      \item \texttt{c\_seq\_color}: specifies the color for a pattern.
+      \item \textsl{Length}: 5
+      \item \textsl{Format}: \texttt{0x2424001B colorcode}
+   \end{description}
+
+   This value specifies an index into the \textsl{Seq66} color palette.
+   This feature is useful for distinguishing patterns more quickly in the
+   pattern and song editors. Up to 32 colors (0 to 31) can be specified.
+   See \sectionref{sec:palettes}.
+
+\subsubsection{SeqSpec c\_seq\_edit\_mode}
+\label{subsubsec:proprietary_track_seqspec_seq_edit_mode}
+
+   \begin{description}
+      \item \texttt{c\_seq\_edit\_mode}: specifies the editing mode of each pattern.
+      \item \textsl{Length}: Indeterminate
+      \item \textsl{Format}: \texttt{0x2424001C}
+   \end{description}
+
+   This looks like a way to specify that a pattern should be edited in drum mote (1) or
+   normal mode (0).  This is a \textsl{Kepler34} feature. However, in \textsl{Seq66} it
+   is currently not implemented.  We don't even read it.
+
+\subsubsection{SeqSpec c\_seq\_loopcount}
+\label{subsubsec:proprietary_track_seqspec_seq_loopcount}
+
+   \begin{description}
+      \item \texttt{c\_seq\_loopcount}: specifies the number of times a pattern should play.
+      \item \textsl{Length}: 6
+      \item \textsl{Format}: \texttt{0x2424001D count:S}
+   \end{description}
+
+   This item is a future feature to provide a user's request for a one-shot pattern,
+   a pattern that plays once and never plays again.  A count value of 0 would yield
+   the normal behavior, playing endlessly during \textbf{Live} mode.
+   Any other value would repeat the pattern the specified number of times.
+   Not yet read nor written.  
+   However, a loop-count is used in the one-shot step-edit feature used in recording
+   a device's drum pattern.
+   See \sectionref{subsec:pattern_editor_bottom}.
 
 \subsection{MIDI Information}
 \label{subsec:midi_information}
@@ -658,63 +984,6 @@
    Also, some malformed SysEx events have been encountered, and those are
    detected and skipped as well.
 
-\subsubsection{Sequencer Specific (0x7F)}
-\label{subsubsec:midi_format_meta_sequencer_specific}
-
-   This data, also known as SeqSpec data, provides a way to encode information
-   that a specific sequencer application needs, while marking it so that other
-   sequences can safely ignore the information.
-
-   \begin{verbatim}
-      FF 7F len data
-   \end{verbatim}
-
-   In \textsl{Seq24 and Seq66},
-   the data portion starts with four bytes
-   that indicate the kind of data for a particular SeqSpec event:
-
-   \begin{verbatim}
-      c_midibus        ^  0x24240001  Track buss number
-      c_midich         ^  0x24240002  Track channel number
-      c_midiclocks     *  0x24240003  Track clocking (not fully implemented!)
-      c_triggers       ^  0x24240004  See c_triggers_new; no offset here
-      c_notes          *  0x24240005  Song data, notes (names of sets)
-      c_timesig        ^  0x24240006  Track time signature (not global)
-      c_bpmtag         *  0x24240007  Song beats/minute (global)
-      c_triggers_new   ^  0x24240008  Track trigger data
-      c_mutegroups     *  0x24240009  Song mute group data (global)
-	   c_gap_A          s  0x2424000A  Gap A
-	   c_gap_B          s  0x2424000B  Gap B
-	   c_gap_C          s  0x2424000C  Gap C
-	   c_gap_D          s  0x2424000D  Gap D
-	   c_gap_E          s  0x2424000E  Gap E
-	   c_gap_F          s  0x2424000F  Gap F
-      c_midictrl       *  0x24240010  Song MIDI control (always empty)
-      c_musickey       +  0x24240011  Track key (Seq66 only) (global too)
-      c_musicscale     +  0x24240012  Track scale (Seq66 only) (global too)
-      c_backsequence   +  0x24240013  Track background sequence (global too)
-	   c_transpose      t  0x24240014  Track transpose value
-	   c_perf_bp_mes    t  0x24240015  Perfedit beats/measure
-	   c_perf_bw        t  0x24240016  Perfedit beat-width
-	   c_tempo_map      t  0x24240017  Reserve seq32 tempo map
-	   c_reserved_1     t  0x24240018  Reserved for expansion
-	   c_reserved_2     t  0x24240019  Reserved for expansion
-	   c_tempo_track    t  0x2424001A  Alternate tempo track no. (unimplemented)
-	   c_seq_color      t  0x2424001B  Track color, from Kepler34
-	   c_seq_edit_mode  t  0x2424001C  Unimplemented feature from Kepler34
-	   c_seq_loopcount  t  0x2424001D  Future: Track N-play pattern
-   \end{verbatim}
-
-   Here are the meanings of the markers:
-
-   \begin{verbatim}
-      * = global only
-      ^ = track only
-      + = both
-      s = reserved for seq32
-      t = TBD
-   \end{verbatim}
-
    In \textsl{Seq24}, these events are placed at the end of the song, but are
    not marked as SeqSpec data.  Most MIDI applications handle this situation
    fine, but some (e.g. midicvt) do not.  \textsl{Seq66} makes
@@ -731,7 +1000,7 @@
    Any other statuses are deemed unsupportable in \textsl{Seq66}, and
    abort parsing with an error.
 
-   If the --bus option is in force, it overrides the buss number (if any)
+   If the \texttt{-{}-bus} option is in force, it overrides the buss number (if any)
    stored with the sequence.  This option is useful for testing a setup.
    Note that it also applies to new sequences.
 

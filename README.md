@@ -1,4 +1,4 @@
-# README for Seq66 0.92.1 (Sequencer64 refactored for C++/14 and Qt 5)
+# README for Seq66 0.92.2 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
 2015-09-10 to 2021-03-07
@@ -8,6 +8,7 @@ grid-pattern interface, MIDI automation for live performance, sets and
 playlists for song management, scale/chord-aware piano-roll interface, song
 editor for creative composition, and control via mouse, keystrokes, and MIDI.
 Supports NSM (New Session Manager) on Linux, can also be run headless.
+Note that it does not support audio, just MIDI.
 
 __Seq66__ is a refactoring of the Qt version of Sequencer64/Kepler34, a reboot
 of __Seq24__ with modern C++ and new features.  Linux users can build this
@@ -15,7 +16,9 @@ application from the source code.  See the INSTALL file.  Windows users can
 get an installer package on GitHub or build it with Qt Creator.  A PDF
 user-manual is also provided.
 
-# Major Features (also see **Recent Changes** below):
+# Major Features:
+
+    Also see **Recent Changes** below.
 
 ##  User interface
 
@@ -66,6 +69,8 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.92.2:
+        *   No fixes yet.
     *   Version 0.92.1:
         *   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
             when there are many ports on the system; also increased port
@@ -97,6 +102,4 @@ Windows, and using a conventional source tarball.
 
     See the "NEWS" file for changes in earlier versions.
 
-/*
- * vim: sw=4 ts=4 wm=4 et ft=markdown
- */
+// vim: sw=4 ts=4 wm=4 et ft=markdown

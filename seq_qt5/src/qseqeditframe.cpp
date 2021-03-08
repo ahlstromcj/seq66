@@ -205,7 +205,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
-        bussbyte b = seq_pointer()->get_midi_bus();
+        bussbyte b = seq_pointer()->seq_midi_bus();
         for (int buss = 0; buss < mmb->get_num_out_buses(); ++buss)
         {
             bool disabled = clock_is_disabled(mmb->get_clock(buss));
@@ -234,7 +234,7 @@ qseqeditframe::qseqeditframe (performer & p, int seqid, QWidget * parent) :
      */
 
     ui->txtSeqName->setPlainText(seq_pointer()->name().c_str());
-    ui->cmbMidiChan->setCurrentIndex(seq_pointer()->get_midi_channel());
+    ui->cmbMidiChan->setCurrentIndex(seq_pointer()->seq_midi_channel());
     QString snapText("1/");
     snapText.append
     (

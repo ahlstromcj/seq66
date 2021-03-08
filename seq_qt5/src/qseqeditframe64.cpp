@@ -375,8 +375,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
-    m_editing_bus           (seq_pointer()->get_midi_bus()),
-    m_editing_channel       (seq_pointer()->get_midi_channel()),
+    m_editing_bus           (seq_pointer()->seq_midi_bus()),
+    m_editing_channel       (seq_pointer()->seq_midi_channel()),
     m_editing_status        (0),
     m_editing_cc            (0),
     m_first_event           (0),
@@ -633,7 +633,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
-        bussbyte seqbuss = seq_pointer()->get_midi_bus();
+        bussbyte seqbuss = seq_pointer()->seq_midi_bus();
         std::string selectedbuss = opm.active() ?
             opm.get_name(seqbuss) : mmb->get_midi_out_bus_name(seqbuss) ;
 
@@ -1835,7 +1835,7 @@ qseqeditframe64::reset_midi_bus ()
 void
 qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
-    bussbyte initialbus = seq_pointer()->get_midi_bus();
+    bussbyte initialbus = seq_pointer()->seq_midi_bus();
     bussbyte b = bussbyte(bus);
     if (b != initialbus)
     {
@@ -1931,7 +1931,7 @@ qseqeditframe64::reset_midi_channel ()
 void
 qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
 {
-    int initialchan = seq_pointer()->get_midi_channel();
+    int initialchan = seq_pointer()->seq_midi_channel();
     if (midichannel != initialchan)
     {
         int chindex = is_null_channel(midichannel) ?
@@ -1950,7 +1950,8 @@ qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
             repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
             set_dirty();
         }
-        ui->m_combo_channel->setCurrentIndex(chindex);
+        else
+            ui->m_combo_channel->setCurrentIndex(chindex);
     }
 }
 
@@ -2293,8 +2294,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         snprintf(type, sizeof type, "Aftertouch");
     else if (status == EVENT_CONTROL_CHANGE)
     {
-        int bus = int(seq_pointer()->get_midi_bus());
-        int channel = int(seq_pointer()->get_midi_channel());
+        int bus = int(seq_pointer()->seq_midi_bus());
+        int channel = int(seq_pointer()->seq_midi_channel());
         std::string ccname(c_controller_names[control]);
         if (usr().controller_active(bus, channel, control))
             ccname = usr().controller_name(bus, channel, control);

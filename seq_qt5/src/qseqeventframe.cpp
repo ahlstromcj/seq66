@@ -112,7 +112,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     set_seq_time_sig_and_ppqn(ts_ppqn);
 
     std::string channelstr = "Channel ";
-    channelstr += std::to_string(int(m_seq->get_midi_channel()) + 1);
+    channelstr += std::to_string(int(m_seq->seq_midi_channel()) + 1);
     channelstr += " [re 1]";
     set_seq_channel(channelstr);
 
@@ -765,7 +765,7 @@ qseqeventframe::handle_modify ()
          * Which one is better?  The one use would allow for events on more
          * than one channel in this pattern/loop.
          *
-         * std::string chan = std::to_string(int(m_seq->get_midi_channel()));
+         * std::string chan = std::to_string(int(m_seq->seq_midi_channel()));
          */
 
         std::string chan = ev.channel_string();

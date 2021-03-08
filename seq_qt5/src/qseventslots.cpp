@@ -492,7 +492,7 @@ qseventslots::insert_event
      */
 
     if (! edev.is_ex_data())
-        edev.set_channel(m_seq->get_midi_channel());
+        edev.set_channel(m_seq->seq_midi_channel());
 
     m_current_event = edev;
     return insert_event(edev);
@@ -704,7 +704,7 @@ qseventslots::modify_current_event
         {
             editable_event & ev = editable_events::dref(m_current_iterator);
             if (! ev.is_ex_data())
-                ev.set_channel(m_seq->get_midi_channel());  /* just in case */
+                ev.set_channel(m_seq->seq_midi_channel());  /* just in case */
 
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (row >= 0)
@@ -719,7 +719,7 @@ qseventslots::modify_current_event
 
             editable_event ev = editable_events::dref(m_current_iterator);
             if (! ev.is_ex_data())
-                ev.set_channel(m_seq->get_midi_channel());
+                ev.set_channel(m_seq->seq_midi_channel());
 
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             result = delete_current_event();

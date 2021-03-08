@@ -212,8 +212,8 @@ qloopbutton::initialize_text ()
          * Code from performer::sequence_label().
          */
 
-        bussbyte bus = m_seq->get_midi_bus();
-        int chan = m_seq->is_smf_0() ? 0 : m_seq->get_midi_channel() + 1;
+        bussbyte bus = m_seq->seq_midi_bus();
+        int chan = m_seq->is_smf_0() ? 0 : m_seq->seq_midi_channel() + 1;
         int bpb = int(m_seq->get_beats_per_bar());
         int bw = int(m_seq->get_beat_width());
         int sn = m_seq->seq_number();
