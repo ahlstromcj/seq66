@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-02-21
+ * \updates       2021-03-10
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1885,7 +1885,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         }
         if (channel == c_midichannel_max)
         {
-            QString combo_text("Any");
+            QString combo_text("Free");
             ui->m_combo_channel->insertItem(c_midichannel_max, combo_text);
         }
         else
@@ -1915,12 +1915,10 @@ qseqeditframe64::reset_midi_channel ()
 
 /**
  *  Selects the given MIDI channel parameter in the main sequence object,
- *  so that it will use that channel.
+ *  so that it will use that channel.  If "Free" is selected, all that happens
+ *  is that the pattern is set to "no-channel" mode for MIDI output.
  *
- *  Should this change set the is-modified flag?  Where should validation
- *  occur?
- *
- * \param midichannel
+ * \param ch
  *      The MIDI channel  value to set.
  *
  * \param user_change
@@ -1929,29 +1927,29 @@ qseqeditframe64::reset_midi_channel ()
  */
 
 void
-qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
+qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
     int initialchan = seq_pointer()->seq_midi_channel();
-    if (midichannel != initialchan)
+    if (ch != initialchan)
     {
-        int chindex = is_null_channel(midichannel) ?
-            c_midichannel_max : midichannel ;
+        int chindex = ch > c_midichannel_max ? c_midichannel_max : ch ;
+        if (ch == c_midichannel_max)
+            ch = c_midichannel_null;
 
-        seq_pointer()->set_midi_channel(midichannel, user_change);
-        m_editing_channel = midichannel;
-        repopulate_usr_combos(m_editing_bus, m_editing_channel);
-        if (user_change)
+        seq_pointer()->set_midi_channel(ch, user_change);
+        if (! is_null_channel(ch))
         {
-            /*
-             * Too much: repopulate_usr_combos(m_editing_bus, m_editing_channel);
-             */
-
-            repopulate_event_menu(m_editing_bus, m_editing_channel);
-            repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
-            set_dirty();
+            m_editing_channel = ch;
+            repopulate_usr_combos(m_editing_bus, m_editing_channel);
+            if (user_change)
+            {
+                repopulate_event_menu(m_editing_bus, m_editing_channel);
+                repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
+                set_dirty();
+            }
+            else
+                ui->m_combo_channel->setCurrentIndex(chindex);
         }
-        else
-            ui->m_combo_channel->setCurrentIndex(chindex);
     }
 }
 

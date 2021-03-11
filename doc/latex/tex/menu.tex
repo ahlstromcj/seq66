@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2020-12-30
+% \update      2021-03-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -87,8 +87,11 @@
 
    This dialog lets one type a file-name, highlighting the first file
    that matches the characters typed.
-   \textsl{Seq66} can open \textsl{Seq66}, regular MIDI files, and
-   \textsl{Cakewalk} "WRK" files.
+   \textsl{Seq66} can open \textsl{Seq66}, MIDI SMF 0 and SMF 1 files, and
+   \textsl{Cakewalk} WRK files.
+   If the file is an SMF 0 file, where all channels appear on one track, the
+   track is split so that each channel (0 to 15) is stored in the corresponding
+   pattern, and pattern 16 contains the original track.
 
 \subsubsection{Menu / File / Open Playlist}
 \label{subsubsec:menu_file_open_playlist}

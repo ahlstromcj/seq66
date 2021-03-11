@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-25
+ * \updates       2021-03-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -1015,6 +1015,7 @@ sequence::remove (event::buffer::iterator evi)
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
             master_bus()->play(m_true_bus, &er, midi_channel(er));
+            master_bus()->flush();
             --m_playing_notes[er.get_note()];                   // ugh
         }
         if (m_events.remove(evi))
@@ -2035,10 +2036,7 @@ sequence::change_event_data_range
                 (tick - tick_s) * data_f + (tick_f - tick) * data_s
             ) / (tick_f - tick_s);
 
-            if (newdata < 0)
-                newdata = 0;
-            else if (newdata > c_max_midi_data_value)    /* 127              */
-                newdata = c_max_midi_data_value;
+            newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127     */
 
             /*
              * I think we can assume, at this point, that this is a good
@@ -2144,17 +2142,12 @@ sequence::change_event_data_relative
 
         if (good)
         {
-            int newdata = d1 + newval;                  /* "scale" data     */
-            if (newdata < 0)
-                newdata = 0;
-            else if (newdata > c_max_midi_data_value)   /* 127              */
-                newdata = c_max_midi_data_value;
-
             /*
              * Two-byte messages: Note On/Off, Aftertouch, Control, Pitch.
              * One-byte messages: Proram or Channel Pressure.
              */
 
+            int newdata = int(clamp_midibyte_value(d1 + newval));
             if (event::is_one_byte_msg(status))
                 d0 = newdata;
             else
@@ -3671,7 +3664,7 @@ sequence::reset_draw_trigger_marker ()
  *
  * \param lowest
  *      A reference parameter to return the note with the lowest value.
- *      if there are no notes, then it is set to c_max_midi_data_value, and
+ *      if there are no notes, then it is set to c_midibyte_value_max, and
  *      false is returned.
  *
  * \param highest
@@ -3689,7 +3682,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 {
     automutex locker(m_mutex);
     bool result = false;
-    int low = c_max_midi_data_value;
+    int low = int(c_midibyte_value_max);
     int high = -1;
     for (auto & er : m_events)
     {
@@ -4552,15 +4545,16 @@ sequence::title () const
 
 /**
  *  Sets the m_midi_channel number, which is the output channel for this
- *  sequence.
+ *  sequence.  If the channel number provides equates to the null channel,
+ *  this function does not change the channel number, but merely sets the
+ *  m_no_channel flag.
  *
  * \threadsafe
  *
  * \param ch
  *      The MIDI channel to set as the output channel number for this
- *      sequence.  This value can range from 0 to 15, but greater values are
- *      converted to c_midichannel_null = 0x80 (not c_midibyte_max = 0xFF
- *      anymore).
+ *      sequence.  This value can range from 0 to 15, but c_midichannel_null
+ *      equal to  0x80 means we are just setting the "no-channel" status.
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -4576,11 +4570,9 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
-        m_no_channel = ch >= c_midichannel_max;     /* 16   */
         off_playing_notes();
-        if (m_no_channel)
-            m_midi_channel = c_midichannel_null;    /* 0x80 */
-        else
+        m_no_channel = is_null_channel(ch);
+        if (! m_no_channel)
             m_midi_channel = ch;
 
         if (user_change)
@@ -4662,8 +4654,7 @@ sequence::put_event_on_bus (event & ev)
     }
     if (! skip)
     {
-        midibyte channel = m_no_channel ? ev.channel() : m_midi_channel ;
-        master_bus()->play(m_true_bus, &ev, channel);
+        master_bus()->play(m_true_bus, &ev, midi_channel(ev));
         master_bus()->flush();
     }
 }

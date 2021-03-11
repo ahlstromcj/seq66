@@ -302,7 +302,7 @@ qloopbutton::initialize_fingerprint ()
         if (t1 == 0)
             return;
 
-        int nh = c_max_midi_data_value;
+        int nh = c_midibyte_value_max;
         for (int i = 0; i < i1; ++i)
             m_fingerprint[i] = 0;
 
@@ -311,9 +311,7 @@ qloopbutton::initialize_fingerprint ()
          */
 
         n1 += 12;
-        if (n1 > c_max_midi_data_value)
-            n1 = c_max_midi_data_value;
-
+        n1 = clamp_midibyte_value(midibyte(n1));
         n0 -= 12;
         if (n0 < 0)
             n0 = 0;
@@ -688,7 +686,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);
-            int height = c_max_midi_data_value;
+            int height = c_midibyte_value_max;
             if (have_notes)
             {
                 /*
@@ -696,9 +694,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                  */
 
                 highest += 12;
-                if (highest > c_max_midi_data_value)
-                    highest = c_max_midi_data_value;
-
+                highest = clamp_midibyte_value(midibyte(highest));
                 lowest -= 12;
                 if (lowest < 0)
                     lowest = 0;

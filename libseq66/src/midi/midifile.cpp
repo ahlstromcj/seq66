@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-12-13
+ * \updates       2021-03-10
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -65,10 +65,9 @@
  *  Uses the new format for the proprietary footer section of the Seq24
  *  MIDI file.
  *
- *  In the new format, each sequencer-specfic value (0x242400xx, as
- *  defined in the globals module) is preceded by the sequencer-specific
- *  prefix, 0xFF 0x7F len id/date). By default, the new format is used.
- *  In Seq66, the old format is no longer supported.
+ *  In the new format, each sequencer-specfic value (0x242400xx) is preceded
+ *  by the sequencer-specific prefix, 0xFF 0x7F len). By default, the new
+ *  format is used.  In Seq66, the old format is no longer supported.
  *
  * Running status:
  *
@@ -1042,24 +1041,27 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                         case EVENT_META_TRACK_NAME:     /* FF 03 len text   */
 
-                            if (! checklen(len, mtype))
+                            if (checklen(len, mtype))
+                            {
+                                int count = 0;
+                                for (int i = 0; i < int(len); ++i)
+                                {
+                                    char ch = char(read_byte());
+                                    if (count < SEQ66_TRACKNAME_MAX)
+                                    {
+                                        TrackName[count] = ch;
+                                        ++count;
+                                    }
+                                }
+                                TrackName[count] = '\0';
+                                s.set_name(TrackName);
+                            }
+                            else
                                 return false;
 
-                            if (len > SEQ66_TRACKNAME_MAX)
-                                len = SEQ66_TRACKNAME_MAX;
-
-                            for (int i = 0; i < int(len); ++i)
-                                TrackName[i] = char(read_byte());
-
-                            TrackName[len] = '\0';
-                            s.set_name(TrackName);
                             break;
 
                         case EVENT_META_END_OF_TRACK:   /* FF 2F 00         */
-
-                            /*
-                             *  if (delta == 0) ++currenttime;
-                             */
 
                             s.set_length(currenttime, false);
                             s.zero_markers();
@@ -1073,11 +1075,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                             if (len == 3)
                             {
-                                /*
-                                 * See "Tempo events" in the function banner.
-                                 */
-
-                                midibyte bt[4];
+                                midibyte bt[4];         /* "Tempo events"   */
                                 bt[0] = read_byte();                // tt
                                 bt[1] = read_byte();                // tt
                                 bt[2] = read_byte();                // tt
@@ -1101,7 +1099,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                     bool ok = e.append_meta_data(mtype, bt, 3);
                                     if (ok)
-                                        s.append_event(e);    /* new 0.93 */
+                                        s.append_event(e);
                                 }
                             }
                             else
@@ -1210,8 +1208,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
-                                    len -= 12;
                                     add_trigger(s, p);
+                                    len -= 12;
                                 }
                             }
                             else if (seqspec == c_musickey)
@@ -1243,9 +1241,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 (void) set_error_dump
                                 (
-                                    "Unsupported track SeqSpec, skipping...",
+                                    "Unknown Seq66 SeqSpec, skipping...",
                                     seqspec
                                 );
+                            }
+                            else
+                            {
+                                /* will skip all other SeqSpecs */
                             }
                             skip(len);                  /* eat it           */
                             break;
@@ -1481,9 +1483,9 @@ midifile::finalize_sequence
  *
  * \return
  *      Returns the control-tag value found.  These are the values, such as
- *      c_midich, found in the midi_vector_base module, that indicate the type of
- *      sequencer-specific data that comes next.  If there is not enough data to
- *      process, then 0 is returned.
+ *      c_midich, found in the midi_vector_base module, that indicate the type
+ *      of sequencer-specific data that comes next.  If there is not enough
+ *      data to process, then 0 is returned.
  */
 
 midilong
@@ -1715,16 +1717,16 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             midishort screen_sets = read_short();
             for (midishort x = 0; x < screen_sets; ++x)
             {
-                midishort len = read_short();           /* length of string */
+                midishort len = read_short();               /* string size  */
                 std::string notess;
                 for (midishort i = 0; i < len; ++i)
                     notess += read_byte();                  /* unsigned!    */
 
-                p.set_screenset_notepad(x, notess, true);  /* load time    */
+                p.set_screenset_notepad(x, notess, true);   /* load time    */
             }
         }
         seqspec = parse_prop_header(file_size);
-        if (seqspec == c_bpmtag)                        /* beats per minute */
+        if (seqspec == c_bpmtag)                            /* beats/minute */
         {
             /*
              * Should check here for a conflict between the Tempo meta event
@@ -1737,7 +1739,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             if (bpm > (SEQ66_BPM_SCALE_FACTOR - 1.0))
                 bpm /= SEQ66_BPM_SCALE_FACTOR;
 
-            p.set_beats_per_minute(bpm);                /* 2nd way to set!  */
+            p.set_beats_per_minute(bpm);                    /* 2nd setter   */
         }
 
         /*
@@ -2594,7 +2596,10 @@ midifile::write_song (performer & p)
                             if (remainder != measticks - 1)
                                 seqend += measticks - remainder - 1;
                         }
-                        lst.song_fill_seq_trigger(end_trigger, seqend, previous_ts);
+                        lst.song_fill_seq_trigger
+                        (
+                            end_trigger, seqend, previous_ts
+                        );
                     }
                     write_track(lst);
                 }

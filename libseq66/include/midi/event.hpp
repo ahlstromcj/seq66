@@ -99,12 +99,6 @@ namespace seq66
 {
 
 /**
- *  Replaces SEQ66_MAX_DATA_VALUE.
- */
-
-const midibyte c_max_midi_data_value    = 127;
-
-/**
  *  This highest bit of the STATUS byte is always 1.  If this bit is not set,
  *  then the MIDI byte is a DATA byte.
  */

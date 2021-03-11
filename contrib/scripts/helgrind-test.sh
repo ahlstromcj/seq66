@@ -7,3 +7,4 @@
 
 valgrind --tool=helgrind --log-file=helgrind.log $*
 
+# vim: ts=3 sw=3 wm=4 et ft=sh

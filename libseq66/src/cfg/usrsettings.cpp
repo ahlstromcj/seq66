@@ -243,7 +243,7 @@ usrsettings::usrsettings () :
     m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
     m_midi_bpm_minimum          (0),
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
-    m_midi_bpm_maximum          (c_max_midi_data_value),
+    m_midi_bpm_maximum          (c_midibyte_value_max),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
     m_midi_buss_override        (c_bussbyte_max),   /* is_null_bussbyte()   */
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
@@ -581,11 +581,11 @@ usrsettings::set_defaults ()
     m_file_ppqn = 0;                        // range: 32 to 19200, default 0
     m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
-    m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;    // range: 20-500
-    m_midi_bpm_maximum = c_max_midi_data_value;     // range: ? to ???
-    m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;   // range: 1-16, powers of 2
+    m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;
+    m_midi_bpm_maximum = c_midibyte_value_max;
+    m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;
     m_midi_buss_override = c_bussbyte_max;          // 0xFF
-    m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, range: 0 to 127
+    m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, 0 to 127
     m_bpm_precision = SEQ66_DEFAULT_BPM_PRECISION;
     m_bpm_step_increment = SEQ66_DEFAULT_BPM_STEP_INCREMENT;
     m_bpm_page_increment = SEQ66_DEFAULT_BPM_PAGE_INCREMENT;

@@ -49,6 +49,8 @@ tex-stamp:
 
 clean: clean-dvi clean-pdf clean-ps
 	latexmk -c
+	rm -f *.4tc
+	rm -f *.xref
 	rm -f tex-stamp
 
 clean-dvi:

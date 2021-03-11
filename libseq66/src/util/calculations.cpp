@@ -77,7 +77,8 @@
 
 #include "app_limits.h"
 #include "cfg/settings.hpp"
-#include "midi/event.hpp"
+// #include "midi/midibytes.hpp"
+// #include "midi/event.hpp"
 #include "util/calculations.hpp"
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 
@@ -925,15 +926,11 @@ tempo_us_to_bytes (midibyte t[3], int tempo_us)
 midibyte
 tempo_to_note_value (midibpm tempovalue)
 {
-    double slope = double(c_max_midi_data_value);
+    double slope = double(c_midibyte_value_max);
     slope /= usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
-    double note = (tempovalue - usr().midi_bpm_minimum()) * slope;
-    if (note < 0.0)
-        note = 0.0;
-    else if (note > double(c_max_midi_data_value))
-        note = double(c_max_midi_data_value);
 
-    return midibyte(note);
+    int note = (tempovalue - usr().midi_bpm_minimum()) * slope;
+    return clamp_midibyte_value(midibyte(note));
 }
 
 /**
@@ -1030,7 +1027,7 @@ note_value_to_tempo (midibyte note)
 {
     double slope = usr().midi_bpm_maximum() - usr().midi_bpm_minimum();
     slope *= double(note);
-    slope /= double(c_max_midi_data_value);
+    slope /= double(c_midibyte_value_max);
     slope += usr().midi_bpm_minimum();
     return slope;
 }

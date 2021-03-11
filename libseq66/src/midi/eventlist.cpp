@@ -709,10 +709,7 @@ eventlist::randomize_selected (midibyte status, int range)
             midibyte datitem = data[datidx];
             int random = rand() / (RAND_MAX / (2 * range + 1) + 1) - range;
             datitem += random;
-            if (datitem > c_max_midi_data_value)            /* 127 */
-                datitem = c_max_midi_data_value;
-
-            data[datidx] = datitem;
+            data[datidx] = clamp_midibyte_value(datitem);
             e.set_data(data[0], data[1]);
             result = true;
         }
@@ -755,13 +752,8 @@ eventlist::randomize_selected_notes (int jitter, int range)
                     midibyte data[2];
                     e.get_data(data[0], data[1]);
 
-                    int velocity = int(data[1]);
-                    velocity += random;
-                    if (velocity < 0)
-                        velocity = 0;
-                    else if (velocity > c_max_midi_data_value)
-                        velocity = c_max_midi_data_value;
-
+                    int velocity = int(data[1]) + random;
+                    velocity = int(clamp_midibyte_value(midibyte(velocity)));
                     e.note_velocity(velocity);
                     result = true;
                 }

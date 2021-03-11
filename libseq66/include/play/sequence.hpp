@@ -1268,7 +1268,7 @@ public:
 
     midibyte seq_midi_channel () const
     {
-        return m_no_channel ? c_midichannel_null : m_midi_channel;
+        return m_midi_channel;      /* a valid channel even if m_no_channel */
     }
 
     midibyte midi_channel (const event & ev) const

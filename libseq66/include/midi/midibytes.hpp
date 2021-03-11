@@ -180,6 +180,7 @@ const midipulse c_null_midipulse = -1;  /* ULONG_MAX if we convert later    */
  */
 
 const midibyte c_midibyte_data_max  = midibyte(0x80u);
+const midibyte c_midibyte_value_max = 127;
 
 /**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
@@ -525,6 +526,12 @@ inline bool
 is_good_midibyte (midibyte b)
 {
     return b < c_midibyte_data_max;
+}
+
+inline midibyte
+clamp_midibyte_value (midibyte b)
+{
+    return b > c_midibyte_value_max ? c_midibyte_value_max : b ;
 }
 
 /**

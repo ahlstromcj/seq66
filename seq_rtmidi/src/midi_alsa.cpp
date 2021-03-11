@@ -562,10 +562,15 @@ midi_in_alsa::api_poll_for_midi ()
 /**
  *  Defines the size of the MIDI event buffer, which should be large enough to
  *  accomodate the largest MIDI message to be encoded.
- *  A local define for visibility.
+ *  A local define for visibility.  Also provided, but not yet used, is a size
+ *  for SysEx events, which we don't handle, but want to note here.  Inspired
+ *  by Qtractor code. Also in Qtractor, the same snd_midi_event_t object is
+ *  used over and over, rather than being recreated/destroyed for every
+ *  event-play by snd_midi_event_new() and snd_midi_event_free().
  */
 
-#define SEQ66_MIDI_EVENT_SIZE_MAX   10
+#define SEQ66_MIDI_EVENT_SIZE_MAX    10
+#define SEQ66_MIDI_SYSEX_SIZE_MAX   512     /* Hydrogen uses 32 for input!  */
 
 /**
  *  This play() function takes a native event, encodes it to an ALSA MIDI
@@ -586,27 +591,29 @@ midi_in_alsa::api_poll_for_midi ()
 void
 midi_alsa::api_play (event * e24, midibyte channel)
 {
-    midibyte buffer[4];                             /* temp for MIDI data   */
-    buffer[0] = e24->get_status();                  /* fill buffer          */
-    buffer[0] += (channel & 0x0F);
-    e24->get_data(buffer[1], buffer[2]);            /* set MIDI data        */
+    static const size_t s_event_size_max = SEQ66_MIDI_EVENT_SIZE_MAX;
+    snd_midi_event_t * midi_ev;                         /* ALSA MIDI parser */
+    int rc = snd_midi_event_new(s_event_size_max, &midi_ev);
+    if (rc == 0)
+    {
+        midibyte buffer[4];                             /* temp MIDI data   */
+        buffer[0] = e24->get_status();                  /* fill buffer      */
+        buffer[0] += (channel & 0x0F);
+        e24->get_data(buffer[1], buffer[2]);            /* set MIDI data    */
 
-    snd_midi_event_t * midi_ev;                     /* ALSA MIDI parser     */
-    snd_midi_event_new(SEQ66_MIDI_EVENT_SIZE_MAX, &midi_ev);
-
-    snd_seq_event_t ev;
-    snd_seq_ev_clear(&ev);                          /* clear event          */
-    snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* encode 3 raw bytes   */
-    snd_midi_event_free(midi_ev);                   /* free the parser      */
-    snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source           */
-
-#if defined SEQ66_SHOW_API_CALLS_TMI                /* Too Much Information */
-    printf("midi_alsa::play() local port %d\n", m_local_addr_port);
-#endif
-
-    snd_seq_ev_set_subs(&ev);
-    snd_seq_ev_set_direct(&ev);                     /* it is immediate      */
-    snd_seq_event_output(m_seq, &ev);               /* pump into the queue  */
+        snd_seq_event_t ev;
+        snd_seq_ev_clear(&ev);                          /* clear event      */
+        snd_midi_event_encode(midi_ev, buffer, 3, &ev); /* 3 raw bytes      */
+        snd_midi_event_free(midi_ev);                   /* free the parser  */
+        snd_seq_ev_set_source(&ev, m_local_addr_port);  /* set source       */
+        snd_seq_ev_set_subs(&ev);
+        snd_seq_ev_set_direct(&ev);                     /* it is immediate  */
+        snd_seq_event_output(m_seq, &ev);               /* pump into queue  */
+    }
+    else
+    {
+        errprint("api_play() out-of-memory error");
+    }
 }
 
 /**

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-03-08
+ * \updates       2021-03-11
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -60,6 +60,31 @@ midi_vector_base::midi_vector_base (sequence & seq)
     m_position_for_get  (0)
 {
     // Empty body
+}
+
+void
+midi_vector_base::put_meta
+(
+    midibyte metavalue,
+    int datalen,
+    midipulse deltatime
+)
+{
+    add_variable(deltatime);
+    put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
+    put(metavalue);                                 /* meta marker          */
+    put(midibyte(datalen));                         /* range from 0 to 255  */
+}
+
+void
+midi_vector_base::put_seqspec (midilong spec, int datalen)
+{
+    datalen += 4;                                   /* size of 0x242400nn   */
+    add_variable(0);
+    put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
+    put(EVENT_META_SEQSPEC);                        /* 0xF7 seqspec marker  */
+    put(midibyte(datalen));                         /* range from 0 to 255  */
+    add_long(spec);                                 /* e.g. c_midibus       */
 }
 
 /**
@@ -156,7 +181,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
     }
     else
     {
-        midibyte d0 = e.data(0);                    /* encode status & data */
+        midibyte d0 = e.data(0);
         midibyte d1 = e.data(1);
         midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
@@ -235,10 +260,7 @@ midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
 void
 midi_vector_base::fill_seq_number (int seq)
 {
-    add_variable(0);                                /* delta time N/A   */
-    put(0xFF);                                      /* meta marker      */
-    put(0x00);                                      /* seq-num marker   */
-    put(0x02);                                      /* length of event  */
+    put_meta(EVENT_META_SEQ_NUMBER, 2);             /* 0x00, 2 bytes long   */
     add_short(midishort(seq));
 }
 
@@ -258,15 +280,8 @@ midi_vector_base::fill_seq_number (int seq)
 void
 midi_vector_base::fill_seq_name (const std::string & name)
 {
-    add_variable(0);                                /* delta time N/A   */
-    put(0xFF);                                      /* meta marker      */
-    put(0x03);                                      /* track name mark  */
-
-    int len = name.length();
-    if (len > c_max_midi_data_value)                /* 0x7F, 127        */
-        len = c_max_midi_data_value;
-
-    put(midibyte(len));                             /* length of name   */
+    int len = int(name.length());
+    put_meta(EVENT_META_TRACK_NAME, len);           /* 0x03, len bytes long */
     for (int i = 0; i < len; ++i)
         put(midibyte(name[i]));
 }
@@ -281,10 +296,7 @@ midi_vector_base::fill_seq_name (const std::string & name)
 void
 midi_vector_base::fill_meta_track_end (midipulse deltatime)
 {
-    add_variable(deltatime);
-    put(0xFF);
-    put(0x2F);
-    put(0x00);
+    put_meta(EVENT_META_END_OF_TRACK, 0, deltatime);    /* no data to add   */
 }
 
 #if defined USE_FILL_TIME_SIG_AND_TEMPO
@@ -324,7 +336,6 @@ midi_vector_base::fill_time_sig_and_tempo
         fill_time_sig(p);
 }
 
-
 /**
  *  Fill in the time-signature information.  This function is used only for
  *  the first track, and only if no such event is in the track data.
@@ -346,10 +357,7 @@ midi_vector_base::fill_time_sig (const performer & p)
     int cpm = p.clocks_per_metronome();
     int get32pq = p.get_32nds_per_quarter();
     int bw = log2_time_sig_value(beatwidth);
-    add_variable(0);                    /* delta time                   */
-    put(0xFF);                          /* EVENT_MIDI_META              */
-    put(0x58);                          /* EVENT_MIDI_TIME_SIGNATURE    */
-    put(0x04);                          /* data length                  */
+    put_meta(EVENT_META_TIME_SIGNATURE, 4);         /* 0x58 marker, 4 bytes */
     put(bpb);
     put(bw);
     put(cpm);
@@ -377,14 +385,11 @@ midi_vector_base::fill_time_sig (const performer & p)
 void
 midi_vector_base::fill_tempo (const performer & p)
 {
-    midibyte t[4];                              /* hold tempo bytes */
+    midibyte t[4];                                  /* hold tempo bytes     */
     int usperqn = p.us_per_quarter_note();
     tempo_us_to_bytes(t, usperqn);
-    add_variable(0);                            /* delta time       */
-    put(0xFF);                                  /* meta event       */
-    put(0x51);                                  /* tempo event      */
-    put(0x03);                                  /* data length      */
-    put(t[0]);                                  /* NOT 2, 1, 0!     */
+    put_meta(EVENT_META_SET_TEMPO, 3);              /* 0x51, 3 bytes long   */
+    put(t[0]);                                      /* NOT 2, 1, 0!         */
     put(t[1]);
     put(t[2]);
 }
@@ -403,26 +408,14 @@ midi_vector_base::fill_tempo (const performer & p)
 void
 midi_vector_base::fill_proprietary ()
 {
-    add_variable(0);                                /* bus delta time   */
-    put(0xFF);                                      /* meta marker      */
-    put(0x7F);                                      /* SeqSpec marker   */
-    put(0x05);                                      /* event length     */
-    add_long(c_midibus);                            /* Seq24 SeqSpec ID */
-    put(m_sequence.seq_midi_bus());                 /* MIDI buss number */
+    put_seqspec(c_midibus, 1);
+    put(m_sequence.seq_midi_bus());                 /* MIDI buss number     */
 
-    add_variable(0);                                /* timesig delta t  */
-    put(0xFF);
-    put(0x7F);
-    put(0x06);
-    add_long(c_timesig);
+    put_seqspec(c_timesig, 2);
     put(m_sequence.get_beats_per_bar());
     put(m_sequence.get_beat_width());
 
-    add_variable(0);                                /* channel delta t  */
-    put(0xFF);
-    put(0x7F);
-    put(0x05);
-    add_long(c_midich);                             /* channel override */
+    put_seqspec(c_midich, 1);
     put(m_sequence.seq_midi_channel());
     if (! usr().global_seq_feature())
     {
@@ -437,30 +430,18 @@ midi_vector_base::fill_proprietary ()
 
         if (m_sequence.musical_key() != c_key_of_C)
         {
-            add_variable(0);                        /* key selection dt */
-            put(0xFF);
-            put(0x7F);
-            put(0x05);                              /* long + midibyte  */
-            add_long(c_musickey);
+            put_seqspec(c_musickey, 1);
             put(m_sequence.musical_key());
         }
         if (m_sequence.musical_scale() != c_scales_off)
         {
-            add_variable(0);                        /* scale selection  */
-            put(0xFF);
-            put(0x7F);
-            put(0x05);                              /* long + midibyte  */
-            add_long(c_musicscale);
+            put_seqspec(c_musicscale, 1);
             put(m_sequence.musical_scale());
         }
         if (seq::valid(m_sequence.background_sequence()))
         {
-            add_variable(0);                        /* b'ground seq.    */
-            put(0xFF);
-            put(0x7F);
-            put(0x08);                              /* two long values  */
-            add_long(c_backsequence);
-            add_long(m_sequence.background_sequence()); /* put_long()?  */
+            put_seqspec(c_backsequence, 4);
+            add_long(m_sequence.background_sequence());
         }
     }
 
@@ -469,20 +450,12 @@ midi_vector_base::fill_proprietary ()
      */
 
     bool transpose = m_sequence.transposable();
-    add_variable(0);                            /* no delta time    */
-    put(0xFF);
-    put(0x7F);
-    put(0x05);                                  /* long + midibyte  */
-    add_long(c_transpose);
-    put(transpose);                             /* a boolean byte   */
+    put_seqspec(c_transpose, 1);
+    put(midibyte(transpose));
     if (m_sequence.color() != c_seq_color_none)
     {
-        add_variable(0);                            /* key selection dt */
-        put(0xFF);
-        put(0x7F);
-        put(0x05);                                  /* long + colorbyte */
-        add_long(c_seq_color);
-        put(colorbyte(m_sequence.color()));
+        put_seqspec(c_seq_color, 1);
+        put(midibyte(m_sequence.color()));
     }
 }
 
@@ -613,11 +586,7 @@ midi_vector_base::song_fill_seq_trigger
 )
 {
     const int num_triggers = 1;                 /* only one trigger here    */
-    add_variable(0);                            /* no delta time            */
-    put(0xFF);                                  /* indicates a meta event   */
-    put(0x7F);                                  /* sequencer-specific       */
-    add_variable((num_triggers * 3 * 4) + 4);   /* 3 long values + tag      */
-    add_long(c_triggers_new);                   /* Seq24 tag for triggers   */
+    put_seqspec(c_triggers_new, num_triggers * 3 * 4);
 
     /*
      * Using all the trigger values seems to be the same as these values, but
@@ -629,9 +598,9 @@ midi_vector_base::song_fill_seq_trigger
      * add_long(trig.offset());
      */
 
-    add_long(0);                            // the start tick
+    add_long(0);                                /* the start tick           */
     add_long(trig.tick_end());
-    add_long(0);                            // offset is done in event
+    add_long(0);                                /* offset is done in event  */
     fill_proprietary();
 
     midipulse delta_time = length - prev_timestamp;
@@ -708,20 +677,21 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 
     fill_seq_name(m_sequence.name());
 
+#if defined USE_FILL_TIME_SIG_AND_TEMPO
+
     /**
      * To allow other sequencers to read Seq24/Seq66 files, we should
      * provide the Time Signature and Tempo meta events, in the 0th (first)
      * track (sequence).  These events must precede any "real" MIDI events.
-     * They are not included if the legacy-format option is in force.
      * We also need to skip this if tempo track support is in force.
      */
 
     if (track == 0)
     {
-#if defined USE_FILE_TIME_SIG_AND_TEMPO
         fill_time_sig_and_tempo(p, evl.has_time_signature(), evl.has_tempo());
-#endif
     }
+
+#endif
 
     midipulse timestamp = 0;
     midipulse deltatime = 0;
@@ -750,11 +720,7 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 
         triggers::List & triggerlist = m_sequence.triggerlist();
         int triggercount = int(triggerlist.size());
-        add_variable(0);
-        put(0xFF);
-        put(0x7F);
-        add_variable((triggercount * 3 * 4) + 4);       /* 3 long ints plus...  */
-        add_long(c_triggers_new);                       /* ...the triggers code */
+        put_seqspec(c_triggers_new, triggercount * 3 * 4);
         for (auto & t : triggerlist)
         {
             add_long(t.tick_start());
