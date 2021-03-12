@@ -463,14 +463,14 @@ setmapper::install_sequence (sequence * s, seq::number seqno)
 }
 
 /**
- *  Removes a sequence from the tune, based on its sequence number.  It will not
- *  be removed if it is in editing.
+ *  Removes a sequence from the tune, based on its sequence number.  It will
+ *  not be removed if it is in editing.
  *
  * \param seqno
  *      Provides the sequence number, used to look up any existing sequences.
- *      All sequences have a unique number ranging from 0 to 1023.  Also, please
- *      note that the setmapper does lookups, including of screensets, using
- *      this range of numbers, rather than set number.
+ *      All sequences have a unique number ranging from 0 to 1023.  Also,
+ *      please note that the setmapper does lookups, including of screensets,
+ *      using this range of numbers, rather than set number.
  *
  * \return
  *      Returns true if the sequence did exist and was removed successfully.
@@ -717,7 +717,7 @@ setmapper::remove_set (screenset::number setno)
     {
         setmaster::container::size_type count = sets().erase(setno);
         if (setno == m_playscreen)
-            result = set_playscreen(0); // m_playscreen = 0;
+            result = set_playscreen(0);
 
         if (result)
             result = count > 0;
@@ -735,12 +735,12 @@ setmapper::remove_set (screenset::number setno)
  *  If the desired play-screen exists, unmark the current play-screen and mark
  *  the new one.
  *
- *  If there was a existing screen-set \a setno, just mark it (again).  [DO WE
- *  NEED TO CLEAR IT?]  Otherwise, if the set number is valid, then create a new
- *  screenset and set it as the play-screen.
+ *  If there was a existing screen-set \a setno, just mark it (again).
+ *  Otherwise, if the set number is valid, then create a new screenset and set
+ *  it as the play-screen.
  *
- *  We no longer check for a change in m_playscreen, because doing so leads to a
- *  segfault... bad set?
+ *  We no longer check for a change in m_playscreen, because doing so leads to
+ *  a segfault... bad set?
  *
  * \param setno
  *      Provides the desired set number.  This ranges from 0 to 2047, though

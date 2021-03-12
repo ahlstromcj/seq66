@@ -243,7 +243,7 @@ public:
      *  in the derived class.
      */
 
-    virtual std::size_t size () const = 0;
+    virtual unsigned size () const = 0;
 
     /**
      *  Instead of checking for the size of the container when "emptying" it

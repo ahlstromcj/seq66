@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2020-01-13
-% \update      2020-01-18
+% \update      2020-03-12
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -64,6 +64,57 @@
    Clicking this button deletes the set selected in the table above it.
    Note that the 0th set cannot be deleted.
    In \textsl{Seq66}, there must always be a set 0.
+
+\subsection{Set Handling}
+\label{subsec:setmaster_handling}
+
+   This section talks about how sets work.  The topics are
+
+   \begin{itemize}
+      \item \textbf{Set Management}
+      \item \textbf{Empty-Set Handling}
+   \end{itemize}
+
+\subsubsection{Set Management}
+\label{subsubsec:setmaster_management}
+
+   This section will discuss the work-flows of using sets to organize a song
+   and to control playback.
+
+   MORE TO COME.
+
+\subsubsection{Empty Set Handling}
+\label{subsubsec:setmaster_empty_sets}
+
+   When \textsl{Seq66} loads a song, it loads the existing sets in the song and
+   sets their names as stored in the \texttt{c\_notes} \textsl{SeqSpec}
+   (see \sectionref{subsec:midi_format_meta_format}).
+   In addition, one dummy and invisible set is created for internal management
+   purposes.
+
+   When a new song is created, one usable set, Set \#0, is always created, as a
+   starting point.  One generally starts with this set and adds patterns to it.
+
+   When one selects the next set (e.g. using the \textbf{Live} frame's
+   \textbf{Set} spin control), that set does not exist, but is immediately
+   created.  So now the song has two sets, with the second one being empty.
+   If the song is now saved, so is the empty set's file name.  However, empty
+   sets are not saved; a set must be populated with at least one pattern to be
+   saved.
+
+   The following figure shows what happens when a song with 4 sets (0, 1, 2,
+   and 7) is loaded, and then the user increments the spin-button all the way
+   to set 8.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.85]{tabs/sets/setmaster-with-additional-sets.png}
+   \caption{New Sets Creation}
+   \label{fig:setmaster_set_creation}
+\end{figure}
+
+   There are new sets 3, 4, 5, 6, and 8.  However, if one saves and then
+   reloads this song, the empty sets are gone.  Just something to be aware of.
 
 %-------------------------------------------------------------------------------
 % vim: ts=3 sw=3 et ft=tex

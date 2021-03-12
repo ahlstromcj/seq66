@@ -88,9 +88,9 @@ public:
      *      Returns the size of the container, in midibytes.
      */
 
-    virtual std::size_t size () const
+    virtual unsigned size () const
     {
-        return m_char_vector.size();
+        return unsigned(m_char_vector.size());
     }
 
     /**

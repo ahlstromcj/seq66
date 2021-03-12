@@ -1076,9 +1076,9 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             if (len == 3)
                             {
                                 midibyte bt[4];         /* "Tempo events"   */
-                                bt[0] = read_byte();                // tt
-                                bt[1] = read_byte();                // tt
-                                bt[2] = read_byte();                // tt
+                                bt[0] = read_byte();                /* tt   */
+                                bt[1] = read_byte();                /* tt   */
+                                bt[2] = read_byte();                /* tt   */
                                 bt[3] = 0;
 
                                 double tt = tempo_us_from_bytes(bt);
@@ -1285,15 +1285,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             break;
 
                         case EVENT_META_MIDI_CHANNEL:   /* FF 20 01 cc      */
-
-                            (void) read_meta_data(s, e, mtype, len);
-                            break;
-
                         case EVENT_META_MIDI_PORT:      /* FF 21 01 pp      */
-
-                            (void) read_meta_data(s, e, mtype, len);
-                            break;
-
                         case EVENT_META_SMPTE_OFFSET:   /* FF 54 03 t t t   */
 
                             (void) read_meta_data(s, e, mtype, len);
@@ -1496,11 +1488,11 @@ midifile::parse_prop_header (int file_size)
     {
         result = read_long();                   /* status (new), or C_tag   */
         midibyte status = (result & 0x00FF0000) >> 16;      /* 2-byte shift */
-        if (status == 0xFF)
+        if (status == EVENT_MIDI_META)          /* 0xFF meta marker         */
         {
             skip(-2);                           /* back up to meta type     */
             midibyte type = read_byte();        /* get meta type            */
-            if (type == 0x7F)                   /* SeqSpec event marker     */
+            if (type == EVENT_META_SEQSPEC)     /* 0x7F event marker     */
             {
                 (void) read_varinum();          /* prop section length      */
                 result = read_long();           /* control tag              */
@@ -1509,9 +1501,8 @@ midifile::parse_prop_header (int file_size)
             {
                 fprintf
                 (
-                    stderr,
-                    "Bad meta type '%x' in prop section near offset %lx\n",
-                    int(type), (unsigned long)(m_pos)
+                    stderr, "Unexpected meta type 0x%x near offset 0x%lx\n",
+                    int(type), long(m_pos)
                 );
             }
         }
@@ -2222,9 +2213,10 @@ midifile::write_start_tempo (midibpm start_tempo)
 void
 midifile::write_time_sig (int beatsperbar, int beatwidth)
 {
-    write_byte(0x00);                       /* delta time at beginning      */
-    write_short(0xFF58);
-    write_byte(0x04);                       /* the message length           */
+    write_byte(0);                          /* delta time at beginning      */
+    write_byte(EVENT_MIDI_META);            /* 0xFF meta marker             */
+    write_byte(EVENT_META_TIME_SIGNATURE);  /* 0x58                         */
+    write_byte(4);                          /* the message length           */
     write_byte(beatsperbar);                /* nn                           */
     write_byte(beat_log2(beatwidth));       /* dd                           */
     write_short(0x1808);                    /* cc bb                        */
@@ -2263,17 +2255,12 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
  */
 
 void
-midifile::write_prop_header
-(
-    midilong control_tag,
-    long data_length
-)
+midifile::write_prop_header ( midilong control_tag, long len)
 {
-    int len = data_length + 4;          /* data + sizeof(control_tag);  */
-    write_byte(0x00);                   /* delta time                   */
-    write_byte(0xFF);
-    write_byte(0x7F);
-    write_varinum(len);
+    write_byte(0);                      /* delta time                   */
+    write_byte(EVENT_MIDI_META);        /* 0xFF meta marker             */
+    write_byte(EVENT_META_SEQSPEC);     /* 0x7F sequencer-specific mark */
+    write_varinum(len + 4);             /* data + sizeof(control_tag);  */
     write_long(control_tag);            /* use legacy output call       */
 }
 
@@ -2782,9 +2769,9 @@ midifile::write_track_name (const std::string & trackname)
     bool ok = ! trackname.empty();
     if (ok)
     {
-        write_byte(0x00);                               /* delta time       */
-        write_byte(0xFF);                               /* meta tag         */
-        write_byte(0x03);                               /* second byte      */
+        write_byte(0);                                  /* delta time       */
+        write_byte(EVENT_MIDI_META);                    /* 0xFF meta tag    */
+        write_byte(EVENT_META_TRACK_NAME);              /* 0x03 second byte */
         write_varinum(midilong(trackname.size()));
         for (int i = 0; i < int(trackname.size()); ++i)
             write_byte(trackname[i]);
@@ -2805,18 +2792,15 @@ midifile::read_track_name ()
     std::string result;
     (void) read_byte();                         /* throw-away delta time    */
     midibyte status = read_byte();              /* get the seq-spec marker  */
-    if (status == 0xFF)
+    if (status == EVENT_MIDI_META)              /* 0x7F                     */
     {
-        if (read_byte() == 0x03)
+        if (read_byte() == EVENT_META_TRACK_NAME)       /* 0x03             */
         {
-            midilong tl = int(read_varinum());     /* track length     */
-            if (tl > 0)
+            midilong tl = int(read_varinum());  /* track length             */
+            for (midilong i = 0; i < tl; ++i)
             {
-                for (midilong i = 0; i < tl; ++i)
-                {
-                    midibyte c = read_byte();
-                    result += c;
-                }
+                midibyte c = read_byte();
+                result += c;
             }
         }
     }
@@ -2865,10 +2849,10 @@ midifile::track_name_size (const std::string & trackname) const
 void
 midifile::write_seq_number (midishort seqnum)
 {
-    write_byte(0x00);                           /* delta time               */
-    write_byte(0xFF);                           /* meta tag                 */
-    write_byte(0x00);                           /* second byte              */
-    write_byte(0x02);                           /* finish sequence tag      */
+    write_byte(0);                              /* delta time               */
+    write_byte(EVENT_MIDI_META);                /* 0xFF meta tag            */
+    write_byte(EVENT_META_SEQ_NUMBER);          /* 0x00 second byte         */
+    write_byte(2);                              /* 2-bytes of data          */
     write_short(seqnum);                        /* write sequence number    */
 }
 
@@ -2886,9 +2870,9 @@ midifile::read_seq_number ()
     int result = -1;
     (void) read_byte();                         /* throw-away delta time    */
     midibyte status = read_byte();              /* get the seq-spec marker  */
-    if (status == 0xFF)
+    if (status == EVENT_MIDI_META)
     {
-        if (read_byte() == 0x00 && read_byte() == 0x02)
+        if (read_byte() == EVENT_META_SEQ_NUMBER && read_byte() == 2)
             result = int(read_short());
     }
     return result;
@@ -2901,9 +2885,9 @@ midifile::read_seq_number ()
 void
 midifile::write_track_end ()
 {
-    write_byte(0xFF);                       /* meta tag                     */
-    write_byte(0x2F);                       /* EVENT_META_END_OF_TRACK      */
-    write_byte(0x00);
+    write_byte(EVENT_MIDI_META);                    /* 0xFF meta tag        */
+    write_byte(EVENT_META_END_OF_TRACK);            /* 0x2F                 */
+    write_byte(0);                                  /* no data              */
 }
 
 /**

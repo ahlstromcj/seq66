@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-03-03
+ * \updates       2021-03-12
  * \license       GNU GPLv2 or above
  *
  *  Implements the screenset class.  The screenset class represent all of the
@@ -80,11 +80,10 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_set_number        (setnum),
     m_set_offset        (m_set_number * m_set_size),
     m_set_maximum       (m_set_offset + m_set_size),
-    m_set_name          (),
+    m_set_name          (usable() ? "New Set" : ""),
     m_is_playscreen     (false)
 {
     clear();
-    m_set_name = usable() ? "New Set" : "Dummy Set" ;
 }
 
 /**
