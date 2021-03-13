@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Igor Angst (major modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-02-28
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the
@@ -282,15 +282,20 @@ public:
 
     midicontrolout
     (
-        int buss    = 0,                        /* SET INDIRECTLY   */
+        int buss,
         int rows    = SEQ66_DEFAULT_SET_ROWS,
         int columns = SEQ66_DEFAULT_SET_COLUMNS
     );
+    midicontrolout (const std::string & name);
     midicontrolout (const midicontrolout &) = default;
     midicontrolout & operator = (const midicontrolout &) = default;
     virtual ~midicontrolout () = default;
 
-    void initialize (int count, int buss = SEQ66_MIDI_CONTROL_OUT_BUSS);
+    virtual void initialize
+    (
+        int count,
+        int buss
+    ) override;
 
     static void seqaction_range (int & minimum, int & maximum)
     {

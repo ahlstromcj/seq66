@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-06
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -349,9 +349,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
-    m_midi_control_in       ("MIDI input controls"),
-    m_midi_control_buss     (c_bussbyte_max),   /* any buss can control app */
-    m_midi_control_out      (),
+    m_midi_control_in       ("performer input controls"),
+    m_midi_control_out      ("performer output controls"),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
@@ -2006,6 +2005,10 @@ performer::launch (int ppqn)
         bool ok = activate();
         if (ok)
         {
+            bussbyte truebus = true_output_bus(midi_control_in().nominal_buss());
+            m_midi_control_in.true_buss(truebus);
+            truebus = true_output_bus(midi_control_out().nominal_buss());
+            m_midi_control_out.true_buss(truebus);
             launch_input_thread();
             launch_output_thread();
             (void) set_playing_screenset(0);    // ca 2020-08-11
@@ -4844,8 +4847,11 @@ performer::midi_control_event (const event & ev, bool recording)
         midicontrol::key k(ev);
         const midicontrol & incoming = m_midi_control_in.control(k);
         result = incoming.is_usable();
-        if (result && m_midi_control_buss < c_bussbyte_max)
-            result = ev.input_bus() == m_midi_control_buss;
+        if (result)
+            result = m_midi_control_in.is_enabled();
+
+        if (result)
+            result = ev.input_bus() == m_midi_control_in.true_buss();
 
         if (result)
         {

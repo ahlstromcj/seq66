@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-02-28
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -139,9 +139,9 @@ midicontrolfile::midicontrolfile
     rcsettings & rcs
 ) :
     configfile              (filename, rcs),
-    m_temp_key_controls     (),             /* used during reading only */
-    m_temp_midi_controls    (),             /* used during reading only */
-    m_stanzas               ()              /* fill from rcs in writing */
+    m_temp_key_controls     (),                             /* reading only */
+    m_temp_midi_ctrl_in     ("ctrl"),                       /* reading only */
+    m_stanzas               ()
 {
     version("3");                           /* adds more automation out */
 }
@@ -206,7 +206,7 @@ midicontrolfile::parse_stream (std::ifstream & file)
 
     std::string s = parse_comments(file);
     if (! s.empty())
-        m_temp_midi_controls.comments_block().set(s);
+        m_temp_midi_ctrl_in.comments_block().set(s);
 
     std::string mctag = "[midi-control-settings]";  /* the new name for it  */
     if (bad_position(find_tag(file, mctag)))
@@ -225,7 +225,9 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (is_good_bussbyte(bussbyte(buss)))
     {
         bussbyte b = bussbyte(buss);                /* c_bussbyte_max       */
-        m_temp_midi_controls.buss(b);
+        m_temp_midi_ctrl_in.initialize(0, buss);   // MUST REFACTOR!!!
+        m_temp_midi_ctrl_in.nominal_buss(b);
+        m_temp_midi_ctrl_in.true_buss(b);
     }
     s = get_variable(file, mctag, "midi-enabled");
 
@@ -235,10 +237,10 @@ midicontrolfile::parse_stream (std::ifstream & file)
     if (! result)
         enabled = false;
 
-    m_temp_midi_controls.is_enabled(enabled);
-    m_temp_midi_controls.offset(offset);
-    m_temp_midi_controls.rows(rows);
-    m_temp_midi_controls.columns(columns);
+    m_temp_midi_ctrl_in.is_enabled(enabled);
+    m_temp_midi_ctrl_in.offset(offset);
+    m_temp_midi_ctrl_in.rows(rows);
+    m_temp_midi_ctrl_in.columns(columns);
     if (loadkeys)
         m_temp_key_controls.clear();
 
@@ -297,10 +299,10 @@ midicontrolfile::parse_stream (std::ifstream & file)
             infoprintf("%d automation-control lines", count);
         }
     }
-    if (loadmidi && m_temp_midi_controls.count() > 0)
+    if (loadmidi && m_temp_midi_ctrl_in.count() > 0)
     {
         rc_ref().midi_control_in().clear();
-        rc_ref().midi_control_in() = m_temp_midi_controls;
+        rc_ref().midi_control_in() = m_temp_midi_ctrl_in;
         rc_ref().midi_control_in().inactive_allowed(true);  /* always   */
     }
     if (rc_ref().load_key_controls() && m_temp_key_controls.count() > 0)
@@ -502,7 +504,11 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
          */
 
         midicontrolout & mco = rc_ref().midi_control_out();
-        mco.initialize(sequences, buss);
+        mco.initialize(sequences, buss);            // MUST REFACTOR!!!
+
+        bussbyte b = bussbyte(buss);                /* c_bussbyte_max       */
+        mco.nominal_buss(b);
+        mco.true_buss(b);
         mco.is_enabled(enabled);
         mco.offset(offset);
         mco.rows(rows);
@@ -906,7 +912,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
     {
         const midicontrolin & mci = rc_ref().midi_control_in();
         bool disabled = mci.is_disabled();
-        int bb = int(mci.buss());
+        int bb = int(mci.nominal_buss());
         std::string k(bool_to_string(rc_ref().load_key_controls()));
         std::string m(bool_to_string(rc_ref().load_midi_control_in()));
         file <<
@@ -1107,123 +1113,126 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
     const midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
-    int buss = int(mco.buss());
+    int buss = int(mco.nominal_buss());
     bool disabled = mco.is_disabled();
     bool result = setsize > 0 && buss >= 0;         /* light sanity check */
-    file <<
-        "\n"
-        "[midi-control-out-settings]\n\n"
-        << "set-size = " << setsize << "\n"
-        << "output-buss = " << buss << "\n"
-        << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
-        << "button-offset = " << mco.offset() << "\n"
-        << "button-rows = " << mco.rows() << "\n"
-        << "button-columns = " << mco.columns() << "\n"
-        ;
-
-    file <<
-        "\n"
-        "[midi-control-out]\n"
-        "\n"
-        "#   --------------------- Pattern number (as applicable)\n"
-        "#  |    -------------- MIDI status/event byte (e.g. Note On)\n"
-        "#  |   |  ------------ data 1 (e.g. note number)\n"
-        "#  |   | |  ---------- data 2 (e.g. velocity)\n"
-        "#  |   | | |\n"
-        "#  v   v v v\n"
-        "# 31 [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0]\n"
-        "#       Arm      Mute      Queue    Delete\n"
-        ;
-
-    file <<
-        "\n"
-        "# This is a change from version 1 of this file, made on 2021-02-10.\n"
-        "# The enabled column is replaced by a test of the status/event byte,\n"
-        "# and channel must be incorporated into the status.  Much cleaner!\n"
-        "# The order of the lines that follow must must be preserved.\n"
-        "\n"
-        ;
-
-    if (mco.is_blank())
+    if (result)
     {
-        for (int seq = 0; seq < setsize; ++seq)
+        file <<
+            "\n"
+            "[midi-control-out-settings]\n\n"
+            << "set-size = " << setsize << "\n"
+            << "output-buss = " << buss << "\n"
+            << "midi-enabled = " << (disabled ? "false" : "true") << "\n"
+            << "button-offset = " << mco.offset() << "\n"
+            << "button-rows = " << mco.rows() << "\n"
+            << "button-columns = " << mco.columns() << "\n"
+            ;
+
+        file <<
+            "\n"
+            "[midi-control-out]\n"
+            "\n"
+            "#   --------------------- Pattern number (as applicable)\n"
+            "#  |    -------------- MIDI status/event byte (e.g. Note On)\n"
+            "#  |   |  ------------ data 1 (e.g. note number)\n"
+            "#  |   | |  ---------- data 2 (e.g. velocity)\n"
+            "#  |   | | |\n"
+            "#  v   v v v\n"
+            "# 31 [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0]\n"
+            "#       Arm      Mute      Queue    Delete\n"
+            ;
+
+        file <<
+            "\n"
+            "# This is a change from version 1 of this file, made on 2021-02-10.\n"
+            "# The enabled column is replaced by a test of the status/event byte,\n"
+            "# and channel must be incorporated into the status.  Much cleaner!\n"
+            "# The order of the lines that follow must must be preserved.\n"
+            "\n"
+            ;
+
+        if (mco.is_blank())
         {
-            file << seq
-                << " [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ]\n";
-        }
-    }
-    else
-    {
-        for (int seq = 0; seq < setsize; ++seq)
-        {
-            int minimum, maximum;
-            midicontrolout::seqaction_range(minimum, maximum);
-            file << std::setw(2) << seq << std::setw(0);
-            for (int a = minimum; a < maximum; ++a)
+            for (int seq = 0; seq < setsize; ++seq)
             {
-                event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
-                midibyte d0, d1;
-                char temp[48];
-                ev.get_data(d0, d1);
-                (void) snprintf             /* much easier format!  */
-                (
-                    temp, sizeof temp, " [ 0x%02x %3d %3d ]",
-                    unsigned(ev.get_status()), int(d0), int(d1)
-                );
-                file << temp;
+                file << seq
+                    << " [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ]\n";
             }
-            file << "\n";
         }
+        else
+        {
+            for (int seq = 0; seq < setsize; ++seq)
+            {
+                int minimum, maximum;
+                midicontrolout::seqaction_range(minimum, maximum);
+                file << std::setw(2) << seq << std::setw(0);
+                for (int a = minimum; a < maximum; ++a)
+                {
+                    event ev = mco.get_seq_event(seq, midicontrolout::seqaction(a));
+                    midibyte d0, d1;
+                    char temp[48];
+                    ev.get_data(d0, d1);
+                    (void) snprintf             /* much easier format!  */
+                    (
+                        temp, sizeof temp, " [ 0x%02x %3d %3d ]",
+                        unsigned(ev.get_status()), int(d0), int(d1)
+                    );
+                    file << temp;
+                }
+                file << "\n";
+            }
+        }
+
+        file <<
+            "\n[mute-control-out]\n\n"
+            "# The format of the mute and automation output events is simpler:\n"
+            "#\n"
+            "#  --------------------- mute-group number\n"
+            "# |   ---------------- MIDI status/event byte (e.g. Note On+channel)\n"
+            "# |  |  -------------- data 1 (e.g. note number)\n"
+            "# |  | |  ------------ data 2 (e.g. velocity)\n"
+            "# |  | | |\n"
+            "# v  v v v v\n"
+            "# 1 [0 0 0]\n"
+            "\n"
+            "# The mute-controls have an additional stanza for non-populated\n"
+            "# (\"deleted\") mute-groups.\n"
+            "\n"
+            ;
+
+        for (int m = 0; m < mutegroups::Size(); ++m)
+        {
+            if (! write_mutes_triple(file, mco, m))
+                break;
+        }
+
+        file << "\n[automation-control-out]\n\n";
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::free);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::song);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
+        write_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
     }
-
-    file <<
-        "\n[mute-control-out]\n\n"
-        "# The format of the mute and automation output events is simpler:\n"
-        "#\n"
-        "#  --------------------- mute-group number\n"
-        "# |   ---------------- MIDI status/event byte (e.g. Note On + channel)\n"
-        "# |  |  -------------- data 1 (e.g. note number)\n"
-        "# |  | |  ------------ data 2 (e.g. velocity)\n"
-        "# |  | | |\n"
-        "# v  v v v v\n"
-        "# 1 [0 0 0]\n"
-        "\n"
-        "# Also, the mute-controls have an additional stanza for non-populated\n"
-        "# (\"deleted\") mute-groups.\n"
-        "\n"
-        ;
-
-    for (int m = 0; m < mutegroups::Size(); ++m)
-    {
-        if (! write_mutes_triple(file, mco, m))
-            break;
-    }
-
-    file << "\n[automation-control-out]\n\n";
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::play);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::toggle_mutes);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_record);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::slot_shift);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::free);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::queue);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::oneshot);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::replace);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::snap);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::song);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::learn);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_up);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::bpm_dn);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::list_up);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::list_dn);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_up);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::song_dn);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::set_up);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::set_dn);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::tap_bpm);
-    write_ctrl_triple(file, mco, midicontrolout::uiaction::free_2);
     return result;
 }
 
@@ -1270,21 +1279,21 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
                 keyname, opcat, automation::action::toggle, opslot, opcode
             );
             mca.set(&a[1]);
-            (void) m_temp_midi_controls.add(mca);
+            (void) m_temp_midi_ctrl_in.add(mca);
 
             midicontrol mcb
             (
                 keyname, opcat, automation::action::on, opslot, opcode
             );
             mcb.set(&b[1]);
-            (void) m_temp_midi_controls.add(mcb);
+            (void) m_temp_midi_ctrl_in.add(mcb);
 
             midicontrol mcc
             (
                 keyname, opcat, automation::action::off, opslot, opcode
             );
             mcc.set(&c[1]);
-            (void) m_temp_midi_controls.add(mcc);
+            (void) m_temp_midi_ctrl_in.add(mcc);
         }
         else
             result = false;
@@ -1319,21 +1328,21 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
                 keyname, opcat, automation::action::toggle, opslot, opcode
             );
             mca.set(a);
-            (void) m_temp_midi_controls.add(mca);
+            (void) m_temp_midi_ctrl_in.add(mca);
 
             midicontrol mcb
             (
                 keyname, opcat, automation::action::on, opslot, opcode
             );
             mcb.set(b);
-            (void) m_temp_midi_controls.add(mcb);
+            (void) m_temp_midi_ctrl_in.add(mcb);
 
             midicontrol mcc
             (
                 keyname, opcat, automation::action::off, opslot, opcode
             );
             mcc.set(c);
-            (void) m_temp_midi_controls.add(mcc);
+            (void) m_temp_midi_ctrl_in.add(mcc);
         }
         else
             result = false;

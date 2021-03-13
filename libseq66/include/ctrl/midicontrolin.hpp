@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-06
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -81,12 +81,6 @@ private:
     mccontainer m_container;
 
     /**
-     *  A name to use for showing the contents of the container.
-     */
-
-    std::string m_container_name;
-
-    /**
      *  Provides the text of a "[comments]" section of the MIDI control "rc"
      *  file.  It can, for example, note the device for which the controls
      *  apply.
@@ -131,7 +125,7 @@ public:
 
     midicontrolin
     (
-        int buss    = 0,                        /* NOT YET USED */
+        int buss,
         int rows    = SEQ66_DEFAULT_SET_ROWS,
         int columns = SEQ66_DEFAULT_SET_COLUMNS
     );
@@ -142,10 +136,11 @@ public:
     midicontrolin & operator = (midicontrolin &&) = default;
     virtual ~midicontrolin () = default;
 
-    const std::string & name () const
-    {
-        return m_container_name;
-    }
+    virtual void initialize
+    (
+        int count,
+        int buss
+    ) override;
 
     comments & comments_block ()
     {

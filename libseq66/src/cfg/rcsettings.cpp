@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-27
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -73,7 +73,7 @@ rcsettings::rcsettings () :
     m_load_midi_controls        (true),
     m_midi_control_buss         (c_bussbyte_max),
     m_midi_control_in           ("rc"),
-    m_midi_control_out          (),
+    m_midi_control_out          ("rc"),
     m_show_ui_sequence_key      (true),
     m_show_ui_sequence_number   (true),
     m_clock_mod                 (64),

@@ -20,7 +20,7 @@
  * \file          rcfile.cpp
  *
  *  This module declares/defines the base class for managing the
- *  the <code> ~/.config/seq66.rc </code> ("rc") configuration file.
+ *  the ~/.config/seq66.rc ("rc") configuration file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom

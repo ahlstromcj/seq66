@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-13
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -100,26 +100,21 @@ namespace seq66
  *  either false or some other form of zero.
  */
 
-midicontrolin::midicontrolin
+midicontrolin::midicontrolin\
 (
-    int /*buss*/,       /* NOT YET USED */
+    int buss,                           /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
     int rows,
     int columns
 ) :
-    midicontrolbase
-    (
-        SEQ66_MIDI_CONTROL_IN_BUSS,         /* allows all busses */
-        rows, columns
-    ),
+    midicontrolbase     (buss, rows, columns),
     m_container         (),
-    m_container_name    ("Default MIDI Controls"),
     m_comments_block    (),
     m_inactive_allowed  (false),
     m_loaded_from_rc    (false),
     m_control_status    (automation::ctrlstatus::none),
     m_have_controls     (false)
 {
-    is_enabled(true);                   /* by default */
+    // is_enabled(true);                   /* by default */
 }
 
 /**
@@ -128,14 +123,35 @@ midicontrolin::midicontrolin
  */
 
 midicontrolin::midicontrolin (const std::string & name) :
-    m_container         (),
-    m_container_name    (name),
+    midicontrolbase
+    (
+        SEQ66_MIDI_CONTROL_IN_BUSS,
+        SEQ66_DEFAULT_SET_ROWS,
+        SEQ66_DEFAULT_SET_COLUMNS,
+        name
+    ),
     m_comments_block    (),
     m_loaded_from_rc    (false),
     m_control_status    (automation::ctrlstatus::none),
     m_have_controls     (false)
 {
    // no code
+}
+
+void
+midicontrolin::initialize (int count, int bus)
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("midicontrolout::initialize(count = %d, bus = %d)\n", count, bus);
+#endif
+    if (count > 0)
+    {
+        is_enabled(true);
+    }
+    else
+    {
+        is_enabled(false);
+    }
 }
 
 /**

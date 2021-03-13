@@ -152,7 +152,7 @@ private:
      *  Provides a default-filled midicontrol container.
      */
 
-    midicontrolin m_temp_midi_controls;
+    midicontrolin m_temp_midi_ctrl_in;
 
     /**
      *  Provides the storage for the mute-groups data.

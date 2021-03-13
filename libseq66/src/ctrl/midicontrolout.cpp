@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-02-28
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -50,42 +50,64 @@ namespace seq66
 
 midicontrolout::midicontrolout
 (
-    int /*buss*/,       /* NOT YET USED */
+    int buss,                           /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
     int rows,
     int columns
 ) :
-    midicontrolbase     (SEQ66_MIDI_CONTROL_OUT_BUSS, rows, columns),
+    midicontrolbase     (buss, rows, columns),
     m_master_bus        (nullptr),
     m_seq_events        (),
     m_ui_events         (),
     m_mutes_events      (),
     m_screenset_size    (0)
 {
-    initialize(usr().set_size());       /* buss value set in initialize()   */
+    // initialize(usr().set_size());    /* buss value set in initialize()   */
 }
 
 /**
- *  Reinitializes an empty set of MIDI-control-out values.  It first clears any
- *  existing values from the vectors.
+ *  This constructor assigns the basic values of control name, number, and
+ *  action code.  The rest of the members can be set via the set() function.
+ */
+
+midicontrolout::midicontrolout (const std::string & name) :
+    midicontrolbase
+    (
+        SEQ66_MIDI_CONTROL_OUT_BUSS,
+        SEQ66_DEFAULT_SET_ROWS,
+        SEQ66_DEFAULT_SET_COLUMNS,
+        name
+    ),
+    m_master_bus        (nullptr),
+    m_seq_events        (),
+    m_ui_events         (),
+    m_mutes_events      (),
+    m_screenset_size    (0)
+{
+   // no code
+}
+
+/**
+ *  Reinitializes an empty set of MIDI-control-out values.  It first clears
+ *  any existing values from the vectors.
  *
- *  Next, it loads an action-pair with "empty" values.  It the creates an array
- *  of these pairs.
+ *  Next, it loads an action-pair with "empty" values.  It the creates an
+ *  array of these pairs.
  *
  *  Finally, it pushes the desired number of action-pair arrays into an
- *  actionlist, which is, for example, a vector of 32 elements, each containing
- *  4 pairs of event + status.  A vector of vector of pairs.
+ *  actionlist, which is, for example, a vector of 32 elements, each
+ *  containing 4 pairs of event + status.  A vector of vector of pairs.
  *
  * \param count
  *      The number of controls to allocate.  Normally, this is 32, but larger
  *      values can now be handled.
  *
- * \param bus
+ * \param truebus
  *      The buss number, which can range from 0 to 31, and defaults to
  *      SEQ66_MIDI_CONTROL_OUT_BUSS (15).
  */
 
 void
-midicontrolout::initialize (int count, int bus)
+midicontrolout::initialize (int count, int truebus)
 {
     event dummy_event;
     actions actionstemp;
@@ -93,16 +115,22 @@ midicontrolout::initialize (int count, int bus)
     m_seq_events.clear();
     m_ui_events.clear();
     m_mutes_events.clear();
-    is_enabled(false);
+#if defined SEQ66_PLATFORM_DEBUG
+    printf\
+    (
+        "midicontrolout::initialize(count = %d, truebus = %d)\n",
+        count, truebus
+    );
+#endif
     if (count > 0)
     {
-        bussbyte b = bussbyte(bus);
+        bussbyte b = bussbyte(truebus);
         actionpair apt;
         apt.apt_action_status = false;
         apt.apt_action_event = dummy_event;
         is_enabled(true);
         if (is_good_bussbyte(b))                /* see midibytes.hpp        */
-            buss(b);
+            true_buss(b);
 
         m_screenset_size = count;
         for (int a = 0; a < static_cast<int>(seqaction::max); ++a)
@@ -123,11 +151,10 @@ midicontrolout::initialize (int count, int bus)
             m_mutes_events.push_back(att);
     }
     else
+    {
         m_screenset_size = 0;
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("midicontrolout::initialize(count = %d, bus = %d)\n", count, bus);
-#endif
+        is_enabled(false);
+    }
 }
 
 /**
@@ -159,20 +186,11 @@ seqaction_to_string (midicontrolout::seqaction a)
 {
     switch (a)
     {
-    case midicontrolout::seqaction::arm:
-        return "arm";
-
-    case midicontrolout::seqaction::mute:
-        return "mute";
-
-    case midicontrolout::seqaction::queue:
-        return "queue";
-
-    case midicontrolout::seqaction::remove:
-        return "delete";
-
-    default:
-        return "unknown";
+    case midicontrolout::seqaction::arm:    return "arm";
+    case midicontrolout::seqaction::mute:   return "mute";
+    case midicontrolout::seqaction::queue:  return "queue";
+    case midicontrolout::seqaction::remove: return "delete";
+    default:                                return "unknown";
     }
 }
 
@@ -209,8 +227,7 @@ action_to_string (midicontrolout::uiaction a)
     case midicontrolout::uiaction::set_dn:          return "set_dn";
     case midicontrolout::uiaction::tap_bpm:         return "tap_bpm";
     case midicontrolout::uiaction::free_2:          return "free_2";
-    default:
-        return "unknown";
+    default:                                        return "unknown";
     }
 }
 
@@ -285,7 +302,7 @@ midicontrolout::send_seq_event (int index, seqaction what, bool flush)
                     "send_seq_event(%s): %s\n", act.c_str(), evstring.c_str()
                 );
 #endif
-                m_master_bus->play(buss(), &ev, ev.channel());
+                m_master_bus->play(true_buss(), &ev, ev.channel());
                 if (flush)
                     m_master_bus->flush();
             }
@@ -414,7 +431,7 @@ midicontrolout::send_event (uiaction what, actionindex which)
         else
             ev = m_ui_events[w].att_action_event_del;
 
-        m_master_bus->play(buss(), &ev, ev.channel());
+        m_master_bus->play(true_buss(), &ev, ev.channel());
         m_master_bus->flush();
     }
 }
@@ -444,30 +461,40 @@ midicontrolout::get_event_str (const event & ev) const
 std::string
 midicontrolout::get_ctrl_event_str (uiaction what, actionindex which) const
 {
-    int w = static_cast<int>(what);
-    event ev;
-    if (which == action_on)
-        ev = m_ui_events[w].att_action_event_on;
-    else if (which == action_off)
-        ev = m_ui_events[w].att_action_event_off;
-    else if (which == action_del)
-        ev = m_ui_events[w].att_action_event_del;
+    std::string result;
+    if (m_ui_events.size() > 0)
+    {
+        int w = static_cast<int>(what);
+        event ev;
+        if (which == action_on)
+            ev = m_ui_events[w].att_action_event_on;
+        else if (which == action_off)
+            ev = m_ui_events[w].att_action_event_off;
+        else if (which == action_del)
+            ev = m_ui_events[w].att_action_event_del;
 
-    return get_event_str(ev);
+        result = get_event_str(ev);
+    }
+    return result;
 }
 
 std::string
 midicontrolout::get_mutes_event_str (int group, actionindex which) const
 {
-    event ev;
-    if (which == action_on)
-        ev = m_mutes_events[group].att_action_event_on;
-    else if (which == action_off)
-        ev = m_mutes_events[group].att_action_event_off;
-    else if (which == action_del)
-        ev = m_mutes_events[group].att_action_event_del;
+    std::string result;
+    if (m_mutes_events.size() > 0)
+    {
+        event ev;
+        if (which == action_on)
+            ev = m_mutes_events[group].att_action_event_on;
+        else if (which == action_off)
+            ev = m_mutes_events[group].att_action_event_off;
+        else if (which == action_del)
+            ev = m_mutes_events[group].att_action_event_del;
 
-    return get_event_str(ev);
+        result = get_event_str(ev);
+    }
+    return result;
 }
 
 /**
@@ -540,13 +567,6 @@ midicontrolout::set_mutes_event
 {
     if (group >= 0 && group < mutegroups::Size())
     {
-        /*
-        event on;
-        on.set_channel_status(onp[1], onp[0]);          // status, channel  //
-        on.set_data(onp[2], onp[3]);                    // d1 and d2        //
-        m_mutes_events[group].att_action_event_on = on;
-        */
-
         event on;
         bool enabled = onp[index::status] > 0x00;
         on.set_status_keep_channel(onp[index::status]);
@@ -593,7 +613,7 @@ midicontrolout::send_mutes_event (int group, actionindex which)
         else if (which == action_del)
             ev = m_mutes_events[group].att_action_event_del;
 
-        m_master_bus->play(buss(), &ev, ev.channel());
+        m_master_bus->play(true_buss(), &ev, ev.channel());
         m_master_bus->flush();
     }
 }

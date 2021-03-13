@@ -25,12 +25,12 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2020-08-13
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
- * send feedback to an external control surface in order to reflect the state of
- * seq66. This includes updates on the playing and queueing status of the
+ * send feedback to an external control surface in order to reflect the state
+ * of seq66. This includes updates on the playing and queueing status of the
  * sequences.
  */
 
@@ -45,12 +45,16 @@
 namespace seq66
 {
 
-/**
- * \dtor
- */
-
-midicontrolbase::midicontrolbase (int buss, int rows, int columns) :
+midicontrolbase::midicontrolbase
+(
+    int buss,
+    int rows,
+    int columns,
+    const std::string & name
+) :
+    m_name              (name),
     m_buss              (buss),
+    m_true_buss         (buss),
     m_is_blank          (true),
     m_is_enabled        (false),
     m_offset            (0),            /* currently always 0   */
