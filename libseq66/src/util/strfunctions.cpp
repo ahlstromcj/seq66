@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2020-12-22
+ * \updates       2021-03-14 (Pi day!)
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -34,6 +34,16 @@ namespace seq66
 {
 
 /**
+ *  Returns "" as a string for external callers.
+ */
+
+std::string
+empty_string ()
+{
+    return std::string(SEQ66_DOUBLE_QUOTES);
+}
+
+/**
  *  Provides a way to work with a visible empty string (e.g. in a
  *  configuration file).  This function returns true if the string really is
  *  empty, or just contains two double quotes ("").
@@ -48,16 +58,6 @@ is_empty_string (const std::string & item)
     return item.empty() || item == SEQ66_DOUBLE_QUOTES;
 }
 
-/**
- *  Returns "" as a string for external callers.
- */
-
-std::string
-empty_string ()
-{
-    return std::string(SEQ66_DOUBLE_QUOTES);
-}
-
 std::string
 questionable_string ()
 {
@@ -70,6 +70,11 @@ is_questionable_string (const std::string & item)
     return item == SEQ66_QUESTION_MARK;
 }
 
+bool
+is_missing_string (const std::string & item)
+{
+    return is_empty_string(item) || is_questionable_string(item);
+}
 
 /**
  *  Indicates if one string can be found within another.  Doesn't force the

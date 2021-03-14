@@ -132,7 +132,7 @@ sequence::sequence (int ppqn)
     m_midi_channel              (0),
     m_no_channel                (false),
     m_nominal_bus               (0),
-    m_true_bus                  (c_bussbyte_max),   // is_null_bussbyte()
+    m_true_bus                  (c_bussbyte_max),
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
@@ -4095,7 +4095,7 @@ bool
 sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
-    bool result = nominalbus != m_nominal_bus && is_good_bussbyte(nominalbus);
+    bool result = nominalbus != m_nominal_bus && is_good_buss(nominalbus);
     if (result)
     {
         off_playing_notes();                /* off notes except initial     */
@@ -4103,7 +4103,7 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
         if (not_nullptr(perf()))
         {
             m_true_bus = perf()->true_output_bus(nominalbus);
-            if (is_null_bussbyte(m_true_bus))
+            if (is_null_buss(m_true_bus))
                 m_true_bus = nominalbus;    /* named buss no longer exists  */
         }
         else
@@ -5132,10 +5132,10 @@ sequence::set_parent (performer * p)
     if (is_nullptr(m_parent) && not_nullptr(p))
     {
         m_parent = p;
-        if (is_null_bussbyte(m_true_bus))
+        if (is_null_buss(m_true_bus))
         {
             m_true_bus = p->true_output_bus(m_nominal_bus);
-            if (is_null_bussbyte(m_true_bus))
+            if (is_null_buss(m_true_bus))
                 m_true_bus = m_nominal_bus; /* a named buss does not exist  */
         }
     }

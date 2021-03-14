@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-13
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -100,9 +100,9 @@ private:
      *  Indicates if the control values were loaded from an "rc" configuration
      *  file, as opposed to being empty.  (There are no default values at this
      *  time.)
-     */
 
     bool m_loaded_from_rc;
+     */
 
     /**
      *  Holds the current control statuses for use by the performer.  It
@@ -123,24 +123,13 @@ private:
 
 public:
 
-    midicontrolin
-    (
-        int buss,
-        int rows    = SEQ66_DEFAULT_SET_ROWS,
-        int columns = SEQ66_DEFAULT_SET_COLUMNS
-    );
     midicontrolin (const std::string & name);
     midicontrolin (const midicontrolin &) = default;
     midicontrolin & operator = (const midicontrolin &) = default;
     midicontrolin (midicontrolin &&) = default;
     midicontrolin & operator = (midicontrolin &&) = default;
     virtual ~midicontrolin () = default;
-
-    virtual void initialize
-    (
-        int count,
-        int buss
-    ) override;
+    virtual bool initialize (int buss, int rows, int columns) override;
 
     comments & comments_block ()
     {
@@ -193,6 +182,7 @@ public:
         m_inactive_allowed = flag;
     }
 
+/*
     bool loaded_from_rc () const
     {
         return m_loaded_from_rc;
@@ -202,6 +192,7 @@ public:
     {
         m_loaded_from_rc = flag;
     }
+    */
 
     automation::ctrlstatus status () const
     {

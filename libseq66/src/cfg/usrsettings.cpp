@@ -245,7 +245,7 @@ usrsettings::usrsettings () :
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
     m_midi_bpm_maximum          (c_midibyte_value_max),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
-    m_midi_buss_override        (c_bussbyte_max),   /* is_null_bussbyte()   */
+    m_midi_buss_override        (c_bussbyte_max),       /* is_null_buss()   */
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
     m_bpm_precision             (SEQ66_DEFAULT_BPM_PRECISION),
     m_bpm_step_increment        (SEQ66_DEFAULT_BPM_STEP_INCREMENT),
@@ -256,11 +256,11 @@ usrsettings::usrsettings () :
      */
 
     m_total_seqs                (0),
-    m_seqs_in_set               (0),            // set correctly in normalize()
-    m_gmute_tracks              (0),            // same as max-tracks
+    m_seqs_in_set               (0),                /* set in normalize()   */
+    m_gmute_tracks              (0),                /* same as max-tracks   */
     m_max_sequence              (0),
-    m_mainwnd_x                 (780),          // constant
-    m_mainwnd_y                 (412),          // constant
+    m_mainwnd_x                 (780),              /* constant             */
+    m_mainwnd_y                 (412),              /* constant             */
     m_save_user_config          (false),
 
     /*
@@ -1174,7 +1174,7 @@ usrsettings::midi_beat_width (int bw)
 /**
  *  This value can be set from 0 to c_busscount_max.  The default value is -1
  *  (0xFF), which means that there is no buss override, as defined by the
- *  inline function is_null_bussbyte() in midibytes.hpp.  It provides a way to
+ *  inline function is_null_buss() in midibytes.hpp.  It provides a way to
  *  override the buss number for smallish MIDI files.  It replaces the
  *  buss-number read from the file.  This option is turned on by the --bus
  *  option, and is merely a convenience feature for the quick previewing of a
@@ -1184,7 +1184,7 @@ usrsettings::midi_beat_width (int bw)
 void
 usrsettings::midi_buss_override (bussbyte buss)
 {
-    if (is_good_bussbyte(buss) || is_null_bussbyte(buss))
+    if (is_good_buss(buss) || is_null_buss(buss))
         m_midi_buss_override = buss;
 }
 

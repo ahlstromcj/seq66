@@ -505,13 +505,13 @@ is_null_midipulse (midipulse p)
  */
 
 inline bool
-is_null_bussbyte (bussbyte b)
+is_null_buss (bussbyte b)
 {
     return b == c_bussbyte_max;
 }
 
 inline bool
-is_good_bussbyte (bussbyte b)
+is_good_buss (bussbyte b)
 {
     return b < bussbyte(c_busscount_max);
 }

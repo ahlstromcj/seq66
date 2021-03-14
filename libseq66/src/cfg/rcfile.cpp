@@ -232,7 +232,7 @@ rcfile::parse ()
     bool ok = true;                                     /* start hopefully! */
     if (line_after(file, "[midi-control-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());               /* "", "?", empty   */
         if (ok)
         {
             std::string mcfname = strip_quotes(line());
@@ -265,7 +265,7 @@ rcfile::parse ()
 
     if (line_after(file, "[mute-group-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());
         if (ok)
         {
             std::string mgfname = strip_quotes(line());
@@ -301,7 +301,7 @@ rcfile::parse ()
 
     if (line_after(file, "[usr-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());
         if (ok)
         {
             std::string mgfname = strip_quotes(line());
@@ -316,7 +316,7 @@ rcfile::parse ()
         rc_ref().palette_active(flag != 0);
         if (next_data_line(file))
         {
-            ok = ! is_empty_string(line());             /* not "" or empty? */
+            ok = ! is_missing_string(line());
             if (ok)
             {
                 std::string pfname = strip_quotes(line());
@@ -553,7 +553,7 @@ rcfile::parse ()
     }
     if (line_after(file, "[last-used-dir]"))
     {
-        if (! is_empty_string(line()))                 /* not "" or empty? */
+        if (! is_missing_string(line()))
         {
             std::string ludir = strip_quotes(line());
             rc_ref().last_used_dir(ludir);
@@ -575,7 +575,7 @@ rcfile::parse ()
         {
             if (next_data_line(file))
             {
-                if (! is_empty_string(line()))          /* not "" or empty? */
+                if (! is_missing_string(line()))
                 {
                     std::string rfilename = strip_quotes(line());
                     if (! rc_ref().append_recent_file(rfilename))
@@ -596,11 +596,11 @@ rcfile::parse ()
     {
         bool exists = false;
         int flag = 0;
-        sscanf(scanline(), "%d", &flag);            /* playlist-active flag */
+        sscanf(scanline(), "%d", &flag);                /* playlist-active? */
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            exists = ! is_empty_string(fname);      /* not "" or empty      */
+            exists = ! is_missing_string(fname);
             if (exists)
             {
                 /*
@@ -629,7 +629,7 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string midibase = trimline();
-            if (! is_empty_string(midibase))
+            if (! is_missing_string(midibase))
             {
                 file_message("Playlist MIDI base directory", midibase);
                 rc_ref().midi_base_directory(midibase);
@@ -650,7 +650,7 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            exists = ! is_empty_string(fname);
+            exists = ! is_missing_string(fname);
             if (exists)
             {
                 /*
@@ -1055,11 +1055,18 @@ rcfile::write ()
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
+        bool active = inpsref.active();
+        std::string activestring = active ? "1" : "0";
+        std::string mapstatus = "map is ";
+        if (! active)
+            mapstatus += "not ";
+
+        mapstatus += "active";
         file
         << "\n[midi-input-map]\n\n"
         << "# This table is similar to the [midi-clock-map] section.\n"
            "# Port-mapping is disabled in manual/virtual port mode.\n\n"
-        << (inpsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
+        << activestring << "   # " << mapstatus << "\n\n"
         << input_port_map_list()
         ;
     }

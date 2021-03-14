@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-13
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1301,7 +1301,7 @@ bool
 performer::ui_change_set_bus (int buss)
 {
     bussbyte b = bussbyte(buss);
-    bool result = is_good_bussbyte(b);
+    bool result = is_good_buss(b);
     if (result)
     {
         for (auto seqi : m_play_set.seq_container())
@@ -2005,13 +2005,21 @@ performer::launch (int ppqn)
         bool ok = activate();
         if (ok)
         {
-            bussbyte truebus = true_output_bus(midi_control_in().nominal_buss());
-            m_midi_control_in.true_buss(truebus);
+            bussbyte truebus = true_input_bus(midi_control_in().nominal_buss());
+            if (is_good_buss(truebus))
+                m_midi_control_in.true_buss(truebus);
+            else
+                m_midi_control_in.is_enabled(false);
+
             truebus = true_output_bus(midi_control_out().nominal_buss());
-            m_midi_control_out.true_buss(truebus);
+            if (is_good_buss(truebus))
+                m_midi_control_out.true_buss(truebus);
+            else
+                m_midi_control_out.is_enabled(false);
+
             launch_input_thread();
             launch_output_thread();
-            (void) set_playing_screenset(0);    // ca 2020-08-11
+            (void) set_playing_screenset(0);
         }
         else
             m_error_pending = true;

@@ -222,25 +222,19 @@ midicontrolfile::parse_stream (std::ifstream & file)
     s = get_variable(file, mctag, "control-buss");
 
     int buss = string_to_int(s, SEQ66_MIDI_CONTROL_IN_BUSS);
-    if (is_good_bussbyte(bussbyte(buss)))
-    {
-        bussbyte b = bussbyte(buss);                /* c_bussbyte_max       */
-        m_temp_midi_ctrl_in.initialize(0, buss);   // MUST REFACTOR!!!
-        m_temp_midi_ctrl_in.nominal_buss(b);
-        m_temp_midi_ctrl_in.true_buss(b);
-    }
     s = get_variable(file, mctag, "midi-enabled");
 
     bool enabled = string_to_bool(s);
     int offset = 0, rows = 0, columns = 0;
-    result =  parse_control_sizes(file, mctag, offset, rows, columns);
+    result = parse_control_sizes(file, mctag, offset, rows, columns);
     if (! result)
         enabled = false;
 
-    m_temp_midi_ctrl_in.is_enabled(enabled);
-    m_temp_midi_ctrl_in.offset(offset);
-    m_temp_midi_ctrl_in.rows(rows);
-    m_temp_midi_ctrl_in.columns(columns);
+    if (m_temp_midi_ctrl_in.initialize(buss, rows, columns))
+    {
+        m_temp_midi_ctrl_in.is_enabled(enabled);
+        m_temp_midi_ctrl_in.offset(offset);
+    }
     if (loadkeys)
         m_temp_key_controls.clear();
 
@@ -495,6 +489,9 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
     bool enabled = string_to_bool(s);
     int offset = 0, rows = 0, columns = 0;
     result = parse_control_sizes(file, mctag, offset, rows, columns);
+    if (! result)
+        enabled = false;
+
     if (line_after(file, "[midi-control-out]"))
     {
         /*
@@ -504,15 +501,11 @@ midicontrolfile::parse_midi_control_out (std::ifstream & file)
          */
 
         midicontrolout & mco = rc_ref().midi_control_out();
-        mco.initialize(sequences, buss);            // MUST REFACTOR!!!
-
-        bussbyte b = bussbyte(buss);                /* c_bussbyte_max       */
-        mco.nominal_buss(b);
-        mco.true_buss(b);
-        mco.is_enabled(enabled);
-        mco.offset(offset);
-        mco.rows(rows);
-        mco.columns(columns);
+        if (mco.initialize(buss, rows, columns))
+        {
+            mco.is_enabled(enabled);
+            mco.offset(offset);
+        }
         if (version_number() < 2)
         {
             infoprint("Reading version 1 'ctrl' file, will upgrade at exit");

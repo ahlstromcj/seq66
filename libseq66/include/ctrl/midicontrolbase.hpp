@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-03-13
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -71,7 +71,8 @@ private:
      *  Provides the MIDI I/O buss, that is the port number for MIDI I/O.
      *  This value defaults to 0, and the user must be sure to avoid using
      *  this buss value for music, or redefine the buss.  This is the nominal
-     *  buss.
+     *  buss, which is read and saved, but not used for I/O; see m_true_buss
+     *  instead.
      */
 
     bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_IN/OUT_BUSS   */
@@ -89,7 +90,7 @@ private:
     bool m_is_blank;
 
     /**
-     *  Indicates that this container is disabled.
+     *  Indicates that this container is enabled or disabled.
      */
 
     bool m_is_enabled;
@@ -120,20 +121,9 @@ private:
 
 public:
 
-    midicontrolbase
-    (
-        int buss,
-        int rows                    = SEQ66_DEFAULT_SET_ROWS,
-        int columns                 = SEQ66_DEFAULT_SET_COLUMNS,
-        const std::string & name    = ""
-    );
+    midicontrolbase (const std::string & name = "");
     virtual ~midicontrolbase () = default;
-
-    virtual void initialize
-    (
-        int count,
-        int buss
-    ) = 0;
+    virtual bool initialize (int buss, int rows, int columns);      /* base */
 
     const std::string & name () const
     {

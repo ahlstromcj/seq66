@@ -48,35 +48,13 @@
 namespace seq66
 {
 
-midicontrolout::midicontrolout
-(
-    int buss,                           /* SEQ66_MIDI_CONTROL_OUT_BUSS      */
-    int rows,
-    int columns
-) :
-    midicontrolbase     (buss, rows, columns),
-    m_master_bus        (nullptr),
-    m_seq_events        (),
-    m_ui_events         (),
-    m_mutes_events      (),
-    m_screenset_size    (0)
-{
-    // initialize(usr().set_size());    /* buss value set in initialize()   */
-}
-
 /**
  *  This constructor assigns the basic values of control name, number, and
  *  action code.  The rest of the members can be set via the set() function.
  */
 
 midicontrolout::midicontrolout (const std::string & name) :
-    midicontrolbase
-    (
-        SEQ66_MIDI_CONTROL_OUT_BUSS,
-        SEQ66_DEFAULT_SET_ROWS,
-        SEQ66_DEFAULT_SET_COLUMNS,
-        name
-    ),
+    midicontrolbase     (name),
     m_master_bus        (nullptr),
     m_seq_events        (),
     m_ui_events         (),
@@ -97,42 +75,33 @@ midicontrolout::midicontrolout (const std::string & name) :
  *  actionlist, which is, for example, a vector of 32 elements, each
  *  containing 4 pairs of event + status.  A vector of vector of pairs.
  *
- * \param count
- *      The number of controls to allocate.  Normally, this is 32, but larger
- *      values can now be handled.
- *
- * \param truebus
+ * \param buss
  *      The buss number, which can range from 0 to 31, and defaults to
  *      SEQ66_MIDI_CONTROL_OUT_BUSS (15).
+ *
+ * \param rows
+ *      The number of rows in the set, normally 4.
+ *
+ * \param columns
+ *      The number of columns in the set, normally 8.
  */
 
-void
-midicontrolout::initialize (int count, int truebus)
+bool
+midicontrolout::initialize (int buss, int rows, int columns)
 {
-    event dummy_event;
-    actions actionstemp;
-    dummy_event.set_channel_status(0, 0);       /* set status and channel   */
+    bool result = midicontrolbase::initialize(buss, rows, columns);
     m_seq_events.clear();
     m_ui_events.clear();
     m_mutes_events.clear();
-#if defined SEQ66_PLATFORM_DEBUG
-    printf\
-    (
-        "midicontrolout::initialize(count = %d, truebus = %d)\n",
-        count, truebus
-    );
-#endif
-    if (count > 0)
+    if (result)
     {
-        bussbyte b = bussbyte(truebus);
+        int count = rows * columns;
+        event dummy_event;
+        actions actionstemp;
+        dummy_event.set_channel_status(0, 0);       /* set status & channel */
         actionpair apt;
         apt.apt_action_status = false;
         apt.apt_action_event = dummy_event;
-        is_enabled(true);
-        if (is_good_bussbyte(b))                /* see midibytes.hpp        */
-            true_buss(b);
-
-        m_screenset_size = count;
         for (int a = 0; a < static_cast<int>(seqaction::max); ++a)
             actionstemp.push_back(apt);         /* blank action-pair vector */
 
@@ -149,12 +118,16 @@ midicontrolout::initialize (int count, int truebus)
 
         for (int m = 0; m < mutegroups::Size(); ++m)
             m_mutes_events.push_back(att);
+
+        m_screenset_size = count;
+        is_enabled(true);                           /* master bus???        */
     }
     else
     {
         m_screenset_size = 0;
         is_enabled(false);
     }
+    return result;
 }
 
 /**

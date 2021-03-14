@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2021-03-13
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -45,23 +45,26 @@
 namespace seq66
 {
 
-midicontrolbase::midicontrolbase
-(
-    int buss,
-    int rows,
-    int columns,
-    const std::string & name
-) :
+midicontrolbase::midicontrolbase (const std::string & name) :
     m_name              (name),
-    m_buss              (buss),
-    m_true_buss         (buss),
+    m_buss              (c_bussbyte_max),       /* 0xFF */
+    m_true_buss         (c_bussbyte_max),       /* 0xFF */
     m_is_blank          (true),
     m_is_enabled        (false),
-    m_offset            (0),            /* currently always 0   */
-    m_rows              (rows),
-    m_columns           (columns)
+    m_offset            (0),
+    m_rows              (0),
+    m_columns           (0)
 {
     // No code needed
+}
+
+bool
+midicontrolbase::initialize (int buss, int rows, int columns)
+{
+    m_buss = m_true_buss = buss;
+    m_rows = rows;
+    m_columns = columns;
+    return is_good_buss(buss) && rows > 0 && columns > 0;
 }
 
 }           // namespace seq66

@@ -213,30 +213,34 @@ build_output_port_map (const clockslist & cl)
  *      If the port map exists, the looked-up port/buss number is returned. If
  *      that port cannot be found by name, then c_bussbyte_max (0xFF) is
  *      returned.  Otherwise, the nominal buss parameter is returned, which
- *      preserves the legacy behavior of the pattern buss number.
+ *      preserves the legacy behavior of the pattern buss number. Also,
+ *      c_bussbyte_max will be returned if the nomimal buss is that value.
  */
 
 bussbyte
 true_output_bus (const clockslist & cl, bussbyte nominalbuss)
 {
     bussbyte result = nominalbuss;
-    const clockslist & cloutref = output_port_map();
-    if (cloutref.active())
+    if (! is_null_buss(result))
     {
-        std::string shortname = cloutref.port_name_from_bus(nominalbuss);
-        if (shortname.empty())
-            result = c_bussbyte_max;                    /* no such buss */
-        else
-            result = cl.bus_from_nick_name(shortname);
-
-        if (is_null_bussbyte(result))
+        const clockslist & cloutref = output_port_map();
+        if (cloutref.active())
         {
-            std::string msg = string_format
-            (
-                "true_output_bus(%d) failed for port '%s'",
-                nominalbuss, shortname
-            );
-            errprint(msg);
+            std::string shortname = cloutref.port_name_from_bus(nominalbuss);
+            if (shortname.empty())
+                result = c_bussbyte_max;                    /* no such buss */
+            else
+                result = cl.bus_from_nick_name(shortname);
+
+            if (is_null_buss(result))
+            {
+                std::string msg = string_format
+                (
+                    "true_output_bus(%d) failed for port '%s'",
+                    nominalbuss, shortname.c_str()
+                );
+                errprint(msg);
+            }
         }
     }
     return result;

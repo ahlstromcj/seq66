@@ -1,10 +1,12 @@
 #!/bin/bash
 #
-# Updated 2020-11-25
+# Date    2020-11-25
+# Updated 2021-03-14 (Pi day!)
 #
 # YOSHPATH="/usr/bin"
 #
 # Starts Yoshimi with our oft-used GM patch setup for Yoshimi.
+# Adjust the variables below for your setup.
 
 YOSHPATH="/usr/bin"
 YOSHIMI="yoshimi"
@@ -20,7 +22,10 @@ fi
 
 if [ "$1" == "jack" ] ; then
     OPTIONS="-jJ"
+elif [ "$1" == "alsa" ] ; then
+    OPTIONS="-aA"
 fi
 
+echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state"
 $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state
 

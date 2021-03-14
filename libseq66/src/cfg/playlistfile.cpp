@@ -198,15 +198,14 @@ playlistfile::open (bool verify_it)
 bool
 playlistfile::parse ()
 {
-    std::ifstream file(name(), std::ios::in | std::ios::ate);
-    bool result = ! name().empty() && file.is_open();
-    if (result)
-        file_message("Reading 'playlist'", name());
-    else
-        file_error("Read open fail", name());
+    if (is_empty_string(name()))
+        return false;
 
+    std::ifstream file(name(), std::ios::in | std::ios::ate);
+    bool result = file.is_open();
     if (result)
     {
+        file_message("Reading 'playlist'", name());
         file.seekg(0, std::ios::beg);                   /* seek to start    */
         play_list().clear();
 
@@ -611,32 +610,26 @@ open_playlist
     bool show_on_stdout
 )
 {
-    bool result = ! source.empty();
+    bool result = ! is_missing_string(source);  /* empty, "", or "?"        */
     if (result)
     {
-        if (is_questionable_string(source))
+        playlistfile plf(source, pl, rc(), show_on_stdout);
+        result = plf.open(true);            /* parse and file verify    */
+        if (result)
         {
-            pl.mode(false);
+            // Anything worth doing?
         }
-        else
+        else if (rc().playlist_active())
         {
-            playlistfile plf(source, pl, rc(), show_on_stdout);
-            result = plf.open(true);            /* parse and file verify    */
-            if (result)
-            {
-                // Anything worth doing?
-            }
-            else if (rc().playlist_active())
-            {
-                std::string msg = "Open failed: ";
-                msg += source;
-                (void) error_message(msg);
-            }
+            std::string msg = "Open failed: ";
+            msg += source;
+            (void) error_message(msg);
         }
     }
     else
     {
         file_error("Play-list file to open", "none");
+        pl.mode(false);
     }
     return result;
 }
@@ -667,7 +660,7 @@ save_playlist
 )
 {
     std::string destination = destfile.empty() ? pl.file_name() : destfile;
-    bool result = ! destination.empty();
+    bool result = ! is_missing_string(destination);     /* empty, "", "?"   */
     if (result)
     {
         playlistfile plf(destination, pl, rc(), false); /* false --> quiet  */
