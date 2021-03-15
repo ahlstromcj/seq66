@@ -185,6 +185,9 @@ qclocklayout::setup_ui ()
         case e_clock::mod:
             m_rbutton_clockonmod->setChecked(true);
             break;
+
+        case e_clock::max:      /* will never occur */
+            break;
         }
     }
 }

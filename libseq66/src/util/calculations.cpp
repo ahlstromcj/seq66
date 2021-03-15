@@ -1179,7 +1179,7 @@ wave_type_name (wave wavetype)
 /**
  *  Extracts the two names from the ALSA/JACK client/port name format:
  *
- *      [0] 128:0 clientname:portname
+ *      [0] 128:0 client name:port name
  *
  *  When a2jmidid is running:
  *

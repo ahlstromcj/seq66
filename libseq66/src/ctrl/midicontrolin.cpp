@@ -104,7 +104,6 @@ midicontrolin::midicontrolin (const std::string & name) :
     midicontrolbase     (name),
     m_container         (),
     m_comments_block    (),
-//  m_loaded_from_rc    (false),
     m_control_status    (automation::ctrlstatus::none),
     m_have_controls     (false)
 {
@@ -115,9 +114,6 @@ bool
 midicontrolin::initialize (int buss, int rows, int columns)
 {
     bool result = midicontrolbase::initialize(buss, rows, columns);
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("midicontrolout::initialize(count = %d, bus = %d)\n", count, bus);
-#endif
     is_enabled(result);     // master bus???
     return result;
 }

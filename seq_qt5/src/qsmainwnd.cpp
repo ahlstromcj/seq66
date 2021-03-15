@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-07
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2153,8 +2153,8 @@ qsmainwnd::load_qseqedit (int seqid)
         if (ei == m_open_editors.end())
         {
             /*
-             * Make sure the sequence exists.  We should consider creating it if
-             * it does not exist.  So many features, so little time.
+             * Make sure the sequence exists.  We should consider creating it
+             * if it does not exist.  So many features, so little time.
              */
 
             if (perf().is_seq_active(seqid))
@@ -2164,9 +2164,9 @@ qsmainwnd::load_qseqedit (int seqid)
 
                 if (not_nullptr(ex))
                 {
-                    ex->show();
-                    std::pair<int, qseqeditex *> p = std::make_pair(seqid, ex);
+                    auto p = std::make_pair(seqid, ex);
                     m_open_editors.insert(p);
+                    ex->show();
                 }
             }
         }
@@ -2334,9 +2334,9 @@ qsmainwnd::load_live_frame (int ssnum)
 
             if (not_nullptr(ex))
             {
-                ex->show();
-                std::pair<int, qliveframeex *> p = std::make_pair(ssnum, ex);
+                auto p = std::make_pair(ssnum, ex);
                 m_open_live_frames.insert(p);
+                ex->show();
             }
         }
     }

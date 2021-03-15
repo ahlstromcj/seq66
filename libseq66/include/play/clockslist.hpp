@@ -68,6 +68,7 @@ public:
 
     bool add
     (
+        int buss,
         e_clock clocktype,
         const std::string & name,
         const std::string & nickname = ""

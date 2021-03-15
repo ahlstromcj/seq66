@@ -113,6 +113,7 @@ extern std::vector<std::string> tokenize
     const std::string & source,
     const std::string delimiter = " "
 );
+extern std::string simplify (const std::string & source);
 extern std::string write_stanza_bits
 (
     const midibooleans & bitbucket,

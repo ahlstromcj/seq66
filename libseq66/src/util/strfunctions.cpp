@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-03-14 (Pi day!)
+ * \updates       2021-03-15
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -929,6 +929,42 @@ tokenize
     return result;
 }
 
+/**
+ *  Simplifies a string by tokenizing it based on spaces, and dropping tokens
+ *  that have some special characters and don't start with a letter, then
+ *  reassembling the remaining tokens with spaces in between.  EXPERIMENTAL.
+ */
+
+std::string
+simplify (const std::string & source)
+{
+    std::string result;
+    std::vector<std::string> tokens = tokenize(source);
+    if (tokens.empty())
+    {
+        result = source;
+    }
+    else
+    {
+        static std::string s_special = "[:]()";
+        bool first_one = false;
+        for (const auto & t : tokens)
+        {
+            bool ok = std::isalpha(t[0]);
+            if (! ok)
+                ok = t.find_first_of(s_special) == std::string::npos;
+            if (ok)
+            {
+                if (first_one)
+                    result += " ";
+
+                result += t;
+                first_one = true;
+            }
+        }
+    }
+    return result;
+}
 
 /**
  * \param bitbucket

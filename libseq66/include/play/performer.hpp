@@ -2327,12 +2327,12 @@ public:
      *
      * \param clocktype
      *      The clock value read from the "rc" file.
-     */
 
-    void add_clock (e_clock clocktype, const std::string & name)
+    void add_clock (int buss, e_clock clocktype, const std::string & name)
     {
-        m_clocks.add(clocktype, name);
+        m_clocks.add(buss, clocktype, name);
     }
+     */
 
     void store_output_map ()
     {
@@ -2377,12 +2377,12 @@ public:
      *
      * \param flag
      *      The input flag read from the "rc" file.
-     */
 
-    void add_input (bool flag, const std::string & name)
+    void add_input (int bus, bool flag, const std::string & name)
     {
-        m_inputs.add(flag, name);
+        m_inputs.add(bus flag, name);
     }
+     */
 
     /**
      *  Sets a single input item, if in the currently existing range.

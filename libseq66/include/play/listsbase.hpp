@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-11
- * \updates       2020-12-28
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  Defines the list of MIDI inputs and outputs (clocks).  We've combined them
@@ -35,7 +35,7 @@
  */
 
 #include <string>                       /* std::string                      */
-#include <vector>                       /* std::vector for I/O values       */
+#include <map>                          /* std::map<buss, I/O struct>       */
 
 #include "midi/midibus_common.hpp"      /* enum class e_clock, etc.         */
 #include "midi/midibytes.hpp"           /* bussbyte and other types         */
@@ -77,8 +77,15 @@ protected:
         e_clock out_clock;          /**<< The clock setting for this buss.  */
         std::string io_name;        /**<< The name of the I/O buss.         */
         std::string io_nick_name;   /**<< The short name of the I/O buss.   */
-        std::string io_alt_name;    /**<< A name used in certain bases.     */
+//      std::string io_alt_name;    /**<< A name used in certain bases.     */
     };
+
+    /**
+     *  The container type for io information.  Replaces std::vector<io>.
+     */
+
+    using container = std::map<bussbyte, io>;
+
 
     /**
      *  Saves the input or clock settings obtained from the "rc" (options)
@@ -86,7 +93,7 @@ protected:
      *  created.
      */
 
-    std::vector<io> m_master_io;
+    container m_master_io;
 
     /**
      *  Indicates if the list is to be used.  It will always be saved and read,
@@ -117,11 +124,13 @@ public:
         m_master_io.clear();
     }
 
+/*
     void resize (size_t sz)
     {
         if (sz > 0)
             m_master_io.resize(sz);
     }
+    */
 
     int count () const
     {
@@ -164,7 +173,12 @@ protected:
     std::string e_clock_to_string (e_clock e) const;
     std::string port_map_list () const;
     std::string to_string (const std::string & tag) const;
-    bool add (const std::string & name, const std::string & nickname);
+    bool add
+    (
+        int buss,
+        const std::string & name,
+        const std::string & nickname = ""
+    );
     const io & get_io_block (const std::string & nickname) const;
 
 };              // class listsbase

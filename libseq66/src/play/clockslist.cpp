@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-27
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -49,6 +49,13 @@ namespace seq66
  *  passed to the mastermidibus after it is created.  Also used in the
  *  creation of a port-map, in which the port nick-name is ultimately used to
  *  look up an index into the ports actually discovered in the system.
+ *  The input string is of the following form (in ALSA), which includes the
+ *  quotes:
+ *
+ *      1 0 "[1] 32:0 Launchpad Mini MIDI 1"
+ *
+ * \param buss
+ *      The buss number read from the "rc" file.
  *
  * \param clocktype
  *      The clock value read from the "rc" file.
@@ -70,27 +77,33 @@ namespace seq66
 bool
 clockslist::add
 (
+    int buss,
     e_clock clocktype,
     const std::string & name,
     const std::string & nickname
 )
 {
-    bool result = false;
-    io ioitem;
-    ioitem.io_enabled = clocktype != e_clock::disabled;
-    ioitem.out_clock = clocktype;
-    if (! name.empty())
+    bool result = buss >= 0 && ! name.empty();
+    if (result)
     {
-        ioitem.io_name = name;
+        std::string portname = next_quoted_string(name);
+        if (portname.empty())                   /* was already parsed       */
+            portname = name;
+
+        io ioitem;
+        ioitem.io_enabled = clocktype != e_clock::disabled;
+        ioitem.out_clock = clocktype;
+        ioitem.io_name = portname;
         if (nickname.empty())
         {
-            std::string nick = extract_nickname(name);
+            std::string nick = extract_nickname(portname);
             ioitem.io_nick_name = nick;
         }
         else
             ioitem.io_nick_name = nickname;
 
-        m_master_io.push_back(ioitem);
+        auto p = std::make_pair(bussbyte(buss), ioitem);
+        m_master_io.insert(p);          // later, check the insertion
         result = true;
     }
     return result;
@@ -105,12 +118,13 @@ clockslist::add
 bool
 clockslist::set (bussbyte bus, e_clock clocktype)
 {
-    bool result = bus < count();
+    auto it = m_master_io.find(bus);
+    bool result = it != m_master_io.end();
     if (result)
     {
         bool enabled = clocktype != e_clock::disabled;
-        m_master_io[bus].io_enabled = enabled;
-        m_master_io[bus].out_clock = clocktype;
+        it->second.io_enabled = enabled;
+        it->second.out_clock = clocktype;
     }
     return result;
 }
@@ -118,7 +132,8 @@ clockslist::set (bussbyte bus, e_clock clocktype)
 e_clock
 clockslist::get (bussbyte bus) const
 {
-    return bus < count() ? m_master_io[bus].out_clock : e_clock::off ;
+    auto it = m_master_io.find(bus);
+    return it != m_master_io.end() ? it->second.out_clock : e_clock::off ;
 }
 
 /*
@@ -181,7 +196,13 @@ build_output_port_map (const clockslist & cl)
         {
             std::string name = std::to_string(b);
             bussbyte bb = bussbyte(b);
-            result = cloutref.add(e_clock::off, cl.get_nick_name(bb), name);
+
+            /*
+             * TODO: use the buss from the source and iterate through the
+             * souce.
+             */
+
+            result = cloutref.add(b, e_clock::off, cl.get_nick_name(bb), name);
             if (! result)
             {
                 cloutref.clear();

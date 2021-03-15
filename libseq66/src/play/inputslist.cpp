@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2020-12-28
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  */
@@ -69,27 +69,33 @@ namespace seq66
 bool
 inputslist::add
 (
+    int buss,
     bool flag,
     const std::string & name,
     const std::string & nickname
 )
 {
-    bool result = false;
-    io ioitem;
-    ioitem.io_enabled = flag;
-    ioitem.out_clock = e_clock::off;        /* but not e_clock::disabled    */
-    if (! name.empty())
+    bool result = buss >= 0 && ! name.empty();
+    if (result)
     {
-        ioitem.io_name = name;
+        std::string portname = next_quoted_string(name);
+        if (portname.empty())                   /* was already parsed       */
+            portname = name;
+
+        io ioitem;
+        ioitem.io_enabled = flag;
+        ioitem.out_clock = e_clock::off;        /* not e_clock::disabled!   */
+        ioitem.io_name = portname;
         if (nickname.empty())
         {
-            std::string nick = extract_nickname(name);
+            std::string nick = extract_nickname(portname);
             ioitem.io_nick_name = nick;
         }
         else
             ioitem.io_nick_name = nickname;
 
-        m_master_io.push_back(ioitem);
+        auto p = std::make_pair(bussbyte(buss), ioitem);
+        m_master_io.insert(p);          // later, check the insertion
         result = true;
     }
     return result;
@@ -104,11 +110,12 @@ inputslist::add
 bool
 inputslist::set (bussbyte bus, bool inputing)
 {
-    bool result = bus < count();
+    auto it = m_master_io.find(bus);
+    bool result = it != m_master_io.end();
     if (result)
     {
-        m_master_io[bus].io_enabled = inputing;
-        m_master_io[bus].out_clock = e_clock::off;
+        it->second.io_enabled = inputing;
+        it->second.out_clock = e_clock::off;
     }
     return result;
 }
@@ -116,7 +123,8 @@ inputslist::set (bussbyte bus, bool inputing)
 bool
 inputslist::get (bussbyte bus) const
 {
-    return bus < count() ? m_master_io[bus].io_enabled : false ;
+    auto it = m_master_io.find(bus);
+    return it != m_master_io.end() ?  it->second.io_enabled : false ;
 }
 
 /*
@@ -179,7 +187,12 @@ build_input_port_map (const inputslist & il)
         {
             std::string name = std::to_string(b);
             bussbyte bb = bussbyte(b);
-            result = inpsref.add(true, il.get_nick_name(bb), name);
+
+            /*
+             * TODO: use the source buss number.
+             */
+
+            result = inpsref.add(b, true, il.get_nick_name(bb), name);
             if (! result)
             {
                 inpsref.clear();

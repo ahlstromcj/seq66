@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-02-22
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -52,29 +52,47 @@ static const std::string s_short_names [] =
 {
     "input",
     "output",
+    "in",
+    "out",
+    "midi input",
+    "midi output",
     "midi in",
     "midi out",
     ""                                  /* empty string is a terminator     */
 };
 
-/*
+/**
+ *  Looks for the name in the short-name list.
  *
+ * \param portname
+ *      The name to be checked.  This is the name after the colon in a
+ *      "client:port" pair.
+ *
+ * \return
+ *      Returns true if the port-name is found in the short-name list, or is
+ *      empty. This is a signal to get the nick-name from the client name and the
+ *      portname.
  */
 
 static bool
-detect_short_name (const std::string & name)
+detect_short_name (const std::string & portname)
 {
-    bool result = false;
-    for (int i = 0; /* forever */; ++i)
+    bool result = portname.empty();
+    if (! result)
     {
-        std::string compared = s_short_names[i];
-        if (compared.empty())
-            break;
-        else
+        for (int i = 0; /* forever */; ++i)
         {
-            result = strncompare(compared, name, compared.length());
-            if (result)
+            std::string compared = s_short_names[i];
+            if (compared.empty())
+            {
                 break;
+            }
+            else
+            {
+                result = strncompare(compared, portname, compared.length());
+                if (result)
+                    break;
+            }
         }
     }
     return result;
@@ -93,31 +111,30 @@ listsbase::listsbase (bool pmflag) :
 }
 
 bool
-listsbase::add (const std::string & name, const std::string & nickname)
+listsbase::add
+(
+    int buss,
+    const std::string & name,
+    const std::string & nickname
+)
 {
-    bool result = false;
-    io ioitem;
-    ioitem.io_enabled = true;
-    ioitem.out_clock = e_clock::off;
-    if (! name.empty())
+    bool result = buss >= 0 && ! name.empty();
+    if (result)
     {
+        io ioitem;
+        ioitem.io_enabled = true;                   // ??????
+        ioitem.out_clock = e_clock::off;
         ioitem.io_name = name;
-        if (detect_short_name(nickname))
+        if (nickname.empty())
         {
             std::string nick = extract_nickname(name);
-            std::string clientname, portname;
-            bool extracted = extract_port_names(name, clientname, portname);
-            if (extracted)
-                ioitem.io_alt_name = clientname + ":" + portname;
-
             ioitem.io_nick_name = nick;
         }
         else
-        {
             ioitem.io_nick_name = nickname;
-            result = true;
-        }
-        m_master_io.push_back(ioitem);
+
+        auto p = std::make_pair(bussbyte(buss), ioitem);
+        m_master_io.insert(p);          // later, check the insertion
     }
     return result;
 }
@@ -125,10 +142,10 @@ listsbase::add (const std::string & name, const std::string & nickname)
 /**
  *  Parses a string of the form:
  *
- *      0   "Name of the Port"
+ *      0   "Nickname of the Port"
  *
  *  These lines are created by output_port_map_list().  Their format is
- *  strict.
+ *  strict.  These lines are those created in the port_map_list() function.
  *
  * \return
  *      Returns true if the line started with a number, followed by text
@@ -144,16 +161,11 @@ listsbase::add_list_line (const std::string & line)
     if (lpos != std::string::npos)
     {
         int portnum = std::stoi(temp);
-        lpos = temp.find_first_of("\"");
-        if (lpos != std::string::npos)
+        std::string portname = next_quoted_string(temp, lpos);
+        if (! portname.empty())
         {
-            auto rpos = temp.find_last_of("\"");
-            std::string portname = temp.substr(lpos + 1, rpos - lpos - 1);
-            if (! portname.empty())
-            {
-                std::string pnum = std::to_string(portnum);
-                result = add(portname, pnum);
-            }
+            std::string pnum = std::to_string(portnum);
+            result = add(portnum, portname, pnum);
         }
     }
     return result;
@@ -167,43 +179,41 @@ listsbase::add_list_line (const std::string & line)
 bool
 listsbase::is_disabled (bussbyte bus) const
 {
-    e_clock clocking = bus < count() ?
-        m_master_io[bus].out_clock : e_clock::disabled ;
+    bool result = true;
+    auto it = m_master_io.find(bus);
+    if (it != m_master_io.end())
+        result = it->second.out_clock == e_clock::disabled;
 
-    return clocking == e_clock::disabled;
+    return result;
 }
 
 void
 listsbase::set_name (bussbyte bus, const std::string & name)
 {
-    if (bus < count())
+    auto it = m_master_io.find(bus);
+    if (it != m_master_io.end())
     {
         std::string nick = extract_nickname(name);
-        m_master_io[bus].io_name = name;
-        m_master_io[bus].io_nick_name = nick;
-        if (detect_short_name(nick))
-        {
-            std::string clientname, portname;
-            bool extracted = extract_port_names(name, clientname, portname);
-            if (extracted)
-                m_master_io[bus].io_alt_name = clientname + ":" + portname;
-        }
+        it->second.io_name = name;
+        it->second.io_nick_name = nick;
     }
 }
 
 void
 listsbase::set_nick_name (bussbyte bus, const std::string & name)
 {
-    if (bus < count())
-        m_master_io[bus].io_nick_name = name;
+    auto it = m_master_io.find(bus);
+    if (it != m_master_io.end())
+        it->second.io_nick_name = name;
 }
 
 std::string
 listsbase::get_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
-    std::string result = bus < count() ?
-        m_master_io[bus].io_name : s_dummy ;
+    auto it = m_master_io.find(bus);
+    std::string result = it != m_master_io.end() ?
+        it->second.io_name : s_dummy ;
 
     if (addnumber && ! result.empty())
         result = "[" + std::to_string(int(bus)) + "] " + result;
@@ -215,8 +225,9 @@ std::string
 listsbase::get_nick_name (bussbyte bus, bool addnumber) const
 {
     static std::string s_dummy;
-    std::string result =  bus < count() ?
-        m_master_io[bus].io_nick_name : s_dummy ;
+    auto it = m_master_io.find(bus);
+    std::string result = it != m_master_io.end() ?
+        it->second.io_nick_name : s_dummy ;
 
     if (addnumber && ! result.empty())
         result = "[" + std::to_string(int(bus)) + "] " + result;
@@ -300,6 +311,16 @@ listsbase::extract_nickname (const std::string & name) const
             result = name.substr(cpos);
         }
     }
+    if (detect_short_name(result))
+    {
+        std::string clientname, portname;
+        bool extracted = extract_port_names(name, clientname, portname);
+        if (extracted)
+            result = clientname + ":" + portname;
+
+        if (result == name)
+            result = simplify(result);
+    }
     if (result.empty())
         result = name;
 
@@ -323,11 +344,11 @@ bussbyte
 listsbase::bus_from_nick_name (const std::string & nick) const
 {
     bussbyte result = c_bussbyte_max;           /* a "null", unusable value */
-    for (int b = 0; b < count(); ++b)
+    for (const auto & iopair : m_master_io)
     {
-        if (nick == m_master_io[b].io_nick_name)
+        if (nick == iopair.second.io_nick_name)
         {
-            result = bussbyte(b);
+            result = iopair.first;              // bussbyte(b);
             break;
         }
     }
@@ -352,11 +373,11 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
 {
     std::string result;
     std::string nick = std::to_string(int(nominalbuss));
-    for (const auto & value : m_master_io)
+    for (const auto & iopair : m_master_io)
     {
-        if (nick == value.io_nick_name)
+        if (nick == iopair.second.io_nick_name)
         {
-            result = value.io_name;
+            result = iopair.second.io_name;
             break;
         }
     }
@@ -375,18 +396,20 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
  *  string version of the port-number.  Too tricky... unless it works. :-)
  *
  * \param source
- *      The source for the statuses to be applied, when usesource is true.
+ *      The source for the statuses to be applied.  Ultimately, the sources are
+ *      the clocks and inputs from the performer, provided by mastermidibase ::
+ *      get_port_statuses().
  */
 
 void
 listsbase::match_up (const listsbase & source)
 {
-    for (auto & value : m_master_io)
+    for (auto & iopair : m_master_io)
     {
-        const std::string & portname = value.io_name;   /* not io_nick_name */
+        const std::string & portname = iopair.second.io_name;   /* io_nick_name */
         const io & sourceio = source.get_io_block(portname);
-        value.io_enabled = sourceio.io_enabled;
-        value.out_clock = sourceio.out_clock;
+        iopair.second.io_enabled = sourceio.io_enabled;
+        iopair.second.out_clock = sourceio.out_clock;
     }
 }
 
@@ -402,10 +425,10 @@ listsbase::get_io_block (const std::string & nickname) const
         s_dummy_io.out_clock = e_clock::disabled;
     }
 
-    for (const auto & value : m_master_io)
+    for (const auto & iopair : m_master_io)
     {
-        if (value.io_nick_name == nickname)
-            return value;
+        if (iopair.second.io_nick_name == nickname)
+            return iopair.second;
     }
     return s_dummy_io;
 }
@@ -431,10 +454,10 @@ listsbase::port_map_list () const
     std::string result;
     if (not_empty())
     {
-        for (const auto & value : m_master_io)
+        for (const auto & iopair : m_master_io)
         {
-            std::string port = value.io_nick_name;
-            std::string name = value.io_name;
+            std::string port = iopair.second.io_nick_name;
+            std::string name = iopair.second.io_name;
             std::string temp = port + "   \"" + name + "\"\n";
             result += temp;
         }
@@ -447,14 +470,14 @@ listsbase::to_string (const std::string & tag) const
 {
     std::string result = "I/O List: '" + tag + "'\n";
     int count = 0;
-    for (const auto & value : m_master_io)
+    for (const auto & iopair : m_master_io)
     {
         std::string temp = std::to_string(count) + ". ";
-        temp += value.io_enabled ? "Enabled;  " : "Disabled; " ;
-        temp += "Clock = " + e_clock_to_string(value.out_clock);
+        temp += iopair.second.io_enabled ? "Enabled;  " : "Disabled; " ;
+        temp += "Clock = " + e_clock_to_string(iopair.second.out_clock);
         temp += "\n   ";
-        temp += "Name:     " + value.io_name + "\n   ";
-        temp += "Nickname: " + value.io_nick_name + "\n";
+        temp += "Name:     " + iopair.second.io_name + "\n   ";
+        temp += "Nickname: " + iopair.second.io_nick_name + "\n";
         result += temp;
         ++count;
     }

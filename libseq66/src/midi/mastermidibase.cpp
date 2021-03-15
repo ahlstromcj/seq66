@@ -417,7 +417,12 @@ mastermidibase::copy_io_busses ()
     {
         bool inputflag = m_inbus_array.get_input(bus);
         std::string name = m_inbus_array.get_midi_bus_name(bus);
-        m_master_inputs.add(inputflag, name);
+
+        /*
+         * TODO: use the buss number from the source!!!
+         */
+
+        m_master_inputs.add(bus, inputflag, name);
     }
     m_master_clocks.clear();
     buses = m_outbus_array.count();                 /* get_num_out_buses()  */
@@ -425,7 +430,12 @@ mastermidibase::copy_io_busses ()
     {
         e_clock clk = m_outbus_array.get_clock(bus);
         std::string name = m_outbus_array.get_midi_bus_name(bus);
-        m_master_clocks.add(clk, name);
+
+        /*
+         * TODO:  Use the buss from the source !!!
+         */
+
+        m_master_clocks.add(bus, clk, name);
     }
 }
 
@@ -515,7 +525,11 @@ mastermidibase::save_input (bussbyte bus, bool inputing)
             if (i == int(bus))
                 value = inputing;
 
-            m_master_inputs.add(value, "Why no name???");
+            /*
+             * TODO: use the buss number from the source!!!
+             */
+
+            m_master_inputs.add(i, value, "Why no name???");
         }
     }
     return result;          /* or true ? */
