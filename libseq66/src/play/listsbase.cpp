@@ -319,7 +319,7 @@ listsbase::extract_nickname (const std::string & name) const
             result = clientname + ":" + portname;
 
         if (result == name)
-            result = simplify(result);
+            result = simplify(result);  /* can we just call this one??? */
     }
     if (result.empty())
         result = name;
@@ -385,20 +385,21 @@ listsbase::port_name_from_bus (bussbyte nominalbuss) const
 }
 
 /**
- *  Sets the enabled/disabled status based on the source list.  Used to
- *  prepare the lists for showing the port-map along with the status of the
- *  disabled ports.  Each port in the port-map is looked up in the given
- *  source list.  If not found, it is disabled.
+ *  Sets the enabled/disabled status in a port-map based on the source list.
+ *  Used to prepare the lists for showing the port-map along with the status
+ *  of the disabled ports.  Each port in the port-map is looked up in the
+ *  given source list.  If not found, it is disabled.
  *
  *  Currently, it is assumed that the "this" here is the listsbase object
- *  returned by the input_port_map() or output_port_map() functions. Recall that
- *  its full-name is the nick-name of an actual port, and its nick-name is a
- *  string version of the port-number.  Too tricky... unless it works. :-)
+ *  returned by the input_port_map() or output_port_map() functions. Recall
+ *  that its full-name is the nick-name of an actual port, and its nick-name
+ *  is a string version of the port-number.  Too tricky... unless it works.
+ *  :-)
  *
  * \param source
- *      The source for the statuses to be applied.  Ultimately, the sources are
- *      the clocks and inputs from the performer, provided by mastermidibase ::
- *      get_port_statuses().
+ *      The source for the statuses to be applied.  Ultimately, the sources
+ *      are the clocks and inputs from the performer, provided by
+ *      mastermidibase :: get_port_statuses().
  */
 
 void
@@ -406,7 +407,7 @@ listsbase::match_up (const listsbase & source)
 {
     for (auto & iopair : m_master_io)
     {
-        const std::string & portname = iopair.second.io_name;   /* io_nick_name */
+        const std::string & portname = iopair.second.io_name;  /* nick-name */
         const io & sourceio = source.get_io_block(portname);
         iopair.second.io_enabled = sourceio.io_enabled;
         iopair.second.out_clock = sourceio.out_clock;

@@ -1117,6 +1117,13 @@ rcfile::write ()
     const clockslist & outsref = output_port_map();
     if (outsref.not_empty())
     {
+        bool active = outsref.active();
+        std::string activestring = active ? "1" : "0";
+        std::string mapstatus = "map is ";
+        if (! active)
+            mapstatus += "not ";
+
+        mapstatus += "active";
         file
         << "\n[midi-clock-map]\n\n"
            "# This table, if present, allows the pattern to set buss numbers\n"
@@ -1126,7 +1133,7 @@ rcfile::write ()
            "# the proper port. The short names are the same with ALSA or with\n"
            "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
            "# disabled in manual/virtual port mode.\n\n"
-        << (outsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
+        << activestring << "   # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;
     }

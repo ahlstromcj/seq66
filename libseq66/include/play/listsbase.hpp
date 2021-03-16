@@ -77,7 +77,6 @@ protected:
         e_clock out_clock;          /**<< The clock setting for this buss.  */
         std::string io_name;        /**<< The name of the I/O buss.         */
         std::string io_nick_name;   /**<< The short name of the I/O buss.   */
-//      std::string io_alt_name;    /**<< A name used in certain bases.     */
     };
 
     /**
@@ -111,26 +110,13 @@ protected:
 public:
 
     listsbase (bool pmflag = false);
-
-    virtual ~listsbase ()
-    {
-        // Nothing to do
-    }
-
+    virtual ~listsbase () = default;
     void match_up (const listsbase & source);
 
     void clear ()
     {
         m_master_io.clear();
     }
-
-/*
-    void resize (size_t sz)
-    {
-        if (sz > 0)
-            m_master_io.resize(sz);
-    }
-    */
 
     int count () const
     {

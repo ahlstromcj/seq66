@@ -455,8 +455,8 @@ mastermidibase::get_port_statuses (clockslist & outs, inputslist & ins)
     if (ipm.not_empty())
         ipm.match_up(m_master_inputs);
 
-    outs = m_master_clocks;
-    ins = m_master_inputs;
+    outs = m_master_clocks;     /* the actual system clocks information     */
+    ins = m_master_inputs;      /* the actual system inputs information     */
 }
 
 /**

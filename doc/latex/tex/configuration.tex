@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-02-11
+% \update      2021-03-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -477,6 +477,18 @@
    For the usage of the note-mapper, see
    \figureref{fig:pattern_editor_oneshot_recording}, and the surrounding
    discussion.
+
+\subsubsection{'rc' File / Port Map}
+\label{subsubsec:configuration_rc_port_map}
+
+   The 'rc' file also supports a port map, which maps I/O ports from a
+   permanent buss number to the actual system buss number.
+   The pattern is set to output to a specific buss number; this buss number is
+   associated with a port name; this port name is looked up to see what
+   system buss number is the one to be used.  When the system setup changes,
+   the pattern does not need to changed; only the port mapping may need to be
+   changed.  If the port map covers all I/O ports ever possible on a system, it
+   will not need to be changed.  See \sectionref{sec:port_mapping}.
 
 \subsubsection{'rc' File / MIDI-Clock Section}
 \label{subsec:configuration_rc_midi_clock}

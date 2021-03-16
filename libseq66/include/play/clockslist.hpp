@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-12-27
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the seq66::clock enumeration.  In
@@ -61,11 +61,7 @@ public:
         // Nothing to do
     }
 
-    virtual ~clockslist ()
-    {
-        // Nothing to do
-    }
-
+    virtual ~clockslist () = default;
     bool add
     (
         int buss,

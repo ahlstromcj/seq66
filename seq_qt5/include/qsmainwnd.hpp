@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-06
+ * \updates       2021-03-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -134,6 +134,7 @@ public:
     void remove_qperfedit ();
     void hide_qperfedit (bool hide = false);
     void remove_live_frame (int ssnum);
+    void enable_bus_item (int bus, bool enabled);
 
     int ppqn () const
     {
@@ -442,7 +443,9 @@ private slots:
     void load_set_master ();
     void load_mute_master ();
     void toggle_time_format (bool on);
+#if defined USE_EXTERNAL_SETMASTER
     void show_set_master ();
+#endif
     void open_performance_edit ();
     void apply_song_transpose ();
     void reload_mute_groups ();

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-15
+ * \updates       2021-03-16
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -582,6 +582,8 @@ qsmainwnd::qsmainwnd
         this, SLOT(toggle_time_format(bool))
     );
 
+#if defined USE_EXTERNAL_SETMASTER
+
     /*
      * Set-Master window button.
      */
@@ -591,6 +593,10 @@ qsmainwnd::qsmainwnd
         ui->setMasterButton, SIGNAL(clicked(bool)),
         this, SLOT(show_set_master())
     );
+
+#else
+    ui->setMasterButton->hide();
+#endif
 
 
     /*
@@ -891,6 +897,22 @@ qsmainwnd::~qsmainwnd ()
     m_timer->stop();
     cb_perf().unregister(this);
     delete ui;
+}
+
+void
+qsmainwnd::enable_bus_item (int bus, bool enabled)
+{
+    int index = bus + 1;
+    QStandardItemModel * model =
+        qobject_cast<QStandardItemModel *>
+        (
+            ui->cmb_global_bus->model()
+        );
+    QStandardItem * item = model->item(index);
+    if (enabled)
+        item->setFlags(item->flags() | Qt::ItemIsEnabled);
+    else
+        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 }
 
 /*
@@ -1461,9 +1483,16 @@ qsmainwnd::load_session_frame ()
     }
 }
 
+#if defined USE_EXTERNAL_SETMASTER
+
 /**
  *  Handles the external Set Master, the one instantiated with the Sets button
- *  on the main window.
+ *  on the main window.  Show the set master in a separate window.  The
+ *  "embedded" parameter is set to false, and there is no parent widget, just
+ *  this main window as a parent.
+ *
+ *  However, this window is gratuitous, and removing the external window zaps
+ *  the tab (permanently) as well.
  */
 
 void
@@ -1471,12 +1500,6 @@ qsmainwnd::show_set_master ()
 {
     if (is_nullptr(m_set_master))
     {
-        /*
-         * Show the set master in a separate window.  The "embedded" parameter
-         * is set to false, and there is no parent widget, just this main window
-         * as a parent.
-         */
-
         m_set_master = new qsetmaster(perf(), false, this);
         if (not_nullptr(m_set_master))
             m_set_master->show();
@@ -1484,6 +1507,8 @@ qsmainwnd::show_set_master ()
     else
         remove_set_master();
 }
+
+#endif  // defined USE_EXTERNAL_SETMASTER
 
 void
 qsmainwnd::remove_set_master ()
@@ -2406,7 +2431,8 @@ qsmainwnd::update_ppqn (int pindex)
  *  individually to each set; this allows each set to drive a different buss.
  *
  * \param index
- *      The index into the list of available MIDI buses.
+ *      The index into the list of available MIDI buses.  The drop-down has
+ *      already been remapped (if port-mapping is active).
  */
 
 void
@@ -2417,7 +2443,7 @@ qsmainwnd::update_midi_bus (int index)
     {
         if (index == 0)
         {
-            // Anything to do for the "None" entry?
+            /* Anything to do for the "None" entry? */
         }
         else
         {

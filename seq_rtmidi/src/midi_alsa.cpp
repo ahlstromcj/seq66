@@ -363,11 +363,6 @@ midi_alsa::set_virtual_name (int portid, const std::string & portname)
             port_name(portname);
             set_bus_id(cid);
             set_name(rc().app_client_name(), clientname, portname);
-
-            /*
-             * Redundant?
-             */
-
             parent_bus().set_name(rc().app_client_name(), clientname, portname);
         }
     }

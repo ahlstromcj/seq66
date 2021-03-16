@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-02-19
+ * \updates       2021-03-16
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -391,10 +391,12 @@ qloopbutton::toggle_checked ()
 {
 #if defined USE_OLD_TOGGLE_CHECKED
     bool result = m_seq->toggle_playing();
+    set_checked(result);
 #else
     bool result = m_seq->sequence_playing_toggle();
+    if (result)
+        set_checked(m_seq->playing());
 #endif
-    set_checked(result);
     reupdate();
     return result;
 }

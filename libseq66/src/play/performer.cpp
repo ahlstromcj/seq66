@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-14
+ * \updates       2021-03-16
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -619,16 +619,38 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
-    if (rcs.midi_control_in().count() > 0)          /* could be 0-sized     */
+    if (rcs.midi_control_in().is_enabled())
+    {
+        bussbyte namedbus = rcs.midi_control_in().nominal_buss();
+        bussbyte truebus = true_input_bus(namedbus);
         m_midi_control_in = rcs.midi_control_in();
-    else if (rcs.key_controls().count() > 0)
-        m_midi_control_in.add_blank_controls(m_key_controls);
+        if (is_good_buss(truebus))
+            m_midi_control_in.true_buss(truebus);
+        else
+            m_midi_control_in.is_enabled(false);
+    }
+    if (rcs.midi_control_in().count() == 0)
+    {
+        if (rcs.key_controls().count() > 0)
+        {
+            m_midi_control_in.add_blank_controls(m_key_controls);
+        }
+    }
+    if (rcs.midi_control_out().is_enabled())
+    {
+        bussbyte namedbus = rcs.midi_control_out().nominal_buss();
+        bussbyte truebus = true_output_bus(namedbus);
+        m_midi_control_out = rcs.midi_control_out();
+        if (is_good_buss(truebus))
+            m_midi_control_out.true_buss(truebus);
+        else
+            m_midi_control_out.is_enabled(false);
+    }
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
     song_mode(rcs.song_start_mode());               /* boolean setter       */
     filter_by_channel(rcs.filter_by_channel());
     tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
-    m_midi_control_out = rcs.midi_control_out();
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -748,7 +770,8 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
 bool
 performer::ui_set_input (bussbyte bus, bool active)
 {
-    bool result = m_master_bus->set_input(bus, active);
+    bussbyte truebus = true_input_bus(bus);
+    bool result = m_master_bus->set_input(truebus, active);
     if (result)
     {
         inputslist & ipm = input_port_map();
@@ -778,7 +801,7 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 }
 
 /**
- *  Sets the clock value, as specified in the Options / MIDI Clocks tab.
+ *  Sets the clock value, as specified in the Preferences / MIDI Clocks tab.
  *  Note that the call to mastermidibus::set_clock() also sets the clock in
  *  the output busarray.
  *
@@ -1295,6 +1318,8 @@ performer::change_ppqn (int p)
  *  Currently operates only on the current screenset.
  *
  * \param buss
+ *      Provides the number of the buss to be set.  Note that this buss number
+ *      has already effectively been remapped if port-mapping is in place.
  */
 
 bool
@@ -2005,18 +2030,6 @@ performer::launch (int ppqn)
         bool ok = activate();
         if (ok)
         {
-            bussbyte truebus = true_input_bus(midi_control_in().nominal_buss());
-            if (is_good_buss(truebus))
-                m_midi_control_in.true_buss(truebus);
-            else
-                m_midi_control_in.is_enabled(false);
-
-            truebus = true_output_bus(midi_control_out().nominal_buss());
-            if (is_good_buss(truebus))
-                m_midi_control_out.true_buss(truebus);
-            else
-                m_midi_control_out.is_enabled(false);
-
             launch_input_thread();
             launch_output_thread();
             (void) set_playing_screenset(0);

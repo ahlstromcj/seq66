@@ -51,6 +51,7 @@ namespace Ui
 namespace seq66
 {
     class performer;
+    class qsmainwnd;
 
 /**
  *  Provides a dialog class for Edit / Preferences.
@@ -69,10 +70,12 @@ public:
     );
     virtual ~qseditoptions();
 
+    void enable_bus_item (int bus, bool enabled);
+
 private:
 
-    void syncWithInternals();   /* makes dialog reflect internal settings   */
-    void backup();              /* backup preferences for cancel-changes    */
+    void syncWithInternals ();  /* makes dialog reflect internal settings   */
+    void backup ();             /* backup preferences for cancel-changes    */
 
     const performer & perf () const
     {
@@ -118,6 +121,7 @@ private slots:
 private:
 
     Ui::qseditoptions * ui;
+    qsmainwnd * m_parent_widget;
     performer & m_perf;
     bool m_is_initialized;
 

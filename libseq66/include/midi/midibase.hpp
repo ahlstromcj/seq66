@@ -387,11 +387,10 @@ public:
     }
 
     /**
-     * \setter m_bus_id
-     *      Useful for setting the buss ID when using the rtmidi_info object
-     *      to create a list of busses and ports.  Would be protected, but
-     *      midi_alsa needs to change this value to reflect the user-client ID
-     *      actually assigned by ALSA.  (That value ranges from 128 to 191.)
+     *  Useful for setting the buss ID when using the rtmidi_info object to
+     *  create a list of busses and ports.  Would be protected, but midi_alsa
+     *  needs to change this value to reflect the user-client ID actually
+     *  assigned by ALSA.  (That value ranges from 128 to 191.)
      */
 
     void set_bus_id (int id)

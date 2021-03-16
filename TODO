@@ -1,6 +1,6 @@
 TO DO for Seq66 0.92.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-01-20
+2019-04-13 to 2021-03-16
 
 HOT ITEMS:
 
@@ -149,19 +149,10 @@ EXTANT ISSUES:
     this issue might be to some pass child scrolling up to the qscrollmaster
     class.
 
-    #11: Pattern editor: disabling the 'piano roll scrolls with playback'
-    button does not stop the scrolling.
-    STATUS: Closed, but why?
-
     #12: Note rendering problem.
     Having a long note, scrolling it out of vision and back again leads to a
     problem.  (Only the first snap division and last snap division of the note
     appears.  STATUS:  Weird, will do.
-
-#15 Crash when closing Set Window
-    OS: Manjaro-Linux 5.7.9-1-MANJARO x86_64
-    Version: seq66-git 0.90.3.r181.70e9302-1 (master)
-    STATUS: Awaiting feedback as to if this is still an issue.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.

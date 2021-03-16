@@ -40,6 +40,7 @@
 #include "qclocklayout.hpp"
 #include "qinputcheckbox.hpp"
 #include "qseditoptions.hpp"
+#include "qsmainwnd.hpp"
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -84,6 +85,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
  :
     QDialog                 (parent),
     ui                      (new Ui::qseditoptions),
+    m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
     m_is_initialized        (false),
     m_backup_JackTransport  (false),
@@ -460,6 +462,17 @@ qseditoptions::syncWithInternals ()
     ui->lineEditUiScaling->setText(tmp);
     snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
     ui->lineEditUiScalingHeight->setText(tmp);
+}
+
+/**
+ *  Instead of this sequence of calls, we could send a Qt signal from
+ *  qclocklayout to eventually call the qsmainwnd slot.
+ */
+
+void
+qseditoptions::enable_bus_item (int bus, bool enabled)
+{
+    m_parent_widget->enable_bus_item(bus, enabled);
 }
 
 /**
