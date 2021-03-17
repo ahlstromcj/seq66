@@ -960,10 +960,10 @@
 
    \begin{verbatim}
       Header ID:     "MThd"         4 bytes
-      MThd length:     6            4 bytes
-      Format:        0, 1, 2        2 bytes
-      No. of track:  1 or more      2 bytes
-      PPQN:           192           2 bytes
+      MThd length:   6              4 bytes
+      Format:        0, 1, or 2     2 bytes (format 2 is rare)
+      No. of tracks: 1 or more      2 bytes
+      PPQN:          192            2 bytes (bit 15 = 0)
    \end{verbatim}
 
    The header ID and its length are always the values above, "MThd" and 6.

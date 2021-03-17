@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-03-13
+ * \updates       2021-03-17
  * \license       GNU GPLv2 or above
  *
  */
@@ -817,7 +817,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     "# basename (e.g. nanomap.ctrl) on a separate line.\n"
     "\n"
     "# Version 1 adds the [mute-control-out] and [automation-control-out]\n"
-    "# sections.\n"
+    "# sections. Versions 2 and 3 simplify the data items.\n"
     "\n"
     "[Seq66]\n\n"
     "config-type = \"ctrl\"\n"
@@ -844,7 +844,7 @@ midicontrolfile::write_stream (std::ofstream & file)
     if (result)
     {
         file
-            << "# End of " << name() << "\n#\n"
+            << "\n# End of " << name() << "\n#\n"
             << "# vim: sw=4 ts=4 wm=4 et ft=dosini\n"
             ;
     }
@@ -1055,10 +1055,9 @@ midicontrolfile::write_ctrl_triple
         a, midicontrolout::action_del
     );
     file
-        << "# MIDI Control Out: " << action_to_string(a)
-        << " " << action_to_type_string(a) << "\n"
         << (active ? 1 : 0) << " "
-        << act1str << " " << act2str << " " << act3str << "\n\n"
+        << act1str << " " << act2str << " " << act3str
+        << "  # " << action_to_string(a) << "\n"
         ;
     return file.good();
 }
@@ -1104,13 +1103,21 @@ midicontrolfile::write_mutes_triple
 bool
 midicontrolfile::write_midi_control_out (std::ofstream & file)
 {
-    const midicontrolout & mco = rc_ref().midi_control_out();
+    /* const */ midicontrolout & mco = rc_ref().midi_control_out();
     int setsize = mco.screenset_size();
     int buss = int(mco.nominal_buss());
     bool disabled = mco.is_disabled();
-    bool result = setsize > 0 && buss >= 0;         /* light sanity check */
+    bool result = buss >= 0;                /* do a very light sanity check */
     if (result)
     {
+        if (setsize == 0)
+        {
+            mco.initialize
+            (
+                buss, SEQ66_DEFAULT_SET_ROWS, SEQ66_DEFAULT_SET_COLUMNS
+            );
+            setsize = mco.screenset_size();
+        }
         file <<
             "\n"
             "[midi-control-out-settings]\n\n"
@@ -1127,20 +1134,20 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "[midi-control-out]\n"
             "\n"
             "#   --------------------- Pattern number (as applicable)\n"
-            "#  |    -------------- MIDI status/event byte (e.g. Note On)\n"
-            "#  |   |  ------------ data 1 (e.g. note number)\n"
-            "#  |   | |  ---------- data 2 (e.g. velocity)\n"
-            "#  |   | | |\n"
-            "#  v   v v v\n"
-            "# 31 [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0 ] [ 0 0 0]\n"
+            "#  |     ---------------- MIDI status+channel (e.g. Note On)\n"
+            "#  |    |    ------------ data 1 (e.g. note number)\n"
+            "#  |    |   |  ---------- data 2 (e.g. velocity)\n"
+            "#  |    |   | |\n"
+            "#  v    v   v v\n"
+            "# 31 [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0]\n"
             "#       Arm      Mute      Queue    Delete\n"
             ;
 
         file <<
-            "\n"
-            "# This is a change from version 1 of this file, made on 2021-02-10.\n"
-            "# The enabled column is replaced by a test of the status/event byte,\n"
-            "# and channel must be incorporated into the status.  Much cleaner!\n"
+            "#\n"
+            "# This is a change (2021-02-10) from version 1 of this file.\n"
+            "# A test of the status/event byte determines the enabled status,\n"
+            "# and channel is incorporated into the status.  Much cleaner!\n"
             "# The order of the lines that follow must must be preserved.\n"
             "\n"
             ;
@@ -1149,8 +1156,10 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
         {
             for (int seq = 0; seq < setsize; ++seq)
             {
-                file << seq
-                    << " [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ] [ 0x00 0 0 ]\n";
+                file << std::setw(2) << seq <<
+                    " [ 0x00   0   0 ]" " [ 0x00   0   0 ]"
+                    " [ 0x00   0   0 ]" " [ 0x00   0   0 ]\n"
+                    ;
             }
         }
         else
@@ -1181,14 +1190,15 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
             "\n[mute-control-out]\n\n"
             "# The format of the mute and automation output events is simpler:\n"
             "#\n"
-            "#  --------------------- mute-group number\n"
-            "# |   ---------------- MIDI status/event byte (e.g. Note On+channel)\n"
-            "# |  |  -------------- data 1 (e.g. note number)\n"
-            "# |  | |  ------------ data 2 (e.g. velocity)\n"
-            "# |  | | |\n"
-            "# v  v v v v\n"
-            "# 1 [0 0 0]\n"
-            "\n"
+            "#  ---------------------- mute-group number\n"
+            "# |    ------------------ MIDI status+channel (e.g. Note On)\n"
+            "# |   |    -------------- data 1 (e.g. note number)\n"
+            "# |   |   |  ------------ data 2 (e.g. velocity)\n"
+            "# |   |   | |\n"
+            "# v   v   v v\n"
+            "# 1 [0x00 0 0 ] [0x00 0 0] [0x00 0 0]\n"
+            "#       On         Off      Empty (dark)\n"
+            "#\n"
             "# The mute-controls have an additional stanza for non-populated\n"
             "# (\"deleted\") mute-groups.\n"
             "\n"
@@ -1200,7 +1210,12 @@ midicontrolfile::write_midi_control_out (std::ofstream & file)
                 break;
         }
 
-        file << "\n[automation-control-out]\n\n";
+        file << "\n[automation-control-out]\n\n"
+            "# This format is similar to the [mute-control-out] format, but\n"
+            "# the first number is an active-flag, not an index number.\n"
+            "# The stanzas are on/off/inactive, except for 'snap', which is\n"
+            "# store/restore/inactive.\n\n"
+            ;
         write_ctrl_triple(file, mco, midicontrolout::uiaction::panic);
         write_ctrl_triple(file, mco, midicontrolout::uiaction::stop);
         write_ctrl_triple(file, mco, midicontrolout::uiaction::pause);

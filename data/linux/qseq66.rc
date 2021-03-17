@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) 'rc' configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written on 2021-02-28 08:58:34
+# Written on 2021-03-16 15:14:21
 #
 # This file holds the main configuration options for Seq66.
 # It loosely follows the format of the seq24 'rc' configuration
@@ -23,7 +23,7 @@ config-type = "rc"
 version = 0
 verbose = false
 sets-mode = normal
-port-naming = short
+port-naming = long
 
 # The [comments] section holds the user's documentation for this file.
 # Lines starting with '#' and '[' are ignored.  Blank lines are ignored;
@@ -37,7 +37,7 @@ look empty with a space.
 
 [midi-control-file]
 
-"qseq66-lp-mini-alt.ctrl"       # was "nanomap.ctrl"
+"qseq66-lp-mini-alt.ctrl"
 
 [mute-group-file]
 
@@ -57,7 +57,7 @@ look empty with a space.
 # Provides the name of a play-list file. If there is none, use '""',
 # or set the flag above to 0. Use the extension '.playlist'.
 
-"ca_midi.playlist"      # was "qseq66.playlist"
+"qseq66.playlist"
 
 # Optional MIDI file base directory for play-list files.
 # If present, sets the base directory in which to find all of
@@ -100,6 +100,18 @@ look empty with a space.
 
 0    # tempo_track_number
 
+[manual-ports]
+
+# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not
+# auto-connect to other clients.  It allows up to 16 output ports.
+# and 8 input ports. Set the first value (the flag) to 0 to
+# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.
+# A new feature is to change the number of ports; see below.
+
+0   # flag for manual (virtual) ALSA or JACK ports
+8   # number of manual/virtual output ports
+4   # number of manual/virtual input ports
+
 [midi-input]
 
 # These ports can be used for input into Seq66.
@@ -108,15 +120,28 @@ look empty with a space.
 # is the input status, disabled (0) or enabled (1). The item in
 # quotes is the input-buss name.
 
-7   # number of input MIDI busses
+6   # number of input MIDI busses
 
 0 1    "[0] 0:1 system:announce"
 1 0    "[1] 14:0 Midi Through Port-0"
-2 0    "[2] 28:0 Q25 MIDI 1"
-3 1    "[3] 32:0 E-MU XMidi1X1 Tab MIDI 1"
-4 1    "[4] 36:0 Launchpad Mini MIDI 1"
-5 1    "[5] 40:0 nanoKEY2 MIDI 1"
-6 0    "[6] 44:0 USB Midi MIDI 1"
+2 0    "[2] 32:0 nanoKEY2 MIDI 1"
+3 0    "[3] 36:0 Launchpad Mini MIDI 1"
+4 0    "[4] 40:0 Q25 MIDI 1"
+5 1    "[5] 44:0 E-MU XMidi1X1 Tab MIDI 1"
+
+[midi-input-map]
+
+# This table is similar to the [midi-clock-map] section.
+# Port-mapping is disabled in manual/virtual port mode.
+
+1   # map is active
+
+0   "announce"
+1   "Midi Through Port-0"
+2   "Launchpad Mini MIDI 1"
+3   "nanoKEY2 MIDI 1"
+4   "Q25 MIDI 1"
+5   "E-MU XMidi1X1 Tab MIDI 1"
 
 [midi-clock]
 
@@ -138,12 +163,30 @@ look empty with a space.
 
 6    # number of MIDI clocks (output busses)
 
- 0 0    "[0] 14:0 Midi Through Port-0"
- 1 0    "[1] 28:0 Q25 MIDI 1"
- 2 0    "[2] 32:0 E-MU XMidi1X1 Tab MIDI 1"
- 3 0    "[3] 36:0 Launchpad Mini MIDI 1"
- 4 0    "[4] 40:0 nanoKEY2 MIDI 1"
- 5 0    "[5] 44:0 USB Midi MIDI 1"
+0 0    "[0] 14:0 Midi Through Port-0"
+1 0    "[1] 32:0 nanoKEY2 MIDI 1"
+2 0    "[2] 36:0 Launchpad Mini MIDI 1"
+3 0    "[3] 40:0 Q25 MIDI 1"
+4 0    "[4] 44:0 E-MU XMidi1X1 Tab MIDI 1"
+5 0    "[5] 128:0 yoshimi:input"
+
+[midi-clock-map]
+
+# This table, if present, allows the pattern to set buss numbers
+# as usual, but the use the table to look up the true buss number
+# by the short form of the port name. Thus, if the ports change
+# their order in the MIDI system, the pattern can still output to
+# the proper port. The short names are the same with ALSA or with
+# JACK with the a2jmidi bridge running. Note that port-mapping is
+# disabled in manual/virtual port mode.
+
+1   # map is active
+
+0   "Midi Through Port-0"
+1   "Launchpad Mini MIDI 1"
+2   "nanoKEY2 MIDI 1"
+3   "yoshimi:input"
+4   "E-MU XMidi1X1 Tab MIDI 1"
 
 [midi-clock-mod-ticks]
 
@@ -158,18 +201,6 @@ look empty with a space.
 # This is an option adopted from the Seq32 project at GitHub.
 
 0   # flag to record incoming data by channel
-
-[manual-ports]
-
-# Set to 1 to have Seq66 create its own ALSA/JACK I/O ports and not
-# auto-connect to other clients.  It allows up to 16 output ports.
-# and 8 input ports. Set the first value (the flag) to 0 to
-# auto-connect Seq66 to the system's existing ALSA/JACK MIDI ports.
-# A new feature is to change the number of ports; see below.
-
-0   # flag for manual (virtual) ALSA or JACK ports
-8   # number of manual/virtual output ports
-4   # number of manual/virtual input ports
 
 [reveal-ports]
 
@@ -232,7 +263,7 @@ look empty with a space.
 #     controls, regardless of which window was used to start the
 #     playback.
 
-0   # song_start_mode
+1   # song_start_mode
 
 # jack_midi - Enable JACK MIDI, which is a separate option from
 # JACK Transport.
@@ -256,7 +287,7 @@ look empty with a space.
 
 # Last-used and currently-active directory:
 
-"/home/user/Home/ca/mls/git/seq66/data/midi/"
+"/home/user/Home/ca/mls/git/seq66/data/midi"
 
 [recent-files]
 
@@ -265,13 +296,10 @@ look empty with a space.
 # indicates if to load the most recent file (the top of the list)
 # at startup (1 = load it, 0 = do not load it).
 
-5 1
+2 1
 
-"/home/user/Home/ca/mls/git/seq66/contrib/midi/mutes-test.midi"
 "/home/user/Home/ca/mls/git/seq66/data/midi/b4uacuse-gm-patchless.midi"
-"/home/user/Home/ca/mls/git/seq66/contrib/midi/playtime.midi"
-"/home/user/Home/ca/mls/git/seq66/contrib/midi/buffalo.midi"
-"/home/user/Home/ca/mls/git/seq66/contrib/midi/sets-test.midi"
+"/home/user/Home/ca/mls/git/seq66/contrib/midi/mutes-test.midi"
 
 # End of /home/user/.config/seq66/qseq66.rc
 #

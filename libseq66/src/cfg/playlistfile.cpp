@@ -499,7 +499,7 @@ playlistfile::write ()
 
     std::string c = play_list().comments_block().text();
     if (c.empty())
-        c = "Put your comment line(s) here";
+        c = "(Put your comment line(s) here as per the explanation above.)";
 
     file << "\n[comments]\n\n" << c << "\n";
 
@@ -566,9 +566,14 @@ playlistfile::write ()
         << "\n[playlist]\n\n"
            "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE. See one of the\n"
            "# sample playlist files shipping with Seq66.\n\n"
-        ;
+           "0   # playlist number, ranging from 0 to 127.\n\n"
+           "\"My Midi Files\"    # display name for the play-list.\n\n"
+           "\"~/My Songs\"       # storage directory for tunes in the list.\n\n"
+           "0 \"b4uacufm.midi\"  # first tune, selected by d1 value 0\n"
+           "1 \"brecluse.midi\"  # second tune...\n"
+           " . . .\n"
+            ;
     }
-
     file
         << "\n"
         << "# End of " << name() << "\n#\n"

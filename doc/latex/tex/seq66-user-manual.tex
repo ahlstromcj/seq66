@@ -137,12 +137,12 @@
       \item A mutes editor tab, improve mutes handling, control, and status
          display.
       \item A playlist editor tab, with improved flexibility and automation.
-      \item A sets editor tab (still in progress).
+      \item A sets editor tab.
       \item A better live frame (main window and external windows) using
-         buttons (and a fallback to the earlier style).
+         buttons (or a fallback to the earlier style).
       \item Non Session Manager support.
       \item Repartitioning of the configuration files into separate files for
-         flexibility.
+         flexibility; a palette file was added as well.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
@@ -183,15 +183,16 @@
    The "data" directory is a installation directory:
 
    \begin{verbatim}
-      /usr/share/seq66-0.90/              (Linux)
-      C:/Program Files (x86)/Seq66        (Windows)
+      /usr/share/seq66-0.90/                       (Linux)
+      C:/Program Files (x86)/Seq66                 (Windows)
    \end{verbatim}
 
-   The configration directory is:
+   Some of the files in these directories apply to both operating systems.
+   The configration files are:
 
    \begin{verbatim}
-      /home/user/.config/seq66            (Linux)
-      C:/Users/user/AppData/Local/seq66   (Windows)
+      /home/user/.config/seq66/qseq66.*            (Linux)
+      C:/Users/user/AppData/Local/seq66/qpseq66.*  (Windows)
    \end{verbatim}
 
    These are created after the first run of \textsl{Seq66}.
@@ -229,10 +230,12 @@
    \end{itemize}
 
    The \textbf{Live} tab is foremost in the application.
-   It provides a grid of patterns (also called loops, tracks, or
-   sequences) that display recorded MIDI data, status information, and provide
-   popup-menus for each pattern.  The buttons can
-   be colored via a palette, and that the status of being armed is easy to see
+   It provides a grid of \textsl{patterns}
+   (also called \textsl{loops}, \textsl{tracks}, or
+   \textsl{sequences) that display recorded MIDI data, status information, and
+   provide popup-menus for each pattern.
+   The buttons can
+   be colored via a palette, and the status of being armed is easy to see
    from the theme's coloring of activated buttons.
    In addition, the buttons can be toggled by a keystroke, shown in the lower
    right corner of the button.

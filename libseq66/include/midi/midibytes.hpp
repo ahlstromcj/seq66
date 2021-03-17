@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-03-05
+ * \updates       2021-03-17
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -514,6 +514,12 @@ inline bool
 is_good_buss (bussbyte b)
 {
     return b < bussbyte(c_busscount_max);
+}
+
+inline bool
+is_valid_buss (bussbyte b)
+{
+    return is_good_buss(b) || is_null_buss(b);
 }
 
 inline bool

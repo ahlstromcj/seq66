@@ -61,10 +61,11 @@ midicontrolbase::midicontrolbase (const std::string & name) :
 bool
 midicontrolbase::initialize (int buss, int rows, int columns)
 {
-    m_buss = m_true_buss = buss;
+    bussbyte b = bussbyte(buss);
+    m_buss = m_true_buss = b;
     m_rows = rows;
     m_columns = columns;
-    return is_good_buss(buss) && rows > 0 && columns > 0;
+    return is_valid_buss(b) && rows > 0 && columns > 0;
 }
 
 }           // namespace seq66

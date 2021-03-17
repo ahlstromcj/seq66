@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Igor Angst (with modifications by C. Ahlstrom)
  * \date          2018-03-28
- * \updates       2021-03-13
+ * \updates       2021-03-17 (St. Patrick's Day)
  * \license       GNU GPLv2 or above
  *
  * The class contained in this file encapsulates most of the functionality to
@@ -204,6 +204,8 @@ action_to_string (midicontrolout::uiaction a)
     }
 }
 
+#if defined USE_ACTION_TO_TYPE_STRING
+
 /**
  *  A "to_string" function for the control file.
  */
@@ -226,6 +228,8 @@ action_to_type_string (midicontrolout::uiaction a)
     }
     return result;
 }
+
+#endif
 
 /**
  *  Send out notification about playing status of a sequence.
@@ -435,7 +439,7 @@ std::string
 midicontrolout::get_ctrl_event_str (uiaction what, actionindex which) const
 {
     std::string result;
-    if (m_ui_events.size() > 0)
+    if (! m_ui_events.empty())
     {
         int w = static_cast<int>(what);
         event ev;
@@ -455,18 +459,17 @@ std::string
 midicontrolout::get_mutes_event_str (int group, actionindex which) const
 {
     std::string result;
+    event ev;
     if (m_mutes_events.size() > 0)
     {
-        event ev;
         if (which == action_on)
             ev = m_mutes_events[group].att_action_event_on;
         else if (which == action_off)
             ev = m_mutes_events[group].att_action_event_off;
         else if (which == action_del)
             ev = m_mutes_events[group].att_action_event_del;
-
-        result = get_event_str(ev);
     }
+    result = get_event_str(ev);
     return result;
 }
 
@@ -482,7 +485,7 @@ midicontrolout::set_event
     int * onp, int * offp, int * delp
 )
 {
-    if (what < uiaction::max)
+    if (what < uiaction::max && ! m_ui_events.empty())
     {
         int w = static_cast<int>(what);
         event on;
@@ -529,7 +532,8 @@ bool
 midicontrolout::event_is_active (uiaction what) const
 {
     int w = static_cast<int>(what);
-    return what < uiaction::max ? m_ui_events[w].att_action_status : false ;
+    return (what < uiaction::max && ! m_ui_events.empty()) ?
+        m_ui_events[w].att_action_status : false ;
 }
 
 void

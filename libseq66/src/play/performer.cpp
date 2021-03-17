@@ -1306,7 +1306,9 @@ performer::change_ppqn (int p)
             }
         );
         if (result)
+        {
             notify_resolution_change(get_ppqn(), get_beats_per_minute());
+        }
     }
     return result;
 }
