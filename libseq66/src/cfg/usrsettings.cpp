@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-01-31
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -238,7 +238,9 @@ usrsettings::usrsettings () :
      * [user-midi-settings]
      */
 
+    m_default_ppqn              (SEQ66_DEFAULT_PPQN),
     m_midi_ppqn                 (SEQ66_DEFAULT_PPQN),
+    m_use_file_ppqn             (false),
     m_file_ppqn                 (0),
     m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
     m_midi_bpm_minimum          (0),
@@ -351,7 +353,9 @@ usrsettings::usrsettings (const usrsettings & rhs) :
      * [user-midi-settings]
      */
 
+    m_default_ppqn              (rhs.m_default_ppqn),
     m_midi_ppqn                 (rhs.m_midi_ppqn),
+    m_use_file_ppqn             (rhs.m_use_file_ppqn),
     m_file_ppqn                 (rhs.m_file_ppqn),
     m_midi_beats_per_measure    (rhs.m_midi_beats_per_measure),
     m_midi_bpm_minimum          (rhs.m_midi_bpm_minimum),
@@ -466,7 +470,9 @@ usrsettings::operator = (const usrsettings & rhs)
          * [user-midi-settings]
          */
 
+        m_default_ppqn              = rhs.m_default_ppqn;
         m_midi_ppqn                 = rhs.m_midi_ppqn;
+        m_use_file_ppqn             = rhs.m_use_file_ppqn;
         m_file_ppqn                 = rhs.m_file_ppqn;
         m_midi_beats_per_measure    = rhs.m_midi_beats_per_measure;
         m_midi_bpm_minimum          = rhs.m_midi_bpm_minimum;
@@ -577,7 +583,9 @@ usrsettings::set_defaults ()
     m_text_y = 12;                          // range: 12-12
     m_seqchars_x = 15;                      // range: 15-15
     m_seqchars_y =  5;                      // range: 5-5
+    m_default_ppqn = SEQ66_DEFAULT_PPQN;    // range: 32 to 19200, default 192
     m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 32 to 19200, default 192
+    m_use_file_ppqn = false;
     m_file_ppqn = 0;                        // range: 32 to 19200, default 0
     m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
@@ -1088,6 +1096,13 @@ usrsettings::zoom (int value)
         m_current_zoom = value;
 }
 
+void
+usrsettings::default_ppqn (int value)
+{
+    if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+        m_default_ppqn = value;
+}
+
 /**
  * \setter m_midi_ppqn
  *      This value can be set from 96 to 19200 (this upper limit will be
@@ -1100,10 +1115,8 @@ usrsettings::midi_ppqn (int value)
 {
     if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
         m_midi_ppqn = value;
-    else if (value == SEQ66_USE_FILE_PPQN)
-        m_midi_ppqn = value;
     else
-        m_midi_ppqn = SEQ66_DEFAULT_PPQN;
+        m_midi_ppqn = default_ppqn();
 }
 
 /**
@@ -1119,7 +1132,9 @@ usrsettings::midi_beats_per_bar (int value)
         value >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
         value <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
     )
+    {
         m_midi_beats_per_measure = value;
+    }
 }
 
 /**

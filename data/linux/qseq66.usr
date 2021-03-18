@@ -1,7 +1,7 @@
-# Seq66 0.91.0 (and above) 'usr' configuration file
+# Seq66 0.92.2 (and above) 'usr' configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.usr
-# Written on 2021-01-25 07:05:46
+# Written on 2021-03-18 12:50:07
 #
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
@@ -246,6 +246,15 @@ look empty with a space.
 
 1 1      # window_scale (scales main window width and height)
 
+[user-midi-ppqn]
+
+# These settings replace the midi_ppqn setting below.  We need to
+# separate the file-ppqn flag from the default PPQN that the user
+# wants Seq66 to support.
+
+default-ppqn = 960
+use-file-ppqn = false
+
 [user-midi-settings]
 
 # These settings specify MIDI-specific value that might be
@@ -364,16 +373,15 @@ look empty with a space.
 
 # This first value specifies the height of the keys in the
 # sequence editor.  Defaults to 12 (pixels), but 8 is better.
-# Currently used only in the Qt GUI.
 
-10       # (user_ui_) key_height
+10       # key_height
 
 # Normally, the Qt version of Seq66 uses the old pattern editor in the
 # 'Edit' tab.  If this value is set to 1, then the new, larger,
 # more functional pattern editor can be used in the 'Edit' tab. This
 # setting makes the whole Seq66 window larger.
 
-1       # (user_ui_) use_new_seqedit
+1       # use_new_seqedit
 
 # The note-resume option, if active, causes any notes in progress
 # to be resumed when the pattern is toggled back on.

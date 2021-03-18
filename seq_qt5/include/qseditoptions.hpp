@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-30
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -76,6 +76,7 @@ private:
 
     void syncWithInternals ();  /* makes dialog reflect internal settings   */
     void backup ();             /* backup preferences for cancel-changes    */
+    bool set_ppqn_combo ();
 
     const performer & perf () const
     {
@@ -108,6 +109,9 @@ private slots:
     void okay ();
     void cancel ();
     void update_note_resume ();
+    void update_ppqn (int pindex);
+    void update_ppqn_by_text (const QString & text);
+    void update_use_file_ppqn ();
     void update_key_height ();
     void update_ui_scaling_width ();
     void update_ui_scaling_height ();

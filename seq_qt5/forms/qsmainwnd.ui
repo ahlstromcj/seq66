@@ -177,7 +177,16 @@ or no transport mode.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Changes the PPQN value of the current song, currently only for the current set.  Not yet ready at all.</string>
+         <string>Changes the PPQN value of the current song, currently only for
+the current set.  It does not change Seq66's default PPQN.
+
+Not yet ready at all.</string>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentText">
+         <string>19200</string>
         </property>
        </widget>
       </item>

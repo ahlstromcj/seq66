@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-02-18
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -546,20 +546,35 @@ private:
      */
 
     /**
+     *  Provides the default PPQN for the application.  This PPQN is used when
+     *  creating a new MIDI file or when reading an existing file with the
+     *  m_use_file_ppqn value set.  This value defaults to SEQ66_DEFAULT_PPQN
+     *  = 192 (the legacy Seq24 value).
+     */
+
+    int m_default_ppqn;
+
+    /**
      *  Provides the universal PPQN setting for the duration of this session.
      *  This variable replaces the global ppqn.  The default value of this
      *  setting is 192 parts-per-quarter-note (PPQN).  There is still a lot of
      *  work to get a different PPQN to work properly in speed of playback,
      *  scaling of the user interface, and other issues.  Note that this value
-     *  can be changed by the still-experimental --ppqn option.  There is one
-     *  remaining trace of the global, though:  DEFAULT_PPQN.
+     *  can be changed by the still-experimental --ppqn option.
      */
 
     int m_midi_ppqn;                     /* PPQN, parts per QN       */
 
     /**
-     *  Holds the PPQN read from the file, for use with the
-     *  SEQ66_USE_FILE_PPQN value (0) from app_limits.h.
+     *  If true, ignore Seq66's default PPQN value and use the file's PPQN,
+     *  leaving the file unscaled.
+     */
+
+    bool m_use_file_ppqn;
+
+    /**
+     *  Holds the PPQN read from the file, for use in file conversion if we're
+     *  not using the file's PPQN.
      */
 
     int m_file_ppqn;
@@ -1472,9 +1487,19 @@ protected:
 
 public:
 
+    int default_ppqn () const
+    {
+        return m_default_ppqn;
+    }
+
     int midi_ppqn () const
     {
-        return m_midi_ppqn;
+        return m_midi_ppqn;     /* current PPQN */
+    }
+
+    bool use_file_ppqn () const
+    {
+        return m_use_file_ppqn;
     }
 
     int file_ppqn () const
@@ -1482,9 +1507,14 @@ public:
         return m_file_ppqn;
     }
 
+    void use_file_ppqn (bool flag)
+    {
+        m_use_file_ppqn = flag;
+    }
+
     void file_ppqn (int p)
     {
-        m_file_ppqn = p;        // LATER: validate
+        m_file_ppqn = p;
     }
 
     int midi_beats_per_bar () const
@@ -1793,6 +1823,7 @@ public:         // used in main application module and the usrfile class
             m_new_pattern_recordstyle = style;
     }
 
+    void default_ppqn (int ppqn);
     void midi_ppqn (int ppqn);
     void midi_buss_override (bussbyte buss);
     void velocity_override (int vel);

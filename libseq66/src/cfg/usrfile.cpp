@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-22
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -64,9 +64,7 @@ namespace seq66
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    // version("1");                    // a new version on 2019-12-12
-    // version("2");                    // a new version on 2020-06-20
-    version("3");                       // a new version on 2020-08-22
+    version("3");                       /* new version on 2020-08-22    */
 }
 
 /**
@@ -419,6 +417,24 @@ usrfile::parse ()
     usr().normalize();    /* calculate derived values */
 
     /*
+     * [user-midi-ppqn]
+     */
+
+    bool ppqn_settings_made = false;
+    std::string s = get_variable(file, "[user-midi-ppqn]", "default-ppqn");
+    if (! s.empty())
+    {
+        usr().default_ppqn(std::stoi(s));
+        s = get_variable(file, "[user-midi-ppqn]", "use-file-ppqn");
+        if (! s.empty())
+        {
+            bool use_it = string_to_bool(s, false);
+            usr().use_file_ppqn(use_it);
+            ppqn_settings_made = true;
+        }
+    }
+
+    /*
      * [user-midi-settings]
      */
 
@@ -426,7 +442,8 @@ usrfile::parse ()
     {
         int scratch = 0;
         sscanf(scanline(), "%d", &scratch);
-        usr().midi_ppqn(scratch);
+        if (! ppqn_settings_made)
+            usr().midi_ppqn(scratch);   /* ignored if set earlier */
 
         next_data_line(file);
         sscanf(scanline(), "%d", &scratch);
@@ -543,7 +560,7 @@ usrfile::parse ()
         usr().resume_note_ons(string_to_bool(s));
     }
 
-    std::string s = get_variable(file, "[user-session]", "session");
+    s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
 
     s = get_variable(file, "[user-session]", "url");
@@ -607,7 +624,7 @@ usrfile::write ()
      */
 
     file
-        << "# Seq66 0.91.0 (and above) 'usr' configuration file\n"
+        << "# Seq66 0.92.2 (and above) 'usr' configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -1070,6 +1087,21 @@ usrfile::write ()
         "\n"
         << usr().window_scale() << " " << usr().window_scale_y()
         << "      # window_scale (scales main window width and height)\n"
+        ;
+
+    /*
+     * [user-midi-ppqn]
+     */
+
+    file << "\n"
+        "[user-midi-ppqn]\n"
+        "\n"
+        "# These settings replace the midi_ppqn setting below.  We need to\n"
+        "# separate the file-ppqn flag from the default PPQN that the user\n"
+        "# wants Seq66 to support.\n"
+        "\n"
+        "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
+        "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"
         ;
 
     /*

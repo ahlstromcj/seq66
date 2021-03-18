@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-06
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  */
@@ -1250,6 +1250,11 @@ public:
     int ppqn () const
     {
         return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
+    }
+
+    void file_ppqn (int p)
+    {
+        m_file_ppqn = p;
     }
 
     /**

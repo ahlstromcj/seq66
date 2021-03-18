@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-16
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -166,31 +166,6 @@ static const int s_beat_measure_count   = 16;
 static const int s_beat_length_count    =  5;
 
 /**
- *  Available PPQN values.  The default is 192, item #xx.  The first item uses the
- *  edit text for a "File" value, which means that whatever was read from the file
- *  is what holds.  The last item terminates the list.
- */
-
-static const int s_ppqn_list [] =
-{
-       -1,      /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
-        0,      /* "File" (SEQ66_USE_FILE_PPQN)                             */
-       32,
-       48,
-       96,
-      192,
-      384,
-      768,
-      960,
-     1920,
-     3840,
-     7680,
-     9600,
-    19200,
-       -2       /* terminator   */
-};
-
-/**
  *  Given a display coordinate, looks up the screen and returns its geometry.
  *  If no screen was found, return the primary screen's geometry
  */
@@ -217,10 +192,9 @@ desktop_rectangle (const QPoint & p)
  *      Provides an optional MIDI file-name.  If provided, the file is opened
  *      immediately.
  *
- * \param ppqn
- *      Sets the desired PPQN value.  If 0 (SEQ66_USE_FILE_PPQN), then
- *      the PPQN to use is obtained from the file.  Otherwise, if a legal
- *      PPQN, any file read is scaled temporally to that PPQN, as applicable.
+ * \param usensm
+ *      If true, this changes the menu to be suitable for keeping work
+ *      products inside an NSM session directory.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
@@ -283,41 +257,22 @@ qsmainwnd::qsmainwnd
      *  Combo-box for tweaking the PPQN.
      */
 
-    bool ppqn_is_set = false;
-    for (int i = 0; ; ++i)
-    {
-        int ppqn = s_ppqn_list[i];
-        if (ppqn == SEQ66_USE_FILE_PPQN)
-        {
-            ui->cmb_ppqn->insertItem(i, "File");
-        }
-        else if (ppqn == SEQ66_USE_DEFAULT_PPQN)
-        {
-            std::string lbl = std::to_string(usr().midi_ppqn());
-            lbl += "*";
-            ui->cmb_ppqn->insertItem(i, lbl.c_str());
-        }
-        else if (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
-        {
-            QString combo_text = QString::number(ppqn);
-            ui->cmb_ppqn->insertItem(i, combo_text);
-            if (ppqn == perf().ppqn())
-            {
-                ui->cmb_ppqn->setCurrentIndex(i);
-                ppqn_is_set = true;
-            }
-        }
-        else if (ppqn == -2)
-        {
-            break;
-        }
-    }
-    if (! ppqn_is_set)
-        ui->cmb_ppqn->setCurrentIndex(0);
+    (void) set_ppqn_combo();
 
-    std::string ppqnstr = std::to_string(perf().ppqn());
-    ui->lineEditPpqn->setText(ppqnstr.c_str());
+    int ppqn = perf().ppqn();                   /* usr().default_ppqn() */
+    std::string pstring = std::to_string(ppqn);
+    set_ppqn_text(pstring);
     ui->lineEditPpqn->setReadOnly(true);
+    connect
+    (
+        ui->cmb_ppqn, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_ppqn(int))
+    );
+    connect
+    (
+        ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(update_ppqn_by_text(const QString &))
+    );
 
     /*
      * Global output buss items.  Connected later on in this constructor.
@@ -651,16 +606,6 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * PPQN combo-box
-     */
-
-    connect
-    (
-        ui->cmb_ppqn, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_ppqn(int))
-    );
-
-    /*
      * Global buss combo-box
      */
 
@@ -915,6 +860,17 @@ qsmainwnd::enable_bus_item (int bus, bool enabled)
         item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
 }
 
+void
+qsmainwnd::set_ppqn_text (const std::string & text)
+{
+    QString ppqnstring = QString::fromStdString(text);
+    ui->lineEditPpqn->setText(ppqnstring);
+
+    QLineEdit * qle = ui->cmb_ppqn->lineEdit();
+    if (not_nullptr(qle))
+        qle->setText(ppqnstring);
+}
+
 /*
  *  Note that the "use NSM" flag is set at construction time.  We don't need
  *  to do it here.
@@ -1059,6 +1015,25 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
         song_recording(false);
 
     show_song_mode(playmode);
+}
+
+bool
+qsmainwnd::set_ppqn_combo ()
+{
+    bool result = false;
+    int count = ppqn_list_value();
+    for (int i = 0; i < count; ++i)
+    {
+        int ppqn = ppqn_list_value(i);
+        QString combo_text = QString::number(ppqn);
+        ui->cmb_ppqn->insertItem(i, combo_text);
+        if (ppqn == perf().ppqn())
+        {
+            ui->cmb_ppqn->setCurrentIndex(i);
+            result = true;
+        }
+    }
+    return result;
 }
 
 void
@@ -2406,21 +2381,30 @@ qsmainwnd::remove_all_live_frames ()
 void
 qsmainwnd::update_ppqn (int pindex)
 {
-    int p = s_ppqn_list[pindex];
+    int p = ppqn_list_value(pindex);
     if (p > 0)
     {
-        if (p == SEQ66_USE_FILE_PPQN)
-        {
-            p = usr().file_ppqn();
-        }
-        else if (p == SEQ66_USE_DEFAULT_PPQN)
-        {
-            p = usr().midi_ppqn();
-        }
         if (perf().change_ppqn(p))
         {
             std::string ppqnstr = std::to_string(p);
-            ui->lineEditPpqn->setText(ppqnstr.c_str());
+            set_ppqn_text(ppqnstr);
+            // ui->lineEditPpqn->setText(ppqnstr.c_str());
+        }
+    }
+}
+
+void
+qsmainwnd::update_ppqn_by_text (const QString & text)
+{
+    std::string temp = text.toStdString();
+    if (! temp.empty())
+    {
+        int p = std::stoi(temp);
+        if (perf().change_ppqn(p))
+        {
+            set_ppqn_text(temp);
+            // std::string ppqnstr = std::to_string(p);
+            // ui->lineEditPpqn->setText(ppqnstr.c_str());
         }
     }
 }

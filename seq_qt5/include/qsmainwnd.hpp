@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-16
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -135,6 +135,7 @@ public:
     void hide_qperfedit (bool hide = false);
     void remove_live_frame (int ssnum);
     void enable_bus_item (int bus, bool enabled);
+    void set_ppqn_text (const std::string & text);
 
     int ppqn () const
     {
@@ -249,6 +250,7 @@ private:
     bool open_mutes_dialog ();
     bool save_mutes_dialog (const std::string & basename = "");
     void update_tap (midibpm bpm);
+    bool set_ppqn_combo ();
 
 private:
 
@@ -409,6 +411,7 @@ private slots:
     void edit_bpm ();
     void update_set_change (int setno);
     void update_ppqn (int pindex);
+    void update_ppqn_by_text (const QString & text);
     void update_midi_bus (int bindex);
     void update_beats_per_measure (int bmindex);
     void update_beat_length (int blindex);

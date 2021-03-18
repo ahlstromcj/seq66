@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-05
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -141,6 +141,38 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
         this, SLOT(update_note_resume())
+    );
+    connect
+    (
+        ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
+        this, SLOT(update_use_file_ppqn())
+    );
+
+    /*
+     *  Combo-box for changing the default PPQN.
+     */
+
+    bool ppqn_is_set = set_ppqn_combo();
+    if (! ppqn_is_set)
+    {
+        QLineEdit * qle = ui->combo_box_ppqn->lineEdit();
+        if (not_nullptr(qle))
+        {
+            int ppqn = usr().default_ppqn();
+            std::string pstring = std::to_string(ppqn);
+            qle->setText(QString::fromStdString(pstring));
+        }
+    }
+
+    connect
+    (
+        ui->combo_box_ppqn, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(update_ppqn(int))
+    );
+    connect
+    (
+        ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(update_ppqn_by_text(const QString &))
     );
 
     /*
@@ -321,6 +353,25 @@ qseditoptions::~qseditoptions ()
     delete ui;
 }
 
+bool
+qseditoptions::set_ppqn_combo ()
+{
+    bool result = false;
+    int count = ppqn_list_value();
+    for (int i = 0; i < count; ++i)
+    {
+        int ppqn = ppqn_list_value(i);
+        QString combo_text = QString::number(ppqn);
+        ui->combo_box_ppqn->insertItem(i, combo_text);
+        if (ppqn == perf().ppqn())
+        {
+            ui->combo_box_ppqn->setCurrentIndex(i);
+            result = true;
+        }
+    }
+    return result;
+}
+
 void
 qseditoptions::slot_jack_mode (int buttonno)
 {
@@ -455,6 +506,7 @@ qseditoptions::syncWithInternals ()
      */
 
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
+    ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     ui->spinKeyHeight->setValue(usr().key_height());
 
     char tmp[32];
@@ -494,6 +546,54 @@ qseditoptions::update_note_resume ()
             usr().resume_note_ons(resumenotes);
             perf().resume_note_ons(resumenotes);
             syncWithInternals();
+        }
+    }
+}
+
+void
+qseditoptions::update_ppqn (int pindex)
+{
+    int p = ppqn_list_value(pindex);
+    if (p > 0)
+    {
+        if (perf().change_ppqn(p))
+        {
+            std::string temp = std::to_string(p);
+            m_parent_widget->set_ppqn_text(temp);
+            usr().default_ppqn(p);
+            usr().save_user_config(true);
+        }
+    }
+}
+
+void
+qseditoptions::update_ppqn_by_text (const QString & text)
+{
+    std::string temp = text.toStdString();
+    if (! temp.empty())
+    {
+        int p = std::stoi(temp);
+        if (perf().change_ppqn(p))
+        {
+            m_parent_widget->set_ppqn_text(temp);
+            usr().default_ppqn(p);
+            usr().save_user_config(true);
+        }
+    }
+}
+
+void
+qseditoptions::update_use_file_ppqn ()
+{
+    if (m_is_initialized)
+    {
+        bool ufppqn = ui->chkUseFilesPPQN->isChecked();
+        bool status = usr().use_file_ppqn();
+        if (ufppqn != status)
+        {
+            usr().use_file_ppqn(ufppqn);
+            syncWithInternals();
+            usr().save_user_config(true);
         }
     }
 }

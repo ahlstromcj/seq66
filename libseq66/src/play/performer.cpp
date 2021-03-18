@@ -323,13 +323,6 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 
 /**
  *  This constructor...
- *
- * PPQN and choose_ppqn(p):
- *
- *      -   If p is SEQ66_USE_FILE_PPQN, that is the potential result.
- *      -   If p is SEQ66_USE_DEFAULT_PPQN (-1, the default), then
- *          usr().midi_ppqn() is checked. If SEQ66_USE_FILE_PPQN, then
- *          usr().file_ppqn() is returned.
  */
 
 performer::performer (int ppqn, int rows, int columns) :

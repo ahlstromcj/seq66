@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-03-10
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -134,13 +134,13 @@ const std::string midifile::sm_meta_text_labels[8] =
  *      -   Reading.  The caller of read_midi_file(), as well as the function
  *          itself, determine the value of ppqn used here.  It is either 0 or
  *          the result of seq66::choose_ppqn().
- *          -   If set to SEQ66_USE_FILE_PPQN (0), then m_ppqn is set to the
+ *          -   If usr().use_file_ppqn() is true, then m_ppqn is set to the
  *              value read from the MIDI file.  No PPQN scaling is done.
  *          -   Otherwise, the ppqn value is used as is.  If the file uses a
- *              different PPQN than 192, PPQN rescaling is done to make it
- *              192.  The PPQN value read from the MIDI file is used to scale
- *              the running-time of the sequence relative to
- *              SEQ66_DEFAULT_PPQN.
+ *              different PPQN than the default, PPQN rescaling is done to
+ *              make it so.  The PPQN value read from the MIDI file is used to
+ *              scale the running-time of the sequence relative to
+ *              usr().default_ppqn().
  *      -   Writing.  This value is written to the MIDI file in the header
  *          chunk of the song.  Note that the caller must query for the
  *          PPQN set during parsing, and pass it to the constructor when
@@ -900,13 +900,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     midishort NumTracks = read_short();
     midishort fileppqn = read_short();
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
-    if (ppqn() == SEQ66_USE_FILE_PPQN)
+    if (usr().use_file_ppqn())
     {
-        ppqn(file_ppqn());
-        m_use_scaled_ppqn = false;                  /* redundant?           */
+        p.file_ppqn(file_ppqn());                   /* let performer know   */
+        ppqn(file_ppqn());                          /* PPQN == file PPQN    */
+        m_use_scaled_ppqn = false;                  /* do not scale time    */
     }
     else
-        m_use_scaled_ppqn = file_ppqn() > 0;        /* redundant?           */
+        m_use_scaled_ppqn = file_ppqn() != usr().default_ppqn();
 
     for (midishort track = 0; track < NumTracks; ++track)
     {
@@ -2990,9 +2991,9 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  *      The full path specification for the file to be opened.
  *
  * \param out ppqn
- *      Provides the PPQN to start with.  It can also be SEQ66_USE_FILE_PPQN,
- *      SEQ66_USE_DEFAULT_PPQN, or a legitimate PPQN value.  The performer's
- *      PPQN value is updated, and will affect the rest of the application.
+ *      Provides the PPQN to start with.  It can be SEQ66_USE_FILE_PPQN,
+ *      or a legitimate PPQN value.  The performer's PPQN value is updated,
+ *      and will affect the rest of the application.
  *
  * \param [out] errmsg
  *      If the function fails, this string is filled with the error message.
@@ -3016,11 +3017,10 @@ read_midi_file
     if (result)
     {
         bool is_wrk = file_extension_match(fn, "wrk");
-        bool usefileppqn = usr().midi_ppqn() == SEQ66_USE_FILE_PPQN;
-        if (usefileppqn)
+        if (usr().use_file_ppqn())
             ppqn = SEQ66_USE_FILE_PPQN;         /* no usr().file_ppqn() yet */
         else
-            ppqn = choose_ppqn(ppqn);           /* re-evaluate parameter    */
+            ppqn = usr().default_ppqn();
 
         midifile * fp = is_wrk ? new wrkfile(fn, ppqn) : new midifile(fn, ppqn) ;
         std::unique_ptr<midifile> f(fp);
@@ -3028,18 +3028,11 @@ read_midi_file
         result = f->parse(p, 0);
         if (result)
         {
-            if (usefileppqn)
+            if (usr().use_file_ppqn())
             {
                 ppqn = f->ppqn();               /* get & return file PPQN   */
                 usr().file_ppqn(ppqn);          /* save the value from file */
             }
-            /*
-             * We don't use this call because we're not changing PPQN, we are
-             * setting it.
-             *
-             *      p.change_ppqn(choose_ppqn(ppqn));
-             */
-
             p.set_ppqn(choose_ppqn(ppqn));      /* set chosen PPQN for MIDI */
             rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */
