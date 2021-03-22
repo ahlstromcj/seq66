@@ -16,7 +16,8 @@ CFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
 
 if [ "$1" == "latest" ] ; then
     YOSHPATH="/usr/local/bin"
-    YOSHIMI="yoshimi-1.7.2rc1"
+#   YOSHIMI="yoshimi-1.7.2rc1"
+    YOSHIMI="yoshimi"
     shift
 fi
 

@@ -800,6 +800,11 @@ public:
         return m_triggers.triggerlist();
     }
 
+    std::string trigger_listing () const
+    {
+        return m_triggers.to_string();
+    }
+
     /**
      *  Gets the trigger count, useful for exporting a sequence.
      */

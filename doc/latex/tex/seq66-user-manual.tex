@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-03-07
+% \update      2021-03-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -232,7 +232,7 @@
    The \textbf{Live} tab is foremost in the application.
    It provides a grid of \textsl{patterns}
    (also called \textsl{loops}, \textsl{tracks}, or
-   \textsl{sequences) that display recorded MIDI data, status information, and
+   \textsl{sequences} that display recorded MIDI data, status information, and
    provide popup-menus for each pattern.
    The buttons can
    be colored via a palette, and the status of being armed is easy to see
@@ -284,8 +284,13 @@
    This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
-   match the PPQN read from the file, or to other values:
-   \texttt{File, 32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}
+   to other values:
+   \texttt{32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600,
+   19200}.
+   Values, even weird ones, can be entered by typing them.
+   If a MIDI file is loaded, this modifies that file, rescaling all the
+   pattern events and pattern triggers.
+   Also see \sectionref{paragraph:menu_edit_preferences_play_options}.
 
 \paragraph{Set's Buss Override}
 \label{paragraph:introduction_sets_buss_override}
@@ -322,7 +327,7 @@
    This dropdown changes the global beat width (time-signature denominator)
    for the song.
 
-   Values: \texttt{1, 2, 4, 8, 16}
+   Values: \texttt{1 to 16}
 
 \paragraph{BBT or HMS Time Display}
 \label{paragraph:introduction_time_display}

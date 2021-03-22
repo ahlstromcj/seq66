@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2021-03-18
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -41,6 +41,57 @@
 
 namespace seq66
 {
+
+/**
+ *  The combo default constructor.
+ */
+
+combo::combo () :
+    m_list_items ()
+{
+    m_list_items.push_back("");
+}
+
+combo::combo (const container & slist) :
+    m_list_items ()
+{
+    m_list_items.push_back("");
+    for (const auto & s : slist)
+        m_list_items.push_back(s);
+}
+
+std::string
+combo::at (int index) const
+{
+    std::string result;
+    if (index >= 0 && index < int(m_list_items.size()))
+        result = m_list_items[index];
+
+    return result;
+}
+
+int
+combo::ctoi (int index) const
+{
+    int result = (-1);
+    std::string s = at(index);
+    if (! s.empty())
+        result = std::stoi(s);
+
+    return result;
+}
+
+const combo::container &
+default_ppqns ()
+{
+    static combo::container s_default_ppqn_list =
+    {
+        "32", "48", "96", "192",
+        "384", "768", "960", "1920",
+        "3840", "7680", "9600", "19200"
+    };
+    return s_default_ppqn_list;
+}
 
 /**
  *  Returns a reference to the global rcsettings object.  Why a function
@@ -88,11 +139,10 @@ set_configuration_defaults ()
 }
 
 /**
- *  Available PPQN values.  The default is 192, item #xx.  The first item uses
- *  the edit text for a "File" value, which means that whatever was read from
- *  the file is what holds.  The last item terminates the list.  However, note
- *  that the default PPQN can be edited by the user to be any value within
- *  this range.  Also note this list is wrapped in an accessor function.
+ *  Available PPQN values.  The default is 192.  The first item uses the edit
+ *  text for a non-standard default PPQN (like 333).  However, note that the
+ *  default PPQN can be edited by the user to be any value within this range.
+ *  Also note this list is wrapped in an accessor function.
  *
  * \param index
  *      Provides the index into the PPQN list.  If set to below 0, then
@@ -100,6 +150,8 @@ set_configuration_defaults ()
  *
  * \return
  *      Returns either the desired PPQN value, or the length of the list.
+ *      If the index is not in the range, and is not (-1), then 0 is returned,
+ *      and the result should be ignored.
  */
 
 int
@@ -110,15 +162,16 @@ ppqn_list_value (int index)
         0,                          /* place-holder for default PPQN    */
         32, 48, 96, 192,
         384, 768, 960, 1920,
-        3840, 7680, 9600, 19200,
+        3840, 7680, 9600, 19200
     };
     static const int s_count = sizeof(s_ppqn_list) / sizeof(int);
-    int result = s_count;
-    if (index >= 0 && (index < (s_count - 1)))
-    {
-        s_ppqn_list[0] = usr().default_ppqn();
+    int result = 0;
+    s_ppqn_list[0] = usr().default_ppqn();
+    if (index >= 0 && (index < s_count))
         result = s_ppqn_list[index];
-    }
+    else if (index == (-1))
+        result = s_count;
+
     return result;
 }
 

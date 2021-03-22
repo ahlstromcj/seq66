@@ -6,7 +6,7 @@
 # \author          Chris Ahlstrom
 # \date            2008-02-26
 # \updates         2014-12-01
-# \updates         2020-11-13
+# \updates         2021-03-22
 # \version         $Revision$
 # \license         $XPC_SUITE_GPL_LICENSE$
 #
@@ -408,6 +408,7 @@ EXEC 01;32
 .drums 00;31
 .guess 00;31
 .header 00;31
+.in 00;31
 .ini 00;31
 .mutes 00;31
 .pc 00;31
@@ -419,7 +420,7 @@ EXEC 01;32
 .pws 00;31
 .tjp 00;31
 .tji 00;31
-.in 00;31
+.qss 00;31
 .rc 00;31
 .rh 00;31
 .resp 00;31

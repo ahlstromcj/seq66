@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-03-17
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  */
@@ -335,8 +335,10 @@ midicontrolfile::parse_control_sizes
     int rows = string_to_int(s, defvalue);
     if (rows != defaultrows)
     {
-        result = make_error_message(mctag, "rows don't match pattern rows");
-        rows = defaultrows;
+        if (rows > 0)
+            result = make_error_message(mctag, "invalid row count");
+        else
+            rows = defaultrows;
     }
     newrows = rows;
     defvalue = 0;
@@ -347,7 +349,8 @@ midicontrolfile::parse_control_sizes
     int columns = string_to_int(s, defvalue);
     if (columns != defaultcolumns)
     {
-        result = make_error_message(mctag, "columns don't match pattern columns");
+        if (columns > 0)
+            result = make_error_message(mctag, "invalid column count");
         columns = defaultcolumns;
     }
     newcolumns = columns;

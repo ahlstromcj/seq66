@@ -28,12 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-18
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QDialog>
+
+#include "cfg/settings.hpp"             /* seq66::combo helper class etc.   */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -109,7 +111,6 @@ private slots:
     void okay ();
     void cancel ();
     void update_note_resume ();
-    void update_ppqn (int pindex);
     void update_ppqn_by_text (const QString & text);
     void update_use_file_ppqn ();
     void update_key_height ();
@@ -127,6 +128,7 @@ private:
     Ui::qseditoptions * ui;
     qsmainwnd * m_parent_widget;
     performer & m_perf;
+    combo m_ppqn_list;
     bool m_is_initialized;
 
     /*

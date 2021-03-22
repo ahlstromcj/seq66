@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-13
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -604,6 +604,29 @@ rcsettings::palette_filespec () const
             result = palettename;
         else
             result = home_config_directory() + palettename;
+
+        result = os_normalize_path(result);
+    }
+    return result;
+}
+
+/**
+ *  Constructs the style-sheet filespec.  The base name is, however, part of
+ *  the 'usr' configuration.  If empty, then this function returns and empty
+ *  string.
+ */
+
+std::string
+rcsettings::style_sheet_filespec () const
+{
+    std::string result;
+    std::string ssheet = usr().style_sheet();
+    if (! ssheet.empty())
+    {
+        if (name_has_directory(ssheet))
+            result = ssheet;
+        else
+            result = home_config_directory() + ssheet;
 
         result = os_normalize_path(result);
     }

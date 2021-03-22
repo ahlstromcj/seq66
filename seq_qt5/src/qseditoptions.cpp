@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-18
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -32,7 +32,6 @@
 
 #include <QButtonGroup>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
@@ -87,6 +86,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     ui                      (new Ui::qseditoptions),
     m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
+    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
     m_is_initialized        (false),
     m_backup_JackTransport  (false),
     m_backup_TimeMaster     (false),
@@ -137,11 +137,15 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->chkJackNative, SIGNAL(stateChanged(int)),
         this, SLOT(update_jack_midi())
     );
+
+    ui->chkNoteResume->setChecked(usr().resume_note_ons());
     connect
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
         this, SLOT(update_note_resume())
     );
+
+    ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     connect
     (
         ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
@@ -152,23 +156,7 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      *  Combo-box for changing the default PPQN.
      */
 
-    bool ppqn_is_set = set_ppqn_combo();
-    if (! ppqn_is_set)
-    {
-        QLineEdit * qle = ui->combo_box_ppqn->lineEdit();
-        if (not_nullptr(qle))
-        {
-            int ppqn = usr().default_ppqn();
-            std::string pstring = std::to_string(ppqn);
-            qle->setText(QString::fromStdString(pstring));
-        }
-    }
-
-    connect
-    (
-        ui->combo_box_ppqn, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_ppqn(int))
-    );
+    (void) set_ppqn_combo();
     connect
     (
         ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
@@ -207,6 +195,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Display tab.
      */
 
+    ui->spinKeyHeight->setMinimum(SEQ66_SEQKEY_HEIGHT_MIN);
+    ui->spinKeyHeight->setMaximum(SEQ66_SEQKEY_HEIGHT_MAX);
+    ui->spinKeyHeight->setValue(usr().key_height());
     connect
     (
         ui->spinKeyHeight, SIGNAL(valueChanged(int)),
@@ -357,17 +348,22 @@ bool
 qseditoptions::set_ppqn_combo ()
 {
     bool result = false;
-    int count = ppqn_list_value();
-    for (int i = 0; i < count; ++i)
+    int count = m_ppqn_list.count();
+    if (count > 0)
     {
-        int ppqn = ppqn_list_value(i);
-        QString combo_text = QString::number(ppqn);
-        ui->combo_box_ppqn->insertItem(i, combo_text);
-        if (ppqn == perf().ppqn())
+        std::string p = std::to_string(usr().default_ppqn());
+        QString combo_text = QString::fromStdString(p);
+        ui->combo_box_ppqn->clear();
+        ui->combo_box_ppqn->insertItem(0, combo_text);
+        for (int i = 1; i < count; ++i)
         {
-            ui->combo_box_ppqn->setCurrentIndex(i);
-            result = true;
+            p = m_ppqn_list.at(i);
+            combo_text = QString::fromStdString(p);
+            ui->combo_box_ppqn->insertItem(i, combo_text);
+            if (std::stoi(p) == perf().ppqn())
+                result = true;
         }
+        ui->combo_box_ppqn->setCurrentIndex(0);
     }
     return result;
 }
@@ -551,22 +547,6 @@ qseditoptions::update_note_resume ()
 }
 
 void
-qseditoptions::update_ppqn (int pindex)
-{
-    int p = ppqn_list_value(pindex);
-    if (p > 0)
-    {
-        if (perf().change_ppqn(p))
-        {
-            std::string temp = std::to_string(p);
-            m_parent_widget->set_ppqn_text(temp);
-            usr().default_ppqn(p);
-            usr().save_user_config(true);
-        }
-    }
-}
-
-void
 qseditoptions::update_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
@@ -576,6 +556,8 @@ qseditoptions::update_ppqn_by_text (const QString & text)
         if (perf().change_ppqn(p))
         {
             m_parent_widget->set_ppqn_text(temp);
+            m_ppqn_list.current(temp);
+            ui->combo_box_ppqn->setItemText(0, text);
             usr().default_ppqn(p);
             usr().save_user_config(true);
         }

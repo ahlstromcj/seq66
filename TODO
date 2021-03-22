@@ -1,6 +1,6 @@
-TO DO for Seq66 0.92.0 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.92.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-03-16
+2019-04-13 to 2021-03-22
 
 HOT ITEMS:
 
@@ -86,6 +86,9 @@ HOT ITEMS:
         See the mouse wheel scroll event requests for both the song and
         pattern editors.
 
+        In the main window, the time-line, etc., do not change to match the
+        time signature.  Also check the perf and seq rolls.
+
     Automation:
 
         Add a panic-button control.
@@ -166,6 +169,11 @@ EXTANT ISSUES:
     STATUS:  A "port-mapping" configuation in the 'rc' file is now supported.
     Partially tested.
 
+#18 Mute Group does not toggle
+    Also I have noticed that when I activate a mute group I am not able to
+    activate patters that do not belong to the activated mute group. It is normal?
+    STATUS: I want to double-check this one.
+
 #23 Problems with Qt during compilation
     See the github issue.
     STATUS:  Pending more investigation.
@@ -177,6 +185,14 @@ EXTANT ISSUES:
     Either using the release description box in the Create Release feature on
     GitHub (which can accept markdown) or with something like git tag -a v0.4
     -m "$(cat RELNOTES.md)" (which GH does not detect markdown from).
+    Might it be possible to edit
+    (https://github.com/ahlstromcj/seq66/releases) to pop the release
+    notes in?
+
+    It's just that it's time sensitive as GitHub has [malformed releases.atom
+    feeds](https://github.com/isaacs/github/issues/1892) that only have an
+    updated  date not a published date, so any change to the release details
+    will change the date in the feed that is used by libreav.org.
     STATUS: Not sure this is worth doing. Do not know about "atom".
 
 #29 Play patterns from different sets at the same time
@@ -207,6 +223,36 @@ EXTANT ISSUES:
     PPQN and BPM updates.  Then removed the check for performer::is_running()
     from the transport callback.  Made sure to refresh the beat indicator
     while a pattern is playing or while JACK is running.
+
+#39 Arm Build - Pattern editor doesnt open
+    Ive built it using the described methods on my raspberry pi . It all seems
+    to be pretty alright, but when clicking on an empty pattern , I can get
+    the midi editor to display . Also the edit tab is empty no matter what .
+    I attach a log of the terminal and some screenshots .  Ive built it
+    running on a raspberry pi 3B+ with [Patchbox OS]
+
+#40 NSM: seq66 in a new session should provide a blank project
+    Currently it imports the previously used MIDI file.
+
+#41 NSM: hide seq66 on closing window, don't exit?
+    If closing the window, rather than quitting the app, could change the its
+    visibility state to hidden.
+
+#42 MIDI Input window doesn't handle large port count
+    STATUS:  Added scroll bars "as needed".
+
+#44 "Record live sequence changes" functionality
+    Currently the "record live sequence changes" only adds patterns into the
+    song timeline as whole loops, starting at the last pattern loop and ending
+    at the next, and ignoring queueing completely (queueing a pattern just
+    adds it to the song immediately). It seems to me that a live-oriented
+    sequencer like Seq66 should have the ability to record a live performance
+    as accurately as possible, so that a user can simply hit the record enable
+    and do their live performance, knowing that can then go back and replay it
+    exactly (if they want to do a recording session for example, or perform
+    the same track while focussing entirely on knob tweaking etc.) The song
+    timeline already supports arbitrary start/end points for pattern "chunks",
+    so it seems like this should already be possible. Thoughts?
 
 PATTERNS:
 

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-18
+ * \updates       2021-03-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -559,7 +559,7 @@ private:
      *  Snap recorded playback changes to the sequence length.
      */
 
-    const bool m_song_record_snap;
+    bool m_song_record_snap;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -2895,14 +2895,10 @@ public:         /* GUI-support functions */
 
     void song_recording (bool f);
 
-    /*
-     * Now effectively a constant.
-     *
-     *  void song_record_snap (bool f)
-     *  {
-     *      m_song_record_snap = f;
-     *  }
-     */
+    void song_record_snap (bool f)
+    {
+        m_song_record_snap = f;
+    }
 
     mutegroup::number group_selected () const
     {

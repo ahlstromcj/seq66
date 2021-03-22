@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-16
+ * \updates       2021-03-21
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -986,9 +986,9 @@ performer::main_window_title (const std::string & file_name)
 {
     std::string result = seq_app_name() + std::string(" - ");
     std::string itemname = "unnamed";
-    int ppqn = choose_ppqn(m_ppqn);
+    int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
     char temp[32];
-    snprintf(temp, sizeof temp, " (%d ppqn) ", ppqn);
+    snprintf(temp, sizeof temp, " %d PPQN", p);
     if (file_name.empty())
     {
         if (! rc().midi_filename().empty())
@@ -1251,17 +1251,21 @@ performer::set_ppqn (int p)
     bool result = m_ppqn != p && ppqn_in_range(p);
     if (result)
     {
-        m_ppqn = p;
         if (m_master_bus)
-            m_master_bus->set_ppqn(p);
-        else
-            (void) error_message("performer::set_ppqn(): master bus is null");
+        {
+            m_ppqn = p;
+            m_one_measure = 0;
 
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_ppqn(p);
+            m_jack_asst.set_ppqn(p);
 #endif
-
-        m_one_measure = 0;
+            m_master_bus->set_ppqn(p);
+        }
+        else
+        {
+            (void) error_message("performer::set_ppqn(): master bus is null");
+            result = false;
+        }
     }
     if (m_one_measure == 0)
     {
@@ -1300,7 +1304,10 @@ performer::change_ppqn (int p)
         );
         if (result)
         {
-            notify_resolution_change(get_ppqn(), get_beats_per_minute());
+            change ch = rc().midi_filename().empty() ?
+                change::no : change:: yes;
+
+            notify_resolution_change(get_ppqn(), get_beats_per_minute(), ch);
         }
     }
     return result;
@@ -2362,6 +2369,7 @@ bool
 performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
+    panic();                                /* go even further 2021-03-18   */
     announce_exit(true);                    /* blank device completely      */
 
     bool ok = deinit_jack_transport();
@@ -4595,6 +4603,11 @@ performer::sequence_playing_toggle (seq::number seqno)
                 }
                 else        /* ...else need to trim block already in place  */
                 {
+                    /*
+                     * Hmmm, for issue #44, can we make the splitpoint an
+                     * option?
+                     */
+
                     s->split_trigger(tick, trigger::splitpoint::exact);
                     s->delete_trigger(tick);
                 }

@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2020-12-22
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -34,6 +34,7 @@
 
 #include <QApplication>                 /* QApplication etc.                */
 #include <QTimer>                       /* QTimer                           */
+#include <QFile>
 
 #include "cfg/settings.hpp"             /* seq66::usr() and seq66::rc()     */
 #include "util/strfunctions.hpp"        /* seq66::string_replace()          */
@@ -197,6 +198,18 @@ qt5nsmanager::create_window ()
                 m_window->session_URL("None");
 #endif
             }
+        }
+    }
+    if (result)
+    {
+        std::string ssname = rc().style_sheet_filespec();
+        if (! ssname.empty())
+        {
+            QFile file(QString::fromStdString(ssname));
+            file.open(QFile::ReadOnly);
+
+            QString ss = QLatin1String(file.readAll());
+            qApp->setStyleSheet(ss);
         }
     }
     return result;

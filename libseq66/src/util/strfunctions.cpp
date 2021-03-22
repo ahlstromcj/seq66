@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-03-15
+ * \updates       2021-03-22
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -507,13 +507,10 @@ has_digit (const std::string & s)
 bool
 string_to_bool (const std::string & s, bool defalt)
 {
-    return s.empty() ?
-        defalt :
-        (
-            s == "1"   || s == "true" || s == "TRUE" ||
-            s == "yes" || s == "YES" ||
-            s == "on"  || s == "ON"
-        );
+    return s.empty() ? defalt :
+    (
+        s == "1" || s == "true" || s == "on" || s == "yes"
+    );
 }
 
 /**

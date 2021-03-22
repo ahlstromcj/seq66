@@ -177,16 +177,18 @@ or no transport mode.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Changes the PPQN value of the current song, currently only for
-the current set.  It does not change Seq66's default PPQN.
-
-Not yet ready at all.</string>
+         <string>Changes the PPQN value of the current song for all sets.
+This modifies the song, so a &quot;Save&quot; prompt will occur at exit.
+It does not change Seq66's default PPQN.</string>
         </property>
         <property name="editable">
          <bool>true</bool>
         </property>
         <property name="currentText">
-         <string>19200</string>
+         <string notr="true">19200</string>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -380,7 +382,7 @@ Not yet ready at all.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">

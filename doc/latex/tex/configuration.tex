@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-03-16
+% \update      2021-03-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -159,6 +159,14 @@
       save-mutes-to = both
       . . .
    \end{verbatim}
+
+   If the variable value is a string value, especially the name of the file or
+   a directory, it must be surrounded with quotes, in case the path has spaces
+   in it.
+
+   Also note that there are still a lot of old-style variable specifications in
+   place.  As time allows, they will be fixed, one-by-one, in a manner that
+   does not break old configurations.
 
 \subsubsection{Stanzas}
 \label{subsec:configuration_common_stanzas}
@@ -1247,23 +1255,46 @@
    10    # key_height
    1     # use_new_seqedit
    note-resume = false
+   style-sheet = "qseq66.qss"
    \end{verbatim}
 
+   \index{key height}
    The key-height affects the default "width" of the piano keys in the pattern
    sequence editor.  Defaults to 12 (pixels).
    This option is also editable in the \textbf{Preferences} dialog.
    There are vertical zoom buttons, and the \texttt{v/0/V} keystrokes to change
    this on the fly, but those changes are not saved.
 
+   \index{new seqedit}
    Normally, \textsl{Seq66} uses the old pattern editor in the 'Edit' tab.
-   If this value is set to 1, then the new, larger, more functional
-   pattern editor will be used in the 'Edit' tab; this
+   If the use-new-seqedit value is set to 1, then the new, larger, more
+   functional pattern editor will be used in the 'Edit' tab; this
    makes the main window larger.
 
+   The following options adopt the new convention for setting variables, in
+   which the format is \texttt{item-name = value}.
+   This style will eventually be used for all settings.
+
+   \index{note resume}
    The note-resume option, if active, causes any notes in progress
    to be resumed when the pattern is toggled back on.
-   Observe that this setting uses the new "feature = value" format, which
-   should eventually be used for all settings.
+
+   \index{style sheet}
+   The style-sheet option, if non-empty, causes a user-designed style-sheet to
+   be applied.  This is useful in expanding the tab-sizes, for example.
+   The style sheet file is assumed to reside in the normal \textsl{Seq66}
+   configuration directory.
+   However, it can have a path component so that the same style sheet
+   can be used by many applications more readily.
+   Here is an example using the style sheet file
+   \texttt{data/samples/qseq66.qss}:
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/main-window-stylesheet.png}
+   \caption{Seq66 View with Style Sheet Applied}
+   \label{fig:view_with_style_sheet_applied}
+\end{figure}
 
 \paragraph{'usr' File / Additional Options / [user-session]}
 \label{paragraph:user_file_added_options_session}

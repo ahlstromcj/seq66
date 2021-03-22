@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-18
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -73,7 +73,6 @@
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
-#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
@@ -131,6 +130,8 @@
 
 #define SEQ66_ERROR_BOX_WIDTH       600
 
+#define SEQ66_PLATFORM_DEBUG_SONG_SNAP
+
 /*
  * Don't document the namespace.
  */
@@ -163,7 +164,12 @@ static const int Tab_Session            =  7;
  */
 
 static const int s_beat_measure_count   = 16;
+
+#if defined USE_LIMITED_BEAT_COUNT
 static const int s_beat_length_count    =  5;
+#else
+static const int s_beat_length_count    = 16;
+#endif
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -232,6 +238,7 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
+    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_use_nsm               (usensm),
@@ -263,11 +270,6 @@ qsmainwnd::qsmainwnd
     std::string pstring = std::to_string(ppqn);
     set_ppqn_text(pstring);
     ui->lineEditPpqn->setReadOnly(true);
-    connect
-    (
-        ui->cmb_ppqn, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_ppqn(int))
-    );
     connect
     (
         ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
@@ -322,13 +324,18 @@ qsmainwnd::qsmainwnd
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
-     * default.  Note that the actual value is selected via a switch statement in
-     * the update_beat_length() function.  See that function for the true story.
+     * default.  Note that the actual value is selected via a switch statement
+     * in the update_beat_length() function.  See that function for the true
+     * story.
      */
 
     for (int i = 0; i < s_beat_length_count; ++i)
     {
+#if defined USE_LIMITED_BEAT_COUNT
         QString combo_text = QString::number(pow(2, i));
+#else
+        QString combo_text = QString::number(i + 1);
+#endif
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
 
@@ -646,17 +653,6 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * Record Snap button. Removed.  We always snap.
-     *
-     *  connect
-     *  (
-     *      ui->btnRecSnap, SIGNAL(clicked(bool)),
-     *      this, SLOT(song_recording_snap(bool))
-     *  );
-     *  qt_set_icon(snap_xpm, ui->btnRecSnap);
-     */
-
-    /*
      * Pattern editor callbacks.  One for editing in the tab, and the other
      * for editing in an external pattern editor window.  Also added is a
      * signal/callback to create an external live-frame window.
@@ -777,6 +773,22 @@ qsmainwnd::qsmainwnd
         ui->testButton, SIGNAL(clicked(bool)),
         this, SLOT(import_into_session())
     );
+#elif defined SEQ66_PLATFORM_DEBUG_SONG_SNAP
+    ui->testButton->setToolTip("Developer test of disabling song record snap");
+    ui->testButton->setEnabled(true);
+    connect
+    (
+        ui->testButton, &QPushButton::clicked,
+        [=]
+        {
+            cb_perf().song_record_snap(! cb_perf().song_record_snap());
+            printf
+            (
+                "Song-record snap %s\n",
+                cb_perf().song_record_snap() ? "on" : "off"
+            );
+        }
+    );
 #else
     ui->testButton->setToolTip("Developer test button, disabled.");
     ui->testButton->setEnabled(false);
@@ -810,14 +822,14 @@ qsmainwnd::qsmainwnd
     ui->jackTransportButton->hide();
 #else
     QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
-    QString jtrans = "None";
     if (cb_perf().is_jack_master())
-        jtrans = "Master";
+        ui->jackTransportButton->setText("Master");
     else if (cb_perf().is_jack_slave())
-        jtrans = "Slave";
+        ui->jackTransportButton->setText("Slave");
+    else
+        ui->jackTransportButton->hide();
 
     ui->alsaJackButton->setText(midiengine);
-    ui->jackTransportButton->setText(jtrans);
 #endif
 
     show();
@@ -865,10 +877,6 @@ qsmainwnd::set_ppqn_text (const std::string & text)
 {
     QString ppqnstring = QString::fromStdString(text);
     ui->lineEditPpqn->setText(ppqnstring);
-
-    QLineEdit * qle = ui->cmb_ppqn->lineEdit();
-    if (not_nullptr(qle))
-        qle->setText(ppqnstring);
 }
 
 /*
@@ -1021,17 +1029,22 @@ bool
 qsmainwnd::set_ppqn_combo ()
 {
     bool result = false;
-    int count = ppqn_list_value();
-    for (int i = 0; i < count; ++i)
+    int count = m_ppqn_list.count();
+    if (count > 0)
     {
-        int ppqn = ppqn_list_value(i);
-        QString combo_text = QString::number(ppqn);
-        ui->cmb_ppqn->insertItem(i, combo_text);
-        if (ppqn == perf().ppqn())
+        std::string p = std::to_string(perf().ppqn());
+        QString combo_text = QString::fromStdString(p);
+        ui->cmb_ppqn->clear();
+        ui->cmb_ppqn->insertItem(0, combo_text);
+        for (int i = 1; i < count; ++i)
         {
-            ui->cmb_ppqn->setCurrentIndex(i);
-            result = true;
+            p = m_ppqn_list.at(i);
+            combo_text = QString::fromStdString(p);
+            ui->cmb_ppqn->insertItem(i, combo_text);
+            if (std::stoi(p) == perf().ppqn())
+                result = true;
         }
+        ui->cmb_ppqn->setCurrentIndex(0);
     }
     return result;
 }
@@ -1418,9 +1431,9 @@ qsmainwnd::update_window_title (const std::string & fn)
     }
     else
     {
-        int pp = choose_ppqn();
+        int pp = perf().ppqn();                     /* choose_ppqn()    */
         char temp[16];
-        snprintf(temp, sizeof temp, " (%d ppqn) ", pp);
+        snprintf(temp, sizeof temp, " %d PPQN ", pp);
         itemname = fn;
         itemname += temp;
     }
@@ -2379,21 +2392,6 @@ qsmainwnd::remove_all_live_frames ()
 }
 
 void
-qsmainwnd::update_ppqn (int pindex)
-{
-    int p = ppqn_list_value(pindex);
-    if (p > 0)
-    {
-        if (perf().change_ppqn(p))
-        {
-            std::string ppqnstr = std::to_string(p);
-            set_ppqn_text(ppqnstr);
-            // ui->lineEditPpqn->setText(ppqnstr.c_str());
-        }
-    }
-}
-
-void
 qsmainwnd::update_ppqn_by_text (const QString & text)
 {
     std::string temp = text.toStdString();
@@ -2403,8 +2401,9 @@ qsmainwnd::update_ppqn_by_text (const QString & text)
         if (perf().change_ppqn(p))
         {
             set_ppqn_text(temp);
-            // std::string ppqnstr = std::to_string(p);
-            // ui->lineEditPpqn->setText(ppqnstr.c_str());
+            m_ppqn_list.current(temp);
+            ui->cmb_ppqn->setItemText(0, text);
+            usr().file_ppqn(p);
         }
     }
 }

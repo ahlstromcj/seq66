@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-03-09
+% \update      2021-03-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -418,12 +418,13 @@
 
    \begin{verbatim}
       [5] 128:4 yoshimi:input
-       ^  ^   ^ ^
-       |  |   | |
-       |  |   |  -------- Buss name
-       |  |    ---------- Port number
-       |   ------------ Client number
-        --------------- Index number
+       ^  ^   ^ ^        ^
+       |  |   | |        |
+       |  |   | |         ---- Port name
+       |  |   |  ------------- Client name
+       |  |    --------------- Port number
+       |   ------------------- Client number
+        ---------------------- Index number
    \end{verbatim}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -605,13 +606,14 @@
    When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
 
-\paragraph{Menu / Edit / Preferences / Keyboard (Removed)}
+\paragraph{Menu / Edit / Preferences / Keyboard}
 \label{paragraph:menu_edit_preferences_keyboard}
 
+   Unlike \textsl{Seq24}, \textsl{Seq66} does not provide an options tab for
+   setting up the keyboard.
    The default keyboard mappings follow \textsl{Seq24} fairly well,
-   but add a large number of additional controls.
-   \textsl{Seq66} does not provide a user-interface to edit
-   control keystrokes; around 96 keystroke slots would need to be provided!
+   but add a large number of additional controls;
+   around 96 keystroke slots would need to be provided!
    The keystroke and MIDI controls are consolidated, and are easy to change by
    editing the appropriate 'ctrl' configuration file, stored in one of the
    following directories, depending on
@@ -622,18 +624,22 @@
          C:/Users/username/AppData/Local/seq66/qpseq66.ctrl (Windows)
    \end{verbatim}
 
-   There are also some extended example present in the \textsl{Seq66}
-   \texttt{data/linux} directory.
+   There are also some extended examples present in the \textsl{Seq66}
+   \texttt{data/linux} and
+   \texttt{data/samples} directory.
+   Also see \sectionref{sec:launchpad_mini}.
 
    For more information on keystrokes, see
    \sectionref{subsec:kbd_mouse_keyboard_control}.
 
-\paragraph{Menu / Edit / Preferences / Mouse (Removed)}
+\paragraph{Menu / Edit / Preferences / Mouse}
 \label{paragraph:menu_edit_preferences_mouse}
 
-   This item selected the mouse-interaction method.
+   Unlike \textsl{Seq24}, \textsl{Seq66} does not provide an options tab for
+   the mouse-interaction method.
    It is not supported in \textsl{Seq66}...
-   the "Fruity" interaction method is not available.
+   the "Fruity" interaction method is not available;
+   only the "Seq24" interaction is available.
  
 \paragraph{Menu / Edit / Preferences / Display}
 \label{paragraph:menu_edit_preferences_display}
@@ -806,11 +812,38 @@
 \paragraph{Menu / Edit / Preferences / Play Options}
 \label{paragraph:menu_edit_preferences_play_options}
 
-   There is currently only one setting in this tab:
+   This tab contains some disparate options ostensibly related to playback.
 
-   \textbf{Resume Note Ons at start/stop or sequence toggle}.
-   This option allows notes that had already started
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/file/livegrid-dark-menu-file.png}
+   \caption{Seq66 Menu File Items}
+   \label{fig:menu_file_items}
+\end{figure}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Resume Note Ons...}{edit!resume notes}
+   \textbf{Resume Note Ons at start/stop or sequence toggle}
+   allows notes that had already started
    to be resumed when playback resumes.
+
+   \itempar{Use File's PPQN...}{edit!use file ppqn}
+   \textbf{Use File's PPQN for Pre-Existing Files}, if checked, allows
+   \textsl{Seq66} to run using the PPQn of the MIDI file rather than
+   the default \textsl{Seq66} internal PPQN.
+   When this option is changed, the \texttt{-{}-user-save} option is turned on
+   to preserve the setting when \textsl{Seq66} exits.
+
+   \itempar{Default Seq66 PPQN...}{edit!default ppqn}
+   \textbf{Default Seq66 PPQN for New or Converted Files}, if checked, allows
+   the standard PPQN, 192 pulses/quarter-note, to be changed to discrete values
+   from 32 to 19200.  Intermediate values, even goofy ones, can be entered
+   by typing the number.
+   When this option is changed, the \texttt{-{}-user-save} option is turned on
+   to preserve the setting when \textsl{Seq66} exits.
+   If there is a MIDI file loaded, it is modified to use the new PPQN, and the
+   user is prompted to save it at exit.
 
 \subsection{Menu / Help / About...}
 \label{subsec:menu_about}

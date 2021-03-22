@@ -25,16 +25,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-15
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
  *  performance/song editor.
  *
- *      Seq24f's song editor does not snap when first drawing in the pattern
- *      extent.  It does snap when moving an existing pattern extent.  It does
- *      snap when enlarging or shrinking an existing pattern extent via the
- *      handle.  That is, if moving or growing, snap the tick.
+ *  Seq24's song editor does not snap when first drawing in the pattern
+ *  extent.  It does snap when moving an existing pattern extent.  It does
+ *  snap when enlarging or shrinking an existing pattern extent via the
+ *  handle.  That is, if moving or growing, snap the tick.
  */
 
 #include <QKeyEvent>
@@ -255,7 +255,6 @@ qperfroll::in_selection_area (midipulse tick)
 void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
-    // bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
     bool lbutton = event->button() == Qt::LeftButton;
     bool rbutton = event->button() == Qt::RightButton;
@@ -267,22 +266,23 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
     if (mbutton)                                    /* split loop at cursor */
     {
-        if (not_nullptr(dropseq))   // perf().is_seq_active(m_drop_sequence)
+        if (not_nullptr(dropseq))
         {
             bool state = dropseq->get_trigger_state(m_drop_tick);
             if (state)
             {
                 /*
                  * Determine how and where the split should occur.
+                 * Need to support an exact split at some point.
                  */
 
-                trigger::splitpoint sp = trigger::splitpoint::middle;
                 midipulse tick = m_drop_tick;
+                trigger::splitpoint sp = trigger::splitpoint::middle;
                 if (rc().allow_snap_split())
                 {
                     sp = trigger::splitpoint::snap;
                     tick -= m_drop_tick_offset;
-                    tick -= tick % snap();              // always snap
+                    tick -= tick % snap();
                 }
                 (void) perf().split_trigger(m_drop_sequence, tick, sp);
             }
@@ -454,20 +454,12 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
     }
     else if (moving() || growing())
     {
-        /*
-         * Used in perfroll_input:
-         *
-         *  if (m_have_button_press)
-         *  {
-         *      perf().push_trigger_undo(m_drop_sequence);
-         *      m_have_button_press = false;
-         *  }
-         */
-
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
-        tick -= tick % snap();              // always snap
-        if (moving())                       // move all selected triggers
+        if (rc().allow_snap_split())        /* apply to move/grow too   */
+            tick -= tick % snap();
+
+        if (moving())                       /* move selected triggers   */
         {
 #if defined USE_SONG_BOX_SELECT
             for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-18
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -41,6 +41,7 @@
 #include <QList>
 
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
+#include "cfg/settings.hpp"             /* seq66::combo helper class        */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
@@ -290,6 +291,7 @@ private:
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
+    combo m_ppqn_list;
 
     /**
      *  Holds the last value of the MIDI-control-in status, used in displaying
@@ -398,19 +400,10 @@ private slots:
     void stop_playing ();
     void set_song_mode (bool song_mode);
     void song_recording (bool record);
-
-    void song_recording_snap (bool /*snap*/)
-    {
-        /*
-         * This will always be in force: perf().song_record_snap(snap);
-         */
-    }
-
     void panic ();
     void update_bpm (double bpm);
     void edit_bpm ();
     void update_set_change (int setno);
-    void update_ppqn (int pindex);
     void update_ppqn_by_text (const QString & text);
     void update_midi_bus (int bindex);
     void update_beats_per_measure (int bmindex);

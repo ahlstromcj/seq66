@@ -163,10 +163,10 @@ qmutemaster::qmutemaster
         this, SLOT(slot_pattern_offset(int))
     );
 
-    ui->m_button_down->setEnabled(false);   // ui->m_button_down->hide();
+    ui->m_button_down->setEnabled(false);
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_down()));
 
-    ui->m_button_up->setEnabled(false);     // ui->m_button_up->hide();
+    ui->m_button_up->setEnabled(false);
     connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
 
     ui->m_button_load->setEnabled(true);

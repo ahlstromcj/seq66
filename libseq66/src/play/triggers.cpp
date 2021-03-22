@@ -96,6 +96,18 @@ trigger::rescale (int oldppqn, int newppqn)
     m_offset = rescale_tick(m_offset, oldppqn, newppqn);
 }
 
+std::string
+trigger::to_string () const
+{
+    std::string result = "trigger: ";
+    result += std::to_string(tick_start());
+    result += " to ";
+    result += std::to_string(tick_end());
+    result += " at ";
+    result += std::to_string(offset());
+    return result;
+}
+
 /**
  *  Principal constructor.
  *
@@ -1283,6 +1295,20 @@ triggers::print (const std::string & seqname) const
             bool_to_string(t.selected()).c_str()
         );
     }
+}
+
+std::string
+triggers::to_string () const
+{
+    std::string result = std::to_string(count());
+    result += " triggers:\n";
+    for (const auto & t : m_triggers)
+    {
+        result += "   ";
+        result += t.to_string();
+        result += "\n";
+    }
+    return result;
 }
 
 }           // namespace seq66

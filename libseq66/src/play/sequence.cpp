@@ -806,10 +806,10 @@ bool
 sequence::toggle_queued ()
 {
     automutex locker(m_mutex);
+    set_dirty_mp();
     m_queued = ! m_queued;
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
-    set_dirty_mp();
     return true;
 }
 
@@ -5293,8 +5293,9 @@ sequence::song_recording_stop (midipulse tick)
             len -= tick % len;
 
         m_triggers.grow_trigger(m_song_record_tick, tick, len);
+        if (m_song_recording_snap)
+            m_off_from_snap = true;
     }
-    m_off_from_snap = true;
 }
 
 /**

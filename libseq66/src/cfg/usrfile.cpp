@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-18
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -428,7 +428,7 @@ usrfile::parse ()
         s = get_variable(file, "[user-midi-ppqn]", "use-file-ppqn");
         if (! s.empty())
         {
-            bool use_it = string_to_bool(s, false);
+            bool use_it = string_to_bool(s);
             usr().use_file_ppqn(use_it);
             ppqn_settings_made = true;
         }
@@ -548,18 +548,30 @@ usrfile::parse ()
     if (line_after(file, "[user-ui-tweaks]"))
     {
         int scratch = 0;
-        sscanf(scanline(), "%d", &scratch);
-        usr().key_height(scratch);
-        if (next_data_line(file))
+        int count = sscanf(scanline(), "%d", &scratch);
+        if (count == 1)
         {
-            sscanf(scanline(), "%d", &scratch);
-            usr().use_new_seqedit(scratch != 0);
+            usr().save_user_config(true);
+            usr().key_height(scratch);
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &scratch);
+                usr().use_new_seqedit(scratch != 0);
+            }
+        }
+        else
+        {
+            std::string s = get_variable(file, "[user-ui-tweaks]", "key-height");
+            usr().key_height(string_to_int(s, 10));
+            s = get_variable(file, "[user-ui-tweaks]", "use-new-seqedit");
+            usr().use_new_seqedit(string_to_bool(s));
         }
 
         std::string s = get_variable(file, "[user-ui-tweaks]", "note-resume");
         usr().resume_note_ons(string_to_bool(s));
+        s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
+        usr().style_sheet(strip_quotes(s));
     }
-
     s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
 
@@ -1299,8 +1311,8 @@ usrfile::write ()
         "\n"
         ;
 
-    uscratch = usr().key_height();
-    file << uscratch << "       # key_height\n";
+    std::string v = std::to_string(usr().key_height());
+    file << "key-height = " << v << "\n";
 
     file << "\n"
         "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
@@ -1310,14 +1322,23 @@ usrfile::write ()
         "\n"
         ;
 
-    uscratch = usr().use_new_seqedit();
-    file << uscratch << "       # use_new_seqedit\n";
+    v = bool_to_string(usr().use_new_seqedit());
+    file << "use-new-seqedit = " << v << "\n";
 
-    std::string v = bool_to_string(usr().resume_note_ons());
+    v = bool_to_string(usr().resume_note_ons());
     file << "\n"
         "# The note-resume option, if active, causes any notes in progress\n"
         "# to be resumed when the pattern is toggled back on.\n\n"
         << "note-resume = " << v << "\n"
+        ;
+
+    v = add_quotes(usr().style_sheet());
+    file << "\n"
+        "# If specified, this style-sheet (e.g. 'qseq66.qss') is applied\n"
+        "# at startup.  Although normally just a base-name, it can contain\n"
+        "# a file-path, to provide a style usable in many applications,\n"
+        "# outside the Seq66 configuration directory.\n\n"
+        << "style-sheet = " << v << "\n"
         ;
 
     /*

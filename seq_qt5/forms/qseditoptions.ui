@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -467,13 +467,13 @@ A primitive way to zoom.</string>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinKeyHeight">
           <property name="minimum">
-           <number>7</number>
+           <number>4</number>
           </property>
           <property name="maximum">
-           <number>17</number>
+           <number>24</number>
           </property>
           <property name="value">
-           <number>12</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
@@ -762,6 +762,11 @@ playback resumes.</string>
             <height>23</height>
            </rect>
           </property>
+          <property name="toolTip">
+           <string>When checked, the PPQN of the MIDI file being loaded
+overrides the default Seq66 PPQN.  Otherwise, the
+file's PPQN is scaled to the default PPQN.</string>
+          </property>
           <property name="text">
            <string>Use File's PPQN for Pre-Existing Files</string>
           </property>
@@ -798,11 +803,22 @@ playback resumes.</string>
              <height>16777215</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>Changes the default PPQN from 192 to another value.
+This new default value is saved in the 'usr' file when
+Seq66 exits.</string>
+           </property>
            <property name="editable">
             <bool>true</bool>
            </property>
            <property name="currentText">
             <string>9600</string>
+           </property>
+           <property name="maxCount">
+            <number>32</number>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::NoInsert</enum>
            </property>
            <property name="frame">
             <bool>true</bool>

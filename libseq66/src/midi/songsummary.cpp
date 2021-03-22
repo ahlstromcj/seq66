@@ -160,6 +160,7 @@ songsummary::write (performer & p, bool doseqspec)
 bool
 songsummary::write_sequence (std::ofstream & file, seq::pointer s)
 {
+    int triggercount = s->trigger_count();
     file
         << "Sequence #" << s->seq_number() << " '" << s->name() << "'\n"
         << "        Channel: " << int(s->seq_midi_channel()) << "\n"
@@ -169,7 +170,7 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
                                << int(s->true_bus()) << "\n"
         << " Length (ticks): " << long(s->get_length()) << "\n"
         << "Events;triggers: " << s->event_count() << "; "
-                               << s->trigger_count() << "\n"
+                               << triggercount << "\n"
         << "   Transposable: " << bool_to_string(s->transposable()) << "\n"
         << "  Key and scale: " << int(s->musical_key()) << "; "
                                << int(s->musical_scale()) << "\n"
@@ -183,6 +184,17 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
 #else
         file << "          Color: " << s->color() << "\n";
 #endif
+    }
+
+    /*
+     * The format of c_triggers_new:  0x24240008, followed by a length value
+     * of 4 + triggercount * 12.  Each trigger has three 4-byte values:
+     * trigger-on, trigger-off, and trigger-offset.
+     */
+
+    if (triggercount > 0)
+    {
+        file << s->trigger_listing() << std::endl;
     }
     return true;
 }
@@ -311,6 +323,10 @@ songsummary::write_time_sig (std::ofstream & file, int beatsperbar, int beatwidt
  *      Determines the type of sequencer-specific section to be written.
  *      It should be one of the value in the globals module, such as
  *      c_midibus or c_mutegroups.
+ *
+ * \param value
+ *      This value appears in the output, and its meaning depends on the
+ *      control tag.
  */
 
 void

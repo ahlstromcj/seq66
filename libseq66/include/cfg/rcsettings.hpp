@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-20
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -467,6 +467,7 @@ public:
     void clear_playlist (bool disable = false);
     std::string notemap_filespec () const;
     std::string palette_filespec () const;
+    std::string style_sheet_filespec () const;
     virtual void set_defaults () override;
 
     const clockslist & clocks () const
