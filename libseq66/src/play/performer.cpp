@@ -3916,7 +3916,9 @@ performer::add_trigger (seq::number seqno, midipulse tick)
     if (s)
     {
         midipulse seqlength = s->get_length();
-        tick -= tick % seqlength;
+        if (song_record_snap())
+            tick -= tick % seqlength;
+
         push_trigger_undo(seqno);
         s->add_trigger(tick, seqlength);    /* offset = 0, fixoffset = true */
         notify_trigger_change(seqno);

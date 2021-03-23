@@ -2900,6 +2900,11 @@ public:         /* GUI-support functions */
         m_song_record_snap = f;
     }
 
+    void toggle_record_snap ()
+    {
+        m_song_record_snap = ! m_song_record_snap;
+    }
+
     mutegroup::number group_selected () const
     {
         return mutes().group_selected();

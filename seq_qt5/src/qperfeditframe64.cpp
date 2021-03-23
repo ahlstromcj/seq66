@@ -126,7 +126,7 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     connect
     (
         ui->cmbGridSnap, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(updateGridSnap(int))
+        this, SLOT(update_grid_snap(int))
     );
 
     /*
@@ -293,6 +293,22 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     ui->btnEntryMode->setChecked(false);
 
     /*
+     * Song-record snap button
+     */
+
+    connect
+    (
+        ui->btnSnap, &QPushButton::toggled,
+        [=]
+        {
+            perf().toggle_record_snap();
+            ui->btnSnap->setChecked(perf().song_record_snap());
+        }
+    );
+    ui->btnSnap->setCheckable(true);
+    ui->btnSnap->setChecked(perf().song_record_snap());
+
+    /*
      * Final settings.
      */
 
@@ -356,7 +372,7 @@ qperfeditframe64::follow_progress ()
  */
 
 void
-qperfeditframe64::updateGridSnap (int snapindex)
+qperfeditframe64::update_grid_snap (int snapindex)
 {
     int snap = power(2, snapindex);
     if (snap == 0)

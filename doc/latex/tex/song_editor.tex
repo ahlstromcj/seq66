@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-01-11
+% \update      2021-03-23
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -100,6 +100,7 @@
       \item \textbf{Follow Progress}
       \item \textbf{Zoom Out and Zoom In}
       \item \textbf{Toggle Section Painting}
+      \item \textbf{Record Snap}
       \item \textbf{Grid Snap}
       \item \textbf{Transpose}
       \item \textbf{L/R Loop}
@@ -165,6 +166,13 @@
    This mode can alsp be changed via the keystrokes \texttt{p} and
    \texttt{x}.
 
+   \itempar{Record Snap}{song editor!record snap}
+   The record snap button is a bit counter-intuitive.  If disabled,
+   it allows only clips of the full pattern to be added.
+   If enabled, it turns on record-snap for recording live performance triggers,
+   and it also enables the grid snap functionality noted below.
+   It also allows the trigger to be smoothly extended without snapping as well.
+
    \itempar{Grid Snap}{song editor!grid snap}
    Indicates the horizontal grid snap for movement actions and trigger drawing.
    Grid snap determine where the pattern boundaries are drawn.
@@ -172,7 +180,6 @@
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
    1, 1/2, 1/4, 1/8, 1/16, and 1/32.
-%  , and 1/3, 1/6, 1/12, and 1/24.
 
    \itempar{Transpose}{song editor!transpose}
    \textbf{Transpose} consists of two controls: one to apply
