@@ -425,19 +425,16 @@ triggers::adjust_offset (midipulse offset)
  * \param offset
  *      This value specifies the offset of the trigger.  It is a feature of
  *      the c_triggers_new that c_triggers doesn't have.  It is the third
- *      value in the trigger specification of the Seq66 MIDI file.
+ *      value in the trigger specification of the Seq66 MIDI file. The default
+ *      value is 0.
  *
  * \param fixoffset
  *      If true, the offset parameter is modified by adjust_offset() first.
- *      We think that basically makes sure it is positive.
+ *      We think that basically makes sure it is positive. The default is true.
  */
 
 void
-triggers::add
-(
-    midipulse tick, midipulse len,
-    midipulse offset, bool fixoffset
-)
+triggers::add (midipulse tick, midipulse len, midipulse offset, bool fixoffset)
 {
     trigger t(tick, len, fixoffset ? adjust_offset(offset) : offset);
     for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
@@ -1229,10 +1226,6 @@ triggers::select (trigger & t, bool count)
 {
     if (! t.selected())
     {
-        /*
-         * TMI: infoprint("trigger selected");
-         */
-
         t.selected(true);
         if (count)
             ++m_number_selected;

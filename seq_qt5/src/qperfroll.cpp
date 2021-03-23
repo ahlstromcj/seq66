@@ -298,7 +298,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     {
         /*
          * Add a new seq instance if we didn't select anything, and are holding
-         * the right mouse button.
+         * the right mouse button (or the finger button is active).
          */
 
         midipulse tick = m_drop_tick;
@@ -311,14 +311,14 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 if (trigger_state)
                     delete_trigger(m_drop_sequence, tick);
                 else
-                    add_trigger(m_drop_sequence, tick);
+                    add_trigger(m_drop_sequence, tick); /* length and snap  */
             }
             else
             {
                 errprint("No perfroll drop sequence");
             }
         }
-        else                /* we aren't holding the right mouse btn */
+        else                /* we aren't holding the right mouse button */
         {
             bool selected = false;
             if (not_nullptr(dropseq))
@@ -446,17 +446,25 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
 
         /*
          * ca 2019-02-06 Issue #171.  Always snap.
+         * ca 2021-03-23.  The user can toggle song-record snap via a button.
          */
 
         midipulse seqlength = dropseq->get_length();
-        tick -= tick % seqlength;
+        if (perf().song_record_snap())
+            tick -= tick % seqlength;
+
         dropseq->grow_trigger(m_drop_tick, tick, seqlength);
     }
     else if (moving() || growing())
     {
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
-        if (rc().allow_snap_split())        /* apply to move/grow too   */
+
+        /*
+         * if (rc().allow_snap_split())
+         */
+
+        if (perf().song_record_snap())      /* apply to move/grow too   */
             tick -= tick % snap();
 
         if (moving())                       /* move selected triggers   */

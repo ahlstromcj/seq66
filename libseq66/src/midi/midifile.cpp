@@ -2444,8 +2444,8 @@ midifile::write (performer & p, bool doseqspec)
  *  We get the number of active tracks, and we don't count tracks with no
  *  triggers, or tracks that are muted.
  *
- *  This function, write_song(), was not included in Seq66 because it
- *  Seq66 writes standard MIDI files (with SeqSpec information that a
+ *  This function, write_song(), was not included in Seq24 because it
+ *  Seq24 writes standard MIDI files (with SeqSpec information that a
  *  decent sequencer should ignore).  But we believe this is a good feature
  *  for export, and created the Export Song command to do this.  The
  *  write_song() function doesn't count tracks that are muted or that have no
@@ -2540,6 +2540,8 @@ midifile::write_song (performer & p)
                     midi_vector lst(seq);
                     lst.fill_seq_number(track);
                     lst.fill_seq_name(seq.name());
+
+#if defined USE_FILL_TIME_SIG_AND_TEMPO
                     if (track == 0)
                     {
                         /*
@@ -2547,15 +2549,14 @@ midifile::write_song (performer & p)
                          * creation/writing of time-sig and tempo events.
                          */
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
                         seq.events().scan_meta_events();
                         lst.fill_time_sig_and_tempo
                         (
                             p, seq.events().has_time_signature(),
                             seq.events().has_tempo()
                         );
-#endif
                     }
+#endif
 
                     /*
                      * Add each trigger as described in the function banner.
@@ -2566,14 +2567,14 @@ midifile::write_song (performer & p)
                     for (auto & t : trigs)
                         previous_ts = lst.song_fill_seq_event(t, previous_ts);
 
-                    if (! trigs.empty())        /* adjust the sequence length */
+                    if (! trigs.empty())        /* adjust sequence length   */
                     {
                         const trigger & end_trigger = trigs.back();
 
                         /*
-                         * This isn't really the trigger length.  It is off by 1.
-                         * But subtracting the tick_start() value can really screw
-                         * things up.
+                         * This isn't really the trigger length.  It is off by
+                         * 1.  But subtracting the tick_start() value can
+                         * really screw things up.
                          */
 
                         midipulse seqend = end_trigger.tick_end();
@@ -2617,14 +2618,6 @@ midifile::write_song (performer & p)
             result = false;
         }
     }
-
-    /*
-     * Does not apply to exporting.
-     *
-     * if (result)
-     *      p.is_modified(false);
-     */
-
     return result;
 }
 

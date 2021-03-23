@@ -463,6 +463,15 @@ midi_vector_base::fill_proprietary ()
  *  Fills in sequence events based on the trigger and events in the sequence
  *  associated with this midi_vector_base.
  *
+ *  This calculation needs investigation.  The number of times the pattern is
+ *  played is given by how many pattern lengths fit in the trigger length.
+ *  But the commented calculation adds to the value of 1 already assigned.
+ *  And what about triggers that are somehow of 0 size?  Let's try a different
+ *  calculation, currently the same.
+ *
+ *      int times_played = 1;
+ *      times_played += (trig.tick_end() - trig.tick_start()) / len;
+ *
  * \param trig
  *      The current trigger to be processed.
  *
@@ -483,32 +492,31 @@ midi_vector_base::song_fill_seq_event
     midipulse len = m_sequence.get_length();
     midipulse trig_offset = trig.offset() % len;
     midipulse start_offset = trig.tick_start() % len;
-    midipulse timestamp_adjust = trig.tick_start() + trig_offset - start_offset;
-    int note_is_used[c_midi_notes];
-    for (int i = 0; i < c_midi_notes; ++i)
-        note_is_used[i] = 0;                        /* initialize to off */
-
-    /*
-     * This calculation needs investigation.  The number of times the pattern
-     * is played is given by how many pattern lengths fit in the trigger
-     * length.   But the commented calculation adds to the value of 1 already
-     * assigned.  And what about triggers that are somehow of 0 size?  Let's
-     * try a different calculation, currently the same.
-     *
-     * int times_played = 1;
-     * times_played += (trig.tick_end() - trig.tick_start()) / len;
-     */
-
+    midipulse time_offset = trig.tick_start() + trig_offset - start_offset;
     int times_played = 1 + (trig.length() - 1) / len;
     if (trig_offset > start_offset)                 /* offset len too far   */
-        timestamp_adjust -= len;
+        time_offset -= len;
 
-    for (int p = 0; p <= times_played; ++p)
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    std::string tstr = trig.to_string();
+    printf
+    (
+        "%s: toffset=%ld; soffset=%ld; tadjust=%ld; tplay=%d\n",
+        tstr.c_str(), trig_offset, start_offset,
+        time_offset, times_played
+    );
+#endif
+
+    int note_is_used[c_midi_notes];
+    for (int i = 0; i < c_midi_notes; ++i)
+        note_is_used[i] = 0;                        /* initialize to off    */
+
+    for (int p = 0; p <= times_played; ++p, time_offset += len)
     {
         midipulse delta_time = 0;
         for (auto & e : m_sequence.events())
         {
-            midipulse timestamp = e.timestamp() + timestamp_adjust;
+            midipulse timestamp = e.timestamp() + time_offset;
             if (timestamp >= trig.tick_start())     /* at/after trigger     */
             {
                 /*
@@ -519,7 +527,7 @@ midi_vector_base::song_fill_seq_event
                 if (e.is_note_on())
                 {
                     if (timestamp <= trig.tick_end())
-                        note_is_used[note]++;       /* count the note       */
+                        ++note_is_used[note];       /* count the note       */
                     else
                         continue;                   /* skip                 */
                 }
@@ -532,7 +540,7 @@ midi_vector_base::song_fill_seq_event
                          * use the trigger end.
                          */
 
-                        note_is_used[note]--;       /* turn off the note    */
+                        --note_is_used[note];       /* turn off the note    */
                         if (timestamp > trig.tick_end())
                             timestamp = trig.tick_end();
                     }
@@ -549,7 +557,7 @@ midi_vector_base::song_fill_seq_event
 
             if (timestamp >= trig.tick_end())       /* event past trigger   */
             {
-                if (! e.is_note_on() && ! e.is_note_off())
+                if (! e.is_note())                  /* (also aftertouch)    */
                     continue;                       /* drop the event       */
             }
 
@@ -557,7 +565,6 @@ midi_vector_base::song_fill_seq_event
             prev_timestamp = timestamp;
             add_event(e, delta_time);               /* does it sort???      */
         }
-        timestamp_adjust += len;        // any side-effects on sequence length?
     }
     return prev_timestamp;
 }
@@ -574,7 +581,8 @@ midi_vector_base::song_fill_seq_event
  *      Provides the total length of the sequence.
  *
  * \param prev_timestamp
- *      The time-stamp of the previous event, which is actually the first event.
+ *      The time-stamp of the previous event, which is actually the first
+ *      event.
  */
 
 void

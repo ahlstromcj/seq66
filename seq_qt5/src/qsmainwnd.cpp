@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-22
+ * \updates       2021-03-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -129,8 +129,6 @@
 #include "pixmaps/stop.xpm"
 
 #define SEQ66_ERROR_BOX_WIDTH       600
-
-#define SEQ66_PLATFORM_DEBUG_SONG_SNAP
 
 /*
  * Don't document the namespace.
@@ -764,55 +762,8 @@ qsmainwnd::qsmainwnd
      * any particular time.
      */
 
-
-#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
-    ui->testButton->setToolTip("Developer test of MIDI 'Import into Session'.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(import_into_session())
-    );
-#elif defined SEQ66_PLATFORM_DEBUG_SONG_SNAP
-    ui->testButton->setToolTip("Developer test of disabling song record snap");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, &QPushButton::clicked,
-        [=]
-        {
-            cb_perf().song_record_snap(! cb_perf().song_record_snap());
-            printf
-            (
-                "Song-record snap %s\n",
-                cb_perf().song_record_snap() ? "on" : "off"
-            );
-        }
-    );
-#else
     ui->testButton->setToolTip("Developer test button, disabled.");
     ui->testButton->setEnabled(false);
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
-    ui->testButton->setToolTip("Test of saving/copying the current playlist.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(test_playlist_save())
-    );
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
-    ui->testButton->setToolTip("Test of saving the note-map.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(test_notemap_save())
-    );
-#endif
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
