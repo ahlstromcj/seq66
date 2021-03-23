@@ -3918,7 +3918,7 @@ performer::add_trigger (seq::number seqno, midipulse tick)
         midipulse seqlength = s->get_length();
         tick -= tick % seqlength;
         push_trigger_undo(seqno);
-        s->add_trigger(tick, seqlength);
+        s->add_trigger(tick, seqlength);    /* offset = 0, fixoffset = true */
         notify_trigger_change(seqno);
     }
 }

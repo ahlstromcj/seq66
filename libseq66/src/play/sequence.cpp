@@ -2993,10 +2993,10 @@ sequence::clear_triggers ()
  *      The duration of the trigger.
  *
  * \param offset
- *      The performance offset of the trigger.
+ *      The performance offset of the trigger. Defaults to 0.
  *
  * \param fixoffset
- *      If true, adjust the offset.
+ *      If true, adjust the offset. Defaults to true.
  */
 
 void

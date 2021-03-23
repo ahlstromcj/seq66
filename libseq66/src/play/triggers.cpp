@@ -426,10 +426,12 @@ triggers::adjust_offset (midipulse offset)
  *      This value specifies the offset of the trigger.  It is a feature of
  *      the c_triggers_new that c_triggers doesn't have.  It is the third
  *      value in the trigger specification of the Seq66 MIDI file.
+ *      The default value is 0.
  *
  * \param fixoffset
  *      If true, the offset parameter is modified by adjust_offset() first.
- *      We think that basically makes sure it is positive.
+ *      We think that basically makes sure it is positive.  The default value is
+ *      true.
  */
 
 void
