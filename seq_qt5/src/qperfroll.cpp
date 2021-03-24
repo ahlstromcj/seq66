@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-22
+ * \updates       2021-03-23
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -313,10 +313,6 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 else
                     add_trigger(m_drop_sequence, tick); /* length and snap  */
             }
-            else
-            {
-                errprint("No perfroll drop sequence");
-            }
         }
         else                /* we aren't holding the right mouse button */
         {
@@ -377,10 +373,6 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     selected = true;
                     m_drop_tick_offset = m_drop_tick - start_tick;
                 }
-            }
-            else
-            {
-                errprint("No perfroll drop sequence");
             }
             if (! selected)                         // select with a box
             {

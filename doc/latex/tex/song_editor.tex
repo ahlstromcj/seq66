@@ -18,11 +18,11 @@
 \label{sec:song_editor}
 
    The \textsl{Seq66 Song Editor} combines all patterns
-   into a complete tune with specified repetitions of each pattern.
+   into a complete tune with controlled repetitions of each pattern.
    It shows one row per pattern/loop/sequence,
    with the placement of each pattern at various time locations in the song.
    \index{performance}
-   In \textsl{Seq66} parlance, the song editor creates a
+   In \textsl{Seq24} parlance, the song editor creates a
    \textsl{performance}, and the performance is implemented by a set of
    triggers.
    Triggers are internal timing items stored with each pattern when a
@@ -33,21 +33,20 @@
 
    \index{song editor!dual}
    Two song editor windows can be
-   brought onscreen, as a convenience for arranging projects with a large
-   number of sequences/patterns.
+   brought onscreen, one in the \textbf{Song} tab, and
+   one in an external window.
    The \textbf{Song} tab and a \textbf{Song} window can be shown at the
    same time.
-   The \textbf{Song} editor activates
-   the \textbf{Song} mode of \textsl{Seq66}.
+%  The \textbf{Song} editor activates
+%  the \textbf{Song} mode of \textsl{Seq66}.
 %  When the song editor has the focus of the application, it
 %  takes over control from the patterns panel, and controls playback.
    Once playback is started in the song editor (using the \texttt{Space} or
-   \texttt{.} keys),
-   some actions in the patterns panel no longer have effect, disabling live mode.
+   \texttt{.} keys), live mode is disabled.
    The song editor takes over the arming/unarming (unmuting/muting)
    shown in the patterns panel.  The highlighting of armed/unarmed patterns
-   changes according to whether the pattern is triggered in the song editor, or
-   not.  If one tries to change the muting in
+   changes according to whether the pattern is triggered in the song editor.
+   If one tries to change the muting in
    the patterns panel, the song editor immediately returns the pattern to the
    state it has in the song editor.  The only way to manually change the muting
    then is to click the pattern's label in the song editor.
@@ -167,11 +166,11 @@
    \texttt{x}.
 
    \itempar{Record Snap}{song editor!record snap}
-   The record snap button is a bit counter-intuitive.  If disabled,
-   it allows only clips of the full pattern to be added.
-   If enabled, it turns on record-snap for recording live performance triggers,
+   If enabled, it allows only full clips of the pattern to be added.
+   It turns on record-snap for recording live performance triggers,
    and it also enables the grid snap functionality noted below.
-   It also allows the trigger to be smoothly extended without snapping as well.
+   If disabled, it allows the trigger to be smoothly extended in either
+   direction, without snapping, when the mouse is moved left or right.
 
    \itempar{Grid Snap}{song editor!grid snap}
    Indicates the horizontal grid snap for movement actions and trigger drawing.
