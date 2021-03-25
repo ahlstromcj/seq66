@@ -261,10 +261,6 @@ public:
         m_measures = m_beats = m_divisions = 0;
     }
 
-    /**
-     * \getter m_measures
-     */
-
     int measures () const
     {
         return m_measures;

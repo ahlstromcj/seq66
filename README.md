@@ -1,7 +1,7 @@
 # README for Seq66 0.92.2 (Sequencer64 refactored for C++/14 and Qt 5)
 
 Chris Ahlstrom
-2015-09-10 to 2021-03-22
+2015-09-10 to 2021-03-25
 
 __Seq66__ is a MIDI sequencer/live-looper with a hardware-sampler-like
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -71,14 +71,16 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.92.2:
         *   Added a Qt "style-sheet" configuration it to the 'usr' file. It
-            can be used to alter the appearance of the application.  A
-            sample 'qss' file is provided.
+            can be used to alter the appearance of the application beyond what
+            a palette can do.  A sample 'qss' file is provided.
         *   Fixed PPQN modification, added user-interface and 'usr'
             configuration to change the default PPQN from 192.
+        *   Fixed many issues with changing the time signature.
         *   Fixed creation of new configuration files.
         *   Fixed port-mapping for MIDI output, control, and status display.
         *   Removed the external set-master; use the set-master tab.
         *   Tightened meta-events and set-handling.
+        *   More fixes to Song recording; added a Snap button for it.
     *   Version 0.92.1:
         *   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
             when there are many ports on the system; also increased port

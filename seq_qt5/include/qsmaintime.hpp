@@ -63,43 +63,24 @@ public:
         int beat_width          = 4
     );
 
-    virtual ~qsmaintime ();
-
-    /**
-     * \getter m_beats_per_measure
-     */
+    virtual ~qsmaintime ()
+    {
+        // no code
+    }
 
     int beats_per_measure () const
     {
         return m_beats_per_measure;
     }
 
-    /**
-     * \setter m_beats_per_measure
-     */
-
-    void beats_per_measure (int bpm)
-    {
-        m_beats_per_measure = bpm;
-    }
-
-    /**
-     *  \getter m_beat_width
-     */
+    void beats_per_measure (int bpm);
 
     int beat_width () const
     {
         return m_beat_width;
     }
 
-    /**
-     *  \setter m_beat_width
-     */
-
-    void beat_width (int bw)
-    {
-        m_beat_width = bw;
-    }
+    void beat_width (int bw);
 
 protected:
 
@@ -120,7 +101,7 @@ private:
     QFont m_font;
     int m_beats_per_measure;
     int m_beat_width;
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
     int m_alpha;
 #endif
     int m_last_metro;

@@ -2507,13 +2507,13 @@ midifile::write_song (performer & p)
     bool result = numtracks > 0;
     if (result)
     {
-        printf("[Exporting song as MIDI file, %d ppqn]\n", m_ppqn);
+        printf("[Exporting song, %d ppqn]\n", m_ppqn);
         result = write_header(numtracks);
     }
     else
     {
         m_error_message =
-            "The current MIDI song has no exportable tracks; "
+            "The current song has no exportable tracks; "
             "create a performance in the Song Editor first."
             ;
         result = false;

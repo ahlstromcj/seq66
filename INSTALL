@@ -333,6 +333,11 @@ MANUALLY-DEFINED MACROS IN CODE:
         This support is used only in some test code (see the midi_probe)
         module, and is no long included in normal builds.
 
+    SEQ66_USE_METRONOME_FADE
+
+        Define if it is desired to waster CPU cycles on a fancier
+        time-indicator bar.
+
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
 

@@ -326,14 +326,26 @@ pulses_to_midi_measures
     bool result = (W > 0) && (P > 0) && (B > 0);
     if (result)
     {
-        double pf = 4.0 * P;
+#if defined USE_OLD_MEASURES_CALCULATION
+        double pf = 4.0 * P;                    /* pulses in 4 Q notes      */
         double tbc = p * W / pf;                /* total beat-count for p   */
         midipulse Lp = midipulse(pf) / W;       /* beat length in pulses    */
         int beatticks = int(tbc) * Lp;          /* pulses in total beats    */
         int b = int(tbc) % B;                   /* beat within measure re 0 */
-        measures.measures(int(tbc / B) + 1);    /* number of measures       */
+        int m = int(tbc / B) + 1;               /* number of measures       */
+        measures.measures(m);                   /* number of measures       */
         measures.beats(b + 1);                  /* beats within the measure */
         measures.divisions(int(p - beatticks)); /* leftover pulses / ticks  */
+#else
+        double qnotes = 4.0 * B / W;            /* # of Q notes per measure */
+        double measlength = P * qnotes;         /* # of pulses in a measure */
+        int beatticks = measlength / B;         /* # of pulses in a beat    */
+        int m = int(p / measlength) + 1;        /* measure number of pulse  */
+        int metro = 1 + ((p * W / P / 4 ) % B); /* see qsmaintime           */
+        measures.measures(m);                   /* number of measures       */
+        measures.beats(metro);                  /* beats within the measure */
+        measures.divisions(int(p % beatticks)); /* leftover pulses / ticks  */
+#endif
     }
     return result;
 }

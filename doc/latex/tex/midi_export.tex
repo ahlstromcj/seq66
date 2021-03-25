@@ -65,8 +65,10 @@
       \item Only tracks (sequences, loops, or patterns)
          \index{exportable}
          that are "exportable" are written.  To be exportable, a
-         track must be unmuted, and it must have triggers present
-         in the \textbf{Song Editor}.
+         track must have triggers present
+         in the \textbf{Song Editor}, and, \textsl{in the song editor}, it
+         must not be muted. (It doesn't matter if the track is muted in
+         the patterns panel.)
       \item Each trigger generates the events, including repeats and
          offset-play of the events.
          If there is a gap in the layout
@@ -81,13 +83,13 @@
          so they are preserved in the triggers \textsl{SeqSpec} section.
       \item Empty pattern slots between tracks are removed.
       \item No matter what set the original track was in, it ends up in the
-         first set.
+         first set; sets are consolidated.
       \item Other additions, such as time signature and tempo meta events, are
          written in the same manner as for a normal \textbf{File / Save}
          operation.
    \end{itemize}
 
-   The export dialog is similar to the open dialog; one will likely want to
+   The Export dialog is similar to the Open dialog; one will likely want to
    change the name of the file so as not to overwrite it.
    If there are no exportable tracks, the following message is shown:
 
@@ -98,12 +100,54 @@
    \label{fig:midi_export_file_unexportable}
 \end{figure}
 
-   Once the file is exported, reopen it to see the results of the export.  Both
-   the main window and the song editor show the results of the export.  The two
-   sets are combined into the first set, and all of the track layouts
-   (triggers) have been exported.  Had there been gaps in layouts or repeats of
-   layouts in the song/performance data, these would have been reflected in the
-   triggers.
+   Once the file is exported, reopen it to see the results of the export.
+   The following figure shows a before and after picture of the export, as
+   seen in the song editor.
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{song-editor/song-layout-sample-2.png}
+   \caption{MIDI File Layout Before/After Export}
+   \label{fig:midi_export_file_before_after}
+\end{figure}
+   
+   The gaps in layouts in the song/performance data are reflected in the
+   consolidated triggers.
+   Here is the before/after triggers for pattern \#0, which was
+   layed out with \textbf{Record Snap} \textsl{on}:
+
+   \begin{verbatim}
+       BEFORE                              AFTER
+      Sequence #0 'One Bar'               Sequence #0 'One Bar'
+      Length (ticks): 768                 Length (ticks): 5375
+      trigger: 768 to 1535 at 768         trigger: 0 to 5375 at 5375
+      trigger: 3840 to 5375 at 768        
+   \end{verbatim}
+
+   Note that 768, at PPQN = 192, is 4 beats (1 measure), while 5375 is 28
+   beats (7 measures).
+   For each of these triggers, the first number is the start of the trigger in
+   PPQNs, the second is the end of the triger, and the third, called the
+   "offset", is actually the length of the pattern.
+   Note how the "AFTER"
+   trigger consolidates the "BEFORE" triggers, starts at time 0, extends to
+   the end of the last trigger, and has a length equal to the end of the
+   trigger.
+
+   Now here is the before/after triggers for pattern \#5, which was
+   layed out with \textbf{Record Snap} \textsl{off}:
+
+   \begin{verbatim}
+       BEFORE                              AFTER
+      Sequence #5 'Two Bars'              Sequence #5 'Two Bars'
+      Length (ticks): 1536                Length (ticks): 6911
+      trigger: 2344 to 3879 at 1536       trigger: 0 to 6655 at 6911
+      trigger: 4944 to 6655 at 0
+   \end{verbatim}
+
+   6655 is a little over 34.5 beats, which is what the bottom grey trigger
+   shows.
+   6911 is almost 36 beats (9 measures).  Something to figure out.
 
 \subsection{Export MIDI Only}
 \label{subsec:midi_export_file_export_midi_only}

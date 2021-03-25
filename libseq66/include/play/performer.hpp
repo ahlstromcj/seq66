@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-21
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -1347,14 +1347,6 @@ public:
         return m_beats_per_bar;
     }
 
-    /**
-     * \setter m_beats_per_bar
-     *
-     * \param bpm
-     *      Provides the value for beats/measure.  Also used to set the
-     *      beats/measure in the JACK assistant object.
-     */
-
     void set_beats_per_bar (int bpm)
     {
         m_beats_per_bar = bpm;
@@ -1370,21 +1362,15 @@ public:
         return m_beat_width;
     }
 
-    /**
-     * \setter m_beat_width
-     *
-     * \param bw
-     *      Provides the value for beat-width.  Also used to set the
-     *      beat-width in the JACK assistant object.
-     */
-
-    void set_beat_width (int bw)
+    void set_beat_length (int bl)
     {
-        m_beat_width = bw;
+        m_beat_width = bl;
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_beat_width(bw);
+        m_jack_asst.set_beat_width(bl);
 #endif
     }
+
+    bool set_beat_width (int bw);
 
     seq::number tempo_track_number () const
     {
@@ -2315,11 +2301,13 @@ public:
         mapper().off_sequences();
     }
 
-    std::string sequence_label (const sequence & seq);
-    std::string sequence_label (seq::number seqno);
-    std::string sequence_title (const sequence & seq);
-    std::string main_window_title (const std::string & fn = "");
-    std::string sequence_window_title (const sequence & seq);
+    std::string sequence_label (const sequence & seq) const;
+    std::string sequence_label (seq::number seqno) const;
+    std::string sequence_title (const sequence & seq) const;
+    std::string sequence_window_title (const sequence & seq) const;
+    std::string main_window_title (const std::string & fn = "") const;
+    std::string pulses_to_measure_string (midipulse tick) const;
+    std::string pulses_to_time_string (midipulse tick) const;
 
     bool ui_set_input (bussbyte bus, bool active);
     bool ui_get_input (bussbyte bus, bool & active, std::string & n) const;

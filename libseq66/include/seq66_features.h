@@ -122,6 +122,13 @@
 
 #undef  SEQ66_USE_BLACK_SELECTION_BOX
 
+/**
+ *  An option to make the main-window time-indicator fancier by using alpha
+ *  fade, at the expense of CPU cycles.
+ */
+
+#undef  SEQ66_USE_METRONOME_FADE
+
 #endif          // SEQ66_FEATURES_H
 
 /*

@@ -465,7 +465,7 @@ write_song_summary (performer & p, const std::string & fname)
     bool result = f.write(p);
     if (result)
     {
-        file_message("Wrote MIDI file", fname);
+        file_message("Wrote", fname);
     }
     else
     {

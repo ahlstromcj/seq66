@@ -33,7 +33,7 @@
 #include "porttime.h"
 
 /**
- *
+ *  Important constants from PortMidi.
  */
 
 static double s_pm_beats_per_minute = 125;
@@ -54,10 +54,6 @@ Pt_Set_Midi_Timing (double bpm, int ppqn)
     Pt_Set_Ppqn(ppqn);
 }
 
-/**
- *
- */
-
 void
 Pt_Set_Bpm (double bpm)
 {
@@ -67,10 +63,6 @@ Pt_Set_Bpm (double bpm)
         s_pm_tempo_microseconds = (int) (60000000.0 / bpm);
     }
 }
-
-/**
- *
- */
 
 void
 Pt_Set_Ppqn (int ppqn)
@@ -88,29 +80,17 @@ Pt_Time_To_Pulses (int tsms)
     return (long) (tsms * s_pm_beats_per_minute / 60000);
 }
 
-/**
- *
- */
-
 double
 Pt_Get_Bpm (void)
 {
     return s_pm_beats_per_minute;
 }
 
-/**
- *
- */
-
 int
 Pt_Get_Tempo_Microseconds (void)
 {
     return s_pm_tempo_microseconds;
 }
-
-/**
- *
- */
 
 int
 Pt_Get_Ppqn (void)

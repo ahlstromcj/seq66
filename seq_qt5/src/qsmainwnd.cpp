@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-23
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -96,8 +96,7 @@
 #include "qsliveframe.hpp"
 #include "qslivegrid.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
-#include "sessions/smanager.hpp"        /* pulse_to_measurestring(), etc.   */
-#include "util/calculations.hpp"        /* pulse_to_measurestring(), etc.   */
+#include "sessions/smanager.hpp"        /* attach_session()                 */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
 
 /*
@@ -311,14 +310,17 @@ qsmainwnd::qsmainwnd
 
     /*
      * Fill options for beats per measure in the combo box, and set the
-     * default.
+     * default.  For both the beat-measure and beat-length combo-boxes, we tack on
+     * an additional entry for "32".
      */
 
+    QString thirtytwo = QString::number(32);
     for (int i = 0; i < s_beat_measure_count; ++i)
     {
         QString combo_text = QString::number(i + 1);
         ui->cmb_beat_measure->insertItem(i, combo_text);
     }
+    ui->cmb_beat_measure->insertItem(s_beat_measure_count, thirtytwo);
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
@@ -336,6 +338,7 @@ qsmainwnd::qsmainwnd
 #endif
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
+    ui->cmb_beat_length->insertItem(s_beat_length_count, thirtytwo);
 
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
@@ -678,7 +681,7 @@ qsmainwnd::qsmainwnd
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
     /*
-     * Set Number.
+     * Set Number and Name.
      */
 
     connect
@@ -686,17 +689,11 @@ qsmainwnd::qsmainwnd
         ui->spinBank, SIGNAL(valueChanged(int)),
         this, SLOT(update_bank(int))
     );
-
-    /*
-     * Set Name.
-     */
-
     connect
     (
         ui->txtBankName, SIGNAL(textEdited(QString)),
         this, SLOT(update_bank_text(QString))
     );
-
     connect
     (
         this, SIGNAL(signal_set_change(int)),
@@ -737,25 +734,6 @@ qsmainwnd::qsmainwnd
     load_session_frame();
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
-
-#if defined SEQ66_DISABLE_SESSION_TAB
-
-    /*
-     * We want to keep the session table accessible to show the current
-     * configuration directory, etc.
-     */
-
-    if (! usr().wants_nsm_session())
-    {
-        /*
-         * Which to do, remove or disable?
-         * ui->tabWidget->removeTab(Tab_Session);
-         */
-
-        ui->tabWidget->setTabEnabled(Tab_Session, false);
-    }
-
-#endif
 
     /*
      * Test button.  This button supports whatever debugging we need to do at
@@ -1510,23 +1488,11 @@ qsmainwnd::refresh ()
         m_previous_tick = tick;
         if (not_nullptr(m_beat_ind))
         {
-            midibpm bpm = perf().bpm();
-            int ppqn = perf().ppqn();
-            if (m_tick_time_as_bbt)
-            {
-                midi_timing mt
-                (
-                    bpm, perf().get_beats_per_bar(),
-                    perf().get_beat_width(), ppqn
-                );
-                std::string t = pulses_to_measurestring(tick, mt);
-                ui->label_HMS->setText(t.c_str());
-            }
-            else
-            {
-                std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
-                ui->label_HMS->setText(t.c_str());
-            }
+            std::string t = m_tick_time_as_bbt ?
+                perf().pulses_to_measure_string(tick) :
+                perf().pulses_to_time_string(tick) ;
+
+            ui->label_HMS->setText(t.c_str());
             m_beat_ind->update();
         }
     }
@@ -1903,7 +1869,7 @@ qsmainwnd::export_song (const std::string & fname)
     std::string filename;
     if (fname.empty())
     {
-        std::string prompt = "Export Song as MIDI...";
+        std::string prompt = "Export Song...";
         filename = filename_prompt(prompt);
     }
     else
@@ -2394,56 +2360,18 @@ qsmainwnd::update_midi_bus (int index)
 void
 qsmainwnd::update_beat_length (int blindex)
 {
-    int bl;
-    switch (blindex)
+    int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
+    if (perf().set_beat_width(bl))
     {
-    case 0:
-        bl = 1;
-        break;
+        if (not_nullptr(m_song_frame64))
+            m_song_frame64->set_beat_width(bl);
 
-    case 1:
-        bl = 2;
-        break;
+        if (not_nullptr(m_beat_ind))
+            m_beat_ind->beat_width(bl);
 
-    case 2:
-        bl = 4;
-        break;
-
-    case 3:
-        bl = 8;
-        break;
-
-    case 4:
-        bl = 16;
-        break;
-
-    default:
-        bl = 4;
-        break;
+        if (not_nullptr(m_edit_frame))
+            m_edit_frame->update_draw_geometry();
     }
-
-    if (not_nullptr(m_song_frame64))
-        m_song_frame64->set_beat_width(bl);
-
-    if (not_nullptr(m_beat_ind))
-        m_beat_ind->beat_width(bl);
-
-    for (int i = 0; i < perf().sequence_max(); ++i)
-    {
-        seq::pointer seq = perf().get_sequence(i);
-        if (seq)
-        {
-            /*
-             * Set beat width, then reset the number of measures, causing
-             * length to adjust to the new beats per measure.
-             */
-
-            seq->set_beat_width(bl);
-            seq->set_measures(seq->get_measures());
-        }
-    }
-    if (not_nullptr(m_edit_frame))
-        m_edit_frame->update_draw_geometry();
 }
 
 /**
@@ -2459,7 +2387,7 @@ qsmainwnd::update_beat_length (int blindex)
 void
 qsmainwnd::update_beats_per_measure (int bmindex)
 {
-    int bm = bmindex + 1;
+    int bm = bmindex == s_beat_measure_count ? 32 : bmindex + 1;
     if (perf().set_beats_per_measure(bm))
     {
         if (not_nullptr(m_beat_ind))

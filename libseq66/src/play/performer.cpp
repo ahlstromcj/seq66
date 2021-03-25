@@ -864,7 +864,7 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
  */
 
 std::string
-performer::sequence_label (const sequence & seq)
+performer::sequence_label (const sequence & seq) const
 {
     std::string result;
     int sn = seq.seq_number();
@@ -898,7 +898,7 @@ performer::sequence_label (const sequence & seq)
  */
 
 std::string
-performer::sequence_label (seq::number seqno)
+performer::sequence_label (seq::number seqno) const
 {
     const seq::pointer s = get_sequence(seqno);
     return s ? sequence_label(*s) : std::string("") ;
@@ -920,7 +920,7 @@ performer::sequence_label (seq::number seqno)
  */
 
 std::string
-performer::sequence_title (const sequence & seq)
+performer::sequence_title (const sequence & seq) const
 {
     std::string result;
     int sn = seq.seq_number();
@@ -949,13 +949,13 @@ performer::sequence_title (const sequence & seq)
  */
 
 std::string
-performer::sequence_window_title (const sequence & seq)
+performer::sequence_window_title (const sequence & seq) const
 {
     std::string result = seq_app_name();
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        int ppqn = seq.get_ppqn();                    /* choose_ppqn(m_ppqn);    */
+        int ppqn = seq.get_ppqn();
         char temp[32];
         snprintf(temp, sizeof temp, " (%d ppqn)", ppqn);
         result += " #";
@@ -982,7 +982,7 @@ performer::sequence_window_title (const sequence & seq)
  */
 
 std::string
-performer::main_window_title (const std::string & file_name)
+performer::main_window_title (const std::string & file_name) const
 {
     std::string result = seq_app_name() + std::string(" - ");
     std::string itemname = "unnamed";
@@ -1007,6 +1007,19 @@ performer::main_window_title (const std::string & file_name)
     }
     result += itemname + std::string(temp);
     return result;
+}
+
+std::string
+performer::pulses_to_measure_string (midipulse tick) const
+{
+    midi_timing mt(bpm(), get_beats_per_bar(), get_beat_width(), ppqn());
+    return pulses_to_measurestring(tick, mt);
+}
+
+std::string
+performer::pulses_to_time_string (midipulse tick) const
+{
+    return pulses_to_timestring(tick, bpm(), ppqn(), false);
 }
 
 /*
@@ -2224,7 +2237,7 @@ performer::set_beats_per_measure (int bpm)
     bool result = bpm != m_beats_per_bar;
     if (result)
     {
-        set_beats_per_bar(bpm);
+        set_beats_per_bar(bpm);         /* also sets in jack_assistant  */
         mapper().set_function
         (
             [bpm] (seq::pointer sp, seq::number /*sn*/)
@@ -2233,6 +2246,38 @@ performer::set_beats_per_measure (int bpm)
                 if (result)
                 {
                     sp->set_beats_per_bar(bpm);
+                    sp->set_measures(sp->get_measures());
+                }
+                return result;
+            }
+        );
+    }
+    return result;
+}
+
+/**
+ * \setter m_beat_width
+ *
+ * \param bw
+ *      Provides the value for beat-width.  Also used to set the
+ *      beat-width in the JACK assistant object.
+ */
+
+bool
+performer::set_beat_width (int bw)
+{
+    bool result = bw != m_beat_width;
+    if (result)
+    {
+        set_beat_length(bw);            /* also sets in jack_assistant  */
+        mapper().set_function
+        (
+            [bw] (seq::pointer sp, seq::number /*sn*/)
+            {
+                bool result = bool(sp);
+                if (result)
+                {
+                    sp->set_beat_width(bw);
                     sp->set_measures(sp->get_measures());
                 }
                 return result;

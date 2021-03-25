@@ -308,13 +308,13 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QLabel" name="label_HMS">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
@@ -328,13 +328,13 @@ It does not change Seq66's default PPQN.</string>
         <property name="minimumSize">
          <size>
           <width>180</width>
-          <height>24</height>
+          <height>18</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>180</width>
-          <height>16777215</height>
+          <height>18</height>
          </size>
         </property>
         <layout class="QVBoxLayout" name="layout_beat_ind">
