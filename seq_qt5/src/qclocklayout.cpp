@@ -40,6 +40,7 @@
 
 #include "play/performer.hpp"
 #include "qclocklayout.hpp"
+#include "qseditoptions.hpp"
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -73,7 +74,7 @@ qclocklayout::qclocklayout
     QWidget                     (parent),
     m_performance               (p),
     m_bus                       (bus),
-    m_parent_widget             (parent),           /* m_groupbox_clocks */
+    m_parent_widget             (dynamic_cast<qseditoptions *>(parent)),
     m_horizlayout_clockline     (nullptr),
     m_spacer_clock              (nullptr),
     m_label_outputbusname       (nullptr),
@@ -185,6 +186,9 @@ qclocklayout::setup_ui ()
         case e_clock::mod:
             m_rbutton_clockonmod->setChecked(true);
             break;
+
+        case e_clock::max:      /* will never occur */
+            break;
         }
     }
 }
@@ -215,6 +219,7 @@ qclocklayout::clock_callback_clicked (int id)
     m_rbutton_clockoff->setEnabled(true);
     m_rbutton_clockonpos->setEnabled(enable);
     m_rbutton_clockonmod->setEnabled(enable);
+    m_parent_widget->enable_bus_item(m_bus, enable);
 }
 
 }           // namespace seq66

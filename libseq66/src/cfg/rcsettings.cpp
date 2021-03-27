@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-01-27
+ * \updates       2021-03-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -73,7 +73,7 @@ rcsettings::rcsettings () :
     m_load_midi_controls        (true),
     m_midi_control_buss         (c_bussbyte_max),
     m_midi_control_in           ("rc"),
-    m_midi_control_out          (),
+    m_midi_control_out          ("rc"),
     m_show_ui_sequence_key      (true),
     m_show_ui_sequence_number   (true),
     m_clock_mod                 (64),
@@ -611,6 +611,29 @@ rcsettings::palette_filespec () const
 }
 
 /**
+ *  Constructs the style-sheet filespec.  The base name is, however, part of
+ *  the 'usr' configuration.  If empty, then this function returns and empty
+ *  string.
+ */
+
+std::string
+rcsettings::style_sheet_filespec () const
+{
+    std::string result;
+    std::string ssheet = usr().style_sheet();
+    if (! ssheet.empty())
+    {
+        if (name_has_directory(ssheet))
+            result = ssheet;
+        else
+            result = home_config_directory() + ssheet;
+
+        result = os_normalize_path(result);
+    }
+    return result;
+}
+
+/**
  *  Constructs the full path and file specification for a "MIDI control" file.
  *
  * \return
@@ -771,6 +794,10 @@ rcsettings::session_midi_filename (const std::string & value)
 
 /**
  * \setter m_jack_session_uuid
+ *
+ *  This is an FYI-only data item that is controlled by JACK, and cannot be
+ *  modified by the user. See https://jackaudio.org/metadata/ for more
+ *  information.
  *
  * \param value
  *      The value to use to make the setting.

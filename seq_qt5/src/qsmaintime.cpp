@@ -58,7 +58,7 @@ qsmaintime::qsmaintime
     m_font              (),
     m_beats_per_measure (beatspermeasure),
     m_beat_width        (beatwidth),
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
     m_alpha             (230),
 #endif
     m_last_metro        (0)
@@ -66,18 +66,29 @@ qsmaintime::qsmaintime
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setPointSize(9);
     m_font.setBold(true);
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
     m_color.setAlpha(m_alpha);
 #endif
 }
 
-/**
- *  what about the pens, brushes, etc???
- */
-
-qsmaintime::~qsmaintime ()
+void
+qsmaintime::beat_width (int bw)
 {
-    // no code
+    if (bw != m_beat_width)
+    {
+        m_beat_width = bw;
+        update();
+    }
+}
+
+void
+qsmaintime::beats_per_measure (int bpm)
+{
+    if (bpm != m_beats_per_measure)
+    {
+        m_beats_per_measure = bpm;
+        update();
+    }
 }
 
 /**
@@ -96,35 +107,31 @@ qsmaintime::paintEvent (QPaintEvent *)
 
     midipulse tick = perf().get_tick();
     int boxwidth = (width() - 1) / beats_per_measure();
-    int metro = (tick / (perf().ppqn() / 4 * beat_width())) % beats_per_measure();
+    int metro = ticks_to_beats
+    (
+        tick, perf().ppqn(), beats_per_measure(), beat_width()
+    );
 
     /*
-     * Flash on beats (i.e. if the metronome has changed, or we've just started
-     * playing).
-     *
-     * \todo
-     *      We need to select a color from the palette.
+     * Flash on beats (i.e. if the metronome has changed, or we've just
+     * started playing).  We select a color from the palette.
      */
 
     if (metro != m_last_metro || (tick < 50 && tick > 0))
     {
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
         m_alpha = 230;
-        if (metro == 0)
-            m_color.setRgb(255, 50, 50);        // red on first beat in bar
-        else
-            m_color.setRgb(255, 255, 255);      // white on others
 #endif
         if (metro == 0)
-            m_color = beat_paint();             // drum_paint(), tempo_paint()
+            m_color = beat_paint();
         else
             m_color = background_paint();
     }
-    for (int b = 0; b < beats_per_measure(); ++b)       // draw beat blocks
+    for (int b = 0; b < beats_per_measure(); ++b)   /* draw beat blocks     */
     {
         int offset_x = boxwidth * b;
         int w = pen.width() - 1;
-        if (b == metro && perf().is_running())    // flash on current beat
+        if (b == metro && perf().is_running())      /* flash current beat   */
         {
             brush.setStyle(Qt::SolidPattern);
             pen.setColor(Qt::black);
@@ -135,7 +142,7 @@ qsmaintime::paintEvent (QPaintEvent *)
             pen.setColor(Qt::darkGray);
         }
 
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
         m_color.setAlpha(m_alpha);
 #endif
         brush.setColor(m_color);
@@ -156,7 +163,7 @@ qsmaintime::paintEvent (QPaintEvent *)
         painter.drawText(x, y, QString::number(metro + 1));
     }
 
-#if defined USE_METRONOME_FADE
+#if defined SEQ66_USE_METRONOME_FADE
 
     /*
      * Lessen alpha on each redraw to have smooth fading done as a factor of

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-06
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  */
@@ -559,7 +559,7 @@ private:
      *  Snap recorded playback changes to the sequence length.
      */
 
-    const bool m_song_record_snap;
+    bool m_song_record_snap;
 
     /**
      *  Indicates to resume notes if the sequence is toggled after a Note On.
@@ -1252,6 +1252,11 @@ public:
         return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
     }
 
+    void file_ppqn (int p)
+    {
+        m_file_ppqn = p;
+    }
+
     /**
      *  Only a nominal value.  The mastermidibus could be considered the true
      *  value of BPM (and PPQN).
@@ -1342,14 +1347,6 @@ public:
         return m_beats_per_bar;
     }
 
-    /**
-     * \setter m_beats_per_bar
-     *
-     * \param bpm
-     *      Provides the value for beats/measure.  Also used to set the
-     *      beats/measure in the JACK assistant object.
-     */
-
     void set_beats_per_bar (int bpm)
     {
         m_beats_per_bar = bpm;
@@ -1365,21 +1362,15 @@ public:
         return m_beat_width;
     }
 
-    /**
-     * \setter m_beat_width
-     *
-     * \param bw
-     *      Provides the value for beat-width.  Also used to set the
-     *      beat-width in the JACK assistant object.
-     */
-
-    void set_beat_width (int bw)
+    void set_beat_length (int bl)
     {
-        m_beat_width = bw;
+        m_beat_width = bl;
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_beat_width(bw);
+        m_jack_asst.set_beat_width(bl);
 #endif
     }
+
+    bool set_beat_width (int bw);
 
     seq::number tempo_track_number () const
     {
@@ -1439,6 +1430,8 @@ public:
     {
         return m_master_bus.get();
     }
+
+    std::string client_id_string () const;
 
     int client_id () const
     {
@@ -2310,11 +2303,13 @@ public:
         mapper().off_sequences();
     }
 
-    std::string sequence_label (const sequence & seq);
-    std::string sequence_label (seq::number seqno);
-    std::string sequence_title (const sequence & seq);
-    std::string main_window_title (const std::string & fn = "");
-    std::string sequence_window_title (const sequence & seq);
+    std::string sequence_label (const sequence & seq) const;
+    std::string sequence_label (seq::number seqno) const;
+    std::string sequence_title (const sequence & seq) const;
+    std::string sequence_window_title (const sequence & seq) const;
+    std::string main_window_title (const std::string & fn = "") const;
+    std::string pulses_to_measure_string (midipulse tick) const;
+    std::string pulses_to_time_string (midipulse tick) const;
 
     bool ui_set_input (bussbyte bus, bool active);
     bool ui_get_input (bussbyte bus, bool & active, std::string & n) const;
@@ -2327,12 +2322,12 @@ public:
      *
      * \param clocktype
      *      The clock value read from the "rc" file.
-     */
 
-    void add_clock (e_clock clocktype, const std::string & name)
+    void add_clock (int buss, e_clock clocktype, const std::string & name)
     {
-        m_clocks.add(clocktype, name);
+        m_clocks.add(buss, clocktype, name);
     }
+     */
 
     void store_output_map ()
     {
@@ -2377,12 +2372,12 @@ public:
      *
      * \param flag
      *      The input flag read from the "rc" file.
-     */
 
-    void add_input (bool flag, const std::string & name)
+    void add_input (int bus, bool flag, const std::string & name)
     {
-        m_inputs.add(flag, name);
+        m_inputs.add(bus flag, name);
     }
+     */
 
     /**
      *  Sets a single input item, if in the currently existing range.
@@ -2890,14 +2885,15 @@ public:         /* GUI-support functions */
 
     void song_recording (bool f);
 
-    /*
-     * Now effectively a constant.
-     *
-     *  void song_record_snap (bool f)
-     *  {
-     *      m_song_record_snap = f;
-     *  }
-     */
+    void song_record_snap (bool f)
+    {
+        m_song_record_snap = f;
+    }
+
+    void toggle_record_snap ()
+    {
+        m_song_record_snap = ! m_song_record_snap;
+    }
 
     mutegroup::number group_selected () const
     {

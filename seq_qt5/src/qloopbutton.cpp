@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-02-19
+ * \updates       2021-03-26
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -172,8 +172,8 @@ qloopbutton::qloopbutton
     m_progress_box      (),
     m_event_box         ()
 {
-    int fontsize = usr().scale_size(6);
-    m_text_font.setPointSize(fontsize);
+//  int fontsize = usr().scale_font_size(6);
+//  m_text_font.setPointSize(fontsize);
     m_text_font.setBold(true);
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
@@ -196,24 +196,30 @@ qloopbutton::initialize_text ()
     {
         int w = width();
         int h = height();
-        int dx = usr().scale_size(2);
+        int dx = usr().scale_size(4);
         int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
         int lx = dx + 1;                        /* left x       */
         int ty = dy;                            /* top y        */
         int bh = usr().scale_size_y(12);        /* box height   */
-        int rx = int(0.50 * w) + lx - dx - 2;   /* right x      */
-        int by = int(0.85 * h);                 /* bottom y     */
+        int rx = int(0.50 * w) + lx - dx - 4;   /* right x      */
+        int by = int(0.85 * h) + dy;            /* bottom y     */
         if (vert_compressed())
             by = int(0.75 * h);                 /* bottom y     */
+
+        int fontsize = usr().scale_font_size(6);
+        m_text_font.setPointSize(fontsize);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("font rescale of %d to %d\n", 6, fontsize);
+#endif
 
         /*
          * Code from performer::sequence_label().
          */
 
-        bussbyte bus = m_seq->get_midi_bus();
-        int chan = m_seq->is_smf_0() ? 0 : m_seq->get_midi_channel() + 1;
+        bussbyte bus = m_seq->seq_midi_bus();
+        int chan = m_seq->is_smf_0() ? 0 : m_seq->seq_midi_channel() + 1;
         int bpb = int(m_seq->get_beats_per_bar());
         int bw = int(m_seq->get_beat_width());
         int sn = m_seq->seq_number();
@@ -302,7 +308,7 @@ qloopbutton::initialize_fingerprint ()
         if (t1 == 0)
             return;
 
-        int nh = c_max_midi_data_value;
+        int nh = c_midibyte_value_max;
         for (int i = 0; i < i1; ++i)
             m_fingerprint[i] = 0;
 
@@ -311,9 +317,7 @@ qloopbutton::initialize_fingerprint ()
          */
 
         n1 += 12;
-        if (n1 > c_max_midi_data_value)
-            n1 = c_max_midi_data_value;
-
+        n1 = clamp_midibyte_value(midibyte(n1));
         n0 -= 12;
         if (n0 < 0)
             n0 = 0;
@@ -393,10 +397,12 @@ qloopbutton::toggle_checked ()
 {
 #if defined USE_OLD_TOGGLE_CHECKED
     bool result = m_seq->toggle_playing();
+    set_checked(result);
 #else
     bool result = m_seq->sequence_playing_toggle();
+    if (result)
+        set_checked(m_seq->playing());
 #endif
-    set_checked(result);
     reupdate();
     return result;
 }
@@ -491,12 +497,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 painter.setPen(pen);
 #endif
 
-                /*
-                 * EXPERIMENTAL.  Might be needed for large window sizes.
-                 * int fontsize = usr().scale_size(6);
-                 * m_text_font.setPointSize(fontsize);
-                 */
-
                 painter.drawText(box, m_top_left.m_flags, title);
                 title = m_top_right.m_label.c_str();
                 box.setRect
@@ -533,9 +533,10 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     else
                         title = "Muted";
 
+                    int line2y = 2 * usr().scale_font_size(6);    // vs 13
                     box.setRect
                     (
-                        m_top_left.m_x, m_top_left.m_y + 12,
+                        m_top_left.m_x, m_top_left.m_y + line2y,
                         m_top_left.m_w, m_top_left.m_h
                     );
                     painter.drawText(box, m_top_left.m_flags, title);
@@ -557,7 +558,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             setEnabled(false);
             setText(snstring.c_str());
         }
-        // set_dirty(false);
     }
 }
 
@@ -688,7 +688,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         {
             int lowest, highest;
             bool have_notes = m_seq->minmax_notes(lowest, highest);
-            int height = c_max_midi_data_value;
+            int height = c_midibyte_value_max;
             if (have_notes)
             {
                 /*
@@ -696,9 +696,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                  */
 
                 highest += 12;
-                if (highest > c_max_midi_data_value)
-                    highest = c_max_midi_data_value;
-
+                highest = clamp_midibyte_value(midibyte(highest));
                 lowest -= 12;
                 if (lowest < 0)
                     lowest = 0;

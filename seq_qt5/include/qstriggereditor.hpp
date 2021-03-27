@@ -41,7 +41,7 @@
 #include <QTimer>
 #include <QPen>
 
-#include "app_limits.h"                 /* SEQ66_SEQKEY_HEIGHT macro        */
+#include "app_limits.h"                 /* SEQ66_SEQKEY_HEIGHT_DEFAULT      */
 #include "midi/midibytes.hpp"           /* seq66::midibyte, other aliases   */
 #include "qseqbase.hpp"                 /* seq66::qseqbase base class       */
 
@@ -74,7 +74,7 @@ public:
         seq::pointer seqp,
         int zoom                = SEQ66_DEFAULT_ZOOM,
         int snap                = SEQ66_DEFAULT_SNAP,
-        int keyHeight           = SEQ66_SEQKEY_HEIGHT,
+        int keyheight           = SEQ66_SEQKEY_HEIGHT_DEFAULT,
         QWidget * parent        = nullptr,
         int xoffset             = 0
     );

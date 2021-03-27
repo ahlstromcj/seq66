@@ -190,7 +190,7 @@ public:
     screenset () = delete;
     screenset
     (
-        number setnum,
+        number setnum   = sm_number_none,
         int rows        = SEQ66_DEFAULT_SET_ROWS,
         int columns     = SEQ66_DEFAULT_SET_COLUMNS
     );

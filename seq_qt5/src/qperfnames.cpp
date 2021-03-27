@@ -159,7 +159,7 @@ qperfnames::paintEvent (QPaintEvent *)
                 snprintf
                 (
                     name, sizeof name, "%-14.14s   %2d",
-                    s->name().c_str(), s->get_midi_channel() + 1
+                    s->name().c_str(), int(s->seq_midi_channel()) + 1
                 );
 
                 QString chinfo(name);

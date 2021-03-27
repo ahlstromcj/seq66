@@ -1,6 +1,6 @@
 # Seq66 0.91.0 (and above) 'usr' configuration file
 #
-# /home/ahlstrom/.config/seq66/qseq66.usr
+# /home/ahlstrom/.config/seq66/qpseq66.usr
 # Written on 2021-01-25 07:05:46
 #
 # This is a seq66.usr file. Edit it and place it in the
@@ -407,6 +407,6 @@ record = false
 qrecord = false
 record-style = merge
 
-# End of /home/ahlstrom/.config/seq66/qseq66.usr
+# End of /home/ahlstrom/.config/seq66/qpseq66.usr
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

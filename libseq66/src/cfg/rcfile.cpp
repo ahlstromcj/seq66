@@ -20,12 +20,12 @@
  * \file          rcfile.cpp
  *
  *  This module declares/defines the base class for managing the
- *  the <code> ~/.config/seq66.rc </code> ("rc") configuration file.
+ *  the ~/.config/seq66.rc ("rc") configuration file.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-05
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -50,7 +50,7 @@
  *  too much has changed.
  */
 
-#include <iomanip>                      /* std::setw manipulator            */
+// #include <iomanip>                      /* std::setw manipulator            */
 
 #include "cfg/midicontrolfile.hpp"      /* seq66::midicontrolfile class     */
 #include "cfg/mutegroupsfile.hpp"       /* seq66::mutegroupsfile class      */
@@ -232,7 +232,7 @@ rcfile::parse ()
     bool ok = true;                                     /* start hopefully! */
     if (line_after(file, "[midi-control-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());               /* "", "?", empty   */
         if (ok)
         {
             std::string mcfname = strip_quotes(line());
@@ -265,7 +265,7 @@ rcfile::parse ()
 
     if (line_after(file, "[mute-group-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());
         if (ok)
         {
             std::string mgfname = strip_quotes(line());
@@ -301,7 +301,7 @@ rcfile::parse ()
 
     if (line_after(file, "[usr-file]"))
     {
-        ok = ! is_empty_string(line());                 /* not "" or empty? */
+        ok = ! is_missing_string(line());
         if (ok)
         {
             std::string mgfname = strip_quotes(line());
@@ -316,7 +316,7 @@ rcfile::parse ()
         rc_ref().palette_active(flag != 0);
         if (next_data_line(file))
         {
-            ok = ! is_empty_string(line());             /* not "" or empty? */
+            ok = ! is_missing_string(line());
             if (ok)
             {
                 std::string pfname = strip_quotes(line());
@@ -394,14 +394,14 @@ rcfile::parse ()
         if (count > 0 && inbuses > 0)
         {
             int b = 0;
-            rc_ref().inputs().resize(size_t(inbuses));
+            rc_ref().inputs().clear();
             while (next_data_line(file))
             {
                 int bus, bus_on;
                 count = sscanf(scanline(), "%d %d", &bus, &bus_on);
                 if (count == 2)
                 {
-                    rc_ref().inputs().set(bus, bool(bus_on));
+                    rc_ref().inputs().add(bus, bool(bus_on), line());
                     ++b;
                 }
                 else if (count == 1)
@@ -462,7 +462,7 @@ rcfile::parse ()
          * odd event that the user changed the bus-order of the entries.
          */
 
-        rc_ref().clocks().resize(size_t(outbuses));
+        rc_ref().clocks().clear();
         for (int i = 0; i < outbuses; ++i)
         {
             int bus, bus_on;
@@ -470,7 +470,8 @@ rcfile::parse ()
             ok = count == 2;
             if (ok)
             {
-                rc_ref().clocks().set(bus, static_cast<e_clock>(bus_on));
+                e_clock e = int_to_clock(bus_on);
+                rc_ref().clocks().add(bus, e, line());
                 ok = next_data_line(file);
                 if (! ok && i < (outbuses-1))
                     return make_error_message("midi-clock", "missing data line");
@@ -491,7 +492,7 @@ rcfile::parse ()
          *  e_clock::off.  LATER?
          */
 
-        rc_ref().clocks().add(e_clock::off, "Bad clock count");
+        rc_ref().clocks().add(0, e_clock::off, "Bad clock count");
     }
 
     /*
@@ -553,7 +554,7 @@ rcfile::parse ()
     }
     if (line_after(file, "[last-used-dir]"))
     {
-        if (! is_empty_string(line()))                 /* not "" or empty? */
+        if (! is_missing_string(line()))
         {
             std::string ludir = strip_quotes(line());
             rc_ref().last_used_dir(ludir);
@@ -575,7 +576,7 @@ rcfile::parse ()
         {
             if (next_data_line(file))
             {
-                if (! is_empty_string(line()))          /* not "" or empty? */
+                if (! is_missing_string(line()))
                 {
                     std::string rfilename = strip_quotes(line());
                     if (! rc_ref().append_recent_file(rfilename))
@@ -596,11 +597,11 @@ rcfile::parse ()
     {
         bool exists = false;
         int flag = 0;
-        sscanf(scanline(), "%d", &flag);            /* playlist-active flag */
+        sscanf(scanline(), "%d", &flag);                /* playlist-active? */
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            exists = ! is_empty_string(fname);      /* not "" or empty      */
+            exists = ! is_missing_string(fname);
             if (exists)
             {
                 /*
@@ -629,7 +630,7 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string midibase = trimline();
-            if (! is_empty_string(midibase))
+            if (! is_missing_string(midibase))
             {
                 file_message("Playlist MIDI base directory", midibase);
                 rc_ref().midi_base_directory(midibase);
@@ -650,7 +651,7 @@ rcfile::parse ()
         if (next_data_line(file))
         {
             std::string fname = strip_quotes(line());
-            exists = ! is_empty_string(fname);
+            exists = ! is_missing_string(fname);
             if (exists)
             {
                 /*
@@ -1045,9 +1046,10 @@ rcfile::write ()
 
     for (bussbyte bus = 0; bus < inbuses; ++bus)
     {
-        int bus_on = static_cast<bool>(rc_ref().inputs().get(bus));
+        bool bus_on = rc_ref().inputs().get(bus);
+        std::string activestring = bus_on ? "1" : "0";
         file
-            << int(bus) << " " << bus_on << "    \""
+            << int(bus) << " " << activestring << "    \""
             << rc_ref().inputs().get_name(bus) << "\"\n"
             ;
     }
@@ -1055,11 +1057,18 @@ rcfile::write ()
     const inputslist & inpsref = input_port_map();
     if (inpsref.not_empty())
     {
+        bool active = inpsref.active();
+        std::string activestring = active ? "1" : "0";
+        std::string mapstatus = "map is ";
+        if (! active)
+            mapstatus += "not ";
+
+        mapstatus += "active";
         file
         << "\n[midi-input-map]\n\n"
         << "# This table is similar to the [midi-clock-map] section.\n"
            "# Port-mapping is disabled in manual/virtual port mode.\n\n"
-        << (inpsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
+        << activestring << "   # " << mapstatus << "\n\n"
         << input_port_map_list()
         ;
     }
@@ -1069,10 +1078,10 @@ rcfile::write ()
      * accessor, even if a pointer dereference, because it was created at
      * application start-up, and here we are at application close-down.
      *
-     * However, since we get these from the 'rc' file via the rc_refs().clocks()
-     * container accessor, we should depend on the performer class getting them,
-     * and then passing them to rcsettings via the performer::put_settings()
-     * function.
+     * However, since we get these from the 'rc' file via the
+     * rc_refs().clocks() container accessor, we should depend on the
+     * performer class getting them, and then passing them to rcsettings via
+     * the performer::put_settings() function.
      */
 
     bussbyte outbuses = bussbyte(rc_ref().clocks().count());
@@ -1098,9 +1107,9 @@ rcfile::write ()
 
     for (bussbyte bus = 0; bus < outbuses; ++bus)
     {
-        int bus_on = static_cast<int>(rc_ref().clocks().get(bus));
+        int bus_on = clock_to_int(rc_ref().clocks().get(bus));
         file
-            << std::setw(2) << int(bus) << " " << bus_on << "    \""
+            << int(bus) << " " << bus_on << "    \""
             << rc_ref().clocks().get_name(bus) << "\"\n"
             ;
     }
@@ -1108,6 +1117,13 @@ rcfile::write ()
     const clockslist & outsref = output_port_map();
     if (outsref.not_empty())
     {
+        bool active = outsref.active();
+        std::string activestring = active ? "1" : "0";
+        std::string mapstatus = "map is ";
+        if (! active)
+            mapstatus += "not ";
+
+        mapstatus += "active";
         file
         << "\n[midi-clock-map]\n\n"
            "# This table, if present, allows the pattern to set buss numbers\n"
@@ -1117,7 +1133,7 @@ rcfile::write ()
            "# the proper port. The short names are the same with ALSA or with\n"
            "# JACK with the a2jmidi bridge running. Note that port-mapping is\n"
            "# disabled in manual/virtual port mode.\n\n"
-        << (outsref.active() ? "1" : "0") << "   # map is/not (1/0) active\n\n"
+        << activestring << "   # " << mapstatus << "\n\n"
         << output_port_map_list()
         ;
     }

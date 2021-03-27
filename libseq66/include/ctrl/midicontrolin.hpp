@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-06
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of midicontrol objects keyed by a key ordinal
@@ -81,12 +81,6 @@ private:
     mccontainer m_container;
 
     /**
-     *  A name to use for showing the contents of the container.
-     */
-
-    std::string m_container_name;
-
-    /**
      *  Provides the text of a "[comments]" section of the MIDI control "rc"
      *  file.  It can, for example, note the device for which the controls
      *  apply.
@@ -101,14 +95,6 @@ private:
      */
 
     bool m_inactive_allowed;
-
-    /**
-     *  Indicates if the control values were loaded from an "rc" configuration
-     *  file, as opposed to being empty.  (There are no default values at this
-     *  time.)
-     */
-
-    bool m_loaded_from_rc;
 
     /**
      *  Holds the current control statuses for use by the performer.  It
@@ -129,23 +115,13 @@ private:
 
 public:
 
-    midicontrolin
-    (
-        int buss    = 0,                        /* NOT YET USED */
-        int rows    = SEQ66_DEFAULT_SET_ROWS,
-        int columns = SEQ66_DEFAULT_SET_COLUMNS
-    );
     midicontrolin (const std::string & name);
     midicontrolin (const midicontrolin &) = default;
     midicontrolin & operator = (const midicontrolin &) = default;
     midicontrolin (midicontrolin &&) = default;
     midicontrolin & operator = (midicontrolin &&) = default;
     virtual ~midicontrolin () = default;
-
-    const std::string & name () const
-    {
-        return m_container_name;
-    }
+    virtual bool initialize (int buss, int rows, int columns) override;
 
     comments & comments_block ()
     {
@@ -196,16 +172,6 @@ public:
     void inactive_allowed (bool flag)
     {
         m_inactive_allowed = flag;
-    }
-
-    bool loaded_from_rc () const
-    {
-        return m_loaded_from_rc;
-    }
-
-    void loaded_from_rc (bool flag)
-    {
-        m_loaded_from_rc = flag;
     }
 
     automation::ctrlstatus status () const

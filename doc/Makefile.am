@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2020-10-02
-# \updates     2021-03-06
+# \updates     2021-03-08
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -57,12 +57,16 @@ seq66docdir = @seq66docdir@
 # 	   method doesn't work because /usr/bin/install will only install files,
 # 	   and automake doesn't give it the switch needed to install directories.
 #
+# 	   Also, since we don't always build the documentation, we copied these
+# 	   commands to data/Makefile.am as well.
+#
 #------------------------------------------------------------------------------
 
 install-data-local:
-	mkdir -p $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
+	@echo "Copying Seq66 documentation to $(seq66docdir)..."
+	mkdir -p $(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.pdf $(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.ods $(seq66docdir)
 
 #*******************************************************************************
 # uninstall-hook
@@ -73,7 +77,7 @@ install-data-local:
 #-------------------------------------------------------------------------------
 
 uninstall-hook:
-	rm -rf $(DESTDIR)$(seq66docdir)
+	rm -rf $(seq66docdir)
 
 #****************************************************************************
 # Makefile.am (seq66 top-level)

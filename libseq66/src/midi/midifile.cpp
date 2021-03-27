@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2020-12-13
+ * \updates       2021-03-18
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -65,10 +65,9 @@
  *  Uses the new format for the proprietary footer section of the Seq24
  *  MIDI file.
  *
- *  In the new format, each sequencer-specfic value (0x242400xx, as
- *  defined in the globals module) is preceded by the sequencer-specific
- *  prefix, 0xFF 0x7F len id/date). By default, the new format is used.
- *  In Seq66, the old format is no longer supported.
+ *  In the new format, each sequencer-specfic value (0x242400xx) is preceded
+ *  by the sequencer-specific prefix, 0xFF 0x7F len). By default, the new
+ *  format is used.  In Seq66, the old format is no longer supported.
  *
  * Running status:
  *
@@ -135,13 +134,13 @@ const std::string midifile::sm_meta_text_labels[8] =
  *      -   Reading.  The caller of read_midi_file(), as well as the function
  *          itself, determine the value of ppqn used here.  It is either 0 or
  *          the result of seq66::choose_ppqn().
- *          -   If set to SEQ66_USE_FILE_PPQN (0), then m_ppqn is set to the
+ *          -   If usr().use_file_ppqn() is true, then m_ppqn is set to the
  *              value read from the MIDI file.  No PPQN scaling is done.
  *          -   Otherwise, the ppqn value is used as is.  If the file uses a
- *              different PPQN than 192, PPQN rescaling is done to make it
- *              192.  The PPQN value read from the MIDI file is used to scale
- *              the running-time of the sequence relative to
- *              SEQ66_DEFAULT_PPQN.
+ *              different PPQN than the default, PPQN rescaling is done to
+ *              make it so.  The PPQN value read from the MIDI file is used to
+ *              scale the running-time of the sequence relative to
+ *              usr().default_ppqn().
  *      -   Writing.  This value is written to the MIDI file in the header
  *          chunk of the song.  Note that the caller must query for the
  *          PPQN set during parsing, and pass it to the constructor when
@@ -283,24 +282,25 @@ midifile::read_long ()
 
 /**
  *  We want to be able to support a special case, the c_mutegroups count.  In
- *  Seq24, the count was always 1024 (0x400), which would be represented in the
- *  MIDI file as 0x00 0x04 0x00 0x00.  Other numbers use the same encoding, which
- *  does not use the MIDI VLV encoding at all.  The bytes are stored
- *  conventionally.
+ *  Seq24, the count was always 1024 (0x400), which would be represented in
+ *  the MIDI file as 0x00 0x04 0x00 0x00.  Other numbers use the same
+ *  encoding, which does not use the MIDI VLV encoding at all.  The bytes are
+ *  stored conventionally.
  *
  *  We also want to be able to support counts other than 1024 (32 groups x 32
- *  sequences), such as 1024 = 16 groups x 64 sequences and 1536 = 16 groups x 96
- *  sequences.  We can adopt a special encoding if the value is not 0 or 1024:
+ *  sequences), such as 1024 = 16 groups x 64 sequences and 1536 = 16 groups x
+ *  96 sequences.  We can adopt a special encoding if the value is not 0 or
+ *  1024:
  *
  *      -   2-bytes group countvalue
  *      -   2-bytes sequence count value
  *
  *  So, 16 groups x 64 sequences would be represented by 0x1040 = 4160 dec.
- *  16 groups x 96 sequences would be represented by 0x1060 = 4192 dec.
- *  And 1024 dec = 0x0400 would represent 4 groups and 0 sequences, obviously
+ *  16 groups x 96 sequences would be represented by 0x1060 = 4192 dec.  And
+ *  1024 dec = 0x0400 would represent 4 groups and 0 sequences, obviously
  *  bogus.
  *
- *  Recall that midilong (see midi/midibytes.hpp) is unsigned.
+ *  Recall that midilong (see midi/midibytes.hpp) is still signed.
  *
  * \param [out] highbytes
  *      Provides the value of the most significant 2 bytes of the four-byte
@@ -900,13 +900,14 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
     midishort NumTracks = read_short();
     midishort fileppqn = read_short();
     file_ppqn(int(fileppqn));                       /* original file PPQN   */
-    if (ppqn() == SEQ66_USE_FILE_PPQN)
+    if (usr().use_file_ppqn())
     {
-        ppqn(file_ppqn());
-        m_use_scaled_ppqn = false;                  /* redundant?           */
+        p.file_ppqn(file_ppqn());                   /* let performer know   */
+        ppqn(file_ppqn());                          /* PPQN == file PPQN    */
+        m_use_scaled_ppqn = false;                  /* do not scale time    */
     }
     else
-        m_use_scaled_ppqn = file_ppqn() > 0;        /* redundant?           */
+        m_use_scaled_ppqn = file_ppqn() != usr().default_ppqn();
 
     for (midishort track = 0; track < NumTracks; ++track)
     {
@@ -1041,24 +1042,27 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                         case EVENT_META_TRACK_NAME:     /* FF 03 len text   */
 
-                            if (! checklen(len, mtype))
+                            if (checklen(len, mtype))
+                            {
+                                int count = 0;
+                                for (int i = 0; i < int(len); ++i)
+                                {
+                                    char ch = char(read_byte());
+                                    if (count < SEQ66_TRACKNAME_MAX)
+                                    {
+                                        TrackName[count] = ch;
+                                        ++count;
+                                    }
+                                }
+                                TrackName[count] = '\0';
+                                s.set_name(TrackName);
+                            }
+                            else
                                 return false;
 
-                            if (len > SEQ66_TRACKNAME_MAX)
-                                len = SEQ66_TRACKNAME_MAX;
-
-                            for (int i = 0; i < int(len); ++i)
-                                TrackName[i] = char(read_byte());
-
-                            TrackName[len] = '\0';
-                            s.set_name(TrackName);
                             break;
 
                         case EVENT_META_END_OF_TRACK:   /* FF 2F 00         */
-
-                            /*
-                             *  if (delta == 0) ++currenttime;
-                             */
 
                             s.set_length(currenttime, false);
                             s.zero_markers();
@@ -1072,14 +1076,10 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                             if (len == 3)
                             {
-                                /*
-                                 * See "Tempo events" in the function banner.
-                                 */
-
-                                midibyte bt[4];
-                                bt[0] = read_byte();                // tt
-                                bt[1] = read_byte();                // tt
-                                bt[2] = read_byte();                // tt
+                                midibyte bt[4];         /* "Tempo events"   */
+                                bt[0] = read_byte();                /* tt   */
+                                bt[1] = read_byte();                /* tt   */
+                                bt[2] = read_byte();                /* tt   */
                                 bt[3] = 0;
 
                                 double tt = tempo_us_from_bytes(bt);
@@ -1100,7 +1100,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                     bool ok = e.append_meta_data(mtype, bt, 3);
                                     if (ok)
-                                        s.append_event(e);    /* new 0.93 */
+                                        s.append_event(e);
                                 }
                             }
                             else
@@ -1209,8 +1209,8 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
-                                    len -= 12;
                                     add_trigger(s, p);
+                                    len -= 12;
                                 }
                             }
                             else if (seqspec == c_musickey)
@@ -1242,9 +1242,13 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 (void) set_error_dump
                                 (
-                                    "Unsupported track SeqSpec, skipping...",
+                                    "Unknown Seq66 SeqSpec, skipping...",
                                     seqspec
                                 );
+                            }
+                            else
+                            {
+                                /* will skip all other SeqSpecs */
                             }
                             skip(len);                  /* eat it           */
                             break;
@@ -1282,15 +1286,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             break;
 
                         case EVENT_META_MIDI_CHANNEL:   /* FF 20 01 cc      */
-
-                            (void) read_meta_data(s, e, mtype, len);
-                            break;
-
                         case EVENT_META_MIDI_PORT:      /* FF 21 01 pp      */
-
-                            (void) read_meta_data(s, e, mtype, len);
-                            break;
-
                         case EVENT_META_SMPTE_OFFSET:   /* FF 54 03 t t t   */
 
                             (void) read_meta_data(s, e, mtype, len);
@@ -1480,9 +1476,9 @@ midifile::finalize_sequence
  *
  * \return
  *      Returns the control-tag value found.  These are the values, such as
- *      c_midich, found in the midi_vector_base module, that indicate the type of
- *      sequencer-specific data that comes next.  If there is not enough data to
- *      process, then 0 is returned.
+ *      c_midich, found in the midi_vector_base module, that indicate the type
+ *      of sequencer-specific data that comes next.  If there is not enough
+ *      data to process, then 0 is returned.
  */
 
 midilong
@@ -1493,11 +1489,11 @@ midifile::parse_prop_header (int file_size)
     {
         result = read_long();                   /* status (new), or C_tag   */
         midibyte status = (result & 0x00FF0000) >> 16;      /* 2-byte shift */
-        if (status == 0xFF)
+        if (status == EVENT_MIDI_META)          /* 0xFF meta marker         */
         {
             skip(-2);                           /* back up to meta type     */
             midibyte type = read_byte();        /* get meta type            */
-            if (type == 0x7F)                   /* SeqSpec event marker     */
+            if (type == EVENT_META_SEQSPEC)     /* 0x7F event marker     */
             {
                 (void) read_varinum();          /* prop section length      */
                 result = read_long();           /* control tag              */
@@ -1506,9 +1502,8 @@ midifile::parse_prop_header (int file_size)
             {
                 fprintf
                 (
-                    stderr,
-                    "Bad meta type '%x' in prop section near offset %lx\n",
-                    int(type), (unsigned long)(m_pos)
+                    stderr, "Unexpected meta type 0x%x near offset 0x%lx\n",
+                    int(type), long(m_pos)
                 );
             }
         }
@@ -1618,19 +1613,20 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         midilong seqspec = parse_prop_header(file_size);
 
         /*
-         * Seq24 would store the MIDI control setting in the MIDI file.
-         * While this could be a useful feature, it seems a bit confusing, since
-         * the user/musician will more likely define those controls for his set of
+         * Seq24 would store the MIDI control setting in the MIDI file.  While
+         * this could be a useful feature, it seems a bit confusing, since the
+         * user/musician will more likely define those controls for his set of
          * equipment to apply to all songs.
          *
          * Furthermore, we would need to load these control settings into a
          * midicontrolin (see ctrl/midicontrolin modules).
          *
-         * And, lastly, Seq24 never wrote these controls to the file.  It merely
-         * wrote the c_midictrl code, followed by a long 0.
+         * And, lastly, Seq24 never wrote these controls to the file.  It
+         * merely wrote the c_midictrl code, followed by a long 0.
          *
-         * For now, we are going to evade this functionality.  We will continue to
-         * write this section, and try to read it, but expect it to be empty.
+         * For now, we are going to evade this functionality.  We will
+         * continue to write this section, and try to read it, but expect it
+         * to be empty.
          */
 
         if (seqspec == c_midictrl)
@@ -1658,7 +1654,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             {
                 read_byte_array(a, 6);
 
-#if defined USE_MIDI_CONTROL_IN_SONGS           // WHY DID I DO THIS?  INVESTIGATE
+#if defined USE_MIDI_CONTROL_IN_SONGS                   /* deprecated */
                 p.midi_control_toggle(i).set(a);
 #endif
                 read_byte_array(a, 6);
@@ -1673,12 +1669,6 @@ midifile::parse_proprietary_track (performer & p, int file_size)
 #endif
             }
         }
-
-        /*
-         * As with c_midictrl, this feature was never fully implemented in
-         * Seq24.  We barely handle this data.
-         */
-
         seqspec = parse_prop_header(file_size);
         if (seqspec == c_midiclocks)
         {
@@ -1719,16 +1709,16 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             midishort screen_sets = read_short();
             for (midishort x = 0; x < screen_sets; ++x)
             {
-                midishort len = read_short();           /* length of string */
+                midishort len = read_short();               /* string size  */
                 std::string notess;
                 for (midishort i = 0; i < len; ++i)
                     notess += read_byte();                  /* unsigned!    */
 
-                p.set_screenset_notepad(x, notess, true);  /* load time    */
+                p.set_screenset_notepad(x, notess, true);   /* load time    */
             }
         }
         seqspec = parse_prop_header(file_size);
-        if (seqspec == c_bpmtag)                        /* beats per minute */
+        if (seqspec == c_bpmtag)                            /* beats/minute */
         {
             /*
              * Should check here for a conflict between the Tempo meta event
@@ -1741,7 +1731,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             if (bpm > (SEQ66_BPM_SCALE_FACTOR - 1.0))
                 bpm /= SEQ66_BPM_SCALE_FACTOR;
 
-            p.set_beats_per_minute(bpm);                /* 2nd way to set!  */
+            p.set_beats_per_minute(bpm);                    /* 2nd setter   */
         }
 
         /*
@@ -1755,9 +1745,9 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             (void) parse_mute_groups(p);
 
         /*
-         * We let Seq66 read this new stuff even if legacy mode or the
-         * global-background sequence is in force.  Those two flags affect
-         * only the writing of the MIDI file, not the reading.
+         * We let Seq66 read this new stuff even the global-background
+         * sequence is in force.  That flag affects only the writing of the
+         * MIDI file, not the reading.
          */
 
         seqspec = parse_prop_header(file_size);
@@ -1896,9 +1886,9 @@ midifile::parse_mute_groups (performer & p)
                 setsize = low;
 
                 /*
-                 * What about rows & columns?  Ultimately, the set-size must match
-                 * that specified by the application's user-interface as must the
-                 * rows and columns.
+                 * What about rows & columns?  Ultimately, the set-size must
+                 * match that specified by the application's user-interface as
+                 * must the rows and columns.
                  */
             }
             for (unsigned g = 0; g < groupcount; ++g)
@@ -1907,12 +1897,12 @@ midifile::parse_mute_groups (performer & p)
                 midilong group = read_long();
                 for (unsigned s = 0; s < setsize; ++s)
                 {
-                    midilong gmutestate = read_long();  /* why long for a bit!? */
+                    midilong gmutestate = read_long();  /* long for a bit!? */
                     bool status = gmutestate != 0;
                     mutebits.push_back(midibool(status));
                 }
                 if (! mutes.load(group, mutebits))
-                    break;                              /* usually a duplicate  */
+                    break;                              /* often duplicate  */
             }
         }
     }
@@ -2224,9 +2214,10 @@ midifile::write_start_tempo (midibpm start_tempo)
 void
 midifile::write_time_sig (int beatsperbar, int beatwidth)
 {
-    write_byte(0x00);                       /* delta time at beginning      */
-    write_short(0xFF58);
-    write_byte(0x04);                       /* the message length           */
+    write_byte(0);                          /* delta time at beginning      */
+    write_byte(EVENT_MIDI_META);            /* 0xFF meta marker             */
+    write_byte(EVENT_META_TIME_SIGNATURE);  /* 0x58                         */
+    write_byte(4);                          /* the message length           */
     write_byte(beatsperbar);                /* nn                           */
     write_byte(beat_log2(beatwidth));       /* dd                           */
     write_short(0x1808);                    /* cc bb                        */
@@ -2265,17 +2256,12 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
  */
 
 void
-midifile::write_prop_header
-(
-    midilong control_tag,
-    long data_length
-)
+midifile::write_prop_header ( midilong control_tag, long len)
 {
-    int len = data_length + 4;          /* data + sizeof(control_tag);  */
-    write_byte(0x00);                   /* delta time                   */
-    write_byte(0xFF);
-    write_byte(0x7F);
-    write_varinum(len);
+    write_byte(0);                      /* delta time                   */
+    write_byte(EVENT_MIDI_META);        /* 0xFF meta marker             */
+    write_byte(EVENT_META_SEQSPEC);     /* 0x7F sequencer-specific mark */
+    write_varinum(len + 4);             /* data + sizeof(control_tag);  */
     write_long(control_tag);            /* use legacy output call       */
 }
 
@@ -2458,8 +2444,8 @@ midifile::write (performer & p, bool doseqspec)
  *  We get the number of active tracks, and we don't count tracks with no
  *  triggers, or tracks that are muted.
  *
- *  This function, write_song(), was not included in Seq66 because it
- *  Seq66 writes standard MIDI files (with SeqSpec information that a
+ *  This function, write_song(), was not included in Seq24 because it
+ *  Seq24 writes standard MIDI files (with SeqSpec information that a
  *  decent sequencer should ignore).  But we believe this is a good feature
  *  for export, and created the Export Song command to do this.  The
  *  write_song() function doesn't count tracks that are muted or that have no
@@ -2521,13 +2507,13 @@ midifile::write_song (performer & p)
     bool result = numtracks > 0;
     if (result)
     {
-        printf("[Exporting song as MIDI file, %d ppqn]\n", m_ppqn);
+        printf("[Exporting song, %d ppqn]\n", m_ppqn);
         result = write_header(numtracks);
     }
     else
     {
         m_error_message =
-            "The current MIDI song has no exportable tracks; "
+            "The current song has no exportable tracks; "
             "create a performance in the Song Editor first."
             ;
         result = false;
@@ -2554,6 +2540,8 @@ midifile::write_song (performer & p)
                     midi_vector lst(seq);
                     lst.fill_seq_number(track);
                     lst.fill_seq_name(seq.name());
+
+#if defined USE_FILL_TIME_SIG_AND_TEMPO
                     if (track == 0)
                     {
                         /*
@@ -2561,15 +2549,14 @@ midifile::write_song (performer & p)
                          * creation/writing of time-sig and tempo events.
                          */
 
-#if defined USE_FILL_TIME_SIG_AND_TEMPO
                         seq.events().scan_meta_events();
                         lst.fill_time_sig_and_tempo
                         (
                             p, seq.events().has_time_signature(),
                             seq.events().has_tempo()
                         );
-#endif
                     }
+#endif
 
                     /*
                      * Add each trigger as described in the function banner.
@@ -2580,14 +2567,14 @@ midifile::write_song (performer & p)
                     for (auto & t : trigs)
                         previous_ts = lst.song_fill_seq_event(t, previous_ts);
 
-                    if (! trigs.empty())        /* adjust the sequence length */
+                    if (! trigs.empty())        /* adjust sequence length   */
                     {
                         const trigger & end_trigger = trigs.back();
 
                         /*
-                         * This isn't really the trigger length.  It is off by 1.
-                         * But subtracting the tick_start() value can really screw
-                         * things up.
+                         * This isn't really the trigger length.  It is off by
+                         * 1.  But subtracting the tick_start() value can
+                         * really screw things up.
                          */
 
                         midipulse seqend = end_trigger.tick_end();
@@ -2598,7 +2585,10 @@ midifile::write_song (performer & p)
                             if (remainder != measticks - 1)
                                 seqend += measticks - remainder - 1;
                         }
-                        lst.song_fill_seq_trigger(end_trigger, seqend, previous_ts);
+                        lst.song_fill_seq_trigger
+                        (
+                            end_trigger, seqend, previous_ts
+                        );
                     }
                     write_track(lst);
                 }
@@ -2628,14 +2618,6 @@ midifile::write_song (performer & p)
             result = false;
         }
     }
-
-    /*
-     * Does not apply to exporting.
-     *
-     * if (result)
-     *      p.is_modified(false);
-     */
-
     return result;
 }
 
@@ -2781,9 +2763,9 @@ midifile::write_track_name (const std::string & trackname)
     bool ok = ! trackname.empty();
     if (ok)
     {
-        write_byte(0x00);                               /* delta time       */
-        write_byte(0xFF);                               /* meta tag         */
-        write_byte(0x03);                               /* second byte      */
+        write_byte(0);                                  /* delta time       */
+        write_byte(EVENT_MIDI_META);                    /* 0xFF meta tag    */
+        write_byte(EVENT_META_TRACK_NAME);              /* 0x03 second byte */
         write_varinum(midilong(trackname.size()));
         for (int i = 0; i < int(trackname.size()); ++i)
             write_byte(trackname[i]);
@@ -2804,18 +2786,15 @@ midifile::read_track_name ()
     std::string result;
     (void) read_byte();                         /* throw-away delta time    */
     midibyte status = read_byte();              /* get the seq-spec marker  */
-    if (status == 0xFF)
+    if (status == EVENT_MIDI_META)              /* 0x7F                     */
     {
-        if (read_byte() == 0x03)
+        if (read_byte() == EVENT_META_TRACK_NAME)       /* 0x03             */
         {
-            midilong tl = int(read_varinum());     /* track length     */
-            if (tl > 0)
+            midilong tl = int(read_varinum());  /* track length             */
+            for (midilong i = 0; i < tl; ++i)
             {
-                for (midilong i = 0; i < tl; ++i)
-                {
-                    midibyte c = read_byte();
-                    result += c;
-                }
+                midibyte c = read_byte();
+                result += c;
             }
         }
     }
@@ -2864,10 +2843,10 @@ midifile::track_name_size (const std::string & trackname) const
 void
 midifile::write_seq_number (midishort seqnum)
 {
-    write_byte(0x00);                           /* delta time               */
-    write_byte(0xFF);                           /* meta tag                 */
-    write_byte(0x00);                           /* second byte              */
-    write_byte(0x02);                           /* finish sequence tag      */
+    write_byte(0);                              /* delta time               */
+    write_byte(EVENT_MIDI_META);                /* 0xFF meta tag            */
+    write_byte(EVENT_META_SEQ_NUMBER);          /* 0x00 second byte         */
+    write_byte(2);                              /* 2-bytes of data          */
     write_short(seqnum);                        /* write sequence number    */
 }
 
@@ -2885,9 +2864,9 @@ midifile::read_seq_number ()
     int result = -1;
     (void) read_byte();                         /* throw-away delta time    */
     midibyte status = read_byte();              /* get the seq-spec marker  */
-    if (status == 0xFF)
+    if (status == EVENT_MIDI_META)
     {
-        if (read_byte() == 0x00 && read_byte() == 0x02)
+        if (read_byte() == EVENT_META_SEQ_NUMBER && read_byte() == 2)
             result = int(read_short());
     }
     return result;
@@ -2900,9 +2879,9 @@ midifile::read_seq_number ()
 void
 midifile::write_track_end ()
 {
-    write_byte(0xFF);                       /* meta tag                     */
-    write_byte(0x2F);                       /* EVENT_META_END_OF_TRACK      */
-    write_byte(0x00);
+    write_byte(EVENT_MIDI_META);                    /* 0xFF meta tag        */
+    write_byte(EVENT_META_END_OF_TRACK);            /* 0x2F                 */
+    write_byte(0);                                  /* no data              */
 }
 
 /**
@@ -3005,9 +2984,9 @@ midifile::set_error_dump (const std::string & msg, unsigned long value)
  *      The full path specification for the file to be opened.
  *
  * \param out ppqn
- *      Provides the PPQN to start with.  It can also be SEQ66_USE_FILE_PPQN,
- *      SEQ66_USE_DEFAULT_PPQN, or a legitimate PPQN value.  The performer's
- *      PPQN value is updated, and will affect the rest of the application.
+ *      Provides the PPQN to start with.  It can be SEQ66_USE_FILE_PPQN,
+ *      or a legitimate PPQN value.  The performer's PPQN value is updated,
+ *      and will affect the rest of the application.
  *
  * \param [out] errmsg
  *      If the function fails, this string is filled with the error message.
@@ -3031,11 +3010,10 @@ read_midi_file
     if (result)
     {
         bool is_wrk = file_extension_match(fn, "wrk");
-        bool usefileppqn = usr().midi_ppqn() == SEQ66_USE_FILE_PPQN;
-        if (usefileppqn)
+        if (usr().use_file_ppqn())
             ppqn = SEQ66_USE_FILE_PPQN;         /* no usr().file_ppqn() yet */
         else
-            ppqn = choose_ppqn(ppqn);           /* re-evaluate parameter    */
+            ppqn = usr().default_ppqn();
 
         midifile * fp = is_wrk ? new wrkfile(fn, ppqn) : new midifile(fn, ppqn) ;
         std::unique_ptr<midifile> f(fp);
@@ -3043,18 +3021,11 @@ read_midi_file
         result = f->parse(p, 0);
         if (result)
         {
-            if (usefileppqn)
+            if (usr().use_file_ppqn())
             {
                 ppqn = f->ppqn();               /* get & return file PPQN   */
                 usr().file_ppqn(ppqn);          /* save the value from file */
             }
-            /*
-             * We don't use this call because we're not changing PPQN, we are
-             * setting it.
-             *
-             *      p.change_ppqn(choose_ppqn(ppqn));
-             */
-
             p.set_ppqn(choose_ppqn(ppqn));      /* set chosen PPQN for MIDI */
             rc().last_used_dir(fn.substr(0, fn.rfind("/") + 1));
             rc().midi_filename(fn);             /* save current file-name   */

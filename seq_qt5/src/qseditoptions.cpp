@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-05
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -32,7 +32,6 @@
 
 #include <QButtonGroup>
 
-#include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "gui_palette_qt5.hpp"          /* seq66::global_palette()          */
@@ -40,6 +39,7 @@
 #include "qclocklayout.hpp"
 #include "qinputcheckbox.hpp"
 #include "qseditoptions.hpp"
+#include "qsmainwnd.hpp"
 
 /*
  *  Qt's uic application allows a different output file-name, but not sure
@@ -84,7 +84,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
  :
     QDialog                 (parent),
     ui                      (new Ui::qseditoptions),
+    m_parent_widget         (dynamic_cast<qsmainwnd *>(parent)),
     m_perf                  (p),
+    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
     m_is_initialized        (false),
     m_backup_JackTransport  (false),
     m_backup_TimeMaster     (false),
@@ -135,10 +137,30 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         ui->chkJackNative, SIGNAL(stateChanged(int)),
         this, SLOT(update_jack_midi())
     );
+
+    ui->chkNoteResume->setChecked(usr().resume_note_ons());
     connect
     (
         ui->chkNoteResume, SIGNAL(stateChanged(int)),
         this, SLOT(update_note_resume())
+    );
+
+    ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
+    connect
+    (
+        ui->chkUseFilesPPQN, SIGNAL(stateChanged(int)),
+        this, SLOT(update_use_file_ppqn())
+    );
+
+    /*
+     *  Combo-box for changing the default PPQN.
+     */
+
+    (void) set_ppqn_combo();
+    connect
+    (
+        ui->combo_box_ppqn, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(update_ppqn_by_text(const QString &))
     );
 
     /*
@@ -173,6 +195,9 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
      * Display tab.
      */
 
+    ui->spinKeyHeight->setMinimum(SEQ66_SEQKEY_HEIGHT_MIN);
+    ui->spinKeyHeight->setMaximum(SEQ66_SEQKEY_HEIGHT_MAX);
+    ui->spinKeyHeight->setValue(usr().key_height());
     connect
     (
         ui->spinKeyHeight, SIGNAL(valueChanged(int)),
@@ -301,8 +326,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     vboxinputs->addItem(spacer2);
     syncWithInternals();
 
-    std::string clid = std::to_string(perf().client_id());
-    ui->plainTextEditClientId->setPlainText(clid.c_str());
+    std::string clid = perf().client_id_string();
+    ui->plainTextEditClientId->setPlainText(QString::fromStdString(clid));
     m_is_initialized = true;
 
 #if defined SEQ66_PLATFORM_WINDOWS
@@ -317,6 +342,30 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
 qseditoptions::~qseditoptions ()
 {
     delete ui;
+}
+
+bool
+qseditoptions::set_ppqn_combo ()
+{
+    bool result = false;
+    int count = m_ppqn_list.count();
+    if (count > 0)
+    {
+        std::string p = std::to_string(usr().default_ppqn());
+        QString combo_text = QString::fromStdString(p);
+        ui->combo_box_ppqn->clear();
+        ui->combo_box_ppqn->insertItem(0, combo_text);
+        for (int i = 1; i < count; ++i)
+        {
+            p = m_ppqn_list.at(i);
+            combo_text = QString::fromStdString(p);
+            ui->combo_box_ppqn->insertItem(i, combo_text);
+            if (std::stoi(p) == perf().ppqn())
+                result = true;
+        }
+        ui->combo_box_ppqn->setCurrentIndex(0);
+    }
+    return result;
 }
 
 void
@@ -453,6 +502,7 @@ qseditoptions::syncWithInternals ()
      */
 
     ui->chkNoteResume->setChecked(usr().resume_note_ons());
+    ui->chkUseFilesPPQN->setChecked(usr().use_file_ppqn());
     ui->spinKeyHeight->setValue(usr().key_height());
 
     char tmp[32];
@@ -460,6 +510,17 @@ qseditoptions::syncWithInternals ()
     ui->lineEditUiScaling->setText(tmp);
     snprintf(tmp, sizeof tmp, "%g", usr().window_scale_y());
     ui->lineEditUiScalingHeight->setText(tmp);
+}
+
+/**
+ *  Instead of this sequence of calls, we could send a Qt signal from
+ *  qclocklayout to eventually call the qsmainwnd slot.
+ */
+
+void
+qseditoptions::enable_bus_item (int bus, bool enabled)
+{
+    m_parent_widget->enable_bus_item(bus, enabled);
 }
 
 /**
@@ -481,6 +542,40 @@ qseditoptions::update_note_resume ()
             usr().resume_note_ons(resumenotes);
             perf().resume_note_ons(resumenotes);
             syncWithInternals();
+        }
+    }
+}
+
+void
+qseditoptions::update_ppqn_by_text (const QString & text)
+{
+    std::string temp = text.toStdString();
+    if (! temp.empty())
+    {
+        int p = std::stoi(temp);
+        if (perf().change_ppqn(p))
+        {
+            m_parent_widget->set_ppqn_text(temp);
+            m_ppqn_list.current(temp);
+            ui->combo_box_ppqn->setItemText(0, text);
+            usr().default_ppqn(p);
+            usr().save_user_config(true);
+        }
+    }
+}
+
+void
+qseditoptions::update_use_file_ppqn ()
+{
+    if (m_is_initialized)
+    {
+        bool ufppqn = ui->chkUseFilesPPQN->isChecked();
+        bool status = usr().use_file_ppqn();
+        if (ufppqn != status)
+        {
+            usr().use_file_ppqn(ufppqn);
+            syncWithInternals();
+            usr().save_user_config(true);
         }
     }
 }

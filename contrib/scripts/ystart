@@ -1,10 +1,12 @@
 #!/bin/bash
 #
-# Updated 2020-11-25
+# Date    2020-11-25
+# Updated 2021-03-14 (Pi day!)
 #
 # YOSHPATH="/usr/bin"
 #
 # Starts Yoshimi with our oft-used GM patch setup for Yoshimi.
+# Adjust the variables below for your setup.
 
 YOSHPATH="/usr/bin"
 YOSHIMI="yoshimi"
@@ -14,13 +16,17 @@ CFGPATH="$HOME/$REPOPATH/yoshimi-cookbook/sequencer64/b4uacuse"
 
 if [ "$1" == "latest" ] ; then
     YOSHPATH="/usr/local/bin"
-    YOSHIMI="yoshimi-1.7.2rc1"
+#   YOSHIMI="yoshimi-1.7.2rc1"
+    YOSHIMI="yoshimi"
     shift
 fi
 
 if [ "$1" == "jack" ] ; then
     OPTIONS="-jJ"
+elif [ "$1" == "alsa" ] ; then
+    OPTIONS="-aA"
 fi
 
+echo "Running $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state"
 $YOSHPATH/$YOSHIMI $OPTIONS --state=$CFGPATH/yoshimi-b4uacuse-gm.state
 

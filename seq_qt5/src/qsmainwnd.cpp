@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-07
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -73,7 +73,6 @@
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
-#include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "midi/songsummary.hpp"         /* seq66::write_song_summary()      */
 #include "midi/wrkfile.hpp"             /* seq66::wrkfile class             */
@@ -97,8 +96,7 @@
 #include "qsliveframe.hpp"
 #include "qslivegrid.hpp"
 #include "qt5_helpers.hpp"              /* seq66::qt_set_icon() etc.        */
-#include "sessions/smanager.hpp"        /* pulse_to_measurestring(), etc.   */
-#include "util/calculations.hpp"        /* pulse_to_measurestring(), etc.   */
+#include "sessions/smanager.hpp"        /* attach_session()                 */
 #include "util/filefunctions.hpp"       /* seq66::file_extension_match()    */
 
 /*
@@ -163,32 +161,12 @@ static const int Tab_Session            =  7;
  */
 
 static const int s_beat_measure_count   = 16;
+
+#if defined USE_LIMITED_BEAT_COUNT
 static const int s_beat_length_count    =  5;
-
-/**
- *  Available PPQN values.  The default is 192, item #xx.  The first item uses the
- *  edit text for a "File" value, which means that whatever was read from the file
- *  is what holds.  The last item terminates the list.
- */
-
-static const int s_ppqn_list [] =
-{
-       -1,      /* "Default" (SEQ66_USE_DEFAULT_PPQN), marked with asterisk */
-        0,      /* "File" (SEQ66_USE_FILE_PPQN)                             */
-       32,
-       48,
-       96,
-      192,
-      384,
-      768,
-      960,
-     1920,
-     3840,
-     7680,
-     9600,
-    19200,
-       -2       /* terminator   */
-};
+#else
+static const int s_beat_length_count    = 16;
+#endif
 
 /**
  *  Given a display coordinate, looks up the screen and returns its geometry.
@@ -217,10 +195,9 @@ desktop_rectangle (const QPoint & p)
  *      Provides an optional MIDI file-name.  If provided, the file is opened
  *      immediately.
  *
- * \param ppqn
- *      Sets the desired PPQN value.  If 0 (SEQ66_USE_FILE_PPQN), then
- *      the PPQN to use is obtained from the file.  Otherwise, if a legal
- *      PPQN, any file read is scaled temporally to that PPQN, as applicable.
+ * \param usensm
+ *      If true, this changes the menu to be suitable for keeping work
+ *      products inside an NSM session directory.
  *
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
@@ -237,6 +214,8 @@ qsmainwnd::qsmainwnd
     QMainWindow             (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qsmainwnd),
+    m_initial_width         (0),
+    m_initial_height        (0),
     m_live_frame            (nullptr),
     m_perfedit              (nullptr),
     m_song_frame64          (nullptr),
@@ -258,6 +237,7 @@ qsmainwnd::qsmainwnd
     m_session_frame         (nullptr),
     m_set_master            (nullptr),
     m_mute_master           (nullptr),
+    m_ppqn_list             (default_ppqns()),  /* see the settings module  */
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
     m_use_nsm               (usensm),
@@ -283,41 +263,17 @@ qsmainwnd::qsmainwnd
      *  Combo-box for tweaking the PPQN.
      */
 
-    bool ppqn_is_set = false;
-    for (int i = 0; ; ++i)
-    {
-        int ppqn = s_ppqn_list[i];
-        if (ppqn == SEQ66_USE_FILE_PPQN)
-        {
-            ui->cmb_ppqn->insertItem(i, "File");
-        }
-        else if (ppqn == SEQ66_USE_DEFAULT_PPQN)
-        {
-            std::string lbl = std::to_string(usr().midi_ppqn());
-            lbl += "*";
-            ui->cmb_ppqn->insertItem(i, lbl.c_str());
-        }
-        else if (ppqn >= SEQ66_MINIMUM_PPQN && ppqn <= SEQ66_MAXIMUM_PPQN)
-        {
-            QString combo_text = QString::number(ppqn);
-            ui->cmb_ppqn->insertItem(i, combo_text);
-            if (ppqn == perf().ppqn())
-            {
-                ui->cmb_ppqn->setCurrentIndex(i);
-                ppqn_is_set = true;
-            }
-        }
-        else if (ppqn == -2)
-        {
-            break;
-        }
-    }
-    if (! ppqn_is_set)
-        ui->cmb_ppqn->setCurrentIndex(0);
+    (void) set_ppqn_combo();
 
-    std::string ppqnstr = std::to_string(perf().ppqn());
-    ui->lineEditPpqn->setText(ppqnstr.c_str());
+    int ppqn = perf().ppqn();                   /* usr().default_ppqn() */
+    std::string pstring = std::to_string(ppqn);
+    set_ppqn_text(pstring);
     ui->lineEditPpqn->setReadOnly(true);
+    connect
+    (
+        ui->cmb_ppqn, SIGNAL(currentTextChanged(const QString &)),
+        this, SLOT(update_ppqn_by_text(const QString &))
+    );
 
     /*
      * Global output buss items.  Connected later on in this constructor.
@@ -356,26 +312,35 @@ qsmainwnd::qsmainwnd
 
     /*
      * Fill options for beats per measure in the combo box, and set the
-     * default.
+     * default.  For both the beat-measure and beat-length combo-boxes, we tack on
+     * an additional entry for "32".
      */
 
+    QString thirtytwo = QString::number(32);
     for (int i = 0; i < s_beat_measure_count; ++i)
     {
         QString combo_text = QString::number(i + 1);
         ui->cmb_beat_measure->insertItem(i, combo_text);
     }
+    ui->cmb_beat_measure->insertItem(s_beat_measure_count, thirtytwo);
 
     /*
      * Fill options for beat length (beat width) in the combo box, and set the
-     * default.  Note that the actual value is selected via a switch statement in
-     * the update_beat_length() function.  See that function for the true story.
+     * default.  Note that the actual value is selected via a switch statement
+     * in the update_beat_length() function.  See that function for the true
+     * story.
      */
 
     for (int i = 0; i < s_beat_length_count; ++i)
     {
+#if defined USE_LIMITED_BEAT_COUNT
         QString combo_text = QString::number(pow(2, i));
+#else
+        QString combo_text = QString::number(i + 1);
+#endif
         ui->cmb_beat_length->insertItem(i, combo_text);
     }
+    ui->cmb_beat_length->insertItem(s_beat_length_count, thirtytwo);
 
     m_msg_save_changes = new QMessageBox(this);
     m_msg_save_changes->setText(tr("Unsaved changes detected."));
@@ -387,7 +352,7 @@ qsmainwnd::qsmainwnd
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
     m_dialog_prefs = new qseditoptions(perf(), this);
-    m_beat_ind = new qsmaintime(perf(), this, 4, 4);
+    m_beat_ind = new qsmaintime(perf(), ui->verticalWidget /*this*/, 4, 4);
     m_dialog_about = new qsabout(this);
     m_dialog_build_info = new qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
@@ -582,6 +547,8 @@ qsmainwnd::qsmainwnd
         this, SLOT(toggle_time_format(bool))
     );
 
+#if defined USE_EXTERNAL_SETMASTER
+
     /*
      * Set-Master window button.
      */
@@ -591,6 +558,10 @@ qsmainwnd::qsmainwnd
         ui->setMasterButton, SIGNAL(clicked(bool)),
         this, SLOT(show_set_master())
     );
+
+#else
+    ui->setMasterButton->hide();
+#endif
 
 
     /*
@@ -645,16 +616,6 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * PPQN combo-box
-     */
-
-    connect
-    (
-        ui->cmb_ppqn, SIGNAL(currentIndexChanged(int)),
-        this, SLOT(update_ppqn(int))
-    );
-
-    /*
      * Global buss combo-box
      */
 
@@ -695,17 +656,6 @@ qsmainwnd::qsmainwnd
     );
 
     /*
-     * Record Snap button. Removed.  We always snap.
-     *
-     *  connect
-     *  (
-     *      ui->btnRecSnap, SIGNAL(clicked(bool)),
-     *      this, SLOT(song_recording_snap(bool))
-     *  );
-     *  qt_set_icon(snap_xpm, ui->btnRecSnap);
-     */
-
-    /*
      * Pattern editor callbacks.  One for editing in the tab, and the other
      * for editing in an external pattern editor window.  Also added is a
      * signal/callback to create an external live-frame window.
@@ -733,7 +683,7 @@ qsmainwnd::qsmainwnd
     ui->spinBank->setRange(0, perf().screenset_max() - 1);
 
     /*
-     * Set Number.
+     * Set Number and Name.
      */
 
     connect
@@ -741,17 +691,11 @@ qsmainwnd::qsmainwnd
         ui->spinBank, SIGNAL(valueChanged(int)),
         this, SLOT(update_bank(int))
     );
-
-    /*
-     * Set Name.
-     */
-
     connect
     (
         ui->txtBankName, SIGNAL(textEdited(QString)),
         this, SLOT(update_bank_text(QString))
     );
-
     connect
     (
         this, SIGNAL(signal_set_change(int)),
@@ -793,63 +737,13 @@ qsmainwnd::qsmainwnd
     ui->tabWidget->setCurrentIndex(Tab_Live);
     ui->tabWidget->setTabEnabled(Tab_Events, false);    /* prevents issues  */
 
-#if defined SEQ66_DISABLE_SESSION_TAB
-
-    /*
-     * We want to keep the session table accessible to show the current
-     * configuration directory, etc.
-     */
-
-    if (! usr().wants_nsm_session())
-    {
-        /*
-         * Which to do, remove or disable?
-         * ui->tabWidget->removeTab(Tab_Session);
-         */
-
-        ui->tabWidget->setTabEnabled(Tab_Session, false);
-    }
-
-#endif
-
     /*
      * Test button.  This button supports whatever debugging we need to do at
      * any particular time.
      */
 
-
-#if defined SEQ66_PLATFORM_DEBUG_SESSION_IMPORT
-    ui->testButton->setToolTip("Developer test of MIDI 'Import into Session'.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(import_into_session())
-    );
-#else
     ui->testButton->setToolTip("Developer test button, disabled.");
     ui->testButton->setEnabled(false);
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_PLAYLIST_SAVE
-    ui->testButton->setToolTip("Test of saving/copying the current playlist.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(test_playlist_save())
-    );
-#endif
-
-#if defined SEQ66_PLATFORM_DEBUG_NOTEMAP_SAVE
-    ui->testButton->setToolTip("Test of saving the note-map.");
-    ui->testButton->setEnabled(true);
-    connect
-    (
-        ui->testButton, SIGNAL(clicked(bool)),
-        this, SLOT(test_notemap_save())
-    );
-#endif
 
     if (use_nsm())
         rc().session_midi_filename(s_default_tune);
@@ -859,14 +753,14 @@ qsmainwnd::qsmainwnd
     ui->jackTransportButton->hide();
 #else
     QString midiengine = rc().with_jack_midi() ? "JACK" : "ALSA" ;
-    QString jtrans = "None";
     if (cb_perf().is_jack_master())
-        jtrans = "Master";
+        ui->jackTransportButton->setText("Master");
     else if (cb_perf().is_jack_slave())
-        jtrans = "Slave";
+        ui->jackTransportButton->setText("Slave");
+    else
+        ui->jackTransportButton->hide();
 
     ui->alsaJackButton->setText(midiengine);
-    ui->jackTransportButton->setText(jtrans);
 #endif
 
     show();
@@ -891,6 +785,29 @@ qsmainwnd::~qsmainwnd ()
     m_timer->stop();
     cb_perf().unregister(this);
     delete ui;
+}
+
+void
+qsmainwnd::enable_bus_item (int bus, bool enabled)
+{
+    int index = bus + 1;
+    QStandardItemModel * model =
+        qobject_cast<QStandardItemModel *>
+        (
+            ui->cmb_global_bus->model()
+        );
+    QStandardItem * item = model->item(index);
+    if (enabled)
+        item->setFlags(item->flags() | Qt::ItemIsEnabled);
+    else
+        item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+}
+
+void
+qsmainwnd::set_ppqn_text (const std::string & text)
+{
+    QString ppqnstring = QString::fromStdString(text);
+    ui->lineEditPpqn->setText(ppqnstring);
 }
 
 /*
@@ -1037,6 +954,30 @@ qsmainwnd::set_song_mode (bool /*songmode*/)
         song_recording(false);
 
     show_song_mode(playmode);
+}
+
+bool
+qsmainwnd::set_ppqn_combo ()
+{
+    bool result = false;
+    int count = m_ppqn_list.count();
+    if (count > 0)
+    {
+        std::string p = std::to_string(perf().ppqn());
+        QString combo_text = QString::fromStdString(p);
+        ui->cmb_ppqn->clear();
+        ui->cmb_ppqn->insertItem(0, combo_text);
+        for (int i = 1; i < count; ++i)
+        {
+            p = m_ppqn_list.at(i);
+            combo_text = QString::fromStdString(p);
+            ui->cmb_ppqn->insertItem(i, combo_text);
+            if (std::stoi(p) == perf().ppqn())
+                result = true;
+        }
+        ui->cmb_ppqn->setCurrentIndex(0);
+    }
+    return result;
 }
 
 void
@@ -1421,9 +1362,9 @@ qsmainwnd::update_window_title (const std::string & fn)
     }
     else
     {
-        int pp = choose_ppqn();
+        int pp = perf().ppqn();                     /* choose_ppqn()    */
         char temp[16];
-        snprintf(temp, sizeof temp, " (%d ppqn) ", pp);
+        snprintf(temp, sizeof temp, " %d PPQN ", pp);
         itemname = fn;
         itemname += temp;
     }
@@ -1461,9 +1402,16 @@ qsmainwnd::load_session_frame ()
     }
 }
 
+#if defined USE_EXTERNAL_SETMASTER
+
 /**
  *  Handles the external Set Master, the one instantiated with the Sets button
- *  on the main window.
+ *  on the main window.  Show the set master in a separate window.  The
+ *  "embedded" parameter is set to false, and there is no parent widget, just
+ *  this main window as a parent.
+ *
+ *  However, this window is gratuitous, and removing the external window zaps
+ *  the tab (permanently) as well.
  */
 
 void
@@ -1471,12 +1419,6 @@ qsmainwnd::show_set_master ()
 {
     if (is_nullptr(m_set_master))
     {
-        /*
-         * Show the set master in a separate window.  The "embedded" parameter
-         * is set to false, and there is no parent widget, just this main window
-         * as a parent.
-         */
-
         m_set_master = new qsetmaster(perf(), false, this);
         if (not_nullptr(m_set_master))
             m_set_master->show();
@@ -1484,6 +1426,8 @@ qsmainwnd::show_set_master ()
     else
         remove_set_master();
 }
+
+#endif  // defined USE_EXTERNAL_SETMASTER
 
 void
 qsmainwnd::remove_set_master ()
@@ -1546,23 +1490,11 @@ qsmainwnd::refresh ()
         m_previous_tick = tick;
         if (not_nullptr(m_beat_ind))
         {
-            midibpm bpm = perf().bpm();
-            int ppqn = perf().ppqn();
-            if (m_tick_time_as_bbt)
-            {
-                midi_timing mt
-                (
-                    bpm, perf().get_beats_per_bar(),
-                    perf().get_beat_width(), ppqn
-                );
-                std::string t = pulses_to_measurestring(tick, mt);
-                ui->label_HMS->setText(t.c_str());
-            }
-            else
-            {
-                std::string t = pulses_to_timestring(tick, bpm, ppqn, false);
-                ui->label_HMS->setText(t.c_str());
-            }
+            std::string t = m_tick_time_as_bbt ?
+                perf().pulses_to_measure_string(tick) :
+                perf().pulses_to_time_string(tick) ;
+
+            ui->label_HMS->setText(t.c_str());
             m_beat_ind->update();
         }
     }
@@ -1939,7 +1871,7 @@ qsmainwnd::export_song (const std::string & fname)
     std::string filename;
     if (fname.empty())
     {
-        std::string prompt = "Export Song as MIDI...";
+        std::string prompt = "Export Song...";
         filename = filename_prompt(prompt);
     }
     else
@@ -2153,8 +2085,8 @@ qsmainwnd::load_qseqedit (int seqid)
         if (ei == m_open_editors.end())
         {
             /*
-             * Make sure the sequence exists.  We should consider creating it if
-             * it does not exist.  So many features, so little time.
+             * Make sure the sequence exists.  We should consider creating it
+             * if it does not exist.  So many features, so little time.
              */
 
             if (perf().is_seq_active(seqid))
@@ -2164,9 +2096,9 @@ qsmainwnd::load_qseqedit (int seqid)
 
                 if (not_nullptr(ex))
                 {
-                    ex->show();
-                    std::pair<int, qseqeditex *> p = std::make_pair(seqid, ex);
+                    auto p = std::make_pair(seqid, ex);
                     m_open_editors.insert(p);
+                    ex->show();
                 }
             }
         }
@@ -2334,9 +2266,9 @@ qsmainwnd::load_live_frame (int ssnum)
 
             if (not_nullptr(ex))
             {
-                ex->show();
-                std::pair<int, qliveframeex *> p = std::make_pair(ssnum, ex);
+                auto p = std::make_pair(ssnum, ex);
                 m_open_live_frames.insert(p);
+                ex->show();
             }
         }
     }
@@ -2379,23 +2311,18 @@ qsmainwnd::remove_all_live_frames ()
 }
 
 void
-qsmainwnd::update_ppqn (int pindex)
+qsmainwnd::update_ppqn_by_text (const QString & text)
 {
-    int p = s_ppqn_list[pindex];
-    if (p > 0)
+    std::string temp = text.toStdString();
+    if (! temp.empty())
     {
-        if (p == SEQ66_USE_FILE_PPQN)
-        {
-            p = usr().file_ppqn();
-        }
-        else if (p == SEQ66_USE_DEFAULT_PPQN)
-        {
-            p = usr().midi_ppqn();
-        }
+        int p = std::stoi(temp);
         if (perf().change_ppqn(p))
         {
-            std::string ppqnstr = std::to_string(p);
-            ui->lineEditPpqn->setText(ppqnstr.c_str());
+            set_ppqn_text(temp);
+            m_ppqn_list.current(temp);
+            ui->cmb_ppqn->setItemText(0, text);
+            usr().file_ppqn(p);
         }
     }
 }
@@ -2406,7 +2333,8 @@ qsmainwnd::update_ppqn (int pindex)
  *  individually to each set; this allows each set to drive a different buss.
  *
  * \param index
- *      The index into the list of available MIDI buses.
+ *      The index into the list of available MIDI buses.  The drop-down has
+ *      already been remapped (if port-mapping is active).
  */
 
 void
@@ -2417,7 +2345,7 @@ qsmainwnd::update_midi_bus (int index)
     {
         if (index == 0)
         {
-            // Anything to do for the "None" entry?
+            /* Anything to do for the "None" entry? */
         }
         else
         {
@@ -2434,56 +2362,18 @@ qsmainwnd::update_midi_bus (int index)
 void
 qsmainwnd::update_beat_length (int blindex)
 {
-    int bl;
-    switch (blindex)
+    int bl = blindex == s_beat_length_count ? 32 : blindex + 1 ;
+    if (perf().set_beat_width(bl))
     {
-    case 0:
-        bl = 1;
-        break;
+        if (not_nullptr(m_song_frame64))
+            m_song_frame64->set_beat_width(bl);
 
-    case 1:
-        bl = 2;
-        break;
+        if (not_nullptr(m_beat_ind))
+            m_beat_ind->beat_width(bl);
 
-    case 2:
-        bl = 4;
-        break;
-
-    case 3:
-        bl = 8;
-        break;
-
-    case 4:
-        bl = 16;
-        break;
-
-    default:
-        bl = 4;
-        break;
+        if (not_nullptr(m_edit_frame))
+            m_edit_frame->update_draw_geometry();
     }
-
-    if (not_nullptr(m_song_frame64))
-        m_song_frame64->set_beat_width(bl);
-
-    if (not_nullptr(m_beat_ind))
-        m_beat_ind->beat_width(bl);
-
-    for (int i = 0; i < perf().sequence_max(); ++i)
-    {
-        seq::pointer seq = perf().get_sequence(i);
-        if (seq)
-        {
-            /*
-             * Set beat width, then reset the number of measures, causing
-             * length to adjust to the new beats per measure.
-             */
-
-            seq->set_beat_width(bl);
-            seq->set_measures(seq->get_measures());
-        }
-    }
-    if (not_nullptr(m_edit_frame))
-        m_edit_frame->update_draw_geometry();
 }
 
 /**
@@ -2499,7 +2389,7 @@ qsmainwnd::update_beat_length (int blindex)
 void
 qsmainwnd::update_beats_per_measure (int bmindex)
 {
-    int bm = bmindex + 1;
+    int bm = bmindex == s_beat_measure_count ? 32 : bmindex + 1;
     if (perf().set_beats_per_measure(bm))
     {
         if (not_nullptr(m_beat_ind))
@@ -3493,9 +3383,36 @@ qsmainwnd::changeEvent (QEvent * event)
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
+    if (m_initial_width == 0)
+    {
+        m_initial_width = width();
+        m_initial_height = height();
+    }
+    else
+    {
+        bool rescale = false;
+        int w = width();
+        int h = height();
+        float wscale = usr().window_scale_x();
+        float hscale = usr().window_scale_y();
+        if (w != m_initial_width)
+        {
+            wscale = float(w) / float(m_initial_width);
+            rescale = true;
+        }
+        if (h != m_initial_height)
+        {
+            hscale = float(h) / float(m_initial_height);
+            rescale = true;
+        }
+        if (rescale)
+        {
+            usr().window_scale(wscale, hscale);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("qsmainwnd::resizeEvent()\n");
+            printf("qsmainwnd rescale to %f x %f\n", wscale, hscale);
 #endif
+        }
+    }
 }
 
 bool

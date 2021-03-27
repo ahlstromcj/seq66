@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-02-12
+ * \updates       2021-03-17
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -340,6 +340,11 @@ public:
     int count () const
     {
         return int(m_container.size());
+    }
+
+    bool empty () const
+    {
+        return m_container.empty();
     }
 
     int group_size () const

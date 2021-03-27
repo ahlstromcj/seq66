@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-01-12
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -116,6 +116,8 @@ public:
     ~trigger () = default;
     trigger (const trigger &) = default;
     trigger & operator = (const trigger &) = default;
+
+    std::string to_string () const;
 
     /**
      *  This operator compares only the m_tick_start members.
@@ -384,6 +386,7 @@ public:
     triggers (const triggers & rhs) = default;
     triggers & operator = (const triggers & rhs);
 
+    std::string to_string () const;
     bool change_ppqn (int p);
 
     /**

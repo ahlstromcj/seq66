@@ -167,14 +167,14 @@ the system's MIDI setup has changed.</string>
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>72</x>
-         <y>490</y>
+         <x>16</x>
+         <y>488</y>
          <width>161</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Seq66's MIDI Client ID</string>
+        <string>Client Name:ID/UUID</string>
        </property>
       </widget>
       <widget class="QPlainTextEdit" name="plainTextEditClientId">
@@ -183,9 +183,9 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>168</x>
          <y>480</y>
-         <width>42</width>
+         <width>217</width>
          <height>28</height>
         </rect>
        </property>
@@ -467,13 +467,13 @@ A primitive way to zoom.</string>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinKeyHeight">
           <property name="minimum">
-           <number>7</number>
+           <number>4</number>
           </property>
           <property name="maximum">
-           <number>17</number>
+           <number>24</number>
           </property>
           <property name="value">
-           <number>12</number>
+           <number>10</number>
           </property>
          </widget>
         </item>
@@ -726,20 +726,133 @@ patterns is controlled by the layout drawn in the Song Editor.</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QCheckBox" name="chkNoteResume">
-         <property name="toolTip">
-          <string>When checked, unfinished notes are turned back on when
+        <widget class="QGroupBox" name="groupBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Flags</string>
+         </property>
+         <widget class="QCheckBox" name="chkNoteResume">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>32</y>
+            <width>355</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>When checked, unfinished notes are turned back on when
 playback resumes.</string>
+          </property>
+          <property name="text">
+           <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="chkUseFilesPPQN">
+          <property name="geometry">
+           <rect>
+            <x>24</x>
+            <y>56</y>
+            <width>353</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="toolTip">
+           <string>When checked, the PPQN of the MIDI file being loaded
+overrides the default Seq66 PPQN.  Otherwise, the
+file's PPQN is scaled to the default PPQN.</string>
+          </property>
+          <property name="text">
+           <string>Use File's PPQN for Pre-Existing Files</string>
+          </property>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_ppqn">
+         <property name="maximumSize">
+          <size>
+           <width>120</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>DejaVu Sans</family>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
-          <string>&amp;Resume Note Ons at start/stop or sequence toggle</string>
+          <string>PPQN Settings</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QComboBox" name="combo_box_ppqn">
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Changes the default PPQN from 192 to another value.
+This new default value is saved in the 'usr' file when
+Seq66 exits.</string>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+           <property name="currentText">
+            <string>9600</string>
+           </property>
+           <property name="maxCount">
+            <number>32</number>
+           </property>
+           <property name="insertPolicy">
+            <enum>QComboBox::NoInsert</enum>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_ppqn_2">
+           <property name="minimumSize">
+            <size>
+             <width>460</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>200</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Default Seq66 PPQN for New or Converted Files</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::MinimumExpanding</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>

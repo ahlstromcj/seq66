@@ -243,7 +243,7 @@ public:
      *  in the derived class.
      */
 
-    virtual std::size_t size () const = 0;
+    virtual unsigned size () const = 0;
 
     /**
      *  Instead of checking for the size of the container when "emptying" it
@@ -264,6 +264,16 @@ public:
     virtual void put (midibyte b) = 0;
 
     /**
+     *  Combines a number of put() calls.  It puts the preamble for a MIDI Meta
+     *  event.  After this function is called, the call then puts() the actual
+     *  data.  Note that the data-length is assumed to fit into a midibyte (255
+     *  maximum).
+     */
+
+    void put_meta (midibyte metavalue, int datalen, midipulse deltatime = 0);
+    void put_seqspec (midilong spec, int datalen);
+
+    /**
      *  Provide a way to get the next byte from the container.  It also
      *  increments m_position_for_get.
      */
@@ -279,8 +289,9 @@ public:
 protected:
 
     /**
-     * \setter m_position_for_get
-     *      Sets the position to 0 and then returns that value.
+     *  Sets the position to 0 and then returns that value. So far, it is not
+     *  used, because we create a new midi_vector for each write_track()
+     *  call.
      */
 
     unsigned position_reset () const

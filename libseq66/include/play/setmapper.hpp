@@ -805,7 +805,7 @@ public:
 
     const std::string & name () const
     {
-        return play_screen()->name();   // performer via master()?
+        return play_screen()->name();
     }
 
     const std::string & name (screenset::number setno) const

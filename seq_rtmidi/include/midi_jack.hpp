@@ -133,9 +133,6 @@ protected:
         m_jack_data.m_jack_port = handle;
     }
 
-#if defined SEQ64_USE_OPEN_CLIENT_IMPL
-    bool open_client_impl (bool input);     /* implements "connect()"   */
-#endif
     void close_client ();
     void close_port ();
     bool create_ringbuffer (size_t rbsize);
@@ -213,21 +210,6 @@ public:
 
 private:
 
-#if defined SEQ64_USE_OPEN_CLIENT_IMPL
-
-    /**
-     *  This function is virtual, so we don't call it in the constructor,
-     *  using open_client_impl() directly instead.  This function replaces the
-     *  RtMidi function "connect()".
-     */
-
-    virtual bool open_client ()
-    {
-        return open_client_impl(SEQ66_MIDI_INPUT_PORT);
-    }
-
-#endif
-
 };          // class midi_in_jack
 
 /**
@@ -241,23 +223,6 @@ public:
 
     midi_out_jack (midibus & parentbus, midi_info & masterinfo);
     virtual ~midi_out_jack ();
-
-private:
-
-#if defined SEQ64_USE_OPEN_CLIENT_IMPL
-
-    /**
-     *  This function is virtual, so we don't call it in the constructor,
-     *  using open_client_impl() directly instead.  This function replaces the
-     *  RtMidi function "connect()".
-     */
-
-    virtual bool open_client ()
-    {
-        return open_client_impl(SEQ66_MIDI_OUTPUT_PORT);
-    }
-
-#endif
 
 };          // class midi_out_jack
 

@@ -109,7 +109,9 @@ cmdlineopts::s_long_options [] =
     {"jack-master",         0, 0, 'J'},
     {"jack-master-cond",    0, 0, 'C'},
     {"jack-start-mode",     required_argument, 0, 'M'},
+#if defined SEQ66-JACK_SESSION
     {"jack-session-uuid",   required_argument, 0, 'U'},
+#endif
     {"no-jack-midi",        0, 0, 'N'},
     {"jack-midi",           0, 0, 't'},
 #endif
@@ -201,7 +203,7 @@ cmdlineopts::s_help_1b =
 "   -A, --alsa               Do not use JACK, use ALSA. A sticky option.\n"
 "   -b, --bus b              Global override of bus number (for testing).\n"
 "   -B, --buss b             Avoids the 'bus' versus 'buss' confusion.\n"
-"   -l, --client-name        Replaces the client name 'seq66' with a new label.\n"
+"   -l, --client-name label  Replaces the client name 'seq66' with a new label.\n"
 "                            Will be overridden by a session manager.\n"
 "   -q, --ppqn qn            Specify default PPQN to replace 192.  The MIDI\n"
 "                            file might specify its own PPQN.\n"
@@ -228,7 +230,9 @@ cmdlineopts::s_help_2 =
 "                            available: 0 = live mode; 1 = song mode (default).\n"
 "   -N, --no-jack-midi       Use ALSA MIDI, even with JACK Transport. See -A.\n"
 "   -t, --jack-midi          Use JACK MIDI; separate option from JACK Transport.\n"
+#if defined SEQ66_JACK_SESSION
 "   -U, --jack-session-uuid u  Set UUID for JACK session.\n"
+#endif
 #endif
 "   -d, --record-by-channel  Divert MIDI input by channel into the sequences\n"
 "                            that are configured for each channel.\n"
@@ -1057,9 +1061,11 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
             printf("[Activating native JACK MIDI]\n");
             break;
 
+#if defined SEQ66_JACK_SESSION
         case 'U':
             rc().jack_session_uuid(soptarg);
             break;
+#endif
 
         case 'u':
             usr().save_user_config(true);    /* usr(), not rc()!     */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-06
+ * \updates       2021-03-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -323,13 +323,6 @@ static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
 
 /**
  *  This constructor...
- *
- * PPQN and choose_ppqn(p):
- *
- *      -   If p is SEQ66_USE_FILE_PPQN, that is the potential result.
- *      -   If p is SEQ66_USE_DEFAULT_PPQN (-1, the default), then
- *          usr().midi_ppqn() is checked. If SEQ66_USE_FILE_PPQN, then
- *          usr().file_ppqn() is returned.
  */
 
 performer::performer (int ppqn, int rows, int columns) :
@@ -349,9 +342,8 @@ performer::performer (int ppqn, int rows, int columns) :
     m_clocks                (),                 /* vector wrapper class     */
     m_inputs                (),                 /* vector wrapper class     */
     m_key_controls          ("Key controls"),
-    m_midi_control_in       ("MIDI input controls"),
-    m_midi_control_buss     (c_bussbyte_max),   /* any buss can control app */
-    m_midi_control_out      (),
+    m_midi_control_in       ("performer input controls"),
+    m_midi_control_out      ("performer output controls"),
     m_mute_groups           ("Mute groups", rows, columns),
     m_operations            ("Performer Operations"),
     m_set_master            (rows, columns),    /* 32 row x column sets     */
@@ -620,16 +612,38 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
-    if (rcs.midi_control_in().count() > 0)          /* could be 0-sized     */
+    if (rcs.midi_control_in().is_enabled())
+    {
+        bussbyte namedbus = rcs.midi_control_in().nominal_buss();
+        bussbyte truebus = true_input_bus(namedbus);
         m_midi_control_in = rcs.midi_control_in();
-    else if (rcs.key_controls().count() > 0)
-        m_midi_control_in.add_blank_controls(m_key_controls);
+        if (is_good_buss(truebus))
+            m_midi_control_in.true_buss(truebus);
+        else
+            m_midi_control_in.is_enabled(false);
+    }
+    if (rcs.midi_control_in().count() == 0)
+    {
+        if (rcs.key_controls().count() > 0)
+        {
+            m_midi_control_in.add_blank_controls(m_key_controls);
+        }
+    }
+    if (rcs.midi_control_out().is_enabled())
+    {
+        bussbyte namedbus = rcs.midi_control_out().nominal_buss();
+        bussbyte truebus = true_output_bus(namedbus);
+        m_midi_control_out = rcs.midi_control_out();
+        if (is_good_buss(truebus))
+            m_midi_control_out.true_buss(truebus);
+        else
+            m_midi_control_out.is_enabled(false);
+    }
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
     song_mode(rcs.song_start_mode());               /* boolean setter       */
     filter_by_channel(rcs.filter_by_channel());
     tempo_track_number(rcs.tempo_track_number());   /* [midi-meta-events]   */
-    m_midi_control_out = rcs.midi_control_out();
     m_resume_note_ons = usrs.resume_note_ons();
     return result;
 }
@@ -749,7 +763,8 @@ performer::ui_get_input (bussbyte bus, bool & active, std::string & n) const
 bool
 performer::ui_set_input (bussbyte bus, bool active)
 {
-    bool result = m_master_bus->set_input(bus, active);
+    bussbyte truebus = true_input_bus(bus);
+    bool result = m_master_bus->set_input(truebus, active);
     if (result)
     {
         inputslist & ipm = input_port_map();
@@ -779,7 +794,7 @@ performer::ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const
 }
 
 /**
- *  Sets the clock value, as specified in the Options / MIDI Clocks tab.
+ *  Sets the clock value, as specified in the Preferences / MIDI Clocks tab.
  *  Note that the call to mastermidibus::set_clock() also sets the clock in
  *  the output busarray.
  *
@@ -849,14 +864,14 @@ performer::ui_set_clock (bussbyte bus, e_clock clocktype)
  */
 
 std::string
-performer::sequence_label (const sequence & seq)
+performer::sequence_label (const sequence & seq) const
 {
     std::string result;
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        bussbyte bus = seq.get_midi_bus();
-        int chan = seq.is_smf_0() ? 0 : seq.get_midi_channel() + 1;
+        bussbyte bus = seq.seq_midi_bus();
+        int chan = seq.is_smf_0() ? 0 : int(seq.seq_midi_channel()) + 1;
         int bpb = int(seq.get_beats_per_bar());
         int bw = int(seq.get_beat_width());
         char tmp[32];
@@ -883,7 +898,7 @@ performer::sequence_label (const sequence & seq)
  */
 
 std::string
-performer::sequence_label (seq::number seqno)
+performer::sequence_label (seq::number seqno) const
 {
     const seq::pointer s = get_sequence(seqno);
     return s ? sequence_label(*s) : std::string("") ;
@@ -905,7 +920,7 @@ performer::sequence_label (seq::number seqno)
  */
 
 std::string
-performer::sequence_title (const sequence & seq)
+performer::sequence_title (const sequence & seq) const
 {
     std::string result;
     int sn = seq.seq_number();
@@ -934,13 +949,13 @@ performer::sequence_title (const sequence & seq)
  */
 
 std::string
-performer::sequence_window_title (const sequence & seq)
+performer::sequence_window_title (const sequence & seq) const
 {
     std::string result = seq_app_name();
     int sn = seq.seq_number();
     if (is_seq_active(sn))
     {
-        int ppqn = seq.get_ppqn();                    /* choose_ppqn(m_ppqn);    */
+        int ppqn = seq.get_ppqn();
         char temp[32];
         snprintf(temp, sizeof temp, " (%d ppqn)", ppqn);
         result += " #";
@@ -967,13 +982,13 @@ performer::sequence_window_title (const sequence & seq)
  */
 
 std::string
-performer::main_window_title (const std::string & file_name)
+performer::main_window_title (const std::string & file_name) const
 {
     std::string result = seq_app_name() + std::string(" - ");
     std::string itemname = "unnamed";
-    int ppqn = choose_ppqn(m_ppqn);
+    int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
     char temp[32];
-    snprintf(temp, sizeof temp, " (%d ppqn) ", ppqn);
+    snprintf(temp, sizeof temp, " %d PPQN", p);
     if (file_name.empty())
     {
         if (! rc().midi_filename().empty())
@@ -991,6 +1006,32 @@ performer::main_window_title (const std::string & file_name)
         itemname = file_name;
     }
     result += itemname + std::string(temp);
+    return result;
+}
+
+std::string
+performer::pulses_to_measure_string (midipulse tick) const
+{
+    midi_timing mt(bpm(), get_beats_per_bar(), get_beat_width(), ppqn());
+    return pulses_to_measurestring(tick, mt);
+}
+
+std::string
+performer::pulses_to_time_string (midipulse tick) const
+{
+    return pulses_to_timestring(tick, bpm(), ppqn(), false);
+}
+
+std::string
+performer::client_id_string () const
+{
+    std::string result = seq_client_name();
+    result += ':';
+    if (rc().with_jack_midi() && ! rc().jack_session_uuid().empty())
+        result += rc().jack_session_uuid();
+    else
+        result += std::to_string(m_master_bus->client_id());
+
     return result;
 }
 
@@ -1236,17 +1277,21 @@ performer::set_ppqn (int p)
     bool result = m_ppqn != p && ppqn_in_range(p);
     if (result)
     {
-        m_ppqn = p;
         if (m_master_bus)
-            m_master_bus->set_ppqn(p);
-        else
-            (void) error_message("performer::set_ppqn(): master bus is null");
+        {
+            m_ppqn = p;
+            m_one_measure = 0;
 
 #if defined SEQ66_JACK_SUPPORT
-        m_jack_asst.set_ppqn(p);
+            m_jack_asst.set_ppqn(p);
 #endif
-
-        m_one_measure = 0;
+            m_master_bus->set_ppqn(p);
+        }
+        else
+        {
+            (void) error_message("performer::set_ppqn(): master bus is null");
+            result = false;
+        }
     }
     if (m_one_measure == 0)
     {
@@ -1284,7 +1329,12 @@ performer::change_ppqn (int p)
             }
         );
         if (result)
-            notify_resolution_change(get_ppqn(), get_beats_per_minute());
+        {
+            change ch = rc().midi_filename().empty() ?
+                change::no : change:: yes;
+
+            notify_resolution_change(get_ppqn(), get_beats_per_minute(), ch);
+        }
     }
     return result;
 }
@@ -1296,13 +1346,15 @@ performer::change_ppqn (int p)
  *  Currently operates only on the current screenset.
  *
  * \param buss
+ *      Provides the number of the buss to be set.  Note that this buss number
+ *      has already effectively been remapped if port-mapping is in place.
  */
 
 bool
 performer::ui_change_set_bus (int buss)
 {
     bussbyte b = bussbyte(buss);
-    bool result = is_good_bussbyte(b);
+    bool result = is_good_buss(b);
     if (result)
     {
         for (auto seqi : m_play_set.seq_container())
@@ -2008,7 +2060,7 @@ performer::launch (int ppqn)
         {
             launch_input_thread();
             launch_output_thread();
-            (void) set_playing_screenset(0);    // ca 2020-08-11
+            (void) set_playing_screenset(0);
         }
         else
             m_error_pending = true;
@@ -2198,7 +2250,7 @@ performer::set_beats_per_measure (int bpm)
     bool result = bpm != m_beats_per_bar;
     if (result)
     {
-        set_beats_per_bar(bpm);
+        set_beats_per_bar(bpm);         /* also sets in jack_assistant  */
         mapper().set_function
         (
             [bpm] (seq::pointer sp, seq::number /*sn*/)
@@ -2207,6 +2259,38 @@ performer::set_beats_per_measure (int bpm)
                 if (result)
                 {
                     sp->set_beats_per_bar(bpm);
+                    sp->set_measures(sp->get_measures());
+                }
+                return result;
+            }
+        );
+    }
+    return result;
+}
+
+/**
+ * \setter m_beat_width
+ *
+ * \param bw
+ *      Provides the value for beat-width.  Also used to set the
+ *      beat-width in the JACK assistant object.
+ */
+
+bool
+performer::set_beat_width (int bw)
+{
+    bool result = bw != m_beat_width;
+    if (result)
+    {
+        set_beat_length(bw);            /* also sets in jack_assistant  */
+        mapper().set_function
+        (
+            [bw] (seq::pointer sp, seq::number /*sn*/)
+            {
+                bool result = bool(sp);
+                if (result)
+                {
+                    sp->set_beat_width(bw);
                     sp->set_measures(sp->get_measures());
                 }
                 return result;
@@ -2343,6 +2427,7 @@ bool
 performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
+    panic();                                /* go even further 2021-03-18   */
     announce_exit(true);                    /* blank device completely      */
 
     bool ok = deinit_jack_transport();
@@ -3889,9 +3974,11 @@ performer::add_trigger (seq::number seqno, midipulse tick)
     if (s)
     {
         midipulse seqlength = s->get_length();
-        tick -= tick % seqlength;
+        if (song_record_snap())
+            tick -= tick % seqlength;
+
         push_trigger_undo(seqno);
-        s->add_trigger(tick, seqlength);
+        s->add_trigger(tick, seqlength);    /* offset = 0, fixoffset = true */
         notify_trigger_change(seqno);
     }
 }
@@ -4576,6 +4663,11 @@ performer::sequence_playing_toggle (seq::number seqno)
                 }
                 else        /* ...else need to trim block already in place  */
                 {
+                    /*
+                     * Hmmm, for issue #44, can we make the splitpoint an
+                     * option?
+                     */
+
                     s->split_trigger(tick, trigger::splitpoint::exact);
                     s->delete_trigger(tick);
                 }
@@ -4844,8 +4936,11 @@ performer::midi_control_event (const event & ev, bool recording)
         midicontrol::key k(ev);
         const midicontrol & incoming = m_midi_control_in.control(k);
         result = incoming.is_usable();
-        if (result && m_midi_control_buss < c_bussbyte_max)
-            result = ev.input_bus() == m_midi_control_buss;
+        if (result)
+            result = m_midi_control_in.is_enabled();
+
+        if (result)
+            result = ev.input_bus() == m_midi_control_in.true_buss();
 
         if (result)
         {

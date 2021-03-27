@@ -126,7 +126,7 @@ private:
 
 private slots:
 
-    void updateGridSnap (int snapIndex);
+    void update_grid_snap (int snapindex);
     void zoom_in ();
     void zoom_out ();
     void reset_transpose ();

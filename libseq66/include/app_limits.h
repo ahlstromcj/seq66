@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-03-04
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -156,12 +156,14 @@
 #define SEQ66_SET_KEYS_MAX                32
 
 /**
- *  Default value of the height of the piano keys in the Qt 5 qseqkeys
+ *  Default values of the height of the piano keys in the Qt 5 qseqkeys
  *  user-interface.  Also configurable in the "usr" file.  No limit-checking
  *  right now, but keep the values from 8 to 16 for sanity's sake.
  */
 
-#define SEQ66_SEQKEY_HEIGHT               10
+#define SEQ66_SEQKEY_HEIGHT_MIN            4
+#define SEQ66_SEQKEY_HEIGHT_DEFAULT       10
+#define SEQ66_SEQKEY_HEIGHT_MAX           32
 
 /**
  *  The number of default virtual ALSA input busses supported in the

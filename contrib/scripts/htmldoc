@@ -1,0 +1,23 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+##
+# \file        htmldoc
+# \library     scripts
+# \author      Chris Ahlstrom
+# \date        2021-03-10 to 2021-03-10
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+#     This script, when run from the doc/latex/tex directory, generates a
+#     quick-and-dirty single-page HTML version of the user's manual.
+#
+#------------------------------------------------------------------------------
+
+pandoc -f latex -t html --extract-media=images -o x.html seq66-user-manual.tex
+
+#******************************************************************************
+# htmldoc
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+

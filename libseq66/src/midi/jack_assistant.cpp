@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-01-20
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -77,6 +77,14 @@
 
 namespace seq66
 {
+
+/**
+ *  Apparently, MIDI pulses are 10 times the size of JACK ticks. So we need,
+ *  in some places, to convert pulses (ticks) to JACK ticks by multiplying by
+ *  10.
+ */
+
+static const int c_jack_factor = 10;
 
 #if defined USE_JACK_DEBUG_PRINT
 
@@ -347,6 +355,23 @@ create_jack_client
     return result;                      /* bad result handled by caller     */
 }
 
+std::string
+get_jack_client_uuid (jack_client_t * jc)
+{
+    std::string result;
+    char * lname = jack_get_client_name(jc);
+    if (not_nullptr(lname))
+    {
+        char * luuid = jack_get_uuid_for_client_name(jc, lname);
+        if (not_nullptr(luuid))
+        {
+            result = luuid;
+            jack_free(luuid);
+        }
+    }
+    return result;
+}
+
 /**
  *  Provides a list of JACK status bits, and a brief string to explain the
  *  status bit.  Terminated by a 0 value and an empty string.
@@ -567,45 +592,27 @@ jack_assistant::error_message (const std::string & msg)
  *  Tries to obtain the best information on the JACK client and the UUID
  *  assigned to this client.  Sets m_jack_client_name and m_jack_client_info
  *  as side-effects.
+ *
+ * Only store the transport UUID in the rc().jack_session_uuid() if not already
+ * filled by opening the with-jack MIDI client.
  */
 
 void
 jack_assistant::get_jack_client_info ()
 {
-    char * actualname = nullptr;
-    if (rc().jack_session_uuid().empty())
-    {
-        actualname = jack_get_client_name(m_jack_client);
-        apiprint("jack_get_client_name", "sync");
-    }
-    else
-    {
-        /*
-         * Currently, this doesn't seem to work, no matter what
-         * is supplied as a UUID.  A null pointer is returned.  Still
-         * investigating.
-         */
-
-        const char * uuid = rc().jack_session_uuid().c_str();
-        actualname = jack_get_client_name_by_uuid(m_jack_client, uuid);
-        apiprint("jack_get_client_name_by_uuid", "sync");
-    }
+    char * actualname = jack_get_client_name(m_jack_client);
     if (not_nullptr(actualname))
+    {
+        m_jack_client_uuid = get_jack_client_uuid(m_jack_client);
+        if (! m_jack_client_uuid.empty())
+        {
+            if (rc().jack_session_uuid().empty())
+                rc().jack_session_uuid(m_jack_client_uuid);
+        }
         m_jack_client_name = actualname;
-    else
-        m_jack_client_name = SEQ66_PACKAGE;
+    }
 
-    char * actualuuid = jack_get_uuid_for_client_name
-    (
-        m_jack_client, m_jack_client_name.c_str()
-    );
-    apiprint("jack_get_uuid_for_client_name", "sync");
-    if (not_nullptr(actualuuid))
-        m_jack_client_uuid = actualuuid;
-    else
-        m_jack_client_uuid = rc().jack_session_uuid();
-
-    std::string jinfo = "JACK client:uuid is ";
+    std::string jinfo = "JACK transport client:uuid ";
     jinfo += m_jack_client_name;
     if (! m_jack_client_uuid.empty())
     {
@@ -992,11 +999,11 @@ jack_assistant::position (bool songmode, midipulse tick)
 {
 #if defined SEQ66_JACK_SUPPORT
     if (songmode)                               /* master in song mode  */
-        tick = is_null_midipulse(tick) ? 0 : tick * 10 ;
+        tick = is_null_midipulse(tick) ? 0 : tick * c_jack_factor ;
     else
         tick = 0;
 
-    int ticks_per_beat = m_ppqn * 10;
+    int ticks_per_beat = m_ppqn * c_jack_factor;
     int beats_per_minute = parent().get_beats_per_minute();
     uint64_t tick_rate = (uint64_t(m_jack_frame_rate) * tick * 60.0);
     long tpb_bpm = ticks_per_beat * beats_per_minute * 4.0 / m_beat_width;
@@ -1051,17 +1058,17 @@ jack_assistant::set_position (midipulse tick)
     pos.valid = JackPositionBBT;                // flag what will be modified
     pos.beats_per_bar = m_beats_per_measure;
     pos.beat_type = m_beat_width;
-    pos.ticks_per_beat = m_ppqn * 10;
+    pos.ticks_per_beat = m_ppqn * c_jack_factor;
     pos.beats_per_minute = get_beats_per_minute();
 
     /*
      * pos.frame = frame;
      */
 
-    tick *= 10;                     /* compute BBT info from frame number */
+    tick *= c_jack_factor;          /* compute BBT info from frame number */
     pos.bar = int32_t(tick / long(pos.ticks_per_beat) / pos.beats_per_bar);
     pos.beat = int32_t(((tick / long(pos.ticks_per_beat)) % m_beat_width));
-    pos.tick = int32_t((tick % (m_ppqn * 10)));
+    pos.tick = int32_t((tick % (m_ppqn * c_jack_factor)));
     pos.bar_start_tick = pos.bar * pos.beats_per_bar * pos.ticks_per_beat;
     ++pos.bar;
     ++pos.beat;
@@ -1223,18 +1230,6 @@ jack_sync_callback
  *  midifile object, quits if told to by JACK, and can free the JACK
  *  session event.
  *
- *  ca 2015-07-24
- *  Just a note:  The OMA (OpenMandrivaAssociation) patch was already
- *  applied to seq66 v.0.9.2.  It put quotes around the --file argument.
- *  However, the --file option doesn't work, so let's change that line.
- *
- *      seq66 --file \"${SESSION_DIR}file.mid\" --jack_session_uuid
- *
- *  Why are we using a Glib::ustring here?  Convenience.  But with C++11, we
- *  could use a lexical_cast<>.  No more ustring, baby!  It doesn't really
- *  matter; this function can call Gtk::Main::quit(), via the parent's
- *  gui().quit() function.
- *
  * \return
  *      Always returns false.
  */
@@ -1359,7 +1354,7 @@ jack_assistant::output (jack_scratchpad & pad)
 
         m_jack_pos.beats_per_bar = m_beats_per_measure;
         m_jack_pos.beat_type = m_beat_width;
-        m_jack_pos.ticks_per_beat = m_ppqn * 10;
+        m_jack_pos.ticks_per_beat = m_ppqn * c_jack_factor;
         m_jack_pos.beats_per_minute = parent().get_beats_per_minute();
         if
         (
@@ -1667,7 +1662,7 @@ jack_assistant::current_jack_position () const
         double tick2 = frame * Bpbar * ppqn / (15.0 * jack_frame_rate() * Bw);
 
         /*
-         * double Tpb = ppqn * 10;          // ticks/beat
+         * double Tpb = ppqn * c_jack_factor;          // ticks/beat
          * double tick = frame * Tpb * Bpbar / (jack_frame_rate() * 60.0);
          * tick *= (ppqn / (Tpb * Bw / 4.0));
          * printf("tick = %f; tick2 = %f\n", tick, tick2);
@@ -1806,7 +1801,7 @@ jack_timebase_callback
     pos->beats_per_minute = jack->get_beats_per_minute();   /* sooperlooper */
     pos->beats_per_bar = jack->beats_per_measure();
     pos->beat_type = jack->beat_width();
-    pos->ticks_per_beat = jack->get_ppqn() * 10.0;
+    pos->ticks_per_beat = jack->get_ppqn() * double(c_jack_factor);
 
     long ticks_per_bar = long(pos->ticks_per_beat * pos->beats_per_bar);
     long ticks_per_minute = long(pos->beats_per_minute * pos->ticks_per_beat);

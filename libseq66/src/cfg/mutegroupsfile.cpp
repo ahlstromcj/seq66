@@ -204,12 +204,14 @@ bool
 mutegroupsfile::write_stream (std::ofstream & file)
 {
     file
-        << "# Seq66 0.91.1 (and above) mute-groups configuration file\n\n"
+        << "# Seq66 0.91.1 (and above) mute-groups configuration file\n"
+           "#\n"
         << "# " << name() << "\n"
-        << "# Written on " << current_date_time() << "\n\n"
-        << "# This file replaces the [mute-group] section, making it a little\n"
-        << "# easier to manage multiple sets of mute groups.\n"
-        << "\n"
+        << "# Written on " << current_date_time() << "\n"
+        << "#\n"
+           "# This file replaces the [mute-group] section in the 'rc' file,\n"
+           "# making it easier to manage multiple sets of mute groups.\n"
+           "\n"
         ;
 
     /*
@@ -338,19 +340,36 @@ mutegroupsfile::write_mute_groups (std::ofstream & file)
         "\n"
             ;
 
-        for (const auto & stz : mutes.list())
+        if (mutes.empty())
         {
-            int gmute = stz.first;
-            const mutegroup & m = stz.second;
-            std::string stanza = write_stanza_bits(m.get(), usehex);
-            if (! stanza.empty())
+            for (int m = 0; m < mutegroups::Size(); ++m)
             {
-                file << std::setw(2) << gmute << " " << stanza << std::endl;
+                file << std::setw(2) << m << " " <<
+                     "[ 0 0 0 0 0 0 0 0 ] "
+                     "[ 0 0 0 0 0 0 0 0 ] "
+                     "[ 0 0 0 0 0 0 0 0 ] "
+                     "[ 0 0 0 0 0 0 0 0 ]\n"
+                     ;
             }
-            else
+        }
+        else
+        {
+            for (const auto & stz : mutes.list())
             {
-                result = false;
-                break;
+                int gmute = stz.first;
+                const mutegroup & m = stz.second;
+                std::string stanza = write_stanza_bits(m.get(), usehex);
+                if (! stanza.empty())
+                {
+                    file << std::setw(2) << gmute << " "
+                        << stanza << std::endl
+                        ;
+                }
+                else
+                {
+                    result = false;
+                    break;
+                }
             }
         }
     }

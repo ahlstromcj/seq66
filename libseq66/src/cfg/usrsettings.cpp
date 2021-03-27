@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-01-31
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -112,10 +112,12 @@ namespace seq66
 {
 
 /**
- *  Provide limits for the option "--option scale=x.y".
+ *  Provide limits for the option "--option scale=x.y".  Based on the minimum
+ *  size of the main window specified in qsmainwnd.ui, 0.8 is the smallest one
+ *  can go for both width and height.
  */
 
-const double c_window_scale_min         = 0.5f;
+const double c_window_scale_min         = 0.8f;
 const double c_window_scale_default     = 1.0f;
 const double c_window_scale_max         = 3.0f;
 
@@ -238,14 +240,16 @@ usrsettings::usrsettings () :
      * [user-midi-settings]
      */
 
+    m_default_ppqn              (SEQ66_DEFAULT_PPQN),
     m_midi_ppqn                 (SEQ66_DEFAULT_PPQN),
+    m_use_file_ppqn             (false),
     m_file_ppqn                 (0),
     m_midi_beats_per_measure    (SEQ66_DEFAULT_BEATS_PER_MEASURE),
     m_midi_bpm_minimum          (0),
     m_midi_beats_per_minute     (SEQ66_DEFAULT_BPM),
-    m_midi_bpm_maximum          (c_max_midi_data_value),
+    m_midi_bpm_maximum          (c_midibyte_value_max),
     m_midi_beat_width           (SEQ66_DEFAULT_BEAT_WIDTH),
-    m_midi_buss_override        (c_bussbyte_max),   /* is_null_bussbyte()   */
+    m_midi_buss_override        (c_bussbyte_max),       /* is_null_buss()   */
     m_velocity_override         (SEQ66_PRESERVE_VELOCITY),
     m_bpm_precision             (SEQ66_DEFAULT_BPM_PRECISION),
     m_bpm_step_increment        (SEQ66_DEFAULT_BPM_STEP_INCREMENT),
@@ -256,12 +260,11 @@ usrsettings::usrsettings () :
      */
 
     m_total_seqs                (0),
-    m_seqs_in_set               (0),            // set correctly in normalize()
-    m_gmute_tracks              (0),            // same as max-tracks
+    m_seqs_in_set               (0),                /* set in normalize()   */
+    m_gmute_tracks              (0),                /* same as max-tracks   */
     m_max_sequence              (0),
-    m_mainwnd_x                 (780),          // constant
-    m_mainwnd_y                 (412),          // constant
-    m_save_user_config          (false),
+    m_mainwnd_x                 (780),              /* constant             */
+    m_mainwnd_y                 (412),              /* constant             */
 
     /*
      * Constant values.
@@ -275,6 +278,7 @@ usrsettings::usrsettings () :
      * Back to non-constant values.
      */
 
+    m_save_user_config          (false),
     m_user_option_daemonize     (false),
     m_user_use_logfile          (false),
     m_user_option_logfile       (),
@@ -285,8 +289,9 @@ usrsettings::usrsettings () :
      * [user-ui-tweaks]
      */
 
-    m_user_ui_key_height        (SEQ66_SEQKEY_HEIGHT),
+    m_user_ui_key_height        (SEQ66_SEQKEY_HEIGHT_DEFAULT),
     m_user_ui_seqedit_in_tab    (true),
+    m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
     m_session_manager           (session::none),
     m_session_url               (),
@@ -299,241 +304,6 @@ usrsettings::usrsettings () :
 {
     // Empty body; it's no use to call normalize() here, see set_defaults().
 }
-
-#if defined USE_USRSETTINGS_COPYING
-
-/**
- *  Copy constructor.
- */
-
-usrsettings::usrsettings (const usrsettings & rhs) :
-    basesettings                (rhs),
-    m_midi_buses                (rhs.m_midi_buses),     // vector
-    m_instruments               (rhs.m_instruments),    // vector
-    m_grid_style                (rhs.m_grid_style),
-    m_grid_brackets             (rhs.m_grid_brackets),
-    m_mainwnd_rows              (rhs.m_mainwnd_rows),
-    m_mainwnd_cols              (rhs.m_mainwnd_cols),
-    m_max_sets                  (rhs.m_max_sets),
-    m_window_scale              (rhs.m_window_scale),
-    m_window_scale_y            (rhs.m_window_scale_y),
-    m_mainwid_border            (rhs.m_mainwid_border),
-    m_mainwid_spacing           (rhs.m_mainwid_spacing),
-    m_control_height            (rhs.m_control_height),
-    m_current_zoom              (rhs.m_current_zoom),
-    m_global_seq_feature_save   (rhs.m_global_seq_feature_save),
-    m_seqedit_scale             (rhs.m_seqedit_scale),
-    m_seqedit_key               (rhs.m_seqedit_key),
-    m_seqedit_bgsequence        (rhs.m_seqedit_bgsequence),
-    m_use_new_font              (rhs.m_use_new_font),
-    m_allow_two_perfedits       (rhs.m_allow_two_perfedits),
-    m_h_perf_page_increment     (rhs.m_h_perf_page_increment),
-    m_v_perf_page_increment     (rhs.m_v_perf_page_increment),
-    m_progress_bar_colored      (rhs.m_progress_bar_colored),
-    m_progress_bar_thick        (rhs.m_progress_bar_thick),
-    m_inverse_colors            (rhs.m_inverse_colors),
-    m_window_redraw_rate_ms     (rhs.m_window_redraw_rate_ms),
-    m_use_more_icons            (rhs.m_use_more_icons),
-    m_mainwid_block_rows        (rhs.m_mainwid_block_rows),
-    m_mainwid_block_cols        (rhs.m_mainwid_block_cols),
-    m_mainwid_block_independent (rhs.m_mainwid_block_independent),
-
-    /*
-     * The members that follow are not yet part of the .usr file.
-     */
-
-    m_text_x                    (rhs.m_text_x),
-    m_text_y                    (rhs.m_text_y),
-    m_seqchars_x                (rhs.m_seqchars_x),
-    m_seqchars_y                (rhs.m_seqchars_y),
-
-    /*
-     * [user-midi-settings]
-     */
-
-    m_midi_ppqn                 (rhs.m_midi_ppqn),
-    m_file_ppqn                 (rhs.m_file_ppqn),
-    m_midi_beats_per_measure    (rhs.m_midi_beats_per_measure),
-    m_midi_bpm_minimum          (rhs.m_midi_bpm_minimum),
-    m_midi_beats_per_minute     (rhs.m_midi_beats_per_minute),
-    m_midi_bpm_maximum          (rhs.m_midi_bpm_maximum),
-    m_midi_beat_width           (rhs.m_midi_beat_width),
-    m_midi_buss_override        (rhs.m_midi_buss_override),
-    m_velocity_override         (rhs.m_velocity_override),
-    m_bpm_precision             (rhs.m_bpm_precision),
-    m_bpm_step_increment        (rhs.m_bpm_step_increment),
-    m_bpm_page_increment        (rhs.m_bpm_page_increment),
-
-    /*
-     * Calculated from other member values in the normalize() function.
-     */
-
-    m_total_seqs                (rhs.m_total_seqs),
-    m_seqs_in_set               (rhs.m_seqs_in_set),
-    m_gmute_tracks              (rhs.m_gmute_tracks),
-    m_max_sequence              (rhs.m_max_sequence),
-    m_mainwnd_x                 (rhs.m_mainwnd_x),
-    m_mainwnd_y                 (rhs.m_mainwnd_y),
-    m_save_user_config          (rhs.m_save_user_config),
-
-    /*
-     * Constant values.
-     */
-
-    mc_min_zoom                 (rhs.mc_min_zoom),
-    mc_max_zoom                 (rhs.mc_max_zoom),
-    mc_baseline_ppqn            (SEQ66_DEFAULT_PPQN),
-
-    /*
-     * Back to non-constant values.
-     */
-
-    m_user_option_daemonize     (rhs.m_user_option_daemonize),
-    m_user_use_logfile          (rhs.m_user_use_logfile),
-    m_user_option_logfile       (rhs.m_user_option_logfile),
-    m_work_around_play_image    (rhs.m_work_around_play_image),
-    m_work_around_transpose_image (rhs.m_work_around_transpose_image),
-
-    /*
-     * [user-ui-tweaks]
-     */
-
-    m_user_ui_key_height        (rhs.m_user_ui_key_height),
-    m_user_ui_seqedit_in_tab    (rhs.m_user_ui_seqedit_in_tab),
-    m_resume_note_ons           (rhs.m_resume_note_ons),
-    m_session_manager           (rhs.m_session_manager),
-    m_session_url               (rhs.m_session_url),
-    m_in_session                (rhs.m_in_session),
-    m_new_pattern_armed         (rhs.m_new_pattern_armed),
-    m_new_pattern_thru          (rhs.m_new_pattern_thru),
-    m_new_pattern_record        (rhs.m_new_pattern_record),
-    m_new_pattern_qrecord       (rhs.m_new_pattern_qrecord),
-    m_new_pattern_recordstyle   (rhs.m_new_pattern_recordstyle)
-{
-    // Empty body; no need to call normalize() here.
-}
-
-/**
- *  Principal assignment operator.
- */
-
-usrsettings &
-usrsettings::operator = (const usrsettings & rhs)
-{
-    if (this != &rhs)
-    {
-        basesettings::operator =(rhs),
-        m_midi_buses                = rhs.m_midi_buses;
-        m_instruments               = rhs.m_instruments;
-        m_grid_style                = rhs.m_grid_style;
-        m_grid_brackets             = rhs.m_grid_brackets;
-        m_mainwnd_rows              = rhs.m_mainwnd_rows;
-        m_mainwnd_cols              = rhs.m_mainwnd_cols;
-        m_max_sets                  = rhs.m_max_sets;
-        m_window_scale              = rhs.m_window_scale;
-        m_window_scale_y            = rhs.m_window_scale_y;
-        m_mainwid_border            = rhs.m_mainwid_border;
-        m_mainwid_spacing           = rhs.m_mainwid_spacing;
-        m_control_height            = rhs.m_control_height;
-        m_current_zoom              = rhs.m_current_zoom;
-        m_global_seq_feature_save   = rhs.m_global_seq_feature_save;
-        m_seqedit_scale             = rhs.m_seqedit_scale;
-        m_seqedit_key               = rhs.m_seqedit_key;
-        m_seqedit_bgsequence        = rhs.m_seqedit_bgsequence;
-        m_use_new_font              = rhs.m_use_new_font;
-        m_allow_two_perfedits       = rhs.m_allow_two_perfedits;
-        m_h_perf_page_increment     = rhs.m_h_perf_page_increment;
-        m_v_perf_page_increment     = rhs.m_v_perf_page_increment;
-        m_progress_bar_colored      = rhs.m_progress_bar_colored;
-        m_progress_bar_thick        = rhs.m_progress_bar_thick;
-        m_inverse_colors            = rhs.m_inverse_colors;
-        m_window_redraw_rate_ms     = rhs.m_window_redraw_rate_ms;
-        m_use_more_icons            = rhs.m_use_more_icons;
-        m_mainwid_block_rows        = rhs.m_mainwid_block_rows;
-        m_mainwid_block_cols        = rhs.m_mainwid_block_cols;
-        m_mainwid_block_independent = rhs.m_mainwid_block_independent;
-
-        /*
-         * The members that follow are not yet part of the .usr file.
-         */
-
-        m_text_x                    = rhs.m_text_x;
-        m_text_y                    = rhs.m_text_y;
-        m_seqchars_x                = rhs.m_seqchars_x;
-        m_seqchars_y                = rhs.m_seqchars_y;
-
-        /*
-         * [user-midi-settings]
-         */
-
-        m_midi_ppqn                 = rhs.m_midi_ppqn;
-        m_file_ppqn                 = rhs.m_file_ppqn;
-        m_midi_beats_per_measure    = rhs.m_midi_beats_per_measure;
-        m_midi_bpm_minimum          = rhs.m_midi_bpm_minimum;
-        m_midi_beats_per_minute     = rhs.m_midi_beats_per_minute;
-        m_midi_bpm_maximum          = rhs.m_midi_bpm_maximum;
-        m_midi_beat_width           = rhs.m_midi_beat_width;
-        m_midi_buss_override        = rhs.m_midi_buss_override;
-        m_velocity_override         = rhs.m_velocity_override;
-        m_bpm_precision             = rhs.m_bpm_precision;
-        m_bpm_step_increment        = rhs.m_bpm_step_increment;
-        m_bpm_page_increment        = rhs.m_bpm_page_increment;
-
-        /*
-         * Calculated from other member values in the normalize() function.
-         *
-         *  m_total_seqs                = rhs.m_total_seqs;
-         *  m_seqs_in_set               = rhs.m_seqs_in_set;
-         *  m_max_sequence              = rhs.m_max_sequence;
-         */
-
-        m_gmute_tracks              = rhs.m_gmute_tracks;   // ! NOT
-        m_seqarea_x                 = rhs.m_seqarea_x;      // ! NOT
-        m_seqarea_y                 = rhs.m_seqarea_y;      // ! NOT
-        m_seqarea_seq_x             = rhs.m_seqarea_seq_x;  // ! NOT
-        m_seqarea_seq_y             = rhs.m_seqarea_seq_y;  // ! NOT
-        m_mainwid_x                 = rhs.m_mainwid_x;      // ! NOT
-        m_mainwid_y                 = rhs.m_mainwid_y;      // ! NOT
-        m_mainwnd_x                 = rhs.m_mainwnd_x;      // ! NOT
-        m_mainwnd_y                 = rhs.m_mainwnd_y;      // ! NOT
-
-        m_save_user_config = rhs.m_save_user_config;
-        normalize();
-
-        /*
-         * Constant values.  These values cannot be modified.
-         *
-         * mc_min_zoom              = rhs.mc_min_zoom;
-         * mc_max_zoom              = rhs.mc_max_zoom;
-         * mc_baseline_ppqn         = rhs.mc_baseline_ppqn;
-         */
-
-        m_user_option_daemonize = rhs.m_user_option_daemonize;
-        m_user_use_logfile = rhs.m_user_use_logfile;
-        m_user_option_logfile = rhs.m_user_option_logfile;
-        m_work_around_play_image = rhs.m_work_around_play_image;
-        m_work_around_transpose_image = rhs.m_work_around_transpose_image;
-
-        /*
-         * [user-ui-tweaks]
-         */
-
-        m_user_ui_key_height = rhs.m_user_ui_key_height;
-        m_user_ui_seqedit_in_tab = rhs.m_user_ui_seqedit_in_tab;
-        m_resume_note_ons = rhs.m_resume_note_ons;
-        m_session_manager = rhs.m_session_manager;
-        m_session_url = rhs.m_session_url;
-        m_in_session = rhs.m_in_session;
-        m_new_pattern_armed = rhs.m_new_pattern_armed;
-        m_new_pattern_thru = rhs.m_new_pattern_thru;
-        m_new_pattern_record = rhs.m_new_pattern_record;
-        m_new_pattern_qrecord = rhs.m_new_pattern_qrecord;
-        m_new_pattern_recordstyle = rhs.m_new_pattern_recordstyle;
-    }
-    return *this;
-}
-
-#endif  // USE_USRSETTINGS_COPYING
 
 /**
  *  Sets the default values.  For the m_midi_buses and
@@ -577,20 +347,31 @@ usrsettings::set_defaults ()
     m_text_y = 12;                          // range: 12-12
     m_seqchars_x = 15;                      // range: 15-15
     m_seqchars_y =  5;                      // range: 5-5
+    m_default_ppqn = SEQ66_DEFAULT_PPQN;    // range: 32 to 19200, default 192
     m_midi_ppqn = SEQ66_DEFAULT_PPQN;       // range: 32 to 19200, default 192
+    m_use_file_ppqn = false;
     m_file_ppqn = 0;                        // range: 32 to 19200, default 0
     m_midi_beats_per_measure = SEQ66_DEFAULT_BEATS_PER_MEASURE; // range: 1-16
     m_midi_bpm_minimum = 0;                 // range: 0 to ???
-    m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;    // range: 20-500
-    m_midi_bpm_maximum = c_max_midi_data_value;     // range: ? to ???
-    m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;   // range: 1-16, powers of 2
+    m_midi_beats_per_minute = SEQ66_DEFAULT_BPM;
+    m_midi_bpm_maximum = c_midibyte_value_max;
+    m_midi_beat_width = SEQ66_DEFAULT_BEAT_WIDTH;
     m_midi_buss_override = c_bussbyte_max;          // 0xFF
-    m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, range: 0 to 127
+    m_velocity_override = SEQ66_PRESERVE_VELOCITY;  // -1, 0 to 127
     m_bpm_precision = SEQ66_DEFAULT_BPM_PRECISION;
     m_bpm_step_increment = SEQ66_DEFAULT_BPM_STEP_INCREMENT;
     m_bpm_page_increment = SEQ66_DEFAULT_BPM_PAGE_INCREMENT;
 
     /*
+     * Calculated from other member values in the normalize() function.
+     *
+     *  m_total_seqs
+     *  m_seqs_in_set
+     *  m_gmute_tracks
+     *  m_max_sequence
+     *  m_mainwnd_x
+     *  m_mainwnd_y
+     *
      * Constants:
      *
      *  mc_min_zoom
@@ -598,13 +379,15 @@ usrsettings::set_defaults ()
      *  mc_baseline_ppqn
      */
 
+    m_save_user_config = false;
     m_user_option_daemonize = false;
     m_user_use_logfile = false;
     m_user_option_logfile.clear();
     m_work_around_play_image = false;
     m_work_around_transpose_image = false;
-    m_user_ui_key_height = SEQ66_SEQKEY_HEIGHT;
+    m_user_ui_key_height = SEQ66_SEQKEY_HEIGHT_DEFAULT;
     m_user_ui_seqedit_in_tab = true;
+    m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
     m_session_manager = session::none;
     m_session_url.clear();
@@ -681,8 +464,7 @@ usrsettings::mainwnd_x () const
 }
 
 /**
- * \getter m_mainwnd_y
- *      Scaled only if window scaling is less than 1.0.
+ *  Scaled only if window scaling is less than 1.0.
  */
 
 int
@@ -880,9 +662,17 @@ usrsettings::parse_window_scale (const std::string & source)
     return result;
 }
 
-/**
- * \setter m_grid_style
- */
+int
+usrsettings::scale_font_size (int value) const
+{
+    int result = value;
+    if (window_is_scaled())
+    {
+        result = m_window_scale <= m_window_scale_y ?
+            scale_size(value) : scale_size_y(value) ;
+    }
+    return result;
+}
 
 void
 usrsettings::set_grid_style (int gridstyle)
@@ -1088,6 +878,13 @@ usrsettings::zoom (int value)
         m_current_zoom = value;
 }
 
+void
+usrsettings::default_ppqn (int value)
+{
+    if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
+        m_default_ppqn = value;
+}
+
 /**
  * \setter m_midi_ppqn
  *      This value can be set from 96 to 19200 (this upper limit will be
@@ -1100,10 +897,8 @@ usrsettings::midi_ppqn (int value)
 {
     if (value >= SEQ66_MINIMUM_PPQN && value <= SEQ66_MAXIMUM_PPQN)
         m_midi_ppqn = value;
-    else if (value == SEQ66_USE_FILE_PPQN)
-        m_midi_ppqn = value;
     else
-        m_midi_ppqn = SEQ66_DEFAULT_PPQN;
+        m_midi_ppqn = default_ppqn();
 }
 
 /**
@@ -1119,7 +914,9 @@ usrsettings::midi_beats_per_bar (int value)
         value >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
         value <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
     )
+    {
         m_midi_beats_per_measure = value;
+    }
 }
 
 /**
@@ -1174,7 +971,7 @@ usrsettings::midi_beat_width (int bw)
 /**
  *  This value can be set from 0 to c_busscount_max.  The default value is -1
  *  (0xFF), which means that there is no buss override, as defined by the
- *  inline function is_null_bussbyte() in midibytes.hpp.  It provides a way to
+ *  inline function is_null_buss() in midibytes.hpp.  It provides a way to
  *  override the buss number for smallish MIDI files.  It replaces the
  *  buss-number read from the file.  This option is turned on by the --bus
  *  option, and is merely a convenience feature for the quick previewing of a
@@ -1184,7 +981,7 @@ usrsettings::midi_beat_width (int bw)
 void
 usrsettings::midi_buss_override (bussbyte buss)
 {
-    if (is_good_bussbyte(buss) || is_null_bussbyte(buss))
+    if (is_good_buss(buss) || is_null_buss(buss))
         m_midi_buss_override = buss;
 }
 

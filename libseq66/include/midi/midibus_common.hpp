@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2019-01-27
+ * \updates       2021-03-15
  * \license       GNU GPLv2 or above
  *
  *  Defines some midibus constants and the clock_e enumeration
@@ -107,13 +107,33 @@ enum class e_clock
      *  notes) that is specified.
      */
 
-    mod
+    mod,
+
+    /**
+     *  Illegal value for terminator.  Follows our convention for enum class
+     *  maximums-but-out-of-bounds.
+     */
+
+    max
 
 };          // enum class e_clock
 
 /*
  *  Inline free functions.
  */
+
+inline e_clock
+int_to_clock (int e)
+{
+    return e < static_cast<int>(e_clock::max) ?
+        static_cast<e_clock>(e) : e_clock::disabled ;
+}
+
+inline int
+clock_to_int (e_clock e)
+{
+    return static_cast<int>(e == e_clock::max ? e_clock::disabled : e);
+}
 
 inline bool
 clock_is_disabled (e_clock ce)

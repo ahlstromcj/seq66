@@ -198,15 +198,14 @@ playlistfile::open (bool verify_it)
 bool
 playlistfile::parse ()
 {
-    std::ifstream file(name(), std::ios::in | std::ios::ate);
-    bool result = ! name().empty() && file.is_open();
-    if (result)
-        file_message("Reading 'playlist'", name());
-    else
-        file_error("Read open fail", name());
+    if (is_empty_string(name()))
+        return false;
 
+    std::ifstream file(name(), std::ios::in | std::ios::ate);
+    bool result = file.is_open();
     if (result)
     {
+        file_message("Reading 'playlist'", name());
         file.seekg(0, std::ios::beg);                   /* seek to start    */
         play_list().clear();
 
@@ -500,7 +499,7 @@ playlistfile::write ()
 
     std::string c = play_list().comments_block().text();
     if (c.empty())
-        c = "Put your comment line(s) here";
+        c = "(Put your comment line(s) here as per the explanation above.)";
 
     file << "\n[comments]\n\n" << c << "\n";
 
@@ -567,9 +566,14 @@ playlistfile::write ()
         << "\n[playlist]\n\n"
            "# THIS IS A NON-FUNCTIONAL PLAYLIST SAMPLE. See one of the\n"
            "# sample playlist files shipping with Seq66.\n\n"
-        ;
+           "0   # playlist number, ranging from 0 to 127.\n\n"
+           "\"My Midi Files\"    # display name for the play-list.\n\n"
+           "\"~/My Songs\"       # storage directory for tunes in the list.\n\n"
+           "0 \"b4uacufm.midi\"  # first tune, selected by d1 value 0\n"
+           "1 \"brecluse.midi\"  # second tune...\n"
+           " . . .\n"
+            ;
     }
-
     file
         << "\n"
         << "# End of " << name() << "\n#\n"
@@ -611,32 +615,26 @@ open_playlist
     bool show_on_stdout
 )
 {
-    bool result = ! source.empty();
+    bool result = ! is_missing_string(source);  /* empty, "", or "?"        */
     if (result)
     {
-        if (is_questionable_string(source))
+        playlistfile plf(source, pl, rc(), show_on_stdout);
+        result = plf.open(true);            /* parse and file verify    */
+        if (result)
         {
-            pl.mode(false);
+            // Anything worth doing?
         }
-        else
+        else if (rc().playlist_active())
         {
-            playlistfile plf(source, pl, rc(), show_on_stdout);
-            result = plf.open(true);            /* parse and file verify    */
-            if (result)
-            {
-                // Anything worth doing?
-            }
-            else if (rc().playlist_active())
-            {
-                std::string msg = "Open failed: ";
-                msg += source;
-                (void) error_message(msg);
-            }
+            std::string msg = "Open failed: ";
+            msg += source;
+            (void) error_message(msg);
         }
     }
     else
     {
         file_error("Play-list file to open", "none");
+        pl.mode(false);
     }
     return result;
 }
@@ -667,7 +665,7 @@ save_playlist
 )
 {
     std::string destination = destfile.empty() ? pl.file_name() : destfile;
-    bool result = ! destination.empty();
+    bool result = ! is_missing_string(destination);     /* empty, "", "?"   */
     if (result)
     {
         playlistfile plf(destination, pl, rc(), false); /* false --> quiet  */

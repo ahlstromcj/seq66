@@ -177,7 +177,18 @@ or no transport mode.</string>
          </size>
         </property>
         <property name="toolTip">
-         <string>Changes the PPQN value of the current song, currently only for the current set.  Not yet ready at all.</string>
+         <string>Changes the PPQN value of the current song for all sets.
+This modifies the song, so a &quot;Save&quot; prompt will occur at exit.
+It does not change Seq66's default PPQN.</string>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
+        </property>
+        <property name="currentText">
+         <string notr="true">19200</string>
+        </property>
+        <property name="insertPolicy">
+         <enum>QComboBox::NoInsert</enum>
         </property>
        </widget>
       </item>
@@ -297,13 +308,13 @@ or no transport mode.</string>
        <widget class="QLabel" name="label_HMS">
         <property name="minimumSize">
          <size>
-          <width>80</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>80</width>
+          <width>84</width>
           <height>24</height>
          </size>
         </property>
@@ -314,16 +325,22 @@ or no transport mode.</string>
       </item>
       <item>
        <widget class="QWidget" name="verticalWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>180</width>
-          <height>24</height>
+          <width>80</width>
+          <height>18</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>180</width>
-          <height>16777215</height>
+          <height>18</height>
          </size>
         </property>
         <layout class="QVBoxLayout" name="layout_beat_ind">
@@ -371,7 +388,7 @@ or no transport mode.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>7</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">

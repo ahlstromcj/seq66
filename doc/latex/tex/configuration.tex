@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-02-11
+% \update      2021-03-22
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -160,6 +160,14 @@
       . . .
    \end{verbatim}
 
+   If the variable value is a string value, especially the name of the file or
+   a directory, it must be surrounded with quotes, in case the path has spaces
+   in it.
+
+   Also note that there are still a lot of old-style variable specifications in
+   place.  As time allows, they will be fixed, one-by-one, in a manner that
+   does not break old configurations.
+
 \subsubsection{Stanzas}
 \label{subsec:configuration_common_stanzas}
 
@@ -201,32 +209,31 @@
    \optionline{-h}{-{}-help}
       Display a list of all command-line options, then exit.
 
-   \optionline{-v}{-{}-version}
+   \optionline{-V}{-{}-version}
       Display the program version, then exit.
 
-   \optionline{-H}{-{}-home [directory]}
-      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
-      The configuration files are loaded from or saved to the specified directory.
+   \optionline{-v}{-{}-verbose}
+      During execution, write more information to the console.  Useful for
+      trouble-shooting.
+   
+%  \optionline{-L}{-{}-lash}
+%     If LASH support is compiled into the program, this option
+%     enables it.  Deprecated.
+%     See \texttt{usr: [user-session] session}.
 
-   \optionline{-b}{-{}-bus [buss]}
-      Modifies the output buss number on \textsl{all} tracks when a MIDI file is
-      read.  Useful for testing or quick-and-dirty setup.
+   \optionline{-n}{-{}-nsm}
+      Activate the built-in NSM (\textsl{Non Session Manager}) support.
 
-   \optionline{-q}{-{}-ppqn [ppqn]}
-      Supports modifying the PPQN value of Seq66, which is
-      defaults to a value of 192.  This setting
-      is written into the MIDI file when it is saved.
-      The PPQN value can range from 32 to 19200, or
-      be set to 0 to use the PPQN from the loaded file.
+   \optionline{-T}{-{}-no-nsm}
+      Ignore the NSM setting in the 'usr' file. ('T' for 'typical').
 
-      \configref{usr}{user-midi-settings}{midi\_ppqn}.
+   \optionline{-X}{-{}-playlist [filename]}
+      This option loads the given file-name as a play-list file.
+      See \sectionref{sec:playlist}.
 
-   \optionline{-L}{-{}-lash}
-      If LASH support is compiled into the program, this option
-      enables it.  Deprecated.
-      See \texttt{usr: [user-session] session}.
+      \configref{rc}{playlist}{name}
 
-      \configref{usr}{user-session}{session}
+      \configref{playlist}{playlist}{full}
 
    \optionline{-m}{-{}-manual-ports}
       \textsl{Seq66} won't attach the system's existing ALSA or JACK MIDI ports.
@@ -258,11 +265,30 @@
       \textsl{Seq66} will run with ALSA, even if JACK is running.
       This options is "sticky" (they are saved).
 
-   \optionline{-t}{-{}-jack-midi}
-      \textsl{Seq66} will run with JACK, which is the default is JACK is
-      running.
+   \optionline{-b}{-{}-bus [buss]}
+      Modifies the output buss number on \textsl{all} tracks when a MIDI file is
+      read.  Useful for testing or quick-and-dirty setup.
 
-      \configref{rc}{jack-transport}{with\_jack\_midi}
+   \optionline{-l}{-{}-client-name}
+      Replaces the normal client-name, \texttt{seq66}, with the given name.
+      Probably best to make sure "seq66" is part of the name, for clarity.
+      Also note that, if active, the \textsl{Non Session Manager} will override
+      this name, e.g. using something like \textsl{seq66.nXYZT}.
+
+   \optionline{-q}{-{}-ppqn [ppqn]}
+      Supports modifying the PPQN value of Seq66, which is
+      defaults to a value of 192.  This setting
+      is written into the MIDI file when it is saved.
+      The PPQN value can range from 32 to 19200, or
+      be set to 0 to use the PPQN from the loaded file.
+
+      \configref{usr}{user-midi-settings}{midi\_ppqn}.
+
+      \configref{usr}{user-session}{session}
+
+   \optionline{-H}{-{}-home [directory]}
+      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
+      The configuration files are loaded from or saved to the specified directory.
 
    \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
@@ -280,16 +306,15 @@
    \optionline{-K}{-{}-inverse}
       Changes the color palette for the sequence editor and performance editor
       piano rolls.  Also note that the palette is highly configurable.
+      And there is also an option to use a Qt style-sheet.
 
       \configref{palette}{palette}{inverse}
 
-   \optionline{-X}{-{}-playlist [filename]}
-      This option loads the given file-name as a play-list file.
-      See \sectionref{sec:playlist}.
+   \optionline{-t}{-{}-jack-midi}
+      \textsl{Seq66} will run with JACK, which is the default is JACK is
+      running.
 
-      \configref{rc}{playlist}{name}
-
-      \configref{playlist}{playlist}{full}
+      \configref{rc}{jack-transport}{with\_jack\_midi}
 
    \optionline{-j}{-{}-jack-transport}
       \textsl{Seq66} will sync to JACK transport.
@@ -477,6 +502,18 @@
    For the usage of the note-mapper, see
    \figureref{fig:pattern_editor_oneshot_recording}, and the surrounding
    discussion.
+
+\subsubsection{'rc' File / Port Map}
+\label{subsubsec:configuration_rc_port_map}
+
+   The 'rc' file also supports a port map, which maps I/O ports from a
+   permanent buss number to the actual system buss number.
+   The pattern is set to output to a specific buss number; this buss number is
+   associated with a port name; this port name is looked up to see what
+   system buss number is the one to be used.  When the system setup changes,
+   the pattern does not need to changed; only the port mapping may need to be
+   changed.  If the port map covers all I/O ports ever possible on a system, it
+   will not need to be changed.  See \sectionref{sec:port_mapping}.
 
 \subsubsection{'rc' File / MIDI-Clock Section}
 \label{subsec:configuration_rc_midi_clock}
@@ -1235,23 +1272,46 @@
    10    # key_height
    1     # use_new_seqedit
    note-resume = false
+   style-sheet = "qseq66.qss"
    \end{verbatim}
 
+   \index{key height}
    The key-height affects the default "width" of the piano keys in the pattern
    sequence editor.  Defaults to 12 (pixels).
    This option is also editable in the \textbf{Preferences} dialog.
    There are vertical zoom buttons, and the \texttt{v/0/V} keystrokes to change
    this on the fly, but those changes are not saved.
 
+   \index{new seqedit}
    Normally, \textsl{Seq66} uses the old pattern editor in the 'Edit' tab.
-   If this value is set to 1, then the new, larger, more functional
-   pattern editor will be used in the 'Edit' tab; this
+   If the use-new-seqedit value is set to 1, then the new, larger, more
+   functional pattern editor will be used in the 'Edit' tab; this
    makes the main window larger.
 
+   The following options adopt the new convention for setting variables, in
+   which the format is \texttt{item-name = value}.
+   This style will eventually be used for all settings.
+
+   \index{note resume}
    The note-resume option, if active, causes any notes in progress
    to be resumed when the pattern is toggled back on.
-   Observe that this setting uses the new "feature = value" format, which
-   should eventually be used for all settings.
+
+   \index{style sheet}
+   The style-sheet option, if non-empty, causes a user-designed style-sheet to
+   be applied.  This is useful in expanding the tab-sizes, for example.
+   The style sheet file is assumed to reside in the normal \textsl{Seq66}
+   configuration directory.
+   However, it can have a path component so that the same style sheet
+   can be used by many applications more readily.
+   Here is an example using the style sheet file
+   \texttt{data/samples/qseq66.qss}:
+
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-window/main-window-stylesheet.png}
+   \caption{Seq66 View with Style Sheet Applied}
+   \label{fig:view_with_style_sheet_applied}
+\end{figure}
 
 \paragraph{'usr' File / Additional Options / [user-session]}
 \label{paragraph:user_file_added_options_session}

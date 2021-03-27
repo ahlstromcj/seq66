@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-22
+ * \updates       2021-03-22
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -64,9 +64,7 @@ namespace seq66
 usrfile::usrfile (const std::string & name, rcsettings & rcs) :
     configfile (name, rcs)
 {
-    // version("1");                    // a new version on 2019-12-12
-    // version("2");                    // a new version on 2020-06-20
-    version("3");                       // a new version on 2020-08-22
+    version("3");                       /* new version on 2020-08-22    */
 }
 
 /**
@@ -419,6 +417,24 @@ usrfile::parse ()
     usr().normalize();    /* calculate derived values */
 
     /*
+     * [user-midi-ppqn]
+     */
+
+    bool ppqn_settings_made = false;
+    std::string s = get_variable(file, "[user-midi-ppqn]", "default-ppqn");
+    if (! s.empty())
+    {
+        usr().default_ppqn(std::stoi(s));
+        s = get_variable(file, "[user-midi-ppqn]", "use-file-ppqn");
+        if (! s.empty())
+        {
+            bool use_it = string_to_bool(s);
+            usr().use_file_ppqn(use_it);
+            ppqn_settings_made = true;
+        }
+    }
+
+    /*
      * [user-midi-settings]
      */
 
@@ -426,7 +442,8 @@ usrfile::parse ()
     {
         int scratch = 0;
         sscanf(scanline(), "%d", &scratch);
-        usr().midi_ppqn(scratch);
+        if (! ppqn_settings_made)
+            usr().midi_ppqn(scratch);   /* ignored if set earlier */
 
         next_data_line(file);
         sscanf(scanline(), "%d", &scratch);
@@ -531,19 +548,31 @@ usrfile::parse ()
     if (line_after(file, "[user-ui-tweaks]"))
     {
         int scratch = 0;
-        sscanf(scanline(), "%d", &scratch);
-        usr().key_height(scratch);
-        if (next_data_line(file))
+        int count = sscanf(scanline(), "%d", &scratch);
+        if (count == 1)
         {
-            sscanf(scanline(), "%d", &scratch);
-            usr().use_new_seqedit(scratch != 0);
+            usr().save_user_config(true);
+            usr().key_height(scratch);
+            if (next_data_line(file))
+            {
+                sscanf(scanline(), "%d", &scratch);
+                usr().use_new_seqedit(scratch != 0);
+            }
+        }
+        else
+        {
+            std::string s = get_variable(file, "[user-ui-tweaks]", "key-height");
+            usr().key_height(string_to_int(s, 10));
+            s = get_variable(file, "[user-ui-tweaks]", "use-new-seqedit");
+            usr().use_new_seqedit(string_to_bool(s));
         }
 
         std::string s = get_variable(file, "[user-ui-tweaks]", "note-resume");
         usr().resume_note_ons(string_to_bool(s));
+        s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
+        usr().style_sheet(strip_quotes(s));
     }
-
-    std::string s = get_variable(file, "[user-session]", "session");
+    s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
 
     s = get_variable(file, "[user-session]", "url");
@@ -607,7 +636,7 @@ usrfile::write ()
      */
 
     file
-        << "# Seq66 0.91.0 (and above) 'usr' configuration file\n"
+        << "# Seq66 0.92.2 (and above) 'usr' configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"
@@ -1063,13 +1092,28 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies an enlargement of the main window of Seq66.\n"
-        "# The normal value is 1.0, which is the legacy sizing.  If this\n"
-        "# value is between 0.5 and 3.0, it will change the size of the main\n"
+        "# Specifies a scaling of the main window of Seq66 at startup.\n"
+        "# The norm is 1.0x1.0, which is the legacy sizing.  If this value\n"
+        "# value is between 0.8 and 3.0, it will change the size of the main\n"
         "# window proportionately. Same as the '-o scale=m.n[xp.q]' option.\n"
         "\n"
         << usr().window_scale() << " " << usr().window_scale_y()
-        << "      # window_scale (scales main window width and height)\n"
+        << "      # window_scale (scales main window width x height)\n"
+        ;
+
+    /*
+     * [user-midi-ppqn]
+     */
+
+    file << "\n"
+        "[user-midi-ppqn]\n"
+        "\n"
+        "# These settings replace the midi_ppqn setting below.  We need to\n"
+        "# separate the file-ppqn flag from the default PPQN that the user\n"
+        "# wants Seq66 to support.\n"
+        "\n"
+        "default-ppqn = " << std::to_string(usr().default_ppqn()) << "\n"
+        "use-file-ppqn = " << bool_to_string(usr().use_file_ppqn()) << "\n"
         ;
 
     /*
@@ -1124,7 +1168,7 @@ usrfile::write ()
         ;
 
     int bo = int(usr().midi_buss_override());   /* writing char no good */
-    if (is_null_bussbyte(bussbyte(bo)))
+    if (is_null_buss(bussbyte(bo)))
         file << "-1" << "       # midi_buss_override (disabled)\n";
     else
         file << bo   << "       # midi_buss_override (enabled, careful!)\n";
@@ -1267,8 +1311,8 @@ usrfile::write ()
         "\n"
         ;
 
-    uscratch = usr().key_height();
-    file << uscratch << "       # key_height\n";
+    std::string v = std::to_string(usr().key_height());
+    file << "key-height = " << v << "\n";
 
     file << "\n"
         "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
@@ -1278,14 +1322,23 @@ usrfile::write ()
         "\n"
         ;
 
-    uscratch = usr().use_new_seqedit();
-    file << uscratch << "       # use_new_seqedit\n";
+    v = bool_to_string(usr().use_new_seqedit());
+    file << "use-new-seqedit = " << v << "\n";
 
-    std::string v = bool_to_string(usr().resume_note_ons());
+    v = bool_to_string(usr().resume_note_ons());
     file << "\n"
         "# The note-resume option, if active, causes any notes in progress\n"
         "# to be resumed when the pattern is toggled back on.\n\n"
         << "note-resume = " << v << "\n"
+        ;
+
+    v = add_quotes(usr().style_sheet());
+    file << "\n"
+        "# If specified, this style-sheet (e.g. 'qseq66.qss') is applied\n"
+        "# at startup.  Although normally just a base-name, it can contain\n"
+        "# a file-path, to provide a style usable in many applications,\n"
+        "# outside the Seq66 configuration directory.\n\n"
+        << "style-sheet = " << v << "\n"
         ;
 
     /*

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2020-08-13
+ * \updates       2021-03-13
  * \license       GNU GPLv2 or above
  *
  * MIDI control container:
@@ -96,46 +96,26 @@ namespace seq66
 {
 
 /**
- *  This default constructor creates a "zero" object.  Every member is
- *  either false or some other form of zero.
- */
-
-midicontrolin::midicontrolin
-(
-    int /*buss*/,       /* NOT YET USED */
-    int rows,
-    int columns
-) :
-    midicontrolbase
-    (
-        SEQ66_MIDI_CONTROL_IN_BUSS,         /* allows all busses */
-        rows, columns
-    ),
-    m_container         (),
-    m_container_name    ("Default MIDI Controls"),
-    m_comments_block    (),
-    m_inactive_allowed  (false),
-    m_loaded_from_rc    (false),
-    m_control_status    (automation::ctrlstatus::none),
-    m_have_controls     (false)
-{
-    is_enabled(true);                   /* by default */
-}
-
-/**
  *  This constructor assigns the basic values of control name, number, and
  *  action code.  The rest of the members can be set via the set() function.
  */
 
 midicontrolin::midicontrolin (const std::string & name) :
+    midicontrolbase     (name),
     m_container         (),
-    m_container_name    (name),
     m_comments_block    (),
-    m_loaded_from_rc    (false),
     m_control_status    (automation::ctrlstatus::none),
     m_have_controls     (false)
 {
    // no code
+}
+
+bool
+midicontrolin::initialize (int buss, int rows, int columns)
+{
+    bool result = midicontrolbase::initialize(buss, rows, columns);
+    is_enabled(result);     // master bus???
+    return result;
 }
 
 /**
@@ -158,13 +138,8 @@ midicontrolin::add (const midicontrol & mc)
 {
     bool result = false;
     auto sz = m_container.size();
-    midicontrol::key k = mc.make_key();
-
-    /*
-     * auto --> std::pair<int, midicontrol>;
-     */
-
-    auto p = std::make_pair(k, mc);
+    auto k = mc.make_key();
+    auto p = std::make_pair(k, mc);         /* std::pair<int, midicontrol>  */
     (void) m_container.insert(p);
     result = m_container.size() == (sz + 1);
     if (result)
@@ -185,10 +160,11 @@ midicontrolin::add (const midicontrol & mc)
 }
 
 /**
- *  This function is needed for running the application for the first time, when
- *  there is no "rc" or "ctrl" file.  We want to be able to write out the full
- *  set of stanzas, with the keystrokes, even if the MIDI controls are all zero.
- *  Controls are written only for defined keystrokes in the keycontainer.
+ *  This function is needed for running the application for the first time,
+ *  when there is no "rc" or "ctrl" file.  We want to be able to write out the
+ *  full set of stanzas, with the keystrokes, even if the MIDI controls are
+ *  all zero.  Controls are written only for defined keystrokes in the
+ *  keycontainer.
  *
  * \param kc
  *      Provides the key setup, so that the keystroke can be added to the

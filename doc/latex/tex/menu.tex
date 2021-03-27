@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2020-12-30
+% \update      2021-03-27
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -87,8 +87,11 @@
 
    This dialog lets one type a file-name, highlighting the first file
    that matches the characters typed.
-   \textsl{Seq66} can open \textsl{Seq66}, regular MIDI files, and
-   \textsl{Cakewalk} "WRK" files.
+   \textsl{Seq66} can open \textsl{Seq66}, MIDI SMF 0 and SMF 1 files, and
+   \textsl{Cakewalk} WRK files.
+   If the file is an SMF 0 file, where all channels appear on one track, the
+   track is split so that each channel (0 to 15) is stored in the corresponding
+   pattern, and pattern 16 contains the original track.
 
 \subsubsection{Menu / File / Open Playlist}
 \label{subsubsec:menu_file_open_playlist}
@@ -392,7 +395,7 @@
       \item \textbf{Clock Start Modulo}
       \item \textbf{Save Clock/Input Maps}
       \item \textbf{Meta Events}
-      \item \textbf{Client ID}
+      \item \textbf{Client Name:ID/UUID}
    \end{enumber}
 
    The \textbf{Ports and Clocks} table contains the following elements,
@@ -415,12 +418,13 @@
 
    \begin{verbatim}
       [5] 128:4 yoshimi:input
-       ^  ^   ^ ^
-       |  |   | |
-       |  |   |  -------- Buss name
-       |  |    ---------- Port number
-       |   ------------ Client number
-        --------------- Index number
+       ^  ^   ^ ^        ^
+       |  |   | |        |
+       |  |   | |         ---- Port name
+       |  |   |  ------------- Client name
+       |  |    --------------- Port number
+       |   ------------------- Client number
+        ---------------------- Index number
    \end{verbatim}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -474,9 +478,9 @@
    device list.
    When the \textsl{Windows} version of \textsl{Seq66}
    (\texttt{qpseq66.exe}) is first started, it may error out.
-   It will then write \texttt{erroneous.rc}
-   and \texttt{erroneous.usr} configuration
-   files, which can be examined to find the offending buss, which can then be
+   It will then write a default \texttt{qseq66.rc}
+   or \texttt{qpseq66.rc} configuration file,
+   which can be examined to find the offending buss, which can then be
    marked in the normal 'rc' file as disabled.
 
    \itempar{Off}{midi clock!off}
@@ -525,9 +529,22 @@
    process tempo events in any pattern.
    \textsl{The "Set as Tempo Track" button to the right is not yet functional.}
 
-   \itempar{Seq66 Client ID}{client ID}
-   This read-only text field shows the client ID number assigned to
+   \itempar{Client Name:ID/UUID}{client ID}
+   This read-only text field shows two things:
+
+   \begin{enumerate}
+      \item \textbf{Client Name}.
+         This is the name of the client under ALSA or JACK.  It defaults to
+         \texttt{seq66}, but it can be altered by the command-line option
+         \texttt{-{}-client-name} or by a session manager.
+      \item \textbf{ID/UUID}.
+         Under ALSA, the client number (client ID) is shown.
+         Under JACK, the UUID that JACK assigned to \textsl{Seq66} is shown.
+   \end{enumerate}
+
+   the client ID number assigned to
    \textsl{Seq66} by the ALSA MIDI subsystem.
+   Each instance of Seq66 run under ALSA will have a different client ID.
 
    \itempar{Output Ports Mapped}{mapping}
    This read-only check-box shows if the port-mapper is active for the output
@@ -602,13 +619,14 @@
    When disabled, the normal recording behavior dumps all data into the current
    sequence, regardless of channel.
 
-\paragraph{Menu / Edit / Preferences / Keyboard (Removed)}
+\paragraph{Menu / Edit / Preferences / Keyboard}
 \label{paragraph:menu_edit_preferences_keyboard}
 
+   Unlike \textsl{Seq24}, \textsl{Seq66} does not provide an options tab for
+   setting up the keyboard.
    The default keyboard mappings follow \textsl{Seq24} fairly well,
-   but add a large number of additional controls.
-   \textsl{Seq66} does not provide a user-interface to edit
-   control keystrokes; around 96 keystroke slots would need to be provided!
+   but add a large number of additional controls;
+   around 96 keystroke slots would need to be provided!
    The keystroke and MIDI controls are consolidated, and are easy to change by
    editing the appropriate 'ctrl' configuration file, stored in one of the
    following directories, depending on
@@ -619,18 +637,22 @@
          C:/Users/username/AppData/Local/seq66/qpseq66.ctrl (Windows)
    \end{verbatim}
 
-   There are also some extended example present in the \textsl{Seq66}
-   \texttt{data/linux} directory.
+   There are also some extended examples present in the \textsl{Seq66}
+   \texttt{data/linux} and
+   \texttt{data/samples} directory.
+   Also see \sectionref{sec:launchpad_mini}.
 
    For more information on keystrokes, see
    \sectionref{subsec:kbd_mouse_keyboard_control}.
 
-\paragraph{Menu / Edit / Preferences / Mouse (Removed)}
+\paragraph{Menu / Edit / Preferences / Mouse}
 \label{paragraph:menu_edit_preferences_mouse}
 
-   This item selected the mouse-interaction method.
+   Unlike \textsl{Seq24}, \textsl{Seq66} does not provide an options tab for
+   the mouse-interaction method.
    It is not supported in \textsl{Seq66}...
-   the "Fruity" interaction method is not available.
+   the "Fruity" interaction method is not available;
+   only the "Seq24" interaction is available.
  
 \paragraph{Menu / Edit / Preferences / Display}
 \label{paragraph:menu_edit_preferences_display}
@@ -650,8 +672,11 @@
 
    \itempar{Editor Key Height}{key height}
    This option affects the pattern editor's piano roll.  Smaller means a wider
-   range of notes can be shown.  It might be a good idea at some point to
-   implement a vertical zoom.
+   range of notes can be shown.  There are also
+   \textbf{-},
+   \textbf{0}, and
+   \textbf{+} buttons in the pattern editor that provide
+   vertical zoom.
 
    \itempar{Scaling of User Interface}{window scaling}
    These two items set scale factor for width and height of the main window.
@@ -671,17 +696,17 @@
 \label{paragraph:menu_edit_preferences_jack}
 
    This tab sets up JACK transport, if \textsl{Seq66}
-   was built with JACK support.
+   was built with JACK support (\textsl{Linux} only).
 %  It now also supports native JACK MIDI.
-   This tab also sets up options for using LASH session management, \textsl{if}
-   \textsl{Seq66} was built with LASH support, which is no longer the
-   default, even though it is shown in the figure below.
+%  This tab also sets up options for using LASH session management, \textsl{if}
+%  \textsl{Seq66} was built with LASH support, which is no longer the
+%  default, even though it is shown in the figure below.
 
 \begin{figure}[H]
    \centering 
    \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_jack_tab.png}
    \caption{File / Options / JACK}
-   \label{fig:menu_edit_preferences_jack_sync}
+   \label{fig:midi_jack_tab}
 \end{figure}
 
    The main sections in this dialog are:
@@ -690,7 +715,7 @@
       \item \textbf{JACK Transport/MIDI}
       \item \textbf{JACK Start Mode}
       \item \textbf{JACK Transport Connect and Disconnect}
-      \item \textbf{LASH Options}
+%     \item \textbf{LASH Options}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -790,24 +815,52 @@
    Disconnect from JACK Sync.
    This button is useful to stop JACK sync when making changes to it.
 
-   \itempar{LASH Options}{lash!option}
-   Currently contains only one item, which enables the usage of LASH session
-   management.  Currently, \textsl{Seq66} needs to be restarted to
-   complete the enabling or disabling of LASH support.  Like the rest of the
-   options, this one is written to the 'rc' configuration file.
-   However, LASH is no longer supported in the default build.
+%  \itempar{LASH Options}{lash!option}
+%  Currently contains only one item, which enables the usage of LASH session
+%  management.  Currently, \textsl{Seq66} needs to be restarted to
+%  complete the enabling or disabling of LASH support.  Like the rest of the
+%  options, this one is written to the 'rc' configuration file.
 
    JACK connection and disconnection are disabled during playback, but the
    buttons don't yet reflect that status.
+   Note that LASH is no longer supported in the default build.
+   Use \textsl{Non Session Manager} instead.
 
 \paragraph{Menu / Edit / Preferences / Play Options}
 \label{paragraph:menu_edit_preferences_play_options}
 
-   There is currently only one setting in this tab:
+   This tab contains some disparate options ostensibly related to playback.
 
-   \textbf{Resume Note Ons at start/stop or sequence toggle}.
-   This option allows notes that had already started
+\begin{figure}[H]
+   \centering 
+   \includegraphics[scale=0.75]{main-menu/edit/preferences/midi_play_options_tab.png}
+   \caption{Play Options}
+   \label{fig:midi_play_options_tab}
+\end{figure}
+
+   \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
+
+   \itempar{Resume Note Ons...}{edit!resume notes}
+   \textbf{Resume Note Ons at start/stop or sequence toggle}
+   allows notes that had already started
    to be resumed when playback resumes.
+
+   \itempar{Use File's PPQN...}{edit!use file ppqn}
+   \textbf{Use File's PPQN for Pre-Existing Files}, if checked, allows
+   \textsl{Seq66} to run using the PPQn of the MIDI file rather than
+   the default \textsl{Seq66} internal PPQN.
+   When this option is changed, the \texttt{-{}-user-save} option is turned on
+   to preserve the setting when \textsl{Seq66} exits.
+
+   \itempar{Default Seq66 PPQN...}{edit!default ppqn}
+   \textbf{Default Seq66 PPQN for New or Converted Files}, if checked, allows
+   the standard PPQN, 192 pulses/quarter-note, to be changed to discrete values
+   from 32 to 19200.  Intermediate values, even goofy ones, can be entered
+   by typing the number.
+   When this option is changed, the \texttt{-{}-user-save} option is turned on
+   to preserve the setting when \textsl{Seq66} exits.
+   If there is a MIDI file loaded, it is modified to use the new PPQN, and the
+   user is prompted to save it at exit.
 
 \subsection{Menu / Help / About...}
 \label{subsec:menu_about}

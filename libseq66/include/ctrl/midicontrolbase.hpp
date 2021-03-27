@@ -23,12 +23,12 @@
  * \file          midicontrolbase.hpp
  *
  *  This module declares/defines the base class for handling MIDI control
- *  <i>I/O</i> of the application.
+ *  I/O of the application.
  *
  * \library       seq66 application
  * \author        C. Ahlstrom
  * \date          2019-11-25
- * \updates       2020-08-13
+ * \updates       2021-03-14
  * \license       GNU GPLv2 or above
  *
  *  Provides the base class for midicontrolout.
@@ -57,16 +57,31 @@ class midicontrolbase
 {
 
     friend class midicontrolfile;
+    friend class performer;
 
 private:
 
     /**
-     *  Provides the MIDI output buss, that is the port number for MIDI output.
+     *  A name to use for showing the contents of the container.
+     */
+
+    std::string m_name;
+
+    /**
+     *  Provides the MIDI I/O buss, that is the port number for MIDI I/O.
      *  This value defaults to 0, and the user must be sure to avoid using
-     *  this buss value for music, or redefine the buss.
+     *  this buss value for music, or redefine the buss.  This is the nominal
+     *  buss, which is read and saved, but not used for I/O; see m_true_buss
+     *  instead.
      */
 
     bussbyte m_buss;                    /* SEQ66_MIDI_CONTROL_IN/OUT_BUSS   */
+
+    /**
+     * The true buss, which exists on the system.
+     */
+
+    bussbyte m_true_buss;
 
     /**
      *  Indicates that this container is "empty".
@@ -75,7 +90,7 @@ private:
     bool m_is_blank;
 
     /**
-     *  Indicates that this container is disabled.
+     *  Indicates that this container is enabled or disabled.
      */
 
     bool m_is_enabled;
@@ -106,17 +121,23 @@ private:
 
 public:
 
-    midicontrolbase
-    (
-        int buss    = 0,
-        int rows    = SEQ66_DEFAULT_SET_ROWS,
-        int columns = SEQ66_DEFAULT_SET_COLUMNS
-    );
+    midicontrolbase (const std::string & name = "");
     virtual ~midicontrolbase () = default;
+    virtual bool initialize (int buss, int rows, int columns);      /* base */
 
-    bussbyte buss () const
+    const std::string & name () const
+    {
+        return m_name;
+    }
+
+    bussbyte nominal_buss () const
     {
         return m_buss;
+    }
+
+    bussbyte true_buss () const
+    {
+        return m_true_buss;
     }
 
     bool is_blank () const
@@ -151,9 +172,14 @@ public:
 
 protected:
 
-    void buss (bussbyte b)
+    void nominal_buss (bussbyte b)
     {
-        m_buss = b;                 /* verification needed?     */
+        m_buss = b;
+    }
+
+    void true_buss (bussbyte b)
+    {
+        m_true_buss = b;
     }
 
     void is_blank (bool flag)

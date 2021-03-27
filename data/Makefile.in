@@ -593,18 +593,26 @@ uninstall-am:
 #     method doesn't work because /usr/bin/install will only install files,
 #     and automake doesn't give it the switch needed to install directories.
 #
+#     Also, since we don't always build the documentation, we copied the
+#     commands from doc/Makefile.am to here.
+#
 #------------------------------------------------------------------------------
 
 install-data-local:
-	mkdir -p $(DESTDIR)$(seq66datadir)
-	cp -r -p $(top_builddir)/data/* $(DESTDIR)$(seq66datadir)
+	@echo "Copying Seq66 data to $(seq66ddatadir)..."
+	mkdir -p $(seq66datadir)
+	cp -r -p $(top_builddir)/data/* $(seq66datadir)
+	@echo "Copying Seq66 documentation to $(seq66docdir)..."
+	mkdir -p $(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.pdf $(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.ods $(seq66docdir)
 
 #******************************************************************************
 # uninstall-hook
 #------------------------------------------------------------------------------
 
 uninstall-hook:
-	rm -rf $(DESTDIR)$(seq66datadir)
+	rm -rf $(seq66datadir)
 
 #******************************************************************************
 # Makefile.am (seq66/include)

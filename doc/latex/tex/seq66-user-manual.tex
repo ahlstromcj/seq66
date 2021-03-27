@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-03-07
+% \update      2021-03-21
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -52,7 +52,7 @@
 
 \begin{document}
 
-\title{Seq66 User Manual 0.92.1}
+\title{Seq66 User Manual 0.92.2}
 \author{Chris Ahlstrom \\
    (\texttt{ahlstromcj@gmail.com})}
 \date{\today}
@@ -83,7 +83,7 @@
 \label{sec:introduction}
 
    This document describes "Seq66", a reboot of \textsl{Seq24} and a rewrite of
-   \textsl{Sequencer64}, through version 0.92.1.
+   \textsl{Sequencer64}, through version 0.92.2.
    The following project supports \textsl{Seq66} and documentation:
 
    \begin{itemize}
@@ -93,10 +93,11 @@
    \textsl{Seq66} is \textsl{Sequencer64} refactored for newer versions of
    \textsl{C++} with cruft cleanup.  It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
-   and has better handling of sets, mute-groups, and configuration files.
-   It includes support for the \textsl{Non Session Manager} and the ability to
-   modify the color palette.
-   Be prepared to note some significant differences (as well as similarities)
+   and has better handling of sets, mute-groups, sessions, configuration files,
+   and more.
+   It supports for the \textsl{Non Session Manager}, the ability to
+   modify the color palette, and Qt style-sheets.
+   Be prepared to note some significant differences
    between \textsl{Seq66} and textsl{Sequencer64}.
 
    We have many contributors to acknowledge.
@@ -134,15 +135,15 @@
 
    \begin{itemize}
       \item Qt 5 as the standard user-interface.
-      \item A mutes editor tab, improve mutes handling, control, and status
-         display.
+      \item A mutes editor tab, improvements to mutes handling, control, and
+         status display.
       \item A playlist editor tab, with improved flexibility and automation.
-      \item A sets editor tab (still in progress).
+      \item A sets editor tab.
       \item A better live frame (main window and external windows) using
-         buttons (and a fallback to the earlier style).
+         buttons (or a fallback to the earlier style).
       \item Non Session Manager support.
       \item Repartitioning of the configuration files into separate files for
-         flexibility.
+         flexibility; a color palette file; Qt style-sheets.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
@@ -183,15 +184,16 @@
    The "data" directory is a installation directory:
 
    \begin{verbatim}
-      /usr/share/seq66-0.90/              (Linux)
-      C:/Program Files (x86)/Seq66        (Windows)
+      /usr/share/seq66-0.90/                       (Linux)
+      C:/Program Files (x86)/Seq66                 (Windows)
    \end{verbatim}
 
-   The configration directory is:
+   Some of the files in these directories apply to both operating systems.
+   The configration files are:
 
    \begin{verbatim}
-      /home/user/.config/seq66            (Linux)
-      C:/Users/user/AppData/Local/seq66   (Windows)
+      /home/user/.config/seq66/qseq66.*            (Linux)
+      C:/Users/user/AppData/Local/seq66/qpseq66.*  (Windows)
    \end{verbatim}
 
    These are created after the first run of \textsl{Seq66}.
@@ -208,13 +210,15 @@
    \label{fig:main_screen}
 \end{figure}
 
-   The \textsl{Seq66} main window appears, as shown above.
+   The \textsl{Seq66} main window appears as shown above.
    This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
+   However, \textsl{Seq66} behaves better on resizing, and can also
+   be configured to start with its size scaled up or scaled down.
    Most features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
-   and 'palette' configuration files, or via command-line options, and via
-   desktop themes.
+   and 'palette' configuration files, via command-line options, via
+   desktop themes, and via Qt style-sheets.
    There are many new front-panel items in \textsl{Seq66}.
    Many of these buttons have configurable keystrokes and configurable MIDI
    controls.
@@ -229,10 +233,12 @@
    \end{itemize}
 
    The \textbf{Live} tab is foremost in the application.
-   It provides a grid of patterns (also called loops, tracks, or
-   sequences) that display recorded MIDI data, status information, and provide
-   popup-menus for each pattern.  The buttons can
-   be colored via a palette, and that the status of being armed is easy to see
+   It provides a grid of \textsl{patterns}
+   (also called \textsl{loops}, \textsl{tracks}, or
+   \textsl{sequences} that display recorded MIDI data, status information, and
+   provide popup-menus for each pattern.
+   The buttons can
+   be colored via a palette, and the status of being armed is easy to see
    from the theme's coloring of activated buttons.
    In addition, the buttons can be toggled by a keystroke, shown in the lower
    right corner of the button.
@@ -281,8 +287,13 @@
    This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
    loaded tune.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
-   match the PPQN read from the file, or to other values:
-   \texttt{File, 32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600, 19200}
+   to other values:
+   \texttt{32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600,
+   19200}.
+   Values, even weird ones, can be entered by typing them.
+   If a MIDI file is loaded, this modifies that file, rescaling all the
+   pattern events and pattern triggers.
+   Also see \sectionref{paragraph:menu_edit_preferences_play_options}.
 
 \paragraph{Set's Buss Override}
 \label{paragraph:introduction_sets_buss_override}
@@ -310,16 +321,20 @@
 \label{paragraph:introduction_global_beats_per_measure}
 
    This dropdown changes the global beats/measure for the song.
+   Along with the beat-width setting, this set of values allows
+   for a large number of different time signatures, even crazy ones.
 
-   Values: \texttt{1 to 16}
+   Values: \texttt{1 to 16, 32}
 
 \paragraph{Global Beat Width}
 \label{paragraph:introduction_global_beat_width}
 
    This dropdown changes the global beat width (time-signature denominator)
    for the song.
+   Along with the beats-per-measure setting, this set of values allows
+   for a large number of different time signatures.
 
-   Values: \texttt{1, 2, 4, 8, 16}
+   Values: \texttt{1 to 16, 32}
 
 \paragraph{BBT or HMS Time Display}
 \label{paragraph:introduction_time_display}
@@ -342,7 +357,7 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
-      \item \textbf{Set Master Button}
+%     \item \textbf{Set Master Button}
       \item \textbf{Active Set Indicator}
       \item \textbf{Set Changer}
    \end{itemize}
@@ -353,6 +368,8 @@
    This text field shows the name of the current set, and also allows editing
    the set name.
 
+\begin{comment}
+
 \paragraph{Set Master Button}
 \label{paragraph:introduction_set_master_button}
 
@@ -361,6 +378,8 @@
    progress, and doesn't have a whole lot of functionality yet.
    It can currently show existing sets in one view, and allow
    reordering the sets.
+
+\end{comment}
 
 \paragraph{Active Set Indicator}
 \label{paragraph:introduction_active_set_indicator}
@@ -408,8 +427,9 @@
 
    This button causes playback to stop, all patterns to mute, and flushes the
    MIDI buss.
-   There is currently no keystroke, MIDI control, or MIDI-announcement (output)
-   slot for this automation operation.
+   There is a keystroke control and a MIDI control
+   for this automation operation, plus
+   a MIDI-announcement (output) configuration item for it.
 
 \paragraph{Stop Button}
 \label{paragraph:introduction_stop_button}
@@ -437,8 +457,8 @@
    By default, the \texttt{Space} key operates this function,
    and there is both a MIDI-control slot and a MIDI-announcement slot
    available for it.
-   This key is also hardwired to toggle playback in the pattern editor and the song
-   editor.
+   This key is also hardwired to toggle playback in the pattern editor and the
+   song editor.
 
 \paragraph{Live Record Button}
 \label{paragraph:introduction_live_record_button}

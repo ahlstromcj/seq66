@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.92.0
+INSTALL for Seq66 v. 0.92.2
 Chris Ahlstrom
-2015-09-10 to 2021-02-04
+2015-09-10 to 2021-03-07
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -333,6 +333,11 @@ MANUALLY-DEFINED MACROS IN CODE:
         This support is used only in some test code (see the midi_probe)
         module, and is no long included in normal builds.
 
+    SEQ66_USE_METRONOME_FADE
+
+        Define if it is desired to waster CPU cycles on a fancier
+        time-indicator bar.
+
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
 
@@ -420,13 +425,6 @@ DEPENDENCIES:
       - Test 
       - Sql
 
-   Runtime:
-
-      -  libatk-adaptor (and its dependencies)
-      -  libgail-common (and its dependencies)
-      -  Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to be
-         installed.  Not sure what is up with that.
-
    Build tools:
 
       -  automake and autoconf
@@ -454,6 +452,13 @@ DEPENDENCIES:
             export QT_SELECT=5
 
         This allows builds in bash to use the correct version of Qt.
+
+   Runtime:
+
+      -  libatk-adaptor (and its dependencies)
+      -  libgail-common (and its dependencies)
+      -  Some distros (Arch?) may need a gambas3-gb-qt5-opengl package to be
+         installed.  Not sure what is up with that.
 
    Documentation (now optional, must be built manually):
 

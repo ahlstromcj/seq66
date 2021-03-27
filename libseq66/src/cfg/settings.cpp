@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-05-17
- * \updates       2020-09-15
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *  The first part of this file defines a couple of global structure
@@ -41,6 +41,57 @@
 
 namespace seq66
 {
+
+/**
+ *  The combo default constructor.
+ */
+
+combo::combo () :
+    m_list_items ()
+{
+    m_list_items.push_back("");
+}
+
+combo::combo (const container & slist) :
+    m_list_items ()
+{
+    m_list_items.push_back("");
+    for (const auto & s : slist)
+        m_list_items.push_back(s);
+}
+
+std::string
+combo::at (int index) const
+{
+    std::string result;
+    if (index >= 0 && index < int(m_list_items.size()))
+        result = m_list_items[index];
+
+    return result;
+}
+
+int
+combo::ctoi (int index) const
+{
+    int result = (-1);
+    std::string s = at(index);
+    if (! s.empty())
+        result = std::stoi(s);
+
+    return result;
+}
+
+const combo::container &
+default_ppqns ()
+{
+    static combo::container s_default_ppqn_list =
+    {
+        "32", "48", "96", "192",
+        "384", "768", "960", "1920",
+        "3840", "7680", "9600", "19200"
+    };
+    return s_default_ppqn_list;
+}
 
 /**
  *  Returns a reference to the global rcsettings object.  Why a function
@@ -88,34 +139,54 @@ set_configuration_defaults ()
 }
 
 /**
+ *  Available PPQN values.  The default is 192.  The first item uses the edit
+ *  text for a non-standard default PPQN (like 333).  However, note that the
+ *  default PPQN can be edited by the user to be any value within this range.
+ *  Also note this list is wrapped in an accessor function.
+ *
+ * \param index
+ *      Provides the index into the PPQN list.  If set to below 0, then
+ *      it represents a request for the size of the list.
+ *
+ * \return
+ *      Returns either the desired PPQN value, or the length of the list.
+ *      If the index is not in the range, and is not (-1), then 0 is returned,
+ *      and the result should be ignored.
+ */
+
+int
+ppqn_list_value (int index)
+{
+    static int s_ppqn_list [] =
+    {
+        0,                          /* place-holder for default PPQN    */
+        32, 48, 96, 192,
+        384, 768, 960, 1920,
+        3840, 7680, 9600, 19200
+    };
+    static const int s_count = sizeof(s_ppqn_list) / sizeof(int);
+    int result = 0;
+    s_ppqn_list[0] = usr().default_ppqn();
+    if (index >= 0 && (index < s_count))
+        result = s_ppqn_list[index];
+    else if (index == (-1))
+        result = s_count;
+
+    return result;
+}
+
+/**
  *  Common code for handling PPQN settings.  Putting it here means we can
  *  reduce the reliance on the global PPQN, and have a lot more flexibility in
  *  changing the PPQN.
  *
  *  However, this function works completely only if the "user" configuration
  *  file has already been read.  In some cases we may need to retrofit the
- *  desired PPQN value!  Also, the default constructor for
- *  seqmenu::sm_clipboard is called before we read either the configuration
- *  files or the MIDI file, so we don't report issues when that happens.
+ *  desired PPQN value!
  *
  * \param ppqn
  *      Provides the PPQN value to be used. The default value is
- *      SEQ66_USE_DEFAULT_PPQN.  Apart from that, the legal values are:
- *
- *      -   SEQ66_USE_FILE_PPQN (0).  Start with usr().file_ppqn().  If this
- *          is zero, there is no MIDI-file PPQN in force, so try
- *          usr().midi_ppqn().  If still 0, then use SEQ66_DEFAULT_PPQN.
- *      -   SEQ66_USE_DEFAULT_PPQN (-1).  This is the default value of this
- *          parameter.  Behavior:
- *          -   If usr().midi_ppqn() is SEQ66_USE_FILE_PPQN (0), try
- *              usr().file_ppqn().
- *          -   Otherwise try the value of usr().midi_ppqn(). This value is
- *              set via command-line options "--ppqn" or in the "usr"
- *              configuration file at the "midi_ppqn" setting.
- *      -   Other PPQN.  Use it unchanged.
- *
- *      If the resultant value is out of the range SEQ66_MINIMUM_PPQN to
- *      SEQ66_MAXIMUM_PPQN, then return SEQ66_DEFAULT_PPQN.
+ *      SEQ66_USE_DEFAULT_PPQN.
  *
  * \return
  *      Returns the ppqn parameter, unless that parameter is one of the
@@ -127,25 +198,20 @@ choose_ppqn (int ppqn)
 {
     int result = ppqn;
     if (result == SEQ66_USE_DEFAULT_PPQN)
-    {
-        if (usr().midi_ppqn() == SEQ66_USE_FILE_PPQN)
-            result = usr().file_ppqn();
-        else
-            result = usr().midi_ppqn();
-    }
+        result = usr().default_ppqn();
     else if (result == SEQ66_USE_FILE_PPQN)
-        result = usr().file_ppqn();                 /* could be 0           */
+        result = usr().file_ppqn();
 
     if (result < SEQ66_MINIMUM_PPQN || result > SEQ66_MAXIMUM_PPQN)
     {
+        result = usr().default_ppqn();
         if (rc().verbose())
         {
             if (result != SEQ66_USE_FILE_PPQN)      /* "usr" was 0          */
             {
-                warnprintf("PPQN %d bad, setting it to 192", result);
+                warnprintf("PPQN %d bad, setting it to default", result);
             }
         }
-        result = SEQ66_DEFAULT_PPQN;                /* the legacy value 192 */
     }
     return result;
 }

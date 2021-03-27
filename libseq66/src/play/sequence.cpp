@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-25
+ * \updates       2021-03-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -132,7 +132,7 @@ sequence::sequence (int ppqn)
     m_midi_channel              (0),
     m_no_channel                (false),
     m_nominal_bus               (0),
-    m_true_bus                  (c_bussbyte_max),   // is_null_bussbyte()
+    m_true_bus                  (c_bussbyte_max),
     m_song_mute                 (false),
     m_transposable              (true),
     m_notes_on                  (0),
@@ -806,10 +806,10 @@ bool
 sequence::toggle_queued ()
 {
     automutex locker(m_mutex);
+    set_dirty_mp();
     m_queued = ! m_queued;
     m_queued_tick = m_last_tick - mod_last_tick() + get_length();
     m_off_from_snap = true;
-    set_dirty_mp();
     return true;
 }
 
@@ -1014,7 +1014,8 @@ sequence::remove (event::buffer::iterator evi)
         event & er = eventlist::dref(evi);
         if (er.is_note_off() && m_playing_notes[er.get_note()] > 0)
         {
-            master_bus()->play(m_true_bus, &er, m_midi_channel);
+            master_bus()->play(m_true_bus, &er, midi_channel(er));
+            master_bus()->flush();
             --m_playing_notes[er.get_note()];                   // ugh
         }
         if (m_events.remove(evi))
@@ -2035,10 +2036,7 @@ sequence::change_event_data_range
                 (tick - tick_s) * data_f + (tick_f - tick) * data_s
             ) / (tick_f - tick_s);
 
-            if (newdata < 0)
-                newdata = 0;
-            else if (newdata > c_max_midi_data_value)    /* 127              */
-                newdata = c_max_midi_data_value;
+            newdata = int(clamp_midibyte_value(newdata));   /* 0 to 127     */
 
             /*
              * I think we can assume, at this point, that this is a good
@@ -2144,17 +2142,12 @@ sequence::change_event_data_relative
 
         if (good)
         {
-            int newdata = d1 + newval;                  /* "scale" data     */
-            if (newdata < 0)
-                newdata = 0;
-            else if (newdata > c_max_midi_data_value)   /* 127              */
-                newdata = c_max_midi_data_value;
-
             /*
              * Two-byte messages: Note On/Off, Aftertouch, Control, Pitch.
              * One-byte messages: Proram or Channel Pressure.
              */
 
+            int newdata = int(clamp_midibyte_value(d1 + newval));
             if (event::is_one_byte_msg(status))
                 d0 = newdata;
             else
@@ -2950,7 +2943,7 @@ sequence::play_note_on (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_ON, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, midi_channel(e));
     master_bus()->flush();
 }
 
@@ -2970,7 +2963,7 @@ sequence::play_note_off (int note)
 {
     automutex locker(m_mutex);
     event e(0, EVENT_NOTE_OFF, midibyte(note), midibyte(m_note_on_velocity));
-    master_bus()->play(m_true_bus, &e, m_midi_channel);
+    master_bus()->play(m_true_bus, &e, midi_channel(e));
     master_bus()->flush();
 }
 
@@ -3000,10 +2993,10 @@ sequence::clear_triggers ()
  *      The duration of the trigger.
  *
  * \param offset
- *      The performance offset of the trigger.
+ *      The performance offset of the trigger. Defaults to 0.
  *
  * \param fixoffset
- *      If true, adjust the offset.
+ *      If true, adjust the offset. Defaults to true.
  */
 
 void
@@ -3671,7 +3664,7 @@ sequence::reset_draw_trigger_marker ()
  *
  * \param lowest
  *      A reference parameter to return the note with the lowest value.
- *      if there are no notes, then it is set to c_max_midi_data_value, and
+ *      if there are no notes, then it is set to c_midibyte_value_max, and
  *      false is returned.
  *
  * \param highest
@@ -3689,7 +3682,7 @@ sequence::minmax_notes (int & lowest, int & highest) // const
 {
     automutex locker(m_mutex);
     bool result = false;
-    int low = c_max_midi_data_value;
+    int low = int(c_midibyte_value_max);
     int high = -1;
     for (auto & er : m_events)
     {
@@ -4102,7 +4095,7 @@ bool
 sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
 {
     automutex locker(m_mutex);
-    bool result = nominalbus != m_nominal_bus && is_good_bussbyte(nominalbus);
+    bool result = nominalbus != m_nominal_bus && is_good_buss(nominalbus);
     if (result)
     {
         off_playing_notes();                /* off notes except initial     */
@@ -4110,7 +4103,7 @@ sequence::set_midi_bus (bussbyte nominalbus, bool user_change)
         if (not_nullptr(perf()))
         {
             m_true_bus = perf()->true_output_bus(nominalbus);
-            if (is_null_bussbyte(m_true_bus))
+            if (is_null_buss(m_true_bus))
                 m_true_bus = nominalbus;    /* named buss no longer exists  */
         }
         else
@@ -4552,14 +4545,16 @@ sequence::title () const
 
 /**
  *  Sets the m_midi_channel number, which is the output channel for this
- *  sequence.
+ *  sequence.  If the channel number provides equates to the null channel,
+ *  this function does not change the channel number, but merely sets the
+ *  m_no_channel flag.
  *
  * \threadsafe
  *
  * \param ch
  *      The MIDI channel to set as the output channel number for this
- *      sequence.  This value can range from 0 to 15, but greater values are
- *      converted to c_midibyte_max = 0xFF.
+ *      sequence.  This value can range from 0 to 15, but c_midichannel_null
+ *      equal to  0x80 means we are just setting the "no-channel" status.
  *
  * \param user_change
  *      If true (the default value is false), the user has decided to change
@@ -4575,8 +4570,8 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     automutex locker(m_mutex);
     if (ch != m_midi_channel)
     {
-        m_no_channel = ch >= c_midichannel_max;     /* 16 */
         off_playing_notes();
+        m_no_channel = is_null_channel(ch);
         if (! m_no_channel)
             m_midi_channel = ch;
 
@@ -4597,15 +4592,19 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
 std::string
 sequence::to_string () const
 {
+    midibyte channel = seq_midi_channel();
+    std::string chanstring = is_null_channel(channel) ?
+        "null" : std::to_string(int(channel) + 1) ;
+
     std::string result = "Pattern ";
     result += std::to_string(seq_number());
     result +=  " '";
     result += name();
     result += "'\n";
     result += "Channel ";
-    result += std::to_string(get_midi_channel() + 1);
+    result += chanstring;
     result += ", Bus ";
-    result += std::to_string(get_midi_bus());
+    result += std::to_string(seq_midi_bus());
     result += "\n Transposeable: ";
     result += bool_to_string(transposable());
     result += "\n Length (ticks): ";
@@ -4655,8 +4654,7 @@ sequence::put_event_on_bus (event & ev)
     }
     if (! skip)
     {
-        midibyte channel = m_no_channel ? ev.channel() : m_midi_channel ;
-        master_bus()->play(m_true_bus, &ev, channel);
+        master_bus()->play(m_true_bus, &ev, midi_channel(ev));
         master_bus()->flush();
     }
 }
@@ -4679,7 +4677,7 @@ sequence::off_playing_notes ()
         while (m_playing_notes[x] > 0)
         {
             e.set_data(x, midibyte(0));               /* or is 127 better?  */
-            master_bus()->play(m_true_bus, &e, m_midi_channel);
+            master_bus()->play(m_true_bus, &e, midi_channel(e));
             if (m_playing_notes[x] > 0)
                 --m_playing_notes[x];
         }
@@ -5042,7 +5040,7 @@ sequence::show_events () const
     printf
     (
         "sequence #%d '%s': channel %d, events %d\n",
-        seq_number(), name().c_str(), get_midi_channel(), event_count()
+        seq_number(), name().c_str(), seq_midi_channel(), event_count()
     );
     for (auto iter = cbegin(); ! cend(iter); ++iter)
     {
@@ -5134,10 +5132,10 @@ sequence::set_parent (performer * p)
     if (is_nullptr(m_parent) && not_nullptr(p))
     {
         m_parent = p;
-        if (is_null_bussbyte(m_true_bus))
+        if (is_null_buss(m_true_bus))
         {
             m_true_bus = p->true_output_bus(m_nominal_bus);
-            if (is_null_bussbyte(m_true_bus))
+            if (is_null_buss(m_true_bus))
                 m_true_bus = m_nominal_bus; /* a named buss does not exist  */
         }
     }
@@ -5295,8 +5293,9 @@ sequence::song_recording_stop (midipulse tick)
             len -= tick % len;
 
         m_triggers.grow_trigger(m_song_record_tick, tick, len);
+        if (m_song_recording_snap)
+            m_off_from_snap = true;
     }
-    m_off_from_snap = true;
 }
 
 /**

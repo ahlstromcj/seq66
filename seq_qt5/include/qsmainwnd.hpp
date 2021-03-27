@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-06
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -41,6 +41,7 @@
 #include <QList>
 
 #include "app_limits.h"                 /* SEQ66_USE_DEFAULT_PPQN           */
+#include "cfg/settings.hpp"             /* seq66::combo helper class        */
 #include "midi/midibytes.hpp"           /* alias midibpm                    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 
@@ -134,6 +135,8 @@ public:
     void remove_qperfedit ();
     void hide_qperfedit (bool hide = false);
     void remove_live_frame (int ssnum);
+    void enable_bus_item (int bus, bool enabled);
+    void set_ppqn_text (const std::string & text);
 
     int ppqn () const
     {
@@ -248,6 +251,7 @@ private:
     bool open_mutes_dialog ();
     bool save_mutes_dialog (const std::string & basename = "");
     void update_tap (midibpm bpm);
+    bool set_ppqn_combo ();
 
 private:
 
@@ -266,6 +270,8 @@ private:
 private:
 
     Ui::qsmainwnd * ui;
+    int m_initial_width;
+    int m_initial_height;
     qslivebase * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;
@@ -287,6 +293,7 @@ private:
     qsessionframe * m_session_frame;
     qsetmaster * m_set_master;
     qmutemaster * m_mute_master;
+    combo m_ppqn_list;
 
     /**
      *  Holds the last value of the MIDI-control-in status, used in displaying
@@ -395,19 +402,11 @@ private slots:
     void stop_playing ();
     void set_song_mode (bool song_mode);
     void song_recording (bool record);
-
-    void song_recording_snap (bool /*snap*/)
-    {
-        /*
-         * This will always be in force: perf().song_record_snap(snap);
-         */
-    }
-
     void panic ();
     void update_bpm (double bpm);
     void edit_bpm ();
     void update_set_change (int setno);
-    void update_ppqn (int pindex);
+    void update_ppqn_by_text (const QString & text);
     void update_midi_bus (int bindex);
     void update_beats_per_measure (int bmindex);
     void update_beat_length (int blindex);
@@ -442,7 +441,9 @@ private slots:
     void load_set_master ();
     void load_mute_master ();
     void toggle_time_format (bool on);
+#if defined USE_EXTERNAL_SETMASTER
     void show_set_master ();
+#endif
     void open_performance_edit ();
     void apply_song_transpose ();
     void reload_mute_groups ();

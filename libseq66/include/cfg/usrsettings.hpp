@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-02-18
+ * \updates       2021-03-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -546,20 +546,35 @@ private:
      */
 
     /**
+     *  Provides the default PPQN for the application.  This PPQN is used when
+     *  creating a new MIDI file or when reading an existing file with the
+     *  m_use_file_ppqn value set.  This value defaults to SEQ66_DEFAULT_PPQN
+     *  = 192 (the legacy Seq24 value).
+     */
+
+    int m_default_ppqn;
+
+    /**
      *  Provides the universal PPQN setting for the duration of this session.
      *  This variable replaces the global ppqn.  The default value of this
      *  setting is 192 parts-per-quarter-note (PPQN).  There is still a lot of
      *  work to get a different PPQN to work properly in speed of playback,
      *  scaling of the user interface, and other issues.  Note that this value
-     *  can be changed by the still-experimental --ppqn option.  There is one
-     *  remaining trace of the global, though:  DEFAULT_PPQN.
+     *  can be changed by the still-experimental --ppqn option.
      */
 
     int m_midi_ppqn;                     /* PPQN, parts per QN       */
 
     /**
-     *  Holds the PPQN read from the file, for use with the
-     *  SEQ66_USE_FILE_PPQN value (0) from app_limits.h.
+     *  If true, ignore Seq66's default PPQN value and use the file's PPQN,
+     *  leaving the file unscaled.
+     */
+
+    bool m_use_file_ppqn;
+
+    /**
+     *  Holds the PPQN read from the file, for use in file conversion if we're
+     *  not using the file's PPQN.
      */
 
     int m_file_ppqn;
@@ -759,27 +774,6 @@ private:
 
     int m_mainwnd_y;
 
-    /**
-     *  Provides a temporary variable that can be set from the command line to
-     *  cause the "user" state to be saved into the "user" configuration file.
-     *
-     *  Normally, this state is not saved.  It is not saved because there is
-     *  currently no user-interface for editing it, and because it can pick up
-     *  some command-line options, and it is not right to have them written
-     *  to the "user" configuration file.
-     *
-     *  (The "rc" configuration file is a different case, having historically
-     *  always been saved, and having a number of command-line options, such
-     *  as JACK settings that should generally be permanent on a given
-     *  system.)
-     *
-     *  Anyway, this flag can be set by the --user-save option.  This setting
-     *  is never saved.  But note that, if no "user" configuration file is
-     *  found, it is then saved anyway.
-     */
-
-    bool m_save_user_config;
-
     /*
      *  All constant (unchanging) values go here.  They are not saved or read.
      */
@@ -810,6 +804,27 @@ private:
     /*
      *  [user-options]
      */
+
+    /**
+     *  Provides a temporary variable that can be set from the command line to
+     *  cause the "user" state to be saved into the "user" configuration file.
+     *
+     *  Normally, this state is not saved.  It is not saved because there is
+     *  currently no user-interface for editing it, and because it can pick up
+     *  some command-line options, and it is not right to have them written
+     *  to the "user" configuration file.
+     *
+     *  (The "rc" configuration file is a different case, having historically
+     *  always been saved, and having a number of command-line options, such
+     *  as JACK settings that should generally be permanent on a given
+     *  system.)
+     *
+     *  Anyway, this flag can be set by the --user-save option.  This setting
+     *  is never saved.  But note that, if no "user" configuration file is
+     *  found, it is then saved anyway.
+     */
+
+    bool m_save_user_config;
 
     /**
      *  Indicates if the application should be daemonized.  All options that
@@ -881,6 +896,16 @@ private:
      */
 
     bool m_user_ui_seqedit_in_tab;
+
+    /**
+     *  Provides the name of an optional Qt style-sheet, located in the active
+     *  Seq66 configuration directory.  By default, this name is empty and not
+     *  used.  It present, it contains the base name of the sheet (e.g.
+     *  "qseq66.qss".  (It can contain a path, in order to support a universal
+     *  style-sheet).
+     */
+
+    std::string m_user_ui_style_sheet;
 
     /**
      *  Indicates to resume notes that are "in progress" upon a sequence
@@ -1115,6 +1140,8 @@ public:
     {
         return window_scaled_up() || window_scaled_down();
     }
+
+    int scale_font_size (int value) const;
 
     int scale_size (int value) const
     {
@@ -1472,9 +1499,19 @@ protected:
 
 public:
 
+    int default_ppqn () const
+    {
+        return m_default_ppqn;
+    }
+
     int midi_ppqn () const
     {
-        return m_midi_ppqn;
+        return m_midi_ppqn;     /* current PPQN */
+    }
+
+    bool use_file_ppqn () const
+    {
+        return m_use_file_ppqn;
     }
 
     int file_ppqn () const
@@ -1482,9 +1519,14 @@ public:
         return m_file_ppqn;
     }
 
+    void use_file_ppqn (bool flag)
+    {
+        m_use_file_ppqn = flag;
+    }
+
     void file_ppqn (int p)
     {
-        m_file_ppqn = p;        // LATER: validate
+        m_file_ppqn = p;
     }
 
     int midi_beats_per_bar () const
@@ -1586,12 +1628,17 @@ public:
 
     bool valid_key_height (int h) const
     {
-        return h >= 4 && h <= 24;
+        return h >= SEQ66_SEQKEY_HEIGHT_MIN && h <= SEQ66_SEQKEY_HEIGHT_MAX;
     }
 
     bool use_new_seqedit () const
     {
         return m_user_ui_seqedit_in_tab;
+    }
+
+    const std::string & style_sheet () const
+    {
+        return m_user_ui_style_sheet;
     }
 
     bool resume_note_ons () const
@@ -1734,11 +1781,6 @@ public:         // used in main application module and the usrfile class
         m_work_around_transpose_image = flag;
     }
 
-    /**
-     * \setter m_user_ui_key_height
-     *      Do we want to add scaling to this at this time?  m_window_scale
-     */
-
     void key_height (int h)
     {
         if (valid_key_height(h))
@@ -1748,6 +1790,11 @@ public:         // used in main application module and the usrfile class
     void use_new_seqedit (bool f)
     {
         m_user_ui_seqedit_in_tab = f;
+    }
+
+    void style_sheet (const std::string & s)
+    {
+        m_user_ui_style_sheet = s;
     }
 
     void resume_note_ons (bool f)
@@ -1793,6 +1840,7 @@ public:         // used in main application module and the usrfile class
             m_new_pattern_recordstyle = style;
     }
 
+    void default_ppqn (int ppqn);
     void midi_ppqn (int ppqn);
     void midi_buss_override (bussbyte buss);
     void velocity_override (int vel);

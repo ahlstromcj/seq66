@@ -60,10 +60,10 @@
 #define SEQ66_MIDI_LINE_MAX         1024
 
 /**
- *  The maximum length of a Seq24 track name.  This is a bit excessive.
+ *  The maximum length of a Seq24 track name.
  */
 
-#define SEQ66_TRACKNAME_MAX          256
+#define SEQ66_TRACKNAME_MAX         c_midibyte_value_max
 
 /**
  *  The maximum allowed variable length value for a MIDI file, which allows
@@ -411,11 +411,13 @@ protected:
     }
 
     void write_varinum (midilong);
+    void write_track (const midi_vector & lst);
     void write_track_name (const std::string & trackname);
+    void write_track_end ();
     std::string read_track_name();
+    long track_name_size (const std::string & trackname) const;
     void write_seq_number (midishort seqnum);
     int read_seq_number ();
-    void write_track_end ();
     bool write_header (int numtracks);
 #if defined USE_WRITE_START_TEMPO
     void write_start_tempo (midibpm start_tempo);
@@ -427,11 +429,9 @@ protected:
     bool write_proprietary_track (performer & p);
     long varinum_size (long len) const;
     long prop_item_size (long datalen) const;
-    long track_name_size (const std::string & trackname) const;
     bool set_error (const std::string & msg);
     bool set_error_dump (const std::string & msg);
     bool set_error_dump (const std::string & msg, unsigned long p);
-    void write_track (const midi_vector & lst);
 
     /**
      *  Returns the size of a sequence-number event, which is always 5

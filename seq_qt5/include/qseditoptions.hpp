@@ -28,12 +28,14 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-12-30
+ * \updates       2021-03-20
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QDialog>
+
+#include "cfg/settings.hpp"             /* seq66::combo helper class etc.   */
 
 /*
  *  Do not document the namespace, it breaks Doxygen.
@@ -51,6 +53,7 @@ namespace Ui
 namespace seq66
 {
     class performer;
+    class qsmainwnd;
 
 /**
  *  Provides a dialog class for Edit / Preferences.
@@ -69,10 +72,13 @@ public:
     );
     virtual ~qseditoptions();
 
+    void enable_bus_item (int bus, bool enabled);
+
 private:
 
-    void syncWithInternals();   /* makes dialog reflect internal settings   */
-    void backup();              /* backup preferences for cancel-changes    */
+    void syncWithInternals ();  /* makes dialog reflect internal settings   */
+    void backup ();             /* backup preferences for cancel-changes    */
+    bool set_ppqn_combo ();
 
     const performer & perf () const
     {
@@ -105,6 +111,8 @@ private slots:
     void okay ();
     void cancel ();
     void update_note_resume ();
+    void update_ppqn_by_text (const QString & text);
+    void update_use_file_ppqn ();
     void update_key_height ();
     void update_ui_scaling_width ();
     void update_ui_scaling_height ();
@@ -118,7 +126,9 @@ private slots:
 private:
 
     Ui::qseditoptions * ui;
+    qsmainwnd * m_parent_widget;
     performer & m_perf;
+    combo m_ppqn_list;
     bool m_is_initialized;
 
     /*

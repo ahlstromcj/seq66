@@ -47,8 +47,7 @@ namespace seq66
  *      holds MIDI data.
  */
 
-midi_vector::midi_vector (sequence & seq)
- :
+midi_vector::midi_vector (sequence & seq) :
     midi_vector_base    (seq),
     m_char_vector       ()
 {

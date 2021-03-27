@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-04-20
-% \update      2021-01-28
+% \update      2021-03-07
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -21,8 +21,10 @@
 \setlistdepth{9}
 \setlist{noitemsep}           % spacing within the list
 
+\usepackage{comment}         % For the comment macro
 \usepackage{color}            % provide colors?
 \usepackage{nameref}          % Provide references by name instead of number
+\usepackage[obeyspaces]{url}  % Required for including URLs, ahead of hyperref
 \usepackage[colorlinks=true,linkcolor=webgreen,filecolor=webbrown,citecolor=webgreen]{hyperref}
 \definecolor{webgreen}{rgb}{0,.5,0}
 \definecolor{webbrown}{rgb}{.6,0,0}
@@ -30,12 +32,10 @@
 \usepackage{ragged2e}         % For underfull boxes in the bibliography
 \usepackage{wasysym}          % For smileys
 \usepackage{verbatim}         % For the comment macro
-\usepackage{url}              % Required for including URLs
-\usepackage{hyperref}         % Required for including hyperlinks
 \usepackage{amsthm}           % Helps avoid "destination with same
 \usepackage[hypcap]{caption}  % make labels point to figure, not the caption
 \usepackage[pdftex]{graphicx} % Required for including images
-\graphicspath{{../images}}    % Set the default folder for images
+\graphicspath{{../images/}}   % Set the default folder for images
 \usepackage{float}            % For more control of location of Figures
 \usepackage[T1]{fontenc}      % Remove font warnings for textleftbrace, etc.
 \usepackage{geometry}         % Page & text layout

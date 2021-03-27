@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-07
- * \updates       2021-02-12
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  These items were moved from the globals.h module so that only the modules
@@ -482,31 +482,35 @@ measures_to_ticks (int bpb, int ppqn, int bw, int measures = 1)
 /**
  *  The inverse of measures_to_ticks.
  *
- * \param bpb
+ * \param B
  *      The B value in the equation, beats/measure or beats/bar.
  *
- * \param ppqn
+ * \param P
  *      The P value in the equation, pulses/qn.
  *
- * \param bw
- *      The W value in the equation, the denominator of the time signature.
- *      If this value is 0, we'll get an arithmetic exception (crash), so we
- *      just return 0 in this case.
+ * \param W
+ *      The W value in the equation, the denominator of the time signature,
+ *      the beat-width.  If this value is 0, we'll get an arithmetic exception
+ *      (crash), so we just return 0 in this case.
  *
- * \param ticks
- *      The p (pulses) value in the equation.  It defaults to 192, in case one
- *      desires a default "ticks per measure" number.
+ * \param p
+ *      The p (pulses) value in the equation.
  *
  * \return
  *      Returns the M value (measures or bars) as calculated via the inverse
- *      equation.  If ppqn or bpb are 0, then 0 is returned.
+ *      equation.  If P or B are 0, then 0 is returned.
  */
 
 inline int
-ticks_to_measures (int bpb, int ppqn, int bw, midipulse ticks = 192)
+ticks_to_measures (midipulse p, int P, int B, int W)
 {
-    return (ppqn > 0 && bpb > 0.0) ?
-        (ticks * bw) / (4.0 * ppqn * bpb) : 0 ;
+    return (P > 0 && B > 0.0) ? (p * W) / (4.0 * P * B) : 0 ;
+}
+
+inline int
+ticks_to_beats (midipulse p, int P, int B, int W)
+{
+    return (P > 0 && B > 0.0) ? ((p * W / P / 4 ) % B) : 0 ;
 }
 
 /*

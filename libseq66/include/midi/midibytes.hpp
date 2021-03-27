@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-03-05
+ * \updates       2021-03-17
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -180,6 +180,7 @@ const midipulse c_null_midipulse = -1;  /* ULONG_MAX if we convert later    */
  */
 
 const midibyte c_midibyte_data_max  = midibyte(0x80u);
+const midibyte c_midibyte_value_max = 127;
 
 /**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
@@ -202,10 +203,13 @@ const int c_busscount_max           = 48;
 
 /**
  *  Indicates the maximum number of MIDI channels, counted internally from 0
- *  to 15, and by humans (sequencer user-interfaces) from 1 to 16.
+ *  to 15, and by humans (sequencer user-interfaces) from 1 to 16. This value
+ *  is also used as a code to indicate that a sequence will use the events
+ *  present in the channel.
  */
 
 const int c_midichannel_max         = 16;
+const int c_midichannel_null        = 0x80;
 
 /*
  * -------------------------------------------------------------------------
@@ -256,10 +260,6 @@ public:
     {
         m_measures = m_beats = m_divisions = 0;
     }
-
-    /**
-     * \getter m_measures
-     */
 
     int measures () const
     {
@@ -501,15 +501,21 @@ is_null_midipulse (midipulse p)
  */
 
 inline bool
-is_null_bussbyte (bussbyte b)
+is_null_buss (bussbyte b)
 {
     return b == c_bussbyte_max;
 }
 
 inline bool
-is_good_bussbyte (bussbyte b)
+is_good_buss (bussbyte b)
 {
     return b < bussbyte(c_busscount_max);
+}
+
+inline bool
+is_valid_buss (bussbyte b)
+{
+    return is_good_buss(b) || is_null_buss(b);
 }
 
 inline bool
@@ -524,14 +530,20 @@ is_good_midibyte (midibyte b)
     return b < c_midibyte_data_max;
 }
 
+inline midibyte
+clamp_midibyte_value (midibyte b)
+{
+    return b > c_midibyte_value_max ? c_midibyte_value_max : b ;
+}
+
 /**
- *  Compares a channel value to the maximum value.
+ *  Compares a channel value to the maximum (and illegal) value.
  */
 
 inline bool
 is_null_channel (midibyte c)
 {
-    return c == c_midibyte_max;
+    return c >= c_midichannel_null;     /* c_midibyte_max */
 }
 
 }               // namespace seq66

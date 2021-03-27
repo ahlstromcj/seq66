@@ -68,6 +68,7 @@ public:
 
     bool add
     (
+        int buss,
         bool flag,
         const std::string & name,
         const std::string & nickname = ""

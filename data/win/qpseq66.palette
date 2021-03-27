@@ -1,6 +1,6 @@
 # Seq66 0.91.5 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66.palette
+# /home/user/.config/seq66/qpseq66.palette
 # Written on 2021-01-07 10:10:08
 #
 # This file can be used to change the colors used by patterns
@@ -99,6 +99,6 @@ note = solid
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66.palette
+# End of /home/user/.config/seq66/qpseq66.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

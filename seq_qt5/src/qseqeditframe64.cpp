@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-02-21
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -188,29 +188,25 @@ int qseqeditframe64::sm_initial_chord        = 0;
 
 /**
  * To reduce the amount of written code, we use a static array to
- * initialize the beat-width entries.
+ * initialize the beat-width entries.  Nope, now we go from 1 to 16 and tack on
+ * 32 to match the main-windows global time signature handling.
+ *
+ *  static const int s_width_items [] = { 1, 2, 4, 8, 16, 32 };
+ *  static const int s_width_count = sizeof(s_width_items) / sizeof(int);
  */
 
-static const int s_width_items [] = { 1, 2, 4, 8, 16, 32 };
-static const int s_width_count = sizeof(s_width_items) / sizeof(int);
+static const int s_beat_measure_count   = 16;
+static const int s_beat_length_count    = 16;
 
 /**
- *  Looks up a beat-width value.
+ *  Looks up a beat-width value and returns the index into the combo-box.
+ *  Now we use 1 to 16 and 32 as values instead of a filled static array.
  */
 
 static int
 s_lookup_bw (int bw)
 {
-    int result = 0;
-    for (int wi = 0; wi < s_width_count; ++wi)
-    {
-        if (s_width_items[wi] == bw)
-        {
-            result = wi;
-            break;
-        }
-    }
-    return result;
+    return bw == 32 ? s_beat_length_count : bw - 1 ;
 }
 
 /**
@@ -375,8 +371,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
-    m_editing_bus           (seq_pointer()->get_midi_bus()),
-    m_editing_channel       (seq_pointer()->get_midi_channel()),
+    m_editing_bus           (seq_pointer()->seq_midi_bus()),
+    m_editing_channel       (seq_pointer()->seq_midi_channel()),
     m_editing_status        (0),
     m_editing_cc            (0),
     m_first_event           (0),
@@ -417,28 +413,19 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     qt_set_icon(down_xpm, ui->m_button_bpm);
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-    ui->m_button_bpm->setToolTip("Beats per bar. Increments to next value.");
-    connect
-    (
-        ui->m_button_bpm, SIGNAL(clicked(bool)),
-        this, SLOT(increment_beats_per_measure())
-    );
-#else
     connect
     (
         ui->m_button_bpm, SIGNAL(clicked(bool)),
         this, SLOT(reset_beats_per_measure())
     );
-#endif
 
-    int minimum = SEQ66_MINIMUM_BEATS_PER_MEASURE - 1;
-    int maximum = SEQ66_MAXIMUM_BEATS_PER_MEASURE - 1;
-    for (int b = minimum; b <= maximum; ++b)
+    QString thirtytwo = QString::number(32);
+    for (int b = 0; b < s_beat_measure_count; ++b)
     {
         QString combo_text = QString::number(b + 1);
         ui->m_combo_bpm->insertItem(b, combo_text);
     }
+    ui->m_combo_bpm->insertItem(s_beat_measure_count, thirtytwo);
 
     int beatspm = seq_pointer()->get_beats_per_bar();
     std::string beatstring = std::to_string(beatspm);
@@ -463,35 +450,23 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     qt_set_icon(down_xpm, ui->m_button_bw);
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-    ui->m_button_bw->setToolTip
-    (
-        "Beats width (denominator). Increments to next value."
-    );
-    connect
-    (
-        ui->m_button_bw, SIGNAL(clicked(bool)),
-        this, SLOT(next_beat_width())
-    );
-#else
     connect
     (
         ui->m_button_bw, SIGNAL(clicked(bool)),
         this, SLOT(reset_beat_width())
     );
-#endif
 
-    for (int w = 0; w < s_width_count; ++w)
+    for (int w = 0; w < s_beat_length_count; ++w)
     {
-        std::string itext = std::to_string(s_width_items[w]);
-        QString combo_text = QString::fromStdString(itext);
+        QString combo_text = QString::number(w + 1);
         ui->m_combo_bw->insertItem(w, combo_text);
     }
+    ui->m_combo_bw->insertItem(s_beat_length_count, thirtytwo);
 
-    int bw_index = s_lookup_bw(m_beat_width);
+    int bwindex = s_lookup_bw(m_beat_width);
     int bw = seq_pointer()->get_beat_width();
     std::string bstring = std::to_string(bw);
-    ui->m_combo_bw->setCurrentIndex(bw_index);
+    ui->m_combo_bw->setCurrentIndex(bwindex);
     ui->m_combo_bw->setEditText(QString::fromStdString(bstring));
     connect
     (
@@ -512,23 +487,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     qt_set_icon(length_short_xpm, ui->m_button_length);
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-    ui->m_button_length->setToolTip
-    (
-        "Pattern length (bars). Increments to next value."
-    );
-    connect
-    (
-        ui->m_button_length, SIGNAL(clicked(bool)),
-        this, SLOT(next_measures())
-    );
-#else
     connect
     (
         ui->m_button_length, SIGNAL(clicked(bool)),
         this, SLOT(reset_measures())
     );
-#endif
 
     for (int m = 0; m < s_measures_count; ++m)
     {
@@ -584,25 +547,12 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
      * in the scales.hpp header file.
      */
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-    qt_set_icon(chord3_inv_xpm, ui->m_button_chord);
-    ui->m_button_chord->setToolTip
-    (
-        "Chord generation. Increments to next value."
-    );
-    connect
-    (
-        ui->m_button_chord, SIGNAL(clicked(bool)),
-        this, SLOT(increment_chord())
-    );
-#else
     qt_set_icon(chord3_inv_xpm, ui->m_button_chord);
     connect
     (
         ui->m_button_chord, SIGNAL(clicked(bool)),
         this, SLOT(reset_chord())
     );
-#endif
 
     for (int chord = 0; chord < c_chord_number; ++chord)
     {
@@ -633,7 +583,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     mastermidibus * mmb = perf().master_bus();
     if (not_nullptr(mmb))
     {
-        bussbyte seqbuss = seq_pointer()->get_midi_bus();
+        bussbyte seqbuss = seq_pointer()->seq_midi_bus();
         std::string selectedbuss = opm.active() ?
             opm.get_name(seqbuss) : mmb->get_midi_out_bus_name(seqbuss) ;
 
@@ -801,20 +751,11 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     qt_set_icon(zoom_xpm, ui->m_button_zoom);
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-    ui->m_button_zoom->setToolTip("Next zoom level. Wraps around.");
-    connect
-    (
-        ui->m_button_zoom, SIGNAL(clicked(bool)),
-        this, SLOT(zoom_out())
-    );
-#else
     connect
     (
         ui->m_button_zoom, SIGNAL(clicked(bool)),
         this, SLOT(slot_reset_zoom())
     );
-#endif
 
     for (int zi = 0; zi < s_zoom_count; ++zi)
     {
@@ -1411,14 +1352,10 @@ void
 qseqeditframe64::update_beats_per_measure (int index)
 {
     ++index;
-    if
-    (
-        index != m_beats_per_bar &&
-        index >= SEQ66_MINIMUM_BEATS_PER_MEASURE &&
-        index <= SEQ66_MAXIMUM_BEATS_PER_MEASURE
-    )
+    int bpb = index == s_beat_measure_count ? 32 : index + 1 ;
+    if (bpb != m_beats_per_bar)
     {
-        set_beats_per_measure(index);
+        set_beats_per_measure(bpb);
         set_dirty();
     }
 }
@@ -1445,26 +1382,6 @@ qseqeditframe64::text_beats_per_measure (const QString & text)
     }
 }
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-
-/**
- *  When the BPM (beats-per-measure) button is pushed, we go to the next BPM
- *  entry in the combo-box, wrapping around when the end is reached.
- */
-
-void
-qseqeditframe64::increment_beats_per_measure ()
-{
-    int bpm = m_beats_per_bar + 1;
-    if (bpm > SEQ66_MAXIMUM_BEATS_PER_MEASURE)
-        bpm = SEQ66_MINIMUM_BEATS_PER_MEASURE;
-
-    ui->m_combo_bpm->setCurrentIndex(bpm - 1);
-    set_beats_per_measure(bpm);
-}
-
-#else
-
 void
 qseqeditframe64::reset_beats_per_measure ()
 {
@@ -1478,8 +1395,6 @@ qseqeditframe64::reset_beats_per_measure ()
     perf().notify_sequence_change(seqno, performer::change::recreate);
     update_draw_geometry();     // set_dirty();
 }
-
-#endif  // defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
 
 /**
  *  Applies the new beats/bar (beats/measure) value to the sequence and the user
@@ -1555,7 +1470,7 @@ qseqeditframe64::get_measures ()
 void
 qseqeditframe64::update_beat_width (int index)
 {
-    int bw = s_width_items[index];
+    int bw = index == s_beat_length_count ? 32 : index + 1 ;
     if (bw != m_beat_width)
     {
         set_beat_width(bw);
@@ -1585,28 +1500,6 @@ qseqeditframe64::text_beat_width (const QString & text)
     }
 }
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-
-/**
- *  When the BW (beat width) button is pushed, we go to the next beat width
- *  entry in the combo-box, wrapping around when the end is reached.
- */
-
-void
-qseqeditframe64::next_beat_width ()
-{
-    int index = s_lookup_bw(m_beat_width);
-    if (++index >= s_width_count)
-        index = 0;
-
-    ui->m_combo_bw->setCurrentIndex(index);
-    int bw = s_width_items[index];
-    if (bw != m_beat_width)
-        set_beat_width(bw);
-}
-
-#else
-
 /**
  *  Resets the beat-width combo-box to its default value.
  */
@@ -1614,11 +1507,10 @@ qseqeditframe64::next_beat_width ()
 void
 qseqeditframe64::reset_beat_width ()
 {
-    ui->m_combo_bw->setCurrentIndex(2);     /* i.e. 4, see s_width_items    */
+    int index = s_lookup_bw(SEQ66_DEFAULT_BEAT_WIDTH);
+    ui->m_combo_bw->setCurrentIndex(index);
     update_draw_geometry();
 }
-
-#endif  // defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
 
 /**
  *  Sets the beat-width value and then dirties the user-interface so that it
@@ -1738,26 +1630,6 @@ qseqeditframe64::update_chord (int index)
     }
 }
 
-#if defined SEQ66_QSEQEDIT_BUTTON_INCREMENT
-
-/**
- *  When the chord button is pushed, we can go to the next chord
- *  entry in the combo-box, wrapping around when the end is reached.
- *  Currently, though, we just reset to the default chord.
- */
-
-void
-qseqeditframe64::increment_chord ()
-{
-    int chord = m_chord + 1;
-    if (chord >= c_chord_number)
-        chord = 0;
-
-    set_chord(chord);
-}
-
-#else   // SEQ66_QSEQEDIT_BUTTON_INCREMENT
-
 /**
  *  Resets the chord-setting to the initial value in the chord combo-box.
  */
@@ -1771,8 +1643,6 @@ qseqeditframe64::reset_chord ()
 
     update_draw_geometry();
 }
-
-#endif  // SEQ66_QSEQEDIT_BUTTON_INCREMENT
 
 void
 qseqeditframe64::set_chord (int chord)
@@ -1835,7 +1705,7 @@ qseqeditframe64::reset_midi_bus ()
 void
 qseqeditframe64::set_midi_bus (int bus, bool user_change)
 {
-    bussbyte initialbus = seq_pointer()->get_midi_bus();
+    bussbyte initialbus = seq_pointer()->seq_midi_bus();
     bussbyte b = bussbyte(bus);
     if (b != initialbus)
     {
@@ -1885,7 +1755,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
         }
         if (channel == c_midichannel_max)
         {
-            QString combo_text("Any");
+            QString combo_text("Free");
             ui->m_combo_channel->insertItem(c_midichannel_max, combo_text);
         }
         else
@@ -1915,12 +1785,10 @@ qseqeditframe64::reset_midi_channel ()
 
 /**
  *  Selects the given MIDI channel parameter in the main sequence object,
- *  so that it will use that channel.
+ *  so that it will use that channel.  If "Free" is selected, all that happens
+ *  is that the pattern is set to "no-channel" mode for MIDI output.
  *
- *  Should this change set the is-modified flag?  Where should validation
- *  occur?
- *
- * \param midichannel
+ * \param ch
  *      The MIDI channel  value to set.
  *
  * \param user_change
@@ -1929,28 +1797,29 @@ qseqeditframe64::reset_midi_channel ()
  */
 
 void
-qseqeditframe64::set_midi_channel (int midichannel, bool user_change)
+qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
-    int initialchan = seq_pointer()->get_midi_channel();
-    if (midichannel != initialchan)
+    int initialchan = seq_pointer()->seq_midi_channel();
+    if (ch != initialchan)
     {
-        int chindex = is_null_channel(midichannel) ?
-            c_midichannel_max : midichannel ;
+        int chindex = ch > c_midichannel_max ? c_midichannel_max : ch ;
+        if (ch == c_midichannel_max)
+            ch = c_midichannel_null;
 
-        seq_pointer()->set_midi_channel(midichannel, user_change);
-        m_editing_channel = midichannel;
-        repopulate_usr_combos(m_editing_bus, m_editing_channel);
-        if (user_change)
+        seq_pointer()->set_midi_channel(ch, user_change);
+        if (! is_null_channel(ch))
         {
-            /*
-             * Too much: repopulate_usr_combos(m_editing_bus, m_editing_channel);
-             */
-
-            repopulate_event_menu(m_editing_bus, m_editing_channel);
-            repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
-            set_dirty();
+            m_editing_channel = ch;
+            repopulate_usr_combos(m_editing_bus, m_editing_channel);
+            if (user_change)
+            {
+                repopulate_event_menu(m_editing_bus, m_editing_channel);
+                repopulate_mini_event_menu(m_editing_bus, m_editing_channel);
+                set_dirty();
+            }
+            else
+                ui->m_combo_channel->setCurrentIndex(chindex);
         }
-        ui->m_combo_channel->setCurrentIndex(chindex);
     }
 }
 
@@ -2036,7 +1905,7 @@ qseqeditframe64::popup_tool_menu ()
 
     char num[16];
     QAction * transpose[24];     /* fill out note transpositions */
-    for (int t = -12; t <= 12; ++t)
+    for (int t = -c_octave_size; t <= c_octave_size; ++t)
     {
         if (t != 0)
         {
@@ -2044,12 +1913,12 @@ qseqeditframe64::popup_tool_menu ()
             (
                 num, sizeof num, "%+d [%s]", t, c_interval_text[abs(t)].c_str()
             );
-            transpose[t + 12] = new QAction(num, m_tools_popup);
-            transpose[t + 12]->setData(t);
-            menupitch->addAction(transpose[t + 12]);
+            transpose[t + c_octave_size] = new QAction(num, m_tools_popup);
+            transpose[t + c_octave_size]->setData(t);
+            menupitch->addAction(transpose[t + c_octave_size]);
             connect
             (
-                transpose[t + 12], SIGNAL(triggered(bool)),
+                transpose[t + c_octave_size], SIGNAL(triggered(bool)),
                 this, SLOT(transpose_notes())
             );
         }
@@ -2293,8 +2162,8 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         snprintf(type, sizeof type, "Aftertouch");
     else if (status == EVENT_CONTROL_CHANGE)
     {
-        int bus = int(seq_pointer()->get_midi_bus());
-        int channel = int(seq_pointer()->get_midi_channel());
+        int bus = int(seq_pointer()->seq_midi_bus());
+        int channel = int(seq_pointer()->seq_midi_channel());
         std::string ccname(c_controller_names[control]);
         if (usr().controller_active(bus, channel, control))
             ccname = usr().controller_name(bus, channel, control);

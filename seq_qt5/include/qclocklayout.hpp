@@ -56,6 +56,7 @@ class QSpacerItem;
 namespace seq66
 {
     class performer;
+    class qseditoptions;
 
 /**
  *  This class is a widget that supports a row of radio-buttons that let the
@@ -117,10 +118,10 @@ private:
     int m_bus;
 
     /**
-     *  TODO
+     *  For telling the parent function.
      */
 
-    QWidget * m_parent_widget;                      /* currently not used   */
+    qseditoptions * m_parent_widget;
 
     /**
      * m_horizlayout_clockline holds the label and all of the radio buttons for

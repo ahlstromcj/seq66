@@ -132,7 +132,6 @@ PMEXPORT void Pt_Sleep (int32_t duration);
 
 PMEXPORT void Pt_Set_Midi_Timing (double bpm, int ppqn);
 PMEXPORT long Pt_Time_To_Pulses (int tsms);
-PMEXPORT void Pt_Set_Midi_Timing (double bpm, int ppqn);
 PMEXPORT void Pt_Set_Bpm (double bpm);
 PMEXPORT void Pt_Set_Ppqn (int ppqn);
 PMEXPORT double Pt_Get_Bpm (void);
