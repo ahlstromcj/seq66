@@ -93,10 +93,11 @@
    \textsl{Seq66} is \textsl{Sequencer64} refactored for newer versions of
    \textsl{C++} with cruft cleanup.  It drops the
    \textsl{Gtkmm} user-interface in favor of \textsl{Qt 5},
-   and has better handling of sets, mute-groups, and configuration files.
-   It includes support for the \textsl{Non Session Manager} and the ability to
-   modify the color palette.
-   Be prepared to note some significant differences (as well as similarities)
+   and has better handling of sets, mute-groups, sessions, configuration files,
+   and more.
+   It supports for the \textsl{Non Session Manager}, the ability to
+   modify the color palette, and Qt style-sheets.
+   Be prepared to note some significant differences
    between \textsl{Seq66} and textsl{Sequencer64}.
 
    We have many contributors to acknowledge.
@@ -134,15 +135,15 @@
 
    \begin{itemize}
       \item Qt 5 as the standard user-interface.
-      \item A mutes editor tab, improve mutes handling, control, and status
-         display.
+      \item A mutes editor tab, improvements to mutes handling, control, and
+         status display.
       \item A playlist editor tab, with improved flexibility and automation.
       \item A sets editor tab.
       \item A better live frame (main window and external windows) using
          buttons (or a fallback to the earlier style).
       \item Non Session Manager support.
       \item Repartitioning of the configuration files into separate files for
-         flexibility; a palette file was added as well.
+         flexibility; a color palette file; Qt style-sheets.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
@@ -426,8 +427,9 @@
 
    This button causes playback to stop, all patterns to mute, and flushes the
    MIDI buss.
-   There is currently no keystroke, MIDI control, or MIDI-announcement (output)
-   slot for this automation operation.
+   There is a keystroke control and a MIDI control
+   for this automation operation, plus
+   a MIDI-announcement (output) configuration item for it.
 
 \paragraph{Stop Button}
 \label{paragraph:introduction_stop_button}
@@ -455,8 +457,8 @@
    By default, the \texttt{Space} key operates this function,
    and there is both a MIDI-control slot and a MIDI-announcement slot
    available for it.
-   This key is also hardwired to toggle playback in the pattern editor and the song
-   editor.
+   This key is also hardwired to toggle playback in the pattern editor and the
+   song editor.
 
 \paragraph{Live Record Button}
 \label{paragraph:introduction_live_record_button}

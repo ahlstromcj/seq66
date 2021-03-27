@@ -37,9 +37,6 @@ HOT ITEMS:
 
     NSM:
 
-        Write up the difference between the main Save button and app Save
-        button in the NSM GUI.
-
         I add a new pattern, add a couple notes, then click File / Save to
         save the tune.  It DOES NOT save the tune, because at that point it
         does not have a name.  [I consider this to be a BUG, there should be a
@@ -52,87 +49,50 @@ HOT ITEMS:
 
     Port-Mapping:
 
-        If the port name is something plain like "midi in 0", "midi out
-        0", "input", "in", "output", "out", then prepend the client name
-        to the internal port-map objects.
+        No issues noted at present.
 
     Main Window:
 
-        PPQN dropdown needs to be fully implemented.  Also fix the PPQN
-        indicator at the bottom. In qsmainwnd, implement and unhide the PPQN
-        combo box, and save the setting.
-
-        In general, support run-time changes in PPQN, a big task.
-        In general, support PPQN calculations other than "times 4", a big task.
-
-        The time indicator needs to adapt to the global time-signature
-        controls.  It adapts to the numerator, but only once playback
-        resumes.
+        No issues noted at present.
 
     UI:
 
-        Also make sure the data modifier works correctly.
-
-        File / New does not work after using the Recent Files menu
-        The Recent Files menu usage does not clear the current song... it
-        appends the recent song to the current song.
-        CANNOT DUPLICATE.
-
-        Add a Redo key to correspond to the Undo key.
-
         The Event Pane also does not perform as documented.  Need to be able
-        to edit in it similarly to the piano roll. A big job!!!
+        to edit in it similarly to the piano roll. It is not really practical to
+        edit Note-Ons and Note-Offs in the event editor.  However, one can now
+        delete linked notes with one command.
 
         See the mouse wheel scroll event requests for both the song and
         pattern editors.
 
-        In the main window, the time-line, etc., do not change to match the
-        time signature.  Also check the perf and seq rolls.
-
     Automation:
-
-        Add a panic-button control.
 
         Add a live/song-button control.
 
-        Tap BPM key (F9) does not work, though the button works.
+        Tap BPM key (F9) works now, but it should cause the Tap BPM button to
+        show the tap count.
 
         Look into the "nativeVirtualKey" functionality to support
         locale-independent key processing.
 
     Testing:
 
-        Test the Live Record functionality.
-
-        Make sure we follow JACK transport properly, including tempo changes.
-
         Can we leverage the Julian-data project for testing?
 
         Make sure MIDI import does not import the SeqSpec sections of a Seq66
-        MIDI file.
+        MIDI file. ???
 
 Others to Consider:
 
     When filling the file line in the live grid with the MIDI filename (not
     from playlist), use the realpath() result.
 
-    When resizing, also recalculate the x and y scaling appropriately.
-
-    The corners and borders of the grid buttons are colored.  A problem?
-
-    Make sure grid button text colors are appropriate.
-
     In main frame, try to highlight the start/stop/pause buttons
-    appropriately.  Also consider showing a small status bar:
+    appropriately.
     
-    Figure out a way to condense the external qseqedit frame to 800x480.
-
-    Make sure performer::ppqn() and bpm() always consistent with
-    get_ppqn() and get_beats_per_minute().
-
 Backports to Sequencer64:
 
-        -   qseqedit 800x480 feature if successful
+    qseqedit 800x480 feature if successful
 
 EXTANT ISSUES:
 
@@ -167,16 +127,12 @@ EXTANT ISSUES:
     This could even be backwards-compatible: when the configuration file has a
     bus number, use that, if it is a string, connect by name.
     STATUS:  A "port-mapping" configuation in the 'rc' file is now supported.
-    Partially tested.
+    Mostly tested; works for patterns and for MIDI I/O control.
 
 #18 Mute Group does not toggle
     Also I have noticed that when I activate a mute group I am not able to
     activate patters that do not belong to the activated mute group. It is normal?
     STATUS: I want to double-check this one.
-
-#23 Problems with Qt during compilation
-    See the github issue.
-    STATUS:  Pending more investigation.
 
 #24 Release notes in release tag message?
     I would d like to add seq66 to https://libreav.org/updates
@@ -199,13 +155,8 @@ EXTANT ISSUES:
     STATUS: Provisional support in 0.91.3.  One more feature to add soon.
 
 #30 Managing pattern colors with a pallette
-    See the GitHub issue.  My plan is to add a "qseq66.palette" file that will
-    be saved, can be modified, and then to load a palette pleasing to the
-    user.  The user will have to use a palette app to modify the values
-    manually; not wanting to add this code to the app.  Could add it to the
-    little-used Seqtool app at some point.
     STATUS: Basically complete, works.  May be a few more places to add
-    configuration coloring.
+    configuration coloring.  Also added usage of Qt style-sheets.
 
 #32 NSM: Save session
     save session, should be renamed to just 'save' I think. I should just save
@@ -219,17 +170,10 @@ EXTANT ISSUES:
 
 #34 seq66 doesn't follow jack_transport tempo changes (and so also doesn't
     work with jack_link)
-    STATUS:  Fixed.  First added a performer callback to qsmainwnd to show
-    PPQN and BPM updates.  Then removed the check for performer::is_running()
-    from the transport callback.  Made sure to refresh the beat indicator
-    while a pattern is playing or while JACK is running.
+    STATUS:  Fixed.
 
 #39 Arm Build - Pattern editor doesnt open
-    Ive built it using the described methods on my raspberry pi . It all seems
-    to be pretty alright, but when clicking on an empty pattern , I can get
-    the midi editor to display . Also the edit tab is empty no matter what .
-    I attach a log of the terminal and some screenshots .  Ive built it
-    running on a raspberry pi 3B+ with [Patchbox OS]
+    STATUS:  Should be closed.
 
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
@@ -272,9 +216,6 @@ Tons of TO DOs in performer!
     Do:
 
         -   After importing to a set, reload that set to make changes visible.
-        -   Implement setmapper::select_triggers_in_range().
-        -   Implement screenset::select_triggers_in_range().
-        -   Investigate sequence::offset_triggers() usage.
 
     Load a song with Song triggers; go to the song tab; select File/New. Note
     that the perfroll clears, but not the perfnames!  We need to derive all
@@ -322,18 +263,6 @@ Seqtool/src/optionsfile.cpp (a low priority):
 
     parse():  Investigate and fix all the TO DOs.
 
-Seqtool/src/optionsfile.cpp (a low priority):
-
-    Investigate and fix all the TO DOs.
-
-seq_qt5/src/qseqkeys.cpp:
-
-    paintEvent():
-
-seq_qt5/src/qseventslots.cpp:
-
-    delete_current_event(): set modify flag
-
 seq_qt5/src/qlfoframe.cpp:
 
     on_focus_out_event():  Implement undo of calculations.
@@ -361,17 +290,11 @@ seq_qt5/src/gui_palette_qt5.cpp:
 
     get_color_inverse(): return black for NONE color.
 
-seq_qt5/src/qseqroll.cpp:
-
-    keyPressEvent():  Fix the zoom keys.
-
-seq_qt5/src/qsliveframe.cpp:
-
-    While running, try to avoid drawing the empty slots over and over.
-
 libseq66/src/play/setmapper.cpp:
+libseq66/src/play/screenset.cpp:
 
     Implement select_triggers_in_range().
+    Investigate sequence::offset_triggers() usage.
 
 libseq66/src/play/sequence.cpp:
 
@@ -386,10 +309,6 @@ libseq66/src/play/performer.cpp:
     put_settings(): Implement the to-do.
     mute_group_control(): Implement it, a HIGH PRIORITY!
 
-libseq66/src/play/screenset.cpp:
-
-    Implement select_triggers_in_range().
-
 libseq66/src/midi/jack_assistant.cpp:
 
     session_event():  Implement the quit functionality.
@@ -402,19 +321,5 @@ libseq66/src/midi/editable_event.cpp:
 libseq66/src/midi/wrkfile.cpp:
 
     Implement the to-dos.
-
-libseq66/src/midi/midifile.cpp:
-
-    Implement the to-dos.  A HIGH PRIORITY.
-
-libseq66/src/cfg/mutegroupsfile.cpp:
-
-    Implement the to-dos?
-
-libseq66/src/cfg/usrsettings.cpp:
-
-    normalize(): Fix the calculation of the number of mute tracks.
-
-Lots of testing as well!
 
 # vim: sw=4 ts=4 wm=4 et ft=sh
