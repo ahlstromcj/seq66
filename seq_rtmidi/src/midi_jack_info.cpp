@@ -169,12 +169,12 @@ midi_jack_info::connect ()
          */
 
         const char * clientname = seq_client_name().c_str();
-        result = create_jack_client(clientname);
+        result = create_jack_client(clientname);    /* see jack_assistant   */
         if (not_nullptr(result))
         {
-            int rc = jack_set_process_callback(result, jack_process_io, this);
+            int r = jack_set_process_callback(result, jack_process_io, this);
             m_jack_client = result;
-            if (rc == 0)
+            if (r == 0)
             {
                 /**
                  * We need to add a call to jack_on_shutdown() to set up a
@@ -186,6 +186,10 @@ midi_jack_info::connect ()
                  *
                  * jack_activate(result);
                  */
+
+                std::string uuid = get_jack_client_uuid(result);
+                if (! uuid.empty())
+                    rc().jack_session_uuid(uuid);
             }
             else
             {
@@ -240,31 +244,31 @@ midi_jack_info::extract_names
  *  container, and putting output data into another midi_info container.
  *
  * \tricky
- *      When we want to connect to a system input port, we want to use an output
- *      port to do that.  When we want to connect to a system output port, we
- *      want to use an input port to do that.  Therefore, we search for the <i>
- *      opposite </i> kind of port.
+ *      When we want to connect to a system input port, we want to use an
+ *      output port to do that.  When we want to connect to a system output
+ *      port, we want to use an input port to do that.  Therefore, we search
+ *      for the <i> opposite </i> kind of port.
  *
- *  If in multi-client mode, then this function disconnects the JACK
- *  client afterward. At this point, we have got all the data we need, and are
- *  not providing a client to each JACK port we create.
+ *  If in multi-client mode, then this function disconnects the JACK client
+ *  afterward. At this point, we have got all the data we need, and are not
+ *  providing a client to each JACK port we create.
  *
  *  If there is no system input port, or no system output port, then we add a
- *  virtual port of that type so that the application has something to work with.
+ *  virtual port of that type so that the application has something to work
+ *  with.
  *
  *  Note that, at some pointer, we ought to consider how to deal with
  *  transitory system JACK clients and ports, and adjust for it.  A kind of
- *  miniature form of session management.
- *  Also, don't forget about the usefulness of jack_get_port_by_id() and
- *  jack_get_port_by_name().
+ *  miniature form of session management.  Also, don't forget about the
+ *  usefulness of jack_get_port_by_id() and jack_get_port_by_name().
  *
  * Error handling:
  *
  *  Not having any JACK input ports present isn't necessarily an error.  There
- *  may not be any, and there may still be at least one output port.
- *  Also, if there are none, we try to make a virtual port so that the
- *  application has something to work with.  The only issue is the client
- *  number.  Currently all virtual ports we create have a client number of 0.
+ *  may not be any, and there may still be at least one output port.  Also, if
+ *  there are none, we try to make a virtual port so that the application has
+ *  something to work with.  The only issue is the client number.  Currently
+ *  all virtual ports we create have a client number of 0.
  *
  * JackPortIsPhysical:
  *

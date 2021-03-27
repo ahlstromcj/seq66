@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-03-22
+ * \updates       2021-03-25
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -112,10 +112,12 @@ namespace seq66
 {
 
 /**
- *  Provide limits for the option "--option scale=x.y".
+ *  Provide limits for the option "--option scale=x.y".  Based on the minimum
+ *  size of the main window specified in qsmainwnd.ui, 0.8 is the smallest one
+ *  can go for both width and height.
  */
 
-const double c_window_scale_min         = 0.5f;
+const double c_window_scale_min         = 0.8f;
 const double c_window_scale_default     = 1.0f;
 const double c_window_scale_max         = 3.0f;
 
@@ -660,9 +662,17 @@ usrsettings::parse_window_scale (const std::string & source)
     return result;
 }
 
-/**
- * \setter m_grid_style
- */
+int
+usrsettings::scale_font_size (int value) const
+{
+    int result = value;
+    if (window_is_scaled())
+    {
+        result = m_window_scale <= m_window_scale_y ?
+            scale_size(value) : scale_size_y(value) ;
+    }
+    return result;
+}
 
 void
 usrsettings::set_grid_style (int gridstyle)

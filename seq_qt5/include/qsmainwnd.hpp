@@ -270,6 +270,8 @@ private:
 private:
 
     Ui::qsmainwnd * ui;
+    int m_initial_width;
+    int m_initial_height;
     qslivebase * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;

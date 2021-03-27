@@ -1092,13 +1092,13 @@ usrfile::write ()
         ;
 
     file << "\n"
-        "# Specifies an enlargement of the main window of Seq66.\n"
-        "# The normal value is 1.0, which is the legacy sizing.  If this\n"
-        "# value is between 0.5 and 3.0, it will change the size of the main\n"
+        "# Specifies a scaling of the main window of Seq66 at startup.\n"
+        "# The norm is 1.0x1.0, which is the legacy sizing.  If this value\n"
+        "# value is between 0.8 and 3.0, it will change the size of the main\n"
         "# window proportionately. Same as the '-o scale=m.n[xp.q]' option.\n"
         "\n"
         << usr().window_scale() << " " << usr().window_scale_y()
-        << "      # window_scale (scales main window width and height)\n"
+        << "      # window_scale (scales main window width x height)\n"
         ;
 
     /*

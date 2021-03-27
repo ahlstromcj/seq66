@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-03-16
+ * \updates       2021-03-26
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -172,8 +172,8 @@ qloopbutton::qloopbutton
     m_progress_box      (),
     m_event_box         ()
 {
-    int fontsize = usr().scale_size(6);
-    m_text_font.setPointSize(fontsize);
+//  int fontsize = usr().scale_font_size(6);
+//  m_text_font.setPointSize(fontsize);
     m_text_font.setBold(true);
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
@@ -196,17 +196,23 @@ qloopbutton::initialize_text ()
     {
         int w = width();
         int h = height();
-        int dx = usr().scale_size(2);
+        int dx = usr().scale_size(4);
         int dy = usr().scale_size_y(2);
         int lw = int(0.70 * w);
         int rw = int(0.50 * w);
         int lx = dx + 1;                        /* left x       */
         int ty = dy;                            /* top y        */
         int bh = usr().scale_size_y(12);        /* box height   */
-        int rx = int(0.50 * w) + lx - dx - 2;   /* right x      */
-        int by = int(0.85 * h);                 /* bottom y     */
+        int rx = int(0.50 * w) + lx - dx - 4;   /* right x      */
+        int by = int(0.85 * h) + dy;            /* bottom y     */
         if (vert_compressed())
             by = int(0.75 * h);                 /* bottom y     */
+
+        int fontsize = usr().scale_font_size(6);
+        m_text_font.setPointSize(fontsize);
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf("font rescale of %d to %d\n", 6, fontsize);
+#endif
 
         /*
          * Code from performer::sequence_label().
@@ -491,12 +497,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                 painter.setPen(pen);
 #endif
 
-                /*
-                 * EXPERIMENTAL.  Might be needed for large window sizes.
-                 * int fontsize = usr().scale_size(6);
-                 * m_text_font.setPointSize(fontsize);
-                 */
-
                 painter.drawText(box, m_top_left.m_flags, title);
                 title = m_top_right.m_label.c_str();
                 box.setRect
@@ -533,9 +533,10 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     else
                         title = "Muted";
 
+                    int line2y = 2 * usr().scale_font_size(6);    // vs 13
                     box.setRect
                     (
-                        m_top_left.m_x, m_top_left.m_y + 12,
+                        m_top_left.m_x, m_top_left.m_y + line2y,
                         m_top_left.m_w, m_top_left.m_h
                     );
                     painter.drawText(box, m_top_left.m_flags, title);
@@ -557,7 +558,6 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             setEnabled(false);
             setText(snstring.c_str());
         }
-        // set_dirty(false);
     }
 }
 

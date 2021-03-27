@@ -214,6 +214,8 @@ qsmainwnd::qsmainwnd
     QMainWindow             (parent),
     performer::callbacks    (p),
     ui                      (new Ui::qsmainwnd),
+    m_initial_width         (0),
+    m_initial_height        (0),
     m_live_frame            (nullptr),
     m_perfedit              (nullptr),
     m_song_frame64          (nullptr),
@@ -350,7 +352,7 @@ qsmainwnd::qsmainwnd
     m_msg_save_changes->setDefaultButton(QMessageBox::Save);
 
     m_dialog_prefs = new qseditoptions(perf(), this);
-    m_beat_ind = new qsmaintime(perf(), this, 4, 4);
+    m_beat_ind = new qsmaintime(perf(), ui->verticalWidget /*this*/, 4, 4);
     m_dialog_about = new qsabout(this);
     m_dialog_build_info = new qsbuildinfo(this);
     make_perf_frame_in_tab();           /* create m_song_frame64 pointer    */
@@ -3381,9 +3383,36 @@ qsmainwnd::changeEvent (QEvent * event)
 void
 qsmainwnd::resizeEvent (QResizeEvent * /*r*/ )
 {
+    if (m_initial_width == 0)
+    {
+        m_initial_width = width();
+        m_initial_height = height();
+    }
+    else
+    {
+        bool rescale = false;
+        int w = width();
+        int h = height();
+        float wscale = usr().window_scale_x();
+        float hscale = usr().window_scale_y();
+        if (w != m_initial_width)
+        {
+            wscale = float(w) / float(m_initial_width);
+            rescale = true;
+        }
+        if (h != m_initial_height)
+        {
+            hscale = float(h) / float(m_initial_height);
+            rescale = true;
+        }
+        if (rescale)
+        {
+            usr().window_scale(wscale, hscale);
 #if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf("qsmainwnd::resizeEvent()\n");
+            printf("qsmainwnd rescale to %f x %f\n", wscale, hscale);
 #endif
+        }
+    }
 }
 
 bool

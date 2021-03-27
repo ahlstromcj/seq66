@@ -355,6 +355,23 @@ create_jack_client
     return result;                      /* bad result handled by caller     */
 }
 
+std::string
+get_jack_client_uuid (jack_client_t * jc)
+{
+    std::string result;
+    char * lname = jack_get_client_name(jc);
+    if (not_nullptr(lname))
+    {
+        char * luuid = jack_get_uuid_for_client_name(jc, lname);
+        if (not_nullptr(luuid))
+        {
+            result = luuid;
+            jack_free(luuid);
+        }
+    }
+    return result;
+}
+
 /**
  *  Provides a list of JACK status bits, and a brief string to explain the
  *  status bit.  Terminated by a 0 value and an empty string.
@@ -575,45 +592,27 @@ jack_assistant::error_message (const std::string & msg)
  *  Tries to obtain the best information on the JACK client and the UUID
  *  assigned to this client.  Sets m_jack_client_name and m_jack_client_info
  *  as side-effects.
+ *
+ * Only store the transport UUID in the rc().jack_session_uuid() if not already
+ * filled by opening the with-jack MIDI client.
  */
 
 void
 jack_assistant::get_jack_client_info ()
 {
-    char * actualname = nullptr;
-    if (rc().jack_session_uuid().empty())
-    {
-        actualname = jack_get_client_name(m_jack_client);
-        apiprint("jack_get_client_name", "sync");
-    }
-    else
-    {
-        /*
-         * Currently, this doesn't seem to work, no matter what
-         * is supplied as a UUID.  A null pointer is returned.  Still
-         * investigating.
-         */
-
-        const char * uuid = rc().jack_session_uuid().c_str();
-        actualname = jack_get_client_name_by_uuid(m_jack_client, uuid);
-        apiprint("jack_get_client_name_by_uuid", "sync");
-    }
+    char * actualname = jack_get_client_name(m_jack_client);
     if (not_nullptr(actualname))
+    {
+        m_jack_client_uuid = get_jack_client_uuid(m_jack_client);
+        if (! m_jack_client_uuid.empty())
+        {
+            if (rc().jack_session_uuid().empty())
+                rc().jack_session_uuid(m_jack_client_uuid);
+        }
         m_jack_client_name = actualname;
-    else
-        m_jack_client_name = SEQ66_PACKAGE;
+    }
 
-    char * actualuuid = jack_get_uuid_for_client_name
-    (
-        m_jack_client, m_jack_client_name.c_str()
-    );
-    apiprint("jack_get_uuid_for_client_name", "sync");
-    if (not_nullptr(actualuuid))
-        m_jack_client_uuid = actualuuid;
-    else
-        m_jack_client_uuid = rc().jack_session_uuid();
-
-    std::string jinfo = "JACK client:uuid is ";
+    std::string jinfo = "JACK transport client:uuid ";
     jinfo += m_jack_client_name;
     if (! m_jack_client_uuid.empty())
     {
@@ -1230,18 +1229,6 @@ jack_sync_callback
  *  Writes the MIDI file named "<jack session dir>-file.mid" using a
  *  midifile object, quits if told to by JACK, and can free the JACK
  *  session event.
- *
- *  ca 2015-07-24
- *  Just a note:  The OMA (OpenMandrivaAssociation) patch was already
- *  applied to seq66 v.0.9.2.  It put quotes around the --file argument.
- *  However, the --file option doesn't work, so let's change that line.
- *
- *      seq66 --file \"${SESSION_DIR}file.mid\" --jack_session_uuid
- *
- *  Why are we using a Glib::ustring here?  Convenience.  But with C++11, we
- *  could use a lexical_cast<>.  No more ustring, baby!  It doesn't really
- *  matter; this function can call Gtk::Main::quit(), via the parent's
- *  gui().quit() function.
  *
  * \return
  *      Always returns false.

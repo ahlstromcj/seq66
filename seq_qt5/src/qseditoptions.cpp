@@ -326,8 +326,8 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     vboxinputs->addItem(spacer2);
     syncWithInternals();
 
-    std::string clid = std::to_string(perf().client_id());
-    ui->plainTextEditClientId->setPlainText(clid.c_str());
+    std::string clid = perf().client_id_string();
+    ui->plainTextEditClientId->setPlainText(QString::fromStdString(clid));
     m_is_initialized = true;
 
 #if defined SEQ66_PLATFORM_WINDOWS

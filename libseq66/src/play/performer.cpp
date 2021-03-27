@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-21
+ * \updates       2021-03-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1020,6 +1020,19 @@ std::string
 performer::pulses_to_time_string (midipulse tick) const
 {
     return pulses_to_timestring(tick, bpm(), ppqn(), false);
+}
+
+std::string
+performer::client_id_string () const
+{
+    std::string result = seq_client_name();
+    result += ':';
+    if (rc().with_jack_midi() && ! rc().jack_session_uuid().empty())
+        result += rc().jack_session_uuid();
+    else
+        result += std::to_string(m_master_bus->client_id());
+
+    return result;
 }
 
 /*

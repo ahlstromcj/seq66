@@ -1431,6 +1431,8 @@ public:
         return m_master_bus.get();
     }
 
+    std::string client_id_string () const;
+
     int client_id () const
     {
         return m_master_bus->client_id();

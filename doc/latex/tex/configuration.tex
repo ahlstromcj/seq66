@@ -209,32 +209,31 @@
    \optionline{-h}{-{}-help}
       Display a list of all command-line options, then exit.
 
-   \optionline{-v}{-{}-version}
+   \optionline{-V}{-{}-version}
       Display the program version, then exit.
 
-   \optionline{-H}{-{}-home [directory]}
-      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
-      The configuration files are loaded from or saved to the specified directory.
+   \optionline{-v}{-{}-verbose}
+      During execution, write more information to the console.  Useful for
+      trouble-shooting.
+   
+%  \optionline{-L}{-{}-lash}
+%     If LASH support is compiled into the program, this option
+%     enables it.  Deprecated.
+%     See \texttt{usr: [user-session] session}.
 
-   \optionline{-b}{-{}-bus [buss]}
-      Modifies the output buss number on \textsl{all} tracks when a MIDI file is
-      read.  Useful for testing or quick-and-dirty setup.
+   \optionline{-n}{-{}-nsm}
+      Activate the built-in NSM (\textsl{Non Session Manager}) support.
 
-   \optionline{-q}{-{}-ppqn [ppqn]}
-      Supports modifying the PPQN value of Seq66, which is
-      defaults to a value of 192.  This setting
-      is written into the MIDI file when it is saved.
-      The PPQN value can range from 32 to 19200, or
-      be set to 0 to use the PPQN from the loaded file.
+   \optionline{-T}{-{}-no-nsm}
+      Ignore the NSM setting in the 'usr' file. ('T' for 'typical').
 
-      \configref{usr}{user-midi-settings}{midi\_ppqn}.
+   \optionline{-X}{-{}-playlist [filename]}
+      This option loads the given file-name as a play-list file.
+      See \sectionref{sec:playlist}.
 
-   \optionline{-L}{-{}-lash}
-      If LASH support is compiled into the program, this option
-      enables it.  Deprecated.
-      See \texttt{usr: [user-session] session}.
+      \configref{rc}{playlist}{name}
 
-      \configref{usr}{user-session}{session}
+      \configref{playlist}{playlist}{full}
 
    \optionline{-m}{-{}-manual-ports}
       \textsl{Seq66} won't attach the system's existing ALSA or JACK MIDI ports.
@@ -266,11 +265,30 @@
       \textsl{Seq66} will run with ALSA, even if JACK is running.
       This options is "sticky" (they are saved).
 
-   \optionline{-t}{-{}-jack-midi}
-      \textsl{Seq66} will run with JACK, which is the default is JACK is
-      running.
+   \optionline{-b}{-{}-bus [buss]}
+      Modifies the output buss number on \textsl{all} tracks when a MIDI file is
+      read.  Useful for testing or quick-and-dirty setup.
 
-      \configref{rc}{jack-transport}{with\_jack\_midi}
+   \optionline{-l}{-{}-client-name}
+      Replaces the normal client-name, \texttt{seq66}, with the given name.
+      Probably best to make sure "seq66" is part of the name, for clarity.
+      Also note that, if active, the \textsl{Non Session Manager} will override
+      this name, e.g. using something like \textsl{seq66.nXYZT}.
+
+   \optionline{-q}{-{}-ppqn [ppqn]}
+      Supports modifying the PPQN value of Seq66, which is
+      defaults to a value of 192.  This setting
+      is written into the MIDI file when it is saved.
+      The PPQN value can range from 32 to 19200, or
+      be set to 0 to use the PPQN from the loaded file.
+
+      \configref{usr}{user-midi-settings}{midi\_ppqn}.
+
+      \configref{usr}{user-session}{session}
+
+   \optionline{-H}{-{}-home [directory]}
+      Change the "home" configuration directory from \texttt{\$HOME.config/seq66}
+      The configuration files are loaded from or saved to the specified directory.
 
    \optionline{-s}{-{}-show-midi}
       Dumps incoming MIDI to the screen.
@@ -288,16 +306,15 @@
    \optionline{-K}{-{}-inverse}
       Changes the color palette for the sequence editor and performance editor
       piano rolls.  Also note that the palette is highly configurable.
+      And there is also an option to use a Qt style-sheet.
 
       \configref{palette}{palette}{inverse}
 
-   \optionline{-X}{-{}-playlist [filename]}
-      This option loads the given file-name as a play-list file.
-      See \sectionref{sec:playlist}.
+   \optionline{-t}{-{}-jack-midi}
+      \textsl{Seq66} will run with JACK, which is the default is JACK is
+      running.
 
-      \configref{rc}{playlist}{name}
-
-      \configref{playlist}{playlist}{full}
+      \configref{rc}{jack-transport}{with\_jack\_midi}
 
    \optionline{-j}{-{}-jack-transport}
       \textsl{Seq66} will sync to JACK transport.

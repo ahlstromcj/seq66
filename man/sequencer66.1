@@ -1,16 +1,21 @@
 .TH Sequencer66 "March 2021" "Version 0.92.2" "Seq66 Manual Page"
 
 .SH NAME
-Seq66 (qseq66) - Real-time live MIDI sequencer refactored from
+Seq66 (qseq66) - Real-time live MIDI loop sequencer refactored from
 Sequencer64/Seq24
 
 .SH SYNOPSIS
 .B qseq66
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
-.B seq66
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
+[\fIOPTIONS\fP] [\fIfilename\fP]
+.BR
+.B qpseq66 (Windows)
+[\fIOPTIONS\fP] [\fIfilename\fP]
+.BR
 .B seq66cli
-[\fIOPTIONS\fP] [\fIFILENAME\fP]
+[\fIOPTIONS\fP] [\fIfilename\fP]
+
+.BR filename
+is the name of a MIDI file to be loaded at startup.
 
 .SH DESCRIPTION
 .PP
@@ -79,13 +84,6 @@ that the Seq66 internal PPQN should be set to the value that
 is present in the currently-loaded MIDI file.
 
 .TP 8
-.B \-L, \-\-lash
-If LASH support is compiled into the program, this option
-enables it.
-If LASH support is not compiled into the program, this option will not
-be shown in the output of the --help option.
-
-.TP 8
 .B \-l, \-\-client-name
 Changes the default label for the client MIDI ports, which is "seq66".
 It can be changed to any value, though better if it includes "seq66".
@@ -94,9 +92,15 @@ The Non Session Manager will override this label with its own label (e.g,
 
 .TP 8
 .B \-n, \-\-nsm
-Enable NSM support (if included in the build options). This option provides
-support for qseq66 as a client of the Non Session Manager.  NOTE:  this support
-is not yet finished, so be prepared for issues.
+Enable
+.BR NSM
+support (if included in the build options). This option provides
+support for qseq66 as a client of the Non Session Manager.  This support
+is basically finished, but please report any issues.
+Note that
+.BR LASH
+is
+currently not supported.
 
 .TP 8
 .B \-T, \-\-no-nsm
@@ -262,14 +266,50 @@ virtual=o,i   Set up the --manual-ports option, using 'o' output ports
 \fB$HOME\fP/.config/qseq66.rc stores the main configuration settings for
 Seq66.  If it does not exist, it will be generated when Seq66
 exits.  If it does exist, it will be rewritten with the current configuration
-of Seq66.  Many, or most, of the command-line options are "sticky", in
+of Seq66.
+If running under
+.BR NSM ,
+the configuration is stored in the Non Session Manager directory
+created for that session.
+Many, or most, of the command-line options are "sticky", in
 that they will be written to the configuration file.
+This configuration file also specifies other configuration files to be used.
 
 \fB$HOME\fP/.config/qseq66.usr stores the MIDI-configuration settings and
 some of the user-interface settings for Seq66.  If it does not
 exist, it will be generated with a minimal configuration when Seq66
-exits.  If it does exist, it will be rewritten with the current configuration
-of Seq66.
+exits.  If it does exist, it will not be rewritten with the current
+configuration of Seq66 except when the user-save option is given, or when
+particular items are changed in the 'Preferences' dialog.
+
+\fB$HOME\fP/.config/qseq66.ctrl contains the keystroke-control and MIDI-control
+specification for operating Seq66 from the keyboard and via MIDI commands.
+It also specifies MIDI commands to show the status of commands, patterns, and 
+mute-groups on "launch-pad" devices.
+
+\fB$HOME\fP/.config/qseq66.mutes contains the setting for mute-groups, which
+specify collections of unmuted patterns to be played at the touch of a
+keystroke or by a MIDI command configured in the 'ctrl' file.
+
+\fB$HOME\fP/.config/qseq66.drums contains settings which can be used to modify
+drum tracks recorded on legacy MIDI equipment to play on modern General MIDI
+equipment. The conversions can be reversed as well.
+
+\fB$HOME\fP/.config/qseq66.playlist contains one or more play-lists.  Each
+play-list is a group of songs.  The user can cycle through the play-lists and
+the songs using the arrow keys or MIDI commands configured in the 'ctrl' file.
+
+\fB$HOME\fP/.config/qseq66.palette contains all of the variable colors for
+tracks, foreground, background, etc.  If present, it overrides the default
+palette colors.
+
+\fB$HOME\fP/.config/qseq66.qss is an optional Qt style-sheet. If present,
+it is loaded and can override most elements of the user-interface.
+It can be specified in the 'usr' file.
+
+Many sample configuration files are provided in the 'data/linux' and
+the 'data/samples' installed directories.
+See the Seq66 user manual for details.
 
 .SH BUGS
 Seq66 has them.  See 
@@ -284,13 +324,14 @@ maintainer.  See the link in the previous section.
 .UR https://github.com/ahlstromcj/seq66/
 
 .SH OTHER INFO
---ppqn works, but be aware that it may have bugs.  If a MIDI file is re-saved,
---ppqn is also saved.  Some options shown above may have been
+--ppqn works and should be close to bug-free.  If a MIDI file is re-saved,
+the new PPQN is also saved to the MIDI file.
+Note that some options shown above may have been
 disabled in the Linux distro's build configuration.
 
 The current Seq66 project homepage is a simple git repository at the
 https://github.com/ahlstromcj/seq66.git URL.
-Comprehensive instructions are (or will be) provided as a PDF manual in the
+Comprehensive instructions are provided as a PDF manual in the
 same project.
 
 The old Seq24 project homepage is at <http://www.filter24.org/seq24/>, and the
@@ -298,9 +339,11 @@ new one is at <https://edge.launchpad.net/seq24/>.  It is released under the
 GNU GPL license.  Seq66 is also released under the GNU GPL license.
 
 .SH SEE ALSO
-There are no man-pages yet for the "rc" and "usr" configuration files.
+There are no man-pages yet for the configuration files.
 However, when Seq66 is first run, these files are saved in
 $HOME/.config/seq66, and they are fairly self-documenting.
+Also see the Seq66 PDF user's manual in the 'doc' directory for even more
+information.  It is very comprehensive and is indexed.
 
 .SH AUTHOR
 Seq66 was written by Chris Ahlstrom <ahlstromcj@gmail.com>, with

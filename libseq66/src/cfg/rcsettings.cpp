@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-22
+ * \updates       2021-03-27
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -794,6 +794,10 @@ rcsettings::session_midi_filename (const std::string & value)
 
 /**
  * \setter m_jack_session_uuid
+ *
+ *  This is an FYI-only data item that is controlled by JACK, and cannot be
+ *  modified by the user. See https://jackaudio.org/metadata/ for more
+ *  information.
  *
  * \param value
  *      The value to use to make the setting.

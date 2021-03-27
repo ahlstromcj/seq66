@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -167,14 +167,14 @@ the system's MIDI setup has changed.</string>
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>72</x>
-         <y>490</y>
+         <x>16</x>
+         <y>488</y>
          <width>161</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Seq66's MIDI Client ID</string>
+        <string>Client Name:ID/UUID</string>
        </property>
       </widget>
       <widget class="QPlainTextEdit" name="plainTextEditClientId">
@@ -183,9 +183,9 @@ the system's MIDI setup has changed.</string>
        </property>
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>168</x>
          <y>480</y>
-         <width>42</width>
+         <width>217</width>
          <height>28</height>
         </rect>
        </property>

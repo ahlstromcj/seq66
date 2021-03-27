@@ -325,9 +325,15 @@ It does not change Seq66's default PPQN.</string>
       </item>
       <item>
        <widget class="QWidget" name="verticalWidget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>180</width>
+          <width>80</width>
           <height>18</height>
          </size>
         </property>

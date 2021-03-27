@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-22
+ * \updates       2021-03-26
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -1140,6 +1140,8 @@ public:
     {
         return window_scaled_up() || window_scaled_down();
     }
+
+    int scale_font_size (int value) const;
 
     int scale_size (int value) const
     {

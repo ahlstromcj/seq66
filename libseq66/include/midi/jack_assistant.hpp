@@ -612,8 +612,9 @@ extern int jack_transport_callback (jack_nframes_t nframes, void * arg);
 extern jack_client_t * create_jack_client
 (
     const std::string & clientname,
-    const std::string & uuid        = ""
+    const std::string & uuid = ""       /* deprecated */
 );
+extern std::string get_jack_client_uuid (jack_client_t * jc);
 extern void show_jack_statuses (unsigned bits);
 extern std::string jack_state_name (const jack_transport_state_t & state);
 
