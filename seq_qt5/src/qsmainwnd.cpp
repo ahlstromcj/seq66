@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-25
+ * \updates       2021-03-28
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -2067,6 +2067,9 @@ qsmainwnd::load_mute_master ()
  *  seqedit window, and somewhat more functional.  It has no parent widget,
  *  otherwise the whole big dialog will appear inside that parent.
  *
+ *  We make sure the sequence exists.  We should consider creating it if it
+ *  does not exist.  So many features, so little time.
+ *
  * \warning
  *      We have to make sure the pattern ID is valid.  Somehow, we can
  *      double-click on the qsmainwnd's set/bank roller and get this function
@@ -2084,22 +2087,14 @@ qsmainwnd::load_qseqedit (int seqid)
         auto ei = m_open_editors.find(seqid);
         if (ei == m_open_editors.end())
         {
-            /*
-             * Make sure the sequence exists.  We should consider creating it
-             * if it does not exist.  So many features, so little time.
-             */
+            qseqeditex * ex = new (std::nothrow)
+                qseqeditex(perf(), seqid, this);
 
-            if (perf().is_seq_active(seqid))
+            if (not_nullptr(ex))
             {
-                qseqeditex * ex = new (std::nothrow)
-                    qseqeditex(perf(), seqid, this);
-
-                if (not_nullptr(ex))
-                {
-                    auto p = std::make_pair(seqid, ex);
-                    m_open_editors.insert(p);
-                    ex->show();
-                }
+                auto p = std::make_pair(seqid, ex);
+                m_open_editors.insert(p);
+                ex->show();
             }
         }
     }

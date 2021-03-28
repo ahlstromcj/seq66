@@ -1,14 +1,17 @@
-# Seq66 Release Notes 0.92.2
+# Seq66 Release Notes 0.92.3
 ==============================
 Chris Ahlstrom
-2020-11-15 to 2021-03-07
+2020-11-15 to 2021-03-28
 
 This file lists the major changes for this version from the previous version.
-Also see the README and INSTALL files.
+Also see the README.md and INSTALL files.
 
-## New stuff here
+## New Stuff
 
-More items ...
+Apart from minor updates that occur as we test this software in actual
+sessions, most of the work involves testing, finding bugs, fixing them, and
+making sure the documentation is in accord with the functionality, and vice
+versa.
 
 ## Documentation
 

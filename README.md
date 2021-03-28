@@ -1,4 +1,4 @@
-# README for Seq66 0.92.2 (Sequencer64 refactored for C++/14 and Qt 5)
+# README for Seq66 0.92.3
 
 Chris Ahlstrom
 2015-09-10 to 2021-03-28
@@ -16,28 +16,27 @@ application from the source code.  See the INSTALL file.  Windows users can
 get an installer package on GitHub or build it with Qt Creator.  A PDF
 user-manual is also provided.
 
-# Major Features:
+# Major Features
 
     Also see **Recent Changes** below.
 
 ##  User interface
 
-    *   Qt 5 (good cross-platform support).  No "grid of sets", but
-        unlimited external windows.  Can be modified via a Qt style-sheet.
+    *   Qt 5 (good cross-platform support).  A grid of loop buttons and a song
+        layout tab.  Unlimited external windows.  The live frame uses buttons
+        matching Qt theming.  Qt style-sheet support.
     *   Tabs for management of sets, mute-groups, song mode, pattern
         editing, event-editing, play-lists, and session information.
-    *   The live frame uses buttons matching Qt theming.
     *   A color for each sequence can be chosen to make them stand out.
-        The color number is saved in a *SeqSpec* associated with the track.
         The color palette can be saved and modified.
 
 ##  Configuration files
 
-    *   Separated MIDI control and mute-group setting into their own files,
+    *   Separates MIDI control and mute-group setting into their own files,
         with support for hex notation.
-    *   Supported configuration files: ".rc", ".usr", ".ctrl", ".mutes",
+    *   Supports configuration files: ".rc", ".usr", ".ctrl", ".mutes",
         ".playlist", ".drums" (note-mapping), and ".palette".
-    *   Unified keystroke control and MIDI control into a ".ctrl" file. It
+    *   Unified keystroke control and MIDI control in the ".ctrl" file. It
         defines MIDI In controls for controlling Seq66, and MIDI Out controls
         for displaying Seq66 status in grid controllers (e.g.  LaunchPad).
         Basic 4x8 and 8x8 ".ctrl" files for the Launchpad Mini provided.
@@ -45,13 +44,14 @@ user-manual is also provided.
 ##  Non Session Manager
 
     *   Support for this manager is essentially complete.
-    *   Handles stopping and saving
-    *   Handle display of details about the session.
+    *   Handles stopping and saving>
+    *   Handles display of details about the session.
 
 ##  Internal
 
     *   More consistent use of modern C++, auto, and lambda functions.
     *   Additional performer callbacks to reduce the need for polling.
+    *   A ton of clean-up.
 
 ##  Multiple Builds
 
@@ -114,4 +114,4 @@ Windows, and using a conventional source tarball.
 
     See the "NEWS" file for changes in earlier versions.
 
-// vim: sw=4 ts=4 wm=4 et ft=markdown
+// vim: sw=4 ts=4 wm=2 et ft=markdown

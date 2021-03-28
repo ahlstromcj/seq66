@@ -1012,7 +1012,7 @@ public:
 
     bool is_new_pattern () const
     {
-        return is_default_name();       /* any better way?  */
+        return is_default_name() && event_count() == 0;
     }
 
     static const std::string & default_name ()

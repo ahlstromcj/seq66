@@ -939,13 +939,21 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
 
     qt_set_icon(play_xpm, ui->m_toggle_play);
     ui->m_toggle_play->setCheckable(true);
+
+    /*
+     *  This check looks only for "Untitled". Causes opening this window to
+     *  unmute patters in generic *.mid files.  We added a check for events
+     *  existing.
+     */
+
+    if (seq_pointer()->is_new_pattern())
+        play_change(usr().new_pattern_armed());
+
     connect
     (
         ui->m_toggle_play, SIGNAL(toggled(bool)),
         this, SLOT(play_change(bool))
     );
-    if (seq_pointer()->is_new_pattern())
-        play_change(usr().new_pattern_armed());
 
     /*
      * MIDI Thru Button.

@@ -4,12 +4,13 @@
 # \file        qbuild
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-09-27 to 2020-09-29
+# \date        2020-09-27 to 2021-03-28
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
 # This script runs qmake and make, and should be run from a Qt shadow
-# directory.
+# directory.  Look at the Bash variables below and make any changes needed for
+# your setup.
 #
 #------------------------------------------------------------------------------
 
@@ -35,7 +36,12 @@ Seq66, to generate either qpseq66 (portmidi) or qrseq66 (rtmidi).  The default
 is to build 'qpseq66' for release.  The build can be modified by adding the
 flags 'debug' and 'rtmidi'.
 
+    cd ..                     (parent directory of seq66)
+    mkdir shadow-rtmidi       (if not already made)
+    cd shadow
+    rm -rf *                  (removed old junk; CAREFUL!)
     qbuild debug rtmidi
+    vi make.log
 
 This must be run from a shadow directory.  The build output is written to
 make.log.  Other options are '--help' and '--dry-run'.

@@ -1,6 +1,6 @@
-INSTALL for Seq66 v. 0.92.2
+INSTALL for Seq66 v. 0.92.3
 Chris Ahlstrom
-2015-09-10 to 2021-03-07
+2015-09-10 to 2021-03-28
 
 Getting Seq66 requires building the code or going to the
 "sequencer64-packages/seq66" project directory on GitHub.
@@ -15,7 +15,7 @@ the instructions below.  Different versions of the program can be built:
         implementation is used as the MIDI engine.  Linux and Windows.  Built
         via qmake and suitable for loading in QtCreator installed with mingw32
         tools. To build it in Windows, specify the Mingw library and tools when
-        installing QtCreator.
+        installing QtCreator.  See "Qmake-based Install" below.
     -   seq66cli.  A GUI-less version of Seq66, which can run from the
         console or as a daemon, controlled via MIDI and playlists.
         Still being worked on.
@@ -30,8 +30,11 @@ Below are sections for various ways of installing this project by building
 from source code:
 
     -   Linux Distro Package
-    -   Quick Install
+    -   Normal (automake) Install
+    -   Bootstrap Install (Quick Install)
     -   Advanced Steps
+        -   Pipe Option:
+        -   Debugging:
     -   Qmake-based Install (Linux and Windows)
 
 Linux Distro Package (seq66):
@@ -242,11 +245,11 @@ Qmake-based Install:
     build".  Assuming you are in the "seq66" directory:
 
         $ cd ..
-        $ mkdir debug-build
-        $ cd debug-build
+        $ mkdir shadow-debug-build
+        $ cd shadow-debug-build
         $ qmake -makefile -recursive "CONFIG += debug" ../seq66/seq66.pro
         $ make &> make.log
-        $ gdb ./Seq66qt/seq66 (for debugging)
+        $ gdb ./Seq66qt/qpseq66 (for debugging)
 
     One can also use "CONFIG += release", or just leave that off entirely.
     We get a nice build that works under Linux or Windows.  Currently, we have
@@ -263,6 +266,9 @@ Qmake-based Install:
 
         $ qmake -makefile -recursive "CONFIG += rtmidi" ../seq66/seq66.pro
         $ qmake -makefile -recursive "CONFIG += debug rtmidi" ../seq66/seq66.pro
+
+    See the contrib/scripts/qbuild Bash script for an automation of this
+    process.
 
 Windows:
 
@@ -341,7 +347,7 @@ MANUALLY-DEFINED MACROS IN CODE:
     USE_xxxxxx:
     SEQ66_xxxxxx_TMI:
 
-        This category of macro are usually undefined values that let us keep
+        This category of macros are usually undefined values that let us keep
         old or experimental code around in case we decide it was the better
         code after all.  Generally, you do not want to change the status of
         these macros unless you are very familiar with the code and willing to
