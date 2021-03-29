@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-19
+ * \updates       2021-03-29
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -151,7 +151,11 @@ qseqroll::~qseqroll ()
 void
 qseqroll::conditional_update ()
 {
-    if (perf().needs_update() || check_dirty())
+    bool ok = seq_pointer()->playing();
+    if (! ok)
+        ok = perf().needs_update() || check_dirty();
+
+    if (ok)
     {
         if (progress_follow())
             follow_progress();              /* keep up with progress    */
@@ -1132,6 +1136,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 {
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     seq::pointer s = seq_pointer();
+
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
         if (s->remove_selected())
@@ -1175,45 +1180,20 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                  * be used for "undo".
                  */
 
-                if (event->key() == Qt::Key_Left)
-                {
-                    s->set_last_tick(s->get_last_tick() - snap());
-                    set_dirty();
-                }
-                else if (event->key() == Qt::Key_Right)
-                {
-                    s->set_last_tick(s->get_last_tick() + snap());
-                    set_dirty();
-                }
-            }
-            else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
-            {
-                if (event->key() == Qt::Key_Z)
-                    (void) zoom_in();
-                else if (event->key() == Qt::Key_V)
-                    (void) v_zoom_in();
-            }
-            else
-            {
-                if (event->key() == Qt::Key_Z)
-                    (void) zoom_out();
-                else if (event->key() == Qt::Key_0)
-                {
-                    if (m_v_zooming)
-                        (void) reset_v_zoom();
-                    else
-                        (void) reset_zoom();
-                }
-                else if (event->key() == Qt::Key_V)
-                    (void) v_zoom_out();
-            }
-        }
-        if (! is_dirty())
-        {
-            if (isctrl)
-            {
                 switch (event->key())
                 {
+                case Qt::Key_Left:
+
+                    s->set_last_tick(s->get_last_tick() - snap());
+                    set_dirty();
+                    break;
+
+                case Qt::Key_Right:
+
+                    s->set_last_tick(s->get_last_tick() + snap());
+                    set_dirty();
+                    break;
+
                 case Qt::Key_Home:
 
                     if (not_nullptr(m_parent_frame))
@@ -1270,6 +1250,11 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     set_dirty();
                     break;
 
+                case Qt::Key_D:
+
+                    sequence::clear_clipboard();    /* Drop clipboard */
+                    break;
+
                 case Qt::Key_A:
 
                     s->select_all();
@@ -1277,55 +1262,76 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     break;
                 }
             }
+            else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
+            {
+                if (event->key() == Qt::Key_Z)
+                    (void) zoom_in();
+                else if (event->key() == Qt::Key_V)
+                    (void) v_zoom_in();
+            }
             else
             {
-                if
-                (
-                    (event->modifiers() & Qt::ShiftModifier) == 0 &&
-                    (event->modifiers() & Qt::MetaModifier) == 0
-                )
+                if (event->key() == Qt::Key_Z)
+                    (void) zoom_out();
+                else if (event->key() == Qt::Key_0)
                 {
-                    switch (event->key())
-                    {
-                    case Qt::Key_C:
+                    if (m_v_zooming)
+                        (void) reset_v_zoom();
+                    else
+                        (void) reset_zoom();
+                }
+                else if (event->key() == Qt::Key_V)
+                    (void) v_zoom_out();
+            }
+        }
+        if (! is_dirty())
+        {
+            if
+            (
+                (event->modifiers() & Qt::ShiftModifier) == 0 &&
+                (event->modifiers() & Qt::MetaModifier) == 0
+            )
+            {
+                switch (event->key())
+                {
+                case Qt::Key_C:
 
-                        if (m_parent_frame->repitch_selected())
-                            set_dirty();
-                        break;
+                    if (m_parent_frame->repitch_selected())
+                        set_dirty();
+                    break;
 
-                    case Qt::Key_F:
+                case Qt::Key_F:
 
-                        if (s->edge_fix())
-                            set_dirty();
-                        break;
+                    if (s->edge_fix())
+                        set_dirty();
+                    break;
 
-                    case Qt::Key_P:
+                case Qt::Key_P:
 
-                        set_adding(true);
-                        break;
+                    set_adding(true);
+                    break;
 
-                    case Qt::Key_Q:                 /* quantize selected notes  */
+                case Qt::Key_Q:                 /* quantize selected notes  */
 
-                        if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
-                            set_dirty();
-                        break;
+                    if (s->push_quantize(EVENT_NOTE_ON, 0, 1, true))
+                        set_dirty();
+                    break;
 
-                    case Qt::Key_R:                 /* default jitter == 8      */
+                case Qt::Key_R:                 /* default jitter == 8      */
 
-                        if (s->randomize_selected_notes())
-                            set_dirty();
-                        break;
+                    if (s->randomize_selected_notes())
+                        set_dirty();
+                    break;
 
-                    case Qt::Key_T:                 /* tighten selected notes   */
-                        if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
-                            set_dirty();
-                        break;
+                case Qt::Key_T:                 /* tighten selected notes   */
+                    if (s->push_quantize(EVENT_NOTE_ON, 0, 2, true))
+                        set_dirty();
+                    break;
 
-                    case Qt::Key_X:
+                case Qt::Key_X:
 
-                        set_adding(false);
-                        break;
-                    }
+                    set_adding(false);
+                    break;
                 }
             }
         }

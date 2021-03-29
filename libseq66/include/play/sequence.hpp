@@ -198,7 +198,7 @@ private:
      * Documented at the definition point in the cpp module.
      */
 
-    static eventlist m_clipboard;   /* shared between sequences */
+    static eventlist sm_clipboard;      /* shared between sequences */
 
     /**
      *  For pause support, we need a way for the sequence to find out if JACK
@@ -1644,6 +1644,11 @@ public:
     bool check_loop_reset ();
 
 public:
+
+    static void clear_clipboard ()
+    {
+        sm_clipboard.clear();      /* shared between sequences */
+    }
 
     bool remove_selected ();
     bool remove_marked ();                      /* a forwarding function */

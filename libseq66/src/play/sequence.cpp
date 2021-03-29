@@ -102,7 +102,7 @@ sequence::note_info::show () const
  *  allows for copy/paste between patterns.
  */
 
-eventlist sequence::m_clipboard;
+eventlist sequence::sm_clipboard;
 
 /**
  *  Provides the default name/title for the sequence.
@@ -829,12 +829,12 @@ sequence::toggle_queued ()
  *  playback mode.  And if we are song-recording, we then keep growing the
  *  sequence's song-data triggers.
  *
- *  Note that the song_playback_block() is handled in the trigger::play()
+ *  Note that the song_playback_block() is handled in the trigger :: play()
  *  function.  If we have reached a new chunk of drawn patterns in the song
  *  data, and we are not recording, then trigger unsets the playback block on
  *  this pattern's events.
  *
- *  The trigger calculations have been offloaded to the triggers::play()
+ *  The trigger calculations have been offloaded to the triggers :: play()
  *  function.  Its return value and side-effects tell if there's a change in
  *  playing based on triggers, and provides the ticks that bracket it.
  *
@@ -867,6 +867,7 @@ sequence::play
     bool trigger_turning_off = false;       /* turn off after in-frame play */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
     midipulse end_tick = tick;              /* ditto                        */
+    m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
     if (m_song_mute)
     {
         set_playing(false);
@@ -1298,14 +1299,14 @@ sequence::clipboard_box
     tick_f = 0;
     note_h = 0;
     note_l = c_midibyte_data_max;
-    if (m_clipboard.empty())
+    if (sm_clipboard.empty())
     {
         tick_s = tick_f = note_h = note_l = 0;
     }
     else
     {
         result = true;                  /* FIXME */
-        for (auto & e : m_clipboard)
+        for (auto & e : sm_clipboard)
         {
             midipulse time = e.timestamp();
             int note = e.get_note();
@@ -1805,20 +1806,20 @@ sequence::repitch (const notemapper & nmap, bool all)
  *  by user 0rel, of events being modified after being added to the clipboard.
  *  So we add his reconstruction fix here as well.  To summarize the steps:
  *
- *      -#  Clear the m_clipboard.  NO!  If we have no events to
+ *      -#  Clear the sm_clipboard.  NO!  If we have no events to
  *          copy to the clipboard, we do not want to clear it.  This kills
  *          cut-and-paste functionality.
  *      -#  Add all selected events in this clipboard to the sequence.
  *      -#  Normalize the timestamps of the events in the clip relative to the
- *          timestamp of the first selected event.  (Is this really needed?)
- *      -#  Reconstruct/reconstitute the m_clipboard.
+ *          timestamp of the first selected event.
+ *      -#  Reconstruct/reconstitute the sm_clipboard.
  *
  *  This process is a bit easier to manage than erase/insert on events because
  *  std::multimap has no erase() function that returns the next valid
  *  iterator.  Also, we use a local clipboard first, to save on copying.
  *  We've enhanced the error-checking, too.
  *
- *  Finally, note that m_clipboard is a static member of sequence, so:
+ *  Finally, note that sm_clipboard is a static member of sequence, so:
  *
  *      -#  Copying can be done between sequences.
  *      -#  Access to it needs to be protected by a mutex.
@@ -1833,7 +1834,7 @@ sequence::copy_selected ()
     eventlist clipbd;
     bool result = m_events.copy_selected(clipbd);
     if (result)
-        m_clipboard = clipbd;
+        sm_clipboard = clipbd;
 
     return result;
 }
@@ -1920,7 +1921,7 @@ bool
 sequence::paste_selected (midipulse tick, int note)
 {
     automutex locker(m_mutex);
-    eventlist clipbd = m_clipboard;             /* copy the clipboard   */
+    eventlist clipbd = sm_clipboard;            /* copy the clipboard   */
     push_undo();                                /* push undo, no lock   */
     bool result = m_events.paste_selected(clipbd, tick, note);
     if (result)

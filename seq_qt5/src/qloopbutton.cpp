@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-03-26
+ * \updates       2021-03-29
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -668,7 +668,9 @@ qloopbutton::draw_pattern (QPainter & painter)
         pen.setWidth(2);
         if (m_seq->measure_threshold())
         {
-            if (! m_seq->transposable())
+            if (m_seq->transposable())
+                pen.setColor(text_color());
+            else
                 pen.setColor(drum_color());
 
             painter.setPen(pen);
@@ -704,11 +706,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 height = highest - lowest;
             }
             if (m_seq->transposable())
-            {
-                int c = m_seq ? m_seq->color() : palette_to_int(none) ;
-                Color pencolor = get_pen_color(PaletteColor(c));
-                pen.setColor(pencolor);
-            }
+                pen.setColor(text_color());
             else
                 pen.setColor(drum_color());
 
