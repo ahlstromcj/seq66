@@ -228,7 +228,7 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
 
             long tick = j->current_jack_position();
             long diff = tick - j->get_jack_stop_tick();
-            if (diff > 0)
+            if (diff != 0)          // was (diff > 0) 2021-03-30
             {
                 p.set_reposition();
                 p.set_start_tick(tick);

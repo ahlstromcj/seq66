@@ -1198,8 +1198,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     if (not_nullptr(m_parent_frame))
                     {
-                        reinterpret_cast<qseqeditframe64 *>(m_parent_frame)->
-                            scroll_to_tick(0);
+                        frame64()->scroll_to_tick(0);
                     }
                     s->set_last_tick(0);        /* sets it to the beginning */
                     set_dirty();
@@ -1209,8 +1208,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                     if (not_nullptr(m_parent_frame))
                     {
-                        reinterpret_cast<qseqeditframe64 *>(m_parent_frame)->
-                            scroll_to_tick(s->get_length());
+                        frame64()->scroll_to_tick(s->get_length());
                     }
                     s->set_last_tick();         /* sets it to the length    */
                     set_dirty();
@@ -1247,12 +1245,15 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     else
                         s->pop_undo();
 
-                    set_dirty();
+                    if (not_nullptr(m_parent_frame))
+                    {
+                        frame64()->set_dirty();     /* set_dirty()      */
+                    }
                     break;
 
                 case Qt::Key_D:
 
-                    sequence::clear_clipboard();    /* Drop clipboard */
+                    sequence::clear_clipboard();    /* drop clipboard   */
                     break;
 
                 case Qt::Key_A:
@@ -1584,9 +1585,7 @@ void
 qseqroll::follow_progress ()
 {
     if (not_nullptr(m_parent_frame) && m_is_new_edit_frame)
-    {
-        reinterpret_cast<qseqeditframe64 *>(m_parent_frame)->follow_progress();
-    }
+        frame64()->follow_progress();
 }
 
 }           // namespace seq66

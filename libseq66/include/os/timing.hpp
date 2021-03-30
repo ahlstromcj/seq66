@@ -2,10 +2,10 @@
 #define SEQ66_TIMING_HPP
 
 /**
- * \file          daemonize.hpp
+ * \file          timing.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-01-07
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -26,9 +26,11 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  *    02110-1301, USA.
  *
- *    This module provides a function to make it easy to run an application
- *    as a daemon.
+ *    This module provides functions for timing and increasing thread
+ *    priority.
  */
+
+#include <thread>                       /* std::thread                      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -45,6 +47,7 @@ extern bool microsleep (int us = (-1));
 extern bool millisleep (int ms);
 extern long microtime ();
 extern long millitime ();
+extern bool set_thread_priority (std::thread & t, int p = 1);
 
 }        // namespace seq66
 

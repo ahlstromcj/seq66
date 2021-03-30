@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-27
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -320,6 +320,7 @@ namespace seq66
  */
 
 static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
+static const int c_thread_priority = 1;
 
 /**
  *  This constructor...
@@ -2341,21 +2342,12 @@ performer::launch_output_thread ()
     m_out_thread_launched = true;
     if (rc().priority())                        /* Not in MinGW RCB     */
     {
-        struct sched_param schp;
-        memset(&schp, 0, sizeof(sched_param));
-        schp.sched_priority = 1;                /* Linux range: 1 to 99 */
-#if defined SEQ66_PLATFORM_PTHREADS
-        int rc = pthread_setschedparam
-        (
-            m_out_thread.native_handle(), SCHED_FIFO, &schp
-        );
-#else
-        int rc = sched_setscheduler
-        (
-            m_out_thread.native_handle(), SCHED_FIFO, &schp
-        );
-#endif
-        if (rc != 0)
+        bool ok = set_thread_priority(m_out_thread, c_thread_priority);
+        if (ok)
+        {
+            infoprint("Output priority elevated");
+        }
+        else
         {
             errprint
             (
@@ -2363,10 +2355,6 @@ performer::launch_output_thread ()
                 "need root priviledges."
             );
             pthread_exit(0);
-        }
-        else
-        {
-            infoprint("Output priority set to 1");
         }
     }
 }
@@ -2383,21 +2371,12 @@ performer::launch_input_thread ()
     m_in_thread_launched = true;
     if (rc().priority())                        /* Not in MinGW RCB     */
     {
-        struct sched_param schp;
-        memset(&schp, 0, sizeof(sched_param));
-        schp.sched_priority = 1;                /* Linux range: 1 to 99 */
-#if defined SEQ66_PLATFORM_PTHREADS
-        int rc = pthread_setschedparam
-        (
-            m_in_thread.native_handle(), SCHED_FIFO, &schp
-        );
-#else
-        int rc = sched_setscheduler
-        (
-            m_in_thread.native_handle(), SCHED_FIFO, &schp
-        );
-#endif
-        if (rc != 0)
+        bool ok = set_thread_priority(m_in_thread, c_thread_priority);
+        if (ok)
+        {
+            infoprint("Input priority elevated");
+        }
+        else
         {
             errprint
             (
@@ -2405,10 +2384,6 @@ performer::launch_input_thread ()
                 "need root priviledges."
             );
             pthread_exit(0);
-        }
-        else
-        {
-            infoprint("Input priority set to 1");
         }
     }
 }
@@ -3086,6 +3061,13 @@ performer::output_func ()
                             play(rtick - 1);
 
                         midipulse ltick = get_left_tick();
+
+                        /*
+                         * Restored from seq64 ca 2021-03-30
+                         */
+
+                        reset_sequences();                          // reset!
+
                         set_last_ticks(ltick);
                         m_current_tick = double(ltick) + leftover_tick;
                         pad.js_current_tick = double(ltick) + leftover_tick;
@@ -4320,17 +4302,17 @@ performer::set_midi_control_out ()
 
 /**
  *  Sets or unsets the keep-queue functionality, used by the "Q"
- *  button in the main window to set keep-queue.
+ *  button in the main window to set keep-queue.  Also see the
+ *  automation_keep_queue() function.
  */
 
 void
 performer::set_keep_queue (bool activate)
 {
     automation::action a = activate ?
-        automation::action::off : automation::action::on;
+        automation::action::on : automation::action::off;
 
-    if (activate)
-        (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
+    (void) set_ctrl_status(a, automation::ctrlstatus::keep_queue);
 }
 
 /**
@@ -6435,8 +6417,7 @@ performer::automation_song_pointer
 
 /**
  *  I think we don't want to support inverse for this one.  See the support for
- *  the "Q" button.  We might need to make this a toggle for the keystroke
- *  support.  TODO TODO TODO!!!
+ *  the "Q" button and the set_keep_queue() function.
  */
 
 bool

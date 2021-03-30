@@ -171,6 +171,11 @@ private:
     void draw_drum_note (QPainter & painter);
     void call_draw_notes (QPainter & painter, const QRect & view);
 
+    qseqeditframe64 * frame64 ()
+    {
+        return reinterpret_cast<qseqeditframe64 *>(m_parent_frame);
+    }
+
 private:
 
     /**

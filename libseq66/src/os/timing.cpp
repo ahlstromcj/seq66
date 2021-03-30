@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-01-07
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -22,12 +22,16 @@
  */
 
 #include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
+#include "util/basic_macros.hpp"        /* errprint() macro                 */
 #include "os/timing.hpp"                /* seq66::microsleep(), etc.        */
 
 #if defined SEQ66_PLATFORM_LINUX
 
 #include <errno.h>                      /* error numbers                    */
-#include <sched.h>                      /* sched_yield()                    */
+#include <pthread.h>                    /* pthread_setschedparam()          */
+#include <sched.h>                      /* sched_yield(), _get_priority()   */
+#include <stdio.h>                      /* snprintf()                       */
+#include <string.h>                     /* memset()                         */
 #include <time.h>                       /* C::nanosleep(2)                  */
 #include <unistd.h>                     /* exit(), setsid()                 */
 
@@ -191,6 +195,48 @@ millitime ()
     return (t.tv_sec * 1000) + (t.tv_nsec / 1000000);
 }
 
+/**
+ * In Linux, sets the thread priority for the calling thread, either the
+ * performer input thread or output thread.
+ *
+ * \param p
+ *      This is the desired priority of the thread, ranging from 1 (low), to
+ *      99 (high).  The default value is 1.
+ *
+ * \return
+ *      Returns true if the scheduling call succeeded.
+ */
+
+bool
+set_thread_priority (std::thread & t, int p)
+{
+    int minp = sched_get_priority_min(SCHED_FIFO);
+    int maxp = sched_get_priority_max(SCHED_FIFO);
+    if (p >= minp && p <= maxp)
+    {
+        struct sched_param schp;
+        memset(&schp, 0, sizeof(sched_param));
+        schp.sched_priority = p;                /* Linux range: 1 to 99 */
+#if defined SEQ66_PLATFORM_PTHREADS
+        int rc = pthread_setschedparam(t.native_handle(), SCHED_FIFO, &schp);
+#else
+        int rc = sched_setscheduler(t.native_handle(), SCHED_FIFO, &schp);
+#endif
+        return rc == 0;
+    }
+    else
+    {
+        char temp[80];
+        snprintf
+        (
+            temp, sizeof temp,
+            "Priority %d outside of range %d-%d", p, minp, maxp
+        );
+        errprint(temp);     // errprintf(fmt, p, minp, maxp);
+        return false;
+    }
+}
+
 #elif defined SEQ66_PLATFORM_WINDOWS
 
 /**
@@ -294,6 +340,24 @@ long
 millitime ()
 {
     return long(timeGetTime());
+}
+
+/**
+ *  In Windows, currently does nothing.  An upgrade for the future.
+ *
+ *
+ * \param p
+ *      This is the desired priority of the thread, ranging from 1 (low), to
+ *      99 (high).  The default value is 1.
+ *
+ * \return
+ *      Returns true if p > 0; no functionality at present.
+ */
+
+bool
+set_thread_priority (int p)
+{
+    return p > 0;
 }
 
 #endif      // SEQ66_PLATFORM_LINUX, SEQ66_PLATFORM_WINDOWS

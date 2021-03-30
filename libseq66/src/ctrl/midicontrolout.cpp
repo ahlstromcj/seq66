@@ -176,31 +176,31 @@ action_to_string (midicontrolout::uiaction a)
 {
     switch (a)
     {
-    case midicontrolout::uiaction::panic:           return "panic";
-    case midicontrolout::uiaction::stop:            return "stop";
-    case midicontrolout::uiaction::pause:           return "pause";
-    case midicontrolout::uiaction::play:            return "play";
-    case midicontrolout::uiaction::toggle_mutes:    return "toggle_mutes";
-    case midicontrolout::uiaction::song_record:     return "song_record";
-    case midicontrolout::uiaction::slot_shift:      return "slot_shift";
-    case midicontrolout::uiaction::free:            return "free";
-    case midicontrolout::uiaction::queue:           return "queue";
-    case midicontrolout::uiaction::oneshot:         return "oneshot";
-    case midicontrolout::uiaction::replace:         return "replace";
-    case midicontrolout::uiaction::snap:            return "snap";
-    case midicontrolout::uiaction::song:            return "song";
-    case midicontrolout::uiaction::learn:           return "learn";
-    case midicontrolout::uiaction::bpm_up:          return "bpm_up";
-    case midicontrolout::uiaction::bpm_dn:          return "bpm_dn";
-    case midicontrolout::uiaction::list_up:         return "list_up";
-    case midicontrolout::uiaction::list_dn:         return "list_dn";
-    case midicontrolout::uiaction::song_up:         return "song_up";
-    case midicontrolout::uiaction::song_dn:         return "song_dn";
-    case midicontrolout::uiaction::set_up:          return "set_up";
-    case midicontrolout::uiaction::set_dn:          return "set_dn";
-    case midicontrolout::uiaction::tap_bpm:         return "tap_bpm";
-    case midicontrolout::uiaction::free_2:          return "free_2";
-    default:                                        return "unknown";
+    case midicontrolout::uiaction::panic:           return "Panic";
+    case midicontrolout::uiaction::stop:            return "Stop";
+    case midicontrolout::uiaction::pause:           return "Pause";
+    case midicontrolout::uiaction::play:            return "Play";
+    case midicontrolout::uiaction::toggle_mutes:    return "Toggle_mutes";
+    case midicontrolout::uiaction::song_record:     return "Song_record";
+    case midicontrolout::uiaction::slot_shift:      return "Slot_shift";
+    case midicontrolout::uiaction::free:            return "Free";
+    case midicontrolout::uiaction::queue:           return "Queue";
+    case midicontrolout::uiaction::oneshot:         return "Oneshot";
+    case midicontrolout::uiaction::replace:         return "Replace";
+    case midicontrolout::uiaction::snap:            return "Snap";
+    case midicontrolout::uiaction::song:            return "Song";
+    case midicontrolout::uiaction::learn:           return "Learn";
+    case midicontrolout::uiaction::bpm_up:          return "BPM_Up";
+    case midicontrolout::uiaction::bpm_dn:          return "BPM_Dn";
+    case midicontrolout::uiaction::list_up:         return "List_Up";
+    case midicontrolout::uiaction::list_dn:         return "List_Dn";
+    case midicontrolout::uiaction::song_up:         return "Song_Up";
+    case midicontrolout::uiaction::song_dn:         return "Song_Dn";
+    case midicontrolout::uiaction::set_up:          return "Set_Up";
+    case midicontrolout::uiaction::set_dn:          return "Set_Dn";
+    case midicontrolout::uiaction::tap_bpm:         return "Tap_BPM";
+    case midicontrolout::uiaction::free_2:          return "Free_2";
+    default:                                        return "Unknown";
     }
 }
 

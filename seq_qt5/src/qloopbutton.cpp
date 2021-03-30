@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-03-29
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -172,8 +172,6 @@ qloopbutton::qloopbutton
     m_progress_box      (),
     m_event_box         ()
 {
-//  int fontsize = usr().scale_font_size(6);
-//  m_text_font.setPointSize(fontsize);
     m_text_font.setBold(true);
     m_text_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     make_checkable();
@@ -420,7 +418,9 @@ qloopbutton::reupdate (bool all)
 {
     if (all)
     {
-        update();
+        m_text_initialized = false;     /* ca 2021-03-30 */
+        if (initialize_text())
+            update();
     }
     else
     {
@@ -430,7 +430,6 @@ qloopbutton::reupdate (bool all)
         int h = m_progress_box.m_h;
         update(x, y, w, h);
     }
-    // set_dirty(true);
 }
 
 /**

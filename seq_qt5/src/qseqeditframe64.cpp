@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-03-25
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -584,9 +584,6 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     if (not_nullptr(mmb))
     {
         bussbyte seqbuss = seq_pointer()->seq_midi_bus();
-        std::string selectedbuss = opm.active() ?
-            opm.get_name(seqbuss) : mmb->get_midi_out_bus_name(seqbuss) ;
-
         int buses = opm.active() ?
             opm.count() : mmb->get_num_out_buses() ;
 
@@ -610,7 +607,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
                 }
             }
         }
-        ui->m_combo_bus->setCurrentText(QString::fromStdString(selectedbuss));
+        ui->m_combo_bus->setCurrentIndex(int(seqbuss));
     }
     connect
     (

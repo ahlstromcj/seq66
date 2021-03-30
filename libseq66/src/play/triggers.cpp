@@ -243,7 +243,7 @@ triggers::pop_redo ()
 /**
  *  If playback-mode (song mode) is in force, that is, if using in-triggers
  *  and on/off triggers, this function handles that kind of playback.
- *  This is a new function for sequence::play() to call.
+ *  This is a new function for sequence :: play() to call.
  *
  *  The for-loop goes through all the triggers, determining if there are
  *  trigger start/end values before the \a end_tick.  If so, then the trigger
@@ -376,13 +376,8 @@ triggers::play
         offplay = ! m_parent.song_playback_block();
 
     if (offplay)                                    /* stop playing     */
-    {
-        /*
-         * Not yet sure if we should do a trigger notification here.
-         */
-
         m_parent.set_playing(false);
-    }
+
     m_parent.set_trigger_offset(trigger_offset);
     return result;
 }
