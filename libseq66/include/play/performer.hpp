@@ -2316,19 +2316,6 @@ public:
     bool ui_set_clock (bussbyte bus, e_clock clocktype);
     bool ui_get_clock (bussbyte bus, e_clock & e, std::string & n) const;
 
-    /**
-     *  Saves the clock settings read from the "rc" file so that they can be
-     *  passed to the mastermidibus after it is created.
-     *
-     * \param clocktype
-     *      The clock value read from the "rc" file.
-
-    void add_clock (int buss, e_clock clocktype, const std::string & name)
-    {
-        m_clocks.add(buss, clocktype, name);
-    }
-     */
-
     void store_output_map ()
     {
         (void) build_output_port_map(m_clocks);

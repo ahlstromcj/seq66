@@ -146,15 +146,14 @@ qseqroll::~qseqroll ()
 /**
  *  In an effort to reduce CPU usage when simply idling, this function calls
  *  update() only if necessary.  See qseqbase::check_dirty().
+ *
+ *  bool ok = seq_pointer()->playing();
  */
 
 void
 qseqroll::conditional_update ()
 {
-    bool ok = seq_pointer()->playing();
-    if (! ok)
-        ok = perf().needs_update() || check_dirty();
-
+    bool ok = perf().needs_update() || check_dirty();
     if (ok)
     {
         if (progress_follow())
