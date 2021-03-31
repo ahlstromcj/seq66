@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-01-22
- * \updates       2021-03-08
+ * \updates       2021-03-31
  * \license       GNU GPLv2 or above
  *
  */
@@ -79,7 +79,10 @@ s_tag_names_container
     { c_tempo_track  ,  "Alternate tempo track number" },
     { c_seq_color    ,  "Color" },
     { c_seq_edit_mode,  "Normal/drum edit mode" },
-    { c_seq_loopcount,  "Future: N-play pattern" }
+    { c_seq_loopcount,  "Future: N-play pattern" },
+    { c_reserved_3,     "Reserved 3" },
+    { c_reserved_4,     "Reserved 4" },
+    { c_trig_transpose, "Transposable triggers" }
 };
 
 /**
@@ -190,6 +193,9 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
      * The format of c_triggers_new:  0x24240008, followed by a length value
      * of 4 + triggercount * 12.  Each trigger has three 4-byte values:
      * trigger-on, trigger-off, and trigger-offset.
+     *
+     * The c_trig_transpose (0x24240020) tag adds a byte value for trigger
+     * transposition.
      */
 
     if (triggercount > 0)

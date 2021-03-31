@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-03-22
+ * \updates       2021-03-31
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -103,6 +103,16 @@ private:
     midipulse m_offset;
 
     /**
+     *  New feature.  An additional byte indicates to transpose this trigger.
+     *  The values range from 0 to 0x80.  0x00 indicates that transposition is
+     *  not in effect. 0x40 indicates that it is in effect, but has a value of
+     *  0.  Values from 0x41 to 0x80 indicate tranposition from +1 to +63.
+     *  Values from 0x3F to 0x01 indicate transposition from -1 to -63.
+     */
+
+    int m_transpose;
+
+    /**
      *  Indicates that the trigger is part of a selection.
      */
 
@@ -111,7 +121,7 @@ private:
 public:
 
     trigger ();
-    trigger (midipulse tick, midipulse len, midipulse offset);
+    trigger (midipulse tick, midipulse len, midipulse offset, int transpose = 0);
 
     ~trigger () = default;
     trigger (const trigger &) = default;
@@ -236,6 +246,27 @@ public:
     void decrement_offset (midipulse s)
     {
         m_offset -= s;
+    }
+
+    /**
+     *  This function maps 0x00 and 0x40 to 0, values less than 0x40 to
+     *  transposing downward in semitones, and value greater than 0x40 to
+     *  transposing upward in semitones.
+     */
+
+    int transpose () const
+    {
+        return m_transpose;
+    }
+
+    void transpose (midibyte t)
+    {
+        if (t > 0x00 && t < 0x40)
+            m_transpose = t - 0x40;         /* convert to negative integer  */
+        else if (t > 0x40 && t <= 0x80)
+            m_transpose = 0x80 - t;         /* convert to positive integer  */
+        else
+            m_transpose = 0;
     }
 
     bool selected () const
@@ -451,7 +482,8 @@ public:
     void add
     (
         midipulse tick, midipulse len,
-        midipulse offset = 0, bool adjustoffset = true
+        midipulse offset = 0, midibyte transpose = 0x00,
+        bool adjustoffset = true
     );
     void adjust_offsets_to_length (midipulse newlen);
     bool split (midipulse tick, trigger::splitpoint splittype);

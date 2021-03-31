@@ -1334,7 +1334,9 @@ public:
     void add_trigger
     (
         midipulse tick, midipulse len,
-        midipulse offset = 0, bool adjust_offset = true
+        midipulse offset = 0,
+        midibyte tpose = 0x00,
+        bool adjust_offset = true
     );
     bool split_trigger (midipulse tick, trigger::splitpoint splittype);
     void grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);

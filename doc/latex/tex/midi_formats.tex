@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-03-09
+% \update      2021-03-30
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -362,6 +362,22 @@
    Each trigger has a start and an end tick value based on the
    recorded pattern loop, and an offset value that indicates how much
    the trigger is delayed as laid out in the song editor.
+
+\subsubsection{SeqSpec c\_trig\_transpose}
+\label{subsubsec:midi_format_track_seqspec_trig_transpose}
+
+   \begin{description}
+      \item \texttt{c\_trig\_transpose}: specifies the triggers for a given track,
+         plus a transposition value.
+      \item \textsl{Length}: 4 + triggercount * (12 + 1)
+      \item \textsl{Format}: \texttt{0x24240020 [trigger-on off offset transpose]
+         [ ... ]}
+   \end{description}
+
+   This is an extension to \texttt{c\_triggers\_new} that adds a value to use to
+   transpose the pattern at this particular trigger.
+   Very useful for simple background patterns like that in
+   \textsl{Kraftwerk's "Europe Endless"}.
 
 \subsubsection{SeqSpec c\_mutegroups}
 \label{subsubsec:midi_format_track_seqspec_mutegroups}

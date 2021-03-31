@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2021-01-05
+ * \updates       2021-03-30
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -104,6 +104,7 @@ namespace seq66
             c_timesig
             c_triggers (deprecated)
             c_triggers_new
+            c_trig_transpose (c_triggers_new plus!)
             c_musickey (can be in footer, as well)
             c_musicscale (ditto)
             c_backsequence (ditto)
@@ -111,6 +112,7 @@ namespace seq66
             c_seq_color (performance colors for a sequence)
             c_seq_edit_mode
             c_seq_loopcount
+            c_trig_transpose
 \endverbatim
  *
  *  Note that c_seq_color in Seq66 is stored per sequence, and only if
@@ -143,7 +145,8 @@ namespace seq66
  *  directly to the MIDI file.  Instead, it is stored in the MIDI container as
  *  sequences are edited to used these "sequencer-specific" features.
  *  Also note that c_triggers has been replaced by c_triggers_new as the code
- *  that marks the triggers stored with a sequence.
+ *  that marks the triggers stored with a sequence. And c_trig_transpose
+ *  extends it even further with a byte-value for tranposing a trigger.
  *
  *  As an extension, we can also grab the key, scale, and background sequence
  *  value selected in a sequence and write these values as track data, where
@@ -168,35 +171,38 @@ namespace seq66
  *          existed between 0x24240009 and 0x24240010 since Seq24!
  */
 
-const midilong c_midibus     =  0x24240001; /**< Track buss number.         */
-const midilong c_midich      =  0x24240002; /**< Track channel number.      */
-const midilong c_midiclocks  =  0x24240003; /**< Track clocking.            */
-const midilong c_triggers    =  0x24240004; /**< See c_triggers_new.        */
-const midilong c_notes       =  0x24240005; /**< Song data.                 */
-const midilong c_timesig     =  0x24240006; /**< Track time signature.      */
-const midilong c_bpmtag      =  0x24240007; /**< Song beats/minute.         */
-const midilong c_triggers_new = 0x24240008; /**< Track trigger data.        */
-const midilong c_mutegroups  =  0x24240009; /**< Song mute group data.      */
-const midilong c_gap_A       =  0x2424000A; /**< Gap. A.                    */
-const midilong c_gap_B       =  0x2424000B; /**< Gap. B.                    */
-const midilong c_gap_C       =  0x2424000C; /**< Gap. C.                    */
-const midilong c_gap_D       =  0x2424000D; /**< Gap. D.                    */
-const midilong c_gap_E       =  0x2424000E; /**< Gap. E.                    */
-const midilong c_gap_F       =  0x2424000F; /**< Gap. F.                    */
-const midilong c_midictrl    =  0x24240010; /**< Song MIDI control.         */
-const midilong c_musickey    =  0x24240011; /**< The track's key. *         */
-const midilong c_musicscale  =  0x24240012; /**< The track's scale. *       */
-const midilong c_backsequence = 0x24240013; /**< Track background sequence. */
-const midilong c_transpose   =  0x24240014; /**< Track transpose value.     */
-const midilong c_perf_bp_mes =  0x24240015; /**< Perfedit beats/measure.    */
-const midilong c_perf_bw     =  0x24240016; /**< Perfedit beat-width.       */
-const midilong c_tempo_map   =  0x24240017; /**< Reserve seq32 tempo map.   */
-const midilong c_reserved_1  =  0x24240018; /**< Reserved for expansion.    */
-const midilong c_reserved_2  =  0x24240019; /**< Reserved for expansion.    */
-const midilong c_tempo_track =  0x2424001A; /**< Alternate tempo track no.  */
-const midilong c_seq_color   =  0x2424001B; /**< Feature from Kepler34.     */
-const midilong c_seq_edit_mode = 0x2424001C; /**< Feature from Kepler34.    */
-const midilong c_seq_loopcount = 0x2424001D; /**< Future: N-play pattern.   */
+const midilong c_midibus        = 0x24240001; /**< Track buss number.         */
+const midilong c_midich         = 0x24240002; /**< Track channel number.      */
+const midilong c_midiclocks     = 0x24240003; /**< Track clocking.            */
+const midilong c_triggers       = 0x24240004; /**< See c_triggers_new.        */
+const midilong c_notes          = 0x24240005; /**< Song data.                 */
+const midilong c_timesig        = 0x24240006; /**< Track time signature.      */
+const midilong c_bpmtag         = 0x24240007; /**< Song beats/minute.         */
+const midilong c_triggers_new   = 0x24240008; /**< Trigger data w/offset.     */
+const midilong c_mutegroups     = 0x24240009; /**< Song mute group data.      */
+const midilong c_gap_A          = 0x2424000A; /**< Gap. A.                    */
+const midilong c_gap_B          = 0x2424000B; /**< Gap. B.                    */
+const midilong c_gap_C          = 0x2424000C; /**< Gap. C.                    */
+const midilong c_gap_D          = 0x2424000D; /**< Gap. D.                    */
+const midilong c_gap_E          = 0x2424000E; /**< Gap. E.                    */
+const midilong c_gap_F          = 0x2424000F; /**< Gap. F.                    */
+const midilong c_midictrl       = 0x24240010; /**< Song MIDI control.         */
+const midilong c_musickey       = 0x24240011; /**< The track's key. *         */
+const midilong c_musicscale     = 0x24240012; /**< The track's scale. *       */
+const midilong c_backsequence   = 0x24240013; /**< Track background sequence. */
+const midilong c_transpose      = 0x24240014; /**< Track transpose value.     */
+const midilong c_perf_bp_mes    = 0x24240015; /**< Perfedit beats/measure.    */
+const midilong c_perf_bw        = 0x24240016; /**< Perfedit beat-width.       */
+const midilong c_tempo_map      = 0x24240017; /**< Reserve seq32 tempo map.   */
+const midilong c_reserved_1     = 0x24240018; /**< Reserved for expansion.    */
+const midilong c_reserved_2     = 0x24240019; /**< Reserved for expansion.    */
+const midilong c_tempo_track    = 0x2424001A; /**< Alternate tempo track no.  */
+const midilong c_seq_color      = 0x2424001B; /**< Feature from Kepler34.     */
+const midilong c_seq_edit_mode  = 0x2424001C; /**< Feature from Kepler34.     */
+const midilong c_seq_loopcount  = 0x2424001D; /**< Future: N-play pattern.    */
+const midilong c_reserved_3     = 0x2424001E; /**< Reserved for expansion.    */
+const midilong c_reserved_4     = 0x2424001F; /**< Reserved for expansion.    */
+const midilong c_trig_transpose = 0x24240020; /**< Triggers with transpose.   */
 
 /**
  *    This class is the abstract base class for a container of MIDI track

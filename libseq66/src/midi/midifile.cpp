@@ -587,6 +587,7 @@ midifile::grab_input_stream (const std::string & tag)
     c_midibus:          SeqSpec FF 7F 05 24 24 00 01 00
     c_timesig:          SeqSpec FF 7F 06 24 24 00 06 04 04
     c_midich:           SeqSpec FF 7F 05 24 24 00 02 06
+    c_trig_transpose:   SeqSpec FF 7F 1C 24 24 00 20 00 00 ...
 \endverbatim
  *
  *  Note that only Seq66 adds "FF 7F len" to the SeqSpec data.
@@ -775,10 +776,10 @@ midifile::checklen (midilong len, midibyte type)
 }
 
 /**
- *  Internal function to make the parser easier to read.  Handles only
- *  c_triggers_new values, not the old c_triggers value.  If m_ppqn isn't set
- *  to the default value, then we must scale these triggers accordingly, just
- *  as is done for the MIDI events.
+ *  Internal function to make the parser easier to read.  Handles the
+ *  c_triggers_new and c_trig_transpose values, not the old c_triggers value.
+ *  If m_ppqn isn't set to the default value, then we must scale these triggers
+ *  accordingly, just as is done for the MIDI events.
  *
  * \param seq
  *      Provides the sequence to which the trigger is to be added.
@@ -786,14 +787,22 @@ midifile::checklen (midilong len, midibyte type)
  * \param ppqn
  *      Provides the ppqn value to use to scale the tick values if
  *      m_use_scaled_ppqn is true.  If 0, the ppqn value is not used.
+ *
+ * \param transposable
+ *      If true, use the new style trigger, which adds a byte-long transpose
+ *      value.
  */
 
 void
-midifile::add_trigger (sequence & seq, midishort ppqn)
+midifile::add_trigger (sequence & seq, midishort ppqn, bool transposable)
 {
     midilong on = read_long();
     midilong off = read_long();
     midilong offset = read_long();
+    midibyte tpose = 0x00;
+    if (transposable)
+        tpose = read_byte();
+
     if (ppqn > 0 && m_use_scaled_ppqn)
     {
         on = rescale_tick(on, ppqn, m_ppqn);        /* old PPQN, new PPQN   */
@@ -802,7 +811,7 @@ midifile::add_trigger (sequence & seq, midishort ppqn)
     }
 
     midilong length = off - on + 1;
-    seq.add_trigger(on, length, offset, false);
+    seq.add_trigger(on, length, offset, tpose, false);
 }
 
 /**
@@ -1198,7 +1207,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_triggers)
                             {
-                                set_error("Old-style triggers encountered");
+                                int num_triggers = len / 8;
+                                for (int i = 0; i < num_triggers; i += 2)
+                                {
+                                    midilong on = read_long();
+                                    midilong off = read_long() - on;
+                                    if (m_use_scaled_ppqn)
+                                    {
+                                        // TODO
+                                    }
+                                    s.add_trigger(on, off, 0x0, false);
+                                    len -= 8;
+                                }
                                 break;
                             }
                             else if (seqspec == c_triggers_new)
@@ -1211,6 +1231,18 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 {
                                     add_trigger(s, p);
                                     len -= 12;
+                                }
+                            }
+                            else if (seqspec == c_trig_transpose)
+                            {
+                                int num_triggers = len / 13;
+                                midishort p = m_use_scaled_ppqn ?
+                                    m_file_ppqn : 0 ;
+
+                                for (int i = 0; i < num_triggers; ++i)
+                                {
+                                    add_trigger(s, p, true);
+                                    len -= 13;
                                 }
                             }
                             else if (seqspec == c_musickey)

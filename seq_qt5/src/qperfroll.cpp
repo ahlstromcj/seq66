@@ -290,9 +290,16 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     }
     else if (rbutton)
     {
-        set_adding(true);
-        perf().unselect_all_triggers();
-        mBoxSelect = false;
+        if (isctrl)
+        {
+            set_adding(true);
+            perf().unselect_all_triggers();
+            mBoxSelect = false;
+        }
+        else
+        {
+            // TODO:  Pop up a transpose dialog (not a menu)
+        }
     }
     else if (lbutton)
     {

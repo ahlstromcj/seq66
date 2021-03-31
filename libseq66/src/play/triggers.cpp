@@ -25,12 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-01-12
+ * \updates       2021-03-31
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
  *  note is that the triggers are written to a MIDI file using the
- *  sequencer-specific code c_triggers_new.
+ *  sequencer-specific code c_triggers_new.  Updated now with c_trig_transpose
+ *  to add a transposition byte.
  *
  * Stazed:
  *
@@ -74,18 +75,24 @@ trigger::trigger () :
     m_tick_start    (0),
     m_tick_end      (0),
     m_offset        (0),
+    m_transpose     (0),
     m_selected      (false)
 {
     // Empty body
 }
 
-trigger::trigger (midipulse tick, midipulse len, midipulse offset) :
+trigger::trigger
+(
+    midipulse tick, midipulse len,
+    midipulse offset, int tpose
+) :
     m_tick_start    (tick),
     m_tick_end      (tick + len - 1),
     m_offset        (offset),
+    m_transpose     (0),
     m_selected      (false)
 {
-    // Empty body
+    transpose(tpose);                   /* convert byte to converted int    */
 }
 
 void
@@ -105,6 +112,8 @@ trigger::to_string () const
     result += std::to_string(tick_end());
     result += " at ";
     result += std::to_string(offset());
+    result += " transpose ";
+    result += std::to_string(transpose());
     return result;
 }
 
@@ -423,15 +432,29 @@ triggers::adjust_offset (midipulse offset)
  *      value in the trigger specification of the Seq66 MIDI file. The default
  *      value is 0.
  *
+ * \param transpose
+ *      If the even new tag value c_trig_transpose is used, it add this value,
+ *      which is 0x00 or 0x40 for no transposition, and 0x40 is the base value
+ *      for transposition.
+ *
  * \param fixoffset
  *      If true, the offset parameter is modified by adjust_offset() first.
  *      We think that basically makes sure it is positive. The default is true.
  */
 
 void
-triggers::add (midipulse tick, midipulse len, midipulse offset, bool fixoffset)
+triggers::add
+(
+    midipulse tick, midipulse len, midipulse offset, midibyte transpose,
+    bool fixoffset
+)
 {
-    trigger t(tick, len, fixoffset ? adjust_offset(offset) : offset);
+    trigger t
+    (
+        tick, len,
+        fixoffset ? adjust_offset(offset) : offset,
+        transpose
+    );
     for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
     {
         midipulse tickstart = ti->tick_start();

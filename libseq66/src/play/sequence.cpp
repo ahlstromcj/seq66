@@ -3003,11 +3003,13 @@ sequence::clear_triggers ()
 void
 sequence::add_trigger
 (
-    midipulse tick, midipulse len, midipulse offset, bool fixoffset
+    midipulse tick, midipulse len, midipulse offset,
+    midibyte tpose,
+    bool fixoffset
 )
 {
     automutex locker(m_mutex);
-    m_triggers.add(tick, len, offset, fixoffset);
+    m_triggers.add(tick, len, offset, tpose, fixoffset);
 }
 
 #if defined USE_INTERSECT_FUNCTIONS

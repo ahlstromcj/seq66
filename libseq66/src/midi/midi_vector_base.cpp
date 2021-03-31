@@ -570,7 +570,7 @@ midi_vector_base::song_fill_seq_event
 }
 
 /**
- *  Fills in the trigger for the whole sequence.  For a song-performance,
+ *  Fills in the trigger for the whole sequence.  For a song-performance export,
  *  there will be only one trigger, covering the beginning to the end of the
  *  fully unlooped track.
  *
@@ -594,7 +594,11 @@ midi_vector_base::song_fill_seq_trigger
 )
 {
     const int num_triggers = 1;                 /* only one trigger here    */
+#if defined USE_C_TRIG_TRANSPOSE
+    put_seqspec(c_trig_transpose, num_triggers * (3 * 4 + 1));
+#else
     put_seqspec(c_triggers_new, num_triggers * 3 * 4);
+#endif
 
     /*
      * Using all the trigger values seems to be the same as these values, but
@@ -647,6 +651,12 @@ midi_vector_base::song_fill_seq_trigger
  *      Then 0xFF 0x7F is written, followed by the length value, which is the
  *      number of triggers at 3 long integers per trigger, plus the 4-byte
  *      code for triggers, c_triggers_new = 0x24240008.
+ *
+ *      However, we're now extending triggers (c_trig_transpose) to include a
+ *      transposition byte which allows up to 5 octaves of tranposition either
+ *      way, as a way to re-use patterns.  Inspired by Kraftwerk's "Europe
+ *      Endless" background sequence with patterns being shifted up and down in
+ *      pitch.
  *
  * Meta and SysEx Events:
  *
@@ -728,7 +738,11 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
 
         triggers::List & triggerlist = m_sequence.triggerlist();
         int triggercount = int(triggerlist.size());
+#if defined USE_C_TRIG_TRANSPOSE
+        put_seqspec(c_trig_transpose, triggercount * (3 * 4 + 1));
+#else
         put_seqspec(c_triggers_new, triggercount * 3 * 4);
+#endif
         for (auto & t : triggerlist)
         {
             add_long(t.tick_start());
