@@ -32,6 +32,8 @@
 
 #include <thread>                       /* std::thread                      */
 
+#include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -42,6 +44,11 @@ namespace seq66
 /*
  *  Free functions for Linux and Windows support.
  */
+
+#if defined SEQ66_PLATFORM_LINUX
+extern void set_for_microsleep (struct timespec & ts, int us);
+extern bool microsleep (struct timespec & ts);
+#endif
 
 extern bool microsleep (int us = (-1));
 extern bool millisleep (int ms);

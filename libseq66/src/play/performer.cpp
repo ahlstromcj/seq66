@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-30
+ * \updates       2021-03-31
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -319,11 +319,11 @@ namespace seq66
  *  Need to document this.
  */
 
-static int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS;
+static const int c_thread_trigger_width_us = SEQ66_DEFAULT_TRIGWIDTH_MS * 1000;
 static const int c_thread_priority = 1;
 
 /**
- *  This constructor...
+ *  Principal constructor.
  */
 
 performer::performer (int ppqn, int rows, int columns) :
@@ -2854,11 +2854,28 @@ performer::set_jack_mode (bool jack_button_active)
  *          this code breaks the MIDI clock speed.  So we use the "Stazed"
  *          version of the code, from seq32.  We get delta ticks, delta_ticks_f
  *          is in 1000th of a tick.
+ *
+ * microsleep() call:
+ *
+ *      With the long patterns in a rendition of Kraftwerk's "Europe Endless",
+ *      we found that that the Qt thread was getting starved, as evidenced by
+ *      a great slow-down in counting in the timer function in qseqroll. And
+ *      many other parts of the user interface were slow.  This bug did not
+ *      appear in version 0.91.3, but we never found out the difference that
+ *      caused it.  However, a microsleep(1) call mitigated the problem
+ *      without causing playback issues.
+ *
+ *      What might be happening is the the call on line 3144 is not being
+ *      made.  But it's not being called in 0.91.3 either!  However, we found
+ *      we were using milliseconds, not microseconds!  Once corrected, we
+ *      were getting sleep deltas from 3800, down to around 1000 as the load
+ *      level (number of playing patterns) increased.
  */
 
 void
 performer::output_func ()
 {
+    bool resolution_change = true;          /* BPM or PPQN.  EXPERIMENTAL.  */
     while (m_io_active)                     /* should we LOCK this variable */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
@@ -2871,10 +2888,6 @@ performer::output_func ()
                     break;
             }
         }
-
-        long last;                          /* beginning time               */
-        long current;                       /* current time                 */
-        long delta;                         /* current - last               */
 
 #if defined SEQ66_PLATFORM_DEBUG && defined SEQ66_PLATFORM_LINUX
         if (rc().verbose())
@@ -2919,24 +2932,33 @@ performer::output_func ()
             set_last_ticks(m_starting_tick);
         }
 
-        int ppqn = m_master_bus->get_ppqn();
-        last = microtime();                     /* depends on OS            */
+        midibpm bpm;
+        int ppqn, bpm_times_ppqn;
+        double dct, pus;
+        long current;                           /* current time             */
+        long delta, delta_us;                   /* current - last           */
+        long last = microtime();                /* beginning time           */
         while (is_running())
         {
+            if (resolution_change)
+            {
+                bpm = m_master_bus->get_beats_per_minute();
+                ppqn = m_master_bus->get_ppqn();
+                bpm_times_ppqn = bpm * ppqn;
+                dct = double_ticks_from_ppqn(m_ppqn);
+                pus = pulse_length_us(bpm, m_ppqn);
+                resolution_change = false;
+            }
+
             /**
-             *  See note 2 in the function banner.
-             */
-
-            current = microtime();
-            delta = current - last;
-            long delta_us = delta;
-            midibpm bpm  = m_master_bus->get_beats_per_minute();
-
-            /*
+             *  See note 2 and the microsleep() note in the function banner.
              *  See note 3 in the function banner.
              */
 
-            long long delta_tick_num = bpm * ppqn * delta_us +
+            current = microtime();
+            delta_us = delta = current - last;
+
+            long long delta_tick_num = bpm_times_ppqn * delta_us +
                 pad.js_delta_tick_frac;
 
             long delta_tick = long(delta_tick_num / 60000000LL);
@@ -3061,13 +3083,6 @@ performer::output_func ()
                             play(rtick - 1);
 
                         midipulse ltick = get_left_tick();
-
-                        /*
-                         * Restored from seq64 ca 2021-03-30
-                         */
-
-                        reset_sequences();                          // reset!
-
                         set_last_ticks(ltick);
                         m_current_tick = double(ltick) + leftover_tick;
                         pad.js_current_tick = double(ltick) + leftover_tick;
@@ -3104,26 +3119,24 @@ performer::output_func ()
             /**
              * Now we want to trigger every c_thread_trigger_width_us, and it
              * took us delta_us to play().  Also known as the "sleeping_us".
+             * Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm
              */
 
             delta_us = c_thread_trigger_width_us - delta;
 
-            /**
-             * Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm
-             */
-
-            double dct = double_ticks_from_ppqn(m_ppqn);    /* see above    */
-            double next_total_tick = pad.js_total_tick + dct;
-            double next_clock_delta = next_total_tick - pad.js_total_tick - 1;
-            double next_clock_delta_us =
-                next_clock_delta * pulse_length_us(bpm, m_ppqn);
-
+            double next_clock_delta = dct - 1;
+            double next_clock_delta_us = next_clock_delta * pus;
             if (next_clock_delta_us < (c_thread_trigger_width_us * 2.0))
                 delta_us = long(next_clock_delta_us);
 
             if (delta_us > 0)
+            {
                 (void) microsleep(delta_us);                /* timing.hpp   */
-
+            }
+            else
+            {
+                printf("Underrun in playback %ld us\r", delta_us);
+            }
             if (pad.js_jack_stopped)
                 inner_stop();
         }
@@ -3492,12 +3505,12 @@ performer::start_playing (bool songmode)
         *
         *   m_jack_asst.position(true, m_left_tick);    // position_jack()
         *
-        * The "! m_repostion" doesn't seem to make sense.
+        * The "! m_reposition" doesn't seem to make sense.
         *
         *       if (is_jack_master() && ! m_reposition)
         */
 
-       if (is_jack_master() && m_reposition)            // ca 2021-01-20
+       if (is_jack_master() && ! m_reposition)            // ca 2021-01-20
            position_jack(true, m_left_tick);
     }
     else

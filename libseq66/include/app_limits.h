@@ -508,12 +508,6 @@
 
 #define SEQ66_DEFAULT_TRIGWIDTH_MS          4
 
-/*
- *  Default value for c_thread_trigger_width_ms.  Not in use at present.
- *
- *  #define SEQ66_DEFAULT_TRIGLOOK_MS         2
- */
-
 /**
  *  Defines the minimum Note On velocity.
  */

@@ -21,7 +21,6 @@
  *  Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "seq66_platform_macros.h"      /* for detecting 32-bit builds      */
 #include "util/basic_macros.hpp"        /* errprint() macro                 */
 #include "os/timing.hpp"                /* seq66::microsleep(), etc.        */
 
@@ -108,6 +107,13 @@ millisleep (int ms)
 
 #if defined SEQ66_PLATFORM_LINUX
 
+void
+set_for_microsleep (struct timespec & ts, int us)
+{
+    ts.tv_sec = us / 1000000;
+    ts.tv_nsec = (us % 1000000) * 1000;             /* 1000 ns granularity  */
+}
+
 /**
  *  Sleeps for the given number of microseconds. nanosleep() is a Linux
  *  function which has some advantage over sleep(3) and usleep(3), such as not
@@ -163,6 +169,13 @@ microsleep (int us)
         }
     }
     return result;
+}
+
+bool
+microsleep (struct timespec & ts)
+{
+    int rc = nanosleep(&ts, NULL);
+    return rc == 0 || rc == EINTR;
 }
 
 /**
