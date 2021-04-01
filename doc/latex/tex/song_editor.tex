@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-03-23
+% \update      2021-04-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -106,6 +106,7 @@
       \item \textbf{L/R Collapse}
       \item \textbf{L/R Expand}
       \item \textbf{L/R Expand and Copy}
+      \item \textbf{Trigger Transpose}
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -226,6 +227,21 @@
    However, it also copies the original data that is present after the
    \textbf{R marker}, and pastes it into the newly-available space between
    the L and R markers.
+
+   \itempar{Trigger Transpose}{song editor!trigger transpose}
+   This button and spin-box support making trigger selections or segments
+   transposable during play-back.  This feature is very useful
+   for patterns that repeat many times, but are shifted in pitch at various
+   points.
+   The transposition value ranges from -60 to 0 to +60, in units of semitones.
+   The button resets the value to 0.
+
+   To apply a transposition value, first set it in the spin-box.
+   Then carefully Shift-Left-click on the desired segment(s) to transpose.
+   A number with a plus-or-minus will appear at the left of the segment to
+   indicate a non-zero transposition.
+   The transposition value will be saved with the trigger when the song is
+   saved.
 
 \subsection{Song Editor / Measures Ruler}
 \label{subsec:song_editor_measures_ruler}

@@ -44,6 +44,8 @@
  */
 
 #include <QMouseEvent>
+#include <QPainter>
+#include <QPen>
 
 #include "play/performer.hpp"
 #include "gui_palette_qt5.hpp"

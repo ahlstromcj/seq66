@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-03-11
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -217,6 +217,16 @@ sequence::~sequence ()
  *  track of the modification of the buss (port) and channel numbers, as per
  *  GitHub Issue #47.
  *
+ * Issue #19: Crash when recording note.
+ *
+ *  The notify_change() call eventually causes the "64" version of the edit
+ *  frame to crash, and also makes it do a lot of unnecessary rebuilding of
+ *  the grid buttons.  So we revert to the original call.  There's a chance
+ *  this might cause updates to be missed, but that's a lesser issue than a
+ *  segfault.  But now we have added a feature that a complete recreation
+ *  requires a performer::change::recreate value; the default is
+ *  performer::change::yes.
+ *
  *  Note that now we don't call performer::modify(), now we call its
  *  notification function for sequence-changes, which notifies all subscribers
  *  and also calls modify().
@@ -229,20 +239,11 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
-    set_dirty();
 
     /*
-     * Issue #19: Crash when recording note.
-     *
-     * This call eventually causes the "64" version of the edit frame to
-     * crash, and also makes it do a lot of unnecessary rebuilding of the grid
-     * buttons.  So we revert to the original call.  There's a chance this
-     * might cause updates to be missed, but that's a lesser issue than a
-     * segfault.  But now we have added a feature that a complete recreation
-     * requires a performer::change::recreate value; the default is
-     * performer::change::yes.
      */
 
+    set_dirty();
      if (notifychange)
          notify_change();
 }
@@ -865,9 +866,7 @@ sequence::play
 {
     automutex locker(m_mutex);
     bool trigger_turning_off = false;       /* turn off after in-frame play */
-#if defined USE_C_TRIG_TRANSPOSE
-    int trigtranspose;
-#endif
+    int trigtranspose = 0;                  /* used with c_trig_transpose   */
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
     midipulse end_tick = tick;              /* ditto                        */
     m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
@@ -884,13 +883,9 @@ sequence::play
                 grow_trigger(song_record_tick(), end_tick, c_song_record_incr);
                 set_dirty_mp();             /* force redraw                 */
             }
-            trigger_turning_off = m_triggers.play
+            trigger_turning_off = m_triggers.play   /* side-effects !!!     */
             (
-#if defined USE_C_TRIG_TRANSPOSE
                 start_tick, end_tick, trigtranspose, resumenoteons
-#else
-                start_tick, end_tick, resumenoteons /* tick side-effects!   */
-#endif
             );
         }
     }
@@ -901,13 +896,10 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / get_length();
         midipulse offset_base = times_played * get_length();
-#if defined USE_C_TRIG_TRANSPOSE
         int transpose = trigtranspose;
         if (transpose == 0)
             transpose = transposable() ? perf()->get_transpose() : 0 ;
-#else
-        int transpose = transposable() ? perf()->get_transpose() : 0 ;
-#endif
+
         auto e = m_events.begin();
         while (e != m_events.end())
         {
@@ -3490,7 +3482,11 @@ bool
 sequence::transpose_trigger (midipulse tick, int transposition)
 {
     automutex locker(m_mutex);
-    return m_triggers.transpose(tick, transposition);
+    bool result = m_triggers.transpose(tick, transposition);
+    if (result)
+        modify();                               /* no easy way to undo this */
+
+    return result;
 }
 
 /**

@@ -1085,6 +1085,11 @@ public:
     midipulse get_last_tick () const;
     void set_last_tick (midipulse tick = c_null_midipulse);
 
+    midipulse last_tick () const
+    {
+        return m_last_tick;
+    }
+
     /**
      *  Some MIDI file errors and other things can lead to an m_length of 0,
      *  which causes arithmetic errors when m_last_tick is modded against it.

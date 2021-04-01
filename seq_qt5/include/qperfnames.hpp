@@ -33,8 +33,6 @@
  */
 
 #include <QWidget>
-#include <QPainter>
-#include <QPen>
 
 #include "qperfbase.hpp"                /* for constants and base class    */
 #include "play/sequence.hpp"

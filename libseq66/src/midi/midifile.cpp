@@ -583,10 +583,10 @@ midifile::grab_input_stream (const std::string & tag)
  *  of the track:
  *
 \verbatim
-    c_triggers_new:     SeqSpec FF 7F 1C 24 24 00 08 00 00 ...
     c_midibus:          SeqSpec FF 7F 05 24 24 00 01 00
-    c_timesig:          SeqSpec FF 7F 06 24 24 00 06 04 04
     c_midich:           SeqSpec FF 7F 05 24 24 00 02 06
+    c_timesig:          SeqSpec FF 7F 06 24 24 00 06 04 04
+    c_triggers_ex:      SeqSpec FF 7F 1C 24 24 00 08 00 00 ...
     c_trig_transpose:   SeqSpec FF 7F 1C 24 24 00 20 00 00 ...
 \endverbatim
  *
@@ -777,7 +777,9 @@ midifile::checklen (midilong len, midibyte type)
 
 /**
  *  Internal function to make the parser easier to read.  Handles the
- *  c_triggers_new and c_trig_transpose values, not the old c_triggers value.
+ *  c_triggers_ex and c_trig_transpose values, as well as the old and
+ *  deprecated c_triggers value.
+ *
  *  If m_ppqn isn't set to the default value, then we must scale these triggers
  *  accordingly, just as is done for the MIDI events.
  *
@@ -809,9 +811,7 @@ midifile::add_trigger (sequence & seq, midishort ppqn, bool transposable)
         off = rescale_tick(off, ppqn, m_ppqn);
         offset = rescale_tick(offset, ppqn, m_ppqn);
     }
-
-    midilong length = off - on + 1;
-    seq.add_trigger(on, length, offset, tpose, false);
+    seq.add_trigger(on, off - on + 1, offset, tpose, false);
 }
 
 /**
@@ -1221,28 +1221,28 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 }
                                 break;
                             }
-                            else if (seqspec == c_triggers_new)
+                            else if (seqspec == c_triggers_ex)
                             {
-                                int num_triggers = len / 12;
+                                int num_triggers = len / (3 * 4);
                                 midishort p = m_use_scaled_ppqn ?
                                     m_file_ppqn : 0 ;
 
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
-                                    add_trigger(s, p);
-                                    len -= 12;
+                                    add_trigger(s, p, false);
+                                    len -= (3 * 4);
                                 }
                             }
                             else if (seqspec == c_trig_transpose)
                             {
-                                int num_triggers = len / 13;
+                                int num_triggers = len / (3 * 4 + 1);
                                 midishort p = m_use_scaled_ppqn ?
                                     m_file_ppqn : 0 ;
 
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, true);
-                                    len -= 13;
+                                    len -= (3 * 4 + 1);
                                 }
                             }
                             else if (seqspec == c_musickey)

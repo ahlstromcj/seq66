@@ -25,12 +25,12 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-03-31
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
  *  note is that the triggers are written to a MIDI file using the
- *  sequencer-specific code c_triggers_new.  Updated now with c_trig_transpose
+ *  sequencer-specific code c_triggers_ex.  Updated now with c_trig_transpose
  *  to add a transposition byte.
  *
  * Stazed:
@@ -84,7 +84,7 @@ trigger::trigger () :
 trigger::trigger
 (
     midipulse tick, midipulse len,
-    midipulse offset, int tpose
+    midipulse offset, midibyte tpose
 ) :
     m_tick_start    (tick),
     m_tick_end      (tick + len - 1),
@@ -92,7 +92,7 @@ trigger::trigger
     m_transpose     (0),
     m_selected      (false)
 {
-    transpose(tpose);                   /* convert byte to converted int    */
+    transpose_byte(tpose);                /* convert byte to converted int    */
 }
 
 void
@@ -112,7 +112,7 @@ trigger::to_string () const
     result += std::to_string(tick_end());
     result += " at ";
     result += std::to_string(offset());
-    result += " transpose ";
+    result += " transpose by ";
     result += std::to_string(transpose());
     return result;
 }
@@ -297,10 +297,11 @@ triggers::pop_redo ()
  *
  * \sideeffect
  *      -   start_tick and end_tick as noted above
- *      -   sequence::song_playback_block()
- *      -   sequence::set_playing()
+ *      -   sequence::song_playback_block() [in]
+ *      -   sequence::set_playing() and playing() [in]
  *      -   sequence::resume_note_ons()
  *      -   sequence::set_trigger_offset();
+ *      -   sequence::last_tick(); [in]
  */
 
 bool
@@ -308,9 +309,7 @@ triggers::play
 (
     midipulse & start_tick,
     midipulse & end_tick,
-#if defined USE_C_TRIG_TRANSPOSE
-    int & transpose
-#endif
+    int & transpose,
     bool resumenoteons
 )
 {
@@ -319,9 +318,8 @@ triggers::play
     midipulse tick = start_tick;            /* saved for later              */
     midipulse trigger_offset = 0;
     midipulse trigger_tick = 0;
-#if defined USE_C_TRIG_TRANSPOSE
+    int tp = 0;
     transpose = 0;
-#endif
     for (auto & t : m_triggers)
     {
         /*
@@ -334,13 +332,14 @@ triggers::play
         midipulse trigstart = t.tick_start();
         midipulse trigend = t.tick_end();
         midipulse trigoffset = t.offset();
-        if (trigstart <= end_tick)
+        if (trigstart <= end_tick)          /* trigger in range...          */
         {
             trigger_state = true;
             trigger_tick = trigstart;
             trigger_offset = trigoffset;
+            tp = t.transpose();
         }
-        if (trigend <= end_tick)
+        if (trigend <= end_tick)            /* ... but ends early           */
         {
             trigger_state = false;
             trigger_tick = trigend;
@@ -364,15 +363,12 @@ triggers::play
     {
         if (trigger_state)                              /* turning on       */
         {
-            if (trigger_tick < m_parent.m_last_tick)
-                start_tick = m_parent.m_last_tick;      /* side-effect      */
+            if (trigger_tick < m_parent.last_tick())
+                start_tick = m_parent.last_tick();      /* side-effect      */
             else
                 start_tick = trigger_tick;              /* side-effect      */
 
-            m_parent.set_playing(true);
-#if defined USE_C_TRIG_TRANSPOSE
-            transpose = t.transpose();  // or use m_parent????
-#endif
+            m_parent.set_playing(true);                 /* side-effect      */
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
@@ -393,8 +389,10 @@ triggers::play
     if (offplay)
         offplay = ! m_parent.song_playback_block();
 
-    if (offplay)                                    /* stop playing     */
-        m_parent.set_playing(false);
+    if (offplay)
+        m_parent.set_playing(false);                    /* stop playing     */
+    else
+        transpose = tp;                                 /* side-effect      */
 
     m_parent.set_trigger_offset(trigger_offset);
     return result;
@@ -437,13 +435,13 @@ triggers::adjust_offset (midipulse offset)
  *
  * \param offset
  *      This value specifies the offset of the trigger.  It is a feature of
- *      the c_triggers_new that c_triggers doesn't have.  It is the third
+ *      the c_triggers_ex that c_triggers doesn't have.  It is the third
  *      value in the trigger specification of the Seq66 MIDI file. The default
  *      value is 0.
  *
  * \param transpose
- *      If the even new tag value c_trig_transpose is used, it add this value,
- *      which is 0x00 or 0x40 for no transposition, and 0x40 is the base value
+ *      If the even newer tag value c_trig_transpose is used, it add this value,
+ *      which is 0x00 for no transposition, and 0x40 is the base value ("zero")
  *      for transposition.
  *
  * \param fixoffset
@@ -454,16 +452,12 @@ triggers::adjust_offset (midipulse offset)
 void
 triggers::add
 (
-    midipulse tick, midipulse len, midipulse offset, midibyte transpose,
-    bool fixoffset
+    midipulse tick, midipulse len, midipulse offset,
+    midibyte transpose, bool fixoffset
 )
 {
-    trigger t
-    (
-        tick, len,
-        fixoffset ? adjust_offset(offset) : offset,
-        transpose
-    );
+    midipulse adjusted_offset = fixoffset ? adjust_offset(offset) : offset;
+    trigger t(tick, len, adjusted_offset, transpose);
     for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
     {
         midipulse tickstart = ti->tick_start();
@@ -1068,8 +1062,10 @@ triggers::transpose (midipulse tick, int transposition)
     {
         if (t.tick_start() <= tick && tick <= t.tick_end())
         {
-            result = true;
-            t.transpose(transposition);
+            result = transposition != t.transpose();
+            if (result)
+                t.transpose(transposition);
+
             break;
         }
     }

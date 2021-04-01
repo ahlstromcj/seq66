@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-03-11
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -570,9 +570,20 @@ midi_vector_base::song_fill_seq_event
 }
 
 /**
- *  Fills in the trigger for the whole sequence.  For a song-performance export,
+ *  Fills in one trigger for sequence.  For a song-performance export,
  *  there will be only one trigger, covering the beginning to the end of the
- *  fully unlooped track.
+ *  fully unlooped track.  We replaced the following with the new and slightly
+ *  longer c_trig_transpose:
+ *
+ *      put_seqspec(c_triggers_ex, num_triggers * 3 * 4);
+ *
+ * Using all the trigger values seems to be the same as these values, but
+ * we're basically zeroing the start and offset values to make "one big
+ * trigger" for the whole pattern.
+ *
+ *      add_long(trig.tick_start());
+ *      add_long(trig.tick_end());
+ *      add_long(trig.offset());
  *
  * \param trig
  *      The current trigger to be processed.
@@ -594,29 +605,13 @@ midi_vector_base::song_fill_seq_trigger
 )
 {
     const int num_triggers = 1;                 /* only one trigger here    */
-#if defined USE_C_TRIG_TRANSPOSE
     put_seqspec(c_trig_transpose, num_triggers * (3 * 4 + 1));
-#else
-    put_seqspec(c_triggers_new, num_triggers * 3 * 4);
-#endif
-
-    /*
-     * Using all the trigger values seems to be the same as these values, but
-     * we're basically zeroing the start and offset values to make "one big
-     * trigger" for the whole pattern.
-     *
-     * add_long(trig.tick_start());
-     * add_long(trig.tick_end());
-     * add_long(trig.offset());
-     */
-
     add_long(0);                                /* the start tick           */
-    add_long(trig.tick_end());
+    add_long(trig.tick_end());                  /* the ending tick          */
     add_long(0);                                /* offset is done in event  */
+    add_byte(trig.transpose_byte());            /* the (new) transpose byte */
     fill_proprietary();
-
-    midipulse delta_time = length - prev_timestamp;
-    fill_meta_track_end(delta_time);
+    fill_meta_track_end(length - prev_timestamp);           /* delta time   */
 }
 
 /**
@@ -650,13 +645,13 @@ midi_vector_base::song_fill_seq_trigger
  *
  *      Then 0xFF 0x7F is written, followed by the length value, which is the
  *      number of triggers at 3 long integers per trigger, plus the 4-byte
- *      code for triggers, c_triggers_new = 0x24240008.
+ *      code for triggers, c_triggers_ex = 0x24240008.
  *
- *      However, we're now extending triggers (c_trig_transpose) to include a
- *      transposition byte which allows up to 5 octaves of tranposition either
- *      way, as a way to re-use patterns.  Inspired by Kraftwerk's "Europe
- *      Endless" background sequence with patterns being shifted up and down in
- *      pitch.
+ *      However, we're now extending triggers (c_trig_transpose = 0x24240020)
+ *      to include a transposition byte which allows up to 5 octaves of
+ *      tranposition either way, as a way to re-use patterns.  Inspired by
+ *      Kraftwerk's "Europe Endless" background sequence, with patterns being
+ *      shifted up and down in pitch.
  *
  * Meta and SysEx Events:
  *
@@ -726,28 +721,26 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
         prevtimestamp = timestamp;
         add_event(e, deltatime);                    /* does it sort???      */
     }
-
     if (doseqspec)
     {
         /*
          * Here, we add SeqSpec entries (specific to seq66) for triggers
-         * (c_triggers_new), the MIDI buss (c_midibus), time signature
+         * (c_triggers_ex), the MIDI buss (c_midibus), time signature
          * (c_timesig), and MIDI channel (c_midich).   Should we restrict this
-         * to only track 0?  No; seq66 saves these events with each sequence.
+         * to only track 0?  No; Seq66 saves these events with each sequence.
+         *
+         *  Old: put_seqspec(c_triggers_ex, triggercount * 3 * 4);
          */
 
-        triggers::List & triggerlist = m_sequence.triggerlist();
-        int triggercount = int(triggerlist.size());
-#if defined USE_C_TRIG_TRANSPOSE
-        put_seqspec(c_trig_transpose, triggercount * (3 * 4 + 1));
-#else
-        put_seqspec(c_triggers_new, triggercount * 3 * 4);
-#endif
+        const triggers::List & triggerlist = m_sequence.triggerlist();
+        int triggersize = int(triggerlist.size());
+        put_seqspec(c_trig_transpose, triggersize * (3 * 4 + 1));
         for (auto & t : triggerlist)
         {
             add_long(t.tick_start());
             add_long(t.tick_end());
             add_long(t.offset());
+            add_byte(t.transpose_byte());
         }
         fill_proprietary();
     }

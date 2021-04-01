@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-03-30
+% \update      2021-04-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -155,11 +155,11 @@
          \texttt{c\_midibus}         & Track         & 5                 & \texttt{0x24240001 buss} \\
          \texttt{c\_midich}          & Track         & 5                 & \texttt{0x24240002 channel} \\
          \texttt{c\_midiclocks}      & Unused        & 4+count           & \texttt{0x24240003 count:L bussclocks} \\
-         \texttt{c\_triggers}        & TBD           & 0                 & \texttt{0x24240004 (see c\_triggers\_new)} \\
+         \texttt{c\_triggers}        & TBD           & 0                 & \texttt{0x24240004 (see c\_triggers\_ex)} \\
          \texttt{c\_notes}           & TBD           & 2+variable        & \texttt{0x24240005 setcount strings...} \\
          \texttt{c\_timesig}         & Track         & 6                 & \texttt{0x24240006 bpb bw} \\
          \texttt{c\_bpmtag}          & TBD           & 8                 & \texttt{0x24240007 bpm:L } \\
-         \texttt{c\_triggers\_new}   & Track         & 4+triggercount*12 & \texttt{0x24240008 triggers...} \\
+         \texttt{c\_triggers\_ex}    & Track         & 4+triggercount*12 & \texttt{0x24240008 triggers...} \\
          \texttt{c\_mutegroups}      & Global        & 4+4*groups+4*seqs & \texttt{0x24240009 groups:S seqs:S data...} \\
          \texttt{c\_gap\_A}          & Unused        & 4                 & \texttt{0x2424000A} \\
          \texttt{c\_gap\_B}          & Unused        & 4                 & \texttt{0x2424000B} \\
@@ -181,6 +181,9 @@
          \texttt{c\_seq\_color}      & Track         & 5                 & \texttt{0x2424001B color} \\
          \texttt{c\_seq\_edit\_mode} & Kepler34      & 0                 & \texttt{0x2424001C} \\
          \texttt{c\_seq\_loopcount}  & To-do         & 6                 & \texttt{0x2424001D 00 00} \\
+         \texttt{c\_reserved\_3}     & TBD           & 0                 & \texttt{0x2424001E} \\
+         \texttt{c\_reserved\_4}     & TBD           & 0                 & \texttt{0x2424001F} \\
+         \texttt{c\_trig\_transpose} & Track     & 4+triggercount*(12+1) & \texttt{0x24240020 triggers...} \\
       \end{tabular}
    \end{table}
 
@@ -260,10 +263,10 @@
       \item \textsl{Format}: \texttt{0x24240004 buss}
    \end{description}
 
-   This \texttt{SeqSpec} is no longer used, and is flagged as an error if
-   encountered.
+   This \texttt{SeqSpec} is no longer used, but is still read and
+   converted to a valid trigger, encountered.
    We have not encountered a file containing this value yet.
-   Instead, \texttt{c\_triggers\_new} is used.
+   Instead, \texttt{c\_triggers\_ex} is used.
 
 \subsubsection{SeqSpec c\_notes}
 \label{subsubsec:midi_format_track_seqspec_notes}
@@ -338,11 +341,11 @@
    effected by the functions
    \texttt{bpm\_from\_tempo\_us()} and \texttt{tempo\_us\_from\_bpm()}.
 
-\subsubsection{SeqSpec c\_triggers\_new}
-\label{subsubsec:midi_format_track_seqspec_triggers_new}
+\subsubsection{SeqSpec c\_triggers\_ex}
+\label{subsubsec:midi_format_track_seqspec_triggers_ex}
 
    \begin{description}
-      \item \texttt{c\_triggers\_new}: specifies the triggers for a given track.
+      \item \texttt{c\_triggers\_ex}: specifies the triggers for a given track.
       \item \textsl{Length}: 4 + triggercount * 12
       \item \textsl{Format}: \texttt{0x24240008 [trigger-on off offset ] [ ... ]}
    \end{description}
@@ -374,10 +377,15 @@
          [ ... ]}
    \end{description}
 
-   This is an extension to \texttt{c\_triggers\_new} that adds a value to use to
+   This is an extension to \texttt{c\_triggers\_ex} that adds a value to use to
    transpose the pattern at this particular trigger.
    Very useful for simple background patterns like that in
    \textsl{Kraftwerk's "Europe Endless"}.
+   If the trigger has a zero tranpose value, then 
+   \texttt{c\_trig\_transpose is still written, but the extra byte is zero.
+
+   The older trigger tags are no longer written, but they will be read if
+   present in the \textsl{Seq66} MIDI file.
 
 \subsubsection{SeqSpec c\_mutegroups}
 \label{subsubsec:midi_format_track_seqspec_mutegroups}

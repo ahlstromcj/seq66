@@ -374,7 +374,7 @@ protected:
     bool parse_mute_groups (performer & p);
     bool write_mute_groups (const performer & p);
     bool checklen (midilong len, midibyte type);
-    void add_trigger (sequence & seq, midishort ppqn, bool tposable = false);
+    void add_trigger (sequence & seq, midishort ppqn, bool tposable = true);
     bool read_seek (size_t pos);
     midilong read_long ();
     midilong read_split_long (unsigned & highbytes, unsigned & lowbytes);

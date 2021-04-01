@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-23
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -90,6 +90,7 @@ qperfroll::qperfroll
     ),
     m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
     m_timer             (nullptr),
+    m_font              ("Monospace"),
     m_measure_length    (0),
     m_beat_length       (0),
     m_trigger_transpose (0),
@@ -107,6 +108,10 @@ qperfroll::qperfroll
 {
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
+    m_font.setStyleHint(QFont::Monospace);
+    m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
+    m_font.setBold(true);
+    m_font.setPointSize(8);
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -257,6 +262,7 @@ void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    bool isshift = event->modifiers() & Qt::ShiftModifier;
     bool lbutton = event->button() == Qt::LeftButton;
     bool rbutton = event->button() == Qt::RightButton;
     bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);
@@ -265,9 +271,10 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     convert_xy(drop_x(), drop_y(), m_drop_tick, m_drop_sequence);
 
     seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+    bool on_pattern = not_nullptr(dropseq);
     if (mbutton)                                    /* split loop at cursor */
     {
-        if (not_nullptr(dropseq))
+        if (on_pattern)
         {
             bool state = dropseq->get_trigger_state(m_drop_tick);
             if (state)
@@ -293,17 +300,18 @@ qperfroll::mousePressEvent(QMouseEvent *event)
     {
         if (isctrl)
         {
-            set_adding(true);
-            perf().unselect_all_triggers();
-            mBoxSelect = false;
+            /*
+             * See Shift-Left-Click instead.
+             *
+             * if (on_pattern)
+             *    dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
+             */
         }
         else
         {
-            dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
-
-#if defined USE_C_TRIG_TRANSPOSE
-            /* STILL need to update that trigger box. */
-#endif
+            set_adding(true);
+            perf().unselect_all_triggers();
+            mBoxSelect = false;
         }
     }
     else if (lbutton)
@@ -313,86 +321,94 @@ qperfroll::mousePressEvent(QMouseEvent *event)
          * the right mouse button (or the finger button is active).
          */
 
-        midipulse tick = m_drop_tick;
-        if (adding())
+        if (isshift)
         {
-            m_adding_pressed = true;
-            if (not_nullptr(dropseq))
-            {
-                bool trigger_state = dropseq->get_trigger_state(tick);
-                if (trigger_state)
-                    delete_trigger(m_drop_sequence, tick);
-                else
-                    add_trigger(m_drop_sequence, tick); /* length and snap  */
-            }
+            if (on_pattern)
+                dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
         }
-        else                /* we aren't holding the right mouse button */
+        else
         {
-            bool selected = false;
-            if (not_nullptr(dropseq))
+            midipulse tick = m_drop_tick;
+            if (adding())
             {
-                /*
-                 * ISSUE:  Just clicking in the perf roll gets us here,
-                 * and this ends up setting the perf modify flag.  And at best
-                 * we are only selecting.
-                 *
-                 *      perf().push_trigger_undo();
-                 *
-                 * If the current loop is not in selection range, bin it.
-                 */
+                m_adding_pressed = true;
+                if (on_pattern)
+                {
+                    bool trigger_state = dropseq->get_trigger_state(tick);
+                    if (trigger_state)
+                        delete_trigger(m_drop_sequence, tick);
+                    else
+                        add_trigger(m_drop_sequence, tick); /* length/snap  */
+                }
+            }
+            else                                    /* not in paint mode    */
+            {
+                bool selected = false;
+                if (on_pattern)
+                {
+                    /*
+                     * ISSUE:  Just clicking in the perf roll gets us here,
+                     * and this ends up setting the perf modify flag.  And at best
+                     * we are only selecting.
+                     *
+                     *      perf().push_trigger_undo();
+                     *
+                     * If the current loop is not in selection range, bin it.
+                     */
 
-                if (! in_selection_area(tick))
+                    if (! in_selection_area(tick))
+                    {
+                        perf().unselect_all_triggers();
+                        m_seq_h = m_seq_l = m_drop_sequence;
+                    }
+                    dropseq->select_trigger(tick);
+
+                    midipulse start_tick = dropseq->selected_trigger_start();
+                    midipulse end_tick = dropseq->selected_trigger_end();
+
+                    /*
+                     * Check for corner drag to grow sequence start.
+                     */
+
+                    int clickminus = c_size_box_click_w - 1;
+                    int clickbox = c_size_box_click_w * scale_zoom();
+                    if
+                    (
+                        tick >= start_tick && tick <= start_tick + clickbox &&
+                        (drop_y() % c_names_y) <= clickminus
+                    )
+                    {
+                        growing(true);
+                        m_grow_direction = true;
+                        selected = true;
+                        m_drop_tick_offset = m_drop_tick - start_tick;
+                    }
+                    else if     // check for corner drag to grow sequence end
+                    (
+                        tick >= end_tick - clickbox && tick <= end_tick &&
+                        (drop_y() % c_names_y) >= c_names_y - clickminus
+                    )
+                    {
+                        growing(true);
+                        selected = true;
+                        m_grow_direction = false;
+                        m_drop_tick_offset = m_drop_tick - end_tick;
+                    }
+                    else if (tick <= end_tick && tick >= start_tick)
+                    {
+                        moving(true);                   // we're moving the seq
+                        selected = true;
+                        m_drop_tick_offset = m_drop_tick - start_tick;
+                    }
+                }
+                if (! selected)                         // select with a box
                 {
                     perf().unselect_all_triggers();
-                    m_seq_h = m_seq_l = m_drop_sequence;
+                    snap_drop_y();                      // y always snapped to rows
+                    current_x(drop_x());
+                    current_y(drop_y());
+                    mBoxSelect = true;
                 }
-                dropseq->select_trigger(tick);
-
-                midipulse start_tick = dropseq->selected_trigger_start();
-                midipulse end_tick = dropseq->selected_trigger_end();
-
-                /*
-                 * Check for corner drag to grow sequence start.
-                 */
-
-                int clickminus = c_size_box_click_w - 1;
-                int clickbox = c_size_box_click_w * scale_zoom();
-                if
-                (
-                    tick >= start_tick && tick <= start_tick + clickbox &&
-                    (drop_y() % c_names_y) <= clickminus
-                )
-                {
-                    growing(true);
-                    m_grow_direction = true;
-                    selected = true;
-                    m_drop_tick_offset = m_drop_tick - start_tick;
-                }
-                else if     // check for corner drag to grow sequence end
-                (
-                    tick >= end_tick - clickbox && tick <= end_tick &&
-                    (drop_y() % c_names_y) >= c_names_y - clickminus
-                )
-                {
-                    growing(true);
-                    selected = true;
-                    m_grow_direction = false;
-                    m_drop_tick_offset = m_drop_tick - end_tick;
-                }
-                else if (tick <= end_tick && tick >= start_tick)
-                {
-                    moving(true);                   // we're moving the seq
-                    selected = true;
-                    m_drop_tick_offset = m_drop_tick - start_tick;
-                }
-            }
-            if (! selected)                         // select with a box
-            {
-                perf().unselect_all_triggers();
-                snap_drop_y();                      // y always snapped to rows
-                current_x(drop_x());
-                current_y(drop_y());
-                mBoxSelect = true;
             }
         }
     }
@@ -834,6 +850,18 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                     );
                     pen.setColor(Qt::black);
                     painter.setPen(pen);
+                    if (trig.transposed())
+                    {
+                        char temp[16];
+                        int t = trig.transpose();
+                        if (t > 0)
+                            snprintf(temp, sizeof temp, "+%d", t);
+                        else
+                            snprintf(temp, sizeof temp, "-%d", -t);
+
+                        painter.setFont(m_font);
+                        painter.drawText(x + 2, y + cbw + h / 2, temp);
+                    }
 
                     midipulse t = trig.trigger_marker(lens);
                     while (t < trig.tick_end())

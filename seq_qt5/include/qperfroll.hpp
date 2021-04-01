@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-11
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -125,9 +125,9 @@ private:
     //  cut_selected_trigger()
     //  copy_selected_trigger()
     //  paste_trigger()
+    //  void half_split_trigger (int seq, midipulse tick);
 
     void add_trigger (int seq, midipulse tick);
-    // void half_split_trigger (int seq, midipulse tick);
     void delete_trigger (int seq, midipulse tick);
     void follow_progress ();
 
@@ -135,6 +135,7 @@ private:
 
     qperfeditframe64 * m_parent_frame;
     QTimer * m_timer;
+    QFont m_font;
     int m_measure_length;
     int m_beat_length;
     int m_trigger_transpose;

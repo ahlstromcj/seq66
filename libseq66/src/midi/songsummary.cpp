@@ -58,7 +58,7 @@ s_tag_names_container
     { c_notes        ,  "Set notes" },
     { c_timesig      ,  "Track time signature" },
     { c_bpmtag       ,  "Main beats/minute" },
-    { c_triggers_new ,  "Track trigger data" },
+    { c_triggers_ex  ,  "Track trigger data" },
     { c_mutegroups   ,  "Song mute group data" },
     { c_gap_A        ,  "Gap A" },
     { c_gap_B        ,  "Gap B" },
@@ -82,7 +82,7 @@ s_tag_names_container
     { c_seq_loopcount,  "Future: N-play pattern" },
     { c_reserved_3,     "Reserved 3" },
     { c_reserved_4,     "Reserved 4" },
-    { c_trig_transpose, "Transposable triggers" }
+    { c_trig_transpose, "Transposable trigger" }
 };
 
 /**
@@ -190,12 +190,10 @@ songsummary::write_sequence (std::ofstream & file, seq::pointer s)
     }
 
     /*
-     * The format of c_triggers_new:  0x24240008, followed by a length value
+     * The format of c_triggers_ex:  0x24240008, followed by a length value
      * of 4 + triggercount * 12.  Each trigger has three 4-byte values:
-     * trigger-on, trigger-off, and trigger-offset.
-     *
-     * The c_trig_transpose (0x24240020) tag adds a byte value for trigger
-     * transposition.
+     * trigger-on, trigger-off, and trigger-offset.  The c_trig_transpose
+     * (0x24240020) tag adds a byte value for trigger transposition.
      */
 
     if (triggercount > 0)

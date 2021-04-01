@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-03-31
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -121,7 +121,10 @@ private:
 public:
 
     trigger ();
-    trigger (midipulse tick, midipulse len, midipulse offset, int transpose = 0);
+    trigger
+    (
+        midipulse tick, midipulse len,
+        midipulse offset, midibyte transpose = 0);
 
     ~trigger () = default;
     trigger (const trigger &) = default;
@@ -271,6 +274,11 @@ public:
     int transpose () const
     {
         return m_transpose;
+    }
+
+    bool transposed () const
+    {
+        return m_transpose != 0;
     }
 
     void transpose (int t)                          /* to modify a trigger  */
@@ -488,7 +496,11 @@ public:
     void pop_undo ();
     void pop_redo ();
     void print (const std::string & seqname) const;
-    bool play (midipulse & starttick, midipulse & endtick, bool resume = false);
+    bool play
+    (
+        midipulse & starttick, midipulse & endtick,
+        int & transpose, bool resume = false
+    );
     void add
     (
         midipulse tick, midipulse len,

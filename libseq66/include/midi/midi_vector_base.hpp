@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2021-03-30
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -103,8 +103,8 @@ namespace seq66
             c_midich
             c_timesig
             c_triggers (deprecated)
-            c_triggers_new
-            c_trig_transpose (c_triggers_new plus!)
+            c_triggers_ex (deprecated)
+            c_trig_transpose (c_triggers_ex plus!)
             c_musickey (can be in footer, as well)
             c_musicscale (ditto)
             c_backsequence (ditto)
@@ -144,9 +144,9 @@ namespace seq66
  *  Note that the track data is read from the MIDI file, but not written
  *  directly to the MIDI file.  Instead, it is stored in the MIDI container as
  *  sequences are edited to used these "sequencer-specific" features.
- *  Also note that c_triggers has been replaced by c_triggers_new as the code
+ *  Also note that c_triggers has been replaced by c_triggers_ex as the code
  *  that marks the triggers stored with a sequence. And c_trig_transpose
- *  extends it even further with a byte-value for tranposing a trigger.
+ *  extends it even further with a byte-value for transposing a trigger.
  *
  *  As an extension, we can also grab the key, scale, and background sequence
  *  value selected in a sequence and write these values as track data, where
@@ -174,11 +174,11 @@ namespace seq66
 const midilong c_midibus        = 0x24240001; /**< Track buss number.         */
 const midilong c_midich         = 0x24240002; /**< Track channel number.      */
 const midilong c_midiclocks     = 0x24240003; /**< Track clocking.            */
-const midilong c_triggers       = 0x24240004; /**< See c_triggers_new.        */
+const midilong c_triggers       = 0x24240004; /**< See c_triggers_ex.         */
 const midilong c_notes          = 0x24240005; /**< Song data.                 */
 const midilong c_timesig        = 0x24240006; /**< Track time signature.      */
 const midilong c_bpmtag         = 0x24240007; /**< Song beats/minute.         */
-const midilong c_triggers_new   = 0x24240008; /**< Trigger data w/offset.     */
+const midilong c_triggers_ex    = 0x24240008; /**< Trigger data w/offset.     */
 const midilong c_mutegroups     = 0x24240009; /**< Song mute group data.      */
 const midilong c_gap_A          = 0x2424000A; /**< Gap. A.                    */
 const midilong c_gap_B          = 0x2424000B; /**< Gap. B.                    */
@@ -327,6 +327,11 @@ protected:
     }
 
 private:
+
+    void add_byte (midibyte b)
+    {
+        put(b);
+    }
 
     void add_variable (midipulse v);
     void add_long (midipulse x);
