@@ -249,24 +249,34 @@ public:
     }
 
     /**
-     *  This function maps 0x00 and 0x40 to 0, values less than 0x40 to
-     *  transposing downward in semitones, and value greater than 0x40 to
-     *  transposing upward in semitones.
+     *  This function maps 0x00 to 0, values less than 0x40 to transposing
+     *  downward in semitones, and values greater than 0x40, but less than 0x80,
+     *  to transposing upward in semitones. Value 0x40 is not used.  We can
+     *  tranpose up and down by 63 semitones, or a little more than 5 octaves.
      */
+
+    midibyte transpose_byte () const
+    {
+        return m_transpose == 0 ? 0 : midibyte(m_transpose + 0x40);
+    }
+
+    void transpose_byte (midibyte t)                /* when reading a file  */
+    {
+        if (t > 0x00 && t < 0x80)
+            m_transpose = t - 0x40;
+        else
+            m_transpose = 0;                        /* no transpose         */
+    }
 
     int transpose () const
     {
         return m_transpose;
     }
 
-    void transpose (midibyte t)
+    void transpose (int t)                          /* to modify a trigger  */
     {
-        if (t > 0x00 && t < 0x40)
-            m_transpose = t - 0x40;         /* convert to negative integer  */
-        else if (t > 0x40 && t <= 0x80)
-            m_transpose = 0x80 - t;         /* convert to positive integer  */
-        else
-            m_transpose = 0;
+        if (t > (-64) && t < 64)                    /* -63 to 0 to +63      */
+            m_transpose = t;
     }
 
     bool selected () const
@@ -490,6 +500,7 @@ public:
     void grow_trigger (midipulse tickfrom, midipulse tickto, midipulse length);
     void remove (midipulse tick);
     bool get_state (midipulse tick) const;
+    bool transpose (midipulse tick, int transposition);
     bool select (midipulse tick);
     bool unselect (midipulse tick);
     bool unselect ();

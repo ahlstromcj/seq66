@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-01-11
+ * \updates       2021-03-31
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -81,6 +81,13 @@ namespace seq66
 static const int c_progress_page_overlap = 80;
 
 /**
+ *  Trigger transpose ranges.
+ */
+
+static const int c_trigger_transpose_min    = (-60);
+static const int c_trigger_transpose_max    =   60;
+
+/**
  *  Principal constructor, has a reference to a performer object.
  *
  * \param p
@@ -101,6 +108,7 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
     m_snap                  (8),
     m_beats_per_measure     (4),
     m_beat_width            (4),
+    m_trigger_transpose     (0),
     m_perfroll              (nullptr),
     m_perfnames             (nullptr),
     m_perftime              (nullptr)
@@ -269,14 +277,30 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
      *  we're not sure how to deal with this, so the grow button is hidden.
      */
 
-    connect
-    (
-        ui->btnGrow, SIGNAL(clicked(bool)),
-        this, SLOT(grow())
-    );
+    connect(ui->btnGrow, SIGNAL(clicked(bool)), this, SLOT(grow()));
     qt_set_icon(right_xpm, ui->btnGrow);
     ui->btnGrow->setEnabled(false);
     ui->btnGrow->hide();
+
+    /*
+     *  Trigger transpose button and spin-box.
+     */
+
+    connect
+    (
+        ui->btnResetTT, SIGNAL(clicked(bool)),
+        this, SLOT(reset_trigger_transpose(bool))
+    );
+
+    ui->spinBoxTT->setRange(c_trigger_transpose_min, c_trigger_transpose_max);
+    ui->spinBoxTT->setSingleStep(1);
+    ui->spinBoxTT->setValue(m_trigger_transpose);
+    ui->spinBoxTT->setReadOnly(false);
+    connect
+    (
+        ui->spinBoxTT, SIGNAL(valueChanged(int)),
+        this, SLOT(set_trigger_transpose(int))
+    );
 
     /*
      *  Entry mode
@@ -486,12 +510,18 @@ qperfeditframe64::reset_zoom ()
 void
 qperfeditframe64::reset_transpose ()
 {
-    // if (perf().get_transpose() != transpose)
-    //     set_transpose(transpose);
+#ifdef THIS_IS_BETTER
+    if (perf().get_transpose() != 0)
+       set_transpose(0);
+#else
+    ui->comboTranspose->setCurrentIndex(c_octave_size);
+#endif
 }
 
 /**
- *  Handles updates to the tranposition value.
+ *  Handles updates to the tranposition value.  This value can be used to
+ *  transpose the whole song, or just one trigger, depending on the action
+ *  selected.
  */
 
 void
@@ -586,6 +616,22 @@ qperfeditframe64::grow ()
 {
     m_perfroll->increment_size();
     m_perftime->increment_size();
+}
+
+void
+qperfeditframe64::reset_trigger_transpose (bool /*ischecked*/)
+{
+    ui->spinBoxTT->setValue(0);
+}
+
+void
+qperfeditframe64::set_trigger_transpose (int tpose)
+{
+    if (tpose >= c_trigger_transpose_min && tpose <= c_trigger_transpose_max)
+    {
+        ui->spinBoxTT->setValue(tpose);     // m_trigger_transpose
+        m_perfroll->set_trigger_transpose(tpose);
+    }
 }
 
 void

@@ -258,7 +258,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Transpose.</string>
+        <string>Resets transpose to 0 in the performance.</string>
        </property>
        <property name="text">
         <string>Trans</string>
@@ -268,7 +268,9 @@
      <item>
       <widget class="QComboBox" name="comboTranspose">
        <property name="toolTip">
-        <string>Selects the number of semitones to transpose the performance, for transposable patterns.</string>
+        <string>Selects the number of semitones to transpose the performance,
+for transposable patterns.  The transposition is done at
+playback time, on the fly.  It is not permanent.</string>
        </property>
        <property name="currentText">
         <string/>
@@ -437,6 +439,39 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnResetTT">
+       <property name="minimumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>28</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Resets the Trigger Transpose to 0.</string>
+       </property>
+       <property name="text">
+        <string>TT</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxTT">
+       <property name="toolTip">
+        <string>Provides the transposition value for Trigger Transpose.
+It can range from -60 to +60 (5 octaves either way).
+It can be applied to a trigger block via a Ctrl-Right 
+click after this value is set.  To reset it, set it to 0
+and apply it to a trigger.</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">

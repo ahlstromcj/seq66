@@ -92,6 +92,7 @@ qperfroll::qperfroll
     m_timer             (nullptr),
     m_measure_length    (0),
     m_beat_length       (0),
+    m_trigger_transpose (0),
     m_drop_sequence     (-1),
     m_tick_s            (0),
     m_tick_f            (0),
@@ -298,7 +299,11 @@ qperfroll::mousePressEvent(QMouseEvent *event)
         }
         else
         {
-            // TODO:  Pop up a transpose dialog (not a menu)
+            dropseq->transpose_trigger(m_drop_tick, m_trigger_transpose);
+
+#if defined USE_C_TRIG_TRANSPOSE
+            /* STILL need to update that trigger box. */
+#endif
         }
     }
     else if (lbutton)

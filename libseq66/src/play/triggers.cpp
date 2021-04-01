@@ -308,6 +308,9 @@ triggers::play
 (
     midipulse & start_tick,
     midipulse & end_tick,
+#if defined USE_C_TRIG_TRANSPOSE
+    int & transpose
+#endif
     bool resumenoteons
 )
 {
@@ -316,6 +319,9 @@ triggers::play
     midipulse tick = start_tick;            /* saved for later              */
     midipulse trigger_offset = 0;
     midipulse trigger_tick = 0;
+#if defined USE_C_TRIG_TRANSPOSE
+    transpose = 0;
+#endif
     for (auto & t : m_triggers)
     {
         /*
@@ -364,6 +370,9 @@ triggers::play
                 start_tick = trigger_tick;              /* side-effect      */
 
             m_parent.set_playing(true);
+#if defined USE_C_TRIG_TRANSPOSE
+            transpose = t.transpose();  // or use m_parent????
+#endif
 
             /*
              * If triggered between a Note On and a Note Off, then play it.
@@ -1045,6 +1054,22 @@ triggers::get_state (midipulse tick) const
         if (t.tick_start() <= tick && tick <= t.tick_end())
         {
             result = true;
+            break;
+        }
+    }
+    return result;
+}
+
+bool
+triggers::transpose (midipulse tick, int transposition)
+{
+    bool result = false;
+    for (auto & t : m_triggers)
+    {
+        if (t.tick_start() <= tick && tick <= t.tick_end())
+        {
+            result = true;
+            t.transpose(transposition);
             break;
         }
     }

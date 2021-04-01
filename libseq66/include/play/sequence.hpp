@@ -1342,6 +1342,7 @@ public:
     void grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);
     void delete_trigger (midipulse tick);
     bool get_trigger_state (midipulse tick) const;
+    bool transpose_trigger (midipulse tick, int transposition);
     bool select_trigger (midipulse tick);
     triggers::List get_triggers () const;
     bool unselect_trigger (midipulse tick);

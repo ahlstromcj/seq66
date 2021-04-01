@@ -865,6 +865,9 @@ sequence::play
 {
     automutex locker(m_mutex);
     bool trigger_turning_off = false;       /* turn off after in-frame play */
+#if defined USE_C_TRIG_TRANSPOSE
+    int trigtranspose;
+#endif
     midipulse start_tick = m_last_tick;     /* modified in triggers::play() */
     midipulse end_tick = tick;              /* ditto                        */
     m_trigger_offset = 0;                   /* NEW from Seq24 (!)           */
@@ -883,7 +886,11 @@ sequence::play
             }
             trigger_turning_off = m_triggers.play
             (
+#if defined USE_C_TRIG_TRANSPOSE
+                start_tick, end_tick, trigtranspose, resumenoteons
+#else
                 start_tick, end_tick, resumenoteons /* tick side-effects!   */
+#endif
             );
         }
     }
@@ -894,7 +901,13 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / get_length();
         midipulse offset_base = times_played * get_length();
+#if defined USE_C_TRIG_TRANSPOSE
+        int transpose = trigtranspose;
+        if (transpose == 0)
+            transpose = transposable() ? perf()->get_transpose() : 0 ;
+#else
         int transpose = transposable() ? perf()->get_transpose() : 0 ;
+#endif
         auto e = m_events.begin();
         while (e != m_events.end())
         {
@@ -3471,6 +3484,13 @@ sequence::get_trigger_state (midipulse tick) const
 {
     automutex locker(m_mutex);
     return m_triggers.get_state(tick);
+}
+
+bool
+sequence::transpose_trigger (midipulse tick, int transposition)
+{
+    automutex locker(m_mutex);
+    return m_triggers.transpose(tick, transposition);
 }
 
 /**

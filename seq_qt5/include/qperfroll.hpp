@@ -82,6 +82,11 @@ public:
 
     void set_guides (midipulse snap, midipulse measure, midipulse beat);
 
+    void set_trigger_transpose (int tpose)
+    {
+        m_trigger_transpose = tpose;
+    }
+
 private:
 
     bool in_selection_area (midipulse tick);
@@ -132,6 +137,7 @@ private:
     QTimer * m_timer;
     int m_measure_length;
     int m_beat_length;
+    int m_trigger_transpose;
     int m_drop_sequence;                    // sequence selection
     midipulse m_tick_s;                     // start of tick window
     midipulse m_tick_f;                     // end of tick window
