@@ -1,7 +1,7 @@
 # README for Seq66 0.92.3
 
 Chris Ahlstrom
-2015-09-10 to 2021-03-28
+2015-09-10 to 2021-04-03
 
 __Seq66__ is a MIDI sequencer/live-looper with a hardware-sampler-like
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -69,6 +69,12 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.92.3:
+        *   Add a transpose value to song editor triggers to support shifting
+            patterns automatically during Song play.
+        *   Fixed playback of ultra-long patterns due to not sleeping in the
+            output loop (forgot to convert milliseconds to microseconds).
+        *   Fixed vertical zoom in the pattern editor.
     *   Version 0.92.2:
         *   Added a Qt "style-sheet" configuration it to the 'usr' file. It
             can be used to alter the appearance of the application beyond what

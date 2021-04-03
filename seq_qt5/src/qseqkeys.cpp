@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-21
+ * \updates       2021-04-03
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -64,7 +64,6 @@ static const int sc_key_y =  8;
 
 static const int sc_keyoffset_x = 20;
 static const int sc_keyarea_x   = sc_key_x + sc_keyoffset_x + 2;
-static const int sc_keyoffset_y = 19;
 
 /**
  *  Principal constructor.
@@ -84,8 +83,8 @@ qseqkeys::qseqkeys
     m_font                  (),
     m_show_key_names        (show::octave_letters), /* the legacy display   */
     m_key                   (0),
-    m_key_y                 (keyheight),
-    m_key_area_y            (keyareaheight + sc_keyoffset_y),
+    m_key_y                 (keyheight),            /* note_height()        */
+    m_key_area_y            (keyareaheight),        /* total_height()       */
     m_preview_color         (progress_paint()),     /* extra_paint())       */
     m_is_previewing         (false),
     m_preview_key           (-1)
@@ -107,7 +106,6 @@ qseqkeys::qseqkeys
 void
 qseqkeys::paintEvent (QPaintEvent *)
 {
-    int ycorrection = 2 * note_height() - sc_keyoffset_y;
     int keyx = sc_keyoffset_x + 1;
     QPainter painter(this);
     QPen pen(Qt::black);
@@ -121,27 +119,27 @@ qseqkeys::paintEvent (QPaintEvent *)
      * Draw keyboard border.
      */
 
-    painter.drawRect(0, 0, sc_keyarea_x, m_key_area_y); /* see sizeHint()   */
+    painter.drawRect(0, 0, sc_keyarea_x, total_height());   /* sizeHint()   */
     for (int i = 0; i < c_num_keys; ++i)
     {
         int keyvalue = c_num_keys - i - 1;
         int key = keyvalue % c_octave_size;
-        int y = m_key_y * i + ycorrection;
-        pen.setColor(Qt::black);                    /* draw white keys      */
+        int y = note_height() * i;
+        pen.setColor(Qt::black);                            /* white keys   */
         pen.setStyle(Qt::SolidLine);
         brush.setColor(Qt::white);
         brush.setStyle(Qt::SolidPattern);
         painter.setPen(pen);
         painter.setBrush(brush);
-        painter.drawRect(keyx, y + 1, sc_key_x, m_key_y - 1);
-        if (is_black_key(key))                      /* draw black keys      */
+        painter.drawRect(keyx, y + 1, sc_key_x, note_height() - 1);
+        if (is_black_key(key))                              /* black keys   */
         {
             pen.setStyle(Qt::SolidLine);
             pen.setColor(Qt::black);
             brush.setColor(Qt::black);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx, y + 3, sc_key_x - 2, m_key_y - 5);
+            painter.drawRect(keyx, y + 3, sc_key_x - 2, note_height() - 5);
         }
         if (keyvalue == m_preview_key)              /* preview note         */
         {
@@ -149,7 +147,7 @@ qseqkeys::paintEvent (QPaintEvent *)
             pen.setStyle(Qt::NoPen);
             painter.setPen(pen);
             painter.setBrush(brush);
-            painter.drawRect(keyx + 2, y + 3, sc_key_x - 3, m_key_y - 4);
+            painter.drawRect(keyx + 2, y + 3, sc_key_x - 3, note_height() - 4);
         }
 
         std::string note;
@@ -201,12 +199,6 @@ qseqkeys::paintEvent (QPaintEvent *)
             break;
         }
     }
-}
-
-void
-qseqkeys::resizeEvent (QResizeEvent * qrep)
-{
-    qrep->ignore();                         /* QWidget::resizeEvent(qrep)   */
 }
 
 void
@@ -294,13 +286,13 @@ qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
 QSize
 qseqkeys::sizeHint () const
 {
-    return QSize(sc_keyarea_x, m_key_area_y);
+    return QSize(sc_keyarea_x, total_height());
 }
 
 void
 qseqkeys::convert_y (int y, int & note)
 {
-    note = (m_key_area_y - y - 2) / m_key_y;
+    note = (total_height() - y - 2) / note_height();
 }
 
 /**
@@ -337,8 +329,9 @@ qseqkeys::set_note_height (int h)
     bool result = usr().valid_key_height(h) && h != note_height();
     if (result)
     {
-        m_key_y = h;
-        m_key_area_y = h * c_num_keys + sc_keyoffset_y;
+        note_height(h);
+        total_height(h * c_num_keys);
+        resize(sc_keyarea_x, total_height());
         update();
     }
     return result;

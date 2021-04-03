@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-20
+ * \updates       2021-04-03
  * \license       GNU GPLv2 or above
  *
  *      We've added the feature of a right-click toggling between showing the
@@ -111,7 +111,6 @@ protected:
 protected:      // Qt overrides
 
     virtual void paintEvent (QPaintEvent *) override;
-    virtual void resizeEvent (QResizeEvent *) override;
     virtual void mousePressEvent (QMouseEvent *) override;
     virtual void mouseReleaseEvent (QMouseEvent *) override;
     virtual void mouseMoveEvent (QMouseEvent *) override;
@@ -151,6 +150,18 @@ private:
     seq::pointer seq_pointer ()
     {
         return m_seq;
+    }
+
+    void total_height (int y)
+    {
+        if (y > 0)
+            m_key_area_y = y;
+    }
+
+    void note_height (int y)
+    {
+        if (y > 0)
+            m_key_y = y;
     }
 
 private:

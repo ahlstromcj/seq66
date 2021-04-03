@@ -28,10 +28,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-03-25
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  */
+
+#include <set>                          /* std::set, arbitary selection     */
+#include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
+#include <vector>                       /* std::vector<>                    */
+#include <thread>                       /* std::thread                      */
 
 #include "ctrl/keycontainer.hpp"        /* class seq66::keycontainer        */
 #include "ctrl/midicontrolin.hpp"       /* class seq66::midicontrolin       */
@@ -46,11 +51,6 @@
 #include "play/sequence.hpp"            /* seq66::sequence                  */
 #include "play/setmapper.hpp"           /* seq66::seqmanager and seqstatus  */
 #include "util/condition.hpp"           /* seq66::condition (variable)      */
-
-#include <set>                          /* std::set, arbitary selection     */
-#include <memory>                       /* std::shared_ptr<>, unique_ptr<>  */
-#include <vector>                       /* std::vector<>                    */
-#include <thread>                       /* std::thread                      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -595,6 +595,13 @@ private:
      */
 
     midibpm m_bpm;
+
+    /**
+     *  Indicates if the BPM or PPQN value has changed, for internal handling in
+     *  output_func().
+     */
+
+    std::atomic<bool> m_resolution_change;
 
     /**
      *  Indicates the number of beats considered in calculating the BPM via

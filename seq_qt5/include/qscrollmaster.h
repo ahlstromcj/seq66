@@ -120,14 +120,11 @@ public:
         return viewportSizeHint();
     }
 
-    void adjust_for_resize ();
     void scroll_to_x (int x);
     void scroll_to_y (int y);
 
 protected:      // QWidget overrides
 
-    virtual void paintEvent (QPaintEvent * ) override;
-    virtual void resizeEvent (QResizeEvent *) override;
     virtual void wheelEvent (QWheelEvent *) override;
     virtual void scrollContentsBy (int dx, int dy) override;
 

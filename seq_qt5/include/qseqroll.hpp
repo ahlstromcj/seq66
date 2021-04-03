@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-16
+ * \updates       2021-04-03
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -136,6 +136,7 @@ private:
     void set_background_sequence (bool state, int seq);
     int note_off_length () const;
     bool add_note (midipulse tick, int note);
+    void zoom_key_press (QKeyEvent *);
 
 private:        // overrides for painting, mouse/keyboard events, & size hints
 

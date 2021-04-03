@@ -25,8 +25,40 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2021-01-02
+ * \updates       2021-04-03
  * \license       GNU GPLv2 or above
+ *
+ *  When inheriting QAbstractScrollArea, you need to do the following:
+ *
+ *  -#  Control the scroll bars by setting their range, value, page step, and
+ *      tracking their movements.
+ *  -#  Draw the contents of the area in the viewport according to the values of
+ *      the scroll bars.
+ *  -#  Handle events received by the viewport in viewportEvent() - notably
+ *      resize events.
+ *  -#  Use viewport->update() to update the contents of the viewport instead of
+ *      update() as all painting operations take place on the viewport.
+ *
+ *  In order to track scroll bar movements, reimplement the virtual function
+ *  scrollContentsBy().
+ *
+ *  For convenience, QAbstractScrollArea makes all viewport events available in
+ *  the virtual viewportEvent() handler. QWidget's specialized handlers are
+ *  remapped to viewport events in the cases where this makes sense. The
+ *  remapped specialized handlers are:
+ *
+ *      -   paintEvent()
+ *      -   mousePressEvent()
+ *      -   mouseReleaseEvent()
+ *      -   mouseDoubleClickEvent()
+ *      -   mouseMoveEvent()
+ *      -   wheelEvent()
+ *      -   dragEnterEvent()
+ *      -   dragMoveEvent()
+ *      -   dragLeaveEvent()
+ *      -   dropEvent()
+ *      -   contextMenuEvent()
+ *      -   resizeEvent()
  *
  * Other useful QScrollBar functions:
  *
@@ -124,30 +156,6 @@ qscrollmaster::scroll_to_y (int y)
 }
 
 void
-qscrollmaster::paintEvent (QPaintEvent * qpep)
-{
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qscrollmaster::paintEvent(%d)\n", s_count++);
-#endif
-
-    QScrollArea::paintEvent(qpep);
-}
-
-void
-qscrollmaster::resizeEvent (QResizeEvent * qrep)
-{
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    static int s_count = 0;
-    printf("qscrollmaster::resizeEvent(%d)\n", s_count++);
-#endif
-
-    qrep->ignore();                         /* QScrollArea::resizeEvent(qrep) */
-}
-
-void
 qscrollmaster::wheelEvent (QWheelEvent * qwep)
 {
 
@@ -159,62 +167,26 @@ qscrollmaster::wheelEvent (QWheelEvent * qwep)
     qwep->ignore();                         /* QScrollArea::wheelEvent(qwep)  */
 }
 
-/**
- *  When inheriting QAbstractScrollArea, you need to do the following:
- *
- *  -#  Control the scroll bars by setting their range, value, page step, and
- *      tracking their movements.
- *  -#  Draw the contents of the area in the viewport according to the values of
- *      the scroll bars.
- *  -#  Handle events received by the viewport in viewportEvent() - notably
- *      resize events.
- *  -#  Use viewport->update() to update the contents of the viewport instead of
- *      update() as all painting operations take place on the viewport.
- *
- *  In order to track scroll bar movements, reimplement the virtual function
- *  scrollContentsBy().
- *
- *  For convenience, QAbstractScrollArea makes all viewport events available in
- *  the virtual viewportEvent() handler. QWidget's specialized handlers are
- *  remapped to viewport events in the cases where this makes sense. The
- *  remapped specialized handlers are:
- *
- *      -   paintEvent()
- *      -   mousePressEvent()
- *      -   mouseReleaseEvent()
- *      -   mouseDoubleClickEvent()
- *      -   mouseMoveEvent()
- *      -   wheelEvent()
- *      -   dragEnterEvent()
- *      -   dragMoveEvent()
- *      -   dragLeaveEvent()
- *      -   dropEvent()
- *      -   contextMenuEvent()
- *      -   resizeEvent()
+#if defined USE_ADJUST_FOR_SIZE
+
+/*
+ *  Typical: viewport = 208x796 and widget = 1538x38790. Code saved "just in
+ *  case".
  */
+
 
 void
 qscrollmaster::adjust_for_resize ()
 {
    QSize view = viewport()->size();
    QSize widg = widget()->size();
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-
-    /*
-     * Typical: viewport = 208x796 and widget = 1538x38790.
-     */
-
-    printf("viewport size (w, h) = (%d, %d)\n", view.height(), view.width());
-    printf("widget size (w, h)   = (%d, %d)\n", widg.height(), widg.width());
-
-#endif
-
    verticalScrollBar()->setPageStep(view.height());
    horizontalScrollBar()->setPageStep(view.width());
    verticalScrollBar()->setRange(0, widg.height() - view.height());
    horizontalScrollBar()->setRange(0, widg.width() - view.width());
 }
+
+#endif  //defined USE_ADJUST_FOR_SIZE
 
 /*
  * qscrollmaster.cpp

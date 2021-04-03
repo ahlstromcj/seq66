@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-29
+ * \updates       2021-04-03
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
@@ -471,7 +471,7 @@ qseqroll::draw_grid (QPainter & painter, const QRect & r)
          * Set line colour dependent on the note row we're on.
          */
 
-        int y = key * unit_height();                // ADJUST!!
+        int y = key * unit_height();
         if ((modkey % c_octave_size) == 0)
             pen.setColor(fore_color());
         else
@@ -1122,6 +1122,34 @@ qseqroll::mouseMoveEvent (QMouseEvent * event)
     set_dirty();
 }
 
+void
+qseqroll::zoom_key_press (QKeyEvent * event)
+{
+    if (event->modifiers() & Qt::ShiftModifier)     /* Shift + ...  */
+    {
+        if (event->key() == Qt::Key_Z)
+            (void) zoom_in();
+        else if (event->key() == Qt::Key_V)
+            (void) v_zoom_in();
+    }
+    else
+    {
+        if (event->key() == Qt::Key_Z)
+        {
+            (void) zoom_out();
+        }
+        else if (event->key() == Qt::Key_0)
+        {
+            if (m_v_zooming)
+                (void) reset_v_zoom();
+            else
+                (void) reset_zoom();
+        }
+        else if (event->key() == Qt::Key_V)
+            (void) v_zoom_out();
+    }
+}
+
 /**
  *  Handles keystrokes for note movement, zoom, and more.  These key names are
  *  located in /usr/include/x86_64-linux-gnu/qt5/QtCore/qnamespace.h (for
@@ -1135,7 +1163,6 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 {
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
     seq::pointer s = seq_pointer();
-
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
         if (s->remove_selected())
@@ -1147,8 +1174,12 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         {
             /*
              * The space and period keystrokes are handled at the top of
-             * qseqeditframe64::keyPressEvent().
+             * qseqeditframe64::keyPressEvent(). The zoom keys are repeated
+             * here and below as well.
              */
+
+            if (! isctrl)
+                zoom_key_press(event);
         }
         else
         {
@@ -1262,27 +1293,8 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     break;
                 }
             }
-            else if (event->modifiers() & Qt::ShiftModifier) // Shift + ...
-            {
-                if (event->key() == Qt::Key_Z)
-                    (void) zoom_in();
-                else if (event->key() == Qt::Key_V)
-                    (void) v_zoom_in();
-            }
             else
-            {
-                if (event->key() == Qt::Key_Z)
-                    (void) zoom_out();
-                else if (event->key() == Qt::Key_0)
-                {
-                    if (m_v_zooming)
-                        (void) reset_v_zoom();
-                    else
-                        (void) reset_zoom();
-                }
-                else if (event->key() == Qt::Key_V)
-                    (void) v_zoom_out();
-            }
+                zoom_key_press(event);
         }
         if (! is_dirty())
         {

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-03-31
+ * \updates       2021-04-01
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -372,6 +372,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
     m_bpm                   (SEQ66_DEFAULT_BPM),
+    m_resolution_change     (true),
     m_current_beats         (0),
     m_base_time_ms          (0),
     m_last_time_ms          (0),
@@ -549,6 +550,7 @@ performer::notify_trigger_change (seq::number seqno, change mod)
 void
 performer::notify_resolution_change (int ppqn, midibpm bpm, change mod)
 {
+    m_resolution_change = true;
     for (auto notify : m_notify)
         (void) notify->on_resolution_change(ppqn, bpm);
 
@@ -1310,6 +1312,8 @@ performer::set_ppqn (int p)
  *  lamdba function.
  *
  *  Note the it also, via notify_resolution_change(), sets the modify flag.
+ *
+ *  ISSUE?  Do we need to pass this to the master MIDI bus object?
  */
 
 bool
@@ -2875,7 +2879,6 @@ performer::set_jack_mode (bool jack_button_active)
 void
 performer::output_func ()
 {
-    bool resolution_change = true;          /* BPM or PPQN.  EXPERIMENTAL.  */
     while (m_io_active)                     /* should we LOCK this variable */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
@@ -2932,22 +2935,30 @@ performer::output_func ()
             set_last_ticks(m_starting_tick);
         }
 
-        midibpm bpm;
-        int ppqn, bpm_times_ppqn;
-        double dct, pus;
+        /*
+         * We still need to make sure the BPM and PPQN changes are airtight!
+         * Check jack_set_beats_per_minute() and change_ppqn()
+         */
+
+        midibpm bpm = m_master_bus->get_beats_per_minute();
+        int ppqn = m_master_bus->get_ppqn();
+        int bpm_times_ppqn = bpm * ppqn;
+        double dct = double_ticks_from_ppqn(ppqn);
+        double pus = pulse_length_us(bpm, ppqn);
         long current;                           /* current time             */
         long delta, delta_us;                   /* current - last           */
         long last = microtime();                /* beginning time           */
+        m_resolution_change = false;            /* BPM/PPQN. EXPERIMENTAL.  */
         while (is_running())
         {
-            if (resolution_change)
+            if (m_resolution_change)
             {
                 bpm = m_master_bus->get_beats_per_minute();
                 ppqn = m_master_bus->get_ppqn();
                 bpm_times_ppqn = bpm * ppqn;
-                dct = double_ticks_from_ppqn(m_ppqn);
-                pus = pulse_length_us(bpm, m_ppqn);
-                resolution_change = false;
+                dct = double_ticks_from_ppqn(ppqn);
+                pus = pulse_length_us(bpm, ppqn);
+                m_resolution_change = false;
             }
 
             /**
