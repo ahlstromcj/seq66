@@ -164,7 +164,7 @@ qseqkeys::paintEvent (QPaintEvent *)
                 pen.setStyle(Qt::SolidLine);
                 painter.setPen(pen);
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, y + 11, note.c_str());
+                painter.drawText(2, y + 9, note.c_str());   // 11
             }
             break;
 
@@ -173,14 +173,14 @@ qseqkeys::paintEvent (QPaintEvent *)
             if ((keyvalue % 2) == 0)
             {
                 note = musical_note_name(keyvalue);
-                painter.drawText(2, y + 11, note.c_str());
+                painter.drawText(2, y + 9, note.c_str());   // 11
             }
             break;
 
         case show::all_letters:
 
             note = musical_note_name(keyvalue);
-            painter.drawText(2, y + 11, note.c_str());
+            painter.drawText(2, y + 9, note.c_str());       // 11
             break;
 
         case show::even_numbers:

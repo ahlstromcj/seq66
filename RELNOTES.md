@@ -1,4 +1,4 @@
-# Seq66 Release Notes 0.92.3
+# Seq66 Release Notes 0.93.0
 ==============================
 Chris Ahlstrom
 2020-11-15 to 2021-03-28

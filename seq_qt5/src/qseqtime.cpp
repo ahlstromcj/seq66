@@ -36,6 +36,8 @@
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqtime.hpp"
 
+#define USE_L_R_PATTERN_MARKERS
+
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -111,15 +113,13 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.setFont(m_font);
     painter.drawRect                    /* draw the border  */
     (
-        c_keyboard_padding_x, 0, size().width(), size().height() - 1
+        c_keyboard_padding_x + 1, 0, size().width(), size().height() - 1
     );
 
     /*
      * The ticks_per_step value needs to be figured out.  Why 6 * m_zoom?  6
      * is the number of pixels in the smallest divisions in the default
-     * seqroll background.
-     *
-     * This code needs to be put into a function.
+     * seqroll background.  This code needs to be put into a function.
      */
 
     int bpbar = seq_pointer()->get_beats_per_bar();
@@ -163,7 +163,14 @@ qseqtime::paintEvent (QPaintEvent *)
         }
     }
 
-    int end_x = xoffset(seq_pointer()->get_length()) - scroll_offset_x() - 20;
+    midipulse length = seq_pointer()->get_length();
+    int end_x = xoffset(length) - scroll_offset_x() - 20;
+
+#if defined USE_L_R_PATTERN_MARKERS
+    int left_x = xoffset(perf().get_left_tick()) - scroll_offset_x() + 4;
+    int right_x = xoffset(perf().get_right_tick()) - scroll_offset_x() - 7;
+#endif
+
 
     /*
      * Draw end of seq label, label background.
@@ -174,10 +181,35 @@ qseqtime::paintEvent (QPaintEvent *)
     brush.setStyle(Qt::SolidPattern);
     painter.setBrush(brush);
     painter.setPen(pen);
+
+#if defined USE_L_R_PATTERN_MARKERS
+    if (left_x > 0 && left_x < end_x)
+    {
+        painter.setBrush(brush);
+        painter.drawRect(left_x, 10, 8, 24);        // black background
+        pen.setColor(Qt::white);                        // white label text
+        painter.setPen(pen);
+        painter.drawText(left_x, 18, "L");
+    }
+#endif
+
+    pen.setColor(Qt::black);
+    painter.setPen(pen);
     painter.drawRect(end_x, 10, 20, 24);            // black background
     pen.setColor(Qt::white);                        // white label text
     painter.setPen(pen);
     painter.drawText(end_x, 18, tr("END"));
+
+#if defined USE_L_R_PATTERN_MARKERS
+    if (right_x > 0 && right_x <= end_x)
+    {
+        painter.setBrush(brush);
+        painter.drawRect(right_x, 10, 8, 24);       // black background
+        pen.setColor(Qt::white);                    // white label text
+        painter.setPen(pen);
+        painter.drawText(right_x, 18, "R");
+    }
+#endif
 }
 
 void
@@ -192,10 +224,51 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
     QWidget::resizeEvent(qrep);         /* qrep->ignore() */
 }
 
+/**
+ *  There is a trick to this function that to document and take further
+ *  advantage of.  If clicking in the top half of the time-bar, whether and
+ *  L- or R-click, the time is set to that value, and the effect can be
+ *  seen in the main window's beat-indicator.  If clicking in the bottom
+ *  half, of course, the L or R marker is set, depending on which button
+ *  is pressed.  See the qperftime versoin of this function.
+ */
+
 void
-qseqtime::mousePressEvent (QMouseEvent *)
+qseqtime::mousePressEvent (QMouseEvent * event)
 {
-    // no code
+#if defined USE_L_R_PATTERN_MARKERS
+    midipulse tick = midipulse(event->x());
+    tick *= scale_zoom();
+    tick -= (tick % snap());
+    if (event->y() > height() * 0.5)                    /* see banner note  */
+    {
+        bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+        if (event->button() == Qt::LeftButton)          /* move L/R markers */
+        {
+            if (isctrl)
+                perf().set_start_tick(tick);
+            else
+                perf().set_left_tick(tick);
+
+            set_dirty();
+        }
+        else if (event->button() == Qt::MiddleButton)    /* set start tick  */
+        {
+            perf().set_start_tick(tick);
+            set_dirty();
+        }
+        else if (event->button() == Qt::RightButton)
+        {
+            perf().set_right_tick(tick + snap());
+            set_dirty();
+        }
+    }
+    else
+    {
+        perf().set_tick(tick);                          /* reposition time  */
+        set_dirty();
+    }
+#endif
 }
 
 void

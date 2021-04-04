@@ -1,4 +1,4 @@
-# README for Seq66 0.92.3
+# README for Seq66 0.93.0
 
 Chris Ahlstrom
 2015-09-10 to 2021-04-03
@@ -69,7 +69,7 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
-    *   Version 0.92.3:
+    *   Version 0.93.0:
         *   Add a transpose value to song editor triggers to support shifting
             patterns automatically during Song play.
         *   Fixed playback of ultra-long patterns due to not sleeping in the

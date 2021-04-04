@@ -101,12 +101,6 @@ private:
 
     QTimer * m_timer;
     QFont m_font;
-
-    /**
-     *  Snap value, starts out very small, equal to m_ppqn.
-     */
-
-    midipulse m_4bar_offset;
     midipulse m_measure_length;
     bool m_move_left;
 

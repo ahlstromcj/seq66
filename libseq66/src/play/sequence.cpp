@@ -4335,19 +4335,6 @@ sequence::set_playing (bool p)
 
         set_dirty();
         notify_trigger();
-
-#if defined USE_THIS_CODE
-        THIS REALLY BELONGS IN PERFORM
-        midi_control_out * mco = perf()->get_midi_control_out();
-        if (not_nullptr(mco))
-        {
-            mco->send_seq_event
-            (
-                number(), p ? midi_control_out::seq_action_arm :
-                    midi_control_out::seq_action_mute
-            );
-        }
-#endif
     }
     m_queued = false;
     m_one_shot = false;

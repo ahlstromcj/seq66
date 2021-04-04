@@ -59,7 +59,6 @@ qperftime::qperftime
     qperfbase           (p, zoom, snap, 1, 1 * 1),
     m_timer             (new QTimer(this)),     /* refresh/redraw timer */
     m_font              (),
-    m_4bar_offset       (0),
     m_move_left         (false)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -233,17 +232,30 @@ qperftime::keyPressEvent (QKeyEvent * event)
     }
 }
 
+/**
+ *  There is a trick to this function that to document and take further
+ *  advantage of.  If clicking in the top half of the time-bar, whether and
+ *  L- or R-click, the time is set to that value, and the effect can be
+ *  seen in the main window's beat-indicator.
+ *
+ *  If clicking in the bottom
+ *  half, of course, the L or R marker is set, depending on which button
+ *  is pressed.
+ *
+ *  We need to figure out the difference between setting start-tick and
+ *  left-tick.  It might be better to make the two represent the same concept.
+ */
+
 void
 qperftime::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick = midipulse(event->x());
     tick *= scale_zoom();
-    tick += (m_4bar_offset * 16 * perf().ppqn());
     tick -= (tick % snap());
-    if (event->y() > height() * 0.5)
+    if (event->y() > height() * 0.5)                    /* see banner note  */
     {
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-        if (event->button() == Qt::LeftButton)      /* move L/R markers     */
+        if (event->button() == Qt::LeftButton)          /* move L/R markers */
         {
             if (isctrl)
                 perf().set_start_tick(tick);
@@ -252,7 +264,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
 
             set_dirty();
         }
-        else if (event->button() == Qt::MiddleButton)    /* set start tick       */
+        else if (event->button() == Qt::MiddleButton)    /* set start tick  */
         {
             perf().set_start_tick(tick);
             set_dirty();
@@ -265,7 +277,7 @@ qperftime::mousePressEvent (QMouseEvent * event)
     }
     else
     {
-        perf().set_tick(tick);                      /* reposition timecode  */
+        perf().set_tick(tick);                          /* reposition time  */
         set_dirty();
     }
 }

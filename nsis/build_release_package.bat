@@ -8,7 +8,7 @@
 :: \library     Seq66 for Windows
 :: \author      Chris Ahlstrom
 :: \date        2018-05-26
-:: \update      2021-02-13
+:: \update      2021-04-04
 :: \license     $XPC_SUITE_GPL_LICENSE$
 ::
 ::      This script sets up and creates a release build of Seq66 for
@@ -119,7 +119,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.92.0
+set PROJECT_VERSION=0.93.0
 set PROJECT_DRIVE=C:
 
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66

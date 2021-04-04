@@ -87,7 +87,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>240</width>
+         <width>512</width>
          <height>28</height>
         </size>
        </property>
@@ -355,7 +355,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>256</width>
          <height>28</height>
         </size>
        </property>
@@ -846,13 +846,13 @@ zooms 'in'.</string>
        </property>
        <property name="minimumSize">
         <size>
-         <width>16</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
@@ -868,13 +868,13 @@ zooms 'in'.</string>
       <widget class="QPushButton" name="btnKeyVZoomReset">
        <property name="minimumSize">
         <size>
-         <width>15</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>15</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
@@ -891,13 +891,13 @@ the '0' key in the piano roll.</string>
       <widget class="QPushButton" name="btnKeyVZoomIn">
        <property name="minimumSize">
         <size>
-         <width>16</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>16</width>
+         <width>17</width>
          <height>20</height>
         </size>
        </property>
@@ -943,7 +943,7 @@ the '0' key in the piano roll.</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>730</width>
+          <width>726</width>
           <height>24</height>
          </rect>
         </property>
