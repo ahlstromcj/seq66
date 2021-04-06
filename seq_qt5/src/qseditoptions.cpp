@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-20
+ * \updates       2021-04-05
  * \license       GNU GPLv2 or above
  *
  *      This version is located in Edit / Preferences.
@@ -179,11 +179,11 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
     int rbid = perf().song_mode() ? radio_button_song : radio_button_live ;
     foreach (QAbstractButton * button, bgroup->buttons())
     {
-        if (bgroup->id(button) == rbid)
-        {
+        int bid = bgroup->id(button);
+        if (bid == rbid)
             button->setChecked(true);
-            break;
-        }
+        else
+            button->setChecked(false);
     }
     connect
     (

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-02-22
+% \update      2021-04-06
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -427,6 +427,16 @@
    Once a value other than \textbf{Off} is selected,
    drawing mode will add multiple notes representing the chord
    created, with the clicked note value as the base of the chord.
+
+\subsection{Pattern Editor / Time}
+\label{subsec:pattern_editor_time}
+
+   The \textbf{Time} (or \textbf{Measures}) bar provides an explicit count of
+   beats and bars.  It also includes vertical-zoom buttons at its left side.
+   As of version 0.93.0, \textsl{Seq66} allows the
+   \textbf{L/R} markers to be placed on the pattern editor's time-line, to
+   allow for close work with sections deep into a long pattern.
+   This looping now works with both Live and Song modes.
 
 \subsection{Pattern Editor / Piano Roll}
 \label{subsec:pattern_editor_piano_roll}
@@ -1174,6 +1184,19 @@
          \texttt{z} \index{keys!z},
          \texttt{Z} \index{keys!Z}, and
          \texttt{0} \index{keys!0} keys to change the timeline zoom.
+      \item \textbf{Vertical Zoom (Notes Zoom)}
+         \index{scroll!vertical zoom}
+         \index{scroll!notes zoom}
+         \index{zoom!seqroll notes}
+         Additional buttons for vertical zoom have been added:
+         \textbf{-},
+         \textbf{0}, and
+         \textbf{+}.
+         One can also click in the piano roll, and then use the
+         \texttt{v} \index{keys!v},
+         \texttt{V} \index{keys!V}, and
+         \texttt{0} \index{keys!0} keys to change the notes zoom.
+         The zoom can make the note-rows large enough to use on a touch screen.
    \end{itemize}
 
    The actions of this scrolling are smooth and fast.

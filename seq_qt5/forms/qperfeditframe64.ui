@@ -298,7 +298,7 @@ playback time, on the fly.  It is not permanent.</string>
         <string>Sets looping between the L and R markers.</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Loop</string>
        </property>
        <property name="iconSize">
         <size>

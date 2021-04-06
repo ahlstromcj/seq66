@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-01
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -343,13 +343,6 @@ private:
     sequence::playback m_song_start_mode;
 
     /**
-     *  Indicates that, no matter what the current Song/Live setting, the
-     *  playback was started from the perfedit window.
-     */
-
-    bool m_start_from_perfedit;
-
-    /**
      *  It seems that this member, if true, forces a repositioning to the left
      *  (L) tick marker.
      */
@@ -570,13 +563,6 @@ private:
     bool m_resume_note_ons;
 
     /**
-     *  The global current tick, moved out from the output function so that
-     *  position can be set.
-     */
-
-    double m_current_tick;
-
-    /**
      *  Holds the current PPQN for usage in various actions.  If
      *  SEQ66_USE_FILE_PPQN (0) is the value, then m_file_ppqn will be used.
      */
@@ -729,6 +715,12 @@ private:
      */
 
     mutable midipulse m_tick;
+
+    /**
+     *  EXPERIMENTAL
+     */
+
+    jack_scratchpad m_jack_pad;
 
     /**
      *  Let's try to save the last JACK pad structure tick for re-use with
@@ -1478,6 +1470,23 @@ public:
      * ---------------------------------------------------------------------
      */
 
+    jack_scratchpad & pad ()
+    {
+        return m_jack_pad;
+    }
+
+#if defined SEQ66_JACK_SUPPORT
+    bool jack_output (jack_scratchpad & pad)
+    {
+        return m_jack_asst.output(pad);
+    }
+#else
+    bool jack_output (jack_scratchpad & /*pad*/)
+    {
+        return false;
+    }
+#endif
+
     /**
      * \getter m_jack_asst.is_running()
      *      This function is useful for announcing the status of JACK in
@@ -1589,17 +1598,6 @@ public:
 #endif
     }
 
-
-    /**
-     *  If JACK is supported and running, sets the position of the transport.
-     *
-     * \param songmode
-     *      If true, playback is in Song mode; otherwise, Live mode.
-     *
-     * \param tick
-     *      Provides the pulse position to be set.  The default value is 0.
-     */
-
 #if defined SEQ66_JACK_SUPPORT
     void position_jack (bool songmode, midipulse tick)
     {
@@ -1609,7 +1607,7 @@ public:
     void position_jack (bool, midipulse) { /* no code */ }
 #endif
 
-    bool set_jack_mode (bool mode);
+    bool set_jack_mode (bool connect);
 
     void toggle_jack_mode ()
     {
@@ -1627,13 +1625,22 @@ public:
 #endif
     }
 
-#if defined SEQ66_JACK_SUPPORT
-    void set_jack_stop_tick (midipulse tick)
+    midipulse jack_stop_tick () const
     {
-        m_jack_asst.set_jack_stop_tick(tick);
+#if defined SEQ66_JACK_SUPPORT
+        return m_jack_asst.jack_stop_tick();
+#else
+        return 0;
+#endif
+    }
+
+#if defined SEQ66_JACK_SUPPORT
+    void jack_stop_tick (midipulse tick)
+    {
+        m_jack_asst.jack_stop_tick(tick);
     }
 #else
-    void set_jack_stop_tick (midipulse)
+    void jack_stop_tick (midipulse)
     {
         /* no code needed */
     }
@@ -1696,7 +1703,7 @@ public:
      * ---------------------------------------------------------------------
      */
 
-    bool jack_song_mode () const
+    bool jackless_song_mode () const
     {
         return song_mode() && ! is_jack_running();
     }
@@ -1751,16 +1758,6 @@ public:
 
     void FF_rewind ();
     bool FF_RW_timeout ();          /* called by free-function of same name */
-
-    void start_from_perfedit (bool flag)
-    {
-        m_start_from_perfedit = flag;
-    }
-
-    bool start_from_perfedit () const
-    {
-        return m_start_from_perfedit;
-    }
 
     void set_reposition (bool postype = true)
     {
@@ -1880,7 +1877,8 @@ public:
 
     bool panic ();                                  /* from kepler43    */
     void set_tick (midipulse tick);
-    void set_left_tick (midipulse tick, bool setstart = true);
+    void set_left_tick (midipulse tick);
+    void set_left_tick_seq (midipulse tick, midipulse snap);
 
     /**
      *  For every pattern/sequence that is active, sets the "original tick"
@@ -1912,7 +1910,8 @@ public:
         return m_starting_tick;
     }
 
-    void set_right_tick (midipulse tick, bool setstart = true);
+    void set_right_tick (midipulse tick);
+    void set_right_tick_seq (midipulse tick, midipulse snap);
 
     midipulse get_right_tick () const
     {
@@ -2126,13 +2125,8 @@ public:
     (
         sequence * seq, seq::number seqno, bool fileload = false
     );
-    void inner_start (bool songmode);
+    void inner_start ();
     void inner_stop (bool midiclock = false);
-
-    void inner_start ()
-    {
-        inner_start(song_mode());                       /* versus live mode */
-    }
 
     /**
      *  If JACK is not running, call inner_start() with the given state.
@@ -2145,10 +2139,10 @@ public:
      *      in Live mode.
      */
 
-    void start (bool songmode)
+    void start ()
     {
         if (! is_jack_running())
-            inner_start(songmode);
+            inner_start();
     }
 
     /**
@@ -2173,12 +2167,9 @@ public:
 
 public:
 
-    void start_playing (bool songmode = false);
-    void pause_playing (bool songmode = false);
+    void start_playing ();
+    void pause_playing ();
     void stop_playing ();
-    void start_key (bool songmode = false);
-    void pause_key (bool songmode = false);
-    void stop_key ();
     void group_learn (bool flag);
     void group_learn_complete (const keystroke & k, bool good = true);
     bool needs_update (seq::number seqno = seq::all()) const;
@@ -2644,15 +2635,12 @@ public:
         return mapper().name(sset);
     }
 
-    /**
-     * \setter m_looping
-     *
-     * \param looping
-     *      The boolean value to set for looping, used in the performance
-     *      editor.
-     */
+    bool looping () const
+    {
+        return m_looping;
+    }
 
-    void set_looping (bool looping)
+    void looping (bool looping)
     {
         m_looping = looping;
     }
@@ -2864,12 +2852,12 @@ public:         /* GUI-support functions */
 
     void song_recording_start ()
     {
-        mapper().song_recording_start(m_current_tick);
+        mapper().song_recording_start(pad().js_current_tick);
     }
 
     void song_recording_stop ()
     {
-        mapper().song_recording_stop(m_current_tick);
+        mapper().song_recording_stop(pad().js_current_tick);
     }
 
     bool seq_in_playing_screen (int seq)
@@ -2949,6 +2937,7 @@ public:         /* GUI-support functions */
 
 private:
 
+    void show_cpu ();
     void playlist_activate (bool on);
     bool set_recording (seq::number seqno, bool active, bool toggle);
     bool set_quantized_recording (seq::number seqno, bool active, bool toggle);

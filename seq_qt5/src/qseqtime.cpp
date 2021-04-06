@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-07
+ * \updates       2021-04-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -167,8 +167,10 @@ qseqtime::paintEvent (QPaintEvent *)
     int end_x = xoffset(length) - scroll_offset_x() - 20;
 
 #if defined USE_L_R_PATTERN_MARKERS
-    int left_x = xoffset(perf().get_left_tick()) - scroll_offset_x() + 4;
-    int right_x = xoffset(perf().get_right_tick()) - scroll_offset_x() - 7;
+    midipulse left = perf().get_left_tick();
+    midipulse right = perf().get_right_tick();
+    int left_x = xoffset(left) - scroll_offset_x() + 4;
+    int right_x = xoffset(right) - scroll_offset_x() - 7;
 #endif
 
 
@@ -183,13 +185,13 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.setPen(pen);
 
 #if defined USE_L_R_PATTERN_MARKERS
-    if (left_x > 0 && left_x < end_x)
+    if (left >= snap() && left < length - snap())
     {
         painter.setBrush(brush);
         painter.drawRect(left_x, 10, 8, 24);        // black background
         pen.setColor(Qt::white);                        // white label text
         painter.setPen(pen);
-        painter.drawText(left_x, 18, "L");
+        painter.drawText(left_x + 1, 18, "L");
     }
 #endif
 
@@ -198,16 +200,18 @@ qseqtime::paintEvent (QPaintEvent *)
     painter.drawRect(end_x, 10, 20, 24);            // black background
     pen.setColor(Qt::white);                        // white label text
     painter.setPen(pen);
-    painter.drawText(end_x, 18, tr("END"));
+    painter.drawText(end_x + 2, 18, tr("END"));
 
 #if defined USE_L_R_PATTERN_MARKERS
-    if (right_x > 0 && right_x <= end_x)
+    if (right > left && right < length - snap())
     {
+        pen.setColor(Qt::black);
         painter.setBrush(brush);
+        painter.setPen(pen);
         painter.drawRect(right_x, 10, 8, 24);       // black background
         pen.setColor(Qt::white);                    // white label text
         painter.setPen(pen);
-        painter.drawText(right_x, 18, "R");
+        painter.drawText(right_x + 1, 18, "R");
     }
 #endif
 }
@@ -248,7 +252,7 @@ qseqtime::mousePressEvent (QMouseEvent * event)
             if (isctrl)
                 perf().set_start_tick(tick);
             else
-                perf().set_left_tick(tick);
+                perf().set_left_tick_seq(tick, snap());
 
             set_dirty();
         }
@@ -259,7 +263,7 @@ qseqtime::mousePressEvent (QMouseEvent * event)
         }
         else if (event->button() == Qt::RightButton)
         {
-            perf().set_right_tick(tick + snap());
+            perf().set_right_tick_seq(tick, snap());
             set_dirty();
         }
     }

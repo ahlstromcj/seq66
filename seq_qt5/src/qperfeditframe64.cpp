@@ -97,14 +97,23 @@ static const int c_trigger_transpose_max    =   60;
  *      The Qt widget that owns this frame.  Either the qperfeditex (the
  *      external window holding this frame) or the "Song" tab object in the
  *      main window.
+ *
+ * \param isexternal
+ *      Indicates that this is an external frame, so that we can reveal the Loop
+ *      button.
  */
 
-qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
- :
+qperfeditframe64::qperfeditframe64
+(
+    seq66::performer & p,
+    QWidget * parent,
+    bool isexternal
+) :
     QFrame                  (parent),
     ui                      (new Ui::qperfeditframe64),
     m_mainperf              (p),
     m_palette               (nullptr),
+    m_is_external           (isexternal),
     m_snap                  (8),
     m_beats_per_measure     (4),
     m_beat_width            (4),
@@ -258,18 +267,24 @@ qperfeditframe64::qperfeditframe64 (seq66::performer & p, QWidget * parent)
      * Collapse, Expand, Expand-Copy, Grow, and Loop buttons.
      */
 
-    connect(ui->btnCollapse, SIGNAL(clicked(bool)), this, SLOT(markerCollapse()));
+    connect(ui->btnCollapse, SIGNAL(clicked(bool)), this, SLOT(marker_collapse()));
     qt_set_icon(collapse_xpm, ui->btnCollapse);
-    connect(ui->btnExpand, SIGNAL(clicked(bool)), this, SLOT(markerExpand()));
+    connect(ui->btnExpand, SIGNAL(clicked(bool)), this, SLOT(marker_expand()));
     qt_set_icon(expand_xpm, ui->btnExpand);
     connect
     (
         ui->btnExpandCopy, SIGNAL(clicked(bool)),
-        this, SLOT(markerExpandCopy())
+        this, SLOT(marker_expand_copy())
     );
     qt_set_icon(copy_xpm, ui->btnExpandCopy);
-    connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(markerLoop(bool)));
-    qt_set_icon(loop_xpm, ui->btnLoop);
+
+    if (m_is_external)
+    {
+        connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(marker_loop(bool)));
+        qt_set_icon(loop_xpm, ui->btnLoop);
+    }
+    else
+        ui->btnLoop->hide();
 
     /*
      *  The width of the qperfroll is based on its sizeHint(), which is based on
@@ -591,21 +606,21 @@ qperfeditframe64::set_dirty ()
 }
 
 void
-qperfeditframe64::markerCollapse ()
+qperfeditframe64::marker_collapse ()
 {
     perf().collapse();
     set_dirty();
 }
 
 void
-qperfeditframe64::markerExpand ()
+qperfeditframe64::marker_expand ()
 {
     perf().expand();
     set_dirty();
 }
 
 void
-qperfeditframe64::markerExpandCopy ()
+qperfeditframe64::marker_expand_copy ()
 {
     perf().copy();
     set_dirty();
@@ -635,9 +650,15 @@ qperfeditframe64::set_trigger_transpose (int tpose)
 }
 
 void
-qperfeditframe64::markerLoop (bool loop)
+qperfeditframe64::marker_loop (bool loop)
 {
-    perf().set_looping(loop);
+    perf().looping(loop);
+}
+
+void
+qperfeditframe64::set_loop_button (bool looping)
+{
+    ui->btnLoop->setChecked(looping);
 }
 
 }           // namespace seq66

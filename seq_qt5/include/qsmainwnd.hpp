@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-20
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -310,6 +310,12 @@ private:
     bool m_song_mode;
 
     /**
+     *  Hold the current looping status.
+     */
+
+    bool m_is_looping;
+
+    /**
      *  Duty now for the future!
      */
 
@@ -398,6 +404,7 @@ private slots:
     void update_bank (int newBank);
     void update_bank_text (const QString &);
     void start_playing ();
+    void set_loop (bool loop);
     void pause_playing ();
     void stop_playing ();
     void set_song_mode (bool song_mode);

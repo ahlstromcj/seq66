@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-21
- * \updates       2020-07-27
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  */
@@ -80,7 +80,7 @@ qperfeditex::qperfeditex (performer & p, qsmainwnd * parent)
     ui->setupUi(this);
 
     QGridLayout * layout = new QGridLayout(this);
-    m_edit_frame = new qperfeditframe64(p, this);
+    m_edit_frame = new qperfeditframe64(p, this, true); /* external frame   */
     layout->addWidget(m_edit_frame);
     show();
     m_edit_frame->show();
@@ -120,6 +120,13 @@ qperfeditex::update_sizes ()
 {
     if (not_nullptr(m_edit_frame))
         m_edit_frame->update_sizes();
+}
+
+void
+qperfeditex::set_loop_button (bool looping)
+{
+    if (not_nullptr(m_edit_frame))
+        m_edit_frame->set_loop_button(looping);
 }
 
 }               // namespace seq66

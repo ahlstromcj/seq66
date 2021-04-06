@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-01
+ * \updates       2021-04-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -332,7 +332,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_play_list             (),
     m_note_mapper           (new notemapper()),
     m_song_start_mode       (sequence::playback::live),
-    m_start_from_perfedit   (false),
     m_reposition            (false),
     m_excell_FF_RW          (1.0),
     m_FF_RW_button_type     (ff_rw::none),
@@ -368,7 +367,6 @@ performer::performer (int ppqn, int rows, int columns) :
     m_song_recording        (false),
     m_song_record_snap      (true),
     m_resume_note_ons       (usr().resume_note_ons()),
-    m_current_tick          (0.0),
     m_ppqn                  (choose_ppqn(ppqn)),
     m_file_ppqn             (0),
     m_bpm                   (SEQ66_DEFAULT_BPM),
@@ -389,6 +387,7 @@ performer::performer (int ppqn, int rows, int columns) :
     m_right_tick            (0),
     m_starting_tick         (0),
     m_tick                  (0),
+    m_jack_pad              (),                 /* data for JACK... & ALSA  */
     m_jack_tick             (0),
     m_usemidiclock          (false),            /* MIDI Clock support       */
     m_midiclockrunning      (false),
@@ -1398,18 +1397,18 @@ performer::ui_change_set_bus (int buss)
  */
 
 void
-performer::inner_start (bool songmode)
+performer::inner_start ()
 {
     if (! is_running())
     {
-        song_mode(songmode);            /* playback_mode(p)             */
+        bool songmode = song_mode();
         if (songmode)
-            off_sequences();
+            off_sequences();            /* mute in prep for song playback   */
 
         is_running(true);
 
 #if ! defined SEQ66_PLATFORM_WINDOWS
-        automutex lk(cv().locker());    /* use the condition's recmutex */
+        automutex lk(cv().locker());    /* use the condition's recmutex     */
 #endif
         cv().signal();
         send_onoff_event(midicontrolout::uiaction::play, true);
@@ -1436,7 +1435,6 @@ performer::inner_start (bool songmode)
 void
 performer::inner_stop (bool midiclock)
 {
-    start_from_perfedit(false);
     is_running(false);
     reset_sequences();                  /* resets, and flushes the buss     */
     m_usemidiclock = midiclock;
@@ -1900,15 +1898,15 @@ performer::clear_song ()
  *  the same thing but also checks the sequence for being active.  Is it worth
  *  it?
  *
- * \param pause
+ * \param p
  *      Try to prevent notes from lingering on pause if true.  By default, it
  *      is false.
  */
 
 void
-performer::reset_sequences (bool pause)
+performer::reset_sequences (bool p)
 {
-    void (sequence::* f) (bool) = pause ? &sequence::pause : &sequence::stop ;
+    void (sequence::* f) (bool) = p ? &sequence::pause : &sequence::stop ;
     bool songmode = song_mode();
     for (auto & seqi : m_play_set.seq_container())
         (seqi.get()->*f)(songmode);
@@ -2444,14 +2442,11 @@ performer::activate ()
 
 /**
  *  This version for song-recording not only logs m_tick, it also does JACK
- *  positioning (if applicable), calls the master bus's continue_from()
- *  function, and sets m_current_tick as well.
+ *  positioning (if applicable), and calls the master bus's continue_from()
+ *  function.
  *
  *  For debugging: Display the tick values; normally this is too much
  *  information.
- *
- * \todo
- *      Do we really need m_current_tick???
  */
 
 void
@@ -2470,7 +2465,7 @@ performer::set_tick (midipulse tick)
         s_last_tick = 0;
 #endif
 
-    m_tick = m_current_tick = tick;
+    m_tick = tick;
 }
 
 /**
@@ -2486,29 +2481,19 @@ performer::set_tick (midipulse tick)
  *      tick is greater than or equal to the right tick, then the right ticked
  *      is moved forward by one "measure's length" (m_ppqn * 4) past the left
  *      tick.
- *
- * \param setstart
- *      If true (the default, and long-standing implicit setting), then the
- *      starting tick is also set to the left tick.
  */
 
 void
-performer::set_left_tick (midipulse tick, bool setstart)
+performer::set_left_tick (midipulse tick)
 {
     m_left_tick = tick;
-    if (setstart)
-        set_start_tick(tick);
-
-#if defined SEQ66_JACK_SUPPORT
+    set_start_tick(tick);
+    m_reposition = false;
     if (is_jack_master())                       /* don't use in slave mode  */
         position_jack(true, tick);
     else if (! is_jack_running())
         set_tick(tick);
-#else
-    set_tick(tick);
-#endif
 
-    m_reposition = false;
     if (m_left_tick >= m_right_tick)
         m_right_tick = m_left_tick + m_one_measure;
 }
@@ -2523,14 +2508,10 @@ performer::set_left_tick (midipulse tick, bool setstart)
  *      or equal to the left tick setting, then the left tick is backed up by
  *      one "measure's worth" (m_ppqn * 4) worth of ticks from the new right
  *      tick.
- *
- * \param setstart
- *      If true (the default, and long-standing implicit setting), then the
- *      starting tick is also set to the left tick, if that got changed.
  */
 
 void
-performer::set_right_tick (midipulse tick, bool setstart)
+performer::set_right_tick (midipulse tick)
 {
     if (tick == 0)
         tick = m_one_measure;
@@ -2541,21 +2522,55 @@ performer::set_right_tick (midipulse tick, bool setstart)
         if (m_right_tick <= m_left_tick)
         {
             m_left_tick = m_right_tick - m_one_measure;
-            if (setstart)
-                set_start_tick(m_left_tick);
-
-            /*
-             * Do this no matter the value of setstart, to match stazed's
-             * implementation.
-             */
-
+            set_start_tick(m_left_tick);
+            m_reposition = false;
             if (is_jack_master())
                 position_jack(true, m_left_tick);
             else
                 set_tick(m_left_tick);
-
-            m_reposition = false;
         }
+    }
+}
+
+void
+performer::set_left_tick_seq (midipulse tick, midipulse snap)
+{
+    midipulse remainder = tick % snap;
+    if (remainder > (snap / 2))
+        tick += snap - remainder;               /* move up to next snap     */
+    else
+        tick -= remainder;                      /* move down to next snap   */
+
+    if (tick < m_right_tick || m_right_tick == 0)
+    {
+        m_left_tick = tick;
+        set_start_tick(tick);
+        m_reposition = false;
+        if (is_jack_master())                   /* don't use in slave mode  */
+            position_jack(true, tick);
+        else if (! is_jack_running())
+            set_tick(tick);
+    }
+}
+
+void
+performer::set_right_tick_seq (midipulse tick, midipulse snap)
+{
+    midipulse remainder = tick % snap;
+    if (remainder > (snap / 2))
+        tick += snap - remainder;               /* move up to next snap     */
+    else
+        tick -= remainder;                      /* move down to next snap   */
+
+    if (tick > m_left_tick)
+    {
+        m_right_tick = tick;
+        set_start_tick(m_left_tick);
+        m_reposition = false;
+        if (is_jack_master())
+            position_jack(true, m_left_tick);
+        else
+            set_tick(m_left_tick);
     }
 }
 
@@ -2781,19 +2796,19 @@ performer::set_thru (seq::number seqno, bool thruon, bool toggle)
  *  Encapsulates behavior needed by perfedit.  Note that we moved some of the
  *  code from perfedit::set_jack_mode() [the seq32 version] to this function.
  *
- * \param jack_button_active
- *      Indicates if the perfedit JACK button shows it is active.
+ * \param connect
+ *      Indicates if JACK is to be connected versus disconnected.
  *
  * \return
  *      Returns true if JACK is running currently, and false otherwise.
  */
 
 bool
-performer::set_jack_mode (bool jack_button_active)
+performer::set_jack_mode (bool connect)
 {
     if (! is_running())                         /* was global_is_running    */
     {
-        if (jack_button_active)
+        if (connect)
             (void) init_jack_transport();
         else
             (void) deinit_jack_transport();
@@ -2879,6 +2894,7 @@ performer::set_jack_mode (bool jack_button_active)
 void
 performer::output_func ()
 {
+    show_cpu();
     while (m_io_active)                     /* should we LOCK this variable */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
@@ -2892,59 +2908,57 @@ performer::output_func ()
             }
         }
 
-#if defined SEQ66_PLATFORM_DEBUG && defined SEQ66_PLATFORM_LINUX
-        if (rc().verbose())
-            infoprintf("output_func() running on CPU #%d", sched_getcpu());
-#endif
-
-        jack_scratchpad pad;
-        pad.js_total_tick = 0.0;            /* double... long probably ...  */
-        pad.js_clock_tick = 0;              /* ... offers more ticks        */
+        midipulse currenttick = 0;
         if (m_dont_reset_ticks)
+            currenttick = get_jack_tick();
+        else if (looping())
+            currenttick = get_left_tick();  /* == m_starting_tick */
+
+        pad().initialize(currenttick, looping(), song_mode());
+
+        /*
+         * If song-mode Master, then start the left tick marker if the Stazed
+         * "key-p" position was set.  If live-mode master, start at 0.
+         */
+
+        if (song_mode())
         {
-            pad.js_current_tick = get_jack_tick();
+            if (is_jack_master() && m_reposition)
+                position_jack(true, get_left_tick());
         }
         else
-        {
-            pad.js_current_tick = 0.0;      /* tick and tick fraction       */
-            pad.js_total_tick = 0.0;
-            m_current_tick = 0.0;
-        }
-
-        pad.js_jack_stopped = false;
-        pad.js_dumping = false;
-        pad.js_init_clock = true;
-        pad.js_looping = m_looping;
-        pad.js_playback_mode = song_mode();
-        pad.js_ticks_converted_last = 0.0;
-        pad.js_ticks_converted = 0.0;
-        pad.js_ticks_delta = 0.0;
-        pad.js_delta_tick_frac = 0L;        /* seq24 0.9.3; long value      */
+            position_jack(false, 0);
 
         /*
          *  See note 1 in the function banner.
          */
 
-        bool ok = jack_song_mode() && ! m_dont_reset_ticks;
+#if 0
+        bool ok = jackless_song_mode() && ! m_dont_reset_ticks;
+        bool ok = ! is_jack_running() && ! m_dont_reset_ticks;
         m_dont_reset_ticks = false;
         if (ok)
         {
-            m_current_tick = double(m_starting_tick);
-            pad.js_current_tick = long(m_starting_tick);
-            pad.js_clock_tick = m_starting_tick;
+            pad().set_current_tick(m_starting_tick);
             set_last_ticks(m_starting_tick);
         }
+#endif
+
+        midipulse startpoint = looping() ? get_left_tick() : get_start_tick() ;
+        pad().set_current_tick(startpoint);
+        set_last_ticks(startpoint);
 
         /*
          * We still need to make sure the BPM and PPQN changes are airtight!
          * Check jack_set_beats_per_minute() and change_ppqn()
          */
 
-        midibpm bpm = m_master_bus->get_beats_per_minute();
+        double bwdenom = 4.0 / get_beat_width();
+        midibpm bpmfactor = m_master_bus->get_beats_per_minute() * bwdenom;
         int ppqn = m_master_bus->get_ppqn();
-        int bpm_times_ppqn = bpm * ppqn;
+        int bpm_times_ppqn = bpmfactor * ppqn;
         double dct = double_ticks_from_ppqn(ppqn);
-        double pus = pulse_length_us(bpm, ppqn);
+        double pus = pulse_length_us(bpmfactor, ppqn);
         long current;                           /* current time             */
         long delta, delta_us;                   /* current - last           */
         long last = microtime();                /* beginning time           */
@@ -2953,11 +2967,12 @@ performer::output_func ()
         {
             if (m_resolution_change)
             {
-                bpm = m_master_bus->get_beats_per_minute();
+                bwdenom = 4.0 / get_beat_width();
+                bpmfactor = m_master_bus->get_beats_per_minute() * bwdenom;
                 ppqn = m_master_bus->get_ppqn();
-                bpm_times_ppqn = bpm * ppqn;
+                bpm_times_ppqn = bpmfactor * ppqn;
                 dct = double_ticks_from_ppqn(ppqn);
-                pus = pulse_length_us(bpm, ppqn);
+                pus = pulse_length_us(bpmfactor, ppqn);
                 m_resolution_change = false;
             }
 
@@ -2970,35 +2985,29 @@ performer::output_func ()
             delta_us = delta = current - last;
 
             long long delta_tick_num = bpm_times_ppqn * delta_us +
-                pad.js_delta_tick_frac;
+                pad().js_delta_tick_frac;
 
             long delta_tick = long(delta_tick_num / 60000000LL);
-            pad.js_delta_tick_frac = long(delta_tick_num % 60000000LL);
+            pad().js_delta_tick_frac = long(delta_tick_num % 60000000LL);
             if (m_usemidiclock)
             {
-                delta_tick = m_midiclocktick;       /* int to double */
+                delta_tick = m_midiclocktick;       /* int to long          */
                 m_midiclocktick = 0;
-            }
-            if (m_midiclockpos >= 0)
-            {
-                delta_tick = 0;
-                m_current_tick = double(m_midiclockpos);
-                pad.js_clock_tick = pad.js_current_tick = pad.js_total_tick =
-                    m_midiclockpos;
-
-                m_midiclockpos = -1;
+                if (m_midiclockpos >= 0)            /* was after this if    */
+                {
+                    delta_tick = 0;
+                    pad().set_current_tick(midipulse(m_midiclockpos));
+                    m_midiclockpos = -1;
+                }
             }
 
-#if defined SEQ66_JACK_SUPPORT
-            bool jackrunning = m_jack_asst.output(pad);
+            bool jackrunning = m_jack_asst.output(pad());
             if (jackrunning)
             {
                 // No additional code needed besides the output() call above.
             }
             else
             {
-#endif
-
 #if defined USE_THIS_STAZED_CODE_WHEN_READY
                 /*
                  * If we reposition key-p, FF, rewind, adjust delta_tick for
@@ -3010,7 +3019,7 @@ performer::output_func ()
                  * doesn't have).
                  */
 
-                if (song_mode() && && ! m_usemidiclock && m_reposition)
+                if (song_mode() && ! m_usemidiclock && m_reposition)
                 {
                     current_tick = clock_tick;
                     delta_tick = m_starting_tick - clock_tick;
@@ -3026,21 +3035,19 @@ performer::output_func ()
                  * running.  Add the delta to the current ticks.
                  */
 
-                pad.js_clock_tick += delta_tick;
-                pad.js_current_tick += delta_tick;
-                pad.js_total_tick += delta_tick;
-                pad.js_dumping = true;
-                m_current_tick = double(pad.js_current_tick);
+                pad().add_delta_tick(delta_tick);
 #if defined SEQ66_JACK_SUPPORT
             }
 #endif
 
+
+#if defined USE_ODD_CHANGE_POSITION_CODE             // ca 2021-04-05 EXPERIMENT
             /*
              * If we reposition key-p from perfroll, reset to adjusted
-             * start.
+             * start. See around line #3065!
              */
 
-            bool change_position = jack_song_mode() && ! m_usemidiclock;
+            bool change_position = jackless_song_mode() && ! m_usemidiclock;
             if (change_position)
                 change_position = m_reposition;
 
@@ -3050,27 +3057,28 @@ performer::output_func ()
                 m_starting_tick = m_left_tick;      /* restart at L marker  */
                 m_reposition = false;
             }
+#endif
 
             /*
-             * pad.js_init_clock will be true when we run for the first time,
+             * pad().js_init_clock will be true when we run for the first time,
              * or as soon as JACK gets a good lock on playback.
              */
 
-            if (pad.js_init_clock)
+            if (pad().js_init_clock)
             {
-                m_master_bus->init_clock(midipulse(pad.js_clock_tick));
-                pad.js_init_clock = false;
+                m_master_bus->init_clock(midipulse(pad().js_clock_tick));
+                pad().js_init_clock = false;
             }
-            if (pad.js_dumping)
+            if (pad().js_dumping)
             {
-                /*
-                 * THIS IS A MESS WE WILL HAVE TO SORT OUT.  If looping, then
-                 * we ought to play if any of the tested flags are true.
-                 */
+                bool perfloop = looping();
 
-                bool perfloop = m_looping;
+                /*
+                 *  Let's allow looping anytime the loop flag is set.
+                 *
                 if (perfloop)
                     perfloop = song_mode() || start_from_perfedit();
+                 */
 
                 if (perfloop)
                 {
@@ -3081,7 +3089,7 @@ performer::output_func ()
 
                     static bool jack_position_once = false;
                     midipulse rtick = get_right_tick();     /* can change? */
-                    if (pad.js_current_tick >= rtick)
+                    if (pad().js_current_tick >= rtick)
                     {
                         if (is_jack_master() && ! jack_position_once)
                         {
@@ -3089,14 +3097,15 @@ performer::output_func ()
                             jack_position_once = true;
                         }
 
-                        double leftover_tick = pad.js_current_tick - rtick;
+                        double leftover_tick = pad().js_current_tick - rtick;
                         if (jack_transport_not_starting())  /* no FF/RW xrun */
                             play(rtick - 1);
 
+                        reset_sequences();
+
                         midipulse ltick = get_left_tick();
                         set_last_ticks(ltick);
-                        m_current_tick = double(ltick) + leftover_tick;
-                        pad.js_current_tick = double(ltick) + leftover_tick;
+                        pad().js_current_tick = double(ltick) + leftover_tick;
                     }
                     else
                         jack_position_once = false;
@@ -3108,31 +3117,27 @@ performer::output_func ()
                  */
 
                 if (jack_transport_not_starting())
-                    play(midipulse(pad.js_current_tick));
+                    play(midipulse(pad().js_current_tick));
 
                 /*
                  * The next line enables proper pausing in both old and seq32
                  * JACK builds.
                  */
 
-                set_jack_tick(pad.js_current_tick);
-                m_master_bus->emit_clock(midipulse(pad.js_clock_tick));
+                set_jack_tick(pad().js_current_tick);
+                m_master_bus->emit_clock(midipulse(pad().js_clock_tick));
             }
 
             /**
              *  Figure out how much time we need to sleep, and do it.
+             *  Then we want to trigger every c_thread_trigger_width_us; it
+             *  took us delta_us to play().  Also known as the "sleeping_us".
+             *  Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm.
              */
 
             last = current;
             current = microtime();
             delta = current - last;
-
-            /**
-             * Now we want to trigger every c_thread_trigger_width_us, and it
-             * took us delta_us to play().  Also known as the "sleeping_us".
-             * Check MIDI clock adjustment:  60000000.0f / m_ppqn * / bpm
-             */
-
             delta_us = c_thread_trigger_width_us - delta;
 
             double next_clock_delta = dct - 1;
@@ -3148,7 +3153,7 @@ performer::output_func ()
             {
                 printf("Underrun in playback %ld us\r", delta_us);
             }
-            if (pad.js_jack_stopped)
+            if (pad().js_jack_stopped)
                 inner_stop();
         }
 
@@ -3503,10 +3508,9 @@ performer::poll_cycle ()
  */
 
 void
-performer::start_playing (bool songmode)
+performer::start_playing ()
 {
-    m_start_from_perfedit = songmode;
-    songmode = songmode || song_mode();
+    bool songmode = song_mode();
     if (songmode)
     {
        /*
@@ -3536,7 +3540,7 @@ performer::start_playing (bool songmode)
         }
     }
     start_jack();
-    start(songmode);                                    /* Song vs Live     */
+    start();
     for (auto notify : m_notify)
         (void) notify->on_automation_change(automation::slot::start);
 }
@@ -3570,20 +3574,15 @@ performer::start_playing (bool songmode)
  */
 
 void
-performer::pause_playing (bool songmode)
+performer::pause_playing ()
 {
     m_dont_reset_ticks = true;
     is_running(! is_running());
     stop_jack();
-    if (is_jack_running())
-    {
-        m_start_from_perfedit = songmode;   /* act like start_playing()     */
-    }
-    else
+    if (! is_jack_running())
     {
         reset_sequences(true);              /* don't reset "last-tick"      */
         m_usemidiclock = false;
-        m_start_from_perfedit = false;      /* act like stop_playing()      */
     }
     send_onoff_play_states(midicontrolout::uiaction::pause);
 }
@@ -3600,7 +3599,7 @@ performer::stop_playing ()
 {
     stop_jack();
     stop();
-    m_dont_reset_ticks = m_start_from_perfedit = false;
+    m_dont_reset_ticks = false;
     for (auto notify : m_notify)
         (void) notify->on_automation_change(automation::slot::stop);
 }
@@ -3608,7 +3607,6 @@ performer::stop_playing ()
 void
 performer::auto_play ()
 {
-    bool songmode = song_mode();
     bool onekey = false;                /* keys().start() == keys().stop(); */
     bool isplaying = false;
     if (onekey)
@@ -3619,13 +3617,13 @@ performer::auto_play ()
         }
         else
         {
-            start_playing(songmode);
+            start_playing();
             isplaying = true;
         }
     }
     else if (! is_running())
     {
-        start_playing(songmode);
+        start_playing();
         isplaying = true;
     }
     is_pattern_playing(isplaying);
@@ -3634,17 +3632,16 @@ performer::auto_play ()
 void
 performer::auto_pause ()
 {
-    bool songmode = song_mode();
     bool isplaying = false;
     if (is_running())
     {
-        pause_playing(songmode);
+        pause_playing();
         send_onoff_event(midicontrolout::uiaction::play, false);
         send_onoff_event(midicontrolout::uiaction::panic, true);
     }
     else
     {
-        start_playing(songmode);
+        start_playing();
         isplaying = true;
         send_onoff_event(midicontrolout::uiaction::play, true);
         send_onoff_event(midicontrolout::uiaction::panic, false);
@@ -4270,6 +4267,15 @@ performer::pop_trigger_redo ()
  *  Other handling
  * -------------------------------------------------------------------------
  */
+
+void
+performer::show_cpu ()
+{
+#if defined SEQ66_PLATFORM_LINUX
+    if (rc().verbose())
+        infoprintf("output_func() running on CPU #%d", sched_getcpu());
+#endif
+}
 
 /**
  *  Simple error reporting for debugging.

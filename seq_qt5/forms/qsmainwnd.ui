@@ -388,7 +388,7 @@ It does not change Seq66's default PPQN.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -810,7 +810,7 @@ It does not change Seq66's default PPQN.</string>
            <string>Panic - send global note off signal</string>
           </property>
           <property name="text">
-           <string/>
+           <string>Panic</string>
           </property>
           <property name="iconSize">
            <size>
@@ -850,7 +850,7 @@ It does not change Seq66's default PPQN.</string>
            <string>Stop playback.</string>
           </property>
           <property name="text">
-           <string/>
+           <string>Stop</string>
           </property>
           <property name="checkable">
            <bool>false</bool>
@@ -881,7 +881,7 @@ It does not change Seq66's default PPQN.</string>
            <string>Pauses playback, so that the current location is preserved.</string>
           </property>
           <property name="text">
-           <string/>
+           <string>Pause</string>
           </property>
          </widget>
         </item>
@@ -912,13 +912,41 @@ It does not change Seq66's default PPQN.</string>
            <string>Start playback.</string>
           </property>
           <property name="text">
-           <string/>
+           <string>Play</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
           </property>
           <property name="autoRepeat">
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btnLoop">
+          <property name="minimumSize">
+           <size>
+            <width>32</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Loop</string>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>33</width>
+            <height>12</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -952,7 +980,7 @@ It does not change Seq66's default PPQN.</string>
            <string>Record live sequence changes into the Song Editor.</string>
           </property>
           <property name="text">
-           <string/>
+           <string>Rec</string>
           </property>
           <property name="checkable">
            <bool>true</bool>
@@ -1011,7 +1039,7 @@ It does not change Seq66's default PPQN.</string>
            <string>Mute Group Learn. Click the L button, then press a mute-group key to store the mute state of the sequences in the Shift of that key.</string>
           </property>
           <property name="text">
-           <string>L</string>
+           <string>Learn</string>
           </property>
          </widget>
         </item>
@@ -1021,13 +1049,13 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QPushButton" name="testButton">
         <property name="minimumSize">
          <size>
-          <width>24</width>
+          <width>16</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>32</width>
+          <width>16</width>
           <height>28</height>
          </size>
         </property>
@@ -1174,13 +1202,13 @@ It does not change Seq66's default PPQN.</string>
        <widget class="QPushButton" name="btn_set_HMS">
         <property name="minimumSize">
          <size>
-          <width>72</width>
+          <width>56</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>72</width>
+          <width>56</width>
           <height>28</height>
          </size>
         </property>

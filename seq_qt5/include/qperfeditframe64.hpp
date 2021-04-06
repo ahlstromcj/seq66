@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-03-31
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  *  Note that the z and Z keys, when focus is on the perfroll (piano roll), will
@@ -76,7 +76,7 @@ private:
 
 public:
 
-    qperfeditframe64 (performer & p, QWidget * parent = nullptr);
+    qperfeditframe64 (performer & p, QWidget * parent, bool isexternal = false);
 
     virtual ~qperfeditframe64 ();
 
@@ -105,6 +105,7 @@ public:
     void follow_progress ();
     void update_sizes ();
     void set_dirty ();
+    void set_loop_button (bool looping);
 
 private:
 
@@ -127,10 +128,10 @@ private slots:
     void zoom_out ();
     void reset_transpose ();
     void update_transpose (int index);
-    void markerCollapse ();
-    void markerExpand ();
-    void markerExpandCopy ();
-    void markerLoop (bool loop);
+    void marker_collapse ();
+    void marker_expand ();
+    void marker_expand_copy ();
+    void marker_loop (bool loop);
     void grow ();
     void follow (bool ischecked);
     void entry_mode (bool ischecked);
@@ -142,7 +143,8 @@ private:
     Ui::qperfeditframe64 * ui;
     performer & m_mainperf;
     QPalette * m_palette;
-    int m_snap;                 /* set snap-to in pulses/ticks  */
+    bool m_is_external;
+    int m_snap;                         /* set snap-to in pulses/ticks  */
     int m_beats_per_measure;
     int m_beat_width;
     int m_trigger_transpose;

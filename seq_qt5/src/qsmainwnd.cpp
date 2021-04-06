@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-03-28
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -119,6 +119,7 @@
 
 #include "pixmaps/learn.xpm"
 #include "pixmaps/learn2.xpm"
+#include "pixmaps/loop.xpm"
 #include "pixmaps/live_mode.xpm"        /* #include "pixmaps/song_mode.xpm" */
 #include "pixmaps/panic.xpm"
 #include "pixmaps/pause.xpm"
@@ -240,6 +241,7 @@ qsmainwnd::qsmainwnd
     m_ppqn_list             (default_ppqns()),  /* see the settings module  */
     m_control_status        (automation::ctrlstatus::none),
     m_song_mode             (false),
+    m_is_looping            (false),
     m_use_nsm               (usensm),
     m_is_title_dirty        (true),
     m_tick_time_as_bbt      (true),
@@ -501,6 +503,14 @@ qsmainwnd::qsmainwnd
 
     connect(ui->btnPlay, SIGNAL(clicked(bool)), this, SLOT(start_playing()));
     qt_set_icon(play2_xpm, ui->btnPlay);
+
+    /*
+     * L/R Loop button.
+     */
+
+    ui->btnLoop->setChecked(perf().looping());
+    connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(set_loop(bool)));
+    qt_set_icon(loop_xpm, ui->btnLoop);
 
     /*
      * Song Play (Live vs Song) button.
@@ -912,6 +922,14 @@ qsmainwnd::start_playing ()
     perf().auto_play();
     ui->btnPause->setChecked(false);
     ui->btnPlay->setChecked(true);
+}
+
+void
+qsmainwnd::set_loop (bool looping)
+{
+    perf().looping(looping);
+    if (not_nullptr(m_perfedit))
+        m_perfedit->set_loop_button(looping);
 }
 
 void
@@ -1472,6 +1490,11 @@ qsmainwnd::refresh ()
     {
         m_song_mode = perf().song_mode();
         show_song_mode(m_song_mode);
+    }
+    if (m_is_looping != perf().looping())
+    {
+        m_is_looping = perf().looping();
+        ui->btnLoop->setChecked(m_is_looping);
     }
     if (m_control_status != perf().ctrl_status())
     {

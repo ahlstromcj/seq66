@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-23
- * \updates       2021-01-20
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  *  This class contains a number of functions that used to reside in the
@@ -66,8 +66,7 @@ namespace seq66
  *  performer and jack_assistant object.  The jack_assistant class already
  *  has access to the members of performer, but it needs access to and
  *  modification of "local" variables in performer::output_func().  This
- *  scratchpad is useful even if JACK support is not enabled. This struct is
- *  also used if JACK is not support.
+ *  scratchpad structure is useful even if JACK support is not enabled.
  */
 
 class jack_scratchpad
@@ -87,6 +86,13 @@ public:
     double js_ticks_delta;              /**< Minor difference in tick.      */
     double js_ticks_converted_last;     /**< Keeps track of position?       */
     long js_delta_tick_frac;            /**< More precision for seq66 0.9.3 */
+
+public:
+
+    jack_scratchpad ();
+    void initialize (midipulse currenttick, bool islooping, bool songmode);
+    void set_current_tick (midipulse curtick);
+    void add_delta_tick (midipulse deltick);
 
 };
 
@@ -480,12 +486,12 @@ public:
         return m_toggle_jack;
     }
 
-    midipulse get_jack_stop_tick () const
+    midipulse jack_stop_tick () const
     {
         return m_jack_stop_tick;
     }
 
-    void set_jack_stop_tick (long tick)
+    void jack_stop_tick (long tick)
     {
         m_jack_stop_tick = tick;
     }

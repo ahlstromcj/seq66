@@ -83,6 +83,7 @@ public:
     virtual ~qperfeditex ();
 
     void update_sizes ();
+    void set_loop_button (bool looping);
 
 protected:
 

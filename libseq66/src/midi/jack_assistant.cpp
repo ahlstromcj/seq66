@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-03-25
+ * \updates       2021-04-06
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -77,6 +77,12 @@
 
 namespace seq66
 {
+
+/*
+ * -------------------------------------------------------------------------
+ *  JACK Transport Callbacks
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  Apparently, MIDI pulses are 10 times the size of JACK ticks. So we need,
@@ -227,21 +233,18 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
              */
 
             long tick = j->current_jack_position();
-            long diff = tick - j->get_jack_stop_tick();
-            if (diff != 0)          // was (diff > 0) 2021-03-30
+            long diff = tick - p.jack_stop_tick();
+            if (diff != 0)                  // was (diff > 0) 2021-03-30
             {
                 p.set_reposition();
                 p.set_start_tick(tick);
-                j->set_jack_stop_tick(tick);
+                p.jack_stop_tick(tick);     // j->jack_stop_tick(tick);
             }
         }
         else /* if (s==JackTransportStarting || s==JackTransportRolling) */
         {
             j->m_jack_transport_state_last = JackTransportStarting;
-            if (p.start_from_perfedit())
-                p.inner_start(true);
-            else
-                p.inner_start();
+            p.inner_start();
         }
     }
     return 0;
@@ -474,6 +477,74 @@ show_jack_statuses (unsigned bits)
         ++jsp;
     }
 }
+
+/*
+ * -------------------------------------------------------------------------
+ *  JACK scratch-pad
+ * -------------------------------------------------------------------------
+ */
+
+jack_scratchpad::jack_scratchpad () :
+    js_current_tick         (0.0),
+    js_total_tick           (0.0),
+    js_clock_tick           (0.0),
+    js_jack_stopped         (false),
+    js_dumping              (false),
+    js_init_clock           (true),
+    js_looping              (false),
+    js_playback_mode        (false),
+    js_ticks_converted      (0.0),
+    js_ticks_delta          (0.0),
+    js_ticks_converted_last (0.0),
+    js_delta_tick_frac      (0L)
+{
+    // No other code
+}
+
+void
+jack_scratchpad::initialize
+(
+    midipulse currenttick,
+    bool islooping,
+    bool songmode
+)
+{
+    js_current_tick         = double(currenttick);
+    js_total_tick           = 0.0;
+    js_clock_tick           = 0.0;
+    js_jack_stopped         = false;
+    js_dumping              = false;
+    js_init_clock           = true;
+    js_looping              = islooping;
+    js_playback_mode        = songmode;
+    js_ticks_converted      = 0.0;
+    js_ticks_delta          = 0.0;
+    js_ticks_converted_last = 0.0;
+    js_delta_tick_frac      = 0L;
+}
+
+void
+jack_scratchpad::set_current_tick (midipulse curtick)
+{
+    double ct = double(curtick);
+    js_current_tick = js_total_tick = js_clock_tick = ct;
+}
+
+void
+jack_scratchpad::add_delta_tick (midipulse deltick)
+{
+    double dt = double(deltick);
+    js_current_tick += dt;
+    js_total_tick += dt;
+    js_clock_tick += dt;
+    js_dumping = true;
+}
+
+/*
+ * -------------------------------------------------------------------------
+ *  JACK Assistant
+ * -------------------------------------------------------------------------
+ */
 
 /**
  *  This constructor initializes a number of member variables, some

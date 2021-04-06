@@ -570,6 +570,8 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     /*
      *  MIDI buss items discovered at startup-time.  Not sure if we want to
      *  use the button to reset the buss, or increment to the next buss.
+     *  The combo-box loop could be moved to a repopulate_midibuss_combo()
+     *  function.
      */
 
     qt_set_icon(bus_xpm, ui->m_button_bus);
@@ -1745,6 +1747,7 @@ qseqeditframe64::set_midi_bus (int bus, bool user_change)
 void
 qseqeditframe64::repopulate_midich_combo (int buss)
 {
+    int channel = seq_pointer()->seq_midi_channel();
     ui->m_combo_channel->clear();
     for (int channel = 0; channel <= c_midichannel_max; ++channel)
     {
@@ -1769,6 +1772,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
             ui->m_combo_channel->insertItem(channel, combo_text);
         }
     }
+    ui->m_combo_channel->setCurrentIndex(channel);
 }
 
 /**
