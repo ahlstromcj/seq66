@@ -153,13 +153,23 @@ qseqbase::convert_xy (int x, int y, midipulse & tick, int & note)
 {
     tick = pix_to_tix(x);
     note = (m_total_height - y - 2) / m_unit_height;
+    if (note >= c_note_max)
+        note = c_note_max;
+    else if (note < 0)
+        note = 0;
+
 }
 
 void
 qseqbase::convert_tn (midipulse ticks, int note, int & x, int & y)
 {
-    x = ticks / zoom();
-    y = m_total_height - ((note + 1) * m_unit_height) - 1;
+    if (note >= 0 && note <= c_note_max)
+    {
+        x = ticks / zoom();
+        y = m_total_height - ((note + 1) * m_unit_height) - 1;
+    }
+    else
+        x = y = 0;
 }
 
 /**

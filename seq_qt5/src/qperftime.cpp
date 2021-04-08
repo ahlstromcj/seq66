@@ -195,16 +195,17 @@ qperftime::keyPressEvent (QKeyEvent * event)
     }
     else
     {
+        midipulse s = snap() > 0 ? snap() : 1 ;
         if (event->key() == Qt::Key_Left)
         {
             if (m_move_left)
             {
-                midipulse tick = perf().get_left_tick() - snap();
+                midipulse tick = perf().get_left_tick() - s;
                 perf().set_left_tick(tick);
             }
             else
             {
-                midipulse tick = perf().get_right_tick() - snap();
+                midipulse tick = perf().get_right_tick() - s;
                 perf().set_right_tick(tick);
             }
             set_dirty();
@@ -214,12 +215,12 @@ qperftime::keyPressEvent (QKeyEvent * event)
         {
             if (m_move_left)
             {
-                midipulse tick = perf().get_left_tick() + snap();
+                midipulse tick = perf().get_left_tick() + s;
                 perf().set_left_tick(tick);
             }
             else
             {
-                midipulse tick = perf().get_right_tick() + snap();
+                midipulse tick = perf().get_right_tick() + s;
                 perf().set_right_tick(tick);
             }
             set_dirty();
@@ -251,7 +252,9 @@ qperftime::mousePressEvent (QMouseEvent * event)
 {
     midipulse tick = midipulse(event->x());
     tick *= scale_zoom();
-    tick -= (tick % snap());
+    if (snap() > 0)
+        tick -= (tick % snap());
+
     if (event->y() > height() * 0.5)                    /* see banner note  */
     {
         bool isctrl = bool(event->modifiers() & Qt::ControlModifier);

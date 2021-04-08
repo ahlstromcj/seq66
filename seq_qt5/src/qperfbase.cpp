@@ -101,8 +101,13 @@ qperfbase::convert_xy (int x, int y, midipulse & tick, int & seq)
 void
 qperfbase::convert_ts (midipulse ticks, int seq, int & x, int & y)
 {
-    x = tix_to_pix(ticks);
-    y = m_total_height - ((seq + 1) * m_unit_height) - 1;
+    if (seq >= 0)
+    {
+        x = tix_to_pix(ticks);
+        y = m_total_height - ((seq + 1) * m_unit_height) - 1;
+    }
+    else
+        x = y = 0;
 }
 
 /**

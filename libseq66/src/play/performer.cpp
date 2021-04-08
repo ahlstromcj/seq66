@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-05
+ * \updates       2021-04-08
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2541,16 +2541,16 @@ performer::set_left_tick_seq (midipulse tick, midipulse snap)
     else
         tick -= remainder;                      /* move down to next snap   */
 
-    if (tick < m_right_tick || m_right_tick == 0)
-    {
-        m_left_tick = tick;
-        set_start_tick(tick);
-        m_reposition = false;
-        if (is_jack_master())                   /* don't use in slave mode  */
-            position_jack(true, tick);
-        else if (! is_jack_running())
-            set_tick(tick);
-    }
+    if (m_right_tick <= tick)
+        set_right_tick_seq(tick + 4 * snap, snap);
+
+    m_left_tick = tick;
+    set_start_tick(tick);
+    m_reposition = false;
+    if (is_jack_master())                   /* don't use in slave mode  */
+        position_jack(true, tick);
+    else if (! is_jack_running())
+        set_tick(tick);
 }
 
 void
@@ -2908,13 +2908,7 @@ performer::output_func ()
             }
         }
 
-        midipulse currenttick = 0;
-        if (m_dont_reset_ticks)
-            currenttick = get_jack_tick();
-        else if (looping())
-            currenttick = get_left_tick();  /* == m_starting_tick */
-
-        pad().initialize(currenttick, looping(), song_mode());
+        pad().initialize(0, looping(), song_mode());
 
         /*
          * If song-mode Master, then start the left tick marker if the Stazed
@@ -2933,18 +2927,14 @@ performer::output_func ()
          *  See note 1 in the function banner.
          */
 
-#if 0
-        bool ok = jackless_song_mode() && ! m_dont_reset_ticks;
-        bool ok = ! is_jack_running() && ! m_dont_reset_ticks;
-        m_dont_reset_ticks = false;
-        if (ok)
-        {
-            pad().set_current_tick(m_starting_tick);
-            set_last_ticks(m_starting_tick);
-        }
-#endif
+        midipulse startpoint;
+        if (m_dont_reset_ticks)
+            startpoint = get_tick();
+        else if (looping())
+            startpoint = get_left_tick();
+        else
+            startpoint = get_start_tick();
 
-        midipulse startpoint = looping() ? get_left_tick() : get_start_tick() ;
         pad().set_current_tick(startpoint);
         set_last_ticks(startpoint);
 
@@ -3024,7 +3014,7 @@ performer::output_func ()
                     current_tick = clock_tick;
                     delta_tick = m_starting_tick - clock_tick;
                     init_clock = true;
-                    m_starting_tick = m_left_tick;
+                    m_starting_tick = get_left_tick();
                     m_reposition = false;
                     m_reset_tempo_list = true;
                 }
@@ -3041,7 +3031,7 @@ performer::output_func ()
 #endif
 
 
-#if defined USE_ODD_CHANGE_POSITION_CODE             // ca 2021-04-05 EXPERIMENT
+#if defined USE_ODD_CHANGE_POSITION_CODE            // ca 2021-04-05 EXPERIMENT
             /*
              * If we reposition key-p from perfroll, reset to adjusted
              * start. See around line #3065!
@@ -3054,7 +3044,7 @@ performer::output_func ()
             if (change_position)
             {
                 set_last_ticks(m_starting_tick);
-                m_starting_tick = m_left_tick;      /* restart at L marker  */
+                m_starting_tick = get_left_tick();  /* restart at L marker  */
                 m_reposition = false;
             }
 #endif
@@ -3093,7 +3083,7 @@ performer::output_func ()
                     {
                         if (is_jack_master() && ! jack_position_once)
                         {
-                            position_jack(true, m_left_tick);
+                            position_jack(true, get_left_tick());
                             jack_position_once = true;
                         }
 
@@ -3168,7 +3158,7 @@ performer::output_func ()
         if (song_mode())
         {
             if (is_jack_master())                       // running Song Master
-                position_jack(song_mode(), m_left_tick);
+                position_jack(song_mode(), get_left_tick());
         }
         else
         {
@@ -3180,7 +3170,7 @@ performer::output_func ()
             if (! is_jack_running())
             {
                 if (song_mode())
-                    set_tick(m_left_tick);              // song mode default
+                    set_tick(get_left_tick());          // song mode default
                 else if (! m_dont_reset_ticks)
                     set_tick(0);                        // live mode default
             }
@@ -3526,7 +3516,7 @@ performer::start_playing ()
         */
 
        if (is_jack_master() && ! m_reposition)            // ca 2021-01-20
-           position_jack(true, m_left_tick);
+           position_jack(true, get_left_tick());
     }
     else
     {
@@ -3591,17 +3581,26 @@ performer::pause_playing ()
  *  Encapsulates a series of calls used in mainwnd.  Stops playback, turns off
  *  the (new) m_dont_reset_ticks flag, and set the "is-pattern-playing" flag
  *  to false.  With stop, reset the start-tick to either the left-tick or the
- *  0th tick (to be determined, currently resets to 0).
+ *  0th tick (to be determined, currently resets to 0).  If looping, act like
+ *  pause_playing(), but allow reset to the left tick (as opposed to 0).
  */
 
 void
 performer::stop_playing ()
 {
-    stop_jack();
-    stop();
-    m_dont_reset_ticks = false;
-    for (auto notify : m_notify)
-        (void) notify->on_automation_change(automation::slot::stop);
+    if (looping())
+    {
+        pause_playing();
+        m_dont_reset_ticks = false;
+    }
+    else
+    {
+        stop_jack();
+        stop();
+        m_dont_reset_ticks = false;
+        for (auto notify : m_notify)
+            (void) notify->on_automation_change(automation::slot::stop);
+    }
 }
 
 void
@@ -3961,7 +3960,18 @@ performer::selected_trigger
 }
 
 /**
- *  Adds a trigger on behalf of a sequence.
+ *  Adds a trigger on behalf of a sequence. The Seq24 behavior is that
+ *  the beginning of the sequence is snapped to the nearest value that is a
+ *  multiple of the sequence length. It grows forward or backward by one whole
+ *  sequence length.
+ *
+ *  With song-record-snap off, we
+ *  allow the user to place the trigger anywhere in tick-time, and provide the
+ *  whole sequence at that time, which can then be grown in either direction.
+ *
+ *  With song-record-snap on, we want the beginning of the trigger to go to
+ *  the nearest snap, but offer a snap length of 0 to indicate to snap to the
+ *  sequence length.
  *
  * \param seqno
  *      Indicates the sequence that needs to have its trigger handled.
@@ -3971,14 +3981,19 @@ performer::selected_trigger
  */
 
 void
-performer::add_trigger (seq::number seqno, midipulse tick)
+performer::add_trigger (seq::number seqno, midipulse tick, midipulse snap)
 {
     seq::pointer s = get_sequence(seqno);
     if (s)
     {
         midipulse seqlength = s->get_length();
         if (song_record_snap())
-            tick -= tick % seqlength;
+        {
+            if (snap == 0)
+                snap = seqlength;
+
+            tick -= tick % snap;            // seqlength;
+        }
 
         push_trigger_undo(seqno);
         s->add_trigger(tick, seqlength);    /* offset = 0, fixoffset = true */

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-03-31
+ * \updates       2021-04-08
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -88,6 +88,15 @@ static const int c_trigger_transpose_min    = (-60);
 static const int c_trigger_transpose_max    =   60;
 
 /**
+ *  The number of Snap entries in the combo-box:
+ *
+ *      "L", "1/1", "1/2", "1/3", "1/4", "1/8", "1/16", and "1/32"
+ */
+
+static const int c_snap_entry [] = { 0, 1, 2, 3, 4, 8, 16, 32 };
+static const int c_snap_entry_count = 8;
+
+/**
  *  Principal constructor, has a reference to a performer object.
  *
  * \param p
@@ -134,9 +143,12 @@ qperfeditframe64::qperfeditframe64
      * We need an obvious macro for "6".
      */
 
-    for (int i = 0; i < 6; ++i)
+    for (int i = 0; i < c_snap_entry_count; ++i)
     {
-        QString combo_text = "1/" + QString::number(pow(2, i));
+        QString combo_text = "1/" + QString::number(c_snap_entry[i]);
+        if (i == 0)
+            combo_text = "L";
+
         ui->cmbGridSnap->insertItem(i, combo_text);
     }
     ui->cmbGridSnap->setCurrentIndex(3);
@@ -348,10 +360,11 @@ qperfeditframe64::qperfeditframe64
     );
 
     /*
-     * Final settings.
+     * Final settings.  For snap, 8 is too small.  4, which is actually "1/4"
+     * is better at normal zoom, and also represents a single beat.
      */
 
-    set_snap(8);
+    set_snap(4);
     set_beats_per_measure(4);
     set_beat_width(4);
 }
@@ -406,28 +419,36 @@ qperfeditframe64::follow_progress ()
  *  Sets the snap value per the given index.
  *
  * \param snapindex
- *      The order of the value in the menu. For 0 to 5, this is the exponent of
- *      2 that yields the snap value.  The default is 4, which sets snap to 16.
+ *      The order of the value in the menu. For 0 to 5, this is the exponent
+ *      of 2 that yields the snap value.  The default is 4, which sets snap to
+ *      16.
  */
 
 void
 qperfeditframe64::update_grid_snap (int snapindex)
 {
-    int snap = power(2, snapindex);
-    if (snap == 0)
-        snap = 16;
-
-    m_snap = snap;
-    set_guides();
+    if (snapindex >= 0 && snapindex < c_snap_entry_count)
+    {
+        m_snap = c_snap_entry[snapindex];
+        set_guides();
+    }
 }
 
 void
 qperfeditframe64::set_snap (midipulse s)
 {
-    char b[16];
-    snprintf(b, sizeof b, "1/%d", int(s));
-    ui->cmbGridSnap->setCurrentText(b);
-    m_snap = int(s);
+    if (s > 0)
+    {
+        char b[16];
+        snprintf(b, sizeof b, "1/%d", int(s));
+        ui->cmbGridSnap->setCurrentText(b);
+        m_snap = int(s);
+    }
+    else
+    {
+        ui->cmbGridSnap->setCurrentText("L");
+        m_snap = 0;
+    }
     set_guides();
 }
 
@@ -439,14 +460,14 @@ qperfeditframe64::set_snap (midipulse s)
 void
 qperfeditframe64::set_guides ()
 {
-    if (m_beat_width > 0 && m_snap > 0)
+    if (m_beat_width > 0 && m_snap >= 0)
     {
         midipulse pp = perf().ppqn() * 4;
-        midipulse measure_ticks = pp * m_beats_per_measure / m_beat_width;
-        midipulse snap_ticks = measure_ticks / m_snap;
-        midipulse beat_ticks = pp / m_beat_width;
-        m_perfroll->set_guides(snap_ticks, measure_ticks, beat_ticks);
-        m_perftime->set_guides(snap_ticks, measure_ticks);
+        midipulse measticks = pp * m_beats_per_measure / m_beat_width;
+        midipulse beatticks = pp / m_beat_width;
+        midipulse snapticks = m_snap == 0 ? 0 : measticks / m_snap ;
+        m_perfroll->set_guides(snapticks, measticks, beatticks);
+        m_perftime->set_guides(snapticks, measticks);
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf

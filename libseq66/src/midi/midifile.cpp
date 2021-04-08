@@ -1274,7 +1274,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             {
                                 (void) set_error_dump
                                 (
-                                    "Unknown Seq66 SeqSpec, skipping...",
+                                    "Unknown Seq66 SeqSpec, skipping",
                                     seqspec
                                 );
                             }
@@ -1374,7 +1374,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                     }
                     else
                     {
-                        return set_error_dump
+                        (void) set_error_dump
                         (
                             "Unexpected meta code", midilong(status)
                         );
@@ -1389,10 +1389,11 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                      * in them.
                      */
 
-                    /* return */ set_error_dump
+                    (void) set_error_dump
                     (
                         "Unsupported MIDI event", midilong(status)
                     );
+                    return true;        /* allow further processing */
                     break;
                 }
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -1400,22 +1401,25 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 #endif
             }                          /* while not done loading Trk chunk */
 
-            if (buss_override != c_bussbyte_max)
-                s.set_midi_bus(buss_override);
+            if (seqnum < PROP_SEQ_NUMBER)
+            {
+                if (buss_override != c_bussbyte_max)
+                    s.set_midi_bus(buss_override);
 
-            /*
-             * Sequence has been filled, add it to the performance or SMF 0
-             * splitter.  If there was no sequence number embedded in the track,
-             * use the for-loop track number.  It's not fool-proof.
-             */
+                /*
+                 * Sequence has been filled, add it to the performance or SMF 0
+                 * splitter.  If there was no sequence number embedded in the track,
+                 * use the for-loop track number.  It's not fool-proof.
+                 */
 
-            if (seqnum == c_midishort_max)
-                seqnum = track;
+                if (seqnum == c_midishort_max)
+                    seqnum = track;
 
-            if (is_smf0)
-                (void) m_smf0_splitter.log_main_sequence(s, seqnum);
-            else
-                finalize_sequence(p, s, seqnum, screenset);
+                if (is_smf0)
+                    (void) m_smf0_splitter.log_main_sequence(s, seqnum);
+                else
+                    finalize_sequence(p, s, seqnum, screenset);
+            }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
             s.print();
@@ -2945,16 +2949,23 @@ midifile::set_error (const std::string & msg)
  *
  * \return
  *      Always returns false, to make it easier on the caller.  The constructed
- *      string is returned as a side-effect, in case we want to pass it along to
- *      the externally-accessible error-message buffer.
+ *      string is returned as a side-effect (m_error_message), plus some other
+ *      side-effects (m_error_is_fatal, m_disabled_reported) in case we want to
+ *      pass it along to the externally-accessible error-message buffer.
  */
 
 bool
 midifile::set_error_dump (const std::string & msg)
 {
-    char temp[32];
-    snprintf(temp, sizeof temp, "Near offset 0x%lx: ", (unsigned long)(m_pos));
+    char temp[80];
+    snprintf
+    (
+        temp, sizeof temp, "Near offset 0x%zx of 0x%zx bytes (%zu/%zu): ",
+        m_pos, m_file_size, m_pos, m_file_size
+    );
     std::string result = temp;
+    result += "\n";
+    result += "   ";
     result += msg;
     fprintf(stderr, "%s\n", result.c_str());
     m_error_message = result;
@@ -2974,27 +2985,17 @@ midifile::set_error_dump (const std::string & msg)
  *      The long value to show as part of the message.
  *
  * \return
- *      Always returns false, to make it easier on the caller.  The constructed
- *      string is returned as a side-effect, in case we want to pass it along to
- *      the externally-accessible error-message buffer.
+ *      Always returns false, to make it easier on the caller.
  */
 
 bool
 midifile::set_error_dump (const std::string & msg, unsigned long value)
 {
     char temp[64];
-    snprintf
-    (
-        temp, sizeof temp, "Near offset 0x%lx, bad value %lu (0x%lx): ",
-        (unsigned long)(m_pos), value, value
-    );
-    std::string result = temp;
-    result += msg;
-    fprintf(stderr, "%s\n", result.c_str());
-    m_error_message = result;
-    m_error_is_fatal = true;
-    m_disable_reported = true;
-    return false;
+    snprintf(temp, sizeof temp, ". Bad value 0x%lx.", value);
+    std::string result = msg;
+    result += temp;
+    return set_error_dump(result);
 }
 
 /**

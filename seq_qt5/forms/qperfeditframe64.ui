@@ -182,6 +182,11 @@
            <height>28</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Toggles the painting mode.  It provides a visual alternative
+to hold the right mouse button or using the &quot;p&quot; and &quot;x&quot;
+keys.</string>
+         </property>
          <property name="text">
           <string>Enter</string>
          </property>
@@ -207,6 +212,12 @@
            <width>40</width>
            <height>28</height>
           </size>
+         </property>
+         <property name="toolTip">
+          <string>Turns on &quot;song record&quot; snap. When active, an added
+pattern will snap to the full length of the sequence
+like Seq24 (if snap is set to &quot;L&quot;) or the snap setting.
+Growing occurs a full snap length at a time.</string>
          </property>
          <property name="text">
           <string>Snap</string>
@@ -234,7 +245,11 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Selects the desired movement and sizing snap value.</string>
+          <string>Selects the desired movement and sizing snap value.
+&quot;L&quot; indicates full length. &quot;1/N&quot; means 1/Nth of a measure.
+Also affects the L/R guide markers, except that &quot;L&quot; means
+&quot;1 measure L/R&quot;.  Use &quot;L&quot; only for patterns no longer than
+a few measures!</string>
          </property>
          <property name="currentIndex">
           <number>-1</number>

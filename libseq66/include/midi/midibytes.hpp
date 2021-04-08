@@ -183,6 +183,13 @@ const midibyte c_midibyte_data_max  = midibyte(0x80u);
 const midibyte c_midibyte_value_max = 127;
 
 /**
+ *  The number of MIDI notes supported.  The notes range from 0 to 127.
+ */
+
+const int c_num_keys = 128;
+const midibyte c_note_max = 127;
+
+/**
  *  Maximum and unusable values.  Use these values to avoid sign issues.
  *  Also see c_null_midipulse.  No global buss override is in force if the
  *  buss override number is c_bussbyte_max (0xFF).

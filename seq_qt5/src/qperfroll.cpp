@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-01
+ * \updates       2021-04-08
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -290,7 +290,8 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                 {
                     sp = trigger::splitpoint::snap;
                     tick -= m_drop_tick_offset;
-                    tick -= tick % snap();
+                    if (snap() > 0)
+                        tick -= tick % snap();
                 }
                 (void) perf().split_trigger(m_drop_sequence, tick, sp);
             }
@@ -338,7 +339,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                     if (trigger_state)
                         delete_trigger(m_drop_sequence, tick);
                     else
-                        add_trigger(m_drop_sequence, tick); /* length/snap  */
+                        add_trigger(m_drop_sequence, tick);
                 }
             }
             else                                    /* not in paint mode    */
@@ -428,8 +429,19 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
     else if (lbutton)
     {
         if (adding())
-            m_adding_pressed = false;
+        {
+            /*
+             * A quandary.  This turns off trigger insertion. But the user may
+             * have "permanently" turned on insertion via "p" or the "Entry
+             * mode" button, and expect that to stay in force, and then
+             * forgetfully click on an existing pattern.  May have to let user
+             * feedback settle this one.
+             *
+             *  set_adding(false);
+             */
 
+            m_adding_pressed = false;
+        }
         if (mBoxSelect)                 /* calculate selected seqs in box   */
         {
             int x, y, w, h;             /* window dimensions                */
@@ -462,30 +474,21 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
 
     if (adding() && m_adding_pressed)
     {
-        convert_x(x, tick);
-
-        /*
-         * ca 2019-02-06 Issue #171.  Always snap.
-         * ca 2021-03-23.  The user can toggle song-record snap via a button.
-         */
-
         midipulse seqlength = dropseq->get_length();
+        midipulse s = snap() == 0 ? seqlength : snap();
+        convert_x(x, tick);
         if (perf().song_record_snap())
-            tick -= tick % seqlength;
+            tick -= tick % s;
 
-        dropseq->grow_trigger(m_drop_tick, tick, seqlength);
+        dropseq->grow_trigger(m_drop_tick, tick, seqlength);    // or "s"??
     }
     else if (moving() || growing())
     {
         convert_x(x, tick);
         tick -= m_drop_tick_offset;
-
-        /*
-         * if (rc().allow_snap_split())
-         */
-
         if (perf().song_record_snap())      /* apply to move/grow too   */
-            tick -= tick % snap();
+            if (snap() > 0)
+                tick -= tick % snap();
 
         if (moving())                       /* move selected triggers   */
         {
@@ -677,7 +680,7 @@ qperfroll::keyReleaseEvent (QKeyEvent * /*event*/)
 void
 qperfroll::add_trigger(int seq, midipulse tick)
 {
-    perf().add_trigger(seq, tick);
+    perf().add_trigger(seq, tick, snap());
 }
 
 void

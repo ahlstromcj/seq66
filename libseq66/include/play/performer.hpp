@@ -2436,7 +2436,7 @@ public:
         return not_nullptr(s) ? s->get_trigger_state(tick) : false ;
     }
 
-    void add_trigger (seq::number seqno, midipulse tick);
+    void add_trigger (seq::number seqno, midipulse tick, midipulse snap);
     void delete_trigger (seq::number seqno, midipulse tick);
     void add_or_delete_trigger (seq::number seqno, midipulse tick);
     bool split_trigger

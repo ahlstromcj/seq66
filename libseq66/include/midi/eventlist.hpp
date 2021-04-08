@@ -67,12 +67,6 @@ namespace seq66
 {
 
 /**
- *  The number of MIDI notes supported.  The notes range from 0 to 127.
- */
-
-const int c_num_keys = 128;
-
-/**
  *  The eventlist class is a receptable for MIDI events.
  */
 
