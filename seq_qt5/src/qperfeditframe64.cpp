@@ -279,7 +279,11 @@ qperfeditframe64::qperfeditframe64
      * Collapse, Expand, Expand-Copy, Grow, and Loop buttons.
      */
 
-    connect(ui->btnCollapse, SIGNAL(clicked(bool)), this, SLOT(marker_collapse()));
+    connect
+    (
+        ui->btnCollapse, SIGNAL(clicked(bool)),
+        this, SLOT(marker_collapse())
+    );
     qt_set_icon(collapse_xpm, ui->btnCollapse);
     connect(ui->btnExpand, SIGNAL(clicked(bool)), this, SLOT(marker_expand()));
     qt_set_icon(expand_xpm, ui->btnExpand);
@@ -292,7 +296,11 @@ qperfeditframe64::qperfeditframe64
 
     if (m_is_external)
     {
-        connect(ui->btnLoop, SIGNAL(clicked(bool)), this, SLOT(marker_loop(bool)));
+        connect
+        (
+            ui->btnLoop, SIGNAL(clicked(bool)),
+            this, SLOT(marker_loop(bool))
+        );
         qt_set_icon(loop_xpm, ui->btnLoop);
     }
     else
