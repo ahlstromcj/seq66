@@ -80,7 +80,7 @@ screenset::screenset (screenset::number setnum, int rows, int columns) :
     m_set_number        (setnum),
     m_set_offset        (m_set_number * m_set_size),
     m_set_maximum       (m_set_offset + m_set_size),
-    m_set_name          (usable() ? "New Set" : ""),
+    m_set_name          (usable() ? "New" : ""),
     m_is_playscreen     (false)
 {
     clear();

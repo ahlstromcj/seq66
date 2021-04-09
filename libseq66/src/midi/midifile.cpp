@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-03-18
+ * \updates       2021-04-09
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1401,19 +1401,21 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
 #endif
             }                          /* while not done loading Trk chunk */
 
+            /*
+             * Sequence has been filled, add it to the performance or SMF 0
+             * splitter.  If there was no sequence number embedded in the
+             * track, use the for-loop track number.  It's not fool-proof.
+             * "If the ID numbers are omitted, the sequences' locations in
+             * order in the file are used as defaults."
+             */
+
+            if (seqnum == c_midishort_max)
+                seqnum = track;
+
             if (seqnum < PROP_SEQ_NUMBER)
             {
                 if (buss_override != c_bussbyte_max)
                     s.set_midi_bus(buss_override);
-
-                /*
-                 * Sequence has been filled, add it to the performance or SMF 0
-                 * splitter.  If there was no sequence number embedded in the track,
-                 * use the for-loop track number.  It's not fool-proof.
-                 */
-
-                if (seqnum == c_midishort_max)
-                    seqnum = track;
 
                 if (is_smf0)
                     (void) m_smf0_splitter.log_main_sequence(s, seqnum);
@@ -1429,7 +1431,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
         {
             if (track > 0)                              /* non-fatal later  */
             {
-                (void) set_error_dump("Unsupported MIDI track ID, skipping...", ID);
+                (void) set_error_dump("Unknown MIDI track ID, skipping...", ID);
             }
             else                                        /* fatal in 1st one */
             {

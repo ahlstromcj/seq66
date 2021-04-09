@@ -262,7 +262,7 @@ void
 qperfroll::mousePressEvent(QMouseEvent *event)
 {
     bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
-    bool isshift = event->modifiers() & Qt::ShiftModifier;
+    bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
     bool lbutton = event->button() == Qt::LeftButton;
     bool rbutton = event->button() == Qt::RightButton;
     bool mbutton = event->button() == Qt::MiddleButton || (lbutton && isctrl);

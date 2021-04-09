@@ -458,6 +458,15 @@ triggers::add
 {
     midipulse adjusted_offset = fixoffset ? adjust_offset(offset) : offset;
     trigger t(tick, len, adjusted_offset, transpose);
+
+#if defined SEQ66_PLATFORM_DEBUG
+    printf
+    (
+        "%ld ticks at %ld, offset %ld, transpose %u\n",
+        len, tick, adjusted_offset, unsigned(transpose)
+    );
+#endif
+
     for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
     {
         midipulse tickstart = ti->tick_start();

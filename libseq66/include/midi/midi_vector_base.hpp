@@ -112,7 +112,6 @@ namespace seq66
             c_seq_color (performance colors for a sequence)
             c_seq_edit_mode
             c_seq_loopcount
-            c_trig_transpose
 \endverbatim
  *
  *  Note that c_seq_color in Seq66 is stored per sequence, and only if

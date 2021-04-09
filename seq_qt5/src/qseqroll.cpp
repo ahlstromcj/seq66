@@ -1161,7 +1161,9 @@ qseqroll::zoom_key_press (QKeyEvent * event)
 void
 qseqroll::keyPressEvent (QKeyEvent * event)
 {
-    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);   /* Ctrl */
+    bool isctrl = bool(event->modifiers() & Qt::ControlModifier);
+    bool isshift = bool(event->modifiers() & Qt::ShiftModifier);
+    bool ismeta = bool(event->modifiers() & Qt::MetaModifier);
     seq::pointer s = seq_pointer();
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
@@ -1298,11 +1300,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
         }
         if (! is_dirty())
         {
-            if
-            (
-                (event->modifiers() & Qt::ShiftModifier) == 0 &&
-                (event->modifiers() & Qt::MetaModifier) == 0
-            )
+            if (! isctrl && ! isshift && ! ismeta)
             {
                 switch (event->key())
                 {
