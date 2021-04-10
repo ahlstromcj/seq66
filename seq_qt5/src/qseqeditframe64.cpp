@@ -365,14 +365,14 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_chord                 (0),
     m_key                   (usr().seqedit_key()),
     m_bgsequence            (usr().seqedit_bgsequence()),
-    m_measures              (0),                        /* fixed below      */
+    m_measures              (0),                                /* fixed below          */
 #if defined USE_STAZED_ODD_EVEN_SELECTION
     m_pp_whole              (0),
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
     m_editing_bus           (seq_pointer()->seq_midi_bus()),
-    m_editing_channel       (seq_pointer()->seq_midi_channel()),
+    m_editing_channel       (seq_pointer()->midi_channel()),    /* seq_midi_channel())  */
     m_editing_status        (0),
     m_editing_cc            (0),
     m_first_event           (0),
@@ -382,7 +382,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_timer                 (nullptr)
 {
     ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);                 /* part of issue #4 */
+    setAttribute(Qt::WA_DeleteOnClose);                         /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     initialize_panels();
 
@@ -1808,15 +1808,19 @@ qseqeditframe64::reset_midi_channel ()
 void
 qseqeditframe64::set_midi_channel (int ch, bool user_change)
 {
-    int initialchan = seq_pointer()->seq_midi_channel();
-    if (ch != initialchan)
+    int initialchan = seq_pointer()->midi_channel();                    /* seq_midi_channel()   */
+    if (ch != initialchan || ! user_change)
     {
         int chindex = ch > c_midichannel_max ? c_midichannel_max : ch ;
         if (ch == c_midichannel_max)
             ch = c_midichannel_null;
 
         seq_pointer()->set_midi_channel(ch, user_change);
-        if (! is_null_channel(ch))
+        if (is_null_channel(ch))
+        {
+            ui->m_combo_channel->setCurrentIndex(chindex);
+        }
+        else
         {
             m_editing_channel = ch;
             repopulate_usr_combos(m_editing_bus, m_editing_channel);

@@ -4588,6 +4588,12 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
     }
 }
 
+std::string
+sequence::channel_string () const
+{
+    return m_no_channel ? std::string("F") : std::to_string(m_midi_channel + 1);
+}
+
 /**
  *  Constructs a list of the currently-held events.  We do it by brute force,
  *  not by std::sstream.

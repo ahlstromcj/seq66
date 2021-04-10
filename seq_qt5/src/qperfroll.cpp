@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-08
+ * \updates       2021-04-10
  * \license       GNU GPLv2 or above
  *
  *  This class represents the central piano-roll user-interface area of the
@@ -47,6 +47,7 @@
 #include "util/rect.hpp"                /* seq66::rect::xy_to_rect_get()    */
 #include "gui_palette_qt5.hpp"
 #include "qperfeditframe64.hpp"
+#include "qperfnames.hpp"
 #include "qperfroll.hpp"
 
 /*
@@ -80,6 +81,7 @@ qperfroll::qperfroll
     performer & p,
     int zoom,
     int snap,
+    qperfnames * seqnames,  // NEW
     QWidget * frame,        // must be a qseqeditframe/64 widget
     QWidget * parent
 ) :
@@ -89,6 +91,7 @@ qperfroll::qperfroll
         p, zoom, snap, c_names_y, c_names_y * p.sequence_max()
     ),
     m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
+    m_perf_names_wid    (seqnames),
     m_timer             (nullptr),
     m_font              ("Monospace"),
     m_measure_length    (0),
@@ -112,6 +115,13 @@ qperfroll::qperfroll
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(8);
+
+    /*
+     * Done in order to be able to track mouse movement without a click.
+     */
+
+    setMouseTracking(true);
+
     m_timer = new QTimer(this);                         // redraw timer
     m_timer->setInterval(2 * usr().window_redraw_rate());
     connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
@@ -466,9 +476,15 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
 void
 qperfroll::mouseMoveEvent (QMouseEvent * event)
 {
-    midipulse tick = 0;
-    int x = event->x();
     seq::pointer dropseq = perf().get_sequence(m_drop_sequence);
+    int x = event->x();
+    int y = event->y();
+    int row;
+    midipulse t, tick = 0;
+    convert_xy(x, y, t, row);
+    if (row >= 0)
+        m_perf_names_wid->set_preview_row(row);
+
     if (is_nullptr(dropseq))
         return;
 

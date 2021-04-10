@@ -91,14 +91,18 @@
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
-          <pointsize>18</pointsize>
+          <pointsize>15</pointsize>
           <weight>75</weight>
+          <italic>false</italic>
           <bold>true</bold>
           <stylestrategy>PreferDefault</stylestrategy>
          </font>
         </property>
         <property name="text">
-         <string notr="true">Seq66</string>
+         <string notr="true">&lt;font color=&quot;#383838&quot;&gt;Seq66&lt;/font&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
         </property>
        </widget>
       </item>

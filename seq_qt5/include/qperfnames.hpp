@@ -27,15 +27,16 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-04-10
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <QWidget>
 
-#include "qperfbase.hpp"                /* for constants and base class    */
 #include "play/sequence.hpp"
+#include "qperfbase.hpp"                /* for constants and base class    */
+#include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -65,6 +66,8 @@ public:
         // no code
     }
 
+    void set_preview_row (int row);
+
 protected:
 
     void reupdate ();
@@ -92,6 +95,11 @@ private:
 
     int convert_y (int y);
 
+    const Color & preview_color () const
+    {
+        return m_preview_color;
+    }
+
 signals:
 
 public slots:
@@ -101,14 +109,12 @@ private:
     QFont m_font;
     int m_nametext_x;
     int m_nametext_y;
+    int m_set_text_y;                       /* saves a frequent calculation */
+    Color m_preview_color;                  /* will reduce its alpha value  */
+    bool m_is_previewing;
+    int m_preview_row;
 
-    /*
-     * Saves a frequent calculation.
-     */
-
-    int m_set_text_y;
-
-};
+};          // class qperfnames
 
 }           // namespace seq66
 

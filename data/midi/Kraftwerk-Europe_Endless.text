@@ -46,7 +46,7 @@ Parts of the tune:
 
     Track 0: Three MIDI port events, Time Sig, Key Sig, and Tempo
 
-    Track 1: Background arpeggiation.
+    Track 1 (Background Arpeggiation): Ch 1
 
         Arp 1  -  0:  1 M @ 2     M 2     (1)  D4 to B4  1 oct
         Arp 2  -  0:  1 M @ 3/4   M 3-4   (2)  D4 to B5  1.5 oct
@@ -65,12 +65,12 @@ Parts of the tune:
         Arp 1  +  4:  1 M         M 193-208 (G becomes B)
         Arp 1  +  0:  1 M         M 209-258 (END)
 
-    Track 2 (Strings)
+    Track 2 (Strings): Ch 2
 
         Note 1: G2 at M 11 + 1/8, for 1M 
         Note 2: G2 at M 33 + 1/2, for 8M 
 
-    Track 3 (Chorus):
+    Track 3 (Chorus): Ch 3
 
         Chorus 1 - 0: 8 M @ 33    M 33-40 (8)
         Chorus 1 - 0:             M 41-48
@@ -79,7 +79,7 @@ Parts of the tune:
         Chorus 1 - 8:             M 153-160 F#3
         Chorus 1 - 8:             M 193-200 F#3
 
-    Track 4 (Simple Bass):
+    Track 4 (Simple Bass): Ch 4
 
         Bass 1 - 0:   1 M @ 40     M 40 only; Two-note intro
         Bass 2 - 0:   1 M @ 41     M 41-64   (24) Simple pattern, G1 and G2
@@ -92,7 +92,7 @@ Parts of the tune:
         Bass 2 + 4:                M 193-208 (16) B1 and B2
         Bass 2 - 1:                M 209-258 (16) F#1 and F#2
 
-    Track 5 (Melody):
+    Track 5 (Melody): Ch 5
 
         Melody 1 - 0: 4 M @ 49     M 49-52 - 53-56 Descending melody D4
         Melody 1 - 0:              M 53-56
@@ -103,7 +103,7 @@ Parts of the tune:
         Melody 3 - 0:              M 181-184 Melody B
         Melody 2 - 0:              M 209-248 Melody A
 
-    Track 6 (Voice):
+    Track 6 (Voice): Ch 6
 
         Voice 1 - 0:  3 M @ 56    M 56-58 "Europe ... Endless" D4
         Voice 1 - 0:              M 60-62
@@ -122,7 +122,7 @@ Parts of the tune:
         Voice 2 - 0:              M 201-202
         Voice 2 - 0:              M 205-206
 
-    Track 7 (Endless):
+    Track 7 (Endless): Ch 7
 
         Endless 1 - 0: 2 M @ 59   M 59-60 G4 "Endless" 4 times
         Endless 1 - 0:            M 63-64
@@ -143,7 +143,7 @@ Parts of the tune:
         Endless 2 - 0:            M 206-207
         Endless 4 - 0: 50 M @ 209 M 209
 
-    Track 8 (Drums):
+    Track 8 (Drums): Ch 10
 
         Drums 1 -     1 M @ 48     M 48 only; Intro part, plays once
         Drums 2 -     1 M @ 49     M 49-258   Plays for the rest of the song

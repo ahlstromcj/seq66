@@ -56,6 +56,7 @@ namespace seq66
 {
     class performer;
     class qperfeditframe64;
+    class qperfnames;
 
 /**
  * The grid in the song editor for setting out sequences
@@ -73,9 +74,10 @@ public:
     (
         performer & p,
         int zoom,
-        int snap            = SEQ66_DEFAULT_SNAP,
-        QWidget * frame     = nullptr,
-        QWidget * parent    = nullptr
+        int snap                = SEQ66_DEFAULT_SNAP,
+        qperfnames * seqnames   = nullptr, ///// NEW
+        QWidget * frame         = nullptr,
+        QWidget * parent        = nullptr
     );
 
     virtual ~qperfroll ();
@@ -134,6 +136,14 @@ private:
 private:
 
     qperfeditframe64 * m_parent_frame;
+
+    /**
+     *  Holds a pointer to the qperfnames pane that is associated with the
+     *  qperfroll piano roll.
+     */
+
+    qperfnames * m_perf_names_wid;
+
     QTimer * m_timer;
     QFont m_font;
     int m_measure_length;

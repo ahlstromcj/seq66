@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-03-30
+ * \updates       2021-04-10
  * \license       GNU GPLv2 or above
  *
  * QWidget::paintEvent(QPaintEvent * ev):
@@ -217,25 +217,31 @@ qloopbutton::initialize_text ()
          */
 
         bussbyte bus = m_seq->seq_midi_bus();
-        int chan = m_seq->is_smf_0() ? 0 : m_seq->seq_midi_channel() + 1;
         int bpb = int(m_seq->get_beats_per_bar());
         int bw = int(m_seq->get_beat_width());
         int sn = m_seq->seq_number();
         int lflags = Qt::AlignLeft | Qt::AlignVCenter;
         int rflags = Qt::AlignRight | Qt::AlignVCenter;
         std::string lengthstr = std::to_string(m_seq->get_measures());
+        std::string chanstr = m_seq->channel_string();
         std::string lowerleft, hotkey;
         char tmp[32];
         if (rc().show_ui_sequence_number())
         {
             snprintf
             (
-                tmp, sizeof tmp, "%-3d %d-%d %d/%d", sn, bus, chan, bpb, bw
+                tmp, sizeof tmp, "%-3d %d-%s %d/%d",
+                sn, bus, chanstr.c_str(), bpb, bw
             );
         }
         else
-            snprintf(tmp, sizeof tmp, "%d-%d %d/%d", bus, chan, bpb, bw);
-
+        {
+            snprintf
+            (
+                tmp, sizeof tmp, "%d-%s %d/%d",
+                bus, chanstr.c_str(), bpb, bw
+            );
+        }
         lowerleft = std::string(tmp);
         if (rc().show_ui_sequence_key())
             hotkey = m_hotkey;

@@ -416,7 +416,7 @@ midi_vector_base::fill_proprietary ()
     put(m_sequence.get_beat_width());
 
     put_seqspec(c_midich, 1);
-    put(m_sequence.seq_midi_channel());
+    put(m_sequence.midi_channel());
     if (! usr().global_seq_feature())
     {
         /**

@@ -254,33 +254,12 @@ qseqkeys::mouseReleaseEvent (QMouseEvent * event)
 void
 qseqkeys::mouseMoveEvent (QMouseEvent * /* event */)
 {
-#if defined SEQ66_SEQKEY_PREVIEW_ON_MOVEMENT
-
-    /*
-     * There's no easy way to turn this off.
-     */
-
-    int note;
-    int y = event->y();
-    convert_y(y, note);
-    if (m_is_previewing)
-    {
-        if (note != m_preview_key)
-        {
-            seq_pointer()->play_note_off(m_preview_key);
-            seq_pointer()->play_note_on(note);
-            m_preview_key = note;
-        }
-    }
-    update();
-#else
     if (m_is_previewing)
     {
         seq_pointer()->play_note_off(m_preview_key);
         set_preview_key(-1);
     }
     update();
-#endif
 }
 
 QSize

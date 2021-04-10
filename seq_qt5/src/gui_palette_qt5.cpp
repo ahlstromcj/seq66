@@ -153,9 +153,7 @@ background_paint ()
 Color
 label_paint ()
 {
-    Color r =
-        global_palette().get_color(InvertibleColor::label);
-    return r;
+    return global_palette().get_color(InvertibleColor::label);
 }
 
 Color

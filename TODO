@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-03-28
+2019-04-13 to 2021-04-10
 
 HOT ITEMS:
 
@@ -75,12 +75,21 @@ HOT ITEMS:
         Look into the "nativeVirtualKey" functionality to support
         locale-independent key processing.
 
-    Testing:
-
-        Can we leverage the Julian-data project for testing?
+    From Testing:
 
         Make sure MIDI import does not import the SeqSpec sections of a Seq66
-        MIDI file. ???
+        MIDI file.
+
+        Find out why adding a trigger (to the Kraftwerk file) can sometimes seem to remove the next
+        track.
+
+        When loading the recent files list: (1) eliminate files that no longer exist; (2) figure out
+        how to display files that differ only in path.
+
+        When zooming, try to keep the same viewport in view.  Try to center vertically on notes in
+        the viewport.
+
+        Add port and channel selection to seqmenu; make sure Free is displayed as "F".
 
 Others to Consider:
 

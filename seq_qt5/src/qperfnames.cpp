@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-01-04
+ * \updates       2021-04-10
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -51,8 +51,6 @@
 #include "gui_palette_qt5.hpp"
 #include "qperfnames.hpp"
 
-const int s_pointsize = 7;
-
 /*
  *  Do not document a namespace; it breaks Doxygen.
  */
@@ -60,6 +58,18 @@ const int s_pointsize = 7;
 namespace seq66
 {
     class performer;
+
+/**
+ *  Alpha for coloring the names not so brightly.
+ */
+
+const int s_alpha_names = 100;
+
+/**
+ *  Default font size.
+ */
+
+const int s_pointsize = 7;
 
 /**
  * Sequence labels for the side of the song editor
@@ -72,7 +82,10 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
     m_font              ("Monospace"),
     m_nametext_x        (6 * 2 + 6 * 20),       // not used!
     m_nametext_y        (c_names_y),
-    m_set_text_y        (m_nametext_y * p.seqs_in_set() / 2)
+    m_set_text_y        (m_nametext_y * p.seqs_in_set() / 2),
+    m_preview_color     (progress_paint()),
+    m_is_previewing     (false),
+    m_preview_row       (-1)
 {
     /*
      * This policy is necessary in order to allow the vertical scrollbar to
@@ -81,10 +94,11 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     setFocusPolicy(Qt::StrongFocus);
-    m_font.setStyleHint(QFont::Monospace);                  // EXPERIMENT
+    m_font.setStyleHint(QFont::Monospace);
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
-    m_font.setPointSize(s_pointsize);                       // 6
+    m_font.setPointSize(s_pointsize);
+    m_preview_color.setAlpha(s_alpha_names);
 }
 
 /**
@@ -160,29 +174,36 @@ qperfnames::paintEvent (QPaintEvent *)
                 char name[64];
                 snprintf
                 (
-                    name, sizeof name, "%-14.14s   %2d",
+                    name, sizeof name, "%-14.14s  %2d",
                     s->name().c_str(), int(s->seq_midi_channel()) + 1
                 );
 
                 QString chinfo(name);
                 if (muted)
                 {
-                    brush.setColor(grey_color());       // Qt::black
+                    brush.setColor(grey_color());           // Qt::black
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);
-                    pen.setColor(back_color());         // Qt::white
+                    pen.setColor(back_color());             // Qt::white
                 }
                 else
                 {
-                    int c = s->color();
-                    Color backcolor = get_color_fix(PaletteColor(c));
-                    brush.setColor(back_color());       // Qt::white
+                    if (seq_id == m_preview_row)
+                    {
+                        brush.setColor(preview_color());
+                    }
+                    else
+                    {
+                        int c = s->color();
+                        Color backcolor = get_color_fix(PaletteColor(c));
+                        backcolor.setAlpha(s_alpha_names);
+                        brush.setColor(backcolor);          // Qt::white
+                    }
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);
-                    brush.setColor(backcolor);
-                    pen.setColor(fore_color());         // Qt::black
+                    pen.setColor(fore_color());             // Qt::black
                 }
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 10, chinfo);
@@ -290,6 +311,14 @@ void
 qperfnames::mouseMoveEvent (QMouseEvent * /*event*/)
 {
     // no code; add a call to update() if a change is made
+}
+
+void
+qperfnames::set_preview_row (int row)
+{
+    m_is_previewing = row >= 0;
+    m_preview_row = row;
+    update();
 }
 
 }           // namespace seq66

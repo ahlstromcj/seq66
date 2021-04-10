@@ -1275,6 +1275,7 @@ public:
     bool is_dirty_names () const;
     void set_dirty_mp ();
     void set_dirty ();
+    std::string channel_string () const;            /* "F" or "<channel+1>" */
 
     midibyte seq_midi_channel () const
     {
@@ -1284,6 +1285,16 @@ public:
     midibyte midi_channel (const event & ev) const
     {
         return m_no_channel ? ev.channel() : m_midi_channel ;
+    }
+
+    midibyte midi_channel () const
+    {
+        return m_no_channel ? c_midichannel_null : m_midi_channel ;
+    }
+
+    bool no_channel () const
+    {
+        return m_no_channel;
     }
 
     /**

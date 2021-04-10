@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-04-08
+ * \updates       2021-04-10
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -186,7 +186,7 @@ qperfeditframe64::qperfeditframe64
     m_perfroll = new qperfroll
     (
         m_mainperf, SEQ66_DEFAULT_ZOOM, SEQ66_DEFAULT_SNAP,
-        this, ui->rollScrollArea
+        m_perfnames, this, ui->rollScrollArea
     );
     ui->rollScrollArea->setWidget(m_perfroll);
     ui->rollScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
