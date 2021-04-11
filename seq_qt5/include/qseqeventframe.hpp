@@ -132,6 +132,8 @@ private:
     QTableWidgetItem * cell (int row, column_id col);
     void current_row (int row);
     int current_row () const;
+    void populate_midich_combo ();
+    void populate_status_combo ();
 
 private slots:
 
@@ -144,6 +146,8 @@ private slots:
     void handle_dump ();
     void handle_cancel ();
     void update_seq_name ();
+    void slot_midi_channel (int index);
+    void slot_event_name (int index);
 
 private:
 

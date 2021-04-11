@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-01
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -4574,7 +4574,8 @@ void
 sequence::set_midi_channel (midibyte ch, bool user_change)
 {
     automutex locker(m_mutex);
-    if (ch != m_midi_channel)
+    bool change = is_null_channel(ch) ? !no_channel() : ch != m_midi_channel ;
+    if (change)
     {
         off_playing_notes();
         m_no_channel = is_null_channel(ch);

@@ -42,7 +42,20 @@ In this deconstruction/reconstruction, we do not worry about program
 changes or about exactly duplicating sections that are very minor variations on
 a theme.
 
+Program and Controller Changes:
+
+    Track 0:    None
+    Track 1:    Ch1  Part 6     GM Chorused Piano   Vol 127
+    Track 2:    Ch2  Part 35    GM Bass             Vol 1 to 100
+    Track 3:    Ch3  Part 52    GM Synth Strings    Vol 100
+    Track 4:    Ch4  Part 39    GM Synth Bass       Vol 127
+    Track 5:    Ch5  Part 65    GM Sax              Vol 100
+    Track 6:    Ch6  Part 87    GM Synth Lead       Vol 110
+    Track 7:    Ch7  Part 91    GM Synth Pad        Vol 70
+    Track 8:    Ch10 Part 25    GM Unknown          Vol 127
+
 Parts of the tune:
+
 
     Track 0: Three MIDI port events, Time Sig, Key Sig, and Tempo
 

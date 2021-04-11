@@ -69,14 +69,14 @@
 
 #define USE_JACK_BBT_OFFSET             /* another experiment               */
 
-#if defined SEQ66_JACK_SUPPORT
-
 /*
  *  All library code in the Seq66 project is in the seq66 namespace.
  */
 
 namespace seq66
 {
+
+#if defined SEQ66_JACK_SUPPORT
 
 /*
  * -------------------------------------------------------------------------
@@ -476,68 +476,6 @@ show_jack_statuses (unsigned bits)
 
         ++jsp;
     }
-}
-
-/*
- * -------------------------------------------------------------------------
- *  JACK scratch-pad
- * -------------------------------------------------------------------------
- */
-
-jack_scratchpad::jack_scratchpad () :
-    js_current_tick         (0.0),
-    js_total_tick           (0.0),
-    js_clock_tick           (0.0),
-    js_jack_stopped         (false),
-    js_dumping              (false),
-    js_init_clock           (true),
-    js_looping              (false),
-    js_playback_mode        (false),
-    js_ticks_converted      (0.0),
-    js_ticks_delta          (0.0),
-    js_ticks_converted_last (0.0),
-    js_delta_tick_frac      (0L)
-{
-    // No other code
-}
-
-void
-jack_scratchpad::initialize
-(
-    midipulse currenttick,
-    bool islooping,
-    bool songmode
-)
-{
-    js_current_tick         = double(currenttick);
-    js_total_tick           = 0.0;
-    js_clock_tick           = 0.0;
-    js_jack_stopped         = false;
-    js_dumping              = false;
-    js_init_clock           = true;
-    js_looping              = islooping;
-    js_playback_mode        = songmode;
-    js_ticks_converted      = 0.0;
-    js_ticks_delta          = 0.0;
-    js_ticks_converted_last = 0.0;
-    js_delta_tick_frac      = 0L;
-}
-
-void
-jack_scratchpad::set_current_tick (midipulse curtick)
-{
-    double ct = double(curtick);
-    js_current_tick = js_total_tick = js_clock_tick = ct;
-}
-
-void
-jack_scratchpad::add_delta_tick (midipulse deltick)
-{
-    double dt = double(deltick);
-    js_current_tick += dt;
-    js_total_tick += dt;
-    js_clock_tick += dt;
-    js_dumping = true;
 }
 
 /*
@@ -1994,9 +1932,71 @@ jack_state_name (const jack_transport_state_t & state)
     return result;
 }
 
-}           // namespace seq66
-
 #endif      // SEQ66_JACK_SUPPORT
+
+/*
+ * -------------------------------------------------------------------------
+ *  JACK scratch-pad
+ * -------------------------------------------------------------------------
+ */
+
+jack_scratchpad::jack_scratchpad () :
+    js_current_tick         (0.0),
+    js_total_tick           (0.0),
+    js_clock_tick           (0.0),
+    js_jack_stopped         (false),
+    js_dumping              (false),
+    js_init_clock           (true),
+    js_looping              (false),
+    js_playback_mode        (false),
+    js_ticks_converted      (0.0),
+    js_ticks_delta          (0.0),
+    js_ticks_converted_last (0.0),
+    js_delta_tick_frac      (0L)
+{
+    // No other code
+}
+
+void
+jack_scratchpad::initialize
+(
+    midipulse currenttick,
+    bool islooping,
+    bool songmode
+)
+{
+    js_current_tick         = double(currenttick);
+    js_total_tick           = 0.0;
+    js_clock_tick           = 0.0;
+    js_jack_stopped         = false;
+    js_dumping              = false;
+    js_init_clock           = true;
+    js_looping              = islooping;
+    js_playback_mode        = songmode;
+    js_ticks_converted      = 0.0;
+    js_ticks_delta          = 0.0;
+    js_ticks_converted_last = 0.0;
+    js_delta_tick_frac      = 0L;
+}
+
+void
+jack_scratchpad::set_current_tick (midipulse curtick)
+{
+    double ct = double(curtick);
+    js_current_tick = js_total_tick = js_clock_tick = ct;
+}
+
+void
+jack_scratchpad::add_delta_tick (midipulse deltick)
+{
+    double dt = double(deltick);
+    js_current_tick += dt;
+    js_total_tick += dt;
+    js_clock_tick += dt;
+    js_dumping = true;
+}
+
+}           // namespace seq66
 
 /*
  * jack_assistant.cpp

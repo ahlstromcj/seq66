@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-02-01
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -187,6 +187,12 @@ private:
 
     int m_pager_index;
 
+    /**
+     *  Indicates to show data values in hexadecimal format.
+     */
+
+    bool m_show_data_as_hex;
+
 public:
 
     qseventslots (performer & p, qseqeventframe & parent, seq::pointer seqp);
@@ -303,6 +309,7 @@ private:
 
     bool load_events ();
     bool load_table ();
+    midibyte string_to_channel (const std::string & channel);
     std::string events_to_string () const;
     void set_current_event
     (
@@ -323,7 +330,8 @@ private:
         const std::string & evtimestamp,
         const std::string & evname,
         const std::string & evdata0,
-        const std::string & evdata1
+        const std::string & evdata1,
+        const std::string & ch = ""
     );
     bool delete_current_event ();
     bool modify_current_event
@@ -332,7 +340,8 @@ private:
         const std::string & evtimestamp,
         const std::string & evname,
         const std::string & evdata0,
-        const std::string & evdata1
+        const std::string & evdata1,
+        const std::string & ch = ""
     );
     bool save_events ();
     void select_event

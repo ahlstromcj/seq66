@@ -80,16 +80,20 @@ HOT ITEMS:
         Make sure MIDI import does not import the SeqSpec sections of a Seq66
         MIDI file.
 
-        Find out why adding a trigger (to the Kraftwerk file) can sometimes seem to remove the next
-        track.
+        Find out why adding a trigger (to the Kraftwerk file) can sometimes
+        seem to remove the next track.
 
-        When loading the recent files list: (1) eliminate files that no longer exist; (2) figure out
-        how to display files that differ only in path.
+        When loading the recent files list: (1) eliminate files that no longer
+        exist; (2) figure out how to display files that differ only in path.
 
-        When zooming, try to keep the same viewport in view.  Try to center vertically on notes in
-        the viewport.
+        When zooming, try to keep the same viewport in view.  Try to center
+        vertically on notes in the viewport.
 
-        Add port and channel selection to seqmenu; make sure Free is displayed as "F".
+        Add port and channel selection to seqmenu; make sure Free is displayed
+        as "F".
+
+        When muting/unmuting a pattern in the song editor, when focus changes
+        the tracks are shown in the bright color.
 
 Others to Consider:
 

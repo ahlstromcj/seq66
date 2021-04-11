@@ -186,7 +186,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
         add_variable(deltatime);                    /* encode delta_time    */
-        if (is_null_channel(channel))
+        if (m_sequence.no_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
             put(st | channel);                      /* the sequence channel */
@@ -230,7 +230,7 @@ midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
     add_variable(deltatime);                    /* encode delta_time        */
     put(e.get_status());                        /* indicates SysEx/Meta     */
     if (e.is_meta())
-        put(e.channel());                   /* indicates meta type      */
+        put(e.channel());                       /* indicates meta type      */
 
     int count = e.get_sysex_size();             /* applies for meta, too    */
     put(count);

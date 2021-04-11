@@ -630,7 +630,7 @@ gui_palette_qt5::get_color_fix (PaletteColor index) const
     {
         Color c = m_palette.get_color(index);
         if (c.value() != 255)
-            c.setHsv(c.hue(), c.saturation() * 0.65, c.value());    // * 1.2);
+            c.setHsv(c.hue(), c.saturation() * 0.65, c.value());
 
         return c;
     }

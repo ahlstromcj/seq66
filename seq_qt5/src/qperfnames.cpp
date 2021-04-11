@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-10
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -60,10 +60,11 @@ namespace seq66
     class performer;
 
 /**
- *  Alpha for coloring the names not so brightly.
+ *  Alpha for coloring the names brightly, or not.
  */
 
-const int s_alpha_names = 100;
+const int s_alpha_bright = 255;
+const int s_alpha_normal = 100;
 
 /**
  *  Default font size.
@@ -98,7 +99,7 @@ qperfnames::qperfnames (performer & p, QWidget * parent)
     m_font.setLetterSpacing(QFont::AbsoluteSpacing, 1);
     m_font.setBold(true);
     m_font.setPointSize(s_pointsize);
-    m_preview_color.setAlpha(s_alpha_names);
+    m_preview_color.setAlpha(s_alpha_normal);
 }
 
 /**
@@ -189,17 +190,18 @@ qperfnames::paintEvent (QPaintEvent *)
                 }
                 else
                 {
+                    int c = s->color();
+                    Color backcolor = get_color_fix(PaletteColor(c));
+                    int alpha = seq_id == m_preview_row ?
+                        s_alpha_bright : s_alpha_normal ;
+
+#if defined USE_PREVIEW_COLOR_VS_ALPHA_HIGHTLIGHT
                     if (seq_id == m_preview_row)
-                    {
-                        brush.setColor(preview_color());
-                    }
-                    else
-                    {
-                        int c = s->color();
-                        Color backcolor = get_color_fix(PaletteColor(c));
-                        backcolor.setAlpha(s_alpha_names);
-                        brush.setColor(backcolor);          // Qt::white
-                    }
+                        backcolor = preview_color();
+#endif
+                    backcolor.setAlpha(alpha);
+                    brush.setColor(backcolor);          // Qt::white
+
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
                     painter.drawRect(rect_x, rect_y, rect_w, m_nametext_y);

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-02-01
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  A MIDI editable event is encapsulated by the seq66::editable_event
@@ -42,7 +42,7 @@
  *  used to terminate a array of items keyed by a midibyte value.
  */
 
-#define SEQ66_END_OF_MIDIBYTES_TABLE     0x100       /* one more than 0xFF   */
+unsigned short s_end_of_table = 0x100;  /* one more than 0xFF   */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -63,7 +63,7 @@ namespace seq66
  */
 
 static const editable_event::name_value_t
-sm_category_names [] =
+s_category_names [] =
 {
     {
         (unsigned short)(editable_event::subgroup::channel_message),
@@ -82,7 +82,7 @@ sm_category_names [] =
         "Proprietary Event"
     },
     {
-        SEQ66_END_OF_MIDIBYTES_TABLE,
+        s_end_of_table,
         ""
     }
 };
@@ -93,7 +93,7 @@ sm_category_names [] =
  */
 
 static const editable_event::name_value_t
-sm_channel_event_names [] =
+s_channel_event_names [] =
 {
     { (unsigned short)(EVENT_NOTE_OFF),         "Note Off"          },  // 0x80
     { (unsigned short)(EVENT_NOTE_ON),          "Note On"           },  // 0x90
@@ -102,7 +102,7 @@ sm_channel_event_names [] =
     { (unsigned short)(EVENT_PROGRAM_CHANGE),   "Program"           },  // 0xC0
     { (unsigned short)(EVENT_CHANNEL_PRESSURE), "Ch Pressure"       },  // 0xD0
     { (unsigned short)(EVENT_PITCH_WHEEL),      "Pitch Wheel"       },  // 0xE0
-    { SEQ66_END_OF_MIDIBYTES_TABLE,              ""                 }   // end
+    { s_end_of_table,                           ""                  }    // end
 };
 
 /**
@@ -111,7 +111,7 @@ sm_channel_event_names [] =
  */
 
 static const editable_event::name_value_t
-sm_system_event_names [] =
+s_system_event_names [] =
 {
     { (unsigned short)(EVENT_MIDI_SYSEX),         "SysEx Start"     },  // 0xF0
     { (unsigned short)(EVENT_MIDI_QUARTER_FRAME), "Quarter Frame"   },  //   .
@@ -129,7 +129,7 @@ sm_system_event_names [] =
     { (unsigned short)(EVENT_MIDI_SONG_FD),       "FD"              },  //   .
     { (unsigned short)(EVENT_MIDI_ACTIVE_SENSE),  "Active sensing"  },  //   .
     { (unsigned short)(EVENT_MIDI_RESET),         "Reset"           },  // 0xFF
-    { SEQ66_END_OF_MIDIBYTES_TABLE,                ""               }   // end
+    { s_end_of_table,                             ""                }   // end
 };
 
 /**
@@ -138,7 +138,7 @@ sm_system_event_names [] =
  */
 
 static const editable_event::name_value_t
-sm_meta_event_names [] =
+s_meta_event_names [] =
 {
     { 0x00, "Seq Number"                },      // FF 00 02 ss ss (16-bit)
     { 0x01, "Text Event"                },      // FF 01 len text
@@ -172,7 +172,7 @@ sm_meta_event_names [] =
     { 0x59, "Key Sig"                   },      // FF 59 02 sf mi
     { 0x7F, "Seq Spec"                  },      // FF 7F len id data (seq66 prop)
     { 0xFF, "Illegal meta event"        },      // indicator of problem
-    { SEQ66_END_OF_MIDIBYTES_TABLE, ""   }      // terminator
+    { s_end_of_table, ""                }       // terminator
 };
 
 /**
@@ -221,7 +221,7 @@ sm_meta_lengths [] =
     { 0x59, 2   },                              // "Key Sig"
     { 0x7F, 0   },                              // "Seq Spec"
     { 0xFF, 0   },                              // "Illegal meta event"
-    { SEQ66_END_OF_MIDIBYTES_TABLE, 0 }         // terminator
+    { s_end_of_table, 0 }                       // terminator
 };
 
 /**
@@ -232,7 +232,7 @@ sm_meta_lengths [] =
  */
 
 static const editable_event::name_value_t
-sm_prop_event_names [] =
+s_prop_event_names [] =
 {
     { 0x01, "Buss number"               },
     { 0x02, "Channel number"            },
@@ -247,7 +247,7 @@ sm_prop_event_names [] =
     { 0x11, "Key"                       },
     { 0x12, "Scale"                     },
     { 0x13, "Background sequence"       },
-    { SEQ66_END_OF_MIDIBYTES_TABLE, ""  }       // terminator
+    { s_end_of_table, ""                }   // terminator
 };
 
 /**
@@ -257,14 +257,35 @@ sm_prop_event_names [] =
  */
 
 static const editable_event::name_value_t * const
-sm_category_arrays [] =
+s_category_arrays [] =
 {
-    sm_category_names,
-    sm_channel_event_names,
-    sm_system_event_names,
-    sm_meta_event_names,
-    sm_prop_event_names
+    s_category_names,
+    s_channel_event_names,
+    s_system_event_names,
+    s_meta_event_names,
+    s_prop_event_names
 };
+
+/**
+ *  A static function used to fill a channel-event status combo-box.
+ */
+
+std::string
+editable_event::channel_event_name (int index)
+{
+    std::string result;
+    int counter = 0;
+    while (s_channel_event_names[counter].event_value != s_end_of_table)
+    {
+        if (counter == index)
+        {
+            result = s_channel_event_names[counter].event_name;
+            break;
+        }
+        ++counter;
+    }
+    return result;
+}
 
 /**
  *  Provides a static lookup function that returns the name, if any,
@@ -290,12 +311,12 @@ editable_event::value_to_name
 )
 {
     std::string result;
-    const name_value_t * const table = sm_category_arrays[int(cat)];
+    const name_value_t * const table = s_category_arrays[int(cat)];
     if (cat == subgroup::channel_message)
         event::strip_channel(value);
 
     midibyte counter = 0;
-    while (table[counter].event_value != SEQ66_END_OF_MIDIBYTES_TABLE)
+    while (table[counter].event_value != s_end_of_table)
     {
         if (value == table[counter].event_value)
         {
@@ -322,7 +343,7 @@ editable_event::value_to_name
  *
  *  \return
  *      Returns the value associated with the name.  If there is no such value,
- *      then SEQ66_END_OF_MIDIBYTES_TABLE is returned.
+ *      then s_end_of_table is returned.
  */
 
 unsigned short
@@ -332,12 +353,12 @@ editable_event::name_to_value
     editable_event::subgroup cat
 )
 {
-    unsigned short result = SEQ66_END_OF_MIDIBYTES_TABLE;
+    unsigned short result = s_end_of_table;
     if (! name.empty())
     {
-        const name_value_t * const table = sm_category_arrays[int(cat)];
+        const name_value_t * const table = s_category_arrays[int(cat)];
         midibyte counter = 0;
-        while (table[counter].event_value != SEQ66_END_OF_MIDIBYTES_TABLE)
+        while (table[counter].event_value != s_end_of_table)
         {
             if (strings_match(table[counter].event_name, name))
             {
@@ -367,7 +388,7 @@ editable_event::meta_event_length (midibyte value)
 {
     unsigned short result = 0;
     midibyte counter = 0;
-    while (sm_meta_lengths[counter].event_value != SEQ66_END_OF_MIDIBYTES_TABLE)
+    while (sm_meta_lengths[counter].event_value != s_end_of_table)
     {
         if (value == sm_meta_lengths[counter].event_value)
         {
@@ -545,7 +566,7 @@ void
 editable_event::category (const std::string & name)
 {
     unsigned short catcode = name_to_value(name, subgroup::name);
-    if (catcode < SEQ66_END_OF_MIDIBYTES_TABLE)
+    if (catcode < s_end_of_table)
         m_category = static_cast<subgroup>(catcode);
     else
         m_category = subgroup::name;
@@ -665,6 +686,11 @@ editable_event::time_as_minutes ()
  *      Provides the string defining the second data byte of the event, if
  *      applicable to the event.  Some meta event may provide multiple values
  *      in this string.
+ *
+ * \param chan
+ *      Provides the string name for the channel.  If empty (the default
+ *      value), the channel is not changed.  The name of the channel is re
+ *      "1", not 0.
  */
 
 void
@@ -673,16 +699,21 @@ editable_event::set_status_from_string
     const std::string & ts,
     const std::string & s,
     const std::string & sd0,
-    const std::string & sd1
+    const std::string & sd1,
+    const std::string & chan
 )
 {
     unsigned short value = name_to_value(s, subgroup::channel_message);
     timestamp(ts);
-    if (value != SEQ66_END_OF_MIDIBYTES_TABLE)
+    if (value != s_end_of_table)
     {
         midibyte newstatus = midibyte(value);
         midibyte d0 = string_to_midibyte(sd0);
-        set_channel_status(newstatus, channel());   /* pass in code, channel */
+        midibyte c = channel();
+        if (! chan.empty())
+            c = midibyte(std::stoi(chan) - 1);
+
+        set_channel_status(newstatus, c);       /* pass in code, channel */
         if (is_one_byte_msg(newstatus))
         {
             set_data(d0);
@@ -696,7 +727,7 @@ editable_event::set_status_from_string
     else
     {
         value = name_to_value(s, subgroup::meta_event);
-        if (value != SEQ66_END_OF_MIDIBYTES_TABLE)
+        if (value != s_end_of_table)
         {
             /*
              * Handle Meta or SysEx events, setting that status to 0xFF and

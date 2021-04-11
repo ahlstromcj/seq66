@@ -2991,7 +2991,7 @@ performer::output_func ()
                 }
             }
 
-            bool jackrunning = m_jack_asst.output(pad());
+            bool jackrunning = jack_output(pad());  // m_jack_asst.output(pad());
             if (jackrunning)
             {
                 // No additional code needed besides the output() call above.
@@ -3026,10 +3026,7 @@ performer::output_func ()
                  */
 
                 pad().add_delta_tick(delta_tick);
-#if defined SEQ66_JACK_SUPPORT
             }
-#endif
-
 
 #if defined USE_ODD_CHANGE_POSITION_CODE            // ca 2021-04-05 EXPERIMENT
             /*

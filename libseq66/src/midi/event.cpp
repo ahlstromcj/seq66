@@ -390,7 +390,8 @@ void
 event::set_channel_status (midibyte eventcode, midibyte channel)
 {
     m_status = eventcode;               /* already masked against 0xF0      */
-    m_channel = channel;                /* already masked against 0x0F      */
+    if (! is_null_channel(channel))
+        m_channel = channel;            /* already masked against 0x0F :-D  */
 }
 
 /**

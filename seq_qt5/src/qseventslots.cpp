@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-02-03
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  Also note that, currently, the editable_events container does not support
@@ -82,7 +82,8 @@ qseventslots::qseventslots
     m_top_iterator          (),
     m_bottom_iterator       (),
     m_current_iterator      (),
-    m_pager_index           (0)
+    m_pager_index           (0),
+    m_show_data_as_hex      (false)
 {
     load_events();
 }
@@ -176,7 +177,8 @@ qseventslots::events_to_string () const
  *  area of the event editor.
  */
 
-#define SEQ66_EVENT_DATA_FMT    "0x%02x:%d"
+#define SEQ66_EVENT_DATA_FMT_DEC    "%d"
+#define SEQ66_EVENT_DATA_FMT_HEX    "0x%02x"
 
 /**
  *  Set the current event, which is the event that is highlighted.  Note in
@@ -218,10 +220,20 @@ qseventslots::set_current_event
         char tmp[32];
         midibyte d0, d1;
         ev.get_data(d0, d1);
-        snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT, int(d0), int(d0));
-        data_0 = tmp;
-        snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT, int(d1), int(d1));
-        data_1 = tmp;
+        if (m_show_data_as_hex)
+        {
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d0));
+            data_0 = tmp;
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d1));
+            data_1 = tmp;
+        }
+        else
+        {
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d0));
+            data_0 = tmp;
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d1));
+            data_1 = tmp;
+        }
     }
     set_event_text
     (
@@ -257,10 +269,20 @@ qseventslots::set_table_event
         char tmp[32];
         midibyte d0, d1;
         ev.get_data(d0, d1);
-        snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT, int(d0), int(d0));
-        data_0 = tmp;
-        snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT, int(d1), int(d1));
-        data_1 = tmp;
+        if (m_show_data_as_hex)
+        {
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d0));
+            data_0 = tmp;
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_HEX, int(d1));
+            data_1 = tmp;
+        }
+        else
+        {
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d0));
+            data_0 = tmp;
+            snprintf(tmp, sizeof tmp, SEQ66_EVENT_DATA_FMT_DEC, int(d1));
+            data_1 = tmp;
+        }
         if (ev.is_linked())
         {
             midipulse lt = ev.link_time();
@@ -367,6 +389,16 @@ qseventslots::set_event_text
     m_parent.set_event_data_1(evdata1);
 }
 
+midibyte
+qseventslots::string_to_channel (const std::string & channel)
+{
+    midibyte result = m_seq->seq_midi_channel();
+    if (! channel.empty())
+        result = midibyte(std::stoi(channel) - 1);
+
+    return result;
+}
+
 /**
  *  Inserts an event.  What actually happens here depends if the new event is
  *  before the frame, within the frame, or after the frame, based on the
@@ -470,6 +502,10 @@ qseventslots::insert_event (editable_event ev)
  *      The second data byte of the new event, as obtained from the event-edit
  *      data 2 field.  Used only for two-parameter events.
  *
+ * \param channel
+ *      Provides the channel string.  Defaults to "", which means the
+ *      sequence's internal MIDI channel (most often it is 0) is used.
+ *
  * \return
  *      Returns true if the event was inserted.
  */
@@ -480,19 +516,20 @@ qseventslots::insert_event
     const std::string & evtimestamp,
     const std::string & evname,
     const std::string & evdata0,
-    const std::string & evdata1
+    const std::string & evdata1,
+    const std::string & channel
 )
 {
     seq66::event e;                                 /* new default event    */
     editable_event edev(m_event_container, e);
-    edev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
+    edev.set_status_from_string(evtimestamp, evname, evdata0, evdata1, channel);
 
     /*
      * Don't set the channel for "Tempo", "Time Sig", and other Meta events.
-     */
 
     if (! edev.is_ex_data())
-        edev.set_channel(m_seq->seq_midi_channel());
+        edev.set_channel(string_to_channel(channel));   // REDUNDANT!
+     */
 
     m_current_event = edev;
     return insert_event(edev);
@@ -679,6 +716,9 @@ qseventslots::delete_current_event ()
  * \param evdata1
  *      Provides the second data byte as edited by the user.
  *
+ * \param channel
+ *      Provides the channel string.  Defaults to "", which means the
+ *
  * \return
  *      Returns true simply if the event-count is greater than 0.
  */
@@ -690,7 +730,8 @@ qseventslots::modify_current_event
     const std::string & evtimestamp,
     const std::string & evname,
     const std::string & evdata0,
-    const std::string & evdata1
+    const std::string & evdata1,
+    const std::string & channel
 )
 {
     bool result = m_event_count > 0;
@@ -700,11 +741,12 @@ qseventslots::modify_current_event
     if (result)
     {
         bool isnoteevent = strings_match(evname, "Note");
+        midibyte channelbyte = string_to_channel(channel);
         if (isnoteevent)
         {
             editable_event & ev = editable_events::dref(m_current_iterator);
             if (! ev.is_ex_data())
-                ev.set_channel(m_seq->seq_midi_channel());  /* just in case */
+                ev.set_channel(channelbyte);            /* set just in case */
 
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             if (row >= 0)
@@ -719,7 +761,7 @@ qseventslots::modify_current_event
 
             editable_event ev = editable_events::dref(m_current_iterator);
             if (! ev.is_ex_data())
-                ev.set_channel(m_seq->seq_midi_channel());
+                ev.set_channel(channelbyte);            /* set just in case */
 
             ev.set_status_from_string(evtimestamp, evname, evdata0, evdata1);
             result = delete_current_event();

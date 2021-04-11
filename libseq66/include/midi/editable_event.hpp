@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-28
- * \updates       2021-02-01
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  *  This module extends the event class to support conversions between events
@@ -380,7 +380,8 @@ public:
         const std::string & ts,
         const std::string & s,
         const std::string & sd0,
-        const std::string & sd1
+        const std::string & sd1,
+        const std::string & ch = ""
     );
     std::string format_timestamp ();
     std::string stock_event_string ();
@@ -414,6 +415,8 @@ public:
     }
 
     void analyze ();
+
+    static std::string channel_event_name (int index);
 
 };          // class editable_event
 

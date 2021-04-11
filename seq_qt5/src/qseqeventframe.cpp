@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-02-21
+ * \updates       2021-04-11
  * \license       GNU GPLv2 or above
  *
  */
@@ -165,6 +165,24 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     );
 
     /*
+     * Channel selection and (new) Event selection.
+     */
+
+    populate_midich_combo();
+    connect
+    (
+        ui->channel_combo_box, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_midi_channel(int))
+    );
+
+    populate_status_combo();
+    connect
+    (
+        ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
+        this, SLOT(slot_event_name(int))
+    );
+
+    /*
      * Delete button.  Will set to enabled/disabled once fully initialized.
      */
 
@@ -254,6 +272,54 @@ qseqeventframe::~qseqeventframe()
     delete ui;
 }
 
+void
+qseqeventframe::populate_midich_combo ()
+{
+    std::string defalt = std::to_string(int(m_seq->seq_midi_channel()));
+    defalt += " (default)";
+    ui->channel_combo_box->clear();
+    ui->channel_combo_box->insertItem(0, QString::fromStdString(defalt));
+    for (int channel = 1; channel <= c_midichannel_max; ++channel)
+    {
+        std::string name = std::to_string(channel);
+        QString combotext(QString::fromStdString(name));
+        ui->channel_combo_box->insertItem(channel, combotext);
+    }
+    ui->channel_combo_box->setCurrentIndex(0);
+}
+
+void
+qseqeventframe::populate_status_combo ()
+{
+    ui->combo_ev_name->clear();
+    for (int counter = 0; /* counter value */; ++counter)
+    {
+        std::string name = editable_event::channel_event_name(counter);
+        if (name.empty())
+        {
+            break;
+        }
+        else
+        {
+            QString combotext(QString::fromStdString(name));
+            ui->combo_ev_name->insertItem(counter, combotext);
+        }
+    }
+    ui->combo_ev_name->setCurrentIndex(0);
+}
+
+void
+qseqeventframe::slot_midi_channel (int /*index*/)
+{
+    // Anything to do? We just need the text.
+}
+
+void
+qseqeventframe::slot_event_name (int /*index*/)
+{
+    // Anything to do? We just need the text.
+}
+
 /**
  *  Check for dirtiness (perhaps), clear the table and settings, an reload as
  *  if starting again.
@@ -267,9 +333,7 @@ qseqeventframe::on_sequence_change (seq::number seqno, bool recreate)
     {
         if (m_is_dirty)
         {
-            // ignore and pop up a warning dialog?
-
-            result = false;
+            result = false;     /* ignore and pop up a warning dialog?  */
         }
         else
         {
@@ -411,7 +475,8 @@ qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 void
 qseqeventframe::set_seq_channel (const std::string & ch)
 {
-    ui->label_channel->setText(ch.c_str());
+    ui->label_channel->setText(QString::fromStdString(ch));
+    ui->channel_combo_box->setCurrentIndex(0);
 }
 
 /**
@@ -455,7 +520,11 @@ qseqeventframe::set_event_timestamp (const std::string & ts)
 }
 
 /**
- *  Sets ui->entry_ev_name to the name-of-event string.
+ *  Sets ui->combo_ev_name to the name-of-event string.  Oops, now
+ *  (2021-04-11), we used it to select the entry in the editable combo-box for
+ *  event-status names.
+ *
+ * Old:  ui->entry_ev_name->setText(n.c_str());
  *
  * \param n
  *      The name-of-event string for the current event.
@@ -464,7 +533,8 @@ qseqeventframe::set_event_timestamp (const std::string & ts)
 void
 qseqeventframe::set_event_name (const std::string & n)
 {
-    ui->entry_ev_name->setText(n.c_str());
+    QString name = QString::fromStdString(n);
+    ui->combo_ev_name->setCurrentText(name);
 }
 
 /**
@@ -723,11 +793,19 @@ qseqeventframe::handle_insert ()
     if (m_eventslots)
     {
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
-        std::string name = ui->entry_ev_name->text().toStdString();
+//      std::string name = ui->entry_ev_name->text().toStdString();
+        std::string name = ui->combo_ev_name->currentText().toStdString();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
+        std::string channel;
+        if (ui->channel_combo_box->currentIndex() > 0)
+            channel = ui->channel_combo_box->currentText().toStdString();
+
         std::string linktime;                   /* empty, no link time yet  */
-        bool has_events = m_eventslots->insert_event(ts, name, data0, data1);
+        bool has_events = m_eventslots->insert_event
+        (
+            ts, name, data0, data1, channel
+        );
         set_seq_lengths(get_lengths());
         if (has_events)
         {
@@ -759,7 +837,8 @@ qseqeventframe::handle_modify ()
         int cr = current_row();
         const editable_event & ev = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
-        std::string name = ui->entry_ev_name->text().toStdString();
+//      std::string name = ui->entry_ev_name->text().toStdString();
+        std::string name = ui->combo_ev_name->currentText().toStdString();
 
         /*
          * Which one is better?  The one use would allow for events on more
@@ -771,12 +850,16 @@ qseqeventframe::handle_modify ()
         std::string chan = ev.channel_string();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
+        std::string channel = ui->channel_combo_box->currentText().toStdString();
         midipulse lt = c_null_midipulse;
         if (ev.is_linked())
             lt = ev.link_time();
 
         std::string linktime = m_eventslots->time_string(lt);
-        (void) m_eventslots->modify_current_event(cr, ts, name, data0, data1);
+        (void) m_eventslots->modify_current_event
+        (
+            cr, ts, name, data0, data1, channel
+        );
         set_seq_lengths(get_lengths());
         set_event_line(cr, ts, name, chan, data0, data1, linktime);
         set_dirty();

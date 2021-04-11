@@ -177,8 +177,11 @@
    blank.  The user must select a valid buss from this dropdown.
 
    \itempar{MIDI Out Channel}{pattern editor!midi out channel}
-   This settings select the MIDI output channel.
-   The possible values range from 1 to 16.
+   The \textbf{Channel Selection} setting selects the MIDI output channel.
+   The possible values range from 1 to 16, plus \textsl{Free}, which means
+   that the channels of the events are preserved, and are used as the output
+   channel, a bit like an SMF 0 track.
+   The editing channel is always channel 1.
    If instruments are assigned in the 'usr' configuration file
    to that device and channel, their names will be shown in the dropdown.
 
