@@ -575,16 +575,16 @@ qseqroll::draw_notes
     int unitheight = unit_height();
     int unitdecr = unit_height() - 1;
     int noteheight = unitheight - 3;
-
-    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
+    auto cev = s->cbegin();
+    while (! s->cend(cev))
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* ++cev here   */
+        sequence::draw dt = s->get_next_note(ni, cev); /* ++cev */
         if (dt == sequence::draw::finish)
             break;
 
-        if (dt == sequence::draw::tempo)                    /* not ready!   */
-            continue;
+        if (dt == sequence::draw::tempo)
+            continue;                               // DRAW_TEMPO_LINE_DISABLED
 
         bool start_in = ni.start() >= start_tick && ni.start() <= end_tick;
         bool end_in = ni.finish() >= start_tick && ni.finish() <= end_tick;
@@ -739,10 +739,11 @@ qseqroll::draw_drum_notes
 
     int noteheight = unit_height();
     int noteheight2 = unit_height() + 1;
-    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
+    auto cev = s->cbegin();
+    while (! s->cend(cev))
     {
         sequence::note_info ni;
-        sequence::draw dt = s->get_next_note_ex(ni, cev);   /* ++cev here   */
+        sequence::draw dt = s->get_next_note(ni, cev); /* ++cev */
         if (dt == sequence::draw::finish)
             break;
 

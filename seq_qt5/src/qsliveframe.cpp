@@ -568,14 +568,16 @@ qsliveframe::draw_sequence (seq::pointer s, seq::number sn)
                 eventcolor = drum_paint();
                 drawcolor = drum_paint();
             }
-            preview_h -= 6;                     /* padding for box          */
+            preview_h -= 6;                             /* padding for box  */
             preview_w -= 6;
             rectangle_x += 2;
             rectangle_y += 2;
-            for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
+
+            auto cev = s->cbegin();
+            while (! s->cend(cev))
             {
-                sequence::note_info ni;             /* two members used!    */
-                sequence::draw dt = s->get_next_note_ex(ni, cev);  /* ++cev */
+                sequence::note_info ni;
+                sequence::draw dt = s->get_next_note(ni, cev); /* ++cev */
                 int tick_s_x = (ni.start() * preview_w) / t1;
                 int tick_f_x = (ni.finish() * preview_w) / t1;
                 if (dt == sequence::draw::finish)

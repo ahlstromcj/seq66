@@ -1,7 +1,7 @@
 # README for Seq66 0.93.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-04-11
+2015-09-10 to 2021-04-13
 
 __Seq66__ is a MIDI sequencer/live-looper with a hardware-sampler-like
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -83,6 +83,7 @@ Windows, and using a conventional source tarball.
         *   Fixed playback of ultra-long patterns due to not sleeping in the
             output loop (forgot to convert milliseconds to microseconds).
         *   Fixed vertical zoom in the pattern editor.
+        *   Fixed bug in writing Meta and SeqSpec data-lengths greater than 127.
         *   Enhanced the event editor to work with channel-less tracks.
     *   Version 0.92.2:
         *   Added a Qt "style-sheet" configuration it to the 'usr' file. It

@@ -77,8 +77,6 @@
 
 #include "app_limits.h"
 #include "cfg/settings.hpp"
-// #include "midi/midibytes.hpp"
-// #include "midi/event.hpp"
 #include "util/calculations.hpp"
 #include "util/strfunctions.hpp"        /* seq66::contains(), etc.          */
 

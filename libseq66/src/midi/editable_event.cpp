@@ -927,9 +927,12 @@ editable_event::analyze ()
     if (status >= EVENT_NOTE_OFF && status <= EVENT_PITCH_WHEEL)
     {
         char tmp[32];
-        midibyte ch = channel() + 1;
+        int ch = int(channel()) + 1;
+        int di0, di1;
         midibyte d0, d1;
         get_data(d0, d1);
+        di0 = int(d0);
+        di1 = int(d1);
         category(subgroup::channel_message);
         event::strip_channel(status);
 
@@ -938,24 +941,21 @@ editable_event::analyze ()
          */
 
         m_name_status = value_to_name(status, subgroup::channel_message);
-        snprintf(tmp, sizeof tmp, "Ch %d", int(ch));
+        snprintf(tmp, sizeof tmp, "%d", ch);        /* no "Ch" */
         m_name_channel = std::string(tmp);
         if (is_one_byte_msg(status))
         {
-            snprintf(tmp, sizeof tmp, "Data %d", int(d0));
+            snprintf(tmp, sizeof tmp, "Data %d", di0);
         }
         else
         {
             if (is_note_msg(status))
             {
-                snprintf(tmp, sizeof tmp, "Key %d Vel %d", int(d0), int(d1));
+                snprintf(tmp, sizeof tmp, "Key %d Vel %d", di0, di1);
             }
             else
             {
-                snprintf
-                (
-                    tmp, sizeof tmp, "Data %d, %d", int(d0), int(d1)
-                );
+                snprintf(tmp, sizeof tmp, "Data %d, %d", di0, di1);
             }
         }
         m_name_data = std::string(tmp);

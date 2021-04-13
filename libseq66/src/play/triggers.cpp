@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-04-01
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -458,15 +458,6 @@ triggers::add
 {
     midipulse adjusted_offset = fixoffset ? adjust_offset(offset) : offset;
     trigger t(tick, len, adjusted_offset, transpose);
-
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-    printf
-    (
-        "%ld ticks at %ld, offset %ld, transpose %u\n",
-        len, tick, adjusted_offset, unsigned(transpose)
-    );
-#endif
-
     for (auto ti = m_triggers.begin(); ti != m_triggers.end(); /* ++ti */)
     {
         midipulse tickstart = ti->tick_start();
@@ -487,8 +478,8 @@ triggers::add
         }
         ++ti;                                   /* tricky code              */
     }
-    m_triggers.push_front(t);
-    m_triggers.sort();                          /* hmmm, another sort       */
+    m_triggers.push_back(t);
+    sort();                                     /* m_triggers.sort()        */
 }
 
 /**
@@ -606,10 +597,10 @@ triggers::remove (midipulse tick)
 
 #if defined USE_TRIGGERS_FIND
 
-triggers::List::iterator
+triggers::container::iterator
 triggers::find (midipulse tick)
 {
-    triggers::List::iterator result = m_triggers.end();
+    triggers::container::iterator result = m_triggers.end();
     for (auto i = m_triggers.begin(); i != m_triggers.end(); ++i)
     {
         if (i->tick_start() <= tick && tick <= i->tick_end())
@@ -622,6 +613,12 @@ triggers::find (midipulse tick)
 }
 
 #endif  // USE_TRIGGERS_FIND
+
+void
+triggers::sort ()
+{
+    std::sort(m_triggers.begin(), m_triggers.end());
+}
 
 /**
  *  Splits a single trigger into two triggers.  The
@@ -751,10 +748,10 @@ triggers::copy (midipulse starttick, midipulse distance)
             if (xt.offset() < 0)
                 xt.increment_offset(m_length);
 
-            m_triggers.push_front(xt);
+            m_triggers.push_back(xt);
         }
     }
-    m_triggers.sort();
+    sort();                                     /* m_triggers.sort()        */
 }
 
 /**

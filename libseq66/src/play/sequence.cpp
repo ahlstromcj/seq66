@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-11
+ * \updates       2021-04-12
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -891,11 +891,12 @@ sequence::play
     }
     if (playing())                          /* play notes in the frame      */
     {
-        midipulse offset = get_length() - m_trigger_offset;
+        midipulse length = get_length() > 0 ? get_length() : m_ppqn ;
+        midipulse offset = length - m_trigger_offset;
         midipulse start_tick_offset = start_tick + offset;
         midipulse end_tick_offset = end_tick + offset;
-        midipulse times_played = m_last_tick / get_length();
-        midipulse offset_base = times_played * get_length();
+        midipulse times_played = m_last_tick / length;
+        midipulse offset_base = times_played * length;
         int transpose = trigtranspose;
         if (transpose == 0)
             transpose = transposable() ? perf()->get_transpose() : 0 ;
@@ -931,7 +932,7 @@ sequence::play
             if (e == m_events.end())                /* did we hit the end ? */
             {
                 e = m_events.begin();               /* yes, start over      */
-                offset_base += get_length();        /* for another go at it */
+                offset_base += length;              /* for another go at it */
 
                 /*
                  * Putting this sleep here doesn't reduce the total CPU load,
@@ -3497,7 +3498,7 @@ sequence::transpose_trigger (midipulse tick, int transposition)
  *      Returns of copy of m_triggers.triggerlist().
  */
 
-triggers::List
+triggers::container
 sequence::get_triggers () const
 {
     automutex locker(m_mutex);
@@ -3772,7 +3773,7 @@ sequence::note_count ()
  */
 
 sequence::draw
-sequence::get_next_note_ex
+sequence::get_next_note
 (
     note_info & niout,
     event::buffer::const_iterator & evi
@@ -3929,7 +3930,7 @@ sequence::reset_interval
  */
 
 bool
-sequence::get_next_event_ex
+sequence::get_next_event
 (
     midibyte & status, midibyte & cc,
     event::buffer::const_iterator & evi
@@ -5112,18 +5113,14 @@ sequence::copy_events (const eventlist & newevents)
          */
 
         midipulse len = m_events.get_max_timestamp();
-#ifdef USE_THIS_READY_CODE
-        int qnnum = len / int(get_ppqn());  /* number of quarter notes      */
-        if (len % get_ppqn() != 0)
+        if (len < get_ppqn())
         {
-            qnnum = get_beats_per_bar();    /* set to size of measure       */
-            while (qnnum * get_ppqn() <= len)
-                ++qnnum;                    /* shouldn't ever happen        */
+            double qn_per_beat = 4.0 / get_beat_width();
+            int qnnum = int(get_beats_per_bar() * qn_per_beat);
+            len = qnnum * get_ppqn();
         }
-        len = qnnum * get_ppqn();
-#endif
         m_length = len;
-        verify_and_link();                  /* function uses m_length       */
+        verify_and_link();                      /* function uses m_length   */
     }
     modify();
 }

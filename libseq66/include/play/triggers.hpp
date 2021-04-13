@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-04-01
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -36,8 +36,8 @@
  */
 
 #include <string>
-#include <list>
 #include <stack>
+#include <vector>
 
 #include "midi/midibytes.hpp"           /* seq66::midipulse alias, etc.     */
 
@@ -124,13 +124,11 @@ public:
     trigger
     (
         midipulse tick, midipulse len,
-        midipulse offset, midibyte transpose = 0);
-
+        midipulse offset, midibyte transpose = 0
+    );
     ~trigger () = default;
     trigger (const trigger &) = default;
     trigger & operator = (const trigger &) = default;
-
-    std::string to_string () const;
 
     /**
      *  This operator compares only the m_tick_start members.
@@ -146,6 +144,8 @@ public:
     {
         return m_tick_start < rhs.m_tick_start;
     }
+
+    std::string to_string () const;
 
     bool is_valid () const
     {
@@ -344,14 +344,14 @@ private:
      *  We might convert to using a vector instead of a list.
      */
 
-    using List = std::list<trigger>;
+    using container = std::vector<trigger>;
 
     /**
      *  Provides a stack for use with the undo/redo features of the
      *  trigger support.
      */
 
-    using Stack = std::stack<List>;
+    using stack = std::stack<container>;
 
 private:
 
@@ -366,7 +366,7 @@ private:
      *  This list holds the current pattern/triggers events.
      */
 
-    List m_triggers;
+    container m_triggers;
 
     /**
      *  Holds a count of the selected triggers, for better control over
@@ -385,19 +385,19 @@ private:
      *  Handles the undo list for a series of operations on triggers.
      */
 
-    Stack m_undo_stack;
+    stack m_undo_stack;
 
     /**
      *  Handles the redo list for a series of operations on triggers.
      */
 
-    Stack m_redo_stack;
+    stack m_redo_stack;
 
     /**
      *  An iterator for cycling through the triggers during drawing.
      */
 
-    List::iterator m_draw_iterator;
+    container::iterator m_draw_iterator;
 
     /**
      *  Set to true if there is an active trigger in the trigger clipboard.
@@ -463,12 +463,12 @@ public:
             m_length = len;
     }
 
-    const List & triggerlist () const
+    const container & triggerlist () const
     {
         return m_triggers;
     }
 
-    List & triggerlist ()
+    container & triggerlist ()
     {
         return m_triggers;
     }
@@ -483,13 +483,13 @@ public:
         return m_number_selected;
     }
 
-    bool is_end (const List::iterator & it)
+    bool is_end (const container::iterator & it)
     {
         return it == m_triggers.end();
     }
 
 #if defined USE_TRIGGERS_FIND
-    List::iterator find (midipulse tick);
+    container::iterator find (midipulse tick);
 #endif
 
     void push_undo ();
@@ -567,6 +567,7 @@ public:
 
 private:
 
+    void sort ();
     bool split (trigger & t, midipulse splittick);
     bool rescale (int oldppqn, int newppqn);
     midipulse adjust_offset (midipulse offset);

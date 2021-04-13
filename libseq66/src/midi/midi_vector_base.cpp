@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-04-01
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -73,7 +73,15 @@ midi_vector_base::put_meta
     add_variable(deltatime);
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(metavalue);                                 /* meta marker          */
-    put(midibyte(datalen));                         /* range from 0 to 255  */
+
+    /*
+     * Some meta events (e.g. c_trig_transpose for a lot of triggers) can
+     * exceed 0x80 (128). Yikes!
+     *
+     * put(midibyte(datalen));                      // range from 0 to 127
+     */
+
+    add_variable(midipulse(datalen));               /* TODO: use midilong   */
 }
 
 void
@@ -83,7 +91,15 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
     add_variable(0);
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(EVENT_META_SEQSPEC);                        /* 0xF7 seqspec marker  */
-    put(midibyte(datalen));                         /* range from 0 to 255  */
+
+    /*
+     * Some meta events (e.g. c_trig_transpose for a lot of triggers) can
+     * exceed 0x80 (128). Yikes!
+     *
+     * put(midibyte(datalen));                      // range from 0 to 127
+     */
+
+    add_variable(midipulse(datalen));               /* TODO: use midilong   */
     add_long(spec);                                 /* e.g. c_midibus       */
 }
 
@@ -91,7 +107,8 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
  *  This function masks off the lower 8 bits of the long parameter, then
  *  shifts it right 7, and, if there are still set bits, it encodes it into
  *  the buffer in reverse order.  This function "replaces"
- *  sequence::add_list_var().
+ *  sequence::add_list_var().  It is very similar to midifile ::
+ *  write_varinum().
  *
  * \param v
  *      The data value to be added to the current event in the MIDI container.
@@ -605,11 +622,17 @@ midi_vector_base::song_fill_seq_trigger
 )
 {
     const int num_triggers = 1;                 /* only one trigger here    */
-    put_seqspec(c_trig_transpose, num_triggers * (3 * 4 + 1));
+    if (rc().save_old_triggers())
+        put_seqspec(c_triggers_ex, num_triggers * (3 * 4));
+    else
+        put_seqspec(c_trig_transpose, num_triggers * (3 * 4 + 1));
+
     add_long(0);                                /* the start tick           */
     add_long(trig.tick_end());                  /* the ending tick          */
     add_long(0);                                /* offset is done in event  */
-    add_byte(trig.transpose_byte());            /* the (new) transpose byte */
+    if (! rc().save_old_triggers())
+        add_byte(trig.transpose_byte());        /* the (new) transpose byte */
+
     fill_proprietary();
     fill_meta_track_end(length - prev_timestamp);           /* delta time   */
 }
@@ -732,15 +755,21 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
          *  Old: put_seqspec(c_triggers_ex, triggercount * 3 * 4);
          */
 
-        const triggers::List & triggerlist = m_sequence.triggerlist();
+        bool transtriggers = ! rc().save_old_triggers();
+        const triggers::container & triggerlist = m_sequence.triggerlist();
         int triggersize = int(triggerlist.size());
-        put_seqspec(c_trig_transpose, triggersize * (3 * 4 + 1));
+        if (transtriggers)
+            put_seqspec(c_trig_transpose, triggersize * (3 * 4 + 1));
+        else
+            put_seqspec(c_triggers_ex, triggersize * (3 * 4));
+
         for (auto & t : triggerlist)
         {
             add_long(t.tick_start());
             add_long(t.tick_end());
             add_long(t.offset());
-            add_byte(t.transpose_byte());
+            if (transtriggers)
+                add_byte(t.transpose_byte());
         }
         fill_proprietary();
     }

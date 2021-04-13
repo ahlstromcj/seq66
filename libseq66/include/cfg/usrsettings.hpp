@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-26
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -915,6 +915,13 @@ private:
     bool m_resume_note_ons;
 
     /**
+     *  The size of the fingerprint to use.  The default size is 32, but can
+     *  be made larger, at the expense of slowing down drawing slightly.
+     */
+
+    int m_fingerprint_size;
+
+    /**
      *  [user-session]
      *
      *  This value indicates to create and use a Non Session Manager (or New
@@ -1646,6 +1653,11 @@ public:
         return m_resume_note_ons;
     }
 
+    int fingerprint_size () const
+    {
+        return m_fingerprint_size;
+    }
+
     session session_manager () const
     {
         return m_session_manager;
@@ -1800,6 +1812,12 @@ public:         // used in main application module and the usrfile class
     void resume_note_ons (bool f)
     {
         m_resume_note_ons = f;
+    }
+
+    void fingerprint_size (int sz)
+    {
+        if (sz >= 32 && sz <= 128)
+            m_fingerprint_size = sz;
     }
 
     void session_manager (const std::string & sm);

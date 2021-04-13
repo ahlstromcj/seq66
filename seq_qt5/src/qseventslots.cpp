@@ -83,7 +83,7 @@ qseventslots::qseventslots
     m_bottom_iterator       (),
     m_current_iterator      (),
     m_pager_index           (0),
-    m_show_data_as_hex      (false)
+    m_show_data_as_hex      (false)                     /* hexadecimal()    */
 {
     load_events();
 }
@@ -238,7 +238,7 @@ qseventslots::set_current_event
     set_event_text
     (
         ev.category_string(), ev.timestamp_string(), ev.status_string(),
-        data_0, data_1
+        data_0, data_1, int(ev.channel())
     );
     m_current_row = m_current_index = index;
     m_current_iterator = ei;
@@ -379,12 +379,14 @@ qseventslots::set_event_text
     const std::string & evtimestamp,
     const std::string & evname,
     const std::string & evdata0,
-    const std::string & evdata1
+    const std::string & evdata1,
+    int channel
 )
 {
     m_parent.set_event_timestamp(evtimestamp);
     m_parent.set_event_category(evcategory);
     m_parent.set_event_name(evname);
+    m_parent.set_event_channel(channel);
     m_parent.set_event_data_0(evdata0);
     m_parent.set_event_data_1(evdata1);
 }

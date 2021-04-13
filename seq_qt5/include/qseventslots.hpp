@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-04-11
+ * \updates       2021-04-12
  * \license       GNU GPLv2 or above
  *
  *  This class supports the left side of the Qt 5 version of the Event Editor
@@ -307,6 +307,11 @@ private:
         return m_seq;
     }
 
+    void hexadecimal (bool flag)
+    {
+        m_show_data_as_hex = flag;
+    }
+
     bool load_events ();
     bool load_table ();
     midibyte string_to_channel (const std::string & channel);
@@ -355,7 +360,8 @@ private:
         const std::string & evtimestamp,
         const std::string & evname,
         const std::string & evdata0,
-        const std::string & evdata1
+        const std::string & evdata1,
+        int channel
     );
 
     void page_movement (int new_value);

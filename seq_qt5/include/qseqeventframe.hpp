@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-01-30
+ * \updates       2021-04-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -110,6 +110,7 @@ private:
     void set_event_category (const std::string & c);
     void set_event_timestamp (const std::string & ts);
     void set_event_name (const std::string & n);
+    void set_event_channel (int channel);
     void set_event_data_0 (const std::string & d);
     void set_event_data_1 (const std::string & d);
     void set_event_line
@@ -148,6 +149,7 @@ private slots:
     void update_seq_name ();
     void slot_midi_channel (int index);
     void slot_event_name (int index);
+    void slot_hex_data_state (int state);
 
 private:
 
@@ -168,6 +170,12 @@ private:
      */
 
     std::unique_ptr<qseventslots> m_eventslots;
+
+    /**
+     *  If true, show data in hexadecimal format.
+     */
+
+    bool m_show_data_as_hex;
 
     /**
      *  Indicates a modification is active.

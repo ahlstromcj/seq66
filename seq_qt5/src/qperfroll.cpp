@@ -846,7 +846,6 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         pen.setColor(Qt::black);
                         brush.setColor(backcolor);
                     }
-
                     pen.setStyle(Qt::SolidLine);    /* main seq icon box    */
                     brush.setStyle(Qt::SolidPattern);
                     painter.setBrush(brush);
@@ -896,15 +895,19 @@ qperfroll::draw_triggers (QPainter & painter, const QRect & r)
                         else
                             pen.setColor(drum_color());     // Qt::red
 
+                        painter.setPen(pen);
+
                         int cny = c_names_y - 6;
                         int marker_x = tix_to_pix(t);
-                        painter.setPen(pen);
-                        for (auto cev = seq->cbegin(); ! seq->cend(cev); ++cev)
+                        auto cev = seq->cbegin();
+                        while (! seq->cend(cev))
                         {
                             sequence::note_info ni;
-                            sequence::draw dt = seq->get_next_note_ex(ni, cev);
+                            sequence::draw dt = seq->get_next_note(ni, cev);
                             if (dt == sequence::draw::finish)
                                 break;
+                            else if (dt == sequence::draw::tempo)
+                                continue;       // DRAW_TEMPO_LINE_DISABLED
 
                             midipulse tick_s = ni.start();
                             midipulse tick_f = ni.finish();

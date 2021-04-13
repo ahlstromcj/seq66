@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-08-13
- * \updates       2021-04-11
+ * \updates       2021-04-12
  * \license       GNU GPLv2 or above
  *
  */
@@ -87,6 +87,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     ui                      (new Ui::qseqeventframe),
     m_seq                   (p.sequence_pointer(seqid)),
     m_eventslots            (new qseventslots(p, *this, m_seq)),
+    m_show_data_as_hex      (false),
     m_is_dirty              (false)
 {
     ui->setupUi(this);
@@ -138,7 +139,7 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
      */
 
     QStringList columns;
-    columns << "Time" << "Event" << "Chan" << "Data 0" << "Data 1" << "Link";
+    columns << "Time" << "Event" << "Ch" << "Data 0" << "Data 1" << "Link";
     ui->eventTableWidget->setHorizontalHeaderLabels(columns);
     ui->eventTableWidget->setSelectionBehavior
     (
@@ -180,6 +181,12 @@ qseqeventframe::qseqeventframe (performer & p, int seqid, QWidget * parent)
     (
         ui->combo_ev_name, SIGNAL(currentIndexChanged(int)),
         this, SLOT(slot_event_name(int))
+    );
+
+    connect
+    (
+        ui->hex_data_check_box, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_hex_data_state(int))
     );
 
     /*
@@ -275,7 +282,7 @@ qseqeventframe::~qseqeventframe()
 void
 qseqeventframe::populate_midich_combo ()
 {
-    std::string defalt = std::to_string(int(m_seq->seq_midi_channel()));
+    std::string defalt = std::to_string(int(m_seq->seq_midi_channel()) + 1);
     defalt += " (default)";
     ui->channel_combo_box->clear();
     ui->channel_combo_box->insertItem(0, QString::fromStdString(defalt));
@@ -320,8 +327,17 @@ qseqeventframe::slot_event_name (int /*index*/)
     // Anything to do? We just need the text.
 }
 
+void
+qseqeventframe::slot_hex_data_state (int state)
+{
+    bool is_true = state != Qt::Unchecked;
+    m_show_data_as_hex = is_true;
+    m_eventslots->hexadecimal(is_true);
+    initialize_table();
+}
+
 /**
- *  Check for dirtiness (perhaps), clear the table and settings, an reload as
+ *  Check for dirtiness (perhaps), clear the table and settings, and reload as
  *  if starting again.
  */
 
@@ -367,17 +383,20 @@ qseqeventframe::set_row_height (int row, int height)
 
 /**
  *  Scales the columns against the provided window width.
+ *
+ *  Old:    s_w [6] = { 0.15f, 0.25f, 0.1f, 0.14f, 0.14f, 0.2f };
  */
 
 void
 qseqeventframe::set_column_widths (int total_width)
 {
-    ui->eventTableWidget->setColumnWidth(0, int(0.15f * total_width));
-    ui->eventTableWidget->setColumnWidth(1, int(0.25f * total_width));
-    ui->eventTableWidget->setColumnWidth(2, int(0.10f * total_width));
-    ui->eventTableWidget->setColumnWidth(3, int(0.140f * total_width));
-    ui->eventTableWidget->setColumnWidth(4, int(0.140f * total_width));
-    ui->eventTableWidget->setColumnWidth(5, int(0.20f * total_width));
+    static float s_w [6] = { 0.20f, 0.30f, 0.1f, 0.1f, 0.1f, 0.2f };
+    ui->eventTableWidget->setColumnWidth(0, int(s_w[0] * total_width));
+    ui->eventTableWidget->setColumnWidth(1, int(s_w[1] * total_width));
+    ui->eventTableWidget->setColumnWidth(2, int(s_w[2] * total_width));
+    ui->eventTableWidget->setColumnWidth(3, int(s_w[3] * total_width));
+    ui->eventTableWidget->setColumnWidth(4, int(s_w[4] * total_width));
+    ui->eventTableWidget->setColumnWidth(5, int(s_w[5] * total_width));
 }
 
 /**
@@ -440,7 +459,7 @@ qseqeventframe::make_seq_title ()
 void
 qseqeventframe::set_seq_title (const std::string & title)
 {
-    ui->m_entry_name->setText(title.c_str());
+    ui->m_entry_name->setText(QString::fromStdString(title));
 }
 
 /**
@@ -469,7 +488,7 @@ qseqeventframe::update_seq_name ()
 void
 qseqeventframe::set_seq_time_sig_and_ppqn (const std::string & sig)
 {
-    ui->label_time_sig->setText(sig.c_str());
+    ui->label_time_sig->setText(QString::fromStdString(sig));
 }
 
 void
@@ -490,7 +509,7 @@ qseqeventframe::set_seq_channel (const std::string & ch)
 void
 qseqeventframe::set_seq_lengths (const std::string & mevents)
 {
-    ui->label_measures_ev_count->setText(mevents.c_str());
+    ui->label_measures_ev_count->setText(QString::fromStdString(mevents));
 }
 
 /**
@@ -503,7 +522,7 @@ qseqeventframe::set_seq_lengths (const std::string & mevents)
 void
 qseqeventframe::set_event_category (const std::string & c)
 {
-    ui->label_category->setText(c.c_str());
+    ui->label_category->setText(QString::fromStdString(c));
 }
 
 /**
@@ -516,15 +535,13 @@ qseqeventframe::set_event_category (const std::string & c)
 void
 qseqeventframe::set_event_timestamp (const std::string & ts)
 {
-    ui->entry_ev_timestamp->setText(ts.c_str());
+    ui->entry_ev_timestamp->setText(QString::fromStdString(ts));
 }
 
 /**
  *  Sets ui->combo_ev_name to the name-of-event string.  Oops, now
  *  (2021-04-11), we used it to select the entry in the editable combo-box for
  *  event-status names.
- *
- * Old:  ui->entry_ev_name->setText(n.c_str());
  *
  * \param n
  *      The name-of-event string for the current event.
@@ -537,6 +554,15 @@ qseqeventframe::set_event_name (const std::string & n)
     ui->combo_ev_name->setCurrentText(name);
 }
 
+void
+qseqeventframe::set_event_channel (int channel)
+{
+    if (! m_seq->no_channel())
+        channel = m_seq->seq_midi_channel() + 1;
+
+    ui->channel_combo_box->setCurrentIndex(channel + 1);
+}
+
 /**
  *  Sets ui->entry_ev_data_0 to the first data byte string.
  *
@@ -547,7 +573,7 @@ qseqeventframe::set_event_name (const std::string & n)
 void
 qseqeventframe::set_event_data_0 (const std::string & d)
 {
-    ui->entry_ev_data_0->setText(d.c_str());
+    ui->entry_ev_data_0->setText(QString::fromStdString(d));
 }
 
 /**
@@ -560,7 +586,7 @@ qseqeventframe::set_event_data_0 (const std::string & d)
 void
 qseqeventframe::set_event_data_1 (const std::string & d)
 {
-    ui->entry_ev_data_1->setText(d.c_str());
+    ui->entry_ev_data_1->setText(QString::fromStdString(d));
 }
 
 /**
@@ -608,27 +634,27 @@ qseqeventframe::set_event_line
 {
     QTableWidgetItem * qtip = cell(row, column_id::timestamp);
     if (not_nullptr(qtip))
-        qtip->setText(evtimestamp.c_str());
+        qtip->setText(QString::fromStdString(evtimestamp));
 
     qtip = cell(row, column_id::eventname);
     if (not_nullptr(qtip))
-        qtip->setText(evname.c_str());
+        qtip->setText(QString::fromStdString(evname));
 
     qtip = cell(row, column_id::channel);
     if (not_nullptr(qtip))
-        qtip->setText(evchannel.c_str());
+        qtip->setText(QString::fromStdString(evchannel));
 
     qtip = cell(row, column_id::data_0);
     if (not_nullptr(qtip))
-        qtip->setText(evdata0.c_str());
+        qtip->setText(QString::fromStdString(evdata0));
 
     qtip = cell(row, column_id::data_1);
     if (not_nullptr(qtip))
-        qtip->setText(evdata1.c_str());
+        qtip->setText(QString::fromStdString(evdata1));
 
     qtip = cell(row, column_id::link);
     if (not_nullptr(qtip))
-        qtip->setText(linktime.c_str());
+        qtip->setText(QString::fromStdString(linktime));
 }
 
 /**
@@ -793,7 +819,6 @@ qseqeventframe::handle_insert ()
     if (m_eventslots)
     {
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
-//      std::string name = ui->entry_ev_name->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
         std::string data0 = ui->entry_ev_data_0->text().toStdString();
         std::string data1 = ui->entry_ev_data_1->text().toStdString();
@@ -837,7 +862,6 @@ qseqeventframe::handle_modify ()
         int cr = current_row();
         const editable_event & ev = m_eventslots->current_event();
         std::string ts = ui->entry_ev_timestamp->text().toStdString();
-//      std::string name = ui->entry_ev_name->text().toStdString();
         std::string name = ui->combo_ev_name->currentText().toStdString();
 
         /*

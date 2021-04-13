@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) 'rc' configuration file
 #
 # /home/user/.config/seq66/qseq66.rc
-# Written on 2021-03-16 15:14:21
+# Written on 2021-04-13 10:23:26
 #
 # This file holds the main configuration options for Seq66.
 # It loosely follows the format of the seq24 'rc' configuration
@@ -283,6 +283,13 @@ look empty with a space.
 
 1     # auto-save-options-on-exit support flag
 
+
+# Set the following value to true to save triggers in a format
+# compatible with Seq64/Seq66.  Otherwise, the triggers are saved with
+# an additional 'transpose' setting.
+
+save-old-triggers = false
+
 [last-used-dir]
 
 # Last-used and currently-active directory:
@@ -296,10 +303,12 @@ look empty with a space.
 # indicates if to load the most recent file (the top of the list)
 # at startup (1 = load it, 0 = do not load it).
 
-2 1
+4 1
 
 "/home/user/Home/ca/mls/git/seq66/data/midi/b4uacuse-gm-patchless.midi"
 "/home/user/Home/ca/mls/git/seq66/contrib/midi/mutes-test.midi"
+"/home/user/Home/ca/mls/git/seq66/contrib/midi/K-baseline.midi"
+"/home/user/Home/Documents/Kraftwerk - Europe Endless.mid"
 
 # End of /home/user/.config/seq66/qseq66.rc
 #

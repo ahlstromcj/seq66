@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-04-11
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -2160,9 +2160,9 @@ qseqeditframe64::set_background_sequence (int seqnum)
 void
 qseqeditframe64::set_data_type (midibyte status, midibyte control)
 {
-    char hex[8];
+    char hexa[8];
     char type[32];
-    snprintf(hex, sizeof hex, "[0x%02X]", status);
+    snprintf(hexa, sizeof hexa, "[0x%02X]", status);
     m_editing_status = status;                      /* not yet used, though */
     m_editing_cc = control;                         /* not yet used, though */
     m_seqevent->set_data_type(status, control);     /* qstriggereditor      */
@@ -2189,11 +2189,13 @@ qseqeditframe64::set_data_type (midibyte status, midibyte control)
         snprintf(type, sizeof type, "Channel Pressure");
     else if (status == EVENT_PITCH_WHEEL)
         snprintf(type, sizeof type, "Pitch Wheel");
+    else if (status == EVENT_MIDI_META)
+        snprintf(type, sizeof type, "Meta Events");
     else
         snprintf(type, sizeof type, "Unknown MIDI Event");
 
     char text[80];
-    snprintf(text, sizeof text, "%s %s", hex, type);
+    snprintf(text, sizeof text, "%s %s", hexa, type);
     ui->m_entry_data->setText(text);
 }
 
@@ -2732,9 +2734,9 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
     midibyte status = 0, cc = 0;
     seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
-        if (! s->get_next_event_ex(status, cc, cev))
+        if (! s->get_next_event(status, cc, cev))
             break;
 
         switch (status)
@@ -2767,9 +2769,7 @@ qseqeditframe64::repopulate_event_menu (int buss, int channel)
             channel_pressure = true;
             break;
         }
-        ++cev;                                      /* found, must do this  */
     }
-
     if (not_nullptr(m_events_popup))
         delete m_events_popup;
 
@@ -2902,12 +2902,13 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
     bool program_change = false;
     bool channel_pressure = false;
     bool pitch_wheel = false;
+    bool meta_event = false;
     midibyte status = 0, cc = 0;
     seq::pointer s = seq_pointer();
     memset(ccs, false, sizeof(bool) * c_midibyte_data_max);
-    for (auto cev = s->cbegin(); ! s->cend(cev); /*++cev*/)
+    for (auto cev = s->cbegin(); ! s->cend(cev); ++cev)
     {
-        if (! s->get_next_event_ex(status, cc, cev))
+        if (! s->get_next_event(status, cc, cev))
             break;
 
         switch (status)
@@ -2939,8 +2940,11 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
         case EVENT_CHANNEL_PRESSURE:
             channel_pressure = true;
             break;
+
+        case EVENT_MIDI_META:
+            meta_event = true;
+            break;
         }
-        ++cev;                                      /* found, must do this  */
     }
 
     if (not_nullptr(m_minidata_popup))
@@ -2994,7 +2998,11 @@ qseqeditframe64::repopulate_mini_event_menu (int buss, int channel)
             m_minidata_popup, "Pitch Wheel", true, EVENT_PITCH_WHEEL
         );
     }
-
+    if (meta_event)
+    {
+        any_events = true;
+        set_event_entry(m_minidata_popup, "Meta Events", true, EVENT_MIDI_META);
+    }
     if (any_events)
         m_minidata_popup->addSeparator();
 

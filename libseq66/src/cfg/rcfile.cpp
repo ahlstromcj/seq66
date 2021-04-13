@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-15
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -735,6 +735,11 @@ rcfile::parse ()
     line_after(file, "[auto-option-save]");
     sscanf(scanline(), "%d", &method);
     rc_ref().auto_option_save(bool(method));
+
+    s = get_variable(file, "[auto-option-save]", "save-old-triggers");
+
+    bool sot = string_to_bool(s, false);
+    rc_ref().save_old_triggers(sot);
     file.close();               /* done parsing the "rc" file               */
     return true;
 }
@@ -1291,6 +1296,14 @@ rcfile::write ()
         "\n"
         << (rc_ref().auto_option_save() ? "1" : "0")
         << "     # auto-save-options-on-exit support flag\n"
+        ;
+
+    std::string oldtrigs = bool_to_string(rc_ref().save_old_triggers());
+    file << "\n"
+        "# Set the following value to true to save triggers in a format\n"
+        "# compatible with Seq64/Seq66.  Otherwise, the triggers are saved with\n"
+        "# an additional 'transpose' setting.\n\n"
+        << "save-old-triggers = " << oldtrigs << "\n"
         ;
 
     std::string lud = rc_ref().last_used_dir();

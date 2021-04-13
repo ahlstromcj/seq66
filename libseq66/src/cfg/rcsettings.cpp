@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-27
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -79,6 +79,7 @@ rcsettings::rcsettings () :
     m_clock_mod                 (64),
     m_verbose                   (false),
     m_auto_option_save          (true),     /* legacy seq24 behavior    */
+    m_save_old_triggers         (false),
     m_lash_support              (false),
     m_allow_mod4_mode           (false),
     m_allow_snap_split          (false),
@@ -178,6 +179,7 @@ rcsettings::set_defaults ()
     m_clock_mod                 = 64;
     m_verbose                   = false;
     m_auto_option_save          = true;     /* legacy seq24 setting */
+    m_save_old_triggers         = false;
     m_lash_support              = false;
     m_allow_mod4_mode           = false;
     m_allow_snap_split          = false;

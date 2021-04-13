@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-03-22
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -571,6 +571,8 @@ usrfile::parse ()
         usr().resume_note_ons(string_to_bool(s));
         s = get_variable(file, "[user-ui-tweaks]", "style-sheet");
         usr().style_sheet(strip_quotes(s));
+        s = get_variable(file, "[user-ui-tweaks]", "fingerprint-size");
+        usr().fingerprint_size(string_to_int(s, 32));
     }
     s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
@@ -1339,6 +1341,14 @@ usrfile::write ()
         "# a file-path, to provide a style usable in many applications,\n"
         "# outside the Seq66 configuration directory.\n\n"
         << "style-sheet = " << v << "\n"
+        ;
+
+    file << "\n"
+        "# If specified, the fingerprint size is adjusted to this value.  The\n"
+        "# fingerprint is a condensation of the note events in a long track,\n"
+        "# which reduces the amount of drawing in the grid buttons. Ranges\n"
+        "# from 32 (the default) to 128.\n\n"
+        << "fingerprint-size = " << usr().fingerprint_size() << "\n"
         ;
 
     /*

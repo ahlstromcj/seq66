@@ -54,10 +54,13 @@ Program and Controller Changes:
     Track 7:    Ch7  Part 91    GM Synth Pad        Vol 70
     Track 8:    Ch10 Part 25    GM Unknown          Vol 127
 
+    These have been set for the default Qsynth setup.
+
 Parts of the tune:
 
+    Track 0:
 
-    Track 0: Three MIDI port events, Time Sig, Key Sig, and Tempo
+        MIDI port events, Time Sig, Key Sig, and Tempo
 
     Track 1 (Background Arpeggiation): Ch 1
 
@@ -85,7 +88,7 @@ Parts of the tune:
 
     Track 3 (Chorus): Ch 3
 
-        Chorus 1 - 0: 8 M @ 33    M 33-40 (8)
+        Chorus 1 - 0: 8 M @ 33    M 33-40 (8) D4 to C5
         Chorus 1 - 0:             M 41-48
         Chorus 1 - 8:             M 65-72 F#3 (minus 8)
         Chorus 1 - 8:             M 97-104 F#3
@@ -154,7 +157,7 @@ Parts of the tune:
         Endless 1 - 0:            M 191-192
         Endless 2 - 0:            M 202-203
         Endless 2 - 0:            M 206-207
-        Endless 4 - 0: 50 M @ 209 M 209
+        Endless 4 - 0: 50 M @ 209 M 209-258 Repetitive Chords at F#3
 
     Track 8 (Drums): Ch 10
 

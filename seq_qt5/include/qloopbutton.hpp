@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-01-08
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  */
@@ -118,8 +118,9 @@ private:
      *  events in the tiny box centered in the pattern button.
      */
 
-    int m_fingerprint[32];
-    int m_fingerprint_size;
+    bool m_fingerprint_inited;
+    size_t m_fingerprint_size;
+    std::vector<midibyte> m_fingerprint;
 
     /**
      *  Provides a pointer to the sequence displayed by this button.  Note that

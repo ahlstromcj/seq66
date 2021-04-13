@@ -1,7 +1,7 @@
 # Seq66 0.92.2 (and above) 'usr' configuration file
 #
 # /home/ahlstrom/.config/seq66/qseq66.usr
-# Written on 2021-03-18 12:50:07
+# Written on 2021-04-13 09:49:02
 #
 # This is a seq66.usr file. Edit it and place it in the
 # $HOME/.config/seq66 directory. It allows one to provide an
@@ -374,19 +374,33 @@ use-file-ppqn = false
 # This first value specifies the height of the keys in the
 # sequence editor.  Defaults to 12 (pixels), but 8 is better.
 
-10       # key_height
+key-height = 10
 
 # Normally, the Qt version of Seq66 uses the old pattern editor in the
 # 'Edit' tab.  If this value is set to 1, then the new, larger,
 # more functional pattern editor can be used in the 'Edit' tab. This
 # setting makes the whole Seq66 window larger.
 
-1       # use_new_seqedit
+use-new-seqedit = true
 
 # The note-resume option, if active, causes any notes in progress
 # to be resumed when the pattern is toggled back on.
 
 note-resume = false
+
+# If specified, this style-sheet (e.g. 'qseq66.qss') is applied
+# at startup.  Although normally just a base-name, it can contain
+# a file-path, to provide a style usable in many applications,
+# outside the Seq66 configuration directory.
+
+style-sheet = ""
+
+# If specified, the fingerprint size is adjusted to this value.  The
+# fingerprint is a condensation of the note events in a long track,
+# which reduces the amount of drawing in the grid buttons. Ranges
+# from 32 (the default) to 128.
+
+fingerprint-size = 128
 
 [user-session]
 

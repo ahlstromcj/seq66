@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-03-22
+ * \updates       2021-04-13
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -235,6 +235,7 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
+    bool m_save_old_triggers;       /**< Save c_triggers_ex, not transpose  */
     bool m_lash_support;            /**< Enable LASH, if compiled in.       */
     bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
     bool m_allow_snap_split;        /**< Allow snap-split of a trigger.     */
@@ -581,6 +582,11 @@ public:
     bool auto_option_save () const
     {
         return m_auto_option_save;
+    }
+
+    bool save_old_triggers () const
+    {
+        return m_save_old_triggers;
     }
 
     bool lash_support () const
@@ -979,6 +985,11 @@ public:
     void auto_option_save (bool flag)
     {
         m_auto_option_save = flag;
+    }
+
+    void save_old_triggers (bool flag)
+    {
+        m_save_old_triggers = flag;
     }
 
     void lash_support (bool flag)

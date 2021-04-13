@@ -121,8 +121,8 @@ public:
     };
 
     /**
-     *  A structure that holds note information, used, for example, in the
-     *  sequence::get_next_note() overload.
+     *  A structure that holds note information, used, for example, in
+     *  sequence::get_next_note().
      */
 
     class note_info
@@ -790,12 +790,12 @@ public:
         return m_events.any_selected_notes();
     }
 
-    const triggers::List & triggerlist () const
+    const triggers::container & triggerlist () const
     {
         return m_triggers.triggerlist();
     }
 
-    triggers::List & triggerlist ()
+    triggers::container & triggerlist ()
     {
         return m_triggers.triggerlist();
     }
@@ -1360,7 +1360,7 @@ public:
     bool get_trigger_state (midipulse tick) const;
     bool transpose_trigger (midipulse tick, int transposition);
     bool select_trigger (midipulse tick);
-    triggers::List get_triggers () const;
+    triggers::container get_triggers () const;
     bool unselect_trigger (midipulse tick);
     bool unselect_triggers ();
 
@@ -1563,12 +1563,7 @@ public:
         event::buffer::const_iterator & it0,
         event::buffer::const_iterator & it1
     ) const;
-    draw get_note_info
-    (
-        note_info & niout,
-        event::buffer::const_iterator & evi
-    ) const;
-    draw get_next_note_ex
+    draw get_next_note
     (
         note_info & niout,
         event::buffer::const_iterator & evi
@@ -1578,7 +1573,7 @@ public:
         midibyte status, midibyte cc,
         event::buffer::const_iterator & ev, int evtype = EVENTS_ALL
     );
-    bool get_next_event_ex
+    bool get_next_event
     (
         midibyte & status, midibyte & cc,
         event::buffer::const_iterator & evi
@@ -1731,6 +1726,11 @@ private:
     void set_trigger_offset (midipulse trigger_offset);
     void adjust_trigger_offsets_to_length (midipulse newlen);
     midipulse adjust_offset (midipulse offset);
+    draw get_note_info                      /* used only internally     */
+    (
+        note_info & niout,
+        event::buffer::const_iterator & evi
+    ) const;
 
 #if defined USE_SEQUENCE_REMOVE_EVENTS
     void remove (event::buffer::iterator i);
