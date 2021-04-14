@@ -180,13 +180,40 @@
    Unlike the \textbf{Grid Snap} of the pattern editor, the units
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
-   1, 1/2, 1/4, 1/8, 1/16, and 1/32.
+
+   \textsl{L, 1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
+
+   These fractions represent fractions of measures.
+   The \texttt{L} entry, when \textbf{Snap} is on, causes the addition of a
+   trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps
+   to the length of the pattern, and can result in the trigger beginning well
+   before the click.
+
+   Also, in patterns longer than a measure, if \texttt{L} is not checked
+   the pattern may wrap, so that beginning note appear at the end of the
+   trigger!  When this happens, a trick is needed:
+
+   \begin{enumerate}
+      \item Undo that trigger insertion.
+      \item Select the \texttt{L} Snap value.
+      \item Insert the trigger.
+      \item Click another snap value.
+      \item Drag the trigger, usually to the left, until it reaches the
+         desired snap location.
+      \item Verify that the whole pattern is in place with the notes exactly
+         placed as in the pattern.
+   \end{enumerate}
+
+   This trick is annoying, and we're not sure if it is a feature or a bug.
+   It is something on our "to-do" list.
 
    \itempar{Transpose}{song editor!transpose}
-   \textbf{Transpose} consists of two controls: one to apply
-   transposition, and a drop-down menu to select the direction and amount
-   of transposition.
-   Transposition ranges from minus one octave to plus one octave.
+   \textbf{Transpose} consists of two controls:
+   a drop-down menu to select the transpose direction and amount,
+   and one to apply the transposition.
+   Transposition ranges from -60 to +60, or five octaves either way.
+   Transpostion is applied by setting the value, and then doing
+   a Shift-Left-click on each trigger that needs that transposition value.
 
    \itempar{L/R Loop}{song editor!play loop}
    \index{loop mode}
@@ -274,20 +301,20 @@
    \index{R marker}
    \textbf{L marker} (\textbf{R anchor}) on the measures ruler.
    
-   These markers denote the time intervale from the left of the 
+   These markers denote the time interval from the left of the 
    \textbf{L} marker to the right of the \textbf{R} marker.
    Once these markers are in place, one can then use
 	the \textsl{Collapse} and \textsl{Expand} buttons to modify the
    placement of the pattern events.
-
    Note that the \textbf{L marker} serves as the start position for playback
-   in the song editor.  One can change the start position only when the
+   in the song editor even when not looping.
+   One can change the start position only when the
    performance is not playing.
 
    \index{marker!mode}
    \index{marker!movement}
    Another way to move the "L" and "R" markers has been added.
-   To select which marker will move, first click the upper half of the time
+   To select which marker will move, click the upper half of the time
    strip (otherwise, the "L" will move, prematurely) to give it keyboard focus.
    Then press the lower-case
    \index{keys!l}
@@ -394,7 +421,8 @@
          Clicking inside a trigger selects it.
          Selection is denoted by an orange rectangle around the trigger
          and a dark grey color in the trigger.
-         A pattern subsection can be moved by the mouse and deleted by keystrokes.
+         A pattern subsection can be moved by the mouse and deleted by
+         keystrokes.
       \item \textbf{De-selection}.
          \index{song editor!section deselection}
          Left-clicking or right-clicking in an empty area of the song roll
@@ -477,14 +505,15 @@
    Each middle-click on the pattern adds a new selection position,
    halving the size of the subsections as more pattern subsections are
    added.  The \texttt{allow\_snap\_split} option in the 'rc' file
-   allows the split to be made at the nearest snap point instead of in the middle.
+   allows the split to be made at the nearest snap point instead of in the
+   middle.
 
    \index{song editor!left-click}
    \index{song editor!selection}
    When a pattern or a pattern subsection is left-clicked in the piano
    roll, it is marked with a dark gray filling.
-   It can then be moved horizontally if there is room, or be deleted or copied for
-   later pasting.
+   It can then be moved horizontally if there is room, or be deleted or copied
+   for later pasting.
 
    \index{song editor!right left click}
    \index{song editor!deletion}
@@ -496,8 +525,8 @@
 \subsubsection{Song Editor / Song Roll / Keystrokes}
 \label{subsubsec:song_editor_song_roll_keystrokes}
 
-   There are a number of useful keystrokes in the song roll that can be used once
-   is has focus, by clicking in it.
+   There are a number of useful keystrokes in the song roll that can be used
+   once is has focus, by clicking in it.
 
    \begin{itemize}
       \item Enter "paint" mode.

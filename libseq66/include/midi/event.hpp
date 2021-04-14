@@ -694,8 +694,7 @@ public:
     {
         return
         (
-            m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF ||
-            m == EVENT_AFTERTOUCH
+            m == EVENT_NOTE_ON || m == EVENT_NOTE_OFF || m == EVENT_AFTERTOUCH
         );
     }
 

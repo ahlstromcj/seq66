@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10
- * \updates       2021-04-01
+ * \updates       2021-04-14
  * \license       GNU GPLv2 or above
  *
  *  This class is meant to hold the bytes that represent MIDI events and other
@@ -332,8 +332,8 @@ private:
         put(b);
     }
 
-    void add_variable (midipulse v);
-    void add_long (midipulse x);
+    void add_varinum (midilong v);
+    void add_long (midilong x);
     void add_short (midishort x);
     void add_event (const event & e, midipulse deltatime);
     void add_ex_event (const event & e, midipulse deltatime);

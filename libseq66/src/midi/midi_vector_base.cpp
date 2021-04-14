@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-04-13
+ * \updates       2021-04-14
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -70,7 +70,7 @@ midi_vector_base::put_meta
     midipulse deltatime
 )
 {
-    add_variable(deltatime);
+    add_varinum(deltatime);
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(metavalue);                                 /* meta marker          */
 
@@ -81,14 +81,14 @@ midi_vector_base::put_meta
      * put(midibyte(datalen));                      // range from 0 to 127
      */
 
-    add_variable(midipulse(datalen));               /* TODO: use midilong   */
+    add_varinum(midilong(datalen));
 }
 
 void
 midi_vector_base::put_seqspec (midilong spec, int datalen)
 {
     datalen += 4;                                   /* size of 0x242400nn   */
-    add_variable(0);
+    add_varinum(0);
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(EVENT_META_SEQSPEC);                        /* 0xF7 seqspec marker  */
 
@@ -99,7 +99,7 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
      * put(midibyte(datalen));                      // range from 0 to 127
      */
 
-    add_variable(midipulse(datalen));               /* TODO: use midilong   */
+    add_varinum(midilong(datalen));
     add_long(spec);                                 /* e.g. c_midibus       */
 }
 
@@ -107,7 +107,7 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
  *  This function masks off the lower 8 bits of the long parameter, then
  *  shifts it right 7, and, if there are still set bits, it encodes it into
  *  the buffer in reverse order.  This function "replaces"
- *  sequence::add_list_var().  It is very similar to midifile ::
+ *  sequence::add_list_var().  It is almost identical to midifile ::
  *  write_varinum().
  *
  * \param v
@@ -115,10 +115,10 @@ midi_vector_base::put_seqspec (midilong spec, int datalen)
  */
 
 void
-midi_vector_base::add_variable (midipulse v)
+midi_vector_base::add_varinum (midilong v)
 {
-    midipulse buffer = v & 0x7F;                /* mask off a no-sign byte  */
-    while (v >>= 7)                             /* shift right 7 bits, test */
+    midilong buffer = v & 0x7F;                /* mask off a no-sign byte   */
+    while (v >>= 7)                            /* shift right 7 bits, test  */
     {
         buffer <<= 8;                           /* move LSB bits to MSB     */
         buffer |= ((v & 0x7F) | 0x80);          /* add LSB and set bit 7    */
@@ -147,7 +147,7 @@ midi_vector_base::add_variable (midipulse v)
  */
 
 void
-midi_vector_base::add_long (midipulse x)
+midi_vector_base::add_long (midilong x)
 {
     put((x & 0xFF000000) >> 24);
     put((x & 0x00FF0000) >> 16);
@@ -202,7 +202,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
         midibyte d1 = e.data(1);
         midibyte channel = m_sequence.seq_midi_channel();
         midibyte st = e.get_status();
-        add_variable(deltatime);                    /* encode delta_time    */
+        add_varinum(deltatime);                    /* encode delta_time    */
         if (m_sequence.no_channel() || is_null_channel(channel))
             put(st | e.channel());                  /* channel from event   */
         else
@@ -244,7 +244,7 @@ midi_vector_base::add_event (const event & e, midipulse deltatime)
 void
 midi_vector_base::add_ex_event (const event & e, midipulse deltatime)
 {
-    add_variable(deltatime);                    /* encode delta_time        */
+    add_varinum(deltatime);                    /* encode delta_time        */
     put(e.get_status());                        /* indicates SysEx/Meta     */
     if (e.is_meta())
         put(e.channel());                       /* indicates meta type      */
@@ -531,7 +531,7 @@ midi_vector_base::song_fill_seq_event
     for (int p = 0; p <= times_played; ++p, time_offset += len)
     {
         midipulse delta_time = 0;
-        for (auto & e : m_sequence.events())
+        for (auto e : m_sequence.events())          /* use a copy of event  */
         {
             midipulse timestamp = e.timestamp() + time_offset;
             if (timestamp >= trig.tick_start())     /* at/after trigger     */
@@ -540,29 +540,35 @@ midi_vector_base::song_fill_seq_event
                  * Save the note; eliminate Note Off if Note On is unused.
                  */
 
-                midibyte note = e.get_note();
-                if (e.is_note_on())
+                if (e.is_note())                    /* includes aftertouch  */
                 {
-                    if (timestamp <= trig.tick_end())
-                        ++note_is_used[note];       /* count the note       */
-                    else
-                        continue;                   /* skip                 */
-                }
-                else if (e.is_note_off())
-                {
-                    if (note_is_used[note] > 0)
-                    {
-                        /*
-                         * We have a Note On, and if past the end of trigger,
-                         * use the trigger end.
-                         */
+                    midibyte note = e.get_note();
+                    if (trig.transposed())
+                        e.transpose_note(trig.transpose());
 
-                        --note_is_used[note];       /* turn off the note    */
-                        if (timestamp > trig.tick_end())
-                            timestamp = trig.tick_end();
+                    if (e.is_note_on())
+                    {
+                        if (timestamp <= trig.tick_end())
+                            ++note_is_used[note];   /* count the note       */
+                        else
+                            continue;               /* skip                 */
                     }
-                    else
-                        continue;                   /* if no Note On, skip  */
+                    else if (e.is_note_off())
+                    {
+                        if (note_is_used[note] > 0)
+                        {
+                            /*
+                             * We have a Note On, and if past the end of trigger,
+                             * use the trigger end.
+                             */
+
+                            --note_is_used[note];   /* turn off the note    */
+                            if (timestamp > trig.tick_end())
+                                timestamp = trig.tick_end();
+                        }
+                        else
+                            continue;               /* if no Note On, skip  */
+                    }
                 }
             }
             else
@@ -663,7 +669,7 @@ midi_vector_base::song_fill_seq_trigger
  *
  * Triggers:
  *
- *      Triggers are added by first calling add_variable(0), which is needed
+ *      Triggers are added by first calling add_varinum(0), which is needed
  *      because why?
  *
  *      Then 0xFF 0x7F is written, followed by the length value, which is the

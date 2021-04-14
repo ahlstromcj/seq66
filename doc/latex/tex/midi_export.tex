@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2018-10-20
-% \update      2020-12-30
+% \update      2021-04-14
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -67,10 +67,9 @@
          that are "exportable" are written.  To be exportable, a
          track must have triggers present
          in the \textbf{Song Editor}, and, \textsl{in the song editor}, it
-         must not be muted. (It doesn't matter if the track is muted in
-         the patterns panel.)
-      \item Each trigger generates the events, including repeats and
-         offset-play of the events.
+         must not be muted.
+      \item Each trigger generates the events, including repeats,
+         offset-play of the events, and transposition.
          If there is a gap in the layout
          (e.g. due to an \textbf{Expand} operation in the
          \textbf{Song Editor}),
@@ -80,7 +79,8 @@
          The events themselves are sufficient to play the performance exactly
          in any MIDI sequencer.
          The triggers are useful for further editing of the song/performance,
-         so they are preserved in the triggers \textsl{SeqSpec} section.
+         so they are preserved in the triggers \textsl{SeqSpec} section, but
+         they cover the whole song.
       \item Empty pattern slots between tracks are removed.
       \item No matter what set the original track was in, it ends up in the
          first set; sets are consolidated.

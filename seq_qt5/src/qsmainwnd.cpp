@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-06
+ * \updates       2021-04-14
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -244,7 +244,7 @@ qsmainwnd::qsmainwnd
     m_is_looping            (false),
     m_use_nsm               (usensm),
     m_is_title_dirty        (true),
-    m_tick_time_as_bbt      (true),
+    m_tick_time_as_bbt      (false),            /* toggled in constructor   */
     m_previous_tick         (0),
     m_is_playing_now        (false),
     m_open_editors          (),
@@ -551,6 +551,7 @@ qsmainwnd::qsmainwnd
      * B:B:T vs H:M:S button.
      */
 
+    toggle_time_format(true);           /* slightly tricky */
     connect
     (
         ui->btn_set_HMS, SIGNAL(clicked(bool)),
@@ -1824,8 +1825,7 @@ qsmainwnd::save_file_as ()
  *  Prompts for a file-name, then exports the current tune as a standard
  *  MIDI file, stripping out the Seq66 SeqSpec information.  Does not
  *  update the the current file-name, but does update the recent-file
- *  information at this time.
- *
+ *  information at this time.  It does not preserve the triggers.
  *  This function is equivalent to export_song(), except it calls midifile ::
  *  write() instead of midifile :: write_song().
  *

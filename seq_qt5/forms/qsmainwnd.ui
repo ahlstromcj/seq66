@@ -665,7 +665,7 @@ It does not change Seq66's default PPQN.</string>
          </font>
         </property>
         <property name="text">
-         <string>New Set</string>
+         <string>New</string>
         </property>
         <property name="maxLength">
          <number>128</number>

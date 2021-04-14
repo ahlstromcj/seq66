@@ -1,0 +1,44 @@
+Data/Midi Directory for Seq66 0.93.0
+Chris Ahlstrom
+2021-04-14 to 2021-04-14
+
+This directory contains sample MIDI files to be installed for
+instructional purposes.
+
+    b4uacufm.mid
+    b4uacuse-gm-patchless.midi
+
+        The first file is our original transcription of the Eric Clapton &
+        Robert Cray tune "Before You Accuse Me".  The second file is converted
+        to Seq66 format, though each pattern is very long and only one trigger
+        per pattern is used in the song editor.  It makes a good way to verify
+        that the basics work.
+
+    Chameleon-HHancock-Ov.midi
+
+        We found this file, and it is a pleasant rendition of a Herbie Hancock
+        classic.
+    
+    colours.midi
+
+        This file illustrates the usage of colors in patterns.
+
+    EE-qsynth-presets.conf
+
+        This sample can be added to the QSynth configuration.  However, we
+        have found that Timidity works better out of the box for previewing
+        tunes.
+
+    If_You_Could_Read_My_Mind.mid
+
+        Another song found, used in our initial testing of the Windows build.
+
+    Kraftwerk-Europe_Endless-reconstructed.midi
+    Kraftwerk-Europe_Endless.asc
+    Kraftwerk-Europe_Endless.text
+
+        This MIDI file is a reconstruction of a MIDI file found on the Web.
+        What we did with it is described in the "text" file.  The "asc" is a
+        partial dump (via midicvt) of some of the events in the original file.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh

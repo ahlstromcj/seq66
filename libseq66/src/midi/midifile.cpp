@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-09
+ * \updates       2021-04-14
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -2102,7 +2102,7 @@ midifile::write_short (midishort x)
  *      -   The largest 3-byte MIDI value is 0xFF FF 7F = 0x1FFFFF.
  *      -   The largest number, 4 bytes, is 0xFF FF FF 7F = 0xFFFFFFF.
  *
- *  Also see the varinum_size() function.
+ *  Also see the varinum_size() and midi_vector_base::add_variable() functions.
  *
  * \param value
  *      The long value to be encoded as a MIDI varinum, and written to the
@@ -2110,23 +2110,23 @@ midifile::write_short (midishort x)
  */
 
 void
-midifile::write_varinum (midilong value)
+midifile::write_varinum (midilong v)
 {
-   midilong buffer = value & 0x7f;
-   while ((value >>= 7) > 0)
-   {
-       buffer <<= 8;
-       buffer |= 0x80;
-       buffer += (value & 0x7f);
-   }
-   for (;;)
-   {
-      write_byte(midibyte(buffer & 0xff));
-      if (buffer & 0x80)                            /* continuation bit?    */
-         buffer >>= 8;                              /* yes                  */
-      else
-         break;                                     /* no, we are done      */
-   }
+    midilong buffer = v & 0x7f;
+    while ((v >>= 7) > 0)
+    {
+        buffer <<= 8;
+        buffer |= 0x80;
+        buffer += (v & 0x7f);
+    }
+    for (;;)
+    {
+        write_byte(midibyte(buffer & 0xff));
+        if (buffer & 0x80)                      /* continuation bit?        */
+            buffer >>= 8;                       /* yes, get next MSB        */
+        else
+            break;                              /* no, we are done          */
+    }
 }
 
 /**
@@ -2552,7 +2552,8 @@ midifile::write_song (performer & p)
     {
         m_error_message =
             "The current song has no exportable tracks; "
-            "create a performance in the Song Editor first."
+            "each track to export must have triggers in the Song Editor "
+            "and be unmuted."
             ;
         result = false;
     }
