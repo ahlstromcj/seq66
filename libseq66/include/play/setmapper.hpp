@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2020-12-06
+ * \updates       2021-04-15
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -209,19 +209,32 @@ private:
      *  Given the raw sequence number, returns the calculated set number.
      *
      * \param seqno
-     *      The raw sequence number.  Normally, this value can range from 0 to
-     *      1023, or whatever the maximum is based on set size and number of
-     *      sets.  All seq::number values in setmapper are assumed to be in
-     *      this range, whereas as they range from 0 to the set-size when used
-     *      by screenset functions.
+     *      The raw sequence number.  Normally, this value can range from 0
+     *      to 1023, or whatever the maximum is based on set size and number
+     *      of sets.  All seq::number values in setmapper are assumed to be
+     *      in this range, whereas as they range from 0 to the set-size when
+     *      used by screenset functions.
      *
      * \return
-     *      Returns the calculated set number.  It is clamped to a valid value.
+     *      Returns the calculated set number.  It is clamped to a valid
+     *      value.
      */
 
     screenset::number seq_set (seq::number seqno) const
     {
         return clamp(seqno / m_set_size);
+    }
+
+    /**
+     *  Checks the highest-numbered screen-set in existence, not counting
+     *  the "dummy" screen-set, and returns the number of sequences that
+     *  represents.  Useful in drawing the rows in the perfedit
+     *  and avoiding vertical scrolling issues.
+     */
+
+    int sequences_in_sets () const
+    {
+        return screenset_size() * (master().highest_set() + 1);
     }
 
     screenset::number seq_set (seq::number s, int & offset) const;

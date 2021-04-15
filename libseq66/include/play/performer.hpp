@@ -1246,6 +1246,11 @@ public:
         return mapper().screenset_size();
     }
 
+    int sequences_in_sets () const
+    {
+        return mapper().sequences_in_sets();
+    }
+
     int ppqn () const
     {
         return m_ppqn == SEQ66_USE_FILE_PPQN ? m_file_ppqn : m_ppqn ;
@@ -1804,6 +1809,8 @@ public:
 
 public:
 
+    bool set_midi_bus (seq::number seqno, int buss);
+    bool set_midi_channel (seq::number seqno, int channel);
     bool set_sequence_name (seq::pointer s, const std::string & name);
     bool set_recording (seq::pointer s, bool active, bool toggle);
     bool set_quantized_recording (seq::pointer s, bool active, bool toggle);

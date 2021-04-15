@@ -1751,7 +1751,7 @@ qseqeditframe64::repopulate_midich_combo (int buss)
     ui->m_combo_channel->clear();
     for (int channel = 0; channel <= c_midichannel_max; ++channel)
     {
-        char b[4];                                  /* 2 digits or less  */
+        char b[4];                                      /* 2 digits or less */
         snprintf(b, sizeof b, "%2d", channel + 1);
         std::string name = std::string(b);
         std::string s = usr().instrument_name(buss, channel);

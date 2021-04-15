@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-03-30
+ * \updates       2021-04-15
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -368,9 +368,9 @@ millitime ()
  */
 
 bool
-set_thread_priority (int p)
+set_thread_priority (std::thread & t, int p)
 {
-    return p > 0;
+    return p > 0 || t.joinable();
 }
 
 #endif      // SEQ66_PLATFORM_LINUX, SEQ66_PLATFORM_WINDOWS

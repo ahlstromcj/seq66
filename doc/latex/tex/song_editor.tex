@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-11
+% \update      2021-04-15
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -183,15 +183,18 @@
 
    \textsl{L, 1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
 
-   These fractions represent fractions of measures.
+   The fractions represent fractions of measures.
+
    The \texttt{L} entry, when \textbf{Snap} is on, causes the addition of a
    trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps
-   to the length of the pattern, and can result in the trigger beginning well
+   to the length of the pattern so that the new trigger is always an integral
+   number of pattern lengths from the beginning.
+   For long patterns, this feature can result in the trigger beginning well
    before the click.
 
    Also, in patterns longer than a measure, if \texttt{L} is not checked
-   the pattern may wrap, so that beginning note appear at the end of the
-   trigger!  When this happens, a trick is needed:
+   the pattern may wrap, so that beginning notes appear at the end of the
+   trigger, and notes can wrap around.  When this happens, a trick is needed:
 
    \begin{enumerate}
       \item Undo that trigger insertion.

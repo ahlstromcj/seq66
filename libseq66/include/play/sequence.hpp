@@ -1306,11 +1306,6 @@ public:
         return is_null_channel(m_midi_channel);
     }
 
-    void set_midi_channel
-    (
-        midibyte ch = c_midichannel_null,
-        bool user_change = false
-    );
     std::string to_string () const;
     void play (midipulse tick, bool playback_mode, bool resume = false);
     void play_queue (midipulse tick, bool playbackmode, bool resume);
@@ -1419,8 +1414,13 @@ public:
         return m_true_bus;
     }
 
+    bool set_master_midi_bus (const mastermidibus * mmb);
     bool set_midi_bus (bussbyte mb, bool user_change = false);
-    void set_master_midi_bus (const mastermidibus * mmb);
+    bool set_midi_channel
+    (
+        midibyte ch = c_midichannel_null,
+        bool user_change = false
+    );
     int select_note_events
     (
         midipulse tick_s, int note_h,

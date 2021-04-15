@@ -2574,6 +2574,32 @@ performer::set_right_tick_seq (midipulse tick, midipulse snap)
     }
 }
 
+bool
+performer::set_midi_bus (seq::number seqno, int buss)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+        result = s->set_midi_bus(buss, true);           /* a user change    */
+
+    return result;
+}
+
+bool
+performer::set_midi_channel (seq::number seqno, int channel)
+{
+    seq::pointer s = get_sequence(seqno);
+    bool result = bool(s);
+    if (result)
+    {
+        if (channel >= c_midichannel_max)
+            channel = c_midichannel_null;
+
+        result = s->set_midi_channel(channel, true);    /* a user change    */
+    }
+    return result;
+}
+
 /**
  *  Also modify()'s.
  */

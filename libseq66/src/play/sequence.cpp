@@ -505,11 +505,12 @@ sequence::pop_trigger_redo ()
  *      should be a reference, but isn't, nor is it checked.
  */
 
-void
+bool
 sequence::set_master_midi_bus (const mastermidibus * mmb)
 {
     automutex locker(m_mutex);
     m_master_bus = const_cast<mastermidibus *>(mmb);
+    return not_nullptr(mmb);
 }
 
 /**
@@ -4571,12 +4572,12 @@ sequence::title () const
  *      the sequence.
  */
 
-void
+bool
 sequence::set_midi_channel (midibyte ch, bool user_change)
 {
     automutex locker(m_mutex);
-    bool change = is_null_channel(ch) ? !no_channel() : ch != m_midi_channel ;
-    if (change)
+    bool result = is_null_channel(ch) ? !no_channel() : ch != m_midi_channel ;
+    if (result)
     {
         off_playing_notes();
         m_no_channel = is_null_channel(ch);
@@ -4588,6 +4589,7 @@ sequence::set_midi_channel (midibyte ch, bool user_change)
 
         set_dirty();                    /* this is for display updating     */
     }
+    return result;
 }
 
 std::string

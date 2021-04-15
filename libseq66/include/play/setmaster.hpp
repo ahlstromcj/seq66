@@ -110,6 +110,13 @@ private:
     int m_set_count;
 
     /**
+     *  The highest-numbered set that currently exists, whether empty or not.
+     *  Does not include the dummy set.
+     */
+
+    int m_highest_set;
+
+    /**
      *  Holds a vector of screenset objects.  This container starts out empty.
      */
 
@@ -237,6 +244,11 @@ public:
     int screenset_count () const
     {
         return int(m_container.size()) - 1;     /* ignore the dummy set */
+    }
+
+    int highest_set () const
+    {
+        return m_highest_set;
     }
 
     int screenset_max () const

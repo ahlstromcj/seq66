@@ -100,6 +100,11 @@ private:
         // TODO
     }
 
+    void resize ()
+    {
+        force_resize(this);
+    }
+
 private:
 
     virtual void paintEvent (QPaintEvent *) override;

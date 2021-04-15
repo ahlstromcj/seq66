@@ -257,11 +257,8 @@ qperfeditframe64::qperfeditframe64
         int index = t + c_octave_size;
         if (t != 0)
         {
-            snprintf
-            (
-                num, sizeof num, "%+d [%s]",
-                t, c_interval_text[abs(t)].c_str()
-            );
+            const char * cit = c_interval_text[abs(t)].c_str();
+            snprintf(num, sizeof num, "%+d [%s]", t, cit);
         }
         else
             snprintf(num, sizeof num, "0 [normal]");
@@ -307,9 +304,10 @@ qperfeditframe64::qperfeditframe64
         ui->btnLoop->hide();
 
     /*
-     *  The width of the qperfroll is based on its sizeHint(), which is based on
-     *  the maximum trigger in all of the sequences in all sets.  At the moment,
-     *  we're not sure how to deal with this, so the grow button is hidden.
+     *  The width of the qperfroll is based on its sizeHint(), which is based
+     *  on the maximum trigger in all of the sequences in all sets.  At the
+     *  moment, we're not sure how to deal with this, so the grow button is
+     *  hidden.
      */
 
     connect(ui->btnGrow, SIGNAL(clicked(bool)), this, SLOT(grow()));
@@ -611,11 +609,16 @@ qperfeditframe64::update_entry_mode (bool on)
 /**
  *  Calls updateGeometry() on child elements to react to changes in MIDI file
  *  sizes.
+ *
+ *  For the resize() calls, see qperfbase::force_resize().
  */
 
 void
 qperfeditframe64::update_sizes ()
 {
+    m_perfnames->resize();
+    m_perfroll->resize();
+
     m_perfnames->updateGeometry();
     m_perfroll->updateGeometry();
     m_perftime->updateGeometry();

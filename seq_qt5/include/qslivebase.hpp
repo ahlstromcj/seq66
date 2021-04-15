@@ -155,6 +155,8 @@ protected:
     }
 
     virtual void color_by_number (int i) = 0;   /* implemented!!!   */
+    virtual void set_midi_bus (int b);
+    virtual void set_midi_channel (int b);
 
     virtual bool recreate_all_slots ()
     {

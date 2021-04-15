@@ -158,6 +158,18 @@ qslivebase::color_by_number (int i)
     perf().color(m_current_seq, i);
 }
 
+void
+qslivebase::set_midi_bus (int b)
+{
+    (void) perf().set_midi_bus(m_current_seq, b);
+}
+
+void
+qslivebase::set_midi_channel (int channel)
+{
+    (void) perf().set_midi_channel(m_current_seq, channel);
+}
+
 bool
 qslivebase::copy_seq ()
 {

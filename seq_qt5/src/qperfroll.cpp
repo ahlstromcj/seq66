@@ -81,14 +81,15 @@ qperfroll::qperfroll
     performer & p,
     int zoom,
     int snap,
-    qperfnames * seqnames,  // NEW
+    qperfnames * seqnames,
     QWidget * frame,        // must be a qseqeditframe/64 widget
     QWidget * parent
 ) :
     QWidget             (parent),
     qperfbase
     (
-        p, zoom, snap, c_names_y, c_names_y * p.sequence_max()
+        p, zoom, snap, c_names_y,
+        c_names_y * p.sequences_in_sets()       // p.sequence_max()
     ),
     m_parent_frame      (reinterpret_cast<qperfeditframe64 *>(frame)),
     m_perf_names_wid    (seqnames),
@@ -248,7 +249,8 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
 QSize
 qperfroll::sizeHint () const
 {
-    int height = c_names_y * perf().sequence_max() + 1;
+    int count = perf().sequences_in_sets();         // perf().sequence_max()
+    int height = c_names_y * count;
     int width = horizSizeHint();
     int w = m_parent_frame->width();
     if (width < w)

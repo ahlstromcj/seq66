@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-08-10
- * \updates       2021-01-14
+ * \updates       2021-04-15
  * \license       GNU GPLv2 or above
  *
  *  Implements setmaster.
@@ -57,6 +57,7 @@ setmaster::setmaster (int setrows, int setcolumns) :
     m_rows                  (c_rows),                   /* constant         */
     m_columns               (c_columns),                /* constant         */
     m_set_count             (m_rows * m_columns),
+    m_highest_set           (-1),
     m_container             ()                          /* screensets map   */
 {
     (void) reset();
@@ -158,6 +159,11 @@ setmaster::add_set (screenset::number setno)
     screenset newset(setno, m_screenset_rows, m_screenset_columns);
     auto setpair = std::make_pair(setno, newset);
     auto resultpair = m_container.insert(setpair);
+    if (resultpair.second)
+    {
+        if (setno > m_highest_set && setno != screenset::limit())
+            m_highest_set = setno;
+    }
     return resultpair.first;
 }
 

@@ -518,7 +518,7 @@ qslivegrid::setup_button (qslotbutton * pb)
 void
 qslivegrid::color_by_number (int i)
 {
-    qslivebase::color_by_number(i);
+    qslivebase::color_by_number(i);     /* perf().color(m_current_seq, ...) */
     (void) recreate_all_slots();
 }
 
@@ -1293,6 +1293,7 @@ qslivegrid::popup_menu ()
     QAction * ns = new QAction(tr("&New pattern"), m_popup);
     QObject::connect(ns, SIGNAL(triggered(bool)), this, SLOT(new_sequence()));
     m_popup->addAction(ns);
+    m_popup->addSeparator();
 
     /*
      *  Add an action to bring up an external qslivegrid window based
@@ -1312,6 +1313,7 @@ qslivegrid::popup_menu ()
             );
             QAction * livegrid = new QAction(tr(temp), m_popup);
             m_popup->addAction(livegrid);
+            m_popup->addSeparator();
             QObject::connect
             (
                 livegrid, SIGNAL(triggered(bool)),
@@ -1359,7 +1361,11 @@ qslivegrid::popup_menu ()
             );
         }
 
-        QMenu * menuColour = new QMenu(tr("Set pattern &color..."));
+        /**
+         *  Color menus
+         */
+
+        QMenu * menuColour = new QMenu(tr("Pattern &color..."));
         int firstcolor = palette_to_int(none);
         int lastcolor = palette_to_int(white);
         for (int c = firstcolor; c <= lastcolor; ++c)
@@ -1430,6 +1436,10 @@ qslivegrid::popup_menu ()
         menuColour->addMenu(menu4Colour);
         m_popup->addMenu(menuColour);
 
+        /**
+         *  Copy/Cut/Delete/Paste menus
+         */
+
         QAction * actionCopy = new QAction(tr("Cop&y pattern"), m_popup);
         m_popup->addAction(actionCopy);
         connect
@@ -1464,6 +1474,92 @@ qslivegrid::popup_menu ()
             this, SLOT(paste_sequence())
         );
     }
+    if (perf().is_seq_active(m_current_seq))
+    {
+        /**
+         *  Buss menu
+         */
+
+        mastermidibus * mmb = perf().master_bus();
+        seq::pointer s = perf().get_sequence(m_current_seq);
+        if (not_nullptr(mmb))
+        {
+            QMenu * menubuss = new QMenu(tr("Output Bus"));
+            const clockslist & opm = output_port_map();
+            int buses = opm.active() ?
+                opm.count() : mmb->get_num_out_buses() ;
+
+            for (int bus = 0; bus < buses; ++bus)
+            {
+                e_clock ec;
+                std::string busname;
+                if (perf().ui_get_clock(bussbyte(bus), ec, busname))
+                {
+                    bool disabled = ec == e_clock::disabled;
+                    QString bname = QString::fromStdString(busname);
+                    QAction * a = new QAction(bname, menubuss);
+                    connect
+                    (
+                        a, &QAction::triggered,
+                        [this, bus] { set_midi_bus(bus); }
+                    );
+                    menubuss->addAction(a);
+                    if (disabled)
+                        a->setEnabled(false);
+                }
+            }
+            m_popup->addSeparator();
+            m_popup->addMenu(menubuss);
+
+            /**
+             *  Channel menu
+             */
+
+            QMenu * menuchan = new QMenu(tr("Output Channel"));
+            int buss = s->true_bus();
+            for (int channel = 0; channel <= c_midichannel_max; ++channel)
+            {
+                char b[4];                              /* 2 digits or less */
+                snprintf(b, sizeof b, "%2d", channel + 1);
+                std::string name = std::string(b);
+                std::string s = usr().instrument_name(buss, channel);
+                if (! s.empty())
+                {
+                    name += " [";
+                    name += s;
+                    name += "]";
+                }
+                if (channel == c_midichannel_max)
+                {
+                    QString cname("Free");
+                    QAction * a = new QAction(cname, menuchan);
+                    connect
+                    (
+                        a, &QAction::triggered,
+                        [this, buss, channel] { set_midi_channel(channel); }
+                    );
+                    menuchan->addAction(a);
+                }
+                else
+                {
+                    QString cname(QString::fromStdString(name));
+                    QAction * a = new QAction(cname, menuchan);
+                    connect
+                    (
+                        a, &QAction::triggered,
+                        [this, buss, channel] { set_midi_channel(channel); }
+                    );
+                    menuchan->addAction(a);
+                }
+            }
+            m_popup->addMenu(menuchan);
+        }
+
+    }
+
+#if defined SEQ_BUSS_MENU_CODE_READY
+#endif  // defined SEQ_BUSS_MENU_CODE_READY
+
     m_popup->exec(QCursor::pos());
 
     /*

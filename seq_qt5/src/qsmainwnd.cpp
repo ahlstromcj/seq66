@@ -3361,6 +3361,9 @@ qsmainwnd::update_set_change (int setno)
         }
         else
             m_live_frame->update_bank();            /* updates current bank */
+
+        if (not_nullptr(m_song_frame64))
+            m_song_frame64->update_sizes();
     }
 }
 

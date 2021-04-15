@@ -81,6 +81,11 @@ public:
 
     void set_guides (midipulse snap, midipulse measure);
 
+    void resize ()
+    {
+        force_resize(this);
+    }
+
 private:
 
     void increment_size ()

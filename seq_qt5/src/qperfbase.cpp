@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-14
- * \updates       2020-07-26
+ * \updates       2021-04-15
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -33,6 +33,8 @@
  *  User jean-emmanual added support for disabling the following of the
  *  progress bar during playback.  See the seqroll::m_progress_follow member.
  */
+
+#include <QWidget>                      /* QWidget::resize()                */
 
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qperfbase.hpp"
@@ -69,6 +71,22 @@ qperfbase::horizSizeHint () const
 {
     int hint = perf().get_max_trigger() / scale_zoom() + 2000;
     return hint;
+}
+
+/**
+ *  Force a resize so that a sizeHint() call will occur so that the scrollbars
+ *  for the perfroll and perfnames will update upon a change in the number of
+ *  sets.  Have to do it twice because Qt sometimes optimizes the change out
+ *  and doesn't call sizeHint().
+ */
+
+void
+qperfbase::force_resize (QWidget * self)
+{
+    int w = self->geometry().width();
+    int h = self->geometry().height();
+    self->resize(w + 1, h + 1);
+    self->resize(w, h);
 }
 
 void

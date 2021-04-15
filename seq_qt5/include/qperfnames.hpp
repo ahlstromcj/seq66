@@ -68,6 +68,11 @@ public:
 
     void set_preview_row (int row);
 
+    void resize ()
+    {
+        force_resize(this);
+    }
+
 protected:
 
     void reupdate ();

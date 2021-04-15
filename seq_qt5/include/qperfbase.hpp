@@ -75,6 +75,7 @@ public:
 protected:
 
     int horizSizeHint () const;
+    void force_resize (QWidget *);
 
 protected:
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-11
+ * \updates       2021-04-15
  * \license       GNU GPLv2 or above
  *
  *  This module is almost exclusively user-interface code.  There are some
@@ -122,7 +122,7 @@ qperfnames::paintEvent (QPaintEvent *)
     int y_s = 0;
     int y_f = height() / m_nametext_y;
     QPainter painter(this);
-    QPen pen(Qt::black);
+    QPen pen(Qt::blue);  // (Qt::black);
     QBrush brush(Qt::lightGray);
     pen.setStyle(Qt::SolidLine);
     brush.setStyle((Qt::SolidPattern));
@@ -133,23 +133,23 @@ qperfnames::paintEvent (QPaintEvent *)
     for (int y = y_s; y <= y_f; ++y)
     {
         int seq_id = y;
-        if (seq_id < int(perf().sequence_max()))
+        if (seq_id < int(perf().sequence_max()))        // sequences_in_sets()?
         {
-            int rect_x = 6 * 2 + 4;
+            int rect_x = 6 * 2 + 2;
             int rect_y = m_nametext_y * seq_id;
             int rect_w = c_names_x - 15;
+            int text_y = rect_y + m_set_text_y;
             if (seq_id % perf().seqs_in_set() == 0)     // if 1st seq in bank
             {
+                char ss[16];
+                int bank_id = seq_id / perf().seqs_in_set();
+                snprintf(ss, sizeof ss, "%2d", bank_id);
                 pen.setColor(Qt::black);                // black boxes, each bank
                 brush.setColor(Qt::black);
                 brush.setStyle(Qt::SolidPattern);
                 painter.setPen(pen);
                 painter.setBrush(brush);
-                painter.drawRect(1, name_y(seq_id) + 1, 15, m_nametext_y - 1);
-
-                char ss[16];
-                int bankId = seq_id / perf().seqs_in_set();
-                snprintf(ss, sizeof ss, "%2d", bankId);
+                painter.drawRect(1, name_y(seq_id) + 1, 13, m_nametext_y - 1);
 
                 QString bankss(ss);
                 pen.setColor(Qt::white);                // for bank number
@@ -157,15 +157,12 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.drawText(1, rect_y + 15, bankss);
                 pen.setColor(Qt::black);                // bank name sideways
                 painter.setPen(pen);
-                painter.save();
-                QString bankname(perf().bank_name(bankId).c_str());
-                painter.translate
-                (
-                    12, rect_y + m_set_text_y + bankname.length() * 4
-                );
+                painter.save();                         // {
+                QString bankname(perf().bank_name(bank_id).c_str());
+                painter.translate(12, text_y + bankname.length() * 4);
                 painter.rotate(270);
                 painter.drawText(0, 0, bankname);
-                painter.restore();
+                painter.restore();                      // }
             }
             if (perf().is_seq_active(seq_id))
             {
@@ -210,8 +207,8 @@ qperfnames::paintEvent (QPaintEvent *)
                 painter.setPen(pen);
                 painter.drawText(18, rect_y + 10, chinfo);
                 painter.drawText(18, rect_y + 20, sname.c_str());
-                painter.drawRect(name_x(2), name_y(seq_id), 11, m_nametext_y);
-                painter.drawText(name_x(5), name_y(seq_id) + 15, QString("M"));
+                painter.drawRect(name_x(2), name_y(seq_id), 9, m_nametext_y);
+                painter.drawText(name_x(4), name_y(seq_id) + 15, QString("M"));
             }
             else
             {
@@ -229,7 +226,8 @@ qperfnames::paintEvent (QPaintEvent *)
 QSize
 qperfnames::sizeHint () const
 {
-    return QSize(c_names_x, m_nametext_y * perf().sequence_max() + 1);
+    int count = perf().sequences_in_sets();     // perf().sequence_max() + 1
+    return QSize(c_names_x, m_nametext_y * count);
 }
 
 /**
@@ -247,9 +245,10 @@ qperfnames::sizeHint () const
 int
 qperfnames::convert_y (int y)
 {
+    int seqlimit = perf().sequences_in_sets();      // perf().sequence_max()
     int seq = y / m_nametext_y;
-    if (seq >= perf().sequence_max())
-        seq = perf().sequence_max() - 1;
+    if (seq >= seqlimit)
+        seq = seqlimit - 1;
     else if (seq < 0)
         seq = 0;
 
