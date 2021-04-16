@@ -259,6 +259,12 @@ qseqroll::reset_v_zoom ()
     return result;
 }
 
+int
+qseqroll::note_height () const
+{
+    return m_seqkeys_wid->note_height();
+}
+
 /**
  *  Override.
  *

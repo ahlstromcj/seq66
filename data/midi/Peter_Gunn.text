@@ -1,0 +1,76 @@
+Deconstructing and Reconstructing "Peter Gun" with Seq66
+Chris Ahlstrom
+2021-04-14 to 2021-04-16
+
+Since working with "Europe Endless" was so fruitful for uncovering bugs and
+suggesting new features, we thought we'd try again with a shorter tune. This is
+a basic, simply orchestrated version of the theme from "Peter Gunn".
+
+Track 0 (Tempo): Key Signature, MIDI Port (!), Time Signature, Tempo
+
+Track 1 (Trumpet): Ch. 5; Program 5; Vol 126
+
+    Trumpet 1:    8 M @ M 7
+    Trumpet 2:   21 M @ M 22
+    Trumpet 3:    8 M @ M 43
+    Trumpet 4:    6 M @ M 58
+
+    Trumpet 1 -  0: M 7-14
+    Trumpet 1 + 12: M 15-21
+    Trumpet 2 -  0: M 22-42
+    Trumpet 3 -  0: M 43-50
+    Trumpet 3 -  0: M 51-58
+    Trumpet 4 -  0: M 58-63
+
+Track 2 (Brass):  Ch. 3; Program 62; Vol 94
+
+    Better to just play the whole track as is.
+
+    Brass:     57 M at 7-63, but use whole track
+
+Track 3 (Bass):  Ch. 2; Program 38; Vol unspecified
+
+    Bass 1:    1 M @ M 5
+    Bass 2:    4 M @ M 23
+    Bass 3:    3 M @ M 61
+
+    Bass 1 -  0:  M 5-22
+    Bass 2 -  0:  M 23-26
+    Bass 1 -  0:  M 27-60
+    Bass 3 -  0:  M 61-63
+
+Track 4 (Percussion): Ch. 10; Program 0; Vol 126
+
+    Perc 1 (standard beat):  1 M @ M 1
+    Perc 2 (hammer bridge):  1 M @ M 6
+    Perc 3 (finale):         3 M @ M 61
+
+    Perc 1: M 1 - 5
+    Perc 2: M 6
+    Perc 1: M 7 - 13
+    Perc 2: M 14
+    Perc 1: M 15 - 25
+    Perc 2: M 26
+    Perc 1: M 27 - 33
+    Perc 2: M 34
+    Perc 1: M 35 - 41
+    Perc 2: M 42
+    Perc 1: M 43 - 49
+    Perc 2: M 50
+    Perc 1: M 51 - 60
+    Perc 3: M 61
+
+Track 5 (Fretless Bass): Ch. 1; Program 35; Vol 126
+
+    Fretless 1:  1 M @ 3 M
+    Fretless 2:  4 M @ M 23
+    Fretless 3:  3 M @ M 61
+
+    Fretless 1 - 0: M 3-22
+    Fretless 2 - 0: M 23-26
+    Fretless 1 - 0: M 27-60
+    Fretless 3 - 0: M 61-63
+
+By the way, the best version for us is Henry Mancini's version.
+
+# vim: sw=4 ts=4 wm=2 et ft=markdown

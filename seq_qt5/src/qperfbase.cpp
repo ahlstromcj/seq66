@@ -76,8 +76,9 @@ qperfbase::horizSizeHint () const
 /**
  *  Force a resize so that a sizeHint() call will occur so that the scrollbars
  *  for the perfroll and perfnames will update upon a change in the number of
- *  sets.  Have to do it twice because Qt sometimes optimizes the change out
- *  and doesn't call sizeHint().
+ *  sets.  Have to do it twice because Qt sometimes optimizes the non-change
+ *  out and doesn't call sizeHint().  Kind of crufty, but invisible to the
+ *  user as far as we can see.
  */
 
 void

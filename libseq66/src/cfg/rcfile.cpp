@@ -732,14 +732,24 @@ rcfile::parse ()
 #endif
 
     int method = 1;             /* preserve seq24 option if not present     */
-    line_after(file, "[auto-option-save]");
-    sscanf(scanline(), "%d", &method);
-    rc_ref().auto_option_save(bool(method));
+    bool savethem = false;
+    if (line_after(file, "[auto-option-save]"))
+    {
+        int count = sscanf(scanline(), "%d", &method);
+        if (count == 1)
+        {
+            rc_ref().auto_option_save(bool(method));
+        }
+        else
+        {
+            s = get_variable(file, "[auto-option-save]", "auto-save-rc");
+            savethem = string_to_bool(s, true);
+        }
 
-    s = get_variable(file, "[auto-option-save]", "save-old-triggers");
-
-    bool sot = string_to_bool(s, false);
-    rc_ref().save_old_triggers(sot);
+        s = get_variable(file, "[auto-option-save]", "save-old-triggers");
+        savethem = string_to_bool(s, false);
+        rc_ref().save_old_triggers(savethem);
+    }
     file.close();               /* done parsing the "rc" file               */
     return true;
 }
@@ -1283,26 +1293,25 @@ rcfile::write ()
             ;
 #endif
 
+    std::string autosave = bool_to_string(rc_ref().auto_option_save());
     file << "\n"
         "[auto-option-save]\n\n"
         "# Set the following value to 0 to disable the automatic saving of the\n"
         "# current configuration to the 'rc' and 'user' files.  Set it to 1 to\n"
         "# follow seq24 behavior of saving the configuration at exit.\n"
         "# Note that, if auto-save is set, many of the command-line settings,\n"
-        "# such as the JACK/ALSA settings, are then saved to the configuration,\n"
+        "# such as the JACK/ALSA settings, are saved to the configuration,\n"
         "# which can confuse one at first.  Also note that one currently needs\n"
-        "# this option set to 1 to save the configuration, as there is not a\n"
-        "# user-interface control for it at present.\n"
-        "\n"
-        << (rc_ref().auto_option_save() ? "1" : "0")
-        << "     # auto-save-options-on-exit support flag\n"
+        "# this option set to true to save the configuration; there is no\n"
+        "# user-interface control for it at present.\n\n"
+        << "auto-save-rc = " << autosave << "\n"
         ;
 
     std::string oldtrigs = bool_to_string(rc_ref().save_old_triggers());
     file << "\n"
         "# Set the following value to true to save triggers in a format\n"
-        "# compatible with Seq64/Seq66.  Otherwise, the triggers are saved with\n"
-        "# an additional 'transpose' setting.\n\n"
+        "# compatible with Seq64/Seq66.  Otherwise, triggers are saved with\n"
+        "# a new additional 'transpose' setting.\n\n"
         << "save-old-triggers = " << oldtrigs << "\n"
         ;
 

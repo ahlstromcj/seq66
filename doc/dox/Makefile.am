@@ -89,8 +89,10 @@ clean-local:
 #------------------------------------------------------------------------------
 
 install-data-local:
+	@echo "Copying Seq66 documentation to $(DESTDIR)$(seq66docdir)..."
 	mkdir -p $(DESTDIR)$(seq66docdir)
 	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
 
 #*******************************************************************************
 # uninstall-hook

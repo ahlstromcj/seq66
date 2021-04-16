@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-07-18
- * \updates       2021-04-10
+ * \updates       2021-04-16
  * \license       GNU GPLv2 or above
  *
  *  Note that, as of version 0.9.11, the z and Z keys, when focus is on the
@@ -90,7 +90,7 @@ static const int c_trigger_transpose_max    =   60;
 /**
  *  The number of Snap entries in the combo-box:
  *
- *      "L", "1/1", "1/2", "1/3", "1/4", "1/8", "1/16", and "1/32"
+ *      "Length", "1/1", "1/2", "1/3", "1/4", "1/8", "1/16", and "1/32"
  */
 
 static const int c_snap_entry [] = { 0, 1, 2, 3, 4, 8, 16, 32 };
@@ -147,7 +147,7 @@ qperfeditframe64::qperfeditframe64
     {
         QString combo_text = "1/" + QString::number(c_snap_entry[i]);
         if (i == 0)
-            combo_text = "L";
+            combo_text = "Length";
 
         ui->cmbGridSnap->insertItem(i, combo_text);
     }
@@ -452,7 +452,7 @@ qperfeditframe64::set_snap (midipulse s)
     }
     else
     {
-        ui->cmbGridSnap->setCurrentText("L");
+        ui->cmbGridSnap->setCurrentText("Length");
         m_snap = 0;
     }
     set_guides();
@@ -515,8 +515,12 @@ qperfeditframe64::change_bpm (int bpm)
 void
 qperfeditframe64::zoom_in ()
 {
+    int zprevious = m_perfroll->zoom();
     m_perftime->zoom_in();
     m_perfroll->zoom_in();
+
+    float factor = float(zprevious) / float(m_perfroll->zoom());
+    ui->rollScrollArea->scroll_x_by_factor(factor); // 2.0f
 }
 
 /**
@@ -527,8 +531,12 @@ qperfeditframe64::zoom_in ()
 void
 qperfeditframe64::zoom_out ()
 {
+    int zprevious = m_perfroll->zoom();
     m_perftime->zoom_out();
     m_perfroll->zoom_out();
+
+    float factor = float(zprevious) / float(m_perfroll->zoom());
+    ui->rollScrollArea->scroll_x_by_factor(factor); // 0.5f
 }
 
 /**

@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-04-13
+ * \updates       2021-04-16
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -1258,7 +1258,7 @@ qseqeditframe64::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new qseqdata
     (
-        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea   // , 1
+        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -2477,12 +2477,15 @@ qseqeditframe64::zoom_out ()
 bool
 qseqeditframe64::set_zoom (int z)
 {
+    int zprevious = qseqframe::zoom();
     bool result = qseqframe::set_zoom(z);
     if (result)
     {
+        float factor = float(zprevious) / float(zoom());
         int index = s_lookup_zoom(zoom());
         ui->m_combo_zoom->setCurrentIndex(index);
         update_draw_geometry();
+        ui->rollScrollArea->scroll_x_by_factor(factor);
     }
     return result;
 }
@@ -2507,13 +2510,13 @@ qseqeditframe64::reset_v_zoom ()
 
 /**
  *  This override just reset the current index of the zoom combo-box.
- *  That then triggers the  callback.
+ *  That then triggers the callback that sets the current index.
  */
 
 void
 qseqeditframe64::slot_reset_zoom ()
 {
-    (void) qseqframe::reset_zoom();     // ui->m_combo_zoom->setCurrentIndex(1);
+    (void) qseqframe::reset_zoom();
 }
 
 /**

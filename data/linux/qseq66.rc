@@ -281,8 +281,7 @@ look empty with a space.
 # this option set to 1 to save the configuration, as there is not a
 # user-interface control for it at present.
 
-1     # auto-save-options-on-exit support flag
-
+auto-save-rc = true
 
 # Set the following value to true to save triggers in a format
 # compatible with Seq64/Seq66.  Otherwise, the triggers are saved with

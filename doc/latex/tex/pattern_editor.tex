@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-06
+% \update      2021-04-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -555,7 +555,8 @@
    \index{paint mode}
    \index{mode!paint}
    or "paint" notes.
-   Drawing, modifying, copying, and deleting notes is easy in \textsl{Seq66}.
+   Drawing, modifying, copying, and deleting notes is fairly easy in
+   \textsl{Seq66}, though a little different from other MIDI sequencers.
 
    The \textsl{Seq24} note-editing style is as expected for basic
    actions such as selecting and moving notes using the left mouse button.
@@ -706,6 +707,16 @@
          single note, with, say, a \texttt{Shift-click} or
          \texttt{Ctrl-click} action.
    \end{itemize}
+
+   \index{note!selection box}
+   The selection, copying, and pasting of notes has some minor tricks to
+   remember.  When some notes are selected, the effective selection box
+   goes from the first note to the last note, and from the top-most note to the
+   bottom-most note.
+   When pasting the notes, place the mouse cursor so that it lies on the
+   desired row for the top-most note, and on the desired time location for the
+   left-most note.  After pasting, be sure to verify the notes in the new
+   location.
 
    \index{warning!wrap-around notes}
    \textbf{Warning}:  Reducing or increasing the length of a note selection

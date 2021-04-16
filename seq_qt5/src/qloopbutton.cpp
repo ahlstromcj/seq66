@@ -733,12 +733,10 @@ qloopbutton::draw_pattern (QPainter & painter)
 
             int y = lyh * (highest - ni.note()) / height;
 
-// #if defined DRAW_TEMPO_LINE_DISABLED
+#if defined DRAW_TEMPO_LINE_DISABLED
             if (dt == sequence::draw::tempo)
                 pen.setColor(tempo_paint());    /* NEED A MEMBER    */
-            else
-                pen.setColor(Qt::black);
-// #endif
+#endif
 
             int sx = lx0 + tick_s_x;            /* start x          */
             int fx = lx0 + tick_f_x;            /* finish x         */

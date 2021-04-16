@@ -6,7 +6,7 @@
 # \library     seq66
 # \author      Chris Ahlstrom
 # \date        2018-01-02
-# \updates     2020-08-15
+# \updates     2021-04-16
 # \version     $Revision$
 # \license     $XPC_SUITE_GPL_LICENSE$
 #
@@ -105,20 +105,20 @@ builddir = @abs_top_builddir@
 #------------------------------------------------------------------------------
 
 install-data-local:
-	@echo "Copying Seq66 data to $(seq66ddatadir)..."
-	mkdir -p $(seq66datadir)
-	cp -r -p $(top_builddir)/data/* $(seq66datadir)
-	@echo "Copying Seq66 documentation to $(seq66docdir)..."
-	mkdir -p $(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.pdf $(seq66docdir)
-	cp -r -p $(top_srcdir)/doc/*.ods $(seq66docdir)
+	@echo "Copying Seq66 data to $(DESTDIR)$(seq66ddatadir)..."
+	mkdir -p $(DESTDIR)$(seq66datadir)
+	cp -r -p $(top_builddir)/data/* $(DESTDIR)$(seq66datadir)
+	@echo "Copying Seq66 documentation to $(DESTDIR)$(seq66docdir)..."
+	mkdir -p $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_builddir)/doc/*.pdf $(DESTDIR)$(seq66docdir)
+	cp -r -p $(top_srcdir)/doc/*.ods $(DESTDIR)$(seq66docdir)
 
 #******************************************************************************
 # uninstall-hook
 #------------------------------------------------------------------------------
 
 uninstall-hook:
-	rm -rf $(seq66datadir)
+	rm -rf $(DESTDIR)$(seq66datadir)
 
 #******************************************************************************
 # Makefile.am (seq66/include)

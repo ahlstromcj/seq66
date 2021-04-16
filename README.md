@@ -1,7 +1,7 @@
 # README for Seq66 0.93.0
 
 Chris Ahlstrom
-2015-09-10 to 2021-04-15
+2015-09-10 to 2021-04-16
 
 __Seq66__ is a MIDI sequencer/live-looper with a hardware-sampler-like
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -71,8 +71,10 @@ Windows, and using a conventional source tarball.
 
     *   Version 0.93.0:
         *   Added a transpose value to song editor triggers to support shifting
-            patterns automatically during Song play. Improved the vertical
-            scrollbar, it adjusts to the number of actual sets.
+            patterns automatically during Song play.  Added an 'rc' option to
+            save MIDI files using the original triggers.
+        *   Improved the song editor's vertical scrollbar, it adjusts to the
+            number of actual sets.
         *   Added the L/R marker feature to the external pattern editor, and
             Song mode is no longer required to use it.  This makes it easier
             to explore a long pattern for extracting to a short pattern loop.

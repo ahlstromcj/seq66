@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-18
- * \updates       2021-04-03
+ * \updates       2021-04-16
  * \license       GNU GPLv2 or above
  *
  *  When inheriting QAbstractScrollArea, you need to do the following:
@@ -102,17 +102,17 @@ qscrollmaster::~qscrollmaster ()
 }
 
 /**
- *  This override of a QScrollArea virtual member function
- *  modifies any attached/listed scrollbars and then calls the base-class
- *  version of this function.
+ *  This override of a QScrollArea virtual member function modifies any
+ *  attached/listed scrollbars and then calls the base-class version of this
+ *  function.
  *
  * \param dx
- *      The change in the x position value of the scrollbar.  Simply passed on
- *      to the base-class version of this function.
+ *      The change in the x position value of the scrollbar.  Simply passed
+ *      on to the base-class version of this function.
  *
  * \param dy
- *      The change in the y position value of the scrollbar.  Simply passed on
- *      to the base-class version of this function.
+ *      The change in the y position value of the scrollbar.  Simply passed
+ *      on to the base-class version of this function.
  */
 
 void
@@ -144,6 +144,19 @@ qscrollmaster::scroll_to_x (int x)
 }
 
 void
+qscrollmaster::scroll_x_by_factor (float f)
+{
+    if (! m_h_scrollbars.empty())
+    {
+        int hvalue = m_self_h_scrollbar->value();
+        int newh = int(hvalue * f);
+        int dx = hvalue - newh;
+        scroll_to_x(newh);
+        QScrollArea::scrollContentsBy(dx, 0);
+    }
+}
+
+void
 qscrollmaster::scroll_to_y (int y)
 {
     if (! m_v_scrollbars.empty())
@@ -152,6 +165,19 @@ qscrollmaster::scroll_to_y (int y)
             vit->setValue(y);
 
         m_self_v_scrollbar->setValue(y);
+    }
+}
+
+void
+qscrollmaster::scroll_y_by_factor (float f)
+{
+    if (! m_v_scrollbars.empty())
+    {
+        int vvalue = m_self_v_scrollbar->value();
+        int newv = int(vvalue * f);
+        int dy = vvalue - newv;
+        scroll_to_y(newv);
+        QScrollArea::scrollContentsBy(0, dy);
     }
 }
 

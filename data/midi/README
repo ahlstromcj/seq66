@@ -1,6 +1,6 @@
 Data/Midi Directory for Seq66 0.93.0
 Chris Ahlstrom
-2021-04-14 to 2021-04-14
+2021-04-14 to 2021-04-16
 
 This directory contains sample MIDI files to be installed for
 instructional purposes.
@@ -40,5 +40,11 @@ instructional purposes.
         This MIDI file is a reconstruction of a MIDI file found on the Web.
         What we did with it is described in the "text" file.  The "asc" is a
         partial dump (via midicvt) of some of the events in the original file.
+
+    Peter_Gunn-reconstructed.midi
+    Peter_Gunn.text
+
+        This MIDI file is another, simpler and short reconstruction, as
+        described in the text file.
 
 # vim: sw=4 ts=4 wm=8 et ft=sh

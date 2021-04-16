@@ -1554,11 +1554,7 @@ qslivegrid::popup_menu ()
             }
             m_popup->addMenu(menuchan);
         }
-
     }
-
-#if defined SEQ_BUSS_MENU_CODE_READY
-#endif  // defined SEQ_BUSS_MENU_CODE_READY
 
     m_popup->exec(QCursor::pos());
 

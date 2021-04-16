@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-15
+% \update      2021-04-16
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -30,6 +30,14 @@
    \index{song mode}
    In \textbf{Song} mode, these triggers, not the user, control
    playback.
+
+   \begin{quotation}
+      \textbf{Tip}
+      In the installed \texttt{data/midi} directory, there are sample files for
+      the tunes "Europe Endless" and "Peter Gunn" that illustrate what can be
+      done with the song editor.  They are accompanied by descriptive text
+      files.  Be sure to check them out.
+   \end{quotation}
 
    \index{song editor!dual}
    Two song editor windows can be
@@ -181,24 +189,23 @@
    of the song editor snap value are in fractions of a measure length.
    The following values are supported:
 
-   \textsl{L, 1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
+   \textsl{Length, 1/1, 1/2, 1/4, 1/8, 1/16, and 1/32}
 
    The fractions represent fractions of measures.
 
-   The \texttt{L} entry, when \textbf{Snap} is on, causes the addition of a
-   trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps
-   to the length of the pattern so that the new trigger is always an integral
-   number of pattern lengths from the beginning.
-   For long patterns, this feature can result in the trigger beginning well
-   before the click.
+   The \texttt{Length} entry, when \textbf{Snap} is on, causes the addition of
+   a trigger to act as in \textsl{Seq24}:  the pattern is added, but snaps to
+   the length of the pattern so that the new trigger is always an integral
+   number of pattern lengths from the beginning.  For long patterns, this
+   feature can result in the trigger beginning well before the click.
 
-   Also, in patterns longer than a measure, if \texttt{L} is not checked
+   Also, in patterns longer than a measure, if \texttt{Length} is not selected,
    the pattern may wrap, so that beginning notes appear at the end of the
    trigger, and notes can wrap around.  When this happens, a trick is needed:
 
    \begin{enumerate}
       \item Undo that trigger insertion.
-      \item Select the \texttt{L} Snap value.
+      \item Select the \texttt{Length} Snap value.
       \item Insert the trigger.
       \item Click another snap value.
       \item Drag the trigger, usually to the left, until it reaches the
@@ -207,7 +214,8 @@
          placed as in the pattern.
    \end{enumerate}
 
-   This trick is annoying, and we're not sure if it is a feature or a bug.
+   This trick is annoying, and we're not sure if note wrap-around
+   is a feature or a bug.
    It is something on our "to-do" list.
 
    \itempar{Transpose}{song editor!transpose}
@@ -225,12 +233,13 @@
    \index{L marker}
    \index{R marker}
    \textbf{L marker} and the \textbf{R marker}.
-   This button is a state button, and its appearance indicates when it is
+   This button has been moved to the main window.
+   It is a state button, and its appearance indicates when it is
    depressed, and thus active.
    If this button is deactivated during playback, then playback
    continues past the \textbf{R marker}.
-   Note that these markers can be placed using left
-   and right mouse clicks, respectively, in the time/measures ruler.
+   Note that these markers can be placed using Left
+   and Right mouse clicks, respectively, in the time/measures ruler.
 
    Also note that, as of version 0.93.0, this button has been added to the main
    window, and appears only in the "external" version of the song editor.
