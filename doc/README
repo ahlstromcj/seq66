@@ -1,3 +1,15 @@
+Documentation Directory for Seq66 0.93.0
+Chris Ahlstrom
+2021-04-17 to 2021-04-17
 
-TO DO
+This directory contains document to be installed in the
+${prefix}/share/doc/seq66-0.93 directory (e.g. /usr/share/doc or
+/usr/local/share/doc) on Linux, or in the installation ${install}/data
+directory (e.g. C:/Program Files (x86)/Seq66/data)
+on Windows.
 
+The documentation consists of a large PDF Seq66 User Manual and an Open
+Document Format spreadsheet describing the configuration for the Novation
+LaunchPad Mini supplied with Seq6.
+
+# vim: sw=4 ts=4 wm=8 et ft=sh
