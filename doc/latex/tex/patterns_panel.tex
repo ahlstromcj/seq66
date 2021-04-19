@@ -360,8 +360,13 @@
       \item \textbf{Bus-Channel}.
          \index{pattern!bus-channel}
          This pair of numbers shows the the MIDI buss number, a dash, and
-         the MIDI channel number.
-         For example, "0-2" means MIDI buss 0, channel 2.
+         the MIDI output channel number.
+         For example, "0-2" means MIDI buss 0 (re 0), channel 2 (re 1).
+         \index{pattern!free channel}
+         If the channel is an "F", this means that the pattern has no specified
+         output channel, and can play on all channels.
+         This "free" channel concept is useful for applying Program Changes and
+         Volume controls to many channels at once.
       \item \textbf{Beat/Beat Width}.
          \index{pattern!beat}
          This pair of numbers is the standard time-signature of the pattern,
@@ -393,10 +398,10 @@
    pattern between muted (white background) and unmuted (black background).
    If the song is playing via the main window, toggling this status makes
    the pattern stop playing or start playing.  The armed status
-   can also be toggled using hot-keys.
+   can also be toggled using hot-keys and MIDI controls.
 
-   \itempar{Cut}{pattern!cut}
-   Deletes and copies an existing loop or pattern.
+%  \itempar{Cut}{pattern!cut}
+%  Deletes and copies an existing loop or pattern.
 
 % =========================================================================
 

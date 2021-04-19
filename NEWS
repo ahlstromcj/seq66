@@ -1,10 +1,38 @@
-NEWS for Sequencer66 0.91.2
+NEWS for Sequencer66 0.93.1
 Chris Ahlstrom
-2015-07-10 to 2021-02-15
+2015-07-10 to 2021-04-18
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
 
+    -   Version 0.92.1:
+        -   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
+            when there are many ports on the system; also increased port
+            limits to 48 ports.
+        -   Fixed issues with iterating through MIDI events in the
+            user-interfaces.
+        -   Big fixes to Song recording. More to do?
+        -   Added an experimental one-shot auto-step step-edit feature for
+            recording (for example) drumbeats from MIDI devices.
+        -   Fixed bug in parsing Fluidsynth port names.
+        -   Improved handling of MIDI I/O control of Seq66.  Added more
+            automation-display events, more testing.
+        -   Updated documentation, including a ODF spreadsheet for the MIDI
+            control configuration of the -Launchpad Mini*.
+    -   Version 0.92.0:
+        -   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
+        -   Fixed issues with applying 'usr' buss and instrument names to the
+            pattern-editor menus.
+        -   Fixing serious issues with the event editor. Now deletes both
+            linked notes.
+        -   Added mute-group-out to show mutegroups on Launchpad Mini buttons.
+        -   Tightened up mute-group handling, configuration file handling,
+            play-list handling, and MIDI display device handling.
+        -   Stream-line the format of the 'ctrl' file by removing columns for
+            the values of "enabled" and "channel".  Will detect older formats
+            and fix them.
+        -   A PDF user manual is now provided in the doc directory, installed
+            to /usr/local/share/doc/seq66-0.92 with "make install".
     -   Version 0.91.6:
         -   Massively updated the Mutes tab.
         -   More documentation.

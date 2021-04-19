@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-01-27
+ * \updates       2021-04-19
  * \license       GNU GPLv2 or above
  *
  */
@@ -431,7 +431,7 @@ configfile::next_section (std::ifstream & file, const std::string & tag)
         bool ok = get_line(file);       /* fills in m_line as a side-effect */
         while (ok)                      /* includes the EOF check           */
         {
-            result = strncompare(m_line, tag, tag.length());
+            result = strncompare(m_line, tag);
             if (result)
             {
                 break;
@@ -505,7 +505,7 @@ configfile::line_after
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {
-        result = strncompare(m_line, tag, tag.length());
+        result = strncompare(m_line, tag);
         if (result)
         {
             break;
@@ -554,7 +554,7 @@ configfile::find_tag (std::ifstream & file, const std::string & tag)
     bool ok = get_line(file, true);             /* trims spaces/comments    */
     while (ok)                                  /* includes the EOF check   */
     {
-        bool match = strncompare(m_line, tag, tag.length());
+        bool match = strncompare(m_line, tag);
         if (match)
         {
             result = int(m_prev_pos);

@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-08-04
+ * \updates       2021-04-19
  * \license       See the rtexmidi.lic file.  Too big.
  *
  *  API information found at:
@@ -63,6 +63,13 @@
 #include "util/calculations.hpp"        /* seq66::tempo_us_from_bpm()       */
 #include "util/basic_macros.hpp"        /* C++ version of easy macros       */
 
+/*
+ * Do not document the namespace; it breaks Doxygen.
+ */
+
+namespace seq66
+{
+
 /**
  *  We tried opening the ALSA port in non-blocking mode.  Didn't seem to
  *  offer any benefit.
@@ -70,24 +77,13 @@
  *  -   0                       Blocking mode.
  *  -   SND_SEQ_NONBLOCK        Non-blocking mode.
  *
- *  We did reduce the polling timeout from 1000 milliseconds to 100 milliseconds,
- *  and removed the addition 100 microsecond wait.
+ *  We did reduce the polling timeout from 1000 milliseconds to 100
+ *  milliseconds, and now, after testing, 10 milliseconds, and removed the
+ *  addition 100 microsecond wait.
  */
 
-#define SEQ64_SND_SEQ_OPEN_BLOCK_MODE   0
-
-#if defined SEQ64_USE_SLEEPY_POLL
-#define SEQ64_POLL_WAIT_MS              1000
-#else
-#define SEQ64_POLL_WAIT_MS               100
-#endif
-
-/*
- * Do not document the namespace; it breaks Doxygen.
- */
-
-namespace seq66
-{
+static const int c_poll_wait_ms = 10;   /* 100 milliseconds is too high     */
+static const int c_open_block_mode = SND_SEQ_NONBLOCK; /* blocking mode setting, see above */
 
 /*
  * Initialization of static members.
@@ -126,7 +122,7 @@ midi_alsa_info::midi_alsa_info
     snd_seq_t * seq;                        /* point to member              */
     int result = snd_seq_open               /* set up ALSA sequencer client */
     (
-        &seq, "default", SND_SEQ_OPEN_DUPLEX, SEQ64_SND_SEQ_OPEN_BLOCK_MODE
+        &seq, "default", SND_SEQ_OPEN_DUPLEX, c_open_block_mode
     );
     if (result < 0)
     {
@@ -407,14 +403,8 @@ midi_alsa_info::api_poll_for_midi ()
 {
     int result = poll
     (
-        m_poll_descriptors, m_num_poll_descriptors, SEQ64_POLL_WAIT_MS
+        m_poll_descriptors, m_num_poll_descriptors, c_poll_wait_ms
     );
-
-#if defined SEQ64_USE_SLEEPY_POLL
-    if (result == 0)
-        (void) microsleep();
-#endif
-
     return result;
 }
 

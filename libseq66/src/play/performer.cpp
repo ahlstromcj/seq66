@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-08
+ * \updates       2021-04-18
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1846,6 +1846,7 @@ performer::clear_all (bool clearplaylist)
     bool result = clear_song();
     if (result)
     {
+        m_play_set.clear();             /* dump active patterns             */
         if (m_play_list)
         {
             m_is_busy = true;
@@ -2347,7 +2348,9 @@ performer::launch_output_thread ()
         bool ok = set_thread_priority(m_out_thread, c_thread_priority);
         if (ok)
         {
+#if defined SEQ66_PLATFORM_LINUX
             infoprint("Output priority elevated");
+#endif
         }
         else
         {
@@ -2376,13 +2379,15 @@ performer::launch_input_thread ()
         bool ok = set_thread_priority(m_in_thread, c_thread_priority);
         if (ok)
         {
+#if defined SEQ66_PLATFORM_LINUX
             infoprint("Input priority elevated");
+#endif
         }
         else
         {
             errprint
             (
-                "output_thread: couldn't set scheduler to FIFO, "
+                "input_thread: couldn't set scheduler to FIFO, "
                 "need root priviledges."
             );
             pthread_exit(0);

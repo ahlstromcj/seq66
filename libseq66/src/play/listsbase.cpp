@@ -50,19 +50,20 @@ namespace seq66
 
 static const std::string s_short_names [] =
 {
-    "input",
-    "output",
-    "in",
-    "out",
-    "midi input",
-    "midi output",
     "midi in",
     "midi out",
+    "input",
+    "output",
+    "midi input",
+    "midi output",
+    "in",
+    "out",
     ""                                  /* empty string is a terminator     */
 };
 
 /**
- *  Looks for the name in the short-name list.
+ *  Looks for the port name in the short-name list. We are interested in
+ *  seeing if it is a generic name such as "midi in".
  *
  * \param portname
  *      The name to be checked.  This is the name after the colon in a
@@ -70,8 +71,8 @@ static const std::string s_short_names [] =
  *
  * \return
  *      Returns true if the port-name is found in the short-name list, or is
- *      empty. This is a signal to get the nick-name from the client name and the
- *      portname.
+ *      empty. This is a signal to get the nick-name from the client name and
+ *      the portname.
  */
 
 static bool

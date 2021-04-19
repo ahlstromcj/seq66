@@ -1,0 +1,40 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+##
+# \file        timid
+# \library     bin
+# \author      Chris Ahlstrom
+# \date        2021-04-19 to 2021-04-19
+# \version     $Revision$
+# \license     GNU GPLv2 or above
+#
+#  This script runs timidity, so one can avoid having to deal with timidity as
+#  a service.  Starts it under ALSA as a daemon, not a service.
+#
+#     -Os            Output to ALSA.
+#     -iA            Launch as an ALSA sequencer client
+#     --background   Start as a daemon.
+#
+#  See https://wiki.debian.org/AlsaMidi
+#
+#------------------------------------------------------------------------------
+
+if [ "$1" == "kill" ] ; then
+
+   killall timidity
+
+else
+
+   timidity -Os -iA --background
+   echo "Waiting 3 seconds to settle..."
+   sleep 3
+   aplaymidi -l
+
+fi
+
+#******************************************************************************
+# qbuild (Seq66)
+#------------------------------------------------------------------------------
+# vim: ts=3 sw=3 wm=4 et ft=sh
+#------------------------------------------------------------------------------
+

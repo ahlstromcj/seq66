@@ -87,6 +87,7 @@
 #include "qseditoptions.hpp"
 #include "qseqeditex.hpp"
 #include "qseqeditframe.hpp"            /* Kepler34 version                 */
+#include "qseqeditframe64.hpp"          /* Seq66 version                    */
 #include "qseqeventframe.hpp"           /* a new event editor for Qt        */
 #include "qsessionframe.hpp"            /* shows session information        */
 #include "qsetmaster.hpp"               /* shows a map of all sets          */
@@ -314,8 +315,8 @@ qsmainwnd::qsmainwnd
 
     /*
      * Fill options for beats per measure in the combo box, and set the
-     * default.  For both the beat-measure and beat-length combo-boxes, we tack on
-     * an additional entry for "32".
+     * default.  For both the beat-measure and beat-length combo-boxes, we
+     * tack on an additional entry for "32".
      */
 
     QString thirtytwo = QString::number(32);
@@ -2020,7 +2021,11 @@ qsmainwnd::load_editor (int seqid)
         if (not_nullptr(m_edit_frame))
             delete m_edit_frame;
 
-        m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
+        if (usr().use_new_seqedit())
+            m_edit_frame = new qseqeditframe64(perf(), seqid, ui->EditTab);
+        else
+            m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
+
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();
         ui->tabWidget->setCurrentIndex(Tab_Edit);

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-13
+ * \updates       2021-04-19
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -47,7 +47,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc(), seq66::usr()        */
 #include "play/seq.hpp"                 /* seq66::seq::maximum()            */
 #include "util/filefunctions.hpp"       /* make_directory(), etc.           */
-#include "util/strfunctions.hpp"        /* strncompare()                    */
+#include "util/strfunctions.hpp"        /* seq66::strncompare()             */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -338,10 +338,7 @@ rcsettings::home_config_directory () const
 bool
 rcsettings::has_home_config_path (const std::string & name)
 {
-    return strncompare
-    (
-        name, home_config_directory(), home_config_directory().length()
-    );
+    return strncompare(name, home_config_directory());
 }
 
 /**

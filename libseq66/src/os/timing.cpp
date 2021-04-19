@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-04-15
+ * \updates       2021-04-19
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -357,11 +357,20 @@ millitime ()
 
 /**
  *  In Windows, currently does nothing.  An upgrade for the future.
+ *  The handle must have the THREAD_SET_INFORMATION or
+ *  THREAD_SET_LIMITED_INFORMATION access right.  The main priority values are
  *
+ *      0:  THREAD_PRIORITY_NORMAL
+ *      1:  THREAD_PRIORITY_ABOVE_NORMAL
+ *      2:  THREAD_PRIORITY_HIGHEST
+ *     15:  THREAD_PRIORITY_TIME_CRITICAL
+ *
+ *  See https://docs.microsoft.com/en-us/windows/win32/api/
+ *          processthreadsapi/nf-processthreadsapi-setthreadpriority
  *
  * \param p
- *      This is the desired priority of the thread, ranging from 1 (low), to
- *      99 (high).  The default value is 1.
+ *      This is the desired priority of the thread. For Windows we restrict it
+ *      to the first three values shown above.
  *
  * \return
  *      Returns true if p > 0; no functionality at present.
@@ -370,7 +379,22 @@ millitime ()
 bool
 set_thread_priority (std::thread & t, int p)
 {
+#if defined THIS_CODE_IS_READY
+    bool result = false;
+    if (p >= THREAD_PRIORITY_NORMAL && p <= THREAD_PRIORITY_HIGHEST)
+    {
+        HANDLE hthread = t.native_handle();
+        BOOL ok = SetThreadPriority(hthread, p);
+        result = ok != 0;
+        if (! result)
+        {
+            errprint("Windows set-priority error... access rights issue?");
+        }
+    }
+    return result;
+#else
     return p > 0 || t.joinable();
+#endif
 }
 
 #endif      // SEQ66_PLATFORM_LINUX, SEQ66_PLATFORM_WINDOWS

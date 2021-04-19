@@ -2799,7 +2799,9 @@ sequence::stream_event (event & ev)
             }
         }
         if (m_thru)
+        {
             put_event_on_bus(ev);                       /* removed locking  */
+        }
 
         /*
          * We don't need to link note events until a note-off comes in.

@@ -93,6 +93,7 @@ namespace seq66
     class qseditoptions;
     class qseqeditex;
     class qseqeditframe;
+    class qseqframe;
     class qseqeventframe;
     class qsessionframe;
     class qsetmaster;
@@ -275,7 +276,7 @@ private:
     qslivebase * m_live_frame;
     qperfeditex * m_perfedit;
     qperfeditframe64 * m_song_frame64;
-    qseqeditframe * m_edit_frame;
+    qseqframe * m_edit_frame;           /* was qseqeditframe */
     qseqeventframe * m_event_frame;
     qplaylistframe * m_playlist_frame;
     QErrorMessage * m_msg_error;

@@ -8,7 +8,7 @@
 # \library    	Seq66
 # \author     	Chris Ahlstrom
 # \date       	2018-09-29
-# \update     	2019-09-23
+# \update     	2021-04-17
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
@@ -18,8 +18,8 @@
 #
 #-----------------------------------------------------------------------------
 
-RELEASEMAJOR="0.90"
-RELEASEMINOR="1"
+RELEASEMAJOR="0.93"
+RELEASEMINOR="0"
 RELEASENUMBER="$RELEASEMAJOR.$RELEASEMINOR"
 REVNUMBER="0"
 DODRYRUN="no"
@@ -29,9 +29,9 @@ if [ "$1" == "--help" ] || [ "$1" == "help" ] ; then
 
    cat << E_O_F
 
-packages 0.5 2019-10-20
+packages 0.6 2021-04-17
 
-Usage:  ./packages [--dry-run] [--release [0.90.2] ]
+Usage:  ./packages [--dry-run] [--release [0.93.0] ]
 
 This script packs the contents of the current directory into the following
 packages:

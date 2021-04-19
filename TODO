@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-04-16
+2019-04-13 to 2021-04-18
 
 HOT ITEMS:
 
@@ -51,6 +51,8 @@ HOT ITEMS:
 
         No issues noted at present.
 
+        Running qpseq66 on Linux:  "QSynth" is named "PortMidi"!
+
     Main Window:
 
         No issues noted at present.
@@ -81,11 +83,26 @@ HOT ITEMS:
         When loading the recent files list: (1) eliminate files that no longer
         exist; (2) figure out how to display files that differ only in path.
 
-        When zooming, try to keep the same viewport in view.  Try to center
-        vertically on notes in the viewport.
+        When zooming, try to keep the same viewport in view.  Got this working
+        for horizontal seqroll and perfroll, but not for vertical (refactoring
+        needed).
+
+        Try to center vertically on notes in the viewport.  
 
         When muting/unmuting a pattern in the song editor, when focus changes
         the tracks are shown in the bright color.
+
+        Time-zoom and seqroll zoom can get out of sync.  Workaround: move the
+        scrollbar to beginning.
+
+        Can we distinguish note-insertion from movement snap, to avoid the
+        "L"-then-snap-then-move mamba?
+
+        Tempo display needs to be worked on for the perfroll and qloopbuttons.
+
+        In File / Save As, put the current name in for starters.
+
+        Song Mode:  make Follow-progress the default.
 
 Others to Consider:
 

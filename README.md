@@ -1,20 +1,20 @@
-# README for Seq66 0.93.0
+# README for Seq66 0.93.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-04-16
+2015-09-10 to 2021-04-19
 
-__Seq66__ is a MIDI sequencer/live-looper with a hardware-sampler-like
+__Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
 playlists for song management, scale/chord-aware piano-roll interface, song
 editor for creative composition, and control via mouse, keystrokes, and MIDI.
 Supports NSM (New Session Manager) on Linux, can also be run headless.
-Note that it does not support audio, just MIDI.
+Note that it does not support audio samples, just MIDI.
 
-__Seq66__ is a refactoring of the Qt version of Sequencer64/Kepler34, a reboot
+__Seq66__ is a refactoring of the Qt version of Sequencer64/Kepler34, reboots
 of __Seq24__ with modern C++ and new features.  Linux users can build this
 application from the source code.  See the INSTALL file.  Windows users can
-get an installer package on GitHub or build it with Qt Creator.  A PDF
-user-manual is also provided.
+get an installer package on GitHub or build it with Qt Creator.  A large PDF
+user-manual is provided.
 
 # Major Features
 
@@ -28,7 +28,8 @@ user-manual is also provided.
     *   Tabs for management of sets, mute-groups, song mode, pattern
         editing, event-editing, play-lists, and session information.
     *   A color for each sequence can be chosen to make them stand out.
-        The color palette can be saved and modified.
+        The color palette can be saved and modified. A Qt style-sheet can also
+        be used for further tinkering of the app's appearance.
 
 ##  Configuration files
 
@@ -47,18 +48,24 @@ user-manual is also provided.
     *   Handles stopping and saving>
     *   Handles display of details about the session.
 
-##  Internal
-
-    *   More consistent use of modern C++, auto, and lambda functions.
-    *   Additional performer callbacks to reduce the need for polling.
-    *   A ton of clean-up.
-
 ##  Multiple Builds
 
     *   ALSA/JACK: `qseq66`
     *   Command-line/daemon: `seq66cli`
     *   PortMidi: `qpseq66`
     *   Windows: `qpseq66.exe`
+
+##  New Features
+
+    *   Transposable triggers for re-using patterns more comprehensively.
+        Works with Song Export. Can be disabled in the 'rc' file.
+    *   See **Recent Changes** below.
+
+##  Internal
+
+    *   More consistent use of modern C++, auto, and lambda functions.
+    *   Additional performer callbacks to reduce the need for polling.
+    *   A ton of clean-up.
 
 Seq66 uses a Qt 5 user-interface based on Kepler34 and the Seq66 *rtmidi*
 (Linux) and *portmidi* (Windows) engines.  MIDI devices are detected,
@@ -69,6 +76,11 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.93.1:
+        *   Add clearing of the performer's "play-set" for "File / New" to
+            prevent the previous song from being playable. :-D
+        *   Activate usage of (larger) seqedit frame in the "Edit" tab via
+            a 'usr' option.
     *   Version 0.93.0:
         *   Added a transpose value to song editor triggers to support shifting
             patterns automatically during Song play.  Added an 'rc' option to
@@ -80,9 +92,8 @@ Windows, and using a conventional source tarball.
             to explore a long pattern for extracting to a short pattern loop.
         *   Added more perfroll snap options, including one to force Seq24
             behavior.
-        *   Make the perf-names now also show the pattern color. They are also
-            highlighted as the mouse moves over the pattern rows, useful for
-            long songs.
+        *   Make the perf-names now also show the pattern color. They highlight
+            as the mouse moves over the pattern rows, useful for long songs.
         *   Fixed playback of ultra-long patterns due to not sleeping in the
             output loop (forgot to convert milliseconds to microseconds).
         *   Fixed vertical zoom in the pattern editor.
@@ -104,34 +115,6 @@ Windows, and using a conventional source tarball.
         *   More fixes to Song recording; added a Snap button for it.
         *   Fixed the rendering of the beat indicator and pattern fonts.
         *   Updated the man pages and the documentation.
-    *   Version 0.92.1:
-        *   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
-            when there are many ports on the system; also increased port
-            limits to 48 ports.
-        *   Fixed issues with iterating through MIDI events in the
-            user-interfaces.
-        *   Big fixes to Song recording. More to do?
-        *   Added an experimental one-shot auto-step step-edit feature for
-            recording (for example) drumbeats from MIDI devices.
-        *   Fixed bug in parsing Fluidsynth port names.
-        *   Improved handling of MIDI I/O control of Seq66.  Added more
-            automation-display events, more testing.
-        *   Updated documentation, including a ODF spreadsheet for the MIDI
-            control configuration of the *Launchpad Mini*.
-    *   Version 0.92.0:
-        *   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
-        *   Fixed issues with applying 'usr' buss and instrument names to the
-            pattern-editor menus.
-        *   Fixing serious issues with the event editor. Now deletes both
-            linked notes.
-        *   Added mute-group-out to show mutegroups on Launchpad Mini buttons.
-        *   Tightened up mute-group handling, configuration file handling,
-            play-list handling, and MIDI display device handling.
-        *   Stream-line the format of the 'ctrl' file by removing columns for
-            the values of "enabled" and "channel".  Will detect older formats
-            and fix them.
-        *   A PDF user manual is now provided in the doc directory, installed
-            to /usr/local/share/doc/seq66-0.92 with "make install".
 
     See the "NEWS" file for changes in earlier versions.
 

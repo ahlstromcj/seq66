@@ -94,7 +94,7 @@ public:
     bool repitch_all ();
     bool repitch_selected ();
 
-protected:
+public:     // protected:
 
     const seq::pointer seq_pointer () const
     {

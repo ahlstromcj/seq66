@@ -7,7 +7,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-24
- * \updates       2021-03-22
+ * \updates       2021-04-19
  * \version       $Revision$
  *
  *    We basically include only the functions we need for Seq66, not
@@ -287,21 +287,32 @@ not_npos (std::string::size_type p)
 /**
  *  Compares two strings for equality up to the given length.  Unlike
  *  std::string::compare(), it returns only a boolean.  Meant to be a simpler
- *  alternative, and analogous to strncmp().
+ *  alternative, and analogous to strncmp().  The comparison function is
+ *  std::string::compare():
+ *
+ *          a.compare(position, length, b)
+ *
+ *  We want to see if the "comparing" string matches the "compared" string up
+ *  to n characters or to the full length of the compared string.
  *
  * \param a
- *      Provides the "compared" string.
+ *      Provides the "compared" string. False is returned if it is empty.
+ *      It is the string whose contents we want to determine.
  *
  * \param b
- *      Provides the "comparing" string.
+ *      Provides the "comparing" string. False is returned if it is empty.
+ *      It is the string whose contents we want to (partially) match.
+ *      It is generally the shorter of the two strings, but no promises.
  *
  * \param n
- *      Provides the number of characters in the "compared" string that must
- *      match.  If equal to 0, then a regular operator ==() is used.
+ *      Provides the number of characters in the "compared" string (parameter
+ *      \a a) that must match.  If equal to 0 (the default value), then
+ *      the length of b is used. (Too tricky?) If n is greater than
+ *      a.length(), then we cannot satisfy the semantics of this function.
  *
  * \return
  *      Returns true if the strings compare identically for the first \a n
- *      characters.
+ *      characters.  Returns false otherwise, including when n > a.length().
  */
 
 bool
@@ -309,8 +320,12 @@ strncompare (const std::string & a, const std::string & b, size_t n)
 {
     bool result = ! a.empty() && ! b.empty();
     if (result)
-        result = (n > 0) ? a.compare(0, n, b) == 0 : a == b ;
+    {
+        if (n == 0)
+            n = b.length();
 
+        result = n <= a.length() ? a.compare(0, n, b) == 0 : false ;
+    }
     return result;
 }
 

@@ -61,7 +61,10 @@ extern std::string next_bracketed_string
 extern std::string add_quotes (const std::string & item);
 extern const std::string & double_quotes ();
 extern bool not_npos (std::string::size_type p);
-extern bool strncompare (const std::string & a, const std::string & b, size_t n);
+extern bool strncompare
+(
+    const std::string & a, const std::string & b, size_t n = 0
+);
 extern bool strcasecompare (const std::string & a, const std::string & b);
 extern std::string & ltrim
 (

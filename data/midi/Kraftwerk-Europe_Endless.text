@@ -1,6 +1,6 @@
 Deconstructing and Reconstructing "Europe Endless" with Seq66
 Chris Ahlstrom
-2021-04-01 to 2021-04-14
+2021-04-01 to 2021-04-19
 
 Kraftwerk's "Europe Endless" is a long, repetitive tune.  So repetitive that
 the vinyl recording of it had a visible pattern in the grooves.  And it seemed
@@ -32,19 +32,22 @@ Chords:
     B   =   B       D#    F#        (G +  4, G - 8)
     F#  =   F#      A#    C#        (G + 11, G - 1)
 
-In this deconstruction/reconstruction, we do not worry about program
-changes or about exactly duplicating sections that are very minor variations on
-a theme.  Some additional Volume events could be added, but they might be
-synth/patch-dependent.  The reproduction is probably about 97% faithful to the
-original (for example, we didn't add the fade-out at the end), and, at about
-12000 bytes, is about 12% of the size of the original.
+We added the various patterns as noted below, and added provisional program
+changes and volume settings using the Seq66 "Events" tab.  In this
+deconstruction/reconstruction, we do not worry about exactly duplicating
+sections that are very minor variations on a theme.  Some additional Volume
+events could be added, but they might be synth/patch-dependent.  The
+reproduction is probably about 97% faithful to the original (for example, we
+didn't add the fade-out at the end), and, at about 12000 bytes, is about 12% of
+the size of the original.
 
-We can take this Seq66 tune as laid out in the song editor, unmute all the
+We can also take this Seq66 tune as laid out in the song editor, unmute all the
 patterns, and export it as a reconstituted MIDI file, playable in any sequencer.
 In this form, it is back up to about 93000 bytes in size.  The following command
 will convert the exported version to MP3:
 
    $ timidity K.midi -Ow -o - | ffmpeg -i - -acodec libmp3lame -ab 128k K.mp3
+              =                                                         =
 
 where "K" is "Kraftwek-Europe-Endless-exported" (see the contrib/midi directory
 of this project). At 128k, it ends up about 9 Mb in size, and so we don't
@@ -64,6 +67,8 @@ Program and Controller Changes:
 
     These have been set for the default Qsynth setup.  However, that application
     would crackle a bit, and we found Timidity worked better, at least in ALSA.
+    However, Timidity also has a lag in playback, noticeable when using MIDI
+    Thru to play from a MIDI controller.
 
 Parts of the tune and their breakdown:
 
