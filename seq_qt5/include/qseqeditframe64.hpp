@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-03-25
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  */
@@ -107,9 +107,8 @@ public:
 
     qseqeditframe64
     (
-        performer & p,
-        int seqid,
-        QWidget * parent = nullptr
+        performer & p, int seqid, QWidget * parent,
+        bool shorter = false
     );
     virtual ~qseqeditframe64 ();
 
@@ -214,6 +213,7 @@ private slots:
     void q_record_change (bool ischecked);
     void update_record_type (int index);
     void update_recording_volume (int index);
+    void update_loop_count (int value);
     void reset_recording_volume ();
     void slot_follow (bool ischecked);
     void v_zoom_in ();
@@ -262,7 +262,17 @@ private:        /* setters and getters          */
 
 private:
 
+    /**
+     *  Needed for Qt.
+     */
+
     Ui::qseqeditframe64 * ui;
+
+    /**
+     *  Indicates to compress this window vertically, for use in the Edit tab.
+     */
+
+    bool m_short_version;
 
     /**
      *  The LFO window object used by the pattern editor.

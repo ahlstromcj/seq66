@@ -428,9 +428,10 @@ private:
     midipulse m_one_shot_tick;
 
     /**
-     *  EXPERIMENTAL>
      *  Number of times to play the pattern in Live mode.  A value of 0 means
-     *  to play the pattern endlessly in Live mode.
+     *  to play the pattern endlessly in Live mode, like normal.  The maximum
+     *  loop-count, if non-zero, is stored in a c_seq_loopcount SeqSpec as a
+     *  short integer.
      */
 
     int m_loop_count;
@@ -863,11 +864,22 @@ public:
         return m_seq_edit_mode;
     }
 
+    midibyte edit_mode_byte () const
+    {
+        return static_cast<midibyte>(m_seq_edit_mode);
+    }
+
     void edit_mode (editmode mode)
     {
         m_seq_edit_mode = mode;
     }
 
+    void edit_mode (midibyte b)
+    {
+        m_seq_edit_mode = b == 0 ? editmode::note : editmode::drum ;
+    }
+
+    bool loop_count_max (int m);
     void modify (bool notifychange = true);
     int event_count () const;
     int note_count ();
@@ -1768,11 +1780,6 @@ private:
     void off_from_snap (bool f)
     {
         m_off_from_snap = f;
-    }
-
-    void loop_count_max (int m)
-    {
-        m_loop_count_max = m;
     }
 
     void song_playback_block (bool f)

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-12
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -239,10 +239,6 @@ sequence::~sequence ()
 void
 sequence::modify (bool notifychange)
 {
-
-    /*
-     */
-
     set_dirty();
      if (notifychange)
          notify_change();
@@ -344,6 +340,18 @@ sequence::color (int c)
             m_seq_color = colorbyte(c);
             result = true;
         }
+    }
+    return result;
+}
+
+bool
+sequence::loop_count_max (int m)
+{
+    bool result = m != m_loop_count_max && m >= 0;
+    if (result)
+    {
+        m_loop_count_max = m;
+        modify();                               /* have pending changes */
     }
     return result;
 }
@@ -898,6 +906,12 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
+
+        // EXPERIMENTAL; seems to work for one-shot play.
+        if (loop_count_max() > 0 && times_played >= loop_count_max())
+            return;
+        // EXPERIMENTAL
+
         int transpose = trigtranspose;
         if (transpose == 0)
             transpose = transposable() ? perf()->get_transpose() : 0 ;

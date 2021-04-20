@@ -32,6 +32,15 @@
    <enum>QFrame::Plain</enum>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>2</number>
+   </property>
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
@@ -626,7 +635,7 @@ and apply it to a trigger.</string>
           <x>0</x>
           <y>0</y>
           <width>16</width>
-          <height>292</height>
+          <height>314</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -661,7 +670,7 @@ and apply it to a trigger.</string>
           <x>0</x>
           <y>0</y>
           <width>681</width>
-          <height>290</height>
+          <height>312</height>
          </rect>
         </property>
         <property name="sizePolicy">

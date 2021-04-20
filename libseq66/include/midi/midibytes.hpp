@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-03-17
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -551,6 +551,44 @@ inline bool
 is_null_channel (midibyte c)
 {
     return c >= c_midichannel_null;     /* c_midibyte_max */
+}
+
+/**
+ *  This function is meant to deal with values that range from 0 to 127, but
+ *  need to be displayed over a different number of pixels.  In qseqdata, the
+ *  data is normally shown as one pixel per value (up to 128 pixels). But now
+ *  we want a height half that; it's better to provide a function for that.
+ *
+ * \param height
+ *      The current height of the range in pixels.  This will be used to scale
+ *      the value against 128.
+ *
+ * \param value
+ *      The value of the byte, assumed to range from 0 to 127.
+ *
+ * \return
+ *      Returns the actual pixel height of the value in the range from
+ *      0 to height, versus 0 to 128.
+ */
+
+inline int
+byte_height (int height, midibyte value)
+{
+    const int s_max_height = 128;
+    return int(value) * height / s_max_height;
+}
+
+/**
+ *  The inverse of byte_height().  Parameters and result not checked, for
+ *  speed.  Note that height can represent the y-difference between two
+ *  pixels.
+ */
+
+inline int
+byte_value (int height, int value)
+{
+    const int s_max_height = 128;
+    return s_max_height * value / height;
 }
 
 }               // namespace seq66

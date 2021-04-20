@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-03-22
+% \update      2021-04-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1276,29 +1276,37 @@
    \end{verbatim}
 
    \index{key height}
-   The key-height affects the default "width" of the piano keys in the pattern
+   The \texttt{key-height} option
+   affects the default "width" of the piano keys in the pattern
    sequence editor.  Defaults to 12 (pixels).
    This option is also editable in the \textbf{Preferences} dialog.
    There are vertical zoom buttons, and the \texttt{v/0/V} keystrokes to change
    this on the fly, but those changes are not saved.
 
    \index{new seqedit}
-   Normally, \textsl{Seq66} uses the old pattern editor in the 'Edit' tab.
-   If the use-new-seqedit value is set to 1, then the new, larger, more
-   functional pattern editor will be used in the 'Edit' tab; this
-   makes the main window larger.
+   \textsl{Seq66} now uses the new pattern editor in the 'Edit' tab.
+   The \texttt{use-new-seqedit} value is set to \texttt{true} by default.
+   When used in the \textbf{Edit} tab instead of an external window,
+   it is shrunk slight vertically, but the bottom row of buttons is invisible
+   unless the user makes the window taller.
+
+   Setting \texttt{use-new-seqedit} value is set to \texttt{false} uses the 
+   smaller window.
+   It is less functional and a bit more buggy.
+   It will eventually go away completely.
 
    The following options adopt the new convention for setting variables, in
    which the format is \texttt{item-name = value}.
    This style will eventually be used for all settings.
 
    \index{note resume}
-   The note-resume option, if active, causes any notes in progress
+   The \texttt{note-resume} option, if active, causes any notes in progress
    to be resumed when the pattern is toggled back on.
 
    \index{style sheet}
-   The style-sheet option, if non-empty, causes a user-designed style-sheet to
-   be applied.  This is useful in expanding the tab-sizes, for example.
+   The \texttt{style-sheet} option, if non-empty, causes a user-designed
+   style-sheet to be applied.  This is useful in expanding the tab-sizes, for
+   example.
    The style sheet file is assumed to reside in the normal \textsl{Seq66}
    configuration directory.
    However, it can have a path component so that the same style sheet

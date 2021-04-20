@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-08-05
- * \updates       2021-01-04
+ * \updates       2021-04-19
  * \license       GNU GPLv2 or above
  *
  *  This class will be the base class for the qseqbase and qperfbase classes.
@@ -38,16 +38,6 @@
 #include "util/rect.hpp"
 #include "gui_palette_qt5.hpp"          /* gui_pallete_qt5::Color etc.      */
 #include "qbase.hpp"                    /* seq66:qbase super base class     */
-
-/**
- *  The height of the data-entry area for velocity, aftertouch, and other
- *  controllers, as well as note on and off velocity.  This value looks to
- *  be in pixels; one pixel per MIDI value, which ranges from 0 to 127.
- *  We're trying to avoid header clutter, and are using a hardwired constant
- *  for this variable, which will eventually go away.
- */
-
-const int c_dataarea_y = 128;
 
 /**
  *  The dimensions and offset of the virtual keyboard at the left of the

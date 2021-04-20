@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-04-16
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -346,12 +346,21 @@ static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
  * \param parent
  *      Provides the parent window/widget for this container window.  Defaults
  *      to null.
+ *
+ * \param shorter
+ *      If true, the data window is halved in size, and some controls are hidden,
+ *      to compact the editor for use a tab.
  */
 
-qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
+qseqeditframe64::qseqeditframe64
+(
+    performer & p, int seqid,
+    QWidget * parent, bool shorter
+) :
     qseqframe               (p, seqid, parent),
     performer::callbacks    (p),
     ui                      (new Ui::qseqeditframe64),
+    m_short_version         (shorter),
     m_lfo_wnd               (nullptr),
     m_tools_popup           (nullptr),
     m_sequences_popup       (nullptr),
@@ -365,14 +374,14 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_chord                 (0),
     m_key                   (usr().seqedit_key()),
     m_bgsequence            (usr().seqedit_bgsequence()),
-    m_measures              (0),                                /* fixed below          */
+    m_measures              (0),
 #if defined USE_STAZED_ODD_EVEN_SELECTION
     m_pp_whole              (0),
     m_pp_eighth             (0),
     m_pp_sixteenth          (0),
 #endif
     m_editing_bus           (seq_pointer()->seq_midi_bus()),
-    m_editing_channel       (seq_pointer()->midi_channel()),    /* seq_midi_channel())  */
+    m_editing_channel       (seq_pointer()->midi_channel()),
     m_editing_status        (0),
     m_editing_cc            (0),
     m_first_event           (0),
@@ -382,7 +391,7 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
     m_timer                 (nullptr)
 {
     ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);                         /* part of issue #4     */
+    setAttribute(Qt::WA_DeleteOnClose);             /* part of issue #4     */
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     initialize_panels();
 
@@ -522,25 +531,33 @@ qseqeditframe64::qseqeditframe64 (performer & p, int seqid, QWidget * parent) :
      *  Transpose button.  Qt::NoFocus is the default focus policy.
      */
 
-    bool cantranspose = seq_pointer()->transposable();
-    qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
-    ui->m_toggle_transpose->setCheckable(true);
-    ui->m_toggle_transpose->setChecked(cantranspose);
-    ui->m_toggle_transpose->setAutoDefault(false);
-    connect
-    (
-        ui->m_toggle_transpose, SIGNAL(toggled(bool)),
-        this, SLOT(transpose(bool))
-    );
-    if (! usr().work_around_transpose_image())
-        set_transpose_image(cantranspose);
+    if (shorter)
+    {
+        ui->m_toggle_transpose->hide();
+        ui->m_map_notes->hide();
+    }
+    else
+    {
+        bool cantranspose = seq_pointer()->transposable();
+        qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
+        ui->m_toggle_transpose->setCheckable(true);
+        ui->m_toggle_transpose->setChecked(cantranspose);
+        ui->m_toggle_transpose->setAutoDefault(false);
+        connect
+        (
+            ui->m_toggle_transpose, SIGNAL(toggled(bool)),
+            this, SLOT(transpose(bool))
+        );
+        if (! usr().work_around_transpose_image())
+            set_transpose_image(cantranspose);
 
-    connect
-    (
-        ui->m_map_notes, SIGNAL(clicked(bool)),
-        this, SLOT(remap_notes())
-    );
-    ui->m_map_notes->setEnabled(cantranspose);
+        connect
+        (
+            ui->m_map_notes, SIGNAL(clicked(bool)),
+            this, SLOT(remap_notes())
+        );
+        ui->m_map_notes->setEnabled(cantranspose);
+    }
 
     /*
      * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
@@ -1249,7 +1266,7 @@ qseqeditframe64::initialize_panels ()
     m_seqroll = new qseqroll
     (
         perf(), seq_pointer(), m_seqkeys, zoom(), m_snap,
-        sequence::editmode::note, this                    /* see note above   */
+        sequence::editmode::note, this          /* see note above re "this" */
     );
 
     ui->rollScrollArea->setWidget(m_seqroll);
@@ -1258,7 +1275,9 @@ qseqeditframe64::initialize_panels ()
     m_seqroll->update_edit_mode(m_edit_mode);
     m_seqdata = new qseqdata
     (
-        perf(), seq_pointer(), zoom(), m_snap, ui->dataScrollArea
+        perf(), seq_pointer(), zoom(),
+        m_snap, ui->dataScrollArea,
+        m_short_version ? 64 : 0                /* 0 means "normal height"  */
     );
     ui->dataScrollArea->setWidget(m_seqdata);
     ui->dataScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -1298,25 +1317,16 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    bool expandrec = seq_pointer()->expand_recording();
-
-    /*
-     * EXPERIMENTAL
-
-    if (perf().is_pattern_playing())
-        ui->m_combo_rec_type->setEnabled(false);
-    else
-        ui->m_combo_rec_type->setEnabled(true);
-
-     */
-
-    QString countstr = QString::fromStdString
+    ui->m_spin_loop_count->setValue(seq_pointer()->loop_count_max());
+    ui->m_spin_loop_count->setReadOnly(false);
+    connect
     (
-        std::to_string(seq_pointer()->event_count())
+        ui->m_spin_loop_count, SIGNAL(valueChanged(int)),
+        this, SLOT(update_loop_count(int))
     );
-    ui->m_button_reserved->setText(countstr);
-
     update_midi_buttons();                      /* mirror current states    */
+
+    bool expandrec = seq_pointer()->expand_recording();
     if (expandrec)
     {
         set_measures(get_measures() + 1);
@@ -3167,6 +3177,13 @@ qseqeditframe64::update_recording_volume (int index)
         set_recording_volume(recvol);
         set_dirty();
     }
+}
+
+void
+qseqeditframe64::update_loop_count (int value)
+{
+    if (seq_pointer()->loop_count_max(value))
+        set_dirty();
 }
 
 void

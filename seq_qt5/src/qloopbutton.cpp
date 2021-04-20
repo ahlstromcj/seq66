@@ -25,16 +25,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-04-13
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
- *
- * QWidget::paintEvent(QPaintEvent * ev):
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
  *  the following reasons: repaint() or update() was invoked; the widget was
  *  obscured and then uncovered; or other reasons.  Widgets can repaint their
  *  entire surface, but slow widgets need to optimize by painting only the
- *  requested region: QPaintEvent::region(); painting is clipped to that region.
+ *  requested region: QPaintEvent::region(); painting is clipped to that
+ *  region.
  *
  *  Qt tries to speed painting by merging multiple paint events into one. When
  *  update() is called several times or the window system sends several paint
@@ -42,8 +41,8 @@
  *  [QRegion::united()]. repaint() does not permit this optimization, so use
  *  update() whenever possible.
  *
- *  When paint occurs, the update region is normally erased, so you are painting
- *  on the widget's background.
+ *  When paint occurs, the update region is normally erased, so you are
+ *  painting on the widget's background.
  *
  *  The qloopbutton turns off the Qt::WA_Hover attribute.  This attribute
  *  makes the button repaint whenever the mouse moves over it, which wastes
@@ -246,6 +245,9 @@ qloopbutton::initialize_text ()
         lowerleft = std::string(tmp);
         if (rc().show_ui_sequence_key())
             hotkey = m_hotkey;
+
+        if (m_seq->loop_count_max() > 0)
+            lengthstr += "*";
 
         m_top_left.set(lx, ty, lw, bh, lflags, m_seq->name());
         m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);

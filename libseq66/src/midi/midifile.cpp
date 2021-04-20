@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-14
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1270,6 +1270,19 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                 s.color(read_byte());
                                 --len;
                             }
+#if defined SEQ66_SEQUENCE_EDIT_MODE        /* same as "not transposable"?  */
+                            else if (seqspec == c_seq_edit_mode)
+                            {
+                                sequence::edit_mode m = (read_byte());
+                                s.edit_mode(read_byte());
+                                --len;
+                            }
+#endif
+                            else if (seqspec == c_seq_loopcount)
+                            {
+                                s.loop_count_max(int(read_short()));
+                                len -= 2;
+                            }
                             else if (SEQ66_IS_PROPTAG(seqspec))
                             {
                                 (void) set_error_dump
@@ -1867,14 +1880,14 @@ midifile::parse_proprietary_track (performer & p, int file_size)
                 p.tempo_track_number(tempotrack);
         }
 
-#if defined SEQ66_SEQUENCE_EDIT_MODE
+#if defined SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
 
         /*
          * Sequence editing mode are a feature of Kepler34.  We don't know
          * what these modes do, yet, but let's leave room for them.
          *
-         * Consider storing this in the MIDI file. Also the current code below
-         * will SKIP DATA!!!  So we are disabling it!!!
+         * We will eventually store this in the MIDI file. Also the current
+         * code below will SKIP DATA!!!  So we are disabling it!!!
          */
 
         seqspec = parse_prop_header(file_size);
@@ -1887,7 +1900,7 @@ midifile::parse_proprietary_track (performer & p, int file_size)
             }
         }
 
-#endif  // SEQ66_SEQUENCE_EDIT_MODE
+#endif  // SEQ66_SEQUENCE_EDIT_MODE_GLOBAL
 
         /*
          * ADD NEW CONTROL TAGS AT THE END OF THE LIST HERE.  Don't forget to

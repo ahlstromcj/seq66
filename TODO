@@ -35,6 +35,12 @@ HOT ITEMS:
         Song mode.  Currently added a tag (c_seq_loopcount) to support it in
         preparation.
 
+        Remove the old-style Live grid completely and deprecate that option in
+        the 'usr' file.
+
+        Remove the old qseqeditframe and the use-new-seqedit option (now the
+        default).
+
     NSM:
 
         I add a new pattern, add a couple notes, then click File / Save to

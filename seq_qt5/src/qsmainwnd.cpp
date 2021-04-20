@@ -2022,7 +2022,12 @@ qsmainwnd::load_editor (int seqid)
             delete m_edit_frame;
 
         if (usr().use_new_seqedit())
-            m_edit_frame = new qseqeditframe64(perf(), seqid, ui->EditTab);
+        {
+            m_edit_frame = new qseqeditframe64
+            (
+                perf(), seqid, ui->EditTab, true            /* short one    */
+            );
+        }
         else
             m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
 

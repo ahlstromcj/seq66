@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-04-14
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -467,12 +467,24 @@ midi_vector_base::fill_proprietary ()
      */
 
     bool transpose = m_sequence.transposable();
-    put_seqspec(c_transpose, 1);
+    put_seqspec(c_transpose, 1);                                /* byte     */
     put(midibyte(transpose));
     if (m_sequence.color() != c_seq_color_none)
     {
-        put_seqspec(c_seq_color, 1);
+        put_seqspec(c_seq_color, 1);                            /* byte     */
         put(midibyte(m_sequence.color()));
+    }
+#if defined SEQ66_SEQUENCE_EDIT_MODE                            /* useful?  */
+    if (m_sequence.edit_mode() != sequence::editmode::note)
+    {
+        put_seqspec(c_seq_edit_mode, 1);                        /* byte     */
+        put(m_sequence.edit_mode_byte());
+    }
+#endif
+    if (m_sequence.loop_count_max() != 0)
+    {
+        put_seqspec(c_seq_loopcount, 2);                        /* short    */
+        add_short(midishort(m_sequence.loop_count_max()));
     }
 }
 

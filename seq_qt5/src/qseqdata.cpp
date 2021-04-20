@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-02-19
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -46,6 +46,16 @@
 namespace seq66
 {
 
+/**
+ *  The height of the data-entry area for velocity, aftertouch, and other
+ *  controllers, as well as note on and off velocity.  This value looks to
+ *  be in pixels; one pixel per MIDI value, which ranges from 0 to 127.
+ *  We're trying to avoid header clutter, and are using a hardwired constant
+ *  for this variable, which will eventually transition to a modifiable member.
+ */
+
+static const int sc_dataarea_y = 128;
+
 /*
  * Tweaks
  */
@@ -58,19 +68,18 @@ static const int s_x_data_fix =  8;
 
 qseqdata::qseqdata
 (
-    performer & p,
-    seq::pointer seqp,
-    int zoom,
-    int snap,
+    performer & p, seq::pointer seqp,
+    int zoom, int snap,
     QWidget * parent,
-    int xpadding
+    int height
 ) :
     QWidget                 (parent),
     qseqbase                (p, seqp, zoom, snap),
     performer::callbacks    (p),
     m_timer                 (nullptr),
     m_font                  (),
-    m_keyboard_padding_x    (xpadding + s_x_data_fix),
+    m_keyboard_padding_x    (s_x_data_fix),
+    m_dataarea_y            (height > 0 ? height : sc_dataarea_y),
     m_status                (EVENT_NOTE_ON),
     m_cc                    (1),                /* modulation */
     m_line_adjust           (false),
@@ -122,7 +131,7 @@ qseqdata::on_ui_change (seq::number seqno)
 QSize
 qseqdata::sizeHint () const
 {
-    return QSize(xoffset(seq_pointer()->get_length()) + 100, c_dataarea_y);
+    return QSize(xoffset(seq_pointer()->get_length()) + 100, m_dataarea_y);
 }
 
 /**
@@ -162,28 +171,23 @@ qseqdata::paintEvent (QPaintEvent * qpep)
             midibyte d0, d1;
             cev->get_data(d0, d1);
 
-            int event_height = d1;          /* generate the value       */
-            if (event::is_one_byte_msg(m_status))
-                event_height = d0;
-
-            pen.setWidth(2);                /* draw vertical grid lines */
+            int event_height = event::is_one_byte_msg(m_status) ? d0 : d1 ;
+            event_height = height() - byte_height(m_dataarea_y, event_height);
+            pen.setWidth(2);                    /* draw vertical grid lines */
             if (selected)
-                pen.setColor(sel_paint());  /* pen.setColor("orange")   */
+                pen.setColor(sel_paint());      /* pen.setColor("orange")   */
             else
-                pen.setColor(fore_color()); /* pen.setColor(Qt::black)  */
+                pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
 
             painter.setPen(pen);
-            painter.drawLine
-            (
-                event_x, height() - event_height, event_x, height()
-            );
+            painter.drawLine(event_x, event_height, event_x, height());
 
             int x_offset = event_x + s_x_data_fix;
-            int y_offset = c_dataarea_y - 25;
+            int y_offset = m_dataarea_y - 25;
             snprintf(digits, sizeof digits, "%3d", d1);
 
             QString val = digits;
-            pen.setColor(fore_color());     /* pen.setColor(Qt::black)  */
+            pen.setColor(fore_color());         /* pen.setColor(Qt::black)  */
             painter.drawText(x_offset, y_offset,      val.at(0));
             painter.drawText(x_offset, y_offset +  8, val.at(1));
             painter.drawText(x_offset, y_offset + 16, val.at(2));
@@ -269,10 +273,11 @@ qseqdata::mouseReleaseEvent (QMouseEvent * event)
 
         midipulse tick_s = pix_to_tix(drop_x());
         midipulse tick_f = pix_to_tix(current_x());
+        int ds = byte_value(m_dataarea_y, m_dataarea_y - drop_y());
+        int df = byte_value(m_dataarea_y, m_dataarea_y - current_y() - 1);
         bool ok = seq_pointer()->change_event_data_range
         (
-            tick_s, tick_f, m_status, m_cc,
-            c_dataarea_y - drop_y() - 1, c_dataarea_y - current_y() - 1
+            tick_s, tick_f, m_status, m_cc, ds, df
         );
         m_line_adjust = false;
         if (ok)
@@ -313,20 +318,22 @@ qseqdata::mouseMoveEvent (QMouseEvent * event)
 
         tick_s = pix_to_tix(adj_x_min);
         tick_f = pix_to_tix(adj_x_max);
+
+        int ds = byte_value(m_dataarea_y, m_dataarea_y - adj_y_min - 1);
+        int df = byte_value(m_dataarea_y, m_dataarea_y - adj_y_max - 1);
         bool ok = seq_pointer()->change_event_data_range
         (
-            tick_s, tick_f, m_status, m_cc,
-            c_dataarea_y - adj_y_min - 1, c_dataarea_y - adj_y_max - 1
+            tick_s, tick_f, m_status, m_cc, ds, df
         );
         if (ok)
             set_dirty();
     }
     else if (m_relative_adjust)
     {
+        int adjy = byte_value(m_dataarea_y, drop_y() - current_y());
         tick_s = pix_to_tix(drop_x() - 2);
         tick_f = pix_to_tix(drop_x() + 2);
 
-        int adjy = drop_y() - current_y();
         bool ok = seq_pointer()->change_event_data_relative
         (
             tick_s, tick_f, m_status, m_cc, adjy

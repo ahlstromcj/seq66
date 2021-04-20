@@ -29,7 +29,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2020-07-27
+ * \updates       2021-04-20
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -73,12 +73,10 @@ public:
 
     qseqdata
     (
-        performer & p,
-        seq::pointer seqp,
-        int zoom            = SEQ66_DEFAULT_ZOOM,
-        int snap            = SEQ66_DEFAULT_SNAP,
-        QWidget * parent    = nullptr,
-        int xpadding        = 0
+        performer & p, seq::pointer seqp,
+        int zoom, int snap,
+        QWidget * parent,
+        int height = 0
     );
 
     virtual ~qseqdata ();
@@ -126,20 +124,26 @@ private:
     QTimer * m_timer;
     QFont m_font;
 
-    /*
+    /**
      * A kludge to account for differences between the external and tabbed
      * sequence-editing frames.
      */
 
     int m_keyboard_padding_x;
 
-    /*
+    /**
+     *  Provides a way to shrink the height of the data area. Defaults to 128.
+     */
+
+    int m_dataarea_y;
+
+    /**
      * What events is the data window currently editing?
      */
 
     midibyte m_status;
 
-    /*
+    /**
      * What events is the data window currently editing?
      */
 
