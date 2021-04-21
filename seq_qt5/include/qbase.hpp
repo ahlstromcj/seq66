@@ -43,7 +43,6 @@
  *      -   Dirtiness. This indicates if the user-interface should be drawn.
  */
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_ZOOM, _SNAP        */
 #include "play/performer.hpp"           /* seq66::performer                 */
 
 /*
@@ -105,11 +104,7 @@ private:
 
 public:
 
-    qbase
-    (
-        performer & p,
-        int zoom = SEQ66_DEFAULT_ZOOM
-    );
+    qbase (performer & p, int zoom);
     virtual ~qbase ();
 
     void stop_playing ()

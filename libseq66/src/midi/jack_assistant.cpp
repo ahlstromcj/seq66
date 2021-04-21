@@ -1221,7 +1221,7 @@ jack_sync_callback
     jack_assistant * jack = (jack_assistant *)(arg);
     if (not_nullptr(jack))
     {
-        result = jack->sync(state);         /* use the new member function */
+        result = jack->sync(state);         /* use the new member function  */
     }
     else
     {
@@ -1232,7 +1232,7 @@ jack_sync_callback
 
 #endif  // USE_JACK_SYNC_CALLBACK
 
-#if defined SEQ66_JACK_SESSION
+#if defined SEQ66_JACK_SESSION              /* deprecated, use NSM          */
 
 /**
  *  Writes the MIDI file named "<jack session dir>-file.mid" using a

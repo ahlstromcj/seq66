@@ -61,10 +61,8 @@ public:
 
     qseqtime
     (
-        performer & p,
-        seq::pointer seqp,
-        int zoom            = SEQ66_DEFAULT_ZOOM,
-        QWidget * parent    = nullptr
+        performer & p, seq::pointer seqp,
+        int zoom, QWidget * parent
     );
 
     virtual ~qseqtime ();

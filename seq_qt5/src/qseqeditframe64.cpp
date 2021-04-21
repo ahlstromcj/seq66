@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-04-20
+ * \updates       2021-04-21
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -421,7 +421,6 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(down_xpm, ui->m_button_bpm);
-
     connect
     (
         ui->m_button_bpm, SIGNAL(clicked(bool)),
@@ -458,7 +457,6 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(down_xpm, ui->m_button_bw);
-
     connect
     (
         ui->m_button_bw, SIGNAL(clicked(bool)),
@@ -495,13 +493,11 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(length_short_xpm, ui->m_button_length);
-
     connect
     (
         ui->m_button_length, SIGNAL(clicked(bool)),
         this, SLOT(reset_measures())
     );
-
     for (int m = 0; m < s_measures_count; ++m)
     {
         std::string itext = std::to_string(s_measures_items[m]);
@@ -527,37 +523,49 @@ qseqeditframe64::qseqeditframe64
     seq_pointer()->calculate_unit_measure(); /* must precede set_measures() */
     set_measures(get_measures());
 
-    /*
-     *  Transpose button.  Qt::NoFocus is the default focus policy.
-     */
-
+    bool can_transpose = seq_pointer()->transposable();
     if (shorter)
     {
-        ui->m_toggle_transpose->hide();
+        ui->m_toggle_drum->hide();      /* ui->m_toggle_transpose->hide()   */
         ui->m_map_notes->hide();
     }
     else
     {
-        bool cantranspose = seq_pointer()->transposable();
-        qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
-        ui->m_toggle_transpose->setCheckable(true);
-        ui->m_toggle_transpose->setChecked(cantranspose);
-        ui->m_toggle_transpose->setAutoDefault(false);
+        /*
+         * Drum-Mode Button.  Qt::NoFocus is the default focus policy.
+         */
+
+        ui->m_toggle_drum->setAutoDefault(false);
+        ui->m_toggle_drum->setCheckable(true);
+        qt_set_icon(drum_xpm, ui->m_toggle_drum);
         connect
         (
-            ui->m_toggle_transpose, SIGNAL(toggled(bool)),
-            this, SLOT(transpose(bool))
+            ui->m_toggle_drum, SIGNAL(toggled(bool)),
+            this, SLOT(editor_mode(bool))
         );
-        if (! usr().work_around_transpose_image())
-            set_transpose_image(cantranspose);
-
         connect
         (
             ui->m_map_notes, SIGNAL(clicked(bool)),
             this, SLOT(remap_notes())
         );
-        ui->m_map_notes->setEnabled(cantranspose);
+        ui->m_map_notes->setEnabled(can_transpose);
     }
+
+    /*
+     *  Transpose button.  Qt::NoFocus is the default focus policy.
+     */
+
+    qt_set_icon(transpose_xpm, ui->m_toggle_transpose);
+    ui->m_toggle_transpose->setCheckable(true);
+    ui->m_toggle_transpose->setChecked(can_transpose);
+    ui->m_toggle_transpose->setAutoDefault(false);
+    connect
+    (
+        ui->m_toggle_transpose, SIGNAL(toggled(bool)),
+        this, SLOT(transpose(bool))
+    );
+    if (! usr().work_around_transpose_image())
+        set_transpose_image(can_transpose);
 
     /*
      * Chord button and combox-box.  See c_chord_table_text[c_chord_number][]
@@ -570,7 +578,6 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_chord, SIGNAL(clicked(bool)),
         this, SLOT(reset_chord())
     );
-
     for (int chord = 0; chord < c_chord_number; ++chord)
     {
         QString combo_text = c_chord_table_text[chord].c_str();
@@ -766,13 +773,11 @@ qseqeditframe64::qseqeditframe64
      */
 
     qt_set_icon(zoom_xpm, ui->m_button_zoom);
-
     connect
     (
         ui->m_button_zoom, SIGNAL(clicked(bool)),
         this, SLOT(slot_reset_zoom())
     );
-
     for (int zi = 0; zi < s_zoom_count; ++zi)
     {
         int zoom = s_zoom_items[zi];
@@ -831,7 +836,6 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_scale, SIGNAL(clicked(bool)),
         this, SLOT(reset_scale())
     );
-
     for (int scale = c_scales_off; scale < c_scales_max; ++scale)
     {
         QString combo_text = musical_scale_name(scale).c_str();
@@ -859,7 +863,6 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(sequences())
     );
     popup_sequence_menu();              /* create the initial popup menu    */
-
     if (seq::valid(seq_pointer()->background_sequence()))
         m_bgsequence = seq_pointer()->background_sequence();
 
@@ -904,19 +907,6 @@ qseqeditframe64::qseqeditframe64
     );
 
     /*
-     * Drum-Mode Button.  Qt::NoFocus is the default focus policy.
-     */
-
-    ui->m_toggle_drum->setAutoDefault(false);
-    ui->m_toggle_drum->setCheckable(true);
-    connect
-    (
-        ui->m_toggle_drum, SIGNAL(toggled(bool)),
-        this, SLOT(editor_mode(bool))
-    );
-    qt_set_icon(drum_xpm, ui->m_toggle_drum);
-
-    /*
      * Event Selection Button and Popup Menu for qseqdata.
      */
 
@@ -948,6 +938,18 @@ qseqeditframe64::qseqeditframe64
         ui->m_button_lfo, SIGNAL(clicked(bool)),
         this, SLOT(show_lfo_frame())
      );
+
+     /*
+      * Loop-count Spin Box.
+      */
+
+    ui->m_spin_loop_count->setValue(seq_pointer()->loop_count_max());
+    ui->m_spin_loop_count->setReadOnly(false);
+    connect
+    (
+        ui->m_spin_loop_count, SIGNAL(valueChanged(int)),
+        this, SLOT(update_loop_count(int))
+    );
 
     /*
      * Enable (unmute) Play Button.
@@ -1060,7 +1062,6 @@ qseqeditframe64::qseqeditframe64
         this, SLOT(update_recording_volume(int))
     );
     set_recording_volume(usr().velocity_override());
-
     repopulate_usr_combos(m_editing_bus, m_editing_channel);
     set_midi_bus(m_editing_bus);
     set_midi_channel(m_editing_channel);
@@ -1069,7 +1070,6 @@ qseqeditframe64::qseqeditframe64
     int scrollwidth = ui->rollScrollArea->width();
     m_seqroll->progress_follow(seqwidth > scrollwidth);
     ui->m_toggle_follow->setChecked(m_seqroll->progress_follow());
-
     update_midi_buttons();
 
     /*
@@ -1317,13 +1317,6 @@ qseqeditframe64::initialize_panels ()
 void
 qseqeditframe64::conditional_update ()
 {
-    ui->m_spin_loop_count->setValue(seq_pointer()->loop_count_max());
-    ui->m_spin_loop_count->setReadOnly(false);
-    connect
-    (
-        ui->m_spin_loop_count, SIGNAL(valueChanged(int)),
-        this, SLOT(update_loop_count(int))
-    );
     update_midi_buttons();                      /* mirror current states    */
 
     bool expandrec = seq_pointer()->expand_recording();

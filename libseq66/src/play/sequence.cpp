@@ -150,7 +150,7 @@ sequence::sequence (int ppqn)
     m_queued                    (false),
     m_one_shot                  (false),
     m_one_shot_tick             (0),
-    m_loop_count                (0),
+    m_step_count                (0),
     m_loop_count_max            (0),
     m_off_from_snap             (false),
     m_song_playback_block       (false),
@@ -906,11 +906,8 @@ sequence::play
         midipulse end_tick_offset = end_tick + offset;
         midipulse times_played = m_last_tick / length;
         midipulse offset_base = times_played * length;
-
-        // EXPERIMENTAL; seems to work for one-shot play.
         if (loop_count_max() > 0 && times_played >= loop_count_max())
             return;
-        // EXPERIMENTAL
 
         int transpose = trigtranspose;
         if (transpose == 0)
@@ -2770,13 +2767,13 @@ sequence::stream_event (event & ev)
                     {
                         if (mod_last_tick() < snap() / 2)
                         {
-                            if (m_loop_count > 0)
+                            if (m_step_count > 0)
                             {
                                 loop_reset(true);
-                                m_loop_count = 0;
+                                m_step_count = 0;
                                 return false;
                             }
-                            ++m_loop_count;
+                            ++m_step_count;
                         }
                         m_last_tick += snap();
                     }
@@ -2794,7 +2791,7 @@ sequence::stream_event (event & ev)
                         velocity = m_rec_vol;
 
                     m_events_undo.push(m_events);       /* push_undo()      */
-                    if (auto_step_reset() && m_loop_count == 0)
+                    if (auto_step_reset() && m_step_count == 0)
                         m_last_tick = 0;                /* set_last_tick()  */
 
                     bool ok = add_note                  /* more locking     */

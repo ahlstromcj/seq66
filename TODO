@@ -30,16 +30,15 @@ HOT ITEMS:
 
     Loops:
 
-        Add, if necessary, a "one-shot" option, where a loop plays only once.
-        This would be useful for intros.  Currently can be achieved only in
-        Song mode.  Currently added a tag (c_seq_loopcount) to support it in
-        preparation.
-
         Remove the old-style Live grid completely and deprecate that option in
         the 'usr' file.
 
         Remove the old qseqeditframe and the use-new-seqedit option (now the
         default).
+
+        In play.midi, pattern 1.  Recording a new note in the existing pattern
+        really messes up the drawing of the notes.  When reopened in the
+        pattern editor, it looks fine.
 
     NSM:
 
@@ -314,19 +313,10 @@ seq_qt5/src/qperfroll.cpp:
     Investigate the note at the top about passing values to constructors.
     paintEvent(): handle DRAW_TEMPO
 
-seq_qt5/src/gui_palette_qt5.cpp:
-
-    get_color_inverse(): return black for NONE color.
-
 libseq66/src/play/setmapper.cpp:
 libseq66/src/play/screenset.cpp:
 
-    Implement select_triggers_in_range().
-    Investigate sequence::offset_triggers() usage.
-
-libseq66/src/play/sequence.cpp:
-
-    Investigate and fix offset_triggers().
+    Reconcile the two classes select_triggers_in_range() functions.
 
 libseq66/src/play/performer.cpp:
 
@@ -335,16 +325,10 @@ libseq66/src/play/performer.cpp:
     Implement error handling in various places.
 
     put_settings(): Implement the to-do.
-    mute_group_control(): Implement it, a HIGH PRIORITY!
-
-libseq66/src/midi/jack_assistant.cpp:
-
-    session_event():  Implement the quit functionality.
-    jack_session_callback():  Implement the quit functionality.
 
 libseq66/src/midi/editable_event.cpp:
 
-    set_status_from_string(): Implement the to-do functionality.
+    set_status_from_string(): Implement the to-do functionality if practical.
 
 libseq66/src/midi/wrkfile.cpp:
 

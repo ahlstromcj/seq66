@@ -158,8 +158,8 @@ qloopbutton::qloopbutton
     m_fingerprint_inited(false),
     m_fingerprint_size  (usr().fingerprint_size()),
     m_fingerprint       (m_fingerprint_size),       /* reserve vector space */
-    m_seq               (seqp),
-    m_is_checked        (m_seq->playing()),
+    m_seq               (seqp),                     /* loop()               */
+    m_is_checked        (loop()->playing()),
     m_prog_back_color   (Qt::black),
     m_prog_fore_color   (Qt::green),
     m_text_font         (),
@@ -181,7 +181,7 @@ qloopbutton::qloopbutton
     QWidget tmp;
     text_color(tmp.palette().color(QPalette::ButtonText));
 
-    int c = m_seq ? m_seq->color() : palette_to_int(none) ;
+    int c = loop() ? loop()->color() : palette_to_int(none) ;
     if (c != palette_to_int(black))
         back_color(get_color_fix(PaletteColor(c)));
 }
@@ -216,14 +216,14 @@ qloopbutton::initialize_text ()
          * Code from performer::sequence_label().
          */
 
-        bussbyte bus = m_seq->seq_midi_bus();
-        int bpb = int(m_seq->get_beats_per_bar());
-        int bw = int(m_seq->get_beat_width());
-        int sn = m_seq->seq_number();
+        bussbyte bus = loop()->seq_midi_bus();
+        int bpb = int(loop()->get_beats_per_bar());
+        int bw = int(loop()->get_beat_width());
+        int sn = loop()->seq_number();
         int lflags = Qt::AlignLeft | Qt::AlignVCenter;
         int rflags = Qt::AlignRight | Qt::AlignVCenter;
-        std::string lengthstr = std::to_string(m_seq->get_measures());
-        std::string chanstr = m_seq->channel_string();
+        std::string lengthstr = std::to_string(loop()->get_measures());
+        std::string chanstr = loop()->channel_string();
         std::string lowerleft, hotkey;
         char tmp[32];
         if (rc().show_ui_sequence_number())
@@ -246,10 +246,10 @@ qloopbutton::initialize_text ()
         if (rc().show_ui_sequence_key())
             hotkey = m_hotkey;
 
-        if (m_seq->loop_count_max() > 0)
+        if (loop()->loop_count_max() > 0)
             lengthstr += "*";
 
-        m_top_left.set(lx, ty, lw, bh, lflags, m_seq->name());
+        m_top_left.set(lx, ty, lw, bh, lflags, loop()->name());
         m_top_right.set(rx, ty, rw, bh, rflags, lengthstr);
         m_bottom_left.set(lx, by, lw, bh, lflags, lowerleft);
         m_bottom_right.set(rx, by, rw, bh, rflags, hotkey);
@@ -301,7 +301,7 @@ void
 qloopbutton::initialize_fingerprint ()
 {
     int n0, n1;
-    bool have_notes = m_seq->minmax_notes(n0, n1);      /* fill n0 and n1   */
+    bool have_notes = loop()->minmax_notes(n0, n1);     /* fill n0 and n1   */
     if (! m_fingerprint_inited && have_notes)
     {
         int i1 = int(m_fingerprint_size);
@@ -311,7 +311,7 @@ qloopbutton::initialize_fingerprint ()
         int y0 = m_event_box.y();
         int y1 = y0 + m_event_box.h();
         int yh = y1 - y0;
-        midipulse t1 = m_seq->get_length();             /* t0 = 0           */
+        midipulse t1 = loop()->get_length();            /* t0 = 0           */
         if (t1 == 0)
             return;
 
@@ -331,11 +331,11 @@ qloopbutton::initialize_fingerprint ()
         else
             nh = n1 - n0;
 
-        auto cev = m_seq->cbegin();
-        while (! m_seq->cend(cev))
+        auto cev = loop()->cbegin();
+        while (! loop()->cend(cev))
         {
             sequence::note_info ni;
-            sequence::draw dt = m_seq->get_next_note(ni, cev);  /* ++cev */
+            sequence::draw dt = loop()->get_next_note(ni, cev);  /* ++cev */
             if (dt != sequence::draw::finish)
             {
                 int x = (ni.start() * xw) / t1 + x0;
@@ -364,7 +364,7 @@ void
 qloopbutton::setup ()
 {
     QPalette pal = palette();
-    int c = m_seq ? m_seq->color() : palette_to_int(none) ;
+    int c = loop() ? loop()->color() : palette_to_int(none) ;
     if (c == palette_to_int(black))
     {
         pal.setColor(QPalette::Button, QColor(Qt::black));
@@ -405,12 +405,12 @@ bool
 qloopbutton::toggle_checked ()
 {
 #if defined USE_OLD_TOGGLE_CHECKED
-    bool result = m_seq->toggle_playing();
+    bool result = loop()->toggle_playing();
     set_checked(result);
 #else
-    bool result = m_seq->sequence_playing_toggle();
+    bool result = loop()->sequence_playing_toggle();
     if (result)
-        set_checked(m_seq->playing());
+        set_checked(loop()->playing());
 #endif
     reupdate();
     return result;
@@ -470,9 +470,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
     {
         QPushButton::paintEvent(pev);
         QPainter painter(this);
-        if (m_seq)
+        if (loop())
         {
-            midipulse tick = m_seq->get_last_tick();
+            midipulse tick = loop()->get_last_tick();
             if (initialize_text() || tick == 0)
             {
                 QRectF box
@@ -534,16 +534,16 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 
                 if (! vert_compressed())
                 {
-                    if (m_seq->playing())
+                    if (loop()->playing())
                         title = "Armed";
-                    else if (m_seq->get_queued())
+                    else if (loop()->get_queued())
                         title = "Queued";
-                    else if (m_seq->one_shot())
+                    else if (loop()->one_shot())
                         title = "One-shot";
                     else
                         title = "Muted";
 
-                    int line2y = 2 * usr().scale_font_size(6);    // vs 13
+                    int line2y = 2 * usr().scale_font_size(6);
                     box.setRect
                     (
                         m_top_left.m_x, m_top_left.m_y + line2y,
@@ -583,7 +583,7 @@ qloopbutton::paintEvent (QPaintEvent * pev)
 void
 qloopbutton::draw_progress (QPainter & painter, midipulse tick)
 {
-    midipulse t1 = m_seq->get_length();
+    midipulse t1 = loop()->get_length();
     if (t1 > 0)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
@@ -613,7 +613,7 @@ qloopbutton::draw_progress_box (QPainter & painter)
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
     QPen pen(text_color());
     const int penwidth = 2;
-    bool qsnap = m_seq->snap_it();
+    bool qsnap = loop()->snap_it();
     Color backcolor = back_color();
     if (qsnap)                                      /* playing, queued, ... */
     {
@@ -621,23 +621,23 @@ qloopbutton::draw_progress_box (QPainter & painter)
         pen.setColor(Qt::gray);                     /* instead of Qt::black */
         pen.setStyle(Qt::SolidLine);
     }
-    else if (m_seq->playing())                      /* armed, playing       */
+    else if (loop()->playing())                     /* armed, playing       */
     {
         backcolor.setAlpha(s_alpha_playing);
     }
-    else if (m_seq->get_queued())
+    else if (loop()->get_queued())
     {
         backcolor.setAlpha(s_alpha_queued);
         pen.setWidth(penwidth);
         pen.setStyle(Qt::SolidLine);
     }
-    else if (m_seq->one_shot())                     /* one-shot queued      */
+    else if (loop()->one_shot())                   /* one-shot queued      */
     {
         backcolor.setAlpha(s_alpha_oneshot);
         pen.setColor(Qt::darkGray);
         pen.setStyle(Qt::DotLine);
     }
-    else                                            /* unarmed, muted       */
+    else                                           /* unarmed, muted       */
     {
         backcolor.setAlpha(s_alpha_muted);
         pen.setStyle(Qt::SolidLine);
@@ -666,8 +666,8 @@ qloopbutton::draw_progress_box (QPainter & painter)
 void
 qloopbutton::draw_pattern (QPainter & painter)
 {
-    midipulse t1 = m_seq->get_length();
-    if (m_seq->event_count() > 0 && t1 > 0)
+    midipulse t1 = loop()->get_length();
+    if (loop()->event_count() > 0 && t1 > 0)
     {
         QBrush brush(m_prog_back_color, Qt::SolidPattern);
         QPen pen(text_color());
@@ -676,9 +676,9 @@ qloopbutton::draw_pattern (QPainter & painter)
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
         pen.setWidth(2);
-        if (m_seq->measure_threshold())
+        if (loop()->measure_threshold())
         {
-            if (m_seq->transposable())
+            if (loop()->transposable())
                 pen.setColor(text_color());
             else
                 pen.setColor(drum_color());
@@ -699,7 +699,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         else
         {
             int lowest, highest;
-            bool have_notes = m_seq->minmax_notes(lowest, highest);
+            bool have_notes = loop()->minmax_notes(lowest, highest);
             int height = c_midibyte_value_max;
             if (have_notes)
             {
@@ -715,16 +715,16 @@ qloopbutton::draw_pattern (QPainter & painter)
 
                 height = highest - lowest;
             }
-            if (m_seq->transposable())
+            if (loop()->transposable())
                 pen.setColor(text_color());
             else
                 pen.setColor(drum_color());
 
-        auto cev = m_seq->cbegin();
-        while (! m_seq->cend(cev))
+        auto cev = loop()->cbegin();
+        while (! loop()->cend(cev))
         {
             sequence::note_info ni;
-            sequence::draw dt = m_seq->get_next_note(ni, cev); /* ++cev */
+            sequence::draw dt = loop()->get_next_note(ni, cev); /* ++cev */
             if (dt == sequence::draw::finish)
                 break;
 

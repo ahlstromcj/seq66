@@ -92,12 +92,19 @@ smanager::smanager (const std::string & caps) :
     m_extant_msg_active     (false)
 {
     /*
-     * This has to wait:
-     *
-     * m_perf_pointer = create_performer();
+     * This has to wait: m_perf_pointer = create_performer();
      */
 
     set_configuration_defaults();
+}
+
+
+smanager::~smanager ()
+{
+#if defined SEQ66_PLATFORM_DEBUG
+    printf("~smanager()\n");
+#endif
+    // currently no additional code needed
 }
 
 /**

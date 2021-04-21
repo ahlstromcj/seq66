@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-08-31
-% \update      2021-04-16
+% \update      2021-04-20
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -18,9 +18,10 @@
    The \textsl{Seq66} \textbf{Pattern Editor} can edit and preview a
    pattern, configure its buss, channel, transpose, musical
    scale, and many other settings.
-   A rudimentary version of the \textbf{Pattern Editor} appears in the
-   \textbf{Edit} tab in the main window, and a more powerful version can be
-   brought up in an external window.
+   A slightly modified  version of the \textbf{Pattern Editor} appears in the
+   \textbf{Edit} tab in the main window; the main window has to be expanded
+   vertically to see all of the controls.
+   The complete version can be brought up in an external window.
 
 \begin{figure}[H]
    \centering 
@@ -1023,6 +1024,13 @@
          modulation that one ultimately does not like.
       \item \textbf{Close}.  Closes the LFO panel.
    \end{enumber}
+
+   \itempar{Live Loop Counter}{pattern editor!live loop counter}
+   Normally, in Live mode, a pattern plays endlessly if left alone.
+   If this counter is set to a value greater than 0, then the pattern will loop
+   only that number of times in Live mode.  For example, if set to 1, then the
+   pattern acts like a "one-shot" loop.  This can save having quickly use
+   queuing to handle an intro phrase.
 
    \itempar{Armed/Mute Toggle}{pattern editor!data to midi buss}
    This button causes the pattern to be output to the

@@ -51,12 +51,8 @@ namespace seq66
 qeditbase::qeditbase
 (
     performer & p,
-    int initialzoom,
-    int snap,
-    int scalex,
-    int padding,
-    int unit_height,
-    int total_height
+    int initialzoom, int snap, int scalex,
+    int padding, int unit_height, int total_height
 ) :
     qbase                   (p, initialzoom),
     m_back_color            (background_paint()),

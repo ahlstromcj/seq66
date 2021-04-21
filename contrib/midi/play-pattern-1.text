@@ -1,0 +1,18 @@
+Why did recording the "New note" cause the pattern display to be weird with really
+elongated notes?
+
+   0 001:1:001     Note Off     1    56    64         None
+   1 001:1:025      Note On     1    58    79    001:1:129
+   N 001:1:113      Note On     1    53   102    001:1:155 New note
+   2 001:1:129     Note Off     1    58    64    001:1:025
+   N 001:1:155     Note Off     1    53    64    001:1:113 New note
+   3 001:1:182      Note On     1    58    99    001:2:079
+   4 001:2:079     Note Off     1    58    64    001:1:182
+   5 001:2:151      Note On     1    58   106    001:3:087
+   6 001:3:087     Note Off     1    58    64    001:2:151
+   7 001:3:114      Note On     1    56    79    001:3:171
+   8 001:3:171     Note Off     1    56    64    001:3:114
+   9 001:4:018      Note On     1    58    90    001:4:157
+  10 001:4:157     Note Off     1    58    64    001:4:018
+  11 002:1:005      Note On     1    53    99    002:2:044
+  12 002:2:044     Note Off     1    53    64    002:1:005

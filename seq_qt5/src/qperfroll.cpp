@@ -105,8 +105,8 @@ qperfroll::qperfroll
     m_seq_l             (-1),
     m_drop_tick         (0),
     m_drop_tick_offset  (0),
-    mLastTick           (0),
-    mBoxSelect          (false),
+    m_last_tick         (0),
+    m_box_select        (false),
     m_grow_direction    (false),
     m_adding_pressed    (false)
 {
@@ -197,7 +197,7 @@ qperfroll::paintEvent (QPaintEvent * /*qpep*/)
      * implementing.
      */
 
-    if (mBoxSelect)
+    if (m_box_select)
     {
         int x, y, w, h;
         rect::xy_to_rect_get
@@ -324,7 +324,7 @@ qperfroll::mousePressEvent(QMouseEvent *event)
         {
             set_adding(true);
             perf().unselect_all_triggers();
-            mBoxSelect = false;
+            m_box_select = false;
         }
     }
     else if (lbutton)
@@ -414,13 +414,13 @@ qperfroll::mousePressEvent(QMouseEvent *event)
                         m_drop_tick_offset = m_drop_tick - start_tick;
                     }
                 }
-                if (! selected)                         // select with a box
+                if (! selected)                     /* select with a box    */
                 {
                     perf().unselect_all_triggers();
-                    snap_drop_y();                      // y always snapped to rows
+                    snap_drop_y();                  /* always snap to rows  */
                     current_x(drop_x());
                     current_y(drop_y());
-                    mBoxSelect = true;
+                    m_box_select = true;
                 }
             }
         }
@@ -454,7 +454,7 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
 
             m_adding_pressed = false;
         }
-        if (mBoxSelect)                 /* calculate selected seqs in box   */
+        if (m_box_select)                 /* calculate selected seqs in box   */
         {
             int x, y, w, h;             /* window dimensions                */
             current_x(event->x());
@@ -470,8 +470,8 @@ qperfroll::mouseReleaseEvent (QMouseEvent * event)
         }
     }
     clear_action_flags();
-    mBoxSelect = false;
-    mLastTick = 0;
+    m_box_select = false;
+    m_last_tick = 0;
     set_dirty();                                    /* force a redraw       */
 }
 
@@ -511,13 +511,14 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         if (moving())                       /* move selected triggers   */
         {
 #if defined USE_SONG_BOX_SELECT
+            midipulse lastoffset = tick - m_last_tick;
             for (int seqid = m_seq_l; seqid <= m_seq_h; ++seqid)
             {
                 seq::pointer seq = perf().get_sequence(seqid);
                 if (not_nullptr(seq))
                 {
-                    if (mLastTick != 0)
-                        seq->offset_triggers(-(mLastTick - tick));
+                    if (m_last_tick != 0)
+                        seq->offset_triggers(lastoffset);
                 }
             }
 #else
@@ -526,7 +527,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
         }
         if (growing())
         {
-            midipulse lastoffset = tick - mLastTick;
+            midipulse lastoffset = tick - m_last_tick;
             if (m_grow_direction)           // grow start, selected triggers
             {
                 triggers::grow ts = triggers::grow::start;
@@ -535,7 +536,7 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     seq::pointer seq = perf().get_sequence(seqid);
                     if (not_nullptr(seq))
                     {
-                        if (mLastTick != 0)
+                        if (m_last_tick != 0)
                             seq->offset_triggers(lastoffset, ts);
                     }
                 }
@@ -548,21 +549,21 @@ qperfroll::mouseMoveEvent (QMouseEvent * event)
                     seq::pointer seq = perf().get_sequence(seqid);
                     if (not_nullptr(seq))
                     {
-                        if (mLastTick != 0)
+                        if (m_last_tick != 0)
                             seq->offset_triggers(lastoffset - 1, te);
                     }
                 }
             }
         }
     }
-    else if (mBoxSelect)
+    else if (m_box_select)
     {
         current_x(event->x());
         current_y(event->y());
         snap_current_y();
         convert_xy(0, current_y(), tick, m_drop_sequence);
     }
-    mLastTick = tick;
+    m_last_tick = tick;
     set_dirty();                                    /* force a redraw       */
 }
 

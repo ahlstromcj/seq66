@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-05
+ * \updates       2021-04-21
  * \license       GNU GPLv2 or above
  *
  */
@@ -35,8 +35,6 @@
 #include "cfg/settings.hpp"             /* seq66::usr() config functions    */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "qseqtime.hpp"
-
-#define USE_L_R_PATTERN_MARKERS
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -57,10 +55,8 @@ static const int s_x_tick_fix  = 2;
 
 qseqtime::qseqtime
 (
-    performer & p,
-    seq::pointer seqp,
-    int zoom,
-    QWidget * parent
+    performer & p, seq::pointer seqp,
+    int zoom, QWidget * parent
 ) :
     QWidget                 (parent),
     qseqbase                (p, seqp, zoom, SEQ66_DEFAULT_SNAP),
@@ -70,9 +66,13 @@ qseqtime::qseqtime
     setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
     m_font.setBold(true);
     m_font.setPointSize(6);
-    m_timer = new QTimer(this);                             // redraw timer !!!
-    m_timer->setInterval(2 * usr().window_redraw_rate());   // 50
-    QObject::connect(m_timer, SIGNAL(timeout()), this, SLOT(conditional_update()));
+    m_timer = new QTimer(this);
+    m_timer->setInterval(2 * usr().window_redraw_rate());
+    QObject::connect
+    (
+        m_timer, SIGNAL(timeout()),
+        this, SLOT(conditional_update())
+    );
     m_timer->start();
 }
 
@@ -165,14 +165,10 @@ qseqtime::paintEvent (QPaintEvent *)
 
     midipulse length = seq_pointer()->get_length();
     int end_x = xoffset(length) - scroll_offset_x() - 20;
-
-#if defined USE_L_R_PATTERN_MARKERS
     midipulse left = perf().get_left_tick();
     midipulse right = perf().get_right_tick();
     int left_x = xoffset(left) - scroll_offset_x() + 4;
     int right_x = xoffset(right) - scroll_offset_x() - 7;
-#endif
-
 
     /*
      * Draw end of seq label, label background.
@@ -183,8 +179,6 @@ qseqtime::paintEvent (QPaintEvent *)
     brush.setStyle(Qt::SolidPattern);
     painter.setBrush(brush);
     painter.setPen(pen);
-
-#if defined USE_L_R_PATTERN_MARKERS
     if (left >= snap() && left < length - snap())
     {
         painter.setBrush(brush);
@@ -193,16 +187,12 @@ qseqtime::paintEvent (QPaintEvent *)
         painter.setPen(pen);
         painter.drawText(left_x + 1, 18, "L");
     }
-#endif
-
     pen.setColor(Qt::black);
     painter.setPen(pen);
     painter.drawRect(end_x, 10, 20, 24);            // black background
     pen.setColor(Qt::white);                        // white label text
     painter.setPen(pen);
     painter.drawText(end_x + 2, 18, tr("END"));
-
-#if defined USE_L_R_PATTERN_MARKERS
     if (right > left && right < length - snap())
     {
         pen.setColor(Qt::black);
@@ -213,7 +203,6 @@ qseqtime::paintEvent (QPaintEvent *)
         painter.setPen(pen);
         painter.drawText(right_x + 1, 18, "R");
     }
-#endif
 }
 
 void
@@ -240,7 +229,6 @@ qseqtime::resizeEvent (QResizeEvent * qrep)
 void
 qseqtime::mousePressEvent (QMouseEvent * event)
 {
-#if defined USE_L_R_PATTERN_MARKERS
     midipulse tick = midipulse(event->x());
     tick *= scale_zoom();
     tick -= (tick % snap());
@@ -272,7 +260,6 @@ qseqtime::mousePressEvent (QMouseEvent * event)
         perf().set_tick(tick);                          /* reposition time  */
         set_dirty();
     }
-#endif
 }
 
 void

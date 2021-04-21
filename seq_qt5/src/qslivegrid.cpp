@@ -435,7 +435,7 @@ qslivegrid::create_one_button (int seqno)
             snstring = std::to_string(seqno);
 
         std::string hotkey = perf().lookup_slot_key(seqno);
-        seq::pointer pattern = perf().loop(seqno);      /* can be null      */
+        seq::pointer pattern = perf().loop(seqno);          /* can be null  */
         if (pattern)
             result = new qloopbutton(this, seqno, snstring, hotkey, pattern);
         else
@@ -446,9 +446,6 @@ qslivegrid::create_one_button (int seqno)
         result->show();
         result->setEnabled(enabled);
         setup_button(result);
-#if defined SEQ66_PLATFORM_DEBUG_TMI    // can use to check the mapping
-        printf("seq %2d at (%d, %d)\n", seqno, row, column);
-#endif
     }
     else
     {

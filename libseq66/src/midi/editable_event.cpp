@@ -810,14 +810,15 @@ editable_event::set_status_from_string
                  * Parse the string of (potentially) hex digits.  However, we
                  * still need to determine the length value and allocate the
                  * midibyte array ahead of time, or add a function to set
-                 * SysEx.
-                 */
+                 * SysEx. TODO.
 
                 auto pos = sd0.find_first_of("0123456789x");
                 while (pos != std::string::npos)
                 {
                     // TODO
                 }
+
+                 */
             }
         }
     }

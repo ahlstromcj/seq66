@@ -84,8 +84,10 @@ Windows, and using a conventional source tarball.
             needs to increase vertical dimension slightly to see the bottom
             buttons.  Will eventually eliminate the old version of the tabbed
             Edit frame.
-        *   Adding loop-count for live playback of a pattern.  In progress,
-            seems to work for one-shot.
+        *   Added a loop-count for live playback of a pattern.  0 means normal
+            infinite looping; 1 means "one-shot"; and higher numbers will work.
+            Stored with the pattern in the MIDI file.
+        *   Working on a bug in drawing notes as a new one is recorded.
     *   Version 0.93.0:
         *   Added a transpose value to song editor triggers to support shifting
             patterns automatically during Song play.  Added an 'rc' option to

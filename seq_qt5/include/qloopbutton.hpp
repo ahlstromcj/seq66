@@ -181,7 +181,7 @@ public:
         const std::string & label,
         const std::string & hotkey,
         seq::pointer seqp,
-        QWidget * parent            = nullptr
+        QWidget * parent = nullptr
     );
 
     virtual ~qloopbutton ()

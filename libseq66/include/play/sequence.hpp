@@ -428,13 +428,18 @@ private:
     midipulse m_one_shot_tick;
 
     /**
+     *  A counter used in the step-edit (auto-edit) feature.
+     */
+
+    int m_step_count;
+
+    /**
      *  Number of times to play the pattern in Live mode.  A value of 0 means
      *  to play the pattern endlessly in Live mode, like normal.  The maximum
      *  loop-count, if non-zero, is stored in a c_seq_loopcount SeqSpec as a
      *  short integer.
      */
 
-    int m_loop_count;
     int m_loop_count_max;
 
     /**
@@ -1188,7 +1193,7 @@ public:
     void auto_step_reset (bool flag)
     {
         m_auto_step_reset = flag;
-        m_loop_count = 0;
+        m_step_count = 0;
     }
 
     void oneshot_recording (bool flag)
@@ -1238,9 +1243,9 @@ public:
         return one_shot() && (one_shot_tick() <= tick);
     }
 
-    int loop_count () const
+    int step_count () const
     {
-        return m_loop_count;
+        return m_step_count;
     }
 
     int loop_count_max () const

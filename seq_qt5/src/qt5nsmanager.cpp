@@ -25,7 +25,7 @@
  * \library       qt5nsmanager application
  * \author        Chris Ahlstrom
  * \date          2020-03-15
- * \updates       2021-03-22
+ * \updates       2021-04-21
  * \license       GNU GPLv2 or above
  *
  *  Duty now for the future!
@@ -86,7 +86,7 @@ qt5nsmanager::qt5nsmanager
 
 qt5nsmanager::~qt5nsmanager ()
 {
-    // no code yet
+    m_timer->stop();
 }
 
 /**
@@ -101,8 +101,8 @@ qt5nsmanager::refresh ()
     {
         if (perf()->modified() != last_dirty_status())
         {
-#if defined SEQ66_NSM_SUPPORT
             last_dirty_status(perf()->modified());
+#if defined SEQ66_NSM_SUPPORT
             if (not_nullptr(nsm_client()))
                 nsm_client()->dirty(last_dirty_status());
 #endif

@@ -515,7 +515,7 @@ Use 0.60 at a minimum.</string>
         </rect>
        </property>
        <property name="text">
-        <string>* Restart of Seq66 required</string>
+        <string>* Applied at Seq66 start-up</string>
        </property>
       </widget>
       <widget class="QWidget" name="layoutWidgetOp">

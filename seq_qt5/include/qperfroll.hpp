@@ -161,8 +161,8 @@ private:
     int m_seq_l;                            // lowest seq in window
     midipulse m_drop_tick;
     midipulse m_drop_tick_offset;           // ticks clicked from trigger
-    midipulse mLastTick;                    // tick using at last mouse event
-    bool mBoxSelect;
+    midipulse m_last_tick;                  // tick using at last mouse event
+    bool m_box_select;
     bool m_grow_direction;
     bool m_adding_pressed;
 

@@ -104,7 +104,8 @@ private:
     bool m_is_help;
 
     /**
-     *
+     *  Used in seeing if the "dirty" status has changed so that the session
+     *  manager can be told about the change.
      */
 
     bool m_last_dirty_status;
@@ -128,18 +129,13 @@ public:
     smanager (const std::string & caps = "");
     smanager (const smanager &) = delete;
     smanager & operator =(const smanager &) = delete;
-
-    virtual ~smanager ()
-    {
-        // currently no additional code needed
-    }
+    virtual ~smanager ();
 
     bool create (int argc, char * argv []);
     bool main_settings (int argc, char * argv []);
     bool open_playlist ();
     bool open_note_mapper ();
     bool create_performer ();
-
     std::string open_midi_file (const std::string & fname);
 
     bool error_active () const
