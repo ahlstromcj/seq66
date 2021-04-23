@@ -32,7 +32,6 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().mainwid_spacing()   */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
-#include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivebase.hpp"
 
 /*

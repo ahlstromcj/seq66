@@ -296,11 +296,11 @@ qt_keys (int i)
         { 0xa0,  0x01000030,  "F1",         KNONE  },
         { 0xa1,  0x01000031,  "F2",         KNONE  },
         { 0xa2,  0x01000032,  "F3",         KNONE  },
-        { 0xa3,  0x01000033,  "F4",         KNONE  },
+        { 0xa3,  0x01000033,  "F4",         KNONE  },    // FR: lira
         { 0xa4,  0x01000034,  "F5",         KNONE  },
         { 0xa5,  0x01000035,  "F6",         KNONE  },
         { 0xa6,  0x01000036,  "F7",         KNONE  },
-        { 0xa7,  0x01000037,  "F8",         KNONE  },
+        { 0xa7,  0x01000037,  "F8",         KNONE  },    // FR: silcrow
         { 0xa8,  0x01000038,  "F9",         KNONE  },
         { 0xa9,  0x01000039,  "F10",        KNONE  },
         { 0xaa,  0x0100003a,  "F11",        KNONE  },
@@ -309,12 +309,12 @@ qt_keys (int i)
         { 0xad,  0x01000054,  "Super_R",    KNONE  },
         { 0xae,  0x01000055,  "Menu",       KNONE  },
         { 0xaf,  0x01000056,  "Hyper_L",    KNONE  },
-        { 0xb0,  0x01000057,  "Hyper_R",    KNONE  },
+        { 0xb0,  0x01000057,  "Hyper_R",    KNONE  },    // FR: degree
         { 0xb1,  0x01000058,  "Help",       KNONE  },
-        { 0xb2,  0x01000059,  "Dir_L",      KNONE  },    // Direction_L
+        { 0xb2,  0x01000059,  "Dir_L",      KNONE  },    // FR: 2-super
         { 0xb3,  0x01000060,  "Dir_R",      KNONE  },    // Direction_R
         { 0xb4,  0x01000030,  "Sh_F1",      KSHIFT },
-        { 0xb5,  0x01000031,  "Sh_F2",      KSHIFT },
+        { 0xb5,  0x01000031,  "Sh_F2",      KSHIFT },    // FR: mu
         { 0xb6,  0x01000032,  "Sh_F3",      KSHIFT },
         { 0xb7,  0x01000033,  "Sh_F4",      KSHIFT },
         { 0xb8,  0x01000034,  "Sh_F5",      KSHIFT },
@@ -346,17 +346,17 @@ qt_keys (int i)
         { 0xc9,  0x01000015,  "KP_Down",    KEYPAD },
         { 0xca,  0x01000016,  "KP_PageUp",  KEYPAD },
         { 0xcb,  0x01000017,  "KP_PageDn",  KEYPAD },
-        { 0xcc,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xcd,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xce,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xcf,  0x01000099,  "Null_ff",    KNONE  },
+        { 0xcc,  0x01000099,  "0xcc",       KNONE  },
+        { 0xcd,  0x01000099,  "0xcd",       KNONE  },
+        { 0xce,  0x01000099,  "0xce",       KNONE  },
+        { 0xcf,  0x01000099,  "0xcf",       KNONE  },
         { 0xd0,        0x2a,  "KP_*",       KEYPAD },    // Asterisk
         { 0xd1,        0x2b,  "KP_+",       KEYPAD },    // Plus
         { 0xd2,        0x2c,  "KP_,",       KEYPAD },    // Comma, impossible
         { 0xd3,        0x2d,  "KP_-",       KEYPAD },    // Minus
         { 0xd4,        0x2e,  "KP_.",       KNONE  },    // Period
         { 0xd5,        0x2f,  "KP_/",       KEYPAD },    // Slash
-        { 0xd6,  0x01000099,  "Null_ff",    KNONE  },
+        { 0xd6,  0x01000099,  "0xd6",       KNONE  },
 
         /*
          *              Remainders
@@ -368,46 +368,46 @@ qt_keys (int i)
         { 0xda,  0x01000023,  "Alt",        KALT   },    // redundant!
         { 0xdb,  0x01000024,  "CapsLk",     KNONE  },    // redundant!
 
-        { 0xdc,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xdd,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xde,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xdf,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe0,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe1,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe2,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe3,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe4,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe5,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe6,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe7,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe8,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xe9,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xea,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xeb,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xec,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xed,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xee,  0x01000099,  "Null_ff",    KNONE  },
-        { 0xef,  0x01000099,  "Null_ff",    KNONE  },
+        { 0xdc,  0x01000099,  "0xdc",       KNONE  },
+        { 0xdd,  0x01000099,  "0xdd",       KNONE  },
+        { 0xde,  0x01000099,  "0xde",       KNONE  },
+        { 0xdf,  0x01000099,  "0xdf",       KNONE  },
+        { 0xe0,  0x01000099,  "0xe0",       KNONE  },    // FR: a-grave
+        { 0xe1,  0x01000099,  "0xe1",       KNONE  },
+        { 0xe2,  0x01000099,  "0xe2",       KNONE  },
+        { 0xe3,  0x01000099,  "0xe3",       KNONE  },
+        { 0xe4,  0x01000099,  "0xe4",       KNONE  },
+        { 0xe5,  0x01000099,  "0xe5",       KNONE  },
+        { 0xe6,  0x01000099,  "0xe6",       KNONE  },
+        { 0xe7,  0x01000099,  "0xe7",       KNONE  },    // FR: c-cedilla
+        { 0xe8,  0x01000099,  "0xe8",       KNONE  },    // FR: e-grave
+        { 0xe9,  0x01000099,  "0xe9",       KNONE  },    // FR: e-accent
+        { 0xea,  0x01000099,  "0xea",       KNONE  },
+        { 0xeb,  0x01000099,  "0xeb",       KNONE  },
+        { 0xec,  0x01000099,  "0xec",       KNONE  },
+        { 0xed,  0x01000099,  "0xed",       KNONE  },
+        { 0xee,  0x01000099,  "0xee",       KNONE  },
+        { 0xef,  0x01000099,  "0xef",       KNONE  },
 
         /*
          * This section is currently useful to fill in for future expansion.
          */
 
-        { 0xf0,  0x01000099,  "Null_f0",    KNONE  },
-        { 0xf1,  0x01000099,  "Null_f1",    KNONE  },
-        { 0xf2,  0x01000099,  "Null_f2",    KNONE  },
-        { 0xf3,  0x01000099,  "Null_f3",    KNONE  },
-        { 0xf4,  0x01000099,  "Null_f4",    KNONE  },
-        { 0xf5,  0x01000099,  "Null_f5",    KNONE  },
-        { 0xf6,  0x01000099,  "Null_f6",    KNONE  },
-        { 0xf7,  0x01000099,  "Null_f7",    KNONE  },
-        { 0xf8,  0x01000099,  "Null_f8",    KNONE  },
-        { 0xf9,  0x01000099,  "Null_f9",    KNONE  },
-        { 0xfa,  0x01000099,  "Null_fa",    KNONE  },
-        { 0xfb,  0x01000099,  "Null_fb",    KNONE  },
-        { 0xfc,  0x01000099,  "Null_fc",    KNONE  },
-        { 0xfd,  0x01000099,  "Null_fd",    KNONE  },
-        { 0xfe,  0x01000099,  "Null_fe",    KNONE  },
+        { 0xf0,  0x01000099,  "0xf0",       KNONE  },
+        { 0xf1,  0x01000099,  "0xf1",       KNONE  },
+        { 0xf2,  0x01000099,  "0xf2",       KNONE  },
+        { 0xf3,  0x01000099,  "0xf3",       KNONE  },
+        { 0xf4,  0x01000099,  "0xf4",       KNONE  },
+        { 0xf5,  0x01000099,  "0xf5",       KNONE  },
+        { 0xf6,  0x01000099,  "0xf6",       KNONE  },
+        { 0xf7,  0x01000099,  "0xf7",       KNONE  },
+        { 0xf8,  0x01000099,  "0xf8",       KNONE  },
+        { 0xf9,  0x01000099,  "0xf9",       KNONE  },    // FR: u-grave
+        { 0xfa,  0x01000099,  "0xfa",       KNONE  },
+        { 0xfb,  0x01000099,  "0xfb",       KNONE  },
+        { 0xfc,  0x01000099,  "0xfc",       KNONE  },
+        { 0xfd,  0x01000099,  "0xfd",       KNONE  },
+        { 0xfe,  0x01000099,  "0xfe",       KNONE  },
         { 0xff,  0xffffffff,  "Null_ff",    KNONE  }     // end-of-list
     };
     if (i < 0 || i > int(0xff))

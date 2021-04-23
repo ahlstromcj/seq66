@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-04-03
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -559,13 +559,6 @@
 
 #define SEQ66_TRANSPOSE_UP_LIMIT        (128 / 2)
 #define SEQ66_TRANSPOSE_DOWN_LIMIT      (-128 / 2)
-
-/**
- *  Indicates the maximum number of recently-opened MIDI file-names we will
- *  store.
- */
-
-#define SEQ66_RECENT_FILES_MAX           10
 
 #endif      // SEQ66_APP_LIMITS_H
 

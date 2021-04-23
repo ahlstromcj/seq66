@@ -863,31 +863,24 @@ void
 mastermidibase::dump_midi_input (event ev)
 {
     size_t sz = m_vector_sequence.size();
-    if (sz > 0)
+    for (size_t i = 0; i < sz; ++i)
     {
-        for (size_t i = 0; i < sz; ++i)
+        if (is_nullptr(m_vector_sequence[i]))          // error check
         {
-            if (is_nullptr(m_vector_sequence[i]))          // error check
-            {
-                errprint("dump_midi_input(): bad sequence");
-                continue;
-            }
-            else if (m_vector_sequence[i]->stream_event(ev))
-            {
-                /*
-                 * Did we find a match to the sequence channel?  Then don't
-                 * bother with the remaining sequences.  Otherwise, pass the
-                 * event to any other recording sequences.
-                 */
-
-                if (m_vector_sequence[i]->channel_match())
-                    break;
-            }
+            errprint("dump_midi_input(): bad sequence");
+            continue;
         }
-    }
-    else
-    {
-        errprint("dump_midi_input(): no sequences");
+        else if (m_vector_sequence[i]->stream_event(ev))
+        {
+            /*
+             * Did we find a match to the sequence channel?  Then don't
+             * bother with the remaining sequences.  Otherwise, pass the
+             * event to any other recording sequences.
+             */
+
+            if (m_vector_sequence[i]->channel_match())
+                break;
+        }
     }
 }
 

@@ -1749,6 +1749,39 @@ This MIDI control sets the playing screen-set.
 
    See the sample files for more detailed descriptions.
 
+\subsubsection{'ctrl' File / AZERTY and QWERTZ Keyboards}
+\label{subsubsec:configuration_ctrl_azerty}
+
+   This section makes it clear how to adapt to an AZERTY or QWERTY keyboard.
+   Keystrokes are mapped to loop, mute-group, and automation control in the
+   \texttt{qseq66.ctrl} file in the \texttt{\$HOME/.config/seq66} directory.
+
+   \textbf{AZERTY}.
+   Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
+   file to \texttt{qseq66-azerty.ctrl} (or a better name).
+   Edit the latter to
+   change ... TO DO!
+   Make sure to edit \texttt{qseq66.rc} so that it has:
+
+   \begin{verbatim}
+      [midi-control-file]
+      qseq66-azerty.ctrl
+   \end{verbatim}
+
+   \textbf{QWERTZ}.
+   Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
+   file to \texttt{qseq66-qwertz.ctrl} (or a better name).  Edit the latter to
+   change "z" to "y", "y" to "z", "Z" to "Y", and "Y" to "Z".
+   Make sure to edit \texttt{qseq66.rc} so that it has:
+
+   \begin{verbatim}
+      [midi-control-file]
+      qseq66-qwertz.ctrl
+   \end{verbatim}
+
+   After exiting \texttt{qseq66}, the 'ctrl' file one has specified
+   should still have the new settings.
+
 \subsection{'mutes' File}
 \label{subsubsec:configuration_mute_group_control}
 

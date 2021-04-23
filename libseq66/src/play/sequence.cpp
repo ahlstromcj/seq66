@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-20
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -2530,14 +2530,18 @@ bool
 sequence::add_event (const event & er)
 {
     automutex locker(m_mutex);
-    bool result = m_events.add(er);     /* post/auto-sorts by time & rank   */
+
+    /*
+     * verify_and_link() sorts, as does add().  So just append().
+     *
+     * bool result = m_events.add(er);  // post/auto-sorts by time & rank
+     */
+
+    bool result = m_events.append(er);  /* no-sort insertion of event       */
     if (result)
     {
+        verify_and_link();              /* for proper seqroll draw; sorts   */
         modify(true);                   /* call notify_change()             */
-    }
-    else
-    {
-        errprint("sequence::add_event(): failed");
     }
     return result;
 }

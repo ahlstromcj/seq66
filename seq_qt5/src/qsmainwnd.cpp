@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-14
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -91,7 +91,6 @@
 #include "qseqeventframe.hpp"           /* a new event editor for Qt        */
 #include "qsessionframe.hpp"            /* shows session information        */
 #include "qsetmaster.hpp"               /* shows a map of all sets          */
-#include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qsmaintime.hpp"
 #include "qsmainwnd.hpp"
 #include "qsliveframe.hpp"
@@ -229,7 +228,6 @@ qsmainwnd::qsmainwnd
     m_timer                 (nullptr),
     m_menu_recent           (nullptr),          /* QMenu *                  */
     m_recent_action_list    (),                 /* QList<QAction *>         */
-    mc_max_recent_files     (10),               /* constant                 */
     m_import_dialog         (nullptr),
     m_main_perf             (p),
     m_beat_ind              (nullptr),
@@ -2544,9 +2542,6 @@ qsmainwnd::update_recent_files_menu ()
     int count = rc().recent_file_count();
     if (count > 0)
     {
-        if (count > mc_max_recent_files)
-            count = mc_max_recent_files;
-
         bool ok = true;
         for (int f = 0; f < count; ++f)
         {
@@ -2566,7 +2561,7 @@ qsmainwnd::update_recent_files_menu ()
         }
         if (ok)
         {
-            for (int fj = count; fj < mc_max_recent_files; ++fj)
+            for (int fj = count; fj < rc().recent_file_max(); ++fj)
                 m_recent_action_list.at(fj)->setVisible(false);
 
             ui->menuFile->insertMenu(ui->actionSave, m_menu_recent);
@@ -2577,7 +2572,7 @@ qsmainwnd::update_recent_files_menu ()
 void
 qsmainwnd::create_action_connections ()
 {
-    for (int i = 0; i < mc_max_recent_files; ++i)
+    for (int i = 0; i < rc().recent_file_max(); ++i)
     {
         QAction * action = new QAction(this);
         action->setVisible(false);
@@ -2602,7 +2597,7 @@ qsmainwnd::create_action_menu ()
         delete m_menu_recent;
 
     m_menu_recent = new QMenu(tr("&Recent MIDI Files..."), this);
-    for (int i = 0; i < mc_max_recent_files; ++i)
+    for (int i = 0; i < rc().recent_file_max(); ++i)
     {
         m_menu_recent->addAction(m_recent_action_list.at(i));
     }

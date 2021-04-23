@@ -39,7 +39,6 @@
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke class           */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "gui_palette_qt5.hpp"
-#include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qsliveframe.hpp"
 #include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */

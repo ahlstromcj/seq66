@@ -76,7 +76,6 @@
 #include "os/timing.hpp"                /* seq66::microsleep()              */
 #include "gui_palette_qt5.hpp"
 #include "qloopbutton.hpp"              /* seq66::qloopbutton (qslotbutton) */
-#include "qskeymaps.hpp"                /* mapping between Gtkmm and Qt     */
 #include "qslivegrid.hpp"               /* seq66::qslivegrid (qsliveframe)  */
 #include "qsmacros.hpp"                 /* QS_TEXT_CHAR() macro             */
 #include "qsmainwnd.hpp"                /* the true parent of this class    */
@@ -1145,11 +1144,28 @@ void
 qslivegrid::keyPressEvent (QKeyEvent * event)
 {
     keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+
+#if defined SEQ66_PLATFORM_DEBUG_TESTING_ONLY
+    bool done = false;
+    std::string ktext = event->text().toStdString();
+    std::string kname = k.name();
+    ctrlkey kkey = unsigned(k.key());
+    unsigned scode = unsigned(event->nativeScanCode());     /* scan code    */
+    unsigned kcode = unsigned(event->nativeVirtualKey());   /* key sym      */
+    printf
+    (
+        "Key '%s' 0x%x: text = '%s' scan code = 0x%x; key code = 0x%x\n",
+        kname.c_str(), kkey, ktext.c_str(), scode, kcode
+    );
+    return;
+#else
     bool done = handle_key_press(k);
     if (done)
         update();
     else
         QWidget::keyPressEvent(event);              /* event->ignore()?     */
+#endif
+
 }
 
 void

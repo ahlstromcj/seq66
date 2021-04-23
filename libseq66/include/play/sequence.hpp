@@ -1771,10 +1771,8 @@ private:
 
     bool channels_match (const event & e) const
     {
-        if (m_channel_match)
-            return (e.get_status() & 0x0F) == m_midi_channel;
-        else
-            return true;
+        return m_channel_match ?
+            (e.get_status() & 0x0F) == m_midi_channel : true ;
     }
 
     void one_shot (bool f)

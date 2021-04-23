@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-06
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -284,7 +284,6 @@ private:
     QTimer * m_timer;
     QMenu * m_menu_recent;
     QList<QAction *> m_recent_action_list;
-    const int mc_max_recent_files;
     QFileDialog * m_import_dialog;
     performer & m_main_perf;
     qsmaintime * m_beat_ind;

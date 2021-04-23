@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-03-22
- * \updates       2020-12-13
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  Note that this module is part of the libseq66 library, not the libsessions
@@ -98,13 +98,17 @@ smanager::smanager (const std::string & caps) :
     set_configuration_defaults();
 }
 
+/**
+ *  We found that on a Debian developer laptop, this destructor took a couple
+ *  of seconds to call get_deleter().  Works fine on our Ubuntu developer
+ *  laptop.  Weird.
+ */
 
 smanager::~smanager ()
 {
-#if defined SEQ66_PLATFORM_DEBUG
-    printf("~smanager()\n");
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+    printf("~smanager()\n"); // currently no additional code needed
 #endif
-    // currently no additional code needed
 }
 
 /**

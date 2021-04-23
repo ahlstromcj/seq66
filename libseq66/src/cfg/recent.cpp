@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-29
- * \updates       2020-11-14
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  The seq66::recent class simply keeps track of recently-used files for the
@@ -34,7 +34,6 @@
 
 #include <algorithm>                    /* std::find()                      */
 
-#include "app_limits.h"                 /* SEQ66_RECENT_FILES_MAX           */
 #include "cfg/recent.hpp"               /* recent-files container           */
 #include "util/filefunctions.hpp"       /* seq66::get_full_path()           */
 
@@ -46,13 +45,20 @@ namespace seq66
 {
 
 /**
+ *  Indicates the maximum number of recently-opened MIDI file-names we will
+ *  store.
+ */
+
+static const int sc_recent_files_max = 12;
+
+/**
  *  This construction creates an empty recent-files list and sets the maximum
  *  size of the list.
  */
 
 recent::recent () :
     m_recent_list   (),
-    m_maximum_size  (SEQ66_RECENT_FILES_MAX)
+    m_maximum_size  (sc_recent_files_max)
 {
     // no code
 }
@@ -61,8 +67,7 @@ recent::recent () :
  *  \copyctor
  */
 
-recent::recent (const recent & source)
- :
+recent::recent (const recent & source) :
     m_recent_list   (source.m_recent_list),
     m_maximum_size  (source.m_maximum_size)
 {
@@ -119,6 +124,9 @@ recent::append (const std::string & item)
         std::string path = get_full_path(normalize_path(item));
         result = ! path.empty();
         if (result)
+            result = file_readable(path);
+
+        if (result)
         {
             const auto & it = std::find
             (
@@ -143,7 +151,7 @@ recent::append (const std::string & item)
  *      using the forward slash as a path separator.
  *
  * \return
- *      Returns true if the file-name was added.
+ *      Returns true if the file-name was added.  The file must be readable.
  */
 
 bool
@@ -151,6 +159,9 @@ recent::add (const std::string & item)
 {
     std::string path = get_full_path(normalize_path(item));
     bool result = ! path.empty();
+    if (result)
+        result = file_readable(path);
+
     if (result)
     {
         const auto & it = std::find

@@ -936,6 +936,11 @@ public:
         return m_recent_files.count();
     }
 
+    int recent_file_max () const
+    {
+        return m_recent_files.maximum();
+    }
+
 public:
 
     void load_key_controls (bool flag)

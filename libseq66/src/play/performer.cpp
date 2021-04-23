@@ -3232,6 +3232,13 @@ performer::output_func ()
  *
  *      8 MIDI beats * 6 MIDI clocks per MIDI beat = 48 MIDI Clocks.
  *
+ *      The MIDI-control check will limit the controls to start, stop and record
+ *      only. The function returns a a bool flag indicating whether the event was
+ *      used or not. The flag is used to exclude from recording the events that
+ *      are used for control purposes and should not be recorded (dumping).  If
+ *      the used event is a note on, then the linked note off will also be
+ *      excluded.
+ *
  * http://midi.teragonaudio.com/tech/midispec/seq.htm
  *
  *      Provides a description of how the following events and Song Position
@@ -3345,7 +3352,7 @@ performer::output_func ()
 void
 performer::input_func ()
 {
-    while (m_io_active)                 /* should we lock this variable?    */
+    while (m_io_active)                 /* should we lock/atomic this one?  */
     {
         if (! poll_cycle())
             return;
@@ -3381,7 +3388,7 @@ performer::poll_cycle ()
                         else
                         {
                             ev.set_timestamp(get_tick());
-#if defined SEQ66_PLATFORM_DEBUG
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                             if (rc().verbose())
                                 ev.print_note();
 
@@ -3397,9 +3404,10 @@ performer::poll_cycle ()
                     }
                     else
                     {
+#if defined SEQ66_PLATFORM_DEBUG_TMI
                         if (rc().show_midi())
                             ev.print();
-
+#endif
                         (void) midi_control_event(ev);
                     }
                 }

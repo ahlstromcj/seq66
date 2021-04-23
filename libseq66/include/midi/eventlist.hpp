@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-19
- * \updates       2021-02-16
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  This module extracts the event-list functionality from the sequencer
@@ -231,28 +231,7 @@ public:
         return m_events.empty();
     }
 
-    /**
-     *  Adds an event to the internal event list in a sorted manner.  Note
-     *  that, for speed, it is better to call append() for each event, and
-     *  then later sort them.
-     *
-     * \param e
-     *      Provides the event to be added to the list.
-     *
-     * \return
-     *      Returns true.  We assume the insertion succeeded, and no longer
-     *      care about an increment in container size.  It's a multimap, so it
-     *      always inserts, and if we don't have memory left, all bets are off
-     *      anyway.
-     */
-
-    bool add (const event & e)
-    {
-        bool result = append(e);
-        sort();                         /* by time-stamp and "rank" */
-        return result;
-    }
-
+    bool add (const event & e);
     bool append (const event & e);
 
     midipulse get_length () const
@@ -324,20 +303,8 @@ public:
         }
     }
 
+    void sort ();
     void merge (eventlist & el, bool presort = true);
-
-    /**
-     *  Sorts the event list.  For the vector, equivalent elements are not
-     *  guaranteed to keep their original relative order [see
-     *  std::stable_sort(), which we could try at some point].
-     */
-
-    void sort ()
-    {
-        m_sort_in_progress = true;
-        std::sort(m_events.begin(), m_events.end());
-        m_sort_in_progress = false;
-    }
 
     bool sort_in_progress () const
     {

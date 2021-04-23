@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-04-13
+ * \updates       2021-04-22
  * \license       GNU GPLv2 or above
  *
  *  The <code> ~/.config/seq66.rc </code> configuration file is fairly simple
@@ -373,9 +373,7 @@ rcfile::parse ()
         }
     }
     else
-    {
         (void) make_error_message("manual-ports", "data line missing");
-    }
 
     /*
      *  We are taking a slightly different approach to this section.  When
@@ -524,9 +522,8 @@ rcfile::parse ()
         rc_ref().set_clock_mod(ticks);
     }
     else
-    {
         return make_error_message("midi-clock-mod-ticks", "data line missing");
-    }
+
     if (line_after(file, "[midi-meta-events]"))
     {
         int track = 0;
@@ -534,9 +531,8 @@ rcfile::parse ()
         rc_ref().tempo_track_number(track); /* MIDI file can override this  */
     }
     else
-    {
         return make_error_message("midi-meta_events", "data line missing");
-    }
+
     if (line_after(file, "[reveal-ports]"))
     {
         /*
@@ -549,9 +545,8 @@ rcfile::parse ()
             rc_ref().reveal_ports(bool(flag));
     }
     else
-    {
         (void) make_error_message("reveal-ports", "data line missing");
-    }
+
     if (line_after(file, "[last-used-dir]"))
     {
         if (! is_missing_string(line()))
@@ -561,9 +556,8 @@ rcfile::parse ()
         }
     }
     else
-    {
          (void) make_error_message("last-used-dir", "data line missing");
-    }
+
     if (line_after(file, "[recent-files]"))
     {
         int count, loadrecent;
@@ -580,7 +574,7 @@ rcfile::parse ()
                 {
                     std::string rfilename = strip_quotes(line());
                     if (! rc_ref().append_recent_file(rfilename))
-                        break;
+                        file_message("Cannot read recent file", rfilename);
                 }
             }
             else
@@ -588,9 +582,7 @@ rcfile::parse ()
         }
     }
     else
-    {
         (void) make_error_message("recent-files", "data line missing");
-    }
 
     rc_ref().playlist_active(false);
     if (line_after(file, "[playlist]"))
