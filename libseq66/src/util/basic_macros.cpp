@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2020-11-21
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -238,7 +238,7 @@ formatted (const std::string & fmt, va_list args)
     {
         std::vector<char> dest(ilen + 1);                   /* Step 3       */
         std::vsnprintf(dest.data(), dest.size(), szfmt, args);
-        result = std::string(dest.data(), dest.size());
+        result = std::string(dest.data(), dest.size() - 1);
     }
     va_end(args);
     return result;

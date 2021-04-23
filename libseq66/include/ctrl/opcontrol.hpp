@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-04
- * \updates       2021-02-24
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *  This module defines a number of constants relating to control of pattern
@@ -88,10 +88,9 @@ private:
     automation::action m_action;
 
     /**
-     *  Provides the operation number.
-     *  For a pattern control, this is the
-     *  slot number to obtain the loop-control midioperation object.  For
-     *  a mute-group control, this is the group number to obtain the
+     *  Provides the operation number.  For a pattern control, this is the
+     *  slot number to obtain the loop-control midioperation object.  For a
+     *  mute-group control, this is the group number to obtain the
      *  mute-group-control midioperation object.  For an automation control,
      *  this is the number of the performer operation to call, of type
      *  automation::slot.  The values above automation::slot::maximum are used
@@ -122,16 +121,6 @@ public:
     static std::string slot_name (automation::slot s);
     static automation::slot set_slot (int opcode);
 
-    /**
-     *  This function is a little bit much, would like to streamline it.
-     *  We've commented the checks for "maximum", which will never be
-     *  assigned.
-     *
-     * \return
-     *      Returns true if the category, action, and slot values are not
-     *      "none".
-     */
-
     bool is_usable () const
     {
         return
@@ -139,6 +128,15 @@ public:
             m_category != automation::category::none &&
             m_action != automation::action::none &&
             m_slot_number != automation::slot::none
+        );
+    }
+
+    bool is_glearn_control () const                     /* a special case   */
+    {
+        return
+        (
+            m_category == automation::category::automation &&
+            m_slot_number == automation::slot::mod_glearn
         );
     }
 

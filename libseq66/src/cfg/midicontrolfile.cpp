@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-03-22
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -143,7 +143,7 @@ midicontrolfile::midicontrolfile
     m_temp_midi_ctrl_in     ("ctrl"),                       /* reading only */
     m_stanzas               ()
 {
-    version("3");                           /* adds more automation out */
+    version("3");                               /* adds more automation out */
 }
 
 /**
@@ -236,8 +236,11 @@ midicontrolfile::parse_stream (std::ifstream & file)
         m_temp_midi_ctrl_in.offset(offset);
     }
     if (loadkeys)
+    {
+        std::string layout = get_variable(file, mctag, "keyboard-layout");
         m_temp_key_controls.clear();
-
+        m_temp_key_controls.set_kbd_layout(layout);
+    }
     if (loadmidi || loadkeys)
     {
         bool good = line_after(file, "[loop-control]");
@@ -919,7 +922,9 @@ midicontrolfile::write_midi_control (std::ofstream & file)
         "# If set, then only that buss will be allowed to send MIDI control.\n"
         "# A value of 255 (0xFF) means any buss can send MIDI control.\n"
         "# The 'midi-enabled' flag applies to the MIDI controls; keystrokes\n"
-        "# are always enabled.\n\n"
+        "# are always enabled. Supported keyboard layouts are 'qwerty' (the\n"
+        "# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift\n"
+        "# feature for group-learn.\n\n"
             << "load-key-controls = " << k << "\n"
             << "load-midi-controls = " << m << "\n"
             ;
@@ -934,6 +939,8 @@ midicontrolfile::write_midi_control (std::ofstream & file)
             << "button-offset = " << mci.offset() << "\n"
             << "button-rows = " << mci.rows() << "\n"
             << "button-columns = " << mci.columns() << "\n"
+            << "keyboard-layout = " <<
+                rc_ref().key_controls().kbd_layout_to_string() << "\n";
             ;
         file <<
         "\n"

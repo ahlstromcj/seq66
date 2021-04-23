@@ -57,8 +57,7 @@ namespace seq66
  *      the selected MIDI subsystem.
  */
 
-rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info)
- :
+rtmidi::rtmidi (midibus & parentbus, rtmidi_info & info) :
     midi_api        (parentbus, *(info.get_api_info())),
     m_midi_info     (info),
     m_midi_api      (nullptr)
@@ -101,8 +100,7 @@ rtmidi::~rtmidi ()
  *      API to use.
  */
 
-rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info)
- :
+rtmidi_in::rtmidi_in (midibus & parentbus, rtmidi_info & info) :
     rtmidi   (parentbus, info)
 {
     if (rtmidi_info::selected_api() != RTMIDI_API_UNSPECIFIED)
@@ -263,8 +261,7 @@ rtmidi_in::openmidi_api (rtmidi_api api, rtmidi_info & info)
  *      API to use.
  */
 
-rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info)
- :
+rtmidi_out::rtmidi_out (midibus & parentbus, rtmidi_info & info) :
     rtmidi   (parentbus, info)
 {
     if (rtmidi_info::selected_api() != RTMIDI_API_UNSPECIFIED)

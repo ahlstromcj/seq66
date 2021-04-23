@@ -5,7 +5,7 @@
  * \file          timing.hpp
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (from xpc-suite project)
- * \updates       2021-03-30
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *    Daemonization of POSIX C Wrapper (PSXC) library
@@ -55,6 +55,7 @@ extern bool millisleep (int ms);
 extern long microtime ();
 extern long millitime ();
 extern bool set_thread_priority (std::thread & t, int p = 1);
+extern bool set_timer_services (bool on);
 
 }        // namespace seq66
 

@@ -3,7 +3,7 @@
  * \library       seq66 application (from PSXC library)
  * \author        Chris Ahlstrom
  * \date          2005-07-03 to 2007-08-21 (pre-Sequencer24/64)
- * \updates       2021-04-19
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -250,6 +250,12 @@ set_thread_priority (std::thread & t, int p)
     }
 }
 
+bool
+set_timer_services (bool /*on*/)
+{
+    return true;
+}
+
 #elif defined SEQ66_PLATFORM_WINDOWS
 
 /**
@@ -395,6 +401,13 @@ set_thread_priority (std::thread & t, int p)
 #else
     return p > 0 || t.joinable();
 #endif
+}
+
+bool
+set_timer_services (bool on)
+{
+    MMRESULT mmr = on ? timeBeginPeriod(1) : timeEndPeriod(1) ;
+    return mmr == TIMERR_NOERROR;
 }
 
 #endif      // SEQ66_PLATFORM_LINUX, SEQ66_PLATFORM_WINDOWS

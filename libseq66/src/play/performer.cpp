@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-18
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -2925,6 +2925,9 @@ performer::set_jack_mode (bool connect)
 void
 performer::output_func ()
 {
+    if (! set_timer_services(true))         /* wrapper for Win-only func.   */
+        return
+
     show_cpu();
     while (m_io_active)                     /* should we LOCK this variable */
     {
@@ -3212,6 +3215,7 @@ performer::output_func ()
         m_master_bus->flush();
         m_master_bus->stop();
     }
+    set_timer_services(false);
 }
 
 /**
@@ -3352,10 +3356,17 @@ performer::output_func ()
 void
 performer::input_func ()
 {
-    while (m_io_active)                 /* should we lock/atomic this one?  */
+    if (set_timer_services(true))       /* wrapper for a Windows-only func. */
     {
-        if (! poll_cycle())
-            return;
+        while (m_io_active)             /* should we lock/atomic this one?  */
+        {
+            if (! poll_cycle())
+            {
+                set_timer_services(false);
+                return;
+            }
+        }
+        set_timer_services(false);
     }
 }
 
@@ -4892,7 +4903,7 @@ performer::clear_seq_edits ()
  *          release, the mode is deactivated. This operating mode is determined
  *          by the automation callback function.
  *
- *  Example:
+ * Example:
  *
  *      -   BPM Up. Uses automation::action::on, and increments BPM at each
  *          key-press, with key-release being ignored.
@@ -4904,6 +4915,18 @@ performer::clear_seq_edits ()
  *
  *  If the midioperation is usable, then we can call the midioperation
  *  function, passing it the parameters based on the keystroke.
+ *
+ * Notes:
+ *
+ *  1.  Note that the "inverse" parameter is based on key press versus release.
+ *      Not all automation functions care about this setting.  The
+ *      opcontrol::allowed(int, bool) function checks for the
+ *      non-keystroke-release status. Too tricky. Also, the index is meant
+ *      only for pattern and mute-group control.
+ *
+ *  2.  If we start group-learn mode, and then press the group-learn key,
+ *      we're in learning mode, but should not learn that key.  We still need
+ *      to report it, though.
  *
  * \param key
  *      Provides the ordinal number of the keystroke.  See above for how to
@@ -4923,11 +4946,13 @@ performer::midi_control_keystroke (const keystroke & k)
     if (is_group_learn())
     {
         if (kkey.is_press())
-            kkey.shift_lock();
+        {
+            if (m_key_controls.use_auto_shift())
+                kkey.shift_lock();      /* employ the auto-shift feature    */
+        }
         else
             result = false;             /* ignore the control-key release   */
     }
-
     if (result)
     {
         const keycontrol & kc = m_key_controls.control(kkey.key());
@@ -4939,11 +4964,7 @@ performer::midi_control_keystroke (const keystroke & k)
             if (mop.is_usable())
             {
                 /*
-                 * Note that the "inverse" parameter is based on key press versus
-                 * release.  Not all automation functions care about this setting.
-                 * The opcontrol::allowed(int, bool) function checks for the
-                 * non-keystroke-release status. Too tricky. Also, the index is
-                 * meant only for pattern and mute-group control.
+                 * See Notes 1 (inverse) and 2 (group-learn) in the banner.
                  */
 
                 automation::action a = kc.action_code();
@@ -4951,7 +4972,22 @@ performer::midi_control_keystroke (const keystroke & k)
                 int d0 = (-1);                                  /* key flag */
                 int index = kc.control_code();                  /* i.e. d1  */
                 bool learning = is_group_learn();               /* before   */
-                result = mop.call(a, d0, index, invert);
+                if (kc.is_glearn_control())                     /* ignore?  */
+                {
+                    if (invert)
+                    {
+                        result = false;
+                    }
+                    else if (learning)
+                    {
+                        group_learn_complete(kkey, false);      /* fail     */
+                        group_learn(false);
+                        result = false;
+                    }
+                }
+                if (result)
+                    result = mop.call(a, d0, index, invert);
+
                 if (result)
                 {
                     if (learning)
@@ -5106,7 +5142,6 @@ performer::populate_default_ops ()
         );
         result = m_operations.add(mutmop);
     }
-
     for (int index = 0; /* breaker */ ; ++index)
     {
         if (sm_auto_func_list[index].ap_slot != automation::slot::max)

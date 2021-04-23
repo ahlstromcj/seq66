@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-22
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -70,6 +70,7 @@
 #include <QScreen>                      /* Qscreen                          */
 #include <QStandardItemModel>           /* for disabling combobox entries   */
 #include <QTimer>                       /* QTimer                           */
+#include <iomanip>                      /* std::hex, std::setw()            */
 #include <sstream>                      /* std::ostringstream               */
 #include <utility>                      /* std::make_pair()                 */
 
@@ -3310,16 +3311,20 @@ qsmainwnd::on_group_learn_complete (const keystroke & k, bool good)
     if (good)
     {
         os
-            << "MIDI mute group learn success, Mute group key '" << k.name()
-            << "' (code = " << int(k.key()) << ") successfully mapped."
+            << "MIDI mute-group learn success, mute-group key '" << k.name()
+            << "' (code = " << int(k.key())
+            << " [0x" << std::hex << std::setw(2) << unsigned(k.key())
+            << "]) mapped."
            ;
     }
     else
     {
         os
-            << "Key '" << k.name() << "' (code = " << int(k.key())
-            << ") is not a configured mute-group key. "
-            << "To add it, see the 'ctrl' file."
+            << "Key '" << k.name()
+            << "' (code = " << int(k.key())
+            << " [0x" << std::hex << std::setw(2) << unsigned(k.key())
+            << "]) is not a configured mute-group key. "
+            << "To add it, edit the 'ctrl' file."
            ;
     }
     report_message(os.str(), good);

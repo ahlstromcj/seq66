@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-02-24
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,6 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
+#include "util/strfunctions.hpp"       /* seq66::strcasecompare()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -54,7 +55,9 @@ keycontainer::keycontainer () :
     m_container_name    ("Default keys"),
     m_pattern_keys      (),
     m_mute_keys         (),
-    m_loaded_from_rc    (false)
+    m_loaded_from_rc    (false),
+    m_use_auto_shift    (true),
+    m_kbd_layout        (layout::qwerty)
 {
     add_defaults();
 }
@@ -109,13 +112,16 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
     else
     {
         /*
-         * Currently the "~" key (ordinal #126) is used only as a placeholder
-         * for loop-control entries above the normal 4x8 sets.  We don't want
-         * to spam the user on the console with 30+ of these reports.
+         * Currently the "~" key (ordinal #126, 0x7e, as shown in keymaps.cpp
+         * in the s_qt_keys[] array) is used only as a placeholder for
+         * loop-control entries above the normal 4x8 sets.  We don't want to
+         * spam the user on the console with 30+ of these reports.
+         *
+         * WRONG:  now it is used as the Panic key.
          */
 
-        if (ordinal != 126)
-        {
+//      if (ordinal != 0x7e)
+//      {
             std::string tag = is_invalid_ordinal(ordinal) ?
                 "Invalid" : "Duplicate" ;
 
@@ -126,7 +132,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
                 << "' Category " << op.category_name()
                 << std::endl
                 ;
-        }
+//      }
     }
     return result;
 }
@@ -252,6 +258,34 @@ keycontainer::show () const
     }
 }
 
+void
+keycontainer::set_kbd_layout (const std::string & lay)
+{
+    if (strcasecompare(lay, "qwerty"))
+        m_kbd_layout = layout::qwerty;
+    else if (strcasecompare(lay, "qwertz"))
+        m_kbd_layout = layout::qwertz;
+    else if (strcasecompare(lay, "azerty"))
+        m_kbd_layout = layout::azerty;
+
+    if (m_kbd_layout == layout::azerty)
+        use_auto_shift(false);
+}
+
+std::string
+keycontainer::kbd_layout_to_string (layout lay)
+{
+    std::string result;
+    if (lay == layout::qwerty)
+        result = "qwerty";
+    else if (lay == layout::qwertz)
+        result = "qwertz";
+    else if (lay == layout::azerty)
+        result = "azerty";
+
+    return result;
+}
+
 /**
  *  We had to put the static vectors inside this function because they were not
  *  initialized in time for their usage.  Odd.
@@ -325,7 +359,7 @@ keycontainer::add_defaults ()
         { "\\",        automation::action::toggle  },  // 32 keep_queue
         { "/",         automation::action::off     },  // 33 slot_shift
         { "0",         automation::action::on      },  // 34 mutes_clear
-        { "Null_f1",   automation::action::off     },  // 35 reserved_35
+        { "0xf1",      automation::action::off     },  // 35 reserved_35
         { "=",         automation::action::on      },  // 36 pattern_edit
         { "-",         automation::action::on      },  // 37 event_edit
         { "F10",       automation::action::on      },  // 38 song_mode
@@ -333,16 +367,16 @@ keycontainer::add_defaults ()
         { "F12",       automation::action::on      },  // 40 menu_mode
         { "F4",        automation::action::on      },  // 41 follow_transport
         { "~",         automation::action::on      },  // 42 panic
-        { "Null_f9",   automation::action::off     },  // 43 reserved_43
-        { "Null_fa",   automation::action::off     },  // 44 reserved_44
-        { "Null_fb",   automation::action::off     },  // 45 reserved_45
-        { "Null_fc",   automation::action::off     },  // 46 reserved_46
-        { "Null_fd",   automation::action::off     },  // 47 reserved_47
-        { "Null_fe",   automation::action::off     },  // 48 reserved_48
-        { "Null_ff",   automation::action::off     },  // -- maximum
-        { "Null_g0",   automation::action::toggle  },  // loop/pattern function
-        { "Null_g1",   automation::action::toggle  },  // mute_group function
-        { "Null_g3",   automation::action::none    }   // automation functions
+        { "0xf9",      automation::action::off     },  // 43 reserved_43
+        { "0xfa",      automation::action::off     },  // 44 reserved_44
+        { "0xfb",      automation::action::off     },  // 45 reserved_45
+        { "0xfc",      automation::action::off     },  // 46 reserved_46
+        { "0xfd",      automation::action::off     },  // 47 reserved_47
+        { "0xfe",      automation::action::off     },  // 48 reserved_48
+        { "0xff",      automation::action::off     },  // -- maximum
+        { "g0",        automation::action::toggle  },  // loop/pattern function
+        { "g1",        automation::action::toggle  },  // mute_group function
+        { "g3",        automation::action::none    }   // automation functions
     };
 
     clear();

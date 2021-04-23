@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2019-06-01
+ * \updates       2021-04-23
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -85,6 +85,18 @@ public:
 
     using mutemap = std::map<int, std::string>;
 
+    /**
+     *  Helps to work around key-board control issues.
+     */
+
+    enum class layout
+    {
+        qwerty,
+        qwertz,
+        azerty,
+        max
+    };
+
 private:
 
     /**
@@ -129,6 +141,20 @@ private:
      */
 
     bool m_loaded_from_rc;
+
+    /**
+     *  Indicates if the auto-shift feature for group learning is to be used.
+     *  Defaults to true, but some keyboard layouts (e.g. AZERTY) are
+     *  problematic with this feature.
+     */
+
+    bool m_use_auto_shift;
+
+    /**
+     *  Defaults to layout::qwerty.
+     */
+
+    layout m_kbd_layout;
 
 public:
 
@@ -179,6 +205,34 @@ public:
     void loaded_from_rc (bool flag)
     {
         m_loaded_from_rc = flag;
+    }
+
+    bool use_auto_shift () const
+    {
+        return m_use_auto_shift;
+    }
+
+    void use_auto_shift (bool flag)
+    {
+        m_use_auto_shift = flag;
+    }
+
+    layout kbd_layout () const
+    {
+        return m_kbd_layout;
+    }
+
+    void kbd_layout (layout lay)
+    {
+        m_kbd_layout = lay;
+    }
+
+    void set_kbd_layout (const std::string & lay);
+    std::string kbd_layout_to_string (layout lay);
+
+    std::string kbd_layout_to_string ()
+    {
+        return kbd_layout_to_string(m_kbd_layout);
     }
 
 public:

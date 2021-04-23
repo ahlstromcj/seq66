@@ -51,7 +51,7 @@
 namespace seq66
 {
 
-    class keycontainer;
+class keycontainer;
 
 /**
  *  Provides an object specifying what a keystroke, GUI action, or a MIDI
@@ -98,7 +98,7 @@ private:
 
     /**
      *  Holds the current control statuses for use by the performer.  It
-     *  replaces Sequencer64's 0, c_status_replace, c_status_snapshot,
+     *  replaces Sequencer64's c_status_replace, c_status_snapshot,
      *  c_status_queue, and c_status_oneshot.  Functions are provided to query
      *  and modify these values.
      */

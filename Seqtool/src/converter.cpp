@@ -213,7 +213,9 @@ converter::parse ()
 #endif
         }
         else
+        {
             errprintfunc("failed");
+        }
     }
     return result;
 }
