@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-23
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -182,20 +182,8 @@ public:
     bool add_slot (const keycontrol & kc);
     bool add_mute (const keycontrol & kc);
     const keycontrol & control (ctrlkey ordinal) const;
-
-    const std::string & slot_key (int pattern_offset) const
-    {
-        static std::string s_dummy("?");
-        auto p = m_pattern_keys.find(pattern_offset);
-        return p != m_pattern_keys.end() ? p->second : s_dummy ;
-    }
-
-    const std::string & mute_key (int mute_offset) const
-    {
-        static std::string s_dummy("?");
-        auto p = m_mute_keys.find(mute_offset);
-        return p != m_mute_keys.end() ? p->second : s_dummy ;
-    }
+    std::string slot_key (int pattern_offset) const;
+    std::string mute_key (int mute_offset) const;
 
     bool loaded_from_rc () const
     {

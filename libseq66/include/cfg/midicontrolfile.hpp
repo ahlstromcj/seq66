@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-01-27
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -190,6 +190,12 @@ public:
 
 private:
 
+    static bool keycontrol_error_message
+    (
+        const keycontrol & kc,
+        ctrlkey ordinal,
+        int lineno
+    );
     bool parse_control_stanza (automation::category opcategory);
     bool parse_midi_control_out (std::ifstream & file);
     void show_stanza (const stanza & stan) const;

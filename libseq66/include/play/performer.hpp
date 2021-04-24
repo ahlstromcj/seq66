@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-06
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -3009,12 +3009,12 @@ public:                                 /* access functions for the containers *
      * Looks up the slot-key (hot-key) for the given pattern number.
      */
 
-    const std::string & lookup_slot_key (int seqno) const
+    std::string lookup_slot_key (int seqno) const
     {
         return m_key_controls.slot_key(seqno % screenset_size());
     }
 
-    const std::string & lookup_mute_key (int mute_number) const
+    std::string lookup_mute_key (int mute_number) const
     {
         return m_key_controls.mute_key(mute_number);
     }

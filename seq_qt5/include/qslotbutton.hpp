@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-26
- * \updates       2021-01-08
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  *  All this button can do is enable a new pattern to be created.
@@ -183,6 +183,11 @@ public:
     const std::string & label () const
     {
         return m_label;
+    }
+
+    std::string hotkey () const
+    {
+        return m_hotkey;
     }
 
     bool is_checkable () const

@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2019-05-27
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  */
 
@@ -99,6 +99,14 @@ struct qt_keycodes
  *
  *  Also note that we restrict the keystroke names to 9 characters or less, to
  *  keep the MIDI control section readable.
+ *
+ *  For alternate keyboards such as AZERTY, we have many characters in the
+ *  Extened ASCII (code >= 0x80) set, besides the usual items (e.g. keypad
+ *  characters) that Qt provides.  And, because the exact character can, as far as
+ *  we know, depend on the code page, we cannot use the extended character itself
+ *  as the name of the character.  Instead, we use the hex code (e.g. "0xe9") as
+ *  the name of the character.  This affects the display of pattern and mute group
+ *  keys as obtained by keycontainer::slot_key() and mute_key().
  *
  *  Finally, we started encountering uninitialized static variables.  A g++ bug,
  *  or bug fix?  So now we enforce initialization by wrapping static values in
@@ -273,10 +281,10 @@ qt_keys (int i)
         { 0x89,  0x01000009,  "Print",      KNONE  },
         { 0x8a,  0x0100000a,  "SysReq",     KNONE  },
         { 0x8b,  0x0100000b,  "Clear",      KNONE  },
-        { 0x8c,  0x0100000c,  "Null_ff",    KNONE  },
-        { 0x8d,  0x0100000d,  "Null_ff",    KNONE  },
-        { 0x8e,  0x0100000e,  "Null_ff",    KNONE  },
-        { 0x8f,  0x0100000f,  "Null_ff",    KNONE  },
+        { 0x8c,  0x0100000c,  "0x8c",       KNONE  },
+        { 0x8d,  0x0100000d,  "0x8d",       KNONE  },
+        { 0x8e,  0x0100000e,  "0x8e",       KNONE  },
+        { 0x8f,  0x0100000f,  "0x8f",       KNONE  },
         { 0x90,  0x01000010,  "Home",       KNONE  },
         { 0x91,  0x01000011,  "End",        KNONE  },
         { 0x92,  0x01000012,  "Left",       KNONE  },
@@ -292,7 +300,7 @@ qt_keys (int i)
         { 0x9c,  0x01000024,  "CapsLk",     KNONE  },
         { 0x9d,  0x01000025,  "NumLk",      KNONE  },
         { 0x9e,  0x01000026,  "ScrlLk",     KNONE  },
-        { 0x9f,  0x01000027,  "Null_ff",    KNONE  },
+        { 0x9f,  0x01000027,  "0x9f",       KNONE  },
         { 0xa0,  0x01000030,  "F1",         KNONE  },
         { 0xa1,  0x01000031,  "F2",         KNONE  },
         { 0xa2,  0x01000032,  "F3",         KNONE  },

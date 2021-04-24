@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-04-23
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -91,12 +91,9 @@ midicontrolfile::stanza::stanza (const midicontrol & mc) :
     m_category          (mc.category_code()),
     m_key_name          (mc.key_name()),
     m_op_name           (mc.label()),
-    m_slot_number       (static_cast<int>(mc.slot_number())),
+    m_slot_number       (mc.slot_control()),        /* slot vs control no.  */
     m_settings          ()                          /* 2-dimensional array  */
 {
-    if (m_category != automation::category::automation)
-        m_slot_number = static_cast<int>(mc.control_code());
-
     set(mc);
 }
 
@@ -106,7 +103,7 @@ midicontrolfile::stanza::set (const midicontrol & mc)
     automation::action a = mc.action_code();
     if (a > automation::action::none && a < automation::action::max)
     {
-        unsigned index = static_cast<int>(a) - 1;   /* skips "none"         */
+        int index = static_cast<int>(a) - 1;   /* skips "none"         */
         m_settings[index][0] = int(mc.inverse_active());
         m_settings[index][1] = int(mc.status());
         m_settings[index][2] = int(mc.d0());        /* note: d1 not needed  */
@@ -121,6 +118,29 @@ midicontrolfile::stanza::set (const midicontrol & mc)
  *  midicontrolfile
  * -------------------------------------------------------------------------
  */
+
+/**
+ *  Static function to create a detail error message.
+ */
+
+bool
+midicontrolfile::keycontrol_error_message
+(
+    const keycontrol & kc,
+    ctrlkey ordinal,
+    int lineno
+)
+{
+    char temp[256];
+    snprintf
+    (
+        temp, sizeof temp,
+        "Error at line %d ordinal 0x%2x key '%s' control '%s' code %d\n",
+        lineno, unsigned(ordinal), kc.key_name().c_str(), kc.name().c_str(),
+        kc.control_code()
+    );
+    return make_error_message("Key controls", temp);
+}
 
 /**
  *  Principal constructor.
@@ -1383,11 +1403,16 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
             );
             std::string keyname = strip_quotes(std::string(charname));
             ctrlkey ordinal = qt_keyname_ordinal(keyname);
-            (void) m_temp_key_controls.add(ordinal, kc);
-            if (opcat == automation::category::loop)
-                (void) m_temp_key_controls.add_slot(kc);
-            else if (opcat == automation::category::mute_group)
-                (void) m_temp_key_controls.add_mute(kc);
+            bool ok = m_temp_key_controls.add(ordinal, kc);
+            if (ok)
+            {
+                if (opcat == automation::category::loop)
+                    ok = m_temp_key_controls.add_slot(kc);
+                else if (opcat == automation::category::mute_group)
+                    ok = m_temp_key_controls.add_mute(kc);
+            }
+            if (! ok)
+                (void) keycontrol_error_message(kc, ordinal, line_number());
         }
     }
     else
@@ -1400,7 +1425,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
 
 /**
  *  Note that midicontrolin is a multimap, and it can hold multiple
- *  midicontrols for a givem midicontrol::key, so that the same event can
+ *  midicontrols for a given midicontrol::key, so that the same event can
  *  trigger multiple operations/actions.
  */
 

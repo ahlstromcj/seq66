@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-23
+ * \updates       2021-04-24
  * \license       GNU GPLv2 or above
  *
  */
@@ -36,7 +36,7 @@
 #include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
-#include "util/strfunctions.hpp"       /* seq66::strcasecompare()          */
+#include "util/strfunctions.hpp"        /* seq66::strcasecompare()          */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -111,28 +111,16 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
     }
     else
     {
-        /*
-         * Currently the "~" key (ordinal #126, 0x7e, as shown in keymaps.cpp
-         * in the s_qt_keys[] array) is used only as a placeholder for
-         * loop-control entries above the normal 4x8 sets.  We don't want to
-         * spam the user on the console with 30+ of these reports.
-         *
-         * WRONG:  now it is used as the Panic key.
-         */
+        std::string tag = is_invalid_ordinal(ordinal) ?
+            "Invalid" : "Duplicate" ;
 
-//      if (ordinal != 0x7e)
-//      {
-            std::string tag = is_invalid_ordinal(ordinal) ?
-                "Invalid" : "Duplicate" ;
-
-            std::cerr
-                << tag << " key (#" << ordinal
-                << " = '" << qt_ordinal_keyname(ordinal) << "')"
-                << " for '" << op.name()
-                << "' Category " << op.category_name()
-                << std::endl
-                ;
-//      }
+        std::cerr
+            << tag << " key (#" << ordinal
+            << " = '" << qt_ordinal_keyname(ordinal) << "')"
+            << " for '" << op.name()
+            << "' Category " << op.category_name()
+            << std::endl
+            ;
     }
     return result;
 }
@@ -234,6 +222,57 @@ keycontainer::control (ctrlkey ordinal) const
     static keycontrol sm_keycontrol_dummy;
     const auto & cki = m_container.find(ordinal);
     return (cki != m_container.end()) ? cki->second : sm_keycontrol_dummy;
+}
+
+/**
+ *  For issue #47, we set up the key-map to use the hex-code for the name of the
+ *  key.  See the discussion in keymap.cpp for the function qt_keys(). Our
+ *  detection of this case is that the name begins with "0x", which is sufficient
+ *  based on the contents of the keymap.
+ */
+
+std::string
+keycontainer::slot_key (int pattern_offset) const
+{
+    std::string result;
+    auto p = m_pattern_keys.find(pattern_offset);
+    if (p != m_pattern_keys.end())
+    {
+        result = p->second;
+        if (result[0] == '0' && result[1] == 'x')
+        {
+            char ch = char(std::stoi(result, nullptr, 0));
+            result = ch;
+        }
+    }
+    else
+        result = "?";
+
+    return result;
+}
+
+/**
+ *  Similar to slot_key().
+ */
+
+std::string
+keycontainer::mute_key (int mute_offset) const
+{
+    std::string result;
+    auto p = m_mute_keys.find(mute_offset);
+    if (p != m_mute_keys.end())
+    {
+        result = p->second;
+        if (result[0] == '0' && result[1] == 'x')
+        {
+            char ch = char(std::stoi(result, nullptr, 0));
+            result = ch;
+        }
+    }
+    else
+        result = "?";
+
+    return result;
 }
 
 /**
