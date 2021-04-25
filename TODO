@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.0 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-04-23
+2019-04-13 to 2021-04-25
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -106,9 +106,6 @@ From Testing:
     Merge Pattern?  Similar to Paste Pattern with no need to copy and no
     change in time.
 
-    Consider the use of Win32 API timeBeginPeriod(1)/timeEndPeriod(1)
-    before/after input_func()/output_func(). See seq32/src/perform.cpp.
-
     Consider a configurable metronome functionality.  In seqtime?
 
     Should we make mastermidibase::dump_midi_input() accept a reference
@@ -121,8 +118,6 @@ Others to Consider:
 
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.
-
-    Should qskeymaps be moved to Seqtool?
 
     Should the old-style qsliveframe be removed?
 
@@ -296,10 +291,6 @@ seq_rtmidi/src/midi_alsa_info.cpp *:
 Seq66qt5/seq66qt5.cpp *:
 
     Implement gui_palette_qt5::load_inverse_palette().
-
-Seqtool/src/optionsfile.cpp (a low priority):
-
-    parse():  Investigate and fix all the TO DOs.
 
 seq_qt5/src/qlfoframe.cpp:
 

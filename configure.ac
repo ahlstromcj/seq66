@@ -6,7 +6,7 @@ dnl \file          configure.ac
 dnl \library       Seq66
 dnl \author        Chris Ahlstrom
 dnl \date          2018-11-09
-dnl \update        2021-04-17
+dnl \update        2021-04-25
 dnl \version       $Revision$
 dnl \license       $XPC_SUITE_GPL_LICENSE$
 dnl
@@ -71,7 +71,6 @@ build_portmidi="no"
 build_qtmidi="yes"
 build_rtcli="no"
 build_rtmidi="yes"
-build_seqtool="no"
 build_sessions="yes"
 build_testing="no"
 need_qt="yes"
@@ -446,42 +445,6 @@ else
     AC_MSG_NOTICE([PortMidi build disabled.]);
 fi
 
-dnl "seqtool" support.  This is (optionally) a test application and a toolbox
-dnl for Seq66.
-
-AC_ARG_ENABLE(seqtool,
-    [AS_HELP_STRING(--enable-seqtool, [Enable seqtool build, the tool app])],
-    [seqtool=$enableval],
-    [seqtool=no])
-
-if test "$seqtool" != "no"; then
-    build_seqtool="yes"
-    build_qtmidi="yes"
-    AC_DEFINE(TOOL_APP_NAME, ["seqtool"], [Names the Seq66 tool application])
-    AC_DEFINE(TOOL_CONFIG_NAME, ["seqtool"], [Seqtool configuration file name])
-    AC_DEFINE(SEQTOOL_SUPPORT, 1, [Indicates if seqtool is enabled])
-    AM_PATH_ALSA(0.9.0)
-    AC_MSG_RESULT([seqtool application build enabled.]);
-fi
-
-dnl "testing" support.  This enables seqtool to use the xpccut library to build
-dnl a test application and toolbox for Seq66.
-dnl Check that xpccut and xpccut++ libraries are installed.
-dnl The latter seems to screw up, maybe because of the "++".
-
-AC_ARG_ENABLE(testing,
-    [AS_HELP_STRING(--enable-testing, [Enable a seqtool testing build])],
-    [testing=$enableval],
-    [testing=no])
-
-if test "$testing" != "no"; then
-    build_testing="yes"
-    PKG_CHECK_MODULES([XPCCUT], [xpccut-1.1 >= 0.9])
-    PKG_CHECK_MODULES([XPCCUTPP], [xpccut++-1.1 >= 0.9])
-    AC_MSG_RESULT([seqtool testing build enabled.]);
-    AC_DEFINE(SEQTOOL_TESTING_SUPPORT, 1, [Indicates seqtool testing is enabled])
-fi
-
 AC_SUBST(APP_NAME)
 AC_SUBST(APP_TYPE)
 AC_SUBST(APP_ENGINE)
@@ -494,7 +457,6 @@ AM_CONDITIONAL([BUILD_PORTMIDI], [test "$build_portmidi" = "yes"])
 AM_CONDITIONAL([BUILD_QTMIDI], [test "$build_qtmidi" = "yes"])
 AM_CONDITIONAL([BUILD_RTCLI], [test "$build_rtcli" = "yes"])
 AM_CONDITIONAL([BUILD_RTMIDI], [test "$build_rtmidi" = "yes"])
-AM_CONDITIONAL([BUILD_SEQTOOL], [test "$build_seqtool" = "yes"])
 AM_CONDITIONAL([BUILD_SESSIONS], [test "$build_sessions" = "yes"])
 AM_CONDITIONAL([BUILD_WINDOWS], [test "$build_windows" = "yes"])
 
@@ -504,7 +466,7 @@ dnl      automatically for us.
 
 AH_TOP(
 
-#define VERSION_DATE_SHORT "2021-04-17"
+#define VERSION_DATE_SHORT "2021-04-25"
 #define VERSION "0.93.1"
 
 )
@@ -627,10 +589,6 @@ AC_CONFIG_FILES([
  doc/Makefile
  doc/latex/Makefile
  doc/latex/tex/Makefile
- Seqtool/Makefile
- Seqtool/forms/Makefile
- Seqtool/include/Makefile
- Seqtool/src/Makefile
 ])
 
 dnl See AC_CONFIG_COMMANDS
@@ -642,12 +600,11 @@ AC_MSG_RESULT([$SEQ66_APP_NAME]);
 cat << E_O_F
 
 Run 'make' to build the application.  Run 'make install' as root/sudo to install
-the application.  Some tests can be run using the Seqtool project, if built.  Do
-'make dist', etc. to create gzip and other archives.  To build the PDF
-documentation, make sure Doxygen, Graphviz, and TexLive are installed, change
-to the doc/dox directory, and run './make_dox reference'.  To clean the
-documentation, run './make_dox clean'.  'install' and 'uninstall' are other
-options for make_dox.
+the application. Do 'make dist', etc. to create gzip and other archives.  To
+build the PDF documentation, make sure Doxygen, Graphviz, and TexLive are
+installed, change to the doc/dox directory, and run './make_dox reference'.  To
+clean the documentation, run './make_dox clean'.  'install' and 'uninstall' are
+other options for make_dox.
 
 E_O_F
 

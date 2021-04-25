@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-13
+ * \updates       2021-04-25
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -37,7 +37,7 @@
 
 #include <string>
 
-#include "app_limits.h"                 /* SEQ66_DEFAULT_SEQS_IN_SET        */
+// #include "app_limits.h"                 /* SEQ66_DEFAULT_SEQS_IN_SET        */
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "cfg/recent.hpp"               /* seq66::recent class              */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
@@ -535,19 +535,6 @@ public:
     {
         return m_midi_control_in;
     }
-
-#if defined SEQ66_DEFINE_RC_ADD_MIDICONTROL_STANZA
-    bool add_midicontrol_stanza
-    (
-        const std::string & kn,
-        automation::category cat, int slotnumber,
-        int a[6], int b[6], int c[6]
-    );
-    bool add_blank_stanza
-    (
-        const std::string & kn, automation::category cat, int slotnumber
-    );
-#endif
 
     const midicontrolout & midi_control_out () const
     {

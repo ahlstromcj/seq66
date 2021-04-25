@@ -154,7 +154,6 @@ sdist
 Seq66cli/seq66cli
 Seq66qt5/qseq66
 Seq66rtmidi/seq66
-Seqtool/src/seqtool
 Session.vim
 *.sln.docstates
 *.slo

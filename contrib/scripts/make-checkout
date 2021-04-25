@@ -4,7 +4,7 @@
 # \file        make-checkout
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2020-10-10 to 2020-11-28
+# \date        2020-10-10 to 2021-04-25
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -17,10 +17,6 @@
 git checkout Makefile.in
 git checkout Seq66cli/Makefile.in
 git checkout Seq66qt5/Makefile.in
-git checkout Seqtool/Makefile.in
-git checkout Seqtool/forms/Makefile.in
-git checkout Seqtool/include/Makefile.in
-git checkout Seqtool/src/Makefile.in
 git checkout configure
 git checkout data/Makefile.in
 git checkout doc/Makefile.in

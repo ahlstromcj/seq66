@@ -29,8 +29,6 @@
 #   built-in Seq66 "portmidi" library.  We recommend runnning qmake and make
 #   from a "shadow" directory.  See "contrib/scripts/q-make".
 #
-#   Unsupported project (use automake): Seqtool
-#
 #------------------------------------------------------------------------------
 
 TEMPLATE = subdirs
@@ -50,10 +48,6 @@ message("SUBDIRS is set to: $${SUBDIRS}")
 # CONFIG += c++14 -or-  QMAKE_CXXFLAGS += -std=gnu++14
 
 QMAKE_CXXFLAGS += -std=c++14
-
-# Use only automake to build this side app, for now:
-#
-# Seqtool.depends = libseq66
 
 #******************************************************************************
 # seq66.pro (qpseq66)

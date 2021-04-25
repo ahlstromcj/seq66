@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-08
- * \updates       2021-04-22
+ * \updates       2021-04-25
  * \license       GNU GPLv2 or above
  *
  *  This collection of macros describes some facets of the
@@ -129,13 +129,6 @@
  */
 
 #define SEQ66_MAX_SET_COLUMNS             12
-
-/**
- *  Default value for c_seqs_in_set, which is now used only in Seqtool.
- */
-
-#define SEQ66_DEFAULT_SEQS_IN_SET \
-    (SEQ66_DEFAULT_SET_ROWS * SEQ66_DEFAULT_SET_COLUMNS)
 
 /**
  *  Default value for c_max_groups.  This value replaces c_seqs_in_set for

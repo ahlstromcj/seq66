@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-05-31
- * \updates       2021-04-17
+ * \updates       2021-04-25
  * \license       GNU GPLv2 or above
  *
  *  Qt Rtmidi Linux and Windows versions, hardwired for use with
@@ -383,10 +383,6 @@
 #ifndef SEQ66_QTMIDI_SUPPORT
 #define SEQ66_QTMIDI_SUPPORT 1
 #endif
-
-#undef SEQTOOL_SUPPORT
-#undef STATISTICS_SUPPORT
-#undef SEQTOOL_TESTING_SUPPORT
 
 /*
  * Define to 1 if you have the ANSI C header files.

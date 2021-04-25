@@ -1,6 +1,6 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
-#define VERSION_DATE_SHORT "2021-04-17"
+#define VERSION_DATE_SHORT "2021-04-25"
 #define VERSION "0.93.1"
 
 
@@ -160,20 +160,8 @@
 /* Indicates that rtmidi is enabled */
 #undef RTMIDI_SUPPORT
 
-/* Indicates if seqtool is enabled */
-#undef SEQTOOL_SUPPORT
-
-/* Indicates seqtool testing is enabled */
-#undef SEQTOOL_TESTING_SUPPORT
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Names the Seq66 tool application */
-#undef TOOL_APP_NAME
-
-/* Seqtool configuration file name */
-#undef TOOL_CONFIG_NAME
 
 /* Version number of package */
 #undef VERSION

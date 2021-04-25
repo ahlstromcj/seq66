@@ -408,7 +408,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Dump</string>
+        <string>D&amp;ump</string>
        </property>
       </widget>
      </item>
@@ -433,7 +433,7 @@
         <string>Deletes the current event, and then inserts a new event at the time shown above, with the data items shown above.</string>
        </property>
        <property name="text">
-        <string>Modify</string>
+        <string>Modif&amp;y</string>
        </property>
       </widget>
      </item>
@@ -480,7 +480,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Save</string>
+        <string>Sa&amp;ve</string>
        </property>
       </widget>
      </item>
@@ -505,7 +505,7 @@
         <string>Inserts a new event at the time shown above, with the data items shown above.</string>
        </property>
        <property name="text">
-        <string>Insert</string>
+        <string>&amp;Insert</string>
        </property>
       </widget>
      </item>
@@ -530,7 +530,7 @@
         <string>Deletes the currently-selected MIDI event.</string>
        </property>
        <property name="text">
-        <string>Delete</string>
+        <string>&amp;Delete</string>
        </property>
       </widget>
      </item>

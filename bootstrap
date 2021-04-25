@@ -8,7 +8,7 @@
 # \library        Seq66
 # \author         Chris Ahlstrom
 # \date           2018-11-09
-# \update         2021-02-07
+# \update         2021-04-25
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -33,7 +33,7 @@ LANG=C
 export LANG
 CYGWIN=binmode
 export CYGWIN
-export SEQ66_SCRIPT_EDIT_DATE="2021-02-07"
+export SEQ66_SCRIPT_EDIT_DATE="2021-04-25"
 export SEQ66_LIBRARY_API_VERSION="0.90"
 export SEQ66_LIBRARY_VERSION="$SEQ66_LIBRARY_API_VERSION.90.0"
 
@@ -78,7 +78,6 @@ DOSTATIC="no"
 DOTESTING="no"
 DOVERSION="no"
 DOPORTMIDI="no"
-DOSEQTOOL="no"
 DOUSERMANUAL="no"
 LOGFILENAME=""
 M4DIR="m4"
@@ -97,7 +96,7 @@ EXTRAFLAGS=""
 if [ "$1" == "--help" ] ; then
 
    cat << E_O_F
-Usage: ./bootstrap [options]                             (0.92.0-2021-02-07)
+Usage: ./bootstrap [options]                             (0.93.1-2021-04-25)
 
 'bootstrap' sets up GNU automake and libtool support for the Seq66 project
 and creates the 'configure' script.  It can super-clean the project, removing
@@ -119,11 +118,6 @@ passing long options to the configure script for some canned setups.
                      Implies --enable-rtmidi.  The official GUI is Qt 5.
  -cli                Configure for seq66cli (command-line rtmidi version).
  --no-nsm            Disable Non Session Manager support.  Saves some code.
- --seqtool, -st      Configure to also build the test/tool command-line
-                     application, seqtool.  Not useful for most people.
- --testing, -stt     Also enable "unit-testing" in seqtool.  This requires
-                     the xpccutxx GitHub project to be built and installed
-                     as well. Not useful for most people.
  --manual            Build the user manual.
  --help              Show this help text.
 
@@ -209,11 +203,6 @@ if [ $# -ge 1 ] ; then
          --cli | -cli)
             DORTCLI="yes"
             EXTRAFLAGS+=" --enable-cli"
-            ;;
-
-         --seqtool | -st)
-            DOSEQTOOL="no"
-            EXTRAFLAGS+=" --enable-seqtool"
             ;;
 
          --manual | --docs)
@@ -548,7 +537,6 @@ Run './configure' to configure Seq66 for compilation, or
 
       --enable-debug=gdb  --disable-shared  --enable-silent-rules
       --enable-rtmidi (default)  --enable-cli (no GUI)  --enable-portmidi
-      --enable-seqtool (a test/tool application)  --enable-testing
 
 E_O_F
       fi

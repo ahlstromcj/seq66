@@ -201,7 +201,6 @@ else
  --exclude="Seq66/seq66" \
  --exclude="Seq66qt5/qseq66" \
  --exclude="Seq66cli/seq66cli" \
- --exclude="Seqtool/src/seqtool" \
  --exclude="config.h" \
  --exclude="config.status" \
  --exclude="libtool" \

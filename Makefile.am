@@ -165,10 +165,6 @@ if BUILD_RTCLI
 SUBDIRS += Seq66cli
 endif
 
-if BUILD_SEQTOOL
-SUBDIRS += Seqtool
-endif
-
 if BUILD_DOCS
 SUBDIRS += doc
 endif

@@ -68,23 +68,15 @@
  *
  *  Key/MIDI control setup written to new "ctrl" file:
  *
- *      Writing of the midicontrolin occurs only during conversion from
- *      old-style "rc" file to new-style "ctrl" file using the seqtool
- *      application.  In that case, the container needs iteration in the
- *      following order:
- *
- *          -   Category value: pattern section, then mute-group section, then
- *              the automation section.
- *          -   Slot value (pattern number, mute-group number, or automation
- *              slot.
- *          -   Action: toggle, on, and off.
+ *      Writing of the MIDI control setting takes place every time Seq66
+ *      exits.
  */
 
 #include <iomanip>                      /* std::setw manipulator            */
 #include <iostream>                     /* std::cerr                        */
 
 #include "cfg/settings.hpp"             /* seq66::rc() rcsettings getter    */
-#include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class       */
+#include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
 #include "ctrl/keymap.hpp"              /* seq66::qt_keyname_ordinal()      */
 #include "ctrl/midicontrolin.hpp"       /* seq66::midicontrolin class       */
 

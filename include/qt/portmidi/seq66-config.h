@@ -33,7 +33,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-10
- * \updates       2021-04-17
+ * \updates       2021-04-25
  * \license       GNU GPLv2 or above
  *
  *  Qt Portmidi Linux and Windows versions, hardwired for use with
@@ -349,10 +349,6 @@
 #ifndef SEQ66_QTMIDI_SUPPORT
 #define SEQ66_QTMIDI_SUPPORT 1
 #endif
-
-#undef SEQTOOL_SUPPORT
-#undef STATISTICS_SUPPORT
-#undef SEQTOOL_TESTING_SUPPORT
 
 #ifndef SEQ66_STDC_HEADERS
 #define SEQ66_STDC_HEADERS 1
