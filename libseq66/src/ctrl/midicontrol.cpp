@@ -183,9 +183,7 @@ midicontrol::show (bool add_newline) const
 {
     using namespace std;
     cout << "Key: ";
-
     keycontrol::show(false);
-
     cout
         << " [ " << active() << " " << inverse_active()
         << " "   << "0x" << setw(2)
@@ -195,12 +193,11 @@ midicontrol::show (bool add_newline) const
         << " "   << setw(3) << max_value()
         << " ]"
         ;
-
     if (add_newline)
         cout << endl;
 }
 
-}           // namespace seq66
+}           // namespace seq66stanza"
 
 /*
  * midicontrol.cpp

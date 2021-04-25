@@ -345,38 +345,32 @@ midicontrolfile::parse_control_sizes
     int & newcolumns
 )
 {
-    bool result = true;
     int defaultrows = usr().mainwnd_rows();
     int defaultcolumns = usr().mainwnd_cols();
-    int defvalue = 0;
+    int rows = defaultrows;
+    int columns = defaultcolumns;
     std::string s = get_variable(file, mctag, "button-offset");
     newoffset = string_to_int(s, 0);                /* currently constant   */
     s = get_variable(file, mctag, "button-rows");
-    if (s.empty())                                  /* no button-rows entry */
-        defvalue = defaultrows;
+    rows = string_to_int(s, defaultrows);
+    if (rows <= 0)
+        rows = defaultrows;
 
-    int rows = string_to_int(s, defvalue);
-    if (rows != defaultrows)
-    {
-        if (rows > 0)
-            result = make_error_message(mctag, "invalid row count");
-        else
-            rows = defaultrows;
-    }
+    infoprintf("Setting control rows = %d", rows);
     newrows = rows;
-    defvalue = 0;
     s = get_variable(file, mctag, "button-columns");
-    if (s.empty())                                  /* no button-rows entry */
-        defvalue = defaultcolumns;
-
-    int columns = string_to_int(s, defvalue);
-    if (columns != defaultcolumns)
-    {
-        if (columns > 0)
-            result = make_error_message(mctag, "invalid column count");
+    columns = string_to_int(s, defaultcolumns);
+    if (columns <= 0)
         columns = defaultcolumns;
-    }
+
+    infoprintf("Setting control columns = %d", columns);
     newcolumns = columns;
+
+    bool result =
+    (
+        rows >= SEQ66_MIN_SET_ROWS && rows <= SEQ66_MAX_SET_ROWS &&
+        columns >= SEQ66_MIN_SET_COLUMNS && columns <= SEQ66_MAX_SET_COLUMNS
+    );
     return result;
 }
 

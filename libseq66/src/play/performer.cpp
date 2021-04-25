@@ -614,33 +614,36 @@ performer::get_settings (const rcsettings & rcs, const usrsettings & usrs)
     if (rcs.key_controls().count() > 0)             /* could be 0-sized     */
         m_key_controls = rcs.key_controls();
 
-    if (rcs.midi_control_in().is_enabled())
-    {
-        bussbyte namedbus = rcs.midi_control_in().nominal_buss();
-        bussbyte truebus = true_input_bus(namedbus);
-        m_midi_control_in = rcs.midi_control_in();
-        if (is_good_buss(truebus))
-            m_midi_control_in.true_buss(truebus);
-        else
-            m_midi_control_in.is_enabled(false);
-    }
+    /*
+     * We need to copy the MIDI input controls whether the user has enabled
+     * them or not.  Otherwise, the controls are replaced by the defaults
+     * during the 'ctrl' file save at exit, which is surprising to the poor
+     * user.  See issue #47.
+     *
+     *  if (rcs.midi_control_in().is_enabled())
+     *  if (rcs.midi_control_out().is_enabled())
+     */
+
+    bussbyte namedbus = rcs.midi_control_in().nominal_buss();
+    bussbyte truebus = true_input_bus(namedbus);
+    m_midi_control_in = rcs.midi_control_in();
+    if (is_good_buss(truebus))
+        m_midi_control_in.true_buss(truebus);
+    else
+        m_midi_control_in.is_enabled(false);
+
     if (rcs.midi_control_in().count() == 0)
     {
         if (rcs.key_controls().count() > 0)
-        {
             m_midi_control_in.add_blank_controls(m_key_controls);
-        }
     }
-    if (rcs.midi_control_out().is_enabled())
-    {
-        bussbyte namedbus = rcs.midi_control_out().nominal_buss();
-        bussbyte truebus = true_output_bus(namedbus);
-        m_midi_control_out = rcs.midi_control_out();
-        if (is_good_buss(truebus))
-            m_midi_control_out.true_buss(truebus);
-        else
-            m_midi_control_out.is_enabled(false);
-    }
+    namedbus = rcs.midi_control_out().nominal_buss();
+    truebus = true_output_bus(namedbus);
+    m_midi_control_out = rcs.midi_control_out();
+    if (is_good_buss(truebus))
+        m_midi_control_out.true_buss(truebus);
+    else
+        m_midi_control_out.is_enabled(false);
 
     m_mute_groups = rcs.mute_groups();              /* could be 0-sized     */
     song_mode(rcs.song_start_mode());               /* boolean setter       */

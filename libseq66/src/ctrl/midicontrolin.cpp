@@ -280,8 +280,6 @@ midicontrolin::control (const midicontrol::key & k) const
 std::string
 midicontrolin::status_string () const
 {
-    // m_control_status    (automation::ctrlstatus::none),
-
     std::string result;
     if (is_solo())
         result = "Solo";
@@ -306,7 +304,11 @@ midicontrolin::show () const
 {
     using namespace std;
     int index = 0;
-    cout << "MIDI container size: " << m_container.size() << endl;
+    cout
+        << "MIDI-In container (size " << m_container.size() << "): "
+        << "Index; MIDI key; Keystroke (name, action, slot, code); stanza"
+        << endl
+        ;
     for (const auto & mcpair : m_container)
     {
         const midicontrol::key & k = mcpair.first;
@@ -315,14 +317,13 @@ midicontrolin::show () const
         int d0 = k.d0();
         int d1 = k.d1();
         cout
-            << "["   << setw(3) << hex << right << index << "] "
+            << "["   << setw(2) << hex << right << index << "] "
             << "ev " << "0x" << setw(2)
             << setfill('0') << hex << status << setfill(' ')
             << " "   << setw(2) << hex << d0 << " " << setw(2) << hex << d1
             << " "
             ;
-
-        mc.show();
+        mc.show();                      /* shows the key and midi control   */
         ++index;
     }
 }

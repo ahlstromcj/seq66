@@ -163,8 +163,8 @@ load-midi-control = true
 31 "F7"        [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Song Pointer Position
 32 "p"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Keep queue
 33 "/"         [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # Slot shift
-34 "Null_f0"   [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 2
-35 "Null_f1"   [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 3
+34 "0xf0"      [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 2
+35 "0xf1"      [0 0   0   0   0   0] [0 0   0   0   0   0] [0 0   0   0   0   0] # EXPANSION 3
 
 # [extended-keys]
 #

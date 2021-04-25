@@ -121,28 +121,11 @@ keycontrol::show (bool add_newline) const
 {
     using namespace std;
     cout
-        <<         setw(7)  << left  << key_name()
-        << ": " << setw(11)  << left  << name()
+        <<         setw(7) << left << key_name()
+        << " "  << setw(6) << left << action_name()
+        << " "  << setw(2) << dec  << right << int(slot_number())
+        << "/"  << setw(2) << dec  << right << int(control_code())
         ;
-
-        /*
-         * Redundant:
-         *
-         *      << " "  << setw(2)  << left  << category_name()
-         *      << " "  << setw(2)  << left  << slot_name()
-         */
-
-    cout << " " << setw(6) << left  << action_name();
-
-    /*
-     * Redundant for pattern/loop or mute-groups labelling.
-     */
-
-    cout
-        << " " << setw(2) << dec << right << int(slot_number())
-        << "/" << setw(2) << dec << right << int(control_code())
-        ;
-
     if (add_newline)
         cout << endl;
 }
