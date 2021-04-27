@@ -1157,6 +1157,9 @@ screenset::unqueue (seq::number hotseq)
  *  set will be active, in general.  Therefore we must check all seqs, and not
  *  quit if a sequence is missing.
  *
+ *  Note that an unapply_bits() function is not needed here; we just follow the
+ *  bits given.
+ *
  * \param bits
  *      Provides the boolean container that is the source of mute statuses.
  *

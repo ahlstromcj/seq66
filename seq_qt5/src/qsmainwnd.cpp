@@ -3186,7 +3186,7 @@ qsmainwnd::clear_mute_groups ()
 void
 qsmainwnd::set_song_mute_on ()
 {
-    perf().set_song_mute(mutegroups::muting::on);
+    perf().set_song_mute(mutegroups::action::on);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -3198,7 +3198,7 @@ qsmainwnd::set_song_mute_on ()
 void
 qsmainwnd::set_song_mute_off ()
 {
-    perf().set_song_mute(mutegroups::muting::off);
+    perf().set_song_mute(mutegroups::action::off);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }
@@ -3210,7 +3210,7 @@ qsmainwnd::set_song_mute_off ()
 void
 qsmainwnd::set_song_mute_toggle ()
 {
-    perf().set_song_mute(mutegroups::muting::toggle);
+    perf().set_song_mute(mutegroups::action::toggle);
     if (not_nullptr(m_live_frame))
         m_live_frame->refresh();
 }

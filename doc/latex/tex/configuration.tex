@@ -156,12 +156,13 @@
 
    \begin{verbatim}
       [mute-group-flags]
+      load-mute-groups = true
       save-mutes-to = both
       . . .
    \end{verbatim}
 
-   If the variable value is a string value, especially the name of the file or
-   a directory, it must be surrounded with quotes, in case the path has spaces
+   If the variable value is a string value, especially the name of a file or
+   directory, it must be surrounded with quotes, in case the path has spaces
    in it.
 
    Also note that there are still a lot of old-style variable specifications in
@@ -463,13 +464,21 @@
 \subsubsection{'rc' File / Mute Groups}
 \label{subsubsec:configuration_rc_mute_groups}
 
+   The 'rc' file has been modified so that mute-group are now stored in a
+   separate file.  The following section specifies that file, which should be
+   located in the session/configuration directory.
+
    \begin{verbatim}
       [midi-group-file]
       "qseq66.mutes"         # contains a whole [mute-groups] section
    \end{verbatim}
 
+   The mutes-groups themselves are loaded from the 'mutes' file dependent on
+   the \texttt{load-mute-groups} option in the mute-groups file.
+
    The mutes-groups sections is written on exit dependent on the
    \texttt{save-mutes-to} option in the mute-groups file.
+   It can go to the MIDI file, the 'mutes' file, or both.
 
 \subsubsection{'rc' File / Color Palette}
 \label{subsubsec:configuration_rc_color_palette}
@@ -1789,11 +1798,13 @@ This MIDI control sets the playing screen-set.
 
    \begin{verbatim}
       [mute-group-flags]
-      save-mutes-to = both
-      mute-group-rows = 4
-      mute-group-columns = 8
-      mute-group-selected = -1
-      groups-format = bin
+      load-mute-groups = true       # load the mute-groups from this file
+      save-mutes-to = both          # save to this file, MIDI file, or both
+      mute-group-rows = 4           # for now, stick with this value
+      mute-group-columns = 8        # for now, stick with this value
+      mute-group-selected = -1      # if 0 to 31, load that group at startup
+      groups-format = binary        # binary versus hex format for bits
+      toggle-active-only = false    # if true, toggle only mute-active patterns
    \end{verbatim}
 
    These variables are described in the sample 'mutes' file.

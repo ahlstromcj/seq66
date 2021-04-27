@@ -915,12 +915,6 @@ rcfile::write ()
 
     if (rc_ref().use_mute_group_file())
     {
-        /*
-         * Before using this [mute-group-file] file-name, change, if
-         * necessary, the extension, from ".rc" to ".mutes".  This will also
-         * be changed in the [mute-group-file] section.
-         */
-
         const mutegroups & mgroups = rc().mute_groups();
         if (mgroups.group_save_to_mutes())
         {

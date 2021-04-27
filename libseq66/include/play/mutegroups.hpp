@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-03-17
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  This module is meant to support the main mute groups and the mute groups
@@ -38,14 +38,6 @@
 
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "play/mutegroup.hpp"           /* seq66::mutegroup stanza class    */
-
-/**
- *  Experimental option for controlling how setmapper::toggle_mutes() works.
- *  See that function and mutegroups::alt_toggle() for details.  This works,
- *  but in some ways defeats the purpose of a mute-group.
- */
-
-#undef  SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
 
 /*
  *  This namespace is not documented because it screws up the document
@@ -64,6 +56,7 @@ class mutegroups final : public basesettings
     friend class midifile;
     friend class performer;
     friend class mutegroupsfile;
+    friend class qmutemaster;
     friend class setmapper;
 
 public:
@@ -72,38 +65,39 @@ public:
      *  Provides settings for muting.
      */
 
-    enum class muting
+    enum class action
     {
-        toggle  = -1,
-        off     = 0,
-        on      = 1
+        off = 0,
+        on = 1,
+        toggle = 2,
+        toggle_active = 3
     };
 
     /**
-     *  Provides mutually-exclusive codes for handling the reading of
-     *  mute-groups from the "rc" file versus the "MIDI" file.  There's no GUI
+     *  Provides mutually-exclusive codes for handling the reading/writing of
+     *  mute-groups from the 'rc' file versus the MIDI file.  There's no GUI
      *  way to set this item yet.
      *
-     *  handling::mutes: In this option, the mute groups are
-     *  writtin only to the "mutes" (formerly "rc") file.
+     *  saving::mutes: In this option, the mute groups are
+     *  writtin only to the 'mutes' (formerly 'rc') file.
      *
-     *  handling::midi: In this option, the mute groups are
-     *  only written to the "rc" file if the MIDI file did not contain
-     *  non-zero mute groups.  This option prevents the contamination of the
-     *  "rc" mute-groups by the MIDI file's mute-groups.  We're going to make
-     *  this the default option.  NEEDS FIXING!
+     *  saving::midi: In this option, the mute groups are only written to
+     *  the 'rc' file if the MIDI file did not contain non-zero mute groups.
+     *  This option prevents the contamination of the 'mutes' mute-groups by
+     *  the MIDI file's mute-groups.  We're going to make this the default
+     *  option.  NEEDS FIXING!
      *
-     *  handling::both: This is the legacy (seq66) option, which
+     *  saving::both: This is the legacy (seq66) option, which
      *  reads the mute-groups from the MIDI file, and saves them back to the
-     *  "rc" file and to the MIDI file.  However, for Seq66 MIDI files such as
+     *  'rc' file and to the MIDI file.  However, for Seq66 MIDI files such as
      *  b4uacuse-stress.midi, seq66 never reads the mute-groups in that MIDI
-     *  file!  In any case, this can be considered a corruption of the "rc"
+     *  file!  In any case, this can be considered a corruption of the 'rc'
      *  file.
      */
 
-    enum class handling
+    enum class saving
     {
-        mutes,              /**< Save mute groups to the "mutes" file.      */
+        mutes,              /**< Save mute groups to the 'mutes' file.      */
         midi,               /**< Write mute groups only to the MIDI file.   */
         both,               /**< Write the mute groups to both files.       */
         maximum             /**< Keep this last... it is only a size value. */
@@ -190,7 +184,7 @@ private:
     bool m_group_format_hex;
 
     /**
-     *  Indicates if the control values were loaded from an "rc" configuration
+     *  Indicates if the control values were loaded from an 'rc' configuration
      *  file, as opposed to being empty.  The default value is false.
      */
 
@@ -241,17 +235,32 @@ private:
     /**
      *  If true, indicates that non-zero mute-groups were present in this MIDI
      *  file.  We need to know if valid mute-groups are present when deciding
-     *  whether or not to write them to the "rc" file.  This can be set by
+     *  whether or not to write them to the 'rc' file.  This can be set by
      *  getting the result of the any() function.
      */
 
     bool m_group_present;
 
     /**
+     *  If true, the mute-groups in the 'mutes' file will be loaded.
+     *  Otherwise, they will be ignored.
+     */
+
+    bool m_load_mute_groups;
+
+    /**
      *  Indicates if empty mute-groups get saved to the MIDI file.
      */
 
-    handling m_group_save;
+    saving m_group_save;
+
+    /**
+     *  If true (the default is false), then, when turning off mutes via
+     *  toggling, turn off only the patterns that are part of the mute group,
+     *  leaving alone any other patterns that the user may have turned on.
+     */
+
+    bool m_toggle_active_only;
 
 public:
 
@@ -355,10 +364,7 @@ public:
     bool apply (mutegroup::number group, midibooleans & bits);
     bool unapply (mutegroup::number group, midibooleans & bits);
     bool toggle (mutegroup::number group, midibooleans & bits);
-
-#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
-    bool alt_toggle (mutegroup::number group, midibooleans & armedbits);
-#endif
+    bool toggle_active (mutegroup::number group, midibooleans & armedbits);
 
     bool loaded_from_mutes () const
     {
@@ -375,38 +381,38 @@ public:
         m_loaded_from_mutes = flag;
     }
 
-    handling group_save () const
+    saving group_save () const
     {
         return m_group_save;
     }
 
     bool group_save (const std::string & v);
-    bool group_save (handling mgh);
+    bool group_save (saving mgh);
     bool group_save (bool midi, bool mutes);
     std::string group_save_label () const;
 
     /**
      * \return
-     *      Returns true if mute-group-handling is set to 'mutes' or 'both'.
+     *      Returns true if mute-group-saving is set to 'mutes' or 'both'.
      */
 
     bool group_save_to_mutes () const
     {
         return
         (
-            m_group_save == handling::mutes || m_group_save == handling::both
+            m_group_save == saving::mutes || m_group_save == saving::both
         );
     }
 
     /**
-     *  Returns true if mute-group-handling is set to 'midi' or 'both'.
+     *  Returns true if mute-group-saving is set to 'midi' or 'both'.
      */
 
     bool group_save_to_midi () const
     {
         return
         (
-            m_group_save == handling::midi || m_group_save == handling::both
+            m_group_save == saving::midi || m_group_save == saving::both
         );
     }
 
@@ -523,6 +529,16 @@ public:
         return (group >= 0) && (group < count());
     }
 
+    bool load_mute_groups () const
+    {
+        return m_load_mute_groups;
+    }
+
+    bool toggle_active_only () const
+    {
+        return m_toggle_active_only;
+    }
+
 private:
 
     bool add (mutegroup::number gmute, const mutegroup & m);
@@ -559,6 +575,16 @@ private:
     {
         if (group_valid(mg) || mg == smc_null_mute_group)
             m_group_selected = mg;
+    }
+
+    void load_mute_groups (bool flag)
+    {
+        m_load_mute_groups = flag;
+    }
+
+    void toggle_active_only (bool flag)
+    {
+        m_toggle_active_only = flag;
     }
 
 };              // class mutegroups

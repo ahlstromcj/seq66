@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-22
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  The functionality of this class also includes handling some of the
@@ -120,7 +120,7 @@ const std::string sequence::sm_default_name = "Untitled";
 
 sequence::sequence (int ppqn)
  :
-    m_parent                    (nullptr),          // set when seq installed
+    m_parent                    (nullptr),      /* set when seq installed   */
     m_events                    (),
     m_triggers                  (*this),
     m_events_undo_hold          (),
@@ -137,7 +137,7 @@ sequence::sequence (int ppqn)
     m_transposable              (true),
     m_notes_on                  (0),
     m_master_bus                (nullptr),
-    m_playing_notes             (),                 // an array
+    m_playing_notes             (),
     m_was_playing               (false),
     m_playing                   (false),
     m_recording                 (false),
@@ -155,7 +155,7 @@ sequence::sequence (int ppqn)
     m_off_from_snap             (false),
     m_song_playback_block       (false),
     m_song_recording            (false),
-    m_song_recording_snap       (true),             /* effectively constant */
+    m_song_recording_snap       (true),
     m_song_record_tick          (0),
     m_loop_reset                (false),
     m_unit_measure              (0),
@@ -175,7 +175,7 @@ sequence::sequence (int ppqn)
     m_maxbeats                  (c_maxbeats),
     m_ppqn                      (choose_ppqn(ppqn)),
     m_seq_number                (unassigned()),
-    m_seq_color                 (c_seq_color_none), /* PaletteColor::NONE   */
+    m_seq_color                 (c_seq_color_none),
     m_seq_edit_mode             (sequence::editmode::note),
     m_length                    (4 * midipulse(m_ppqn)),  /* 1 bar of ticks */
     m_snap_tick                 (int(m_ppqn) / 4),
@@ -195,7 +195,7 @@ sequence::sequence (int ppqn)
     m_events.set_length(m_length);
     m_triggers.set_ppqn(int(m_ppqn));
     m_triggers.set_length(m_length);
-    for (auto & p : m_playing_notes)        /* no notes are playing now     */
+    for (auto & p : m_playing_notes)            /* no notes playing now     */
         p = 0;
 }
 
@@ -4335,6 +4335,11 @@ sequence::notify_trigger ()
  *  Sets the playing state of this sequence.  When playing, and the sequencer
  *  is running, notes get dumped to the ALSA buffers.
  *
+ *  If we're turning play on, we now (2021-04-27 issue #49) turn song-mute
+ *  off, so that the pattern will not get turned off when playback starts.
+ *  This covers the case where the user enables and then disables a mute
+ *  group, which sets song-mute to true on all sequences.
+ *
  * \param p
  *      Provides the playing status to set.  True means to turn on the
  *      playing, false means to turn it off, and turn off any notes still
@@ -4349,7 +4354,9 @@ sequence::set_playing (bool p)
     if (result)
     {
         m_playing = p;
-        if (! p)
+        if (p)
+            set_song_mute(false);   /* see banner notes */
+        else
             off_playing_notes();
 
         set_dirty();

@@ -18,6 +18,11 @@
 #     This script generally assume that you have a ~/bin directory, and that
 #     it is part of your PATH.
 #
+#     NOTE:
+#
+#        A BETTER alternative is data/linux/startjack, which is installed via
+#        "make install".
+#
 #-----------------------------------------------------------------------------
 
 MyJackVersion="0.1 (2015-07-19)"

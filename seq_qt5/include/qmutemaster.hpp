@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-02-12
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  We want to be able to survey the existing mute-groups.
@@ -212,6 +212,8 @@ private slots:
     void slot_up ();
     void slot_write_to_midi ();
     void slot_write_to_mutes ();
+    void slot_load_mutes ();
+    void slot_toggle_active ();
     void slot_load ();
     void slot_save ();
 

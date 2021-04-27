@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-04-15
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  Implements three classes:  seq, screenset, and setmapper, which replace a
@@ -869,24 +869,26 @@ setmapper::unapply_mutes (mutegroup::number group)
 bool
 setmapper::toggle_mutes (mutegroup::number group)
 {
-#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
-    midibooleans armedbits;
-    bool result = play_screen()->learn_bits(armedbits); /* get armed set    */
-    if (result)
-    {
-        result = mutes().alt_toggle(group, armedbits);  /* toggle mutables  */
-        if (result)
-            result = play_screen()->apply_bits(armedbits);
-    }
-    return result;
-#else
     midibooleans bits;
     bool result = mutes().toggle(group, bits);
     if (result)
         result = play_screen()->apply_bits(bits);
 
     return result;
-#endif
+}
+
+bool
+setmapper::toggle_active_mutes (mutegroup::number group)
+{
+    midibooleans armedbits;
+    bool result = play_screen()->learn_bits(armedbits);
+    if (result)
+    {
+        result = mutes().toggle_active(group, armedbits);
+        if (result)
+            result = play_screen()->apply_bits(armedbits);
+    }
+    return result;
 }
 
 /**

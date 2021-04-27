@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-02-12
- * \updates       2021-04-15
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  This module also creates a small structure for managing sequence variables,
@@ -891,21 +891,18 @@ public:
     bool apply_mutes (mutegroup::number gmute);
     bool unapply_mutes (mutegroup::number gmute);
     bool toggle_mutes (mutegroup::number gmute);
+    bool toggle_active_mutes (mutegroup::number gmute);
     bool learn_mutes (bool learnmode, mutegroup::number gmute);
     bool clear_mutes ();
     void select_and_mute_group (mutegroup::number group);
     void mute_group_tracks ();
     void sequence_playing_change
     (
-        seq::number seqno,
-        bool on,
-        bool qinprogress = false
+        seq::number seqno, bool on, bool qinprogress = false
     );
     void sequence_playscreen_change
     (
-        seq::number seqno,
-        bool on,
-        bool qinprogress = false
+        seq::number seqno, bool on, bool qinprogress = false
     );
 
 private:

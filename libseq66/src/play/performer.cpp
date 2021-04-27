@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-23
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -1771,7 +1771,7 @@ performer::set_playing_screenset (screenset::number setno)
         mapper().fill_play_set(m_play_set, clearitfirst);
         if (rc().is_setsmode_autoarm())
         {
-            set_song_mute(mutegroups::muting::off);
+            set_song_mute(mutegroups::action::off);
         }
         notify_set_change(setno, change::signal);   /* change::no           */
     }
@@ -1964,23 +1964,31 @@ performer::repitch_selected (const std::string & nmapfile, sequence & s)
  */
 
 void
-performer::set_song_mute (mutegroups::muting op)
+performer::set_song_mute (mutegroups::action op)
 {
     switch (op)
     {
-    case mutegroups::muting::on:
+    case mutegroups::action::on:
 
         mute_all_tracks(true);
         break;
 
-    case mutegroups::muting::off:
+    case mutegroups::action::off:
 
         mute_all_tracks(false);
         break;
 
-    case mutegroups::muting::toggle:
+    case mutegroups::action::toggle:
 
         toggle_all_tracks();
+        break;
+
+    case mutegroups::action::toggle_active:
+
+        /*
+         * No action yet.
+         */
+
         break;
     }
 }
@@ -5282,6 +5290,19 @@ performer::toggle_mutes (mutegroup::number group)
     return result;
 }
 
+bool
+performer::toggle_active_mutes (mutegroup::number group)
+{
+    mutegroup::number oldgroup = mutes().group_selected();
+    bool result = mapper().toggle_active_mutes(group);
+    if (result)
+    {
+        mutegroup::number newgroup = mutes().group_selected();
+        send_mutes_events(newgroup, oldgroup);
+    }
+    return result;
+}
+
 /**
  *  Provides a solution to "SM: pattern state isn't recalled with session
  *  (#27).  It actually applies to normal operation as well.
@@ -5465,7 +5486,10 @@ performer::mute_group_control
 
             if (a == automation::action::toggle)
             {
-                (void) toggle_mutes(gn);            /* apply_mutes(gn); */
+                if (mutes().toggle_active_only())
+                    (void) toggle_active_mutes(gn);
+                else
+                    (void) toggle_mutes(gn);            /* apply_mutes(gn); */
             }
             else if (a == automation::action::on)
             {
@@ -6499,21 +6523,21 @@ performer::automation_toggle_mutes
     if (a == automation::action::toggle)
     {
         if (! inverse)
-            set_song_mute(mutegroups::muting::toggle);
+            set_song_mute(mutegroups::action::toggle);
     }
     else if (a == automation::action::on)
     {
         if (inverse)
-            set_song_mute(mutegroups::muting::off);
+            set_song_mute(mutegroups::action::off);
         else
-            set_song_mute(mutegroups::muting::on);
+            set_song_mute(mutegroups::action::on);
     }
     else if (a == automation::action::off)
     {
         if (inverse)
-            set_song_mute(mutegroups::muting::on);
+            set_song_mute(mutegroups::action::on);
         else
-            set_song_mute(mutegroups::muting::off);
+            set_song_mute(mutegroups::action::off);
     }
     return true;
 }

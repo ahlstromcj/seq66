@@ -1961,10 +1961,11 @@ midifile::parse_mute_groups (performer & p)
 }
 
 /**
- *  For each groups in the mute-groups,
+ *  For each groups in the mute-groups, write the status bits to the
+ *  c_mutegroups SeqSpec.
  *
- *  mutegroups has rows and columns for each group, but doesn't have a way to
- *  iterate through all the groups.
+ *  The mutegroups class has rows and columns for each group, but doesn't have
+ *  a way to iterate through all the groups.
  */
 
 bool
@@ -1972,25 +1973,24 @@ midifile::write_mute_groups (const performer & p)
 {
     const mutegroups & mutes = p.mutes();
     bool result = mutes.group_save_to_midi();
-    for (const auto & stz : mutes.list())
+    if (result)
     {
-        int groupnumber = stz.first;
-        const mutegroup & m = stz.second;
-        midibooleans mutebits = m.get();
-        result = mutebits.size() > 0;
-        if (result)
+        for (const auto & stz : mutes.list())
         {
-            write_long(groupnumber);
-            for (auto mutestatus : mutebits)
-                write_long(bool(mutestatus) ? 1 : 0);   /* long! wasteful!  */
-        }
-        else
-        {
-            result = false;
-            break;
+            int groupnumber = stz.first;
+            const mutegroup & m = stz.second;
+            midibooleans mutebits = m.get();
+            result = mutebits.size() > 0;
+            if (result)
+            {
+                write_long(groupnumber);
+                for (auto mutestatus : mutebits)
+                    write_long(bool(mutestatus) ? 1 : 0);   /* long! wasteful!  */
+            }
+            else
+                break;
         }
     }
-
     return result;
 }
 
@@ -2307,7 +2307,7 @@ midifile::write_time_sig (int beatsperbar, int beatwidth)
  */
 
 void
-midifile::write_prop_header ( midilong control_tag, long len)
+midifile::write_prop_header (midilong control_tag, long len)
 {
     write_byte(0);                      /* delta time                   */
     write_byte(EVENT_MIDI_META);        /* 0xFF meta marker             */

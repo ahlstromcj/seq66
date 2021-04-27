@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-30
- * \updates       2021-02-05
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  Provides support for a mute-groups configuration file.
@@ -115,7 +115,7 @@ public:
 
 private:
 
-    bool parse_mutes_stanza ();
+    bool parse_mutes_stanza (mutegroups & mutes);
     bool write_mute_groups (std::ofstream & file);
 
 };              // class mutegroupsfile

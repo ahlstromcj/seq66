@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
-    <height>418</height>
+    <width>774</width>
+    <height>426</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,7 @@
       <property name="maximumSize">
        <size>
         <width>400</width>
-        <height>320</height>
+        <height>340</height>
        </size>
       </property>
       <property name="alternatingRowColors">
@@ -215,7 +215,7 @@ configuration directory.</string>
      <x>10</x>
      <y>0</y>
      <width>322</width>
-     <height>225</height>
+     <height>275</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -229,15 +229,22 @@ configuration directory.</string>
      <widget class="QLabel" name="label_4">
       <property name="minimumSize">
        <size>
-        <width>100</width>
-        <height>28</height>
+        <width>120</width>
+        <height>22</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
-        <height>28</height>
+        <width>120</width>
+        <height>22</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Mute-Groups</string>
@@ -258,15 +265,22 @@ configuration directory.</string>
      <widget class="QLabel" name="label_5">
       <property name="minimumSize">
        <size>
-        <width>100</width>
-        <height>28</height>
+        <width>120</width>
+        <height>22</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>100</width>
-        <height>28</height>
+        <width>120</width>
+        <height>22</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>DejaVu Sans</family>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Group Patterns</string>
@@ -301,12 +315,19 @@ configuration directory.</string>
         </property>
         <property name="maximumSize">
          <size>
-          <width>64</width>
+          <width>80</width>
           <height>28</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <family>DejaVu Sans</family>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Mutes File:</string>
+         <string>Mutes File</string>
         </property>
        </widget>
       </item>
@@ -320,13 +341,13 @@ configuration directory.</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>248</width>
+          <width>200</width>
           <height>28</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>248</width>
+          <width>200</width>
           <height>28</height>
          </size>
         </property>
@@ -334,6 +355,9 @@ configuration directory.</string>
          <string>Provides the base name for the mute-group file.
 If a path is present, it is stripped.  The file is always
 saved to the session configuration directory.</string>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
        </widget>
       </item>
@@ -343,8 +367,15 @@ saved to the session configuration directory.</string>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <family>DejaVu Sans</family>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Write Format:</string>
+         <string>Write Format</string>
         </property>
        </widget>
       </item>
@@ -358,15 +389,24 @@ saved to the session configuration directory.</string>
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>This setting causes the mute statuses to be saved
+as stanzas of 1's and 0's.  This is the default setting.</string>
+          </property>
           <property name="text">
            <string>Binar&amp;y</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QCheckBox" name="m_check_to_midi">
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="m_check_to_mutes">
+          <property name="toolTip">
+           <string>If checked, the mute-groups are saved to the
+&quot;Mutes File&quot; (*.mutes) when the application
+exits.</string>
+          </property>
           <property name="text">
-           <string>To MIDI </string>
+           <string>To Mutes</string>
           </property>
          </widget>
         </item>
@@ -378,19 +418,68 @@ saved to the session configuration directory.</string>
             <height>16777215</height>
            </size>
           </property>
+          <property name="toolTip">
+           <string>If set, the mute statuses are saved in hexadecimal
+format (e.g. 0xFF).  Useful if the set-size is larger
+than the default of 8 x 4.</string>
+          </property>
           <property name="text">
            <string>He&amp;x</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="m_check_to_mutes">
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="m_check_to_midi">
+          <property name="toolTip">
+           <string>If checked, the mute-groups are saved in the MIDI
+file when it is saved.</string>
+          </property>
           <property name="text">
-           <string>To Mutes</string>
+           <string>To MIDI </string>
           </property>
          </widget>
         </item>
        </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="m_check_toggle_active">
+        <property name="maximumSize">
+         <size>
+          <width>160</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>If checked, toggling off a mute-group toggles only
+the patterns active in that group; patterns unmuted
+by the user will stay on.  The legacy behavior is to
+adhere strictly to the mute-group.</string>
+        </property>
+        <property name="text">
+         <string>Toggle Only Active</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="m_check_load_mutes">
+        <property name="maximumSize">
+         <size>
+          <width>170</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>If checked, load the mute-group section in the
+'mutes' file.</string>
+        </property>
+        <property name="text">
+         <string>Load Mutes from File</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -401,6 +490,10 @@ saved to the session configuration directory.</string>
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="toolTip">
+         <string>When active, the mute-group button in this
+tab can be used to toggle the mute-groups.</string>
+        </property>
         <property name="text">
          <string>Trigger Mode</string>
         </property>
@@ -408,6 +501,9 @@ saved to the session configuration directory.</string>
       </item>
       <item>
        <widget class="QPushButton" name="m_button_clear_all">
+        <property name="toolTip">
+         <string>Removes all mute-groups from the mute-group setup.</string>
+        </property>
         <property name="text">
          <string>Clear All Mutes</string>
         </property>
@@ -417,6 +513,11 @@ saved to the session configuration directory.</string>
        <widget class="QPushButton" name="m_button_set_mutes">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="toolTip">
+         <string>Saves the current mute-group modifications to
+the mute-group settings.  One still needs to save
+the MIDI file as applicable to preserve this mute-group.</string>
         </property>
         <property name="text">
          <string>Update Group</string>

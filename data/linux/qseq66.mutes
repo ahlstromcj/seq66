@@ -1,10 +1,10 @@
-# Seq66 0.91.1 (and above) mute-groups configuration file
+# Seq66 0.93.1 (and above) mute-groups configuration file
 
 # /home/ahlstrom/.config/seq66/qseq66.mutes
-# Written on 2021-01-27 11:22:19
-
-# This file replaces the [mute-group] section, making it a little
-# easier to manage multiple sets of mute groups.
+# Written on 2021-04-27 14:03:05
+#
+# This file replaces the [mute-group] section in the 'rc' file,
+# making it easier to manage multiple sets of mute groups.
 
 [Seq66]
 
@@ -36,21 +36,29 @@ look empty with a space.
 # mute-group-rows and mute-group-columns: Specifies the size of the
 # grid.  For now, keep these values at 4 and 8.
 #
-# groups-format: 'bin' means to write the mutes as 0 or 1; 'hex' means
-# to write them as hexadecimal numbers (e.g. 0xff), which will be
-# useful with larger set sizes.
+# groups-format: 'binary' means write the mutes as 0 or 1; 'hex' means
+# to write them as hexadecimal numbers (e.g. 0xff), which is useful
+# larger set sizes.
 #
 # group-selected: if 0 to 31, and mutes are available either from
 # this file or from the MIDI file, then the mute-group is applied at
 # startup.  This is useful in restoring a session.
+#
+# toggle-active-only: normally, when a mute-group is toggled off, all
+# patterns, even those outside the mute-group, are muted.  If this
+# flag is set to true, only the patterns in the mute-group are muted.
+# Any patterns unmuted directly by the user remain unmuted.
+# toggle-active-only: normally, when a mute-group is toggled off, all
 
 [mute-group-flags]
 
+load-mute-groups = true
 save-mutes-to = mutes
 mute-group-rows = 4
 mute-group-columns = 8
 mute-group-selected = 0
 groups-format = binary
+toggle-active-only = false
 
 [mute-groups]
 

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-12-01
- * \updates       2021-02-12
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  The mutegroups object contains the mute-group data read from a mute-group
@@ -73,7 +73,8 @@ mutegroups::mutegroups (int rows, int columns) :
     m_group_learn               (false),
     m_group_selected            (smc_null_mute_group),
     m_group_present             (false),
-    m_group_save                (handling::both)    /* midi and mutes files */
+    m_group_save                (saving::both),     /* midi and mutes files */
+    m_toggle_active_only        (false)
 {
     // no code needed
 }
@@ -108,7 +109,7 @@ mutegroups::mutegroups (const std::string & name, int rows, int columns) :
     m_group_mode                (true),         /* see its description  */
     m_group_learn               (false),
     m_group_present             (false),
-    m_group_save                (handling::both)
+    m_group_save                (saving::both)
 {
     // no code needed
 }
@@ -389,8 +390,6 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
     return result;
 }
 
-#if defined SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
-
 /**
  *  Toggles a mute group to the current play-screen in an alternative way.
  *  This alternative is to disarm only the patterns that are marked as active
@@ -398,7 +397,7 @@ mutegroups::toggle (mutegroup::number group, midibooleans & bits)
  */
 
 bool
-mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
+mutegroups::toggle_active (mutegroup::number group, midibooleans & armedbits)
 {
     auto mgiterator = list().find(clamp_group(group));
     bool result = mgiterator != list().end();
@@ -406,7 +405,7 @@ mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
     {
         if (group != m_group_selected && m_group_selected >= 0)
         {
-            (void) alt_toggle(m_group_selected, armedbits);
+            (void) toggle_active(m_group_selected, armedbits);
         }
 
         mutegroup & mg = mgiterator->second;
@@ -437,8 +436,6 @@ mutegroups::alt_toggle (mutegroup::number group, midibooleans & armedbits)
     return result;
 }
 
-#endif  //SEQ66_TOGGLE_ONLY_ACTIVE_MUTE_PATTERNS
-
 void
 mutegroups::group_learn (bool flag)
 {
@@ -454,9 +451,9 @@ mutegroups::group_learn (bool flag)
 }
 
 bool
-mutegroups::group_save (handling mgh)
+mutegroups::group_save (saving mgh)
 {
-    if (mgh >= handling::mutes && mgh < handling::maximum)
+    if (mgh >= saving::mutes && mgh < saving::maximum)
     {
         m_group_save = mgh;
         return true;
@@ -469,11 +466,11 @@ bool
 mutegroups::group_save (const std::string & v)
 {
     if (v == "both" || v == "stomp")
-        return group_save(handling::both);
+        return group_save(saving::both);
     else if (v == "mutes")
-        return group_save(handling::mutes);
+        return group_save(saving::mutes);
     else if (v == "midi" || v == "preserve")
-        return group_save(handling::midi);
+        return group_save(saving::midi);
     else
         return false;
 }
@@ -482,11 +479,11 @@ bool
 mutegroups::group_save (bool midi, bool mutes)
 {
     if (midi && mutes)
-        return group_save(handling::both);
+        return group_save(saving::both);
     else if (mutes)
-        return group_save(handling::mutes);
+        return group_save(saving::mutes);
     else if (midi)
-        return group_save(handling::midi);
+        return group_save(saving::midi);
     else
         return false;
 }
@@ -499,11 +496,11 @@ std::string
 mutegroups::group_save_label () const
 {
     std::string result = "bad";
-    if (m_group_save == handling::mutes)
+    if (m_group_save == saving::mutes)
         result = "mutes";
-    else if (m_group_save == handling::midi)
+    else if (m_group_save == saving::midi)
         result = "midi";
-    else if (m_group_save == handling::both)
+    else if (m_group_save == saving::both)
         result = "both";
 
     return result;

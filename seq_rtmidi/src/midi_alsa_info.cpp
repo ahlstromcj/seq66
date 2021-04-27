@@ -79,11 +79,11 @@ namespace seq66
  *
  *  We did reduce the polling timeout from 1000 milliseconds to 100
  *  milliseconds, and now, after testing, 10 milliseconds, and removed the
- *  addition 100 microsecond wait.
+ *  additional 100 microsecond wait.
  */
 
-static const int c_poll_wait_ms = 10;   /* 100 milliseconds is too high     */
-static const int c_open_block_mode = SND_SEQ_NONBLOCK; /* blocking mode setting, see above */
+static const int c_poll_wait_ms = 10;
+static const int c_open_block_mode = SND_SEQ_NONBLOCK;
 
 /*
  * Initialization of static members.

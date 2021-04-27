@@ -182,12 +182,14 @@ midi_alsa::~midi_alsa ()
 bool
 midi_alsa::api_init_out ()
 {
+    static unsigned s_caps = SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_READ;
+    static unsigned s_apps = SND_SEQ_PORT_TYPE_MIDI_GENERIC |
+        SND_SEQ_PORT_TYPE_APPLICATION;
+
     std::string busname = parent_bus().bus_name();
     int result = snd_seq_create_simple_port         /* create ports     */
     (
-        m_seq, busname.c_str(),
-        SND_SEQ_PORT_CAP_NO_EXPORT | SND_SEQ_PORT_CAP_READ,
-        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION
+        m_seq, busname.c_str(), s_caps, s_apps
     );
     m_local_addr_port = result;
     if (result < 0)

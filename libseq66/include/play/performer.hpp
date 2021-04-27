@@ -2104,7 +2104,7 @@ public:
         mapper().toggle();
     }
 
-    void set_song_mute (mutegroups::muting op);
+    void set_song_mute (mutegroups::action op);
     void mute_screenset (int ss, bool flag = true);
 
     /**
@@ -2229,6 +2229,7 @@ public:
     bool apply_mutes (mutegroup::number group);
     bool unapply_mutes (mutegroup::number group);
     bool toggle_mutes (mutegroup::number group);
+    bool toggle_active_mutes (mutegroup::number group);
 
     midibpm decrement_beats_per_minute ();
     midibpm increment_beats_per_minute ();

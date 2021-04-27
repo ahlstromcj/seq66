@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-05-29
- * \updates       2021-02-12
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  */
@@ -165,10 +165,8 @@ qmutemaster::qmutemaster
 
     ui->m_button_down->setEnabled(false);
     connect(ui->m_button_down, SIGNAL(clicked()), this, SLOT(slot_down()));
-
     ui->m_button_up->setEnabled(false);
     connect(ui->m_button_up, SIGNAL(clicked()), this, SLOT(slot_up()));
-
     ui->m_button_load->setEnabled(true);
     connect(ui->m_button_load, SIGNAL(clicked()), this, SLOT(slot_load()));
 
@@ -179,7 +177,6 @@ qmutemaster::qmutemaster
      */
 
     connect(ui->m_button_save, SIGNAL(clicked()), this, SLOT(slot_save()));
-
     ui->m_check_to_midi->setEnabled(true);
     ui->m_check_to_midi->setChecked(cb_perf().mutes().group_save_to_midi());
     connect
@@ -187,7 +184,6 @@ qmutemaster::qmutemaster
         ui->m_check_to_midi, SIGNAL(stateChanged(int)),
         this, SLOT(slot_write_to_midi())
     );
-
     ui->m_check_to_mutes->setEnabled(true);
     ui->m_check_to_mutes->setChecked(cb_perf().mutes().group_save_to_mutes());
     connect
@@ -195,7 +191,6 @@ qmutemaster::qmutemaster
         ui->m_check_to_mutes, SIGNAL(stateChanged(int)),
         this, SLOT(slot_write_to_mutes())
     );
-
     create_group_buttons();
     create_pattern_buttons();
     connect
@@ -203,11 +198,24 @@ qmutemaster::qmutemaster
         ui->m_button_clear_all, SIGNAL(clicked()),
         this, SLOT(slot_clear_all_mutes())
     );
+    ui->m_check_load_mutes->setEnabled(true);
+    ui->m_check_load_mutes->setChecked(cb_perf().mutes().load_mute_groups());
+    connect
+    (
+        ui->m_check_load_mutes, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_load_mutes())
+    );
+    ui->m_check_toggle_active->setEnabled(true);
+    ui->m_check_toggle_active->setChecked(cb_perf().mutes().toggle_active_only());
+    connect
+    (
+        ui->m_check_toggle_active, SIGNAL(stateChanged(int)),
+        this, SLOT(slot_toggle_active())
+    );
 
     QString mgfname = QString::fromStdString(rc().mute_group_filename());
     ui->m_mute_basename->setPlainText(mgfname);
     ui->m_mute_basename->setEnabled(true);
-
     setup_table();                      /* row and column sizing            */
     (void) initialize_table();          /* fill with mute-group information */
     handle_group_button(0, 0);          /* guaranteed to be present         */
@@ -711,7 +719,7 @@ qmutemaster::save_mutegroups (const std::string & mutefile)
 }
 
 void
-qmutemaster::slot_write_to_midi()
+qmutemaster::slot_write_to_midi ()
 {
     bool ismidichecked = ui->m_check_to_midi->isChecked();
     bool ismuteschecked = ui->m_check_to_mutes->isChecked();
@@ -719,11 +727,25 @@ qmutemaster::slot_write_to_midi()
 }
 
 void
-qmutemaster::slot_write_to_mutes()
+qmutemaster::slot_write_to_mutes ()
 {
     bool ismidichecked = ui->m_check_to_midi->isChecked();
     bool ismuteschecked = ui->m_check_to_mutes->isChecked();
     cb_perf().mutes().group_save(ismidichecked, ismuteschecked);
+}
+
+void
+qmutemaster::slot_load_mutes ()
+{
+    bool ischecked = ui->m_check_load_mutes->isChecked();
+    cb_perf().mutes().load_mute_groups(ischecked);
+}
+
+void
+qmutemaster::slot_toggle_active ()
+{
+    bool ischecked = ui->m_check_toggle_active->isChecked();
+    cb_perf().mutes().toggle_active_only(ischecked);
 }
 
 /**

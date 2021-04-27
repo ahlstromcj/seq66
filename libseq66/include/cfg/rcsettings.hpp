@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-25
+ * \updates       2021-04-27
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -37,7 +37,6 @@
 
 #include <string>
 
-// #include "app_limits.h"                 /* SEQ66_DEFAULT_SEQS_IN_SET        */
 #include "cfg/basesettings.hpp"         /* seq66::basesettings class        */
 #include "cfg/recent.hpp"               /* seq66::recent class              */
 #include "ctrl/keycontainer.hpp"        /* seq66::keycontainer class        */
