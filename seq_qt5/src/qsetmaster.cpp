@@ -556,7 +556,7 @@ qsetmaster::on_set_change (screenset::number setno, performer::change modtype)
 void
 qsetmaster::keyPressEvent (QKeyEvent * event)
 {
-    keystroke kkey = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+    keystroke kkey = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(kkey);
     if (done)
         set_needs_update();
@@ -567,7 +567,7 @@ qsetmaster::keyPressEvent (QKeyEvent * event)
 void
 qsetmaster::keyReleaseEvent (QKeyEvent * event)
 {
-    keystroke kkey = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+    keystroke kkey = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(kkey);
     if (done)
         update();

@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-04-20
+% \update      2021-04-28
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -1766,10 +1766,8 @@ This MIDI control sets the playing screen-set.
    \texttt{qseq66.ctrl} file in the \texttt{\$HOME/.config/seq66} directory.
 
    \textbf{AZERTY}.
-   Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
-   file to \texttt{qseq66-azerty.ctrl} (or a better name).
-   Edit the latter to
-   change ... TO DO!
+   Exit from \texttt{qseq66}, then copy the \texttt{qseq66-azerty.ctrl}
+   file to the configuration/session directory.
    Make sure to edit \texttt{qseq66.rc} so that it has:
 
    \begin{verbatim}
@@ -1777,7 +1775,21 @@ This MIDI control sets the playing screen-set.
       qseq66-azerty.ctrl
    \end{verbatim}
 
+   Note that the \texttt{qseq66-azerty.ctrl} file specifies the following:
+
+   \begin{verbatim}
+      [midi-control-settings]
+      keyboard-layout = azerty
+   \end{verbatim}
+
+   This code tells \textsl{Seq66} to (1) ignore the automatic shift-lock feature when learning mutes;
+   and (2) slightly alters the internal key-map to place a few extended ASCII characters in it.
+   This is necessary because of the extra keys and because one must use the Shift key to get the
+   numbers on the numeric row of the keyboard.
+
    \textbf{QWERTZ}.
+   We don't currently supply this layout, since it is quite similar to the default
+   \textbf{QWERTY} layout.
    Exit from \texttt{qseq66}, then copy the \texttt{qseq66.ctrl}
    file to \texttt{qseq66-qwertz.ctrl} (or a better name).  Edit the latter to
    change "z" to "y", "y" to "z", "Z" to "Y", and "Y" to "Z".

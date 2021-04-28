@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-02-06
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -51,22 +51,51 @@ namespace seq66
  * \param event
  *      The putative Qt 5 keystroke event.
  *
- * \param press
- *      Set to true if the keystroke event is a key-press, and false if it is a
- *      key-release.
+ * \param act
+ *      Indicates if the keystroke action was a press or a release.
  *
  * \return
  *      Returns an object that makes the key event easier to use.
  */
 
 keystroke
-qt_keystroke (QKeyEvent * event, bool press)
+qt_keystroke (QKeyEvent * event, keystroke::action act)
 {
     seq66::ctrlkey k = event->key();
     unsigned kmods = static_cast<unsigned>(event->modifiers());
     seq66::ctrlkey ordinal = seq66::qt_modkey_ordinal(k, kmods);
+    bool press = act == keystroke::action::press;
     return keystroke(ordinal, press);
 }
+
+#if defined SEQ66_KEY_TESTING
+
+/**
+ *  This code is used in qslivekeys in order to get the list(s) of extended
+ *  characters in the keymap module.
+ */
+
+keystroke
+qt_keystroke_test (QKeyEvent * event, keystroke::action act)
+{
+    seq66::ctrlkey k = event->key();
+    unsigned kmods = static_cast<unsigned>(event->modifiers());
+    seq66::ctrlkey ordinal = seq66::qt_modkey_ordinal(k, kmods);
+    bool press = act == keystroke::action::press;
+    keystroke t = keystroke(ordinal, press);
+    std::string ktext = event->text().toStdString();
+    std::string kname = t.name();
+    unsigned scode = unsigned(event->nativeScanCode());     /* scan code    */
+    unsigned kcode = unsigned(event->nativeVirtualKey());   /* key sym      */
+    printf
+    (
+        "Key #0x%02x %s '%s' scan = 0x%x; keycode = 0x%x ordinal %u\n",
+        k, press ? "Press  " : "Release", ktext.c_str(), scode, kcode, ordinal
+    );
+    return keystroke(0, press);                 /* disable the key action   */
+}
+
+#endif
 
 /**
  *  Clears the text of the QPushButton, and sets its icon to the pixmap given
@@ -173,7 +202,7 @@ show_file_dialog
     std::string d = forceconfig ? rc().home_config_directory() : selectedfile ;
     if (selectedfile.empty())
     {
-        // nothing to do (yet)
+        /* nothing to do (yet) */
     }
     else
     {
@@ -181,9 +210,7 @@ show_file_dialog
         {
             if (file_is_directory(selectedfile))
             {
-                /*
-                 *  Keep the home configuration directory
-                 */
+                /* Keep the home configuration directory */
             }
             else
             {

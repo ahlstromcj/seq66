@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-24
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  *  This container holds a map of keycontrol objects keyed by a key ordinal
@@ -40,6 +40,7 @@
 #include <map>                          /* std::map<>                       */
 #include <string>                       /* std::string                      */
 
+#include "ctrl/keymap.hpp"              /* seq66::keyboard::layout, etc.    */
 #include "ctrl/keycontrol.hpp"          /* seq66::keycontrol                */
 
 /*
@@ -84,18 +85,6 @@ public:
      */
 
     using mutemap = std::map<int, std::string>;
-
-    /**
-     *  Helps to work around key-board control issues.
-     */
-
-    enum class layout
-    {
-        qwerty,
-        qwertz,
-        azerty,
-        max
-    };
 
 private:
 
@@ -154,7 +143,7 @@ private:
      *  Defaults to layout::qwerty.
      */
 
-    layout m_kbd_layout;
+    keyboard::layout m_kbd_layout;
 
 public:
 
@@ -205,18 +194,18 @@ public:
         m_use_auto_shift = flag;
     }
 
-    layout kbd_layout () const
+    keyboard::layout kbd_layout () const
     {
         return m_kbd_layout;
     }
 
-    void kbd_layout (layout lay)
+    void kbd_layout (keyboard::layout lay)
     {
         m_kbd_layout = lay;
     }
 
     void set_kbd_layout (const std::string & lay);
-    std::string kbd_layout_to_string (layout lay);
+    std::string kbd_layout_to_string (keyboard::layout lay);
 
     std::string kbd_layout_to_string ()
     {

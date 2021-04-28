@@ -25,7 +25,7 @@
  * \library       seq66qt5 application
  * \author        Chris Ahlstrom
  * \date          2017-09-05
- * \updates       2020-11-11
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  *  This is an attempt to change from the hoary old (or, as H.P. Lovecraft
@@ -35,6 +35,9 @@
 #include <QApplication>                 /* QApplication etc.                */
 
 #include "qt5nsmanager.hpp"             /* an seq66::smanager for Qt 5      */
+
+#define SEQ66_LOCALE_SUPPORT            /* EXPERIMENTAL */
+#undef  SEQ66_TRANSLATOR_SUPPORT
 
 /**
  *  The standard C/C++ entry point to this application.  The first thing is to
@@ -66,6 +69,34 @@ int
 main (int argc, char * argv [])
 {
     QApplication app(argc, argv);           /* main application object      */
+
+#if defined SEQ66_LOCALE_SUPPORT
+    Q_FOREACH(QString a, app.arguments())
+    {
+        const static QString s_locale_arg = "--locale:";
+        if (a.startsWith(s_locale_arg))
+        {
+           QLocale::setDefault(QLocale(a.mid(sizeof(s_locale_arg) - 1)));
+           break;
+        }
+    }
+#endif
+
+#if defined SEQ66_TRANSLATOR_SUPPORT
+    QTranslator app_translator;
+    if (! app_translator.load ("seq66_" + QLocale().name (), app_tr_dir))
+    {
+         qWarning
+         (
+            "Can't load app translator file for locale %s from %s",
+            qPrintable(QLocale().name()),
+            app_tr_dir.toLocal8Bit().data()
+         );
+    }
+    else
+         app.installTranslator(&app_translator);
+#endif
+
     int exit_status = EXIT_SUCCESS;         /* EXIT_FAILURE                 */
     seq66::qt5nsmanager sm(app);
     bool result = sm.create(argc, argv);

@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2020-08-25
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  */
@@ -44,18 +44,25 @@
 namespace seq66
 {
 
+namespace keyboard
+{
+
 /**
- *  Provides short names for these Qt::KeyboardModifier values, to make the
- *  table readable.
+ *  Provides a list of supported keyboard layouts.
+ *
+ *  Only the normal and azerty layouts are supported at this time.
  */
 
-const int KNONE   = 0x00000000;
-const int KSHIFT  = 0x02000000;
-const int KCTRL   = 0x04000000;
-const int KALT    = 0x08000000;
-const int KMETA   = 0x10000000;
-const int KEYPAD  = 0x20000000;
-const int KGROUP  = 0x40000000;
+enum class layout
+{
+    normal,                             /* U.S. key map             */
+    qwerty = normal,                    /* Ditto                    */
+    qwertz,                             /* Deutsche                 */
+    azerty,                             /* French AZERTY key map    */
+    max                                 /* terminator value         */
+};
+
+}   // namespace keyboard
 
 /*
  * Free functions and data.
@@ -70,6 +77,7 @@ extern ctrlkey qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier);
 extern std::string qt_modkey_name (ctrlkey qtkey, unsigned qtmodifier);
 extern ctrlkey qt_keyname_ordinal (const std::string & name);
 extern std::string qt_ordinal_keyname (ctrlkey qtkey);
+extern void modify_keyboard_layout (keyboard::layout el);
 
 }               // namespace seq66
 

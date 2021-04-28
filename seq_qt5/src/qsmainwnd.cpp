@@ -2686,7 +2686,7 @@ qsmainwnd::quit_session ()
 void
 qsmainwnd::keyPressEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+    keystroke k = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(k);
     if (done)
         update();
@@ -2697,7 +2697,7 @@ qsmainwnd::keyPressEvent (QKeyEvent * event)
 void
 qsmainwnd::keyReleaseEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+    keystroke k = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(k);
     if (done)
         update();

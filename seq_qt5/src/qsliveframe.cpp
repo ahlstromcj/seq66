@@ -1269,7 +1269,7 @@ qsliveframe::handle_key_release (const keystroke & k)
 void
 qsliveframe::keyPressEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+    keystroke k = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(k);
     if (done)
     {
@@ -1285,7 +1285,7 @@ qsliveframe::keyPressEvent (QKeyEvent * event)
 void
 qsliveframe::keyReleaseEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+    keystroke k = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(k);
     if (done)
         update();

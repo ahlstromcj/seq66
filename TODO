@@ -35,7 +35,8 @@ Library installation:
 Loops:
 
     Remove the old-style Live grid completely and deprecate that option in
-    the 'usr' file.
+    the 'usr' file.  Should the old-style qsliveframe be removed? Yes.  Remove
+    the old-style qseqeditframe.
 
     Remove the old qseqeditframe and the use-new-seqedit option (now the
     default).
@@ -56,7 +57,8 @@ Port-Mapping:
 
     No issues noted at present.
 
-    Running qpseq66 on Linux:  "QSynth" is named "PortMidi"!
+    Running qpseq66 on Linux:  "QSynth" is named "PortMidi"! See
+    seq_portmidi/src/midibus.cpp.
 
 Main Window:
 
@@ -78,7 +80,8 @@ Automation:
     show the tap count.
 
     Look into the "nativeVirtualKey" functionality to support
-    locale-independent key processing.
+    locale-independent key processing.  This seems futile.  See issue #48 for
+    more information.
 
 From Testing:
 
@@ -125,14 +128,6 @@ Others to Consider:
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.
 
-    Should the old-style qsliveframe be removed?
-
-    Remove the old-style qseqeditframe.
-
-Backports to Sequencer64:
-
-    qseqedit 800x480 feature if successful
-
 EXTANT ISSUES:
 
     #1: JACK Metadata MIDINAM support.  LV2 MIDNAM has been around for a
@@ -154,7 +149,8 @@ EXTANT ISSUES:
     #12: Note rendering problem.
     Having a long note, scrolling it out of vision and back again leads to a
     problem.  (Only the first snap division and last snap division of the note
-    appears.  STATUS:  Weird, will do.
+    appears.  STATUS:  Weird, will do.  Might be fixed by the verify-and-link
+    fix.
 
 #16 Ableton Live transport support?
     Go to this issue in Github to see the thread.
@@ -170,11 +166,12 @@ EXTANT ISSUES:
 
 #18 Mute Group does not toggle
     Also I have noticed that when I activate a mute group I am not able to
-    activate patters that do not belong to the activated mute group. It is normal?
-    STATUS: I want to double-check this one.
+    activate patterns that do not belong to the activated mute group. It is
+    normal?  STATUS: I want to double-check this one.  This may now be fixed via
+    fixes for issue #49.
 
 #24 Release notes in release tag message?
-    I would d like to add seq66 to https://libreav.org/updates
+    I would like to add seq66 to https://libreav.org/updates
     Could I request that the release change notes are used in the release
     message? Then they could be syndicated via the releases.atom.
     Either using the release description box in the Create Release feature on
@@ -193,36 +190,19 @@ EXTANT ISSUES:
 #29 Play patterns from different sets at the same time
     STATUS: Provisional support in 0.91.3.  One more feature to add soon.
 
-#30 Managing pattern colors with a pallette
-    STATUS: Basically complete, works.  May be a few more places to add
-    configuration coloring.  Also added usage of Qt style-sheets.
-
-#32 NSM: Save session
-    save session, should be renamed to just 'save' I think. I should just save
-    the application, not the total NSM session. I assume it just saves seq66,
-    but then the naming is somewhat confusing.
-    STATUS: Renamed "Save Session" back to "Save".
-
 #33 NSM not working here
     STATUS:  Will start retesting soon.  I believe I found some nasty bugs in
     0.91.2 that I have already fixed, but 0.91.3 is not quite ready yet.
 
-#34 seq66 doesn't follow jack_transport tempo changes (and so also doesn't
-    work with jack_link)
-    STATUS:  Fixed.
-
-#39 Arm Build - Pattern editor doesnt open
-    STATUS:  Should be closed.
+#39 Arm Build - Pattern editor does not open
+    STATUS:  Should be closed.  Will try it myself on a Pi soon.
 
 #40 NSM: seq66 in a new session should provide a blank project
     Currently it imports the previously used MIDI file.
 
-#41 NSM: hide seq66 on closing window, don't exit?
+#41 NSM: hide seq66 on closing window, do not exit?
     If closing the window, rather than quitting the app, could change the its
     visibility state to hidden.
-
-#42 MIDI Input window doesn't handle large port count
-    STATUS:  Added scroll bars "as needed".
 
 #44 "Record live sequence changes" functionality
     Currently the "record live sequence changes" only adds patterns into the
@@ -258,25 +238,6 @@ EXTANT ISSUES:
 
     Note:  Probably need an option to not auto-connect while NSM is running.
 
-    More data from Tripayou:
-
-    I tested some AZERTY special keys with showkey and I found
-    particularities. Maybe it is hard to find this without hardware keyboard.
-    Some keys return 2 codes, on press and on release :
-
-        Symbol  PCode   RCode
-        ²       0xc2    0xb2
-        é       0xc3    0xa9
-        è       0xc3    0xa8
-        ç       0xc3    0xa7
-        à       0xc3    0xa0
-        °       0xc2    0xb0
-        ù       0x3c    0xb9
-        §       0xc2    0xa7
-
-    Key `^` code `0x5e` needs to be pressed twice, do not know if yours 6/^ on
-    QWERTZ/QWERTY do the same.  Maybe it will be impossible to assign...
-
 #49 Unable to unmute loops after group learn
 
     I found an issue with group learn. Loops learnt as muted in a mute group
@@ -308,6 +269,25 @@ EXTANT ISSUES:
 
     Also, mutes are not being saved to the MIDI file!  Nor are they cleared
     with File / New (which might be a feature, not a bug).
+
+    More data from Tripayou:
+
+    I tested some AZERTY special keys with showkey and I found
+    particularities. Maybe it is hard to find this without hardware keyboard.
+    Some keys return 2 codes, on press and on release :
+
+        Symbol  PCode   RCode
+        ²       0xc2    0xb2
+        é       0xc3    0xa9
+        è       0xc3    0xa8
+        ç       0xc3    0xa7
+        à       0xc3    0xa0
+        °       0xc2    0xb0
+        ù       0x3c    0xb9
+        §       0xc2    0xa7
+
+    Key `^` code `0x5e` needs to be pressed twice, do not know if yours 6/^ on
+    QWERTZ/QWERTY do the same.  Maybe it will be impossible to assign...
 
 PATTERNS:
 

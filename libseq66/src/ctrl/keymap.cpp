@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-24
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  */
 
@@ -39,6 +39,19 @@
 
 namespace seq66
 {
+
+/**
+ *  Provides short names for these Qt::KeyboardModifier values, to make the
+ *  table readable.
+ */
+
+static const int KNONE   = 0x00000000;
+static const int KSHIFT  = 0x02000000;
+static const int KCTRL   = 0x04000000;
+static const int KALT    = 0x08000000;
+static const int KMETA   = 0x10000000;
+static const int KEYPAD  = 0x20000000;
+static const int KGROUP  = 0x40000000;
 
 /**
  *  Provides a data type for key name/value pairs.
@@ -113,10 +126,10 @@ struct qt_keycodes
  *  accessor functions.
  */
 
-static qt_keycodes
+static qt_keycodes &
 qt_keys (int i)
 {
-    static const qt_keycodes s_qt_keys [] =             // or a vector, meh
+    static qt_keycodes s_qt_keys [] =   /* modifiable from inside this module */
     {
         /*
          *  Code        Qt     Key
@@ -304,7 +317,7 @@ qt_keys (int i)
         { 0xa0,  0x01000030,  "F1",         KNONE  },
         { 0xa1,  0x01000031,  "F2",         KNONE  },
         { 0xa2,  0x01000032,  "F3",         KNONE  },
-        { 0xa3,  0x01000033,  "F4",         KNONE  },    // FR: lira
+        { 0xa3,  0x01000033,  "F4",         KNONE  },    // FR: pound sign
         { 0xa4,  0x01000034,  "F5",         KNONE  },
         { 0xa5,  0x01000035,  "F6",         KNONE  },
         { 0xa6,  0x01000036,  "F7",         KNONE  },
@@ -418,8 +431,8 @@ qt_keys (int i)
         { 0xfe,  0x01000099,  "0xfe",       KNONE  },
         { 0xff,  0xffffffff,  "Null_ff",    KNONE  }     // end-of-list
     };
-    if (i < 0 || i > int(0xff))
-        i = 0xff;
+    if (i < 0 || i > 0xff)
+        i = 0;
 
     return s_qt_keys[i];
 }
@@ -518,19 +531,22 @@ keymap_size ()
 }
 
 /**
- *  Indicates if the key map is set up.
-
- *  We could let C++11 load this via the initializer list, but then we'd
- *  need an extra column for the key.
+ *  Indicates if the key map is set up.  Also allows for re-initialization in
+ *  order to alter the key map for alternate keyboard maps.
  */
 
-void
-initialize_key_maps ()
+static bool
+initialize_key_maps (bool reinit)
 {
     static bool s_are_maps_initialized = false;
+    if (reinit)
+        s_are_maps_initialized = false;
+
     if (! s_are_maps_initialized)
     {
-        for (int k = 0; k < 255; ++k)
+        keycode_map().clear();
+        keyname_map().clear();
+        for (int k = 0; k < 0xff; ++k)
         {
             qt_keycodes temp = qt_keys(k);
             if (temp.qtk_keycode != 0)
@@ -552,8 +568,9 @@ initialize_key_maps ()
             else
                 break;
         }
-        if (keymap_size() == 255)
-            s_are_maps_initialized = true;
+        s_are_maps_initialized = keymap_size() == 0xff;
+        if (! s_are_maps_initialized)
+            errprint("Key map unable to be initialized");
     }
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
@@ -570,6 +587,8 @@ initialize_key_maps ()
     }
     printf("keymap size = %d\n", keymap_size());
 #endif
+
+    return s_are_maps_initialized;
 }
 
 /**
@@ -589,13 +608,15 @@ unsigned
 ordinal_to_qt_key (ctrlkey ordinal)
 {
     unsigned result = 0;
-    initialize_key_maps();
-    for (const auto & qk : keycode_map())
+    if (initialize_key_maps(false))
     {
-        if (qk.second.qtk_ordinal == ordinal)
+        for (const auto & qk : keycode_map())
         {
-            result = qk.second.qtk_keycode;
-            break;
+            if (qk.second.qtk_ordinal == ordinal)
+            {
+                result = qk.second.qtk_keycode;
+                break;
+            }
         }
     }
     return result;
@@ -633,34 +654,37 @@ ordinal_to_qt_key (ctrlkey ordinal)
 ctrlkey
 qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier)
 {
-    initialize_key_maps();
-
-    auto cqi = keycode_map().find(qtkey);          /* copy modified later! */
-    if (cqi != keycode_map().end())
+    ctrlkey result = 0xffffffff;
+    if (initialize_key_maps(false))
     {
-        /*
-         * std::multimap<unsigned, qt_keycodes>::size_type
-         */
-
-        auto c = keycode_map().count(qtkey);
-        if (c > 1)
+        auto cqi = keycode_map().find(qtkey);      /* copy modified later! */
+        if (cqi != keycode_map().end())
         {
-            auto p = keycode_map().equal_range(qtkey);
-            for (cqi = p.first; cqi != p.second; ++cqi)
+            /*
+             * std::multimap<unsigned, qt_keycodes>::size_type
+             */
+
+            auto c = keycode_map().count(qtkey);
+            if (c > 1)
             {
-                if (cqi->second.qtk_modifier == qtmodifier)
-                    break;
+                auto p = keycode_map().equal_range(qtkey);
+                for (cqi = p.first; cqi != p.second; ++cqi)
+                {
+                    if (cqi->second.qtk_modifier == qtmodifier)
+                        break;
+                }
             }
+            result = cqi->second.qtk_ordinal;
         }
-        return cqi->second.qtk_ordinal;
     }
-    else
-        return 0xffffffff;
+    return result;
 }
 
 /**
  *  Gets the name of the key/text combination, either from the text() value or
  *  via lookup in the key-code map.
+ *
+ *      std::multimap<unsigned, qt_keycodes>::size_type
  *
  * \param qtkey
  *      The Qt 5 key-code, as provided to the Qt keyPressEvent() callback via
@@ -679,32 +703,29 @@ qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier)
 std::string
 qt_modkey_name (ctrlkey qtkey, unsigned qtmodifier)
 {
-    initialize_key_maps();
-
-    auto cqi = keycode_map().find(qtkey);          /* copy modified later! */
-    if (cqi != keycode_map().end())
+    std::string result = "unknown";
+    if (initialize_key_maps(false))
     {
-        /*
-         * std::multimap<unsigned, qt_keycodes>::size_type
-         */
-
-        auto c = keycode_map().count(qtkey);
-        if (c > 1)
+        auto cqi = keycode_map().find(qtkey);       /* copy modified later! */
+        if (cqi != keycode_map().end())
         {
-            auto p = keycode_map().equal_range(qtkey);
-            for (cqi = p.first; cqi != p.second; ++cqi)
+            auto c = keycode_map().count(qtkey);
+            if (c > 1)
             {
-                if (cqi->second.qtk_modifier == qtmodifier)
-                    break;
+                auto p = keycode_map().equal_range(qtkey);
+                for (cqi = p.first; cqi != p.second; ++cqi)
+                {
+                    if (cqi->second.qtk_modifier == qtmodifier)
+                        break;
+                }
             }
+            if (cqi->second.qtk_keyname == " ")
+                result = std::string("Space");
+            else
+                result = cqi->second.qtk_keyname;
         }
-        if (cqi->second.qtk_keyname == " ")
-            return std::string("Space");
-        else
-            return cqi->second.qtk_keyname;
     }
-    else
-        return std::string("unknown");
+    return result;
 }
 
 /**
@@ -724,12 +745,12 @@ ctrlkey
 qt_keyname_ordinal (const std::string & name)
 {
     ctrlkey result = invalid_ordinal();
-    initialize_key_maps();
-
-    const auto & cki = keyname_map().find(name);
-    if (cki != keyname_map().end())
-        result = cki->second;
-
+    if (initialize_key_maps(false))
+    {
+        const auto & cki = keyname_map().find(name);
+        if (cki != keyname_map().end())
+            result = cki->second;
+    }
     return result;
 }
 
@@ -745,7 +766,94 @@ qt_keyname_ordinal (const std::string & name)
 std::string
 qt_ordinal_keyname (ctrlkey ordinal)
 {
-    return qt_keys(ordinal).qtk_keyname;
+    return is_invalid_ordinal(ordinal) ? "Missing_Key" : qt_keys(ordinal).qtk_keyname ;
+}
+
+/**
+ *  Extended keys, running on system locale with French (fr) AZERTY keymap.
+ *  The first number is the value returned by QKeyEvent::key().  The second column
+ *  is the name returned by QKeyEvent::text().  The scan code is returned by
+ *  QKeyEvent::nativeScanCode(), but is not used in this table.  The keycode
+ *  is returned by QKeyEvent::nativeVirtualKey(), and is used to look up the
+ *  s_qt_keys[] slot that will be replaced by the information below.
+ *
+ *  Note that these code are what we found on Debian Linux after running
+ *  "setxkbmap fr".  All of the standard ASCII symbols are unchanged with this
+ *  mapping, even though their locations on the French keyboard are different, and
+ *  numeric-key shifting is reversed compared to the US key-map.
+ *
+\verbatim
+        Key #0xa3  '£' scan = 0x23; keycode = 0xa3
+        Key #0xa7  '§' scan = 0x3d; keycode = 0xa7
+        Key #0xb0  '°' scan = 0x14; keycode = 0xb0
+        Key #0xb2  '²' scan = 0x31; keycode = 0xb2
+        Key #0xc0  'à' scan = 0x13; keycode = 0xe0
+        Key #0xc7  'ç' scan = 0x12; keycode = 0xe7
+        Key #0xc8  'è' scan = 0x10; keycode = 0xe8
+        Key #0xc9  'é' scan = 0x0b; keycode = 0xe9
+        Key #0xd9  'ù' scan = 0x30; keycode = 0xf9
+        Key #0x39c 'µ' scan = 0x33; keycode = 0xb5
+\verbatim
+ *
+ *  Just call this function once.
+ */
+
+static void
+setup_qt_azerty_fr_keys ()
+{
+    static const qt_keycodes s_qt_keys [] =
+    {
+        { 0xa3,  0xa3,          "£",       KNONE  },    // pound sign <-- F4
+        { 0xa7,  0xa7,          "§",       KNONE  },    // silcrow <-- F8
+        { 0xb0,  0xb0,          "°",       KNONE  },    // degrees <-- Hyper_R
+        { 0xb2,  0xb2,          "²",       KNONE  },    // 2 superscript <-- Dir_L
+        { 0xc0,  0xe0,          "à",       KNONE  },    // a-grave <-- KP_Ins
+        { 0xc7,  0xe7,          "ç",       KNONE  },    // c-cedilla <-- KP_Up
+        { 0xc8,  0xe8,          "è",       KNONE  },    // e-grave <-- KP_Right
+        { 0xc9,  0xe9,          "é",       KNONE  },    // e-acute <-- KP_Down
+        { 0xd9,  0xf9,          "ù",       KNONE  },    // u-grave <-- Super (Mod4, Win)
+        { 0x39c, 0xb5,          "µ",       KNONE  },    // mu <-- (totally new)
+        { 0x00,  0xffffffff,    "?",       KNONE  }     // terminator
+    };
+    for (int i = 0; s_qt_keys[i].qtk_keycode != 0xffffffff; ++i)
+    {
+        int index = s_qt_keys[i].qtk_ordinal;           // not qtk_keycode
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x-->",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keycode
+        );
+#endif
+
+        qt_keys(index) = s_qt_keys[i];
+
+#if defined SEQ66_PLATFORM_DEBUG_TMI
+        printf
+        (
+            "Key #%03d '%s': Ord %02x; code %02x\n",
+            i, qt_keys(index).qtk_keyname.c_str(),
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keycode
+        );
+#endif
+    }
+}
+
+/**
+ *  Tweaks the setup for some keyboard layouts that give direct access (i.e.
+ *  without using a "dead key") to extended ASCII keys.
+ */
+
+void
+modify_keyboard_layout (keyboard::layout el)
+{
+    if (el == keyboard::layout::azerty)
+    {
+        setup_qt_azerty_fr_keys();          /* this call must come first    */
+        (void) initialize_key_maps(true);   /* reinitialize the key maps    */
+    }
 }
 
 }           // namespace seq66

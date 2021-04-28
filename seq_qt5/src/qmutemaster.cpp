@@ -820,7 +820,7 @@ qmutemaster::on_mutes_change (mutegroup::number group)
 void
 qmutemaster::keyPressEvent (QKeyEvent * event)
 {
-    keystroke kkey = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
+    keystroke kkey = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(kkey);
     if (done)
         group_needs_update();
@@ -831,7 +831,7 @@ qmutemaster::keyPressEvent (QKeyEvent * event)
 void
 qmutemaster::keyReleaseEvent (QKeyEvent * event)
 {
-    keystroke kkey = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+    keystroke kkey = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(kkey);
     if (done)
         update();

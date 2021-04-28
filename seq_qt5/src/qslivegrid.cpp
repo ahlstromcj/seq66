@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-03-06
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -1110,13 +1110,13 @@ qslivegrid::sequence_key_check ()
 bool
 qslivegrid::handle_key_press (const keystroke & k)
 {
-    return m_parent->handle_key_press(k);
+    return k.is_good() ? m_parent->handle_key_press(k) : false ;
 }
 
 bool
 qslivegrid::handle_key_release (const keystroke & k)
 {
-    return m_parent->handle_key_press(k);
+    return k.is_good() ? m_parent->handle_key_press(k) : false ;
 }
 
 /**
@@ -1143,40 +1143,31 @@ qslivegrid::handle_key_release (const keystroke & k)
 void
 qslivegrid::keyPressEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_PRESS);
-
-#if defined SEQ66_PLATFORM_DEBUG_TESTING_ONLY
-    bool done = false;
-    std::string ktext = event->text().toStdString();
-    std::string kname = k.name();
-    ctrlkey kkey = unsigned(k.key());
-    unsigned scode = unsigned(event->nativeScanCode());     /* scan code    */
-    unsigned kcode = unsigned(event->nativeVirtualKey());   /* key sym      */
-    printf
-    (
-        "Key '%s' 0x%x: text = '%s' scan code = 0x%x; key code = 0x%x\n",
-        kname.c_str(), kkey, ktext.c_str(), scode, kcode
-    );
-    return;
+#if defined SEQ66_KEY_TESTING
+    (void) qt_keystroke_test(event, keystroke::action::press);
 #else
+    keystroke k = qt_keystroke(event, keystroke::action::press);
     bool done = handle_key_press(k);
     if (done)
         update();
     else
         QWidget::keyPressEvent(event);              /* event->ignore()?     */
 #endif
-
 }
 
 void
 qslivegrid::keyReleaseEvent (QKeyEvent * event)
 {
-    keystroke k = qt_keystroke(event, SEQ66_KEYSTROKE_RELEASE);
+#if defined SEQ66_KEY_TESTING
+    (void) qt_keystroke_test(event, keystroke::action::release);
+#else
+    keystroke k = qt_keystroke(event, keystroke::action::release);
     bool done = handle_key_release(k);
     if (done)
         update();
     else
         QWidget::keyReleaseEvent(event);            /* event->ignore()?     */
+#endif
 }
 
 void

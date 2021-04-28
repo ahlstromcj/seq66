@@ -57,7 +57,7 @@ keycontainer::keycontainer () :
     m_mute_keys         (),
     m_loaded_from_rc    (false),
     m_use_auto_shift    (true),
-    m_kbd_layout        (layout::qwerty)
+    m_kbd_layout        (keyboard::layout::qwerty)
 {
     add_defaults();
 }
@@ -291,7 +291,6 @@ keycontainer::show () const
             << "[" << std::setw(3) << std::right << index << "] ("
             <<        std::setw(3) << std::right << kp.first << ") "
             ;
-
         kp.second.show();
         ++index;
     }
@@ -301,25 +300,26 @@ void
 keycontainer::set_kbd_layout (const std::string & lay)
 {
     if (strcasecompare(lay, "qwerty"))
-        m_kbd_layout = layout::qwerty;
+        m_kbd_layout = keyboard::layout::qwerty;
     else if (strcasecompare(lay, "qwertz"))
-        m_kbd_layout = layout::qwertz;
+        m_kbd_layout = keyboard::layout::qwertz;
     else if (strcasecompare(lay, "azerty"))
-        m_kbd_layout = layout::azerty;
+        m_kbd_layout = keyboard::layout::azerty;
 
-    if (m_kbd_layout == layout::azerty)
+    modify_keyboard_layout(m_kbd_layout);
+    if (m_kbd_layout == keyboard::layout::azerty)
         use_auto_shift(false);
 }
 
 std::string
-keycontainer::kbd_layout_to_string (layout lay)
+keycontainer::kbd_layout_to_string (keyboard::layout lay)
 {
     std::string result;
-    if (lay == layout::qwerty)
+    if (lay == keyboard::layout::qwerty)
         result = "qwerty";
-    else if (lay == layout::qwertz)
+    else if (lay == keyboard::layout::qwertz)
         result = "qwertz";
-    else if (lay == layout::azerty)
+    else if (lay == keyboard::layout::azerty)
         result = "azerty";
 
     return result;

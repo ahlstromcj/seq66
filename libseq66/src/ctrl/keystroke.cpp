@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-30
- * \updates       2019-05-30
+ * \updates       2021-04-28
  * \license       GNU GPLv2 or above
  *
  *  This class makes access to keystroke features simpler.
@@ -49,9 +49,9 @@ namespace seq66
 
 keystroke::keystroke ()
  :
-    m_is_press  (SEQ66_KEYSTROKE_RELEASE),          /* false */
-    m_key       (SEQ66_KEYSTROKE_MIN),
-    m_modifier  (SEQ66_NO_MASK)
+    m_is_press  (false),
+    m_key       (sm_minimum),
+    m_modifier  (mod::None)
 {
     // Empty body
 }
@@ -68,56 +68,16 @@ keystroke::keystroke ()
  * \param modkey
  *      The modifier key combination that was pressed, if any, in the form of
  *      a bit-mask, as defined in the gdk_basic_keys module.  Common mask
- *      values are SEQ66_SHIFT_MASK, SEQ66_CONTROL_MASK, SEQ66_MOD1_MASK, and
- *      SEQ66_MOD4_MASK.  If no modifier, this value is SEQ66_NO_MASK.
+ *      modifier values are Shift, Control, Mod1, and Mod4.  If no modifier,
+ *      this value is None.
  */
 
-keystroke::keystroke (ctrlkey key, bool press, int modkey)
- :
+keystroke::keystroke (ctrlkey key, bool press, int modkey) :
     m_is_press  (press),
     m_key       (key),
-    m_modifier  (seq_modifier_t(modkey))
+    m_modifier  (static_cast<mod>(modkey))
 {
     // Empty body
-}
-
-/**
- *  Provides the rote copy constructor.
- *
- * \param rhs
- *      The object to be copied.
- */
-
-keystroke::keystroke (const keystroke & rhs)
- :
-    m_is_press  (rhs.m_is_press),
-    m_key       (rhs.m_key),
-    m_modifier  (rhs.m_modifier)
-{
-    // Empty body
-}
-
-/**
- *  Provides the rote principal assignment operator.
- *
- * \param rhs
- *      The object to be assigned.
- *
- * \return
- *      Returns the reference to the current object, for use in assignment
- *      chains.
- */
-
-keystroke &
-keystroke::operator = (const keystroke & rhs)
-{
-    if (this != &rhs)
-    {
-        m_is_press  = rhs.m_is_press;
-        m_key       = rhs.m_key;
-        m_modifier  = rhs.m_modifier;
-    }
-    return *this;
 }
 
 /**
@@ -136,7 +96,7 @@ keystroke::operator = (const keystroke & rhs)
 bool
 keystroke::is_letter (ctrlkey ch) const
 {
-    if (ch == SEQ66_KEYSTROKE_BAD_VALUE)
+    if (ch == sm_bad_value)
         return bool(std::isalpha(m_key));
     else
         return std::tolower(m_key) == std::tolower(ch);

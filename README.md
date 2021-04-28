@@ -7,8 +7,9 @@ __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
 playlists for song management, scale/chord-aware piano-roll interface, song
 editor for creative composition, and control via mouse, keystrokes, and MIDI.
-Supports NSM (New Session Manager) on Linux, can also be run headless.
-Note that it does not support audio samples, just MIDI.
+Includes mute-groups so that a set of patterns can be enabled/disabled with one
+keystroke or MIDI control Supports NSM (New Session Manager) on Linux, can also be
+run headless.  It does not support audio samples, just MIDI.
 
 __Seq66__ is a refactoring of the Qt version of Sequencer64/Kepler34, reboots
 of __Seq24__ with modern C++ and new features.  Linux users can build this
@@ -24,12 +25,12 @@ user-manual is provided.
 
     *   Qt 5 (good cross-platform support).  A grid of loop buttons and a song
         layout tab.  Unlimited external windows.  The live frame uses buttons
-        matching Qt theming.  Qt style-sheet support.
+        matching Qt theming.  Qt style-sheet support, to further tinker with the
+        app's appearance.
     *   Tabs for management of sets, mute-groups, song mode, pattern
         editing, event-editing, play-lists, and session information.
-    *   A color for each sequence can be chosen to make them stand out.
-        The color palette can be saved and modified. A Qt style-sheet can also
-        be used for further tinkering of the app's appearance.
+    *   A color for each pattern can be chosen to make them stand out.
+        The color palette can be saved and modified.
 
 ##  Configuration files
 
@@ -45,8 +46,9 @@ user-manual is provided.
 ##  Non Session Manager
 
     *   Support for this manager is essentially complete.
-    *   Handles stopping and saving>
+    *   Handles stopping and saving.
     *   Handles display of details about the session.
+    *   Still needs to be integrated with NSM's jackpatch.
 
 ##  Multiple Builds
 
