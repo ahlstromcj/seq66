@@ -1097,6 +1097,8 @@ public:
         return m_play_list->current_song();
     }
 
+    std::string playlist_song_basename () const;
+
     bool open_current_song ()
     {
         return m_play_list->open_current_song();

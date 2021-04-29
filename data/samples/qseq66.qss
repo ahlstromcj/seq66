@@ -3,7 +3,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2021-03-22
- * \updates       2021-03-22
+ * \updates       2021-04-29
  * \license       Public domain
  *
  *  Provides a sample Qt style sheet for Seq66.  See
@@ -34,9 +34,9 @@ QTabWidget::tab-bar /* move to the right by 5px */
 QTabBar::tab
 {
     background: qlineargradient(
-        x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-        stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #808080, stop: 0.4 #404040,
+        stop: 0.5 #808080, stop: 1.0 #606060);
     border: 2px solid #C4C4C3;
     border-bottom-color: #6495ED; /* same as the pane color */
     border-top-left-radius: 4px;
@@ -48,9 +48,9 @@ QTabBar::tab
 QTabBar::tab:selected, QTabBar::tab:hover
 {
     background: qlineargradient(
-        x1: 0, y1: 0, x2: 0, y2: 1,
-        stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-        stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #404040, stop: 0.4 #202020,
+        stop: 0.5 #303030, stop: 1.0 #101010);
 }
 
 QTabBar::tab:selected
@@ -64,20 +64,39 @@ QTabBar::tab:selected
  */
 
 QTabBar::tab { height: 48px; width: 80px; }
-QLineEdit { background-color: cornflowerblue }
-QDoubleSpinBox { background-color: cornflowerblue }
-QSpinBox { background-color: cornflowerblue }
-QComboBox { background-color: cornflowerblue }
+
+QLineEdit
+{
+    color: white;
+    background-color: cornflowerblue;
+}
+
+QLineEdit:disabled
+{
+    color: lightgray;
+    background-color: darkgrey;
+}
+
+QDoubleSpinBox { background-color: cornflowerblue; }
+QSpinBox { background-color: cornflowerblue; }
+QComboBox { background-color: cornflowerblue; }
+
 QPushButton
 {
-	background-color: darkgray;
+    color: green;
+	background-color: maroon;
     border-style: ridge;
     border-width: 2px;
     border-radius: 4px;
-    border-color: beige;
+    border-color: black;
     font: bold 12px;
     min-width: 2em;
     padding: 2px;
+}
+
+QPushButton:checked
+{
+	background-color: salmon;
 }
 
 /*

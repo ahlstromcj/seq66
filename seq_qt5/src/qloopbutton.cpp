@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-04-20
+ * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -178,10 +178,20 @@ qloopbutton::qloopbutton
     set_checked(m_is_checked);
     setMinimumSize(30, 30);
 
+    /*
+     * We're trying to mitigate issue #50, where the white text of the
+     * breeze-dark theme cannot be seen against a yellow background.
+     */
+
+#if defined SEQ66_FOLLOW_THEME_TEXT_COLOR
     QWidget tmp;
     text_color(tmp.palette().color(QPalette::ButtonText));
+#else
+    text_color(foreground_paint());
+#endif
 
     int c = loop() ? loop()->color() : palette_to_int(none) ;
+    pen_color(get_pen_color(PaletteColor(c)));
     if (c != palette_to_int(black))
         back_color(get_color_fix(PaletteColor(c)));
 }
@@ -481,12 +491,12 @@ qloopbutton::paintEvent (QPaintEvent * pev)
                     m_top_left.m_w, m_top_left.m_h
                 );
                 QString title(m_top_left.m_label.c_str());
-                painter.setPen(text_color());       /* label_color() */
+                painter.setPen(label_color());      /* text issue #50   */
                 painter.setFont(m_text_font);
 
 #if defined SEQ66_USE_BACKGROUND_ROLE_COLOR_DISABLED
 
-                QPen pen(text_color());             /* label_color() */
+                QPen pen(text_color());             /* label_color()    */
                 QBrush brush(Qt::black);
                 painter.setBrush(brush);
 
@@ -611,7 +621,7 @@ void
 qloopbutton::draw_progress_box (QPainter & painter)
 {
     QBrush brush(m_prog_back_color, Qt::SolidPattern);
-    QPen pen(text_color());
+    QPen pen(pen_color());                          /* #50: text_color()    */
     const int penwidth = 2;
     bool qsnap = loop()->snap_it();
     Color backcolor = back_color();
@@ -716,7 +726,7 @@ qloopbutton::draw_pattern (QPainter & painter)
                 height = highest - lowest;
             }
             if (loop()->transposable())
-                pen.setColor(text_color());
+                pen.setColor(pen_color());      /* issue #50 text_color()   */
             else
                 pen.setColor(drum_color());
 

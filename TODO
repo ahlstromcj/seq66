@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-04-27
+2019-04-13 to 2021-04-29
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -74,14 +74,16 @@ UI:
     See the mouse wheel scroll event requests for both the song and
     pattern editors.
 
+    Try to mitigate issue #50, where the yellow background of a new pattern
+    and the white text of the breeze-dark theme make the button unreadable.
+    Make sure the palette line color is being followed.
+
+    Clean out all of the unused options in the 'usr' file.
+
 Automation:
 
     Tap BPM key (F9) works now, but it should cause the Tap BPM button to
     show the tap count.
-
-    Look into the "nativeVirtualKey" functionality to support
-    locale-independent key processing.  This seems futile.  See issue #48 for
-    more information.
 
 From Testing:
 
@@ -288,6 +290,14 @@ EXTANT ISSUES:
 
     Key `^` code `0x5e` needs to be pressed twice, do not know if yours 6/^ on
     QWERTZ/QWERTY do the same.  Maybe it will be impossible to assign...
+
+#50 White text on Yellow is unreadable
+
+    I have recently updated Seq66 and I want to do some live music with it on
+    my next livestream.  On my system (Manajro KDE, using Breeze-dark theme)
+    the default pattern look is  Yellow BG and White text - this is quite
+    unreadable. Is it possible to somehow make Yellow BG use black text
+    instead?
 
 PATTERNS:
 

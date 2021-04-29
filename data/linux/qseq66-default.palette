@@ -1,7 +1,7 @@
 # Seq66 0.91.5 (and above) palette configuration file
 #
-# /home/user/.config/seq66/qseq66.palette
-# Written on 2021-04-29 12:50:18
+# /home/ahlstrom/.config/seq66/qseq66-default.palette
+# Written on 2021-04-29 14:55:49
 #
 # This file can be used to change the colors used by patterns
 # and in some parts of the user-interface.
@@ -70,7 +70,7 @@ look empty with a space.
 
  0       "Foreground" [ 0xFF000000 ]       "Foreground" [ 0xFFFFFFFF ]
  1       "Background" [ 0xFFFFFFFF ]       "Background" [ 0xFF484848 ]
- 2            "Label" [ 0xFF808080 ]            "Label" [ 0xFFFFFFFF ]
+ 2            "Label" [ 0xDEADBEEF ]            "Label" [ 0xFFFFFFFF ]
  3        "Selection" [ 0xFFFFA500 ]        "Selection" [ 0xFFFF00FF ]
  4             "Drum" [ 0xFFFF0000 ]             "Drum" [ 0xFF000080 ]
  5            "Tempo" [ 0xFFFF00FF ]            "Tempo" [ 0xFFFFFF00 ]
@@ -99,6 +99,6 @@ note = solid
 scale = dense3
 backseq = dense2
 
-# End of /home/user/.config/seq66/qseq66.palette
+# End of /home/ahlstrom/.config/seq66/qseq66-default.palette
 #
 # vim: sw=4 ts=4 wm=4 et ft=dosini

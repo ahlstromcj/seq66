@@ -43,7 +43,9 @@ issues are:
 # If set, then only that buss will be allowed to send MIDI control.
 # A value of 255 (0xFF) means any buss can send MIDI control.
 # The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled.
+# are always enabled. Supported keyboard layouts are 'qwerty' (the
+# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
+# feature for group-learn.
 
 load-key-controls = true
 load-midi-controls = true
@@ -199,7 +201,7 @@ keyboard-layout = azerty
 30 "§"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Toggle Mute
 31 "F7"      [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Song Pos
 32 "<"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Keep Queue
-33 "!"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Slot Shift
+33 "/"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Slot Shift
 34 "à"       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Mutes Clear
 35 "0xf1"    [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Reserved 35
 36 "="       [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] [ 0 0x00   0   0   0 ] # Loop Edit

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-04-28
+ * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -90,6 +90,10 @@
 #include "forms/ui_qslivegrid.h"
 #else
 #include "forms/qslivegrid.ui.h"
+#endif
+
+#if defined SEQ66_PLATFORM_DEBUG_KEY_TESTING
+#define SEQ66_KEY_TESTING
 #endif
 
 /*
@@ -1144,9 +1148,10 @@ void
 qslivegrid::keyPressEvent (QKeyEvent * event)
 {
 #if defined SEQ66_KEY_TESTING
-    (void) qt_keystroke_test(event, keystroke::action::press);
+    (void) qt_keystroke(event, keystroke::action::press, true);
 #else
-    keystroke k = qt_keystroke(event, keystroke::action::press);
+    bool show = rc().verbose();
+    keystroke k = qt_keystroke(event, keystroke::action::press, show);
     bool done = handle_key_press(k);
     if (done)
         update();
@@ -1159,9 +1164,10 @@ void
 qslivegrid::keyReleaseEvent (QKeyEvent * event)
 {
 #if defined SEQ66_KEY_TESTING
-    (void) qt_keystroke_test(event, keystroke::action::release);
+    (void) qt_keystroke(event, keystroke::action::release, true);
 #else
-    keystroke k = qt_keystroke(event, keystroke::action::release);
+    bool show = rc().verbose();
+    keystroke k = qt_keystroke(event, keystroke::action::release, show);
     bool done = handle_key_release(k);
     if (done)
         update();

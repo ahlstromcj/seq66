@@ -1381,11 +1381,15 @@ qsmainwnd::update_window_title (const std::string & fn)
     }
     else
     {
+#if defined SHOW_PPQN_IN_WINDOW_TITLE
         int pp = perf().ppqn();                     /* choose_ppqn()    */
         char temp[16];
         snprintf(temp, sizeof temp, " %d PPQN ", pp);
         itemname = fn;
         itemname += temp;
+#else
+        itemname = fn;
+#endif
     }
     itemname += " [*]";                             /* required by Qt 5 */
 
@@ -2691,7 +2695,7 @@ qsmainwnd::keyPressEvent (QKeyEvent * event)
     if (done)
         update();
     else
-        QWidget::keyPressEvent(event);          /* event->ignore()?     */
+        QWidget::keyPressEvent(event);              /* event->ignore()?     */
 }
 
 void
@@ -3455,7 +3459,7 @@ qsmainwnd::recreate_all_slots ()
         if (perf().playlist_active())
         {
             m_live_frame->set_playlist_name(perf().playlist_song());
-            update_window_title(perf().playlist_song());
+            update_window_title(perf().playlist_song_basename());
         }
         result = m_live_frame->recreate_all_slots();
     }

@@ -27,17 +27,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-04-28
+ * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
  */
 
 #include "ctrl/keymap.hpp"              /* seq66::qt_modkey_ordinal()       */
 #include "ctrl/keystroke.hpp"           /* seq66::keystroke wrapper class   */
-
-#if defined SEQ66_PLATFORM_DEBUG // _TESTING
-#define SEQ66_KEY_TESTING               /* affects qt5_helpers & qslivegrid */
-#endif
 
 class QKeyEvent;
 class QPushButton;
@@ -65,10 +61,12 @@ const bool NormalFile = false;
  */
 
 extern void qt_set_icon (const char * pixmap_array [], QPushButton * button);
-extern keystroke qt_keystroke (QKeyEvent * event, keystroke::action rp);
-#if defined SEQ66_KEY_TESTING
-extern keystroke qt_keystroke_test (QKeyEvent * event, keystroke::action rp);
-#endif
+extern keystroke qt_keystroke
+(
+    QKeyEvent * event,
+    keystroke::action rp,
+    bool testing = false
+);
 extern bool show_open_midi_file_dialog (QWidget * parent, std::string & file);
 extern bool show_playlist_dialog
 (

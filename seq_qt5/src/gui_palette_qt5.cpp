@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-02-23
- * \updates       2021-01-11
+ * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
  *  One possible idea would be a color configuration that would radically
@@ -128,6 +128,12 @@ bool
 no_color (int c)
 {
     return global_palette().no_color(c);
+}
+
+bool
+is_theme_color (const Color & c)
+{
+    return global_palette().is_theme_color(c);
 }
 
 /**
@@ -263,7 +269,14 @@ gui_backseq_brush ()
 }
 
 /**
- * Bright constant colors
+ *  Secret color to indicate to use the corresponding theme color. Used for a
+ *  label-color as the default color.
+ */
+
+static Color m_theme;
+
+/**
+ *  Bright constant colors
  */
 
 static Color m_black;
@@ -276,7 +289,7 @@ static Color m_cyan;
 static Color m_white;
 
 /**
- * Dark static colors
+ *  Dark static colors
  */
 
 static Color m_dk_black;
@@ -355,6 +368,7 @@ gui_palette_qt5::load_static_colors (bool inverse)
     if (! m_statics_are_loaded)
     {
         m_statics_are_loaded = true;
+        m_theme        = Color(0xAD, 0xBE, 0xEF, 0xDE);     /* #DEADBEEF */
         m_black        = Color("black");
         m_red          = Color("red");
         m_green        = Color("green");
@@ -403,6 +417,16 @@ gui_palette_qt5::calculate_inverse (const Color & c)
     g = a - g;
     b = a - b;
     return Color(r, g, b, a);
+}
+
+/**
+ *  Returns true if the corresponding theme color is to be used.
+ */
+
+bool
+gui_palette_qt5::is_theme_color (const Color & c) const
+{
+    return c == m_theme;
 }
 
 /**
@@ -533,7 +557,7 @@ gui_palette_qt5::reset_invertibles ()
     m_nrm_palette.clear();
     m_nrm_palette.add(InvertibleColor::black,       m_black,    "Foreground");
     m_nrm_palette.add(InvertibleColor::white,       m_white,    "Background");
-    m_nrm_palette.add(InvertibleColor::label,       m_black,    "Label");
+    m_nrm_palette.add(InvertibleColor::label,       m_theme,    "Label");
     m_nrm_palette.add(InvertibleColor::selection,   m_orange,   "Selection");
     m_nrm_palette.add(InvertibleColor::drum,        m_red,      "Drum");
     m_nrm_palette.add(InvertibleColor::tempo,       m_magenta,  "Tempo");

@@ -392,7 +392,7 @@ It does not change Seq66's default PPQN.</string>
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="LiveTab">
        <property name="sizePolicy">
@@ -475,7 +475,7 @@ It does not change Seq66's default PPQN.</string>
         </size>
        </property>
        <attribute name="title">
-        <string>E&amp;dit</string>
+        <string>E&amp;ditor</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>

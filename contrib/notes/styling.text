@@ -1,0 +1,91 @@
+Ways to color Seq66:
+
+    1.  Desktop theme:  Select a desktop theme supported by Qt/KDE. Gtk themes
+        can also work.
+
+    2.  qseq66.usr:
+
+        1.  In "[user-interface-settings]", set the "grid_style" items to 0 for
+            the old-style of flat, fully-colored button, or set to 3 for the
+            new style using the theme's push-button style, and
+            foreground/background coloring from the internal palette only for
+            the progress box in the center.  Warning: the old-style is
+            deprecated and will eventually go away (unless there is a clamor
+            for it).
+
+        2.  In the "[user-ui-tweaks]" section, change the empty style-sheet
+            filename:  style-sheet = "qseq66.qss" which can affect only certain
+            types of Qt widget.  It cannot affect the text that Seq66 draws on
+            the buttons nor the lines drawn in the pattern-progress box.
+            Those colors have to be handled by a 'palette' file.
+
+    3. qseq66.palette:
+
+        1.  In the "data" directory, the following palette files are available:
+
+                ./linux/qseq66.palette
+                ./linux/qseq66-alt-gray.palette
+                ./linux/qseq66-gray.palette
+                ./win/qpseq66.palette
+
+        2.  To create your own palette:
+
+            1.  In Seq66, go to Edit / Preferences / Display.  Edit the
+                "Palette File Base Name" as desired, then press the "Save
+                Current Palette" button.  The file should then be available in
+                your Seq66 configuration directory.
+
+            2.  Also check the "Use Palette File" option.  The named palette
+                file will be saved in the 'rc' file, section "[palette-file]".
+
+            3.  In your Seq66 configuration directory, edit the 'palette' file
+                to change the colors.  Also change the color name appropriately
+                if editing colors in the "[palette]" section, which apply to
+                the pattern slots.
+
+            4.  In your Seq66 configuration directory, edit the 'rc' file to
+                include the 'palette' file and make it active:
+
+                    [palette-file]
+
+                    1     # palette_active
+
+                    "qseq66-sample.palette"
+
+Color notes:
+
+    The 32 "[palette]" colors are used for coloring the patterns.  The
+    pen-color (left column) is used for drawing the progress box outline and
+    the note lines inside of it.  The back-color (right column) is used for
+    drawing the background of the progress box.
+
+    "Label" is used for the text in the loop buttons.  There is no apparent way
+    to modify the text and line colors used via a style-sheet.
+
+    Also, the color of the text in an empty button is dependent on the theme.
+    It can be altered, though, via a Qt style-sheet as noted earlier.
+
+Gradient:
+
+    Gradient is handled in a box, and parameters are in percent (0.0 to 1.0):
+
+       (0,0) -----------
+            |           |
+            |           |
+            |           |
+             ----------- (1,1)
+
+    The range of the gradient [which is allowed to fall outside of (0,0) to
+    (1.1)] is set by "stops".  Given the (x,y) range, each stop represents a
+    change in color at the percentage range given by that stop.
+
+    background: qlineargradient
+    (
+        x1:0, y1:0,         // starting point
+        x2:1, y2:1,         // ending point
+        stop:0 white,       // start a white
+        stop:0.5 gray,      // transition to gray halfway through
+        stop:1 green        // finish at green
+    )
+
+

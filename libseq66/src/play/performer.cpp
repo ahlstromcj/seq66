@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-27
+ * \updates       2021-04-29
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -306,6 +306,7 @@
 #include "play/notemapper.hpp"          /* seq66::notemapper                */
 #include "play/performer.hpp"           /* seq66::performer, this class     */
 #include "os/timing.hpp"                /* seq66::microsleep(), microtime() */
+#include "util/filefunctions.hpp"       /* seq66::filename_base()           */
 #include "util/strfunctions.hpp"        /* seq66::shorten_file_spec()       */
 
 /*
@@ -989,11 +990,13 @@ performer::sequence_window_title (const sequence & seq) const
 std::string
 performer::main_window_title (const std::string & file_name) const
 {
-    std::string result = seq_app_name() + std::string(" - ");
+    std::string result = seq_package_name() + std::string(" ");
     std::string itemname = "unnamed";
+#if defined SHOW_PPQN_IN_WINDOW_TITLE
     int p = ppqn();                                 /* choose_ppqn(m_ppqn)  */
     char temp[32];
     snprintf(temp, sizeof temp, " %d PPQN", p);
+#endif
     if (file_name.empty())
     {
         if (! rc().midi_filename().empty())
@@ -1010,7 +1013,11 @@ performer::main_window_title (const std::string & file_name) const
     {
         itemname = file_name;
     }
+#if defined SHOW_PPQN_IN_WINDOW_TITLE
     result += itemname + std::string(temp);
+#else
+    result += filename_base(itemname);
+#endif
     return result;
 }
 
@@ -6272,6 +6279,12 @@ performer::save_note_mapper (const std::string & notefile)
         }
     }
     return result;
+}
+
+std::string
+performer::playlist_song_basename () const
+{
+    return filename_base(playlist_song());
 }
 
 void
