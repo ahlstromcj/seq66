@@ -42,12 +42,6 @@ EXTRA_DIST =
 #******************************************************************************
 # Items from configure.ac
 #-------------------------------------------------------------------------------
-#
-#  XPCCUT_LIBS is defined by the PKG_CHECK_MODULES macro.  The xpccut
-#  library must be installed officially in order to be used to build the
-#  unit-test application of the xpc library.
-#
-#-------------------------------------------------------------------------------
 
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@

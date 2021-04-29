@@ -114,8 +114,7 @@ host_triplet = @host@
 @BUILD_SESSIONS_TRUE@am__append_3 = libsessions
 @BUILD_QTMIDI_TRUE@am__append_4 = seq_qt5 Seq66qt5
 @BUILD_RTCLI_TRUE@am__append_5 = Seq66cli
-@BUILD_SEQTOOL_TRUE@am__append_6 = Seqtool
-@BUILD_DOCS_TRUE@am__append_7 = doc
+@BUILD_DOCS_TRUE@am__append_6 = doc
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/alsa.m4 \
@@ -201,7 +200,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/aux-files/mkinstalldirs \
 	$(top_srcdir)/include/config.h.in ChangeLog INSTALL NEWS TODO \
 	aux-files/compile aux-files/config.guess \
-	aux-files/config.rpath aux-files/config.sub aux-files/depcomp \
+	aux-files/config.rpath aux-files/config.sub \
 	aux-files/install-sh aux-files/ltmain.sh aux-files/missing \
 	aux-files/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -372,10 +371,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 XMKMF = @XMKMF@
-XPCCUTPP_CFLAGS = @XPCCUTPP_CFLAGS@
-XPCCUTPP_LIBS = @XPCCUTPP_LIBS@
-XPCCUT_CFLAGS = @XPCCUT_CFLAGS@
-XPCCUT_LIBS = @XPCCUT_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
@@ -522,7 +517,7 @@ LIBTOOL_DEPS = @LIBTOOL_DEPS@
 #-----------------------------------------------------------------------------
 SUBDIRS = m4 libseq66 resources/pixmaps $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_4) \
-	$(am__append_5) $(am__append_6) $(am__append_7) man data
+	$(am__append_5) $(am__append_6) man data
 
 #*****************************************************************************
 # DIST_SUBDIRS
