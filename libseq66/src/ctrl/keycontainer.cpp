@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-24
+ * \updates       2021-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -118,7 +118,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
             << tag << " key (#" << ordinal
             << " = '" << qt_ordinal_keyname(ordinal) << "')"
             << " for '" << op.name()
-            << "' Category " << op.category_name()
+            << "' Type " << op.category_name()
             << std::endl
             ;
     }
@@ -282,14 +282,19 @@ keycontainer::mute_key (int mute_offset) const
 void
 keycontainer::show () const
 {
+    using namespace std;
     int index = 0;
-    std::cout << "Key container size: " << m_container.size() << std::endl;
-    std::cout << "Index Key Name" << std::endl;
+    cout << "Key container size: " << m_container.size() << endl;
+    cout << "Index  Key  Name    Category Action Slot/Code" << endl;
     for (const auto & kp : m_container)
     {
-        std::cout
-            << "[" << std::setw(3) << std::right << index << "] ("
-            <<        std::setw(3) << std::right << kp.first << ") "
+        unsigned key = kp.first;
+        if (key > 0xff)
+            key = 0xff;
+
+        cout
+            << "[" << setw(3) << right << index << "] "
+            << "(0x" << hex << setw(2) << right << key << ") "
             ;
         kp.second.show();
         ++index;
@@ -299,12 +304,16 @@ keycontainer::show () const
 void
 keycontainer::set_kbd_layout (const std::string & lay)
 {
-    if (strcasecompare(lay, "qwerty"))
+    if (strcasecompare(lay, "normal"))
+        m_kbd_layout = keyboard::layout::qwerty;
+    else if (strcasecompare(lay, "qwerty"))
         m_kbd_layout = keyboard::layout::qwerty;
     else if (strcasecompare(lay, "qwertz"))
         m_kbd_layout = keyboard::layout::qwertz;
     else if (strcasecompare(lay, "azerty"))
         m_kbd_layout = keyboard::layout::azerty;
+    else
+        m_kbd_layout = keyboard::layout::qwerty;
 
     modify_keyboard_layout(m_kbd_layout);
     if (m_kbd_layout == keyboard::layout::azerty)

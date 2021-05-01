@@ -1,53 +1,39 @@
-# Maintainer: Daniel Appelt <daniel.appelt@gmail.com>
-# Contributor: Gimmeapill <gimmeapill at gmail dot com>
+# Maintainer: Christopher Arndt <aur -at- chrisarndt -dot- de>
 
-_pkgbasename=seq66
-pkgname=${_pkgbasename}-git
-pkgver=0.90.4.r186.f4f1619
+_pkgname=seq66
+pkgname="${_pkgname}-git"
+pkgver=0.91.3.r319.1f92b17
 pkgrel=1
-pkgdesc="A live-looping sequencer with an interface similar to hardware sequencers"
+pkgdesc="A live-looping sequencer with an Qt graphical interface (git version)"
 arch=('i686' 'x86_64')
-url="https://github.com/ahlstromcj/seq66.git"
-license=('GPL')
-depends=('jack' 'qt5-base' 'gambas3-gb-qt5-opengl')
-makedepends=('git' 'autoconf-archive')
+url="https://github.com/ahlstromcj/seq66"
+license=('GPL2')
+depends=('qt5-base')
+makedepends=('git' 'alsa-lib' 'jack' 'liblo')
+groups=('pro-audio')
 provides=("${_pkgname}" "${_pkgname}=${pkgver//.r*/}")
-conflicts=("${_pkgbasename}")
-# source=("${_pkgbasename}::git://github.com/ahlstromcj/sequencer64.git")
-source=("${_pkgbasename}::git+https://github.com/ahlstromcj/${_pkgname}.git#branch=optimizing")
+conflicts=("${_pkgname}")
+source=("${_pkgname}::git+https://github.com/ahlstromcj/${_pkgname}.git")
 md5sums=('SKIP')
-sha256sums=('SKIP')
 
 pkgver() {
-    cd "${srcdir}/${_pkgbasename}"
+  cd "${srcdir}/${_pkgname}"
 
-    # git describe --long | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
-
-    local ver=$(tail -n 1 VERSION)
-    # replace alpha chars with a dot
-    echo "$ver.r$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
+  local ver=$(tail -n 1 VERSION)
+  echo "$ver.r$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
 }
 
 build() {
-    cd "${srcdir}/${_pkgbasename}"
+  cd "${srcdir}/${_pkgname}"
 
-    # Alternative build
-    # qmake -makefile -recursive "CONFIG += rtmidi" seq66.pro
-    # make
-
-    ./bootstrap --full-clean
-    ./bootstrap
-    ./configure --enable-silent-rules --enable-rtmidi --prefix=/usr
-    make
+  ./bootstrap
+  ./configure --prefix=/usr --enable-rtmidi
+  make
 }
 
 package() {
-    cd "${srcdir}/${_pkgbasename}"
-    make DESTDIR="${pkgdir}" install
+  depends+=('libasound.so' 'libjack.so' 'liblo.so')
+  cd "${srcdir}/${_pkgname}"
 
-    # TO DO?
-    # install -v -D -m 0644 "debian/${_pkgbasename}.xpm" "${pkgdir}/usr/share/pixmaps/${_pkgbasename}.xpm"
-    # install -v -D -m 0644 "debian/${_pkgbasename}.desktop" "${pkgdir}/usr/share/applications/${_pkgbasename}.desktop"
+  make DESTDIR="${pkgdir}/" install
 }
-
-# vim: ft=sh

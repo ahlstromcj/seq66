@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2019-03-24
+ * \updates       2019-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -122,9 +122,11 @@ keycontrol::show (bool add_newline) const
     using namespace std;
     cout
         <<         setw(7) << left << key_name()
+        << " "  << setw(4) << left << category_name()
         << " "  << setw(6) << left << action_name()
         << " "  << setw(2) << dec  << right << int(slot_number())
         << "/"  << setw(2) << dec  << right << int(control_code())
+        << " '" << name() << "'"
         ;
     if (add_newline)
         cout << endl;

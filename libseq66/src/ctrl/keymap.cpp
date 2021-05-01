@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-28
+ * \updates       2021-04-30
  * \license       GNU GPLv2 or above
  */
 
@@ -120,6 +120,9 @@ struct qt_keycodes
  *  as the name of the character.  Instead, we use the hex code (e.g. "0xe9") as
  *  the name of the character.  This affects the display of pattern and mute group
  *  keys as obtained by keycontainer::slot_key() and mute_key().
+ *
+ *  This array can be modified at run-time.  See setup_qt_azerty_fr_keys(),
+ *  for example.
  *
  *  Finally, we started encountering uninitialized static variables.  A g++ bug,
  *  or bug fix?  So now we enforce initialization by wrapping static values in
@@ -771,18 +774,24 @@ qt_ordinal_keyname (ctrlkey ordinal)
 
 /**
  *  Extended keys, running on system locale with French (fr) AZERTY keymap.
- *  The first number is the value returned by QKeyEvent::key().  The second column
- *  is the name returned by QKeyEvent::text().  The scan code is returned by
- *  QKeyEvent::nativeScanCode(), but is not used in this table.  The keycode
- *  is returned by QKeyEvent::nativeVirtualKey(), and is used to look up the
- *  s_qt_keys[] slot that will be replaced by the information below.
+ *  The first number is the value returned by QKeyEvent::key().  The second
+ *  column is the name returned by QKeyEvent::text().  The scan code is
+ *  returned by QKeyEvent::nativeScanCode(), but is not used in this table.
+ *  The keycode is returned by QKeyEvent::nativeVirtualKey(), and is used to
+ *  look up the s_qt_keys[] slot that will be replaced by the information
+ *  below.
  *
  *  Note that these code are what we found on Debian Linux after running
  *  "setxkbmap fr".  All of the standard ASCII symbols are unchanged with this
- *  mapping, even though their locations on the French keyboard are different, and
- *  numeric-key shifting is reversed compared to the US key-map.
+ *  mapping, even though their locations on the French keyboard are different,
+ *  and numeric-key shifting is reversed compared to the US key-map.
+ *
+ *  Also note that we cannot place the characters themselves in a 'ctrl' file.
+ *  When read, these characters have the value 0xffffffc2 or 0xffffffc3.  So
+ *  we have to look up based on the hex string.
  *
 \verbatim
+        Key #0x39c 'µ' scan = 0x33; keycode = 0xb5
         Key #0xa3  '£' scan = 0x23; keycode = 0xa3
         Key #0xa7  '§' scan = 0x3d; keycode = 0xa7
         Key #0xb0  '°' scan = 0x14; keycode = 0xb0
@@ -792,8 +801,24 @@ qt_ordinal_keyname (ctrlkey ordinal)
         Key #0xc8  'è' scan = 0x10; keycode = 0xe8
         Key #0xc9  'é' scan = 0x0b; keycode = 0xe9
         Key #0xd9  'ù' scan = 0x30; keycode = 0xf9
-        Key #0x39c 'µ' scan = 0x33; keycode = 0xb5
 \verbatim
+ *
+ * Sylvain's findings on a real AZERTY keyboard:
+ *
+ *      Key #0xa3   '£' scan = 0x23; keycode = 0xa3
+ *      Key #0xa4   '¤' scan = 0x23; keycode = 0xa4
+ *      Key #0xa7   '§' scan = 0x3d; keycode = 0xa7
+ *      Key #0xb0   '°' scan = 0x14; keycode = 0xb0
+ *      Key #0xb2   '²' scan = 0x31; keycode = 0xb2
+ *      Key #0xc0   'à' scan = 0x13; keycode = 0xe0
+ *      Key #0xc7   'ç' scan = 0x12; keycode = 0xe7
+ *      Key #0xc8   'è' scan = 0x10; keycode = 0xe8
+ *      Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
+ *      Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
+ *      Key #0x39c  'µ' scan = 0x33; keycode = 0xb5
+ *      Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
+ *      Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
+ *      Key #0x1001252	'^' scan = 0x22; keycode = 0xfe52
  *
  *  Just call this function once.
  */
@@ -803,17 +828,20 @@ setup_qt_azerty_fr_keys ()
 {
     static const qt_keycodes s_qt_keys [] =
     {
-        { 0xa3,  0xa3,          "£",       KNONE  },    // pound sign <-- F4
-        { 0xa7,  0xa7,          "§",       KNONE  },    // silcrow <-- F8
-        { 0xb0,  0xb0,          "°",       KNONE  },    // degrees <-- Hyper_R
-        { 0xb2,  0xb2,          "²",       KNONE  },    // 2 superscript <-- Dir_L
-        { 0xc0,  0xe0,          "à",       KNONE  },    // a-grave <-- KP_Ins
-        { 0xc7,  0xe7,          "ç",       KNONE  },    // c-cedilla <-- KP_Up
-        { 0xc8,  0xe8,          "è",       KNONE  },    // e-grave <-- KP_Right
-        { 0xc9,  0xe9,          "é",       KNONE  },    // e-acute <-- KP_Down
-        { 0xd9,  0xf9,          "ù",       KNONE  },    // u-grave <-- Super (Mod4, Win)
-        { 0x39c, 0xb5,          "µ",       KNONE  },    // mu <-- (totally new)
-        { 0x00,  0xffffffff,    "?",       KNONE  }     // terminator
+        { 0xa3,   0xa3,       "0xa3",   KNONE  },  // £ pound sign<--F4
+        { 0xa4,   0xa4,       "0xa4",   KNONE  },  // ¤ ?<--F8
+        { 0xa7,   0xa7,       "0xa7",   KNONE  },  // § silcrow<--F8
+        { 0xb0,   0xb0,       "0xb0",   KNONE  },  // ° degrees<--Hyper_R
+        { 0xb2,   0xb2,       "0xb2",   KNONE  },  // ² 2 superscript<--Dir_L
+        { 0xc0,   0xe0,       "0xc0",   KNONE  },  // à a-grave<--KP_Ins
+        { 0xc7,   0xe7,       "0xc7",   KNONE  },  // ç c-cedilla<--KP_Up
+        { 0xc8,   0xe8,       "0xc8",   KNONE  },  // è e-grave<--KP_Right
+        { 0xc9,   0xe9,       "0xc9",   KNONE  },  // é e-acute<--KP_Down
+        { 0xd9,   0xf9,       "0xd9",   KNONE  },  // ù u-grave<--Super/Mod4/Win)
+        { 0x39c,  0xb5,       "0x39c",  KNONE  },  // µ mu<--(totally new)
+        { 0x20ac, 0xb6,       "0x20ac", KNONE  },  // €  euro<--(totally new)
+     { 0x1001257, 0xfe57,     "0xfe57", KNONE  },  // ¨ ?<--(totally new)
+        { 0x00,   0xffffffff, "0x00?",  KNONE  }   // terminator
     };
     for (int i = 0; s_qt_keys[i].qtk_keycode != 0xffffffff; ++i)
     {

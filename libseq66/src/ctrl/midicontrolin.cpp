@@ -297,7 +297,7 @@ midicontrolin::show () const
     using namespace std;
     int index = 0;
     cout
-        << "MIDI-In container (size " << m_container.size() << "): "
+        << "MIDI-In container (size " << m_container.size() << "): " << endl
         << "Index; MIDI key; Keystroke (name, action, slot, code); stanza"
         << endl
         ;
@@ -309,8 +309,8 @@ midicontrolin::show () const
         int d0 = k.d0();
         int d1 = k.d1();
         cout
-            << "["   << setw(2) << hex << right << index << "] "
-            << "ev " << "0x" << setw(2)
+            << "["   << setw(3) << hex << right << index << "] "
+            << "0x" << setw(2)
             << setfill('0') << hex << status << setfill(' ')
             << " "   << setw(2) << hex << d0 << " " << setw(2) << hex << d1
             << " "

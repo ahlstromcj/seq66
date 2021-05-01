@@ -407,6 +407,12 @@
          <height>24</height>
         </size>
        </property>
+       <property name="toolTip">
+        <string>This button write the text of the events to a file for trouble-shooting.
+The file is in the same directory as the MIDI file, and has a name
+of the form &quot;filename-pattern-#.text&quot;, where '#' is the number of
+the pattern.</string>
+       </property>
        <property name="text">
         <string>D&amp;ump</string>
        </property>
@@ -478,6 +484,11 @@
          <width>80</width>
          <height>24</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Saves the current changes back to the pattern.  This step
+must be done to preserve the changes.  Then the file must
+be saved to make the changes permanent.  Tricky, but safer.</string>
        </property>
        <property name="text">
         <string>Sa&amp;ve</string>

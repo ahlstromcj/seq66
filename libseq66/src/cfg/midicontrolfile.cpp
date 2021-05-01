@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-04-24
+ * \updates       2021-04-30
  * \license       GNU GPLv2 or above
  *
  */
@@ -314,6 +314,11 @@ midicontrolfile::parse_stream (std::ifstream & file)
         if (count > 0)
         {
             infoprintf("%d automation-control lines", count);
+        }
+        if (rc_ref().verbose())
+        {
+            infoprint("Loaded key mappings");
+            m_temp_key_controls.show();
         }
     }
     if (loadmidi && m_temp_midi_ctrl_in.count() > 0)
@@ -1350,8 +1355,9 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
                 opslot = opcontrol::set_slot(opcode);
 
             /*
-             *  Create control objects, whether active or not.  We want to save
-             *  all objects in the file, to avoid altering the user's preferences.
+             *  Create control objects, whether active or not.  We want to
+             *  save all objects in the file, to avoid altering the user's
+             *  preferences.
              */
 
             keyname = strip_quotes(std::string(charname));
@@ -1405,7 +1411,14 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
                 else if (opcat == automation::category::mute_group)
                     ok = m_temp_key_controls.add_mute(kc);
             }
-            if (! ok)
+            if (ok)
+            {
+#if defined SEQ66_PLATFORM_DEBUG
+                if (rc_ref().verbose())
+                    kc.show();
+#endif
+            }
+            else
                 (void) keycontrol_error_message(kc, ordinal, line_number());
         }
     }

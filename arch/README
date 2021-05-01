@@ -1,11 +1,13 @@
 Seq66 Arch Linux Package Build
 Chris Ahlstrom
-2020-07-20 to 2020-07-20
+2020-07-20 to 2021-05-01
 
 The directory "arch/package" holds a copy of the package build files for Arch
 Linux.
 
-TO BE DETERMINED: These files may be updated from the original build files via:
+TO BE DETERMINED:
+
+	These files may be updated from the original build files via:
 
     git subtree pull --prefix arch/package https://aur.archlinux.org/seq66-git.git master --squash
 
@@ -30,5 +32,28 @@ Discussions:
 Working with git subtree:
 
     https://www.atlassian.com/git/articles/alternatives-to-git-submodule-git-subtree
+
+Dependencies:
+
+libasound.so (alsa-lib-x205ta, alsa-lib-git, alsa-lib-minimal-git,
+	lib32-alsa-lib-minimal-git, lib32-alsa-lib-git, alsa-lib-a52pcm, alsa-lib,
+	lib32-alsa-lib)
+
+libjack.so (pipewire-jack-dropin, jack2-git, pipewire-jack-git, jack, jack2,
+	lib32-jack, lib32-jack2)
+
+liblo.so (liblo-ipv6, liblo)
+
+qt5-base (qt5-base-git, qt5-base-fractional-fix, qt5-base-headless)
+
+alsa-lib (alsa-lib-x205ta, alsa-lib-git, alsa-lib-minimal-git, alsa-lib-a52pcm)
+	(make)
+
+git (git-git) (make)
+
+jack (jack-git, jack-stub, jack-dbus, jack2-git, pipewire-jack-git, jack2)
+	(make)
+
+liblo (liblo-git, liblo-ipv6) (make)
 
 # vim: sw=4 ts=4 wm=4 et ft=sh

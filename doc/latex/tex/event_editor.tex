@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2016-01-02
-% \update      2021-01-28
+% \update      2021-05-01
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -353,8 +353,8 @@
       \item \textbf{Insert} (new event)
       \item \textbf{Modify} (selected event)
       \item \textbf{Clear} (all events)
-      \item \textbf{Save} (back to sequence)
-      \item \textbf{Dump} (events to console)
+      \item \textbf{Save} (back to pattern)
+      \item \textbf{Dump} (events to file)
    \end{enumber}
 
    \setcounter{ItemCounter}{0}      % Reset the ItemCounter for this list.
@@ -390,8 +390,17 @@
    in the pattern editor once this button is pressed.
 
    \itempar{Dump}{event editor!dump events}
-   Write the events to a console, useful mostly for further troubleshooting, as
-   it does not go through the event table.
+   Write the events to a text file in the same directory as the MIDI file, very
+   useful for troubleshooting.  The name of the file is of the form:
+
+   \begin{verbatim}
+      midi_file_name-pattern-#.text
+   \end{verbatim}
+
+   where '#' is the pattern number.  For example, if the loaded file is
+   \texttt{/home/user/miditunes/The\_Wild\_Bull.midi}, and the pattern is 9,
+   then the resulting dump-file is
+   \texttt{/home/user/miditunes/The\_Wild\_Bull-pattern-9.text}.
 
    Again, good luck with this tab.  Bug reports are appreciated.
 
