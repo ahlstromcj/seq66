@@ -349,12 +349,6 @@ OTOOL64 = @OTOOL64@
 #******************************************************************************
 # Items from configure.ac
 #-------------------------------------------------------------------------------
-#
-#  XPCCUT_LIBS is defined by the PKG_CHECK_MODULES macro.  The xpccut
-#  library must be installed officially in order to be used to build the
-#  unit-test application of the xpc library.
-#
-#-------------------------------------------------------------------------------
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -394,10 +388,6 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 XMKMF = @XMKMF@
-XPCCUTPP_CFLAGS = @XPCCUTPP_CFLAGS@
-XPCCUTPP_LIBS = @XPCCUTPP_LIBS@
-XPCCUT_CFLAGS = @XPCCUT_CFLAGS@
-XPCCUT_LIBS = @XPCCUT_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
 X_LIBS = @X_LIBS@
