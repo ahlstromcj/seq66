@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2020-12-10
- * \updates       2021-03-15
+ * \updates       2021-05-02
  * \license       GNU GPLv2 or above
  *
  *  The listbase provides common code for the clockslist and inputslist
@@ -32,6 +32,7 @@
  */
 
 #include <iostream>                     /* std::cout, etc.                  */
+#include "cfg/settings.hpp"             /* seq66::rc() accessor             */
 #include "play/listsbase.hpp"           /* seq66::listsbase class           */
 #include "util/calculations.hpp"        /* seq66::extract_port_names()      */
 #include "util/strfunctions.hpp"        /* seq66::strncompare()             */
@@ -280,15 +281,25 @@ std::string
 listsbase::extract_nickname (const std::string & name) const
 {
     std::string result;
-    if (count_colons(name) > 2)
+    int colons = count_colons(name);
+    if (colons > 2)
     {
-        auto cpos = name.find_first_of(":");
-        auto spos = name.find_first_of(" ", cpos);
-        if (spos != std::string::npos)
+        if (rc().with_jack_midi())
         {
-            ++spos;
-            cpos = name.find_first_of(":", cpos + 1);
-            result = name.substr(spos, cpos - spos);
+            auto cpos = name.find_last_of(":");
+            ++cpos;
+            result = name.substr(cpos);
+        }
+        else
+        {
+            auto cpos = name.find_first_of(":");
+            auto spos = name.find_first_of(" ", cpos);
+            if (spos != std::string::npos)
+            {
+                ++spos;
+                cpos = name.find_first_of(":", cpos + 1);
+                result = name.substr(spos, cpos - spos);
+            }
         }
     }
     else
