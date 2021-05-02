@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-14
- * \updates       2021-04-06
+ * \updates       2021-05-02
  * \license       GNU GPLv2 or above
  *
  *  This module was created from code that existed in the performer object.
@@ -177,6 +177,12 @@ jack_dummy_callback (jack_nframes_t nframes, void * arg)
 }
 
 /**
+ *  On 2021-05-02 we reverted some of the code in this function to the code
+ *  present in the Seq64 version.  This seems to solve issue #51 where
+ *  running JACK transport under Arch/KXStudio environments causes very iffy
+ *  playback, with either multiple repetitions of Note Ons or notes being dropped
+ *  from complex tunes.
+ *
  *  Implemented second patch for JACK Transport from freddix/seq66 GitHub
  *  project, to allow seq66 to follow JACK transport.
  *  For more advanced ideas, see the MetronomeJack::process_callback()
@@ -214,37 +220,47 @@ jack_transport_callback (jack_nframes_t /*nframes*/, void * arg)
     jack_assistant * j = (jack_assistant *)(arg);
     if (not_nullptr(j))
     {
-        jack_position_t pos;
-        performer & p = j->m_jack_parent;   /* if (! p.is_running()) */
-        jack_transport_state_t s = jack_transport_query(j->client(), &pos);
-        if (j->is_slave())
-        {
-            if (j->parent().jack_set_beats_per_minute(pos.beats_per_minute))
-            {
-#if defined SEQ66_PLATFORM_DEBUG_TMI
-                printf("BPM = %f\n", pos.beats_per_minute);
-#endif
-            }
-        }
-        if (s == JackTransportStopped)
+        performer & p = j->m_jack_parent;
+        if (! p.is_running())
         {
             /*
-             * Don't start, just reposition transport marker.
+             * For start or for FF/RW/key-p when not running.  If we're stopped,
+             * we need to start, otherwise we need to reposition the transport
+             * marker.  Not sure if the code in the ! j->m_jack_master
+             * clause is necessary, it's not in Seq32.
              */
 
-            long tick = j->current_jack_position();
-            long diff = tick - p.jack_stop_tick();
-            if (diff != 0)                  // was (diff > 0) 2021-03-30
+            jack_position_t pos;
+            jack_transport_state_t s = jack_transport_query(j->client(), &pos);
+            if (! j->is_master())                       /* j->is_slave()    */
             {
-                p.set_reposition();
-                p.set_start_tick(tick);
-                p.jack_stop_tick(tick);     // j->jack_stop_tick(tick);
+                if (pos.beats_per_minute > 1.0)         /* a sanity check   */
+                {
+                    static double s_old_bpm = 0.0;
+                    if (pos.beats_per_minute != s_old_bpm)
+                    {
+                        s_old_bpm = pos.beats_per_minute;
+                        infoprintf("BPM = %f\n", pos.beats_per_minute);
+                        j->parent().set_beats_per_minute(pos.beats_per_minute);
+                    }
+                }
             }
-        }
-        else /* if (s==JackTransportStarting || s==JackTransportRolling) */
-        {
-            j->m_jack_transport_state_last = JackTransportStarting;
-            p.inner_start();
+            if (s == JackTransportRolling || s == JackTransportStarting)
+            {
+                j->m_jack_transport_state_last = JackTransportStarting;
+                p.inner_start();
+            }
+            else                            /* reposition transport marker  */
+            {
+                long tick = j->current_jack_position(/*(void *) j*/);
+                long diff = tick - j->jack_stop_tick();
+                if (diff != 0)
+                {
+                    p.set_reposition();
+                    p.set_start_tick(tick);
+                    j->jack_stop_tick(tick);
+                }
+            }
         }
     }
     return 0;
@@ -532,14 +548,14 @@ jack_assistant::jack_assistant
     m_jsession_ev               (nullptr),
 #endif
     m_jack_running              (false),
-    m_timebase                  (timebase::none),
+    m_timebase                  (timebase::none),   /* or slave, master...  */
 #if defined ENABLE_PROPOSED_FUNCTIONS
     m_timebase_tracking         (-1),
 #endif
     m_jack_frame_rate           (0),
     m_toggle_jack               (false),
     m_jack_stop_tick            (0),
-    m_follow_transport          (true),         /* performer::follow_progress() */
+    m_follow_transport          (true),
     m_ppqn                      (choose_ppqn(ppqn)),
     m_beats_per_measure         (bpmeasure),
     m_beat_width                (beatwidth),
@@ -767,10 +783,6 @@ jack_assistant::init ()
             }
             else
             {
-                /*
-                 * seq66 doesn't set this flag, but that seems incorrect.
-                 */
-
                 m_jack_running = false;
                 m_timebase = timebase::slave;
                 return error_message("jack_set_timebase_callback() failed");
@@ -810,7 +822,7 @@ jack_assistant::deinit ()
     if (m_jack_running)
     {
         m_jack_running = false;
-        if (m_timebase == timebase::master)
+        if (is_master())
         {
             m_timebase = timebase::none;
             if (jack_release_timebase(m_jack_client) != 0)
@@ -1017,7 +1029,7 @@ jack_assistant::position (bool songmode, midipulse tick)
     uint64_t tick_rate = (uint64_t(m_jack_frame_rate) * tick * 60.0);
     long tpb_bpm = ticks_per_beat * beats_per_minute * 4.0 / m_beat_width;
     uint64_t jack_frame = tick_rate / tpb_bpm;
-    if (m_timebase == timebase::master)
+    if (is_master())
     {
         /*
          * We don't want to do this unless we are JACK Master.  Otherwise,
@@ -1176,6 +1188,15 @@ jack_assistant::sync (jack_transport_state_t state)
     std::string sname = jack_state_name(state);
     printf("sync(%s)\n", sname.c_str());
 #endif
+
+    if (state == JackTransportStarting)
+        parent().inner_start();
+
+    /*
+     * 2021-05-02 for issue #51.  Added this code found in the
+     * switch statement in the Seq64 version of this function.
+     */
+
     return result;
 }
 
@@ -1295,10 +1316,9 @@ jack_session_callback (jack_session_event_t * ev, void * arg)
 {
     jack_assistant * jack = (jack_assistant *)(arg);
     jack->m_jsession_ev = ev;
+
     /*
-     *
-    jack->parent().gui().jack_idle_connect(*jack);      // see note above
-     *
+     * jack->parent().gui().jack_idle_connect(*jack);   // see note above
      */
 }
 

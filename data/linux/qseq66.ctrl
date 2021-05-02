@@ -43,8 +43,8 @@ load-midi-controls = true
 control-buss = 0xFF
 midi-enabled = false
 button-offset = 0
-button-rows = 0
-button-columns = 0
+button-rows = 4
+button-columns = 8
 
 # This style of control stanza incorporates key control as well,
 # but keys support only 'toggle', and key-release is an 'invert'.

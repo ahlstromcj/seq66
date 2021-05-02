@@ -6,7 +6,7 @@
  * \library       seq66 application
  * \author        Gary P. Scavone; severe refactoring by Chris Ahlstrom
  * \date          2016-11-14
- * \updates       2020-12-15
+ * \updates       2021-05-02
  * \license       See the rtexmidi.lic file.  Too big for a header file.
  *
  *  Written primarily by Alexander Svetalkin, with updates for delta time by
@@ -284,18 +284,28 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
                     }
                     else
 #endif
-                    (void) rtindata->queue().add(message);
+                    if (! rtindata->queue().add(message))
+                        break;              /* EXPERIMENTAL ca 2021-05-02   */
                 }
             }
             else
             {
                 if (rc == ENODATA)
                 {
-                    errprintf("jack_process_rtmidi_input() ENODATA = %x", rc);
+                    /*
+                     * ENODATA = 61: No data available.
+                     */
+
+                    errprintf("process rtmidi input: ENODATA = %d", rc);
                 }
                 else
                 {
-                    errprintf("jack_process_rtmidi_input() ERROR = %x", rc);
+                    /*
+                     * ENOBUFS = 105: No buffer space available can happen.
+                     */
+
+                    errprintf("process rtmidi input: ERROR = %d", rc);
+                    break;
                 }
             }
         }

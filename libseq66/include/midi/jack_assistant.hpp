@@ -347,12 +347,7 @@ public:
 
     static void show_position (const jack_position_t & pos);
 
-    /**
-     * \getter m_jack_parent
-     *      Needed for external callbacks.
-     */
-
-    performer & parent ()
+    performer & parent ()       /* getter needed for external callbacks.    */
     {
         return m_jack_parent;
     }

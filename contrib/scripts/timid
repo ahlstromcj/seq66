@@ -4,7 +4,7 @@
 # \file        timid
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2021-04-19 to 2021-04-19
+# \date        2021-04-19 to 2021-05-01
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
@@ -22,6 +22,8 @@
 if [ "$1" == "kill" ] ; then
 
    killall timidity
+   sleep 1
+   aplaymidi -l
 
 else
 

@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.1 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-04-29
+2019-04-13 to 2021-05-01
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -79,6 +79,9 @@ UI:
     Make sure the palette line color is being followed.
 
     Clean out all of the unused options in the 'usr' file.
+
+    Running in JACK now shows "seq66" for all automatic connections, instead
+    of the official name of the connected device or software port!
 
 Automation:
 
