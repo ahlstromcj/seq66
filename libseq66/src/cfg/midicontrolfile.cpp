@@ -828,7 +828,7 @@ midicontrolfile::read_mutes_triple
 bool
 midicontrolfile::write_stream (std::ofstream & file)
 {
-    file << "# Seq66 0.92.0 (and above) MIDI control configuration file\n"
+    file << "# Seq66 0.93.1 (and above) MIDI control configuration file\n"
         << "#\n"
         << "# " << name() << "\n"
         << "# Written on " << current_date_time() << "\n"

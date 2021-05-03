@@ -88,7 +88,7 @@ Windows, and using a conventional source tarball.
         *   Fixed issue #50, made the slot text color the same as the label
             color, and provided a "secret" default color that will cause the
             text to match the theme.  This can be overridden by a palette file.
-        *   Tentatively fixed issue #51, where playback with JACK transport
+        *   Fixed issue #51 (show-stopper!), where playback with JACK transport
             enable was extremely erratic on some platforms.
         *   Add clearing of the performer's "play-set" for "File / New" to
             prevent the previous song from being playable. :-D
