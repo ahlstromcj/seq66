@@ -1,7 +1,7 @@
 # README for Seq66 0.93.1
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-02
+2015-09-10 to 2021-05-03
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -79,11 +79,15 @@ Windows, and using a conventional source tarball.
 ## Recent Changes
 
     *   Version 0.93.1:
+        *   Work in progress on issue #47; added a keyboard-layout option to the
+            'ctrl' file to disable auto-shift and tweak the internal key-map for
+            some keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
+        *   Improved group-learn key control.
         *   Fixed issue #49, mute-group issues, plus a bug in saving mutes to
             the MIDI file.  Added a couple more flags to the 'mutes' file.
-        *   For issue #50, made the slot text color the same as the label color,
-            and provided a "secret" default color that will cause the text to
-            match the theme.  This can be overridden by a palette file.
+        *   Fixed issue #50, made the slot text color the same as the label
+            color, and provided a "secret" default color that will cause the
+            text to match the theme.  This can be overridden by a palette file.
         *   Tentatively fixed issue #51, where playback with JACK transport
             enable was extremely erratic on some platforms.
         *   Add clearing of the performer's "play-set" for "File / New" to
@@ -98,10 +102,6 @@ Windows, and using a conventional source tarball.
         *   Added a loop-count for live playback of a pattern.  0 means normal
             infinite looping; 1 means "one-shot"; and higher numbers will work.
             Stored with the pattern in the MIDI file.
-        *   While fixing issue #47, added a keyboard-layout option to the 'ctrl'
-            file to disable auto-shift and tweak the internal key-map for some
-            keyboards.  Added an "AZERTY" 'ctrl' file to the installation.
-            Improved group-learn key control.
     *   Version 0.93.0:
         *   Added a transpose value to song editor triggers to support shifting
             patterns automatically during Song play.  Added an 'rc' option to
