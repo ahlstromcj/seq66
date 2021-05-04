@@ -4,7 +4,7 @@
 "
 "  Language:      C
 "  Maintainer:    Chris Ahlstrom <ahlstromcj@users.sourceforge.net>
-"  Last Change:   2006-08-04 to 2019-02-03
+"  Last Change:   2006-08-04 to 2021-05-04
 "  Project:       XPC Suite library project
 "  License:       None.  Use it in any manner whatsover, and don't blame me.
 "  Usage:
@@ -98,7 +98,7 @@ syn keyword XPCC xpc_strerrnoprint_func xpc_strerrprint_func
 syn keyword XPCC xpc_infoprint_func xpc_warnprint_func
 syn keyword XPCC safe_array_delete safe_ptr_delete safe_pointer_delete thisptr
 syn keyword XPCC set_nullptr set_posix_error set_posix_success
-syn keyword XPCC bussbyte colorbyte ctrlkey ctrlop
+syn keyword XPCC bussbyte colorbyte ctrlkey ctrlop eventkey
 syn keyword XPCC midibool midibooleans midibyte midibyte_t midilong
 syn keyword XPCC midipulse midishort midibpm
 

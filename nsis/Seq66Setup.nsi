@@ -4,7 +4,7 @@
 ; Author:       Chris Ahlstrom
 ; Date:         2018-05-26
 ; Updated:      2021-04-17
-; Version:      0.93.1
+; Version:      0.94.0
 ;
 ;       Installation is silent.
 ;

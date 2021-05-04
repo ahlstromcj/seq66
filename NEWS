@@ -1,10 +1,24 @@
-NEWS for Sequencer66 0.93.1
+NEWS for Sequencer66 0.93.2
 Chris Ahlstrom
-2015-07-10 to 2021-04-18
+2015-07-10 to 2021-05-03
 
 This file collects major changes that are older and clutter up
 the README file.  This file should be called "OLD NEWS".
 
+    -   Version 0.92.2:
+        -   Added a Qt "style-sheet" configuration it to the 'usr' file. It
+            can be used to alter the appearance of the application beyond what
+            a palette can do.  A sample 'qss' file is provided.
+        -   Fixed PPQN modification, added user-interface and 'usr'
+            configuration to change the default PPQN from 192.
+        -   Fixed many issues with changing the time signature.
+        -   Fixed creation of new configuration files.
+        -   Fixed port-mapping for MIDI output, control, and status display.
+        -   Removed the external set-master; use the set-master tab.
+        -   Tightened meta-events and set-handling.
+        -   More fixes to Song recording; added a Snap button for it.
+        -   Fixed the rendering of the beat indicator and pattern fonts.
+        -   Updated the man pages and the documentation.
     -   Version 0.92.1:
         -   Fixed issue #42 by adding scrollbars to I/O lists in Preferences
             when there are many ports on the system; also increased port
@@ -18,7 +32,7 @@ the README file.  This file should be called "OLD NEWS".
         -   Improved handling of MIDI I/O control of Seq66.  Added more
             automation-display events, more testing.
         -   Updated documentation, including a ODF spreadsheet for the MIDI
-            control configuration of the -Launchpad Mini*.
+            control configuration of the Launchpad Mini.
     -   Version 0.92.0:
         -   Fixed issue #34: "seq66 does not follow jack_transport tempo changes"
         -   Fixed issues with applying 'usr' buss and instrument names to the

@@ -28,14 +28,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-28
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  *
  */
 
 #include <string>                       /* std::string                      */
-
-#include "midi/midibytes.hpp"           /* the ctrlkey type definition      */
+#include "midi/midibytes.hpp"           /* ctrlkey & eventkey types         */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -65,16 +64,31 @@ enum class layout
 }   // namespace keyboard
 
 /*
- * Free functions and data.
+ * Free functions in the seq66 namespace.
  */
 
+extern ctrlkey arrow_left ();
+extern ctrlkey arrow_up ();
+extern ctrlkey arrow_right ();
+extern ctrlkey arrow_down ();
+extern std::string modifier_names (unsigned kmod);
 extern const std::string & undefined_qt_key_name ();
 extern bool is_undefined_qt_key (const std::string & keyname);
 extern int keymap_size ();
 extern bool is_invalid_ordinal (ctrlkey ordinal);
 extern unsigned ordinal_to_qt_key (ctrlkey ordinal);
-extern ctrlkey qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier);
-extern std::string qt_modkey_name (ctrlkey qtkey, unsigned qtmodifier);
+extern ctrlkey qt_modkey_ordinal
+(
+    eventkey qtkey,
+    unsigned qtmodifier,
+    eventkey virtkey = 0
+);
+extern std::string qt_modkey_name
+(
+    eventkey qtkey,
+    unsigned qtmodifier,
+    eventkey virtkey = 0
+);
 extern ctrlkey qt_keyname_ordinal (const std::string & name);
 extern std::string qt_ordinal_keyname (ctrlkey qtkey);
 extern void modify_keyboard_layout (keyboard::layout el);

@@ -213,7 +213,7 @@ jack_process_rtmidi_input (jack_nframes_t nframes, void * arg)
 {
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
-#ifdef SEQ66_USE_DEBUG_OUTPUT
+#if defined SEQ66_USE_DEBUG_OUTPUT
     rtmidi_in_data * rtindata = jackdata->m_jack_rtmidiin;
     static bool s_null_detected = false;
     if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
@@ -362,7 +362,7 @@ jack_process_rtmidi_output (jack_nframes_t nframes, void * arg)
     static size_t s_offset = 0;
     midi_jack_data * jackdata = reinterpret_cast<midi_jack_data *>(arg);
 
-#ifdef SEQ66_USE_DEBUG_OUTPUT
+#if defined SEQ66_USE_DEBUG_OUTPUT
     static bool s_null_detected = false;
     if (is_nullptr(jackdata->m_jack_port))          /* is port created?     */
     {
@@ -982,7 +982,7 @@ midi_jack::api_clock (midipulse tick)
 {
     if (tick >= 0)
     {
-#ifdef PLATFORM_DEBUG_TMI
+#if defined SEQ66_PLATFORM_DEBUG_TMI
         midibase::show_clock("JACK", tick);
 #endif
     }
@@ -1407,7 +1407,7 @@ midi_in_jack::api_get_midi_event (event * inev)
             midibyte st = mm[0];
 
 #if defined SEQ66_PLATFORM_DEBUG
-            if (rc().verbose())
+            if (rc().verbose() && st >= EVENT_MIDI_REALTIME)
             {
                 static int s_count = 0;
                 char c = '.';

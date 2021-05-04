@@ -1,6 +1,6 @@
-TO DO for Seq66 0.93.1 (Sequencer64 refactored for C++14 and Qt)
+TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-01
+2019-04-13 to 2021-05-03
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -222,55 +222,7 @@ EXTANT ISSUES:
     timeline already supports arbitrary start/end points for pattern "chunks",
     so it seems like this should already be possible. Thoughts?
 
-#48 JACK-midi self connections
-    With NSM and [manual ports] enabled, inputs ports are not created when I
-    load the session.  Steps to reproduce :
-
-      * Create a NSM session with a jack-patch.
-      * Add qseq66
-      * Save and quit the session
-      * Change .rc file in the session folder to enable [manual-ports], then
-        save the file.
-      * Open your NSM session, use MIDI-input preference to create ports,
-        then make connections.
-      * Save and reload the session.
-
-    Also, [manual-ports] is off, then seq66 handles connections. IMO, this
-    behavior should be disabled with NSM, because a session manager is
-    supposed to store/restore the connections.
-
-    (I have used Ray-Session , but I guess it acts as others NSM managers)
-
-    Note:  Probably need an option to not auto-connect while NSM is running.
-
-#49 Unable to unmute loops after group learn
-
-    I found an issue with group learn. Loops learnt as muted in a mute group
-    are mute blocked, pressing key or click on it has no effect. How to
-    reproduce:
-
-    - open seq66
-    - open new project
-    - create loop 0, draw random notes then close editor
-    - do the same for loops 1 and 2
-    - unmute loops 0 and 1
-    - press learn key and assign a key, close success popup window
-    - unmute loop 2
-    - press play
-    - press mute key you assigned : the 3 loops are muted (I expected here
-      loop 2 muted)
-    - press mute key again : loops 0 and 1 are armed, this is the correct
-      state I saved and expected last step
-    - press loop 2 key or click on it : loop stay muted
-    - press stop : I can now unmute/mute loop 2 but if I press play the loop
-      is automatically muted and blocked on start
-
-    I tried with several loops, all loops learnt as muted do the same
-
-    STATUS: Testing with en_US.UTF-8 setup, setxkbmap us.  The big observation
-    is that, once a mute-group is applied, no pattern can be enabled by a
-    hotkey/click during play, and if enabled before play, the pattern mutes
-    when play commences.
+#47 Change the key map
 
     Also, mutes are not being saved to the MIDI file!  Nor are they cleared
     with File / New (which might be a feature, not a bug).
@@ -294,13 +246,26 @@ EXTANT ISSUES:
     Key `^` code `0x5e` needs to be pressed twice, do not know if yours 6/^ on
     QWERTZ/QWERTY do the same.  Maybe it will be impossible to assign...
 
-#50 White text on Yellow is unreadable
+#48 JACK-midi self connections
+    With NSM and [manual ports] enabled, inputs ports are not created when I
+    load the session.  Steps to reproduce :
 
-    I have recently updated Seq66 and I want to do some live music with it on
-    my next livestream.  On my system (Manajro KDE, using Breeze-dark theme)
-    the default pattern look is  Yellow BG and White text - this is quite
-    unreadable. Is it possible to somehow make Yellow BG use black text
-    instead?
+      * Create a NSM session with a jack-patch.
+      * Add qseq66
+      * Save and quit the session
+      * Change .rc file in the session folder to enable [manual-ports], then
+        save the file.
+      * Open your NSM session, use MIDI-input preference to create ports,
+        then make connections.
+      * Save and reload the session.
+
+    Also, [manual-ports] is off, then seq66 handles connections. IMO, this
+    behavior should be disabled with NSM, because a session manager is
+    supposed to store/restore the connections.
+
+    (I have used Ray-Session , but I guess it acts as others NSM managers)
+
+    Note:  Probably need an option to not auto-connect while NSM is running.
 
 PATTERNS:
 

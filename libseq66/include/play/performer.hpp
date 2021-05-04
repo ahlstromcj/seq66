@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-24
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -501,7 +501,7 @@ private:
      *  running.  Replaces m_inputing and m_outputing.
      */
 
-    bool m_io_active;
+    std::atomic<bool> m_io_active;
 
     /**
      *  Indicates that playback is running.  However, this flag is conflated
@@ -3113,12 +3113,12 @@ private:
 
 private:
 
-    void show_ordinal_error (seq66::ctrlkey ordinal, const std::string & tag);
+    void show_ordinal_error (ctrlkey ordinal, const std::string & tag);
 
     static void print_parameters
     (
         const std::string & tag,
-        seq66::automation::action a,
+        automation::action a,
         int d0, int d1, bool inverse
     );
 
@@ -3194,11 +3194,11 @@ public:
 
     bool loop_control                   /* [loop-control]       */
     (
-        seq66::automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1, bool inverse
     );
     bool mute_group_control             /* [mute-group-control] */
     (
-        seq66::automation::action a, int d0, int d1, bool inverse
+        automation::action a, int d0, int d1, bool inverse
     );
     bool populate_default_ops ();
     bool add_automation                 /* [automation-control] */

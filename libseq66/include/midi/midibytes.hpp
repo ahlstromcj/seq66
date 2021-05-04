@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-04-20
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -107,21 +107,33 @@ using midilong = unsigned long;
 /**
  *  This value is used for representing pattern, mute-group, and automation
  *  operations.  It overlaps with automation::slot values.
+ *
+ *  Currently unused.
  */
 
 using ctrlop = unsigned short;
 
 /**
  *  This value is used for representing pattern, mute-group, and automation
- *  keystrokes.
+ *  keystrokes.  It is meant to range from 0x00 to 0xff, and is also known
+ *  as the "ordinal", a unique value that can map to a control operation.
  */
 
-using ctrlkey = unsigned;
+using ctrlkey = unsigned char;
 
 /**
- *  Provides a way to save a sequence palette color in a single byte.
- *  This value is signed since we need a value of -1 to indicate no color, and
- *  0 to 127 to indicate the index that "points" to a palette color.
+ *  This value can hold the result of a call to QKeyEvent::key().  It is
+ *  common in GUI frameworks to have key-codes that require an unsigned value
+ *  to fit.
+ */
+
+using eventkey = unsigned;
+
+/**
+ *  Provides a way to save a sequence palette color in a single byte.  This
+ *  value is signed since we need a value of -1 to indicate no color, and 0 to
+ *  127 to indicate the index that "points" to a palette color. (The actual
+ *  limit is currently 31, though, which ought to be enough colors.)
  */
 
 using colorbyte = char;

@@ -1,4 +1,4 @@
-readme.txt for Seq66 0.93.1
+readme.txt for Seq66 0.93.2
 Chris Ahlstrom
 2015-09-10 to 2021-05-03
 
@@ -20,7 +20,7 @@ packages:
 
     https://github.com/ahlstromcj/sequencer64-packages.git
 
-See the seq66/0.93.0 directory for the Windows installer.
+See the seq66/0.93 directory for the Windows installer.
 
 Windows support:
 

@@ -41,7 +41,7 @@
 #include <functional>                   /* std::function, function objects  */
 
 #include "qslivebase.hpp"               /* seq66::qslivebase ABC            */
-#include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
+// #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 
 class QMenu;

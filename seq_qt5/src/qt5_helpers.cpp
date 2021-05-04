@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-03-14
- * \updates       2021-04-29
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  *
  */
@@ -33,7 +33,7 @@
 #include <QKeyEvent>
 #include <QPushButton>
 
-#include "cfg/settings.hpp"             /* seq66::last_used_dir()           */
+#include "cfg/settings.hpp"             /* seq66::rc().home_config_dir...() */
 #include "util/filefunctions.hpp"       /* seq66 file-name manipulations    */
 #include "qt5_helpers.hpp"
 
@@ -52,26 +52,38 @@ namespace seq66
 static keystroke
 qt_keystroke_test (QKeyEvent * event, keystroke::action act)
 {
-    seq66::ctrlkey k = event->key();
     unsigned kmods = static_cast<unsigned>(event->modifiers());
-    seq66::ctrlkey ordinal = seq66::qt_modkey_ordinal(k, kmods);
+    eventkey k = event->key();
+    ctrlkey ordinal = qt_modkey_ordinal(k, kmods);
     bool press = act == keystroke::action::press;
     keystroke t = keystroke(ordinal, press);
     std::string ktext = event->text().toStdString();
     std::string kname = t.name();
+    std::string modifiers = modifier_names(kmods);
     unsigned scode = unsigned(event->nativeScanCode());     /* scan code    */
     unsigned kcode = unsigned(event->nativeVirtualKey());   /* key sym      */
     printf
     (
-        "Key #0x%02x %s '%s' scan = 0x%x; keycode = 0x%x ordinal %u\n",
-        k, press ? "Press  " : "Release", ktext.c_str(), scode, kcode, ordinal
+        "Event key #0x%02x mod %s '%s' %s codes: scan 0x%x key 0x%x ord %u\n",
+        k, modifiers.c_str(), ktext.c_str(), press ? "press" : "release",
+        scode, kcode, ordinal
     );
     return keystroke(0, press);                 /* disable the key action   */
 }
 
 /**
- *  Given a keystroke from a Qt 5 GUI, this function returns an "ordinal"
- *  version of the keystroke.
+ *  Given a keystroke from a Qt 5 GUI, this function returns an "ordinal" version of the
+ *  keystroke.  Note that there are many keystrokes that can have the same event key value.
+ *  For example: Ctrl-a, Shift-a, and a.  In cases like that, we have to check the modifiers.
+ *
+ *  But the QKeyEvent::modifiers() function cannot always be trusted. The user can confuse it
+ *  by pressing both Shift keys simultaneously and releasing one of them, for example.
+ *
+ *  We can also check the nativeVirtualKey() result for the event.  Even that can be fooled
+ *  by a change in the keyboard encoding.  Yeesh!
+ *
+ *  The qt_modkey_ordinal() function in the keymap module can use all these codes to try to
+ *  figure out the proper ordinal to return.
  *
  * \param event
  *      The putative Qt 5 keystroke event.
@@ -81,28 +93,29 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
  *
  * \param testing
  *      If true (the default is false), then the lookup results are shown and
- *      a null keystroke is returned.  We have a feeling we'll be looking at a
- *      more international key-maps in the future.
+ *      the true keystroke is returned to be acted on.  We have a feeling
+ *      we'll be looking at a more international key-maps in the future.
+ *      To avoid problematic actions getting in the way of the test, call
+ *      qt_keystroke_test() directly, as done in the qslivegrid class when
+ *      SEQ66_KEY_TESTING is defined.
  *
  * \return
- *      Returns an object that makes the key event easier to use.
+ *      Returns an object that makes the key event easier to use.  It needs to hold only the
+ *      ordinal and whether the key was pressed or released.
  */
 
 keystroke
 qt_keystroke (QKeyEvent * event, keystroke::action act, bool testing)
 {
     if (testing)
-    {
-        return qt_keystroke_test(event, act);
-    }
-    else
-    {
-        seq66::ctrlkey k = event->key();
-        unsigned kmods = static_cast<unsigned>(event->modifiers());
-        seq66::ctrlkey ordinal = seq66::qt_modkey_ordinal(k, kmods);
-        bool press = act == keystroke::action::press;
-        return keystroke(ordinal, press);
-    }
+        (void) qt_keystroke_test(event, act);           /* show key details */
+
+    unsigned kmods = static_cast<unsigned>(event->modifiers());
+    eventkey k = event->key();
+    eventkey v = event->nativeVirtualKey();
+    ctrlkey ordinal = qt_modkey_ordinal(k, kmods, v);
+    bool press = act == keystroke::action::press;
+    return keystroke(ordinal, press);
 }
 
 /**

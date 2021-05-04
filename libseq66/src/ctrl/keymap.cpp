@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-04-30
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  */
 
@@ -45,13 +45,78 @@ namespace seq66
  *  table readable.
  */
 
-static const int KNONE   = 0x00000000;
-static const int KSHIFT  = 0x02000000;
-static const int KCTRL   = 0x04000000;
-static const int KALT    = 0x08000000;
-static const int KMETA   = 0x10000000;
-static const int KEYPAD  = 0x20000000;
-static const int KGROUP  = 0x40000000;
+enum kmodifiers
+{
+    KNONE   = 0x00000000,
+    KSHIFT  = 0x02000000,
+    KCTRL   = 0x04000000,
+    KALT    = 0x08000000,
+    KMETA   = 0x10000000,
+    KEYPAD  = 0x20000000,
+    KGROUP  = 0x40000000
+};
+
+std::string
+modifier_names (unsigned kmod)
+{
+    std::string result;
+    if (kmod == KNONE)
+    {
+        result = "None";
+    }
+    else
+    {
+        if (kmod & KSHIFT)
+            result += "Shift ";
+
+        if (kmod & KCTRL)
+            result += "Ctrl ";
+
+        if (kmod & KALT)
+            result += "Alt ";
+
+        if (kmod & KMETA)
+            result += "Meta ";
+
+        if (kmod & KEYPAD)
+            result += "Keypad ";
+
+        if (kmod & KGROUP)
+            result += "Group ";
+    }
+    return result;
+}
+
+ctrlkey
+arrow_left ()
+{
+    return 0x92;
+}
+
+ctrlkey
+arrow_up ()
+{
+    return 0x93;
+}
+
+ctrlkey
+arrow_right ()
+{
+    return 0x94;
+}
+
+ctrlkey
+arrow_down ()
+{
+    return 0x95;
+}
+
+/**
+ *  Indicates the start of section where expansion/foreign characters can be
+ *  placed.  Covers the ordinals from 0xe0 to 0xfe (31 characters).
+ */
+
+static const int s_expansion_start = 0xe0;
 
 /**
  *  Provides a data type for key name/value pairs.
@@ -64,16 +129,44 @@ struct qt_keycodes
      *  that character.  Up to almost 255 characters can be supported.  The
      *  incoming keystroke is analyzed and converted to this number.  Many of
      *  the values are ASCII values.
+     *
+     *  These ordinals are key-values in keycontainer::keymap for fast lookup
+     *  of the keys the application actually loaded from the 'ctrl' file at
+     *  startup.
      */
 
     ctrlkey qtk_ordinal;
 
     /**
-     *  Provides the incoming code presented to the application by Qt,
-     *  obtained by the QKeyEvent::key() function.
+     *  Provides the incoming key value presented to the application by Qt, as
+     *  obtained by the QKeyEvent :: key() function.  It is important to note
+     *  that this is NOT the ASCII value of the character.
      */
 
-    ctrlkey qtk_keycode;
+    eventkey qtk_keyevent;
+
+    /**
+     *  Provides the keycode for the key, as obtained by the QKeyEvent ::
+     *  nativeVirtualKey() function.  However, see this link:
+     *
+     *  https://forum.qt.io/topic/95527/
+     *      dealing-with-keyboard-layouts-for-input-on-multiple-platforms
+     *
+     *      "Each platform has a different set of virtual key codes. For
+     *      Windows, the list can be found here. For mac, it's in Events.h. As
+     *      a simple comparison to demonstrate that they are different, the
+     *      virtual key code for the letter key O on Windows is 0x4F, while on
+     *      mac the same key's code is 0x1F. Not to mention, I couldn't even
+     *      find any relevant info for Linux.
+     *
+     *      This makes it impossible to set good default settings that would
+     *      work on all platforms, forcing me to create separate defaults for
+     *      each platform (unlike key())."
+     *
+     *  But key() is layout-dependent!
+     */
+
+    eventkey qtk_virtkey;
 
     /**
      *  Provides our name for the keystroke.  These values are deliberately
@@ -102,13 +195,17 @@ struct qt_keycodes
  *  MetaModifier (0x10) bits need to be checked.  They are accessed via
  *  QKeyEvent::modifiers().
  *
- *      -   Code:       qtk_ordinal
- *      -   Qt Keycode: qtk_keycode
- *      -   Key Name:   qtk_keyname
- *      -   Modifier:   qtk_modifier
+ *      -   Code:           qtk_ordinal     [legal range is 0x01 to 0xfe]
+ *      -   Qt Key Event:   qtk_keyevent    [QKeyEvent::key(), unsigned]
+ *      -   Qt Virtual Key: qtk_virtkey     [QKeyEvent::nativeVirtualKey(), unsigned]
+ *      -   Key Name:       qtk_keyname
+ *      -   Modifier:       qtk_modifier    [QKeyEvent::modifiers(), unsigned]
  *
  *  By using the modifier, we can distinguish between various version of the
  *  same key, such as the normal PageDn and the keypad's PageDn.
+ *
+ *  A number of these keys (e.g. the keypad keys) are defined in Seq64's gdk_basic_keys.h
+ *  file, which we do not use here.
  *
  *  Also note that we restrict the keystroke names to 9 characters or less, to
  *  keep the MIDI control section readable.
@@ -135,149 +232,147 @@ qt_keys (int i)
     static qt_keycodes s_qt_keys [] =   /* modifiable from inside this module */
     {
         /*
-         *  Code        Qt     Key
-         * Ordinal    Keycode  Name        Modifier
+         *  Code        Qt      Qt      Key
+         * Ordinal   Key Event Virt Key Name        Modifier
          *
-         *                Ctrl-key section
+         * Ctrl-key section. It is best to avoid using Control keys to control loops, mutes,
+         * and automation.  Too much chance of interfering with the normal user interface.
          */
 
-        { 0x00,        0x40,  "NUL",        KCTRL  },    // ^@: Null
-        { 0x01,        0x41,  "SOH",        KCTRL  },    // ^A: Start of Heading
-        { 0x02,        0x42,  "STX",        KCTRL  },    // ^B: Start of Text
-        { 0x03,        0x43,  "ETX",        KCTRL  },    // ^C: End of Text
-        { 0x04,        0x44,  "EOT",        KCTRL  },    // ^D: End of Transmision
-        { 0x05,        0x45,  "ENQ",        KCTRL  },    // ^E: Enquiry
-        { 0x06,        0x46,  "ACK",        KCTRL  },    // ^F: Acknowledge
-        { 0x07,        0x47,  "BEL",        KCTRL  },    // ^G: Bell/beep
-        { 0x08,        0x48,  "BS",         KCTRL  },    // ^H: Backspace
-        { 0x09,        0x49,  "HT",         KCTRL  },    // ^I: Horizontal Tab
-        { 0x0a,        0x4a,  "LF",         KCTRL  },    // ^J: Line Feed
-        { 0x0b,        0x4b,  "VT",         KCTRL  },    // ^K: Vertical Tab
-        { 0x0c,        0x4c,  "FF",         KCTRL  },    // ^L: Form Feed
-        { 0x0d,        0x4d,  "CR",         KCTRL  },    // ^M: Carriage Return
-        { 0x0e,        0x4e,  "SO",         KCTRL  },    // ^N: Shift Out
-        { 0x0f,        0x4f,  "SI",         KCTRL  },    // ^O: Shift In
-        { 0x10,        0x50,  "DLE",        KCTRL  },    // ^P: Data Link Escape
-        { 0x11,        0x51,  "DC1",        KCTRL  },    // ^Q: Device Control 1
-        { 0x12,        0x52,  "DC2",        KCTRL  },    // ^R: Device Control 2
-        { 0x13,        0x53,  "DC3",        KCTRL  },    // ^S: Device Control 3
-        { 0x14,        0x54,  "DC4",        KCTRL  },    // ^T: Device Control 4
-        { 0x15,        0x55,  "NAK",        KCTRL  },    // ^U: Negative ACK
-        { 0x16,        0x56,  "SYN",        KCTRL  },    // ^V: Synchronous Idle
-        { 0x17,        0x57,  "ETB",        KCTRL  },    // ^W: End of Trans Block
-        { 0x18,        0x58,  "CAN",        KCTRL  },    // ^X: Cancel
-        { 0x19,        0x59,  "EM",         KCTRL  },    // ^Y: End of Medium
-        { 0x1a,        0x5a,  "SUB",        KCTRL  },    // ^Z: Substitute
-        { 0x1b,        0x5b,  "ESC",        KCTRL  },    // ^[: Escape
-        { 0x1c,        0x5c,  "FS",         KCTRL  },    // ^\: File Separator
-        { 0x1d,        0x5d,  "GS",         KCTRL  },    // ^]: Group Separator
-        { 0x1e,        0x5e,  "RS",         KCTRL  },    // ^^: Record Separator
-        { 0x1f,        0x5f,  "US",         KCTRL  },    // ^_: Unit Separator
+        { 0x00,        0x40,   0x60,  "NUL",        KCTRL  },    // ^@: Null
+        { 0x01,        0x41,   0x61,  "SOH",        KCTRL  },    // ^A: Start of Heading
+        { 0x02,        0x42,   0x62,  "STX",        KCTRL  },    // ^B: Start of Text
+        { 0x03,        0x43,   0x63,  "ETX",        KCTRL  },    // ^C: End of Text
+        { 0x04,        0x44,   0x64,  "EOT",        KCTRL  },    // ^D: End of Transmision
+        { 0x05,        0x45,   0x65,  "ENQ",        KCTRL  },    // ^E: Enquiry
+        { 0x06,        0x46,   0x66,  "ACK",        KCTRL  },    // ^F: Acknowledge
+        { 0x07,        0x47,   0x67,  "BEL",        KCTRL  },    // ^G: Bell/beep
+        { 0x08,        0x48,   0x68,  "BS",         KCTRL  },    // ^H: Backspace
+        { 0x09,        0x49,   0x69,  "HT",         KCTRL  },    // ^I: Horizontal Tab
+        { 0x0a,        0x4a,   0x6a,  "LF",         KCTRL  },    // ^J: Line Feed
+        { 0x0b,        0x4b,   0x6b,  "VT",         KCTRL  },    // ^K: Vertical Tab
+        { 0x0c,        0x4c,   0x6c,  "FF",         KCTRL  },    // ^L: Form Feed
+        { 0x0d,        0x4d,   0x6d,  "CR",         KCTRL  },    // ^M: Carriage Return
+        { 0x0e,        0x4e,   0x60,  "SO",         KCTRL  },    // ^N: Shift Out
+        { 0x0f,        0x4f,   0x6e,  "SI",         KCTRL  },    // ^O: Shift In
+        { 0x10,        0x50,   0x7f,  "DLE",        KCTRL  },    // ^P: Data Link Escape
+        { 0x11,        0x51,   0x71,  "DC1",        KCTRL  },    // ^Q: Device Control 1
+        { 0x12,        0x52,   0x72,  "DC2",        KCTRL  },    // ^R: Device Control 2
+        { 0x13,        0x53,   0x73,  "DC3",        KCTRL  },    // ^S: Device Control 3
+        { 0x14,        0x54,   0x74,  "DC4",        KCTRL  },    // ^T: Device Control 4
+        { 0x15,        0x55,   0x75,  "NAK",        KCTRL  },    // ^U: Negative ACK
+        { 0x16,        0x56,   0x76,  "SYN",        KCTRL  },    // ^V: Synchronous Idle
+        { 0x17,        0x57,   0x77,  "ETB",        KCTRL  },    // ^W: End of Trans Block
+        { 0x18,        0x58,   0x78,  "CAN",        KCTRL  },    // ^X: Cancel
+        { 0x19,        0x59,   0x79,  "EM",         KCTRL  },    // ^Y: End of Medium
+        { 0x1a,        0x5a,   0x7a,  "SUB",        KCTRL  },    // ^Z: Substitute
+        { 0x1b,        0x5b,   0x7b,  "ESC",        KCTRL  },    // ^[: Escape
+        { 0x1c,        0x5c,   0x7c,  "FS",         KCTRL  },    // ^\: File Separator
+        { 0x1d,        0x5d,   0x7d,  "GS",         KCTRL  },    // ^]: Group Separator
+        { 0x1e,        0x5e,   0x7e,  "RS",  KSHIFT|KCTRL  },    // ^^: Record Separator
+        { 0x1f,        0x5f,   0x7f,  "US",  KSHIFT|KCTRL  },    // ^_???: Unit Separator
 
         /*
-         * Block of Qt-based code moved to below.
-         *
-         * Code   Qt Keycode   Key Name      Modifier
-         *
-         *            Unmodified key section
+         * Code        Qt           Key Name      Modifier
+         *          Key Event
          */
 
-        { 0x20,        0x20,  "Space",      KNONE  },    // Space (" " not good)
-        { 0x21,        0x21,  "!",          KSHIFT },    // Exclam
-        { 0x22,        0x22,  "\"",         KSHIFT },    // QuoteDbl
-        { 0x23,        0x23,  "#",          KSHIFT },    // NumberSign
-        { 0x24,        0x24,  "$",          KSHIFT },    // Dollar
-        { 0x25,        0x25,  "%",          KSHIFT },    // Percent
-        { 0x26,        0x26,  "&",          KSHIFT },    // Ampersand
-        { 0x27,        0x27,  "'",          KSHIFT },    // Apostrophe
-        { 0x28,        0x28,  "(",          KSHIFT },    // ParenLeft
-        { 0x29,        0x29,  ")",          KSHIFT },    // ParenRight
-        { 0x2a,        0x2a,  "*",          KSHIFT },    // Asterisk
-        { 0x2b,        0x2b,  "+",          KSHIFT },    // Plus
-        { 0x2c,        0x2c,  ",",          KNONE  },    // Comma
-        { 0x2d,        0x2d,  "-",          KNONE  },    // Minus
-        { 0x2e,        0x2e,  ".",          KNONE  },    // Period
-        { 0x2f,        0x2f,  "/",          KNONE  },    // Slash
-        { 0x30,        0x30,  "0",          KNONE  },
-        { 0x31,        0x31,  "1",          KNONE  },
-        { 0x32,        0x32,  "2",          KNONE  },
-        { 0x33,        0x33,  "3",          KNONE  },
-        { 0x34,        0x34,  "4",          KNONE  },
-        { 0x35,        0x35,  "5",          KNONE  },
-        { 0x36,        0x36,  "6",          KNONE  },
-        { 0x37,        0x37,  "7",          KNONE  },
-        { 0x38,        0x38,  "8",          KNONE  },
-        { 0x39,        0x39,  "9",          KNONE  },
-        { 0x3a,        0x3a,  ":",          KSHIFT },
-        { 0x3b,        0x3b,  ";",          KNONE  },
-        { 0x3c,        0x3c,  "<",          KSHIFT },
-        { 0x3d,        0x3d,  "=",          KNONE  },
-        { 0x3e,        0x3e,  ">",          KSHIFT },
-        { 0x3f,        0x3f,  "?",          KSHIFT },
-        { 0x40,        0x40,  "@",          KSHIFT },
-        { 0x41,        0x41,  "A",          KSHIFT },    /* Shift key modifier  */
-        { 0x42,        0x42,  "B",          KSHIFT },
-        { 0x43,        0x43,  "C",          KSHIFT },
-        { 0x44,        0x44,  "D",          KSHIFT },
-        { 0x45,        0x45,  "E",          KSHIFT },
-        { 0x46,        0x46,  "F",          KSHIFT },
-        { 0x47,        0x47,  "G",          KSHIFT },
-        { 0x48,        0x48,  "H",          KSHIFT },
-        { 0x49,        0x49,  "I",          KSHIFT },
-        { 0x4a,        0x4a,  "J",          KSHIFT },
-        { 0x4b,        0x4b,  "K",          KSHIFT },
-        { 0x4c,        0x4c,  "L",          KSHIFT },
-        { 0x4d,        0x4d,  "M",          KSHIFT },
-        { 0x4e,        0x4e,  "N",          KSHIFT },
-        { 0x4f,        0x4f,  "O",          KSHIFT },
-        { 0x50,        0x50,  "P",          KSHIFT },
-        { 0x51,        0x51,  "Q",          KSHIFT },
-        { 0x52,        0x52,  "R",          KSHIFT },
-        { 0x53,        0x53,  "S",          KSHIFT },
-        { 0x54,        0x54,  "T",          KSHIFT },
-        { 0x55,        0x55,  "U",          KSHIFT },
-        { 0x56,        0x56,  "V",          KSHIFT },
-        { 0x57,        0x57,  "W",          KSHIFT },
-        { 0x58,        0x58,  "X",          KSHIFT },
-        { 0x59,        0x59,  "Y",          KSHIFT },
-        { 0x5a,        0x5a,  "Z",          KSHIFT },
-        { 0x5b,        0x5b,  "[",          KNONE  },    // BracketLeft
-        { 0x5c,        0x5c,  "\\",         KNONE  },    // Backslash
-        { 0x5d,        0x5d,  "]",          KNONE  },    // BracketRight
-        { 0x5e,        0x5e,  "^",          KSHIFT },    // AsciiCircum
-        { 0x5f,        0x5f,  "_",          KSHIFT },    // Underscore
-        { 0x60,        0x60,  "`",          KNONE  },    // QuoteLeft, Backtick
-        { 0x61,        0x41,  "a",          KNONE  },
-        { 0x62,        0x42,  "b",          KNONE  },
-        { 0x63,        0x43,  "c",          KNONE  },
-        { 0x64,        0x44,  "d",          KNONE  },
-        { 0x65,        0x45,  "e",          KNONE  },
-        { 0x66,        0x46,  "f",          KNONE  },
-        { 0x67,        0x47,  "g",          KNONE  },
-        { 0x68,        0x48,  "h",          KNONE  },
-        { 0x69,        0x49,  "i",          KNONE  },
-        { 0x6a,        0x4a,  "j",          KNONE  },
-        { 0x6b,        0x4b,  "k",          KNONE  },
-        { 0x6c,        0x4c,  "l",          KNONE  },
-        { 0x6d,        0x4d,  "m",          KNONE  },
-        { 0x6e,        0x4e,  "n",          KNONE  },
-        { 0x6f,        0x4f,  "o",          KNONE  },
-        { 0x70,        0x50,  "p",          KNONE  },
-        { 0x71,        0x51,  "q",          KNONE  },
-        { 0x72,        0x52,  "r",          KNONE  },
-        { 0x73,        0x53,  "s",          KNONE  },
-        { 0x74,        0x54,  "t",          KNONE  },
-        { 0x75,        0x55,  "u",          KNONE  },
-        { 0x76,        0x56,  "v",          KNONE  },
-        { 0x77,        0x57,  "w",          KNONE  },
-        { 0x78,        0x58,  "x",          KNONE  },
-        { 0x79,        0x59,  "y",          KNONE  },
-        { 0x7a,        0x5a,  "z",          KNONE  },
-        { 0x7b,        0x7b,  "{",          KSHIFT },    // BraceLeft
-        { 0x7c,        0x7c,  "|",          KSHIFT },    // Bar
-        { 0x7d,        0x7d,  "}",          KSHIFT },    // BraceRight
-        { 0x7e,        0x7e,  "~",          KSHIFT },    // AsciiTilde
-        { 0x7f,        0x7f,  "DEL",        KNONE  },
+        { 0x20,        0x20,   0x20,  "Space",      KNONE  },    // Space (" " not good)
+        { 0x21,        0x21,   0x21,  "!",          KSHIFT },    // Exclam
+        { 0x22,        0x22,   0x22,  "\"",         KSHIFT },    // QuoteDbl
+        { 0x23,        0x23,   0x23,  "#",          KSHIFT },    // NumberSign
+        { 0x24,        0x24,   0x24,  "$",          KSHIFT },    // Dollar
+        { 0x25,        0x25,   0x25,  "%",          KSHIFT },    // Percent
+        { 0x26,        0x26,   0x26,  "&",          KSHIFT },    // Ampersand
+        { 0x27,        0x27,   0x27,  "'",          KSHIFT },    // Apostrophe
+        { 0x28,        0x28,   0x28,  "(",          KSHIFT },    // ParenLeft
+        { 0x29,        0x29,   0x29,  ")",          KSHIFT },    // ParenRight
+        { 0x2a,        0x2a,   0x2a,  "*",          KSHIFT },    // Asterisk
+        { 0x2b,        0x2b,   0x2b,  "+",          KSHIFT },    // Plus
+        { 0x2c,        0x2c,   0x2c,  ",",          KNONE  },    // Comma
+        { 0x2d,        0x2d,   0x2d,  "-",          KNONE  },    // Minus
+        { 0x2e,        0x2e,   0x2e,  ".",          KNONE  },    // Period
+        { 0x2f,        0x2f,   0x2f,  "/",          KNONE  },    // Slash
+        { 0x30,        0x30,   0x30,  "0",          KNONE  },
+        { 0x31,        0x31,   0x31,  "1",          KNONE  },
+        { 0x32,        0x32,   0x32,  "2",          KNONE  },
+        { 0x33,        0x33,   0x33,  "3",          KNONE  },
+        { 0x34,        0x34,   0x34,  "4",          KNONE  },
+        { 0x35,        0x35,   0x35,  "5",          KNONE  },
+        { 0x36,        0x36,   0x36,  "6",          KNONE  },
+        { 0x37,        0x37,   0x37,  "7",          KNONE  },
+        { 0x38,        0x38,   0x38,  "8",          KNONE  },
+        { 0x39,        0x39,   0x39,  "9",          KNONE  },
+        { 0x3a,        0x3a,   0x3a,  ":",          KSHIFT },
+        { 0x3b,        0x3b,   0x3b,  ";",          KNONE  },
+        { 0x3c,        0x3c,   0x3c,  "<",          KSHIFT },
+        { 0x3d,        0x3d,   0x3d,  "=",          KNONE  },
+        { 0x3e,        0x3e,   0x3e,  ">",          KSHIFT },
+        { 0x3f,        0x3f,   0x3f,  "?",          KSHIFT },
+        { 0x40,        0x40,   0x40,  "@",          KSHIFT },
+        { 0x41,        0x41,   0x41,  "A",          KSHIFT },    /* Shift key modifier  */
+        { 0x42,        0x42,   0x42,  "B",          KSHIFT },
+        { 0x43,        0x43,   0x43,  "C",          KSHIFT },
+        { 0x44,        0x44,   0x44,  "D",          KSHIFT },
+        { 0x45,        0x45,   0x45,  "E",          KSHIFT },
+        { 0x46,        0x46,   0x46,  "F",          KSHIFT },
+        { 0x47,        0x47,   0x47,  "G",          KSHIFT },
+        { 0x48,        0x48,   0x48,  "H",          KSHIFT },
+        { 0x49,        0x49,   0x49,  "I",          KSHIFT },
+        { 0x4a,        0x4a,   0x4a,  "J",          KSHIFT },
+        { 0x4b,        0x4b,   0x4b,  "K",          KSHIFT },
+        { 0x4c,        0x4c,   0x4c,  "L",          KSHIFT },
+        { 0x4d,        0x4d,   0x4d,  "M",          KSHIFT },
+        { 0x4e,        0x4e,   0x4e,  "N",          KSHIFT },
+        { 0x4f,        0x4f,   0x4f,  "O",          KSHIFT },
+        { 0x50,        0x50,   0x50,  "P",          KSHIFT },
+        { 0x51,        0x51,   0x51,  "Q",          KSHIFT },
+        { 0x52,        0x52,   0x52,  "R",          KSHIFT },
+        { 0x53,        0x53,   0x53,  "S",          KSHIFT },
+        { 0x54,        0x54,   0x54,  "T",          KSHIFT },
+        { 0x55,        0x55,   0x55,  "U",          KSHIFT },
+        { 0x56,        0x56,   0x56,  "V",          KSHIFT },
+        { 0x57,        0x57,   0x57,  "W",          KSHIFT },
+        { 0x58,        0x58,   0x58,  "X",          KSHIFT },
+        { 0x59,        0x59,   0x59,  "Y",          KSHIFT },
+        { 0x5a,        0x5a,   0x5a,  "Z",          KSHIFT },
+        { 0x5b,        0x5b,   0x5b,  "[",          KNONE  },    // BracketLeft
+        { 0x5c,        0x5c,   0x5c,  "\\",         KNONE  },    // Backslash
+        { 0x5d,        0x5d,   0x5d,  "]",          KNONE  },    // BracketRight
+        { 0x5e,        0x5e,   0x5e,  "^",          KSHIFT },    // AsciiCircumflex
+        { 0x5f,        0x5f,   0x5f,  "_",          KSHIFT },    // Underscore
+        { 0x60,        0x60,   0x60,  "`",          KNONE  },    // QuoteLeft, Backtick
+        { 0x61,        0x41,   0x61,  "a",          KNONE  },
+        { 0x62,        0x42,   0x62,  "b",          KNONE  },
+        { 0x63,        0x43,   0x63,  "c",          KNONE  },
+        { 0x64,        0x44,   0x64,  "d",          KNONE  },
+        { 0x65,        0x45,   0x65,  "e",          KNONE  },
+        { 0x66,        0x46,   0x66,  "f",          KNONE  },
+        { 0x67,        0x47,   0x67,  "g",          KNONE  },
+        { 0x68,        0x48,   0x68,  "h",          KNONE  },
+        { 0x69,        0x49,   0x69,  "i",          KNONE  },
+        { 0x6a,        0x4a,   0x6a,  "j",          KNONE  },
+        { 0x6b,        0x4b,   0x6b,  "k",          KNONE  },
+        { 0x6c,        0x4c,   0x6c,  "l",          KNONE  },
+        { 0x6d,        0x4d,   0x6d,  "m",          KNONE  },
+        { 0x6e,        0x4e,   0x6e,  "n",          KNONE  },
+        { 0x6f,        0x4f,   0x6f,  "o",          KNONE  },
+        { 0x70,        0x50,   0x50,  "p",          KNONE  },
+        { 0x71,        0x51,   0x71,  "q",          KNONE  },
+        { 0x72,        0x52,   0x72,  "r",          KNONE  },
+        { 0x73,        0x53,   0x73,  "s",          KNONE  },
+        { 0x74,        0x54,   0x74,  "t",          KNONE  },
+        { 0x75,        0x55,   0x75,  "u",          KNONE  },
+        { 0x76,        0x56,   0x76,  "v",          KNONE  },
+        { 0x77,        0x57,   0x77,  "w",          KNONE  },
+        { 0x78,        0x58,   0x78,  "x",          KNONE  },
+        { 0x79,        0x59,   0x79,  "y",          KNONE  },
+        { 0x7a,        0x5a,   0x7a,  "z",          KNONE  },
+        { 0x7b,        0x7b,   0x7b,  "{",          KSHIFT },   // BraceLeft
+        { 0x7c,        0x7c,   0x7c,  "|",          KSHIFT },   // Bar
+        { 0x7d,        0x7d,   0x7d,  "}",          KSHIFT },   // BraceRight
+        { 0x7e,        0x7e,   0x7e,  "~",          KSHIFT },   // AsciiTilde
+        { 0x7f,        0x7f,   0x7f,  "DEL",        KNONE  },
 
         /*
          * Block moved from above to here.
@@ -285,154 +380,162 @@ qt_keys (int i)
          * Code   Qt Keycode   Key Name      Modifier
          */
 
-        { 0x80,  0x01000000,  "Esc",        KNONE  },
-        { 0x81,  0x01000001,  "Tab",        KNONE  },    // best to avoid this one
-        { 0x82,  0x01000002,  "BkTab",      KSHIFT },    // best to avoid this one
-        { 0x83,  0x01000003,  "BkSpace",    KNONE  },    // differs from Ctrl-H !
-        { 0x84,  0x01000004,  "Return",     KNONE  },
-        { 0x85,  0x01000005,  "Enter",      KNONE  },
-        { 0x86,  0x01000006,  "Ins",        KNONE  },
-        { 0x87,  0x01000007,  "Del",        KNONE  },
-        { 0x88,  0x01000008,  "Pause",      KNONE  },
-        { 0x89,  0x01000009,  "Print",      KNONE  },
-        { 0x8a,  0x0100000a,  "SysReq",     KNONE  },
-        { 0x8b,  0x0100000b,  "Clear",      KNONE  },
-        { 0x8c,  0x0100000c,  "0x8c",       KNONE  },
-        { 0x8d,  0x0100000d,  "0x8d",       KNONE  },
-        { 0x8e,  0x0100000e,  "0x8e",       KNONE  },
-        { 0x8f,  0x0100000f,  "0x8f",       KNONE  },
-        { 0x90,  0x01000010,  "Home",       KNONE  },
-        { 0x91,  0x01000011,  "End",        KNONE  },
-        { 0x92,  0x01000012,  "Left",       KNONE  },
-        { 0x93,  0x01000013,  "Up",         KNONE  },
-        { 0x94,  0x01000014,  "Right",      KNONE  },
-        { 0x95,  0x01000015,  "Down",       KNONE  },
-        { 0x96,  0x01000016,  "PageUp",     KNONE  },
-        { 0x97,  0x01000017,  "PageDn",     KNONE  },
-        { 0x98,  0x01000020,  "Shift",      KSHIFT },    // ignore this one?
-        { 0x99,  0x01000021,  "Ctrl",       KCTRL  },
-        { 0x9a,  0x01000022,  "Meta",       KMETA  },
-        { 0x9b,  0x01000023,  "Alt",        KALT   },
-        { 0x9c,  0x01000024,  "CapsLk",     KNONE  },
-        { 0x9d,  0x01000025,  "NumLk",      KNONE  },
-        { 0x9e,  0x01000026,  "ScrlLk",     KNONE  },
-        { 0x9f,  0x01000027,  "0x9f",       KNONE  },
-        { 0xa0,  0x01000030,  "F1",         KNONE  },
-        { 0xa1,  0x01000031,  "F2",         KNONE  },
-        { 0xa2,  0x01000032,  "F3",         KNONE  },
-        { 0xa3,  0x01000033,  "F4",         KNONE  },    // FR: pound sign
-        { 0xa4,  0x01000034,  "F5",         KNONE  },
-        { 0xa5,  0x01000035,  "F6",         KNONE  },
-        { 0xa6,  0x01000036,  "F7",         KNONE  },
-        { 0xa7,  0x01000037,  "F8",         KNONE  },    // FR: silcrow
-        { 0xa8,  0x01000038,  "F9",         KNONE  },
-        { 0xa9,  0x01000039,  "F10",        KNONE  },
-        { 0xaa,  0x0100003a,  "F11",        KNONE  },
-        { 0xab,  0x0100003b,  "F12",        KNONE  },
-        { 0xac,  0x01000053,  "Super_L",    KNONE  },
-        { 0xad,  0x01000054,  "Super_R",    KNONE  },
-        { 0xae,  0x01000055,  "Menu",       KNONE  },
-        { 0xaf,  0x01000056,  "Hyper_L",    KNONE  },
-        { 0xb0,  0x01000057,  "Hyper_R",    KNONE  },    // FR: degree
-        { 0xb1,  0x01000058,  "Help",       KNONE  },
-        { 0xb2,  0x01000059,  "Dir_L",      KNONE  },    // FR: 2-super
-        { 0xb3,  0x01000060,  "Dir_R",      KNONE  },    // Direction_R
-        { 0xb4,  0x01000030,  "Sh_F1",      KSHIFT },
-        { 0xb5,  0x01000031,  "Sh_F2",      KSHIFT },    // FR: mu
-        { 0xb6,  0x01000032,  "Sh_F3",      KSHIFT },
-        { 0xb7,  0x01000033,  "Sh_F4",      KSHIFT },
-        { 0xb8,  0x01000034,  "Sh_F5",      KSHIFT },
-        { 0xb9,  0x01000035,  "Sh_F6",      KSHIFT },
-        { 0xba,  0x01000036,  "Sh_F7",      KSHIFT },
-        { 0xbb,  0x01000037,  "Sh_F8",      KSHIFT },
-        { 0xbc,  0x01000038,  "Sh_F9",      KSHIFT },
-        { 0xbd,  0x01000039,  "Sh_F10",     KSHIFT },
-        { 0xbe,  0x0100003a,  "Sh_F11",     KSHIFT },
-        { 0xbf,  0x0100003b,  "Sh_F12",     KSHIFT },
+        { 0x80,  0x01000000, 0xff1b,  "Esc",        KNONE  },
+        { 0x81,  0x01000001, 0xff09,  "Tab",        KNONE  },   // avoid, moves focus
+        { 0x82,  0x01000002, 0xff09,  "BkTab",      KSHIFT },   // avoid, moves focus
+        { 0x83,  0x01000003, 0xff08,  "BkSpace",    KNONE  },   // differs from Ctrl-H !
+        { 0x84,  0x01000004, 0xff0d,  "Return",     KNONE  },
+        { 0x85,  0x01000005, 0xff8d,  "Enter",      KEYPAD },   // Keypad-Enter
+        { 0x86,  0x01000006, 0xff63,  "Ins",        KNONE  },
+        { 0x87,  0x01000007, 0xffff,  "Del",        KNONE  },
+        { 0x88,        0x88,   0x88,  "0x88",       KNONE  },   // was "Pause", a duplicate
+        { 0x89,        0x89,   0x89,  "0x88",       KNONE  },   // was "Print", a duplicate
+        { 0x8a,  0x0100000a,   0x8a,  "SysReq",     KNONE  },
+        { 0x8b,  0x0100000b,   0x8b,  "Clear",      KNONE  },
+        { 0x8c,  0x0100000c,   0x8c,  "0x8c",       KNONE  },
+        { 0x8d,  0x0100000d,   0x8d,  "0x8d",       KNONE  },
+        { 0x8e,  0x0100000e,   0x8e,  "0x8e",       KNONE  },
+        { 0x8f,  0x0100000f,   0x8f,  "0x8f",       KNONE  },
+        { 0x90,  0x01000010, 0xff50,  "Home",       KNONE  },
+        { 0x91,  0x01000011, 0xff57,  "End",        KNONE  },
+        { 0x92,  0x01000012, 0xff51,  "Left",       KNONE  },
+        { 0x93,  0x01000013, 0xff52,  "Up",         KNONE  },
+        { 0x94,  0x01000014, 0xff53,  "Right",      KNONE  },
+        { 0x95,  0x01000015, 0xff54,  "Down",       KNONE  },
+        { 0x96,  0x01000016, 0xff55,  "PageUp",     KNONE  },
+        { 0x97,  0x01000017, 0xff56,  "PageDn",     KNONE  },
 
         /*
-         * Block moved from above to here.
-         *
-         * Code   Qt Keycode   Key Name      Modifier
-         *
-         *              Keypad section
+         * See starting around 0xd7 for the Right versions of these keys.
          */
 
-        { 0xc0,  0x01000006,  "KP_Ins",     KEYPAD },
-        { 0xc1,  0x01000007,  "KP_Del",     KEYPAD },
-        { 0xc2,  0x01000008,  "Pause",      KEYPAD },    // impossible
-        { 0xc3,  0x01000009,  "Print",      KEYPAD },    // impossible
-        { 0xc4,  0x01000010,  "KP_Home",    KEYPAD },
-        { 0xc5,  0x01000011,  "KP_End",     KEYPAD },
-        { 0xc6,  0x01000012,  "KP_Left",    KEYPAD },
-        { 0xc7,  0x01000013,  "KP_Up",      KEYPAD },
-        { 0xc8,  0x01000014,  "KP_Right",   KEYPAD },
-        { 0xc9,  0x01000015,  "KP_Down",    KEYPAD },
-        { 0xca,  0x01000016,  "KP_PageUp",  KEYPAD },
-        { 0xcb,  0x01000017,  "KP_PageDn",  KEYPAD },
-        { 0xcc,  0x01000099,  "0xcc",       KNONE  },
-        { 0xcd,  0x01000099,  "0xcd",       KNONE  },
-        { 0xce,  0x01000099,  "0xce",       KNONE  },
-        { 0xcf,  0x01000099,  "0xcf",       KNONE  },
-        { 0xd0,        0x2a,  "KP_*",       KEYPAD },    // Asterisk
-        { 0xd1,        0x2b,  "KP_+",       KEYPAD },    // Plus
-        { 0xd2,        0x2c,  "KP_,",       KEYPAD },    // Comma, impossible
-        { 0xd3,        0x2d,  "KP_-",       KEYPAD },    // Minus
-        { 0xd4,        0x2e,  "KP_.",       KNONE  },    // Period
-        { 0xd5,        0x2f,  "KP_/",       KEYPAD },    // Slash
-        { 0xd6,  0x01000099,  "0xd6",       KNONE  },
+        { 0x98,  0x01000020, 0xffe1,  "Shift",      KSHIFT },   // Left-Shift
+        { 0x99,  0x01000021, 0xffe3,  "Ctrl",       KCTRL  },   // Left-Ctrl
+        { 0x9a,  0x01000022,   0x9a,  "Meta",       KMETA  },
+        { 0x9b,  0x01000023, 0xffe9,  "Alt",        KALT   },   // Left-Alt
+        { 0x9c,  0x01000024, 0xffe5,  "CapsLk",     KNONE  },   // Shift-Lock too???
+        { 0x9d,  0x01000025, 0xff7f,  "NumLk",      KNONE  },
+        { 0x9e,  0x01000026, 0xff14,  "ScrlLk",     KNONE  },   // Good?
+        { 0x9f,  0x01000027,   0x9f,  "0x9f",       KNONE  },
+        { 0xa0,  0x01000030, 0xffbe,  "F1",         KNONE  },
+        { 0xa1,  0x01000031, 0xffbf,  "F2",         KNONE  },
+        { 0xa2,  0x01000032, 0xffc0,  "F3",         KNONE  },
+        { 0xa3,  0x01000033, 0xffc1,  "F4",         KNONE  },
+        { 0xa4,  0x01000034, 0xffc2,  "F5",         KNONE  },
+        { 0xa5,  0x01000035, 0xffc3,  "F6",         KNONE  },
+        { 0xa6,  0x01000036, 0xffc4,  "F7",         KNONE  },
+        { 0xa7,  0x01000037, 0xffc5,  "F8",         KNONE  },
+        { 0xa8,  0x01000038, 0xffc6,  "F9",         KNONE  },
+        { 0xa9,  0x01000039, 0xffc7,  "F10",        KNONE  },
+        { 0xaa,  0x0100003a, 0xffc8,  "F11",        KNONE  },
+        { 0xab,  0x0100003b, 0xffc9,  "F12",        KNONE  },
+        { 0xac,  0x01000053, 0xffeb,  "Super_L",    KNONE  },   // Left-Windows
+        { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  },   // Right-Windows, good code?
+        { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  },
+        { 0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },
+        { 0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },
+        { 0xb1,  0x01000058,   0xb1,  "Help",       KNONE  },
+        { 0xb2,  0x01000059,   0xb2,  "Dir_L",      KNONE  },
+        { 0xb3,  0x01000060,   0xb3,  "Dir_R",      KNONE  },    // Direction_R
+        { 0xb4,  0x01000030, 0xffbe,  "Sh_F1",      KSHIFT },
+        { 0xb5,  0x01000031, 0xffbf,  "Sh_F2",      KSHIFT },
+        { 0xb6,  0x01000032, 0xffc0,  "Sh_F3",      KSHIFT },
+        { 0xb7,  0x01000033, 0xffc1,  "Sh_F4",      KSHIFT },
+        { 0xb8,  0x01000034, 0xffc2,  "Sh_F5",      KSHIFT },
+        { 0xb9,  0x01000035, 0xffc3,  "Sh_F6",      KSHIFT },
+        { 0xba,  0x01000036, 0xffc4,  "Sh_F7",      KSHIFT },
+        { 0xbb,  0x01000037, 0xffc5,  "Sh_F8",      KSHIFT },
+        { 0xbc,  0x01000038, 0xffc6,  "Sh_F9",      KSHIFT },
+        { 0xbd,  0x01000039, 0xffc7,  "Sh_F10",     KSHIFT },
+        { 0xbe,  0x0100003a, 0xffc8,  "Sh_F11",     KSHIFT },
+        { 0xbf,  0x0100003b, 0xffc9,  "Sh_F12",     KSHIFT },
+
+        /*
+         *  Keys missing: KP_0 to KP_9, accessible with NumLock on.
+         *
+        { 0x30,  0x30,       0xffb0,  "KP_0",       KEYPAD },
+        { 0x31,  0x31,       0xffb1,  "KP_0",       KEYPAD },
+                . . .           . . .           . . .
+        { 0x39,  0x39,       0xffb9,  "KP_0",       KEYPAD },
+         *
+         */
+
+        { 0xc0,  0x01000006, 0xff9e,  "KP_Ins",     KEYPAD },
+        { 0xc1,  0x01000007, 0xff9f,  "KP_Del",     KEYPAD },
+        { 0xc2,  0x01000008, 0xffe1,  "Pause",      KSHIFT },
+        { 0xc3,  0x01000009, 0xff61,  "Print",      KSHIFT },
+        { 0xc4,  0x01000010, 0xff95,  "KP_Home",    KEYPAD },
+        { 0xc5,  0x01000011, 0xff9c,  "KP_End",     KEYPAD },
+        { 0xc6,  0x01000012, 0xff96,  "KP_Left",    KEYPAD },
+        { 0xc7,  0x01000013, 0xff97,  "KP_Up",      KEYPAD },
+        { 0xc8,  0x01000014, 0xff98,  "KP_Right",   KEYPAD },
+        { 0xc9,  0x01000015, 0xff99,  "KP_Down",    KEYPAD },
+        { 0xca,  0x01000016, 0xff9a,  "KP_PageUp",  KEYPAD },
+        { 0xcb,  0x01000017, 0xff9b,  "KP_PageDn",  KEYPAD },
+        { 0xcc,  0x01000099, 0xff9d,  "KP_Begin",   KNONE  },   // KP_Begin
+        { 0xcd,  0x01000099,   0xcd,  "0xcd",       KNONE  },
+        { 0xce,  0x01000099,   0xce,  "0xce",       KNONE  },
+        { 0xcf,  0x01000099,   0xcf,  "0xcf",       KNONE  },
+        { 0xd0,        0x2a, 0xffaa,  "KP_*",       KEYPAD },    // Asterisk, KP_Multiply
+        { 0xd1,        0x2b, 0xffab,  "KP_+",       KEYPAD },    // Plus, KP_Add
+        { 0xd2,        0x2c, 0xffac,  "KP_,",       KEYPAD },    // Comma, KP_Separator
+        { 0xd3,        0x2d, 0xffad,  "KP_-",       KEYPAD },    // Minus, KP_Subtract
+        { 0xd4,        0x2e, 0xff0e,  "KP_.",       KNONE  },    // Period, KP_Decimal
+        { 0xd5,        0x2f, 0xffaf,  "KP_/",       KEYPAD },    // Slash, KP_Divide
+        { 0xd6,  0x01000099,   0xd6,  "0xd6",       KNONE  },
 
         /*
          *              Remainders
          */
 
-        { 0xd7,  0x01000020,  "Shift",      KSHIFT },    // ignore this one
-        { 0xd8,  0x01000021,  "Control",    KCTRL  },    // redundant!
-        { 0xd9,  0x01000022,  "Super",      KMETA  },    // redundant!
-        { 0xda,  0x01000023,  "Alt",        KALT   },    // redundant!
-        { 0xdb,  0x01000024,  "CapsLk",     KNONE  },    // redundant!
+        { 0xd7,  0x01000020, 0xffe2,  "Shift",      KSHIFT },   // Right-Shift
+        { 0xd8,  0x01000021, 0xffe4,  "Ctrl",       KCTRL  },   // Right-Ctrl
+        { 0xd9,        0xd9,   0xd9,  "0xd9",       KNONE  },
+        { 0xda,  0x01000023, 0xffea,  "Alt",        KALT   },   // Right-Alt
+        { 0xdb,        0xdb,   0xdb,  "0xdb",       KNONE  },
 
-        { 0xdc,  0x01000099,  "0xdc",       KNONE  },
-        { 0xdd,  0x01000099,  "0xdd",       KNONE  },
-        { 0xde,  0x01000099,  "0xde",       KNONE  },
-        { 0xdf,  0x01000099,  "0xdf",       KNONE  },
-        { 0xe0,  0x01000099,  "0xe0",       KNONE  },    // FR: a-grave
-        { 0xe1,  0x01000099,  "0xe1",       KNONE  },
-        { 0xe2,  0x01000099,  "0xe2",       KNONE  },
-        { 0xe3,  0x01000099,  "0xe3",       KNONE  },
-        { 0xe4,  0x01000099,  "0xe4",       KNONE  },
-        { 0xe5,  0x01000099,  "0xe5",       KNONE  },
-        { 0xe6,  0x01000099,  "0xe6",       KNONE  },
-        { 0xe7,  0x01000099,  "0xe7",       KNONE  },    // FR: c-cedilla
-        { 0xe8,  0x01000099,  "0xe8",       KNONE  },    // FR: e-grave
-        { 0xe9,  0x01000099,  "0xe9",       KNONE  },    // FR: e-accent
-        { 0xea,  0x01000099,  "0xea",       KNONE  },
-        { 0xeb,  0x01000099,  "0xeb",       KNONE  },
-        { 0xec,  0x01000099,  "0xec",       KNONE  },
-        { 0xed,  0x01000099,  "0xed",       KNONE  },
-        { 0xee,  0x01000099,  "0xee",       KNONE  },
-        { 0xef,  0x01000099,  "0xef",       KNONE  },
+        { 0xdc,  0x01000099,   0xdc,  "0xdc",       KNONE  },
+        { 0xdd,  0x01000099,   0xdd,  "0xdd",       KNONE  },
+        { 0xde,  0x01000099,   0xde,  "0xde",       KNONE  },
+        { 0xdf,  0x01000099,   0xdf,  "0xdf",       KNONE  },
 
         /*
-         * This section is currently useful to fill in for future expansion.
+         * This section is currently useful to fill in for future expansion or
+         * for extended ASCII characters.
          */
 
-        { 0xf0,  0x01000099,  "0xf0",       KNONE  },
-        { 0xf1,  0x01000099,  "0xf1",       KNONE  },
-        { 0xf2,  0x01000099,  "0xf2",       KNONE  },
-        { 0xf3,  0x01000099,  "0xf3",       KNONE  },
-        { 0xf4,  0x01000099,  "0xf4",       KNONE  },
-        { 0xf5,  0x01000099,  "0xf5",       KNONE  },
-        { 0xf6,  0x01000099,  "0xf6",       KNONE  },
-        { 0xf7,  0x01000099,  "0xf7",       KNONE  },
-        { 0xf8,  0x01000099,  "0xf8",       KNONE  },
-        { 0xf9,  0x01000099,  "0xf9",       KNONE  },    // FR: u-grave
-        { 0xfa,  0x01000099,  "0xfa",       KNONE  },
-        { 0xfb,  0x01000099,  "0xfb",       KNONE  },
-        { 0xfc,  0x01000099,  "0xfc",       KNONE  },
-        { 0xfd,  0x01000099,  "0xfd",       KNONE  },
-        { 0xfe,  0x01000099,  "0xfe",       KNONE  },
-        { 0xff,  0xffffffff,  "Null_ff",    KNONE  }     // end-of-list
+        { 0xe0,  0x01000099,   0xe0,  "0xe0",       KNONE  },
+        { 0xe1,  0x01000099,   0xe1,  "0xe1",       KNONE  },
+        { 0xe2,  0x01000099,   0xe2,  "0xe2",       KNONE  },
+        { 0xe3,  0x01000099,   0xe3,  "0xe3",       KNONE  },
+        { 0xe4,  0x01000099,   0xe4,  "0xe4",       KNONE  },
+        { 0xe5,  0x01000099,   0xe5,  "0xe5",       KNONE  },
+        { 0xe6,  0x01000099,   0xe6,  "0xe6",       KNONE  },
+        { 0xe7,  0x01000099,   0xe7,  "0xe7",       KNONE  },
+        { 0xe8,  0x01000099,   0xe8,  "0xe8",       KNONE  },
+        { 0xe9,  0x01000099,   0xe9,  "0xe9",       KNONE  },
+        { 0xea,  0x01000099,   0xea,  "0xea",       KNONE  },
+        { 0xeb,  0x01000099,   0xeb,  "0xeb",       KNONE  },
+        { 0xec,  0x01000099,   0xec,  "0xec",       KNONE  },
+        { 0xed,  0x01000099,   0xed,  "0xed",       KNONE  },
+        { 0xee,  0x01000099,   0xee,  "0xee",       KNONE  },
+        { 0xef,  0x01000099,   0xef,  "0xef",       KNONE  },
+        { 0xf0,  0x01000099,   0xf0,  "0xf0",       KNONE  },
+        { 0xf1,  0x01000099,   0xf1,  "0xf1",       KNONE  },
+        { 0xf2,  0x01000099,   0xf2,  "0xf2",       KNONE  },
+        { 0xf3,  0x01000099,   0xf3,  "0xf3",       KNONE  },
+        { 0xf4,  0x01000099,   0xf4,  "0xf4",       KNONE  },
+        { 0xf5,  0x01000099,   0xf5,  "0xf5",       KNONE  },
+        { 0xf6,  0x01000099,   0xf6,  "0xf6",       KNONE  },
+        { 0xf7,  0x01000099,   0xf7,  "0xf7",       KNONE  },
+        { 0xf8,  0x01000099,   0xf8,  "0xf8",       KNONE  },
+        { 0xf9,  0x01000099,   0xf9,  "0xf9",       KNONE  },
+        { 0xfa,  0x01000099,   0xfa,  "0xfa",       KNONE  },
+        { 0xfb,  0x01000099,   0xfb,  "0xfb",       KNONE  },
+        { 0xfc,  0x01000099,   0xfc,  "0xfc",       KNONE  },
+        { 0xfd,  0x01000099,   0xfd,  "0xfd",       KNONE  },
+        { 0xfe,  0x01000099,   0xfe,  "0xfe",       KNONE  },
+        { 0xff,  0xffffffff,   0xff,  "Null_ff",    KNONE  }     // end-of-list
     };
     if (i < 0 || i > 0xff)
         i = 0;
@@ -469,7 +572,7 @@ is_undefined_qt_key (const std::string & keyname)
 ctrlkey
 invalid_ordinal ()
 {
-    return 0xffffffff;
+    return 0xff;
 }
 
 /**
@@ -483,16 +586,23 @@ is_invalid_ordinal (ctrlkey ordinal)
 }
 
 /**
- *  Provides a data type to convert from incoming Qt 5 key() and text() values
- *  into the corresponding Gdk/Gtkmm key value.
+ *  Provides a data type to convert from incoming Qt 5 key() values
+ *  into the corresponding internal key value. It is important to note that
+ *  more than one key can have the same value.  Some are examples are the
+ *  keypad keys and their normal keys, or letters that can be typed on their
+ *  own, but also be paired with the Control or Shift modifiers.  Thus we use
+ *  a multi-map to hold the data, to allow multiple entries with the same
+ *  event-key value.
  *
- *  It can also be used to convert from Gtkmm 2.4 to Qt 5, but this conversion
- *  is slower and generally not necessary, as Sequencer64 uses the Gtkmm key
- *  set as the canonical key set, both in processing and in storage in the
- *  "rc" configuration file.
+ *  Each event-key value is paired with a structure that contains the ordinal,
+ *  virtual key, and modifier that completely define that key, plus the name
+ *  of the key.
+ *
+ *  So, this map lets us look up an event-key, and, if there are more than
+ *  one, search a little further to find the one we want.
  */
 
-using qt_keycode_map = std::multimap<unsigned, qt_keycodes>;
+using qt_keycode_map = std::multimap<eventkey, qt_keycodes>;
 
 /**
  *  Provide a built-in key map.  We could make all this stuff part of a class,
@@ -507,10 +617,13 @@ keycode_map ()
 }
 
 /**
- *  Another map to use to look up keystroke names from the "rc" file.
+ *  Another map to use to look up keystroke names from the 'ctrl' file. See
+ *  the function qt_keyname_ordinal() in this module.  This lets us look up an
+ *  ordinal value (ctrlkey), ranging from 0x00 to 0xff-1, given the name of
+ *  the key.
  */
 
-using qt_keyname_map = std::map<std::string, unsigned>;
+using qt_keyname_map = std::map<std::string, ctrlkey>;
 
 /**
  *  Provide a built-in name map.
@@ -534,8 +647,8 @@ keymap_size ()
 }
 
 /**
- *  Indicates if the key map is set up.  Also allows for re-initialization in
- *  order to alter the key map for alternate keyboard maps.
+ *  Indicates if the key maps are set up.  Also allows for re-initialization in
+ *  order to alter the key maps for alternate keyboard maps.
  */
 
 static bool
@@ -547,31 +660,27 @@ initialize_key_maps (bool reinit)
 
     if (! s_are_maps_initialized)
     {
-        keycode_map().clear();
-        keyname_map().clear();
-        for (int k = 0; k < 0xff; ++k)
+        keycode_map().clear();  /* multimap of ctrlkey and key-code structs */
+        keyname_map().clear();  /* map of key-names and ctrlkey ordinals    */
+        for (int k = 0x01; k < 0xff; ++k)
         {
             qt_keycodes temp = qt_keys(k);
-            if (temp.qtk_keycode != 0)
-            {
-                /*
-                 * auto --> std::pair<unsigned, qt_keycodes>
-                 */
 
-                auto pk = std::make_pair(temp.qtk_keycode, temp);
-                (void) keycode_map().insert(pk);
+            /*
+             * auto --> std::pair<eventkey, qt_keycodes>
+             */
 
-                /*
-                 * auto --> std::pair<std::string, unsigned>
-                 */
+            auto pk = std::make_pair(temp.qtk_keyevent, temp);
+            (void) keycode_map().insert(pk);
 
-                auto pn = std::make_pair(temp.qtk_keyname, temp.qtk_ordinal);
-                (void) keyname_map().insert(pn);
-            }
-            else
-                break;
+            /*
+             * auto --> std::pair<std::string, unsigned>
+             */
+
+            auto pn = std::make_pair(temp.qtk_keyname, temp.qtk_ordinal);
+            (void) keyname_map().insert(pn);
         }
-        s_are_maps_initialized = keymap_size() == 0xff;
+        s_are_maps_initialized = keymap_size() >= 0xfe;
         if (! s_are_maps_initialized)
             errprint("Key map unable to be initialized");
     }
@@ -583,7 +692,7 @@ initialize_key_maps (bool reinit)
         printf
         (
             "Key[%3d] = { 0x%2x <-- keycode 0x%8x, '%9s', mod 0x%2x }\n",
-            index, kp.second.qtk_ordinal, kp.second.qtk_keycode,
+            index, kp.second.qtk_ordinal, kp.second.qtk_keyevent,
             kp.second.qtk_keyname.c_str(), kp.second.qtk_modifier
         );
         ++index;
@@ -617,7 +726,7 @@ ordinal_to_qt_key (ctrlkey ordinal)
         {
             if (qk.second.qtk_ordinal == ordinal)
             {
-                result = qk.second.qtk_keycode;
+                result = qk.second.qtk_keyevent;
                 break;
             }
         }
@@ -645,19 +754,22 @@ ordinal_to_qt_key (ctrlkey ordinal)
  *      function.  It can alter the value returned, for example distinguishing
  *      normal keys from keypad keys.
  *
+ * \param virtkey
+ *      This is the result of the QKeyEvent::nativeVirtualKey() function.
+ *      For ASCII keys it is the ASCII code.  For extended keys it is values such
+ *      as 0xffnn or even other values.  This parameter is used only if non-zero.
+ *      For now, the default value is 0.
+ *
  * \return
- *      If the qttext parameter is greater than 0, it is returned unaltered.
- *      If the qtkey parameter is less than 0x1000000 (this should not
- *      happen), it is returned unaltered.  Otherwise, the keycode is looked
- *      up in the keycode_map(), and, if found, the corresponding Gdk keycode
- *      is returned.  If not found, then 0xffffffff is returned.  This would
- *      indicate an error of some kind.
+ *      If the combination is found in the key-map, then it's ordinal is
+ *      returned.  If not found, then 0xff [invalid_ordinal()] is returned.
+ *      This would indicate an error of some kind.
  */
 
 ctrlkey
-qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier)
+qt_modkey_ordinal (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
 {
-    ctrlkey result = 0xffffffff;
+    ctrlkey result = invalid_ordinal();
     if (initialize_key_maps(false))
     {
         auto cqi = keycode_map().find(qtkey);      /* copy modified later! */
@@ -673,7 +785,11 @@ qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier)
                 auto p = keycode_map().equal_range(qtkey);
                 for (cqi = p.first; cqi != p.second; ++cqi)
                 {
-                    if (cqi->second.qtk_modifier == qtmodifier)
+                    bool found = cqi->second.qtk_modifier == qtmodifier;
+                    if (found && virtkey > 0)
+                        found = cqi->second.qtk_virtkey == virtkey;
+
+                    if (found)
                         break;
                 }
             }
@@ -699,36 +815,21 @@ qt_modkey_ordinal (ctrlkey qtkey, unsigned qtmodifier)
  *      function.  It can alter the value returned, for example distinguishing
  *      normal keys from keypad keys.
  *
+ * \param virtkey
+ *      This is the result of the QKeyEvent::nativeVirtualKey() function.
+ *      For ASCII keys it is the ASCII code.  For extended keys it is values such
+ *      as 0xffnn or even other values.  This parameter is used only if non-zero.
+ *      For now, the default value is 0.
+ *
  * \return
  *      Returns the name of the key.
  */
 
 std::string
-qt_modkey_name (ctrlkey qtkey, unsigned qtmodifier)
+qt_modkey_name (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
 {
-    std::string result = "unknown";
-    if (initialize_key_maps(false))
-    {
-        auto cqi = keycode_map().find(qtkey);       /* copy modified later! */
-        if (cqi != keycode_map().end())
-        {
-            auto c = keycode_map().count(qtkey);
-            if (c > 1)
-            {
-                auto p = keycode_map().equal_range(qtkey);
-                for (cqi = p.first; cqi != p.second; ++cqi)
-                {
-                    if (cqi->second.qtk_modifier == qtmodifier)
-                        break;
-                }
-            }
-            if (cqi->second.qtk_keyname == " ")
-                result = std::string("Space");
-            else
-                result = cqi->second.qtk_keyname;
-        }
-    }
-    return result;
+    ctrlkey ordinal = qt_modkey_ordinal(qtkey, qtmodifier, virtkey);
+    return qt_ordinal_keyname(ordinal);
 }
 
 /**
@@ -769,7 +870,8 @@ qt_keyname_ordinal (const std::string & name)
 std::string
 qt_ordinal_keyname (ctrlkey ordinal)
 {
-    return is_invalid_ordinal(ordinal) ? "Missing_Key" : qt_keys(ordinal).qtk_keyname ;
+    return is_invalid_ordinal(ordinal) ?
+        "Missing_Key" : qt_keys(ordinal).qtk_keyname ;
 }
 
 /**
@@ -791,7 +893,7 @@ qt_ordinal_keyname (ctrlkey ordinal)
  *  we have to look up based on the hex string.
  *
 \verbatim
-        Key #0x39c 'µ' scan = 0x33; keycode = 0xb5
+        Key #0x039c 'µ' scan = 0x33; keycode = 0xb5
         Key #0xa3  '£' scan = 0x23; keycode = 0xa3
         Key #0xa7  '§' scan = 0x3d; keycode = 0xa7
         Key #0xb0  '°' scan = 0x14; keycode = 0xb0
@@ -815,10 +917,10 @@ qt_ordinal_keyname (ctrlkey ordinal)
  *      Key #0xc8   'è' scan = 0x10; keycode = 0xe8
  *      Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
  *      Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
- *      Key #0x39c  'µ' scan = 0x33; keycode = 0xb5
+ *      Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
  *      Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
  *      Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
- *      Key #0x1001252	'^' scan = 0x22; keycode = 0xfe52
+ *      Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
  *
  *  Just call this function once.
  */
@@ -828,31 +930,37 @@ setup_qt_azerty_fr_keys ()
 {
     static const qt_keycodes s_qt_keys [] =
     {
-        { 0xa3,   0xa3,       "0xa3",   KNONE  },  // £ pound sign<--F4
-        { 0xa4,   0xa4,       "0xa4",   KNONE  },  // ¤ ?<--F8
-        { 0xa7,   0xa7,       "0xa7",   KNONE  },  // § silcrow<--F8
-        { 0xb0,   0xb0,       "0xb0",   KNONE  },  // ° degrees<--Hyper_R
-        { 0xb2,   0xb2,       "0xb2",   KNONE  },  // ² 2 superscript<--Dir_L
-        { 0xc0,   0xe0,       "0xc0",   KNONE  },  // à a-grave<--KP_Ins
-        { 0xc7,   0xe7,       "0xc7",   KNONE  },  // ç c-cedilla<--KP_Up
-        { 0xc8,   0xe8,       "0xc8",   KNONE  },  // è e-grave<--KP_Right
-        { 0xc9,   0xe9,       "0xc9",   KNONE  },  // é e-acute<--KP_Down
-        { 0xd9,   0xf9,       "0xd9",   KNONE  },  // ù u-grave<--Super/Mod4/Win)
-        { 0x39c,  0xb5,       "0x39c",  KNONE  },  // µ mu<--(totally new)
-        { 0x20ac, 0xb6,       "0x20ac", KNONE  },  // €  euro<--(totally new)
-     { 0x1001257, 0xfe57,     "0xfe57", KNONE  },  // ¨ ?<--(totally new)
-        { 0x00,   0xffffffff, "0x00?",  KNONE  }   // terminator
+        /*
+         *  Code      Qt           Qt        Key
+         * Ordinal  Ev Key       Virtkey     Name   Modifier
+         */
+
+        { 0xe0,      0xa3,         0xa3,    "L_pound",      KNONE  },  // £  <-- F4
+        { 0xe1,      0xa4,         0xa4,    "Currency",     KNONE  },  // ¤  <-- F?
+        { 0xe2,      0xa7,         0xa7,    "Silcrow",      KNONE  },  // §  <-- F8
+        { 0xe3,      0xb0,         0xb0,    "Degrees",      KNONE  },  // °  <-- Hyper_R
+        { 0xe4,      0xb2,         0xb2,    "Super_2",      KNONE  },  // ²  <-- Dir_L
+        { 0xe5,      0xc0,         0xe0,    "a_grave",      KNONE  },  // à  <-- KP_Ins
+        { 0xe6,      0xc7,         0xe7,    "c_cedilla",    KNONE  },  // ç  <-- KP_Up
+        { 0xe7,      0xc8,         0xe8,    "e_grave",      KNONE  },  // è  <-- KP_Right
+        { 0xe8,      0xc9,         0xe9,    "e_acute",      KNONE  },  // é  <-- KP_Down
+        { 0xe9,      0xd9,         0xf9,    "u_grave",      KNONE  },  // ù  <-- Super/Mod4/Win)
+        { 0xea,      0x039c,       0xb5,    "Mu",           KNONE  },  // µ  <-- (new)
+        { 0xeb,      0x20ac,       0xb6,    "Euro",         KNONE  },  // €  <-- (new)
+        { 0xec,      0x1001252,  0xfe52,    "Circflex",     KNONE  },  // ^  <-- Caret, Circumflex
+        { 0xed,      0x1001257,  0xfe57,    "Umlaut",       KNONE  },  // ¨  <-- Diaeresis, Trema
+        { 0x00,      0xffffffff,   0xff,    "?",            KNONE  }   // terminator
     };
-    for (int i = 0; s_qt_keys[i].qtk_keycode != 0xffffffff; ++i)
+    for (int i = 0; s_qt_keys[i].qtk_keyevent != 0xffffffff; ++i)
     {
-        int index = s_qt_keys[i].qtk_ordinal;           // not qtk_keycode
+        int index = s_qt_keys[i].qtk_ordinal;           // not qtk_keyevent
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf
         (
             "Key #%03d '%s': Ord %02x; code %02x-->",
             i, qt_keys(index).qtk_keyname.c_str(),
-            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keycode
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
         );
 #endif
 
@@ -863,7 +971,7 @@ setup_qt_azerty_fr_keys ()
         (
             "Key #%03d '%s': Ord %02x; code %02x\n",
             i, qt_keys(index).qtk_keyname.c_str(),
-            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keycode
+            qt_keys(index).qtk_ordinal, qt_keys(index).qtk_keyevent
         );
 #endif
     }

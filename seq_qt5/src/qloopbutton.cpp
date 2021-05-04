@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-28
- * \updates       2021-04-29
+ * \updates       2021-05-04
  * \license       GNU GPLv2 or above
  *
  *  A paint event is a request to repaint all/part of a widget. It happens for
@@ -685,7 +685,7 @@ qloopbutton::draw_pattern (QPainter & painter)
         int ly0 = m_event_box.y();
         int lxw = m_event_box.w();
         int lyh = m_event_box.h();
-        pen.setWidth(2);
+        pen.setWidth(1);
         if (loop()->measure_threshold())
         {
             if (loop()->transposable())
@@ -693,6 +693,7 @@ qloopbutton::draw_pattern (QPainter & painter)
             else
                 pen.setColor(drum_color());
 
+            pen.setWidth(2);
             painter.setPen(pen);
             if (m_fingerprint_size > 1)
             {

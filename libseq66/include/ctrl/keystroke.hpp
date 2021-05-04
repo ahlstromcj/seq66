@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-21
- * \updates       2020-04-28
+ * \updates       2020-05-04
  * \license       GNU GPLv2 or above
  *
  *  This class is used for encapsulating keystrokes, and is used for some Qt 5
@@ -36,8 +36,7 @@
  */
 
 #include <string>                       /* std::string class                */
-
-#include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
+#include "ctrl/keymap.hpp"              /* seq66::ctrlkey alias, etc.       */
 
 /*
  *  Do not document a namespace; it breaks Doxygen.
@@ -110,21 +109,21 @@ private:
      *  sanity-checking.
      */
 
-    static const ctrlkey sm_bad_value  = 0x0000;       /* null   */
-    static const ctrlkey sm_minimum    = 0x0001;       /* Ctrl-A */
-    static const ctrlkey sm_maximum    = 0xffff;
+    static const ctrlkey sm_bad_value       = 0x00;         /* null         */
+    static const ctrlkey sm_minimum         = 0x01;         /* Ctrl-A       */
+    static const ctrlkey sm_maximum         = 0xff;
 
     /**
      *  Values from Qt 5.  The commented values indicate their value in the
      *  keymap module.
      */
 
-    static const ctrlkey sm_Qt_Backspace = 0x01000002;  // 0x83 // 0xff08 (Gtk)
-    static const ctrlkey sm_Qt_Delete    = 0x01000007;  // 0x87 // 0xffff (Gtk)
-    static const ctrlkey sm_Qt_Left      = 0x01000012;  // 0x92
-    static const ctrlkey sm_Qt_Up        = 0x01000013;  // 0x93
-    static const ctrlkey sm_Qt_Right     = 0x01000014;  // 0x94
-    static const ctrlkey sm_Qt_Down      = 0x01000015;  // 0x95
+    static const eventkey sm_Qt_Backspace   = 0x01000003;   /* 0x83, 0xff08 */
+    static const eventkey sm_Qt_Delete      = 0x01000007;   /* 0x87, 0xffff */
+    static const eventkey sm_Qt_Left        = 0x01000012;   /* 0x92         */
+    static const eventkey sm_Qt_Up          = 0x01000013;   /* 0x93         */
+    static const eventkey sm_Qt_Right       = 0x01000014;   /* 0x94         */
+    static const eventkey sm_Qt_Down        = 0x01000015;   /* 0x95         */
 
     /**
      *  Determines if the key was a press or a release.  See enum class
@@ -135,10 +134,9 @@ private:
 
     /**
      *  The key that was pressed or released.  Generally, the extended ASCII
-     *  range (0 to 255) is supported.  However, Gtk-2.x/3.x and Qt 5.0 will
-     *  generally support the full gamut of characters defined in the
-     *  gdk_basic_keys.h module.  We define minimum and maximum range macros
-     *  for keystrokes that are a bit generous.
+     *  range (0 to 0xff) is supported.  However, Gtk-2.x/3.x and Qt 5.0 will
+     *  generally support the full gamut of characters, with codes that are
+     *  unsigned integers; and the modifiers might be needed for lookup.
      */
 
     mutable ctrlkey m_key;
@@ -224,22 +222,22 @@ public:
 
     bool is_left () const
     {
-        return m_key == 0x92;
+        return m_key == arrow_left();
     }
 
     bool is_up () const
     {
-        return m_key == 0x93;
+        return m_key == arrow_up();
     }
 
     bool is_right () const
     {
-        return m_key == 0x94;
+        return m_key == arrow_right();
     }
 
     bool is_down () const
     {
-        return m_key == 0x95;
+        return m_key == arrow_down();
     }
 
     ctrlkey key () const

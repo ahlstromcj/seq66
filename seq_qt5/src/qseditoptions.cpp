@@ -244,6 +244,14 @@ qseditoptions::qseditoptions (performer & p, QWidget * parent)
         this, SLOT(handle_palette_active_click())
     );
 
+    connect
+    (
+        ui->text_edit_key, SIGNAL(textChanged(const QString &)),
+        this, SLOT(handle_key_test(const QString &))
+    );
+    ui->text_edit_key->hide();
+    ui->label_key->hide();
+
     /*
      * OK/Cancel Buttons
      */
@@ -695,6 +703,18 @@ qseditoptions::update_pattern_editor ()
 }
 
 #endif
+
+void
+qseditoptions::handle_key_test (const QString &)
+{
+    QString s = ui->text_edit_key->text();
+    if (s.length() > 0)
+    {
+        QChar first = s.at(0);
+        ushort us = first.unicode();
+        printf("0x%x\n", unsigned(us));
+    }
+}
 
 /**
  *  Added for Seq66.  Not yet filled with functionality.

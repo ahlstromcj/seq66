@@ -122,6 +122,7 @@ private slots:
     void update_palette_file (const QString &);
     void handle_palette_save_click ();
     void handle_palette_active_click ();
+    void handle_key_test (const QString &);
 
 private:
 

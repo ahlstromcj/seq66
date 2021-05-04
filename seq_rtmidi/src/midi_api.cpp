@@ -131,17 +131,17 @@ midi_api::error (rterror::Type type, const std::string & errorstring)
 
     if (type == rterror::WARNING)
     {
-        errprint(errorstring.c_str());
+        errprint(errorstring);
     }
     else if (type == rterror::DEBUG_WARNING)
     {
 #if defined SEQ66_PLATFORM_DEBUG
-        errprint(errorstring.c_str());
+        errprint(errorstring);
 #endif
     }
     else
     {
-        errprint(errorstring.c_str());
+        errprint(errorstring);
 
         /*
          * Not a big fan of throwing errors, especially since we currently log

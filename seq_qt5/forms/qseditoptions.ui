@@ -24,7 +24,7 @@ in a very specific place; the alternative is to do Alt-C
 once or twice. </string>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabMidiClock">
       <property name="toolTip">
@@ -556,6 +556,29 @@ path added to this name is stripped.</string>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QLabel" name="label_key">
+       <property name="geometry">
+        <rect>
+         <x>24</x>
+         <y>232</y>
+         <width>73</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Key</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="text_edit_key">
+       <property name="geometry">
+        <rect>
+         <x>112</x>
+         <y>232</y>
+         <width>41</width>
+         <height>25</height>
+        </rect>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="tabJackSync">

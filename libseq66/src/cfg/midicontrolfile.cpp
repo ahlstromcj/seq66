@@ -1028,7 +1028,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
                 else if (currcat == automation::category::automation)
                     file << "\n[automation-control]\n\n";
             }
-            int spacing = 8 - int(stan.key_name().size());
+            int spacing = 10 - int(stan.key_name().size());
             file
                 << std::setw(2) << stan.slot_number()
                 << " \"" << stan.key_name() << "\""

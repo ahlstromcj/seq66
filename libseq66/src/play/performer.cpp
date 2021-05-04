@@ -2428,6 +2428,7 @@ performer::finish ()
 {
     reset_sequences();                      /* stop all output upon exit    */
     panic();                                /* go even further 2021-03-18   */
+    m_io_active = m_is_running = false;     /* also done in constructor     */
     announce_exit(true);                    /* blank device completely      */
 
     bool ok = deinit_jack_transport();
@@ -2947,7 +2948,7 @@ performer::output_func ()
         return
 
     show_cpu();
-    while (m_io_active)                     /* should we LOCK this variable */
+    while (m_io_active)                     /* this variable is now atomic  */
     {
         SEQ66_SCOPE_LOCK                    /* only a marker macro          */
         {
@@ -3400,6 +3401,9 @@ performer::poll_cycle ()
     {
         do
         {
+            if (! m_io_active)
+                break;                              /* spurious exit events */
+
             event ev;
             if (m_master_bus->get_midi_event(&ev))
             {

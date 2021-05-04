@@ -1,7 +1,7 @@
-# README for Seq66 0.93.1
+# README for Seq66 0.93.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-03
+2015-09-10 to 2021-05-04
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -17,6 +17,9 @@ application from the source code.  See the INSTALL file.  Windows users can
 get an installer package on GitHub or build it with Qt Creator.  A large PDF
 user-manual is provided.
 
+![Alt text](doc/latex/images/main-window/main-window-fluxbox.png?raw=true "Seq66
+Dark-Cold Fluxbox")
+
 # Major Features
 
     Also see **Recent Changes** below.
@@ -25,8 +28,8 @@ user-manual is provided.
 
     *   Qt 5 (good cross-platform support).  A grid of loop buttons and a song
         layout tab.  Unlimited external windows.  The live frame uses buttons
-        matching Qt theming.  Qt style-sheet support, to further tinker with the
-        app's appearance.
+        matching Qt theming.
+    *   Qt style-sheet support, to further tinkering with the app's appearance.
     *   Tabs for management of sets, mute-groups, song mode, pattern
         editing, event-editing, play-lists, and session information.
     *   A color for each pattern can be chosen to make them stand out.
@@ -78,6 +81,13 @@ Windows, and using a conventional source tarball.
 
 ## Recent Changes
 
+    *   Version 0.93.2:
+        *   Removed the code for the essentially unused Seqtool application.
+        *   Refactored keymaps for better progress on issue #47, using native
+            key-codes. Added a spreadsheet listing the supported names of the
+            keys.
+        *   Removed excess spurious events when the application shuts down under
+            JACK.
     *   Version 0.93.1:
         *   Work in progress on issue #47; added a keyboard-layout option to the
             'ctrl' file to disable auto-shift and tweak the internal key-map for
@@ -122,20 +132,6 @@ Windows, and using a conventional source tarball.
             than 127.
         *   Enhanced the event editor to work with channel-less tracks.
         *   Added channel and bus menus to the grid-button popup menu.
-    *   Version 0.92.2:
-        *   Added a Qt "style-sheet" configuration it to the 'usr' file. It
-            can be used to alter the appearance of the application beyond what
-            a palette can do.  A sample 'qss' file is provided.
-        *   Fixed PPQN modification, added user-interface and 'usr'
-            configuration to change the default PPQN from 192.
-        *   Fixed many issues with changing the time signature.
-        *   Fixed creation of new configuration files.
-        *   Fixed port-mapping for MIDI output, control, and status display.
-        *   Removed the external set-master; use the set-master tab.
-        *   Tightened meta-events and set-handling.
-        *   More fixes to Song recording; added a Snap button for it.
-        *   Fixed the rendering of the beat indicator and pattern fonts.
-        *   Updated the man pages and the documentation.
 
     See the "NEWS" file for changes in earlier versions.
 

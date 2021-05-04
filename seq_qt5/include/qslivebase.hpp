@@ -38,7 +38,7 @@
 
 #include <QFrame>
 
-#include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
+// #include "midi/midibytes.hpp"           /* seq66::ctrlkey alias             */
 #include "play/performer.hpp"           /* seq66::performer class           */
 #include "play/screenset.hpp"           /* seq66::screenset class           */
 

@@ -1,7 +1,7 @@
 # Seq66 0.92.0 (and above) MIDI control configuration file
 #
 # /home/user/.config/seq66/qseq66.ctrl
-# Written on 2021-04-23 07:06:15
+# Written on 2021-05-04 08:33:21
 #
 # This file holds the MIDI control configuration for Seq66. It follows
 # the format of the 'rc' configuration file, but is stored separately for
@@ -36,7 +36,9 @@ look empty with a space.
 # If set, then only that buss will be allowed to send MIDI control.
 # A value of 255 (0xFF) means any buss can send MIDI control.
 # The 'midi-enabled' flag applies to the MIDI controls; keystrokes
-# are always enabled.
+# are always enabled. Supported keyboard layouts are 'qwerty' (the
+# default), 'qwertz', and 'azerty'. AZERTY turns off the auto-shift
+# feature for group-learn.
 
 load-key-controls = true
 load-midi-controls = true
@@ -45,6 +47,7 @@ midi-enabled = false
 button-offset = 0
 button-rows = 4
 button-columns = 8
+keyboard-layout = qwerty
 
 # This style of control stanza incorporates key control as well,
 # but keys support only 'toggle', and key-release is an 'invert'.

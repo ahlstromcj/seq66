@@ -82,7 +82,12 @@ keycontainer::keycontainer (const std::string & name) :
  *  container.
  *
  * \param ordinal
- *      Provides the keystroke value (see the keymap.cpp module).
+ *      Provides the keystroke value (see the keymap.cpp module). This is an
+ *      internal value ranging from 0x00 to 0xfe that can be tied to an
+ *      operation/control.  For the ASCII character set, this value is the
+ *      same as the key-code returned by the Qt function nativeVirtualKey().
+ *      For other character, we have to look up the key-code to find the
+ *      proper ordinal.
  *
  * \param op
  *      Provides the key-control operation to be triggered by this keystroke.
@@ -96,7 +101,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
 {
     bool result = false;
     auto sz = m_container.size();
-    auto p = std::make_pair(ordinal, op);   /* std::pair<int, keycontrol>   */
+    auto p = std::make_pair(ordinal, op);   /* std::pair<ctrlkey, keycontrol>   */
     (void) m_container.insert(p);
     result = m_container.size() == (sz + 1);
     if (result)
@@ -132,8 +137,8 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
  *
  * \param op
  *      Provides the key-control operation to be triggered by this keystroke.
- *      This item provides the pattern offset for the slot, and the name of the
- *      keystroke that toggles the slot.
+ *      This item provides the pattern offset for the slot, and the name of
+ *      the keystroke that toggles the slot.
  *
  * \return
  *      Returns true if the container size increased by 1.
@@ -225,10 +230,13 @@ keycontainer::control (ctrlkey ordinal) const
 }
 
 /**
- *  For issue #47, we set up the key-map to use the hex-code for the name of the
- *  key.  See the discussion in keymap.cpp for the function qt_keys(). Our
- *  detection of this case is that the name begins with "0x", which is sufficient
- *  based on the contents of the keymap.
+ *  For issue #47, we set up the key-map to use the hex-code for the name of
+ *  the key.  See the discussion in keymap.cpp for the function qt_keys(). Our
+ *  detection of this case is that the name begins with "0x", which is
+ *  sufficient based on the contents of the keymap.
+ *
+ *  However, we've also added some more names to the list in the keymap
+ *  module, so these numeric names won't occur all that often.
  */
 
 std::string
@@ -335,8 +343,8 @@ keycontainer::kbd_layout_to_string (keyboard::layout lay)
 }
 
 /**
- *  We had to put the static vectors inside this function because they were not
- *  initialized in time for their usage.  Odd.
+ *  We had to put the static vectors inside this function because they were
+ *  not initialized in time for their usage.  Odd.
  */
 
 void

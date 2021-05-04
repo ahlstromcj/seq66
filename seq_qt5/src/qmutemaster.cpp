@@ -860,6 +860,7 @@ qmutemaster::handle_key_press (const keystroke & k)
     bool result = kc.is_usable();
     if (result)
     {
+        // no code
     }
     return result;
 }
@@ -870,6 +871,7 @@ qmutemaster::handle_key_release (const keystroke & k)
     bool done = cb_perf().midi_control_keystroke(k);
     if (! done)
     {
+        // no code
     }
     return done;
 }

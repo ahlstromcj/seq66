@@ -127,7 +127,7 @@
 ::
 ::---------------------------------------------------------------------------
  
-set PROJECT_VERSION=0.93.1
+set PROJECT_VERSION=0.94.0
 set PROJECT_DRIVE=C:
 
 :: PROJECT_BASE is the directory that is the immediate parent of the seq66
