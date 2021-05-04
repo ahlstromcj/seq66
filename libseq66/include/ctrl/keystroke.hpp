@@ -207,15 +207,6 @@ public:
         return m_key == ch1 || m_key == ch2;
     }
 
-    /**
-     * \getter m_key to test for a delete-causing key.
-     */
-
-    bool is_delete () const
-    {
-        return m_key == sm_Qt_Delete || m_key == sm_Qt_Backspace;
-    }
-
     /*
      * The following functions support hard-wired usage of the arrow keys.
      */

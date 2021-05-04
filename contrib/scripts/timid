@@ -4,14 +4,16 @@
 # \file        timid
 # \library     bin
 # \author      Chris Ahlstrom
-# \date        2021-04-19 to 2021-05-01
+# \date        2021-04-19 to 2021-05-04
 # \version     $Revision$
 # \license     GNU GPLv2 or above
 #
 #  This script runs timidity, so one can avoid having to deal with timidity as
 #  a service.  Starts it under ALSA as a daemon, not a service.
 #
+#     -Oj            Output to JACK.
 #     -Os            Output to ALSA.
+#     -Od            Output to audio device.
 #     -iA            Launch as an ALSA sequencer client
 #     --background   Start as a daemon.
 #
@@ -19,20 +21,26 @@
 #
 #------------------------------------------------------------------------------
 
+SETTLETIME="3"
+
 if [ "$1" == "kill" ] ; then
 
+   SETTLETIME="1"
    killall timidity
-   sleep 1
-   aplaymidi -l
+
+elif [ "$1" == "jack" ] ; then
+
+   timidity -Oj -iA --background
 
 else
 
    timidity -Os -iA --background
-   echo "Waiting 3 seconds to settle..."
-   sleep 3
-   aplaymidi -l
 
 fi
+
+echo "Waiting $SETTLETIME seconds to settle..."
+sleep $SETTLETIME
+aplaymidi -l
 
 #******************************************************************************
 # qbuild (Seq66)
