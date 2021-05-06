@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-04-20
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1219,7 +1219,6 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                                     s.add_trigger(on, off, 0x0, false);
                                     len -= 8;
                                 }
-                                break;
                             }
                             else if (seqspec == c_triggers_ex)
                             {
@@ -2099,6 +2098,7 @@ midifile::write_short (midishort x)
  *
  *  To generate a VLV from a given number, break the number up into 7 bit
  *  units and then apply the correct continuation bit to each byte.
+ *  Basically this is a base-128 system where the digits range from 0 to 7F.
  *
  *  In theory, you could have a very long VLV number which was quite
  *  large; however, in the standard MIDI file specification, the maximum
@@ -2109,11 +2109,15 @@ midifile::write_short (midishort x)
  *
  *      -   Numbers between 0 and 127 are represented by a single byte:
  *          0x00 to 7F.
- *      -   0x80 is represented as 0x81 00.
+ *      -   0x80 is represented as 0x81 00.  The first number is
+ *          10000001, with the left bit being the continuation bit.
+ *          The rest of the number is multiplied by 128, and the second byte
+ *          (0) is added to that. So 0x82 would be 0x81 0x01
  *      -   The largest 2-byte MIDI value (e.g. a sequence number) is
  *          0xFF 7F, which is 127 * 128 + 127 = 16383 = 0x3FFF.
- *      -   The largest 3-byte MIDI value is 0xFF FF 7F = 0x1FFFFF.
- *      -   The largest number, 4 bytes, is 0xFF FF FF 7F = 0xFFFFFFF.
+ *      -   The largest 3-byte MIDI value is 0xFF FF 7F = 2097151 = 0x1FFFFF.
+ *      -   The largest number, 4 bytes, is 0xFF FF FF 7F = 536870911 =
+ *          0xFFFFFFF.
  *
  *  Also see the varinum_size() and midi_vector_base::add_variable() functions.
  *
@@ -2611,25 +2615,24 @@ midifile::write_song (performer & p)
 #endif
 
                     /*
-                     * Add each trigger as described in the function banner.
+                     * Add all triggered events (see the function banner).
+                     * If any, then make one long trigger.
                      */
 
-                    midipulse previous_ts = 0;
+                    midipulse last_ts = 0;
                     const auto & trigs = seq.get_triggers();
                     for (auto & t : trigs)
-                        previous_ts = lst.song_fill_seq_event(t, previous_ts);
+                        last_ts = lst.song_fill_seq_event(t, last_ts);
 
                     if (! trigs.empty())        /* adjust sequence length   */
                     {
-                        const trigger & end_trigger = trigs.back();
-
                         /*
-                         * This isn't really the trigger length.  It is off by
-                         * 1.  But subtracting the tick_start() value can
-                         * really screw things up.
+                         * tick_end() isn't quite a trigger length, off by 1.
+                         * Subtracting tick_start() can really screw it up.
                          */
 
-                        midipulse seqend = end_trigger.tick_end();
+                        const trigger & ender = trigs.back();
+                        midipulse seqend = ender.tick_end();
                         midipulse measticks = seq.measures_to_ticks();
                         if (measticks > 0)
                         {
@@ -2637,10 +2640,7 @@ midifile::write_song (performer & p)
                             if (remainder != measticks - 1)
                                 seqend += measticks - remainder - 1;
                         }
-                        lst.song_fill_seq_trigger
-                        (
-                            end_trigger, seqend, previous_ts
-                        );
+                        lst.song_fill_seq_trigger(ender, seqend, last_ts);
                     }
                     write_track(lst);
                 }

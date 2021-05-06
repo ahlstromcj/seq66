@@ -25,13 +25,13 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-04-13
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
  *  note is that the triggers are written to a MIDI file using the
  *  sequencer-specific code c_triggers_ex.  Updated now with c_trig_transpose
- *  to add a transposition byte.
+ *  to add a transposition byte when a trigger has been marked as transposed.
  *
  * Stazed:
  *
@@ -71,16 +71,6 @@
 namespace seq66
 {
 
-trigger::trigger () :
-    m_tick_start    (0),
-    m_tick_end      (0),
-    m_offset        (0),
-    m_transpose     (0),
-    m_selected      (false)
-{
-    // Empty body
-}
-
 trigger::trigger
 (
     midipulse tick, midipulse len,
@@ -92,7 +82,7 @@ trigger::trigger
     m_transpose     (0),
     m_selected      (false)
 {
-    transpose_byte(tpose);                /* convert byte to converted int    */
+    transpose_byte(tpose);                /* convert byte to converted int  */
 }
 
 void
@@ -115,6 +105,19 @@ trigger::to_string () const
     result += " transpose by ";
     result += std::to_string(transpose());
     return result;
+}
+
+/**
+ *  Gets the total number of bytes needed to store all the triggers in the
+ *  container.  Non-transposed triggers can save a byte, and also be backward
+ *  compatible to Seq24.  However, we're currently stuck with one size or the
+ *  other, and so this is a static function for now.
+ */
+
+int
+trigger::datasize ()
+{
+    return rc().save_old_triggers() ? (3 * 4) : (3 * 4 + 1);
 }
 
 /**
@@ -185,6 +188,34 @@ triggers::rescale (int oldppqn, int newppqn)
             t.rescale(oldppqn, newppqn);
 
         set_length(rescale_tick(m_length, oldppqn, newppqn));
+    }
+    return result;
+}
+
+/**
+ *  Gets the total number of bytes needed to store all the triggers in the
+ *  container.  Non-transposed triggers can save a byte, and also be backward
+ *  compatible to Seq24.  However, we're currently stuck with one size or the
+ *  other.
+ */
+
+int
+triggers::datasize () const
+{
+    return count() * trigger::datasize();
+}
+
+bool
+triggers::any_transposed () const
+{
+    bool result = false;
+    for (auto & t : m_triggers)
+    {
+        if (t.transposed())
+        {
+            result = true;
+            break;
+        }
     }
     return result;
 }

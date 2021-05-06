@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom and others
  * \date          2018-11-12
- * \updates       2021-04-29
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  Also read the comments in the Sequencer64 version of this module,
@@ -4362,13 +4362,23 @@ performer::show_cpu ()
 }
 
 /**
- *  Simple error reporting for debugging.
+ *  Simple error reporting for debugging. We have to cast the ordinal back to
+ *  unsigned, otherwise odd or empty strings are emitted.
  */
 
 void
-performer::show_ordinal_error (ctrlkey ordinal, const std::string & tag)
+performer::show_key_error (const keystroke & k, const std::string & tag)
 {
-    std::cerr << "Ordinal 0x" << std::hex << ordinal << " " << tag << std::endl;
+    ctrlkey ordinal = k.key();
+    std::string name = qt_ordinal_keyname(ordinal);
+    std::string pr = k.is_press() ? "Press" : "Release" ;
+    std::string mods = modifier_names(unsigned(k.modifiers()));
+    std::cerr
+        << "Key '" << name
+        << "' Ordinal 0x" << std::hex << unsigned(ordinal)
+        << " Modifier(s) " << mods
+        << ": " << pr << ": "<< tag << std::endl
+        ;
 }
 
 /**
@@ -4880,8 +4890,8 @@ performer::clear_seq_edits ()
 
 
 /**
- *  Handle a control key.  The caller (e.g. a Qt key-press event handler) grabs
- *  the event text and modifiers and converts it to an ctrlkey value
+ *  Handle a control key.  The caller (e.g. a Qt key-press event handler)
+ *  grabs the event text and modifiers and converts it to an ctrlkey value
  *  (ranging from 0x00 to 0xFE).  We show the caller code here for reference:
  *
 \verbatim
@@ -4899,15 +4909,15 @@ performer::clear_seq_edits ()
  *  can use its slot value to look up the midioperation associated with this
  *  slot.
  *
- *  Also part of keystroke is whether the key was pressed or released.
- *  A press sets inverse = false, while a release sets inverse = true.
- *  For some keystrokes, this difference matters.  For most, we want to
- *  ignore the release.
+ *  Also part of keystroke is whether the key was pressed or released.  A
+ *  press sets inverse = false, while a release sets inverse = true.  For some
+ *  keystrokes, this difference matters.  For most, we want to ignore the
+ *  release.
  *
  *  Note that the default action for most keys is automation::action::toggle,
  *  but some keys are configured to do automation::action::on during a
- *  key-press, and automation::action::off during a key-release.
- *  To summarize:
+ *  key-press, and automation::action::off during a key-release.  To
+ *  summarize:
  *
  *      -   Pattern keys. The action is always automation::action::toggle
  *          upon a key-press. Key-release is ignored.
@@ -4920,10 +4930,10 @@ performer::clear_seq_edits ()
  *          -   toggle.  Operate a toggling operation.  Operate only upon
  *              key-press.
  *          -   off.  Not used with keystrokes, just with MIDI control.
- *      -   Modal keys.  The action is automation::action::on.  But the state of
- *          the key-press is used.  If a press, the mode is activated.  If a
- *          release, the mode is deactivated. This operating mode is determined
- *          by the automation callback function.
+ *      -   Modal keys.  The action is automation::action::on.  But the state
+ *          of the key-press is used.  If a press, the mode is activated.  If
+ *          a release, the mode is deactivated. This operating mode is
+ *          determined by the automation callback function.
  *
  * Example:
  *
@@ -5022,11 +5032,11 @@ performer::midi_control_keystroke (const keystroke & k)
                      */
 
                     if (! m_seq_edit_pending && ! m_event_edit_pending)
-                        show_ordinal_error(kkey.key(), "call returned false");
+                        show_key_error(kkey, "call returned false");
                 }
             }
             else
-                show_ordinal_error(kkey.key(), "call unusable");
+                show_key_error(kkey, "call unusable");
         }
     }
     return result;
@@ -6753,7 +6763,7 @@ performer::automation_menu_mode
 }
 
 /**
- *  TODO TODO TODO
+ *  Toggles the following of JACK Transport upon a "key" press.
  */
 
 bool
@@ -6762,12 +6772,15 @@ performer::automation_follow_transport
     automation::action a, int d0, int d1, bool inverse
 )
 {
-    std::string name = "Follow JACK Transport TODO";
-    bool result = false;
+    std::string name = "Follow JACK Transport";
+    bool result = true;
     print_parameters(name, a, d0, d1, inverse);
     if (! inverse)
     {
-        // TODO
+        std::string mode("Follow JACK Transport ");
+        toggle_follow_transport();
+        mode += get_follow_transport() ? "On" : "Off" ;
+        infoprint(mode);
     }
     return result;
 }

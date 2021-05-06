@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-30
- * \updates       2021-04-28
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  This class makes access to keystroke features simpler.
@@ -44,19 +44,6 @@ namespace seq66
 {
 
 /**
- *  The default constructor for class keystroke.
- */
-
-keystroke::keystroke ()
- :
-    m_is_press  (false),
-    m_key       (sm_minimum),
-    m_modifier  (mod::None)
-{
-    // Empty body
-}
-
-/**
  *  The principal constructor.
  *
  * \param key
@@ -67,15 +54,14 @@ keystroke::keystroke ()
  *
  * \param modkey
  *      The modifier key combination that was pressed, if any, in the form of
- *      a bit-mask, as defined in the gdk_basic_keys module.  Common mask
- *      modifier values are Shift, Control, Mod1, and Mod4.  If no modifier,
- *      this value is None.
+ *      a bit-mask, as defined in the keymap module; it follows Qt
+ *      conventions.  If no modifier, this value is keyboard::KNONE = 0.
  */
 
-keystroke::keystroke (ctrlkey key, bool press, int modkey) :
-    m_is_press  (press),
-    m_key       (key),
-    m_modifier  (static_cast<mod>(modkey))
+keystroke::keystroke (ctrlkey key, bool press, unsigned modkey) :
+    m_is_press      (press),
+    m_key           (key),
+    m_modifiers     (static_cast<keyboard::modifiers>(modkey))
 {
     // Empty body
 }

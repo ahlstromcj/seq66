@@ -2680,11 +2680,11 @@ qsmainwnd::quit_session ()
  *  we moved much of the processing to that class.  If the event isn't handled
  *  there, then qsmainwnd::handle_key_press() is called.
  *
- *  If we reimplement this handler, it is very important to call the base class
- *  implementation if the key is no acted on.
+ *  If we reimplement this handler, it is very important to call the base
+ *  class implementation if the key is no acted on.
  *
- *  ca 2020-11-22 Refactoring keystroke handling between the main window and the
- *  live grid/frame.
+ *  ca 2020-11-22 Refactoring keystroke handling between the main window and
+ *  the live grid/frame.
  */
 
 void

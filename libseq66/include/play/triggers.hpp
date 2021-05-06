@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-04-13
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -58,9 +58,9 @@ namespace seq66
 const int c_no_paste_trigger    = (-1);
 
 /**
- *  This class hold a single trigger for a sequence object.  This class is used
- *  in playback, and instantiations of this class are contained in the triggers
- *  class defined later in this module.
+ *  This class hold a single trigger for a sequence object.  This class is
+ *  used in playback, and instantiations of this class are contained in the
+ *  triggers class defined later in this module.
  */
 
 class trigger
@@ -103,11 +103,12 @@ private:
     midipulse m_offset;
 
     /**
-     *  New feature.  An additional byte indicates to transpose this trigger.
-     *  The values range from 0 to 0x80.  0x00 indicates that transposition is
-     *  not in effect. 0x40 indicates that it is in effect, but has a value of
-     *  0.  Values from 0x41 to 0x80 indicate tranposition from +1 to +63.
-     *  Values from 0x3F to 0x01 indicate transposition from -1 to -63.
+     *  New feature.  An additional byte indicates to transpose this trigger,
+     *  to implement the new c_trig_transpose SeqSpec tag.  The values range
+     *  from 0 to 0x80.  0x00 indicates that transposition is not in effect.
+     *  0x40 indicates that it is in effect, but has a value of 0.  Values
+     *  from 0x41 to 0x80 indicate tranposition from +1 to +63.  Values from
+     *  0x3F to 0x01 indicate transposition from -1 to -63.
      */
 
     int m_transpose;
@@ -120,15 +121,15 @@ private:
 
 public:
 
-    trigger ();
+    trigger () = default;
     trigger
     (
         midipulse tick, midipulse len,
         midipulse offset, midibyte transpose = 0
     );
-    ~trigger () = default;
     trigger (const trigger &) = default;
     trigger & operator = (const trigger &) = default;
+    ~trigger () = default;
 
     /**
      *  This operator compares only the m_tick_start members.
@@ -280,6 +281,8 @@ public:
     {
         return m_transpose != 0;
     }
+
+    static int datasize ();
 
     void transpose (int t)                          /* to modify a trigger  */
     {
@@ -478,6 +481,9 @@ public:
         return int(m_triggers.size());
     }
 
+    int datasize () const;
+    bool any_transposed () const;
+
     int number_selected () const
     {
         return m_number_selected;
@@ -504,7 +510,7 @@ public:
     void add
     (
         midipulse tick, midipulse len,
-        midipulse offset = 0, midibyte transpose = 0x00,
+        midipulse offset = 0, midibyte transpose = 0,
         bool adjustoffset = true
     );
     void adjust_offsets_to_length (midipulse newlen);

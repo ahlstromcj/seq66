@@ -40,48 +40,32 @@
 namespace seq66
 {
 
-/**
- *  Provides short names for these Qt::KeyboardModifier values, to make the
- *  table readable.
- */
-
-enum kmodifiers
-{
-    KNONE   = 0x00000000,
-    KSHIFT  = 0x02000000,
-    KCTRL   = 0x04000000,
-    KALT    = 0x08000000,
-    KMETA   = 0x10000000,
-    KEYPAD  = 0x20000000,
-    KGROUP  = 0x40000000
-};
-
 std::string
 modifier_names (unsigned kmod)
 {
     std::string result;
-    if (kmod == KNONE)
+    if (kmod == keyboard::KNONE)
     {
         result = "None";
     }
     else
     {
-        if (kmod & KSHIFT)
+        if (kmod & keyboard::KSHIFT)
             result += "Shift ";
 
-        if (kmod & KCTRL)
+        if (kmod & keyboard::KCTRL)
             result += "Ctrl ";
 
-        if (kmod & KALT)
+        if (kmod & keyboard::KALT)
             result += "Alt ";
 
-        if (kmod & KMETA)
+        if (kmod & keyboard::KMETA)
             result += "Meta ";
 
-        if (kmod & KEYPAD)
+        if (kmod & keyboard::KEYPAD)
             result += "Keypad ";
 
-        if (kmod & KGROUP)
+        if (kmod & keyboard::KGROUP)
             result += "Group ";
     }
     return result;
@@ -181,7 +165,7 @@ struct qt_keycodes
      *  integer version of the enum class qt_kbd_modifier defined above.
      */
 
-    unsigned qtk_modifier;
+    /* unsigned */ keyboard::modifiers qtk_modifier;
 };
 
 /**
@@ -199,7 +183,7 @@ struct qt_keycodes
  *      -   Qt Key Event:   qtk_keyevent    [QKeyEvent::key(), unsigned]
  *      -   Qt Virtual Key: qtk_virtkey     [QKeyEvent::nativeVirtualKey(), unsigned]
  *      -   Key Name:       qtk_keyname
- *      -   Modifier:       qtk_modifier    [QKeyEvent::modifiers(), unsigned]
+ *      -   Modifier:       qtk_modifiers   [QKeyEvent::modifiers(), unsigned]
  *
  *  By using the modifier, we can distinguish between various version of the
  *  same key, such as the normal PageDn and the keypad's PageDn.
@@ -229,6 +213,7 @@ struct qt_keycodes
 static qt_keycodes &
 qt_keys (int i)
 {
+    using namespace keyboard;
     static qt_keycodes s_qt_keys [] =   /* modifiable from inside this module */
     {
         /*
@@ -269,8 +254,8 @@ qt_keys (int i)
         { 0x1b,        0x5b,   0x7b,  "ESC",        KCTRL  },    // ^[: Escape
         { 0x1c,        0x5c,   0x7c,  "FS",         KCTRL  },    // ^\: File Separator
         { 0x1d,        0x5d,   0x7d,  "GS",         KCTRL  },    // ^]: Group Separator
-        { 0x1e,        0x5e,   0x7e,  "RS",  KSHIFT|KCTRL  },    // ^^: Record Separator
-        { 0x1f,        0x5f,   0x7f,  "US",  KSHIFT|KCTRL  },    // ^_???: Unit Separator
+        { 0x1e,        0x5e,   0x7e,  "RS",    KCTRLSHIFT  },    // ^^: Record Separator
+        { 0x1f,        0x5f,   0x7f,  "US",    KCTRLSHIFT  },    // ^_???: Unit Separator
 
         /*
          * Code        Qt           Key Name      Modifier
@@ -928,28 +913,29 @@ qt_ordinal_keyname (ctrlkey ordinal)
 static void
 setup_qt_azerty_fr_keys ()
 {
+    using namespace keyboard;
     static const qt_keycodes s_qt_keys [] =
     {
         /*
-         *  Code      Qt           Qt        Key
-         * Ordinal  Ev Key       Virtkey     Name   Modifier
+         *  Code     Qt      Qt        Key
+         * Ordinal Evkey  Virtkey     Name   Modifier
          */
 
-        { 0xe0,      0xa3,         0xa3,    "L_pound",      KNONE  },  // £  <-- F4
-        { 0xe1,      0xa4,         0xa4,    "Currency",     KNONE  },  // ¤  <-- F?
-        { 0xe2,      0xa7,         0xa7,    "Silcrow",      KNONE  },  // §  <-- F8
-        { 0xe3,      0xb0,         0xb0,    "Degrees",      KNONE  },  // °  <-- Hyper_R
-        { 0xe4,      0xb2,         0xb2,    "Super_2",      KNONE  },  // ²  <-- Dir_L
-        { 0xe5,      0xc0,         0xe0,    "a_grave",      KNONE  },  // à  <-- KP_Ins
-        { 0xe6,      0xc7,         0xe7,    "c_cedilla",    KNONE  },  // ç  <-- KP_Up
-        { 0xe7,      0xc8,         0xe8,    "e_grave",      KNONE  },  // è  <-- KP_Right
-        { 0xe8,      0xc9,         0xe9,    "e_acute",      KNONE  },  // é  <-- KP_Down
-        { 0xe9,      0xd9,         0xf9,    "u_grave",      KNONE  },  // ù  <-- Super/Mod4/Win)
-        { 0xea,      0x039c,       0xb5,    "Mu",           KNONE  },  // µ  <-- (new)
-        { 0xeb,      0x20ac,       0xb6,    "Euro",         KNONE  },  // €  <-- (new)
-        { 0xec,      0x1001252,  0xfe52,    "Circflex",     KNONE  },  // ^  <-- Caret, Circumflex
-        { 0xed,      0x1001257,  0xfe57,    "Umlaut",       KNONE  },  // ¨  <-- Diaeresis, Trema
-        { 0x00,      0xffffffff,   0xff,    "?",            KNONE  }   // terminator
+        { 0xe0,   0xa3,        0xa3, "L_pound",   KNONE }, // £ <--F4
+        { 0xe1,   0xa4,        0xa4, "Currency",  KNONE }, // ¤ <--F?
+        { 0xe2,   0xa7,        0xa7, "Silcrow",   KNONE }, // § <--F8
+        { 0xe3,   0xb0,        0xb0, "Degrees",   KNONE }, // ° <--Hyper_R
+        { 0xe4,   0xb2,        0xb2, "Super_2",   KNONE }, // ² <--Dir_L
+        { 0xe5,   0xc0,        0xe0, "a_grave",   KNONE }, // à <--KP_Ins
+        { 0xe6,   0xc7,        0xe7, "c_cedilla", KNONE }, // ç <--KP_Up
+        { 0xe7,   0xc8,        0xe8, "e_grave",   KNONE }, // è <--KP_Right
+        { 0xe8,   0xc9,        0xe9, "e_acute",   KNONE }, // é <--KP_Down
+        { 0xe9,   0xd9,        0xf9, "u_grave",   KNONE }, // ù <--Super/Mod4/Win
+        { 0xea,   0x039c,      0xb5, "Mu",        KNONE }, // µ <--(new)
+        { 0xeb,   0x20ac,      0xb6, "Euro",      KNONE }, // € <--(new)
+        { 0xec,   0x1001252, 0xfe52, "Circflex",  KNONE }, // ^ <--Caret
+        { 0xed,   0x1001257, 0xfe57, "Umlaut",    KNONE }, // ¨ <--Diaeresis
+        { 0x00,   0xffffffff,  0xff, "?",         KNONE }  // terminator
     };
     for (int i = 0; s_qt_keys[i].qtk_keyevent != 0xffffffff; ++i)
     {

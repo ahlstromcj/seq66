@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-21
- * \updates       2020-05-04
+ * \updates       2020-05-05
  * \license       GNU GPLv2 or above
  *
  *  This class is used for encapsulating keystrokes, and is used for some Qt 5
@@ -65,42 +65,6 @@ public:
         release,
         press
     };
-
-    /**
-     *  Types of modifiers, essentially the set from gtk-2.0/gdk/gdktypes.h.
-     *  We have to tweak the names to avoid redeclaration errors and to
-     *  "personalize" the values.  We change "GDK" to "SEQ66".
-     */
-
-    enum class mod
-    {
-        None         = 0,
-        Shift        = 1,                // Shift modifier key
-        Lock         = 1 << 1,           // Lock (scroll)? modifier key
-        Control      = 1 << 2,           // Ctrl modifier key
-        Mod1         = 1 << 3,           // Alt modifier key
-        Mod2         = 1 << 4,           // Num Lock modifier key
-        Mod3         = 1 << 5,           // Hyper_L (?)
-        Mod4         = 1 << 6,           // Super/Windoze modifier key
-        Mod5         = 1 << 7,           // Mode_Switch (?)
-        Button1      = 1 << 8,
-        Button2      = 1 << 9,
-        Button3      = 1 << 10,
-        Button4      = 1 << 11,
-        Button5      = 1 << 12,
-
-        /**
-         * Bits 13 and 14 are used by XKB, bits 15 to 25 are unused. Bit 29 is
-         * used internally.
-         */
-
-        Super        = 1 << 26,
-        Hyper        = 1 << 27,
-        Meta         = 1 << 28,
-        Release      = 1 << 30,
-        Max          = 1 << 31
-
-    };          // mod
 
 private:
 
@@ -142,20 +106,20 @@ private:
     mutable ctrlkey m_key;
 
     /**
-     *  The optional modifier value.  Note that "mod::None" is our word
-     *  for 0, meaning "no modifier".
+     *  The optional modifiers value.  Note that "keyboard::KNONE" is our word
+     *  for 0, meaning "no modifiers".
      */
 
-    mod m_modifier;
+    keyboard::modifiers m_modifiers;
 
 public:
 
-    keystroke ();
+    keystroke () = default;
     keystroke
     (
         ctrlkey key,
         bool press,
-        int modkey = static_cast<int>(mod::None)
+        unsigned modkey = static_cast<unsigned>(keyboard::KNONE)
     );
     keystroke (const keystroke & rhs) = default;
     keystroke & operator = (const keystroke & rhs) = default;
@@ -243,45 +207,41 @@ public:
         m_key = shifted();
     }
 
-    mod modifier () const
+    keyboard::modifiers modifiers () const
     {
-        return m_modifier;
+        return m_modifiers;
     }
 
-    int cast (mod m) const
+    void setmodifier (keyboard::modifiers km)
     {
-        return static_cast<int>(m);
+        m_modifiers = km;
     }
 
     /**
-     * \getter m_modifier tested for Ctrl key.
+     * \getter m_modifiers tested for Ctrl key.
      */
 
     bool mod_control () const
     {
-        return bool(cast(m_modifier) & cast(mod::Control));
+        return bool(m_modifiers & keyboard::KCTRL);
     }
 
     /**
-     * \getter m_modifier tested for Ctrl and Shift key.
+     * \getter m_modifiers tested for Ctrl and Shift key.
      */
 
     bool mod_control_shift () const
     {
-        return
-        (
-            bool(cast(m_modifier) & cast(mod::Control)) &&
-            bool(cast(m_modifier) & cast(mod::Shift))
-        );
+        return mod_control() && (m_modifiers & keyboard::KSHIFT);
     }
 
     /**
-     * \getter m_modifier tested for Mod4/Super/Windows key.
+     * \getter m_modifiers tested for Mod4/Super/Windows key.
      */
 
     bool mod_super () const
     {
-        return bool(cast(m_modifier) & cast(mod::Mod4));
+        return bool(m_modifiers & keyboard::KMETA);
     }
 
     void toupper ();                    /* changes m_key    */

@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-04-20
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -73,14 +73,6 @@ midi_vector_base::put_meta
     add_varinum(deltatime);
     put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
     put(metavalue);                                 /* meta marker          */
-
-    /*
-     * Some meta events (e.g. c_trig_transpose for a lot of triggers) can
-     * exceed 0x80 (128). Yikes!
-     *
-     * put(midibyte(datalen));                      // range from 0 to 127
-     */
-
     add_varinum(midilong(datalen));
 }
 
@@ -88,18 +80,7 @@ void
 midi_vector_base::put_seqspec (midilong spec, int datalen)
 {
     datalen += 4;                                   /* size of 0x242400nn   */
-    add_varinum(0);
-    put(EVENT_MIDI_META);                           /* 0xFF meta marker     */
-    put(EVENT_META_SEQSPEC);                        /* 0xF7 seqspec marker  */
-
-    /*
-     * Some meta events (e.g. c_trig_transpose for a lot of triggers) can
-     * exceed 0x80 (128). Yikes!
-     *
-     * put(midibyte(datalen));                      // range from 0 to 127
-     */
-
-    add_varinum(midilong(datalen));
+    put_meta(EVENT_META_SEQSPEC, datalen, 0);
     add_long(spec);                                 /* e.g. c_midibus       */
 }
 
@@ -605,12 +586,11 @@ midi_vector_base::song_fill_seq_event
 }
 
 /**
- *  Fills in one trigger for sequence.  For a song-performance export,
- *  there will be only one trigger, covering the beginning to the end of the
- *  fully unlooped track.  We replaced the following with the new and slightly
- *  longer c_trig_transpose:
- *
- *      put_seqspec(c_triggers_ex, num_triggers * 3 * 4);
+ *  Fills in one trigger for the sequence, for a song-performance export.
+ *  There will be only one trigger, covering the beginning to the end of the
+ *  fully unlooped track. Therefore, we use the older c_triggers_ex SeqSpec,
+ *  which saves a byte, while indicating the sequence has already been
+ *  transposed.
  *
  * Using all the trigger values seems to be the same as these values, but
  * we're basically zeroing the start and offset values to make "one big
@@ -639,18 +619,10 @@ midi_vector_base::song_fill_seq_trigger
     midipulse prev_timestamp
 )
 {
-    const int num_triggers = 1;                 /* only one trigger here    */
-    if (rc().save_old_triggers())
-        put_seqspec(c_triggers_ex, num_triggers * (3 * 4));
-    else
-        put_seqspec(c_trig_transpose, num_triggers * (3 * 4 + 1));
-
-    add_long(0);                                /* the start tick           */
+    put_seqspec(c_triggers_ex, trigger::datasize());        /* (3 * 4)      */
+    add_long(0);                                /* start tick (see banner)  */
     add_long(trig.tick_end());                  /* the ending tick          */
     add_long(0);                                /* offset is done in event  */
-    if (! rc().save_old_triggers())
-        add_byte(trig.transpose_byte());        /* the (new) transpose byte */
-
     fill_proprietary();
     fill_meta_track_end(length - prev_timestamp);           /* delta time   */
 }
@@ -768,18 +740,27 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
          * Here, we add SeqSpec entries (specific to seq66) for triggers
          * (c_triggers_ex), the MIDI buss (c_midibus), time signature
          * (c_timesig), and MIDI channel (c_midich).   Should we restrict this
-         * to only track 0?  No; Seq66 saves these events with each sequence.
-         *
-         *  Old: put_seqspec(c_triggers_ex, triggercount * 3 * 4);
+         * to only track 0?  No, Seq66 saves these events with each sequence.
          */
 
         bool transtriggers = ! rc().save_old_triggers();
         const triggers::container & triggerlist = m_sequence.triggerlist();
-        int triggersize = int(triggerlist.size());
+        int datasize = m_sequence.trigger_datasize();
+
+        /*
+         * This seems to mung the file when saved.  DISABLED PENDING FURTHER
+         * INVESTIGATION.
+         */
+
+#if defined USE_THIS_DANGEROUS_FEATURE
         if (transtriggers)
-            put_seqspec(c_trig_transpose, triggersize * (3 * 4 + 1));
+            transtriggers = m_sequence.any_trigger_transposed();
+#endif
+
+        if (transtriggers)
+            put_seqspec(c_trig_transpose, datasize);
         else
-            put_seqspec(c_triggers_ex, triggersize * (3 * 4));
+            put_seqspec(c_triggers_ex, datasize);
 
         for (auto & t : triggerlist)
         {

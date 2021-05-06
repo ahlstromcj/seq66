@@ -62,9 +62,12 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
     std::string modifiers = modifier_names(kmods);
     unsigned scode = unsigned(event->nativeScanCode());     /* scan code    */
     unsigned kcode = unsigned(event->nativeVirtualKey());   /* key sym      */
+    if (ktext.empty())
+        ktext = kname;
+
     printf
     (
-        "Event key #0x%02x mod %s '%s' %s codes: scan 0x%x key 0x%x ord %u\n",
+        "Event key #0x%02x mod %s '%s' %s: scan 0x%x key 0x%x ord %u\n",
         k, modifiers.c_str(), ktext.c_str(), press ? "press" : "release",
         scode, kcode, ordinal
     );
@@ -72,18 +75,20 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
 }
 
 /**
- *  Given a keystroke from a Qt 5 GUI, this function returns an "ordinal" version of the
- *  keystroke.  Note that there are many keystrokes that can have the same event key value.
- *  For example: Ctrl-a, Shift-a, and a.  In cases like that, we have to check the modifiers.
+ *  Given a keystroke from a Qt 5 GUI, this function returns an "ordinal"
+ *  version of the keystroke.  Note that there are many keystrokes that can
+ *  have the same event key value.  For example: Ctrl-a, Shift-a, and a.  In
+ *  cases like that, we have to check the modifiers.
  *
- *  But the QKeyEvent::modifiers() function cannot always be trusted. The user can confuse it
- *  by pressing both Shift keys simultaneously and releasing one of them, for example.
+ *  But the QKeyEvent::modifiers() function cannot always be trusted. The user
+ *  can confuse it by pressing both Shift keys simultaneously and releasing
+ *  one of them, for example.
  *
- *  We can also check the nativeVirtualKey() result for the event.  Even that can be fooled
- *  by a change in the keyboard encoding.  Yeesh!
+ *  We can also check the nativeVirtualKey() result for the event.  Even that
+ *  can be fooled by a change in the keyboard encoding.  Yeesh!
  *
- *  The qt_modkey_ordinal() function in the keymap module can use all these codes to try to
- *  figure out the proper ordinal to return.
+ *  The qt_modkey_ordinal() function in the keymap module can use all these
+ *  codes to try to figure out the proper ordinal to return.
  *
  * \param event
  *      The putative Qt 5 keystroke event.
@@ -100,8 +105,8 @@ qt_keystroke_test (QKeyEvent * event, keystroke::action act)
  *      SEQ66_KEY_TESTING is defined.
  *
  * \return
- *      Returns an object that makes the key event easier to use.  It needs to hold only the
- *      ordinal and whether the key was pressed or released.
+ *      Returns an object that makes the key event easier to use.  It needs to
+ *      hold only the ordinal and whether the key was pressed or released.
  */
 
 keystroke
@@ -115,7 +120,7 @@ qt_keystroke (QKeyEvent * event, keystroke::action act, bool testing)
     eventkey v = event->nativeVirtualKey();
     ctrlkey ordinal = qt_modkey_ordinal(k, kmods, v);
     bool press = act == keystroke::action::press;
-    return keystroke(ordinal, press);
+    return keystroke(ordinal, press, kmods);
 }
 
 /**
@@ -144,8 +149,9 @@ qt_set_icon (const char * pixmap_array [], QPushButton * button)
  *  Shows the "Open" file dialog.
  *
  * \param [inout] selectedfile
- *      A return value for the chosen file and path.  If not-empty when the call
- *      is made, show the user that directory instead of the last-used directory.
+ *      A return value for the chosen file and path.  If not-empty when the
+ *      call is made, show the user that directory instead of the last-used
+ *      directory.
  *
  * \return
  *      Returns true if the returned path can be used.
@@ -166,8 +172,8 @@ show_open_midi_file_dialog (QWidget * parent, std::string & selectedfile)
 /**
  *  Shows the "Open" play-list dialog.
  *
- *  Was starting from the rc().last_used_dir(), but should be the home directory
- *  for both normal and NSM sessions.
+ *  Was starting from the rc().last_used_dir(), but should be the home
+ *  directory for both normal and NSM sessions.
  *
  * \param [inout] selectedfile
  *      A return value for the chosen file and path.  If not-empty when the

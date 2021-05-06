@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-04
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -59,6 +59,23 @@ enum class layout
     qwertz,                             /* Deutsche                 */
     azerty,                             /* French AZERTY key map    */
     max                                 /* terminator value         */
+};
+
+/**
+ *  Provides short names for these Qt::KeyboardModifier values, to make the
+ *  table readable.  Also used in the keystroke class.
+ */
+
+using modifiers = enum kmod_t
+{
+    KNONE       = 0x00000000,
+    KSHIFT      = 0x02000000,
+    KCTRL       = 0x04000000,
+    KCTRLSHIFT  = 0x06000000,
+    KALT        = 0x08000000,
+    KMETA       = 0x10000000,
+    KEYPAD      = 0x20000000,
+    KGROUP      = 0x40000000
 };
 
 }   // namespace keyboard

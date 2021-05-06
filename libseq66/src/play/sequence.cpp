@@ -885,13 +885,18 @@ sequence::play
     }
     else
     {
+        /*
+         *  We make the song_recording() clause active for both Live and Song
+         *  mode now. From Sequencer64 on 2021-05-06.
+         */
+
+        if (song_recording())               /* song record of triggers      */
+        {
+            grow_trigger(song_record_tick(), end_tick, c_song_record_incr);
+            set_dirty_mp();                 /* force redraw                 */
+        }
         if (playback_mode)                  /* song mode: use triggers      */
         {
-            if (song_recording())           /* song record of triggers      */
-            {
-                grow_trigger(song_record_tick(), end_tick, c_song_record_incr);
-                set_dirty_mp();             /* force redraw                 */
-            }
             trigger_turning_off = m_triggers.play   /* side-effects !!!     */
             (
                 start_tick, end_tick, trigtranspose, resumenoteons

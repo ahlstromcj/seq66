@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-04
+ * \updates       2021-05-05
  * \license       GNU GPLv2 or above
  *
  */
@@ -3113,7 +3113,7 @@ private:
 
 private:
 
-    void show_ordinal_error (ctrlkey ordinal, const std::string & tag);
+    void show_key_error (const keystroke & k, const std::string & tag);
 
     static void print_parameters
     (

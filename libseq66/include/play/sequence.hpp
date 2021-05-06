@@ -820,6 +820,16 @@ public:
         return int(m_triggers.count());
     }
 
+    int trigger_datasize () const
+    {
+        return m_triggers.datasize();
+    }
+
+    int any_trigger_transposed () const
+    {
+        return m_triggers.any_transposed();
+    }
+
     /**
      *  Gets the number of selected triggers.  That is, selected in the
      *  perfroll.
@@ -1362,9 +1372,9 @@ public:
     void add_trigger
     (
         midipulse tick, midipulse len,
-        midipulse offset = 0,
-        midibyte tpose = 0x00,
-        bool adjust_offset = true
+        midipulse offset    = 0,
+        midibyte tpose      = 0,
+        bool adjust_offset  = true
     );
     bool split_trigger (midipulse tick, trigger::splitpoint splittype);
     void grow_trigger (midipulse tick_from, midipulse tick_to, midipulse len);

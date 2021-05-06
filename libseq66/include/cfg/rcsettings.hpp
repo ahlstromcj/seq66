@@ -234,7 +234,7 @@ private:
 
     bool m_verbose;                 /**< Message-showing setting.           */
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
-    bool m_save_old_triggers;       /**< Save c_triggers_ex, not transpose  */
+    bool m_save_old_triggers;       /**< Save c_triggers_ex, no transpose.  */
     bool m_lash_support;            /**< Enable LASH, if compiled in.       */
     bool m_allow_mod4_mode;         /**< Allow Mod4 to hold drawing mode.   */
     bool m_allow_snap_split;        /**< Allow snap-split of a trigger.     */
