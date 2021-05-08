@@ -1638,9 +1638,14 @@ public:
         return h >= SEQ66_SEQKEY_HEIGHT_MIN && h <= SEQ66_SEQKEY_HEIGHT_MAX;
     }
 
+    /*
+     * Deprecated and hardwired to true.  We now use the new qseqeditframe64
+     * all the time, and pare it down slightly when embedded in the Edit tab.
+     */
+
     bool use_new_seqedit () const
     {
-        return m_user_ui_seqedit_in_tab;
+        return true;
     }
 
     const std::string & style_sheet () const
@@ -1799,10 +1804,15 @@ public:         // used in main application module and the usrfile class
             m_user_ui_key_height = h;
     }
 
-    void use_new_seqedit (bool f)
-    {
-        m_user_ui_seqedit_in_tab = f;
-    }
+
+    /*
+     * Deprecated and removed.  See the getter above.
+     *
+     *  void use_new_seqedit (bool f)
+     *  {
+     *      m_user_ui_seqedit_in_tab = f;
+     *  }
+     */
 
     void style_sheet (const std::string & s)
     {

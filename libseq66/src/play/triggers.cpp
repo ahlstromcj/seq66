@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-05-05
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -71,6 +71,20 @@
 namespace seq66
 {
 
+/**
+ *  The default constructor creates an invalid trigger.
+ */
+
+trigger::trigger () :
+    m_tick_start    (c_midipulse_max),  /* start (LONG_MAX) > end is invalid */
+    m_tick_end      (0),
+    m_offset        (0),
+    m_transpose     (0),
+    m_selected      (false)
+{
+    // No code needed
+}
+
 trigger::trigger
 (
     midipulse tick, midipulse len,
@@ -79,10 +93,10 @@ trigger::trigger
     m_tick_start    (tick),
     m_tick_end      (tick + len - 1),
     m_offset        (offset),
-    m_transpose     (0),
+    m_transpose     (0),                    /* set in constructor body      */
     m_selected      (false)
 {
-    transpose_byte(tpose);                /* convert byte to converted int  */
+    transpose_byte(tpose);                  /* convert byte to scaled int   */
 }
 
 void
@@ -1277,7 +1291,7 @@ trigger
 triggers::next ()
 {
     trigger result;
-    if (m_draw_iterator != m_triggers.end())
+    if (! cend(m_draw_iterator))
     {
         result = *m_draw_iterator;
         ++m_draw_iterator;

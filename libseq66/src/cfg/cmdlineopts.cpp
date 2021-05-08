@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-01-27
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -86,6 +86,7 @@ cmdlineopts::s_long_options [] =
     {"help",                0, 0, 'h'},
     {"version",             0, 0, 'V'},
     {"verbose",             0, 0, 'v'},
+    {"investigate",         0, 0, 'i'},
     {"home",                required_argument, 0, 'H'},
 #if defined SEQ66_LASH_SUPPORT
     {"lash",                0, 0, 'L'},
@@ -150,7 +151,7 @@ cmdlineopts::s_long_options [] =
  *
 \verbatim
         @AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz#
-         xxxxxx x  xx  xx  xxxxxlxxxx *xx xxx xxxxxxx  xx  aax
+         xxxxxx x  xx  xx xxxxxxlxxxx *xx xxx xxxxxxx  xx  aax
 \endverbatim
  *
  *  * Note that 'o' options arguments cannot be included here due to issues
@@ -163,11 +164,16 @@ cmdlineopts::s_long_options [] =
  *      in favor of the 'usr' definition of the names of ports and channels.
  *      The opposite (native) setting uses '-a' and '-r'.
  *      Both modes turn on the --user-save (-u) option.
+ *
+ * Investigate:
+ *
+ *      The undocument -i/--investigate option is used (only on the command
+ *      line, to turn on the test-of-the-day.
  */
 
 const std::string
 cmdlineopts::s_arg_list =
-    "AaB:b:Cc:dF:f:H:h:JjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
+    "AaB:b:Cc:dF:f:H:h:iJjKkLl:M:mNnoPpq:RrTtsU:uVvX:x:Zz#";
 
 /**
  *  Provides help text.
@@ -210,9 +216,14 @@ cmdlineopts::s_help_1b =
 "   -p, --priority           Run high priority, FIFO scheduler (needs root).\n"
 "   -P, --pass-sysex         Passes incoming SysEx messages to all outputs.\n"
 "                            Not yet fully implemented.\n"
-"   -i, --ignore n           Ignore ALSA device number.\n"
 "   -s, --show-midi          Dump incoming MIDI events to the screen.\n"
     ;
+
+/*
+ * This option was never used, just settable, in Seq24.  We need that letter!
+ *
+ *      "   -i, --ignore n           Ignore ALSA device number.\n"
+ */
 
 /**
  *  Still more help text.
@@ -954,6 +965,10 @@ cmdlineopts::parse_command_line_options (int argc, char * argv [])
         case 'h':
             show_help();
             result = c_null_option_index;
+            break;
+
+        case 'i':
+            rc().investigate(true);
             break;
 
         case 'J':

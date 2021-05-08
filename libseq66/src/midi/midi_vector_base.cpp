@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-05-05
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -752,10 +752,13 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
          * INVESTIGATION.
          */
 
-#if defined USE_THIS_DANGEROUS_FEATURE
-        if (transtriggers)
-            transtriggers = m_sequence.any_trigger_transposed();
-#endif
+        if (rc().investigate())
+        {
+// #if defined USE_THIS_DANGEROUS_FEATURE
+            if (transtriggers)
+                transtriggers = m_sequence.any_trigger_transposed();
+// #endif
+        }
 
         if (transtriggers)
             put_seqspec(c_trig_transpose, datasize);

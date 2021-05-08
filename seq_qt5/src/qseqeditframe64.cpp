@@ -20,13 +20,12 @@
  * \file          qseqeditframe64.cpp
  *
  *  This module declares/defines the base class for plastering
- *  pattern/sequence data information in the data area of the pattern
- *  editor.
+ *  pattern/sequence data information in the data area of the pattern editor.
  *
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-06-15
- * \updates       2021-04-21
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  The data pane is the drawing-area below the seqedit's event area, and
@@ -41,15 +40,15 @@
  *      widgets into one widget, with a QScrollBar underneath (and/or to the
  *      side, if needed).
  *
- *      Designate one of the interior scrolled widgets as the "master", probably
- *      the plot widget. Then do this:
+ *      Designate one of the interior scrolled widgets as the "master",
+ *      probably the plot widget. Then do this:
  *
  *      Set every QScrollArea's horizontal scroll bar policy to never show the
  *      scroll bars.  (Set) the master QScrollArea's horizontalScrollBar()'s
  *      rangeChanged(int min, int max) signal to a slot that sets the main
  *      widget's horizontal QScrollBar to the same range. Additionally, it
- *      should set the same range for the other scroll area widget's horizontal
- *      scroll bars.
+ *      should set the same range for the other scroll area widget's
+ *      horizontal scroll bars.
  *
  *      The horizontal QScrollBar's valueChanged(int value) signal should be
  *      connected to every scroll area widget's horizontal scroll bar's
@@ -81,6 +80,7 @@ QWidget container?
                 |   |                                                   |   |
     QScrollArea |   | qseqdata      (3, 1, 1, 1) Scroll horiz only      |   |
                 |   |                                                   |   |
+                |   | [Note: the height can be reduced to fit in tab.]  |   |
                  -----------------------------------------------------------
                 |   | Horizontal scroll bar for QWidget container       |   |
                  -----------------------------------------------------------
@@ -160,7 +160,9 @@ namespace seq66
  *  We have an issue that using the new (and larger) qseqeditframe64 class in
  *  the Edit tab causes the whole main window to increase in size, which
  *  stretches the Live frame's pattern slots too much vertically.  So let's
- *  try to shrink the seq-edit's piano roll to compensate.  Nope.
+ *  try to shrink the seq-edit's piano roll to compensate.  Nope. However, we
+ *  now get around that issue by halving the height of the qseqdata pane and
+ *  removing the "Map" button.
  */
 
 /**
@@ -335,8 +337,8 @@ static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
 /**
  *
  * \param p
- *      Provides the performer object to use for interacting with this sequence.
- *      Among other things, this object provides the active PPQN.
+ *      Provides the performer object to use for interacting with this
+ *      sequence.  Among other things, this object provides the active PPQN.
  *
  * \param seqid
  *      Provides the sequence number.  The sequence pointer is looked up using
@@ -348,8 +350,8 @@ static const int s_rec_vol_count = sizeof(s_rec_vol_items) / sizeof(int);
  *      to null.
  *
  * \param shorter
- *      If true, the data window is halved in size, and some controls are hidden,
- *      to compact the editor for use a tab.
+ *      If true, the data window is halved in size, and some controls are
+ *      hidden, to compact the editor for use a tab.
  */
 
 qseqeditframe64::qseqeditframe64
@@ -2021,16 +2023,11 @@ qseqeditframe64::sequences ()
 {
     if (not_nullptr(m_sequences_popup))
     {
+        int w = ui->m_button_sequence->width() - 2;
+        int h = ui->m_button_sequence->height() - 2;
         m_sequences_popup->exec
         (
-            ui->m_button_sequence->mapToGlobal
-            (
-                QPoint
-                (
-                    ui->m_button_sequence->width() - 2,
-                    ui->m_button_sequence->height() - 2
-                )
-            )
+            ui->m_button_sequence->mapToGlobal(QPoint(w, h))
         );
     }
 }
@@ -2044,8 +2041,8 @@ qseqeditframe64::sequences ()
 
 
 /**
- *  Builds the Tools popup menu on the fly.  Analogous to seqedit ::
- *  popup_sequence_menu().
+ *  Builds the menu for the Background Sequences button on the fly.  Analogous
+ *  to seqedit :: popup_sequence_menu().
  */
 
 void
@@ -2070,19 +2067,20 @@ qseqeditframe64::popup_sequence_menu ()
             char number[16];
             snprintf(number, sizeof number, "Set %d", sset);
             menusset = m_sequences_popup->addMenu(number);
-        }
-        for (int seq = 0; seq < seqsinset; ++seq)
-        {
-            char name[32];
-            int s = sset * seqsinset + seq;
-            seq::pointer sp = perf().get_sequence(s);
-            if (not_nullptr(sp))
+            for (int seq = 0; seq < seqsinset; ++seq)
             {
-                snprintf(name, sizeof name, "[%d] %.13s", s, sp->name().c_str());
+                char name[32];
+                int s = sset * seqsinset + seq;
+                seq::pointer sp = perf().get_sequence(s);
+                if (not_nullptr(sp))
+                {
+                    const char * nameptr = sp->name().c_str();
+                    snprintf(name, sizeof name, "[%d] %.13s", s, nameptr);
 
-                QAction * item = new QAction(tr(name), menusset);
-                menusset->addAction(item);
-                connect(item, &QAction::triggered, SET_BG_SEQ(s));
+                    QAction * item = new QAction(tr(name), menusset);
+                    menusset->addAction(item);
+                    connect(item, &QAction::triggered, SET_BG_SEQ(s));
+                }
             }
         }
     }

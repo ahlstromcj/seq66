@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-27
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  This collection of variables describes the options of the application,
@@ -233,6 +233,7 @@ private:
     bool m_clock_mod;
 
     bool m_verbose;                 /**< Message-showing setting.           */
+    bool m_investigate;             /**< An option for the test of the day. */
     bool m_auto_option_save;        /**< [auto-option-save] setting.        */
     bool m_save_old_triggers;       /**< Save c_triggers_ex, no transpose.  */
     bool m_lash_support;            /**< Enable LASH, if compiled in.       */
@@ -563,6 +564,11 @@ public:
     bool verbose () const
     {
         return m_verbose;
+    }
+
+    bool investigate () const
+    {
+        return m_investigate;
     }
 
     bool auto_option_save () const
@@ -971,6 +977,11 @@ public:
     void verbose (bool flag)
     {
         m_verbose = flag;
+    }
+
+    void investigate (bool flag)
+    {
+        m_investigate = flag;
     }
 
     void auto_option_save (bool flag)

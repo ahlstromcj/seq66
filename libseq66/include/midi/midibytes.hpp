@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-09
- * \updates       2021-05-04
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  These alias specifications are intended to remove the ambiguity we have
@@ -184,7 +184,8 @@ using midibooleans = std::vector<midibool>;
  *  is_null_midipulse().
  */
 
-const midipulse c_null_midipulse = -1;  /* ULONG_MAX if we convert later    */
+const midipulse c_null_midipulse = -1;              /* ULONG_MAX later?     */
+const midipulse c_midipulse_max = LONG_MAX;         /* for sanity checks    */
 
 /**
  *  Defines the maximum number of MIDI values, and one more than the

@@ -6,12 +6,16 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2017-09-06
-# \update      2020-12-21
+# \update      2021-05-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the libseq_qt5 C++
 # 		library.
+#
+# Removed:
+#
+#     qseqeditframe.hpp
 #
 #------------------------------------------------------------------------------
 
@@ -93,7 +97,6 @@ pkginclude_HEADERS = \
  qseqdata.hpp \
  qseqeditex.hpp \
  qseqeditframe64.hpp \
- qseqeditframe.hpp \
  qseqeventframe.hpp \
  qseqframe.hpp \
  qseqkeys.hpp \

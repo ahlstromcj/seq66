@@ -6,12 +6,16 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2020-12-21
+# \update      2021-05-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the libseq_qt5 C/C++
 # 		library.
+#
+# Removed:
+#
+#     qseqeditframe.cpp
 #
 #------------------------------------------------------------------------------
 
@@ -253,7 +257,6 @@ moc_qt_headers = \
  ../include/qseqdata.hpp \
  ../include/qseqeditex.hpp \
  ../include/qseqeditframe64.hpp \
- ../include/qseqeditframe.hpp \
  ../include/qseqeventframe.hpp \
  ../include/qseqframe.hpp \
  ../include/qseqkeys.hpp \
@@ -283,7 +286,6 @@ uic_qt_forms = \
  $(formsdir)/qseditoptions.ui \
  $(formsdir)/qseqeditex.ui \
  $(formsdir)/qseqeditframe64.ui \
- $(formsdir)/qseqeditframe.ui \
  $(formsdir)/qseqeventframe.ui \
  $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
@@ -326,7 +328,6 @@ libseq_qt5_la_SOURCES = \
  qseqdata.cpp \
  qseqeditex.cpp \
  qseqeditframe64.cpp \
- qseqeditframe.cpp \
  qseqeventframe.cpp \
  qseqframe.cpp \
  qseqkeys.cpp \

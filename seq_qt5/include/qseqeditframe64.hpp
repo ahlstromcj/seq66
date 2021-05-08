@@ -287,7 +287,7 @@ private:
     QMenu * m_tools_popup;
 
     /**
-     *  Menu for Background Sequences.
+     *  Menu for the Background Sequences button.
      */
 
     QMenu * m_sequences_popup;

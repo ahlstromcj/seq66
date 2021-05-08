@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-05
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  */
@@ -1231,6 +1231,11 @@ public:
     int screenset_count () const
     {
         return master().screenset_count();
+    }
+
+    int highest_set () const
+    {
+        return master().highest_set();
     }
 
     int screenset_max () const

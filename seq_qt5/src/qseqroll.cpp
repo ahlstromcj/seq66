@@ -25,11 +25,15 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-03
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  Please see the additional notes for the Gtkmm-2.4 version of this panel,
  *  seqroll.
+ *
+ * Removed:
+ *
+ *      #include "qseqeditframe.hpp" // seq66::qseqeditframe legacy
  */
 
 #include <QApplication>                 /* QApplication keyboardModifiers() */
@@ -41,9 +45,7 @@
 
 #include "cfg/settings.hpp"             /* seq66::usr().key_height(), etc.  */
 #include "play/performer.hpp"           /* seq66::performer class           */
-#include "qseqeditframe.hpp"            /* seq66::qseqeditframe legacy      */
 #include "qseqeditframe64.hpp"          /* seq66::qseqeditframe64 class     */
-#include "qseqframe.hpp"                /* interface class for seqedits     */
 #include "qseqkeys.hpp"                 /* seq66::qseqkeys class            */
 #include "qseqroll.hpp"                 /* seq66::qseqroll class            */
 
@@ -71,7 +73,7 @@ qseqroll::qseqroll
     qseqkeys * seqkeys_wid,
     int zoom, int snap,
     sequence::editmode mode,
-    qseqframe * frame
+    qseqeditframe64 * frame                         /* qseqframe        */
 ) :
     QWidget                 (frame),
     qseqbase
@@ -82,10 +84,6 @@ qseqroll::qseqroll
     ),
     m_backseq_color         (backseq_paint()),
     m_parent_frame          (frame),
-    m_is_new_edit_frame
-    (
-        not_nullptr(dynamic_cast<qseqeditframe64 *>(m_parent_frame))
-    ),
     m_seqkeys_wid           (seqkeys_wid),
     m_timer                 (nullptr),
     m_progbar_width         (usr().progress_bar_thick() ? 2 : 1),
@@ -176,7 +174,7 @@ qseqroll::zoom_in ()
     bool result = qseqbase::zoom_in();
     if (result)
     {
-        result = m_parent_frame->set_zoom(zoom());
+        result = frame64()->set_zoom(zoom());
         set_dirty();
     }
     return result;
@@ -194,7 +192,7 @@ qseqroll::zoom_out ()
     bool result = qseqbase::zoom_out();
     if (result)
     {
-        result = m_parent_frame->set_zoom(zoom());
+        result = frame64()->set_zoom(zoom());
         set_dirty();
     }
     return result;
@@ -207,7 +205,7 @@ qseqroll::zoom_out ()
 bool
 qseqroll::reset_zoom ()
 {
-    bool result = m_parent_frame->reset_zoom();
+    bool result = frame64()->reset_zoom();
     set_dirty();
     return result;
 }
@@ -223,7 +221,7 @@ qseqroll::v_zoom_in ()
         total_height(m_seqkeys_wid->total_height());
         m_v_zooming = true;
         set_dirty();
-        m_parent_frame->set_dirty();
+        frame64()->set_dirty();
     }
     return result;
 }
@@ -239,7 +237,7 @@ qseqroll::v_zoom_out ()
         total_height(m_seqkeys_wid->total_height());
         m_v_zooming = true;
         set_dirty();
-        m_parent_frame->set_dirty();
+        frame64()->set_dirty();
     }
     return result;
 }
@@ -254,7 +252,7 @@ qseqroll::reset_v_zoom ()
         unit_height(h);
         total_height(m_seqkeys_wid->total_height());
         set_dirty();
-        m_parent_frame->set_dirty();
+        frame64()->set_dirty();
     }
     m_v_zooming = false;
     return result;
@@ -279,7 +277,7 @@ qseqroll::scroll_offset (int x)
     midipulse ticks = pix_to_tix(x);
     midipulse ticks_per_step = pulses_per_substep(perf().ppqn(), zoom());
     m_t0 = ticks - (ticks % ticks_per_step);
-    m_frame_ticks = pix_to_tix(m_parent_frame->width());
+    m_frame_ticks = pix_to_tix(frame64()->width());
     m_t1 = ticks + m_frame_ticks;
     qseqbase::scroll_offset(x);                         // WHY COMMENTED OUT?
 }
@@ -975,7 +973,7 @@ qseqroll::mousePressEvent (QMouseEvent * event)
                     if (! isctrl)
                     {
                         s->unselect();
-                        m_parent_frame->set_dirty();
+                        frame64()->set_dirty();
                     }
                     selmode = is_drum_mode() ?
                         eventlist::select::onset :
@@ -1039,7 +1037,7 @@ qseqroll::mouseReleaseEvent (QMouseEvent * event)
                 tick_s, note_h, tick_f, note_l, selmode
             );
             if (numsel > 0)
-                m_parent_frame->set_dirty();
+                frame64()->set_dirty();
         }
         if (moving())
         {
@@ -1236,7 +1234,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_Home:
 
-                    if (not_nullptr(m_parent_frame))
+                    if (not_nullptr(frame64()))
                     {
                         frame64()->scroll_to_tick(0);
                     }
@@ -1246,7 +1244,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
 
                 case Qt::Key_End:
 
-                    if (not_nullptr(m_parent_frame))
+                    if (not_nullptr(frame64()))
                     {
                         frame64()->scroll_to_tick(s->get_length());
                     }
@@ -1285,7 +1283,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                     else
                         s->pop_undo();
 
-                    if (not_nullptr(m_parent_frame))
+                    if (not_nullptr(frame64()))
                     {
                         frame64()->set_dirty();     /* set_dirty()      */
                     }
@@ -1314,7 +1312,7 @@ qseqroll::keyPressEvent (QKeyEvent * event)
                 {
                 case Qt::Key_C:
 
-                    if (m_parent_frame->repitch_selected())
+                    if (frame64()->repitch_selected())
                         set_dirty();
                     break;
 
@@ -1461,7 +1459,7 @@ QSize
 qseqroll::sizeHint () const
 {
     int h = total_height();                         /* + 1;             */
-    int w = m_parent_frame->width();
+    int w = frame64()->width();
     int len = tix_to_pix(seq_pointer()->get_length());
     if (len < w)
         len = w;
@@ -1500,7 +1498,7 @@ qseqroll::set_adding (bool a)
     else
         setCursor(Qt::ArrowCursor);
 
-    m_parent_frame->update_note_entry(a);       /* updates checkable button */
+    frame64()->update_note_entry(a);            /* updates checkable button */
     set_dirty();
 }
 
@@ -1601,7 +1599,7 @@ qseqroll::set_scale (int scale)
 void
 qseqroll::follow_progress ()
 {
-    if (not_nullptr(m_parent_frame) && m_is_new_edit_frame)
+    if (not_nullptr(frame64()))
         frame64()->follow_progress();
 }
 

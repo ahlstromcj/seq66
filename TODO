@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-03
+2019-04-13 to 2021-05-07
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -87,6 +87,9 @@ Automation:
 
     Tap BPM key (F9) works now, but it should cause the Tap BPM button to
     show the tap count.
+
+    Can we leverage continuous controllers (CC) to support modifying synth
+    parameters through input automation?
 
 From Testing:
 

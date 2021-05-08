@@ -80,11 +80,11 @@ public:
     (
         performer & perf,
         seq::pointer seqp,
-        qseqkeys * seqkeys_wid  = nullptr,
-        int zoom                = SEQ66_DEFAULT_ZOOM,
-        int snap                = SEQ66_DEFAULT_SNAP,
-        sequence::editmode mode = sequence::editmode::note,
-        qseqframe * parent      = nullptr
+        qseqkeys * seqkeys_wid      = nullptr,
+        int zoom                    = SEQ66_DEFAULT_ZOOM,
+        int snap                    = SEQ66_DEFAULT_SNAP,
+        sequence::editmode mode     = sequence::editmode::note,
+        qseqeditframe64 * parent    = nullptr
     );
 
     virtual ~qseqroll ();
@@ -175,7 +175,12 @@ private:
 
     qseqeditframe64 * frame64 ()
     {
-        return reinterpret_cast<qseqeditframe64 *>(m_parent_frame);
+        return m_parent_frame;
+    }
+
+    const qseqeditframe64 * frame64 () const
+    {
+        return m_parent_frame;
     }
 
 private:
@@ -190,13 +195,7 @@ private:
      *  Holds a pointer to the scroll-master object in the edit-frame window.
      */
 
-    qseqframe * m_parent_frame;     /* qseqeditframe64 or qseqeditframe */
-
-    /**
-     *  Avoids continual dynamic_cast tests.
-     */
-
-    bool m_is_new_edit_frame;
+    qseqeditframe64 * m_parent_frame;    /* no more qseqframe/qseqeditframe */
 
     /**
      *  Holds a pointer to the qseqkeys pane that is associated with the

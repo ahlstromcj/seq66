@@ -6,7 +6,7 @@
 # \library        qpseq66 application
 # \author         Chris Ahlstrom
 # \date           2018-04-08
-# \update         2020-12-21
+# \update         2021-05-07
 # \version        $Revision$
 # \license        $XPC_SUITE_GPL_LICENSE$
 #
@@ -17,6 +17,10 @@
 # Important:
 #
 #  This project file is designed only for Qt 5 (and above?).
+#
+# Removed:
+#
+#     qseqeditframe.cpp/.hpp/.ui
 #
 #------------------------------------------------------------------------------
 
@@ -70,7 +74,6 @@ FORMS += forms/qlfoframe.ui \
  forms/qseditoptions.ui \
  forms/qseqeditex.ui \
  forms/qseqeditframe64.ui \
- forms/qseqeditframe.ui \
  forms/qseqeventframe.ui \
  forms/qsessionframe.ui \
  forms/qsetmaster.ui \
@@ -104,7 +107,6 @@ HEADERS += include/gui_palette_qt5.hpp \
  include/qseqdata.hpp \
  include/qseqeditex.hpp \
  include/qseqeditframe64.hpp \
- include/qseqeditframe.hpp \
  include/qseqeventframe.hpp \
  include/qseqframe.hpp \
  include/qseqkeys.hpp \
@@ -152,7 +154,6 @@ SOURCES += src/gui_palette_qt5.cpp \
  src/qseqdata.cpp \
  src/qseqeditex.cpp \
  src/qseqeditframe64.cpp \
- src/qseqeditframe.cpp \
  src/qseqeventframe.cpp \
  src/qseqframe.cpp \
  src/qseqkeys.cpp \

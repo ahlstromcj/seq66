@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-04-13
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -556,15 +556,25 @@ usrfile::parse ()
             if (next_data_line(file))
             {
                 sscanf(scanline(), "%d", &scratch);
-                usr().use_new_seqedit(scratch != 0);
+
+                /*
+                 * usr().use_new_seqedit(scratch != 0);
+                 */
+
+                warnprintf("use-new-seqedit = %d now always true\n", scratch);
             }
         }
         else
         {
             std::string s = get_variable(file, "[user-ui-tweaks]", "key-height");
             usr().key_height(string_to_int(s, 10));
-            s = get_variable(file, "[user-ui-tweaks]", "use-new-seqedit");
-            usr().use_new_seqedit(string_to_bool(s));
+
+            /*
+             * Disabled 2021-05-07
+             *
+             *  s = get_variable(file, "[user-ui-tweaks]", "use-new-seqedit");
+             *  usr().use_new_seqedit(string_to_bool(s));
+             */
         }
 
         std::string s = get_variable(file, "[user-ui-tweaks]", "note-resume");
@@ -1317,15 +1327,18 @@ usrfile::write ()
     file << "key-height = " << v << "\n";
 
     file << "\n"
-        "# Normally, the Qt version of Seq66 uses the old pattern editor in the\n"
-        "# 'Edit' tab.  If this value is set to 1, then the new, larger,\n"
-        "# more functional pattern editor can be used in the 'Edit' tab. This\n"
-        "# setting makes the whole Seq66 window larger.\n"
+        "# The Qt version of Seq66 now always uses the new pattern editor in\n"
+        "# the 'Edit' tab.  So, the 'use-new-seqedit' option is removed.\n"
         "\n"
         ;
 
-    v = bool_to_string(usr().use_new_seqedit());
-    file << "use-new-seqedit = " << v << "\n";
+    /*
+     * Disabled 2021-05-07
+     *
+     *
+     *      v = bool_to_string(usr().use_new_seqedit());
+     *      file << "use-new-seqedit = " << v << "\n";
+     */
 
     v = bool_to_string(usr().resume_note_ons());
     file << "\n"

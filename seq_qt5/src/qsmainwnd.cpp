@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-23
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -59,6 +59,13 @@
  *  Quit/Exit       quit()                  Normal Qt application closing
  *  Help            showqsabout()           Show Help About (version info)
  *                  showqsbuildinfo()       Show features of the build
+ *
+ * Removed:
+ *
+ *  We found a way to squeeze the much more functional qseqeditframe64 into
+ *  the Edit tab, and so no longer need this version.
+ *
+ *      #include "qseqeditframe.hpp"    // Kepler34 version
  */
 
 #include <QErrorMessage>
@@ -87,7 +94,6 @@
 #include "qsbuildinfo.hpp"
 #include "qseditoptions.hpp"
 #include "qseqeditex.hpp"
-#include "qseqeditframe.hpp"            /* Kepler34 version                 */
 #include "qseqeditframe64.hpp"          /* Seq66 version                    */
 #include "qseqeventframe.hpp"           /* a new event editor for Qt        */
 #include "qsessionframe.hpp"            /* shows session information        */
@@ -2024,16 +2030,10 @@ qsmainwnd::load_editor (int seqid)
         if (not_nullptr(m_edit_frame))
             delete m_edit_frame;
 
-        if (usr().use_new_seqedit())
-        {
-            m_edit_frame = new qseqeditframe64
-            (
-                perf(), seqid, ui->EditTab, true            /* short one    */
-            );
-        }
-        else
-            m_edit_frame = new qseqeditframe(perf(), seqid, ui->EditTab);
-
+        m_edit_frame = new qseqeditframe64
+        (
+            perf(), seqid, ui->EditTab, true            /* short data pane  */
+        );
         ui->EditTabLayout->addWidget(m_edit_frame);
         m_edit_frame->show();
         ui->tabWidget->setCurrentIndex(Tab_Edit);
@@ -2469,7 +2469,7 @@ qsmainwnd::tabWidgetClicked (int newindex)
                 if (seq)
                 {
                     m_edit_frame = new (std::nothrow)
-                        qseqeditframe(perf(), seqid, ui->EditTab);
+                        qseqeditframe64(perf(), seqid, ui->EditTab);
 
                     if (not_nullptr(m_edit_frame))
                     {

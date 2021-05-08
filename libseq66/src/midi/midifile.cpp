@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-05-05
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  For a quick guide to the MIDI format, see, for example:
@@ -1756,6 +1756,16 @@ midifile::parse_proprietary_track (performer & p, int file_size)
         seqspec = parse_prop_header(file_size);
         if (seqspec == c_notes)
         {
+            /*
+             * The default number of sets is c_max_sets = 32.  This is also
+             * the initial minimum number of screen-set names, though some
+             * can be empty.  More than 32 sets can be supported, though that
+             * claim is currently untested.  The highest set number is
+             * determined by the highest pattern number; the
+             * setmaster::add_set() function creates a new set when a pattern
+             * number falls outside the boundaries of the existing sets.
+             */
+
             midishort screen_sets = read_short();
             for (midishort x = 0; x < screen_sets; ++x)
             {
@@ -2712,10 +2722,18 @@ midifile::write_proprietary_track (performer & p)
     const mutegroups & mutes = p.mutes();
     long tracklength = 0;
     int cnotesz = 2;                            /* first value is short     */
-    for (int s = 0; s < c_max_sets; ++s)
+    int highset = p.highest_set();              /* high set number re 0     */
+    int maxsets = c_max_sets;                   /* i.e. 32                  */
+    if (highset >= maxsets)
+        maxsets = highset + 1;
+
+    for (int s = 0; s < maxsets; ++s)
     {
-        const std::string & note = p.get_screenset_notepad(s);
-        cnotesz += 2 + note.length();           /* short + note length      */
+        if (s <= highset)                       /* unused tracks = no name  */
+        {
+            const std::string & note = p.get_screenset_notepad(s);
+            cnotesz += 2 + note.length();       /* short + note length      */
+        }
     }
 
     unsigned groupcount = c_max_groups;         /* 32, the maximum          */
@@ -2757,13 +2775,18 @@ midifile::write_proprietary_track (performer & p)
     write_prop_header(c_midiclocks, 4);         /* bus mute/unmute data + 4 */
     write_long(0);                              /* Seq24 writes only a zero */
     write_prop_header(c_notes, cnotesz);        /* notepad data tag + data  */
-    write_short(c_max_sets);                    /* data, not a tag          */
-    for (int s = 0; s < c_max_sets; ++s)        /* see "cnotesz" calc       */
+    write_short(maxsets);                       /* data, not a tag          */
+    for (int s = 0; s < maxsets; ++s)           /* see "cnotesz" calc       */
     {
-        const std::string & note = p.get_screenset_notepad(s);
-        write_short(note.length());
-        for (unsigned n = 0; n < unsigned(note.length()); ++n)
-            write_byte(note[n]);
+        if (s <= highset)                       /* unused tracks = no name  */
+        {
+            const std::string & note = p.get_screenset_notepad(s);
+            write_short(midishort(note.length()));
+            for (unsigned n = 0; n < unsigned(note.length()); ++n)
+                write_byte(midibyte(note[n]));
+        }
+        else
+            write_short(0);                     /* name is empty            */
     }
     write_prop_header(c_bpmtag, 4);             /* bpm tag + long data      */
 

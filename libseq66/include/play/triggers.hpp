@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-05-05
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -121,7 +121,7 @@ private:
 
 public:
 
-    trigger () = default;
+    trigger ();
     trigger
     (
         midipulse tick, midipulse len,
@@ -489,11 +489,6 @@ public:
         return m_number_selected;
     }
 
-    bool is_end (const container::iterator & it)
-    {
-        return it == m_triggers.end();
-    }
-
 #if defined USE_TRIGGERS_FIND
     container::iterator find (midipulse tick);
 #endif
@@ -580,6 +575,11 @@ private:
     void offset_selected (midipulse tick, grow editmode);
     void select (trigger & t, bool count = true);
     void unselect (trigger & t, bool count = true);
+
+    bool cend (container::iterator & evi) const // no can do const_iterator
+    {
+        return evi == m_triggers.cend();
+    }
 
 };          // class triggers
 

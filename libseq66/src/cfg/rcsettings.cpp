@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Seq24 team; modifications by Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-25
+ * \updates       2021-05-07
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the legacy global variables, so that
@@ -78,6 +78,7 @@ rcsettings::rcsettings () :
     m_show_ui_sequence_number   (true),
     m_clock_mod                 (64),
     m_verbose                   (false),
+    m_investigate               (false),
     m_auto_option_save          (true),     /* legacy seq24 behavior    */
     m_save_old_triggers         (false),
     m_lash_support              (false),
@@ -178,6 +179,7 @@ rcsettings::set_defaults ()
     m_show_ui_sequence_number   = true;
     m_clock_mod                 = 64;
     m_verbose                   = false;
+    m_investigate               = false;
     m_auto_option_save          = true;     /* legacy seq24 setting */
     m_save_old_triggers         = false;
     m_lash_support              = false;
