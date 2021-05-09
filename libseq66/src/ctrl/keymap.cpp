@@ -914,7 +914,7 @@ static void
 setup_qt_azerty_fr_keys ()
 {
     using namespace keyboard;
-    static const qt_keycodes s_qt_keys [] =
+    static const qt_keycodes s_fr_keys [] =
     {
         /*
          *  Code     Qt      Qt        Key
@@ -937,9 +937,9 @@ setup_qt_azerty_fr_keys ()
         { 0xed,   0x1001257, 0xfe57, "Umlaut",    KNONE }, // ¨ <--Diaeresis
         { 0x00,   0xffffffff,  0xff, "?",         KNONE }  // terminator
     };
-    for (int i = 0; s_qt_keys[i].qtk_keyevent != 0xffffffff; ++i)
+    for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)
     {
-        int index = s_qt_keys[i].qtk_ordinal;           // not qtk_keyevent
+        int index = s_fr_keys[i].qtk_ordinal;           // not qtk_keyevent
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf
@@ -950,7 +950,7 @@ setup_qt_azerty_fr_keys ()
         );
 #endif
 
-        qt_keys(index) = s_qt_keys[i];
+        qt_keys(index) = s_fr_keys[i];
 
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         printf

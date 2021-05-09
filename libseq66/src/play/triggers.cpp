@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-05-07
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  *  Man, we need to learn a lot more about triggers.  One important thing to
@@ -60,6 +60,7 @@
  */
 
 #include "cfg/settings.hpp"             /* seq66::rc() settings access      */
+#include "midi/midi_vector_base.hpp"    /* c_triggers_ex, c_trig_transpose  */
 #include "play/sequence.hpp"            /* the "parent" of the triggers     */
 #include "play/triggers.hpp"            /* seq66::triggers helper class     */
 #include "util/strfunctions.hpp"        /* seq66::bool_to_string()          */
@@ -125,13 +126,21 @@ trigger::to_string () const
  *  Gets the total number of bytes needed to store all the triggers in the
  *  container.  Non-transposed triggers can save a byte, and also be backward
  *  compatible to Seq24.  However, we're currently stuck with one size or the
- *  other, and so this is a static function for now.
+ *  other for all the triggers in one pattern/sequence, and so this is a
+ *  static function for now.
  */
 
 int
-trigger::datasize ()
+trigger::datasize (midilong seqspec)
 {
-    return rc().save_old_triggers() ? (3 * 4) : (3 * 4 + 1);
+    if (seqspec == c_trig_transpose)            /* adds a "transpose" byte  */
+        return 3 * 4 + 1;
+    else if (seqspec == c_triggers_ex)          /* seq24's c_triggers_new   */
+        return 3 * 4;
+    else if (seqspec == c_triggers)             /* not seen in the wild     */
+        return 2 * 4;
+    else
+        return 0;
 }
 
 /**
@@ -142,8 +151,7 @@ trigger::datasize ()
  *      what to do (such as stop playing).
  */
 
-triggers::triggers (sequence & parent)
- :
+triggers::triggers (sequence & parent) :
     m_parent                    (parent),
     m_triggers                  (),
     m_number_selected           (0),
@@ -214,9 +222,9 @@ triggers::rescale (int oldppqn, int newppqn)
  */
 
 int
-triggers::datasize () const
+triggers::datasize (midilong seqspec) const
 {
-    return count() * trigger::datasize();
+    return count() * trigger::datasize(seqspec);
 }
 
 bool

@@ -1452,7 +1452,7 @@ qseqroll::grow_selected_notes (int dx)
 /**
  *  Provides the base sizing of the piano roll.  If less than the width of the
  *  parent frame, it is increased to that, so that the roll covers the whole
- *  scrolling area (in qseqeditframe).
+ *  scrolling area.
  */
 
 QSize
@@ -1584,9 +1584,6 @@ qseqroll::set_scale (int scale)
  *  We don't want to do any of this if the length of the sequence fits in the
  *  window, but for now it doesn't hurt; the progress bar just never meets the
  *  criterion for moving to the next page.
- *
- *  This feature is not provided by qseqeditframe; it requires
- *  qseqeditframe64.
  *
  * \todo
  *      -   If playback is disabled (such as by a trigger), then do not update

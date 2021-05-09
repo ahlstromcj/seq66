@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-05-07
+ * \updates       2021-05-08
  * \license       GNU GPLv2 or above
  *
  *  The main window is known as the "Patterns window" or "Patterns
@@ -779,6 +779,9 @@ qsmainwnd::qsmainwnd
 
     ui->alsaJackButton->setText(midiengine);
 #endif
+
+    if (! rc().investigate())
+        ui->label_test->hide();
 
     show();
     show_song_mode(m_song_mode);

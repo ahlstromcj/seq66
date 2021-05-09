@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-30
- * \updates       2021-05-07
+ * \updates       2021-05-08
  * \license       GNU GPLv2 or above
  *
  *  By segregating trigger support into its own module, the sequence class is
@@ -282,7 +282,7 @@ public:
         return m_transpose != 0;
     }
 
-    static int datasize ();
+    static int datasize (midilong seqspec);
 
     void transpose (int t)                          /* to modify a trigger  */
     {
@@ -481,7 +481,7 @@ public:
         return int(m_triggers.size());
     }
 
-    int datasize () const;
+    int datasize (midilong seqspec) const;
     bool any_transposed () const;
 
     int number_selected () const

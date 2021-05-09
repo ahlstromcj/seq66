@@ -788,7 +788,7 @@ midifile::checklen (midilong len, midibyte type)
  *
  * \param ppqn
  *      Provides the ppqn value to use to scale the tick values if
- *      m_use_scaled_ppqn is true.  If 0, the ppqn value is not used.
+ *      scaled() is true.  If 0, the ppqn value is not used.
  *
  * \param transposable
  *      If true, use the new style trigger, which adds a byte-long transpose
@@ -801,17 +801,25 @@ midifile::add_trigger (sequence & seq, midishort ppqn, bool transposable)
     midilong on = read_long();
     midilong off = read_long();
     midilong offset = read_long();
-    midibyte tpose = 0x00;
+    midibyte tpose = 0;
     if (transposable)
         tpose = read_byte();
 
-    if (ppqn > 0 && m_use_scaled_ppqn)
+    if (ppqn > 0)
     {
         on = rescale_tick(on, ppqn, m_ppqn);        /* old PPQN, new PPQN   */
         off = rescale_tick(off, ppqn, m_ppqn);
         offset = rescale_tick(offset, ppqn, m_ppqn);
     }
     seq.add_trigger(on, off - on + 1, offset, tpose, false);
+}
+
+void
+midifile::add_old_trigger (sequence & seq)
+{
+    midilong on = read_long();
+    midilong off = read_long();
+    seq.add_trigger(on, off - on + 1, 0, false, false);
 }
 
 /**
@@ -976,7 +984,7 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                  */
 
                 runningtime += delta;           /* add in the time          */
-                if (m_use_scaled_ppqn)          /* adjust time via ppqn     */
+                if (scaled())                   /* adjust time via ppqn     */
                 {
                     currenttime = runningtime * m_ppqn / m_file_ppqn;
                     e.set_timestamp(currenttime);
@@ -1207,41 +1215,34 @@ midifile::parse_smf_1 (performer & p, int screenset, bool is_smf0)
                             }
                             else if (seqspec == c_triggers)
                             {
-                                int num_triggers = len / 8;
-                                for (int i = 0; i < num_triggers; i += 2)
+                                int sz = trigger::datasize(c_triggers);
+                                int num_triggers = len / sz;
+                                for (int i = 0; i < num_triggers; ++i)
                                 {
-                                    midilong on = read_long();
-                                    midilong off = read_long() - on;
-                                    if (m_use_scaled_ppqn)
-                                    {
-                                        // TODO
-                                    }
-                                    s.add_trigger(on, off, 0x0, false);
-                                    len -= 8;
+                                    add_old_trigger(s);
+                                    len -= sz;
                                 }
                             }
                             else if (seqspec == c_triggers_ex)
                             {
-                                int num_triggers = len / (3 * 4);
-                                midishort p = m_use_scaled_ppqn ?
-                                    m_file_ppqn : 0 ;
-
+                                int sz = trigger::datasize(c_triggers_ex);
+                                int num_triggers = len / sz;
+                                midishort p = scaled() ?  m_file_ppqn : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, false);
-                                    len -= (3 * 4);
+                                    len -= sz;
                                 }
                             }
                             else if (seqspec == c_trig_transpose)
                             {
-                                int num_triggers = len / (3 * 4 + 1);
-                                midishort p = m_use_scaled_ppqn ?
-                                    m_file_ppqn : 0 ;
-
+                                int sz = trigger::datasize(c_trig_transpose);
+                                int num_triggers = len / sz;
+                                midishort p = scaled() ?  m_file_ppqn : 0 ;
                                 for (int i = 0; i < num_triggers; ++i)
                                 {
                                     add_trigger(s, p, true);
-                                    len -= (3 * 4 + 1);
+                                    len -= sz;
                                 }
                             }
                             else if (seqspec == c_musickey)
@@ -2486,6 +2487,11 @@ midifile::write (performer & p, bool doseqspec)
             {
                 char kc = char(c);
                 file.write(&kc, 1);
+                if (file.fail())
+                {
+                    m_error_message = "Error writing MIDI byte";
+                    result = false;
+                }
             }
             m_char_list.clear();
         }
@@ -2647,7 +2653,7 @@ midifile::write_song (performer & p)
                         if (measticks > 0)
                         {
                             midipulse remainder = seqend % measticks;
-                            if (remainder != measticks - 1)
+                            if (remainder != (measticks - 1))
                                 seqend += measticks - remainder - 1;
                         }
                         lst.song_fill_seq_trigger(ender, seqend, last_ts);

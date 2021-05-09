@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-10-10 (as midi_container.cpp)
- * \updates       2021-05-07
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  *  This class is important when writing the MIDI and sequencer data out to a
@@ -619,7 +619,7 @@ midi_vector_base::song_fill_seq_trigger
     midipulse prev_timestamp
 )
 {
-    put_seqspec(c_triggers_ex, trigger::datasize());        /* (3 * 4)      */
+    put_seqspec(c_triggers_ex, trigger::datasize(c_triggers_ex));
     add_long(0);                                /* start tick (see banner)  */
     add_long(trig.tick_end());                  /* the ending tick          */
     add_long(0);                                /* offset is done in event  */
@@ -741,30 +741,25 @@ midi_vector_base::fill (int track, const performer & /*p*/, bool doseqspec)
          * (c_triggers_ex), the MIDI buss (c_midibus), time signature
          * (c_timesig), and MIDI channel (c_midich).   Should we restrict this
          * to only track 0?  No, Seq66 saves these events with each sequence.
+         * Also, the datasize needs to be calculated differently for
+         * c_trig_transpose versus c_triggers_ex.
          */
 
-        bool transtriggers = ! rc().save_old_triggers();
         const triggers::container & triggerlist = m_sequence.triggerlist();
-        int datasize = m_sequence.trigger_datasize();
-
-        /*
-         * This seems to mung the file when saved.  DISABLED PENDING FURTHER
-         * INVESTIGATION.
-         */
-
-        if (rc().investigate())
-        {
-// #if defined USE_THIS_DANGEROUS_FEATURE
-            if (transtriggers)
-                transtriggers = m_sequence.any_trigger_transposed();
-// #endif
-        }
+        bool transtriggers = ! rc().save_old_triggers();
+        if (transtriggers)
+            transtriggers = m_sequence.any_trigger_transposed();
 
         if (transtriggers)
+        {
+            int datasize = m_sequence.triggers_datasize(c_trig_transpose);
             put_seqspec(c_trig_transpose, datasize);
+        }
         else
+        {
+            int datasize = m_sequence.triggers_datasize(c_triggers_ex);
             put_seqspec(c_triggers_ex, datasize);
-
+        }
         for (auto & t : triggerlist)
         {
             add_long(t.tick_start());

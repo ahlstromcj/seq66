@@ -1,6 +1,6 @@
 TO DO for Seq66 0.93.2 (Sequencer64 refactored for C++14 and Qt)
 Chris Ahlstrom
-2019-04-13 to 2021-05-07
+2019-04-13 to 2021-05-09
 
 From: zigmhount <notifications@github.com>
 Subject: [Question/Feature request] Live midi pattern recording (#188)
@@ -135,6 +135,20 @@ Others to Consider:
 
     In main frame, try to highlight the start/stop/pause buttons
     appropriately.
+
+    When we "Save As" the Kraftwerk tune in the updated Seq64, it has
+    two extra SeqSpecs:
+
+    c_bpmtag:       SeqSpec 24 24 00 07 00 01 a9 c8
+    c_musickey:     SeqSpec 24 24 00 11 00
+    c_musicscale:   SeqSpec 24 24 00 12 00
+    c_backsequence: SeqSpec 24 24 00 13 00 00 08 00
+    c_perf_bp_mes:  SeqSpec 24 24 00 15 00 00 00 04
+    c_perf_bw:      SeqSpec 24 24 00 16 00 00 00 04
+    c_tempo_track:  SeqSpec 24 24 00 1a 00 00 00 00
+
+    The last three are from Seq32 and are not currently read/written by Seq66.
+    Kind of redundant.
 
 EXTANT ISSUES:
 

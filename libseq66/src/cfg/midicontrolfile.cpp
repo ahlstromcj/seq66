@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-13
- * \updates       2021-04-30
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -427,11 +427,12 @@ static const char * const sg_scanf_fmt_ctrl_in =
  *  Removes the "enabled" flag from each control-input stanza: loops,
  *  mute-groups, and automation.  The "inverse" flag remains.
  *  The "enabled" status will be determined by the status value not being
- *  0x00.
+ *  0x00.  We changed '%10s' to '%s' because the '10' causes sscanf() to
+ *  return a count of 2 instead of 17.  Weird with a beard!
  */
 
 static const char * const sg_scanf_fmt_ctrl_in_2 =
-"%d %10s [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
+"%d %s [ %d %i %i %i %i ] [ %d %i %i %i %i ] [ %d %i %i %i %i ]";
 
 /*
  * For version 1 only.
@@ -1028,7 +1029,7 @@ midicontrolfile::write_midi_control (std::ofstream & file)
                 else if (currcat == automation::category::automation)
                     file << "\n[automation-control]\n\n";
             }
-            int spacing = 10 - int(stan.key_name().size());
+            int spacing = 12 - int(stan.key_name().size());
             file
                 << std::setw(2) << stan.slot_number()
                 << " \"" << stan.key_name() << "\""
@@ -1286,9 +1287,10 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     int a[8], b[8], c[8];
     automation::slot opslot = automation::slot::none;
     std::string keyname;
+    int count = 0;
     if (version_number() < 2)
     {
-        int count = std::sscanf
+        count = std::sscanf
         (
             scanline(), sg_scanf_fmt_ctrl_in, &opcode, &charname[0],
             &a[0], &a[1], &a[2], &a[3], &a[4], &a[5],
@@ -1337,7 +1339,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     }
     else
     {
-        int count = std::sscanf
+        count = std::sscanf
         (
             scanline(), sg_scanf_fmt_ctrl_in_2, &opcode, &charname[0],
             &a[0], &a[1], &a[2], &a[3], &a[4],
@@ -1424,7 +1426,7 @@ midicontrolfile::parse_control_stanza (automation::category opcat)
     }
     else
     {
-        errprint("unexpected control count in stanza");
+        errprintf("unexpected control count %d in stanza", count);
         result = false;
     }
     return result;

@@ -32,8 +32,8 @@
  * \license       GNU GPLv2 or above
  *
  *  This class is a base class for qseqroll, qseqdata, qtriggereditor, and
- *  qseqtime, the four panes of the qseqeditframe64 class or the legacy Kepler34
- *  qseqeditframe class.  It will be used as a mix-in class
+ *  qseqtime, and the four panes of the qseqeditframe64 class.  Used as a
+ *  mix-in class.
  */
 
 #include "app_limits.h"                 /* SEQ66_DEFAULT_ZOOM, _SNAP        */

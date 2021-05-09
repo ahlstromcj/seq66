@@ -91,8 +91,8 @@ namespace seq66
 
 /**
  *  This frame holds tools for editing an individual MIDI sequence.  This
- *  frame is a more advanced version of qseqeditframe, which was based on
- *  Kepler34's EditFrame class.
+ *  frame is a more advanced version of qseqeditframe (now moved to
+ *  contrib/code), which was based on Kepler34's EditFrame class.
  */
 
 class qseqeditframe64 final : public qseqframe, protected performer::callbacks

@@ -27,7 +27,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-07-24
- * \updates       2021-03-31
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  *  The Seq24 MIDI file is a standard, Format 1 MIDI file, with some extra
@@ -314,9 +314,12 @@ public:
         return m_file_ppqn;
     }
 
+    bool scaled () const
+    {
+        return m_use_scaled_ppqn;
+    }
+
     /**
-     * \getter m_pos
-     *
      *  Current position in the data stream.
      */
 
@@ -374,7 +377,8 @@ protected:
     bool parse_mute_groups (performer & p);
     bool write_mute_groups (const performer & p);
     bool checklen (midilong len, midibyte type);
-    void add_trigger (sequence & seq, midishort ppqn, bool tposable = true);
+    void add_trigger (sequence & seq, midishort ppqn, bool tposable);
+    void add_old_trigger (sequence & seq);
     bool read_seek (size_t pos);
     midilong read_long ();
     midilong read_split_long (unsigned & highbytes, unsigned & lowbytes);

@@ -774,7 +774,7 @@ mastermidibase::port_exit (int client, int port)
  * Usages:
  *
  *  -   portmidi mastermidibus::api_init()
- *  -   qseqeditframe::toggle_midi_rec() and _thru()
+ *  -   qseqeditframe64::toggle_midi_rec() and _thru()
  *  -   sequence::set_input_recording() and _thru()
  *  -   performer::set_sequence_input() [called only internally]
  *  -   performer::set_recording() and _thru() [see line above]

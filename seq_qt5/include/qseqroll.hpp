@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-01-01
- * \updates       2021-04-03
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  *  We are currently moving toward making this class a base class.
@@ -69,7 +69,6 @@ namespace seq66
 class qseqroll final : public QWidget, public qseqbase
 {
     friend class qseqframe;
-    friend class qseqeditframe;
     friend class qseqeditframe64;
 
     Q_OBJECT

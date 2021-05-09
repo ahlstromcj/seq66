@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-18
- * \updates       2021-04-30
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  */
@@ -101,7 +101,7 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
 {
     bool result = false;
     auto sz = m_container.size();
-    auto p = std::make_pair(ordinal, op);   /* std::pair<ctrlkey, keycontrol>   */
+    auto p = std::make_pair(ordinal, op); /* std::pair<ctrlkey, keycontrol> */
     (void) m_container.insert(p);
     result = m_container.size() == (sz + 1);
     if (result)
@@ -109,9 +109,14 @@ keycontainer::add (ctrlkey ordinal, const keycontrol & op)
 #if defined SEQ66_PLATFORM_DEBUG_TMI
         std::string keyname = op.key_name();
         std::cout
-            << "Inserted pattern key ordinal #" << std::setw(3) << ordinal
-            << " : '" << keyname << "'" << std::endl
-                ;
+            << "Inserted pattern key ordinal 0x"
+            << std::hex << unsigned(ordinal)
+            << " : '" << keyname << "' as control code "
+            << std::dec << op.control_code()
+            << " (" << op.category_name() << ": "
+            << op.action_name() << ")"
+            << std::endl
+            ;
 #endif
     }
     else

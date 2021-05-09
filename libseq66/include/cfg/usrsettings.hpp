@@ -890,9 +890,9 @@ private:
     int m_user_ui_key_height;
 
     /**
-     *  Turns on the replacement of the Qt 5 qseqeditframe with the larger
-     *  and more functional qseqeditframe64, in the "Edit" tab.  The size of
-     *  the main window is increased to fit it.  A Kepler34 adaptation.
+     *  Turns on the replacement of the Qt 5 qseqeditframe (now moved to
+     *  contrib/code) with the larger and more functional qseqeditframe64, in
+     *  the "Edit" tab.  A Kepler34 adaptation. Now permanently true.
      */
 
     bool m_user_ui_seqedit_in_tab;

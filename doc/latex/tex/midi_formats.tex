@@ -6,12 +6,12 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-09-03
-% \update      2021-04-20
+% \update      2021-05-09
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
-%     Provides a discussion of the formats of the last
-%     track of an Seq24/Seq66 MIDI file.
+%     Provides a discussion of the formats of the last track of an Seq24/Seq66
+%     MIDI file.
 %
 %-------------------------------------------------------------------------------
 
@@ -386,7 +386,10 @@
    If the trigger has a zero tranpose value, then 
    \texttt{c\_trig\_transpose} is still written, but the extra byte is zero.
 
-   The older trigger tags are no longer written, but they will be read if
+   In order to preserve some of the ability of older sequencers to read this
+   section, if all of the triggers are non-transposed, then the old-style
+   triggers () are written for that pattern.
+   The older trigger tags will be read if
    present in the \textsl{Seq66} MIDI file.
 
 \subsubsection{SeqSpec c\_mutegroups}
@@ -507,10 +510,20 @@
 
    This
    \texttt{SeqSpec} applies to patterns only.
+   Unlike \texttt{c\_trig\_transpose}, it applies not to the triggers, but
+   to the whole pattern, and is merely a boolean value.
    It is set to a non-zero value (1) to indicate
    that a pattern can be transposed, either on the fly or via the
    note-mapping features (see \sectionref{subsec:configuration_drums}).
-   It is useful to mark a drum pattern.
+   A value of 0 is useful to mark a drum pattern and prevent it from being
+   transposed.
+
+   A value of 0 also prevents the drum pattern from being note-mapped.
+   See \sectionref{subsubsec:configuration_rc_note_mapper}.
+   The user must temporarily enable transposition in the pattern editor, and
+   then press the \textbf{Map}.  This should be done only once, otherwise the
+   drum pattern will sound like a random set of percussive instruments.
+
    This section is always saved with the pattern.
 
 \subsubsection{SeqSpec c\_perf\_bp\_mes}
