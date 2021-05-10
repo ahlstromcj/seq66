@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-05
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  *
  */
@@ -63,7 +63,16 @@ enum class layout
 
 /**
  *  Provides short names for these Qt::KeyboardModifier values, to make the
- *  table readable.  Also used in the keystroke class.
+ *  internal tables readable.  Also used in the keystroke class.
+ *
+ *  Note that it seems that the Alt-Gr key on a French keyboard might generate
+ *  a Ctrl-Alt in the Qt framework.
+ *
+ *  On MacOS, KCTRL correspondes to the Command keys, and KMETA corresponds to
+ *  the Control keys.
+ *
+ *  On Windows and Linux, the Windows key has KNONE on press, and KMETA on
+ *  release.
  */
 
 using modifiers = enum kmod_t
@@ -71,8 +80,10 @@ using modifiers = enum kmod_t
     KNONE       = 0x00000000,
     KSHIFT      = 0x02000000,
     KCTRL       = 0x04000000,
-    KCTRLSHIFT  = 0x06000000,
+    KCTRLSHIFT  = KCTRL|KSHIFT,     /* 0x06000000 */
     KALT        = 0x08000000,
+    KCTRLALT    = KCTRL|KALT,       /* 0x08000000 */
+    KALTGR      = KCTRL|KALT,       /* 0x08000000 */
     KMETA       = 0x10000000,
     KEYPAD      = 0x20000000,
     KGROUP      = 0x40000000

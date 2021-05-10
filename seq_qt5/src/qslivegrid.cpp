@@ -24,7 +24,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2019-06-21
- * \updates       2021-04-29
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  *
  *  This class is the Qt counterpart to the mainwid class.  This version is
@@ -170,6 +170,11 @@ qslivegrid::qslivegrid
 
     ui->labelPlaylistSong->setText("");
     set_mode_text();
+    qloopbutton::progress_box_size
+    (
+        usr().progress_box_width(),
+        usr().progress_box_height()
+    );
 
     /*
      * When done here, the buttons don't resize to the actual frame size.

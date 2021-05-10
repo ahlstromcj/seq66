@@ -113,6 +113,18 @@ public:
 private:
 
     /**
+     *  Allows for tailorable progress-box sizes as a percentage of the button
+     *  size.
+     *
+     *      Horizontal: 0.50 to 0.80
+     *      Vertical:   0.10 to 0.40 with 0 to turn off drawing it.
+     */
+
+    static bool sm_draw_progress_box;
+    static double sm_progress_w_fraction;
+    static double sm_progress_h_fraction;
+
+    /**
      *  Provides a buffer that represents a condensed version of long
      *  patterns, so that we don't have to waste time drawing hundreds of
      *  events in the tiny box centered in the pattern button.
@@ -188,6 +200,8 @@ public:
     {
         // no code needed
     }
+
+    static void progress_box_size (double w, double h);
 
     virtual seq::pointer loop () override
     {

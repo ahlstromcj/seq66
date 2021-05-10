@@ -239,12 +239,12 @@ look empty with a space.
 
 0      # block_independent (set spinners for each block/wid)
 
-# Specifies an enlargement of the main window of Seq66.
-# The normal value is 1.0, which is the legacy sizing.  If this
-# value is between 0.5 and 3.0, it will change the size of the main
+# Specifies a scaling of the main window of Seq66 at startup.
+# The norm is 1.0x1.0, which is the legacy sizing.  If this value
+# value is between 0.8 and 3.0, it will change the size of the main
 # window proportionately. Same as the '-o scale=m.n[xp.q]' option.
 
-1 1      # window_scale (scales main window width and height)
+1 1      # window_scale (scales main window width x height)
 
 [user-midi-ppqn]
 
@@ -252,7 +252,7 @@ look empty with a space.
 # separate the file-ppqn flag from the default PPQN that the user
 # wants Seq66 to support.
 
-default-ppqn = 960
+default-ppqn = 192
 use-file-ppqn = false
 
 [user-midi-settings]
@@ -376,12 +376,8 @@ use-file-ppqn = false
 
 key-height = 10
 
-# Normally, the Qt version of Seq66 uses the old pattern editor in the
-# 'Edit' tab.  If this value is set to 1, then the new, larger,
-# more functional pattern editor can be used in the 'Edit' tab. This
-# setting makes the whole Seq66 window larger.
-
-use-new-seqedit = true
+# The Qt version of Seq66 now always uses the new pattern editor in
+# the 'Edit' tab.  So, the 'use-new-seqedit' option is removed.
 
 # The note-resume option, if active, causes any notes in progress
 # to be resumed when the pattern is toggled back on.
@@ -401,6 +397,15 @@ style-sheet = ""
 # from 32 (the default) to 128.
 
 fingerprint-size = 128
+
+# If specified, changes the default size of the progress box in the
+# live-loop grid buttons.  The numbers are in fractions.  The width
+# ranges from 0.50 to 1.0; the height from 0.10 to 0.50.  If either
+# is 0, then the box isn't drawn.  If either is -1.0, the defaults
+# are used.
+
+progress-box-width = -1
+progress-box-height = -1
 
 [user-session]
 

@@ -1,0 +1,42 @@
+/*
+ * \file          flat.qss
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2021-05-10
+ * \updates       2021-05-10
+ * \license       Public domain
+ *
+ *  Provides a sample Qt style sheet for Seq66.  See
+ *  https://doc.qt.io/archives/qt-4.8/stylesheet-examples.html and
+ *  https://doc.qt.io/qt-5/stylesheet-reference.html.
+ */
+
+QPushButton
+{
+	color: black;
+    font: 12px;
+    background-color: gray;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 8;
+    border-color: black;
+    min-width: 20px;
+    padding: 1px;
+}
+
+QPushButton:checked
+{
+	color: yellow;
+    font: 12px;
+	background-color: black;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 24px;
+    border-color: black;
+    min-width: 20px;
+    padding: 1px;
+}
+
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=css
+ */

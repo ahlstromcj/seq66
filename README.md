@@ -1,7 +1,7 @@
 # README for Seq66 0.93.2
 
 Chris Ahlstrom
-2015-09-10 to 2021-05-08
+2015-09-10 to 2021-05-10
 
 __Seq66__ is a MIDI sequencer and live-looper with a hardware-sampler
 grid-pattern interface, MIDI automation for live performance, sets and
@@ -84,6 +84,8 @@ Windows, and using a conventional source tarball.
     *   Version 0.93.2:
         *   Removed the code for the essentially unused Seqtool application.
         *   Removed the now unnecessary old-style qseqeditframe.
+        *   Add 'usr' tweaks options to change the size of the live-grid
+            progress boxes, or eliminate them completely.
         *   Refactored keymaps for better progress on issue #47, using native
             key-codes. Added a spreadsheet listing the supported names of the
             keys.

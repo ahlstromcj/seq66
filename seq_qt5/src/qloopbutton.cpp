@@ -88,6 +88,27 @@ const int s_alpha_oneshot       = 148;
 namespace seq66
 {
 
+bool qloopbutton::sm_draw_progress_box = true;
+double qloopbutton::sm_progress_w_fraction = 0.80;  /* 0.50 to 0.80         */
+double qloopbutton::sm_progress_h_fraction = 0.25;  /* 0.10 to 0.40 and 0.0 */
+
+void
+qloopbutton::progress_box_size (double w, double h)
+{
+    if (w == 0.0 || h == 0.0)
+    {
+        sm_draw_progress_box = false;
+    }
+    else
+    {
+        if (w >= 0.50 && w <= 1.0)
+            sm_progress_w_fraction = w;
+
+        if (h >= 0.10 && h <= 0.50)
+            sm_progress_h_fraction = h;
+    }
+}
+
 /**
  *  Textbox functions.
  */
@@ -123,9 +144,6 @@ qloopbutton::progbox::progbox () :
     // no code
 }
 
-#define PROG_W_FRACTION     0.80
-#define PROG_H_FRACTION     0.25
-
 /**
  * Let's do it like seq24/seq64, but not so tall, just enough to show
  * progress.  We don't really need to keep redrawing all the events over
@@ -135,8 +153,8 @@ qloopbutton::progbox::progbox () :
 void
 qloopbutton::progbox::set (int w, int h)
 {
-    m_x = int(double(w) * (1.0 - PROG_W_FRACTION) / 2.0);
-    m_y = int(double(h) * (1.0 - PROG_H_FRACTION) / 2.0);
+    m_x = int(double(w) * (1.0 - sm_progress_w_fraction) / 2.0);
+    m_y = int(double(h) * (1.0 - sm_progress_h_fraction) / 2.0);
     m_w = w - 2 * m_x;
     m_h = h - 2 * m_y;
 }
@@ -567,7 +585,9 @@ qloopbutton::paintEvent (QPaintEvent * pev)
             else
                 initialize_fingerprint();
 
-            draw_progress_box(painter);
+            if (sm_draw_progress_box)
+                draw_progress_box(painter);
+
             draw_pattern(painter);
             draw_progress(painter, tick);
         }

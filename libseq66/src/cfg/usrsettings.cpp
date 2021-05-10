@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-23
- * \updates       2021-04-13
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  *
  *  Note that this module also sets the remaining legacy global variables, so
@@ -294,6 +294,8 @@ usrsettings::usrsettings () :
     m_user_ui_style_sheet       (""),
     m_resume_note_ons           (false),
     m_fingerprint_size          (32),
+    m_progress_box_width        (-1.0),
+    m_progress_box_height       (-1.0),
     m_session_manager           (session::none),
     m_session_url               (),
     m_in_session                (false),
@@ -391,6 +393,8 @@ usrsettings::set_defaults ()
     m_user_ui_style_sheet = "";
     m_resume_note_ons = false;
     m_fingerprint_size = 32;
+    m_progress_box_width = (-1.0);
+    m_progress_box_height = (-1.0);
     m_session_manager = session::none;
     m_session_url.clear();
     m_in_session = false;

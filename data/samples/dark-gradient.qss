@@ -1,0 +1,77 @@
+/*
+ * \file          flat.qss
+ * \library       seq66 application
+ * \author        Chris Ahlstrom
+ * \date          2021-05-10
+ * \updates       2021-05-10
+ * \license       Public domain
+ *
+ *  Provides a sample Qt style sheet for Seq66.  See
+ *  https://doc.qt.io/archives/qt-4.8/stylesheet-examples.html and
+ *  https://doc.qt.io/qt-5/stylesheet-reference.html.
+ */
+
+QTabBar::tab
+{
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #404040, stop: 0.4 #202020,
+        stop: 0.5 #404040, stop: 1.0 #303030);
+    border: 2px solid #C4C4C3;
+    border-bottom-color: #6495ED; /* same as the pane color */
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    min-width: 8ex;
+    padding: 2px;
+}
+
+/*
+ * Style the tab using the tab sub-control. Note that it reads QTabBar _not_
+ * QTabWidget
+ */
+
+QTabBar::tab:selected, QTabBar::tab:hover
+{
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 0, y2: 1,
+        stop: 0 #808080, stop: 0.4 #404040,
+        stop: 0.5 #404040, stop: 1.0 #808080);
+}
+
+QTabBar::tab:selected
+{
+    border-color: #9B9B9B;
+    border-bottom-color: #6495ED; /* same as pane color */
+}
+
+QPushButton
+{
+	color: black;
+    font: 12px;
+    background: qlineargradient(
+        x1: 0, y1: 0, x2: 1, y2: 1,
+        stop: 0 #404040, stop: 0.4 #202020,
+        stop: 0.5 #404040, stop: 1.0 #303030);
+    border-style: ridge;
+    border-width: 2px;
+    border-radius: 4px;
+    border-color: beige;
+    min-width: 2em;
+    padding: 2px;
+}
+QPushButton:checked
+{
+	color: yellow;
+    font: bold 12px;
+	background-color: black;
+    border-style: ridge;
+    border-width: 2px;
+    border-radius: 4px;
+    border-color: beige;
+    min-width: 2em;
+    padding: 2px;
+}
+
+/*
+ * vim: sw=4 ts=4 wm=4 et ft=css
+ */

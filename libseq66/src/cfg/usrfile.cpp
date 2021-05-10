@@ -26,7 +26,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-23
- * \updates       2021-05-07
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  *
  *  Note that the parse function has some code that is not yet enabled.
@@ -583,6 +583,13 @@ usrfile::parse ()
         usr().style_sheet(strip_quotes(s));
         s = get_variable(file, "[user-ui-tweaks]", "fingerprint-size");
         usr().fingerprint_size(string_to_int(s, 32));
+        s = get_variable(file, "[user-ui-tweaks]", "progress-box-width");
+
+        double w = string_to_double(s, -1.0);
+        s = get_variable(file, "[user-ui-tweaks]", "progress-box-height");
+
+        double h = string_to_double(s, -1.0);
+        usr().progress_box_size(w, h);
     }
     s = get_variable(file, "[user-session]", "session");
     usr().session_manager(s);
@@ -1335,7 +1342,6 @@ usrfile::write ()
     /*
      * Disabled 2021-05-07
      *
-     *
      *      v = bool_to_string(usr().use_new_seqedit());
      *      file << "use-new-seqedit = " << v << "\n";
      */
@@ -1362,6 +1368,16 @@ usrfile::write ()
         "# which reduces the amount of drawing in the grid buttons. Ranges\n"
         "# from 32 (the default) to 128.\n\n"
         << "fingerprint-size = " << usr().fingerprint_size() << "\n"
+        ;
+
+    file << "\n"
+        "# If specified, changes the default size of the progress box in the\n"
+        "# live-loop grid buttons.  The numbers are in fractions.  The width\n"
+        "# ranges from 0.50 to 1.0; the height from 0.10 to 0.50.  If either\n"
+        "# is 0, then the box isn't drawn.  If either is -1.0, the defaults\n"
+        "# are used.\n\n"
+        << "progress-box-width = " << usr().progress_box_width() << "\n"
+        << "progress-box-height = " << usr().progress_box_height() << "\n"
         ;
 
     /*

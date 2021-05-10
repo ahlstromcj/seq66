@@ -28,7 +28,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-09-22
- * \updates       2021-04-13
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  *
  *  This module defines the following categories of "global" variables that
@@ -922,6 +922,15 @@ private:
     int m_fingerprint_size;
 
     /**
+     *  Lets the progress-box in the loop-buttons be tailored in size, or even
+     *  not drawn at all.  The defaults are -1, which means use the internal
+     *  defaults in qloopbutton.
+     */
+
+    double m_progress_box_width;
+    double m_progress_box_height;
+
+    /**
      *  [user-session]
      *
      *  This value indicates to create and use a Non Session Manager (or New
@@ -1663,6 +1672,16 @@ public:
         return m_fingerprint_size;
     }
 
+    double progress_box_width () const
+    {
+        return m_progress_box_width;
+    }
+
+    double progress_box_height () const
+    {
+        return m_progress_box_height;
+    }
+
     session session_manager () const
     {
         return m_session_manager;
@@ -1828,6 +1847,20 @@ public:         // used in main application module and the usrfile class
     {
         if (sz >= 32 && sz <= 128)
             m_fingerprint_size = sz;
+    }
+
+    /**
+     *  Ultimately validated in the qloopbutton class.  Ignored if either is
+     *  less than 0.0.
+     */
+
+    void progress_box_size (double w, double h)
+    {
+        if (w >= 0.0 && h >= 0.0)
+        {
+            m_progress_box_width = w;
+            m_progress_box_height = h;
+        }
     }
 
     void session_manager (const std::string & sm);

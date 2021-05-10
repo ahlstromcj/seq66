@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2018-11-12
- * \updates       2021-05-04
+ * \updates       2021-05-10
  * \license       GNU GPLv2 or above
  */
 
@@ -46,7 +46,7 @@ modifier_names (unsigned kmod)
     std::string result;
     if (kmod == keyboard::KNONE)
     {
-        result = "None";
+        result = "None ";
     }
     else
     {
@@ -416,7 +416,7 @@ qt_keys (int i)
         { 0xab,  0x0100003b, 0xffc9,  "F12",        KNONE  },
         { 0xac,  0x01000053, 0xffeb,  "Super_L",    KNONE  },   // Left-Windows
         { 0xad,  0x01000054, 0xffec,  "Super_R",    KNONE  },   // Right-Windows, good code?
-        { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  },
+        { 0xae,  0x01000055, 0xff67,  "Menu",       KNONE  },   // Win-Menu key
         { 0xaf,  0x01000056,   0xaf,  "Hyper_L",    KNONE  },
         { 0xb0,  0x01000057,   0xb0,  "Hyper_R",    KNONE  },
         { 0xb1,  0x01000058,   0xb1,  "Help",       KNONE  },
@@ -765,12 +765,13 @@ qt_modkey_ordinal (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
              */
 
             auto c = keycode_map().count(qtkey);
+            bool found = c == 1;
             if (c > 1)
             {
                 auto p = keycode_map().equal_range(qtkey);
                 for (cqi = p.first; cqi != p.second; ++cqi)
                 {
-                    bool found = cqi->second.qtk_modifier == qtmodifier;
+                    found = cqi->second.qtk_modifier == qtmodifier;
                     if (found && virtkey > 0)
                         found = cqi->second.qtk_virtkey == virtkey;
 
@@ -778,7 +779,8 @@ qt_modkey_ordinal (eventkey qtkey, unsigned qtmodifier, eventkey virtkey)
                         break;
                 }
             }
-            result = cqi->second.qtk_ordinal;
+            if (found)
+                result = cqi->second.qtk_ordinal;
         }
     }
     return result;
@@ -875,37 +877,26 @@ qt_ordinal_keyname (ctrlkey ordinal)
  *
  *  Also note that we cannot place the characters themselves in a 'ctrl' file.
  *  When read, these characters have the value 0xffffffc2 or 0xffffffc3.  So
- *  we have to look up based on the hex string.
- *
-\verbatim
-        Key #0x039c 'µ' scan = 0x33; keycode = 0xb5
-        Key #0xa3  '£' scan = 0x23; keycode = 0xa3
-        Key #0xa7  '§' scan = 0x3d; keycode = 0xa7
-        Key #0xb0  '°' scan = 0x14; keycode = 0xb0
-        Key #0xb2  '²' scan = 0x31; keycode = 0xb2
-        Key #0xc0  'à' scan = 0x13; keycode = 0xe0
-        Key #0xc7  'ç' scan = 0x12; keycode = 0xe7
-        Key #0xc8  'è' scan = 0x10; keycode = 0xe8
-        Key #0xc9  'é' scan = 0x0b; keycode = 0xe9
-        Key #0xd9  'ù' scan = 0x30; keycode = 0xf9
-\verbatim
+ *  we have to make up names to use in the 'ctrl' file.
  *
  * Sylvain's findings on a real AZERTY keyboard:
  *
- *      Key #0xa3   '£' scan = 0x23; keycode = 0xa3
- *      Key #0xa4   '¤' scan = 0x23; keycode = 0xa4
- *      Key #0xa7   '§' scan = 0x3d; keycode = 0xa7
- *      Key #0xb0   '°' scan = 0x14; keycode = 0xb0
- *      Key #0xb2   '²' scan = 0x31; keycode = 0xb2
- *      Key #0xc0   'à' scan = 0x13; keycode = 0xe0
- *      Key #0xc7   'ç' scan = 0x12; keycode = 0xe7
- *      Key #0xc8   'è' scan = 0x10; keycode = 0xe8
- *      Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
- *      Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
- *      Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
- *      Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
- *      Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
- *      Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
+\verbatim
+        Key #0xa3   '£' scan = 0x23; keycode = 0xa3
+        Key #0xa4   '¤' scan = 0x23; keycode = 0xa4
+        Key #0xa7   '§' scan = 0x3d; keycode = 0xa7
+        Key #0xb0   '°' scan = 0x14; keycode = 0xb0
+        Key #0xb2   '²' scan = 0x31; keycode = 0xb2
+        Key #0xc0   'à' scan = 0x13; keycode = 0xe0
+        Key #0xc7   'ç' scan = 0x12; keycode = 0xe7
+        Key #0xc8   'è' scan = 0x10; keycode = 0xe8
+        Key #0xc9   'é' scan = 0x0b; keycode = 0xe9
+        Key #0xd9   'ù' scan = 0x30; keycode = 0xf9
+        Key #0x039c  'µ' scan = 0x33; keycode = 0xb5
+        Key #0x20ac '€' scan = 0x1a; keycode = 0x20ac
+        Key #0x1001257 '¨' scan = 0x22; keycode = 0xfe57
+        Key #0x1001252 '^' scan = 0x22; keycode = 0xfe52
+\endverbatim
  *
  *  Just call this function once.
  */
@@ -917,25 +908,48 @@ setup_qt_azerty_fr_keys ()
     static const qt_keycodes s_fr_keys [] =
     {
         /*
-         *  Code     Qt      Qt        Key
-         * Ordinal Evkey  Virtkey     Name   Modifier
+         *  Code     Qt      Qt      Key
+         * Ordinal Evkey  Virtkey   Name        Modifier
          */
 
-        { 0xe0,   0xa3,        0xa3, "L_pound",   KNONE }, // £ <--F4
-        { 0xe1,   0xa4,        0xa4, "Currency",  KNONE }, // ¤ <--F?
-        { 0xe2,   0xa7,        0xa7, "Silcrow",   KNONE }, // § <--F8
-        { 0xe3,   0xb0,        0xb0, "Degrees",   KNONE }, // ° <--Hyper_R
-        { 0xe4,   0xb2,        0xb2, "Super_2",   KNONE }, // ² <--Dir_L
-        { 0xe5,   0xc0,        0xe0, "a_grave",   KNONE }, // à <--KP_Ins
-        { 0xe6,   0xc7,        0xe7, "c_cedilla", KNONE }, // ç <--KP_Up
-        { 0xe7,   0xc8,        0xe8, "e_grave",   KNONE }, // è <--KP_Right
-        { 0xe8,   0xc9,        0xe9, "e_acute",   KNONE }, // é <--KP_Down
-        { 0xe9,   0xd9,        0xf9, "u_grave",   KNONE }, // ù <--Super/Mod4/Win
-        { 0xea,   0x039c,      0xb5, "Mu",        KNONE }, // µ <--(new)
-        { 0xeb,   0x20ac,      0xb6, "Euro",      KNONE }, // € <--(new)
-        { 0xec,   0x1001252, 0xfe52, "Circflex",  KNONE }, // ^ <--Caret
-        { 0xed,   0x1001257, 0xfe57, "Umlaut",    KNONE }, // ¨ <--Diaeresis
-        { 0x00,   0xffffffff,  0xff, "?",         KNONE }  // terminator
+        { 0x21,   0x21,     0x21,   "!",         KNONE  }, // Exclam
+        { 0x22,   0x22,     0x22,   "\"",        KNONE  }, // QuoteDbl
+        { 0x23,   0x23,     0x23,   "#",         KALTGR }, // NumberSign
+        { 0x26,   0x26,     0x26,   "&",         KNONE  }, // Ampersand
+        { 0x27,   0x27,     0x27,  "'",          KNONE  }, // Apostrophe
+        { 0x28,   0x28,     0x28,  "(",          KNONE  }, // ParenLeft
+        { 0x29,   0x29,     0x29,  ")",          KNONE  }, // ParenRight
+        { 0x2a,   0x2a,     0x2a,  "*",          KNONE  }, // Asterisk
+        { 0x2e,   0x2e,     0x2e,  ".",          KSHIFT }, // Period
+        { 0x2f,   0x2f,     0x2f,  "/",          KSHIFT }, // Slash
+        { 0x3a,   0x3a,     0x3a,  ":",          KNONE  }, // Colon
+        { 0x3c,   0x3c,     0x3c,  "<",          KNONE  },
+        { 0x40,   0x40,     0x40,  "@",          KALTGR }, // AtSign
+        { 0x5b,   0x5b,     0x5b,   "[",         KALTGR }, // BracketLeft
+        { 0x5c,   0x5c,     0x5c,   "\\",        KALTGR }, // Backslash
+        { 0x5d,   0x5d,     0x5d,   "]",         KALTGR }, // BracketRight
+        { 0x5e,   0x5e,     0x5e,   "^",         KALTGR }, // AsciiCircumflex
+        { 0x5f,   0x5f,     0x5f,   "_",         KNONE  }, // Underscore
+        { 0x60,   0x60,     0x60,   "`",         KALTGR },    // QuoteLeft, Backtick
+        { 0x7b,   0x7b,     0x7b,   "{",         KALTGR }, // BraceLeft
+        { 0x7c,   0x7c,     0x7c,   "|",         KALTGR }, // Bar
+        { 0x7d,   0x7d,     0x7d,   "}",         KALTGR }, // BraceRight
+        { 0x7e,   0x7e,     0x7e,   "~",         KALTGR }, // Tilde (dead key)
+        { 0xe0,   0xa3,     0xa3,   "L_pound",   KNONE  }, // £ <--F4
+        { 0xe1,   0xa4,     0xa4,   "Currency",  KALTGR }, // ¤ <--F?
+        { 0xe2,   0xa7,     0xa7,   "Silcrow",   KSHIFT }, // § <--F8
+        { 0xe3,   0xb0,     0xb0,   "Degrees",   KSHIFT }, // ° <--Hyper_R
+        { 0xe4,   0xb2,     0xb2,   "Super_2",   KNONE  }, // ² <--Dir_L
+        { 0xe5,   0xc0,     0xe0,   "a_grave",   KNONE  }, // à <--KP_Ins
+        { 0xe6,   0xc7,     0xe7,   "c_cedilla", KNONE  }, // ç <--KP_Up
+        { 0xe7,   0xc8,     0xe8,   "e_grave",   KNONE  }, // è <--KP_Right
+        { 0xe8,   0xc9,     0xe9,   "e_acute",   KNONE  }, // é <--KP_Down
+        { 0xe9,   0xd9,     0xf9,   "u_grave",   KNONE  }, // ù <--Super/Mod4/Win
+        { 0xea,   0x039c,   0xb5,   "Mu",        KSHIFT }, // µ <--(new)
+        { 0xeb,   0x20ac,   0xb6,   "Euro",      KALTGR }, // € <--(new)
+        { 0xec, 0x1001252,  0xfe52, "Circflex",  KNONE  }, // ^ <--Caret
+        { 0xed, 0x1001257,  0xfe57, "Umlaut",    KSHIFT }, // ¨ <--Diaeresis
+        { 0x00, 0xffffffff, 0xff,   "?",         KNONE  }  // terminator
     };
     for (int i = 0; s_fr_keys[i].qtk_keyevent != 0xffffffff; ++i)
     {
