@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2015-11-01
-% \update      2021-04-20
+% \update      2021-05-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -98,34 +98,36 @@
    It supports for the \textsl{Non Session Manager}, the ability to
    modify the color palette, and Qt style-sheets.
    Be prepared to note some significant differences
-   between \textsl{Seq66} and textsl{Sequencer64}.
+   between \textsl{Seq66} and \textsl{Sequencer64}.
 
-   We have many contributors to acknowledge.
+   We also have many contributors to acknowledge.
    Please see \sectionref{sec:kudos}.
+   It is out-of-date!  If your name is not there, ping us!
 
-\subsection{Seq66: What?}
+\subsection{Seq66: What!?}
 \label{subsec:what_is_seq66}
 
    \textsl{Seq66} is a reboot of \textsl{Sequencer64}, which
    is itself a reboot of \textsl{Seq24},
    a live-looping sequencer with an interface similar to a hardware sequencer.
    \textsl{Seq66} is not a synthesizer.  It requires a hardware
-   synthesizer or a software synthesizer.  It does not handle audio data.
+   synthesizer or a software synthesizer.  It does not handle audio data,
+   just MIDI.
 
-   \textsl{Seq66} works with
-   \textsl{ALSA},
-   \textsl{JACK},
-   \textsl{PortMidi}, and
-   \textsl{Windows}.
+   \textsl{Seq66} works with \textsl{ALSA}, \textsl{JACK},
+   \textsl{PortMidi}, and \textsl{Windows}. It uses close-to-the-latest C++
+   features for faster and simpler code.
 
-\subsection{Seq66: Why?}
+\subsection{Seq66: Why!?}
 \label{subsec:introduction_vs_others}
 
    The first reason to refactor \textsl{Sequencer64} is to take advantage of
    things learned in responding to user reports.  The second reason is to use
    the new code as an opportunity to add new functionality such as
    \textsl{Non Session Manager} support.  The third reason is to tighten the
-   code by using newer features of \textsl{C++11} and beyond.
+   code by using newer features of \textsl{C++11} and later.
+   The fourth reason is to make the innumerable minor improvements that come to
+   attention with time and more testing.
 
 \subsection{Improvements}
 \label{subsec:improvements}
@@ -134,16 +136,28 @@
    \textsl{Seq66} versus \textsl{Sequencer64}.
 
    \begin{itemize}
-      \item Qt 5 as the standard user-interface.
+      \item Qt 5 as the standard user-interface. Changing the window size works
+         much better.
+      \item A song editor tab for laying out patterns into a complete
+         performance.
       \item A mutes editor tab, improvements to mutes handling, control, and
          status display.
       \item A playlist editor tab, with improved flexibility and automation.
       \item A sets editor tab.
+      \item A events editor tab for basic fixing of minor event issues.
       \item A better live frame (main window and external windows) using
          Qt buttons.
-      \item Non Session Manager support.
+      \item Non Session Manager support. A sessions tab which shows the current
+         locations of configuration files for the run.
       \item Repartitioning of the configuration files into separate files for
-         flexibility; a color palette file; Qt style-sheets.
+         flexibility; added a color palette file, Qt style-sheets, beefed up the
+         'ctrl' file radically.
+      \item Improved alternate keyboard layout support.
+      \item Mapping of port names to a consistent set of port numbers.
+      \item Palette files and Qt style-sheets can be used to configure the colors
+         of the painted text, lines, patterns, and the size and color of
+         the user-interface items.
+      \item More efficient lookups for controls; lambda functions.
    \end{itemize}
 
    For developers, a \textsl{Seq66} build is customizable via C macros,
@@ -173,7 +187,7 @@
    Provide a MIDI file.
    On our system, the synthesizer (\textsl{Yoshimi}) comes up on MIDI buss 5;
    on \textsl{Windows}, buss 0 is the "MIDI Mapper", while buss 1 is the
-   built-in wavetable synthesizer.
+   built-in wavetable synthesizer, which is normally under control of buss 0.
    The \texttt{-{}-buss} option remaps all events to the desired buss:
 
    \begin{verbatim}
@@ -181,7 +195,9 @@
       C:\> qpseq66 --buss 1  data/midi/b4uacuse-gm-patchless.midi
    \end{verbatim}
 
-   The "data" directory is a installation directory:
+   This can also be done from a dropdown in the main window.
+
+   The "data" directory is an installation directory:
 
    \begin{verbatim}
       /usr/share/seq66-0.90/                       (Linux)
@@ -213,15 +229,15 @@
    The \textsl{Seq66} main window appears as shown above.
    This figure has many differences from the \textsl{Seq24} main window,
    but the functionality is similar.
-   However, \textsl{Seq66} behaves better on resizing, and can also
+   \textsl{Seq66} behaves better on resizing, and can also
    be configured to start with its size scaled up or scaled down.
    Most features, including the "look" of the application,
    can be configured via the 'rc', 'usr', 'ctrl', 'drums', 'playlist', 'mutes',
    and 'palette' configuration files, via command-line options, via
-   desktop themes, and via Qt style-sheets.
-   There are many new front-panel items in \textsl{Seq66}.
-   Many of these buttons have configurable keystrokes and configurable MIDI
-   controls.
+   desktop themes, and via Qt style-sheets ('qss' files).
+%  There are many new front-panel items in \textsl{Seq66}.
+%  Many of these buttons have configurable keystrokes and configurable MIDI
+%  controls.
 
    We break the discussion into sections for the following
    groups shown in the figure above:
@@ -285,7 +301,7 @@
 \label{paragraph:introduction_ppqn_selection}
 
    This dropdown allows one to change the pulses-per-quarter-note (PPQN) of the
-   loaded tune.
+   loaded tune, and this change can then be saved, if desired, with the file.
    As with \textsl{Seq24}, the default PPQN is 192.  This can be changed to
    to other values:
    \texttt{32, 48, 96, 192, 384, 768, 960, 1920, 3840, 7680, 9600,
@@ -305,7 +321,9 @@
    output busses is either the existing MIDI ports on the system, or,
    if port-mapping (see \sectionref{sec:port_mapping}) is active, the list
    of mapped output ports.
-   This is an easy way to redirect the set to a different output device.
+   Port-mapping is a useful way to redirect the set to a different output device;
+   it can be used to provide a full set of virtual devices that any of the user's
+   sequences can depend on.
 
    \index{--bus option}
    Another way to specify busses is the
@@ -315,7 +333,8 @@
    sequence/pattern is created.  This option is only
    for convenience in testing.  Save the file, and it will
    have that buss number as part of each track's data, which makes the song
-   file less portable, so be careful.
+   file less portable, so be careful with both options.
+   For portability, set the output buss to 0.
 
 \paragraph{Global Beats Per Measure}
 \label{paragraph:introduction_global_beats_per_measure}
@@ -357,7 +376,6 @@
 
    \begin{itemize}
       \item \textbf{Set Name}
-%     \item \textbf{Set Master Button}
       \item \textbf{Active Set Indicator}
       \item \textbf{Set Changer}
    \end{itemize}

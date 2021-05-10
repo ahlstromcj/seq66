@@ -21,12 +21,16 @@
 # \library    	libseq_qt5 library
 # \author     	Chris Ahlstrom
 # \date       	2018-01-01
-# \update      2020-12-21
+# \update      2021-05-07
 # \version    	$Revision$
 # \license    	$XPC_SUITE_GPL_LICENSE$
 #
 # 		This module provides an Automake makefile for the libseq_qt5 C/C++
 # 		library.
+#
+# Removed:
+#
+#     qseqeditframe.cpp
 #
 #------------------------------------------------------------------------------
 
@@ -171,7 +175,6 @@ am__objects_1 = ../include/qclocklayout.moc.lo \
 	../include/qsbuildinfo.moc.lo ../include/qseditoptions.moc.lo \
 	../include/qseqdata.moc.lo ../include/qseqeditex.moc.lo \
 	../include/qseqeditframe64.moc.lo \
-	../include/qseqeditframe.moc.lo \
 	../include/qseqeventframe.moc.lo ../include/qseqframe.moc.lo \
 	../include/qseqkeys.moc.lo ../include/qseqroll.moc.lo \
 	../include/qseqtime.moc.lo ../include/qsessionframe.moc.lo \
@@ -187,13 +190,12 @@ am_libseq_qt5_la_OBJECTS = gui_palette_qt5.lo palettefile.lo qbase.lo \
 	qperfeditex.lo qperfeditframe64.lo qperfnames.lo qperfroll.lo \
 	qperftime.lo qplaylistframe.lo qrollframe.lo qsabout.lo \
 	qsbuildinfo.lo qscrollmaster.lo qseditoptions.lo qseqbase.lo \
-	qseqdata.lo qseqeditex.lo qseqeditframe64.lo qseqeditframe.lo \
-	qseqeventframe.lo qseqframe.lo qseqkeys.lo qseqroll.lo \
-	qseqstyle.lo qsessionframe.lo qseqtime.lo qsetmaster.lo \
-	qseventslots.lo qskeymaps.lo qslivebase.lo qsliveframe.lo \
-	qslivegrid.lo qslotbutton.lo qsmaintime.lo qsmainwnd.lo \
-	qstriggereditor.lo qt5_helpers.lo qt5nsmanager.lo \
-	$(am__objects_2)
+	qseqdata.lo qseqeditex.lo qseqeditframe64.lo qseqeventframe.lo \
+	qseqframe.lo qseqkeys.lo qseqroll.lo qseqstyle.lo \
+	qsessionframe.lo qseqtime.lo qsetmaster.lo qseventslots.lo \
+	qskeymaps.lo qslivebase.lo qsliveframe.lo qslivegrid.lo \
+	qslotbutton.lo qsmaintime.lo qsmainwnd.lo qstriggereditor.lo \
+	qt5_helpers.lo qt5nsmanager.lo $(am__objects_2)
 libseq_qt5_la_OBJECTS = $(am_libseq_qt5_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -615,7 +617,6 @@ moc_qt_headers = \
  ../include/qseqdata.hpp \
  ../include/qseqeditex.hpp \
  ../include/qseqeditframe64.hpp \
- ../include/qseqeditframe.hpp \
  ../include/qseqeventframe.hpp \
  ../include/qseqframe.hpp \
  ../include/qseqkeys.hpp \
@@ -644,7 +645,6 @@ uic_qt_forms = \
  $(formsdir)/qseditoptions.ui \
  $(formsdir)/qseqeditex.ui \
  $(formsdir)/qseqeditframe64.ui \
- $(formsdir)/qseqeditframe.ui \
  $(formsdir)/qseqeventframe.ui \
  $(formsdir)/qsessionframe.ui \
  $(formsdir)/qsetmaster.ui \
@@ -685,7 +685,6 @@ libseq_qt5_la_SOURCES = \
  qseqdata.cpp \
  qseqeditex.cpp \
  qseqeditframe64.cpp \
- qseqeditframe.cpp \
  qseqeventframe.cpp \
  qseqframe.cpp \
  qseqkeys.cpp \
@@ -822,8 +821,6 @@ clean-libLTLIBRARIES:
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qseqeditframe64.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
-../include/qseqeditframe.moc.lo: ../include/$(am__dirstamp) \
-	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qseqeventframe.moc.lo: ../include/$(am__dirstamp) \
 	../include/$(DEPDIR)/$(am__dirstamp)
 ../include/qseqframe.moc.lo: ../include/$(am__dirstamp) \
@@ -882,7 +879,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseditoptions.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqdata.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqeditex.moc.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqeditframe.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqeditframe64.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqeventframe.moc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@../include/$(DEPDIR)/qseqframe.moc.Plo@am__quote@
@@ -923,7 +919,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqbase.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqdata.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqeditex.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqeditframe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqeditframe64.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqeventframe.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qseqframe.Plo@am__quote@

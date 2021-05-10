@@ -25,7 +25,7 @@
  * \library       seq66 application
  * \author        Chris Ahlstrom
  * \date          2015-11-20
- * \updates       2021-05-07
+ * \updates       2021-05-09
  * \license       GNU GPLv2 or above
  *
  *  The "rc" command-line options override setting that are first read from
@@ -182,18 +182,18 @@ cmdlineopts::s_arg_list =
 const std::string
 cmdlineopts::s_help_1a =
 "Options:\n"
-"   -h, --help               Show this message and exit.\n"
+"   -h, --help               Show this help and exit.\n"
 "   -V, --version            Show program version/build information and exit.\n"
 "   -v, --verbose            Verbose mode, show more data to the console.\n"
 #if defined SEQ66_LASH_SUPPORT
 "   -L, --lash               Activate built-in LASH support.\n"
 #endif
 #if defined SEQ66_NSM_SUPPORT
-"   -n, --nsm                Activate built-in Non Session Manager support.\n"
+"   -n, --nsm                Activate Non Session Manager support.\n"
 "   -T, --no-nsm             Ignore NSM in 'usr' file. T for 'typical'.\n"
 #endif
-"   -X, --playlist filename  Load the given playlist from the $HOME directory.\n"
-"   -m, --manual-ports       Don't auto-connect MIDI ports. Use virtual ports.\n"
+"   -X, --playlist filename  Load the playlist from configuration directory.\n"
+"   -m, --manual-ports       Don't auto-connect MIDI ports; use virtual ports.\n"
 "                            Not supported in the PortMIDI version.\n"
 "   -a, --auto-ports         Connect MIDI ports (overrides the 'rc' file).\n"
     ;
@@ -257,20 +257,17 @@ cmdlineopts::s_help_2 =
 
 const std::string
 cmdlineopts::s_help_3 =
-"   -u, --user-save          Save the 'usr' configuration settings.  Normally,\n"
+"   -u, --user-save          Save the 'usr' configuration settings.  Normally\n"
 "                            they are saved only if the file does not exist, so\n"
-"                            that certain 'usr' command-line options, such as\n"
-"                            --bus, do not become permanent.\n"
+"                            that 'usr' command-line options are not permanent.\n"
 "   -H, --home dir           Set the directory to hold the configuration files,\n"
 "                            relative to $HOME.  The default is .config/seq66.\n"
 "   -f, --rc filename        Use a different 'rc' configuration file.  It must\n"
-"                            be a file in the user's $HOME/.config/seq66\n"
-"                            (or --home) directory.\n"
-"                            The '.rc' extension is added if needed.\n"
+"                            be in the user's $HOME/.config/seq66 or --home\n"
+"                            directory.  The '.rc' extension is added if needed.\n"
 "   -F, --usr filename       Use a different 'usr' configuration file.  Same\n"
-"                            rules as for the --rc option. The '.usr'\n"
-"                            extension is added if needed.\n"
-"   -c, --config basename    Change 'rc', 'usr', etc. file base namess. Any\n"
+"                            rules as for the --rc option.\n"
+"   -c, --config basename    Change 'rc', 'usr', ... base file names. Any\n"
 "                            extension is stripped starting at the last period.\n"
 "   -o, --option optoken     Provides app-specific options for expansion.  The\n"
 "                            options supported are:\n"
@@ -283,19 +280,15 @@ cmdlineopts::s_help_3 =
 
 const std::string
 cmdlineopts::s_help_4a =
-"              log=filename  Redirect console output to a log file in the\n"
-"                            --home directory [$HOME/.config/seq66].\n"
-"                            If '=filename' is not provided, then the filename\n"
-"                            specified in '[user-options]' in the 'usr' file is\n"
-"                            used.\n"
+"              log=filename  Redirect console output to a log file in the home\n"
+"                            directory [$HOME/.config/seq66]. if '=filename' is\n"
+"                            If '=filename' is not provided, the filename in\n"
+"                            '[user-options]' in the 'usr' file is used.\n"
 "              wid=RxC,F     UNSUPPORTED in Seq66. Use external live windows.\n"
-"              sets=RxC      Modifies the rows and columns in a set from the\n"
-"                            default of 4x8.  Supported values of R are 4 to 8,\n"
-"                            and C can range from 8 to 12. If not 4x8, seq66 is\n"
-"                            in 'variset' mode. Affects mute groups, too. If\n"
-"                            larger than 4x8, we recommend the 'scale' option\n"
-"                            as well to scale up the slot sizes.\n"
-"\n"
+"              sets=RxC      Changes the rows and columns in a set from 4x8.\n"
+"                            Supported values of R are 4 to 8, and for C are 8 to\n"
+"                            to 12. If not 4x8, seq66 is in 'variset' mode.\n"
+"                            Affects mute groups, too.\n"
     ;
 
 const std::string
@@ -303,8 +296,8 @@ cmdlineopts::s_help_4b =
 "              scale=x.y     Scales size of main window. Range: 0.5 to 3.0.\n"
 "              mutes=value   Saving of mute-groups: 'mutes', 'midi', or 'both'.\n"
 "              virtual=o,i   Same as --manual-ports, except that the number of\n"
-"                            output and input ports can be specified. The\n"
-"                            default values are 8 and 4, respectively.\n"
+"                            output and input ports can be specified. Default\n"
+"                            values are 8 and 4, respectively.\n"
 "\n"
 " seq66cli:\n"
 "              daemonize     Makes this application fork to the background.\n"
@@ -322,12 +315,10 @@ cmdlineopts::s_help_4b =
 
 const std::string
 cmdlineopts::s_help_5 =
-"--ppqn works well. Saving a MIDI file saves the new PPQN value.\n"
-"If no JACK options are shown above, they were disabled in the build\n"
-"configuration. Command-line options can be sticky; most of them\n"
-"get saved to the configuration files when Seq66 exits.  See the\n"
-"Sequencer64 user manual at https://github.com/ahlstromcj/sequencer64-doc.\n"
-"It is close enough to Seq66 functionality to be useful, for now.\n"
+"--ppqn works well. Saving a MIDI file saves the new PPQN value. If no JACK\n"
+"options are shown above, they were disabled in the build configuration.\n"
+"Command-line options can be sticky; many of them are saved to the configuration\n"
+"files when Seq66 exits.  See the Seq66 User Manual in the 'doc' directory.\n"
     ;
 
 /**
@@ -341,9 +332,6 @@ cmdlineopts::show_help ()
         << seq_app_name() << " v " << seq_version()
         << " A reboot of the seq24 live sequencer.\n"
         << "Usage: " << seq_app_name() << " [options] [MIDI filename]\n"
-        ;
-
-    std::cout
         << s_help_1a << s_help_1b << s_help_2 << s_help_3
         << s_help_4a << s_help_4b << s_help_5
         ;

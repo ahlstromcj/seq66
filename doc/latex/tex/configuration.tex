@@ -6,7 +6,7 @@
 % \library     Documents
 % \author      Chris Ahlstrom
 % \date        2021-01-18
-% \update      2021-04-28
+% \update      2021-05-04
 % \version     $Revision$
 % \license     $XPC_GPL_LICENSE$
 %
@@ -32,6 +32,7 @@
       \item \textbf{'drums' File}
       \item \textbf{'palette' File}
       \item \textbf{'playlist' File}
+      \item \textbf{'qss' File}
    \end{itemize}
 
    After the first run of \textsl{Seq66},
@@ -1330,6 +1331,9 @@
    \label{fig:view_with_style_sheet_applied}
 \end{figure}
 
+   Note the blue text fields. Also note the larger tabs, which could be useful on
+   a touch-screen.
+
 \paragraph{'usr' File / Additional Options / [user-session]}
 \label{paragraph:user_file_added_options_session}
 
@@ -1369,17 +1373,23 @@
 
    Like \textsl{Seq24}, \textsl{Seq66} provides a way to control the
    application to some extent via a MIDI controller, such as a MIDI keyboard or
-   a MIDI pad device.  The current section describes this feature;
+   a MIDI pad.  The current section describes this feature;
    additional resources and ideas can be found at \url{linuxaudio.org}
    (\cite{midicontrol}).
    Also see the tutorial section \sectionref{sec:launchpad_mini}.
-   An \textsl{Open Document Format} spreadsheet shows layouts for the default
+   An \textsl{Open Document Format} spreadsheet in the
+   \texttt{doc} directory shows layouts for the default
    keystroke configuration (including pattern, mutes, and automation controls)
    and for a couple of \textsl{Launchpad Mini} configurations.
+   Another spreadsheet lists the support names for keys; these names can be used
+   in the 'ctrl' file, and include some changes for French AZERTY keyboards.
+   The spreadsheets are
+   \texttt{control\_keys.ods} and
+   \texttt{launchpad-mini.ods}.
 
-   The 'ctrl; file provides settings for keyboard control, MIDI control, and for
+   The 'ctrl' file provides settings for keyboard control, MIDI control, and for
    specifying MIDI output to reflect \textsl{automation} commands in a device
-   such as the \textsl{LaunchPad}..
+   such as the \textsl{LaunchPad Mini}.
    The name of this file is specfied in the 'rc' file as noted earlier.
 
 \subsubsection{'ctrl' File / MIDI Control Settings}
@@ -1803,6 +1813,8 @@ This MIDI control sets the playing screen-set.
 
    After exiting \texttt{qseq66}, the 'ctrl' file one has specified
    should still have the new settings.
+   As usual, keep all your configurations in a safe place, such as a tar-file or
+   ZIP-file.
 
 \subsection{'mutes' File}
 \label{subsubsec:configuration_mute_group_control}
